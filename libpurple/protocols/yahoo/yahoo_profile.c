@@ -940,7 +940,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		 * we specify HTTP 1.1. So we have to specify 1.0 & fix purple_util_fetch_url
 		 */
 		url_data = purple_util_fetch_url(photo_url_text, use_whole_url, NULL,
-				FALSE, yahoo_got_photo, info2_data);
+				FALSE, -1, yahoo_got_photo, info2_data);
 		if (url_data != NULL)
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	} else {
@@ -1274,7 +1274,7 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s",
 			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
 
-	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
+	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, -1, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	else {

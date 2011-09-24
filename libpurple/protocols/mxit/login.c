@@ -549,7 +549,7 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
 			session->logindata->wapserver, session->logindata->sessionid, purple_url_encode( session->acc->username ), PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CLIENT_ID, MXIT_CP_ARCH,
 			captcha_resp, session->logindata->cc, session->logindata->locale, ( state == MXIT_STATE_REGISTER1 ) ? 0 : 1, MXIT_CP_PLATFORM, MXIT_CP_OS,
 			MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
-	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo2, session );
+	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_clientinfo2, session );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );
@@ -713,7 +713,7 @@ static void get_clientinfo( struct MXitSession* session )
 
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&h=%i&w=%i&ts=%li", wapserver, MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
-	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo1, session );
+	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_clientinfo1, session );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );

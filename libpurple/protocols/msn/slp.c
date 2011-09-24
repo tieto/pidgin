@@ -253,7 +253,7 @@ msn_request_user_display(MsnUser *user)
 			data->session = session;
 			data->remote_user = user->passport;
 			data->sha1 = info;
-			url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE, 200*1024,
+			url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE, 200*1024,
 			                                     fetched_user_display, data);
 			session->url_datas = g_slist_prepend(session->url_datas, url_data);
 		} else {

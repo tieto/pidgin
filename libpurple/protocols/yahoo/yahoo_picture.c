@@ -132,7 +132,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->checksum = checksum;
 		/* TODO: Does this need to be MSIE 5.0? */
 		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE,
+				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, -1,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
 			yd = purple_connection_get_protocol_data(gc);

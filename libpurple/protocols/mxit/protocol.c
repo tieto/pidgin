@@ -311,7 +311,7 @@ static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* 
 #endif
 
 	/* send the HTTP request */
-	session->http_out_req = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_http_rx, session );
+	session->http_out_req = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_http_rx, session );
 
 	g_free( url );
 	if ( part )

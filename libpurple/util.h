@@ -1167,49 +1167,13 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
  *                   partial URL.
  * @param user_agent The user agent field to use, or NULL.
  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param cb         The callback function.
- * @param data       The user data to pass to the callback function.
- */
-#define purple_util_fetch_url(url, full, user_agent, http11, cb, data) \
-	purple_util_fetch_url_request(url, full, user_agent, http11, NULL, \
-		FALSE, cb, data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
  * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
  * @param cb         The callback function.
  * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url" and get rid of the old one
  */
-#define purple_util_fetch_url_len(url, full, user_agent, http11, max_len, cb, data) \
-	purple_util_fetch_url_request_len(NULL, url, full, user_agent, http11, NULL, \
+#define purple_util_fetch_url(url, full, user_agent, http11, max_len, cb, data) \
+	purple_util_fetch_url_request(NULL, url, full, user_agent, http11, NULL, \
 		FALSE, max_len, cb, data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param request    A HTTP request to send to the server instead of the
- *                   standard GET
- * @param include_headers
- *                   If TRUE, include the HTTP headers in the response.
- * @param callback   The callback function.
- * @param data       The user data to pass to the callback function.
- */
-PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
-		gboolean full, const gchar *user_agent, gboolean http11,
-		const gchar *request, gboolean include_headers,
-		PurpleUtilFetchUrlCallback callback, gpointer data);
 
 /**
  * Fetches the data from a URL, and passes it to a callback function.
@@ -1227,9 +1191,8 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
  * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
  * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
  */
-PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(
+PurpleUtilFetchUrlData *purple_util_fetch_url_request(
 		PurpleAccount *account, const gchar *url,
 		gboolean full, const gchar *user_agent, gboolean http11,
 		const gchar *request, gboolean include_headers, gssize max_len,
@@ -1275,14 +1238,15 @@ const char *purple_url_encode(const char *str);
 gboolean purple_email_is_valid(const char *address);
 
 /**
- * Checks if the given IP address is a syntactically valid IPv4 address.
+ * Checks if the given IP address is a syntactically valid IPv4 or
+ * IPv6 address.
+ * If you specifically want to check for an IPv4 address use
+ * purple_ipv4_address_is_valid(), or for an IPv6 address use
+ * purple_ipv6_address_is_valid().
  *
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
- * @deprecated This function will be replaced with one that validates
- *             as either IPv4 or IPv6 in 3.0.0. If you don't want this,
- *             behavior, use one of the more specific functions.
  */
 gboolean purple_ip_address_is_valid(const char *ip);
 

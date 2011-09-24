@@ -338,7 +338,7 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 		return;
 	}
 
-	if (!purple_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
+	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, hosts)) {
 		while (hosts) {
 			hosts = g_slist_delete_link(hosts, hosts);
 			g_free(hosts->data);

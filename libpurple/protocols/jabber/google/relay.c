@@ -137,7 +137,7 @@ jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 	purple_debug_info("jabber",
 		"sending Google relay request %s to %s\n", request, url);
 	url_data =
-		purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
+		purple_util_fetch_url_request(NULL, url, FALSE, NULL, FALSE, request, FALSE, -1,
 			jabber_google_relay_fetch_cb, data);
 	if (url_data) {
 		js->google_relay_requests =

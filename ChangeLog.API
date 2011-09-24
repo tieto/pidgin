@@ -53,27 +53,32 @@ version 3.0.0 (??/??/????):
 		* xmlnode_strip_prefixes
 
 		Changed:
+		* purple_account_add_buddy now takes an invite message as the last
+		  parameter
+		* purple_account_add_buddies now takes an invite message as the last
+		  parameter
 		* purple_certificate_check_signature_chain_with_failing renamed
 		  to purple_certificate_check_signature_chain
 		* purple_connection_error now takes a PurpleConnectionError
 		  as the second parameter
+		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
+		* purple_network_listen_family renamed to purple_network_listen
+		* purple_network_listen_range_family renamed to
+		  purple_network_listen_range
 		* purple_notify_user_info_add_pair renamed to
 		  purple_notify_user_info_add_pair_html
 		* purple_notify_user_info_get_entries returns a GQueue instead of
 		  a GList
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
-		* purple_util_fetch_url_request_len now takes a PurpleAccount as
-		  the first parameter
-		* PurpleConnectionUiOps.report_disconnect now passes a
-		  PurpleConnectionError as the second parameter
-		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
-		* purple_account_add_buddy now takes an invite message as the last
-		  parameter
-		* purple_account_add_buddies now takes an invite message as the last
-		  parameter
+		* purple_util_fetch_url_request_len now takes a PurpleAccount as
+		  the first parameter
+		* purple_util_fetch_url_request_len renamed to purple_util_fetch_url_request
+		* purple_util_fetch_url_len renamed to purple_util_fetch_url
+		* PurpleConnectionUiOps.report_disconnect now passes a
+		  PurpleConnectionError as the second parameter
 
 		Removed:
 		* _GntFileType
@@ -125,6 +130,7 @@ version 3.0.0 (??/??/????):
 		* purple_conv_chat_set_users
 		* purple_core_migrate
 		* purple_dnsquery_a_account
+		* purple_network_listen_map_external
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count

@@ -464,7 +464,7 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 	purple_timeout_remove(dd->tima);
 	dd->tima = 0;
 
-	purple_util_fetch_url_request_len(NULL, descriptionURL, TRUE, NULL, TRUE, httpRequest,
+	purple_util_fetch_url_request(NULL, descriptionURL, TRUE, NULL, TRUE, httpRequest,
 			TRUE, MAX_UPNP_DOWNLOAD, upnp_parse_description_cb, dd);
 
 	g_free(httpRequest);
@@ -730,7 +730,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gfud = purple_util_fetch_url_request_len(NULL, control_info.control_url, FALSE, NULL, TRUE,
+	gfud = purple_util_fetch_url_request(NULL, control_info.control_url, FALSE, NULL, TRUE,
 				totalSendMessage, TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);

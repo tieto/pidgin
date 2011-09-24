@@ -384,7 +384,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
 			if (user->url_data != NULL)
 				purple_util_fetch_url_cancel(user->url_data);
-			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
+			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, -1, msim_downloaded_buddy_icon, (gpointer)user);
 		}
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
