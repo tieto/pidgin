@@ -202,7 +202,7 @@ purple_certificate_check_signature_chain(...)
 			l = g_list_prepend(l, purple_perl_ref_object(ST(i)));
 		}
 		l = g_list_reverse(l);
-		ret = purple_certificate_check_signature_chain(l);
+		ret = purple_certificate_check_signature_chain(l, NULL);
 		g_list_free(l);
 		if(ret) XSRETURN_YES;
 		XSRETURN_NO;

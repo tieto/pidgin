@@ -53,6 +53,8 @@ version 3.0.0 (??/??/????):
 		* xmlnode_strip_prefixes
 
 		Changed:
+		* purple_certificate_check_signature_chain_with_failing renamed
+		  to purple_certificate_check_signature_chain
 		* purple_connection_error now takes a PurpleConnectionError
 		  as the second parameter
 		* purple_notify_user_info_add_pair renamed to
