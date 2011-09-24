@@ -183,11 +183,22 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
+ * Libpurple does not currently do any port mapping (stateful firewall hole
+ * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
+ * addresses, a mapping is done).
+ *
  * @param start The port number to bind to, or 0 to pick a random port.
  *              Users are allowed to override this arg in prefs.
  * @param end The highest possible port in the range of ports to listen on,
  *            or 0 to pick a random port.  Users are allowed to override this
  *            arg in prefs.
+ * @param socket_family The protocol family of the socket.  This should be
+ *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
+ *                      may or may not be able to accept IPv4 connections
+ *                      based on the system configuration (use
+ *                      purple_socket_speaks_ipv4 to check).  If an IPv6
+ *                      socket doesn't accept V4-mapped addresses, you will
+ *                      need a second listener to support both v4 and v6.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  * @param cb The callback to be invoked when the port to listen on is available.
@@ -199,29 +210,7 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  *         the pending listener, or NULL if unable to obtain a local
  *         socket to listen on.
  */
-PurpleNetworkListenData *purple_network_listen_range(unsigned short start,
-		unsigned short end, int socket_type,
-		PurpleNetworkListenCallback cb, gpointer cb_data);
-
-/**
- * \copydoc purple_network_listen_range
- *
- * Libpurple does not currently do any port mapping (stateful firewall hole
- * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
- * addresses, a mapping is done).
- *
- * @param socket_family The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
- * @since 2.7.0
- * @deprecated This function will be renamed to purple_network_listen_range
- *             in 3.0.0.
- */
-PurpleNetworkListenData *purple_network_listen_range_family(
+PurpleNetworkListenData *purple_network_listen_range(
 	unsigned short start, unsigned short end, int socket_family,
 	int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
 

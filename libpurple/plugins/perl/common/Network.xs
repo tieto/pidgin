@@ -31,9 +31,10 @@ purple_network_listen(port, socket_family, socket_type, cb, cb_data)
 	gpointer cb_data
 
 Purple::NetworkListenData
-purple_network_listen_range(start, end, socket_type, cb, cb_data)
+purple_network_listen_range(start, end, socket_family, socket_type, cb, cb_data)
 	unsigned short start
 	unsigned short end
+	int socket_family
 	int socket_type
 	Purple::NetworkListenCallback cb
 	gpointer cb_data

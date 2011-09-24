@@ -731,6 +731,7 @@ got_invite(MsnSlpCall *slpcall,
 
 			dc->listen_data = purple_network_listen_range(
 				0, 0,
+				AF_UNSPEC,
 				SOCK_STREAM,
 				msn_dc_listen_socket_created_cb,
 				dc
@@ -832,6 +833,7 @@ got_ok(MsnSlpCall *slpcall,
 
 		dc->listen_data = purple_network_listen_range(
 			0, 0,
+			AF_UNSPEC,
 			SOCK_STREAM,
 			msn_dc_listen_socket_created_cb,
 			dc

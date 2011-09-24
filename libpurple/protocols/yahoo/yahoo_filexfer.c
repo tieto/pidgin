@@ -1570,7 +1570,7 @@ static void yahoo_p2p_client_send_ft_info(PurpleConnection *gc, PurpleXfer *xfer
 
 	p2p_data = g_hash_table_lookup(yd->peers, purple_xfer_get_remote_user(xfer));
 	if( p2p_data->connection_type == YAHOO_P2P_WE_ARE_SERVER )
-		if(purple_network_listen_range(0, 0, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer))
+		if(purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer))
 			return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_INFO_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -1871,7 +1871,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 			purple_xfer_cancel_remote(xfer);
 			return;
 		}
-		if(!purple_network_listen_range(0, 0, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer)) {
+		if(!purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer)) {
 			purple_xfer_cancel_remote(xfer);
 			return;
 		}

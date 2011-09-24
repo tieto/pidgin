@@ -339,7 +339,7 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 	purple_xfer_ref(xfer);
 
 	/* Create a listening socket */
-	xd->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
+	xd->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM,
 			irc_dccsend_network_listen_cb, xfer);
 	if (xd->listen_data == NULL) {
 		purple_xfer_unref(xfer);

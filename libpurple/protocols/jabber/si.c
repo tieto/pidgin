@@ -959,7 +959,7 @@ jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 		purple_debug_info("jabber", "Skipping attempting local streamhost.\n");
 		jsx->listen_data = NULL;
 	} else
-		jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
+		jsx->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM,
 				jabber_si_xfer_bytestreams_listen_cb, xfer);
 
 	if (jsx->listen_data == NULL) {
