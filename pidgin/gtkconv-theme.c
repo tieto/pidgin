@@ -37,6 +37,8 @@
 #define PIDGIN_CONV_THEME_GET_PRIVATE(Gobject) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_CONV_THEME, PidginConvThemePrivate))
 
+static void _set_variant(PidginConvTheme *theme, const char *variant);
+
 /******************************************************************************
  * Structs
  *****************************************************************************/
@@ -68,19 +70,22 @@ typedef struct {
 } PidginConvThemePrivate;
 
 /******************************************************************************
- * Globals
- *****************************************************************************/
-
-static GObjectClass *parent_class = NULL;
-
-/******************************************************************************
  * Enums
  *****************************************************************************/
 
 enum {
 	PROP_ZERO = 0,
 	PROP_INFO,
+	PROP_VARIANT,
+	PROP_LAST
 };
+
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /******************************************************************************
  * GObject Stuff
@@ -96,6 +101,11 @@ pidgin_conv_theme_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_INFO:
 			g_value_set_boxed(value, (gpointer)pidgin_conversation_theme_get_info(theme));
 			break;
+
+		case PROP_VARIANT:
+			g_value_set_string(value, pidgin_conversation_theme_get_variant(theme));
+			break;
+
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
 			break;
@@ -112,6 +122,11 @@ pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value
 		case PROP_INFO:
 			pidgin_conversation_theme_set_info(theme, g_value_get_boxed(value));
 			break;
+
+		case PROP_VARIANT:
+			_set_variant(theme, g_value_get_string(value));
+			break;
+
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
 			break;
@@ -176,6 +191,14 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 			G_TYPE_HASH_TABLE,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_INFO, pspec);
+	properties[PROP_INFO] = pspec;
+
+	/* VARIANT */
+	pspec = g_param_spec_string("variant", "Variant",
+			"The current variant for this theme",
+			NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
+	properties[PROP_VARIANT] = pspec;
 
 }
 
@@ -490,6 +513,28 @@ get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
 	return priv->outgoing_next_context_html;
 }
 
+static void
+_set_variant(PidginConvTheme *theme, const char *variant)
+{
+	PidginConvThemePrivate *priv;
+	const GValue *val;
+	char *prefname;
+
+	g_return_if_fail(theme != NULL);
+	g_return_if_fail(variant != NULL);
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	g_free(priv->variant);
+	priv->variant = g_strdup(variant);
+
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
+	                           g_value_get_string(val));
+	purple_prefs_set_string(prefname, variant);
+	g_free(prefname);
+}
+
 /*****************************************************************************
  * Public API functions
  *****************************************************************************/
@@ -628,23 +673,8 @@ pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
 void
 pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
 {
-	PidginConvThemePrivate *priv;
-	const GValue *val;
-	char *prefname;
-
-	g_return_if_fail(theme != NULL);
-	g_return_if_fail(variant != NULL);
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	g_free(priv->variant);
-	priv->variant = g_strdup(variant);
-
-	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
-	                           g_value_get_string(val));
-	purple_prefs_set_string(prefname, variant);
-	g_free(prefname);
+	_set_variant(theme, variant);
+	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_VARIANT]);
 }
 
 const GList *
