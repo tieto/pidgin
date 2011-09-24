@@ -454,6 +454,7 @@ static void
 pidgin_conv_theme_finalize(GObject *obj)
 {
 	PidginConvThemePrivate *priv;
+	GList *list;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(obj);
 
@@ -475,6 +476,13 @@ pidgin_conv_theme_finalize(GObject *obj)
 
 	if (priv->info)
 		g_hash_table_destroy(priv->info);
+
+	list = priv->variants;
+	while (list) {
+		g_free(list->data);
+		list = g_list_delete_link(list, list);
+	}
+	g_free(priv->variant);
 
 	parent_class->finalize(obj);
 }
