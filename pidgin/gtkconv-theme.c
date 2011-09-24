@@ -673,7 +673,7 @@ pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	return g_strdup(priv->variant);
+	return priv->variant;
 }
 
 void
