@@ -477,8 +477,6 @@ PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *f
  * @param field The field.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 PurpleRequestFieldGroup *purple_request_field_get_group(const PurpleRequestField *field);
 
@@ -542,8 +540,6 @@ gboolean purple_request_field_is_required(const PurpleRequestField *field);
  * @param field The field.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
 
@@ -554,8 +550,6 @@ gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
  * @param ui_data The UI data.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 void purple_request_field_set_ui_data(PurpleRequestField *field,
                                       gpointer ui_data);
@@ -1336,8 +1330,7 @@ void *purple_request_action_varg(void *handle, const char *title,
 
 /**
  * Version of purple_request_action() supplying an image for the UI to
- * optionally display as an icon in the dialog; see its documentation
- * @since 2.7.0
+ * optionally display as an icon in the dialog; see its documentation.
  */
 void *purple_request_action_with_icon(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,
@@ -1348,7 +1341,6 @@ void *purple_request_action_with_icon(void *handle, const char *title,
 /**
  * <tt>va_list</tt> version of purple_request_action_with_icon();
  * see its documentation.
- * @since 2.7.0
  */
 void *purple_request_action_with_icon_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,

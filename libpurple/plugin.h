@@ -317,8 +317,6 @@ gboolean purple_plugin_unload(PurplePlugin *plugin);
  * startup" by excluding said plugins from the list of plugins to save.  The
  * UI needs to call purple_plugins_save_loaded() after calling this for it
  * to have any effect.
- *
- * @since 2.3.0
  */
 void purple_plugin_disable(PurplePlugin *plugin);
 
@@ -515,8 +513,6 @@ void purple_plugins_add_search_path(const char *path);
  * Returns a list of plugin search paths.
  *
  * @constreturn A list of searched paths.
- *
- * @since 2.6.0
  */
 GList *purple_plugins_get_search_paths(void);
 

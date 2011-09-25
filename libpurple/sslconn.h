@@ -203,7 +203,6 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
  * @param data       User-defined data.
  *
  * @return The SSL connection handle.
- * @since 2.6.0
  */
 PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host,
 									int port, PurpleSslInputFunction func,
@@ -222,8 +221,6 @@ PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, cons
  * @param data       User-defined data.
  *
  * @return The SSL connection handle.
- *
- * @since 2.2.0
  */
 PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                                            PurpleSslInputFunction func,
@@ -278,8 +275,6 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  *
  * @return The peer certificate chain, in the order of certificate, issuer,
  *         issuer's issuer, etc. @a NULL if no certificates have been provided,
- *
- * @since 2.2.0
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 

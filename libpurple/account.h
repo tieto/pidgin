@@ -433,8 +433,6 @@ void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info
  *
  * @param account      The account.
  * @param privacy_type The privacy type.
- *
- * @since 2.7.0
  */
 void purple_account_set_privacy_type(PurpleAccount *account, PurplePrivacyType privacy_type);
 
@@ -491,8 +489,6 @@ void purple_account_set_status_list(PurpleAccount *account,
  *                   is successfully set on the server (or NULL).
  * @param failure_cb A callback which will be called if the alias
  *                   is not successfully set on the server (or NULL).
- *
- * @since 2.7.0
  */
 void purple_account_set_public_alias(PurpleAccount *account,
 	const char *alias, PurpleSetPublicAliasSuccessCallback success_cb,
@@ -506,7 +502,6 @@ void purple_account_set_public_alias(PurpleAccount *account,
  * @param success_cb A callback which will be called with the alias
  * @param failure_cb A callback which will be called if the prpl is
  *                   unable to retrieve the server-side alias.
- * @since 2.7.0
  */
 void purple_account_get_public_alias(PurpleAccount *account,
 	PurpleGetPublicAliasSuccessCallback success_cb,
@@ -542,8 +537,6 @@ void purple_account_clear_settings(PurpleAccount *account);
  *
  * @param account The account.
  * @param setting The setting to remove.
- *
- * @since 2.6.0
  */
 void purple_account_remove_setting(PurpleAccount *account, const char *setting);
 
@@ -717,8 +710,6 @@ PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
  * @param account The account.
  *
  * @return The name to display.
- *
- * @since 2.7.0
  */
 const gchar *purple_account_get_name_for_display(const PurpleAccount *account);
 
@@ -767,8 +758,6 @@ PurpleProxyInfo *purple_account_get_proxy_info(const PurpleAccount *account);
  * @param account   The account.
  *
  * @return The privacy type.
- *
- * @since 2.7.0
  */
 PurplePrivacyType purple_account_get_privacy_type(const PurpleAccount *account);
 

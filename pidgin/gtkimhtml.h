@@ -58,9 +58,6 @@ typedef struct _GtkIMHtmlAnimation	GtkIMHtmlAnimation;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
 
-/**
- * @since 2.6.0
- */
 typedef struct _GtkIMHtmlLink       GtkIMHtmlLink;
 
 typedef enum {
@@ -78,7 +75,7 @@ typedef enum {
 	GTK_IMHTML_SMILEY =     1 << 11,
 	GTK_IMHTML_LINKDESC =   1 << 12,
 	GTK_IMHTML_STRIKE =     1 << 13,
-	/** Show custom smileys when appropriate. @since 2.5.0 */
+	/** Show custom smileys when appropriate. */
 	GTK_IMHTML_CUSTOM_SMILEY = 1 << 14,
 	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
@@ -166,8 +163,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
-	gpointer data;       /** @since 2.6.0 */
-	gsize datasize;      /** @since 2.6.0 */
+	gpointer data;
+	gsize datasize;
 };
 
 struct _GtkIMHtmlScalable {
@@ -766,8 +763,6 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
  *
  * @param imhtml  The GTK+ IM/HTML.
  * @param flags   The connection flag which describes the allowed types of formatting.
- *
- * @since 2.1.0
  */
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
@@ -780,7 +775,6 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
  * @param flags      The smiley flags
  *
  * @return The newly created smiley
- * @since 2.5.0
  */
 GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
 		GtkIMHtmlSmileyFlags flags);
@@ -789,8 +783,6 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
  * Reload the image data for the smiley.
  *
  * @param smiley   The smiley to reload
- *
- * @since 2.5.0
  */
 void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
 
@@ -798,8 +790,6 @@ void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
  * Destroy a GtkIMHtmlSmiley.
  *
  * @param smiley   The smiley to destroy
- *
- * @since 2.5.0
  */
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
 
@@ -818,8 +808,6 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
  *                      successfully, @c FALSE otherwise.
  *
  * @return  @c TRUE if the protocol was successfully registered (or unregistered, when \a activate is @c NULL)
- *
- * @since 2.6.0
  */
 gboolean gtk_imhtml_class_register_protocol(const char *name,
 		gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link),
@@ -831,8 +819,6 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  The URL
- *
- * @since 2.6.0
  */
 const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
 
@@ -842,8 +828,6 @@ const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  The GtkTextTag object, or @c NULL
- *
- * @since 2.6.0
  */
 const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
 
@@ -854,8 +838,6 @@ const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  @c TRUE if 'url-clicked' signal was emitted, @c FALSE otherwise.
- *
- * @since 2.6.0
  */
 gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
 

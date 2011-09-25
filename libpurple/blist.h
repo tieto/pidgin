@@ -75,9 +75,6 @@ typedef enum
 
 } PurpleBlistNodeFlags;
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_BLIST_NODE(obj) ((PurpleBlistNode *)(obj))
 
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
@@ -86,24 +83,12 @@ typedef enum
 #define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
 				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_GROUP(obj) ((PurpleGroup *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_CONTACT(obj) ((PurpleContact *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_BUDDY(obj) ((PurpleBuddy *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_CHAT(obj) ((PurpleChat *)(obj))
 
 #include "account.h"
@@ -226,8 +211,6 @@ struct _PurpleBlistUiOps
 	 * previous libpurple versions.
 	 *
 	 * @param node    The node which has been modified.
-	 *
-	 * @since 2.6.0.
 	 */
 	void (*save_node)(PurpleBlistNode *node);
 
@@ -241,7 +224,6 @@ struct _PurpleBlistUiOps
 	 * previous libpurple versions.
 	 *
 	 * @param node  The node which has been modified.
-	 * @since 2.6.0.
 	 */
 	void (*remove_node)(PurpleBlistNode *node);
 
@@ -256,7 +238,6 @@ struct _PurpleBlistUiOps
 	 *
 	 * @param account  The account whose data to save. If NULL, save all data
 	 *                  for all accounts.
-	 * @since 2.6.0.
 	 */
 	void (*save_account)(PurpleAccount *account);
 
@@ -311,7 +292,6 @@ PurpleBlistNode *purple_blist_get_root(void);
  *         freeing the list.
  *
  * @see purple_find_buddies
- * @since 2.6.0
  */
 GSList *purple_blist_get_buddies(void);
 
@@ -319,8 +299,6 @@ GSList *purple_blist_get_buddies(void);
  * Returns the UI data for the list.
  *
  * @return The UI data for the list.
- *
- * @since 2.6.0
  */
 gpointer purple_blist_get_ui_data(void);
 
@@ -328,8 +306,6 @@ gpointer purple_blist_get_ui_data(void);
  * Sets the UI data for the list.
  *
  * @param ui_data The UI data for the list.
- *
- * @since 2.6.0
  */
 void purple_blist_set_ui_data(gpointer ui_data);
 
@@ -352,7 +328,7 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
  *
  * @param node A node.
  * @return  The parent node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
@@ -365,7 +341,7 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The child node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
@@ -378,7 +354,7 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The sibling node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_prev
@@ -391,7 +367,7 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The sibling node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
@@ -404,7 +380,6 @@ PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
  *
  * @param node The node.
  * @return The UI data.
- * @since 2.6.0
  */
 gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
 
@@ -413,8 +388,6 @@ gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
  *
  * @param node The node.
  * @param ui_data The UI data.
- *
- * @since 2.6.0
  */
 void purple_blist_node_set_ui_data(PurpleBlistNode *node, gpointer ui_data);
 
@@ -611,7 +584,6 @@ PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
  * @return      The protocol data.
  *
  * @see purple_buddy_set_protocol_data()
- * @since 2.6.0
  */
 gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
 
@@ -624,7 +596,6 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
  * @param data  The data.
  *
  * @see purple_buddy_get_protocol_data()
- * @since 2.6.0
  */
 void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
 
@@ -651,8 +622,6 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
  *
  * @param buddy The buddy.
  * @return      The media caps.
- *
- * @since 2.7.0
  */
 PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy);
 
@@ -727,8 +696,6 @@ void purple_contact_destroy(PurpleContact *contact);
  *
  * @param contact  The contact
  * @return         The group
- *
- * @since 2.7.0
  */
 PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
 
@@ -867,8 +834,6 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  *
  * @param buddy  The buddy
  * @return       The local alias for the buddy
- *
- * @since 2.6.0
  */
 const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
 
@@ -944,8 +909,6 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @return  The account the chat belongs to.
- *
- * @since 2.4.0
  */
 PurpleAccount *purple_chat_get_account(PurpleChat *chat);
 
@@ -955,8 +918,6 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @constreturn  The hashtable.
- *
- * @since 2.4.0
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 
@@ -1174,8 +1135,6 @@ PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
  * @param node The node.
  *
  * @return The type of the node.
- *
- * @since 2.1.0
  */
 PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
 

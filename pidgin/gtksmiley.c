@@ -47,9 +47,9 @@ struct _PidginSmiley
 	GtkWidget *smiley_image;
 	gchar *filename;
 	GdkPixbuf *custom_pixbuf;
-	gpointer data; /** @since 2.6.0 */
-	gsize datasize; /** @since 2.6.0 */
-	gint entry_len; /** @since 2.6.0 */
+	gpointer data;
+	gsize datasize;
+	gint entry_len;
 };
 
 typedef struct

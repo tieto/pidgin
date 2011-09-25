@@ -3979,8 +3979,6 @@ animate_image_cb(gpointer data)
  * @param id       The id to associate with the image.
  *
  * @return A new IM/HTML Scalable object with an image.
- *
- * @since 2.1.0
  */
 /*
  * TODO: All this animation code could be combined much better with

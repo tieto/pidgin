@@ -137,7 +137,6 @@ GtkWidget *pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, Gtk
  * @param  image   A button image.
  *
  * @return   A GtkButton created from the image.
- * @since 2.7.0
  */
 GtkWidget *pidgin_create_small_button(GtkWidget *image);
 
@@ -148,8 +147,6 @@ GtkWidget *pidgin_create_small_button(GtkWidget *image);
  * @param border_width The window's desired border width
  * @param role         A string indicating what the window is responsible for doing, or @c NULL
  * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
- *
- * @since 2.1.0
  */
 GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
 
@@ -160,8 +157,6 @@ GtkWidget *pidgin_create_window(const char *title, guint border_width, const cha
  * @param border_width The window's desired border width
  * @param role         A string indicating what the window is responsible for doing, or @c NULL
  * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
- *
- * @since 2.4.0
  */
 GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable);
 
@@ -171,8 +166,6 @@ GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const cha
  * @param dialog       The dialog window
  * @param homogeneous  TRUE if all children are to be given equal space allotments.
  * @param spacing      the number of pixels to place by default between children
- *
- * @since 2.4.0
  */
 GtkWidget *pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing);
 
@@ -180,8 +173,6 @@ GtkWidget *pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean ho
  * Retrieves the main content box (vbox) from a pidgin dialog window
  *
  * @param dialog       The dialog window
- *
- * @since 2.4.0
  */
 GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog);
 
@@ -194,7 +185,6 @@ GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog);
  * @param callbackdata   The user data for the callback function
  *
  * @return The created button.
- * @since 2.4.0
  */
 GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
 		GCallback callback, gpointer callbackdata);
@@ -203,8 +193,6 @@ GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
  * Retrieves the action area (button box) from a pidgin dialog window
  *
  * @param dialog       The dialog window
- *
- * @since 2.4.0
  */
 GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
 
@@ -438,8 +426,6 @@ void pidgin_load_accels(void);
  *
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
- *
- * @since 2.1.0
  */
 void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
 
@@ -449,8 +435,6 @@ void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
  * @param chatid The chat id.
- *
- * @since 2.1.0
  */
 void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chatid);
 
@@ -489,8 +473,6 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
  *
  * @param w The widget that we want to label.
  * @param l A GtkLabel that we want to use as the label for the widget.
- *
- * @since 2.2.0
  */
 void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
 
@@ -505,8 +487,6 @@ void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
  *        where the menu shall be drawn. This is an output parameter.
  * @param push_in This is an output parameter?
  * @param data Not used by this particular position function.
- *
- * @since 2.1.0
  */
 void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
@@ -578,8 +558,6 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget
  * @param prim   The status primitive
  *
  * @return The stock-id
- *
- * @since 2.6.0
  */
 const char *pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim);
 
@@ -589,8 +567,6 @@ const char *pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim);
  * @param presence   The presence.
  *
  * @return The stock-id
- *
- * @since 2.6.0
  */
 const char *pidgin_stock_id_from_presence(PurplePresence *presence);
 
@@ -758,8 +734,6 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget);
  *
  * @return               A newly created text GtkComboBox containing a GtkEntry
  *                       child.
- *
- * @since 2.2.0
  */
 GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *items);
 
@@ -769,8 +743,6 @@ GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *item
  * @param widget         The simple text GtkComboBoxEntry equivalent widget
  *
  * @return               The text in the widget's entry. It must not be freed
- *
- * @since 2.2.0
  */
 const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
 
@@ -779,8 +751,6 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
  *
  * @param widget         The simple text GtkComboBoxEntry equivalent widget
  * @param text           The text to set
- *
- * @since 2.2.0
  */
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
@@ -790,8 +760,6 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
  * @param window    The window to make transient.
  *
  * @return Whether the window was made transient or not.
- *
- * @since 2.4.0
  */
 gboolean pidgin_auto_parent_window(GtkWidget *window);
 
@@ -806,7 +774,6 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * @param p_label      Place to store a pointer to the GtkLabel, or @c NULL if you don't care.
  *
  * @return  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
- * @since 2.4.0
  */
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
 
@@ -818,8 +785,6 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  *
  * @return A GdkPixbuf created from the image data, or NULL if
  *         there was an error parsing the data.
- *
- * @since 2.9.0
  */
 GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count);
 
@@ -831,8 +796,6 @@ GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count);
  *
  * @return A GdkPixbufAnimation created from the image data, or NULL if
  *         there was an error parsing the data.
- *
- * @since 2.9.0
  */
 GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count);
 
@@ -842,8 +805,6 @@ GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count)
  * @param  image   A PurpleStoredImage.
  *
  * @return   A GdkPixbuf created from the stored image.
- *
- * @since 2.5.0
  */
 GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
@@ -867,8 +828,6 @@ GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
  *
  * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
  *         a warning is logged.
- *
- * @since 2.9.0
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file(const char *filename);
 
@@ -894,8 +853,6 @@ GdkPixbuf *pidgin_pixbuf_new_from_file(const char *filename);
  *
  * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
  *         a warning is logged.
- *
- * @since 2.9.0
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, int height);
 
@@ -922,8 +879,6 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, 
  *
  * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
  *         a warning is logged.
- *
- * @since 2.9.0
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
 
@@ -935,22 +890,16 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
  * @param shadow_type        Shadow type
  * @param width              Desired widget width, or -1 for default
  * @param height             Desired widget height, or -1 for default
- *
- * @since 2.8.0
  */
 GtkWidget *pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPolicyType vscrollbar_policy, GtkShadowType shadow_type, int width, int height);
 
 /**
  * Initialize some utility functions.
- *
- * @since 2.6.0
  */
 void pidgin_utils_init(void);
 
 /**
  * Uninitialize some utility functions.
- *
- * @since 2.6.0
  */
 void pidgin_utils_uninit(void);
 

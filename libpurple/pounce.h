@@ -101,8 +101,6 @@ void purple_pounce_destroy_all_by_account(PurpleAccount *account);
  * Destroys all buddy pounces for a buddy
  *
  * @param buddy The buddy whose pounces are to be removed
- *
- * @since 2.8.0
  */
 void purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy);
 
@@ -334,7 +332,6 @@ GList *purple_pounces_get_all(void);
  *
  * @return The list of buddy pounces. The list should be freed by
  *         the caller when it's no longer used.
- * @since  2.1.0
  */
 GList *purple_pounces_get_all_for_ui(const char *ui);
 

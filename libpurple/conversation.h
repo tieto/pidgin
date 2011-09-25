@@ -125,7 +125,7 @@ typedef enum
 	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
 	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
 	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
-										   linkified @since 2.1.0 */
+										   linkified */
 	PURPLE_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
 } PurpleMessageFlags;
 
@@ -140,7 +140,7 @@ typedef enum
 	PURPLE_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	PURPLE_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
 	PURPLE_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
-	PURPLE_CBFLAGS_AWAY          = 0x0020  /**< Currently away. @since 2.8.0 */
+	PURPLE_CBFLAGS_AWAY          = 0x0020  /**< Currently away.              */
 
 } PurpleConvChatBuddyFlags;
 
@@ -281,9 +281,7 @@ struct _PurpleConvChat
 	char *nick;                      /**< Your nick in this chat.       */
 
 	gboolean left;                   /**< We left the chat and kept the window open */
-	GHashTable *users;               /**< Hash table of the users in the room.
-	                                  *   @since 2.9.0
-	                                  */
+	GHashTable *users;               /**< Hash table of the users in the room. */
 };
 
 /**
@@ -328,8 +326,6 @@ struct _PurpleConvChatBuddy
 
 /**
  * Description of a conversation message
- *
- * @since 2.2.0
  */
 struct _PurpleConvMessage
 {
@@ -337,8 +333,8 @@ struct _PurpleConvMessage
 	char *what;
 	PurpleMessageFlags flags;
 	time_t when;
-	PurpleConversation *conv;  /**< @since 2.3.0 */
-	char *alias;               /**< @since 2.3.0 */
+	PurpleConversation *conv;
+	char *alias;
 };
 
 /**
@@ -758,8 +754,6 @@ void purple_conversation_foreach(void (*func)(PurpleConversation *conv));
  * @return  A GList of PurpleConvMessage's. The must not modify the list or the data within.
  *          The list contains the newest message at the beginning, and the oldest message at
  *          the end.
- *
- * @since 2.2.0
  */
 GList *purple_conversation_get_message_history(PurpleConversation *conv);
 
@@ -767,8 +761,6 @@ GList *purple_conversation_get_message_history(PurpleConversation *conv);
  * Clear the message history of a conversation.
  *
  * @param conv  The conversation
- *
- * @since 2.2.0
  */
 void purple_conversation_clear_message_history(PurpleConversation *conv);
 
@@ -778,8 +770,6 @@ void purple_conversation_clear_message_history(PurpleConversation *conv);
  * @param msg   A PurpleConvMessage
  *
  * @return   The name of the sender of the message
- *
- * @since 2.2.0
  */
 const char *purple_conversation_message_get_sender(PurpleConvMessage *msg);
 
@@ -789,8 +779,6 @@ const char *purple_conversation_message_get_sender(PurpleConvMessage *msg);
  * @param msg   A PurpleConvMessage
  *
  * @return   The name of the sender of the message
- *
- * @since 2.2.0
  */
 const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
 
@@ -800,8 +788,6 @@ const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
  * @param msg   A PurpleConvMessage
  *
  * @return   The message flags
- *
- * @since 2.2.0
  */
 PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg);
 
@@ -811,8 +797,6 @@ PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
  * @param msg   A PurpleConvMessage
  *
  * @return   The timestamp of the message
- *
- * @since 2.2.0
  */
 time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg);
 
@@ -1379,8 +1363,6 @@ void purple_conv_chat_left(PurpleConvChat *chat);
  * @param message  The message to send with the invitation.
  * @param confirm  Prompt before sending the invitation. The user is always
  *                 prompted if either \a user or \a message is @c NULL.
- *
- * @since 2.6.0
  */
 void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
 		const char *message, gboolean confirm);
@@ -1440,8 +1422,6 @@ void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
  * @return  A list of PurpleMenuAction items, harvested by the
  *          chat-extended-menu signal. The list and the menuaction
  *          items should be freed by the caller.
- *
- * @since 2.1.0
  */
 GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
 
@@ -1455,8 +1435,6 @@ GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
  *                message, if not @c NULL. It must be freed by the caller with g_free().
  *
  * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
- *
- * @since 2.1.0
  */
 gboolean purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline, const gchar *markup, gchar **error);
 

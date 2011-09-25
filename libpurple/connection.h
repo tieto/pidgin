@@ -59,8 +59,6 @@ typedef enum
 
 /**
  * Possible errors that can cause a connection to be closed.
- *
- *  @since 2.3.0
  */
 typedef enum
 {
@@ -216,8 +214,6 @@ typedef struct
 	 * @param text  a localized message describing the disconnection
 	 *              in more detail to the user.
 	 * @see #purple_connection_error
-	 *
-	 * @since 2.3.0
 	 */
 	void (*report_disconnect)(PurpleConnection *gc,
 	                          PurpleConnectionError reason,
@@ -305,8 +301,6 @@ void purple_connection_set_display_name(PurpleConnection *gc, const char *name);
  *
  * @param connection The PurpleConnection.
  * @param proto_data The protocol data to set for the connection.
- *
- * @since 2.6.0
  */
 void purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data);
 
@@ -342,8 +336,6 @@ PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
  * @param gc The connection.
  *
  * @return The protocol plugin.
- *
- * @since 2.4.0
  */
 PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
@@ -371,8 +363,6 @@ const char *purple_connection_get_display_name(const PurpleConnection *gc);
  * @param connection The PurpleConnection.
  *
  * @return The protocol data for the connection.
- *
- * @since 2.6.0
  */
 void *purple_connection_get_protocol_data(const PurpleConnection *connection);
 
@@ -404,8 +394,6 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  * @param gc          the connection which is closing.
  * @param reason      why the connection is closing.
  * @param description a non-@c NULL localized description of the error.
- *
- * @since 2.3.0
  */
 void
 purple_connection_error(PurpleConnection *gc,
@@ -416,8 +404,6 @@ purple_connection_error(PurpleConnection *gc,
  * Closes a connection due to an SSL error; this is basically a shortcut to
  * turning the #PurpleSslErrorType into a #PurpleConnectionError and a
  * human-readable string and then calling purple_connection_error().
- *
- * @since 2.3.0
  */
 void
 purple_connection_ssl_error (PurpleConnection *gc,
@@ -440,8 +426,6 @@ purple_connection_ssl_error (PurpleConnection *gc,
  *
  * @return @c TRUE if the account should not be automatically reconnected, and
  *         @c FALSE otherwise.
- *
- * @since 2.3.0
  */
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason);

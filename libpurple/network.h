@@ -92,7 +92,6 @@ const char *purple_network_get_local_system_ip(int fd);
  *
  * @note The caller must free this list.  If libpurple was built with
  *       support for it, this function also enumerates IPv6 addresses.
- * @since 2.7.0
  *
  * @return A list of local IP addresses.
  */
@@ -240,8 +239,6 @@ gboolean purple_network_is_available(void);
  * This is what backs the --force-online command line argument in Pidgin,
  * for example.  This is useful for offline testing, especially when
  * combined with nullprpl.
- *
- * @since 2.6.0
  */
 void purple_network_force_online(void);
 
@@ -257,7 +254,6 @@ void *purple_network_get_handle(void);
  * Will result in a DNS query being executed asynchronous
  *
  * @param stun_server The host name of the STUN server to set
- * @since 2.6.0
  */
 void purple_network_set_stun_server(const gchar *stun_server);
 
@@ -265,7 +261,6 @@ void purple_network_set_stun_server(const gchar *stun_server);
  * Get the IP address of the STUN server as a string representation
  *
  * @return the IP address
- * @since 2.6.0
  */
 const gchar *purple_network_get_stun_ip(void);
 
@@ -274,7 +269,6 @@ const gchar *purple_network_get_stun_ip(void);
  * Will result in a DNS query being executed asynchronous
  *
  * @param turn_server The host name of the TURN server to set
- * @since 2.6.0
  */
 void purple_network_set_turn_server(const gchar *turn_server);
 
@@ -282,7 +276,6 @@ void purple_network_set_turn_server(const gchar *turn_server);
  * Get the IP address of the TURN server as a string representation
  *
  * @return the IP address
- * @since 2.6.0
  */
 const gchar *purple_network_get_turn_ip(void);
 
@@ -290,7 +283,6 @@ const gchar *purple_network_get_turn_ip(void);
  * Remove a port mapping (UPnP or NAT-PMP) associated with listening socket
  *
  * @param fd Socket to remove the port mapping for
- * @since 2.6.0
  */
 void purple_network_remove_port_mapping(gint fd);
 
@@ -309,7 +301,6 @@ void purple_network_remove_port_mapping(gint fd);
  *                The caller is responsible for freeing this.
  * @returns       0 on success, -1 if the out is NULL, or an error code
  *                that currently corresponds to the Idna_rc enum in libidn.
- * @since 2.6.0
  */
 int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out);
 

@@ -51,7 +51,7 @@ enum {
 	CHAT_USERS_FLAGS_COLUMN,
 	CHAT_USERS_COLOR_COLUMN,
 	CHAT_USERS_WEIGHT_COLUMN,
-	CHAT_USERS_ICON_STOCK_COLUMN,   /** @since 2.6.0 */
+	CHAT_USERS_ICON_STOCK_COLUMN,
 	CHAT_USERS_COLUMNS
 };
 
@@ -144,8 +144,6 @@ struct _PidginConversation
 
 	/**
 	 * Quick Find.
-	 *
-	 * @since 2.7.0
 	 */
 	struct {
 		GtkWidget *entry;
@@ -233,8 +231,6 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  * @param conv  The conversation.
  *
  * @return  Wheter Pidgin UI was successfully attached.
- *
- * @since 2.2.0
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 

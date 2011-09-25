@@ -186,14 +186,12 @@ typedef enum
 	/**
 	 * Indicates that slash commands are native to this protocol.
 	 * Used as a hint that unknown commands should not be sent as messages.
-	 * @since 2.1.0
 	 */
 	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
 
 	/**
 	 * Indicates that this protocol supports sending a user-supplied message
 	 * along with an invitation.
-	 * @since 2.8.0
 	 */
 	OPT_PROTO_INVITE_MESSAGE = 0x00000800
 
@@ -571,7 +569,6 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Returns an array of "PurpleMood"s, with the last one having
 	 * "mood" set to @c NULL.
-	 * @since 2.7.0
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
 
@@ -591,7 +588,6 @@ struct _PurplePluginProtocolInfo
 	 * @param failure_cb Callback to be called if setting the public alias
 	 *                   fails
 	 * @see purple_account_set_public_alias
-	 * @since 2.7.0
 	 */
 	void (*set_public_alias)(PurpleConnection *gc, const char *alias,
 	                         PurpleSetPublicAliasSuccessCallback success_cb,
@@ -608,7 +604,6 @@ struct _PurplePluginProtocolInfo
 	 * @param failure_cb Callback to be called if the prpl is unable to
 	 *                   retrieve the alias
 	 * @see purple_account_get_public_alias
-	 * @since 2.7.0
 	 */
 	void (*get_public_alias)(PurpleConnection *gc,
 	                         PurpleGetPublicAliasSuccessCallback success_cb,
@@ -792,7 +787,6 @@ void purple_prpl_got_account_status(PurpleAccount *account,
  * @param account   The account.
  *
  * @see account-actions-changed
- * @since 2.6.0
  */
 void purple_prpl_got_account_actions(PurpleAccount *account);
 
@@ -883,8 +877,6 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  *
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
  * only a fixed set of attention commands.
- *
- * @since 2.5.0
  */
 void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
 
@@ -895,8 +887,6 @@ void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint typ
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
- *
- * @since 2.5.0
  */
 void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
@@ -908,8 +898,6 @@ void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
- *
- * @since 2.5.0
  */
 void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
 
@@ -944,7 +932,6 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
  *
  * @param account The account the user is on.
  * @param who The name of the contact for which capabilities have been received.
- * @since 2.7.0
  */
 void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 

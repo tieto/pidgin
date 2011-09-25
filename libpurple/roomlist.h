@@ -217,7 +217,6 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
  *
  * @param roomlist The roomlist, which must not be @c NULL.
  * @constreturn A list of fields
- * @since 2.4.0
  */
 GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
 
@@ -299,7 +298,6 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
  * Get the type of a room.
  * @param room  The room, which must not be @c NULL.
  * @return The type of the room.
- * @since 2.4.0
  */
 PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room);
 
@@ -307,7 +305,6 @@ PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room);
  * Get the name of a room.
  * @param room  The room, which must not be @c NULL.
  * @return The name of the room.
- * @since 2.4.0
  */
 const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room);
 
@@ -315,7 +312,6 @@ const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room);
  * Get the parent of a room.
  * @param room  The room, which must not be @c NULL.
  * @return The parent of the room, which can be @c NULL.
- * @since 2.4.0
  */
 PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room);
 
@@ -341,7 +337,6 @@ void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean e
  *
  * @param room  The room, which must not be @c NULL.
  * @constreturn A list of fields
- * @since 2.4.0
  */
 GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 
@@ -373,7 +368,6 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
  * @param field  A PurpleRoomlistField, which must not be @c NULL.
  *
  * @return  The type of the field.
- * @since 2.4.0
  */
 PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field);
 
@@ -383,7 +377,6 @@ PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *fiel
  * @param field  A PurpleRoomlistField, which must not be @c NULL.
  *
  * @return  The label of the field.
- * @since 2.4.0
  */
 const char * purple_roomlist_field_get_label(PurpleRoomlistField *field);
 
@@ -392,7 +385,6 @@ const char * purple_roomlist_field_get_label(PurpleRoomlistField *field);
  * @param field  A PurpleRoomlistField, which must not be @c NULL.
  *
  * @return  @c TRUE if the field is hidden, @c FALSE otherwise.
- * @since 2.4.0
  */
 gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
 
