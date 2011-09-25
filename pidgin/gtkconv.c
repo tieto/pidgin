@@ -5593,7 +5593,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	theme = purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"), "conversation");
 	if (!theme)
 		theme = purple_theme_manager_find_theme("Default", "conversation");
-	gtkconv->theme = PIDGIN_CONV_THEME(theme);
+	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM) {
@@ -5797,6 +5797,8 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	if (gtkconv->attach.timer) {
 		g_source_remove(gtkconv->attach.timer);
 	}
+
+	g_object_unref(gtkconv->theme);
 
 	g_free(gtkconv);
 }
