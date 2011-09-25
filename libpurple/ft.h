@@ -637,11 +637,8 @@ gssize purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size);
  * file receive transfer. On send, @a fd must be specified, and
  * @a ip and @a port are ignored.
  *
- * Prior to libpurple 2.6.0, passing '0' to @a fd was special-cased to
- * allow the protocol plugin to facilitate the file transfer itself. As of
- * 2.6.0, this is supported (for backward compatibility), but will be
- * removed in libpurple 3.0.0. If a prpl detects that the running libpurple
- * is running 2.6.0 or higher, it should use the invalid fd '-1'.
+ * Passing @a fd as '-1' is a special-case and indicates to the
+ * protocol plugin to facilitate the file transfer itself.
  *
  * @param xfer The file transfer.
  * @param fd   The file descriptor for the socket.
