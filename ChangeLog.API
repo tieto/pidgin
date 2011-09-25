@@ -77,6 +77,7 @@ version 3.0.0 (??/??/????):
 		  the first parameter
 		* purple_util_fetch_url_request_len renamed to purple_util_fetch_url_request
 		* purple_util_fetch_url_len renamed to purple_util_fetch_url
+		* purple_xfer_is_canceled renamed to purple_xfer_is_cancelled
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
 

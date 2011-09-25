@@ -765,9 +765,8 @@ purple_xfer_get_status(const PurpleXfer *xfer)
 	return xfer->status;
 }
 
-/* FIXME: Rename with cancelled for 3.0.0. */
 gboolean
-purple_xfer_is_canceled(const PurpleXfer *xfer)
+purple_xfer_is_cancelled(const PurpleXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, TRUE);
 

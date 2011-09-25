@@ -149,7 +149,7 @@ toggle_clear_finished_cb(GntWidget *w)
 		while (iter) {
 			PurpleXfer *xfer = iter->data;
 			iter = iter->next;
-			if (purple_xfer_is_completed(xfer) || purple_xfer_is_canceled(xfer))
+			if (purple_xfer_is_completed(xfer) || purple_xfer_is_cancelled(xfer))
 			finch_xfer_dialog_remove_xfer(xfer);
 		}
 	}
@@ -160,7 +160,7 @@ remove_button_cb(GntButton *button)
 {
 	PurpleXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
 	if (selected_xfer && (purple_xfer_is_completed(selected_xfer) ||
-				purple_xfer_is_canceled(selected_xfer))) {
+				purple_xfer_is_cancelled(selected_xfer))) {
 		finch_xfer_dialog_remove_xfer(selected_xfer);
 	}
 }
@@ -382,7 +382,7 @@ finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 
 	update_title_progress();
 
-	if (purple_xfer_is_canceled(xfer))
+	if (purple_xfer_is_cancelled(xfer))
 		status = _("Cancelled");
 	else
 		status = _("Failed");

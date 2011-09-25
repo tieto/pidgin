@@ -321,9 +321,8 @@ PurpleXferStatusType purple_xfer_get_status(const PurpleXfer *xfer);
  * @param xfer The file transfer.
  *
  * @return Whether or not the transfer was cancelled.
- * FIXME: This should be renamed using cancelled for 3.0.0.
  */
-gboolean purple_xfer_is_canceled(const PurpleXfer *xfer);
+gboolean purple_xfer_is_cancelled(const PurpleXfer *xfer);
 
 /**
  * Returns the completed state for a file transfer.
