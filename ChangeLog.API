@@ -57,14 +57,19 @@ version 3.0.0 (??/??/????):
 		  parameter
 		* purple_account_add_buddies now takes an invite message as the last
 		  parameter
-		* purple_certificate_check_signature_chain_with_failing renamed
-		  to purple_certificate_check_signature_chain
+		* purple_certificate_check_signature_chain now returns a list of failing
+		  PurpleCertificate*s as the second parameter
 		* purple_connection_error now takes a PurpleConnectionError
 		  as the second parameter
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
-		* purple_network_listen_family renamed to purple_network_listen
-		* purple_network_listen_range_family renamed to
-		  purple_network_listen_range
+		* purple_network_listen now takes the protocol family as the second
+		  parameter
+		* purple_network_listen now takes a boolean indicating external port
+		  mapping as the fourth parameter
+		* purple_network_listen_range now takes a boolean indicating external
+		  port mapping as the fifth parameter
+		* purple_network_listen_range now takes the protocol family as the
+		  third parameter
 		* purple_notify_user_info_add_pair renamed to
 		  purple_notify_user_info_add_pair_html
 		* purple_notify_user_info_get_entries returns a GQueue instead of
@@ -73,10 +78,11 @@ version 3.0.0 (??/??/????):
 		  purple_notify_user_info_prepend_pair_html
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
-		* purple_util_fetch_url_request_len now takes a PurpleAccount as
+		* purple_util_fetch_url_request now takes a PurpleAccount as
 		  the first parameter
-		* purple_util_fetch_url_request_len renamed to purple_util_fetch_url_request
-		* purple_util_fetch_url_len renamed to purple_util_fetch_url
+		* purple_util_fetch_url_request now takes a length as the eighth
+		  parameter
+		* purple_util_fetch_url_len now takes a length as the fifth parameter
 		* purple_xfer_is_canceled renamed to purple_xfer_is_cancelled
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
@@ -123,6 +129,8 @@ version 3.0.0 (??/??/????):
 		* purple_buddy_icons_has_custom_icon
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
+		* purple_certificate_check_signature_chain_with_failing. Use
+		  purple_certificate_check_signature_chain, instead
 		* purple_connection_error_reason
 		* purple_connection_new
 		* purple_connection_new_unregister
@@ -131,7 +139,10 @@ version 3.0.0 (??/??/????):
 		* purple_conv_chat_set_users
 		* purple_core_migrate
 		* purple_dnsquery_a_account
+		* purple_network_listen_family. Use purple_network_listen, instead.
 		* purple_network_listen_map_external
+		* purple_network_listen_range_family. Use purple_network_listen,
+		  instead.
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
@@ -161,8 +172,11 @@ version 3.0.0 (??/??/????):
 		* purple_strlcpy
 		* purple_txt_cancel
 		* purple_txt_resolve_account
+		* purple_util_fetch_url_len. Use purple_util_fetch_url, instead.
+		* purple_util_fetch_url_request_len. Use purple_util_fetch_url_request,
+		  instead.
 		* purple_util_fetch_url_request_len_with_account.  Use
-		  purple_util_fetch_url_request_len, instead.
+		  purple_util_fetch_url_request, instead.
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite
