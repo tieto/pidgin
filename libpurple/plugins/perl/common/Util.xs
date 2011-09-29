@@ -462,12 +462,13 @@ PROTOTYPES: ENABLE
 
  #XXX: expand...
 void
-purple_util_fetch_url(plugin, url, full, user_agent, http11, cb)
+purple_util_fetch_url(plugin, url, full, user_agent, http11, max_len, cb)
 	Purple::Plugin plugin
 	const char *url
 	gboolean full
 	const char *user_agent
 	gboolean http11
+	gssize max_len
 	SV * cb
 PREINIT:
 	PurpleUtilFetchUrlData *data;
@@ -476,7 +477,7 @@ PPCODE:
 	SV *sv = purple_perl_sv_from_fun(plugin, cb);
 
 	if (sv != NULL) {
-		data = purple_util_fetch_url(url, full, user_agent, http11,
+		data = purple_util_fetch_url(url, full, user_agent, http11, max_len,
 		                      purple_perl_util_url_cb, sv);
 		XPUSHs(sv_2mortal(purple_perl_bless_object(data, "Purple::Util::FetchUrlData")));
 	} else {
