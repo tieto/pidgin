@@ -286,7 +286,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn = httpconn->servconn;
 
 	if (servconn->type == MSN_SERVCONN_NS) {
-		PurpleConnection *gc = purple_account_get_connection(servconn->session);
+		PurpleConnection *gc = purple_account_get_connection(servconn->session->account);
 		gc->last_received = time(NULL);
 	}
 
