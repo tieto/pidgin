@@ -5213,7 +5213,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	purple_prpl_send_attention(account->gc, c->name, YAHOO_BUZZ);
+	purple_prpl_send_attention(account->gc, purple_conversation_get_name(c), YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -5267,7 +5267,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 	g_return_val_if_fail(c != NULL, FALSE);
 
 	purple_debug_info("yahoo", "Sending <ding> on account %s to buddy %s.\n",
-			username, c->name);
+			username, purple_conversation_get_name(c));
 	purple_conv_im_send_with_flags(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;

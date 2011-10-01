@@ -807,7 +807,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 	}
 #endif
 	purple_markup_html_to_xhtml(what, NULL, &tmp);
-	args[0] = convo->name;
+	args[0] = purple_conversation_get_name(convo);
 	args[1] = tmp;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);

@@ -2543,7 +2543,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 	for (l = info->chats; l != NULL; l = l->next) {
 		chat = l->data;
 
-		if (g_utf8_collate(chat->name, conv->name) == 0) {
+		if (g_utf8_collate(chat->name, purple_conversation_get_name(conv)) == 0) {
 			break;
 		}
 

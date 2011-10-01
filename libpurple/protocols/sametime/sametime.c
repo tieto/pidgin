@@ -2480,12 +2480,12 @@ static void convo_error(struct mwConversation *conv, guint32 err) {
   text = g_strconcat(_("Unable to send message: "), tmp, NULL);
 
   gconv = convo_get_gconv(conv);
-  if(gconv && !purple_conv_present_error(idb->user, gconv->account, text)) {
+  if(gconv && !purple_conv_present_error(idb->user, purple_conversation_get_account(gconv), text)) {
 
     g_free(text);
     text = g_strdup_printf(_("Unable to send message to %s:"),
 			   (idb->user)? idb->user: "(unknown)");
-    purple_notify_error(purple_account_get_connection(gconv->account),
+    purple_notify_error(purple_account_get_connection(purple_conversation_get_account(gconv)),
 		      NULL, text, tmp);
   }
 

@@ -30,7 +30,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 
 	if (conv == NULL)
 		return;
-	g_return_if_fail(conv->type == PURPLE_CONV_TYPE_IM);
+	g_return_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM);
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
 	if (buddy != purple_find_buddy(account, buddy_name))

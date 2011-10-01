@@ -1166,7 +1166,7 @@ void yahoo_c_invite(PurpleConnection *gc, int id, const char *msg, const char *n
 	PurpleConversation *c;
 
 	c = purple_find_chat(gc, id);
-	if (!c || !c->name)
+	if (!c || !purple_conversation_get_name(c))
 		return;
 
 	if (id != YAHOO_CHAT_ID) {
