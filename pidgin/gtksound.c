@@ -96,8 +96,8 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 	if (chat==NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(conv->account, purple_conv_chat_get_nick(chat)));
-	name = g_strdup(purple_normalize(conv->account, aname));
+	nick = g_strdup(purple_normalize(purple_conversation_get_account(conv), purple_conv_chat_get_nick(chat)));
+	name = g_strdup(purple_normalize(purple_conversation_get_account(conv), aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;

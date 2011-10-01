@@ -3480,7 +3480,7 @@ save_file_cb(GtkWidget *item, const char *url)
 		return TRUE;
 	purple_request_file(conv->active_conv, _("Save File"), NULL, TRUE,
 	                    G_CALLBACK(savefile_write_cb), NULL,
-	                    conv->active_conv->account, NULL, conv->active_conv,
+	                    purple_conversation_get_account(conv->active_conv), NULL, conv->active_conv,
 	                    (void *)url);
 	return TRUE;
 }
