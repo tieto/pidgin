@@ -53,7 +53,6 @@ typedef enum
 	PURPLE_CONV_TYPE_UNKNOWN = 0, /**< Unknown conversation type. */
 	PURPLE_CONV_TYPE_IM,          /**< Instant Message.           */
 	PURPLE_CONV_TYPE_CHAT,        /**< Chat room.                 */
-	PURPLE_CONV_TYPE_MISC,        /**< A misc. conversation.      */
 	PURPLE_CONV_TYPE_ANY          /**< Any type of conversation.  */
 
 } PurpleConversationType;
@@ -285,8 +284,6 @@ struct _PurpleConversation
 	{
 		PurpleConvIm   *im;       /**< IM-specific data.                  */
 		PurpleConvChat *chat;     /**< Chat-specific data.                */
-		void *misc;             /**< Misc. data.                        */
-
 	} u;
 
 	PurpleConversationUiOps *ui_ops;           /**< UI-specific operations. */
