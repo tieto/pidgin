@@ -645,9 +645,10 @@ static void irc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 
 static void read_input(struct irc_conn *irc, int len)
 {
+	PurpleConnection *connection = purple_account_get_connection(irc->account);
 	char *cur, *end;
 
-	irc->account->gc->last_received = time(NULL);
+	connection->last_received = time(NULL);
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 

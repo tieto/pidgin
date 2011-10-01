@@ -526,7 +526,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		chats = g_list_prepend(chats, conv);
 
-		if ((disp = purple_connection_get_display_name(account->gc)))
+		if ((disp = purple_connection_get_display_name(purple_account_get_connection(account))))
 			purple_conv_chat_set_nick(conv->u.chat, disp);
 		else
 			purple_conv_chat_set_nick(conv->u.chat,
@@ -815,7 +815,7 @@ purple_conversation_get_gc(const PurpleConversation *conv)
 	if (account == NULL)
 		return NULL;
 
-	return account->gc;
+	return purple_account_get_connection(account);
 }
 
 void

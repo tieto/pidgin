@@ -627,7 +627,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *passport;
 	const char *value;
 
-	gc = cmdproc->session->account->gc;
+	gc = purple_account_get_connection(cmdproc->session->account);
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_enc = g_markup_escape_text(body, body_len);
@@ -713,7 +713,7 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	PurpleConnection *gc;
 	char *passport;
 
-	gc = cmdproc->session->account->gc;
+  	gc = purple_account_get_connection(cmdproc->session->account);
 	passport = msg->remote_user;
 
 	if (msn_message_get_header_value(msg, "TypingUser") == NULL)
@@ -762,7 +762,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 
 	if (swboard->conv == NULL) {
 		if (chat)
-			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
+			swboard->conv = purple_find_chat(purple_account_get_connection(account), swboard->chat_id);
 		else {
 			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 									who, account);
@@ -991,21 +991,23 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* Nudge */
 		PurpleAccount *account;
 		const char *user;
+		PurpleConnection *gc;
 
 		account = cmdproc->session->account;
 		user = msg->remote_user;
+		gc = purple_account_get_connection(account);
 
 		if (cmdproc->servconn->type == MSN_SERVCONN_SB) {
 			MsnSwitchBoard *swboard = cmdproc->data;
 			if (swboard->current_users > 1 ||
 				((swboard->conv != NULL) &&
 				 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-				purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
+				purple_prpl_got_attention_in_chat(gc, swboard->chat_id, user, MSN_NUDGE);
 
 			else
-				purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+				purple_prpl_got_attention(gc, user, MSN_NUDGE);
 		} else {
-			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+			purple_prpl_got_attention(gc, user, MSN_NUDGE);
 		}
 
 	} else if (!strcmp(id, "2")) {

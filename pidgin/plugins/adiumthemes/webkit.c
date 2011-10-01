@@ -452,7 +452,7 @@ webkit_on_displaying_im_msg(PurpleAccount *account,
 	}
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
-	smileyed = smiley_parse_markup(stripped, purple_conversation_get_account(conv)->protocol_id);
+	smileyed = smiley_parse_markup(stripped, purple_account_get_protocol_id(purple_conversation_get_account(conv)));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = gtk_webview_quote_js_string(msg);
 	script = g_strdup_printf("%s(%s)", func, escape);

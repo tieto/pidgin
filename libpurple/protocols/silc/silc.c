@@ -555,7 +555,7 @@ silcpurple_login(PurpleAccount *account)
 	char *username, *hostname, *realname, **up;
 	int i;
 
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	if (!gc)
 		return;
 	purple_connection_set_protocol_data(gc, NULL);

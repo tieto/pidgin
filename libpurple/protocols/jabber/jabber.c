@@ -3163,7 +3163,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
-	JabberStream *js = purple_connection_get_protocol_data(account->gc);
+	JabberStream *js = purple_connection_get_protocol_data(purple_account_get_connection(account));
 	const gchar *who;
 	gchar *description;
 	PurpleBuddy *buddy;
@@ -3575,7 +3575,7 @@ jabber_cmd_mood(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
-	JabberStream *js = purple_connection_get_protocol_data(account->gc);
+	JabberStream *js = purple_connection_get_protocol_data(purple_account_get_connection(account));
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */

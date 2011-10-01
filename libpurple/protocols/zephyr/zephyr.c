@@ -1842,7 +1842,7 @@ static void zephyr_login(PurpleAccount * account)
 	if (zephyr_subscribe_to(zephyr,"MESSAGE","PERSONAL",zephyr->username,NULL) != ZERR_NONE) {
 		/* XXX don't translate this yet. It could be written better */
 		/* XXX error messages could be handled with more detail */
-		purple_notify_error(account->gc, NULL,
+		purple_notify_error(purple_account_get_connection(account), NULL,
 				  "Unable to subscribe to messages", "Unable to subscribe to initial messages");
 		return;
 	}

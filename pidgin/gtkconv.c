@@ -1746,7 +1746,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	if (buddy != NULL)
 	{
 		if (purple_account_is_connected(account))
-			pidgin_append_blist_node_proto_menu(menu, account->gc,
+			pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(account),
 												  (PurpleBlistNode *)buddy);
 		pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 		gtk_widget_show_all(menu);
@@ -1772,7 +1772,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 	account = purple_conversation_get_account(conv);
-	gc      = account->gc;
+	gc      = purple_account_get_connection(account);
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
@@ -1808,7 +1808,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	gtkchat = gtkconv->u.chat;
 	account = purple_conversation_get_account(conv);
-	gc      = account->gc;
+	gc      = purple_account_get_connection(account);
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
@@ -2678,7 +2678,7 @@ redraw_icon(gpointer data)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	account = purple_conversation_get_account(conv);
 
-	if (!(account && account->gc)) {
+	if (!(account && purple_account_get_connection(account))) {
 		gtkconv->u.im->icon_timer = 0;
 		return FALSE;
 	}
@@ -3303,7 +3303,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 		}
 	} else if (node) {
 		if (purple_account_is_connected(account))
-			pidgin_append_blist_node_proto_menu(menu, account->gc, node);
+			pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(account), node);
 		pidgin_append_blist_node_extended_menu(menu, node);
 	}
 
@@ -4770,7 +4770,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	char *who = NULL;
 
-	if (account->gc == NULL)
+	if (purple_account_get_connection(account) == NULL)
 		return FALSE;
 
 	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path))
@@ -4778,7 +4778,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_account_get_connection(account)->prpl);
 	node = (PurpleBlistNode*)(purple_find_buddy(purple_conversation_get_account(conv), who));
 	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME))
 		pidgin_blist_draw_tooltip(node, gtkconv->infopane);

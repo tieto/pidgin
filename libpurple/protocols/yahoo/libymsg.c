@@ -5213,7 +5213,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	purple_prpl_send_attention(account->gc, purple_conversation_get_name(c), YAHOO_BUZZ);
+	purple_prpl_send_attention(purple_account_get_connection(account), purple_conversation_get_name(c), YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }

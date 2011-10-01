@@ -1519,7 +1519,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
-			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
+			prpl_info->can_receive_file(purple_account_get_connection(buddy->account), buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File..."),
 									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
@@ -1547,7 +1547,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
 	}
 
-	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc, node);
+	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(buddy->account), node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
 	if (!contact_expanded && contact != NULL)
@@ -1600,7 +1600,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 			return FALSE;
 		}
 		if(buddy)
-			pidgin_retrieve_user_info(buddy->account->gc, buddy->name);
+			pidgin_retrieve_user_info(purple_account_get_connection(buddy->account), buddy->name);
 	} else {
 		switch (event->keyval) {
 			case GDK_F2:
@@ -1753,7 +1753,7 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
-	pidgin_append_blist_node_proto_menu(menu, c->account->gc, node);
+	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(c->account), node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
 	pidgin_separator(menu);
@@ -1838,7 +1838,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 
 				if(buddy == b)
 					continue;
-				if(!buddy->account->gc)
+				if(!purple_account_get_connection(buddy->account))
 					continue;
 				if(!show_offline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 					continue;
@@ -1967,7 +1967,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			pidgin_retrieve_user_info(b->account->gc, b->name);
+			pidgin_retrieve_user_info(purple_account_get_connection(b->account), b->name);
 		handled = TRUE;
 	}
 
@@ -2673,8 +2673,8 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 		account = purple_buddy_get_account(buddy);
 	}
 
-	if(account && account->gc) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	if(account && purple_account_get_connection(account)) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_account_get_connection(account)->prpl);
 	}
 
 #if 0
@@ -3681,7 +3681,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		connections = purple_connections_get_all();
 		if (connections && connections->next)
 		{
-			tmp = g_markup_escape_text(chat->account->username, -1);
+			tmp = g_markup_escape_text(purple_account_get_username(chat->account), -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
 			g_free(tmp);
 		}
@@ -3713,7 +3713,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		if (prpl_info && prpl_info->chat_info != NULL)
-			cur = prpl_info->chat_info(chat->account->gc);
+			cur = prpl_info->chat_info(purple_account_get_connection(chat->account));
 		else
 			cur = NULL;
 
@@ -4235,7 +4235,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		if (prpl != NULL)
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (prpl_info && prpl_info->status_text && b->account->gc) {
+		if (prpl_info && prpl_info->status_text && purple_account_get_connection(b->account)) {
 			char *tmp = prpl_info->status_text(b);
 			const char *end;
 

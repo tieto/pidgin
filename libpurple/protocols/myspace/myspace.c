@@ -2543,7 +2543,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	/* If we should be idle, set that status. Time is irrelevant here. */
 	if (purple_presence_is_idle(pres) && status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN)
-		msim_set_idle(account->gc, 1);
+		msim_set_idle(purple_account_get_connection(account), 1);
 }
 
 /**
@@ -2864,7 +2864,7 @@ static const char *msim_normalize(const PurpleAccount *account, const char *str)
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-		if (!account || !account->gc)
+		if (!account || !purple_account_get_connection(account))
 			return str;
 
 		id = atol(str);
