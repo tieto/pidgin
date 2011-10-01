@@ -265,26 +265,6 @@ struct _PurpleConvIm
 };
 
 /**
- * Data specific to Chats.
- */
-struct _PurpleConvChat
-{
-	PurpleConversation *conv;          /**< The parent conversation.      */
-
-	GList *in_room;                  /**< The users in the room.
-	                                  *   @deprecated Will be removed in 3.0.0
-									  */
-	GList *ignored;                  /**< Ignored users.                */
-	char  *who;                      /**< The person who set the topic. */
-	char  *topic;                    /**< The topic.                    */
-	int    id;                       /**< The chat ID.                  */
-	char *nick;                      /**< Your nick in this chat.       */
-
-	gboolean left;                   /**< We left the chat and kept the window open */
-	GHashTable *users;               /**< Hash table of the users in the room. */
-};
-
-/**
  * Data for "Chat Buddies"
  */
 struct _PurpleConvChatBuddy

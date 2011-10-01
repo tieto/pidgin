@@ -2622,9 +2622,8 @@ static PurpleCmdRet zephyr_purple_cmd_instance(PurpleConversation *conv,
 	 * one word isn't ideal either.	 */
 
 	PurpleConvChat *gcc = purple_conversation_get_chat_data(conv);
-	int id = gcc->id;
 	const char* instance = args[0];
-	zephyr_chat_set_topic(purple_conversation_get_gc(conv),id,instance);
+	zephyr_chat_set_topic(purple_conversation_get_gc(conv),purple_conv_chat_get_id(gcc),instance);
 	return PURPLE_CMD_RET_OK;
 }
 

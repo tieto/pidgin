@@ -187,6 +187,7 @@ version 3.0.0 (??/??/????):
 		* struct _PidginChatPane
 		* struct _PidginImPane
 		* struct _PurpleAttentionType
+		* struct _PurpleConvChat
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
 		* struct _PurpleProxyInfo

@@ -8185,7 +8185,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 
 	if (conv->type == PURPLE_CONV_TYPE_CHAT) {
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
-		pidgin_conv_chat_add_users(conv, PURPLE_CONV_CHAT(conv)->in_room, TRUE);
+		pidgin_conv_chat_add_users(conv, purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv)), TRUE);
 	}
 
 	return TRUE;
