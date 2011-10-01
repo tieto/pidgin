@@ -4,6 +4,8 @@ version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
 		* pidgin_create_webview
+		* purple_account_get_ui_data
+		* purple_account_set_ui_data
 		* purple_conv_chat_cb_get_alias
 		* purple_conv_chat_cb_get_flags
 		* purple_conv_chat_cb_is_buddy
