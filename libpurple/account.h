@@ -167,7 +167,7 @@ struct _PurpleAccount
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
 
-	gpointer priv;              /**< Pointer to opaque private data. */
+	PurpleConnectionErrorInfo *current_error;	/**< Errors */
 };
 
 #ifdef __cplusplus

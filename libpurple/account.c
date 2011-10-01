@@ -41,14 +41,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-typedef struct
-{
-	PurpleConnectionErrorInfo *current_error;
-} PurpleAccountPrivate;
-
-#define PURPLE_ACCOUNT_GET_PRIVATE(account) \
-	((PurpleAccountPrivate *) (account->priv))
-
 /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
 typedef struct
 {
@@ -361,8 +353,6 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 static xmlnode *
 account_to_xmlnode(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-
 	xmlnode *node, *child;
 	const char *tmp;
 	PurplePresence *presence;
@@ -419,7 +409,7 @@ account_to_xmlnode(PurpleAccount *account)
 		xmlnode_insert_child(node, child);
 	}
 
-	child = current_error_to_xmlnode(priv->current_error);
+	child = current_error_to_xmlnode(account->current_error);
 	xmlnode_insert_child(node, child);
 
 	return node;
@@ -996,7 +986,6 @@ PurpleAccount *
 purple_account_new(const char *username, const char *protocol_id)
 {
 	PurpleAccount *account = NULL;
-	PurpleAccountPrivate *priv = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleStatusType *status_type;
@@ -1011,8 +1000,6 @@ purple_account_new(const char *username, const char *protocol_id)
 
 	account = g_new0(PurpleAccount, 1);
 	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
-	priv = g_new0(PurpleAccountPrivate, 1);
-	account->priv = priv;
 
 	purple_account_set_username(account, username);
 
@@ -1055,7 +1042,6 @@ purple_account_new(const char *username, const char *protocol_id)
 void
 purple_account_destroy(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = NULL;
 	GList *l;
 
 	g_return_if_fail(account != NULL);
@@ -1102,13 +1088,11 @@ purple_account_destroy(PurpleAccount *account)
 		account->permit = g_slist_delete_link(account->permit, account->permit);
 	}
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
-	if (priv->current_error) {
-		g_free(priv->current_error->description);
-		g_free(priv->current_error);
+	PURPLE_DBUS_UNREGISTER_POINTER(account->current_error);
+	if (account->current_error) {
+		g_free(account->current_error->description);
+		g_free(account->current_error);
 	}
-	g_free(priv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
@@ -2709,18 +2693,16 @@ signed_off_cb(PurpleConnection *gc,
 static void
 set_current_error(PurpleAccount *account, PurpleConnectionErrorInfo *new_err)
 {
-	PurpleAccountPrivate *priv;
 	PurpleConnectionErrorInfo *old_err;
 
 	g_return_if_fail(account != NULL);
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	old_err = priv->current_error;
+	old_err = account->current_error;
 
 	if(new_err == old_err)
 		return;
 
-	priv->current_error = new_err;
+	account->current_error = new_err;
 
 	purple_signal_emit(purple_accounts_get_handle(),
 	                   "account-error-changed",
@@ -2762,8 +2744,7 @@ connection_error_cb(PurpleConnection *gc,
 const PurpleConnectionErrorInfo *
 purple_account_get_current_error(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	return priv->current_error;
+	return account->current_error;
 }
 
 void
