@@ -96,7 +96,7 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 	if (chat==NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(conv->account, chat->nick));
+	nick = g_strdup(purple_normalize(conv->account, purple_conv_chat_get_nick(chat)));
 	name = g_strdup(purple_normalize(conv->account, aname));
 
 	if (g_utf8_collate(nick, name) == 0)
@@ -212,7 +212,7 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 	if (chat_nick_matches_name(conv, sender))
 		return;
 
-	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, chat->nick))
+	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_conv_chat_get_nick(chat)))
 		/* This isn't quite right; if you have the PURPLE_SOUND_CHAT_NICK event disabled
 		 * and the PURPLE_SOUND_CHAT_SAY event enabled, you won't get a sound at all */
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);

@@ -1657,7 +1657,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	if (menu)
 		gtk_widget_destroy(menu);
 
-	if (!strcmp(chat->nick, purple_normalize(conv->account, who)))
+	if (!strcmp(purple_conv_chat_get_nick(chat), purple_normalize(conv->account, who)))
 		is_me = TRUE;
 
 	menu = gtk_menu_new();
@@ -4070,7 +4070,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	stock = get_chat_buddy_status_icon(chat, name, flags);
 
-	if (!strcmp(chat->nick, purple_normalize(conv->account, old_name != NULL ? old_name : name)))
+	if (!strcmp(purple_conv_chat_get_nick(chat), purple_normalize(conv->account, old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
 	is_buddy = cb->buddy;
@@ -4474,7 +4474,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection
 			char *alias_key = NULL;
 			PurpleBuddy *buddy2;
 
-			if (strcmp(chat->nick, purple_normalize(conv->account, name))) {
+			if (strcmp(purple_conv_chat_get_nick(chat), purple_normalize(conv->account, name))) {
 				/* This user is not me, so look into updating the alias. */
 
 				if ((buddy2 = purple_find_buddy(conv->account, name)) != NULL) {
