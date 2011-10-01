@@ -1425,16 +1425,14 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 		purple_conversation_write(conv, NULL,
 								_("Logging started. Future messages in this conversation will be logged."),
-								conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
-								             (PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+								PURPLE_MESSAGE_SYSTEM,
 								time(NULL));
 	}
 	else
 	{
 		purple_conversation_write(conv, NULL,
 								_("Logging stopped. Future messages in this conversation will not be logged."),
-								conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
-								             (PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+								PURPLE_MESSAGE_SYSTEM,
 								time(NULL));
 
 		/* Disable the logging second, so that the above message can be logged. */

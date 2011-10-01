@@ -110,6 +110,40 @@ struct _PurpleConvChatBuddy
 	gpointer ui_data;
 };
 
+/**
+ * A core representation of a conversation between two or more people.
+ *
+ * The conversation can be an IM or a chat.
+ */
+struct _PurpleConversation
+{
+	PurpleConversationType type;  /**< The type of conversation.          */
+
+	PurpleAccount *account;       /**< The user using this conversation.  */
+
+
+	char *name;                 /**< The name of the conversation.      */
+	char *title;                /**< The window title.                  */
+
+	gboolean logging;           /**< The status of logging.             */
+
+	GList *logs;                /**< This conversation's logs           */
+
+	union
+	{
+		PurpleConvIm   *im;       /**< IM-specific data.                  */
+		PurpleConvChat *chat;     /**< Chat-specific data.                */
+	} u;
+
+	PurpleConversationUiOps *ui_ops;           /**< UI-specific operations. */
+	void *ui_data;                           /**< UI-specific data.       */
+
+	GHashTable *data;                        /**< Plugin-specific data.   */
+
+	PurpleConnectionFlags features; /**< The supported features */
+	GList *message_history;         /**< Message history, as a GList of PurpleConvMessage's */
+};
+
 
 static GList *conversations = NULL;
 static GList *ims = NULL;

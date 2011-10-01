@@ -192,6 +192,7 @@ version 3.0.0 (??/??/????):
 		* struct _PidginChatPane
 		* struct _PidginImPane
 		* struct _PurpleAttentionType
+		* struct _PurpleConversation
 		* struct _PurpleConvChat
 		* struct _PurpleConvChatBuddy
 		* struct _PurpleConvIm
