@@ -100,6 +100,7 @@ version 3.0.0 (??/??/????):
 		* _GntProgressBarOrientation
 		* _GntTreeColumnFlag
 		* _GntWidgetFlags
+		* _PurpleAccount.ui_data
 		* _PurpleCipherBatchMode
 		* _PurpleCipherCaps
 		* _PurpleCmdFlag

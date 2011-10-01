@@ -164,7 +164,6 @@ struct _PurpleAccount
 	PurplePresence *presence;     /**< Presence.                              */
 	PurpleLog *system_log;        /**< The system log                         */
 
-	void *ui_data;              /**< The UI can put data here.              */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
 
