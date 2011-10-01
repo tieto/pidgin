@@ -205,7 +205,7 @@ pounce_to_xmlnode(PurplePounce *pounce)
 	xmlnode_set_attrib(node, "ui", pounce->ui_type);
 
 	child = xmlnode_new_child(node, "account");
-	xmlnode_set_attrib(child, "protocol", pouncer->protocol_id);
+	xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(pouncer));
 	xmlnode_insert_data(child,
 			purple_normalize(pouncer, purple_account_get_username(pouncer)), -1);
 

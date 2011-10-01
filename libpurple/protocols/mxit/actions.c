@@ -372,12 +372,12 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 	purple_request_fields_add_group( fields, group );
 
 	/* pin */
-	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
+	field = purple_request_field_string_new( "pin", _( "PIN" ), purple_account_get_password( session->acc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* verify pin */
-	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
+	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), purple_account_get_password( session->acc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 

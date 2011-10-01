@@ -4672,7 +4672,7 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
   session = pd->session;
   g_return_if_fail(session != NULL);
 
-  switch(acct->perm_deny) {
+  switch(purple_account_get_privacy_type(acct)) {
   case PURPLE_PRIVACY_DENY_USERS:
     DEBUG_INFO("PURPLE_PRIVACY_DENY_USERS\n");
     privacy_fill(&privacy, acct->deny);
@@ -4696,7 +4696,7 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
     break;
 
   default:
-    DEBUG_INFO("acct->perm_deny is 0x%x\n", acct->perm_deny);
+    DEBUG_INFO("acct->perm_deny is 0x%x\n", purple_account_get_privacy_type(acct));
     return;
   }
 

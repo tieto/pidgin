@@ -458,7 +458,7 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->headerlen = 0;
 
 	/* create generic packet header */
-	hlen = snprintf( header, sizeof( header ), "id=%s%c", session->acc->username, CP_REC_TERM );			/* client msisdn */
+	hlen = snprintf( header, sizeof( header ), "id=%s%c", purple_account_get_username( session->acc), CP_REC_TERM );			/* client msisdn */
 
 	if ( session->http ) {
 		/* http connection only */

@@ -1404,15 +1404,15 @@ _sync_privacy_lists(NMUser *user)
 	/* Set the Purple privacy setting */
 	if (user->default_deny) {
 		if (user->allow_list == NULL) {
-			gc->account->perm_deny = PURPLE_PRIVACY_DENY_ALL;
+			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_DENY_ALL);
 		} else {
-			gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_ALLOW_USERS);
 		}
 	} else {
 		if (user->deny_list == NULL) {
-			gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
+			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_ALLOW_ALL);
 		} else {
-			gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_DENY_USERS);
 		}
 	}
 
@@ -3253,7 +3253,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 		return;
 	}
 
-	switch (gc->account->perm_deny) {
+	switch (purple_account_get_privacy_type(gc->account)) {
 
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			rc = nm_send_set_privacy_default(user, FALSE,

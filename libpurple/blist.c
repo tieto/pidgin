@@ -314,7 +314,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
-	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
+	g_snprintf(buf, sizeof(buf), "%d", purple_account_get_privacy_type(account));
 	xmlnode_set_attrib(node, "mode", buf);
 
 	for (cur = account->permit; cur; cur = cur->next)
@@ -641,7 +641,7 @@ purple_blist_load()
 				continue;
 
 			imode = atoi(mode);
-			account->perm_deny = (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL);
+			purple_account_set_privacy_type(account, (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL));
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;

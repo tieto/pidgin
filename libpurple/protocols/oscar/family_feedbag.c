@@ -661,7 +661,7 @@ static int aim_ssi_sync(OscarData *od)
 			for (cur1 = od->ssi.local.data; cur1; cur1 = cur1->next)
 				aim_ssi_item_debug_append(debugstr, "\t", cur1);
 			purple_debug_misc("oscar", "Dumping item list of account %s:\n%s",
-				purple_connection_get_account(od->gc)->username, debugstr->str);
+				purple_account_get_username(purple_connection_get_account(od->gc)), debugstr->str);
 		}
 	}
 	g_string_free(debugstr, TRUE);
@@ -1284,7 +1284,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		aim_tlvlist_free(data);
 	}
 	purple_debug_misc("oscar", "Reading items from tlvlist for account %s:\n%s",
-		purple_connection_get_account(od->gc)->username, debugstr->str);
+		purple_account_get_username(purple_connection_get_account(od->gc)), debugstr->str);
 	g_string_free(debugstr, TRUE);
 
 	/* Read in the timestamp */

@@ -440,7 +440,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	return gc->password ? gc->password : purple_account_get_password(gc->account);
 }
 
 const char *

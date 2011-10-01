@@ -2816,7 +2816,7 @@ static int purple_parse_locaterights(OscarData *od, FlapConnection *conn, FlapFr
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
 	aim_locate_setcaps(od, purple_caps);
-	oscar_set_info_and_status(account, TRUE, account->user_info, TRUE,
+	oscar_set_info_and_status(account, TRUE, purple_account_get_user_info(account), TRUE,
 							  purple_account_get_active_status(account));
 
 	return 1;
@@ -4108,11 +4108,11 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				 */
 				if (!od->icq && curitem->data) {
 					guint8 perm_deny = aim_ssi_getpermdeny(&od->ssi.local);
-					if (perm_deny != 0 && perm_deny != account->perm_deny)
+					if (perm_deny != 0 && perm_deny != purple_account_get_privacy_type(account))
 					{
 						purple_debug_info("oscar",
-								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, perm_deny);
-						account->perm_deny = perm_deny;
+								   "ssi: changing permdeny from %d to %hhu\n", purple_account_get_privacy_type(account), perm_deny);
+						purple_account_set_privacy_type(account, perm_deny);
 					}
 				}
 			} break;
@@ -4741,7 +4741,7 @@ void oscar_set_aim_permdeny(PurpleConnection *gc) {
 	 * values of libpurple's PurplePrivacyType and the values used
 	 * by the oscar protocol.
 	 */
-	aim_ssi_setpermdeny(od, account->perm_deny);
+	aim_ssi_setpermdeny(od, purple_account_get_privacy_type(account));
 }
 
 void oscar_add_permit(PurpleConnection *gc, const char *who) {

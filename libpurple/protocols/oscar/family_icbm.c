@@ -1941,7 +1941,7 @@ int icq_im_xstatus_request(OscarData *od, const char *sn)
 
 	account = purple_connection_get_account(od->gc);
 
-	statxml = g_strdup_printf(fmt, account->username);
+	statxml = g_strdup_printf(fmt, purple_account_get_username(account));
 	xmllen = strlen(statxml);
 
 	aim_icbm_makecookie(cookie);
@@ -2035,7 +2035,7 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	/* if (!strcmp(account->username, sn))
 		icq_im_xstatus_request(od, sn); */
 
-	status = purple_presence_get_active_status(account->presence);
+	status = purple_presence_get_active_status(purple_account_get_presence(account));
 	if (!status)
 		return -EINVAL;
 
@@ -2051,7 +2051,7 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	if (!msg)
 		return -EINVAL;
 
-	statxml = g_strdup_printf(fmt, account->username, title, msg);
+	statxml = g_strdup_printf(fmt, purple_account_get_username(account), title, msg);
 	len = strlen(statxml);
 
 	purple_debug_misc("oscar", "X-Status AutoReply: %s, %s\n", formatted_msg, msg);

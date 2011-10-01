@@ -254,7 +254,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	g_return_val_if_fail(who != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
 
-	from_username = session->account->username;
+	from_username = purple_account_get_username(session->account);
 
 	g_return_val_if_fail(from_username != NULL, FALSE);
 
@@ -705,14 +705,14 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
 	response_len = 0;
-	response = msim_compute_login_response(nc, account->username, account->password, &response_len);
+	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_account_get_password(account), &response_len);
 
 	g_free(nc);
 
 	ret = msim_send(session,
 			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
 			/* This is actually user's email address. */
-			"username", MSIM_TYPE_STRING, g_strdup(account->username),
+			"username", MSIM_TYPE_STRING, g_strdup(purple_account_get_username(account)),
 			/* GString will be freed in msim_msg_free() in msim_send(). */
 			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
 			"clientver", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
@@ -752,8 +752,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n",
-			(session && session->account && session->account->username) ?
-			session->account->username : "(NULL)");
+			(session && session->account && purple_account_get_username(session->account)) ?
+			purple_account_get_username(session->account) : "(NULL)");
 	if (note) {
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
@@ -1838,7 +1838,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
-				if (session->account->password && (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH)) {
+				if (purple_account_get_password(session->account) && (strlen(purple_account_get_password(session->account)) > MSIM_MAX_PASSWORD_LENGTH)) {
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
@@ -1846,7 +1846,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 							"maximum length of %d.  Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg,
-							strlen(session->account->password),
+							strlen(purple_account_get_password(session->account)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */
@@ -2184,9 +2184,9 @@ msim_login(PurpleAccount *acct)
 	int port;
 
 	g_return_if_fail(acct != NULL);
-	g_return_if_fail(acct->username != NULL);
+	g_return_if_fail(purple_account_get_username(acct) != NULL);
 
-	purple_debug_info("msim", "logging in %s\n", acct->username);
+	purple_debug_info("msim", "logging in %s\n", purple_account_get_username(acct));
 
 	gc = purple_account_get_connection(acct);
 	purple_connection_set_protocol_data(gc, msim_session_new(acct));

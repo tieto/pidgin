@@ -813,8 +813,8 @@ msn_send_privacy(PurpleConnection *gc)
 	session = purple_connection_get_protocol_data(gc);
 	cmdproc = session->notification->cmdproc;
 
-	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
-	    account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
+	if (purple_account_get_privacy_type(account) == PURPLE_PRIVACY_ALLOW_ALL ||
+	    purple_account_get_privacy_type(account) == PURPLE_PRIVACY_DENY_USERS)
 		trans = msn_transaction_new(cmdproc, "BLP", "%s", "AL");
 	else
 		trans = msn_transaction_new(cmdproc, "BLP", "%s", "BL");
@@ -1643,7 +1643,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 
 		purple_debug_info("msn", "prepare to send offline Message\n");
 
-		friendname = msn_encode_mime(account->username);
+		friendname = msn_encode_mime(purple_account_get_username(account));
 		msn_oim_prep_send_msg_info(session->oim,
 			purple_account_get_username(account),
 			friendname, who, msgtext);

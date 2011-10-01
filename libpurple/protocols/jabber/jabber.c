@@ -1872,8 +1872,7 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 		return;
 
 	/* This is the only privacy method supported by XEP-0191 */
-	if (account->perm_deny != PURPLE_PRIVACY_DENY_USERS)
-		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+	purple_account_set_privacy_type(account, PURPLE_PRIVACY_DENY_USERS);
 
 	/*
 	 * TODO: When account->deny is something more than a hash table, this can
