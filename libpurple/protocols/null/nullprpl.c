@@ -138,11 +138,11 @@ static void call_chat_func(gpointer data, gpointer userdata) {
   PurpleConnection *to = (PurpleConnection *)data;
   ChatFuncData *cfdata = (ChatFuncData *)userdata;
 
-  int id = cfdata->from_chat->id;
+  int id = purple_conv_chat_get_id(cfdata->from_chat);
   PurpleConversation *conv = purple_find_chat(to, id);
   if (conv) {
     PurpleConvChat *chat = purple_conversation_get_chat_data(conv);
-    cfdata->fn(cfdata->from_chat, chat, id, conv->name, cfdata->userdata);
+    cfdata->fn(cfdata->from_chat, chat, id, purple_conversation_get_name(conv), cfdata->userdata);
   }
 }
 
@@ -648,9 +648,9 @@ static void joined_chat(PurpleConvChat *from, PurpleConvChat *to,
                         int id, const char *room, gpointer userdata) {
   /*  tell their chat window that we joined */
   purple_debug_info("nullprpl", "%s sees that %s joined chat room %s\n",
-                    to->nick, from->nick, room);
+                    purple_conv_chat_get_nick(to), purple_conv_chat_get_nick(from), room);
   purple_conv_chat_add_user(to,
-                            from->nick,
+                            purple_conv_chat_get_nick(from),
                             NULL,   /* user-provided join message, IRC style */
                             PURPLE_CBFLAGS_NONE,
                             TRUE);  /* show a join message */
@@ -658,9 +658,9 @@ static void joined_chat(PurpleConvChat *from, PurpleConvChat *to,
   if (from != to) {
     /* add them to our chat window */
     purple_debug_info("nullprpl", "%s sees that %s is in chat room %s\n",
-                      from->nick, to->nick, room);
+                      purple_conv_chat_get_nick(from), purple_conv_chat_get_nick(to), room);
     purple_conv_chat_add_user(from,
-                              to->nick,
+                              purple_conv_chat_get_nick(to),
                               NULL,   /* user-provided join message, IRC style */
                               PURPLE_CBFLAGS_NONE,
                               FALSE);  /* show a join message */
@@ -721,7 +721,7 @@ static void nullprpl_chat_invite(PurpleConnection *gc, int id,
                                  const char *message, const char *who) {
   const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
-  const char *room = conv->name;
+  const char *room = purple_conversation_get_name(conv);
   PurpleAccount *to_acct = purple_accounts_find(who, NULLPRPL_ID);
 
   purple_debug_info("nullprpl", "%s is inviting %s to join chat room %s\n",
@@ -752,9 +752,9 @@ static void left_chat_room(PurpleConvChat *from, PurpleConvChat *to,
   if (from != to) {
     /*  tell their chat window that we left */
     purple_debug_info("nullprpl", "%s sees that %s left chat room %s\n",
-                      to->nick, from->nick, room);
+                      purple_conv_chat_get_nick(to), purple_conv_chat_get_nick(from), room);
     purple_conv_chat_remove_user(to,
-                                 from->nick,
+                                 purple_conv_chat_get_nick(from),
                                  NULL);  /* user-provided message, IRC style */
   }
 }
@@ -762,7 +762,7 @@ static void left_chat_room(PurpleConvChat *from, PurpleConvChat *to,
 static void nullprpl_chat_leave(PurpleConnection *gc, int id) {
   PurpleConversation *conv = purple_find_chat(gc, id);
   purple_debug_info("nullprpl", "%s is leaving chat room %s\n",
-                    gc->account->username, conv->name);
+                    gc->account->username, purple_conversation_get_name(conv));
 
   /* tell everyone that we left */
   foreach_gc_in_chat(left_chat_room, gc, id, NULL);
@@ -789,9 +789,9 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
     return PURPLE_CMD_RET_FAILED;
   }
 
-  from_username = conv->account->username;
+  from_username = purple_conversation_get_account(conv)->username;
   purple_debug_info("nullprpl", "%s whispers to %s in chat room %s: %s\n",
-                    from_username, to_username, conv->name, message);
+                    from_username, to_username, purple_conversation_get_name(conv), message);
 
   chat = purple_conversation_get_chat_data(conv);
   chat_buddy = purple_conv_chat_cb_find(chat, to_username);
@@ -813,7 +813,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
     g_free(message_to);
 
     /* send the whisper */
-    serv_chat_whisper(to, chat->id, from_username, message);
+    serv_chat_whisper(to, purple_conv_chat_get_id(chat), from_username, message);
 
     return PURPLE_CMD_RET_OK;
   }
@@ -825,7 +825,7 @@ static void nullprpl_chat_whisper(PurpleConnection *gc, int id, const char *who,
   PurpleConversation *conv = purple_find_chat(gc, id);
   purple_debug_info("nullprpl",
                     "%s receives whisper from %s in chat room %s: %s\n",
-                    username, who, conv->name, message);
+                    username, who, purple_conversation_get_name(conv), message);
 
   /* receive whisper on recipient's account */
   serv_got_chat_in(gc, id, who, PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_WHISPER,
@@ -835,12 +835,12 @@ static void nullprpl_chat_whisper(PurpleConnection *gc, int id, const char *who,
 static void receive_chat_message(PurpleConvChat *from, PurpleConvChat *to,
                                  int id, const char *room, gpointer userdata) {
   const char *message = (const char *)userdata;
-  PurpleConnection *to_gc = get_nullprpl_gc(to->nick);
+  PurpleConnection *to_gc = get_nullprpl_gc(purple_conv_chat_get_nick(to));
 
   purple_debug_info("nullprpl",
                     "%s receives message from %s in chat room %s: %s\n",
-                    to->nick, from->nick, room, message);
-  serv_got_chat_in(to_gc, id, from->nick, PURPLE_MESSAGE_RECV, message,
+                    purple_conv_chat_get_nick(to), purple_conv_chat_get_nick(from), room, message);
+  serv_got_chat_in(to_gc, id, purple_conv_chat_get_nick(from), PURPLE_MESSAGE_RECV, message,
                    time(NULL));
 }
 
@@ -852,7 +852,7 @@ static int nullprpl_chat_send(PurpleConnection *gc, int id, const char *message,
   if (conv) {
     purple_debug_info("nullprpl",
                       "%s is sending message to chat room %s: %s\n", username,
-                      conv->name, message);
+                      purple_conversation_get_name(conv), message);
 
     /* send message to everyone in the chat room */
     foreach_gc_in_chat(receive_chat_message, gc, id, (gpointer)message);
@@ -875,7 +875,7 @@ static void nullprpl_get_cb_info(PurpleConnection *gc, int id, const char *who) 
   PurpleConversation *conv = purple_find_chat(gc, id);
   purple_debug_info("nullprpl",
                     "retrieving %s's info for %s in chat room %s\n", who,
-                    gc->account->username, conv->name);
+                    gc->account->username, purple_conversation_get_name(conv));
 
   nullprpl_get_info(gc, who);
 }
@@ -928,7 +928,7 @@ static void nullprpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
 static void set_chat_topic_fn(PurpleConvChat *from, PurpleConvChat *to,
                               int id, const char *room, gpointer userdata) {
   const char *topic = (const char *)userdata;
-  const char *username = from->conv->account->username;
+  const char *username = purple_conversation_get_account(purple_conv_chat_get_conversation(from))->username;
   char *msg;
 
   purple_conv_chat_set_topic(to, username, topic);
@@ -954,7 +954,7 @@ static void nullprpl_set_chat_topic(PurpleConnection *gc, int id,
     return;
 
   purple_debug_info("nullprpl", "%s sets topic of chat room '%s' to '%s'\n",
-                    gc->account->username, conv->name, topic);
+                    gc->account->username, purple_conversation_get_name(conv), topic);
 
   last_topic = purple_conv_chat_get_topic(chat);
   if ((!topic && !last_topic) ||
@@ -994,8 +994,8 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
   for (chats  = purple_get_chats(); chats; chats = g_list_next(chats)) {
     PurpleConversation *conv = (PurpleConversation *)chats->data;
     PurpleRoomlistRoom *room;
-    const char *name = conv->name;
-    int id = purple_conversation_get_chat_data(conv)->id;
+    const char *name = purple_conversation_get_name(conv);
+    int id = purple_conv_chat_get_id(purple_conversation_get_chat_data(conv));
 
     /* have we already added this room? */
     if (g_list_find_custom(seen_ids, name, (GCompareFunc)strcmp))
