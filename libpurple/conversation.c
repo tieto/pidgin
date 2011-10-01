@@ -55,6 +55,21 @@ struct _PurpleConvChat
 	GHashTable *users;               /**< Hash table of the users in the room. */
 };
 
+/**
+ * Data specific to Instant Messages.
+ */
+struct _PurpleConvIm
+{
+	PurpleConversation *conv;            /**< The parent conversation.     */
+
+	PurpleTypingState typing_state;      /**< The current typing state.    */
+	guint  typing_timeout;             /**< The typing timer handle.     */
+	time_t type_again;                 /**< The type again time.         */
+	guint  send_typed_timeout;         /**< The type again timer handle. */
+
+	PurpleBuddyIcon *icon;               /**< The buddy icon.              */
+};
+
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;

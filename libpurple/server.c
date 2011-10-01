@@ -725,7 +725,7 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	{
 		im = PURPLE_CONV_IM(conv);
 
-		if (im->typing_state == PURPLE_NOT_TYPING)
+		if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING)
 			return;
 
 		purple_conv_im_stop_typing_timeout(im);
