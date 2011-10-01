@@ -102,6 +102,7 @@ replace_message_tokens(
 	PurpleMessageFlags flags,
 	time_t mtime)
 {
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	GString *str = g_string_new(NULL);
 	const char *cur = text;
 	const char *prev = cur;
@@ -129,10 +130,10 @@ replace_message_tokens(
 			g_free(format);
 		} else if (!strncmp(cur, "%userIconPath%", strlen("%userIconPath%"))) {
 			if (flags & PURPLE_MESSAGE_SEND) {
-				if (purple_account_get_bool(conv->account, "use-global-buddyicon", TRUE)) {
+				if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				} else {
-					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(conv->account);
+					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 					replace = purple_imgstore_get_filename(img);
 				}
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
@@ -151,7 +152,7 @@ replace_message_tokens(
 		} else if (!strncmp(cur, "%sender%", strlen("%sender%"))) {
 			replace = alias;
 		} else if (!strncmp(cur, "%service%", strlen("%service%"))) {
-			replace = purple_account_get_protocol_name(conv->account);
+			replace = purple_account_get_protocol_name(account);
 		} else {
 			cur++;
 			continue;
@@ -178,6 +179,7 @@ replace_message_tokens(
 static char *
 replace_header_tokens(char *text, PurpleConversation *conv)
 {
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	GString *str = g_string_new(NULL);
 	char *cur = text;
 	char *prev = cur;
@@ -190,17 +192,17 @@ replace_header_tokens(char *text, PurpleConversation *conv)
 		char *fin = NULL;
 
 		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
-			replace = conv->name;
+			replace = purple_conversation_get_name(conv);
 		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
-			replace = purple_account_get_alias(conv->account);
+			replace = purple_account_get_alias(account);
 			if (replace == NULL)
-				replace = purple_account_get_username(conv->account);
+				replace = purple_account_get_username(account);
 		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
-			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+			PurpleBuddy *buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
 			if (buddy) {
 				replace = purple_buddy_get_alias(buddy);
 			} else {
-				replace = conv->name;
+				replace = purple_conversation_get_name(conv);
 			}
 		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
 			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
@@ -450,7 +452,7 @@ webkit_on_displaying_im_msg(PurpleAccount *account,
 	}
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
-	smileyed = smiley_parse_markup(stripped, conv->account->protocol_id);
+	smileyed = smiley_parse_markup(stripped, purple_conversation_get_account(conv)->protocol_id);
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = gtk_webview_quote_js_string(msg);
 	script = g_strdup_printf("%s(%s)", func, escape);

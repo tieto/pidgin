@@ -4590,6 +4590,7 @@ static void
 conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
                         PidginBuddyList *gtkblist)
 {
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	GList *convs = NULL;
 	GList *ims, *chats;
 	GList *l = NULL;
@@ -4597,8 +4598,8 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 	if (type != PURPLE_CONV_UPDATE_UNSEEN)
 		return;
 
-	if(conv->account != NULL && conv->name != NULL) {
-		PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+	if(account != NULL && purple_conversation_get_name(conv) != NULL) {
+		PurpleBuddy *buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
 		if(buddy != NULL)
 			pidgin_blist_update_buddy(NULL, (PurpleBlistNode *)buddy, TRUE);
 	}
@@ -4707,10 +4708,12 @@ displayed_msg_update_ui_cb(PidginConversation *gtkconv, PurpleBlistNode *node)
 static void
 conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 {
-	switch (conv->type) {
+	PurpleAccount *account = purple_conversation_get_account(conv);
+
+	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 			{
-				GSList *buddies = purple_find_buddies(conv->account, conv->name);
+				GSList *buddies = purple_find_buddies(account, purple_conversation_get_name(conv));
 				while (buddies) {
 					PurpleBlistNode *buddy = buddies->data;
 					struct _pidgin_blist_node *ui = buddy->ui_data;
@@ -4731,7 +4734,7 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 			break;
 		case PURPLE_CONV_TYPE_CHAT:
 			{
-				PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
+				PurpleChat *chat = purple_blist_find_chat(account, purple_conversation_get_name(conv));
 				struct _pidgin_blist_node *ui;
 				if (!chat)
 					break;

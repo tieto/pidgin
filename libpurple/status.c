@@ -1099,7 +1099,7 @@ purple_presence_new_for_conv(PurpleConversation *conv)
 
 	presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_CONV);
 	presence->u.chat.conv = conv;
-	/* presence->statuses = purple_prpl_get_statuses(conv->account, presence); ? */
+	/* presence->statuses = purple_prpl_get_statuses(purple_conversation_get_account(conv), presence); ? */
 
 	return presence;
 }
