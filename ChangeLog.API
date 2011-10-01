@@ -4,6 +4,11 @@ version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
 		* pidgin_create_webview
+		* purple_conv_chat_cb_get_alias
+		* purple_conv_chat_cb_get_flags
+		* purple_conv_chat_cb_is_buddy
+		* purple_conv_chat_cb_get_ui_data
+		* purple_conv_chat_cb_set_ui_data
 		* purple_conversation_get_ui_data
 		* purple_conversation_set_ui_data
 		* purple_notify_searchresult_column_is_visible
@@ -188,6 +193,7 @@ version 3.0.0 (??/??/????):
 		* struct _PidginImPane
 		* struct _PurpleAttentionType
 		* struct _PurpleConvChat
+		* struct _PurpleConvChatBuddy
 		* struct _PurpleConvIm
 		* struct _PurpleMenuAction
 		* struct _PurplePounce

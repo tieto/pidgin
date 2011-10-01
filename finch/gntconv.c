@@ -1084,10 +1084,10 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 		for (iter = users; iter; iter = iter->next)
 		{
 			PurpleConvChatBuddy *cbuddy = iter->data;
-			char *str;
+			const char *str;
 
-			if ((str = cbuddy->alias) == NULL)
-				str = cbuddy->name;
+			if ((str = purple_conv_chat_cb_get_alias(cbuddy)) == NULL)
+				str = purple_conv_chat_cb_get_name(cbuddy);
 			g_string_append_printf(string, "[ %s ]", str);
 		}
 
@@ -1100,10 +1100,10 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 	{
 		PurpleConvChatBuddy *cbuddy = users->data;
 		GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
-		gnt_entry_add_suggest(entry, cbuddy->name);
-		gnt_entry_add_suggest(entry, cbuddy->alias);
-		gnt_tree_add_row_after(tree, g_strdup(cbuddy->name),
-				gnt_tree_create_row(tree, chat_flag_text(cbuddy->flags), cbuddy->alias), NULL, NULL);
+		gnt_entry_add_suggest(entry, purple_conv_chat_cb_get_name(cbuddy));
+		gnt_entry_add_suggest(entry, purple_conv_chat_cb_get_alias(cbuddy));
+		gnt_tree_add_row_after(tree, g_strdup(purple_conv_chat_cb_get_name(cbuddy)),
+				gnt_tree_create_row(tree, chat_flag_text(purple_conv_chat_cb_get_flags(cbuddy)), purple_conv_chat_cb_get_alias(cbuddy)), NULL, NULL);
 	}
 }
 
@@ -1122,7 +1122,7 @@ finch_chat_rename_user(PurpleConversation *conv, const char *old, const char *ne
 	gnt_entry_add_suggest(entry, new_n);
 	gnt_entry_add_suggest(entry, new_a);
 	gnt_tree_add_row_after(tree, g_strdup(new_n),
-			gnt_tree_create_row(tree, chat_flag_text(cb->flags), new_a), NULL, NULL);
+			gnt_tree_create_row(tree, chat_flag_text(purple_conv_chat_cb_get_flags(cb)), new_a), NULL, NULL);
 }
 
 static void
@@ -1143,7 +1143,7 @@ finch_chat_update_user(PurpleConversation *conv, const char *user)
 {
 	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), user);
 	FinchConv *ggc = FINCH_CONV(conv);
-	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(cb->flags));
+	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(purple_conv_chat_cb_get_flags(cb)));
 }
 
 static void

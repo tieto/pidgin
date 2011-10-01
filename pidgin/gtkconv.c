@@ -4027,10 +4027,11 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 static void
 deleting_chat_buddy_cb(PurpleConvChatBuddy *cb)
 {
-	if (cb->ui_data) {
-		GtkTreeRowReference *ref = cb->ui_data;
+	GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cb);
+
+	if (ref) {
 		gtk_tree_row_reference_free(ref);
-		cb->ui_data = NULL;
+		purple_conv_chat_cb_set_ui_data(cb, NULL);
 	}
 }
 
@@ -4049,13 +4050,14 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	GtkTreeIter iter;
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
-	gchar *tmp, *alias_key, *name, *alias;
+	const gchar *name, *alias;
+	gchar *tmp, *alias_key;
 	PurpleConvChatBuddyFlags flags;
 	GdkColor *color = NULL;
 
-	alias = cb->alias;
-	name  = cb->name;
-	flags = cb->flags;
+	alias = purple_conv_chat_cb_get_alias(cb);
+	name  = purple_conv_chat_cb_get_name(cb);
+	flags = purple_conv_chat_cb_get_flags(cb);
 
 	chat    = PURPLE_CONV_CHAT(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -4073,7 +4075,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	if (!strcmp(purple_conv_chat_get_nick(chat), purple_normalize(conv->account, old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
-	is_buddy = cb->buddy;
+	is_buddy = purple_conv_chat_cb_is_buddy(cb);
 
 	tmp = g_utf8_casefold(alias, -1);
 	alias_key = g_utf8_collate_key(tmp, -1);
@@ -4114,13 +4116,13 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 
-	if (cb->ui_data) {
-		GtkTreeRowReference *ref = cb->ui_data;
+	if (purple_conv_chat_cb_get_ui_data(cb)) {
+		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cb);
 		gtk_tree_row_reference_free(ref);
 	}
 
 	newpath = gtk_tree_model_get_path(tm, &iter);
-	cb->ui_data = gtk_tree_row_reference_new(tm, newpath);
+	purple_conv_chat_cb_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
 	gtk_tree_path_free(newpath);
 
 	if (is_me && color)
@@ -4150,7 +4152,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
  */
 static void
 tab_complete_process_item(int *most_matched, const char *entered, gsize entered_bytes, char **partial, char *nick_partial,
-				  GList **matches, char *name)
+				  GList **matches, const char *name)
 {
 	memcpy(nick_partial, name, entered_bytes);
 	if (purple_utf8_strcasecmp(nick_partial, entered))
@@ -4272,7 +4274,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, ((PurpleConvChatBuddy *)l->data)->name);
+									  &matches, purple_conv_chat_cb_get_name((PurpleConvChatBuddy *)l->data));
 		}
 
 
@@ -6445,7 +6447,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *iter)
 {
-	GtkTreeRowReference *ref = cb->ui_data;
+	GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cb);
 	GtkTreePath *path;
 	GtkTreeModel *model;
 
@@ -6531,11 +6533,11 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 
 	old_cbuddy = purple_conv_chat_cb_find(chat, old_name);
 	if (get_iter_from_chatbuddy(old_cbuddy, &iter)) {
-		GtkTreeRowReference *ref = old_cbuddy->ui_data;
+		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(old_cbuddy);
 
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		old_cbuddy->ui_data = NULL;
+		purple_conv_chat_cb_set_ui_data(old_cbuddy, NULL);
 	}
 
 	if ((tag = get_buddy_tag(conv, old_name, 0, FALSE)))
@@ -6629,10 +6631,10 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 
 	cbuddy = purple_conv_chat_cb_find(chat, user);
 	if (get_iter_from_chatbuddy(cbuddy, &iter)) {
-		GtkTreeRowReference *ref = cbuddy->ui_data;
+		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cbuddy);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		cbuddy->ui_data = NULL;
+		purple_conv_chat_cb_set_ui_data(cbuddy, NULL);
 	}
 
 	if (cbuddy)

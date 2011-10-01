@@ -250,46 +250,6 @@ struct _PurpleConversationUiOps
 };
 
 /**
- * Data for "Chat Buddies"
- */
-struct _PurpleConvChatBuddy
-{
-	/** The chat participant's name in the chat. */
-	char *name;
-
-	/** The chat participant's alias, if known; @a NULL otherwise. */
-	char *alias;
-
-	/**
-	 * A string by which this buddy will be sorted, or @c NULL if the
-	 * buddy should be sorted by its @c name.  (This is currently always
-	 * @c NULL.
-	 */
-	char *alias_key;
-
-	/**
-	 * @a TRUE if this chat participant is on the buddy list;
-	 * @a FALSE otherwise.
-	 */
-	gboolean buddy;
-
-	/**
-	 * A bitwise OR of flags for this participant, such as whether they
-	 * are a channel operator.
-	 */
-	PurpleConvChatBuddyFlags flags;
-
-	/**
-	 * A hash table of attributes about the user, such as real name,
-	 * user\@host, etc.
-	 */
-	GHashTable *attributes;
-
-	/** The UI can put whatever it wants here. */
-	gpointer ui_data;
-};
-
-/**
  * Description of a conversation message
  */
 struct _PurpleConvMessage
@@ -1364,13 +1324,59 @@ PurpleConvChatBuddy *purple_conv_chat_cb_new(const char *name, const char *alias
 PurpleConvChatBuddy *purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name);
 
 /**
+ * Set the UI data associated with this chat buddy.
+ *
+ * @param cb			The chat buddy
+ * @param ui_data		A pointer to associate with this chat buddy.
+ */
+void purple_conv_chat_cb_set_ui_data(PurpleConvChatBuddy *cb, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this chat buddy.
+ *
+ * @param cb			The chat buddy.
+ *
+ * @return The UI data associated with this chat buddy.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_conv_chat_cb_get_ui_data(const PurpleConvChatBuddy *conv);
+
+/**
+ * Get the alias of a chat buddy
+ *
+ * @param cb    The chat buddy.
+ *
+ * @return The alias of the chat buddy.
+ */
+const char *purple_conv_chat_cb_get_alias(const PurpleConvChatBuddy *cb);
+
+/**
  * Get the name of a chat buddy
  *
  * @param cb    The chat buddy.
  *
  * @return The name of the chat buddy.
  */
-const char *purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb);
+const char *purple_conv_chat_cb_get_name(const PurpleConvChatBuddy *cb);
+
+/**
+ * Get the flags of a chat buddy.
+ *
+ * @param cb	The chat buddy.
+ *
+ * @return The flags of the chat buddy.
+ */
+PurpleConvChatBuddyFlags purple_conv_chat_cb_get_flags(const PurpleConvChatBuddy *cb);
+
+/**
+ * Indicates if this chat buddy is on the buddy list.
+ *
+ * @param cb	The chat buddy.
+ *
+ * @return TRUE if the chat buddy is on the buddy list.
+ */
+gboolean purple_conv_chat_cb_is_buddy(const PurpleConvChatBuddy *cb);
 
 /**
  * Destroys a chat buddy

@@ -70,6 +70,47 @@ struct _PurpleConvIm
 	PurpleBuddyIcon *icon;               /**< The buddy icon.              */
 };
 
+/**
+ * Data for "Chat Buddies"
+ */
+struct _PurpleConvChatBuddy
+{
+	/** The chat participant's name in the chat. */
+	char *name;
+
+	/** The chat participant's alias, if known; @a NULL otherwise. */
+	char *alias;
+
+	/**
+	 * A string by which this buddy will be sorted, or @c NULL if the
+	 * buddy should be sorted by its @c name.  (This is currently always
+	 * @c NULL.
+	 */
+	char *alias_key;
+
+	/**
+	 * @a TRUE if this chat participant is on the buddy list;
+	 * @a FALSE otherwise.
+	 */
+	gboolean buddy;
+
+	/**
+	 * A bitwise OR of flags for this participant, such as whether they
+	 * are a channel operator.
+	 */
+	PurpleConvChatBuddyFlags flags;
+
+	/**
+	 * A hash table of attributes about the user, such as real name,
+	 * user\@host, etc.
+	 */
+	GHashTable *attributes;
+
+	/** The UI can put whatever it wants here. */
+	gpointer ui_data;
+};
+
+
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
@@ -2219,12 +2260,49 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb);
 }
 
+void purple_conv_chat_cb_set_ui_data(PurpleConvChatBuddy *cb, gpointer ui_data)
+{
+	g_return_if_fail(cb != NULL);
+
+	cb->ui_data = ui_data;
+}
+
+gpointer purple_conv_chat_cb_get_ui_data(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	return cb->ui_data;
+}
+
 const char *
-purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
+purple_conv_chat_cb_get_alias(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	return cb->alias;
+}
+
+const char *
+purple_conv_chat_cb_get_name(const PurpleConvChatBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 
 	return cb->name;
+}
+
+PurpleConvChatBuddyFlags
+purple_conv_chat_cb_get_flags(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, PURPLE_CBFLAGS_NONE);
+
+	return cb->flags;
+}
+
+gboolean purple_conv_chat_cb_is_buddy(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, FALSE);
+
+	return cb->buddy;
 }
 
 const char *
