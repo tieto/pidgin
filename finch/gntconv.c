@@ -801,6 +801,9 @@ finch_create_conversation(PurpleConversation *conv)
 		case PURPLE_CONV_TYPE_CHAT:
 			gnt_widget_set_name(ggc->window, "conversation-window-chat" );
 			break;
+		case PURPLE_CONV_TYPE_MISC:
+			gnt_widget_set_name(ggc->window, "conversation-window-misc" );
+			break;
 		case PURPLE_CONV_TYPE_ANY:
 			gnt_widget_set_name(ggc->window, "conversation-window-any" );
 			break;
