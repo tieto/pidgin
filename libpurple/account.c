@@ -2480,10 +2480,10 @@ purple_account_get_ui_data(const PurpleAccount *account)
 }
 
 void
-purple_request_field_set_ui_data(PurpleAccount *account,
+purple_account_set_ui_data(PurpleAccount *account,
                                  gpointer ui_data)
 {
-        g_return_if_fail(acount != NULL);
+        g_return_if_fail(account != NULL);
 
         account->ui_data = ui_data;
 }
