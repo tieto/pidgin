@@ -53,6 +53,7 @@ typedef enum
 	PURPLE_CONV_TYPE_UNKNOWN = 0, /**< Unknown conversation type. */
 	PURPLE_CONV_TYPE_IM,          /**< Instant Message.           */
 	PURPLE_CONV_TYPE_CHAT,        /**< Chat room.                 */
+	PURPLE_CONV_TYPE_MISC,        /**< A misc. conversation.      */
 	PURPLE_CONV_TYPE_ANY          /**< Any type of conversation.  */
 
 } PurpleConversationType;
