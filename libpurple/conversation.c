@@ -133,6 +133,8 @@ struct _PurpleConversation
 	{
 		PurpleConvIm   *im;       /**< IM-specific data.                  */
 		PurpleConvChat *chat;     /**< Chat-specific data.                */
+		void *misc;               /**< Misc. data.                        */
+
 	} u;
 
 	PurpleConversationUiOps *ui_ops;           /**< UI-specific operations. */
