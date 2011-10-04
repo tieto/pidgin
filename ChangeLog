@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.1 (??/??/????):
+	SILC:
+	* Fix CVE-2011-3594, by UTF-8 validating incoming messages before
+	  passing them to glib or libpurple.  Identified by Diego Bauche
+	  Madero from IOActive.  (#14636)
+
 version 2.10.0 (08/18/2011):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.
