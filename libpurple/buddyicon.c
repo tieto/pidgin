@@ -105,9 +105,6 @@ static char       *cache_dir     = NULL;
 /** "Should icons be cached to disk?" */
 static gboolean    icon_caching  = TRUE;
 
-/* For ~/.gaim to ~/.purple migration. */
-static char *old_icons_dir = NULL;
-
 static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);
 
 /*
@@ -759,7 +756,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	else
 		g_hash_table_remove(pointer_icon_cache, account);
 
-	if (purple_account_is_connected(account))
+	if (!purple_account_is_disconnected(account))
 	{
 		PurpleConnection *gc;
 		PurplePluginProtocolInfo *prpl_info;
@@ -958,31 +955,6 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 	return purple_buddy_icons_node_set_custom_icon(node, data, len);
 }
 
-gboolean
-purple_buddy_icons_has_custom_icon(PurpleContact *contact)
-{
-	return purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact);
-}
-
-PurpleStoredImage *
-purple_buddy_icons_find_custom_icon(PurpleContact *contact)
-{
-	return purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
-}
-
-PurpleStoredImage *
-purple_buddy_icons_set_custom_icon(PurpleContact *contact, guchar *icon_data,
-                                   size_t icon_len)
-{
-	return purple_buddy_icons_node_set_custom_icon((PurpleBlistNode*)contact, icon_data, icon_len);
-}
-
-void
-_purple_buddy_icon_set_old_icons_dir(const char *dirname)
-{
-	old_icons_dir = g_strdup(dirname);
-}
-
 static void
 delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name)
 {
@@ -992,133 +964,6 @@ delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name)
 	{
 		purple_blist_node_remove_setting(node, "avatar_hash");
 		purple_blist_node_remove_setting(node, "icon_checksum");
-	}
-}
-
-static void
-migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
-                   const char *dirname, const char *filename)
-{
-	char *path;
-
-	if (filename[0] != '/')
-	{
-		path = g_build_filename(dirname, filename, NULL);
-		if (g_file_test(path, G_FILE_TEST_EXISTS))
-		{
-			g_free(path);
-			return;
-		}
-		g_free(path);
-
-		path = g_build_filename(old_icons_dir, filename, NULL);
-	}
-	else
-		path = g_strdup(filename);
-
-	if (g_file_test(path, G_FILE_TEST_EXISTS))
-	{
-		guchar *icon_data;
-		size_t icon_len;
-		FILE *file;
-		char *new_filename;
-
-		if (!read_icon_file(path, &icon_data, &icon_len))
-		{
-			g_free(path);
-			delete_buddy_icon_settings(node, setting_name);
-			return;
-		}
-
-		if (icon_data == NULL || icon_len <= 0)
-		{
-			/* This really applies to the icon_len check.
-			 * icon_data should never be NULL if
-			 * read_icon_file() returns TRUE. */
-			purple_debug_error("buddyicon", "Empty buddy icon file: %s\n", path);
-			delete_buddy_icon_settings(node, setting_name);
-			g_free(path);
-			return;
-		}
-
-		g_free(path);
-
-		new_filename = purple_util_get_image_filename(icon_data, icon_len);
-		if (new_filename == NULL)
-		{
-			purple_debug_error("buddyicon",
-				"New icon filename is NULL. This should never happen! "
-				"The old filename was: %s\n", path);
-			delete_buddy_icon_settings(node, setting_name);
-			g_return_if_reached();
-		}
-
-		path = g_build_filename(dirname, new_filename, NULL);
-		if ((file = g_fopen(path, "wb")) != NULL)
-		{
-			if (!fwrite(icon_data, icon_len, 1, file))
-			{
-				purple_debug_error("buddyicon", "Error writing %s: %s\n",
-				                   path, g_strerror(errno));
-			}
-			else
-				purple_debug_info("buddyicon", "Wrote migrated cache file: %s\n", path);
-
-			fclose(file);
-		}
-		else
-		{
-			purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-			                   path, g_strerror(errno));
-			g_free(new_filename);
-			g_free(path);
-
-			delete_buddy_icon_settings(node, setting_name);
-			return;
-		}
-		g_free(path);
-
-		purple_blist_node_set_string(node,
-		                             setting_name,
-		                             new_filename);
-		ref_filename(new_filename);
-
-		g_free(new_filename);
-
-		if (purple_strequal(setting_name, "buddy_icon"))
-		{
-			const char *hash;
-
-			hash = purple_blist_node_get_string(node, "avatar_hash");
-			if (hash != NULL)
-			{
-				purple_blist_node_set_string(node, "icon_checksum", hash);
-				purple_blist_node_remove_setting(node, "avatar_hash");
-			}
-			else
-			{
-				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
-				const char *prpl_id = purple_account_get_protocol_id(account);
-
-				if (g_str_equal(prpl_id, "prpl-yahoo") || g_str_equal(prpl_id, "prpl-yahoojp"))
-				{
-					int checksum = purple_blist_node_get_int(node, "icon_checksum");
-					if (checksum != 0)
-					{
-						char *checksum_str = g_strdup_printf("%i", checksum);
-						purple_blist_node_remove_setting(node, "icon_checksum");
-						purple_blist_node_set_string(node, "icon_checksum", checksum_str);
-						g_free(checksum_str);
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		purple_debug_error("buddyicon", "Old icon file doesn't exist: %s\n", path);
-		delete_buddy_icon_settings(node, setting_name);
-		g_free(path);
 	}
 }
 
@@ -1153,22 +998,6 @@ _purple_buddy_icons_blist_loaded_cb()
 	PurpleBlistNode *node = purple_blist_get_root();
 	const char *dirname = purple_buddy_icons_get_cache_dir();
 
-	/* Doing this once here saves having to check it inside a loop. */
-	if (old_icons_dir != NULL)
-	{
-		if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
-		{
-			purple_debug_info("buddyicon", "Creating icon cache directory.\n");
-
-			if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
-			{
-				purple_debug_error("buddyicon",
-				                   "Unable to create directory %s: %s\n",
-				                   dirname, g_strerror(errno));
-			}
-		}
-	}
-
 	while (node != NULL)
 	{
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node))
@@ -1178,26 +1007,17 @@ _purple_buddy_icons_blist_loaded_cb()
 			filename = purple_blist_node_get_string(node, "buddy_icon");
 			if (filename != NULL)
 			{
-				if (old_icons_dir != NULL)
+				char *path = g_build_filename(dirname, filename, NULL);
+				if (!g_file_test(path, G_FILE_TEST_EXISTS))
 				{
-					migrate_buddy_icon(node,
-					                   "buddy_icon",
-					                   dirname, filename);
+					purple_blist_node_remove_setting(node,
+					                                 "buddy_icon");
+					purple_blist_node_remove_setting(node,
+					                                 "icon_checksum");
 				}
 				else
-				{
-					char *path = g_build_filename(dirname, filename, NULL);
-					if (!g_file_test(path, G_FILE_TEST_EXISTS))
-					{
-						purple_blist_node_remove_setting(node,
-						                                 "buddy_icon");
-						purple_blist_node_remove_setting(node,
-						                                 "icon_checksum");
-					}
-					else
-						ref_filename(filename);
-					g_free(path);
-				}
+					ref_filename(filename);
+				g_free(path);
 			}
 		}
 		else if (PURPLE_BLIST_NODE_IS_CONTACT(node) ||
@@ -1209,24 +1029,15 @@ _purple_buddy_icons_blist_loaded_cb()
 			filename = purple_blist_node_get_string(node, "custom_buddy_icon");
 			if (filename != NULL)
 			{
-				if (old_icons_dir != NULL)
+				char *path = g_build_filename(dirname, filename, NULL);
+				if (!g_file_test(path, G_FILE_TEST_EXISTS))
 				{
-					migrate_buddy_icon(node,
-					                   "custom_buddy_icon",
-					                   dirname, filename);
+					purple_blist_node_remove_setting(node,
+					                                 "custom_buddy_icon");
 				}
 				else
-				{
-					char *path = g_build_filename(dirname, filename, NULL);
-					if (!g_file_test(path, G_FILE_TEST_EXISTS))
-					{
-						purple_blist_node_remove_setting(node,
-						                                 "custom_buddy_icon");
-					}
-					else
-						ref_filename(filename);
-					g_free(path);
-				}
+					ref_filename(filename);
+				g_free(path);
 			}
 		}
 		node = purple_blist_node_next(node, TRUE);
@@ -1298,11 +1109,9 @@ purple_buddy_icons_uninit()
 	g_hash_table_destroy(icon_data_cache);
 	g_hash_table_destroy(icon_file_cache);
 	g_hash_table_destroy(pointer_icon_cache);
-	g_free(old_icons_dir);
 	g_free(cache_dir);
 
 	cache_dir = NULL;
-	old_icons_dir = NULL;
 }
 
 void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height)

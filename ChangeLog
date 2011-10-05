@@ -1,5 +1,24 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 3.0.0 (??/??/????):
+	AIM and ICQ:
+	* Make buddy list management code more efficient. (Oliver) (#4816)
+	* Don't try to format ICQ usernames entered as email addresses.
+	  Gets rid of an "Unable to format username" error at login. (#13883)
+
+	MXit:
+	* Remove all reference to Hidden Number.
+	* Fix decoding of font-size changes in the markup of received messages.
+	* Ignore new invites to join a GroupChat if you're already joined, or
+	  still have a pending invite.
+	* The buddy's name was not centered vertically in the buddy-list if they
+	  did not have a status-message or mood set.
+
+	XMPP:
+	* Strip element prefixes from XHTML-IM messages as they're presented
+	  to the core (and UIs) as incoming messages (Thijs Alkemade).
+	  (#14529)
+
 version 2.10.1 (??/??/????):
 	SILC:
 	* Fix CVE-2011-3594, by UTF-8 validating incoming messages before

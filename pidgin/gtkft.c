@@ -37,9 +37,6 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
-#define PIDGINXFER(xfer) \
-	(PidginXferUiData *)(xfer)->ui_data
-
 /* the maximum size of files we will try to make a thumbnail for */
 #define PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL 10 * 1024 * 1024
 
@@ -116,14 +113,17 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 	double kbps = 0.0;
 	time_t elapsed, now;
 
-	if (xfer->end_time != 0)
-		now = xfer->end_time;
-	else
+	now = purple_xfer_get_end_time(xfer);
+	if (now == 0)
 		now = time(NULL);
 
 	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
 	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
-	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
+	elapsed = purple_xfer_get_start_time(xfer);
+	if (elapsed > 0)
+		elapsed = now - elapsed;
+	else
+		elapsed = 0;
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
@@ -135,9 +135,9 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 		int h, m, s;
 		int secs_elapsed;
 
-		if (xfer->start_time > 0)
+		if (purple_xfer_get_start_time(xfer) > 0)
 		{
-			secs_elapsed = now - xfer->start_time;
+			secs_elapsed = now - purple_xfer_get_start_time(xfer);
 
 			h = secs_elapsed / 3600;
 			m = (secs_elapsed % 3600) / 60;
@@ -155,7 +155,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 		if (purple_xfer_is_completed(xfer)) {
 			*time_remaining = g_strdup(_("Finished"));
 		}
-		else if (purple_xfer_is_canceled(xfer)) {
+		else if (purple_xfer_is_cancelled(xfer)) {
 			*time_remaining = g_strdup(_("Cancelled"));
 		}
 		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
@@ -243,7 +243,7 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
@@ -281,10 +281,10 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 	}
 
 	gtk_label_set_text(GTK_LABEL(dialog->local_user_label),
-								 purple_account_get_username(xfer->account));
-	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), xfer->who);
+								 purple_account_get_username(purple_xfer_get_account(xfer)));
+	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), purple_xfer_get_remote_user(xfer));
 	gtk_label_set_text(GTK_LABEL(dialog->protocol_label),
-								 purple_account_get_protocol_name(xfer->account));
+								 purple_account_get_protocol_name(purple_xfer_get_account(xfer)));
 
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
@@ -357,7 +357,7 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 #endif
 
 		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
-	} else if (purple_xfer_is_canceled(xfer)) {
+	} else if (purple_xfer_is_cancelled(xfer)) {
 		gtk_widget_hide(dialog->stop_button);
 		gtk_widget_show(dialog->remove_button);
 
@@ -732,8 +732,8 @@ pidgin_xfer_dialog_new(void)
 	gtk_widget_show(vbox2);
 
 	/* Setup the listbox */
-	gtk_box_pack_start(GTK_BOX(vbox2), 
-		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140), 
+	gtk_box_pack_start(GTK_BOX(vbox2),
+		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140),
 		TRUE, TRUE, 0);
 
 	/* "Close this window when all transfers finish" */
@@ -869,7 +869,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	purple_xfer_ref(xfer);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
 
 	pidgin_xfer_dialog_show(dialog);
@@ -926,7 +926,7 @@ pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -957,7 +957,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -970,7 +970,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 		return;
 	}
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	update_detailed_info(dialog, xfer);
 	update_title_progress(dialog);
@@ -979,7 +979,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									PIDGIN_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
-	if (purple_xfer_is_canceled(xfer))
+	if (purple_xfer_is_cancelled(xfer))
 		status = _("Cancelled");
 	else
 		status = _("Failed");
@@ -1007,7 +1007,7 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	if ((data = PIDGINXFER(xfer)) == NULL)
+	if ((data = purple_xfer_get_ui_data(xfer)) == NULL)
 		return;
 
 	if (data->in_list == FALSE)
@@ -1095,9 +1095,9 @@ pidgin_xfer_new_xfer(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
-	/* This is where we're setting xfer->ui_data for the first time. */
+	/* This is where we're setting xfer's "ui_data" for the first time. */
 	data = g_new0(PidginXferUiData, 1);
-	xfer->ui_data = data;
+	purple_xfer_set_ui_data(xfer, data);
 }
 
 static void
@@ -1105,11 +1105,11 @@ pidgin_xfer_destroy(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	if (data) {
 		g_free(data->name);
 		g_free(data);
-		xfer->ui_data = NULL;
+		purple_xfer_set_ui_data(xfer, NULL);
 	}
 }
 

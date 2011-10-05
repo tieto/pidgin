@@ -317,8 +317,6 @@ gboolean purple_plugin_unload(PurplePlugin *plugin);
  * startup" by excluding said plugins from the list of plugins to save.  The
  * UI needs to call purple_plugins_save_loaded() after calling this for it
  * to have any effect.
- *
- * @since 2.3.0
  */
 void purple_plugin_disable(PurplePlugin *plugin);
 
@@ -515,8 +513,6 @@ void purple_plugins_add_search_path(const char *path);
  * Returns a list of plugin search paths.
  *
  * @constreturn A list of searched paths.
- *
- * @since 2.6.0
  */
 GList *purple_plugins_get_search_paths(void);
 
@@ -565,72 +561,6 @@ void purple_plugins_probe(const char *ext);
  * @return TRUE if plugin support is enabled, or FALSE otherwise.
  */
 gboolean purple_plugins_enabled(void);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Registers a function that will be called when probing is finished.
- *
- * @param func The callback function.
- * @param data Data to pass to the callback.
- * @deprecated If you need this, ask for a plugin-probe signal to be added.
- */
-void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Unregisters a function that would be called when probing is finished.
- *
- * @param func The callback function.
- * @deprecated If you need this, ask for a plugin-probe signal to be added.
- */
-void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Registers a function that will be called when a plugin is loaded.
- *
- * @param func The callback function.
- * @param data Data to pass to the callback.
- * @deprecated Use the plugin-load signal instead.
- */
-void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
-										  void *data);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Unregisters a function that would be called when a plugin is loaded.
- *
- * @param func The callback function.
- * @deprecated Use the plugin-load signal instead.
- */
-void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *));
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Registers a function that will be called when a plugin is unloaded.
- *
- * @param func The callback function.
- * @param data Data to pass to the callback.
- * @deprecated Use the plugin-unload signal instead.
- */
-void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
-											void *data);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
-/**
- * Unregisters a function that would be called when a plugin is unloaded.
- *
- * @param func The callback function.
- * @deprecated Use the plugin-unload signal instead.
- */
-void purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *,
-														   void *));
-#endif
 
 /**
  * Finds a plugin with the specified name.

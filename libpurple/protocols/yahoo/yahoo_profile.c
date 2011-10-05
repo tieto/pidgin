@@ -789,7 +789,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
-	yd = info_data->gc->proto_data;
+	yd = purple_connection_get_protocol_data(info_data->gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
@@ -805,7 +805,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 * to send back HTML, with a 200 status code.
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
-		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
+		purple_notify_user_info_add_pair_html(user_info, _("Error retrieving profile"), NULL);
 		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
@@ -840,7 +840,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 						 _("If you wish to view this profile, "
 						"you will need to visit this link in your web browser:"),
 						 profile_url_text, profile_url_text);
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);
+		purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 		g_free(tmp);
 
 		purple_notify_userinfo(info_data->gc, info_data->name,
@@ -940,7 +940,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		 * we specify HTTP 1.1. So we have to specify 1.0 & fix purple_util_fetch_url
 		 */
 		url_data = purple_util_fetch_url(photo_url_text, use_whole_url, NULL,
-				FALSE, yahoo_got_photo, info2_data);
+				FALSE, -1, yahoo_got_photo, info2_data);
 		if (url_data != NULL)
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	} else {
@@ -983,7 +983,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
-	yd = info_data->gc->proto_data;
+	yd = purple_connection_get_protocol_data(info_data->gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
@@ -1048,7 +1048,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
-			purple_notify_user_info_add_pair(user_info, NULL, tmp);
+			purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 			g_free(tmp);
 		}
 	}
@@ -1195,7 +1195,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *str;
 
 		purple_notify_user_info_add_section_break(user_info);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
 
 		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
@@ -1228,14 +1228,14 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			str = _("The user's profile is empty.");
 		}
 
-		purple_notify_user_info_add_pair(user_info, NULL, str);
+		purple_notify_user_info_add_pair_plaintext(user_info, NULL, str);
 	}
 
 	/* put a link to the actual profile URL */
 	purple_notify_user_info_add_section_break(user_info);
 	tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 			profile_url_text, _("View web profile"));
-	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 	g_free(tmp);
 
 	g_free(stripped);
@@ -1262,7 +1262,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;
@@ -1274,7 +1274,7 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s",
 			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
 
-	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
+	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, -1, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	else {

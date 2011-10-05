@@ -50,9 +50,6 @@ extern "C" {
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
-#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
-typedef struct _GtkIMHtmlFontDetail	GtkIMHtmlFontDetail;	/* The five elements contained in a FONT tag */
-#endif
 typedef struct _GtkSmileyTree		GtkSmileyTree;
 typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
@@ -61,9 +58,6 @@ typedef struct _GtkIMHtmlAnimation	GtkIMHtmlAnimation;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
 
-/**
- * @since 2.6.0
- */
 typedef struct _GtkIMHtmlLink       GtkIMHtmlLink;
 
 typedef enum {
@@ -81,7 +75,7 @@ typedef enum {
 	GTK_IMHTML_SMILEY =     1 << 11,
 	GTK_IMHTML_LINKDESC =   1 << 12,
 	GTK_IMHTML_STRIKE =     1 << 13,
-	/** Show custom smileys when appropriate. @since 2.5.0 */
+	/** Show custom smileys when appropriate. */
 	GTK_IMHTML_CUSTOM_SMILEY = 1 << 14,
 	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
@@ -135,16 +129,6 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKIMHTML_C_)
-	/** @deprecated */
-	char *clipboard_text_string;
-	/** @deprecated */
-	char *clipboard_html_string;
-#else
-	char *depr1;
-	char *depr2;
-#endif
-
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
 	GtkSourceUndoManager *undo_manager;
@@ -164,20 +148,6 @@ struct _GtkIMHtmlClass {
 	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
 
-#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
-/** @deprecated as of 2.7.10 */
-struct _GtkIMHtmlFontDetail {
-	gushort size;
-	gchar *face;
-	gchar *fore;
-	gchar *back;
-	gchar *bg;
-	gchar *sml;
-	gboolean underline;
-	gshort bold;
-};
-#endif
-
 struct _GtkSmileyTree {
 	GString *values;
 	GtkSmileyTree **children;
@@ -193,8 +163,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
-	gpointer data;       /** @since 2.6.0 */
-	gsize datasize;      /** @since 2.6.0 */
+	gpointer data;
+	gsize datasize;
 };
 
 struct _GtkIMHtmlScalable {
@@ -441,73 +411,6 @@ void gtk_imhtml_page_down(GtkIMHtml *imhtml);
  * @return A new IM/HTML Scalable object.
  */
 GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
-
-/**
- * Creates and returns a new GTK+ IM/HTML scalable object with an image.
- *
- * @param img      A GdkPixbuf of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
-
-/**
- * Creates and returns a new GTK+ IM/HTML scalable object with an
- * animated image.
- *
- * @param img      A GdkPixbufAnimation of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- *
- * @since 2.1.0
- */
-/*
- * TODO: All this animation code could be combined much better with
- *       the image code.  It couldn't be done when it was written
- *       because it requires breaking backward compatibility.  It
- *       would be good to do it for 3.0.0.
- */
-GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *img, const gchar *filename, int id);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable image.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_free(GtkIMHtmlScalable *scale);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable animation.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale);
-
-/**
- * Rescales a GTK+ IM/HTML scalable image to a given size.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param width  The new width.
- * @param height The new height.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height);
-
-/**
- * Adds a GTK+ IM/HTML scalable image to a given GTK+ IM/HTML at a given iter.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param imhtml The GTK+ IM/HTML.
- * @param iter   The GtkTextIter at which to add the scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
 
 /**
  * Creates and returns an new GTK+ IM/HTML scalable with a horizontal rule.
@@ -860,8 +763,6 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
  *
  * @param imhtml  The GTK+ IM/HTML.
  * @param flags   The connection flag which describes the allowed types of formatting.
- *
- * @since 2.1.0
  */
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
@@ -874,7 +775,6 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
  * @param flags      The smiley flags
  *
  * @return The newly created smiley
- * @since 2.5.0
  */
 GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
 		GtkIMHtmlSmileyFlags flags);
@@ -883,8 +783,6 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
  * Reload the image data for the smiley.
  *
  * @param smiley   The smiley to reload
- *
- * @since 2.5.0
  */
 void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
 
@@ -892,8 +790,6 @@ void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
  * Destroy a GtkIMHtmlSmiley.
  *
  * @param smiley   The smiley to destroy
- *
- * @since 2.5.0
  */
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
 
@@ -912,8 +808,6 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
  *                      successfully, @c FALSE otherwise.
  *
  * @return  @c TRUE if the protocol was successfully registered (or unregistered, when \a activate is @c NULL)
- *
- * @since 2.6.0
  */
 gboolean gtk_imhtml_class_register_protocol(const char *name,
 		gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link),
@@ -925,8 +819,6 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  The URL
- *
- * @since 2.6.0
  */
 const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
 
@@ -936,8 +828,6 @@ const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  The GtkTextTag object, or @c NULL
- *
- * @since 2.6.0
  */
 const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
 
@@ -948,8 +838,6 @@ const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
  * @param link   The GtkIMHtmlLink object sent to the callback functions
  *
  * @return  @c TRUE if 'url-clicked' signal was emitted, @c FALSE otherwise.
- *
- * @since 2.6.0
  */
 gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
 

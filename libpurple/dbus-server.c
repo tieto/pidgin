@@ -711,7 +711,7 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 			g_return_val_if_fail(ptr, TRUE);
 		}
 
-		switch (purple_values[i]->type)
+		switch (purple_value_get_type(purple_values[i]))
 		{
 		case PURPLE_TYPE_INT:
 		case PURPLE_TYPE_ENUM:

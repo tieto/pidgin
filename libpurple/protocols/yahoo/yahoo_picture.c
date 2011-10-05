@@ -52,7 +52,7 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	YahooData *yd;
 
 	d = user_data;
-	yd = d->gc->proto_data;
+	yd = purple_connection_get_protocol_data(d->gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL) {
@@ -132,10 +132,10 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->checksum = checksum;
 		/* TODO: Does this need to be MSIE 5.0? */
 		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE,
+				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, -1,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
-			yd = gc->proto_data;
+			yd = purple_connection_get_protocol_data(gc);
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 		} else {
 			g_free(data->who);
@@ -185,7 +185,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 void yahoo_process_picture_upload(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	GSList *l = pkt->hash;
 	char *url = NULL;
 
@@ -261,7 +261,7 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 
 	if (!yd->picture_url) {
@@ -278,7 +278,7 @@ void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 
 void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -290,7 +290,7 @@ void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 
 void yahoo_send_picture_checksum(PurpleConnection *gc)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -301,7 +301,7 @@ void yahoo_send_picture_checksum(PurpleConnection *gc)
 
 void yahoo_send_picture_update_to_user(PurpleConnection *gc, const char *who, int type)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AVATAR_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -326,7 +326,7 @@ static void yahoo_send_picture_update_foreach(gpointer key, gpointer value, gpoi
 
 void yahoo_send_picture_update(PurpleConnection *gc, int type)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yspufe data;
 
 	data.gc = gc;
@@ -425,7 +425,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 	account = purple_connection_get_account(gc);
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	/* Buddy icon connect is now complete; clear the PurpleProxyConnectData */
 	yd->buddy_icon_connect_data = NULL;
@@ -490,7 +490,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_upload_data *d)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (yd->buddy_icon_connect_data != NULL) {
 		/* Cancel any in-progress buddy icon upload */
@@ -535,7 +535,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 
 void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = gc->account;
 
 	if (img == NULL) {

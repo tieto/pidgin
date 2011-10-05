@@ -39,10 +39,9 @@
 
 #include "gtkblist.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 #include "pidginstock.h"
 
 static GList *dialogwindows = NULL;
@@ -151,7 +150,7 @@ static const struct translator translators[] = {
 	{N_("Assamese"),            "as", "Amitakhya Phukan", "aphukan@fedoraproject.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
-	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
+	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "kaladan@gmail.com"},
 	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
 	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
@@ -222,7 +221,6 @@ static const struct translator translators[] = {
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Piotr Drąg", "piotrdrag@gmail.com"},
-	{N_("Polish"),              "pl", "Piotr Makowski", "pmakowski@aviary.pl"},
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
@@ -304,6 +302,7 @@ static const struct translator past_translators[] = {
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
+	{N_("Polish"),              "pl", "Piotr Makowski", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
@@ -422,9 +421,8 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 static GtkWidget *
 pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 {
-	GtkWidget *win, *vbox, *frame, *logo, *imhtml, *button;
+	GtkWidget *win, *vbox, *frame, *logo, *webview, *button;
 	GdkPixbuf *pixbuf;
-	GtkTextIter iter;
 	AtkObject *obj;
 	char *filename, *tmp;
 
@@ -451,13 +449,15 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = pidgin_create_imhtml(FALSE, &imhtml, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &webview, NULL, NULL);
+	/* TODO WEBKIT: Compile now and fix it later when we have a proper replacement for this function
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	*/
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), string->str, GTK_IMHTML_NO_SCROLL);
-	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), &iter);
-	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), &iter);
+	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
+	/* TODO WEBKIT: This doesn't seem to stay at the top. */
+	webkit_web_view_move_cursor(WEBKIT_WEB_VIEW(webview), GTK_MOVEMENT_BUFFER_ENDS, -1);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
@@ -1111,26 +1111,6 @@ pidgin_dialogs_log(void)
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
 						NULL);
-}
-
-static void
-pidgin_dialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
-{
-	purple_blist_alias_contact(contact, new_alias);
-}
-
-void
-pidgin_dialogs_alias_contact(PurpleContact *contact)
-{
-	g_return_if_fail(contact != NULL);
-
-	purple_request_input(NULL, _("Alias Contact"), NULL,
-					   _("Enter an alias for this contact."),
-					   contact->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
-					   _("Cancel"), NULL,
-					   NULL, purple_contact_get_alias(contact), NULL,
-					   contact);
 }
 
 static void

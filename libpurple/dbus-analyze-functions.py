@@ -29,7 +29,11 @@ excluded = [\
     # Similar to the above:
     "purple_account_set_register_callback",
     "purple_account_unregister",
-    "purple_connection_new_unregister",
+
+    # Similar to the above, again
+    "purple_menu_action_new",
+    "purple_menu_action_set_callback",
+    "purple_menu_action_get_callback",
 
     # These functions are excluded because they involve setting arbitrary
     # data via pointers for protocols and UIs.  This just won't work.

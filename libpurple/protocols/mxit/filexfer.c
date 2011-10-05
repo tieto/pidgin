@@ -97,11 +97,11 @@ const char* file_mime_type( const char* filename, const char* buf, int buflen )
  */
 static void mxit_xfer_free( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx		= (struct mxitxfer*) xfer->data;;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	if ( mx ) {
+		purple_xfer_set_protocol_data( xfer, NULL );
 		g_free( mx );
-		xfer->data = NULL;
 	}
 }
 
@@ -117,7 +117,7 @@ static void mxit_xfer_free( PurpleXfer* xfer )
  */
 static void mxit_xfer_init( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx	= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_init\n" );
 
@@ -126,7 +126,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 
 		if ( purple_xfer_get_size( xfer ) > CP_MAX_FILESIZE ) {
 			/* the file is too big */
-			purple_xfer_error( xfer->type, xfer->account, xfer->who, _( "The file you are trying to send is too large!" ) );
+			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "The file you are trying to send is too large!" ) );
 			purple_xfer_cancel_local( xfer );
 			return;
 		}
@@ -151,6 +151,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
  */
 static void mxit_xfer_start( PurpleXfer* xfer )
 {
+	size_t			filesize;
 	unsigned char*	buffer;
 	int				size;
 	int				wrote;
@@ -163,10 +164,12 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 		 * a buffer and copy the file data into memory and then we can send it to
 		 * the contact. we will send the whole file with one go.
 		 */
-		buffer = g_malloc( xfer->bytes_remaining );
-		size = fread( buffer, xfer->bytes_remaining, 1, xfer->dest_fp );
+		filesize = purple_xfer_get_bytes_remaining( xfer );
+		buffer = g_malloc( filesize );
+		size = fread( buffer, filesize, 1, xfer->dest_fp );
+		// TODO: If (size != 1) -> file read error
 
-		wrote = purple_xfer_write( xfer, buffer, xfer->bytes_remaining );
+		wrote = purple_xfer_write( xfer, buffer, filesize );
 		if ( wrote > 0 )
 			purple_xfer_set_bytes_sent( xfer, wrote );
 
@@ -215,7 +218,7 @@ static void mxit_xfer_cancel_send( PurpleXfer* xfer )
  */
 static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx	= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_write\n" );
 
@@ -245,7 +248,7 @@ static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xf
  */
 static void mxit_xfer_request_denied( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx		= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx		= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_request_denied\n" );
 
@@ -295,7 +298,7 @@ gboolean mxit_xfer_enabled( PurpleConnection* gc, const char* who )
  */
 PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 	PurpleXfer*			xfer	= NULL;
 	struct mxitxfer*	mx		= NULL;
 
@@ -305,7 +308,7 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	/* create file info and attach it to the file transfer */
 	mx = g_new0( struct mxitxfer, 1 );
 	mx->session = session;
-	xfer->data = mx;
+	purple_xfer_set_protocol_data( xfer, mx );
 
 	/* configure callbacks (reference: "libpurple/ft.h") */
 	purple_xfer_set_init_fnc( xfer, mxit_xfer_init );
@@ -362,7 +365,7 @@ void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, cons
 		mx = g_new0( struct mxitxfer, 1 );
 		mx->session = session;
 		memcpy( mx->fileid, fileid, MXIT_CHUNK_FILEID_LEN );
-		xfer->data = mx;
+		purple_xfer_set_protocol_data( xfer, mx );
 
 		purple_xfer_set_filename( xfer, filename );
 		if( filesize > 0 )
@@ -395,9 +398,9 @@ static PurpleXfer* find_mxit_xfer( struct MXitSession* session, const char* file
 	while ( item ) {
 		xfer = item->data;
 
-		if ( xfer->account == session->acc ) {
+		if ( purple_xfer_get_account( xfer ) == session->acc ) {
 			/* transfer is associated with this MXit account */
-			struct mxitxfer* mx	= xfer->data;
+			struct mxitxfer* mx	= purple_xfer_get_protocol_data( xfer );
 
 			/* does the fileid match? */
 			if ( ( mx ) && ( memcmp( mx->fileid, fileid, MXIT_CHUNK_FILEID_LEN ) == 0 ) )
@@ -431,12 +434,13 @@ void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const c
 	/* find the file-transfer object */
 	xfer = find_mxit_xfer( session, fileid );
 	if ( xfer ) {
-		mx = xfer->data;
+		mx = purple_xfer_get_protocol_data( xfer );
 
 		/* this is the transfer we have been looking for */
 		purple_xfer_ref( xfer );
 		purple_xfer_start( xfer, -1, NULL, 0 );
 		fwrite( data, datalen, 1, xfer->dest_fp );
+		// TODO: Handle error from fwrite()
 		purple_xfer_unref( xfer );
 		purple_xfer_set_completed( xfer, TRUE );
 		purple_xfer_end( xfer );

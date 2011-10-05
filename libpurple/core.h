@@ -156,17 +156,6 @@ void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
 
 /**
- * Migrates from <tt>.gaim</tt> to <tt>.purple</tt>.
- *
- * UIs <strong>must not</strong> call this if they have been told to use a
- * custom user directory.
- *
- * @return A boolean indicating success or migration failure. On failure,
- *         the application must display an error to the user and then exit.
- */
-gboolean purple_core_migrate(void);
-
-/**
  * Ensures that only one instance is running.  If libpurple is built with D-Bus
  * support, this checks if another process owns the libpurple bus name and if
  * so whether that process is using the same configuration directory as this
@@ -174,8 +163,6 @@ gboolean purple_core_migrate(void);
  *
  * @return @c TRUE if this is the first instance of libpurple running;
  *         @c FALSE if there is another instance running.
- *
- * @since 2.1.0
  */
 gboolean purple_core_ensure_single_instance(void);
 
@@ -206,8 +193,6 @@ gboolean purple_core_ensure_single_instance(void);
  *
  * @return A GHashTable with strings for keys and values.  This
  * hash table must not be freed and should not be modified.
- *
- * @since 2.1.0
  *
  */
 GHashTable* purple_core_get_ui_info(void);

@@ -220,7 +220,7 @@ purple_xfer_unref(PurpleXfer *xfer)
 		purple_xfer_destroy(xfer);
 }
 
-static void
+void
 purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
@@ -720,6 +720,20 @@ purple_xfer_request_denied(PurpleXfer *xfer)
 	purple_xfer_unref(xfer);
 }
 
+int purple_xfer_get_fd(PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->fd;
+}
+
+int purple_xfer_get_watcher(PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->watcher;
+}
+
 PurpleXferType
 purple_xfer_get_type(const PurpleXfer *xfer)
 {
@@ -751,9 +765,8 @@ purple_xfer_get_status(const PurpleXfer *xfer)
 	return xfer->status;
 }
 
-/* FIXME: Rename with cancelled for 3.0.0. */
 gboolean
-purple_xfer_is_canceled(const PurpleXfer *xfer)
+purple_xfer_is_cancelled(const PurpleXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, TRUE);
 
@@ -864,6 +877,20 @@ purple_xfer_get_end_time(const PurpleXfer *xfer)
 	return xfer->end_time;
 }
 
+void purple_xfer_set_fd(PurpleXfer *xfer, int fd)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->fd = fd;
+}
+
+void purple_xfer_set_watcher(PurpleXfer *xfer, int watcher)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->watcher = watcher;
+}
+
 void
 purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 {
@@ -944,6 +971,14 @@ purple_xfer_set_size(PurpleXfer *xfer, size_t size)
 
 	xfer->size = size;
 	xfer->bytes_remaining = xfer->size - purple_xfer_get_bytes_sent(xfer);
+}
+
+void
+purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->local_port = local_port;
 }
 
 void
@@ -1404,13 +1439,6 @@ purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_STARTED);
 
-	/*
-	 * FIXME 3.0.0 -- there's too much broken code depending on fd == 0
-	 * meaning "don't use a real fd"
-	 */
-	if (fd == 0)
-		fd = -1;
-
 	if (type == PURPLE_XFER_RECEIVE) {
 		cond = PURPLE_INPUT_READ;
 
@@ -1700,6 +1728,37 @@ purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats)
 		xfer->ui_ops->add_thumbnail(xfer, formats);
 	}
 }
+
+void
+purple_xfer_set_protocol_data(PurpleXfer *xfer, gpointer proto_data)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->proto_data = proto_data;
+}
+
+gpointer
+purple_xfer_get_protocol_data(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, NULL);
+
+	return xfer->proto_data;
+}
+
+void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->ui_data = ui_data;
+}
+
+gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, NULL);
+
+	return xfer->ui_data;
+}
+
 
 /**************************************************************************
  * File Transfer Subsystem API

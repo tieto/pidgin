@@ -325,18 +325,6 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 	return attn;
 }
 
-void
-serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
-{
-	purple_prpl_send_attention(gc, who, type_code);
-}
-
-void
-serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
-{
-	purple_prpl_got_attention(gc, who, type_code);
-}
-
 
 /*
  * Move a buddy from one group to another on server.
@@ -737,7 +725,7 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	{
 		im = PURPLE_CONV_IM(conv);
 
-		if (im->typing_state == PURPLE_NOT_TYPING)
+		if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING)
 			return;
 
 		purple_conv_im_stop_typing_timeout(im);

@@ -253,7 +253,7 @@ msn_request_user_display(MsnUser *user)
 			data->session = session;
 			data->remote_user = user->passport;
 			data->sha1 = info;
-			url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE, 200*1024,
+			url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE, 200*1024,
 			                                     fetched_user_display, data);
 			session->url_datas = g_slist_prepend(session->url_datas, url_data);
 		} else {
@@ -364,7 +364,7 @@ msn_request_ft(PurpleXfer *xfer)
 	fn = purple_xfer_get_filename(xfer);
 	fp = purple_xfer_get_local_filename(xfer);
 
-	slplink = xfer->data;
+	slplink = purple_xfer_get_protocol_data(xfer);
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
@@ -384,7 +384,7 @@ msn_request_ft(PurpleXfer *xfer)
 	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
 	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
 
-	xfer->data = slpcall;
+	purple_xfer_set_protocol_data(xfer, slpcall);
 
 	context = gen_context(xfer, fn, fp);
 

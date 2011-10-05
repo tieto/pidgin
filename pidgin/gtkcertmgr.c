@@ -333,6 +333,12 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 }
 
 static void
+tls_peers_mgmt_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column, gpointer data)
+{
+	tls_peers_mgmt_info_cb(NULL, NULL);
+}
+
+static void
 tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
 {
 	if (1 == choice) {
@@ -452,6 +458,9 @@ tls_peers_mgmt_build(void)
 	g_signal_connect(G_OBJECT(select), "changed",
 			 G_CALLBACK(tls_peers_mgmt_select_chg_cb), NULL);
 
+	g_signal_connect(G_OBJECT(listview), "row-activated",
+			 G_CALLBACK(tls_peers_mgmt_activated_cb), NULL);
+
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), 
 			pidgin_make_scrollable(GTK_WIDGET(listview), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 			TRUE, TRUE, /* Take up lots of space */
@@ -471,9 +480,8 @@ tls_peers_mgmt_build(void)
 	gtk_widget_show(bbox);
 
 	/* Import button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->importbutton = importbutton =
-		gtk_button_new_from_stock(GTK_STOCK_ADD);
+		gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
 	gtk_widget_show(importbutton);
 	g_signal_connect(G_OBJECT(importbutton), "clicked",
@@ -481,9 +489,8 @@ tls_peers_mgmt_build(void)
 
 
 	/* Export button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->exportbutton = exportbutton =
-		gtk_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
 	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
 	gtk_widget_show(exportbutton);
 	g_signal_connect(G_OBJECT(exportbutton), "clicked",

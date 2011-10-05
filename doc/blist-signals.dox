@@ -136,7 +136,6 @@ void (*buddy_caps_changed)(PurpleBuddy *buddy, PurpleMediaCaps newcaps,
   @param buddy	  The buddy
   @param newcaps
   @param oldcaps
-  @since 2.7.0
  @endsignaldef
 
  @signaldef ui-caps-changed
@@ -147,7 +146,6 @@ void (*ui_caps_changed)(PurpleMediaCaps newcaps, PurpleMediaCaps oldcaps)
     Emitted when updating the media capabilities of the UI.
   @param newcaps
   @param oldcaps
-  @since 2.7.0
  @endsignaldef
  
  */

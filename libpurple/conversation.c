@@ -35,6 +35,118 @@
 
 #define SEND_TYPED_TIMEOUT_SECONDS 5
 
+/**
+ * Data specific to Chats.
+ */
+struct _PurpleConvChat
+{
+	PurpleConversation *conv;          /**< The parent conversation.      */
+
+	GList *in_room;                  /**< The users in the room.
+	                                  *   @deprecated Will be removed in 3.0.0
+									  */
+	GList *ignored;                  /**< Ignored users.                */
+	char  *who;                      /**< The person who set the topic. */
+	char  *topic;                    /**< The topic.                    */
+	int    id;                       /**< The chat ID.                  */
+	char *nick;                      /**< Your nick in this chat.       */
+
+	gboolean left;                   /**< We left the chat and kept the window open */
+	GHashTable *users;               /**< Hash table of the users in the room. */
+};
+
+/**
+ * Data specific to Instant Messages.
+ */
+struct _PurpleConvIm
+{
+	PurpleConversation *conv;            /**< The parent conversation.     */
+
+	PurpleTypingState typing_state;      /**< The current typing state.    */
+	guint  typing_timeout;             /**< The typing timer handle.     */
+	time_t type_again;                 /**< The type again time.         */
+	guint  send_typed_timeout;         /**< The type again timer handle. */
+
+	PurpleBuddyIcon *icon;               /**< The buddy icon.              */
+};
+
+/**
+ * Data for "Chat Buddies"
+ */
+struct _PurpleConvChatBuddy
+{
+	/** The chat participant's name in the chat. */
+	char *name;
+
+	/** The chat participant's alias, if known; @a NULL otherwise. */
+	char *alias;
+
+	/**
+	 * A string by which this buddy will be sorted, or @c NULL if the
+	 * buddy should be sorted by its @c name.  (This is currently always
+	 * @c NULL.
+	 */
+	char *alias_key;
+
+	/**
+	 * @a TRUE if this chat participant is on the buddy list;
+	 * @a FALSE otherwise.
+	 */
+	gboolean buddy;
+
+	/**
+	 * A bitwise OR of flags for this participant, such as whether they
+	 * are a channel operator.
+	 */
+	PurpleConvChatBuddyFlags flags;
+
+	/**
+	 * A hash table of attributes about the user, such as real name,
+	 * user\@host, etc.
+	 */
+	GHashTable *attributes;
+
+	/** The UI can put whatever it wants here. */
+	gpointer ui_data;
+};
+
+/**
+ * A core representation of a conversation between two or more people.
+ *
+ * The conversation can be an IM or a chat.
+ */
+struct _PurpleConversation
+{
+	PurpleConversationType type;  /**< The type of conversation.          */
+
+	PurpleAccount *account;       /**< The user using this conversation.  */
+
+
+	char *name;                 /**< The name of the conversation.      */
+	char *title;                /**< The window title.                  */
+
+	gboolean logging;           /**< The status of logging.             */
+
+	GList *logs;                /**< This conversation's logs           */
+
+	union
+	{
+		PurpleConvIm   *im;       /**< IM-specific data.                  */
+		PurpleConvChat *chat;     /**< Chat-specific data.                */
+		void *misc;               /**< Misc. data.                        */
+
+	} u;
+
+	PurpleConversationUiOps *ui_ops;           /**< UI-specific operations. */
+	void *ui_data;                           /**< UI-specific data.       */
+
+	GHashTable *data;                        /**< Plugin-specific data.   */
+
+	PurpleConnectionFlags features; /**< The supported features */
+	GList *message_history;         /**< Message history, as a GList of PurpleConvMessage's */
+};
+
+
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
@@ -262,7 +374,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *al
 		if (gc)
 			me = purple_connection_get_display_name(gc);
 		if (!me)
-			me = conv->account->username;
+			me = purple_account_get_username(conv->account);
 		who = me;
 	}
 
@@ -416,7 +528,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		chats = g_list_prepend(chats, conv);
 
-		if ((disp = purple_connection_get_display_name(account->gc)))
+		if ((disp = purple_connection_get_display_name(purple_account_get_connection(account))))
 			purple_conv_chat_set_nick(conv->u.chat, disp);
 		else
 			purple_conv_chat_set_nick(conv->u.chat,
@@ -705,7 +817,7 @@ purple_conversation_get_gc(const PurpleConversation *conv)
 	if (account == NULL)
 		return NULL;
 
-	return account->gc;
+	return purple_account_get_connection(account);
 }
 
 void
@@ -990,7 +1102,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 							purple_account_get_username(account));
 
 				if (purple_account_get_alias(account) != NULL)
-					alias = account->alias;
+					alias = purple_account_get_alias(account);
 				else if (b != NULL && !purple_strequal(purple_buddy_get_name(b), purple_buddy_get_contact_alias(b)))
 					alias = purple_buddy_get_contact_alias(b);
 				else if (purple_connection_get_display_name(gc) != NULL)
@@ -1376,16 +1488,6 @@ purple_conv_chat_get_conversation(const PurpleConvChat *chat)
 	g_return_val_if_fail(chat != NULL, NULL);
 
 	return chat->conv;
-}
-
-GList *
-purple_conv_chat_set_users(PurpleConvChat *chat, GList *users)
-{
-	g_return_val_if_fail(chat != NULL, NULL);
-
-	chat->in_room = users;
-
-	return users;
 }
 
 GList *
@@ -2194,12 +2296,49 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb);
 }
 
+void purple_conv_chat_cb_set_ui_data(PurpleConvChatBuddy *cb, gpointer ui_data)
+{
+	g_return_if_fail(cb != NULL);
+
+	cb->ui_data = ui_data;
+}
+
+gpointer purple_conv_chat_cb_get_ui_data(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	return cb->ui_data;
+}
+
 const char *
-purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
+purple_conv_chat_cb_get_alias(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	return cb->alias;
+}
+
+const char *
+purple_conv_chat_cb_get_name(const PurpleConvChatBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 
 	return cb->name;
+}
+
+PurpleConvChatBuddyFlags
+purple_conv_chat_cb_get_flags(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, PURPLE_CBFLAGS_NONE);
+
+	return cb->flags;
+}
+
+gboolean purple_conv_chat_cb_is_buddy(const PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, FALSE);
+
+	return cb->buddy;
 }
 
 const char *
@@ -2322,6 +2461,21 @@ time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
 	g_return_val_if_fail(msg, 0);
 	return msg->when;
 }
+
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
+{
+	g_return_if_fail(conv != NULL);
+
+	conv->ui_data = ui_data;
+}
+
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv)
+{
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	return conv->ui_data;
+}
+
 
 gboolean
 purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,

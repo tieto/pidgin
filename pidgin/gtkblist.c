@@ -1519,7 +1519,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
-			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
+			prpl_info->can_receive_file(purple_account_get_connection(buddy->account), buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File..."),
 									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
@@ -1547,7 +1547,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
 	}
 
-	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc, node);
+	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(buddy->account), node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
 	if (!contact_expanded && contact != NULL)
@@ -1600,7 +1600,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 			return FALSE;
 		}
 		if(buddy)
-			pidgin_retrieve_user_info(buddy->account->gc, buddy->name);
+			pidgin_retrieve_user_info(purple_account_get_connection(buddy->account), buddy->name);
 	} else {
 		switch (event->keyval) {
 			case GDK_F2:
@@ -1753,7 +1753,7 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
-	pidgin_append_blist_node_proto_menu(menu, c->account->gc, node);
+	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(c->account), node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
 	pidgin_separator(menu);
@@ -1838,7 +1838,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 
 				if(buddy == b)
 					continue;
-				if(!buddy->account->gc)
+				if(!purple_account_get_connection(buddy->account))
 					continue;
 				if(!show_offline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 					continue;
@@ -1967,7 +1967,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			pidgin_retrieve_user_info(b->account->gc, b->name);
+			pidgin_retrieve_user_info(purple_account_get_connection(b->account), b->name);
 		handled = TRUE;
 	}
 
@@ -2673,8 +2673,8 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 		account = purple_buddy_get_account(buddy);
 	}
 
-	if(account && account->gc) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	if(account && purple_account_get_connection(account)) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_account_get_connection(account)->prpl);
 	}
 
 #if 0
@@ -3539,7 +3539,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
 
-	purple_request_field_list_add(f, _("None"), "");
+	purple_request_field_list_add_icon(f, _("None"), NULL, "");
 	if (current_mood == NULL)
 		purple_request_field_list_add_selected(f, _("None"));
 
@@ -3681,7 +3681,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		connections = purple_connections_get_all();
 		if (connections && connections->next)
 		{
-			tmp = g_markup_escape_text(chat->account->username, -1);
+			tmp = g_markup_escape_text(purple_account_get_username(chat->account), -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
 			g_free(tmp);
 		}
@@ -3713,7 +3713,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		if (prpl_info && prpl_info->chat_info != NULL)
-			cur = prpl_info->chat_info(chat->account->gc);
+			cur = prpl_info->chat_info(purple_account_get_connection(chat->account));
 		else
 			cur = NULL;
 
@@ -3774,10 +3774,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		connections = purple_connections_get_all();
 		if (full && connections && connections->next)
 		{
-			tmp = g_markup_escape_text(purple_account_get_username(
-									   purple_buddy_get_account(b)), -1);
-			purple_notify_user_info_add_pair(user_info, _("Account"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Account"),
+					purple_account_get_username(purple_buddy_get_account(b)));
 		}
 
 		/* Alias */
@@ -3787,9 +3785,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		    (c->alias != NULL && c->alias[0] != '\0') &&
 		    strcmp(c->alias, b->alias) != 0)
 		{
-			tmp = g_markup_escape_text(b->alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Buddy Alias"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Buddy Alias"), b->alias);
 		}
 
 		/* Nickname/Server Alias */
@@ -3799,9 +3796,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		 * to look at the tooltip. */
 		if (full && b->server_alias != NULL && b->server_alias[0] != '\0')
 		{
-			tmp = g_markup_escape_text(b->server_alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Nickname"), b->server_alias);
 		}
 
 		/* Logged In */
@@ -3817,7 +3813,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 				tmp = g_strdup(purple_date_format_long(localtime(&signon)));
 			} else
 				tmp = purple_str_seconds_to_string(time(NULL) - signon);
-			purple_notify_user_info_add_pair(user_info, _("Logged In"), tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Logged In"), tmp);
 			g_free(tmp);
 		}
 
@@ -3828,7 +3824,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			if (idle_secs > 0)
 			{
 				tmp = purple_str_seconds_to_string(time(NULL) - idle_secs);
-				purple_notify_user_info_add_pair(user_info, _("Idle"), tmp);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -3863,7 +3859,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			if (lastseen > 0)
 			{
 				tmp = purple_str_seconds_to_string(time(NULL) - lastseen);
-				purple_notify_user_info_add_pair(user_info, _("Last Seen"), tmp);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Last Seen"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -3873,7 +3869,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		/* FIXME: Why is this status special-cased by the core? --rlaager
 		 * FIXME: Alternatively, why not have the core do all of them? --rlaager */
 		if (!PURPLE_BUDDY_IS_ONLINE(b)) {
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Offline"));
 		}
 
 		if (purple_account_is_connected(b->account) &&
@@ -3885,11 +3881,11 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */
 		if (!g_ascii_strcasecmp(b->name, "robflynn"))
-			purple_notify_user_info_add_pair(user_info, _("Description"), _("Spooky"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Description"), _("Spooky"));
 		if (!g_ascii_strcasecmp(b->name, "seanegn"))
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Awesome"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Awesome"));
 		if (!g_ascii_strcasecmp(b->name, "chipx86"))
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Rockin'"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Rockin'"));
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
@@ -3904,24 +3900,21 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		count = purple_blist_get_group_online_count(group);
-
 		if (count != 0) {
 			/* Online buddies in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Online Buddies"),
-			                                 tmp);
-			g_free(tmp);
+			char tmp2[12];
+			sprintf(tmp2, "%d", count);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Online Buddies"), tmp2);
 		}
 
 		count = purple_blist_get_group_size(group, FALSE);
 		if (count != 0) {
 			/* Total buddies (from online accounts) in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Total Buddies"),
-			                                 tmp);
-			g_free(tmp);
+			char tmp2[12];
+			sprintf(tmp2, "%d", count);
+			purple_notify_user_info_add_pair_html(user_info,
+					_("Total Buddies"), tmp2);
 		}
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
@@ -4242,7 +4235,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		if (prpl != NULL)
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (prpl_info && prpl_info->status_text && b->account->gc) {
+		if (prpl_info && prpl_info->status_text && purple_account_get_connection(b->account)) {
 			char *tmp = prpl_info->status_text(b);
 			const char *end;
 
@@ -4597,6 +4590,7 @@ static void
 conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
                         PidginBuddyList *gtkblist)
 {
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	GList *convs = NULL;
 	GList *ims, *chats;
 	GList *l = NULL;
@@ -4604,8 +4598,8 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 	if (type != PURPLE_CONV_UPDATE_UNSEEN)
 		return;
 
-	if(conv->account != NULL && conv->name != NULL) {
-		PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+	if(account != NULL && purple_conversation_get_name(conv) != NULL) {
+		PurpleBuddy *buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
 		if(buddy != NULL)
 			pidgin_blist_update_buddy(NULL, (PurpleBlistNode *)buddy, TRUE);
 	}
@@ -4714,10 +4708,12 @@ displayed_msg_update_ui_cb(PidginConversation *gtkconv, PurpleBlistNode *node)
 static void
 conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 {
-	switch (conv->type) {
+	PurpleAccount *account = purple_conversation_get_account(conv);
+
+	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 			{
-				GSList *buddies = purple_find_buddies(conv->account, conv->name);
+				GSList *buddies = purple_find_buddies(account, purple_conversation_get_name(conv));
 				while (buddies) {
 					PurpleBlistNode *buddy = buddies->data;
 					struct _pidgin_blist_node *ui = buddy->ui_data;
@@ -4738,7 +4734,7 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 			break;
 		case PURPLE_CONV_TYPE_CHAT:
 			{
-				PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
+				PurpleChat *chat = purple_blist_find_chat(account, purple_conversation_get_name(conv));
 				struct _pidgin_blist_node *ui;
 				if (!chat)
 					break;
@@ -4770,8 +4766,6 @@ static void pidgin_blist_new_list(PurpleBuddyList *blist)
 	PidginBuddyList *gtkblist;
 
 	gtkblist = g_new0(PidginBuddyList, 1);
-	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
-												g_direct_equal, NULL, g_free);
 	gtkblist->priv = g_new0(PidginBuddyListPrivate, 1);
 
 	blist->ui_data = gtkblist;
@@ -5085,7 +5079,6 @@ static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
-	g_hash_table_remove(gtkblist->connection_errors, account);
 	/* If the error dialog is being destroyed in response to the
 	 * account-error-changed signal, we don't want to clear the current
 	 * error.
@@ -5356,12 +5349,6 @@ update_account_error_state(PurpleAccount *account,
 	if (old == NULL && new == NULL)
 		return;
 
-	/* For backwards compatibility: */
-	if (new)
-		pidgin_blist_update_account_error_state(account, new->description);
-	else
-		pidgin_blist_update_account_error_state(account, NULL);
-
 	if (new != NULL)
 		pidgin_blist_select_notebook_page(gtkblist);
 
@@ -5425,18 +5412,6 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
 
 		update_account_error_state(account, NULL, err, gtkblist);
 	}
-}
-
-void
-pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
-{
-	/* connection_errors isn't actually used anywhere; it's just kept in
-	 * sync with reality in case a plugin uses it.
-	 */
-	if (text == NULL)
-		g_hash_table_remove(gtkblist->connection_errors, account);
-	else
-		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
 }
 
 static gboolean
@@ -6881,7 +6856,6 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	if (gtkblist->drag_timeout)
 		g_source_remove(gtkblist->drag_timeout);
 
-	g_hash_table_destroy(gtkblist->connection_errors);
 	gtkblist->refresh_timer = 0;
 	gtkblist->timeout = 0;
 	gtkblist->drag_timeout = 0;
@@ -7037,7 +7011,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			purple_blist_add_buddy(b, NULL, g, NULL);
 		}
 
-		purple_account_add_buddy_with_invite(account, b, invite);
+		purple_account_add_buddy(account, b, invite);
 
 		/* Offer to merge people with the same alias. */
 		if (whoalias != NULL && g != NULL)
