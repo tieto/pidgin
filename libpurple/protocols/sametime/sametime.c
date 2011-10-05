@@ -3721,7 +3721,7 @@ static void mw_prpl_login(PurpleAccount *account) {
     /* somehow, we don't have a host to connect to. Well, we need one
        to actually continue, so let's ask the user directly. */
     g_free(user);
-    purple_connection_error_reason(gc,
+    purple_connection_error(gc,
             PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
             _("A server is required to connect this account"));
     return;
