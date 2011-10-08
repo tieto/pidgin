@@ -40,9 +40,7 @@ typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;
 struct _PidginMenuTray {
 	GtkMenuItem gparent;					/**< The parent instance */
 	GtkWidget *tray;						/**< The tray */
-#if GTK_CHECK_VERSION(2,12,0)
-	gpointer depr1;
-#else
+#if !GTK_CHECK_VERSION(2,12,0)
 	GtkTooltips *tooltips;					/**< Tooltips */
 #endif
 };

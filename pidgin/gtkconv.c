@@ -1146,9 +1146,6 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
 	gdk_window_set_cursor(win->window->window, cursor);
 	gdk_cursor_unref(cursor);
-#if GTK_CHECK_VERSION(2,4,0) && !GTK_CHECK_VERSION(2,6,0) //FIXME: What?
-	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
-#endif
 
 	name = purple_conversation_get_name(conv);
 	account = purple_conversation_get_account(conv);
@@ -3467,7 +3464,6 @@ regenerate_options_items(PidginWindow *win)
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
 	GList *list;
-#if GTK_CHECK_VERSION(2,6,0)
 	GtkWidget *more_menu;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -3475,10 +3471,6 @@ regenerate_options_items(PidginWindow *win)
 	                                      "/Conversation/ConversationMenu/MoreMenu");
 	gtk_widget_show(more_menu);
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(more_menu));
-#else
-	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
-#endif
 
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
@@ -3534,12 +3526,8 @@ regenerate_plugins_items(PidginWindow *win)
 		action_items = g_list_delete_link(action_items, action_items);
 	}
 
-#if GTK_CHECK_VERSION(2,6,0)
 	item = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/OptionsMenu");
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(item));
-#else
-	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Options"));
-#endif
 
 	list = purple_conversation_get_extended_menu(conv);
 	if (list) {
@@ -10130,12 +10118,7 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 
 	index = gtk_notebook_page_num(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont);
 
-#if GTK_CHECK_VERSION(2,10,0)
 	g_object_ref_sink(G_OBJECT(gtkconv->tab_cont));
-#else
-	g_object_ref(gtkconv->tab_cont);
-	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
-#endif
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
 
