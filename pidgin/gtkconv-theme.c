@@ -512,7 +512,7 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 	/* VARIANT */
 	pspec = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
-			NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+			NULL, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
 	properties[PROP_VARIANT] = pspec;
 
