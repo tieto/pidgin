@@ -2806,11 +2806,6 @@ static void init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
-	option = purple_account_option_string_new(_("Nickname"),
-			"nick", _("Gadu-Gadu User"));
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-						   option);
-
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
