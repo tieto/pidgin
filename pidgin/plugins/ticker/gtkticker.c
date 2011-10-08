@@ -178,7 +178,7 @@ static void gtk_ticker_put (GtkTicker *ticker, GtkWidget *widget)
 
 	ticker->children = g_list_append (ticker->children, child_info);
 
-	if (gtk_widget_get_realized (ticker))
+	if (gtk_widget_get_realized (GTK_WIDGET (ticker)))
 		gtk_widget_realize (widget);
 
 	if (gtk_widget_get_visible (GTK_WIDGET (ticker)) &&
