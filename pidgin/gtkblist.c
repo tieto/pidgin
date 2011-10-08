@@ -3607,6 +3607,8 @@ set_mood_show(void)
 #if 1
 /* TODO: fill out tooltips... */
 static const GtkActionEntry blist_menu_entries[] = {
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by
+   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
 	/* Buddies menu */
 	{ "BuddiesMenu", NULL, N_("_Buddies"), NULL, NULL, NULL },
 	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, pidgin_dialogs_im },
@@ -3633,7 +3635,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "Plugins", PIDGIN_STOCK_TOOLBAR_PLUGINS, N_("Plu_gins"), "<control>U", NULL, pidgin_plugin_dialog_show },
 	{ "Preferences", GTK_STOCK_PREFERENCES, N_("Pr_eferences"), "<control>P", NULL, pidgin_prefs_show },
 	{ "Privacy", NULL, N_("Pr_ivacy"), NULL, NULL, pidgin_privacy_dialog_show },
-	{ "SetMood", NULL, N_("Set _Mood"), "<control>O", NULL, set_mood_show },
+	{ "SetMood", NULL, N_("Set _Mood"), "<control>D", NULL, set_mood_show },
 	{ "FileTransfers", PIDGIN_STOCK_TOOLBAR_TRANSFER, N_("_File Transfers"), "<control>T", NULL, G_CALLBACK(gtk_blist_show_xfer_dialog_cb) },
 	{ "RoomList", NULL, N_("R_oom List"), NULL, NULL, pidgin_roomlist_dialog_show },
 	{ "SystemLog", NULL, N_("System _Log"), NULL, NULL, gtk_blist_show_systemlog_cb },
@@ -3644,6 +3646,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "BuildInformation", NULL, N_("_Build Information"), NULL, NULL, pidgin_dialogs_buildinfo },
 	{ "DebugWindow", NULL, N_("_Debug Window"), NULL, NULL, toggle_debug },
 	{ "DeveloperInformation", NULL, N_("De_veloper Information"), NULL, NULL, pidgin_dialogs_developers },
+	{ "PluginInformation", NULL, N_("_Plugin Information"), NULL, NULL, pidgin_dialogs_plugins_info },
 	{ "TranslatorInformation", NULL, N_("_Translator Information"), NULL, NULL, pidgin_dialogs_translators },
 	{ "About", GTK_STOCK_ABOUT, N_("_About"), NULL, NULL, pidgin_dialogs_about },
 };
@@ -3713,6 +3716,7 @@ static const char *blist_menu =
 			"<menuitem action='BuildInformation'/>"
 			"<menuitem action='DebugWindow'/>"
 			"<menuitem action='DeveloperInformation'/>"
+			"<menuitem action='PluginInformation'/>"
 			"<menuitem action='TranslatorInformation'/>"
 			"<separator/>"
 			"<menuitem action='About'/>"
@@ -3723,9 +3727,6 @@ static const char *blist_menu =
 #else
 static GtkItemFactoryEntry blist_menu[] =
 {
-/* NOTE: Do not set any accelerator to Control+O. It is mapped by
-   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
-
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
@@ -8377,3 +8378,4 @@ pidgin_blist_update_sort_methods(void)
 
 	g_string_free(ui_string, TRUE);
 }
+
