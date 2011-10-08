@@ -5130,6 +5130,19 @@ set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
 		webkit_web_view_set_transparent(webview, g_value_get_boolean(val));
 }
 
+static void
+conv_variant_changed_cb(GObject *gobject, GParamSpec *pspec, gpointer user_data)
+{
+	PidginConversation *gtkconv = user_data;
+	const char *path;
+	char *js;
+
+	path = pidgin_conversation_theme_get_css_path(PIDGIN_CONV_THEME(gobject));
+	js = g_strdup_printf("setStylesheet(\"mainStyle\", \"file://%s\");", path);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), js);
+	g_free(js);
+}
+
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -5257,6 +5270,9 @@ setup_common_pane(PidginConversation *gtkconv)
 
 		if (chat)
 			gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), "document.getElementById('Chat').className = 'groupchat'");
+
+		g_signal_connect(G_OBJECT(gtkconv->theme), "notify::variant",
+		                 G_CALLBACK(conv_variant_changed_cb), gtkconv);
 
 		g_free(basedir);
 		g_free(baseuri);
@@ -5805,6 +5821,8 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		g_source_remove(gtkconv->attach.timer);
 	}
 
+	g_object_disconnect(G_OBJECT(gtkconv->theme), "any_signal::notify",
+	                    conv_variant_changed_cb, gtkconv, NULL);
 	g_object_unref(gtkconv->theme);
 
 	g_free(gtkconv);
