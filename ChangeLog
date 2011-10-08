@@ -9,6 +9,7 @@ version 3.0.0 (??/??/????):
 	Gadu-Gadu:
 	* Possibility to require encryption. Also, using encryption when
 	  available is default option now. (Tomasz Wasilczyk)
+	* Show local time for incoming messages. (Tomasz Wasilczyk) (#4579)
 
 	MXit:
 	* Remove all reference to Hidden Number.

@@ -1444,6 +1444,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
+	time_t mtime;
 
 	if (ev->event.msg.message == NULL)
 	{
@@ -1572,8 +1573,13 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 			from, msg, ev->event.msg.msgclass,
 			ev->event.msg.recipients_count);
 
+	if (ev->event.msg.msgclass & GG_CLASS_QUEUED)
+		mtime = ev->event.msg.time;
+	else
+		mtime = time(NULL);
+
 	if (ev->event.msg.recipients_count == 0) {
-		serv_got_im(gc, from, msg, 0, ev->event.msg.time);
+		serv_got_im(gc, from, msg, 0, mtime);
 	} else {
 		const char *chat_name;
 		int chat_id;
@@ -1599,7 +1605,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 
 		buddy_name = ggp_buddy_get_name(gc, ev->event.msg.sender);
 		serv_got_chat_in(gc, chat_id, buddy_name,
-				 PURPLE_MESSAGE_RECV, msg, ev->event.msg.time);
+				 PURPLE_MESSAGE_RECV, msg, mtime);
 		g_free(buddy_name);
 	}
 	g_free(msg);
