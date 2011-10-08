@@ -595,9 +595,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (!strcmp(_("Domain"), purple_account_user_split_get_text(split)) && !value)
 			value = google_talk_default_domain_hackery(dialog->protocol_menu, "gmail.com");
 
-		if (!strcmp(_("Domain"), purple_account_user_split_get_text(split)) && !value)
-			value = 
-
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
 	}
@@ -2749,3 +2746,4 @@ pidgin_account_uninit(void)
 	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
+
