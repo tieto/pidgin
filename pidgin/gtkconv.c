@@ -1044,7 +1044,7 @@ menu_new_conv_cb(GtkAction *action, gpointer data)
 }
 
 static void
-menu_join_chat_cb(gpointer data, guint action, GtkWidget *widget)
+menu_join_chat_cb(GtkAction *action, gpointer data)
 {
 	pidgin_blist_joinchat_show();
 }
@@ -3120,6 +3120,7 @@ static GtkActionEntry menu_entries[] =
 	/* Conversation menu */
 	{ "ConversationMenu", NULL, N_("_Conversation"), NULL, NULL, NULL },
 	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, G_CALLBACK(menu_new_conv_cb) },
+	{ "JoinAChat", PIDGIN_STOCK_CHAT, N_("Join a _Chat..."), NULL, NULL, G_CALLBACK(menu_join_chat_cb) },
 	{ "Find", GTK_STOCK_FIND, N_("_Find..."), NULL, NULL, G_CALLBACK(menu_find_cb) },
 	{ "ViewLog", NULL, N_("View _Log"), NULL, NULL, G_CALLBACK(menu_view_log_cb) },
 	{ "SaveAs", GTK_STOCK_SAVE_AS, N_("_Save As..."), NULL, NULL, G_CALLBACK(menu_save_as_cb) },
@@ -3164,6 +3165,7 @@ static const char *conversation_menu =
 	"<menubar name='Conversation'>"
 		"<menu action='ConversationMenu'>"
 			"<menuitem action='NewInstantMessage'/>"
+			"<menuitem action='JoinAChat'/>"
 			"<separator/>"
 			"<menuitem action='Find'/>"
 			"<menuitem action='ViewLog'/>"
