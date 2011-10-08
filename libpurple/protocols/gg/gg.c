@@ -1932,9 +1932,56 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_EVENT_CONN_FAILED:
 			purple_input_remove(gc->inpa);
 			gc->inpa = 0;
-			purple_connection_error (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Connection failed"));
+			purple_debug_info("gg", "Connection failure: %d\n",
+				ev->event.failure);
+			switch (ev->event.failure) {
+				case GG_FAILURE_RESOLVING:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Unable to resolve "
+						"hostname"));
+					break;
+				case GG_FAILURE_PASSWORD:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+						_("Incorrect password"));
+					break;
+				case GG_FAILURE_TLS:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
+						_("SSL Connection Failed"));
+					break;
+				case GG_FAILURE_INTRUDER:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+						_("Your account has been "
+						"disabled because too many "
+						"incorrect passwords were "
+						"entered"));
+					break;
+				case GG_FAILURE_UNAVAILABLE:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Service temporarily "
+						"unavailable"));
+					break;
+				case GG_FAILURE_PROXY:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Error connecting to proxy "
+						"server"));
+					break;
+				case GG_FAILURE_HUB:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Error connecting to master "
+						"server"));
+					break;
+				default:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Connection failed"));
+			}
 			break;
 		case GG_EVENT_MSG:
 			if (ev->event.msg.sender == 0)
@@ -2137,6 +2184,15 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
+
+	if (glp->uin == 0) {
+		purple_connection_error(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_USERNAME,
+			_("The username specified is invalid."));
+		g_free(glp);
+		return;
+	}
+
 	glp->image_size = 255;
 
 	presence = purple_account_get_presence(account);
@@ -2155,12 +2211,10 @@ static void ggp_login(PurpleAccount *account)
 		encryption_type);
 	if (strcmp(encryption_type, "opportunistic_tls") == 0)
 		glp->tls = GG_SSL_ENABLED;
-	else if (strcmp(encryption_type, "require_tls") == 0)
-	{
+	else if (strcmp(encryption_type, "require_tls") == 0) {
 		if (gg_libgadu_check_feature(GG_LIBGADU_FEATURE_SSL))
 			glp->tls = GG_SSL_REQUIRED;
-		else
-		{
+		else {
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
