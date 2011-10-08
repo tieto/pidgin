@@ -829,8 +829,11 @@ add_protocol_options(AccountPrefsDialog *dialog)
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
 
+/* FIXME: Facebook forced-options hack */
+#if 0
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
+#endif
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
@@ -946,9 +949,12 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				opt_entry->widget = combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
 
+/* FIXME: Facebook forced-options hack */
+#if 0
 				if (g_object_get_data(G_OBJECT(item), "fakefacebook") &&
 					!strcmp(opt_entry->setting, "connection_security"))
 					str_value = "opportunistic_tls";
+#endif
 
 				/* Loop through list of PurpleKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {

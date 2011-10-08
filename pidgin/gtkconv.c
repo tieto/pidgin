@@ -3132,7 +3132,7 @@ static GtkActionEntry menu_entries[] =
 	{ "MediaMenu", NULL, N_("M_edia"), NULL, NULL, NULL },
 	{ "AudioCall", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, N_("_Audio Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
 	{ "VideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("_Video Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
-	{ "AudioVideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("Audio\\/Video _Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
+	{ "AudioVideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("Audio/Video _Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
 #endif
 
 	{ "SendFile", PIDGIN_STOCK_TOOLBAR_SEND_FILE, N_("Se_nd File..."), NULL, NULL, G_CALLBACK(menu_send_file_cb) },
@@ -3464,14 +3464,21 @@ regenerate_media_items(PidginWindow *win)
 static void
 regenerate_options_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,6,0)
-#else
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
 	GList *list;
+#if GTK_CHECK_VERSION(2,6,0)
+	GtkWidget *more_menu;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	more_menu = gtk_ui_manager_get_widget(win->menu.ui,
+	                                      "/Conversation/ConversationMenu/MoreMenu");
+	gtk_widget_show(more_menu);
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(more_menu));
+#else
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+#endif
 
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
@@ -3489,7 +3496,6 @@ regenerate_options_items(PidginWindow *win)
 	}
 
 	gtk_widget_show_all(menu);
-#endif
 }
 
 static void
@@ -3503,8 +3509,6 @@ remove_from_list(GtkWidget *widget, PidginWindow *win)
 static void
 regenerate_plugins_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,6,0)
-#else
 	GList *action_items;
 	GtkWidget *menu;
 	GList *list;
@@ -3530,7 +3534,12 @@ regenerate_plugins_items(PidginWindow *win)
 		action_items = g_list_delete_link(action_items, action_items);
 	}
 
+#if GTK_CHECK_VERSION(2,6,0)
+	item = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/OptionsMenu");
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(item));
+#else
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Options"));
+#endif
 
 	list = purple_conversation_get_extended_menu(conv);
 	if (list) {
@@ -3546,10 +3555,8 @@ regenerate_plugins_items(PidginWindow *win)
 		g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(remove_from_list), win);
 	}
 	g_object_set_data(G_OBJECT(win->window), "plugin-actions", action_items);
-#endif
 }
 
-#if 0
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
@@ -3568,12 +3575,11 @@ focus_out_from_menubar(GtkWidget *wid, PidginWindow *win)
 {
 	/* The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
 	 * the 'Conversation' menu pops up. */
-	GtkWidget *menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
+	GtkWidget *menuitem = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/ConversationMenu");
 	g_signal_handlers_unblock_by_func(G_OBJECT(menuitem), G_CALLBACK(menubar_activated), win);
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->menu.menubar),
 				G_CALLBACK(focus_out_from_menubar), win);
 }
-#endif
 
 static GtkWidget *
 setup_menubar(PidginWindow *win)
@@ -3582,6 +3588,7 @@ setup_menubar(PidginWindow *win)
 	const char *method;
 	GtkActionGroup *action_group;
 	GError *error;
+	GtkWidget *menuitem;
 
 	action_group = gtk_action_group_new("ConversationActions");
 	gtk_action_group_add_actions(action_group,
@@ -3615,6 +3622,9 @@ setup_menubar(PidginWindow *win)
 
 	win->menu.menubar =
 		gtk_ui_manager_get_widget(win->menu.ui, "/Conversation");
+
+	menuitem = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/ConversationMenu");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
 
 	win->menu.view_log =
 		gtk_ui_manager_get_action(win->menu.ui,
