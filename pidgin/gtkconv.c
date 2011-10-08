@@ -3112,8 +3112,6 @@ pidgin_conv_get_window(PidginConversation *gtkconv)
 	return gtkconv->win;
 }
 
-#if 1
-
 static GtkActionEntry menu_entries[] =
 /* TODO: fill out tooltips... */
 {
@@ -3206,86 +3204,6 @@ static const char *conversation_menu =
 		"</menu>"
 	"</menubar>"
 "</ui>";
-
-#else
-
-static GtkItemFactoryEntry menu_items[] =
-{
-	/* Conversation menu */
-	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>", NULL },
-
-	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
-			0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
-	{ N_("/Conversation/Join a _Chat..."), NULL, menu_join_chat_cb,
-			0, "<StockItem>", PIDGIN_STOCK_CHAT },
-
-	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>", NULL },
-
-	{ N_("/Conversation/_Find..."), NULL, menu_find_cb, 0,
-			"<StockItem>", GTK_STOCK_FIND },
-	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<Item>", NULL },
-	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
-			"<StockItem>", GTK_STOCK_SAVE_AS },
-	{ N_("/Conversation/Clea_r Scrollback"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
-
-	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
-
-#ifdef USE_VV
-	{ N_("/Conversation/M_edia"), NULL, NULL, 0, "<Branch>", NULL },
-
-	{ N_("/Conversation/Media/_Audio Call"), NULL, menu_initiate_media_call_cb, 0,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL },
-	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_media_call_cb, 1,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
-	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_media_call_cb, 2,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
-#endif
-
-	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
-	{ N_("/Conversation/Get _Attention"), NULL, menu_get_attention_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION },
-	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
-			0, "<Item>", NULL },
-	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
-	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
-			"<Item>", NULL },
-	{ N_("/Conversation/M_ore"), NULL, NULL, 0, "<Branch>", NULL },
-
-	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>", NULL },
-
-	{ N_("/Conversation/Al_ias..."), NULL, menu_alias_cb, 0,
-			"<Item>", NULL },
-	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_TOOLBAR_BLOCK },
-	{ N_("/Conversation/_Unblock..."), NULL, menu_unblock_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_TOOLBAR_UNBLOCK },
-	{ N_("/Conversation/_Add..."), NULL, menu_add_remove_cb, 0,
-			"<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Conversation/_Remove..."), NULL, menu_add_remove_cb, 0,
-			"<StockItem>", GTK_STOCK_REMOVE },
-
-	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>", NULL },
-
-	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_INSERT_LINK },
-	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE },
-
-	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
-
-
-	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
-			"<StockItem>", GTK_STOCK_CLOSE },
-
-	/* Options */
-	{ N_("/_Options"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>", NULL },
-	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>", NULL },
-	{ "/Options/sep0", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>", NULL },
-	{ N_("/Options/Show Ti_mestamps"), NULL, menu_timestamps_cb, 0, "<CheckItem>", NULL },
-};
-#endif
 
 static void
 sound_method_pref_changed_cb(const char *name, PurplePrefType type,
