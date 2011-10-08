@@ -246,7 +246,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	int         int_value  = 0;
 	const char *str_value  = NULL;
 	gboolean    bool_value = FALSE;
-	GtkListStore *store;
+	GtkListStore *store = NULL;
 	GtkTreeIter iter;
 	GtkTreeIter active;
 	GtkCellRenderer *renderer;
@@ -262,6 +262,9 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	} else if (type == PURPLE_PREF_BOOLEAN) {
 		store = gtk_list_store_new(PREF_DROPDOWN_COUNT, G_TYPE_STRING, G_TYPE_BOOLEAN);
 		stored_bool = purple_prefs_get_bool(key);
+	} else {
+		g_warn_if_reached();
+		return NULL;
 	}
 
 	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
