@@ -2280,6 +2280,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	PurpleConversation *old_conv;
 	GtkIMHtml *entry;
 	const char *protocol_name;
+	PurpleConnectionFlags features;
 
 	g_return_if_fail(conv != NULL);
 
@@ -2305,9 +2306,10 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	gtk_imhtml_set_protocol_name(entry, protocol_name);
 	/* TODO WEBKIT: gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name); */
 
-	if (!(purple_conversation_get_features(conv) & PURPLE_CONNECTION_HTML))
+	features = purple_conversation_get_features(conv);
+	if (!(features & PURPLE_CONNECTION_HTML))
 		gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
-	else if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FORMATTING_WBFO &&
+	else if (features & PURPLE_CONNECTION_FORMATTING_WBFO &&
 	         !(purple_conversation_get_features(old_conv) & PURPLE_CONNECTION_FORMATTING_WBFO))
 	{
 		/* The old conversation allowed formatting on parts of the
@@ -2348,12 +2350,12 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 		gtk_imhtml_toggle_fontface(entry, fontface);
 
-		if (!(purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_FONTSIZE))
+		if (!(features & PURPLE_CONNECTION_NO_FONTSIZE))
 			gtk_imhtml_font_set_size(entry, fontsize);
 
 		gtk_imhtml_toggle_forecolor(entry, forecolor);
 
-		if (!(purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_BGCOLOR))
+		if (!(features & PURPLE_CONNECTION_NO_BGCOLOR))
 		{
 			gtk_imhtml_toggle_backcolor(entry, backcolor);
 			gtk_imhtml_toggle_background(entry, background);
@@ -2371,7 +2373,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 		 * here, we didn't call gtk_imhtml_clear_formatting() (because we want to
 		 * preserve the formatting exactly as it is), so we have to do this now. */
 		gtk_imhtml_set_whole_buffer_formatting_only(entry,
-			(purple_conversation_get_features(conv) & PURPLE_CONNECTION_FORMATTING_WBFO));
+			(features & PURPLE_CONNECTION_FORMATTING_WBFO));
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(), "conversation-switched", conv);
@@ -6941,31 +6943,34 @@ gray_stuff_out(PidginConversation *gtkconv)
 		((purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_CHAT) ||
 		 !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) ))
 	{
+		PurpleConnectionFlags features = purple_conversation_get_features(conv);
 		/* Account is online */
 		/* Deal with the toolbar */
-		if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_HTML)
+		if (features & PURPLE_CONNECTION_HTML)
 		{
 			buttons = GTK_IMHTML_ALL; /* Everything on */
-			if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_BGCOLOR)
+			if (features & PURPLE_CONNECTION_NO_BGCOLOR)
 				buttons &= ~GTK_IMHTML_BACKCOLOR;
-			if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_FONTSIZE)
+			if (features & PURPLE_CONNECTION_NO_FONTSIZE)
 			{
 				buttons &= ~GTK_IMHTML_GROW;
 				buttons &= ~GTK_IMHTML_SHRINK;
 			}
-			if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_URLDESC)
+			if (features & PURPLE_CONNECTION_NO_URLDESC)
 				buttons &= ~GTK_IMHTML_LINKDESC;
 		} else {
 			buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		}
 
-		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
-			purple_conversation_set_features(conv, purple_conversation_get_features(conv) | PURPLE_CONNECTION_NO_IMAGES);
+		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE)) {
+			features |= PURPLE_CONNECTION_NO_IMAGES;
+			purple_conversation_set_features(conv, features);
+		}
 
-		if(purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_IMAGES)
+		if (features & PURPLE_CONNECTION_NO_IMAGES)
 			buttons &= ~GTK_IMHTML_IMAGE;
 
-		if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		if (features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
 			buttons |= GTK_IMHTML_CUSTOM_SMILEY;
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
@@ -6979,8 +6984,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		gtk_widget_set_sensitive(win->menu.insert_link, (purple_conversation_get_features(conv) & PURPLE_CONNECTION_HTML));
-		gtk_widget_set_sensitive(win->menu.insert_image, !(purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_IMAGES));
+		gtk_widget_set_sensitive(win->menu.insert_link, (features & PURPLE_CONNECTION_HTML));
+		gtk_widget_set_sensitive(win->menu.insert_image, !(features & PURPLE_CONNECTION_NO_IMAGES));
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
