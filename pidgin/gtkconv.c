@@ -6962,7 +6962,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		}
 
-		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE)) {
+		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE)
+		 && !(features & PURPLE_CONNECTION_NO_IMAGES)) {
 			features |= PURPLE_CONNECTION_NO_IMAGES;
 			purple_conversation_set_features(conv, features);
 		}
