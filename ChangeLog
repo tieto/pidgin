@@ -6,6 +6,10 @@ version 3.0.0 (??/??/????):
 	* Don't try to format ICQ usernames entered as email addresses.
 	  Gets rid of an "Unable to format username" error at login. (#13883)
 
+	Gadu-Gadu:
+	* Possibility to require encryption. Also, using encryption when
+	  available is default option now. (Tomasz Wasilczyk)
+
 	MXit:
 	* Remove all reference to Hidden Number.
 	* Fix decoding of font-size changes in the markup of received messages.

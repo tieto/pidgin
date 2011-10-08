@@ -2143,13 +2143,28 @@ static void ggp_login(PurpleAccount *account)
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	
-	encryption_type = purple_account_get_string(account, "encryption", "none");
-	purple_debug_info("gg", "Requested encryption type: %s\n", encryption_type);
+	encryption_type = purple_account_get_string(account, "encryption",
+		"opportunistic_tls");
+	purple_debug_info("gg", "Requested encryption type: %s\n",
+		encryption_type);
 	if (strcmp(encryption_type, "opportunistic_tls") == 0)
-		glp->tls = 1;
-	else
-		glp->tls = 0;
-	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
+		glp->tls = GG_SSL_ENABLED;
+	else if (strcmp(encryption_type, "require_tls") == 0)
+	{
+		if (gg_libgadu_check_feature(GG_LIBGADU_FEATURE_SSL))
+			glp->tls = GG_SSL_REQUIRED;
+		else
+		{
+			purple_connection_error(gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("SSL support unavailable"));
+			g_free(glp);
+			return;
+		}
+	}
+	else /* encryption_type == "none" */
+		glp->tls = GG_SSL_DISABLED;
+	purple_debug_info("gg", "TLS mode: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
@@ -2808,13 +2823,10 @@ static void init_plugin(PurplePlugin *plugin)
 	list = g_list_append(list, kvp); \
 }
 
-	ADD_VALUE(encryption_options, _("Don't use encryption"), "none");
 	ADD_VALUE(encryption_options, _("Use encryption if available"),
 		"opportunistic_tls");
-#if 0
-	/* TODO */
 	ADD_VALUE(encryption_options, _("Require encryption"), "require_tls");
-#endif
+	ADD_VALUE(encryption_options, _("Don't use encryption"), "none");
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
