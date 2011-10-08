@@ -1985,9 +1985,14 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_EVENT_MSG:
 			if (ev->event.msg.sender == 0)
+			{
+				if (ev->event.msg.message == NULL)
+					break;
+
 				/* system messages are mostly ads */
 				purple_debug_info("gg", "System message:\n%s\n",
 					ev->event.msg.message);
+			}
 			else
 				purple_debug_warning("gg", "GG_EVENT_MSG: message from user %u "
 					"unexpected while connecting:\n%s\n",
