@@ -21,27 +21,23 @@
  * GtkTicker Copyright 2000 Syd Logan
  */
 
-/* FIXME: GTK+ deprecated GTK_WIDGET_MAPPED/REALIZED, but don't provide
-          accessor functions yet. */
-#undef GSEAL_ENABLE
-
 #include "gtkticker.h"
 #include <gtk/gtk.h>
 
-/* These don't seem to be in a release yet. See BZ #69872 */
-#define gtk_widget_is_mapped(x) GTK_WIDGET_MAPPED(x)
-#define gtk_widget_is_realized(x) GTK_WIDGET_REALIZED(x)
-#define gtk_widget_set_realized(x,y) do {\
-	if (y) \
-		GTK_WIDGET_SET_FLAGS(x, GTK_REALIZED); \
-	else \
-		GTK_WIDGET_UNSET_FLAGS(x, GTK_REALIZED); \
-} while(0)
+#if !GTK_CHECK_VERSION(2,20,0)
+#define gtk_widget_get_mapped(x) GTK_WIDGET_MAPPED(x)
 #define gtk_widget_set_mapped(x,y) do {\
 	if (y) \
 		GTK_WIDGET_SET_FLAGS(x, GTK_MAPPED); \
 	else \
 		GTK_WIDGET_UNSET_FLAGS(x, GTK_MAPPED); \
+} while(0)
+#define gtk_widget_get_realized(x) GTK_WIDGET_REALIZED(x)
+#define gtk_widget_set_realized(x,y) do {\
+	if (y) \
+		GTK_WIDGET_SET_FLAGS(x, GTK_REALIZED); \
+	else \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_REALIZED); \
 } while(0)
 
 #if !GTK_CHECK_VERSION(2,18,0)
@@ -49,6 +45,7 @@
 
 #if !GTK_CHECK_VERSION(2,14,0)
 #define gtk_widget_get_window(x) x->window
+#endif
 #endif
 #endif
 
@@ -181,13 +178,13 @@ static void gtk_ticker_put (GtkTicker *ticker, GtkWidget *widget)
 
 	ticker->children = g_list_append (ticker->children, child_info);
 
-	if (gtk_widget_is_realized (ticker))
+	if (gtk_widget_get_realized (ticker))
 		gtk_widget_realize (widget);
 
 	if (gtk_widget_get_visible (GTK_WIDGET (ticker)) &&
 		gtk_widget_get_visible (widget))
 	{
-		if (gtk_widget_is_mapped (GTK_WIDGET (ticker)))
+		if (gtk_widget_get_mapped (GTK_WIDGET (ticker)))
 			gtk_widget_map (widget);
 
 		gtk_widget_queue_resize (GTK_WIDGET (ticker));
@@ -298,7 +295,7 @@ static void gtk_ticker_map (GtkWidget *widget)
 		children = children->next;
 
 		if (gtk_widget_get_visible (child->widget) &&
-				!gtk_widget_is_mapped (child->widget))
+				!gtk_widget_get_mapped (child->widget))
 			gtk_widget_map (child->widget);
 	}
 
@@ -474,7 +471,7 @@ static void gtk_ticker_size_allocate (GtkWidget *widget,
 #else
 	widget->allocation = *allocation;
 #endif
-	if (gtk_widget_is_realized (widget))
+	if (gtk_widget_get_realized (widget))
 		gdk_window_move_resize (gtk_widget_get_window (widget),
 				allocation->x,
 				allocation->y,

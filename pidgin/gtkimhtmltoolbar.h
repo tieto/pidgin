@@ -46,7 +46,11 @@ struct _GtkIMHtmlToolbar {
 
 	GtkWidget *imhtml;
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gpointer depr1;
+#else
 	GtkTooltips *tooltips;
+#endif
 
 	GtkWidget *bold;
 	GtkWidget *italic;
