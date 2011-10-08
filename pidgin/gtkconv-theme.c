@@ -83,7 +83,9 @@ enum {
  *****************************************************************************/
 
 static GObjectClass *parent_class = NULL;
+#if GLIB_CHECK_VERSION(2,26,0)
 static GParamSpec *properties[PROP_LAST];
+#endif
 
 /******************************************************************************
  * Helper Functions
@@ -507,15 +509,18 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 			G_TYPE_HASH_TABLE,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_INFO, pspec);
+#if GLIB_CHECK_VERSION(2,26,0)
 	properties[PROP_INFO] = pspec;
+#endif
 
 	/* VARIANT */
 	pspec = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
 			NULL, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
+#if GLIB_CHECK_VERSION(2,26,0)
 	properties[PROP_VARIANT] = pspec;
-
+#endif
 }
 
 GType
@@ -680,7 +685,11 @@ void
 pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
 {
 	_set_variant(theme, variant);
+#if GLIB_CHECK_VERSION(2,26,0)
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_VARIANT]);
+#else
+	g_object_notify(G_OBJECT(theme), "variant");
+#endif
 }
 
 const GList *
