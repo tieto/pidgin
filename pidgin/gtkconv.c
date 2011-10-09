@@ -10024,9 +10024,9 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	}
 
-	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont,
-					   !tabs_side && !angle,
-					   TRUE, GTK_PACK_START);
+	gtk_container_child_set(GTK_CONTAINER(win->notebook), gtkconv->tab_cont,
+	                        "tab-expand", !tabs_side && !angle,
+	                        "tab-fill", TRUE, NULL);
 
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
