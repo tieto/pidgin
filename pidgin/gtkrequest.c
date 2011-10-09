@@ -39,6 +39,21 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_set_can_default(x,y) do {\
+	if (y) \
+		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_DEFAULT); \
+	else \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_DEFAULT); \
+} while(0)
+#define gtk_widget_set_can_focus(x,y) do {\
+	if (y) \
+		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_FOCUS); \
+	else \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_FOCUS); \
+} while(0)
+#endif
+
 static GtkWidget * create_account_field(PurpleRequestField *field);
 
 typedef struct
@@ -731,8 +746,8 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 
 
 	if (default_action == PURPLE_DEFAULT_ACTION_NONE) {
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_DEFAULT);
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_FOCUS);
+		gtk_widget_set_can_default(img, TRUE);
+		gtk_widget_set_can_focus(img, TRUE);
 		gtk_widget_grab_focus(img);
 		gtk_widget_grab_default(img);
 	} else
@@ -1270,12 +1285,12 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(button, TRUE);
 
 	/* OK button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
 	data->ok_button = button;
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
 	pidgin_widget_decorate_account(hbox, account);

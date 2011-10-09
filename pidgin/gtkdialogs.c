@@ -462,7 +462,11 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
 
+#if GTK_CHECK_VERSION(2,18,0)
+	gtk_widget_set_can_default(button, TRUE);
+#else
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+#endif
 	gtk_widget_grab_default(button);
 
 	gtk_widget_show_all(win);

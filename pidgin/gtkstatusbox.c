@@ -72,6 +72,12 @@
 
 #if !GTK_CHECK_VERSION(2,18,0)
 #define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#define gtk_widget_set_has_window(x, y) do { \
+	if (y) \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_WIDGET_NO_WINDOW); \
+	else \
+		GTK_WIDGET_SET_FLAGS(x, GTK_WIDGET_NO_WINDOW); \
+} while (0)
 #endif
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
@@ -1753,7 +1759,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	GtkWidget *toplevel;
 	GtkTreeSelection *sel;
 
-	GTK_WIDGET_SET_FLAGS (status_box, GTK_NO_WINDOW);
+	gtk_widget_set_has_window(GTK_WIDGET(status_box), FALSE);
 	status_box->imhtml_visible = FALSE;
 	status_box->network_available = purple_network_is_available();
 	status_box->connecting = FALSE;
