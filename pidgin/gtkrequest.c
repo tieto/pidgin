@@ -263,7 +263,11 @@ multifield_ok_cb(GtkWidget *button, PidginRequestData *data)
 {
 	generic_response_start(data);
 
+#if GTK_CHECK_VERSION(2,18,0)
+	if (!gtk_widget_has_focus(button))
+#else
 	if (!GTK_WIDGET_HAS_FOCUS(button))
+#endif
 		gtk_widget_grab_focus(button);
 
 	if (data->cbs[0] != NULL)

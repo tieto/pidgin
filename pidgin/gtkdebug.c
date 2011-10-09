@@ -128,7 +128,11 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 {
+#if GTK_CHECK_VERSION(2,18,0)
+	if (gtk_widget_get_visible(w)) {
+#else
 	if (GTK_WIDGET_VISIBLE(w)) {
+#endif
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/height", event->height);
 	}
@@ -625,7 +629,11 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
 	if(e->keyval == GDK_Return &&
+#if GTK_CHECK_VERSION(2,18,0)
+	   gtk_widget_is_sensitive(win->filter) &&
+#else
 	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
+#endif
 	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 	{
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);

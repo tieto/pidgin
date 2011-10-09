@@ -40,6 +40,10 @@ static GObjectClass *parent_class = NULL;
  * Internal Stuff
  *****************************************************************************/
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_has_window(x) !GTK_WIDGET_NO_WINDOW(x)
+#endif
+
 /******************************************************************************
  * Item Stuff
  *****************************************************************************/
@@ -209,7 +213,7 @@ pidgin_menu_tray_add(PidginMenuTray *menu_tray, GtkWidget *widget,
 	g_return_if_fail(PIDGIN_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
-	if (GTK_WIDGET_NO_WINDOW(widget))
+	if (!gtk_widget_get_has_window(widget))
 	{
 		GtkWidget *event;
 
@@ -256,7 +260,7 @@ pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const
 	 * case, we want to set the tooltip on the widget's parent,
 	 * not on the widget itself.
 	 */
-	if (GTK_WIDGET_NO_WINDOW(widget))
+	if (!gtk_widget_get_has_window(widget))
 		widget = widget->parent;
 
 #if GTK_CHECK_VERSION(2,12,0)

@@ -43,6 +43,11 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#endif
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
@@ -1196,7 +1201,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 	if (event->button != 3)
 		return FALSE;
 
-	wide = GTK_WIDGET_VISIBLE(toolbar->bold);
+	wide = gtk_widget_get_visible(toolbar->bold);
 
 	menu = gtk_menu_new();
 	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
@@ -1291,7 +1296,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 static void
 button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
-	if (GTK_WIDGET_VISIBLE(button))
+	if (gtk_widget_get_visible(button))
 		gtk_widget_hide(item);
 	else
 		gtk_widget_show(item);
@@ -1300,7 +1305,7 @@ button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 static void
 button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
-	gtk_widget_set_sensitive(item, GTK_WIDGET_IS_SENSITIVE(button));
+	gtk_widget_set_sensitive(item, gtk_widget_is_sensitive(button));
 }
 
 static void

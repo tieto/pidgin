@@ -80,6 +80,15 @@
 
 #include "gtknickcolors.h"
 
+#if !GTK_CHECK_VERSION(2,20,0)
+#define gtk_widget_get_realized(x) GTK_WIDGET_REALIZED(x)
+
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_drawable(x) GTK_WIDGET_DRAWABLE(x)
+#endif
+#endif
+
 /**
  * A GTK+ Instant Message pane.
  */
@@ -7205,7 +7214,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		if (title != markup)
 			g_free(markup);
 
-		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
+		if (!gtk_widget_get_realized(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
 		accessibility_obj = gtk_widget_get_accessible(gtkconv->tab_cont);
@@ -7599,7 +7608,7 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 		tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook), page);
 
 		/* Make sure the tab is not hidden beyond an arrow */
-		if (!GTK_WIDGET_DRAWABLE(tab) && gtk_notebook_get_show_tabs(notebook))
+		if (!gtk_widget_is_drawable(tab) && gtk_notebook_get_show_tabs(notebook))
 			continue;
 
 		if (horiz) {
@@ -9446,7 +9455,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	const char *text = NULL;
 
-	if (!GTK_WIDGET_VISIBLE(gtkconv->infopane)) {
+	if (!gtk_widget_get_visible(gtkconv->infopane)) {
 		/* There's already an entry for alias. Let's not create another one. */
 		return FALSE;
 	}
@@ -9606,7 +9615,7 @@ plugin_changed_cb(PurplePlugin *p, gpointer data)
 static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gpointer data) {
 	int x, y;
 
-	if (GTK_WIDGET_VISIBLE(w))
+	if (gtk_widget_get_visible(w))
 		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
 	else
 		return FALSE; /* carry on normally */
@@ -9641,7 +9650,7 @@ pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
 	 /* if the window exists, is hidden, we're saving positions, and the
           * position is sane... */
 	if (win && win->window &&
-			!GTK_WIDGET_VISIBLE(win->window) && conv_width != 0) {
+			!gtk_widget_get_visible(win->window) && conv_width != 0) {
 
 #ifdef _WIN32  /* only override window manager placement on Windows */
 		/* ...check position is on screen... */
@@ -10246,7 +10255,7 @@ conv_placement_last_created_win_type_configured_cb(GtkWidget *w,
 	PurpleConversationType type = purple_conversation_get_type(conv->active_conv);
 	GList *all;
 
-	if (GTK_WIDGET_VISIBLE(w))
+	if (gtk_widget_get_visible(w))
 		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
 	else
 		return FALSE; /* carry on normally */

@@ -70,6 +70,11 @@
 #include "gtkwebview.h"
 #include "pidgin/minidialog.h"
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#endif
+
 typedef struct {
 	GtkTreeModel *model;
 	gint default_item;
@@ -356,7 +361,7 @@ pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	if (to_toggle == NULL)
 		return;
 
-	sensitivity = GTK_WIDGET_IS_SENSITIVE(to_toggle);
+	sensitivity = gtk_widget_is_sensitive(to_toggle);
 
 	gtk_widget_set_sensitive(to_toggle, !sensitivity);
 }
@@ -373,7 +378,7 @@ pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 		if (element == NULL)
 			continue;
 
-		sensitivity = GTK_WIDGET_IS_SENSITIVE(element);
+		sensitivity = gtk_widget_is_sensitive(element);
 
 		gtk_widget_set_sensitive(element, !sensitivity);
 	}
@@ -385,7 +390,7 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 	if (to_toggle == NULL)
 		return;
 
-	if (GTK_WIDGET_VISIBLE(to_toggle))
+	if (gtk_widget_get_visible(to_toggle))
 		gtk_widget_hide(to_toggle);
 	else
 		gtk_widget_show(to_toggle);
@@ -2991,7 +2996,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		windows = g_list_delete_link(windows, windows);
 
 		if (window == widget ||
-				!GTK_WIDGET_VISIBLE(window))
+				!gtk_widget_get_visible(window))
 			continue;
 
 		if (!gdk_property_get(window->window, _WindowTime, _Cardinal, 0, sizeof(time_t), FALSE,
@@ -3045,7 +3050,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		windows = g_list_delete_link(windows, windows);
 
 		if (window == widget ||
-				!GTK_WIDGET_VISIBLE(window)) {
+				!gtk_widget_get_visible(window)) {
 			continue;
 		}
 
