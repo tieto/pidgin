@@ -3824,7 +3824,6 @@ update_send_to_selection(PidginWindow *win)
 	if (!(b = purple_find_buddy(account, purple_conversation_get_name(conv))))
 		return FALSE;
 
-#if 0 /* TODO */
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
@@ -3846,7 +3845,6 @@ update_send_to_selection(PidginWindow *win)
 			break;
 		}
 	}
-#endif
 
 	return FALSE;
 }
@@ -3956,7 +3954,6 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 static void
 generate_send_to_items(PidginWindow *win)
 {
-#if 0 /* TODO */
 	GtkWidget *menu;
 	GSList *group = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -4042,7 +4039,6 @@ generate_send_to_items(PidginWindow *win)
 	if (!group)
 		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
 	update_send_to_selection(win);
-#endif
 }
 
 static const char *
@@ -9022,9 +9018,8 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		/* Right click was pressed. Popup the context menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
 		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
-#if 0 /* TODO */
-		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
+		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
 			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 			if (populated)
@@ -9037,7 +9032,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 			gtk_widget_destroy(menu);
 			return FALSE;
 		}
-#endif
+
 		gtk_widget_show_all(menu);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 		return TRUE;
