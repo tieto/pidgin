@@ -3567,6 +3567,10 @@ setup_menubar(PidginWindow *win)
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/SendFile");
 
+	win->menu.get_attention =
+		gtk_ui_manager_get_action(win->menu.ui,
+		                          "/Conversation/ConversationMenu/GetAttention");
+
 	win->menu.add_pounce =
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/AddBuddyPounce");
@@ -6925,7 +6929,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_action_set_visible(win->menu.view_log, TRUE);
 		gtk_action_set_visible(win->menu.send_file, TRUE);
-		gtk_action_set_visible(g_object_get_data(G_OBJECT(win->window), "get_attention"), TRUE);
+		gtk_action_set_visible(win->menu.get_attention, TRUE);
 		gtk_action_set_visible(win->menu.add_pounce, TRUE);
 		gtk_action_set_visible(win->menu.get_info, TRUE);
 		gtk_action_set_visible(win->menu.invite, FALSE);
@@ -6954,7 +6958,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_action_set_visible(win->menu.view_log, TRUE);
 		gtk_action_set_visible(win->menu.send_file, FALSE);
-		gtk_action_set_visible(g_object_get_data(G_OBJECT(win->window), "get_attention"), FALSE);
+		gtk_action_set_visible(win->menu.get_attention, FALSE);
 		gtk_action_set_visible(win->menu.add_pounce, FALSE);
 		gtk_action_set_visible(win->menu.get_info, FALSE);
 		gtk_action_set_visible(win->menu.invite, TRUE);
@@ -7036,7 +7040,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_action_set_sensitive(win->menu.send_file,
 									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
 									  prpl_info->can_receive_file(gc, purple_conversation_get_name(conv)))));
-			gtk_action_set_sensitive(g_object_get_data(G_OBJECT(win->window), "get_attention"), (prpl_info->send_attention != NULL));
+			gtk_action_set_sensitive(win->menu.get_attention, (prpl_info->send_attention != NULL));
 			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_find_buddy(account, purple_conversation_get_name(conv)) != NULL));
@@ -7057,8 +7061,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Then deal with menu items */
 		gtk_action_set_sensitive(win->menu.view_log, TRUE);
 		gtk_action_set_sensitive(win->menu.send_file, FALSE);
-		gtk_action_set_sensitive(g_object_get_data(G_OBJECT(win->window),
-			"get_attention"), FALSE);
+		gtk_action_set_sensitive(win->menu.get_attention, FALSE);
 		gtk_action_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_action_set_sensitive(win->menu.get_info, FALSE);
 		gtk_action_set_sensitive(win->menu.invite, FALSE);
