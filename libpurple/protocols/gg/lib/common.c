@@ -92,7 +92,7 @@ char *gg_vsaprintf(const char *format, va_list ap)
 			}
 			buf = tmp;
 			res = vsnprintf(buf, size, format, ap);
-		} while (res == size - 1 || res == -1);
+		} while (res >= size - 1 || res == -1);
 	}
 #else
 	{
