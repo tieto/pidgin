@@ -2756,14 +2756,16 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 	GList *m = NULL;
 	PurplePluginAction *act;
 
+	act = purple_plugin_action_new(_("Change password..."),
+				     ggp_change_passwd);
+	m = g_list_append(m, act);
+
 	act = purple_plugin_action_new(_("Find buddies..."),
 				     ggp_find_buddies);
 	m = g_list_append(m, act);
 
-	m = g_list_append(m, NULL);
-
-	act = purple_plugin_action_new(_("Change password..."),
-				     ggp_change_passwd);
+	act = purple_plugin_action_new(_("Change status broadcasting"),
+				     ggp_action_change_status_broadcasting);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
@@ -2788,10 +2790,6 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 				     ggp_action_buddylist_load);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Change status broadcasting"),
-				     ggp_action_change_status_broadcasting);
-	m = g_list_append(m, act);
-	
 	return m;
 }
 
