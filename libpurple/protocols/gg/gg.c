@@ -635,7 +635,7 @@ static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
 
 	purple_input_remove(req->inpa);
 
-	if (gg_pubdir_watch_fd(req->http_req) == -1 ||
+	if (gg_change_passwd_watch_fd(req->http_req) == -1 ||
 		req->http_req->state == GG_STATE_ERROR)
 		goto exit_error;
 
@@ -660,7 +660,7 @@ exit_error:
 		_("Unable to change password. Error occurred.\n"), NULL);
 
 exit_cleanup:
-	gg_pubdir_free(req->http_req);
+	gg_change_passwd_free(req->http_req);
 	g_free(req->new_password);
 	g_free(req);
 }
