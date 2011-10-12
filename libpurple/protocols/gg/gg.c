@@ -2266,6 +2266,10 @@ static void ggp_login(PurpleAccount *account)
 	}
 
 	glp->image_size = 255;
+	glp->status_flags = GG_STATUS_FLAG_UNKNOWN;
+
+	if (purple_account_get_bool(account, "show_links_from_strangers", 1))
+		glp->status_flags |= GG_STATUS_FLAG_SPAM;
 
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);
@@ -2955,6 +2959,11 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
+
+	option = purple_account_option_bool_new(_("Show links from strangers"),
+		"show_links_from_strangers", 1);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
 
