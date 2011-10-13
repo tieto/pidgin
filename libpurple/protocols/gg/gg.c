@@ -2082,6 +2082,19 @@ static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 	return "gadu-gadu";
 }
 
+static const char *ggp_normalize(const PurpleAccount *account, const char *who)
+{
+	static char normalized[21]; /* maximum unsigned long long int size */
+
+	uin_t uin = ggp_str_to_uin(who);
+	if (uin <= 0)
+		return NULL;
+
+	g_snprintf(normalized, sizeof(normalized), "%u", uin);
+
+	return normalized;
+}
+
 static char *ggp_status_text(PurpleBuddy *b)
 {
 	PurpleStatus *status;
@@ -2850,7 +2863,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* rename_group */
 	NULL,				/* buddy_free */
 	NULL,				/* convo_closed */
-	NULL,				/* normalize */
+	ggp_normalize,			/* normalize */
 	NULL,				/* set_buddy_icon */
 	NULL,				/* remove_group */
 	NULL,				/* get_cb_real_name */
