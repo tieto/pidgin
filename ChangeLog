@@ -10,8 +10,6 @@ version 3.0.0 (??/??/????):
 	* Possibility to require encryption. Also, using encryption when
 	  available is default option now. (Tomasz Wasilczyk)
 	* Show local time for incoming messages. (Tomasz Wasilczyk) (#4579)
-	* Detailed descriptions on connection failures. (Tomasz Wasilczyk)
-	  (#14648)
 	* Fixed password change dialog and problems with connecting to accounts
 	  with non-ASCII passwords. (Tomasz Wasilczyk) (#14652)
 	* Option to show links from strangers. (Tomasz Wasilczyk) (#10591)
