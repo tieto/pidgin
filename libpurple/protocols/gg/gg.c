@@ -1152,7 +1152,7 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 			break;
 		case GG_STATUS_FFC:
 		case GG_STATUS_FFC_DESCR:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
+			st = "freeforchat";
 			break;
 		case GG_STATUS_AVAIL:
 		case GG_STATUS_AVAIL_DESCR:
@@ -1161,6 +1161,10 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 		case GG_STATUS_BUSY:
 		case GG_STATUS_BUSY_DESCR:
 			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AWAY);
+			break;
+		case GG_STATUS_INVISIBLE:
+		case GG_STATUS_INVISIBLE_DESCR:
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_INVISIBLE);
 			break;
 		case GG_STATUS_DND:
 		case GG_STATUS_DND_DESCR:
@@ -2150,50 +2154,60 @@ static GList *ggp_status_types(PurpleAccount *account)
 	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+		NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	/*
-	 * Without this selecting Invisible as own status doesn't
-	 * work. It's not used and not needed to show status of buddies.
+	 * New status for GG 8.0: PoGGadaj ze mna (chatty).
+	 * NOTE: at this time, this is used only to set our own status.
 	 */
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+		"freeforchat", _("Chatty"), TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+		NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	/*
-	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because
-	 * libpurple can't support Chatty status) and Nie przeszkadzac
+	 * New status for GG 8.0: Nie przeszkadzac (do not disturb).
 	 */
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_UNAVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
+		NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
+	types = g_list_append(types, type);
+
+	/*
+	 * It's used on buddy list if and only if it's showing our own
+	 * (invisible) status.
+	 */
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
+		NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	/*
 	 * This status is necessary to display guys who are blocking *us*.
 	 */
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING), NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
+		"blocked", _("Blocked"), TRUE, FALSE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
-	type = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
+		NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	return types;
@@ -2565,6 +2579,9 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	if (strcmp(status_id, "available") == 0) {
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
+	} else if (strcmp(status_id, "freeforchat") == 0) {
+		new_status = GG_STATUS_FFC;
+		new_status_descr = GG_STATUS_FFC_DESCR;
 	} else if (strcmp(status_id, "away") == 0) {
 		new_status = GG_STATUS_BUSY;
 		new_status_descr = GG_STATUS_BUSY_DESCR;

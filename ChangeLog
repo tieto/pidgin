@@ -15,6 +15,8 @@ version 3.0.0 (??/??/????):
 	* Fixed password change dialog and problems with connecting to accounts
 	  with non-ASCII passwords. (Tomasz Wasilczyk) (#14652)
 	* Option to show links from strangers. (Tomasz Wasilczyk) (#10591)
+	* Better handling of "invisible" and "chatty" statuses. (Tomasz
+	  Wasilczyk) (#13836)
 
 	MXit:
 	* Remove all reference to Hidden Number.
