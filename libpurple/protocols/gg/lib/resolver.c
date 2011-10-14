@@ -508,6 +508,8 @@ static int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname
 		return -1;
 	}
 
+	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() creating pipes...\n");
+
 	if (socket_pipe(pipes) == -1) {
 		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() unable to create pipes (errno=%d, %s)\n", errno, strerror(errno));
 		return -1;
@@ -528,6 +530,8 @@ static int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname
 	}
 
 	d->fd = pipes[1];
+
+	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() creating thread...\n");
 
 	h = CreateThread(NULL, 0, gg_resolve_win32thread_thread,
 		d, 0, &dwTId);
