@@ -64,22 +64,22 @@ typedef struct _GtkWebViewClass GtkWebViewClass;
 /**
  * Returns the GType for a GtkWebView widget
  *
- * @return the GType for GtkWebView widget
+ * @return The GType for GtkWebView widget
  */
 GType gtk_webview_get_type(void);
 
 /**
  * Create a new GtkWebView object
  *
- * @return a GtkWidget corresponding to the GtkWebView object
+ * @return A GtkWidget corresponding to the GtkWebView object
  */
 GtkWidget *gtk_webview_new(void);
 
 /**
  * Set the vertical adjustment for the GtkWebView.
  *
- * @param webview  The GtkWebView.
- * @param vadj     The GtkAdjustment that control the webview.
+ * @param webview  The GtkWebView object
+ * @param vadj     The GtkAdjustment that control the webview
  */
 void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj);
 
@@ -109,7 +109,7 @@ void gtk_webview_load_html_string_with_imgstore(GtkWebView *webview, const char 
  *
  * @param webview The GtkWebView object
  *
- * @return gboolean indicating whether the webview is empty.
+ * @return gboolean indicating whether the webview is empty
  */
 gboolean gtk_webview_is_empty(GtkWebView *webview);
 
@@ -120,8 +120,8 @@ gboolean gtk_webview_is_empty(GtkWebView *webview);
  * conditions when calling JS functions immediately after opening the
  * page.
  *
- * @param webview the GtkWebView object
- * @param script   the script to execute
+ * @param webview The GtkWebView object
+ * @param script  The script to execute
  */
 void gtk_webview_safe_execute_script(GtkWebView *webview, const char *script);
 
@@ -131,15 +131,15 @@ void gtk_webview_safe_execute_script(GtkWebView *webview, const char *script);
  *
  * @param str The string to escape and quote
  *
- * @return the quoted string.
+ * @return The quoted string
  */
 char *gtk_webview_quote_js_string(const char *str);
 
 /**
  * Scrolls the Webview to the end of its contents.
  *
- * @param webview The GtkWebView.
- * @param smooth   A boolean indicating if smooth scrolling should be used.
+ * @param webview The GtkWebView object
+ * @param smooth  A boolean indicating if smooth scrolling should be used
  */
 void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
 
