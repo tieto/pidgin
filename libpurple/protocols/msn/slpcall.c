@@ -1145,8 +1145,6 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 			if (slpcall->cb)
 				slpcall->cb(slpcall, body, body_len);
-
-			slpcall->wasted = TRUE;
 		}
 	}
 	else if (msn_p2p_info_is_ack(slpmsg->p2p_info))
