@@ -336,8 +336,10 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 	}
 	memset(&context.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
+#if 0
 	memset(&context.unknown1, 0, sizeof(context.unknown1));
 	context.unknown2 = 0xffffffff;
+#endif
 
 	/* Mind the cast, as in, don't free it after! */
 	context.preview = (char *)preview;

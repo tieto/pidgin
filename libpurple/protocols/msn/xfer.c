@@ -174,9 +174,15 @@ msn_file_context_to_wire(MsnFileContext *context)
 	msn_push32le(tmp, context->type);
 	memcpy(tmp, context->file_name, MAX_FILE_NAME_LEN * 2);
 	tmp += MAX_FILE_NAME_LEN * 2;
+#if 0
 	memcpy(tmp, context->unknown1, sizeof(context->unknown1));
 	tmp += sizeof(context->unknown1);
 	msn_push32le(tmp, context->unknown2);
+#else
+	memset(tmp, 0, sizeof(gchar[30]));
+	tmp += sizeof(gchar[30]);
+	msn_push32le(tmp, 0);
+#endif
 	if (context->preview) {
 		memcpy(tmp, context->preview, context->preview_len);
 	}
@@ -218,9 +224,13 @@ msn_file_context_from_wire(const char *buf, gsize len)
 	context->type = msn_pop32le(buf);
 	memcpy(context->file_name, buf, MAX_FILE_NAME_LEN * 2);
 	buf += MAX_FILE_NAME_LEN * 2;
+#if 0
 	memcpy(context->unknown1, buf, sizeof(context->unknown1));
 	buf += sizeof(context->unknown1);
 	context->unknown2 = msn_pop32le(buf);
+#else
+	buf += sizeof(gchar[30]) + sizeof(guint32);
+#endif
 
 	if (context->type == 0 && len > context->length) {
 		context->preview_len = len - context->length;

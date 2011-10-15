@@ -39,8 +39,10 @@ typedef struct
 	guint64   file_size;    /*< Size of file */
 	guint32   type;         /*< Transfer type */
 	gunichar2 file_name[MAX_FILE_NAME_LEN]; /*< Self-explanatory */
+#if 0
 	gchar     unknown1[30]; /*< Used somehow for background sharing */
 	guint32   unknown2;     /*< Possibly for background sharing as well */
+#endif
 	gchar     *preview;     /*< File preview data, 96x96 PNG */
 	gsize     preview_len;
 } MsnFileContext;
