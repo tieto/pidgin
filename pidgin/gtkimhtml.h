@@ -148,12 +148,6 @@ struct _GtkIMHtmlClass {
 	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
 
-struct _GtkSmileyTree {
-	GString *values;
-	GtkSmileyTree **children;
-	GtkIMHtmlSmiley *image;
-};
-
 struct _GtkIMHtmlSmiley {
 	gchar *smile;
 	gchar *file;
@@ -165,36 +159,6 @@ struct _GtkIMHtmlSmiley {
 	GtkIMHtml *imhtml;
 	gpointer data;
 	gsize datasize;
-};
-
-struct _GtkIMHtmlScalable {
-	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
-	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
-	void (*free)(struct _GtkIMHtmlScalable *);
-};
-
-struct _GtkIMHtmlImage {
-	GtkIMHtmlScalable scalable;
-	GtkImage *image; /**< Contains the scaled version of this pixbuf. */
-	GdkPixbuf *pixbuf; /**< The original pixbuf, before any scaling. */
-	GtkTextMark *mark;
-	gchar *filename;
-	int width;
-	int height;
-	int id;
-	GtkWidget *filesel;
-};
-
-struct _GtkIMHtmlAnimation {
-	GtkIMHtmlImage imhtmlimage;
-	GdkPixbufAnimation *anim; /**< The original animation, before any scaling. */
-	GdkPixbufAnimationIter *iter;
-	guint timer;
-};
-
-struct _GtkIMHtmlHr {
-	GtkIMHtmlScalable scalable;
-	GtkWidget *sep;
 };
 
 typedef enum {

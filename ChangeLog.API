@@ -190,7 +190,12 @@ version 3.0.0 (??/??/????):
 		* PurplePluginProtocolInfo.get_cb_away
 		* serv_got_attention
 		* serv_send_attention
+		* struct _GtkIMHtmlAnimation
 		* struct _GtkIMHtmlFontDetail
+		* struct _GtkIMHtmlHr
+		* struct _GtkIMHtmlImage
+		* struct _GtkIMHtmlScalable
+		* struct _GtkSmileyTree
 		* struct _PidginChatPane
 		* struct _PidginImPane
 		* struct _PurpleAttentionType
