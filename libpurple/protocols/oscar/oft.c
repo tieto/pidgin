@@ -651,7 +651,7 @@ void
 peer_oft_sendcb_init(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
-	size_t size;
+	goffset size;
 
 	conn = purple_xfer_get_protocol_data(xfer);
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
