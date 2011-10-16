@@ -139,7 +139,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 		 * we have just accepted a file transfer request from MXit.  send a confirmation
 		 * to the MXit server so that can send us the file
 		 */
-		mxit_send_file_accept( mx->session, mx->fileid, purple_xfer_get_size( xfer ), 0 );
+		mxit_send_file_accept( mx->session, mx->fileid, (int) purple_xfer_get_size( xfer ), 0 );
 	}
 }
 
@@ -151,7 +151,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
  */
 static void mxit_xfer_start( PurpleXfer* xfer )
 {
-	size_t			filesize;
+	goffset			filesize;
 	unsigned char*	buffer;
 	int				size;
 	int				wrote;
