@@ -260,7 +260,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER,
 		YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	size = g_strdup_printf("%" G_GSIZE_FORMAT, purple_xfer_get_size(xfer));
+	size = g_strdup_printf("%" G_GOFFSET_FORMAT, purple_xfer_get_size(xfer));
 	filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 	encoded_filename = yahoo_string_encode(gc, filename, NULL);
 
@@ -279,7 +279,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
 	header = g_strdup_printf(
 		"POST http://%s:%d/notifyft HTTP/1.0\r\n"
-		"Content-length: %" G_GSIZE_FORMAT "\r\n"
+		"Content-length: %" G_GOFFSET_FORMAT "\r\n"
 		"Host: %s:%d\r\n"
 		"Cookie: Y=%s; T=%s\r\n"
 		"\r\n",
@@ -378,7 +378,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 			302, 268,
 			300, 268,
 			27,  filename,
-			28,  purple_xfer_get_size(xfer),
+			28,  (int)purple_xfer_get_size(xfer),
 			301, 268,
 			303, 268);
 		g_free(filename);
@@ -411,14 +411,14 @@ static void yahoo_xfer_start(PurpleXfer *xfer)
 	/* We don't need to do anything here, do we? */
 }
 
-static guint calculate_length(const gchar *l, size_t len)
+static goffset calculate_length(const gchar *l, size_t len)
 {
 	int i;
 
 	for (i = 0; i < len; i++) {
 		if (!g_ascii_isdigit(l[i]))
 			continue;
-		return strtol(l + i, NULL, 10);
+		return g_ascii_strtoll(l + i, NULL, 10);
 	}
 	return 0;
 }
@@ -430,7 +430,7 @@ static gssize yahoo_xfer_read(guchar **buffer, PurpleXfer *xfer)
 	gchar *start = NULL;
 	gchar *length;
 	gchar *end;
-	int filelen;
+	goffset filelen;
 	struct yahoo_xfer_data *xd = purple_xfer_get_protocol_data(xfer);
 
 	if (purple_xfer_get_type(xfer) != PURPLE_XFER_RECEIVE) {
@@ -656,10 +656,10 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 		if(xfer_data->filename_list)
 		{
 			gchar* filename;
-			long filesize;
+			goffset filesize;
 
 			filename = xfer_data->filename_list->data;
-			filesize = atol( xfer_data->size_list->data );
+			filesize = g_ascii_strtoll( xfer_data->size_list->data, NULL, 10 );
 
 			gc = xfer_data->gc;
 			yd = purple_connection_get_protocol_data(gc);
@@ -802,7 +802,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
 	char *filename = NULL;
-	unsigned long filesize = 0L;
+	goffset filesize = G_GOFFSET_CONSTANT(0);
 	GSList *l;
 
 	yd = purple_connection_get_protocol_data(gc);
@@ -830,7 +830,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 			filename = pair->value;
 			break;
 		case 28:
-			filesize = atol(pair->value);
+			filesize = g_ascii_strtoll(pair->value, NULL, 10);
 			break;
 		case 49:
 			service = pair->value;
@@ -1265,7 +1265,7 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 				initial_buffer = g_strdup_printf("POST /%s HTTP/1.1\r\n"
 						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 						"Host: %s\r\n"
-						"Content-Length: %" G_GSIZE_FORMAT "\r\n"
+						"Content-Length: %" G_GOFFSET_FORMAT "\r\n"
 						"Cache-Control: no-cache\r\n\r\n",
 										xd->path,
 										xd->host,
@@ -1278,7 +1278,7 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 						"Cookie:%s\r\n"
 						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 						"Host: %s\r\n"
-						"Content-Length: %" G_GSIZE_FORMAT "\r\n"
+						"Content-Length: %" G_GOFFSET_FORMAT "\r\n"
 						"Cache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1433,7 +1433,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 		                            "Server: Y!/1.0\r\n"
 		                            "MIME-version: 1.0\r\n"
 		                            "Last-modified: %s GMT\r\n"
-		                            "Content-length: %" G_GSIZE_FORMAT "\r\n\r\n",
+		                            "Content-length: %" G_GOFFSET_FORMAT "\r\n\r\n",
 		                            time_str, time_str, purple_xfer_get_size(xfer));
 		xd->txbuf = (guchar *)initial_buffer;
 		xd->txbuflen = strlen(initial_buffer);
@@ -1601,7 +1601,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *filename = NULL;
 	char *xfer_peer_idstring = NULL;
 	char *utf8_filename;
-	unsigned long filesize = 0L;
+	goffset filesize = G_GOFFSET_CONSTANT(0);
 	GSList *l;
 	GSList *filename_list = NULL;
 	GSList *size_list = NULL;
@@ -1718,7 +1718,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	filename_list = g_slist_reverse(filename_list);
 	size_list = g_slist_reverse(size_list);
 	filename = filename_list->data;
-	filesize = atol(size_list->data);
+	filesize = g_ascii_strtoll(size_list->data, NULL, 10);
 
 	if(!from) return;
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
