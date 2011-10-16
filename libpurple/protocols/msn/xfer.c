@@ -181,7 +181,7 @@ msn_file_context_to_wire(MsnFileContext *context)
 #else
 	memset(tmp, 0, sizeof(gchar[30]));
 	tmp += sizeof(gchar[30]);
-	msn_push32le(tmp, 0);
+	msn_push32le(tmp, 0xffffffff);
 #endif
 	if (context->preview) {
 		memcpy(tmp, context->preview, context->preview_len);
