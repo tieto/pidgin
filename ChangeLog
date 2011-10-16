@@ -6,6 +6,9 @@ version 3.0.0 (??/??/????):
 	* Don't try to format ICQ usernames entered as email addresses.
 	  Gets rid of an "Unable to format username" error at login. (#13883)
 
+	Bonjour:
+	* Support file transfers up to ~9 EiB.
+
 	Gadu-Gadu:
 	* Possibility to require encryption. Also, using encryption when
 	  available is default option now. (Tomasz Wasilczyk)
@@ -18,6 +21,7 @@ version 3.0.0 (??/??/????):
 
 	MSN:
 	* Fix file transfer with older Mac MSN clients.
+	* Support file transfers up to ~9 EiB.
 
 	MXit:
 	* Remove all reference to Hidden Number.
@@ -31,6 +35,7 @@ version 3.0.0 (??/??/????):
 	* Strip element prefixes from XHTML-IM messages as they're presented
 	  to the core (and UIs) as incoming messages (Thijs Alkemade).
 	  (#14529)
+	* Support file transfers up to ~9 EiB.
 
 version 2.10.1 (??/??/????):
 	SILC:
