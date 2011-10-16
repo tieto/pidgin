@@ -1099,7 +1099,7 @@ static void
 jabber_si_xfer_ibb_sent_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
-	gsize remaining = purple_xfer_get_bytes_remaining(xfer);
+	goffset remaining = purple_xfer_get_bytes_remaining(xfer);
 
 	if (remaining == 0) {
 		/* close the session */
@@ -1240,7 +1240,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	file = xmlnode_new_child(si, "file");
 	xmlnode_set_namespace(file, NS_SI_FILE_TRANSFER);
 	xmlnode_set_attrib(file, "name", purple_xfer_get_filename(xfer));
-	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, purple_xfer_get_size(xfer));
+	g_snprintf(buf, sizeof(buf), "%" G_GOFFSET_FORMAT, purple_xfer_get_size(xfer));
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
@@ -1676,8 +1676,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	xmlnode *thumbnail;
 #endif
 	const char *stream_id, *filename, *filesize_c, *profile;
-	guint64 filesize_64 = 0;
-	size_t filesize = 0;
+	goffset filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
 			strcmp(profile, NS_SI_FILE_TRANSFER))
@@ -1693,17 +1692,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 
 	if((filesize_c = xmlnode_get_attrib(file, "size")))
-		filesize_64 = g_ascii_strtoull(filesize_c, NULL, 10);
-	/* TODO 3.0.0: When the core uses a guint64, this is redundant.
-	 * See #8477.
-	 */
-	if (filesize_64 > G_MAXSIZE) {
-		/* Should this pop up a warning? */
-		purple_debug_warning("jabber", "Unable to transfer file (too large)"
-		                     " -- see #8477 for more details.");
-		return;
-	}
-	filesize = filesize_64;
+		filesize = g_ascii_strtoull(filesize_c, NULL, 10);
 
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;

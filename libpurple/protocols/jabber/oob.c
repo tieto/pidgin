@@ -137,8 +137,8 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 			*tmp = '\0';
 			lenstr = strstr(jox->headers->str, "Content-Length: ");
 			if(lenstr) {
-				int size;
-				sscanf(lenstr, "Content-Length: %d", &size);
+				goffset size;
+				sscanf(lenstr, "Content-Length: %" G_GOFFSET_FORMAT, &size);
 				purple_xfer_set_size(xfer, size);
 			}
 			purple_xfer_set_read_fnc(xfer, NULL);
