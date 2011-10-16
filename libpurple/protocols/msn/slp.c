@@ -291,7 +291,7 @@ send_file_cb(MsnSlpCall *slpcall)
 static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
-	gsize size = 0;
+	goffset size = 0;
 	MsnFileContext context;
 	gchar *u8 = NULL;
 	gchar *ret;

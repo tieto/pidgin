@@ -512,7 +512,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		MsnFileContext *file_context;
 		char *buf;
 		gsize bin_len;
-		guint32 file_size;
 		char *file_name;
 
 		account = slpcall->slplink->session->account;
@@ -529,8 +528,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		file_context = msn_file_context_from_wire(buf, bin_len);
 
 		if (file_context != NULL) {
-			file_size = file_context->file_size;
-
 			file_name = g_convert((const gchar *)&file_context->file_name,
 			                      MAX_FILE_NAME_LEN * 2,
 			                      "UTF-8", "UTF-16LE",
@@ -538,7 +535,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_set_filename(xfer, file_name ? file_name : "");
 			g_free(file_name);
-			purple_xfer_set_size(xfer, file_size);
+			purple_xfer_set_size(xfer, file_context->file_size);
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
 			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
 			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
