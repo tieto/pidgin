@@ -319,7 +319,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	/* Send the intended recipient the DCC request */
 	arg[0] = purple_xfer_get_remote_user(xfer);
 	inet_aton(purple_network_get_my_ip(irc->fd), &addr);
-	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GSIZE_FORMAT "\001",
+	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GOFFSET_FORMAT "\001",
 	                               purple_xfer_get_filename(xfer), ntohl(addr.s_addr),
 	                               port, purple_xfer_get_size(xfer));
 
