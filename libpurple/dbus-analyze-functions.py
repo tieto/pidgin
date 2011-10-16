@@ -495,7 +495,7 @@ class ServerBinding (Binding):
         if self.function.name in stringlists:
             self.cdecls.append("\tchar **%s;" % name)
             self.ccode.append("\tlist = %s;" % self.call)
-            self.ccode.append("\t%s = (char **)purple_%s_to_array(list, FALSE, &%s_LEN);" % \
+            self.ccode.append("\t%s = (char **)purple_%s_to_array(list, &%s_LEN);" % \
                          (name, type[0], name))
             self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
                           % (name, name))
@@ -507,7 +507,7 @@ class ServerBinding (Binding):
         else:
             self.cdecls.append("\tdbus_int32_t *%s;" % name)
             self.ccode.append("\tlist = %s;" % self.call)
-            self.ccode.append("\t%s = purple_dbusify_%s(list, FALSE, &%s_LEN);" % \
+            self.ccode.append("\t%s = purple_dbusify_%s(list, &%s_LEN);" % \
                          (name, type[0], name))
             if (not (self.function.name in constlists)):
                 self.ccode.append("\tg_%s_free(list);" % type[0].lower()[1:])

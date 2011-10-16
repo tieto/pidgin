@@ -300,7 +300,7 @@ null_to_empty(const char *s)
 }
 
 dbus_int32_t *
-purple_dbusify_GList(GList *list, gboolean free_memory, dbus_int32_t *len)
+purple_dbusify_GList(GList *list, dbus_int32_t *len)
 {
 	dbus_int32_t *array;
 	int i;
@@ -310,15 +310,12 @@ purple_dbusify_GList(GList *list, gboolean free_memory, dbus_int32_t *len)
 	array = g_new0(dbus_int32_t, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
-
-	if (free_memory)
-		g_list_free(list);
 
 	return array;
 }
 
 dbus_int32_t *
-purple_dbusify_GSList(GSList *list, gboolean free_memory, dbus_int32_t *len)
+purple_dbusify_GSList(GSList *list, dbus_int32_t *len)
 {
 	dbus_int32_t *array;
 	int i;
@@ -329,14 +326,11 @@ purple_dbusify_GSList(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
 
-	if (free_memory)
-		g_slist_free(list);
-
 	return array;
 }
 
 gpointer *
-purple_GList_to_array(GList *list, gboolean free_memory, dbus_int32_t *len)
+purple_GList_to_array(GList *list, dbus_int32_t *len)
 {
 	gpointer *array;
 	int i;
@@ -347,14 +341,11 @@ purple_GList_to_array(GList *list, gboolean free_memory, dbus_int32_t *len)
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
 
-	if (free_memory)
-		g_list_free(list);
-
 	return array;
 }
 
 gpointer *
-purple_GSList_to_array(GSList *list, gboolean free_memory, dbus_int32_t *len)
+purple_GSList_to_array(GSList *list, dbus_int32_t *len)
 {
 	gpointer *array;
 	int i;
@@ -364,9 +355,6 @@ purple_GSList_to_array(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	array = g_new0(gpointer, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
-
-	if (free_memory)
-		g_slist_free(list);
 
 	return array;
 }
