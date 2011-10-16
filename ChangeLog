@@ -16,6 +16,9 @@ version 3.0.0 (??/??/????):
 	* Better handling of "invisible" and "chatty" statuses. (Tomasz
 	  Wasilczyk) (#13836)
 
+	MSN:
+	* Fix file transfer with older Mac MSN clients.
+
 	MXit:
 	* Remove all reference to Hidden Number.
 	* Fix decoding of font-size changes in the markup of received messages.

@@ -322,7 +322,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 
 	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
 
-	context.length = MSN_FILE_CONTEXT_SIZE;
+	context.length = MSN_FILE_CONTEXT_SIZE_V2;
 	context.version = 2; /* V.3 contains additional unnecessary data */
 	context.file_size = size;
 	if (preview)
@@ -346,7 +346,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 	context.preview_len = preview_len;
 
 	u8 = msn_file_context_to_wire(&context);
-	ret = purple_base64_encode((const guchar *)u8, MSN_FILE_CONTEXT_SIZE + preview_len);
+	ret = purple_base64_encode((const guchar *)u8, MSN_FILE_CONTEXT_SIZE_V2 + preview_len);
 
 	g_free(uni);
 	g_free(u8);

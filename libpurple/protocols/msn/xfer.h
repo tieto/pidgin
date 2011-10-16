@@ -47,7 +47,9 @@ typedef struct
 	gsize     preview_len;
 } MsnFileContext;
 
-#define MSN_FILE_CONTEXT_SIZE (4*4 + 1*8 + 2*MAX_FILE_NAME_LEN + 30)
+#define MSN_FILE_CONTEXT_SIZE_V0 (4*3 + 1*8 + 2*MAX_FILE_NAME_LEN)
+#define MSN_FILE_CONTEXT_SIZE_V2 (MSN_FILE_CONTEXT_SIZE_V0 + 4*1 + 30)
+#define MSN_FILE_CONTEXT_SIZE_V3 (MSN_FILE_CONTEXT_SIZE_V2 + 63)
 
 void msn_xfer_init(PurpleXfer *xfer);
 void msn_xfer_cancel(PurpleXfer *xfer);
