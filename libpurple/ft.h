@@ -140,7 +140,7 @@ struct _PurpleXfer
 	char *message;                /**< A message sent with the request     */
 	char *filename;               /**< The name sent over the network.     */
 	char *local_filename;         /**< The name on the local hard drive.   */
-	size_t size;                  /**< The size of the file.               */
+	goffset size;                 /**< The size of the file.               */
 
 	FILE *dest_fp;                /**< The destination file pointer.       */
 
@@ -151,8 +151,8 @@ struct _PurpleXfer
 	int fd;                       /**< The socket file descriptor.         */
 	int watcher;                  /**< Watcher.                            */
 
-	size_t bytes_sent;            /**< The number of bytes sent.           */
-	size_t bytes_remaining;       /**< The number of bytes remaining.      */
+	goffset bytes_sent;           /**< The number of bytes sent.           */
+	goffset bytes_remaining;      /**< The number of bytes remaining.      */
 	time_t start_time;            /**< When the transfer of data began.    */
 	time_t end_time;              /**< When the transfer of data ended.    */
 
@@ -358,7 +358,7 @@ const char *purple_xfer_get_local_filename(const PurpleXfer *xfer);
  *
  * @return The number of bytes sent.
  */
-size_t purple_xfer_get_bytes_sent(const PurpleXfer *xfer);
+goffset purple_xfer_get_bytes_sent(const PurpleXfer *xfer);
 
 /**
  * Returns the number of bytes remaining to send or receive.
@@ -367,7 +367,7 @@ size_t purple_xfer_get_bytes_sent(const PurpleXfer *xfer);
  *
  * @return The number of bytes remaining.
  */
-size_t purple_xfer_get_bytes_remaining(const PurpleXfer *xfer);
+goffset purple_xfer_get_bytes_remaining(const PurpleXfer *xfer);
 
 /**
  * Returns the size of the file being sent or received.
@@ -376,7 +376,7 @@ size_t purple_xfer_get_bytes_remaining(const PurpleXfer *xfer);
  *
  * @return The total size of the file.
  */
-size_t purple_xfer_get_size(const PurpleXfer *xfer);
+goffset purple_xfer_get_size(const PurpleXfer *xfer);
 
 /**
  * Returns the current percentage of progress of the transfer.
@@ -496,7 +496,7 @@ void purple_xfer_set_local_filename(PurpleXfer *xfer, const char *filename);
  * @param xfer The file transfer.
  * @param size The size of the file.
  */
-void purple_xfer_set_size(PurpleXfer *xfer, size_t size);
+void purple_xfer_set_size(PurpleXfer *xfer, goffset size);
 
 /**
  * Sets the local port of the file transfer.
@@ -519,7 +519,7 @@ void purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port);
  *                   send.  If we're receiving a file, this is the
  *                   next byte that we expect to receive.
  */
-void purple_xfer_set_bytes_sent(PurpleXfer *xfer, size_t bytes_sent);
+void purple_xfer_set_bytes_sent(PurpleXfer *xfer, goffset bytes_sent);
 
 /**
  * Returns the UI operations structure for a file transfer.
@@ -848,3 +848,4 @@ PurpleXferUiOps *purple_xfers_get_ui_ops(void);
 #endif
 
 #endif /* _PURPLE_FT_H_ */
+

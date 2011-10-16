@@ -1091,7 +1091,7 @@ const char *purple_strcasestr(const char *haystack, const char *needle);
  *
  * @return The string in units form. This must be freed.
  */
-char *purple_str_size_to_units(size_t size);
+char *purple_str_size_to_units(goffset size);
 
 /**
  * Converts seconds into a human-readable form.

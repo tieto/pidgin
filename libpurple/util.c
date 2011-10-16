@@ -3331,9 +3331,9 @@ purple_strcasestr(const char *haystack, const char *needle)
 }
 
 char *
-purple_str_size_to_units(size_t size)
+purple_str_size_to_units(goffset size)
 {
-	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB" };
+	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3346,7 +3346,7 @@ purple_str_size_to_units(size_t size)
 	else {
 		size_mag = (float)size;
 
-		while ((size_index < 3) && (size_mag > 1024)) {
+		while ((size_index < G_N_ELEMENTS(size_str) - 1) && (size_mag > 1024)) {
 			size_mag /= 1024;
 			size_index++;
 		}

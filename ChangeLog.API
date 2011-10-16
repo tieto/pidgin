@@ -84,15 +84,25 @@ version 3.0.0 (??/??/????):
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
+		* purple_str_size_to_units now takes a goffset as the size parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
 		* purple_util_fetch_url_request now takes a PurpleAccount as
 		  the first parameter
 		* purple_util_fetch_url_request now takes a length as the eighth
 		  parameter
 		* purple_util_fetch_url_len now takes a length as the fifth parameter
+		* purple_xfer_get_bytes_remaining now returns a goffset
+		* purple_xfer_get_bytes_sent now returns a goffset
+		* purple_xfer_get_size now returns a goffset
 		* purple_xfer_is_canceled renamed to purple_xfer_is_cancelled
+		* purple_xfer_set_bytes_sent now takes a goffset as the bytes_sent
+		  parameter
+		* purple_xfer_set_size now takes a goffset as the size parameter
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
+		* PurpleXfer.bytes_remaining is now a goffset
+		* PurpleXfer.bytes_sent is now a goffset
+		* PurpleXfer.size is now a goffset
 
 		Removed:
 		* _GntFileType
