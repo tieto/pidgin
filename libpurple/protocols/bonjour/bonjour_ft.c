@@ -38,7 +38,7 @@ static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
-		     const int filesize, const char *filename, int option);
+		     const goffset filesize, const char *filename, int option);
 static void bonjour_free_xfer(PurpleXfer *xfer);
 
 /* Look for specific xfer handle */
@@ -211,7 +211,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	file = xmlnode_new_child(si_node, "file");
 	xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
 	xmlnode_set_attrib(file, "name", purple_xfer_get_filename(xfer));
-	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, purple_xfer_get_size(xfer));
+	g_snprintf(buf, sizeof(buf), "%" G_GOFFSET_FORMAT, purple_xfer_get_size(xfer));
 	xmlnode_set_attrib(file, "size", buf);
 
 	feature = xmlnode_new_child(si_node, "feature");
@@ -439,7 +439,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			if (si && (profile = xmlnode_get_attrib(si, "profile"))
 					&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
 				const char *filename = NULL, *filesize_str = NULL;
-				int filesize = 0;
+				goffset filesize = 0;
 				xmlnode *file;
 
 				const char *sid = xmlnode_get_attrib(si, "id");
@@ -447,7 +447,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				if ((file = xmlnode_get_child(si, "file"))) {
 					filename = xmlnode_get_attrib(file, "name");
 					if((filesize_str = xmlnode_get_attrib(file, "size")))
-						filesize = atoi(filesize_str);
+						filesize = g_ascii_strtoll(filesize_str, NULL, 10);
 				}
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
@@ -576,7 +576,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
-		     const int filesize, const char *filename, int option)
+		     const goffset filesize, const char *filename, int option)
 {
 	PurpleXfer *xfer;
 	XepXfer *xf;
