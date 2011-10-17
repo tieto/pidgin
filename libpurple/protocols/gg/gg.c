@@ -47,6 +47,10 @@
 #include "buddylist.h"
 #include "gg-utils.h"
 
+#ifdef _WIN32
+#  include "win32-resolver.h"
+#endif
+
 static PurplePlugin *my_protocol = NULL;
 
 /* Prototypes */
@@ -3000,6 +3004,11 @@ static void init_plugin(PurplePlugin *plugin)
 	my_protocol = plugin;
 
 	gg_debug_handler = purple_gg_debug_handler;
+	
+#ifdef _WIN32
+	gg_global_set_custom_resolver(ggp_resolver_win32thread_start,
+		ggp_resolver_win32thread_cleanup);
+#endif
 }
 
 PURPLE_INIT_PLUGIN(gg, init_plugin, info);

@@ -60,7 +60,8 @@ C_SRC =	\
 	confer.c \
 	gg.c \
 	search.c \
-	gg-utils.c
+	gg-utils.c \
+	win32-resolver.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
