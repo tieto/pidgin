@@ -601,7 +601,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 		struct sockaddr_in sin;
 		struct gg_dcc *c;
 		int fd, one = 1;
-		unsigned int sin_len = sizeof(sin);
+		socklen_t sin_len = sizeof(sin);
 
 		if ((fd = accept(h->fd, (struct sockaddr*) &sin, &sin_len)) == -1) {
 			gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() can't accept() new connection (errno=%d, %s)\n", errno, strerror(errno));
@@ -648,7 +648,8 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 		struct gg_dcc_small_packet small;
 		struct gg_dcc_big_packet big;
 		int size, tmp, res;
-		unsigned int utmp, res_size = sizeof(res);
+		unsigned int utmp;
+		socklen_t res_size = sizeof(res);
 		char buf[1024], ack[] = "UDAG";
 
 		struct gg_dcc_file_info_packet {

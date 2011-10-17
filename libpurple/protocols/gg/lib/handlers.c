@@ -92,7 +92,7 @@ static int gg_session_handle_welcome(struct gg_session *gs, uint32_t type, const
 	uint8_t hash_buf[64];
 	uint32_t local_ip;
 	struct sockaddr_in sin;
-	unsigned int sin_len = sizeof(sin);
+	socklen_t sin_len = sizeof(sin);
 
 	if (len < sizeof(struct gg_welcome)) {
 		ge->type = GG_EVENT_CONN_FAILED;
