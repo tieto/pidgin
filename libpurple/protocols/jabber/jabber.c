@@ -829,7 +829,7 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
-	gc->inpa = purple_input_add(js->fd, PURPLE_INPUT_READ, jabber_recv_cb, gc);
+	js->inpa = purple_input_add(js->fd, PURPLE_INPUT_READ, jabber_recv_cb, gc);
 }
 
 static void
@@ -850,8 +850,8 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 static void tls_init(JabberStream *js)
 {
-	purple_input_remove(js->gc->inpa);
-	js->gc->inpa = 0;
+	purple_input_remove(js->inpa);
+	js->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(purple_connection_get_account(js->gc), js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 	/* The fd is no longer our concern */
@@ -1603,8 +1603,10 @@ void jabber_close(PurpleConnection *gc)
 	if(js->gsc) {
 		purple_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
-		if(js->gc->inpa)
-			purple_input_remove(js->gc->inpa);
+		if(js->inpa) {
+			purple_input_remove(js->inpa);
+			js->inpa = 0;
+		}
 		close(js->fd);
 	}
 
