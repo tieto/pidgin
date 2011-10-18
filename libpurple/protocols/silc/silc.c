@@ -528,7 +528,7 @@ static void silcpurple_running(SilcClient client, void *context)
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	if (!silc_load_key_pair((char *)purple_account_get_string(account, "public-key", pkd),
 				(char *)purple_account_get_string(account, "private-key", prd),
-				(gc->password == NULL) ? "" : gc->password,
+				(purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 				&sg->public_key, &sg->private_key)) {
 		if (!purple_account_get_password(account)) {
 			purple_account_request_password(account, G_CALLBACK(silcpurple_got_password_cb),

@@ -210,8 +210,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  SILCPURPLE_DEF_PKCS_LEN,
 						  file_public_key,
 						  file_private_key, NULL,
-						  (gc->password == NULL)
-						  ? "" : gc->password,
+						  (purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 						  NULL, NULL, FALSE)) {
 				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));
@@ -253,8 +252,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  SILCPURPLE_DEF_PKCS_LEN,
 						  file_public_key,
 						  file_private_key, NULL,
-						  (gc->password == NULL)
-						  ? "" : gc->password,
+						  (purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 						  NULL, NULL, FALSE)) {
 				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));

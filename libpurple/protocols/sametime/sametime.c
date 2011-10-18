@@ -217,6 +217,7 @@ struct mwPurplePluginData {
 
   /** socket fd */
   int socket;
+  guint inpa;  /* input watcher */
   gint outpa;  /* like inpa, but the other way */
 
   /** circular buffer for outgoing data */
@@ -449,9 +450,9 @@ static void mw_session_io_close(struct mwSession *session) {
     pd->socket = 0;
   }
 
-  if(gc->inpa) {
-    purple_input_remove(gc->inpa);
-    gc->inpa = 0;
+  if(pd->inpa) {
+    purple_input_remove(pd->inpa);
+    pd->inpa = 0;
   }
 }
 
@@ -1760,9 +1761,9 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     pd->socket = 0;
   }
 
-  if(pd->gc->inpa) {
-    purple_input_remove(pd->gc->inpa);
-    pd->gc->inpa = 0;
+  if(pd->inpa) {
+    purple_input_remove(pd->inpa);
+    pd->inpa = 0;
   }
 
   if(! ret) {
@@ -1791,7 +1792,6 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
 static void connect_cb(gpointer data, gint source, const gchar *error_message) {
 
   struct mwPurplePluginData *pd = data;
-  PurpleConnection *gc = pd->gc;
 
   if(source < 0) {
     /* connection failed */
@@ -1819,7 +1819,7 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
   }
 
   pd->socket = source;
-  gc->inpa = purple_input_add(source, PURPLE_INPUT_READ,
+  pd->inpa = purple_input_add(source, PURPLE_INPUT_READ,
 			    read_cb, pd);
 
   mwSession_start(pd->session);
@@ -3794,9 +3794,9 @@ static void mw_prpl_close(PurpleConnection *gc) {
   purple_connection_set_protocol_data(gc, NULL);
 
   /* stop watching the socket */
-  if(gc->inpa) {
-    purple_input_remove(gc->inpa);
-    gc->inpa = 0;
+  if(pd->inpa) {
+    purple_input_remove(pd->inpa);
+    pd->inpa = 0;
   }
 
   /* clean up the rest */
