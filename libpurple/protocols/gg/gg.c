@@ -39,8 +39,6 @@
 #include "request.h"
 #include "xmlnode.h"
 
-#include <libgadu.h>
-
 #include "gg.h"
 #include "confer.h"
 #include "search.h"

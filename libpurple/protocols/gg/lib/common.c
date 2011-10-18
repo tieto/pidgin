@@ -30,9 +30,9 @@
 #  include <sys/socket.h>
 #  include <netinet/in.h>
 #  include <arpa/inet.h>
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include <errno.h>

@@ -5,6 +5,8 @@
 #ifndef __GG_LIBGADU_CONFIG_H
 #define __GG_LIBGADU_CONFIG_H
 
+#define GG_LIBGADU_VERSION "1.11.0"
+
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef __GG_LIBGADU_BIGENDIAN
 #ifdef WORDS_BIGENDIAN

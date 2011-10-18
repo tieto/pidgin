@@ -38,14 +38,13 @@
 #  include <sys/socket.h>
 #  include <netinet/in.h>
 #  include <arpa/inet.h>
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "protocol.h"
 #include "resolver.h"
 #include "libgadu-internal.h"
@@ -73,8 +72,6 @@
 #  include <openssl/err.h>
 #  include <openssl/rand.h>
 #endif
-
-#define GG_LIBGADU_VERSION "1.11.0"
 
 /**
  * Port gniazda nasłuchującego dla połączeń bezpośrednich.

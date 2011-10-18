@@ -1447,7 +1447,6 @@ int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
 
 int gg_file_hash_sha1(int fd, uint8_t *result) GG_DEPRECATED;
 
-#undef printf
 #ifdef __GNUC__
 char *gg_saprintf(const char *format, ...) __attribute__ ((format (printf, 1, 2))) GG_DEPRECATED;
 #else
@@ -2312,6 +2311,8 @@ struct gg_dcc7_dunno1 {
 #endif
 
 #endif /* __GG_LIBGADU_H */
+
+#include "libgadu-config.h"
 
 /*
  * Local variables:

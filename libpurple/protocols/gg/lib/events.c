@@ -38,7 +38,6 @@
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "protocol.h"
 #include "libgadu-internal.h"
 #include "encoding.h"

@@ -157,6 +157,9 @@ struct ggp_resolver_win32thread_data {
 	int fd;
 };
 
+/**
+ * Copy-paste from gg_resolver_run().
+ */
 static DWORD WINAPI ggp_resolver_win32thread_thread(LPVOID arg)
 {
 	struct ggp_resolver_win32thread_data *data = arg;
@@ -167,12 +170,10 @@ static DWORD WINAPI ggp_resolver_win32thread_thread(LPVOID arg)
 		"fd: %i called\n", data->hostname, data->fd);
 
 	if ((addr_ip[0].s_addr = inet_addr(data->hostname)) == INADDR_NONE) {
-		/* W przypadku błędu gg_gethostbyname_real() zwróci -1
-		 * i nie zmieni &addr. Tam jest już INADDR_NONE,
-		 * więc nie musimy robić nic więcej. */
 		if (gg_gethostbyname_real(data->hostname, &addr_list,
 			&addr_count, 0) == -1) {
 			addr_list = addr_ip;
+			/* addr_ip[0] już zawiera INADDR_NONE */
 		}
 	} else {
 		addr_list = addr_ip;
@@ -183,7 +184,7 @@ static DWORD WINAPI ggp_resolver_win32thread_thread(LPVOID arg)
 	purple_debug_misc("gg", "ggp_resolver_win32thread_thread() "
 		"count = %d\n", addr_count);
 
-	write(data->fd, addr_list, (addr_count+1) * sizeof(struct in_addr));
+	write(data->fd, addr_list, (addr_count + 1) * sizeof(struct in_addr));
 	close(data->fd);
 
 	free(data->hostname);

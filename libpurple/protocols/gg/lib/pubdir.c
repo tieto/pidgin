@@ -35,7 +35,6 @@
 #include <unistd.h>
 
 #include "libgadu.h"
-#include "libgadu-config.h"
 
 /**
  * Rejestruje nowego użytkownika.

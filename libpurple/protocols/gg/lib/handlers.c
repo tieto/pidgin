@@ -33,15 +33,12 @@
 #  include <arpa/inet.h>
 #endif
 #include <ctype.h>
-#ifndef _WIN32
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "resolver.h"
 #include "session.h"
 #include "protocol.h"

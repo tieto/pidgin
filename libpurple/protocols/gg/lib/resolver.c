@@ -41,7 +41,6 @@
 #endif
 
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "resolver.h"
 #include "compat.h"
 #include "session.h"
@@ -249,7 +248,7 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 #endif /* GG_CONFIG_HAVE_GETHOSTBYNAME_R */
 }
 
-#if defined(GG_CONFIG_HAVE_PTHREAD) || !defined(_WIN32)
+#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_HAVE_FORK)
 /**
  * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
  *
@@ -319,7 +318,7 @@ struct gg_resolver_fork_data {
 	int pid;		/*< Identyfikator procesu */
 };
 
-#ifndef _WIN32
+#ifdef GG_CONFIG_HAVE_FORK
 /**
  * \internal Rozwiązuje nazwę serwera w osobnym procesie.
  *
