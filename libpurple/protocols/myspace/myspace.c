@@ -2167,8 +2167,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	}
 
 	session->fd = source;
-
-	gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
+	session->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
 }
 
 /**
@@ -2263,8 +2262,9 @@ msim_close(PurpleConnection *gc)
 
 	purple_connection_set_protocol_data(gc, NULL);
 
-	if (session->gc->inpa) {
-		purple_input_remove(session->gc->inpa);
+	if (session->inpa) {
+		purple_input_remove(session->inpa);
+		session->inpa = 0;
 	}
 	if (session->fd >= 0) {
 		close(session->fd);
