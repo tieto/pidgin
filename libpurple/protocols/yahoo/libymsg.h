@@ -188,6 +188,7 @@ typedef struct _YahooPersonalDetails {
 typedef struct {
 	PurpleConnection *gc;
 	int fd;
+	guint inpa;
 	guchar *rxqueue;
 	int rxlen;
 	PurpleCircBuffer *txbuf;

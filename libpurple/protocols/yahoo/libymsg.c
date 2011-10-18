@@ -2244,8 +2244,10 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 			yd->wm = TRUE;
 			if (yd->fd >= 0)
 				close(yd->fd);
-			if (gc->inpa)
-				purple_input_remove(gc->inpa);
+			if (yd->inpa) {
+				purple_input_remove(yd->inpa);
+				yd->inpa = 0;
+			}
 			url_data = purple_util_fetch_url(WEBMESSENGER_URL, TRUE,
 					"Purple/" VERSION, FALSE, -1, yahoo_login_page_cb, gc);
 			if (url_data != NULL)
@@ -3248,7 +3250,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	yahoo_packet_hash_str(pkt, 1, purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
 
-	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
+	yd->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
 #ifdef TRY_WEBMESSENGER_LOGIN
@@ -3278,7 +3280,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(yd->auth);
-	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
+	yd->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
 static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition cond)
@@ -3342,7 +3344,8 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 	}
 
 	yd->auth = g_string_free(s, FALSE);
-	purple_input_remove(gc->inpa);
+	purple_input_remove(yd->inpa);
+	yd->inpa = 0;
 	close(source);
 	g_free(yd->rxqueue);
 	yd->rxqueue = NULL;
@@ -3359,12 +3362,9 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 
 static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	PurpleConnection *gc;
-	YahooData *yd;
+	PurpleConnection *gc = data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	int written, remaining;
-
-	gc = data;
-	yd = purple_connection_get_protocol_data(gc);
 
 	remaining = strlen(yd->auth) - yd->auth_written;
 	written = write(source, yd->auth + yd->auth_written, remaining);
@@ -3375,9 +3375,10 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 		gchar *tmp;
 		g_free(yd->auth);
 		yd->auth = NULL;
-		if (gc->inpa)
-			purple_input_remove(gc->inpa);
-		gc->inpa = 0;
+		if (yd->inpa) {
+			purple_input_remove(yd->inpa);
+			yd->inpa = 0;
+		}
 		tmp = g_strdup_printf(_("Lost connection with %s: %s"),
 				"login.yahoo.com:80", g_strerror(errno));
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
@@ -3393,13 +3394,14 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 	g_free(yd->auth);
 	yd->auth = NULL;
 	yd->auth_written = 0;
-	purple_input_remove(gc->inpa);
-	gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, yahoo_web_pending, gc);
+	purple_input_remove(yd->inpa);
+	yd->inpa = purple_input_add(source, PURPLE_INPUT_READ, yahoo_web_pending, gc);
 }
 
 static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (source < 0) {
 		gchar *tmp;
@@ -3410,9 +3412,9 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 		return;
 	}
 
-	if (gc->inpa == 0)
+	if (yd->inpa == 0)
 	{
-		gc->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
+		yd->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
 			yahoo_got_cookies_send_cb, gc);
 		yahoo_got_cookies_send_cb(gc, source, PURPLE_INPUT_WRITE);
 	}
@@ -3725,8 +3727,10 @@ void yahoo_close(PurpleConnection *gc) {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	GSList *l;
 
-	if (gc->inpa)
-		purple_input_remove(gc->inpa);
+	if (yd->inpa) {
+		purple_input_remove(yd->inpa);
+		yd->inpa = 0;
+	}
 
 	while (yd->url_datas) {
 		purple_util_fetch_url_cancel(yd->url_datas->data);
