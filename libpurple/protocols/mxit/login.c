@@ -176,7 +176,7 @@ static void mxit_cb_connect( gpointer user_data, gint source, const gchar* error
 	session->fd = source;
 
 	/* start listening on the open connection for messages from the server (reference: "libpurple/eventloop.h") */
-	session->con->inpa = purple_input_add( session->fd, PURPLE_INPUT_READ, mxit_cb_rx, session );
+	session->inpa = purple_input_add( session->fd, PURPLE_INPUT_READ, mxit_cb_rx, session );
 
 	mxit_connected( session );
 }
@@ -780,9 +780,9 @@ void mxit_reconnect( struct MXitSession* session )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_reconnect\n" );
 
 	/* remove the input cb function */
-	if ( session->con->inpa ) {
-		purple_input_remove( session->con->inpa );
-		session->con->inpa = 0;
+	if ( session->inpa ) {
+		purple_input_remove( session->inpa );
+		session->inpa = 0;
 	}
 
 	/* close existing connection */

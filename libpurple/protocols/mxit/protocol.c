@@ -2819,9 +2819,9 @@ void mxit_close_connection( struct MXitSession* session )
 	}
 
 	/* remove the input cb function */
-	if ( session->con->inpa ) {
-		purple_input_remove( session->con->inpa );
-		session->con->inpa = 0;
+	if ( session->inpa ) {
+		purple_input_remove( session->inpa );
+		session->inpa = 0;
 	}
 
 	/* remove HTTP poll timer */
