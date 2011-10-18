@@ -235,7 +235,6 @@ struct _PurpleConnection
 
 	PurpleAccount *account;        /**< The account being connected to.    */
 	char *password;              /**< The password used.                 */
-	int inpa_;                    /**< The input watcher.                 */
 
 	GSList *buddy_chats;         /**< A list of active chats
 	                                  (#PurpleConversation structs of type
