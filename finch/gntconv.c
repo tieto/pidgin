@@ -683,7 +683,7 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 
 	name = gnt_tree_get_selection_data(GNT_TREE(widget));
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_cb_real_name))
 		realname = prpl_info->get_cb_real_name(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(fc->active_conv)), name);
 	else

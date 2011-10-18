@@ -493,7 +493,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 	/* copy features from the connection. */
-	conv->features = gc->flags;
+	conv->features = purple_connection_get_flags(gc);
 
 	if (type == PURPLE_CONV_TYPE_IM)
 	{
@@ -1789,7 +1789,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 				}
 			} else {
 				PurpleBuddy *buddy;
-				if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 		}
@@ -1887,7 +1887,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 		}
 	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
-		if ((buddy = purple_find_buddy(gc->account, new_user)) != NULL)
+		if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 			new_alias = purple_buddy_get_contact_alias(buddy);
 	}
 
@@ -1936,9 +1936,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(gc->account, old_user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
 					old_alias = purple_buddy_get_contact_alias(buddy);
-				if ((buddy = purple_find_buddy(gc->account, new_user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 					new_alias = purple_buddy_get_contact_alias(buddy);
 			}
 
@@ -2013,7 +2013,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 

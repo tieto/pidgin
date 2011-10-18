@@ -420,7 +420,7 @@ static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPToken *token = info->token;
 
-	purple_account_disconnect(gc->account);
+	purple_account_disconnect(purple_connection_get_account(gc));
 
 	g_free(token->id);
 	g_free(token->data);

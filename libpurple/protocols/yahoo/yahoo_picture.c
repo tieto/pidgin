@@ -170,7 +170,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who) {
-		PurpleBuddy *b = purple_find_buddy(gc->account, who);
+		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
@@ -251,7 +251,7 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 			yahoo_send_picture_request(gc, who);
 		else if ((avatar == 0) || (avatar == 1)) {
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
+			purple_buddy_icons_set_for_user(purple_connection_get_account(gc), who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -536,7 +536,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	PurpleAccount *account = gc->account;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (img == NULL) {
 		g_free(yd->picture_url);

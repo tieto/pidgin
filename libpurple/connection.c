@@ -387,6 +387,14 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 }
 
 void
+purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
+{
+	g_return_if_fail(gc != NULL);
+
+	gc->flags = flags;
+}
+
+void
 purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 {
 	g_return_if_fail(gc != NULL);
@@ -417,6 +425,14 @@ purple_connection_get_state(const PurpleConnection *gc)
 	g_return_val_if_fail(gc != NULL, PURPLE_DISCONNECTED);
 
 	return gc->state;
+}
+
+PurpleConnectionFlags
+purple_connection_get_flags(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, 0);
+
+	return gc->flags;
 }
 
 PurpleAccount *

@@ -150,7 +150,7 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	JabberIq *iq;
 
 	/* bail if the user isn't interested */
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
 
 	/* Is this an initial incoming mail notification? If so, send a request for more info */

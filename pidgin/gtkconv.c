@@ -564,7 +564,7 @@ check_for_and_do_command(PurpleConversation *conv)
 					PurpleConnection *gc;
 
 					if ((gc = purple_conversation_get_gc(conv)))
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 					if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
 						char *spaceslash;
@@ -1512,7 +1512,7 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	if (prpl_info && prpl_info->get_cb_real_name)
 		real_who = prpl_info->get_cb_real_name(gc,
@@ -1568,7 +1568,7 @@ menu_chat_send_file_cb(GtkWidget *w, PidginConversation *gtkconv)
 
 	g_return_if_fail(gc != NULL);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	if (prpl_info && prpl_info->get_cb_real_name)
 		real_who = prpl_info->get_cb_real_name(gc,
@@ -1649,7 +1649,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	PurpleBuddy *buddy = NULL;
 
 	if (gc != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	/*
 	 * If a menu already exists, destroy it before creating a new one,
@@ -4069,7 +4069,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	gtkchat = gtkconv->u.chat;
 	gc      = purple_conversation_get_gc(conv);
 
-	if (!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+	if (!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))))
 		return;
 
 	tm = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -4379,7 +4379,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 
 	gc      = purple_conversation_get_gc(conv);
 
-	if(!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+	if(!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))))
 		return;
 
 	if(prpl_info->set_chat_topic == NULL)
@@ -4522,8 +4522,8 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 
 	gc = purple_conversation_get_gc(conv);
 	g_return_if_fail(gc != NULL);
-	g_return_if_fail(gc->prpl != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	g_return_if_fail(purple_connection_get_prpl(gc) != NULL);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	if (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)
 		return;
@@ -4731,7 +4731,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleConnection *gc = purple_conversation_get_gc(conv);
-	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
 		GtkWidget *hbox, *label;
@@ -4780,7 +4780,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_account_get_connection(account)->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(purple_account_get_connection(account)));
 	node = (PurpleBlistNode*)(purple_find_buddy(purple_conversation_get_account(conv), who));
 	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME))
 		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
@@ -5370,7 +5370,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	PurpleConversation *c;
 	PurpleAccount *convaccount = purple_conversation_get_account(conv);
 	PurpleConnection *gc = purple_account_get_connection(convaccount);
-	PurplePluginProtocolInfo *prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	PurplePluginProtocolInfo *prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc)) : NULL;
 
 	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
@@ -6865,7 +6865,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 	account = purple_conversation_get_account(conv);
 
 	if (gc != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	if (win->menu.send_to != NULL)
 		update_send_to_selection(win);
@@ -7929,13 +7929,15 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 
 		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
 				purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-				purple_conversation_get_account(conv) == gc->account &&
+				purple_conversation_get_account(conv) == purple_connection_get_account(gc) &&
 				purple_conversation_get_data(conv, "want-to-rejoin")) {
 			GHashTable *comps = NULL;
 			PurpleChat *chat = purple_blist_find_chat(purple_conversation_get_account(conv), purple_conversation_get_name(conv));
 			if (chat == NULL) {
-				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
-					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, purple_conversation_get_name(conv));
+				PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+				
+				if (prpl_info->chat_info_defaults != NULL)
+					comps = prpl_info->chat_info_defaults(gc, purple_conversation_get_name(conv));
 			} else {
 				comps = chat->components;
 			}
@@ -9430,7 +9432,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 
 		gc = purple_conversation_get_gc(conv);
 		if (gc != NULL)
-			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		if (prpl_info && prpl_info->set_chat_topic == NULL)
 			/* This protocol doesn't support setting the chat room topic */
 			return FALSE;

@@ -2190,7 +2190,7 @@ msim_login(PurpleAccount *acct)
 
 	gc = purple_account_get_connection(acct);
 	purple_connection_set_protocol_data(gc, msim_session_new(acct));
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
 
 	/*
 	 * Lets wipe out our local list of blocked buddies.  We'll get a

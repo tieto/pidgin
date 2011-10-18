@@ -1591,7 +1591,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 	purple_request_input(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
-					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
+					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,

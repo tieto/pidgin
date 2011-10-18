@@ -2531,7 +2531,7 @@ static void convo_nofeatures(struct mwConversation *conv) {
   gc = purple_conversation_get_gc(gconv);
   if(! gc) return;
 
-  purple_conversation_set_features(gconv, gc->flags);
+  purple_conversation_set_features(gconv, purple_connection_get_flags(gc));
 }
 
 
@@ -3701,7 +3701,7 @@ static void mw_prpl_login(PurpleAccount *account) {
   pd = mwPurplePluginData_new(gc);
 
   /* while we do support images, the default is to not offer it */
-  gc->flags |= PURPLE_CONNECTION_NO_IMAGES;
+  purple_connection_set_flags(gc, PURPLE_CONNECTION_NO_IMAGES);
 
   user = g_strdup(purple_account_get_username(account));
 

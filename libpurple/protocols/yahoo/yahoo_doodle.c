@@ -394,7 +394,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
-	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
+	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(purple_connection_get_account(gc)));
 	yahoo_packet_hash_str(pkt, 14,   message);
 	yahoo_packet_hash_int(pkt, 13,   command);
 	yahoo_packet_hash_str(pkt, 5,    to);

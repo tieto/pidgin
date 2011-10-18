@@ -1076,7 +1076,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
 	                         G_CALLBACK(searchresults_close_cb), data);
 
-	data->account = gc->account;
+	data->account = purple_connection_get_account(gc);
 	data->model = model;
 	data->treeview = treeview;
 	data->window = window;

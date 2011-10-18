@@ -688,7 +688,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
 		}
-		else if (!g_str_equal(passport, purple_account_get_username(gc->account)))
+		else if (!g_str_equal(passport, purple_account_get_username(purple_connection_get_account(gc))))
 		{
 			/* Don't im ourselves ... */
 			serv_got_im(gc, passport, body_final, 0, time(NULL));

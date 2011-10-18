@@ -655,6 +655,7 @@ oscar_login(PurpleAccount *account)
 	GList *sorted_handlers;
 	GList *cur;
 	GString *msg = g_string_new("");
+	PurpleConnectionFlags flags;
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -740,17 +741,19 @@ oscar_login(PurpleAccount *account)
 		return;
 	}
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	flags = PURPLE_CONNECTION_HTML;
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
-		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
+		flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
 	/* Set this flag based on the protocol_id rather than the username,
 	   because that is what's tied to the get_moods prpl callback. */
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
-		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
+		flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
+
+	purple_connection_set_flags(gc, flags);
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
@@ -1000,7 +1003,7 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	if (purple_proxy_connect(pos->gc, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(pos->gc, purple_connection_get_account(pos->gc), "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -1547,7 +1550,7 @@ static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_OFFLINE, NULL);
 	purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
-	g_hash_table_remove(od->buddyinfo, purple_normalize(gc->account, info->bn));
+	g_hash_table_remove(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), info->bn));
 
 	return 1;
 }
@@ -3176,9 +3179,9 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	else {
 		/* Don't send if this turkey is in our deny list */
 		GSList *list;
-		for (list=gc->account->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
+		for (list=purple_connection_get_account(gc)->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
 		if (!list) {
-			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(gc->account, name));
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), name));
 			if (bi && bi->typingnot) {
 				if (state == PURPLE_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);

@@ -692,7 +692,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 			purple_xfer_set_protocol_data(xfer_old, NULL);
 
 			/* Build the file transfer handle. */
-			xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, purple_xfer_get_remote_user(xfer_old));
+			xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, purple_xfer_get_remote_user(xfer_old));
 
 
 			if (xfer) {
@@ -879,7 +879,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	                xfer_data->host, xfer_data->port, xfer_data->path, url);
 
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, from);
 	if (xfer == NULL) {
 		g_free(xfer_data);
 		g_return_if_reached();
@@ -935,7 +935,7 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 	xfer_data->gc = gc;
 
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer == NULL)
 	{
 		g_free(xfer_data);
@@ -1730,7 +1730,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	xfer_data->size_list = size_list;
 
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, from);
 	if (xfer == NULL)
 	{
 		g_free(xfer_data);

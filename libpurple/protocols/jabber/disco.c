@@ -387,7 +387,7 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 
 	/* If there are manually specified bytestream proxies, query them */
-	ft_proxies = purple_account_get_string(js->gc->account, "ft_proxies", NULL);
+	ft_proxies = purple_account_get_string(purple_connection_get_account(js->gc), "ft_proxies", NULL);
 	if (ft_proxies) {
 		JabberIq *iq;
 		JabberBytestreamsStreamhost *sh;
@@ -524,8 +524,10 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 		if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep")) {
 			PurpleConnection *gc = js->gc;
 			js->pep = TRUE;
-			gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS |
-				PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES;
+			purple_connection_set_flags(gc,
+					  purple_connection_get_flags(gc)
+					| PURPLE_CONNECTION_SUPPORT_MOODS
+					| PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES);
 		}
 		if (!category || strcmp(category, "server"))
 			continue;

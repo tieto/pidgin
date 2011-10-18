@@ -135,7 +135,7 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 	session = purple_connection_get_protocol_data(gc);
 
 	/* Look for this attention type, by the code index given. */
-	types = msim_attention_types(gc->account);
+	types = msim_attention_types(purple_connection_get_account(gc));
 	attn = (PurpleAttentionType *)g_list_nth_data(types, code);
 
 	if (!attn) {

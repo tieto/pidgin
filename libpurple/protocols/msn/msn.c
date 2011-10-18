@@ -881,7 +881,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	session = purple_connection_get_protocol_data(gc);
 
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 
 	g_return_val_if_fail(xfer != NULL, NULL);
 
@@ -1354,8 +1354,9 @@ msn_login(PurpleAccount *account)
 	session = msn_session_new(account);
 
 	purple_connection_set_protocol_data(gc, session);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR |
-		PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
+	purple_connection_set_flags(gc, 
+		PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR |
+		PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY);
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_START);
 
@@ -1526,7 +1527,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
 {
 	PurpleAccount *account;
-	PurpleBuddy *buddy = purple_find_buddy(gc->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;

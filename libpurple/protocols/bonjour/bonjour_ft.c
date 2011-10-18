@@ -333,7 +333,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	xep_xfer = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xep_xfer);
 	xep_xfer->data = bd;
@@ -592,7 +592,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
 	xf = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xf);
 	xf->data = bd;

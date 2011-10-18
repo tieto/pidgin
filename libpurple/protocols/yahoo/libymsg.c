@@ -337,12 +337,12 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (!name)
 				break;
 
-			b = purple_find_buddy(gc->account, name);
+			b = purple_find_buddy(purple_connection_get_account(gc), name);
 
 			if (!cksum || (cksum == -1)) {
 				if (f)
 					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0, NULL);
+				purple_buddy_icons_set_for_user(purple_connection_get_account(gc), name, NULL, 0, NULL);
 				break;
 			}
 
@@ -2180,12 +2180,12 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 							  who, (ignore ? "ignoring" : "unignoring"));
 
 			if (ignore) {
-				b = purple_find_buddy(gc->account, who);
+				b = purple_find_buddy(purple_connection_get_account(gc), who);
 				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 											   "user is on your buddy list.  Clicking \"Yes\" "
 											   "will remove and ignore the buddy."), who);
 				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-									  gc->account, who, NULL,
+									  purple_connection_get_account(gc), who, NULL,
 									  b,
 									  G_CALLBACK(ignore_buddy),
 									  G_CALLBACK(keep_buddy));
@@ -2214,7 +2214,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *msg;
 	char *url = NULL;
 	char *fullmsg;
-	PurpleAccount *account = gc->account;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 
 	while (l) {
@@ -3245,7 +3245,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, yd->session_id);
 
-	yahoo_packet_hash_str(pkt, 1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))));
+	yahoo_packet_hash_str(pkt, 1, purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
 
 	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
@@ -3272,8 +3272,8 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sss", 0,
-	                  purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
-	                  1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
+	                  purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))),
+	                  1, purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))),
 	                  6, yd->auth);
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -3678,7 +3678,7 @@ void yahoo_login(PurpleAccount *account) {
 	PurpleUtilFetchUrlData *url_data;
 
 	purple_connection_set_protocol_data(gc, yd);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC);
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
@@ -4476,7 +4476,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((purple_account_get_proxy_info(gc->account)) && (purple_proxy_info_get_type(purple_account_get_proxy_info(gc->account)) == PURPLE_PROXY_HTTP))
+	if ((purple_account_get_proxy_info(purple_connection_get_account(gc))) && (purple_proxy_info_get_type(purple_account_get_proxy_info(purple_connection_get_account(gc))) == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(
@@ -4612,7 +4612,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	 *
 	 * If they have not set an IMVironment, then use the default.
 	 */
-	wb = purple_whiteboard_get_session(gc->account, who);
+	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), who);
 	if (wb)
 		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
@@ -5262,7 +5262,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 	PurpleConversation *c;
 
 	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-			username, gc->account);
+			username, purple_connection_get_account(gc));
 
 	g_return_val_if_fail(c != NULL, FALSE);
 

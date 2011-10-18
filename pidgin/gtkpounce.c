@@ -476,7 +476,7 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
 	gtk_imhtml_setup_entry(GTK_IMHTML(dialog->send_msg_entry),
-			(account && purple_account_get_connection(account)) ? purple_account_get_connection(account)->flags : PURPLE_CONNECTION_HTML);
+			(account && purple_account_get_connection(account)) ? purple_connection_get_flags(purple_account_get_connection(account)) : PURPLE_CONNECTION_HTML);
 }
 
 void

@@ -11,6 +11,8 @@ version 3.0.0 (??/??/????):
 		* purple_conv_chat_cb_is_buddy
 		* purple_conv_chat_cb_get_ui_data
 		* purple_conv_chat_cb_set_ui_data
+		* purple_connection_get_flags
+		* purple_connection_set_flags
 		* purple_conversation_get_ui_data
 		* purple_conversation_set_ui_data
 		* purple_notify_searchresult_column_is_visible

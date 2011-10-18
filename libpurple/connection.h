@@ -281,6 +281,14 @@ extern "C" {
 void purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state);
 
 /**
+ * Sets the connection flags.
+ *
+ * @param gc    The connection.
+ * @param flags The flags.
+ */
+void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags);
+
+/**
  * Sets the connection's account.
  *
  * @param gc      The connection.
@@ -312,6 +320,15 @@ void purple_connection_set_protocol_data(PurpleConnection *connection, void *pro
  * @return The connection state.
  */
 PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
+
+/**
+ * Returns the connection flags.
+ *
+ * @param gc The connection.
+ *
+ * @return The connection flags.
+ */
+PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 
 /**
  * Returns TRUE if the account is connected, otherwise returns FALSE.

@@ -314,7 +314,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
-			      hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
+			      hostname ? tmp2 : NULL, 1, purple_connection_get_account(gc), client_entry->nickname,
 			      NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			      _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
@@ -457,7 +457,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     gc->account, NULL, NULL, p);
+	                     purple_connection_get_account(gc), NULL, NULL, p);
 
 	silc_client_list_free(sg->client, sg->conn, clients);
 }
@@ -686,7 +686,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = purple_find_buddy(gc->account, nick);
+	b = purple_find_buddy(purple_connection_get_account(gc), nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */

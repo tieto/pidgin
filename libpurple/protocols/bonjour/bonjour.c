@@ -102,7 +102,7 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif /* _WIN32 */
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML);
 	bd = g_new0(BonjourData, 1);
 	purple_connection_set_protocol_data(gc, bd);
 
@@ -309,7 +309,7 @@ bonjour_status_types(PurpleAccount *account)
 static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 	BonjourBuddy *bb;
 
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
@@ -439,7 +439,7 @@ bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
 static void
 bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	bonjour_do_group_change(buddy, new_group);
 
@@ -464,7 +464,7 @@ bonjour_rename_group(PurpleConnection *connection, const char *old_name, PurpleG
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }

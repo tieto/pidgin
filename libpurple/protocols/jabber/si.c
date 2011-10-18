@@ -1561,7 +1561,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, purple_xfer_get_remote_user(xfer), NULL, xfer);
+					purple_connection_get_account(jsx->js->gc), purple_xfer_get_remote_user(xfer), NULL, xfer);
 
 			g_free(msg);
 		}
@@ -1617,7 +1617,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 	js = purple_connection_get_protocol_data(gc);
 
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
 		jsx = g_new0(JabberSIXfer, 1);
@@ -1743,7 +1743,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(id);
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE, from);
 	g_return_if_fail(xfer != NULL);
 
 	purple_xfer_set_protocol_data(xfer, jsx);

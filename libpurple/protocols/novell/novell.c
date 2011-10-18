@@ -131,8 +131,8 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				/* Don't attempt to auto-reconnect if our
 				 * password was invalid.
 				 */
-				if (!purple_account_get_remember_password(gc->account))
-					purple_account_set_password(gc->account, NULL);
+				if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
+					purple_account_set_password(purple_connection_get_account(gc), NULL);
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				break;
 			default:
@@ -741,16 +741,16 @@ _get_details_resp_add_privacy_item(NMUser *user, NMERR_T ret_code,
 
 		if (allowed) {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
-				purple_privacy_permit_add(gc->account, display_id, TRUE);
+				purple_privacy_permit_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
-				purple_privacy_deny_add(gc->account, display_id, TRUE);
+				purple_privacy_deny_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 		}
 
@@ -789,10 +789,10 @@ _create_privacy_item_deny_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		if (display_id) {
 
-			if (!g_slist_find_custom(gc->account->deny,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
 
-				purple_privacy_deny_add(gc->account, display_id, TRUE);
+				purple_privacy_deny_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
@@ -840,11 +840,11 @@ _create_privacy_item_permit_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		if (display_id) {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id,
 									 (GCompareFunc)purple_utf8_strcasecmp)) {
 
-				purple_privacy_permit_add(gc->account, display_id, TRUE);
+				purple_privacy_permit_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
@@ -1404,15 +1404,15 @@ _sync_privacy_lists(NMUser *user)
 	/* Set the Purple privacy setting */
 	if (user->default_deny) {
 		if (user->allow_list == NULL) {
-			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_DENY_ALL);
+			purple_account_set_privacy_type(purple_connection_get_account(gc), PURPLE_PRIVACY_DENY_ALL);
 		} else {
-			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_ALLOW_USERS);
+			purple_account_set_privacy_type(purple_connection_get_account(gc), PURPLE_PRIVACY_ALLOW_USERS);
 		}
 	} else {
 		if (user->deny_list == NULL) {
-			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_ALLOW_ALL);
+			purple_account_set_privacy_type(purple_connection_get_account(gc), PURPLE_PRIVACY_ALLOW_ALL);
 		} else {
-			purple_account_set_privacy_type(gc->account, PURPLE_PRIVACY_DENY_USERS);
+			purple_account_set_privacy_type(purple_connection_get_account(gc), PURPLE_PRIVACY_DENY_USERS);
 		}
 	}
 
@@ -1424,9 +1424,9 @@ _sync_privacy_lists(NMUser *user)
 		else
 			name =(char *)node->data;
 
-		if (!g_slist_find_custom(gc->account->permit,
+		if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 								 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-			purple_privacy_permit_add(gc->account, name , TRUE);
+			purple_privacy_permit_add(purple_connection_get_account(gc), name , TRUE);
 		}
 	}
 
@@ -1437,15 +1437,15 @@ _sync_privacy_lists(NMUser *user)
 		else
 			name =(char *)node->data;
 
-		if (!g_slist_find_custom(gc->account->deny,
+		if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 								 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-			purple_privacy_deny_add(gc->account, name, TRUE);
+			purple_privacy_deny_add(purple_connection_get_account(gc), name, TRUE);
 		}
 	}
 
 
 	/*  Remove stuff */
-	for (node = gc->account->permit; node; node = node->next) {
+	for (node = purple_connection_get_account(gc)->permit; node; node = node->next) {
 		dn = nm_lookup_dn(user, (char *)node->data);
 		if (dn != NULL &&
 			!g_slist_find_custom(user->allow_list,
@@ -1456,13 +1456,13 @@ _sync_privacy_lists(NMUser *user)
 
 	if (rem_list) {
 		for (node = rem_list; node; node = node->next) {
-			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+			purple_privacy_permit_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 		}
 		g_slist_free(rem_list);
 		rem_list = NULL;
 	}
 
-	for (node = gc->account->deny; node; node = node->next) {
+	for (node = purple_connection_get_account(gc)->deny; node; node = node->next) {
 		dn = nm_lookup_dn(user, (char *)node->data);
 		if (dn != NULL &&
 			!g_slist_find_custom(user->deny_list,
@@ -1473,7 +1473,7 @@ _sync_privacy_lists(NMUser *user)
 
 	if (rem_list) {
 		for (node = rem_list; node; node = node->next) {
-			purple_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+			purple_privacy_deny_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 		}
 		g_slist_free(rem_list);
 	}
@@ -3091,7 +3091,7 @@ novell_add_permit(PurpleConnection *gc, const char *who)
 	/* Remove first -- we will add it back in when we get
 	 * the okay from the server
 	 */
-	purple_privacy_permit_remove(gc->account, who, TRUE);
+	purple_privacy_permit_remove(purple_connection_get_account(gc), who, TRUE);
 
 	if (nm_user_is_privacy_locked(user)) {
 		_show_privacy_locked_error(gc, user);
@@ -3135,7 +3135,7 @@ novell_add_deny(PurpleConnection *gc, const char *who)
 	/* Remove first -- we will add it back in when we get
 	 * the okay from the server
 	 */
-	purple_privacy_deny_remove(gc->account, who, TRUE);
+	purple_privacy_deny_remove(purple_connection_get_account(gc), who, TRUE);
 
 	if (nm_user_is_privacy_locked(user)) {
 		_show_privacy_locked_error(gc, user);
@@ -3253,7 +3253,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 		return;
 	}
 
-	switch (purple_account_get_privacy_type(gc->account)) {
+	switch (purple_account_get_privacy_type(purple_connection_get_account(gc))) {
 
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			rc = nm_send_set_privacy_default(user, FALSE,
@@ -3309,14 +3309,14 @@ novell_set_permit_deny(PurpleConnection *gc)
 					if (user_record) {
 						name = nm_user_record_get_display_id(user_record);
 
-						if (!g_slist_find_custom(gc->account->permit,
+						if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 												 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-							purple_privacy_permit_add(gc->account, name , TRUE);
+							purple_privacy_permit_add(purple_connection_get_account(gc), name , TRUE);
 						}
 					}
 				}
 
-				for (node = gc->account->permit; node; node = node->next) {
+				for (node = purple_connection_get_account(gc)->permit; node; node = node->next) {
 					name = NULL;
 					dn = nm_lookup_dn(user, (char *)node->data);
 					if (dn) {
@@ -3330,7 +3330,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 															 g_strdup(dn));
 						}
 					} else {
-						purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+						purple_privacy_permit_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 					}
 				}
 			}
@@ -3351,14 +3351,14 @@ novell_set_permit_deny(PurpleConnection *gc)
 					if (user_record) {
 						name = nm_user_record_get_display_id(user_record);
 
-						if (!g_slist_find_custom(gc->account->deny,
+						if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 												 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-							purple_privacy_deny_add(gc->account, name , TRUE);
+							purple_privacy_deny_add(purple_connection_get_account(gc), name , TRUE);
 						}
 					}
 				}
 
-				for (node = gc->account->deny; node; node = node->next) {
+				for (node = purple_connection_get_account(gc)->deny; node; node = node->next) {
 
 					name = NULL;
 					dn = nm_lookup_dn(user, (char *)node->data);
@@ -3373,7 +3373,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 															 g_strdup(name));
 						}
 					} else {
-						purple_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+						purple_privacy_deny_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 					}
 				}
 

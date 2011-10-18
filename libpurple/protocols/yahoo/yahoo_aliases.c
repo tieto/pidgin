@@ -331,7 +331,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 			content = g_strdup_printf("<ab k=\"%s\" cc=\"9\">\n"
 						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
-						  purple_account_get_username(gc->account),
+						  purple_account_get_username(purple_connection_get_account(gc)),
 						  who, converted_alias_jp);
 			g_free(converted_alias_jp);
 			g_free(alias_jp);
@@ -339,7 +339,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 			gchar *escaped_alias = g_markup_escape_text(alias, -1);
 			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"9\">\n"
 						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
-						  purple_account_get_username(gc->account),
+						  purple_account_get_username(purple_connection_get_account(gc)),
 						  who, escaped_alias);
 			g_free(escaped_alias);
 		}
@@ -351,7 +351,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 			content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
 						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-						  purple_account_get_username(gc->account),
+						  purple_account_get_username(purple_connection_get_account(gc)),
 						  who, cb->id, converted_alias_jp);
 			g_free(converted_alias_jp);
 			g_free(alias_jp);
@@ -359,7 +359,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 			gchar *escaped_alias = g_markup_escape_text(alias, -1);
 			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
 						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-						  purple_account_get_username(gc->account),
+						  purple_account_get_username(purple_connection_get_account(gc)),
 						  who, cb->id, escaped_alias);
 			g_free(escaped_alias);
 		}
