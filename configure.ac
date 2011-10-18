@@ -2496,7 +2496,6 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/emotes/small/16/Makefile
 		   pidgin/plugins/Makefile
-		   pidgin/plugins/adiumthemes/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/disco/Makefile
 		   pidgin/plugins/gestures/Makefile
