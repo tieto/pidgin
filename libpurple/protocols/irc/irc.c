@@ -500,7 +500,7 @@ static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 	irc->fd = source;
 
 	if (do_login(gc)) {
-		gc->inpa = purple_input_add(irc->fd, PURPLE_INPUT_READ, irc_input_cb, gc);
+		irc->inpa = purple_input_add(irc->fd, PURPLE_INPUT_READ, irc_input_cb, gc);
 	}
 }
 
@@ -526,8 +526,10 @@ static void irc_close(PurpleConnection *gc)
 	if (irc->gsc || (irc->fd >= 0))
 		irc_cmd_quit(irc, "quit", NULL, NULL);
 
-	if (gc->inpa)
-		purple_input_remove(gc->inpa);
+	if (irc->inpa) {
+		purple_input_remove(irc->inpa);
+		irc->inpa = 0;
+	}
 
 	g_free(irc->inbuf);
 	if (irc->gsc) {
