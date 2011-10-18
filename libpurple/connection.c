@@ -627,6 +627,13 @@ purple_connection_error_is_fatal (PurpleConnectionError reason)
 	}
 }
 
+void purple_connection_update_last_received(PurpleConnection *gc)
+{
+	g_return_if_fail(gc != NULL);
+
+	gc->last_received = time(NULL);
+}
+
 void
 purple_connections_disconnect_all(void)
 {

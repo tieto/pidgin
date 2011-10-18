@@ -447,6 +447,14 @@ purple_connection_ssl_error (PurpleConnection *gc,
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason);
 
+/**
+ * Indicate that a packet was received on the connection.
+ * Set by the prpl to avoid sending unneeded keepalives.
+ *
+ * @param gc   The connection.
+ */
+void purple_connection_update_last_received(PurpleConnection *gc);
+
 /*@}*/
 
 /**************************************************************************/

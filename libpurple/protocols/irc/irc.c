@@ -648,7 +648,7 @@ static void read_input(struct irc_conn *irc, int len)
 	PurpleConnection *connection = purple_account_get_connection(irc->account);
 	char *cur, *end;
 
-	connection->last_received = time(NULL);
+	purple_connection_update_last_received(connection);
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 

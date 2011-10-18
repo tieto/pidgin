@@ -921,7 +921,7 @@ flap_connection_recv(FlapConnection *conn)
 						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
-			conn->od->gc->last_received = time(NULL);
+			purple_connection_update_last_received(conn->od->gc);
 
 			/* If we don't even have a complete FLAP header then do nothing */
 			conn->header_received += read;
