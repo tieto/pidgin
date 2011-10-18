@@ -59,6 +59,7 @@ typedef struct
 typedef struct {
 
 	struct gg_session *session;
+	guint inpa;
 	GGPToken *token;
 	GList *chats;
 	GGPSearches *searches;
