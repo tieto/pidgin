@@ -27,11 +27,6 @@
  */
 
 #include <sys/types.h>
-#ifndef _WIN32
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 #include <ctype.h>
 #ifdef sun
 #  include <sys/filio.h>
@@ -48,9 +43,6 @@
 #include "deflate.h"
 
 #include <errno.h>
-#ifndef _WIN32
-#  include <netdb.h>
-#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

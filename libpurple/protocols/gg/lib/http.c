@@ -25,11 +25,6 @@
  */
 
 #include <sys/types.h>
-#ifndef _WIN32
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 
 #include "compat.h"
 #include "libgadu.h"
@@ -37,9 +32,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#ifndef _WIN32
-#  include <netdb.h>
-#endif
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>

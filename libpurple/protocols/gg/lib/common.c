@@ -24,13 +24,8 @@
  *
  * \brief Funkcje wykorzystywane przez różne moduły biblioteki
  */
-#ifndef _WIN32
-#  include <sys/types.h>
-#  include <sys/ioctl.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
+#include "compat.h"
+#include <sys/types.h>
 #ifdef sun
 #  include <sys/filio.h>
 #endif

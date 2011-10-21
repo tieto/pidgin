@@ -19,9 +19,7 @@
 #ifndef LIBGADU_RESOLVER_H
 #define LIBGADU_RESOLVER_H
 
-#ifndef _WIN32
-#  include <arpa/inet.h>
-#endif
+#include "compat.h"
 
 int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread);
 

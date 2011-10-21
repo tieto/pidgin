@@ -26,24 +26,20 @@
  * \brief Funkcje rozwiązywania nazw
  */
 
-#ifndef _WIN32
-#  include <sys/wait.h>
-#  include <netdb.h>
-#endif
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifndef _WIN32
-#  include <signal.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 
 #include "libgadu.h"
 #include "resolver.h"
 #include "compat.h"
 #include "session.h"
+
+#ifdef GG_CONFIG_HAVE_FORK
+#include <sys/wait.h>
+#include <signal.h>
+#endif
 
 /** Sposób rozwiązywania nazw serwerów */
 static gg_resolver_t gg_global_resolver_type = GG_RESOLVER_DEFAULT;
@@ -249,6 +245,7 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 }
 
 #if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_HAVE_FORK)
+
 /**
  * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
  *
@@ -286,7 +283,8 @@ static int gg_resolver_run(int fd, const char *hostname)
 
 	return res;
 }
-#endif
+
+#endif /* GG_CONFIG_HAVE_PTHREAD || GG_CONFIG_HAVE_FORK */
 
 /**
  * \internal Odpowiednik \c gethostbyname zapewniający współbieżność.
@@ -311,6 +309,8 @@ struct in_addr *gg_gethostbyname(const char *hostname)
 	return result;
 }
 
+#ifdef GG_CONFIG_HAVE_FORK
+
 /**
  * \internal Struktura przekazywana do wątku rozwiązującego nazwę.
  */
@@ -318,7 +318,6 @@ struct gg_resolver_fork_data {
 	int pid;		/*< Identyfikator procesu */
 };
 
-#ifdef GG_CONFIG_HAVE_FORK
 /**
  * \internal Rozwiązuje nazwę serwera w osobnym procesie.
  *
@@ -370,12 +369,17 @@ static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostnam
 	}
 
 	if (data->pid == 0) {
+		int status;
+
 		close(pipes[0]);
 
-		if (gg_resolver_run(pipes[1], hostname) == -1)
-			_exit(1);
-		else
-			_exit(0);
+		status = (gg_resolver_run(pipes[1], hostname) == -1) ? 1 : 0;
+
+#ifdef GG_CONFIG_HAVE__EXIT
+		_exit(status);
+#else
+		exit(status);
+#endif
 	}
 
 	close(pipes[1]);
@@ -424,7 +428,8 @@ static void gg_resolver_fork_cleanup(void **priv_data, int force)
 
 	free(data);
 }
-#endif
+
+#endif /* GG_CONFIG_HAVE_FORK */
 
 #ifdef GG_CONFIG_HAVE_PTHREAD
 
@@ -594,10 +599,10 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 			return 0;
 		}
 
-#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
-		type = GG_RESOLVER_FORK;
-#else
+#if defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(GG_CONFIG_HAVE_FORK)
+		type = GG_RESOLVER_FORK;
 #endif
 	}
 
@@ -705,10 +710,10 @@ int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type)
 			return 0;
 		}
 
-#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
-		type = GG_RESOLVER_FORK;
-#else
+#if defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(GG_CONFIG_HAVE_FORK)
+		type = GG_RESOLVER_FORK;
 #endif
 	}
 

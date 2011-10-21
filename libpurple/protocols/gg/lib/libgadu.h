@@ -33,7 +33,7 @@
 #ifndef __GG_LIBGADU_H
 #define __GG_LIBGADU_H
 
-#ifdef _WIN32
+#if defined(__cplusplus) || defined(_WIN32)
 #pragma pack(push, 1)
 #endif
 
@@ -52,6 +52,12 @@ extern "C" {
 
 /* Defined if this machine has gethostbyname_r(). */
 #undef GG_CONFIG_HAVE_GETHOSTBYNAME_R
+
+/* Defined if this machine has _exit(). */
+#undef GG_CONFIG_HAVE__EXIT
+
+/* Defined if libgadu was compiled and linked with fork support. */
+#undef GG_CONFIG_HAVE_FORK
 
 /* Defined if libgadu was compiled and linked with pthread support. */
 #undef GG_CONFIG_HAVE_PTHREAD
@@ -95,11 +101,7 @@ extern "C" {
 /* Defined if uintX_t types are defined in <sys/types.h>. */
 #undef GG_CONFIG_HAVE_SYS_TYPES_H
 
-#ifdef _WIN32
-#  undef GG_CONFIG_HAVE_FORK
-#else
-#  define GG_CONFIG_HAVE_FORK
-#endif
+#include "libgadu-config.h"
 
 #ifdef GG_CONFIG_HAVE_OPENSSL
 #include <openssl/ssl.h>
@@ -121,23 +123,11 @@ extern "C" {
 #        include <sys/types.h>
 #        else
 
-#ifndef __AC_STDINT_H
-#define __AC_STDINT_H
-
 /* ISO C 9X: 7.18 Integer types <stdint.h> */
 
 typedef unsigned char   uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int   uint32_t;
-
-#if !defined(__CYGWIN__) && !defined(__SunOS) && !defined(_INCLUDE_HPUX_SOURCE)
-#define __int8_t_defined
-typedef   signed char    int8_t;
-typedef   signed short  int16_t;
-typedef   signed int    int32_t;
-#endif
-
-#endif /* __AC_STDINT_H */
 
 #        endif
 #      endif
@@ -2302,17 +2292,15 @@ struct gg_dcc7_dunno1 {
 #define GG_DCC7_TIMEOUT_FILE_ACK 300	/* 5 minut */
 #define GG_DCC7_TIMEOUT_VOICE_ACK 300	/* 5 minut */
 
-#ifdef _WIN32
-#pragma pack(pop)
-#endif
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __GG_LIBGADU_H */
+#if defined(__cplusplus) || defined(_WIN32)
+#pragma pack(pop)
+#endif
 
-#include "libgadu-config.h"
+#endif /* __GG_LIBGADU_H */
 
 /*
  * Local variables:
