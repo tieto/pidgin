@@ -708,7 +708,14 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 		switch (fmt[i]) {
 		case 'v':
 			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			args[i] = g_strndup(cur, end - cur);
+			/* This is a string of unknown encoding which we do not
+			 * want to transcode, but it may or may not be valid
+			 * UTF-8, so we'll salvage it.  If a nick/channel/target
+			 * field has inadvertently been marked verbatim, this
+			 * could cause weirdness. */
+			tmp = g_strndup(cur, end - cur);
+			args[i] = purple_utf8_salvage(tmp);
+			g_free(tmp);
 			cur += end - cur;
 			break;
 		case 't':
@@ -726,7 +733,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			cur = cur + strlen(cur);
 			break;
 		case '*':
-			args[i] = g_strdup(cur);
+			/* Ditto 'v' above; we're going to salvage this in case
+			 * it leaks past the IRC prpl */
+			args[i] = purple_utf8_salvage(cur);
 			cur = cur + strlen(cur);
 			break;
 		default:
