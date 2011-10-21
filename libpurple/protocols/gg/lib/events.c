@@ -28,17 +28,10 @@
  */
 
 #include <sys/types.h>
-#ifndef _WIN32
-#  include <sys/ioctl.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 #include <ctype.h>
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "protocol.h"
 #include "libgadu-internal.h"
 #include "encoding.h"

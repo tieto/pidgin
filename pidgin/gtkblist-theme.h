@@ -51,7 +51,6 @@ typedef struct _PidginBlistThemeClass   PidginBlistThemeClass;
 struct _PidginBlistTheme
 {
 	PurpleTheme parent;
-	gpointer priv;
 };
 
 struct _PidginBlistThemeClass

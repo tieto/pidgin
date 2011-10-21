@@ -175,7 +175,7 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 	if (!gc)
 		return PURPLE_CMD_RET_FAILED;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -670,11 +670,11 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Disconnected."));
 		return;
@@ -708,7 +708,14 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 		switch (fmt[i]) {
 		case 'v':
 			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			args[i] = g_strndup(cur, end - cur);
+			/* This is a string of unknown encoding which we do not
+			 * want to transcode, but it may or may not be valid
+			 * UTF-8, so we'll salvage it.  If a nick/channel/target
+			 * field has inadvertently been marked verbatim, this
+			 * could cause weirdness. */
+			tmp = g_strndup(cur, end - cur);
+			args[i] = purple_utf8_salvage(tmp);
+			g_free(tmp);
 			cur += end - cur;
 			break;
 		case 't':
@@ -726,7 +733,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			cur = cur + strlen(cur);
 			break;
 		case '*':
-			args[i] = g_strdup(cur);
+			/* Ditto 'v' above; we're going to salvage this in case
+			 * it leaks past the IRC prpl */
+			args[i] = purple_utf8_salvage(cur);
 			cur = cur + strlen(cur);
 			break;
 		default:

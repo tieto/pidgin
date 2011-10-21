@@ -27,12 +27,12 @@ void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberB
 	if (!js->googletalk)
 		return;
 	if (jbr->status && purple_str_has_prefix(jbr->status, "♫ ")) {
-		purple_prpl_got_user_status(js->gc->account, user, "tune",
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), user, "tune",
 					    PURPLE_TUNE_TITLE, jbr->status + strlen("♫ "), NULL);
 		g_free(jbr->status);
 		jbr->status = NULL;
 	} else {
-		purple_prpl_got_user_status_deactive(js->gc->account, user, "tune");
+		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), user, "tune");
 	}
 }
 

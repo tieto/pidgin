@@ -58,6 +58,8 @@ PIDGIN_C_SRC =	\
 			gtkcertmgr.c \
 			gtkconn.c \
 			gtkconv.c \
+			gtkconv-theme.c \
+			gtkconv-theme-loader.c \
 			gtkdebug.c \
 			gtkdialogs.c \
 			gtkdnd-hints.c \
@@ -91,12 +93,12 @@ PIDGIN_C_SRC =	\
 			gtkstatusbox.c \
 			gtkthemes.c \
 			gtkutils.c \
+			gtkwebview.c \
 			gtkwhiteboard.c \
 			minidialog.c \
 			pidginstock.c \
 			pidgintooltip.c \
-			win32/MinimizeToTray.c \
-			win32/gtkdocklet-win32.c \
+			smileyparser.c \
 			win32/gtkwin32dep.c \
 			win32/untar.c \
 			win32/wspell.c

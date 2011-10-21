@@ -239,7 +239,7 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 
 }
 
-MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
+MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, goffset size)
 {
 	MsnSlpMessage *slpmsg;
 

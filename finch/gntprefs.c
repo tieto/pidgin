@@ -62,14 +62,6 @@ void finch_prefs_init()
 
 void finch_prefs_update_old()
 {
-	const char *str = NULL;
-
-	purple_prefs_rename("/gaim/gnt", "/finch");
-	purple_prefs_rename("/purple/gnt", "/finch");
-
-	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
-			strcmp(str, "gaim") == 0)
-		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 }
 
 typedef struct

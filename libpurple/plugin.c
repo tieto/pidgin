@@ -64,13 +64,6 @@ static GList *plugin_loaders   = NULL;
 static GList *plugins_to_disable = NULL;
 #endif
 
-static void (*probe_cb)(void *) = NULL;
-static void *probe_cb_data = NULL;
-static void (*load_cb)(PurplePlugin *, void *) = NULL;
-static void *load_cb_data = NULL;
-static void (*unload_cb)(PurplePlugin *, void *) = NULL;
-static void *unload_cb_data = NULL;
-
 #ifdef PURPLE_PLUGINS
 
 static gboolean
@@ -615,9 +608,6 @@ purple_plugin_load(PurplePlugin *plugin)
 
 	plugin->loaded = TRUE;
 
-	if (load_cb != NULL)
-		load_cb(plugin, load_cb_data);
-
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
 
 	return TRUE;
@@ -744,9 +734,6 @@ purple_plugin_unload(PurplePlugin *plugin)
 	 */
 	g_free(plugin->error);
 	plugin->error = NULL;
-
-	if (unload_cb != NULL)
-		unload_cb(plugin, unload_cb_data);
 
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-unload", plugin);
 
@@ -1439,10 +1426,6 @@ purple_plugins_probe(const char *ext)
 													(GCompareFunc)compare_prpl);
 		}
 	}
-
-	if (probe_cb != NULL)
-		probe_cb(probe_cb_data);
-
 #endif /* PURPLE_PLUGINS */
 }
 
@@ -1511,50 +1494,6 @@ purple_plugins_enabled(void)
 #else
 	return FALSE;
 #endif
-}
-
-void
-purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data)
-{
-	probe_cb = func;
-	probe_cb_data = data;
-}
-
-void
-purple_plugins_unregister_probe_notify_cb(void (*func)(void *))
-{
-	probe_cb = NULL;
-	probe_cb_data = NULL;
-}
-
-void
-purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
-									 void *data)
-{
-	load_cb = func;
-	load_cb_data = data;
-}
-
-void
-purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *))
-{
-	load_cb = NULL;
-	load_cb_data = NULL;
-}
-
-void
-purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
-									   void *data)
-{
-	unload_cb = func;
-	unload_cb_data = data;
-}
-
-void
-purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *, void *))
-{
-	unload_cb = NULL;
-	unload_cb_data = NULL;
 }
 
 PurplePlugin *

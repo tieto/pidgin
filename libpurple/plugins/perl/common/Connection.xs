@@ -36,15 +36,6 @@ purple_connection_notice(gc, text)
 	const char *text
 
 void
-purple_connection_error(gc, reason)
-	Purple::Connection gc
-	const char *reason
-
-void
-purple_connection_destroy(gc)
-	Purple::Connection gc
-
-void
 purple_connection_set_state(gc, state)
 	Purple::Connection gc
 	Purple::ConnectionState state

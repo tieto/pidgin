@@ -387,7 +387,6 @@ parse_substatus(xmlnode *substatus)
 		const char *protocol;
 		acct_name = xmlnode_get_data(node);
 		protocol = xmlnode_get_attrib(node, "protocol");
-		protocol = _purple_oscar_convert(acct_name, protocol); /* XXX: Remove */
 		if ((acct_name != NULL) && (protocol != NULL))
 			ret->account = purple_accounts_find(acct_name, protocol);
 		g_free(acct_name);
@@ -404,7 +403,7 @@ parse_substatus(xmlnode *substatus)
 	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->type = purple_status_type_find_with_id(
-							ret->account->status_types, data);
+							purple_account_get_status_types(ret->account), data);
 		g_free(data);
 	}
 

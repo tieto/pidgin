@@ -190,7 +190,7 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
@@ -643,7 +643,7 @@ signing_on_cb(PurpleConnection *gc)
 	if (!console)
 		return;
 
-	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(gc->account));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(purple_connection_get_account(gc)));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
@@ -733,10 +733,10 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 
 	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)),
 				    "prpl-jabber");
-	if (!account || !account->gc)
+	if (!account || !purple_account_get_connection(account))
 		return;
 
-	console->gc = account->gc;
+	console->gc = purple_account_get_connection(account);
 	gtk_imhtml_clear(GTK_IMHTML(console->imhtml));
 }
 

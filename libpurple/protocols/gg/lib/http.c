@@ -25,11 +25,6 @@
  */
 
 #include <sys/types.h>
-#ifndef _WIN32
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 
 #include "compat.h"
 #include "libgadu.h"
@@ -37,9 +32,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#ifndef _WIN32
-#  include <netdb.h>
-#endif
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -258,7 +250,7 @@ int gg_http_watch_fd(struct gg_http *h)
 	}
 
 	if (h->state == GG_STATE_SENDING_QUERY) {
-		size_t res;
+		ssize_t res;
 
 		if ((res = write(h->fd, h->query, strlen(h->query))) < 1) {
 			gg_debug(GG_DEBUG_MISC, "=> http, write() failed (len=%d, res=%d, errno=%d)\n", strlen(h->query), res, errno);

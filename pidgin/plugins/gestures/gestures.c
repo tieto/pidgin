@@ -48,7 +48,7 @@ stroke_close(GtkWidget *widget, void *data)
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
-	gstroke_cleanup(gtkconv->imhtml);
+	gstroke_cleanup(gtkconv->webview);
 	purple_conversation_destroy(conv);
 }
 
@@ -126,15 +126,15 @@ attach_signals(PurpleConversation *conv)
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
-	gstroke_enable(gtkconv->imhtml);
-	gstroke_signal_connect(gtkconv->imhtml, "14789",  stroke_close,    conv);
-	gstroke_signal_connect(gtkconv->imhtml, "1456",   stroke_close,    conv);
-	gstroke_signal_connect(gtkconv->imhtml, "1489",   stroke_close,    conv);
-	gstroke_signal_connect(gtkconv->imhtml, "74123",  stroke_next_tab, conv);
-	gstroke_signal_connect(gtkconv->imhtml, "7456",   stroke_next_tab, conv);
-	gstroke_signal_connect(gtkconv->imhtml, "96321",  stroke_prev_tab, conv);
-	gstroke_signal_connect(gtkconv->imhtml, "9654",   stroke_prev_tab, conv);
-	gstroke_signal_connect(gtkconv->imhtml, "25852",  stroke_new_win,  conv);
+	gstroke_enable(gtkconv->webview);
+	gstroke_signal_connect(gtkconv->webview, "14789",  stroke_close,    conv);
+	gstroke_signal_connect(gtkconv->webview, "1456",   stroke_close,    conv);
+	gstroke_signal_connect(gtkconv->webview, "1489",   stroke_close,    conv);
+	gstroke_signal_connect(gtkconv->webview, "74123",  stroke_next_tab, conv);
+	gstroke_signal_connect(gtkconv->webview, "7456",   stroke_next_tab, conv);
+	gstroke_signal_connect(gtkconv->webview, "96321",  stroke_prev_tab, conv);
+	gstroke_signal_connect(gtkconv->webview, "9654",   stroke_prev_tab, conv);
+	gstroke_signal_connect(gtkconv->webview, "25852",  stroke_new_win,  conv);
 }
 
 static void
@@ -215,8 +215,8 @@ plugin_unload(PurplePlugin *plugin)
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
-		gstroke_cleanup(gtkconv->imhtml);
-		gstroke_disable(gtkconv->imhtml);
+		gstroke_cleanup(gtkconv->webview);
+		gstroke_disable(gtkconv->webview);
 	}
 
 	return TRUE;

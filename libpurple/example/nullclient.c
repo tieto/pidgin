@@ -237,7 +237,7 @@ static void
 signed_on(PurpleConnection *gc, gpointer null)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	printf("Account connected: %s %s\n", account->username, account->protocol_id);
+	printf("Account connected: %s %s\n", purple_account_get_username(account), purple_account_get_protocol_id(account));
 }
 
 static void

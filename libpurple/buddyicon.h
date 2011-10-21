@@ -275,7 +275,6 @@ purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
  * @param node The blist node.
  *
  * @return A boolean indicating if @a node has a custom buddy icon.
- * @since 2.5.0
  */
 gboolean
 purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
@@ -293,7 +292,6 @@ purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
  * @param node The node.
  *
  * @return The custom buddy icon.
- * @since 2.5.0
  */
 PurpleStoredImage *
 purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
@@ -311,7 +309,6 @@ purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
  *
  * @return The icon that was set. The caller does NOT own a reference to this,
  *         and must call purple_imgstore_ref() if it wants one.
- * @since 2.5.0
  */
 PurpleStoredImage *
 purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
@@ -329,44 +326,10 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
  *
  * @return The icon that was set. The caller does NOT own a reference to this,
  *         and must call purple_imgstore_ref() if it wants one.
- * @since 2.5.0
  */
 PurpleStoredImage *
 purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BUDDYICON_C_)
-/**
- * PurpleContact version of purple_buddy_icons_node_has_custom_icon.
- *
- * @copydoc purple_buddy_icons_node_has_custom_icon()
- *
- * @deprecated Use purple_buddy_icons_node_has_custom_icon instead.
- */
-gboolean
-purple_buddy_icons_has_custom_icon(PurpleContact *contact);
-
-/**
- * PurpleContact version of purple_buddy_icons_node_find_custom_icon.
- *
- * @copydoc purple_buddy_icons_node_find_custom_icon()
- *
- * @deprecated Use purple_buddy_icons_node_find_custom_icon instead.
- */
-PurpleStoredImage *
-purple_buddy_icons_find_custom_icon(PurpleContact *contact);
-
-/**
- * PurpleContact version of purple_buddy_icons_node_set_custom_icon.
- *
- * @copydoc purple_buddy_icons_node_set_custom_icon()
- *
- * @deprecated Use purple_buddy_icons_node_set_custom_icon instead.
- */
-PurpleStoredImage *
-purple_buddy_icons_set_custom_icon(PurpleContact *contact,
-                                   guchar *icon_data, size_t icon_len);
-#endif
 
 /**
  * Sets whether or not buddy icon caching is enabled.

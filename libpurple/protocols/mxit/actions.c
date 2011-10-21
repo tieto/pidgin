@@ -43,7 +43,7 @@
  */
 static void mxit_profile_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc ) ;
 	PurpleRequestField*		field	= NULL;
 	const char*				name	= NULL;
 	const char*				bday	= NULL;
@@ -83,13 +83,6 @@ out:
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROFILE_TYPE_UTF8, profile->nickname );
 		g_string_append( attributes, attrib );
 		acount++;
-
-		/* force hidden if disabled */
-		if ( profile->hidden == FALSE ) {
-			g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, "1" );
-			g_string_append( attributes, attrib );
-			acount++;
-		}
 
 		/* update birthday */
 		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
@@ -165,7 +158,7 @@ out:
 
 		/* update where am i */
 		name = purple_request_fields_get_string( fields, "whereami" );
-		if ( !name)
+		if ( !name )
 			profile->whereami[0] = '\0';
 		else
 			g_strlcpy( profile->whereami, name, sizeof( profile->whereami ) );
@@ -207,7 +200,7 @@ out:
 static void mxit_profile_action( PurplePluginAction* action )
 {
 	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*			session	= purple_connection_get_protocol_data( gc );
 	struct MXitProfile*			profile	= session->profile;
 
 	PurpleRequestFields*		fields	= NULL;
@@ -304,7 +297,7 @@ static void mxit_profile_action( PurplePluginAction* action )
  */
 static void mxit_change_pin_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 	const char*				pin		= NULL;
 	const char*				pin2	= NULL;
 	const char*				err		= NULL;
@@ -366,7 +359,7 @@ out:
 static void mxit_change_pin_action( PurplePluginAction* action )
 {
 	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*			session	= purple_connection_get_protocol_data( gc );
 
 	PurpleRequestFields*		fields	= NULL;
 	PurpleRequestFieldGroup*	group	= NULL;
@@ -375,16 +368,16 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_change_pin_action\n" );
 
 	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
+	group = purple_request_field_group_new( NULL );
+	purple_request_fields_add_group( fields, group );
 
 	/* pin */
-	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
+	field = purple_request_field_string_new( "pin", _( "PIN" ), purple_account_get_password( session->acc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* verify pin */
-	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
+	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), purple_account_get_password( session->acc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
@@ -402,7 +395,7 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 static void mxit_splash_action( PurplePluginAction* action )
 {
 	PurpleConnection*		gc		= (PurpleConnection*) action->context;
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 
 	if ( splash_current( session ) != NULL )
 		splash_display( session );
@@ -439,7 +432,7 @@ static void mxit_about_action( PurplePluginAction* action )
 static void mxit_suggested_friends_action( PurplePluginAction* action )
 {
 	PurpleConnection*		gc				= (PurpleConnection*) action->context;
-	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= {
 				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
 				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR,
@@ -456,7 +449,7 @@ static void mxit_suggested_friends_action( PurplePluginAction* action )
  */
 static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
 {
-	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= {
 				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
 				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR,
@@ -479,10 +472,10 @@ static void mxit_user_search_action( PurplePluginAction* action )
 		_( "Search for a MXit contact" ),
 		_( "Type search information" ),
 		NULL, FALSE, FALSE, NULL,
-		_("_Search"), G_CALLBACK( mxit_user_search_cb ),
-		_("_Cancel"), NULL,
+		_( "_Search" ), G_CALLBACK( mxit_user_search_cb ),
+		_( "_Cancel" ), NULL,
 		purple_connection_get_account( gc ), NULL, NULL,
-		gc);
+		gc );
 }
 
 
