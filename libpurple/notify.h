@@ -32,9 +32,12 @@
 #include <glib.h>
 
 typedef struct _PurpleNotifyUserInfoEntry	PurpleNotifyUserInfoEntry;
-typedef struct _PurpleNotifyUserInfo	PurpleNotifyUserInfo;
+typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
+/** @copydoc _PurpleNotifySearchColumn */
+typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
 #include "connection.h"
+
 
 /**
  * Notification close callbacks.
@@ -106,15 +109,6 @@ typedef enum
 	PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER
 } PurpleNotifyUserInfoEntryType;
 
-/**
- * Single column of a search result.
- */
-typedef struct
-{
-	char *title;           /**< Title of the column. */
-	gboolean visible;      /**< Should the column be visible to the user. Defaults to TRUE. */
-
-} PurpleNotifySearchColumn;
 
 
 /**
@@ -275,6 +269,15 @@ PurpleNotifySearchResults *purple_notify_searchresults_new(void);
  * @return The new search column object.
  */
 PurpleNotifySearchColumn *purple_notify_searchresults_column_new(const char *title);
+
+/**
+ * Returns the title of the column
+ *
+ * @param column The search column object.
+ *
+ * @return The title of the column
+ */
+const char *purple_notify_searchresult_column_get_title(const PurpleNotifySearchColumn *column);
 
 /**
  * Sets whether or not a search result column is visible.

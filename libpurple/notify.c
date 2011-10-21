@@ -56,6 +56,16 @@ struct _PurpleNotifyUserInfo
 	GQueue entries;
 };
 
+/**
+ * Single column of a search result.
+ */
+struct _PurpleNotifySearchColumn
+{
+	char *title;           /**< Title of the column. */
+	gboolean visible;      /**< Should the column be visible to the user. Defaults to TRUE. */
+
+};
+
 void *
 purple_notify_message(void *handle, PurpleNotifyMsgType type,
 					const char *title, const char *primary,
@@ -366,6 +376,13 @@ purple_notify_searchresults_column_new(const char *title)
 	sc->visible = TRUE;
 
 	return sc;
+}
+
+const char *purple_notify_searchresult_column_get_title(const PurpleNotifySearchColumn *column)
+{
+	g_return_val_if_fail(column != NULL, NULL);
+	
+	return column->title;
 }
 
 void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible)
