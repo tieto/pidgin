@@ -146,6 +146,19 @@ struct _PurpleConversation
 	GList *message_history;         /**< Message history, as a GList of PurpleConvMessage's */
 };
 
+/**
+ * Description of a conversation message
+ */
+struct _PurpleConvMessage
+{
+	char *who;
+	char *what;
+	PurpleMessageFlags flags;
+	time_t when;
+	PurpleConversation *conv;
+	char *alias;
+};
+
 
 static GList *conversations = NULL;
 static GList *ims = NULL;
@@ -2438,28 +2451,40 @@ GList *purple_conversation_get_message_history(PurpleConversation *conv)
 	return conv->message_history;
 }
 
-const char *purple_conversation_message_get_sender(PurpleConvMessage *msg)
+const char *purple_conversation_message_get_sender(const PurpleConvMessage *msg)
 {
 	g_return_val_if_fail(msg, NULL);
 	return msg->who;
 }
 
-const char *purple_conversation_message_get_message(PurpleConvMessage *msg)
+const char *purple_conversation_message_get_message(const PurpleConvMessage *msg)
 {
 	g_return_val_if_fail(msg, NULL);
 	return msg->what;
 }
 
-PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
+PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConvMessage *msg)
 {
 	g_return_val_if_fail(msg, 0);
 	return msg->flags;
 }
 
-time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
+time_t purple_conversation_message_get_timestamp(const PurpleConvMessage *msg)
 {
 	g_return_val_if_fail(msg, 0);
 	return msg->when;
+}
+
+const char *purple_conversation_message_get_alias(const PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->alias;
+}
+
+PurpleConversation *purple_conversation_message_get_conv(const PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->conv;
 }
 
 void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)

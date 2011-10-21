@@ -8081,7 +8081,7 @@ static int
 message_compare(gconstpointer p1, gconstpointer p2)
 {
 	const PurpleConvMessage *m1 = p1, *m2 = p2;
-	return (m1->when > m2->when);
+	return (purple_conversation_message_get_timestamp(m1) > purple_conversation_message_get_timestamp(m2));
 }
 
 /* Adds some message history to the gtkconv. This happens in a idle-callback. */
@@ -8097,11 +8097,17 @@ add_message_history_to_gtkconv(gpointer data)
 	gtkconv->attach.timer = 0;
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
-		if (!im && when && when < msg->when) {
+		if (!im && when && when < purple_conversation_message_get_timestamp(msg)) {
 			gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
-		pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
+		pidgin_conv_write_conv(
+				purple_conversation_message_get_conv(msg),
+				purple_conversation_message_get_sender(msg),
+				purple_conversation_message_get_alias(msg),
+				purple_conversation_message_get_message(msg),
+				purple_conversation_message_get_flags(msg),
+				purple_conversation_message_get_timestamp(msg));
 		if (im) {
 			gtkconv->attach.current = g_list_delete_link(gtkconv->attach.current, gtkconv->attach.current);
 		} else {
@@ -8124,14 +8130,20 @@ add_message_history_to_gtkconv(gpointer data)
 			GList *history = purple_conversation_get_message_history(conv);
 			for (; history; history = history->next) {
 				PurpleConvMessage *msg = history->data;
-				if (msg->when > when)
+				if (purple_conversation_message_get_timestamp(msg) > when)
 					msgs = g_list_prepend(msgs, msg);
 			}
 		}
 		msgs = g_list_sort(msgs, message_compare);
 		for (; msgs; msgs = g_list_delete_link(msgs, msgs)) {
 			PurpleConvMessage *msg = msgs->data;
-			pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
+			pidgin_conv_write_conv(
+					purple_conversation_message_get_conv(msg),
+					purple_conversation_message_get_sender(msg),
+					purple_conversation_message_get_alias(msg),
+					purple_conversation_message_get_message(msg),
+					purple_conversation_message_get_flags(msg),
+					purple_conversation_message_get_timestamp(msg));
 		}
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
@@ -8209,7 +8221,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 				g_return_val_if_reached(TRUE);
 		}
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time",
-				GINT_TO_POINTER(((PurpleConvMessage*)(list->data))->when));
+				GINT_TO_POINTER(purple_conversation_message_get_timestamp((PurpleConvMessage*)(list->data))));
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
 		purple_signal_emit(pidgin_conversations_get_handle(),

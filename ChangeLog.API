@@ -16,6 +16,8 @@ version 3.0.0 (??/??/????):
 		* purple_connection_update_last_received
 		* purple_conversation_get_ui_data
 		* purple_conversation_set_ui_data
+		* purple_conversation_message_get_alias
+		* purple_conversation_message_get_conv
 		* purple_notify_searchresult_column_is_visible
 		* purple_notify_searchresult_column_set_visible
 		* purple_notify_user_info_prepend_pair_plaintext
@@ -216,6 +218,7 @@ version 3.0.0 (??/??/????):
 		* struct _PurpleConvChat
 		* struct _PurpleConvChatBuddy
 		* struct _PurpleConvIm
+		* struct _PurpleConvMessage
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
 		* struct _PurpleProxyInfo

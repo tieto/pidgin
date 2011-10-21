@@ -249,19 +249,6 @@ struct _PurpleConversationUiOps
 	void (*_purple_reserved4)(void);
 };
 
-/**
- * Description of a conversation message
- */
-struct _PurpleConvMessage
-{
-	char *who;
-	char *what;
-	PurpleMessageFlags flags;
-	time_t when;
-	PurpleConversation *conv;
-	char *alias;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -660,7 +647,7 @@ void purple_conversation_clear_message_history(PurpleConversation *conv);
  *
  * @return   The name of the sender of the message
  */
-const char *purple_conversation_message_get_sender(PurpleConvMessage *msg);
+const char *purple_conversation_message_get_sender(const PurpleConvMessage *msg);
 
 /**
  * Get the message from a PurpleConvMessage
@@ -669,7 +656,7 @@ const char *purple_conversation_message_get_sender(PurpleConvMessage *msg);
  *
  * @return   The name of the sender of the message
  */
-const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
+const char *purple_conversation_message_get_message(const PurpleConvMessage *msg);
 
 /**
  * Get the message-flags of a PurpleConvMessage
@@ -678,7 +665,7 @@ const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
  *
  * @return   The message flags
  */
-PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg);
+PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConvMessage *msg);
 
 /**
  * Get the timestamp of a PurpleConvMessage
@@ -687,7 +674,25 @@ PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
  *
  * @return   The timestamp of the message
  */
-time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg);
+time_t purple_conversation_message_get_timestamp(const PurpleConvMessage *msg);
+
+/**
+ * Get the alias from a PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The alias of the sender of the message
+ */
+const char *purple_conversation_message_get_alias(const PurpleConvMessage *msg);
+
+/**
+ * Get the conversation associated with the PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The conversation
+ */
+PurpleConversation *purple_conversation_message_get_conv(const PurpleConvMessage *msg);
 
 /**
  * Set the UI data associated with this conversation.
