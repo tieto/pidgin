@@ -202,6 +202,8 @@ static void
 jingle_iceudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleIceUdp *iceudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_ICEUDP(object));
 
 	iceudp = JINGLE_ICEUDP(object);
@@ -225,6 +227,8 @@ static void
 jingle_iceudp_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleIceUdp *iceudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_ICEUDP(object));
 
 	iceudp = JINGLE_ICEUDP(object);

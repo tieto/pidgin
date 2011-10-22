@@ -38,10 +38,24 @@ version 3.0.0 (??/??/????):
 	* Support file transfers up to ~9 EiB.
 
 version 2.10.1 (??/??/????):
+	Gadu-Gadu:
+	* Fix problems linking against GnuTLS. (#14544)
+
+	Sametime:
+	* Separate "username" and "server" when adding new Sametime accounts.
+	  (#14608)
+	* Fix compilation in Visual C++. (#14608)
+
 	SILC:
 	* Fix CVE-2011-3594, by UTF-8 validating incoming messages before
 	  passing them to glib or libpurple.  Identified by Diego Bauche
 	  Madero from IOActive.  (#14636)
+
+	Yahoo!:
+	* Fetch buddy icons in some cases where we previously weren't. (#13050)
+
+	Windows-Specific Changes:
+	* Fix compilation
 
 version 2.10.0 (08/18/2011):
 	Pidgin:
