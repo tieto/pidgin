@@ -189,6 +189,8 @@ static void
 jingle_session_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleSession *session;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_SESSION(object));
 
 	session = JINGLE_SESSION(object);
@@ -231,6 +233,8 @@ static void
 jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleSession *session;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_SESSION(object));
 
 	session = JINGLE_SESSION(object);

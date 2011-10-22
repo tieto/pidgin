@@ -108,6 +108,7 @@ jingle_transport_finalize (GObject *transport)
 static void
 jingle_transport_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
 
 	switch (prop_id) {
@@ -120,6 +121,7 @@ jingle_transport_set_property (GObject *object, guint prop_id, const GValue *val
 static void
 jingle_transport_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
 
 	switch (prop_id) {
@@ -170,6 +172,7 @@ jingle_transport_parse(xmlnode *transport)
 xmlnode *
 jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action)
 {
+	g_return_val_if_fail(transport != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_TRANSPORT(transport), NULL);
 	return JINGLE_TRANSPORT_GET_CLASS(transport)->to_xml(transport, content, action);
 }

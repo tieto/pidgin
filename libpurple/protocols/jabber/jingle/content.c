@@ -181,6 +181,8 @@ static void
 jingle_content_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleContent *content;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(object));
 
 	content = JINGLE_CONTENT(object);
@@ -225,6 +227,8 @@ static void
 jingle_content_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleContent *content;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(object));
 
 	content = JINGLE_CONTENT(object);
@@ -454,6 +458,7 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 xmlnode *
 jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action)
 {
+	g_return_val_if_fail(content != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_CONTENT(content), NULL);
 	return JINGLE_CONTENT_GET_CLASS(content)->to_xml(content, jingle, action);
 }
@@ -461,6 +466,7 @@ jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType 
 void
 jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
 {
+	g_return_if_fail(content != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(content));
 	JINGLE_CONTENT_GET_CLASS(content)->handle_action(content, xmlcontent, action);
 }
