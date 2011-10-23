@@ -793,14 +793,17 @@ create_console(PurplePluginAction *action)
 
 	toolbar = gtk_toolbar_new();
 	button = gtk_tool_button_new(NULL, "<iq/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(iq_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 
 	button = gtk_tool_button_new(NULL, "<presence/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(presence_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 
 	button = gtk_tool_button_new(NULL, "<message/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(message_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 
