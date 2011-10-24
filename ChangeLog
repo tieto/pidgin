@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.1 (10/11/2011):
+	Finch:
+	* Fix compilation on OpenBSD.
+
 	Gadu-Gadu:
 	* Fix problems linking against GnuTLS. (#14544)
 
