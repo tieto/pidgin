@@ -466,14 +466,14 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 
 static void send_request(MMConversation *mmconv)
 {
-	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
 	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
-	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
 	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
 }

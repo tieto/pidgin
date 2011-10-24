@@ -241,7 +241,7 @@ send_typed_cb(gpointer data)
 
 	g_return_val_if_fail(conv != NULL, FALSE);
 
-	gc   = purple_conversation_get_gc(conv);
+	gc   = purple_conversation_get_connection(conv);
 	name = purple_conversation_get_name(conv);
 
 	if (gc != NULL && name != NULL) {
@@ -271,7 +271,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		return;
 
 	account = purple_conversation_get_account(conv);
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(gc != NULL);
@@ -594,7 +594,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 	purple_request_close_with_handle(conv);
 
 	ops  = purple_conversation_get_ui_ops(conv);
-	gc   = purple_conversation_get_gc(conv);
+	gc   = purple_conversation_get_connection(conv);
 	name = purple_conversation_get_name(conv);
 
 	if (gc != NULL)
@@ -819,7 +819,7 @@ purple_conversation_get_account(const PurpleConversation *conv)
 }
 
 PurpleConnection *
-purple_conversation_get_gc(const PurpleConversation *conv)
+purple_conversation_get_connection(const PurpleConversation *conv)
 {
 	PurpleAccount *account;
 
@@ -1659,7 +1659,7 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	g_return_if_fail(message != NULL);
 
 	conv      = purple_conv_chat_get_conversation(chat);
-	gc        = purple_conversation_get_gc(conv);
+	gc        = purple_conversation_get_connection(conv);
 	account   = purple_connection_get_account(gc);
 
 	/* Don't display this if the person who wrote it is ignored. */
@@ -1775,7 +1775,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 	conv = purple_conv_chat_get_conversation(chat);
 	ops  = purple_conversation_get_ui_ops(conv);
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
@@ -1876,7 +1876,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	conv = purple_conv_chat_get_conversation(chat);
 	ops  = purple_conversation_get_ui_ops(conv);
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
@@ -1995,7 +1995,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 
 	conv = purple_conv_chat_get_conversation(chat);
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
@@ -2180,7 +2180,7 @@ purple_find_chat(const PurpleConnection *gc, int id)
 		conv = (PurpleConversation *)l->data;
 
 		if (purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)) == id &&
-			purple_conversation_get_gc(conv) == gc)
+			purple_conversation_get_connection(conv) == gc)
 			return conv;
 	}
 
@@ -2208,7 +2208,7 @@ invite_user_to_chat(gpointer data, PurpleRequestFields *fields)
 	user = purple_request_fields_get_string(fields, "screenname");
 	message = purple_request_fields_get_string(fields, "message");
 
-	serv_chat_invite(purple_conversation_get_gc(conv), chat->id, message, user);
+	serv_chat_invite(purple_conversation_get_connection(conv), chat->id, message, user);
 }
 
 void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,

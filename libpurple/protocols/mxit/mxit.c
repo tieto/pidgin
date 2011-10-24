@@ -176,7 +176,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	const char*			who;
 	char*				tmp;
 
-	gc = purple_conversation_get_gc( conv );
+	gc = purple_conversation_get_connection( conv );
 	if ( session->con != gc ) {
 		/* not our conversation */
 		return;

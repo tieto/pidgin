@@ -3001,7 +3001,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_invite(purple_conversation_get_gc(conv),
+	jabber_chat_invite(purple_conversation_get_connection(conv),
 			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
 			args[0]);
 
@@ -3048,7 +3048,7 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 	if (args[1])
 		g_hash_table_insert(components, "password", args[1]);
 
-	jabber_chat_join(purple_conversation_get_gc(conv), components);
+	jabber_chat_join(purple_conversation_get_connection(conv), components);
 
 	g_hash_table_destroy(components);
 	jabber_id_free(jid);
@@ -3082,7 +3082,7 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 
 	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
 
-	jabber_message_send_im(purple_conversation_get_gc(conv), who, args[1], 0);
+	jabber_message_send_im(purple_conversation_get_connection(conv), who, args[1], 0);
 
 	g_free(who);
 	return PURPLE_CMD_RET_OK;

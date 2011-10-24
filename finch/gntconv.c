@@ -123,7 +123,7 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 			if (send || (purple_conv_im_get_type_again(im) != 0 &&
 						  time(NULL) > purple_conv_im_get_type_again(im))) {
 				unsigned int timeout;
-				timeout = serv_send_typing(purple_conversation_get_gc(conv),
+				timeout = serv_send_typing(purple_conversation_get_connection(conv),
 										   purple_conversation_get_name(conv),
 										   PURPLE_TYPING);
 				purple_conv_im_set_type_again(im, timeout);
@@ -131,7 +131,7 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 		} else {
 			purple_conv_im_stop_send_typed_timeout(im);
 
-			serv_send_typing(purple_conversation_get_gc(conv),
+			serv_send_typing(purple_conversation_get_connection(conv),
 							 purple_conversation_get_name(conv),
 							 PURPLE_NOT_TYPING);
 		}
@@ -414,7 +414,7 @@ static void
 send_file_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	serv_send_file(purple_conversation_get_gc(ggc->active_conv),
+	serv_send_file(purple_conversation_get_connection(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv), NULL);
 }
 
@@ -431,7 +431,7 @@ static void
 get_info_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	finch_retrieve_user_info(purple_conversation_get_gc(ggc->active_conv),
+	finch_retrieve_user_info(purple_conversation_get_connection(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv));
 }
 

@@ -1280,7 +1280,7 @@ static void conversation_created_cb(PurpleConversation *g_conv,
   struct mwIdBlock who = { 0, 0 };
   struct mwConversation *conv;
 
-  gc = purple_conversation_get_gc(g_conv);
+  gc = purple_conversation_get_connection(g_conv);
   if(pd->gc != gc)
     return; /* not ours */
 
@@ -2528,7 +2528,7 @@ static void convo_nofeatures(struct mwConversation *conv) {
   gconv = convo_get_gconv(conv);
   if(! gconv) return;
 
-  gc = purple_conversation_get_gc(gconv);
+  gc = purple_conversation_get_connection(gconv);
   if(! gc) return;
 
   purple_conversation_set_features(gconv, purple_connection_get_flags(gc));

@@ -1548,7 +1548,7 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 	PurpleConversation *convo = conv;
 	int id = 0;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1577,7 +1577,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 	char *buf, *tmp, *tmp2;
 	const char *topic;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 
 	if (gc == NULL || id == 0)
@@ -1623,7 +1623,7 @@ static PurpleCmdRet silcpurple_cmd_chat_join(PurpleConversation *conv,
 	if(args[1])
 		g_hash_table_replace(comp, "passphrase", args[1]);
 
-	silcpurple_chat_join(purple_conversation_get_gc(conv), comp);
+	silcpurple_chat_join(purple_conversation_get_connection(conv), comp);
 
 	g_hash_table_destroy(comp);
 	return PURPLE_CMD_RET_OK;
@@ -1633,7 +1633,7 @@ static PurpleCmdRet silcpurple_cmd_chat_list(PurpleConversation *conv,
         const char *cmd, char **args, char **error, void *data)
 {
 	PurpleConnection *gc;
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	purple_roomlist_show_with_account(purple_connection_get_account(gc));
 	return PURPLE_CMD_RET_OK;
 }
@@ -1643,7 +1643,7 @@ static PurpleCmdRet silcpurple_cmd_whois(PurpleConversation *conv,
 {
 	PurpleConnection *gc;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1659,7 +1659,7 @@ static PurpleCmdRet silcpurple_cmd_msg(PurpleConversation *conv,
 	int ret;
 	PurpleConnection *gc;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1685,7 +1685,7 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 	}
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1713,7 +1713,7 @@ static PurpleCmdRet silcpurple_cmd_motd(PurpleConversation *conv,
 	SilcPurple sg;
 	char *tmp;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1742,7 +1742,7 @@ static PurpleCmdRet silcpurple_cmd_detach(PurpleConversation *conv,
 	PurpleConnection *gc;
 	SilcPurple sg;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1767,7 +1767,7 @@ static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 	char *silccmd, *silcargs, *msg, tmp[256];
 	const char *chname;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL || !args || purple_connection_get_protocol_data(gc) == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1818,7 +1818,7 @@ static PurpleCmdRet silcpurple_cmd_generic(PurpleConversation *conv,
 	SilcPurple sg;
 	char *silccmd, *silcargs;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1850,7 +1850,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	const char *ui_name = NULL, *ui_website = NULL;
 	char *quit_msg;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -1887,7 +1887,7 @@ static PurpleCmdRet silcpurple_cmd_call(PurpleConversation *conv,
 	PurpleConnection *gc;
 	SilcPurple sg;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;

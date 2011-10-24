@@ -171,7 +171,7 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 	struct irc_conn *irc;
 	struct _irc_user_cmd *cmdent;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	if (!gc)
 		return PURPLE_CMD_RET_FAILED;
 

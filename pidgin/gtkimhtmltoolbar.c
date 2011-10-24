@@ -904,7 +904,7 @@ static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 	PurpleConversation *conv =
 		g_object_get_data(G_OBJECT(toolbar), "active_conv");
 	const gchar *who = purple_conversation_get_name(conv);
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
 	purple_prpl_send_attention(gc, who, 0);
@@ -1581,7 +1581,7 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	PurpleConversation *conv)
 {
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	PurplePlugin *prpl = purple_connection_get_prpl(gc);
 	GtkWidget *attention =
 		g_object_get_data(G_OBJECT(toolbar), "attention");

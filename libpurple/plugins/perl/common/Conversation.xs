@@ -146,7 +146,7 @@ purple_conversation_get_account(conv)
 	Purple::Conversation conv
 
 Purple::Connection
-purple_conversation_get_gc(conv)
+purple_conversation_get_connection(conv)
 	Purple::Conversation conv
 
 void

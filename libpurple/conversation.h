@@ -355,13 +355,11 @@ PurpleAccount *purple_conversation_get_account(const PurpleConversation *conv);
 /**
  * Returns the specified conversation's purple_connection.
  *
- * This is the same as purple_conversation_get_user(conv)->gc.
- *
  * @param conv The conversation.
  *
  * @return The conversation's purple_connection.
  */
-PurpleConnection *purple_conversation_get_gc(const PurpleConversation *conv);
+PurpleConnection *purple_conversation_get_connection(const PurpleConversation *conv);
 
 /**
  * Sets the specified conversation's title.

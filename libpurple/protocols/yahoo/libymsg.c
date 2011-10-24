@@ -5232,7 +5232,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 	if (!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	purple_debug_info("yahoo", "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);

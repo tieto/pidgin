@@ -2591,7 +2591,7 @@ static PurpleCmdRet zephyr_purple_cmd_msg(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	char *recipient;
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);;
 	if (!g_ascii_strcasecmp(args[0],"*"))
 		return PURPLE_CMD_RET_FAILED;  /* "*" is not a valid argument */
@@ -2610,7 +2610,7 @@ static PurpleCmdRet zephyr_purple_cmd_msg(PurpleConversation *conv,
 static PurpleCmdRet zephyr_purple_cmd_zlocate(PurpleConversation *conv,
 					  const char *cmd, char **args, char **error, void *data)
 {
-	zephyr_zloc(purple_conversation_get_gc(conv),args[0]);
+	zephyr_zloc(purple_conversation_get_connection(conv),args[0]);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -2623,7 +2623,7 @@ static PurpleCmdRet zephyr_purple_cmd_instance(PurpleConversation *conv,
 
 	PurpleConvChat *gcc = purple_conversation_get_chat_data(conv);
 	const char* instance = args[0];
-	zephyr_chat_set_topic(purple_conversation_get_gc(conv),purple_conv_chat_get_id(gcc),instance);
+	zephyr_chat_set_topic(purple_conversation_get_connection(conv),purple_conv_chat_get_id(gcc),instance);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -2635,7 +2635,7 @@ static PurpleCmdRet zephyr_purple_cmd_joinchat_cir(PurpleConversation *conv,
 	g_hash_table_insert(triple,"class",args[0]);
 	g_hash_table_insert(triple,"instance",args[1]);
 	g_hash_table_insert(triple,"recipient",args[2]);
-	zephyr_join_chat(purple_conversation_get_gc(conv),triple);
+	zephyr_join_chat(purple_conversation_get_connection(conv),triple);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -2643,7 +2643,7 @@ static PurpleCmdRet zephyr_purple_cmd_zi(PurpleConversation *conv,
 				     const char *cmd, char **args, char **error, void *data)
 {
 	/* args = instance, message */
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if ( zephyr_send_message(zephyr,"message",args[0],"",args[1],zephyr_get_signature(),""))
 		return PURPLE_CMD_RET_OK;
@@ -2655,7 +2655,7 @@ static PurpleCmdRet zephyr_purple_cmd_zci(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, instance, message */
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if ( zephyr_send_message(zephyr,args[0],args[1],"",args[2],zephyr_get_signature(),""))
 		return PURPLE_CMD_RET_OK;
@@ -2667,7 +2667,7 @@ static PurpleCmdRet zephyr_purple_cmd_zcir(PurpleConversation *conv,
 				       const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, instance, recipient, message */
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if ( zephyr_send_message(zephyr,args[0],args[1],args[2],args[3],zephyr_get_signature(),""))
 		return PURPLE_CMD_RET_OK;
@@ -2679,7 +2679,7 @@ static PurpleCmdRet zephyr_purple_cmd_zir(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	/* args = instance, recipient, message */
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if ( zephyr_send_message(zephyr,"message",args[0],args[1],args[2],zephyr_get_signature(),""))
 		return PURPLE_CMD_RET_OK;
@@ -2691,7 +2691,7 @@ static PurpleCmdRet zephyr_purple_cmd_zc(PurpleConversation *conv,
 				     const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, message */
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if ( zephyr_send_message(zephyr,args[0],"PERSONAL","",args[1],zephyr_get_signature(),""))
 		return PURPLE_CMD_RET_OK;

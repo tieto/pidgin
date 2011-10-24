@@ -74,6 +74,8 @@ version 3.0.0 (??/??/????):
 		  PurpleCertificate*s as the second parameter
 		* purple_connection_error now takes a PurpleConnectionError
 		  as the second parameter
+		* purple_conversation_get_gc renamed to
+		  purple_conversation_get_connection
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
 		* purple_network_listen now takes the protocol family as the second
 		  parameter
