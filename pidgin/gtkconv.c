@@ -1228,8 +1228,13 @@ menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		int index;
+		if (widget == win->menu.get_attention)
+			index = 0;
+		else
+			index = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), "index"));
 		purple_prpl_send_attention(purple_conversation_get_gc(conv),
-			purple_conversation_get_name(conv), 0);
+			purple_conversation_get_name(conv), index);
 	}
 }
 
@@ -3375,6 +3380,60 @@ regenerate_media_items(PidginWindow *win)
 }
 
 static void
+regenerate_attention_items(PidginWindow *win)
+{
+	GtkWidget *menu;
+	PurpleConversation *conv;
+	PurpleConnection *pc;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	GList *list;
+
+	conv = pidgin_conv_window_get_active_conversation(win);
+	if (!conv)
+		return;
+
+	/* Remove the previous entries */
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.get_attention), NULL);
+
+	pc = purple_conversation_get_gc(conv);
+	if (pc != NULL)
+		prpl = purple_connection_get_prpl(pc);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_attention_types)) {
+		list = prpl_info->get_attention_types(purple_connection_get_account(pc));
+
+		/* Multiple attention types */
+		if (list && list->next) {
+			int index = 0;
+
+			menu = gtk_menu_new();
+			while (list) {
+				PurpleAttentionType *type;
+				GtkWidget *menuitem;
+
+				type = list->data;
+
+				menuitem = gtk_menu_item_new_with_label(purple_attention_type_get_name(type));
+				g_object_set_data(G_OBJECT(menuitem), "index", GINT_TO_POINTER(index));
+				g_signal_connect(G_OBJECT(menuitem), "activate",
+				                 G_CALLBACK(menu_get_attention_cb),
+				                 win);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+				index++;
+				list = g_list_delete_link(list, list);
+			}
+
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.get_attention), menu);
+			gtk_widget_show_all(menu);
+		}
+	}
+}
+
+static void
 regenerate_options_items(PidginWindow *win)
 {
 	GtkWidget *menu;
@@ -3462,6 +3521,7 @@ static void menubar_activated(GtkWidget *item, gpointer data)
 	regenerate_media_items(win);
 	regenerate_options_items(win);
 	regenerate_plugins_items(win);
+	regenerate_attention_items(win);
 
 	/* The following are to make sure the 'More' submenu is not regenerated every time
 	 * the focus shifts from 'Conversations' to some other menu and back. */
