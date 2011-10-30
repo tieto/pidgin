@@ -115,4 +115,15 @@ const gchar* jabber_caps_get_own_hash(JabberStream *js);
  */
 void jabber_caps_broadcast_change(void);
 
+/**
+ * Parse the <query/> element from an IQ stanza into a JabberCapsClientInfo
+ * struct.
+ *
+ * Exposed for tests
+ *
+ * @param query The 'query' element from an IQ reply stanza.
+ * @returns A JabberCapsClientInfo struct, or NULL on error
+ */
+JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
+
 #endif /* PURPLE_JABBER_CAPS_H_ */

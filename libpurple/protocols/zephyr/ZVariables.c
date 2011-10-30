@@ -6,7 +6,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "libpurple/internal.h"
@@ -30,10 +30,10 @@ char *ZGetVariable(var)
 	if ((varfile = get_localvarfile()) == NULL)
 		return ((char *)0);
 
-	if ((ret = get_varval(varfile, var)) != ZERR_NONE) {
-		g_free(varfile);
+	ret = get_varval(varfile, var);
+	g_free(varfile);
+	if (ret != ZERR_NONE)
 		return ret;
-	}
 
 #ifdef WIN32
 	varfile = g_strdup("C:\\zephyr\\zephyr.var");
@@ -55,12 +55,12 @@ Code_t ZSetVariable(var, value)
     char *varfile, *varfilebackup, varbfr[512];
 
     written = 0;
-	
+
     if ((varfile = get_localvarfile()) == NULL)
 	return (ZERR_INTERNAL);
 
     varfilebackup = g_strconcat(varfile, ".backup", NULL);
-	
+
     if (!(fpout = fopen(varfilebackup, "w"))) {
 	g_free(varfile);
 	g_free(varfilebackup);
@@ -78,7 +78,7 @@ Code_t ZSetVariable(var, value)
 		fprintf(fpout, "%s\n", varbfr);
 	}
 	(void) fclose(fpin);		/* don't care about errs on input */
-    } 
+    }
     if (!written)
 	fprintf(fpout, "%s = %s\n", var, value);
     if (fclose(fpout) == EOF) {
@@ -94,7 +94,7 @@ Code_t ZSetVariable(var, value)
     g_free(varfilebackup);
     g_free(varfile);
     return (ZERR_NONE);
-}	
+}
 
 Code_t ZUnsetVariable(var)
     char *var;
@@ -106,7 +106,7 @@ Code_t ZUnsetVariable(var)
 	return (ZERR_INTERNAL);
 
     varfilebackup = g_strconcat(varfile, ".backup", NULL);
-	
+
     if (!(fpout = fopen(varfilebackup, "w"))) {
 	g_free(varfile);
 	g_free(varfilebackup);
@@ -120,7 +120,7 @@ Code_t ZUnsetVariable(var)
 		fprintf(fpout, "%s\n", varbfr);
 	}
 	(void) fclose(fpin);		/* don't care about read close errs */
-    } 
+    }
     if (fclose(fpout) == EOF) {
 	g_free(varfilebackup);
 	g_free(varfile);
@@ -134,7 +134,7 @@ Code_t ZUnsetVariable(var)
     g_free(varfilebackup);
     g_free(varfile);
     return (ZERR_NONE);
-}	
+}
 
 static char *get_localvarfile(void)
 {
@@ -146,7 +146,7 @@ static char *get_localvarfile(void)
     base = getenv("HOME");
     if (!base)
         base = getenv("HOMEPATH");
-    if (!base) 
+    if (!base)
         base = "C:\\";
 #endif
     if (!base) {
@@ -160,8 +160,8 @@ static char *get_localvarfile(void)
     }
 
     return g_strconcat(base, "/.zephyr.vars", NULL);
-} 
-	
+}
+
 static char *get_varval(fn, var)
     char *fn;
     char *var;
@@ -169,7 +169,7 @@ static char *get_varval(fn, var)
     FILE *fp;
     static char varbfr[512];
     int i;
-	
+
     fp = fopen(fn, "r");
     if (!fp)
 	return ((char *)0);
@@ -193,11 +193,11 @@ static int varline(bfr, var)
     char *var;
 {
     register char *cp;
-	
+
 
     if (!bfr[0] || bfr[0] == '#')	/* comment or null line */
 	return (0);
-	
+
     cp = bfr;
     while (*cp && !isspace(*cp) && (*cp != '='))
 	cp++;

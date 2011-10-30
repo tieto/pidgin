@@ -21,7 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "cipher.h"
+#include "debug.h"
+
+#include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
 #include "notification.h"
@@ -161,41 +166,45 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 	return out;
 }
 
+#define MSN_USER_KEY_SIZE (7*4 + 8 + 20 + 72)
 #define CRYPT_MODE_CBC 1
 #define CIPHER_TRIPLE_DES 0x6603
 #define HASH_SHA1 0x8004
 static char *
 msn_rps_encrypt(MsnNexus *nexus)
 {
-	MsnUsrKey *usr_key;
+	char usr_key_base[MSN_USER_KEY_SIZE], *usr_key;
 	const char magic1[] = "SESSION KEY HASH";
 	const char magic2[] = "SESSION KEY ENCRYPTION";
 	PurpleCipherContext *hmac;
 	size_t len;
-	guchar hash[20];
+	guchar *hash;
 	char *key1, *key2, *key3;
 	gsize key1_len;
-	int *iv;
+	const char *iv;
 	char *nonce_fixed;
 	char *cipher;
 	char *response;
 
-	usr_key = g_malloc(sizeof(MsnUsrKey));
-	usr_key->size = GUINT32_TO_LE(28);
-	usr_key->crypt_mode = GUINT32_TO_LE(CRYPT_MODE_CBC);
-	usr_key->cipher_type = GUINT32_TO_LE(CIPHER_TRIPLE_DES);
-	usr_key->hash_type = GUINT32_TO_LE(HASH_SHA1);
-	usr_key->iv_len = GUINT32_TO_LE(8);
-	usr_key->hash_len = GUINT32_TO_LE(20);
-	usr_key->cipher_len = GUINT32_TO_LE(72);
+	usr_key = &usr_key_base[0];
+	/* Header */
+	msn_push32le(usr_key, 28);                  /* Header size */
+	msn_push32le(usr_key, CRYPT_MODE_CBC);      /* Crypt mode */
+	msn_push32le(usr_key, CIPHER_TRIPLE_DES);   /* Cipher type */
+	msn_push32le(usr_key, HASH_SHA1);           /* Hash type */
+	msn_push32le(usr_key, 8);                   /* IV size */
+	msn_push32le(usr_key, 20);                  /* Hash size */
+	msn_push32le(usr_key, 72);                  /* Cipher size */
+	/* Data */
+	iv = usr_key;
+	msn_push32le(usr_key, rand());
+	msn_push32le(usr_key, rand());
+	hash = (guchar *)usr_key;
+	usr_key += 20;  /* Remaining is cipher data */
 
 	key1 = (char *)purple_base64_decode((const char *)nexus->tokens[MSN_AUTH_MESSENGER].secret, &key1_len);
 	key2 = rps_create_key(key1, key1_len, magic1, sizeof(magic1) - 1);
 	key3 = rps_create_key(key1, key1_len, magic2, sizeof(magic2) - 1);
-
-	iv = (int *)usr_key->iv;
-	iv[0] = rand();
-	iv[1] = rand();
 
 	len = strlen(nexus->nonce);
 	hmac = purple_cipher_context_new_by_name("hmac", NULL);
@@ -209,20 +218,17 @@ msn_rps_encrypt(MsnNexus *nexus)
 	nonce_fixed = g_malloc(len + 8);
 	memcpy(nonce_fixed, nexus->nonce, len);
 	memset(nonce_fixed + len, 0x08, 8);
-	cipher = des3_cbc(key3, usr_key->iv, nonce_fixed, len + 8, FALSE);
+	cipher = des3_cbc(key3, iv, nonce_fixed, len + 8, FALSE);
 	g_free(nonce_fixed);
 
-	memcpy(usr_key->hash, hash, 20);
-	memcpy(usr_key->cipher, cipher, 72);
+	memcpy(usr_key, cipher, 72);
 
 	g_free(key1);
 	g_free(key2);
 	g_free(key3);
 	g_free(cipher);
 
-	response = purple_base64_encode((guchar *)usr_key, sizeof(MsnUsrKey));
-
-	g_free(usr_key);
+	response = purple_base64_encode((guchar *)usr_key_base, MSN_USER_KEY_SIZE);
 
 	return response;
 }
@@ -243,15 +249,6 @@ struct _MsnNexusUpdateCallback {
 	GSourceFunc cb;
 	gpointer data;
 };
-
-#if !GLIB_CHECK_VERSION(2, 12, 0)
-static gboolean
-nexus_remove_all_cb(gpointer key, gpointer val, gpointer data)
-{
-	return TRUE;
-}
-#endif
-
 
 static gboolean
 nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
@@ -281,12 +278,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	if (token_str == NULL)
 		return FALSE;
 
-#if GLIB_CHECK_VERSION(2, 12, 0)
 	g_hash_table_remove_all(nexus->tokens[id].token);
-#else
-	g_hash_table_foreach_remove(nexus->tokens[id].token,
-		nexus_remove_all_cb, NULL);
-#endif
 
 	elems = g_strsplit(token_str, "&", 0);
 
@@ -338,8 +330,10 @@ nexus_parse_collection(MsnNexus *nexus, int id, xmlnode *collection)
 			xmlnode *cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
 			xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
 
+			g_free(nexus->cipher);
 			nexus->cipher = xmlnode_get_data(cipher);
 			data = xmlnode_get_data(secret);
+			g_free(nexus->secret);
 			nexus->secret = (char *)purple_base64_decode(data, NULL);
 			g_free(data);
 
@@ -396,8 +390,15 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
-	password = purple_connection_get_password(session->account->gc);
-	password_xml = g_markup_escape_text(password, MIN(strlen(password), 16));
+	password = purple_connection_get_password(purple_account_get_connection(session->account));
+	if (g_utf8_strlen(password, -1) > 16) {
+		/* max byte size for 16 utf8 characters is 64 + 1 for the null */
+		gchar truncated[65];
+		g_utf8_strncpy(truncated, password, 16);
+		password_xml = g_markup_escape_text(truncated, -1);
+	} else {
+		password_xml = g_markup_escape_text(password, -1);
+	}
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);
@@ -506,6 +507,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	g_free(ud);
+	g_free(key);
 }
 
 void

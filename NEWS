@@ -2,6 +2,178 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.8.0 (06/07/2011):
+	Paul: I fixed a few things in this release, and committed some
+	patches, but am being vague because I can't remember any specifics.
+	Hopefully you enjoy this, and happy May!
+
+	John: Wow, this release has taken forever.  But there are a crapload
+	of patches that have been committed this time around, a lot of them by
+	me.  The infamous MSN bugs are still outstanding, but otherwise this
+	release has brought some excellent progress.  Oh, and we dropped the
+	hasn't-quite-worked-in-ages QQ plugin, too.  Enjoy!
+
+	Jorge: I managed to get one patch applied! Wii for end of semester!
+
+2.7.11 (03/10/2011):
+	John: Yet another release.  This time around we finally fixed that
+	annoying MSN buddy adding problem and a security issue in Yahoo.  You
+	know the drill--upgrade already!
+
+2.7.10 (02/06/2011):
+	John: It's release time again.  This release contains a bunch of stuff
+	committed from Trac.  This is another "thank a patch writer" release.
+	Unfortunately, no one has fixed our wonderful MSN issues yet.  There is
+	a tiny security fix in this release, as well.
+
+2.7.9 (12/26/2010):
+	John: Just a quick release for a security fix here.  Elliott has not
+	yet had a chance to work on the MSN breakage that's been present in
+	the last couple releases, but we hope he can do it before 2.7.10!
+
+2.7.8 (12/19/2010):
+	Elliott: OK, so I know a few things broke with the last release, and
+	it's too bad we had to rush it for that silly certificate thing that
+	the MSN people can't configure properly.  I've certainly done a lot of
+	small fixes this time, but it's too bad we haven't been able to get the
+	transfers with the official client fixed yet.  I promise it'll be in
+	the next release (barring any quick security issues).
+
+	John: So, it's been about a month since we last released.  Again, we've
+	assembled a bugfix release for your enjoyment.  While a few commonly
+	reported bugs remain, particularly in MSN, we're working on it for the
+	next release.  In the meantime, Merry Christmas and enjoy!
+
+2.7.7 (11/23/2010):
+	John: Well, this time around, we should finally have the certificate
+	issue really and fully fixed for all of you MSN users.  Also, we have
+	a few AIM-related fixes in this release, most notably the fix for the
+	new "SSL Handshake Failure" message some of you got after upgrading.
+	That one was an oversight on our part.  Enjoy the fixes!
+
+2.7.6 (11/21/2010):
+	Jorge: In this release I have merged two branches where I have spent
+	most of my time in the last months, the MSNP16 and SLP-rewrite.  I 
+	hope you all will enjoy the hability to be connected on multiple
+	instances at the same time. I also hope that the SLP rewrite
+	fix a lot of old bugs that we have in the tracker. I am really 
+	happy with this rewrite because there was untoched code from almost
+	5 years ago. I hope you like this release!
+
+	John: In this release, we give you some new features and a bunch of
+	bug fixes.  This includes shipping intermediate certificates to fix
+	certificate validation for MSN's servers.  Upgrade and enjoy!
+
+2.7.5 (10/31/2010):
+	John: A bugfix release for all of you!  This time we fixed a bunch of
+	bugs ranging from annoying regressions to long-standing bugs we didn't
+	realize until now were bugs.  Enjoy!
+
+2.7.4 (10/20/2010):
+	John: This release came at this particular time due to some security
+	issues Daniel discovered for us when investigating a bug.  There are
+	a ton of other changes, including some partial Yahoo file transfer
+	fixes and a bunch of other little things.  Enjoy!
+
+2.7.3 (08/10/2010):
+	Mark: Lots of little incremental[1] bug fixes and enhancements in this
+	release.
+
+	[1] No whales were harmed[2] during the creation of this release.
+	[2] Probably.
+
+	John: Finally got some fixes out there for you Yahoo users behind some
+	particularly annoying firewalls and proxies, among other fixes.  Enjoy!
+
+2.7.2 (07/21/2010):
+	Mark: We discovered a security issue in Pidgin 2.7.0 and 2.7.1 and
+	decided to release a patched version quickly.  This release contains
+	the fix for that crash, and a few other minor fixes.
+
+2.7.1 (05/29/2010):
+	Elliott: Hey, I'm first!  How did that happen?!  Maybe because of the
+	interesting changes in this release.  Sure there were quite a few bug
+	fixes, but I know what you've all been waiting for is the direct
+	connections in MSN.  Trust me, it's really really fast!!
+
+	John: Whoa, short turnaround for us.  This is just 17 days after our
+	previous release!  This fixes a number of bugs that you've all been
+	reporting a ton of duplicate tickets about and even gives you the new
+	direct connection file transfer support for MSN.  Enjoy!
+
+	Marcus: Quite a bit quicker to get this release out, compared with the
+	previous one :).  Fixes a number of bugs, and I'm sure the MSN direct
+	connections will please many users.  Enjoy!
+
+2.7.0 (05/12/2010):
+	John: We FINALLY got the ICQ X-Status stuff merged in!  And a few other
+	patches that have been sitting on Trac forever.  Couple that with some
+	new features and we have an excellent release for all of you!
+
+	Marcus: Finally time for a new release, seems like it took
+	quite a while this time.  But then again, there are some new features
+	in there, like file transfer preview (thumbnails) support (only on MSN
+	so far), plus a lot of bug fixes.  Enjoy!
+
+	Paul: Yay, a new release!  I don't think I added very much useful to
+	this release, other than fixing a paste bug from Chrome (no weird
+	characters appended to the end of your URI).  Enjoy!
+
+	Jorge: This is my first NEWS!  I'm not sure I added something nice
+	to this release.  I know it took a lot of time to bring this one
+	out, however I'm really excited by this release.  I hope everyone
+	likes the new features this release brings.
+
+	Elliott: This release took so long, I had to go check the ChangeLog
+	just to see what happened.  I doubt many people will notice, but we
+	dropped support for many old things, like GTK+<2.10 and MSNP9.  In more
+	exciting news, we have file transfer previews on MSN, and support for
+	setting moods on ICQ and XMPP (which has been waiting forever.)
+
+2.6.6 (02/18/2010):
+	Mark: This release includes some great little changes and fixes a few
+	security-related bugs.  See the ChangeLog for details.
+
+2.6.5 (01/08/2010):
+	Paul: This release fixes a pretty serious bug in the MSN code, so we're
+	releasing this build a little earlier than planned with only major
+	bugs fixed.  See the ChangeLog for details.  Enjoy!
+
+2.6.4 (11/29/2009):
+	John:  It's release time again.  Lots of bug fixes this time around, as
+	well as a new protocol plugin developed and maintained by the MXit folks
+	folks.  Elliott and I also did a ton of work on the Preferences window,
+	which will now hopefully fit on most people's small screens.  Enjoy!
+
+	Elliott: This release has been in the works for so long, I don't really
+	remember doing any work on it.  But I do know the MSN servers gave us a
+	little bit of trouble this time around, forgetting people's friendly
+	names.  Nothing too problematic, just a touch annoying.  Also, we've got
+	a nice new Preferences dialog.  You can thank John for that mostly, with
+	a couple of tweaks by me.
+
+	Sadrul: A lot of little fixes for a lot of things! Among them, a fix
+	for a long standing issue with displaying unicode in non-utf8 locale in
+	finch. We also have a new prpl for MXit. This release is very very cool
+	altogether. Enjoy!
+
+2.6.3 (10/16/2009):
+	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
+	so we're releasing a special "severe bug fix only" build.  See the
+	ChangeLog for details.  Enjoy!
+
+2.6.2 (09/05/2009):
+	Mark: Woo boy it's been a busy two weeks.  There was a lot of new code
+	in 2.6.0, and with new code comes new bugs.  The cadre of relentless
+	developers responsible for Pidgin have been hard at work, and I believe
+	they have fixed all the major bugs that cropped up.  My thanks to all
+	those names listed as Current Developers in Pidgin's 'About' window.
+
+	Elliott: Well now, just as Mark said, there was a lot of new stuff that
+	probably came up with tons of bugs.  So I can't say I wrote anything
+	super-awesome, but I definitely fixed quite a few of those itty-bitty
+	why-didn't-this-work-this-way sort of bugs.
+
 2.6.1 (08/18/2009):
 	Mark: There were a lot of changes in 2.6.0, and so a few major bugs
 	crept in.  This is a very minor release to fix those bugs.  Sorry for

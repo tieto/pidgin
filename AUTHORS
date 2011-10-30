@@ -12,53 +12,58 @@ Daniel 'datallah' Atallah - Developer
 Paul 'darkrain42' Aurich - Developer
 John 'rekkanoryo' Bailey - Developer
 Ethan 'Paco-Paco' Blanton - Developer
-Thomas Butter - Developer
-Ka-Hing Cheung - Developer
 Sadrul Habib Chowdhury - Developer
 Mark 'KingAnt' Doliner - Developer
-Sean Egan - Developer
 Casey Harkins - Developer
+Ivan Komarov - Developer
 Gary 'grim' Kramlich - Developer
 Richard 'rlaager' Laager - Developer
+Marcus 'malu' Lundblad - Developer
+Sulabh 'sulabh_m' Mahajan - Developer
 Richard 'wabz' Nelson - Developer
-Christopher 'siege' O'Brien - Developer
-Bartosz Oler - Developer
 Etan 'deryni' Reisner - Developer
-Tim 'marv' Ringenbach - Developer
 Michael 'Maiku' Ruprecht - Developer, voice and video
 Elliott 'QuLogic' Sales de Andrade - Developer
 Luke 'LSchiere' Schierer - Support
-Megan 'Cae' Schneider - support/QA
 Evan Schoenberg - Developer
 Kevin 'SimGuy' Stange - Developer & Webmaster
 Will 'resiak' Thompson - Developer
 Stu 'nosnilmot' Tomlinson - Developer
-Nathan 'faceprint' Walp - Developer
+Jorge 'Masca' Villaseñor - Developer
 
 Crazy Patch Writers:
 -------------------
-Marcus 'malu' Lundblad
-Dennis 'EvilDennisR' Ristuccia
+Jakub 'haakon' Adam
+Krzysztof Klinikowski
 Peter 'Fmoo' Ruibal
 Gabriel 'Nix' Schulhof
-Jorge 'Masca' Villaseñor
+Tomasz Wasilczyk
 
 Retired Developers:
 ------------------
 Herman Bloggs - Win32 Port
+Thomas Butter - Developer
+Ka-Hing Cheung - Developer
 Jim Duchek <jim@linuxpimps.com> - maintainer
+Sean Egan - Developer
 Rob Flynn <gaim@robflynn.com> - maintainer
 Adam Fritzler - libfaim maintainer
 Christian 'ChipX86' Hammond - Developer & Webmaster
 Syd Logan - hacker and designated driver [lazy bum]
+Christopher 'siege' O'Brien - Developer
+Bartosz Oler - Developer
+Tim 'marv' Ringenbach - Developer
+Megan 'Cae' Schneider - support/QA
 Jim Seymour - XMPP developer
 Mark Spencer <markster@marko.net> - original author
+Nathan 'faceprint' Walp - Developer
 Eric Warmenhoven <eric@warmenhoven.org> - lead developer
 
 Retired Crazy Patch Writers:
 ---------------------------
 Felipe 'shx' Contreras
 Decklin Foster
+Dennis 'EvilDennisR' Ristuccia - Senior Contributor/QA
 Peter 'Bleeter' Lawler
 Robert 'Robot101' McQueen
 Benjamin Miller
@@ -136,4 +141,4 @@ Elliot Tobin <elliot@bha.udel.edu>
 Thanks to Jeroen van der Vegt for the initial smiley plugin and images.
 
 The OpenQ Team
-	Wrote the QQ plugin (see AUTHORS in the qq directory)
+	Wrote the QQ plugin dropped in 2.8.0 (see libpurple/qq/AUTHORS in 2.7.11)

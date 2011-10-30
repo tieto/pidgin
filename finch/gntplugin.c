@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <internal.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -32,7 +34,6 @@
 #include <gntutils.h>
 
 #include "finch.h"
-#include <internal.h>
 
 #include "debug.h"
 #include "notify.h"
@@ -63,7 +64,7 @@ free_stringlist(GList *list)
 static void
 decide_conf_button(PurplePlugin *plugin)
 {
-	if (purple_plugin_is_loaded(plugin) && 
+	if (purple_plugin_is_loaded(plugin) &&
 		((PURPLE_IS_GNT_PLUGIN(plugin) &&
 			FINCH_PLUGIN_UI_INFO(plugin) != NULL) ||
 		(plugin->info->prefs_info &&
@@ -261,7 +262,7 @@ install_selected_file_cb(gpointer handle, const char *filename)
 	PurplePlugin *plugin;
 
 	g_return_if_fail(plugins.window);
-	
+
 	plugin = purple_plugin_probe(filename);
 	if (!plugin) {
 		purple_notify_error(handle, _("Error loading plugin"),
@@ -497,7 +498,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 						break;
 				}
 				stringlist = g_list_prepend(stringlist, value);
-				purple_request_field_list_add(field, label, value);
+				purple_request_field_list_add_icon(field, label, NULL, value);
 				if (strcmp(value, current_value) == 0)
 					purple_request_field_list_add_selected(field, label);
 				list = list->next->next;

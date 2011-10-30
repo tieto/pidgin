@@ -24,7 +24,7 @@ int main()
 	freopen(".error", "w", stderr);
 	gnt_init();
 #endif
-	
+
 	GntWidget *label = gnt_label_new("So wassup dudes and dudettes!!\u4e0a1\u6d772\u67003\u4f4e4\u67085\nSo this is, like,\nthe third line!! \\o/");
 	GntWidget *vbox, *hbox, *tree, *box, *button;
 	WINDOW *test;
@@ -78,7 +78,7 @@ int main()
 	gnt_box_add_widget(GNT_BOX(vbox), button);
 
 	gnt_box_add_widget(GNT_BOX(hbox), vbox);
-	
+
 	gnt_widget_show(hbox);
 
 #ifdef STANDALONE

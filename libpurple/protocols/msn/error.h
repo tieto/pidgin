@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_ERROR_H_
-#define _MSN_ERROR_H_
+#ifndef MSN_ERROR_H
+#define MSN_ERROR_H
 
 #include "session.h"
 
@@ -44,4 +44,14 @@ const char *msn_error_get_text(unsigned int type, gboolean *debug);
  */
 void msn_error_handle(MsnSession *session, unsigned int type);
 
-#endif /* _MSN_ERROR_H_ */
+/**
+ * Show the sync issue in a dialog using request api
+ *
+ * @param sesion 		MsnSession associated to this error.
+ * @param passport 		The passport associated with the error.
+ * @param group_name 	The group in the buddy is suppoused to be
+ */
+void msn_error_sync_issue(MsnSession *session, const char *passport,
+						 const char *group_name);
+
+#endif /* MSN_ERROR_H */

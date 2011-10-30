@@ -174,6 +174,8 @@ static void
 jingle_rawudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleRawUdp *rawudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_RAWUDP(object));
 
 	rawudp = JINGLE_RAWUDP(object);
@@ -187,7 +189,7 @@ jingle_rawudp_set_property (GObject *object, guint prop_id, const GValue *value,
 			rawudp->priv->remote_candidates =
 					g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -197,8 +199,10 @@ static void
 jingle_rawudp_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleRawUdp *rawudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_RAWUDP(object));
-	
+
 	rawudp = JINGLE_RAWUDP(object);
 
 	switch (prop_id) {
@@ -208,8 +212,8 @@ jingle_rawudp_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		case PROP_REMOTE_CANDIDATES:
 			g_value_set_pointer(value, rawudp->priv->remote_candidates);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }

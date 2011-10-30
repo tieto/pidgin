@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <internal.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -36,7 +38,6 @@
 #include <gntwindow.h>
 
 #include "finch.h"
-#include <internal.h>
 
 #include <account.h>
 #include <accountopt.h>
@@ -128,7 +129,8 @@ save_account_cb(AccountEditDialog *dialog)
 
 	if (value == NULL || *value == '\0')
 	{
-		purple_notify_error(NULL, _("Error"), _("Account was not added"),
+		purple_notify_error(NULL, _("Error"),
+				dialog->account ? _("Account was not modified") : _("Account was not added"),
 				_("Username of an account must be non-empty."));
 		return;
 	}
@@ -163,15 +165,34 @@ save_account_cb(AccountEditDialog *dialog)
 		account = dialog->account;
 
 		/* Protocol */
-		purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
-		purple_account_set_username(account, username->str);
+		if (purple_account_is_disconnected(account)) {
+			purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
+			purple_account_set_username(account, username->str);
+		} else {
+			const char *old = purple_account_get_protocol_id(account);
+			char *oldprpl;
+			if (strcmp(old, purple_plugin_get_id(plugin))) {
+				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
+						_("The account's protocol cannot be changed while it is connected to the server."));
+				return;
+			}
+
+			oldprpl = g_strdup(purple_normalize(account, purple_account_get_username(account)));
+			if (g_utf8_collate(oldprpl, purple_normalize(account, username->str))) {
+				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
+						_("The account's username cannot be changed while it is connected to the server."));
+				g_free(oldprpl);
+				return;
+			}
+			g_free(oldprpl);
+			purple_account_set_username(account, username->str);
+		}
 	}
 	g_string_free(username, TRUE);
 
 	/* Alias */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->alias));
-	if (value && *value)
-		purple_account_set_alias(account, value);
+	purple_account_set_alias(account, value);
 
 	/* Remember password and password */
 	purple_account_set_remember_password(account,
@@ -219,7 +240,8 @@ save_account_cb(AccountEditDialog *dialog)
 			}
 			else if (type == PURPLE_PREF_STRING_LIST)
 			{
-				/* TODO: */
+				gchar *value = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(entry));
+				purple_account_set_string(account, setting, value);
 			}
 			else
 			{
@@ -247,6 +269,17 @@ save_account_cb(AccountEditDialog *dialog)
 			purple_savedstatus_activate_for_account(saved_status, account);
 			purple_account_set_enabled(account, FINCH_UI, TRUE);
 		}
+	}
+
+	/* In case of a new account, the 'Accounts' window is updated from the account-added
+	 * callback. In case of changes in an existing account, we need to explicitly do it
+	 * here.
+	 */
+	if (dialog->account != NULL && accounts.window) {
+		gnt_tree_change_text(GNT_TREE(accounts.tree), dialog->account,
+				0, purple_account_get_username(dialog->account));
+		gnt_tree_change_text(GNT_TREE(accounts.tree), dialog->account,
+				1, purple_account_get_protocol_name(dialog->account));
 	}
 
 	gnt_widget_destroy(dialog->window);
@@ -279,7 +312,7 @@ update_user_splits(AccountEditDialog *dialog)
 	if (!plugin)
 		return;
 	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	
+
 	username = dialog->account ? g_strdup(purple_account_get_username(dialog->account)) : NULL;
 
 	for (iter = prplinfo->user_splits; iter; iter = iter->next)
@@ -402,8 +435,26 @@ add_protocol_options(AccountEditDialog *dialog)
 
 			if (type == PURPLE_PREF_STRING_LIST)
 			{
-				/* TODO: Use a combobox */
-				/*       Don't forget to append the widget to prpl_entries */
+				GntWidget *combo = gnt_combo_box_new();
+				GList *opt_iter = purple_account_option_get_list(option);
+				const char *dv = purple_account_option_get_default_list_value(option);
+				const char *active = dv;
+
+				if (account)
+					active = purple_account_get_string(account,
+						purple_account_option_get_setting(option), dv);
+
+				gnt_box_add_widget(GNT_BOX(box), combo);
+				dialog->prpl_entries = g_list_append(dialog->prpl_entries, combo);
+
+				for ( ; opt_iter; opt_iter = opt_iter->next)
+				{
+					PurpleKeyValuePair *kvp = opt_iter->data;
+					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), kvp->value, kvp->key);
+
+					if (g_str_equal(kvp->value, active))
+						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), kvp->value);
+				}
 			}
 			else
 			{
@@ -614,7 +665,7 @@ edit_account_continue(PurpleAccount * account,
 	button = gnt_button_new(_("Cancel"));
 	gnt_box_add_widget(GNT_BOX(hbox), button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), window);
-	
+
 	button = gnt_button_new(_("Save"));
 	gnt_box_add_widget(GNT_BOX(hbox), button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(save_account_cb), dialog);

@@ -63,14 +63,6 @@ void finch_prefs_init()
 
 void finch_prefs_update_old()
 {
-	const char *str = NULL;
-
-	purple_prefs_rename("/gaim/gnt", "/finch");
-	purple_prefs_rename("/purple/gnt", "/finch");
-
-	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
-			strcmp(str, "gaim") == 0)
-		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 }
 
 typedef struct
@@ -179,7 +171,7 @@ get_pref_field(Prefs *prefs)
 				default:
 					break;
 			}
-			purple_request_field_list_add(field, data, iter->data);
+			purple_request_field_list_add_icon(field, data, NULL, iter->data);
 			if (select)
 				purple_request_field_list_add_selected(field, data);
 		}
@@ -188,21 +180,21 @@ get_pref_field(Prefs *prefs)
 	return field;
 }
 
-static Prefs blist[] = 
+static Prefs blist[] =
 {
 	{PURPLE_PREF_BOOLEAN, "/finch/blist/idletime", N_("Show Idle Time"), NULL},
 	{PURPLE_PREF_BOOLEAN, "/finch/blist/showoffline", N_("Show Offline Buddies"), NULL},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL}
 };
 
-static Prefs convs[] = 
+static Prefs convs[] =
 {
 	{PURPLE_PREF_BOOLEAN, "/finch/conversations/timestamps", N_("Show Timestamps"), NULL},
 	{PURPLE_PREF_BOOLEAN, "/finch/conversations/notify_typing", N_("Notify buddies when you are typing"), NULL},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL}
 };
 
-static Prefs logging[] = 
+static Prefs logging[] =
 {
 	{PURPLE_PREF_STRING, "/purple/logging/format", N_("Log format"), get_log_options},
 	{PURPLE_PREF_BOOLEAN, "/purple/logging/log_ims", N_("Log IMs"), NULL},

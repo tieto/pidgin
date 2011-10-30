@@ -25,13 +25,15 @@
 #define DBUS_API_SUBJECT_TO_CHANGE
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 /* Allow the code below to see deprecated functions, so we can continue to
  * export them via DBus. */
 #undef PURPLE_DISABLE_DEPRECATED
+
+#include "internal.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "account.h"
 #include "blist.h"
@@ -42,7 +44,6 @@
 #include "dbus-bindings.h"
 #include "debug.h"
 #include "core.h"
-#include "internal.h"
 #include "savedstatuses.h"
 #include "smiley.h"
 #include "util.h"
@@ -126,8 +127,10 @@ purple_dbus_pointer_to_id(gconstpointer node)
 	gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
 	if ((id == 0) && (node != NULL))
 	{
-		purple_debug_warning("dbus",
-				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore this message.)\n");
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"Need to register an object with the dbus subsystem."
+				" (If you are not a developer, please ignore this message.)\n");
 		return 0;
 	}
 	return id;
@@ -297,7 +300,7 @@ null_to_empty(const char *s)
 }
 
 dbus_int32_t *
-purple_dbusify_GList(GList *list, gboolean free_memory, dbus_int32_t *len)
+purple_dbusify_GList(GList *list, dbus_int32_t *len)
 {
 	dbus_int32_t *array;
 	int i;
@@ -307,15 +310,12 @@ purple_dbusify_GList(GList *list, gboolean free_memory, dbus_int32_t *len)
 	array = g_new0(dbus_int32_t, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
-
-	if (free_memory)
-		g_list_free(list);
 
 	return array;
 }
 
 dbus_int32_t *
-purple_dbusify_GSList(GSList *list, gboolean free_memory, dbus_int32_t *len)
+purple_dbusify_GSList(GSList *list, dbus_int32_t *len)
 {
 	dbus_int32_t *array;
 	int i;
@@ -326,14 +326,11 @@ purple_dbusify_GSList(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
 
-	if (free_memory)
-		g_slist_free(list);
-
 	return array;
 }
 
 gpointer *
-purple_GList_to_array(GList *list, gboolean free_memory, dbus_int32_t *len)
+purple_GList_to_array(GList *list, dbus_int32_t *len)
 {
 	gpointer *array;
 	int i;
@@ -344,14 +341,11 @@ purple_GList_to_array(GList *list, gboolean free_memory, dbus_int32_t *len)
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
 
-	if (free_memory)
-		g_list_free(list);
-
 	return array;
 }
 
 gpointer *
-purple_GSList_to_array(GSList *list, gboolean free_memory, dbus_int32_t *len)
+purple_GSList_to_array(GSList *list, dbus_int32_t *len)
 {
 	gpointer *array;
 	int i;
@@ -361,9 +355,6 @@ purple_GSList_to_array(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	array = g_new0(gpointer, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
-
-	if (free_memory)
-		g_slist_free(list);
 
 	return array;
 }
@@ -498,7 +489,9 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 
 	g_string_append(str, "<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>\n");
 	g_string_append_printf(str, "<node name='%s'>\n", DBUS_PATH_PURPLE);
-	g_string_append_printf(str, "<interface name='%s'>\n", DBUS_INTERFACE_PURPLE);
+	g_string_append(str, "  <interface name='org.freedesktop.DBus.Introspectable'>\n    <method name='Introspect'>\n      <arg name='data' direction='out' type='s'/>\n    </method>\n  </interface>\n\n");
+
+	g_string_append_printf(str, "  <interface name='%s'>\n", DBUS_INTERFACE_PURPLE);
 
 	bindings_list = NULL;
 	purple_signal_emit(purple_dbus_get_handle(), "dbus-introspect", &bindings_list);
@@ -514,7 +507,7 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 		{
 			const char *text;
 
-			g_string_append_printf(str, "<method name='%s'>\n", bindings[i].name);
+			g_string_append_printf(str, "    <method name='%s'>\n", bindings[i].name);
 
 			text = bindings[i].parameters;
 			while (*text)
@@ -526,10 +519,10 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 				name = dbus_gettext(&text);
 
 				g_string_append_printf(str,
-						"<arg name='%s' type='%s' direction='%s'/>\n",
+						"      <arg name='%s' type='%s' direction='%s'/>\n",
 						name, type, direction);
 			}
-			g_string_append(str, "</method>\n");
+			g_string_append(str, "    </method>\n");
 		}
 	}
 
@@ -546,7 +539,7 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 	}
 	g_string_append(str, signals);
 
-	g_string_append(str, "</interface>\n</node>\n");
+	g_string_append(str, "  </interface>\n</node>\n");
 
 	reply = dbus_message_new_method_return(message);
 	dbus_message_append_args(reply, DBUS_TYPE_STRING, &(str->str),
@@ -565,10 +558,8 @@ purple_dbus_dispatch(DBusConnection *connection,
 			"dbus-method-called", connection, message))
 		return DBUS_HANDLER_RESULT_HANDLED;
 
-	if (dbus_message_get_type(message) == DBUS_MESSAGE_TYPE_METHOD_CALL &&
-			dbus_message_has_path(message, DBUS_PATH_PURPLE) &&
-			dbus_message_has_interface(message, DBUS_INTERFACE_INTROSPECTABLE) &&
-			dbus_message_has_member(message, "Introspect"))
+	if (dbus_message_is_method_call(message, DBUS_INTERFACE_INTROSPECTABLE, "Introspect") &&
+			dbus_message_has_path(message, DBUS_PATH_PURPLE))
 	{
 		DBusMessage *reply;
 		reply = purple_dbus_introspect(message);
@@ -598,7 +589,6 @@ purple_dbus_dispatch_init(void)
 {
 	static DBusObjectPathVTable vtable = {NULL, &purple_dbus_dispatch, NULL, NULL, NULL, NULL};
 	DBusError error;
-	int result;
 
 	dbus_error_init(&error);
 	purple_dbus_connection = dbus_bus_get(DBUS_BUS_STARTER, &error);
@@ -622,16 +612,15 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
-	dbus_request_name_reply =
-	result = dbus_bus_request_name(purple_dbus_connection,
+	dbus_request_name_reply = dbus_bus_request_name(purple_dbus_connection,
 			DBUS_SERVICE_PURPLE, 0, &error);
 
 	if (dbus_error_is_set(&error))
 	{
 		dbus_connection_unref(purple_dbus_connection);
-		dbus_error_free(&error);
 		purple_dbus_connection = NULL;
 		init_error = g_strdup_printf(N_("Failed to get serv name: %s"), error.name);
+		dbus_error_free(&error);
 		return;
 	}
 
@@ -710,7 +699,7 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 			g_return_val_if_fail(ptr, TRUE);
 		}
 
-		switch (purple_values[i]->type)
+		switch (purple_value_get_type(purple_values[i]))
 		{
 		case PURPLE_TYPE_INT:
 		case PURPLE_TYPE_ENUM:
@@ -795,7 +784,11 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
-		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore this message.)\n", name);
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"The signal \"%s\" caused some dbus error."
+				" (If you are not a developer, please ignore this message.)\n",
+				name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 

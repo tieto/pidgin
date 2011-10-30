@@ -38,7 +38,7 @@ static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
-		     const int filesize, const char *filename, int option);
+		     const goffset filesize, const char *filename, int option);
 static void bonjour_free_xfer(PurpleXfer *xfer);
 
 /* Look for specific xfer handle */
@@ -53,11 +53,12 @@ xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *er
 	g_return_if_fail(error_code != NULL);
 	g_return_if_fail(error_type != NULL);
 
-	if(!to || !id)
+	if(!to || !id) {
+		purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
 		return;
+	}
 
-	purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
-	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, purple_account_get_username(bd->jabber_data->account), id);
+	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, bonjour_get_jid(bd->jabber_data->account), id);
 	if(iq == NULL)
 		return;
 
@@ -89,12 +90,12 @@ static void bonjour_xfer_cancel_send(PurpleXfer *xfer)
 
 static void bonjour_xfer_request_denied(PurpleXfer *xfer)
 {
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 
 	purple_debug_info("bonjour", "Bonjour-xfer-request-denied.\n");
 
 	if(xf)
-		xep_ft_si_reject(xf->data, xf->sid, xfer->who, "403", "cancel");
+		xep_ft_si_reject(xf->data, xf->sid, purple_xfer_get_remote_user(xfer), "403", "cancel");
 
 	bonjour_free_xfer(xfer);
 }
@@ -135,8 +136,8 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 	 * otherwise there is a RST resulting in an error on the client side */
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
 		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
-		sc->fd = xfer->fd;
-		xfer->fd = -1;
+		sc->fd = purple_xfer_get_fd(xfer);
+		purple_xfer_set_fd(xfer, -1);
 		sc->handle = purple_input_add(sc->fd, PURPLE_INPUT_READ,
 						 _wait_for_socket_close, sc);
 	}
@@ -161,11 +162,11 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 		xfer = xfers->data;
 		if(xfer == NULL)
 			break;
-		xf = xfer->data;
+		xf = purple_xfer_get_protocol_data(xfer);
 		if(xf == NULL)
 			break;
-		if(xf->sid && xfer->who && !strcmp(xf->sid, sid) &&
-				!strcmp(xfer->who, from))
+		if(xf->sid && purple_xfer_get_remote_user(xfer) && !strcmp(xf->sid, sid) &&
+				!strcmp(purple_xfer_get_remote_user(xfer), from))
 			return xfer;
 	}
 
@@ -179,7 +180,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 {
 	xmlnode *si_node, *feature, *field, *file, *x;
 	XepIq *iq;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	BonjourData *bd = NULL;
 	char buf[32];
 
@@ -195,7 +196,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	/* Assign stream id. */
 	g_free(xf->iq_id);
 	xf->iq_id = g_strdup_printf("%u", next_id++);
-	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -209,8 +210,8 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 
 	file = xmlnode_new_child(si_node, "file");
 	xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
-	xmlnode_set_attrib(file, "name", xfer->filename);
-	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
+	xmlnode_set_attrib(file, "name", purple_xfer_get_filename(xfer));
+	g_snprintf(buf, sizeof(buf), "%" G_GOFFSET_FORMAT, purple_xfer_get_size(xfer));
 	xmlnode_set_attrib(file, "size", buf);
 
 	feature = xmlnode_new_child(si_node, "feature");
@@ -239,7 +240,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 }
 
 static void
-xep_ft_si_result(PurpleXfer *xfer, char *to)
+xep_ft_si_result(PurpleXfer *xfer, const char *to)
 {
 	xmlnode *si_node, *feature, *field, *value, *x;
 	XepIq *iq;
@@ -248,14 +249,14 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 
 	if(!to || !xfer)
 		return;
-	xf = xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(!xf)
 		return;
 
 	bd = xf->data;
 
 	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -289,14 +290,14 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		return;
 	}
 
-	purple_debug_info("bonjour", "bonjour-free-xfer-%p.\n", xfer);
+	purple_debug_misc("bonjour", "bonjour-free-xfer-%p.\n", xfer);
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(xf != NULL) {
 		BonjourData *bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
 			bd->xfer_lists = g_slist_remove(bd->xfer_lists, xfer);
-			purple_debug_info("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
+			purple_debug_misc("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
 		}
 		if (xf->proxy_connection != NULL)
 			purple_proxy_connect_cancel(xf->proxy_connection);
@@ -310,10 +311,10 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->buddy_ip);
 		g_free(xf->sid);
 		g_free(xf);
-		xfer->data = NULL;
+		purple_xfer_set_protocol_data(xfer, NULL);
 	}
 
-	purple_debug_info("bonjour", "Need close socket=%d.\n", xfer->fd);
+	purple_debug_misc("bonjour", "Need close socket.\n");
 }
 
 PurpleXfer *
@@ -327,13 +328,14 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer to %s.\n", who);
-	bd = (BonjourData*) gc->proto_data;
+	bd = purple_connection_get_protocol_data(gc);
 	if(bd == NULL)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
-	xfer->data = xep_xfer = g_new0(XepXfer, 1);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xep_xfer = g_new0(XepXfer, 1);
+	purple_xfer_set_protocol_data(xfer, xep_xfer);
 	xep_xfer->data = bd;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
@@ -378,13 +380,13 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	BonjourBuddy *bb;
 	XepXfer *xf;
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(xf == NULL)
 		return;
 
 	purple_debug_info("bonjour", "Bonjour-xfer-init.\n");
 
-	buddy = purple_find_buddy(xfer->account, xfer->who);
+	buddy = purple_find_buddy(purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer));
 	/* this buddy is offline. */
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
 		return;
@@ -395,10 +397,10 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 		/* initiate file transfer, send SI offer. */
 		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
-		xep_ft_si_offer(xfer, xfer->who);
+		xep_ft_si_offer(xfer, purple_xfer_get_remote_user(xfer));
 	} else {
 		/* accept file transfer request, send SI result. */
-		xep_ft_si_result(xfer, xfer->who);
+		xep_ft_si_result(xfer, purple_xfer_get_remote_user(xfer));
 		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_RECEIVE.\n");
 	}
 }
@@ -415,7 +417,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
@@ -437,7 +439,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			if (si && (profile = xmlnode_get_attrib(si, "profile"))
 					&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
 				const char *filename = NULL, *filesize_str = NULL;
-				int filesize = 0;
+				goffset filesize = 0;
 				xmlnode *file;
 
 				const char *sid = xmlnode_get_attrib(si, "id");
@@ -445,7 +447,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				if ((file = xmlnode_get_child(si, "file"))) {
 					filename = xmlnode_get_attrib(file, "name");
 					if((filesize_str = xmlnode_get_attrib(file, "size")))
-						filesize = atoi(filesize_str);
+						filesize = g_ascii_strtoll(filesize_str, NULL, 10);
 				}
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
@@ -501,7 +503,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
@@ -529,7 +531,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				int portnum;
 				XepXfer *xf = NULL;
 
-				xf = (XepXfer*)xfer->data;
+				xf = purple_xfer_get_protocol_data(xfer);
 				for(streamhost = xmlnode_get_child(query, "streamhost");
 						streamhost;
 						streamhost = xmlnode_get_next_twin(streamhost)) {
@@ -563,7 +565,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
 				if (iq_id && xfer != NULL)
-					xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
+					xep_ft_si_reject(bd, iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 			}
 
 		} else {
@@ -574,7 +576,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
-		     const int filesize, const char *filename, int option)
+		     const goffset filesize, const char *filename, int option)
 {
 	PurpleXfer *xfer;
 	XepXfer *xf;
@@ -583,15 +585,16 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	if(pc == NULL || id == NULL || from == NULL)
 		return;
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
-	xfer->data = xf = g_new0(XepXfer, 1);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
+	xf = g_new0(XepXfer, 1);
+	purple_xfer_set_protocol_data(xfer, xf);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
 	xf->iq_id = g_strdup(id);
@@ -613,7 +616,7 @@ static void
 bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	int acceptfd;
 	int len = 0;
 
@@ -631,8 +634,6 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			/* This should cancel the ft */
 			purple_debug_error("bonjour", "Error accepting incoming SOCKS5 connection. (%d)\n", errno);
 
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
 			close(source);
 			purple_xfer_cancel_remote(xfer);
 			return;
@@ -647,29 +648,26 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
 #endif
 
-			purple_input_remove(xfer->watcher);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
 			close(source);
-			xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
-							 bonjour_sock5_request_cb, xfer);
+			purple_xfer_set_watcher(xfer, purple_input_add(acceptfd, PURPLE_INPUT_READ,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 		}
 		break;
 	case 0x01:
-		xfer->fd = source;
+		purple_xfer_set_fd(xfer, source);
 		len = read(source, xf->rx_buf + xf->rxlen, 3);
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0){
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
-			close(source);
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 			bonjour_sock5_request_cb(xfer, source, PURPLE_INPUT_WRITE);
@@ -682,15 +680,13 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		if (len < 0 && errno == EAGAIN)
 			return;
 		else if (len < 0) {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
 			close(source);
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_READ,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_READ,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 		}
@@ -699,9 +695,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		len = read(source, xf->rx_buf + xf->rxlen, 20);
 		if(len<=0){
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 			bonjour_sock5_request_cb(xfer, source, PURPLE_INPUT_WRITE);
@@ -720,14 +716,12 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		if (len < 0 && errno == EAGAIN) {
 			return;
 		} else if (len < 0) {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
 			close(source);
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, 0);
 			xf->rxlen = 0;
 			/*close(source);*/
 			purple_xfer_start(xfer, source, NULL, -1);
@@ -747,8 +741,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	XepIq *iq;
 	xmlnode *query, *streamhost;
 	gchar *port;
-	const char *next_ip, *local_ip;
-	const char token [] = ";";
+	GSList *local_ips;
 	BonjourData *bd;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
@@ -757,33 +750,32 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 		return;
 	}
 
-	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-					 bonjour_sock5_request_cb, xfer);
-	xf = (XepXfer*)xfer->data;
+	purple_xfer_set_watcher(xfer, purple_input_add(sock, PURPLE_INPUT_READ,
+					 bonjour_sock5_request_cb, xfer));
+	xf = purple_xfer_get_protocol_data(xfer);
 	xf->listen_data = NULL;
 
 	bd = xf->data;
 
-	iq = xep_iq_new(bd, XEP_IQ_SET, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->sid);
+	iq = xep_iq_new(bd, XEP_IQ_SET, purple_xfer_get_remote_user(xfer), bonjour_get_jid(bd->jabber_data->account), xf->sid);
 
 	query = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(query, "http://jabber.org/protocol/bytestreams");
 	xmlnode_set_attrib(query, "sid", xf->sid);
 	xmlnode_set_attrib(query, "mode", "tcp");
 
-	xfer->local_port = purple_network_get_port_from_fd(sock);
+	purple_xfer_set_local_port(xfer, purple_network_get_port_from_fd(sock));
 
-	local_ip = purple_network_get_my_ip_ext2(sock);
-	/* cheat a little here - the intent of the "const" attribute is to make it clear that the string doesn't need to be freed */
-	next_ip = strtok((char *)local_ip, token);
+	local_ips = bonjour_jabber_get_local_ips(sock);
 
-	port = g_strdup_printf("%hu", xfer->local_port);
-	while(next_ip != NULL) {
+	port = g_strdup_printf("%hu", purple_xfer_get_local_port(xfer));
+	while(local_ips) {
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", xf->sid);
-		xmlnode_set_attrib(streamhost, "host", next_ip);
+		xmlnode_set_attrib(streamhost, "host", local_ips->data);
 		xmlnode_set_attrib(streamhost, "port", port);
-		next_ip = strtok(NULL, token);
+		g_free(local_ips->data);
+		local_ips = g_slist_delete_link(local_ips, local_ips);
 	}
 	g_free(port);
 
@@ -796,15 +788,15 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 	XepXfer *xf;
 	if(xfer == NULL)
 		return;
+
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
-	xf = xfer->data;
-	purple_network_listen_map_external(FALSE);
-	xf->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
+	xf = purple_xfer_get_protocol_data(xfer);
+
+	xf->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, FALSE,
 						      bonjour_bytestreams_listen, xfer);
-	purple_network_listen_map_external(TRUE);
-	if (xf->listen_data == NULL) {
+	if (xf->listen_data == NULL)
 		purple_xfer_cancel_local(xfer);
-	}
+
 	return;
 }
 
@@ -812,7 +804,7 @@ static void
 bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	XepIq *iq;
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
@@ -822,7 +814,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	if(source < 0) {
 		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
 			error_message ? error_message : "(null)");
-		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
+		xep_ft_si_reject(xf->data, xf->iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
 		return;
@@ -835,7 +827,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	/* Here, start the file transfer.*/
 
 	/* Notify Initiator of Connection */
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, purple_xfer_get_remote_user(xfer), bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	q_node = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(q_node, "http://jabber.org/protocol/bytestreams");
 	tmp_node = xmlnode_new_child(q_node, "streamhost-used");
@@ -861,14 +853,14 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 
 	purple_debug_info("bonjour", "bonjour-bytestreams-connect.\n");
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(!xf)
 		return;
 
 	name = purple_buddy_get_name(pb);
 	account = purple_buddy_get_account(pb);
 
-	p = g_strdup_printf("%s%s%s", xf->sid, name, purple_account_get_username(account));
+	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);
@@ -882,14 +874,15 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	purple_proxy_info_set_type(xf->proxy_info, PURPLE_PROXY_SOCKS5);
 	purple_proxy_info_set_host(xf->proxy_info, xf->proxy_host);
 	purple_proxy_info_set_port(xf->proxy_info, xf->proxy_port);
-	xf->proxy_connection = purple_proxy_connect_socks5(
+	xf->proxy_connection = purple_proxy_connect_socks5_account(
 							   purple_account_get_connection(account),
+							   account,
 							   xf->proxy_info,
 							   dstaddr, 0,
 							   bonjour_bytestreams_connect_cb, xfer);
 
 	if(xf->proxy_connection == NULL) {
-		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
+		xep_ft_si_reject(xf->data, xf->iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
 	}

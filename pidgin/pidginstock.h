@@ -44,7 +44,7 @@
 #define PIDGIN_STOCK_DOWNLOAD        "pidgin-download"
 #define PIDGIN_STOCK_EDIT            "pidgin-edit"
 #define PIDGIN_STOCK_FGCOLOR         "pidgin-fgcolor"
-#define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
+#define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-cancelled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
 #define PIDGIN_STOCK_INFO            "pidgin-info"
@@ -159,6 +159,7 @@
 #define PIDGIN_STOCK_TOOLBAR_VIDEO_CALL   "pidgin-video-call"
 #define PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL "pidgin-audio-video-call"
 #endif
+#define PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION	"pidgin-send-attention"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"

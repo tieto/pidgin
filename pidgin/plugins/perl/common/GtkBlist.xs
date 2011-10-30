@@ -69,8 +69,3 @@ pidgin_blist_joinchat_is_showable()
 
 void
 pidgin_blist_joinchat_show()
-
-void
-pidgin_blist_update_account_error_state(account, message)
-	Purple::Account account
-	const char * message

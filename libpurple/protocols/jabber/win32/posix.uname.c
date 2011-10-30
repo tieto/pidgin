@@ -1,10 +1,10 @@
 /*
    posix.uname.c - version 1.1
-   Copyright (C) 1999, 2000 
+   Copyright (C) 1999, 2000
 	     Earnie Boyd and assigns
 
    Fills the utsname structure with the appropriate values.
-  
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
    by the Free Software Foundation; either version 2.1, or (at your option)
@@ -27,6 +27,8 @@
 #include "utsname.h"
 #include <string.h>
 #include <stdio.h>
+
+#include <glib.h>
 
 /* ANONYMOUS unions and structs are used from the windows header definitions.
    These need to be defined for them to work correctly with gcc2.95.2-mingw. */
@@ -54,32 +56,32 @@ jabber_win32_uname( struct utsname *uts )
   GetVersionEx ( &OS_version );
   GetSystemInfo ( &System_Info );
 
-  strcpy( uts->sysname, "WIN32_" );
+  g_strlcpy( uts->sysname, "WIN32_" , sizeof(uts->sysname));
   switch( OS_version.dwPlatformId )
   {
     case VER_PLATFORM_WIN32_NT:
-      strcat( uts->sysname, "WinNT" );
+      g_strlcat( uts->sysname, "WinNT", sizeof(uts->sysname) );
       MingwOS = WinNT;
       break;
     case VER_PLATFORM_WIN32_WINDOWS:
       switch ( OS_version.dwMinorVersion )
       {
         case 0:
-          strcat( uts->sysname, "Win95" );
+          g_strlcat( uts->sysname, "Win95", sizeof(uts->sysname) );
 	  MingwOS = Win95;
           break;
         case 10:
-          strcat( uts->sysname, "Win98" );
+          g_strlcat( uts->sysname, "Win98", sizeof(uts->sysname) );
 	  MingwOS = Win98;
           break;
         default:
-          strcat( uts->sysname, "Win??" );
+          g_strlcat( uts->sysname, "Win??", sizeof(uts->sysname) );
 	  MingwOS = unknown;
           break;
       }
       break;
     default:
-      strcat( uts->sysname, "Win??" );
+      g_strlcat( uts->sysname, "Win??", sizeof(uts->sysname) );
       MingwOS = unknown;
       break;
   }
@@ -92,13 +94,13 @@ jabber_win32_uname( struct utsname *uts )
   switch( System_Info.wProcessorArchitecture )
   {
     case PROCESSOR_ARCHITECTURE_PPC:
-      strcpy( uts->machine, "ppc" );
+      g_strlcpy( uts->machine, "ppc" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_ALPHA:
-      strcpy( uts->machine, "alpha" );
+      g_strlcpy( uts->machine, "alpha" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_MIPS:
-      strcpy( uts->machine, "mips" );
+      g_strlcpy( uts->machine, "mips" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_INTEL:
       /* dwProcessorType is only valid in Win95 and Win98
@@ -115,7 +117,7 @@ jabber_win32_uname( struct utsname *uts )
               sprintf( uts->machine, "i%ld", System_Info.dwProcessorType );
               break;
             default:
-              strcpy( uts->machine, "i386" );
+              g_strlcpy( uts->machine, "i386" , sizeof( uts->machine ) );
               break;
           }
           break;
@@ -123,15 +125,15 @@ jabber_win32_uname( struct utsname *uts )
 	  sprintf( uts->machine, "i%d86", System_Info.wProcessorLevel );
 	  break;
 	default:
-	  strcpy( uts->machine, "unknown" );
+	  g_strlcpy( uts->machine, "unknown" , sizeof( uts->machine ) );
 	  break;
       }
       break;
     default:
-      strcpy( uts->machine, "unknown" );
+      g_strlcpy( uts->machine, "unknown" , sizeof( uts->machine ) );
       break;
   }
-  
+
   sLength = sizeof ( uts->nodename ) - 1;
   GetComputerNameA( uts->nodename, &sLength );
   return 1;

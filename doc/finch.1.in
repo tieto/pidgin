@@ -40,13 +40,13 @@ Yahoo.
 The following options are provided by \fBfinch\fR using the standard GNU
 command line syntax:
 .TP
+.B \-c, \-\-config=\fIDIR\fB
+Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
+.TP
 .B \-d, \-\-debug
 Print debugging messages to stderr and start with the \fBDebug\fR window. The
 messages shown in the \fBDebug\fR window are the same as the ones printed in
 stderr.
-.TP
-.B \-c, \-\-config=\fIDIR\fB
-Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .TP
 .B \-h, \-\-help
 Print this help and exit.
@@ -59,7 +59,7 @@ Offline.
 Display the version information window.
 
 .SH GNT Shortcuts
-You can use the following shortcuts (see the "\*QWidget Actions\*U" section for a more complete list):
+You can use the following shortcuts (see the "Widget Actions" section for a more complete list):
 .TP
 .B Alt \+ a
 Bring up a list of available actions. You can use this list to access the
@@ -114,7 +114,7 @@ Jump to the previous URGENT (highlighted) window.
 .B Ctrl \+ o \fR or \fB F10
 Bring up the menu (if there is one) for a window.
 .TP
-.B F11
+.B F11 \fR or \fB Ctrl \+ x
 Popup the context menu (if there is one) for the selected widget.
 .TP
 .B Alt \+ /
@@ -305,6 +305,13 @@ right = focus-next
 left = focus-prev
 
 .br
+[GntComboBox::binding]
+.br
+down = dropdown
+.br
+up = dropdown
+
+.br
 [GntEntry::binding]
 .br
 c-a = cursor-home
@@ -339,6 +346,10 @@ down = suggest-next
 .br
 up = suggest-prev
 .br
+page-down = suggest-next-page
+.br
+page-up = suggest-prev-page
+.br
 c-w = delete-prev-word
 .br
 a-b = cursor-prev-word
@@ -348,6 +359,16 @@ a-f = cursor-next-word
 a-d = delete-next-word
 .br
 c-v = clipboard-paste
+.br
+c-p = history-prev
+.br
+c-n = history-next
+.br
+c-r = history-search
+.br
+c-up = history-prev
+.br
+c-down = history-next
 
 .br
 [GntTree::binding]
@@ -365,6 +386,10 @@ pageup = page-up
 pagedown = page-down
 .br
 backspace = move-parent
+.br
+home = move-first
+.br
+end = move-last
 .br
 # Following is the default binding for the context-menu
 .br
@@ -481,6 +506,10 @@ a-T = place-tagged
 a-C = toggle-clipboard
 .br
 a-/ = help-for-widget
+.br
+a-c-j = window-scroll-down
+.br
+a-c-k = window-scroll-up
 .br
 # The following action is still incomplete, and doesn't have a default binding
 .br

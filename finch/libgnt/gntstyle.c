@@ -105,7 +105,7 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 
 	if (bool_styles[style] != -1)
 		return bool_styles[style];
-	
+
 	str = gnt_style_get(style);
 
 	bool_styles[style] = str ? gnt_style_parse_bool(str) : def;
@@ -226,7 +226,7 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 	{
 		gsize len = 0;
 		char **keys;
-		
+
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
 		if (error)
 		{
@@ -280,7 +280,7 @@ gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table)
 	{
 		gsize len = 0;
 		char **keys;
-		
+
 		keys = g_key_file_get_keys(gkfile, kname, &len, &error);
 		if (error)
 		{
@@ -331,14 +331,14 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
 #if GLIB_CHECK_VERSION(2,6,0)
 	char *name;
 	GError *error = NULL;
-	
+
 	name = g_strdup_printf("%s::remap", g_type_name(type));
 
 	if (g_key_file_has_group(gkfile, name))
 	{
 		gsize len = 0;
 		char **keys;
-		
+
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
 		if (error)
 		{

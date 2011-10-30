@@ -29,7 +29,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
-BuildRequires: gtk2-devel
+BuildRequires: gtk2-devel, libidn-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-glib-devel}
@@ -46,12 +46,14 @@ BuildRequires: gtk2-devel
 %if "%{_vendor}" == "suse"
 # For SuSE:
 BuildRequires: gnutls-devel
+%define sslopts --enable-gnutls=yes --enable-nss=no
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
 Requires(pre): gconf2
 Requires(post): gconf2
 Requires(preun): gconf2
 %else
+%define sslopts --enable-gnutls=no --enable-nss=yes
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 Requires(pre): GConf2
@@ -86,6 +88,8 @@ Requires: libpurple = %{version}
 
 Obsoletes: gaim
 Provides: gaim
+Obsoletes: pidgin-perl < %{version}
+Provides: pidgin-perl = %{version}-%{release}
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
@@ -104,6 +108,8 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+Obsoletes:  libpurple-perl < %{version}
+Provides:   libpurple-perl = %{version}-%{release}
 %{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
@@ -226,6 +232,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
+                                    %{sslopts} \
+                                    %{!?_with_vv:--disable-vv} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
                                     %{!?_with_meanwhile:--disable-meanwhile} \
@@ -236,7 +244,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
-                                    %{?_without_text:--disable-consoleui}
+                                    %{?_without_text:--disable-consoleui} \
+                                    %{?_with_trayiconcompat:--enable-trayicon-compat}
 
 make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
@@ -410,7 +419,7 @@ fi
 %doc PLUGIN_HOWTO
 
 %dir %{_includedir}/libpurple
-%{_includedir}/libpurple/*.h
+%{_includedir}/libpurple/*
 %{_libdir}/libpurple.so
 %{_libdir}/pkgconfig/purple.pc
 %{_datadir}/aclocal/purple.m4
@@ -465,6 +474,21 @@ fi
 %endif
 
 %changelog
+* Wed Sep 01 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Ensure predictable use of SSL libs
+
+* Wed Jun 02 2010 Stu Tomlinson <stu@nosnilmot.com>
+- add an option to build RPMs using --enable-trayicon-compat
+  (--with trayiconcompat)
+
+* Thu May 13 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Include all libpurple headers in libpurple-devel
+
+* Sat Sep 05 2009 Stu Tomlinson <stu@nosnilmot.com>
+- Disable Voice & Video unless --with vv is used
+- Add BuildRequires for libidn-devel
+- Add Provides/Obsoletes to ease transition from Red Hat / Fedora RPMs
+
 * Sat Jul 11 2009 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect changes in perl module installation directories
 

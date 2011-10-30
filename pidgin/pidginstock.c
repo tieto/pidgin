@@ -53,49 +53,29 @@ static struct StockIcon
 } const stock_icons[] = {
 
 	{ PIDGIN_STOCK_ACTION,          NULL,      GTK_STOCK_EXECUTE          },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
-#else
-	{ PIDGIN_STOCK_ALIAS,           "buttons", "edit.png"                 },
-#endif
 	{ PIDGIN_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
 	{ PIDGIN_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_DEBUG,           NULL,      GTK_STOCK_PROPERTIES       },
 	{ PIDGIN_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_DISCONNECT,      NULL,      GTK_STOCK_DISCONNECT       },
-#else
-	{ PIDGIN_STOCK_DISCONNECT,      "icons",   "stock_disconnect_16.png"  },
-#endif
 	{ PIDGIN_STOCK_FGCOLOR,         "buttons", "change-fgcolor-small.png" },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_EDIT,            NULL,      GTK_STOCK_EDIT             },
-#else
-	{ PIDGIN_STOCK_EDIT,            "buttons", "edit.png"                 },
-#endif
 	{ PIDGIN_STOCK_FILE_CANCELED,   NULL,      GTK_STOCK_CANCEL           },
 	{ PIDGIN_STOCK_FILE_DONE,       NULL,      GTK_STOCK_APPLY            },
 	{ PIDGIN_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ PIDGIN_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 	{ PIDGIN_STOCK_ADD,             NULL,	   GTK_STOCK_ADD			  },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
-#else
-	{ PIDGIN_STOCK_PAUSE,           "buttons", "pause.png"                },
-#endif
 	{ PIDGIN_STOCK_POUNCE,          NULL,      GTK_STOCK_REDO             },
 	{ PIDGIN_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_TYPED,           "pidgin",  "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
-#if GTK_CHECK_VERSION(2,8,0)
 	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
-#else
-	{ PIDGIN_STOCK_INFO,            "buttons", "info.png"                 },
-#endif
 };
 
 static const GtkStockItem stock_items[] =
@@ -204,6 +184,7 @@ const SizedStockIcon sized_stock_icons [] = {
 	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,       "toolbar", "video-call.png",       FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, NULL },
 	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
 #endif
+	{ PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, "toolbar", "get-attention.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }
 };
 
 const SizedStockIcon sized_status_icons [] = {
@@ -218,17 +199,22 @@ const SizedStockIcon sized_status_icons [] = {
 	{ PIDGIN_STOCK_STATUS_LOGOUT,    "status",  "log-out.png",       TRUE, TRUE, TRUE,  TRUE,  TRUE,  FALSE, TRUE,  NULL },
 	{ PIDGIN_STOCK_STATUS_OFFLINE,   "status",  "offline.png",       TRUE, TRUE, TRUE,  TRUE,  TRUE,  FALSE, FALSE, PIDGIN_STOCK_STATUS_OFFLINE_I  },
 	{ PIDGIN_STOCK_STATUS_PERSON,    "status",  "person.png",        TRUE, TRUE, TRUE,  TRUE,  TRUE,  FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_STATUS_MESSAGE,   "toolbar", "message-new.png",   TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
+	{ PIDGIN_STOCK_STATUS_MESSAGE,   "toolbar", "message-new.png",   TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL }
+};
 
-	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png",        FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_INVISIBLE, "tray", "tray-invisible.png",     FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_AWAY,      "tray", "tray-away.png",          FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_BUSY,      "tray", "tray-busy.png",          FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_XA,        "tray", "tray-extended-away.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_OFFLINE,   "tray", "tray-offline.png",       FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_CONNECT,   "tray", "tray-connecting.png",    FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_PENDING,   "tray", "tray-new-im.png",        FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TRAY_EMAIL,     "tray", "tray-message.png",       FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL }
+const SizedStockIcon sized_tray_icons [] = {
+#define SIZED_TRAY_ICON(name) \
+	{ name, "tray/hicolor", "status/" name ".png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL }
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_AVAILABLE ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_INVISIBLE ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_AWAY ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_BUSY ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_XA ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_OFFLINE ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_CONNECT ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_PENDING ),
+	SIZED_TRAY_ICON( PIDGIN_STOCK_TRAY_EMAIL )
+#undef SIZED_TRAY_ICON
 };
 
 /*****************************************************************************
@@ -239,7 +225,6 @@ static gchar *
 find_file_common(const char *name)
 {
 	gchar *filename;
-#if GLIB_CHECK_VERSION(2,6,0)
 	const gchar *userdir;
 	const gchar * const *sysdirs;
 
@@ -256,7 +241,6 @@ find_file_common(const char *name)
 			return filename;
 		g_free(filename);
 	}
-#endif
 	filename = g_build_filename(DATADIR, name, NULL);
 	if (g_file_test(filename, G_FILE_TEST_EXISTS))
 		return filename;
@@ -286,37 +270,30 @@ find_file(const char *dir, const char *base)
 
 /* Altered from do_colorshift in gnome-panel */
 static void
-do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)
+do_alphashift(GdkPixbuf *pixbuf)
 {
 	gint i, j;
-	gint width, height, has_alpha, srcrowstride, destrowstride;
-	guchar *target_pixels;
-	guchar *original_pixels;
-	guchar *pixsrc;
-	guchar *pixdest;
+	gint width, height, padding;
+	guchar *pixels;
 	guchar a;
 
-	has_alpha = gdk_pixbuf_get_has_alpha (src);
-	if (!has_alpha)
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
 		return;
 
-	width = gdk_pixbuf_get_width (src);
-	height = gdk_pixbuf_get_height (src);
-	srcrowstride = gdk_pixbuf_get_rowstride (src);
-	destrowstride = gdk_pixbuf_get_rowstride (dest);
-	target_pixels = gdk_pixbuf_get_pixels (dest);
-	original_pixels = gdk_pixbuf_get_pixels (src);
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	padding = gdk_pixbuf_get_rowstride(pixbuf) - width * 4;
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
 
 	for (i = 0; i < height; i++) {
-		pixdest = target_pixels + i*destrowstride;
-		pixsrc = original_pixels + i*srcrowstride;
 		for (j = 0; j < width; j++) {
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			a = *(pixsrc++);
-			*(pixdest++) = a / 2;
+			pixels++;
+			pixels++;
+			pixels++;
+			a = *(pixels);
+			*(pixels++) = a / 2;
 		}
+		pixels += padding;
 	}
 }
 
@@ -364,7 +341,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 	g_return_if_fail(filename != NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	if (translucent)
-		do_alphashift(pixbuf, pixbuf);
+		do_alphashift(pixbuf);
 
 	source = gtk_icon_source_new();
 	gtk_icon_source_set_pixbuf(source, pixbuf);
@@ -394,7 +371,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		g_return_if_fail(filename != NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		if (translucent)
-			do_alphashift(pixbuf, pixbuf);
+			do_alphashift(pixbuf);
 
 		source = gtk_icon_source_new();
 		gtk_icon_source_set_pixbuf(source, pixbuf);
@@ -413,11 +390,9 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 static void
 reload_settings(void)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkSettings *setting = NULL;
 	setting = gtk_settings_get_default();
 	gtk_rc_reset_styles(setting);
-#endif
 }
 
 /*****************************************************************************
@@ -476,6 +451,33 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 
 		if (sized_status_icons[i].translucent_name) {
 			gtk_icon_factory_add(icon_factory, sized_status_icons[i].translucent_name, translucent);
+			gtk_icon_set_unref(translucent);
+		}
+	}
+
+	for (i = 0; i < G_N_ELEMENTS(sized_tray_icons); i++)
+	{
+		normal = gtk_icon_set_new();
+		if (sized_tray_icons[i].translucent_name)
+			translucent = gtk_icon_set_new();
+
+#define ADD_SIZED_ICON(name, size) \
+		if (sized_tray_icons[i].name) { \
+			add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], FALSE); \
+			if (sized_tray_icons[i].translucent_name) \
+				add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], TRUE); \
+		}
+		ADD_SIZED_ICON(extra_small, "16x16");
+		ADD_SIZED_ICON(small, "22x22");
+		ADD_SIZED_ICON(medium, "32x32");
+		ADD_SIZED_ICON(large, "48x48");
+#undef ADD_SIZED_ICON
+
+		gtk_icon_factory_add(icon_factory, sized_tray_icons[i].name, normal);
+		gtk_icon_set_unref(normal);
+
+		if (sized_tray_icons[i].translucent_name) {
+			gtk_icon_factory_add(icon_factory, sized_tray_icons[i].translucent_name, translucent);
 			gtk_icon_set_unref(translucent);
 		}
 	}
@@ -583,11 +585,13 @@ pidgin_stock_init(void)
 	/* Setup the status icon theme */
 	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 
 	stockloader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "stock-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(stockloader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/stock");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/stock/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir", "");
 
@@ -602,12 +606,13 @@ pidgin_stock_init(void)
 	pidgin_stock_load_stock_icon_theme(NULL);
 
 	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
-	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") &&
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme") &&
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
 
 		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
 		pidgin_stock_load_status_icon_theme(theme);
-		g_object_unref(G_OBJECT(theme));
+		if (theme)
+			g_object_unref(G_OBJECT(theme));
 
 	}
 	else

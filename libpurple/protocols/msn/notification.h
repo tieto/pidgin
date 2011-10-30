@@ -21,28 +21,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_NOTIFICATION_H_
-#define _MSN_NOTIFICATION_H_
+#ifndef MSN_NOTIFICATION_H
+#define MSN_NOTIFICATION_H
 
-/*MSN protocol challenge info*/
+typedef struct _MsnNotification MsnNotification;
 
-/*MSNP15 challenge: WLM 8.5.1288.816*/
+/* MSN protocol challenge info */
+
+/* MSNP18 challenge: WLM Version 2009 (Build 14.0.8089.726) */
+#define MSNP18_WLM_PRODUCT_KEY "C1BX{V4W}Q3*10SM"
+#define MSNP18_WLM_PRODUCT_ID "PROD0120PW!CCV9@"
+
+/* MSNP15 challenge: WLM 8.5.1288.816 */
 #define MSNP15_WLM_PRODUCT_KEY "ILTXC!4IXB5FB*PX"
 #define MSNP15_WLM_PRODUCT_ID "PROD0119GSJUC$18"
 
-/*MSNP13 challenge*/
+/* MSNP13 challenge */
 #define MSNP13_WLM_PRODUCT_KEY	"O4BG@C7BWLYQX?5G"
 #define MSNP13_WLM_PRODUCT_ID	"PROD01065C%ZFN6F"
 
 #define MSNP10_PRODUCT_KEY		"VT6PX?UQTM4WM%YR"
 #define MSNP10_PRODUCT_ID		"PROD0038W!61ZTF9"
 
-typedef struct _MsnNotification MsnNotification;
-
+#include "cmdproc.h"
+#include "msg.h"
 #include "session.h"
 #include "servconn.h"
-#include "cmdproc.h"
+#include "state.h"
 #include "user.h"
+#include "userlist.h"
 
 struct _MsnNotification
 {
@@ -60,8 +67,16 @@ struct _MsnNotification
 
 typedef void (*MsnFqyCb)(MsnSession *session, const char *passport, MsnNetwork network, gpointer data);
 
-#include "state.h"
-void uum_send_msg(MsnSession *session,MsnMessage *msg);
+/* Type used for msn_notification_send_uun */
+typedef enum {
+	MSN_UNIFIED_NOTIFICATION_SHARED_FOLDERS = 1,
+	MSN_UNIFIED_NOTIFICATION_UNKNOWN1 = 2,
+	MSN_UNIFIED_NOTIFICATION_P2P = 3,
+	MSN_UNIFIED_NOTIFICATION_MPOP = 4
+
+} MsnUnifiedNotificationType;
+
+void uum_send_msg(MsnSession *session, MsnMessage *msg);
 
 void msn_notification_end(void);
 void msn_notification_init(void);
@@ -82,6 +97,17 @@ gboolean msn_notification_connect(MsnNotification *notification,
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
 
+void msn_notification_send_uux(MsnSession *session, const char *payload);
+
+void msn_notification_send_uux_endpointdata(MsnSession *session);
+
+void msn_notification_send_uux_private_endpointdata(MsnSession *session);
+
+void msn_notification_send_uun(MsnSession *session,
+                               const char *user,
+                               MsnUnifiedNotificationType type,
+                               const char *payload);
+
 /**
  * Closes a notification.
  *
@@ -93,4 +119,4 @@ void msn_notification_close(MsnNotification *notification);
 
 void msn_got_login_params(MsnSession *session, const char *ticket, const char *response);
 
-#endif /* _MSN_NOTIFICATION_H_ */
+#endif /* MSN_NOTIFICATION_H */

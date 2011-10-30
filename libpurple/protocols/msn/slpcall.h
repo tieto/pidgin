@@ -21,25 +21,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLPCALL_H_
-#define _MSN_SLPCALL_H_
-
-#include "internal.h"
-#include "ft.h"
+#ifndef MSN_SLPCALL_H
+#define MSN_SLPCALL_H
 
 typedef struct _MsnSlpCall MsnSlpCall;
-
-#include "slplink.h"
-
-/* The official client seems to timeout slp calls after 5 minutes */
-#define MSN_SLPCALL_TIMEOUT 300
 
 typedef enum
 {
 	MSN_SLPCALL_ANY,
 	MSN_SLPCALL_DC
-
 } MsnSlpCallType;
+
+#include "internal.h"
+
+#include "slplink.h"
+
+/* The official client seems to timeout slp calls after 5 minutes */
+#define MSN_SLPCALL_TIMEOUT 300
 
 struct _MsnSlpCall
 {
@@ -64,14 +62,24 @@ struct _MsnSlpCall
 	gboolean started; /**< A flag that states if this slpcall's session has
 						been initiated. */
 
+	gboolean wait_for_socket;
+
 	void (*progress_cb)(MsnSlpCall *slpcall,
-						gsize total_length, gsize len, gsize offset);
+						gsize total_length, gsize len);
 	void (*session_init_cb)(MsnSlpCall *slpcall);
 
 	/* Can be checksum, or smile */
 	char *data_info;
 
 	PurpleXfer *xfer;
+	union {
+		GByteArray *incoming_data;
+		struct {
+			gsize len;
+			const guchar *data;
+		} outgoing;
+	} u;
+	MsnSlpMessage *xfer_msg; /* A dirty hack */
 
 	MsnSlpCb cb;
 	void (*end_cb)(MsnSlpCall *slpcall, MsnSession *session);
@@ -84,7 +92,7 @@ void msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type);
 void msn_slpcall_session_init(MsnSlpCall *slpcall);
 void msn_slpcall_destroy(MsnSlpCall *slpcall);
 void msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
-						 int app_id, const char *context);
+						 MsnP2PAppId app_id, const char *context);
 void msn_slpcall_close(MsnSlpCall *slpcall);
 
-#endif /* _MSN_SLPCALL_H_ */
+#endif /* MSN_SLPCALL_H */

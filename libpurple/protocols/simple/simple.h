@@ -83,7 +83,7 @@ struct simple_account_data {
 	gchar *username;
 	gchar *password;
 	PurpleDnsQueryData *query_data;
-	PurpleSrvQueryData *srv_query_data;
+	PurpleSrvTxtQueryData *srv_query_data;
 	PurpleNetworkListenData *listen_data;
 	int fd;
 	int cseq;

@@ -39,23 +39,15 @@ typedef enum
 	PURPLE_PROXY_HTTP,             /**< HTTP proxy.                       */
 	PURPLE_PROXY_SOCKS4,           /**< SOCKS 4 proxy.                    */
 	PURPLE_PROXY_SOCKS5,           /**< SOCKS 5 proxy.                    */
-	PURPLE_PROXY_USE_ENVVAR        /**< Use environmental settings.       */
+	PURPLE_PROXY_USE_ENVVAR,       /**< Use environmental settings.       */
+	PURPLE_PROXY_TOR               /**< Use a Tor proxy (SOCKS 5 really)  */
 
 } PurpleProxyType;
 
 /**
  * Information on proxy settings.
  */
-typedef struct
-{
-	PurpleProxyType type;   /**< The proxy type.  */
-
-	char *host;           /**< The host.        */
-	int   port;           /**< The port number. */
-	char *username;       /**< The username.    */
-	char *password;       /**< The password.    */
-
-} PurpleProxyInfo;
+typedef struct _PurpleProxyInfo PurpleProxyInfo;
 
 typedef struct _PurpleProxyConnectData PurpleProxyConnectData;
 
@@ -190,7 +182,6 @@ PurpleProxyInfo *purple_global_proxy_get_info(void);
  * Set purple's global proxy information.
  *
  * @param info     The proxy information.
- * @since 2.6.0
  */
 void purple_global_proxy_set_info(PurpleProxyInfo *info);
 
@@ -288,11 +279,15 @@ PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
 /**
  * Makes a connection through a SOCKS5 proxy.
  *
+ * Note that if the account that is making the connection uses a proxy, this
+ * connection to a SOCKS5 proxy will be made through the account proxy.
+ *
  * @param handle     A handle that should be associated with this
  *                   connection attempt.  The handle can be used
  *                   to cancel the connection attempt using the
  *                   purple_proxy_connect_cancel_with_handle()
  *                   function.
+ * @param account    The account making the connection.
  * @param gpi        The PurpleProxyInfo specifying the proxy settings
  * @param host       The destination host.
  * @param port       The destination port.
@@ -306,8 +301,8 @@ PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
  *         opaque data structure that can be used to cancel
  *         the pending connection, if needed.
  */
-PurpleProxyConnectData *purple_proxy_connect_socks5(void *handle,
-			PurpleProxyInfo *gpi,
+PurpleProxyConnectData *purple_proxy_connect_socks5_account(void *handle,
+			PurpleAccount *account, PurpleProxyInfo *gpi,
 			const char *host, int port,
 			PurpleProxyConnectFunction connect_cb, gpointer data);
 

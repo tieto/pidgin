@@ -25,10 +25,8 @@
  *
  */
 
-#include <glib.h>
-
-#include "core.h"
 #include "internal.h"
+#include "core.h"
 #include "pidgin.h"
 #include "pidginstock.h"
 
@@ -335,6 +333,12 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 }
 
 static void
+tls_peers_mgmt_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column, gpointer data)
+{
+	tls_peers_mgmt_info_cb(NULL, NULL);
+}
+
+static void
 tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
 {
 	if (1 == choice) {
@@ -392,7 +396,6 @@ tls_peers_mgmt_build(void)
 {
 	GtkWidget *bbox;
 	GtkListStore *store;
-	GtkWidget *sw;
 
 	/* This block of variables will end up in tpm_dat */
 	GtkTreeView *listview;
@@ -418,16 +421,6 @@ tls_peers_mgmt_build(void)
 	   is closed */
 	g_signal_connect(G_OBJECT(mgmt_widget), "destroy",
 			 G_CALLBACK(tls_peers_mgmt_destroy), NULL);
-
-	/* Scrolled window */
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(mgmt_widget), GTK_WIDGET(sw),
-			TRUE, TRUE, /* Take up lots of space */
-			0);
-	gtk_widget_show(GTK_WIDGET(sw));
 
 	/* List view */
 	store = gtk_list_store_new(TPM_N_COLUMNS, G_TYPE_STRING);
@@ -465,7 +458,13 @@ tls_peers_mgmt_build(void)
 	g_signal_connect(G_OBJECT(select), "changed",
 			 G_CALLBACK(tls_peers_mgmt_select_chg_cb), NULL);
 
-	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(listview));
+	g_signal_connect(G_OBJECT(listview), "row-activated",
+			 G_CALLBACK(tls_peers_mgmt_activated_cb), NULL);
+
+	gtk_box_pack_start(GTK_BOX(mgmt_widget), 
+			pidgin_make_scrollable(GTK_WIDGET(listview), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
+			TRUE, TRUE, /* Take up lots of space */
+			0);
 	gtk_widget_show(GTK_WIDGET(listview));
 
 	/* Fill the list for the first time */
@@ -481,9 +480,8 @@ tls_peers_mgmt_build(void)
 	gtk_widget_show(bbox);
 
 	/* Import button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->importbutton = importbutton =
-		gtk_button_new_from_stock(GTK_STOCK_ADD);
+		gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
 	gtk_widget_show(importbutton);
 	g_signal_connect(G_OBJECT(importbutton), "clicked",
@@ -491,9 +489,8 @@ tls_peers_mgmt_build(void)
 
 
 	/* Export button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->exportbutton = exportbutton =
-		gtk_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
 	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
 	gtk_widget_show(exportbutton);
 	g_signal_connect(G_OBJECT(exportbutton), "clicked",

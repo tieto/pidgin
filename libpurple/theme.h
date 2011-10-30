@@ -49,7 +49,6 @@ typedef struct _PurpleThemeClass   PurpleThemeClass;
 struct _PurpleTheme
 {
 	GObject parent;
-	gpointer priv;
 };
 
 struct _PurpleThemeClass
@@ -73,7 +72,7 @@ GType purple_theme_get_type(void);
  *
  * @param theme  The purple theme.
  *
- * @return The string representating the name of the theme.
+ * @return The string representing the name of the theme.
  */
 const gchar *purple_theme_get_name(PurpleTheme *theme);
 
@@ -124,7 +123,7 @@ void purple_theme_set_author(PurpleTheme *theme, const gchar *author);
  *
  * @param theme  The purple theme.
  *
- * @return The string represtenting the type.
+ * @return The string representing the type.
  */
 const gchar *purple_theme_get_type_string(PurpleTheme *theme);
 
@@ -133,7 +132,7 @@ const gchar *purple_theme_get_type_string(PurpleTheme *theme);
  *
  * @param theme  The purple theme.
  *
- * @return The string represtenting the theme directory.
+ * @return The string representing the theme directory.
  */
 const gchar *purple_theme_get_dir(PurpleTheme *theme);
 

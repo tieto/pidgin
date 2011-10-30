@@ -4,7 +4,7 @@
  * purple
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -184,7 +184,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		if (objc == 3) {
-			Tcl_SetObjResult(interp, 
+			Tcl_SetObjResult(interp,
 					 Tcl_NewBooleanObj(
 						 purple_account_get_enabled(account,
 									    purple_core_get_ui())));
@@ -209,7 +209,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetObjResult(interp, 
+		Tcl_SetObjResult(interp,
 				 purple_tcl_ref_new(PurpleTclRefHandle,
 						    purple_accounts_get_handle()));
 		break;
@@ -374,7 +374,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetObjResult(interp, 
+		Tcl_SetObjResult(interp,
 				 Tcl_NewStringObj((char *)purple_account_get_username(account), -1));
 		break;
 	}
@@ -865,7 +865,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			return error;
 		from = Tcl_GetString(objv[4]);
 		what = Tcl_GetString(objv[5]);
-		
+
 		switch (style) {
 		case CMD_CONV_WRITE_SEND:
 			flags = PURPLE_MESSAGE_SEND;
@@ -1426,7 +1426,7 @@ int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetObjResult(interp, 
+		Tcl_SetObjResult(interp,
 				 purple_tcl_ref_new(PurpleTclRefHandle,
 						    purple_savedstatuses_get_handle()));
 		break;
@@ -1640,13 +1640,13 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	const char *cmds[] = { "attr", "attrs", "available", "exclusive", "id",
-	                       "independent", "name", "primary_attr",
+	                       "independent", "name",
 	                       "primitive", "saveable", "user_settable",
 	                       NULL };
 	enum { CMD_STATUS_TYPE_ATTR, CMD_STATUS_TYPE_ATTRS,
 	       CMD_STATUS_TYPE_AVAILABLE, CMD_STATUS_TYPE_EXCLUSIVE,
 	       CMD_STATUS_TYPE_ID, CMD_STATUS_TYPE_INDEPENDENT,
-	       CMD_STATUS_TYPE_NAME, CMD_STATUS_TYPE_PRIMARY_ATTR,
+	       CMD_STATUS_TYPE_NAME,
 	       CMD_STATUS_TYPE_PRIMITIVE, CMD_STATUS_TYPE_SAVEABLE,
 	       CMD_STATUS_TYPE_USER_SETTABLE } cmd;
 	PurpleStatusType *status_type;
@@ -1751,18 +1751,6 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 				 Tcl_NewStringObj(purple_primitive_get_id_from_type
 						  (purple_status_type_get_primitive(status_type)), -1));
 		break;
-	case CMD_STATUS_TYPE_PRIMARY_ATTR:
-#if !(defined PURPLE_DISABLE_DEPRECATED)
-		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
-			return TCL_ERROR;
-		}
-		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
-			return TCL_ERROR;
-		Tcl_SetObjResult(interp,
-				 Tcl_NewStringObj(purple_status_type_get_primary_attr(status_type), -1));
-#endif
-		break;
 	case CMD_STATUS_TYPE_SAVEABLE:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
@@ -1809,7 +1797,7 @@ int tcl_cmd_unload(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		/* This isn't exactly OK, but heh.  What do you do? */
 		return TCL_OK;
 	}
-	/* We can't unload immediately, but we can unload at the first 
+	/* We can't unload immediately, but we can unload at the first
 	 * known safe opportunity. */
 	purple_timeout_add(0, unload_self, (gpointer)plugin);
 

@@ -33,6 +33,7 @@
 #include "request.h"
 #include "pidginstock.h"
 #include "util.h"
+#include "debug.h"
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
@@ -48,6 +49,9 @@ static void toggle_button_set_active_block(GtkToggleButton *button,
 										   gboolean is_active,
 										   GtkIMHtmlToolbar *toolbar);
 
+static gboolean
+gtk_imhtmltoolbar_popup_menu(GtkWidget *widget,
+		GdkEventButton *event, GtkIMHtmlToolbar *toolbar);
 
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
@@ -133,22 +137,30 @@ cancel_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 	destroy_toolbar_font(widget, NULL, toolbar);
 }
 
-static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
+static void
+apply_font(GtkWidget *widget, GtkFontSelectionDialog *fontsel)
 {
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
-	char *fontname;
-	char *space;
-	GtkIMHtmlToolbar *toolbar =  g_object_get_data(G_OBJECT(fontsel), "purple_toolbar");
+	gchar *fontname = gtk_font_selection_dialog_get_font_name(fontsel);
+	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(fontsel),
+	                                              "purple_toolbar");
 
-	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
+	if (fontname) {
+		const gchar *family_name = NULL;
+		PangoFontDescription *desc = NULL;
 
-	space = strrchr(fontname, ' ');
-	if(space && isdigit(*(space+1)))
-		*space = '\0';
+		desc = pango_font_description_from_string(fontname);
+		family_name = pango_font_description_get_family(desc);
 
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml), fontname);
-	g_free(fontname);
+		if (family_name) {
+			gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml),
+			                           family_name);
+		}
+
+		pango_font_description_free(desc);
+		g_free(fontname);
+	}
 
 	cancel_toolbar_font(NULL, toolbar);
 }
@@ -470,34 +482,18 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	GtkTextIter iter;
 	GtkTextMark *ins;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	if (response != GTK_RESPONSE_ACCEPT)
-#else /* FILECHOOSER */
-	if (response != GTK_RESPONSE_OK)
-#endif /* FILECHOOSER */
 	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
-#endif /* FILECHOOSER */
 
 	if (filename == NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (pidgin_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
-		g_free(filename);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
-		return;
-	}
-#endif /* FILECHOOSER */
 
 	/* The following triggers a callback that closes the widget */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
@@ -541,7 +537,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *window;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image))) {
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		window = gtk_file_chooser_dialog_new(_("Insert Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -551,12 +546,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 		g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(window)),
 				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#else /* FILECHOOSER */
-		window = gtk_file_selection_new(_("Insert Image"));
-		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
-				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#endif /* FILECHOOSER */
 
 		gtk_widget_show(window);
 		toolbar->image_dialog = window;
@@ -869,14 +858,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
 
-	scrolled = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled), GTK_SHADOW_NONE);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
-			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
-	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
-	gtk_widget_show(scrolled);
 
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled), smiley_table);
+	scrolled = pidgin_make_scrollable(smiley_table, GTK_POLICY_NEVER, GTK_POLICY_NEVER, GTK_SHADOW_NONE, -1, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
 	gtk_widget_show(smiley_table);
 
 	viewport = gtk_widget_get_parent(smiley_table);
@@ -901,8 +885,10 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	 * makes one or both scrollbars visible (sometimes).
 	 * I too think this hack is gross. But I couldn't find a better way -- sadrul */
 	gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	g_object_set(G_OBJECT(scrolled),
+		"hscrollbar-policy", GTK_POLICY_AUTOMATIC,
+		"vscrollbar-policy", GTK_POLICY_AUTOMATIC,
+		NULL);
 
 #ifdef _WIN32
 	winpidgin_ensure_onscreen(dialog);
@@ -910,6 +896,18 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 	toolbar->smiley_dialog = dialog;
 
+	gtk_widget_grab_focus(toolbar->imhtml);
+}
+
+static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
+{
+	PurpleConversation *conv =
+		g_object_get_data(G_OBJECT(toolbar), "active_conv");
+	const gchar *who = purple_conversation_get_name(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
+
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
+	purple_prpl_send_attention(gc, who, 0);
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -1101,6 +1099,16 @@ menu_position_func (GtkMenu           *menu,
 		*y -= widget->allocation.height;
 }
 
+static gboolean
+button_activate_on_click(GtkWidget *button, GdkEventButton *event, GtkIMHtmlToolbar *toolbar)
+{
+	if (event->button == 1 && GTK_IS_TOGGLE_BUTTON(button))
+		gtk_widget_activate(button);
+	else if (event->button == 3)
+		return gtk_imhtmltoolbar_popup_menu(button, event, toolbar);
+	return FALSE;
+}
+
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 {
 	gtk_widget_show_all(GTK_WIDGET(menu));
@@ -1194,9 +1202,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 /* Boring GTK+ stuff */
 static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 {
-	GtkObjectClass *object_class;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
 	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
@@ -1224,14 +1230,16 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &toolbar->smaller_size, _("Decrease Font Size")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &toolbar->font, _("Font Face")},
-		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
+		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &toolbar->clear, _("Reset Formatting")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
+		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
+		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
+		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &toolbar->attention, _("Send Attention")},
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1241,6 +1249,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	for (iter = 0; buttons[iter].stock; iter++) {
 		if (buttons[iter].stock[0]) {
 			button = pidgin_pixbuf_toolbar_button_from_stock(buttons[iter].stock);
+			g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
 			g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buttons[iter].callback), toolbar);
 			*(buttons[iter].button) = button;
@@ -1252,6 +1261,15 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
+}
+
+static void
+button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
+{
+	if (GTK_WIDGET_VISIBLE(button))
+		gtk_widget_hide(item);
+	else
+		gtk_widget_show(item);
 }
 
 static void
@@ -1297,6 +1315,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
+	GtkWidget *attention_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
@@ -1371,10 +1390,12 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), menuitem);
 		g_signal_connect(G_OBJECT(old), "notify::sensitive",
 				G_CALLBACK(button_sensitiveness_changed), menuitem);
+		g_signal_connect(G_OBJECT(old), "notify::visible",
+				G_CALLBACK(button_visibility_changed), menuitem);
 		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
-	g_signal_connect_swapped(G_OBJECT(font_button), "button-press-event", G_CALLBACK(gtk_widget_activate), font_button);
+	g_signal_connect(G_OBJECT(font_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(font_button), "activate", G_CALLBACK(pidgin_menu_clicked), font_menu);
 	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);
 
@@ -1403,19 +1424,23 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->image), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->link), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
 	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	toolbar->insert_hr = menuitem;
 
-	g_signal_connect_swapped(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(gtk_widget_activate), insert_button);
+	g_signal_connect(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
@@ -1435,8 +1460,37 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	label = gtk_label_new_with_mnemonic(_("_Smile!"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(smiley_button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
+
+	/* Sep */
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
+
+	/* Attention */
+	attention_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(attention_button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Attention!"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
+	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked",
+		G_CALLBACK(gtk_button_clicked), toolbar->attention);
+	gtk_widget_show_all(attention_button);
+
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), attention_button);
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::visible",
+			G_CALLBACK(button_visibility_changed), attention_button);
+
+	/* set attention button to be greyed out until we get a conversation */
+	gtk_widget_set_sensitive(toolbar->attention, FALSE);
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
@@ -1448,9 +1502,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 			G_CALLBACK(purple_prefs_trigger_callback), PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
-#endif
 
 	gtk_widget_add_events(event, GDK_BUTTON_PRESS_MASK);
 	gtk_box_pack_start(GTK_BOX(hbox), event, TRUE, TRUE, 0);
@@ -1492,7 +1544,6 @@ GType gtk_imhtmltoolbar_get_type()
 void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 {
 	GtkIMHtmlButtons buttons;
-	gboolean bold, italic, underline;
 
 	g_return_if_fail(toolbar != NULL);
 	g_return_if_fail(GTK_IS_IMHTMLTOOLBAR(toolbar));
@@ -1508,9 +1559,6 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
 	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
-
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
-
 	update_buttons(toolbar);
 }
 
@@ -1519,3 +1567,19 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }
+
+void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
+	PurpleConversation *conv)
+{
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
+	PurplePlugin *prpl = purple_connection_get_prpl(gc);
+
+	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
+
+	/* gray out attention button on protocols that don't support it
+	 for the time being it is always disabled for chats */
+	gtk_widget_set_sensitive(toolbar->attention,
+		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
+		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
+}
+

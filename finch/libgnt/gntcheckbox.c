@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntcheckbox.h"
 
 enum
@@ -36,21 +37,21 @@ gnt_check_box_draw(GntWidget *widget)
 {
 	GntCheckBox *cb = GNT_CHECK_BOX(widget);
 	GntColorType type;
-	char *text;
+	gboolean focus = gnt_widget_has_focus(widget);
 
-	if (gnt_widget_has_focus(widget))
+	if (focus)
 		type = GNT_COLOR_HIGHLIGHT;
 	else
 		type = GNT_COLOR_NORMAL;
 
 	wbkgdset(widget->window, '\0' | gnt_color_pair(type));
 
-	text = g_strdup_printf("[%c]", cb->checked ? 'X' : ' ');
-	mvwaddstr(widget->window, 0, 0, text);
-	g_free(text);
+	mvwaddch(widget->window, 0, 0, '[');
+	mvwaddch(widget->window, 0, 1, (cb->checked ? 'X' : ' ') | (focus ? A_UNDERLINE : A_NORMAL));
+	mvwaddch(widget->window, 0, 2, ']');
 
 	wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_NORMAL));
-	mvwaddstr(widget->window, 0, 4, GNT_BUTTON(cb)->priv->text);
+	mvwaddstr(widget->window, 0, 4, C_(GNT_BUTTON(cb)->priv->text));
 	wmove(widget->window, 0, 1);
 
 	GNTDEBUG;
@@ -99,7 +100,7 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 	wclass->key_pressed = gnt_check_box_key_pressed;
 	wclass->clicked = gnt_check_box_clicked;
 
-	signals[SIG_TOGGLED] = 
+	signals[SIG_TOGGLED] =
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,

@@ -53,7 +53,17 @@ struct _PurpleNotifyUserInfoEntry
 
 struct _PurpleNotifyUserInfo
 {
-	GList *user_info_entries;
+	GQueue entries;
+};
+
+/**
+ * Single column of a search result.
+ */
+struct _PurpleNotifySearchColumn
+{
+	char *title;           /**< Title of the column. */
+	gboolean visible;      /**< Should the column be visible to the user. Defaults to TRUE. */
+
 };
 
 void *
@@ -363,42 +373,31 @@ purple_notify_searchresults_column_new(const char *title)
 
 	sc = g_new0(PurpleNotifySearchColumn, 1);
 	sc->title = g_strdup(title);
+	sc->visible = TRUE;
 
 	return sc;
 }
 
-guint
-purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *results)
+const char *purple_notify_searchresult_column_get_title(const PurpleNotifySearchColumn *column)
 {
-	g_return_val_if_fail(results != NULL, 0);
-
-	return g_list_length(results->columns);
+	g_return_val_if_fail(column != NULL, NULL);
+	
+	return column->title;
 }
 
-guint
-purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *results)
+void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible)
 {
-	g_return_val_if_fail(results != NULL, 0);
+	g_return_if_fail(column != NULL);
 
-	return g_list_length(results->rows);
+	column->visible = visible;
 }
 
-char *
-purple_notify_searchresults_column_get_title(PurpleNotifySearchResults *results,
-										   unsigned int column_id)
+gboolean
+purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column)
 {
-	g_return_val_if_fail(results != NULL, NULL);
+	g_return_val_if_fail(column != NULL, FALSE);
 
-	return ((PurpleNotifySearchColumn *)g_list_nth_data(results->columns, column_id))->title;
-}
-
-GList *
-purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
-								  unsigned int row_id)
-{
-	g_return_val_if_fail(results != NULL, NULL);
-
-	return g_list_nth_data(results->rows, row_id);
+	return column->visible;
 }
 
 void *
@@ -472,7 +471,7 @@ purple_notify_user_info_new()
 
 	user_info = g_new0(PurpleNotifyUserInfo, 1);
 	PURPLE_DBUS_REGISTER_POINTER(user_info, PurpleNotifyUserInfo);
-	user_info->user_info_entries = NULL;
+	g_queue_init(&user_info->entries);
 
 	return user_info;
 }
@@ -482,23 +481,23 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 {
 	GList *l;
 
-	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
+	for (l = user_info->entries.head; l != NULL; l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
 
 		purple_notify_user_info_entry_destroy(user_info_entry);
 	}
 
-	g_list_free(user_info->user_info_entries);
+	g_queue_clear(&user_info->entries);
 	PURPLE_DBUS_UNREGISTER_POINTER(user_info);
 	g_free(user_info);
 }
 
-GList *
+GQueue *
 purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info)
 {
 	g_return_val_if_fail(user_info != NULL, NULL);
 
-	return user_info->user_info_entries;
+	return &user_info->entries;
 }
 
 char *
@@ -509,7 +508,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 
 	text = g_string_new("");
 
-	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
+	for (l = user_info->entries.head; l != NULL; l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
 		/* Add a newline before a section header */
 		if (user_info_entry->type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
@@ -593,21 +592,41 @@ purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entr
 }
 
 void
-purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+purple_notify_user_info_add_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *entry;
 
 	entry = purple_notify_user_info_entry_new(label, value);
-	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+	g_queue_push_tail(&user_info->entries, entry);
 }
 
 void
-purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	gchar *escaped;
+
+	escaped = g_markup_escape_text(value, -1);
+	purple_notify_user_info_add_pair_html(user_info, label, escaped);
+	g_free(escaped);
+}
+
+void
+purple_notify_user_info_prepend_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *entry;
 
 	entry = purple_notify_user_info_entry_new(label, value);
-	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+	g_queue_push_head(&user_info->entries, entry);
+}
+
+void
+purple_notify_user_info_prepend_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	gchar *escaped;
+
+	escaped = g_markup_escape_text(value, -1);
+	purple_notify_user_info_prepend_pair_html(user_info, label, escaped);
+	g_free(escaped);
 }
 
 void
@@ -616,7 +635,7 @@ purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNoti
 	g_return_if_fail(user_info != NULL);
 	g_return_if_fail(entry != NULL);
 
-	user_info->user_info_entries = g_list_remove(user_info->user_info_entries, entry);
+	g_queue_remove(&user_info->entries, entry);
 }
 
 void
@@ -627,7 +646,7 @@ purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, cons
 	entry = purple_notify_user_info_entry_new(label, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
 
-	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+	g_queue_push_tail(&user_info->entries, entry);
 }
 
 void
@@ -638,7 +657,7 @@ purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, 
 	entry = purple_notify_user_info_entry_new(label, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
 
-	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+	g_queue_push_head(&user_info->entries, entry);
 }
 
 void
@@ -649,7 +668,7 @@ purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 	entry = purple_notify_user_info_entry_new(NULL, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
 
-	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+	g_queue_push_tail(&user_info->entries, entry);
 }
 
 void
@@ -660,17 +679,17 @@ purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info)
 	entry = purple_notify_user_info_entry_new(NULL, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
 
-	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+	g_queue_push_head(&user_info->entries, entry);
 }
 
 void
 purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info)
 {
-	GList *last = g_list_last(user_info->user_info_entries);
-	if (last) {
-		purple_notify_user_info_entry_destroy(last->data);
-		user_info->user_info_entries = g_list_delete_link(user_info->user_info_entries, last);
-	}
+	PurpleNotifyUserInfoEntry *entry;
+
+	entry = g_queue_pop_tail(&user_info->entries);
+	if (entry)
+		purple_notify_user_info_entry_destroy(entry);
 }
 
 void *

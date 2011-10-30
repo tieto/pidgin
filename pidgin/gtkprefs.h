@@ -92,8 +92,6 @@ GtkWidget *pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
  * @return      An hbox containing both the label and the entry.  Can be used to set
  *               the widgets to sensitive or insensitive based on the value of a
  *               checkbox.
- *
- * @since 2.6.0
  */
 GtkWidget *pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
 										const char *key, GtkSizeGroup *sg);

@@ -37,8 +37,8 @@
 #endif
 
 #ifdef USE_VV
+#include <media/backend-fs2.h>
 
-#include <gst/farsight/fs-conference-iface.h>
 #include <gst/farsight/fs-element-added-notifier.h>
 #include <gst/interfaces/xoverlay.h>
 
@@ -80,6 +80,8 @@ struct _PurpleMediaManagerPrivate
 	GList *elements;
 	GList *output_windows;
 	gulong next_output_window_id;
+	GType backend_type;
+	GstCaps *video_caps;
 
 	PurpleMediaElementInfo *video_src;
 	PurpleMediaElementInfo *video_sink;
@@ -100,6 +102,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	INIT_MEDIA,
+	UI_CAPS_CHANGED,
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
@@ -138,7 +141,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = purple_media_manager_finalize;
 
 	purple_media_manager_signals[INIT_MEDIA] = g_signal_new ("init-media",
@@ -148,6 +151,15 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING,
 		G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
 		G_TYPE_POINTER, G_TYPE_STRING);
+
+	purple_media_manager_signals[UI_CAPS_CHANGED] = g_signal_new ("ui-caps-changed",
+		G_TYPE_FROM_CLASS (klass),
+		G_SIGNAL_RUN_LAST,
+		0, NULL, NULL,
+		purple_smarshal_VOID__FLAGS_FLAGS,
+		G_TYPE_NONE, 2, PURPLE_MEDIA_TYPE_CAPS,
+		PURPLE_MEDIA_TYPE_CAPS);
+
 	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
 }
 
@@ -157,9 +169,13 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
 	media->priv->next_output_window_id = 1;
+#ifdef USE_VV
+	media->priv->backend_type = PURPLE_TYPE_MEDIA_BACKEND_FS2;
+#endif
 
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/audio");
+	purple_prefs_add_int("/purple/media/audio/silence_threshold", 5);
 	purple_prefs_add_none("/purple/media/audio/volume");
 	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
 	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
@@ -177,6 +193,8 @@ purple_media_manager_finalize (GObject *media)
 			g_list_delete_link(priv->elements, priv->elements)) {
 		g_object_unref(priv->elements->data);
 	}
+	if (priv->video_caps)
+		gst_caps_unref(priv->video_caps);
 	parent_class->finalize(media);
 }
 #endif
@@ -304,33 +322,14 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 {
 #ifdef USE_VV
 	PurpleMedia *media;
-	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
-	GstStateChangeReturn ret;
 	gboolean signal_ret;
-
-	if (conference == NULL) {
-		purple_conv_present_error(remote_user, account,
-					  _("Error creating conference."));
-		purple_debug_error("media", "Conference == NULL\n");
-		return NULL;
-	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "manager", manager,
 			     "account", account,
-			     "conference", conference,
+			     "conference-type", conference_type,
 			     "initiator", initiator,
 			     NULL));
-
-	ret = gst_element_set_state(GST_ELEMENT(conference), GST_STATE_PLAYING);
-
-	if (ret == GST_STATE_CHANGE_FAILURE) {
-		purple_conv_present_error(remote_user, account,
-					  _("Error creating conference."));
-		purple_debug_error("media", "Failed to start conference.\n");
-		g_object_unref(media);
-		return NULL;
-	}
 
 	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
 			media, account, remote_user, &signal_ret);
@@ -402,6 +401,7 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 	GstIteratorResult result;
 
 	gst_element_release_request_pad(GST_ELEMENT_PARENT(pad), pad);
+
 	iter = gst_element_iterate_src_pads(parent);
 
 	result = gst_iterator_next(iter, (gpointer)&remaining_pad);
@@ -419,6 +419,43 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 #endif
 
 #ifdef USE_GSTREAMER
+
+void
+purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
+{
+#ifdef USE_VV
+	if (manager->priv->video_caps)
+		gst_caps_unref(manager->priv->video_caps);
+
+	manager->priv->video_caps = caps;
+
+	if (manager->priv->pipeline && manager->priv->video_src) {
+		gchar *id = purple_media_element_info_get_id(manager->priv->video_src);
+		GstElement *src = gst_bin_get_by_name(GST_BIN(manager->priv->pipeline), id);
+
+		if (src) {
+			GstElement *capsfilter = gst_bin_get_by_name(GST_BIN(src), "prpl_video_caps");
+			g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+		}
+
+		g_free(id);
+	}
+#endif
+}
+
+GstCaps *
+purple_media_manager_get_video_caps(PurpleMediaManager *manager)
+{
+#ifdef USE_VV
+	if (manager->priv->video_caps == NULL)
+		manager->priv->video_caps = gst_caps_from_string("video/x-raw-yuv,"
+			"width=[250,352], height=[200,288], framerate=[1/1,20/1]");
+	return manager->priv->video_caps;
+#else
+	return NULL;
+#endif
+}
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -461,7 +498,21 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			bin = gst_bin_new(id);
 			tee = gst_element_factory_make("tee", "tee");
 			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
-			gst_element_link(ret, tee);
+
+			if (type & PURPLE_MEDIA_SEND_VIDEO) {
+				GstElement *videoscale;
+				GstElement *capsfilter;
+
+				videoscale = gst_element_factory_make("videoscale", NULL);
+				capsfilter = gst_element_factory_make("capsfilter", "prpl_video_caps");
+
+				g_object_set(G_OBJECT(capsfilter),
+					"caps", purple_media_manager_get_video_caps(manager), NULL);
+
+				gst_bin_add_many(GST_BIN(bin), videoscale, capsfilter, NULL);
+				gst_element_link_many(ret, videoscale, capsfilter, tee, NULL);
+			} else
+				gst_element_link(ret, tee);
 
 			/*
 			 * This shouldn't be necessary, but it stops it from
@@ -894,8 +945,17 @@ purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
 		PurpleMediaCaps caps)
 {
 #ifdef USE_VV
+	PurpleMediaCaps oldcaps;
+
 	g_return_if_fail(PURPLE_IS_MEDIA_MANAGER(manager));
+
+	oldcaps = manager->priv->ui_caps;
 	manager->priv->ui_caps = caps;
+
+	if (caps != oldcaps)
+		g_signal_emit(manager,
+				purple_media_manager_signals[UI_CAPS_CHANGED],
+				0, caps, oldcaps);
 #endif
 }
 
@@ -908,6 +968,30 @@ purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
 	return manager->priv->ui_caps;
 #else
 	return PURPLE_MEDIA_CAPS_NONE;
+#endif
+}
+
+void
+purple_media_manager_set_backend_type(PurpleMediaManager *manager,
+		GType backend_type)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA_MANAGER(manager));
+
+	manager->priv->backend_type = backend_type;
+#endif
+}
+
+GType
+purple_media_manager_get_backend_type(PurpleMediaManager *manager)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager),
+			PURPLE_MEDIA_CAPS_NONE);
+
+	return manager->priv->backend_type;
+#else
+	return G_TYPE_NONE;
 #endif
 }
 
@@ -1042,7 +1126,7 @@ purple_media_element_info_set_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			priv->create = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1055,7 +1139,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 {
 	PurpleMediaElementInfoPrivate *priv;
 	g_return_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(object));
-	
+
 	priv = PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -1071,7 +1155,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			g_value_set_pointer(value, priv->create);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1082,7 +1166,7 @@ static void
 purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
-	
+
 	gobject_class->finalize = purple_media_element_info_finalize;
 	gobject_class->set_property = purple_media_element_info_set_property;
 	gobject_class->get_property = purple_media_element_info_get_property;

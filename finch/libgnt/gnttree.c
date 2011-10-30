@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
@@ -274,7 +275,7 @@ get_root_distance(GntTreeRow *row)
 	return get_root_distance(get_prev(row)) + 1;
 }
 
-/* Returns the distance between a and b. 
+/* Returns the distance between a and b.
  * If a is 'above' b, then the distance is positive */
 static int
 get_distance(GntTreeRow *a, GntTreeRow *b)
@@ -549,7 +550,7 @@ redraw_tree(GntTree *tree)
 		}
 
 		wbkgdset(widget->window, '\0' | attr);
-		mvwaddstr(widget->window, i, pos, str);
+		mvwaddstr(widget->window, i, pos, C_(str));
 		whline(widget->window, ' ', scrcol - wr);
 		tree->bottom = row;
 		g_free(str);
@@ -626,7 +627,7 @@ gnt_tree_draw(GntWidget *widget)
 	GntTree *tree = GNT_TREE(widget);
 
 	redraw_tree(tree);
-	
+
 	GNTDEBUG;
 }
 
@@ -815,7 +816,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		gnt_widget_activate(widget);
 	} else if (tree->priv->search) {
 		gboolean changed = TRUE;
-		if (isalnum(*text)) {
+		if (g_unichar_isprint(*text)) {
 			tree->priv->search = g_string_append_c(tree->priv->search, *text);
 		} else if (g_utf8_collate(text, GNT_KEY_BACKSPACE) == 0) {
 			if (tree->priv->search->len)
@@ -956,6 +957,45 @@ end_search_action(GntBindable *bindable, GList *list)
 	return TRUE;
 }
 
+static gboolean
+move_first_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *row = tree->root;
+	GntTreeRow *old = tree->current;
+	if (row && !row_matches_search(row))
+		row = get_next(row);
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+move_last_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *old = tree->current;
+	GntTreeRow *row = tree->bottom;
+	GntTreeRow *next;
+
+	while ((next = get_next(row)))
+		row = next;
+
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
 static void
 gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
 		GParamSpec *spec)
@@ -1026,7 +1066,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			)
 		);
 
-	signals[SIG_SELECTION_CHANGED] = 
+	signals[SIG_SELECTION_CHANGED] =
 		g_signal_new("selection-changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1034,7 +1074,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
-	signals[SIG_SCROLLED] = 
+	signals[SIG_SCROLLED] =
 		g_signal_new("scrolled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1042,7 +1082,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__INT,
 					 G_TYPE_NONE, 1, G_TYPE_INT);
-	signals[SIG_TOGGLED] = 
+	signals[SIG_TOGGLED] =
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1050,7 +1090,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_COLLAPSED] = 
+	signals[SIG_COLLAPSED] =
 		g_signal_new("collapse-toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1075,6 +1115,10 @@ gnt_tree_class_init(GntTreeClass *klass)
 				"/", NULL);
 	gnt_bindable_class_register_action(bindable, "end-search", end_search_action,
 				"\033", NULL);
+	gnt_bindable_class_register_action(bindable, "move-first", move_first_action,
+			GNT_KEY_HOME, NULL);
+	gnt_bindable_class_register_action(bindable, "move-last", move_last_action,
+			GNT_KEY_END, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 	GNTDEBUG;
@@ -1302,6 +1346,10 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 {
 	GntTreeRow *pr = NULL;
 
+	if (g_hash_table_lookup(tree->hash, key)) {
+		gnt_tree_remove(tree, key);
+	}
+
 	row->tree = tree;
 	row->key = key;
 	row->data = NULL;
@@ -1336,7 +1384,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 			}
 		}
 
-		if (pr == NULL && parent)	
+		if (pr == NULL && parent)
 		{
 			pr = g_hash_table_lookup(tree->hash, parent);
 			if (pr)
@@ -1516,7 +1564,7 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 	GntTreeCol *col;
 
 	g_return_if_fail(colno < tree->ncol);
-	
+
 	row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
@@ -1553,7 +1601,7 @@ GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void 
 				while (r->next)
 					r = r->next;
 				bigbro = r->key;
-			} 
+			}
 		}
 	}
 	row = gnt_tree_add_row_after(tree, key, row, parent, bigbro);
@@ -1837,7 +1885,7 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
 {
 	g_return_if_fail(col < tree->ncol);
-	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_BINARY_DATA, bin);
 }
 
 void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right)
@@ -1876,5 +1924,35 @@ gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
 	return (row && row->parent) ? row->parent->key : NULL;
+}
+
+gpointer gnt_tree_row_get_key(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->key;
+}
+
+GntTreeRow * gnt_tree_row_get_next(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->next;
+}
+
+GntTreeRow * gnt_tree_row_get_prev(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->prev;
+}
+
+GntTreeRow * gnt_tree_row_get_child(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->child;
+}
+
+GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->parent;
 }
 

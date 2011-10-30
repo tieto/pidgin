@@ -21,6 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "msn.h"
 #include "object.h"
 #include "debug.h"
 /* Sha1 stuff */
@@ -94,15 +96,29 @@ msn_object_new_from_string(const char *str)
 	GET_STRING_TAG(friendly, "Friendly");
 	GET_STRING_TAG(sha1d,    "SHA1D");
 	GET_STRING_TAG(sha1c,    "SHA1C");
+	GET_STRING_TAG(url,      "Url");
+	GET_STRING_TAG(url1,     "Url1");
 
 	/* If we are missing any of the required elements then discard the object */
-	/* SHA1C is not always sent anymore */
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
-			|| obj->location == NULL || obj->friendly == NULL
-			|| obj->sha1d == NULL /*|| obj->sha1c == NULL*/) {
+	 || obj->sha1d == NULL) {
 		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
-		msn_object_destroy(obj);
-		obj = NULL;
+		msn_object_destroy(obj, FALSE);
+		return NULL;
+	}
+
+	if (obj->location == NULL || obj->friendly == NULL) {
+		/* Location/friendly are required for non-buddyicon objects */
+		if (obj->type != MSN_OBJECT_USERTILE) {
+			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
+			msn_object_destroy(obj, FALSE);
+			return NULL;
+		/* Buddy icon object can contain Url/Url1 instead */
+		} else if (obj->url == NULL || obj->url1 == NULL) {
+			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
+			msn_object_destroy(obj, FALSE);
+			return NULL;
+		}
 	}
 
 	return obj;
@@ -177,15 +193,20 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 }
 
 void
-msn_object_destroy(MsnObject *obj)
+msn_object_destroy(MsnObject *obj, gboolean only_remote)
 {
 	g_return_if_fail(obj != NULL);
+
+	if (only_remote && obj->local)
+		return;
 
 	g_free(obj->creator);
 	g_free(obj->location);
 	g_free(obj->friendly);
 	g_free(obj->sha1d);
 	g_free(obj->sha1c);
+	g_free(obj->url);
+	g_free(obj->url1);
 
 	purple_imgstore_unref(obj->img);
 
@@ -282,6 +303,24 @@ msn_object_set_sha1c(MsnObject *obj, const char *sha1c)
 	obj->sha1c = g_strdup(sha1c);
 }
 
+void
+msn_object_set_url(MsnObject *obj, const char *url)
+{
+	g_return_if_fail(obj != NULL);
+
+	g_free(obj->url);
+	obj->url = g_strdup(url);
+}
+
+void
+msn_object_set_url1(MsnObject *obj, const char *url)
+{
+	g_return_if_fail(obj != NULL);
+
+	g_free(obj->url1);
+	obj->url1 = g_strdup(url);
+}
+
 const char *
 msn_object_get_creator(const MsnObject *obj)
 {
@@ -350,7 +389,23 @@ msn_object_get_sha1(const MsnObject *obj)
 	}
 }
 
-static MsnObject *
+const char *
+msn_object_get_url(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	return obj->url;
+}
+
+const char *
+msn_object_get_url1(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	return obj->url1;
+}
+
+MsnObject *
 msn_object_find_local(const char *sha1)
 {
 	GList *l;

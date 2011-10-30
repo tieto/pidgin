@@ -75,9 +75,6 @@ typedef enum
 
 } PurpleBlistNodeFlags;
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_BLIST_NODE(obj) ((PurpleBlistNode *)(obj))
 
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
@@ -86,28 +83,17 @@ typedef enum
 #define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
 				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_GROUP(obj) ((PurpleGroup *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_CONTACT(obj) ((PurpleContact *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_BUDDY(obj) ((PurpleBuddy *)(obj))
 
-/**
- * @since 2.6.0
- */
 #define PURPLE_CHAT(obj) ((PurpleChat *)(obj))
 
 #include "account.h"
 #include "buddyicon.h"
+#include "media.h"
 #include "status.h"
 
 /**************************************************************************/
@@ -143,6 +129,7 @@ struct _PurpleBuddy {
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */
 	PurplePresence *presence;
+	PurpleMediaCaps media_caps;		/**< The media capabilities of the buddy. */
 };
 
 /**
@@ -223,9 +210,7 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib node    The node which has been modified.
-	 *
-	 * @since 2.6.0.
+	 * @param node    The node which has been modified.
 	 */
 	void (*save_node)(PurpleBlistNode *node);
 
@@ -238,8 +223,7 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib node  The node which has been modified.
-	 * @since 2.6.0.
+	 * @param node  The node which has been modified.
 	 */
 	void (*remove_node)(PurpleBlistNode *node);
 
@@ -252,9 +236,8 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib account  The account whose data to save. If NULL, save all data
+	 * @param account  The account whose data to save. If NULL, save all data
 	 *                  for all accounts.
-	 * @since 2.6.0.
 	 */
 	void (*save_account)(PurpleAccount *account);
 
@@ -309,7 +292,6 @@ PurpleBlistNode *purple_blist_get_root(void);
  *         freeing the list.
  *
  * @see purple_find_buddies
- * @since 2.6.0
  */
 GSList *purple_blist_get_buddies(void);
 
@@ -317,8 +299,6 @@ GSList *purple_blist_get_buddies(void);
  * Returns the UI data for the list.
  *
  * @return The UI data for the list.
- *
- * @since 2.6.0
  */
 gpointer purple_blist_get_ui_data(void);
 
@@ -326,8 +306,6 @@ gpointer purple_blist_get_ui_data(void);
  * Sets the UI data for the list.
  *
  * @param ui_data The UI data for the list.
- *
- * @since 2.6.0
  */
 void purple_blist_set_ui_data(gpointer ui_data);
 
@@ -350,7 +328,7 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
  *
  * @param node A node.
  * @return  The parent node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
@@ -363,7 +341,7 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The child node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
@@ -376,7 +354,7 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The sibling node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_prev
@@ -389,7 +367,7 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
  *
  * @param node A node.
  * @return  The sibling node.
- * @since 2.4.0
+ *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
@@ -402,7 +380,6 @@ PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
  *
  * @param node The node.
  * @return The UI data.
- * @since 2.6.0
  */
 gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
 
@@ -411,8 +388,6 @@ gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
  *
  * @param node The node.
  * @param ui_data The UI data.
- *
- * @since 2.6.0
  */
 void purple_blist_node_set_ui_data(PurpleBlistNode *node, gpointer ui_data);
 
@@ -452,20 +427,8 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  * Updates a node's custom icon.
  *
  * @param node  The PurpleBlistNode whose custom icon has changed.
- *
- * @since 2.5.0
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Updates a buddy's icon.
- *
- * @param buddy  The buddy whose buddy icon has changed
- * @deprecated Use purple_blist_update_node_icon() instead.
- */
-void purple_blist_update_buddy_icon(PurpleBuddy *buddy);
-#endif
 
 /**
  * Renames a buddy in the buddy list.
@@ -621,7 +584,6 @@ PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
  * @return      The protocol data.
  *
  * @see purple_buddy_set_protocol_data()
- * @since 2.6.0
  */
 gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
 
@@ -634,7 +596,6 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
  * @param data  The data.
  *
  * @see purple_buddy_get_protocol_data()
- * @since 2.6.0
  */
 void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
 
@@ -655,6 +616,22 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
  * @return The buddy's presence.
  */
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
+
+/**
+ * Gets the media caps from a buddy.
+ *
+ * @param buddy The buddy.
+ * @return      The media caps.
+ */
+PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy);
+
+/**
+ * Sets the media caps for a buddy.
+ *
+ * @param buddy      The PurpleBuddy.
+ * @param media_caps The PurpleMediaCaps.
+ */
+void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps);
 
 /**
  * Adds a new buddy to the buddy list.
@@ -715,6 +692,14 @@ PurpleContact *purple_contact_new(void);
 void purple_contact_destroy(PurpleContact *contact);
 
 /**
+ * Gets the PurpleGroup from a PurpleContact
+ *
+ * @param contact  The contact
+ * @return         The group
+ */
+PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
+
+/**
  * Adds a new contact to the buddy list.
  *
  * The new contact will be inserted after insert or prepended to the list if
@@ -743,18 +728,6 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  * @return The highest priority buddy
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Sets the alias for a contact.
- *
- * @param contact  The contact
- * @param alias    The alias to set, or NULL to unset
- *
- * @deprecated Use purple_blist_alias_contact() instead.
- */
-void purple_contact_set_alias(PurpleContact *contact, const char *alias);
-#endif
 
 /**
  * Gets the alias for a contact.
@@ -846,19 +819,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Returns the correct alias for this user, ignoring server aliases.  Used
- * when a user-recognizable name is required.  In order: buddy's alias; buddy's
- * contact alias; buddy's user name.
- *
- * @param buddy  The buddy whose alias will be returned.
- * @return       The appropriate name or alias.
- * @deprecated   Try purple_buddy_get_alias(), if server aliases are okay.
- */
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
-#endif
-
 /**
  * Returns the correct name to display for a buddy. In order of precedence:
  * the buddy's alias; the buddy's server alias; the buddy's contact alias;
@@ -874,8 +834,6 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  *
  * @param buddy  The buddy
  * @return       The local alias for the buddy
- *
- * @since 2.6.0
  */
 const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
 
@@ -951,8 +909,6 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @return  The account the chat belongs to.
- *
- * @since 2.4.0
  */
 PurpleAccount *purple_chat_get_account(PurpleChat *chat);
 
@@ -962,8 +918,6 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @constreturn  The hashtable.
- *
- * @since 2.4.0
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 
@@ -1181,8 +1135,6 @@ PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
  * @param node The node.
  *
  * @return The type of the node.
- *
- * @since 2.1.0
  */
 PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
 

@@ -14,9 +14,13 @@
   @signal account-actions-changed
   @signal account-alias-changed
   @signal account-authorization-requested
+  @signal account-authorization-requested-with-message
   @signal account-authorization-denied
   @signal account-authorization-granted
   @signal account-error-changed
+  @signal account-signed-on
+  @signal account-signed-off
+  @signal account-connection-error
  @endsignals
 
  @see account.h
@@ -30,7 +34,6 @@ void (*account_created)(PurpleAccount *account);
   @signaldesc
    Emitted when an account is created by calling purple_account_new.
   @param account The account.
-  @since 2.6.0
  @endsignaldef
 
  @signaldef account-destroying
@@ -40,7 +43,6 @@ void (*account_destroying)(PurpleAccount *account);
   @signaldesc
    Emitted when an account is about to be destroyed.
   @param account The account.
-  @since 2.6.0
  @endsignaldef
 
  @signaldef account-added
@@ -152,7 +154,22 @@ int (*account_authorization_requested)(PurpleAccount *account, const char *user)
   @return Less than zero to deny the request without prompting, greater
           than zero if the request should be granted. If zero is returned,
           then the user will be prompted with the request.
-  @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-authorization-requested-with-message
+  @signalproto
+int (*account_authorization_requested)(PurpleAccount *account, const char *user, const char *message);
+  @endsignalproto
+  @signaldesc
+   Emitted when a user requests authorization.
+  @param account The account.
+  @param user    The name of the user requesting authorization.
+  @param message The authorization request message
+  @return PURPLE_ACCOUNT_RESPONSE_IGNORE to silently ignore the request,
+          PURPLE_ACCOUNT_RESPONSE_DENY to block the request (the sender might
+          get informed, PURPLE_ACCOUNT_RESPONSE_ACCEPT if the request should be
+          granted. If PURPLE_ACCOUNT_RESPONSE_PASS is returned, then the user
+          will be prompted with the request.
  @endsignaldef
 
  @signaldef account-authorization-denied
@@ -163,7 +180,6 @@ void (*account_authorization_denied)(PurpleAccount *account, const char *user);
    Emitted when the authorization request for a buddy is denied.
   @param account The account.
   @param user    The name of the user requesting authorization.
-  @since 2.3.0
  @endsignaldef
 
  @signaldef account-authorization-granted
@@ -174,7 +190,6 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
    Emitted when the authorization request for a buddy is granted.
   @param account The account.
   @param user    The name of the user requesting authorization.
-  @since 2.3.0
  @endsignaldef
 
  @signaldef account-error-changed
@@ -193,8 +208,35 @@ void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErro
                    pointer just after the next time this signal is emitted
                    for this @a account.
   @see purple_account_get_current_error()
-  @since 2.3.0
  @endsignaldef
 
+ @signaldef account-signed-on
+  @signalproto
+void (*signed_on)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account has signed on.
+  @param account The account that has signed on.
+ @endsignaldef
+
+ @signaldef account-signed-off
+  @signalproto
+void (*signed_off)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account has signed off.
+  @param account The account that has signed off.
+ @endsignaldef
+
+ @signaldef account-connection-error
+  @signalproto
+void (*connection_error)(PurpleAccount *gc, PurpleConnectionError err, const gchar *desc)
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection error occurs, before @ref signed-off.
+   @param account The account on which the error has occurred
+   @param err     The error that occurred
+   @param desc    A description of the error, giving more information.
+ @endsignaldef
  */
 // vim: syntax=c.doxygen tw=75 et

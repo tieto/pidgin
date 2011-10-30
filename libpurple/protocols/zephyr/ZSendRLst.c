@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -30,13 +30,13 @@ Code_t ZSrvSendRawList(notice, list, nitems, send_routine)
     char *buffer;
     int len;
 
-    if ((retval = ZFormatRawNoticeList(notice, list, nitems, &buffer, 
+    if ((retval = ZFormatRawNoticeList(notice, list, nitems, &buffer,
 				       &len)) != ZERR_NONE)
 	return (retval);
 
     if ((retval = ZParseNotice(buffer, len, &newnotice)) != ZERR_NONE)
 	return (retval);
-    
+
     retval = Z_SendFragmentedNotice(&newnotice, len, NULL, send_routine);
 
     free(buffer);

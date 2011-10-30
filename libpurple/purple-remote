@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
+import codecs
 import dbus
 import re
 import urllib
 import sys
 
 import xml.dom.minidom 
+
+sys.stdin = codecs.getwriter('utf-8')(sys.stdin);
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout);
 
 xml.dom.minidom.Element.all   = xml.dom.minidom.Element.getElementsByTagName
 
@@ -32,7 +36,8 @@ class CheckedAttribute:
     def __call__(self, *args):
         result = self.cobj.obj.__getattr__(self.attr)(*args)
         if result == 0:
-            raise "Error: " + self.attr + " " + str(args) + " returned " + str(result)
+            raise Exception("Error: %s %s returned %s" %
+                            (self.attr, args, result))
         return result
             
 def show_help(requested=False):
@@ -219,7 +224,7 @@ def execute(uri):
                             elif type == "i":
                                 methodparams.append(int(value))
                             else:
-                                raise "Don't know how to handle type \"%s\"" % type
+                                raise Exception("Don't know how to handle type \"%s\"" % type)
                     return purple.__getattr__(command)(*methodparams)
             show_help()
 

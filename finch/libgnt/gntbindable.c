@@ -48,7 +48,7 @@ static struct
 	GList * params;       /* The list of paramaters */
 } rebind_info;
 
-static void 
+static void
 gnt_bindable_free_rebind_info(void)
 {
 	g_free(rebind_info.name);
@@ -92,7 +92,7 @@ gnt_bindable_rebinding_grab_key(GntBindable *bindable, const char *text, gpointe
 		if (!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)) {
 			return FALSE;
 		}
-		
+
 		tmp = gnt_key_lookup(text);
 		new_text = g_strdup_printf("KEY: \"%s\"", tmp);
 		gnt_text_view_clear(textview);
@@ -105,7 +105,7 @@ gnt_bindable_rebinding_grab_key(GntBindable *bindable, const char *text, gpointe
 		return TRUE;
 	}
 	return FALSE;
-} 
+}
 static void
 gnt_bindable_rebinding_activate(GntBindable *data, gpointer bindable)
 {
@@ -154,18 +154,18 @@ gnt_bindable_rebinding_activate(GntBindable *data, gpointer bindable)
 	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(gnt_bindable_rebinding_grab_key), key_textview);
 
 	button_box = gnt_box_new(FALSE, FALSE);
-	
+
 	bind_button = gnt_button_new("BIND");
 	gnt_widget_set_name(bind_button, "bind");
 	gnt_box_add_widget(GNT_BOX(button_box), bind_button);
-	
+
 	cancel_button = gnt_button_new("Cancel");
 	gnt_widget_set_name(cancel_button, "cancel");
 	gnt_box_add_widget(GNT_BOX(button_box), cancel_button);
-	
+
 	g_signal_connect(G_OBJECT(bind_button), "activate", G_CALLBACK(gnt_bindable_rebinding_rebind), win);
 	g_signal_connect(G_OBJECT(cancel_button), "activate", G_CALLBACK(gnt_bindable_rebinding_cancel), win);
-	
+
 	gnt_box_add_widget(GNT_BOX(vbox), button_box);
 
 	gnt_box_add_widget(GNT_BOX(win), vbox);
@@ -320,7 +320,7 @@ gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...)
 	while ((p = va_arg(args, void *)) != NULL)
 		list = g_list_append(list, p);
 	va_end(args);
-	
+
 	action = g_hash_table_lookup(klass->actions, name);
 	if (action && action->u.action) {
 		return action->u.action(bindable, list);

@@ -299,7 +299,7 @@ perl_signal_cb(va_list args, void *data)
 	for (i = 0; i < value_count; i++) {
 		sv_args[i] = purple_perl_sv_from_vargs(values[i],
 #ifdef VA_COPY_AS_ARRAY
-		                                       args,
+		                                       (va_list*)args,
 #else
 		                                       (va_list*)&args,
 #endif
@@ -649,6 +649,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 static void
 destroy_cmd_handler(PurplePerlCmdHandler *handler)
 {
+	purple_cmd_unregister(handler->id);
 	cmd_handlers = g_slist_remove(cmd_handlers, handler);
 
 	if (handler->callback != NULL)
@@ -705,7 +706,6 @@ purple_perl_cmd_unregister(PurpleCmdId id)
 		return;
 	}
 
-	purple_cmd_unregister(id);
 	destroy_cmd_handler(handler);
 }
 

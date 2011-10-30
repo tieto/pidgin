@@ -38,6 +38,7 @@ typedef struct _MsimSession
 	int privacy_mode;                   /**< This is a bitmask */
 	int offline_message_mode;
 	gint fd;                            /**< File descriptor to/from server */
+	guint inpa;							/**< The input watcher */
 
 	/* TODO: Remove. */
 	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
@@ -53,9 +54,6 @@ typedef struct _MsimSession
 	guint inbox_status;                 /**< Bit field of inbox notifications */
 	guint inbox_handle;                 /**< The handle for the mail check timer */
 } MsimSession;
-
-/* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
 MsimSession *msim_session_new(PurpleAccount *acct);
 void msim_session_destroy(MsimSession *session);

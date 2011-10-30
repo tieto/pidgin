@@ -4,7 +4,7 @@
  * purple
  *
  * Copyright (C) 2006 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -92,6 +92,7 @@ static void purple_tcl_ref_dup(Tcl_Obj *obj1, Tcl_Obj *obj2)
 
 static void purple_tcl_ref_update(Tcl_Obj *obj)
 {
+	size_t len;
 	/* This is ugly on memory, but we pretty much have to either
 	 * do this or guesstimate lengths or introduce a varargs
 	 * function in here ... ugh. */
@@ -100,8 +101,9 @@ static void purple_tcl_ref_update(Tcl_Obj *obj)
 				      OBJ_REF_VALUE(obj));
 
 	obj->length = strlen(bytes);
-	obj->bytes = ckalloc(obj->length + 1);
-	strcpy(obj->bytes, bytes);
+	len = obj->length + 1;
+	obj->bytes = ckalloc(len);
+	g_strlcpy(obj->bytes, bytes, len);
 	g_free(bytes);
 }
 

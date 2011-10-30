@@ -65,7 +65,7 @@ struct cc_session *cc_add_session(struct crazychat *cc, char *handle)
 void cc_remove_session(struct crazychat *cc, struct cc_session *session)
 {
 	struct cc_session_node *curr, *prev;
-	
+
 	assert(cc);
 	assert(session);
 

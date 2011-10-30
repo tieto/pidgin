@@ -5,11 +5,13 @@
 #
 
 PIDGIN_TREE_TOP := ../../../..
-GCCWARNINGS := -Wno-comment -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wpointer-arith -Wundef -Wno-unused
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+GCCWARNINGS += -Wno-comment -Wno-unused -Wno-nested-externs
+
+DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
+
 TARGET = Pidgin
-EXTUTILS ?= C:/perl/lib/ExtUtils
 
 ##
 ## INCLUDE PATHS
@@ -22,6 +24,7 @@ INCLUDE_PATHS =		-I. \
 			-I$(PIDGIN_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/include/cairo \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \

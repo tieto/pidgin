@@ -1,18 +1,18 @@
 /*
-This file was produced by Deep Exploration Plugin: CPP Export filter. 
+This file was produced by Deep Exploration Plugin: CPP Export filter.
 
-Deep Exploration 
+Deep Exploration
 
-Copyright (c) 1999-2003 Right Hemisphere, Inc 
+Copyright (c) 1999-2003 Right Hemisphere, Inc
 
-WWW http://www.righthemisphere.com/dexp.htm 
+WWW http://www.righthemisphere.com/dexp.htm
 eMail support@righthemisphere.com
 */
 //#include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include <math.h> 
+#include <math.h>
 
 typedef struct sample_MATERIAL{
  GLfloat ambient[3];

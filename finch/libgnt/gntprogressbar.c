@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  **/
 
+#include "gntinternal.h"
 #include "gntprogressbar.h"
 #include "gntutils.h"
 
@@ -167,7 +168,7 @@ gnt_progress_bar_get_type (void)
 			0,                            /* n_preallocs */
 			gnt_progress_bar_init,        /* instance_init */
 			NULL                          /* value_table */
-		}; 
+		};
 
 		type = g_type_register_static (GNT_TYPE_WIDGET, "GntProgressBar", &info, 0);
 	}

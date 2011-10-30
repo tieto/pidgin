@@ -49,6 +49,10 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 Print debugging messages to stdout.  These are the same debugging messages
 that are displayed in the \fBDebug Window\fR.
 .TP
+.B \-f, \-\-force-online
+Try to be online even if the network is reported (by Windows, or NetworkManager
+on Linux) to be unavailable.
+.TP
 .B \-h, \-\-help
 Print a summary of command line options and exit.
 .TP
@@ -620,9 +624,13 @@ Pidgin's active developers are:
 .br
   Casey Harkins (developer)
 .br
+  Ivan Komarov
+.br
   Gary 'grim' Kramlich (developer)
 .br
   Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
+.br
+  Sulabh 'sulabh_m' Mahajan (developer)
 .br
   Richard 'wabz' Nelson (developer)
 .br
@@ -655,8 +663,6 @@ Pidgin's active developers are:
 
 
 Our crazy patch writers include:
-.br
-  Paul Aurich
 .br
   Marcus 'malu' Lundblad
 .br

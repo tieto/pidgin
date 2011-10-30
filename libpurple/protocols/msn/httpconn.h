@@ -21,13 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_HTTPCONN_H_
-#define _MSN_HTTPCONN_H_
+#ifndef MSN_HTTPCONN_H
+#define MSN_HTTPCONN_H
 
 typedef struct _MsnHttpConn MsnHttpConn;
 
 #include "circbuffer.h"
 #include "servconn.h"
+#include "session.h"
 
 /**
  * An HTTP Connection.
@@ -108,4 +109,4 @@ gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
  */
 void msn_httpconn_disconnect(MsnHttpConn *httpconn);
 
-#endif /* _MSN_HTTPCONN_H_ */
+#endif /* MSN_HTTPCONN_H */

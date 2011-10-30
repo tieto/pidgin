@@ -41,6 +41,7 @@
 
 #define PREF_ROOT "/finch/roomlist"
 
+
 /* Yes, just one roomlist at a time. Let's not get greedy. Aight? */
 struct _FinchRoomlist
 {
@@ -146,9 +147,9 @@ roomlist_activated(GntWidget *widget)
 			purple_roomlist_room_join(froomlist.roomlist, room);
 			break;
 		case PURPLE_ROOMLIST_ROOMTYPE_CATEGORY:
-			if (!room->expanded_once) {
+			if (!purple_roomlist_room_get_expanded_once(room)) {
 				purple_roomlist_expand_category(froomlist.roomlist, room);
-				room->expanded_once = TRUE;
+				purple_roomlist_room_set_expanded_once(room, TRUE);
 			}
 			break;
 	}
@@ -343,7 +344,7 @@ fl_show_with_account(PurpleAccount *account)
 static void
 fl_create(PurpleRoomlist *list)
 {
-	FINCH_SET_DATA(list, &froomlist);
+	purple_roomlist_set_ui_data(list, &froomlist);
 	setup_roomlist(NULL);
 	update_roomlist(list);
 }

@@ -118,6 +118,12 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
 	}
 
+Purple::Conversation
+purple_find_conversation_with_account(type, name, account)
+	Purple::ConversationType type
+	const char *name
+	Purple::Account account
+
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversations  PREFIX = purple_conversations_
 PROTOTYPES: ENABLE
 
@@ -140,7 +146,7 @@ purple_conversation_get_account(conv)
 	Purple::Conversation conv
 
 Purple::Connection
-purple_conversation_get_gc(conv)
+purple_conversation_get_connection(conv)
 	Purple::Conversation conv
 
 void
@@ -297,6 +303,12 @@ purple_conv_im_send(im, message)
 	const char *message
 
 void
+purple_conv_im_send_with_flags(im, message, flags)
+	Purple::Conversation::IM im
+	const char *message
+	Purple::MessageFlags flags
+
+void
 purple_conv_im_write(im, who, message, flags, mtime)
 	Purple::Conversation::IM im
 	const char *who
@@ -324,24 +336,6 @@ PROTOTYPES: ENABLE
 Purple::Conversation
 purple_conv_chat_get_conversation(chat)
 	Purple::Conversation::Chat chat
-
-void
-purple_conv_chat_set_users(chat, users)
-	Purple::Conversation::Chat chat
-	SV * users
-PREINIT:
-	GList *l, *t_GL;
-	int i, t_len;
-PPCODE:
-	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(users));
-
-	for (i = 0; i <= t_len; i++)
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(users), i, 0)));
-
-	for (l = purple_conv_chat_set_users(chat, t_GL); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
-	}
 
 void
 purple_conv_chat_get_users(chat)
@@ -408,6 +402,12 @@ void
 purple_conv_chat_send(chat, message)
 	Purple::Conversation::Chat chat
 	const char * message
+
+void
+purple_conv_chat_send_with_flags(chat, message, flags)
+	Purple::Conversation::Chat chat
+	const char * message
+	Purple::MessageFlags flags
 
 void
 purple_conv_chat_write(chat, who, message, flags, mtime)

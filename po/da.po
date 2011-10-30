@@ -25,10 +25,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2009-02-23 18:17+0100\n"
 "Last-Translator: Peter Bach <bach.peter@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -73,14 +74,27 @@ msgstr ""
 "og færdiggør migreringen manuelt. Venligst rapportér denne fejl på http://"
 "developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Fejl"
+
+#, fuzzy
+msgid "Account was not modified"
+msgstr "Konto blev ikke tilføjet"
 
 msgid "Account was not added"
 msgstr "Konto blev ikke tilføjet"
 
 msgid "Username of an account must be non-empty."
 msgstr "Brugernavn på en konto må ikke være tom."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Påmindelse om ny post"
@@ -213,6 +227,10 @@ msgid "Username"
 msgstr "Brugernavn"
 
 msgid "Alias (optional)"
+msgstr "Alias (valgfri)"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "Alias (valgfri)"
 
 msgid "Add in group"
@@ -526,7 +544,6 @@ msgstr "Bekræft sletning af certifikat"
 msgid "Certificate Manager"
 msgstr "Certifikathåndtering"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Værtsnavn"
 
@@ -559,13 +576,6 @@ msgstr ""
 
 msgid "Re-enable Account"
 msgstr "Slå konto til igen"
-
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Kontoen har afbrudt og du er ikke længere i denne samtale. Du vil automatisk "
-"blive tilsluttet til samtalen igen når kontoen genforbinder."
 
 msgid "No such command."
 msgstr "Ingen kommando ved det navn."
@@ -608,6 +618,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Du har forladt denne samtale."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Kontoen har afbrudt og du er ikke længere i denne samtale. Du vil automatisk "
+"blive tilsluttet til samtalen igen når kontoen genforbinder."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "Logning startet. Fremtidige beskeder i denne samtale vil blive logget."
 
@@ -640,6 +657,10 @@ msgstr "Aktivér logning"
 msgid "Enable Sounds"
 msgstr "Aktivér lyde"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Kunne ikke forbinde"
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-SVAR> "
 
@@ -649,7 +670,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Liste over %d bruger:\n"
 msgstr[1] "Liste over %d brugere:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Understøttede fejlsøgningstilvalg er:  version"
 
 msgid "No such command (in this context)."
@@ -777,6 +799,7 @@ msgid "Remaining"
 msgstr "Tilbage"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Status"
 
@@ -792,7 +815,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Venter på at overførsel skal starte"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Annulleret"
 
 msgid "Failed"
@@ -877,7 +900,7 @@ msgid "System Log"
 msgstr "System log"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Udregner..."
 
 msgid "Hangup"
@@ -951,6 +974,9 @@ msgstr "Invitér"
 msgid "(none)"
 msgstr "(intet)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1259,6 +1285,10 @@ msgstr "Andre taler i samtale"
 msgid "Someone says your username in chat"
 msgstr "Nogle siger dit brugernavn i en samtale"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Aktivering krævet"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer fejl"
 
@@ -1351,6 +1381,7 @@ msgstr "Slet status"
 msgid "Saved Statuses"
 msgstr "Gemte statuser"
 
+#. title
 msgid "Title"
 msgstr "Titel"
 
@@ -1517,9 +1548,39 @@ msgstr ""
 "Når en ny samtale bliver åbnet, vil dette modul indsætte den sidste samtale "
 "ind i den nye samtale."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "Sang URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "Tilkoblet"
 
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Afkoblet"
 
@@ -1559,28 +1620,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "Lastlog-udvidelsesmodul."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "Sang URL"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "konti"
@@ -1634,14 +1673,69 @@ msgstr "Ændr brugeroplysninger for %s"
 msgid "Set User Info"
 msgstr "Ret brugeroplysninger"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Denne protokol understøtter ikke samtalerum."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Denne protokol understøtter ikke samtalerum."
+
 msgid "Unknown"
 msgstr "Ukendt"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Venner"
 
 msgid "buddy list"
 msgstr "venneliste"
+
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Certifikatet præsenteret af \"%s\" er selv underskrevet. Det kan ikke "
+"kontrolleres automatisk."
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Du har ingen database med rodcertifikater, så dette certifikat kan ikke "
+"kontrolleres."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Der opstod en ukendt fejl under logind: %s."
 
 msgid "(DOES NOT MATCH)"
 msgstr "(STEMMER IKKE OVERENS)"
@@ -1685,65 +1779,22 @@ msgstr "SSL-certifikat efterprøvning"
 msgid "_View Certificate..."
 msgstr "_Vis certifikat..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Certifikatet præsenteret af \"%s\" er selv underskrevet. Det kan ikke "
-"kontrolleres automatisk."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "SSL-certifikat fejl"
 
-msgid "Invalid certificate chain"
-msgstr "Ugyldig certifikatkæde"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Kunne ikke godkende: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Du har ingen database med rodcertifikater, så dette certifikat kan ikke "
-"kontrolleres."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-"Rodcertifikatet, som denne påstår at være udgivet af, er ukendt af Pidgin."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"Certifikatkæden, præsenteret af %s, har ikke en gyldig digital underskrift "
-"fra den certificerende myndighed, som den påstår at have en underskrift fra."
-
-msgid "Invalid certificate authority signature"
-msgstr "Ugyldig underskrift fra certificerende myndighed"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "Certifikatet præsenteret af \"%s\" påstår at være fra \"%s\" i stedet. Dette "
 "kunne tyde på, at du ikke er forbundet til den tjeneste du tror du er."
@@ -1769,6 +1820,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Certifikatinformation"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Fejl under registrering"
 
@@ -1783,8 +1835,8 @@ msgstr "+++ %s loggede på"
 msgid "+++ %s signed off"
 msgstr "+++ %s loggede ud"
 
+#. Undocumented
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "Ukendt fejl"
 
@@ -1891,12 +1943,19 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Løsningsprocess afsluttede uden svar på vores forespørgsel"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Fejl ved opløsning af %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Fejl ved oprettelse af tråd: %s"
 
 msgid "Unknown reason"
 msgstr "Ukendt grund"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -1934,6 +1993,10 @@ msgstr "Kan ikke sende en mappe."
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s er ikke en normal fil. Nægter at overskrive den.\n"
+
+#, fuzzy
+msgid "File is not readable."
+msgstr "Mappe er ikke skrivebar."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -1973,6 +2036,10 @@ msgstr "Tilbyder at sende %s til %s"
 msgid "Starting transfer of %s from %s"
 msgstr "Starter overførsel af %s fra %s"
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Overførsel af filen %s færdig"
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "Overførsel af filen %s færdig"
@@ -1980,19 +2047,19 @@ msgstr "Overførsel af filen %s færdig"
 msgid "File transfer complete"
 msgstr "Filoverførsel færdig"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Du annullerede overførslen af %s"
 
 msgid "File transfer cancelled"
 msgstr "Filoverførsel annulleret"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s annullerede overførslen af %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s annullerede filoverførslen"
 
 #, c-format
@@ -2186,8 +2253,31 @@ msgstr "<font color=\"red\"><b>Kunne ikke læse filen: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-SVAR>: %s\n"
 
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
 #, fuzzy
-msgid "Error creating conference."
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Der opstod en ukendt fejl under logind: %s."
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+#, fuzzy
+msgid "Conference error"
+msgstr "Konference afsluttet"
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
 msgstr "Fejl ved oprettelse af forbindelse"
 
 #, c-format
@@ -2279,8 +2369,11 @@ msgstr ""
 "Sti til at gemme filerne i\n"
 "(Venligst angiv fuld sti)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Afvis automatisk fra brugere der ikke er i min venneliste"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "Når der ankommer en filoverførselsanmodning fra %s"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2291,6 +2384,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Opret et nyt katalog for hver bruger"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s annullerede filoverførslen"
 
 msgid "Notes"
 msgstr "Noter"
@@ -2445,14 +2542,15 @@ msgstr ""
 "Test modul IPC understøttelse, som en server. Dette registrerer IPC "
 "kommandoerne."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Tilslut/Deltag skjult konfiguration"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Mindste rumstørrelse"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Bruger inaktivitetstidsgrænse (i minutter)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr "Anvend skjulte regler for venner"
@@ -2921,6 +3019,7 @@ msgstr "Fornavn"
 msgid "Last name"
 msgstr "Efternavn"
 
+#. email
 msgid "Email"
 msgstr "E-post"
 
@@ -2959,22 +3058,6 @@ msgstr "%s har afsluttet samtalen."
 
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Kunne ikke sende beskedn; samtalen kunne ikke startes."
-
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr ""
-"Kunne ikke oprette sokkel:\n"
-"%s"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Kan ikke binde socket til port"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr ""
-"Kunne ikke oprette sokkel:\n"
-"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Fejl under kommunikation med lokal mDNSResponder."
@@ -3065,12 +3148,14 @@ msgstr "By"
 msgid "Year of birth"
 msgstr "Fødselsår"
 
+#. gender
 msgid "Gender"
 msgstr "Køn"
 
 msgid "Male or female"
 msgstr "Mand eller kvinde"
 
+#. 0
 msgid "Male"
 msgstr "Mand"
 
@@ -3119,6 +3204,25 @@ msgstr "Indtast din nuværende og nye adgangskode til UIN: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Ændr Gadu-Gadu-adgangskode"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Ændr _status til:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Tilkoblede venner"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Ændr status til"
+
+#, fuzzy
+msgid "Please, select who can see your status"
+msgstr "Vælg et billede til smileyen."
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Vælg en samtale for ven: %s"
@@ -3126,10 +3230,20 @@ msgstr "Vælg en samtale for ven: %s"
 msgid "Add to chat..."
 msgstr "Tilføj til samtale..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Tilgængelig"
 
+#. 2
+msgid "Chatty"
+msgstr "Vil gerne samtale"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Vil ikke forstyrres"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3139,6 +3253,8 @@ msgstr "Fraværende"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
+#. optional information
 msgid "First Name"
 msgstr "Fornavn"
 
@@ -3252,6 +3368,23 @@ msgstr "Gadu-Gadu bruger"
 msgid "GG server"
 msgstr "Finder server"
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Kræv godkendelse"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Brug TLS hvis tilgængelig"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "Kræv godkendelse"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Forbindelse lukket"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Ukendt kommando: %s"
@@ -3288,7 +3421,6 @@ msgstr "MOTD for %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3548,6 +3680,10 @@ msgstr "Wallops fra %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;handling at udføre&gt;:  Udfør en handling."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Send en kommando til chanserv"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3749,16 +3885,19 @@ msgstr "Ad-Hoc-kommando fejlede"
 msgid "execute"
 msgstr "kør"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Server kræver SSL til logind. Ingen TLS/SSL-understøttelse fundet."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Du kræver kryptering, men ingen TLS/SSL-understøttelse blev fundet."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server kræver godkendelse i klartekst over en ukrypteret strøm"
+
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "Ugyldigt svar fra server."
+
+msgid "Server does not use any supported authentication method"
+msgstr "Serveren bruger ikke nogle understøttede godkendelsesmetoder"
 
 #, c-format
 msgid ""
@@ -3771,26 +3910,86 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Godkendelse i klartekst"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "Godkendelse fejlede"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "Ugyldigt svar fra server."
-
-msgid "Server does not use any supported authentication method"
-msgstr "Serveren bruger ikke nogle understøttede godkendelsesmetoder"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Du kræver kryptering, men det er ikke tilrådighed på denne server."
 
 msgid "Invalid challenge from server"
 msgstr "Ugyldigt svar fra server"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "Server kræver godkendelse i klartekst over en ukrypteret strøm"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s kræver godkendelse i klartekst over en ukrypteret forbindelse. Tillad "
+"dette og fortsæt godkendelse?"
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Godkendelse fejlede"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL fejl"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Ugyldig indtastningsbetingelse"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Ikke understøttet version"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Server understøtter ikke blokering"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Ikke-understøttet tegnsæt"
+
+msgid "User not found"
+msgstr "Bruger ikke fundet"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Ugyldigt brugernavn"
+
+msgid "Resource Constraint"
+msgstr "Ressurcebegrænsning"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Kunne ikke konfigurere"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Kunne ikke åbne en lyttende port."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Ugyldigt svar fra server"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Modtog ugyldigt HTTP-svar fra server."
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3834,6 +4033,11 @@ msgstr "Hjemmeside"
 msgid "Street Address"
 msgstr "Adresse 1"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Adresse 2"
 
@@ -3860,9 +4064,14 @@ msgstr "Organisationsnavn"
 msgid "Organization Unit"
 msgstr "Organisatorisk enhed"
 
+msgid "Job Title"
+msgstr "Job titel"
+
 msgid "Role"
 msgstr "Rolle"
 
+#. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Fødselsdato"
 
@@ -3895,13 +4104,17 @@ msgstr "Prioritet"
 msgid "Resource"
 msgstr "Ressource"
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "Opdatér"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "Logget ind"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr "Mellemnavn"
@@ -3918,24 +4131,31 @@ msgstr "Billede"
 msgid "Logo"
 msgstr "Logo"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "Du skal til at slette %s fra din venneliste. Vil du fortsætte?"
+
+msgid "Cancel Presence Notification"
+msgstr "Annullér tilstedeværelse-påmindelse"
+
 msgid "Un-hide From"
 msgstr "Skjul ikke længere for"
 
 msgid "Temporarily Hide From"
 msgstr "Midlertidig skjul for"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Annullér tilstedeværelse-påmindelse"
-
 msgid "(Re-)Request authorization"
 msgstr "Anmod om ny godkendelse"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "Afmeld"
+
+msgid "Initiate _Chat"
+msgstr "Åbn _samtale"
 
 msgid "Log In"
 msgstr "Log på"
@@ -3943,18 +4163,10 @@ msgstr "Log på"
 msgid "Log Out"
 msgstr "Log af"
 
-msgid "Chatty"
-msgstr "Vil gerne samtale"
-
-msgid "Extended Away"
-msgstr "Totalt fraværende"
-
-msgid "Do Not Disturb"
-msgstr "Vil ikke forstyrres"
-
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Efternavn"
 
@@ -4082,16 +4294,23 @@ msgid "Roles:"
 msgstr "Rolle"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Server kræver SSL til logind. Ingen TLS/SSL-understøttelse fundet."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Du kræver kryptering, men ingen TLS/SSL-understøttelse blev fundet."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Ping tidsudløb"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 msgid "Invalid XMPP ID"
 msgstr "Ugyldigt XMPP-id"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Ugyldigt XMPP-id. Domæne skal angives."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Ugyldigt XMPP-id. Domæne skal angives."
@@ -4166,10 +4385,6 @@ msgstr "Registrér ny konto på %s"
 msgid "Change Registration"
 msgstr "Ændr registrering"
 
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "Kunne ikke forbinde til server."
-
 msgid "Error unregistering account"
 msgstr "Fejl ved afregistrering af konto"
 
@@ -4218,6 +4433,7 @@ msgstr "Ingen (Til afventer)"
 msgid "None"
 msgstr "Ingen"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Abonnering"
 
@@ -4227,6 +4443,20 @@ msgstr "Humørtekst"
 msgid "Allow Buzz"
 msgstr "Tillad bip"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "Mellemnavn"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Vennekommentar"
+
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Sangkunstner"
 
@@ -4397,9 +4627,6 @@ msgstr "Overtrædelse af retningslinjer"
 msgid "Remote Connection Failed"
 msgstr "Fjernstyring fejlede"
 
-msgid "Resource Constraint"
-msgstr "Ressurcebegrænsning"
-
 msgid "Restricted XML"
 msgstr "Begrænset XML"
 
@@ -4469,10 +4696,6 @@ msgid ""
 "buzzes now."
 msgstr "Kunne ikke bippe fordi bruger %s ikke understøtter det."
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "Bipper %s..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4481,6 +4704,10 @@ msgstr "Bip"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s har bippet dig!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "Bipper %s..."
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4513,13 +4740,18 @@ msgstr "Vælg en ressource"
 msgid "Initiate Media"
 msgstr "Åbn _samtale"
 
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Denne protokol understøtter ikke samtalerum."
+
 msgid "config:  Configure a chat room."
 msgstr "config:  Sæt et samtalerum op."
 
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Sæt et samtalerum op."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [rum]:  Forlad rummet."
 
 msgid "register:  Register with a chat room."
@@ -4542,7 +4774,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;bruger&gt; &lt;moderator|participant|visitor|none&gt;: Indstil en "
 "brugers rolle i rummet."
@@ -4550,7 +4782,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;bruger&gt; [besked]:  Invitér en bruger til rummet."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;room&gt; [password]:  Tilslut samtalerum på denne server."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4567,6 +4800,13 @@ msgstr "ping &lt;jid&gt;:\tPing en bruger/komponent/server."
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Bip en kontakt for at få deres opmærksomhed"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Vælg en korrekt bruger"
+
+msgid "Extended Away"
+msgstr "Totalt fraværende"
 
 #. *< type
 #. *< ui_requirement
@@ -4585,11 +4825,8 @@ msgstr "XMPP-protokoludvidelsesmodul"
 msgid "Domain"
 msgstr "Domæne"
 
-msgid "Require SSL/TLS"
-msgstr "Kræv SSL/TLS"
-
-msgid "Force old (port 5223) SSL"
-msgstr "Tving gammel (port 5223) SSL"
+msgid "Use old-style SSL"
+msgstr ""
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Tillad godkendelse i klartekst over ukrypterede strømme"
@@ -4641,11 +4878,21 @@ msgstr "Fejl i XMPP-besked"
 msgid "(Code %s)"
 msgstr "(Kode %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "Kunne ikke sende besked: Beskeden er for lang."
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XML læsningsfejl"
-
-msgid "Unknown Error in presence"
-msgstr "Ukendt fejlkode i tilstedeværelse"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4683,20 +4930,8 @@ msgstr "Du er blevet smidt ud af %s: (%s)"
 msgid "Kicked (%s)"
 msgstr "Smidt ud af %s: (%s)"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "En fejl skete ved forsøg på at åbne filen."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Filoverførsel fejlede"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "Kunne ikke åbne fil \"%s\": %s"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
+msgid "Unknown Error in presence"
+msgstr "Ukendt fejlkode i tilstedeværelse"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -4704,6 +4939,7 @@ msgstr ""
 "Ikke i stand til at sende fil til %s, brugeren understøtter ikke "
 "filoverførsler"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Afsendelse af fil fejlede"
 
@@ -4725,17 +4961,314 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Vælg ressourcen fra %s som du gerne vil sende en fil"
 
-msgid "Edit User Mood"
-msgstr "Redigér bruger humør"
+#, fuzzy
+msgid "Afraid"
+msgstr "Arabisk"
 
-msgid "Please select your mood from the list."
-msgstr "Vælg dit humør fra listen."
+#, fuzzy
+msgid "Amazed"
+msgstr "Skammer sig"
 
-msgid "Set"
-msgstr "Indstil"
+#, fuzzy
+msgid "Amorous"
+msgstr "Strålende"
 
-msgid "Set Mood..."
-msgstr "Indstil humør..."
+msgid "Angry"
+msgstr "Sur"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Udvist"
+
+msgid "Anxious"
+msgstr "Spændt"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Du sender"
+
+msgid "Ashamed"
+msgstr "Skammer sig"
+
+msgid "Bored"
+msgstr "Keder sig"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Gem"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Rige"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Samtalerum"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Fed"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Konflikt"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Fortsæt"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Kontakt-oplysninger"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Tilsluttet"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Firma"
+
+#, fuzzy
+msgid "Crazy"
+msgstr "Skørchat"
+
+#, fuzzy
+msgid "Creative"
+msgstr "Opret"
+
+#, fuzzy
+msgid "Curious"
+msgstr "Strålende"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Afvis"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Slet"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Forbindelse afbrudt."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "_Slå fra"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Ikke koblet på"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Spændt"
+
+msgid "Excited"
+msgstr "Begejstret"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Strålende"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Fornavn"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Henter..."
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Gruppe"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "By"
+
+msgid "Happy"
+msgstr "Glad"
+
+msgid "Hopeful"
+msgstr ""
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Værtsnavn:"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Sur"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Humor"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Forelsket"
+
+msgid "In love"
+msgstr "Forelsket"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "Indonesisk"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Interesser"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Invitér"
+
+msgid "Invincible"
+msgstr "Usårlig"
+
+msgid "Jealous"
+msgstr "Jaloux"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "Abe"
+
+#, fuzzy
+msgid "Lost"
+msgstr "Højest"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "Tysk"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Humør"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Detalje"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Afkoblet"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Afspil"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Høj"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Rigtigt navn"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Modtaget"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Slet"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Registrér"
+
+msgid "Sad"
+msgstr "Trist"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Strålende"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Blokeret"
+
+msgid "Shy"
+msgstr ""
+
+#, fuzzy
+msgid "Sick"
+msgstr "Kælenavn"
+
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Søvnig"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Hastighed:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Sang"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Fire"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Understregning"
+
+#, fuzzy
+msgid "Weak"
+msgstr "Dask"
+
+#, fuzzy
+msgid "Worried"
+msgstr "Keder sig"
 
 msgid "Set User Nickname"
 msgstr "Indstil brugerkælenavn"
@@ -4749,6 +5282,9 @@ msgid ""
 msgstr ""
 "Denne information er synlig for alle kontakter på din kontaktliste, så vælg "
 "noget passende."
+
+msgid "Set"
+msgstr "Indstil"
 
 msgid "Set Nickname..."
 msgstr "Indstil kælenavn..."
@@ -4772,6 +5308,177 @@ msgstr "Fejl ved tilføj ven"
 msgid "The username specified does not exist."
 msgstr "Brugernavnet du angav findes ikke."
 
+msgid "Unable to parse message"
+msgstr "Kunne ikke fortolke besked"
+
+msgid "Syntax Error (probably a client bug)"
+msgstr "Syntaks fejl (sikkert en klientfejl)"
+
+msgid "Invalid email address"
+msgstr "Ugyldig e-postadresse"
+
+msgid "User does not exist"
+msgstr "Bruger eksisterer ikke"
+
+msgid "Fully qualified domain name missing"
+msgstr "Fuldt kvalificeret domænenavn mangler"
+
+msgid "Already logged in"
+msgstr "Allerede logget ind"
+
+msgid "Invalid username"
+msgstr "Ugyldigt brugernavn"
+
+msgid "Invalid friendly name"
+msgstr "Ugyldigt synligt navn"
+
+msgid "List full"
+msgstr "Liste fuld"
+
+msgid "Already there"
+msgstr "Allerede der"
+
+msgid "Not on list"
+msgstr "Ikke på liste"
+
+msgid "User is offline"
+msgstr "Bruger er afkoblet"
+
+msgid "Already in the mode"
+msgstr "Allerede i den mode"
+
+msgid "Already in opposite list"
+msgstr "Allerede i den modsatte liste"
+
+msgid "Too many groups"
+msgstr "For mange grupper"
+
+msgid "Invalid group"
+msgstr "Ugyldig gruppe"
+
+msgid "User not in group"
+msgstr "Bruger ikke i gruppe"
+
+msgid "Group name too long"
+msgstr "Gruppenavn for langt"
+
+msgid "Cannot remove group zero"
+msgstr "Kan ikke fjerne gruppe nul"
+
+msgid "Tried to add a user to a group that doesn't exist"
+msgstr "Prøvede at tilføje en ven til en gruppe der ikke eksisterer"
+
+msgid "Switchboard failed"
+msgstr "Switchboard fejlede"
+
+msgid "Notify transfer failed"
+msgstr "Påmindelse om overførsel fejlede"
+
+msgid "Required fields missing"
+msgstr "Krævede felter manglende"
+
+msgid "Too many hits to a FND"
+msgstr "For mange hits til en FND"
+
+msgid "Not logged in"
+msgstr "Ikke logget ind"
+
+msgid "Service temporarily unavailable"
+msgstr "Tjeneste midlertidigt utilgængelig"
+
+msgid "Database server error"
+msgstr "Database server fejl"
+
+msgid "Command disabled"
+msgstr "Kommando slået fra"
+
+msgid "File operation error"
+msgstr "Filhåndterings fejl"
+
+msgid "Memory allocation error"
+msgstr "Hukommelses-allokerings fejl"
+
+msgid "Wrong CHL value sent to server"
+msgstr "Forkert CHL værdi sendt til server"
+
+msgid "Server busy"
+msgstr "Server travl"
+
+msgid "Server unavailable"
+msgstr "Server ikke tilgængelig"
+
+msgid "Peer notification server down"
+msgstr "\"Peer Notification\"-server nede"
+
+msgid "Database connect error"
+msgstr "Fejl ved forbindelse til database"
+
+msgid "Server is going down (abandon ship)"
+msgstr "Serveren er på vej ned"
+
+msgid "Error creating connection"
+msgstr "Fejl ved oprettelse af forbindelse"
+
+msgid "CVR parameters are either unknown or not allowed"
+msgstr "CVR parametre er enten ukendte eller ikke tilladte"
+
+msgid "Unable to write"
+msgstr "Kunne ikke skrive"
+
+msgid "Session overload"
+msgstr "Overbelastet session"
+
+msgid "User is too active"
+msgstr "Bruger er for aktiv"
+
+msgid "Too many sessions"
+msgstr "For mange sessioner"
+
+msgid "Passport not verified"
+msgstr "Passport-konto endnu ikke godkendt"
+
+msgid "Bad friend file"
+msgstr "Fejl i vennefil"
+
+msgid "Not expected"
+msgstr "Ikke forventet"
+
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
+msgstr "Synligt navn ændres for ofte"
+
+msgid "Server too busy"
+msgstr "Server for travlt"
+
+msgid "Authentication failed"
+msgstr "Godkendelse fejlede"
+
+msgid "Not allowed when offline"
+msgstr "Ikke tilladt når du er afkoblet"
+
+msgid "Not accepting new users"
+msgstr "Accepterer ikke nye brugere"
+
+msgid "Kids Passport without parental consent"
+msgstr "Børne-passport uden forældre godkendelse"
+
+msgid "Passport account not yet verified"
+msgstr "Passport-konto endnu ikke godkendt"
+
+msgid "Passport account suspended"
+msgstr "Passport-konto suspenderet"
+
+msgid "Bad ticket"
+msgstr "Fejl fra server: \"Bad ticket\""
+
+#, c-format
+msgid "Unknown Error Code %d"
+msgstr "Ukendt fejlkode %d"
+
+#, c-format
+msgid "MSN Error: %s\n"
+msgstr "MSN Fejl: %s\n"
+
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Problemer med synkronisering af venneliste i %s (%s)"
@@ -4792,234 +5499,27 @@ msgstr ""
 "%s er på den lokale liste men ikke på serverlisten. Vil du have denne ven "
 "tilføjet?"
 
-#, c-format
-msgid "Unable to parse message"
-msgstr "Kunne ikke fortolke besked"
-
-#, c-format
-msgid "Syntax Error (probably a client bug)"
-msgstr "Syntaks fejl (sikkert en klientfejl)"
-
-#, c-format
-msgid "Invalid email address"
-msgstr "Ugyldig e-postadresse"
-
-#, c-format
-msgid "User does not exist"
-msgstr "Bruger eksisterer ikke"
-
-#, c-format
-msgid "Fully qualified domain name missing"
-msgstr "Fuldt kvalificeret domænenavn mangler"
-
-#, c-format
-msgid "Already logged in"
-msgstr "Allerede logget ind"
-
-#, c-format
-msgid "Invalid username"
-msgstr "Ugyldigt brugernavn"
-
-#, c-format
-msgid "Invalid friendly name"
-msgstr "Ugyldigt synligt navn"
-
-#, c-format
-msgid "List full"
-msgstr "Liste fuld"
-
-#, c-format
-msgid "Already there"
-msgstr "Allerede der"
-
-#, c-format
-msgid "Not on list"
-msgstr "Ikke på liste"
-
-#, c-format
-msgid "User is offline"
-msgstr "Bruger er afkoblet"
-
-#, c-format
-msgid "Already in the mode"
-msgstr "Allerede i den mode"
-
-#, c-format
-msgid "Already in opposite list"
-msgstr "Allerede i den modsatte liste"
-
-#, c-format
-msgid "Too many groups"
-msgstr "For mange grupper"
-
-#, c-format
-msgid "Invalid group"
-msgstr "Ugyldig gruppe"
-
-#, c-format
-msgid "User not in group"
-msgstr "Bruger ikke i gruppe"
-
-#, c-format
-msgid "Group name too long"
-msgstr "Gruppenavn for langt"
-
-#, c-format
-msgid "Cannot remove group zero"
-msgstr "Kan ikke fjerne gruppe nul"
-
-#, c-format
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Prøvede at tilføje en ven til en gruppe der ikke eksisterer"
-
-#, c-format
-msgid "Switchboard failed"
-msgstr "Switchboard fejlede"
-
-#, c-format
-msgid "Notify transfer failed"
-msgstr "Påmindelse om overførsel fejlede"
-
-#, c-format
-msgid "Required fields missing"
-msgstr "Krævede felter manglende"
-
-#, c-format
-msgid "Too many hits to a FND"
-msgstr "For mange hits til en FND"
-
-#, c-format
-msgid "Not logged in"
-msgstr "Ikke logget ind"
-
-#, c-format
-msgid "Service temporarily unavailable"
-msgstr "Tjeneste midlertidigt utilgængelig"
-
-#, c-format
-msgid "Database server error"
-msgstr "Database server fejl"
-
-#, c-format
-msgid "Command disabled"
-msgstr "Kommando slået fra"
-
-#, c-format
-msgid "File operation error"
-msgstr "Filhåndterings fejl"
-
-#, c-format
-msgid "Memory allocation error"
-msgstr "Hukommelses-allokerings fejl"
-
-#, c-format
-msgid "Wrong CHL value sent to server"
-msgstr "Forkert CHL værdi sendt til server"
-
-#, c-format
-msgid "Server busy"
-msgstr "Server travl"
-
-#, c-format
-msgid "Server unavailable"
-msgstr "Server ikke tilgængelig"
-
-#, c-format
-msgid "Peer notification server down"
-msgstr "\"Peer Notification\"-server nede"
-
-#, c-format
-msgid "Database connect error"
-msgstr "Fejl ved forbindelse til database"
-
-#, c-format
-msgid "Server is going down (abandon ship)"
-msgstr "Serveren er på vej ned"
-
-#, c-format
-msgid "Error creating connection"
-msgstr "Fejl ved oprettelse af forbindelse"
-
-#, c-format
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR parametre er enten ukendte eller ikke tilladte"
-
-#, c-format
-msgid "Unable to write"
-msgstr "Kunne ikke skrive"
-
-#, c-format
-msgid "Session overload"
-msgstr "Overbelastet session"
-
-#, c-format
-msgid "User is too active"
-msgstr "Bruger er for aktiv"
-
-#, c-format
-msgid "Too many sessions"
-msgstr "For mange sessioner"
-
-#, c-format
-msgid "Passport not verified"
-msgstr "Passport-konto endnu ikke godkendt"
-
-#, c-format
-msgid "Bad friend file"
-msgstr "Fejl i vennefil"
-
-#, c-format
-msgid "Not expected"
-msgstr "Ikke forventet"
-
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Synligt navn ændres for ofte"
-
-#, c-format
-msgid "Server too busy"
-msgstr "Server for travlt"
-
-#, c-format
-msgid "Authentication failed"
-msgstr "Godkendelse fejlede"
-
-#, c-format
-msgid "Not allowed when offline"
-msgstr "Ikke tilladt når du er afkoblet"
-
-#, c-format
-msgid "Not accepting new users"
-msgstr "Accepterer ikke nye brugere"
-
-#, c-format
-msgid "Kids Passport without parental consent"
-msgstr "Børne-passport uden forældre godkendelse"
-
-#, c-format
-msgid "Passport account not yet verified"
-msgstr "Passport-konto endnu ikke godkendt"
-
-msgid "Passport account suspended"
-msgstr "Passport-konto suspenderet"
-
-#, c-format
-msgid "Bad ticket"
-msgstr "Fejl fra server: \"Bad ticket\""
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Ukendt fejlkode %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN Fejl: %s\n"
-
 msgid "Other Contacts"
 msgstr "Andre kontakter"
 
 msgid "Non-IM Contacts"
 msgstr "Ikke-besked kontakter"
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr "%s har sendt dig en webcam invitation, hvilket ikke er understøttet."
 
 #, fuzzy, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5042,11 +5542,57 @@ msgstr "E-postadresser..."
 msgid "Your new MSN friendly name is too long."
 msgstr "Dit nye synlige MSN-navn er for langt."
 
-msgid "Set your friendly name."
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
 msgstr "Sæt dit synlige navn."
+
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Sæt synligt navn..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Dette er navnet som dine andre MSN venner vil se dig som."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Brugerplacering"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Dette er navnet som dine andre MSN venner vil se dig som."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Brugerplacering"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Du er logget ind fra en anden maskine."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Du er logget ind fra en anden maskine."
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Tillad flere samtidige indlogninger"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Tillad"
+
+msgid "Disallow"
+msgstr "Nægt"
 
 msgid "Set your home phone number."
 msgstr "Sæt hjemmetelefonnummer."
@@ -5066,12 +5612,6 @@ msgid ""
 msgstr ""
 "Vil du tillade eller nægte folk på din venneliste at sende dig MSN "
 "mobiltelefon sider til din mobiltelefon eller andre mobilenheder?"
-
-msgid "Allow"
-msgstr "Tillad"
-
-msgid "Disallow"
-msgstr "Nægt"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5124,18 +5664,6 @@ msgstr "Snakker i telefon"
 msgid "Out to Lunch"
 msgstr "Ude til frokost"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Kunstner"
-
-msgid "Album"
-msgstr "Album"
-
 msgid "Game Title"
 msgstr "Spiltitel"
 
@@ -5144,6 +5672,10 @@ msgstr "Kontortitel"
 
 msgid "Set Friendly Name..."
 msgstr "Sæt synligt navn..."
+
+#, fuzzy
+msgid "View Locations..."
+msgstr "Vælg placering..."
 
 msgid "Set Home Phone Number..."
 msgstr "Sæt hjemmetelefonnummer..."
@@ -5157,6 +5689,10 @@ msgstr "Sæt mobiltelefonnummer..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Aktivér/Deaktivér mobiltelefoner..."
 
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Tillad/Nægt mobiltelefon sider..."
+
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Tillad/Nægt mobiltelefon sider..."
 
@@ -5169,13 +5705,22 @@ msgstr "Åbn Hotmail indbakke"
 msgid "Send to Mobile"
 msgstr "Send til mobiltelefon"
 
-msgid "Initiate _Chat"
-msgstr "Åbn _samtale"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "SSL-understøttelse er krævet til MSN. Installér et understøttet SSL-"
 "bibliotek."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be valid email addresses."
+msgstr ""
+"Kunne ikke tilføje vennen %s, fordi brugernavnet er ugyldigt.  Brugernavne "
+"skal være en gyldig e-postadresse, eller starte med ét bogstav og kun "
+"indeholde bogstaver, tal og mellemrum, eller kun indeholde tal."
+
+msgid "Unable to Add"
+msgstr "Ikke i stand til at tilføje"
 
 msgid "Error retrieving profile"
 msgstr "Fejl ved modtagelse af profil"
@@ -5265,9 +5810,6 @@ msgstr "Jubilæum"
 msgid "Work"
 msgstr "Arbejde"
 
-msgid "Job Title"
-msgstr "Job titel"
-
 msgid "Company"
 msgstr "Firma"
 
@@ -5356,6 +5898,13 @@ msgstr "HTTP-metodeserver"
 msgid "Show custom smileys"
 msgstr "Vis tilpassede smileyer"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Kunne ikke oprette forbindelse"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "vink: vink en bruger for at få deres opmærksomhed"
 
@@ -5365,9 +5914,8 @@ msgstr "Godkendelse af Windows Live-id:Kunne ikke forbinde"
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Godkendelse af Windows Live-id:Ugyldigt svar"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s sendte dig et vink!"
+msgid "The following users are missing from your addressbook"
+msgstr "Følgende brugere mangler i din adressebog"
 
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
@@ -5376,15 +5924,21 @@ msgstr "Ukendt fejl (%d)"
 msgid "Unable to add user"
 msgstr "Kunne ikke tilføje bruger"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Ukendt fejl (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Følgende brugere mangler i din adressebog"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Kunne ikke tilføje bruger"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobilbesked blev ikke sendt, fordi den var for lang."
+
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Besked blev ikke sendt, fordi en ukendt fejl opstod."
 
 #, c-format
 msgid ""
@@ -5495,8 +6049,8 @@ msgstr "Modtager venneliste"
 msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr "%s har sendt dig en webcam invitation, hvilket ikke er understøttet."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr "%s har sendt dig en webcam invitation, hvilket ikke er understøttet."
 
 msgid "Away From Computer"
@@ -5549,72 +6103,508 @@ msgstr "Vil du også slette denne ven fra din adressebog?"
 msgid "The username specified is invalid."
 msgstr "Brugernavnet du angav er ugyldigt."
 
-msgid "This Hotmail account may not be active."
-msgstr "Denne Hotmail konto er måske ikke aktiv."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "SecurID-nøglen du indtastede er ugyldig."
 
-msgid "Profile URL"
-msgstr "Profil URL"
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN-protokoludvidelsesmodul"
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Skrive fejl"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. display name
+#. nick name (required)
+#, fuzzy
+msgid "Display Name"
+msgstr "Efternavn"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "Om mig"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Mobiltelefonnummer"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Brugerprofil"
+
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Nye adgangskoder er ikke ens."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Skrive fejl"
+
+#. pin
+#. pin (required)
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Ændr ikon"
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Ændr ikon"
+
+msgid "View Splash"
+msgstr ""
+
+#, fuzzy
+msgid "There is no splash-screen currently available"
+msgstr "Samtale er ikke tilgængelig nu"
+
+#, fuzzy
+msgid "About"
+msgstr "Om mig"
+
+#, fuzzy
+msgid "Search for user"
+msgstr "Søg efter en bruger"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Søg efter en bruger"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Brugeroplysninger"
+
+msgid "_Search"
+msgstr "_Søg"
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Ændr adgangskode..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Ændr adgangskode..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Sæt synligt navn..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Søg efter brugere..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Vis log..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "Om mig"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Beskeden er for lang."
+
+#, fuzzy
+msgid ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr ""
+"Kunne ikke forbinde til server. Indtast adressen på serveren du vil forbinde "
+"til."
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Logger ind"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the MXit server. Please check your server settings."
+msgstr ""
+"Kunne ikke forbinde til server. Indtast adressen på serveren du vil forbinde "
+"til."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Tilslutter"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+#. mxit login name
+msgid "MXit ID"
+msgstr ""
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Registrér ny XMPP-konto"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Udfyld alle de følgende felter"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "The MXit ID you entered is not registered. Please register first."
+msgstr ""
+
+msgid "The MXit ID you entered is already registered. Please choose another."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Serveren er utilgængelig; prøv igen senere"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Sikkerhedsaktiveret"
+
+#. ask for input (required)
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Indtast kode"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Land"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Foretrukket sprog"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Anmod om godkendelse"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Serveroplysninger"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Fejl fra server: \"Bad ticket\""
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Du er blevet smidt ud af %s: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Rum:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Du har modtaget post!"
+
+#, fuzzy
+msgid "Loading menu..."
+msgstr "Logger ind"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Status-besked"
+
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Modtaget beskeder"
+
+#. hidden number
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Mellemnavn"
+
+#, fuzzy
+msgid "No profile available"
+msgstr "Ikke tilgængelig"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Denne konto har ikke e-post aktiveret."
+
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "Yahoo-id..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Invitér"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Server"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Tilslut med TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Tilkoblet"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Invitationsbesked"
+
+#, fuzzy
+msgid "No results"
+msgstr "Søgeresultater"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Ikke-matchende brugere fundet"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Bruger"
+
+msgid "Where I live"
+msgstr ""
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s er ikke en gyldig gruppe."
-
-msgid "Unknown error."
-msgstr "Ukendt fejl."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s på %s (%s)"
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Kunne ikke tilføje brugeren på %s (%s)"
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Kunne ikke blokere bruger på %s (%s)"
+#. we must have lost the connection, so terminate it so that we can reconnect
+#, fuzzy
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr "Du har tabt forbindelsen til samtalerummet %s."
 
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Kunne ikke tillade bruger på %s (%s)"
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Fejl i XMPP-besked"
 
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s kunne ikke tilføjes, fordi din venneliste er fuld."
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Kunne ikke kontakte server."
 
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s er ikke en gyldig passport-konto."
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
 
-msgid "Service Temporarily Unavailable."
-msgstr "Tjeneste midlertidigt utilgængelig."
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Tilsluttet Qun problemfrit"
 
-msgid "Unable to rename group"
-msgstr "Kunne ikke omdøbe gruppe"
+#, fuzzy, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr "%s har sendt dig en webcam invitation, hvilket ikke er understøttet."
 
-msgid "Unable to delete group"
-msgstr "Kunne ikke slette gruppe"
+#, fuzzy
+msgid "Message Error"
+msgstr "Fejl i XMPP-besked"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s har tilføjet dig til hans eller hendes venneliste."
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
 
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s har fjernet dig fra hans eller hendes venneliste."
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Der opstod en ukendt fejl under logind: %s."
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL fejl"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL fejl"
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Forbindelsesfejl"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Fejl i XMPP-besked"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Strøm fejl"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Ikon fejl"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Afregistreringsfejl"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Forbindelsesfejl"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Abonnering"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Forbindelsesfejl"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Filoverførsel"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Kan ikke oprette overvågning"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Afregistreringsfejl"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Skrive fejl"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
+msgstr "Forelsket"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Sender"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Invitér"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Afvis"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Slet"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Arbejds information"
 
 #, c-format
 msgid "No such user: %s"
@@ -5991,9 +6981,6 @@ msgstr "Adgangskode er udløbet"
 msgid "Incorrect password"
 msgstr "Forkert adgangskode"
 
-msgid "User not found"
-msgstr "Bruger ikke fundet"
-
 msgid "Account has been disabled"
 msgstr "Konto er blevet deaktiveret"
 
@@ -6219,11 +7206,29 @@ msgstr "Serveradresse"
 msgid "Server port"
 msgstr "Server port"
 
-#, fuzzy
-msgid "Received unexpected response from "
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Venligst godkend mig, så jeg kan tilføje dig til min venneliste."
+
+msgid "No reason given."
+msgstr "Ingen grund givet."
+
+msgid "Authorization Denied Message:"
+msgstr "Besked for nægtelse af godkendelses anmodning:"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_O.k."
+
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
 msgstr "Modtog ugyldigt HTTP-svar fra server."
 
-#. username connecting too frequently
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
+msgstr "Modtog ugyldigt HTTP-svar fra server."
+
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6231,18 +7236,216 @@ msgstr ""
 "Du er logget ind og ud for mange gange indenfor et kort tidsrum. Vent ti "
 "minutter og prøv så igen, for ellers skal du bare vente endnu længere."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "Fejl ved oprettelse af forbindelse"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Kunne ikke forbinde til server. Indtast adressen på serveren du vil forbinde "
+"til."
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Der opstod en fejl ved modtagelse af denne besked. Vennen du taler med "
+"bruger måske en anden indkodning end forventet. Hvis du kender indkodningen, "
+"som han bruger, kan du angive den i avancerede kontoindstillinger for din "
+"AIM/ICQ-konto.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Der opstod en fejl ved modtagelse af denne besked. Enten har du eller %s "
+"valgt forskellige indkodninger, eller har %s en fejlramt klient.)"
 
 msgid "Could not join chat room"
 msgstr "Kunne ikke tilslutte samtalerum"
 
 msgid "Invalid chat room name"
 msgstr "Ugyldigt navn på samtalerum"
+
+msgid "Invalid error"
+msgstr "Ugyldig fejl"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Kan ikke sende fil"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Kan ikke sende en mappe."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Kunne ikke sende besked."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Besked når afkoblet"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Kunne ikke sende besked. (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Kunne ikke sende besked: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Kunne ikke sende besked til %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Kunne ikke sende besked til %s:"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Stopper med at skrive"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Anmodnings dialog"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Personsøger"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "Spiller et spil"
+
+msgid "Typing"
+msgstr "Skriver"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Ikke på kontoret"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Søvnig"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "IM-venner"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Snakker i telefon"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "Gentages"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Searching the web"
+msgstr ""
+
+#, fuzzy
+msgid "At a party"
+msgstr "Godkendelses port"
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Bruger spiller"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Sang"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Arbejder"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Arbejder"
+
+msgid "Listening to music"
+msgstr "Lytter til musik"
+
+#, fuzzy
+msgid "Studying"
+msgstr "Sender"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Interesser"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -6312,164 +7515,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Filen %s er %s, som er større end den maksimale størrelse på %s."
 
-msgid "Invalid error"
-msgstr "Ugyldig fejl"
-
-msgid "Invalid SNAC"
-msgstr "Ugyldig SNAC"
-
-msgid "Rate to host"
-msgstr "Grænse til vært"
-
-msgid "Rate to client"
-msgstr "Grænse til klient"
-
-msgid "Service unavailable"
-msgstr "Tjeneste ikke tilgængelig"
-
-msgid "Service not defined"
-msgstr "Tjeneste ikke defineret"
-
-msgid "Obsolete SNAC"
-msgstr "Forældet SNAC"
-
-msgid "Not supported by host"
-msgstr "Ikke understøttet af vært"
-
-msgid "Not supported by client"
-msgstr "Ikke understøttet af klient"
-
-msgid "Refused by client"
-msgstr "Nægtet af klient"
-
-msgid "Reply too big"
-msgstr "Svar for stort"
-
-msgid "Responses lost"
-msgstr "Svar tabt"
-
-msgid "Request denied"
-msgstr "Anmodning nægtet"
-
-msgid "Busted SNAC payload"
-msgstr "Ødelagt SNAC payload"
-
-msgid "Insufficient rights"
-msgstr "Ikke nok rettigheder"
-
-msgid "In local permit/deny"
-msgstr "I den lokale tillad/nægt"
-
-msgid "Warning level too high (sender)"
-msgstr "Advarselsgrænse for høj (sender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Advarselsgrænse for høj (modtager)"
-
-msgid "User temporarily unavailable"
-msgstr "Bruger midlertidigt utilgængelig"
-
-msgid "No match"
-msgstr "Ingen fundne"
-
-msgid "List overflow"
-msgstr "Liste overløb"
-
-msgid "Request ambiguous"
-msgstr "Anmodning flertydig"
-
-msgid "Queue full"
-msgstr "Kø fuld"
-
-msgid "Not while on AOL"
-msgstr "Ikke samtidig med AOL"
-
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Der opstod en fejl ved modtagelse af denne besked. Vennen du taler med "
-"bruger måske en anden indkodning end forventet. Hvis du kender indkodningen, "
-"som han bruger, kan du angive den i avancerede kontoindstillinger for din "
-"AIM/ICQ-konto.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Der opstod en fejl ved modtagelse af denne besked. Enten har du eller %s "
-"valgt forskellige indkodninger, eller har %s en fejlramt klient.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Venneikon"
-
-msgid "Voice"
-msgstr "Tale"
-
-msgid "AIM Direct IM"
-msgstr "AIM direkte besked"
-
-msgid "Get File"
-msgstr "Modtag fil"
-
-msgid "Games"
-msgstr "Spil"
-
-msgid "Add-Ins"
-msgstr "Udvidelser"
-
-msgid "Send Buddy List"
-msgstr "Send venneliste"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ direkte forbindelse"
-
-msgid "AP User"
-msgstr "AP Bruger"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ Send gennem server"
-
-msgid "Old ICQ UTF8"
-msgstr "Gammel ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian kryptering"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Sikkerhedsaktiveret"
-
-msgid "Video Chat"
-msgstr "Videosamtale"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live video"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Skærmdeling"
-
 msgid "Free For Chat"
 msgstr "Fri til samtale"
 
@@ -6485,14 +7530,25 @@ msgstr "Internet-opmærksom"
 msgid "Invisible"
 msgstr "Usynlig"
 
-msgid "IP Address"
-msgstr "IP-adresse"
+#, fuzzy
+msgid "Evil"
+msgstr "E-post"
 
-msgid "Warning Level"
-msgstr "Advarselsniveau"
+#, fuzzy
+msgid "Depression"
+msgstr "Profession"
 
-msgid "Buddy Comment"
-msgstr "Vennekommentar"
+#, fuzzy
+msgid "At home"
+msgstr "Om mig"
+
+#, fuzzy
+msgid "At work"
+msgstr "Netværk"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Ude til frokost"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -6525,6 +7581,11 @@ msgstr ""
 "bogstav og kun indeholde bogstaver, tal eller mellemrum, eller kun indeholde "
 "tal."
 
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6541,7 +7602,6 @@ msgid "Received authorization"
 msgstr "Modtog godkendelse"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -6556,6 +7616,17 @@ msgstr "Din konto er ikke aktiv for øjeblikket."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL Instant Messenger tjenesten er midlertidigt utilgængelig."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Du er logget ind og ud for mange gange indenfor et kort tidsrum. Vent ti "
+"minutter og prøv så igen, for ellers skal du bare vente endnu længere."
+
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Din klient er for gammel. Hent en opgradering på %s"
@@ -6563,8 +7634,9 @@ msgstr "Din klient er for gammel. Hent en opgradering på %s"
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Du er logget ind og ud for mange gange indenfor et kort tidsrum. Vent ti "
 "minutter og prøv så igen, for ellers skal du bare vente endnu længere."
@@ -6579,32 +7651,11 @@ msgstr "Indtast SecurID"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Indtast det 6-cifrede tal fra det digitale display."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_O.k."
-
 msgid "Password sent"
 msgstr "Adgangskode sendt"
 
 msgid "Unable to initialize connection"
 msgstr "Kunne ikke initialisere forbindelse"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Venligst godkend mig, så jeg kan tilføje dig til min venneliste."
-
-msgid "Authorization Request Message:"
-msgstr "Besked til anmodning om godkendelse:"
-
-msgid "Please authorize me!"
-msgstr "Venligst godkend mig!"
-
-msgid "No reason given."
-msgstr "Ingen grund givet."
-
-msgid "Authorization Denied Message:"
-msgstr "Besked for nægtelse af godkendelses anmodning:"
 
 #, c-format
 msgid ""
@@ -6724,81 +7775,18 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Du har ikke modtaget %hu besked fra %s pga. en ukendt årsag."
 msgstr[1] "Du har ikke modtaget %hu beskeder fra %s pga. en ukendt årsag."
 
-#. Data is assumed to be the destination bn
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Kunne ikke sende besked: %s"
-
-msgid "Unknown reason."
-msgstr "Ukendt fejl."
-
-#, c-format
-msgid "Unable to send message to %s:"
-msgstr "Kunne ikke sende besked til %s:"
-
-#, c-format
-msgid "User information not available: %s"
-msgstr "Bruger oplysninger er ikke tilgængelige: %s"
-
-msgid "Online Since"
-msgstr "Tilkoblet siden"
-
-msgid "Member Since"
-msgstr "Medlem siden"
-
-msgid "Capabilities"
-msgstr "Klient understøtter"
-
-msgid "Profile"
-msgstr "Profil"
-
 msgid "Your AIM connection may be lost."
 msgstr "Din AIM forbindelse kan være afbrudt."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Ude af stand til at vise en besked fra denne bruger, fordi den indeholdte "
-"ugyldige bogstaver.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
-msgstr ""
-"Den sidste handling blev ikke udført, fordi du har overskredet grænsen. Vent "
-"i 10 sekunder og prøv igen."
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Forbindelse til samtalerum %s afbrudt."
 
-msgid "Mobile Phone"
-msgstr "Mobiltelefon"
+msgid "The new formatting is invalid."
+msgstr "Den nye formattering er ugyldig."
 
-msgid "Personal Web Page"
-msgstr "Personlig hjemmeside"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Yderligere information"
-
-msgid "Zip Code"
-msgstr "Postnummer"
-
-msgid "Work Information"
-msgstr "Arbejds information"
-
-msgid "Division"
-msgstr "Afdeling"
-
-msgid "Position"
-msgstr "Stilling"
-
-msgid "Web Page"
-msgstr "Hjemmeside"
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Brugernavn formatering kan kun ændre store/små bogstaver og mellemrum."
 
 msgid "Pop-Up Message"
 msgstr "Pop-Up besked"
@@ -6940,9 +7928,6 @@ msgstr ""
 "skal være en gyldig e-postadresse, eller starte med ét bogstav og kun "
 "indeholde bogstaver, tal og mellemrum, eller kun indeholde tal."
 
-msgid "Unable to Add"
-msgstr "Ikke i stand til at tilføje"
-
 msgid "Unable to Retrieve Buddy List"
 msgstr "Kunne ikke hente venneliste"
 
@@ -7017,6 +8002,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "Henvisning til iTunes Music Store"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Vennekommentar for %s"
@@ -7038,6 +8027,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Tilslut"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Server lukkede forbindelsen."
+
 msgid "Get AIM Info"
 msgstr "Hent AIM-info"
 
@@ -7045,8 +8038,13 @@ msgstr "Hent AIM-info"
 msgid "Edit Buddy Comment"
 msgstr "Redigér vennekommentar"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Hent statusbesked"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Direkte besked etableret"
 
 msgid "Direct IM"
 msgstr "Direkte forbindelse"
@@ -7064,16 +8062,11 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr "ICQ privatlivsindstillinger"
 
-msgid "The new formatting is invalid."
-msgstr "Den nye formattering er ugyldig."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Brugernavn formatering kan kun ændre store/små bogstaver og mellemrum."
-
 msgid "Change Address To:"
 msgstr "Ændr adresse til:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>du venter ikke på godkendelse</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7095,9 +8088,6 @@ msgstr "Søg efter en ven udfra e-postadresse"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Indtast e-postadressen på vennen du søger efter."
 
-msgid "_Search"
-msgstr "_Søg"
-
 msgid "Set User Info (web)..."
 msgstr "Indstil brugeroplysninger (internet)..."
 
@@ -7111,6 +8101,14 @@ msgstr "Konfigurér beskedvideresendelse (internet)"
 #. ICQ actions
 msgid "Set Privacy Options..."
 msgstr "Sæt privatlivsindstillinger..."
+
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Vis venne_liste"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Inviteringsliste"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7127,9 +8125,6 @@ msgstr "Vis venner der afventer godkendelse"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Søg efter ven udfra e-postadresse..."
-
-msgid "Search for Buddy by Information"
-msgstr "Søg efter ven udfra oplysninger"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -7171,724 +8166,245 @@ msgstr ""
 "for billeder. Fordi din IP-adresse vil blive afsløret, kan det anses som en "
 "privatlivs risiko."
 
-msgid "Aquarius"
-msgstr "Vandmand"
-
-msgid "Pisces"
-msgstr "Fisk"
-
-msgid "Aries"
-msgstr "Vædder"
-
-msgid "Taurus"
-msgstr "Tyr"
-
-msgid "Gemini"
-msgstr "Tvilling"
-
-msgid "Cancer"
-msgstr "Krebs"
-
-msgid "Leo"
-msgstr "Løve"
-
-msgid "Virgo"
-msgstr "Jomfru"
-
-msgid "Libra"
-msgstr "Vægt"
-
-msgid "Scorpio"
-msgstr "Skorpion"
-
-msgid "Sagittarius"
-msgstr "Skytte"
-
-msgid "Capricorn"
-msgstr "Stenbuk"
-
-msgid "Rat"
-msgstr "Rot"
-
-msgid "Ox"
-msgstr "Tyr"
-
-msgid "Tiger"
-msgstr "Tiger"
-
-msgid "Rabbit"
-msgstr "Kanin"
-
-msgid "Dragon"
-msgstr "Drage"
-
-msgid "Snake"
-msgstr "Slange"
-
-msgid "Horse"
-msgstr "Hest"
-
-msgid "Goat"
-msgstr "Ged"
-
-msgid "Monkey"
-msgstr "Abe"
-
-msgid "Rooster"
-msgstr "Hane"
-
-msgid "Dog"
-msgstr "Hund"
-
-msgid "Pig"
-msgstr "Gris"
-
-msgid "Other"
-msgstr "Andet"
-
-msgid "Visible"
-msgstr "Synlig"
-
-msgid "Friend Only"
-msgstr "Kun ven"
-
-msgid "Private"
-msgstr "Privat"
-
-msgid "QQ Number"
-msgstr "QQ-nummer"
-
-msgid "Country/Region"
-msgstr "Land/Region"
-
-msgid "Province/State"
-msgstr "Provins/Stat"
-
-msgid "Zipcode"
-msgstr "Postnummer"
-
-msgid "Phone Number"
-msgstr "Telefonnummer"
-
-msgid "Authorize adding"
-msgstr "Godkend tilføjelse"
-
-msgid "Cellphone Number"
-msgstr "Mobilnummer"
-
-msgid "Personal Introduction"
-msgstr "Personlig introduktion"
-
-msgid "City/Area"
-msgstr "By/område"
-
-msgid "Publish Mobile"
-msgstr "Offentliggør mobil"
-
-msgid "Publish Contact"
-msgstr "Offentliggør kontakt"
-
-msgid "College"
-msgstr "Fold sammen"
-
-msgid "Horoscope"
-msgstr "Horoskop"
-
-msgid "Zodiac"
-msgstr "Stjernetegn"
-
-msgid "Blood"
-msgstr "Blod"
-
-msgid "True"
-msgstr "Sand"
-
-msgid "False"
-msgstr "Falsk"
-
-msgid "Modify Contact"
-msgstr "Ændr kontakt"
-
-msgid "Modify Address"
-msgstr "Ændr adresse"
-
-msgid "Modify Extended Information"
-msgstr "Ændr udvidet information"
-
-msgid "Modify Information"
-msgstr "Ændr information"
-
-msgid "Update"
-msgstr "Opdatér"
-
-msgid "Could not change buddy information."
-msgstr "Kunne ikke ændre venneinformation."
-
-msgid "Mobile"
-msgstr "Mobil"
-
-msgid "Note"
-msgstr "Note"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
+#. Label
+msgid "Buddy Icon"
 msgstr "Venneikon"
 
-msgid "Change his/her memo as you like"
+msgid "Voice"
+msgstr "Tale"
+
+msgid "AIM Direct IM"
+msgstr "AIM direkte besked"
+
+msgid "Get File"
+msgstr "Modtag fil"
+
+msgid "Games"
+msgstr "Spil"
+
+msgid "ICQ Xtraz"
 msgstr ""
 
-#, fuzzy
-msgid "_Modify"
-msgstr "Ret"
+msgid "Add-Ins"
+msgstr "Udvidelser"
 
-#, fuzzy
-msgid "Memo Modify"
-msgstr "Ret"
+msgid "Send Buddy List"
+msgstr "Send venneliste"
 
-#, fuzzy
-msgid "Server says:"
-msgstr "Server travl"
+msgid "ICQ Direct Connect"
+msgstr "ICQ direkte forbindelse"
 
-msgid "Your request was accepted."
+msgid "AP User"
+msgstr "AP Bruger"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ Send gennem server"
+
+msgid "Old ICQ UTF8"
+msgstr "Gammel ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian kryptering"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Sikkerhedsaktiveret"
+
+msgid "Video Chat"
+msgstr "Videosamtale"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Live video"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Skærmdeling"
+
+msgid "IP Address"
+msgstr "IP-adresse"
+
+msgid "Warning Level"
+msgstr "Advarselsniveau"
+
+msgid "Buddy Comment"
+msgstr "Vennekommentar"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Bruger oplysninger er ikke tilgængelige: %s"
+
+msgid "Mobile Phone"
+msgstr "Mobiltelefon"
+
+msgid "Personal Web Page"
+msgstr "Personlig hjemmeside"
+
+#. aim_userinfo_t
+#. use_html_status
+msgid "Additional Information"
+msgstr "Yderligere information"
+
+msgid "Zip Code"
+msgstr "Postnummer"
+
+msgid "Work Information"
+msgstr "Arbejds information"
+
+msgid "Division"
+msgstr "Afdeling"
+
+msgid "Position"
+msgstr "Stilling"
+
+msgid "Web Page"
+msgstr "Hjemmeside"
+
+msgid "Online Since"
+msgstr "Tilkoblet siden"
+
+msgid "Member Since"
+msgstr "Medlem siden"
+
+msgid "Capabilities"
+msgstr "Klient understøtter"
+
+msgid "Invalid SNAC"
+msgstr "Ugyldig SNAC"
+
+msgid "Server rate limit exceeded"
 msgstr ""
 
-msgid "Your request was rejected."
+msgid "Client rate limit exceeded"
 msgstr ""
 
-#, c-format
-msgid "%u requires verification"
-msgstr "%u kræver godkendelse"
+msgid "Service unavailable"
+msgstr "Tjeneste ikke tilgængelig"
 
-msgid "Add buddy question"
-msgstr "Tilføj venne spørgsmål"
+msgid "Service not defined"
+msgstr "Tjeneste ikke defineret"
 
-msgid "Enter answer here"
-msgstr "Indtast svar her"
+msgid "Obsolete SNAC"
+msgstr "Forældet SNAC"
 
-msgid "Send"
-msgstr "Send"
+msgid "Not supported by host"
+msgstr "Ikke understøttet af vært"
 
-msgid "Invalid answer."
-msgstr "Ugyldigt svar."
+msgid "Not supported by client"
+msgstr "Ikke understøttet af klient"
 
-msgid "Authorization denied message:"
-msgstr "Godkendelsen nægtet besked:"
+msgid "Refused by client"
+msgstr "Nægtet af klient"
 
-msgid "Sorry, you're not my style."
-msgstr "Beklager, du er ikke min type."
+msgid "Reply too big"
+msgstr "Svar for stort"
 
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u mangler godkendelse"
+msgid "Responses lost"
+msgstr "Svar tabt"
 
-msgid "Add buddy authorize"
-msgstr "Tilføj vennegodkendelse"
+msgid "Request denied"
+msgstr "Anmodning nægtet"
 
-msgid "Enter request here"
-msgstr "Indtast anmodning her"
+msgid "Busted SNAC payload"
+msgstr "Ødelagt SNAC payload"
 
-msgid "Would you be my friend?"
-msgstr "Vil du være min ven?"
+msgid "Insufficient rights"
+msgstr "Ikke nok rettigheder"
 
-msgid "QQ Buddy"
-msgstr "QQ-ven"
+msgid "In local permit/deny"
+msgstr "I den lokale tillad/nægt"
 
-msgid "Add buddy"
-msgstr "Tilføj ven"
+msgid "Warning level too high (sender)"
+msgstr "Advarselsgrænse for høj (sender)"
 
-msgid "Invalid QQ Number"
-msgstr "Ugyldigt QQ-nummer"
+msgid "Warning level too high (receiver)"
+msgstr "Advarselsgrænse for høj (modtager)"
 
-msgid "Failed sending authorize"
-msgstr "Godkendelse blev ikke sendt"
+msgid "User temporarily unavailable"
+msgstr "Bruger midlertidigt utilgængelig"
 
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "Kunne ikke fjerne vennen %u"
+msgid "No match"
+msgstr "Ingen fundne"
 
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Fejl ved fjernelse af dig fra %d's venneliste"
+msgid "List overflow"
+msgstr "Liste overløb"
 
-msgid "No reason given"
-msgstr "Ingen grund givet"
+msgid "Request ambiguous"
+msgstr "Anmodning flertydig"
 
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Du er blevet tilføjet af %s"
+msgid "Queue full"
+msgstr "Kø fuld"
 
-msgid "Would you like to add him?"
-msgstr "Vil du tilføje ham?"
+msgid "Not while on AOL"
+msgstr "Ikke samtidig med AOL"
 
-#, c-format
-msgid "Rejected by %s"
-msgstr "Afvis af %s"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
+msgid "Appear Online"
+msgstr "Virk tilkoblet"
 
-#, c-format
-msgid "Message: %s"
-msgstr "Besked: %s"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Virk tilkoblet"
 
-msgid "ID: "
-msgstr "ID: "
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
+msgid "Appear Offline"
+msgstr "Virk afkoblet"
 
-msgid "Group ID"
-msgstr "Gruppe-id"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Virk afkoblet"
 
-msgid "QQ Qun"
-msgstr "QQ Qun"
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Du er blevet smidt ud af %s: (%s)"
 
-msgid "Please enter Qun number"
-msgstr "Indtast dit Qun-nummer"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Du kan kun søge efter permanente Qun\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(Ugyldig UTF-8-streng)"
-
-msgid "Not member"
-msgstr "Ikke medlem"
-
-msgid "Member"
-msgstr "Medlem"
-
-msgid "Requesting"
-msgstr "Anmoder"
-
-msgid "Admin"
-msgstr "Admin"
-
-msgid "Notice"
-msgstr "Bemærk"
-
-msgid "Detail"
-msgstr "Detalje"
-
-msgid "Creator"
-msgstr "Opretter"
-
-msgid "About me"
-msgstr "Om mig"
-
-msgid "Category"
-msgstr "Kategori"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun'en tillader ikke andre at tilslutte"
-
-msgid "Join QQ Qun"
-msgstr "Tilslut QQ Qun"
-
-msgid "Input request here"
-msgstr "Indtast forespørgsel her"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Tilsluttet Qun %s (%u) problemfrit"
-
-msgid "Successfully joined Qun"
-msgstr "Tilsluttet Qun problemfrit"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u nægtet tilslutning"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun-operation"
-
-msgid "Failed:"
-msgstr "Fejlede:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Tilslut Qun, ukendt svar"
-
-msgid "Quit Qun"
-msgstr "Afslut Qun"
-
+#, fuzzy, c-format
 msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
 msgstr ""
-"Bemærk, hvis du er opretteren, \n"
-"vil denne operation måske fjerne denne Qun."
-
-msgid "Sorry, you are not our style"
-msgstr "Beklager, du er ikke vores type"
-
-msgid "Successfully changed Qun members"
-msgstr "Ændrede Qun-medlemmer problemfrit"
-
-msgid "Successfully changed Qun information"
-msgstr "Ændrede Qun-information problemfrit"
-
-msgid "You have successfully created a Qun"
-msgstr "Du har oprettet en Qun"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "Vil du opsætte detaljeret information nu?"
-
-msgid "Setup"
-msgstr "Opsætning"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u anmoder om at tilslutte Qun %u for %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u anmoder om at tilslutte Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Kunne ikke tilslutte Qun %u, styret af admin %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Qun-tilslutning af %u er godkendt af admin %u for %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Fjernede vennen %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>Ny ven %u tilsluttet.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Ukendt-%d"
-
-msgid "Level"
-msgstr "Niveau"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr " Video"
-
-msgid " Zone"
-msgstr " Zone"
-
-msgid "Flag"
-msgstr "Flag"
-
-msgid "Ver"
-msgstr "Ver"
-
-msgid "Invalid name"
-msgstr "Ugyldigt navn"
-
-msgid "Select icon..."
-msgstr "Vælg ikon..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Logind tid</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Totale venner tilkoblet</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Sidste opdatering</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Server</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Klientmærke</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Forbindelsestilstand</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Min internet IP</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Sendt</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Gensend</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Tabt</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Modtaget</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Modtaget duplikat</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Tid</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Logind information"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Oprindelig forfatter</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Kode bidragydere</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Elskede programrettelsesskrivere</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>Bekræft anerkendelse</b>:<br>\n"
+"Du kan anmode om ny godkendelse fra disse venner ved at højreklikke på dem "
+"og vælge \"Anmod om ny godkendelse\"."
 
 #, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Oprindelig forfatter</b>:<br>\n"
+msgid "Visible List"
+msgstr "Synlig"
 
-msgid "and more, please let me know... thank you!))"
+msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>Og alle drengene i baggrunden...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Vær velkommen til at tilslutte os!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "Om OpenQ %s"
-
-msgid "Change Icon"
-msgstr "Ændr ikon"
-
-msgid "Change Password"
-msgstr "Ændr adgangskode"
-
-msgid "Account Information"
-msgstr "Kontoinformation"
-
-msgid "Update all QQ Quns"
-msgstr "Opdatér alle QQ Qun'er"
-
-msgid "About OpenQ"
-msgstr "Om OpenQ"
 
 #, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "Ændr adresse"
+msgid "Invisible List"
+msgstr "Inviteringsliste"
 
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "QQ-protokoludvidelsesmodul"
-
-msgid "Auto"
-msgstr "Auto"
-
-msgid "Select Server"
-msgstr "Vælg server"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "Tilslut med TCP"
-
-msgid "Show server notice"
-msgstr "Vis serverbemærkning"
-
-msgid "Show server news"
-msgstr "Vis servernyheder"
-
-msgid "Show chat room when msg comes"
-msgstr "Vis samtalerum når besked kommer"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Hold i live interval (sekunder)"
-
-msgid "Update interval (seconds)"
-msgstr "Opdateringsinterval (sekunder)"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "Kan ikke afkryptere serversvar"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Fejl ved forespørgsel efter nøgle, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "Ugyldig nøglelængde, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX er for øjeblikket ikke understøttet"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Aktivering krævet"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Ukendt svarkode ved indlogning i (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "Anmoder om captcha"
-
-msgid "Checking captcha"
-msgstr "Kontrollerer captcha"
-
-msgid "Failed captcha verification"
-msgstr "Captcha-godkendelse fejlede"
-
-msgid "Captcha Image"
-msgstr "Captcha-billede"
-
-msgid "Enter code"
-msgstr "Indtast kode"
-
-msgid "QQ Captcha Verification"
-msgstr "QQ Captcha-godkendelse"
-
-msgid "Enter the text from the image"
-msgstr "Indtast teksten fra billedet"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Ukendt svar ved kontrol af adgangskode (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
+msgid "These buddies will always see you as offline"
 msgstr ""
-"Ukendt svarkode ved indlogning i (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Sokkel-fejl"
-
-msgid "Getting server"
-msgstr "Finder server"
-
-msgid "Requesting token"
-msgstr "Anmoder om nøgle"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "Kunne ikke kontakte server."
-
-msgid "Invalid server or port"
-msgstr "Ugyldig server eller port"
-
-msgid "Connecting to server"
-msgstr "Tilslutter server"
-
-msgid "QQ Error"
-msgstr "QQ-fejl"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Servernyheder:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "Fra %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Server notits fra %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "Ukendt SERVER CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Fejlsvar %s(0x%02X)\n"
-"Rum %u, svar 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun-kommando"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "Kan ikke afkryptere logindsvar"
-
-msgid "Unknown LOGIN CMD"
-msgstr "Ukendt LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "Ukendt CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d har afslået filen %s"
-
-msgid "File Send"
-msgstr "Send fil"
-
-#, c-format
-msgid "%d canceled the transfer of %s"
-msgstr "%d annullerede overførslen af %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -7953,6 +8469,10 @@ msgstr "Konference afsluttet"
 
 msgid "Unable to send message: "
 msgstr "Kunne ikke sende besked: "
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Kunne ikke sende besked til %s:"
 
 msgid "Place Closed"
 msgstr "Sted lukket"
@@ -8365,39 +8885,6 @@ msgstr "Hyperaktiv"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Glad"
-
-msgid "Sad"
-msgstr "Trist"
-
-msgid "Angry"
-msgstr "Sur"
-
-msgid "Jealous"
-msgstr "Jaloux"
-
-msgid "Ashamed"
-msgstr "Skammer sig"
-
-msgid "Invincible"
-msgstr "Usårlig"
-
-msgid "In Love"
-msgstr "Forelsket"
-
-msgid "Sleepy"
-msgstr "Søvnig"
-
-msgid "Bored"
-msgstr "Keder sig"
-
-msgid "Excited"
-msgstr "Begejstret"
-
-msgid "Anxious"
-msgstr "Spændt"
-
 msgid "User Modes"
 msgstr "Bruger tilstande"
 
@@ -8684,6 +9171,9 @@ msgstr "Organisation"
 msgid "Unit"
 msgstr "Enhed"
 
+msgid "Note"
+msgstr "Note"
+
 msgid "Join Chat"
 msgstr "Tilslut samtale"
 
@@ -8873,10 +9363,6 @@ msgstr "Kunne ikke indlæse SILC-nøglepar"
 msgid "Connecting to SILC Server"
 msgstr "Tilslutter til SILC-server"
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "Kunne ikke indlæse SILC-nøglepar"
-
 msgid "Out of memory"
 msgstr "Løb tør for hukommelse"
 
@@ -8897,9 +9383,6 @@ msgstr "Dit nuværende humør"
 #, c-format
 msgid "Normal"
 msgstr "Normal"
-
-msgid "In love"
-msgstr "Forelsket"
 
 msgid ""
 "\n"
@@ -9334,6 +9817,10 @@ msgstr "Ukendt serversvar."
 msgid "Unable to create listen socket"
 msgstr "Kunne ikke oprette sokkel"
 
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Kunne ikke kontakte server."
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-brugernavne må ikke indeholde mellemrum og @-tegn"
 
@@ -9399,9 +9886,6 @@ msgstr "Yahoo-id..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo protokolmodul"
 
-msgid "Pager server"
-msgstr "Bipper-server"
-
 msgid "Pager port"
 msgstr "Bipper port"
 
@@ -9417,14 +9901,11 @@ msgstr "Samtalerum tegnsæt"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorér konference og samtalerum invitationer"
 
+msgid "Use account proxy for HTTP and HTTPS connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "Adresse på liste over samtalerum"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo-samtaleserver"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo-samtaleport"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -9444,6 +9925,10 @@ msgstr "Yahoo-id..."
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo protokolmodul"
 
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s har sendt dig en webcam invitation, hvilket ikke er understøttet."
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9453,6 +9938,9 @@ msgstr "Din Yahoo! besked blev ikke sendt."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Yahoo! systembesked til %s:"
+
+msgid "Authorization denied message:"
+msgstr "Godkendelsen nægtet besked:"
 
 #, c-format
 msgid ""
@@ -9495,6 +9983,15 @@ msgstr ""
 "Ukendt fejl nummer %d. Prøv at logge ind på Yahoo!webstedet for at fixe "
 "dette."
 
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Ukendt fejl nummer %d. Prøv at logge ind på Yahoo!webstedet for at fixe "
+"dette."
+
 #. username or password missing
 #, fuzzy
 msgid "Username or password missing"
@@ -9524,8 +10021,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Ignorér ven?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Din konto er låst. Log ind på Yahoo!-webstedet."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Forkert brugernavn eller adgangskode"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Ukendt fejl nummer %d. Prøv at logge ind på Yahoo!webstedet for at fixe "
+"dette."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9561,6 +10076,17 @@ msgstr ""
 "Kunne ikke etablere en forbindelse til server:\n"
 "%s"
 
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Kunne ikke forbinde til server. Indtast adressen på serveren du vil forbinde "
+"til."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+
 msgid "Not at Home"
 msgstr "Ikke hjemme"
 
@@ -9579,17 +10105,11 @@ msgstr "Trådt udenfor"
 msgid "Not on server list"
 msgstr "Ikke på server liste"
 
-msgid "Appear Online"
-msgstr "Virk tilkoblet"
-
 msgid "Appear Permanently Offline"
 msgstr "Virk permanent afkoblet"
 
 msgid "Presence"
 msgstr "Tilstedeværelse"
-
-msgid "Appear Offline"
-msgstr "Virk afkoblet"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Virk ikke permanent afkoblet"
@@ -9620,6 +10140,15 @@ msgstr "Tilslut bruger i samtale..."
 
 msgid "Open Inbox"
 msgstr "Åbn indbakke"
+
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -9709,13 +10238,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Brugerens profil er tom."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s sagde nej til din konference-invitiation til rum \"%s\" pga. \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Invitation afvist"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s er logget på."
 
 msgid "Failed to join chat"
 msgstr "Kunne ikke tilslutte samtale"
@@ -9896,6 +10421,12 @@ msgid "Exposure"
 msgstr "Fremvisning"
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Kunne ikke oprette sokkel:\n"
+"%s"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Kunne ikke fortolke svar fra HTTP-proxy: %s\n"
 
@@ -9930,6 +10461,10 @@ msgstr "_Nej"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "_Acceptér"
@@ -9997,8 +10532,9 @@ msgstr "Vil ikke forstyrres"
 msgid "Extended away"
 msgstr "Totalt fraværende"
 
-msgid "Listening to music"
-msgstr "Lytter til musik"
+#, fuzzy
+msgid "Feeling"
+msgstr "Modtager"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10121,27 +10657,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Forbindelse afbrudt af andet software på din computer."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Fjernværten har lukket forbindelsen."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Forbindelsen overskred tidsgrænsen."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Forbindelse afvist."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Addressen er allerede i brug."
 
@@ -10157,20 +10688,15 @@ msgstr ""
 "En fejl opstod ved læsning af din %s. De er ikke blevet indlæst, og den "
 "gamle fil er blevet omdøbt til %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Internet beskeder"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Besked"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Send kvikbeskeder over flere protokoller"
-
-msgid "Orientation"
-msgstr "Placering"
-
-msgid "The orientation of the tray."
-msgstr "Placering af systemområdet."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -10199,7 +10725,8 @@ msgstr "Påmindelse om ny _post"
 msgid "Use this buddy _icon for this account:"
 msgstr "Brug dette venne_ikon til denne konto:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "_Avanceret"
 
 msgid "Use GNOME Proxy Settings"
@@ -10211,14 +10738,17 @@ msgstr "Brug globale proxy-indstillinger"
 msgid "No Proxy"
 msgstr "Ingen proxy"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Brug miljø-indstillinger"
@@ -10247,6 +10777,14 @@ msgstr "_Port:"
 msgid "Pa_ssword:"
 msgstr "Adgang_skode:"
 
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Genoptager session"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "Redigér indstillinger"
+
 msgid "Unable to save new account"
 msgstr "Kunne ikke gemme ny konto"
 
@@ -10263,7 +10801,7 @@ msgid "Create _this new account on the server"
 msgstr "Opret _denne nye konto på serveren"
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "Proxy"
 
 msgid "Enabled"
@@ -10293,6 +10831,152 @@ msgstr ""
 "\n"
 "Du kan vende tilbage til dette vindue for at tilføje, redigere eller fjerne "
 "konti fra <b>Konti->Kontihåndtering</b> i venneliste-vinduet"
+
+#, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s vil tilføje %s til hans eller hendes venneliste%s%s"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s vil tilføje %s til hans eller hendes venneliste%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Ny besked"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Baggrundsfarve"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Denne gruppe er blevet tilføjet til din venneliste"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Lao"
+
+#, fuzzy
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "Brugeren %s vil tilføje %s til sin venneliste."
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Baggrundsfarve"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Udvid"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Vælg baggrundsfarve"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Fold sammen"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Vælg baggrundsfarve"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "Genvej"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Tilkoblet"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "Fraværende"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Afkoblet"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Ændr brugeroplysninger for %s"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "Humørtekst"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "Besked sendt"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Ændr brugeroplysninger for %s"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10427,6 +11111,19 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Ukendt nodetype"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Vælg dit humør fra listen."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Alias (valgfri)"
+
+msgid "Edit User Mood"
+msgstr "Redigér bruger humør"
+
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Venner"
@@ -10506,6 +11203,10 @@ msgstr "/Værktøjer/_Indstillinger"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Værktøjer/_Privatliv"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Værktøjer/System_log"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Værktøjer/_Filoverførsler"
 
@@ -10525,8 +11226,24 @@ msgstr "/_Hjælp"
 msgid "/Help/Online _Help"
 msgstr "/Hjælp/Tilkoblet _hjælp"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Venneinformation"
+
 msgid "/Help/_Debug Window"
 msgstr "/Hjælp/Vis _fejlsøgningsvindue"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Serveroplysninger"
+
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Venneinformation"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Personlige oplysninger"
 
 msgid "/Help/_About"
 msgstr "/Hjælp/_Om"
@@ -10709,6 +11426,10 @@ msgstr "_Brugernavn på ven:"
 msgid "(Optional) A_lias:"
 msgstr "(Valgfrit) a_lias:"
 
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "Invitationsbesked"
+
 msgid "Add buddy to _group:"
 msgstr "Tilføj ven til _gruppe:"
 
@@ -10735,7 +11456,8 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Gruppe:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "_Tilslut automatisk når en konto tilkobles."
 
 msgid "_Remain in chat after window is closed."
@@ -10756,6 +11478,10 @@ msgstr "<PurpleMain>/Konti/"
 msgid "_Edit Account"
 msgstr "_Redigér konto"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Indstil humør..."
+
 msgid "No actions available"
 msgstr "Ingen handlinger tilgængelige"
 
@@ -10767,112 +11493,6 @@ msgstr "/Værktøjer"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Venner/Sortér venner"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Baggrundsfarve"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "Denne gruppe er blevet tilføjet til din venneliste"
-
-#, fuzzy
-msgid "Layout"
-msgstr "Lao"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Baggrundsfarve"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "_Udvid"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Vælg baggrundsfarve"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_Fold sammen"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "Vælg baggrundsfarve"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "Genvej"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "Tilkoblet"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "Fraværende"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "Afkoblet"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "Humørtekst"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "Besked sendt"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "Ændr brugeroplysninger for %s"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -10909,12 +11529,6 @@ msgstr "<h1>Samtale med %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Gem samtale"
-
-msgid "Find"
-msgstr "Find"
-
-msgid "_Search for:"
-msgstr "_Søg efter:"
 
 msgid "Un-Ignore"
 msgstr "Ignorér ikke"
@@ -10960,6 +11574,10 @@ msgstr "/_Samtale"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Samtale/Ny _besked..."
 
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Samtale/In_vitér..."
+
 msgid "/Conversation/_Find..."
 msgstr "/Samtale/_Find..."
 
@@ -10990,6 +11608,10 @@ msgstr "/Samtale/Vis _log"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Samtale/Se_nd fil..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Samtale/Hent oplysninger"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Samtale/Tilføj _venneovervågning..."
@@ -11075,6 +11697,10 @@ msgstr "/Samtale/Mere"
 msgid "/Conversation/Send File..."
 msgstr "/Samtale/Send fil..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Samtale/Hent oplysninger"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Samtale/Tilføj venneovervågning..."
 
@@ -11139,14 +11765,19 @@ msgstr "_Send"
 msgid "0 people in room"
 msgstr "Ingen samtalere i rummet"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Luk dette faneblade"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Find"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d person i rummet"
 msgstr[1] "%d personer i rummet"
-
-msgid "Typing"
-msgstr "Skriver"
 
 msgid "Stopped Typing"
 msgstr "Stoppet med at skrive"
@@ -11199,6 +11830,12 @@ msgstr "Efter gruppe"
 msgid "By account"
 msgstr "Efter konto"
 
+msgid "Find"
+msgstr "Find"
+
+msgid "_Search for:"
+msgstr "_Søg efter:"
+
 msgid "Save Debug Log"
 msgstr "Gem fejlsporingslog"
 
@@ -11244,15 +11881,8 @@ msgstr "Fejl "
 msgid "Fatal Error"
 msgstr "Fatal fejl"
 
-msgid "bug master"
-msgstr "fejlbestyrer"
-
 msgid "artist"
 msgstr "kunstner"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
 
 msgid "voice and video"
 msgstr ""
@@ -11263,11 +11893,12 @@ msgstr "support"
 msgid "webmaster"
 msgstr "internetudvikler"
 
-msgid "Senior Contributor/QA"
-msgstr "Seniorbidrager/QA"
-
 msgid "win32 port"
 msgstr "win32 port"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "vedligeholder"
@@ -11291,11 +11922,18 @@ msgstr "oprindelig forfatter"
 msgid "lead developer"
 msgstr "hovedudvikler"
 
+msgid "Senior Contributor/QA"
+msgstr "Seniorbidrager/QA"
+
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
 msgid "Arabic"
 msgstr "Arabisk"
+
+#, fuzzy
+msgid "Assamese"
+msgstr "Skammer sig"
 
 msgid "Belarusian Latin"
 msgstr "Hviderussisk latinsk"
@@ -11304,6 +11942,10 @@ msgid "Bulgarian"
 msgstr "Bulgarsk"
 
 msgid "Bengali"
+msgstr "Bengali"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengali"
 
 msgid "Bosnian"
@@ -11333,11 +11975,11 @@ msgstr "Græsk"
 msgid "Australian English"
 msgstr "Australsk-engelsk"
 
-msgid "Canadian English"
-msgstr "Canadisk-engelsk"
-
 msgid "British English"
 msgstr "Britisk-engelsk"
+
+msgid "Canadian English"
+msgstr "Canadisk-engelsk"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -11348,8 +11990,8 @@ msgstr "Spansk"
 msgid "Estonian"
 msgstr "Estisk"
 
-msgid "Euskera(Basque)"
-msgstr "Euskera(Basque)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Persisk"
@@ -11377,6 +12019,9 @@ msgstr "Hebraisk"
 
 msgid "Hindi"
 msgstr "Hindu"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "Ungarsk"
@@ -11419,14 +12064,31 @@ msgstr "Kurdisk"
 msgid "Lao"
 msgstr "Lao"
 
-msgid "Lithuanian"
-msgstr "Litausk"
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilist"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Ny post"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "Mand"
+
 msgid "Mongolian"
 msgstr "Mongolsk"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Gujarati"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Mand"
 
 msgid "Bokmål Norwegian"
 msgstr "Norsk"
@@ -11442,6 +12104,10 @@ msgstr "Nynorsk"
 
 msgid "Occitan"
 msgstr "Occitan"
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -11497,6 +12163,10 @@ msgstr "Thai"
 msgid "Turkish"
 msgstr "Kurdisk"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "Rumænsk"
+
 msgid "Urdu"
 msgstr "Urdu"
 
@@ -11518,21 +12188,17 @@ msgstr "Traditionelt kinesisk"
 msgid "Amharic"
 msgstr "Amharisk"
 
-#, c-format
-msgid "About %s"
-msgstr "Om %s"
+msgid "Lithuanian"
+msgstr "Litausk"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s er en grafisk modulær beskedklient baseret på libpurple, der understøtter "
 "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
@@ -11545,28 +12211,35 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">OSS:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Hjælp via e-post:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
 
 #, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC-kanal:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "Om %s"
 
-#, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#, fuzzy
+msgid "Build Information"
+msgstr "Venneinformation"
+
+#. End of not to be translated section
+#, fuzzy, c-format
+msgid "%s Build Information"
+msgstr "Venneinformation"
 
 msgid "Current Developers"
 msgstr "Nuværende udviklere"
@@ -11580,14 +12253,27 @@ msgstr "Tidligere udviklere"
 msgid "Retired Crazy Patch Writers"
 msgstr "Tidligere Vilde fejlrettere"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Serveroplysninger"
+
 msgid "Current Translators"
 msgstr "Nuværende oversættere"
 
 msgid "Past Translators"
 msgstr "Tidligere oversættere"
 
-msgid "Debugging Information"
-msgstr "Fejlsøgningsoplysninger"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "Arbejds information"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Venneinformation"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Logind information"
 
 msgid "_Name"
 msgstr "_Navn"
@@ -11788,14 +12474,6 @@ msgstr "_Ryd afsluttede overførsler"
 msgid "File transfer _details"
 msgstr "Filoverførsels_detaljer"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Pause"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Genoptag"
-
 msgid "Paste as Plain _Text"
 msgstr "Indsæt som ren _tekst"
 
@@ -11889,15 +12567,6 @@ msgstr ""
 "\n"
 "Anvender PNG."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Ukendt filtype\n"
-"\n"
-"Anvender PNG."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -11905,16 +12574,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>Fejl ved skrivning af billede</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Fejl ved skrivning af billede\n"
 "\n"
 "%s"
 
@@ -12025,6 +12684,10 @@ msgstr "Indsæt beskedbillede"
 msgid "Insert Smiley"
 msgstr "Indsæt smiley"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "Sendknap"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>_Fed</b>"
 
@@ -12070,6 +12733,9 @@ msgstr "_Vandret regel"
 msgid "_Smile!"
 msgstr "S_mil!"
 
+msgid "_Attention!"
+msgstr ""
+
 msgid "Log Deletion Failed"
 msgstr "Sletning af log fejlede"
 
@@ -12086,19 +12752,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Er du sikker på at du permanent vil slette loggen over samtalen i %s som er "
 "startet %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
-"Er du sikker på at du permanent vil slette systemloggen som er startet ved %"
-"s?"
+"Er du sikker på at du permanent vil slette systemloggen som er startet ved "
+"%s?"
 
 msgid "Delete Log?"
 msgstr "Slet log?"
@@ -12122,66 +12788,48 @@ msgstr "_Gennemse log-mappe"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Prøv \"%s -h\" for flere informationer.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Brug: %s [TILVALG]...\n"
-"\n"
-"  -c, --config=DIR    brug DIR for opsætningsfiler\n"
-"  -d, --debug         udskriv fejlsøgningsbeskeder til stdout\n"
-"  -h, --help          vis denne hjælp og afslut\n"
-"  -m, --multiple      tillad flere instanser\n"
-"  -n, --nologin       log ikke ind automatisk\n"
-"  -l, --login[=NAVN]  aktivér angivede konti (valgfrit argument NAVN\n"
-"                      angiver konti der skal benyttes, adskilt af kommaer.\n"
-"                      Uden dette vil kun den første konto blive aktiveret.\n"
-"  --display=SKÆRM     X-skærm der skal benyttes\n"
-"  -v, --version       vis nuværende version og afslut\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Brug: %s [TILVALG]...\n"
-"\n"
-"  -c, --config=MAPPE  brug MAPPE for opsætningsfiler\n"
-"  -d, --debug         udskriv fejlsøgningsbeskeder til stdout\n"
-"  -h, --help          vis denne hjælp og afslut\n"
-"  -m, --multiple      tillad flere instanser\n"
-"  -n, --nologin       log ikke ind automatisk\n"
-"  -l, --login[=NAVN]  aktivér angivede konti (valgfrit argument NAVN\n"
-"                      angiver konti der skal benyttes, adskilt af kommaer.\n"
-"                      Uden dette vil kun den første konto blive aktiveret.\n"
-"  --display=SKÆRM     X-skærm der skal benyttes\n"
-"  -v, --version       vis nuværende version og afslut\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "Tillad flere samtidige indlogninger"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12210,24 +12858,15 @@ msgstr ""
 "får en backtrace, så læs instruktionerne på\n"
 "%swiki/GetABacktrace\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Afslutter fordi en anden libpurple-klient allerede kører.\n"
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
-
-#, fuzzy
-msgid "Calling..."
-msgstr "Udregner..."
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12236,6 +12875,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Pause"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12280,6 +12925,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Du har fået post!</span>"
 msgid "New Pounces"
 msgstr "Tilføj venneovervågning"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -12412,49 +13064,65 @@ msgstr "_Gentages"
 msgid "Pounce Target"
 msgstr "Overvåg mål"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "Starter med at skrive"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "Pause ved tastning"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "Logger på"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "%s returnerede fra inaktivitet (%s)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "Returnerer fra fravær"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "Stoppet med at skrive"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "Logger af"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "Bliver inaktiv"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "Hvis fraværende"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "Send en besked"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "Ukendt hændelse ved overvågning. Venligst rapportér dette!"
+
+msgid "(Custom)"
+msgstr ""
+
+msgid "Penguin Pimps"
+msgstr "Penguin Pimps"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Venneliste"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -12468,29 +13136,40 @@ msgstr "Smiley-tema kunne ikke udpakkes."
 msgid "Theme failed to copy."
 msgstr "Smiley-tema kunne ikke udpakkes."
 
-msgid "Install Theme"
-msgstr "Installér tema"
+#, fuzzy
+msgid "Theme Selections"
+msgstr "Browservalg"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "Vælg et smiley-tema som du gerne vil bruge fra listen forneden. Nye temaer "
 "kan installeres ved at træk-og-slippe dem ind i tema listen."
 
-msgid "Icon"
-msgstr "Ikon"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "Venneliste"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "Status for %s"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "Smiley-temaer"
 
 msgid "Keyboard Shortcuts"
 msgstr "Tastaturgenveje"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "_Afslut samtaler med Escape-tasten"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "Venneliste"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12573,14 +13252,19 @@ msgstr "Brug blød rullebjælke"
 msgid "F_lash window when IMs are received"
 msgstr "_Blink vindue når beskeder modtages"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Håndtér tilpassede smileyer"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Maksimal svar-udløbstid:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Mindste højde, i linjer, af indtastningsfelt:"
 
 msgid "Font"
 msgstr "Skrifttype"
-
-msgid "Use document font from _theme"
-msgstr "Brug dokument strifttype fra _tema"
 
 msgid "Use font from _theme"
 msgstr "Brug skrifttype fra _tema"
@@ -12604,12 +13288,20 @@ msgstr "Kan ikke starte proxy-konfigurationsprogram."
 msgid "Cannot start browser configuration program."
 msgstr "Kan ikke starte konfigurationsprogram til browser."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Eksempel: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Slå fra"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Find IP-adresse _automatisk"
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ST_UN server:"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Eksempel: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Offentlig _IP-adresse:"
@@ -12620,53 +13312,41 @@ msgstr "Porte"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Aktivér automatisk ruter portvideresendelse"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "Angiv _manuelt område af porte der skal lyttes på"
 
-msgid "_Start port:"
-msgstr "_Start port:"
+#, fuzzy
+msgid "_Start:"
+msgstr "_Status:"
 
-msgid "_End port:"
-msgstr "Slut _port:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Udvid"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
 
-msgid "Proxy Server &amp; Browser"
-msgstr "Proxy-server &amp; Browser"
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN server:"
 
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>Proxy-konfigurationsprogram blev ikke fundet.</b>"
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "UDP port"
 
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>Browser-konfigurationsprogram blev ikke fundet.</b>"
+#, fuzzy
+msgid "T_CP Port:"
+msgstr "UDP port"
 
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-"Proxy- og Browserindstillinger konfigureres\n"
-"i GNOME-indstillinger"
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Brugernavn:"
 
-msgid "Configure _Proxy"
-msgstr "Konfigurér _proxy"
-
-msgid "Configure _Browser"
-msgstr "Konfigurér _browser"
-
-msgid "Proxy Server"
-msgstr "Server"
-
-msgid "No proxy"
-msgstr "Ingen proxy"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Benyt fjern-DNS med SOCKS4-proxyer"
-
-msgid "_User:"
-msgstr "_Bruger:"
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Adgangskode:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -12683,6 +13363,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Standardskrivebord"
 
@@ -12701,11 +13386,31 @@ msgstr "Firebird"
 msgid "Epiphany"
 msgstr "Epiphany"
 
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
+
 msgid "Manual"
 msgstr "Andet program"
 
 msgid "Browser Selection"
 msgstr "Browservalg"
+
+#, fuzzy
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+"Proxy- og Browserindstillinger konfigureres\n"
+"i GNOME-indstillinger"
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>Browser-konfigurationsprogram blev ikke fundet.</b>"
+
+msgid "Configure _Browser"
+msgstr "Konfigurér _browser"
 
 msgid "_Browser:"
 msgstr "_Browser:"
@@ -12729,6 +13434,42 @@ msgid ""
 msgstr ""
 "_Manuelt:\n"
 "(%s for URL)"
+
+msgid "Proxy Server"
+msgstr "Server"
+
+#, fuzzy
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+"Proxy- og Browserindstillinger konfigureres\n"
+"i GNOME-indstillinger"
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>Proxy-konfigurationsprogram blev ikke fundet.</b>"
+
+msgid "Configure _Proxy"
+msgstr "Konfigurér _proxy"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Benyt fjern-DNS med SOCKS4-proxyer"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "Proxy_type:"
+
+msgid "No proxy"
+msgstr "Ingen proxy"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Port:"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "Brugernavn:"
 
 msgid "Log _format:"
 msgstr "Log_format:"
@@ -12813,24 +13554,18 @@ msgstr "_Rapportér inaktiv tid:"
 msgid "Based on keyboard or mouse use"
 msgstr "Baseret på keyboard- eller musebrug"
 
+msgid "_Minutes before becoming idle:"
+msgstr "_Minutter før du bliver inaktiv:"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "Ændr status ved _inaktivitet"
+
 msgid "_Auto-reply:"
 msgstr "_Automatisk svar:"
 
 msgid "When both away and idle"
 msgstr "Når både fraværende og inaktiv"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Automatisk fraværende"
-
-msgid "_Minutes before becoming idle:"
-msgstr "_Minutter før du bliver inaktiv:"
-
-msgid "Change status when _idle"
-msgstr "Ændr status ved _inaktivitet"
-
-msgid "Change _status to:"
-msgstr "Ændr _status til:"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -12845,14 +13580,15 @@ msgstr "Status som skal _bruges ved opstart:"
 msgid "Interface"
 msgstr "Grænseflade"
 
-msgid "Smiley Themes"
-msgstr "Smiley-temaer"
-
 msgid "Browser"
 msgstr "Browser"
 
 msgid "Status / Idle"
 msgstr "Status / inaktiv"
+
+#, fuzzy
+msgid "Themes"
+msgstr "Smiley-temaer"
 
 msgid "Allow all users to contact me"
 msgstr "Tillad alle brugere at kontakte mig"
@@ -13039,6 +13775,9 @@ msgstr "Statusvælger"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Den følgende fejl opstod ved indlæsning: %s %s"
@@ -13093,10 +13832,13 @@ msgstr ""
 "Du kan indsætte dette billede i beskeden, eller bruge det som venneikon for "
 "denne bruger"
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Kan ikke sende starter"
@@ -13129,17 +13871,6 @@ msgstr "Ikon fejl"
 msgid "Could not set icon"
 msgstr "Kunne ikke opsætte ikon"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Kunne ikke åbne fil \"%s\": %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"Kunne ikke indlæse billeder \"%s\": årsag ikke kendt, måske en ødelagt "
-"billedefil"
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "_Åbn henvisning i:"
@@ -13150,11 +13881,36 @@ msgstr "_Kopiér henvisningsadresse"
 msgid "_Copy Email Address"
 msgstr "_Kopier e-postadresse"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "Åbn fil..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "Logmappe"
+
 msgid "Save File"
 msgstr "Gem fil"
 
+#, fuzzy
+msgid "_Play Sound"
+msgstr "Afspil en lyd"
+
+#, fuzzy
+msgid "_Save File"
+msgstr "Gem fil"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "Er du sikker på at du vil slette %s?"
+
 msgid "Select color"
 msgstr "Vælg farve"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Alias"
@@ -13186,9 +13942,6 @@ msgstr "Pidgin værktøjstip"
 msgid "Pidgin smileys"
 msgstr "Pidgin smileyer"
 
-msgid "Penguin Pimps"
-msgstr "Penguin Pimps"
-
 msgid "Selecting this disables graphical emoticons."
 msgstr "Slår grafiske humørikoner fra."
 
@@ -13198,7 +13951,8 @@ msgstr "intet"
 msgid "Small"
 msgstr "Lille"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Mindre udgaver af standardsmileyerne"
 
 msgid "Response Probability:"
@@ -13239,82 +13993,6 @@ msgstr "Tilængelighedsforudsigelses-udvidelsesmodul."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Viser statistiske oplysninger om dine venners tilgængelighed"
-
-#, fuzzy
-msgid "Server name request"
-msgstr "Serveradresse"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Indtast en konference-server"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Vælg en konference-server at slå op"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "Online tjenester"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "Send venneliste"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "Bliver fraværende"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Logmappe"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Lydvalg"
-
-#, fuzzy
-msgid "PubSub Leaf"
-msgstr "PubSub-tjeneste"
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Beskrivelse:</b> Skræmmende"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Besked ved tjenesteopdagelse"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_Browser:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "Bruger eksisterer ikke"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Server understøtter ikke blokering"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Besked ved tjenesteopdagelse"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Dette udvidelsesmodul er nyttigt for fejlsøgning af XMPP-servere eller "
-"klienter."
 
 msgid "Buddy is idle"
 msgstr "Ven er inaktiv"
@@ -13407,6 +14085,87 @@ msgstr "Anvend i samtaler"
 
 msgid "Apply in IMs"
 msgstr "Tilføj i beskeder"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Serveradresse"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Indtast en konference-server"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Vælg en konference-server at slå op"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Online tjenester"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Send venneliste"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Bliver fraværende"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Logmappe"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Lydvalg"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub-tjeneste"
+
+msgid "Other"
+msgstr "Andet"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Beskrivelse:</b> Skræmmende"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Besked ved tjenesteopdagelse"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Browser:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Bruger eksisterer ikke"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Server understøtter ikke blokering"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Besked ved tjenesteopdagelse"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Dette udvidelsesmodul er nyttigt for fejlsøgning af XMPP-servere eller "
+"klienter."
 
 msgid "By conversation count"
 msgstr "Efter antallet af samtaler"
@@ -13840,6 +14599,9 @@ msgstr "GtkTreeView horisontal separering"
 msgid "Conversation Entry"
 msgstr "Samtaler"
 
+msgid "Conversation History"
+msgstr "Samtale historik"
+
 msgid "Request Dialog"
 msgstr "Anmodnings dialog"
 
@@ -14047,10 +14809,13 @@ msgstr "Ignorér"
 msgid "Founder"
 msgstr "Højere"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14170,8 +14935,20 @@ msgstr "Vis iChat-agtige tidsstempler hvert N'te minut."
 msgid "Timestamp Format Options"
 msgstr "Formatteringsindstillinger for tidsstempel"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Tving 24-timers tidsformat"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Standardskrivebord"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Tving 24-timers tidsformat"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Tving 24-timers tidsformat"
 
 msgid "Show dates in..."
@@ -14211,6 +14988,76 @@ msgid ""
 msgstr ""
 "Dette modul tillader brugeren selv at tilpasse formatet på tidsstempler i "
 "samtaler og logs."
+
+#, fuzzy
+msgid "Audio"
+msgstr "Auto"
+
+#, fuzzy
+msgid "Video"
+msgstr " Video"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Udvidelsesmoduler"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Enhed"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Udvidelsesmoduler"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Enhed"
+
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "L_ydstyrke:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Grænseværdi:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Mikrofon"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Redigér indstillinger"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
 
 msgid "Opacity:"
 msgstr "Ugennemsigtighed:"
@@ -14268,9 +15115,6 @@ msgstr ""
 "\n"
 "* Bemærk: Dette modul kræver Win2000 eller bedre."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ kørselstidsversion"
-
 #. Autostart
 msgid "Startup"
 msgstr "Opstart"
@@ -14278,6 +15122,10 @@ msgstr "Opstart"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Start %s ved Windows opstart"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "Tillad flere samtidige indlogninger"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dockbar venneliste"
@@ -14320,15 +15168,6 @@ msgstr "Konto: "
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>Ikke forbundet til XMPP</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "Indsæt en <iq/>-stanza."
-
-msgid "Insert a <presence/> stanza."
-msgstr "Indsæt en <presence/>-stanza."
-
-msgid "Insert a <message/> stanza."
-msgstr "Indsæt et <message/>-vers."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14336,10 +15175,1187 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Send og modtag rå XMPP-stanzas."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette udvidelsesmodul er nyttigt for fejlsøgning af XMPP-servere eller "
 "klienter."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) er frigivet under GPL licensen. Licensen er kun medtaget her til "
+"generel orientering. $_CLICK"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+"Et multi-platform grafisk interface udviklingsværktøj, bruges af Pidgin"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Basale Pidgin filer og biblioteker"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Standardskrivebord"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ kørselstidsversion"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Beliggenhed"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Næste >"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Internet Besked"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Genvej"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Opstart"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Afinstallationen kunne ikke finde Pidgin i registreringsdatabasen.$"
+"\\rMuligvis har en anden bruger installeret programmet."
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Besøg Pidgin's hjemmeside"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "Du har ikke tilladelse til at afinstallere dette program."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Afvis automatisk fra brugere der ikke er i min venneliste"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Besked til anmodning om godkendelse:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Venligst godkend mig!"
+
+#~ msgid "Aquarius"
+#~ msgstr "Vandmand"
+
+#~ msgid "Pisces"
+#~ msgstr "Fisk"
+
+#~ msgid "Aries"
+#~ msgstr "Vædder"
+
+#~ msgid "Taurus"
+#~ msgstr "Tyr"
+
+#~ msgid "Gemini"
+#~ msgstr "Tvilling"
+
+#~ msgid "Cancer"
+#~ msgstr "Krebs"
+
+#~ msgid "Leo"
+#~ msgstr "Løve"
+
+#~ msgid "Virgo"
+#~ msgstr "Jomfru"
+
+#~ msgid "Libra"
+#~ msgstr "Vægt"
+
+#~ msgid "Scorpio"
+#~ msgstr "Skorpion"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Skytte"
+
+#~ msgid "Capricorn"
+#~ msgstr "Stenbuk"
+
+#~ msgid "Rat"
+#~ msgstr "Rot"
+
+#~ msgid "Ox"
+#~ msgstr "Tyr"
+
+#~ msgid "Tiger"
+#~ msgstr "Tiger"
+
+#~ msgid "Rabbit"
+#~ msgstr "Kanin"
+
+#~ msgid "Dragon"
+#~ msgstr "Drage"
+
+#~ msgid "Snake"
+#~ msgstr "Slange"
+
+#~ msgid "Horse"
+#~ msgstr "Hest"
+
+#~ msgid "Goat"
+#~ msgstr "Ged"
+
+#~ msgid "Monkey"
+#~ msgstr "Abe"
+
+#~ msgid "Rooster"
+#~ msgstr "Hane"
+
+#~ msgid "Dog"
+#~ msgstr "Hund"
+
+#~ msgid "Pig"
+#~ msgstr "Gris"
+
+#~ msgid "Visible"
+#~ msgstr "Synlig"
+
+#~ msgid "Friend Only"
+#~ msgstr "Kun ven"
+
+#~ msgid "Private"
+#~ msgstr "Privat"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ-nummer"
+
+#~ msgid "Country/Region"
+#~ msgstr "Land/Region"
+
+#~ msgid "Province/State"
+#~ msgstr "Provins/Stat"
+
+#~ msgid "Zipcode"
+#~ msgstr "Postnummer"
+
+#~ msgid "Phone Number"
+#~ msgstr "Telefonnummer"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Godkend tilføjelse"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Mobilnummer"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Personlig introduktion"
+
+#~ msgid "City/Area"
+#~ msgstr "By/område"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "Offentliggør mobil"
+
+#~ msgid "Publish Contact"
+#~ msgstr "Offentliggør kontakt"
+
+#~ msgid "College"
+#~ msgstr "Fold sammen"
+
+#~ msgid "Horoscope"
+#~ msgstr "Horoskop"
+
+#~ msgid "Zodiac"
+#~ msgstr "Stjernetegn"
+
+#~ msgid "Blood"
+#~ msgstr "Blod"
+
+#~ msgid "True"
+#~ msgstr "Sand"
+
+#~ msgid "False"
+#~ msgstr "Falsk"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Ændr kontakt"
+
+#~ msgid "Modify Address"
+#~ msgstr "Ændr adresse"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Ændr udvidet information"
+
+#~ msgid "Modify Information"
+#~ msgstr "Ændr information"
+
+#~ msgid "Update"
+#~ msgstr "Opdatér"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "Kunne ikke ændre venneinformation."
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "Venneikon"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "Ret"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "Ret"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "Server travl"
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u kræver godkendelse"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Tilføj venne spørgsmål"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Indtast svar her"
+
+#~ msgid "Send"
+#~ msgstr "Send"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Ugyldigt svar."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Beklager, du er ikke min type."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u mangler godkendelse"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Tilføj vennegodkendelse"
+
+#~ msgid "Enter request here"
+#~ msgstr "Indtast anmodning her"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Vil du være min ven?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ-ven"
+
+#~ msgid "Add buddy"
+#~ msgstr "Tilføj ven"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Ugyldigt QQ-nummer"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Godkendelse blev ikke sendt"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Kunne ikke fjerne vennen %u"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Fejl ved fjernelse af dig fra %d's venneliste"
+
+#~ msgid "No reason given"
+#~ msgstr "Ingen grund givet"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "Du er blevet tilføjet af %s"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Vil du tilføje ham?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Afvis af %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "Besked: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "Gruppe-id"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Indtast dit Qun-nummer"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Du kan kun søge efter permanente Qun\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(Ugyldig UTF-8-streng)"
+
+#~ msgid "Not member"
+#~ msgstr "Ikke medlem"
+
+#~ msgid "Member"
+#~ msgstr "Medlem"
+
+#~ msgid "Requesting"
+#~ msgstr "Anmoder"
+
+#~ msgid "Admin"
+#~ msgstr "Admin"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Rumliste"
+
+#~ msgid "Notice"
+#~ msgstr "Bemærk"
+
+#~ msgid "Detail"
+#~ msgstr "Detalje"
+
+#~ msgid "Creator"
+#~ msgstr "Opretter"
+
+#~ msgid "Category"
+#~ msgstr "Kategori"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun'en tillader ikke andre at tilslutte"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Tilslut QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Indtast forespørgsel her"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Tilsluttet Qun %s (%u) problemfrit"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Tilsluttet Qun problemfrit"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u nægtet tilslutning"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun-operation"
+
+#~ msgid "Failed:"
+#~ msgstr "Fejlede:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Tilslut Qun, ukendt svar"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Afslut Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Bemærk, hvis du er opretteren, \n"
+#~ "vil denne operation måske fjerne denne Qun."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Beklager, du er ikke vores type"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Ændrede Qun-medlemmer problemfrit"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Ændrede Qun-information problemfrit"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Du har oprettet en Qun"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Vil du opsætte detaljeret information nu?"
+
+#~ msgid "Setup"
+#~ msgstr "Opsætning"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u anmoder om at tilslutte Qun %u for %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u anmoder om at tilslutte Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Kunne ikke tilslutte Qun %u, styret af admin %u"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Qun-tilslutning af %u er godkendt af admin %u for %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Fjernede vennen %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>Ny ven %u tilsluttet.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Ukendt-%d"
+
+#~ msgid "Level"
+#~ msgstr "Niveau"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr " Video"
+
+#~ msgid " Zone"
+#~ msgstr " Zone"
+
+#~ msgid "Flag"
+#~ msgstr "Flag"
+
+#~ msgid "Ver"
+#~ msgstr "Ver"
+
+#~ msgid "Invalid name"
+#~ msgstr "Ugyldigt navn"
+
+#~ msgid "Select icon..."
+#~ msgstr "Vælg ikon..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Logind tid</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Totale venner tilkoblet</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Sidste opdatering</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Server</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Klientmærke</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Forbindelsestilstand</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Min internet IP</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Sendt</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Gensend</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Tabt</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Modtaget</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Modtaget duplikat</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Tid</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Oprindelig forfatter</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Kode bidragydere</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Elskede programrettelsesskrivere</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>Bekræft anerkendelse</b>:<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Oprindelig forfatter</b>:<br>\n"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>Og alle drengene i baggrunden...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Vær velkommen til at tilslutte os!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "Om OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Ændr adgangskode"
+
+#~ msgid "Account Information"
+#~ msgstr "Kontoinformation"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Opdatér alle QQ Qun'er"
+
+#~ msgid "About OpenQ"
+#~ msgstr "Om OpenQ"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Ændr adresse"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ-protokoludvidelsesmodul"
+
+#~ msgid "Auto"
+#~ msgstr "Auto"
+
+#~ msgid "Select Server"
+#~ msgstr "Vælg server"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Tilslut med TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "Vis serverbemærkning"
+
+#~ msgid "Show server news"
+#~ msgstr "Vis servernyheder"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Vis samtalerum når besked kommer"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Hold i live interval (sekunder)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Opdateringsinterval (sekunder)"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Kan ikke afkryptere serversvar"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Fejl ved forespørgsel efter nøgle, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Ugyldig nøglelængde, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX er for øjeblikket ikke understøttet"
+
+#~ msgid "Activation required"
+#~ msgstr "Aktivering krævet"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Ukendt svarkode ved indlogning i (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "Anmoder om captcha"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Kontrollerer captcha"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "Captcha-godkendelse fejlede"
+
+#~ msgid "Captcha Image"
+#~ msgstr "Captcha-billede"
+
+#~ msgid "Enter code"
+#~ msgstr "Indtast kode"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "QQ Captcha-godkendelse"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "Indtast teksten fra billedet"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Ukendt svar ved kontrol af adgangskode (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ukendt svarkode ved indlogning i (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Sokkel-fejl"
+
+#~ msgid "Getting server"
+#~ msgstr "Finder server"
+
+#~ msgid "Requesting token"
+#~ msgstr "Anmoder om nøgle"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "Ugyldig server eller port"
+
+#~ msgid "Connecting to server"
+#~ msgstr "Tilslutter server"
+
+#~ msgid "QQ Error"
+#~ msgstr "QQ-fejl"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Servernyheder:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "Fra %s:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Server notits fra %s: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Ukendt SERVER CMD"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Fejlsvar %s(0x%02X)\n"
+#~ "Rum %u, svar 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun-kommando"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Kan ikke afkryptere logindsvar"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Ukendt LOGIN CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Ukendt CLIENT CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d har afslået filen %s"
+
+#~ msgid "File Send"
+#~ msgstr "Send fil"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d annullerede overførslen af %s"
+
+#~ msgid "bug master"
+#~ msgstr "fejlbestyrer"
+
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "En fejl skete ved forsøg på at åbne filen."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Filoverførsel fejlede"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Sæt dit synlige navn."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Fejl ved oprettelse af forbindelse"
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Kræv SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Tving gammel (port 5223) SSL"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Ude af stand til at vise en besked fra denne bruger, fordi den "
+#~ "indeholdte ugyldige bogstaver.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Søg efter ven udfra oplysninger"
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Den præsenterede certifikatkæde for %s er ikke gyldig."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "SecurID-nøglen du indtastede er ugyldig."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Kælenavn"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Sæt mobiltelefonnummer..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Grænse til vært"
+
+#~ msgid "Rate to client"
+#~ msgstr "Grænse til klient"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Ukendt fejl."
+
+#~ msgid "Artist"
+#~ msgstr "Kunstner"
+
+#~ msgid "Album"
+#~ msgstr "Album"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Dit nuværende humør"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Brugerhumør"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Ændr adgangskode"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Jeg er her ikke lige nu"
+
+#~ msgid "Pager server"
+#~ msgstr "Bipper-server"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo-samtaleserver"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo-samtaleport"
+
+#~ msgid "Orientation"
+#~ msgstr "Placering"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Placering af systemområdet."
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Fejl ved oprettelse af forbindelse"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Kan ikke binde socket til port"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr ""
+#~ "Kunne ikke oprette sokkel:\n"
+#~ "%s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s sendte dig et vink!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Synligt navn ændres for ofte"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Denne Hotmail konto er måske ikke aktiv."
+
+#~ msgid "Profile URL"
+#~ msgstr "Profil URL"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN-protokoludvidelsesmodul"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s er ikke en gyldig gruppe."
+
+#~ msgid "Unknown error."
+#~ msgstr "Ukendt fejl."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s på %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Kunne ikke tilføje brugeren på %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Kunne ikke blokere bruger på %s (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Kunne ikke tillade bruger på %s (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%s kunne ikke tilføjes, fordi din venneliste er fuld."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s er ikke en gyldig passport-konto."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Tjeneste midlertidigt utilgængelig."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Kunne ikke omdøbe gruppe"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Kunne ikke slette gruppe"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s har tilføjet dig til hans eller hendes venneliste."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s har fjernet dig fra hans eller hendes venneliste."
+
+#, fuzzy
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Den sidste handling blev ikke udført, fordi du har overskredet grænsen. "
+#~ "Vent i 10 sekunder og prøv igen."
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">OSS:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC-kanal:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Fejlsøgningsoplysninger"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Ukendt filtype\n"
+#~ "\n"
+#~ "Anvender PNG."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Fejl ved skrivning af billede\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "(standard)"
+
+#~ msgid "Install Theme"
+#~ msgstr "Installér tema"
+
+#~ msgid "Icon"
+#~ msgstr "Ikon"
+
+#~ msgid "Use document font from _theme"
+#~ msgstr "Brug dokument strifttype fra _tema"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Proxy-server &amp; Browser"
+
+#~ msgid "Auto-away"
+#~ msgstr "Automatisk fraværende"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Kunne ikke åbne fil \"%s\": %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "Kunne ikke indlæse billeder \"%s\": årsag ikke kendt, måske en ødelagt "
+#~ "billedefil"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "Indsæt en <iq/>-stanza."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "Indsæt en <presence/>-stanza."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Indsæt et <message/>-vers."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Rodcertifikatet, som denne påstår at være udgivet af, er ukendt af Pidgin."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Send kvikbeskeder over flere protokoller"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Start port:"
+
+#~ msgid "_End port:"
+#~ msgstr "Slut _port:"
+
+#~ msgid "_User:"
+#~ msgstr "_Bruger:"
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "Udregner..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Ugyldig certifikatkæde"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Certifikatkæden, præsenteret af %s, har ikke en gyldig digital "
+#~ "underskrift fra den certificerende myndighed, som den påstår at have en "
+#~ "underskrift fra."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Ugyldig underskrift fra certificerende myndighed"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Tilslut/Deltag skjult konfiguration"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Mindste rumstørrelse"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Bruger inaktivitetstidsgrænse (i minutter)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Kunne ikke forbinde til server."
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "Kunne ikke åbne fil \"%s\": %s"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Kunne ikke indlæse SILC-nøglepar"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Din konto er låst. Log ind på Yahoo!-webstedet."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s sagde nej til din konference-invitiation til rum \"%s\" pga. \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Invitation afvist"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Proxy"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Euskera(Basque)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Hjælp via e-post:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "_Genoptag"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Brug: %s [TILVALG]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    brug DIR for opsætningsfiler\n"
+#~ "  -d, --debug         udskriv fejlsøgningsbeskeder til stdout\n"
+#~ "  -h, --help          vis denne hjælp og afslut\n"
+#~ "  -m, --multiple      tillad flere instanser\n"
+#~ "  -n, --nologin       log ikke ind automatisk\n"
+#~ "  -l, --login[=NAVN]  aktivér angivede konti (valgfrit argument NAVN\n"
+#~ "                      angiver konti der skal benyttes, adskilt af "
+#~ "kommaer.\n"
+#~ "                      Uden dette vil kun den første konto blive "
+#~ "aktiveret.\n"
+#~ "  --display=SKÆRM     X-skærm der skal benyttes\n"
+#~ "  -v, --version       vis nuværende version og afslut\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Brug: %s [TILVALG]...\n"
+#~ "\n"
+#~ "  -c, --config=MAPPE  brug MAPPE for opsætningsfiler\n"
+#~ "  -d, --debug         udskriv fejlsøgningsbeskeder til stdout\n"
+#~ "  -h, --help          vis denne hjælp og afslut\n"
+#~ "  -m, --multiple      tillad flere instanser\n"
+#~ "  -n, --nologin       log ikke ind automatisk\n"
+#~ "  -l, --login[=NAVN]  aktivér angivede konti (valgfrit argument NAVN\n"
+#~ "                      angiver konti der skal benyttes, adskilt af "
+#~ "kommaer.\n"
+#~ "                      Uden dette vil kun den første konto blive "
+#~ "aktiveret.\n"
+#~ "  --display=SKÆRM     X-skærm der skal benyttes\n"
+#~ "  -v, --version       vis nuværende version og afslut\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Kan ikke åbne socket"
@@ -14414,9 +16430,6 @@ msgstr ""
 #~ msgid "In-Band Registration"
 #~ msgstr "In-Band-registrering"
 
-#~ msgid "User Location"
-#~ msgstr "Brugerplacering"
-
 #~ msgid "User Avatar"
 #~ msgstr "Brugeravatar"
 
@@ -14428,9 +16441,6 @@ msgstr ""
 
 #~ msgid "Stream Initiation"
 #~ msgstr "Klargøring af strøm"
-
-#~ msgid "User Mood"
-#~ msgstr "Brugerhumør"
 
 #~ msgid "User Activity"
 #~ msgstr "Brugeraktivitet"
@@ -14449,9 +16459,6 @@ msgstr ""
 
 #~ msgid "Reachability Address"
 #~ msgstr "E-post-adresse"
-
-#~ msgid "User Profile"
-#~ msgstr "Brugerprofil"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14488,9 +16495,6 @@ msgstr ""
 
 #~ msgid "User Browsing"
 #~ msgstr "Bruger browser"
-
-#~ msgid "User Gaming"
-#~ msgstr "Bruger spiller"
 
 #~ msgid "User Viewing"
 #~ msgstr "Bruger ser"
@@ -14578,9 +16582,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Forbindelse lukket (skrivning)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Forbindelse lukket"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Fejl under læsning fra sokkel: %s"
 
@@ -14589,9 +16590,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "Kunne ikke skrive"
-
-#~ msgid "Could not connect"
-#~ msgstr "Kunne ikke forbinde"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Kunne ikke oprette lyttende sokkel"
@@ -14644,9 +16642,6 @@ msgstr ""
 #~ msgid "Please provide a shortcut to associate with the smiley."
 #~ msgstr "Angiv en genvej der skal tilknyttes smileyen."
 
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Vælg et billede til smileyen."
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Aktivér hvilket id?"
 
@@ -14661,9 +16656,6 @@ msgstr ""
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Størrelse på kontroller"
-
-#~ msgid "Invite message"
-#~ msgstr "Invitationsbesked"
 
 #~ msgid ""
 #~ "Please enter the name of the user you wish to invite,\n"
@@ -14760,9 +16752,6 @@ msgstr ""
 #~ "Du er logget ind og ud for mange gange indenfor et kort tidsrum. Vent ti "
 #~ "minutter og prøv så igen, for ellers skal du bare vente endnu længere."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Der opstod en ukendt fejl under logind: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "En ukendt fejl, %d, er opstået. Info: %s"
 
@@ -14790,7 +16779,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Kunne ikke åbne %s til skrivning!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Filoverførsel fejlede - den anden side har sikkert afbrudt."
 
 #~ msgid "Could not connect for transfer."
@@ -14824,9 +16813,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "Åbn henvisning i br_owser"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN server:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "Smiley _billede"
@@ -14890,10 +16876,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Update information"
 #~ msgstr "Opdatér min information"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "Hastighed:"
 
 #, fuzzy
 #~ msgid ""
@@ -15336,9 +17318,6 @@ msgstr ""
 #~ "Tilgængelighedsforudsigelses-udvidelsesmodulet (cap) bruges til at vise "
 #~ "statistik-information om venner i en brugers kontaktliste."
 
-#~ msgid "Conversation History"
-#~ msgstr "Samtale historik"
-
 #~ msgid "Log Viewer"
 #~ msgstr "Loglæser"
 
@@ -15506,9 +17485,6 @@ msgstr ""
 
 #~ msgid "_Default reply"
 #~ msgstr "_Standard-svar"
-
-#~ msgid "Status message"
-#~ msgstr "Status-besked"
 
 #~ msgid "Autoreply with status message"
 #~ msgstr "Automatisk svar med statusbesked"
@@ -15682,9 +17658,6 @@ msgstr ""
 #~ msgid "Unavailable"
 #~ msgstr "Ikke tilgængelig"
 
-#~ msgid "Crazychat"
-#~ msgstr "Skørchat"
-
 #~ msgid "Plugin to establish a Crazychat session."
 #~ msgstr "Plugin til at etablere en skørchat session."
 
@@ -15698,9 +17671,6 @@ msgstr ""
 
 #~ msgid "TCP port"
 #~ msgstr "TCP port"
-
-#~ msgid "UDP port"
-#~ msgstr "UDP port"
 
 #~ msgid "Feature Calibration"
 #~ msgstr "Funktionalitets justering"
@@ -15853,12 +17823,6 @@ msgstr ""
 #~ "Server kræevr TLS/SSL til logind.  Vælg \"Brug TLS hvis tilgængeligt\" i "
 #~ "kontoegenskaber"
 
-#~ msgid "Use TLS if available"
-#~ msgstr "Brug TLS hvis tilgængelig"
-
-#~ msgid "The user %s wants to add %s to his or her buddy list."
-#~ msgstr "Brugeren %s vil tilføje %s til sin venneliste."
-
 #~ msgid "_Authorize"
 #~ msgstr "_Godkend"
 
@@ -15918,12 +17882,6 @@ msgstr ""
 #~ msgid "Unable to open Direct IM"
 #~ msgstr "Kunne ikke oprette direkte forbindelse"
 
-#~ msgid "You have lost your connection to chat room %s."
-#~ msgstr "Du har tabt forbindelsen til samtalerummet %s."
-
-#~ msgid "Chat is currently unavailable"
-#~ msgstr "Samtale er ikke tilgængelig nu"
-
 #~ msgid ""
 #~ "Transfer of file %s timed out.\n"
 #~ " Try enabling proxy servers for file transfers in Accounts -> %s -> Edit "
@@ -15948,9 +17906,6 @@ msgstr ""
 #~ "Brugeren %s kræver godkendelse for at blive tilføjet til en venneliste."
 #~ "Vil du sende en anmodning om godkendelse?"
 
-#~ msgid "Request Authorization"
-#~ msgstr "Anmod om godkendelse"
-
 #~ msgid "_Request Authorization"
 #~ msgstr "_Anmod om godkendelse"
 
@@ -15970,9 +17925,6 @@ msgstr ""
 
 #~ msgid "Auth host"
 #~ msgstr "Godkendelses server"
-
-#~ msgid "Auth port"
-#~ msgstr "Godkendelses port"
 
 #~ msgid ""
 #~ "\n"

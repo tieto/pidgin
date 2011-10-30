@@ -29,8 +29,8 @@
  * as I want to be.  Thank you libxode for giving me a good starting point */
 #define _PURPLE_XMLNODE_C_
 
-#include "debug.h"
 #include "internal.h"
+#include "debug.h"
 
 #include <libxml/parser.h>
 #include <string.h>
@@ -62,7 +62,7 @@ new_node(const char *name, XMLNodeType type)
 xmlnode*
 xmlnode_new(const char *name)
 {
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	return new_node(name, XMLNODE_TYPE_TAG);
 }
@@ -73,11 +73,24 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	xmlnode *node;
 
 	g_return_val_if_fail(parent != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	node = new_node(name, XMLNODE_TYPE_TAG);
 
 	xmlnode_insert_child(parent, node);
+#if 0
+	/* This would give xmlnodes more appropriate namespacing
+	 * when creating them.  Otherwise, unless an explicit namespace
+	 * is set, xmlnode_get_namespace() will return NULL, when
+	 * there may be a default namespace.
+	 *
+	 * I'm unconvinced that it's useful, and concerned it may break things.
+	 *
+	 * _insert_child would need the same thing, probably (assuming
+	 * xmlns->node == NULL)
+	 */
+	xmlnode_set_namespace(node, xmlnode_get_default_namespace(node))
+#endif
 
 	return node;
 }
@@ -191,18 +204,6 @@ xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 }
 
 void
-xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value)
-{
-	xmlnode_set_attrib_full(node, attr, xmlns, NULL, value);
-}
-
-void
-xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value)
-{
-	xmlnode_set_attrib_full(node, attr, NULL, prefix, value);
-}
-
-void
 xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, const char *prefix, const char *value)
 {
 	xmlnode *attrib_node;
@@ -223,7 +224,7 @@ xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, cons
 
 
 const char *
-xmlnode_get_attrib(xmlnode *node, const char *attr)
+xmlnode_get_attrib(const xmlnode *node, const char *attr)
 {
 	xmlnode *x;
 
@@ -240,9 +241,9 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 }
 
 const char *
-xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
+xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const char *xmlns)
 {
-	xmlnode *x;
+	const xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(attr != NULL, NULL);
@@ -261,17 +262,51 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 
 void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 {
+	char *tmp;
 	g_return_if_fail(node != NULL);
 
-	g_free(node->xmlns);
+	tmp = node->xmlns;
 	node->xmlns = g_strdup(xmlns);
+
+	if (node->namespace_map) {
+		g_hash_table_insert(node->namespace_map,
+			g_strdup(""), g_strdup(xmlns));
+	}
+
+	g_free(tmp);
 }
 
-const char *xmlnode_get_namespace(xmlnode *node)
+const char *xmlnode_get_namespace(const xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 
 	return node->xmlns;
+}
+
+const char *xmlnode_get_default_namespace(const xmlnode *node)
+{
+	const xmlnode *current_node;
+	const char *ns = NULL;
+
+	g_return_val_if_fail(node != NULL, NULL);
+
+	current_node = node;
+	while (current_node) {
+		/* If this node does *not* have a prefix, node->xmlns is the default
+		 * namespace.  Otherwise, it's the prefix namespace.
+		 */
+		if (!current_node->prefix && current_node->xmlns) {
+			return current_node->xmlns;
+		} else if (current_node->namespace_map) {
+			ns = g_hash_table_lookup(current_node->namespace_map, "");
+			if (ns && *ns)
+				return ns;
+		}
+
+		current_node = current_node->parent;
+	}
+
+	return ns;
 }
 
 void xmlnode_set_prefix(xmlnode *node, const char *prefix)
@@ -286,6 +321,53 @@ const char *xmlnode_get_prefix(const xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 	return node->prefix;
+}
+
+const char *xmlnode_get_prefix_namespace(const xmlnode *node, const char *prefix)
+{
+	const xmlnode *current_node;
+
+	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(prefix != NULL, xmlnode_get_default_namespace(node));
+
+	current_node = node;
+	while (current_node) {
+		if (current_node->prefix && g_str_equal(prefix, current_node->prefix) &&
+				current_node->xmlns) {
+			return current_node->xmlns;
+		} else if (current_node->namespace_map) {
+			const char *ns = g_hash_table_lookup(current_node->namespace_map, prefix);
+			if (ns && *ns) {
+				return ns;
+			}
+		}
+
+		current_node = current_node->parent;
+	}
+
+	return NULL;
+}
+
+void xmlnode_strip_prefixes(xmlnode *node)
+{
+	xmlnode *child;
+	const char *prefix;
+
+	g_return_if_fail(node != NULL);
+
+	for (child = node->child; child; child = child->next) {
+		if (child->type == XMLNODE_TYPE_TAG)
+			xmlnode_strip_prefixes(child);
+	}
+
+	prefix = xmlnode_get_prefix(node);
+	if (prefix) {
+		const char *ns = xmlnode_get_prefix_namespace(node, prefix);
+		xmlnode_set_namespace(node, ns);
+		xmlnode_set_prefix(node, NULL);
+	} else {
+		xmlnode_set_namespace(node, xmlnode_get_default_namespace(node));
+	}
 }
 
 xmlnode *xmlnode_get_parent(const xmlnode *child)
@@ -455,12 +537,22 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 	if (node->namespace_map) {
 		g_hash_table_foreach(node->namespace_map,
 			(GHFunc)xmlnode_to_str_foreach_append_ns, text);
-	} else if (node->xmlns) {
-		if(!node->parent || !purple_strequal(node->xmlns, node->parent->xmlns))
+	} else {
+		/* Figure out if this node has a different default namespace from parent */
+		const char *xmlns = NULL;
+		const char *parent_xmlns = NULL;
+		if (!prefix)
+			xmlns = node->xmlns;
+
+		if (!xmlns)
+			xmlns = xmlnode_get_default_namespace(node);
+		if (node->parent)
+			parent_xmlns = xmlnode_get_default_namespace(node->parent);
+		if (!purple_strequal(xmlns, parent_xmlns))
 		{
-			char *xmlns = g_markup_escape_text(node->xmlns, -1);
-			g_string_append_printf(text, " xmlns='%s'", xmlns);
-			g_free(xmlns);
+			char *escaped_xmlns = g_markup_escape_text(xmlns, -1);
+			g_string_append_printf(text, " xmlns='%s'", escaped_xmlns);
+			g_free(escaped_xmlns);
 		}
 	}
 	for(c = node->child; c; c = c->next)
@@ -588,11 +680,9 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			const char *prefix = (const char *)attributes[i+1];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((const char *)attributes[i+3], attrib_len);
 			txt = attrib;
-			attrib = purple_unescape_html(txt);
+			attrib = purple_unescape_text(txt);
 			g_free(txt);
 			xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
 			g_free(attrib);
@@ -608,7 +698,7 @@ xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
-       	if(!element_name || !xpd->current || xpd->error)
+	if(!element_name || !xpd->current || xpd->error)
 		return;
 
 	if(xpd->current->parent) {

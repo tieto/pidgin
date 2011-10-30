@@ -67,7 +67,7 @@ struct _GntBindableClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
@@ -166,7 +166,7 @@ gboolean gnt_bindable_check_key(GntBindable *bindable, const char *keys);
  *
  * @return  @c TRUE if the action was performed successfully, @c FALSE otherwise.
  */
-gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...);
+gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Returns a GntTree populated with "key" -> "binding" for the widget.

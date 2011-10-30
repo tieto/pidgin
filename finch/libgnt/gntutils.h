@@ -66,7 +66,7 @@ int gnt_util_onscreen_width(const char *start, const char *end);
 const char *gnt_util_onscreen_width_to_pointer(const char *str, int len, int *w);
 
 /**
- * Inserts newlines in 'string' where necessary so that its onscreen width is 
+ * Inserts newlines in 'string' where necessary so that its onscreen width is
  * no more than 'maxw'.
  *
  * @param string  The string.
@@ -107,7 +107,7 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint, GValue *r
 
 /**
  * Get a helpful display about the bindings of a widget.
- * 
+ *
  * @param widget The widget to get bindings for.
  *
  * @return Returns a GntTree populated with "key" -> "binding" for the widget.
@@ -126,7 +126,7 @@ GntWidget * gnt_widget_bindings_view(GntWidget *widget);
  *      </vwindow>",
  *   2, &win, &button);
  * @endcode
- * 
+ *
  * @param string  The XML string.
  * @param num     The number of widgets to return, followed by 'num' GntWidget **
  */

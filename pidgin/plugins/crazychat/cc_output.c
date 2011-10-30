@@ -60,20 +60,20 @@ void Interpolate(struct output_instance* instance){
 	curr_mode = NORMAL;
 	return;
 */
-	
+
 	//find z plane from percentage of face
 	if(instance->features->head_size==0){
 		z = 5;
-	}	
+	}
 
 	temp = (GLfloat)instance->features->head_size/40.0;
 	//printf("head size %d\n", instance->features->head_size);
-	
+
 	minZ = ROOT_3;
 	z = ROOT_3*(PERSONS_HEAD/temp);
 	if(z < minZ)
 		z = minZ;
-	 	
+
 	//these calculations are based on a 90 degree viewing angle
 	rangeX = z*(TAN_30)*2;
 	rangeY = window_aspect*rangeX;
@@ -87,7 +87,7 @@ void Interpolate(struct output_instance* instance){
 		x = 0 + temp*rangeX/1.0;
 	}
 
-	temp = (GLfloat)instance->features->y;	
+	temp = (GLfloat)instance->features->y;
 
 	if(temp>50){
 		temp = (temp-50.0)/50.0;
@@ -113,14 +113,14 @@ void Interpolate(struct output_instance* instance){
 
 	mouth_open = (float)instance->features->mouth_open/105;
 	count++;
-	//mouth_open = (count%10)/(10);	
+	//mouth_open = (count%10)/(10);
 
 	if(instance->features->left_eye_open==0){
 		left_open = FALSE;
 	}
 	else{
 		left_open = TRUE;
-	}	
+	}
 
 	if(instance->features->right_eye_open==0)
 		right_open = FALSE;
@@ -141,7 +141,7 @@ void Interpolate(struct output_instance* instance){
 		which_face=DOG;
 	else
 		which_face=SHARK;
-	
+
 }
 
 
@@ -151,7 +151,7 @@ gboolean configure(GtkWidget *widget,
 {
 	GdkGLContext *glcontext = gtk_widget_get_gl_context(widget);
 	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable(widget);
-	
+
 	GLfloat w = widget->allocation.width;
 	GLfloat h = widget->allocation.height;
 	GLfloat aspect;
@@ -174,7 +174,7 @@ gboolean configure(GtkWidget *widget,
 		window_aspect = h / w;
 	}
 
-	//glOrtho(-10, 10, -10,10, 0.0001, 1000); 
+	//glOrtho(-10, 10, -10,10, 0.0001, 1000);
 	gluPerspective(90.0, window_aspect, 0.0001, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -194,7 +194,7 @@ gboolean draw(GtkWidget *widget, GdkEventExpose *event,
 		fprintf(stderr,"null\n");
 	}
 	assert(instance);
-	Interpolate(instance);	
+	Interpolate(instance);
 
 	GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
 	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
@@ -212,11 +212,11 @@ gboolean draw(GtkWidget *widget, GdkEventExpose *event,
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	//glDisable(GL_CULL_FACE);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 	glTranslatef(x, y, -z);
 	if(instance->my_output==LOCAL){
 		if(which_face==DOG){
@@ -226,7 +226,7 @@ gboolean draw(GtkWidget *widget, GdkEventExpose *event,
 		else {
 			change_materials(local_shark_face, curr_materials, DOG_SHARK_CHANGE);
 			draw_face(local_shark_face, zrot, yrot, left_open, right_open, mouth_open, dir, curr_mode);
-		}	
+		}
 	}
 	else{
 		if(which_face==DOG){
@@ -245,7 +245,7 @@ gboolean draw(GtkWidget *widget, GdkEventExpose *event,
 	return TRUE;
 }
 
-void init (GtkWidget *widget, void *data) 
+void init (GtkWidget *widget, void *data)
 {
 	setupDrawlists(REMOTE);
 	setupLighting(widget);
@@ -282,14 +282,14 @@ void setupLighting(GtkWidget *widget)
         //glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
         glMateriali(GL_FRONT, GL_SHININESS, 128);
-        
+
         //glEnable(GL_CULL_FACE);
-        
+
         glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//glOrtho(-2, 2, -2, 2, 0.0001, 1000);
-	
+
 	if (w > h) {
 		window_aspect = w / h;
 	} else {

@@ -97,7 +97,7 @@ jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_ERROR)
 		return;
 
-	query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+	query = xmlnode_get_child_with_namespace(packet, "query", NS_DISCO_ITEMS);
 	if (!query)
 		return;
 	node = xmlnode_get_attrib(query, "node");
@@ -125,7 +125,8 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	xmlnode_set_attrib(command,"node",actionInfo->node);
 
 	/* cancel is handled differently on ad-hoc commands than regular forms */
-	if(!strcmp(xmlnode_get_namespace(result),"jabber:x:data") && !strcmp(xmlnode_get_attrib(result, "type"),"cancel")) {
+	if (purple_strequal(xmlnode_get_namespace(result), "jabber:x:data") &&
+			purple_strequal(xmlnode_get_attrib(result, "type"), "cancel")) {
 		xmlnode_set_attrib(command,"action","cancel");
 	} else {
 		if(actionhandle)
@@ -227,7 +228,8 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleAccount *account = purple_buddy_get_account(buddy);
-		JabberStream *js = purple_account_get_connection(account)->proto_data;
+		PurpleConnection *gc = purple_account_get_connection(account);
+		JabberStream *js = purple_connection_get_protocol_data(gc);
 
 		jabber_adhoc_execute(js, cmd);
 	}
@@ -275,7 +277,8 @@ jabber_adhoc_server_got_list_cb(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
                                 xmlnode *packet, gpointer data)
 {
-	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+			NS_DISCO_ITEMS);
 
 	jabber_adhoc_got_server_list(js, from, query);
 
@@ -291,8 +294,9 @@ void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query)
 }
 
 void jabber_adhoc_server_get_list(JabberStream *js) {
-	JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#items");
-	xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_ITEMS);
+	xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query",
+			NS_DISCO_ITEMS);
 
 	xmlnode_set_attrib(iq->node,"to",js->user->domain);
 	xmlnode_set_attrib(query,"node","http://jabber.org/protocol/commands");
@@ -318,7 +322,7 @@ static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;
-		JabberStream *js = gc->proto_data;
+		JabberStream *js = purple_connection_get_protocol_data(gc);
 
 		jabber_adhoc_execute(js, cmd);
 	}

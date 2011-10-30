@@ -24,6 +24,7 @@
 #ifndef _PURPLE_GG_H
 #define _PURPLE_GG_H
 
+#undef printf
 #include <libgadu.h>
 #include "internal.h"
 #include "search.h"
@@ -58,12 +59,14 @@ typedef struct
 typedef struct {
 
 	struct gg_session *session;
+	guint inpa;
 	GGPToken *token;
 	GList *chats;
 	GGPSearches *searches;
 	int chats_count;
 	GList *pending_richtext_messages;
 	GHashTable *pending_images;
+	gboolean status_broadcasting; //When TRUE status is visible to all, when FALSE status is visible only to friends.
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */

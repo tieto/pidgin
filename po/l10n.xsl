@@ -12,7 +12,6 @@
 			<head>
 				<title><xsl:value-of select='@name'/> translation statistics</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-				<!-- <link rel="Stylesheet" href="/gaim.css" type="text/css" media="screen" /> -->
 				<style type="text/css">
 					.bargraph {
 						width: 200px;

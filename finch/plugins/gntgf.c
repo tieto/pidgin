@@ -134,7 +134,7 @@ urgent(void)
 	ids = getenv("WINDOWID");
 	if (ids == NULL)
 		return;
-	
+
 	id = atoi(ids);
 
 	dpy = XOpenDisplay(NULL);
@@ -168,7 +168,7 @@ notify(PurpleConversation *conv, const char *fmt, ...)
 		beep();
 
 	if (conv != NULL) {
-		FinchConv *fc = conv->ui_data;
+		FinchConv *fc = FINCH_CONV(conv);
 		if (gnt_widget_has_focus(fc->window))
 			return;
 	}
@@ -255,8 +255,8 @@ received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
 
 	if (flags & PURPLE_MESSAGE_WHISPER)
 		return;
-	
-	nick = PURPLE_CONV_CHAT(conv)->nick;
+
+	nick = purple_conv_chat_get_nick(PURPLE_CONV_CHAT(conv));
 
 	if (g_utf8_collate(sender, nick) == 0)
 		return;
@@ -401,7 +401,7 @@ init_plugin(PurplePlugin *plugin)
 {
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gnt");
-	
+
 	purple_prefs_add_none("/plugins/gnt/gntgf");
 	purple_prefs_add_none(PREFS_EVENT);
 

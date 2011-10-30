@@ -194,15 +194,12 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 {
 	GtkTreeIter iter;
 	PurpleAccount *account;
-	PurplePounceEvent events;
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf;
 
 	account = purple_pounce_get_pouncer(pounce);
-
-	events = purple_pounce_get_events(pounce);
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
@@ -479,7 +476,7 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
 	gtk_imhtml_setup_entry(GTK_IMHTML(dialog->send_msg_entry),
-			(account && account->gc) ? account->gc->flags : PURPLE_CONNECTION_HTML);
+			(account && purple_account_get_connection(account)) ? purple_connection_get_flags(purple_account_get_connection(account)) : PURPLE_CONNECTION_HTML);
 }
 
 void
@@ -1063,15 +1060,6 @@ pounces_manager_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_dat
 	return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	(*(gint *)user_data)++;
-}
-#endif
-
 static void
 pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 {
@@ -1163,11 +1151,7 @@ pounce_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 	PouncesManager *dialog = user_data;
 	int num_selected = 0;
 
-#if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(sel);
-#else
-	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
-#endif
 
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
 	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
@@ -1237,20 +1221,10 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 static GtkWidget *
 create_pounces_list(PouncesManager *dialog)
 {
-	GtkWidget *sw;
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
-
-	/* Create the scrolled window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-						GTK_SHADOW_IN);
-	gtk_widget_show(sw);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(POUNCES_MANAGER_NUM_COLUMNS,
@@ -1275,7 +1249,6 @@ create_pounces_list(PouncesManager *dialog)
 	/* Handle double-clicking */
 	g_signal_connect(G_OBJECT(treeview), "button_press_event",
 					 G_CALLBACK(pounce_double_click_cb), dialog);
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
 
 	/* Pouncee Column */
@@ -1335,7 +1308,7 @@ create_pounces_list(PouncesManager *dialog)
 	/* Populate list */
 	populate_pounces_list(dialog);
 
-	return sw;
+	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
 
 void
@@ -1455,7 +1428,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		 * Here we place the protocol name in the pounce dialog to lessen
 		 * confusion about what protocol a pounce is for.
 		 */
-		tmp = g_strdup_printf(
+		tmp = g_strdup(
 				   (events & PURPLE_POUNCE_TYPING) ?
 				   _("Started typing") :
 				   (events & PURPLE_POUNCE_TYPED) ?
@@ -1510,7 +1483,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(conv, NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
+			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 
@@ -1546,53 +1519,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 				g_free(localecmd);
 			}
 #else /* !_WIN32 */
-			PROCESS_INFORMATION pi;
-			BOOL retval;
-			gchar *message = NULL;
-
-			memset(&pi, 0, sizeof(pi));
-
-			if (G_WIN32_HAVE_WIDECHAR_API ()) {
-				STARTUPINFOW si;
-				wchar_t *wc_cmd = g_utf8_to_utf16(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessW(NULL, wc_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(wc_cmd);
-			} else {
-				STARTUPINFOA si;
-				char *l_cmd = g_locale_from_utf8(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessA(NULL, l_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(l_cmd);
-			}
-
-			if (retval) {
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
-			} else {
-				message = g_win32_error_message(GetLastError());
-			}
-
-			purple_debug_info("pounce",
-					"Pounce execute command called for: "
-					"%s\n%s%s%s",
-						command,
-						retval ? "" : "Error: ",
-						retval ? "" : message,
-						retval ? "" : "\n");
-			g_free(message);
+			winpidgin_shell_execute(command, "open", NULL);
 #endif /* !_WIN32 */
 		}
 	}

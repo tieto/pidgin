@@ -17,6 +17,7 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -78,7 +79,7 @@ static void silcpurple_verify_details_cb(PublicKeyVerify verify)
 static void silcpurple_verify_details(PublicKeyVerify verify, gint id)
 {
 	PurpleConnection *gc = verify->client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	silcpurple_show_public_key(sg, verify->entity_name, verify->public_key,
 				   G_CALLBACK(silcpurple_verify_details_cb),

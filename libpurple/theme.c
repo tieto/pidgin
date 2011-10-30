@@ -20,15 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-#include <string.h>
-
 #include "internal.h"
 #include "theme.h"
 #include "util.h"
 
 #define PURPLE_THEME_GET_PRIVATE(PurpleTheme) \
-	((PurpleThemePrivate *) ((PurpleTheme)->priv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((PurpleTheme), PURPLE_TYPE_THEME, PurpleThemePrivate))
 
 void purple_theme_set_type_string(PurpleTheme *theme, const gchar *type);
 
@@ -132,14 +129,6 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 }
 
 static void
-purple_theme_init(GTypeInstance *instance,
-		gpointer klass)
-{
-	PurpleTheme *theme = PURPLE_THEME(instance);
-	theme->priv = g_new0(PurpleThemePrivate, 1);
-}
-
-static void
 purple_theme_finalize(GObject *obj)
 {
 	PurpleTheme *theme = PURPLE_THEME(obj);
@@ -162,6 +151,8 @@ purple_theme_class_init(PurpleThemeClass *klass)
 	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PurpleThemePrivate));
 
 	obj_class->get_property = purple_theme_get_property;
 	obj_class->set_property = purple_theme_set_property;
@@ -190,7 +181,7 @@ purple_theme_class_init(PurpleThemeClass *klass)
 
 	/* TYPE STRING (read only) */
 	pspec = g_param_spec_string("type", "Type",
-			"The string represtenting the type of the theme",
+			"The string representing the type of the theme",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
@@ -225,7 +216,7 @@ purple_theme_get_type(void)
 			NULL, /* class_data */
 			sizeof(PurpleTheme),
 			0, /* n_preallocs */
-			purple_theme_init, /* instance_init */
+			NULL, /* instance_init */
 			NULL, /* value table */
 		};
 		type = g_type_register_static (G_TYPE_OBJECT,

@@ -27,9 +27,13 @@ use Locale::Language;
 
 $lang{'ca@valencia'} = "Catalan (Valencian)";
 $lang{'be@latin'} = "Belarusian (Latin)";
+$lang{bn_IN} = "Bengali-India";
 $lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
+$lang{mai} = "Maithili";
+$lang{mhr} = "Meadow Mari";
+$lang{ms_MY} = "Malay";
 $lang{my_MM} = "Burmese (Myanmar)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
 $lang{'sr@latin'} = "Serbian (Latin)";

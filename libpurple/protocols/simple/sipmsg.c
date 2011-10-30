@@ -55,15 +55,15 @@ struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
 }
 
 struct sipmsg *sipmsg_parse_header(const gchar *header) {
-	struct sipmsg *msg = g_new0(struct sipmsg,1);
-	gchar **parts, **lines = g_strsplit(header,"\r\n",0);
+	struct sipmsg *msg;
+	gchar **parts, **lines;
 	gchar *dummy, *dummy2, *tmp;
 	const gchar *tmp2;
 	int i = 1;
 
+	lines = g_strsplit(header,"\r\n",0);
 	if(!lines[0]) {
 		g_strfreev(lines);
-		g_free(msg);
 		return NULL;
 	}
 
@@ -71,10 +71,10 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	if(!parts[0] || !parts[1] || !parts[2]) {
 		g_strfreev(parts);
 		g_strfreev(lines);
-		g_free(msg);
 		return NULL;
 	}
 
+	msg = g_new0(struct sipmsg,1);
 	if(strstr(parts[0],"SIP")) { /* numeric response */
 		msg->method = g_strdup(parts[2]);
 		msg->response = strtol(parts[1],NULL,10);
@@ -90,7 +90,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		if(!parts[0] || !parts[1]) {
 			g_strfreev(parts);
 			g_strfreev(lines);
-			g_free(msg);
+			sipmsg_free(msg);
 			return NULL;
 		}
 		dummy = parts[1];
@@ -106,6 +106,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 			dummy2 = tmp;
 		}
 		sipmsg_add_header(msg, parts[0], dummy2);
+		g_free(dummy2);
 		g_strfreev(parts);
 	}
 	g_strfreev(lines);
@@ -116,9 +117,10 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 
 	if(msg->response) {
 		tmp2 = sipmsg_find_header(msg, "CSeq");
+		g_free(msg->method);
 		if(!tmp2) {
 			/* SHOULD NOT HAPPEN */
-			msg->method = 0;
+			msg->method = NULL;
 		} else {
 			parts = g_strsplit(tmp2, " ", 2);
 			msg->method = g_strdup(parts[1]);
@@ -168,7 +170,7 @@ char *sipmsg_to_string(const struct sipmsg *msg) {
 	return g_string_free(outstr, FALSE);
 }
 void sipmsg_add_header(struct sipmsg *msg, const gchar *name, const gchar *value) {
-	struct siphdrelement *element = g_new0(struct siphdrelement,1);
+	struct siphdrelement *element = g_new(struct siphdrelement,1);
 	element->name = g_strdup(name);
 	element->value = g_strdup(value);
 	msg->headers = g_slist_append(msg->headers, element);

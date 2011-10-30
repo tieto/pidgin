@@ -54,11 +54,13 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 	user = purple_buddy_get_protocol_data(buddy);
 	if (create && !user) {
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(buddy);
+
 		/* No MsimUser for this buddy; make one. */
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
+		user->id = purple_blist_node_get_int(node, "UserID");
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
@@ -69,6 +71,9 @@ void msim_user_free(MsimUser *user)
 {
 	if (!user)
 		return;
+
+	if (user->url_data != NULL)
+		purple_util_fetch_url_cancel(user->url_data);
 
 	g_free(user->client_info);
 	g_free(user->gender);
@@ -89,16 +94,13 @@ MsimUser *
 msim_find_user(MsimSession *session, const gchar *username)
 {
 	PurpleBuddy *buddy;
-	MsimUser *user;
 
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy, TRUE);
-
-	return user;
+	return msim_get_user_from_buddy(buddy, TRUE);
 }
 
 /**
@@ -115,27 +117,33 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	/* Useful to identify the account the tooltip refers to.
 	 *  Other prpls show this. */
 	if (user->username) {
-		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("User"), user->username);
 	}
 
 	/* a/s/l...the vitals */
 	if (user->age) {
 		char age[16];
 		g_snprintf(age, sizeof(age), "%d", user->age);
-		purple_notify_user_info_add_pair(user_info, _("Age"), age);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Age"), age);
 	}
 
 	if (user->gender && *user->gender) {
-		purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Gender"), user->gender);
 	}
 
 	if (user->location && *user->location) {
-		purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Location"), user->location);
 	}
 
 	/* Other information */
 	if (user->headline && *user->headline) {
-		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Headline"), user->headline);
 	}
 
 	if (user->buddy != NULL) {
@@ -151,7 +159,9 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 			str = msim_format_now_playing(artist, title);
 			if (str && *str) {
-				purple_notify_user_info_add_pair(user_info, _("Song"), str);
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Song"), str);
 			}
 			g_free(str);
 		}
@@ -161,7 +171,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	if (user->total_friends) {
 		char friends[16];
 		g_snprintf(friends, sizeof(friends), "%d", user->total_friends);
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"), friends);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Total Friends"), friends);
 	}
 
 	if (full) {
@@ -178,8 +188,11 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		} else if (cv) {
 			client = g_strdup_printf("Build %d", cv);
 		}
-		if (client && *client)
-			purple_notify_user_info_add_pair(user_info, _("Client Version"), client);
+		if (client && *client) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Client Version"), client);
+		}
 		g_free(client);
 	}
 
@@ -193,7 +206,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		else
 			profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
 					user->id, _("View web profile"));
-		purple_notify_user_info_add_pair(user_info, NULL, profile);
+		purple_notify_user_info_add_pair_html(user_info, NULL, profile);
 		g_free(profile);
 	}
 }
@@ -211,6 +224,8 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	MsimUser *user = (MsimUser *)user_data;
 	const char *name = purple_buddy_get_name(user->buddy);
 	PurpleAccount *account;
+
+	user->url_data = NULL;
 
 	purple_debug_info("msim_downloaded_buddy_icon",
 			"Downloaded %" G_GSIZE_FORMAT " bytes\n", len);
@@ -350,14 +365,6 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 			return;
 		}
 
-		if (user->temporary_user) {
-			/* This user will be destroyed soon; don't try to look up its image or avatar,
-			 * since that won't return immediately and we will end up accessing freed data.
-			 */
-			g_free(value_str);
-			return;
-		}
-
 		g_free(user->image_url);
 
 		user->image_url = value_str;
@@ -375,7 +382,9 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 
 		/* Only download if URL changed */
 		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
-			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
+			if (user->url_data != NULL)
+				purple_util_fetch_url_cancel(user->url_data);
+			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, -1, msim_downloaded_buddy_icon, (gpointer)user);
 		}
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
@@ -403,7 +412,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
  *
  * @param session
  * @param msg The user information reply, with any amount of information.
- * @param user The structure to save to, or NULL to save in PurpleBuddy->proto_data.
+ * @param user The structure to save to, or NULL to save in PurpleBuddy's protocol_data.
  *
  * Variable information is saved to the passed MsimUser structure. Permanent
  * information (UserID) is stored in the blist node of the buddy list (and
@@ -418,7 +427,6 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 	gchar *username;
 	MsimMessage *body, *body_node;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	body = msim_msg_get_dictionary(msg, "body");
@@ -568,9 +576,8 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 {
 	MsimMessage *body;
 	gchar *field_name;
-	guint rid, cmd, dsn, lid;
+	guint rid, dsn, lid;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(user != NULL);
 	/* Callback can be null to not call anything, just lookup & store information. */
 	/*g_return_if_fail(cb != NULL);*/
@@ -582,8 +589,6 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	rid = msim_new_reply_callback(session, cb, data);
 
 	/* Send request */
-
-	cmd = MSIM_CMD_GET;
 
 	if (msim_is_userid(user)) {
 		field_name = "UserID";
@@ -606,7 +611,7 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	g_return_if_fail(msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, 1,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
 			"dsn", MSIM_TYPE_INTEGER, dsn,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, lid,
@@ -630,8 +635,6 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 
 	purple_debug_info("msim","username_is_set made\n");
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-
 	cmd = msim_msg_get_integer(userinfo, "cmd");
 	dsn = msim_msg_get_integer(userinfo, "dsn");
 	uid = msim_msg_get_integer(userinfo, "uid");
@@ -644,7 +647,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	if (!body) {
 		purple_debug_info("msim_username_is_set_cb", "No body");
 		/* Error: No body! */
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 	username = msim_msg_get_string(body, "UserName");
 	code = msim_msg_get_integer(body,"Code");
@@ -686,13 +689,13 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 					NULL)) {
 			/* Error! */
 			/* Can't set... Disconnect */
-			purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+			purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 		}
 
 	} else {
 		/* Error! */
 		purple_debug_info("msim","username_is_set Error: Invalid cmd/dsn/lid combination");
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 }
 
@@ -711,7 +714,6 @@ msim_set_username(MsimSession *session, const gchar *username,
 	MsimMessage *body;
 	guint rid;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(username != NULL);
 	g_return_if_fail(cb != NULL);
 
@@ -756,10 +758,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-
+	session = purple_connection_get_protocol_data(gc);
 
 	user_msg = msim_msg_new(
 			"user", MSIM_TYPE_STRING, g_strdup(msim_username_to_set),
@@ -787,7 +786,6 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 	purple_debug_info("msim_username_is_available_cb", "Look up username callback made\n");
 
 	msg = (MsimMessage *)data;
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(msg != NULL);
 
 	username = msim_msg_get_string(msg, "user");
@@ -795,7 +793,7 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("An error occurred while trying to set the username.  "
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 				"fuseaction=profile.username to set your username."));
@@ -853,9 +851,7 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("msim_check_username_availability_cb", "Checking username: %s\n", username_to_check);
 
@@ -882,7 +878,7 @@ void msim_do_not_set_username_cb(PurpleConnection *gc)
 	purple_debug_info("msim", "Don't set username");
 
 	/* Protocol won't log in now without a username set.. Disconnect */
-	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
+	purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
 }
 
 /**

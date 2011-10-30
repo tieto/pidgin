@@ -67,6 +67,12 @@ static gboolean double_click;
 
 static void reset_text_view(GntTextView *view);
 
+static gboolean
+text_view_contains(GntTextView *view, const char *str)
+{
+	return (str >= view->string->str && str < view->string->str + view->string->len);
+}
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
@@ -109,10 +115,10 @@ gnt_text_view_draw(GntWidget *widget)
 			char back = *end;
 			chtype fl = seg->flags;
 			*end = '\0';
-			if (select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
+			if (select_start && select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
 				fl |= A_REVERSE;
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			} else if (select_start && select_end &&
 				((select_start >= view->string->str + seg->start && select_start <= view->string->str + seg->end) ||
 				(select_end <= view->string->str + seg->end && select_start <= view->string->str + seg->start))) {
@@ -126,13 +132,13 @@ gnt_text_view_draw(GntWidget *widget)
 						fl = seg->flags;
 					str = g_strndup(cur, last - cur);
 					wattrset(widget->window, fl);
-					waddstr(widget->window, str);
+					waddstr(widget->window, C_(str));
 					g_free(str);
 					cur = g_utf8_next_char(cur);
 				}
 			} else {
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			}
 			*end = back;
 		}
@@ -159,7 +165,7 @@ gnt_text_view_draw(GntWidget *widget)
 
 		if (showing + position > rows)
 			position = rows - showing;
-		
+
 		if (showing + position == rows && view->list && view->list->prev)
 			position = MAX(1, rows - 1 - showing);
 		else if (showing + position < rows && view->list && !view->list->prev)
@@ -326,9 +332,10 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		select_start = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
 		g_timeout_add(500, too_slow, NULL);
 	} else if (event == GNT_MOUSE_UP) {
-		if (select_start) {
+		GntTextView *view = GNT_TEXT_VIEW(widget);
+		if (text_view_contains(view, select_start)) {
 			GString *clip;
-			select_end = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
+			select_end = gnt_text_view_get_p(view, x - widget->priv.x, y - widget->priv.y);
 			if (select_end < select_start) {
 				gchar *t = select_start;
 				select_start = select_end;
@@ -336,7 +343,7 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			}
 			if (select_start == select_end) {
 				if (double_click) {
-					clip = select_word_text(GNT_TEXT_VIEW(widget), select_start);
+					clip = select_word_text(view, select_start);
 					double_click = FALSE;
 				} else {
 					double_click = TRUE;
@@ -449,7 +456,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	GntTextLine *line = g_new0(GntTextLine, 1);
 
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | 
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW |
             GNT_WIDGET_GROW_Y | GNT_WIDGET_GROW_X);
 	widget->priv.minw = 5;
 	widget->priv.minh = 2;
@@ -629,7 +636,7 @@ void gnt_text_view_scroll(GntTextView *view, int scroll)
 			list = g_list_last(view->list);
 		view->list = list;
 	}
-		
+
 	gnt_widget_draw(GNT_WIDGET(view));
 }
 
@@ -637,7 +644,7 @@ void gnt_text_view_next_line(GntTextView *view)
 {
 	GntTextLine *line = g_new0(GntTextLine, 1);
 	GList *list = view->list;
-	
+
 	view->list = g_list_prepend(g_list_first(view->list), line);
 	view->list = list;
 	gnt_widget_draw(GNT_WIDGET(view));
@@ -704,7 +711,7 @@ int gnt_text_view_get_lines_below(GntTextView *view)
 int gnt_text_view_get_lines_above(GntTextView *view)
 {
 	int above = 0;
-	GList *list = view->list;
+	GList *list;
 	list = g_list_nth(view->list, GNT_WIDGET(view)->priv.height);
 	if (!list)
 		return 0;
@@ -767,6 +774,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							line->segments = g_list_delete_link(line->segments, segs);
 							if (line->segments == NULL) {
 								free_text_line(line, NULL);
+								line = NULL;
 								if (view->list == iter) {
 									if (inext)
 										view->list = inext;
@@ -780,7 +788,8 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							seg->start = tag->start;
 							seg->end = tag->end - change;
 						}
-						line->length -= change;
+						if (line)
+							line->length -= change;
 						/* XXX: Make things work if the tagged text spans over several lines. */
 					} else {
 						/* XXX: handle the rest of the conditions */

@@ -105,11 +105,11 @@ static void close_stun_conn(struct stun_conn *sc) {
 }
 
 static void do_callbacks(void) {
-	while(callbacks) {
+	while (callbacks) {
 		StunCallback cb = callbacks->data;
-		if(cb)
+		if (cb)
 			cb(&nattype);
-		callbacks = g_slist_remove(callbacks, cb);
+		callbacks = g_slist_delete_link(callbacks, callbacks);
 	}
 }
 
@@ -226,7 +226,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 				memcpy(&in.s_addr, tmp + 4, 4);
 				ip = inet_ntoa(in);
 				if(ip)
-					strcpy(nattype.publicip, ip);
+					g_strlcpy(nattype.publicip, ip, sizeof(nattype.publicip));
 			}
 
 			tmp += ntohs(attrib->len);
@@ -280,7 +280,6 @@ static void hbn_listen_cb(int fd, gpointer data) {
 	GSList *hosts = data;
 	struct stun_conn *sc;
 	static struct stun_header hdr_data;
-	int ret;
 
 	if(fd < 0) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
@@ -298,15 +297,14 @@ static void hbn_listen_cb(int fd, gpointer data) {
 
 	sc->incb = purple_input_add(fd, PURPLE_INPUT_READ, reply_cb, sc);
 
-	ret = GPOINTER_TO_INT(hosts->data);
-	hosts = g_slist_remove(hosts, hosts->data);
+	hosts = g_slist_delete_link(hosts, hosts);
 	memcpy(&(sc->addr), hosts->data, sizeof(struct sockaddr_in));
 	g_free(hosts->data);
-	hosts = g_slist_remove(hosts, hosts->data);
-	while(hosts) {
-		hosts = g_slist_remove(hosts, hosts->data);
+	hosts = g_slist_delete_link(hosts, hosts);
+	while (hosts) {
+		hosts = g_slist_delete_link(hosts, hosts);
 		g_free(hosts->data);
-		hosts = g_slist_remove(hosts, hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
 	}
 
 	hdr_data.type = htons(MSGTYPE_BINDINGREQUEST);
@@ -340,11 +338,11 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 		return;
 	}
 
-	if (!purple_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
-		while(hosts) {
-			hosts = g_slist_remove(hosts, hosts->data);
+	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, hosts)) {
+		while (hosts) {
+			hosts = g_slist_delete_link(hosts, hosts);
 			g_free(hosts->data);
-			hosts = g_slist_remove(hosts, hosts->data);
+			hosts = g_slist_delete_link(hosts, hosts);
 		}
 
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
@@ -367,7 +365,7 @@ static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
 	purple_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
 		results, servername, port);
 
-	purple_dnsquery_a(servername, port, hbn_cb, NULL);
+	purple_dnsquery_a(NULL, servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 
@@ -426,7 +424,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 	nattype.servername = g_strdup(servername);
 
 	callbacks = g_slist_append(callbacks, cb);
-	purple_srv_resolve("stun", "udp", servername, do_test1,
+	purple_srv_resolve(NULL, "stun", "udp", servername, do_test1,
 		(gpointer) servername);
 
 	return &nattype;

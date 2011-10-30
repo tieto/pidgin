@@ -1,10 +1,10 @@
 /*
 	File:		Utilities.h
-	
+
 	Description: Interface file for Utilities.c source code.
 
 	Copyright: 	© Copyright 2003 Apple Computer, Inc. All rights reserved.
-	
+
 	Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
 				("Apple") in consideration of your agreement to the following terms, and your
 				use, installation, modification or redistribution of this Apple software
@@ -39,7 +39,7 @@
 				OF THE APPLE SOFTWARE, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT
 				(INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN
 				ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-				
+
 	Change History (most recent first):
 
 */
@@ -62,7 +62,7 @@
 	#define     sigMoviePlayer        FOUR_CHAR_CODE('TVOD')
 #else
     #include <FileTypesAndCreators.h>
-#endif    
+#endif
 
 
 //

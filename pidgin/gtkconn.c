@@ -136,13 +136,12 @@ do_signon(gpointer data)
 }
 
 static void
-pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
-                                            PurpleConnectionError reason,
-                                            const char *text)
+pidgin_connection_report_disconnect(PurpleConnection *gc,
+                                    PurpleConnectionError reason,
+                                    const char *text)
 {
 	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
-	GList *list;
 
 	account = purple_connection_get_account(gc);
 	info = g_hash_table_lookup(auto_reconns, account);
@@ -163,17 +162,6 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 			g_hash_table_remove(auto_reconns, account);
 
 		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
-	}
-
-	/* If we have any open chats, we probably want to rejoin when we get back online. */
-	list = purple_get_chats();
-	while (list) {
-		PurpleConversation *conv = list->data;
-		list = list->next;
-		if (conv->account != account ||
-				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-			continue;
-		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 	}
 }
 
@@ -224,10 +212,9 @@ static PurpleConnectionUiOps conn_ui_ops =
 	pidgin_connection_connected,
 	pidgin_connection_disconnected,
 	pidgin_connection_notice,
-	NULL, /* report_disconnect */
 	pidgin_connection_network_connected,
 	pidgin_connection_network_disconnected,
-	pidgin_connection_report_disconnect_reason,
+	pidgin_connection_report_disconnect,
 	NULL,
 	NULL,
 	NULL

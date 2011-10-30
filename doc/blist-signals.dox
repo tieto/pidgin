@@ -11,6 +11,8 @@
   @signal buddy-removed
   @signal buddy-icon-changed
   @signal blist-node-aliased
+  @signal buddy-caps-changed
+  @signal ui-caps-changed
  @endsignals
 
  @see blist.h
@@ -124,5 +126,27 @@ void (*blist_node_aliased)(PurpleBlistNode *node, const char *old_alias)
    Emitted when a blist node (buddy, chat, or contact) is aliased.
   @endsignaldef
 
+ @signaldef buddy-caps-changed
+  @signalproto
+void (*buddy_caps_changed)(PurpleBuddy *buddy, PurpleMediaCaps newcaps,
+    PurpleMediaCaps oldcaps)
+  @endsignalproto
+  @signaldesc
+    Emitted when updating a buddy's media capabilities.
+  @param buddy	  The buddy
+  @param newcaps
+  @param oldcaps
+ @endsignaldef
+
+ @signaldef ui-caps-changed
+  @signalproto
+void (*ui_caps_changed)(PurpleMediaCaps newcaps, PurpleMediaCaps oldcaps)
+  @endsignalproto
+  @signaldesc
+    Emitted when updating the media capabilities of the UI.
+  @param newcaps
+  @param oldcaps
+ @endsignaldef
+ 
  */
 // vim: syntax=c.doxygen tw=75 et

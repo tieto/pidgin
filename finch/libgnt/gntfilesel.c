@@ -176,9 +176,13 @@ process_path(const char *path)
 	splits = g_strsplit(path, G_DIR_SEPARATOR_S, -1);
 	for (i = 0, j = 0; splits[i]; i++) {
 		if (strcmp(splits[i], ".") == 0) {
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else if (strcmp(splits[i], "..") == 0) {
 			if (j)
 				j--;
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else {
 			if (i != j) {
 				g_free(splits[j]);
@@ -241,7 +245,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 	GDir *dir;
 	GntFile *file;
 	const char *str;
-	
+
 	dir = g_dir_open(path, 0, error);
 	if (dir == NULL || (error && *error)) {
 		return FALSE;
@@ -311,7 +315,7 @@ location_changed(GntFileSel *sel, GError **err)
 		success = sel->read_fn(sel->current, &files, err);
 	else
 		success = local_read_fn(sel->current, &files, err);
-	
+
 	if (!success || *err) {
 		gnt_warning("error opening location %s (%s)",
 			sel->current, *err ? (*err)->message : "reason unknown");
@@ -352,7 +356,7 @@ dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 
 		if (!str)
 			return TRUE;
-		
+
 		path = g_build_filename(sel->current, str, NULL);
 		dir = g_path_get_basename(sel->current);
 		if (!gnt_file_sel_set_current_location(sel, path)) {
@@ -593,7 +597,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 	orig_size_request = kl->size_request;
 	kl->size_request = gnt_file_sel_size_request;
 
-	signals[SIG_FILE_SELECTED] = 
+	signals[SIG_FILE_SELECTED] =
 		g_signal_new("file_selected",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -625,6 +629,7 @@ gnt_file_sel_init(GTypeInstance *instance, gpointer class)
 
 	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
 	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
+	gnt_tree_set_hash_fns(GNT_TREE(sel->files), g_str_hash, g_str_equal, g_free);
 	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);

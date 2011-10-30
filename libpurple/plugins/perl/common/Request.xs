@@ -374,9 +374,10 @@ purple_request_field_list_new(class, id, text)
 	C_ARGS: id, text
 
 void
-purple_request_field_list_add(field, item, data)
+purple_request_field_list_add_icon(field, item, icon_path, data)
 	Purple::Request::Field field
 	const char *item
+	const char *icon_path
 	void * data
 
 void

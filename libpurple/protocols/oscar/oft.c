@@ -207,7 +207,7 @@ peer_oft_checksum_file(PeerConnection *conn, PurpleXfer *xfer, GSourceFunc callb
 	checksum_data->callback = callback;
 	checksum_data->size = size;
 	checksum_data->checksum = 0xffff0000;
-	checksum_data->file = fopen(purple_xfer_get_local_filename(xfer), "rb");
+	checksum_data->file = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
 
 	if (checksum_data->file == NULL)
 	{
@@ -240,7 +240,7 @@ void
 peer_oft_close(PeerConnection *conn)
 {
 	/*
-	 * If canceled by local user, and we're receiving a file, and
+	 * If cancelled by local user, and we're receiving a file, and
 	 * we're not connected/ready then send an ICBM cancel message.
 	 */
 	if ((purple_xfer_get_status(conn->xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) &&
@@ -362,10 +362,10 @@ start_transfer_when_done_sending_data(gpointer data)
 
 	if (purple_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
+		int fd = conn->fd;
 		conn->sending_data_timer = 0;
-		conn->xfer->fd = conn->fd;
 		conn->fd = -1;
-		purple_xfer_start(conn->xfer, conn->xfer->fd, NULL, 0);
+		purple_xfer_start(conn->xfer, fd, NULL, 0);
 		return FALSE;
 	}
 
@@ -496,9 +496,19 @@ peer_oft_recv_frame_resume(PeerConnection *conn, OftFrame *frame)
 static void
 peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 {
+	/*
+	 * The core ft code sets the xfer to completed automatically if we've
+	 * sent all bytes to the other user.  But this function can be called
+	 * even if we haven't sent all bytes to the other user (in the case
+	 * where the user already has this file on their computer and the
+	 * checksum matches).
+	 */
+	if (!purple_xfer_is_completed(conn->xfer))
+		purple_xfer_set_completed(conn->xfer, TRUE);
+
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
-	conn->xfer->fd = conn->fd;
+	purple_xfer_set_fd(conn->xfer, conn->fd);
 	conn->fd = -1;
 	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
 	peer_connection_schedule_destroy(conn, conn->disconnect_reason, NULL);
@@ -579,7 +589,7 @@ peer_oft_recvcb_init(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 	peer_connection_trynext(conn);
 }
@@ -589,11 +599,11 @@ peer_oft_recvcb_end(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	/* Tell the other person that we've received everything */
-	conn->fd = conn->xfer->fd;
-	conn->xfer->fd = -1;
+	conn->fd = purple_xfer_get_fd(conn->xfer);
+	purple_xfer_set_fd(conn->xfer, -1);
 	peer_oft_send_done(conn);
 
 	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
@@ -607,7 +617,7 @@ peer_oft_recvcb_ack_recv(PurpleXfer *xfer, const guchar *buffer, size_t size)
 	PeerConnection *conn;
 
 	/* Update our rolling checksum.  Like Walmart, yo. */
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->xferdata.recvcsum = peer_oft_checksum_chunk(buffer,
 			size, conn->xferdata.recvcsum, purple_xfer_get_bytes_sent(xfer) & 1);
 }
@@ -641,9 +651,9 @@ void
 peer_oft_sendcb_init(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
-	size_t size;
+	goffset size;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 
 	/* Make sure the file size can be represented in 32 bits */
@@ -655,9 +665,9 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 		size2 = purple_str_size_to_units(G_MAXUINT32);
 		tmp = g_strdup_printf(_("File %s is %s, which is larger than "
 				"the maximum size of %s."),
-				xfer->local_filename, size1, size2);
+				purple_xfer_get_local_filename(xfer), size1, size2);
 		purple_xfer_error(purple_xfer_get_type(xfer),
-				purple_xfer_get_account(xfer), xfer->who, tmp);
+				purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer), tmp);
 		g_free(size1);
 		g_free(size2);
 		g_free(tmp);
@@ -679,9 +689,9 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 	strncpy((gchar *)conn->xferdata.idstring, "Cool FileXfer", 31);
 	conn->xferdata.modtime = 0;
 	conn->xferdata.cretime = 0;
-	xfer->filename = g_path_get_basename(xfer->local_filename);
-	conn->xferdata.name_length = MAX(64, strlen(xfer->filename) + 1);
-	conn->xferdata.name = (guchar *)g_strndup(xfer->filename, conn->xferdata.name_length - 1);
+	purple_xfer_set_filename(xfer, g_path_get_basename(purple_xfer_get_local_filename(xfer)));
+	conn->xferdata.name_length = MAX(64, strlen(purple_xfer_get_filename(xfer)) + 1);
+	conn->xferdata.name = (guchar *)g_strndup(purple_xfer_get_filename(xfer), conn->xferdata.name_length - 1);
 
 	peer_oft_checksum_file(conn, xfer,
 			peer_oft_checksum_calculated_cb, G_MAXUINT32);
@@ -703,7 +713,7 @@ peer_oft_sendcb_ack(PurpleXfer *xfer, const guchar *buffer, size_t size)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	/*
 	 * If we're done sending, intercept the socket from the core ft code
@@ -711,9 +721,9 @@ peer_oft_sendcb_ack(PurpleXfer *xfer, const guchar *buffer, size_t size)
 	 */
 	if (purple_xfer_get_bytes_remaining(xfer) <= 0)
 	{
-		purple_input_remove(xfer->watcher);
-		conn->fd = xfer->fd;
-		xfer->fd = -1;
+		purple_input_remove(purple_xfer_get_watcher(xfer));
+		conn->fd = purple_xfer_get_fd(xfer);
+		purple_xfer_set_fd(xfer, -1);
 		conn->watcher_incoming = purple_input_add(conn->fd,
 				PURPLE_INPUT_READ, peer_connection_recv_cb, conn);
 	}
@@ -732,7 +742,7 @@ peer_oft_cb_generic_cancel(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	if (conn == NULL)
 		return;

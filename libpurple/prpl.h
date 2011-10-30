@@ -31,7 +31,10 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
-/** @copydoc _PurpleAttentionType */
+
+/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
+ *  their attention (or vice-versa).
+ */
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
@@ -50,6 +53,13 @@ typedef enum {
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
+
+/**
+ * A description of a file transfer thumbnail specification.
+ * This tells the UI if and what image formats the prpl support for file
+ * transfer thumbnails.
+ */
+typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
@@ -91,31 +101,17 @@ struct _PurpleBuddyIconSpec {
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
-struct proto_chat_entry {
-	const char *label;
-	const char *identifier;
-	gboolean required;
-	gboolean is_int;
-	int min;
-	int max;
-	gboolean secret;
-};
-
-/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
- *  their attention (or vice-versa).
+/** Represents an entry containing information that must be supplied by the
+ *  user when joining a chat.
  */
-struct _PurpleAttentionType
-{
-	const char *name;                  /**< Shown in GUI elements */
-	const char *incoming_description;  /**< Shown when sent */
-	const char *outgoing_description;  /**< Shown when receied */
-	const char *icon_name;             /**< Icon to display (optional) */
-	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
-
-	/* Reserved fields for future purposes */
-	gpointer _reserved2;
-	gpointer _reserved3;
-	gpointer _reserved4;
+struct proto_chat_entry {
+	const char *label;       /**< User-friendly name of the entry */
+	const char *identifier;  /**< Used by the PRPL to identify the option */
+	gboolean required;       /**< True if it's required */
+	gboolean is_int;         /**< True if the entry expects an integer */
+	int min;                 /**< Minimum value in case of integer */
+	int max;                 /**< Maximum value in case of integer */
+	gboolean secret;         /**< True if the entry is secret (password) */
 };
 
 /**
@@ -190,9 +186,14 @@ typedef enum
 	/**
 	 * Indicates that slash commands are native to this protocol.
 	 * Used as a hint that unknown commands should not be sent as messages.
-	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an invitation.
+	 */
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800
 
 } PurpleProtocolOptions;
 
@@ -205,6 +206,27 @@ typedef enum
  */
 struct _PurplePluginProtocolInfo
 {
+	/**
+	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
+	 * This allows adding more functions to this struct without requiring a major version bump.
+	 */
+	unsigned long struct_size;
+
+	/* NOTE:
+	 * If more functions are added, they should accessed using the following syntax:
+	 *
+	 *		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, new_function))
+	 *			prpl->new_function(...);
+	 *
+	 * instead of
+	 *
+	 *		if (prpl->new_function != NULL)
+	 *			prpl->new_function(...);
+	 *
+	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
+	 * functions (e.g. login, send_im etc.) too.
+	 */
+
 	PurpleProtocolOptions options;  /**< Protocol options.          */
 
 	GList *user_splits;      /**< A GList of PurpleAccountUserSplit */
@@ -252,7 +274,26 @@ struct _PurplePluginProtocolInfo
 	 * node.
 	 */
 	GList *(*blist_node_menu)(PurpleBlistNode *node);
+
+	/**
+	 * Returns a list of #proto_chat_entry structs, which represent
+	 * information required by the PRPL to join a chat. libpurple will
+	 * call join_chat along with the information filled by the user.
+	 *
+	 * @return A list of #proto_chat_entry structs
+	 */
 	GList *(*chat_info)(PurpleConnection *);
+
+	/**
+	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
+	 * to default options as strings based on chat_name. The resulting
+	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
+	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
+	 * to extract a chat name from a hashtable.
+	 *
+	 * @param chat_name The chat name to be turned into components
+	 * @return Hashtable containing the information extracted from chat_name
+	 */
 	GHashTable *(*chat_info_defaults)(PurpleConnection *, const char *chat_name);
 
 	/* All the server-related functions */
@@ -297,6 +338,7 @@ struct _PurplePluginProtocolInfo
 	void (*set_idle)(PurpleConnection *, int idletime);
 	void (*change_passwd)(PurpleConnection *, const char *old_pass,
 						  const char *new_pass);
+
 	/**
 	 * Add a buddy to a group on the server.
 	 *
@@ -304,9 +346,11 @@ struct _PurplePluginProtocolInfo
 	 * already in the specified group. If the protocol supports
 	 * authorization and the user is not already authorized to see the
 	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * If authorization is required, then use the supplied invite message.
 	 */
-	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
-	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
+	void (*add_buddy)(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message);
+	void (*add_buddies)(PurpleConnection *pc, GList *buddies, GList *groups, const char *message);
 	void (*remove_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*remove_buddies)(PurpleConnection *, GList *buddies, GList *groups);
 	void (*add_permit)(PurpleConnection *, const char *name);
@@ -314,14 +358,80 @@ struct _PurplePluginProtocolInfo
 	void (*rem_permit)(PurpleConnection *, const char *name);
 	void (*rem_deny)(PurpleConnection *, const char *name);
 	void (*set_permit_deny)(PurpleConnection *);
+
+	/**
+	 * Called when the user requests joining a chat. Should arrange for
+	 * #serv_got_joined_chat to be called.
+	 *
+	 * @param components A hashtable containing information required to
+	 *                   join the chat as described by the entries returned
+	 *                   by #chat_info. It may also be called when accepting
+	 *                   an invitation, in which case this matches the
+	 *                   data parameter passed to #serv_got_chat_invite.
+	 */
 	void (*join_chat)(PurpleConnection *, GHashTable *components);
+
+	/**
+	 * Called when the user refuses a chat invitation.
+	 *
+	 * @param components A hashtable containing information required to
+	 *                   join the chat as passed to #serv_got_chat_invite.
+	 */
 	void (*reject_chat)(PurpleConnection *, GHashTable *components);
+
+	/**
+	 * Returns a chat name based on the information in components. Use
+	 * #chat_info_defaults if you instead need to generate a hashtable
+	 * from a chat name.
+	 *
+	 * @param components A hashtable containing information about the chat.
+	 */
 	char *(*get_chat_name)(GHashTable *components);
+
+	/**
+	 * Invite a user to join a chat.
+	 *
+	 * @param id      The id of the chat to invite the user to.
+	 * @param message A message displayed to the user when the invitation
+	 *                is received.
+	 * @param who     The name of the user to send the invation to.
+	 */
 	void (*chat_invite)(PurpleConnection *, int id,
 						const char *message, const char *who);
+	/**
+	 * Called when the user requests leaving a chat.
+	 *
+	 * @param id The id of the chat to leave
+	 */
 	void (*chat_leave)(PurpleConnection *, int id);
+
+	/**
+	 * Send a whisper to a user in a chat.
+	 *
+	 * @param id      The id of the chat.
+	 * @param who     The name of the user to send the whisper to.
+	 * @param message The message of the whisper.
+	 */
 	void (*chat_whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
+
+	/**
+	 * Send a message to a chat.
+	 * This PRPL function should return a positive value on success.
+	 * If the message is too big to be sent, return -E2BIG.  If
+	 * the account is not connected, return -ENOTCONN.  If the
+	 * PRPL is unable to send the message for another reason, return
+	 * some other negative value.  You can use one of the valid
+	 * errno values, or just big something.  If the message should
+	 * not be echoed to the conversation window, return 0.
+	 *
+	 * @param id      The id of the chat to send the message to.
+	 * @param message The message to send to the chat.
+	 * @param flags   A bitwise OR of #PurpleMessageFlags representing
+	 *                message flags.
+	 * @return 	  A positive number or 0 in case of succes,
+	 *                a negative error number in case of failure.
+	 */
 	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
 
 	/** If implemented, this will be called regularly for this prpl's
@@ -339,11 +449,6 @@ struct _PurplePluginProtocolInfo
 	 * @deprecated Use #PurplePluginProtocolInfo.get_info instead.
 	 */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
-	/**
-	 * @deprecated Use #PurplePluginProtocolInfo.get_cb_real_name and
-	 *             #PurplePluginProtocolInfo.status_text instead.
-	 */
-	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
 	/** save/store buddy's alias on server list/roster */
 	void (*alias_buddy)(PurpleConnection *, const char *who,
@@ -429,27 +534,6 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	/**
-	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
-	 * This allows adding more functions to this struct without requiring a major version bump.
-	 */
-	unsigned long struct_size;
-
-	/* NOTE:
-	 * If more functions are added, they should accessed using the following syntax:
-	 *
-	 *		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, new_function))
-	 *			prpl->new_function(...);
-	 *
-	 * instead of
-	 *
-	 *		if (prpl->new_function != NULL)
-	 *			prpl->new_function(...);
-	 *
-	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
-	 * functions (e.g. login, send_im etc.) too.
-	 */
-
 	/** This allows protocols to specify additional strings to be used for
 	 * various purposes.  The idea is to stuff a bunch of strings in this hash
 	 * table instead of expanding the struct for every addition.  This hash
@@ -481,11 +565,53 @@ struct _PurplePluginProtocolInfo
 	 */
 	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
 					  const char *who);
+
+	/**
+	 * Returns an array of "PurpleMood"s, with the last one having
+	 * "mood" set to @c NULL.
+	 */
+	PurpleMood *(*get_moods)(PurpleAccount *account);
+
+	/**
+	 * Set the user's "friendly name" (or alias or nickname or
+	 * whatever term you want to call it) on the server.  The
+	 * protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (if it knows immediately that the set will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is set successfully.
+	 *
+	 * @param gc    The connection for which to set an alias
+	 * @param alias The new server-side alias/nickname for this account,
+	 *              or NULL to unset the alias/nickname (or return it to
+	 *              a protocol-specific "default").
+	 * @param success_cb Callback to be called if the public alias is set
+	 * @param failure_cb Callback to be called if setting the public alias
+	 *                   fails
+	 * @see purple_account_set_public_alias
+	 */
+	void (*set_public_alias)(PurpleConnection *gc, const char *alias,
+	                         PurpleSetPublicAliasSuccessCallback success_cb,
+	                         PurpleSetPublicAliasFailureCallback failure_cb);
+	/**
+	 * Retrieve the user's "friendly name" as set on the server.
+	 * The protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (even if it knows immediately that the get will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is retrieved.
+	 *
+	 * @param gc    The connection for which to retireve the alias
+	 * @param success_cb Callback to be called with the retrieved alias
+	 * @param failure_cb Callback to be called if the prpl is unable to
+	 *                   retrieve the alias
+	 * @see purple_account_get_public_alias
+	 */
+	void (*get_public_alias)(PurpleConnection *gc,
+	                         PurpleGetPublicAliasSuccessCallback success_cb,
+	                         PurpleGetPublicAliasFailureCallback failure_cb);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
-	(((G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < G_STRUCT_OFFSET(PurplePluginProtocolInfo, struct_size)) \
-	  || (G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size)) && \
+	(G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size && \
 	 prpl->member != NULL)
 
 
@@ -514,8 +640,8 @@ extern "C" {
  *             should be the same string as @a ulname, with localization.
  * @param inc_desc A localized description shown when the event is received.
  * @param out_desc A localized description shown when the event is sent.
+ *
  * @return A pointer to the new object.
- * @since 2.4.0
  */
 PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *name,
 								const char *inc_desc, const char *out_desc);
@@ -527,7 +653,6 @@ PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *n
  * @param name The localized name that will be displayed by UIs. This should be
  *             the same string given as the unlocalized name, but with
  *             localization.
- * @since 2.4.0
  */
 void purple_attention_type_set_name(PurpleAttentionType *type, const char *name);
 
@@ -537,7 +662,6 @@ void purple_attention_type_set_name(PurpleAttentionType *type, const char *name)
  *
  * @param type The attention type.
  * @param desc The localized description for incoming events.
- * @since 2.4.0
  */
 void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const char *desc);
 
@@ -547,7 +671,6 @@ void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const ch
  *
  * @param type The attention type.
  * @param desc The localized description for outgoing events.
- * @since 2.4.0
  */
 void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const char *desc);
 
@@ -557,7 +680,6 @@ void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const ch
  * @param type The attention type.
  * @param name The icon's name.
  * @note Icons are optional for attention events.
- * @since 2.4.0
  */
 void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name);
 
@@ -568,7 +690,6 @@ void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *
  * @param type The attention type.
  * @param ulname The unlocalized name.  This should be the same string given as
  *               the localized name, but without localization.
- * @since 2.4.0
  */
 void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char *ulname);
 
@@ -576,8 +697,8 @@ void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const
  * Get the attention type's name as displayed by the UI.
  *
  * @param type The attention type.
+ *
  * @return The name.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_name(const PurpleAttentionType *type);
 
@@ -586,7 +707,6 @@ const char *purple_attention_type_get_name(const PurpleAttentionType *type);
  *
  * @param type The attention type.
  * @return The description.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *type);
 
@@ -595,7 +715,6 @@ const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *t
  *
  * @param type The attention type.
  * @return The description.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type);
 
@@ -605,7 +724,6 @@ const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *t
  * @param type The attention type.
  * @return The icon name or @c NULL if unset/empty.
  * @note Icons are optional for attention events.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type);
 
@@ -614,7 +732,6 @@ const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type)
  *
  * @param type The attention type
  * @return The unlocalized name.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 
@@ -670,7 +787,6 @@ void purple_prpl_got_account_status(PurpleAccount *account,
  * @param account   The account.
  *
  * @see account-actions-changed
- * @since 2.6.0
  */
 void purple_prpl_got_account_actions(PurpleAccount *account);
 
@@ -761,8 +877,6 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  *
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
  * only a fixed set of attention commands.
- *
- * @since 2.5.0
  */
 void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
 
@@ -773,8 +887,6 @@ void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint typ
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
- *
- * @since 2.5.0
  */
 void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
@@ -786,8 +898,6 @@ void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
- *
- * @since 2.5.0
  */
 void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
 
@@ -814,6 +924,16 @@ PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount *account,
 gboolean purple_prpl_initiate_media(PurpleAccount *account,
 					const char *who,
 					PurpleMediaSessionType type);
+
+/**
+ * Signals that the prpl received capabilities for the given contact.
+ *
+ * This function is intended to be used only by prpls.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact for which capabilities have been received.
+ */
+void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
 /*@}*/
 

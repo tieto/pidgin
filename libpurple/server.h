@@ -61,32 +61,6 @@ int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageF
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
-/** Send an attention request message.
- *
- * @deprecated Use purple_prpl_send_attention() instead.
- *
- * @param gc The connection to send the message on.
- * @param who Whose attention to request.
- * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send. 0 if prpl only defines one
- * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
- *
- * Note that you can't send arbitrary PurpleAttentionType's, because there is
- * only a fixed set of attention commands.
- */
-void serv_send_attention(PurpleConnection *gc, const char *who, guint type_code);
-
-/** Process an incoming attention message.
- *
- * @deprecated Use purple_prpl_got_attention() instead.
- *
- * @param gc The connection that received the attention message.
- * @param who Who requested your attention.
- * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send.
- */
-void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);
-
 void serv_get_info(PurpleConnection *, const char *);
 void serv_set_info(PurpleConnection *, const char *);
 
@@ -168,6 +142,14 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
 
+/**
+ * Called by a prpl when an account has joined a chat.
+ *
+ * @param gc   The connection on which the chat was joined.
+ * @param id   The id of the chat, assigned by the prpl.
+ * @param name The name of the chat.
+ * @return     The resulting conversation
+ */
 PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
 /**
@@ -181,7 +163,24 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
  */
 void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
 
+/**
+ * Called by a prpl when an account has left a chat.
+ *
+ * @param g  The connection on which the chat was left.
+ * @param id The id of the chat, as assigned by the prpl.
+ */
 void serv_got_chat_left(PurpleConnection *g, int id);
+
+/**
+ * Called by a prpl when a message has been received in a chat.
+ *
+ * @param g       The connection on which the message was received.
+ * @param id      The id of the chat, as assigned by the prpl.
+ * @param who     The name of the user who sent the message.
+ * @param flags   The flags of the message.
+ * @param message The message received in the chat.
+ * @param mtime   The time when the message was received.
+ */
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);

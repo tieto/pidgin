@@ -40,6 +40,7 @@ typedef struct _MsimUser
 	gchar *image_url;
 	guint last_image_updated;
 	gboolean temporary_user;
+	PurpleUtilFetchUrlData *url_data;
 } MsimUser;
 
 /* Callback function pointer type for when a user's information is received,

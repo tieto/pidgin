@@ -25,7 +25,7 @@ struct face_struct {
 	GLint* mat_indeces;
 	GLMmat_str* materials;
 	OUTPUT_MODE my_mode;
-	int eye_count, crazy_count;	
+	int eye_count, crazy_count;
 	void (*draw_func)(struct face_struct*, GLfloat, GLfloat, BOOL, BOOL, GLfloat, DIRECTION, OUTPUT_MODE);
 	float curr_z_angle, curr_eye_pop;
 };
@@ -39,6 +39,6 @@ FACE copy_face(FACE f);
 
 void draw_face(FACE face, GLfloat zrot, GLfloat yrot, BOOL left_eye, BOOL right_eye, GLfloat mouth_open, DIRECTION dir, OUTPUT_MODE mode);
 
-void change_materials(FACE face, int* mats, int num_change); 
+void change_materials(FACE face, int* mats, int num_change);
 
 #endif

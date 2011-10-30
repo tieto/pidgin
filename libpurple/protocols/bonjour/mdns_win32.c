@@ -25,8 +25,8 @@
 #include "buddy.h"
 #include "mdns_interface.h"
 #include "dns_sd_proxy.h"
-#include "dnsquery.h"
 #include "mdns_common.h"
+#include "bonjour.h"
 
 static GSList *pending_buddies = NULL;
 
@@ -65,7 +65,6 @@ typedef struct _ResolveCallbackArgs {
 	BonjourBuddy *bb;
 	Win32SvcResolverData *res_data;
 	gchar *full_service_name;
-	PurpleDnsQueryData *dns_query;
 } ResolveCallbackArgs;
 
 
@@ -106,7 +105,7 @@ _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
 		purple_debug_error("bonjour", "Error (%d) handling mDNS response.\n", errorCode);
 		/* This happens when the mDNSResponder goes down, I haven't seen it happen any other time (in my limited testing) */
 		if (errorCode == kDNSServiceErr_Unknown) {
-			purple_connection_error_reason(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with local mDNSResponder."));
 		}
 	}
@@ -135,7 +134,7 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 {
 
 	if (errorCode != kDNSServiceErr_NoError) {
-		purple_debug_error("bonjour", "record query - callback error.\n");
+		purple_debug_error("bonjour", "record query - callback error (%d).\n", errorCode);
 		/* TODO: Probably should remove the buddy when this happens */
 	} else if (flags & kDNSServiceFlagsAdd) {
 		if (rrtype == kDNSServiceType_TXT) {
@@ -161,16 +160,24 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 	}
 }
 
-static void
-_mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message)
+static void DNSSD_API
+_mdns_resolve_host_callback(DNSServiceRef sdRef, DNSServiceFlags flags,
+	uint32_t interfaceIndex, DNSServiceErrorType errorCode,
+	const char *hostname, const struct sockaddr *address,
+	uint32_t ttl, void *context)
 {
-	ResolveCallbackArgs *args = (ResolveCallbackArgs*) data;
+	ResolveCallbackArgs *args = (ResolveCallbackArgs*) context;
 	Win32BuddyImplData *idata = args->bb->mdns_impl_data;
 	gboolean delete_buddy = FALSE;
 	PurpleBuddy *pb = NULL;
 
+	purple_input_remove(args->resolver_query->input_handler);
+	DNSServiceRefDeallocate(args->resolver_query->sdRef);
+	g_free(args->resolver_query);
+	args->resolver_query = NULL;
+
 	if ((pb = purple_find_buddy(args->account, args->res_data->name))) {
-		if (pb->proto_data != args->bb) {
+		if (purple_buddy_get_protocol_data(pb) != args->bb) {
 			purple_debug_error("bonjour", "Found purple buddy for %s not matching bonjour buddy record.",
 				args->res_data->name);
 			goto cleanup;
@@ -181,12 +188,10 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 		goto cleanup;
 	}
 
-	if (!hosts || !hosts->data) {
-		purple_debug_error("bonjour", "host resolution - callback error.\n");
+	if (errorCode != kDNSServiceErr_NoError) {
+		purple_debug_error("bonjour", "host resolution - callback error (%d).\n", errorCode);
 		delete_buddy = TRUE;
 	} else {
-		struct sockaddr_in *addr = g_slist_nth_data(hosts, 1);
-		DNSServiceErrorType errorCode;
 		DNSServiceRef txt_query_sr;
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
@@ -194,7 +199,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
 				kDNSServiceClass_IN, _mdns_record_query_callback, args->bb);
 		if (errorCode == kDNSServiceErr_NoError) {
-			const char *ip = inet_ntoa(addr->sin_addr);
+			const char *ip = inet_ntoa(((struct sockaddr_in *) address)->sin_addr);
 
 			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", args->bb->name, ip, args->bb->port_p2pj);
 
@@ -217,13 +222,6 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 	}
 
 	cleanup:
-
-	/* free the hosts list*/
-	while (hosts != NULL) {
-		hosts = g_slist_remove(hosts, hosts->data);
-		g_free(hosts->data);
-		hosts = g_slist_remove(hosts, hosts->data);
-	}
 
 	if (delete_buddy) {
 		idata->resolvers = g_slist_remove(idata->resolvers, args->res_data);
@@ -251,7 +249,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 static void DNSSD_API
 _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode,
-    const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context)
+    const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context)
 {
 	ResolveCallbackArgs *args = (ResolveCallbackArgs*) context;
 	Win32BuddyImplData *idata = args->bb->mdns_impl_data;
@@ -259,17 +257,20 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 	/* remove the input fd and destroy the service ref */
 	purple_input_remove(args->resolver_query->input_handler);
 	DNSServiceRefDeallocate(args->resolver_query->sdRef);
-	g_free(args->resolver_query);
-	args->resolver_query = NULL;
 
 	if (errorCode != kDNSServiceErr_NoError)
-		purple_debug_error("bonjour", "service resolver - callback error.\n");
+		purple_debug_error("bonjour", "service resolver - callback error. (%d)\n", errorCode);
 	else {
+		DNSServiceRef getaddrinfo_sr;
 		/* set more arguments, and start the host resolver */
-
-		if ((args->dns_query =
-				purple_dnsquery_a(hosttarget, port, _mdns_resolve_host_callback, args)) != NULL) {
-
+		errorCode = DNSServiceGetAddrInfo(&getaddrinfo_sr, 0, interfaceIndex,
+			kDNSServiceProtocol_IPv4, hosttarget, _mdns_resolve_host_callback, args);
+		if (errorCode != kDNSServiceErr_NoError)
+			purple_debug_error("bonjour", "service resolver - host resolution failed.\n");
+		else {
+			args->resolver_query->sdRef = getaddrinfo_sr;
+			args->resolver_query->input_handler = purple_input_add(DNSServiceRefSockFD(getaddrinfo_sr),
+				PURPLE_INPUT_READ, _mdns_handle_event, args->resolver_query);
 			args->full_service_name = g_strdup(fullname);
 
 			/* TODO: Should this be per resolver? */
@@ -277,11 +278,13 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 
 			/* We don't want to hit the cleanup code */
 			return;
-		} else
-			purple_debug_error("bonjour", "service resolver - host resolution failed.\n");
+		}
 	}
 
 	/* If we get this far, clean up */
+
+	g_free(args->resolver_query);
+	args->resolver_query = NULL;
 
 	idata->resolvers = g_slist_remove(idata->resolvers, args->res_data);
 	_cleanup_resolver_data(args->res_data);
@@ -324,7 +327,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		purple_debug_error("bonjour", "service browser - callback error (%d)\n", errorCode);
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
+		if (purple_utf8_strcasecmp(serviceName, bonjour_get_jid(account)) != 0) {
 			DNSServiceErrorType resErrorCode;
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
@@ -334,7 +337,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 							  serviceName, interfaceIndex, regtype ? regtype : "",
 							  replyDomain ? replyDomain : "");
 
-			resErrorCode = DNSServiceResolve(&resolver_sr, 0, 0, serviceName, regtype,
+			resErrorCode = DNSServiceResolve(&resolver_sr, 0, interfaceIndex, serviceName, regtype,
 					replyDomain, _mdns_service_resolve_callback, args);
 			if (resErrorCode == kDNSServiceErr_NoError) {
 				GSList *tmp = pending_buddies;
@@ -345,7 +348,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 				/* Is there an existing buddy? */
 				if ((pb = purple_find_buddy(account, serviceName)))
-					bb = pb->proto_data;
+					bb = purple_buddy_get_protocol_data(pb);
 				/* Is there a pending buddy? */
 				else {
 					while (tmp) {
@@ -365,7 +368,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 					if (pb == NULL)
 						pending_buddies = g_slist_prepend(pending_buddies, bb);
 					else
-						pb->proto_data = bb;
+						purple_buddy_set_protocol_data(pb, bb);
 				}
 
 				rd = g_new0(Win32SvcResolverData, 1);
@@ -405,7 +408,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 			GSList *l;
 			/* There may be multiple presences, we should only get rid of this one */
 			Win32SvcResolverData *rd_search;
-			BonjourBuddy *bb = pb->proto_data;
+			BonjourBuddy *bb = purple_buddy_get_protocol_data(pb);
 			Win32BuddyImplData *idata;
 
 			g_return_if_fail(bb != NULL);
@@ -452,6 +455,9 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 gboolean _mdns_init_session(BonjourDnsSd *data) {
 	data->mdns_impl_data = g_new0(Win32SessionImplData, 1);
+
+	bonjour_dns_sd_set_jid(data->account, purple_get_host_name());
+
 	return TRUE;
 }
 
@@ -483,7 +489,8 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 		switch (type) {
 			case PUBLISH_START:
 				purple_debug_info("bonjour", "Registering presence on port %d\n", data->port_p2pj);
-				errorCode = DNSServiceRegister(&presence_sr, 0, 0, purple_account_get_username(data->account), LINK_LOCAL_RECORD_NAME,
+				errorCode = DNSServiceRegister(&presence_sr, kDNSServiceInterfaceIndexAny,
+					0, bonjour_get_jid(data->account), LINK_LOCAL_RECORD_NAME,
 					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
@@ -522,8 +529,9 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	errorCode = DNSServiceBrowse(&browser_sr, 0, 0, LINK_LOCAL_RECORD_NAME, NULL,
-		_mdns_service_browse_callback, data->account);
+	errorCode = DNSServiceBrowse(&browser_sr, 0, kDNSServiceInterfaceIndexAny,
+			LINK_LOCAL_RECORD_NAME, NULL,_mdns_service_browse_callback,
+			data->account);
 	if (errorCode == kDNSServiceErr_NoError) {
 		idata->browser_query = g_new(DnsSDServiceRefHandlerData, 1);
 		idata->browser_query->sdRef = browser_sr;

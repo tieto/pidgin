@@ -153,10 +153,9 @@ jabber_idn_validate(const char *str, const char *at, const char *slash,
 		if (!jabber_resourceprep(idn_buffer, sizeof(idn_buffer))) {
 			jabber_id_free(jid);
 			jid = NULL;
-			/* goto out; */
-		}
-
-		jid->resource = g_strdup(idn_buffer);
+			goto out;
+		} else
+			jid->resource = g_strdup(idn_buffer);
 	}
 
 out:
@@ -277,8 +276,46 @@ gboolean jabber_resourceprep_validate(const char *str)
 #endif /* USE_IDN */
 }
 
-JabberID*
-jabber_id_new(const char *str)
+char *jabber_saslprep(const char *in)
+{
+#ifdef USE_IDN
+	char *out;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(strlen(in) <= sizeof(idn_buffer) - 1, NULL);
+
+	strncpy(idn_buffer, in, sizeof(idn_buffer) - 1);
+	idn_buffer[sizeof(idn_buffer) - 1] = '\0';
+
+	if (STRINGPREP_OK != stringprep(idn_buffer, sizeof(idn_buffer), 0,
+	                                stringprep_saslprep)) {
+		memset(idn_buffer, 0, sizeof(idn_buffer));
+		return NULL;
+	}
+
+	out = g_strdup(idn_buffer);
+	memset(idn_buffer, 0, sizeof(idn_buffer));
+	return out;
+#else /* USE_IDN */
+	/* TODO: Something better than disallowing all non-ASCII characters */
+	/* TODO: Is this even correct? */
+	const guchar *c;
+
+	c = (const guchar *)in;
+	for ( ; *c; ++c) {
+		if (*c > 0x7f || /* Non-ASCII characters */
+				*c == 0x7f || /* ASCII Delete character */
+				(*c < 0x20 && *c != '\t' && *c != '\n' && *c != '\r'))
+					/* ASCII control characters */
+			return NULL;
+	}
+
+	return g_strdup(in);
+#endif /* USE_IDN */
+}
+
+static JabberID*
+jabber_id_new_internal(const char *str, gboolean allow_terminating_slash)
 {
 	const char *at = NULL;
 	const char *slash = NULL;
@@ -323,7 +360,7 @@ jabber_id_new(const char *str)
 						/* JIDs cannot start with / */
 						return NULL;
 					}
-					if (c[1] == '\0') {
+					if (c[1] == '\0' && !allow_terminating_slash) {
 						/* JIDs cannot end with / */
 						return NULL;
 					}
@@ -386,14 +423,16 @@ jabber_id_new(const char *str)
 			jid->node = g_ascii_strdown(str, at - str);
 			if (slash) {
 				jid->domain = g_ascii_strdown(at + 1, slash - (at + 1));
-				jid->resource = g_strdup(slash + 1);
+				if (*(slash + 1))
+					jid->resource = g_strdup(slash + 1);
 			} else {
 				jid->domain = g_ascii_strdown(at + 1, -1);
 			}
 		} else {
 			if (slash) {
 				jid->domain = g_ascii_strdown(str, slash - str);
-				jid->resource = g_strdup(slash + 1);
+				if (*(slash + 1))
+					jid->resource = g_strdup(slash + 1);
 			} else {
 				jid->domain = g_ascii_strdown(str, -1);
 			}
@@ -421,14 +460,16 @@ jabber_id_new(const char *str)
 		node = g_utf8_casefold(str, at-str);
 		if(slash) {
 			domain = g_utf8_casefold(at+1, slash-(at+1));
-			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
+			if (*(slash + 1))
+				jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
 			domain = g_utf8_casefold(at+1, -1);
 		}
 	} else {
 		if(slash) {
 			domain = g_utf8_casefold(str, slash-str);
-			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
+			if (*(slash + 1))
+				jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
 			domain = g_utf8_casefold(str, -1);
 		}
@@ -460,16 +501,26 @@ void
 jabber_id_free(JabberID *jid)
 {
 	if(jid) {
-		if(jid->node)
-			g_free(jid->node);
-		if(jid->domain)
-			g_free(jid->domain);
-		if(jid->resource)
-			g_free(jid->resource);
+		g_free(jid->node);
+		g_free(jid->domain);
+		g_free(jid->resource);
 		g_free(jid);
 	}
 }
 
+char *jabber_get_domain(const char *in)
+{
+	JabberID *jid = jabber_id_new(in);
+	char *out;
+
+	if (!jid)
+		return NULL;
+
+	out = g_strdup(jid->domain);
+	jabber_id_free(jid);
+
+	return out;
+}
 
 char *jabber_get_resource(const char *in)
 {
@@ -485,45 +536,64 @@ char *jabber_get_resource(const char *in)
 	return out;
 }
 
-char *jabber_get_bare_jid(const char *in)
+char *
+jabber_get_bare_jid(const char *in)
 {
 	JabberID *jid = jabber_id_new(in);
 	char *out;
 
-	if(!jid)
+	if (!jid)
 		return NULL;
-
-	out = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
-			jid->node ? "@" : "", jid->domain);
+	out = jabber_id_get_bare_jid(jid);
 	jabber_id_free(jid);
 
 	return out;
 }
 
+char *
+jabber_id_get_bare_jid(const JabberID *jid)
+{
+	g_return_val_if_fail(jid != NULL, NULL);
+
+	return g_strconcat(jid->node ? jid->node : "",
+	                   jid->node ? "@" : "",
+	                   jid->domain,
+	                   NULL);
+}
+
+gboolean
+jabber_jid_is_domain(const char *jid)
+{
+	const char *c;
+
+	for (c = jid; *c; ++c) {
+		if (*c == '@' || *c == '/')
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+JabberID *
+jabber_id_new(const char *str)
+{
+	return jabber_id_new_internal(str, FALSE);
+}
+
 const char *jabber_normalize(const PurpleAccount *account, const char *in)
 {
-	PurpleConnection *gc = account ? account->gc : NULL;
-	JabberStream *js = gc ? gc->proto_data : NULL;
+	PurpleConnection *gc = NULL;
+	JabberStream *js = NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
-	char *tmp;
-	size_t len = strlen(in);
 
-	/*
-	 * If the JID ends with a '/', jabber_id_new is going to throw it away as
-	 * invalid.  However, this is what the UI generates for a JID with no
-	 * resource. Deal with that by dropping away the '/'...
-	 */
-	if (in[len - 1] == '/')
-		tmp = g_strndup(in, len - 1);
-	else
-		tmp = (gchar *)in;
+	if (account)
+		gc = purple_account_get_connection(account);
+	if (gc)
+		js = purple_connection_get_protocol_data(gc);
 
-	jid = jabber_id_new(tmp);
-
-	if (tmp != in)
-		g_free(tmp);
-
+	jid = jabber_id_new_internal(in, TRUE);
 	if(!jid)
 		return NULL;
 
@@ -585,36 +655,94 @@ jabber_is_own_account(JabberStream *js, const char *str)
 	return equal;
 }
 
-PurpleConversation *
-jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
+static const struct {
+		const char *status_id; /* link to core */
+		const char *show; /* The show child's cdata in a presence stanza */
+		const char *readable; /* readable representation */
+		JabberBuddyState state;
+} jabber_statuses[] = {
+	{ "offline",       NULL,   N_("Offline"),        JABBER_BUDDY_STATE_UNAVAILABLE },
+	{ "available",     NULL,   N_("Available"),      JABBER_BUDDY_STATE_ONLINE},
+	{ "freeforchat",   "chat", N_("Chatty"),         JABBER_BUDDY_STATE_CHAT },
+	{ "away",          "away", N_("Away"),           JABBER_BUDDY_STATE_AWAY },
+	{ "extended_away", "xa",   N_("Extended Away"),  JABBER_BUDDY_STATE_XA },
+	{ "dnd",           "dnd",  N_("Do Not Disturb"), JABBER_BUDDY_STATE_DND },
+	{ "error",         NULL,   N_("Error"),          JABBER_BUDDY_STATE_ERROR }
+};
+
+const char *
+jabber_buddy_state_get_name(const JabberBuddyState state)
 {
-	PurpleConversation *c = NULL;
-	GList *cnv;
+	int i;
+	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
+		if (jabber_statuses[i].state == state)
+			return _(jabber_statuses[i].readable);
 
-	g_return_val_if_fail(name != NULL, NULL);
+	return _("Unknown");
+}
 
-	for(cnv = purple_get_conversations(); cnv; cnv = cnv->next) {
-		c = (PurpleConversation*)cnv->data;
-		if(purple_conversation_get_type(c) == PURPLE_CONV_TYPE_IM &&
-				!purple_utf8_strcasecmp(name, purple_conversation_get_name(c)) &&
-				account == purple_conversation_get_account(c))
-			return c;
-	}
+JabberBuddyState
+jabber_buddy_status_id_get_state(const char *id)
+{
+	int i;
+	if (!id)
+		return JABBER_BUDDY_STATE_UNKNOWN;
+
+	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
+		if (g_str_equal(id, jabber_statuses[i].status_id))
+			return jabber_statuses[i].state;
+
+	return JABBER_BUDDY_STATE_UNKNOWN;
+}
+
+JabberBuddyState jabber_buddy_show_get_state(const char *id)
+{
+	int i;
+
+	g_return_val_if_fail(id != NULL, JABBER_BUDDY_STATE_UNKNOWN);
+
+	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
+		if (jabber_statuses[i].show && g_str_equal(id, jabber_statuses[i].show))
+			return jabber_statuses[i].state;
+
+	purple_debug_warning("jabber", "Invalid value of presence <show/> "
+	                     "attribute: %s\n", id);
+	return JABBER_BUDDY_STATE_UNKNOWN;
+}
+
+const char *
+jabber_buddy_state_get_show(JabberBuddyState state)
+{
+	int i;
+	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
+		if (state == jabber_statuses[i].state)
+			return jabber_statuses[i].show;
 
 	return NULL;
 }
 
-/* The same as purple_util_get_image_checksum, but guaranteed to remain SHA1 */
+const char *
+jabber_buddy_state_get_status_id(JabberBuddyState state)
+{
+	int i;
+	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
+		if (state == jabber_statuses[i].state)
+			return jabber_statuses[i].status_id;
+
+	return NULL;
+}
+
 char *
-jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
+jabber_calculate_data_hash(gconstpointer data, size_t len,
+    const gchar *hash_algo)
 {
 	PurpleCipherContext *context;
-	static gchar digest[41];
+	static gchar digest[129]; /* 512 bits hex + \0 */
 
-	context = purple_cipher_context_new_by_name("sha1", NULL);
+	context = purple_cipher_context_new_by_name(hash_algo, NULL);
 	if (context == NULL)
 	{
-		purple_debug_error("jabber", "Could not find sha1 cipher\n");
+		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 
@@ -622,7 +750,8 @@ jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
 	purple_cipher_context_append(context, data, len);
 	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
 	{
-		purple_debug_error("jabber", "Failed to get SHA-1 digest.\n");
+		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
+		    hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 	purple_cipher_context_destroy(context);

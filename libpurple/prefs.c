@@ -277,6 +277,12 @@ prefs_start_element_handler (GMarkupParseContext *context,
 		}
 	}
 
+	if ((pref_type == PURPLE_PREF_BOOLEAN || pref_type == PURPLE_PREF_INT) &&
+			pref_value == NULL) {
+		/* Missing a value attribute */
+		return;
+	}
+
 	if(purple_strequal(element_name, "item")) {
 		struct purple_pref *pref;
 
@@ -506,7 +512,6 @@ pref_full_name(struct purple_pref *pref)
 		return g_strdup("/");
 
 	name = g_string_new(pref->name);
-	parent = pref->parent;
 
 	for(parent = pref->parent; parent && parent->name; parent = parent->parent) {
 		name = g_string_prepend_c(name, '/');

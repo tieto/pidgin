@@ -21,28 +21,91 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_H_
-#define _MSN_H_
+#ifndef MSN_H
+#define MSN_H
+
+typedef enum
+{
+	MSN_CAP_VIA_MOBILE    = 0x0000001,
+	MSN_CAP_VIA_TEXAS     = 0x0000002,
+	MSN_CAP_INK_GIF       = 0x0000004,
+	MSN_CAP_INK_ISF       = 0x0000008,
+	MSN_CAP_VIDEO_CHAT    = 0x0000010,
+	MSN_CAP_PACKET        = 0x0000020,
+	MSN_CAP_MOBILE_ON     = 0x0000040,
+	MSN_CAP_WEB_WATCH     = 0x0000080,
+	MSN_CAP_ACTIVITIES    = 0x0000100,
+	MSN_CAP_VIA_WEBIM     = 0x0000200,
+	MSN_CAP_MOBILE_DEV    = 0x0000400,
+	MSN_CAP_VIA_FEDERATED = 0x0000800,
+	MSN_CAP_SPACE         = 0x0001000,
+	MSN_CAP_MCE           = 0x0002000,
+	MSN_CAP_DIRECTIM      = 0x0004000,
+	MSN_CAP_WINKS         = 0x0008000,
+	MSN_CAP_SEARCH        = 0x0010000,
+	MSN_CAP_BOT           = 0x0020000,
+	MSN_CAP_VOICEIM       = 0x0040000,
+	MSN_CAP_SCHANNEL      = 0x0080000,
+	MSN_CAP_SIP_INVITE    = 0x0100000,
+	MSN_CAP_MULTI_VV      = 0x0200000,
+	MSN_CAP_SDRIVE        = 0x0400000,
+	MSN_CAP_PAGEMODE_MSG  = 0x080000,
+	MSN_CAP_ONECARE       = 0x1000000,
+	MSN_CAP_P2P_TURN      = 0x2000000,
+	MSN_CAP_P2P_BOOTSTRAP_VIA_UUN = 0x4000000,
+	MSN_CAP_ALIASED       = 0x8000000
+} MsnClientCaps;
+
+typedef enum
+{
+	MSN_EXT_CAP_SMS_ONLY            = 0x1,
+	MSN_EXT_CAP_VOICE_OVER_MSNP     = 0x2,
+	MSN_EXT_CAP_UUCP_SIP            = 0x4,
+	MSN_EXT_CAP_APP_MSGS            = 0x8,
+	MSN_EXT_CAP_RTC_VIDEO           = 0x10,
+	MSN_EXT_CAP_P2PV2               = 0x20,
+	MSN_EXT_CAP_AUTH_WEBIM          = 0x40,
+	MSN_EXT_CAP_1ON1_VIA_GROUP      = 0x80,
+	MSN_EXT_CAP_OFFLINEIM           = 0x100,
+	MSN_EXT_CAP_SHARING_VIDEO       = 0x200,
+	MSN_EXT_CAP_NUDGE               = 0x400,
+	MSN_EXT_CAP_CIRCLE_VOICEIM      = 0x800,
+	MSN_EXT_CAP_SHARING             = 0x1000,
+	MSN_EXT_CAP_P2P_MIXER_RELAY     = 0x8000,
+	MSN_EXT_CAP_CONV_WINDOW_FT      = 0x20000,
+	MSN_EXT_CAP_VIDEO_16x9          = 0x40000,
+	MSN_EXT_CAP_P2P_ENVELOPE        = 0x80000,
+	MSN_EXT_CAP_YAHOOIM_DISABLE     = 0x400000,
+	MSN_EXT_CAP_SIP_TUNNELv2        = 0x800000,
+	MSN_EXT_CAP_VOICE_CLIP_WMA      = 0x1000000,
+	MSN_EXT_CAP_VOICE_CLIP_CIRCLEIM = 0x2000000,
+	MSN_EXT_CAP_SOCIAL_NEWS         = 0x4000000,
+	MSN_EXT_CAP_CUSTOM_SMILEY       = 0x8000000,
+	MSN_EXT_CAP_UTF8_MOODS          = 0x10000000,
+	MSN_EXT_CAP_FTURN               = 0x20000000,
+	MSN_EXT_CAP_P4_ACTIVITY         = 0x40000000,
+	MSN_EXT_CAP_MUC                 = 0x80000000
+} MsnClientExtCaps;
+
+typedef enum
+{
+	MSN_CLIENT_VER_5_0  = 0x00,
+	MSN_CLIENT_VER_6_0  = 0x10,	/* MSNC1 */
+	MSN_CLIENT_VER_6_1  = 0x20,	/* MSNC2 */
+	MSN_CLIENT_VER_6_2  = 0x30,	/* MSNC3 */
+	MSN_CLIENT_VER_7_0  = 0x40,	/* MSNC4 */
+	MSN_CLIENT_VER_7_5  = 0x50,	/* MSNC5 */
+	MSN_CLIENT_VER_8_0  = 0x60,	/* MSNC6 */
+	MSN_CLIENT_VER_8_1  = 0x70,	/* MSNC7 */
+	MSN_CLIENT_VER_8_5  = 0x80,	/* MSNC8 */
+	MSN_CLIENT_VER_9_0  = 0x90,	/* MSNC9 */
+	MSN_CLIENT_VER_14_0 = 0xA0,	/* MSNC10 */
+	MSN_CLIENT_VER_15_0 = 0xB0	/* MSNC11 */
+} MsnClientVerId;
 
 #include "internal.h"
 
-#include "account.h"
-#include "accountopt.h"
-#include "blist.h"
-#include "connection.h"
-#include "conversation.h"
-#include "debug.h"
-#include "cipher.h"
-#include "notify.h"
-#include "privacy.h"
-#include "proxy.h"
-#include "prpl.h"
-#include "request.h"
-#include "servconn.h"
-#include "sslconn.h"
-#include "util.h"
-
-#include "ft.h"
+#include "session.h"
 
 #include "msg.h"
 
@@ -52,9 +115,9 @@
 #define MSN_SERVER "messenger.hotmail.com"
 #define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
 #define MSN_PORT 1863
-#define WLM_PROT_VER		15
+#define WLM_PROT_VER		16
 
-#define WLM_MAX_PROTOCOL	15
+#define WLM_MAX_PROTOCOL	16
 #define WLM_MIN_PROTOCOL	15
 
 #define MSN_TYPING_RECV_TIMEOUT 6
@@ -77,64 +140,19 @@
 /* Index into attention_types */
 #define MSN_NUDGE 0
 
-typedef enum
-{
-	MSN_LIST_FL_OP = 0x01,
-	MSN_LIST_AL_OP = 0x02,
-	MSN_LIST_BL_OP = 0x04,
-	MSN_LIST_RL_OP = 0x08,
-	MSN_LIST_PL_OP = 0x10
-
-} MsnListOp;
-#define MSN_LIST_OP_MASK	0x07
-
-typedef enum
-{
-	MSN_CLIENT_CAP_WIN_MOBILE = 0x000001,
-	MSN_CLIENT_CAP_INK_GIF    = 0x000004,
-	MSN_CLIENT_CAP_INK_ISF    = 0x000008,
-	MSN_CLIENT_CAP_VIDEO_CHAT = 0x000010,
-	MSN_CLIENT_CAP_PACKET     = 0x000020,
-	MSN_CLIENT_CAP_MSNMOBILE  = 0x000040,
-	MSN_CLIENT_CAP_MSNDIRECT  = 0x000080,
-	MSN_CLIENT_CAP_WEBMSGR    = 0x000200,
-	MSN_CLIENT_CAP_TGW        = 0x000800,
-	MSN_CLIENT_CAP_SPACE      = 0x001000,
-	MSN_CLIENT_CAP_MCE        = 0x002000,
-	MSN_CLIENT_CAP_DIRECTIM   = 0x004000,
-	MSN_CLIENT_CAP_WINKS      = 0x008000,
-	MSN_CLIENT_CAP_SEARCH     = 0x010000,
-	MSN_CLIENT_CAP_BOT        = 0x020000,
-	MSN_CLIENT_CAP_VOICEIM    = 0x040000,
-	MSN_CLIENT_CAP_SCHANNEL   = 0x080000,
-	MSN_CLIENT_CAP_SIP_INVITE = 0x100000,
-	MSN_CLIENT_CAP_SDRIVE     = 0x400000
-
-} MsnClientCaps;
-
-typedef enum
-{
-	MSN_CLIENT_VER_5_0 = 0x00,
-	MSN_CLIENT_VER_6_0 = 0x10,	/* MSNC1 */
-	MSN_CLIENT_VER_6_1 = 0x20,	/* MSNC2 */
-	MSN_CLIENT_VER_6_2 = 0x30,	/* MSNC3 */
-	MSN_CLIENT_VER_7_0 = 0x40,	/* MSNC4 */
-	MSN_CLIENT_VER_7_5 = 0x50,	/* MSNC5 */
-	MSN_CLIENT_VER_8_0 = 0x60,	/* MSNC6 */
-	MSN_CLIENT_VER_8_1 = 0x70,	/* MSNC7 */
-	MSN_CLIENT_VER_8_5 = 0x80	/* MSNC8 */
-
-} MsnClientVerId;
-
-#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_7_0
-#define MSN_CLIENT_ID_CAPABILITIES (MSN_CLIENT_CAP_PACKET|MSN_CLIENT_CAP_INK_GIF|MSN_CLIENT_CAP_VOICEIM)
+#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_9_0
+#define MSN_CLIENT_ID_CAPABILITIES (MSN_CAP_PACKET|MSN_CAP_INK_GIF|MSN_CAP_VOICEIM)
+#define MSN_CLIENT_ID_EXT_CAPS     (0)
 
 #define MSN_CLIENT_ID \
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-void msn_act_id(PurpleConnection *gc, const char *entry);
+void
+msn_set_public_alias(PurpleConnection *gc, const char *alias,
+                     PurpleSetPublicAliasSuccessCallback success_cb,
+                     PurpleSetPublicAliasFailureCallback failure_cb);
 void msn_send_privacy(PurpleConnection *gc);
 void msn_send_im_message(MsnSession *session, MsnMessage *msg);
 
-#endif /* _MSN_H_ */
+#endif /* MSN_H */

@@ -13,10 +13,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -64,8 +65,13 @@ msgstr ""
 "Lütfen taşıma işini araştırarak kendiniz yapın. Lütfen bu hatayı http://"
 "developer.pidgin.im adresine bildirin."
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Hata"
+
+#, fuzzy
+msgid "Account was not modified"
+msgstr "Hesap eklenmedi"
 
 msgid "Account was not added"
 msgstr "Hesap eklenmedi"
@@ -73,6 +79,14 @@ msgstr "Hesap eklenmedi"
 #, fuzzy
 msgid "Username of an account must be non-empty."
 msgstr "Bir hesabın kayıtlı isim kısmı boş olmamalıdır."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Yeni e-posta bildirimleri"
@@ -212,6 +226,10 @@ msgstr "Kullanıcı Adı"
 
 #, fuzzy
 msgid "Alias (optional)"
+msgstr "Görünen İsim"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "Görünen İsim"
 
 #, fuzzy
@@ -532,7 +550,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr "Sertifika Yöneticisi"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Barındırıcı adı"
 
@@ -565,11 +582,6 @@ msgstr ""
 
 msgid "Re-enable Account"
 msgstr "Hesabı Yeniden Etkinleştir"
-
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
 
 msgid "No such command."
 msgstr "Böyle bir komut yok."
@@ -611,6 +623,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Sobetten ayrıldınız."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "Kayıt tutma başlatıldı. Bundan sonraki iletiler kaydedilecek."
 
@@ -643,6 +660,10 @@ msgstr "Kayıt Tutmayı Etkinleştir"
 msgid "Enable Sounds"
 msgstr "Sesleri Etkinleştir"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Bağlanılamadı"
+
 msgid "<AUTO-REPLY> "
 msgstr "<OTOMATİK-YANIT> "
 
@@ -651,7 +672,8 @@ msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] "Kullanıcı listesi:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Desteklenen hata ayıklama seçenekleri:  versiyon"
 
 msgid "No such command (in this context)."
@@ -770,6 +792,7 @@ msgid "Remaining"
 msgstr "Kalan"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Durum"
 
@@ -785,7 +808,7 @@ msgstr "Dur"
 msgid "Waiting for transfer to begin"
 msgstr "Aktarımın başlaması bekleniyor"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "İptal Edildi"
 
 msgid "Failed"
@@ -873,7 +896,7 @@ msgid "System Log"
 msgstr "Sistem Kayıtları"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Hesaplanıyor..."
 
 msgid "Hangup"
@@ -946,6 +969,9 @@ msgstr "Davet Et"
 msgid "(none)"
 msgstr "(hiçbiri)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "UIN"
@@ -1260,6 +1286,10 @@ msgstr "Diğerleri sohbet ederken"
 msgid "Someone says your username in chat"
 msgstr "Biri sohbette takma adınızı söyledi"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Kayıt Gerekli"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer Başarısız"
 
@@ -1352,6 +1382,7 @@ msgstr "Durumu Sil"
 msgid "Saved Statuses"
 msgstr "Kaydedilmiş Durumlar"
 
+#. title
 msgid "Title"
 msgstr "Başlık"
 
@@ -1515,9 +1546,39 @@ msgstr ""
 "Bu eklenti yeni bir yazışma açıldığında eski yazışmaları şimdiki yazışmanın "
 "başına ekler."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "Çevrimiçi"
 
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Çevrimdışı"
 
@@ -1562,28 +1623,6 @@ msgstr "Son Kayıt"
 
 msgid "Lastlog plugin."
 msgstr "Son Kayıt eklentisi"
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "URL"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "hesaplar"
@@ -1637,14 +1676,61 @@ msgstr "%s için kullanıcı bilgilerini değiştir"
 msgid "Set User Info"
 msgstr "Kullanıcı Bilgisini Değiştir"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Bu protokol sohbet odalarını desteklemiyor."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Bu protokol sohbet odalarını desteklemiyor."
+
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Kişiler"
 
 msgid "buddy list"
 msgstr "kişi listesi"
+
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
+
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr ""
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr ""
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Belirlenen görüntü adı geçersiz."
+
+msgid "The certificate has been revoked."
+msgstr ""
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
 
 msgid "(DOES NOT MATCH)"
 msgstr "(EŞLEŞMİYOR)"
@@ -1686,58 +1772,22 @@ msgstr ""
 msgid "_View Certificate..."
 msgstr "_Sertifikayı Göster..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
+msgid "The certificate for %s could not be validated."
 msgstr ""
 
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr ""
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "SSL Sertifika Hatası"
 
-msgid "Invalid certificate chain"
-msgstr "Geçersiz sertifika zinciri"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Doğruluk kanıtlanamıyor: %s"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-
-msgid "Invalid certificate authority signature"
-msgstr ""
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 
 #. Make messages
@@ -1755,6 +1805,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Sertifika Bilgileri"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Kayıt Hatası"
 
@@ -1769,8 +1820,8 @@ msgstr "+++ %s giriş yaptı"
 msgid "+++ %s signed off"
 msgstr "+++ %s çıkış yaptı"
 
+#. Undocumented
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "Bilinmeyen Hata"
 
@@ -1877,12 +1928,19 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "%s çözümlenirken hata: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "İş parçacığı (thread) oluşturma işlemi başarısız oldu: %s"
 
 msgid "Unknown reason"
 msgstr "Bilinmeyen sebep"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -1920,6 +1978,10 @@ msgstr "Bir dizin gönderemezsiniz."
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s düzgün bir dosya değil. Üzerine yazılmaktan vazgeçildi.\n"
+
+#, fuzzy
+msgid "File is not readable."
+msgstr "Dizin yazılabilir değil."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -1959,6 +2021,10 @@ msgstr "Offering to send %s to %s"
 msgid "Starting transfer of %s from %s"
 msgstr "%s transferi, %s tarafından başlatılıyor."
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "%s transferi tamamlandı"
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "%s transferi tamamlandı"
@@ -1966,19 +2032,19 @@ msgstr "%s transferi tamamlandı"
 msgid "File transfer complete"
 msgstr "Dosya transferi tamamlandı"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Dosya Transferinden Vazgeçildi (%s)"
 
 msgid "File transfer cancelled"
 msgstr "Dosya transferinden vazgeçildi"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s, %s transferinden vazgeçti"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s dosya transferinden vazgeçti"
 
 #, c-format
@@ -2173,8 +2239,31 @@ msgstr "<font color=\"red\"><b>Dosya okunamıyor: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <Otomatik-cevap>: %s\n"
 
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
 #, fuzzy
-msgid "Error creating conference."
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+#, fuzzy
+msgid "Conference error"
+msgstr "Konferans Kapandı"
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
 msgstr "Bağlantı oluşturma hatası"
 
 #, c-format
@@ -2268,10 +2357,11 @@ msgstr ""
 "Dosyaların kaydedileceği dizinin yolu\n"
 "(Lütfen tam adres verin)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr ""
-"Kişi listesinde olmayan kullanıcılar tarafından gönderilenleri otomatik "
-"olarak reddet"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "%s tarafından gönderilen dosya aktarım isteği alındığında"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2283,6 +2373,10 @@ msgstr ""
 #, fuzzy
 msgid "Create a new directory for each user"
 msgstr "Aramak için bir kullanıcı dizini seçin"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s dosya transferinden vazgeçti"
 
 msgid "Notes"
 msgstr "Notlar"
@@ -2433,14 +2527,15 @@ msgstr ""
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
 
-msgid "Join/Part Hiding Configuration"
+msgid "Hide Joins/Parts"
 msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "En Düşük Oda Boyutu"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Kullanıcı Hareketsizliği Zamanaşımı (dakika olarak)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr ""
@@ -2884,6 +2979,7 @@ msgstr "Ad"
 msgid "Last name"
 msgstr "Soyad"
 
+#. email
 msgid "Email"
 msgstr "E-Posta"
 
@@ -2923,22 +3019,6 @@ msgstr "%s yazışmayı kapattı."
 
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "İletiniz gönderilemedi, yazışma başlatılamadı."
-
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr ""
-"Soket oluşturulamadı:\n"
-"%s"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Soket porta yönlendirilemedi"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr ""
-"Soket oluşturulamadı:\n"
-"%s"
 
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
@@ -3031,12 +3111,14 @@ msgstr "Şehir"
 msgid "Year of birth"
 msgstr "Doğum Yılı"
 
+#. gender
 msgid "Gender"
 msgstr "Cinsiyet"
 
 msgid "Male or female"
 msgstr "Bay veya Bayan"
 
+#. 0
 msgid "Male"
 msgstr " Bay"
 
@@ -3085,6 +3167,24 @@ msgstr "Lütfen UIN için şimdiki parolanızı ve yeni parolanızı girin:"
 msgid "Change Gadu-Gadu Password"
 msgstr "Gadu-Gadu Parolası Değiştir"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Durumu _değiştir:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Çevrimdışı kişiler"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Durumu değiştir"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Kişi için bir sohbet seçin : %s"
@@ -3092,10 +3192,20 @@ msgstr "Kişi için bir sohbet seçin : %s"
 msgid "Add to chat..."
 msgstr "Sohbete ekle..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Çevrimiçi"
 
+#. 2
+msgid "Chatty"
+msgstr "Konuşkan"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Rahatsız Etme"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3105,6 +3215,8 @@ msgstr "Uzakta"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
+#. optional information
 msgid "First Name"
 msgstr "İsim"
 
@@ -3218,6 +3330,23 @@ msgstr "Gadu-Gadu Kullanıcısı"
 msgid "GG server"
 msgstr "Kullanıcı Bilgisi Ayarla..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "İzin gereksin"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "%s adlı kullanıcının bilgisi mevcut değil"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "İzin gereksin"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Bağlantı kesildi"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Bilinmeyen komut: %s"
@@ -3254,7 +3383,6 @@ msgstr "%s için MOTD"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3515,6 +3643,10 @@ msgstr ""
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  Bir hareket yap."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Chanserv'e bir komut gönderir"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3712,20 +3844,21 @@ msgstr "Ad-Hoc Komutu Başarısız"
 msgid "execute"
 msgstr "çalıştır"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Sunucu şifrelenmemiş bir bağlantı üzerinden normal metin ile kimlik "
 "doğrulama istiyor"
+
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "Hata: sunucudan geçersiz cevap"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
 
 #, c-format
 msgid ""
@@ -3736,26 +3869,89 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Şifresiz Metin Yetkilendirmesi"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "Kimlik denetimi başarısız"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "Hata: sunucudan geçersiz cevap"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
 msgid "Invalid challenge from server"
 msgstr "Sunucudan geçersiz yanıt"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Sunucu şifrelenmemiş bir bağlantı üzerinden normal metin ile kimlik "
+"doğrulama istiyor"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"Sunucu şifrelenmemiş bir bağlantı üzerinden normal metin ile kimlik "
+"doğrulama istiyor.  Buna izin vererek kimlik doğrulamaya devam etmek istiyor "
+"musunuz?"
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Kimlik denetimi başarısız"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL hatası"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Geçersiz girdi durumu"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Desteklenmeyen Sürüm"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Geçersiz Kodlama"
+
+msgid "User not found"
+msgstr "Kullanıcı bulunamadı"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Geçersiz ad"
+
+msgid "Resource Constraint"
+msgstr "Kaynak Kısıtlaması"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Düzenlenemiyor"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Bir dinleme portu açılamadı."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Sunucudan geçersiz yanıt"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Sunucudan beklenmeyen bir HTTP yanıtı alındı."
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3799,6 +3995,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Cadde"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Adres (devam)"
 
@@ -3825,9 +4026,14 @@ msgstr "Organizasyon Adı"
 msgid "Organization Unit"
 msgstr "Organizasyon Ünitesi"
 
+msgid "Job Title"
+msgstr "İşi"
+
 msgid "Role"
 msgstr "Rol"
 
+#. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Doğum Günü"
 
@@ -3860,13 +4066,17 @@ msgstr "Öncelik"
 msgid "Resource"
 msgstr "Kaynak"
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "Son Güncelleme"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "Çevrimiçi"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr "İkinci İsim"
@@ -3883,24 +4093,33 @@ msgstr "Fotoğraf"
 msgid "Logo"
 msgstr "Amblem"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+"%s ögesini kullanıcı listenizden silmek üzeresiniz.  Devam etmek istiyor "
+"musunuz?"
+
+msgid "Cancel Presence Notification"
+msgstr "Sunucuda Bulunma Bildirimini İptal Et"
+
 msgid "Un-hide From"
 msgstr "Gizleme"
 
 msgid "Temporarily Hide From"
 msgstr "Geçici Olarak Gizlen"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Sunucuda Bulunma Bildirimini İptal Et"
-
 msgid "(Re-)Request authorization"
 msgstr "Yeniden İzin İste"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "Üyelikten Çık"
+
+msgid "Initiate _Chat"
+msgstr "Kişiyle Sohbete _Başla"
 
 msgid "Log In"
 msgstr "Giriş Yap"
@@ -3908,18 +4127,10 @@ msgstr "Giriş Yap"
 msgid "Log Out"
 msgstr "Çıkış Yap"
 
-msgid "Chatty"
-msgstr "Konuşkan"
-
-msgid "Extended Away"
-msgstr "Uzun Süreli Uzakta"
-
-msgid "Do Not Disturb"
-msgstr "Rahatsız Etme"
-
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Soyad"
 
@@ -4045,16 +4256,25 @@ msgid "Roles:"
 msgstr "Rol"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Düz metin"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 msgid "Invalid XMPP ID"
 msgstr "Geçersiz XMPP Kimliği"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Geçersiz XMPP Kimliği. Alan adı ayarlanmalı."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Geçersiz XMPP Kimliği. Alan adı ayarlanmalı."
@@ -4129,10 +4349,6 @@ msgstr "Yeni %s Hesabına Kayıt Ol"
 msgid "Change Registration"
 msgstr "Kaydı Değiştir"
 
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "Sunucuya bağlanılamadı"
-
 msgid "Error unregistering account"
 msgstr "Hesap silinirken hata oluştu"
 
@@ -4181,6 +4397,7 @@ msgstr "Hiçbiri (bekletiliyor)"
 msgid "None"
 msgstr "Hiçbiri"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Üyelik"
 
@@ -4190,6 +4407,20 @@ msgstr ""
 msgid "Allow Buzz"
 msgstr ""
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "İkinci İsim"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Kişi Hakkında Yorum"
+
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4360,9 +4591,6 @@ msgstr "Politika İhlâli"
 msgid "Remote Connection Failed"
 msgstr "Uzak Bağlantı Başarısız"
 
-msgid "Resource Constraint"
-msgstr "Kaynak Kısıtlaması"
-
 msgid "Restricted XML"
 msgstr "Kısıtlanmış XML"
 
@@ -4432,10 +4660,6 @@ msgid ""
 "buzzes now."
 msgstr ""
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "%s kullanıcısına bir titreşim gönderiliyor..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4444,6 +4668,10 @@ msgstr ""
 #, c-format
 msgid "%s has buzzed you!"
 msgstr ""
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "%s kullanıcısına bir titreşim gönderiliyor..."
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4476,13 +4704,18 @@ msgstr "Bir Kaynak Seçin"
 msgid "Initiate Media"
 msgstr "Kişiyle Sohbete _Başla"
 
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Bu protokol sohbet odalarını desteklemiyor."
+
 msgid "config:  Configure a chat room."
 msgstr "config:  Sohbet odasını düzenle."
 
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Sohbet odasını düzenle."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [oda]:  Sohbetten ayrıl"
 
 msgid "register:  Register with a chat room."
@@ -4508,7 +4741,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;kullanıcı&gt; &lt;yönetici|katılımcı|ziyaretçi|hiçbiri&gt;: Bir "
 "kullanıcının odadaki rolünü ayarla."
@@ -4517,7 +4750,7 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [message]:  Bir kullanıcıyı odaya davet eder"
 
 #, fuzzy
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;oda&gt; [sunucu]:  Ağdaki sohbete katıl"
 
 #, fuzzy
@@ -4533,6 +4766,13 @@ msgstr ""
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Kullanıcının sizi farketmesi için titreşim yollar"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Doğru kullanıcıyı seçiniz"
+
+msgid "Extended Away"
+msgstr "Uzun Süreli Uzakta"
 
 #. *< type
 #. *< ui_requirement
@@ -4551,11 +4791,8 @@ msgstr "XMPP Protokol Eklentisi"
 msgid "Domain"
 msgstr "Alan Adı"
 
-msgid "Require SSL/TLS"
+msgid "Use old-style SSL"
 msgstr ""
-
-msgid "Force old (port 5223) SSL"
-msgstr "Eski (port 5223) SSL kullan"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Şifrelenmemiş sistemlerden gelen düzyazılara (plain text) izin ver."
@@ -4609,11 +4846,21 @@ msgstr "XMPP İleti Hatası"
 msgid "(Code %s)"
 msgstr "(Kod %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "İleti gönderilemedi: İleti çok uzun."
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XML ayrıştırma hatası"
-
-msgid "Unknown Error in presence"
-msgstr "Bilinmeyen Hata"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4651,25 +4898,14 @@ msgstr "%s tarafından atıldınız: (%s)"
 msgid "Kicked (%s)"
 msgstr "%s tarafından atıldınız (%s)"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Dosyayı açarken bir hata oluştu."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Dosya aktarımı başarısız oldu"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "Dosya açılamadı '%s': %s"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
+msgid "Unknown Error in presence"
+msgstr "Bilinmeyen Hata"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s dosyası gönderilemedi, kullanıcı dosya aktarımlarını desteklemiyor"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Dosya Gönderimi Başarısız"
 
@@ -4691,17 +4927,312 @@ msgstr ""
 "Lütfen bilgilerini görmek istediğiniz kişinin görüntü veya etiket ismini "
 "giriniz."
 
-msgid "Edit User Mood"
+#, fuzzy
+msgid "Afraid"
+msgstr "Arapça"
+
+#, fuzzy
+msgid "Amazed"
+msgstr "Mahçup"
+
+#, fuzzy
+msgid "Amorous"
+msgstr "Harika"
+
+msgid "Angry"
+msgstr "Kızgın"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Yasaklı"
+
+msgid "Anxious"
+msgstr "Sıkıntılı"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Gönderdiğiniz"
+
+msgid "Ashamed"
+msgstr "Mahçup"
+
+msgid "Bored"
+msgstr "Sıkılmış"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Kaydet"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Memleket"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Sohbetler"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Kalın"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Çakışma"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Devam Et"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Bağlantı Bilgileri"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Bağlandı"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Şirket"
+
+msgid "Crazy"
 msgstr ""
 
-msgid "Please select your mood from the list."
+#, fuzzy
+msgid "Creative"
+msgstr "Oluştur"
+
+#, fuzzy
+msgid "Curious"
+msgstr "Harika"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Reddet"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Sil"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Bağlantı kesildi."
+
+msgid "Disgusted"
 msgstr ""
 
-msgid "Set"
-msgstr "Ayarla"
+#, fuzzy
+msgid "Dismayed"
+msgstr "_Hesabı Pasifleştir"
 
-msgid "Set Mood..."
+#, fuzzy
+msgid "Distracted"
+msgstr "Yanlız"
+
+msgid "Embarrassed"
 msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Sıkıntılı"
+
+msgid "Excited"
+msgstr "Heyecanlı"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Harika"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Ad"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Alınıyor..."
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Grup"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Şehir"
+
+msgid "Happy"
+msgstr "Mutlu"
+
+msgid "Hopeful"
+msgstr ""
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Host"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Kızgın"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Mizah"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Aşık"
+
+msgid "In love"
+msgstr "Aşık"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "Endonezya Dili"
+
+#, fuzzy
+msgid "Interested"
+msgstr "İlgiler"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Davet Et"
+
+msgid "Invincible"
+msgstr "Yenilmez"
+
+msgid "Jealous"
+msgstr "Kıskanç"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "Maymun"
+
+#, fuzzy
+msgid "Lost"
+msgstr "En Yüksek"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "Almanca"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Ruh Hali"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Öntanımlı"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Çevrimdışı"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Oynat"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Yüksek"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Gerçek Ad"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Alınan İletiler"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Kaldır"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Kayıt Ol"
+
+msgid "Sad"
+msgstr "Üzgün"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Harika"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Engellenmiş"
+
+msgid "Shy"
+msgstr ""
+
+#, fuzzy
+msgid "Sick"
+msgstr "Takma isim"
+
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Uykulu"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Hız:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Şarkı"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Fire"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Altı çizili"
+
+msgid "Weak"
+msgstr ""
+
+#, fuzzy
+msgid "Worried"
+msgstr "Sıkılmış"
 
 msgid "Set User Nickname"
 msgstr "Kullanıcı Takma Adını Ayarla"
@@ -4713,6 +5244,9 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
+
+msgid "Set"
+msgstr "Ayarla"
 
 msgid "Set Nickname..."
 msgstr "Takma Ad Ayarla..."
@@ -4737,6 +5271,179 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr "Belirlenen görüntü adı geçersiz."
 
+msgid "Unable to parse message"
+msgstr "Mesaj ayrıştırılamıyor"
+
+msgid "Syntax Error (probably a client bug)"
+msgstr "Sözdizimi hatası (muhtemelen bir istemci hatası)"
+
+msgid "Invalid email address"
+msgstr "Geçersiz e-posta adresi"
+
+msgid "User does not exist"
+msgstr "Kullanıcı mevcut değil"
+
+msgid "Fully qualified domain name missing"
+msgstr "Fully qualified domain name (FQDN) yok"
+
+msgid "Already logged in"
+msgstr "Zaten çevrimiçi"
+
+#, fuzzy
+msgid "Invalid username"
+msgstr "Geçersiz ad"
+
+msgid "Invalid friendly name"
+msgstr "Geçersiz arkadaşlık ismi"
+
+msgid "List full"
+msgstr "Tümünü listele"
+
+msgid "Already there"
+msgstr "Zaten orada"
+
+msgid "Not on list"
+msgstr "Listede değil"
+
+msgid "User is offline"
+msgstr "Kullanıcı çevrimdışı"
+
+msgid "Already in the mode"
+msgstr "Zaten modda"
+
+msgid "Already in opposite list"
+msgstr "Zaten karşı listede"
+
+msgid "Too many groups"
+msgstr "Çok fazla grup"
+
+msgid "Invalid group"
+msgstr "Geçersiz grup"
+
+msgid "User not in group"
+msgstr "Kişi grupta değil"
+
+msgid "Group name too long"
+msgstr "Grup adı çok uzun"
+
+msgid "Cannot remove group zero"
+msgstr "Sıfır grup silinemez"
+
+msgid "Tried to add a user to a group that doesn't exist"
+msgstr "Bir kişi, henüz bulunmayan bir gruba eklenilmeye çalışıldı"
+
+msgid "Switchboard failed"
+msgstr "Santral başarısız oldu"
+
+msgid "Notify transfer failed"
+msgstr "Uyarı aktarımı başarısız oldu"
+
+msgid "Required fields missing"
+msgstr "Gerekli alanlar eksik"
+
+msgid "Too many hits to a FND"
+msgstr "FND a çok fazla vuru"
+
+msgid "Not logged in"
+msgstr "Oturum açılmamış"
+
+msgid "Service temporarily unavailable"
+msgstr "Bu servis geçici olarak hizmet dışı"
+
+msgid "Database server error"
+msgstr "Veritabanı sunucusu hatası"
+
+msgid "Command disabled"
+msgstr "Komut pasifleştirildi"
+
+msgid "File operation error"
+msgstr "Dosya işlemi hatası"
+
+msgid "Memory allocation error"
+msgstr "Bellek ayırma hatası"
+
+msgid "Wrong CHL value sent to server"
+msgstr "Yanlış CHL değeri sunucuya yollandı"
+
+msgid "Server busy"
+msgstr "Sunucu meşgul"
+
+msgid "Server unavailable"
+msgstr "Sunucu geçersiz"
+
+msgid "Peer notification server down"
+msgstr "Peer bildirim sunucusu çalışmıyor"
+
+msgid "Database connect error"
+msgstr "Veritabanı bağlantı hatası"
+
+msgid "Server is going down (abandon ship)"
+msgstr "Sunucu kapanıyor (terkedilmiş gemi)"
+
+msgid "Error creating connection"
+msgstr "Bağlantı oluşturma hatası"
+
+msgid "CVR parameters are either unknown or not allowed"
+msgstr "CVR parametrelerinden biri veya hepsi bilinmiyor veya izin verilmiyor"
+
+msgid "Unable to write"
+msgstr "Yazılamıyor"
+
+msgid "Session overload"
+msgstr "Oturuma aşırı yüklendi"
+
+msgid "User is too active"
+msgstr "Kullanıcı çok aktif"
+
+msgid "Too many sessions"
+msgstr "Çok fazla oturum"
+
+msgid "Passport not verified"
+msgstr "Passport onaylanmadı"
+
+msgid "Bad friend file"
+msgstr "Kötü arkadaş dosyası"
+
+msgid "Not expected"
+msgstr "Beklenmeyen"
+
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
+msgstr "Arkadaşlık adı çok hızlı değişiyor"
+
+msgid "Server too busy"
+msgstr "Sunucu çok yoğun"
+
+msgid "Authentication failed"
+msgstr "Kimlik denetimi başarısız"
+
+msgid "Not allowed when offline"
+msgstr "Çevrim dışıyken izin verilmiyor"
+
+msgid "Not accepting new users"
+msgstr "Yeni kullanıcı kabul edilmiyor"
+
+msgid "Kids Passport without parental consent"
+msgstr "Ebeveyn izinsiz Çocuk Passport hesabı"
+
+msgid "Passport account not yet verified"
+msgstr "Passport hesabı henüz doğrulanmadı"
+
+#, fuzzy
+msgid "Passport account suspended"
+msgstr "Passport hesabı henüz doğrulanmadı"
+
+msgid "Bad ticket"
+msgstr "Kötü bilet"
+
+#, c-format
+msgid "Unknown Error Code %d"
+msgstr "Bilinmeyen Hata Kodu %d"
+
+#, c-format
+msgid "MSN Error: %s\n"
+msgstr "MSN Hatası: %s\n"
+
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
 msgstr ""
@@ -4753,230 +5460,6 @@ msgid ""
 "to be added?"
 msgstr ""
 
-#, c-format
-msgid "Unable to parse message"
-msgstr "Mesaj ayrıştırılamıyor"
-
-#, c-format
-msgid "Syntax Error (probably a client bug)"
-msgstr "Sözdizimi hatası (muhtemelen bir istemci hatası)"
-
-#, c-format
-msgid "Invalid email address"
-msgstr "Geçersiz e-posta adresi"
-
-#, c-format
-msgid "User does not exist"
-msgstr "Kullanıcı mevcut değil"
-
-#, c-format
-msgid "Fully qualified domain name missing"
-msgstr "Fully qualified domain name (FQDN) yok"
-
-#, c-format
-msgid "Already logged in"
-msgstr "Zaten çevrimiçi"
-
-#, fuzzy, c-format
-msgid "Invalid username"
-msgstr "Geçersiz ad"
-
-#, c-format
-msgid "Invalid friendly name"
-msgstr "Geçersiz arkadaşlık ismi"
-
-#, c-format
-msgid "List full"
-msgstr "Tümünü listele"
-
-#, c-format
-msgid "Already there"
-msgstr "Zaten orada"
-
-#, c-format
-msgid "Not on list"
-msgstr "Listede değil"
-
-#, c-format
-msgid "User is offline"
-msgstr "Kullanıcı çevrimdışı"
-
-#, c-format
-msgid "Already in the mode"
-msgstr "Zaten modda"
-
-#, c-format
-msgid "Already in opposite list"
-msgstr "Zaten karşı listede"
-
-#, c-format
-msgid "Too many groups"
-msgstr "Çok fazla grup"
-
-#, c-format
-msgid "Invalid group"
-msgstr "Geçersiz grup"
-
-#, c-format
-msgid "User not in group"
-msgstr "Kişi grupta değil"
-
-#, c-format
-msgid "Group name too long"
-msgstr "Grup adı çok uzun"
-
-#, c-format
-msgid "Cannot remove group zero"
-msgstr "Sıfır grup silinemez"
-
-#, c-format
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Bir kişi, henüz bulunmayan bir gruba eklenilmeye çalışıldı"
-
-#, c-format
-msgid "Switchboard failed"
-msgstr "Santral başarısız oldu"
-
-#, c-format
-msgid "Notify transfer failed"
-msgstr "Uyarı aktarımı başarısız oldu"
-
-#, c-format
-msgid "Required fields missing"
-msgstr "Gerekli alanlar eksik"
-
-#, c-format
-msgid "Too many hits to a FND"
-msgstr "FND a çok fazla vuru"
-
-#, c-format
-msgid "Not logged in"
-msgstr "Oturum açılmamış"
-
-#, c-format
-msgid "Service temporarily unavailable"
-msgstr "Bu servis geçici olarak hizmet dışı"
-
-#, c-format
-msgid "Database server error"
-msgstr "Veritabanı sunucusu hatası"
-
-#, c-format
-msgid "Command disabled"
-msgstr "Komut pasifleştirildi"
-
-#, c-format
-msgid "File operation error"
-msgstr "Dosya işlemi hatası"
-
-#, c-format
-msgid "Memory allocation error"
-msgstr "Bellek ayırma hatası"
-
-#, c-format
-msgid "Wrong CHL value sent to server"
-msgstr "Yanlış CHL değeri sunucuya yollandı"
-
-#, c-format
-msgid "Server busy"
-msgstr "Sunucu meşgul"
-
-#, c-format
-msgid "Server unavailable"
-msgstr "Sunucu geçersiz"
-
-#, c-format
-msgid "Peer notification server down"
-msgstr "Peer bildirim sunucusu çalışmıyor"
-
-#, c-format
-msgid "Database connect error"
-msgstr "Veritabanı bağlantı hatası"
-
-#, c-format
-msgid "Server is going down (abandon ship)"
-msgstr "Sunucu kapanıyor (terkedilmiş gemi)"
-
-#, c-format
-msgid "Error creating connection"
-msgstr "Bağlantı oluşturma hatası"
-
-#, c-format
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR parametrelerinden biri veya hepsi bilinmiyor veya izin verilmiyor"
-
-#, c-format
-msgid "Unable to write"
-msgstr "Yazılamıyor"
-
-#, c-format
-msgid "Session overload"
-msgstr "Oturuma aşırı yüklendi"
-
-#, c-format
-msgid "User is too active"
-msgstr "Kullanıcı çok aktif"
-
-#, c-format
-msgid "Too many sessions"
-msgstr "Çok fazla oturum"
-
-#, c-format
-msgid "Passport not verified"
-msgstr "Passport onaylanmadı"
-
-#, c-format
-msgid "Bad friend file"
-msgstr "Kötü arkadaş dosyası"
-
-#, c-format
-msgid "Not expected"
-msgstr "Beklenmeyen"
-
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Arkadaşlık adı çok hızlı değişiyor"
-
-#, c-format
-msgid "Server too busy"
-msgstr "Sunucu çok yoğun"
-
-#, c-format
-msgid "Authentication failed"
-msgstr "Kimlik denetimi başarısız"
-
-#, c-format
-msgid "Not allowed when offline"
-msgstr "Çevrim dışıyken izin verilmiyor"
-
-#, c-format
-msgid "Not accepting new users"
-msgstr "Yeni kullanıcı kabul edilmiyor"
-
-#, c-format
-msgid "Kids Passport without parental consent"
-msgstr "Ebeveyn izinsiz Çocuk Passport hesabı"
-
-#, c-format
-msgid "Passport account not yet verified"
-msgstr "Passport hesabı henüz doğrulanmadı"
-
-#, fuzzy
-msgid "Passport account suspended"
-msgstr "Passport hesabı henüz doğrulanmadı"
-
-#, c-format
-msgid "Bad ticket"
-msgstr "Kötü bilet"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Bilinmeyen Hata Kodu %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN Hatası: %s\n"
-
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Önerilen İrtibat"
@@ -4984,6 +5467,22 @@ msgstr "Önerilen İrtibat"
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "Kişiyi Kaldır"
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
 
 #, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5007,11 +5506,56 @@ msgstr "E-Posta Adresi"
 msgid "Your new MSN friendly name is too long."
 msgstr "Yeni MSN arkadaşlık isminiz çok uzun."
 
-msgid "Set your friendly name."
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
 msgstr "Arkadaşlık adınızı ayarlayın."
+
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Arkadaşlık İsmi Ayarla..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Bu isim MSN arkadaşlarınıza görünen isminizdir."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Kullanıcı Konumu"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Bu isim MSN arkadaşlarınıza görünen isminizdir."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Kullanıcı Konumu"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Başka bir programla oturum açtınız."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Başka bir programla oturum açtınız."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "İzin ver"
+
+msgid "Disallow"
+msgstr "İzin verme"
 
 msgid "Set your home phone number."
 msgstr "Ev telefon numaranızı ayarlayın."
@@ -5029,12 +5573,6 @@ msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
-
-msgid "Allow"
-msgstr "İzin ver"
-
-msgid "Disallow"
-msgstr "İzin verme"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5093,20 +5631,6 @@ msgstr "Telefonda"
 msgid "Out to Lunch"
 msgstr "Yemekte"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "Sanatçılar"
-
-#, fuzzy
-msgid "Album"
-msgstr "Adium"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Başlık"
@@ -5116,6 +5640,10 @@ msgstr ""
 
 msgid "Set Friendly Name..."
 msgstr "Arkadaşlık İsmi Ayarla..."
+
+#, fuzzy
+msgid "View Locations..."
+msgstr "Kullanıcı Konumu"
 
 msgid "Set Home Phone Number..."
 msgstr "Ev Telefonu Numarası Ayarla..."
@@ -5129,6 +5657,10 @@ msgstr "Cep Telefonu Numarası Ayarla..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Mobil Aygıtları Etkinleştir/Pasifleştir"
 
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Mobil Sayfalarına İzin Ver/Reddet"
+
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobil Sayfalarına İzin Ver/Reddet"
 
@@ -5141,12 +5673,21 @@ msgstr "Hotmail Gelen Kutusunu Aç"
 msgid "Send to Mobile"
 msgstr "Cebine Gönder"
 
-msgid "Initiate _Chat"
-msgstr "Kişiyle Sohbete _Başla"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSN için SSL desteği gereklidir. Lütfen geçerli bir SSL kütüphanesi yükleyin."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be valid email addresses."
+msgstr ""
+"%s kişisi eklenemiyor çünkü görünen adı geçersiz. Görüntü adı bir harfle "
+"başlamalı ve sadece harf, rakam, boşluk ve numaralarla devam etmelidir."
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "Eklenemiyor"
 
 msgid "Error retrieving profile"
 msgstr "Profil alınırken hata"
@@ -5236,9 +5777,6 @@ msgstr "Yıldönümü"
 msgid "Work"
 msgstr "İş"
 
-msgid "Job Title"
-msgstr "İşi"
-
 msgid "Company"
 msgstr "Şirket"
 
@@ -5325,6 +5863,13 @@ msgstr "HTTP Yöntem Sunucusu"
 msgid "Show custom smileys"
 msgstr "Özel gülenyüzleri göster"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Bağlantı oluşturulamadı"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge : kullanıcıların sizi farketmesi için dürtme uyarısı"
 
@@ -5335,9 +5880,9 @@ msgstr "Windows Live ID Kimlik Doğrulaması: Bağlanılamadı"
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID Kimlik Doğrulaması: Bağlanılamadı"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s size bir titreşim gönderdi!"
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "Arama sonuçlarınız"
 
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
@@ -5346,17 +5891,22 @@ msgstr "Bilinmeyen hata (%d)"
 msgid "Unable to add user"
 msgstr "Kullanıcı eklenemedi"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Bilinmeyen hata (%d)"
 
 #, fuzzy
-msgid "The following users are missing from your addressbook"
-msgstr "Arama sonuçlarınız"
+msgid "Unable to remove user"
+msgstr "Kullanıcı eklenemedi"
 
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "İleti gönderilmedi, çünkü oturum açmamışsınız."
+
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana geldi:"
 
 #, c-format
 msgid ""
@@ -5463,7 +6013,7 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5515,73 +6065,500 @@ msgstr "Bunu arkadaş listenize eklemek istiyor musunuz?"
 msgid "The username specified is invalid."
 msgstr "Belirlenen görüntü adı geçersiz."
 
-msgid "This Hotmail account may not be active."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "Girilen SecurID anahtarı geçersiz."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Yazma Hatası"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. display name
+#. nick name (required)
+#, fuzzy
+msgid "Display Name"
+msgstr "Soyad"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "%s Hakkında"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Cep Telefonu Numarası Ayarla..."
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Kullanıcı Profili"
+
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "Girilen SecurID anahtarı geçersiz."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Girilen SecurID anahtarı geçersiz."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Yeni şifreler çelişiyor."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Yazma Hatası"
+
+#. pin
+#. pin (required)
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Simgeyi Kaydet"
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Simgeyi Kaydet"
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "%s Hakkında"
+
+#, fuzzy
+msgid "Search for user"
+msgstr "Bir kullanıcı ara"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Bir kullanıcı ara"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Kullanıcının bilgisi"
+
+msgid "_Search"
+msgstr "_Ara"
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Parola Değiştir..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Parola değiştir..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Arkadaşlık İsmi Ayarla..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Kullanıcı Ara..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Kayıtları Göster"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "%s Hakkında"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Mesajınız çok uzun."
+
+#, fuzzy
+msgid ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Giriş yapılıyor"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the MXit server. Please check your server settings."
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Bağlanılıyor"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Girilen SecurID anahtarı geçersiz."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Girilen SecurID anahtarı geçersiz."
+
+#. mxit login name
+msgid "MXit ID"
+msgstr ""
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Yeni XMPP Hesabına Kayıt Ol"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Lütfen alanları doldurun"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "The MXit ID you entered is not registered. Please register first."
+msgstr ""
+
+msgid "The MXit ID you entered is already registered. Please choose another."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Sunucu kullanılamıyor; lütfen tekrar deneyin"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Güvenlik Aktif"
+
+#. ask for input (required)
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Parola"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Ülke"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Önerilen Dil"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "İzin gereksin"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Sunucu Bilgileri"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Kötü bilet"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "%s tarafından atıldınız: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Oda:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "E-postanız var!"
+
+#, fuzzy
+msgid "Loading menu..."
+msgstr "Giriş yapılıyor"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Gönderilmiş İletiler"
+
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Alınan İletiler"
+
+#. hidden number
+#, fuzzy
+msgid "Hidden Number"
+msgstr "İkinci İsim"
+
+#, fuzzy
+msgid "No profile available"
+msgstr "Erişilebilir değil"
+
+#, fuzzy
+msgid "This contact does not have a profile."
 msgstr "Bu Hotmail hesabı aktif olmayabilir."
 
-msgid "Profile URL"
-msgstr "Profil URL"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
 #, fuzzy
-msgid "MSN Protocol Plugin"
-msgstr "AIM Protokolü Eklentisi"
+msgid "Your MXit ID..."
+msgstr "Yahoo! ID"
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Davet Et"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Sunucu"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "TCP kullanarak bağlan"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Çevrimiçi"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "İleti içine ekle"
+
+#, fuzzy
+msgid "No results"
+msgstr "Arama sonuçları"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Uygun kullanıcı bulunamadı"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Kullanıcı"
+
+msgid "Where I live"
+msgstr ""
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s geçerli bir grup değil."
-
-msgid "Unknown error."
-msgstr "Bilinmeyen Hata"
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
 
 #, c-format
-msgid "%s on %s (%s)"
-msgstr "%s - %s (%s)"
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "XMPP İleti Hatası"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Sunucuya bağlanılamadı."
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Qun üyesini başarılı şekilde düzenlediniz"
 
 #, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Kullanıcı %s 'a eklenemiyor (%s)"
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
 
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s içindeki kullanıcı engellenemiyor (%s)"
+#, fuzzy
+msgid "Message Error"
+msgstr "XMPP İleti Hatası"
 
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s içindeki kullanıcıya izin verilemiyor (%s)"
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
 
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s eklenemiyor, çünkü listeniz dolu durumda."
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
 
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s geçerli bir passport hesabı değil."
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL hatası"
 
-msgid "Service Temporarily Unavailable."
-msgstr "Bu Servis Geçici Olarak Hizmet Dışı"
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL hatası"
 
-msgid "Unable to rename group"
-msgstr "Grup adı değiştirilemiyor"
+#, fuzzy
+msgid "Contact Error"
+msgstr "Bağlantı Hatası"
 
-msgid "Unable to delete group"
-msgstr "Grup silinemiyor"
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "XMPP İleti Hatası"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s sizi kişi listesine ekledi."
+#, fuzzy
+msgid "Status Error"
+msgstr "Akış Hatası"
 
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s sizi kişi listesinden sildi."
+#, fuzzy
+msgid "Mood Error"
+msgstr "Simge Hatası"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Kayıt Silme Hatası"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Bağlantı Hatası"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Üyelik"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Bağlantı Hatası"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Dosya Aktarımı"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Uyarıcı oluşturulamadı"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Kayıt Silme Hatası"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Yazma Hatası"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
+msgstr "Aşık"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Gönder"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Davet Et"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Reddet"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Sil"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "İş Bilgileri"
 
 #, c-format
 msgid "No such user: %s"
@@ -5954,9 +6931,6 @@ msgstr "Şifre süresi bitmiş"
 msgid "Incorrect password"
 msgstr "Yanlış parola"
 
-msgid "User not found"
-msgstr "Kullanıcı bulunamadı"
-
 msgid "Account has been disabled"
 msgstr "Hesap kapatılmıştır"
 
@@ -6181,11 +7155,29 @@ msgstr "Sunucu adresi"
 msgid "Server port"
 msgstr "Sunucu portu"
 
-#, fuzzy
-msgid "Received unexpected response from "
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Lütfen bana izin ver, bu şekilde seni arkadaş listeme ekleyebilirim."
+
+msgid "No reason given."
+msgstr "Sebep yazılmamış."
+
+msgid "Authorization Denied Message:"
+msgstr "İzin Reddetme İletisi:"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_Tamam"
+
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
 msgstr "Sunucudan beklenmeyen bir HTTP yanıtı alındı."
 
-#. username connecting too frequently
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
+msgstr "Sunucudan beklenmeyen bir HTTP yanıtı alındı."
+
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6194,11 +7186,40 @@ msgstr ""
 "deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
 "kalacaksınız."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "%s çözümleme hatası"
 
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
+msgstr ""
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
 msgstr ""
 
 #, fuzzy
@@ -6208,6 +7229,165 @@ msgstr "Bağlanılamadı"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "Geçersiz Oda İsmi"
+
+msgid "Invalid error"
+msgstr "Geçersiz hata"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Dosya gönderilemiyor"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Bir dizin gönderemezsiniz."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Mesaj gönderilemedi."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Çevrimdışı İletisi"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "İleti gönderilemedi (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Mesaj gönderilemedi: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Mesaj %s e gönderilemedi:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Mesaj %s e gönderilemedi:"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Yazmayı bırakınca"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "İstek Diyaloğu"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Sayfalama"
+
+msgid "Watching a movie"
+msgstr ""
+
+msgid "Typing"
+msgstr "Yazıyor"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Ofiste Değil"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Uykulu"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "Hızlı Mesajlaşma Arkadaşları"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Telefonda"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "Tekrarlayan"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Cep"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "İkizler"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Şarkı"
+
+#, fuzzy
+msgid "Writing"
+msgstr "İş"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "İş"
+
+msgid "Listening to music"
+msgstr ""
+
+#, fuzzy
+msgid "Studying"
+msgstr "Gönder"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "İlgiler"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -6276,159 +7456,6 @@ msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "%s dosyasının boyutu %s, bu boyut en yüksek boyut olan %s boyutunundan büyük."
 
-msgid "Invalid error"
-msgstr "Geçersiz hata"
-
-msgid "Invalid SNAC"
-msgstr "Geçersiz SNAC"
-
-msgid "Rate to host"
-msgstr "Hostu değerlendir"
-
-msgid "Rate to client"
-msgstr "İstemciyi değerlendir"
-
-msgid "Service unavailable"
-msgstr "Bu servis hizmet dışı"
-
-msgid "Service not defined"
-msgstr "Servis belirtilmedi"
-
-msgid "Obsolete SNAC"
-msgstr "Gereksiz SNAC"
-
-msgid "Not supported by host"
-msgstr "Sunucu tarafından desteklenmiyor"
-
-msgid "Not supported by client"
-msgstr "İstemci tarafından desteklenmiyor"
-
-msgid "Refused by client"
-msgstr "İstemci tarafından reddedildi"
-
-msgid "Reply too big"
-msgstr "Yanıtçok uzun"
-
-msgid "Responses lost"
-msgstr "Yanıtlar kayıp"
-
-msgid "Request denied"
-msgstr "İstek reddedildi"
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr "Yetersiz hak"
-
-msgid "In local permit/deny"
-msgstr "Yerelde izin ver/izin verme"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Kullanıcı geçici olarak erişilemez durumda"
-
-msgid "No match"
-msgstr "Eşlenen yok"
-
-msgid "List overflow"
-msgstr "Liste taşması"
-
-msgid "Request ambiguous"
-msgstr "İstek berlirsizliği"
-
-msgid "Queue full"
-msgstr "Liste dolu"
-
-msgid "Not while on AOL"
-msgstr "AOL'de değil"
-
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Kişi Simgesi"
-
-msgid "Voice"
-msgstr "Ses"
-
-msgid "AIM Direct IM"
-msgstr "AIM Doğrudan IM"
-
-msgid "Get File"
-msgstr "Dosyayı Al"
-
-msgid "Games"
-msgstr "Oyunlar"
-
-msgid "Add-Ins"
-msgstr "Eklentiler"
-
-msgid "Send Buddy List"
-msgstr "Kişi Listesi Gönder"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Doğrudan Bağlantı"
-
-msgid "AP User"
-msgstr "AP Kullanıcısı"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ Server Relay"
-
-msgid "Old ICQ UTF8"
-msgstr "Eski ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian Şifrelemesi"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Güvenlik Aktif"
-
-msgid "Video Chat"
-msgstr "Görüntülü Sohbet"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Canlı Görüntü"
-
-msgid "Camera"
-msgstr "Kamera"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "Kayıtlı İsim"
-
 msgid "Free For Chat"
 msgstr "Sohbet için Hazır"
 
@@ -6444,14 +7471,25 @@ msgstr "Web'e Açık"
 msgid "Invisible"
 msgstr "Görünmez"
 
-msgid "IP Address"
-msgstr "IP Adresi"
+#, fuzzy
+msgid "Evil"
+msgstr "E-Posta"
 
-msgid "Warning Level"
-msgstr "Uyarı Seviyesi"
+#, fuzzy
+msgid "Depression"
+msgstr "Uzmanlık"
 
-msgid "Buddy Comment"
-msgstr "Kişi Hakkında Yorum"
+#, fuzzy
+msgid "At home"
+msgstr "%s Hakkında"
+
+#, fuzzy
+msgid "At work"
+msgstr "Ağ"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Yemekte"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -6484,6 +7522,11 @@ msgstr ""
 "değil. Takma adlar bir harfle başlamalı ve harfler, rakamlar, boşluk ile "
 "devam etmelidir."
 
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6499,7 +7542,6 @@ msgid "Received authorization"
 msgstr "İzin alındı."
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -6514,6 +7556,18 @@ msgstr "Hesabınız şuan için durdurulmuştur."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL Instant Messenger (Anlık İleti) Servisi geçici olarak servis dışı."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Çok sık bağlanıp kopuyorsunuz. Lütfen on dakika bekledikten sonra tekrar "
+"deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
+"kalacaksınız."
+
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "İstemci sürümünüz çok eski. Lütfen şuadan güncelleyin: %s"
@@ -6521,8 +7575,9 @@ msgstr "İstemci sürümünüz çok eski. Lütfen şuadan güncelleyin: %s"
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Çok sık bağlanıp kopuyorsunuz. Lütfen on dakika bekledikten sonra tekrar "
 "deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
@@ -6538,32 +7593,11 @@ msgstr "SecurID (güvenlik nosu) Giriniz"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Dijital görünümden 6 rakamı giriniz."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_Tamam"
-
 msgid "Password sent"
 msgstr "Parola gönderildi"
 
 msgid "Unable to initialize connection"
 msgstr "Bağlantı başlatılamadı"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Lütfen bana izin ver, bu şekilde seni arkadaş listeme ekleyebilirim."
-
-msgid "Authorization Request Message:"
-msgstr "İzin İsteme İletisi:"
-
-msgid "Please authorize me!"
-msgstr "Lütfen sizi eklememe izin verin!"
-
-msgid "No reason given."
-msgstr "Sebep yazılmamış."
-
-msgid "Authorization Denied Message:"
-msgstr "İzin Reddetme İletisi:"
 
 #, c-format
 msgid ""
@@ -6668,81 +7702,18 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 "%hu mesajı %s gönderinden bilinmeyen bir sebepten dolayı kaçırdınız."
 
-#. Data is assumed to be the destination bn
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Mesaj gönderilemedi: %s"
-
-msgid "Unknown reason."
-msgstr "Bilinmeyen Sebep."
-
-#, c-format
-msgid "Unable to send message to %s:"
-msgstr "Mesaj %s e gönderilemedi:"
-
-#, c-format
-msgid "User information not available: %s"
-msgstr "%s kullanıcı bilgisi mevcut değil."
-
-msgid "Online Since"
-msgstr "Bağlı olduğu süre:"
-
-msgid "Member Since"
-msgstr "Üye olduğu süre:"
-
-msgid "Capabilities"
-msgstr "Yetenekler"
-
-msgid "Profile"
-msgstr "Profil"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM bağlantınız kaybolmuş olabilir."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[İçerdiği geçersiz karakterlerden dolayı bu kullanıcıdan gelen mesaj "
-"gösterilemiyor.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
-msgstr ""
-"Yaptığınız son işlem gerçekleştirilemiyor çünkü deneme limitini aştınız. "
-"Lütfen 10 saniye daha bekleyin ve tekrar deneyin."
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "%s sohbet odasından bağlantınız koptu."
 
-msgid "Mobile Phone"
-msgstr "Cep Telefonu"
+msgid "The new formatting is invalid."
+msgstr "Yeni biçimlendirme geçersiz."
 
-msgid "Personal Web Page"
-msgstr "Kişisel Web Sayfası"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Ek Bilgi"
-
-msgid "Zip Code"
-msgstr "Posta Kodu"
-
-msgid "Work Information"
-msgstr "İş Bilgileri"
-
-msgid "Division"
-msgstr "Bölüm"
-
-msgid "Position"
-msgstr "Pozisyon"
-
-msgid "Web Page"
-msgstr "Web Sayfası"
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
 
 msgid "Pop-Up Message"
 msgstr "Açılır Pencere Mesajı"
@@ -6872,10 +7843,6 @@ msgstr ""
 "başlamalı ve sadece harf, rakam, boşluk ve numaralarla devam etmelidir."
 
 #, fuzzy
-msgid "Unable to Add"
-msgstr "Eklenemiyor"
-
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "Kişi Listesi Getirme Hatası"
 
@@ -6944,6 +7911,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "iTunes Müzik Deposu Bağlantısı"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s kişisi için açıklama"
@@ -6965,6 +7936,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Bağlan"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Sunucu bağlantıyı kapattı."
+
 msgid "Get AIM Info"
 msgstr "AIM Bilgilerini Al"
 
@@ -6972,8 +7947,13 @@ msgstr "AIM Bilgilerini Al"
 msgid "Edit Buddy Comment"
 msgstr "Kişi Açıklaması Düzenle"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Durum İletisi Al"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Doğrudan Anında Mesajlaşma sağlandı"
 
 msgid "Direct IM"
 msgstr "Doğrudan IM"
@@ -6990,16 +7970,11 @@ msgstr "Web'e açık (SPAM iletiler almanıza neden olabilir!)"
 msgid "ICQ Privacy Options"
 msgstr "ICQ Gizlilik Seçenekleri"
 
-msgid "The new formatting is invalid."
-msgstr "Yeni biçimlendirme geçersiz."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-
 msgid "Change Address To:"
 msgstr "Adresi Şöyle Değiştir:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>izin için beklemiyorsunuz</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7021,9 +7996,6 @@ msgstr "E-Posta adresiyle bir arkadaş ara"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Aradığınız arkadaşın e-posta adresini yazın."
 
-msgid "_Search"
-msgstr "_Ara"
-
 #, fuzzy
 msgid "Set User Info (web)..."
 msgstr "Kullanıcı Bilgisini Ayarla (URL)..."
@@ -7041,6 +8013,14 @@ msgstr "IM Yönlendirmeyi yapılandır (URL)"
 msgid "Set Privacy Options..."
 msgstr "Gizlilik Seçeneklerini Ayarla..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Kişi Listesini Görüntüle"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Davetli Listesi"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Hesabı Doğrula"
@@ -7056,9 +8036,6 @@ msgstr "İzin Bekleyen Kişileri Göster"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "E-Posta Adresine Göre Kişi Ara..."
-
-msgid "Search for Buddy by Information"
-msgstr "Kişi Bilgilerine Göre Kişi Ara"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -7101,791 +8078,246 @@ msgstr ""
 "resimleri için gereklidir. Çünkü IP adresiniz gösterilecek, bu da bir "
 "güvenlik tehdidi oluşturabilir."
 
-msgid "Aquarius"
-msgstr "Kova"
-
-msgid "Pisces"
-msgstr "Balık"
-
-msgid "Aries"
-msgstr "Koç"
-
-msgid "Taurus"
-msgstr "Boğa"
-
-msgid "Gemini"
-msgstr "İkizler"
-
-msgid "Cancer"
-msgstr "Yengeç"
-
-msgid "Leo"
-msgstr "Aslan"
-
-msgid "Virgo"
-msgstr "Başak"
-
-msgid "Libra"
-msgstr "Terazi"
-
-msgid "Scorpio"
-msgstr "Akrep"
-
-msgid "Sagittarius"
-msgstr "Yay"
-
-msgid "Capricorn"
-msgstr "Oğlak"
-
-msgid "Rat"
-msgstr "Fare"
-
-msgid "Ox"
-msgstr "Öküz"
-
-msgid "Tiger"
-msgstr "Kaplan"
-
-msgid "Rabbit"
-msgstr "Tavşan"
-
-msgid "Dragon"
-msgstr "Ejderha"
-
-msgid "Snake"
-msgstr "Yılan"
-
-msgid "Horse"
-msgstr "At"
-
-msgid "Goat"
-msgstr "Keçi"
-
-msgid "Monkey"
-msgstr "Maymun"
-
-msgid "Rooster"
-msgstr "Horoz"
-
-msgid "Dog"
-msgstr "Köpek"
-
-msgid "Pig"
-msgstr "Domuz"
-
-msgid "Other"
-msgstr "Diğer"
-
-#, fuzzy
-msgid "Visible"
-msgstr "Görünmez"
-
-msgid "Friend Only"
-msgstr ""
-
-#, fuzzy
-msgid "Private"
-msgstr "Gizlilik"
-
-msgid "QQ Number"
-msgstr "QQ Numarası"
-
-msgid "Country/Region"
-msgstr "Ülke/Bölge"
-
-msgid "Province/State"
-msgstr "Eyalet/Ülke"
-
-msgid "Zipcode"
-msgstr "Posta Kodu"
-
-msgid "Phone Number"
-msgstr "Telefon Numarası"
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "İzin vermek istiyor musunuz?"
-
-msgid "Cellphone Number"
-msgstr "Cep Numarası"
-
-msgid "Personal Introduction"
-msgstr "Kişisel Giriş"
-
-#, fuzzy
-msgid "City/Area"
-msgstr "Şehir"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "Kişisel Cep Telefonu"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "Görünen İsim"
-
-msgid "College"
-msgstr "Kolej"
-
-#, fuzzy
-msgid "Horoscope"
-msgstr "Burç Sembolü"
-
-#, fuzzy
-msgid "Zodiac"
-msgstr "Zodyak İmzası"
-
-#, fuzzy
-msgid "Blood"
-msgstr "Engellenmiş"
-
-#, fuzzy
-msgid "True"
-msgstr "Boğa"
-
-#, fuzzy
-msgid "False"
-msgstr "Başarısız Oldu"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "Hesabı Düzenle"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "Ev Adresi"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "Bilgilerimi düzenle"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "Bilgilerimi düzenle"
-
-#, fuzzy
-msgid "Update"
-msgstr "Son Güncelleme"
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "Lütfen kişi bilgilerini girin."
-
-msgid "Mobile"
-msgstr "Cep"
-
-msgid "Note"
-msgstr "Not"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
+#. Label
+msgid "Buddy Icon"
 msgstr "Kişi Simgesi"
 
-msgid "Change his/her memo as you like"
+msgid "Voice"
+msgstr "Ses"
+
+msgid "AIM Direct IM"
+msgstr "AIM Doğrudan IM"
+
+msgid "Get File"
+msgstr "Dosyayı Al"
+
+msgid "Games"
+msgstr "Oyunlar"
+
+msgid "ICQ Xtraz"
 msgstr ""
 
-#, fuzzy
-msgid "_Modify"
-msgstr "Düzenle"
+msgid "Add-Ins"
+msgstr "Eklentiler"
 
-#, fuzzy
-msgid "Memo Modify"
-msgstr "Düzenle"
+msgid "Send Buddy List"
+msgstr "Kişi Listesi Gönder"
 
-#, fuzzy
-msgid "Server says:"
-msgstr "Sunucu meşgul"
+msgid "ICQ Direct Connect"
+msgstr "ICQ Doğrudan Bağlantı"
 
-msgid "Your request was accepted."
-msgstr ""
+msgid "AP User"
+msgstr "AP Kullanıcısı"
 
-msgid "Your request was rejected."
-msgstr ""
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
 
-#, fuzzy, c-format
-msgid "%u requires verification"
-msgstr "İzin gereksin"
+msgid "Nihilist"
+msgstr "Nihilist"
 
-#, fuzzy
-msgid "Add buddy question"
-msgstr "Kişiyi listenize eklemek istiyor musunuz?"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "İsteğinizi buraya girin"
-
-msgid "Send"
-msgstr "Gönder"
-
-#, fuzzy
-msgid "Invalid answer."
-msgstr "Geçersiz ad"
-
-msgid "Authorization denied message:"
-msgstr "İzin reddetme iletisi:"
-
-#, fuzzy
-msgid "Sorry, you're not my style."
-msgstr "Üzgünüm, benim tipim değilsin..."
-
-#, fuzzy, c-format
-msgid "%u needs authorization"
-msgstr "%d kullanıcısı kimlik doğrulamaya gereksinim duyuyor"
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "Kişiyi listenize eklemek istiyor musunuz?"
-
-#, fuzzy
-msgid "Enter request here"
-msgstr "İsteğinizi buraya girin"
-
-msgid "Would you be my friend?"
-msgstr "Arkadaşım olmak ister misiniz?"
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Kişi Ekle"
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "Kişi Ekle"
-
-#, fuzzy
-msgid "Invalid QQ Number"
-msgstr "Geçersiz QQ Yüzü"
-
-#, fuzzy
-msgid "Failed sending authorize"
-msgstr "Lütfen sizi eklememe izin verin!"
-
-#, fuzzy, c-format
-msgid "Failed removing buddy %u"
-msgstr "Kişi silinemedi"
-
-#, fuzzy, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "%s sizi kişi listesinden sildi."
-
-#, fuzzy
-msgid "No reason given"
-msgstr "Sebep yazılmamış."
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s tarafından eklendiniz"
-
-msgid "Would you like to add him?"
-msgstr "Onu eklemek ister misiniz?"
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "Reddet"
-
-#, c-format
-msgid "Message: %s"
-msgstr "İleti: %s"
-
-msgid "ID: "
-msgstr "Kimlik: "
-
-msgid "Group ID"
-msgstr "Grup Kimliği"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "Lütfen %s için yeni ismi girin"
-
-msgid "You can only search for permanent Qun\n"
-msgstr ""
-
-#, fuzzy
-msgid "(Invalid UTF-8 string)"
-msgstr "Geçersiz proxy ayarları"
-
-#, fuzzy
-msgid "Not member"
-msgstr "Ben bir üye değilim"
-
-#, fuzzy
-msgid "Member"
-msgstr "Üye olduğu süre:"
-
-#, fuzzy
-msgid "Requesting"
-msgstr "İstek Diyaloğu"
-
-#, fuzzy
-msgid "Admin"
-msgstr "Adium"
-
-#, fuzzy
-msgid "Notice"
-msgstr "Not"
-
-#, fuzzy
-msgid "Detail"
-msgstr "Öntanımlı"
-
-msgid "Creator"
-msgstr "Oluşturucu"
-
-#, fuzzy
-msgid "About me"
-msgstr "%s Hakkında"
-
-#, fuzzy
-msgid "Category"
-msgstr "Sohbet hatası"
-
-#, fuzzy
-msgid "The Qun does not allow others to join"
-msgstr "Bu grup diğerlerinin katılmasına izin vermiyor"
-
-#, fuzzy
-msgid "Join QQ Qun"
-msgstr "Sohbete Başla..."
-
-msgid "Input request here"
-msgstr "İsteğinizi buraya girin"
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Qun üyesini başarılı şekilde düzenlediniz"
-
-#, fuzzy
-msgid "Successfully joined Qun"
-msgstr "Qun üyesini başarılı şekilde düzenlediniz"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr ""
-
-msgid "QQ Qun Operation"
-msgstr ""
-
-#, fuzzy
-msgid "Failed:"
-msgstr "Başarısız Oldu"
-
-msgid "Join Qun, Unknown Reply"
-msgstr ""
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "QQ Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-#, fuzzy
-msgid "Sorry, you are not our style"
-msgstr "Üzgünüm, benim tipim değilsin..."
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "Qun üyesini başarılı şekilde düzenlediniz"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "Qun bilgisini başarılı şekilde düzenlediniz"
-
-msgid "You have successfully created a Qun"
-msgstr "Başarılı şekilde Qun oluşturdunuz"
-
-#, fuzzy
-msgid "Would you like to set up detailed information now?"
-msgstr "Şimdi Qun detaylarını ayarlamak ister misiniz?"
-
-msgid "Setup"
-msgstr "Kur"
-
-#, fuzzy, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%d kullanıcısı %d grubuna katılmak istedi"
-
-#, fuzzy, c-format
-msgid "%u request to join Qun %u"
-msgstr "%d kullanıcısı %d grubuna katılmak istedi"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Kişiyle sohbete katılınamadı"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "Kişiyi Sil"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "Kişiyi Sil"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Bilinmeyen-%d"
-
-msgid "Level"
-msgstr "Seviye"
-
-msgid " VIP"
-msgstr ""
-
-msgid " TCP"
-msgstr ""
-
-#, fuzzy
-msgid " FromMobile"
-msgstr "Cep"
-
-#, fuzzy
-msgid " BindMobile"
-msgstr "Cep"
-
-#, fuzzy
-msgid " Video"
-msgstr "Canlı Görüntü"
-
-#, fuzzy
-msgid " Zone"
-msgstr "Hiçbiri"
-
-msgid "Flag"
-msgstr ""
-
-msgid "Ver"
-msgstr ""
-
-msgid "Invalid name"
-msgstr "Geçersiz ad"
-
-#, fuzzy
-msgid "Select icon..."
-msgstr "Dizin Seç..."
-
-#, fuzzy, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Sunucunun IP numarası</b>: %s: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Bağlantı Kipi</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Bağlantı Kipi</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Benim Görünen IP numaram</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>Sunucunun IP numarası</b>: %s: %d<br>\n"
-
-msgid "Login Information"
-msgstr "Giriş Bilgileri"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
-
-#, fuzzy
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-#, fuzzy
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<b>Son Yenileme:</b> %s<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "About OpenQ %s"
-msgstr "%s Hakkında"
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "Simgeyi Kaydet"
-
-msgid "Change Password"
-msgstr "Parola Değiştir"
-
-#, fuzzy
-msgid "Account Information"
-msgstr "Giriş Bilgileri"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-#, fuzzy
-msgid "About OpenQ"
-msgstr "%s Hakkında"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "Ev Adresi"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "QQ Protocol Plugin"
-msgstr "QQ Protokolü\t Eklentisi"
-
-#, fuzzy
-msgid "Auto"
-msgstr "Yetki"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "Kullanıcı Seç"
-
-msgid "QQ2005"
-msgstr ""
-
-msgid "QQ2007"
-msgstr ""
-
-msgid "QQ2008"
-msgstr ""
-
-#, fuzzy
-msgid "Connect by TCP"
-msgstr "TCP kullanarak bağlan"
-
-#, fuzzy
-msgid "Show server notice"
-msgstr "Sunucu portu"
-
-#, fuzzy
-msgid "Show server news"
-msgstr "Sunucu adresi"
-
-msgid "Show chat room when msg comes"
-msgstr ""
-
-msgid "Keep alive interval (seconds)"
-msgstr ""
-
-#, fuzzy
-msgid "Update interval (seconds)"
-msgstr "Bilgilerimi güncelle"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "Sunucu bilgileri alınamıyor"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "Hatalı başlık"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-#, fuzzy
-msgid "Activation required"
-msgstr "Kayıt Gerekli"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting captcha"
-msgstr "İstek Diyaloğu"
-
-msgid "Checking captcha"
-msgstr ""
-
-#, fuzzy
-msgid "Failed captcha verification"
-msgstr "Yahoo! Kimlik Denetimi Başarısız"
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "Resmi Kaydet"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "Parola"
-
-msgid "QQ Captcha Verification"
-msgstr ""
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "Lütfen grubun ismini girin"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-
-msgid "Socket error"
-msgstr "Soket hatası"
-
-#, fuzzy
-msgid "Getting server"
-msgstr "Kullanıcı Bilgisi Ayarla..."
-
-#, fuzzy
-msgid "Requesting token"
-msgstr "İstek reddedildi"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "Sunucuya bağlanılamadı."
-
-#, fuzzy
-msgid "Invalid server or port"
-msgstr "Geçersiz hata"
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "SILC sunucusuna bağlanılıyor"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "QQ Kimlik Hatası"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
+msgid "ICQ Server Relay"
 msgstr "ICQ Server Relay"
 
-#, fuzzy, c-format
-msgid "%s:%s"
-msgstr "%s (%s)"
+msgid "Old ICQ UTF8"
+msgstr "Eski ICQ UTF8"
 
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Kimden"
+msgid "Trillian Encryption"
+msgstr "Trillian Şifrelemesi"
 
-#, fuzzy, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr "Sunucu Bilgileri: %s"
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Güvenlik Aktif"
+
+msgid "Video Chat"
+msgstr "Görüntülü Sohbet"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Canlı Görüntü"
+
+msgid "Camera"
+msgstr "Kamera"
 
 #, fuzzy
-msgid "Unknown SERVER CMD"
-msgstr "Bilinmeyen sebep"
+msgid "Screen Sharing"
+msgstr "Kayıtlı İsim"
+
+msgid "IP Address"
+msgstr "IP Adresi"
+
+msgid "Warning Level"
+msgstr "Uyarı Seviyesi"
+
+msgid "Buddy Comment"
+msgstr "Kişi Hakkında Yorum"
 
 #, c-format
+msgid "User information not available: %s"
+msgstr "%s kullanıcı bilgisi mevcut değil."
+
+msgid "Mobile Phone"
+msgstr "Cep Telefonu"
+
+msgid "Personal Web Page"
+msgstr "Kişisel Web Sayfası"
+
+#. aim_userinfo_t
+#. use_html_status
+msgid "Additional Information"
+msgstr "Ek Bilgi"
+
+msgid "Zip Code"
+msgstr "Posta Kodu"
+
+msgid "Work Information"
+msgstr "İş Bilgileri"
+
+msgid "Division"
+msgstr "Bölüm"
+
+msgid "Position"
+msgstr "Pozisyon"
+
+msgid "Web Page"
+msgstr "Web Sayfası"
+
+msgid "Online Since"
+msgstr "Bağlı olduğu süre:"
+
+msgid "Member Since"
+msgstr "Üye olduğu süre:"
+
+msgid "Capabilities"
+msgstr "Yetenekler"
+
+msgid "Invalid SNAC"
+msgstr "Geçersiz SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Bu servis hizmet dışı"
+
+msgid "Service not defined"
+msgstr "Servis belirtilmedi"
+
+msgid "Obsolete SNAC"
+msgstr "Gereksiz SNAC"
+
+msgid "Not supported by host"
+msgstr "Sunucu tarafından desteklenmiyor"
+
+msgid "Not supported by client"
+msgstr "İstemci tarafından desteklenmiyor"
+
+msgid "Refused by client"
+msgstr "İstemci tarafından reddedildi"
+
+msgid "Reply too big"
+msgstr "Yanıtçok uzun"
+
+msgid "Responses lost"
+msgstr "Yanıtlar kayıp"
+
+msgid "Request denied"
+msgstr "İstek reddedildi"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr "Yetersiz hak"
+
+msgid "In local permit/deny"
+msgstr "Yerelde izin ver/izin verme"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Kullanıcı geçici olarak erişilemez durumda"
+
+msgid "No match"
+msgstr "Eşlenen yok"
+
+msgid "List overflow"
+msgstr "Liste taşması"
+
+msgid "Request ambiguous"
+msgstr "İstek berlirsizliği"
+
+msgid "Queue full"
+msgstr "Liste dolu"
+
+msgid "Not while on AOL"
+msgstr "AOL'de değil"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
+msgid "Appear Online"
+msgstr "Çevrimiçi"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Çevrimiçi"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
+msgid "Appear Offline"
+msgstr "Çevrimdışı Görün"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Çevrimdışı Görün"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "%s tarafından atıldınız: (%s)"
+
+#, fuzzy, c-format
 msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Kullanıcıya sağ tıklayıp \"Yeniden İzin İste\" ye tıklayarak yeniden bu "
+"kullanıcıdan izin isteyebilirsiniz."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Görünmez"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
 
 #, fuzzy
-msgid "QQ Qun Command"
-msgstr "Komut"
+msgid "Invisible List"
+msgstr "Davetli Listesi"
 
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "Sunucu bilgileri alınamıyor"
-
-#, fuzzy
-msgid "Unknown LOGIN CMD"
-msgstr "Bilinmeyen sebep"
-
-#, fuzzy
-msgid "Unknown CLIENT CMD"
-msgstr "Bilinmeyen sebep"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d dosyayı kabul etmedi %s"
-
-msgid "File Send"
-msgstr "Dosya Gönder"
-
-#, c-format
-msgid "%d canceled the transfer of %s"
-msgstr "%d şu dosyayı göndermekten vazgeçti %s"
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -7949,6 +8381,10 @@ msgstr "Konferans Kapandı"
 
 msgid "Unable to send message: "
 msgstr "İleti gönderilemedi: "
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Mesaj %s e gönderilemedi:"
 
 msgid "Place Closed"
 msgstr ""
@@ -8333,39 +8769,6 @@ msgstr "Hiperaktif"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Mutlu"
-
-msgid "Sad"
-msgstr "Üzgün"
-
-msgid "Angry"
-msgstr "Kızgın"
-
-msgid "Jealous"
-msgstr "Kıskanç"
-
-msgid "Ashamed"
-msgstr "Mahçup"
-
-msgid "Invincible"
-msgstr "Yenilmez"
-
-msgid "In Love"
-msgstr "Aşık"
-
-msgid "Sleepy"
-msgstr "Uykulu"
-
-msgid "Bored"
-msgstr "Sıkılmış"
-
-msgid "Excited"
-msgstr "Heyecanlı"
-
-msgid "Anxious"
-msgstr "Sıkıntılı"
-
 msgid "User Modes"
 msgstr "Kullanıcı Modları"
 
@@ -8647,6 +9050,9 @@ msgstr "Şirket"
 msgid "Unit"
 msgstr "Ünite"
 
+msgid "Note"
+msgstr "Not"
+
 msgid "Join Chat"
 msgstr "Sohbete Başla..."
 
@@ -8837,10 +9243,6 @@ msgstr "SILC anahtar çifti yüklenemedi"
 msgid "Connecting to SILC Server"
 msgstr "SILC sunucusuna bağlanılıyor"
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "SILC anahtar çifti yüklenemedi"
-
 msgid "Out of memory"
 msgstr "Bellek Aşımı"
 
@@ -8861,9 +9263,6 @@ msgstr "Ruh Haliniz"
 #, c-format
 msgid "Normal"
 msgstr "Normal"
-
-msgid "In love"
-msgstr "Aşık"
 
 msgid ""
 "\n"
@@ -9299,6 +9698,10 @@ msgid "Unable to create listen socket"
 msgstr "Soket oluşturulamadı"
 
 #, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Sunucuya bağlanılamadı."
+
+#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "IRC isimler boşluk karakteri içeremez"
 
@@ -9366,9 +9769,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo Protokol Eklentisi"
 
-msgid "Pager server"
-msgstr "Çağrı cihazı sunucusu"
-
 msgid "Pager port"
 msgstr "Çağrı cihazı portu"
 
@@ -9384,14 +9784,11 @@ msgstr "Sohbet Odası Yereli"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Konferans ve sohbet odası davetlerini yok say"
 
+msgid "Use account proxy for HTTP and HTTPS connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "Sohbet Odası Listesi URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo Sohbet sunucusu"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo Sohbet portu"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -9411,6 +9808,10 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo Protokol Eklentisi"
 
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9420,6 +9821,9 @@ msgstr "Yahoo! mesajınız yollanamadı."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Yahoo! sistem mesajı %s için:"
+
+msgid "Authorization denied message:"
+msgstr "İzin reddetme iletisi:"
 
 #, c-format
 msgid ""
@@ -9453,6 +9857,13 @@ msgid ""
 "this."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
 
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
+
 #. username or password missing
 #, fuzzy
 msgid "Username or password missing"
@@ -9480,8 +9891,24 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Kişiyi yoksay?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Yanlış takma ad veya parola"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9515,6 +9942,15 @@ msgstr ""
 "Sunucu ile bağlantı sağlanamadı:\n"
 "%s"
 
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+
 msgid "Not at Home"
 msgstr "Evde Değil"
 
@@ -9533,17 +9969,11 @@ msgstr "_Dışarı Çıktı"
 msgid "Not on server list"
 msgstr "Sunucu listesinde değil"
 
-msgid "Appear Online"
-msgstr "Çevrimiçi"
-
 msgid "Appear Permanently Offline"
 msgstr "Sürekli Çevrimdışı görün"
 
 msgid "Presence"
 msgstr "Bulunma"
-
-msgid "Appear Offline"
-msgstr "Çevrimdışı Görün"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Sürekli Çevrimdışı görünme"
@@ -9574,6 +10004,15 @@ msgstr "Kullanıcıyla Sohbet Et..."
 
 msgid "Open Inbox"
 msgstr "Gelen Kutusunu Aç"
+
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -9657,14 +10096,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Kullanıcı profili boş."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s kullanıcısı \"%s\" odasına yaptığınız konferans davetinizi kabul etmedi "
-"çünkü \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Davet Reddedildi"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s şimdi bağlı."
 
 msgid "Failed to join chat"
 msgstr "Sohbete katılım başarısız oldu"
@@ -9842,6 +10276,12 @@ msgid "Exposure"
 msgstr "Açıklık"
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Soket oluşturulamadı:\n"
+"%s"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP proxy yanıtı ayrıştırılamadı: %s\n"
 
@@ -9878,6 +10318,10 @@ msgstr "_Hayır"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "_Kabul Et"
@@ -9948,8 +10392,9 @@ msgstr "Rahatsız etmeyin"
 msgid "Extended away"
 msgstr "Uzun süreli uzakta"
 
-msgid "Listening to music"
-msgstr ""
+#, fuzzy
+msgid "Feeling"
+msgstr "Kalan"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10066,27 +10511,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "Uzaktaki kullanıcı bağlantıyı kapattı."
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "Bağlantı zamanaşımına uğradı"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "Bağlantı kesildi"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "Bu sohbet adı zaten kullanımda"
 
@@ -10102,20 +10546,15 @@ msgstr ""
 "%s okunurken bir hata oluştu.  Dosyalar yüklenmedi ve eski dosya %s~ olarak "
 "yeniden adlandırıldı."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "İnternet Mesajlaşma Aracı"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin İnternet Mesajlaşma Aracı"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Bir çok protokol üzerinden anılık ileti gönderin"
-
-msgid "Orientation"
-msgstr "Uyum"
-
-msgid "The orientation of the tray."
-msgstr "Sistem çekmecesi uyumu."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -10144,7 +10583,8 @@ msgstr "Yeni e-posta b_ildirimleri"
 msgid "Use this buddy _icon for this account:"
 msgstr "Bu hesap için b_u kişi simgesini kullan:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "_Gelişmiş Yapılandırma"
 
 msgid "Use GNOME Proxy Settings"
@@ -10156,14 +10596,17 @@ msgstr "Evrensel Proxy Ayarlarını Kullan"
 msgid "No Proxy"
 msgstr "Proxy Kullanma"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Genel Ayarları Kullan"
@@ -10192,6 +10635,14 @@ msgstr "_Port"
 msgid "Pa_ssword:"
 msgstr "Par_ola:"
 
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Oturuma devam ediliyor"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "Ayarları Düzenle"
+
 msgid "Unable to save new account"
 msgstr "Yeni hesap kaydedilemedi"
 
@@ -10209,7 +10660,7 @@ msgid "Create _this new account on the server"
 msgstr "Bu yeni hesabı sunucu üzerinde oluştur"
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "Proxy"
 
 msgid "Enabled"
@@ -10240,6 +10691,151 @@ msgstr ""
 "\n"
 "Bu pencereye daha sonra ulaşmak isterseniz Kişi Listesi Penceresindeki "
 "<b>Hesaplar->Ekle/Düzenle</b> yolunu takip etmelisiniz."
+
+#, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s kullanıcısı %s kişisini kişi listesine eklemek istiyor %s%s"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s kullanıcısı %s kişisini kişi listesine eklemek istiyor %s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Yeni Anlık İleti"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Arkaplan Rengi"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Bu grup kişi listenize eklendi"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Lao"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Arkaplan Rengi"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Genişlet"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Arkaplan Rengini Seç"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Daralt"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Arkaplan Rengini Seç"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "Sırala"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Çevrimiçi"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "Uzakta"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Çevrimdışı"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "%s için kullanıcı bilgilerini değiştir"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "Boşta"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "Mesaj gönderildiğinde"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "%s için kullanıcı bilgilerini değiştir"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10376,6 +10972,19 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Bilinmeyen Hata Kodu %d"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Lütfen kendiniz için yeni bir takma ad belirtin."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Görünen İsim"
+
+msgid "Edit User Mood"
+msgstr ""
+
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Kişiler"
@@ -10456,6 +11065,10 @@ msgstr "/Araçlar/_Tercihler"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Araçlar/_Gizlilik"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Araçlar/Sistem Kayıtlarını Göster"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Araçlar/_Dosya Aktarımları"
 
@@ -10475,8 +11088,24 @@ msgstr "/_Yardım"
 msgid "/Help/Online _Help"
 msgstr "/Yardım/Çevrim_içi Yardım"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Kişi Bilgileri"
+
 msgid "/Help/_Debug Window"
 msgstr "/Yardım/_Hata Yakalama Penceresi"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Sunucu Bilgileri"
+
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Kişi Bilgileri"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Kişisel Bilgiler"
 
 msgid "/Help/_About"
 msgstr "/Yardım/_Pidgin Hakkında"
@@ -10668,6 +11297,10 @@ msgid "(Optional) A_lias:"
 msgstr "İsteğe bağlı bilgi:"
 
 #, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "İleti içine ekle"
+
+#, fuzzy
 msgid "Add buddy to _group:"
 msgstr "Kişiyi listenize eklemek istiyor musunuz?"
 
@@ -10692,7 +11325,7 @@ msgstr "G_örünen isim:"
 msgid "_Group:"
 msgstr "_Grup:"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr ""
 
 msgid "_Remain in chat after window is closed."
@@ -10713,6 +11346,10 @@ msgstr "<PurpleMain>/Hesaplar/"
 msgid "_Edit Account"
 msgstr "_Hesabı Düzenle"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Parola değiştir..."
+
 msgid "No actions available"
 msgstr "Kullanılabilir işlem yok"
 
@@ -10724,112 +11361,6 @@ msgstr "/Araçlar"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Kişiler/Kişileri Sırala"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Arkaplan Rengi"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "Bu grup kişi listenize eklendi"
-
-#, fuzzy
-msgid "Layout"
-msgstr "Lao"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Arkaplan Rengi"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "_Genişlet"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Arkaplan Rengini Seç"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_Daralt"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "Arkaplan Rengini Seç"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "Sırala"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "Çevrimiçi"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "Uzakta"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "Çevrimdışı"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "Boşta"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "Mesaj gönderildiğinde"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "%s için kullanıcı bilgilerini değiştir"
 
 msgid "Type the host name for this certificate."
 msgstr ""
@@ -10864,12 +11395,6 @@ msgstr "<h1>%s ile yazışma</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Yazışmayı Kaydet"
-
-msgid "Find"
-msgstr "Bul"
-
-msgid "_Search for:"
-msgstr "_Şunu Ara:"
 
 msgid "Un-Ignore"
 msgstr "Yoksayma"
@@ -10916,6 +11441,10 @@ msgstr "/_Yazışma"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Yazışma/Yeni _Anlık İleti..."
 
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Yazışma/Davet Et..."
+
 msgid "/Conversation/_Find..."
 msgstr "/Yazışma/_Bul..."
 
@@ -10946,6 +11475,10 @@ msgstr "/Yazışma/_Kayıtları Göster"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Yazışma/Kişiye _Dosya Gönder..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Yazışma/Bilgi Al..."
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Yazışma/Kişi _Uyarıcı Ekle..."
@@ -11031,6 +11564,10 @@ msgstr "/Yazışma/Daha Fazla"
 msgid "/Conversation/Send File..."
 msgstr "/Yazışma/Kişiye Dosya Gönder..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Yazışma/Bilgi Al..."
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Yazışma/Kişi Uyarıcı Ekle..."
 
@@ -11093,13 +11630,18 @@ msgstr "_Gönder"
 msgid "0 people in room"
 msgstr "Odada kimse yok"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Bu sekmeyi kapat"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Bul"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "Odada %d kişi var"
-
-msgid "Typing"
-msgstr "Yazıyor"
 
 msgid "Stopped Typing"
 msgstr "Yazmayı Bıraktı"
@@ -11153,6 +11695,12 @@ msgstr "Gruba göre"
 msgid "By account"
 msgstr "Hesaba göre"
 
+msgid "Find"
+msgstr "Bul"
+
+msgid "_Search for:"
+msgstr "_Şunu Ara:"
+
 msgid "Save Debug Log"
 msgstr "Hata Kaydını Kaydet"
 
@@ -11198,16 +11746,9 @@ msgstr "Hata "
 msgid "Fatal Error"
 msgstr "Ölümcül Hata"
 
-msgid "bug master"
-msgstr ""
-
 #, fuzzy
 msgid "artist"
 msgstr "Sanatçılar"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
 
 msgid "voice and video"
 msgstr ""
@@ -11219,11 +11760,12 @@ msgstr "destek"
 msgid "webmaster"
 msgstr "geliştirici & site yöneticisi"
 
-msgid "Senior Contributor/QA"
-msgstr "Kıdemli Katılımcı/QA"
-
 msgid "win32 port"
 msgstr "win32 portu"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr ""
 
 msgid "maintainer"
 msgstr "bakımcı"
@@ -11247,11 +11789,18 @@ msgstr "asıl yazar"
 msgid "lead developer"
 msgstr "lider geliştirici"
 
+msgid "Senior Contributor/QA"
+msgstr "Kıdemli Katılımcı/QA"
+
 msgid "Afrikaans"
 msgstr "Afrikaanca (Hollanda Lehçesi)"
 
 msgid "Arabic"
 msgstr "Arapça"
+
+#, fuzzy
+msgid "Assamese"
+msgstr "Mahçup"
 
 msgid "Belarusian Latin"
 msgstr "Belarusça Latin"
@@ -11260,6 +11809,10 @@ msgid "Bulgarian"
 msgstr "Bulgarca"
 
 msgid "Bengali"
+msgstr "Bengal Dili"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengal Dili"
 
 msgid "Bosnian"
@@ -11289,11 +11842,11 @@ msgstr "Yunanca"
 msgid "Australian English"
 msgstr "Avusturalya İngilizcesi"
 
-msgid "Canadian English"
-msgstr "Kanada İngilizcesi"
-
 msgid "British English"
 msgstr "İngiliz İngilizcesi"
+
+msgid "Canadian English"
+msgstr "Kanada İngilizcesi"
 
 msgid "Esperanto"
 msgstr "Esperanto Dili"
@@ -11304,8 +11857,8 @@ msgstr "İspanyolca"
 msgid "Estonian"
 msgstr "Estonyaca"
 
-msgid "Euskera(Basque)"
-msgstr "Bask Dili"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Farsça"
@@ -11334,6 +11887,9 @@ msgstr "İbranice"
 
 msgid "Hindi"
 msgstr "Hindu dili"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "Macarca"
@@ -11376,15 +11932,32 @@ msgstr "Kürtçe"
 msgid "Lao"
 msgstr "Lao"
 
-msgid "Lithuanian"
-msgstr "Litvanca"
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilist"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Yeni E-Posta"
 
 msgid "Macedonian"
 msgstr "Makedonca"
 
 #, fuzzy
+msgid "Malayalam"
+msgstr " Bay"
+
+#, fuzzy
 msgid "Mongolian"
 msgstr "Makedonca"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Gujarati (Hindistanda konuşulan bir dil)"
+
+#, fuzzy
+msgid "Malay"
+msgstr " Bay"
 
 msgid "Bokmål Norwegian"
 msgstr "Norveççe"
@@ -11400,6 +11973,10 @@ msgstr "Norveç Dili"
 
 msgid "Occitan"
 msgstr ""
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr ""
@@ -11456,6 +12033,10 @@ msgstr "Tayvan Dili"
 msgid "Turkish"
 msgstr "Türkçe"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "Romence"
+
 msgid "Urdu"
 msgstr ""
 
@@ -11477,21 +12058,17 @@ msgstr "Çince (Geleneksel)"
 msgid "Amharic"
 msgstr "Habeşçe (EZ+)"
 
-#, c-format
-msgid "About %s"
-msgstr "%s Hakkında"
+msgid "Lithuanian"
+msgstr "Litvanca"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, "
 "Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, ve QQ protokollerini destekleyen "
@@ -11504,24 +12081,35 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 
-#, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net #pidgin<BR><BR>"
+#, c-format
+msgid "About %s"
+msgstr "%s Hakkında"
 
+#, fuzzy
+msgid "Build Information"
+msgstr "Kişi Bilgileri"
+
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net #pidgin<BR><BR>"
+msgid "%s Build Information"
+msgstr "Kişi Bilgileri"
 
 msgid "Current Developers"
 msgstr "Şimdiki Geliştiriciler"
@@ -11535,14 +12123,27 @@ msgstr "Önceki Geliştiriciler"
 msgid "Retired Crazy Patch Writers"
 msgstr "Emekli Çılgın Yama Yazarları"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Sunucu Bilgileri"
+
 msgid "Current Translators"
 msgstr "Şimdiki Çevirmenler"
 
 msgid "Past Translators"
 msgstr "Önceki Çevirmenler"
 
-msgid "Debugging Information"
-msgstr "Hata Ayıklama Bilgileri"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "İş Bilgileri"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Kişi Bilgileri"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Giriş Bilgileri"
 
 msgid "_Name"
 msgstr "_İsim"
@@ -11755,14 +12356,6 @@ msgstr "Tamamlanan transferleri _temizle"
 msgid "File transfer _details"
 msgstr "Dosya transferi _ayrıntıları"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Durakla"
-
-#. Resume button
-msgid "_Resume"
-msgstr "Devam _Et"
-
 msgid "Paste as Plain _Text"
 msgstr "_Düz Metin olarak Yapıştır"
 
@@ -11858,15 +12451,6 @@ msgstr ""
 "\n"
 "PNG ye düzenleniyor."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Tanınmayan dosya türü\n"
-"\n"
-"PNG varsayılan yapılıyor."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -11874,16 +12458,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span weight=\"bold\" size=\"larger\">Resmi kaydederken hata</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Resim kaydetme hatası\n"
 "\n"
 "%s"
 
@@ -11993,6 +12567,10 @@ msgstr "Hızlı Mesajlaşma Resmi Ekle"
 msgid "Insert Smiley"
 msgstr "Gülenyüz Ekle"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "Gönder"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>_Kalın</b>"
 
@@ -12038,6 +12616,9 @@ msgstr "_Yatay çizgi"
 msgid "_Smile!"
 msgstr "_Gülümse!"
 
+msgid "_Attention!"
+msgstr ""
+
 #, fuzzy
 msgid "Log Deletion Failed"
 msgstr "SSL Bağlantısı Başarısız"
@@ -12055,16 +12636,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "%s kişisi ile yapmış olduğunuz ve %s tarihinden başlayan sohbet kayıtlarını "
 "kalıcı olarak silmek istediğinizden emin misiniz?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "%s zamanından başlayan sistem kayıtlarını silmek istediğinizden emin misiniz?"
 
@@ -12092,68 +12673,47 @@ msgstr "_Kayıt dizinine gözat"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Daha fazla bilgi için`%s -h' deneyin.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Kullanım: %s [SEÇENEK]...\n"
-"\n"
-"  -c, --config=DIR    DIR yapılandırma dosyalarının yerini gösterir\n"
-"  -d, --debug         hata ayıklama iletilerini göstermek için kullanılır\n"
-"  -h, --help          okuduğunuz bu yardım iletisini gösterir ve çıkar\n"
-"  -m, --multiple      bir kerede garanti etmez\n"
-"  -n, --nologin       otomatik olarak bağlanmanızı engeller\n"
-"  -l, --login[=İSİM]  otomatik olarak giriş yapmayı sağlar (seçimlik argüman "
-"İSİM\n"
-"                      hesapları belirtir, çoklu hesap belirtmek için virgül "
-"kullanın)\n"
-"  --display=DISPLAY   kullanılacak X Ekranını gösterir\n"
-"  -v, --version       geçerli sürümü gösterir ve çıkar\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Kullanım: %s [SEÇENEK]...\n"
-"\n"
-"  -c, --config=DIR    DIR yapılandırma dosyalarının yerini gösterir\n"
-"  -d, --debug         hata ayıklama iletilerini göstermek için kullanılır\n"
-"  -h, --help          okuduğunuz bu yardım iletisini gösterir ve çıkar\n"
-"  -m, --multiple      bir kerede garanti etmez\n"
-"  -n, --nologin       otomatik olarak bağlanmanızı engeller\n"
-"  -l, --login[=İSİM]  otomatik olarak giriş yapmayı sağlar (seçimlik argüman "
-"İSİM\n"
-"                      hesapları belirtir, çoklu hesap belirtmek için virgül "
-"kullanın)\n"
-"  --display=DISPLAY   kullanılacak X Ekranını gösterir\n"
-"  -v, --version       geçerli sürümü gösterir ve çıkar\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12171,24 +12731,15 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
-
-#, fuzzy
-msgid "Calling..."
-msgstr "Hesaplanıyor..."
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12197,6 +12748,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Durakla"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12239,6 +12796,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Yeni E-postanız var !</span>"
 msgid "New Pounces"
 msgstr "Yeni Kişi Uyarıcı"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -12375,49 +12939,65 @@ msgstr "_Tekrarlayan"
 msgid "Pounce Target"
 msgstr "Uyarıcı Hedefi"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "Yazmaya başlayınca"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "Yazmaya ara verince"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "Giriş yapınca"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "%s boşta durumuna geçti (%s)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "Geri dönünce"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "Yazmayı Bıraktı"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "Çıkış yapınca"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "Boşta durumuna geçince"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "Uzaktayken"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "Bir ileti gönder"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "Bilinmeyen uyarı olayı. Lütfen bunu raporlayın !"
+
+msgid "(Custom)"
+msgstr ""
+
+msgid "Penguin Pimps"
+msgstr "Penguen Simgeleri"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Pidgin - Kişi Listesi"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -12431,18 +13011,34 @@ msgstr "Gülenyüz teması açılırken hata oluştu."
 msgid "Theme failed to copy."
 msgstr "Gülenyüz teması açılırken hata oluştu."
 
-msgid "Install Theme"
-msgstr "Tema Yükle"
+#, fuzzy
+msgid "Theme Selections"
+msgstr "Tarayıcı Seçimi"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "Aşağıdaki listeden kullanamak istediğiniz gülenyüz temasını seçin. Yeni "
 "temaları tema listesine sürükleyip bırakarak kurabilirsiniz."
 
-msgid "Icon"
-msgstr "Simge"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "Pidgin - Kişi Listesi"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "%s için durum"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "Gülenyüz Temaları"
 
 msgid "Keyboard Shortcuts"
 msgstr ""
@@ -12450,11 +13046,6 @@ msgstr ""
 #, fuzzy
 msgid "Cl_ose conversations with the Escape key"
 msgstr "%s ile konuşma"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "Pidgin - Kişi Listesi"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12537,14 +13128,19 @@ msgstr "Yumuşak geçiş kullan"
 msgid "F_lash window when IMs are received"
 msgstr "_Yeni ileti geldiğinde pencereyi canlandır"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "Özel gülenyüzleri göster"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "En Düşük Oda Boyutu"
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
 msgid "Font"
 msgstr "Yazı tipi"
-
-msgid "Use document font from _theme"
-msgstr "T_emadan doküman yazı tipini kullan"
 
 msgid "Use font from _theme"
 msgstr "Yazı tipini _temadan kullan"
@@ -12568,12 +13164,20 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "Tarayıcı yapılandırma uygulaması başlatılamıyor."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Örnek: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Hesabı Pasifleştir"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "_IP Adresini Otomatik Bul"
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ST_UN sunucusu:"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Örnek: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Görünen _IP:"
@@ -12584,51 +13188,41 @@ msgstr "Portlar"
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "_Dinlenecek portları el ile belirtin"
 
-msgid "_Start port:"
-msgstr "Başlangıç _portu:"
+#, fuzzy
+msgid "_Start:"
+msgstr "D_urum:"
 
-msgid "_End port:"
-msgstr "Bitiş p_ortu:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Genişlet"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
 
-msgid "Proxy Server &amp; Browser"
-msgstr "Vekil Sunucu & Tarayıcı"
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN sunucusu:"
 
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port"
 
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr ""
+#, fuzzy
+msgid "T_CP Port:"
+msgstr "_Port"
 
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
+#, fuzzy
+msgid "Use_rname:"
+msgstr "_Kullanıcı adı:"
 
-msgid "Configure _Proxy"
-msgstr "_Vekil Sunucuyu Yapılandır"
-
-msgid "Configure _Browser"
-msgstr "_Tarayıcıyı Yapılandır"
-
-msgid "Proxy Server"
-msgstr "Proxy Sunucusu"
-
-msgid "No proxy"
-msgstr "Proxy yok"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
-
-msgid "_User:"
-msgstr "_Kullanıcı:"
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Parola:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -12645,6 +13239,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "Varsayılanları _Kabul Et"
@@ -12664,11 +13263,28 @@ msgstr "Firebird"
 msgid "Epiphany"
 msgstr "Epiphany"
 
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
+
 msgid "Manual"
 msgstr "El ile ayarla"
 
 msgid "Browser Selection"
 msgstr "Tarayıcı Seçimi"
+
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr ""
+
+msgid "Configure _Browser"
+msgstr "_Tarayıcıyı Yapılandır"
 
 msgid "_Browser:"
 msgstr "_Tarayıcı:"
@@ -12692,6 +13308,38 @@ msgid ""
 msgstr ""
 "_El ile ayarla:\n"
 "(Bağlantı için %s)"
+
+msgid "Proxy Server"
+msgstr "Proxy Sunucusu"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr ""
+
+msgid "Configure _Proxy"
+msgstr "_Vekil Sunucuyu Yapılandır"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "Proxy _tipi:"
+
+msgid "No proxy"
+msgstr "Proxy yok"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Port"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "_Kullanıcı adı:"
 
 msgid "Log _format:"
 msgstr "Kayıt _biçemi:"
@@ -12781,24 +13429,18 @@ msgstr "Boşta süresini _raporla:"
 msgid "Based on keyboard or mouse use"
 msgstr "Klavye ya da fare kullanımına göre"
 
+msgid "_Minutes before becoming idle:"
+msgstr "_Boşta durumuna geçmeden önceki süre"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "Boşken durumu değ_iştir"
+
 msgid "_Auto-reply:"
 msgstr "_Otomatik-cevapla:"
 
 msgid "When both away and idle"
 msgstr "Aynı anda meşgul ve boş olduğu zaman"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Otomatik-uzakta"
-
-msgid "_Minutes before becoming idle:"
-msgstr "_Boşta durumuna geçmeden önceki süre"
-
-msgid "Change status when _idle"
-msgstr "Boşken durumu değ_iştir"
-
-msgid "Change _status to:"
-msgstr "Durumu _değiştir:"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -12813,14 +13455,15 @@ msgstr "Başlangıçta uy_gulanacak durum:"
 msgid "Interface"
 msgstr "Arayüz"
 
-msgid "Smiley Themes"
-msgstr "Gülenyüz Temaları"
-
 msgid "Browser"
 msgstr "Tarayıcı"
 
 msgid "Status / Idle"
 msgstr "Durum / Boşta"
+
+#, fuzzy
+msgid "Themes"
+msgstr "Gülenyüz Temaları"
 
 msgid "Allow all users to contact me"
 msgstr "Tüm kullanıcılara izin ver"
@@ -13018,6 +13661,9 @@ msgstr "Durum Yazısı"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s yüklenirken şu hata oluştu: %s"
@@ -13071,10 +13717,13 @@ msgstr ""
 "Bu mesaja resim ekleyebilir veya arkadaşınızın simgesi olarak "
 "kullanabilirsiniz."
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Çalıştırıcı gönderilemiyor"
@@ -13107,16 +13756,6 @@ msgstr "Simge Hatası"
 msgid "Could not set icon"
 msgstr "Simge ayarlanamadı"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Dosya açılamadı '%s': %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"Resim dosyası yüklenemedi '%s': sebep bilinmiyor, muhtemelen dosya bozuk"
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "_Bağlantıyı aç:"
@@ -13127,11 +13766,36 @@ msgstr "Bağlantıyı _Konumunu Kopyala"
 msgid "_Copy Email Address"
 msgstr "E-Posta Adresini _Kopyala"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "Dosya Aç..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "Kayıt Dizini"
+
 msgid "Save File"
 msgstr "Dosyayı Kaydet"
 
+#, fuzzy
+msgid "_Play Sound"
+msgstr "Bir ses çal"
+
+#, fuzzy
+msgid "_Save File"
+msgstr "Dosyayı Kaydet"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "%s hesabını silmek istediğinize emin misiniz?"
+
 msgid "Select color"
 msgstr "Renk seç"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Görünen İsim"
@@ -13167,9 +13831,6 @@ msgstr "Pidgin"
 msgid "Pidgin smileys"
 msgstr "Pidgin gülenyüzleri"
 
-msgid "Penguin Pimps"
-msgstr "Penguen Simgeleri"
-
 msgid "Selecting this disables graphical emoticons."
 msgstr "Bunu seçmek görsel duygu simgelerini pasifleştirir."
 
@@ -13180,7 +13841,7 @@ msgstr "hiçbiri"
 msgid "Small"
 msgstr "E-Posta"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -13221,79 +13882,6 @@ msgstr "Kişilerin Uygunluğunu Gösteren eklenti."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
-
-#, fuzzy
-msgid "Server name request"
-msgstr "Sunucu adresi"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Bir Konferans Sunucusuna Gir"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Sorgulamak için bir konferans sunucusu seçin"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "Çevrimiçi Servisler"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "Kişi Listesi Gönder"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "Uzakta durumuna geçince"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Kayıt Dizini"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Ses Seçimi"
-
-msgid "PubSub Leaf"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "Açıklama"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Servis Bulma Bilgileri"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_Tarayıcı:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "Kullanıcı mevcut değil"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Servis Bulma Bilgileri"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
-"kullanışlıdır."
 
 msgid "Buddy is idle"
 msgstr "Kişi boşta"
@@ -13382,6 +13970,84 @@ msgstr "Sohbetlere Uygula"
 
 msgid "Apply in IMs"
 msgstr "Anlık İletilere Uygula"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Sunucu adresi"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Bir Konferans Sunucusuna Gir"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Sorgulamak için bir konferans sunucusu seçin"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Çevrimiçi Servisler"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Kişi Listesi Gönder"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Uzakta durumuna geçince"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Kayıt Dizini"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Ses Seçimi"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+msgid "Other"
+msgstr "Diğer"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Açıklama"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Servis Bulma Bilgileri"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Tarayıcı:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Kullanıcı mevcut değil"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Servis Bulma Bilgileri"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
+"kullanışlıdır."
 
 msgid "By conversation count"
 msgstr "Sohbet sayısına göre"
@@ -13820,6 +14486,10 @@ msgstr "GtkTreeView Yatay Dağılımı"
 msgid "Conversation Entry"
 msgstr "Yazışma Girdisi"
 
+#, fuzzy
+msgid "Conversation History"
+msgstr "Yazışma Girdisi"
+
 msgid "Request Dialog"
 msgstr "İstek Diyaloğu"
 
@@ -14025,10 +14695,13 @@ msgstr "Yoksay"
 msgid "Founder"
 msgstr "Daha Yüksek"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14148,8 +14821,20 @@ msgstr "iChat gibi her N dakikada bir zaman etiketleri göster."
 msgid "Timestamp Format Options"
 msgstr "Zaman Etiketi Biçemi Seçenekleri"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "24 saat _biçemini zorla"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Varsayılanları _Kabul Et"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "24 saat _biçemini zorla"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "24 saat _biçemini zorla"
 
 msgid "Show dates in..."
@@ -14189,6 +14874,76 @@ msgid ""
 msgstr ""
 "Bu eklenti kullanıcının sohbet penceresinde ve kayıtlarda zaman etiketlerini "
 "özelleştirebilmesini sağlar."
+
+#, fuzzy
+msgid "Audio"
+msgstr "Yetki"
+
+#, fuzzy
+msgid "Video"
+msgstr "Canlı Görüntü"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Eklentiler"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Aygıt"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Eklentiler"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Aygıt"
+
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "Ses Düzeyi:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Eşik:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Mikrofon"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Ayarları Düzenle"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
 
 msgid "Opacity:"
 msgstr "Matlık:"
@@ -14246,9 +15001,6 @@ msgstr ""
 "\n"
 "* Not: Eklenti Win2000 veya daha yeni bir sürüm gerektirir."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime Sürümü"
-
 #. Autostart
 msgid "Startup"
 msgstr "Başlangıç"
@@ -14256,6 +15008,9 @@ msgstr "Başlangıç"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Windows başlarken %s uygulamasını başlat"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "_Üzerine bırakılabilir Kişi Listesi"
@@ -14297,15 +15052,6 @@ msgstr "Hesap: "
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>XMPP'ye bağlanmadı</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "Bir <iq/> stanza girin."
-
-msgid "Insert a <presence/> stanza."
-msgstr "Bir <presence/> stanza girin."
-
-msgid "Insert a <message/> stanza."
-msgstr "Bir <message/> stanza girin."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14313,10 +15059,1147 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Ham XMPP stanzaları gönder ve al."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
 "kullanışlıdır."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Varsayılanları _Kabul Et"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Sürümü"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Konum"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin İnternet Mesajlaşma Aracı"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Sırala"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Başlangıç"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Bu sohbet adı zaten kullanımda"
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim adres yakalayıcı"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Kişi listesinde olmayan kullanıcılar tarafından gönderilenleri otomatik "
+#~ "olarak reddet"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "İzin İsteme İletisi:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Lütfen sizi eklememe izin verin!"
+
+#~ msgid "Aquarius"
+#~ msgstr "Kova"
+
+#~ msgid "Pisces"
+#~ msgstr "Balık"
+
+#~ msgid "Aries"
+#~ msgstr "Koç"
+
+#~ msgid "Taurus"
+#~ msgstr "Boğa"
+
+#~ msgid "Gemini"
+#~ msgstr "İkizler"
+
+#~ msgid "Cancer"
+#~ msgstr "Yengeç"
+
+#~ msgid "Leo"
+#~ msgstr "Aslan"
+
+#~ msgid "Virgo"
+#~ msgstr "Başak"
+
+#~ msgid "Libra"
+#~ msgstr "Terazi"
+
+#~ msgid "Scorpio"
+#~ msgstr "Akrep"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Yay"
+
+#~ msgid "Capricorn"
+#~ msgstr "Oğlak"
+
+#~ msgid "Rat"
+#~ msgstr "Fare"
+
+#~ msgid "Ox"
+#~ msgstr "Öküz"
+
+#~ msgid "Tiger"
+#~ msgstr "Kaplan"
+
+#~ msgid "Rabbit"
+#~ msgstr "Tavşan"
+
+#~ msgid "Dragon"
+#~ msgstr "Ejderha"
+
+#~ msgid "Snake"
+#~ msgstr "Yılan"
+
+#~ msgid "Horse"
+#~ msgstr "At"
+
+#~ msgid "Goat"
+#~ msgstr "Keçi"
+
+#~ msgid "Monkey"
+#~ msgstr "Maymun"
+
+#~ msgid "Rooster"
+#~ msgstr "Horoz"
+
+#~ msgid "Dog"
+#~ msgstr "Köpek"
+
+#~ msgid "Pig"
+#~ msgstr "Domuz"
+
+#, fuzzy
+#~ msgid "Visible"
+#~ msgstr "Görünmez"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "Gizlilik"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ Numarası"
+
+#~ msgid "Country/Region"
+#~ msgstr "Ülke/Bölge"
+
+#~ msgid "Province/State"
+#~ msgstr "Eyalet/Ülke"
+
+#~ msgid "Zipcode"
+#~ msgstr "Posta Kodu"
+
+#~ msgid "Phone Number"
+#~ msgstr "Telefon Numarası"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "İzin vermek istiyor musunuz?"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Cep Numarası"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Kişisel Giriş"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "Şehir"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "Kişisel Cep Telefonu"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "Görünen İsim"
+
+#~ msgid "College"
+#~ msgstr "Kolej"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "Burç Sembolü"
+
+#, fuzzy
+#~ msgid "Zodiac"
+#~ msgstr "Zodyak İmzası"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "Engellenmiş"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "Boğa"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "Başarısız Oldu"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "Hesabı Düzenle"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "Ev Adresi"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "Bilgilerimi düzenle"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "Bilgilerimi düzenle"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "Son Güncelleme"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "Lütfen kişi bilgilerini girin."
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "Kişi Simgesi"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "Düzenle"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "Düzenle"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "Sunucu meşgul"
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "İzin gereksin"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "Kişiyi listenize eklemek istiyor musunuz?"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "İsteğinizi buraya girin"
+
+#~ msgid "Send"
+#~ msgstr "Gönder"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "Geçersiz ad"
+
+#, fuzzy
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Üzgünüm, benim tipim değilsin..."
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "%d kullanıcısı kimlik doğrulamaya gereksinim duyuyor"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "Kişiyi listenize eklemek istiyor musunuz?"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "İsteğinizi buraya girin"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Arkadaşım olmak ister misiniz?"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "Kişi Ekle"
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "Kişi Ekle"
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Geçersiz QQ Yüzü"
+
+#, fuzzy
+#~ msgid "Failed sending authorize"
+#~ msgstr "Lütfen sizi eklememe izin verin!"
+
+#, fuzzy
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Kişi silinemedi"
+
+#, fuzzy
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "%s sizi kişi listesinden sildi."
+
+#, fuzzy
+#~ msgid "No reason given"
+#~ msgstr "Sebep yazılmamış."
+
+#~ msgid "You have been added by %s"
+#~ msgstr "%s tarafından eklendiniz"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Onu eklemek ister misiniz?"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "Reddet"
+
+#~ msgid "Message: %s"
+#~ msgstr "İleti: %s"
+
+#~ msgid "ID: "
+#~ msgstr "Kimlik: "
+
+#~ msgid "Group ID"
+#~ msgstr "Grup Kimliği"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "Lütfen %s için yeni ismi girin"
+
+#, fuzzy
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "Geçersiz proxy ayarları"
+
+#, fuzzy
+#~ msgid "Not member"
+#~ msgstr "Ben bir üye değilim"
+
+#, fuzzy
+#~ msgid "Member"
+#~ msgstr "Üye olduğu süre:"
+
+#, fuzzy
+#~ msgid "Requesting"
+#~ msgstr "İstek Diyaloğu"
+
+#, fuzzy
+#~ msgid "Admin"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Oda Listesi"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "Not"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "Öntanımlı"
+
+#~ msgid "Creator"
+#~ msgstr "Oluşturucu"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "Sohbet hatası"
+
+#, fuzzy
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Bu grup diğerlerinin katılmasına izin vermiyor"
+
+#, fuzzy
+#~ msgid "Join QQ Qun"
+#~ msgstr "Sohbete Başla..."
+
+#~ msgid "Input request here"
+#~ msgstr "İsteğinizi buraya girin"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Qun üyesini başarılı şekilde düzenlediniz"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Qun üyesini başarılı şekilde düzenlediniz"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "Başarısız Oldu"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "QQ Qun"
+
+#, fuzzy
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Üzgünüm, benim tipim değilsin..."
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Qun üyesini başarılı şekilde düzenlediniz"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Qun bilgisini başarılı şekilde düzenlediniz"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Başarılı şekilde Qun oluşturdunuz"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Şimdi Qun detaylarını ayarlamak ister misiniz?"
+
+#~ msgid "Setup"
+#~ msgstr "Kur"
+
+#, fuzzy
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%d kullanıcısı %d grubuna katılmak istedi"
+
+#, fuzzy
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%d kullanıcısı %d grubuna katılmak istedi"
+
+#, fuzzy
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Kişiyle sohbete katılınamadı"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "Kişiyi Sil"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "Kişiyi Sil"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Bilinmeyen-%d"
+
+#~ msgid "Level"
+#~ msgstr "Seviye"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "Cep"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "Cep"
+
+#, fuzzy
+#~ msgid " Video"
+#~ msgstr "Canlı Görüntü"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "Hiçbiri"
+
+#~ msgid "Invalid name"
+#~ msgstr "Geçersiz ad"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "Dizin Seç..."
+
+#, fuzzy
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Sunucunun IP numarası</b>: %s: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Bağlantı Kipi</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Bağlantı Kipi</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Benim Görünen IP numaram</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Giriş Zamanı</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>Sunucunun IP numarası</b>: %s: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<b>Şimdi Çevrimiçi</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<b>Son Yenileme:</b> %s<br>\n"
+
+#, fuzzy
+#~ msgid "About OpenQ %s"
+#~ msgstr "%s Hakkında"
+
+#~ msgid "Change Password"
+#~ msgstr "Parola Değiştir"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "Giriş Bilgileri"
+
+#, fuzzy
+#~ msgid "About OpenQ"
+#~ msgstr "%s Hakkında"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Ev Adresi"
+
+#, fuzzy
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ Protokolü\t Eklentisi"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "Yetki"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "Kullanıcı Seç"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "TCP kullanarak bağlan"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "Sunucu portu"
+
+#, fuzzy
+#~ msgid "Show server news"
+#~ msgstr "Sunucu adresi"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Bilgilerimi güncelle"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Sunucu bilgileri alınamıyor"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Hatalı başlık"
+
+#, fuzzy
+#~ msgid "Activation required"
+#~ msgstr "Kayıt Gerekli"
+
+#, fuzzy
+#~ msgid "Requesting captcha"
+#~ msgstr "İstek Diyaloğu"
+
+#, fuzzy
+#~ msgid "Failed captcha verification"
+#~ msgstr "Yahoo! Kimlik Denetimi Başarısız"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "Resmi Kaydet"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "Parola"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "Lütfen grubun ismini girin"
+
+#~ msgid "Socket error"
+#~ msgstr "Soket hatası"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "Kullanıcı Bilgisi Ayarla..."
+
+#, fuzzy
+#~ msgid "Requesting token"
+#~ msgstr "İstek reddedildi"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "Geçersiz hata"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "SILC sunucusuna bağlanılıyor"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "QQ Kimlik Hatası"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "ICQ Server Relay"
+
+#, fuzzy
+#~ msgid "%s:%s"
+#~ msgstr "%s (%s)"
+
+#, fuzzy
+#~ msgid "From %s:"
+#~ msgstr "Kimden"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr "Sunucu Bilgileri: %s"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Bilinmeyen sebep"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "Komut"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Sunucu bilgileri alınamıyor"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Bilinmeyen sebep"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Bilinmeyen sebep"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d dosyayı kabul etmedi %s"
+
+#~ msgid "File Send"
+#~ msgstr "Dosya Gönder"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d şu dosyayı göndermekten vazgeçti %s"
+
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Dosyayı açarken bir hata oluştu."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Dosya aktarımı başarısız oldu"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Arkadaşlık adınızı ayarlayın."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "%s çözümleme hatası"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Eski (port 5223) SSL kullan"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Girilen SecurID anahtarı geçersiz."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[İçerdiği geçersiz karakterlerden dolayı bu kullanıcıdan gelen mesaj "
+#~ "gösterilemiyor.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Kişi Bilgilerine Göre Kişi Ara"
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Seçilen dosya geçerli bir eklenti değil."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Girilen SecurID anahtarı geçersiz."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Takma ad"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Cep Telefonu Numarası Ayarla..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Hostu değerlendir"
+
+#~ msgid "Rate to client"
+#~ msgstr "İstemciyi değerlendir"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Bilinmeyen Sebep."
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "Sanatçılar"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Ruh Haliniz"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Kullanıcı Modu"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Parola Değiştir"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Şu anda burada değilim"
+
+#~ msgid "Pager server"
+#~ msgstr "Çağrı cihazı sunucusu"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo Sohbet sunucusu"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo Sohbet portu"
+
+#~ msgid "Orientation"
+#~ msgstr "Uyum"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Sistem çekmecesi uyumu."
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Bağlantı oluşturma hatası"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Soket porta yönlendirilemedi"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr ""
+#~ "Soket oluşturulamadı:\n"
+#~ "%s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s size bir titreşim gönderdi!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Arkadaşlık adı çok hızlı değişiyor"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Bu Hotmail hesabı aktif olmayabilir."
+
+#~ msgid "Profile URL"
+#~ msgstr "Profil URL"
+
+#, fuzzy
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "AIM Protokolü Eklentisi"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s geçerli bir grup değil."
+
+#~ msgid "Unknown error."
+#~ msgstr "Bilinmeyen Hata"
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s - %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Kullanıcı %s 'a eklenemiyor (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "%s içindeki kullanıcı engellenemiyor (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "%s içindeki kullanıcıya izin verilemiyor (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%s eklenemiyor, çünkü listeniz dolu durumda."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s geçerli bir passport hesabı değil."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Bu Servis Geçici Olarak Hizmet Dışı"
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Grup adı değiştirilemiyor"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Grup silinemiyor"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s sizi kişi listesine ekledi."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s sizi kişi listesinden sildi."
+
+#, fuzzy
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Yaptığınız son işlem gerçekleştirilemiyor çünkü deneme limitini aştınız. "
+#~ "Lütfen 10 saniye daha bekleyin ve tekrar deneyin."
+
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net #pidgin<BR><BR>"
+
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net #pidgin<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Hata Ayıklama Bilgileri"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Tanınmayan dosya türü\n"
+#~ "\n"
+#~ "PNG varsayılan yapılıyor."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Resim kaydetme hatası\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "(öntanımlı)"
+
+#~ msgid "Install Theme"
+#~ msgstr "Tema Yükle"
+
+#~ msgid "Icon"
+#~ msgstr "Simge"
+
+#~ msgid "Use document font from _theme"
+#~ msgstr "T_emadan doküman yazı tipini kullan"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Vekil Sunucu & Tarayıcı"
+
+#~ msgid "Auto-away"
+#~ msgstr "Otomatik-uzakta"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Dosya açılamadı '%s': %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "Resim dosyası yüklenemedi '%s': sebep bilinmiyor, muhtemelen dosya bozuk"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "Bir <iq/> stanza girin."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "Bir <presence/> stanza girin."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Bir <message/> stanza girin."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Bir çok protokol üzerinden anılık ileti gönderin"
+
+#~ msgid "_Start port:"
+#~ msgstr "Başlangıç _portu:"
+
+#~ msgid "_End port:"
+#~ msgstr "Bitiş p_ortu:"
+
+#~ msgid "_User:"
+#~ msgstr "_Kullanıcı:"
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "Hesaplanıyor..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Geçersiz sertifika zinciri"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Kullanıcı Hareketsizliği Zamanaşımı (dakika olarak)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Sunucuya bağlanılamadı"
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "Dosya açılamadı '%s': %s"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "SILC anahtar çifti yüklenemedi"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s kullanıcısı \"%s\" odasına yaptığınız konferans davetinizi kabul "
+#~ "etmedi çünkü \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Davet Reddedildi"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Proxy"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Bask Dili"
+
+#~ msgid "_Resume"
+#~ msgstr "Devam _Et"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Kullanım: %s [SEÇENEK]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    DIR yapılandırma dosyalarının yerini gösterir\n"
+#~ "  -d, --debug         hata ayıklama iletilerini göstermek için "
+#~ "kullanılır\n"
+#~ "  -h, --help          okuduğunuz bu yardım iletisini gösterir ve çıkar\n"
+#~ "  -m, --multiple      bir kerede garanti etmez\n"
+#~ "  -n, --nologin       otomatik olarak bağlanmanızı engeller\n"
+#~ "  -l, --login[=İSİM]  otomatik olarak giriş yapmayı sağlar (seçimlik "
+#~ "argüman İSİM\n"
+#~ "                      hesapları belirtir, çoklu hesap belirtmek için "
+#~ "virgül kullanın)\n"
+#~ "  --display=DISPLAY   kullanılacak X Ekranını gösterir\n"
+#~ "  -v, --version       geçerli sürümü gösterir ve çıkar\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Kullanım: %s [SEÇENEK]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    DIR yapılandırma dosyalarının yerini gösterir\n"
+#~ "  -d, --debug         hata ayıklama iletilerini göstermek için "
+#~ "kullanılır\n"
+#~ "  -h, --help          okuduğunuz bu yardım iletisini gösterir ve çıkar\n"
+#~ "  -m, --multiple      bir kerede garanti etmez\n"
+#~ "  -n, --nologin       otomatik olarak bağlanmanızı engeller\n"
+#~ "  -l, --login[=İSİM]  otomatik olarak giriş yapmayı sağlar (seçimlik "
+#~ "argüman İSİM\n"
+#~ "                      hesapları belirtir, çoklu hesap belirtmek için "
+#~ "virgül kullanın)\n"
+#~ "  --display=DISPLAY   kullanılacak X Ekranını gösterir\n"
+#~ "  -v, --version       geçerli sürümü gösterir ve çıkar\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Soket açılamıyor"
@@ -14373,9 +16256,6 @@ msgstr ""
 #~ msgid "XHTML-IM"
 #~ msgstr "XHTML-IM"
 
-#~ msgid "User Location"
-#~ msgstr "Kullanıcı Konumu"
-
 #~ msgid "User Avatar"
 #~ msgstr "Kullanıcı Resmi"
 
@@ -14385,17 +16265,11 @@ msgstr ""
 #~ msgid "Software Version"
 #~ msgstr "Yazılım Sürümü"
 
-#~ msgid "User Mood"
-#~ msgstr "Kullanıcı Modu"
-
 #~ msgid "User Activity"
 #~ msgstr "Kullanıcı Etkinliği"
 
 #~ msgid "Reachability Address"
 #~ msgstr "Erişebilirlik Adresi"
-
-#~ msgid "User Profile"
-#~ msgstr "Kullanıcı Profili"
 
 #~ msgid "User Nickname"
 #~ msgstr "Kullanıcı Takma Adı"
@@ -14469,9 +16343,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Bağlantı kapandı (yazılıyor)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Bağlantı kesildi"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Soket okuma hatası: %s"
 
@@ -14480,9 +16351,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "Yazılamadı"
-
-#~ msgid "Could not connect"
-#~ msgstr "Bağlanılamadı"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Dinleme soketi yaratılamadı"
@@ -14531,10 +16399,6 @@ msgstr ""
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "Yazışma Penceresi Gizleme"
 
-#, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Lütfen kendiniz için yeni bir takma ad belirtin."
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Hangi Kimlik etkinleştirilsin?"
 
@@ -14549,10 +16413,6 @@ msgstr ""
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Parçacık Boyutları"
-
-#, fuzzy
-#~ msgid "Invite message"
-#~ msgstr "İleti içine ekle"
 
 #, fuzzy
 #~ msgid ""
@@ -14691,9 +16551,6 @@ msgstr ""
 #~ "deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
 #~ "kalacaksınız."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Bilinmeyen hata, %d, oluştu. Bilgi: %s"
 
@@ -14723,7 +16580,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s yazma için açılamıyor!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Dosya transferi gerçekleştirilemedi; karşı taraf iptal etmiş olabilir."
 
@@ -14746,9 +16603,6 @@ msgstr ""
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC Protokol Eklentisi"
 
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s adlı kullanıcının bilgisi mevcut değil"
-
 #~ msgid "%s Options"
 #~ msgstr "%s Seçenekleri"
 
@@ -14760,9 +16614,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Bağlantıyı Tarayıcıda Aç"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN sunucusu:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"
@@ -14779,10 +16630,6 @@ msgstr ""
 
 #~ msgid "Blood Type"
 #~ msgstr "Kan Grubu"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "Hız:"
 
 #~ msgid "Invalid QQ Face"
 #~ msgstr "Geçersiz QQ Yüzü"
@@ -14959,14 +16806,6 @@ msgstr ""
 
 #~ msgid "Couldn't open file"
 #~ msgstr "Dosya açılamadı"
-
-#~ msgid ""
-#~ "This server requires plaintext authentication over an unencrypted "
-#~ "connection.  Allow this and continue authentication?"
-#~ msgstr ""
-#~ "Sunucu şifrelenmemiş bir bağlantı üzerinden normal metin ile kimlik "
-#~ "doğrulama istiyor.  Buna izin vererek kimlik doğrulamaya devam etmek "
-#~ "istiyor musunuz?"
 
 #~ msgid "Error initializing session"
 #~ msgstr "Oturum başlatma hatası"

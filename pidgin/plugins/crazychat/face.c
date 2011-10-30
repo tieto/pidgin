@@ -10,7 +10,7 @@ FACE init_face(KIND kind)
 
 	switch(kind){
 		case DOG:
-			init_dog(face);			
+			init_dog(face);
 			break;
 		case SHARK:
 			init_shark(face);
@@ -19,8 +19,8 @@ FACE init_face(KIND kind)
 			printf("default face\n");
 			init_dog(face);
 			break;
-	}			
-	return face;	
+	}
+	return face;
 }
 
 void draw_face(FACE face, GLfloat zrot, GLfloat yrot, BOOL left_eye, BOOL right_eye, GLfloat mouth_open, DIRECTION dir, OUTPUT_MODE mode){

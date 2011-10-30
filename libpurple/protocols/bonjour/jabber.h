@@ -37,7 +37,9 @@ typedef struct _BonjourJabber
 {
 	gint port;
 	gint socket;
+	gint socket6;
 	gint watcher_id;
+	gint watcher_id6;
 	PurpleAccount *account;
 	GSList *pending_conversations;
 } BonjourJabber;
@@ -61,6 +63,8 @@ typedef struct _BonjourJabberConversation
 	/* The following are only needed before attaching to a PurpleBuddy */
 	gchar *buddy_name;
 	gchar *ip;
+	/* This points to a data entry in BonjourBuddy->ips */
+	const gchar *ip_link;
 } BonjourJabberConversation;
 
 /**
@@ -105,6 +109,6 @@ typedef struct _XepIq {
 
 XepIq *xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id);
 int xep_iq_send_and_free(XepIq *iq);
-const char *purple_network_get_my_ip_ext2(int fd);
+GSList * bonjour_jabber_get_local_ips(int fd);
 
 #endif /* _BONJOUR_JABBER_H_ */

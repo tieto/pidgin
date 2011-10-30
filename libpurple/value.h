@@ -79,46 +79,14 @@ typedef enum
 	PURPLE_SUBTYPE_XMLNODE,
 	PURPLE_SUBTYPE_USERINFO,
 	PURPLE_SUBTYPE_STORED_IMAGE,
-	PURPLE_SUBTYPE_CERTIFICATEPOOL
+	PURPLE_SUBTYPE_CERTIFICATEPOOL,
+	PURPLE_SUBTYPE_CHATBUDDY
 } PurpleSubType;
 
 /**
  * A wrapper for a type, subtype, and specific type of value.
  */
-typedef struct
-{
-	PurpleType type;
-	unsigned short flags;
-
-	union
-	{
-		char char_data;
-		unsigned char uchar_data;
-		gboolean boolean_data;
-		short short_data;
-		unsigned short ushort_data;
-		int int_data;
-		unsigned int uint_data;
-		long long_data;
-		unsigned long ulong_data;
-		gint64 int64_data;
-		guint64 uint64_data;
-		char *string_data;
-		void *object_data;
-		void *pointer_data;
-		int enum_data;
-		void *boxed_data;
-
-	} data;
-
-	union
-	{
-		unsigned int subtype;
-		char *specific_type;
-
-	} u;
-
-} PurpleValue;
+typedef struct _PurpleValue PurpleValue;
 
 #ifdef __cplusplus
 extern "C" {

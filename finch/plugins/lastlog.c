@@ -60,7 +60,7 @@ window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
 static PurpleCmdRet
 lastlog_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer null)
 {
-	FinchConv *ggconv = conv->ui_data;
+	FinchConv *ggconv = FINCH_CONV(conv);
 	char **strings = g_strsplit(GNT_TEXT_VIEW(ggconv->tv)->string->str, "\n", 0);
 	GntWidget *win, *tv;
 	int i, j;

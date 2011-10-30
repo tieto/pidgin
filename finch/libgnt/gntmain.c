@@ -69,7 +69,8 @@
  */
 
 static GIOChannel *channel = NULL;
-static int channel_read_callback;
+static guint channel_read_callback = 0;
+static guint channel_error_callback = 0;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -80,6 +81,8 @@ static gboolean refresh_screen(void);
 
 static GntWM *wm;
 static GntClipboard *clipboard;
+
+int gnt_need_conversation_to_locale;
 
 #define HOLDING_ESCAPE  (escape_stuff.timer != 0)
 
@@ -123,7 +126,7 @@ detect_mouse_action(const char *buffer)
 
 	if (!wm->cws->ordered || buffer[0] != 27)
 		return FALSE;
-	
+
 	buffer++;
 	if (strlen(buffer) < 5)
 		return FALSE;
@@ -174,7 +177,7 @@ detect_mouse_action(const char *buffer)
 
 	if (widget && gnt_wm_process_click(wm, event, x, y, widget))
 		return TRUE;
-	
+
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
 			!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		if (widget != wm->cws->ordered->data) {
@@ -314,11 +317,11 @@ setup_io()
 	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
-	
-	g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+
+	channel_error_callback = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_NVAL),
 					io_invoke_error, GINT_TO_POINTER(result), NULL);
-	
+
 	g_io_channel_unref(channel);  /* Apparently this caused crashes for some people.
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
@@ -435,7 +438,7 @@ init_wm(void)
 {
 	const char *name = gnt_style_get(GNT_STYLE_WM);
 	gpointer handle;
-	
+
 	if (name && *name) {
 		handle = g_module_open(name, G_MODULE_BIND_LAZY);
 		if (handle) {
@@ -456,7 +459,7 @@ void gnt_init()
 
 	if (channel)
 		return;
-	
+
 	locale = setlocale(LC_ALL, "");
 
 	setup_io();
@@ -464,10 +467,12 @@ void gnt_init()
 #ifdef NO_WIDECHAR
 	ascii_only = TRUE;
 #else
-	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
+	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf"))) {
 		ascii_only = FALSE;
-	else
+	} else {
 		ascii_only = TRUE;
+		gnt_need_conversation_to_locale = TRUE;
+	}
 #endif
 
 	initscr();
@@ -549,7 +554,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	GntWidget *w;
 	if (!widget)
 		return FALSE;
-	
+
 	if (GNT_IS_MENU(widget))
 		return TRUE;
 
@@ -583,6 +588,13 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 void gnt_quit()
 {
+	/* Prevent io_invoke() from being called after wm is destroyed */
+	g_source_remove(channel_error_callback);
+	g_source_remove(channel_read_callback);
+
+	channel_error_callback = 0;
+	channel_read_callback = 0;
+
 	g_object_unref(G_OBJECT(wm));
 	wm = NULL;
 
@@ -721,5 +733,26 @@ gboolean gnt_is_refugee()
 #else
 	return FALSE;
 #endif
+}
+
+const char *C_(const char *x)
+{
+	static char *c = NULL;
+	if (gnt_need_conversation_to_locale) {
+		GError *error = NULL;
+		g_free(c);
+		c = g_locale_from_utf8(x, -1, NULL, NULL, &error);
+		if (c == NULL || error) {
+			char *store = c;
+			c = NULL;
+			gnt_warning("Error: %s\n", error ? error->message : "(unknown)");
+			g_error_free(error);
+			error = NULL;
+			g_free(c);
+			c = store;
+		}
+		return c ? c : x;
+	} else
+		return x;
 }
 

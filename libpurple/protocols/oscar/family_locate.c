@@ -45,7 +45,7 @@
  * But, eh.
  */
 static const struct {
-	guint32 flag;
+	guint64 flag;
 	guint8 data[16];
 } aim_caps[] = {
 
@@ -166,6 +166,16 @@ static const struct {
 	 {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
+	/* New format of caps (xtraz icons) */
+	{OSCAR_CAPABILITY_NEWCAPS,
+	 {0x09, 0x46, 0x00, 0x00, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	/* Support xtraz statuses */
+	{OSCAR_CAPABILITY_XTRAZ,
+	 {0x1a, 0x09, 0x3c, 0x6c, 0xd7, 0xFD, 0x4e, 0xc5,
+	  0x9d, 0x51, 0xa6, 0x47, 0x4e, 0x34, 0xf5, 0xa0}},
+
 	{OSCAR_CAPABILITY_SENDBUDDYLIST,
 	 {0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
@@ -235,10 +245,210 @@ static const struct {
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
+	{OSCAR_CAPABILITY_HTML_MSGS,
+	 {0x01, 0x38, 0xca, 0x7b, 0x76, 0x9a, 0x49, 0x15,
+	  0x88, 0xf2, 0x13, 0xfc, 0x00, 0x97, 0x9e, 0xa8}},
+
 	{OSCAR_CAPABILITY_LAST,
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 };
+
+/* Keep this array synchronized with icq_purple_moods. */
+static const struct {
+	const char *mood;
+	guint8 data[16];
+} icq_custom_icons[] = {
+
+	{"thinking",
+	 {0x3f, 0xb0, 0xbd, 0x36, 0xaf, 0x3b, 0x4a, 0x60,
+	  0x9e, 0xef, 0xcf, 0x19, 0x0f, 0x6a, 0x5a, 0x7f}},
+
+	{"busy",
+	 {0x48, 0x8e, 0x14, 0x89, 0x8a, 0xca, 0x4a, 0x08,
+	  0x82, 0xaa, 0x77, 0xce, 0x7a, 0x16, 0x52, 0x08}},
+
+	{"shopping",
+	 {0x63, 0x62, 0x73, 0x37, 0xa0, 0x3f, 0x49, 0xff,
+	  0x80, 0xe5, 0xf7, 0x09, 0xcd, 0xe0, 0xa4, 0xee}},
+
+	/* This was in the original patch, but isn't what the official client
+	 * (ICQ 6) sets when you choose its typewriter icon. */
+	{"typing",
+	 {0x63, 0x4f, 0x6b, 0xd8 ,0xad, 0xd2, 0x4a, 0xa1,
+	  0xaa, 0xb9, 0x11, 0x5b, 0xc2, 0x6d, 0x05, 0xa1}},
+
+	{"question",
+	 {0x63, 0x14, 0x36, 0xff, 0x3f, 0x8a, 0x40, 0xd0,
+	  0xa5, 0xcb, 0x7b, 0x66, 0xe0, 0x51, 0xb3, 0x64}},
+
+	{"angry",
+	 {0x01, 0xd8, 0xd7, 0xee, 0xac, 0x3b, 0x49, 0x2a,
+	  0xa5, 0x8d, 0xd3, 0xd8, 0x77, 0xe6, 0x6b, 0x92}},
+
+	{"plate",
+	 {0xf8, 0xe8, 0xd7, 0xb2, 0x82, 0xc4, 0x41, 0x42,
+	  0x90, 0xf8, 0x10, 0xc6, 0xce, 0x0a, 0x89, 0xa6}},
+
+	{"cinema",
+	 {0x10, 0x7a, 0x9a, 0x18, 0x12, 0x32, 0x4d, 0xa4,
+	  0xb6, 0xcd, 0x08, 0x79, 0xdb, 0x78, 0x0f, 0x09}},
+
+	{"sick",
+	 {0x1f, 0x7a, 0x40, 0x71, 0xbf, 0x3b, 0x4e, 0x60,
+	  0xbc, 0x32, 0x4c, 0x57, 0x87, 0xb0, 0x4c, 0xf1}},
+
+	{"typing",
+	 {0x2c, 0xe0, 0xe4, 0xe5, 0x7c, 0x64, 0x43, 0x70,
+	  0x9c, 0x3a, 0x7a, 0x1c, 0xe8, 0x78, 0xa7, 0xdc}},
+
+	{"suit",
+	 {0xb7, 0x08, 0x67, 0xf5, 0x38, 0x25, 0x43, 0x27,
+	  0xa1, 0xff, 0xcf, 0x4c, 0xc1, 0x93, 0x97, 0x97}},
+
+	{"bathing",
+	 {0x5a, 0x58, 0x1e, 0xa1, 0xe5, 0x80, 0x43, 0x0c,
+	  0xa0, 0x6f, 0x61, 0x22, 0x98, 0xb7, 0xe4, 0xc7}},
+
+	{"tv",
+	 {0x80, 0x53, 0x7d, 0xe2, 0xa4, 0x67, 0x4a, 0x76,
+	  0xb3, 0x54, 0x6d, 0xfd, 0x07, 0x5f, 0x5e, 0xc6}},
+
+	{"excited",
+	 {0x6f, 0x49, 0x30, 0x98, 0x4f, 0x7c, 0x4a, 0xff,
+	  0xa2, 0x76, 0x34, 0xa0, 0x3b, 0xce, 0xae, 0xa7}},
+
+	{"sleeping",
+	 {0x78, 0x5e, 0x8c, 0x48, 0x40, 0xd3, 0x4c, 0x65,
+	  0x88, 0x6f, 0x04, 0xcf, 0x3f, 0x3f, 0x43, 0xdf}},
+
+	{"hiptop",
+	 {0x10, 0x11, 0x17, 0xc9, 0xa3, 0xb0, 0x40, 0xf9,
+	  0x81, 0xac, 0x49, 0xe1, 0x59, 0xfb, 0xd5, 0xd4}},
+
+	{"in_love",
+	 {0xdd, 0xcf, 0x0e, 0xa9, 0x71, 0x95, 0x40, 0x48,
+	  0xa9, 0xc6, 0x41, 0x32, 0x06, 0xd6, 0xf2, 0x80}},
+
+	{"sleepy",
+	 {0x83, 0xc9, 0xb7, 0x8e, 0x77, 0xe7, 0x43, 0x78,
+	  0xb2, 0xc5, 0xfb, 0x6c, 0xfc, 0xc3, 0x5b, 0xec}},
+
+	{"meeting",
+	 {0xf1, 0x8a, 0xb5, 0x2e, 0xdc, 0x57, 0x49, 0x1d,
+	  0x99, 0xdc, 0x64, 0x44, 0x50, 0x24, 0x57, 0xaf}},
+
+	{"phone",
+	 {0x12, 0x92, 0xe5, 0x50, 0x1b, 0x64, 0x4f, 0x66,
+	  0xb2, 0x06, 0xb2, 0x9a, 0xf3, 0x78, 0xe4, 0x8d}},
+
+	{"surfing",
+	 {0xa6, 0xed, 0x55, 0x7e, 0x6b, 0xf7, 0x44, 0xd4,
+	  0xa5, 0xd4, 0xd2, 0xe7, 0xd9, 0x5c, 0xe8, 0x1f}},
+
+	{"mobile",
+	 {0x16, 0x0c, 0x60, 0xbb, 0xdd, 0x44, 0x43, 0xf3,
+	  0x91, 0x40, 0x05, 0x0f, 0x00, 0xe6, 0xc0, 0x09}},
+
+	{"search",
+	 {0xd4, 0xe2, 0xb0, 0xba, 0x33, 0x4e, 0x4f, 0xa5,
+	  0x98, 0xd0, 0x11, 0x7d, 0xbf, 0x4d, 0x3c, 0xc8}},
+
+	{"party",
+	 {0xe6, 0x01, 0xe4, 0x1c, 0x33, 0x73, 0x4b, 0xd1,
+	  0xbc, 0x06, 0x81, 0x1d, 0x6c, 0x32, 0x3d, 0x81}},
+
+	{"coffee",
+	 {0x1b, 0x78, 0xae, 0x31, 0xfa, 0x0b, 0x4d, 0x38,
+	  0x93, 0xd1, 0x99, 0x7e, 0xee, 0xaf, 0xb2, 0x18}},
+
+	{"console",
+	 {0xd4, 0xa6, 0x11, 0xd0, 0x8f, 0x01, 0x4e, 0xc0,
+	  0x92, 0x23, 0xc5, 0xb6, 0xbe, 0xc6, 0xcc, 0xf0}},
+
+	{"internet",
+	 {0x12, 0xd0, 0x7e, 0x3e, 0xf8, 0x85, 0x48, 0x9e,
+	  0x8e, 0x97, 0xa7, 0x2a, 0x65, 0x51, 0xe5, 0x8d}},
+
+	{"cigarette",
+	 {0x64, 0x43, 0xc6, 0xaf, 0x22, 0x60, 0x45, 0x17,
+	  0xb5, 0x8c, 0xd7, 0xdf, 0x8e, 0x29, 0x03, 0x52}},
+
+	{"writing",
+	 {0x00, 0x72, 0xd9, 0x08, 0x4a, 0xd1, 0x43, 0xdd,
+	  0x91, 0x99, 0x6f, 0x02, 0x69, 0x66, 0x02, 0x6f}},
+
+	{"beer",
+	 {0x8c, 0x50, 0xdb, 0xae, 0x81, 0xed, 0x47, 0x86,
+	  0xac, 0xca, 0x16, 0xcc, 0x32, 0x13, 0xc7, 0xb7}},
+
+	{"music",
+	 {0x61, 0xbe, 0xe0, 0xdd, 0x8b, 0xdd, 0x47, 0x5d,
+	  0x8d, 0xee, 0x5f, 0x4b, 0xaa, 0xcf, 0x19, 0xa7}},
+
+	{"studying",
+	 {0x60, 0x9d, 0x52, 0xf8, 0xa2, 0x9a, 0x49, 0xa6,
+	  0xb2, 0xa0, 0x25, 0x24, 0xc5, 0xe9, 0xd2, 0x60}},
+
+	{"working",
+	 {0xba, 0x74, 0xdb, 0x3e, 0x9e, 0x24, 0x43, 0x4b,
+	  0x87, 0xb6, 0x2f, 0x6b, 0x8d, 0xfe, 0xe5, 0x0f}},
+
+	{"restroom",
+	 {0x16, 0xf5, 0xb7, 0x6f, 0xa9, 0xd2, 0x40, 0x35,
+	  0x8c, 0xc5, 0xc0, 0x84, 0x70, 0x3c, 0x98, 0xfa}},
+
+	{NULL,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
+};
+
+/* Keep this array synchronized with icq_custom_icons. */
+static PurpleMood icq_purple_moods[] = {
+	{"thinking", N_("Thinking"), NULL},
+	{"busy", N_("Busy"), NULL},
+	{"shopping", N_("Shopping"), NULL},
+	/* This was in the original patch, but isn't what the official client
+	 * (ICQ 6) sets when you choose its typewriter icon. */
+	{"typing", NULL, NULL},
+	{"question", N_("Questioning"), NULL},
+	{"angry", N_("Angry"), NULL},
+	{"plate", N_("Eating"), NULL},
+	{"cinema", N_("Watching a movie"), NULL},
+	{"sick", N_("Sick"), NULL},
+	{"typing", N_("Typing"), NULL},
+	{"suit", N_("At the office"), NULL},
+	{"bathing", N_("Taking a bath"), NULL},
+	{"tv", N_("Watching TV"), NULL},
+	{"excited", N_("Having fun"), NULL},
+	{"sleeping", N_("Sleeping"), NULL},
+	{"hiptop", N_("Using a PDA"), NULL},
+	{"in_love", N_("In love"), NULL},
+	/* Sleepy / Tired */
+	{"sleepy", N_("Sleepy"), NULL},
+	{"meeting", N_("Meeting friends"), NULL},
+	{"phone", N_("On the phone"), NULL},
+	{"surfing", N_("Surfing"), NULL},
+	/* "I am mobile." / "John is mobile." */
+	{"mobile", N_("Mobile"), NULL},
+	{"search", N_("Searching the web"), NULL},
+	{"party", N_("At a party"), NULL},
+	{"coffee", N_("Having Coffee"), NULL},
+	/* Playing video games */
+	{"console", N_("Gaming"), NULL},
+	{"internet", N_("Browsing the web"), NULL},
+	{"cigarette", N_("Smoking"), NULL},
+	{"writing", N_("Writing"), NULL},
+	/* Drinking [Alcohol] */
+	{"beer", N_("Drinking"), NULL},
+	{"music", N_("Listening to music"), NULL},
+	{"studying", N_("Studying"), NULL},
+	{"working", N_("Working"), NULL},
+	{"restroom", N_("In the restroom"), NULL},
+	/* Mark the last record. */
+	{NULL, NULL, NULL},
+};
+
 
 /*
  * Add the userinfo to our linked list.  If we already have userinfo
@@ -274,6 +484,7 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		cur->sessionlen = userinfo->sessionlen;
 	if (userinfo->capabilities != 0)
 		cur->capabilities = userinfo->capabilities;
+
 	cur->present |= userinfo->present;
 
 	if (userinfo->iconcsumlen > 0) {
@@ -370,13 +581,13 @@ aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn) {
 	return NULL;
 }
 
-guint32
+guint64
 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 {
-	guint32 flags = 0;
+	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
 		guint8 *cap;
 		int i, identified;
 
@@ -398,20 +609,45 @@ aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 					cap[8], cap[9],
 					cap[10], cap[11], cap[12], cap[13],
 					cap[14], cap[15]);
-
 		g_free(cap);
 	}
 
 	return flags;
 }
 
-guint32
+static const char *
+aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
+{
+	int offset;
+	const char *result = NULL;
+
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
+		/* check wheather this capability is a custom user icon */
+		guint8 *cap;
+		int i;
+
+		cap = byte_stream_getraw(bs, 0x10);
+
+		for (i = 0; icq_custom_icons[i].mood; i++) {
+			if (memcmp(&icq_custom_icons[i].data, cap, 0x10) == 0) {
+				purple_debug_misc("oscar", "Custom status icon: %s\n", icq_purple_moods[i].description);
+				result = icq_custom_icons[i].mood;
+				break; /* should only match once... */
+			}
+		}
+		g_free(cap);
+	}
+
+	return result;
+}
+
+guint64
 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 {
-	guint32 flags = 0;
+	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x02) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x02) {
 		guint8 *cap;
 		int i, identified;
 
@@ -435,23 +671,20 @@ aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 }
 
 int
-byte_stream_putcaps(ByteStream *bs, guint32 caps)
+byte_stream_putcaps(ByteStream *bs, guint64 caps)
 {
 	int i;
 
 	if (!bs)
 		return -EINVAL;
 
-	for (i = 0; byte_stream_empty(bs); i++) {
-
+	for (i = 0; byte_stream_bytes_left(bs); i++) {
 		if (aim_caps[i].flag == OSCAR_CAPABILITY_LAST)
 			break;
 
 		if (caps & aim_caps[i].flag)
 			byte_stream_putraw(bs, aim_caps[i].data, 0x10);
-
 	}
-
 	return 0;
 }
 
@@ -495,6 +728,38 @@ aim_info_free(aim_userinfo_t *info)
 	g_free(info->away_encoding);
 }
 
+static const struct {
+	char *icqmood;
+	const char *mood;
+} icqmoods[] = {
+	{"icqmood0",  "shopping"},
+	{"icqmood1",  "bathing"},
+	{"icqmood2",  "sleepy"},
+	{"icqmood3",  "party"},
+	{"icqmood4",  "beer"},
+	{"icqmood5",  "thinking"},
+	{"icqmood6",  "plate"},
+	{"icqmood7",  "tv"},
+	{"icqmood8",  "meeting"},
+	{"icqmood9",  "coffee"},
+	{"icqmood10", "music"},
+	{"icqmood11", "suit"},
+	{"icqmood12", "cinema"},
+	{"icqmood13", "smile-big"},
+	{"icqmood14", "phone"},
+	{"icqmood15", "console"},
+	{"icqmood16", "studying"},
+	{"icqmood17", "sick"},
+	{"icqmood18", "sleeping"},
+	{"icqmood19", "surfing"},
+	{"icqmood20", "internet"},
+	{"icqmood21", "working"},
+	{"icqmood22", "typing"},
+	{"icqmood23", "angry"},
+	{NULL, 0}
+
+};
+
 /*
  * AIM is fairly regular about providing user info.  This is a generic
  * routine to extract it in its standard form.
@@ -535,11 +800,12 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
 		guint16 type, length;
 		int endpos;
+		int curpos;
 
 		type = byte_stream_get16(bs);
 		length = byte_stream_get16(bs);
-
-		endpos = byte_stream_curpos(bs) + MIN(length, byte_stream_empty(bs));
+		curpos = byte_stream_curpos(bs);
+		endpos = curpos + MIN(length, byte_stream_bytes_left(bs));
 
 		if (type == 0x0001) {
 			/*
@@ -651,11 +917,23 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;
 
 		} else if (type == 0x000d) {
+			PurpleAccount *account = purple_connection_get_account(od->gc);
+			const char *mood;
+
 			/*
 			 * OSCAR Capability information
 			 */
 			outinfo->capabilities |= aim_locate_getcaps(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
+			byte_stream_setpos(bs, curpos);
+
+			mood = aim_receive_custom_icon(od, bs, length);
+			if (mood)
+				purple_prpl_got_user_status(account, outinfo->bn, "mood",
+						PURPLE_MOOD_NAME, mood,
+						NULL);
+			else
+				purple_prpl_got_user_status_deactive(account, outinfo->bn, "mood");
 
 		} else if (type == 0x000e) {
 			/*
@@ -675,6 +953,13 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 */
 			outinfo->sessionlen = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
+
+		} else if (type == 0x0014) {
+			/*
+			 * My instance number.
+			 */
+			guint8 instance_number;
+			instance_number = byte_stream_get8(bs);
 
 		} else if (type == 0x0019) {
 			/*
@@ -726,7 +1011,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 				number2 = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
 
-				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_empty(bs));
+				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_bytes_left(bs));
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
@@ -784,6 +1069,37 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 							outinfo->itmsurl_encoding = NULL;
 						}
 					} break;
+
+					case 0x000e: { /* ICQ mood */
+						PurpleAccount *account = purple_connection_get_account(od->gc);
+						char *icqmood;
+						gint32 i;
+						const char *mood = NULL;
+
+						icqmood = byte_stream_getstr(bs, length2);
+
+						/* icqmood = "" means X-Status
+						 * with no mood icon. */
+						if (*icqmood) {
+							for (i = 0; icqmoods[i].icqmood; i++) {
+								if (!strcmp(icqmood, icqmoods[i].icqmood)) {
+									mood = icqmoods[i].mood;
+									break; /* should only match once... */
+								}
+							}
+
+							if (!mood)
+								purple_debug_warning("oscar", "Unknown icqmood: %s\n", icqmood);
+						}
+						g_free(icqmood);
+
+						if (mood)
+							purple_prpl_got_user_status(account, outinfo->bn, "mood",
+									PURPLE_MOOD_NAME, mood,
+									NULL);
+						else
+							purple_prpl_got_user_status_deactive(account, outinfo->bn, "mood");
+					} break;
 				}
 
 				/* Save ourselves. */
@@ -797,8 +1113,30 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x001f) {
 			/*
+			 * Upper bytes of user flags.  Can be any size
+			 *
 			 * Seen on a buddy using DeadAIM.  Data was 4 bytes:
 			 * 0x00 00 00 10
+			 */
+
+		} else if (type == 0x0023) {
+			/*
+			 * Last Buddy Feed update time, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0026) {
+			/*
+			 * Time that the profile was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0027) {
+			/*
+			 * Time that the away message was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x002a) {
+			/*
+			 * Country code based on GeoIP data.
 			 */
 
 		} else {
@@ -829,66 +1167,17 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 }
 
 /*
- * Inverse of aim_info_extract()
- */
-int
-aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
-{
-	GSList *tlvlist = NULL;
-
-	if (!bs || !info)
-		return -EINVAL;
-
-	byte_stream_put8(bs, strlen(info->bn));
-	byte_stream_putstr(bs, info->bn);
-
-	byte_stream_put16(bs, info->warnlevel);
-
-	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
-		aim_tlvlist_add_16(&tlvlist, 0x0001, info->flags);
-	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0002, info->membersince);
-	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0003, info->onlinesince);
-	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		aim_tlvlist_add_16(&tlvlist, 0x0004, info->idletime);
-
-/* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
-#ifdef ICQ_OSCAR_SUPPORT
-	if (atoi(info->bn) != 0) {
-		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
-			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
-		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
-			aim_tlvlist_add_32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
-	}
-#endif
-
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
-		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities);
-
-	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
-
-	byte_stream_put16(bs, aim_tlvlist_count(tlvlist));
-	aim_tlvlist_write(bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	return 0;
-}
-
-/*
  * Subtype 0x0001
  */
 static int
 error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 	guint16 reason;
 	char *bn;
 
-	if (!(snac2 = aim_remsnac(od, snac->id))) {
+	snac2 = aim_remsnac(od, snac->id);
+	if (!snac2) {
 		purple_debug_misc("oscar", "locate error: received response from unknown request!\n");
 		return 0;
 	}
@@ -900,7 +1189,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		return 0;
 	}
 
-	if (!(bn = snac2->data)) {
+	bn = snac2->data;
+	if (!bn) {
 		purple_debug_misc("oscar", "locate error: received response from request without a buddy name!\n");
 		g_free(snac2);
 		return 0;
@@ -908,15 +1198,12 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	reason = byte_stream_get16(bs);
 
-	/* Notify the user that we do not have info for this buddy */
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, reason, bn);
+	oscar_user_info_display_error(od, reason, bn);
 
-	if (snac2)
-		g_free(snac2->data);
+	g_free(snac2->data);
 	g_free(snac2);
 
-	return ret;
+	return 1;
 }
 
 /*
@@ -1046,7 +1333,7 @@ aim_locate_setprofile(OscarData *od,
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1057,9 +1344,13 @@ aim_locate_setprofile(OscarData *od,
  * Subtype 0x0004 - Set your client's capabilities.
  */
 int
-aim_locate_setcaps(OscarData *od, guint32 caps)
+aim_locate_setcaps(OscarData *od, guint64 caps)
 {
 	FlapConnection *conn;
+	PurpleAccount *account = purple_connection_get_account(od->gc);
+	PurplePresence *presence = purple_account_get_presence(account);
+	PurpleStatus *status = purple_presence_get_status(presence, "mood");
+	const char *mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
 	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
@@ -1067,7 +1358,7 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
-	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps);
+	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps, mood);
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
@@ -1076,41 +1367,7 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x0005 - Request info of another AIM user.
- *
- * @param bn The buddy name whose info you wish to request.
- * @param infotype The type of info you wish to request.
- *        0x0001 - Info/profile
- *        0x0003 - Away message
- *        0x0004 - Capabilities
- */
-int
-aim_locate_getinfo(OscarData *od, const char *bn, guint16 infotype)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 2+1+strlen(bn));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, NULL, 0);
-
-	byte_stream_put16(&bs, infotype);
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1122,7 +1379,6 @@ static int
 userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_userinfo_t *userinfo, *userinfo2;
 	GSList *tlvlist;
 	aim_tlv_t *tlv = NULL;
@@ -1150,9 +1406,21 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	/* Caps will be 5 */
 	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
 		ByteStream cbs;
+		PurpleAccount *account = purple_connection_get_account(od->gc);
+		const char *mood;
+
 		byte_stream_init(&cbs, tlv->value, tlv->length);
 		userinfo->capabilities = aim_locate_getcaps(od, &cbs, tlv->length);
+		byte_stream_rewind(&cbs);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
+
+		mood = aim_receive_custom_icon(od, &cbs, tlv->length);
+		if (mood)
+			purple_prpl_got_user_status(account, userinfo->bn, "mood",
+					PURPLE_MOOD_NAME, mood,
+					NULL);
+		else
+			purple_prpl_got_user_status_deactive(account, userinfo->bn, "mood");
 	}
 	aim_tlvlist_free(tlvlist);
 
@@ -1162,137 +1430,9 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	g_free(userinfo);
 
 	/* Show the info to the user */
-	if (userinfo2 != NULL && ((userfunc = aim_callhandler(od, snac->family, snac->subtype))))
-		ret = userfunc(od, conn, frame, userinfo2);
+	oscar_user_info_display_aim(od, userinfo2);
 
 	return ret;
-}
-
-/*
- * Subtype 0x0009 - Set directory profile data.
- *
- * This is not the same as aim_location_setprofile!
- * privacy: 1 to allow searching, 0 to disallow.
- *
- */
-int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tlvlist = NULL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
-		return -EINVAL;
-
-	aim_tlvlist_add_16(&tlvlist, 0x000a, privacy);
-
-	if (first)
-		aim_tlvlist_add_str(&tlvlist, 0x0001, first);
-	if (last)
-		aim_tlvlist_add_str(&tlvlist, 0x0002, last);
-	if (middle)
-		aim_tlvlist_add_str(&tlvlist, 0x0003, middle);
-	if (maiden)
-		aim_tlvlist_add_str(&tlvlist, 0x0004, maiden);
-
-	if (state)
-		aim_tlvlist_add_str(&tlvlist, 0x0007, state);
-	if (city)
-		aim_tlvlist_add_str(&tlvlist, 0x0008, city);
-
-	if (nickname)
-		aim_tlvlist_add_str(&tlvlist, 0x000c, nickname);
-	if (zip)
-		aim_tlvlist_add_str(&tlvlist, 0x000d, zip);
-
-	if (street)
-		aim_tlvlist_add_str(&tlvlist, 0x0021, street);
-
-	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, NULL, 0);
-
-	aim_tlvlist_write(&bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x000b - Huh? What is this?
- */
-int aim_locate_000b(OscarData *od, const char *bn)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1+strlen(bn));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, NULL, 0);
-
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x000f
- *
- * XXX pass these in better
- *
- */
-int
-aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tlvlist = NULL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
-		return -EINVAL;
-
-	/* ?? privacy ?? */
-	aim_tlvlist_add_16(&tlvlist, 0x000a, privacy);
-
-	if (interest1)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest1);
-	if (interest2)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest2);
-	if (interest3)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest3);
-	if (interest4)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest4);
-	if (interest5)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest5);
-
-	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, NULL, 0);
-
-	aim_tlvlist_write(&bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-	return 0;
 }
 
 /*
@@ -1323,7 +1463,7 @@ aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags)
 	byte_stream_putstr(&bs, bn);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, bn, strlen(bn)+1);
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -1369,4 +1509,49 @@ locate_modfirst(OscarData *od, aim_module_t *mod)
 	mod->shutdown = locate_shutdown;
 
 	return 0;
+}
+
+const char*
+icq_get_custom_icon_description(const char *mood)
+{
+	int i;
+
+	if (!(mood && *mood))
+		return NULL;
+
+	for (i = 0; icq_custom_icons[i].mood; i++) {
+		/* We check that description is not NULL to exclude
+		 * duplicates, like the typing duplicate. */
+		if (icq_purple_moods[i].description &&
+		    !strcmp(mood, icq_custom_icons[i].mood)) {
+			return icq_purple_moods[i].description;
+		}
+	}
+
+	return NULL;
+}
+
+guint8*
+icq_get_custom_icon_data(const char *mood)
+{
+	int i;
+
+	if (!(mood && *mood))
+		return NULL;
+
+	for (i = 0; icq_custom_icons[i].mood; i++) {
+		/* We check that description is not NULL to exclude
+		 * duplicates, like the typing duplicate. */
+		if (icq_purple_moods[i].description &&
+		    !strcmp(mood, icq_custom_icons[i].mood)) {
+			return (guint8 *)icq_custom_icons[i].data;
+		}
+	}
+	return NULL;
+}
+
+PurpleMood*
+icq_get_purple_moods(PurpleAccount *account)
+{
+	return icq_purple_moods;
 }

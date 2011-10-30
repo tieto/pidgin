@@ -1,7 +1,6 @@
 /**
  * @file smiley.h Smiley API
  * @ingroup core
- * @since 2.5.0
  */
 
 /* purple
@@ -192,7 +191,7 @@ const char *purple_smiley_get_extension(const PurpleSmiley *smiley);
  * @param smiley  The custom smiley.
  *
  * @return A full path to the file, or @c NULL under various conditions.
- *         The caller should use #g_free to free the returned string.
+ *         The caller should use g_free to free the returned string.
  */
 char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 

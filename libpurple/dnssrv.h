@@ -28,11 +28,16 @@
 extern "C" {
 #endif
 
-typedef struct _PurpleSrvQueryData PurpleSrvQueryData;
+typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
 
 #include <glib.h>
+
+enum PurpleDnsType {
+	PurpleDnsTypeTxt = 16,
+	PurpleDnsTypeSrv = 33
+};
 
 struct _PurpleSrvResponse {
 	char hostname[256];
@@ -40,6 +45,40 @@ struct _PurpleSrvResponse {
 	int weight;
 	int pref;
 };
+
+struct _PurpleTxtResponse {
+	char *content;
+};
+
+typedef void  (*PurpleSrvTxtQueryResolvedCallback) (PurpleSrvTxtQueryData *query_data, GList *records);
+typedef void  (*PurpleSrvTxtQueryFailedCallback) (PurpleSrvTxtQueryData *query_data, const gchar *error_message);
+
+/**
+ * SRV Request UI operations;  UIs should implement this if they want to do SRV
+ * lookups themselves, rather than relying on the core.
+ *
+ * @see @ref ui-ops
+ */
+typedef struct
+{
+	/** If implemented, return TRUE if the UI takes responsibility for SRV
+	  * queries. When returning FALSE, the standard implementation is used. 
+	  * These callbacks MUST be called asynchronously. */
+	gboolean (*resolve)(PurpleSrvTxtQueryData *query_data,
+	                    PurpleSrvTxtQueryResolvedCallback resolved_cb,
+	                    PurpleSrvTxtQueryFailedCallback failed_cb);
+
+	/** Called just before @a query_data is freed; this should cancel any
+	 *  further use of @a query_data the UI would make. Unneeded if
+	 *  #resolve is not implemented.
+	 */
+	void (*destroy)(PurpleSrvTxtQueryData *query_data);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+} PurpleSrvTxtQueryUiOps;
 
 /**
  * @param resp An array of PurpleSrvResponse of size results.  The array
@@ -60,60 +99,94 @@ typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 /**
  * Queries an SRV record.
  *
- * @param protocol Name of the protocol (e.g. "sip")
+ * @param account   The account that the query is being done for (or NULL)
+ * @param protocol  Name of the protocol (e.g. "sip")
  * @param transport Name of the transport ("tcp" or "udp")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
+ * @param domain    Domain name to query (e.g. "blubb.com")
+ * @param cb        A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
- */
-PurpleSrvQueryData *purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
-
-/**
- * Cancel an SRV DNS query.
  *
- * @param query_data The request to cancel.
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
  */
-void purple_srv_cancel(PurpleSrvQueryData *query_data);
+PurpleSrvTxtQueryData *purple_srv_resolve(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
 
 /**
  * Queries an TXT record.
  *
- * @param owner Name of the protocol (e.g. "_xmppconnect")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
+ * @param account   The account that the query is being done for (or NULL)
+ * @param owner     Name of the protocol (e.g. "_xmppconnect")
+ * @param domain    Domain name to query (e.g. "blubb.com")
+ * @param cb        A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  *
- * @since 2.6.0
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
  */
-PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
-
-/**
- * Cancel an TXT DNS query.
- *
- * @param query_data The request to cancel.
- * @since 2.6.0
- */
-void purple_txt_cancel(PurpleSrvQueryData *query_data);
+PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
 
 /**
  * Get the value of the current TXT record.
  *
- * @param resp  The TXT response record
- * @returns The value of the current TXT record.
- * @since 2.6.0
+ * @param response  The TXT response record
+ *
+ * @return The value of the current TXT record.
  */
-const gchar *purple_txt_response_get_content(PurpleTxtResponse *resp);
+const gchar *purple_txt_response_get_content(PurpleTxtResponse *response);
 
 /**
  * Destroy a TXT DNS response object.
  *
  * @param response The PurpleTxtResponse to destroy.
- * @since 2.6.0
  */
-void purple_txt_response_destroy(PurpleTxtResponse *resp);
+void purple_txt_response_destroy(PurpleTxtResponse *response);
+
+/**
+ * Cancel a SRV/TXT query and destroy the associated data structure.
+ *
+ * @param query_data The SRV/TXT query to cancel.  This data structure
+ *        is freed by this function.
+ */
+void purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data);
+
+/**
+ * Sets the UI operations structure to be used when doing a SRV/TXT
+ * resolve.  The UI operations need only be set if the UI wants to
+ * handle the resolve itself; otherwise, leave it as NULL.
+ *
+ * @param ops The UI operations structure.
+ */
+void purple_srv_txt_query_set_ui_ops(PurpleSrvTxtQueryUiOps *ops);
+
+/**
+ * Returns the UI operations structure to be used when doing a SRV/TXT
+ * resolve.
+ *
+ * @return The UI operations structure.
+ */
+PurpleSrvTxtQueryUiOps *purple_srv_txt_query_get_ui_ops(void);
+
+/**
+ * Get the query from a PurpleSrvTxtQueryData
+ *
+ * @param query_data The SRV/TXT query
+ * @return The query.
+ */
+char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
+
+/**
+ * Get the type from a PurpleSrvTxtQueryData (TXT or SRV)
+ *
+ * @param query_data The query
+ * @return The query.
+ */
+int purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _PURPLE_DNSSRV_H */
+

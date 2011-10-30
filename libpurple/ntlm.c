@@ -24,8 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-#include <stdlib.h>
 #include "internal.h"
 
 #include "util.h"
@@ -113,14 +111,16 @@ struct type3_message {
 gchar *
 purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 {
-	int hostnamelen;
-	int domainlen;
+	int hostnamelen,host_off;
+	int domainlen,dom_off;
 	unsigned char *msg;
 	struct type1_message *tmsg;
 	gchar *tmp;
 
 	hostnamelen = strlen(hostname);
 	domainlen = strlen(domain);
+	host_off = sizeof(struct type1_message);
+	dom_off = sizeof(struct type1_message) + hostnamelen;
 	msg = g_malloc0(sizeof(struct type1_message) + hostnamelen + domainlen);
 	tmsg = (struct type1_message*)msg;
 	tmsg->protocol[0] = 'N';
@@ -134,11 +134,11 @@ purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	tmsg->type      = GUINT32_TO_LE(0x00000001);
 	tmsg->flags     = GUINT32_TO_LE(0x0000b203);
 	tmsg->dom_len1  = tmsg->dom_len2 = GUINT16_TO_LE(domainlen);
-	tmsg->dom_off   = GUINT32_TO_LE(sizeof(struct type1_message) + hostnamelen);
+	tmsg->dom_off   = GUINT32_TO_LE(dom_off);
 	tmsg->host_len1 = tmsg->host_len2 = GUINT16_TO_LE(hostnamelen);
-	tmsg->host_off  = GUINT32_TO_LE(sizeof(struct type1_message));
-	memcpy(msg + tmsg->host_off, hostname, hostnamelen);
-	memcpy(msg + tmsg->dom_off, domain, domainlen);
+	tmsg->host_off  = GUINT32_TO_LE(host_off);
+	memcpy(msg + host_off, hostname, hostnamelen);
+	memcpy(msg + dom_off, domain, domainlen);
 
 	tmp = purple_base64_encode(msg, sizeof(struct type1_message) + hostnamelen + domainlen);
 	g_free(msg);
@@ -154,9 +154,14 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	static guint8 nonce[8];
 
 	tmsg = (struct type2_message*)purple_base64_decode(type2, &retlen);
-	memcpy(nonce, tmsg->nonce, 8);
-	if (flags != NULL)
-		*flags = GUINT16_FROM_LE(tmsg->flags);
+	if (tmsg != NULL && retlen >= (sizeof(struct type2_message) - 1)) {
+		memcpy(nonce, tmsg->nonce, 8);
+		if (flags != NULL)
+			*flags = GUINT16_FROM_LE(tmsg->flags);
+	} else {
+		purple_debug_error("ntlm", "Unable to parse type2 message - returning empty nonce.\n");
+		memset(nonce, 0, 8);
+	}
 	g_free(tmsg);
 
 	return nonce;

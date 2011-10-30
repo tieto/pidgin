@@ -17,6 +17,7 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -71,7 +72,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 			   void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	if (!sg->conn)
 		return;
@@ -145,7 +146,7 @@ static void
 silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
 			   gboolean force_local)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcDList clients;
 	SilcClientEntry client_entry;
 	SilcClientConnectionParams params;
@@ -313,7 +314,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
-			      hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
+			      hostname ? tmp2 : NULL, 1, purple_connection_get_account(gc), client_entry->nickname,
 			      NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			      _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
@@ -345,7 +346,7 @@ silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	/* Find client entry */
 	clients = silc_client_get_clients_local(sg->client, sg->conn,
@@ -425,7 +426,7 @@ silcpurple_buddy_privkey_resolved(SilcClient client,
 static void
 silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurplePrivkey p;
 	SilcDList clients;
 	SilcClientEntry client_entry;
@@ -456,7 +457,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     gc->account, NULL, NULL, p);
+	                     purple_connection_get_account(gc), NULL, NULL, p);
 
 	silc_client_list_free(sg->client, sg->conn, clients);
 }
@@ -553,7 +554,7 @@ silcpurple_buddy_getkey_resolved(SilcClient client,
 static void
 silcpurple_buddy_getkey(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry client_entry;
@@ -617,7 +618,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	pkfile = purple_blist_node_get_string(node, "public-key");
 	if (!silc_pkcs_load_public_key(pkfile, &public_key)) {
@@ -668,7 +669,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 
 void silcpurple_get_info(PurpleConnection *gc, const char *who)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry client_entry;
@@ -685,7 +686,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = purple_find_buddy(gc->account, nick);
+	b = purple_find_buddy(purple_connection_get_account(gc), nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
@@ -1182,7 +1183,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r, SilcDList clients)
 			   client_entry->username, *client_entry->hostname ?
 			   client_entry->hostname : "",
 			   fingerprint ? tmp2 : "");
-		purple_request_field_list_add(f, tmp, client_entry);
+		purple_request_field_list_add_icon(f, tmp, NULL, client_entry);
 		silc_free(fingerprint);
 	}
 
@@ -1337,7 +1338,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 static void
 silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcPurpleBuddyRes r;
@@ -1395,7 +1396,7 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 	silc_buffer_free(attrs);
 }
 
-void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	/* Don't add if the buddy is already on the list.
 	 *
@@ -1436,7 +1437,7 @@ void silcpurple_idle_set(PurpleConnection *gc, int idle)
 	const char *server;
 	int port;
 
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 	if (sg == NULL)
 		return;
 
@@ -1466,7 +1467,7 @@ char *silcpurple_status_text(PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
@@ -1532,7 +1533,7 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
@@ -1546,54 +1547,72 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		return;
 
 	if (client_entry->nickname)
-		purple_notify_user_info_add_pair(user_info, _("Nickname"),
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Nickname"),
 					       client_entry->nickname);
 	if (client_entry->username && client_entry->hostname) {
 		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
-		purple_notify_user_info_add_pair(user_info, _("Username"), tmp);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Username"), tmp);
 	}
 	if (client_entry->mode) {
 		memset(tmp, 0, sizeof(tmp));
 		silcpurple_get_umode_string(client_entry->mode,
 					  tmp, sizeof(tmp) - strlen(tmp));
-		purple_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("User Modes"), tmp);
 	}
 
 	silcpurple_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 
 	if (statusstr) {
-		purple_notify_user_info_add_pair(user_info, _("Message"), statusstr);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Message"), statusstr);
 		g_free(statusstr);
 	}
 
 	if (full) {
 		if (moodstr) {
-			purple_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Mood"), moodstr);
 			g_free(moodstr);
 		}
 
 		if (contactstr) {
-			purple_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Preferred Contact"), contactstr);
 			g_free(contactstr);
 		}
 
 		if (langstr) {
-			purple_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Preferred Language"), langstr);
 			g_free(langstr);
 		}
 
 		if (devicestr) {
-			purple_notify_user_info_add_pair(user_info, _("Device"), devicestr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Device"), devicestr);
 			g_free(devicestr);
 		}
 
 		if (tzstr) {
-			purple_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Timezone"), tzstr);
 			g_free(tzstr);
 		}
 
 		if (geostr) {
-			purple_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Geolocation"), geostr);
 			g_free(geostr);
 		}
 	}
@@ -1610,7 +1629,7 @@ silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	/* Call KILL */
 	silc_client_command_call(sg->client, sg->conn, NULL, "KILL",
@@ -1634,7 +1653,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 {
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClientConnection conn = sg->conn;
 	const char *pkfile = NULL;
 	SilcClientEntry client_entry = NULL;
@@ -1700,7 +1719,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcMime mime;

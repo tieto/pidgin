@@ -27,7 +27,11 @@
 
 #include <signal.h>
 #include <string.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include "win32/win32dep.h"
+#endif
 
 #include "defines.h"
 
@@ -80,7 +84,11 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInput
 	if (condition & PURPLE_INPUT_WRITE)
 		cond |= PURPLE_GLIB_WRITE_COND;
 
+#if defined _WIN32 && !defined WINPIDGIN_USE_GLIB_IO_CHANNEL
+	channel = wpurple_g_io_channel_win32_new_socket(fd);
+#else
 	channel = g_io_channel_unix_new(fd);
+#endif
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      purple_glib_io_invoke, closure, purple_glib_io_destroy);
 
@@ -88,7 +96,7 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInput
 	return closure->result;
 }
 
-static PurpleEventLoopUiOps glib_eventloops = 
+static PurpleEventLoopUiOps glib_eventloops =
 {
 	g_timeout_add,
 	g_source_remove,
@@ -126,7 +134,7 @@ null_write_conv(PurpleConversation *conv, const char *who, const char *alias,
 			name, message);
 }
 
-static PurpleConversationUiOps null_conv_uiops = 
+static PurpleConversationUiOps null_conv_uiops =
 {
 	NULL,                      /* create_conversation  */
 	NULL,                      /* destroy_conversation */
@@ -159,7 +167,7 @@ null_ui_init(void)
 	purple_conversations_set_ui_ops(&null_conv_uiops);
 }
 
-static PurpleCoreUiOps null_core_uiops = 
+static PurpleCoreUiOps null_core_uiops =
 {
 	NULL,
 	NULL,
@@ -229,7 +237,7 @@ static void
 signed_on(PurpleConnection *gc, gpointer null)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	printf("Account connected: %s %s\n", account->username, account->protocol_id);
+	printf("Account connected: %s %s\n", purple_account_get_username(account), purple_account_get_protocol_id(account));
 }
 
 static void
@@ -253,12 +261,14 @@ int main(int argc, char *argv[])
 	PurpleSavedStatus *status;
 	char *res;
 
+#ifndef _WIN32
 	/* libpurple's built-in DNS resolution forks processes to perform
 	 * blocking lookups without blocking the main process.  It does not
 	 * handle SIGCHLD itself, so if the UI does not you quickly get an army
 	 * of zombie subprocesses marching around.
 	 */
 	signal(SIGCHLD, SIG_IGN);
+#endif
 
 	init_libpurple();
 

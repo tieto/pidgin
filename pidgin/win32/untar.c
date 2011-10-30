@@ -80,14 +80,7 @@
 #include "untar.h"
 #include <glib.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#define mkdir(a,b) _mkdir((a))
-#define g_mkdir mkdir
-#define g_fopen fopen
-#define g_unlink unlink
-#endif
+#include <glib/gstdio.h>
 
 #define untar_error( error, args... )      purple_debug(PURPLE_DEBUG_ERROR, "untar", error, ## args )
 #define untar_warning( warning, args... )  purple_debug(PURPLE_DEBUG_WARNING, "untar", warning, ## args )
@@ -585,7 +578,8 @@ static int untar_block(Uchar_t *blk) {
  */
 int untar(const char *filename, const char* destdir, untar_opt options) {
 	int ret=1;
-	char curdir[_MAX_PATH];
+	wchar_t curdir[_MAX_PATH];
+	wchar_t *w_destdir;
 	untarops = options;
 	/* open the archive */
 	inname = filename;
@@ -596,13 +590,15 @@ int untar(const char *filename, const char* destdir, untar_opt options) {
 		return 0;
 	}
 
+	w_destdir = g_utf8_to_utf16(destdir, -1, NULL, NULL, NULL);
+
 	/* Set current directory */
-	if(!GetCurrentDirectory(_MAX_PATH, curdir)) {
+	if(!GetCurrentDirectoryW(_MAX_PATH, curdir)) {
 		untar_error("Could not get current directory (error %lu).\n", GetLastError());
 		fclose(infp);
 		return 0;
 	}
-	if(!SetCurrentDirectory(destdir)) {
+	if(!SetCurrentDirectoryW(w_destdir)) {
 		untar_error("Could not set current directory to (error %lu): %s\n", GetLastError(), destdir);
 		fclose(infp);
 		return 0;
@@ -621,11 +617,13 @@ int untar(const char *filename, const char* destdir, untar_opt options) {
 			fclose(outfp);
 			outfp = NULL;
 		}
-		if(!SetCurrentDirectory(curdir)) {
+		if(!SetCurrentDirectoryW(curdir)) {
 			untar_error("Could not set current dir back to original (error %lu).\n", GetLastError());
 			ret=0;
 		}
 	}
+
+	g_free(w_destdir);
 
 	/* close the archive file. */
 	fclose(infp);

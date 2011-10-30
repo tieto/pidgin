@@ -133,7 +133,7 @@ do_check(void)
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
 		gchar *url, *request;
 		const char *host = "pidgin.im";
-		
+
 		url = g_strdup_printf("http://%s/version.php?version=%s&build=%s",
 				host,
 				purple_core_get_version(),
@@ -152,7 +152,7 @@ do_check(void)
 				url,
 				host);
 
-		purple_util_fetch_url_request_len(url, TRUE, NULL, FALSE,
+		purple_util_fetch_url_request(NULL, url, TRUE, NULL, FALSE,
 			request, TRUE, -1, version_fetch_cb, NULL);
 
 		g_free(request);

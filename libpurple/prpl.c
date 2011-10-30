@@ -32,6 +32,17 @@
 /**************************************************************************/
 /** @name Attention Type API                                              */
 /**************************************************************************/
+
+struct _PurpleAttentionType
+{
+	const char *name;                  /**< Shown in GUI elements */
+	const char *incoming_description;  /**< Shown when sent */
+	const char *outgoing_description;  /**< Shown when receied */
+	const char *icon_name;             /**< Icon to display (optional) */
+	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
+};
+
+
 PurpleAttentionType *
 purple_attention_type_new(const char *ulname, const char *name,
 						const char *inc_desc, const char *out_desc)
@@ -288,8 +299,10 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 
 	/* The buddy is no longer online, they are therefore by definition not
 	 * still typing to us. */
-	if (!purple_status_is_online(status))
+	if (!purple_status_is_online(status)) {
 		serv_got_typing_stopped(purple_account_get_connection(account), name);
+		purple_prpl_got_media_caps(account, name);
+	}
 }
 
 void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
@@ -413,6 +426,16 @@ purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence)
 	return statuses;
 }
 
+static void
+purple_prpl_attention(PurpleConversation *conv, const char *who,
+	guint type, PurpleMessageFlags flags, time_t mtime)
+{
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	purple_signal_emit(purple_conversations_get_handle(),
+		flags == PURPLE_MESSAGE_SEND ? "sent-attention" : "got-attention",
+		account, who, conv, type);
+}
+
 void
 purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
@@ -429,13 +452,13 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
+	prpl = purple_find_prpl(purple_account_get_protocol_id(purple_connection_get_account(gc)));
 	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
 	g_return_if_fail(send_attention != NULL);
 
 	mtime = time(NULL);
 
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
+	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
 	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
@@ -456,8 +479,9 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	if (!send_attention(gc, who, type_code))
 		return;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_connection_get_account(gc), who);
 	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
+	purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
 	g_free(description);
 }
@@ -474,7 +498,7 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 
 	mtime = time(NULL);
 
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
+	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
 	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
 	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
@@ -509,7 +533,15 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 void
 purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
+	PurpleConversation *conv = NULL;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
 	got_attention(gc, -1, who, type_code);
+	conv =
+		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
+	if (conv)
+		purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
+			time(NULL));
 }
 
 void
@@ -550,20 +582,53 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	PurpleConnection *gc = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	
+
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
 		prpl = purple_connection_get_prpl(gc);
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	
+
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
 			get_media_caps)) {
 		return prpl_info->get_media_caps(account, who);
 	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;
+}
+
+void
+purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
+{
+#ifdef USE_VV
+	GSList *list;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+
+	if ((list = purple_find_buddies(account, name)) == NULL)
+		return;
+
+	while (list) {
+		PurpleBuddy *buddy = list->data;
+		PurpleMediaCaps oldcaps = purple_buddy_get_media_caps(buddy);
+		PurpleMediaCaps newcaps = 0;
+		const gchar *bname = purple_buddy_get_name(buddy);
+		list = g_slist_delete_link(list, list);
+
+
+		newcaps = purple_prpl_get_media_caps(account, bname);
+		purple_buddy_set_media_caps(buddy, newcaps);
+
+		if (oldcaps == newcaps)
+			continue;
+
+		purple_signal_emit(purple_blist_get_handle(),
+				"buddy-caps-changed", buddy,
+				newcaps, oldcaps);
+	}
+#endif
 }
 
 /**************************************************************************

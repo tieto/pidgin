@@ -41,7 +41,10 @@
 #include <gntconv.h>
 
 #include <gntplugin.h>
+
+#include <gntlabel.h>
 #include <gnttextview.h>
+#include <gntwindow.h>
 
 static int tag_num = 0;
 
@@ -51,6 +54,8 @@ typedef struct
 	gchar *tag;
 	int num;
 } CbInfo;
+
+static void process_urls(PurpleConversation *conv, GList *urls);
 
 /* 3 functions from util.c */
 static gboolean
@@ -83,7 +88,8 @@ badentity(const char *c)
 	return FALSE;
 }
 
-static GList *extract_urls(char *text) {
+static GList *extract_urls(const char *text)
+{
 	const char *t, *c, *q = NULL;
 	char *url_buf;
 	GList *ret = NULL;
@@ -142,7 +148,9 @@ static GList *extract_urls(char *text) {
 					url_buf = g_strndup(c, t - c);
 					if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 						purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
-						ret = g_list_append(ret, g_strdup(url_buf));
+						ret = g_list_append(ret, url_buf);
+					} else {
+						g_free(url_buf);
 					}
 					c = t;
 					break;
@@ -173,6 +181,8 @@ static GList *extract_urls(char *text) {
 						if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 							purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
 							ret = g_list_append(ret, url_buf);
+						} else {
+							g_free(url_buf);
 						}
 						c = t;
 						break;
@@ -207,10 +217,12 @@ static void url_fetched(PurpleUtilFetchUrlData *url_data, gpointer cb_data,
 			gnt_text_view_tag_change(tv, data->tag, str, FALSE);
 			g_free(str);
 			g_free(data->tag);
+			g_free(data);
 			return;
 		}
 	}
 	g_free(data->tag);
+	g_free(data);
 	purple_debug_info("TinyURL", "Conversation no longer exists... :(\n");
 }
 
@@ -219,13 +231,14 @@ static void free_urls(gpointer data, gpointer null)
 	g_free(data);
 }
 
-static gboolean receiving_msg(PurpleAccount *account, char **sender, char **message,
-				PurpleConversation *conv, PurpleMessageFlags *flags) {
+static gboolean writing_msg(PurpleAccount *account, char *sender, char **message,
+				PurpleConversation *conv, PurpleMessageFlags flags)
+{
 	GString *t;
-	GList *iter, *urls;
+	GList *iter, *urls, *next;
 	int c = 0;
 
-	if (!(*flags & PURPLE_MESSAGE_RECV) || *flags & PURPLE_MESSAGE_INVISIBLE)
+	if ((flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_INVISIBLE)))
 		return FALSE;
 
 	urls = purple_conversation_get_data(conv, "TinyURLs");
@@ -238,7 +251,8 @@ static gboolean receiving_msg(PurpleAccount *account, char **sender, char **mess
 
 	t = g_string_new(*message);
 	g_free(*message);
-	for (iter = urls; iter; iter = iter->next) {
+	for (iter = urls; iter; iter = next) {
+		next = iter->next;
 		if (g_utf8_strlen((char *)iter->data, -1) >= purple_prefs_get_int(PREF_LENGTH)) {
 			int pos, x = 0;
 			gchar *j, *s, *str, *orig;
@@ -256,35 +270,39 @@ static gboolean receiving_msg(PurpleAccount *account, char **sender, char **mess
 			g_free(str);
 			continue;
 		} else {
-			if (iter->prev) {
-				iter = iter->prev;
-				g_free(iter->next->data);
-				urls = g_list_delete_link(urls, iter->next);
-			} else {
-				g_free(iter->data);
-				g_list_free(urls);
-				urls = NULL;
-			}
+			g_free(iter->data);
+			urls = g_list_delete_link(urls, iter);
 		}
 	}
 	*message = t->str;
 	g_string_free(t, FALSE);
 	if (conv == NULL)
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, *sender);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
 	purple_conversation_set_data(conv, "TinyURLs", urls);
 	return FALSE;
 }
 
-static void received_msg(PurpleAccount *account, char *sender, char *message,
-				PurpleConversation *conv, PurpleMessageFlags flags) {
-	int c;
-	GList *urls, *iter;
-	FinchConv *fconv = FINCH_CONV(conv);
-	GntTextView *tv = GNT_TEXT_VIEW(fconv->tv);
+static void wrote_msg(PurpleAccount *account, char *sender, char *message,
+				PurpleConversation *conv, PurpleMessageFlags flags)
+{
+	GList *urls;
 
 	urls = purple_conversation_get_data(conv, "TinyURLs");
-	if (!(flags & PURPLE_MESSAGE_RECV) || urls == NULL)
+	if ((flags & PURPLE_MESSAGE_SEND) || urls == NULL)
 		return;
+
+	process_urls(conv, urls);
+	purple_conversation_set_data(conv, "TinyURLs", NULL);
+}
+
+/* Frees 'urls' */
+static void
+process_urls(PurpleConversation *conv, GList *urls)
+{
+	GList *iter;
+	int c;
+	FinchConv *fconv = FINCH_CONV(conv);
+	GntTextView *tv = GNT_TEXT_VIEW(fconv->tv);
 
 	for (iter = urls, c = 0; iter; iter = iter->next) {
 		int i;
@@ -301,7 +319,7 @@ static void received_msg(PurpleAccount *account, char *sender, char *message,
 			url = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL), purple_url_encode(tmp));
 		}
 		g_free(tmp);
-		purple_util_fetch_url(url, TRUE, "finch", FALSE, url_fetched, cbdata);
+		purple_util_fetch_url(url, TRUE, "finch", FALSE, -1, url_fetched, cbdata);
 		i = gnt_text_view_get_lines_below(tv);
 		str = g_strdup_printf(_("\nFetching TinyURL..."));
 		gnt_text_view_append_text_with_tag((tv), str, GNT_TEXT_FLAG_DIM, cbdata->tag);
@@ -312,7 +330,6 @@ static void received_msg(PurpleAccount *account, char *sender, char *message,
 		g_free(url);
 	}
 	g_list_free(urls);
-	purple_conversation_set_data(conv, "TinyURLs", NULL);
 }
 
 static void
@@ -324,24 +341,88 @@ free_conv_urls(PurpleConversation *conv)
 	g_list_free(urls);
 }
 
+static void tinyurl_notify_fetch_cb(PurpleUtilFetchUrlData *urldata, gpointer cbdata,
+		const gchar *urltext, gsize len, const gchar *error)
+{
+	GntWidget *win = cbdata;
+	GntWidget *label = g_object_get_data(G_OBJECT(win), "info-widget");
+	char *message;
+
+	message = g_strdup_printf(_("TinyURL for above: %s"), urltext);
+	gnt_label_set_text(GNT_LABEL(label), message);
+	g_free(message);
+
+	g_signal_handlers_disconnect_matched(G_OBJECT(win), G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL,
+			G_CALLBACK(purple_util_fetch_url_cancel), NULL);
+}
+
+static void *
+tinyurl_notify_uri(const char *uri)
+{
+	char *fullurl = NULL;
+	GntWidget *win;
+	PurpleUtilFetchUrlData *urlcb;
+
+	/* XXX: The following expects that finch_notify_message gets called. This
+	 * may not always happen, e.g. when another plugin sets its own
+	 * notify_message. So tread carefully. */
+	win = purple_notify_message(NULL, PURPLE_NOTIFY_URI, _("URI"), uri,
+			_("Please wait while TinyURL fetches a shorter URL ..."), NULL, NULL);
+	if (!GNT_IS_WINDOW(win) || !g_object_get_data(G_OBJECT(win), "info-widget"))
+		return win;
+
+	if (g_ascii_strncasecmp(uri, "http://", 7) && g_ascii_strncasecmp(uri, "https://", 8)) {
+		fullurl = g_strdup_printf("%shttp%%3A%%2F%%2F%s",
+				purple_prefs_get_string(PREF_URL), purple_url_encode(uri));
+	} else {
+		fullurl = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL),
+				purple_url_encode(uri));
+	}
+
+	/* Store the return value of _fetch_url and destroy that when win is
+	   destroyed, so that the callback for _fetch_url does not try to molest a
+	   non-existent window */
+	urlcb = purple_util_fetch_url(fullurl, TRUE, "finch", FALSE, -1, tinyurl_notify_fetch_cb, win);
+	g_free(fullurl);
+	g_signal_connect_swapped(G_OBJECT(win), "destroy",
+			G_CALLBACK(purple_util_fetch_url_cancel), urlcb);
+
+	return win;
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin) {
+plugin_load(PurplePlugin *plugin)
+{
+	PurpleNotifyUiOps *ops = purple_notify_get_ui_ops();
+	plugin->extra = ops->notify_uri;
+	ops->notify_uri = tinyurl_notify_uri;
+
 	purple_signal_connect(purple_conversations_get_handle(),
 			"wrote-im-msg",
-			plugin, PURPLE_CALLBACK(received_msg), NULL);
+			plugin, PURPLE_CALLBACK(wrote_msg), NULL);
 	purple_signal_connect(purple_conversations_get_handle(),
 			"wrote-chat-msg",
-			plugin, PURPLE_CALLBACK(received_msg), NULL);
+			plugin, PURPLE_CALLBACK(wrote_msg), NULL);
 	purple_signal_connect(purple_conversations_get_handle(),
-			"receiving-im-msg",
-			plugin, PURPLE_CALLBACK(receiving_msg), NULL);
+			"writing-im-msg",
+			plugin, PURPLE_CALLBACK(writing_msg), NULL);
 	purple_signal_connect(purple_conversations_get_handle(),
-			"receiving-chat-msg",
-			plugin, PURPLE_CALLBACK(receiving_msg), NULL);
+			"writing-chat-msg",
+			plugin, PURPLE_CALLBACK(writing_msg), NULL);
 	purple_signal_connect(purple_conversations_get_handle(),
 			"deleting-conversation",
 			plugin, PURPLE_CALLBACK(free_conv_urls), NULL);
 
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin)
+{
+	PurpleNotifyUiOps *ops = purple_notify_get_ui_ops();
+	if (ops->notify_uri == tinyurl_notify_uri)
+		ops->notify_uri = plugin->extra;
 	return TRUE;
 }
 
@@ -394,7 +475,7 @@ static PurplePluginInfo info =
 	"Richard Nelson <wabz@whatsbeef.net>",
 	PURPLE_WEBSITE,
 	plugin_load,
-	NULL,
+	plugin_unload,
 	NULL,
 	NULL,
 	NULL,

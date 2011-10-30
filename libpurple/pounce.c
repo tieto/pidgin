@@ -32,6 +32,31 @@
 #include "pounce.h"
 #include "util.h"
 
+/**
+ * A buddy pounce structure.
+ *
+ * Buddy pounces are actions triggered by a buddy-related event. For
+ * example, a sound can be played or an IM window opened when a buddy
+ * signs on or returns from away. Such responses are handled in the
+ * UI. The events themselves are done in the core.
+ */
+struct _PurplePounce
+{
+	char *ui_type;                /**< The type of UI.            */
+
+	PurplePounceEvent events;       /**< The event(s) to pounce on. */
+	PurplePounceOption options;     /**< The pounce options         */
+	PurpleAccount *pouncer;         /**< The user who is pouncing.  */
+
+	char *pouncee;                /**< The buddy to pounce on.    */
+
+	GHashTable *actions;          /**< The registered actions.    */
+
+	gboolean save;                /**< Whether or not the pounce should
+	                                   be saved after activation. */
+	void *data;                   /**< Pounce-specific data.      */
+};
+
 typedef struct
 {
 	GString *buffer;
@@ -180,7 +205,7 @@ pounce_to_xmlnode(PurplePounce *pounce)
 	xmlnode_set_attrib(node, "ui", pounce->ui_type);
 
 	child = xmlnode_new_child(node, "account");
-	xmlnode_set_attrib(child, "protocol", pouncer->protocol_id);
+	xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(pouncer));
 	xmlnode_insert_data(child,
 			purple_normalize(pouncer, purple_account_get_username(pouncer)), -1);
 
@@ -405,12 +430,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 
 	if (purple_strequal(element_name, "account")) {
-		char *tmp;
 		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
-		tmp = data->protocol_id;
-		data->protocol_id = g_strdup(_purple_oscar_convert(buffer, tmp));
-		g_free(tmp);
 	}
 	else if (purple_strequal(element_name, "pouncee")) {
 		g_free(data->pouncee);
@@ -690,6 +711,31 @@ purple_pounce_destroy_all_by_account(PurpleAccount *account)
 
 		pouncer = purple_pounce_get_pouncer(pounce);
 		if (pouncer == account)
+			purple_pounce_destroy(pounce);
+	}
+}
+
+void
+purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy)
+{
+	const char *pouncee, *bname;
+	PurpleAccount *pouncer, *bacct;
+	PurplePounce *pounce;
+	GList *l, *l_next;
+
+	g_return_if_fail(buddy != NULL);
+
+	bacct = purple_buddy_get_account(buddy);
+	bname = purple_buddy_get_name(buddy);
+
+	for (l = purple_pounces_get_all(); l != NULL; l = l_next) {
+		pounce = (PurplePounce *)l->data;
+		l_next = l->next;
+
+		pouncer = purple_pounce_get_pouncer(pounce);
+		pouncee = purple_pounce_get_pouncee(pounce);
+
+		if ( (pouncer == bacct) && (strcmp(pouncee, bname) == 0) )
 			purple_pounce_destroy(pounce);
 	}
 }

@@ -161,9 +161,9 @@ gnt_colors_get_color(char *key)
 		color = custom ? GNT_COLOR_BLUE : COLOR_BLUE;
 	else if (strcmp(key, "white") == 0)
 		color = custom ? GNT_COLOR_WHITE : COLOR_WHITE;
-	else if (strcmp(key, "gray") == 0)
+	else if (strcmp(key, "gray") == 0 || strcmp(key, "grey") == 0)
 		color = custom ? GNT_COLOR_GRAY : COLOR_YELLOW;  /* eh? */
-	else if (strcmp(key, "darkgray") == 0)
+	else if (strcmp(key, "darkgray") == 0 || strcmp(key, "darkgrey") == 0)
 		color = custom ? GNT_COLOR_DARK_GRAY : COLOR_BLACK;
 	else if (strcmp(key, "magenta") == 0)
 		color = COLOR_MAGENTA;
@@ -208,8 +208,10 @@ void gnt_colors_parse(GKeyFile *kfile)
 				key = g_ascii_strdown(key, -1);
 				color = gnt_colors_get_color(key);
 				g_free(key);
-				if (color == -EINVAL)
+				if (color == -EINVAL) {
+					g_strfreev(list);
 					continue;
+				}
 
 				init_color(color, r, g, b);
 			}
@@ -251,8 +253,10 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			int bg = gnt_colors_get_color(bgc);
 			g_free(fgc);
 			g_free(bgc);
-			if (fg == -EINVAL || bg == -EINVAL)
+			if (fg == -EINVAL || bg == -EINVAL) {
+				g_strfreev(list);
 				continue;
+			}
 
 			key = g_ascii_strdown(key, -1);
 
@@ -275,6 +279,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			else if (strcmp(key, "urgent") == 0)
 				type = GNT_COLOR_URGENT;
 			else {
+				g_strfreev(list);
 				g_free(key);
 				continue;
 			}

@@ -50,7 +50,6 @@ typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 struct _PurpleThemeLoader
 {
 	GObject parent;
-	gpointer priv;
 };
 
 struct _PurpleThemeLoaderClass
@@ -71,11 +70,11 @@ G_BEGIN_DECLS
 GType purple_theme_loader_get_type(void);
 
 /**
- * Returns the string represtenting the type of the theme loader
+ * Returns the string representing the type of the theme loader
  *
  * @param self The theme loader
  *
- * @returns The string represting this type
+ * @returns The string representing this type
  */
 const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
 

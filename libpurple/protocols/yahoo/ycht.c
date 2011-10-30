@@ -25,8 +25,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-
 #include "internal.h"
 #include "prpl.h"
 #include "notify.h"
@@ -55,7 +53,7 @@
 static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 {
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (ycht->logged_in)
 		return;
@@ -70,7 +68,7 @@ static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 {
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	yd->chat_online = FALSE;
 	ycht->logged_in = FALSE;
@@ -175,7 +173,7 @@ static void ycht_progress_online_friends(YchtConn *ycht, YchtPkt *pkt)
 {
 #if 0
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (ycht->logged_in)
 		return;
@@ -287,7 +285,7 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 /*
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(purple_account_get_connection(irc->account),
+		purple_connection_error(purple_account_get_connection(irc->account),
 			      PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 */
@@ -431,7 +429,7 @@ static void ycht_packet_free(YchtPkt *pkt)
 
 void ycht_connection_close(YchtConn *ycht)
 {
-	YahooData *yd = ycht->gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(ycht->gc);
 
 	if (yd) {
 		yd->ycht = NULL;
@@ -543,7 +541,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 {
 	YchtConn *ycht = data;
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YchtPkt *pkt;
 	char *buf;
 
@@ -570,7 +568,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 void ycht_connection_open(PurpleConnection *gc)
 {
 	YchtConn *ycht;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	ycht = g_new0(YchtConn, 1);

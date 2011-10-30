@@ -160,7 +160,7 @@ jingle_rtp_set_property (GObject *object, guint prop_id, const GValue *value, GP
 			g_free(rtp->priv->ssrc);
 			rtp->priv->ssrc = g_value_dup_string(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -171,7 +171,7 @@ jingle_rtp_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 {
 	JingleRtp *rtp;
 	g_return_if_fail(JINGLE_IS_RTP(object));
-	
+
 	rtp = JINGLE_RTP(object);
 
 	switch (prop_id) {
@@ -181,8 +181,8 @@ jingle_rtp_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		case PROP_SSRC:
 			g_value_set_string(value, rtp->priv->ssrc);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -251,7 +251,7 @@ jingle_rtp_candidate_to_iceudp(JingleSession *session, guint generation,
 	gchar *password = purple_media_candidate_get_password(candidate);
 	PurpleMediaCandidateType type =
 			purple_media_candidate_get_candidate_type(candidate);
-	
+
 	JingleIceUdpCandidate *iceudp_candidate = jingle_iceudp_candidate_new(
 			purple_media_candidate_get_component_id(candidate),
 			purple_media_candidate_get_foundation(candidate),
@@ -468,13 +468,22 @@ jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 
 	g_return_if_fail(JINGLE_IS_SESSION(session));
 
-	if (type == PURPLE_MEDIA_INFO_HANGUP) {
+	if (type == PURPLE_MEDIA_INFO_HANGUP ||
+			type == PURPLE_MEDIA_INFO_REJECT) {
 		jabber_iq_send(jingle_session_terminate_packet(
-				session, "success"));
-		g_object_unref(session);
-	} else if (type == PURPLE_MEDIA_INFO_REJECT) {
-		jabber_iq_send(jingle_session_terminate_packet(
-				session, "decline"));
+				session, type == PURPLE_MEDIA_INFO_HANGUP ?
+				"success" : "decline"));
+
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_state_changed_cb),
+				session);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_stream_info_cb),
+				session);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_new_candidate_cb),
+				session);
+
 		g_object_unref(session);
 	} else if (type == PURPLE_MEDIA_INFO_ACCEPT &&
 			jingle_session_is_initiator(session) == FALSE) {
@@ -522,7 +531,7 @@ jingle_rtp_create_media(JingleContent *content)
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 
 	PurpleMedia *media = purple_media_manager_create_media(
-			purple_media_manager_get(), 
+			purple_media_manager_get(),
 			purple_connection_get_account(js->gc),
 			"fsrtpconference", remote_jid,
 			jingle_session_is_initiator(session));
@@ -601,8 +610,9 @@ jingle_rtp_init_media(JingleContent *content)
 		type = is_audio == TRUE ? PURPLE_MEDIA_RECV_AUDIO
 				: PURPLE_MEDIA_RECV_VIDEO;
 
-	params = 
-		jingle_get_params(jingle_session_get_js(session), &num_params);
+	params =
+		jingle_get_params(jingle_session_get_js(session), NULL, 0, 0, 0,
+			NULL, NULL, &num_params);
 
 	creator = jingle_content_get_creator(content);
 	if (!strcmp(creator, "initiator"))
@@ -649,8 +659,8 @@ jingle_rtp_parse_codecs(xmlnode *description)
 		id = xmlnode_get_attrib(codec_element, "id");
 		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
 
-		codec = purple_media_codec_new(atoi(id), encoding_name, 
-				     type, 
+		codec = purple_media_codec_new(atoi(id), encoding_name,
+				     type,
 				     clock_rate ? atoi(clock_rate) : 0);
 
 		for (param = xmlnode_get_child(codec_element, "parameter");
@@ -692,7 +702,7 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 		gchar *id, *name, *clockrate, *channels;
 		gchar *codec_str;
 		xmlnode *payload = xmlnode_new_child(description, "payload-type");
-		
+
 		id = g_strdup_printf("%d",
 				purple_media_codec_get_id(codec));
 		name = purple_media_codec_get_encoding_name(codec);
@@ -823,13 +833,71 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			g_object_unref(session);
 			break;
 		}
+		case JINGLE_DESCRIPTION_INFO: {
+			JingleSession *session =
+					jingle_content_get_session(content);
+			xmlnode *description = xmlnode_get_child(
+					xmlcontent, "description");
+			GList *codecs, *iter, *iter2, *remote_codecs =
+					jingle_rtp_parse_codecs(description);
+			gchar *name = jingle_content_get_name(content);
+			gchar *remote_jid =
+					jingle_session_get_remote_jid(session);
+			PurpleMedia *media;
+
+			media = jingle_rtp_get_media(session);
+
+			/*
+			 * This may have problems if description-info is
+			 * received without the optional parameters for a
+			 * codec with configuration info (such as THEORA
+			 * or H264). The local configuration info may be
+			 * set for the remote codec.
+			 *
+			 * As of 2.6.3 there's no API to support getting
+			 * the remote codecs specifically, just the
+			 * intersection. Another option may be to cache
+			 * the remote codecs received in initiate/accept.
+			 */
+			codecs = purple_media_get_codecs(media, name);
+
+			for (iter = codecs; iter; iter = g_list_next(iter)) {
+				guint id;
+
+				id = purple_media_codec_get_id(iter->data);
+				iter2 = remote_codecs;
+
+				for (; iter2; iter2 = g_list_next(iter2)) {
+					if (purple_media_codec_get_id(
+							iter2->data) != id)
+						continue;
+
+					g_object_unref(iter->data);
+					iter->data = iter2->data;
+					remote_codecs = g_list_delete_link(
+							remote_codecs, iter2);
+					break;
+				}
+			}
+
+			codecs = g_list_concat(codecs, remote_codecs);
+
+			purple_media_set_remote_codecs(media,
+					name, remote_jid, codecs);
+
+			purple_media_codec_list_free (codecs);
+			g_free(remote_jid);
+			g_free(name);
+			g_object_unref(session);
+			break;
+		}
 		default:
 			break;
 	}
 }
 
 gboolean
-jingle_rtp_initiate_media(JabberStream *js, const gchar *who, 
+jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		      PurpleMediaSessionType type)
 {
 	/* create content negotiation */
@@ -839,7 +907,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	const gchar *transport_type;
-	
+
 	gchar *resource = NULL, *me = NULL, *sid = NULL;
 
 	/* construct JID to send to */

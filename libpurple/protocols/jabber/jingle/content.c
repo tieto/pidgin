@@ -93,7 +93,7 @@ jingle_content_class_init (JingleContentClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = jingle_content_finalize;
 	gobject_class->set_property = jingle_content_set_property;
 	gobject_class->get_property = jingle_content_get_property;
@@ -164,7 +164,7 @@ jingle_content_finalize (GObject *content)
 {
 	JingleContentPrivate *priv = JINGLE_CONTENT_GET_PRIVATE(content);
 	purple_debug_info("jingle","jingle_content_finalize\n");
-	
+
 	g_free(priv->description_type);
 	g_free(priv->creator);
 	g_free(priv->disposition);
@@ -181,6 +181,8 @@ static void
 jingle_content_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleContent *content;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(object));
 
 	content = JINGLE_CONTENT(object);
@@ -215,7 +217,7 @@ jingle_content_set_property (GObject *object, guint prop_id, const GValue *value
 				g_object_unref(content->priv->pending_transport);
 			content->priv->pending_transport = g_value_get_object(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -225,8 +227,10 @@ static void
 jingle_content_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleContent *content;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(object));
-	
+
 	content = JINGLE_CONTENT(object);
 
 	switch (prop_id) {
@@ -251,8 +255,8 @@ jingle_content_get_property (GObject *object, guint prop_id, GValue *value, GPar
 		case PROP_PENDING_TRANSPORT:
 			g_value_set_object(value, content->priv->pending_transport);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -262,7 +266,7 @@ jingle_content_create(const gchar *type, const gchar *creator,
 		const gchar *disposition, const gchar *name,
 		const gchar *senders, JingleTransport *transport)
 {
-	
+
 
 	JingleContent *content = g_object_new(jingle_get_type(type),
 			"creator", creator,
@@ -330,8 +334,8 @@ jingle_content_get_transport(JingleContent *content)
 void
 jingle_content_set_session(JingleContent *content, JingleSession *session)
 {
-	JINGLE_IS_CONTENT(content);
-	JINGLE_IS_SESSION(session);
+	g_return_if_fail(JINGLE_IS_CONTENT(content));
+	g_return_if_fail(JINGLE_IS_SESSION(session));
 	g_object_set(content, "session", session, NULL);
 }
 
@@ -384,6 +388,8 @@ jingle_content_parse_internal(xmlnode *content)
 	const gchar *name = xmlnode_get_attrib(content, "name");
 	JingleTransport *transport =
 			jingle_transport_parse(xmlnode_get_child(content, "transport"));
+	if (transport == NULL)
+		return NULL;
 
 	if (senders == NULL)
 		senders = "both";
@@ -452,6 +458,7 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 xmlnode *
 jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action)
 {
+	g_return_val_if_fail(content != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_CONTENT(content), NULL);
 	return JINGLE_CONTENT_GET_CLASS(content)->to_xml(content, jingle, action);
 }
@@ -459,6 +466,7 @@ jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType 
 void
 jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
 {
+	g_return_if_fail(content != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(content));
 	JINGLE_CONTENT_GET_CLASS(content)->handle_action(content, xmlcontent, action);
 }

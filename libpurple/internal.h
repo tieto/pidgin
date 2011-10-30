@@ -118,36 +118,13 @@
 # include <unistd.h>
 #endif
 
-/* MAXPATHLEN should only be used with readlink() on glib < 2.4.0.  For
- * anything else, use g_file_read_link() or other dynamic functions.  This is
- * important because Hurd has no hard limits on path length. */
-#if !GLIB_CHECK_VERSION(2,4,0)
-# ifndef MAXPATHLEN
-#  ifdef PATH_MAX
-#   define MAXPATHLEN PATH_MAX
-#  else
-#   define MAXPATHLEN 1024
-#  endif
-# endif
-#endif
-
 #ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
 #endif
 
 #include <glib.h>
-#if !GLIB_CHECK_VERSION(2,4,0)
-#	define G_MAXUINT32 ((guint32) 0xffffffff)
-#endif
 
-#ifndef G_MAXSIZE
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_MAXSIZE ((gsize) 0xffffffffffffffff)
-#	else
-#		define G_MAXSIZE ((gsize) 0xffffffff)
-#	endif
-#endif
-
+/* This wasn't introduced until Glib 2.14 :( */
 #ifndef G_MAXSSIZE
 #	if GLIB_SIZEOF_LONG == 8
 #		define G_MAXSSIZE ((gssize) 0x7fffffffffffffff)
@@ -156,78 +133,10 @@
 #	endif
 #endif
 
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#endif
-
-#if !GLIB_CHECK_VERSION(2,6,0)
-#	define g_freopen freopen
-#	define g_fopen fopen
-#	define g_rmdir rmdir
-#	define g_remove remove
-#	define g_unlink unlink
-#	define g_lstat lstat
-#	define g_stat stat
-#	define g_mkdir mkdir
-#	define g_rename rename
-#	define g_open open
-#endif
-
-#if !GLIB_CHECK_VERSION(2,8,0) && !defined _WIN32
-#	define g_access access
-#endif
-
-#if !GLIB_CHECK_VERSION(2,10,0)
-#	define g_slice_new(type) g_new(type, 1)
-#	define g_slice_new0(type) g_new0(type, 1)
-#	define g_slice_free(type, mem) g_free(mem)
-#endif
+#include <glib/gstdio.h>
 
 #ifdef _WIN32
 #include "win32dep.h"
-#endif
-
-/* ugly ugly ugly */
-/* This is a workaround for the fact that G_GINT64_MODIFIER and G_GSIZE_FORMAT
- * are only defined in Glib >= 2.4 */
-#ifndef G_GINT64_MODIFIER
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_GINT64_MODIFIER "l"
-#	else
-#		define G_GINT64_MODIFIER "ll"
-#	endif
-#endif
-
-#ifndef G_GSIZE_MODIFIER
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_GSIZE_MODIFIER "l"
-#	else
-#		define G_GSIZE_MODIFIER ""
-#	endif
-#endif
-
-#ifndef G_GSIZE_FORMAT
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_GSIZE_FORMAT "lu"
-#	else
-#		define G_GSIZE_FORMAT "u"
-#	endif
-#endif
-
-#ifndef G_GSSIZE_FORMAT
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_GSSIZE_FORMAT "li"
-#	else
-#		define G_GSSIZE_FORMAT "i"
-#	endif
-#endif
-
-#ifndef G_GNUC_NULL_TERMINATED
-#	if     __GNUC__ >= 4
-#		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-#	else
-#		define G_GNUC_NULL_TERMINATED
-#	endif
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -241,44 +150,6 @@
 #endif
 
 #include <glib-object.h>
-
-#ifndef G_DEFINE_TYPE
-#define G_DEFINE_TYPE(TypeName, type_name, TYPE_PARENT) \
-\
-static void     type_name##_init              (TypeName        *self); \
-static void     type_name##_class_init        (TypeName##Class *klass); \
-static gpointer type_name##_parent_class = NULL; \
-static void     type_name##_class_intern_init (gpointer klass) \
-{ \
-  type_name##_parent_class = g_type_class_peek_parent (klass); \
-  type_name##_class_init ((TypeName##Class*) klass); \
-} \
-\
-GType \
-type_name##_get_type (void) \
-{ \
-  static GType g_define_type_id = 0; \
-  if (G_UNLIKELY (g_define_type_id == 0)) \
-    { \
-      g_define_type_id = \
-        g_type_register_static_simple (TYPE_PARENT, \
-                                       g_intern_static_string (#TypeName), \
-                                       sizeof (TypeName##Class), \
-                                       (GClassInitFunc)type_name##_class_intern_init, \
-                                       sizeof (TypeName), \
-                                       (GInstanceInitFunc)type_name##_init, \
-                                       (GTypeFlags) 0); \
-    }					\
-  return g_define_type_id;		\
-} /* closes type_name##_get_type() */
-
-#endif
-
-/* Safer ways to work with static buffers. When using non-static
- * buffers, either use g_strdup_* functions (preferred) or use
- * g_strlcpy/g_strlcpy directly. */
-#define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
-#define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
 #define PURPLE_WEBSITE "http://pidgin.im/"
 #define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
@@ -298,12 +169,6 @@ _purple_buddy_icons_account_loaded_cb(void);
  * it's done loading.  We may want to replace this with a signal. */
 void
 _purple_buddy_icons_blist_loaded_cb(void);
-
-/* This is for the purple_core_migrate() code to tell the buddy
- * icon subsystem about the old icons directory so it can
- * migrate any icons in use. */
-void
-_purple_buddy_icon_set_old_icons_dir(const char *dirname);
 
 /**
  * Creates a connection to the specified account and either connects

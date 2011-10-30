@@ -20,6 +20,8 @@
 #ifndef _MYSPACE_MYSPACE_H
 #define _MYSPACE_MYSPACE_H
 
+#include "internal.h"
+
 /* Other includes */
 #include <string.h>
 #include <errno.h>/* for EAGAIN */
@@ -35,8 +37,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #endif
-
-#include "internal.h"
 
 #include "notify.h"
 #include "plugin.h"

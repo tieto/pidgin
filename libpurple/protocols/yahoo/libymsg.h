@@ -28,8 +28,10 @@
 #include "circbuffer.h"
 #include "cmds.h"
 #include "prpl.h"
+#include "network.h"
 
-#define YAHOO_PAGER_HOST "scsa.msg.yahoo.com"
+#define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
+#define YAHOO_PAGER_HOST_FALLBACK "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"
@@ -44,9 +46,9 @@
 #define YAHOO_XFER_RELAY_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
 #define YAHOO_ROOMLIST_LOCALE "us"
-/* really we should get the list of servers from
- http://update.messenger.yahoo.co.jp/servers.html */
-#define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
+
+/* Yahoo! JAPAN stuff */
+#define YAHOOJP_PAGER_HOST_REQ_URL "http://cs1.yahoo.co.jp/capacity"
 #define YAHOOJP_TOKEN_URL "https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
 #define YAHOOJP_LOGIN_URL "https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s"
 #define YAHOOJP_PROFILE_URL "http://profiles.yahoo.co.jp/"
@@ -63,7 +65,7 @@
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
-#define YAHOO_SMS_CARRIER_URL "http://lookup.msg.vip.mud.yahoo.com"
+#define YAHOO_SMS_CARRIER_URL "http://validate.msg.yahoo.com"
 
 #define YAHOO_USERINFO_URL "http://address.yahoo.com/yab/us?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
 #define YAHOOJP_USERINFO_URL "http://address.yahoo.co.jp/yab/jp?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
@@ -90,8 +92,8 @@
 #define YAHOO_CLIENT_VERSION_ID "4194239"
 #define YAHOO_CLIENT_VERSION "9.0.0.2162"
 
-#define YAHOOJP_CLIENT_VERSION_ID "4194239"
-#define YAHOOJP_CLIENT_VERSION "9.0.0.2162"
+#define YAHOOJP_CLIENT_VERSION_ID "4186047"
+#define YAHOOJP_CLIENT_VERSION "9.0.0.1727"
 
 #define YAHOO_CLIENT_USERAGENT "Mozilla/5.0"
 
@@ -119,6 +121,7 @@ enum yahoo_status {
 	YAHOO_STATUS_ONVACATION,
 	YAHOO_STATUS_OUTTOLUNCH,
 	YAHOO_STATUS_STEPPEDOUT,
+	YAHOO_STATUS_P2P = 11,
 	YAHOO_STATUS_INVISIBLE = 12,
 	YAHOO_STATUS_CUSTOM = 99,
 	YAHOO_STATUS_IDLE = 999,
@@ -127,6 +130,21 @@ enum yahoo_status {
 	YAHOO_STATUS_TYPING = 0x16,
 	YAHOO_STATUS_DISCONNECTED = 0xffffffff /* in ymsg 15. doesnt mean the normal sense of 'disconnected' */
 };
+
+/*
+ * Yahoo federated networks.  Key 241 in ymsg.
+ * If it doesn't exist, it is on Yahoo's netowrk.
+ * It if does exist, send to another IM network.
+ */
+
+typedef enum {
+	YAHOO_FEDERATION_NONE = 0, /* No federation - Yahoo! network */
+	YAHOO_FEDERATION_OCS = 1,  /* LCS or OCS private networks */
+	YAHOO_FEDERATION_MSN = 2,  /* MSN or Windows Live network */
+	YAHOO_FEDERATION_IBM = 9,  /* IBM/Sametime network */
+	YAHOO_FEDERATION_PBX = 100 /* Yahoo! Pingbox service */
+} YahooFederation;
+
 
 struct yahoo_buddy_icon_upload_data {
 	PurpleConnection *gc;
@@ -170,6 +188,7 @@ typedef struct _YahooPersonalDetails {
 typedef struct {
 	PurpleConnection *gc;
 	int fd;
+	guint inpa;
 	guchar *rxqueue;
 	int rxlen;
 	PurpleCircBuffer *txbuf;
@@ -204,6 +223,7 @@ typedef struct {
 	gsize auth_written;
 	char *cookie_y;
 	char *cookie_t;
+	char *cookie_b;
 	int session_id;
 	gboolean jp;
 	gboolean wm; /* connected w/ web messenger method */
@@ -225,6 +245,7 @@ typedef struct {
 	GSList *url_datas;
 	GHashTable *xfer_peer_idstring_map;/* Hey, i dont know, but putting this HashTable next to friends gives a run time fault... */
 	GSList *cookies;/* contains all cookies, including _y and _t */
+	PurpleNetworkListenData *listen_data;
 
 	/**
 	 * We may receive a list15 in multiple packets with no prior warning as to how many we'll be getting;
@@ -332,6 +353,7 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
 
 char *yahoo_convert_to_numeric(const char *str);
 
+YahooFederation yahoo_get_federation_from_name(const char *who);
 
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);
@@ -350,7 +372,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
 void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 void yahoo_set_idle(PurpleConnection *gc, int idle);
-void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g);
+void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, const char *message);
 void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void yahoo_add_deny(PurpleConnection *gc, const char *who);
 void yahoo_rem_deny(PurpleConnection *gc, const char *who);

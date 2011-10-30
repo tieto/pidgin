@@ -21,7 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+#include "internal.h"
+#include "debug.h"
+
 #include "servconn.h"
 #include "error.h"
 
@@ -86,7 +88,7 @@ msn_servconn_destroy(MsnServConn *servconn)
 	if (servconn->tx_handler > 0)
 		purple_input_remove(servconn->tx_handler);
 	if (servconn->timeout_handle > 0)
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -280,7 +282,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (servconn->timeout_handle > 0)
 	{
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 		servconn->timeout_handle = 0;
 	}
 
@@ -299,8 +301,8 @@ msn_servconn_disconnect(MsnServConn *servconn)
 static gboolean
 servconn_idle_timeout_cb(MsnServConn *servconn)
 {
-	msn_servconn_disconnect(servconn);
 	servconn->timeout_handle = 0;
+	msn_servconn_disconnect(servconn);
 	return FALSE;
 }
 
@@ -308,7 +310,7 @@ static void
 servconn_timeout_renew(MsnServConn *servconn)
 {
 	if (servconn->timeout_handle) {
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 		servconn->timeout_handle = 0;
 	}
 
@@ -419,8 +421,10 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	servconn = data;
 
-	if (servconn->type == MSN_SERVCONN_NS)
-		servconn->session->account->gc->last_received = time(NULL);
+	if (servconn->type == MSN_SERVCONN_NS) {
+		PurpleConnection *gc = purple_account_get_connection(servconn->session->account);
+		purple_connection_update_last_received(gc);
+	}
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
 	if (len < 0 && errno == EAGAIN)
@@ -440,11 +444,12 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
 
-	msn_servconn_process_data(servconn);
-	servconn_timeout_renew(servconn);
+	servconn = msn_servconn_process_data(servconn);
+	if (servconn)
+		servconn_timeout_renew(servconn);
 }
 
-void msn_servconn_process_data(MsnServConn *servconn)
+MsnServConn *msn_servconn_process_data(MsnServConn *servconn)
 {
 	char *cur, *end, *old_rx_buf;
 	int cur_len;
@@ -503,10 +508,13 @@ void msn_servconn_process_data(MsnServConn *servconn)
 
 	servconn->processing = FALSE;
 
-	if (servconn->wasted)
+	if (servconn->wasted) {
 		msn_servconn_destroy(servconn);
+		servconn = NULL;
+	}
 
 	g_free(old_rx_buf);
+	return servconn;
 }
 
 #if 0

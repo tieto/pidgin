@@ -15,10 +15,12 @@ If concerns are raised as to the copyright holder of a particular
 piece of code, then that code should be traced through our version
 control system to see from where it came and who has modified it.
 
-Copyright (C) 1998-2009 by the following:
+Copyright (C) 1998-2011 by the following:
 
 Saleem Abdulrasool
+Jakub Adam
 Dave Ahlswede
+Thijs Alkemade
 Manuel Amador
 Matt Amato
 Josef Andrysek
@@ -46,10 +48,13 @@ Curtis Beattie
 Stefan Becker
 Carlos Bederian
 Dave Bell
+Matthew W.S. Bell
 Igor Belyi
+David Benjamin
 Brian Bernas
 Vivien Bernet-Rollande
 Paul Betts
+Runa Bhattacharjee
 Jonas Birmé
 George-Cristian Bîrzan
 Eric Blade
@@ -64,7 +69,10 @@ Graham Booker
 Paolo Borelli
 Julien Bossart
 Craig Boston
+Éric Boumaour
 Chris Boyle
+Stanislav Brabec
+Quentin Brandon
 Derrick J Brashear
 Mauro Sérgio Ferreira Brasil
 Luke Bratch
@@ -74,14 +82,17 @@ Jonathan Brossard
 Jeffery Brown
 Philip Brown
 Dan Bruce
+Guillaume Brunerie
 Norbert Buchmuller
 Johannes Buchner
 Sean Burke
+Gabriel Burt
 Thomas Butter
 Trevor Caira
 Andrea Canciani
 Damien Carbery
 Michael Carlson
+Rodrigo Tobar Carrizo
 Keegan Carruthers-Smith
 Ludovico Cavedon
 Steve Cavilia
@@ -89,8 +100,10 @@ Julien Cegarra
 Matěj Cepl
 Cerulean Studios, LLC
 Jonathan Champ
+Markos Chandras
 Matthew Chapman
 Christophe Chapuis
+Tirtha Chatterjee
 Patrick Cheung
 Ka-Hing Cheung
 Sadrul Habib Chowdhury
@@ -118,11 +131,14 @@ Palmer Cox
 Jeramey Crawford
 Michael Culbertson
 Steven Danna
+Simon Danner
 Chris Davies
 Josh Davis
 Martijn Dekker
 Florian Delizy
+Jiri Denemark
 Vinicius Depizzol
+Marc Dequènes
 Philip Derrin
 Taso N. Devetzis
 Balwinder Singh Dheeman
@@ -143,18 +159,23 @@ Nelson Elhage
 Ignacio J. Elia
 Brian Enigma
 Mattias Eriksson
+Pat Erley
 Stefan Esser
 Steffen Eschenbacher
 Marc Etcheverry
 David Everly
 Larry Ewing
+Facebook, Inc.
+Fartash Faghri
 Gábor Farkas
 Jesse Farmer
 Gavan Fantom (gavan)
 Leonardo Fernandes
 David Fiander
+Ryan Flegel
 Rob Flynn <gaim@robflynn.com>
 Rob Foehl (rwf)
+Chris Foote
 Alan Ford
 Nathan Fredrickson
 Chris J. Friesen
@@ -171,11 +192,13 @@ Evgueni V. Gavrilov
 Ignacy Gawedzki
 Georgi Georgiev
 Brian Geppert
+Emanuele Giaquinta
 Thomas Gibson-Robinson
 Ike Gingerich
 Gustavo Giráldez
 Richard Gobeille
 Ian Goldberg
+Jon Goldberg
 Matthew Goldstein
 Michael Golden
 Charlie Gordon
@@ -212,6 +235,7 @@ Casey Ho
 Andrew Hoffman
 Iain Holmes
 Joshua Honeycutt
+Jeffrey Honig
 Nigel Horne
 Jensen Hornick
 Juanjo Molinero Horno
@@ -227,6 +251,7 @@ Thomas Huriaux
 Instant Messaging Freedom, Inc.
 Vitaliy Ischenko
 Intel Corporation
+Andrew Ivanov
 Scott Jackson
 Hans Petter Jansson
 David Jedelsky
@@ -236,22 +261,26 @@ Jan Kaluza
 Yuriy Kaminskiy
 Anders Kaseorg
 Praveen Karadakal
-Jaromír Karmazín
+Tomáš Kebert
 John Kelm
 Jochen Kemnade
 Yann Kerherve
 Gordian Klein
+Marten Klencke
 Krzysztof Klinikowski
 Akuke Kok
 Kir Kolyshkin
+Ivan Komarov
 F.W. Kong
 Konstantin Korikov
 Cole Kowalski
+Nikita Kozlov
 Matt Kramer
 Gary Kramlich
 Jan Kratochvil
 Andrej Krivulčík
 Patrik Kullman
+Sangeeta Kumari
 Tuomas Kuosmanen
 Tero Kuusela
 Richard Laager
@@ -261,6 +290,7 @@ Dennis Lambe Jr.
 Joe LaPenna
 Steve Láposi
 Daniel Larsson
+Julia Lawall
 Peter Lawler
 Vadim Lebedev
 Ho-seok Lee
@@ -269,6 +299,7 @@ Moses Lei
 Ambrose C. Li
 Nicolas Lichtmaier
 Wesley Lin
+Shaun Lindsay
 Artem Litvinovich
 Josh Littlefield
 Daniel Ljungborg
@@ -276,6 +307,8 @@ Syd Logan
 Lokheed
 Norberto Lopes
 Shlomi Loubaton
+Pieter Loubser
+Brian Lu
 Uli Luckas
 Matthew Luckie
 Marcus Lundblad
@@ -287,17 +320,22 @@ Brian Macke
 Paolo Maggi
 Sulabh Mahajan
 Willian T. Mahan
+Jonathan Maltz
+Rok Mandeljc
 Tobias Markmann
 Kris Marsh
 Fidel Martinez
 Lalo Martins
 John Matthews
 Simo Mattila
+Robert Matusewicz
 Michal Matyska
 Ryan McCabe
 Peter McCurdy
 Kurt McKee
+James McLaughlin
 Torrey McMahon
+Greg McNew
 Robert McQueen
 Mihály Mészáros
 Robert Mibus
@@ -307,7 +345,9 @@ Kevin Miller
 Paul Miller
 Arkadiusz Miskiewicz
 David Mohr
+Kartik Mohta
 Andrew Molloy
+Tomasz Mon
 Michael Monreal
 Laurent Montaron
 Marco Monteiro
@@ -315,8 +355,12 @@ Benjamin Moody
 John Moody
 Tim Mooney
 Sergio Moretto
+Nader Morshed
+Keith Moyer
 Andrei Mozzhuhin
 Christian Muise
+MXit Lifestyle (Pty) Ltd.
+Alexander Nartov
 Richard Nelson
 Dennis Nezic
 Matthew A. Nicholson
@@ -334,6 +378,8 @@ Ruediger Oertel
 Gudmundur Bjarni Olafsson
 Bartosz Oler
 Oliver
+The openSUSE Project
+Jürgen Orschiedt
 Stefan Ott
 Shawn Outman
 Nathan Owens (pianocomp81)
@@ -345,14 +391,18 @@ Ricardo Fernandez Pascual
 Riley Patterson
 Havoc Pennington
 Ted Percival
+Hugo Pereira Da Costa
 Eduardo Pérez
 Matt Perry
+Ani Peter
 Luke Petre
 Diego Petten
 Nathan Peterson
 Dmitry Petroff
 Sebastián E. Peyrott
+Amitakhya Phukan
 Andrea Piccinelli
+Mateusz Piękos
 Celso Pinto
 Joao Luís Marques Pinto
 Aleksander Piotrowski
@@ -361,8 +411,10 @@ Robey Pointer
 Eric Polino <aluink@gmail.com>
 Ari Pollak
 Stephen Pope
+Cristi Posoiu
 Nathan Poznick
 Jory A. Pratt
+David Preece
 Brent Priddy
 Justin Pryzby
 Florian Quèze
@@ -371,8 +423,13 @@ Federicco Mena Quintero
 Yosef Radchenko
 David Raeman
 R. Ramkumar
+Rajesh Ranjan
 Mart Raudsepp
 Etan Reisner
+David Reiss
+Luoh Ren-Shan
+Noa Resare
+Daniele Ricci
 Kristian Rietveld
 Pekka Riikonen
 Tim Ringenbach
@@ -384,6 +441,7 @@ Rhett Robinson
 Luciano Miguel Ferreira Rocha
 Andrew Rodland
 Miguel Rodríguez (migrax)
+Adi Roiban
 Martin Rosinski
 Bob Rossi
 Jason Roth
@@ -405,11 +463,10 @@ Alceste Scalas
 Carsten Schaar
 Toby Schaffer
 Jonathan Schleifer <js-pidgin@webkeks.org>
-Matteo Settenvini
-Colin Seymour
 Luke Schierer
 Ralph Schmieder
 David Schmitt
+Heiko Schmitt
 Mark Schneider
 Evan Schoenberg
 Gabriel Schulhof
@@ -419,6 +476,8 @@ Torrey Searle
 Peter Seebach
 Don Seiler
 Leonardo Serra
+Matteo Settenvini
+Colin Seymour
 Jim Seymour
 Javeed Shaikh
 Joe Shaw
@@ -456,6 +515,8 @@ Sun Microsystems
 Marcus Sundberg
 Mårten Svantesson (fursten)
 Amir Szekely (kichik)
+Gábor Szuromi (kukkerman)
+Jakub Szypulka
 Robert T.
 Greg Taeger
 Rob Taft
@@ -485,17 +546,23 @@ Brad Turcotte
 Kyle Turman
 Jon Turney
 Junichi Uekawa
+Max Ulidtko
+Dmitry Utkin
 Igor Vlasenko
 István Váradi
 Martijn van Beers
+Gideon van Melle
 Arjan van de Ven
 Philip Van Hoof
 Kristof Vansant
 James Vega
 David Vermeille
 Sid Vicious
+Andrew Victor
 Jorge Villaseñor (Masca)
 Bjoern Voigt
+Peter Volkov
+Marius Wachtler
 Wan Hing Wah
 Philip Walford
 Nathan Walp
@@ -503,6 +570,7 @@ Jonty Wareing
 Eric Warmenhoven
 Adam J. Warrington
 Denis Washington
+Tomasz Wasilczyk
 Zsombor Welker
 Andrew Wellington
 Adam Wendt
@@ -511,8 +579,10 @@ Dave West
 Zac West
 Daniel Westermann-Clark
 Andrew Whewell
+Stephen Whitmore
 Simon Wilkinson
 Dan Willemsen
+Dan Williams
 Justin Williams (Jaywalker)
 Jason Willis
 Alex Willmer
@@ -527,9 +597,12 @@ Pui Lam Wong
 Justin Wood
 Ximian
 Ma Xuan
+Yonas Yanfa
 Jared Yanovich
 Timmy Yee
 Li Yuan
+Yuriy Yevgrafov
+Jan Zachorowski
 Nickolai Zeldovich
 Tom Zickel
 Marco Ziech

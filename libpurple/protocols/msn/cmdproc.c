@@ -21,8 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "cmdproc.h"
+#include "error.h"
 
 MsnCmdProc *
 msn_cmdproc_new(MsnSession *session)
@@ -54,7 +58,7 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 	msn_history_destroy(cmdproc->history);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	g_hash_table_destroy(cmdproc->multiparts);
 
@@ -105,24 +109,26 @@ show_debug_cmd(MsnCmdProc *cmdproc, gboolean incoming, const char *command)
 	g_free(show);
 }
 
-void
+gboolean
 msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
 	MsnServConn *servconn;
 	char *data;
 	size_t len;
+	gboolean ret;
 
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(trans != NULL);
+	g_return_val_if_fail(cmdproc != NULL, TRUE);
+	g_return_val_if_fail(trans != NULL, TRUE);
 
 	servconn = cmdproc->servconn;
 
 	if (!servconn->connected) {
-		/* TODO: Need to free trans */
-		return;
+		msn_transaction_destroy(trans);
+		return FALSE;
 	}
 
-	msn_history_add(cmdproc->history, trans);
+	if (trans->saveable)
+		msn_history_add(cmdproc->history, trans);
 
 	data = msn_transaction_to_string(trans);
 
@@ -149,78 +155,12 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		trans->payload_len = 0;
 	}
 
-	msn_servconn_write(servconn, data, len);
+	ret = msn_servconn_write(servconn, data, len) != -1;
 
+	if (!trans->saveable)
+		msn_transaction_destroy(trans);
 	g_free(data);
-}
-
-void
-msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
-					   const char *format, ...)
-{
-	MsnServConn *servconn;
-	char *data;
-	char *params = NULL;
-	va_list arg;
-	size_t len;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	servconn = cmdproc->servconn;
-
-	if (!servconn->connected)
-		return;
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	if (params != NULL)
-		data = g_strdup_printf("%s %s\r\n", command, params);
-	else
-		data = g_strdup_printf("%s\r\n", command);
-
-	g_free(params);
-
-	len = strlen(data);
-
-	show_debug_cmd(cmdproc, FALSE, data);
-
-	msn_servconn_write(servconn, data, len);
-
-	g_free(data);
-}
-
-void
-msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
-				 const char *format, ...)
-{
-	MsnTransaction *trans;
-	va_list arg;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	if (!cmdproc->servconn->connected)
-		return;
-
-	trans = g_new0(MsnTransaction, 1);
-
-	trans->cmdproc = cmdproc;
-	trans->command = g_strdup(command);
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		trans->params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	msn_cmdproc_send_trans(cmdproc, trans);
+	return ret;
 }
 
 void
@@ -243,58 +183,73 @@ void
 msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgTypeCb cb;
-	const char *messageId = NULL;
+	const char *message_id = NULL;
 
 	/* Multi-part messages */
-	if ((messageId = msn_message_get_attr(msg, "Message-ID")) != NULL) {
-		const char *chunk_text = msn_message_get_attr(msg, "Chunks");
+	message_id = msn_message_get_header_value(msg, "Message-ID");
+	if (message_id != NULL) {
+		/* This is the first in a series of chunks */
+
+		const char *chunk_text = msn_message_get_header_value(msg, "Chunks");
 		guint chunk;
 		if (chunk_text != NULL) {
 			chunk = strtol(chunk_text, NULL, 10);
-			/* 1024 chunks of ~1300 bytes is ~1MB, which seems OK to prevent 
+			/* 1024 chunks of ~1300 bytes is ~1MB, which seems OK to prevent
 			   some random client causing pidgin to hog a ton of memory.
 			   Probably should figure out the maximum that the official client
 			   actually supports, though. */
 			if (chunk > 0 && chunk < 1024) {
 				msg->total_chunks = chunk;
 				msg->received_chunks = 1;
-				g_hash_table_insert(cmdproc->multiparts, (gpointer)messageId, msn_message_ref(msg));
-				purple_debug_info("msn", "Received chunked message, messageId: '%s', total chunks: %d\n",
-				                  messageId, chunk);
+				g_hash_table_insert(cmdproc->multiparts, (gpointer)message_id, msn_message_ref(msg));
+				purple_debug_info("msn", "Received chunked message, message_id: '%s', total chunks: %d\n",
+				                  message_id, chunk);
 			} else {
-				purple_debug_error("msn", "MessageId '%s' has too many chunks: %d\n", messageId, chunk);
+				purple_debug_error("msn", "MessageId '%s' has too many chunks: %d\n", message_id, chunk);
 			}
 			return;
 		} else {
-			chunk_text = msn_message_get_attr(msg, "Chunk");
+			chunk_text = msn_message_get_header_value(msg, "Chunk");
 			if (chunk_text != NULL) {
-				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, messageId);
+				/* This is one chunk in a series of chunks */
+
+				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, message_id);
 				chunk = strtol(chunk_text, NULL, 10);
-				if (first == NULL) {
-					purple_debug_error("msn",
-					                   "Unable to find first chunk of messageId '%s' to correspond with chunk %d.\n",
-					                   messageId, chunk+1);
-				} else if (first->received_chunks == chunk) {
+				if (first != NULL) {
+					if (first->received_chunks != chunk) {
+						/*
+						 * We received an out of order chunk number (i.e. not the
+						 * next one in the sequence).  Not sure if this can happen
+						 * legitimately, but we definitely don't handle it right
+						 * now.
+						 */
+						g_hash_table_remove(cmdproc->multiparts, message_id);
+						return;
+					}
+
 					/* Chunk is from 1 to total-1 (doesn't count first one) */
-					purple_debug_info("msn", "Received chunk %d of %d, messageId: '%s'\n",
-					                  chunk+1, first->total_chunks, messageId);
+					purple_debug_info("msn", "Received chunk %d of %d, message_id: '%s'\n",
+							chunk + 1, first->total_chunks, message_id);
 					first->body = g_realloc(first->body, first->body_len + msg->body_len);
 					memcpy(first->body + first->body_len, msg->body, msg->body_len);
 					first->body_len += msg->body_len;
 					first->received_chunks++;
 					if (first->received_chunks != first->total_chunks)
+						/* We're waiting for more chunks */
 						return;
-					else
-						/* We're done! Send it along... The caller takes care of
-						   freeing the old one. */
-						msg = first;
+
+					/*
+					 * We have all the chunks for this message, great!  Send
+					 * it along... The caller takes care of freeing the old one.
+					 */
+					msg = first;
 				} else {
-					/* TODO: Can you legitimately receive chunks out of order? */
-					g_hash_table_remove(cmdproc->multiparts, messageId);
-					return;
+					purple_debug_error("msn",
+					                   "Unable to find first chunk of message_id '%s' to correspond with chunk %d.\n",
+					                   message_id, chunk + 1);
 				}
 			} else {
-				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", messageId);
+				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", message_id);
 			}
 		}
 	}
@@ -314,8 +269,8 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		purple_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 
-	if (messageId != NULL)
-		g_hash_table_remove(cmdproc->multiparts, messageId);
+	if (message_id != NULL)
+		g_hash_table_remove(cmdproc->multiparts, message_id);
 }
 
 void
@@ -376,7 +331,7 @@ msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command)
 	show_debug_cmd(cmdproc, TRUE, command);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	cmdproc->last_cmd = msn_command_from_string(command);
 

@@ -10,9 +10,14 @@ check_libpurple_SOURCES=\
         check_libpurple.c \
 	    tests.h \
 		test_cipher.c \
+		test_jabber_caps.c \
+		test_jabber_digest_md5.c \
 		test_jabber_jutil.c \
+		test_jabber_scram.c \
+		test_oscar_util.c \
 		test_yahoo_util.c \
 		test_util.c \
+		test_xmlnode.c \
 		$(top_builddir)/libpurple/util.h
 
 check_libpurple_CFLAGS=\
@@ -25,10 +30,11 @@ check_libpurple_CFLAGS=\
 		-DBUILDDIR=\"$(top_builddir)\"
 
 check_libpurple_LDADD=\
-        @CHECK_LIBS@ \
-		$(GLIB_LIBS) \
 		$(top_builddir)/libpurple/protocols/jabber/libjabber.la \
+		$(top_builddir)/libpurple/protocols/oscar/liboscar.la \
 		$(top_builddir)/libpurple/protocols/yahoo/libymsg.la \
-		$(top_builddir)/libpurple/libpurple.la
+		$(top_builddir)/libpurple/libpurple.la \
+        @CHECK_LIBS@ \
+		$(GLIB_LIBS)
 
 endif

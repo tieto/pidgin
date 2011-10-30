@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #ifdef ZEPHYR_USES_KERBEROS
@@ -49,7 +49,7 @@ Code_t ZInitialize()
 #endif
 
     initialize_zeph_error_table();
-    
+
     (void) memset((char *)&__HM_addr, 0, sizeof(__HM_addr));
 
     __HM_addr.sin_family = AF_INET;
@@ -70,7 +70,7 @@ Code_t ZInitialize()
     /* Initialize the input queue */
     __Q_Tail = NULL;
     __Q_Head = NULL;
-    
+
     /* if the application is a server, there might not be a zhm.  The
        code will fall back to something which might not be "right",
        but this is is ok, since none of the servers call krb_rd_req. */
@@ -101,14 +101,14 @@ Code_t ZInitialize()
 
 #ifdef ZEPHYR_USES_KERBEROS
     if (krealm) {
-	strcpy(__Zephyr_realm, krealm);
+      g_strlcpy(__Zephyr_realm, krealm, REALM_SZ);
     } else if ((krb_get_tf_fullname(TKT_FILE, d1, d2, __Zephyr_realm)
 		!= KSUCCESS) &&
 	       ((krbval = krb_get_lrealm(__Zephyr_realm, 1)) != KSUCCESS)) {
 	return (krbval);
     }
 #else
-    strcpy(__Zephyr_realm, "local-realm");
+    g_strlcpy(__Zephyr_realm, "local-realm", REALM_SZ);
 #endif
 
     __My_addr.s_addr = INADDR_NONE;

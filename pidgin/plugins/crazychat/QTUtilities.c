@@ -1,10 +1,10 @@
 /*
 	File:		QTUtilities.c
-	
+
 	Description: Miscellaneous QuickTime utility routines.
 
 	Copyright: 	© Copyright 2003 Apple Computer, Inc. All rights reserved.
-	
+
 	Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
 				("Apple") in consideration of your agreement to the following terms, and your
 				use, installation, modification or redistribution of this Apple software
@@ -39,7 +39,7 @@
 				OF THE APPLE SOFTWARE, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT
 				(INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN
 				ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-				
+
 	Change History (most recent first):
 
 */
@@ -62,21 +62,21 @@ OSErr GetMovieFromFile(FSSpec *fsspecPtr, Movie *theMovie)
     OSErr	result;
 
     *theMovie = NULL;
-    
+
 	result = OpenMovieFile(fsspecPtr, &resRefNum, 0);
 	if (result == noErr)
     {
         short actualResId = DoTheRightThing;
-        
-        result = NewMovieFromFile(theMovie, 
-                                resRefNum, 
-                                &actualResId, 
+
+        result = NewMovieFromFile(theMovie,
+                                resRefNum,
+                                &actualResId,
                                 (unsigned char *) 0,
                                 0,
                                 (Boolean *) 0);
         CloseMovieFile(resRefNum);
     }
-    
+
     return result;
 }
 
@@ -95,13 +95,13 @@ OSErr GetAMovieFile(Movie *theMovie)
     OSErr	result = noErr;
 
     *theMovie = nil;
-    
+
     result = GetOneFileWithPreview(2, myTypeList, &theFSSpec, NULL);
     if (result != userCanceledErr)
-    {            
+    {
         result = GetMovieFromFile(&theFSSpec, theMovie);
     }
-    
+
     return result;
 }
 
@@ -114,7 +114,7 @@ OSErr GetAMovieFile(Movie *theMovie)
 void NormalizeMovieRect(Movie theMovie)
 {
     Rect movieBounds;
-    
+
 	GetMovieBox(theMovie, &movieBounds);
 	OffsetRect(&movieBounds, -movieBounds.left, -movieBounds.top);
 	movieBounds.right = movieBounds.left + 640;
@@ -138,13 +138,13 @@ void EraseRectAndAlpha(GWorldPtr gWorld, Rect *pRect)
 
     LockPixels(pixMap);
 	rows = pRect->bottom - pRect->top;
-    
+
     rowBaseAddr = GetPixBaseAddr(pixMap) + (GetPixRowBytes(pixMap) & 0x3fff) * pRect->top + pRect->left * GetPixDepth(pixMap) / 8;
 	do
 	{
 		long	cols;
 		UInt32	*baseAddr;
-		
+
 		cols = pRect->right - pRect->left;
 		baseAddr = (UInt32*)rowBaseAddr;
 		rowBaseAddr += (**pixMap).rowBytes & 0x3fff;
@@ -169,7 +169,7 @@ void EraseRectAndAlpha(GWorldPtr gWorld, Rect *pRect)
 OSErr CreateDecompSeqForSGChannelData(SGChannel sgChannel, Rect *srcBounds, GWorldPtr imageDestination, ImageSequence *imageSeqID)
 {
 	OSErr err = noErr;
-	
+
 	ImageDescriptionHandle	imageDesc = (ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
 	if (imageDesc)
 	{
@@ -178,7 +178,7 @@ OSErr CreateDecompSeqForSGChannelData(SGChannel sgChannel, Rect *srcBounds, GWor
 		// The original version of this code had a bug - it passed in a Crop Rect to DecompressSequenceBegin instead of a scaling matrix
 		// This only worked because of another bug inside QT that reated the crop Rect as a destination rect for DV
 		// the following code does the right thing in all cases.
-		
+
 		if (err == noErr)
 		{
 			MatrixRecord 	mr;
@@ -189,17 +189,17 @@ OSErr CreateDecompSeqForSGChannelData(SGChannel sgChannel, Rect *srcBounds, GWor
 			fromR.right = (**imageDesc).width;
 			fromR.bottom = (**imageDesc).height;
 			RectMatrix(&mr, &fromR, srcBounds);
-			
+
 			err = DecompressSequenceBegin(imageSeqID, imageDesc, imageDestination, 0, nil, &mr,srcCopy,nil,0, codecNormalQuality, bestSpeedCodec);
 		}
-		
+
 		DisposeHandle((Handle)imageDesc);
 	}
 	else
 	{
 		err = MemError();
 	}
-	
+
 	return err;
 }
 
@@ -214,21 +214,21 @@ OSErr CreateDecompSeqForSGChannelData(SGChannel sgChannel, Rect *srcBounds, GWor
 OSErr CreateDecompSeqForGWorldData(GWorldPtr srcGWorld, Rect *srcBounds, MatrixRecordPtr mr, GWorldPtr imageDestination, ImageSequence *imageSeqID)
 {
     OSErr err;
-    
+
     ImageDescriptionHandle imageDesc = (ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
     if (imageDesc)
     {
         err = MakeImageDescriptionForPixMap (GetGWorldPixMap(srcGWorld), &imageDesc);
-        err = DecompressSequenceBegin(	imageSeqID, 
-                                        imageDesc, 
-                                        imageDestination, 
-                                        0, 
-                                        srcBounds, 
-                                        mr, 
-                                        srcCopy, 
-                                        nil, 
-                                        0, 
-                                        codecNormalQuality, 
+        err = DecompressSequenceBegin(	imageSeqID,
+                                        imageDesc,
+                                        imageDestination,
+                                        0,
+                                        srcBounds,
+                                        mr,
+                                        srcCopy,
+                                        nil,
+                                        0,
+                                        codecNormalQuality,
                                         bestSpeedCodec);
         DisposeHandle((Handle)imageDesc);
     }
@@ -236,7 +236,7 @@ OSErr CreateDecompSeqForGWorldData(GWorldPtr srcGWorld, Rect *srcBounds, MatrixR
     {
         err = MemError();
     }
-    
+
     return err;
 }
 
@@ -254,7 +254,7 @@ OSErr CreateDecompSeqForGWorldData(GWorldPtr srcGWorld, Rect *srcBounds, MatrixR
 OSErr CreateNewSGChannelForRecording(ComponentInstance seqGrab, SGDataUPP dataProc, CGrafPtr drawPort, Rect *theRect, SGChannel *sgChannel, long refCon)
 {
 	OSErr err = noErr;
-	
+
 	BailErr((err = SGInitialize(seqGrab)));
 
 	// tell it we're not making a movie
@@ -262,13 +262,13 @@ OSErr CreateNewSGChannelForRecording(ComponentInstance seqGrab, SGDataUPP dataPr
 	// It wants a port, even if its not drawing to it
 	BailErr((err = SGSetGWorld(seqGrab, drawPort, GetMainDevice())));
 	BailErr((err = SGNewChannel(seqGrab, VideoMediaType, sgChannel)));
-	
+
 	// let the user configure the video channel
 	//BailErr((err = SGSettingsDialog(seqGrab, *sgChannel, 0, nil, 0, nil, 0)));    // ************************
-// ************************************************************	
-	
-	
-	
+// ************************************************************
+
+
+
 	BailErr((err = SGSetChannelBounds(*sgChannel, theRect)));
 	// set usage for new video channel to avoid playthrough
 	BailErr((err = SGSetChannelUsage(*sgChannel, seqGrabRecord ))); //note we don't set seqGrabPlayDuringRecord
@@ -282,14 +282,14 @@ bail:
 //////////
 //
 // DoCloseSG
-// Terminate recording for our SG channel - dispose of the channel and 
+// Terminate recording for our SG channel - dispose of the channel and
 // the associated SG component instance
 //
 //////////
 
 void DoCloseSG(ComponentInstance seqGrab, SGChannel sgChannel, SGDataUPP dataProc)
 {
-	if(seqGrab) 
+	if(seqGrab)
     {
 		SGStop(seqGrab);
         SGSetDataProc(seqGrab, NULL ,NULL);

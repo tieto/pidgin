@@ -46,7 +46,14 @@
 
 static char *default_firstname;
 static char *default_lastname;
-static char *default_hostname;
+
+const char *
+bonjour_get_jid(PurpleAccount *account)
+{
+	PurpleConnection *conn = purple_account_get_connection(account);
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
+	return bd->jid;
+}
 
 static void
 bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
@@ -70,7 +77,6 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -88,7 +94,7 @@ bonjour_login(PurpleAccount *account)
 
 #ifdef _WIN32
 	if (!dns_sd_available()) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
 				  "http://d.pidgin.im/BonjourWindows for more information."));
@@ -96,17 +102,20 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif /* _WIN32 */
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
-	gc->proto_data = bd = g_new0(BonjourData, 1);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML);
+	bd = g_new0(BonjourData, 1);
+	purple_connection_set_protocol_data(gc, bd);
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
+	bd->jabber_data->socket = -1;
+	bd->jabber_data->socket6 = -1;
 	bd->jabber_data->port = purple_account_get_int(account, "port", BONJOUR_DEFAULT_PORT);
 	bd->jabber_data->account = account;
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to listen for incoming IM connections"));
 		return;
@@ -133,7 +142,7 @@ bonjour_login(PurpleAccount *account)
 	bd->dns_sd_data->account = account;
 	if (!bonjour_dns_sd_start(bd->dns_sd_data))
 	{
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to establish connection with the local mDNS server.  Is it running?"));
 		return;
@@ -149,7 +158,7 @@ static void
 bonjour_close(PurpleConnection *connection)
 {
 	PurpleGroup *bonjour_group;
-	BonjourData *bd = connection->proto_data;
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
 	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 
@@ -170,7 +179,9 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Delete the bonjour group */
+	/* Delete the bonjour group
+	 * (purple_blist_remove_group will bail out if the group isn't empty)
+	 */
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
@@ -179,8 +190,10 @@ bonjour_close(PurpleConnection *connection)
 		purple_xfer_cancel_local(bd->xfer_lists->data);
 	}
 
+	if (bd != NULL)
+		g_free(bd->jid);
 	g_free(bd);
-	connection->proto_data = NULL;
+	purple_connection_set_protocol_data(connection, NULL);
 }
 
 static const char *
@@ -192,10 +205,12 @@ bonjour_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 static int
 bonjour_send_im(PurpleConnection *connection, const char *to, const char *msg, PurpleMessageFlags flags)
 {
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
+
 	if(!to || !msg)
 		return 0;
 
-	return bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
+	return bonjour_jabber_send_message(bd->jabber_data, to, msg);
 }
 
 static void
@@ -203,18 +218,12 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	BonjourData *bd;
-	gboolean disconnected;
-	PurpleStatusType *type;
-	int primitive;
 	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
-	bd = gc->proto_data;
-	disconnected = purple_account_is_disconnected(account);
-	type = purple_status_get_type(status);
-	primitive = purple_status_type_get_primitive(type);
+	bd = purple_connection_get_protocol_data(gc);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");
@@ -247,7 +256,7 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
  * if there is no add_buddy callback.
  */
 static void
-bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message) {
 	purple_debug_error("bonjour", "Buddy '%s' manually added; removing.  "
 				      "Bonjour buddies must be discovered and not manually added.\n",
 			   purple_buddy_get_name(buddy));
@@ -300,7 +309,7 @@ bonjour_status_types(PurpleAccount *account)
 static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 	BonjourBuddy *bb;
 
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
@@ -319,7 +328,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 static
 void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
 {
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 }
 
@@ -365,9 +374,12 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	else
 		status_description = purple_status_get_name(status);
 
-	purple_notify_user_info_add_pair(user_info, _("Status"), status_description);
-	if (message != NULL)
-		purple_notify_user_info_add_pair(user_info, _("Message"), message);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status_description);
+	if (message != NULL) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Message"), message);
+	}
 
 	if (bb == NULL) {
 		purple_debug_error("bonjour", "Got tooltip request for a buddy without protocol data.\n");
@@ -376,27 +388,40 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 
 	/* Only show first/last name if there is a nickname set (to avoid duplication) */
 	if (bb->nick != NULL && *bb->nick != '\0') {
-		if (bb->first != NULL && *bb->first != '\0')
-			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
-		if (bb->last != NULL && *bb->last != '\0')
-			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
+		if (bb->first != NULL && *bb->first != '\0') {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("First name"), bb->first);
+		}
+		if (bb->last != NULL && *bb->last != '\0') {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Last name"), bb->last);
+		}
 	}
 
-	if (bb->email != NULL && *bb->email != '\0')
-		purple_notify_user_info_add_pair(user_info, _("Email"), bb->email);
+	if (bb->email != NULL && *bb->email != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Email"), bb->email);
+	}
 
-	if (bb->AIM != NULL && *bb->AIM != '\0')
-		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
+	if (bb->AIM != NULL && *bb->AIM != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("AIM Account"), bb->AIM);
+	}
 
-	if (bb->jid != NULL && *bb->jid != '\0')
-		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
+	if (bb->jid != NULL && *bb->jid != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("XMPP Account"), bb->jid);
+	}
 }
 
 static void
-bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
-{
+bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
 	PurpleBlistNodeFlags oldflags;
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
 
 	if (buddy == NULL)
 		return;
@@ -404,17 +429,42 @@ bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *o
 	oldflags = purple_blist_node_get_flags((PurpleBlistNode *)buddy);
 
 	/* If we're moving them out of the bonjour group, make them persistent */
-	if (strcmp(new_group, BONJOUR_GROUP_NAME) == 0)
+	if (purple_strequal(new_group, BONJOUR_GROUP_NAME))
 		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags | PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 	else
 		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags ^ PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 
 }
 
+static void
+bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
+{
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+
+	bonjour_do_group_change(buddy, new_group);
+
+}
+
+static void
+bonjour_rename_group(PurpleConnection *connection, const char *old_name, PurpleGroup *group, GList *moved_buddies)
+{
+	GList *cur;
+	const char *new_group;
+	PurpleBuddy *buddy;
+
+	new_group = purple_group_get_name(group);
+
+	for (cur = moved_buddies; cur; cur = cur->next) {
+		buddy = cur->data;
+		bonjour_do_group_change(buddy, new_group);
+	}
+
+}
+
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
@@ -426,7 +476,6 @@ plugin_unload(PurplePlugin *plugin)
 
 	g_free(default_firstname);
 	g_free(default_lastname);
-	g_free(default_hostname);
 
 	return TRUE;
 }
@@ -435,6 +484,7 @@ static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
@@ -475,10 +525,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* keepalive */
 	NULL,                                                    /* register_user */
 	NULL,                                                    /* get_cb_info */
-	NULL,                                                    /* get_cb_away */
 	NULL,                                                    /* alias_buddy */
 	bonjour_group_buddy,                                     /* group_buddy */
-	NULL,                                                    /* rename_group */
+	bonjour_rename_group,                                    /* rename_group */
 	NULL,                                                    /* buddy_free */
 	bonjour_convo_closed,                                    /* convo_closed */
 	NULL,                                                    /* normalize */
@@ -500,10 +549,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* unregister_user */
 	NULL,                                                    /* send_attention */
 	NULL,                                                    /* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	NULL,                                                    /* get_account_text_table */
 	NULL,                                                    /* initiate_media */
-	NULL                                                     /* can_do_media */
+	NULL,                                                    /* get_media_caps */
+	NULL,                                                    /* get_moods */
+	NULL,                                                    /* set_public_alias */
+	NULL                                                     /* get_public_alias */
 };
 
 static PurplePluginInfo info =
@@ -544,7 +595,8 @@ static PurplePluginInfo info =
 };
 
 #ifdef WIN32
-static gboolean _set_default_name_cb(gpointer data) {
+static gboolean
+_set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
 	GList *tmp = prpl_info.protocol_options;
@@ -581,7 +633,8 @@ static gboolean _set_default_name_cb(gpointer data) {
 	return FALSE;
 }
 
-static gpointer _win32_name_lookup_thread(gpointer data) {
+static gpointer
+_win32_name_lookup_thread(gpointer data) {
 	gchar *fullname = NULL;
 	wchar_t username[UNLEN + 1];
 	DWORD dwLenUsername = UNLEN + 1;
@@ -685,23 +738,14 @@ initialize_default_account_values(void)
 	}
 
 	g_free(conv);
-
-	/* Try to figure out a good host name to use */
-	/* TODO: Avoid 'localhost,' if possible */
-	default_hostname = g_strdup(purple_get_host_name());
 }
 
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
 	initialize_default_account_values();
-
-	/* Creating the user splits */
-	split = purple_account_user_split_new(_("Hostname"), default_hostname, '@');
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);

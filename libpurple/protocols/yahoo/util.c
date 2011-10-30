@@ -33,10 +33,21 @@
 #include <string.h>
 
 gboolean
-yahoo_account_use_http_proxy(PurpleConnection *conn)
+yahoo_account_use_http_proxy(PurpleConnection *pc)
 {
-	PurpleProxyInfo *ppi = purple_proxy_get_setup(conn->account);
-	return (ppi->type == PURPLE_PROXY_HTTP || ppi->type == PURPLE_PROXY_USE_ENVVAR);
+	PurpleAccount *account = purple_connection_get_account(pc);
+	PurpleProxyInfo *ppi = NULL;
+	PurpleProxyType type = PURPLE_PROXY_NONE;
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
+
+	if(proxy_ssl)
+		ppi = purple_proxy_get_setup(account);
+	else
+		ppi = purple_proxy_get_setup(NULL);
+
+	type = purple_proxy_info_get_type(ppi);
+
+	return (type == PURPLE_PROXY_HTTP || type == PURPLE_PROXY_USE_ENVVAR);
 }
 
 /*
@@ -52,8 +63,9 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 	char firstflag = 1;
 	gchar *t1,*t2,*t3;
 	GSList *tmp;
-	GSList *cookies;
-	cookies = ((YahooData*)(gc->proto_data))->cookies;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
+	GSList *cookies = yd->cookies;
+
 	tmp = cookies;
 	while(tmp)
 	{
@@ -118,7 +130,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
  */
 char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *to_codeset;
 
@@ -147,7 +159,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *from_codeset;
 
@@ -656,7 +668,10 @@ char *yahoo_codes_to_html(const char *x)
 	/* Strip off the outter HTML node */
 	/* This probably isn't necessary, especially if we made the outter HTML
 	 * node an empty span.  But the HTML is simpler this way. */
-	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	if (!purple_strequal(xmlstr1, "<html/>"))
+		xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	else
+		xmlstr2 = g_strdup("");
 	g_free(xmlstr1);
 
 	esc = g_strescape(x, NULL);
@@ -881,6 +896,11 @@ char *yahoo_html_to_codes(const char *src)
 						}
 						g_free(etag);
 					}
+				} else if (g_str_equal(tag_name, "span") || g_str_equal(tag_name, "/span")) {
+					/* Do nothing */
+				} else {
+					/* We don't know what the tag is. Send it unmodified. */
+					g_string_append(dest, tag);
 				}
 
 				i = j;
@@ -913,3 +933,20 @@ char *yahoo_html_to_codes(const char *src)
 
 	return g_string_free(dest, FALSE);
 }
+
+YahooFederation yahoo_get_federation_from_name(const char *who)
+{
+	YahooFederation fed = YAHOO_FEDERATION_NONE;
+	if (who[3] == '/') {
+		if (!g_ascii_strncasecmp(who, "msn", 3))
+			fed = YAHOO_FEDERATION_MSN;
+		else if (!g_ascii_strncasecmp(who, "ocs", 3))
+			fed = YAHOO_FEDERATION_OCS;
+		else if (!g_ascii_strncasecmp(who, "ibm", 3))
+			fed = YAHOO_FEDERATION_IBM;
+		else if (!g_ascii_strncasecmp(who, "pbx", 3))
+			fed = YAHOO_FEDERATION_PBX;
+	}
+	return fed;
+}
+

@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -50,7 +50,7 @@ Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
 
     now = time(0);
     if (last_authent_time == 0 || (now - last_authent_time > 120)) {
-	result = krb_mk_req(&authent, SERVER_SERVICE, 
+	result = krb_mk_req(&authent, SERVER_SERVICE,
 			    SERVER_INSTANCE, __Zephyr_realm, 0);
 	if (result != MK_AP_OK) {
 	    last_authent_time = 0;
@@ -68,9 +68,9 @@ Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
     /* zero length authent is an error, so malloc(0) is not a problem */
     if (!notice->z_ascii_authent)
 	return (ENOMEM);
-    if ((result = ZMakeAscii(notice->z_ascii_authent, 
-			     authent.length*3, 
-			     authent.dat, 
+    if ((result = ZMakeAscii(notice->z_ascii_authent,
+			     authent.length*3,
+			     authent.dat,
 			     authent.length)) != ZERR_NONE) {
 	free(notice->z_ascii_authent);
 	return (result);
@@ -83,7 +83,7 @@ Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
 	return(result);
 
     /* Compute a checksum over the header and message. */
-    if ((result = krb_get_cred(SERVER_SERVICE, SERVER_INSTANCE, 
+    if ((result = krb_get_cred(SERVER_SERVICE, SERVER_INSTANCE,
 			      __Zephyr_realm, &cred)) != 0)
 	return result;
     checksum = des_quad_cksum(buffer, NULL, cstart - buffer, 0, (C_Block *)cred.session);

@@ -45,7 +45,7 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 			return FALSE;
 		return TRUE;
 	}
-		
+
 	return FALSE;
 }
 

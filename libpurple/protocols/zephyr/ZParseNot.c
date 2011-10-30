@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -84,12 +84,12 @@ Code_t ZParseNotice(buffer, len, notice)
 #endif
 
     (void) memset((char *)notice, 0, sizeof(ZNotice_t));
-	
+
     ptr = buffer;
     end = buffer+len;
 
     notice->z_packet = buffer;
-    
+
     notice->z_version = ptr;
     if (strncmp(ptr, ZVERSIONHDR, sizeof(ZVERSIONHDR) - 1))
 	return (ZERR_VERS);
@@ -141,7 +141,7 @@ Code_t ZParseNotice(buffer, len, notice)
     }
     else
 	BAD_PACKET;
-	
+
     if (numfields) {
 	if (ZReadAscii(ptr, end-ptr, (unsigned char *)&notice->z_uid,
 		       sizeof(ZUnique_Id_t)) == ZERR_BADFIELD)
@@ -153,7 +153,7 @@ Code_t ZParseNotice(buffer, len, notice)
     }
     else
 	BAD_PACKET;
-	
+
     if (numfields) {
 	if (ZReadAscii16(ptr, end-ptr, &notice->z_port) == ZERR_BADFIELD)
 	    BAD_PACKET;
@@ -174,7 +174,7 @@ Code_t ZParseNotice(buffer, len, notice)
     else
 	BAD_PACKET;
     notice->z_checked_auth = ZAUTH_UNSET;
-	
+
     if (numfields) {
 	if (ZReadAscii32(ptr, end-ptr, &temp) == ZERR_BADFIELD)
 	    BAD_PACKET;
@@ -200,7 +200,7 @@ Code_t ZParseNotice(buffer, len, notice)
     }
     else
 	notice->z_class = "";
-	
+
     if (numfields) {
 	notice->z_class_inst = ptr;
 	numfields--;
@@ -240,7 +240,7 @@ Code_t ZParseNotice(buffer, len, notice)
     }
     else
 	notice->z_default_format = "";
-	
+
 /*XXX*/
     if (ZReadAscii32(ptr, end-ptr, &temp) == ZERR_BADFIELD)
 	BAD_PACKET;
@@ -273,10 +273,10 @@ Code_t ZParseNotice(buffer, len, notice)
 	next_field (ptr);
     }
     notice->z_num_other_fields = i;
-    
+
     for (i=0;i<numfields;i++)
 	next_field (ptr);
-	
+
     notice->z_message = (void *)ptr;
     notice->z_message_len = len-(ptr-buffer);
 

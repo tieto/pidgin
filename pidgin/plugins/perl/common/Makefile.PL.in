@@ -9,6 +9,7 @@ WriteMakefile(
       ('ABSTRACT_FROM' => '@srcdir@/Pidgin.pm', # finds $ABSTRACT
        'AUTHOR'        => 'Pidgin <http://pidgin.im/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
+    'dynamic_lib'       => { 'OTHERLDFLAGS' => '@LDFLAGS@' },
     'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@',
     'OBJECT'        => '$(O_FILES)', # link all the C files too
     'TYPEMAPS'      => ["@top_srcdir@/libpurple/plugins/perl/common/typemap"],

@@ -4,7 +4,7 @@
  * purple
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -117,7 +117,7 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 
 	for (cur = tcl_callbacks; cur != NULL; cur = g_list_next(cur)) {
 		handler = cur->data;
-		if (handler->interp == interp && handler->instance == instance 
+		if (handler->interp == interp && handler->instance == instance
 		    && !strcmp(signal, Tcl_GetString(handler->signal))) {
 			purple_signal_disconnect(instance, signal, handler->interp,
 					       PURPLE_CALLBACK(tcl_signal_callback));
@@ -160,7 +160,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 {
 	GString *name, *val;
 	PurpleBlistNode *node;
-	int error, i;
+	int i;
 	void *retval = NULL;
 	Tcl_Obj *cmd, *arg, *result;
 	void **vals; /* Used for inout parameters */
@@ -259,8 +259,9 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					vals[i] = ckalloc(1);
 					*(char *)vals[i] = '\0';
 				} else {
-					vals[i] = ckalloc(strlen(*strs[i]) + 1);
-					strcpy(vals[i], *strs[i]);
+					size_t len = strlen(*strs[i]) + 1;
+					vals[i] = ckalloc(len);
+					g_strlcpy(vals[i], *strs[i], len);
 				}
 				Tcl_LinkVar(handler->interp, name->str,
 					    (char *)&vals[i], TCL_LINK_STRING);
@@ -335,7 +336,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	}
 
 	/* Call the friggin' procedure already */
-	if ((error = Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL)) != TCL_OK) {
+	if (Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL) != TCL_OK) {
 		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
 			   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 	} else {
@@ -345,7 +346,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			if (purple_value_get_type(handler->returntype) == PURPLE_TYPE_STRING) {
 				retval = (void *)g_strdup(Tcl_GetString(result));
 			} else {
-				if ((error = Tcl_GetIntFromObj(handler->interp, result, (int *)&retval)) != TCL_OK) {
+				if (Tcl_GetIntFromObj(handler->interp, result, (int *)&retval) != TCL_OK) {
 					purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Error retrieving procedure result: %s\n",
 						   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 					retval = NULL;

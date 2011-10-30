@@ -149,8 +149,9 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 			char *lengthstring, *widthstring, *heightstring;
 
 			/* compute the sha1 hash */
-			char *hash = jabber_calculate_data_sha1sum(purple_imgstore_get_data(img),
-			                                           purple_imgstore_get_size(img));
+			char *hash = jabber_calculate_data_hash(purple_imgstore_get_data(img),
+			                                        purple_imgstore_get_size(img),
+			    									"sha1");
 			char *base64avatar = purple_base64_encode(purple_imgstore_get_data(img),
 			                                          purple_imgstore_get_size(img));
 
@@ -229,7 +230,7 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 	 * push our avatar. If the server avatar doesn't match the local one, push
 	 * our avatar.
 	 */
-	if (((!items || !metadata) && js->initial_avatar_hash) ||
+	if ((!items || !metadata) ||
 			!purple_strequal(server_hash, js->initial_avatar_hash)) {
 		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 		jabber_avatar_set(js, img);
@@ -239,12 +240,12 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 
 void jabber_avatar_fetch_mine(JabberStream *js)
 {
-	char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	jabber_pep_request_item(js, jid, NS_AVATAR_0_12_METADATA, NULL,
-	                        do_got_own_avatar_0_12_cb);
-	jabber_pep_request_item(js, jid, NS_AVATAR_1_1_METADATA, NULL,
-	                        do_got_own_avatar_cb);
-	g_free(jid);
+	if (js->initial_avatar_hash) {
+		jabber_pep_request_item(js, NULL, NS_AVATAR_0_12_METADATA, NULL,
+		                        do_got_own_avatar_0_12_cb);
+		jabber_pep_request_item(js, NULL, NS_AVATAR_1_1_METADATA, NULL,
+		                        do_got_own_avatar_cb);
+	}
 }
 
 typedef struct _JabberBuddyAvatarUpdateURLInfo {
@@ -262,7 +263,7 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
 	gpointer icon_data;
 
 	if(!url_text) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+		purple_debug_error("jabber",
 		             "do_buddy_avatar_update_fromurl got error \"%s\"",
 		             error_message);
 		goto out;
@@ -376,7 +377,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
 
-				url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE,
+				url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE,
 										  MAX_HTTP_BUDDYICON_BYTES,
 										  do_buddy_avatar_update_fromurl, info);
 				if (url_data) {

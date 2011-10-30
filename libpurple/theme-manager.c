@@ -20,9 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-#include <string.h>
-
 #include "internal.h"
 #include "theme-manager.h"
 #include "util.h"
@@ -298,7 +295,7 @@ purple_theme_manager_for_each_theme(PTFunc func)
 PurpleTheme *
 purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type)
 {
-	PurpleThemeLoader *loader;	
+	PurpleThemeLoader *loader;
 
 	g_return_val_if_fail(theme_dir != NULL && type != NULL, NULL);
 

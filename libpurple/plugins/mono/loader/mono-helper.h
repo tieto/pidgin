@@ -13,16 +13,16 @@
 
 typedef struct {
 	PurplePlugin *plugin;
-	
+
 	MonoAssembly *assm;
 	MonoClass *klass;
-	MonoObject *obj;	
-	
+	MonoObject *obj;
+
 	MonoMethod *init;
 	MonoMethod *load;
 	MonoMethod *unload;
 	MonoMethod *destroy;
-	
+
 	GList *signal_data;
 } PurpleMonoPlugin;
 

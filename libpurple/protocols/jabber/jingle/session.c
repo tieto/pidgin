@@ -93,7 +93,7 @@ jingle_session_class_init (JingleSessionClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = jingle_session_finalize;
 	gobject_class->set_property = jingle_session_set_property;
 	gobject_class->get_property = jingle_session_get_property;
@@ -189,6 +189,8 @@ static void
 jingle_session_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleSession *session;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_SESSION(object));
 
 	session = JINGLE_SESSION(object);
@@ -221,7 +223,7 @@ jingle_session_set_property (GObject *object, guint prop_id, const GValue *value
 		case PROP_PENDING_CONTENTS:
 			session->priv->pending_contents = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -231,8 +233,10 @@ static void
 jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleSession *session;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_SESSION(object));
-	
+
 	session = JINGLE_SESSION(object);
 
 	switch (prop_id) {
@@ -260,8 +264,8 @@ jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GPar
 		case PROP_PENDING_CONTENTS:
 			g_value_set_pointer(value, session->priv->pending_contents);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -360,20 +364,23 @@ jingle_session_get_pending_contents(JingleSession *session)
 JingleSession *
 jingle_session_find_by_sid(JabberStream *js, const gchar *sid)
 {
+	JingleSession *session = NULL;
+
+	if (js->sessions)
+		session = g_hash_table_lookup(js->sessions, sid);
+
 	purple_debug_info("jingle", "find_by_id %s\n", sid);
-	purple_debug_info("jingle", "lookup: %p\n", (js->sessions) ?
-			  g_hash_table_lookup(js->sessions, sid) : NULL);  
-	return (JingleSession *) (js->sessions) ?
-			  g_hash_table_lookup(js->sessions, sid) : NULL;
+	purple_debug_info("jingle", "lookup: %p\n", session);
+
+	return session;
 }
 
-#if GLIB_CHECK_VERSION(2,4,0)
 static gboolean find_by_jid_ghr(gpointer key,
 		gpointer value, gpointer user_data)
 {
 	JingleSession *session = (JingleSession *)value;
 	const gchar *jid = user_data;
-	gboolean use_bare = g_utf8_strchr(jid, -1, '/') == NULL;
+	gboolean use_bare = strchr(jid, '/') == NULL;
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 	gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
 				  : g_strdup(remote_jid);
@@ -387,58 +394,12 @@ static gboolean find_by_jid_ghr(gpointer key,
 	return FALSE;
 }
 
-#else /* GLIB_CHECK_VERSION 2.4.0 */
-
-/* Ugly code; g_hash_table_find version above is much nicer */
-struct session_find_jid
-{
-	const gchar *jid;
-	JingleSession *ret;
-	gboolean use_bare;
-};
-
-static void find_by_jid_ghr(gpointer key, gpointer value, gpointer user_data)
-{
-	JingleSession *session = (JingleSession *)value;
-	struct session_find_jid *data = user_data;
-	gchar *remote_jid;
-	gchar *cmp_jid;
-
-	if (data->ret != NULL)
-		return;
-
-	remote_jid = jingle_session_get_remote_jid(session);
-	cmp_jid = data->use_bare ? jabber_get_bare_jid(remote_jid)
-				: g_strdup(remote_jid);
-	g_free(remote_jid);
-
-	if (g_str_equal(data->jid, cmp_jid))
-		data->ret = session;
-
-	g_free(cmp_jid);
-}
-#endif /* GLIB_CHECK_VERSION 2.4.0 */
-
 JingleSession *
 jingle_session_find_by_jid(JabberStream *js, const gchar *jid)
 {
-#if GLIB_CHECK_VERSION(2,4,0)
 	return js->sessions != NULL ?
 			g_hash_table_find(js->sessions,
-			find_by_jid_ghr, (gpointer)jid) : NULL; 
-#else
-	struct session_find_jid data;
-
-	if (js->sessions == NULL)
-		return NULL;
-
-	data.jid = jid;
-	data.ret = NULL;
-	data.use_bare = g_utf8_strchr(jid, -1, '/') == NULL;
-
-	g_hash_table_foreach(js->sessions, find_by_jid_ghr, &data);
-	return data.ret;
-#endif
+			find_by_jid_ghr, (gpointer)jid) : NULL;
 }
 
 static xmlnode *
@@ -470,7 +431,7 @@ jingle_add_jingle_packet(JingleSession *session,
 	g_free(remote_jid);
 
 	xmlnode_set_attrib(jingle, "sid", jingle_session_get_sid(session));
-	
+
 	return jingle;
 }
 

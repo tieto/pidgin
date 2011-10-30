@@ -37,6 +37,8 @@ OscarData *
 oscar_data_new(void)
 {
 	OscarData *od;
+	aim_module_t *cur;
+	GString *msg;
 
 	od = g_new0(OscarData, 1);
 
@@ -44,6 +46,12 @@ oscar_data_new(void)
 	od->snacid_next = 0x00000001;
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	od->handlerlist = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
+
+	od->ssi.local.idx_gid_bid = g_hash_table_new(g_direct_hash, g_direct_equal);
+	od->ssi.local.idx_all_named_items = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	od->ssi.official.idx_gid_bid = g_hash_table_new(g_direct_hash, g_direct_equal);
+	od->ssi.official.idx_all_named_items = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	/*
 	 * Register all the modules for this session...
@@ -53,17 +61,13 @@ oscar_data_new(void)
 	aim__registermodule(od, locate_modfirst);
 	aim__registermodule(od, buddylist_modfirst);
 	aim__registermodule(od, msg_modfirst);
-	/* aim__registermodule(od, adverts_modfirst); */
-	/* aim__registermodule(od, invite_modfirst); */
 	aim__registermodule(od, admin_modfirst);
 	aim__registermodule(od, popups_modfirst);
 	aim__registermodule(od, bos_modfirst);
 	aim__registermodule(od, search_modfirst);
 	aim__registermodule(od, stats_modfirst);
-	/* aim__registermodule(od, translate_modfirst); */
 	aim__registermodule(od, chatnav_modfirst);
 	aim__registermodule(od, chat_modfirst);
-	aim__registermodule(od, odir_modfirst);
 	aim__registermodule(od, bart_modfirst);
 	/* missing 0x11 - 0x12 */
 	aim__registermodule(od, ssi_modfirst);
@@ -73,6 +77,20 @@ oscar_data_new(void)
 	/* auth_modfirst is only needed if we're connecting with the old-style BUCP login */
 	aim__registermodule(od, auth_modfirst);
 	aim__registermodule(od, email_modfirst);
+
+	msg = g_string_new("Registered modules: ");
+	for (cur = od->modlistv; cur; cur = cur->next) {
+		g_string_append_printf(
+			msg,
+			"%s (family=0x%04x, version=0x%04x, toolid=0x%04x, toolversion=0x%04x), ",
+			cur->name,
+			cur->family,
+			cur->version,
+			cur->toolid,
+			cur->toolversion);
+	}
+	purple_debug_misc("oscar", "%s\n", msg->str);
+	g_string_free(msg, TRUE);
 
 	return od;
 }
@@ -114,6 +132,12 @@ oscar_data_destroy(OscarData *od)
 	g_hash_table_destroy(od->buddyinfo);
 	g_hash_table_destroy(od->handlerlist);
 
+	g_hash_table_destroy(od->ssi.local.idx_gid_bid);
+	g_hash_table_destroy(od->ssi.local.idx_all_named_items);
+
+	g_hash_table_destroy(od->ssi.official.idx_gid_bid);
+	g_hash_table_destroy(od->ssi.official.idx_all_named_items);
+
 	g_free(od);
 }
 
@@ -121,8 +145,6 @@ void
 oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags)
 {
 	SnacHandler *snac_handler;
-
-	purple_debug_misc("oscar", "Adding handler for %04x/%04x\n", family, subtype);
 
 	snac_handler = g_new0(SnacHandler, 1);
 

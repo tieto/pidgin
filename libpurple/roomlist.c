@@ -24,8 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-
 #include "internal.h"
 
 #include "account.h"
@@ -34,6 +32,39 @@
 #include "roomlist.h"
 #include "server.h"
 
+/**
+ * Represents a list of rooms for a given connection on a given protocol.
+ */
+struct _PurpleRoomlist {
+	PurpleAccount *account; /**< The account this list belongs to. */
+	GList *fields; /**< The fields. */
+	GList *rooms; /**< The list of rooms. */
+	gboolean in_progress; /**< The listing is in progress. */
+	gpointer ui_data; /**< UI private data. */
+	gpointer proto_data; /** Prpl private data. */
+	guint ref; /**< The reference count. */
+};
+
+/**
+ * Represents a room.
+ */
+struct _PurpleRoomlistRoom {
+	PurpleRoomlistRoomType type; /**< The type of room. */
+	gchar *name; /**< The name of the room. */
+	GList *fields; /**< Other fields. */
+	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
+	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
+};
+
+/**
+ * A field a room might have.
+ */
+struct _PurpleRoomlistField {
+	PurpleRoomlistFieldType type; /**< The type of field. */
+	gchar *label; /**< The i18n user displayed name of the field. */
+	gchar *name; /**< The internal name of the field. */
+	gboolean hidden; /**< Hidden? */
+};
 
 static PurpleRoomlistUiOps *ops = NULL;
 
@@ -127,6 +158,13 @@ void purple_roomlist_unref(PurpleRoomlist *list)
 	purple_debug_misc("roomlist", "unreffing list, ref count now %d\n", list->ref);
 	if (list->ref == 0)
 		purple_roomlist_destroy(list);
+}
+
+PurpleAccount *purple_roomlist_get_account(PurpleRoomlist *list)
+{
+	g_return_val_if_fail(list != NULL, NULL);
+
+	return list->account;
 }
 
 void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
@@ -236,6 +274,34 @@ GList * purple_roomlist_get_fields(PurpleRoomlist *list)
 	return list->fields;
 }
 
+gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list)
+{
+	g_return_val_if_fail(list != NULL, NULL);
+
+	return list->proto_data;
+}
+
+void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data)
+{
+	g_return_if_fail(list != NULL);
+
+	list->proto_data = proto_data;
+}
+
+gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list)
+{
+	g_return_val_if_fail(list != NULL, NULL);
+
+	return list->ui_data;
+}
+
+void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
+{
+	g_return_if_fail(list != NULL);
+
+	list->ui_data = ui_data;
+}
+
 /*@}*/
 
 /**************************************************************************/
@@ -331,7 +397,21 @@ PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room)
 	return room->parent;
 }
 
-GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
+gboolean purple_roomlist_room_get_expanded_once(PurpleRoomlistRoom *room)
+{
+	g_return_val_if_fail(room != NULL, FALSE);
+
+	return room->expanded_once;
+}
+
+void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean expanded_once)
+{
+	g_return_if_fail(room != NULL);
+
+	room->expanded_once = expanded_once;
+}
+
+GList *purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
 {
 	return room->fields;
 }

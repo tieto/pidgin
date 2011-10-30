@@ -30,9 +30,9 @@
 #include <glib.h>
 #include <glib-object.h>
 
-/** @copydoc _PurpleMediaManager */
+/** An opaque structure representing a group of (usually all) media calls. */
 typedef struct _PurpleMediaManager PurpleMediaManager;
-/** @copydoc _PurpleMediaManagerClass */
+/** The GObject class structure of the PurpleMediaManager object. */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 
 #include "account.h"
@@ -60,8 +60,6 @@ extern "C" {
  * Gets the media manager's GType.
  *
  * @return The media manager's GType.
- *
- * @since 2.6.0
  */
 GType purple_media_manager_get_type(void);
 
@@ -69,8 +67,6 @@ GType purple_media_manager_get_type(void);
  * Gets the "global" media manager object. It's created if it doesn't already exist.
  *
  * @return The "global" instance of the media manager object.
- *
- * @since 2.6.0
  */
 PurpleMediaManager *purple_media_manager_get(void);
 
@@ -81,10 +77,9 @@ PurpleMediaManager *purple_media_manager_get(void);
  * @param account The account to create the session on.
  * @param conference_type The conference type to feed into Farsight2.
  * @param remote_user The remote user to initiate the session with.
+ * @param initiator TRUE if the local user is the initiator of this media call, FALSE otherwise.
  *
  * @return A newly created media session.
- *
- * @since 2.6.0
  */
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						PurpleAccount *account,
@@ -98,8 +93,6 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
  * @param manager The media manager to get all of the sessions from.
  *
  * @return A list of all the media sessions.
- *
- * @since 2.6.0
  */
 GList *purple_media_manager_get_media(PurpleMediaManager *manager);
 
@@ -110,8 +103,6 @@ GList *purple_media_manager_get_media(PurpleMediaManager *manager);
  * @param account The account the sessions are on.
  *
  * @return A list of the media sessions on the given account.
- *
- * @since 2.6.0
  */
 GList *purple_media_manager_get_media_by_account(
 		PurpleMediaManager *manager, PurpleAccount *account);
@@ -121,8 +112,6 @@ GList *purple_media_manager_get_media_by_account(
  *
  * @param manager The media manager to remove the media session from.
  * @param media The media session to remove.
- *
- * @since 2.6.0
  */
 void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
@@ -139,8 +128,6 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
  * @param participant The participant the output windows are registered with.
  *
  * @return TRUE if it succeeded, FALSE if it failed.
- *
- * @since 2.6.0
  */
 gboolean purple_media_manager_create_output_window(
 		PurpleMediaManager *manager, PurpleMedia *media,
@@ -156,8 +143,6 @@ gboolean purple_media_manager_create_output_window(
  * @param window_id The window ID to embed the video in.
  *
  * @return A unique ID to the registered output window, 0 if it failed.
- *
- * @since 2.6.0
  */
 gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
@@ -170,8 +155,6 @@ gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
  * @param output_window_id The ID of the output window.
  *
  * @return TRUE if it found the output window and was successful, else FALSE.
- *
- * @since 2.6.0
  */
 gboolean purple_media_manager_remove_output_window(
 		PurpleMediaManager *manager, gulong output_window_id);
@@ -183,8 +166,6 @@ gboolean purple_media_manager_remove_output_window(
  * @param media The media instance the output windows were registered for.
  * @param session_id The session the output windows were registered for.
  * @param participant The participant the output windows were registered for.
- *
- * @since 2.6.0
  */
 void purple_media_manager_remove_output_windows(
 		PurpleMediaManager *manager, PurpleMedia *media,
@@ -195,8 +176,6 @@ void purple_media_manager_remove_output_windows(
  *
  * @param manager The manager to set the caps on.
  * @param caps The caps to set.
- *
- * @since 2.6.0
  */
 void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
 		PurpleMediaCaps caps);
@@ -207,10 +186,26 @@ void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
  * @param manager The manager to get caps from.
  *
  * @return caps The caps retrieved.
- *
- * @since 2.6.0
  */
 PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager *manager);
+
+/**
+ * Sets which media backend type media objects will use.
+ *
+ * @param manager The manager to set the caps on.
+ * @param backend_type The media backend type to use.
+ */
+void purple_media_manager_set_backend_type(PurpleMediaManager *manager,
+		GType backend_type);
+
+/**
+ * Gets which media backend type media objects will use.
+ *
+ * @param manager The manager to get the media backend type from.
+ *
+ * @return The type of media backend type media objects will use.
+ */
+GType purple_media_manager_get_backend_type(PurpleMediaManager *manager);
 
 /*}@*/
 

@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -20,7 +20,7 @@ Code_t ZFormatNotice(notice, buffer, ret_len, cert_routine)
     int hdrlen;
     Code_t retval;
 
-    if ((retval = Z_FormatHeader(notice, header, sizeof(header), &hdrlen, 
+    if ((retval = Z_FormatHeader(notice, header, sizeof(header), &hdrlen,
 				 cert_routine)) != ZERR_NONE)
 	return (retval);
 

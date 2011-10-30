@@ -119,9 +119,7 @@ setup_tooltip_window(void)
 
 	tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 	name = gtk_window_get_title(GTK_WINDOW(pidgin_tooltip.widget));
-#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
-#endif
 	gtk_widget_set_app_paintable(tipwindow, TRUE);
 	gtk_window_set_title(GTK_WINDOW(tipwindow), name ? name : _("Pidgin Tooltip"));
 	gtk_window_set_resizable(GTK_WINDOW(tipwindow), FALSE);
@@ -136,41 +134,30 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 {
 	int sig;
 	int scr_w, scr_h, x, y, dy;
-#if GTK_CHECK_VERSION(2,2,0)
+	int preserved_x, preserved_y;
 	int mon_num;
 	GdkScreen *screen = NULL;
-#endif
 	GdkRectangle mon_size;
 	GtkWidget *tipwindow = pidgin_tooltip.tipwindow;
-	
-#if GTK_CHECK_VERSION(2,2,0)
+
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
 	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
 	gdk_screen_get_monitor_geometry(screen, mon_num, &mon_size);
 
 	scr_w = mon_size.width + mon_size.x;
 	scr_h = mon_size.height + mon_size.y;
-#else
-	scr_w = gdk_screen_width();
-	scr_h = gdk_screen_height();
-	gdk_window_get_pointer(NULL, &x, &y, NULL);
-	mon_size.x = 0;
-	mon_size.y = 0;
-#endif
 
-#if GTK_CHECK_VERSION(2,4,0)
 	dy = gdk_display_get_default_cursor_size(gdk_display_get_default()) / 2;
-#else
-	dy = 0;
-#endif
 
-#if GTK_CHECK_VERSION(2,2,0)
 	if (w > mon_size.width)
 		w = mon_size.width - 10;
 
 	if (h > mon_size.height)
 		h = mon_size.height - 10;
-#endif
+
+	preserved_x = x;
+	preserved_y = y;
+
 	x -= ((w >> 1) + 4);
 
 	if ((y + h + 4) > scr_h)
@@ -191,6 +178,12 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 		if (x < mon_size.x)
 			x = mon_size.x;
 	}
+
+	/* If the mouse covered by the tipwindow, move the tipwindow
+	 * to the righ side of the it */
+	if ((preserved_x >= x) && (preserved_x <= (x + w))
+			&& (preserved_y >= y) && (preserved_y <= (y + h)))
+		x = preserved_x + dy;
 
 	gtk_widget_set_size_request(tipwindow, w, h);
 	gtk_window_move(GTK_WINDOW(tipwindow), x, y);

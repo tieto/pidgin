@@ -8,7 +8,7 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libgg
-CFLAGS += -include win32dep.h
+CFLAGS += -include win32dep.h -DGG_IGNORE_DEPRECATED
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -41,17 +41,27 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =	\
 	lib/common.c \
+	lib/dcc.c \
+	lib/dcc7.c \
+	lib/debug.c \
+	lib/deflate.c \
+	lib/encoding.c \
 	lib/events.c \
+	lib/handlers.c \
 	lib/http.c \
 	lib/libgadu.c \
+	lib/message.c \
 	lib/obsolete.c \
 	lib/pubdir.c \
 	lib/pubdir50.c \
+	lib/resolver.c \
+	lib/sha1.c \
 	buddylist.c \
 	confer.c \
 	gg.c \
 	search.c \
-	gg-utils.c
+	gg-utils.c \
+	win32-resolver.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

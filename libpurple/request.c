@@ -42,6 +42,108 @@ typedef struct
 
 } PurpleRequestInfo;
 
+struct _PurpleRequestField
+{
+	PurpleRequestFieldType type;
+	PurpleRequestFieldGroup *group;
+
+	char *id;
+	char *label;
+	char *type_hint;
+
+	gboolean visible;
+	gboolean required;
+
+	union
+	{
+		struct
+		{
+			gboolean multiline;
+			gboolean masked;
+			gboolean editable;
+			char *default_value;
+			char *value;
+
+		} string;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+		} integer;
+
+		struct
+		{
+			gboolean default_value;
+			gboolean value;
+
+		} boolean;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+			GList *labels;
+
+		} choice;
+
+		struct
+		{
+			GList *items;
+			GList *icons;
+			GHashTable *item_data;
+			GList *selected;
+			GHashTable *selected_table;
+
+			gboolean multiple_selection;
+
+		} list;
+
+		struct
+		{
+			PurpleAccount *default_account;
+			PurpleAccount *account;
+			gboolean show_all;
+
+			PurpleFilterAccountFunc filter_func;
+
+		} account;
+
+		struct
+		{
+			unsigned int scale_x;
+			unsigned int scale_y;
+			const char *buffer;
+			gsize size;
+		} image;
+
+	} u;
+
+	void *ui_data;
+	char *tooltip;
+};
+
+struct _PurpleRequestFields
+{
+	GList *groups;
+
+	GHashTable *fields;
+
+	GList *required_fields;
+
+	void *ui_data;
+};
+
+struct _PurpleRequestFieldGroup
+{
+	PurpleRequestFields *fields_list;
+
+	char *title;
+
+	GList *fields;
+};
 
 PurpleRequestFields *
 purple_request_fields_new(void)
@@ -271,6 +373,20 @@ purple_request_fields_get_account(const PurpleRequestFields *fields,
 	return purple_request_field_account_get_value(field);
 }
 
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return fields->ui_data;
+}
+
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data)
+{
+	g_return_if_fail(fields != NULL);
+
+	fields->ui_data = ui_data;
+}
+
 PurpleRequestFieldGroup *
 purple_request_field_group_new(const char *title)
 {
@@ -337,6 +453,14 @@ purple_request_field_group_get_fields(const PurpleRequestFieldGroup *group)
 	return group->fields;
 }
 
+PurpleRequestFields *
+purple_request_field_group_get_fields_list(const PurpleRequestFieldGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->fields_list;
+}
+
 PurpleRequestField *
 purple_request_field_new(const char *id, const char *text,
 					   PurpleRequestFieldType type)
@@ -365,6 +489,7 @@ purple_request_field_destroy(PurpleRequestField *field)
 	g_free(field->id);
 	g_free(field->label);
 	g_free(field->type_hint);
+	g_free(field->tooltip);
 
 	if (field->type == PURPLE_REQUEST_FIELD_STRING)
 	{
@@ -425,6 +550,15 @@ purple_request_field_set_type_hint(PurpleRequestField *field,
 
 	g_free(field->type_hint);
 	field->type_hint = g_strdup(type_hint);
+}
+
+void
+purple_request_field_set_tooltip(PurpleRequestField *field, const char *tooltip)
+{
+	g_return_if_fail(field != NULL);
+
+	g_free(field->tooltip);
+	field->tooltip = g_strdup(tooltip);
 }
 
 void
@@ -500,6 +634,14 @@ purple_request_field_get_type_hint(const PurpleRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->type_hint;
+}
+
+const char *
+purple_request_field_get_tooltip(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+
+	return field->tooltip;
 }
 
 gboolean
@@ -847,7 +989,7 @@ purple_request_field_list_get_data(const PurpleRequestField *field,
 }
 
 void
-purple_request_field_list_add(PurpleRequestField *field, const char *item,
+purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, const char* icon_path,
 							void *data)
 {
 	g_return_if_fail(field != NULL);
@@ -855,8 +997,28 @@ purple_request_field_list_add(PurpleRequestField *field, const char *item,
 	g_return_if_fail(data  != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
-	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
+	if (icon_path)
+	{
+		if (field->u.list.icons == NULL)
+		{
+			GList *l;
+			for (l = field->u.list.items ; l != NULL ; l = l->next)
+			{
+				/* Order doesn't matter, because we're just
+				 * filing in blank items.  So, we use
+				 * g_list_prepend() because it's faster. */
+				field->u.list.icons = g_list_prepend(field->u.list.icons, NULL);
+			}
+		}
+		field->u.list.icons = g_list_append(field->u.list.icons, g_strdup(icon_path));
+	}
+	else if (field->u.list.icons)
+	{
+		/* Keep this even with the items list. */
+		field->u.list.icons = g_list_append(field->u.list.icons, NULL);
+	}
 
+	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
 	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
 }
 
@@ -960,6 +1122,15 @@ purple_request_field_list_get_items(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return field->u.list.items;
+}
+
+GList *
+purple_request_field_list_get_icons(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
+
+	return field->u.list.icons;
 }
 
 PurpleRequestField *
@@ -1281,6 +1452,29 @@ purple_request_action(void *handle, const char *title, const char *primary,
 }
 
 void *
+purple_request_action_with_icon(void *handle, const char *title,
+					const char *primary,
+					const char *secondary, int default_action,
+					PurpleAccount *account, const char *who,
+					PurpleConversation *conv, gconstpointer icon_data,
+					gsize icon_size, void *user_data, size_t action_count, ...)
+{
+	void *ui_handle;
+	va_list args;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	va_start(args, action_count);
+	ui_handle = purple_request_action_with_icon_varg(handle, title, primary,
+		secondary, default_action, account, who, conv, icon_data, icon_size,
+		user_data, action_count, args);
+	va_end(args);
+
+	return ui_handle;
+}
+
+
+void *
 purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
@@ -1310,6 +1504,46 @@ purple_request_action_varg(void *handle, const char *title,
 
 	return NULL;
 }
+
+void *
+purple_request_action_with_icon_varg(void *handle, const char *title,
+						 const char *primary, const char *secondary,
+						 int default_action,
+						 PurpleAccount *account, const char *who,
+						 PurpleConversation *conv, gconstpointer icon_data,
+						 gsize icon_size,
+						 void *user_data, size_t action_count, va_list actions)
+{
+	PurpleRequestUiOps *ops;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_action_with_icon != NULL) {
+		PurpleRequestInfo *info;
+
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_ACTION;
+		info->handle    = handle;
+		info->ui_handle = ops->request_action_with_icon(title, primary, secondary,
+											  default_action, account, who, conv,
+											  icon_data, icon_size,
+											  user_data, action_count, actions);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	} else {
+		/* Fall back on the non-icon request if the UI doesn't support icon
+		 requests */
+		return purple_request_action_varg(handle, title, primary, secondary,
+			default_action, account, who, conv, user_data, action_count, actions);
+	}
+
+	return NULL;
+}
+
 
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,

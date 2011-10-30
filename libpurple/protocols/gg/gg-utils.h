@@ -101,6 +101,21 @@ void
 ggp_status_fake_to_self(PurpleAccount *account);
 
 
+/**
+ * Adds an input handler in purple event loop for http request.
+ *
+ * @see purple_input_add
+ *
+ * @param http_req  Http connection to watch.
+ * @param func      The callback function for data.
+ * @param user_data User-specified data.
+ *
+ * @return The resulting handle (will be greater than 0).
+ */
+guint
+ggp_http_input_add(struct gg_http *http_req, PurpleInputFunction func,
+	gpointer user_data);
+
 #endif /* _PURPLE_GG_UTILS_H */
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

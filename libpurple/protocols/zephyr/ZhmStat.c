@@ -5,7 +5,7 @@
  *
  *      Copyright (c) 1996 by the Massachusetts Institute of Technology.
  *      For copying and distribution information, see the file
- *      "mit-copyright.h". 
+ *      "mit-copyright.h".
  */
 
 #include "internal.h"
@@ -53,7 +53,7 @@ Code_t ZhmStat(hostaddr, notice)
     req.z_recipient = "";
     req.z_default_format = "";
     req.z_message_len = 0;
-	
+
     if ((code = ZSetDestAddr(&sin)) != ZERR_NONE)
 	return(code);
 

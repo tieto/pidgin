@@ -51,12 +51,12 @@ enum {
 	CHAT_USERS_FLAGS_COLUMN,
 	CHAT_USERS_COLOR_COLUMN,
 	CHAT_USERS_WEIGHT_COLUMN,
-	CHAT_USERS_ICON_STOCK_COLUMN,   /** @since 2.6.0 */
+	CHAT_USERS_ICON_STOCK_COLUMN,
 	CHAT_USERS_COLUMNS
 };
 
 #define PIDGIN_CONVERSATION(conv) \
-	((PidginConversation *)(conv)->ui_data)
+	((PidginConversation *)purple_conversation_get_ui_data(conv))
 
 #define PIDGIN_IS_PIDGIN_CONVERSATION(conv) \
 	(purple_conversation_get_ui_ops(conv) == \
@@ -65,6 +65,7 @@ enum {
 #include "pidgin.h"
 #include "conversation.h"
 #include "gtkconvwin.h"
+#include "gtkconv-theme.h"
 
 /**************************************************************************
  * @name Structures
@@ -75,39 +76,6 @@ enum {
  * A GTK+ representation of a graphical window containing one or more
  * conversations.
  */
-
-/**
- * A GTK+ Instant Message pane.
- */
-struct _PidginImPane
-{
-	GtkWidget *block;
-	GtkWidget *send_file;
-	GtkWidget *sep1;
-	GtkWidget *sep2;
-	GtkWidget *check;
-	GtkWidget *progress;
-	guint32 typing_timer;
-
-	/* Buddy icon stuff */
-	GtkWidget *icon_container;
-	GtkWidget *icon;
-	gboolean show_icon;
-	gboolean animate;
-	GdkPixbufAnimation *anim;
-	GdkPixbufAnimationIter *iter;
-	guint32 icon_timer;
-};
-
-/**
- * GTK+ Chat panes.
- */
-struct _PidginChatPane
-{
-	GtkWidget *count;
-	GtkWidget *list;
-	GtkWidget *topic_text;
-};
 
 /**
  * A GTK+ conversation pane.
@@ -128,12 +96,14 @@ struct _PidginConversation
 	GtkWidget *tabby;
 	GtkWidget *menu_tabby;
 
-	GtkWidget *imhtml;
+	PidginConvTheme *theme;
+	PurpleMessageFlags last_flags;
+	GtkWidget *webview;
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 	gboolean auto_resize;   /* this is set to TRUE if the conversation
-		 	 	 * is being resized by a non-user-initiated
-		 		 * event, such as the buddy icon appearing
+				 * is being resized by a non-user-initiated
+				 * event, such as the buddy icon appearing
 				 */
 	gboolean entry_growing; /* True if the size of the entry was set
 				 * automatically by typing too much to fit
@@ -144,12 +114,6 @@ struct _PidginConversation
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;
 	GtkWidget *menu_label;
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKCONV_C_)
-	/** @deprecated */
-	GtkSizeGroup *sg;
-#else
-	gpointer depr1;
-#endif
 
 	GtkWidget *lower_hbox;
 
@@ -177,6 +141,14 @@ struct _PidginConversation
 		int timer;
 		GList *current;
 	} attach;
+
+	/**
+	 * Quick Find.
+	 */
+	struct {
+		GtkWidget *entry;
+		GtkWidget *container;
+	} quickfind;
 };
 
 /*@}*/
@@ -259,8 +231,6 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  * @param conv  The conversation.
  *
  * @return  Wheter Pidgin UI was successfully attached.
- *
- * @since 2.2.0
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 

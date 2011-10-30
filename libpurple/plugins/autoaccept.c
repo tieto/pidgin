@@ -28,13 +28,7 @@
 
 /* System headers */
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#	include <sys/types.h>
-#	include <sys/stat.h>
-#	define	g_mkdir mkdir
-#endif
+#include <glib/gstdio.h>
 
 /* Purple headers */
 #include <plugin.h>
@@ -49,9 +43,12 @@
 
 #define PREF_PREFIX		"/plugins/core/" PLUGIN_ID
 #define PREF_PATH		PREF_PREFIX "/path"
-#define PREF_STRANGER	PREF_PREFIX "/reject_stranger"
+#define PREF_STRANGER	PREF_PREFIX "/stranger"
 #define PREF_NOTIFY		PREF_PREFIX "/notify"
 #define PREF_NEWDIR     PREF_PREFIX "/newdir"
+#define PREF_ESCAPE     PREF_PREFIX "/escape"
+
+#define PREF_STRANGER_OLD PREF_PREFIX "/reject_stranger"
 
 typedef enum
 {
@@ -76,10 +73,10 @@ static void
 auto_accept_complete_cb(PurpleXfer *xfer, PurpleXfer *my)
 {
 	if (xfer == my && purple_prefs_get_bool(PREF_NOTIFY) &&
-			!purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who, xfer->account))
+			!purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_xfer_get_remote_user(xfer), purple_xfer_get_account(xfer)))
 	{
 		char *message = g_strdup_printf(_("Autoaccepted file transfer of \"%s\" from \"%s\" completed."),
-					xfer->filename, xfer->who);
+					purple_xfer_get_filename(xfer), purple_xfer_get_remote_user(xfer));
 		purple_notify_info(NULL, _("Autoaccept complete"), message, NULL);
 		g_free(message);
 	}
@@ -94,25 +91,27 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	char *filename;
 	char *dirname;
 
-	account = xfer->account;
-	node = PURPLE_BLIST_NODE(purple_find_buddy(account, xfer->who));
+    int accept_setting;
 
-	if (!node)
-	{
-		if (purple_prefs_get_bool(PREF_STRANGER))
-			xfer->status = PURPLE_XFER_STATUS_CANCEL_LOCAL;
-		return;
+	account = purple_xfer_get_account(xfer);
+	node = PURPLE_BLIST_NODE(purple_find_buddy(account, purple_xfer_get_remote_user(xfer)));
+
+	/* If person is on buddy list, use the buddy setting; otherwise, use the
+	   stranger setting. */
+	if (node) {
+		node = purple_blist_node_get_parent(node);
+		g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
+		accept_setting = purple_blist_node_get_int(node, "autoaccept");
+	} else {
+		accept_setting = purple_prefs_get_int(PREF_STRANGER);
 	}
 
-	node = purple_blist_node_get_parent(node);
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
-
-	pref = purple_prefs_get_string(PREF_PATH);
-	switch (purple_blist_node_get_int(node, "autoaccept"))
+	switch (accept_setting)
 	{
 		case FT_ASK:
 			break;
 		case FT_ACCEPT:
+            pref = purple_prefs_get_string(PREF_PATH);
 			if (ensure_path_exists(pref))
 			{
 				int count = 1;
@@ -122,7 +121,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 				gchar *ext;
 
 				if (purple_prefs_get_bool(PREF_NEWDIR))
-					dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
+					dirname = g_build_filename(pref, purple_normalize(account, purple_xfer_get_remote_user(xfer)), NULL);
 				else
 					dirname = g_build_filename(pref, NULL);
 
@@ -132,7 +131,12 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 					break;
 				}
 
-				escape = purple_escape_filename(xfer->filename);
+				/* Escape filename (if escaping is turned on) */
+				if (purple_prefs_get_bool(PREF_ESCAPE)) {
+					escape = purple_escape_filename(purple_xfer_get_filename(xfer));
+				} else {
+					escape = purple_xfer_get_filename(xfer);
+				}
 				filename = g_build_filename(dirname, escape, NULL);
 
 				/* Split at the first dot, to avoid uniquifying "foo.tar.gz" to "foo.tar-2.gz" */
@@ -170,7 +174,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 								PURPLE_CALLBACK(auto_accept_complete_cb), xfer);
 			break;
 		case FT_REJECT:
-			xfer->status = PURPLE_XFER_STATUS_CANCEL_LOCAL;
+			purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
 			break;
 	}
 }
@@ -193,7 +197,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
-	message = g_strdup_printf(_("When a file-transfer request arrives from %s"), 
+	message = g_strdup_printf(_("When a file-transfer request arrives from %s"),
 					purple_contact_get_alias((PurpleContact *)node));
 	purple_request_choice(plugin, _("Set Autoaccept Setting"), message,
 						NULL, purple_blist_node_get_int(node, "autoaccept"),
@@ -226,6 +230,17 @@ context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+	/* migrate the old pref (we should only care if the plugin is actually *used*) */
+	/*
+	 * TODO: We should eventually call purple_prefs_remove(PREFS_STRANGER_OLD)
+	 *       to clean up after ourselves, but we don't want to do it yet
+	 *       so that we don't break users who share a .purple directory
+	 *       between old libpurple clients and new libpurple clients.
+	 *                                             --Mark Doliner, 2011-01-03
+	 */
+	if(purple_prefs_get_bool(PREF_STRANGER_OLD))
+		purple_prefs_set_int(PREF_STRANGER, FT_REJECT);
+
 	purple_signal_connect(purple_xfers_get_handle(), "file-recv-request", plugin,
 						PURPLE_CALLBACK(file_recv_request_cb), plugin);
 	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
@@ -253,7 +268,12 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	purple_plugin_pref_frame_add(frame, pref);
 
 	pref = purple_plugin_pref_new_with_name_and_label(PREF_STRANGER,
-					_("Automatically reject from users not in buddy list"));
+					_("When a file-transfer request arrives from a user who is\n"
+                      "*not* on your buddy list:"));
+	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_add_choice(pref, _("Ask"), GINT_TO_POINTER(FT_ASK));
+	purple_plugin_pref_add_choice(pref, _("Auto Accept"), GINT_TO_POINTER(FT_ACCEPT));
+	purple_plugin_pref_add_choice(pref, _("Auto Reject"), GINT_TO_POINTER(FT_REJECT));
 	purple_plugin_pref_frame_add(frame, pref);
 
 	pref = purple_plugin_pref_new_with_name_and_label(PREF_NOTIFY,
@@ -263,6 +283,10 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 
 	pref = purple_plugin_pref_new_with_name_and_label(PREF_NEWDIR,
 			_("Create a new directory for each user"));
+	purple_plugin_pref_frame_add(frame, pref);
+
+	pref = purple_plugin_pref_new_with_name_and_label(PREF_ESCAPE,
+			_("Escape the filenames"));
 	purple_plugin_pref_frame_add(frame, pref);
 
 	return frame;
@@ -321,9 +345,10 @@ init_plugin(PurplePlugin *plugin) {
 	dirname = g_build_filename(purple_user_dir(), "autoaccept", NULL);
 	purple_prefs_add_none(PREF_PREFIX);
 	purple_prefs_add_string(PREF_PATH, dirname);
-	purple_prefs_add_bool(PREF_STRANGER, TRUE);
+	purple_prefs_add_int(PREF_STRANGER, FT_ASK);
 	purple_prefs_add_bool(PREF_NOTIFY, TRUE);
 	purple_prefs_add_bool(PREF_NEWDIR, TRUE);
+	purple_prefs_add_bool(PREF_ESCAPE, TRUE);
 	g_free(dirname);
 }
 

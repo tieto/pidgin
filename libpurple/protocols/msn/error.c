@@ -21,8 +21,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+/* Masca: can we get rid of the sync issue dialog? */
+#include "request.h"
+
 #include "error.h"
+
+typedef struct
+{
+	MsnSession *session;
+	char *who;
+	char *group;
+	gboolean add;
+
+} MsnAddRemData;
 
 const char *
 msn_error_get_text(unsigned int type, gboolean *debug)
@@ -260,7 +274,111 @@ msn_error_handle(MsnSession *session, unsigned int type)
 	if (debug)
 		purple_debug_warning("msn", "error %d: %s\n", type, buf);
 	else
-		purple_notify_error(session->account->gc, NULL, buf, NULL);
+		purple_notify_error(purple_account_get_connection(session->account), NULL, buf, NULL);
 	g_free(buf);
+}
+
+/* Remove the buddy referenced by the MsnAddRemData before the serverside list
+ * is changed.  If the buddy will be added, he'll be added back; if he will be
+ * removed, he won't be. */
+/* Actually with our MSNP14 code that isn't true yet, he won't be added back :(
+ * */
+static void
+msn_complete_sync_issue(MsnAddRemData *data)
+{
+	PurpleBuddy *buddy;
+	PurpleGroup *group = NULL;
+
+	if (data->group != NULL)
+		group = purple_find_group(data->group);
+
+	if (group != NULL)
+		buddy = purple_find_buddy_in_group(data->session->account, data->who, group);
+	else
+		buddy = purple_find_buddy(data->session->account, data->who);
+
+	if (buddy != NULL)
+		purple_blist_remove_buddy(buddy);
+}
+
+
+static void
+msn_add_cb(MsnAddRemData *data)
+{
+#if 0
+	/* this *should* be necessary !! */
+	msn_complete_sync_issue(data);
+#endif
+	MsnUserList *userlist = data->session->userlist;
+
+	msn_userlist_add_buddy(userlist, data->who, data->group);
+
+	g_free(data->group);
+	g_free(data->who);
+	g_free(data);
+}
+
+static void
+msn_rem_cb(MsnAddRemData *data)
+{
+	MsnUserList *userlist = data->session->userlist;
+	msn_complete_sync_issue(data);
+
+
+	if (data->group == NULL) {
+		msn_userlist_rem_buddy_from_list(userlist, data->who, MSN_LIST_FL);
+	} else {
+		g_free(data->group);
+	}
+
+	g_free(data->who);
+	g_free(data);
+}
+
+void
+msn_error_sync_issue(MsnSession *session, const char *passport,
+					const char *group_name)
+{
+	PurpleConnection *gc;
+	PurpleAccount *account;
+	MsnAddRemData *data;
+	char *msg, *reason;
+
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	data          = g_new0(MsnAddRemData, 1);
+	data->who     = g_strdup(passport);
+	data->group   = g_strdup(group_name);
+	data->session = session;
+
+	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
+						  purple_account_get_username(account),
+						  purple_account_get_protocol_name(account));
+
+	if (group_name != NULL)
+	{
+		reason = g_strdup_printf(_("%s on the local list is "
+								   "inside the group \"%s\" but not on "
+								   "the server list. "
+								   "Do you want this buddy to be added?"),
+								 passport, group_name);
+	}
+	else
+	{
+		reason = g_strdup_printf(_("%s is on the local list but "
+								   "not on the server list. "
+								   "Do you want this buddy to be added?"),
+								 passport);
+	}
+
+	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE,
+						account, data->who, NULL,
+						data, 2,
+						_("Yes"), G_CALLBACK(msn_add_cb),
+						_("No"), G_CALLBACK(msn_rem_cb));
+
+	g_free(reason);
+	g_free(msg);
 }
 

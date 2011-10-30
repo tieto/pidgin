@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <internal.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -34,7 +36,6 @@
 #include <gntutils.h>
 
 #include "finch.h"
-#include <internal.h>
 
 #include <notify.h>
 #include <request.h>
@@ -313,7 +314,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 		gnt_box_give_focus_to_child(GNT_BOX(edit->window), edit->title);
 		return;
 	}
-	
+
 	if (edit->saved == NULL)
 	{
 		edit->saved = purple_savedstatus_new(title, prim);
@@ -408,7 +409,7 @@ save_substatus_cb(GntWidget *widget, EditSubStatus *sub)
 	gnt_tree_change_text(GNT_TREE(sub->parent->tree), row, 1,
 			purple_status_type_get_name(type));
 	gnt_tree_change_text(GNT_TREE(sub->parent->tree), row, 2, message);
-	
+
 	gnt_widget_destroy(sub->window);
 }
 

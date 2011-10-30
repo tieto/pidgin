@@ -29,7 +29,7 @@
 /**
  * Privacy data types.
  */
-typedef enum _PurplePrivacyType
+typedef enum
 {
 	PURPLE_PRIVACY_ALLOW_ALL = 1,
 	PURPLE_PRIVACY_DENY_ALL,

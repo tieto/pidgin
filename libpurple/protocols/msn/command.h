@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_COMMAND_H
-#define _MSN_COMMAND_H
+#ifndef MSN_COMMAND_H
+#define MSN_COMMAND_H
 
 typedef struct _MsnCommand MsnCommand;
 
@@ -43,7 +43,7 @@ struct _MsnCommand
 	char **params;
 	int param_count;
 
-	int ref_count;
+	guint ref_count;
 
 	MsnTransaction *trans;
 
@@ -54,9 +54,31 @@ struct _MsnCommand
 	void *payload_cbdata;
 };
 
+/**
+ * Create a command object from the incoming string and ref it.
+ *
+ * @param string 	The incoming string.
+ *
+ * @return 			A MsnCommand object.
+ */
 MsnCommand *msn_command_from_string(const char *string);
-void msn_command_destroy(MsnCommand *cmd);
-MsnCommand *msn_command_ref(MsnCommand *cmd);
-MsnCommand *msn_command_unref(MsnCommand *cmd);
 
-#endif /* _MSN_COMMAND_H */
+/**
+ * Increment the ref count.
+ *
+ * @param cmd 	The MsnCommand to be ref.
+ *
+ * @return 		The ref command.
+ */
+MsnCommand *msn_command_ref(MsnCommand *cmd);
+
+/**
+ * Decrement the ref count. If the count goes to 0, destroy it.
+ *
+ * @param cmd	The MsnCommand to be unref.
+ *
+ */
+void msn_command_unref(MsnCommand *cmd);
+
+#endif /* MSN_COMMAND_H */
+

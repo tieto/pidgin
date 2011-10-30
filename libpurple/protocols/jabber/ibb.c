@@ -1,4 +1,6 @@
 /*
+ * purple - Jabber Service Discovery
+ *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -11,11 +13,12 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
 
 #include "internal.h"
@@ -157,6 +160,12 @@ jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size)
 	}
 }
 
+gsize
+jabber_ibb_session_get_max_data_size(const JabberIBBSession *sess)
+{
+	return (gsize) floor((sess->block_size - 2) * (float) 3 / 4);
+}
+
 gpointer
 jabber_ibb_session_get_user_data(JabberIBBSession *sess)
 {
@@ -228,7 +237,7 @@ jabber_ibb_session_open(JabberIBBSession *sess)
 		gchar block_size[10];
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(open, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(open, NS_IBB);
 		xmlnode_set_attrib(open, "sid", jabber_ibb_session_get_sid(sess));
 		g_snprintf(block_size, sizeof(block_size), "%" G_GSIZE_FORMAT,
 			jabber_ibb_session_get_block_size(sess));
@@ -256,7 +265,7 @@ jabber_ibb_session_close(JabberIBBSession *sess)
 		xmlnode *close = xmlnode_new("close");
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(close, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(close, NS_IBB);
 		xmlnode_set_attrib(close, "sid", jabber_ibb_session_get_sid(sess));
 		xmlnode_insert_child(set->node, close);
 		jabber_iq_send(set);
@@ -321,7 +330,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 	if (state != JABBER_IBB_SESSION_OPENED) {
 		purple_debug_error("jabber",
 			"trying to send data on a non-open IBB session\n");
-	} else if (size > jabber_ibb_session_get_block_size(sess)) {
+	} else if (size > jabber_ibb_session_get_max_data_size(sess)) {
 		purple_debug_error("jabber",
 			"trying to send a too large packet in the IBB session\n");
 	} else {
@@ -333,7 +342,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 		g_snprintf(seq, sizeof(seq), "%u", jabber_ibb_session_get_send_seq(sess));
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(data_element, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(data_element, NS_IBB);
 		xmlnode_set_attrib(data_element, "sid", jabber_ibb_session_get_sid(sess));
 		xmlnode_set_attrib(data_element, "seq", seq);
 		xmlnode_insert_data(data_element, base64, -1);
@@ -361,8 +370,7 @@ jabber_ibb_send_error_response(JabberStream *js, const char *to, const char *id)
 	xmlnode *error = xmlnode_new("error");
 	xmlnode *item_not_found = xmlnode_new("item-not-found");
 
-	xmlnode_set_namespace(item_not_found,
-		"urn:ietf:params:xml:ns:xmpp-stanzas");
+	xmlnode_set_namespace(item_not_found, NS_XMPP_STANZAS);
 	xmlnode_set_attrib(error, "code", "440");
 	xmlnode_set_attrib(error, "type", "cancel");
 	jabber_iq_set_id(result, id);
@@ -417,6 +425,10 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 						purple_debug_info("jabber",
 							"got %" G_GSIZE_FORMAT " bytes of data on IBB stream\n",
 							size);
+						/* we accept other clients to send up to block-size
+						 of _unencoded_ data, since there's been some confusions
+						 regarding the interpretation of this attribute
+						 (including previous versions of libpurple) */
 						if (size > jabber_ibb_session_get_block_size(sess)) {
 							purple_debug_error("jabber",
 								"IBB: received a too large packet\n");
@@ -507,11 +519,11 @@ jabber_ibb_init(void)
 {
 	jabber_ibb_sessions = g_hash_table_new(g_str_hash, g_str_equal);
 
-	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
+	jabber_add_feature(NS_IBB, NULL);
 
-	jabber_iq_register_handler("close", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("data", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("open", XEP_0047_NAMESPACE, jabber_ibb_parse);
+	jabber_iq_register_handler("close", NS_IBB, jabber_ibb_parse);
+	jabber_iq_register_handler("data", NS_IBB, jabber_ibb_parse);
+	jabber_iq_register_handler("open", NS_IBB, jabber_ibb_parse);
 }
 
 void

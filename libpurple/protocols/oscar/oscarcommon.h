@@ -24,16 +24,26 @@
  * and libicq.c
  */
 
-#include "accountopt.h"
 #include "internal.h"
+
+#include "accountopt.h"
 #include "prpl.h"
 #include "version.h"
 #include "notify.h"
+#include "status.h"
 
-#define OSCAR_DEFAULT_LOGIN_SERVER "login.messaging.aol.com"
+#define AIM_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define AIM_ALT_LOGIN_SERVER "login.messaging.aol.com"
+#define AIM_DEFAULT_SSL_LOGIN_SERVER "slogin.oscar.aol.com"
+#define ICQ_DEFAULT_LOGIN_SERVER "login.icq.com"
+#define ICQ_DEFAULT_SSL_LOGIN_SERVER "slogin.icq.com"
+
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
-#define OSCAR_DEFAULT_SSL_LOGIN_SERVER "slogin.oscar.aol.com"
-#define OSCAR_OLD_LOGIN_SERVER "login.oscar.aol.com"
+
+#define OSCAR_OPPORTUNISTIC_ENCRYPTION "opportunistic_encryption"
+#define OSCAR_REQUIRE_ENCRYPTION "require_encryption"
+#define OSCAR_NO_ENCRYPTION "no_encryption"
+
 #ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
 #else
@@ -44,12 +54,13 @@
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 #define OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS TRUE
-#define OSCAR_DEFAULT_USE_SSL FALSE
-#define OSCAR_DEFAULT_USE_CLIENTLOGIN FALSE
+#define OSCAR_DEFAULT_USE_CLIENTLOGIN TRUE
+#define OSCAR_DEFAULT_ENCRYPTION OSCAR_OPPORTUNISTIC_ENCRYPTION
 
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
 #endif
+PurpleMood* oscar_get_purple_moods(PurpleAccount *account);
 const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b);
 const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b);
 const char* oscar_list_emblem(PurpleBuddy *b);
@@ -68,13 +79,12 @@ void oscar_get_info(PurpleConnection *gc, const char *name);
 void oscar_set_status(PurpleAccount *account, PurpleStatus *status);
 void oscar_set_idle(PurpleConnection *gc, int time);
 void oscar_change_passwd(PurpleConnection *gc, const char *old, const char *new);
-void oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *msg);
 void oscar_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void oscar_add_permit(PurpleConnection *gc, const char *who);
 void oscar_add_deny(PurpleConnection *gc, const char *who);
 void oscar_rem_permit(PurpleConnection *gc, const char *who);
 void oscar_rem_deny(PurpleConnection *gc, const char *who);
-void oscar_set_permit_deny(PurpleConnection *gc);
 void oscar_join_chat(PurpleConnection *gc, GHashTable *data);
 char *oscar_get_chat_name(GHashTable *data);
 void oscar_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name);
@@ -92,6 +102,5 @@ gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
 void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
 PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
-void oscar_format_username(PurpleConnection *gc, const char *nick);
 GList *oscar_actions(PurplePlugin *plugin, gpointer context);
-void oscar_init(PurplePluginProtocolInfo *prpl_info);
+void oscar_init(PurplePlugin *plugin, gboolean is_icq);

@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 
 #include "account.h"
 #include "core.h"
@@ -107,7 +107,6 @@ finch_connection_report_disconnect(PurpleConnection *gc, PurpleConnectionError r
 {
 	FinchAutoRecon *info;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	GList *list;
 
 	if (!purple_connection_error_is_fatal(reason)) {
 		info = g_hash_table_lookup(hash, account);
@@ -144,21 +143,6 @@ finch_connection_report_disconnect(PurpleConnection *gc, PurpleConnectionError r
 		g_free(secondary);
 		purple_account_set_enabled(account, FINCH_UI, FALSE);
 	}
-
-	/* If we have any open chats, we probably want to rejoin when we get back online. */
-	list = purple_get_chats();
-	while (list) {
-		PurpleConversation *conv = list->data;
-		list = list->next;
-		if (purple_conversation_get_account(conv) != account ||
-				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-			continue;
-		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
-		purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-					"longer in this chat. You will be automatically rejoined in the chat when "
-					"the account reconnects."),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
-	}
 }
 
 static void
@@ -175,13 +159,12 @@ finch_connection_get_handle(void)
 	return &handle;
 }
 
-static PurpleConnectionUiOps ops = 
+static PurpleConnectionUiOps ops =
 {
 	NULL, /* connect_progress */
 	NULL, /* connected */
 	NULL, /* disconnected */
 	NULL, /* notice */
-	NULL,
 	NULL, /* network_connected */
 	NULL, /* network_disconnected */
 	finch_connection_report_disconnect,

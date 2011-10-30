@@ -51,7 +51,7 @@ void gnt_ui_init()
 #endif
 
 	purple_prefs_add_none("/purple/gnt");
-	
+
 	/* Accounts */
 	finch_accounts_init();
 	purple_accounts_set_ui_ops(finch_accounts_get_ui_ops());

@@ -202,6 +202,8 @@ static void
 jingle_iceudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleIceUdp *iceudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_ICEUDP(object));
 
 	iceudp = JINGLE_ICEUDP(object);
@@ -215,7 +217,7 @@ jingle_iceudp_set_property (GObject *object, guint prop_id, const GValue *value,
 			iceudp->priv->remote_candidates =
 					g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -225,8 +227,10 @@ static void
 jingle_iceudp_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleIceUdp *iceudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_ICEUDP(object));
-	
+
 	iceudp = JINGLE_ICEUDP(object);
 
 	switch (prop_id) {
@@ -236,8 +240,8 @@ jingle_iceudp_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		case PROP_REMOTE_CANDIDATES:
 			g_value_set_pointer(value, iceudp->priv->remote_candidates);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }

@@ -27,6 +27,24 @@
 
 #include "cipher.h"
 
+/*
+ * Each time we make a FLAP connection to an oscar server the server gives
+ * us a list of rate classes.  Each rate class has different properties for
+ * how frequently we can send SNACs in that rate class before we become
+ * throttled or disconnected.
+ *
+ * The server also gives us a list of every available SNAC and tells us which
+ * rate class it's in.  There are a lot of different SNACs, so this list can be
+ * fairly large.  One important characteristic of these rate classes is that
+ * currently (and since at least 2004) most SNACs are in the same rate class.
+ *
+ * One optimization we can do to save memory is to only keep track of SNACs
+ * that are in classes other than this default rate class.  So if we try to
+ * look up a SNAC and it's not in our hash table then we can assume that it's
+ * in the default rate class.
+ */
+#define OSCAR_DEFAULT_RATECLASS 1
+
 /* Subtype 0x0002 - Client Online */
 void
 aim_srv_clientready(OscarData *od, FlapConnection *conn)
@@ -55,7 +73,7 @@ aim_srv_clientready(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -79,7 +97,7 @@ hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 {
 	int group;
 
-	while (byte_stream_empty(bs))
+	while (byte_stream_bytes_left(bs))
 	{
 		group = byte_stream_get16(bs);
 		conn->groups = g_slist_prepend(conn->groups, GUINT_TO_POINTER(group));
@@ -123,7 +141,7 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -169,7 +187,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, &csi, sizeof(csi));
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -319,8 +337,11 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	for (i = 0; i < numclasses; i++)
 	{
 		struct rateclass *rateclass;
+		guint32 delta;
+		struct timeval now;
 
-		rateclass = g_new0(struct rateclass, 1);
+		gettimeofday(&now, NULL);
+		rateclass = g_new(struct rateclass, 1);
 
 		rateclass->classid = byte_stream_get16(bs);
 		rateclass->windowsize = byte_stream_get32(bs);
@@ -330,21 +351,21 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		rateclass->disconnect = byte_stream_get32(bs);
 		rateclass->current = byte_stream_get32(bs);
 		rateclass->max = byte_stream_get32(bs);
+		if (mod->version >= 3) {
+			delta = byte_stream_get32(bs);
+			rateclass->dropping_snacs = byte_stream_get8(bs);
+		} else {
+			delta = 0;
+			rateclass->dropping_snacs = 0;
+		}
 
-		/*
-		 * The server will send an extra five bytes of parameters
-		 * depending on the version we advertised in 1/17.  If we
-		 * didn't send 1/17 (evil!), then this will crash and you
-		 * die, as it will default to the old version but we have
-		 * the new version hardcoded here.
-		 */
-		if (mod->version >= 3)
-			byte_stream_getrawbuf(bs, rateclass->unknown, sizeof(rateclass->unknown));
+		rateclass->last.tv_sec = now.tv_sec - delta / 1000;
+		rateclass->last.tv_usec = now.tv_usec - (delta % 1000) * 1000;
 
-		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
-		rateclass->last.tv_sec = 0;
-		rateclass->last.tv_usec = 0;
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
+
+		if (rateclass->classid == OSCAR_DEFAULT_RATECLASS)
+			conn->default_rateclass = rateclass;
 	}
 	conn->rateclasses = g_slist_reverse(conn->rateclasses);
 
@@ -360,6 +381,15 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		classid = byte_stream_get16(bs);
 		count = byte_stream_get16(bs);
 
+		if (classid == OSCAR_DEFAULT_RATECLASS) {
+			/*
+			 * Don't bother adding these SNACs to the hash table.  See the
+			 * comment for OSCAR_DEFAULT_RATECLASS at the top of this file.
+			 */
+			byte_stream_advance(bs, 4 * count);
+			continue;
+		}
+
 		rateclass = rateclass_find(conn->rateclasses, classid);
 
 		for (j = 0; j < count; j++)
@@ -370,9 +400,9 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 			subtype = byte_stream_get16(bs);
 
 			if (rateclass != NULL)
-				g_hash_table_insert(rateclass->members,
+				g_hash_table_insert(conn->rateclass_members,
 						GUINT_TO_POINTER((group << 16) + subtype),
-						GUINT_TO_POINTER(TRUE));
+						rateclass);
 		}
 	}
 
@@ -383,8 +413,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 */
 
 	/*
-	 * Last step in the conn init procedure is to acknowledge that we
-	 * agree to these draconian limitations.
+	 * Subscribe to rate change information for all rate classes.
 	 */
 	aim_srv_rates_addparam(od, conn);
 
@@ -415,30 +444,7 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-}
-
-/* Subtype 0x0009 - Delete Rate Parameter */
-void
-aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tmp;
-
-	byte_stream_new(&bs, 502);
-
-	for (tmp = conn->rateclasses; tmp != NULL; tmp = tmp->next)
-	{
-		struct rateclass *rateclass;
-		rateclass = tmp->data;
-		byte_stream_put16(&bs, rateclass->classid);
-	}
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -447,11 +453,19 @@ aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
 static int
 ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
 	guint16 code, classid;
 	struct rateclass *rateclass;
+	guint32 delta;
+	struct timeval now;
+	static const char *codes[5] = {
+		"invalid",
+		"change",
+		"warning",
+		"limit",
+		"limit cleared",
+	};
 
+	gettimeofday(&now, NULL);
 	code = byte_stream_get16(bs);
 	classid = byte_stream_get16(bs);
 
@@ -467,11 +481,32 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	rateclass->disconnect = byte_stream_get32(bs);
 	rateclass->current = byte_stream_get32(bs);
 	rateclass->max = byte_stream_get32(bs);
+	if (mod->version >= 3) {
+		delta = byte_stream_get32(bs);
+		rateclass->dropping_snacs = byte_stream_get8(bs);
+	} else {
+		delta = 0;
+		rateclass->dropping_snacs = 0;
+	}
 
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, code, classid, rateclass->windowsize, rateclass->clear, rateclass->alert, rateclass->limit, rateclass->disconnect, rateclass->current, rateclass->max);
+	rateclass->last.tv_sec = now.tv_sec - delta / 1000;
+	rateclass->last.tv_usec = now.tv_usec - (delta % 1000) * 1000;
 
-	return ret;
+	purple_debug_misc("oscar", "rate %s (param ID 0x%04hx): curavg = %u, "
+			"maxavg = %u, alert at %u, clear warning at %u, limit at %u, "
+			"disconnect at %u, delta is %u, dropping is %u (window size = %u)\n",
+			(code < 5) ? codes[code] : codes[0], rateclass->classid,
+			rateclass->current, rateclass->max, rateclass->alert,
+			rateclass->clear, rateclass->limit, rateclass->disconnect,
+			delta, rateclass->dropping_snacs, rateclass->windowsize);
+
+	if (code == AIM_RATE_CODE_LIMIT) {
+		purple_debug_warning("oscar",  "The last action you attempted "
+				"could not be performed because you are over the rate "
+				"limit. Please wait 10 seconds and try again.\n");
+	}
+
+	return 1;
 }
 
 /*
@@ -498,40 +533,6 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		ret = userfunc(od, conn, frame);
 
 	return ret;
-}
-
-/*
- * Subtype 0x000c - Service Pause Acknowledgement
- *
- * It is rather important that aim_srv_sendpauseack() gets called for the exact
- * same connection that the Server Pause callback was called for, since
- * libfaim extracts the data for the SNAC from the connection structure.
- *
- * Of course, if you don't do that, more bad things happen than just what
- * libfaim can cause.
- *
- */
-void
-aim_srv_sendpauseack(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *cur;
-
-	byte_stream_new(&bs, 1014);
-
-	/*
-	 * This list should have all the groups that the original
-	 * Host Online / Server Ready said this host supports.  And
-	 * we want them all back after the migration.
-	 */
-	for (cur = conn->groups; cur != NULL; cur = cur->next)
-		byte_stream_put16(&bs, GPOINTER_TO_UINT(cur->data));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
 }
 
 /* Subtype 0x000d - Service Resume */
@@ -585,7 +586,7 @@ evilnotify(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 	newevil = byte_stream_get16(bs);
 
-	if (byte_stream_empty(bs))
+	if (byte_stream_bytes_left(bs))
 		aim_info_extract(od, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
@@ -712,36 +713,6 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 }
 
 /*
- * Subtype 0x0014 - Set privacy flags
- *
- * Normally 0x03.
- *
- *  Bit 1:  Allows other AIM users to see how long you've been idle.
- *  Bit 2:  Allows other AIM users to see how long you've been a member.
- *
- */
-void
-aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
-{
-	aim_genericreq_l(od, conn, SNAC_FAMILY_OSERVICE, 0x0014, &flags);
-}
-
-/*
- * Subtype 0x0016 - No-op
- *
- * WinAIM sends these every 4min or so to keep the connection alive.  Its not
- * really necessary.
- *
- * Wha?  No?  Since when?  I think WinAIM sends an empty channel 5
- * FLAP as a no-op...
- */
-void
-aim_srv_nop(OscarData *od, FlapConnection *conn)
-{
-	aim_genericreq_n(od, conn, SNAC_FAMILY_OSERVICE, 0x0016);
-}
-
-/*
  * Subtype 0x0017 - Set client versions
  *
  * If you've seen the clientonline/clientready SNAC you're probably
@@ -779,7 +750,7 @@ aim_srv_setversions(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -792,8 +763,8 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	guint8 *versions;
 
 	/* This is frivolous. (Thank you SmarterChild.) */
-	vercount = byte_stream_empty(bs)/4;
-	versions = byte_stream_getraw(bs, byte_stream_empty(bs));
+	vercount = byte_stream_bytes_left(bs)/4;
+	versions = byte_stream_getraw(bs, byte_stream_bytes_left(bs));
 	g_free(versions);
 
 	/*
@@ -841,16 +812,6 @@ aim_srv_setextrainfo(OscarData *od,
 				AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH);
 	}
 
-#if 0
-	if (other_stuff_that_isnt_implemented)
-	{
-		aim_tlvlist_add_raw(&tlvlist, 0x000c, 0x0025,
-				chunk_of_x25_bytes_with_ip_address_etc);
-		aim_tlvlist_add_raw(&tlvlist, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
-		aim_tlvlist_add_16(&tlvlist, 0x0012, unknown 0x00 00);
-	}
-#endif
-
 	if (setstatusmsg)
 	{
 		size_t statusmsglen, itmsurllen;
@@ -874,11 +835,55 @@ aim_srv_setextrainfo(OscarData *od,
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
 	return 0;
+}
+
+/* Send dummy DC (direct connect) information to the server.
+ * Direct connect is ICQ's counterpart for AIM's DirectIM,
+ * as far as I can tell. Anyway, we don't support it;
+ * the reason to send this packet is that some clients
+ * (Miranda, QIP) won't send us channel 2 ICBM messages
+ * unless we specify DC version >= 8.
+ *
+ * See #12044 for more information.
+ */
+void
+aim_srv_set_dc_info(OscarData *od)
+{
+	ByteStream bs, tlv0c;
+	aim_snacid_t snacid;
+	GSList *tlvlist = NULL;
+
+	/* http://iserverd.khstu.ru/oscar/snac_01_1e.html has a nice analysis of what goes in 0xc tlv.
+	 * Kopete sends a dummy DC info, too, so I just copied the values from them.
+	 */
+	byte_stream_new(&tlv0c, 4*2 + 1 + 2 + 4*6 + 2);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put8(&tlv0c, 0x0); /* We don't support DC */
+	byte_stream_put16(&tlv0c, 8); /* DC version */
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x50);
+	byte_stream_put32(&tlv0c, 0x3);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put16(&tlv0c, 0x0);
+	aim_tlvlist_add_raw(&tlvlist, 0x000c, byte_stream_curpos(&tlv0c), tlv0c.data);
+	byte_stream_destroy(&tlv0c);
+
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
+	aim_tlvlist_write(&bs, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -1019,7 +1024,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1036,39 +1041,48 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 static int
 aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
-	guint16 type;
-	guint8 flags, length;
+	guint16 type = byte_stream_get16(bs);
+	if (type == 0x0000 || type == 0x0001) {
+		/* buddy icon checksum */
+		/* not sure what the difference between 1 and 0 is */
+		guint8 flags = byte_stream_get8(bs);
+		guint8 length = byte_stream_get8(bs);
+		guint8 *md5 = byte_stream_getraw(bs, length);
 
-	type = byte_stream_get16(bs);
-	flags = byte_stream_get8(bs);
-	length = byte_stream_get8(bs);
+		if ((flags == 0x00) || (flags == 0x41)) {
+			if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
+				od->iconconnecting = TRUE;
+				od->set_icon = TRUE;
+				aim_srv_requestnew(od, SNAC_FAMILY_BART);
+			} else {
+				PurpleAccount *account = purple_connection_get_account(od->gc);
+				PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+				if (img == NULL) {
+					aim_ssi_delicon(od);
+				} else {
 
-	/*
-	 * A flag of 0x01 could mean "this is the checksum we have for you"
-	 * A flag of 0x40 could mean "I don't have your icon, upload it"
-	 */
-
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
-		switch (type) {
-		case 0x0000:
-		case 0x0001: { /* buddy icon checksum */
-			/* not sure what the difference between 1 and 0 is */
-			guint8 *md5 = byte_stream_getraw(bs, length);
-			ret = userfunc(od, conn, frame, type, flags, length, md5);
-			g_free(md5);
-			} break;
-		case 0x0002: { /* available message */
-			/* there is a second length that is just for the message */
-			char *msg = byte_stream_getstr(bs, byte_stream_get16(bs));
-			ret = userfunc(od, conn, frame, msg);
-			g_free(msg);
-			} break;
+					purple_debug_info("oscar",
+									"Uploading icon to icon server\n");
+					aim_bart_upload(od, purple_imgstore_get_data(img),
+							purple_imgstore_get_size(img));
+					purple_imgstore_unref(img);
+				}
+			}
+		} else if (flags == 0x81) {
+			PurpleAccount *account = purple_connection_get_account(od->gc);
+			PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+			if (img == NULL)
+				aim_ssi_delicon(od);
+			else {
+				aim_ssi_seticon(od, md5, length);
+				purple_imgstore_unref(img);
+			}
 		}
+
+		g_free(md5);
 	}
 
-	return ret;
+	return 0;
 }
 
 static int

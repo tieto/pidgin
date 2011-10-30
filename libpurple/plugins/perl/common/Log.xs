@@ -6,7 +6,7 @@ PROTOTYPES: ENABLE
 BOOT:
 {
 	HV *type_stash = gv_stashpv("Purple::Log::Type", 1);
-	HV *flags_stash = gv_stashpv("Purple::Log:ReadFlags::", 1);
+	HV *flags_stash = gv_stashpv("Purple::Log::ReadFlags", 1);
 
 	static const constiv *civ, type_const_iv[] = {
 #define const_iv(name) {#name, (IV)PURPLE_LOG_##name}
@@ -26,6 +26,9 @@ BOOT:
 	for (civ = flags_const_iv + sizeof(flags_const_iv) / sizeof(flags_const_iv[0]); civ-- > flags_const_iv; )
 		newCONSTSUB(flags_stash, (char *)civ->name, newSViv(civ->iv));
 }
+
+Purple::Handle
+purple_log_get_handle()
 
 int
 purple_log_common_sizer(log)

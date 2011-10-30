@@ -40,6 +40,8 @@ START_TEST(test_nodeprep_validate)
 	fail_unless(jabber_nodeprep_validate("foo"));
 	fail_unless(jabber_nodeprep_validate("%d"));
 	fail_unless(jabber_nodeprep_validate("y\\z"));
+	fail_unless(jabber_nodeprep_validate("a="));
+	fail_unless(jabber_nodeprep_validate("a,"));
 
 	longnode = g_strnfill(1023, 'a');
 	fail_unless(jabber_nodeprep_validate(longnode));
@@ -118,6 +120,8 @@ START_TEST(test_jabber_id_new)
 	assert_valid_jid("paul@[::1]"); /* IPv6 */
 	assert_valid_jid("paul@[2001:470:1f05:d58::2]");
 	assert_valid_jid("paul@[2001:470:1f05:d58::2]/foo");
+	assert_valid_jid("pa=ul@10.0.42.230");
+	assert_valid_jid("pa,ul@10.0.42.230");
 
 	assert_invalid_jid("@gmail.com");
 	assert_invalid_jid("@@gmail.com");
@@ -132,6 +136,15 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
 	assert_invalid_jid("paul@[::1]124");
 	assert_invalid_jid("paul@2[::1]124/as");
+	assert_invalid_jid("paul@まつ.おおかみ/\x01");
+
+	/*
+	 * RFC 3454 Section 6 reads, in part,
+	 * "If a string contains any RandALCat character, the
+	 *  string MUST NOT contain any LCat character."
+	 * The character is U+066D (ARABIC FIVE POINTED STAR).
+	 */
+	assert_invalid_jid("foo@example.com/٭simplexe٭");
 
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
 	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
@@ -141,15 +154,30 @@ START_TEST(test_jabber_id_new)
 
 	/* Cyrillic capital EF (U+0424) maps to lowercase EF (U+0444) */
 	assert_jid_parts("ф", "darkrain42.org", "Ф@darkrain42.org");
+
+#ifdef USE_IDN
 	/*
 	 * These character (U+A664 and U+A665) are not mapped to anything in
 	 * RFC3454 B.2. This first test *fails* when not using IDN because glib's
-	 * case-folding/utf8_strdown improperly lowercases the character.
+	 * case-folding/utf8_strdown improperly (for XMPP) lowercases the character.
+	 *
+	 * This is known, but not (very?) likely to actually cause a problem, so
+	 * this test is commented out when using glib's functions.
 	 */
 	assert_jid_parts("Ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
 	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
+#endif
+
 	/* U+04E9 to U+04E9 */
 	assert_jid_parts("paul", "өarkrain42.org", "paul@Өarkrain42.org");
+}
+END_TEST
+
+START_TEST(test_jabber_normalize)
+{
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/resource"));
 }
 END_TEST
 
@@ -172,6 +200,7 @@ jabber_jutil_suite(void)
 	tcase_add_test(tc, test_nodeprep_validate_illegal_chars);
 	tcase_add_test(tc, test_nodeprep_validate_too_long);
 	tcase_add_test(tc, test_jabber_id_new);
+	tcase_add_test(tc, test_jabber_normalize);
 	suite_add_tcase(s, tc);
 
 	return s;

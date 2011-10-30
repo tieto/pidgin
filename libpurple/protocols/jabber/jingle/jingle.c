@@ -29,15 +29,22 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
-#include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
 
+#include <string.h>
+#ifdef USE_VV
+#include <gst/gst.h>
+#endif
+
 GType
 jingle_get_type(const gchar *type)
 {
+	if (type == NULL)
+		return G_TYPE_NONE;
+
 	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
@@ -94,7 +101,8 @@ jingle_handle_content_add(JingleSession *session, xmlnode *jingle)
 		if (pending_content == NULL) {
 			purple_debug_error("jingle",
 					"Error parsing \"content-add\" content.\n");
-			/* XXX: send error here */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_session_add_pending_content(session,
 					pending_content);
@@ -115,7 +123,7 @@ jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
 		JingleContent *local_content = jingle_session_find_content(session, name, creator);
 
-		if (content != NULL) {
+		if (local_content != NULL) {
 			const gchar *senders = xmlnode_get_attrib(content, "senders");
 			gchar *local_senders = jingle_content_get_senders(local_content);
 			if (strcmp(senders, local_senders))
@@ -123,7 +131,8 @@ jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
 			g_free(local_senders);
 		} else {
 			purple_debug_error("jingle", "content_modify: unknown content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unknown-applications"));
 		}
 	}
 }
@@ -164,7 +173,7 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -172,7 +181,8 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_DESCRIPTION_INFO);
@@ -194,7 +204,7 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -202,7 +212,8 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_SESSION_ACCEPT);
@@ -226,7 +237,8 @@ jingle_handle_session_initiate(JingleSession *session, xmlnode *jingle)
 		JingleContent *parsed_content = jingle_content_parse(content);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_session_add_content(session, parsed_content);
 			jingle_content_handle_action(parsed_content, content,
@@ -254,7 +266,7 @@ jingle_handle_transport_accept(JingleSession *session, xmlnode *jingle)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -273,11 +285,12 @@ jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
-		JingleContent *parsed_content = 
+		JingleContent *parsed_content =
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_TRANSPORT_INFO);
@@ -291,7 +304,7 @@ jingle_handle_transport_reject(JingleSession *session, xmlnode *jingle)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -430,32 +443,91 @@ jingle_terminate_sessions(JabberStream *js)
 				jingle_terminate_sessions_gh, NULL);
 }
 
+#ifdef USE_VV
+static GValueArray *
+jingle_create_relay_info(const gchar *ip, guint port, const gchar *username,
+	const gchar *password, const gchar *relay_type, GValueArray *relay_info)
+{
+	GValue value;
+	GstStructure *turn_setup = gst_structure_new("relay-info",
+		"ip", G_TYPE_STRING, ip,
+		"port", G_TYPE_UINT, port,
+		"username", G_TYPE_STRING, username,
+		"password", G_TYPE_STRING, password,
+		"relay-type", G_TYPE_STRING, relay_type,
+		NULL);
+	purple_debug_info("jabber", "created gst_structure %" GST_PTR_FORMAT "\n",
+		turn_setup);
+	if (turn_setup) {
+		memset(&value, 0, sizeof(GValue));
+		g_value_init(&value, GST_TYPE_STRUCTURE);
+		gst_value_set_structure(&value, turn_setup);
+		relay_info = g_value_array_append(relay_info, &value);
+		gst_structure_free(turn_setup);
+	}
+	return relay_info;
+}
+
 GParameter *
-jingle_get_params(JabberStream *js, guint *num)
+jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
+	guint relay_tcp, guint relay_ssltcp, const gchar *relay_username,
+    const gchar *relay_password, guint *num)
 {
 	/* don't set a STUN server if one is set globally in prefs, in that case
 	 this will be handled in media.c */
 	gboolean has_account_stun = js->stun_ip && !purple_network_get_stun_ip();
-	guint num_params = has_account_stun ? 2 : 0;
+	guint num_params = has_account_stun ?
+		(relay_ip ? 3 : 2) : (relay_ip ? 1 : 0);
 	GParameter *params = NULL;
+	int next_index = 0;
 
 	if (num_params > 0) {
 		params = g_new0(GParameter, num_params);
 
-		purple_debug_info("jabber", 
-						  "setting param stun-ip for stream using Google auto-config: %s\n",
-						  js->stun_ip);
-		params[0].name = "stun-ip";
-		g_value_init(&params[0].value, G_TYPE_STRING);
-		g_value_set_string(&params[0].value, js->stun_ip);
-		purple_debug_info("jabber", 
-						  "setting param stun-port for stream using Google auto-config: %d\n",
-						  js->stun_port);
-		params[1].name = "stun-port";
-		g_value_init(&params[1].value, G_TYPE_UINT);
-		g_value_set_uint(&params[1].value, js->stun_port);
+		if (has_account_stun) {
+			purple_debug_info("jabber",
+				"setting param stun-ip for stream using Google auto-config: %s\n",
+				js->stun_ip);
+			params[next_index].name = "stun-ip";
+			g_value_init(&params[next_index].value, G_TYPE_STRING);
+			g_value_set_string(&params[next_index].value, js->stun_ip);
+			purple_debug_info("jabber",
+				"setting param stun-port for stream using Google auto-config: %d\n",
+				js->stun_port);
+			next_index++;
+			params[next_index].name = "stun-port";
+			g_value_init(&params[next_index].value, G_TYPE_UINT);
+			g_value_set_uint(&params[next_index].value, js->stun_port);
+			next_index++;
+		}
+
+		if (relay_ip) {
+			GValueArray *relay_info = g_value_array_new(0);
+
+			if (relay_udp) {
+				relay_info =
+					jingle_create_relay_info(relay_ip, relay_udp, relay_username,
+						relay_password, "udp", relay_info);
+			}
+			if (relay_tcp) {
+				relay_info =
+					jingle_create_relay_info(relay_ip, relay_tcp, relay_username,
+						relay_password, "tcp", relay_info);
+			}
+			if (relay_ssltcp) {
+				relay_info =
+					jingle_create_relay_info(relay_ip, relay_ssltcp, relay_username,
+						relay_password, "tls", relay_info);
+			}
+			params[next_index].name = "relay-info";
+			g_value_init(&params[next_index].value, G_TYPE_VALUE_ARRAY);
+			g_value_set_boxed(&params[next_index].value, relay_info);
+			g_value_array_free(relay_info);
+		}
 	}
 
 	*num = num_params;
 	return params;
 }
+#endif
+

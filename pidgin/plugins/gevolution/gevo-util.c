@@ -35,19 +35,21 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
 
-	if ((group = purple_find_group(group_name)) == NULL)
+	group = purple_find_group(group_name);
+	if (group == NULL)
 	{
 		group = purple_group_new(group_name);
 		purple_blist_add_group(group, NULL);
 	}
 
-	if ((buddy = purple_find_buddy_in_group(account, buddy_name, group)))
-	{	
+	buddy = purple_find_buddy_in_group(account, buddy_name, group);
+	if (buddy == NULL)
+	{
 		buddy = purple_buddy_new(account, buddy_name, alias);
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
-	purple_account_add_buddy(account, buddy);
+	purple_account_add_buddy(account, buddy, NULL);
 
 	if (conv != NULL)
 	{
@@ -97,23 +99,7 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 
 	protocol_id = purple_account_get_protocol_id(account);
 
-	if (!strcmp(protocol_id, "prpl-oscar"))
-	{
-		PurpleConnection *gc;
-		PurplePluginProtocolInfo *prpl_info;
-
-		gc = purple_account_get_connection(account);
-
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		if (!strcmp("aim", prpl_info->list_icon(account, buddy)))
-		{
-			protocol_field = E_CONTACT_IM_AIM;
-		}
-		else
-			protocol_field = E_CONTACT_IM_ICQ;
-	}
-	else if (!strcmp(protocol_id, "prpl-aim"))
+	if (!strcmp(protocol_id, "prpl-aim"))
 		protocol_field = E_CONTACT_IM_AIM;
 	else if (!strcmp(protocol_id, "prpl-icq"))
 		protocol_field = E_CONTACT_IM_ICQ;
@@ -125,6 +111,8 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 		protocol_field = E_CONTACT_IM_JABBER;
 	else if (!strcmp(protocol_id, "prpl-novell"))
 		protocol_field = E_CONTACT_IM_GROUPWISE;
+	else if (!strcmp(protocol_id, "prpl-gg"))
+		protocol_field = E_CONTACT_IM_GADUGADU;
 
 	return protocol_field;
 }
