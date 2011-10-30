@@ -508,7 +508,7 @@ peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
-	conn->xfer->fd = conn->fd;
+	purple_xfer_set_fd(conn->xfer, conn->fd);
 	conn->fd = -1;
 	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
 	peer_connection_schedule_destroy(conn, conn->disconnect_reason, NULL);
@@ -602,8 +602,8 @@ peer_oft_recvcb_end(PurpleXfer *xfer)
 	conn = purple_xfer_get_protocol_data(xfer);
 
 	/* Tell the other person that we've received everything */
-	conn->fd = conn->xfer->fd;
-	conn->xfer->fd = -1;
+	conn->fd = purple_xfer_get_fd(conn->xfer);
+	purple_xfer_set_fd(conn->xfer, -1);
 	peer_oft_send_done(conn);
 
 	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
@@ -721,9 +721,9 @@ peer_oft_sendcb_ack(PurpleXfer *xfer, const guchar *buffer, size_t size)
 	 */
 	if (purple_xfer_get_bytes_remaining(xfer) <= 0)
 	{
-		purple_input_remove(xfer->watcher);
-		conn->fd = xfer->fd;
-		xfer->fd = -1;
+		purple_input_remove(purple_xfer_get_watcher(xfer));
+		conn->fd = purple_xfer_get_fd(xfer);
+		purple_xfer_set_fd(xfer, -1);
 		conn->watcher_incoming = purple_input_add(conn->fd,
 				PURPLE_INPUT_READ, peer_connection_recv_cb, conn);
 	}
