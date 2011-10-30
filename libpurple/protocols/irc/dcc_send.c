@@ -258,8 +258,8 @@ static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCon
 		return;
 	}
 
-	purple_input_remove(xfer->watcher);
-	xfer->watcher = 0;
+	purple_input_remove(purple_xfer_get_watcher(xfer));
+	purple_xfer_set_watcher(xfer, 0);
 	close(xd->fd);
 	xd->fd = -1;
 
@@ -313,8 +313,8 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	port = purple_network_get_port_from_fd(sock);
 	purple_debug_misc("irc", "port is %hu\n", port);
 	/* Monitor the listening socket */
-	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-	                                 irc_dccsend_send_connected, xfer);
+	purple_xfer_set_watcher(xfer, purple_input_add(sock, PURPLE_INPUT_READ,
+	                                 irc_dccsend_send_connected, xfer));
 
 	/* Send the intended recipient the DCC request */
 	arg[0] = purple_xfer_get_remote_user(xfer);
