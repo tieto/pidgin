@@ -169,7 +169,7 @@ static void yahoo_receivefile_connected(gpointer data, gint source, const gchar 
 		return;
 	}
 
-	xfer->fd = source;
+	purple_xfer_set_fd(xfer, source);
 
 	/* The first time we get here, assemble the tx buffer */
 	if (xd->txbuflen == 0) {
@@ -250,7 +250,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 		return;
 	}
 
-	xfer->fd = source;
+	purple_xfer_set_fd(xfer, source);
 
 	/* Assemble the tx buffer */
 	gc = xd->gc;
@@ -340,7 +340,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 			}
 		}
 	} else {
-		xfer->fd = -1;
+		purple_xfer_set_fd(xfer, -1);
 		if (purple_proxy_connect(gc, account, xfer_data->host, xfer_data->port,
 		                              yahoo_receivefile_connected, xfer) == NULL) {
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
@@ -437,7 +437,7 @@ static gssize yahoo_xfer_read(guchar **buffer, PurpleXfer *xfer)
 		return 0;
 	}
 
-	len = read(xfer->fd, buf, sizeof(buf));
+	len = read(purple_xfer_get_fd(xfer), buf, sizeof(buf));
 
 	if (len <= 0) {
 		if ((purple_xfer_get_size(xfer) > 0) &&
@@ -500,7 +500,7 @@ static gssize yahoo_xfer_write(const guchar *buffer, size_t size, PurpleXfer *xf
 		return -1;
 	}
 
-	len = write(xfer->fd, buffer, size);
+	len = write(purple_xfer_get_fd(xfer), buffer, size);
 
 	if (len == -1) {
 		if (purple_xfer_get_bytes_sent(xfer) >= purple_xfer_get_size(xfer))
@@ -612,9 +612,10 @@ static void yahoo_p2p_ft_server_send_OK(PurpleXfer *xfer)
 {
 	char *tx = NULL;
 	int written;
+	int fd = purple_xfer_get_fd(xfer);
 
 	tx = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: application/octet-stream\r\nConnection: close\r\n\r\n";
-	written = write(xfer->fd, tx, strlen(tx));
+	written = write(fd, tx, strlen(tx));
 
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
@@ -622,8 +623,8 @@ static void yahoo_p2p_ft_server_send_OK(PurpleXfer *xfer)
 		purple_debug_info("yahoo", "p2p filetransfer: Unable to write HTTP OK");
 
 	/* close connection */
-	close(xfer->fd);
-	xfer->fd = -1;
+	close(fd);
+	purple_xfer_set_fd(xfer, -1);
 }
 
 static void yahoo_xfer_end(PurpleXfer *xfer_old)
@@ -639,7 +640,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 	   && xfer_data->filename_list) {
 
 		/* Send HTTP OK in case of p2p transfer, when we act as server */
-		if((xfer_data->xfer_url != NULL) && (xfer_old->fd >=0) && (purple_xfer_get_status(xfer_old) == PURPLE_XFER_STATUS_DONE))
+		if((xfer_data->xfer_url != NULL) && (purple_xfer_get_fd(xfer_old) >=0) && (purple_xfer_get_status(xfer_old) == PURPLE_XFER_STATUS_DONE))
 			yahoo_p2p_ft_server_send_OK(xfer_old);
 
 		/* removing top of filename & size list completely */
@@ -1195,13 +1196,13 @@ static void yahoo_xfer_send_cb_15(gpointer data, gint source, PurpleInputConditi
 	else if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE && xd->status_15 == HEAD_REPLY_RECEIVED)
 	{
 		xd->status_15 = TRANSFER_PHASE;
-		xfer->fd = source;
+		purple_xfer_set_fd(xfer, source);
 		purple_xfer_start(xfer, source, NULL, 0);
 	}
 	else if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && (xd->status_15 == ACCEPTED || xd->status_15 == P2P_GET_REQUESTED) )
 	{
 		xd->status_15 = TRANSFER_PHASE;
-		xfer->fd = source;
+		purple_xfer_set_fd(xfer, source);
 		/* Remove Read event */
 		purple_input_remove(xd->input_event);
 		xd->input_event = 0;
@@ -1214,7 +1215,7 @@ static void yahoo_xfer_send_cb_15(gpointer data, gint source, PurpleInputConditi
 		purple_input_remove(xd->input_event);
 		xd->input_event = 0;
 		close(source);
-		xfer->fd = -1;
+		purple_xfer_set_fd(xfer, -1);
 		/* start local server, listen for connections */
 		purple_network_listen(xd->yahoo_local_p2p_ft_server_port, AF_UNSPEC, SOCK_STREAM, TRUE, yahoo_p2p_ft_server_listen_cb, xfer);
 	}
@@ -1377,7 +1378,7 @@ static void yahoo_p2p_ft_POST_cb(gpointer data, gint source, PurpleInputConditio
 
 	purple_input_remove(xd->input_event);
 	xd->status_15 = TRANSFER_PHASE;
-	xfer->fd = source;
+	purple_xfer_set_fd(xfer, source);
 	purple_xfer_start(xfer, source, NULL, 0);
 }
 
@@ -1478,7 +1479,7 @@ static void yahoo_p2p_ft_server_send_connected_cb(gpointer data, gint source, Pu
 	close(xd->yahoo_local_p2p_ft_server_fd);
 
 	/* Add an Input Read event to the file descriptor */
-	xfer->fd = acceptfd;
+	purple_xfer_set_fd(xfer, acceptfd);
 	if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE)
 		xd->input_event = purple_input_add(acceptfd, PURPLE_INPUT_READ, yahoo_p2p_ft_POST_cb, data);
 	else
