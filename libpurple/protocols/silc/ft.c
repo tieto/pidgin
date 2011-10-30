@@ -86,7 +86,7 @@ silcpurple_ftp_monitor(SilcClient client,
 		purple_notify_error(gc, _("Secure File Transfer"),
 				    _("Error during file transfer"),
 				    _("Remote disconnected"));
-		xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_REMOTE;
+		purple_xfer_set_status(xfer->xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 		purple_xfer_update_progress(xfer->xfer);
 		silc_client_file_close(client, conn, session_id);
 		return;
@@ -122,7 +122,7 @@ silcpurple_ftp_monitor(SilcClient client,
 					  _("Error during file transfer"),
 					  _("File transfer session does not exist"));
 		}
-		xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_REMOTE;
+		purple_xfer_set_status(xfer->xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 		purple_xfer_update_progress(xfer->xfer);
 		silc_client_file_close(client, conn, session_id);
 		return;
@@ -154,7 +154,7 @@ silcpurple_ftp_cancel(PurpleXfer *x)
 	if (!xfer)
 		return;
 
-	xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_LOCAL;
+	purple_xfer_set_status(xfer->xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
 	purple_xfer_update_progress(xfer->xfer);
 	silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
 }
