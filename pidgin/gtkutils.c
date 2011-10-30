@@ -2134,8 +2134,8 @@ add_completion_list(PidginCompletionData *data)
 					add_buddyname_autocomplete_entry(data->store,
 														((PurpleContact *)cnode)->alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
-														entry.entry.buddy->account,
-														entry.entry.buddy->name
+														purple_buddy_get_account(entry.entry.buddy),
+														purple_buddy_get_name(entry.entry.buddy)
 													 );
 				}
 			}
@@ -2227,7 +2227,7 @@ pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *
 	gboolean all = GPOINTER_TO_INT(all_accounts);
 
 	if (completion_entry->is_buddy) {
-		return all || purple_account_is_connected(completion_entry->entry.buddy->account);
+		return all || purple_account_is_connected(purple_buddy_get_account(completion_entry->entry.buddy));
 	} else {
 		return all || (completion_entry->entry.logged_buddy->account != NULL && purple_account_is_connected(completion_entry->entry.logged_buddy->account));
 	}
