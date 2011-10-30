@@ -119,10 +119,10 @@ static void jabber_oob_xfer_start(PurpleXfer *xfer)
 		jox->written_len = 0;
 	}
 
-	jox->writeh = purple_input_add(xfer->fd, PURPLE_INPUT_WRITE,
+	jox->writeh = purple_input_add(purple_xfer_get_fd(xfer), PURPLE_INPUT_WRITE,
 		jabber_oob_xfer_request_send, xfer);
 
-	jabber_oob_xfer_request_send(xfer, xfer->fd, PURPLE_INPUT_WRITE);
+	jabber_oob_xfer_request_send(xfer, purple_xfer_get_fd(xfer), PURPLE_INPUT_WRITE);
 }
 
 static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
@@ -131,7 +131,7 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 	char *tmp, *lenstr;
 	int len;
 
-	if((len = read(xfer->fd, test, sizeof(test))) > 0) {
+	if((len = read(purple_xfer_get_fd(xfer), test, sizeof(test))) > 0) {
 		jox->headers = g_string_append_len(jox->headers, test, len);
 		if((tmp = strstr(jox->headers->str, "\r\n\r\n"))) {
 			*tmp = '\0';

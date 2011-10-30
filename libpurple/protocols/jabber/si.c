@@ -393,8 +393,8 @@ jabber_si_xfer_bytestreams_send_read_again_resp_cb(gpointer data, gint source,
 	if (jsx->rxlen < jsx->rxmaxlen)
 		return;
 
-	purple_input_remove(xfer->watcher);
-	xfer->watcher = 0;
+	purple_input_remove(purple_xfer_get_watcher(xfer));
+	purple_xfer_set_watcher(xfer, 0);
 	g_free(jsx->rxqueue);
 	jsx->rxqueue = NULL;
 
@@ -462,8 +462,8 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 	if(jsx->rxlen - 5 < jsx->rxqueue[4] + 2)
 		return;
 
-	purple_input_remove(xfer->watcher);
-	xfer->watcher = 0;
+	purple_input_remove(purple_xfer_get_watcher(xfer));
+	purple_xfer_set_watcher(xfer, 0);
 
 	dstaddr = g_strdup_printf("%s%s@%s/%s%s", jsx->stream_id,
 			jsx->js->user->node, jsx->js->user->domain,
@@ -508,8 +508,8 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 	jsx->rxqueue[5+strlen(host)] = 0x00;
 	jsx->rxqueue[6+strlen(host)] = 0x00;
 
-	xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-		jabber_si_xfer_bytestreams_send_read_again_resp_cb, xfer);
+	purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+		jabber_si_xfer_bytestreams_send_read_again_resp_cb, xfer));
 	jabber_si_xfer_bytestreams_send_read_again_resp_cb(xfer, source,
 		PURPLE_INPUT_WRITE);
 }
@@ -539,9 +539,9 @@ jabber_si_xfer_bytestreams_send_read_response_cb(gpointer data, gint source,
 
 	/* If we sent a "Success", wait for a response, otherwise give up and cancel */
 	if (jsx->rxqueue[1] == 0x00) {
-		purple_input_remove(xfer->watcher);
-		xfer->watcher = purple_input_add(source, PURPLE_INPUT_READ,
-			jabber_si_xfer_bytestreams_send_read_again_cb, xfer);
+		purple_input_remove(purple_xfer_get_watcher(xfer));
+		purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_READ,
+			jabber_si_xfer_bytestreams_send_read_again_cb, xfer));
 		g_free(jsx->rxqueue);
 		jsx->rxqueue = NULL;
 		jsx->rxlen = 0;
@@ -563,7 +563,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 
 	purple_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_read_cb\n");
 
-	xfer->fd = source;
+	purple_xfer_set_fd(xfer, source);
 
 	/** Try to read the SOCKS5 header */
 	if(jsx->rxlen < 2) {
@@ -619,10 +619,10 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 			jsx->rxqueue = g_malloc(jsx->rxmaxlen);
 			jsx->rxqueue[0] = 0x05;
 			jsx->rxqueue[1] = 0x00;
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
 				jabber_si_xfer_bytestreams_send_read_response_cb,
-				xfer);
+				xfer));
 			jabber_si_xfer_bytestreams_send_read_response_cb(xfer,
 				source, PURPLE_INPUT_WRITE);
 			jsx->rxqueue = NULL;
@@ -637,9 +637,9 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 	jsx->rxqueue = g_malloc(jsx->rxmaxlen);
 	jsx->rxqueue[0] = 0x05;
 	jsx->rxqueue[1] = 0xFF;
-	purple_input_remove(xfer->watcher);
-	xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-		jabber_si_xfer_bytestreams_send_read_response_cb, xfer);
+	purple_input_remove(purple_xfer_get_watcher(xfer));
+	purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+		jabber_si_xfer_bytestreams_send_read_response_cb, xfer));
 	jabber_si_xfer_bytestreams_send_read_response_cb(xfer,
 		source, PURPLE_INPUT_WRITE);
 }
@@ -674,7 +674,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 		return;
 	}
 
-	purple_input_remove(xfer->watcher);
+	purple_input_remove(purple_xfer_get_watcher(xfer));
 	close(source);
 	jsx->local_streamhost_fd = -1;
 
@@ -684,8 +684,8 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
-					 jabber_si_xfer_bytestreams_send_read_cb, xfer);
+	purple_xfer_set_watcher(xfer, purple_input_add(acceptfd, PURPLE_INPUT_READ,
+					 jabber_si_xfer_bytestreams_send_read_cb, xfer));
 }
 
 static void
@@ -761,7 +761,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 			jsx->js->user->domain, jsx->js->user->resource);
 		if (!strcmp(jid, my_jid)) {
 			purple_debug_info("jabber", "Got local SOCKS5 streamhost-used.\n");
-			purple_xfer_start(xfer, xfer->fd, NULL, -1);
+			purple_xfer_start(xfer, purple_xfer_get_fd(xfer), NULL, -1);
 		} else {
 			/* if available, try to revert to IBB... */
 			if (jsx->stream_method & STREAM_METHOD_IBB) {
@@ -785,9 +785,9 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 	}
 
 	/* Clean up the local streamhost - it isn't going to be used.*/
-	if (xfer->watcher > 0) {
-		purple_input_remove(xfer->watcher);
-		xfer->watcher = 0;
+	if (purple_xfer_get_watcher(xfer) > 0) {
+		purple_input_remove(purple_xfer_get_watcher(xfer));
+		purple_xfer_set_watcher(xfer, 0);
 	}
 	if (jsx->local_streamhost_fd >= 0) {
 		close(jsx->local_streamhost_fd);
@@ -845,7 +845,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 		jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-		xfer->local_port = purple_network_get_port_from_fd(sock);
+		purple_xfer_set_local_port(xfer, purple_network_get_port_from_fd(sock));
 		g_snprintf(port, sizeof(port), "%hu", purple_xfer_get_local_port(xfer));
 
 		public_ip = purple_network_get_my_ip(jsx->js->fd);
@@ -876,8 +876,8 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		g_free(jid);
 
 		/* The listener for the local proxy */
-		xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-				jabber_si_xfer_bytestreams_send_connected_cb, xfer);
+		purple_xfer_set_watcher(xfer, purple_input_add(sock, PURPLE_INPUT_READ,
+				jabber_si_xfer_bytestreams_send_connected_cb, xfer));
 	}
 
 	for (tmp = jsx->js->bs_proxies; tmp; tmp = tmp->next) {
@@ -1304,9 +1304,9 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			jabber_iq_remove_callback_by_id(js, jsx->iq_id);
 		if (jsx->local_streamhost_fd >= 0)
 			close(jsx->local_streamhost_fd);
-		if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && xfer->fd >= 0) {
+		if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_get_fd(xfer) >= 0) {
 			purple_debug_info("jabber", "remove port mapping\n");
-			purple_network_remove_port_mapping(xfer->fd);
+			purple_network_remove_port_mapping(purple_xfer_get_fd(xfer));
 		}
 		if (jsx->connect_timeout > 0)
 			purple_timeout_remove(jsx->connect_timeout);
