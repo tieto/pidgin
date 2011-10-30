@@ -25,6 +25,23 @@
 #include "whiteboard.h"
 #include "prpl.h"
 
+/**
+ * A PurpleWhiteboard
+ */
+struct _PurpleWhiteboard
+{
+	int state;                       /**< State of whiteboard session */
+
+	PurpleAccount *account;            /**< Account associated with this session */
+	char *who;                       /**< Name of the remote user */
+
+	void *ui_data;                   /**< Graphical user-interface data */
+	void *proto_data;                /**< Protocol specific data */
+	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
+
+	GList *draw_list;                /**< List of drawing elements/deltas to send */
+};
+
 /******************************************************************************
  * Globals
  *****************************************************************************/

@@ -229,6 +229,7 @@ version 3.0.0 (??/??/????):
 		* struct _PurpleRoomlist
 		* struct _PurpleRoomlistField
 		* struct _PurpleRoomlistRoom
+		* struct _PurpleWhiteboard
 		* struct PurpleAccountOption
 		* struct PurpleAccountUserSplit
 		* struct PurpleNotifySearchColumn

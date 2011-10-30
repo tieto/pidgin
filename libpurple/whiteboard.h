@@ -26,6 +26,9 @@
 #ifndef _PURPLE_WHITEBOARD_H_
 #define _PURPLE_WHITEBOARD_H_
 
+/** @copydoc _PurpleWhiteboard */
+typedef struct _PurpleWhiteboard PurpleWhiteboard;
+
 /**
  * Whiteboard PRPL Operations
  */
@@ -33,22 +36,6 @@ typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
 
 #include "account.h"
 
-/**
- * A PurpleWhiteboard
- */
-typedef struct _PurpleWhiteboard
-{
-	int state;                       /**< State of whiteboard session */
-
-	PurpleAccount *account;            /**< Account associated with this session */
-	char *who;                       /**< Name of the remote user */
-
-	void *ui_data;                   /**< Graphical user-interface data */
-	void *proto_data;                /**< Protocol specific data */
-	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
-
-	GList *draw_list;                /**< List of drawing elements/deltas to send */
-} PurpleWhiteboard;
 
 /**
  * The PurpleWhiteboard UI Operations
