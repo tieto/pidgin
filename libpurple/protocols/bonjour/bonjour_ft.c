@@ -136,8 +136,8 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 	 * otherwise there is a RST resulting in an error on the client side */
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
 		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
-		sc->fd = xfer->fd;
-		xfer->fd = -1;
+		sc->fd = purple_xfer_get_fd(xfer);
+		purple_xfer_set_fd(xfer, -1);
 		sc->handle = purple_input_add(sc->fd, PURPLE_INPUT_READ,
 						 _wait_for_socket_close, sc);
 	}
@@ -648,16 +648,16 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
 #endif
 
-			purple_input_remove(xfer->watcher);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
 			close(source);
-			xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
-							 bonjour_sock5_request_cb, xfer);
+			purple_xfer_set_watcher(xfer, purple_input_add(acceptfd, PURPLE_INPUT_READ,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 		}
 		break;
 	case 0x01:
-		xfer->fd = source;
+		purple_xfer_set_fd(xfer, source);
 		len = read(source, xf->rx_buf + xf->rxlen, 3);
 		if(len < 0 && errno == EAGAIN)
 			return;
@@ -665,9 +665,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 			bonjour_sock5_request_cb(xfer, source, PURPLE_INPUT_WRITE);
@@ -684,9 +684,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_READ,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_READ,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 		}
@@ -695,9 +695,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		len = read(source, xf->rx_buf + xf->rxlen, 20);
 		if(len<=0){
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
-							 bonjour_sock5_request_cb, xfer);
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, purple_input_add(source, PURPLE_INPUT_WRITE,
+							 bonjour_sock5_request_cb, xfer));
 			xf->sock5_req_state++;
 			xf->rxlen = 0;
 			bonjour_sock5_request_cb(xfer, source, PURPLE_INPUT_WRITE);
@@ -720,8 +720,8 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			purple_xfer_cancel_remote(xfer);
 			return;
 		} else {
-			purple_input_remove(xfer->watcher);
-			xfer->watcher = 0;
+			purple_input_remove(purple_xfer_get_watcher(xfer));
+			purple_xfer_set_watcher(xfer, 0);
 			xf->rxlen = 0;
 			/*close(source);*/
 			purple_xfer_start(xfer, source, NULL, -1);
@@ -750,8 +750,8 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 		return;
 	}
 
-	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-					 bonjour_sock5_request_cb, xfer);
+	purple_xfer_set_watcher(xfer, purple_input_add(sock, PURPLE_INPUT_READ,
+					 bonjour_sock5_request_cb, xfer));
 	xf = purple_xfer_get_protocol_data(xfer);
 	xf->listen_data = NULL;
 
@@ -764,7 +764,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	xmlnode_set_attrib(query, "sid", xf->sid);
 	xmlnode_set_attrib(query, "mode", "tcp");
 
-	xfer->local_port = purple_network_get_port_from_fd(sock);
+	purple_xfer_set_local_port(xfer, purple_network_get_port_from_fd(sock));
 
 	local_ips = bonjour_jabber_get_local_ips(sock);
 
