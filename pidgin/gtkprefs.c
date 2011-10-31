@@ -2348,7 +2348,7 @@ logging_page(void)
 }
 
 static void
-change_master_password_cb(GtkWidget * button, gpointer ptr)
+change_master_password_cb(GtkWidget *button, gpointer ptr)
 {
 	purple_keyring_change_master(NULL, NULL);
 }
@@ -2356,11 +2356,11 @@ change_master_password_cb(GtkWidget * button, gpointer ptr)
 static void
 keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
 {
-	GtkWidget * button = data;
-	PurpleKeyring * keyring;
+	GtkWidget *button = data;
+	PurpleKeyring *keyring;
 
 	g_return_if_fail(type == PURPLE_PREF_STRING);
-	g_return_if_fail(g_strcmp0(name,"/purple/keyring/active") == 0);
+	g_return_if_fail(g_strcmp0(name, "/purple/keyring/active") == 0);
 
 	/**
 	 * This part is annoying.
@@ -2373,22 +2373,21 @@ keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 	keyring = purple_keyring_get_keyring_by_id(val);
 
 	if (purple_keyring_get_change_master(keyring))
-		gtk_widget_set_sensitive(button,TRUE);
+		gtk_widget_set_sensitive(button, TRUE);
 	else
-		gtk_widget_set_sensitive(button,FALSE);
+		gtk_widget_set_sensitive(button, FALSE);
 }
-
 
 static GtkWidget *
 keyring_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-	GtkWidget * button;
+	GtkWidget *button;
 	GList *names;
-	void * prefs;
-	const char * keyring_id;
-	PurpleKeyring * keyring;
+	void *prefs;
+	const char *keyring_id;
+	PurpleKeyring *keyring;
 
 	keyring_id = purple_prefs_get_string("/purple/keyring/active");
 	keyring = purple_keyring_get_keyring_by_id(keyring_id);
@@ -2396,10 +2395,10 @@ keyring_page(void)
 	prefs = purple_prefs_get_handle();
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	/*  Keyring selection */
-	vbox = pidgin_make_frame (ret, _("Keyring"));
+	vbox = pidgin_make_frame(ret, _("Keyring"));
 	names = purple_keyring_get_options();
 	pidgin_prefs_dropdown_from_list(vbox, _("Keyring :"), PURPLE_PREF_STRING,
 				 "/purple/keyring/active", names);
@@ -2412,12 +2411,13 @@ keyring_page(void)
 	purple_prefs_connect_callback (prefs, "/purple/keyring/active", keyring_page_pref_changed, button);
 
 	if (purple_keyring_get_change_master(keyring))
-		gtk_widget_set_sensitive(button,TRUE);
+		gtk_widget_set_sensitive(button, TRUE);
 	else
-		gtk_widget_set_sensitive(button,FALSE);
+		gtk_widget_set_sensitive(button, FALSE);
 
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
+
 	return ret;
 }
 

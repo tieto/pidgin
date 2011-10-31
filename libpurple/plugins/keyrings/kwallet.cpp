@@ -54,7 +54,7 @@
 #include "internal.h"
 
 
-PurpleKeyring * keyring_handler;
+PurpleKeyring *keyring_handler;
 
 PurplePluginInfo plugininfo =
 {
@@ -105,16 +105,16 @@ class KWalletPlugin::engine
 		engine();
 		~engine();
 		void queue(request req);
-		static engine * Instance();
+		static engine *Instance();
 
 	signal :
 		void walletopened(bool opened);
 
 	private :
 		bool connected;
-		KWallet::wallet * wallet;
+		KWallet::wallet *wallet;
 		std::list<request> requests;
-		static engine * pinstance;
+		static engine *pinstance;
 
 		KApplication *app;
 		void ExecuteRequests();
@@ -191,20 +191,20 @@ class KWalletPlugin::request
 {
 	public :
 		virtual void abort();
-		virtual void execute(KWallet::wallet * wallet);
+		virtual void execute(KWallet::wallet *wallet);
 
 	private :
 		gpointer data;
-		PurpleAccount * account
+		PurpleAccount *account
 		QString password;
 }
 
 class KWalletPlugin::save_request : public request
 {
 	public :
-		request(PurpleAccount * account, char * password, void * cb, void * data);
+		request(PurpleAccount *account, char *password, void *cb, void *data);
 		void abort();
-		void execute(KWallet::wallet * wallet);
+		void execute(KWallet::wallet *wallet);
 
 	private :
 		PurpleKeyringReadCallback callback;
@@ -213,9 +213,9 @@ class KWalletPlugin::save_request : public request
 class KWalletPlugin::read_request : public request
 {
 	public :
-		request(PurpleAccount * account, void * cb, void * data);
+		request(PurpleAccount *account, void *cb, void *data);
 		void abort();
-		void execute(KWallet::wallet * wallet);
+		void execute(KWallet::wallet *wallet);
 
 	private :
 		PurpleKeyringSaveCallback callback;
@@ -223,7 +223,7 @@ class KWalletPlugin::read_request : public request
 
 
 
-KWalletPlugin::save_request::save_request(PurpleAccount * acc, char * pw, void * cb, void * userdata)
+KWalletPlugin::save_request::save_request(PurpleAccount *acc, char *pw, void *cb, void *userdata)
 {
 	account  = acc;
 	data     = userdata;
@@ -231,7 +231,7 @@ KWalletPlugin::save_request::save_request(PurpleAccount * acc, char * pw, void *
 	password = pw;
 }
 
-KWalletPlugin::read_request::read_request(PurpleAccount * acc, void * cb, void * userdata)
+KWalletPlugin::read_request::read_request(PurpleAccount *acc, void *cb, void *userdata)
 {
 	account  = acc;
 	data     = userdata;
@@ -242,7 +242,7 @@ KWalletPlugin::read_request::read_request(PurpleAccount * acc, void * cb, void *
 void
 KWalletPlugin::save_request::abort()
 {
-	GError * error;
+	GError *error;
 	if (cb != NULL) {
 		error = g_error_new(ERR_KWALLETPLUGIN,
 		                    ERR_UNKNOWN,
@@ -255,7 +255,7 @@ KWalletPlugin::save_request::abort()
 void
 KWalletPlugin::read_request::abort()
 {
-	GError * error;
+	GError *error;
 	if (callback != NULL) {
 		error = g_error_new(ERR_KWALLETPLUGIN,
 		                    ERR_UNKNOWN,
@@ -266,7 +266,7 @@ KWalletPlugin::read_request::abort()
 }
 
 void
-KWalletPlugin::read_request::execute(KWallet::wallet * wallet)
+KWalletPlugin::read_request::execute(KWallet::wallet *wallet)
 {
 	int result;
 	GString key;
@@ -282,7 +282,7 @@ KWalletPlugin::read_request::execute(KWallet::wallet * wallet)
 }
 
 void
-KWalletPlugin::save_request::execute(KWallet::wallet * wallet)
+KWalletPlugin::save_request::execute(KWallet::wallet *wallet)
 {
 	int result;
 	GString key;
@@ -307,7 +307,7 @@ KWalletPlugin::save_request::execute(KWallet::wallet * wallet)
 
 
 void
-kwallet_read(PurpleAccount * account,
+kwallet_read(PurpleAccount *account,
 	     PurpleKeyringReadCallback cb,
 	     gpointer data)
 {
@@ -317,8 +317,8 @@ kwallet_read(PurpleAccount * account,
 
 
 void
-kwallet_save(PurpleAccount * account,
-	     const char * password,
+kwallet_save(PurpleAccount *account,
+	     const char *password,
 	     PurpleKeyringSaveCallback cb,
 	     gpointer data)
 {
@@ -328,26 +328,26 @@ kwallet_save(PurpleAccount * account,
 
 
 void
-kwallet_close(GError ** error)
+kwallet_close(GError **error)
 {
 	delete KWalletPlugin::engine::instance();
 }
 
 void
-kwallet_import(PurpleAccount * account,
-	       const char * mode,
-	       const char * data,
-	       GError ** error)
+kwallet_import(PurpleAccount *account,
+	       const char *mode,
+	       const char *data,
+	       GError **error)
 {
 	return TRUE;
 }
 
 void
-kwallet_export(PurpleAccount * account,
-	       const char ** mode,
-	       char ** data,
-	       GError ** error,
-	       GDestroyNotify * destroy)
+kwallet_export(PurpleAccount *account,
+	       const char **mode,
+	       char **data,
+	       GError **error,
+	       GDestroyNotify *destroy)
 {
 	*mode = NULL;
 	*data = NULL;

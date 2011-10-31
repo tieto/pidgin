@@ -52,12 +52,11 @@
 #include "plugin.h"
 #include "internal.h"
 
-#define INTERNALKEYRING_NAME		N_("Internal keyring")
-#define INTERNALKEYRING_VERSION		"0.8b"
-#define INTERNALKEYRING_DESCRIPTION	N_("This plugin provides the default password storage behaviour for libpurple. Password will be stored unencrypted.")
-#define	INTERNALKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define INTERNALKEYRING_ID		FALLBACK_KEYRING
-
+#define INTERNALKEYRING_NAME        N_("Internal keyring")
+#define INTERNALKEYRING_VERSION     "0.8b"
+#define INTERNALKEYRING_DESCRIPTION N_("This plugin provides the default password storage behaviour for libpurple. Password will be stored unencrypted.")
+#define	INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
+#define INTERNALKEYRING_ID          FALLBACK_KEYRING
 
 #define GET_PASSWORD(account) \
 	g_hash_table_lookup (internal_keyring_passwords, account)
@@ -67,16 +66,15 @@
 	if (internal_keyring_is_active == FALSE)\
 		internal_keyring_open();
 
-
-static GHashTable * internal_keyring_passwords = NULL;
-static PurpleKeyring * keyring_handler = NULL;
+static GHashTable *internal_keyring_passwords = NULL;
+static PurpleKeyring *keyring_handler = NULL;
 static gboolean internal_keyring_is_active = FALSE;
 
 /***********************************************/
 /*     Keyring interface                       */
 /***********************************************/
 static void
-internal_keyring_open()
+internal_keyring_open(void)
 {
 	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
 		g_direct_equal, NULL, g_free);
@@ -84,12 +82,12 @@ internal_keyring_open()
 }
 
 static void
-internal_keyring_read(PurpleAccount * account,
-		      PurpleKeyringReadCallback cb,
-		      gpointer data)
+internal_keyring_read(PurpleAccount *account,
+                      PurpleKeyringReadCallback cb,
+                      gpointer data)
 {
-	char * password;
-	GError * error;
+	char *password;
+	GError *error;
 
 	ACTIVATE();
 
@@ -101,24 +99,24 @@ internal_keyring_read(PurpleAccount * account,
 	password = GET_PASSWORD(account);
 
 	if (password != NULL) {
-		if(cb != NULL)
+		if (cb != NULL)
 			cb(account, password, NULL, data);
 	} else {
 		error = g_error_new(ERR_PIDGINKEYRING,
 			ERR_NOPASSWD, "password not found");
-		if(cb != NULL)
+		if (cb != NULL)
 			cb(account, NULL, error, data);
 		g_error_free(error);
 	}
 }
 
 static void
-internal_keyring_save(PurpleAccount * account,
-		      const gchar * password,
-		      PurpleKeyringSaveCallback cb,
-		      gpointer data)
+internal_keyring_save(PurpleAccount *account,
+                      const gchar *password,
+                      PurpleKeyringSaveCallback cb,
+                      gpointer data)
 {
-	gchar * copy;
+	gchar *copy;
 
 	ACTIVATE();
 
@@ -144,7 +142,7 @@ internal_keyring_save(PurpleAccount * account,
 
 
 static void
-internal_keyring_close(GError ** error)
+internal_keyring_close(GError **error)
 {
 	internal_keyring_is_active = FALSE;
 
@@ -153,17 +151,16 @@ internal_keyring_close(GError ** error)
 }
 
 static gboolean
-internal_keyring_import_password(PurpleAccount * account,
-				 const char * mode,
-				 const char * data,
-				 GError ** error)
+internal_keyring_import_password(PurpleAccount *account,
+                                 const char *mode,
+                                 const char *data,
+                                 GError **error)
 {
-	gchar * copy;
+	gchar *copy;
 
 	ACTIVATE();
 
-	purple_debug_info("Internal keyring",
-		"Importing password");
+	purple_debug_info("Internal keyring", "Importing password");
 
 	if (account != NULL &&
 	    data != NULL &&
@@ -174,7 +171,6 @@ internal_keyring_import_password(PurpleAccount * account,
 		return TRUE;
 
 	} else {
-
 		*error = g_error_new(ERR_PIDGINKEYRING, ERR_NOPASSWD, "no password for account");
 		return FALSE;
 
@@ -184,13 +180,13 @@ internal_keyring_import_password(PurpleAccount * account,
 }
 
 static gboolean
-internal_keyring_export_password(PurpleAccount * account,
-				 const char ** mode,
-				 char ** data,
-				 GError ** error,
-				 GDestroyNotify * destroy)
+internal_keyring_export_password(PurpleAccount *account,
+                                 const char **mode,
+                                 char **data,
+                                 GError **error,
+                                 GDestroyNotify *destroy)
 {
-	gchar * password;
+	gchar *password;
 
 	ACTIVATE();
 
@@ -209,11 +205,8 @@ internal_keyring_export_password(PurpleAccount * account,
 	}
 }
 
-
-
-
 static void
-internal_keyring_init()
+internal_keyring_init(void)
 {
 	keyring_handler = purple_keyring_new();
 
@@ -230,14 +223,12 @@ internal_keyring_init()
 }
 
 static void
-internal_keyring_uninit()
+internal_keyring_uninit(void)
 {
 	internal_keyring_close(NULL);
 	purple_keyring_unregister(keyring_handler);
 
 }
-
-
 
 /***********************************************/
 /*     Plugin interface                        */
@@ -269,24 +260,24 @@ internal_keyring_destroy(PurplePlugin *plugin)
 
 PurplePluginInfo plugininfo =
 {
-	PURPLE_PLUGIN_MAGIC,						/* magic */
-	PURPLE_MAJOR_VERSION,						/* major_version */
-	PURPLE_MINOR_VERSION,						/* minor_version */
-	PURPLE_PLUGIN_STANDARD,						/* type */
+	PURPLE_PLUGIN_MAGIC,				/* magic */
+	PURPLE_MAJOR_VERSION,				/* major_version */
+	PURPLE_MINOR_VERSION,				/* minor_version */
+	PURPLE_PLUGIN_STANDARD,				/* type */
 	NULL,								/* ui_requirement */
 	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
 	NULL,								/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,					/* priority */
-	INTERNALKEYRING_ID,						/* id */
-	INTERNALKEYRING_NAME,						/* name */
-	INTERNALKEYRING_VERSION,					/* version */
-	"Internal Keyring Plugin",					/* summary */
-	INTERNALKEYRING_DESCRIPTION,					/* description */
-	INTERNALKEYRING_AUTHOR,						/* author */
+	PURPLE_PRIORITY_DEFAULT,			/* priority */
+	INTERNALKEYRING_ID,					/* id */
+	INTERNALKEYRING_NAME,				/* name */
+	INTERNALKEYRING_VERSION,			/* version */
+	"Internal Keyring Plugin",			/* summary */
+	INTERNALKEYRING_DESCRIPTION,		/* description */
+	INTERNALKEYRING_AUTHOR,				/* author */
 	"N/A",								/* homepage */
-	internal_keyring_load,						/* load */
-	internal_keyring_unload,					/* unload */
-	internal_keyring_destroy,					/* destroy */
+	internal_keyring_load,				/* load */
+	internal_keyring_unload,			/* unload */
+	internal_keyring_destroy,			/* destroy */
 	NULL,								/* ui_info */
 	NULL,								/* extra_info */
 	NULL,								/* prefs_info */

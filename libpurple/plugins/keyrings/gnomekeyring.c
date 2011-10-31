@@ -56,15 +56,15 @@
 #include "plugin.h"
 #include "internal.h"
 
-#define GNOMEKEYRING_NAME		N_("Gnome-Keyring")
-#define GNOMEKEYRING_VERSION		"0.3b"
-#define GNOMEKEYRING_DESCRIPTION	N_("This plugin will store passwords in Gnome-Keyring.")
-#define	GNOMEKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define GNOMEKEYRING_ID			"core-scrouaf-gnomekeyring"
+#define GNOMEKEYRING_NAME        N_("Gnome-Keyring")
+#define GNOMEKEYRING_VERSION     "0.3b"
+#define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in Gnome-Keyring.")
+#define	GNOMEKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
+#define GNOMEKEYRING_ID          "core-scrouaf-gnomekeyring"
 
 #define ERR_GNOMEKEYRINGPLUGIN 	gkp_error_domain()
 
-static PurpleKeyring * keyring_handler = NULL;
+static PurpleKeyring *keyring_handler = NULL;
 
 typedef struct _InfoStorage InfoStorage;
 
@@ -72,8 +72,8 @@ struct _InfoStorage
 {
 	gpointer cb;
 	gpointer user_data;
-	PurpleAccount * account;
-	char * name;
+	PurpleAccount *account;
+	char *name;
 };
 
 static GQuark gkp_error_domain(void)
@@ -85,22 +85,21 @@ static GQuark gkp_error_domain(void)
 /***********************************************/
 /*     Keyring interface                       */
 /***********************************************/
-static void gkp_read_continue(GnomeKeyringResult result,
-                       const char *password,
-                       gpointer data)
+static void
+gkp_read_continue(GnomeKeyringResult result,
+                  const char *password,
+                  gpointer data)
 /* XXX : make sure list is freed on return */
 {
-	InfoStorage * storage = data;
-	PurpleAccount * account =storage->account;
+	InfoStorage *storage = data;
+	PurpleAccount *account = storage->account;
 	PurpleKeyringReadCallback cb = storage->cb;
-	GError * error;
-	char * copy;
+	GError *error;
+	char *copy;
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
-
-		switch(result)
-		{
-			case GNOME_KEYRING_RESULT_NO_MATCH :
+		switch(result) {
+			case GNOME_KEYRING_RESULT_NO_MATCH:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOPASSWD, "no password found for account : %s",
 					purple_account_get_username(account));
@@ -109,8 +108,8 @@ static void gkp_read_continue(GnomeKeyringResult result,
 				g_error_free(error);
 				return;
 
-			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON :
-			case GNOME_KEYRING_RESULT_IO_ERROR :
+			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON:
+			case GNOME_KEYRING_RESULT_IO_ERROR:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
@@ -119,7 +118,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 				g_error_free(error);
 				return;
 
-			default :
+			default:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Unknown error (account : %s).",
 					purple_account_get_username(account));
@@ -130,8 +129,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 		}
 
 	} else {
-
-		if(cb != NULL) {
+		if (cb != NULL) {
 			copy = g_strdup(password);
 			cb(account, copy, NULL, storage->user_data);
 			g_free(copy);
@@ -140,33 +138,30 @@ static void gkp_read_continue(GnomeKeyringResult result,
 }
 
 static void
-gkp_read(PurpleAccount * account,
-	 PurpleKeyringReadCallback cb,
-	 gpointer data)
+gkp_read(PurpleAccount *account, PurpleKeyringReadCallback cb, gpointer data)
 {
-	InfoStorage * storage = g_malloc(sizeof(InfoStorage));
+	InfoStorage *storage = g_malloc(sizeof(InfoStorage));
 
 	storage->cb = cb;
 	storage->user_data = data;
 	storage->account = account;
 
 	gnome_keyring_find_password(GNOME_KEYRING_NETWORK_PASSWORD,
-				    gkp_read_continue,
-				    storage,
-				    g_free,
-				    "user", purple_account_get_username(account),
-				    "protocol", purple_account_get_protocol_id(account),
-				    NULL);
+	                            gkp_read_continue,
+	                            storage,
+	                            g_free,
+	                            "user", purple_account_get_username(account),
+	                            "protocol", purple_account_get_protocol_id(account),
+	                            NULL);
 }
 
 static void
-gkp_save_continue(GnomeKeyringResult result,
-            gpointer data)
+gkp_save_continue(GnomeKeyringResult result, gpointer data)
 {
-	InfoStorage * storage;
+	InfoStorage *storage;
 	PurpleKeyringSaveCallback cb;
-	GError * error;
-	PurpleAccount * account;
+	GError *error;
+	PurpleAccount *account;
 
 	storage = data;
 	g_return_if_fail(storage != NULL);
@@ -177,9 +172,8 @@ gkp_save_continue(GnomeKeyringResult result,
 	g_free(storage->name);
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
-		switch(result)
-		{
-			case GNOME_KEYRING_RESULT_NO_MATCH :
+		switch(result) {
+			case GNOME_KEYRING_RESULT_NO_MATCH:
 				purple_debug_info("Gnome keyring plugin",
 					"Could not update password for %s (%s) : not found.\n",
 					purple_account_get_username(account),
@@ -192,8 +186,8 @@ gkp_save_continue(GnomeKeyringResult result,
 				g_error_free(error);
 				return;
 
-			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON :
-			case GNOME_KEYRING_RESULT_IO_ERROR :
+			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON:
+			case GNOME_KEYRING_RESULT_IO_ERROR:
 				purple_debug_info("Gnome keyring plugin",
 					"Failed to communicate with gnome keyring (account : %s (%s)).\n",
 					purple_account_get_username(account),
@@ -206,7 +200,7 @@ gkp_save_continue(GnomeKeyringResult result,
 				g_error_free(error);
 				return;
 
-			default :
+			default:
 				purple_debug_info("Gnome keyring plugin",
 					"Unknown error (account : %s (%s)).\n",
 					purple_account_get_username(account),
@@ -221,22 +215,21 @@ gkp_save_continue(GnomeKeyringResult result,
 		}
 
 	} else {
-
 		purple_debug_info("gnome-keyring-plugin", "password for %s updated.\n",
 			purple_account_get_username(account));
 
-		if(cb != NULL)
+		if (cb != NULL)
 			cb(account, NULL, storage->user_data);
 	}
 }
 
 static void
-gkp_save(PurpleAccount * account,
-	 const gchar * password,
-	 PurpleKeyringSaveCallback cb,
-	 gpointer data)
+gkp_save(PurpleAccount *account,
+         const gchar *password,
+         PurpleKeyringSaveCallback cb,
+         gpointer data)
 {
-	InfoStorage * storage = g_new0(InfoStorage,1);
+	InfoStorage *storage = g_new0(InfoStorage,1);
 
 	storage->account = account;
 	storage->cb = cb;
@@ -244,67 +237,61 @@ gkp_save(PurpleAccount * account,
 	storage->name = g_strdup_printf("pidgin-%s",
 		purple_account_get_username(account));
 
-	if(password != NULL && *password != '\0') {
-
+	if (password != NULL && *password != '\0') {
 		purple_debug_info("Gnome keyring plugin",
 			"Updating password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
 		gnome_keyring_store_password(GNOME_KEYRING_NETWORK_PASSWORD,
-					     NULL, 	/*default keyring */
-					     storage->name,
-					     password,
+		                             NULL,  /*default keyring */
+		                             storage->name,
+		                             password,
 		                             gkp_save_continue,
-					     storage,
-					     g_free,		/* function to free storage */
-					     "user", purple_account_get_username(account),
-					     "protocol", purple_account_get_protocol_id(account),
-					     NULL);
+		                             storage,
+		                             g_free,    /* function to free storage */
+		                             "user", purple_account_get_username(account),
+		                             "protocol", purple_account_get_protocol_id(account),
+		                             NULL);
 
 	} else {	/* password == NULL, delete password. */
-
 		purple_debug_info("Gnome keyring plugin",
 			"Forgetting password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
 		gnome_keyring_delete_password(GNOME_KEYRING_NETWORK_PASSWORD,
-					      gkp_save_continue,
-					      storage,
-					      g_free,
-					      "user", purple_account_get_username(account),
-					      "protocol", purple_account_get_protocol_id(account),
-					      NULL);
-
+		                              gkp_save_continue,
+		                              storage, g_free,
+		                              "user", purple_account_get_username(account),
+		                              "protocol", purple_account_get_protocol_id(account),
+		                              NULL);
 	}
 }
 
 static void
-gkp_close(GError ** error)
+gkp_close(GError **error)
 {
 }
 
 static gboolean
-gkp_import_password(PurpleAccount * account,
-		    const char * mode,
-		    const char * data,
-		    GError ** error)
+gkp_import_password(PurpleAccount *account,
+                    const char *mode,
+                    const char *data,
+                    GError **error)
 {
-	purple_debug_info("Gnome Keyring plugin",
-		"Importing password.\n");
+	purple_debug_info("Gnome Keyring plugin", "Importing password.\n");
 	return TRUE;
 }
 
 static gboolean
-gkp_export_password(PurpleAccount * account,
-				 const char ** mode,
-				 char ** data,
-				 GError ** error,
-				 GDestroyNotify * destroy)
+gkp_export_password(PurpleAccount *account,
+                    const char **mode,
+                    char **data,
+                    GError **error,
+                    GDestroyNotify *destroy)
 {
-	purple_debug_info("Gnome Keyring plugin",
-		"Exporting password.\n");
+	purple_debug_info("Gnome Keyring plugin", "Exporting password.\n");
 	*data = NULL;
 	*mode = NULL;
 	*destroy = NULL;
@@ -320,19 +307,18 @@ gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data)
 		"This keyring does not support master passwords.\n");
 
 	purple_notify_info(NULL, _("Gnome-Keyring plugin"),
-			_("Failed to change master password."),
-			_("This plugin does not really support master passwords, it just pretends to."));
-	if(cb)
+	                   _("Failed to change master password."),
+	                   _("This plugin does not really support master passwords, it just pretends to."));
+	if (cb)
 		cb(FALSE, NULL, data);
 }
 
 static gboolean
-gkp_init()
+gkp_init(void)
 {
 	purple_debug_info("gnome-keyring-plugin", "init.\n");
 
 	if (gnome_keyring_is_available()) {
-
 		keyring_handler = purple_keyring_new();
 
 		purple_keyring_set_name(keyring_handler, GNOMEKEYRING_NAME);
@@ -349,7 +335,6 @@ gkp_init()
 		return TRUE;
 
 	} else {
-
 		purple_debug_info("gnome-keyring-plugin",
 			"failed to communicate with daemon, not loading.");
 		return FALSE;
@@ -357,7 +342,7 @@ gkp_init()
 }
 
 static void
-gkp_uninit()
+gkp_uninit(void)
 {
 	purple_debug_info("gnome-keyring-plugin", "uninit.\n");
 	gkp_close(NULL);
@@ -365,8 +350,6 @@ gkp_uninit()
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
 }
-
-
 
 /***********************************************/
 /*     Plugin interface                        */
@@ -393,29 +376,29 @@ gkp_destroy(PurplePlugin *plugin)
 
 PurplePluginInfo plugininfo =
 {
-	PURPLE_PLUGIN_MAGIC,						/* magic */
-	PURPLE_MAJOR_VERSION,						/* major_version */
-	PURPLE_MINOR_VERSION,						/* minor_version */
-	PURPLE_PLUGIN_STANDARD,						/* type */
-	NULL,								/* ui_requirement */
+	PURPLE_PLUGIN_MAGIC,		/* magic */
+	PURPLE_MAJOR_VERSION,		/* major_version */
+	PURPLE_MINOR_VERSION,		/* minor_version */
+	PURPLE_PLUGIN_STANDARD,		/* type */
+	NULL,						/* ui_requirement */
 	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
-	NULL,								/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,					/* priority */
-	GNOMEKEYRING_ID,						/* id */
-	GNOMEKEYRING_NAME,						/* name */
-	GNOMEKEYRING_VERSION,					/* version */
-	"Internal Keyring Plugin",					/* summary */
-	GNOMEKEYRING_DESCRIPTION,					/* description */
-	GNOMEKEYRING_AUTHOR,						/* author */
-	"N/A",								/* homepage */
-	gkp_load,						/* load */
+	NULL,						/* dependencies */
+	PURPLE_PRIORITY_DEFAULT,	/* priority */
+	GNOMEKEYRING_ID,			/* id */
+	GNOMEKEYRING_NAME,			/* name */
+	GNOMEKEYRING_VERSION,		/* version */
+	"Internal Keyring Plugin",	/* summary */
+	GNOMEKEYRING_DESCRIPTION,	/* description */
+	GNOMEKEYRING_AUTHOR,		/* author */
+	"N/A",						/* homepage */
+	gkp_load,					/* load */
 	gkp_unload,					/* unload */
-	gkp_destroy,					/* destroy */
-	NULL,								/* ui_info */
-	NULL,								/* extra_info */
-	NULL,								/* prefs_info */
-	NULL,								/* actions */
-	NULL,								/* padding... */
+	gkp_destroy,				/* destroy */
+	NULL,						/* ui_info */
+	NULL,						/* extra_info */
+	NULL,						/* prefs_info */
+	NULL,						/* actions */
+	NULL,						/* padding... */
 	NULL,
 	NULL,
 	NULL,
