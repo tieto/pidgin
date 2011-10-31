@@ -205,7 +205,7 @@ static Prefs logging[] =
 
 static Prefs keyring[] =
 {
-	{PURPLE_PREF_STRING, "/purple/keyring/active", N_("Active keyring"), purple_keyring_get_options}
+	{PURPLE_PREF_STRING, "/purple/keyring/active", N_("Active keyring"), get_keyring_options}
 };
 
 static Prefs idle[] =
