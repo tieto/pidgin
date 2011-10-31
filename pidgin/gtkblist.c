@@ -2113,7 +2113,7 @@ add_buddies_from_vcard(const char *prpl_id, PurpleGroup *group, GList *list,
 		for (l = list; l != NULL; l = l->next)
 		{
 			purple_blist_request_add_buddy(account, l->data,
-										 (group ? group->name : NULL),
+										 (group ? purple_group_get_name(group) : NULL),
 										 alias);
 		}
 	}
@@ -2535,7 +2535,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			else
 			{
 				purple_blist_request_add_buddy(account, username,
-											 (group ? group->name : NULL),
+											 (group ? purple_group_get_name(group) : NULL),
 											 alias);
 			}
 		}
@@ -6435,7 +6435,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	text_color = selected ? NULL : theme_font_get_color_default(pair, NULL);
 	text_font = theme_font_get_face_default(pair, "");
 
-	esc = g_markup_escape_text(group->name, -1);
+	esc = g_markup_escape_text(purple_group_get_name(group), -1);
 	if (text_color) {
 		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s%s%s</span>",
 		                       text_color, text_font,
@@ -6909,7 +6909,6 @@ static GList *
 groups_tree(void)
 {
 	static GList *list = NULL;
-	char *tmp2;
 	PurpleGroup *g;
 	PurpleBlistNode *gnode;
 
@@ -6929,8 +6928,7 @@ groups_tree(void)
 			if (PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			{
 				g    = (PurpleGroup *)gnode;
-				tmp2 = g->name;
-				list  = g_list_append(list, tmp2);
+				list  = g_list_append(list, (char *) purple_group_get_name(g));
 			}
 		}
 	}
@@ -7265,7 +7263,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	if (name != NULL)
 		gtk_widget_grab_focus(data->alias_entry);
 
-	data->group_combo = pidgin_text_combo_box_entry_new(group ? group->name : NULL, groups_tree());
+	data->group_combo = pidgin_text_combo_box_entry_new(group ? purple_group_get_name(group) : NULL, groups_tree());
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Group:"),
 	                          data->chat_data.rq_data.sg, data->group_combo,
 	                          TRUE, NULL);

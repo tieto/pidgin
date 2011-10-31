@@ -1233,7 +1233,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 
 	text = g_strdup_printf(
 				_("You are about to merge the group called %s into the group "
-				"called %s. Do you want to continue?"), source->name, new_name);
+				"called %s. Do you want to continue?"), purple_group_get_name(source), new_name);
 
 	ggp = g_new(struct _PidginGroupMergeObject, 1);
 	ggp->parent = source;
@@ -1293,7 +1293,7 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 	g_return_if_fail(group != NULL);
 
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
-						   group->name);
+						   purple_group_get_name(group));
 
 	purple_request_action(group, NULL, _("Remove Group"), text, 0,
 						NULL, NULL, NULL,
