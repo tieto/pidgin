@@ -789,7 +789,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		/* Hold button */
 		gtkmedia->priv->hold =
-				gtk_toggle_button_new_with_mnemonic("_Hold");
+				gtk_toggle_button_new_with_mnemonic(_("_Hold"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->hold);
@@ -878,7 +878,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->mute =
-				gtk_toggle_button_new_with_mnemonic("_Mute");
+				gtk_toggle_button_new_with_mnemonic(_("_Mute"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
