@@ -36,7 +36,7 @@
 /**
  * Default keyring
  */
-#define FALLBACK_KEYRING	"core-scrouaf-internalkeyring"
+#define PURPLE_DEFAULT_KEYRING "core-scrouaf-internalkeyring"
 
 /*******************************************************/
 /** @name data structures and types                    */

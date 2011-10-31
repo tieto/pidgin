@@ -48,7 +48,7 @@
 #define INTERNALKEYRING_VERSION     "0.8b"
 #define INTERNALKEYRING_DESCRIPTION N_("This plugin provides the default password storage behaviour for libpurple. Password will be stored unencrypted.")
 #define	INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define INTERNALKEYRING_ID          FALLBACK_KEYRING
+#define INTERNALKEYRING_ID          PURPLE_DEFAULT_KEYRING
 
 #define GET_PASSWORD(account) \
 	g_hash_table_lookup (internal_keyring_passwords, account)

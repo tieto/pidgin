@@ -280,8 +280,8 @@ purple_keyring_init(void)
 
 	if (touse == NULL) {
 		purple_prefs_add_none("/purple/keyring");
-		purple_prefs_add_string("/purple/keyring/active", FALLBACK_KEYRING);
-		purple_keyring_to_use = g_strdup(FALLBACK_KEYRING);
+		purple_prefs_add_string("/purple/keyring/active", PURPLE_DEFAULT_KEYRING);
+		purple_keyring_to_use = g_strdup(PURPLE_DEFAULT_KEYRING);
 	} else {
 		purple_keyring_to_use = g_strdup(touse);
 	}
@@ -670,7 +670,7 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 	purple_signal_emit(core, "keyring-unregister", keyring_id, keyring);
 
 	inuse = purple_keyring_get_inuse();
-	fallback = purple_keyring_find_keyring_by_id(FALLBACK_KEYRING);
+	fallback = purple_keyring_find_keyring_by_id(PURPLE_DEFAULT_KEYRING);
 
 	if (inuse == keyring) {
 		if (inuse != fallback) {
@@ -730,7 +730,7 @@ purple_keyring_import_password(PurpleAccount *account,
 	 *  - or the configured keyring is the fallback, compatible one.
 	 */
 	if ((keyringid != NULL && g_strcmp0(realid, keyringid) != 0) ||
-	    (keyringid == NULL && g_strcmp0(FALLBACK_KEYRING, realid))) {
+	    (keyringid == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
 
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
 			"Specified keyring id does not match the configured one.");
