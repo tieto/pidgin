@@ -115,7 +115,6 @@ internal_keyring_read(PurpleAccount * account,
 			cb(account, NULL, error, data);
 		g_error_free(error);
 	}
-	return;
 }
 
 static void
@@ -146,7 +145,6 @@ internal_keyring_save(PurpleAccount * account,
 
 	if (cb != NULL)
 		cb(account, NULL, data);
-	return;
 }
 
 
@@ -280,7 +278,6 @@ static void
 internal_keyring_destroy(PurplePlugin *plugin)
 {
 	internal_keyring_uninit();
-	return;
 }
 
 PurplePluginInfo plugininfo =

@@ -397,7 +397,6 @@ void
 gkp_destroy(PurplePlugin *plugin)
 {
 	kwallet_close();
-	return;
 }
 
 void                        

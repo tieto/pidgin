@@ -168,8 +168,6 @@ purple_keyring_set_name(PurpleKeyring * keyring, char * name)
 
 	g_free(keyring->name);
 	keyring->name = g_strdup(name);
-
-	return;
 }
 
 void 
@@ -179,8 +177,6 @@ purple_keyring_set_id(PurpleKeyring * keyring, char * id)
 
 	g_free(keyring->id);
 	keyring->id = g_strdup(id);
-
-	return;
 }
 
 void
@@ -189,8 +185,6 @@ purple_keyring_set_read_password(PurpleKeyring * keyring, PurpleKeyringRead read
 	g_return_if_fail(keyring != NULL);
 
 	keyring->read_password = read;
-
-	return;
 }
 
 void
@@ -199,8 +193,6 @@ purple_keyring_set_save_password(PurpleKeyring * keyring, PurpleKeyringSave save
 	g_return_if_fail(keyring != NULL);
 
 	keyring->save_password = save;
-
-	return;
 }
 
 void
@@ -209,8 +201,6 @@ purple_keyring_set_close_keyring(PurpleKeyring * keyring, PurpleKeyringClose clo
 	g_return_if_fail(keyring != NULL);
 
 	keyring->close_keyring = close;
-
-	return;
 }
 
 void
@@ -219,8 +209,6 @@ purple_keyring_set_change_master(PurpleKeyring * keyring, PurpleKeyringChangeMas
 	g_return_if_fail(keyring != NULL);
 
 	keyring->change_master = change;
-
-	return;
 }
 
 void
@@ -229,8 +217,6 @@ purple_keyring_set_import_password(PurpleKeyring * keyring, PurpleKeyringImportP
 	g_return_if_fail(keyring != NULL);
 
 	keyring->import_password = import;
-
-	return;
 }
 
 void
@@ -239,8 +225,6 @@ purple_keyring_set_export_password(PurpleKeyring * keyring, PurpleKeyringExportP
 	g_return_if_fail(keyring != NULL);
 
 	keyring->export_password = export;
-
-	return;
 }
 
 /*@}*/
@@ -299,8 +283,6 @@ purple_keyring_init()
 
 	purple_debug_info("keyring", "purple_keyring_init() done, selected keyring is : %s.\n",
 		purple_keyring_to_use);
-
-	return;
 }
 
 void
@@ -356,8 +338,6 @@ purple_keyring_drop_passwords(const PurpleKeyring * keyring)
 	     cur != NULL;
 	     cur = cur->next)
 		save(cur->data, NULL, NULL, NULL);
-
-	return;
 }
 
 
@@ -464,8 +444,6 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount * account,
 	 * are not exposed. So these was done for consistency.
 	 */
 	purple_account_set_password(NULL, NULL, NULL, NULL);
-
-	return;
 }
 
 
@@ -519,8 +497,6 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount * account,
 			g_error_free(error);
 		}
 	}
-
-	return;
 }
 
 
@@ -605,8 +581,6 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 
 		if (cb != NULL)
 			cb(newkeyring, TRUE, NULL, data);
-
-		return;
 	}
 }
 
@@ -628,8 +602,6 @@ purple_keyring_pref_cb(const char *pref,
 	g_return_if_fail(new != NULL);
 
 	purple_keyring_set_inuse(new, FALSE, NULL, data);
-
-	return;
 }
 
 GList *
@@ -909,8 +881,6 @@ purple_keyring_get_password(PurpleAccount *account,
 			}
 		}
 	}
-
-	return;
 }
 
 void 
@@ -950,7 +920,6 @@ purple_keyring_set_password(PurpleAccount * account,
 			save(account, password, purple_keyring_set_password_async_cb, data);
 		}
 	}
-	return;
 }
 
 static void 
@@ -988,8 +957,6 @@ purple_keyring_close(PurpleKeyring * keyring,
 		*error = g_error_new(ERR_PIDGINKEYRING, ERR_INVALID,
 			"No keyring passed to the function.");
 
-		return;
-
 	} else {
 		close = purple_keyring_get_close_keyring(keyring);
 
@@ -1002,8 +969,6 @@ purple_keyring_close(PurpleKeyring * keyring,
 
 		}
 	}
-
-	return;
 }
 
 
@@ -1041,7 +1006,6 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 
 		}
 	}
-	return;
 }
 
 /*@}*/

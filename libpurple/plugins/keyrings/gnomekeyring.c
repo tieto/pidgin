@@ -173,7 +173,6 @@ static void gkp_read_continue(GnomeKeyringResult result,
 			cb(account, copy, NULL, storage->user_data);
 			g_free(copy);
 		}
-		return;
 	}
 }
 
@@ -226,7 +225,6 @@ gkp_save(PurpleAccount * account,
 					      NULL);
 
 	}
-	return;
 }
 
 static void
@@ -297,16 +295,12 @@ gkp_save_continue(GnomeKeyringResult result,
 
 		if(cb != NULL)
 			cb(account, NULL, storage->user_data);
-
-		return;
-	
 	}
 }
 
 static void
 gkp_close(GError ** error)
 {
-	return;
 }
 
 static gboolean
@@ -413,7 +407,6 @@ static void
 gkp_destroy(PurplePlugin *plugin)
 {
 	gkp_uninit();
-	return;
 }
 
 PurplePluginInfo plugininfo =
