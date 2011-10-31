@@ -331,15 +331,12 @@ kwallet_read(PurpleAccount * account,
 
 void 
 kwallet_save(PurpleAccount * account,
-	     char * password,
-	     GDestroyNotify destroypassword,
+	     const char * password,
 	     PurpleKeyringSaveCallback cb,
 	     gpointer data)
 {
 	KWalletPlugin::read_request req(account, password, cb, data);
 	KWalletPlugin::engine::instance()->queue(req);
-	if (destroypassword)
-		destroypassword(password);
 }
 
 

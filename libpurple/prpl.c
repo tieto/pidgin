@@ -361,7 +361,7 @@ do_prpl_change_account_status(PurpleAccount *account,
 		if (!purple_account_get_remember_password(account)) {
 			PurpleConnection *gc = purple_account_get_connection(account);
 			if (gc && purple_connection_had_error(gc))
-				purple_account_set_password(account, NULL, NULL, NULL, NULL);
+				purple_account_set_password(account, NULL, NULL, NULL);
 		}
 
 		if (!purple_account_is_disconnected(account))

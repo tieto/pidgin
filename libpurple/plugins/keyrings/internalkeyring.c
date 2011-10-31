@@ -74,7 +74,7 @@ static gboolean internal_keyring_is_active = FALSE;
 
 /* a few prototypes : */
 static void 		internal_keyring_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
-static void 		internal_keyring_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
+static void 		internal_keyring_save(PurpleAccount *, const gchar *, PurpleKeyringSaveCallback, gpointer);
 static void		internal_keyring_close(GError **);
 static void		internal_keyring_open(void);
 static gboolean		internal_keyring_import_password(PurpleAccount *, const char *, const char *, GError **);
@@ -120,8 +120,7 @@ internal_keyring_read(PurpleAccount * account,
 
 static void
 internal_keyring_save(PurpleAccount * account,
-		      gchar * password,
-		      GDestroyNotify destroy,
+		      const gchar * password,
 		      PurpleKeyringSaveCallback cb,
 		      gpointer data)
 {
@@ -144,9 +143,6 @@ internal_keyring_save(PurpleAccount * account,
 			purple_account_get_protocol_id(account));
 
 	}
-
-	if(destroy && password)
-		destroy(password);
 
 	if (cb != NULL)
 		cb(account, NULL, data);

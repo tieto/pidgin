@@ -335,7 +335,7 @@ static void mxit_change_pin_cb( PurpleConnection* gc, PurpleRequestFields* field
 out:
 	if ( !err ) {
 		/* update PIN in account */
-		purple_account_set_password( session->acc, pin, NULL, NULL, NULL );
+		purple_account_set_password( session->acc, pin, NULL, NULL );
 
 		/* update session object */
 		g_free( session->encpwd );

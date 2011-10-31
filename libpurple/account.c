@@ -1249,12 +1249,12 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	}
 
 	if (!remember)
-		purple_keyring_set_password(account, NULL, NULL, NULL, NULL);
+		purple_keyring_set_password(account, NULL, NULL, NULL);
 
 	purple_account_set_remember_password(account, remember);
 
 	password = g_strdup(entry);
-	purple_account_set_password(account, password, NULL, NULL, NULL);
+	purple_account_set_password(account, password, NULL, NULL);
 	g_free(password);
 	_purple_connection_new(account, FALSE, entry);
 
@@ -1738,8 +1738,7 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 
 void 
 purple_account_set_password(PurpleAccount *account,
-                            gchar *password,
-                            GDestroyNotify destroy,
+                            const gchar *password,
                             PurpleKeyringSaveCallback cb,
                             gpointer data)
 {
@@ -1766,8 +1765,7 @@ purple_account_set_password(PurpleAccount *account,
 			cb(account, NULL, data);
 
 	} else {
-		purple_keyring_set_password(account, password,
-			destroy, cb, data);
+		purple_keyring_set_password(account, password, cb, data);
 	}
 }
 
@@ -2848,7 +2846,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePlugin *prpl = NULL;
 
-	purple_account_set_password(account, g_strdup(new_pw), g_free, NULL, NULL);
+	purple_account_set_password(account, new_pw, NULL, NULL);
 
 	if (gc != NULL)
 		prpl = purple_connection_get_prpl(gc);
@@ -3072,7 +3070,7 @@ purple_accounts_delete(PurpleAccount *account)
 	/* this is async because we do not want the
 	 * account overwritten before we are done.
 	 */
-	purple_keyring_set_password(account, NULL, NULL, 
+	purple_keyring_set_password(account, NULL,
 		purple_accounts_delete_finish, NULL);
 }
 

@@ -1374,7 +1374,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* Remember Password */
 	remember = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check));
 	if(!remember)
-		purple_keyring_set_password(account, NULL, NULL, NULL, NULL);
+		purple_keyring_set_password(account, NULL, NULL, NULL);
 
 	purple_account_set_remember_password(account, remember);
 
@@ -1395,9 +1395,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * don't want to prompt them.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0')) {
-		purple_account_set_password(account, value, NULL, NULL, NULL);
+		purple_account_set_password(account, value, NULL, NULL);
 	} else {
-		purple_account_set_password(account, NULL, NULL, NULL, NULL);
+		purple_account_set_password(account, NULL, NULL, NULL);
 	}
 
 	purple_account_set_username(account, username);

@@ -481,7 +481,7 @@ static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields
 	if (remember)
 		purple_account_set_remember_password(account, TRUE);
 
-	purple_account_set_password(account, password, NULL, NULL, NULL);
+	purple_account_set_password(account, password, NULL, NULL);
 
 	/* Load SILC key pair */
 	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());

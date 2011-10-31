@@ -354,13 +354,11 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  *
  * @param account  The account for which the password is to be saved.
  * @param password The password to save.
- * @param destroy  A function called to free the password. Can be NULL.
  * @param cb       A callback for once the password is saved.
  * @param data     A pointer to be passed to the callback.
  */
 void purple_account_set_password(PurpleAccount *account,
-                                 gchar *password,
-                                 GDestroyNotify destroy,
+                                 const gchar *password,
                                  PurpleKeyringSaveCallback cb,
                                  gpointer data);
 

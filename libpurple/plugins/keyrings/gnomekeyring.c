@@ -80,7 +80,7 @@ struct _InfoStorage
 static GQuark 		gkp_error_domain(void);
 static void 		gkp_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
 static void		gkp_read_continue(GnomeKeyringResult, const char *, gpointer);
-static void 		gkp_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
+static void 		gkp_save(PurpleAccount *, const gchar *, PurpleKeyringSaveCallback, gpointer);
 static void		gkp_save_continue(GnomeKeyringResult, gpointer);
 static void		gkp_close(GError **);
 static gboolean		gkp_import_password(PurpleAccount *, const char *, const char *, GError **);
@@ -180,8 +180,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 
 static void
 gkp_save(PurpleAccount * account,
-	 gchar * password,
-	 GDestroyNotify destroy,
+	 const gchar * password,
 	 PurpleKeyringSaveCallback cb,
 	 gpointer data)
 {
@@ -210,9 +209,6 @@ gkp_save(PurpleAccount * account,
 					     "user", purple_account_get_username(account),
 					     "protocol", purple_account_get_protocol_id(account),
 					     NULL);
-	
-		if (destroy)
-			destroy(password);
 
 	} else {	/* password == NULL, delete password. */
 

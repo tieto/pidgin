@@ -468,7 +468,7 @@ flap_connection_destroy_cb(gpointer data)
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			tmp = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(account))
-				purple_account_set_password(account, NULL, NULL, NULL, NULL);
+				purple_account_set_password(account, NULL, NULL, NULL);
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)

@@ -131,13 +131,11 @@ typedef void (*PurpleKeyringRead)(PurpleAccount * account,
  * the function returns, so one must take care to make a copy if they call other 
  * async functions later. If the password is NULL, this means that the keyring
  * should forget about that password.
- * @param destroypassword A function that will be called to free the password.
  * @param cb A callback to be called once the password is saved.
  * @param data A pointer to be passed to the callback
  */
 typedef void (*PurpleKeyringSave)(PurpleAccount * account,
-				  gchar * password,
-				  GDestroyNotify destroypassword,
+				  const gchar * password,
 				  PurpleKeyringSaveCallback cb,
 				  gpointer data);
 
@@ -326,14 +324,12 @@ purple_keyring_get_password(PurpleAccount *account,
  *
  * @param account  The account for which the password is to be saved.
  * @param password The password to save.
- * @param destroy  A function called to free the password. Can be NULL.
  * @param cb       A callback for once the password is saved.
  * @param data     A pointer to be passed to the callback.
  */
 void 
 purple_keyring_set_password(PurpleAccount *account,
-                            gchar *password,
-                            GDestroyNotify destroy,
+                            const gchar *password,
                             PurpleKeyringSaveCallback cb,
                             gpointer data);
 

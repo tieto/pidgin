@@ -1836,7 +1836,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_INCORRECT_PASSWORD: /* Incorrect password */
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL, NULL, NULL, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
 				if (purple_connection_get_password(session->gc) && (strlen(purple_connection_get_password(session->gc)) > MSIM_MAX_PASSWORD_LENGTH)) {
 					gchar *suggestion;
@@ -1861,7 +1861,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_LOGGED_IN_ELSEWHERE: /* Logged in elsewhere */
 				reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL, NULL, NULL, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 				break;
 		}
 		purple_connection_error(session->gc, reason, full_errmsg);

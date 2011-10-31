@@ -386,7 +386,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	t = g_strdup_printf("%u", uin);
 	purple_account_set_username(account, t);
 	/* Save the password if remembering passwords for the account */
-	purple_account_set_password(account, p1, NULL, NULL, NULL);
+	purple_account_set_password(account, p1, NULL, NULL);
 
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
@@ -651,7 +651,7 @@ static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
 	if (req->http_req->data != NULL &&
 		((struct gg_pubdir*)req->http_req->data)->success == 1)
 	{
-		purple_account_set_password(req->account, req->new_password, NULL, NULL, NULL);
+		purple_account_set_password(req->account, req->new_password, NULL, NULL);
 		purple_notify_info(req->account, messagesTitle,
 			_("Password was changed successfully!"), NULL);
 		goto exit_cleanup;

@@ -359,7 +359,7 @@ purple_keyring_drop_passwords(const PurpleKeyring * keyring)
 	for (cur = purple_accounts_get_all();
 	     cur != NULL;
 	     cur = cur->next)
-		save(cur->data, NULL, NULL, NULL, NULL);
+		save(cur->data, NULL, NULL, NULL);
 
 	return;
 }
@@ -467,7 +467,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount * account,
 	 * schedule_accounts_save() function, but other such functions
 	 * are not exposed. So these was done for consistency.
 	 */
-	purple_account_set_password(NULL, NULL, NULL, NULL, NULL);
+	purple_account_set_password(NULL, NULL, NULL, NULL);
 
 	return;
 }
@@ -513,7 +513,7 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount * account,
 			 * in having a keyring that can't store passwords, but it
 			 * will prevent crash with invalid keyrings
 			 */
-			save(account, password, NULL, 
+			save(account, password, 
 			     purple_keyring_set_inuse_check_error_cb, tracker);
 
 		} else {
@@ -919,8 +919,7 @@ purple_keyring_get_password(PurpleAccount *account,
 
 void 
 purple_keyring_set_password(PurpleAccount * account,
-                            gchar *password,
-                            GDestroyNotify destroy,
+                            const gchar *password,
                             PurpleKeyringSaveCallback cb,
                             gpointer data)
 {
@@ -952,8 +951,7 @@ purple_keyring_set_password(PurpleAccount * account,
 			cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
 			cbinfo->cb = cb;
 			cbinfo->data = data;
-			save(account, password, destroy,
-				purple_keyring_set_password_async_cb, data);
+			save(account, password, purple_keyring_set_password_async_cb, data);
 		}
 	}
 	return;
