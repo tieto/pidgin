@@ -4604,7 +4604,7 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		update_chat_alias((PurpleBuddy *)node, conv, gc, prpl_info);
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
-			purple_conversation_get_account(conv) == ((PurpleChat*)node)->account)
+			purple_conversation_get_account(conv) == purple_chat_get_account((PurpleChat*)node))
 	{
 		if (old_alias == NULL || g_utf8_collate(old_alias, purple_conversation_get_title(conv)) == 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_SET_TITLE);
@@ -7999,7 +7999,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 				if (prpl_info->chat_info_defaults != NULL)
 					comps = prpl_info->chat_info_defaults(gc, purple_conversation_get_name(conv));
 			} else {
-				comps = chat->components;
+				comps = purple_chat_get_components(chat);
 			}
 			serv_join_chat(gc, comps);
 			if (chat == NULL && comps != NULL)

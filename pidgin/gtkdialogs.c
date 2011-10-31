@@ -1155,7 +1155,7 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
-					   chat->account, NULL, NULL,
+					   purple_chat_get_account(chat), NULL, NULL,
 					   chat);
 }
 
@@ -1275,7 +1275,7 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 		} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
 			cnode = cnode->next;
-			if (purple_account_is_connected(chat->account))
+			if (purple_account_is_connected(purple_chat_get_account(chat)))
 				purple_blist_remove_chat(chat);
 		} else {
 			cnode = cnode->next;
@@ -1362,7 +1362,7 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 			name ? name : "");
 
 	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
-						chat->account, NULL, NULL,
+						purple_chat_get_account(chat), NULL, NULL,
 						chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);

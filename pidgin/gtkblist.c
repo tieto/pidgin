@@ -1755,7 +1755,7 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
-	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(c->account), node);
+	pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(purple_chat_get_account(c)), node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
 	pidgin_separator(menu);
@@ -2874,7 +2874,7 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		account = purple_buddy_get_account((PurpleBuddy*)(node));
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		account = ((PurpleChat*)(node))->account;
+		account = purple_chat_get_account((PurpleChat*)(node));
 	}
 
 	td->padding = TOOLTIP_BORDER;
@@ -3677,13 +3677,13 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		PidginBlistNode *bnode = node->ui_data;
 
 		chat = (PurpleChat *)node;
-		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
+		prpl = purple_find_prpl(purple_account_get_protocol_id(purple_chat_get_account(chat)));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		connections = purple_connections_get_all();
 		if (connections && connections->next)
 		{
-			tmp = g_markup_escape_text(purple_account_get_username(chat->account), -1);
+			tmp = g_markup_escape_text(purple_account_get_username(purple_chat_get_account(chat)), -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
 			g_free(tmp);
 		}
@@ -3693,12 +3693,12 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		} else {
 			char *chat_name;
 			if (prpl_info && prpl_info->get_chat_name)
-				chat_name = prpl_info->get_chat_name(chat->components);
+				chat_name = prpl_info->get_chat_name(purple_chat_get_components(chat));
 			else
 				chat_name = g_strdup(purple_chat_get_name(chat));
 
 			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, chat_name,
-					chat->account);
+					purple_chat_get_account(chat));
 			g_free(chat_name);
 		}
 
@@ -3715,7 +3715,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		if (prpl_info && prpl_info->chat_info != NULL)
-			cur = prpl_info->chat_info(purple_account_get_connection(chat->account));
+			cur = prpl_info->chat_info(purple_account_get_connection(purple_chat_get_account(chat)));
 		else
 			cur = NULL;
 
@@ -3724,13 +3724,13 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			pce = cur->data;
 
 			if (!pce->secret && (!pce->required &&
-				g_hash_table_lookup(chat->components, pce->identifier) == NULL))
+				g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier) == NULL))
 			{
 				tmp = purple_text_strip_mnemonic(pce->label);
 				name = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
 				value = g_markup_escape_text(g_hash_table_lookup(
-										chat->components, pce->identifier), -1);
+										purple_chat_get_components(chat), pce->identifier), -1);
 				g_string_append_printf(str, "\n<b>%s</b> %s",
 							name ? name : "",
 							value ? value : "");
@@ -4099,7 +4099,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		if(buddy)
 			account = purple_buddy_get_account(buddy);
 		else
-			account = chat->account;
+			account = purple_chat_get_account(chat);
 
 		prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 		if(!prpl)
@@ -6706,7 +6706,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 	chat = (PurpleChat*)node;
 
-	if(purple_account_is_connected(chat->account)) {
+	if(purple_account_is_connected(purple_chat_get_account(chat))) {
 		GtkTreeIter iter;
 		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 		const gchar *color, *font;
@@ -6770,7 +6770,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		g_free(mark);
 		mark = tmp;
 
-		prpl_icon = pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL);
+		prpl_icon = pidgin_create_prpl_icon(purple_chat_get_account(chat), PIDGIN_PRPL_ICON_SMALL);
 
 		if (theme != NULL)
 			bgcolor = pidgin_blist_theme_get_contact_color(theme);
@@ -7420,11 +7420,11 @@ static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 
 			chat = (PurpleChat *)cnode;
 
-			if(chat->account != account)
+			if(purple_chat_get_account(chat) != account)
 				continue;
 
 			if (purple_blist_node_get_bool((PurpleBlistNode*)chat, "gtk-autojoin"))
-				serv_join_chat(gc, chat->components);
+				serv_join_chat(gc, purple_chat_get_components(chat));
 		}
 	}
 
