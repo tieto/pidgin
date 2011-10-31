@@ -75,8 +75,6 @@ static gboolean internal_keyring_is_active = FALSE;
 /* a few prototypes : */
 static void 		internal_keyring_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
 static void 		internal_keyring_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
-static const char * 	internal_keyring_read_sync(const PurpleAccount *);
-static void 		internal_keyring_save_sync(PurpleAccount *, const gchar *);
 static void		internal_keyring_close(GError **);
 static void		internal_keyring_open(void);
 static gboolean		internal_keyring_import_password(PurpleAccount *, const char *, const char *, GError **);
@@ -155,45 +153,6 @@ internal_keyring_save(PurpleAccount * account,
 	return;
 }
 
-
-static const char * 
-internal_keyring_read_sync(const PurpleAccount * account)
-{
-	ACTIVATE();
-
-	purple_debug_info("Internal Keyring (_sync_)", 
-		"Password for %s (%s) was read.\n",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
-
-	return GET_PASSWORD(account);
-}
-
-static void
-internal_keyring_save_sync(PurpleAccount * account,
-			   const char * password)
-{
-	gchar * copy;
-
-	ACTIVATE();
-
-	if (password == NULL || *password == '\0') {
-		g_hash_table_remove(internal_keyring_passwords, account);
-		purple_debug_info("Internal Keyring (_sync_)", 
-			"Password for %s (%s) was deleted.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-	} else {
-		copy = g_strdup(password);
-		SET_PASSWORD(account, copy);
-		purple_debug_info("Internal Keyring (_sync_)", 
-			"Password for %s (%s) was set.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-	}
-
-	return;
-}
 
 static void
 internal_keyring_close(GError ** error)
@@ -279,8 +238,6 @@ internal_keyring_init()
 
 	purple_keyring_set_name(keyring_handler, INTERNALKEYRING_NAME);
 	purple_keyring_set_id(keyring_handler, INTERNALKEYRING_ID);
-	purple_keyring_set_read_sync(keyring_handler, internal_keyring_read_sync);
-	purple_keyring_set_save_sync(keyring_handler, internal_keyring_save_sync);
 	purple_keyring_set_read_password(keyring_handler, internal_keyring_read);
 	purple_keyring_set_save_password(keyring_handler, internal_keyring_save);
 	purple_keyring_set_close_keyring(keyring_handler, internal_keyring_close);

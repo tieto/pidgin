@@ -82,8 +82,6 @@ static void 		gkp_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
 static void		gkp_read_continue(GnomeKeyringResult, const char *, gpointer);
 static void 		gkp_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
 static void		gkp_save_continue(GnomeKeyringResult, gpointer);
-static const char * 	gkp_read_sync(const PurpleAccount *);
-static void 		gkp_save_sync(PurpleAccount *, const gchar *);
 static void		gkp_close(GError **);
 static gboolean		gkp_import_password(PurpleAccount *, const char *, const char *, GError **);
 static gboolean 	gkp_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
@@ -309,67 +307,6 @@ gkp_save_continue(GnomeKeyringResult result,
 	}
 }
 
-static const char * 
-gkp_read_sync(const PurpleAccount * account)
-/**
- * This is tricky, since the calling function will not free the password. 
- * Since we free the password on the next request, the last request will leak.
- * But that part of the code shouldn't be used anyway. It might however be an issue
- * if another call is made and the old pointer still used.
- * Elegant solution would include a hashtable or a linked list, but would be
- * complex. Also, this might just be dropped at 1.0 of the plugin
- */
-{
-	GnomeKeyringResult result;
-	static char * password = NULL;
-
-	purple_debug_info("Gnome-Keyring plugin (_sync_)", "password for %s was read.\n",
-			purple_account_get_username(account));
-
-	gnome_keyring_free_password(password);
-
-	result = gnome_keyring_find_password_sync(GNOME_KEYRING_NETWORK_PASSWORD,
-		&password,
-		"user", purple_account_get_username(account),
-		"protocol", purple_account_get_protocol_id(account),
-		NULL);
-
-	return password;
-}
-
-static void
-gkp_save_sync(PurpleAccount * account, 
-	const char * password)
-{
-	const char * name;
-
-	if(password != NULL && *password != '\0') {
-
-		name =g_strdup_printf("pidgin-%s", purple_account_get_username(account)),
-
-		gnome_keyring_store_password_sync(GNOME_KEYRING_NETWORK_PASSWORD,
-			NULL, name, password, 
-			"user", purple_account_get_username(account),
-			"protocol", purple_account_get_protocol_id(account),
-			NULL);
-		purple_debug_info("GnomeKeyring plugin (_sync_)", 
-			"Updated password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-
-	} else {
-		gnome_keyring_delete_password_sync(GNOME_KEYRING_NETWORK_PASSWORD,
-			"user", purple_account_get_username(account),
-			"protocol", purple_account_get_protocol_id(account),
-			NULL);
-		purple_debug_info("GnomeKeyring plugin (_sync_)", 
-			"Deleted password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-	
-	}
-}
-
 static void
 gkp_close(GError ** error)
 {
@@ -428,8 +365,6 @@ gkp_init()
 
 		purple_keyring_set_name(keyring_handler, GNOMEKEYRING_NAME);
 		purple_keyring_set_id(keyring_handler, GNOMEKEYRING_ID);
-		purple_keyring_set_read_sync(keyring_handler, gkp_read_sync);
-		purple_keyring_set_save_sync(keyring_handler, gkp_save_sync);
 		purple_keyring_set_read_password(keyring_handler, gkp_read);
 		purple_keyring_set_save_password(keyring_handler, gkp_save);
 		purple_keyring_set_close_keyring(keyring_handler, gkp_close);

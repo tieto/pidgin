@@ -199,9 +199,9 @@ save_account_cb(AccountEditDialog *dialog)
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->remember)));
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->password));
 	if (value && *value)
-		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL);
+		purple_account_set_password(account, g_strdup(value), g_free, NULL, NULL);
 	else
-		purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
+		purple_account_set_password(account, NULL, NULL, NULL, NULL);
 
 	/* Mail notification */
 	purple_account_set_check_mail(account,
@@ -540,7 +540,7 @@ prpl_changed_cb(GntWidget *combo, PurplePlugin *old, PurplePlugin *new, AccountE
 static void
 edit_account(PurpleAccount *account)
 {
-	purple_account_get_password_async(account, edit_account_continue, account);
+	purple_account_get_password(account, edit_account_continue, account);
 }
 
 static void

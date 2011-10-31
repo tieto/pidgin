@@ -46,7 +46,7 @@ signed_on_cb(PurpleConnection *conn, void *data)
 					  purple_account_get_username(account),
 					  purple_account_get_protocol_name(account));
 
-			purple_account_set_password(account, NULL);
+			purple_account_set_password(account, NULL, NULL, NULL, NULL);
 			/* TODO: Do we need to somehow clear conn->password ? */
 		}
 	}

@@ -377,8 +377,6 @@ kwallet_load(PurplePlugin *plugin)
 
 	purple_keyring_set_name(keyring_handler, GNOMEKEYRING_NAME);
 	purple_keyring_set_id(keyring_handler, GNOMEKEYRING_ID);
-	purple_keyring_set_read_sync(keyring_handler, gkp_read_sync);
-	purple_keyring_set_save_sync(keyring_handler, gkp_save_sync);
 	purple_keyring_set_read_password(keyring_handler, gkp_read);
 	purple_keyring_set_save_password(keyring_handler, gkp_save);
 	purple_keyring_set_close_keyring(keyring_handler, gkp_close);

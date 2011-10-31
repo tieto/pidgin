@@ -142,25 +142,6 @@ typedef void (*PurpleKeyringSave)(PurpleAccount * account,
 				  gpointer data);
 
 /**
- * Read a password in an sync way. This is only used for API
- * compatibility, and plugins are not expected to support this.
- * Also, this should be dropped in 3.0.
- * @param account The account.
- * @return The password for the account.
- */
-typedef const char * (*PurpleKeyringReadSync)(const PurpleAccount * account);
-
-/**
- * Read a password in an sync way. This is only used for API
- * compatibility, and plugins are not expected to support this.
- * Also, this should be dropped in 3.0.
- * @param account The account.
- * @param password The password to save.
- */
-typedef void (*PurpleKeyringSaveSync)(PurpleAccount * account,
-				      const char * password);
-
-/**
  * Close the keyring.
  * This will be called so the keyring can do any cleanup it wants.
  * @param error An error that may occur.
@@ -330,64 +311,31 @@ purple_keyring_export_password(PurpleAccount * account,
 
 /**
  * Read a password from the active safe.
- * This should be renamed purple_keyring_get_password() when getting
- * to 3.0, while dropping purple_keyring_get_password_sync().
+ *
  * @param account The account for which we want the password.
- * @param cb The callback to be called.
- * @param data A pointer passed to the callback.
+ * @param cb      The callback to be called.
+ * @param data    A pointer passed to the callback.
  */
 void 
-purple_keyring_get_password_async(PurpleAccount * account,
-				  PurpleKeyringReadCallback cb,
-				  gpointer data);
+purple_keyring_get_password(PurpleAccount *account,
+                            PurpleKeyringReadCallback cb,
+                            gpointer data);
 
 /**
  * Set a password to be remembered.
- * This should be renamed purple_keyring_set_password() when getting
- * to 3.0, while dropping purple_keyring_set_password_sync().keyring
- * @param account The account for which the password is to be saved.
+ *
+ * @param account  The account for which the password is to be saved.
  * @param password The password to save.
- * @param destroypassword A function called to free the password. Can be NULL.
- * @param cb A callback for once the password is saved.
- * @param data A pointer to be passed to the callback.
+ * @param destroy  A function called to free the password. Can be NULL.
+ * @param cb       A callback for once the password is saved.
+ * @param data     A pointer to be passed to the callback.
  */
 void 
-purple_keyring_set_password_async(PurpleAccount * account, 
-				  gchar * password,
-				  GDestroyNotify destroypassword,
-				  PurpleKeyringSaveCallback cb,
-				  gpointer data);
-#ifndef PURPLE_DISABLE_DEPRECATED
-/**
- * Read a password in a synchronous way.
- *
- * @param account The account for which we want the password.
- *
- * @return A pointer to the the password
- *
- * @deprecated This is here only for compatibility reasons. Keyrings
- * are not expected to support this, and you should use 
- * purple_keyring_get_password_async() instead.
- */
-const char * 
-purple_keyring_get_password_sync(const PurpleAccount * account);
-#endif
-
-#ifndef PURPLE_DISABLE_DEPRECATED
-/**
- * Save a password in a synchronous way.
- *
- * @param account The account for which we want the password.
- * @param password The password to save.
- *
- * @deprecated This is here only for compatibility reasons. Keyrings are not
- * expected to support this, and you should use
- * purple_keyring_set_password_async() instead.
- */
-void 
-purple_keyring_set_password_sync(PurpleAccount * account,
-				 const char *password);
-#endif
+purple_keyring_set_password(PurpleAccount *account,
+                            gchar *password,
+                            GDestroyNotify destroy,
+                            PurpleKeyringSaveCallback cb,
+                            gpointer data);
 
 /**
  * Close a safe.
@@ -421,8 +369,6 @@ const char * purple_keyring_get_name(const PurpleKeyring * info);
 const char * purple_keyring_get_id(const PurpleKeyring * info);
 PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring * info);
 PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring * info);
-PurpleKeyringReadSync purple_keyring_get_read_sync(const PurpleKeyring * info);
-PurpleKeyringSaveSync purple_keyring_get_save_sync(const PurpleKeyring * info);
 PurpleKeyringClose purple_keyring_get_close_keyring(const PurpleKeyring * info);
 PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring * info);
 PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring * info);
@@ -430,8 +376,6 @@ PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyri
 
 void purple_keyring_set_name(PurpleKeyring * info, char * name);
 void purple_keyring_set_id(PurpleKeyring * info, char * id);
-void purple_keyring_set_read_sync(PurpleKeyring * info, PurpleKeyringReadSync read);
-void purple_keyring_set_save_sync(PurpleKeyring * info, PurpleKeyringSaveSync save);
 void purple_keyring_set_read_password(PurpleKeyring * info, PurpleKeyringRead read);
 void purple_keyring_set_save_password(PurpleKeyring * info, PurpleKeyringSave save);
 void purple_keyring_set_close_keyring(PurpleKeyring * info, PurpleKeyringClose close);

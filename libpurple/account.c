@@ -1181,7 +1181,7 @@ purple_account_register(PurpleAccount *account)
 	purple_debug_info("account", "Registering account %s\n",
 					purple_account_get_username(account));
 
-	purple_keyring_get_password_async(account, purple_account_register_got_password_cb, NULL);
+	purple_keyring_get_password(account, purple_account_register_got_password_cb, NULL);
 }
 
 
@@ -1213,7 +1213,7 @@ purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb 
 	data->cb = cb;
 	data->user_data = user_data;
 
-	purple_keyring_get_password_async(account, purple_account_unregister_got_password_cb, data);
+	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, data);
 
 }
 
@@ -1248,13 +1248,13 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 		return;
 	}
 
-	if(!remember)
-		purple_keyring_set_password_async(account, NULL, NULL, NULL, NULL);
+	if (!remember)
+		purple_keyring_set_password(account, NULL, NULL, NULL, NULL);
 
 	purple_account_set_remember_password(account, remember);
 
 	password = g_strdup(entry);
-	purple_account_set_password(account, password);
+	purple_account_set_password(account, password, NULL, NULL, NULL);
 	g_free(password);
 	_purple_connection_new(account, FALSE, entry);
 
@@ -1340,7 +1340,7 @@ purple_account_connect(PurpleAccount *account)
 	purple_debug_info("account", "Connecting to account %s.\n", username);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	purple_keyring_get_password_async(account, purple_account_connect_got_password_cb, prpl_info);
+	purple_keyring_get_password(account, purple_account_connect_got_password_cb, prpl_info);
 
 }
 
@@ -1736,27 +1736,12 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 		blist_ops->save_account(account);
 }
 
-void
-purple_account_set_password(PurpleAccount *account, const char *password)
-{
-	schedule_accounts_save();
-
-	g_return_if_fail(account != NULL);
-
-	g_free(account->password);
-
-	account->password = g_strdup(password);
-
-	if (purple_account_get_remember_password(account) == TRUE)
-		purple_keyring_set_password_async(account, g_strdup(password), g_free, NULL, NULL);
-}
-
 void 
-purple_account_set_password_async(PurpleAccount * account, 
-				  gchar * password,
-				  GDestroyNotify destroypassword,
-				  PurpleKeyringSaveCallback cb,
-				  gpointer data)
+purple_account_set_password(PurpleAccount *account,
+                            gchar *password,
+                            GDestroyNotify destroy,
+                            PurpleKeyringSaveCallback cb,
+                            gpointer data)
 {
 	/**
 	 * This is so we can force an account sync by calling
@@ -1781,10 +1766,11 @@ purple_account_set_password_async(PurpleAccount * account,
 			cb(account, NULL, data);
 
 	} else {
-		purple_keyring_set_password_async(account, password,
-			destroypassword, cb, data);
+		purple_keyring_set_password(account, password,
+			destroy, cb, data);
 	}
 }
+
 void
 purple_account_set_alias(PurpleAccount *account, const char *alias)
 {
@@ -2289,38 +2275,12 @@ purple_account_get_username(const PurpleAccount *account)
 	return account->username;
 }
 
-#ifndef PURPLE_DISABLE_DEPRECATED
-/* XXX will be replaced by the async code in 3.0 */
-const char *
-purple_account_get_password(PurpleAccount *account)
-{
-	g_return_val_if_fail(account != NULL, NULL);
-
-	if (account->password == NULL) {
-		purple_debug_info("accounts",
-			"Reading password for account %s (%s) from sync keyring.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-
-		account->password = g_strdup(purple_keyring_get_password_sync(account));
-
-	} else {
-		purple_debug_info("accounts",
-			"Reading password for account %s (%s) from cached.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-	}
-
-	return account->password;
-}
-#endif
-
 void
-purple_account_get_password_async(PurpleAccount * account,
-				  PurpleKeyringReadCallback cb,
-				  gpointer data)
+purple_account_get_password(PurpleAccount *account,
+                            PurpleKeyringReadCallback cb,
+                            gpointer data)
 {
-	CbInfo * info = g_new0(CbInfo,1);
+	CbInfo *info = g_new0(CbInfo, 1);
 	info->cb = cb;
 	info->data = data;
 
@@ -2331,7 +2291,7 @@ purple_account_get_password_async(PurpleAccount * account,
 
 	if (account->password != NULL) {
 		purple_debug_info("accounts",
-			"Reading password for account %s (%s) from cached (async).\n",
+			"Reading password for account %s (%s) from cache.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		cb(account, account->password, NULL, data);
@@ -2341,7 +2301,7 @@ purple_account_get_password_async(PurpleAccount * account,
 			"Reading password for account %s (%s) from async keyring.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
-		purple_keyring_get_password_async(account, 
+		purple_keyring_get_password(account, 
 			purple_account_get_password_async_finish, info);
 	}
 }
@@ -2888,7 +2848,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePlugin *prpl = NULL;
 
-	purple_account_set_password_async(account, g_strdup(new_pw), g_free, NULL, NULL);
+	purple_account_set_password(account, g_strdup(new_pw), g_free, NULL, NULL);
 
 	if (gc != NULL)
 		prpl = purple_connection_get_prpl(gc);
@@ -3112,9 +3072,8 @@ purple_accounts_delete(PurpleAccount *account)
 	/* this is async because we do not want the
 	 * account overwritten before we are done.
 	 */
-	purple_keyring_set_password_async(account, NULL, NULL, 
+	purple_keyring_set_password(account, NULL, NULL, 
 		purple_accounts_delete_finish, NULL);
-
 }
 
 static void

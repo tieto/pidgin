@@ -61,8 +61,6 @@ struct _PurpleKeyring
 	PurpleKeyringChangeMaster change_master;
 	PurpleKeyringImportPassword import_password;
 	PurpleKeyringExportPassword export_password;
-	PurpleKeyringReadSync read_sync;
-	PurpleKeyringSaveSync save_sync;
 	gpointer r1;	/* RESERVED */
 	gpointer r2;	/* RESERVED */
 	gpointer r3;	/* RESERVED */
@@ -135,22 +133,6 @@ purple_keyring_get_save_password(const PurpleKeyring * keyring)
 	return keyring->save_password;
 }
 
-PurpleKeyringReadSync
-purple_keyring_get_read_sync(const PurpleKeyring * keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->read_sync;
-}
-
-PurpleKeyringSaveSync
-purple_keyring_get_save_sync(const PurpleKeyring * keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->save_sync;
-}
-
 PurpleKeyringClose 
 purple_keyring_get_close_keyring(const PurpleKeyring * keyring)
 {
@@ -221,26 +203,6 @@ purple_keyring_set_save_password(PurpleKeyring * keyring, PurpleKeyringSave save
 	g_return_if_fail(keyring != NULL);
 
 	keyring->save_password = save;
-
-	return;
-}
-
-void 
-purple_keyring_set_read_sync(PurpleKeyring * keyring, PurpleKeyringReadSync read)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->read_sync = read;
-
-	return;
-}
-
-void 
-purple_keyring_set_save_sync(PurpleKeyring * keyring, PurpleKeyringSaveSync save)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->save_sync = save;
 
 	return;
 }
@@ -505,7 +467,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount * account,
 	 * schedule_accounts_save() function, but other such functions
 	 * are not exposed. So these was done for consistency.
 	 */
-	purple_account_set_password_async(NULL, NULL, NULL, NULL, NULL);
+	purple_account_set_password(NULL, NULL, NULL, NULL, NULL);
 
 	return;
 }
@@ -904,15 +866,10 @@ purple_keyring_export_password(PurpleAccount * account,
 	return export(account, mode, data, error, destroy);
 }
 
-
-/**
- * This should be renamed purple_keyring_get_password() when getting
- * to 3.0, while dropping purple_keyring_get_password_sync().
- */
 void 
-purple_keyring_get_password_async(PurpleAccount * account,
-				  PurpleKeyringReadCallback cb,
-				  gpointer data)
+purple_keyring_get_password(PurpleAccount *account,
+                            PurpleKeyringReadCallback cb,
+                            gpointer data)
 {
 	GError * error = NULL;
 	const PurpleKeyring * inuse;
@@ -960,16 +917,12 @@ purple_keyring_get_password_async(PurpleAccount * account,
 	return;
 }
 
-/**
- * This should be renamed purple_keyring_set_password() when getting
- * to 3.0, while dropping purple_keyring_set_password_sync().
- */
 void 
-purple_keyring_set_password_async(PurpleAccount * account, 
-				  gchar * password,
-				  GDestroyNotify destroypassword,
-				  PurpleKeyringSaveCallback cb,
-				  gpointer data)
+purple_keyring_set_password(PurpleAccount * account,
+                            gchar *password,
+                            GDestroyNotify destroy,
+                            PurpleKeyringSaveCallback cb,
+                            gpointer data)
 {
 	GError * error = NULL;
 	const PurpleKeyring * inuse;
@@ -999,7 +952,7 @@ purple_keyring_set_password_async(PurpleAccount * account,
 			cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
 			cbinfo->cb = cb;
 			cbinfo->data = data;
-			save(account, password, destroypassword,
+			save(account, password, destroy,
 				purple_keyring_set_password_async_cb, data);
 		}
 	}
@@ -1029,68 +982,6 @@ purple_keyring_set_password_async_cb(PurpleAccount * account,
 	if (cb != NULL)
 		cb(account, error, cbinfo->data);
 	g_free(data);
-}
-
-/**
- * This should be dropped at 3.0 (it's here for compatibility)
- */
-const char * 
-purple_keyring_get_password_sync(const PurpleAccount * account)
-{
-	PurpleKeyringReadSync read;
-	const PurpleKeyring * inuse;
-
-	g_return_val_if_fail(account != NULL, NULL);
-
-	purple_debug_info("keyring (_sync_)",
-		"Reading password for account %s (%s)",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
-
-	inuse = purple_keyring_get_inuse();
-
-	if (inuse == NULL) {
-		return NULL;
-
-	} else {
-		read = purple_keyring_get_read_sync(inuse);
-
-		if (read == NULL)
-			return NULL;
-		else
-			return read(account);
-	}
-}
-
-/**
- * This should be dropped at 3.0 (it's here for compatibility)
- */
-void 
-purple_keyring_set_password_sync(PurpleAccount * account,
-				 const char *password)
-{
-	PurpleKeyringSaveSync save;
-	const PurpleKeyring * inuse;
-
-	purple_debug_info("keyring (_sync_)",
-		"Setting password for account %s (%s)",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
-
-	g_return_if_fail(account != NULL);
-
-	inuse = purple_keyring_get_inuse();
-	if (inuse != NULL) {
-		save = purple_keyring_get_save_sync(inuse);
-
-		if (save != NULL)
-			return save(account, password);
-	}
-
-	/* schedule account save */
-	purple_account_set_password(NULL, NULL);
-
-	return;
 }
 
 void

@@ -346,35 +346,23 @@ void purple_account_request_change_user_info(PurpleAccount *account);
 void purple_account_set_username(PurpleAccount *account, const char *username);
 
 /**
- * Sets the account's password.
- *
- * @param account  The account.
- * @param password The password.
- *
- * This functions is just a wrapper for the async code anyway.
- */
-void purple_account_set_password(PurpleAccount *account, const char *password);
-
-/**
  * Set the account's password, and call the callback
- * This should be renamed purple_account_set_password() when getting
- * to 3.0. This calls the keyring function and syncs the accounts.xml
  *
  * The password in the keyring might not be immediatly updated, but the cache
  * version will be, and it is therefore safe to read the password back before
  * the callback has been triggered. One can also set a NULL calback.
  *
- * @param account The account for which the password is to be saved.
+ * @param account  The account for which the password is to be saved.
  * @param password The password to save.
- * @param destroypassword A function called to free the password. Can be NULL.
- * @param cb A callback for once the password is saved.
- * @param data A pointer to be passed to the callback.
+ * @param destroy  A function called to free the password. Can be NULL.
+ * @param cb       A callback for once the password is saved.
+ * @param data     A pointer to be passed to the callback.
  */
-void purple_account_set_password_async(PurpleAccount * account, 
-				  gchar * password,
-				  GDestroyNotify destroypassword,
-				  PurpleKeyringSaveCallback cb,
-				  gpointer data);
+void purple_account_set_password(PurpleAccount *account,
+                                 gchar *password,
+                                 GDestroyNotify destroy,
+                                 PurpleKeyringSaveCallback cb,
+                                 gpointer data);
 
 /**
  * Sets the account's alias.
@@ -681,32 +669,16 @@ gboolean purple_account_is_disconnected(const PurpleAccount *account);
  */
 const char *purple_account_get_username(const PurpleAccount *account);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
-/**
- * Returns the account's password.
- *
- * @param account The account.
- *
- * @return The password.
- *
- * @deprecated This might return NULL if the password has not been cached yet,
- * and the keyring doesn't support sync access. It might also hang libpurple
- * while the keyring is prompting for a password. Use purple_account_get_password_async()
- * or purple_connection_get_password() instead (depending on the part of the code you are
- * calling from.
- */
-const char *purple_account_get_password(PurpleAccount *account);
-#endif
-
 /**
  * Reads the password for the account and passes it to the callback
  *
- * @param account The account to read the password for.
- * @param cb The callback to pass the password to.
- * @param data A pointer passed to the callback.
+ * @param account The account.
+ * @param cb      The callback to give the password.
+ * @param data    A pointer passed to the callback.
  */
-void purple_account_get_password_async(PurpleAccount * account, 
-	PurpleKeyringReadCallback cb, gpointer data);
+void purple_account_get_password(PurpleAccount *account,
+                                 PurpleKeyringReadCallback cb,
+                                 gpointer data);
 
 /**
  * Returns the account's alias.

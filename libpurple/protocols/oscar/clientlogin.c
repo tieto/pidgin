@@ -481,7 +481,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		if (status_code == 330 && status_detail_code == 3011) {
 			PurpleAccount *account = purple_connection_get_account(gc);
 			if (!purple_account_get_remember_password(account))
-				purple_account_set_password(account, NULL);
+				purple_account_set_password(account, NULL, NULL, NULL, NULL);
 			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 					_("Incorrect password"));

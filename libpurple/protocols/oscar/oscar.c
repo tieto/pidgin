@@ -1095,7 +1095,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		case 0x05:
 			/* Incorrect password */
 			if (!purple_account_get_remember_password(account))
-				purple_account_set_password(account, NULL);
+				purple_account_set_password(account, NULL, NULL, NULL, NULL);
 			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
 			break;
 		case 0x11:

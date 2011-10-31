@@ -154,7 +154,7 @@ static void auth_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	if (remember)
 		purple_account_set_remember_password(account, TRUE);
 
-	purple_account_set_password(account, entry);
+	purple_account_set_password(account, entry, NULL, NULL, NULL);
 
 	/* Rebuild our callbacks as we now have a password to offer */
 	jabber_sasl_build_callbacks(js);

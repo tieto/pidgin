@@ -1122,7 +1122,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				purple_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
 				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
 					if (!purple_account_get_remember_password(purple_connection_get_account(sip->gc)))
-						purple_account_set_password(purple_connection_get_account(sip->gc), NULL);
+						purple_account_set_password(purple_connection_get_account(sip->gc), NULL, NULL, NULL, NULL);
 					purple_connection_error(sip->gc,
 						PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 						_("Incorrect password"));

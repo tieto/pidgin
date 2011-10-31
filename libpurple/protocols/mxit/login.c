@@ -284,7 +284,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 
 out:
 	if ( !err ) {
-		purple_account_set_password( session->acc, session->profile->pin );
+		purple_account_set_password( session->acc, session->profile->pin, NULL, NULL, NULL );
 		mxit_login_connect( session );
 	}
 	else {
