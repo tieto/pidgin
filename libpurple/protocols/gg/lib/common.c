@@ -24,15 +24,10 @@
  *
  * \brief Funkcje wykorzystywane przez różne moduły biblioteki
  */
-#ifndef _WIN32
-#  include <sys/types.h>
-#  include <sys/ioctl.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#include "compat.h"
+#include <sys/types.h>
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include <errno.h>
@@ -92,7 +87,7 @@ char *gg_vsaprintf(const char *format, va_list ap)
 			}
 			buf = tmp;
 			res = vsnprintf(buf, size, format, ap);
-		} while (res == size - 1 || res == -1);
+		} while (res >= size - 1 || res == -1);
 	}
 #else
 	{

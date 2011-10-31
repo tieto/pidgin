@@ -377,7 +377,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
 
-				url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE,
+				url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE,
 										  MAX_HTTP_BUDDYICON_BYTES,
 										  do_buddy_avatar_update_fromurl, info);
 				if (url_data) {

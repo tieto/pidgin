@@ -412,7 +412,7 @@ statusbox_uri_handler(const char *proto, const char *cmd, GHashTable *params, vo
 	if (src == NULL)
 		return FALSE;
 
-	purple_util_fetch_url(src, TRUE, NULL, FALSE, statusbox_got_url, data);
+	purple_util_fetch_url(src, TRUE, NULL, FALSE, -1, statusbox_got_url, data);
 	return TRUE;
 }
 

@@ -24,10 +24,6 @@ void
 pidgin_dialogs_log()
 
 void
-pidgin_dialogs_alias_contact(contact)
-	Purple::BuddyList::Contact contact
-
-void
 pidgin_dialogs_alias_buddy(buddy)
 	Purple::BuddyList::Buddy buddy
 

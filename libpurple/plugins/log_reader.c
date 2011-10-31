@@ -92,7 +92,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 
 	prpl_name = g_ascii_strup(prpl_info->list_icon(account, NULL), -1);
 
-	temp = g_strdup_printf("%s.%s", prpl_name, account->username);
+	temp = g_strdup_printf("%s.%s", prpl_name, purple_account_get_username(account));
 	path = g_build_filename(logdir, temp, sn, NULL);
 	g_free(temp);
 
@@ -635,7 +635,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if (strcmp(account->protocol_id, "prpl-msn"))
+	if (strcmp(purple_account_get_protocol_id(account), "prpl-msn"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
@@ -658,7 +658,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			return list;
 		}
 	} else {
-		username = g_strdup(purple_normalize(account, account->username));
+		username = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 	}
 
 	if (buddy) {
@@ -974,7 +974,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 		their_name = from_name;
 		if (from_name && purple_prefs_get_bool("/plugins/core/log_reader/use_name_heuristics")) {
-			const char *friendly_name = purple_connection_get_display_name(log->account->gc);
+			const char *friendly_name = purple_connection_get_display_name(purple_account_get_connection(log->account));
 
 			if (friendly_name != NULL) {
 				int friendly_name_length = strlen(friendly_name);
@@ -987,13 +987,10 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				if (buddy)
 					their_name = purple_buddy_get_alias(buddy);
 
-				if (log->account->alias)
-				{
-					alias = log->account->alias;
+				alias = purple_account_get_alias(log->account);
+				if (alias) {
 					alias_length = strlen(alias);
-				}
-				else
-				{
+				} else {
 					alias = "";
 					alias_length = 0;
 				}
@@ -1115,10 +1112,10 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, "<b>");
 
 			if (name_guessed == NAME_GUESS_ME) {
-				if (log->account->alias)
-					text = g_string_append(text, log->account->alias);
+				if (purple_account_get_alias(log->account))
+					text = g_string_append(text, purple_account_get_alias(log->account));
 				else
-					text = g_string_append(text, log->account->username);
+					text = g_string_append(text, purple_account_get_username(log->account));
 			}
 			else if (name_guessed == NAME_GUESS_THEM)
 				text = g_string_append(text, their_name);
@@ -1781,7 +1778,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(account != NULL, NULL);
 
 	/* QIP only supports ICQ. */
-	if (strcmp(account->protocol_id, "prpl-icq"))
+	if (strcmp(purple_account_get_protocol_id(account), "prpl-icq"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
@@ -1798,7 +1795,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	if (!prpl_info->list_icon)
 		return NULL;
 
-	username = g_strdup(purple_normalize(account, account->username));
+	username = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 	filename = g_strdup_printf("%s.txt", purple_normalize(account, sn));
 	path = g_build_filename(logdir, username, "History", filename, NULL);
 	g_free(username);
@@ -2241,10 +2238,10 @@ static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 		return NULL;
 
 	/* aMSN only works with MSN/WLM */
-	if (strcmp(account->protocol_id, "prpl-msn"))
+	if (strcmp(purple_account_get_protocol_id(account), "prpl-msn"))
 		return NULL;
 
-	username = g_strdup(purple_normalize(account, account->username));
+	username = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 	buddy_log = g_strdup_printf("%s.log", purple_normalize(account, sn));
 	log_path = g_build_filename(logdir, username, "logs", NULL);
 

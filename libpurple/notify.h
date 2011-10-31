@@ -32,9 +32,12 @@
 #include <glib.h>
 
 typedef struct _PurpleNotifyUserInfoEntry	PurpleNotifyUserInfoEntry;
-typedef struct _PurpleNotifyUserInfo	PurpleNotifyUserInfo;
+typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
+/** @copydoc _PurpleNotifySearchColumn */
+typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
 #include "connection.h"
+
 
 /**
  * Notification close callbacks.
@@ -106,14 +109,6 @@ typedef enum
 	PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER
 } PurpleNotifyUserInfoEntryType;
 
-/**
- * Single column of a search result.
- */
-typedef struct
-{
-	char *title; /**< Title of the column. */
-
-} PurpleNotifySearchColumn;
 
 
 /**
@@ -266,13 +261,40 @@ void purple_notify_searchresults_button_add_labeled(PurpleNotifySearchResults *r
 PurpleNotifySearchResults *purple_notify_searchresults_new(void);
 
 /**
- * Returns a newly created search result column object.
+ * Returns a newly created search result column object.  The column defaults
+ * to being visible.
  *
  * @param title Title of the column. NOTE: Title will get g_strdup()ed.
  *
  * @return The new search column object.
  */
 PurpleNotifySearchColumn *purple_notify_searchresults_column_new(const char *title);
+
+/**
+ * Returns the title of the column
+ *
+ * @param column The search column object.
+ *
+ * @return The title of the column
+ */
+const char *purple_notify_searchresult_column_get_title(const PurpleNotifySearchColumn *column);
+
+/**
+ * Sets whether or not a search result column is visible.
+ *
+ * @param column  The search column object.
+ * @param visible TRUE if visible, or FALSE if not.
+ */
+void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible);
+
+/**
+ * Returns whether or not a search result column is visible.
+ *
+ * @param column The search column object.
+ *
+ * @return TRUE if the search result column is visible. FALSE otherwise.
+ */
+gboolean purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column);
 
 /**
  * Adds a new column to the search result object.
@@ -291,92 +313,6 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
  */
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
-/**
- * Returns a number of the rows in the search results object.
- *
- * @deprecated This function will be removed in Pidgin 3.0.0 unless
- *             there is sufficient demand to keep it.  Using this
- *             function encourages looping through the results
- *             inefficiently.  Instead of using this function you
- *             should iterate through the results using a loop
- *             similar to this:
- *                for (l = results->rows; l != NULL; l = l->next)
- *             If you really need to get the number of rows you
- *             can use g_list_length(results->rows).
- *
- * @param results The search results object.
- *
- * @return Number of the result rows.
- */
-guint purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *results);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
-/**
- * Returns a number of the columns in the search results object.
- *
- * @deprecated This function will be removed in Pidgin 3.0.0 unless
- *             there is sufficient demand to keep it.  Using this
- *             function encourages looping through the columns
- *             inefficiently.  Instead of using this function you
- *             should iterate through the columns using a loop
- *             similar to this:
- *                for (l = results->columns; l != NULL; l = l->next)
- *             If you really need to get the number of columns you
- *             can use g_list_length(results->columns).
- *
- * @param results The search results object.
- *
- * @return Number of the columns.
- */
-guint purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *results);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
-/**
- * Returns a row of the results from the search results object.
- *
- * @deprecated This function will be removed in Pidgin 3.0.0 unless
- *             there is sufficient demand to keep it.  Using this
- *             function encourages looping through the results
- *             inefficiently.  Instead of using this function you
- *             should iterate through the results using a loop
- *             similar to this:
- *                for (l = results->rows; l != NULL; l = l->next)
- *             If you really need to get the data for a particular
- *             row you can use g_list_nth_data(results->rows, row_id).
- *
- * @param results The search results object.
- * @param row_id  Index of the row to be returned.
- *
- * @return Row of the results.
- */
-GList *purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
-										 unsigned int row_id);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
-/**
- * Returns a title of the search results object's column.
- *
- * @deprecated This function will be removed in Pidgin 3.0.0 unless
- *             there is sufficient demand to keep it.  Using this
- *             function encourages looping through the columns
- *             inefficiently.  Instead of using this function you
- *             should iterate through the name of a particular
- *             column you can use
- *             g_list_nth_data(results->columns, row_id).
- *
- * @param results   The search results object.
- * @param column_id Index of the column.
- *
- * @return Title of the column.
- */
-char *purple_notify_searchresults_column_get_title(PurpleNotifySearchResults *results,
-												 unsigned int column_id);
-#endif
 
 /*@}*/
 
@@ -506,20 +442,20 @@ void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
  * Retrieve the array of PurpleNotifyUserInfoEntry objects from a
  * PurpleNotifyUserInfo
  *
- * This GList may be manipulated directly with normal GList functions such
- * as g_list_insert(). Only PurpleNotifyUserInfoEntry are allowed in the
- * list.  If a PurpleNotifyUserInfoEntry item is added to the list, it
- * should not be g_free()'d by the caller; PurpleNotifyUserInfo will g_free
- * it when destroyed.
+ * This GQueue may be manipulated directly with normal GQueue functions such
+ * as g_queue_push_tail(). Only PurpleNotifyUserInfoEntry are allowed in the
+ * queue.  If a PurpleNotifyUserInfoEntry item is added to the queue, it
+ * should not be freed by the caller; PurpleNotifyUserInfo will free it when
+ * destroyed.
  *
  * To remove a PurpleNotifyUserInfoEntry, use
- * purple_notify_user_info_remove_entry(). Do not use the GList directly.
+ * purple_notify_user_info_remove_entry(). Do not use the GQueue directly.
  *
  * @param user_info  The PurpleNotifyUserInfo
  *
- * @constreturn A GList of PurpleNotifyUserInfoEntry objects
+ * @constreturn A GQueue of PurpleNotifyUserInfoEntry objects.
  */
-GList *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
+GQueue *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
 
 /**
  * Create a textual representation of a PurpleNotifyUserInfo, separating
@@ -547,34 +483,25 @@ char *purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_i
  *                   the UI should treat label as independent and not
  *                   include a colon if it would otherwise.
  */
-/*
- * TODO: In 3.0.0 this function should be renamed to
- *       purple_notify_user_info_add_pair_html().  And optionally
- *       purple_notify_user_info_add_pair_plaintext() could be renamed to
- *       purple_notify_user_info_add_pair().
- */
-void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
+void purple_notify_user_info_add_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
- * Like purple_notify_user_info_add_pair, but value should be plaintext
+ * Like purple_notify_user_info_add_pair_html, but value should be plaintext
  * and will be escaped using g_markup_escape_text().
  */
 void purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
- * Prepend a label/value pair to a PurpleNotifyUserInfo object
- *
- * @param user_info  The PurpleNotifyUserInfo
- * @param label      A label, which for example might be displayed by a
- *                   UI with a colon after it ("Status:"). Do not include
- *                   a colon.  If NULL, value will be displayed without a
- *                   label.
- * @param value      The value, which might be displayed by a UI after
- *                   the label.  If NULL, label will still be displayed;
- *                   the UI should then treat label as independent and not
- *                   include a colon if it would otherwise.
+ * Like purple_notify_user_info_add_pair_html, but the pair is inserted
+ * at the beginning of the list.
  */
-void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
+void purple_notify_user_info_prepend_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
+
+/**
+ * Like purple_notify_user_info_prepend_pair_html, but value should be plaintext
+ * and will be escaped using g_markup_escape_text().
+ */
+void purple_notify_user_info_prepend_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
@@ -597,9 +524,11 @@ void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, Purpl
  *
  * If added to a PurpleNotifyUserInfo object, this should not be free()'d,
  * as PurpleNotifyUserInfo will do so when destroyed.
- * purple_notify_user_info_add_pair() and
- * purple_notify_user_info_prepend_pair() are convenience methods for
- * creating entries and adding them to a PurpleNotifyUserInfo.
+ * purple_notify_user_info_add_pair_html(),
+ * purple_notify_user_info_add_pair_plaintext(),
+ * purple_notify_user_info_prepend_pair_html() and
+ * purple_notify_user_info_prepend_pair_plaintext() are convenience
+ * methods for creating entries and adding them to a PurpleNotifyUserInfo.
  *
  * @param label  A label, which for example might be displayed by a UI
  *               with a colon after it ("Status:"). Do not include a
@@ -624,7 +553,6 @@ void purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info);
  * Prepend a section break.  A UI might display this as a horizontal line.
  *
  * @param user_info  The PurpleNotifyUserInfo
- * @since 2.5.0
  */
 void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info);
 
@@ -643,7 +571,6 @@ void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info,
  *
  * @param user_info  The PurpleNotifyUserInfo
  * @param label      The name of the section
- * @since 2.5.0
  */
 void purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label);
 

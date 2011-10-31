@@ -38,6 +38,7 @@ typedef struct _MsimSession
 	int privacy_mode;                   /**< This is a bitmask */
 	int offline_message_mode;
 	gint fd;                            /**< File descriptor to/from server */
+	guint inpa;							/**< The input watcher */
 
 	/* TODO: Remove. */
 	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */

@@ -121,6 +121,8 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 			}
 #endif
 		}
+	} else {
+		msn_transaction_set_saveable(trans, FALSE);
 	}
 
 	trans->payload = payload;

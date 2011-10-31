@@ -38,7 +38,7 @@
  * A type of sound.
  */
 
-typedef enum _PurpleSoundEventID
+typedef enum
 {
 	PURPLE_SOUND_BUDDY_ARRIVE = 0, /**< Buddy signs on.                       */
 	PURPLE_SOUND_BUDDY_LEAVE,      /**< Buddy signs off.                      */

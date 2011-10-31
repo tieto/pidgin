@@ -63,7 +63,6 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
  * @param field   The request field.
  *
  * @return A GntWidget for the request field.
- * @since 2.4.0
  */
 GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
 /*@}*/

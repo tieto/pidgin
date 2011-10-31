@@ -49,29 +49,32 @@ static void get_clientinfo( struct MXitSession* session );
  */
 static struct MXitSession* mxit_create_object( PurpleAccount* account )
 {
+	PurpleConnection*	con			= purple_account_get_connection( account );
 	struct MXitSession*	session		= NULL;
-	PurpleConnection*	con			= NULL;
 
 	/* currently the wapsite does not handle a '+' in front of the username (mxitid) so we just strip it */
-	if ( account->username[0] == '+' ) {
-		char*		fixed;
+	{
+		const char* username	= purple_account_get_username( account );
 
-		/* cut off the '+' */
-		fixed = g_strdup( &account->username[1] );
-		purple_account_set_username( account, fixed );
-		g_free( fixed );
+		if ( username[0] == '+' ) {
+			char* fixed	= g_strdup( &username[1] );
+			purple_account_set_username( account, fixed );
+			g_free( fixed );
+		}
 	}
 
 	session = g_new0( struct MXitSession, 1 );
+	session->con = con;
+	session->acc = account;
 
 	/* configure the connection (reference: "libpurple/connection.h") */
-	con = purple_account_get_connection( account );
-	con->proto_data = session;
-	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_SUPPORT_MOODS;
-	session->con = con;
-
-	/* add account */
-	session->acc = account;
+	purple_connection_set_protocol_data( con, session );
+	purple_connection_set_flags( con,
+			  PURPLE_CONNECTION_NO_BGCOLOR
+			| PURPLE_CONNECTION_NO_URLDESC
+			| PURPLE_CONNECTION_HTML
+			| PURPLE_CONNECTION_SUPPORT_MOODS
+	);
 
 	/* configure the session (reference: "libpurple/account.h") */
 	g_strlcpy( session->server, purple_account_get_string( account, MXIT_CONFIG_SERVER_ADDR, DEFAULT_SERVER ), sizeof( session->server ) );
@@ -165,7 +168,7 @@ static void mxit_cb_connect( gpointer user_data, gint source, const gchar* error
 	/* source is the file descriptor of the new connection */
 	if ( source < 0 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_connect failed: %s\n", error_message );
-		purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
+		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 		return;
 	}
 
@@ -173,7 +176,7 @@ static void mxit_cb_connect( gpointer user_data, gint source, const gchar* error
 	session->fd = source;
 
 	/* start listening on the open connection for messages from the server (reference: "libpurple/eventloop.h") */
-	session->con->inpa = purple_input_add( session->fd, PURPLE_INPUT_READ, mxit_cb_rx, session );
+	session->inpa = purple_input_add( session->fd, PURPLE_INPUT_READ, mxit_cb_rx, session );
 
 	mxit_connected( session );
 }
@@ -202,7 +205,7 @@ static void mxit_login_connect( struct MXitSession* session )
 		/* socket connection */
 		data = purple_proxy_connect( session->con, session->acc, session->server, session->port, mxit_cb_connect, session );
 		if ( !data ) {
-			purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
+			purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 			return;
 		}
 	}
@@ -221,7 +224,7 @@ static void mxit_login_connect( struct MXitSession* session )
  */
 static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fields )
 {
-	struct MXitSession*		session		= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session		= purple_connection_get_protocol_data( gc );
 	struct MXitProfile*		profile		= session->profile;
 	const char*				str;
 	const char*				pin;
@@ -303,7 +306,7 @@ static void mxit_cb_register_cancel( PurpleConnection *gc, PurpleRequestFields *
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_register_cancel\n" );
 
 	/* disconnect */
-	purple_account_disconnect( gc->account );
+	purple_account_disconnect( purple_connection_get_account( gc ) );
 }
 
 
@@ -391,7 +394,7 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
-		purple_connection_error( session->con, _( "Error contacting the MXit WAP site. Please try again later." ) );
+		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;
 	}
 
@@ -400,7 +403,7 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !parts ) {
 		/* wapserver error */
-		purple_connection_error( session->con, _( "MXit is currently unable to process the request. Please try again later." ) );
+		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "MXit is currently unable to process the request. Please try again later." ) );
 		return;
 	}
 
@@ -410,26 +413,26 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 				/* valid reply! */
 				break;
 			case '1' :
-				purple_connection_error( session->con, _( "Wrong security code entered. Please try again later." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Wrong security code entered. Please try again later." ) );
 				return;
 			case '2' :
-				purple_connection_error( session->con, _( "Your session has expired. Please try again later." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Your session has expired. Please try again later." ) );
 				return;
 			case '5' :
-				purple_connection_error( session->con, _( "Invalid country selected. Please try again." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Invalid country selected. Please try again." ) );
 				return;
 			case '6' :
-				purple_connection_error( session->con, _( "The MXit ID you entered is not registered. Please register first." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "The MXit ID you entered is not registered. Please register first." ) );
 				return;
 			case '7' :
-				purple_connection_error( session->con, _( "The MXit ID you entered is already registered. Please choose another." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "The MXit ID you entered is already registered. Please choose another." ) );
 				/* this user's account already exists, so we need to change the registration login flag to be login */
 				purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 				return;
 			case '3' :
 			case '4' :
 			default :
-				purple_connection_error( session->con, _( "Internal error. Please try again later." ) );
+				purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Internal error. Please try again later." ) );
 				return;
 	}
 
@@ -507,7 +510,7 @@ static void free_logindata( struct login_data* data )
  */
 static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 	PurpleUtilFetchUrlData*	url_data;
 	PurpleRequestField*		field;
 	const char*				captcha_resp;
@@ -548,10 +551,23 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
 	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
 	url = g_strdup_printf( "%s?type=getpid&sessionid=%s&login=%s&ver=%i.%i.%i&clientid=%s&cat=%s&chalresp=%s&cc=%s&loc=%s&path=%i&brand=%s&model=%s&h=%i&w=%i&ts=%li",
-			session->logindata->wapserver, session->logindata->sessionid, purple_url_encode( session->acc->username ), PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CLIENT_ID, MXIT_CP_ARCH,
-			captcha_resp, session->logindata->cc, session->logindata->locale, ( state == MXIT_STATE_REGISTER1 ) ? 0 : 1, MXIT_CP_PLATFORM, MXIT_CP_OS,
-			MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
-	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo2, session );
+			session->logindata->wapserver,
+			session->logindata->sessionid,
+			purple_url_encode( purple_account_get_username( session->acc ) ),
+			PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION,
+			MXIT_CLIENT_ID,
+			MXIT_CP_ARCH,
+			captcha_resp,
+			session->logindata->cc,
+			session->logindata->locale,
+			( state == MXIT_STATE_REGISTER1 ) ? 0 : 1,
+			MXIT_CP_PLATFORM,
+			MXIT_CP_OS,
+			MXIT_CAPTCHA_HEIGHT,
+			MXIT_CAPTCHA_WIDTH,
+			time( NULL )
+	);
+	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_clientinfo2, session );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );
@@ -571,7 +587,7 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
  */
 static void mxit_cb_captcha_cancel( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 
 	/* free up the login resources */
 	free_logindata( session->logindata );
@@ -611,7 +627,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
-		purple_connection_error( session->con, _( "Error contacting the MXit WAP site. Please try again later." ) );
+		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;
 	}
 
@@ -620,7 +636,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( ( !parts ) || ( parts[0][0] != '0' ) ) {
 		/* server could not find the user */
-		purple_connection_error( session->con, _( "MXit is currently unable to process the request. Please try again later." ) );
+		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "MXit is currently unable to process the request. Please try again later." ) );
 		return;
 	}
 
@@ -658,7 +674,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 			/* oops, this is not good, time to bail */
 			break;
 		}
-		purple_request_field_list_add( field, country[1], g_strdup( country[0] ) );
+		purple_request_field_list_add_icon( field, country[1], NULL, g_strdup( country[0] ) );
 		if ( strcmp( country[1], parts[6] ) == 0 ) {
 			/* based on the user's IP, this is his current country code, so we default to it */
 			purple_request_field_list_add_selected( field, country[1] );
@@ -679,7 +695,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 			/* oops, this is not good, time to bail */
 			break;
 		}
-		purple_request_field_list_add( field, locale[1], g_strdup( locale[0] ) );
+		purple_request_field_list_add_icon( field, locale[1], NULL, g_strdup( locale[0] ) );
 		g_strfreev( locale );
 	}
 	purple_request_field_list_add_selected( field, "English" );
@@ -715,7 +731,7 @@ static void get_clientinfo( struct MXitSession* session )
 
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&h=%i&w=%i&ts=%li", wapserver, MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
-	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo1, session );
+	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_clientinfo1, session );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );
@@ -743,7 +759,7 @@ void mxit_login( PurpleAccount* account )
 	 * if we don't have any info saved from a previous login, we need to get it from the MXit WAP site.
 	 * we do cache it, so this step is only done on the very first login for each account.
 	 */
-	if ( ( session->distcode == NULL ) || ( strlen( session->distcode ) == 0 ) ) {
+	if ( ( session->distcode == NULL ) || ( !*session->distcode ) ) {
 		/* this must be the very first login, so we need to retrieve the user information */
 		get_clientinfo( session );
 	}
@@ -764,9 +780,9 @@ void mxit_reconnect( struct MXitSession* session )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_reconnect\n" );
 
 	/* remove the input cb function */
-	if ( session->con->inpa ) {
-		purple_input_remove( session->con->inpa );
-		session->con->inpa = 0;
+	if ( session->inpa ) {
+		purple_input_remove( session->inpa );
+		session->inpa = 0;
 	}
 
 	/* close existing connection */

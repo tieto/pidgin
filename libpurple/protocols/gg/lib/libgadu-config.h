@@ -8,8 +8,30 @@
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef __GG_LIBGADU_BIGENDIAN
 #ifdef WORDS_BIGENDIAN
-#define __GG_LIBGADU_BIGENDIAN
-#endif /* WORDS_BIGENDIAN */
+#  define __GG_LIBGADU_BIGENDIAN
+#endif
+
+/* Defined if this machine has gethostbyname_r(). */
+#undef GG_CONFIG_HAVE_GETHOSTBYNAME_R
+
+/* Defined if this machine has _exit(). */
+#define GG_CONFIG_HAVE__EXIT
+
+/* Defined if libgadu was compiled and linked with fork support. */
+#undef GG_CONFIG_HAVE_FORK
+#ifndef _WIN32
+#  define GG_CONFIG_HAVE_FORK
+#endif
+
+/* Defined if libgadu was compiled and linked with pthread support. */
+/* We don't like pthreads. */
+#undef __GG_LIBGADU_HAVE_PTHREAD
+
+/* Defined if this machine has C99-compiliant vsnprintf(). */
+#undef __GG_LIBGADU_HAVE_C99_VSNPRINTF
+#ifndef _WIN32
+#  define __GG_LIBGADU_HAVE_C99_VSNPRINTF
+#endif
 
 /* Defined if this machine has va_copy(). */
 #define __GG_LIBGADU_HAVE_VA_COPY
@@ -20,40 +42,29 @@
 /* Defined if this machine supports long long. */
 #undef __GG_LIBGADU_HAVE_LONG_LONG
 #ifdef HAVE_LONG_LONG
-#define __GG_LIBGADU_HAVE_LONG_LONG
-#endif /* HAVE_LONG_LONG */
-
-/* Defined if libgadu was compiled and linked with pthread support. */
-/* We don't like pthreads. */
-#undef __GG_LIBGADU_HAVE_PTHREAD
-
-/* Defined if libgadu was compiled and linked with GnuTLS encryption support. */
-#ifdef HAVE_GNUTLS
-#  define GG_CONFIG_HAVE_GNUTLS
-#else
-#  undef GG_CONFIG_HAVE_GNUTLS
+#  define __GG_LIBGADU_HAVE_LONG_LONG
 #endif
 
-/* Defined if libgadu was compiled and linked with TLS support. */
+/* Defined if libgadu was compiled and linked with GnuTLS support. */
+#undef GG_CONFIG_HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
+#  define GG_CONFIG_HAVE_GNUTLS
+#endif
+
+/* Defined if libgadu was compiled and linked with OpenSSL support. */
 /* Always undefined in Purple. */
 #undef __GG_LIBGADU_HAVE_OPENSSL
 
-/* Include file containing uintXX_t declarations. */
+/* Defined if libgadu was compiled and linked with zlib support. */
+#undef GG_CONFIG_HAVE_ZLIB
+
+/* Defined if uintX_t types are defined in <stdint.h>. */
+#undef GG_CONFIG_HAVE_STDINT_H
 #if HAVE_STDINT_H
-#include <stdint.h>
+#  define GG_CONFIG_HAVE_STDINT_H
 #endif
 
-/* Defined if this machine has C99-compiliant vsnprintf(). */
-#ifndef _WIN32
-#define __GG_LIBGADU_HAVE_C99_VSNPRINTF
-#else
-#undef __GG_LIBGADU_HAVE_C99_VSNPRINTF
-#endif
 
 #define vnsprintf g_vnsprintf
 
-#ifdef _WIN32
-#define random (long) rand
 #endif
-
-#endif /* __GG_LIBGADU_CONFIG_H */

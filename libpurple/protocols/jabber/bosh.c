@@ -436,7 +436,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 
 	if (type != NULL && !strcmp(type, "terminate")) {
 		conn->state = BOSH_CONN_OFFLINE;
-		purple_connection_error_reason(conn->js->gc,
+		purple_connection_error(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("The BOSH connection manager terminated your session."));
 		return TRUE;
@@ -539,7 +539,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	if (sid) {
 		conn->sid = g_strdup(sid);
 	} else {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 		        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		        _("No session ID given"));
 		return;
@@ -556,7 +556,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			minor = atoi(dot + 1);
 
 		if (major != 1 || minor < 6) {
-			purple_connection_error_reason(js->gc,
+			purple_connection_error(js->gc,
 			        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			        _("Unsupported version of BOSH protocol"));
 			return;
@@ -733,7 +733,7 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		return;
 
 	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
-		purple_connection_error_reason(conn->bosh->js->gc,
+		purple_connection_error(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to establish a connection with the server"));
 	} else {
@@ -939,7 +939,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error)
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Unable to establish a connection with the server: %s"),
 		        error);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -965,18 +965,18 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 			                               ssl_connection_error_cb,
 			                               conn);
 			if (!conn->psc) {
-				purple_connection_error_reason(gc,
+				purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 					_("Unable to establish SSL connection"));
 			}
 		} else {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 			    PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			    _("SSL support unavailable"));
 		}
 	} else if (purple_proxy_connect(conn, account, bosh->host, bosh->port,
 	                                 connection_established_cb, conn) == NULL) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 		    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		    _("Unable to connect"));
 	}
@@ -1023,7 +1023,7 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		 */
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(conn->bosh->js->gc,
+		purple_connection_error(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				tmp);
 		g_free(tmp);
@@ -1079,7 +1079,7 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 		 */
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(conn->bosh->js->gc,
+		purple_connection_error(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				tmp);
 		g_free(tmp);
