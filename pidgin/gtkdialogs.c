@@ -1195,8 +1195,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?",
 						"You are about to remove the contact containing %s "
 						"and %d other buddies from your buddy list.  Do you "
-						"want to continue?", contact->totalsize - 1),
-					purple_buddy_get_name(buddy), contact->totalsize - 1);
+						"want to continue?", purple_contact_get_contact_size(contact, TRUE) - 1),
+					purple_buddy_get_name(buddy), purple_contact_get_contact_size(contact, TRUE) - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,

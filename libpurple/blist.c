@@ -1774,6 +1774,13 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 	contact->priority_valid = FALSE;
 }
 
+int purple_contact_get_contact_size(PurpleContact *contact, gboolean offline)   
+{
+	g_return_val_if_fail(contact != NULL, 0);
+
+	return offline ? contact->totalsize : contact->currentsize;
+}   
+
 PurpleGroup *purple_group_new(const char *name)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();

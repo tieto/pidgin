@@ -1561,7 +1561,7 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleContact *c = (PurpleContact*)node;
 		name = purple_contact_get_alias(c);
-		if (c->totalsize > 1)
+		if (purple_contact_get_contact_size(c, TRUE) > 1)
 			sec = _("Removing this contact will also remove all the buddies in the contact");
 	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		name = purple_buddy_get_name((PurpleBuddy*)node);
