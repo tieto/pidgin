@@ -41,7 +41,7 @@ typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
 static void purple_keyring_pref_cb(const char *, PurplePrefType, gconstpointer, gpointer);
 static PurpleKeyring * purple_keyring_find_keyring_by_id(char * id);
 static void purple_keyring_drop_passwords(const PurpleKeyring * keyring);
-static void purple_keyring_set_inuse_check_error_cb(const PurpleAccount *,GError *,gpointer);
+static void purple_keyring_set_inuse_check_error_cb(PurpleAccount *,GError *,gpointer);
 static void purple_keyring_set_inuse_got_pw_cb(PurpleAccount *, gchar *, GError *, gpointer);
 static void purple_keyring_set_password_async_cb(PurpleAccount * account, GError * error, gpointer data);
 
@@ -405,7 +405,7 @@ purple_keyring_drop_passwords(const PurpleKeyring * keyring)
 
 
 static void
-purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
+purple_keyring_set_inuse_check_error_cb(PurpleAccount * account,
 					GError * error,
 					gpointer data)
 {
