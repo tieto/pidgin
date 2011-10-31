@@ -54,19 +54,6 @@
 #include "internal.h"
 
 
-static GQuark kwallet_plugin_error_domain(void);
-
-static void kwallet_read(PurpleAccount * account, PurpleKeyringReadCallback cb, gpointer data);
-static void kwallet_save(PurpleAccount * account, gchar * password, GDestroyNotify destroypassword, PurpleKeyringSaveCallback cb, gpointer data);
-static void kwallet_close(GError ** error);
-static void kwallet_import(PurpleAccount * account, const char * mode, const char * data, GError ** error);
-static void kwallet_export(PurpleAccount * account, const char ** mode, char ** data, GError ** error, GDestroyNotify * destroy);
-
-static gboolean kwallet_load(PurplePlugin *plugin);
-static gboolean kwallet_unload(PurplePlugin *plugin);
-static void kwallet_destroy(PurplePlugin *plugin);
-static void init_plugin(PurplePlugin *plugin)
-
 PurpleKeyring * keyring_handler;
 
 PurplePluginInfo plugininfo =

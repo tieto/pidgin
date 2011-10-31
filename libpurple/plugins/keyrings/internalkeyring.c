@@ -72,22 +72,17 @@ static GHashTable * internal_keyring_passwords = NULL;
 static PurpleKeyring * keyring_handler = NULL;
 static gboolean internal_keyring_is_active = FALSE;
 
-/* a few prototypes : */
-static void 		internal_keyring_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
-static void 		internal_keyring_save(PurpleAccount *, const gchar *, PurpleKeyringSaveCallback, gpointer);
-static void		internal_keyring_close(GError **);
-static void		internal_keyring_open(void);
-static gboolean		internal_keyring_import_password(PurpleAccount *, const char *, const char *, GError **);
-static gboolean 	internal_keyring_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
-static void		internal_keyring_init(void);
-static void		internal_keyring_uninit(void);
-static gboolean		internal_keyring_load(PurplePlugin *);
-static gboolean		internal_keyring_unload(PurplePlugin *);
-static void		internal_keyring_destroy(PurplePlugin *);
-
 /***********************************************/
 /*     Keyring interface                       */
 /***********************************************/
+static void
+internal_keyring_open()
+{
+	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
+		g_direct_equal, NULL, g_free);
+	internal_keyring_is_active = TRUE;
+}
+
 static void 
 internal_keyring_read(PurpleAccount * account,
 		      PurpleKeyringReadCallback cb,
@@ -155,14 +150,6 @@ internal_keyring_close(GError ** error)
 
 	g_hash_table_destroy(internal_keyring_passwords);
 	internal_keyring_passwords = NULL;
-}
-
-static void
-internal_keyring_open()
-{
-	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
-		g_direct_equal, NULL, g_free);
-	internal_keyring_is_active = TRUE;
 }
 
 static gboolean

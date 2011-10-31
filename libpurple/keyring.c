@@ -38,14 +38,6 @@
 typedef struct _PurpleKeyringCbInfo PurpleKeyringCbInfo;
 typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
 
-static void purple_keyring_pref_cb(const char *, PurplePrefType, gconstpointer, gpointer);
-static PurpleKeyring * purple_keyring_find_keyring_by_id(char * id);
-static void purple_keyring_drop_passwords(const PurpleKeyring * keyring);
-static void purple_keyring_set_inuse_check_error_cb(PurpleAccount *,GError *,gpointer);
-static void purple_keyring_set_inuse_got_pw_cb(PurpleAccount *, gchar *, GError *, gpointer);
-static void purple_keyring_set_password_async_cb(PurpleAccount * account, GError * error, gpointer data);
-
-
 /******************************************/
 /** @name PurpleKeyring                   */
 /******************************************/
@@ -239,6 +231,24 @@ static GList * purple_keyring_keyrings;		/* list of available keyrings   */
 static const PurpleKeyring * purple_keyring_inuse;	/* keyring being used	        */
 static char * purple_keyring_to_use;
 static guint purple_keyring_pref_cb_id;
+
+static void 
+purple_keyring_pref_cb(const char *pref,
+		       PurplePrefType type,
+		       gconstpointer id,
+		       gpointer data)
+{
+	PurpleKeyring * new;
+
+	g_return_if_fail(g_strcmp0(pref, "/purple/keyring/active") == 0);
+	g_return_if_fail(type == PURPLE_PREF_STRING);
+	g_return_if_fail(id != NULL);
+
+	new = purple_keyring_get_keyring_by_id(id);
+	g_return_if_fail(new != NULL);
+
+	purple_keyring_set_inuse(new, FALSE, NULL, data);
+}
 
 void 
 purple_keyring_init()
@@ -586,24 +596,6 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 
 
 
-static void 
-purple_keyring_pref_cb(const char *pref,
-		       PurplePrefType type,
-		       gconstpointer id,
-		       gpointer data)
-{
-	PurpleKeyring * new;
-
-	g_return_if_fail(g_strcmp0(pref, "/purple/keyring/active") == 0);
-	g_return_if_fail(type == PURPLE_PREF_STRING);
-	g_return_if_fail(id != NULL);
-
-	new = purple_keyring_get_keyring_by_id(id);
-	g_return_if_fail(new != NULL);
-
-	purple_keyring_set_inuse(new, FALSE, NULL, data);
-}
-
 GList *
 purple_keyring_get_options()
 {
@@ -883,6 +875,31 @@ purple_keyring_get_password(PurpleAccount *account,
 	}
 }
 
+static void 
+purple_keyring_set_password_async_cb(PurpleAccount * account, 
+				     GError * error,
+				     gpointer data)
+{
+	PurpleKeyringCbInfo * cbinfo;
+	PurpleKeyringSaveCallback cb;
+
+	g_return_if_fail(data != NULL);
+	g_return_if_fail(account != NULL);
+
+	cbinfo = data;
+	cb = cbinfo->cb;
+
+	if (error != NULL) {
+		purple_notify_error(NULL, _("Keyrings"),
+			_("Failed to save password in keyring."),
+			error->message);
+	}
+
+	if (cb != NULL)
+		cb(account, error, cbinfo->data);
+	g_free(data);
+}
+
 void 
 purple_keyring_set_password(PurpleAccount * account,
                             const gchar *password,
@@ -920,31 +937,6 @@ purple_keyring_set_password(PurpleAccount * account,
 			save(account, password, purple_keyring_set_password_async_cb, data);
 		}
 	}
-}
-
-static void 
-purple_keyring_set_password_async_cb(PurpleAccount * account, 
-				     GError * error,
-				     gpointer data)
-{
-	PurpleKeyringCbInfo * cbinfo;
-	PurpleKeyringSaveCallback cb;
-
-	g_return_if_fail(data != NULL);
-	g_return_if_fail(account != NULL);
-
-	cbinfo = data;
-	cb = cbinfo->cb;
-
-	if (error != NULL) {
-		purple_notify_error(NULL, _("Keyrings"),
-			_("Failed to save password in keyring."),
-			error->message);
-	}
-
-	if (cb != NULL)
-		cb(account, error, cbinfo->data);
-	g_free(data);
 }
 
 void
