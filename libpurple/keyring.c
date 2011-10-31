@@ -53,17 +53,14 @@ static void purple_keyring_set_password_async_cb(PurpleAccount * account, GError
 
 struct _PurpleKeyring
 {
-	char * name;		/* a user friendly name	*/
-	char * id;		/* same as plugin id	*/
+	char * name;    /* a user friendly name */
+	char * id;      /* same as plugin id    */
 	PurpleKeyringRead read_password;
 	PurpleKeyringSave save_password;
 	PurpleKeyringClose close_keyring;
 	PurpleKeyringChangeMaster change_master;
 	PurpleKeyringImportPassword import_password;
 	PurpleKeyringExportPassword export_password;
-	gpointer r1;	/* RESERVED */
-	gpointer r2;	/* RESERVED */
-	gpointer r3;	/* RESERVED */
 };
 
 struct _PurpleKeyringChangeTracker
@@ -86,18 +83,17 @@ struct _PurpleKeyringCbInfo
 };
 
 /* Constructor */
-PurpleKeyring * 
-purple_keyring_new()
+PurpleKeyring *
+purple_keyring_new(void)
 {
-	return g_malloc0(sizeof(PurpleKeyring));
+	return g_new0(PurpleKeyring, 1);
 }
 
 /* Destructor */
-void 
-purple_keyring_free(PurpleKeyring * keyring)
+void
+purple_keyring_free(PurpleKeyring *keyring)
 {
 	g_free(keyring);
-	return;
 }
 
 /* Accessors */
