@@ -2,7 +2,7 @@
  * @file gnomekeyring.c Gnome keyring password storage
  * @ingroup plugins
  *
- * @todo 
+ * @todo
  *   cleanup error handling and reporting
  *   refuse unloading when active (in internal keyring too)
  */
@@ -101,7 +101,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 		switch(result)
 		{
 			case GNOME_KEYRING_RESULT_NO_MATCH :
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOPASSWD, "no password found for account : %s",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -111,7 +111,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 
 			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON :
 			case GNOME_KEYRING_RESULT_IO_ERROR :
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -120,7 +120,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 				return;
 
 			default :
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Unknown error (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -139,7 +139,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 	}
 }
 
-static void 
+static void
 gkp_read(PurpleAccount * account,
 	 PurpleKeyringReadCallback cb,
 	 gpointer data)
@@ -173,7 +173,7 @@ gkp_save_continue(GnomeKeyringResult result,
 
 	cb = storage->cb;
 	account = storage->account;
-	
+
 	g_free(storage->name);
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
@@ -184,7 +184,7 @@ gkp_save_continue(GnomeKeyringResult result,
 					"Could not update password for %s (%s) : not found.\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOPASSWD, "Could not update password for %s : not found",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -198,7 +198,7 @@ gkp_save_continue(GnomeKeyringResult result,
 					"Failed to communicate with gnome keyring (account : %s (%s)).\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -211,7 +211,7 @@ gkp_save_continue(GnomeKeyringResult result,
 					"Unknown error (account : %s (%s)).\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
-				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
+				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					ERR_NOCHANNEL, "Unknown error (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
@@ -286,7 +286,7 @@ gkp_close(GError ** error)
 }
 
 static gboolean
-gkp_import_password(PurpleAccount * account, 
+gkp_import_password(PurpleAccount * account,
 		    const char * mode,
 		    const char * data,
 		    GError ** error)
@@ -296,7 +296,7 @@ gkp_import_password(PurpleAccount * account,
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 gkp_export_password(PurpleAccount * account,
 				 const char ** mode,
 				 char ** data,
@@ -319,7 +319,7 @@ gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data)
 	purple_debug_info("Gnome-Keyring plugin",
 		"This keyring does not support master passwords.\n");
 
-	purple_notify_info(NULL, _("Gnome-Keyring plugin"), 
+	purple_notify_info(NULL, _("Gnome-Keyring plugin"),
 			_("Failed to change master password."),
 			_("This plugin does not really support master passwords, it just pretends to."));
 	if(cb)
@@ -421,9 +421,9 @@ PurplePluginInfo plugininfo =
 	NULL,
 };
 
-static void                        
+static void
 init_plugin(PurplePlugin *plugin)
-{                                  
+{
 	purple_debug_info("Gnome Keyring plugin", "init plugin called.\n");
 }
 

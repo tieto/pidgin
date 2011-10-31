@@ -2,7 +2,7 @@
  * @file keyring.h Keyring plugin API
  * @ingroup core
  *
- * @todo 
+ * @todo
  *  - Offer a way to prompt the user for a password or for a password change.
  */
 
@@ -79,7 +79,7 @@ typedef void (*PurpleKeyringReadCallback)(PurpleAccount * account,
  * @param account The account of which the password was saved.
  * @param data Data passed to the callback.
  */
-typedef void (*PurpleKeyringSaveCallback)(PurpleAccount * account, 
+typedef void (*PurpleKeyringSaveCallback)(PurpleAccount * account,
 					  GError * error,
 					  gpointer data);
 
@@ -127,8 +127,8 @@ typedef void (*PurpleKeyringRead)(PurpleAccount * account,
 /**
  * Store a password in the keyring.
  * @param account The account for which the password is to be stored.
- * @param password The password to be stored. This password will be freed once 
- * the function returns, so one must take care to make a copy if they call other 
+ * @param password The password to be stored. This password will be freed once
+ * the function returns, so one must take care to make a copy if they call other
  * async functions later. If the password is NULL, this means that the keyring
  * should forget about that password.
  * @param cb A callback to be called once the password is saved.
@@ -164,7 +164,7 @@ typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
  * @param data Data that was stored, Can be NULL, will be freed when function returns (so copy it if you need it).
  * @return TRUE on success, FALSE on failure.
  */
-typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount * account, 
+typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount * account,
 					    const char * mode,
 					    const char * data,
 					    GError ** error);
@@ -223,13 +223,13 @@ void purple_keyring_uninit(void);
 /**
  * Get the keyring list. Used by the UI.
  */
-const GList * 
+const GList *
 purple_keyring_get_keyrings(void);
 
 /**
  * Get the keyring being used.
  */
-const PurpleKeyring * 
+const PurpleKeyring *
 purple_keyring_get_inuse(void);
 
 /**
@@ -241,7 +241,7 @@ purple_keyring_get_inuse(void);
  * @param error Error that may occur.
  * @param cb The callback to call once the change is done.
  * @param data A pointer that will be passed to the callback.
- * @param force FALSE if the change can be cancelled. If this is TRUE and an 
+ * @param force FALSE if the change can be cancelled. If this is TRUE and an
  * error occurs, data might be lost.
  */
 void
@@ -255,7 +255,7 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
  * Register a keyring plugin.
  * @param keyrint The keyring to register.
  */
-void 
+void
 purple_keyring_register(PurpleKeyring * keyring);
 
 /**
@@ -264,7 +264,7 @@ purple_keyring_register(PurpleKeyring * keyring);
  * to unregister will be properly closed.
  * @param keyrint The keyring to unregister.
  */
-void 
+void
 purple_keyring_unregister(PurpleKeyring * keyring);
 
 /*@}*/
@@ -283,7 +283,7 @@ purple_keyring_unregister(PurpleKeyring * keyring);
  * @param data Data that was stored, can be NULL.
  * @return TRUE if the input was accepted, FALSE otherwise.
  */
-gboolean purple_keyring_import_password(PurpleAccount * account, 
+gboolean purple_keyring_import_password(PurpleAccount * account,
 				    const char * keyringid,
 				    const char * mode,
 				    const char * data,
@@ -314,7 +314,7 @@ purple_keyring_export_password(PurpleAccount * account,
  * @param cb      The callback to be called.
  * @param data    A pointer passed to the callback.
  */
-void 
+void
 purple_keyring_get_password(PurpleAccount *account,
                             PurpleKeyringReadCallback cb,
                             gpointer data);
@@ -327,7 +327,7 @@ purple_keyring_get_password(PurpleAccount *account,
  * @param cb       A callback for once the password is saved.
  * @param data     A pointer to be passed to the callback.
  */
-void 
+void
 purple_keyring_set_password(PurpleAccount *account,
                             const gchar *password,
                             PurpleKeyringSaveCallback cb,
@@ -347,7 +347,7 @@ purple_keyring_close(PurpleKeyring * keyring,
  * @param cb A callback to notify once we're done.
  * @param data A pointer to be passed to the callback.
  */
-void 
+void
 purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 			     gpointer data);
 
@@ -387,7 +387,7 @@ void purple_keyring_set_export_password(PurpleKeyring * info, PurpleKeyringExpor
 /*@{*/
 
 /**
- * Error domain GQuark. 
+ * Error domain GQuark.
  * See @ref purple_keyring_error_domain .
  */
 #define ERR_PIDGINKEYRING 	purple_keyring_error_domain()

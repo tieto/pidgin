@@ -2,7 +2,7 @@
  * @file kwallet.cpp KWallet password storage
  * @ingroup plugins
  *
- * @todo 
+ * @todo
  *   cleanup error handling and reporting
  *   refuse unloading when active (in internal keyring too)
  */
@@ -145,7 +145,7 @@ KWalletPlugin::engine::~engine()
 	pinstance = NULL;
 }
 
-engine * 
+engine *
 KWalletPlugin::engine::Instance()
 {
 	if (pinstance == NULL)
@@ -189,7 +189,7 @@ KWalletPlugin::engine::ExecuteRequests()
 
 class KWalletPlugin::request
 {
-	public :		
+	public :
 		virtual void abort();
 		virtual void execute(KWallet::wallet * wallet);
 
@@ -244,7 +244,7 @@ KWalletPlugin::save_request::abort()
 {
 	GError * error;
 	if (cb != NULL) {
-		error = g_error_new(ERR_KWALLETPLUGIN, 
+		error = g_error_new(ERR_KWALLETPLUGIN,
 		                    ERR_UNKNOWN,
 		                    "Failed to save password");
 		cb(account, error, data);
@@ -257,7 +257,7 @@ KWalletPlugin::read_request::abort()
 {
 	GError * error;
 	if (callback != NULL) {
-		error = g_error_new(ERR_KWALLETPLUGIN, 
+		error = g_error_new(ERR_KWALLETPLUGIN,
 		                    ERR_UNKNOWN,
 		                    "Failed to save password");
 		cb(account, NULL, error, data);
@@ -273,7 +273,7 @@ KWalletPlugin::read_request::execute(KWallet::wallet * wallet)
 
 	key = "purple-" + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
 	result = wallet.readPassword(key, password);
-	
+
 	if(result != 0)
 		abort();
 	else
@@ -289,7 +289,7 @@ KWalletPlugin::save_request::execute(KWallet::wallet * wallet)
 
 	key = "purple-" + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
 	result = wallet.writePassword(key, password);
-	
+
 	if(result != 0)
 		abort();
 	else
@@ -306,7 +306,7 @@ KWalletPlugin::save_request::execute(KWallet::wallet * wallet)
 
 
 
-void 
+void
 kwallet_read(PurpleAccount * account,
 	     PurpleKeyringReadCallback cb,
 	     gpointer data)
@@ -316,7 +316,7 @@ kwallet_read(PurpleAccount * account,
 }
 
 
-void 
+void
 kwallet_save(PurpleAccount * account,
 	     const char * password,
 	     PurpleKeyringSaveCallback cb,
@@ -327,14 +327,14 @@ kwallet_save(PurpleAccount * account,
 }
 
 
-void 
+void
 kwallet_close(GError ** error)
 {
 	delete KWalletPlugin::engine::instance();
 }
 
-void 
-kwallet_import(PurpleAccount * account, 
+void
+kwallet_import(PurpleAccount * account,
 	       const char * mode,
 	       const char * data,
 	       GError ** error)
@@ -342,7 +342,7 @@ kwallet_import(PurpleAccount * account,
 	return TRUE;
 }
 
-void 
+void
 kwallet_export(PurpleAccount * account,
 	       const char ** mode,
 	       char ** data,
@@ -386,9 +386,9 @@ gkp_destroy(PurplePlugin *plugin)
 	kwallet_close();
 }
 
-void                        
+void
 init_plugin(PurplePlugin *plugin)
-{                                  
+{
 	purple_debug_info("KWallet plugin", "init plugin called.\n");
 }
 

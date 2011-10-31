@@ -2,7 +2,7 @@
  * @file internalkeyring.c internal keyring
  * @ingroup plugins
  *
- * @todo 
+ * @todo
  *   cleanup error handling and reporting
  */
 
@@ -65,8 +65,8 @@
 	g_hash_table_replace(internal_keyring_passwords, account, password)
 #define ACTIVATE()\
 	if (internal_keyring_is_active == FALSE)\
-		internal_keyring_open();	
-	
+		internal_keyring_open();
+
 
 static GHashTable * internal_keyring_passwords = NULL;
 static PurpleKeyring * keyring_handler = NULL;
@@ -83,7 +83,7 @@ internal_keyring_open()
 	internal_keyring_is_active = TRUE;
 }
 
-static void 
+static void
 internal_keyring_read(PurpleAccount * account,
 		      PurpleKeyringReadCallback cb,
 		      gpointer data)
@@ -104,7 +104,7 @@ internal_keyring_read(PurpleAccount * account,
 		if(cb != NULL)
 			cb(account, password, NULL, data);
 	} else {
-		error = g_error_new(ERR_PIDGINKEYRING, 
+		error = g_error_new(ERR_PIDGINKEYRING,
 			ERR_NOPASSWD, "password not found");
 		if(cb != NULL)
 			cb(account, NULL, error, data);
@@ -153,7 +153,7 @@ internal_keyring_close(GError ** error)
 }
 
 static gboolean
-internal_keyring_import_password(PurpleAccount * account, 
+internal_keyring_import_password(PurpleAccount * account,
 				 const char * mode,
 				 const char * data,
 				 GError ** error)
@@ -165,7 +165,7 @@ internal_keyring_import_password(PurpleAccount * account,
 	purple_debug_info("Internal keyring",
 		"Importing password");
 
-	if (account != NULL && 
+	if (account != NULL &&
 	    data != NULL &&
 	    (mode == NULL || g_strcmp0(mode, "cleartext") == 0)) {
 
@@ -183,7 +183,7 @@ internal_keyring_import_password(PurpleAccount * account,
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 internal_keyring_export_password(PurpleAccount * account,
 				 const char ** mode,
 				 char ** data,
@@ -297,9 +297,9 @@ PurplePluginInfo plugininfo =
 	NULL,
 };
 
-static void                        
+static void
 init_plugin(PurplePlugin *plugin)
-{                                  
+{
 	purple_debug_info("internalkeyring", "init plugin called.\n");
 }
 
