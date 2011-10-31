@@ -290,14 +290,14 @@ setup_menubar(PidginMedia *window)
 	GtkWidget *menu;
 
 	action_group = gtk_action_group_new("MediaActions");
-	gtk_action_group_add_actions(action_group,
-	                             menu_entries,
-	                             G_N_ELEMENTS(menu_entries),
-	                             GTK_WINDOW(window));
 #ifdef ENABLE_NLS
 	gtk_action_group_set_translation_domain(action_group,
 	                                        PACKAGE);
 #endif
+	gtk_action_group_add_actions(action_group,
+	                             menu_entries,
+	                             G_N_ELEMENTS(menu_entries),
+	                             GTK_WINDOW(window));
 
 	window->priv->ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(window->priv->ui, action_group, 0);
