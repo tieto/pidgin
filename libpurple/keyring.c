@@ -539,7 +539,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 				close(NULL);  /* we can't do much about errors at this point */
 
 		} else {
-			tracker = g_malloc(sizeof(PurpleKeyringChangeTracker));
+			tracker = g_new(PurpleKeyringChangeTracker, 1);
 			oldkeyring = purple_keyring_get_inuse();
 
 			purple_keyring_inuse = newkeyring;
@@ -906,7 +906,7 @@ purple_keyring_set_password(PurpleAccount *account,
 			g_error_free(error);
 
 		} else {
-			cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
+			cbinfo = g_new(PurpleKeyringCbInfo, 1);
 			cbinfo->cb = cb;
 			cbinfo->data = data;
 			save(account, password, purple_keyring_set_password_async_cb, data);

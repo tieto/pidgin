@@ -132,7 +132,7 @@ gkp_read_continue(GnomeKeyringResult result,
 static void
 gkp_read(PurpleAccount *account, PurpleKeyringReadCallback cb, gpointer data)
 {
-	InfoStorage *storage = g_malloc(sizeof(InfoStorage));
+	InfoStorage *storage = g_new(InfoStorage, 1);
 
 	storage->cb = cb;
 	storage->user_data = data;
