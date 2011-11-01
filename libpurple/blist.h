@@ -756,6 +756,15 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
 
 /**
+ * Determines the total size of a contact.
+ *
+ * @param contact	The contact
+ * @param offline	Count buddies in offline accounts
+ * @return The number of buddies in the contact
+ */
+int purple_contact_get_contact_size(PurpleContact *contact, gboolean offline);
+
+/**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  * This doesn't actually try to remove the buddy from the server list.
  *

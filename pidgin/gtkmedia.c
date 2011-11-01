@@ -290,14 +290,14 @@ setup_menubar(PidginMedia *window)
 	GtkWidget *menu;
 
 	action_group = gtk_action_group_new("MediaActions");
-	gtk_action_group_add_actions(action_group,
-	                             menu_entries,
-	                             G_N_ELEMENTS(menu_entries),
-	                             GTK_WINDOW(window));
 #ifdef ENABLE_NLS
 	gtk_action_group_set_translation_domain(action_group,
 	                                        PACKAGE);
 #endif
+	gtk_action_group_add_actions(action_group,
+	                             menu_entries,
+	                             G_N_ELEMENTS(menu_entries),
+	                             GTK_WINDOW(window));
 
 	window->priv->ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(window->priv->ui, action_group, 0);
@@ -789,7 +789,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		/* Hold button */
 		gtkmedia->priv->hold =
-				gtk_toggle_button_new_with_mnemonic("_Hold");
+				gtk_toggle_button_new_with_mnemonic(_("_Hold"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->hold);
@@ -878,7 +878,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->mute =
-				gtk_toggle_button_new_with_mnemonic("_Mute");
+				gtk_toggle_button_new_with_mnemonic(_("_Mute"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
@@ -969,7 +969,7 @@ pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
 		gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
-				0, _("Call in progress."));
+				0, _("Call in progress"));
 		gtk_widget_show(GTK_WIDGET(gtkmedia));
 	}
 }

@@ -37,7 +37,10 @@ version 3.0.0 (??/??/????):
 	  (#14529)
 	* Support file transfers up to ~9 EiB.
 
-version 2.10.1 (??/??/????):
+version 2.10.1 (10/11/2011):
+	Finch:
+	* Fix compilation on OpenBSD.
+
 	Gadu-Gadu:
 	* Fix problems linking against GnuTLS. (#14544)
 

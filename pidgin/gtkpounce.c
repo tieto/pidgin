@@ -427,9 +427,9 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		dialog = (PidginPounceDialog *)data;
 
-		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), buddy->name);
-		dialog->account = buddy->account;
-		pidgin_account_option_menu_set_selected(dialog->account_menu, buddy->account);
+		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), purple_buddy_get_name(buddy));
+		dialog->account = purple_buddy_get_account(buddy);
+		pidgin_account_option_menu_set_selected(dialog->account_menu, purple_buddy_get_account(buddy));
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
