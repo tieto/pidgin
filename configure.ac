@@ -1357,10 +1357,6 @@ fi
 
 AM_CONDITIONAL(ENABLE_GNOMEKEYRING, test "x$enable_gnome_keyring" = "xyes")
 
-
-
-
-
 dnl #######################################################################
 dnl # Check for Python
 dnl #######################################################################
