@@ -92,7 +92,8 @@ gkp_read_continue(GnomeKeyringResult result,
 		switch(result) {
 			case GNOME_KEYRING_RESULT_NO_MATCH:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOPASSWD, "no password found for account : %s",
+					PURPLE_KEYRING_ERROR_NOPASSWD,
+					"No password found for account : %s",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, NULL, error, storage->user_data);
@@ -102,7 +103,8 @@ gkp_read_continue(GnomeKeyringResult result,
 			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON:
 			case GNOME_KEYRING_RESULT_IO_ERROR:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
+					PURPLE_KEYRING_ERROR_NOCHANNEL,
+					"Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, NULL, error, storage->user_data);
@@ -111,7 +113,8 @@ gkp_read_continue(GnomeKeyringResult result,
 
 			default:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOCHANNEL, "Unknown error (account : %s).",
+					PURPLE_KEYRING_ERROR_NOCHANNEL,
+					"Unknown error (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, NULL, error, storage->user_data);
@@ -168,7 +171,8 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOPASSWD, "Could not update password for %s : not found",
+					PURPLE_KEYRING_ERROR_NOPASSWD,
+					"Could not update password for %s : not found",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, error, storage->user_data);
@@ -182,7 +186,8 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
+					PURPLE_KEYRING_ERROR_NOCHANNEL,
+					"Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, error, storage->user_data);
@@ -195,7 +200,8 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
-					ERR_NOCHANNEL, "Unknown error (account : %s).",
+					PURPLE_KEYRING_ERROR_NOCHANNEL,
+					"Unknown error (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, error, storage->user_data);

@@ -365,23 +365,23 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 
 	name = purple_account_get_username(account);
 
-	if ((error != NULL) && (error->domain == ERR_PIDGINKEYRING)) {
+	if ((error != NULL) && (error->domain == PURPLE_KEYRING_ERROR)) {
 		tracker->error = error;
 
 		switch(error->code) {
-			case ERR_NOCAP:
+			case PURPLE_KEYRING_ERROR_NOCAP:
 				purple_debug_info("keyring",
 					"Keyring could not save password for account %s : %s\n",
 					name, error->message);
 				break;
 
-			case ERR_NOPASSWD:
+			case PURPLE_KEYRING_ERROR_NOPASSWD:
 				purple_debug_info("keyring",
 					"No password found while changing keyring for account %s : %s\n",
 					name, error->message);
 				break;
 
-			case ERR_NOCHANNEL:
+			case PURPLE_KEYRING_ERROR_NOCHANNEL:
 				purple_debug_info("keyring",
 					"Failed to communicate with backend while changing keyring for account %s : %s Aborting changes.\n",
 					name, error->message);
@@ -464,8 +464,8 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 	g_return_if_fail(tracker->abort == FALSE);
 
 	if (error != NULL) {
-		if (error->code == ERR_NOPASSWD ||
-		    error->code == ERR_NOACCOUNT ||
+		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWD ||
+		    error->code == PURPLE_KEYRING_ERROR_NOACCOUNT ||
 		    tracker->force == TRUE) {
 			/* don't save password, and directly trigger callback */
 			purple_keyring_set_inuse_check_error_cb(account, error, data);
@@ -487,7 +487,7 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 			     purple_keyring_set_inuse_check_error_cb, tracker);
 
 		} else {
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"cannot store passwords in new keyring");
 			purple_keyring_set_inuse_check_error_cb(account, error, data);
 			g_error_free(error);
@@ -520,7 +520,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 
 		if (read == NULL) {
 			/*
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Existing keyring cannot read passwords");
 			*/
 			purple_debug_info("keyring", "Existing keyring cannot read passwords");
@@ -696,7 +696,7 @@ purple_keyring_import_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOKEYRING,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 			"No keyring configured, cannot import password info");
 		purple_debug_info("Keyring",
 			"No keyring configured, cannot import password info for account %s (%s).\n",
@@ -713,7 +713,7 @@ purple_keyring_import_password(PurpleAccount *account,
 	if ((keyringid != NULL && g_strcmp0(realid, keyringid) != 0) ||
 	    (keyringid == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
 
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"Specified keyring id does not match the configured one.");
 		purple_debug_info("keyring",
 			"Specified keyring id does not match the configured one (%s vs. %s). Data will be lost.\n",
@@ -723,7 +723,7 @@ purple_keyring_import_password(PurpleAccount *account,
 
 	import = purple_keyring_get_import_password(inuse);
 	if (import == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOCAP,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 			"Keyring cannot import password info.");
 		purple_debug_info("Keyring", "Configured keyring cannot import password info. This might be normal.");
 		return FALSE;
@@ -746,7 +746,7 @@ purple_keyring_export_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOKEYRING,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 			"No keyring configured, cannot export password info");
 		purple_debug_info("keyring",
 			"No keyring configured, cannot export password info");
@@ -762,7 +762,7 @@ purple_keyring_export_password(PurpleAccount *account,
 		*keyringid);
 
 	if (*keyringid == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"Plugin does not have a keyring id");
 		purple_debug_info("keyring",
 			"Configured keyring does not have a keyring id, cannot export password");
@@ -772,7 +772,7 @@ purple_keyring_export_password(PurpleAccount *account,
 	export = purple_keyring_get_export_password(inuse);
 
 	if (export == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOCAP,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 			"Keyring cannot export password info.");
 		purple_debug_info("keyring",
 			"Keyring cannot export password info. This might be normal");
@@ -792,7 +792,7 @@ purple_keyring_get_password(PurpleAccount *account,
 	PurpleKeyringRead read;
 
 	if (account == NULL) {
-		error = g_error_new(ERR_PIDGINKEYRING, ERR_INVALID,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"No account passed to the function.");
 
 		if (cb != NULL)
@@ -804,7 +804,7 @@ purple_keyring_get_password(PurpleAccount *account,
 		inuse = purple_keyring_get_inuse();
 
 		if (inuse == NULL) {
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOKEYRING,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 				"No keyring configured.");
 
 			if (cb != NULL)
@@ -816,7 +816,7 @@ purple_keyring_get_password(PurpleAccount *account,
 			read = purple_keyring_get_read_password(inuse);
 
 			if (read == NULL) {
-				error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+				error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 					"Keyring cannot read password.");
 
 				if (cb != NULL)
@@ -871,7 +871,7 @@ purple_keyring_set_password(PurpleAccount *account,
 
 	inuse = purple_keyring_get_inuse();
 	if (inuse == NULL) {
-		error = g_error_new(ERR_PIDGINKEYRING, ERR_NOKEYRING,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 			"No keyring configured.");
 		if (cb != NULL)
 			cb(account, error, data);
@@ -880,7 +880,7 @@ purple_keyring_set_password(PurpleAccount *account,
 	} else {
 		save = purple_keyring_get_save_password(inuse);
 		if (save == NULL) {
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Keyring cannot save password.");
 			if (cb != NULL)
 				cb(account, error, data);
@@ -901,14 +901,14 @@ purple_keyring_close(PurpleKeyring *keyring, GError **error)
 	PurpleKeyringClose close;
 
 	if (keyring == NULL) {
-		*error = g_error_new(ERR_PIDGINKEYRING, ERR_INVALID,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"No keyring passed to the function.");
 
 	} else {
 		close = purple_keyring_get_close_keyring(keyring);
 
 		if (close == NULL) {
-			*error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+			*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Keyring doesn't support being closed.");
 
 		} else {
@@ -930,7 +930,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 			"Keyring doesn't support master passwords.");
 		if (cb)
 			cb(FALSE, error, data);
@@ -940,7 +940,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 		change = purple_keyring_get_change_master(inuse);
 
 		if (change == NULL) {
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Keyring doesn't support master passwords.");
 			if (cb)
 				cb(FALSE, error, data);

@@ -416,23 +416,23 @@ void purple_keyring_set_export_password(PurpleKeyring *info, PurpleKeyringExport
  * Error domain GQuark.
  * See @ref purple_keyring_error_domain .
  */
-#define ERR_PIDGINKEYRING 	purple_keyring_error_domain()
+#define PURPLE_KEYRING_ERROR purple_keyring_error_domain()
 /** stuff here too */
 GQuark purple_keyring_error_domain(void);
 
 /** error codes for keyrings. */
 enum PurpleKeyringError
 {
-	ERR_OK = 0,         /**< No error. */
-	ERR_NOPASSWD = 1,   /**< No stored password. */
-	ERR_NOACCOUNT,      /**< Account not found. */
-	ERR_WRONGPASS,      /**< User submitted wrong password when prompted. */
-	ERR_WRONGFORMAT,    /**< Data passed is not in suitable format. */
-	ERR_NOKEYRING,      /**< No keyring configured. */
-	ERR_NOCHANNEL,      /**< Failed to communicate with the backend */
-	ERR_INVALID,        /**< Invalid input */
-	ERR_NOCAP,          /**< Keyring doesn't support this */
-	ERR_UNKNOWN         /**< Unknown error */
+	PURPLE_KEYRING_ERROR_OK = 0,         /**< No error. */
+	PURPLE_KEYRING_ERROR_NOPASSWD = 1,   /**< No stored password. */
+	PURPLE_KEYRING_ERROR_NOACCOUNT,      /**< Account not found. */
+	PURPLE_KEYRING_ERROR_WRONGPASS,      /**< User submitted wrong password when prompted. */
+	PURPLE_KEYRING_ERROR_WRONGFORMAT,    /**< Data passed is not in suitable format. */
+	PURPLE_KEYRING_ERROR_NOKEYRING,      /**< No keyring configured. */
+	PURPLE_KEYRING_ERROR_NOCHANNEL,      /**< Failed to communicate with the backend */
+	PURPLE_KEYRING_ERROR_INVALID,        /**< Invalid input */
+	PURPLE_KEYRING_ERROR_NOCAP,          /**< Keyring doesn't support this */
+	PURPLE_KEYRING_ERROR_UNKNOWN         /**< Unknown error */
 };
 
 /*}@*/

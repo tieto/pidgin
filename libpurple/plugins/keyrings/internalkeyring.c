@@ -94,8 +94,8 @@ internal_keyring_read(PurpleAccount *account,
 		if (cb != NULL)
 			cb(account, password, NULL, data);
 	} else {
-		error = g_error_new(ERR_PIDGINKEYRING,
-			ERR_NOPASSWD, "password not found");
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_NOPASSWD, "password not found");
 		if (cb != NULL)
 			cb(account, NULL, error, data);
 		g_error_free(error);
@@ -163,7 +163,7 @@ internal_keyring_import_password(PurpleAccount *account,
 		return TRUE;
 
 	} else {
-		*error = g_error_new(ERR_PIDGINKEYRING, ERR_NOPASSWD, "no password for account");
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOPASSWD, "no password for account");
 		return FALSE;
 
 	}
