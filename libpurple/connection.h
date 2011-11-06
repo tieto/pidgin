@@ -357,8 +357,7 @@ PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
 PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
 /**
- * Returns the connection's password. Deprecated, use
- * purple_connection_get_password_async() instead.
+ * Returns the connection's password.
  *
  * @param gc The connection.
  *

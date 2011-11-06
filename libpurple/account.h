@@ -346,14 +346,15 @@ void purple_account_request_change_user_info(PurpleAccount *account);
 void purple_account_set_username(PurpleAccount *account, const char *username);
 
 /**
- * Set the account's password, and call the callback
+ * Sets the account's password.
  *
- * The password in the keyring might not be immediatly updated, but the cache
+ * The password in the keyring might not be immediately updated, but the cached
  * version will be, and it is therefore safe to read the password back before
- * the callback has been triggered. One can also set a NULL calback.
+ * the callback has been triggered. One can also set a NULL callback if
+ * notification of saving to the keyring is not required.
  *
- * @param account  The account for which the password is to be saved.
- * @param password The password to save.
+ * @param account  The account.
+ * @param password The password.
  * @param cb       A callback for once the password is saved.
  * @param data     A pointer to be passed to the callback.
  */
@@ -668,7 +669,12 @@ gboolean purple_account_is_disconnected(const PurpleAccount *account);
 const char *purple_account_get_username(const PurpleAccount *account);
 
 /**
- * Reads the password for the account and passes it to the callback
+ * Reads the password for the account.
+ *
+ * This is an asynchronous call, that will return the password in a callback
+ * once it has been read from the keyring. If the account is connected, and you
+ * require the password immediately, then consider using @ref
+ * purple_connection_get_password instead.
  *
  * @param account The account.
  * @param cb      The callback to give the password.
