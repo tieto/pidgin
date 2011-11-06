@@ -437,15 +437,15 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 	}
 
 	/**
-	 * This is kind of hackish. It will schedule an account save,
-	 * and then return because account == NULL.
+	 * This is kind of hackish. It will schedule an account save.
+	 *
 	 * Another way to do this would be to expose the
 	 * schedule_accounts_save() function, but other such functions
 	 * are not exposed. So these was done for consistency.
 	 */
-	purple_account_set_password(NULL, NULL, NULL, NULL);
+	purple_account_set_remember_password(account,
+		purple_account_get_remember_password(account));
 }
-
 
 static void
 purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,

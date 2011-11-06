@@ -42,7 +42,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-
 /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
 typedef struct
 {
@@ -1742,17 +1741,12 @@ purple_account_set_password(PurpleAccount *account,
                             PurpleKeyringSaveCallback cb,
                             gpointer data)
 {
-	/**
-	 * This is so we can force an account sync by calling
-	 * it with account == NULL.
-	 */
-	schedule_accounts_save();
-
 	g_return_if_fail(account != NULL);
 
 	g_free(account->password);
-
 	account->password = g_strdup(password);
+
+	schedule_accounts_save();
 
 	if (purple_account_get_remember_password(account) == FALSE) {
 
