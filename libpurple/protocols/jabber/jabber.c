@@ -440,7 +440,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 		 * we're disconnecting, don't generate (possibly another) error that
 		 * (for some UIs) would mask the first.
 		 */
-		if (!account->disconnecting) {
+		if (!purple_account_is_disconnecting(account)) {
 			gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
 			purple_connection_error(js->gc,

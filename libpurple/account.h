@@ -246,6 +246,15 @@ void purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrati
 void purple_account_disconnect(PurpleAccount *account);
 
 /**
+ * Indicates if the account is currently being disconnected.
+ *
+ * @param account The account
+ *
+ * @return TRUE if the account is being disconnected.
+ */
+gboolean purple_account_is_disconnecting(const PurpleAccount *account);
+
+/**
  * Notifies the user that the account was added to a remote user's
  * buddy list.
  *

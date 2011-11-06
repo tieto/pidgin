@@ -4,6 +4,7 @@ version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
 		* pidgin_create_webview
+		* purple_account_is_disconnecting
 		* purple_account_get_ui_data
 		* purple_account_set_ui_data
 		* purple_account_register_completed

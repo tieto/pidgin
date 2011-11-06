@@ -1274,6 +1274,14 @@ purple_account_disconnect(PurpleAccount *account)
 	account->disconnecting = FALSE;
 }
 
+gboolean
+purple_account_is_disconnecting(const PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, TRUE);
+	
+	return account->disconnecting;
+}
+
 void
 purple_account_notify_added(PurpleAccount *account, const char *remote_user,
                           const char *id, const char *alias,
