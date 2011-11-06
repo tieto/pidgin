@@ -215,7 +215,7 @@ extern "C" {
  *
  * @return The keyring, or NULL if not found.
  */
-PurpleKeyring *purple_keyring_get_keyring_by_id(const char *id);
+PurpleKeyring *purple_keyring_find_keyring_by_id(const char *id);
 
 /**
  * Get a list of id/name pairs (for preferences)

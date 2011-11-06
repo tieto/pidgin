@@ -244,7 +244,7 @@ purple_keyring_pref_cb(const char *pref,
 	g_return_if_fail(type == PURPLE_PREF_STRING);
 	g_return_if_fail(id != NULL);
 
-	new = purple_keyring_get_keyring_by_id(id);
+	new = purple_keyring_find_keyring_by_id(id);
 	g_return_if_fail(new != NULL);
 
 	purple_keyring_set_inuse(new, FALSE, NULL, data);
@@ -300,7 +300,7 @@ purple_keyring_uninit(void)
 	purple_debug_info("keyring", "purple_keyring_uninit() done.\n");
 }
 
-static PurpleKeyring *
+PurpleKeyring *
 purple_keyring_find_keyring_by_id(const char *id)
 {
 	GList *l;
@@ -596,25 +596,6 @@ purple_keyring_get_options(void)
 	}
 
 	return list;
-}
-
-PurpleKeyring *
-purple_keyring_get_keyring_by_id(const char *id)
-{
-	const GList *keyrings;
-	PurpleKeyring *keyring;
-
-	for (keyrings = purple_keyring_get_keyrings();
-	     keyrings != NULL;
-	     keyrings = keyrings->next) {
-
-		keyring = keyrings->data;
-		if (g_strcmp0(id, keyring->id) == 0)
-			return keyring;
-
-	}
-
-	return NULL;
 }
 
 void
