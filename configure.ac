@@ -1297,7 +1297,6 @@ dnl #######################################################################
 
 AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
 AC_ARG_ENABLE(nm, [AC_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support (requires D-Bus)])], enable_gnome_keyring=$enableval, enable_gnome_keyring=yes)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1334,25 +1333,29 @@ Use --disable-nm if you do not need NetworkManager support.
 ])
 			fi])
 	fi
+else
+	enable_nm=no
+fi
 
+dnl #######################################################################
+dnl # Check for GNOME Keyring headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring=$enableval, enable_gnome_keyring=yes)
 
 dnl Check for gnome-keyring.h; if we don't have it, oh well
-	if test "x$enable_gnome_keyring" = "xyes" ; then
-		PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
-			AC_SUBST(GNOMEKEYRING_CFLAGS)
-			AC_SUBST(GNOMEKEYRING_LIBS)
-			AC_DEFINE(HAVE_GNOMEKEYRING, 1, [Define if we have GNOME Keyring.])
-		], [
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
+if test "x$enable_gnome_keyring" = "xyes" ; then
+	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
+		AC_SUBST(GNOMEKEYRING_CFLAGS)
+		AC_SUBST(GNOMEKEYRING_LIBS)
+		AC_DEFINE(HAVE_GNOMEKEYRING, 1, [Define if we have GNOME Keyring.])
+	], [
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
 GNOME Keyring development headers not found.
 Use --disable-gnome-keyring if you do not need GNOME Keyring support.
 ])
-			fi])
-	fi
-else
-	enable_gnome_keyring=no
-	enable_nm=no
+		fi])
 fi
 
 AM_CONDITIONAL(ENABLE_GNOMEKEYRING, test "x$enable_gnome_keyring" = "xyes")
