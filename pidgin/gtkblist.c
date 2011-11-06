@@ -6812,7 +6812,7 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 	if (purple_blist_node_get_ui_data(node) == NULL)
 		pidgin_blist_new_node(node);
 
-	switch(node->type) {
+	switch (purple_blist_node_get_type(node)) {
 		case PURPLE_BLIST_GROUP_NODE:
 			pidgin_blist_update_group(list, node);
 			break;
