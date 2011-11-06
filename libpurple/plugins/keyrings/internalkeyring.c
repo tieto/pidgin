@@ -50,13 +50,12 @@
 #define	INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define INTERNALKEYRING_ID          PURPLE_DEFAULT_KEYRING
 
-#define ACTIVATE()\
-	if (internal_keyring_is_active == FALSE)\
+#define ACTIVATE() \
+	if (internal_keyring_passwords == NULL) \
 		internal_keyring_open();
 
 static GHashTable *internal_keyring_passwords = NULL;
 static PurpleKeyring *keyring_handler = NULL;
-static gboolean internal_keyring_is_active = FALSE;
 
 /***********************************************/
 /*     Keyring interface                       */
@@ -66,7 +65,6 @@ internal_keyring_open(void)
 {
 	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
 		g_direct_equal, NULL, g_free);
-	internal_keyring_is_active = TRUE;
 }
 
 static void
@@ -129,8 +127,6 @@ internal_keyring_save(PurpleAccount *account,
 static void
 internal_keyring_close(GError **error)
 {
-	internal_keyring_is_active = FALSE;
-
 	g_hash_table_destroy(internal_keyring_passwords);
 	internal_keyring_passwords = NULL;
 }
