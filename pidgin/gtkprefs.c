@@ -2370,7 +2370,7 @@ keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 	 * is (or will be) used, from there.
 	 */
 
-	keyring = purple_keyring_get_keyring_by_id(val);
+	keyring = purple_keyring_find_keyring_by_id(val);
 
 	if (purple_keyring_get_change_master(keyring))
 		gtk_widget_set_sensitive(button, TRUE);
@@ -2390,7 +2390,7 @@ keyring_page(void)
 	PurpleKeyring *keyring;
 
 	keyring_id = purple_prefs_get_string("/purple/keyring/active");
-	keyring = purple_keyring_get_keyring_by_id(keyring_id);
+	keyring = purple_keyring_find_keyring_by_id(keyring_id);
 
 	prefs = purple_prefs_get_handle();
 
