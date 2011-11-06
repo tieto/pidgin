@@ -73,7 +73,7 @@ typedef struct
 
 typedef struct
 {
-	gpointer cb;
+	PurpleCallback cb;
 	gpointer data;
 } CbInfo;
 
@@ -88,20 +88,6 @@ static GList *handles = NULL;
 static void set_current_error(PurpleAccount *account,
 	PurpleConnectionErrorInfo *new_err);
 
-static void purple_account_register_got_password_cb(PurpleAccount * account, 
-	char * password, GError * error, gpointer data);
-
-
-static void purple_account_unregister_got_password_cb(PurpleAccount * account,
-	char * password, GError * error, gpointer data);
-
-static void purple_account_connect_got_password_cb(PurpleAccount * account,
-       gchar * password, GError * error, gpointer data);
-
-static void purple_account_get_password_async_finish(PurpleAccount * account,
-	char * password, GError * error, gpointer data);
-
-static void purple_accounts_delete_finish(PurpleAccount * account, GError * error, gpointer data);
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -380,7 +366,7 @@ account_to_xmlnode(PurpleAccount *account)
 	char *data;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
-	GError * error = NULL;
+	GError *error = NULL;
 	GDestroyNotify destroy;
 
 	node = xmlnode_new("account");
@@ -393,7 +379,7 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
-		purple_debug_info("accounts", "Exporting password for account %s (%s).\n",
+		purple_debug_info("account", "Exporting password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
@@ -402,8 +388,8 @@ account_to_xmlnode(PurpleAccount *account)
 
 		if (error != NULL) {
 
-			purple_debug_info("accounts",
-				"failed to export password for account %s : %s.\n",
+			purple_debug_info("account",
+				"Failed to export password for account %s : %s.\n",
 				purple_account_get_username(account),
 				error->message);
 
@@ -493,8 +479,6 @@ sync_accounts(void)
 						 "they were read!\n");
 		return;
 	}
-
-	purple_debug_info("account", "Syncing accounts.\n");
 
 	node = accounts_to_xmlnode();
 	data = xmlnode_to_formatted_str(node, NULL);
@@ -894,7 +878,7 @@ parse_account(xmlnode *node)
 	const char *mode = NULL;
 	char *data = NULL;
 	gboolean result = FALSE;
-	GError * error = NULL;
+	GError *error = NULL;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -986,7 +970,6 @@ parse_account(xmlnode *node)
 	}
 
 	/* Read the password */
-
 	child = xmlnode_get_child(node, "password");
 	if (child != NULL)
 	{
@@ -997,10 +980,10 @@ parse_account(xmlnode *node)
 		result = purple_keyring_import_password(ret, keyring_id, mode, data, &error);
 
 		if (result == TRUE) {
-			purple_debug_info("accounts", "password imported successfully.\n");
+			purple_debug_info("account", "Password imported successfully.\n");
 			purple_account_set_remember_password(ret, TRUE);		
 		} else {
-			purple_debug_info("accounts", "failed to imported password.\n");
+			purple_debug_info("account", "Failed to import password.\n");
 		} 
 		g_free(data); 
 	}
@@ -1172,6 +1155,17 @@ purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegist
 	account->registration_cb_user_data = user_data;
 }
 
+static void
+purple_account_register_got_password_cb(PurpleAccount *account,
+                                        const char *password,
+                                        GError *error,
+                                        gpointer data)
+{
+	g_return_if_fail(account != NULL);
+
+	_purple_connection_new(account, TRUE, password);
+}
+
 void
 purple_account_register(PurpleAccount *account)
 {
@@ -1183,59 +1177,42 @@ purple_account_register(PurpleAccount *account)
 	purple_keyring_get_password(account, purple_account_register_got_password_cb, NULL);
 }
 
-
 static void
-purple_account_register_got_password_cb(PurpleAccount * account, char * password, GError * error, gpointer data)
+purple_account_unregister_got_password_cb(PurpleAccount *account,
+                                          const char *password,
+                                          GError *error,
+                                          gpointer data)
 {
-	g_return_if_fail(account != NULL);
-
-	_purple_connection_new(account, TRUE, password);
-}
-
-typedef struct
-{
+	CbInfo *info = data;
 	PurpleAccountUnregistrationCb cb;
-	void *user_data;
-} UnregisterData;
+
+	cb = (PurpleAccountUnregistrationCb)info->cb;
+	_purple_connection_new_unregister(account, password, cb, info->data);
+
+	g_free(info);
+}
 
 void
 purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
-	UnregisterData * data;
+	CbInfo *info;
 
 	g_return_if_fail(account != NULL);
 
 	purple_debug_info("account", "Unregistering account %s\n",
 					  purple_account_get_username(account));
 
-	data = g_new0(UnregisterData, 1);
-	data->cb = cb;
-	data->user_data = user_data;
+	info = g_new0(CbInfo, 1);
+	info->cb = PURPLE_CALLBACK(cb);
+	info->data = user_data;
 
-	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, data);
-
-}
-
-static void
-purple_account_unregister_got_password_cb(PurpleAccount * account, char * password, GError * error, gpointer data)
-{
-	UnregisterData * unregdata;
-	
-	g_return_if_fail(account != NULL);
-
-	unregdata = data;
-	g_return_if_fail(unregdata != NULL);
-
-	_purple_connection_new_unregister(account, password, unregdata->cb, unregdata->user_data);
-
-	g_free(unregdata);
+	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, info);
 }
 
 static void
 request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 {
 	const char *entry;
-	char * password;
 	gboolean remember;
 
 	entry = purple_request_fields_get_string(fields, "password");
@@ -1252,11 +1229,8 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 
 	purple_account_set_remember_password(account, remember);
 
-	password = g_strdup(entry);
-	purple_account_set_password(account, password, NULL, NULL);
-	g_free(password);
+	purple_account_set_password(account, entry, NULL, NULL);
 	_purple_connection_new(account, FALSE, entry);
-
 }
 
 static void
@@ -1308,6 +1282,22 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 	g_free(primary);
 }
 
+static void
+purple_account_connect_got_password_cb(PurpleAccount *account,
+                                       const gchar *password,
+                                       GError *error,
+                                       gpointer data)
+{
+	PurplePluginProtocolInfo *prpl_info = data;
+
+	if ((password == NULL) &&
+		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
+	else
+		_purple_connection_new(account, FALSE, password);
+}
+
 void
 purple_account_connect(PurpleAccount *account)
 {
@@ -1340,25 +1330,6 @@ purple_account_connect(PurpleAccount *account)
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	purple_keyring_get_password(account, purple_account_connect_got_password_cb, prpl_info);
-
-}
-
-static void
-purple_account_connect_got_password_cb(PurpleAccount * account,
-				       gchar * password,
-				       GError * error,
-				       gpointer data)
-{
-	PurplePluginProtocolInfo *prpl_info;
-
-	prpl_info = data;
-
-	if ((password == NULL) &&
-		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
-		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
-		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
-	else
-		_purple_connection_new(account, FALSE, password);
 }
 
 void
@@ -1378,8 +1349,8 @@ purple_account_disconnect(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	_purple_connection_destroy(gc);
-
 	purple_account_set_connection(account, NULL);
+
 	account->disconnecting = FALSE;
 }
 
@@ -2267,65 +2238,59 @@ purple_account_get_username(const PurpleAccount *account)
 	return account->username;
 }
 
+static void
+purple_account_get_password_async_finish(PurpleAccount *account,
+                                         const char *password,
+                                         GError *error,
+                                         gpointer data)
+{
+	CbInfo *info = data;
+	PurpleKeyringReadCallback cb;
+
+	purple_debug_info("account",
+		"Read password for account %s (%s) from async keyring.\n",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
+	g_free(account->password);
+	account->password = g_strdup(password);
+
+	cb = (PurpleKeyringReadCallback)info->cb;
+	if (cb != NULL)
+		cb(account, password, error, info->data);
+
+	g_free(info);
+}
+
 void
 purple_account_get_password(PurpleAccount *account,
                             PurpleKeyringReadCallback cb,
                             gpointer data)
 {
-	CbInfo *info = g_new0(CbInfo, 1);
-	info->cb = cb;
-	info->data = data;
-
-	if(account == NULL) {
+	if (account == NULL) {
 		cb(NULL, NULL, NULL, data);
 		return;
 	}
 
 	if (account->password != NULL) {
-		purple_debug_info("accounts",
+		purple_debug_info("account",
 			"Reading password for account %s (%s) from cache.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		cb(account, account->password, NULL, data);
 
 	} else {
-		purple_debug_info("accounts",
+		CbInfo *info = g_new0(CbInfo, 1);
+		info->cb = PURPLE_CALLBACK(cb);
+		info->data = data;
+
+		purple_debug_info("account",
 			"Reading password for account %s (%s) from async keyring.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		purple_keyring_get_password(account, 
 			purple_account_get_password_async_finish, info);
 	}
-}
-
-static void
-purple_account_get_password_async_finish(PurpleAccount * account,
-					 char * password,
-					 GError * error,
-					 gpointer data)
-{
-	CbInfo * info;
-	PurpleKeyringReadCallback cb;
-
-	
-
-	purple_debug_info("accounts",
-		"Read password for account %s (%s) from async keyring.\n",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
-
-	info = data;
-
-	g_return_if_fail(account != NULL);
-	g_free(account->password);
-	account->password = g_strdup(password);
-	g_return_if_fail(info != NULL);
-
-	cb = info->cb;
-	if (cb != NULL)
-		cb(account, password, error, info->data);
-
-	g_free(data);
 }
 
 const char *
@@ -2991,6 +2956,12 @@ purple_accounts_remove(PurpleAccount *account)
 	purple_signal_emit(purple_accounts_get_handle(), "account-removed", account);
 }
 
+static void
+purple_accounts_delete_finish(PurpleAccount *account, GError *error, gpointer data)
+{
+	purple_account_destroy(account);
+}
+
 void
 purple_accounts_delete(PurpleAccount *account)
 {
@@ -3066,12 +3037,6 @@ purple_accounts_delete(PurpleAccount *account)
 	 */
 	purple_keyring_set_password(account, NULL,
 		purple_accounts_delete_finish, NULL);
-}
-
-static void
-purple_accounts_delete_finish(PurpleAccount * account, GError * error, gpointer data)
-{
-		purple_account_destroy(account);
 }
 
 void
