@@ -1119,6 +1119,15 @@ purple_account_register(PurpleAccount *account)
 }
 
 void
+purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+{
+	g_return_if_fail(account != NULL);
+
+	if (account->registration_cb)
+		(account->registration_cb)(account, succeeded, account->registration_cb_user_data);
+}
+
+void
 purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	g_return_if_fail(account != NULL);
