@@ -229,7 +229,7 @@ gkp_save(PurpleAccount *account,
 	storage->account = account;
 	storage->cb = cb;
 	storage->user_data = data;
-	storage->name = g_strdup_printf("pidgin-%s",
+	storage->name = g_strdup_printf("purple-%s",
 		purple_account_get_username(account));
 
 	if (password != NULL && *password != '\0') {
