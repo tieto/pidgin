@@ -450,7 +450,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 
 static void
 purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
-                                   gchar *password,
+                                   const gchar *password,
                                    GError *error,
                                    gpointer data)
 {
