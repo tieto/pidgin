@@ -48,9 +48,9 @@
 #include "plugin.h"
 #include "internal.h"
 
-#define GNOMEKEYRING_NAME        N_("Gnome-Keyring")
+#define GNOMEKEYRING_NAME        N_("GNOME-Keyring")
 #define GNOMEKEYRING_VERSION     "0.3b"
-#define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in Gnome-Keyring.")
+#define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in GNOME Keyring.")
 #define	GNOMEKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define GNOMEKEYRING_ID          "core-scrouaf-gnomekeyring"
 
@@ -104,7 +104,7 @@ gkp_read_continue(GnomeKeyringResult result,
 			case GNOME_KEYRING_RESULT_IO_ERROR:
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					PURPLE_KEYRING_ERROR_NOCHANNEL,
-					"Failed to communicate with gnome keyring (account : %s).",
+					"Failed to communicate with GNOME Keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, NULL, error, storage->user_data);
@@ -166,7 +166,7 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 	if (result != GNOME_KEYRING_RESULT_OK) {
 		switch(result) {
 			case GNOME_KEYRING_RESULT_NO_MATCH:
-				purple_debug_info("Gnome keyring plugin",
+				purple_debug_info("keyring-gnome",
 					"Could not update password for %s (%s) : not found.\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
@@ -181,13 +181,13 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 
 			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON:
 			case GNOME_KEYRING_RESULT_IO_ERROR:
-				purple_debug_info("Gnome keyring plugin",
-					"Failed to communicate with gnome keyring (account : %s (%s)).\n",
+				purple_debug_info("keyring-gnome",
+					"Failed to communicate with GNOME Keyring (account : %s (%s)).\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN,
 					PURPLE_KEYRING_ERROR_NOCHANNEL,
-					"Failed to communicate with gnome keyring (account : %s).",
+					"Failed to communicate with GNOME Keyring (account : %s).",
 					purple_account_get_username(account));
 				if(cb != NULL)
 					cb(account, error, storage->user_data);
@@ -195,7 +195,7 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 				return;
 
 			default:
-				purple_debug_info("Gnome keyring plugin",
+				purple_debug_info("keyring-gnome",
 					"Unknown error (account : %s (%s)).\n",
 					purple_account_get_username(account),
 					purple_account_get_protocol_id(account));
@@ -210,7 +210,7 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 		}
 
 	} else {
-		purple_debug_info("gnome-keyring-plugin", "password for %s updated.\n",
+		purple_debug_info("keyring-gnome", "Password for %s updated.\n",
 			purple_account_get_username(account));
 
 		if (cb != NULL)
@@ -233,7 +233,7 @@ gkp_save(PurpleAccount *account,
 		purple_account_get_username(account));
 
 	if (password != NULL && *password != '\0') {
-		purple_debug_info("Gnome keyring plugin",
+		purple_debug_info("keyring-gnome",
 			"Updating password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -250,7 +250,7 @@ gkp_save(PurpleAccount *account,
 		                             NULL);
 
 	} else {	/* password == NULL, delete password. */
-		purple_debug_info("Gnome keyring plugin",
+		purple_debug_info("keyring-gnome",
 			"Forgetting password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -275,7 +275,7 @@ gkp_import_password(PurpleAccount *account,
                     const char *data,
                     GError **error)
 {
-	purple_debug_info("Gnome Keyring plugin", "Importing password.\n");
+	purple_debug_info("keyring-gnome", "Importing password.\n");
 	return TRUE;
 }
 
@@ -286,7 +286,7 @@ gkp_export_password(PurpleAccount *account,
                     GError **error,
                     GDestroyNotify *destroy)
 {
-	purple_debug_info("Gnome Keyring plugin", "Exporting password.\n");
+	purple_debug_info("keyring-gnome", "Exporting password.\n");
 	*data = NULL;
 	*mode = NULL;
 	*destroy = NULL;
@@ -298,10 +298,10 @@ gkp_export_password(PurpleAccount *account,
 static void
 gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data)
 {
-	purple_debug_info("Gnome-Keyring plugin",
+	purple_debug_info("keyring-gnome",
 		"This keyring does not support master passwords.\n");
 
-	purple_notify_info(NULL, _("Gnome-Keyring plugin"),
+	purple_notify_info(NULL, _("GNOME Keyring plugin"),
 	                   _("Failed to change master password."),
 	                   _("This plugin does not really support master passwords, it just pretends to."));
 	if (cb)
@@ -311,7 +311,7 @@ gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data)
 static gboolean
 gkp_init(void)
 {
-	purple_debug_info("gnome-keyring-plugin", "init.\n");
+	purple_debug_info("keyring-gnome", "Init.\n");
 
 	if (gnome_keyring_is_available()) {
 		keyring_handler = purple_keyring_new();
@@ -330,8 +330,8 @@ gkp_init(void)
 		return TRUE;
 
 	} else {
-		purple_debug_info("gnome-keyring-plugin",
-			"failed to communicate with daemon, not loading.");
+		purple_debug_info("keyring-gnome",
+			"Failed to communicate with daemon, not loading.\n");
 		return FALSE;
 	}
 }
@@ -339,7 +339,7 @@ gkp_init(void)
 static void
 gkp_uninit(void)
 {
-	purple_debug_info("gnome-keyring-plugin", "uninit.\n");
+	purple_debug_info("keyring-gnome", "Uninit.\n");
 	gkp_close(NULL);
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
@@ -382,7 +382,7 @@ PurplePluginInfo plugininfo =
 	GNOMEKEYRING_ID,			/* id */
 	GNOMEKEYRING_NAME,			/* name */
 	GNOMEKEYRING_VERSION,		/* version */
-	"Internal Keyring Plugin",	/* summary */
+	"GNOME Keyring Plugin",		/* summary */
 	GNOMEKEYRING_DESCRIPTION,	/* description */
 	GNOMEKEYRING_AUTHOR,		/* author */
 	"N/A",						/* homepage */
@@ -402,7 +402,7 @@ PurplePluginInfo plugininfo =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_debug_info("Gnome Keyring plugin", "init plugin called.\n");
+	purple_debug_info("keyring-gnome", "Init plugin called.\n");
 }
 
 PURPLE_INIT_PLUGIN(gnome_keyring, init_plugin, plugininfo)

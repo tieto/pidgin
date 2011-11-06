@@ -83,7 +83,7 @@ internal_keyring_read(PurpleAccount *account,
 
 	ACTIVATE();
 
-	purple_debug_info("Internal Keyring",
+	purple_debug_info("keyring-internal",
 		"Reading password for account %s (%s).\n",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));
@@ -95,7 +95,7 @@ internal_keyring_read(PurpleAccount *account,
 			cb(account, password, NULL, data);
 	} else {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOPASSWD, "password not found");
+			PURPLE_KEYRING_ERROR_NOPASSWD, "Password not found.");
 		if (cb != NULL)
 			cb(account, NULL, error, data);
 		g_error_free(error);
@@ -114,14 +114,14 @@ internal_keyring_save(PurpleAccount *account,
 
 	if (password == NULL || *password == '\0') {
 		g_hash_table_remove(internal_keyring_passwords, account);
-		purple_debug_info("Internal Keyring",
+		purple_debug_info("keyring-internal",
 			"Deleted password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 	} else {
 		copy = g_strdup(password);
 		SET_PASSWORD((void *)account, copy);	/* cast prevents warning because account is const */
-		purple_debug_info("Internal Keyring",
+		purple_debug_info("keyring-internal",
 			"Updated password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -152,7 +152,7 @@ internal_keyring_import_password(PurpleAccount *account,
 
 	ACTIVATE();
 
-	purple_debug_info("Internal keyring", "Importing password");
+	purple_debug_info("keyring-internal", "Importing password.\n");
 
 	if (account != NULL &&
 	    data != NULL &&
@@ -163,7 +163,7 @@ internal_keyring_import_password(PurpleAccount *account,
 		return TRUE;
 
 	} else {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOPASSWD, "no password for account");
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOPASSWD, "No password for account.");
 		return FALSE;
 
 	}
@@ -182,8 +182,7 @@ internal_keyring_export_password(PurpleAccount *account,
 
 	ACTIVATE();
 
-	purple_debug_info("Internal keyring",
-		"Exporting password");
+	purple_debug_info("keyring-internal", "Exporting password.\n");
 
 	password = GET_PASSWORD(account);
 
@@ -283,7 +282,7 @@ PurplePluginInfo plugininfo =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_debug_info("internalkeyring", "init plugin called.\n");
+	purple_debug_info("keyring-internal", "Init plugin called.\n");
 }
 
 PURPLE_INIT_PLUGIN(internal_keyring, init_plugin, plugininfo)
