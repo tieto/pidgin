@@ -62,10 +62,9 @@ typedef struct _InfoStorage InfoStorage;
 
 struct _InfoStorage
 {
+	PurpleAccount *account;
 	gpointer cb;
 	gpointer user_data;
-	PurpleAccount *account;
-	char *name;
 };
 
 static GQuark gkp_error_domain(void)
@@ -132,11 +131,11 @@ gkp_read_continue(GnomeKeyringResult result,
 static void
 gkp_read(PurpleAccount *account, PurpleKeyringReadCallback cb, gpointer data)
 {
-	InfoStorage *storage = g_new(InfoStorage, 1);
+	InfoStorage *storage = g_new0(InfoStorage, 1);
 
+	storage->account = account;
 	storage->cb = cb;
 	storage->user_data = data;
-	storage->account = account;
 
 	gnome_keyring_find_password(GNOME_KEYRING_NETWORK_PASSWORD,
 	                            gkp_read_continue,
@@ -158,10 +157,8 @@ gkp_save_continue(GnomeKeyringResult result, gpointer data)
 	storage = data;
 	g_return_if_fail(storage != NULL);
 
-	cb = storage->cb;
 	account = storage->account;
-
-	g_free(storage->name);
+	cb = storage->cb;
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
 		switch(result) {
@@ -224,23 +221,25 @@ gkp_save(PurpleAccount *account,
          PurpleKeyringSaveCallback cb,
          gpointer data)
 {
-	InfoStorage *storage = g_new0(InfoStorage,1);
+	InfoStorage *storage = g_new0(InfoStorage, 1);
 
 	storage->account = account;
 	storage->cb = cb;
 	storage->user_data = data;
-	storage->name = g_strdup_printf("purple-%s",
-		purple_account_get_username(account));
 
 	if (password != NULL && *password != '\0') {
+		char *name;
+
 		purple_debug_info("keyring-gnome",
 			"Updating password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
+		name = g_strdup_printf("purple-%s",
+		                       purple_account_get_username(account));
 		gnome_keyring_store_password(GNOME_KEYRING_NETWORK_PASSWORD,
 		                             NULL,  /*default keyring */
-		                             storage->name,
+		                             name,
 		                             password,
 		                             gkp_save_continue,
 		                             storage,
@@ -248,6 +247,7 @@ gkp_save(PurpleAccount *account,
 		                             "user", purple_account_get_username(account),
 		                             "protocol", purple_account_get_protocol_id(account),
 		                             NULL);
+		g_free(name);
 
 	} else {	/* password == NULL, delete password. */
 		purple_debug_info("keyring-gnome",
