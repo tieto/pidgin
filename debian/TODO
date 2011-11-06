@@ -1,2 +1,2 @@
-- Add a dh_finch for people who want to package plugins for
-it.
+- Move docs from pidgin-dev to libpurple-dev
+- Add a dh_finch for people who want to package plugins for it.
