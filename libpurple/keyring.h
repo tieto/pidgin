@@ -63,14 +63,12 @@ typedef struct _PurpleKeyring PurpleKeyring;
  * should be NULL, and the error set.
  *
  * @param account  The account of which the password was asked.
- * @param password The password that was read. This should be freed when the
- *                 callback returns.
- * @param error    Error that could have occured. Must be freed by the calling
- *                 function.
+ * @param password The password that was read.
+ * @param error    Error that could have occured.
  * @param data     Data passed to the callback.
  */
 typedef void (*PurpleKeyringReadCallback)(PurpleAccount *account,
-                                          gchar *password,
+                                          const gchar *password,
                                           GError *error,
                                           gpointer data);
 
@@ -78,8 +76,7 @@ typedef void (*PurpleKeyringReadCallback)(PurpleAccount *account,
  * Callback for once a password has been stored. If there was a problem, the
  * error will be set.
  *
- * @param error   Error that could have occured. Must be freed by the calling
- *                function.
+ * @param error   Error that could have occured.
  * @param account The account for which the password was saved.
  * @param data    Data passed to the callback.
  */
@@ -133,11 +130,8 @@ typedef void (*PurpleKeyringRead)(PurpleAccount *account,
  * Store a password in the keyring.
  *
  * @param account  The account for which the password is to be stored.
- * @param password The password to be stored. This password will be freed once
- *                 the function returns, so one must take care to make a copy if
- *                 they call other async functions later. If the password is
- *                 NULL, this means that the keyring should forget about that
- *                 password.
+ * @param password The password to be stored. If the password is NULL, this
+ *                 means that the keyring should forget about that password.
  * @param cb       A callback to be called once the password is saved.
  * @param data     A pointer to be passed to the callback
  */
@@ -171,10 +165,8 @@ typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
  * decrypt passwords.
  *
  * @param account The account.
- * @param mode    A keyring specific option that was stored. Can be NULL, will
- *                be freed when function returns.
- * @param data    Data that was stored, Can be NULL, will be freed when function
- *                returns (so copy it if you need it).
+ * @param mode    A keyring specific option that was stored. Can be NULL.
+ * @param data    Data that was stored. Can be NULL.
  *
  * @return TRUE on success, FALSE on failure.
  */
@@ -217,7 +209,7 @@ extern "C" {
 /*@{*/
 
 /**
- * Find a keyring from it's keyring id.
+ * Find a keyring from its keyring id.
  *
  * @param id The id for the keyring.
  *
@@ -403,8 +395,8 @@ PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring *
 PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring *info);
 PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyring *info);
 
-void purple_keyring_set_name(PurpleKeyring *info, char *name);
-void purple_keyring_set_id(PurpleKeyring *info, char *id);
+void purple_keyring_set_name(PurpleKeyring *info, const char *name);
+void purple_keyring_set_id(PurpleKeyring *info, const char *id);
 void purple_keyring_set_read_password(PurpleKeyring *info, PurpleKeyringRead read);
 void purple_keyring_set_save_password(PurpleKeyring *info, PurpleKeyringSave save);
 void purple_keyring_set_close_keyring(PurpleKeyring *info, PurpleKeyringClose close);

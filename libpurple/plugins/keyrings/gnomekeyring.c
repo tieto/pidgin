@@ -87,7 +87,6 @@ gkp_read_continue(GnomeKeyringResult result,
 	PurpleAccount *account = storage->account;
 	PurpleKeyringReadCallback cb = storage->cb;
 	GError *error;
-	char *copy;
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
 		switch(result) {
@@ -122,9 +121,7 @@ gkp_read_continue(GnomeKeyringResult result,
 
 	} else {
 		if (cb != NULL) {
-			copy = g_strdup(password);
-			cb(account, copy, NULL, storage->user_data);
-			g_free(copy);
+			cb(account, password, NULL, storage->user_data);
 		}
 	}
 }

@@ -154,7 +154,7 @@ purple_keyring_get_export_password(const PurpleKeyring *keyring)
 }
 
 void
-purple_keyring_set_name(PurpleKeyring *keyring, char *name)
+purple_keyring_set_name(PurpleKeyring *keyring, const char *name)
 {
 	g_return_if_fail(keyring != NULL);
 
@@ -163,7 +163,7 @@ purple_keyring_set_name(PurpleKeyring *keyring, char *name)
 }
 
 void
-purple_keyring_set_id(PurpleKeyring *keyring, char *id)
+purple_keyring_set_id(PurpleKeyring *keyring, const char *id)
 {
 	g_return_if_fail(keyring != NULL);
 
@@ -301,7 +301,7 @@ purple_keyring_uninit(void)
 }
 
 static PurpleKeyring *
-purple_keyring_find_keyring_by_id(char *id)
+purple_keyring_find_keyring_by_id(const char *id)
 {
 	GList *l;
 	PurpleKeyring *keyring;
@@ -355,7 +355,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 {
 	const char *name;
 	PurpleKeyringClose close;
-	struct _PurpleKeyringChangeTracker *tracker;
+	PurpleKeyringChangeTracker *tracker;
 
 	tracker = (PurpleKeyringChangeTracker *)data;
 

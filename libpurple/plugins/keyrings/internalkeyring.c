@@ -78,7 +78,7 @@ internal_keyring_read(PurpleAccount *account,
                       PurpleKeyringReadCallback cb,
                       gpointer data)
 {
-	char *password;
+	const char *password;
 	GError *error;
 
 	ACTIVATE();
