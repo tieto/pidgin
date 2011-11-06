@@ -50,10 +50,6 @@
 #define	INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define INTERNALKEYRING_ID          PURPLE_DEFAULT_KEYRING
 
-#define GET_PASSWORD(account) \
-	g_hash_table_lookup (internal_keyring_passwords, account)
-#define SET_PASSWORD(account, password) \
-	g_hash_table_replace(internal_keyring_passwords, account, password)
 #define ACTIVATE()\
 	if (internal_keyring_is_active == FALSE)\
 		internal_keyring_open();
@@ -88,7 +84,7 @@ internal_keyring_read(PurpleAccount *account,
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));
 
-	password = GET_PASSWORD(account);
+	password = g_hash_table_lookup(internal_keyring_passwords, account);
 
 	if (password != NULL) {
 		if (cb != NULL)
@@ -108,8 +104,6 @@ internal_keyring_save(PurpleAccount *account,
                       PurpleKeyringSaveCallback cb,
                       gpointer data)
 {
-	gchar *copy;
-
 	ACTIVATE();
 
 	if (password == NULL || *password == '\0') {
@@ -119,8 +113,7 @@ internal_keyring_save(PurpleAccount *account,
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 	} else {
-		copy = g_strdup(password);
-		SET_PASSWORD((void *)account, copy);	/* cast prevents warning because account is const */
+		g_hash_table_replace(internal_keyring_passwords, account, g_strdup(password));
 		purple_debug_info("keyring-internal",
 			"Updated password for account %s (%s).\n",
 			purple_account_get_username(account),
@@ -148,8 +141,6 @@ internal_keyring_import_password(PurpleAccount *account,
                                  const char *data,
                                  GError **error)
 {
-	gchar *copy;
-
 	ACTIVATE();
 
 	purple_debug_info("keyring-internal", "Importing password.\n");
@@ -158,8 +149,7 @@ internal_keyring_import_password(PurpleAccount *account,
 	    data != NULL &&
 	    (mode == NULL || g_strcmp0(mode, "cleartext") == 0)) {
 
-		copy = g_strdup(data);
-		SET_PASSWORD(account, copy);
+		g_hash_table_replace(internal_keyring_passwords, account, g_strdup(data));
 		return TRUE;
 
 	} else {
@@ -184,7 +174,7 @@ internal_keyring_export_password(PurpleAccount *account,
 
 	purple_debug_info("keyring-internal", "Exporting password.\n");
 
-	password = GET_PASSWORD(account);
+	password = g_hash_table_lookup(internal_keyring_passwords, account);
 
 	if (password == NULL) {
 		return FALSE;
