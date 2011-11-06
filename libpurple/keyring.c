@@ -539,7 +539,6 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 
 		} else {
 			tracker = g_new(PurpleKeyringChangeTracker, 1);
-			oldkeyring = purple_keyring_get_inuse();
 
 			purple_keyring_inuse = newkeyring;
 
