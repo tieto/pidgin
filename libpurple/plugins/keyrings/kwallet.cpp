@@ -44,52 +44,24 @@
 #include "debug.h"
 #include "plugin.h"
 #include "internal.h"
+#include <kwallet.h>
 
+#define KWALLET_NAME        N_("KWallet")
+#define KWALLET_VERSION     "0.3b"
+#define KWALLET_DESCRIPTION N_("This plugin will store passwords in KWallet.")
+#define KWALLET_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
+#define KWALLET_ID          "core-scrouaf-kwallet"
 
 PurpleKeyring *keyring_handler;
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,						/* magic */
-	PURPLE_MAJOR_VERSION,						/* major_version */
-	PURPLE_MINOR_VERSION,						/* minor_version */
-	PURPLE_PLUGIN_STANDARD,						/* type */
-	NULL,								/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
-	NULL,								/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,					/* priority */
-	GNOMEKEYRING_ID,						/* id */
-	GNOMEKEYRING_NAME,						/* name */
-	GNOMEKEYRING_VERSION,						/* version */
-	"Internal Keyring Plugin",					/* summary */
-	GNOMEKEYRING_DESCRIPTION,					/* description */
-	GNOMEKEYRING_AUTHOR,						/* author */
-	"N/A",								/* homepage */
-	kwallet_load,							/* load */
-	kwallet_unload,							/* unload */
-	kwallet_destroy,						/* destroy */
-	NULL,								/* ui_info */
-	NULL,								/* extra_info */
-	NULL,								/* prefs_info */
-	NULL,								/* actions */
-	NULL,								/* padding... */
-	NULL,
-	NULL,
-	NULL,
-};
-
-
-extern "C"
-{
-PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
-}
-
-
-
-
 #define ERR_KWALLETPLUGIN 	kwallet_plugin_error_domain()
 
-
+namespace KWalletPlugin {
+	class engine;
+	class request;
+	class save_request;
+	class read_request;
+}
 
 class KWalletPlugin::engine
 {
@@ -213,8 +185,6 @@ class KWalletPlugin::read_request : public request
 		PurpleKeyringSaveCallback callback;
 }
 
-
-
 KWalletPlugin::save_request::save_request(PurpleAccount *acc, char *pw, void *cb, void *userdata)
 {
 	account  = acc;
@@ -289,14 +259,10 @@ KWalletPlugin::save_request::execute(KWallet::wallet *wallet)
 			callback(account, (const char *)password, NULL, data);
 }
 
+} /* namespace KWalletPlugin */
 
-
-
-
-
-
-
-
+extern "C"
+{
 
 void
 kwallet_read(PurpleAccount *account,
@@ -307,17 +273,15 @@ kwallet_read(PurpleAccount *account,
 	KWalletPlugin::engine::instance()->queue(req);
 }
 
-
 void
 kwallet_save(PurpleAccount *account,
 	     const char *password,
 	     PurpleKeyringSaveCallback cb,
 	     gpointer data)
 {
-	KWalletPlugin::read_request req(account, password, cb, data);
+	KWalletPlugin::save_request req(account, password, cb, data);
 	KWalletPlugin::engine::instance()->queue(req);
 }
-
 
 void
 kwallet_close(GError **error)
@@ -351,14 +315,14 @@ kwallet_load(PurplePlugin *plugin)
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, GNOMEKEYRING_NAME);
-	purple_keyring_set_id(keyring_handler, GNOMEKEYRING_ID);
-	purple_keyring_set_read_password(keyring_handler, gkp_read);
-	purple_keyring_set_save_password(keyring_handler, gkp_save);
-	purple_keyring_set_close_keyring(keyring_handler, gkp_close);
-	purple_keyring_set_change_master(keyring_handler, gkp_change_master);
-	purple_keyring_set_import_password(keyring_handler, gkp_import_password);
-	purple_keyring_set_export_password(keyring_handler, gkp_export_password);
+	purple_keyring_set_name(keyring_handler, KWALLET_NAME);
+	purple_keyring_set_id(keyring_handler, KWALLET_ID);
+	purple_keyring_set_read_password(keyring_handler, kwallet_read);
+	purple_keyring_set_save_password(keyring_handler, kwallet_save);
+	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
+	purple_keyring_set_change_master(keyring_handler, kwallet_change_master);
+	purple_keyring_set_import_password(keyring_handler, kwallet_import_password);
+	purple_keyring_set_export_password(keyring_handler, kwallet_export_password);
 
 	purple_keyring_register(keyring_handler);
 
@@ -373,15 +337,45 @@ kwallet_unload(PurplePlugin *plugin)
 }
 
 void
-gkp_destroy(PurplePlugin *plugin)
+kwallet_destroy(PurplePlugin *plugin)
 {
 	kwallet_close();
 }
 
+PurplePluginInfo plugininfo =
+{
+	PURPLE_PLUGIN_MAGIC,				/* magic */
+	PURPLE_MAJOR_VERSION,				/* major_version */
+	PURPLE_MINOR_VERSION,				/* minor_version */
+	PURPLE_PLUGIN_STANDARD,				/* type */
+	NULL,								/* ui_requirement */
+	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
+	NULL,								/* dependencies */
+	PURPLE_PRIORITY_DEFAULT,			/* priority */
+	KWALLET_ID,							/* id */
+	KWALLET_NAME,						/* name */
+	KWALLET_VERSION,					/* version */
+	"KWallet Keyring Plugin",			/* summary */
+	KWALLET_DESCRIPTION,				/* description */
+	KWALLET_AUTHOR,						/* author */
+	"N/A",								/* homepage */
+	kwallet_load,						/* load */
+	kwallet_unload,						/* unload */
+	kwallet_destroy,					/* destroy */
+	NULL,								/* ui_info */
+	NULL,								/* extra_info */
+	NULL,								/* prefs_info */
+	NULL,								/* actions */
+	NULL,								/* padding... */
+	NULL,
+	NULL,
+	NULL,
+};
+
 void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_debug_info("KWallet plugin", "init plugin called.\n");
+	purple_debug_info("keyring-kwallet", "init plugin called.\n");
 }
 
 GQuark kwallet_plugin_error_domain(void)
@@ -389,7 +383,7 @@ GQuark kwallet_plugin_error_domain(void)
 	return g_quark_from_static_string("KWallet keyring");
 }
 
+PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
 
-
-
+} /* extern "C" */
 
