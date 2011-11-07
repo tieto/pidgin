@@ -259,8 +259,6 @@ KWalletPlugin::save_request::execute(KWallet::wallet *wallet)
 			callback(account, (const char *)password, NULL, data);
 }
 
-} /* namespace KWalletPlugin */
-
 extern "C"
 {
 
