@@ -85,10 +85,6 @@ typedef struct
 /* This is necessary to close an edit-dialog when an account is deleted */
 static GList *accountdialogs;
 
-
-static void edit_account_continue(PurpleAccount * account, 
-	gchar * password, GError * error, gpointer user_data);
-
 static void
 account_add(PurpleAccount *account)
 {
@@ -538,14 +534,8 @@ prpl_changed_cb(GntWidget *combo, PurplePlugin *old, PurplePlugin *new, AccountE
 }
 
 static void
-edit_account(PurpleAccount *account)
-{
-	purple_account_get_password(account, edit_account_continue, account);
-}
-
-static void
-edit_account_continue(PurpleAccount * account, 
-	gchar * password, GError * error, gpointer user_data)
+edit_account_continue(PurpleAccount *account, 
+	const gchar *password, GError *error, gpointer user_data)
 {
 	GntWidget *window, *hbox;
 	GntWidget *combo, *button, *entry;
@@ -675,6 +665,12 @@ edit_account_continue(PurpleAccount * account,
 	gnt_widget_show(window);
 	gnt_box_readjust(GNT_BOX(window));
 	gnt_widget_draw(window);
+}
+
+static void
+edit_account(PurpleAccount *account)
+{
+	purple_account_get_password(account, edit_account_continue, account);
 }
 
 static void
