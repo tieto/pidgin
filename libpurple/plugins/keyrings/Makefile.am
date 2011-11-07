@@ -17,16 +17,28 @@ gnomekeyring_la_LIBADD  = $(GLIB_LIBS) $(GNOMEKEYRING_LIBS)
 
 endif
 
+if ENABLE_KWALLET
+
+kwallet_la_CXXFLAGS  = $(KWALLET_CXXFLAGS)
+kwallet_la_LDFLAGS = -module -avoid-version
+kwallet_la_SOURCES = kwallet.cpp
+kwallet_la_LIBADD  = $(GLIB_LIBS) $(KWALLET_LIBS)
+
+endif
+
 if PLUGINS
 
 plugin_LTLIBRARIES = \
 	internalkeyring.la
 
 if ENABLE_GNOMEKEYRING
-
 plugin_LTLIBRARIES += \
 	gnomekeyring.la
+endif
 
+if ENABLE_KWALLET
+plugin_LTLIBRARIES += \
+	kwallet.la
 endif
 
 endif
