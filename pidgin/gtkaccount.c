@@ -151,7 +151,6 @@ typedef struct
 
 } AccountPrefsDialog;
 
-
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
@@ -162,7 +161,6 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
-static void pidgin_account_dialog_show_continue(PurpleAccount * account, char * password, GError * error, gpointer data);
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_protocol_options(AccountPrefsDialog *dialog);
@@ -1246,6 +1244,8 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	purple_signals_disconnect_by_handle(dialog);
 
+	g_free(dialog->password);
+
 	g_free(dialog);
 	return FALSE;
 }
@@ -1384,7 +1384,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
 
-
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
@@ -1394,11 +1393,10 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * the account editor (but has not checked the 'save' box), then we
 	 * don't want to prompt them.
 	 */
-	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0')) {
+	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
 		purple_account_set_password(account, value, NULL, NULL);
-	} else {
+	else
 		purple_account_set_password(account, NULL, NULL, NULL);
-	}
 
 	purple_account_set_username(account, username);
 	g_free(username);
@@ -1536,23 +1534,13 @@ static const GtkTargetEntry dnd_targets[] = {
 	{"STRING", 0, 2}
 };
 
-
-void
-pidgin_account_dialog_show(PidginAccountDialogType type,
-			   PurpleAccount *account)
-{
-	/* this is to make sure the password will be cached */
-	purple_account_get_password(account,
-		pidgin_account_dialog_show_continue, (void*)type);
-}
-
 static void
-pidgin_account_dialog_show_continue(PurpleAccount * account,
-			   char * password,
-			   GError * error,
-			   gpointer data)
+pidgin_account_dialog_show_continue(PurpleAccount *account,
+                                    const char *password,
+                                    GError *error,
+                                    gpointer data)
 {
-	PidginAccountDialogType type = (PidginAccountDialogType)data;
+	PidginAccountDialogType type = (PidginAccountDialogType)GPOINTER_TO_INT(data);
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
 	GtkWidget *main_vbox;
@@ -1575,10 +1563,10 @@ pidgin_account_dialog_show_continue(PurpleAccount * account,
 		g_hash_table_insert(account_pref_wins, account, dialog);
 	}
 
-	dialog->account = account;
+	dialog->account  = account;
 	dialog->password = g_strdup(password);
-	dialog->type    = type;
-	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	dialog->type     = type;
+	dialog->sg       = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (dialog->account == NULL) {
 		/* Select the first prpl in the list*/
@@ -1617,7 +1605,6 @@ pidgin_account_dialog_show_continue(PurpleAccount * account,
 
 	/* Setup the top frames. */
 	add_login_options(dialog, vbox);
-
 	add_user_options(dialog, vbox);
 
 	button = gtk_check_button_new_with_mnemonic(
@@ -1671,6 +1658,15 @@ pidgin_account_dialog_show_continue(PurpleAccount * account,
 	gtk_widget_show(win);
 	if (!account)
 		gtk_widget_grab_focus(dialog->protocol_menu);
+}
+
+void
+pidgin_account_dialog_show(PidginAccountDialogType type,
+                           PurpleAccount *account)
+{
+	/* this is to make sure the password will be cached */
+	purple_account_get_password(account,
+		pidgin_account_dialog_show_continue, GINT_TO_POINTER(type));
 }
 
 /**************************************************************************
@@ -2173,7 +2169,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	if (global_buddyicon != NULL)
 		g_object_unref(G_OBJECT(global_buddyicon));
 
-	return ret; 
+	return ret;
 }
 
 static void
