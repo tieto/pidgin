@@ -32,9 +32,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#ifndef _WIN32
-#  include <netdb.h>
-#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

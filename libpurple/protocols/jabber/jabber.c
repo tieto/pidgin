@@ -440,7 +440,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 		 * we're disconnecting, don't generate (possibly another) error that
 		 * (for some UIs) would mask the first.
 		 */
-		if (!account->disconnecting) {
+		if (!purple_account_is_disconnecting(account)) {
 			gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
 			purple_connection_error(js->gc,
@@ -1144,8 +1144,7 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 		if(js->registration) {
 			buf = g_strdup_printf(_("Registration of %s@%s successful"),
 					js->user->node, js->user->domain);
-			if(account->registration_cb)
-				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+			purple_account_register_completed(account, TRUE);
 		} else {
 			g_return_if_fail(to != NULL);
 			buf = g_strdup_printf(_("Registration to %s successful"),
@@ -1163,8 +1162,7 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 		purple_notify_error(NULL, _("Registration Failed"),
 				_("Registration Failed"), msg);
 		g_free(msg);
-		if(account->registration_cb)
-			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+		purple_account_register_completed(account, FALSE);
 	}
 	g_free(to);
 	if(js->registration)
@@ -1288,8 +1286,7 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 {
 	PurpleAccount *account = purple_connection_get_account(cbdata->js->gc);
 	if(account && cbdata->js->registration) {
-		if(account->registration_cb)
-			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+		purple_account_register_completed(account, FALSE);
 		jabber_connection_schedule_close(cbdata->js);
 	}
 	g_free(cbdata->who);
@@ -1358,8 +1355,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		if(js->registration) {
 			purple_notify_error(NULL, _("Already Registered"),
 								_("Already Registered"), NULL);
-			if(account->registration_cb)
-				(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+			purple_account_register_completed(account, FALSE);
 			jabber_connection_schedule_close(js);
 			return;
 		}
@@ -1380,8 +1376,8 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 
 				if(js->registration) {
 					js->gc->wants_to_die = TRUE;
-					if(account->registration_cb) /* succeeded, but we have no login info */
-						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+					/* succeeded, but we have no login info */
+					purple_account_register_completed(account, TRUE);
 					jabber_connection_schedule_close(js);
 				}
 				return;

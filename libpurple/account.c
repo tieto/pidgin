@@ -1193,6 +1193,15 @@ purple_account_unregister_got_password_cb(PurpleAccount *account,
 }
 
 void
+purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+{
+	g_return_if_fail(account != NULL);
+
+	if (account->registration_cb)
+		(account->registration_cb)(account, succeeded, account->registration_cb_user_data);
+}
+
+void
 purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	CbInfo *info;
@@ -1352,6 +1361,14 @@ purple_account_disconnect(PurpleAccount *account)
 	purple_account_set_connection(account, NULL);
 
 	account->disconnecting = FALSE;
+}
+
+gboolean
+purple_account_is_disconnecting(const PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, TRUE);
+
+	return account->disconnecting;
 }
 
 void
