@@ -221,6 +221,15 @@ void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountR
 void purple_account_register(PurpleAccount *account);
 
 /**
+ * Registration of the account was completed.
+ * Calls the registration call-back set with purple_account_set_register_callback().
+ *
+ * @param account The account being registered.
+ * @param succeeded Was the account registration successful?
+ */
+void purple_account_register_completed(PurpleAccount *account, gboolean succeeded);
+
+/**
  * Unregisters an account (deleting it from the server).
  *
  * @param account The account to unregister.
@@ -235,6 +244,15 @@ void purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrati
  * @param account The account to disconnect from.
  */
 void purple_account_disconnect(PurpleAccount *account);
+
+/**
+ * Indicates if the account is currently being disconnected.
+ *
+ * @param account The account
+ *
+ * @return TRUE if the account is being disconnected.
+ */
+gboolean purple_account_is_disconnecting(const PurpleAccount *account);
 
 /**
  * Notifies the user that the account was added to a remote user's

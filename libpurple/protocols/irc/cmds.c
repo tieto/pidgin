@@ -423,7 +423,7 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 		irc->quitting = TRUE;
 
-		if (!irc->account->disconnecting)
+		if (!purple_account_is_disconnecting(irc->account))
 			purple_account_set_status(irc->account, "offline", TRUE, NULL);
 	}
 
