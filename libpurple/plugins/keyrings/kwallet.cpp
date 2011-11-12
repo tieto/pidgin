@@ -242,7 +242,7 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 	QString key;
 
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet.readPassword(key, password);
+	result = wallet->readPassword(key, *password);
 
 	if (result != 0)
 		abort();
@@ -257,7 +257,7 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 	QString key;
 
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet.writePassword(key, password);
+	result = wallet->writePassword(key, *password);
 
 	if (result != 0)
 		abort();
