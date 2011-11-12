@@ -70,7 +70,7 @@ class request
 		QString *password;
 };
 
-class engine
+class engine : QObject
 {
 	public:
 		engine();
@@ -78,8 +78,8 @@ class engine
 		void queue(request req);
 		static engine *Instance();
 
-/*	signal:*/
-		void walletopened(bool opened);
+	signals:
+		void walletOpened(bool opened);
 
 	private:
 		bool connected;
@@ -129,7 +129,7 @@ KWalletPlugin::engine::engine()
 
 	connected = FALSE;
 	wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous);
-	QObject::connect(wallet, SIGNAL(KWallet::Wallet::walletOpened(bool)), SLOT(walletopened(bool)));
+	QObject::connect(wallet, SIGNAL(KWallet::Wallet::walletOpened(bool)), SLOT(walletOpened(bool)));
 }
 
 KWalletPlugin::engine::~engine()
@@ -155,7 +155,7 @@ KWalletPlugin::engine::Instance()
 }
 
 void
-KWalletPlugin::engine::walletopened(bool opened)
+KWalletPlugin::engine::walletOpened(bool opened)
 {
 	std::list<request>::iterator it;
 
