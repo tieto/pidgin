@@ -67,7 +67,7 @@ class request
 	protected:
 		gpointer data;
 		PurpleAccount *account;
-		QString *password;
+		QString password;
 };
 
 class engine : QObject
@@ -194,7 +194,7 @@ KWalletPlugin::save_request::save_request(PurpleAccount *acc, const char *pw, Pu
 	account  = acc;
 	data     = userdata;
 	callback = cb;
-	password = new QString(pw);
+	password = QString(pw);
 }
 
 KWalletPlugin::read_request::read_request(PurpleAccount *acc, PurpleKeyringReadCallback cb, void *userdata)
@@ -202,7 +202,7 @@ KWalletPlugin::read_request::read_request(PurpleAccount *acc, PurpleKeyringReadC
 	account  = acc;
 	data     = userdata;
 	callback = cb;
-	password = NULL;
+	password = QString();
 }
 
 void
@@ -238,12 +238,12 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 	QString key;
 
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet->readPassword(key, *password);
+	result = wallet->readPassword(key, password);
 
 	if (result != 0)
 		abort();
 	else if (callback != NULL)
-		callback(account, password->toUtf8().constData(), NULL, data);
+		callback(account, password.toUtf8().constData(), NULL, data);
 }
 
 void
@@ -253,7 +253,7 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 	QString key;
 
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet->writePassword(key, *password);
+	result = wallet->writePassword(key, password);
 
 	if (result != 0)
 		abort();
