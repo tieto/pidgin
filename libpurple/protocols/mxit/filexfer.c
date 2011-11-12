@@ -124,7 +124,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 	if ( purple_xfer_get_type( xfer ) == PURPLE_XFER_SEND ) {
 		/* we are trying to send a file to MXit */
 
-		if ( purple_xfer_get_size( xfer ) > CP_MAX_FILESIZE ) {
+		if ( purple_xfer_get_size( xfer ) > ( CP_MAX_PACKET - 1000 ) ) {	/* need to reserve some space for packet headers */
 			/* the file is too big */
 			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "The file you are trying to send is too large!" ) );
 			purple_xfer_cancel_local( xfer );

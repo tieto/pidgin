@@ -718,7 +718,7 @@ void mxit_send_register( struct MXitSession* session )
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
 								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */
-								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_PACKET, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
 								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
 								CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
@@ -765,7 +765,7 @@ void mxit_send_login( struct MXitSession* session )
 								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
-								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
+								CP_MAX_PACKET, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* include "custom resource" information */
