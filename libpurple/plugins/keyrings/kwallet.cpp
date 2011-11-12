@@ -243,7 +243,7 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 	if (result != 0)
 		abort();
 	else if (callback != NULL)
-		callback(account, (const char *)password, NULL, data);
+		callback(account, password->toUtf8().constData(), NULL, data);
 }
 
 void
