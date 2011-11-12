@@ -134,10 +134,9 @@ KWalletPlugin::engine::engine()
 
 KWalletPlugin::engine::~engine()
 {
-	std::list<request>::iterator it;
-
-	for(it = requests.begin(); it != requests.end(); it++) {
-		it->abort();
+	while (!requests.empty()) {
+		request &req = requests.front();
+		req.abort();
 		requests.pop_front();
 	}
 
@@ -157,15 +156,14 @@ KWalletPlugin::engine::Instance()
 void
 KWalletPlugin::engine::walletOpened(bool opened)
 {
-	std::list<request>::iterator it;
-
 	connected = opened;
 
 	if (opened) {
 		ExecuteRequests();
 	} else {
-		for (it = requests.begin(); it != requests.end(); it++) {
-			it->abort();
+		while (!requests.empty()) {
+			request &req = requests.front();
+			req.abort();
 			requests.pop_front();
 		}
 		delete this;
@@ -182,13 +180,11 @@ KWalletPlugin::engine::queue(request req)
 void
 KWalletPlugin::engine::ExecuteRequests()
 {
-	std::list<request>::iterator it;
-
 	if (connected) {
-		for (it = requests.begin(); it != requests.end(); it++) {
-			it->execute(wallet);
+		while (!requests.empty()) {
+			request &req = requests.front();
+			req.execute(wallet);
 			requests.pop_front();
-			delete it;
 		}
 	}
 }
