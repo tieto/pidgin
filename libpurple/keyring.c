@@ -886,7 +886,7 @@ purple_keyring_set_password(PurpleAccount *account,
 			cbinfo = g_new(PurpleKeyringCbInfo, 1);
 			cbinfo->cb = cb;
 			cbinfo->data = data;
-			save(account, password, purple_keyring_set_password_async_cb, data);
+			save(account, password, purple_keyring_set_password_async_cb, cbinfo);
 		}
 	}
 }
