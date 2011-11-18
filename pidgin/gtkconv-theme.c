@@ -111,6 +111,23 @@ get_key(PidginConvThemePrivate *priv, const char *key, gboolean specific)
 	return val;
 }
 
+/* The template path can either come from the theme, or can
+ * be stock Template.html that comes with Pidgin */
+static char *
+get_template_path(const char *dir)
+{
+	char *file;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
+
+	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
+		g_free(file);
+		file = g_build_filename(DATADIR, "pidgin", "theme", "conversation", "Template.html", NULL);
+	}
+
+	return file;
+}
+
 static const char *
 get_template_html(PidginConvThemePrivate *priv, const char *dir)
 {
@@ -119,14 +136,7 @@ get_template_html(PidginConvThemePrivate *priv, const char *dir)
 	if (priv->template_html)
 		return priv->template_html;
 
-	/* The template path can either come from the theme, or can
-	 * be stock Template.html that comes with the plugin */
-	file = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
-
-	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
-		g_free(file);
-		file = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
-	}
+	file = get_template_path(dir);
 
 	if (!g_file_get_contents(file, &priv->template_html, NULL, NULL)) {
 		purple_debug_error("webkit", "Could not locate a Template.html (%s)\n", file);
@@ -708,19 +718,12 @@ char *
 pidgin_conversation_theme_get_template_path(PidginConvTheme *theme)
 {
 	const char *dir;
-	char *filename;
 
 	g_return_val_if_fail(theme != NULL, NULL);
 
 	dir = purple_theme_get_dir(PURPLE_THEME(theme));
-	filename = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
 
-	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
-	}
-
-	return filename;
+	return get_template_path(dir);
 }
 
 char *
