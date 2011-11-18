@@ -6133,6 +6133,9 @@ replace_message_tokens(
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 
+		} else if (g_str_has_prefix(cur, "%shortTime%")) {
+			replace = purple_utf8_strftime("%H:%M", NULL);
+
 		} else if (g_str_has_prefix(cur, "%userIconPath%")) {
 			if (flags & PURPLE_MESSAGE_SEND) {
 				if (purple_account_get_bool(purple_conversation_get_account(conv), "use-global-buddyicon", TRUE)) {
