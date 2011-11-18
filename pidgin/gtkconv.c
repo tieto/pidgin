@@ -5098,7 +5098,11 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 
+		} else if (g_str_has_prefix(cur, "%dateOpened%")) {
+			replace = purple_date_format_short(NULL);
+
 		} else {
+			cur++;
 			continue;
 		}
 
@@ -6129,6 +6133,9 @@ replace_message_tokens(
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 
+		} else if (g_str_has_prefix(cur, "%shortTime%")) {
+			replace = purple_utf8_strftime("%H:%M", NULL);
+
 		} else if (g_str_has_prefix(cur, "%userIconPath%")) {
 			if (flags & PURPLE_MESSAGE_SEND) {
 				if (purple_account_get_bool(purple_conversation_get_account(conv), "use-global-buddyicon", TRUE)) {
@@ -6157,6 +6164,9 @@ replace_message_tokens(
 
 		} else if (g_str_has_prefix(cur, "%service%")) {
 			replace = purple_account_get_protocol_name(purple_conversation_get_account(conv));
+
+		} else if (g_str_has_prefix(cur, "%messageDirection%")) {
+			replace = purple_markup_is_rtl(message) ? "rtl" : "ltr";
 
 		} else {
 			cur++;
