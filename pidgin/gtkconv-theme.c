@@ -381,6 +381,7 @@ get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
 	if (!g_file_get_contents(file, &priv->outgoing_next_context_html, NULL, NULL)) {
 		priv->outgoing_next_context_html = g_strdup(get_outgoing_context_html(priv, dir));
 	}
+	g_free(file);
 
 	return priv->outgoing_next_context_html;
 }
