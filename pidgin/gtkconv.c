@@ -6165,6 +6165,9 @@ replace_message_tokens(
 		} else if (g_str_has_prefix(cur, "%service%")) {
 			replace = purple_account_get_protocol_name(purple_conversation_get_account(conv));
 
+		} else if (g_str_has_prefix(cur, "%messageDirection%")) {
+			replace = purple_markup_is_rtl(message) ? "rtl" : "ltr";
+
 		} else {
 			cur++;
 			continue;
