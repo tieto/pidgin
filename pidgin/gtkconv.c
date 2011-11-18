@@ -5099,6 +5099,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 			g_free(format);
 
 		} else {
+			cur++;
 			continue;
 		}
 
