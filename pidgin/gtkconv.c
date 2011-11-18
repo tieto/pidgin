@@ -5098,6 +5098,9 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 
+		} else if (g_str_has_prefix(cur, "%dateOpened%")) {
+			replace = purple_date_format_short(NULL);
+
 		} else {
 			cur++;
 			continue;
