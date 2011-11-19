@@ -307,7 +307,7 @@ kwallet_export(PurpleAccount *account,
 {
 	*mode = NULL;
 	*data = NULL;
-	destroy = NULL;
+	*destroy = NULL;
 
 	return TRUE;
 }
