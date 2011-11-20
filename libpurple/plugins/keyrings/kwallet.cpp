@@ -28,22 +28,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifdef HAVE_CONFIG_H
- #include <config.h>
-#endif
-
-#ifndef PURPLE_PLUGINS
- #define PURPLE_PLUGINS
-#endif
-
-#include <glib.h>
-
-#include "account.h"
-#include "version.h"
-#include "keyring.h"
-#include "debug.h"
-#include "plugin.h"
 #include "internal.h"
+#include "account.h"
+#include "debug.h"
+#include "keyring.h"
+#include "plugin.h"
+#include "version.h"
+
 #include <kwallet.h>
 
 #define KWALLET_NAME        N_("KWallet")
