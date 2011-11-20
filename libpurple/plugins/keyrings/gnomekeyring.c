@@ -352,12 +352,6 @@ gkp_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static void
-gkp_destroy(PurplePlugin *plugin)
-{
-	gkp_uninit();
-}
-
 PurplePluginInfo plugininfo =
 {
 	PURPLE_PLUGIN_MAGIC,		/* magic */
@@ -377,7 +371,7 @@ PurplePluginInfo plugininfo =
 	"N/A",						/* homepage */
 	gkp_load,					/* load */
 	gkp_unload,					/* unload */
-	gkp_destroy,				/* destroy */
+	NULL,						/* destroy */
 	NULL,						/* ui_info */
 	NULL,						/* extra_info */
 	NULL,						/* prefs_info */

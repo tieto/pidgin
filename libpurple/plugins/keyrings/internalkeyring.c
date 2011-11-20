@@ -219,12 +219,6 @@ internal_keyring_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static void
-internal_keyring_destroy(PurplePlugin *plugin)
-{
-	internal_keyring_uninit();
-}
-
 PurplePluginInfo plugininfo =
 {
 	PURPLE_PLUGIN_MAGIC,				/* magic */
@@ -244,7 +238,7 @@ PurplePluginInfo plugininfo =
 	"N/A",								/* homepage */
 	internal_keyring_load,				/* load */
 	internal_keyring_unload,			/* unload */
-	internal_keyring_destroy,			/* destroy */
+	NULL,								/* destroy */
 	NULL,								/* ui_info */
 	NULL,								/* extra_info */
 	NULL,								/* prefs_info */

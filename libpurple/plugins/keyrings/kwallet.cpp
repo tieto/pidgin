@@ -333,12 +333,6 @@ kwallet_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static void
-kwallet_destroy(PurplePlugin *plugin)
-{
-	kwallet_close(NULL);
-}
-
 PurplePluginInfo plugininfo =
 {
 	PURPLE_PLUGIN_MAGIC,				/* magic */
@@ -358,7 +352,7 @@ PurplePluginInfo plugininfo =
 	"N/A",								/* homepage */
 	kwallet_load,						/* load */
 	kwallet_unload,						/* unload */
-	kwallet_destroy,					/* destroy */
+	NULL,								/* destroy */
 	NULL,								/* ui_info */
 	NULL,								/* extra_info */
 	NULL,								/* prefs_info */
