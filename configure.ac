@@ -1368,7 +1368,6 @@ dnl #######################################################################
 AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--enable-kwallet], [enable KWallet support])], enable_kwallet=$enableval, enable_kwallet=no)
 AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
-AC_ARG_WITH(qt4-libs, [AC_HELP_STRING([--with-qt4-libs=DIR], [compile the KWallet plugin against the Qt4 libs in DIR])], [ac_qt4_libs="$withval"], [ac_qt4_libs="no"])
 
 if test "x$enable_kwallet" = "xyes"; then
 	KWALLET_CXXFLAGS=""
@@ -1388,6 +1387,18 @@ Use --disable-kwallet if you do not need KWallet support.
 	AC_LANG_PUSH([C++])
 	CPPFLAGS_save="$CPPFLAGS"
 	LDFLAGS_save="$LDFLAGS"
+
+	PKG_CHECK_MODULES(QT4, [QtCore], [
+			AC_MSG_RESULT(yes)
+			AC_SUBST(QT4_CFLAGS)
+			AC_SUBST(QT4_LIBS)
+		], [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+Qt4 development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		])
 
 	dnl Check for kwallet.h; if we don't have it, oh well
 	if test "$ac_kwallet_includes" != "no"; then
@@ -1412,14 +1423,8 @@ fi
 	else
 		KWALLET_LIBS="-lkdeui"
 	fi
-	if test "$ac_qt4_libs" != "no"; then
-		KWALLET_LIBS="$KWALLET_LIBS -L$ac_qt4_libs -lQtCore"
-	elif test "x$KDE_CONFIG" != "xno"; then
-		KWALLET_LIBS="$KWALLET_LIBS -L`$KDE4_CONFIG --qt-libraries` -lQtCore"
-	else
-		KWALLET_LIBS="$KWALLET_LIBS -lQtCore"
-	fi
-	LDFLAGS="$LDFLAGS $KWALLET_LIBS"
+	KWALLET_LIBS="$KWALLET_LIBS"
+	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
 		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
 		[if test "x$force_deps" = "xyes"; then
@@ -1435,8 +1440,8 @@ fi
 	AC_LANG_POP
 fi
 
-AC_SUBST(KWALLET_LIBS)
 AC_SUBST(KWALLET_CXXFLAGS)
+AC_SUBST(KWALLET_LIBS)
 
 AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 
