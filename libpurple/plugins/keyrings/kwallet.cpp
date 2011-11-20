@@ -36,6 +36,7 @@
 #include "version.h"
 
 #include <QQueue>
+#include <QCoreApplication>
 #include <kwallet.h>
 
 #define KWALLET_NAME        N_("KWallet")
@@ -76,11 +77,11 @@ class engine : private QObject, private QQueue<request*>
 		void walletOpened(bool opened);
 
 	private:
+		QCoreApplication *app;
 		bool connected;
 		KWallet::Wallet *wallet;
 		static engine *pinstance;
 
-/*		KApplication *app; */
 		void ExecuteRequests();
 };
 
@@ -118,9 +119,8 @@ KWalletPlugin::engine *KWalletPlugin::engine::pinstance = NULL;
 
 KWalletPlugin::engine::engine()
 {
-/*	KAboutData aboutData("libpurple_plugin", N_("LibPurple KWallet Plugin"), "", "", KAboutData::License_GPL, "");
-	KCmdLineArgs::init( &aboutData );
-	app = new KApplication(false, false); */
+	int argc = 0;
+	app = new QCoreApplication(argc, NULL);
 
 	connected = FALSE;
 	wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous);
@@ -137,6 +137,7 @@ KWalletPlugin::engine::~engine()
 
 	KWallet::Wallet::closeWallet(KWallet::Wallet::NetworkWallet(), TRUE);
 	delete wallet;
+	delete app;
 	pinstance = NULL;
 }
 
@@ -175,6 +176,7 @@ KWalletPlugin::engine::queue(request *req)
 void
 KWalletPlugin::engine::ExecuteRequests()
 {
+	app->processEvents();
 	if (connected) {
 		while (!isEmpty()) {
 			request *req = dequeue();
