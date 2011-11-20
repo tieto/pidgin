@@ -64,13 +64,15 @@ class request
 
 class engine : private QObject, private QQueue<request*>
 {
+	Q_OBJECT
+
 	public:
 		engine();
 		~engine();
 		void queue(request *req);
 		static engine *Instance();
 
-	signals:
+	private slots:
 		void walletOpened(bool opened);
 
 	private:
@@ -122,7 +124,7 @@ KWalletPlugin::engine::engine()
 
 	connected = FALSE;
 	wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous);
-	QObject::connect(wallet, SIGNAL(KWallet::Wallet::walletOpened(bool)), SLOT(walletOpened(bool)));
+	connect(wallet, SIGNAL(walletOpened(bool)), SLOT(walletOpened(bool)));
 }
 
 KWalletPlugin::engine::~engine()
@@ -373,4 +375,6 @@ init_plugin(PurplePlugin *plugin)
 PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
 
 } /* extern "C" */
+
+#include "kwallet.moc"
 

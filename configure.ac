@@ -1399,6 +1399,11 @@ Use --disable-kwallet if you do not need KWallet support.
 ])
 		])
 
+	AC_MSG_CHECKING([for metaobject compiler])
+	MOC=`$PKG_CONFIG --variable=moc_location QtCore`
+	AC_SUBST(MOC)
+	AC_MSG_RESULT([$MOC])
+
 	dnl Check for kwallet.h; if we don't have it, oh well
 	if test "$ac_kwallet_includes" != "no"; then
 		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
