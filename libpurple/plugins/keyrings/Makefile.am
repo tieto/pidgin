@@ -19,7 +19,7 @@ endif
 
 if ENABLE_KWALLET
 
-kwallet_la_CXXFLAGS  = $(KWALLET_CXXFLAGS)
+kwallet_la_CXXFLAGS  = $(KWALLET_CXXFLAGS) $(QT4_CFLAGS)
 kwallet_la_LDFLAGS = -module -avoid-version
 kwallet_la_SOURCES = kwallet.cpp
 kwallet_la_LIBADD  = $(GLIB_LIBS) $(KWALLET_LIBS) $(QT4_LIBS)

@@ -35,6 +35,7 @@
 #include "plugin.h"
 #include "version.h"
 
+#include <QQueue>
 #include <kwallet.h>
 
 #define KWALLET_NAME        N_("KWallet")
@@ -61,7 +62,7 @@ class request
 		QString password;
 };
 
-class engine : QObject
+class engine : private QObject, private QQueue<request*>
 {
 	public:
 		engine();
@@ -75,7 +76,6 @@ class engine : QObject
 	private:
 		bool connected;
 		KWallet::Wallet *wallet;
-		std::list<request*> requests;
 		static engine *pinstance;
 
 /*		KApplication *app; */
@@ -125,10 +125,9 @@ KWalletPlugin::engine::engine()
 
 KWalletPlugin::engine::~engine()
 {
-	while (!requests.empty()) {
-		request *req = requests.front();
+	while (!isEmpty()) {
+		request *req = dequeue();
 		req->abort();
-		requests.pop_front();
 		delete req;
 	}
 
@@ -153,10 +152,9 @@ KWalletPlugin::engine::walletOpened(bool opened)
 	if (opened) {
 		ExecuteRequests();
 	} else {
-		while (!requests.empty()) {
-			request *req = requests.front();
+		while (!isEmpty()) {
+			request *req = dequeue();
 			req->abort();
-			requests.pop_front();
 			delete req;
 		}
 		delete this;
@@ -166,7 +164,7 @@ KWalletPlugin::engine::walletOpened(bool opened)
 void
 KWalletPlugin::engine::queue(request *req)
 {
-	requests.push_back(req);
+	enqueue(req);
 	ExecuteRequests();
 }
 
@@ -174,10 +172,9 @@ void
 KWalletPlugin::engine::ExecuteRequests()
 {
 	if (connected) {
-		while (!requests.empty()) {
-			request *req = requests.front();
+		while (!isEmpty()) {
+			request *req = dequeue();
 			req->execute(wallet);
-			requests.pop_front();
 			delete req;
 		}
 	}
