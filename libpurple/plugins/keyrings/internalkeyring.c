@@ -117,7 +117,8 @@ internal_keyring_save(PurpleAccount *account,
 static void
 internal_keyring_close(GError **error)
 {
-	g_hash_table_destroy(internal_keyring_passwords);
+	if (internal_keyring_passwords)
+		g_hash_table_destroy(internal_keyring_passwords);
 	internal_keyring_passwords = NULL;
 }
 
