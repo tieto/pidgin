@@ -112,6 +112,8 @@ kwallet_plugin_error_domain(void)
 
 }
 
+KWalletPlugin::engine *KWalletPlugin::engine::pinstance = NULL;
+
 KWalletPlugin::engine::engine()
 {
 /*	KAboutData aboutData("libpurple_plugin", N_("LibPurple KWallet Plugin"), "", "", KAboutData::License_GPL, "");
