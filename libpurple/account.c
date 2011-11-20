@@ -1299,7 +1299,7 @@ purple_account_connect_got_password_cb(PurpleAccount *account,
 {
 	PurplePluginProtocolInfo *prpl_info = data;
 
-	if ((password == NULL) &&
+	if ((password == NULL || *password == '\0') &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
