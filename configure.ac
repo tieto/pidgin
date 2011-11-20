@@ -1389,7 +1389,6 @@ Use --disable-kwallet if you do not need KWallet support.
 	LDFLAGS_save="$LDFLAGS"
 
 	PKG_CHECK_MODULES(QT4, [QtCore], [
-			AC_MSG_RESULT(yes)
 			AC_SUBST(QT4_CFLAGS)
 			AC_SUBST(QT4_LIBS)
 		], [
