@@ -52,8 +52,8 @@ namespace KWalletPlugin {
 class request
 {
 	public:
-		virtual void abort();
-		virtual void execute(KWallet::Wallet *wallet);
+		virtual void abort() = 0;
+		virtual void execute(KWallet::Wallet *wallet) = 0;
 
 	protected:
 		gpointer data;
@@ -66,7 +66,7 @@ class engine : QObject
 	public:
 		engine();
 		~engine();
-		void queue(request req);
+		void queue(request *req);
 		static engine *Instance();
 
 	signals:
@@ -75,7 +75,7 @@ class engine : QObject
 	private:
 		bool connected;
 		KWallet::Wallet *wallet;
-		std::list<request> requests;
+		std::list<request*> requests;
 		static engine *pinstance;
 
 /*		KApplication *app; */
@@ -126,9 +126,10 @@ KWalletPlugin::engine::engine()
 KWalletPlugin::engine::~engine()
 {
 	while (!requests.empty()) {
-		request &req = requests.front();
-		req.abort();
+		request *req = requests.front();
+		req->abort();
 		requests.pop_front();
+		delete req;
 	}
 
 	KWallet::Wallet::closeWallet(KWallet::Wallet::NetworkWallet(), TRUE);
@@ -153,16 +154,17 @@ KWalletPlugin::engine::walletOpened(bool opened)
 		ExecuteRequests();
 	} else {
 		while (!requests.empty()) {
-			request &req = requests.front();
-			req.abort();
+			request *req = requests.front();
+			req->abort();
 			requests.pop_front();
+			delete req;
 		}
 		delete this;
 	}
 }
 
 void
-KWalletPlugin::engine::queue(request req)
+KWalletPlugin::engine::queue(request *req)
 {
 	requests.push_back(req);
 	ExecuteRequests();
@@ -173,9 +175,10 @@ KWalletPlugin::engine::ExecuteRequests()
 {
 	if (connected) {
 		while (!requests.empty()) {
-			request &req = requests.front();
-			req.execute(wallet);
+			request *req = requests.front();
+			req->execute(wallet);
 			requests.pop_front();
+			delete req;
 		}
 	}
 }
@@ -260,7 +263,8 @@ kwallet_read(PurpleAccount *account,
              PurpleKeyringReadCallback cb,
              gpointer data)
 {
-	KWalletPlugin::read_request req(account, cb, data);
+	KWalletPlugin::read_request *req;
+	req = new KWalletPlugin::read_request(account, cb, data);
 	KWalletPlugin::engine::Instance()->queue(req);
 }
 
@@ -270,7 +274,8 @@ kwallet_save(PurpleAccount *account,
              PurpleKeyringSaveCallback cb,
              gpointer data)
 {
-	KWalletPlugin::save_request req(account, password, cb, data);
+	KWalletPlugin::save_request *req;
+	req = new KWalletPlugin::save_request(account, password, cb, data);
 	KWalletPlugin::engine::Instance()->queue(req);
 }
 
