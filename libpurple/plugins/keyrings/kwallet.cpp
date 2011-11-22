@@ -72,6 +72,7 @@ class engine : private QObject, private QQueue<request*>
 		~engine();
 		void queue(request *req);
 		static engine *Instance();
+		bool closing;
 
 	private slots:
 		void walletOpened(bool opened);
@@ -129,6 +130,8 @@ KWalletPlugin::engine::engine()
 
 KWalletPlugin::engine::~engine()
 {
+	closing = true;
+
 	while (!isEmpty()) {
 		request *req = dequeue();
 		req->abort();
@@ -285,7 +288,8 @@ kwallet_save(PurpleAccount *account,
 static void
 kwallet_close(GError **error)
 {
-	delete KWalletPlugin::engine::Instance();
+	if (!KWalletPlugin::engine::Instance()->closing)
+		delete KWalletPlugin::engine::Instance();
 }
 
 static gboolean
