@@ -1357,6 +1357,7 @@ purple_prefs_update_old()
 	purple_prefs_remove("/purple/conversations/chat/show_leave");
 	purple_prefs_remove("/purple/conversations/combine_chat_im");
 	purple_prefs_remove("/purple/conversations/use_alias_for_title");
+	purple_prefs_remove("/purple/debug/timestamps");
 	purple_prefs_remove("/purple/logging/log_signon_signoff");
 	purple_prefs_remove("/purple/logging/log_idle_state");
 	purple_prefs_remove("/purple/logging/log_away_state");
