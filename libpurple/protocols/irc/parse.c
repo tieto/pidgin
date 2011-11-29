@@ -260,18 +260,18 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	gboolean autodetect;
 	int i;
 
+	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
+
+	if (autodetect && g_utf8_validate(string, -1, NULL)) {
+		return g_strdup(string);
+	}
+
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", -1);
 
 	if (encodings[0] == NULL) {
 		g_strfreev(encodings);
 		return purple_utf8_salvage(string);
-	}
-
-	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
-
-	if (autodetect && g_utf8_validate(string, -1, NULL)) {
-		return g_strdup(string);
 	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
