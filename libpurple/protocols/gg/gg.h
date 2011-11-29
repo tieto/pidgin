@@ -24,6 +24,7 @@
 #ifndef _PURPLE_GG_H
 #define _PURPLE_GG_H
 
+#undef printf
 #include <libgadu.h>
 #include "internal.h"
 #include "search.h"
@@ -58,6 +59,7 @@ typedef struct
 typedef struct {
 
 	struct gg_session *session;
+	guint inpa;
 	GGPToken *token;
 	GList *chats;
 	GGPSearches *searches;

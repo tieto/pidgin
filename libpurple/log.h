@@ -301,8 +301,6 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
  * @param name                The name of the log
  * @param account             The account
  * @return                    The activity score
- *
- * @since 2.6.0
  */
 int purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleAccount *account);
 

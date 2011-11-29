@@ -36,10 +36,10 @@
 #include "util.h"
 
 #include "gtkblist.h"
-#include "gtkimhtml.h"
 #include "gtknotify.h"
 #include "gtkpounce.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 
 typedef struct
 {
@@ -810,21 +810,6 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 	return FALSE;
 }
 
-static GtkIMHtmlOptions
-notify_imhtml_options(void)
-{
-	GtkIMHtmlOptions options = 0;
-
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting"))
-		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
-
-	options |= GTK_IMHTML_NO_COMMENTS;
-	options |= GTK_IMHTML_NO_TITLE;
-	options |= GTK_IMHTML_NO_NEWLINE;
-	options |= GTK_IMHTML_NO_SCROLL;
-	return options;
-}
-
 static void *
 pidgin_notify_formatted(const char *title, const char *primary,
 						  const char *secondary, const char *text)
@@ -833,7 +818,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *label;
 	GtkWidget *button;
-	GtkWidget *imhtml;
+	GtkWidget *web_view;
 	GtkWidget *frame;
 	char label_text[2048];
 	char *linked_text, *primary_esc, *secondary_esc;
@@ -869,12 +854,10 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	/* Add the imhtml */
-	frame = pidgin_create_imhtml(FALSE, &imhtml, NULL, NULL);
-	gtk_widget_set_name(imhtml, "pidgin_notify_imhtml");
-	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
-			gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml)) | GTK_IMHTML_IMAGE);
-	gtk_widget_set_size_request(imhtml, 300, 250);
+	/* Add the webview */
+	frame = pidgin_create_webview(FALSE, &web_view, NULL, NULL);
+	gtk_widget_set_name(web_view, "pidgin_notify_webview");
+	gtk_widget_set_size_request(web_view, 300, 250);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -889,10 +872,10 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	/* Make sure URLs are clickable */
 	linked_text = purple_markup_linkify(text);
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text, notify_imhtml_options());
+	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(web_view), linked_text, "");
 	g_free(linked_text);
 
-	g_object_set_data(G_OBJECT(window), "info-widget", imhtml);
+	g_object_set_data(G_OBJECT(window), "webview-widget", web_view);
 
 	/* Show the window */
 	pidgin_auto_parent_window(window);
@@ -1034,7 +1017,11 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 		renderer = gtk_cell_renderer_text_new();
 
 		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1,
-				column->title, renderer, "text", i, NULL);
+				purple_notify_searchresult_column_get_title(column), renderer, "text", i, NULL);
+
+		if (!purple_notify_searchresult_column_is_visible(column))
+			gtk_tree_view_column_set_visible(gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i), FALSE);
+
 		i++;
 	}
 
@@ -1089,7 +1076,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
 	                         G_CALLBACK(searchresults_close_cb), data);
 
-	data->account = gc->account;
+	data->account = purple_connection_get_account(gc);
 	data->model = model;
 	data->treeview = treeview;
 	data->window = window;
@@ -1143,10 +1130,9 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	info = purple_notify_user_info_get_text_with_newline(user_info, "<br />");
 	pinfo = g_hash_table_lookup(userinfo, key);
 	if (pinfo != NULL) {
-		GtkIMHtml *imhtml = g_object_get_data(G_OBJECT(pinfo->window), "info-widget");
+		GtkWidget *webview = g_object_get_data(G_OBJECT(pinfo->window), "webview-widget");
 		char *linked_text = purple_markup_linkify(info);
-		gtk_imhtml_clear(imhtml);
-		gtk_imhtml_append_text(imhtml, linked_text, notify_imhtml_options());
+		gtk_webview_load_html_string_with_imgstore(GTK_WEBVIEW(webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
 		ui_handle = pinfo->window;
@@ -1646,7 +1632,7 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), 
+	gtk_box_pack_start(GTK_BOX(vbox),
 		pidgin_make_scrollable(spec_dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 2);
 

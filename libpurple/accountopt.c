@@ -28,6 +28,51 @@
 #include "accountopt.h"
 #include "util.h"
 
+/**
+ * An option for an account.
+ *
+ * This is set by protocol plugins, and appears in the account settings
+ * dialogs.
+ */
+struct _PurpleAccountOption
+{
+	PurplePrefType type;      /**< The type of value.                     */
+
+	char *text;             /**< The text that will appear to the user. */
+	char *pref_name;        /**< The name of the associated preference. */
+
+	union
+	{
+		gboolean boolean;   /**< The default boolean value.             */
+		int integer;        /**< The default integer value.             */
+		char *string;       /**< The default string value.              */
+		GList *list;        /**< The default list value.                */
+
+	} default_value;
+
+	gboolean masked;        /**< Whether the value entered should be
+	                         *   obscured from view (for passwords and
+	                         *   similar options)
+	                         */
+};
+
+/**
+ * A username split.
+ *
+ * This is used by some protocols to separate the fields of the username
+ * into more human-readable components.
+ */
+struct _PurpleAccountUserSplit
+{
+	char *text;             /**< The text that will appear to the user. */
+	char *default_value;    /**< The default value.                     */
+	char  field_sep;        /**< The field separator.                   */
+	gboolean reverse;       /**< TRUE if the separator should be found
+							  starting a the end of the string, FALSE
+							  otherwise                                 */
+};
+
+
 PurpleAccountOption *
 purple_account_option_new(PurplePrefType type, const char *text,
 						const char *pref_name)

@@ -53,6 +53,7 @@ static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL
 	OPT_PROTO_PASSWORD_OPTIONAL |
@@ -97,7 +98,6 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
 	NULL,							/* get_cb_info */
-	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
 	jabber_roster_group_rename,		/* rename_group */
@@ -122,16 +122,12 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
-
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
 	jabber_get_moods,  							/* get_moods */
 	NULL, /* set_public_alias */
-	NULL, /* get_public_alias */
-	NULL, /* add_buddy_with_invite */
-	NULL  /* add_buddies_with_invite */
+	NULL  /* get_public_alias */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

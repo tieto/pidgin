@@ -92,7 +92,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
 	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		prpl_info->set_status(irc->account, status);
 	}
 
@@ -352,44 +352,40 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	tmp = g_strdup_printf("%s%s%s", tmp2,
 				(irc->whois.ircop ? _(" <i>(ircop)</i>") : ""),
 				(irc->whois.identified ? _(" <i>(identified)</i>") : ""));
-	purple_notify_user_info_add_pair(user_info, _("Nick"), tmp);
+	purple_notify_user_info_add_pair_html(user_info, _("Nick"), tmp);
 	g_free(tmp2);
 	g_free(tmp);
 
 	if (irc->whois.away) {
-		tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Away"), irc->whois.away);
 		g_free(irc->whois.away);
-		purple_notify_user_info_add_pair(user_info, _("Away"), tmp);
-		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
-		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
-		g_free(irc->whois.name);
-		purple_notify_user_info_add_pair(user_info, _("Username"), irc->whois.userhost);
-		purple_notify_user_info_add_pair(user_info, _("Real name"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Username"), irc->whois.userhost);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.name);
 		g_free(irc->whois.userhost);
-		g_free(tmp);
+		g_free(irc->whois.name);
 	}
 	if (irc->whois.server) {
 		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
-		purple_notify_user_info_add_pair(user_info, _("Server"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Server"), tmp);
 		g_free(tmp);
 		g_free(irc->whois.server);
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		purple_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels->str);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Currently on"), irc->whois.channels->str);
 		g_string_free(irc->whois.channels, TRUE);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = purple_str_seconds_to_string(irc->whois.idle);
-		purple_notify_user_info_add_pair(user_info, _("Idle for"), timex);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Idle for"), timex);
 		g_free(timex);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_plaintext(user_info,
 														_("Online since"), purple_date_format_full(localtime(&irc->whois.signon)));
 	}
-	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
-		purple_notify_user_info_add_pair(user_info,
+	if (!strcmp(irc->whois.nick, "elb")) {
+		purple_notify_user_info_add_pair_plaintext(user_info,
 																   _("<b>Defining adjective:</b>"), _("Glorious"));
 	}
 
@@ -461,12 +457,12 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		g_free(userhost);
 		g_free(realname);
 		
-		flags = cb->flags;
+		flags = purple_conv_chat_cb_get_flags(cb);
 
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
+			purple_conv_chat_user_set_flags(chat, purple_conv_chat_cb_get_name(cb), flags | PURPLE_CBFLAGS_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags & ~PURPLE_CBFLAGS_AWAY);
+			purple_conv_chat_user_set_flags(chat, purple_conv_chat_cb_get_name(cb), flags & ~PURPLE_CBFLAGS_AWAY);
 		}
 	}
 }
@@ -1075,7 +1071,7 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
 
 	} else {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}

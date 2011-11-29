@@ -29,23 +29,12 @@
  */
 
 #include <sys/types.h>
-#ifdef _WIN32
-#  include <io.h>
-#  include <fcntl.h>
-#  include <errno.h>
-#  define SHUT_RDWR SD_BOTH
-#else
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "protocol.h"
 #include "resolver.h"
 #include "libgadu-internal.h"
@@ -55,10 +44,7 @@
 #include "message.h"
 #include "deflate.h"
 
-#ifndef _WIN32
-#  include <errno.h> /* on Win32 this is included above */
-#  include <netdb.h>
-#endif
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1122,7 +1108,6 @@ void gg_logoff(struct gg_session *sess)
 	sess->resolver_cleanup(&sess->resolver, 1);
 
 	if (sess->fd != -1) {
-		shutdown(sess->fd, SHUT_RDWR);
 		close(sess->fd);
 		sess->fd = -1;
 	}

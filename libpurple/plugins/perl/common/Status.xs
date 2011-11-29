@@ -74,28 +74,6 @@ BOOT:
 		newCONSTSUB(primitive_stash, (char *)civ->name, newSViv(civ->iv));
 }
 
-void
-purple_presence_add_list(presence, source_list)
-	Purple::Presence presence
-	SV *source_list
-PREINIT:
-	GList *t_GL;
-	int i, t_len;
-PPCODE:
-	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(source_list));
-
-	for (i = 0; i <= t_len; i++) {
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(source_list), i, 0)));
-	}
-	purple_presence_add_list(presence, t_GL);
-	g_list_free(t_GL);
-
-void
-purple_presence_add_status(presence, status)
-	Purple::Presence presence
-	Purple::Status status
-
 gint
 purple_presence_compare(presence1, presence2)
 	Purple::Presence presence1
@@ -329,27 +307,8 @@ purple_status_set_active(status, active)
 	Purple::Status status
 	gboolean active
 
-void
-purple_status_set_attr_boolean(status, id, value)
-	Purple::Status status
-	const char *id
-	gboolean value
-
-void
-purple_status_set_attr_string(status, id, value)
-	Purple::Status status
-	const char *id
-	const char *value
-
 MODULE = Purple::Status  PACKAGE = Purple::StatusType  PREFIX = purple_status_type_
 PROTOTYPES: ENABLE
-
-void
-purple_status_type_add_attr(status_type, id, name, value)
-	Purple::StatusType status_type
-	const char *id
-	const char *name
-	Purple::Value value
 
 void
 purple_status_type_destroy(status_type)
@@ -397,10 +356,6 @@ const char *
 purple_status_type_get_name(status_type)
 	Purple::StatusType status_type
 
-const char *
-purple_status_type_get_primary_attr(status_type)
-	Purple::StatusType status_type
-
 Purple::StatusPrimitive
 purple_status_type_get_primitive(status_type)
 	Purple::StatusType status_type
@@ -440,8 +395,3 @@ purple_status_type_new_full(primitive, id, name, saveable, user_settable, indepe
 	gboolean saveable
 	gboolean user_settable
 	gboolean independent
-
-void
-purple_status_type_set_primary_attr(status_type, attr_id)
-	Purple::StatusType status_type
-	const char *attr_id

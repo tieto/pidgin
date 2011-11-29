@@ -50,7 +50,6 @@ typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 struct _PurpleThemeLoader
 {
 	GObject parent;
-	gpointer priv;
 };
 
 struct _PurpleThemeLoaderClass

@@ -104,7 +104,7 @@ void music_messaging_change_request(const int session, const char *command, cons
 	{
 		if (mmconv->originator)
 		{
-			char *name = (mmconv->conv)->name;
+			const char *name = purple_conversation_get_name(mmconv->conv);
 			send_change_request (session, name, command, parameters);
 		} else
 		{
@@ -376,7 +376,7 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 				if (mmconv->originator)
 				{
 					int session = mmconv_from_conv_loc(conv);
-					char *id = (mmconv->conv)->name;
+					const char *id = purple_conversation_get_name(mmconv->conv);
 					char *command;
 					char *parameters;
 
@@ -424,7 +424,8 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 				command = strtok(NULL, " ");
 				/* char *parameters = strtok(NULL, "#"); DONT NEED PARAMETERS */
 
-				if ((mmconv->conv)->name == id)
+				// TODO: Shouldn't this be strcmp() ?
+				if (purple_conversation_get_name(mmconv->conv) == id)
 				{
 					purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_ERROR,
 							    _("Music Messaging"),
@@ -465,14 +466,14 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 
 static void send_request(MMConversation *mmconv)
 {
-	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
 	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
-	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
 	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
 }

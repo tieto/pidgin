@@ -303,7 +303,7 @@ static int
 attach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
-	GSList *imhtml_ids = NULL, *entry_ids = NULL;
+	GSList *webview_ids = NULL, *entry_ids = NULL;
 	guint id;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -322,9 +322,9 @@ attach_signals(PurpleConversation *conv)
 		                      G_CALLBACK(unnotify_cb), conv);
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 
-		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "focus-in-event",
+		id = g_signal_connect(G_OBJECT(gtkconv->webview), "focus-in-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		imhtml_ids = g_slist_append(imhtml_ids, GUINT_TO_POINTER(id));
+		webview_ids = g_slist_append(webview_ids, GUINT_TO_POINTER(id));
 	}
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_click")) {
@@ -334,9 +334,9 @@ attach_signals(PurpleConversation *conv)
 		                      G_CALLBACK(unnotify_cb), conv);
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 
-		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "button-press-event",
+		id = g_signal_connect(G_OBJECT(gtkconv->webview), "button-press-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		imhtml_ids = g_slist_append(imhtml_ids, GUINT_TO_POINTER(id));
+		webview_ids = g_slist_append(webview_ids, GUINT_TO_POINTER(id));
 	}
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_type")) {
@@ -345,7 +345,7 @@ attach_signals(PurpleConversation *conv)
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 	}
 
-	purple_conversation_set_data(conv, "notify-imhtml-signals", imhtml_ids);
+	purple_conversation_set_data(conv, "notify-webview-signals", webview_ids);
 	purple_conversation_set_data(conv, "notify-entry-signals", entry_ids);
 
 	return 0;
@@ -361,9 +361,9 @@ detach_signals(PurpleConversation *conv)
 	if (!gtkconv)
 		return;
 
-	ids = purple_conversation_get_data(conv, "notify-imhtml-signals");
+	ids = purple_conversation_get_data(conv, "notify-webview-signals");
 	for (l = ids; l != NULL; l = l->next)
-		g_signal_handler_disconnect(gtkconv->imhtml, GPOINTER_TO_INT(l->data));
+		g_signal_handler_disconnect(gtkconv->webview, GPOINTER_TO_INT(l->data));
 	g_slist_free(ids);
 
 	ids = purple_conversation_get_data(conv, "notify-entry-signals");
@@ -373,7 +373,7 @@ detach_signals(PurpleConversation *conv)
 
 	purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
 
-	purple_conversation_set_data(conv, "notify-imhtml-signals", NULL);
+	purple_conversation_set_data(conv, "notify-webview-signals", NULL);
 	purple_conversation_set_data(conv, "notify-entry-signals", NULL);
 }
 
