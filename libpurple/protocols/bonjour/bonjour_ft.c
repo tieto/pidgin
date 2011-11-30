@@ -426,77 +426,119 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	type = xmlnode_get_attrib(packet, "type");
 	id = xmlnode_get_attrib(packet, "id");
-	if(type) {
-		if(!strcmp(type, "set")) {
-			const char *profile;
-			xmlnode *si;
-			gboolean parsed_receive = FALSE;
+	if(!type)
+		return;
 
-			si = xmlnode_get_child(packet, "si");
+	if(!strcmp(type, "set")) {
+		const char *profile;
+		xmlnode *si;
+		gboolean parsed_receive = FALSE;
 
-			purple_debug_info("bonjour", "si offer Message type - SET.\n");
-			if (si && (profile = xmlnode_get_attrib(si, "profile"))
-					&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
-				const char *filename = NULL, *filesize_str = NULL;
-				int filesize = 0;
-				xmlnode *file;
+		si = xmlnode_get_child(packet, "si");
 
-				const char *sid = xmlnode_get_attrib(si, "id");
+		purple_debug_info("bonjour", "si offer Message type - SET.\n");
+		if (si && (profile = xmlnode_get_attrib(si, "profile"))
+				&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
+			const char *filename = NULL, *filesize_str = NULL;
+			int filesize = 0;
+			xmlnode *file;
 
-				if ((file = xmlnode_get_child(si, "file"))) {
-					filename = xmlnode_get_attrib(file, "name");
-					if((filesize_str = xmlnode_get_attrib(file, "size")))
-						filesize = atoi(filesize_str);
-				}
+			const char *sid = xmlnode_get_attrib(si, "id");
 
-				/* TODO: Make sure that it is advertising a bytestreams transfer */
-
-				if (filename) {
-					bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
-
-					parsed_receive = TRUE;
-				}
+			if ((file = xmlnode_get_child(si, "file"))) {
+				filename = xmlnode_get_attrib(file, "name");
+				if((filesize_str = xmlnode_get_attrib(file, "size")))
+					filesize = atoi(filesize_str);
 			}
 
-			if (!parsed_receive) {
-				BonjourData *bd = purple_connection_get_protocol_data(pc);
+			/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
-				xep_ft_si_reject(bd, id, name, "403", "cancel");
-				/*TODO: Send Cancel (501) */
+			if (filename) {
+				bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
+
+				parsed_receive = TRUE;
 			}
-		} else if(!strcmp(type, "result")) {
-			purple_debug_info("bonjour", "si offer Message type - RESULT.\n");
+		}
 
-			xfer = bonjour_si_xfer_find(bd, id, name);
+		if (!parsed_receive) {
+			BonjourData *bd = purple_connection_get_protocol_data(pc);
 
-			if(xfer == NULL) {
-				BonjourData *bd = purple_connection_get_protocol_data(pc);
-				purple_debug_info("bonjour", "xfer find fail.\n");
-				xep_ft_si_reject(bd, id, name, "403", "cancel");
-			} else
-				bonjour_bytestreams_init(xfer);
+			purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
+			xep_ft_si_reject(bd, id, name, "403", "cancel");
+			/*TODO: Send Cancel (501) */
+		}
+	} else if(!strcmp(type, "result")) {
+		purple_debug_info("bonjour", "si offer Message type - RESULT.\n");
 
-		} else if(!strcmp(type, "error")) {
-			purple_debug_info("bonjour", "si offer Message type - ERROR.\n");
+		xfer = bonjour_si_xfer_find(bd, id, name);
 
-			xfer = bonjour_si_xfer_find(bd, id, name);
-
-			if(xfer == NULL)
-				purple_debug_info("bonjour", "xfer find fail.\n");
-			else
-				purple_xfer_cancel_remote(xfer);
+		if(xfer == NULL) {
+			BonjourData *bd = purple_connection_get_protocol_data(pc);
+			purple_debug_info("bonjour", "xfer find fail.\n");
+			xep_ft_si_reject(bd, id, name, "403", "cancel");
 		} else
-			purple_debug_info("bonjour", "si offer Message type - Unknown-%s.\n", type);
-	}
+			bonjour_bytestreams_init(xfer);
+
+	} else if(!strcmp(type, "error")) {
+		purple_debug_info("bonjour", "si offer Message type - ERROR.\n");
+
+		xfer = bonjour_si_xfer_find(bd, id, name);
+
+		if(xfer == NULL)
+			purple_debug_info("bonjour", "xfer find fail.\n");
+		else
+			purple_xfer_cancel_remote(xfer);
+	} else
+		purple_debug_info("bonjour", "si offer Message type - Unknown-%s.\n", type);
 }
+
+static gboolean
+__xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
+			const char *iq_id)
+{
+	const char *jid, *host, *port;
+	int portnum;
+	xmlnode *streamhost;
+	XepXfer *xf = NULL;
+
+	xf = (XepXfer*)xfer->data;
+	for(streamhost = xmlnode_get_child(query, "streamhost");
+			streamhost;
+			streamhost = xmlnode_get_next_twin(streamhost)) {
+
+		if(!(jid = xmlnode_get_attrib(streamhost, "jid")) ||
+		   !(host = xmlnode_get_attrib(streamhost, "host")) ||
+		   !(port = xmlnode_get_attrib(streamhost, "port")) ||
+		   !(portnum = atoi(port))) {
+			purple_debug_info("bonjour", "bytestream offer Message parse error.\n");
+			continue;
+		}
+
+		if(strcmp(host, xf->buddy_ip))
+			continue;
+
+		g_free(xf->iq_id);
+		xf->iq_id = g_strdup(iq_id);
+		xf->jid = g_strdup(jid);
+		xf->proxy_host = g_strdup(host);
+		xf->proxy_port = portnum;
+		purple_debug_info("bonjour", "bytestream offer parse"
+				  "jid=%s host=%s port=%d.\n", jid, host, portnum);
+		bonjour_bytestreams_connect(xfer, pb);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 
 void
 xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 {
-	const char *type, *from;
+	const char *type, *from, *iq_id, *sid;
 	xmlnode *query;
 	BonjourData *bd;
+	PurpleXfer *xfer;
 
 	g_return_if_fail(pc != NULL);
 	g_return_if_fail(packet != NULL);
@@ -511,66 +553,27 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	type = xmlnode_get_attrib(packet, "type");
 	from = purple_buddy_get_name(pb);
 	query = xmlnode_get_child(packet,"query");
-	if(type) {
-		if(!strcmp(type, "set")) {
-			const char *iq_id, *sid;
-			gboolean found = FALSE;
-			PurpleXfer *xfer;
+	if(!type)
+		return;
 
-			purple_debug_info("bonjour", "bytestream offer Message type - SET.\n");
-
-			iq_id = xmlnode_get_attrib(packet, "id");
-
-			sid = xmlnode_get_attrib(query, "sid");
-			xfer = bonjour_si_xfer_find(bd, sid, from);
-
-			if(xfer) {
-				const char *jid, *host, *port;
-				xmlnode *streamhost;
-				int portnum;
-				XepXfer *xf = NULL;
-
-				xf = (XepXfer*)xfer->data;
-				for(streamhost = xmlnode_get_child(query, "streamhost");
-						streamhost;
-						streamhost = xmlnode_get_next_twin(streamhost)) {
-
-					if((jid = xmlnode_get_attrib(streamhost, "jid")) &&
-					   (host = xmlnode_get_attrib(streamhost, "host")) &&
-					   (port = xmlnode_get_attrib(streamhost, "port")) &&
-					   (portnum = atoi(port))) {
-
-						if(!strcmp(host, xf->buddy_ip)) {
-							g_free(xf->iq_id);
-							xf->iq_id = g_strdup(iq_id);
-							xf->jid = g_strdup(jid);
-							xf->proxy_host = g_strdup(host);
-							xf->proxy_port = portnum;
-							purple_debug_info("bonjour", "bytestream offer parse"
-									  "jid=%s host=%s port=%d.\n", jid, host, portnum);
-							bonjour_bytestreams_connect(xfer, pb);
-							found = TRUE;
-							break;
-						}
-					} else {
-						purple_debug_info("bonjour", "bytestream offer Message parse error.\n");
-					}
-				}
-			} else {
-
-			}
-
-			if (!found) {
-				purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
-
-				if (iq_id && xfer != NULL)
-					xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
-			}
-
-		} else {
-			purple_debug_info("bonjour", "bytestream offer Message type - Unknown-%s.\n", type);
-		}
+	if(strcmp(type, "set")) {
+		purple_debug_info("bonjour", "bytestream offer Message type - Unknown-%s.\n", type);
+		return;
 	}
+
+	purple_debug_info("bonjour", "bytestream offer Message type - SET.\n");
+
+	iq_id = xmlnode_get_attrib(packet, "id");
+
+	sid = xmlnode_get_attrib(query, "sid");
+	xfer = bonjour_si_xfer_find(bd, sid, from);
+	if(xfer && __xep_bytestreams_parse(pb, xfer, query, iq_id))
+		return; /* success */
+
+	purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
+
+	if (iq_id && xfer != NULL)
+		xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
 }
 
 static void
