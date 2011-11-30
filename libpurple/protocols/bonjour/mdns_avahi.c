@@ -179,6 +179,9 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			ip[0] = '\0';
 			avahi_address_snprint(ip, AVAHI_ADDRESS_STR_MAX, a);
 
+			if (protocol == AVAHI_PROTO_INET6)
+				append_iface_if_linklocal(ip, interface);
+
 			purple_debug_info("bonjour", "_resolve_callback - name:%s ip:%s prev_ip:%s\n",
 				name, ip, rd->ip);
 
@@ -190,7 +193,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 				}
 				/* IPv6 goes at the front of the list and IPv4 at the end so that we "prefer" IPv6, if present */
 				if (protocol == AVAHI_PROTO_INET6) {
-					rd->ip = g_strdup_printf("%s%%%d", ip, interface);
+					rd->ip = g_strdup_printf("%s", ip);
 					bb->ips = g_slist_prepend(bb->ips, (gchar *) rd->ip);
 				} else {
 					rd->ip = g_strdup(ip);

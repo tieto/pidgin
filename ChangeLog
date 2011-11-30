@@ -41,6 +41,9 @@ version 2.10.1 (10/11/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
 
+	Bonjour:
+	* IPv6 fixes (Linus Lüssing)
+
 	Gadu-Gadu:
 	* Fix problems linking against GnuTLS. (#14544)
 

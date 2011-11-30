@@ -665,9 +665,13 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	/* Look for the buddy that has opened the conversation and fill information */
 #ifdef HAVE_INET_NTOP
-	if (their_addr.ss_family == AF_INET6)
+	if (their_addr.ss_family == AF_INET6) {
 		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in6 *)&their_addr)->sin6_addr,
 			addrstr, sizeof(addrstr));
+
+		append_iface_if_linklocal(addrstr,
+			((struct sockaddr_in6 *)&their_addr)->sin6_scope_id);
+	}
 	else
 		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in *)&their_addr)->sin_addr,
 			addrstr, sizeof(addrstr));
@@ -1448,4 +1452,20 @@ bonjour_jabber_get_local_ips(int fd)
 #endif
 
 	return ips;
+}
+
+void
+append_iface_if_linklocal(char *ip, uint32_t interface) {
+	struct in6_addr in6_addr;
+	int len_remain = INET6_ADDRSTRLEN - strlen(ip);
+
+	if (len_remain <= 1)
+		return;
+
+	if (inet_pton(AF_INET6, ip, &in6_addr) != 1 ||
+	    !IN6_IS_ADDR_LINKLOCAL(&in6_addr))
+		return;
+
+	snprintf(ip + strlen(ip), len_remain, "%%%d",
+		 interface);
 }
