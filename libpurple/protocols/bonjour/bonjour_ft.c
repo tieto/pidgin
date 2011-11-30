@@ -492,6 +492,60 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 		purple_debug_info("bonjour", "si offer Message type - Unknown-%s.\n", type);
 }
 
+/**
+ * Will compare a host with a buddy_ip.
+ *
+ * Additionally to a common '!strcmp(host, buddy_ip)', it will also return TRUE
+ * if 'host' is a link local IPv6 address without an appended interface
+ * identifier and 'buddy_ip' string is "host" + "%iface".
+ *
+ * Note: This may theoretically result in the attempt to connect to the wrong
+ * host, because we do not know for sure which interface the according link
+ * local IPv6 address might relate to and RFC4862 for instance only ensures the
+ * uniqueness of this address on a given link. So we could possibly have two
+ * distinct buddies with the same ipv6 link local address on two distinct
+ * interfaces. Unfortunately XEP-0065 does not seem to specify how to deal with
+ * link local ip addresses properly...
+ * However, in practice the possiblity for such a conflict is relatively low
+ * (2011 - might be different in the future though?).
+ *
+ * @param host		ipv4 or ipv6 address string
+ * @param buddy_ip	ipv4 or ipv6 address string
+ * @return		TRUE if they match, FALSE otherwise
+ */
+static gboolean
+xep_cmp_addr(const char *host, const char *buddy_ip)
+{
+#if defined(AF_INET6) && defined(HAVE_GETADDRINFO)
+	struct addrinfo hint, *res = NULL;
+	int ret;
+
+	memset(&hint, 0, sizeof(hint));
+	hint.ai_family = AF_UNSPEC;
+	hint.ai_flags = AI_NUMERICHOST;
+
+	ret = getaddrinfo(host, NULL, &hint, &res);
+	if(ret)
+		goto out;
+
+	if(res->ai_family != AF_INET6 ||
+	   !IN6_IS_ADDR_LINKLOCAL(&((struct sockaddr_in6 *)res->ai_addr)->sin6_addr)) {
+		freeaddrinfo(res);
+		goto out;
+	}
+	freeaddrinfo(res);
+
+	if(strlen(buddy_ip) <= strlen(host) ||
+	   buddy_ip[strlen(host)] != '%')
+		return FALSE;
+
+	return !strncmp(host, buddy_ip, strlen(host));
+
+out:
+#endif
+	return !strcmp(host, buddy_ip);
+}
+
 static gboolean
 __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
 			const char *iq_id)
@@ -514,13 +568,13 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
 			continue;
 		}
 
-		if(strcmp(host, xf->buddy_ip))
+		if(!xep_cmp_addr(host, xf->buddy_ip))
 			continue;
 
 		g_free(xf->iq_id);
 		xf->iq_id = g_strdup(iq_id);
 		xf->jid = g_strdup(jid);
-		xf->proxy_host = g_strdup(host);
+		xf->proxy_host = g_strdup(xf->buddy_ip);
 		xf->proxy_port = portnum;
 		purple_debug_info("bonjour", "bytestream offer parse"
 				  "jid=%s host=%s port=%d.\n", jid, host, portnum);
