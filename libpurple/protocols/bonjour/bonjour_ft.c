@@ -554,9 +554,8 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
 	const char *jid, *host, *port;
 	int portnum;
 	xmlnode *streamhost;
-	XepXfer *xf = NULL;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 
-	xf = (XepXfer*)xfer->data;
 	for(streamhost = xmlnode_get_child(query, "streamhost");
 			streamhost;
 			streamhost = xmlnode_get_next_twin(streamhost)) {
