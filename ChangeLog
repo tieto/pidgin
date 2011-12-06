@@ -6,7 +6,8 @@ version 2.10.1 (12/05/2011):
 
 	AIM and ICQ:
 	* Fix remotely-triggerable crashes by validating strings in a few
-	  messages related to buddy list management. (#14682)
+	  messages related to buddy list management.  Thanks to Evgeny Boger
+	  for reporting this!  (#14682)
 
 	Bonjour:
 	* IPv6 fixes (Linus Lüssing)
