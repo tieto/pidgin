@@ -288,7 +288,7 @@ jingle_session_create(JabberStream *js, const gchar *sid,
 	if (!js->sessions) {
 		purple_debug_info("jingle",
 				"Creating hash table for sessions\n");
-		js->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+		js->sessions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	}
 	purple_debug_info("jingle",
 			"inserting session with key: %s into table\n", sid);
@@ -411,26 +411,24 @@ jingle_add_jingle_packet(JingleSession *session,
 			xmlnode_new("jingle");
 	gchar *local_jid = jingle_session_get_local_jid(session);
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
+	gchar *sid = jingle_session_get_sid(session);
 
 	xmlnode_set_namespace(jingle, JINGLE);
 	xmlnode_set_attrib(jingle, "action", jingle_get_action_name(action));
 
 	if (jingle_session_is_initiator(session)) {
-		xmlnode_set_attrib(jingle, "initiator",
-				jingle_session_get_local_jid(session));
-		xmlnode_set_attrib(jingle, "responder",
-				jingle_session_get_remote_jid(session));
+		xmlnode_set_attrib(jingle, "initiator", local_jid);
+		xmlnode_set_attrib(jingle, "responder", remote_jid);
 	} else {
-		xmlnode_set_attrib(jingle, "initiator",
-				jingle_session_get_remote_jid(session));
-		xmlnode_set_attrib(jingle, "responder",
-				jingle_session_get_local_jid(session));
+		xmlnode_set_attrib(jingle, "initiator", remote_jid);
+		xmlnode_set_attrib(jingle, "responder", local_jid);
 	}
+
+	xmlnode_set_attrib(jingle, "sid", sid);
 
 	g_free(local_jid);
 	g_free(remote_jid);
-
-	xmlnode_set_attrib(jingle, "sid", jingle_session_get_sid(session));
+	g_free(sid);
 
 	return jingle;
 }
@@ -508,11 +506,16 @@ void jingle_session_handle_action(JingleSession *session, xmlnode *jingle, Jingl
 JingleContent *
 jingle_session_find_content(JingleSession *session, const gchar *name, const gchar *creator)
 {
-	GList *iter = session->priv->contents;
+	GList *iter;
+
+	if (name == NULL)
+		return NULL;
+
+	iter = session->priv->contents;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gboolean result = !strcmp(name, cname);
+		gboolean result = g_str_equal(name, cname);
 		g_free(cname);
 
 		if (creator != NULL) {
@@ -530,11 +533,16 @@ jingle_session_find_content(JingleSession *session, const gchar *name, const gch
 JingleContent *
 jingle_session_find_pending_content(JingleSession *session, const gchar *name, const gchar *creator)
 {
-	GList *iter = session->priv->pending_contents;
+	GList *iter;
+
+	if (name == NULL)
+		return NULL;
+
+	iter = session->priv->pending_contents;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gboolean result = !strcmp(name, cname);
+		gboolean result = g_str_equal(name, cname);
 		g_free(cname);
 
 		if (creator != NULL) {

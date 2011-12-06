@@ -18,6 +18,10 @@ version 2.10.1 (12/05/2011):
 	* Fix a leak when admitting UTF-8 text with a non-UTF-8 primary
 	  encoding.  (#14700)
 
+	Jabber:
+	* Fix crashes and memory leaks when receiving malformed voice
+	  and video requests.  Thanks to Thijs Alkemade for reporting this!
+
 	Sametime:
 	* Separate "username" and "server" when adding new Sametime accounts.
 	  (#14608)

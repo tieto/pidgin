@@ -590,6 +590,16 @@ jingle_rtp_init_media(JingleContent *content)
 	senders = jingle_content_get_senders(content);
 	transport = jingle_content_get_transport(content);
 
+	if (media_type == NULL) {
+		g_free(name);
+		g_free(remote_jid);
+		g_free(senders);
+		g_free(params);
+		g_object_unref(transport);
+		g_object_unref(session);
+		return FALSE;
+	}
+
 	if (JINGLE_IS_RAWUDP(transport))
 		transmitter = "rawudp";
 	else if (JINGLE_IS_ICEUDP(transport))
@@ -598,17 +608,17 @@ jingle_rtp_init_media(JingleContent *content)
 		transmitter = "notransmitter";
 	g_object_unref(transport);
 
-	is_audio = !strcmp(media_type, "audio");
+	is_audio = g_str_equal(media_type, "audio");
 
-	if (!strcmp(senders, "both"))
-		type = is_audio == TRUE ? PURPLE_MEDIA_AUDIO
+	if (purple_strequal(senders, "both"))
+		type = is_audio ? PURPLE_MEDIA_AUDIO
 				: PURPLE_MEDIA_VIDEO;
-	else if ((strcmp(senders, "initiator") == 0) ==
+	else if (purple_strequal(senders, "initiator") ==
 			jingle_session_is_initiator(session))
-		type = is_audio == TRUE ? PURPLE_MEDIA_SEND_AUDIO
+		type = is_audio ? PURPLE_MEDIA_SEND_AUDIO
 				: PURPLE_MEDIA_SEND_VIDEO;
 	else
-		type = is_audio == TRUE ? PURPLE_MEDIA_RECV_AUDIO
+		type = is_audio ? PURPLE_MEDIA_RECV_AUDIO
 				: PURPLE_MEDIA_RECV_VIDEO;
 
 	params =
@@ -616,7 +626,17 @@ jingle_rtp_init_media(JingleContent *content)
 			NULL, NULL, &num_params);
 
 	creator = jingle_content_get_creator(content);
-	if (!strcmp(creator, "initiator"))
+	if (creator == NULL) {
+		g_free(name);
+		g_free(media_type);
+		g_free(remote_jid);
+		g_free(senders);
+		g_free(params);
+		g_object_unref(session);
+		return FALSE;
+	}
+
+	if (g_str_equal(creator, "initiator"))
 		is_creator = jingle_session_is_initiator(session);
 	else
 		is_creator = !jingle_session_is_initiator(session);
@@ -625,6 +645,8 @@ jingle_rtp_init_media(JingleContent *content)
 	if(!purple_media_add_stream(media, name, remote_jid,
 			type, is_creator, transmitter, num_params, params)) {
 		purple_media_end(media, NULL, NULL);
+		/* TODO: How much clean-up is necessary here? (does calling
+		         purple_media_end lead to cleaning up Jingle structs?) */
 		return FALSE;
 	}
 
@@ -646,9 +668,22 @@ jingle_rtp_parse_codecs(xmlnode *description)
 	const char *encoding_name,*id, *clock_rate;
 	PurpleMediaCodec *codec;
 	const gchar *media = xmlnode_get_attrib(description, "media");
-	PurpleMediaSessionType type =
-			!strcmp(media, "video") ? PURPLE_MEDIA_VIDEO :
-			!strcmp(media, "audio") ? PURPLE_MEDIA_AUDIO : 0;
+	PurpleMediaSessionType type;
+
+	if (media == NULL) {
+		purple_debug_warning("jingle-rtp", "missing media type\n");
+		return NULL;
+	}
+
+	if (g_str_equal(media, "video")) {
+		type = PURPLE_MEDIA_VIDEO;
+	} else if (g_str_equal(media, "audio")) {
+		type = PURPLE_MEDIA_AUDIO;
+	} else {
+		purple_debug_warning("jingle-rtp", "unknown media type: %s\n",
+				media);
+		return NULL;
+	}
 
 	for (codec_element = xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
@@ -769,25 +804,33 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 	switch (action) {
 		case JINGLE_SESSION_ACCEPT:
 		case JINGLE_SESSION_INITIATE: {
-			JingleSession *session = jingle_content_get_session(content);
-			JingleTransport *transport = jingle_transport_parse(
-					xmlnode_get_child(xmlcontent, "transport"));
-			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
-			GList *candidates = jingle_rtp_transport_to_candidates(transport);
-			GList *codecs = jingle_rtp_parse_codecs(description);
-			gchar *name = jingle_content_get_name(content);
-			gchar *remote_jid =
-					jingle_session_get_remote_jid(session);
+			JingleSession *session;
+			JingleTransport *transport;
+			xmlnode *description;
+			GList *candidates;
+			GList *codecs;
+			gchar *name;
+			gchar *remote_jid;
 			PurpleMedia *media;
 
+			session = jingle_content_get_session(content);
+
 			if (action == JINGLE_SESSION_INITIATE &&
-					jingle_rtp_init_media(content) == FALSE) {
+					!jingle_rtp_init_media(content)) {
 				/* XXX: send error */
 				jabber_iq_send(jingle_session_terminate_packet(
 						session, "general-error"));
 				g_object_unref(session);
 				break;
 			}
+
+			transport = jingle_transport_parse(
+					xmlnode_get_child(xmlcontent, "transport"));
+			description = xmlnode_get_child(xmlcontent, "description");
+			candidates = jingle_rtp_transport_to_candidates(transport);
+			codecs = jingle_rtp_parse_codecs(description);
+			name = jingle_content_get_name(content);
+			remote_jid = jingle_session_get_remote_jid(session);
 
 			media = jingle_rtp_get_media(session);
 			purple_media_set_remote_codecs(media,
