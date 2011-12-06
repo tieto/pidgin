@@ -577,11 +577,12 @@ jingle_rtp_init_media(JingleContent *content)
 	guint num_params;
 
 	/* maybe this create ought to just be in initiate and handle initiate */
-	if (media == NULL)
+	if (media == NULL) {
 		media = jingle_rtp_create_media(content);
 
-	if (media == NULL)
-		return FALSE;
+		if (media == NULL)
+			return FALSE;
+	}
 
 	name = jingle_content_get_name(content);
 	media_type = jingle_rtp_get_media_type(content);
