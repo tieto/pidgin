@@ -4,6 +4,10 @@ version 2.10.1 (10/11/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
 
+	AIM and ICQ:
+	* Fix remotely-triggerable crashes by validating strings in a few
+	  messages related to buddy list management. (#14682)
+
 	Bonjour:
 	* IPv6 fixes (Linus Lüssing)
 
