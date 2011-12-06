@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.1 (12/05/2011):
+version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
 
@@ -16,7 +16,7 @@ version 2.10.1 (12/05/2011):
 	* Fix problems linking against GnuTLS. (#14544)
 
 	IRC:
-	* Fix a leak when admitting UTF-8 text with a non-UTF-8 primary
+	* Fix a memory leak when admitting UTF-8 text with a non-UTF-8 primary
 	  encoding.  (#14700)
 
 	Jabber:
