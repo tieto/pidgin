@@ -126,7 +126,7 @@ jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
 		if (local_content != NULL) {
 			const gchar *senders = xmlnode_get_attrib(content, "senders");
 			gchar *local_senders = jingle_content_get_senders(local_content);
-			if (strcmp(senders, local_senders))
+			if (!purple_strequal(senders, local_senders))
 				jingle_content_modify(local_content, senders);
 			g_free(local_senders);
 		} else {
