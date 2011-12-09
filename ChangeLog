@@ -1,5 +1,44 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.1 (12/06/2011):
+	Finch:
+	* Fix compilation on OpenBSD.
+
+	AIM and ICQ:
+	* Fix remotely-triggerable crashes by validating strings in a few
+	  messages related to buddy list management.  Thanks to Evgeny Boger
+	  for reporting this!  (#14682)
+
+	Bonjour:
+	* IPv6 fixes (Linus Lüssing)
+
+	Gadu-Gadu:
+	* Fix problems linking against GnuTLS. (#14544)
+
+	IRC:
+	* Fix a memory leak when admitting UTF-8 text with a non-UTF-8 primary
+	  encoding.  (#14700)
+
+	Jabber:
+	* Fix crashes and memory leaks when receiving malformed voice
+	  and video requests.  Thanks to Thijs Alkemade for reporting this!
+
+	Sametime:
+	* Separate "username" and "server" when adding new Sametime accounts.
+	  (#14608)
+	* Fix compilation in Visual C++. (#14608)
+
+	SILC:
+	* Fix CVE-2011-3594, by UTF-8 validating incoming messages before
+	  passing them to glib or libpurple.  Identified by Diego Bauche
+	  Madero from IOActive.  (#14636)
+
+	Yahoo!:
+	* Fetch buddy icons in some cases where we previously weren't. (#13050)
+
+	Windows-Specific Changes:
+	* Fix compilation
+
 version 2.10.0 (08/18/2011):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.

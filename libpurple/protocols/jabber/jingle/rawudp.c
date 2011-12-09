@@ -174,6 +174,8 @@ static void
 jingle_rawudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	JingleRawUdp *rawudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_RAWUDP(object));
 
 	rawudp = JINGLE_RAWUDP(object);
@@ -197,6 +199,8 @@ static void
 jingle_rawudp_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	JingleRawUdp *rawudp;
+
+	g_return_if_fail(object != NULL);
 	g_return_if_fail(JINGLE_IS_RAWUDP(object));
 
 	rawudp = JINGLE_RAWUDP(object);

@@ -332,10 +332,17 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = g_markup_escape_text((const char *)message, -1);
+		const char *msg = (const char *)message;
+		char *salvaged = NULL;
+		if (!g_utf8_validate((const char *)message, -1, NULL)) {
+			salvaged = purple_utf8_salvage((const char *)message);
+			msg = salvaged;
+		}
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
 				 sender->nickname, 0, tmp, time(NULL));
+		g_free(salvaged);
 		g_free(tmp);
 	}
 }
@@ -408,9 +415,16 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = g_markup_escape_text((const char *)message, -1);
+		const char *msg = (const char *)message;
+		char *salvaged = NULL;
+		if (!g_utf8_validate((const char *)message, -1, NULL)) {
+			salvaged = purple_utf8_salvage((const char *)message);
+			msg = salvaged;
+		}
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		serv_got_im(gc, sender->nickname, tmp, 0, time(NULL));
+		g_free(salvaged);
 		g_free(tmp);
 	}
 }

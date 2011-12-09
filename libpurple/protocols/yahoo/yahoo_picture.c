@@ -123,15 +123,8 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		/* TODO: make this work p2p, try p2p before the url */
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
-		PurpleBuddy *b = purple_find_buddy(gc->account, who);
-		const char *locksum = NULL;
 		/* use whole URL if using HTTP Proxy */
 		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
-
-		/* FIXME: Cleanup this strtol() stuff if possible. */
-		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
-				(checksum == strtol(locksum, NULL, 10)))
-			return;
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
 		data->gc = gc;
