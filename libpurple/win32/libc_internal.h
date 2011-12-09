@@ -141,9 +141,6 @@ int wpurple_close(int fd);
 int wpurple_gethostname(char *name, size_t size);
 
 
-/* stdio.h */
-int wpurple_rename(const char *oldname, const char *newname);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

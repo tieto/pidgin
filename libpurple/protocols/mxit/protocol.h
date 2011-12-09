@@ -34,8 +34,7 @@
 #define		CP_PKT_TERM				'\x02'				/* packet terminator */
 
 
-#define		CP_MAX_PACKET			( 1024 * 1024 )		/* maximum client protocol packet size (1 MiB) */
-#define		CP_MAX_FILESIZE			( 150 * 1000 )		/* maximum client protocol file transfer size (150 KB) */
+#define		CP_MAX_PACKET			( 1 * 1000 * 1000 )	/* maximum client protocol packet size (1 MB) */
 #define		MXIT_EMOTICON_SIZE		18					/* icon size for custom emoticons */
 #define		CP_MAX_STATUS_MSG		250					/* maximum status message length (in characters) */
 
@@ -77,6 +76,7 @@
 #define		MXIT_CF_GAMING_UPDATE	0x800000
 #define		MXIT_CF_VOICE			0x1000000
 #define		MXIT_CF_VIDEO			0x2000000
+#define		MXIT_CF_TOUCHSCREEN		0x4000000
 
 /* Client features supported by this implementation */
 #define		MXIT_CP_FEATURES		( MXIT_CF_FILE_TRANSFER | MXIT_CF_FILE_ACCESS | MXIT_CF_AUDIO | MXIT_CF_MARKUP | MXIT_CF_EXT_MARKUP | MXIT_CF_NO_GATEWAYS | MXIT_CF_IMAGES | MXIT_CF_COMMANDS | MXIT_CF_VIBES | MXIT_CF_MIDP2 )
@@ -155,7 +155,10 @@
 /* message flags */
 #define		CP_MSG_NOTIFY_DELIVERY	0x0002					/* request delivery notification */
 #define		CP_MSG_NOTIFY_READ		0x0004					/* request read notification */
-#define		CP_MSG_ENCRYPTED		0x0010					/* message is encrypted */
+#define		CP_MSG_PWD_ENCRYPTED	0x0010					/* message is password encrypted */
+#define		CP_MSG_TL_ENCRYPTED		0x0020					/* message is transport encrypted */
+#define		CP_MSG_RPLY_PWD_ENCRYPT	0x0040					/* reply should be password encrypted */
+#define		CP_MSG_RPLY_TL_ENCRYPT	0x0080					/* reply should be transport encrypted */
 #define		CP_MSG_MARKUP			0x0200					/* message may contain markup */
 #define		CP_MSG_EMOTICON			0x0400					/* message may contain custom emoticons */
 
@@ -179,7 +182,7 @@
 /* extended profile attribute fields */
 #define		CP_PROFILE_BIRTHDATE	"birthdate"				/* Birthdate (String - ISO 8601 format) */
 #define		CP_PROFILE_GENDER		"gender"				/* Gender (Boolean - 0=female, 1=male) */
-#define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) */
+// #define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) (DEPRECATED) */
 #define		CP_PROFILE_FULLNAME		"fullname"				/* Fullname (UTF8 String) */
 #define		CP_PROFILE_STATUS		"statusmsg"				/* Status Message (UTF8 String) */
 #define		CP_PROFILE_PREVSTATUS	"prevstatusmsgs"		/* Previous Status Messages (UTF8 String) */

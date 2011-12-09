@@ -82,11 +82,6 @@ Purple::BuddyList::Buddy
 purple_contact_get_priority_buddy(contact)
 	Purple::BuddyList::Contact contact
 
-void
-purple_contact_set_alias(contact, alias)
-	Purple::BuddyList::Contact contact
-	const char * alias
-
 const char *
 purple_contact_get_alias(contact)
 	Purple::BuddyList::Contact contact
@@ -198,10 +193,6 @@ void
 purple_blist_update_buddy_status(buddy, old_status)
 	Purple::BuddyList::Buddy buddy
 	Purple::Status old_status
-
-void
-purple_blist_update_buddy_icon(buddy)
-	Purple::BuddyList::Buddy buddy
 
 void
 purple_blist_rename_buddy(buddy, name)
@@ -427,10 +418,6 @@ purple_buddy_get_alias_only(buddy)
 
 const char *
 purple_buddy_get_contact_alias(buddy)
-	Purple::BuddyList::Buddy buddy
-
-const char *
-purple_buddy_get_local_alias(buddy)
 	Purple::BuddyList::Buddy buddy
 
 const char *

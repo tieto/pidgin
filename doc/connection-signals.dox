@@ -44,7 +44,6 @@ gboolean (*autojoin)(PurpleConnection *gc);
   @return @c TRUE if the signal was handled or @c FALSE otherwise.  In
           practice, the return value is irrelevant, as it really only
           exists so plugins can block the UI's autojoin.
-  @since 2.7.0
  @endsignaldef
 
  @signaldef signing-off

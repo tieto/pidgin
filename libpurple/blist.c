@@ -314,7 +314,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
-	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
+	g_snprintf(buf, sizeof(buf), "%d", purple_account_get_privacy_type(account));
 	xmlnode_set_attrib(node, "mode", buf);
 
 	for (cur = account->permit; cur; cur = cur->next)
@@ -461,19 +461,16 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	char *name = NULL, *alias = NULL;
-	const char *acct_name, *proto, *protocol;
+	const char *acct_name, *proto;
 	xmlnode *x;
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
-	protocol = xmlnode_get_attrib(bnode, "protocol");
-	protocol = _purple_oscar_convert(acct_name, protocol); /* XXX: Remove */
 	proto = xmlnode_get_attrib(bnode, "proto");
-	proto = _purple_oscar_convert(acct_name, proto); /* XXX: Remove */
 
-	if (!acct_name || (!proto && !protocol))
+	if (!acct_name || !proto)
 		return;
 
-	account = purple_accounts_find(acct_name, proto ? proto : protocol);
+	account = purple_accounts_find(acct_name, proto);
 
 	if (!account)
 		return;
@@ -532,19 +529,18 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 {
 	PurpleChat *chat;
 	PurpleAccount *account;
-	const char *acct_name, *proto, *protocol;
+	const char *acct_name, *proto;
 	xmlnode *x;
 	char *alias = NULL;
 	GHashTable *components;
 
 	acct_name = xmlnode_get_attrib(cnode, "account");
-	protocol = xmlnode_get_attrib(cnode, "protocol");
 	proto = xmlnode_get_attrib(cnode, "proto");
 
-	if (!acct_name || (!proto && !protocol))
+	if (!acct_name || !proto)
 		return;
 
-	account = purple_accounts_find(acct_name, proto ? proto : protocol);
+	account = purple_accounts_find(acct_name, proto);
 
 	if (!account)
 		return;
@@ -630,23 +626,22 @@ purple_blist_load()
 			xmlnode *x;
 			PurpleAccount *account;
 			int imode;
-			const char *acct_name, *proto, *mode, *protocol;
+			const char *acct_name, *proto, *mode;
 
 			acct_name = xmlnode_get_attrib(anode, "name");
-			protocol = xmlnode_get_attrib(anode, "protocol");
 			proto = xmlnode_get_attrib(anode, "proto");
 			mode = xmlnode_get_attrib(anode, "mode");
 
-			if (!acct_name || (!proto && !protocol) || !mode)
+			if (!acct_name || !proto || !mode)
 				continue;
 
-			account = purple_accounts_find(acct_name, proto ? proto : protocol);
+			account = purple_accounts_find(acct_name, proto);
 
 			if (!account)
 				continue;
 
 			imode = atoi(mode);
-			account->perm_deny = (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL);
+			purple_account_set_privacy_type(account, (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL));
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;
@@ -959,12 +954,6 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
 
 	if (ops && ops->update)
 		ops->update(purplebuddylist, node);
-}
-
-void
-purple_blist_update_buddy_icon(PurpleBuddy *buddy)
-{
-	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
 }
 
 /*
@@ -1318,7 +1307,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 				purple_account_remove_buddies(account, buddies, groups);
 				g_list_free(groups);
-				purple_account_add_buddies(account, buddies);
+				purple_account_add_buddies(account, buddies, NULL);
 			}
 
 			g_list_free(buddies);
@@ -1748,11 +1737,6 @@ purple_contact_get_group(const PurpleContact *contact)
 	return (PurpleGroup *)(((PurpleBlistNode *)contact)->parent);
 }
 
-void purple_contact_set_alias(PurpleContact *contact, const char *alias)
-{
-	purple_blist_alias_contact(contact,alias);
-}
-
 const char *purple_contact_get_alias(PurpleContact* contact)
 {
 	g_return_val_if_fail(contact != NULL, NULL);
@@ -1789,6 +1773,13 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 
 	contact->priority_valid = FALSE;
 }
+
+int purple_contact_get_contact_size(PurpleContact *contact, gboolean offline)   
+{
+	g_return_val_if_fail(contact != NULL, 0);
+
+	return offline ? contact->totalsize : contact->currentsize;
+}   
 
 PurpleGroup *purple_group_new(const char *name)
 {
@@ -2378,26 +2369,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 	    return buddy->server_alias;
 
 	return NULL;
-}
-
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
-{
-	PurpleContact *c;
-
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	/* Search for an alias for the buddy. In order of precedence: */
-	/* The buddy alias */
-	if (buddy->alias != NULL)
-		return buddy->alias;
-
-	/* The contact alias */
-	c = purple_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
-
-	/* The buddy's user name (i.e. no alias) */
-	return buddy->name;
 }
 
 const char *purple_chat_get_name(PurpleChat *chat)

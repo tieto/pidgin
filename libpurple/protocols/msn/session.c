@@ -420,7 +420,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 
 	msn_session_disconnect(session);
 
-	purple_connection_error_reason(gc, reason, msg);
+	purple_connection_error(gc, reason, msg);
 
 	g_free(msg);
 }
@@ -459,7 +459,7 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 	if (session->logged_in)
 		return;
 
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	session->login_step = step;
 

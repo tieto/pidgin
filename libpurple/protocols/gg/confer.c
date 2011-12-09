@@ -42,7 +42,7 @@ void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_nam
 							 const uin_t uin)
 {
 	PurpleConversation *conv;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat;
 	GList *l;
 	gchar *str_uin;
@@ -73,7 +73,7 @@ void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_nam
 void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 				 const uin_t *recipients, int count)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GList *l;
 	gchar *str_uin;
 
@@ -111,7 +111,7 @@ void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 const char *ggp_confer_find_by_participants(PurpleConnection *gc,
 					    const uin_t *recipients, int count)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat = NULL;
 	GList *l;
 	int matches;
@@ -149,7 +149,7 @@ const char *ggp_confer_find_by_participants(PurpleConnection *gc,
 /* const char *ggp_confer_add_new(PurpleConnection *gc, const char *name) {{{ */
 const char *ggp_confer_add_new(PurpleConnection *gc, const char *name)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat;
 
 	chat = g_new0(GGPChat, 1);

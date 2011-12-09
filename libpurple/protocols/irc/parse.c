@@ -171,11 +171,11 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 	struct irc_conn *irc;
 	struct _irc_user_cmd *cmdent;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	if (!gc)
 		return PURPLE_CMD_RET_FAILED;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -670,11 +670,11 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Disconnected."));
 		return;

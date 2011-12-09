@@ -75,7 +75,7 @@ static void allow_plaintext_auth(PurpleAccount *account)
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	purple_connection_error_reason(purple_account_get_connection(account),
+	purple_connection_error(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }

@@ -16,16 +16,17 @@
 #include "gtkconv.h"
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
+#include "gtkwebview.h"
 
 #define HISTORY_PLUGIN_ID "gtk-history"
 
 #define HISTORY_SIZE (4 * 1024)
 
-static gboolean _scroll_imhtml_to_end(gpointer data)
+static gboolean _scroll_webview_to_end(gpointer data)
 {
-	GtkIMHtml *imhtml = data;
-	gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), FALSE);
-	g_object_unref(G_OBJECT(imhtml));
+	GtkWebView *webview = data;
+	gtk_webview_scroll_to_end(GTK_WEBVIEW(webview), FALSE);
+	g_object_unref(G_OBJECT(webview));
 	return FALSE;
 }
 
@@ -39,9 +40,15 @@ static void historize(PurpleConversation *c)
 	guint flags;
 	char *history;
 	PidginConversation *gtkconv;
+#if 0
+	/* FIXME: WebView has no options */
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
+#endif
 	char *header;
+#if 0
+	/* FIXME: WebView has no protocol setting */
 	char *protocol;
+#endif
 	char *escaped_alias;
 	const char *header_date;
 
@@ -116,15 +123,21 @@ static void historize(PurpleConversation *c)
 
 	history = purple_log_read((PurpleLog*)logs->data, &flags);
 	gtkconv = PIDGIN_CONVERSATION(c);
+#if 0
+	/* FIXME: WebView has no options */
 	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
+#endif
 
+#if 0
+	/* FIXME: WebView has no protocol setting */
 	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
 			purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
+#endif
 
-	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
+	if (!gtk_webview_is_empty(GTK_WEBVIEW(gtkconv->webview)))
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR>");
 
 	escaped_alias = g_markup_escape_text(alias, -1);
 
@@ -134,21 +147,24 @@ static void historize(PurpleConversation *c)
 		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
+	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), header);
 	g_free(header);
 	g_free(escaped_alias);
 
 	g_strchomp(history);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
+	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), history);
 	g_free(history);
 
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<hr>");
 
+#if 0
+	/* FIXME: WebView has no protocol setting */
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
 	g_free(protocol);
+#endif
 
-	g_object_ref(G_OBJECT(gtkconv->imhtml));
-	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
+	g_object_ref(G_OBJECT(gtkconv->webview));
+	g_idle_add(_scroll_webview_to_end, gtkconv->webview);
 
 	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);

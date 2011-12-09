@@ -224,12 +224,5 @@ purple_debug_init(void)
 		purple_debug_set_verbose(TRUE);
 
 	purple_prefs_add_none("/purple/debug");
-
-	/*
-	 * This pref is obsolete and no longer referenced anywhere. It only
-	 * survives here because it would be an API break if we removed it.
-	 * Remove this when we get to 3.0.0 :)
-	 */
-	purple_prefs_add_bool("/purple/debug/timestamps", TRUE);
 }
 

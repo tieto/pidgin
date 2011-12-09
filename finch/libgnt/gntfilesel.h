@@ -81,7 +81,7 @@ struct _GntFileSelClass
 	void (*gnt_reserved4)(void);
 };
 
-typedef enum _GntFileType
+typedef enum
 {
 	GNT_FILE_REGULAR,
 	GNT_FILE_DIR

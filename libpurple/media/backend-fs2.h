@@ -50,8 +50,6 @@ typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
  * Gets the type of the Farsight 2 media backend object.
  *
  * @return The Farsight 2 media backend's GType
- *
- * @since 2.7.0
  */
 GType purple_media_backend_fs2_get_type(void);
 

@@ -290,7 +290,7 @@ purple_notify_user_info_get_xhtml(PurpleNotifyUserInfo *user_info)
 
 	text = g_string_new("<span>");
 
-	for (l = purple_notify_user_info_get_entries(user_info); l != NULL;
+	for (l = purple_notify_user_info_get_entries(user_info)->head; l != NULL;
 			l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
 		PurpleNotifyUserInfoEntryType type = purple_notify_user_info_entry_get_type(user_info_entry);
@@ -429,7 +429,10 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	for (iter = results->columns; iter; iter = iter->next)
 	{
 		PurpleNotifySearchColumn *column = iter->data;
-		gnt_tree_set_column_title(GNT_TREE(tree), i, column->title);
+		gnt_tree_set_column_title(GNT_TREE(tree), i, purple_notify_searchresult_column_get_title(column));
+
+		if (!purple_notify_searchresult_column_is_visible(column))
+			gnt_tree_set_column_visible(GNT_TREE(tree), i, FALSE);
 		i++;
 	}
 

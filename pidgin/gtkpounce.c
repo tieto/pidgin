@@ -427,9 +427,9 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		dialog = (PidginPounceDialog *)data;
 
-		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), buddy->name);
-		dialog->account = buddy->account;
-		pidgin_account_option_menu_set_selected(dialog->account_menu, buddy->account);
+		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), purple_buddy_get_name(buddy));
+		dialog->account = purple_buddy_get_account(buddy);
+		pidgin_account_option_menu_set_selected(dialog->account_menu, purple_buddy_get_account(buddy));
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -476,7 +476,7 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
 	gtk_imhtml_setup_entry(GTK_IMHTML(dialog->send_msg_entry),
-			(account && account->gc) ? account->gc->flags : PURPLE_CONNECTION_HTML);
+			(account && purple_account_get_connection(account)) ? purple_connection_get_flags(purple_account_get_connection(account)) : PURPLE_CONNECTION_HTML);
 }
 
 void
@@ -1483,7 +1483,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(conv, NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
+			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 

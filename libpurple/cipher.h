@@ -41,7 +41,7 @@ typedef struct _PurpleCipherContext	PurpleCipherContext;	/**< A context for a Pu
 /**
  * Modes for batch encrypters
  */
-typedef enum _PurpleCipherBatchMode {
+typedef enum {
 	PURPLE_CIPHER_BATCH_MODE_ECB,
 	PURPLE_CIPHER_BATCH_MODE_CBC
 } PurpleCipherBatchMode;
@@ -49,7 +49,7 @@ typedef enum _PurpleCipherBatchMode {
 /**
  * The operation flags for a cipher
  */
-typedef enum _PurpleCipherCaps {
+typedef enum {
 	PURPLE_CIPHER_CAPS_SET_OPT          = 1 << 1,   /**< Set option flag	*/
 	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag	*/
 	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag			*/
