@@ -2,8 +2,8 @@ pidgin (2.10.1-1) unstable; urgency=medium
 
   * Imported Upstream version 2.10.1
     - Fixes remotely-triggered crash in XMPP/Jingle
-    - Fixes remotely-triggered crash in OSCAR
-    - Fixes remotely-triggered crashes in SILC
+    - Fixes remotely-triggered crash in AIM/ICQ (CVE-2011-4601)
+    - Fixes remotely-triggered crash in SILC (CVE-2011-3594)
   * add NEWS to installed docs
   * nm09-more.patch: change deprecated Network Manager signal name
     (Closes: #642117)

@@ -1,4 +1,4 @@
-build/doc/html/*.{html,gif,png} usr/share/doc/pidgin-dev/html
+build/doc/html usr/share/doc/pidgin-dev/
 debian/tmp/usr/include/pidgin
 debian/tmp/usr/lib/pkgconfig/pidgin.pc
 debian/dh_pidgin usr/bin
