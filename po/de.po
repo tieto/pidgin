@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-22 12:37+0200\n"
-"PO-Revision-Date: 2011-10-22 12:37+0200\n"
+"POT-Creation-Date: 2011-12-11 10:41+0100\n"
+"PO-Revision-Date: 2011-12-11 10:40+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -6249,6 +6249,8 @@ msgstr "Startbildschirm anzeigen..."
 msgid "About..."
 msgstr "Über..."
 
+#. we are trying to send a file to MXit
+#. need to reserve some space for packet headers
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Die Datei, die Sie senden möchten ist zu groß!"
@@ -7104,7 +7106,6 @@ msgstr "Hauspostcode"
 msgid "User ID"
 msgstr "Benutzer-ID"
 
-#, fuzzy
 msgid "DN"
 msgstr "DN"
 
@@ -11388,10 +11389,10 @@ msgid "SSL Servers"
 msgstr "SSL-Server"
 
 msgid "Unsafe debugging is now disabled."
-msgstr ""
+msgstr "Unsicheres Debugging ist nun deaktiviert."
 
 msgid "Unsafe debugging is now enabled."
-msgstr ""
+msgstr "Unsicheres Debugging ist nun aktiviert."
 
 msgid "Verbose debugging is now disabled."
 msgstr "Ausführliches Debugging ist nun deaktiviert."
@@ -12778,8 +12779,17 @@ msgstr "%s möchte eine Video-Sitzung mit Ihnen starten."
 msgid "Incoming Call"
 msgstr "Eingehender Anruf"
 
+msgid "_Hold"
+msgstr "_Halten"
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr "Stu_mmschalten"
+
+msgid "Call in progress"
+msgstr "Anruf im Gange"
 
 #, c-format
 msgid "%s has %d new message."
