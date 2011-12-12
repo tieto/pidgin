@@ -764,7 +764,7 @@ int aim_ssi_cleanlist(OscarData *od)
 				aim_ssi_del_from_private_list(od, NULL, cur->type);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(&od->ssi.local, cur->gid, 0x0000)))) {
 			char *alias = aim_ssi_getalias(&od->ssi.local, NULL, cur->name);
-			aim_ssi_addbuddy(od, cur->name, "orphans", NULL, alias, NULL, NULL, FALSE);
+			aim_ssi_addbuddy(od, cur->name, _("Buddies"), NULL, alias, NULL, NULL, FALSE);
 			aim_ssi_delbuddy(od, cur->name, NULL);
 			g_free(alias);
 		}
