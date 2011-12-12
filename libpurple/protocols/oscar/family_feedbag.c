@@ -771,16 +771,23 @@ int aim_ssi_cleanlist(OscarData *od)
 		cur = next;
 	}
 
-	/* Make sure there aren't any duplicate buddies in a group, or duplicate permits or denies */
 	cur = od->ssi.local.data;
 	while (cur) {
 		if ((cur->type == AIM_SSI_TYPE_BUDDY) || (cur->type == AIM_SSI_TYPE_PERMIT) || (cur->type == AIM_SSI_TYPE_DENY))
 		{
 			struct aim_ssi_item *cur2, *next2;
+
+			/* Make sure there aren't any duplicate permits or denies, or
+			   duplicate buddies within a group */
 			cur2 = cur->next;
 			while (cur2) {
 				next2 = cur2->next;
-				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!oscar_util_name_compare(cur->name, cur2->name))) {
+				if (cur->type == cur2->type
+						&& cur->gid == cur2->gid
+						&& cur->name
+						&& cur2->name
+						&& !oscar_util_name_compare(cur->name, cur2->name))
+				{
 					aim_ssi_itemlist_del(&od->ssi.local, cur2);
 				}
 				cur2 = next2;
