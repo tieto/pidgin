@@ -734,10 +734,37 @@ aim_ssi_freelist(OscarData *od)
 }
 
 /**
- * This "cleans" the ssi list.  It does the following:
- * 1) Makes sure all buddies, permits, and denies have names.
- * 2) Makes sure that all buddies are in a group that exist.
- * 3) Deletes any empty groups
+ * Look up the given TLV type in the item's data.  If the value of
+ * the TLV is not a valid UTF-8 string then use purple_utf8_salvage()
+ * to replace invalid bytes with question marks.
+ */
+static void cleanlist_ensure_utf8_data(struct aim_ssi_item *item, guint16 tlvtype)
+{
+	aim_tlv_t *tlv;
+	gchar *value, *salvaged;
+
+	tlv = aim_tlv_gettlv(item->data, tlvtype, 1);
+	if (tlv && tlv->length && !g_utf8_validate((const gchar *)tlv->value, tlv->length, NULL)) {
+		purple_debug_warning("oscar", "cleanlist found invalid UTF-8 "
+				"for 0x%04hx field of 0x%04hx item with name %s.  "
+				"Attempting to repair.\n",
+				tlvtype, item->type, item->name ? item->name : "(null)");
+		value = g_strndup((const gchar *)tlv->value, tlv->length);
+		salvaged = purple_utf8_salvage(value);
+		g_free(value);
+		if (*salvaged)
+			aim_tlvlist_replace_str(&item->data, tlvtype, salvaged);
+		else
+			aim_tlvlist_remove(&item->data, tlvtype);
+		g_free(salvaged);
+	}
+}
+
+/**
+ * This "cleans" the ssi list.  It does things like:
+ * - Makes sure all buddies, permits, and denies have names
+ * - Makes sure all buddies are in a group that exist
+ * - Makes sure strings are valid UTF-8
  *
  * @param od The oscar odion.
  * @return Return 0 if no errors, otherwise return the error number.
@@ -792,6 +819,12 @@ int aim_ssi_cleanlist(OscarData *od)
 				}
 				cur2 = next2;
 			}
+
+			/* Make sure alias is valid UTF-8 */
+			cleanlist_ensure_utf8_data(cur, 0x0131);
+
+			/* Make sure comment is valid UTF-8 */
+			cleanlist_ensure_utf8_data(cur, 0x013c);
 		}
 		cur = cur->next;
 	}
