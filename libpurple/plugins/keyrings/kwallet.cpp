@@ -82,6 +82,8 @@ class engine : private QObject, private QQueue<request*>
 		bool connected;
 		KWallet::Wallet *wallet;
 		static engine *pinstance;
+		gint idle_handle;
+		static bool idle_cb(engine *me);
 
 		void ExecuteRequests();
 };
@@ -132,6 +134,9 @@ KWalletPlugin::engine::~engine()
 {
 	closing = true;
 
+	if (idle_handle)
+		g_source_remove(idle_handle);
+
 	while (!isEmpty()) {
 		request *req = dequeue();
 		req->abort();
@@ -176,10 +181,19 @@ KWalletPlugin::engine::queue(request *req)
 	ExecuteRequests();
 }
 
+bool
+KWalletPlugin::engine::idle_cb(KWalletPlugin::engine *me)
+{
+	me->app->processEvents();
+	return true;
+}
+
 void
 KWalletPlugin::engine::ExecuteRequests()
 {
-	app->processEvents();
+	if (idle_handle == 0)
+		idle_handle = g_idle_add((GSourceFunc)idle_cb, this);
+
 	if (connected) {
 		while (!isEmpty()) {
 			request *req = dequeue();
