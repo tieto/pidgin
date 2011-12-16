@@ -145,6 +145,7 @@ typedef struct
 #include <time.h>
 
 #include "account.h"
+#include "keyring.h"
 #include "plugin.h"
 #include "status.h"
 #include "sslconn.h"
@@ -381,6 +382,15 @@ const char *purple_connection_get_display_name(const PurpleConnection *gc);
  * @return The protocol data for the connection.
  */
 void *purple_connection_get_protocol_data(const PurpleConnection *connection);
+
+/**
+ * Returns if the connection had an error
+ *
+ * @param gc The connection.
+ *
+ * @return TRUE if the connection had an error, FALSE otherwise
+ */
+gboolean purple_connection_had_error(const PurpleConnection *gc);
 
 /**
  * Updates the connection progress.

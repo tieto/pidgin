@@ -110,6 +110,7 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_CXX
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
@@ -1338,6 +1339,117 @@ else
 fi
 
 dnl #######################################################################
+dnl # Check for GNOME Keyring headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring=$enableval, enable_gnome_keyring=yes)
+
+dnl Check for gnome-keyring.h; if we don't have it, oh well
+if test "x$enable_gnome_keyring" = "xyes" ; then
+	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
+		AC_SUBST(GNOMEKEYRING_CFLAGS)
+		AC_SUBST(GNOMEKEYRING_LIBS)
+		AC_DEFINE(HAVE_GNOMEKEYRING, 1, [Define if we have GNOME Keyring.])
+	], [
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNOME Keyring development headers not found.
+Use --disable-gnome-keyring if you do not need GNOME Keyring support.
+])
+		fi])
+fi
+
+AM_CONDITIONAL(ENABLE_GNOMEKEYRING, test "x$enable_gnome_keyring" = "xyes")
+
+dnl #######################################################################
+dnl # Check for KWallet headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--enable-kwallet], [enable KWallet support])], enable_kwallet=$enableval, enable_kwallet=no)
+AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
+AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
+
+if test "x$enable_kwallet" = "xyes"; then
+	KWALLET_CXXFLAGS=""
+	KWALLET_LIBS=""
+	if test -z "$with_kwallet_includes" || test -z "$with_kwallet_libs"; then
+		AC_CHECK_PROG(KDE4_CONFIG, kde4-config, kde4-config, no)
+		if test "x$KDE4_CONFIG" = "xno"; then
+			if test "x$force_deps" = "xyes"; then
+				AC_MSG_ERROR([
+kde4-config not found. $KDE4_CONFIG
+Use --disable-kwallet if you do not need KWallet support.
+])
+			fi
+		fi
+	fi
+			
+	AC_LANG_PUSH([C++])
+	CPPFLAGS_save="$CPPFLAGS"
+	LDFLAGS_save="$LDFLAGS"
+
+	PKG_CHECK_MODULES(QT4, [QtCore], [
+			AC_SUBST(QT4_CFLAGS)
+			AC_SUBST(QT4_LIBS)
+		], [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+Qt4 development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		])
+
+	AC_MSG_CHECKING([for metaobject compiler])
+	MOC=`$PKG_CONFIG --variable=moc_location QtCore`
+	AC_SUBST(MOC)
+	AC_MSG_RESULT([$MOC])
+
+	dnl Check for kwallet.h; if we don't have it, oh well
+	if test "$ac_kwallet_includes" != "no"; then
+		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
+	elif test "x$KDE4_CONFIG" != "xno"; then
+		KWALLET_CXXFLAGS="-I`$KDE4_CONFIG --path include`"
+	fi
+	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
+	AC_CHECK_HEADER([kwallet.h], [true], [if test "x$force_deps" = "xyes"; then
+AC_MSG_ERROR([
+KWallet development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+fi
+])
+
+	AC_MSG_CHECKING([for KWallet libraries])
+	if test "$ac_kwallet_libs" != "no"; then
+		KWALLET_LIBS="-L$ac_kwallet_libs -lkdeui"
+	elif test "x$KDE4_CONFIG" != "xno"; then
+		KWALLET_LIBS="-L`$KDE4_CONFIG --install lib`/kde4/devel -lkdeui"
+	else
+		KWALLET_LIBS="-lkdeui"
+	fi
+	KWALLET_LIBS="$KWALLET_LIBS"
+	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
+		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
+		[if test "x$force_deps" = "xyes"; then
+AC_MSG_ERROR([
+KWallet development libraries not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+fi
+])
+
+	CPPFLAGS="$CPPFLAGS_save"
+	LDFLAGS="$LDFLAGS_save"
+	AC_LANG_POP
+fi
+
+AC_SUBST(KWALLET_CXXFLAGS)
+AC_SUBST(KWALLET_LIBS)
+
+AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
+
+dnl #######################################################################
 dnl # Check for Python
 dnl #######################################################################
 
@@ -2511,6 +2623,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/purple-3.pc
 		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
+		   libpurple/plugins/keyrings/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
 		   libpurple/plugins/mono/loader/Makefile
@@ -2571,6 +2684,8 @@ if test "x$enable_dbus" = "xyes" ; then
 fi
 echo Build with GNU Libidn......... : $enable_idn
 echo Build with NetworkManager..... : $enable_nm
+echo Build with GNOME Keyring...... : $enable_gnome_keyring
+echo Build with KWallet............ : $enable_kwallet
 echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
 	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR

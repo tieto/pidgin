@@ -42,6 +42,7 @@
 #include "upnp.h"
 #include "util.h"
 #include "network.h"
+#include "keyring.h"
 
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -2346,6 +2347,80 @@ logging_page(void)
 	return ret;
 }
 
+static void
+change_master_password_cb(GtkWidget *button, gpointer ptr)
+{
+	purple_keyring_change_master(NULL, NULL);
+}
+
+static void
+keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+{
+	GtkWidget *button = data;
+	PurpleKeyring *keyring;
+
+	g_return_if_fail(type == PURPLE_PREF_STRING);
+	g_return_if_fail(g_strcmp0(name, "/purple/keyring/active") == 0);
+
+	/**
+	 * This part is annoying.
+	 * Since we do not know if purple_keyring_inuse was changed yet,
+	 * as we do not know the order the callbacks are called in, we
+	 * have to rely on the prefs system, and find the keyring that
+	 * is (or will be) used, from there.
+	 */
+
+	keyring = purple_keyring_find_keyring_by_id(val);
+
+	if (purple_keyring_get_change_master(keyring))
+		gtk_widget_set_sensitive(button, TRUE);
+	else
+		gtk_widget_set_sensitive(button, FALSE);
+}
+
+static GtkWidget *
+keyring_page(void)
+{
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkWidget *button;
+	GList *names;
+	void *prefs;
+	const char *keyring_id;
+	PurpleKeyring *keyring;
+
+	keyring_id = purple_prefs_get_string("/purple/keyring/active");
+	keyring = purple_keyring_find_keyring_by_id(keyring_id);
+
+	prefs = purple_prefs_get_handle();
+
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+
+	/*  Keyring selection */
+	vbox = pidgin_make_frame(ret, _("Keyring"));
+	names = purple_keyring_get_options();
+	pidgin_prefs_dropdown_from_list(vbox, _("Keyring :"), PURPLE_PREF_STRING,
+				 "/purple/keyring/active", names);
+	g_list_free(names);
+
+	/* Change master password */
+	button = gtk_button_new_with_mnemonic(_("_Change master password."));
+	
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(change_master_password_cb), NULL);
+	purple_prefs_connect_callback (prefs, "/purple/keyring/active", keyring_page_pref_changed, button);
+
+	if (purple_keyring_get_change_master(keyring))
+		gtk_widget_set_sensitive(button, TRUE);
+	else
+		gtk_widget_set_sensitive(button, FALSE);
+
+	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 1);
+	gtk_widget_show_all(ret);
+
+	return ret;
+}
+
 #ifndef _WIN32
 static gint
 sound_cmd_yeah(GtkEntry *entry, gpointer d)
@@ -2896,6 +2971,7 @@ prefs_notebook_init(void)
 	prefs_notebook_add_page(_("Logging"), logging_page(), notebook_page++);
 	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
 	prefs_notebook_add_page(_("Proxy"), proxy_page(), notebook_page++);
+	prefs_notebook_add_page(_("Password Storage"), keyring_page(), notebook_page++);
 
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);

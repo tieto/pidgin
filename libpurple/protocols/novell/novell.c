@@ -132,7 +132,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				 * password was invalid.
 				 */
 				if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
-					purple_account_set_password(purple_connection_get_account(gc), NULL);
+					purple_account_set_password(purple_connection_get_account(gc), NULL, NULL, NULL);
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				break;
 			default:
@@ -2036,7 +2036,7 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	if (gc)
 	{
 		if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
+			purple_account_set_password(account, NULL, NULL, NULL);
 		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NAME_IN_USE,
 			_("You have signed on from another location"));

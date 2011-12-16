@@ -158,7 +158,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
+			purple_account_set_password(account, NULL, NULL, NULL);
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NAME_IN_USE,
 			_("You have signed on from another location"));
 		return;
@@ -1959,7 +1959,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 					/* Password incorrect */
 					/* Set password to NULL. Avoids account locking. Brings dialog to enter password if clicked on Re-enable account */
 					if (!purple_account_get_remember_password(account))
-						purple_account_set_password(account, NULL);
+						purple_account_set_password(account, NULL, NULL, NULL);
 					error_reason = g_strdup(_("Incorrect password"));
 					error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 					break;
@@ -2256,7 +2256,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		}
 #endif /* TRY_WEBMESSENGER_LOGIN */
 		if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
+			purple_account_set_password(account, NULL, NULL, NULL);
 
 		msg = g_strdup(_("Invalid username or password"));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;

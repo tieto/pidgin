@@ -356,11 +356,17 @@ do_prpl_change_account_status(PurpleAccount *account,
 
 	if (!purple_status_is_online(new_status))
 	{
+		/* Clear out the unsaved password if the disconnect was initiated
+		   by the user */
+		if (!purple_account_get_remember_password(account)) {
+			PurpleConnection *gc = purple_account_get_connection(account);
+			if (gc && purple_connection_had_error(gc))
+				purple_account_set_password(account, NULL, NULL, NULL);
+		}
+
 		if (!purple_account_is_disconnected(account))
 			purple_account_disconnect(account);
-		/* Clear out the unsaved password if we're already disconnected and we switch to offline status */
-		else if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
+
 		return;
 	}
 

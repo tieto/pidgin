@@ -48,6 +48,13 @@ typedef struct
 
 } PurplePerlPrefsHandler;
 
+typedef struct
+{
+	SV *callback;
+	SV *data;
+
+} PurplePerlAccountPasswordHandler;
+
 void purple_perl_plugin_action_cb(PurplePluginAction * gpa);
 GList *purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context);
 
@@ -81,5 +88,11 @@ void purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin);
 guint purple_perl_prefs_connect_callback(PurplePlugin *plugin, const char *name, SV *callback, SV *data);
 void purple_perl_prefs_disconnect_callback(guint callback_id);
 void purple_perl_pref_cb_clear_for_plugin(PurplePlugin *plugin);
+
+void
+purple_perl_account_get_password(PurpleAccount *account, SV *func, SV *data);
+void
+purple_perl_account_set_password(PurpleAccount *account, const char *password,
+                                 SV *func, SV *data);
 
 #endif /* _PURPLE_PERL_HANDLERS_H_ */
