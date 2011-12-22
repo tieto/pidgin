@@ -7152,6 +7152,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 	{
 		gray_stuff_out(PIDGIN_CONVERSATION(conv));
 		generate_send_to_items(win);
+		regenerate_plugins_items(win);
 	}
 
 	if (fields & PIDGIN_CONV_TAB_ICON)
