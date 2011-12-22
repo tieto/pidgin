@@ -794,11 +794,11 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 
 		for (value = xmlnode_get_child(field, "value"); value; value = xmlnode_get_next_twin(value)) {
 			gchar *val = xmlnode_get_data(value);
-			xdatafield->values = g_list_append(xdatafield->values, val);
+			xdatafield->values = g_list_prepend(xdatafield->values, val);
 		}
 
 		xdatafield->values = g_list_sort(xdatafield->values, (GCompareFunc)strcmp);
-		fields = g_list_append(fields, xdatafield);
+		fields = g_list_prepend(fields, xdatafield);
 	}
 
 	fields = g_list_sort(fields, jabber_caps_xdata_field_compare);
