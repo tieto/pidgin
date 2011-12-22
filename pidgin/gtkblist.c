@@ -6225,7 +6225,7 @@ static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer
 
 static gboolean insert_node(PurpleBuddyList *list, PurpleBlistNode *node, GtkTreeIter *iter)
 {
-	GtkTreeIter parent_iter, cur, *curptr = NULL;
+	GtkTreeIter parent_iter = {0, NULL, NULL, NULL}, cur, *curptr = NULL;
 	struct _pidgin_blist_node *gtknode = purple_blist_node_get_ui_data(node);
 	GtkTreePath *newpath;
 
