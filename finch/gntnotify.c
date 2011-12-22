@@ -397,6 +397,12 @@ finch_notify_sr_new_rows(PurpleConnection *gc,
 	}
 }
 
+static void
+notify_sr_destroy_cb(GntWidget *window, void *data)
+{
+	purple_notify_close(PURPLE_NOTIFY_SEARCHRESULTS, window);
+}
+
 static void *
 finch_notify_searchresults(PurpleConnection *gc, const char *title,
 		const char *primary, const char *secondary,
@@ -481,6 +487,8 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	}
 
 	gnt_box_add_widget(GNT_BOX(window), box);
+	g_signal_connect(G_OBJECT(tree), "destroy",
+			G_CALLBACK(notify_sr_destroy_cb), NULL);
 
 	finch_notify_sr_new_rows(gc, results, tree);
 
