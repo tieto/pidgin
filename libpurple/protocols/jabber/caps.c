@@ -875,21 +875,24 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 		g_free(formtype);
 
 		while (fields) {
-			GList *value;
 			JabberDataFormField *field = (JabberDataFormField*)fields->data;
 
 			if (!g_str_equal(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */
 				append_escaped_string(context, field->var);
 				/* Append <value/> elements' cdata */
-				for (value = field->values; value; value = value->next) {
-					append_escaped_string(context, value->data);
-					g_free(value->data);
+				while (field->values) {
+					append_escaped_string(context, field->values->data);
+					g_free(field->values->data);
+					field->values = g_list_delete_link(field->values,
+					                                   field->values);
 				}
+			} else {
+				g_list_free_full(field->values, g_free);
 			}
 
 			g_free(field->var);
-			g_list_free(field->values);
+			g_free(field);
 
 			fields = g_list_delete_link(fields, fields);
 		}
