@@ -386,6 +386,7 @@ finch_notify_sr_new_rows(PurpleConnection *gc,
 {
 	GntTree *tree = GNT_TREE(data);
 	GList *o;
+	GntTreeRow *prev = NULL;
 
 	/* XXX: Do I need to empty the tree here? */
 
@@ -393,7 +394,8 @@ finch_notify_sr_new_rows(PurpleConnection *gc,
 	{
 		gnt_tree_add_row_after(GNT_TREE(tree), o->data,
 				gnt_tree_create_row_from_list(GNT_TREE(tree), o->data),
-				NULL, NULL);
+				NULL, prev);
+		prev = o->data;
 	}
 }
 
