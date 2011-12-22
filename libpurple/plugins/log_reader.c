@@ -2203,7 +2203,6 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 			log->logger = amsn_logger;
 			log->logger_data = data;
 			list = g_list_prepend(list, log);
-			found_start = FALSE;
 
 			purple_debug_info("aMSN logger",
 			                  "Found log for %s:"

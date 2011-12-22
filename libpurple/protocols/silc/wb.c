@@ -105,11 +105,9 @@ typedef struct {
 
 PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry)
 {
-	SilcClientConnection conn;
 	PurpleWhiteboard *wb;
 	SilcPurpleWb wbs;
 
-	conn = sg->conn;
 	wb = purple_whiteboard_get_session(sg->account, client_entry->nickname);
 	if (!wb)
 		wb = purple_whiteboard_create(sg->account, client_entry->nickname, 0);

@@ -224,7 +224,6 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 					    tmp, cflags, time(NULL));
 
 			purple_imgstore_unref_by_id(imgid);
-			cflags = 0;
 			ret = TRUE;
 		}
 		goto out;

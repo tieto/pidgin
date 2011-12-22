@@ -307,8 +307,6 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 {
 	OscarData *od;
 	PurpleAccount *account;
-	PurplePresence *presence = NULL;
-	PurpleStatus *status = NULL;
 	PurpleGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
@@ -330,8 +328,6 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 		bname = purple_buddy_get_name(b);
 		g = purple_buddy_get_group(b);
 		gname = purple_group_get_name(g);
-		presence = purple_buddy_get_presence(b);
-		status = purple_presence_get_active_status(presence);
 	}
 
 	if (userinfo != NULL)

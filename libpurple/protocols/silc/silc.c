@@ -400,7 +400,7 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 	}
 
 	/* Perform SILC Key Exchange. */
-	silc_client_key_exchange(sg->client, &params, sg->public_key,
+	silc_client_key_exchange(client, &params, sg->public_key,
 				 sg->private_key, stream, SILC_CONN_SERVER,
 				 silcpurple_connect_cb, gc);
 

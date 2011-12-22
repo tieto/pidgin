@@ -427,15 +427,12 @@ static PurpleXfer* find_mxit_xfer( struct MXitSession* session, const char* file
 void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const char* data, int datalen )
 {
 	PurpleXfer*			xfer	= NULL;
-	struct mxitxfer*	mx		= NULL;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_rx_file: (size=%i)\n", datalen );
 
 	/* find the file-transfer object */
 	xfer = find_mxit_xfer( session, fileid );
 	if ( xfer ) {
-		mx = purple_xfer_get_protocol_data( xfer );
-
 		/* this is the transfer we have been looking for */
 		purple_xfer_ref( xfer );
 		purple_xfer_start( xfer, -1, NULL, 0 );

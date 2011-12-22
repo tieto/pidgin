@@ -603,15 +603,11 @@ void
 peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
-	OscarData *od;
-	PurpleConnection *gc;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
 	int flags;
 
 	conn = data;
-	od = conn->od;
-	gc = od->gc;
 
 	purple_debug_info("oscar", "Accepting connection on listener socket.\n");
 

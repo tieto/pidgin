@@ -628,6 +628,7 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
 
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver, MXIT_EMOTICON_SIZE, id, time( NULL ) );
+	/* FIXME: This should be cancelled somewhere if not needed. */
 	url_data = purple_util_fetch_url( url, TRUE, NULL, TRUE, -1, emoticon_returned, mx );
 	g_free( url );
 }

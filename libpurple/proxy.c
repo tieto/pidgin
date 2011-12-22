@@ -2024,7 +2024,6 @@ s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
 
 	if (purple_proxy_info_get_username(connect_data->gpi) != NULL) {

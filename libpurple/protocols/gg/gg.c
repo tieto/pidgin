@@ -1091,6 +1091,7 @@ static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user
 
 				purple_debug_info("gg", "gg_get_avatar_url_cb: "
 					"requesting avatar for %s\n", uin);
+				/* FIXME: This should be cancelled somewhere if not needed. */
 				url_data = purple_util_fetch_url_request(account,
 						bigavatar, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)",
 						FALSE, NULL, FALSE, -1, gg_fetch_avatar_cb, data);
@@ -1119,6 +1120,7 @@ static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
 
 	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%u/0.xml", uin);
 
+	/* FIXME: This should be cancelled somewhere if not needed. */
 	url_data = purple_util_fetch_url_request(
 			purple_connection_get_account(gc), avatarurl, TRUE,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,

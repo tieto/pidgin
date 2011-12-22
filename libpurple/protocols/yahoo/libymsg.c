@@ -634,7 +634,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	gboolean export = FALSE;
 	gboolean got_serv_list = FALSE;
 	YahooFriend *f = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -712,7 +711,6 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 					}
 					b = purple_buddy_new(account, norm_bud, NULL);
 					purple_blist_add_buddy(b, NULL, g, NULL);
-					export = TRUE;
 				}
 
 				yahoo_do_group_check(account, ht, norm_bud, grp);

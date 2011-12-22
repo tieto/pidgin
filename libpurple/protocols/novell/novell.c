@@ -1177,7 +1177,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	const char *dn;
 	const char *name;
 	int idle = 0;
-	gboolean loggedin = TRUE;
 
 	account = purple_buddy_get_account(buddy);
 	name = purple_buddy_get_name(buddy);
@@ -1194,7 +1193,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 			break;
 		case NM_STATUS_OFFLINE:
 			status_id = NOVELL_STATUS_TYPE_OFFLINE;
-			loggedin = FALSE;
 			break;
 		case NM_STATUS_AWAY_IDLE:
 			status_id = NOVELL_STATUS_TYPE_AWAY;
@@ -1202,7 +1200,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 			break;
 		default:
 			status_id = NOVELL_STATUS_TYPE_OFFLINE;
-			loggedin = FALSE;
 			break;
 	}
 
