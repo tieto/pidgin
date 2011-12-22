@@ -1895,7 +1895,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			{
 				const char *display_name = purple_connection_get_display_name(gc);
 				if (display_name != NULL)
-					alias = display_name;
+					new_alias = display_name;
 			}
 		}
 	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
