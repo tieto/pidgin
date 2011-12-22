@@ -202,6 +202,12 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+dnl Haiku does not use libm for the math functions, they are part
+dnl of the C library
+AC_SEARCH_LIBS([ceil], [m], [], [
+  AC_MSG_ERROR([unable to find the floor() function])
+])
+
 AC_MSG_CHECKING(for fileno())
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
