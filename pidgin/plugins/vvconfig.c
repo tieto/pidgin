@@ -612,7 +612,7 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 			GstElement *valve;
 
 			percent = gst_msg_db_to_percent(msg, "rms");
-			gtk_progress_bar_set_fraction(ctx->level, percent * 5);
+			gtk_progress_bar_set_fraction(ctx->level, percent);
 
 			percent = gst_msg_db_to_percent(msg, "decay");
 			threshold = gtk_range_get_value(ctx->threshold) / 100.0;
