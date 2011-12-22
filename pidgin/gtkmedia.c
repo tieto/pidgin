@@ -40,6 +40,8 @@
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
+#elif defined(GDK_WINDOWING_QUARTZ)
+#include <gdk/gdkquartz.h>
 #endif
 
 #include <gst/interfaces/xoverlay.h>
@@ -560,6 +562,8 @@ realize_cb_cb(PidginMediaRealizeData *data)
 		window_id = GDK_WINDOW_HWND(window);
 #elif defined(HAVE_X11)
 		window_id = GDK_WINDOW_XWINDOW(window);
+#elif defined(GDK_WINDOWING_QUARTZ)
+		window_id = (gulong) gdk_quartz_window_get_nsview(window);
 #else
 #		error "Unsupported windowing system"
 #endif
@@ -1082,6 +1086,10 @@ create_default_video_src(PurpleMedia *media,
 		src = gst_element_factory_make("dshowvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
+#elif defined(__APPLE__)
+	src = gst_element_factory_make("osxvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autovideosrc", NULL);
 #else
 	src = gst_element_factory_make("gconfvideosrc", NULL);
 	if (src == NULL)
@@ -1136,6 +1144,8 @@ create_default_audio_src(PurpleMedia *media,
 		src = gst_element_factory_make("osssrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("dshowaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("osxaudiosrc", NULL);
 	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default audio source.\n");
