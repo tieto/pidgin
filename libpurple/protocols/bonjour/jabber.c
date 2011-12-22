@@ -206,7 +206,9 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 						g_string_append_printf(str, " face='%s'", font_face);
 					if (font_size)
 						g_string_append_printf(str, " size='%s'", font_size);
-					if (ichat_text_color)
+					if (font_color)
+						g_string_append_printf(str, " color='%s'", font_color);
+					else if (ichat_text_color)
 						g_string_append_printf(str, " color='%s'", ichat_text_color);
 					if (ichat_balloon_color)
 						g_string_append_printf(str, " back='%s'", ichat_balloon_color);
