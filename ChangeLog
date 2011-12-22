@@ -41,6 +41,10 @@ version 3.0.0 (??/??/????):
 	  (#14529)
 	* Support file transfers up to ~9 EiB.
 
+	Plugins:
+	* The Voice/Video Settings plugin supports using the sndio GStreamer
+	 backends. (Brad Smith) (#14414)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
