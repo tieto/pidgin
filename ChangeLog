@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	libpurple:
+	* Support new connection states and signals for NetworkManager 0.9+.
+	  (Dan Williams) (#13859)
+
 	AIM and ICQ:
 	* Make buddy list management code more efficient. (Oliver) (#4816)
 	* Don't try to format ICQ usernames entered as email addresses.
