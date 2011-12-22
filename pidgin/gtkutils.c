@@ -2533,9 +2533,9 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 					   the image. */
 					purple_debug_info("buddyicon", "Converted image from "
 							"%dx%d to %dx%d, format=%s, quality=%u, "
-							"filesize=%zu\n", orig_width, orig_height,
-							new_width, new_height, prpl_formats[i], quality,
-							length);
+							"filesize=%" G_GSIZE_FORMAT "\n",
+							orig_width, orig_height, new_width, new_height,
+							prpl_formats[i], quality, length);
 					if (len)
 						*len = length;
 					g_strfreev(prpl_formats);
@@ -3126,7 +3126,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 
 	if (!gdk_pixbuf_loader_write(loader, buf, count, &error) || error) {
 		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_write() "
-				"failed with size=%zu: %s\n", count,
+				"failed with size=%" G_GSIZE_FORMAT ": %s\n", count,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
@@ -3136,7 +3136,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 
 	if (!gdk_pixbuf_loader_close(loader, &error) || error) {
 		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_close() "
-				"failed for image of size %zu: %s\n", count,
+				"failed for image of size %" G_GSIZE_FORMAT ": %s\n", count,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
@@ -3150,7 +3150,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 		pixbuf = G_OBJECT(gdk_pixbuf_loader_get_pixbuf(loader));
 	if (!pixbuf) {
 		purple_debug_warning("gtkutils", "%s() returned NULL for image "
-				"of size %zu\n",
+				"of size %" G_GSIZE_FORMAT "\n",
 				animated ? "gdk_pixbuf_loader_get_animation"
 					: "gdk_pixbuf_loader_get_pixbuf", count);
 		g_object_unref(G_OBJECT(loader));
