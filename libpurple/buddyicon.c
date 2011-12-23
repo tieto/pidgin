@@ -955,25 +955,6 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 	return purple_buddy_icons_node_set_custom_icon(node, data, len);
 }
 
-gboolean
-purple_buddy_icons_has_custom_icon(PurpleContact *contact)
-{
-	return purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact);
-}
-
-PurpleStoredImage *
-purple_buddy_icons_find_custom_icon(PurpleContact *contact)
-{
-	return purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
-}
-
-PurpleStoredImage *
-purple_buddy_icons_set_custom_icon(PurpleContact *contact, guchar *icon_data,
-                                   size_t icon_len)
-{
-	return purple_buddy_icons_node_set_custom_icon((PurpleBlistNode*)contact, icon_data, icon_len);
-}
-
 static void
 delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name)
 {

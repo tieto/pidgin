@@ -661,7 +661,7 @@ static int aim_ssi_sync(OscarData *od)
 			for (cur1 = od->ssi.local.data; cur1; cur1 = cur1->next)
 				aim_ssi_item_debug_append(debugstr, "\t", cur1);
 			purple_debug_misc("oscar", "Dumping item list of account %s:\n%s",
-				purple_connection_get_account(od->gc)->username, debugstr->str);
+				purple_account_get_username(purple_connection_get_account(od->gc)), debugstr->str);
 		}
 	}
 	g_string_free(debugstr, TRUE);
@@ -734,10 +734,37 @@ aim_ssi_freelist(OscarData *od)
 }
 
 /**
- * This "cleans" the ssi list.  It does the following:
- * 1) Makes sure all buddies, permits, and denies have names.
- * 2) Makes sure that all buddies are in a group that exist.
- * 3) Deletes any empty groups
+ * Look up the given TLV type in the item's data.  If the value of
+ * the TLV is not a valid UTF-8 string then use purple_utf8_salvage()
+ * to replace invalid bytes with question marks.
+ */
+static void cleanlist_ensure_utf8_data(struct aim_ssi_item *item, guint16 tlvtype)
+{
+	aim_tlv_t *tlv;
+	gchar *value, *salvaged;
+
+	tlv = aim_tlv_gettlv(item->data, tlvtype, 1);
+	if (tlv && tlv->length && !g_utf8_validate((const gchar *)tlv->value, tlv->length, NULL)) {
+		purple_debug_warning("oscar", "cleanlist found invalid UTF-8 "
+				"for 0x%04hx field of 0x%04hx item with name %s.  "
+				"Attempting to repair.\n",
+				tlvtype, item->type, item->name ? item->name : "(null)");
+		value = g_strndup((const gchar *)tlv->value, tlv->length);
+		salvaged = purple_utf8_salvage(value);
+		g_free(value);
+		if (*salvaged)
+			aim_tlvlist_replace_str(&item->data, tlvtype, salvaged);
+		else
+			aim_tlvlist_remove(&item->data, tlvtype);
+		g_free(salvaged);
+	}
+}
+
+/**
+ * This "cleans" the ssi list.  It does things like:
+ * - Makes sure all buddies, permits, and denies have names
+ * - Makes sure all buddies are in a group that exist
+ * - Makes sure strings are valid UTF-8
  *
  * @param od The oscar odion.
  * @return Return 0 if no errors, otherwise return the error number.
@@ -764,27 +791,40 @@ int aim_ssi_cleanlist(OscarData *od)
 				aim_ssi_del_from_private_list(od, NULL, cur->type);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(&od->ssi.local, cur->gid, 0x0000)))) {
 			char *alias = aim_ssi_getalias(&od->ssi.local, NULL, cur->name);
-			aim_ssi_addbuddy(od, cur->name, "orphans", NULL, alias, NULL, NULL, FALSE);
+			aim_ssi_addbuddy(od, cur->name, _("Buddies"), NULL, alias, NULL, NULL, FALSE);
 			aim_ssi_delbuddy(od, cur->name, NULL);
 			g_free(alias);
 		}
 		cur = next;
 	}
 
-	/* Make sure there aren't any duplicate buddies in a group, or duplicate permits or denies */
 	cur = od->ssi.local.data;
 	while (cur) {
 		if ((cur->type == AIM_SSI_TYPE_BUDDY) || (cur->type == AIM_SSI_TYPE_PERMIT) || (cur->type == AIM_SSI_TYPE_DENY))
 		{
 			struct aim_ssi_item *cur2, *next2;
+
+			/* Make sure there aren't any duplicate permits or denies, or
+			   duplicate buddies within a group */
 			cur2 = cur->next;
 			while (cur2) {
 				next2 = cur2->next;
-				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!oscar_util_name_compare(cur->name, cur2->name))) {
+				if (cur->type == cur2->type
+						&& cur->gid == cur2->gid
+						&& cur->name
+						&& cur2->name
+						&& !oscar_util_name_compare(cur->name, cur2->name))
+				{
 					aim_ssi_itemlist_del(&od->ssi.local, cur2);
 				}
 				cur2 = next2;
 			}
+
+			/* Make sure alias is valid UTF-8 */
+			cleanlist_ensure_utf8_data(cur, 0x0131);
+
+			/* Make sure comment is valid UTF-8 */
+			cleanlist_ensure_utf8_data(cur, 0x013c);
 		}
 		cur = cur->next;
 	}
@@ -1284,7 +1324,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		aim_tlvlist_free(data);
 	}
 	purple_debug_misc("oscar", "Reading items from tlvlist for account %s:\n%s",
-		purple_connection_get_account(od->gc)->username, debugstr->str);
+		purple_account_get_username(purple_connection_get_account(od->gc)), debugstr->str);
 	g_string_free(debugstr, TRUE);
 
 	/* Read in the timestamp */
@@ -1674,18 +1714,35 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
-	char *bn, *msg;
+	char *bn, *msg, *tmpstr;
 
 	/* Read buddy name */
-	if ((tmp = byte_stream_get8(bs)))
-		bn = byte_stream_getstr(bs, tmp);
-	else
-		bn = NULL;
+	tmp = byte_stream_get8(bs);
+	if (!tmp) {
+		purple_debug_warning("oscar", "Dropping auth grant SNAC "
+				"because username was empty\n");
+		return 0;
+	}
+	bn = byte_stream_getstr(bs, tmp);
+	if (!g_utf8_validate(bn, -1, NULL)) {
+		purple_debug_warning("oscar", "Dropping auth grant SNAC "
+				"because the username was not valid UTF-8\n");
+		g_free(bn);
+	}
 
-	/* Read message (null terminated) */
-	if ((tmp = byte_stream_get16(bs)))
+	/* Read message */
+	tmp = byte_stream_get16(bs);
+	if (tmp) {
 		msg = byte_stream_getstr(bs, tmp);
-	else
+		if (!g_utf8_validate(msg, -1, NULL)) {
+			/* Ugh, msg isn't UTF8.  Let's salvage. */
+			purple_debug_warning("oscar", "Got non-UTF8 message in auth "
+					"grant from %s\n", bn);
+			tmpstr = purple_utf8_salvage(msg);
+			g_free(msg);
+			msg = tmpstr;
+		}
+	} else
 		msg = NULL;
 
 	/* Unknown */
@@ -1748,18 +1805,35 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
-	char *bn, *msg;
+	char *bn, *msg, *tmpstr;
 
 	/* Read buddy name */
-	if ((tmp = byte_stream_get8(bs)))
-		bn = byte_stream_getstr(bs, tmp);
-	else
-		bn = NULL;
+	tmp = byte_stream_get8(bs);
+	if (!tmp) {
+		purple_debug_warning("oscar", "Dropping auth request SNAC "
+				"because username was empty\n");
+		return 0;
+	}
+	bn = byte_stream_getstr(bs, tmp);
+	if (!g_utf8_validate(bn, -1, NULL)) {
+		purple_debug_warning("oscar", "Dropping auth request SNAC "
+				"because the username was not valid UTF-8\n");
+		g_free(bn);
+	}
 
-	/* Read message (null terminated) */
-	if ((tmp = byte_stream_get16(bs)))
+	/* Read message */
+	tmp = byte_stream_get16(bs);
+	if (tmp) {
 		msg = byte_stream_getstr(bs, tmp);
-	else
+		if (!g_utf8_validate(msg, -1, NULL)) {
+			/* Ugh, msg isn't UTF8.  Let's salvage. */
+			purple_debug_warning("oscar", "Got non-UTF8 message in auth "
+					"request from %s\n", bn);
+			tmpstr = purple_utf8_salvage(msg);
+			g_free(msg);
+			msg = tmpstr;
+		}
+	} else
 		msg = NULL;
 
 	/* Unknown */
@@ -1832,21 +1906,38 @@ static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *m
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
 	guint8 reply;
-	char *bn, *msg;
+	char *bn, *msg, *tmpstr;
 
 	/* Read buddy name */
-	if ((tmp = byte_stream_get8(bs)))
-		bn = byte_stream_getstr(bs, tmp);
-	else
-		bn = NULL;
+	tmp = byte_stream_get8(bs);
+	if (!tmp) {
+		purple_debug_warning("oscar", "Dropping auth reply SNAC "
+				"because username was empty\n");
+		return 0;
+	}
+	bn = byte_stream_getstr(bs, tmp);
+	if (!g_utf8_validate(bn, -1, NULL)) {
+		purple_debug_warning("oscar", "Dropping auth reply SNAC "
+				"because the username was not valid UTF-8\n");
+		g_free(bn);
+	}
 
 	/* Read reply */
 	reply = byte_stream_get8(bs);
 
-	/* Read message (null terminated) */
-	if ((tmp = byte_stream_get16(bs)))
+	/* Read message */
+	tmp = byte_stream_get16(bs);
+	if (tmp) {
 		msg = byte_stream_getstr(bs, tmp);
-	else
+		if (!g_utf8_validate(msg, -1, NULL)) {
+			/* Ugh, msg isn't UTF8.  Let's salvage. */
+			purple_debug_warning("oscar", "Got non-UTF8 message in auth "
+					"reply from %s\n", bn);
+			tmpstr = purple_utf8_salvage(msg);
+			g_free(msg);
+			msg = tmpstr;
+		}
+	} else
 		msg = NULL;
 
 	/* Unknown */
@@ -1872,10 +1963,18 @@ static int receiveadded(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	char *bn;
 
 	/* Read buddy name */
-	if ((tmp = byte_stream_get8(bs)))
-		bn = byte_stream_getstr(bs, tmp);
-	else
-		bn = NULL;
+	tmp = byte_stream_get8(bs);
+	if (!tmp) {
+		purple_debug_warning("oscar", "Dropping 'you were added' SNAC "
+				"because username was empty\n");
+		return 0;
+	}
+	bn = byte_stream_getstr(bs, tmp);
+	if (!g_utf8_validate(bn, -1, NULL)) {
+		purple_debug_warning("oscar", "Dropping 'you were added' SNAC "
+				"because the username was not valid UTF-8\n");
+		g_free(bn);
+	}
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, bn);

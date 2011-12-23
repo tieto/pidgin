@@ -99,6 +99,7 @@ typedef enum {
 struct _JabberStream
 {
 	int fd;
+	guint inpa;
 
 	PurpleSrvTxtQueryData *srv_query_data;
 

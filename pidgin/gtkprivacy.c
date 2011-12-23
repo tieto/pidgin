@@ -211,7 +211,7 @@ select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 	dialog->account = account;
 
 	for (i = 0; i < menu_entry_count; i++) {
-		if (menu_entries[i].num == account->perm_deny) {
+		if (menu_entries[i].num == purple_account_get_privacy_type(account)) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), i);
 			break;
 		}
@@ -230,12 +230,12 @@ type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 {
 	int new_type = menu_entries[gtk_combo_box_get_active(combo)].num;
 
-	dialog->account->perm_deny = new_type;
+	purple_account_set_privacy_type(dialog->account, new_type);
 	serv_set_permit_deny(purple_account_get_connection(dialog->account));
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);
-	gtk_widget_hide(dialog->button_box);
+	gtk_widget_hide_all(dialog->button_box);
 
 	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
@@ -363,15 +363,15 @@ privacy_dialog_new(void)
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
-	dialog->type_menu = gtk_combo_box_text_new();
+	dialog->type_menu = gtk_combo_box_new_text();
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->type_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->type_menu);
 
 	for (i = 0; i < menu_entry_count; i++) {
-		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(dialog->type_menu),
+		gtk_combo_box_append_text(GTK_COMBO_BOX(dialog->type_menu),
 		                          _(menu_entries[i].text));
 
-		if (menu_entries[i].num == dialog->account->perm_deny)
+		if (menu_entries[i].num == purple_account_get_privacy_type(dialog->account))
 			selected = i;
 	}
 
@@ -411,12 +411,12 @@ privacy_dialog_new(void)
 
 	type_changed_cb(GTK_COMBO_BOX(dialog->type_menu), dialog);
 #if 0
-	if (dialog->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
+	if (purple_account_get_privacy_type(dialog->account) == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (dialog->account->perm_deny == PURPLE_PRIVACY_DENY_USERS) {
+	else if (purple_account_get_privacy_type(dialog->account) == PURPLE_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
@@ -434,7 +434,7 @@ pidgin_privacy_dialog_show(void)
 		privacy_dialog = privacy_dialog_new();
 
 	gtk_widget_show(privacy_dialog->win);
-	gdk_window_raise(gtk_widget_get_window(privacy_dialog->win));
+	gdk_window_raise(privacy_dialog->win->window);
 }
 
 void

@@ -1,5 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw \
+	win32-resolver.c \
+	win32-resolver.h \
 	lib/common.c \
 	lib/compat.h \
 	lib/COPYING \
@@ -61,11 +63,11 @@ INTGGSOURCES = \
 	lib/sha1.c
 
 INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED -DUSE_INTERNAL_LIBGADU
+endif
 
 if USE_GNUTLS
 GADU_LIBS += $(GNUTLS_LIBS)
-endif
-
+GADU_CFLAGS += $(GNUTLS_CFLAGS)
 endif
 
 GGSOURCES = \

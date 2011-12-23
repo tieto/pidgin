@@ -67,7 +67,13 @@
 #include "pidginstock.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 #include "pidgin/minidialog.h"
+
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#endif
 
 typedef struct {
 	GtkTreeModel *model;
@@ -180,6 +186,7 @@ pidgin_create_dialog(const char *title, guint border_width, const char *role, gb
 
 	wnd = GTK_WINDOW(gtk_dialog_new());
 	pidgin_window_init(wnd, title, border_width, role, resizable);
+	g_object_set(G_OBJECT(wnd), "has-separator", FALSE, NULL);
 
 	return GTK_WIDGET(wnd);
 }
@@ -187,7 +194,7 @@ pidgin_create_dialog(const char *title, guint border_width, const char *role, gb
 GtkWidget *
 pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing)
 {
-	GtkBox *vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+	GtkBox *vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
 	gtk_box_set_homogeneous(vbox, homogeneous);
 	gtk_box_set_spacing(vbox, spacing);
 	return GTK_WIDGET(vbox);
@@ -195,12 +202,12 @@ pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, 
 
 GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog)
 {
-	return gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	return GTK_DIALOG(dialog)->vbox;
 }
 
 GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog)
 {
-	return gtk_dialog_get_action_area(GTK_DIALOG(dialog));
+	return GTK_DIALOG(dialog)->action_area;
 }
 
 GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
@@ -275,6 +282,69 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 	return frame;
 }
 
+GtkWidget *
+pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
+{
+	GtkWidget *frame;
+	GtkWidget *webview;
+	GtkWidget *sep;
+	GtkWidget *sw;
+	GtkWidget *toolbar = NULL;
+	GtkWidget *vbox;
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	if (editable) {
+		toolbar = gtk_imhtmltoolbar_new();
+		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+		gtk_widget_show(toolbar);
+
+		sep = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+		g_signal_connect_swapped(G_OBJECT(toolbar), "show", G_CALLBACK(gtk_widget_show), sep);
+		g_signal_connect_swapped(G_OBJECT(toolbar), "hide", G_CALLBACK(gtk_widget_hide), sep);
+		gtk_widget_show(sep);
+	}
+
+	webview = gtk_webview_new();
+#if 0
+	/* TODO WEBKIT: Don't have editable webview yet. */
+	gtk_webview_set_editable(GTK_WEBVIEW(webview), editable);
+#endif /* if 0 */
+#ifdef USE_GTKSPELL
+	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
+		pidgin_setup_gtkspell(GTK_TEXT_VIEW(webview));
+#endif
+	gtk_widget_show(webview);
+
+	if (editable) {
+		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), webview);
+		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
+	}
+
+	sw = pidgin_make_scrollable(webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+
+	gtk_webview_set_vadjustment(GTK_WEBVIEW(webview),
+			gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)));
+
+	if (webview_ret != NULL)
+		*webview_ret = webview;
+
+	if (editable && (toolbar_ret != NULL))
+		*toolbar_ret = toolbar;
+
+	if (sw_ret != NULL)
+		*sw_ret = sw;
+
+	return frame;
+}
+
 void
 pidgin_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog)
 {
@@ -291,7 +361,7 @@ pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	if (to_toggle == NULL)
 		return;
 
-	sensitivity = gtk_widget_get_sensitive(to_toggle);
+	sensitivity = gtk_widget_is_sensitive(to_toggle);
 
 	gtk_widget_set_sensitive(to_toggle, !sensitivity);
 }
@@ -308,7 +378,7 @@ pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 		if (element == NULL)
 			continue;
 
-		sensitivity = gtk_widget_get_sensitive(element);
+		sensitivity = gtk_widget_is_sensitive(element);
 
 		gtk_widget_set_sensitive(element, !sensitivity);
 	}
@@ -676,6 +746,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (facebook_name && strcmp(facebook_name, plugin->info->name) < 0) {
 			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
 			                                  "16", "facebook.png", NULL);
+
 			pixbuf = pidgin_pixbuf_new_from_file(filename);
 			g_free(filename);
 
@@ -952,7 +1023,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 		return;
 	}
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
 	if (prpl_info != NULL && prpl_info->get_cb_real_name)
 		who = prpl_info->get_cb_real_name(conn, chat, name);
 	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
@@ -1078,7 +1149,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 				}
 
 				protoname = prpl_info->list_icon(account, NULL);
@@ -1120,7 +1191,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 					}
 
 					protoname = prpl_info->list_icon(account, NULL);
@@ -1223,8 +1294,8 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	widget     = GTK_WIDGET(menu);
 	screen     = gtk_widget_get_screen(widget);
-	xthickness = gtk_widget_get_style(widget)->xthickness;
-	ythickness = gtk_widget_get_style(widget)->ythickness;
+	xthickness = widget->style->xthickness;
+	ythickness = widget->style->ythickness;
 	rtl        = (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL);
 
 	/*
@@ -1362,9 +1433,9 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	GtkTreePath *path;
 	GtkTreeViewColumn *col;
 	GdkRectangle rect;
-	gint ythickness = gtk_widget_get_style(GTK_WIDGET(menu))->ythickness;
+	gint ythickness = GTK_WIDGET(menu)->style->ythickness;
 
-	gdk_window_get_origin (gtk_widget_get_window(widget), x, y);
+	gdk_window_get_origin (widget->window, x, y);
 	gtk_tree_view_get_cursor (tv, &path, &col);
 	gtk_tree_view_get_cell_area (tv, path, col, &rect);
 
@@ -1481,7 +1552,7 @@ void
 pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who)
 {
 	GdkPixbuf *pb;
-	GList *files = purple_uri_list_extract_filenames((const gchar *) gtk_selection_data_get_data(sd));
+	GList *files = purple_uri_list_extract_filenames((const gchar *)sd->data);
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 #ifndef _WIN32
@@ -1532,7 +1603,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			data->account = account;
 
 			if (gc)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
@@ -1763,21 +1834,27 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                             gpointer object)
 {
 	GtkWidget *menuitem;
+	GList *list;
 
 	if (act == NULL) {
 		return pidgin_separator(menu);
 	}
 
-	if (act->children == NULL) {
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+	list = purple_menu_action_get_children(act);
+	menuitem = gtk_menu_item_new_with_mnemonic(purple_menu_action_get_label(act));
 
-		if (act->callback != NULL) {
+	if (list == NULL) {
+		PurpleCallback callback;
+
+		callback = purple_menu_action_get_callback(act);
+
+		if (callback != NULL) {
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallback",
-							  act->callback);
+							  callback);
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallbackdata",
-							  act->data);
+							  purple_menu_action_get_data(act));
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 							 G_CALLBACK(menu_action_cb),
 							 object);
@@ -1791,7 +1868,6 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 		GtkWidget *submenu = NULL;
 		GtkAccelGroup *group;
 
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
@@ -1799,21 +1875,20 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 
 		group = gtk_menu_get_accel_group(GTK_MENU(menu));
 		if (group) {
-			char *path = g_strdup_printf("%s/%s",
-				gtk_menu_item_get_accel_path(GTK_MENU_ITEM(menuitem)),
-				act->label);
+			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path,
+					purple_menu_action_get_label(act));
 			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 			g_free(path);
 			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 		}
 
-		for (l = act->children; l; l = l->next) {
+		for (l = list; l; l = l->next) {
 			PurpleMenuAction *act = (PurpleMenuAction *)l->data;
 
 			pidgin_append_menu_action(submenu, act, object);
 		}
-		g_list_free(act->children);
-		act->children = NULL;
+		g_list_free(list);
+		purple_menu_action_set_children(act, NULL);
 	}
 	purple_menu_action_free(act);
 	return menuitem;
@@ -2013,8 +2088,8 @@ add_completion_list(PidginCompletionData *data)
 					add_buddyname_autocomplete_entry(data->store,
 														((PurpleContact *)cnode)->alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
-														entry.entry.buddy->account,
-														entry.entry.buddy->name
+														purple_buddy_get_account(entry.entry.buddy),
+														purple_buddy_get_name(entry.entry.buddy)
 													 );
 				}
 			}
@@ -2106,7 +2181,7 @@ pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *
 	gboolean all = GPOINTER_TO_INT(all_accounts);
 
 	if (completion_entry->is_buddy) {
-		return all || purple_account_is_connected(completion_entry->entry.buddy->account);
+		return all || purple_account_is_connected(purple_buddy_get_account(completion_entry->entry.buddy));
 	} else {
 		return all || (completion_entry->entry.logged_buddy->account != NULL && purple_account_is_connected(completion_entry->entry.logged_buddy->account));
 	}
@@ -2117,23 +2192,23 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 	GdkCursor *cursor;
 
 	g_return_if_fail(widget != NULL);
-	if (gtk_widget_get_window(widget) == NULL)
+	if (widget->window == NULL)
 		return;
 
 	cursor = gdk_cursor_new(cursor_type);
-	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
+	gdk_window_set_cursor(widget->window, cursor);
 	gdk_cursor_unref(cursor);
 
-	gdk_display_flush(gdk_window_get_display(gtk_widget_get_window(widget)));
+	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
 }
 
 void pidgin_clear_cursor(GtkWidget *widget)
 {
 	g_return_if_fail(widget != NULL);
-	if (gtk_widget_get_window(widget) == NULL)
+	if (widget->window == NULL)
 		return;
 
-	gdk_window_set_cursor(gtk_widget_get_window(widget), NULL);
+	gdk_window_set_cursor(widget->window, NULL);
 }
 
 struct _icon_chooser {
@@ -2174,7 +2249,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 	gtk_widget_destroy(dialog->icon_filesel);
 	g_free(filename);
 	g_free(dialog);
-}
+ }
 
 
 static void
@@ -2412,9 +2487,9 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 					   the image. */
 					purple_debug_info("buddyicon", "Converted image from "
 							"%dx%d to %dx%d, format=%s, quality=%u, "
-							"filesize=%zu\n", orig_width, orig_height,
-							new_width, new_height, prpl_formats[i], quality,
-							length);
+							"filesize=%" G_GSIZE_FORMAT "\n",
+							orig_width, orig_height, new_width, new_height,
+							prpl_formats[i], quality, length);
 					if (len)
 						*len = length;
 					g_strfreev(prpl_formats);
@@ -2793,7 +2868,7 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 	if (!widget)
 		return "dim grey";
 
-	style = gtk_widget_get_style(widget);
+ 	style = gtk_widget_get_style(widget);
 	if (!style)
 		return "dim grey";
 
@@ -2805,18 +2880,18 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 }
 
 static void
-combo_box_changed_cb(GtkComboBoxText *combo_box, GtkEntry *entry)
+combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
 {
-	char *text = gtk_combo_box_text_get_active_text(combo_box);
+	char *text = gtk_combo_box_get_active_text(combo_box);
 	gtk_entry_set_text(entry, text ? text : "");
 	g_free(text);
 }
 
 static gboolean
-entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBoxText *combo)
+entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBox *combo)
 {
-	if (key->keyval == GDK_KEY_Down || key->keyval == GDK_KEY_Up) {
-		gtk_combo_box_popup(GTK_COMBO_BOX(combo));
+	if (key->keyval == GDK_Down || key->keyval == GDK_Up) {
+		gtk_combo_box_popup(combo);
 		return TRUE;
 	}
 	return FALSE;
@@ -2825,10 +2900,10 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBoxText *combo)
 GtkWidget *
 pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 {
-	GtkComboBoxText *ret = NULL;
+	GtkComboBox *ret = NULL;
 	GtkWidget *the_entry = NULL;
 
-	ret = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new_with_entry());
+	ret = GTK_COMBO_BOX(gtk_combo_box_entry_new_text());
 	the_entry = gtk_entry_new();
 	gtk_container_add(GTK_CONTAINER(ret), the_entry);
 
@@ -2838,7 +2913,7 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 	for (; items != NULL ; items = items->next) {
 		char *text = items->data;
 		if (text && *text)
-			gtk_combo_box_text_append_text(ret, text);
+			gtk_combo_box_append_text(ret, text);
 	}
 
 	g_signal_connect(G_OBJECT(ret), "changed", (GCallback)combo_box_changed_cb, the_entry);
@@ -2849,12 +2924,12 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 
 const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
 {
-	return gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN((widget)))));
+	return gtk_entry_get_text(GTK_ENTRY(GTK_BIN((widget))->child));
 }
 
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
 {
-	gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN((widget)))), (text));
+	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
 }
 
 GtkWidget *
@@ -2921,7 +2996,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		windows = g_list_delete_link(windows, windows);
 
 		if (window == widget ||
-				!GTK_WIDGET_VISIBLE(window))
+				!gtk_widget_get_visible(window))
 			continue;
 
 		if (!gdk_property_get(window->window, _WindowTime, _Cardinal, 0, sizeof(time_t), FALSE,
@@ -2980,7 +3055,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		}
 
 		if (gtk_window_has_toplevel_focus(GTK_WINDOW(window)) ||
-				(menu && menu == gtk_widget_get_window(window))) {
+				(menu && menu == window->window)) {
 			parent = window;
 			break;
 		}
@@ -3005,7 +3080,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 
 	if (!gdk_pixbuf_loader_write(loader, buf, count, &error) || error) {
 		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_write() "
-				"failed with size=%zu: %s\n", count,
+				"failed with size=%" G_GSIZE_FORMAT ": %s\n", count,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
@@ -3015,7 +3090,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 
 	if (!gdk_pixbuf_loader_close(loader, &error) || error) {
 		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_close() "
-				"failed for image of size %zu: %s\n", count,
+				"failed for image of size %" G_GSIZE_FORMAT ": %s\n", count,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
@@ -3029,7 +3104,7 @@ static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, g
 		pixbuf = G_OBJECT(gdk_pixbuf_loader_get_pixbuf(loader));
 	if (!pixbuf) {
 		purple_debug_warning("gtkutils", "%s() returned NULL for image "
-				"of size %zu\n",
+				"of size %" G_GSIZE_FORMAT "\n",
 				animated ? "gdk_pixbuf_loader_get_animation"
 					: "gdk_pixbuf_loader_get_pixbuf", count);
 		g_object_unref(G_OBJECT(loader));
@@ -3195,9 +3270,9 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 	{
 		gchar *escaped = g_shell_quote(uri);
 		gchar *param = g_strconcat("/select,\"", uri, "\"", NULL);
-		gchar *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
+		wchar_t *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
 
-		code = (int)ShellExecuteW(NULL, "OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
+		code = (int)ShellExecuteW(NULL, L"OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
 
 		g_free(wc_param);
 		g_free(param);
@@ -3359,7 +3434,7 @@ save_file_cb(GtkWidget *item, const char *url)
 		return TRUE;
 	purple_request_file(conv->active_conv, _("Save File"), NULL, TRUE,
 	                    G_CALLBACK(savefile_write_cb), NULL,
-	                    conv->active_conv->account, NULL, conv->active_conv,
+	                    purple_conversation_get_account(conv->active_conv), NULL, conv->active_conv,
 	                    (void *)url);
 	return TRUE;
 }
@@ -3541,7 +3616,7 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 		if (width != -1 || height != -1)
 			gtk_widget_set_size_request(sw, width, height);
 		if (child) {
-			if (GTK_IS_SCROLLABLE(child))
+			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
 				gtk_container_add(GTK_CONTAINER(sw), child);
 			else
 				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);
@@ -3616,4 +3691,3 @@ void pidgin_utils_uninit(void)
 	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
 	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
 }
-

@@ -32,6 +32,17 @@
 /**************************************************************************/
 /** @name Attention Type API                                              */
 /**************************************************************************/
+
+struct _PurpleAttentionType
+{
+	const char *name;                  /**< Shown in GUI elements */
+	const char *incoming_description;  /**< Shown when sent */
+	const char *outgoing_description;  /**< Shown when receied */
+	const char *icon_name;             /**< Icon to display (optional) */
+	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
+};
+
+
 PurpleAttentionType *
 purple_attention_type_new(const char *ulname, const char *name,
 						const char *inc_desc, const char *out_desc)
@@ -435,13 +446,13 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
+	prpl = purple_find_prpl(purple_account_get_protocol_id(purple_connection_get_account(gc)));
 	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
 	g_return_if_fail(send_attention != NULL);
 
 	mtime = time(NULL);
 
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
+	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
 	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
@@ -462,7 +473,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	if (!send_attention(gc, who, type_code))
 		return;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_connection_get_account(gc), who);
 	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
 	purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
@@ -481,7 +492,7 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 
 	mtime = time(NULL);
 
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
+	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
 	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
 	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;

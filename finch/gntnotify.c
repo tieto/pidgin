@@ -386,6 +386,7 @@ finch_notify_sr_new_rows(PurpleConnection *gc,
 {
 	GntTree *tree = GNT_TREE(data);
 	GList *o;
+	GntTreeRow *prev = NULL;
 
 	/* XXX: Do I need to empty the tree here? */
 
@@ -393,8 +394,15 @@ finch_notify_sr_new_rows(PurpleConnection *gc,
 	{
 		gnt_tree_add_row_after(GNT_TREE(tree), o->data,
 				gnt_tree_create_row_from_list(GNT_TREE(tree), o->data),
-				NULL, NULL);
+				NULL, prev);
+		prev = o->data;
 	}
+}
+
+static void
+notify_sr_destroy_cb(GntWidget *window, void *data)
+{
+	purple_notify_close(PURPLE_NOTIFY_SEARCHRESULTS, window);
 }
 
 static void *
@@ -429,7 +437,7 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	for (iter = results->columns; iter; iter = iter->next)
 	{
 		PurpleNotifySearchColumn *column = iter->data;
-		gnt_tree_set_column_title(GNT_TREE(tree), i, column->title);
+		gnt_tree_set_column_title(GNT_TREE(tree), i, purple_notify_searchresult_column_get_title(column));
 
 		if (!purple_notify_searchresult_column_is_visible(column))
 			gnt_tree_set_column_visible(GNT_TREE(tree), i, FALSE);
@@ -481,6 +489,8 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	}
 
 	gnt_box_add_widget(GNT_BOX(window), box);
+	g_signal_connect(G_OBJECT(tree), "destroy",
+			G_CALLBACK(notify_sr_destroy_cb), NULL);
 
 	finch_notify_sr_new_rows(gc, results, tree);
 

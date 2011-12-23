@@ -459,7 +459,7 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 	if (session->logged_in)
 		return;
 
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	session->login_step = step;
 

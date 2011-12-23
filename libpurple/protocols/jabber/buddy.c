@@ -501,7 +501,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		vc_node = NULL;
 	}
 
-	if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+	if ((img = purple_buddy_icons_find_account_icon(purple_connection_get_account(gc)))) {
 		gconstpointer avatar_data;
 		gsize avatar_len;
 		xmlnode *photo, *binval, *type;
@@ -557,7 +557,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* Publish the avatar as specified in XEP-0084 */
-	jabber_avatar_set(gc->proto_data, img);
+	jabber_avatar_set(purple_connection_get_protocol_data(gc), img);
 	/* Set the image in our vCard */
 	jabber_set_info(gc, purple_account_get_user_info(account));
 
@@ -642,7 +642,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	/*
 	 * Get existing, XML-formatted, user info
 	 */
-	if((user_info = purple_account_get_user_info(gc->account)) != NULL)
+	if((user_info = purple_account_get_user_info(purple_connection_get_account(gc))) != NULL)
 		x_vc_data = xmlnode_from_str(user_info, -1);
 
 	/*
@@ -1360,7 +1360,7 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 
 									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(js->gc->account,
+										purple_prpl_got_user_idle(purple_connection_get_account(js->gc),
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}
@@ -2255,10 +2255,10 @@ void jabber_user_search(JabberStream *js, const char *directory)
 	   make sure we aren't persisting an old value */
 	if(js->user_directories && js->user_directories->data &&
 	   !strcmp(directory, js->user_directories->data)) {
-		purple_account_set_string(js->gc->account, "user_directory", "");
+		purple_account_set_string(purple_connection_get_account(js->gc), "user_directory", "");
 	}
 	else {
-		purple_account_set_string(js->gc->account, "user_directory", directory);
+		purple_account_set_string(purple_connection_get_account(js->gc), "user_directory", directory);
 	}
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:search");
@@ -2273,7 +2273,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
-	const char *def_val = purple_account_get_string(js->gc->account, "user_directory", "");
+	const char *def_val = purple_account_get_string(purple_connection_get_account(js->gc), "user_directory", "");
 	if(!*def_val && js->user_directories)
 		def_val = js->user_directories->data;
 

@@ -29,6 +29,44 @@
 
 #define OUTGOING_FLAG 0x01
 
+/**
+ * A wrapper for a type, subtype, and specific type of value.
+ */
+struct _PurpleValue
+{
+	PurpleType type;
+	unsigned short flags;
+
+	union
+	{
+		char char_data;
+		unsigned char uchar_data;
+		gboolean boolean_data;
+		short short_data;
+		unsigned short ushort_data;
+		int int_data;
+		unsigned int uint_data;
+		long long_data;
+		unsigned long ulong_data;
+		gint64 int64_data;
+		guint64 uint64_data;
+		char *string_data;
+		void *object_data;
+		void *pointer_data;
+		int enum_data;
+		void *boxed_data;
+
+	} data;
+
+	union
+	{
+		unsigned int subtype;
+		char *specific_type;
+
+	} u;
+
+};
+
 PurpleValue *
 purple_value_new(PurpleType type, ...)
 {

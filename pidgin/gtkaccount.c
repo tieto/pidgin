@@ -167,7 +167,7 @@ static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_voice_options(AccountPrefsDialog *dialog);
 
 static const char *
-xmpp_default_domain_hackery(GtkWidget *protocol_combo)
+google_talk_default_domain_hackery(GtkWidget *protocol_combo, const char *value_if_gtalk)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -185,12 +185,7 @@ xmpp_default_domain_hackery(GtkWidget *protocol_combo)
 			gtk_tree_model_get(model, &iter, 1, &item_name, -1);
 			if (item_name) {
 				if (!strcmp(item_name, _("Google Talk")))
-					value = "gmail.com";
-				g_free(item_name);
-			}
-			if (item_name) {
-				if (!strcmp(item_name, _("Facebook")))
-					value = "chat.facebook.com";
+					value = value_if_gtalk;
 				g_free(item_name);
 			}
 			/* If it's not GTalk, but still Jabber then the value is not NULL, it's empty */
@@ -390,11 +385,9 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	const gchar *name = (gchar *) gtk_selection_data_get_data(sd);
-	gint length = gtk_selection_data_get_length(sd);
-	gint format = gtk_selection_data_get_format(sd);
+	gchar *name = (gchar *)sd->data;
 
-	if (length >= 0 && format == 8) {
+	if ((sd->length >= 0) && (sd->format == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -600,7 +593,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		/* Google Talk default domain hackery! */
 		if (!strcmp(_("Domain"), purple_account_user_split_get_text(split)) && !value)
-			value = xmpp_default_domain_hackery(dialog->protocol_menu);
+			value = google_talk_default_domain_hackery(dialog->protocol_menu, "gmail.com");
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -1089,7 +1082,7 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
 		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
-		gtk_widget_hide(dialog->proxy_vbox);
+		gtk_widget_hide_all(dialog->proxy_vbox);
 	}
 	else
 		gtk_widget_show_all(dialog->proxy_vbox);
@@ -1792,9 +1785,7 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	GdkAtom target = gtk_selection_data_get_target(data);
-
-	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
+	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
@@ -1865,16 +1856,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	GdkAtom target = gtk_selection_data_get_target(sd);
-	const guchar *data = gtk_selection_data_get_data(sd);
-
-	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && data) {
+	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
 		gint dest_index;
 		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
-		memcpy(&a, data, sizeof(a));
+		memcpy(&a, sd->data, sizeof(a));
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
 											  &path, &position)) {
@@ -2764,3 +2752,4 @@ pidgin_account_uninit(void)
 	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
+

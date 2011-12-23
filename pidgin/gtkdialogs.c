@@ -39,10 +39,9 @@
 
 #include "gtkblist.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 #include "pidginstock.h"
 
 static GList *dialogwindows = NULL;
@@ -151,7 +150,7 @@ static const struct translator translators[] = {
 	{N_("Assamese"),            "as", "Amitakhya Phukan", "aphukan@fedoraproject.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
-	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
+	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "kaladan@gmail.com"},
 	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
 	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
@@ -222,7 +221,6 @@ static const struct translator translators[] = {
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Piotr Drąg", "piotrdrag@gmail.com"},
-	{N_("Polish"),              "pl", "Piotr Makowski", "pmakowski@aviary.pl"},
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
@@ -304,6 +302,7 @@ static const struct translator past_translators[] = {
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
+	{N_("Polish"),              "pl", "Piotr Makowski", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
@@ -422,9 +421,8 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 static GtkWidget *
 pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 {
-	GtkWidget *win, *vbox, *frame, *logo, *imhtml, *button;
+	GtkWidget *win, *vbox, *frame, *logo, *webview, *button;
 	GdkPixbuf *pixbuf;
-	GtkTextIter iter;
 	AtkObject *obj;
 	char *filename, *tmp;
 
@@ -451,18 +449,24 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = pidgin_create_imhtml(FALSE, &imhtml, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &webview, NULL, NULL);
+	/* TODO WEBKIT: Compile now and fix it later when we have a proper replacement for this function
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	*/
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), string->str, GTK_IMHTML_NO_SCROLL);
-	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), &iter);
-	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), &iter);
+	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
+	/* TODO WEBKIT: This doesn't seem to stay at the top. */
+	webkit_web_view_move_cursor(WEBKIT_WEB_VIEW(webview), GTK_MOVEMENT_BUFFER_ENDS, -1);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
 
+#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_can_default(button, TRUE);
+#else
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+#endif
 	gtk_widget_grab_default(button);
 
 	gtk_widget_show_all(win);
@@ -947,15 +951,14 @@ pidgin_dialogs_ee(const char *ee)
 
 	gtk_container_set_border_width (GTK_CONTAINER(window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	/* TODO: figure out how to set no separator in a dialog in GTK+ 3.0 */
-	/*gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);*/
-	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(window))),
-	                    PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
-	                               PIDGIN_HIG_BOX_SPACE);
+#if !GTK_CHECK_VERSION(2,22,0)
+	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
+#endif
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))), hbox);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -1130,10 +1133,10 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 
 	g_return_if_fail(buddy != NULL);
 
-	secondary = g_strdup_printf(_("Enter an alias for %s."), buddy->name);
+	secondary = g_strdup_printf(_("Enter an alias for %s."), purple_buddy_get_name(buddy));
 
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
-					   secondary, buddy->alias, FALSE, FALSE, NULL,
+					   secondary, purple_buddy_get_local_buddy_alias(buddy), FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
 					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
@@ -1158,7 +1161,7 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
-					   chat->account, NULL, NULL,
+					   purple_chat_get_account(chat), NULL, NULL,
 					   chat);
 }
 
@@ -1172,8 +1175,8 @@ pidgin_dialogs_remove_contact_cb(PurpleContact *contact)
 	group = (PurpleGroup*)cnode->parent;
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		PurpleBuddy *buddy = (PurpleBuddy*)bnode;
-		if (purple_account_is_connected(buddy->account))
-			purple_account_remove_buddy(buddy->account, buddy, group);
+		if (purple_account_is_connected(purple_buddy_get_account(buddy)))
+			purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy, group);
 	}
 	purple_blist_remove_contact(contact);
 }
@@ -1198,8 +1201,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?",
 						"You are about to remove the contact containing %s "
 						"and %d other buddies from your buddy list.  Do you "
-						"want to continue?", contact->totalsize - 1),
-					buddy->name, contact->totalsize - 1);
+						"want to continue?", purple_contact_get_contact_size(contact, TRUE) - 1),
+					purple_buddy_get_name(buddy), purple_contact_get_contact_size(contact, TRUE) - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,
@@ -1236,7 +1239,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 
 	text = g_strdup_printf(
 				_("You are about to merge the group called %s into the group "
-				"called %s. Do you want to continue?"), source->name, new_name);
+				"called %s. Do you want to continue?"), purple_group_get_name(source), new_name);
 
 	ggp = g_new(struct _PidginGroupMergeObject, 1);
 	ggp->parent = source;
@@ -1267,8 +1270,8 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
 					buddy = (PurpleBuddy*)bnode;
 					bnode = bnode->next;
-					if (purple_account_is_connected(buddy->account)) {
-						purple_account_remove_buddy(buddy->account, buddy, group);
+					if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
+						purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy, group);
 						purple_blist_remove_buddy(buddy);
 					}
 				} else {
@@ -1278,7 +1281,7 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 		} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
 			cnode = cnode->next;
-			if (purple_account_is_connected(chat->account))
+			if (purple_account_is_connected(purple_chat_get_account(chat)))
 				purple_blist_remove_chat(chat);
 		} else {
 			cnode = cnode->next;
@@ -1296,7 +1299,7 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 	g_return_if_fail(group != NULL);
 
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
-						   group->name);
+						   purple_group_get_name(group));
 
 	purple_request_action(group, NULL, _("Remove Group"), text, 0,
 						NULL, NULL, NULL,
@@ -1316,10 +1319,10 @@ pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 	PurpleAccount *account;
 
 	group = purple_buddy_get_group(buddy);
-	name = g_strdup(buddy->name); /* b->name is a crasher after remove_buddy */
-	account = buddy->account;
+	name = g_strdup(purple_buddy_get_name(buddy)); /* purple_buddy_get_name() is a crasher after remove_buddy */
+	account = purple_buddy_get_account(buddy);
 
-	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
+	purple_debug_info("blist", "Removing '%s' from buddy list.\n", purple_buddy_get_name(buddy));
 	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
@@ -1335,7 +1338,7 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 	g_return_if_fail(buddy != NULL);
 
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
-						   buddy->name);
+						   purple_buddy_get_name(buddy));
 
 	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
 						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
@@ -1365,7 +1368,7 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 			name ? name : "");
 
 	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
-						chat->account, NULL, NULL,
+						purple_chat_get_account(chat), NULL, NULL,
 						chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);

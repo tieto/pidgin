@@ -40,6 +40,12 @@
 
 #include "gtkcertmgr.h"
 
+#ifdef ENABLE_GCR
+#define GCR_API_SUBJECT_TO_CHANGE
+#include <gcr/gcr.h>
+#include <gcr/gcr-simple-certificate.h>
+#endif
+
 /*****************************************************************************
  * X.509 tls_peers management interface                                      *
  *****************************************************************************/
@@ -310,6 +316,13 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	GtkTreeModel *model;
 	gchar *id;
 	PurpleCertificate *crt;
+#ifdef ENABLE_GCR
+	GByteArray *der;
+	GcrCertificate *gcrt;
+	char *title;
+	GtkWidget *dialog;
+	GcrCertificateBasicsWidget *cert_widget;
+#endif
 
 	/* See if things are selected */
 	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
@@ -325,11 +338,44 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
 	g_return_if_fail(crt);
 
+#ifdef ENABLE_GCR
+	der = purple_certificate_get_der_data(crt);
+	g_return_if_fail(der);
+
+	gcrt = gcr_simple_certificate_new(der->data, der->len);
+	g_return_if_fail(gcrt);
+
+	/* Fire the notification */
+	title = g_strdup_printf(_("Certificate Information for %s"), id);
+	dialog = gtk_dialog_new_with_buttons(title,
+	                                     NULL,
+	                                     0,
+	                                     GTK_STOCK_OK,
+	                                     GTK_RESPONSE_ACCEPT,
+	                                     NULL);
+	cert_widget = gcr_certificate_basics_widget_new(gcrt);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                   GTK_WIDGET(cert_widget), TRUE, TRUE, 0);
+	g_signal_connect_swapped(dialog, "response",
+	                         G_CALLBACK(gtk_widget_destroy),
+	                         dialog);
+	gtk_widget_show_all(dialog);
+
+	g_byte_array_free(der, TRUE);
+	g_object_unref(G_OBJECT(gcrt));
+#else
 	/* Fire the notification */
 	purple_certificate_display_x509(crt);
 
 	g_free(id);
 	purple_certificate_destroy(crt);
+#endif
+}
+
+static void
+tls_peers_mgmt_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column, gpointer data)
+{
+	tls_peers_mgmt_info_cb(NULL, NULL);
 }
 
 static void
@@ -452,6 +498,9 @@ tls_peers_mgmt_build(void)
 	g_signal_connect(G_OBJECT(select), "changed",
 			 G_CALLBACK(tls_peers_mgmt_select_chg_cb), NULL);
 
+	g_signal_connect(G_OBJECT(listview), "row-activated",
+			 G_CALLBACK(tls_peers_mgmt_activated_cb), NULL);
+
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), 
 			pidgin_make_scrollable(GTK_WIDGET(listview), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 			TRUE, TRUE, /* Take up lots of space */
@@ -471,9 +520,8 @@ tls_peers_mgmt_build(void)
 	gtk_widget_show(bbox);
 
 	/* Import button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->importbutton = importbutton =
-		gtk_button_new_from_stock(GTK_STOCK_ADD);
+		gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
 	gtk_widget_show(importbutton);
 	g_signal_connect(G_OBJECT(importbutton), "clicked",
@@ -481,9 +529,8 @@ tls_peers_mgmt_build(void)
 
 
 	/* Export button */
-	/* TODO: This is the wrong stock button */
 	tpm_dat->exportbutton = exportbutton =
-		gtk_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
 	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
 	gtk_widget_show(exportbutton);
 	g_signal_connect(G_OBJECT(exportbutton), "clicked",

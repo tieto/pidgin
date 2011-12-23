@@ -73,6 +73,14 @@ struct _PurpleUtilFetchUrlData
 	PurpleAccount *account;
 };
 
+struct _PurpleMenuAction
+{
+	char *label;
+	PurpleCallback callback;
+	gpointer data;
+	GList *children;
+};
+
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
@@ -96,6 +104,62 @@ purple_menu_action_free(PurpleMenuAction *act)
 
 	g_free(act->label);
 	g_free(act);
+}
+
+char * purple_menu_action_get_label(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->label;
+}
+
+PurpleCallback purple_menu_action_get_callback(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->callback;
+}
+
+gpointer purple_menu_action_get_data(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->data;
+}
+
+GList* purple_menu_action_get_children(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->children;
+}
+
+void purple_menu_action_set_label(PurpleMenuAction *act, char *label)
+{
+	g_return_if_fail(act != NULL);
+
+	act-> label = label;
+}
+
+void purple_menu_action_set_callback(PurpleMenuAction *act, PurpleCallback callback)
+{
+	g_return_if_fail(act != NULL);
+
+	act->callback = callback;
+}
+
+void purple_menu_action_set_data(PurpleMenuAction *act, gpointer data)
+{
+	g_return_if_fail(act != NULL);
+
+	act->data = data;
+}
+
+void purple_menu_action_set_children(PurpleMenuAction *act, GList *children)
+{
+	g_return_if_fail(act != NULL);
+
+	act->children = children;
 }
 
 void
@@ -3267,9 +3331,9 @@ purple_strcasestr(const char *haystack, const char *needle)
 }
 
 char *
-purple_str_size_to_units(size_t size)
+purple_str_size_to_units(goffset size)
 {
-	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB" };
+	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3282,7 +3346,7 @@ purple_str_size_to_units(size_t size)
 	else {
 		size_mag = (float)size;
 
-		while ((size_index < 3) && (size_mag > 1024)) {
+		while ((size_index < G_N_ELEMENTS(size_str) - 1) && (size_mag > 1024)) {
 			size_mag /= 1024;
 			size_index++;
 		}
@@ -4103,19 +4167,7 @@ static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSs
 }
 
 PurpleUtilFetchUrlData *
-purple_util_fetch_url_request(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len(NULL, url, full,
-					     user_agent, http11,
-					     request, include_headers, -1,
-					     callback, user_data);
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len(PurpleAccount *account,
+purple_util_fetch_url_request(PurpleAccount *account,
 		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
@@ -4402,11 +4454,10 @@ purple_ipv6_address_is_valid(const gchar *ip)
 	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
 }
 
-/* TODO 3.0.0: Add ipv6 check, too */
 gboolean
 purple_ip_address_is_valid(const char *ip)
 {
-	return purple_ipv4_address_is_valid(ip);
+	return (purple_ipv4_address_is_valid(ip) || purple_ipv6_address_is_valid(ip));
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
@@ -4586,7 +4637,7 @@ purple_utf8_strip_unprintables(const gchar *str)
  * This function is copied from g_strerror() but changed to use
  * gai_strerror().
  */
-G_CONST_RETURN gchar *
+const gchar *
 purple_gai_strerror(gint errnum)
 {
 	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;

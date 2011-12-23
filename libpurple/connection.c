@@ -92,12 +92,6 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 }
 
 void
-purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
-{
-	_purple_connection_new(account, regist, password);
-}
-
-void
 _purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
 {
 	PurpleConnection *gc;
@@ -171,11 +165,6 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		prpl_info->login(account);
 	}
 }
-void
-purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
-{
-	_purple_connection_new_unregister(account, password, cb, user_data);
-}
 
 void
 _purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
@@ -231,12 +220,6 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 
 	prpl_info->unregister_user(account, cb, user_data);
-}
-
-void
-purple_connection_destroy(PurpleConnection *gc)
-{
-	_purple_connection_destroy(gc);
 }
 
 void
@@ -404,6 +387,14 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 }
 
 void
+purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
+{
+	g_return_if_fail(gc != NULL);
+
+	gc->flags = flags;
+}
+
+void
 purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 {
 	g_return_if_fail(gc != NULL);
@@ -436,6 +427,14 @@ purple_connection_get_state(const PurpleConnection *gc)
 	return gc->state;
 }
 
+PurpleConnectionFlags
+purple_connection_get_flags(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, 0);
+
+	return gc->flags;
+}
+
 PurpleAccount *
 purple_connection_get_account(const PurpleConnection *gc)
 {
@@ -457,7 +456,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	return gc->password ? gc->password : purple_account_get_password(gc->account);
 }
 
 const char *
@@ -626,6 +625,13 @@ purple_connection_error_is_fatal (PurpleConnectionError reason)
 		default:
 			g_return_val_if_reached(TRUE);
 	}
+}
+
+void purple_connection_update_last_received(PurpleConnection *gc)
+{
+	g_return_if_fail(gc != NULL);
+
+	gc->last_received = time(NULL);
 }
 
 void

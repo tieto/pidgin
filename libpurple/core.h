@@ -163,8 +163,6 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  *
  * @return @c TRUE if this is the first instance of libpurple running;
  *         @c FALSE if there is another instance running.
- *
- * @since 2.1.0
  */
 gboolean purple_core_ensure_single_instance(void);
 
@@ -195,8 +193,6 @@ gboolean purple_core_ensure_single_instance(void);
  *
  * @return A GHashTable with strings for keys and values.  This
  * hash table must not be freed and should not be modified.
- *
- * @since 2.1.0
  *
  */
 GHashTable* purple_core_get_ui_info(void);

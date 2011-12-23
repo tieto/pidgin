@@ -638,6 +638,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jabber_message_add_remote_smileys(js, to, packet);
 				}
 
+				xmlnode_strip_prefixes(child);
+
 				/* reformat xhtml so that img tags with a "cid:" src gets
 				  translated to the bare text of the emoticon (the "alt" attrib) */
 				/* this is done also when custom smiley retrieval is turned off,
@@ -1148,13 +1150,13 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 
 	resource = jabber_get_resource(who);
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), who, TRUE);
 	jbr = jabber_buddy_find_resource(jb, resource);
 
 	g_free(resource);
 
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = purple_connection_get_protocol_data(gc);
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
@@ -1211,14 +1213,14 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	if(!msg || !gc)
 		return 0;
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
 		return 0;
 
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = purple_connection_get_protocol_data(gc);
 	jm->type = JABBER_MESSAGE_GROUPCHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);

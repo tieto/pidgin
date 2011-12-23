@@ -51,7 +51,7 @@ typedef struct _PidginWhiteboard
 	GtkWidget *window;       /**< Window for the Doodle session */
 	GtkWidget *drawing_area; /**< Drawing area */
 
-	GdkPixbuf *pixbuf;       /**< Memory for drawing area */
+	GdkPixmap *pixmap;       /**< Memory for drawing area */
 
 	int  width;              /**< Canvas width */
 	int  height;             /**< Canvas height */

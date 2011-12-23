@@ -311,7 +311,7 @@ static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* 
 #endif
 
 	/* send the HTTP request */
-	session->http_out_req = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_http_rx, session );
+	session->http_out_req = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_http_rx, session );
 
 	g_free( url );
 	if ( part )
@@ -458,7 +458,7 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->headerlen = 0;
 
 	/* create generic packet header */
-	hlen = snprintf( header, sizeof( header ), "id=%s%c", session->acc->username, CP_REC_TERM );			/* client msisdn */
+	hlen = snprintf( header, sizeof( header ), "id=%s%c", purple_account_get_username( session->acc), CP_REC_TERM );			/* client msisdn */
 
 	if ( session->http ) {
 		/* http connection only */
@@ -718,7 +718,7 @@ void mxit_send_register( struct MXitSession* session )
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
 								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */
-								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_PACKET, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
 								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
 								CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
@@ -765,7 +765,7 @@ void mxit_send_login( struct MXitSession* session )
 								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
-								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
+								CP_MAX_PACKET, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* include "custom resource" information */
@@ -2136,13 +2136,13 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					contact = get_mxit_invite_contact( session, chunk.mxitid );
 					if ( contact ) {
 						/* this is an invite (add image to the internal image store) */
-						contact->imgid = purple_imgstore_add_with_id( chunk.data, chunk.length, NULL );
+						contact->imgid = purple_imgstore_add_with_id( g_memdup( chunk.data, chunk.length ), chunk.length, NULL );
 						/* show the profile */
 						mxit_show_profile( session, chunk.mxitid, contact->profile );
 					}
 					else {
 						/* this is a contact's avatar, so update it */
-						purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length), chunk.length, chunk.avatarid );
+						purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length ), chunk.length, chunk.avatarid );
 					}
 				}
 			}
@@ -2819,9 +2819,9 @@ void mxit_close_connection( struct MXitSession* session )
 	}
 
 	/* remove the input cb function */
-	if ( session->con->inpa ) {
-		purple_input_remove( session->con->inpa );
-		session->con->inpa = 0;
+	if ( session->inpa ) {
+		purple_input_remove( session->inpa );
+		session->inpa = 0;
 	}
 
 	/* remove HTTP poll timer */

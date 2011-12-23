@@ -429,12 +429,15 @@ static gboolean account_filter_func(PurpleAccount *account)
 static gboolean
 disco_paint_tooltip(GtkWidget *tipwindow, gpointer data)
 {
-	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(tipwindow));
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
+#if GTK_CHECK_VERSION(2,14,0)
 	gtk_paint_layout(gtk_widget_get_style(tipwindow),
-			cr,
+			gtk_widget_get_window(tipwindow),
 			GTK_STATE_NORMAL, FALSE,
-			tipwindow, "tooltip",
+#else
+	gtk_paint_layout(tipwindow->style, tipwindow->window, GTK_STATE_NORMAL, FALSE,
+#endif
+			NULL, tipwindow, "tooltip",
 			6, 6, layout);
 	return TRUE;
 }

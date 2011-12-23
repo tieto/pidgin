@@ -225,19 +225,16 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
 /**
  * Get the handle for the commands API
  * @return The handle
- * @since 2.5.0
  */
 gpointer purple_cmds_get_handle(void);
 
 /**
  * Initialize the commands subsystem.
- * @since 2.5.0
  */
 void purple_cmds_init(void);
 
 /**
  * Uninitialize the commands subsystem.
- * @since 2.5.0
  */
 void purple_cmds_uninit(void);
 

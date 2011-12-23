@@ -51,6 +51,6 @@ void pidgin_dialogs_remove_contact(PurpleContact *);
 void pidgin_dialogs_merge_groups(PurpleGroup *, const char *);
 
 /* This macro should probably be moved elsewhere */
-#define PIDGIN_WINDOW_ICONIFIED(x) (gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & GDK_WINDOW_STATE_ICONIFIED)
+#define PIDGIN_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 #endif /* _PIDGINDIALOGS_H_ */

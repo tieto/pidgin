@@ -47,9 +47,9 @@ struct _PidginSmiley
 	GtkWidget *smiley_image;
 	gchar *filename;
 	GdkPixbuf *custom_pixbuf;
-	gpointer data; /** @since 2.6.0 */
-	gsize datasize; /** @since 2.6.0 */
-	gint entry_len; /** @since 2.6.0 */
+	gpointer data;
+	gsize datasize;
+	gint entry_len;
 };
 
 typedef struct
@@ -399,7 +399,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 
 	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
 			widget ? GTK_WINDOW(widget) : NULL,
-			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
@@ -414,8 +414,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 
 	/* The vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
-                    vbox);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), vbox);
 	gtk_widget_show(vbox);
 
 	/* The hbox */
@@ -725,10 +724,9 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		GtkSelectionData *sd, guint info, guint t, gpointer user_data)
 {
 	SmileyManager *dialog = user_data;
-	gchar *name = g_strchomp((gchar *) gtk_selection_data_get_data(sd));
-    
-	if ((gtk_selection_data_get_length(sd) >= 0)
-      && (gtk_selection_data_get_format(sd) == 8)) {
+	gchar *name = g_strchomp((gchar *)sd->data);
+
+	if ((sd->length >= 0) && (sd->format == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 
@@ -752,7 +750,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			purple_util_fetch_url(name, TRUE, NULL, FALSE, smiley_got_url, dialog);
+			purple_util_fetch_url(name, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
 		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
 			/* purple_util_fetch_url() doesn't support HTTPS */
 			char *tmp = g_strdup(name + 1);
@@ -761,7 +759,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			tmp[2] = 't';
 			tmp[3] = 'p';
 
-			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, smiley_got_url, dialog);
+			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
 			g_free(tmp);
 		}
 
@@ -884,8 +882,7 @@ void pidgin_smiley_manager_show(void)
 
 	/* The vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(win))),
-                    vbox);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(win)->vbox), vbox);
 	gtk_widget_show(vbox);
 
 	/* get the scrolled window with all stuff */

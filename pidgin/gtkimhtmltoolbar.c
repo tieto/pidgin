@@ -43,6 +43,11 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#endif
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
@@ -124,15 +129,11 @@ realize_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
 	GtkFontSelection *sel;
 
-	sel = GTK_FONT_SELECTION(
-		gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)));
-	gtk_widget_hide(gtk_widget_get_parent(
-		gtk_font_selection_get_size_entry(sel)));
-	gtk_widget_show_all(gtk_font_selection_get_family_list(sel));
-	gtk_widget_show(gtk_widget_get_parent(
-		gtk_font_selection_get_family_list(sel)));
-	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(
-		gtk_font_selection_get_family_list(sel))));
+	sel = GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->fontsel);
+	gtk_widget_hide_all(gtk_widget_get_parent(sel->size_entry));
+	gtk_widget_show_all(sel->family_list);
+	gtk_widget_show(gtk_widget_get_parent(sel->family_list));
+	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(sel->family_list)));
 }
 
 static void
@@ -195,12 +196,10 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 
 			g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_font), toolbar);
-			g_signal_connect(G_OBJECT(
-				gtk_font_selection_dialog_get_ok_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
-				"clicked", G_CALLBACK(apply_font), toolbar->font_dialog);
-			g_signal_connect(G_OBJECT(
-				gtk_font_selection_dialog_get_cancel_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
-				"clicked", G_CALLBACK(cancel_toolbar_font), toolbar);
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button), "clicked",
+							 G_CALLBACK(apply_font), toolbar->font_dialog);
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
+							 G_CALLBACK(cancel_toolbar_font), toolbar);
 			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
@@ -259,12 +258,9 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->fgcolor_dialog) {
-			GtkWidget *ok_button;
-			GtkWidget *cancel_button;
 
 			toolbar->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-			colorsel =
-				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
+			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->colorsel;
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
@@ -273,13 +269,12 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-			g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "ok-button", &ok_button, NULL);
-			g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "cancel-button", &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(ok_button), "clicked", G_CALLBACK(do_fgcolor), colorsel);
-			g_signal_connect(G_OBJECT(cancel_button), "clicked",
-			                 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->ok_button), "clicked",
+							 G_CALLBACK(do_fgcolor), colorsel);
+			g_signal_connect(G_OBJECT (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button), "clicked",
+							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
 	} else {
@@ -343,13 +338,9 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->bgcolor_dialog) {
-			GtkWidget *ok_button;
-			GtkWidget *cancel_button;
 
 			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
-			colorsel =
-				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
-
+			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->colorsel;
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
@@ -358,14 +349,11 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-			g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "ok-button", &ok_button, NULL);
-			g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "cancel-button",
-			             &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(ok_button), "clicked",
-			                 G_CALLBACK(do_bgcolor), colorsel);
-			g_signal_connect(G_OBJECT(cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->ok_button), "clicked",
+							 G_CALLBACK(do_bgcolor), colorsel);
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 
 		}
@@ -478,12 +466,12 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 
 static void insert_hr_cb(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-	GtkTextIter iter;
-	GtkTextMark *ins;
+        GtkTextIter iter;
+        GtkTextMark *ins;
 	GtkIMHtmlScalable *hr;
 
-	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
-	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
+        ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
+        gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
 	hr = gtk_imhtml_hr_new();
 	gtk_imhtml_hr_add_to(hr, GTK_IMHTML(toolbar->imhtml), &iter);
 }
@@ -739,7 +727,7 @@ smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 static gboolean
 smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *toolbar)
 {
-	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_KEY_Escape) ||
+	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_Escape) ||
 	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
 	{
 		close_smiley_dialog(toolbar);
@@ -929,7 +917,7 @@ static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 	PurpleConversation *conv =
 		g_object_get_data(G_OBJECT(toolbar), "active_conv");
 	const gchar *who = purple_conversation_get_name(conv);
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
 	purple_prpl_send_attention(gc, who, 0);
@@ -1109,21 +1097,19 @@ menu_position_func (GtkMenu           *menu,
 {
 	GtkWidget *widget = GTK_WIDGET(data);
 	GtkRequisition menu_req;
-	GtkAllocation allocation;
-	gint ythickness = gtk_widget_get_style(widget)->ythickness;
+	gint ythickness = widget->style->ythickness;
 	int savy;
 
-	gtk_widget_get_allocation(widget, &allocation);    
 	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
-	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
-	*x += allocation.x;
-	*y += allocation.y + allocation.height;
+	gdk_window_get_origin(widget->window, x, y);
+	*x += widget->allocation.x;
+	*y += widget->allocation.y + widget->allocation.height;
 	savy = *y;
 
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
 	if (savy > *y + ythickness + 1)
-		*y -= allocation.height;
+		*y -= widget->allocation.height;
 }
 
 static gboolean
@@ -1268,6 +1254,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
+		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &toolbar->attention, _("Send Attention")},
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1290,18 +1277,6 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 			button = gtk_vseparator_new();
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	}
-	/* create the attention button (this is a bit hacky to not break ABI) */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION);
-	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
-	g_signal_connect(G_OBJECT(button), "clicked",
-		G_CALLBACK(send_attention_cb), toolbar);
-	g_object_set_data(G_OBJECT(toolbar), "attention", button);
-#if GTK_CHECK_VERSION(2,12,0)
-	gtk_widget_set_tooltip_text(button, _("Send Attention"));
-#else
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Send Attention"), NULL);
-#endif
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
@@ -1319,7 +1294,7 @@ button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 static void
 button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
-	gtk_widget_set_sensitive(item, gtk_widget_get_sensitive(button));
+	gtk_widget_set_sensitive(item, gtk_widget_is_sensitive(button));
 }
 
 static void
@@ -1342,10 +1317,10 @@ imhtmltoolbar_view_pref_changed(const char *name, PurplePrefType type,
 		gconstpointer value, gpointer toolbar)
 {
 	if (value) {
-		gtk_widget_hide(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
+		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
 		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
 	} else {
-		gtk_widget_hide(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
+		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
 		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
 	}
 }
@@ -1364,7 +1339,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
 	GtkWidget *sep;
-	GObject *wide_attention_button;
 	int i;
 	struct {
 		const char *label;
@@ -1517,8 +1491,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(sep);
 
 	/* Attention */
-	wide_attention_button = g_object_get_data(G_OBJECT(toolbar), "attention");
-
 	attention_button = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
 	bbox = gtk_hbox_new(FALSE, 3);
@@ -1530,16 +1502,16 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked",
-		G_CALLBACK(gtk_button_clicked), wide_attention_button);
+		G_CALLBACK(gtk_button_clicked), toolbar->attention);
 	gtk_widget_show_all(attention_button);
 
-	g_signal_connect(wide_attention_button, "notify::sensitive",
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
-	g_signal_connect(wide_attention_button, "notify::visible",
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::visible",
 			G_CALLBACK(button_visibility_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
-	gtk_widget_set_sensitive(GTK_WIDGET(wide_attention_button), FALSE);
+	gtk_widget_set_sensitive(toolbar->attention, FALSE);
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
@@ -1620,16 +1592,14 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	PurpleConversation *conv)
 {
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	PurplePlugin *prpl = purple_connection_get_prpl(gc);
-	GtkWidget *attention =
-		g_object_get_data(G_OBJECT(toolbar), "attention");
 
 	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
 
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
-	gtk_widget_set_sensitive(attention,
+	gtk_widget_set_sensitive(toolbar->attention,
 		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }

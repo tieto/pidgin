@@ -65,6 +65,16 @@
 
 #define TOOLTIP_TIMEOUT 500
 
+#if !GTK_CHECK_VERSION(2,20,0)
+#define gtk_widget_get_realized(x) GTK_WIDGET_REALIZED(x)
+
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_has_window(x) !GTK_WIDGET_NO_WINDOW(x)
+#define gtk_widget_get_state(x) GTK_WIDGET_STATE(x)
+#define gtk_widget_is_drawable(x) GTK_WIDGET_DRAWABLE(x)
+#endif
+#endif
+
 static GtkTextViewClass *parent_class = NULL;
 
 struct scalable_data {
@@ -83,6 +93,36 @@ struct im_image_data {
 	GtkTextMark *mark;
 };
 
+struct _GtkIMHtmlScalable {
+	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
+	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
+	void (*free)(struct _GtkIMHtmlScalable *);
+};
+
+struct _GtkIMHtmlHr {
+	GtkIMHtmlScalable scalable;
+	GtkWidget *sep;
+};
+
+struct _GtkIMHtmlImage {
+	GtkIMHtmlScalable scalable;
+	GtkImage *image; /**< Contains the scaled version of this pixbuf. */
+	GdkPixbuf *pixbuf; /**< The original pixbuf, before any scaling. */
+	GtkTextMark *mark;
+	gchar *filename;
+	int width;
+	int height;
+	int id;
+	GtkWidget *filesel;
+};
+
+struct _GtkIMHtmlAnimation {
+	GtkIMHtmlImage imhtmlimage;
+	GdkPixbufAnimation *anim; /**< The original animation, before any scaling. */
+	GdkPixbufAnimationIter *iter;
+	guint timer;
+};
+
 struct _GtkIMHtmlLink
 {
 	GtkIMHtml *imhtml;
@@ -90,8 +130,13 @@ struct _GtkIMHtmlLink
 	GtkTextTag *tag;
 };
 
-typedef struct _GtkIMHtmlProtocol
-{
+struct _GtkSmileyTree {
+	GString *values;
+	GtkSmileyTree **children;
+	GtkIMHtmlSmiley *image;
+};
+
+typedef struct {
 	char *name;
 	int length;
 
@@ -99,7 +144,8 @@ typedef struct _GtkIMHtmlProtocol
 	gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu);
 } GtkIMHtmlProtocol;
 
-typedef struct _GtkIMHtmlFontDetail {
+/* The five elements contained in a FONT tag */
+typedef struct {
 	gushort size;
 	gchar *face;
 	gchar *fore;
@@ -511,20 +557,18 @@ static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
 	PangoLayout *layout;
-	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(imhtml->tip_window));
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
 
-	gtk_paint_flat_box (gtk_widget_get_style(imhtml->tip_window), cr,
-		GTK_STATE_NORMAL, GTK_SHADOW_OUT, imhtml->tip_window, "tooltip",
-		0, 0, -1, -1);
+	gtk_paint_flat_box (imhtml->tip_window->style, imhtml->tip_window->window,
+						GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, imhtml->tip_window,
+						"tooltip", 0, 0, -1, -1);
 
-	gtk_paint_layout (gtk_widget_get_style(imhtml->tip_window), cr,
-		GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
+	gtk_paint_layout (imhtml->tip_window->style, imhtml->tip_window->window, GTK_STATE_NORMAL,
+					  FALSE, NULL, imhtml->tip_window, NULL, 4, 4, layout);
 
-	cairo_destroy(cr);
 	g_object_unref(layout);
 	return FALSE;
 }
@@ -536,15 +580,12 @@ gtk_imhtml_tip (gpointer data)
 	PangoFontMetrics *font_metrics;
 	PangoLayout *layout;
 	PangoFont *font;
-	GtkStyle *style = gtk_widget_get_style(imhtml->tip_window);
-	GtkAllocation allocation;
+
 	gint gap, x, y, h, w, scr_w, baseline_skip;
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
-	gtk_widget_get_allocation(GTK_WIDGET(imhtml), &allocation);
-
-	if (!imhtml->tip || !gtk_widget_is_drawable(GTK_WIDGET(imhtml))) {
+	if (!imhtml->tip || !gtk_widget_is_drawable (GTK_WIDGET(imhtml))) {
 		imhtml->tip_timer = 0;
 		return FALSE;
 	}
@@ -568,10 +609,11 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_ensure_style (imhtml->tip_window);
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
 	font = pango_context_load_font(pango_layout_get_context(layout),
-	                               style->font_desc);
+			      imhtml->tip_window->style->font_desc);
 
 	if (font == NULL) {
-		char *tmp = pango_font_description_to_string(style->font_desc);
+		char *tmp = pango_font_description_to_string(
+					imhtml->tip_window->style->font_desc);
 
 		purple_debug(PURPLE_DEBUG_ERROR, "gtk_imhtml_tip",
 			"pango_context_load_font() couldn't load font: '%s'\n",
@@ -596,8 +638,8 @@ gtk_imhtml_tip (gpointer data)
 	h = 8 + baseline_skip;
 
 	gdk_window_get_pointer (NULL, &x, &y, NULL);
-	if ((!gtk_widget_get_has_window(GTK_WIDGET(imhtml))))
-		y += allocation.y;
+	if (!gtk_widget_get_has_window (GTK_WIDGET(imhtml)))
+		y += GTK_WIDGET(imhtml)->allocation.y;
 
 	scr_w = gdk_screen_width();
 
@@ -637,7 +679,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 
 	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
 
-	gdk_window_get_pointer(gtk_widget_get_window(GTK_WIDGET(imhtml)), NULL, NULL, NULL);
+	gdk_window_get_pointer(GTK_WIDGET(imhtml)->window, NULL, NULL, NULL);
 	gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(imhtml), GTK_TEXT_WINDOW_WIDGET,
 	                                      event->x, event->y, &x, &y);
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, x, y);
@@ -765,8 +807,6 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 	return FALSE;
 }
 
-/* TODO: I think this can be removed for GTK+ 3.0... */
-#if 0
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
 			 GdkEventExpose *event)
@@ -794,8 +834,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			gdk_color_parse(GTK_IMHTML(widget)->edit.background, &gcolor);
 			gdk_cairo_set_source_color(cr, &gcolor);
 		} else {
-			gdk_cairo_set_source_color(cr,
-				&(gtk_widget_get_style(widget)->base[gtk_widget_get_state(widget)]));
+			gdk_cairo_set_source_color(cr, &(widget->style->base[gtk_widget_get_state(widget)]));
 		}
 
 		cairo_rectangle(cr,
@@ -901,7 +940,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 
 	return FALSE;
 }
-#endif
 
 
 static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
@@ -1073,7 +1111,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	}
 	if (primary) /* This was allocated here */
 		g_free(text);
-}
+ }
 
 static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
 {
@@ -1178,12 +1216,11 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 {
 	char *text;
 	GtkIMHtml *imhtml = data;
-	gint length = gtk_selection_data_get_length(selection_data);
 
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
-	if (imhtml->wbfo || length <= 0) {
+	if (imhtml->wbfo || selection_data->length <= 0) {
 		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
 		return;
 	} else {
@@ -1207,13 +1244,13 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		}
 #endif
 
-		text = g_malloc(length + 1);
-		memcpy(text, gtk_selection_data_get_data(selection_data), length);
+		text = g_malloc(selection_data->length + 1);
+		memcpy(text, selection_data->data, selection_data->length);
 		/* Make sure the paste data is null-terminated.  Given that
 		 * we're passed length (but assume later that it is
 		 * null-terminated), this seems sensible to me.
 		 */
-		text[length] = '\0';
+		text[selection_data->length] = '\0';
 	}
 
 #ifdef _WIN32
@@ -1224,10 +1261,10 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	}
 #endif
 
-	if (length >= 2 &&
+	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
 		/* This is UTF-16 */
-		char *utf8 = utf16_to_utf8_with_bom_check(text, length);
+		char *utf8 = utf16_to_utf8_with_bom_check(text, selection_data->length);
 		g_free(text);
 		text = utf8;
 		if (!text) {
@@ -1342,7 +1379,7 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 				       paste_received_cb, imhtml);
 
 		return TRUE;
-	}
+        }
 
 	return FALSE;
 }
@@ -1588,8 +1625,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
-	/* TODO: I _think_ this should be removed for GTK+ 3.0 */
-	/*widget_class->expose_event = gtk_imhtml_expose_event;*/
+	widget_class->expose_event = gtk_imhtml_expose_event;
 	parent_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
 	parent_style_set = widget_class->style_set;
@@ -1651,20 +1687,20 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        TRUE, G_PARAM_READABLE));
 
 	binding_set = gtk_binding_set_by_class (parent_class);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_u, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_UNDERLINE);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_plus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_equal, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_minus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_SHRINK);
+	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
+	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
+	gtk_binding_entry_add_signal (binding_set, GDK_u, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_UNDERLINE);
+	gtk_binding_entry_add_signal (binding_set, GDK_plus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
+	gtk_binding_entry_add_signal (binding_set, GDK_equal, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
+	gtk_binding_entry_add_signal (binding_set, GDK_minus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_SHRINK);
 	binding_set = gtk_binding_set_by_class(klass);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_r, GDK_CONTROL_MASK, "format_function_clear", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Enter, 0, "message_send", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Return, 0, "message_send", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_z, GDK_CONTROL_MASK, "undo", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F14, 0, "undo", 0);
-	gtk_binding_entry_add_signal(binding_set, GDK_KEY_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
+	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
+	gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -1891,23 +1927,23 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 		/* can't accept any of the offered targets */
 	} else {
 		GtkWidget *source_widget;
-		suggested_action = gdk_drag_context_get_suggested_action(context);
+		suggested_action = context->suggested_action;
 		source_widget = gtk_drag_get_source_widget (context);
 		if (source_widget == widget) {
 			/* Default to MOVE, unless the user has
 			 * pressed ctrl or alt to affect available actions
 			 */
-			if ((gdk_drag_context_get_actions(context) & GDK_ACTION_MOVE) != 0)
+			if ((context->actions & GDK_ACTION_MOVE) != 0)
 				suggested_action = GDK_ACTION_MOVE;
 		}
 	}
 
 	gdk_drag_status (context, suggested_action, time);
 
-	/* TRUE return means don't propagate the drag motion to parent
-	 * widgets that may also be drop sites.
-	 */
-	return TRUE;
+  /* TRUE return means don't propagate the drag motion to parent
+   * widgets that may also be drop sites.
+   */
+  return TRUE;
 }
 
 static void
@@ -1929,22 +1965,21 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 {
 	gchar **links;
 	gchar *link;
-	char *text = (char *) gtk_selection_data_get_data(sd);
+	char *text = (char *)sd->data;
 	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gint i = 0;
-	gint length = gtk_selection_data_get_length(sd);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
 
-	if (gtk_imhtml_get_editable(imhtml) && text) {
+	if(gtk_imhtml_get_editable(imhtml) && sd->data){
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
 			/* TODO: Is it really ok to change sd->data...? */
-			purple_str_strip_char(text, '\r');
+			purple_str_strip_char((char *)sd->data, '\r');
 
-			links = g_strsplit(text, "\n", 0);
-			while ((link = links[i]) != NULL) {
+			links = g_strsplit((char *)sd->data, "\n", 0);
+			while((link = links[i]) != NULL){
 				if (gtk_imhtml_is_protocol(link)) {
 					gchar *label;
 
@@ -1966,7 +2001,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 
 				i++;
 			}
-			g_strfreev(links);
+            g_strfreev(links);
 			break;
 		case GTK_IMHTML_DRAG_HTML:
 			{
@@ -1982,8 +2017,8 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			 * See also the comment on text/html here:
 			 * http://mail.gnome.org/archives/gtk-devel-list/2001-September/msg00114.html
 			 */
-			if (length >= 2 && !g_utf8_validate(text, length - 1, NULL)) {
-				utf8 = utf16_to_utf8_with_bom_check(text, length);
+			if (sd->length >= 2 && !g_utf8_validate(text, sd->length - 1, NULL)) {
+				utf8 = utf16_to_utf8_with_bom_check(text, sd->length);
 
 				if (!utf8) {
 					purple_debug_warning("gtkimhtml", "g_convert from UTF-16 failed in drag_rcv_cb\n");
@@ -2012,8 +2047,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			gtk_drag_finish(dc, FALSE, FALSE, t);
 			return;
 		}
-		gtk_drag_finish(dc, TRUE,
-		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	} else {
 		gtk_drag_finish(dc, FALSE, FALSE, t);
 	}
@@ -2544,8 +2578,8 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 static gboolean smooth_scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
-	GtkAdjustment *adj = gtk_text_view_get_vadjustment(GTK_TEXT_VIEW(imhtml));
-	gdouble max_val = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
+	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
+	gdouble max_val = adj->upper - adj->page_size;
 	gdouble scroll_val = gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3);
 
 	g_return_val_if_fail(imhtml->scroll_time != NULL, FALSE);
@@ -2568,10 +2602,9 @@ static gboolean smooth_scroll_cb(gpointer data)
 static gboolean scroll_idle_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
-	GtkAdjustment *adj = gtk_text_view_get_vadjustment(GTK_TEXT_VIEW(imhtml));
-	if (adj) {
-		gtk_adjustment_set_value(adj, gtk_adjustment_get_upper(adj) -
-		                              gtk_adjustment_get_page_size(adj));
+	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
+	if(adj) {
+		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
 	}
 	imhtml->scroll_src = 0;
 	return FALSE;
@@ -3606,125 +3639,38 @@ void gtk_imhtml_page_down (GtkIMHtml *imhtml)
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &iter, 0, TRUE, 0, 0);
 }
 
-/* GtkIMHtmlScalable, gtk_imhtml_image, gtk_imhtml_hr */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
+/**
+ * Destroys and frees a GTK+ IM/HTML scalable image.
+ *
+ * @param scale The GTK+ IM/HTML scalable.
+ */
+static void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 {
-	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 
-	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
-	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
-	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_image_free;
-
-	im_image->pixbuf = img;
-	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
-	im_image->width = gdk_pixbuf_get_width(img);
-	im_image->height = gdk_pixbuf_get_height(img);
-	im_image->mark = NULL;
-	im_image->filename = g_strdup(filename);
-	im_image->id = id;
-	im_image->filesel = NULL;
-
-	g_object_ref(img);
-	return GTK_IMHTML_SCALABLE(im_image);
+	g_object_unref(image->pixbuf);
+	g_free(image->filename);
+	if (image->filesel)
+		gtk_widget_destroy(image->filesel);
+	g_free(scale);
 }
 
-static gboolean
-animate_image_cb(gpointer data)
+/**
+ * Destroys and frees a GTK+ IM/HTML scalable animation.
+ *
+ * @param scale The GTK+ IM/HTML scalable.
+ */
+static void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale)
 {
-	GtkIMHtmlImage *im_image;
-	int width, height;
-	int delay;
+	GtkIMHtmlAnimation *animation = (GtkIMHtmlAnimation *)scale;
 
-	im_image = data;
+	if (animation->timer > 0)
+		g_source_remove(animation->timer);
+	if (animation->iter != NULL)
+		g_object_unref(animation->iter);
+	g_object_unref(animation->anim);
 
-	/* Update the pointer to this GdkPixbuf frame of the animation */
-	if (gdk_pixbuf_animation_iter_advance(GTK_IMHTML_ANIMATION(im_image)->iter, NULL)) {
-		GdkPixbuf *pb = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
-		g_object_unref(G_OBJECT(im_image->pixbuf));
-		im_image->pixbuf = gdk_pixbuf_copy(pb);
-
-		/* Update the displayed GtkImage */
-		width = gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image));
-		height = gdk_pixbuf_get_height(gtk_image_get_pixbuf(im_image->image));
-		if (width > 0 && height > 0)
-		{
-			/* Need to scale the new frame to the same size as the old frame */
-			GdkPixbuf *tmp;
-			tmp = gdk_pixbuf_scale_simple(im_image->pixbuf, width, height, GDK_INTERP_BILINEAR);
-			gtk_image_set_from_pixbuf(im_image->image, tmp);
-			g_object_unref(G_OBJECT(tmp));
-		} else {
-			/* Display at full-size */
-			gtk_image_set_from_pixbuf(im_image->image, im_image->pixbuf);
-		}
-	}
-
-	delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
-	GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
-
-	return FALSE;
-}
-
-GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gchar *filename, int id)
-{
-	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *) g_new0(GtkIMHtmlAnimation, 1);
-
-	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
-	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
-	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_animation_free;
-
-	GTK_IMHTML_ANIMATION(im_image)->anim = anim;
-	if (gdk_pixbuf_animation_is_static_image(anim)) {
-		im_image->pixbuf = gdk_pixbuf_animation_get_static_image(anim);
-		g_object_ref(im_image->pixbuf);
-	} else {
-		int delay;
-		GdkPixbuf *pb;
-		GTK_IMHTML_ANIMATION(im_image)->iter = gdk_pixbuf_animation_get_iter(anim, NULL);
-		pb = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
-		im_image->pixbuf = gdk_pixbuf_copy(pb);
-		delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
-		GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
-	}
-	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
-	im_image->width = gdk_pixbuf_animation_get_width(anim);
-	im_image->height = gdk_pixbuf_animation_get_height(anim);
-	im_image->filename = g_strdup(filename);
-	im_image->id = id;
-
-	g_object_ref(anim);
-
-	return GTK_IMHTML_SCALABLE(im_image);
-}
-
-void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
-{
-	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *)scale;
-
-	if (im_image->width > width || im_image->height > height) {
-		double ratio_w, ratio_h, ratio;
-		int new_h, new_w;
-		GdkPixbuf *new_image = NULL;
-
-		ratio_w = ((double)width - 2) / im_image->width;
-		ratio_h = ((double)height - 2) / im_image->height;
-
-		ratio = (ratio_w < ratio_h) ? ratio_w : ratio_h;
-
-		new_w = (int)(im_image->width * ratio);
-		new_h = (int)(im_image->height * ratio);
-
-		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, new_w, new_h, GDK_INTERP_BILINEAR);
-		gtk_image_set_from_pixbuf(im_image->image, new_image);
-		g_object_unref(G_OBJECT(new_image));
-	} else if (gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image)) != im_image->width) {
-		/* Enough space to show the full-size of the image. */
-		GdkPixbuf *new_image;
-
-		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, im_image->width, im_image->height, GDK_INTERP_BILINEAR);
-		gtk_image_set_from_pixbuf(im_image->image, new_image);
-		g_object_unref(G_OBJECT(new_image));
-	}
+	gtk_imhtml_image_free(scale);
 }
 
 static void
@@ -3931,55 +3877,51 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 
 }
 
-static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlSmiley *smiley)
+/**
+ * Rescales a GTK+ IM/HTML scalable image to a given size.
+ *
+ * @param scale  The GTK+ IM/HTML scalable.
+ * @param width  The new width.
+ * @param height The new height.
+ */
+static void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 {
-	GdkPixbufAnimation *anim = NULL;
-	GtkIMHtmlImageSave *save = NULL;
-	gboolean ret;
+	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *)scale;
 
-	if (event->type != GDK_BUTTON_RELEASE || ((GdkEventButton*)event)->button != 3)
-		return FALSE;
+	if (im_image->width > width || im_image->height > height) {
+		double ratio_w, ratio_h, ratio;
+		int new_h, new_w;
+		GdkPixbuf *new_image = NULL;
 
-	anim = gtk_smiley_get_image(smiley);
-	if (!anim)
-		return FALSE;
+		ratio_w = ((double)width - 2) / im_image->width;
+		ratio_h = ((double)height - 2) / im_image->height;
 
-	save = g_new0(GtkIMHtmlImageSave, 1);
-	save->image = (GtkIMHtmlScalable *)gtk_imhtml_animation_new(anim, smiley->smile, 0);
-	save->data = smiley->data;        /* Do not need to memdup here, since the smiley is not
-	                                     destroyed before this GtkIMHtmlImageSave */
-	save->datasize = smiley->datasize;
-	ret = gtk_imhtml_image_clicked(w, event, save);
-	g_object_set_data_full(G_OBJECT(w), "image-data", save->image, (GDestroyNotify)gtk_imhtml_animation_free);
-	g_object_set_data_full(G_OBJECT(w), "image-save-data", save, (GDestroyNotify)g_free);
-	return ret;
+		ratio = (ratio_w < ratio_h) ? ratio_w : ratio_h;
+
+		new_w = (int)(im_image->width * ratio);
+		new_h = (int)(im_image->height * ratio);
+
+		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, new_w, new_h, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(im_image->image, new_image);
+		g_object_unref(G_OBJECT(new_image));
+	} else if (gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image)) != im_image->width) {
+		/* Enough space to show the full-size of the image. */
+		GdkPixbuf *new_image;
+
+		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, im_image->width, im_image->height, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(im_image->image, new_image);
+		g_object_unref(G_OBJECT(new_image));
+	}
 }
 
-void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
-{
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
-
-	g_object_unref(image->pixbuf);
-	g_free(image->filename);
-	if (image->filesel)
-		gtk_widget_destroy(image->filesel);
-	g_free(scale);
-}
-
-void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale)
-{
-	GtkIMHtmlAnimation *animation = (GtkIMHtmlAnimation *)scale;
-
-	if (animation->timer > 0)
-		g_source_remove(animation->timer);
-	if (animation->iter != NULL)
-		g_object_unref(animation->iter);
-	g_object_unref(animation->anim);
-
-	gtk_imhtml_image_free(scale);
-}
-
-void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
+/**
+ * Adds a GTK+ IM/HTML scalable image to a given GTK+ IM/HTML at a given iter.
+ *
+ * @param scale  The GTK+ IM/HTML scalable.
+ * @param imhtml The GTK+ IM/HTML.
+ * @param iter   The GtkTextIter at which to add the scalable.
+ */
+static void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
 {
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 	GtkWidget *box = gtk_event_box_new();
@@ -4005,6 +3947,121 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	save->image = scale;
 	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), save);
 	g_object_set_data_full(G_OBJECT(box), "image-save-data", save, (GDestroyNotify)g_free);
+}
+
+/**
+ * Creates and returns a new GTK+ IM/HTML scalable object with an image.
+ *
+ * @param img      A GdkPixbuf of the image to add.
+ * @param filename The filename to associate with the image.
+ * @param id       The id to associate with the image.
+ *
+ * @return A new IM/HTML Scalable object with an image.
+ */
+static GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
+{
+	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
+
+	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
+	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
+	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_image_free;
+
+	im_image->pixbuf = img;
+	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
+	im_image->width = gdk_pixbuf_get_width(img);
+	im_image->height = gdk_pixbuf_get_height(img);
+	im_image->mark = NULL;
+	im_image->filename = g_strdup(filename);
+	im_image->id = id;
+	im_image->filesel = NULL;
+
+	g_object_ref(img);
+	return GTK_IMHTML_SCALABLE(im_image);
+}
+
+static gboolean
+animate_image_cb(gpointer data)
+{
+	GtkIMHtmlImage *im_image;
+	int width, height;
+	int delay;
+
+	im_image = data;
+
+	/* Update the pointer to this GdkPixbuf frame of the animation */
+	if (gdk_pixbuf_animation_iter_advance(GTK_IMHTML_ANIMATION(im_image)->iter, NULL)) {
+		GdkPixbuf *pb = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
+		g_object_unref(G_OBJECT(im_image->pixbuf));
+		im_image->pixbuf = gdk_pixbuf_copy(pb);
+
+		/* Update the displayed GtkImage */
+		width = gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image));
+		height = gdk_pixbuf_get_height(gtk_image_get_pixbuf(im_image->image));
+		if (width > 0 && height > 0)
+		{
+			/* Need to scale the new frame to the same size as the old frame */
+			GdkPixbuf *tmp;
+			tmp = gdk_pixbuf_scale_simple(im_image->pixbuf, width, height, GDK_INTERP_BILINEAR);
+			gtk_image_set_from_pixbuf(im_image->image, tmp);
+			g_object_unref(G_OBJECT(tmp));
+		} else {
+			/* Display at full-size */
+			gtk_image_set_from_pixbuf(im_image->image, im_image->pixbuf);
+		}
+	}
+
+	delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
+	GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
+
+	return FALSE;
+}
+
+/**
+ * Creates and returns a new GTK+ IM/HTML scalable object with an
+ * animated image.
+ *
+ * @param img      A GdkPixbufAnimation of the image to add.
+ * @param filename The filename to associate with the image.
+ * @param id       The id to associate with the image.
+ *
+ * @return A new IM/HTML Scalable object with an image.
+ */
+/*
+ * TODO: All this animation code could be combined much better with
+ *       the image code.  It couldn't be done when it was written
+ *       because it requires breaking backward compatibility.  It
+ *       would be good to do it for 3.0.0.
+ */
+static GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gchar *filename, int id)
+{
+	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *) g_new0(GtkIMHtmlAnimation, 1);
+
+	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
+	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
+	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_animation_free;
+
+	GTK_IMHTML_ANIMATION(im_image)->anim = anim;
+	if (gdk_pixbuf_animation_is_static_image(anim)) {
+		im_image->pixbuf = gdk_pixbuf_animation_get_static_image(anim);
+		g_object_ref(im_image->pixbuf);
+	} else {
+		int delay;
+		GdkPixbuf *pb;
+		GTK_IMHTML_ANIMATION(im_image)->iter = gdk_pixbuf_animation_get_iter(anim, NULL);
+		pb = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
+		im_image->pixbuf = gdk_pixbuf_copy(pb);
+		delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
+		GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
+	}
+	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
+	im_image->width = gdk_pixbuf_animation_get_width(anim);
+	im_image->height = gdk_pixbuf_animation_get_height(anim);
+	im_image->filename = g_strdup(filename);
+	im_image->id = id;
+
+	g_object_ref(anim);
+
+	return GTK_IMHTML_SCALABLE(im_image);
 }
 
 GtkIMHtmlScalable *gtk_imhtml_hr_new()
@@ -4229,14 +4286,9 @@ static void remove_tag_by_prefix(GtkIMHtml *imhtml, const GtkTextIter *i, const 
 
 	for (l = tags; l; l = l->next) {
 		GtkTextTag *tag = l->data;
-		gchar *name = NULL;
 
-		g_object_get(G_OBJECT(tag), "name", &name, NULL);
-
-		if (name && !strncmp(name, prefix, len))
+		if (tag->name && !strncmp(tag->name, prefix, len))
 			gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, i, e);
-
-		g_free(name);
 	}
 
 	g_slist_free(tags);
@@ -4252,14 +4304,9 @@ static void remove_tag_by_prefix(GtkIMHtml *imhtml, const GtkTextIter *i, const 
 
 			for (l = tags; l; l = l->next) {
 				GtkTextTag *tag = l->data;
-				gchar *name = NULL;
 
-				g_object_get(G_OBJECT(tag), "name", &name, NULL);
-
-				if (name && !strncmp(name, prefix, len))
+				if (tag->name && !strncmp(tag->name, prefix, len))
 					gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, &iter, e);
-
-				g_free(name);
 			}
 
 			g_slist_free(tags);
@@ -4380,16 +4427,11 @@ static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *start, GtkTextIter *en
 				gtk_text_iter_begins_tag(start, tag) &&			/* the tag starts with the selection */
 				(!gtk_text_iter_has_tag(end, tag) ||			/* the tag ends within the selection */
 					gtk_text_iter_ends_tag(end, tag))) {
-			gchar *name = NULL;
-
-			g_object_get(G_OBJECT(tag), "name", &name, NULL);
 			gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, start, end);
-
-			if (name && strncmp(name, "LINK ", 5) == 0 && imhtml->edit.link) {
+			if (tag->name &&
+					strncmp(tag->name, "LINK ", 5) == 0 && imhtml->edit.link) {
 				gtk_imhtml_toggle_link(imhtml, NULL);
 			}
-
-			g_free(name);
 		}
 	}
 	g_slist_free(tags);
@@ -4611,32 +4653,27 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 
 	for (l = tags; l != NULL; l = l->next) {
 		GtkTextTag *tag = GTK_TEXT_TAG(l->data);
-		gchar *name = NULL;
 
-		g_object_get(G_OBJECT(tag), "name", &name, NULL);
-
-		if (name) {
-			if (strcmp(name, "BOLD") == 0)
+		if (tag->name) {
+			if (strcmp(tag->name, "BOLD") == 0)
 				imhtml->edit.bold = TRUE;
-			else if (strcmp(name, "ITALICS") == 0)
+			else if (strcmp(tag->name, "ITALICS") == 0)
 				imhtml->edit.italic = TRUE;
-			else if (strcmp(name, "UNDERLINE") == 0)
+			else if (strcmp(tag->name, "UNDERLINE") == 0)
 				imhtml->edit.underline = TRUE;
-			else if (strcmp(name, "STRIKE") == 0)
+			else if (strcmp(tag->name, "STRIKE") == 0)
 				imhtml->edit.strike = TRUE;
-			else if (strncmp(name, "FORECOLOR ", 10) == 0)
-				imhtml->edit.forecolor = g_strdup(&(name)[10]);
-			else if (strncmp(name, "BACKCOLOR ", 10) == 0)
-				imhtml->edit.backcolor = g_strdup(&(name)[10]);
-			else if (strncmp(name, "FONT FACE ", 10) == 0)
-				imhtml->edit.fontface = g_strdup(&(name)[10]);
-			else if (strncmp(name, "FONT SIZE ", 10) == 0)
-				imhtml->edit.fontsize = strtol(&(name)[10], NULL, 10);
-			else if ((strncmp(name, "LINK ", 5) == 0) && !gtk_text_iter_is_end(&iter))
+			else if (strncmp(tag->name, "FORECOLOR ", 10) == 0)
+				imhtml->edit.forecolor = g_strdup(&(tag->name)[10]);
+			else if (strncmp(tag->name, "BACKCOLOR ", 10) == 0)
+				imhtml->edit.backcolor = g_strdup(&(tag->name)[10]);
+			else if (strncmp(tag->name, "FONT FACE ", 10) == 0)
+				imhtml->edit.fontface = g_strdup(&(tag->name)[10]);
+			else if (strncmp(tag->name, "FONT SIZE ", 10) == 0)
+				imhtml->edit.fontsize = strtol(&(tag->name)[10], NULL, 10);
+			else if ((strncmp(tag->name, "LINK ", 5) == 0) && !gtk_text_iter_is_end(&iter))
 				imhtml->edit.link = tag;
 		}
-
-		g_free(name);
 	}
 
 	g_slist_free(tags);
@@ -4927,8 +4964,6 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
-/* TODO: I think this can be removed for GTK+ 3.0... */
-#if 0
 static gboolean
 image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
@@ -4936,10 +4971,9 @@ image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 
 	return TRUE;
 }
-#endif
 
 /* In case the smiley gets removed from the imhtml before it gets removed from the queue */
-static void animated_smiley_destroy_cb(GtkWidget *widget, GtkIMHtml *imhtml)
+static void animated_smiley_destroy_cb(GtkObject *widget, GtkIMHtml *imhtml)
 {
 	GList *l = imhtml->animations->head;
 	while (l) {
@@ -4952,6 +4986,30 @@ static void animated_smiley_destroy_cb(GtkWidget *widget, GtkIMHtml *imhtml)
 		}
 		l = next;
 	}
+}
+
+static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlSmiley *smiley)
+{
+	GdkPixbufAnimation *anim = NULL;
+	GtkIMHtmlImageSave *save = NULL;
+	gboolean ret;
+
+	if (event->type != GDK_BUTTON_RELEASE || ((GdkEventButton*)event)->button != 3)
+		return FALSE;
+
+	anim = gtk_smiley_get_image(smiley);
+	if (!anim)
+		return FALSE;
+
+	save = g_new0(GtkIMHtmlImageSave, 1);
+	save->image = (GtkIMHtmlScalable *)gtk_imhtml_animation_new(anim, smiley->smile, 0);
+	save->data = smiley->data;        /* Do not need to memdup here, since the smiley is not
+	                                     destroyed before this GtkIMHtmlImageSave */
+	save->datasize = smiley->datasize;
+	ret = gtk_imhtml_image_clicked(w, event, save);
+	g_object_set_data_full(G_OBJECT(w), "image-data", save->image, (GDestroyNotify)gtk_imhtml_animation_free);
+	g_object_set_data_full(G_OBJECT(w), "image-save-data", save, (GDestroyNotify)g_free);
+	return ret;
 }
 
 void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter)
@@ -5010,7 +5068,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 						}
 					}
 				} else {
-					imhtml->num_animations++;
+ 					imhtml->num_animations++;
 				}
 				g_signal_connect(G_OBJECT(icon), "destroy", G_CALLBACK(animated_smiley_destroy_cb), imhtml);
 				g_queue_push_tail(imhtml->animations, icon);
@@ -5034,9 +5092,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		 * images, and ensures that they are handled by the image
 		 * itself, without propagating to the textview and causing
 		 * a complete refresh */
-		/* TODO: I think this should be removed for GTK+ 3.0?
 		g_signal_connect(G_OBJECT(icon), "expose-event", G_CALLBACK(image_expose), NULL);
-		*/
 
 		gtk_widget_show(icon);
 		if (ebox)
@@ -5130,29 +5186,22 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
+	const gchar *name;
 	static gchar buf[1024];
-	gchar *name = NULL;
 
+	name = tag->name;
 	g_return_val_if_fail(name != NULL, "");
-	g_object_get(G_OBJECT(tag), "name", &name, NULL);
 
 	if (strcmp(name, "BOLD") == 0) {
-		g_free(name);
 		return "<b>";
 	} else if (strcmp(name, "ITALICS") == 0) {
-		g_free(name);
 		return "<i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
-		g_free(name);
 		return "<u>";
 	} else if (strcmp(name, "STRIKE") == 0) {
-		g_free(name);
 		return "<s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		char *tmp = g_object_get_data(G_OBJECT(tag), "link_url");
-
-		g_free(name);
-
 		if (tmp) {
 			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", tmp);
 			buf[sizeof(buf)-1] = '\0';
@@ -5162,29 +5211,18 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		}
 	} else if (strncmp(name, "FORECOLOR ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font color=\"%s\">", &name[10]);
-
-		g_free(name);
-
 		return buf;
 	} else if (strncmp(name, "BACKCOLOR ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font back=\"%s\">", &name[10]);
-		g_free(name);
-
 		return buf;
 	} else if (strncmp(name, "BACKGROUND ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<body bgcolor=\"%s\">", &name[11]);
-		g_free(name);
-
 		return buf;
 	} else if (strncmp(name, "FONT FACE ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font face=\"%s\">", &name[10]);
-		g_free(name);
-
 		return buf;
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font size=\"%s\">", &name[10]);
-		g_free(name);
-
 		return buf;
 	} else {
 		char *str = buf;
@@ -5247,7 +5285,6 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		}
 
 		g_snprintf(str, sizeof(buf) - (str - buf), "'>");
-		g_free(name);
 
 		return (empty ? "" : buf);
 	}
@@ -5255,40 +5292,30 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 
 static const gchar *tag_to_html_end(GtkTextTag *tag)
 {
-	gchar *name;
+	const gchar *name;
 
+	name = tag->name;
 	g_return_val_if_fail(name != NULL, "");
-	g_object_get(G_OBJECT(tag), "name", &name, NULL);
 
 	if (strcmp(name, "BOLD") == 0) {
-		g_free(name);
 		return "</b>";
 	} else if (strcmp(name, "ITALICS") == 0) {
-		g_free(name);
 		return "</i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
-		g_free(name);
 		return "</u>";
 	} else if (strcmp(name, "STRIKE") == 0) {
-		g_free(name);
 		return "</s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
-		g_free(name);
 		return "</a>";
 	} else if (strncmp(name, "FORECOLOR ", 10) == 0) {
-		g_free(name);
 		return "</font>";
 	} else if (strncmp(name, "BACKCOLOR ", 10) == 0) {
-		g_free(name);
 		return "</font>";
 	} else if (strncmp(name, "BACKGROUND ", 10) == 0) {
-		g_free(name);
 		return "</body>";
 	} else if (strncmp(name, "FONT FACE ", 10) == 0) {
-		g_free(name);
 		return "</font>";
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
-		g_free(name);
 		return "</font>";
 	} else {
 		const char *props[] = {"weight-set", "foreground-set", "background-set",
@@ -5300,8 +5327,6 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 			if (set)
 				return "</span>";
 		}
-
-		g_free(name);
 
 		return "";
 	}

@@ -655,6 +655,7 @@ oscar_login(PurpleAccount *account)
 	GList *sorted_handlers;
 	GList *cur;
 	GString *msg = g_string_new("");
+	PurpleConnectionFlags flags;
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -740,17 +741,19 @@ oscar_login(PurpleAccount *account)
 		return;
 	}
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	flags = PURPLE_CONNECTION_HTML;
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
-		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
+		flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
 	/* Set this flag based on the protocol_id rather than the username,
 	   because that is what's tied to the get_moods prpl callback. */
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
-		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
+		flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
+
+	purple_connection_set_flags(gc, flags);
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
@@ -1000,7 +1003,7 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	if (purple_proxy_connect(pos->gc, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(pos->gc, purple_connection_get_account(pos->gc), "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -1547,7 +1550,7 @@ static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_OFFLINE, NULL);
 	purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
-	g_hash_table_remove(od->buddyinfo, purple_normalize(gc->account, info->bn));
+	g_hash_table_remove(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), info->bn));
 
 	return 1;
 }
@@ -2816,7 +2819,7 @@ static int purple_parse_locaterights(OscarData *od, FlapConnection *conn, FlapFr
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
 	aim_locate_setcaps(od, purple_caps);
-	oscar_set_info_and_status(account, TRUE, account->user_info, TRUE,
+	oscar_set_info_and_status(account, TRUE, purple_account_get_user_info(account), TRUE,
 							  purple_account_get_active_status(account));
 
 	return 1;
@@ -3176,9 +3179,9 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	else {
 		/* Don't send if this turkey is in our deny list */
 		GSList *list;
-		for (list=gc->account->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
+		for (list=purple_connection_get_account(gc)->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
 		if (!list) {
-			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(gc->account, name));
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), name));
 			if (bi && bi->typingnot) {
 				if (state == PURPLE_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);
@@ -3478,13 +3481,11 @@ oscar_set_info(PurpleConnection *gc, const char *rawinfo)
 static guint32
 oscar_get_extended_status(PurpleConnection *gc)
 {
-	OscarData *od;
 	PurpleAccount *account;
 	PurpleStatus *status;
 	const gchar *status_id;
 	guint32 data = 0x00000000;
 
-	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 	status = purple_account_get_active_status(account);
 	status_id = purple_status_get_id(status);
@@ -3806,7 +3807,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 			}
 
 			purple_account_remove_buddies(account, moved_buddies, groups);
-			purple_account_add_buddies(account, moved_buddies);
+			purple_account_add_buddies(account, moved_buddies, NULL);
 			g_list_free(groups);
 			purple_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, gname);
@@ -4032,9 +4033,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					gname = groupitem ? groupitem->name : NULL;
 					gname_utf8 = oscar_utf8_try_convert(account, od, gname);
 
-					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
+					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Buddies"));
 					if (g == NULL) {
-						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Buddies"));
 						purple_blist_add_group(g, NULL);
 					}
 
@@ -4108,11 +4109,11 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				 */
 				if (!od->icq && curitem->data) {
 					guint8 perm_deny = aim_ssi_getpermdeny(&od->ssi.local);
-					if (perm_deny != 0 && perm_deny != account->perm_deny)
+					if (perm_deny != 0 && perm_deny != purple_account_get_privacy_type(account))
 					{
 						purple_debug_info("oscar",
-								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, perm_deny);
-						account->perm_deny = perm_deny;
+								   "ssi: changing permdeny from %d to %hhu\n", purple_account_get_privacy_type(account), perm_deny);
+						purple_account_set_privacy_type(account, perm_deny);
 					}
 				}
 			} break;
@@ -4258,13 +4259,13 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 */
 		b = purple_buddy_new(account, name, alias_utf8);
 
-		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
-			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Buddies")))) {
+			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Buddies"));
 			purple_blist_add_group(g, NULL);
 		}
 
 		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
+				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Buddies"));
 		purple_blist_add_buddy(b, NULL, g, NULL);
 
 		/* Mobile users should always be online */
@@ -4616,7 +4617,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 	PurpleAccount *account = NULL;
 	PurplePresence *presence;
 	PurpleStatus *status;
-	const char *status_id;
 	aim_userinfo_t *userinfo = NULL;
 	const char *name;
 
@@ -4631,7 +4631,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 
 	presence = purple_buddy_get_presence(b);
 	status = purple_presence_get_active_status(presence);
-	status_id = purple_status_get_id(status);
 
 	if (purple_presence_is_online(presence) == FALSE) {
 		char *gname;
@@ -4690,7 +4689,6 @@ char *oscar_status_text(PurpleBuddy *b)
 	OscarData *od;
 	const PurplePresence *presence;
 	const PurpleStatus *status;
-	const char *id;
 	const char *message;
 	gchar *ret = NULL;
 
@@ -4699,7 +4697,6 @@ char *oscar_status_text(PurpleBuddy *b)
 	od = purple_connection_get_protocol_data(gc);
 	presence = purple_buddy_get_presence(b);
 	status = purple_presence_get_active_status(presence);
-	id = purple_status_get_id(status);
 
 	if ((od != NULL) && !purple_presence_is_online(presence))
 	{
@@ -4741,7 +4738,7 @@ void oscar_set_aim_permdeny(PurpleConnection *gc) {
 	 * values of libpurple's PurplePrivacyType and the values used
 	 * by the oscar protocol.
 	 */
-	aim_ssi_setpermdeny(od, account->perm_deny);
+	aim_ssi_setpermdeny(od, purple_account_get_privacy_type(account));
 }
 
 void oscar_add_permit(PurpleConnection *gc, const char *who) {
@@ -5040,7 +5037,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 	name = purple_buddy_get_name(buddy);
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
-	od = gc->proto_data;
+	od = purple_connection_get_protocol_data(gc);
 	conn = peer_connection_find_by_type(od, name, OSCAR_CAPABILITY_DIRECTIM);
 
 	if (conn != NULL)
@@ -5476,7 +5473,7 @@ oscar_new_xfer(PurpleConnection *gc, const char *who)
 		conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 		aim_icbm_makecookie(conn->cookie);
 		conn->xfer = xfer;
-		xfer->data = conn;
+		purple_xfer_set_protocol_data(xfer, conn);
 	}
 
 	return xfer;

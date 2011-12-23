@@ -171,11 +171,11 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 	struct irc_conn *irc;
 	struct _irc_user_cmd *cmdent;
 
-	gc = purple_conversation_get_gc(conv);
+	gc = purple_conversation_get_connection(conv);
 	if (!gc)
 		return PURPLE_CMD_RET_FAILED;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
 		return PURPLE_CMD_RET_FAILED;
@@ -260,18 +260,18 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	gboolean autodetect;
 	int i;
 
+	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
+
+	if (autodetect && g_utf8_validate(string, -1, NULL)) {
+		return g_strdup(string);
+	}
+
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", -1);
 
 	if (encodings[0] == NULL) {
 		g_strfreev(encodings);
 		return purple_utf8_salvage(string);
-	}
-
-	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
-
-	if (autodetect && g_utf8_validate(string, -1, NULL)) {
-		return g_strdup(string);
 	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
@@ -708,7 +708,14 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 		switch (fmt[i]) {
 		case 'v':
 			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			args[i] = g_strndup(cur, end - cur);
+			/* This is a string of unknown encoding which we do not
+			 * want to transcode, but it may or may not be valid
+			 * UTF-8, so we'll salvage it.  If a nick/channel/target
+			 * field has inadvertently been marked verbatim, this
+			 * could cause weirdness. */
+			tmp = g_strndup(cur, end - cur);
+			args[i] = purple_utf8_salvage(tmp);
+			g_free(tmp);
 			cur += end - cur;
 			break;
 		case 't':
@@ -726,7 +733,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			cur = cur + strlen(cur);
 			break;
 		case '*':
-			args[i] = g_strdup(cur);
+			/* Ditto 'v' above; we're going to salvage this in case
+			 * it leaks past the IRC prpl */
+			args[i] = purple_utf8_salvage(cur);
 			cur = cur + strlen(cur);
 			break;
 		default:

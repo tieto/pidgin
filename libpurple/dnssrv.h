@@ -70,7 +70,7 @@ typedef struct
 
 	/** Called just before @a query_data is freed; this should cancel any
 	 *  further use of @a query_data the UI would make. Unneeded if
-	 *  #resolve_host is not implemented.
+	 *  #resolve is not implemented.
 	 */
 	void (*destroy)(PurpleSrvTxtQueryData *query_data);
 
@@ -99,86 +99,40 @@ typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 /**
  * Queries an SRV record.
  *
- * @param account the account that the query is being done for (or NULL)
- * @param protocol Name of the protocol (e.g. "sip")
+ * @param account   The account that the query is being done for (or NULL)
+ * @param protocol  Name of the protocol (e.g. "sip")
  * @param transport Name of the transport ("tcp" or "udp")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
+ * @param domain    Domain name to query (e.g. "blubb.com")
+ * @param cb        A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  *
- * @since 2.8.0
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
  */
-PurpleSrvTxtQueryData *purple_srv_resolve_account(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSSRV_C_)
-/**
- * Queries an SRV record.
- *
- * @param protocol Name of the protocol (e.g. "sip")
- * @param transport Name of the transport ("tcp" or "udp")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
- * @param extradata Extra data to be passed to the callback
- *
- * @deprecated Use purple_srv_resolve_account instead
- */
-PurpleSrvTxtQueryData *purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
-#endif
-
-/**
- * Cancel an SRV or DNS query.
- *
- * @param query_data The request to cancel.
- *
- * @deprecated Use purple_srv_txt_query_destroy instead
- */
-void purple_srv_cancel(PurpleSrvTxtQueryData *query_data);
+PurpleSrvTxtQueryData *purple_srv_resolve(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
 
 /**
  * Queries an TXT record.
  *
- * @param account the account that the query is being done for (or NULL)
- * @param owner Name of the protocol (e.g. "_xmppconnect")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
+ * @param account   The account that the query is being done for (or NULL)
+ * @param owner     Name of the protocol (e.g. "_xmppconnect")
+ * @param domain    Domain name to query (e.g. "blubb.com")
+ * @param cb        A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  *
- * @since 2.8.0
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
  */
-PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSSRV_C_)
-/**
- * Queries an TXT record.
- *
- * @param owner Name of the protocol (e.g. "_xmppconnect")
- * @param domain Domain name to query (e.g. "blubb.com")
- * @param cb A callback which will be called with the results
- * @param extradata Extra data to be passed to the callback
- *
- * @deprecated Use purple_txt_resolve_account instead
- *
- * @since 2.6.0
- */
-PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
-#endif
-
-/**
- * Cancel an TXT DNS query.
- *
- * @param query_data The request to cancel.
- * @since 2.6.0
- *
- * @deprecated Use purple_srv_txt_query_destroy instead
- */
-void purple_txt_cancel(PurpleSrvTxtQueryData *query_data);
+PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
 
 /**
  * Get the value of the current TXT record.
  *
  * @param response  The TXT response record
- * @returns The value of the current TXT record.
- * @since 2.6.0
+ *
+ * @return The value of the current TXT record.
  */
 const gchar *purple_txt_response_get_content(PurpleTxtResponse *response);
 
@@ -186,7 +140,6 @@ const gchar *purple_txt_response_get_content(PurpleTxtResponse *response);
  * Destroy a TXT DNS response object.
  *
  * @param response The PurpleTxtResponse to destroy.
- * @since 2.6.0
  */
 void purple_txt_response_destroy(PurpleTxtResponse *response);
 
@@ -216,7 +169,7 @@ void purple_srv_txt_query_set_ui_ops(PurpleSrvTxtQueryUiOps *ops);
 PurpleSrvTxtQueryUiOps *purple_srv_txt_query_get_ui_ops(void);
 
 /**
- * Get the query from a PurpleDnsQueryData
+ * Get the query from a PurpleSrvTxtQueryData
  *
  * @param query_data The SRV/TXT query
  * @return The query.
@@ -224,7 +177,7 @@ PurpleSrvTxtQueryUiOps *purple_srv_txt_query_get_ui_ops(void);
 char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
 
 /**
- * Get the type from a PurpleDnsQueryData (TXT or SRV)
+ * Get the type from a PurpleSrvTxtQueryData (TXT or SRV)
  *
  * @param query_data The query
  * @return The query.
@@ -236,3 +189,4 @@ int purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data);
 #endif
 
 #endif /* _PURPLE_DNSSRV_H */
+

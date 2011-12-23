@@ -384,7 +384,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
 			if (user->url_data != NULL)
 				purple_util_fetch_url_cancel(user->url_data);
-			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
+			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, -1, msim_downloaded_buddy_icon, (gpointer)user);
 		}
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
@@ -412,7 +412,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
  *
  * @param session
  * @param msg The user information reply, with any amount of information.
- * @param user The structure to save to, or NULL to save in PurpleBuddy->proto_data.
+ * @param user The structure to save to, or NULL to save in PurpleBuddy's protocol_data.
  *
  * Variable information is saved to the passed MsimUser structure. Permanent
  * information (UserID) is stored in the blist node of the buddy list (and
@@ -758,7 +758,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	user_msg = msim_msg_new(
 			"user", MSIM_TYPE_STRING, g_strdup(msim_username_to_set),
@@ -851,7 +851,7 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("msim_check_username_availability_cb", "Checking username: %s\n", username_to_check);
 

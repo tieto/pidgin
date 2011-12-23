@@ -16,13 +16,6 @@ purple_ssl_input_add(gsc, func, data)
 	Purple::Ssl::Connection gsc
 	Purple::SslInputFunction func
 
-Purple::Ssl::Connection
-purple_ssl_connect_fd(account, fd, func, error_func, data)
-	Purple::Account account
-	int fd
-	PurpleSslInputFunction func
-	PurpleSslErrorFunction error_func
-
 */
 
 MODULE = Purple::SSL  PACKAGE = Purple::SSL   PREFIX = purple_ssl_

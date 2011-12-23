@@ -79,7 +79,8 @@ static void padding_remove( GString* data )
 static char* transport_layer_key( struct MXitSession* session )
 {
 	static char	key[16 + 1];
-	int			passlen			= strlen( session->acc->password );
+	const char*	password		= purple_account_get_password( session->acc );
+	int			passlen			= strlen( password );
 
 	/* initialize with initial key */
 	g_strlcpy( key, INITIAL_KEY, sizeof( key ) );
@@ -89,9 +90,9 @@ static char* transport_layer_key( struct MXitSession* session )
 
 	/* add last 8 characters of the PIN (no padding if less characters) */
 	if ( passlen <= 8 )
-		memcpy( key + 8, session->acc->password, passlen );
+		memcpy( key + 8, password, passlen );
 	else
-		memcpy( key + 8, session->acc->password + ( passlen - 8 ), 8 );
+		memcpy( key + 8, password + ( passlen - 8 ), 8 );
 
 	return key;
 }
@@ -124,7 +125,7 @@ char* mxit_encrypt_password( struct MXitSession* session )
 
 	/* build the secret data to be encrypted: SECRET_HEADER + password */
 	pass = g_string_new( SECRET_HEADER );
-	g_string_append( pass, session->acc->password );
+	g_string_append( pass, purple_account_get_password( session->acc) );
 	padding_add( pass );		/* add ISO10126 padding */
 
 	/* now encrypt the secret. we encrypt each block separately (ECB mode) */

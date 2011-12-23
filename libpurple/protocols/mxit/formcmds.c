@@ -25,7 +25,7 @@
 
 
 #include "internal.h"
-#include <glib/gprintf.h>
+#include <glib.h>
 
 #include "purple.h"
 
@@ -86,7 +86,6 @@ struct ii_url_request
 static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message)
 {
 	struct ii_url_request*	iireq		= (struct ii_url_request*) user_data;
-	char*					ii_data;
 	int*					intptr		= NULL;
 	int						id;
 
@@ -106,12 +105,8 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 		goto done;
 	}
 
-	/* make a copy of the data */
-	ii_data = g_malloc(len);
-	memcpy(ii_data, (const char*) url_text, len);
-
-	/* we now have the inline image, store it in the imagestore */
-	id = purple_imgstore_add_with_id(ii_data, len, NULL);
+	/* we now have the inline image, store a copy in the imagestore */
+	id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
 	/* map the inline image id to purple image id */
 	intptr = g_malloc(sizeof(int));
@@ -367,7 +362,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 				purple_debug_info(MXIT_PLUGIN_ID, "sending request for inline image '%s'\n", iireq->url);
 
 				/* request the image (reference: "libpurple/util.h") */
-				purple_util_fetch_url_request(iireq->url, TRUE, NULL, TRUE, NULL, FALSE, mxit_cb_ii_returned, iireq);
+				purple_util_fetch_url(iireq->url, TRUE, NULL, TRUE, -1, mxit_cb_ii_returned, iireq);
 				mx->img_count++;
 			}
 		}

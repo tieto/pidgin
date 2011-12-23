@@ -190,7 +190,7 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
@@ -274,7 +274,9 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
-	/* TODO: how to set no separator for GtkDialog in gtk+ 3.0... */
+#if !GTK_CHECK_VERSION(2,22,0)
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)
@@ -302,11 +304,11 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 
 	gtk_size_group_add_widget(sg, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	type_combo = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "get");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "set");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "result");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "error");
+	type_combo = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "get");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "set");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "result");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "error");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
@@ -325,7 +327,7 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 				 to && *to ? to : "",
 				 to && *to ? "'" : "",
 				 g_random_int(),
-				 gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(type_combo)));
+				 gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)));
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_set_text(buffer, stanza, -1);
@@ -362,9 +364,9 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
-
-  /* TODO: find a way to specify no separator for a dialog in gtk+ 3 */
-  /*gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);*/
+#if !GTK_CHECK_VERSION(2,22,0)
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)
@@ -391,15 +393,15 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	type_combo = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "default");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "unavailable");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "subscribe");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "unsubscribe");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "subscribed");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "unsubscribed");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "probe");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "error");
+	type_combo = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "default");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "unavailable");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "subscribe");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "unsubscribe");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "subscribed");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "unsubscribed");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "probe");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "error");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
@@ -409,12 +411,12 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	show_combo = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(show_combo), "default");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(show_combo), "away");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(show_combo), "dnd");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(show_combo), "xa");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(show_combo), "chat");
+	show_combo = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(show_combo), "default");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(show_combo), "away");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(show_combo), "dnd");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(show_combo), "xa");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(show_combo), "chat");
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(show_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), show_combo, FALSE, FALSE, 0);
@@ -452,10 +454,10 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	}
 
 	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
-	type = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(type_combo));
+	type = gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo));
 	if (!strcmp(type, "default"))
 		type = "";
-	show = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(show_combo));
+	show = gtk_combo_box_get_active_text(GTK_COMBO_BOX(show_combo));
 	if (!strcmp(show, "default"))
 		show = "";
 	status = gtk_entry_get_text(GTK_ENTRY(status_entry));
@@ -522,8 +524,9 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
-  /* TODO: find a way to create a dialog without separtor in gtk+ 3 */
-	/*gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);*/
+#if !GTK_CHECK_VERSION(2,22,0)
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)
@@ -550,12 +553,12 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	type_combo = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "chat");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "headline");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "groupchat");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "normal");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(type_combo), "error");
+	type_combo = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "chat");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "headline");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "groupchat");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "normal");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "error");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
@@ -616,8 +619,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *to ? to : "",
 	                         *to ? "'" : "",
 	                         g_random_int(),
-	                         gtk_combo_box_text_get_active_text(
-                               GTK_COMBO_BOX_TEXT(type_combo)),
+	                         gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)),
 
 	                         *body ? "<body>" : "",
 	                         *body ? body : "",
@@ -647,8 +649,7 @@ signing_on_cb(PurpleConnection *gc)
 	if (!console)
 		return;
 
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),
-      purple_account_get_username(gc->account));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(purple_connection_get_account(gc)));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
@@ -679,7 +680,7 @@ signed_off_cb(PurpleConnection *gc)
 	if (l == NULL)
 		return;
 
-	gtk_combo_box_text_remove(GTK_COMBO_BOX_TEXT(console->dropdown), i);
+	gtk_combo_box_remove_text(GTK_COMBO_BOX(console->dropdown), i);
 	console->accounts = g_list_remove(console->accounts, gc);
 	console->count--;
 
@@ -721,7 +722,7 @@ plugin_unload(PurplePlugin *plugin)
 }
 
 static void
-console_destroy(GtkWidget *window, gpointer nul)
+console_destroy(GtkObject *window, gpointer nul)
 {
 	g_list_free(console->accounts);
 	g_free(console);
@@ -736,13 +737,12 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 	if (!console)
 		return;
 
-	account =
-      purple_accounts_find(gtk_combo_box_text_get_active_text(
-          GTK_COMBO_BOX_TEXT(console->dropdown)), "prpl-jabber");
-	if (!account || !account->gc)
+	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)),
+				    "prpl-jabber");
+	if (!account || !purple_account_get_connection(account))
 		return;
 
-	console->gc = account->gc;
+	console->gc = purple_account_get_connection(account);
 	gtk_imhtml_clear(GTK_IMHTML(console->imhtml));
 }
 
@@ -773,13 +773,13 @@ create_console(PurplePluginAction *action)
 	label = gtk_label_new(_("Account: "));
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	gtk_box_pack_start(GTK_BOX(console->hbox), label, FALSE, FALSE, 0);
-	console->dropdown = gtk_combo_box_text_new();
+	console->dropdown = gtk_combo_box_new_text();
 	for (connections = purple_connections_get_all(); connections; connections = connections->next) {
 		PurpleConnection *gc = connections->data;
 		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
 			console->count++;
 			console->accounts = g_list_append(console->accounts, gc);
-			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),
+			gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown),
 						  purple_account_get_username(purple_connection_get_account(gc)));
 			if (!console->gc)
 				console->gc = gc;
@@ -799,14 +799,17 @@ create_console(PurplePluginAction *action)
 
 	toolbar = gtk_toolbar_new();
 	button = gtk_tool_button_new(NULL, "<iq/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(iq_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 
 	button = gtk_tool_button_new(NULL, "<presence/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(presence_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 
 	button = gtk_tool_button_new(NULL, "<message/>");
+	gtk_tool_item_set_is_important(button, TRUE);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(message_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
 

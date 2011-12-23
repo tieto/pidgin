@@ -384,7 +384,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	g_free(signature);
 
 	/* Make the request */
-	od->url_data = purple_util_fetch_url_request_len(account,
+	od->url_data = purple_util_fetch_url_request(account,
 			url, TRUE, NULL, FALSE, NULL, FALSE, -1,
 			start_oscar_session_cb, od);
 	g_free(url);
@@ -646,7 +646,7 @@ void send_client_login(OscarData *od, const char *username)
 	g_string_free(body, TRUE);
 
 	/* Send the POST request  */
-	od->url_data = purple_util_fetch_url_request_len(
+	od->url_data = purple_util_fetch_url_request(
 			purple_connection_get_account(gc), get_client_login_url(od),
 			TRUE, NULL, FALSE, request->str, FALSE, -1,
 			client_login_cb, od);

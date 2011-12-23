@@ -108,7 +108,7 @@ pidgin_get_time_idle(void)
 
 	if (has_extension == -1)
 		has_extension = XScreenSaverQueryExtension(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()),
-                                               &event_base, &error_base);
+		                                           &event_base, &error_base);
 
 	if (has_extension)
 	{
@@ -116,7 +116,7 @@ pidgin_get_time_idle(void)
 			mit_info = XScreenSaverAllocInfo();
 
 		XScreenSaverQueryInfo(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()),
-                          GDK_ROOT_WINDOW(), mit_info);
+		                      GDK_ROOT_WINDOW(), mit_info);
 		return (mit_info->idle) / 1000;
 	}
 	else

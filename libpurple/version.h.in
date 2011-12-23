@@ -56,8 +56,6 @@ const char *purple_version_check(guint required_major, guint required_minor, gui
  * The major version of the running libpurple.  Contrast with
  * #PURPLE_MAJOR_VERSION, which expands at compile time to the major version of
  * libpurple being compiled against.
- *
- * @since 2.4.0
  */
 extern const guint purple_major_version;
 
@@ -65,8 +63,6 @@ extern const guint purple_major_version;
  * The minor version of the running libpurple.  Contrast with
  * #PURPLE_MINOR_VERSION, which expands at compile time to the minor version of
  * libpurple being compiled against.
- *
- * @since 2.4.0
  */
 extern const guint purple_minor_version;
 
@@ -75,8 +71,6 @@ extern const guint purple_minor_version;
  * The micro version of the running libpurple.  Contrast with
  * #PURPLE_MICRO_VERSION, which expands at compile time to the micro version of
  * libpurple being compiled against.
- *
- * @since 2.4.0
  */
 extern const guint purple_micro_version;
 

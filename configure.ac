@@ -202,6 +202,12 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+dnl Windows and Haiku do not use libm for the math functions, they are part
+dnl of the C library
+AC_SEARCH_LIBS([ceil], [m], [], [
+  AC_MSG_ERROR([unable to find the ceil() function])
+])
+
 AC_MSG_CHECKING(for fileno())
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
@@ -401,6 +407,10 @@ AC_ARG_ENABLE(gestures,
 	[AC_HELP_STRING([--disable-gestures],
 		[compile without the gestures plugin])],
 	enable_gestures="$enableval", enable_gestures="yes")
+AC_ARG_ENABLE(gcr,
+	[AC_HELP_STRING([--enable-gcr],
+		[compile with GCR certificate widgets])],
+	enable_gcr="$enableval", enable_gcr="no")
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -418,11 +428,11 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have GTK+ 2.91.5 or newer development headers installed to compile
+You must have GTK+ 2.10.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
@@ -433,6 +443,16 @@ running configure.
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
+
+	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+You must have WebKit 1.1.1 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	AC_SUBST(WEBKIT_CFLAGS)
+	AC_SUBST(WEBKIT_LIBS)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
@@ -545,8 +565,6 @@ Use --disable-sm if you do not need session management support.
 	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
-	dnl GtkSpell is not GTK+3 compatible yet
-	enable_gtkspell="no"
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
@@ -606,9 +624,26 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-        
+
+	dnl #######################################################################
+	dnl # Check for GCR for its certificate widgets
+	dnl #######################################################################
+	if test "x$enable_gcr" = "xyes"; then
+		PKG_CHECK_MODULES(GCR, gcr-0, [
+			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+			AC_MSG_RESULT(no)
+			enable_gcr="no"
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
+GCR development headers not found.
+Use --disable-gcr if you do not need GCR certificate widgets.
+])
+			fi])
+	fi
+
 
 else # GTK
+	enable_gcr=no
 	enable_cap=no
 	enable_gevolution=no
 	enable_gtkspell=no
@@ -621,6 +656,7 @@ AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$enable_gevolution" = "xyes")
 AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
 AM_CONDITIONAL(ENABLE_GESTURES, test "x$enable_gestures" = "xyes")
+AM_CONDITIONAL(ENABLE_GCR, test "x$enable_gcr" = "xyes")
 
 
 dnl #######################################################################
@@ -1072,7 +1108,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1117,8 +1153,8 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
-		myspace)	static_myspace=yes ;;
 		mxit)		static_mxit=yes ;;
+		myspace)	static_myspace=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -1136,8 +1172,8 @@ AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
-AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
+AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
@@ -1151,7 +1187,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1170,8 +1206,8 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
-		myspace)	dynamic_myspace=yes ;;
 		mxit)		dynamic_mxit=yes ;;
+		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
 		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
@@ -2496,6 +2532,7 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
+		   pidgin/themes/Makefile
 		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
@@ -2579,6 +2616,7 @@ echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with GCR widgets........ : $enable_gcr
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono

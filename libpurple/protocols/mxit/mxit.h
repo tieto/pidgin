@@ -161,6 +161,7 @@ struct MXitSession {
 	/* libpurple */
 	PurpleAccount*		acc;						/* pointer to the libpurple internal account struct */
 	PurpleConnection*	con;						/* pointer to the libpurple internal connection struct */
+	guint				inpa;						/* the input watcher */
 
 	/* transmit */
 	struct tx_queue		queue;						/* transmit packet queue (FIFO mode) */

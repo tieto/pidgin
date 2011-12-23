@@ -34,7 +34,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin-3.pc
 
-SUBDIRS = pixmaps plugins
+SUBDIRS = pixmaps plugins themes
 
 bin_PROGRAMS = pidgin
 
@@ -48,11 +48,12 @@ pidgin_SOURCES = \
 	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
+	gtkconv-theme.c \
+	gtkconv-theme-loader.c \
 	gtkdebug.c \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkdocklet-gtk.c \
 	gtkeventloop.c \
 	gtkft.c \
 	gtkicon-theme.c \
@@ -84,9 +85,11 @@ pidgin_SOURCES = \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
+	gtkwebview.c \
 	gtkwhiteboard.c \
 	minidialog.c \
-	pidgintooltip.c
+	pidgintooltip.c \
+	smileyparser.c
 
 pidgin_headers = \
 	gtkaccount.h \
@@ -98,6 +101,8 @@ pidgin_headers = \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
+	gtkconv-theme.h \
+	gtkconv-theme-loader.h \
 	gtkdebug.h \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
@@ -134,10 +139,12 @@ pidgin_headers = \
 	pidginstock.h \
 	gtkthemes.h \
 	gtkutils.h \
+	gtkwebview.h \
 	gtkwhiteboard.h \
 	minidialog.h \
 	pidgintooltip.h \
-	pidgin.h
+	pidgin.h \
+	smileyparser.h
 
 pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
@@ -149,6 +156,7 @@ pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \
+	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(XSS_LIBS) \
@@ -156,6 +164,7 @@ pidgin_LDADD = \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
 	$(LIBXML_LIBS) \
+	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -173,11 +182,14 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
 	$(GLIB_CFLAGS) \
+	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
+

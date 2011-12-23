@@ -89,6 +89,9 @@ wpurple_inet_aton( name, addr )
 #define inet_ntop( af, src, dst, cnt ) \
 wpurple_inet_ntop( af, src, dst, cnt )
 
+#define inet_pton( af, src, dst ) \
+wpurple_inet_pton( af, src, dst )
+
 /* netdb.h */
 #define gethostbyname( name ) \
 wpurple_gethostbyname( name )
@@ -135,7 +138,7 @@ wpurple_gettimeofday( timeval, timezone )
 #define vsnprintf _vsnprintf
 
 #define rename( oldname, newname ) \
-wpurple_rename( oldname, newname )
+g_rename( oldname, newname )
 
 /* sys/stat.h */
 #define fchmod(a,b)

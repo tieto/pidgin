@@ -111,4 +111,6 @@ XepIq *xep_iq_new(void *data, XepIqType type, const char *to, const char *from, 
 int xep_iq_send_and_free(XepIq *iq);
 GSList * bonjour_jabber_get_local_ips(int fd);
 
+void append_iface_if_linklocal(char *ip, guint32 interface_param);
+
 #endif /* _BONJOUR_JABBER_H_ */

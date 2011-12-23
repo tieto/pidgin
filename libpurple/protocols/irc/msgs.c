@@ -92,7 +92,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
 	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		prpl_info->set_status(irc->account, status);
 	}
 
@@ -457,12 +457,12 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		g_free(userhost);
 		g_free(realname);
 		
-		flags = cb->flags;
+		flags = purple_conv_chat_cb_get_flags(cb);
 
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
+			purple_conv_chat_user_set_flags(chat, purple_conv_chat_cb_get_name(cb), flags | PURPLE_CBFLAGS_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags & ~PURPLE_CBFLAGS_AWAY);
+			purple_conv_chat_user_set_flags(chat, purple_conv_chat_cb_get_name(cb), flags & ~PURPLE_CBFLAGS_AWAY);
 		}
 	}
 }

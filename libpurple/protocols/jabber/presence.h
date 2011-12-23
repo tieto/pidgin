@@ -92,7 +92,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status);
  */
 void jabber_presence_send(JabberStream *js, gboolean force);
 
-xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority); /* DEPRECATED */
 xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, const char *msg, int priority);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,

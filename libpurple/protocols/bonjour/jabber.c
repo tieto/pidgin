@@ -206,7 +206,9 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 						g_string_append_printf(str, " face='%s'", font_face);
 					if (font_size)
 						g_string_append_printf(str, " size='%s'", font_size);
-					if (ichat_text_color)
+					if (font_color)
+						g_string_append_printf(str, " color='%s'", font_color);
+					else if (ichat_text_color)
 						g_string_append_printf(str, " color='%s'", ichat_text_color);
 					if (ichat_balloon_color)
 						g_string_append_printf(str, " back='%s'", ichat_balloon_color);
@@ -665,9 +667,13 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	/* Look for the buddy that has opened the conversation and fill information */
 #ifdef HAVE_INET_NTOP
-	if (their_addr.ss_family == AF_INET6)
+	if (their_addr.ss_family == AF_INET6) {
 		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in6 *)&their_addr)->sin6_addr,
 			addrstr, sizeof(addrstr));
+
+		append_iface_if_linklocal(addrstr,
+			((struct sockaddr_in6 *)&their_addr)->sin6_scope_id);
+	}
 	else
 		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in *)&their_addr)->sin_addr,
 			addrstr, sizeof(addrstr));
@@ -744,7 +750,7 @@ start_serversocket_listening(int port, int socket, struct sockaddr *addr, size_t
 
 #if 0
 	/* TODO: Why isn't this being used? */
-	data->socket = purple_network_listen(jdata->port, SOCK_STREAM);
+	data->socket = purple_network_listen(jdata->port, AF_UNSPEC, SOCK_STREAM, TRUE);
 
 	if (jdata->socket == -1)
 	{
@@ -929,7 +935,9 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 		while(tmp) {
 			ip = tmp->data;
 			if (ip != NULL && g_ascii_strcasecmp(ip, bconv->ip) == 0) {
-				BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+				PurpleConnection *pc = purple_account_get_connection(bconv->account);
+				BonjourData *bd = purple_connection_get_protocol_data(pc);
+				BonjourJabber *jdata = bd->jabber_data;
 
 				purple_debug_info("bonjour", "Matched buddy %s to incoming conversation \"from\" attrib and IP (%s)\n",
 					purple_buddy_get_name(pb), bconv->ip);
@@ -962,7 +970,9 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 
 void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	PurpleConnection *pc = purple_account_get_connection(bconv->account);
+	BonjourData *bd = purple_connection_get_protocol_data(pc);
+	BonjourJabber *jdata = bd->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
 	GSList *buddies;
 
@@ -1122,7 +1132,9 @@ _async_bonjour_jabber_close_conversation_cb(gpointer data) {
 
 void
 async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	PurpleConnection *pc = purple_account_get_connection(bconv->account);
+	BonjourData *bd = purple_connection_get_protocol_data(pc);
+	BonjourJabber *jdata = bd->jabber_data;
 
 	jdata->pending_conversations = g_slist_remove(jdata->pending_conversations, bconv);
 
@@ -1142,8 +1154,9 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 	if (bconv != NULL) {
 		BonjourData *bd = NULL;
 
-		if(PURPLE_CONNECTION_IS_VALID(bconv->account->gc)) {
-			bd = bconv->account->gc->proto_data;
+		PurpleConnection *pc = purple_account_get_connection(bconv->account);
+		if (PURPLE_CONNECTION_IS_VALID(pc)) {
+			bd = purple_connection_get_protocol_data(pc);
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
 
@@ -1157,7 +1170,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 				tmp_next = xfers->next;
 				/* We only need to cancel this if it hasn't actually started transferring. */
 				/* This will change if we ever support IBB transfers. */
-				if (strcmp(xfer->who, purple_buddy_get_name(bconv->pb)) == 0
+				if (strcmp(purple_xfer_get_remote_user(xfer), purple_buddy_get_name(bconv->pb)) == 0
 						&& (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_NOT_STARTED
 							|| purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_UNKNOWN)) {
 					purple_xfer_cancel_remote(xfer);
@@ -1215,7 +1228,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		purple_input_remove(jdata->watcher_id6);
 
 	/* Close all the conversation sockets and remove all the watchers after sending end streams */
-	if (jdata->account->gc != NULL) {
+	if (!purple_account_is_disconnected(jdata->account)) {
 		GSList *buddies, *l;
 
 		buddies = purple_find_buddies(jdata->account, NULL);
@@ -1441,4 +1454,20 @@ bonjour_jabber_get_local_ips(int fd)
 #endif
 
 	return ips;
+}
+
+void
+append_iface_if_linklocal(char *ip, guint32 interface_param) {
+	struct in6_addr in6_addr;
+	int len_remain = INET6_ADDRSTRLEN - strlen(ip);
+
+	if (len_remain <= 1)
+		return;
+
+	if (inet_pton(AF_INET6, ip, &in6_addr) != 1 ||
+	    !IN6_IS_ADDR_LINKLOCAL(&in6_addr))
+		return;
+
+	snprintf(ip + strlen(ip), len_remain, "%%%d",
+		 interface_param);
 }

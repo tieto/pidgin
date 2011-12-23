@@ -51,6 +51,7 @@ struct _PidginWindow
 		GtkAction *view_log;
 
 		GtkAction *send_file;
+		GtkAction *get_attention;
 		GtkAction *add_pounce;
 		GtkAction *get_info;
 		GtkAction *invite;

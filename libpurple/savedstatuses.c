@@ -403,7 +403,7 @@ parse_substatus(xmlnode *substatus)
 	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->type = purple_status_type_find_with_id(
-							ret->account->status_types, data);
+							purple_account_get_status_types(ret->account), data);
 		g_free(data);
 	}
 

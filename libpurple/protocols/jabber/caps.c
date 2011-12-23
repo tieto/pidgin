@@ -794,11 +794,11 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 
 		for (value = xmlnode_get_child(field, "value"); value; value = xmlnode_get_next_twin(value)) {
 			gchar *val = xmlnode_get_data(value);
-			xdatafield->values = g_list_append(xdatafield->values, val);
+			xdatafield->values = g_list_prepend(xdatafield->values, val);
 		}
 
 		xdatafield->values = g_list_sort(xdatafield->values, (GCompareFunc)strcmp);
-		fields = g_list_append(fields, xdatafield);
+		fields = g_list_prepend(fields, xdatafield);
 	}
 
 	fields = g_list_sort(fields, jabber_caps_xdata_field_compare);
@@ -875,21 +875,24 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 		g_free(formtype);
 
 		while (fields) {
-			GList *value;
 			JabberDataFormField *field = (JabberDataFormField*)fields->data;
 
 			if (!g_str_equal(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */
 				append_escaped_string(context, field->var);
 				/* Append <value/> elements' cdata */
-				for (value = field->values; value; value = value->next) {
-					append_escaped_string(context, value->data);
-					g_free(value->data);
+				while (field->values) {
+					append_escaped_string(context, field->values->data);
+					g_free(field->values->data);
+					field->values = g_list_delete_link(field->values,
+					                                   field->values);
 				}
+			} else {
+				g_list_free_full(field->values, g_free);
 			}
 
 			g_free(field->var);
-			g_list_free(field->values);
+			g_free(field);
 
 			fields = g_list_delete_link(fields, fields);
 		}
@@ -958,7 +961,7 @@ void jabber_caps_broadcast_change()
 		const char *prpl_id = purple_account_get_protocol_id(account);
 		if (g_str_equal("prpl-jabber", prpl_id) && purple_account_is_connected(account)) {
 			PurpleConnection *gc = purple_account_get_connection(account);
-			jabber_presence_send(gc->proto_data, TRUE);
+			jabber_presence_send(purple_connection_get_protocol_data(gc), TRUE);
 		}
 	}
 

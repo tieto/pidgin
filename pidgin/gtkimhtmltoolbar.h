@@ -69,6 +69,7 @@ struct _GtkIMHtmlToolbar {
 	GtkWidget *image;
 	GtkWidget *link;
 	GtkWidget *smiley;
+	GtkWidget *attention;
 
 	GtkWidget *font_dialog;
 	GtkWidget *fgcolor_dialog;
@@ -94,9 +95,6 @@ GtkWidget* gtk_imhtmltoolbar_new              (void);
 void gtk_imhtmltoolbar_attach    (GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml);
 void gtk_imhtmltoolbar_associate_smileys (GtkIMHtmlToolbar *toolbar, const char *proto_id);
 
-/**
- * @since 2.7.0
- */
 void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	PurpleConversation *conv);
 

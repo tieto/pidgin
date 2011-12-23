@@ -465,7 +465,7 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PInfo *info)
 					purple_xfer_ref(xfer);
 					purple_xfer_start(xfer,	-1, NULL, 0);
 
-					if (xfer->data == NULL) {
+					if (purple_xfer_get_protocol_data(xfer) == NULL) {
 						purple_xfer_unref(xfer);
 						msn_slpmsg_destroy(slpmsg);
 						g_return_val_if_reached(NULL);

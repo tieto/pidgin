@@ -40,6 +40,8 @@
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
+#elif defined(GDK_WINDOWING_QUARTZ)
+#include <gdk/gdkquartz.h>
 #endif
 
 #include <gst/interfaces/xoverlay.h>
@@ -290,14 +292,14 @@ setup_menubar(PidginMedia *window)
 	GtkWidget *menu;
 
 	action_group = gtk_action_group_new("MediaActions");
-	gtk_action_group_add_actions(action_group,
-	                             menu_entries,
-	                             G_N_ELEMENTS(menu_entries),
-	                             GTK_WINDOW(window));
 #ifdef ENABLE_NLS
 	gtk_action_group_set_translation_domain(action_group,
 	                                        PACKAGE);
 #endif
+	gtk_action_group_add_actions(action_group,
+	                             menu_entries,
+	                             G_N_ELEMENTS(menu_entries),
+	                             GTK_WINDOW(window));
 
 	window->priv->ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(window->priv->ui, action_group, 0);
@@ -455,7 +457,7 @@ level_message_cb(PurpleMedia *media, gchar *session_id, gchar *participant,
 		progress = pidgin_media_get_widget(gtkmedia, session_id, participant);
 
 	if (progress)
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), level * 5);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), level);
 }
 
 
@@ -559,7 +561,9 @@ realize_cb_cb(PidginMediaRealizeData *data)
 #ifdef _WIN32
 		window_id = GDK_WINDOW_HWND(window);
 #elif defined(HAVE_X11)
-		window_id = gdk_x11_window_get_xid(window);
+		window_id = GDK_WINDOW_XWINDOW(window);
+#elif defined(GDK_WINDOWING_QUARTZ)
+		window_id = (gulong) gdk_quartz_window_get_nsview(window);
 #else
 #		error "Unsupported windowing system"
 #endif
@@ -789,7 +793,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		/* Hold button */
 		gtkmedia->priv->hold =
-				gtk_toggle_button_new_with_mnemonic("_Hold");
+				gtk_toggle_button_new_with_mnemonic(_("_Hold"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->hold);
@@ -878,7 +882,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->mute =
-				gtk_toggle_button_new_with_mnemonic("_Mute");
+				gtk_toggle_button_new_with_mnemonic(_("_Mute"));
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
@@ -969,7 +973,7 @@ pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
 		gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
-				0, _("Call in progress."));
+				0, _("Call in progress"));
 		gtk_widget_show(GTK_WIDGET(gtkmedia));
 	}
 }
@@ -1082,6 +1086,10 @@ create_default_video_src(PurpleMedia *media,
 		src = gst_element_factory_make("dshowvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
+#elif defined(__APPLE__)
+	src = gst_element_factory_make("osxvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autovideosrc", NULL);
 #else
 	src = gst_element_factory_make("gconfvideosrc", NULL);
 	if (src == NULL)
@@ -1136,6 +1144,8 @@ create_default_audio_src(PurpleMedia *media,
 		src = gst_element_factory_make("osssrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("dshowaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("osxaudiosrc", NULL);
 	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default audio source.\n");

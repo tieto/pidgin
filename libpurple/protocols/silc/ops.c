@@ -88,7 +88,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 			gboolean recursive)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	const char *type;
 	const unsigned char *data;
 	SilcUInt32 data_len;
@@ -224,7 +224,6 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 					    tmp, cflags, time(NULL));
 
 			purple_imgstore_unref_by_id(imgid);
-			cflags = 0;
 			ret = TRUE;
 		}
 		goto out;
@@ -264,7 +263,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -332,10 +331,17 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = g_markup_escape_text((const char *)message, -1);
+		const char *msg = (const char *)message;
+		char *salvaged = NULL;
+		if (!g_utf8_validate((const char *)message, -1, NULL)) {
+			salvaged = purple_utf8_salvage((const char *)message);
+			msg = salvaged;
+		}
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
 				 sender->nickname, 0, tmp, time(NULL));
+		g_free(salvaged);
 		g_free(tmp);
 	}
 }
@@ -354,7 +360,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -408,9 +414,16 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = g_markup_escape_text((const char *)message, -1);
+		const char *msg = (const char *)message;
+		char *salvaged = NULL;
+		if (!g_utf8_validate((const char *)message, -1, NULL)) {
+			salvaged = purple_utf8_salvage((const char *)message);
+			msg = salvaged;
+		}
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		serv_got_im(gc, sender->nickname, tmp, 0, time(NULL));
+		g_free(salvaged);
 		g_free(tmp);
 	}
 }
@@ -431,7 +444,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 {
 	va_list va;
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
@@ -941,7 +954,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 	     SilcUInt32 argc, unsigned char **argv)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	switch (command) {
 
@@ -1078,7 +1091,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		   SilcStatus error, va_list ap)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo;
 
 	switch (command) {
@@ -1724,7 +1737,7 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 		     SilcGetAuthMeth completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurpleAskPassphrase internal;
 	const char *password;
 
@@ -1775,7 +1788,7 @@ silc_verify_public_key(SilcClient client, SilcClientConnection conn,
 		       SilcVerifyPublicKey completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	if (!sg->conn && (conn_type == SILC_CONN_SERVER ||
 			  conn_type == SILC_CONN_ROUTER)) {
