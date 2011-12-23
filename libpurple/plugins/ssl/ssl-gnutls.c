@@ -1142,6 +1142,37 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	return success;
 }
 
+static GByteArray *
+x509_get_der_data(PurpleCertificate *crt)
+{
+	gnutls_x509_crt crt_dat;
+	GByteArray *data;
+	size_t len;
+	int ret;
+
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	/* Obtain the output size required */
+	len = 0;
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_DER, NULL, &len);
+	g_return_val_if_fail(ret == GNUTLS_E_SHORT_MEMORY_BUFFER, NULL);
+
+	/* Now allocate a buffer and *really* export it */
+	data = g_byte_array_sized_new(len);
+	data->len = len;
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_DER, data->data, &len);
+	if (ret != 0) {
+		purple_debug_error("gnutls/x509",
+		                   "Failed to export cert to buffer with code %d\n",
+		                   ret);
+		g_byte_array_free(data, TRUE);
+		return NULL;
+	}
+
+	return data;
+}
+
 /* X.509 certificate operations provided by this plugin */
 static PurpleCertificateScheme x509_gnutls = {
 	"x509",                          /* Scheme name */
@@ -1158,8 +1189,8 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificates import function */
+	x509_get_der_data,               /* Binary DER data */
 
-	NULL,
 	NULL,
 	NULL
 
