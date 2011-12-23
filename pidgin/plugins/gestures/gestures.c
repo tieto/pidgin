@@ -145,7 +145,6 @@ new_conv_cb(PurpleConversation *conv)
 }
 
 #if 0
-#if GTK_CHECK_VERSION(2,4,0)
 static void
 mouse_button_menu_cb(GtkComboBox *opt, gpointer data)
 {
@@ -153,15 +152,6 @@ mouse_button_menu_cb(GtkComboBox *opt, gpointer data)
 
 	gstroke_set_mouse_button(button + 2);
 }
-#else
-static void
-mouse_button_menu_cb(GtkMenuItem *item, gpointer data)
-{
-	int button = (int)data;
-
-	gstroke_set_mouse_button(button + 2);
-}
-#endif
 #endif
 
 static void
@@ -230,9 +220,6 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *toggle;
 #if 0
 	GtkWidget *opt;
-#if GTK_CHECK_VERSION(2,4,0)
-	GtkWidget *menu, *item;
-#endif
 #endif
 
 	/* Outside container */
@@ -243,7 +230,6 @@ get_config_frame(PurplePlugin *plugin)
 	vbox = pidgin_make_frame(ret, _("Mouse Gestures Configuration"));
 
 #if 0
-#if GTK_CHECK_VERSION(2,4,0)
 	/* Mouse button drop-down menu */
 	opt = gtk_combo_box_new_text();
 
@@ -255,26 +241,6 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(opt),
 							gstroke_get_mouse_button() - 2);
-#else
-	/* Mouse button drop-down menu */
-	menu = gtk_menu_new();
-	opt = gtk_option_menu_new();
-
-	item = gtk_menu_item_new_with_label(_("Middle mouse button"));
-	g_signal_connect(G_OBJECT(item), "activate",
-					 G_CALLBACK(mouse_button_menu_cb), opt);
-	gtk_menu_append(menu, item);
-
-	item = gtk_menu_item_new_with_label(_("Right mouse button"));
-	g_signal_connect(G_OBJECT(item), "activate",
-					 G_CALLBACK(mouse_button_menu_cb), opt);
-	gtk_menu_append(menu, item);
-
-	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(opt), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(opt),
-								gstroke_get_mouse_button() - 2);
-#endif
 #endif
 
 	/* "Visual gesture display" checkbox */

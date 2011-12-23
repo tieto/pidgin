@@ -65,6 +65,16 @@
 
 #define TOOLTIP_TIMEOUT 500
 
+#if !GTK_CHECK_VERSION(2,20,0)
+#define gtk_widget_get_realized(x) GTK_WIDGET_REALIZED(x)
+
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_has_window(x) !GTK_WIDGET_NO_WINDOW(x)
+#define gtk_widget_get_state(x) GTK_WIDGET_STATE(x)
+#define gtk_widget_is_drawable(x) GTK_WIDGET_DRAWABLE(x)
+#endif
+#endif
+
 static GtkTextViewClass *parent_class = NULL;
 
 struct scalable_data {
@@ -458,7 +468,7 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 
 	/* Don't scroll here if we're in the middle of a smooth scroll */
 	if (scroll && imhtml->scroll_time == NULL &&
-	    GTK_WIDGET_REALIZED(imhtml))
+	    gtk_widget_get_realized(GTK_WIDGET(imhtml)))
 		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
@@ -575,7 +585,7 @@ gtk_imhtml_tip (gpointer data)
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
-	if (!imhtml->tip || !GTK_WIDGET_DRAWABLE (GTK_WIDGET(imhtml))) {
+	if (!imhtml->tip || !gtk_widget_is_drawable (GTK_WIDGET(imhtml))) {
 		imhtml->tip_timer = 0;
 		return FALSE;
 	}
@@ -628,7 +638,7 @@ gtk_imhtml_tip (gpointer data)
 	h = 8 + baseline_skip;
 
 	gdk_window_get_pointer (NULL, &x, &y, NULL);
-	if (GTK_WIDGET_NO_WINDOW (GTK_WIDGET(imhtml)))
+	if (!gtk_widget_get_has_window (GTK_WIDGET(imhtml)))
 		y += GTK_WIDGET(imhtml)->allocation.y;
 
 	scr_w = gdk_screen_width();
@@ -824,7 +834,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			gdk_color_parse(GTK_IMHTML(widget)->edit.background, &gcolor);
 			gdk_cairo_set_source_color(cr, &gcolor);
 		} else {
-			gdk_cairo_set_source_color(cr, &(widget->style->base[GTK_WIDGET_STATE(widget)]));
+			gdk_cairo_set_source_color(cr, &(widget->style->base[gtk_widget_get_state(widget)]));
 		}
 
 		cairo_rectangle(cr,
