@@ -345,7 +345,7 @@ smooth_scroll_cb(gpointer data)
 {
 	struct GtkWebViewPriv *priv = data;
 	GtkAdjustment *adj = priv->vadj;
-	gdouble max_val = adj->upper - adj->page_size;
+	gdouble max_val = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
 	gdouble scroll_val = gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3);
 
 	g_return_val_if_fail(priv->scroll_time != NULL, FALSE);
@@ -371,7 +371,8 @@ scroll_idle_cb(gpointer data)
 	struct GtkWebViewPriv *priv = data;
 	GtkAdjustment *adj = priv->vadj;
 	if (adj) {
-		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
+		gtk_adjustment_set_value(adj,
+			gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj));
 	}
 	priv->scroll_src = 0;
 	return FALSE;
