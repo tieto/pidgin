@@ -1231,17 +1231,17 @@ menu_send_file_cb(GtkAction *action, gpointer data)
 }
 
 static void
-menu_get_attention_cb(GtkAction *ation, gpointer data)
+menu_get_attention_cb(GObject *obj, gpointer data)
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		int index;
-		if (widget == win->menu.get_attention)
+		if ((GtkAction *)obj == win->menu.get_attention)
 			index = 0;
 		else
-			index = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), "index"));
+			index = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(obj), "index"));
 		purple_prpl_send_attention(purple_conversation_get_connection(conv),
 			purple_conversation_get_name(conv), index);
 	}
