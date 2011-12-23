@@ -930,6 +930,29 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	return TRUE;
 }
 
+static GByteArray *
+x509_get_der_data(PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	SECItem *dercrt;
+	GByteArray *data;
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	dercrt = SEC_ASN1EncodeItem(NULL, NULL, crt_dat,
+	                            SEC_ASN1_GET(SEC_SignedCertificateTemplate));
+	g_return_val_if_fail(dercrt != NULL, FALSE);
+
+	data = g_byte_array_sized_new(dercrt->len);
+	memcpy(data->data, dercrt->data, dercrt->len);
+	data->len = dercrt->len;
+
+	SECITEM_FreeItem(dercrt, PR_TRUE);
+
+	return data;
+}
+
 static PurpleCertificateScheme x509_nss = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
@@ -945,8 +968,8 @@ static PurpleCertificateScheme x509_nss = {
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificate import function */
+	x509_get_der_data,               /* Binary DER data */
 
-	NULL,
 	NULL,
 	NULL
 };
