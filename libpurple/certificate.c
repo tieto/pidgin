@@ -499,6 +499,24 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	return (scheme->get_times)(crt, activation, expiration);
 }
 
+GByteArray *
+purple_certificate_get_der_data(PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	GByteArray *data;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+
+	scheme = crt->scheme;
+
+	g_return_val_if_fail(scheme->get_der_data, NULL);
+
+	data = (scheme->get_der_data)(crt);
+
+	return data;
+}
+
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
