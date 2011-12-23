@@ -631,7 +631,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 	dnl # Check for GCR for its certificate widgets
 	dnl #######################################################################
 	if test "x$enable_gcr" = "xyes"; then
-		PKG_CHECK_MODULES(GCR, gcr-0, [
+		PKG_CHECK_MODULES(GCR, gcr-3, [
 			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
 			AC_MSG_RESULT(no)
 			enable_gcr="no"
