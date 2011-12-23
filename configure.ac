@@ -444,7 +444,7 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
-	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+	PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= 1.1.1], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 You must have WebKit 1.1.1 or newer development headers installed to compile
