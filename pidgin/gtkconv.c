@@ -2186,19 +2186,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		case GDK_Page_Up:
 		case GDK_KP_Page_Up:
-/* TODO WEBKIT: Write this. */
-#if 0
-			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
-#endif /* if 0 */
+			gtk_webview_page_up(GTK_WEBVIEW(gtkconv->webview));
 			return TRUE;
 			break;
 
 		case GDK_Page_Down:
 		case GDK_KP_Page_Down:
-/* TODO WEBKIT: Write this. */
-#if 0
-			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
-#endif /* if 0 */
+			gtk_webview_page_down(GTK_WEBVIEW(gtkconv->webview));
 			return TRUE;
 			break;
 

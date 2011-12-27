@@ -394,6 +394,41 @@ gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
 	}
 }
 
+void gtk_webview_page_up(GtkWebView *webview)
+{
+	GtkAdjustment *vadj = webview->priv->vadj;
+	gdouble scroll_val;
+
+#if GTK_CHECK_VERSION(2,14,0)
+	scroll_val = gtk_adjustment_get_value(vadj) - gtk_adjustment_get_page_size(vadj);
+	scroll_val = MAX(scroll_val, gtk_adjustment_get_lower(vadj));
+#else
+	scroll_val = gtk_adjustment_get_value(vadj) - vadj->page_size;
+	scroll_val = MAX(scroll_val, vadj->lower);
+#endif
+
+	gtk_adjustment_set_value(vadj, scroll_val);
+}
+
+void gtk_webview_page_down(GtkWebView *webview)
+{
+	GtkAdjustment *vadj = webview->priv->vadj;
+	gdouble scroll_val;
+	gdouble page_size;
+
+#if GTK_CHECK_VERSION(2,14,0)
+	page_size = gtk_adjustment_get_page_size(vadj);
+	scroll_val = gtk_adjustment_get_value(vadj) + page_size;
+	scroll_val = MIN(scroll_val, gtk_adjustment_get_upper(vadj) - page_size);
+#else
+	page_size = vadj->page_size;
+	scroll_val = gtk_adjustment_get_value(vadj) + page_size;
+	scroll_val = MIN(scroll_val, vadj->upper - page_size);
+#endif
+
+	gtk_adjustment_set_value(vadj, scroll_val);
+}
+
 GType
 gtk_webview_get_type(void)
 {

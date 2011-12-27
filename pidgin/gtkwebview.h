@@ -143,5 +143,19 @@ char *gtk_webview_quote_js_string(const char *str);
  */
 void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
 
+/**
+ * Scrolls a GtkWebView up by one page.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_page_up(GtkWebView *webview);
+
+/**
+ * Scrolls a GtkWebView down by one page.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_page_down(GtkWebView *webview);
+
 #endif /* _PIDGIN_WEBVIEW_H_ */
 
