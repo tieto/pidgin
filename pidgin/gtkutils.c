@@ -707,7 +707,6 @@ create_protocols_menu(const char *default_proto_id)
 	GtkTreeIter iter;
 	GtkListStore *ls;
 	GList *p;
-	const char *gtalk_name = NULL, *facebook_name = NULL;
 	int i;
 
 	ls = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
@@ -716,49 +715,11 @@ create_protocols_menu(const char *default_proto_id)
 	aop_menu->default_item = -1;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
-	if (purple_find_prpl("prpl-jabber")) {
-		gtalk_name = _("Google Talk");
-		facebook_name = _("Facebook (XMPP)");
-	}
-
 	for (p = purple_plugins_get_protocols(), i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
 
 		plugin = (PurplePlugin *)p->data;
-
-		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0) {
-			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-			                                  "16", "google-talk.png", NULL);
-			pixbuf = pidgin_pixbuf_new_from_file(filename);
-			g_free(filename);
-
-			gtk_list_store_append(ls, &iter);
-			gtk_list_store_set(ls, &iter, 0, pixbuf, 1, gtalk_name, 2, "prpl-jabber", -1);
-
-			if (pixbuf)
-				g_object_unref(pixbuf);
-
-			gtalk_name = NULL;
-			i++;
-		}
-
-		if (facebook_name && strcmp(facebook_name, plugin->info->name) < 0) {
-			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-			                                  "16", "facebook.png", NULL);
-
-			pixbuf = pidgin_pixbuf_new_from_file(filename);
-			g_free(filename);
-
-			gtk_list_store_append(ls, &iter);
-			gtk_list_store_set(ls, &iter, 0, pixbuf, 1, facebook_name, 2, "prpl-jabber", -1);
-
-			if (pixbuf)
-				g_object_unref(pixbuf);
-
-			facebook_name = NULL;
-			i++;
-		}
 
 		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
 

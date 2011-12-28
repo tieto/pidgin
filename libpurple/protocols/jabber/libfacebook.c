@@ -49,6 +49,12 @@
 #include "data.h"
 #include "ibb.h"
 
+static const char *
+facebook_list_icon(PurpleAccount *a, PurpleBuddy *b)
+{
+	return "facebook";
+}
+
 static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
@@ -62,7 +68,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-	jabber_list_icon,				/* list_icon */
+	facebook_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
 	jabber_tooltip_text,			/* tooltip_text */
