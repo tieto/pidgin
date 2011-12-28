@@ -165,9 +165,9 @@ static PurplePluginInfo info =
 	"Google Talk (XMPP)",                           /**< name           */
 	DISPLAY_VERSION,                                /**< version        */
 	                                                /**  summary        */
-	N_("XMPP Protocol Plugin"),
+	N_("Google Talk Protocol Plugin"),
 	                                                /**  description    */
-	N_("XMPP Protocol Plugin"),
+	N_("Google Talk Protocol Plugin"),
 	NULL,                                           /**< author         */
 	PURPLE_WEBSITE,                                 /**< homepage       */
 
