@@ -38,6 +38,7 @@ gtk_signals_test_la_LDFLAGS = -module -avoid-version
 gtkbuddynote_la_LDFLAGS     = -module -avoid-version
 history_la_LDFLAGS          = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
+markerline_la_LDFLAGS       = -module -avoid-version
 notify_la_LDFLAGS           = -module -avoid-version
 pidginrc_la_LDFLAGS         = -module -avoid-version
 relnot_la_LDFLAGS           = -module -avoid-version
@@ -56,6 +57,7 @@ plugin_LTLIBRARIES = \
 	gtkbuddynote.la     \
 	history.la          \
 	iconaway.la         \
+	markerline.la       \
 	notify.la           \
 	pidginrc.la         \
 	relnot.la           \
@@ -80,6 +82,7 @@ gtk_signals_test_la_SOURCES = gtk-signals-test.c
 gtkbuddynote_la_SOURCES     = gtkbuddynote.c
 history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
+markerline_la_SOURCES       = markerline.c
 notify_la_SOURCES           = notify.c
 pidginrc_la_SOURCES         = pidginrc.c
 relnot_la_SOURCES           = relnot.c
@@ -96,6 +99,7 @@ gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
 gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
 history_la_LIBADD           = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
+markerline_la_LIBADD        = $(GTK_LIBS) $(WEBKIT_LIBS)
 notify_la_LIBADD            = $(GTK_LIBS)
 pidginrc_la_LIBADD          = $(GTK_LIBS)
 relnot_la_LIBADD            = $(GLIB_LIBS)
