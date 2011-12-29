@@ -85,14 +85,14 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
-	jabber_roster_add_buddy,		/* add_buddy */
+	NULL,							/* add_buddy */
 	NULL,							/* add_buddies */
-	jabber_roster_remove_buddy,		/* remove_buddy */
+	NULL,							/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	jabber_add_deny,				/* add_deny */
+	NULL,							/* add_deny */
 	NULL,							/* rem_permit */
-	jabber_rem_deny,				/* rem_deny */
+	NULL,							/* rem_deny */
 	NULL,							/* set_permit_deny */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
@@ -104,9 +104,9 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_keepalive,				/* keepalive */
 	NULL,							/* register_user */
 	NULL,							/* get_cb_info */
-	jabber_roster_alias_change,		/* alias_buddy */
-	jabber_roster_group_change,		/* group_buddy */
-	jabber_roster_group_rename,		/* rename_group */
+	NULL,							/* alias_buddy */
+	NULL,							/* group_buddy */
+	NULL,							/* rename_group */
 	NULL,							/* buddy_free */
 	jabber_convo_closed,			/* convo_closed */
 	jabber_normalize,				/* normalize */
@@ -118,20 +118,20 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,		/* roomlist_get_list */
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
-	jabber_can_receive_file,		/* can_receive_file */
-	jabber_si_xfer_send,			/* send_file */
-	jabber_si_new_xfer,				/* new_xfer */
+	NULL,							/* can_receive_file */
+	NULL,							/* send_file */
+	NULL,							/* new_xfer */
 	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 	NULL,							/* unregister_user */
-	jabber_send_attention,			/* send_attention */
-	jabber_attention_types,			/* attention_types */
+	NULL,							/* send_attention */
+	NULL,							/* attention_types */
 	NULL, /* get_account_text_table */
-	jabber_initiate_media,          /* initiate_media */
-	jabber_get_media_caps,                  /* get_media_caps */
-	jabber_get_moods,  							/* get_moods */
+	NULL,							/* initiate_media */
+	NULL,							/* get_media_caps */
+	NULL,							/* get_moods */
 	NULL, /* set_public_alias */
 	NULL  /* get_public_alias */
 };
@@ -301,14 +301,6 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_string_new(_("Connect server"),
 						  "connect_server", NULL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-						  option);
-
-	option = purple_account_option_string_new(_("File transfer proxies"),
-						  "ft_proxies",
-						/* TODO: Is this an acceptable default?
-						 * Also, keep this in sync as they add more servers */
-						  JABBER_DEFAULT_FT_PROXIES);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
