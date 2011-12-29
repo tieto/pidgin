@@ -166,37 +166,6 @@ static void add_protocol_options(AccountPrefsDialog *dialog);
 static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_voice_options(AccountPrefsDialog *dialog);
 
-static const char *
-google_talk_default_domain_hackery(GtkWidget *protocol_combo, const char *value_if_gtalk)
-{
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	const char *value = NULL;
-
-	model = gtk_combo_box_get_model(GTK_COMBO_BOX(protocol_combo));
-	if (model != NULL && gtk_combo_box_get_active_iter(GTK_COMBO_BOX(protocol_combo), &iter)) {
-		char *protocol = NULL;
-
-		/* protocol is not stored as G_TYPE_STRING in the model so no g_free necessary */
-		gtk_tree_model_get(model, &iter, 2, &protocol, -1);
-		if (protocol && !strcmp("prpl-jabber", protocol)) {
-			char *item_name = NULL;
-
-			gtk_tree_model_get(model, &iter, 1, &item_name, -1);
-			if (item_name) {
-				if (!strcmp(item_name, _("Google Talk")))
-					value = value_if_gtalk;
-				g_free(item_name);
-			}
-			/* If it's not GTalk, but still Jabber then the value is not NULL, it's empty */
-			if (NULL == value)
-				value = "";
-		}
-	}
-
-	return value;
-}
-
 static GtkWidget *
 add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 			 const char *text, GtkWidget *widget)
@@ -590,10 +559,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		}
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
-
-		/* Google Talk default domain hackery! */
-		if (!strcmp(_("Domain"), purple_account_user_split_get_text(split)) && !value)
-			value = google_talk_default_domain_hackery(dialog->protocol_menu, "gmail.com");
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
