@@ -275,8 +275,8 @@ init_plugin(PurplePlugin *plugin)
 	list = g_list_prepend(list, kvp); \
 }
 
-	ADD_VALUE(encryption_values, _("Require encryption"), "require_tls");
 	ADD_VALUE(encryption_values, _("Use encryption if available"), "opportunistic_tls");
+	ADD_VALUE(encryption_values, _("Require encryption"), "require_tls");
 	ADD_VALUE(encryption_values, _("Use old-style SSL"), "old_ssl");
 #if 0
 	ADD_VALUE(encryption_values, "None", "none");
