@@ -627,7 +627,7 @@ aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
 {
 	gtk_combo_box_set_model(GTK_COMBO_BOX(optmenu), new_aop_menu->model);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(optmenu), new_aop_menu->default_item);
-	g_object_set_data_full(G_OBJECT(optmenu), "aop_menu", new_aop_menu, (GDestroyNotify)g_free);
+	g_free(new_aop_menu);
 }
 
 static GdkPixbuf *
