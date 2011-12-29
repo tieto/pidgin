@@ -102,7 +102,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* chat_whisper */
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
-	jabber_register_account,		/* register_user */
+	NULL,							/* register_user */
 	NULL,							/* get_cb_info */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
@@ -125,7 +125,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
-	jabber_unregister_account,		/* unregister_user */
+	NULL,							/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
 	NULL, /* get_account_text_table */
