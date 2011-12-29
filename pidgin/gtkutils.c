@@ -75,6 +75,13 @@
 #define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
 #endif
 
+enum {
+	AOP_ICON_COLUMN,
+	AOP_NAME_COLUMN,
+	AOP_DATA_COLUMN,
+	AOP_COLUMN_COUNT
+};
+
 typedef struct {
 	GtkTreeModel *model;
 	gint default_item;
@@ -599,7 +606,8 @@ aop_option_menu_get_selected(GtkWidget *optmenu)
 	g_return_val_if_fail(optmenu != NULL, NULL);
 
 	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(optmenu), &iter))
-		gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(optmenu)), &iter, 2, &data, -1);
+		gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(optmenu)),
+		                   &iter, AOP_DATA_COLUMN, &data, -1);
 
 	return data;
 }
@@ -666,9 +674,9 @@ aop_option_menu_new(AopMenu *aop_menu, GCallback cb, gpointer user_data)
 	optmenu = gtk_combo_box_new();
 	gtk_widget_show(optmenu);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(optmenu), cr = gtk_cell_renderer_pixbuf_new(), FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(optmenu), cr, "pixbuf", 0);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(optmenu), cr, "pixbuf", AOP_ICON_COLUMN);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(optmenu), cr = gtk_cell_renderer_text_new(), TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(optmenu), cr, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(optmenu), cr, "text", AOP_NAME_COLUMN);
 
 	aop_option_menu_replace_menu(optmenu, aop_menu);
 	if (aop_menu->default_item == -1)
@@ -709,7 +717,7 @@ create_protocols_menu(const char *default_proto_id)
 	GList *p;
 	int i;
 
-	ls = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
 	aop_menu->default_item = -1;
@@ -724,7 +732,11 @@ create_protocols_menu(const char *default_proto_id)
 		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
 
 		gtk_list_store_append(ls, &iter);
-		gtk_list_store_set(ls, &iter, 0, pixbuf, 1, plugin->info->name, 2, plugin->info->id, -1);
+		gtk_list_store_set(ls, &iter,
+		                   AOP_ICON_COLUMN, pixbuf,
+		                   AOP_NAME_COLUMN, plugin->info->name,
+		                   AOP_DATA_COLUMN, plugin->info->id,
+		                   -1);
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
@@ -773,7 +785,7 @@ create_account_menu(PurpleAccount *default_account,
 	else
 		list = purple_connections_get_all();
 
-	ls = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
 	aop_menu->default_item = -1;
@@ -813,7 +825,11 @@ create_account_menu(PurpleAccount *default_account,
 		}
 
 		gtk_list_store_append(ls, &iter);
-		gtk_list_store_set(ls, &iter, 0, pixbuf, 1, buf, 2, account, -1);
+		gtk_list_store_set(ls, &iter, 
+		                   AOP_ICON_COLUMN, pixbuf,
+		                   AOP_NAME_COLUMN, buf,
+		                   AOP_DATA_COLUMN, account,
+		                   -1);
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
@@ -1855,6 +1871,15 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 	return menuitem;
 }
 
+enum {
+	COMPLETION_DISPLAYED_COLUMN,  /* displayed completion value */
+	COMPLETION_BUDDY_COLUMN,      /* buddy name */
+	COMPLETION_NORMALIZED_COLUMN, /* UTF-8 normalized & casefolded buddy name */
+	COMPLETION_COMPARISON_COLUMN, /* UTF-8 normalized & casefolded value for comparison */
+	COMPLETION_ACCOUNT_COLUMN,    /* account */
+	COMPLETION_COLUMN_COUNT
+};
+
 typedef struct
 {
 	GtkWidget *entry;
@@ -1874,10 +1899,10 @@ static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 	GValue val2;
 	const char *tmp;
 
-	model = gtk_entry_completion_get_model (completion);
+	model = gtk_entry_completion_get_model(completion);
 
 	val1.g_type = 0;
-	gtk_tree_model_get_value(model, iter, 2, &val1);
+	gtk_tree_model_get_value(model, iter, COMPLETION_NORMALIZED_COLUMN, &val1);
 	tmp = g_value_get_string(&val1);
 	if (tmp != NULL && purple_str_has_prefix(tmp, key))
 	{
@@ -1887,7 +1912,7 @@ static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 	g_value_unset(&val1);
 
 	val2.g_type = 0;
-	gtk_tree_model_get_value(model, iter, 3, &val2);
+	gtk_tree_model_get_value(model, iter, COMPLETION_COMPARISON_COLUMN, &val2);
 	tmp = g_value_get_string(&val2);
 	if (tmp != NULL && purple_str_has_prefix(tmp, key))
 	{
@@ -1907,11 +1932,11 @@ static gboolean buddyname_completion_match_selected_cb(GtkEntryCompletion *compl
 	PurpleAccount *account;
 
 	val.g_type = 0;
-	gtk_tree_model_get_value(model, iter, 1, &val);
+	gtk_tree_model_get_value(model, iter, COMPLETION_BUDDY_COLUMN, &val);
 	gtk_entry_set_text(GTK_ENTRY(data->entry), g_value_get_string(&val));
 	g_value_unset(&val);
 
-	gtk_tree_model_get_value(model, iter, 4, &val);
+	gtk_tree_model_get_value(model, iter, COMPLETION_ACCOUNT_COLUMN, &val);
 	account = g_value_get_pointer(&val);
 	g_value_unset(&val);
 
@@ -1948,11 +1973,11 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-				0, completion_entry,
-				1, buddyname,
-				2, normalized_buddyname,
-				3, tmp,
-				4, account,
+				COMPLETION_DISPLAYED_COLUMN, completion_entry,
+				COMPLETION_BUDDY_COLUMN, buddyname,
+				COMPLETION_NORMALIZED_COLUMN, normalized_buddyname,
+				COMPLETION_COMPARISON_COLUMN, tmp,
+				COMPLETION_ACCOUNT_COLUMN, account,
 				-1);
 		g_free(completion_entry);
 		g_free(tmp);
@@ -1973,11 +1998,11 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 			gtk_list_store_append(store, &iter);
 			gtk_list_store_set(store, &iter,
-					0, completion_entry,
-					1, buddyname,
-					2, normalized_buddyname,
-					3, tmp,
-					4, account,
+					COMPLETION_DISPLAYED_COLUMN, completion_entry,
+					COMPLETION_BUDDY_COLUMN, buddyname,
+					COMPLETION_NORMALIZED_COLUMN, normalized_buddyname,
+					COMPLETION_COMPARISON_COLUMN, tmp,
+					COMPLETION_ACCOUNT_COLUMN, account,
 					-1);
 			g_free(completion_entry);
 			g_free(tmp);
@@ -1989,11 +2014,11 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 		/* Add the buddy's name. */
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-				0, buddyname,
-				1, buddyname,
-				2, normalized_buddyname,
-				3, NULL,
-				4, account,
+				COMPLETION_DISPLAYED_COLUMN, buddyname,
+				COMPLETION_BUDDY_COLUMN, buddyname,
+				COMPLETION_NORMALIZED_COLUMN, normalized_buddyname,
+				COMPLETION_COMPARISON_COLUMN, NULL,
+				COMPLETION_ACCOUNT_COLUMN, account,
 				-1);
 	}
 
@@ -2091,7 +2116,9 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	GtkEntryCompletion *completion;
 
 	data = g_new0(PidginCompletionData, 1);
-	store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	store = gtk_list_store_new(COMPLETION_COLUMN_COUNT, G_TYPE_STRING,
+	                           G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+	                           G_TYPE_POINTER);
 
 	data->entry = entry;
 	data->accountopt = accountopt;
@@ -2108,7 +2135,8 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 
 	/* Sort the completion list by buddy name */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
-	                                     1, GTK_SORT_ASCENDING);
+	                                     COMPLETION_BUDDY_COLUMN,
+	                                     GTK_SORT_ASCENDING);
 
 	completion = gtk_entry_completion_new();
 	gtk_entry_completion_set_match_func(completion, buddyname_completion_match_func, NULL, NULL);
@@ -2122,7 +2150,7 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(store));
 	g_object_unref(store);
 
-	gtk_entry_completion_set_text_column(completion, 0);
+	gtk_entry_completion_set_text_column(completion, COMPLETION_DISPLAYED_COLUMN);
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
