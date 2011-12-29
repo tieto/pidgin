@@ -1205,8 +1205,12 @@ add_voice_options(AccountPrefsDialog *dialog)
 		gtk_widget_show_all(dialog->voice_frame);
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check),
-								purple_account_get_silence_suppression(dialog->account));
+	if (dialog->account) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check),
+		                             purple_account_get_silence_suppression(dialog->account));
+	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check), FALSE);
+	}
 #endif
 }
 
