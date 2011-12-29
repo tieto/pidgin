@@ -679,8 +679,6 @@ aop_option_menu_new(AopMenu *aop_menu, GCallback cb, gpointer user_data)
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(optmenu), cr, "text", AOP_NAME_COLUMN);
 
 	aop_option_menu_replace_menu(optmenu, aop_menu);
-	if (aop_menu->default_item == -1)
-		gtk_combo_box_set_active(GTK_COMBO_BOX(optmenu), 0);
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 
 	g_signal_connect(G_OBJECT(optmenu), "changed", G_CALLBACK(aop_menu_cb), cb);
@@ -720,7 +718,7 @@ create_protocols_menu(const char *default_proto_id)
 	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
-	aop_menu->default_item = -1;
+	aop_menu->default_item = 0;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
 	for (p = purple_plugins_get_protocols(), i = 0;
@@ -744,6 +742,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
 			aop_menu->default_item = i;
 	}
+
 	return aop_menu;
 }
 
@@ -788,7 +787,7 @@ create_account_menu(PurpleAccount *default_account,
 	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
-	aop_menu->default_item = -1;
+	aop_menu->default_item = 0;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
@@ -837,6 +836,7 @@ create_account_menu(PurpleAccount *default_account,
 		if (default_account && account == default_account)
 			aop_menu->default_item = i;
 	}
+
 	return aop_menu;
 }
 
