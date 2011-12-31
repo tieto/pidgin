@@ -28,6 +28,7 @@
 #include "xmlnode.h"
 
 #include "pidgin.h"
+#include "internal.h"
 #include "gtkconv.h"
 #include "gtkwebview.h"
 
