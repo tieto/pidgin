@@ -271,7 +271,7 @@ gtk_webview_load_html_string_with_imgstore(GtkWebView *view, const char *html)
 
 	clear_images(view);
 	html_imged = replace_img_id_with_src(view, html);
-	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(view), html_imged, "file:///");
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(view), html_imged, NULL, NULL, "file:///");
 	g_free(html_imged);
 }
 
