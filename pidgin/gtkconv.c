@@ -5195,11 +5195,11 @@ static void
 conv_variant_changed_cb(GObject *gobject, GParamSpec *pspec, gpointer user_data)
 {
 	PidginConversation *gtkconv = user_data;
-	const char *path;
-	char *js;
+	char *path, *js;
 
 	path = pidgin_conversation_theme_get_css_path(PIDGIN_CONV_THEME(gobject));
 	js = g_strdup_printf("setStylesheet(\"mainStyle\", \"file://%s\");", path);
+	g_free(path);
 	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), js);
 	g_free(js);
 }
@@ -6097,13 +6097,14 @@ replace_message_tokens(
 	const char *cur = text;
 	const char *prev = cur;
 
-	if (text == NULL)
-		return g_strdup("");
+	if (text == NULL || *text == '\0')
+		return NULL;
 
 	str = g_string_new(NULL);
 	while ((cur = strchr(cur, '%'))) {
 		const char *replace = NULL;
 		const char *fin = NULL;
+		gpointer freeval = NULL;
 
 		if (g_str_has_prefix(cur, "%message%")) {
 			replace = message;
@@ -6139,14 +6140,14 @@ replace_message_tokens(
 					replace = purple_imgstore_get_filename(img);
 				}
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
-					replace = g_build_filename("Outgoing", "buddy_icon.png", NULL);
+					replace = freeval = g_build_filename("Outgoing", "buddy_icon.png", NULL);
 				}
 			} else if (flags & PURPLE_MESSAGE_RECV) {
 				PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 				if (icon)
 					replace = purple_buddy_icon_get_full_path(icon);
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
-					replace = g_build_filename("Incoming", "buddy_icon.png", NULL);
+					replace = freeval = g_build_filename("Incoming", "buddy_icon.png", NULL);
 				}
 			}
 
@@ -6171,6 +6172,8 @@ replace_message_tokens(
 		g_string_append_len(str, prev, cur - prev);
 		if (replace)
 			g_string_append(str, replace);
+		g_free(freeval);
+		freeval = replace = NULL;
 
 		/* And update the pointers */
 		if (fin) {
@@ -6294,7 +6297,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	smileyed = smiley_parse_markup(message, purple_account_get_protocol_id(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
-	escape = gtk_webview_quote_js_string(msg);
+	escape = gtk_webview_quote_js_string(msg ? msg : "");
 	script = g_strdup_printf("%s(%s)", func, escape);
 
 	purple_debug_info("webkit", "JS: %s\n", script);
