@@ -187,6 +187,7 @@ static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
+static void load_conv_theme(PidginConversation *gtkconv);
 static gboolean infopane_entry_activate(PidginConversation *gtkconv);
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
 static void gray_stuff_out(PidginConversation *gtkconv);
@@ -440,12 +441,12 @@ debug_command_cb(PurpleConversation *conv,
 static void clear_conversation_scrollback_cb(PurpleConversation *conv,
                                              void *data)
 {
-	PidginConversation *gtkconv = NULL;
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	if (PIDGIN_CONVERSATION(conv))
-		webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(gtkconv->webview), "", "");
+	if (PIDGIN_CONVERSATION(conv)) {
+		load_conv_theme(gtkconv);
+		gtkconv->last_flags = 0;
+	}
 }
 
 static PurpleCmdRet
@@ -5204,6 +5205,43 @@ conv_variant_changed_cb(GObject *gobject, GParamSpec *pspec, gpointer user_data)
 	g_free(js);
 }
 
+static void
+load_conv_theme(PidginConversation *gtkconv)
+{
+	char *header, *footer;
+	char *template;
+	char *basedir, *baseuri;
+
+	header = replace_header_tokens(gtkconv->active_conv,
+		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_HEADER));
+	footer = replace_header_tokens(gtkconv->active_conv,
+		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_FOOTER));
+	template = replace_template_tokens(gtkconv->theme, header, footer);
+	g_free(header);
+	g_free(footer);
+
+	if (template == NULL)
+		return;
+
+	set_theme_webkit_settings(WEBKIT_WEB_VIEW(gtkconv->webview), gtkconv->theme);
+
+	basedir = pidgin_conversation_theme_get_template_path(gtkconv->theme);
+	baseuri = g_strdup_printf("file://%s", basedir);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(gtkconv->webview), template,
+	                            "text/html", "UTF-8", baseuri);
+
+	if (purple_conversation_get_type(gtkconv->active_conv) == PURPLE_CONV_TYPE_CHAT)
+		gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
+			"document.getElementById('Chat').className = 'groupchat'");
+
+	g_signal_connect(G_OBJECT(gtkconv->theme), "notify::variant",
+	                 G_CALLBACK(conv_variant_changed_cb), gtkconv);
+
+	g_free(basedir);
+	g_free(baseuri);
+	g_free(template);
+}
+
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -5214,8 +5252,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	PurpleBuddy *buddy;
 	gboolean chat = (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT);
 	int buddyicon_size = 0;
-	char *header, *footer;
-	char *template;
 
 	/* Setup the top part of the pane */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5309,36 +5345,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	frame = pidgin_create_webview(FALSE, &gtkconv->webview, NULL, &webview_sw);
 	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
 
-	header = replace_header_tokens(conv,
-		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_HEADER));
-	footer = replace_header_tokens(conv,
-		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_FOOTER));
-	template = replace_template_tokens(gtkconv->theme, header, footer);
-	g_free(header);
-	g_free(footer);
-
-	if (template != NULL) {
-		char *basedir;
-		char *baseuri;
-
-		purple_debug_info("webkit", "template: %s\n", template);
-
-		set_theme_webkit_settings(WEBKIT_WEB_VIEW(gtkconv->webview), gtkconv->theme);
-
-		basedir = pidgin_conversation_theme_get_template_path(gtkconv->theme);
-		baseuri = g_strdup_printf("file://%s", basedir);
-		webkit_web_view_load_string(WEBKIT_WEB_VIEW(gtkconv->webview), template, "text/html", "UTF-8", baseuri);
-
-		if (chat)
-			gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), "document.getElementById('Chat').className = 'groupchat'");
-
-		g_signal_connect(G_OBJECT(gtkconv->theme), "notify::variant",
-		                 G_CALLBACK(conv_variant_changed_cb), gtkconv);
-
-		g_free(basedir);
-		g_free(baseuri);
-		g_free(template);
-	}
+	load_conv_theme(gtkconv);
 
 	if (chat) {
 		GtkWidget *hpaned;
