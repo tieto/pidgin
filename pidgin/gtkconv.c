@@ -5045,6 +5045,8 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 	GString *str;
 	const char *cur = text;
 	const char *prev = cur;
+	time_t mtime;
+	struct tm *tm = NULL;
 
 	if (text == NULL || *text == '\0')
 		return NULL;
@@ -5081,6 +5083,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 		} else if (g_str_has_prefix(cur, "%timeOpened")) {
 			const char *tmp = cur + strlen("%timeOpened");
 			char *format = NULL;
+
 			if (*tmp == '{') {
 				const char *end;
 				tmp++;
@@ -5090,11 +5093,22 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 				format = g_strndup(tmp, end - tmp);
 				fin = end + 1;
 			}
-			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+
+			if (!tm) {
+				mtime = time(NULL);
+				tm = localtime(&mtime);
+			}
+
+			replace = purple_utf8_strftime(format ? format : "%X", tm);
 			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%dateOpened%")) {
-			replace = purple_date_format_short(NULL);
+			if (!tm) {
+				mtime = time(NULL);
+				tm = localtime(&mtime);
+			}
+
+			replace = purple_date_format_short(tm);
 
 		} else {
 			cur++;
