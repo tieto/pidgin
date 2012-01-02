@@ -6182,7 +6182,7 @@ replace_message_tokens(
 		if (replace)
 			g_string_append(str, replace);
 		g_free(freeval);
-		freeval = replace = NULL;
+		replace = freeval = NULL;
 
 		/* And update the pointers */
 		if (fin) {
