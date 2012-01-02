@@ -6096,6 +6096,7 @@ replace_message_tokens(
 	GString *str;
 	const char *cur = text;
 	const char *prev = cur;
+	struct tm *tm = NULL;
 
 	if (text == NULL || *text == '\0')
 		return NULL;
@@ -6116,6 +6117,7 @@ replace_message_tokens(
 		} else if (g_str_has_prefix(cur, "%time")) {
 			const char *tmp = cur + strlen("%time");
 			char *format = NULL;
+
 			if (*tmp == '{') {
 				char *end;
 				tmp++;
@@ -6125,11 +6127,18 @@ replace_message_tokens(
 				format = g_strndup(tmp, end - tmp);
 				fin = end + 1;
 			}
-			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+
+			if (!tm)
+				tm = localtime(&mtime);
+
+			replace = purple_utf8_strftime(format ? format : "%X", tm);
 			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%shortTime%")) {
-			replace = purple_utf8_strftime("%H:%M", NULL);
+			if (!tm)
+				tm = localtime(&mtime);
+
+			replace = purple_utf8_strftime("%H:%M", tm);
 
 		} else if (g_str_has_prefix(cur, "%userIconPath%")) {
 			if (flags & PURPLE_MESSAGE_SEND) {
