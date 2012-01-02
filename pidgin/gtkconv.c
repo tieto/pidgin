@@ -6286,8 +6286,16 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	} else if (flags & PURPLE_MESSAGE_SEND) {
 		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTENT);
 	} else if ((flags & PURPLE_MESSAGE_RECV) && (old_flags & PURPLE_MESSAGE_RECV)) {
-		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT);
-		func = "appendNextMessage";
+		GList *history = purple_conversation_get_message_history(conv);
+		PurpleConvMessage *last_msg = (PurpleConvMessage *)history->data;
+
+		/* If the senders are the same, use appendNextMessage */
+		if (purple_strequal(purple_conversation_message_get_sender(last_msg), name)) {
+			message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT);
+			func = "appendNextMessage";
+		} else {
+			message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTENT);
+		}
 	} else if (flags & PURPLE_MESSAGE_RECV) {
 		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTENT);
 	} else {
