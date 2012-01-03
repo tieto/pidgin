@@ -258,9 +258,7 @@ struct _PurpleConnection
 					  prpl to avoid sending unneeded keepalives */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Connection API                                                  */
@@ -543,8 +541,6 @@ void *purple_connections_get_handle(void);
 /*@}*/
 
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_CONNECTION_H_ */

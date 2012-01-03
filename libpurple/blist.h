@@ -244,9 +244,7 @@ struct _PurpleBlistUiOps
 	void (*_purple_reserved1)(void);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Buddy List API                                                  */
@@ -1202,8 +1200,6 @@ void purple_blist_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_BLIST_H_ */

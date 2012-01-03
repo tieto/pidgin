@@ -29,9 +29,7 @@
 
 typedef struct _UPnPMappingAddRemove UPnPMappingAddRemove;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name UPnP API                                                        */
@@ -125,8 +123,6 @@ UPnPMappingAddRemove *purple_upnp_remove_port_mapping(unsigned short portmap,
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_UPNP_H_ */

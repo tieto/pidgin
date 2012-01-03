@@ -37,10 +37,7 @@ typedef struct _PurpleAccountOption		PurpleAccountOption;
 /** @copydoc _PurpleAccountUserSplit */
 typedef struct _PurpleAccountUserSplit	PurpleAccountUserSplit;
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Account Option API                                              */
@@ -353,8 +350,6 @@ void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboole
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_ACCOUNTOPT_H_ */

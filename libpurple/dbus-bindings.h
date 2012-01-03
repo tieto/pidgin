@@ -32,9 +32,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 gint purple_dbus_pointer_to_id(gconstpointer node);
 gpointer purple_dbus_id_to_pointer(gint id, PurpleDBusType *type);
@@ -103,8 +101,6 @@ void purple_dbus_register_bindings(void *handle, PurpleDBusBinding *bindings);
 
 DBusConnection *purple_dbus_get_connection(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif

@@ -184,9 +184,7 @@ struct _PurpleXfer
 	void *proto_data;                 /**< prpl-specific data.     */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name File Transfer API                                               */
@@ -843,9 +841,7 @@ PurpleXferUiOps *purple_xfers_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_FT_H_ */
 

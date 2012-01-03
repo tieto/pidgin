@@ -26,9 +26,9 @@
 #ifndef _PURPLE_NETWORK_H_
 #define _PURPLE_NETWORK_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <glib.h>
+
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Network API                                                     */
@@ -316,8 +316,6 @@ void purple_network_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_NETWORK_H_ */

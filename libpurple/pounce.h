@@ -59,9 +59,7 @@ typedef enum
 /** A pounce callback. */
 typedef void (*PurplePounceCb)(PurplePounce *, PurplePounceEvent, void *);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Buddy Pounce API                                                */
@@ -354,8 +352,6 @@ void purple_pounces_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_POUNCE_H_ */

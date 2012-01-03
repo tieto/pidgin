@@ -41,6 +41,8 @@ typedef enum {
 	PURPLE_PMP_TYPE_TCP
 } PurplePmpType;
 
+G_BEGIN_DECLS
+
 /**
  * Initialize nat-pmp
  */
@@ -72,6 +74,8 @@ gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, u
  * @returns TRUE if succesful; FALSE if unsuccessful
  */
 gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
+
+G_END_DECLS
 
 #endif
 

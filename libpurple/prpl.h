@@ -621,9 +621,7 @@ struct _PurplePluginProtocolInfo
 #define PURPLE_PLUGIN_PROTOCOL_INFO(plugin) \
 	((PurplePluginProtocolInfo *)(plugin)->info->extra_info)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Attention Type API                                              */
@@ -951,8 +949,6 @@ PurplePlugin *purple_find_prpl(const char *id);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PRPL_H_ */

@@ -72,9 +72,7 @@ typedef struct _PurpleSoundUiOps
 	void (*_purple_reserved4)(void);
 } PurpleSoundUiOps;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Sound API                                                       */
@@ -136,8 +134,6 @@ void *purple_sounds_get_handle(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_SOUND_H_ */

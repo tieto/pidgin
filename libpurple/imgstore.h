@@ -34,9 +34,7 @@
  */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Add an image to the store.
@@ -206,8 +204,6 @@ void purple_imgstore_init(void);
  */
 void purple_imgstore_uninit(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_IMGSTORE_H_ */

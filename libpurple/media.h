@@ -27,14 +27,12 @@
 #ifndef _PURPLE_MEDIA_H_
 #define _PURPLE_MEDIA_H_
 
-#include "media/candidate.h"
-#include "media/codec.h"
-#include "media/enum-types.h"
-
 #include <glib.h>
 #include <glib-object.h>
 
-G_BEGIN_DECLS
+#include "media/candidate.h"
+#include "media/codec.h"
+#include "media/enum-types.h"
 
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
@@ -49,9 +47,7 @@ typedef struct _PurpleMedia PurpleMedia;
 #include "signals.h"
 #include "util.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Gets the media class's GType
@@ -378,10 +374,6 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * @param media The instance to remove all output windows from.
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

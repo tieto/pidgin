@@ -59,9 +59,7 @@ typedef struct
 	void (*_purple_reserved4)(void);
 } PurpleDebugUiOps;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Debug API                                                       */
@@ -228,8 +226,6 @@ void purple_debug_init(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_DEBUG_H_ */

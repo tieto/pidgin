@@ -249,9 +249,7 @@ struct _PurpleConversationUiOps
 	void (*_purple_reserved4)(void);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Conversation API                                                */
@@ -1402,8 +1400,6 @@ void purple_conversations_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_CONVERSATION_H_ */

@@ -58,10 +58,6 @@ typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 #include "notify.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
 struct _PurpleKeyValuePair
@@ -70,6 +66,8 @@ struct _PurpleKeyValuePair
 	void *value;
 
 };
+
+G_BEGIN_DECLS
 
 /**
  * Creates a new PurpleMenuAction.
@@ -1459,8 +1457,6 @@ const gchar *purple_get_host_name(void);
  */
 gchar *purple_uuid_random(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_UTIL_H_ */

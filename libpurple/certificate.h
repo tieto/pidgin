@@ -34,11 +34,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-
 typedef enum
 {
 	PURPLE_CERTIFICATE_INVALID = 0,
@@ -356,6 +351,8 @@ struct _PurpleCertificateVerificationRequest
 	/** Data to pass to the post-verification callback */
 	gpointer cb_data;
 };
+
+G_BEGIN_DECLS
 
 /*****************************************************************************/
 /** @name Certificate Verification Functions                                 */
@@ -833,8 +830,6 @@ purple_certificate_display_x509(PurpleCertificate *crt);
  */
 void purple_certificate_add_ca_search_path(const char *path);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* _PURPLE_CERTIFICATE_H */

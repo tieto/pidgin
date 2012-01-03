@@ -79,9 +79,7 @@ struct _PurpleWhiteboardPrplOps
 	void (*_purple_reserved4)(void);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /******************************************************************************/
 /** @name PurpleWhiteboard API                                                  */
@@ -330,8 +328,6 @@ gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* _PURPLE_WHITEBOARD_H_ */

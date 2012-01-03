@@ -38,8 +38,6 @@ typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 #include "account.h"
 #include "media.h"
 
-G_BEGIN_DECLS
-
 #define PURPLE_TYPE_MEDIA_MANAGER            (purple_media_manager_get_type())
 #define PURPLE_MEDIA_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManager))
 #define PURPLE_MEDIA_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerClass))
@@ -47,9 +45,7 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_MEDIA_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerClass))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Media Manager API                                              */
@@ -208,10 +204,6 @@ void purple_media_manager_set_backend_type(PurpleMediaManager *manager,
 GType purple_media_manager_get_backend_type(PurpleMediaManager *manager);
 
 /*}@*/
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

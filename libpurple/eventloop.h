@@ -28,10 +28,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * An input condition.
  */
@@ -154,6 +150,8 @@ struct _PurpleEventLoopUiOps
 	void (*_purple_reserved4)(void);
 };
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name Event Loop API                                                  */
 /**************************************************************************/
@@ -266,8 +264,6 @@ PurpleEventLoopUiOps *purple_eventloop_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_EVENTLOOP_H_ */

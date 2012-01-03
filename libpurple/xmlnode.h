@@ -28,10 +28,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * The valid types for an xmlnode
  */
@@ -60,6 +56,8 @@ struct _xmlnode
 	char *prefix;               /**< The namespace prefix if any. */
 	GHashTable *namespace_map;  /**< The namespace map. */
 };
+
+G_BEGIN_DECLS
 
 /**
  * Creates a new xmlnode.
@@ -360,9 +358,7 @@ void xmlnode_free(xmlnode *node);
 xmlnode *xmlnode_from_file(const char *dir, const char *filename,
 			   const char *description, const char *process);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_XMLNODE_H_ */
 

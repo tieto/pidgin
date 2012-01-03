@@ -81,9 +81,7 @@ struct _PurpleRoomlistUiOps {
 };
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Room List API                                                   */
@@ -412,8 +410,6 @@ PurpleRoomlistUiOps *purple_roomlist_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_ROOMLIST_H_ */

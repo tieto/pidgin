@@ -76,9 +76,7 @@ typedef struct
 	void (*_purple_reserved3)(void);
 } PurpleCoreUiOps;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Initializes the core of purple.
@@ -197,9 +195,7 @@ gboolean purple_core_ensure_single_instance(void);
  */
 GHashTable* purple_core_get_ui_info(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_CORE_H_ */
 

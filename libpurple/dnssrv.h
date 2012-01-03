@@ -24,10 +24,6 @@
 #ifndef _PURPLE_DNSSRV_H
 #define _PURPLE_DNSSRV_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
@@ -95,6 +91,8 @@ typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer
  * @param data        The extra data passed to purple_txt_resolve.
  */
 typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
+
+G_BEGIN_DECLS
 
 /**
  * Queries an SRV record.
@@ -184,9 +182,7 @@ char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
  */
 int purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_DNSSRV_H */
 

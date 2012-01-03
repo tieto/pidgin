@@ -158,9 +158,7 @@ typedef void (*PurpleRequestChoiceCb)(void *, int);
 typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
 typedef void (*PurpleRequestFileCb)(void *, const char *filename);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Field List API                                                  */
@@ -1527,8 +1525,6 @@ PurpleRequestUiOps *purple_request_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_REQUEST_H_ */

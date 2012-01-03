@@ -32,8 +32,6 @@
 
 #include <gst/gst.h>
 
-G_BEGIN_DECLS
-
 #define PURPLE_TYPE_MEDIA_ELEMENT_TYPE           (purple_media_element_type_get_type())
 #define PURPLE_TYPE_MEDIA_ELEMENT_INFO           (purple_media_element_info_get_type())
 #define PURPLE_MEDIA_ELEMENT_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
@@ -73,9 +71,7 @@ typedef enum {
 	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,		/** can be set as an active sink */
 } PurpleMediaElementType;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Gets the element type's GType.
@@ -175,10 +171,6 @@ PurpleMediaElementType purple_media_element_info_get_element_type(
 GstElement *purple_media_element_info_call_create(
 		PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

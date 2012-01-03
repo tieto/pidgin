@@ -56,9 +56,7 @@ typedef void (*PurpleProxyConnectFunction)(gpointer data, gint source, const gch
 
 #include "account.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Proxy structure API                                             */
@@ -326,8 +324,6 @@ void purple_proxy_connect_cancel_with_handle(void *handle);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_PROXY_H_ */

@@ -99,9 +99,7 @@ typedef enum {
 
 /*@}*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Commands API                                                    */
@@ -240,8 +238,6 @@ void purple_cmds_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_CMDS_H_ */

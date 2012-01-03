@@ -39,10 +39,7 @@ typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 #include "prpl.h"
 #include "util.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Buddy Icon API                                                  */
@@ -397,8 +394,6 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_BUDDYICON_H_ */

@@ -88,9 +88,7 @@ typedef enum
  */
 typedef struct _PurpleValue PurpleValue;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Creates a new PurpleValue.
@@ -464,8 +462,6 @@ int purple_value_get_enum(const PurpleValue *value);
  */
 void *purple_value_get_boxed(const PurpleValue *value);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_VALUE_H_ */
