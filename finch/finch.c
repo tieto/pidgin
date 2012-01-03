@@ -339,7 +339,17 @@ init_libpurple(int argc, char **argv)
 
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
-		purple_util_set_user_dir(opt_config_dir_arg);
+		if (g_path_is_absolute(opt_config_dir_arg)) {
+			purple_util_set_user_dir(opt_config_dir_arg);
+		} else {
+			/* Make an absolute (if not canonical) path */
+			char *cwd = g_get_current_dir();
+			char *path = g_build_path(G_DIR_SEPARATOR_S, cwd, opt_config_dir_arg, NULL);
+			purple_util_set_user_dir(path);
+			g_free(path);
+			g_free(cwd);
+		}
+
 		g_free(opt_config_dir_arg);
 	}
 
