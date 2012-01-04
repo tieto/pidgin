@@ -274,7 +274,9 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)
@@ -362,7 +364,9 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)
@@ -520,7 +524,9 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 							GTK_STOCK_OK,
 							GTK_RESPONSE_ACCEPT,
 							NULL);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 #if GTK_CHECK_VERSION(2,14,0)

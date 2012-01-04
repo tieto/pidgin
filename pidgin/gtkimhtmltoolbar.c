@@ -43,6 +43,11 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#endif
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
@@ -658,7 +663,11 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 	g_object_set_data(G_OBJECT(button), "smiley_text", face);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), toolbar);
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(button, face);
+#else
 	gtk_tooltips_set_tip(toolbar->tooltips, button, face, NULL);
+#endif
 
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -672,7 +681,11 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 		g_snprintf(tip, sizeof(tip),
 			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
 			face);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(button, tip);
+#else
 		gtk_tooltips_set_tip(toolbar->tooltips, button, tip, NULL);
+#endif
 		gtk_widget_set_sensitive(button, FALSE);
 	} else if (psmiley) {
 		/* Remove the button if the smiley is destroyed */
@@ -1155,7 +1168,9 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	}
 
 	g_free(toolbar->sml);
+#if !GTK_CHECK_VERSION(2,12,0)
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
+#endif
 
 	menu = g_object_get_data(object, "font_menu");
 	if (menu)
@@ -1186,7 +1201,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 	if (event->button != 3)
 		return FALSE;
 
-	wide = GTK_WIDGET_VISIBLE(toolbar->bold);
+	wide = gtk_widget_get_visible(toolbar->bold);
 
 	menu = gtk_menu_new();
 	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
@@ -1253,7 +1268,11 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 			g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buttons[iter].callback), toolbar);
 			*(buttons[iter].button) = button;
+#if GTK_CHECK_VERSION(2,12,0)
+			gtk_widget_set_tooltip_text(button, buttons[iter].tooltip);
+#else
 			gtk_tooltips_set_tip(toolbar->tooltips, button, buttons[iter].tooltip, NULL);
+#endif
 		} else
 			button = gtk_vseparator_new();
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -1266,7 +1285,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 static void
 button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
-	if (GTK_WIDGET_VISIBLE(button))
+	if (gtk_widget_get_visible(button))
 		gtk_widget_hide(item);
 	else
 		gtk_widget_show(item);
@@ -1275,7 +1294,7 @@ button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 static void
 button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
-	gtk_widget_set_sensitive(item, GTK_WIDGET_IS_SENSITIVE(button));
+	gtk_widget_set_sensitive(item, gtk_widget_is_sensitive(button));
 }
 
 static void
@@ -1353,7 +1372,9 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->smiley_dialog = NULL;
 	toolbar->image_dialog = NULL;
 
+#if !GTK_CHECK_VERSION(2,12,0)
 	toolbar->tooltips = gtk_tooltips_new();
+#endif
 
 	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
 

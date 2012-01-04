@@ -147,7 +147,7 @@ scroll_close_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 }
 
 static void
-switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, PidginScrollBook *scroll_book)
+switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint page_num, PidginScrollBook *scroll_book)
 {
 	int count;
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));

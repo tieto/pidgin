@@ -534,7 +534,9 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
 
@@ -784,7 +786,11 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		gtk_tree_selection_select_iter(sel, &iter);
 	}
 
+#if GTK_CHECK_VERSION(2,18,0)
+	if (!gtk_widget_get_visible(mail_dialog->dialog)) {
+#else
 	if (!GTK_WIDGET_VISIBLE(mail_dialog->dialog)) {
+#endif
 		GdkPixbuf *pixbuf = gtk_widget_render_icon(mail_dialog->dialog, PIDGIN_STOCK_DIALOG_MAIL,
 							   gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>%d new email.</b>",
@@ -800,7 +806,11 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		g_free(label_text);
 		if (pixbuf)
 			g_object_unref(pixbuf);
+#if GTK_CHECK_VERSION(2,18,0)
+	} else if (!gtk_widget_has_focus(mail_dialog->dialog))
+#else
 	} else if (!GTK_WIDGET_HAS_FOCUS(mail_dialog->dialog))
+#endif
 		pidgin_set_urgent(GTK_WINDOW(mail_dialog->dialog), TRUE);
 
 	return data;
@@ -1503,7 +1513,9 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Vertical box */
