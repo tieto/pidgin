@@ -30,6 +30,7 @@
 
 #include "gtkwebview.h"
 
+#define MAX_FONT_SIZE 7
 #define MAX_SCROLL_TIME 0.4 /* seconds */
 #define SCROLL_DELAY 33 /* milliseconds */
 
@@ -52,6 +53,23 @@ typedef struct _GtkWebViewPriv {
 	GtkAdjustment *vadj;
 	guint scroll_src;
 	GTimer *scroll_time;
+
+	/* Format options */
+	GtkWebViewButtons format_functions;
+	struct {
+		gboolean wbfo:1;	/* Whole buffer formatting only. */
+		gboolean bold:1;
+		gboolean italic:1;
+		gboolean underline:1;
+		gboolean strike:1;
+		gchar *forecolor;
+		gchar *backcolor;
+		gchar *background;
+		gchar *fontface;
+		int fontsize;
+		/*GtkTextTag *link;*/
+	} edit;
+
 } GtkWebViewPriv;
 
 /******************************************************************************
@@ -501,5 +519,192 @@ void gtk_webview_page_down(GtkWebView *webview)
 #endif
 
 	gtk_adjustment_set_value(vadj, scroll_val);
+}
+
+void
+gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
+{
+	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+}
+
+void
+gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview, gboolean wbfo)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.wbfo = wbfo;
+}
+
+void
+gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->format_functions = buttons;
+}
+
+GtkWebViewButtons
+gtk_webview_get_format_functions(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->format_functions;
+}
+
+void
+gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
+                               gboolean *italic, gboolean *underline,
+                               gboolean *strike)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	if (bold)
+		*bold = priv->edit.bold;
+	if (italic)
+		*italic = priv->edit.italic;
+	if (underline)
+		*underline = priv->edit.underline;
+	if (strike)
+		*strike = priv->edit.strike;
+}
+
+const char *
+gtk_webview_get_current_fontface(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.fontface;
+}
+
+const char *
+gtk_webview_get_current_forecolor(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.forecolor;
+}
+
+const char *
+gtk_webview_get_current_backcolor(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.backcolor;
+}
+
+const char *
+gtk_webview_get_current_background(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.background;
+}
+
+gint
+gtk_webview_get_current_fontsize(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.fontsize;
+}
+
+gboolean
+gtk_webview_get_editable(GtkWebView *webview)
+{
+	return webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview));
+}
+
+void
+gtk_webview_clear_formatting(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.bold = FALSE;
+	priv->edit.italic = FALSE;
+	priv->edit.underline = FALSE;
+	priv->edit.strike = FALSE;
+}
+
+void
+gtk_webview_toggle_bold(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.bold = !priv->edit.bold;
+}
+
+void
+gtk_webview_toggle_italic(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.italic = !priv->edit.italic;
+}
+
+void
+gtk_webview_toggle_underline(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.underline = !priv->edit.underline;
+}
+
+void
+gtk_webview_toggle_strike(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.strike = !priv->edit.strike;
+}
+
+gboolean
+gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_free(priv->edit.forecolor);
+	priv->edit.forecolor = g_strdup(color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_free(priv->edit.backcolor);
+	priv->edit.backcolor = g_strdup(color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_background(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_free(priv->edit.background);
+	priv->edit.background = g_strdup(color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_free(priv->edit.fontface);
+	priv->edit.fontface = g_strdup(face);
+
+	return FALSE;
+}
+
+void
+gtk_webview_font_set_size(GtkWebView *webview, gint size)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.fontsize = size;
+}
+
+void
+gtk_webview_font_shrink(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.fontsize = MAX(priv->edit.fontsize - 1, 1);
+}
+
+void
+gtk_webview_font_grow(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.fontsize = MIN(priv->edit.fontsize + 1, MAX_FONT_SIZE);
 }
 
