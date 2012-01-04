@@ -94,8 +94,8 @@ get_image_src_from_id(GtkWebView* view, int id)
 static char *
 replace_img_id_with_src(GtkWebView *view, const char *html)
 {
-	GString *buffer = g_string_sized_new(strlen(html));
-	const char* cur = html;
+	GString *buffer = g_string_new(NULL);
+	const char *cur = html;
 	char *id;
 	int nid;
 
