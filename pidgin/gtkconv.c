@@ -6132,8 +6132,19 @@ replace_message_tokens(
 			replace = message;
 
 		} else if (g_str_has_prefix(cur, "%messageClasses%")) {
-			replace = flags & PURPLE_MESSAGE_SEND ? "outgoing" :
-				  flags & PURPLE_MESSAGE_RECV ? "incoming" : "event";
+			GString *classes = g_string_new(NULL);
+#define ADD_CLASS(f, class) \
+			if (flags & f) \
+				g_string_append(classes, class);
+			ADD_CLASS(PURPLE_MESSAGE_SEND, "outgoing ");
+			ADD_CLASS(PURPLE_MESSAGE_RECV, "incoming ");
+			ADD_CLASS(PURPLE_MESSAGE_SYSTEM, "event ");
+			ADD_CLASS(PURPLE_MESSAGE_AUTO_RESP, "autoreply ");
+			ADD_CLASS(PURPLE_MESSAGE_DELAYED, "history ");
+			ADD_CLASS(PURPLE_MESSAGE_NICK, "mention ");
+#undef ADD_CLASS
+
+			replace = freeval = g_string_free(classes, FALSE);
 
 		} else if (g_str_has_prefix(cur, "%time")) {
 			const char *tmp = cur + strlen("%time");
