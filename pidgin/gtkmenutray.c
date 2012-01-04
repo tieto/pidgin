@@ -44,7 +44,7 @@ static GObjectClass *parent_class = NULL;
  * Item Stuff
  *****************************************************************************/
 static void
-pidgin_menu_tray_select(GtkItem *item) {
+pidgin_menu_tray_select(GtkMenuItem *widget) {
 	/* this may look like nothing, but it's really overriding the
 	 * GtkMenuItem's select function so that it doesn't get highlighted like
 	 * a normal menu item would.
@@ -52,7 +52,7 @@ pidgin_menu_tray_select(GtkItem *item) {
 }
 
 static void
-pidgin_menu_tray_deselect(GtkItem *item) {
+pidgin_menu_tray_deselect(GtkMenuItem *widget) {
 	/* Probably not necessary, but I'd rather be safe than sorry.  We're
 	 * overridding the select, so it makes sense to override deselect as well.
 	 */
@@ -92,7 +92,9 @@ pidgin_menu_tray_map(GtkWidget *widget)
 static void
 pidgin_menu_tray_finalize(GObject *obj)
 {
+#if !GTK_CHECK_VERSION(2,12,0)
 	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
+#endif
 #if 0
 	/* This _might_ be leaking, but I have a sneaking suspicion that the widget is
 	 * getting destroyed in GtkContainer's finalize function.  But if were are
@@ -104,9 +106,11 @@ pidgin_menu_tray_finalize(GObject *obj)
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
 #endif
 
+#if !GTK_CHECK_VERSION(2,12,0)
 	if (tray->tooltips) {
 		gtk_object_sink(GTK_OBJECT(tray->tooltips));
 	}
+#endif
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -114,7 +118,7 @@ pidgin_menu_tray_finalize(GObject *obj)
 static void
 pidgin_menu_tray_class_init(PidginMenuTrayClass *klass) {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
-	GtkItemClass *item_class = GTK_ITEM_CLASS(klass);
+	GtkMenuItemClass *menu_item_class = GTK_MENU_ITEM_CLASS(klass);
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
 	GParamSpec *pspec;
 
@@ -123,8 +127,8 @@ pidgin_menu_tray_class_init(PidginMenuTrayClass *klass) {
 	object_class->finalize = pidgin_menu_tray_finalize;
 	object_class->get_property = pidgin_menu_tray_get_property;
 
-	item_class->select = pidgin_menu_tray_select;
-	item_class->deselect = pidgin_menu_tray_deselect;
+	menu_item_class->select = pidgin_menu_tray_select;
+	menu_item_class->deselect = pidgin_menu_tray_deselect;
 
 	widget_class->map = pidgin_menu_tray_map;
 
@@ -205,7 +209,7 @@ pidgin_menu_tray_add(PidginMenuTray *menu_tray, GtkWidget *widget,
 	g_return_if_fail(PIDGIN_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
-	if (GTK_WIDGET_NO_WINDOW(widget))
+	if (!gtk_widget_get_has_window(widget))
 	{
 		GtkWidget *event;
 
@@ -238,21 +242,27 @@ pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const cha
 void
 pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
+#if !GTK_CHECK_VERSION(2,12,0)
 	if (!menu_tray->tooltips)
 		menu_tray->tooltips = gtk_tooltips_new();
+#endif
 
 	/* Should we check whether widget is a child of menu_tray? */
 
 	/*
-	 * If the widget does not have it's own window, then it
+	 * If the widget does not have its own window, then it
 	 * must have automatically been added to an event box
 	 * when it was added to the menu tray.  If this is the
 	 * case, we want to set the tooltip on the widget's parent,
 	 * not on the widget itself.
 	 */
-	if (GTK_WIDGET_NO_WINDOW(widget))
-		widget = widget->parent;
+	if (!gtk_widget_get_has_window(widget))
+		widget = gtk_widget_get_parent(widget);
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, tooltip);
+#else
 	gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
+#endif
 }
 

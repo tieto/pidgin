@@ -128,7 +128,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 {
-	if (GTK_WIDGET_VISIBLE(w)) {
+	if (gtk_widget_get_visible(w)) {
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/height", event->height);
 	}
@@ -622,8 +622,8 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
-	if(e->keyval == GDK_Return &&
-	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
+	if(e->keyval == GDK_KEY_Return &&
+	   gtk_widget_is_sensitive(win->filter) &&
 	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 	{
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);
@@ -925,7 +925,7 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(item), gtk_label_new(_("Level ")));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		win->filterlevel = gtk_combo_box_new_text();
+		win->filterlevel = gtk_combo_box_text_new();
 		item = gtk_tool_item_new();
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(win->filterlevel, _("Select the debug filter level."));
@@ -935,12 +935,12 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(item), win->filterlevel);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("All"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Misc"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Info"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Warning"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Error "));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Fatal Error"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("All"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Misc"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Info"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Warning"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Error "));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Fatal Error"));
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel),
 					purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"));
 #ifdef USE_REGEX

@@ -505,14 +505,14 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static void
-config_destroy(GtkObject *w, gpointer nul)
+config_destroy(GtkWidget *w, gpointer nul)
 {
 	purple_debug_info("vvconfig", "closing vv configuration window\n");
 	window = NULL;
 }
 
 static void
-config_close(GtkObject *w, gpointer nul)
+config_close(GtkWidget *w, gpointer nul)
 {
 	gtk_widget_destroy(GTK_WIDGET(window));
 }
@@ -629,7 +629,7 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 }
 
 static void
-voice_test_frame_destroy_cb(GtkObject *w, GstElement *pipeline)
+voice_test_frame_destroy_cb(GtkWidget *w, GstElement *pipeline)
 {
 	g_return_if_fail(GST_IS_ELEMENT(pipeline));
 
@@ -704,7 +704,7 @@ get_voice_test_frame(PurplePlugin *plugin)
 
 	gtk_range_set_value(GTK_RANGE(volume),
 			purple_prefs_get_int("/purple/media/audio/volume/input"));
-	gtk_widget_set(volume, "draw-value", FALSE, NULL);
+	gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
 
 	gtk_range_set_value(GTK_RANGE(threshold),
 			purple_prefs_get_int("/purple/media/audio/silence_threshold"));

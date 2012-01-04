@@ -349,7 +349,7 @@ pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 	free(tmp);
 
 	session_managed = TRUE;
-	gdk_set_sm_client_id(client_id);
+	gdk_x11_set_sm_client_id(client_id);
 
 	tmp = g_get_current_dir();
 	session_set_string(session, SmCurrentDirectory, tmp);

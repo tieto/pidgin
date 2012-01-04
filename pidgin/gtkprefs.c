@@ -123,7 +123,7 @@ pidgin_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 		const char *key, int min, int max, GtkSizeGroup *sg)
 {
 	GtkWidget *spin;
-	GtkObject *adjust;
+	GtkAdjustment *adjust;
 	int val;
 
 	val = purple_prefs_get_int(key);
@@ -187,29 +187,49 @@ pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
 	return pidgin_add_widget_to_vbox(GTK_BOX(page), title, sg, entry, TRUE, NULL);
 }
 
+/* TODO: Maybe move this up somewheres... */
+enum {
+	PREF_DROPDOWN_TEXT,
+	PREF_DROPDOWN_VALUE,
+	PREF_DROPDOWN_COUNT
+};
 
 static void
 dropdown_set(GObject *w, const char *key)
 {
 	const char *str_value;
 	int int_value;
+	gboolean bool_value;
 	PurplePrefType type;
+	GtkTreeIter iter;
+	GtkTreeModel *tree_model;
+
+	tree_model = gtk_combo_box_get_model(GTK_COMBO_BOX(w));
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter))
+		return;
 
 	type = GPOINTER_TO_INT(g_object_get_data(w, "type"));
 
 	if (type == PURPLE_PREF_INT) {
-		int_value = GPOINTER_TO_INT(g_object_get_data(w, "value"));
+		gtk_tree_model_get(tree_model, &iter,
+		                   PREF_DROPDOWN_VALUE, &int_value,
+		                   -1);
 
 		purple_prefs_set_int(key, int_value);
 	}
 	else if (type == PURPLE_PREF_STRING) {
-		str_value = (const char *)g_object_get_data(w, "value");
+		gtk_tree_model_get(tree_model, &iter,
+		                   PREF_DROPDOWN_VALUE, &str_value,
+		                   -1);
 
 		purple_prefs_set_string(key, str_value);
 	}
 	else if (type == PURPLE_PREF_BOOLEAN) {
-		purple_prefs_set_bool(key,
-				GPOINTER_TO_INT(g_object_get_data(w, "value")));
+		gtk_tree_model_get(tree_model, &iter,
+		                   PREF_DROPDOWN_VALUE, &bool_value,
+		                   -1);
+
+		purple_prefs_set_bool(key, bool_value);
 	}
 }
 
@@ -217,69 +237,86 @@ GtkWidget *
 pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		PurplePrefType type, const char *key, GList *menuitems)
 {
-	GtkWidget  *dropdown, *opt, *menu;
+	GtkWidget  *dropdown;
 	GtkWidget  *label = NULL;
 	gchar      *text;
 	const char *stored_str = NULL;
 	int         stored_int = 0;
+	gboolean    stored_bool = FALSE;
 	int         int_value  = 0;
 	const char *str_value  = NULL;
-	int         o = 0;
+	gboolean    bool_value = FALSE;
+	GtkListStore *store;
+	GtkTreeIter iter;
+	GtkTreeIter active;
+	GtkCellRenderer *renderer;
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
-	dropdown = gtk_option_menu_new();
-	menu = gtk_menu_new();
-
-	if (type == PURPLE_PREF_INT)
+	if (type == PURPLE_PREF_INT) {
+		store = gtk_list_store_new(PREF_DROPDOWN_COUNT, G_TYPE_STRING, G_TYPE_INT);
 		stored_int = purple_prefs_get_int(key);
-	else if (type == PURPLE_PREF_STRING)
+	} else if (type == PURPLE_PREF_STRING) {
+		store = gtk_list_store_new(PREF_DROPDOWN_COUNT, G_TYPE_STRING, G_TYPE_STRING);
 		stored_str = purple_prefs_get_string(key);
+	} else if (type == PURPLE_PREF_BOOLEAN) {
+		store = gtk_list_store_new(PREF_DROPDOWN_COUNT, G_TYPE_STRING, G_TYPE_BOOLEAN);
+		stored_bool = purple_prefs_get_bool(key);
+	}
 
-	while (menuitems != NULL && (text = (char *) menuitems->data) != NULL) {
+	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+	g_object_set_data(G_OBJECT(dropdown), "type", GINT_TO_POINTER(type));
+
+	while (menuitems != NULL && (text = (char *)menuitems->data) != NULL) {
 		menuitems = g_list_next(menuitems);
 		g_return_val_if_fail(menuitems != NULL, NULL);
 
-		opt = gtk_menu_item_new_with_label(text);
-
-		g_object_set_data(G_OBJECT(opt), "type", GINT_TO_POINTER(type));
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+		                   PREF_DROPDOWN_TEXT, text,
+		                   -1);
 
 		if (type == PURPLE_PREF_INT) {
 			int_value = GPOINTER_TO_INT(menuitems->data);
-			g_object_set_data(G_OBJECT(opt), "value",
-							  GINT_TO_POINTER(int_value));
+			gtk_list_store_set(store, &iter,
+			                   PREF_DROPDOWN_VALUE, int_value,
+			                   -1);
 		}
 		else if (type == PURPLE_PREF_STRING) {
 			str_value = (const char *)menuitems->data;
-
-			g_object_set_data(G_OBJECT(opt), "value", (char *)str_value);
+			gtk_list_store_set(store, &iter,
+			                   PREF_DROPDOWN_VALUE, str_value,
+			                   -1);
 		}
 		else if (type == PURPLE_PREF_BOOLEAN) {
-			g_object_set_data(G_OBJECT(opt), "value",
-					menuitems->data);
+			bool_value = (gboolean)GPOINTER_TO_INT(menuitems->data);
+			gtk_list_store_set(store, &iter,
+			                   PREF_DROPDOWN_VALUE, bool_value,
+			                   -1);
 		}
-
-		g_signal_connect(G_OBJECT(opt), "activate",
-						 G_CALLBACK(dropdown_set), (char *)key);
-
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
 		if ((type == PURPLE_PREF_INT && stored_int == int_value) ||
 			(type == PURPLE_PREF_STRING && stored_str != NULL &&
 			 !strcmp(stored_str, str_value)) ||
 			(type == PURPLE_PREF_BOOLEAN &&
-			 (purple_prefs_get_bool(key) == GPOINTER_TO_INT(menuitems->data)))) {
+			 (stored_bool == bool_value))) {
 
-			gtk_menu_set_active(GTK_MENU(menu), o);
+			active = iter;
 		}
 
 		menuitems = g_list_next(menuitems);
-
-		o++;
 	}
 
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
+	                               "text", 0,
+	                               NULL);
+
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(dropdown), &active);
+
+	g_signal_connect(G_OBJECT(dropdown), "changed",
+	                 G_CALLBACK(dropdown_set), (char *)key);
 
 	pidgin_add_widget_to_vbox(GTK_BOX(box), title, NULL, dropdown, FALSE, &label);
 
@@ -862,9 +899,10 @@ static void
 theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		GtkSelectionData *sd, guint info, guint t, gpointer user_data)
 {
-	gchar *name = g_strchomp((gchar *)sd->data);
+	gchar *name = g_strchomp((gchar *)gtk_selection_data_get_data(sd));
 
-	if ((sd->length >= 0) && (sd->format == 8)) {
+	if ((gtk_selection_data_get_length(sd) >= 0)
+	 && (gtk_selection_data_get_format(sd) == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		gchar *temp;
@@ -2587,7 +2625,7 @@ static GtkWidget *
 sound_page(void)
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *vbox2, *sw, *button;
+	GtkWidget *vbox, *vbox2, *sw, *button, *parent, *parent_parent, *parent_parent_parent;
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
@@ -2684,15 +2722,18 @@ sound_page(void)
 								sound_changed2_cb, vbox);
 #endif
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
+	parent = gtk_widget_get_parent(vbox);
+	parent_parent = gtk_widget_get_parent(parent);
+	parent_parent_parent = gtk_widget_get_parent(parent_parent);
 
 	/* The following is an ugly hack to make the frame expand so the
 	 * sound events list is big enough to be usable */
-	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0,
+	gtk_box_set_child_packing(GTK_BOX(parent), vbox, TRUE, TRUE, 0,
 			GTK_PACK_START);
-	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent), vbox->parent, TRUE,
-			TRUE, 0, GTK_PACK_START);
-	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent->parent),
-			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
+	gtk_box_set_child_packing(GTK_BOX(parent_parent),
+			parent, TRUE, TRUE, 0, GTK_PACK_START);
+	gtk_box_set_child_packing(GTK_BOX(parent_parent_parent),
+			parent_parent, TRUE, TRUE, 0, GTK_PACK_START);
 
 	/* SOUND SELECTION */
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);

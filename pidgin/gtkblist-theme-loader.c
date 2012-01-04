@@ -65,7 +65,8 @@ parse_color(xmlnode *node, const char *tag)
 	GdkColor color;
 
 	if (temp && gdk_color_parse(temp, &color)) {
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, FALSE, TRUE);
+    /* TODO: fix this for gtk+ 3.0 */
+		/*gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, FALSE, TRUE);*/
 		return gdk_color_copy(&color);
 	} else {
 		return NULL;
