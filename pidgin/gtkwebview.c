@@ -213,6 +213,7 @@ webview_link_clicked(WebKitWebView *webview,
 		/* the gtk imhtml way was to create an idle cb, not sure
 		 * why, so right now just using purple_notify_uri directly */
 		purple_notify_uri(NULL, uri);
+		webkit_web_policy_decision_ignore(policy_decision);
 	} else
 		webkit_web_policy_decision_use(policy_decision);
 
