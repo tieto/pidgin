@@ -51,44 +51,39 @@ gtk_webview_new(void)
 	return GTK_WIDGET(ret);
 }
 
-static char *
-get_image_filename_from_id(GtkWebView* view, int id)
+static const char *
+get_image_src_from_id(GtkWebView* view, int id)
 {
-	char *filename = NULL;
-	FILE *file;
-	PurpleStoredImage* img;
+	char *src;
+	PurpleStoredImage *img;
 
-	if (!view->priv->images)
-		view->priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
+	if (view->priv->images) {
+		/* Check for already loaded image */
+		src = (char *)g_hash_table_lookup(view->priv->images, GINT_TO_POINTER(id));
+		if (src)
+			return src;
+	} else {
+		view->priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+		                                           NULL, g_free);
+	}
 
-	filename = (char *)g_hash_table_lookup(view->priv->images, GINT_TO_POINTER(id));
-	if (filename)
-		return filename;
-
-	/* else get from img store */
-	file = purple_mkstemp(&filename, TRUE);
-
+	/* Find image in store */
 	img = purple_imgstore_find_by_id(id);
 
-	fwrite(purple_imgstore_get_data(img), purple_imgstore_get_size(img), 1, file);
-	g_hash_table_insert(view->priv->images, GINT_TO_POINTER(id), filename);
-	fclose(file);
-	return filename;
-}
+	src = (char *)purple_imgstore_get_filename(img);
+	if (src) {
+		src = g_strdup_printf("file://%s", src);
+	} else {
+		char *tmp;
+		tmp = purple_base64_encode(purple_imgstore_get_data(img),
+		                           purple_imgstore_get_size(img));
+		src = g_strdup_printf("data:base64,%s", tmp);
+		g_free(tmp);
+	}
 
-static void
-clear_single_image(gpointer key, gpointer value, gpointer userdata)
-{
-	g_unlink((char *)value);
-}
+	g_hash_table_insert(view->priv->images, GINT_TO_POINTER(id), src);
 
-static void
-clear_images(GtkWebView *view)
-{
-	if (!view->priv->images)
-		return;
-	g_hash_table_foreach(view->priv->images, clear_single_image, NULL);
-	g_hash_table_unref(view->priv->images);
+	return src;
 }
 
 /*
@@ -143,7 +138,7 @@ replace_img_id_with_src(GtkWebView *view, const char *html)
 		/* let's dump this, tag and then dump the src information */
 		g_string_append_len(buffer, img, cur - img);
 
-		g_string_append_printf(buffer, " src='file://%s' ", get_image_filename_from_id(view, nid));
+		g_string_append_printf(buffer, " src='%s' ", get_image_src_from_id(view, nid));
 	}
 
 	return g_string_free(buffer, FALSE);
@@ -158,7 +153,8 @@ gtk_webview_finalize(GObject *view)
 		g_free(temp);
 	g_queue_free(GTK_WEBVIEW(view)->priv->js_queue);
 
-	clear_images(GTK_WEBVIEW(view));
+	if (GTK_WEBVIEW(view)->priv->images)
+		g_hash_table_unref(GTK_WEBVIEW(view)->priv->images);
 	g_free(GTK_WEBVIEW(view)->priv);
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(view));
 }
@@ -260,7 +256,11 @@ gtk_webview_load_html_string_with_imgstore(GtkWebView *view, const char *html)
 {
 	char *html_imged;
 
-	clear_images(view);
+	if (view->priv->images) {
+		g_hash_table_unref(view->priv->images);
+		view->priv->images = NULL;
+	}
+
 	html_imged = replace_img_id_with_src(view, html);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(view), html_imged, NULL, NULL, "file:///");
 	g_free(html_imged);
