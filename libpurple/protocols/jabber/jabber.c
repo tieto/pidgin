@@ -1262,7 +1262,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					cbdata->js->user->node = g_strdup(value);
 				}
 				if(cbdata->js->registration && !strcmp(id, "password"))
-					purple_account_set_password(purple_connection_get_account(cbdata->js->gc), value);
+					purple_account_set_password(purple_connection_get_account(cbdata->js->gc), value, NULL, NULL);
 			}
 		}
 	}
@@ -2484,7 +2484,7 @@ jabber_password_change_result_cb(JabberStream *js, const char *from,
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 
-		purple_account_set_password(purple_connection_get_account(js->gc), (char *)data);
+		purple_account_set_password(purple_connection_get_account(js->gc), (const char *)data, NULL, NULL);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
@@ -2740,7 +2740,7 @@ char *jabber_parse_error(JabberStream *js,
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(purple_connection_get_account(js->gc)))
-				purple_account_set_password(purple_connection_get_account(js->gc), NULL);
+				purple_account_set_password(purple_connection_get_account(js->gc), NULL, NULL, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");

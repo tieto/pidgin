@@ -386,7 +386,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	t = g_strdup_printf("%u", uin);
 	purple_account_set_username(account, t);
 	/* Save the password if remembering passwords for the account */
-	purple_account_set_password(account, p1);
+	purple_account_set_password(account, p1, NULL, NULL);
 
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
@@ -650,7 +650,7 @@ static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
 	if (req->http_req->data != NULL &&
 		((struct gg_pubdir*)req->http_req->data)->success == 1)
 	{
-		purple_account_set_password(req->account, req->new_password);
+		purple_account_set_password(req->account, req->new_password, NULL, NULL);
 		purple_notify_info(req->account, messagesTitle,
 			_("Password was changed successfully!"), NULL);
 		goto exit_cleanup;
@@ -706,7 +706,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 		goto exit_err;
 	}
 
-	if (g_utf8_collate(cur, purple_account_get_password(account)) != 0) {
+	if (g_utf8_collate(cur, purple_connection_get_password(gc)) != 0) {
 		purple_notify_error(account, messagesTitle,
 			_("Your current password is different from the one that"
 			" you specified."), NULL);
@@ -723,7 +723,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 		mail);
 
 	h = gg_change_passwd4(ggp_get_uin(account), mail,
-		purple_account_get_password(account), p1, info->token->id, t,
+		purple_connection_get_password(gc), p1, info->token->id, t,
 		1);
 
 	if (h == NULL)
@@ -741,7 +741,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 		req->inpa = ggp_http_input_add(h,
 			ggp_callback_change_passwd_handler, req);
 	}
-	
+
 exit_err:
 	g_free(cur);
 	g_free(p1);
@@ -2285,7 +2285,7 @@ static void ggp_login(PurpleAccount *account)
 	purple_connection_set_protocol_data(gc, info);
 
 	glp->uin = ggp_get_uin(account);
-	glp->password = charset_convert(purple_account_get_password(account),
+	glp->password = charset_convert(purple_connection_get_password(gc),
 		"UTF-8", "CP1250");
 
 	if (glp->uin == 0) {
@@ -2311,7 +2311,7 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
-	
+
 	encryption_type = purple_account_get_string(account, "encryption",
 		"opportunistic_tls");
 	purple_debug_info("gg", "Requested encryption type: %s\n",
@@ -2335,7 +2335,7 @@ static void ggp_login(PurpleAccount *account)
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
-	
+
 	address = purple_account_get_string(account, "gg_server", "");
 	if (address && *address) {
 		/* TODO: Make this non-blocking */
