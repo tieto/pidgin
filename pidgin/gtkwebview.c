@@ -25,19 +25,10 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "internal.h"
+#include "pidgin.h"
 
-#include <ctype.h>
-#include <string.h>
-#include <glib.h>
-#include <glib/gstdio.h>
-#include <JavaScriptCore/JavaScript.h>
-
-#include "util.h"
 #include "gtkwebview.h"
-#include "imgstore.h"
 
 static WebKitWebViewClass *parent_class = NULL;
 
