@@ -32,8 +32,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#include "notify.h"
-
 #define GTK_TYPE_WEBVIEW            (gtk_webview_get_type())
 #define GTK_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, GtkWebView))
 #define GTK_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEW, GtkWebViewClass))
