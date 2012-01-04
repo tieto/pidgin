@@ -183,7 +183,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns The buddy list layout.
  */
- PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
+PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
 
 /**
  * Returns the background color to be used with expanded groups.
@@ -192,7 +192,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A gdk color.
  */
- GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
+GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used with expanded groups.
@@ -201,7 +201,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the background color to be used with collapsed groups.
@@ -210,7 +210,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A gdk color.
  */
- GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
+GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used with collapsed groups.
@@ -219,7 +219,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the colors to be used for contacts and chats.
@@ -228,7 +228,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A gdkcolor for contacts and chats.
  */
- GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
+GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for expanded contacts.
@@ -237,7 +237,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for online buddies.
@@ -246,7 +246,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_online_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_online_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for away and idle buddies.
@@ -255,7 +255,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_away_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_away_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for offline buddies.
@@ -264,7 +264,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for idle buddies.
@@ -273,7 +273,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for buddies with unread messages.
@@ -282,7 +282,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for chats with unread messages
@@ -292,7 +292,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for a buddy's status message.
@@ -301,7 +301,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @returns A font and color pair.
  */
- PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme);
+PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme);
 
 /* Set Methods */
 
