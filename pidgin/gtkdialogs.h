@@ -30,6 +30,8 @@
 #include "account.h"
 #include "conversation.h"
 
+G_BEGIN_DECLS
+
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
 void pidgin_dialogs_destroy_all(void);
 void pidgin_dialogs_about(void);
@@ -52,5 +54,7 @@ void pidgin_dialogs_merge_groups(PurpleGroup *, const char *);
 
 /* This macro should probably be moved elsewhere */
 #define PIDGIN_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
+
+G_END_DECLS
 
 #endif /* _PIDGINDIALOGS_H_ */

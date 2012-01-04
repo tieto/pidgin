@@ -59,9 +59,7 @@ typedef struct _PidginWhiteboard
 	int brush_size;          /**< Brush size */
 } PidginWhiteboard;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /*****************************************************************************/
 /** @name PidginWhiteboard API                                              */
@@ -77,8 +75,6 @@ PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* _PIDGINWHITEBOARD_H_ */

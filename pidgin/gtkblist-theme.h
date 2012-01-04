@@ -79,6 +79,8 @@ typedef struct
 
 } PidginBlistLayout;
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name PidginThemeFont API                                               */
 /**************************************************************************/
@@ -146,7 +148,6 @@ const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 /**************************************************************************/
 /** @name Purple Buddy List Theme API                                     */
 /**************************************************************************/
-G_BEGIN_DECLS
 
 /**
  * GObject foo.
@@ -434,4 +435,5 @@ void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme 
 void pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 G_END_DECLS
+
 #endif /* PIDGIN_BLIST_THEME_H */

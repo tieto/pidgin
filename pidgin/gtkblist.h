@@ -127,6 +127,8 @@ struct _PidginBuddyList {
 #define PIDGIN_IS_PIDGIN_BLIST(list) \
 	(purple_blist_get_ui_ops() == pidgin_blist_get_ui_ops())
 
+G_BEGIN_DECLS
+
 /**************************************************************************
  * @name GTK+ Buddy List API
  **************************************************************************/
@@ -397,5 +399,6 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
  */
 void pidgin_blist_tooltip_destroy(void);
 
+G_END_DECLS
 
 #endif /* _PIDGINBLIST_H_ */

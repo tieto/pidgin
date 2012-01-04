@@ -31,10 +31,6 @@
 #include "prpl.h"
 #include "util.h"
 
-
-
-
-
 typedef enum
 {
 	PIDGIN_BUTTON_HORIZONTAL,
@@ -79,6 +75,8 @@ typedef struct {
 
 typedef gboolean (*PidginFilterBuddyCompletionEntryFunc) (const PidginBuddyCompletionEntry *completion_entry, gpointer user_data);
 
+
+G_BEGIN_DECLS
 
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
@@ -902,6 +900,8 @@ void pidgin_utils_init(void);
  * Uninitialize some utility functions.
  */
 void pidgin_utils_uninit(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINUTILS_H_ */
 

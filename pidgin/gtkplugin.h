@@ -56,6 +56,8 @@ struct _PidginPluginUiInfo
 #define PIDGIN_PLUGIN_UI_INFO(plugin) \
 	((PidginPluginUiInfo *)(plugin)->info->ui_info)
 
+G_BEGIN_DECLS
+
 /**
  * Returns the configuration frame widget for a GTK+ plugin, if one
  * exists.
@@ -76,5 +78,7 @@ void pidgin_plugins_save(void);
  * Shows the Plugins dialog
  */
 void pidgin_plugin_dialog_show(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINPLUGIN_H_ */

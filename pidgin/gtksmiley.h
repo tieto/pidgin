@@ -31,6 +31,8 @@
 
 typedef struct _PidginSmiley PidginSmiley;
 
+G_BEGIN_DECLS
+
 /**
  * Add a PurpleSmiley to the GtkIMHtmlSmiley's list to be able to use it
  * in pidgin
@@ -107,5 +109,7 @@ void pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image);
  * @param datasize The size of smiley's data
  */
 void pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize);
+
+G_END_DECLS
 
 #endif /* PIDGIN_GTKSMILEY_H */

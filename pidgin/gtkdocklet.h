@@ -25,9 +25,13 @@
 #ifndef _GTKDOCKLET_H_
 #define _GTKDOCKLET_H_
 
+G_BEGIN_DECLS
+
 void pidgin_docklet_init(void);
 void pidgin_docklet_uninit(void);
 void*pidgin_docklet_get_handle(void);
+
+G_END_DECLS
 
 #endif /* _GTKDOCKLET_H_ */
 

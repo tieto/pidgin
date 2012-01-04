@@ -59,6 +59,8 @@ typedef gboolean (*PidginTooltipCreate)(GtkWidget *tipwindow,
  */
 typedef gboolean (*PidginTooltipPaint)(GtkWidget *tipwindow, gpointer userdata);
 
+G_BEGIN_DECLS
+
 /**
  * Setup tooltip drawing functions for a treeview.
  *
@@ -100,5 +102,7 @@ void pidgin_tooltip_destroy(void);
  */
 void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 		PidginTooltipCreate create_cb, PidginTooltipPaint paint_cb);
+
+G_END_DECLS
 
 #endif

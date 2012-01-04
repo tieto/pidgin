@@ -29,6 +29,8 @@
 
 #include "prefs.h"
 
+G_BEGIN_DECLS
+
 /**
  * Initializes all UI-specific preferences.
  */
@@ -127,5 +129,7 @@ GtkWidget *pidgin_prefs_dropdown_from_list(GtkWidget *page,
  * Rename legacy prefs and delete some that no longer exist.
  */
 void pidgin_prefs_update_old(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINPREFS_H_ */

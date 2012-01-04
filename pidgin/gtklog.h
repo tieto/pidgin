@@ -52,6 +52,7 @@ struct _PidginLogViewer {
 };
 
 
+G_BEGIN_DECLS
 
 void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *account);
 void pidgin_log_show_contact(PurpleContact *contact);
@@ -81,5 +82,7 @@ void *pidgin_log_get_handle(void);
 void pidgin_log_uninit(void);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif

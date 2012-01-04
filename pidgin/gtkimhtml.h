@@ -31,9 +31,7 @@
 
 #include "connection.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************
  * @name Structures
@@ -828,8 +826,6 @@ void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean popul
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PIDGINIMHTML_H_ */

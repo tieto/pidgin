@@ -60,6 +60,7 @@ struct _GtkWebViewClass
 
 typedef struct _GtkWebViewClass GtkWebViewClass;
 
+G_BEGIN_DECLS
 
 /**
  * Returns the GType for a GtkWebView widget
@@ -156,6 +157,8 @@ void gtk_webview_page_up(GtkWebView *webview);
  * @param webview The GtkWebView.
  */
 void gtk_webview_page_down(GtkWebView *webview);
+
+G_END_DECLS
 
 #endif /* _PIDGIN_WEBVIEW_H_ */
 
