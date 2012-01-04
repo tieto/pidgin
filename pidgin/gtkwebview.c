@@ -30,41 +30,54 @@
 
 #include "gtkwebview.h"
 
-static WebKitWebViewClass *parent_class = NULL;
+#define MAX_SCROLL_TIME 0.4 /* seconds */
+#define SCROLL_DELAY 33 /* milliseconds */
 
-struct GtkWebViewPriv {
+#define GTK_WEBVIEW_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, GtkWebViewPriv))
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+
+typedef struct _GtkWebViewPriv {
 	GHashTable *images; /**< a map from id to temporary file for the image */
-	gboolean empty;  /**< whether anything has been appended **/
+	gboolean empty;     /**< whether anything has been appended **/
 
 	/* JS execute queue */
 	GQueue *js_queue;
 	gboolean is_loading;
+
+	/* Scroll adjustments */
 	GtkAdjustment *vadj;
 	guint scroll_src;
 	GTimer *scroll_time;
-};
+} GtkWebViewPriv;
 
-GtkWidget *
-gtk_webview_new(void)
-{
-	GtkWebView* ret = GTK_WEBVIEW(g_object_new(gtk_webview_get_type(), NULL));
-	return GTK_WIDGET(ret);
-}
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+
+static WebKitWebViewClass *parent_class = NULL;
+
+/******************************************************************************
+ * Helpers
+ *****************************************************************************/
 
 static const char *
-get_image_src_from_id(GtkWebView* view, int id)
+get_image_src_from_id(GtkWebViewPriv *priv, int id)
 {
 	char *src;
 	PurpleStoredImage *img;
 
-	if (view->priv->images) {
+	if (priv->images) {
 		/* Check for already loaded image */
-		src = (char *)g_hash_table_lookup(view->priv->images, GINT_TO_POINTER(id));
+		src = (char *)g_hash_table_lookup(priv->images, GINT_TO_POINTER(id));
 		if (src)
 			return src;
 	} else {
-		view->priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-		                                           NULL, g_free);
+		priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+		                                     NULL, g_free);
 	}
 
 	/* Find image in store */
@@ -81,7 +94,7 @@ get_image_src_from_id(GtkWebView* view, int id)
 		g_free(tmp);
 	}
 
-	g_hash_table_insert(view->priv->images, GINT_TO_POINTER(id), src);
+	g_hash_table_insert(priv->images, GINT_TO_POINTER(id), src);
 
 	return src;
 }
@@ -92,7 +105,7 @@ get_image_src_from_id(GtkWebView* view, int id)
  * purple changes the way it works.
  */
 static char *
-replace_img_id_with_src(GtkWebView *view, const char *html)
+replace_img_id_with_src(GtkWebViewPriv *priv, const char *html)
 {
 	GString *buffer = g_string_new(NULL);
 	const char *cur = html;
@@ -138,40 +151,57 @@ replace_img_id_with_src(GtkWebView *view, const char *html)
 		/* let's dump this, tag and then dump the src information */
 		g_string_append_len(buffer, img, cur - img);
 
-		g_string_append_printf(buffer, " src='%s' ", get_image_src_from_id(view, nid));
+		g_string_append_printf(buffer, " src='%s' ", get_image_src_from_id(priv, nid));
 	}
 
 	return g_string_free(buffer, FALSE);
 }
 
-static void
-gtk_webview_finalize(GObject *view)
+static gboolean
+process_js_script_queue(GtkWebView *webview)
 {
-	gpointer temp;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	char *script;
 
-	while ((temp = g_queue_pop_head(GTK_WEBVIEW(view)->priv->js_queue)))
-		g_free(temp);
-	g_queue_free(GTK_WEBVIEW(view)->priv->js_queue);
+	if (priv->is_loading)
+		return FALSE; /* we will be called when loaded */
+	if (!priv->js_queue || g_queue_is_empty(priv->js_queue))
+		return FALSE; /* nothing to do! */
 
-	if (GTK_WEBVIEW(view)->priv->images)
-		g_hash_table_unref(GTK_WEBVIEW(view)->priv->images);
-	g_free(GTK_WEBVIEW(view)->priv);
-	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(view));
+	script = g_queue_pop_head(priv->js_queue);
+	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), script);
+	g_free(script);
+
+	return TRUE; /* there may be more for now */
 }
 
 static void
-gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
+webview_load_started(WebKitWebView *webview, WebKitWebFrame *frame,
+                     gpointer userdata)
 {
-	parent_class = g_type_class_ref(webkit_web_view_get_type());
-	G_OBJECT_CLASS(klass)->finalize = gtk_webview_finalize;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	/* is there a better way to test for is_loading? */
+	priv->is_loading = TRUE;
+}
+
+static void
+webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
+                      gpointer userdata)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	priv->is_loading = FALSE;
+	g_idle_add((GSourceFunc)process_js_script_queue, webview);
 }
 
 static gboolean
-webview_link_clicked(WebKitWebView *view,
-		      WebKitWebFrame *frame,
-		      WebKitNetworkRequest *request,
-		      WebKitWebNavigationAction *navigation_action,
-		      WebKitWebPolicyDecision *policy_decision)
+webview_link_clicked(WebKitWebView *webview,
+                     WebKitWebFrame *frame,
+                     WebKitNetworkRequest *request,
+                     WebKitWebNavigationAction *navigation_action,
+                     WebKitWebPolicyDecision *policy_decision,
+                     gpointer userdata)
 {
 	const gchar *uri;
 	WebKitWebNavigationReason reason;
@@ -189,81 +219,143 @@ webview_link_clicked(WebKitWebView *view,
 	return TRUE;
 }
 
+/*
+ * Smoothly scroll a WebView.
+ *
+ * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
+ */
 static gboolean
-process_js_script_queue(GtkWebView *view)
+smooth_scroll_cb(gpointer data)
 {
-	char *script;
-	if (view->priv->is_loading)
-		return FALSE; /* we will be called when loaded */
-	if (!view->priv->js_queue || g_queue_is_empty(view->priv->js_queue))
-		return FALSE; /* nothing to do! */
+	GtkWebViewPriv *priv = data;
+	GtkAdjustment *adj;
+	gdouble max_val;
+	gdouble scroll_val;
 
-	script = g_queue_pop_head(view->priv->js_queue);
-	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(view), script);
-	g_free(script);
+	g_return_val_if_fail(priv->scroll_time != NULL, FALSE);
 
-	return TRUE; /* there may be more for now */
-}
+	adj = priv->vadj;
+	max_val = adj->upper - adj->page_size;
+	scroll_val = gtk_adjustment_get_value(adj) +
+	             ((max_val - gtk_adjustment_get_value(adj)) / 3);
 
-static void
-webview_load_started(WebKitWebView *view,
-		      WebKitWebFrame *frame,
-		      gpointer userdata)
-{
-	/* is there a better way to test for is_loading? */
-	GTK_WEBVIEW(view)->priv->is_loading = TRUE;
-}
-
-static void
-webview_load_finished(WebKitWebView *view,
-		       WebKitWebFrame *frame,
-		       gpointer userdata)
-{
-	GTK_WEBVIEW(view)->priv->is_loading = FALSE;
-	g_idle_add((GSourceFunc)process_js_script_queue, view);
-}
-
-void
-gtk_webview_safe_execute_script(GtkWebView *view, const char *script)
-{
-	g_queue_push_tail(view->priv->js_queue, g_strdup(script));
-	g_idle_add((GSourceFunc)process_js_script_queue, view);
-}
-
-static void
-gtk_webview_init(GtkWebView *view, gpointer userdata)
-{
-	view->priv = g_new0(struct GtkWebViewPriv, 1);
-	g_signal_connect(view, "navigation-policy-decision-requested",
-			  G_CALLBACK(webview_link_clicked),
-			  view);
-
-	g_signal_connect(view, "load-started",
-			  G_CALLBACK(webview_load_started),
-			  view);
-
-	g_signal_connect(view, "load-finished",
-			  G_CALLBACK(webview_load_finished),
-			  view);
-
-	view->priv->empty = TRUE;
-	view->priv->js_queue = g_queue_new();
-}
-
-
-void
-gtk_webview_load_html_string_with_imgstore(GtkWebView *view, const char *html)
-{
-	char *html_imged;
-
-	if (view->priv->images) {
-		g_hash_table_unref(view->priv->images);
-		view->priv->images = NULL;
+	if (g_timer_elapsed(priv->scroll_time, NULL) > MAX_SCROLL_TIME
+	 || scroll_val >= max_val) {
+		/* time's up. jump to the end and kill the timer */
+		gtk_adjustment_set_value(adj, max_val);
+		g_timer_destroy(priv->scroll_time);
+		priv->scroll_time = NULL;
+		g_source_remove(priv->scroll_src);
+		priv->scroll_src = 0;
+		return FALSE;
 	}
 
-	html_imged = replace_img_id_with_src(view, html);
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(view), html_imged, NULL, NULL, "file:///");
-	g_free(html_imged);
+	/* scroll by 1/3rd the remaining distance */
+	gtk_adjustment_set_value(adj, scroll_val);
+	return TRUE;
+}
+
+static gboolean
+scroll_idle_cb(gpointer data)
+{
+	GtkWebViewPriv *priv = data;
+	GtkAdjustment *adj = priv->vadj;
+	if (adj) {
+		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
+	}
+	priv->scroll_src = 0;
+	return FALSE;
+}
+
+/******************************************************************************
+ * GObject Stuff
+ *****************************************************************************/
+
+GtkWidget *
+gtk_webview_new(void)
+{
+	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
+}
+
+static void
+gtk_webview_finalize(GObject *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	gpointer temp;
+
+	while ((temp = g_queue_pop_head(priv->js_queue)))
+		g_free(temp);
+	g_queue_free(priv->js_queue);
+
+	if (priv->images)
+		g_hash_table_unref(priv->images);
+
+	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
+}
+
+static void
+gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
+{
+	parent_class = g_type_class_ref(webkit_web_view_get_type());
+
+	g_type_class_add_private(klass, sizeof(GtkWebViewPriv));
+
+	G_OBJECT_CLASS(klass)->finalize = gtk_webview_finalize;
+}
+
+static void
+gtk_webview_init(GtkWebView *webview, gpointer userdata)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	priv->empty = TRUE;
+	priv->js_queue = g_queue_new();
+
+	g_signal_connect(webview, "navigation-policy-decision-requested",
+			  G_CALLBACK(webview_link_clicked),
+			  webview);
+
+	g_signal_connect(webview, "load-started",
+			  G_CALLBACK(webview_load_started),
+			  webview);
+
+	g_signal_connect(webview, "load-finished",
+			  G_CALLBACK(webview_load_finished),
+			  webview);
+}
+
+GType
+gtk_webview_get_type(void)
+{
+	static GType mview_type = 0;
+	if (G_UNLIKELY(mview_type == 0)) {
+		static const GTypeInfo mview_info = {
+			sizeof(GtkWebViewClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)gtk_webview_class_init,
+			NULL,
+			NULL,
+			sizeof(GtkWebView),
+			0,
+			(GInstanceInitFunc)gtk_webview_init,
+			NULL
+		};
+		mview_type = g_type_register_static(webkit_web_view_get_type(),
+				"GtkWebView", &mview_info, 0);
+	}
+	return mview_type;
+}
+
+/*****************************************************************************
+ * Public API functions
+ *****************************************************************************/
+
+gboolean
+gtk_webview_is_empty(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->empty;
 }
 
 char *
@@ -290,14 +382,34 @@ gtk_webview_quote_js_string(const char *text)
 		}
 		cur++;
 	}
+
 	g_string_append_c(str, '"');
+
 	return g_string_free(str, FALSE);
+}
+void
+gtk_webview_safe_execute_script(GtkWebView *webview, const char *script)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	g_queue_push_tail(priv->js_queue, g_strdup(script));
+	g_idle_add((GSourceFunc)process_js_script_queue, webview);
 }
 
 void
-gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj)
+gtk_webview_load_html_string_with_imgstore(GtkWebView *webview, const char *html)
 {
-	webview->priv->vadj = vadj;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	char *html_imged;
+
+	if (priv->images) {
+		g_hash_table_unref(priv->images);
+		priv->images = NULL;
+	}
+
+	html_imged = replace_img_id_with_src(priv, html);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), html_imged, NULL,
+	                            NULL, "file:///");
+	g_free(html_imged);
 }
 
 /* this is a "hack", my plan is to eventually handle this
@@ -306,77 +418,34 @@ gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj)
  * wrong to hardcode that here.
  */
 void
-gtk_webview_append_html(GtkWebView *view, const char *html)
+gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	char *escaped = gtk_webview_quote_js_string(html);
 	char *script = g_strdup_printf("document.write(%s)", escaped);
-	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(view), script);
-	view->priv->empty = FALSE;
-	gtk_webview_scroll_to_end(view, TRUE);
+	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), script);
+	priv->empty = FALSE;
+	gtk_webview_scroll_to_end(webview, TRUE);
 	g_free(script);
 	g_free(escaped);
 }
 
-gboolean
-gtk_webview_is_empty(GtkWebView *view)
+void
+gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj)
 {
-	return view->priv->empty;
-}
-
-#define MAX_SCROLL_TIME 0.4 /* seconds */
-#define SCROLL_DELAY 33 /* milliseconds */
-
-/*
- * Smoothly scroll a WebView.
- *
- * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
- */
-static gboolean
-smooth_scroll_cb(gpointer data)
-{
-	struct GtkWebViewPriv *priv = data;
-	GtkAdjustment *adj = priv->vadj;
-	gdouble max_val = adj->upper - adj->page_size;
-	gdouble scroll_val = gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3);
-
-	g_return_val_if_fail(priv->scroll_time != NULL, FALSE);
-
-	if (g_timer_elapsed(priv->scroll_time, NULL) > MAX_SCROLL_TIME || scroll_val >= max_val) {
-		/* time's up. jump to the end and kill the timer */
-		gtk_adjustment_set_value(adj, max_val);
-		g_timer_destroy(priv->scroll_time);
-		priv->scroll_time = NULL;
-		g_source_remove(priv->scroll_src);
-		priv->scroll_src = 0;
-		return FALSE;
-	}
-
-	/* scroll by 1/3rd the remaining distance */
-	gtk_adjustment_set_value(adj, scroll_val);
-	return TRUE;
-}
-
-static gboolean
-scroll_idle_cb(gpointer data)
-{
-	struct GtkWebViewPriv *priv = data;
-	GtkAdjustment *adj = priv->vadj;
-	if (adj) {
-		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
-	}
-	priv->scroll_src = 0;
-	return FALSE;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->vadj = vadj;
 }
 
 void
 gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
 {
-	struct GtkWebViewPriv *priv = webview->priv;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	if (priv->scroll_time)
 		g_timer_destroy(priv->scroll_time);
 	if (priv->scroll_src)
 		g_source_remove(priv->scroll_src);
-	if(smooth) {
+	if (smooth) {
 		priv->scroll_time = g_timer_new();
 		priv->scroll_src = g_timeout_add_full(G_PRIORITY_LOW, SCROLL_DELAY, smooth_scroll_cb, priv, NULL);
 	} else {
@@ -387,7 +456,8 @@ gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
 
 void gtk_webview_page_up(GtkWebView *webview)
 {
-	GtkAdjustment *vadj = webview->priv->vadj;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GtkAdjustment *vadj = priv->vadj;
 	gdouble scroll_val;
 
 #if GTK_CHECK_VERSION(2,14,0)
@@ -403,7 +473,8 @@ void gtk_webview_page_up(GtkWebView *webview)
 
 void gtk_webview_page_down(GtkWebView *webview)
 {
-	GtkAdjustment *vadj = webview->priv->vadj;
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GtkAdjustment *vadj = priv->vadj;
 	gdouble scroll_val;
 	gdouble page_size;
 
@@ -418,28 +489,5 @@ void gtk_webview_page_down(GtkWebView *webview)
 #endif
 
 	gtk_adjustment_set_value(vadj, scroll_val);
-}
-
-GType
-gtk_webview_get_type(void)
-{
-	static GType mview_type = 0;
-	if (G_UNLIKELY(mview_type == 0)) {
-		static const GTypeInfo mview_info = {
-			sizeof(GtkWebViewClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) gtk_webview_class_init,
-			NULL,
-			NULL,
-			sizeof(GtkWebView),
-			0,
-			(GInstanceInitFunc) gtk_webview_init,
-			NULL
-		};
-		mview_type = g_type_register_static(webkit_web_view_get_type(),
-				"GtkWebView", &mview_info, 0);
-	}
-	return mview_type;
 }
 
