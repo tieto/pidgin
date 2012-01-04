@@ -128,6 +128,32 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 }
 
+void
+pidgin_setup_webview(GtkWidget *webview)
+{
+	g_return_if_fail(webview != NULL);
+	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+
+#if 0
+/* TODO: WebKit this stuff... */
+	pidgin_themes_smiley_themeize(webview);
+#endif
+
+#ifdef _WIN32
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		WebKitWebSettings *settings = webkit_web_settings_new();
+		g_object_set(G_OBJECT(settings), "default-font-size",
+		             purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size"),
+		             NULL);
+		g_object_set(G_OBJECT(settings), "default-font-family",
+		             purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font"),
+		             NULL);
+
+		webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webview), settings);
+	}
+#endif
+}
+
 static
 void pidgin_window_init(GtkWindow *wnd, const char *title, guint border_width, const char *role, gboolean resizable)
 {
@@ -319,6 +345,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 		gtk_webviewtoolbar_attach(GTK_WEBVIEWTOOLBAR(toolbar), webview);
 		gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(toolbar), "default");
 	}
+	pidgin_setup_webview(webview);
 
 	sw = pidgin_make_scrollable(webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
