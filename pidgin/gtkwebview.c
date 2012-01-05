@@ -756,7 +756,10 @@ void
 gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GObject *object = g_object_ref(G_OBJECT(webview));
 	priv->format_functions = buttons;
+	g_signal_emit(object, signals[BUTTONS_UPDATE], 0, buttons);
+	g_object_unref(object);
 }
 
 GtkWebViewButtons
