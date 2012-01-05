@@ -1588,10 +1588,14 @@ gtk_webviewtoolbar_attach(GtkWebViewToolbar *toolbar, GtkWidget *webview)
 	g_return_if_fail(GTK_IS_WEBVIEW(webview));
 
 	toolbar->webview = webview;
-	g_signal_connect(G_OBJECT(webview), "format_buttons_update", G_CALLBACK(update_buttons_cb), toolbar);
-	g_signal_connect_after(G_OBJECT(webview), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
-	g_signal_connect_after(G_OBJECT(webview), "format_function_clear", G_CALLBACK(update_format_cb), toolbar);
-	g_signal_connect(G_OBJECT(webview), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
+	g_signal_connect(G_OBJECT(webview), "allowed-formats-updated",
+	                 G_CALLBACK(update_buttons_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(webview), "format-toggled",
+	                       G_CALLBACK(toggle_button_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(webview), "format-cleared",
+	                       G_CALLBACK(update_format_cb), toolbar);
+	g_signal_connect(G_OBJECT(webview), "format-updated",
+	                 G_CALLBACK(update_format_cb), toolbar);
 #if 0
 	g_signal_connect_after(G_OBJECT(GTK_WEBVIEW(webview)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
 #endif
