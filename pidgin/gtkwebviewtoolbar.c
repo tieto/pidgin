@@ -43,7 +43,15 @@
 
 #include <gdk/gdkkeysyms.h>
 
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+
 static GtkHBoxClass *parent_class = NULL;
+
+/******************************************************************************
+ * Prototypes
+ *****************************************************************************/
 
 static void
 toggle_button_set_active_block(GtkToggleButton *button, gboolean is_active,
@@ -52,6 +60,10 @@ toggle_button_set_active_block(GtkToggleButton *button, gboolean is_active,
 static gboolean
 gtk_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
                               GtkWebViewToolbar *toolbar);
+
+/******************************************************************************
+ * Helpers
+ *****************************************************************************/
 
 static void
 do_bold(GtkWidget *bold, GtkWebViewToolbar *toolbar)
@@ -1147,10 +1159,83 @@ pidgin_menu_deactivate(GtkWidget *menu, GtkToggleButton *button)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
 }
 
-enum {
-	LAST_SIGNAL
-};
-/* static guint signals [LAST_SIGNAL] = { 0 }; */
+static void
+switch_toolbar_view(GtkWidget *item, GtkWebViewToolbar *toolbar)
+{
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
+			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide"));
+}
+
+static gboolean
+gtk_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
+                              GtkWebViewToolbar *toolbar)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	gboolean wide;
+
+	if (event->button != 3)
+		return FALSE;
+
+	wide = GTK_WIDGET_VISIBLE(toolbar->bold);
+
+	menu = gtk_menu_new();
+	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(switch_toolbar_view), toolbar);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, pidgin_menu_position_func_helper,
+				widget, event->button, event->time);
+	return TRUE;
+}
+
+static void
+button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
+{
+	if (GTK_WIDGET_VISIBLE(button))
+		gtk_widget_hide(item);
+	else
+		gtk_widget_show(item);
+}
+
+static void
+button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
+{
+	gtk_widget_set_sensitive(item, GTK_WIDGET_IS_SENSITIVE(button));
+}
+
+static void
+update_menuitem(GtkToggleButton *button, GtkCheckMenuItem *item)
+{
+	g_signal_handlers_block_by_func(G_OBJECT(item), G_CALLBACK(gtk_button_clicked), button);
+	gtk_check_menu_item_set_active(item, gtk_toggle_button_get_active(button));
+	g_signal_handlers_unblock_by_func(G_OBJECT(item), G_CALLBACK(gtk_button_clicked), button);
+}
+
+static void
+enable_markup(GtkWidget *widget, gpointer null)
+{
+	if (GTK_IS_LABEL(widget))
+		g_object_set(G_OBJECT(widget), "use-markup", TRUE, NULL);
+}
+
+static void
+webviewtoolbar_view_pref_changed(const char *name, PurplePrefType type,
+                                 gconstpointer value, gpointer toolbar)
+{
+	if (value) {
+		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
+		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
+	} else {
+		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
+		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
+	}
+}
+
+/******************************************************************************
+ * GObject stuff
+ *****************************************************************************/
 
 static void
 gtk_webviewtoolbar_finalize(GObject *object)
@@ -1200,38 +1285,6 @@ gtk_webviewtoolbar_finalize(GObject *object)
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
-static void
-switch_toolbar_view(GtkWidget *item, GtkWebViewToolbar *toolbar)
-{
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
-			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide"));
-}
-
-static gboolean
-gtk_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
-                              GtkWebViewToolbar *toolbar)
-{
-	GtkWidget *menu;
-	GtkWidget *item;
-	gboolean wide;
-
-	if (event->button != 3)
-		return FALSE;
-
-	wide = GTK_WIDGET_VISIBLE(toolbar->bold);
-
-	menu = gtk_menu_new();
-	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(switch_toolbar_view), toolbar);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, pidgin_menu_position_func_helper,
-				widget, event->button, event->time);
-	return TRUE;
-}
-
-/* Boring GTK+ stuff */
 static void
 gtk_webviewtoolbar_class_init(GtkWebViewToolbarClass *class)
 {
@@ -1295,49 +1348,6 @@ gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
-}
-
-static void
-button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
-{
-	if (GTK_WIDGET_VISIBLE(button))
-		gtk_widget_hide(item);
-	else
-		gtk_widget_show(item);
-}
-
-static void
-button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
-{
-	gtk_widget_set_sensitive(item, GTK_WIDGET_IS_SENSITIVE(button));
-}
-
-static void
-update_menuitem(GtkToggleButton *button, GtkCheckMenuItem *item)
-{
-	g_signal_handlers_block_by_func(G_OBJECT(item), G_CALLBACK(gtk_button_clicked), button);
-	gtk_check_menu_item_set_active(item, gtk_toggle_button_get_active(button));
-	g_signal_handlers_unblock_by_func(G_OBJECT(item), G_CALLBACK(gtk_button_clicked), button);
-}
-
-static void
-enable_markup(GtkWidget *widget, gpointer null)
-{
-	if (GTK_IS_LABEL(widget))
-		g_object_set(G_OBJECT(widget), "use-markup", TRUE, NULL);
-}
-
-static void
-webviewtoolbar_view_pref_changed(const char *name, PurplePrefType type,
-                                 gconstpointer value, gpointer toolbar)
-{
-	if (value) {
-		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
-		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
-	} else {
-		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
-		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
-	}
 }
 
 static void
@@ -1544,6 +1554,10 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	g_signal_connect(G_OBJECT(event), "button-press-event", G_CALLBACK(gtk_webviewtoolbar_popup_menu), toolbar);
 	gtk_widget_show(event);
 }
+
+/******************************************************************************
+ * Public API
+ *****************************************************************************/
 
 GtkWidget *
 gtk_webviewtoolbar_new(void)
