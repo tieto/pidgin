@@ -51,14 +51,20 @@
  *****************************************************************************/
 
 typedef struct _GtkWebViewToolbarPriv {
+	PurpleConversation *active_conv;
+
+	GtkWidget *wide_view;
+	GtkWidget *lean_view;
+
 	GtkTooltips *tooltips;
+
+	GtkWidget *font_label;
+	GtkWidget *font_menu;
 
 	GtkWidget *bold;
 	GtkWidget *italic;
 	GtkWidget *underline;
 	GtkWidget *strike;
-	GtkWidget *insert_hr;
-	GtkWidget *call;
 
 	GtkWidget *larger_size;
 	GtkWidget *normal_size;
@@ -70,10 +76,14 @@ typedef struct _GtkWebViewToolbarPriv {
 
 	GtkWidget *clear;
 
+	GtkWidget *insert_menu;
 	GtkWidget *image;
 	GtkWidget *link;
+	GtkWidget *insert_hr;
+
 	GtkWidget *smiley;
 	GtkWidget *attention;
+	GtkWidget *call;
 
 	GtkWidget *font_dialog;
 	GtkWidget *fgcolor_dialog;
@@ -1009,8 +1019,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkWebViewToolbar *toolbar)
 static void
 send_attention_cb(GtkWidget *attention, GtkWebViewToolbar *toolbar)
 {
-	PurpleConversation *conv =
-		g_object_get_data(G_OBJECT(toolbar), "active_conv");
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PurpleConversation *conv = priv->active_conv;
 	const gchar *who = purple_conversation_get_name(conv);
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 
@@ -1079,7 +1089,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	gboolean bold, italic, underline, strike;
 	const char *tmp;
 	const char *tmp2;
-	GtkLabel *label = g_object_get_data(G_OBJECT(toolbar), "font_label");
+	GtkLabel *label = GTK_LABEL(priv->font_label);
 
 	gtk_label_set_label(label, _("_Font"));
 
@@ -1303,12 +1313,13 @@ static void
 webviewtoolbar_view_pref_changed(const char *name, PurplePrefType type,
                                  gconstpointer value, gpointer toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (value) {
-		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
-		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
+		gtk_widget_hide_all(priv->lean_view);
+		gtk_widget_show_all(priv->wide_view);
 	} else {
-		gtk_widget_hide_all(g_object_get_data(G_OBJECT(toolbar), "wide-view"));
-		gtk_widget_show_all(g_object_get_data(G_OBJECT(toolbar), "lean-view"));
+		gtk_widget_hide_all(priv->wide_view);
+		gtk_widget_show_all(priv->lean_view);
 	}
 }
 
@@ -1321,7 +1332,6 @@ gtk_webviewtoolbar_finalize(GObject *object)
 {
 	GtkWebViewToolbar *toolbar = GTK_WEBVIEWTOOLBAR(object);
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	GtkWidget *menu;
 
 	if (priv->image_dialog != NULL)
 	{
@@ -1353,12 +1363,10 @@ gtk_webviewtoolbar_finalize(GObject *object)
 	g_free(priv->sml);
 	gtk_object_sink(GTK_OBJECT(priv->tooltips));
 
-	menu = g_object_get_data(object, "font_menu");
-	if (menu)
-		gtk_widget_destroy(menu);
-	menu = g_object_get_data(object, "insert_menu");
-	if (menu)
-		gtk_widget_destroy(menu);
+	if (priv->font_menu)
+		gtk_widget_destroy(priv->font_menu);
+	if (priv->insert_menu)
+		gtk_widget_destroy(priv->insert_menu);
 
 	purple_prefs_disconnect_by_handle(object);
 
@@ -1430,7 +1438,7 @@ gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 	}
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
-	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
+	priv->wide_view = hbox;
 }
 
 static void
@@ -1495,15 +1503,13 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_container_add(GTK_CONTAINER(font_button), bbox);
 	image = gtk_image_new_from_stock(GTK_STOCK_BOLD, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic(_("_Font"));
+	priv->font_label = label = gtk_label_new_with_mnemonic(_("_Font"));
 	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
-	g_object_set_data(G_OBJECT(hbox), "font_label", label);
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), font_button, FALSE, FALSE, 0);
 	gtk_widget_show_all(font_button);
 
-	font_menu = gtk_menu_new();
-	g_object_set_data(G_OBJECT(toolbar), "font_menu", font_menu);
+	priv->font_menu = font_menu = gtk_menu_new();
 
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
@@ -1545,8 +1551,7 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(box), insert_button, FALSE, FALSE, 0);
 	gtk_widget_show_all(insert_button);
 
-	insert_menu = gtk_menu_new();
-	g_object_set_data(G_OBJECT(toolbar), "insert_menu", insert_menu);
+	priv->insert_menu = insert_menu = gtk_menu_new();
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Image"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), priv->image);
@@ -1622,7 +1627,7 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_widget_set_sensitive(priv->attention, FALSE);
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
-	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
+	priv->lean_view = box;
 	gtk_widget_show(box);
 
 	purple_prefs_connect_callback(toolbar, PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
@@ -1720,7 +1725,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	PurplePlugin *prpl = purple_connection_get_prpl(gc);
 
-	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
+	priv->active_conv = conv;
 
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
