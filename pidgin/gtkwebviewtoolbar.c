@@ -43,6 +43,48 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#define GTK_WEBVIEWTOOLBAR_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbarPriv))
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+
+typedef struct _GtkWebViewToolbarPriv {
+	GtkTooltips *tooltips;
+
+	GtkWidget *bold;
+	GtkWidget *italic;
+	GtkWidget *underline;
+	GtkWidget *strike;
+	GtkWidget *insert_hr;
+	GtkWidget *call;
+
+	GtkWidget *larger_size;
+	GtkWidget *normal_size;
+	GtkWidget *smaller_size;
+
+	GtkWidget *font;
+	GtkWidget *fgcolor;
+	GtkWidget *bgcolor;
+
+	GtkWidget *clear;
+
+	GtkWidget *image;
+	GtkWidget *link;
+	GtkWidget *smiley;
+	GtkWidget *attention;
+
+	GtkWidget *font_dialog;
+	GtkWidget *fgcolor_dialog;
+	GtkWidget *bgcolor_dialog;
+	GtkWidget *link_dialog;
+	GtkWidget *smiley_dialog;
+	GtkWidget *image_dialog;
+
+	char *sml;
+} GtkWebViewToolbarPriv;
+
 /******************************************************************************
  * Globals
  *****************************************************************************/
@@ -121,23 +163,27 @@ static gboolean
 destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 					 GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+
 	if (widget != NULL)
 		gtk_webview_toggle_fontface(GTK_WEBVIEW(toolbar->webview), "");
 
-	if (toolbar->font_dialog != NULL)
+	if (priv->font_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->font_dialog);
-		toolbar->font_dialog = NULL;
+		gtk_widget_destroy(priv->font_dialog);
+		priv->font_dialog = NULL;
 	}
+
 	return FALSE;
 }
 
 static void
 realize_toolbar_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkFontSelection *sel;
 
-	sel = GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->fontsel);
+	sel = GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->fontsel);
 	gtk_widget_hide_all(gtk_widget_get_parent(sel->size_entry));
 	gtk_widget_show_all(sel->family_list);
 	gtk_widget_show(gtk_widget_get_parent(sel->family_list));
@@ -181,39 +227,42 @@ apply_font(GtkWidget *widget, GtkFontSelectionDialog *fontsel)
 static void
 toggle_font(GtkWidget *font, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv;
 	g_return_if_fail(toolbar);
+	priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(font))) {
 		const char *fontname = gtk_webview_get_current_fontface(GTK_WEBVIEW(toolbar->webview));
 
-		if (!toolbar->font_dialog) {
-			toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
+		if (!priv->font_dialog) {
+			priv->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
-			g_object_set_data(G_OBJECT(toolbar->font_dialog), "purple_toolbar", toolbar);
+			g_object_set_data(G_OBJECT(priv->font_dialog), "purple_toolbar", toolbar);
 
 			if (fontname) {
 				char *fonttif = g_strdup_printf("%s 12", fontname);
-				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(priv->font_dialog),
 														fonttif);
 				g_free(fonttif);
 			} else {
-				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(priv->font_dialog),
 														DEFAULT_FONT_FACE);
 			}
 
-			g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
+			g_signal_connect(G_OBJECT(priv->font_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_font), toolbar);
-			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button), "clicked",
-							 G_CALLBACK(apply_font), toolbar->font_dialog);
-			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->ok_button), "clicked",
+							 G_CALLBACK(apply_font), priv->font_dialog);
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_font), toolbar);
-			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
+			g_signal_connect_after(G_OBJECT(priv->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
-		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
+		gtk_window_present(GTK_WINDOW(priv->font_dialog));
 	} else {
 		cancel_toolbar_font(font, toolbar);
 	}
+
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
@@ -221,14 +270,17 @@ static gboolean
 destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+
 	if (widget != NULL)
 		gtk_webview_toggle_forecolor(GTK_WEBVIEW(toolbar->webview), "");
 
-	if (toolbar->fgcolor_dialog != NULL)
+	if (priv->fgcolor_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->fgcolor_dialog);
-		toolbar->fgcolor_dialog = NULL;
+		gtk_widget_destroy(priv->fgcolor_dialog);
+		priv->fgcolor_dialog = NULL;
 	}
+
 	return FALSE;
 }
 
@@ -260,15 +312,16 @@ do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 static void
 toggle_fg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor fgcolor;
 		const char *color = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
 
-		if (!toolbar->fgcolor_dialog) {
+		if (!priv->fgcolor_dialog) {
 
-			toolbar->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->colorsel;
+			priv->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+			colorsel = GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->colorsel;
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
@@ -276,17 +329,18 @@ toggle_fg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
+			g_signal_connect(G_OBJECT(priv->fgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->ok_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->ok_button), "clicked",
 							 G_CALLBACK(do_fgcolor), colorsel);
-			g_signal_connect(G_OBJECT (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 		}
-		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
+		gtk_window_present(GTK_WINDOW(priv->fgcolor_dialog));
 	} else {
 		cancel_toolbar_fgcolor(color, toolbar);
 	}
+
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
@@ -294,6 +348,7 @@ static gboolean
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (widget != NULL) {
 #if 0
 		if (gtk_text_buffer_get_selection_bounds(GTK_WEBVIEW(toolbar->webview)->text_buffer, NULL, NULL))
@@ -303,11 +358,12 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 			gtk_webview_toggle_background(GTK_WEBVIEW(toolbar->webview), "");
 	}
 
-	if (toolbar->bgcolor_dialog != NULL)
+	if (priv->bgcolor_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->bgcolor_dialog);
-		toolbar->bgcolor_dialog = NULL;
+		gtk_widget_destroy(priv->bgcolor_dialog);
+		priv->bgcolor_dialog = NULL;
 	}
+
 	return FALSE;
 }
 
@@ -344,15 +400,16 @@ do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 static void
 toggle_bg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor bgcolor;
 		const char *color = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
 
-		if (!toolbar->bgcolor_dialog) {
+		if (!priv->bgcolor_dialog) {
 
-			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
-			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->colorsel;
+			priv->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
+			colorsel = GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->colorsel;
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
@@ -360,49 +417,54 @@ toggle_bg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
+			g_signal_connect(G_OBJECT(priv->bgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->ok_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->ok_button), "clicked",
 							 G_CALLBACK(do_bgcolor), colorsel);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 
 		}
-		gtk_window_present(GTK_WINDOW(toolbar->bgcolor_dialog));
+		gtk_window_present(GTK_WINDOW(priv->bgcolor_dialog));
 	} else {
 		cancel_toolbar_bgcolor(color, toolbar);
 	}
+
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
 static void
 clear_formatting_cb(GtkWidget *clear, GtkWebViewToolbar *toolbar)
 {
-	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->clear), FALSE, toolbar);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->clear), FALSE, toolbar);
 	gtk_webview_clear_formatting(GTK_WEBVIEW(toolbar->webview));
 }
 
 static void
 cancel_link_cb(GtkWebViewToolbar *toolbar, PurpleRequestFields *fields)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->link), FALSE);
 
-	toolbar->link_dialog = NULL;
+	priv->link_dialog = NULL;
 }
 
 static void
 close_link_dialog(GtkWebViewToolbar *toolbar)
 {
-	if (toolbar->link_dialog != NULL)
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	if (priv->link_dialog != NULL)
 	{
-		purple_request_close(PURPLE_REQUEST_FIELDS, toolbar->link_dialog);
-		toolbar->link_dialog = NULL;
+		purple_request_close(PURPLE_REQUEST_FIELDS, priv->link_dialog);
+		priv->link_dialog = NULL;
 	}
 }
 
 static void
 do_insert_link_cb(GtkWebViewToolbar *toolbar, PurpleRequestFields *fields)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	const char *url, *description;
 
 	url = purple_request_fields_get_string(fields, "url");
@@ -420,15 +482,16 @@ do_insert_link_cb(GtkWebViewToolbar *toolbar, PurpleRequestFields *fields)
 	                       url, description);
 #endif
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->link), FALSE);
 
-	toolbar->link_dialog = NULL;
+	priv->link_dialog = NULL;
 }
 
 static void
 insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link))) {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->link))) {
 		PurpleRequestFields *fields;
 		PurpleRequestFieldGroup *group;
 		PurpleRequestField *field;
@@ -464,7 +527,7 @@ insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 									"link that you want to insert."));
 		}
 
-		toolbar->link_dialog =
+		priv->link_dialog =
 			purple_request_fields(toolbar, _("Insert Link"),
 					    NULL,
 						msg,
@@ -478,6 +541,7 @@ insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 	} else {
 		close_link_dialog(toolbar);
 	}
+
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
@@ -499,7 +563,8 @@ insert_hr_cb(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 static void
 do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->image), FALSE);
 #if 0
 	gchar *filename, *name, *buf;
 	char *filedata;
@@ -511,19 +576,19 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 
 	if (response != GTK_RESPONSE_ACCEPT)
 	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->image), FALSE);
 		return;
 	}
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 
 	if (filename == NULL) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->image), FALSE);
 		return;
 	}
 
 	/* The following triggers a callback that closes the widget */
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->image), FALSE);
 
 	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
 		purple_notify_error(NULL, NULL, error->message, NULL);
@@ -561,9 +626,10 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 static void
 insert_image_cb(GtkWidget *save, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *window;
 
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image))) {
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->image))) {
 		window = gtk_file_chooser_dialog_new(_("Insert Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -575,10 +641,10 @@ insert_image_cb(GtkWidget *save, GtkWebViewToolbar *toolbar)
 				"response", G_CALLBACK(do_insert_image_cb), toolbar);
 
 		gtk_widget_show(window);
-		toolbar->image_dialog = window;
+		priv->image_dialog = window;
 	} else {
-		gtk_widget_destroy(toolbar->image_dialog);
-		toolbar->image_dialog = NULL;
+		gtk_widget_destroy(priv->image_dialog);
+		priv->image_dialog = NULL;
 	}
 
 	gtk_widget_grab_focus(toolbar->webview);
@@ -588,17 +654,19 @@ insert_image_cb(GtkWidget *save, GtkWebViewToolbar *toolbar)
 static void
 destroy_smiley_dialog(GtkWebViewToolbar *toolbar)
 {
-	if (toolbar->smiley_dialog != NULL)
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	if (priv->smiley_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->smiley_dialog);
-		toolbar->smiley_dialog = NULL;
+		gtk_widget_destroy(priv->smiley_dialog);
+		priv->smiley_dialog = NULL;
 	}
 }
 
 static gboolean
 close_smiley_dialog(GtkWebViewToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->smiley), FALSE);
 	return FALSE;
 }
 
@@ -606,6 +674,7 @@ close_smiley_dialog(GtkWebViewToolbar *toolbar)
 static void
 insert_smiley_text(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	char *smiley_text, *escaped_smiley;
 
 	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
@@ -632,6 +701,7 @@ static struct smiley_button_list *
 sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 			 int *width, const GtkIMHtmlSmiley *smiley)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *image;
 	GtkWidget *button;
 	GtkRequisition size;
@@ -685,7 +755,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 	g_object_set_data(G_OBJECT(button), "smiley_text", face);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), toolbar);
 
-	gtk_tooltips_set_tip(toolbar->tooltips, button, face, NULL);
+	gtk_tooltips_set_tip(priv->tooltips, button, face, NULL);
 
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -699,7 +769,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 		g_snprintf(tip, sizeof(tip),
 			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
 			face);
-		gtk_tooltips_set_tip(toolbar->tooltips, button, tip, NULL);
+		gtk_tooltips_set_tip(priv->tooltips, button, tip, NULL);
 		gtk_widget_set_sensitive(button, FALSE);
 	} else if (psmiley) {
 		/* Remove the button if the smiley is destroyed */
@@ -729,6 +799,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 static gboolean
 smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	while (list) {
 		GtkIMHtmlSmiley *cur = (GtkIMHtmlSmiley *) list->data;
 		if (!strcmp(cur->file, smiley->file))
@@ -785,6 +856,7 @@ static void
 insert_smiley_cb(GtkWidget *smiley, GtkWebViewToolbar *toolbar)
 {
 #if 0
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *dialog, *vbox;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
@@ -799,8 +871,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkWebViewToolbar *toolbar)
 		return;
 	}
 
-	if (toolbar->sml)
-		smileys = pidgin_themes_get_proto_smileys(toolbar->sml);
+	if (priv->sml)
+		smileys = pidgin_themes_get_proto_smileys(priv->sml);
 	else
 		smileys = pidgin_themes_get_proto_smileys(NULL);
 
@@ -924,7 +996,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkWebViewToolbar *toolbar)
 	winpidgin_ensure_onscreen(dialog);
 #endif
 
-	toolbar->smiley_dialog = dialog;
+	priv->smiley_dialog = dialog;
 
 	gtk_widget_grab_focus(toolbar->webview);
 #endif
@@ -947,19 +1019,20 @@ static void
 update_buttons_cb(GtkWebView *webview, GtkWebViewButtons buttons,
                   GtkWebViewToolbar *toolbar)
 {
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_WEBVIEW_BOLD);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->italic), buttons & GTK_WEBVIEW_ITALIC);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->underline), buttons & GTK_WEBVIEW_UNDERLINE);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->strikethrough), buttons & GTK_WEBVIEW_STRIKE);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->bold), buttons & GTK_WEBVIEW_BOLD);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->italic), buttons & GTK_WEBVIEW_ITALIC);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->underline), buttons & GTK_WEBVIEW_UNDERLINE);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->strike), buttons & GTK_WEBVIEW_STRIKE);
 
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->larger_size), buttons & GTK_WEBVIEW_GROW);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smaller_size), buttons & GTK_WEBVIEW_SHRINK);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->larger_size), buttons & GTK_WEBVIEW_GROW);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->smaller_size), buttons & GTK_WEBVIEW_SHRINK);
 
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->font), buttons & GTK_WEBVIEW_FACE);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->fgcolor), buttons & GTK_WEBVIEW_FORECOLOR);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bgcolor), buttons & GTK_WEBVIEW_BACKCOLOR);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->font), buttons & GTK_WEBVIEW_FACE);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->fgcolor), buttons & GTK_WEBVIEW_FORECOLOR);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->bgcolor), buttons & GTK_WEBVIEW_BACKCOLOR);
 
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->clear),
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->clear),
 							 (buttons & GTK_WEBVIEW_BOLD ||
 							  buttons & GTK_WEBVIEW_ITALIC ||
 							  buttons & GTK_WEBVIEW_UNDERLINE ||
@@ -970,9 +1043,9 @@ update_buttons_cb(GtkWebView *webview, GtkWebViewButtons buttons,
 							  buttons & GTK_WEBVIEW_FORECOLOR ||
 							  buttons & GTK_WEBVIEW_BACKCOLOR));
 
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->image), buttons & GTK_WEBVIEW_IMAGE);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->link), buttons & GTK_WEBVIEW_LINK);
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smiley), buttons & GTK_WEBVIEW_SMILEY);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->image), buttons & GTK_WEBVIEW_IMAGE);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->link), buttons & GTK_WEBVIEW_LINK);
+	gtk_widget_set_sensitive(GTK_WIDGET(priv->smiley), buttons & GTK_WEBVIEW_SMILEY);
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -998,6 +1071,7 @@ toggle_button_set_active_block(GtkToggleButton *button, gboolean is_active,
 static void
 update_buttons(GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	gboolean bold, italic, underline, strike;
 	const char *tmp;
 	const char *tmp2;
@@ -1008,22 +1082,22 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	gtk_webview_get_current_format(GTK_WEBVIEW(toolbar->webview),
 	                               &bold, &italic, &underline, &strike);
 
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->bold)) != bold)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->bold), bold,
 									   toolbar);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->italic)) != italic)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->italic), italic,
 									   toolbar);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->underline)) != underline)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->underline),
 									   underline, toolbar);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->strikethrough)) != strike)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->strikethrough),
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->strike)) != strike)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->strike),
 									   strike, toolbar);
 
 	/* These buttons aren't ever "active". */
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->larger_size), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->smaller_size), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->larger_size), FALSE);
 
 	if (bold) {
 		gchar *markup = g_strdup_printf("<b>%s</b>",
@@ -1051,7 +1125,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	}
 
 	tmp = gtk_webview_get_current_fontface(GTK_WEBVIEW(toolbar->webview));
-	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->font),
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->font),
 								   (tmp != NULL), toolbar);
 	if (tmp != NULL) {
 		gchar *markup = g_strdup_printf("<span font_desc=\"%s\">%s</span>",
@@ -1061,7 +1135,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	}
 
 	tmp = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
-	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->fgcolor),
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->fgcolor),
 								   (tmp != NULL), toolbar);
 	if (tmp != NULL) {
 		gchar *markup = g_strdup_printf("<span foreground=\"%s\">%s</span>",
@@ -1072,7 +1146,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 
 	tmp = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
 	tmp2 = gtk_webview_get_current_background(GTK_WEBVIEW(toolbar->webview));
-	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bgcolor),
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->bgcolor),
 								   (tmp != NULL || tmp2 != NULL), toolbar);
 	if (tmp != NULL) {
 		gchar *markup = g_strdup_printf("<span background=\"%s\">%s</span>",
@@ -1170,6 +1244,7 @@ static gboolean
 gtk_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
                               GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *menu;
 	GtkWidget *item;
 	gboolean wide;
@@ -1177,7 +1252,7 @@ gtk_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
 	if (event->button != 3)
 		return FALSE;
 
-	wide = GTK_WIDGET_VISIBLE(toolbar->bold);
+	wide = GTK_WIDGET_VISIBLE(priv->bold);
 
 	menu = gtk_menu_new();
 	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
@@ -1241,18 +1316,19 @@ static void
 gtk_webviewtoolbar_finalize(GObject *object)
 {
 	GtkWebViewToolbar *toolbar = GTK_WEBVIEWTOOLBAR(object);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *menu;
 
-	if (toolbar->image_dialog != NULL)
+	if (priv->image_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->image_dialog);
-		toolbar->image_dialog = NULL;
+		gtk_widget_destroy(priv->image_dialog);
+		priv->image_dialog = NULL;
 	}
 
 	destroy_toolbar_font(NULL, NULL, toolbar);
-	if (toolbar->smiley_dialog != NULL) {
+	if (priv->smiley_dialog != NULL) {
 #if 0
-		g_signal_handlers_disconnect_by_func(G_OBJECT(toolbar->smiley_dialog), close_smiley_dialog, toolbar);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(priv->smiley_dialog), close_smiley_dialog, toolbar);
 		destroy_smiley_dialog(toolbar);
 #endif
 	}
@@ -1270,8 +1346,8 @@ gtk_webviewtoolbar_finalize(GObject *object)
 #endif
 	}
 
-	g_free(toolbar->sml);
-	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
+	g_free(priv->sml);
+	gtk_object_sink(GTK_OBJECT(priv->tooltips));
 
 	menu = g_object_get_data(object, "font_menu");
 	if (menu)
@@ -1293,6 +1369,8 @@ gtk_webviewtoolbar_class_init(GtkWebViewToolbarClass *class)
 	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_webviewtoolbar_finalize;
 
+	g_type_class_add_private(class, sizeof(GtkWebViewToolbarPriv));
+
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/toolbar");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide", FALSE);
 }
@@ -1300,6 +1378,7 @@ gtk_webviewtoolbar_class_init(GtkWebViewToolbarClass *class)
 static void
 gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *hbox;
 	GtkWidget *button;
 	struct {
@@ -1308,25 +1387,25 @@ gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 		GtkWidget **button;
 		const char *tooltip;
 	} buttons[] = {
-		{GTK_STOCK_BOLD, G_CALLBACK(do_bold), &toolbar->bold, _("Bold")},
-		{GTK_STOCK_ITALIC, do_italic, &toolbar->italic, _("Italic")},
-		{GTK_STOCK_UNDERLINE, do_underline, &toolbar->underline, _("Underline")},
-		{GTK_STOCK_STRIKETHROUGH, do_strikethrough, &toolbar->strikethrough, _("Strikethrough")},
+		{GTK_STOCK_BOLD, G_CALLBACK(do_bold), &priv->bold, _("Bold")},
+		{GTK_STOCK_ITALIC, do_italic, &priv->italic, _("Italic")},
+		{GTK_STOCK_UNDERLINE, do_underline, &priv->underline, _("Underline")},
+		{GTK_STOCK_STRIKETHROUGH, do_strikethrough, &priv->strike, _("Strikethrough")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_TEXT_LARGER, do_big, &toolbar->larger_size, _("Increase Font Size")},
-		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &toolbar->smaller_size, _("Decrease Font Size")},
+		{PIDGIN_STOCK_TOOLBAR_TEXT_LARGER, do_big, &priv->larger_size, _("Increase Font Size")},
+		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &priv->smaller_size, _("Decrease Font Size")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &toolbar->font, _("Font Face")},
-		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
-		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
+		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &priv->font, _("Font Face")},
+		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &priv->fgcolor, _("Foreground Color")},
+		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &priv->bgcolor, _("Background Color")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &toolbar->clear, _("Reset Formatting")},
+		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &priv->clear, _("Reset Formatting")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
-		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
+		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &priv->image, _("Insert IM Image")},
+		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &priv->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &toolbar->attention, _("Send Attention")},
+		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &priv->smiley, _("Insert Smiley")},
+		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &priv->attention, _("Send Attention")},
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1340,7 +1419,7 @@ gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 			g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buttons[iter].callback), toolbar);
 			*(buttons[iter].button) = button;
-			gtk_tooltips_set_tip(toolbar->tooltips, button, buttons[iter].tooltip, NULL);
+			gtk_tooltips_set_tip(priv->tooltips, button, buttons[iter].tooltip, NULL);
 		} else
 			button = gtk_vseparator_new();
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -1353,6 +1432,7 @@ gtk_webviewtoolbar_create_old_buttons(GtkWebViewToolbar *toolbar)
 static void
 gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *hbox = GTK_WIDGET(toolbar), *event = gtk_event_box_new();
 	GtkWidget *bbox, *box = gtk_hbox_new(FALSE, 0);
 	GtkWidget *image;
@@ -1371,34 +1451,34 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 		GtkWidget **button;
 		gboolean check;
 	} buttons[] = {
-		{_("<b>_Bold</b>"), &toolbar->bold, TRUE},
-		{_("<i>_Italic</i>"), &toolbar->italic, TRUE},
-		{_("<u>_Underline</u>"), &toolbar->underline, TRUE},
-		{_("<span strikethrough='true'>Strikethrough</span>"), &toolbar->strikethrough, TRUE},
-		{_("<span size='larger'>_Larger</span>"), &toolbar->larger_size, TRUE},
+		{_("<b>_Bold</b>"), &priv->bold, TRUE},
+		{_("<i>_Italic</i>"), &priv->italic, TRUE},
+		{_("<u>_Underline</u>"), &priv->underline, TRUE},
+		{_("<span strikethrough='true'>Strikethrough</span>"), &priv->strike, TRUE},
+		{_("<span size='larger'>_Larger</span>"), &priv->larger_size, TRUE},
 #if 0
-		{_("_Normal"), &toolbar->normal_size, TRUE},
+		{_("_Normal"), &priv->normal_size, TRUE},
 #endif
-		{_("<span size='smaller'>_Smaller</span>"), &toolbar->smaller_size, TRUE},
+		{_("<span size='smaller'>_Smaller</span>"), &priv->smaller_size, TRUE},
 		/* If we want to show the formatting for the following items, we would
 		 * need to update them when formatting changes. The above items don't need
 		 * no updating nor nothin' */
-		{_("_Font face"), &toolbar->font, TRUE},
-		{_("Foreground _color"), &toolbar->fgcolor, TRUE},
-		{_("Bac_kground color"), &toolbar->bgcolor, TRUE},
-		{_("_Reset formatting"), &toolbar->clear, FALSE},
+		{_("_Font face"), &priv->font, TRUE},
+		{_("Foreground _color"), &priv->fgcolor, TRUE},
+		{_("Bac_kground color"), &priv->bgcolor, TRUE},
+		{_("_Reset formatting"), &priv->clear, FALSE},
 		{NULL, NULL, FALSE}
 	};
 
 	toolbar->webview = NULL;
-	toolbar->font_dialog = NULL;
-	toolbar->fgcolor_dialog = NULL;
-	toolbar->bgcolor_dialog = NULL;
-	toolbar->link_dialog = NULL;
-	toolbar->smiley_dialog = NULL;
-	toolbar->image_dialog = NULL;
+	priv->font_dialog = NULL;
+	priv->fgcolor_dialog = NULL;
+	priv->bgcolor_dialog = NULL;
+	priv->link_dialog = NULL;
+	priv->smiley_dialog = NULL;
+	priv->image_dialog = NULL;
 
-	toolbar->tooltips = gtk_tooltips_new();
+	priv->tooltips = gtk_tooltips_new();
 
 	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
 
@@ -1465,30 +1545,30 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	g_object_set_data(G_OBJECT(toolbar), "insert_menu", insert_menu);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Image"));
-	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), priv->image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
-	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
+	g_signal_connect(G_OBJECT(priv->image), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
-	g_signal_connect(G_OBJECT(toolbar->image), "notify::visible",
+	g_signal_connect(G_OBJECT(priv->image), "notify::visible",
 			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
-	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), priv->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
-	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
+	g_signal_connect(G_OBJECT(priv->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
-	g_signal_connect(G_OBJECT(toolbar->link), "notify::visible",
+	g_signal_connect(G_OBJECT(priv->link), "notify::visible",
 			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
 	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
-	toolbar->insert_hr = menuitem;
+	priv->insert_hr = menuitem;
 
 	g_signal_connect(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
-	toolbar->sml = NULL;
+	priv->sml = NULL;
 
 	/* Sep */
 	sep = gtk_vseparator_new();
@@ -1506,7 +1586,7 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(smiley_button), "button-press-event", G_CALLBACK(gtk_webviewtoolbar_popup_menu), toolbar);
-	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
+	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), priv->smiley);
 	gtk_widget_show_all(smiley_button);
 
 	/* Sep */
@@ -1526,16 +1606,16 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked",
-		G_CALLBACK(gtk_button_clicked), toolbar->attention);
+		G_CALLBACK(gtk_button_clicked), priv->attention);
 	gtk_widget_show_all(attention_button);
 
-	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
+	g_signal_connect(G_OBJECT(priv->attention), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
-	g_signal_connect(G_OBJECT(toolbar->attention), "notify::visible",
+	g_signal_connect(G_OBJECT(priv->attention), "notify::visible",
 			G_CALLBACK(button_visibility_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
-	gtk_widget_set_sensitive(toolbar->attention, FALSE);
+	gtk_widget_set_sensitive(priv->attention, FALSE);
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
@@ -1623,14 +1703,16 @@ void
 gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
                                      const char *proto_id)
 {
-	g_free(toolbar->sml);
-	toolbar->sml = g_strdup(proto_id);
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	g_free(priv->sml);
+	priv->sml = g_strdup(proto_id);
 }
 
 void
 gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
                                               PurpleConversation *conv)
 {
+	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	PurplePlugin *prpl = purple_connection_get_prpl(gc);
 
@@ -1638,7 +1720,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
-	gtk_widget_set_sensitive(toolbar->attention,
+	gtk_widget_set_sensitive(priv->attention,
 		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }

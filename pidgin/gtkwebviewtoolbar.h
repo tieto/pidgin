@@ -42,39 +42,6 @@ struct _GtkWebViewToolbar {
 	GtkHBox box;
 
 	GtkWidget *webview;
-
-	GtkTooltips *tooltips;
-
-	GtkWidget *bold;
-	GtkWidget *italic;
-	GtkWidget *underline;
-	GtkWidget *strikethrough;
-	GtkWidget *insert_hr;
-	GtkWidget *call;
-
-	GtkWidget *larger_size;
-	GtkWidget *normal_size;
-	GtkWidget *smaller_size;
-
-	GtkWidget *font;
-	GtkWidget *fgcolor;
-	GtkWidget *bgcolor;
-
-	GtkWidget *clear;
-
-	GtkWidget *image;
-	GtkWidget *link;
-	GtkWidget *smiley;
-	GtkWidget *attention;
-
-	GtkWidget *font_dialog;
-	GtkWidget *fgcolor_dialog;
-	GtkWidget *bgcolor_dialog;
-	GtkWidget *link_dialog;
-	GtkWidget *smiley_dialog;
-	GtkWidget *image_dialog;
-
-	char *sml;
 };
 
 struct _GtkWebViewToolbarClass {
