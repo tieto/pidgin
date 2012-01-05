@@ -28,6 +28,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
+#include <gdk/gdkkeysyms.h>
 #include "gtkwebview.h"
 
 #define MAX_FONT_SIZE 7
@@ -36,6 +37,15 @@
 
 #define GTK_WEBVIEW_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, GtkWebViewPriv))
+
+enum {
+	BUTTONS_UPDATE,
+	TOGGLE_FORMAT,
+	CLEAR_FORMAT,
+	UPDATE_FORMAT,
+	LAST_SIGNAL
+};
+static guint signals[LAST_SIGNAL] = { 0 };
 
 /******************************************************************************
  * Structs
@@ -327,6 +337,37 @@ webview_clear_formatting(GtkWebView *webview)
 	priv->edit.background = NULL;
 }
 
+static void
+webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	/* since this function is the handler for the formatting keystrokes,
+	   we need to check here that the formatting attempted is permitted */
+	buttons &= gtk_webview_get_format_functions(webview);
+
+	switch (buttons) {
+	case GTK_WEBVIEW_BOLD:
+		gtk_webview_toggle_bold(webview);
+		break;
+	case GTK_WEBVIEW_ITALIC:
+		gtk_webview_toggle_italic(webview);
+		break;
+	case GTK_WEBVIEW_UNDERLINE:
+		gtk_webview_toggle_underline(webview);
+		break;
+	case GTK_WEBVIEW_STRIKE:
+		gtk_webview_toggle_strike(webview);
+		break;
+	case GTK_WEBVIEW_SHRINK:
+		gtk_webview_font_shrink(webview);
+		break;
+	case GTK_WEBVIEW_GROW:
+		gtk_webview_font_grow(webview);
+		break;
+	default:
+		break;
+	}
+}
+
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -356,11 +397,67 @@ gtk_webview_finalize(GObject *webview)
 static void
 gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 {
+	GObjectClass *gobject_class;
+	GtkBindingSet *binding_set;
+
 	parent_class = g_type_class_ref(webkit_web_view_get_type());
+	gobject_class = G_OBJECT_CLASS(klass);
 
 	g_type_class_add_private(klass, sizeof(GtkWebViewPriv));
 
-	G_OBJECT_CLASS(klass)->finalize = gtk_webview_finalize;
+	signals[BUTTONS_UPDATE] = g_signal_new("allowed-formats-updated",
+	                                       G_TYPE_FROM_CLASS(gobject_class),
+	                                       G_SIGNAL_RUN_FIRST,
+	                                       G_STRUCT_OFFSET(GtkWebViewClass, buttons_update),
+	                                       NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                       G_TYPE_NONE, 1, G_TYPE_INT);
+	signals[TOGGLE_FORMAT] = g_signal_new("format-toggled",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, toggle_format),
+	                                      NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                      G_TYPE_NONE, 1, G_TYPE_INT);
+	signals[CLEAR_FORMAT] = g_signal_new("format-cleared",
+	                                     G_TYPE_FROM_CLASS(gobject_class),
+	                                     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+	                                     G_STRUCT_OFFSET(GtkWebViewClass, clear_format),
+	                                     NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                     G_TYPE_NONE, 0);
+	signals[UPDATE_FORMAT] = g_signal_new("format-updated",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_FIRST,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, update_format),
+	                                      NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                      G_TYPE_NONE, 0);
+
+	klass->toggle_format = webview_toggle_format;
+	klass->clear_format = webview_clear_formatting;
+
+	gobject_class->finalize = gtk_webview_finalize;
+
+	binding_set = gtk_binding_set_by_class(parent_class);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_b, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_BOLD);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_i, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_ITALIC);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_u, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_UNDERLINE);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_plus, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_GROW);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_equal, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_GROW);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_minus, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_SHRINK);
+
+	binding_set = gtk_binding_set_by_class(klass);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_r, GDK_CONTROL_MASK,
+	                             "format-cleared", 0);
 }
 
 static void

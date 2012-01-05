@@ -70,6 +70,11 @@ struct _GtkWebView
 struct _GtkWebViewClass
 {
 	WebKitWebViewClass parent;
+
+	void (*buttons_update)(GtkWebView *, GtkWebViewButtons);
+	void (*toggle_format)(GtkWebView *, GtkWebViewButtons);
+	void (*clear_format)(GtkWebView *);
+	void (*update_format)(GtkWebView *);
 };
 
 G_BEGIN_DECLS
