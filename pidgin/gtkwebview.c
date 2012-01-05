@@ -829,11 +829,14 @@ gtk_webview_get_editable(GtkWebView *webview)
 void
 gtk_webview_clear_formatting(GtkWebView *webview)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	priv->edit.bold = FALSE;
-	priv->edit.italic = FALSE;
-	priv->edit.underline = FALSE;
-	priv->edit.strike = FALSE;
+	GObject *object;
+
+	object = g_object_ref(G_OBJECT(webview));
+	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
+
+	gtk_widget_grab_focus(GTK_WIDGET(webview));
+
+	g_object_unref(object);
 }
 
 void
