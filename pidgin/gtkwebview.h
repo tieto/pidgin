@@ -179,6 +179,14 @@ void gtk_webview_page_down(GtkWebView *webview);
 void gtk_webview_set_editable(GtkWebView *webview, gboolean editable);
 
 /**
+ * Setup formatting for a GtkWebView depending on the flags specified.
+ *
+ * @param webview The GtkWebView.
+ * @param flags   The connection flags describing the allowed formatting.
+ */
+void gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags);
+
+/**
  * Enables or disables whole buffer formatting only (wbfo) in a GtkWebView.
  * In this mode formatting options to the buffer take effect for the entire
  * buffer instead of specific text.

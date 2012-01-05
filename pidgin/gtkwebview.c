@@ -300,6 +300,33 @@ scroll_idle_cb(gpointer data)
 	return FALSE;
 }
 
+static void
+webview_clear_formatting(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
+		return;
+
+	priv->edit.bold = FALSE;
+	priv->edit.italic = FALSE;
+	priv->edit.underline = FALSE;
+	priv->edit.strike = FALSE;
+	priv->edit.fontsize = 0;
+
+	g_free(priv->edit.fontface);
+	priv->edit.fontface = NULL;
+
+	g_free(priv->edit.forecolor);
+	priv->edit.forecolor = NULL;
+
+	g_free(priv->edit.backcolor);
+	priv->edit.backcolor = NULL;
+
+	g_free(priv->edit.background);
+	priv->edit.background = NULL;
+}
+
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -525,6 +552,100 @@ void
 gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 {
 	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+}
+
+void
+gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GtkWebViewButtons buttons;
+
+	if (flags & PURPLE_CONNECTION_HTML) {
+		char color[8];
+		GdkColor fg_color, bg_color;
+
+		buttons = GTK_WEBVIEW_ALL;
+
+		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+			buttons &= ~GTK_WEBVIEW_BACKCOLOR;
+		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		{
+			buttons &= ~GTK_WEBVIEW_GROW;
+			buttons &= ~GTK_WEBVIEW_SHRINK;
+		}
+		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+			buttons &= ~GTK_WEBVIEW_LINKDESC;
+
+		gtk_webview_set_format_functions(webview, GTK_WEBVIEW_ALL);
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != priv->edit.bold)
+			gtk_webview_toggle_bold(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic") != priv->edit.italic)
+			gtk_webview_toggle_italic(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline") != priv->edit.underline)
+			gtk_webview_toggle_underline(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_strike") != priv->edit.strike)
+			gtk_webview_toggle_strike(webview);
+
+		gtk_webview_toggle_fontface(webview,
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
+
+		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		{
+			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
+
+			/* 3 is the default. */
+			if (size != 3)
+				gtk_webview_font_set_size(webview, size);
+		}
+
+		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
+							&fg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									fg_color.red   / 256,
+									fg_color.green / 256,
+									fg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_webview_toggle_forecolor(webview, color);
+
+		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
+		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
+							&bg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									bg_color.red   / 256,
+									bg_color.green / 256,
+									bg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_webview_toggle_background(webview, color);
+
+		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
+		else
+			gtk_webview_set_whole_buffer_formatting_only(webview, FALSE);
+	} else {
+		buttons = GTK_WEBVIEW_SMILEY | GTK_WEBVIEW_IMAGE;
+		webview_clear_formatting(webview);
+	}
+
+	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+		buttons &= ~GTK_WEBVIEW_IMAGE;
+
+	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		buttons |= GTK_WEBVIEW_CUSTOM_SMILEY;
+	else
+		buttons &= ~GTK_WEBVIEW_CUSTOM_SMILEY;
+
+	gtk_webview_set_format_functions(webview, buttons);
 }
 
 void
