@@ -5563,9 +5563,6 @@ headline_style_set (GtkWidget *widget,
 	g_object_ref_sink (tooltips);
 
 	gtk_tooltips_force_window (tooltips);
-#if GTK_CHECK_VERSION(2, 12, 0)
-	gtk_widget_set_name (tooltips->tip_window, "gtk-tooltips");
-#endif
 	gtk_widget_ensure_style (tooltips->tip_window);
 	style = gtk_widget_get_style (tooltips->tip_window);
 
