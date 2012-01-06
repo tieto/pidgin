@@ -843,37 +843,61 @@ void
 gtk_webview_toggle_bold(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
 	priv->edit.bold = !priv->edit.bold;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "bold", FALSE, "");
 }
 
 void
 gtk_webview_toggle_italic(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
 	priv->edit.italic = !priv->edit.italic;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "italic", FALSE, "");
 }
 
 void
 gtk_webview_toggle_underline(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
 	priv->edit.underline = !priv->edit.underline;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "underline", FALSE, "");
 }
 
 void
 gtk_webview_toggle_strike(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
 	priv->edit.strike = !priv->edit.strike;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "strikethrough", FALSE, "");
 }
 
 gboolean
 gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
 
 	g_free(priv->edit.forecolor);
 	priv->edit.forecolor = g_strdup(color);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "forecolor", FALSE, color);
 
 	return FALSE;
 }
@@ -882,9 +906,13 @@ gboolean
 gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
 
 	g_free(priv->edit.backcolor);
 	priv->edit.backcolor = g_strdup(color);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "backcolor", FALSE, color);
 
 	return FALSE;
 }
@@ -904,9 +932,13 @@ gboolean
 gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
 
 	g_free(priv->edit.fontface);
 	priv->edit.fontface = g_strdup(face);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "fontname", FALSE, face);
 
 	return FALSE;
 }
@@ -915,20 +947,44 @@ void
 gtk_webview_font_set_size(GtkWebView *webview, gint size)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
 	priv->edit.fontsize = size;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", size);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
 }
 
 void
 gtk_webview_font_shrink(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
 	priv->edit.fontsize = MAX(priv->edit.fontsize - 1, 1);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", priv->edit.fontsize);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
 }
 
 void
 gtk_webview_font_grow(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
 	priv->edit.fontsize = MIN(priv->edit.fontsize + 1, MAX_FONT_SIZE);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", priv->edit.fontsize);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
 }
 
