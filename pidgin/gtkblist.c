@@ -4548,21 +4548,12 @@ static void pidgin_blist_hide_node(PurpleBuddyList *list, PurpleBlistNode *node,
 
 static const char *require_connection[] =
 {
-#if 1
 	"/BList/BuddiesMenu/NewInstantMessage",
 	"/BList/BuddiesMenu/JoinAChat",
 	"/BList/BuddiesMenu/GetUserInfo",
 	"/BList/BuddiesMenu/AddBuddy",
 	"/BList/BuddiesMenu/AddChat",
 	"/BList/BuddiesMenu/AddGroup",
-#else
-	N_("/Buddies/New Instant Message..."),
-	N_("/Buddies/Join a Chat..."),
-	N_("/Buddies/Get User Info..."),
-	N_("/Buddies/Add Buddy..."),
-	N_("/Buddies/Add Chat..."),
-	N_("/Buddies/Add Group..."),
-#endif
 };
 
 static const int require_connection_size = sizeof(require_connection)
