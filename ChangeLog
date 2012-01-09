@@ -6,9 +6,12 @@ version 3.0.0 (??/??/????):
 	  (Dan Williams) (#13859)
 
 	AIM and ICQ:
-	* Make buddy list management code more efficient. (Oliver) (#4816)
+	* Allow signing on with usernames containing periods and
+	  underscores. (#13500)
+	* Allow adding buddies containing periods and underscores. (#13500)
 	* Don't try to format ICQ usernames entered as email addresses.
 	  Gets rid of an "Unable to format username" error at login. (#13883)
+	* Make buddy list management code more efficient. (Oliver) (#4816)
 
 	Bonjour:
 	* Support file transfers up to ~9 EiB.
