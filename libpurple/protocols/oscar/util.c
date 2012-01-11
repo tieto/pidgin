@@ -142,7 +142,7 @@ oscar_util_valid_name_aim(const char *name)
 		return TRUE;
 
 	/* Normal AIM usernames can't start with a number, period or underscore */
-	if (isalnum(name[0]))
+	if (isalnum(name[0]) == 0)
 		return FALSE;
 
 	for (i = 0; name[i] != '\0'; i++) {
