@@ -5759,7 +5759,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	if (convnode == NULL || !purple_blist_node_get_bool(convnode, "gtk-mute-sound"))
 		gtkconv->make_sound = TRUE;
 
-	if (convnode != NULL) {
+	if (convnode != NULL && purple_blist_node_has_setting(convnode, "enable-logging")) {
 		gboolean logging = purple_blist_node_get_bool(convnode, "enable-logging");
 		purple_conversation_set_logging(conv, logging);
 	}

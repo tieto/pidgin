@@ -1052,6 +1052,16 @@ void purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 void purple_blist_request_add_group(void);
 
 /**
+ * Checks whether a named setting exists for a node in the buddy list
+ *
+ * @param node  The node to check from which to check settings
+ * @param key   The identifier of the data
+ *
+ * @return TRUE if a value exists, or FALSE if there is no setting
+ */
+gboolean purple_blist_node_has_setting(PurpleBlistNode *node, const char *key);
+
+/**
  * Associates a boolean with a node in the buddy list
  *
  * @param node  The node to associate the data with
