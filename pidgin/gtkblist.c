@@ -129,8 +129,7 @@ typedef struct
 #define gtk_widget_has_focus(x) GTK_WIDGET_HAS_FOCUS(x)
 #endif
 
-static guint accounts_merge_id;
-static GtkActionGroup *accounts_action_group = NULL;
+static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
 static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
@@ -3640,7 +3639,6 @@ static const GtkActionEntry blist_menu_entries[] = {
 	/* Accounts menu */
 	{ "AccountsMenu", NULL, N_("_Accounts"), NULL, NULL, NULL },
 	{ "ManageAccounts", NULL, N_("Manage Accounts"), "<control>A", NULL, pidgin_accounts_window_show },
-	{ "EnableAccountMenu", NULL, N_("Enable Account"), NULL, NULL, NULL },
 
 	/* Tools */
 	{ "ToolsMenu", NULL, N_("_Tools"), NULL, NULL, NULL },
@@ -3705,9 +3703,6 @@ static const char *blist_menu =
 		"</menu>"
 		"<menu action='AccountsMenu'>"
 			"<menuitem action='ManageAccounts'/>"
-			"<menu action='EnableAccountMenu'/>"
-			"<separator/>"
-			"<placeholder name='Accounts'/>"
 		"</menu>"
 		"<menu action='ToolsMenu'>"
 			"<menuitem action='BuddyPounces'/>"
@@ -5894,6 +5889,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->main_vbox), menu, FALSE, FALSE, 0);
 
+	menu = gtk_ui_manager_get_widget(gtkblist->ui, "/BList/AccountsMenu");
+	accountmenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(menu));
+
 	/****************************** Notebook *************************************/
 	gtkblist->notebook = gtk_notebook_new();
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkblist->notebook), FALSE);
@@ -6989,6 +6987,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_free(priv);
 
 	g_free(gtkblist);
+	accountmenu = NULL;
 	gtkblist = NULL;
 	purple_prefs_disconnect_by_handle(pidgin_blist_get_handle());
 }
@@ -8077,114 +8076,191 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 }
 
-
-
 void
 pidgin_blist_update_accounts_menu(void)
 {
-	GList *accounts = NULL;
+	GtkWidget *menuitem, *submenu;
+	GtkAccelGroup *accel_group;
+	GList *l, *accounts;
+	gboolean disabled_accounts = FALSE;
+	gboolean enabled_accounts = FALSE;
 
-	GtkAction *action;
-	GString *accounts_ui;
-	GString *enable_ui;
-	gchar *ui_string;
-	int count = 0;
-
-	if ((gtkblist == NULL) || (gtkblist->ui == NULL))
+	if (accountmenu == NULL)
 		return;
 
-	/* Clear the old menu */
-	if (accounts_action_group) {
-		gtk_ui_manager_remove_ui(gtkblist->ui, accounts_merge_id);
-		gtk_ui_manager_remove_action_group(gtkblist->ui, accounts_action_group);
-		g_object_unref(G_OBJECT(accounts_action_group));
+	/* Clear the old Accounts menu */
+	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = g_list_delete_link(l, l)) {
+		menuitem = l->data;
+
+		if (menuitem != gtk_ui_manager_get_widget(gtkblist->ui, "/BList/AccountsMenu/ManageAccounts"))
+			gtk_widget_destroy(menuitem);
 	}
 
-	accounts_action_group = gtk_action_group_new("Accounts");
-#ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(accounts_action_group, PACKAGE);
-#endif
-	accounts_ui = g_string_new(NULL);
-	enable_ui = g_string_new(NULL);
-
-	action = gtk_action_new("none-available", N_("No actions available"), NULL, NULL);
-	gtk_action_group_add_action(accounts_action_group, action);
-	gtk_action_set_sensitive(action, FALSE);
+	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
 	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
-		char *label;
-		char *base;
-		char *name;
+		char *buf = NULL;
+		GtkWidget *image = NULL;
 		PurpleAccount *account = NULL;
+		GdkPixbuf *pixbuf = NULL;
 
 		account = accounts->data;
 
-		base = name = g_strdup_printf("account%d", count);
-		label = g_strconcat(purple_account_get_username(account), " (",
-				purple_account_get_protocol_name(account), ")", NULL);
-		action = gtk_action_new(name, label, NULL, NULL);
-		g_free(label);
-		gtk_action_group_add_action(accounts_action_group, action);
-
 		if (!purple_account_get_enabled(account, PIDGIN_UI)) {
-			g_string_append_printf(enable_ui, "<menuitem action='%s'/>", name);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(enable_account_cb), account);
+			if (!disabled_accounts) {
+				menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
+				gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 
-		} else {
-			PurpleConnection *gc = NULL;
-			PurplePlugin *plugin = NULL;
+				submenu = gtk_menu_new();
+				gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+				gtk_menu_set_accel_path(GTK_MENU(submenu), N_("<main>/AccountsMenu/EnableAccount"));
+				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-			g_string_append_printf(accounts_ui, "<menu action='%s'>", name);
-
-			name = g_strconcat(base, "-edit", NULL);
-			action = gtk_action_new(name, N_("_Edit Account"), NULL, NULL);
-			gtk_action_group_add_action(accounts_action_group, action);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(modify_account_cb), account);
-			g_string_append_printf(accounts_ui, "<menuitem action='%s'/>", name);
-			g_free(name);
-
-			g_string_append(accounts_ui, "<separator/>");
-
-			gc = purple_account_get_connection(account);
-			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? purple_connection_get_prpl(gc) : NULL;
-			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				build_plugin_actions(accounts_action_group, accounts_ui, base, plugin, gc);
-			} else {
-				g_string_append(accounts_ui, "<menuitem action='none-available'/>");
+				disabled_accounts = TRUE;
 			}
 
-			g_string_append(accounts_ui, "<separator/>");
+			buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+			menuitem = gtk_image_menu_item_new_with_label(buf);
+			g_free(buf);
 
-			name = g_strconcat(base, "-disable", NULL);
-			action = gtk_action_new(name, N_("_Disable"), NULL, NULL);
-			gtk_action_group_add_action(accounts_action_group, action);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(disable_account_cb), account);
-			g_string_append_printf(accounts_ui, "<menuitem action='%s'/>", name);
-			g_free(name);
+			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+			if (pixbuf != NULL) {
+				if (!purple_account_is_connected(account))
+					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
+				image = gtk_image_new_from_pixbuf(pixbuf);
+				g_object_unref(G_OBJECT(pixbuf));
+				gtk_widget_show(image);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+			}
 
-			g_string_append(accounts_ui, "</menu>");
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(enable_account_cb), account);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+		} else {
+			enabled_accounts = TRUE;
 		}
-
-		g_free(base);
-		count++;
 	}
 
-	ui_string = g_strconcat("<ui><menubar action='BList'><menu action='AccountsMenu'><menu action='EnableAccountMenu'>",
-	                        enable_ui->str,
-	                        "</menu><placeholder name='Accounts'>",
-	                        accounts_ui->str,
-	                        "</placeholder></menu></menubar></ui>",
-	                        NULL);
-	gtk_ui_manager_insert_action_group(gtkblist->ui, accounts_action_group, 1);
-	accounts_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
-purple_debug_info("blist", "The account menu is {%s}\n", ui_string);
+	if (!enabled_accounts) {
+		gtk_widget_show_all(accountmenu);
+		return;
+	}
 
-	g_string_free(enable_ui, TRUE);
-	g_string_free(accounts_ui, TRUE);
-	g_free(ui_string);
+	pidgin_separator(accountmenu);
+
+	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
+		char *buf = NULL;
+		char *accel_path_buf = NULL;
+		GtkWidget *image = NULL;
+		PurpleConnection *gc = NULL;
+		PurpleAccount *account = NULL;
+		GdkPixbuf *pixbuf = NULL;
+		PurplePlugin *plugin = NULL;
+		PurplePluginProtocolInfo *prpl_info;
+
+		account = accounts->data;
+
+		if (!purple_account_get_enabled(account, PIDGIN_UI))
+			continue;
+
+		buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+		menuitem = gtk_image_menu_item_new_with_label(buf);
+		accel_path_buf = g_strconcat(N_("<main>/AccountsMenu/"), buf, NULL);
+		g_free(buf);
+
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		if (pixbuf != NULL) {
+			if (!purple_account_is_connected(account))
+				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
+						0.0, FALSE);
+			image = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+		}
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
+		g_free(accel_path_buf);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(modify_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+		pidgin_separator(submenu);
+
+		gc = purple_account_get_connection(account);
+		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? purple_connection_get_prpl(gc) : NULL;
+		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
+
+		if (prpl_info &&
+		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
+			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
+			    (purple_connection_get_flags(gc) & PURPLE_CONNECTION_SUPPORT_MOODS)) {
+
+				if (purple_account_get_status(account, "mood")) {
+					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
+					g_signal_connect(G_OBJECT(menuitem), "activate",
+					         	G_CALLBACK(set_mood_cb), account);
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+				}
+			}
+
+			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+				GtkWidget *menuitem;
+				PurplePluginAction *action = NULL;
+				GList *actions, *l;
+
+				actions = PURPLE_PLUGIN_ACTIONS(plugin, gc);
+
+				for (l = actions; l != NULL; l = l->next)
+				{
+					if (l->data)
+					{
+						action = (PurplePluginAction *) l->data;
+						action->plugin = plugin;
+						action->context = gc;
+
+						menuitem = gtk_menu_item_new_with_label(action->label);
+						gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+						g_signal_connect(G_OBJECT(menuitem), "activate",
+								G_CALLBACK(plugin_act), action);
+						g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+											   action,
+											   (GDestroyNotify)purple_plugin_action_free);
+						gtk_widget_show(menuitem);
+					}
+					else
+						pidgin_separator(submenu);
+				}
+
+				g_list_free(actions);
+			}
+		} else {
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_set_sensitive(menuitem, FALSE);
+		}
+
+		pidgin_separator(submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(disable_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+	}
+
+	gtk_widget_show_all(accountmenu);
 }
 
 static guint plugins_merge_id;
