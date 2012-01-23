@@ -2404,7 +2404,7 @@ purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 						  PurpleProxyConnectFunction connect_cb,
 						  gpointer data)
 {
-	return purple_proxy_connect_socks5_account(NULL, handle, gpi,
+	return purple_proxy_connect_socks5_account(handle, NULL, gpi,
 						  host, port, connect_cb, data);
 }
 
