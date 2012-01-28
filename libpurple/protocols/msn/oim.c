@@ -660,16 +660,17 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		charset = msn_message_get_charset(message);
 	}
 
-
 	if (charset && !((strncasecmp(charset, "UTF-8", 5) == 0) || (strncasecmp(charset, "UTF8", 4) == 0))) {
 		clean_msg = g_convert(decode_msg, strlen(decode_msg), "UTF-8", charset, NULL, NULL, NULL);
 
 		if (!clean_msg) {
 			char *clean = purple_utf8_salvage(decode_msg);
 
-			purple_debug_error("msn", "Failed to convert charset from %s to UTF-8 for OIM message: %s", charset, clean);
+			purple_debug_error("msn", "Failed to convert charset from %s to UTF-8 for OIM message: %s\n", charset, clean);
 
-			clean_msg = g_strdup_printf(_("%s (There was an error receiving this message. Converting the encoding from %s to UTF-8 failed.)"), clean, charset);
+			clean_msg = g_strdup_printf(_("%s (There was an error receiving this message. "
+			                              "Converting the encoding from %s to UTF-8 failed.)"),
+			                            clean, charset);
 			g_free(clean);
 		}
 
@@ -679,12 +680,17 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		if (!g_utf8_validate(decode_msg, -1, NULL)) {
 			char *clean = purple_utf8_salvage(decode_msg);
 
-			purple_debug_error("msn", "Received an OIM message that is not UTF-8, and no encoding specified: %s", clean);
+			purple_debug_error("msn", "Received an OIM message that is not UTF-8,"
+			                          " and no encoding specified: %s\n", clean);
 
 			if (charset) {
-				clean_msg = g_strdup_printf(_("%s (There was an error receiving this message. The charset was %s, but it was not valid UTF-8.)"), clean, charset);
+				clean_msg = g_strdup_printf(_("%s (There was an error receiving this message."
+				                              " The charset was %s, but it was not valid UTF-8.)"),
+				                            clean, charset);
 			} else {
-				clean_msg = g_strdup_printf(_("%s (There was an error receiving this message. The charset was missing, but it was not valid UTF-8.)"), clean);
+				clean_msg = g_strdup_printf(_("%s (There was an error receiving this message."
+				                              " The charset was missing, but it was not valid UTF-8.)"),
+				                            clean);
 			}
 
 			g_free(clean);
