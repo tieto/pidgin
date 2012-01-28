@@ -107,6 +107,14 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Sets up a gtkwebview widget, loads it with smileys, and sets the
+ * default signal handlers.
+ *
+ * @param webview The gtkwebview widget to setup.
+ */
+void pidgin_setup_webview(GtkWidget *webview);
+
+/**
  * Create an GtkWebView widget and associated GtkIMHtmlToolbar widget.  This
  * function puts both widgets in a nice GtkFrame.  They're separated by an
  * attractive GtkSeparator.

@@ -94,6 +94,7 @@ PIDGIN_C_SRC =	\
 			gtkthemes.c \
 			gtkutils.c \
 			gtkwebview.c \
+			gtkwebviewtoolbar.c \
 			gtkwhiteboard.c \
 			minidialog.c \
 			pidginstock.c \

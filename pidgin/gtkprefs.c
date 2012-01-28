@@ -49,14 +49,14 @@
 #include "gtkconv-theme.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkstatus-icon-theme.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
+#include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
 
 #define PROXYHOST 0
@@ -80,7 +80,7 @@ static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
 /* Conversations page */
-static GtkWidget *sample_imhtml = NULL;
+static GtkWidget *sample_webview = NULL;
 
 /* Themes page */
 static GtkWidget *prefs_sound_themes_combo_box;
@@ -350,7 +350,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_status_themes_combo_box = NULL;
 	prefs_smiley_themes_combo_box = NULL;
 
-	sample_imhtml = NULL;
+	sample_webview = NULL;
 
 	notebook_page = 0;
 	prefsnotebook = NULL;
@@ -992,7 +992,10 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
-		pidgin_themes_smiley_themeize(sample_imhtml);
+#if 0
+/* TODO: WebKit-ify smileys */
+		pidgin_themes_smiley_themeize(sample_webview);
+#endif
 
 		g_free(new_theme);
 	}
@@ -1281,82 +1284,83 @@ theme_page(void)
 }
 
 static void
-formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
+formatting_toggle_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *toolbar)
 {
-	gboolean bold, italic, uline;
+	gboolean bold, italic, uline, strike;
 
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml),
-								  &bold, &italic, &uline);
+	gtk_webview_get_current_format(webview, &bold, &italic, &uline, &strike);
 
-	if (buttons & GTK_IMHTML_BOLD)
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold", bold);
-	if (buttons & GTK_IMHTML_ITALIC)
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic", italic);
-	if (buttons & GTK_IMHTML_UNDERLINE)
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", uline);
+	if (buttons & GTK_WEBVIEW_BOLD)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold",
+		                      bold);
+	if (buttons & GTK_WEBVIEW_ITALIC)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic",
+		                      italic);
+	if (buttons & GTK_WEBVIEW_UNDERLINE)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline",
+		                      uline);
+	if (buttons & GTK_WEBVIEW_STRIKE)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_strike",
+		                      strike);
 
-	if (buttons & GTK_IMHTML_GROW || buttons & GTK_IMHTML_SHRINK)
+	if (buttons & GTK_WEBVIEW_GROW || buttons & GTK_WEBVIEW_SHRINK)
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/font_size",
-						   gtk_imhtml_get_current_fontsize(GTK_IMHTML(imhtml)));
-	if (buttons & GTK_IMHTML_FACE) {
-		char *face = gtk_imhtml_get_current_fontface(GTK_IMHTML(imhtml));
+		                     gtk_webview_get_current_fontsize(webview));
+	if (buttons & GTK_WEBVIEW_FACE) {
+		const char *face = gtk_webview_get_current_fontface(webview);
 		if (!face)
-			face = g_strdup("");
+			face = "";
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", face);
-		g_free(face);
 	}
 
-	if (buttons & GTK_IMHTML_FORECOLOR) {
-		char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(imhtml));
+	if (buttons & GTK_WEBVIEW_FORECOLOR) {
+		const char *color = gtk_webview_get_current_forecolor(webview);
 		if (!color)
-			color = g_strdup("");
+			color = "";
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", color);
-		g_free(color);
 	}
 
-	if (buttons & GTK_IMHTML_BACKCOLOR) {
-		char *color;
+	if (buttons & GTK_WEBVIEW_BACKCOLOR) {
+		const char *color;
 		GObject *object;
 
-		color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(imhtml));
+		color = gtk_webview_get_current_backcolor(webview);
 		if (!color)
-			color = g_strdup("");
+			color = "";
 
 		/* Block the signal to prevent a loop. */
-		object = g_object_ref(G_OBJECT(imhtml));
+		object = g_object_ref(G_OBJECT(webview));
 		g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-										NULL, toolbar);
+		                                NULL, toolbar);
 		/* Clear the backcolor. */
-		gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), "");
+		gtk_webview_toggle_backcolor(webview, "");
 		/* Unblock the signal. */
-		g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-										  NULL, toolbar);
+		g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0,
+		                                  NULL, NULL, toolbar);
 		g_object_unref(object);
 
 		/* This will fire a toggle signal and get saved below. */
-		gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), color);
-
-		g_free(color);
+		gtk_webview_toggle_background(webview, color);
 	}
 
-	if (buttons & GTK_IMHTML_BACKGROUND) {
-		char *color = gtk_imhtml_get_current_background(GTK_IMHTML(imhtml));
+	if (buttons & GTK_WEBVIEW_BACKGROUND) {
+		const char *color = gtk_webview_get_current_background(webview);
 		if (!color)
-			color = g_strdup("");
+			color = "";
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", color);
-		g_free(color);
 	}
 }
 
 static void
-formatting_clear_cb(GtkIMHtml *imhtml, void *data)
+formatting_clear_cb(GtkWebView *webview, void *data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold", FALSE);
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic", FALSE);
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", FALSE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_strike", FALSE);
 
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/font_size", 3);
 
@@ -1572,7 +1576,7 @@ apply_custom_font(void)
 		desc = pango_font_description_from_string(font);
 	}
 
-	gtk_widget_modify_font(sample_imhtml, desc);
+	gtk_widget_modify_font(sample_webview, desc);
 	if (desc)
 		pango_font_description_free(desc);
 
@@ -1596,7 +1600,7 @@ conv_page(void)
 	GtkWidget *toolbar;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
-	GtkWidget *imhtml;
+	GtkWidget *webview;
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *checkbox;
@@ -1686,33 +1690,39 @@ conv_page(void)
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 
-	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
+	frame = pidgin_create_webview(TRUE, &webview, &toolbar, NULL);
 	gtk_widget_show(frame);
-	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
+	gtk_widget_set_name(webview, "pidgin_prefs_font_webview");
 	gtk_widget_set_size_request(frame, 450, -1);
-	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
-	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
-									GTK_IMHTML_BOLD |
-									GTK_IMHTML_ITALIC |
-									GTK_IMHTML_UNDERLINE |
-									GTK_IMHTML_GROW |
-									GTK_IMHTML_SHRINK |
-									GTK_IMHTML_FACE |
-									GTK_IMHTML_FORECOLOR |
-									GTK_IMHTML_BACKCOLOR |
-									GTK_IMHTML_BACKGROUND);
+	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(webview), TRUE);
+	gtk_webview_set_format_functions(GTK_WEBVIEW(webview),
+	                                 GTK_WEBVIEW_BOLD |
+	                                 GTK_WEBVIEW_ITALIC |
+	                                 GTK_WEBVIEW_UNDERLINE |
+	                                 GTK_WEBVIEW_STRIKE |
+	                                 GTK_WEBVIEW_GROW |
+	                                 GTK_WEBVIEW_SHRINK |
+	                                 GTK_WEBVIEW_FACE |
+	                                 GTK_WEBVIEW_FORECOLOR |
+	                                 GTK_WEBVIEW_BACKCOLOR |
+	                                 GTK_WEBVIEW_BACKGROUND);
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting."), 0);
+	gtk_webview_append_html(GTK_WEBVIEW(webview),
+	                        _("This is how your outgoing message text will "
+	                          "appear when you use protocols that support "
+	                          "formatting."));
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	gtk_imhtml_setup_entry(GTK_IMHTML(imhtml), PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO);
+	gtk_webview_setup_entry(GTK_WEBVIEW(webview),
+	                        PURPLE_CONNECTION_HTML |
+	                        PURPLE_CONNECTION_FORMATTING_WBFO);
 
-	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
-					 G_CALLBACK(formatting_toggle_cb), toolbar);
-	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
-					 G_CALLBACK(formatting_clear_cb), NULL);
-	sample_imhtml = imhtml;
+	g_signal_connect_after(G_OBJECT(webview), "format-toggled",
+	                       G_CALLBACK(formatting_toggle_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(webview), "format-cleared",
+	                       G_CALLBACK(formatting_clear_cb), NULL);
+	sample_webview = webview;
 
 	gtk_widget_show(ret);
 

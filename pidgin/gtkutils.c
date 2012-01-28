@@ -68,6 +68,7 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
+#include "gtkwebviewtoolbar.h"
 #include "pidgin/minidialog.h"
 
 typedef struct {
@@ -125,6 +126,32 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	}
 #endif
 
+}
+
+void
+pidgin_setup_webview(GtkWidget *webview)
+{
+	g_return_if_fail(webview != NULL);
+	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+
+#if 0
+/* TODO: WebKit this stuff... */
+	pidgin_themes_smiley_themeize(webview);
+#endif
+
+#ifdef _WIN32
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		WebKitWebSettings *settings = webkit_web_settings_new();
+		g_object_set(G_OBJECT(settings), "default-font-size",
+		             purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size"),
+		             NULL);
+		g_object_set(G_OBJECT(settings), "default-font-family",
+		             purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font"),
+		             NULL);
+
+		webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webview), settings);
+	}
+#endif
 }
 
 static
@@ -295,7 +322,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 	gtk_widget_show(vbox);
 
 	if (editable) {
-		toolbar = gtk_imhtmltoolbar_new();
+		toolbar = gtk_webviewtoolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 		gtk_widget_show(toolbar);
 
@@ -307,10 +334,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 	}
 
 	webview = gtk_webview_new();
-#if 0
-	/* TODO WEBKIT: Don't have editable webview yet. */
 	gtk_webview_set_editable(GTK_WEBVIEW(webview), editable);
-#endif /* if 0 */
 #ifdef USE_GTKSPELL
 	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(webview));
@@ -318,9 +342,10 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 	gtk_widget_show(webview);
 
 	if (editable) {
-		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), webview);
-		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
+		gtk_webviewtoolbar_attach(GTK_WEBVIEWTOOLBAR(toolbar), webview);
+		gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(toolbar), "default");
 	}
+	pidgin_setup_webview(webview);
 
 	sw = pidgin_make_scrollable(webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);

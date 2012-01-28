@@ -2908,6 +2908,17 @@ purple_blist_node_get_type(PurpleBlistNode *node)
 	return node->type;
 }
 
+gboolean
+purple_blist_node_has_setting(PurpleBlistNode* node, const char *key)
+{
+	g_return_val_if_fail(node != NULL, FALSE);
+	g_return_val_if_fail(node->settings != NULL, FALSE);
+	g_return_val_if_fail(key != NULL, FALSE);
+
+	/* Boxed type, so it won't ever be NULL, so no need for _extended */
+	return (g_hash_table_lookup(node->settings, key) != NULL);
+}
+
 void
 purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data)
 {

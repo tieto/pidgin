@@ -28,13 +28,24 @@
 #include "internal.h"
 #include "pidgin.h"
 
+#include <gdk/gdkkeysyms.h>
 #include "gtkwebview.h"
 
+#define MAX_FONT_SIZE 7
 #define MAX_SCROLL_TIME 0.4 /* seconds */
 #define SCROLL_DELAY 33 /* milliseconds */
 
 #define GTK_WEBVIEW_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, GtkWebViewPriv))
+
+enum {
+	BUTTONS_UPDATE,
+	TOGGLE_FORMAT,
+	CLEAR_FORMAT,
+	UPDATE_FORMAT,
+	LAST_SIGNAL
+};
+static guint signals[LAST_SIGNAL] = { 0 };
 
 /******************************************************************************
  * Structs
@@ -52,6 +63,23 @@ typedef struct _GtkWebViewPriv {
 	GtkAdjustment *vadj;
 	guint scroll_src;
 	GTimer *scroll_time;
+
+	/* Format options */
+	GtkWebViewButtons format_functions;
+	struct {
+		gboolean wbfo:1;	/* Whole buffer formatting only. */
+		gboolean bold:1;
+		gboolean italic:1;
+		gboolean underline:1;
+		gboolean strike:1;
+		gchar *forecolor;
+		gchar *backcolor;
+		gchar *background;
+		gchar *fontface;
+		int fontsize;
+		/*GtkTextTag *link;*/
+	} edit;
+
 } GtkWebViewPriv;
 
 /******************************************************************************
@@ -214,8 +242,10 @@ webview_link_clicked(WebKitWebView *webview,
 		 * why, so right now just using purple_notify_uri directly */
 		purple_notify_uri(NULL, uri);
 		webkit_web_policy_decision_ignore(policy_decision);
-	} else
+	} else if (reason == WEBKIT_WEB_NAVIGATION_REASON_OTHER)
 		webkit_web_policy_decision_use(policy_decision);
+	else
+		webkit_web_policy_decision_ignore(policy_decision);
 
 	return TRUE;
 }
@@ -280,6 +310,64 @@ scroll_idle_cb(gpointer data)
 	return FALSE;
 }
 
+static void
+webview_clear_formatting(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
+		return;
+
+	priv->edit.bold = FALSE;
+	priv->edit.italic = FALSE;
+	priv->edit.underline = FALSE;
+	priv->edit.strike = FALSE;
+	priv->edit.fontsize = 0;
+
+	g_free(priv->edit.fontface);
+	priv->edit.fontface = NULL;
+
+	g_free(priv->edit.forecolor);
+	priv->edit.forecolor = NULL;
+
+	g_free(priv->edit.backcolor);
+	priv->edit.backcolor = NULL;
+
+	g_free(priv->edit.background);
+	priv->edit.background = NULL;
+}
+
+static void
+webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	/* since this function is the handler for the formatting keystrokes,
+	   we need to check here that the formatting attempted is permitted */
+	buttons &= gtk_webview_get_format_functions(webview);
+
+	switch (buttons) {
+	case GTK_WEBVIEW_BOLD:
+		gtk_webview_toggle_bold(webview);
+		break;
+	case GTK_WEBVIEW_ITALIC:
+		gtk_webview_toggle_italic(webview);
+		break;
+	case GTK_WEBVIEW_UNDERLINE:
+		gtk_webview_toggle_underline(webview);
+		break;
+	case GTK_WEBVIEW_STRIKE:
+		gtk_webview_toggle_strike(webview);
+		break;
+	case GTK_WEBVIEW_SHRINK:
+		gtk_webview_font_shrink(webview);
+		break;
+	case GTK_WEBVIEW_GROW:
+		gtk_webview_font_grow(webview);
+		break;
+	default:
+		break;
+	}
+}
+
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -309,11 +397,67 @@ gtk_webview_finalize(GObject *webview)
 static void
 gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 {
+	GObjectClass *gobject_class;
+	GtkBindingSet *binding_set;
+
 	parent_class = g_type_class_ref(webkit_web_view_get_type());
+	gobject_class = G_OBJECT_CLASS(klass);
 
 	g_type_class_add_private(klass, sizeof(GtkWebViewPriv));
 
-	G_OBJECT_CLASS(klass)->finalize = gtk_webview_finalize;
+	signals[BUTTONS_UPDATE] = g_signal_new("allowed-formats-updated",
+	                                       G_TYPE_FROM_CLASS(gobject_class),
+	                                       G_SIGNAL_RUN_FIRST,
+	                                       G_STRUCT_OFFSET(GtkWebViewClass, buttons_update),
+	                                       NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                       G_TYPE_NONE, 1, G_TYPE_INT);
+	signals[TOGGLE_FORMAT] = g_signal_new("format-toggled",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, toggle_format),
+	                                      NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                      G_TYPE_NONE, 1, G_TYPE_INT);
+	signals[CLEAR_FORMAT] = g_signal_new("format-cleared",
+	                                     G_TYPE_FROM_CLASS(gobject_class),
+	                                     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+	                                     G_STRUCT_OFFSET(GtkWebViewClass, clear_format),
+	                                     NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                     G_TYPE_NONE, 0);
+	signals[UPDATE_FORMAT] = g_signal_new("format-updated",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_FIRST,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, update_format),
+	                                      NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                      G_TYPE_NONE, 0);
+
+	klass->toggle_format = webview_toggle_format;
+	klass->clear_format = webview_clear_formatting;
+
+	gobject_class->finalize = gtk_webview_finalize;
+
+	binding_set = gtk_binding_set_by_class(parent_class);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_b, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_BOLD);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_i, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_ITALIC);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_u, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_UNDERLINE);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_plus, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_GROW);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_equal, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_GROW);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_minus, GDK_CONTROL_MASK,
+	                             "format-toggled", 1, G_TYPE_INT,
+	                             GTK_WEBVIEW_SHRINK);
+
+	binding_set = gtk_binding_set_by_class(klass);
+	gtk_binding_entry_add_signal(binding_set, GDK_KEY_r, GDK_CONTROL_MASK,
+	                             "format-cleared", 0);
 }
 
 static void
@@ -499,5 +643,348 @@ void gtk_webview_page_down(GtkWebView *webview)
 #endif
 
 	gtk_adjustment_set_value(vadj, scroll_val);
+}
+
+void
+gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
+{
+	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+}
+
+void
+gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GtkWebViewButtons buttons;
+
+	if (flags & PURPLE_CONNECTION_HTML) {
+		char color[8];
+		GdkColor fg_color, bg_color;
+
+		buttons = GTK_WEBVIEW_ALL;
+
+		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+			buttons &= ~GTK_WEBVIEW_BACKCOLOR;
+		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		{
+			buttons &= ~GTK_WEBVIEW_GROW;
+			buttons &= ~GTK_WEBVIEW_SHRINK;
+		}
+		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+			buttons &= ~GTK_WEBVIEW_LINKDESC;
+
+		gtk_webview_set_format_functions(webview, GTK_WEBVIEW_ALL);
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != priv->edit.bold)
+			gtk_webview_toggle_bold(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic") != priv->edit.italic)
+			gtk_webview_toggle_italic(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline") != priv->edit.underline)
+			gtk_webview_toggle_underline(webview);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_strike") != priv->edit.strike)
+			gtk_webview_toggle_strike(webview);
+
+		gtk_webview_toggle_fontface(webview,
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
+
+		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		{
+			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
+
+			/* 3 is the default. */
+			if (size != 3)
+				gtk_webview_font_set_size(webview, size);
+		}
+
+		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
+							&fg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									fg_color.red   / 256,
+									fg_color.green / 256,
+									fg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_webview_toggle_forecolor(webview, color);
+
+		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
+		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
+							&bg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									bg_color.red   / 256,
+									bg_color.green / 256,
+									bg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_webview_toggle_background(webview, color);
+
+		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
+		else
+			gtk_webview_set_whole_buffer_formatting_only(webview, FALSE);
+	} else {
+		buttons = GTK_WEBVIEW_SMILEY | GTK_WEBVIEW_IMAGE;
+		webview_clear_formatting(webview);
+	}
+
+	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+		buttons &= ~GTK_WEBVIEW_IMAGE;
+
+	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		buttons |= GTK_WEBVIEW_CUSTOM_SMILEY;
+	else
+		buttons &= ~GTK_WEBVIEW_CUSTOM_SMILEY;
+
+	gtk_webview_set_format_functions(webview, buttons);
+}
+
+void
+gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview, gboolean wbfo)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->edit.wbfo = wbfo;
+}
+
+void
+gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	GObject *object = g_object_ref(G_OBJECT(webview));
+	priv->format_functions = buttons;
+	g_signal_emit(object, signals[BUTTONS_UPDATE], 0, buttons);
+	g_object_unref(object);
+}
+
+GtkWebViewButtons
+gtk_webview_get_format_functions(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->format_functions;
+}
+
+void
+gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
+                               gboolean *italic, gboolean *underline,
+                               gboolean *strike)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	if (bold)
+		*bold = priv->edit.bold;
+	if (italic)
+		*italic = priv->edit.italic;
+	if (underline)
+		*underline = priv->edit.underline;
+	if (strike)
+		*strike = priv->edit.strike;
+}
+
+const char *
+gtk_webview_get_current_fontface(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.fontface;
+}
+
+const char *
+gtk_webview_get_current_forecolor(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.forecolor;
+}
+
+const char *
+gtk_webview_get_current_backcolor(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.backcolor;
+}
+
+const char *
+gtk_webview_get_current_background(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.background;
+}
+
+gint
+gtk_webview_get_current_fontsize(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->edit.fontsize;
+}
+
+gboolean
+gtk_webview_get_editable(GtkWebView *webview)
+{
+	return webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview));
+}
+
+void
+gtk_webview_clear_formatting(GtkWebView *webview)
+{
+	GObject *object;
+
+	object = g_object_ref(G_OBJECT(webview));
+	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
+
+	gtk_widget_grab_focus(GTK_WIDGET(webview));
+
+	g_object_unref(object);
+}
+
+void
+gtk_webview_toggle_bold(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	priv->edit.bold = !priv->edit.bold;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "bold", FALSE, "");
+}
+
+void
+gtk_webview_toggle_italic(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	priv->edit.italic = !priv->edit.italic;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "italic", FALSE, "");
+}
+
+void
+gtk_webview_toggle_underline(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	priv->edit.underline = !priv->edit.underline;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "underline", FALSE, "");
+}
+
+void
+gtk_webview_toggle_strike(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	priv->edit.strike = !priv->edit.strike;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "strikethrough", FALSE, "");
+}
+
+gboolean
+gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	g_free(priv->edit.forecolor);
+	priv->edit.forecolor = g_strdup(color);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "forecolor", FALSE, color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	g_free(priv->edit.backcolor);
+	priv->edit.backcolor = g_strdup(color);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "backcolor", FALSE, color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_background(GtkWebView *webview, const char *color)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_free(priv->edit.background);
+	priv->edit.background = g_strdup(color);
+
+	return FALSE;
+}
+
+gboolean
+gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	g_free(priv->edit.fontface);
+	priv->edit.fontface = g_strdup(face);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "fontname", FALSE, face);
+
+	return FALSE;
+}
+
+void
+gtk_webview_font_set_size(GtkWebView *webview, gint size)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
+	priv->edit.fontsize = size;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", size);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
+}
+
+void
+gtk_webview_font_shrink(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
+	priv->edit.fontsize = MAX(priv->edit.fontsize - 1, 1);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", priv->edit.fontsize);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
+}
+
+void
+gtk_webview_font_grow(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *tmp;
+
+	priv->edit.fontsize = MIN(priv->edit.fontsize + 1, MAX_FONT_SIZE);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	tmp = g_strdup_printf("%d", priv->edit.fontsize);
+	webkit_dom_document_exec_command(dom, "fontsize", FALSE, tmp);
+	g_free(tmp);
 }
 
