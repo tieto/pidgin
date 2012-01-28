@@ -44,7 +44,6 @@ static char *ticket_domains[][2] = {
 	{"messenger.msn.com", "?id=507"},        /* Authentication for receiving OIMs. */
 	{"contacts.msn.com", "MBI"},             /* Authentication for the Contact server. */
 	{"messengersecure.live.com", "MBI_SSL"}, /* Authentication for sending OIMs. */
-	{"spaces.live.com", "MBI"},              /* Authentication for the Windows Live Spaces */
 	{"livecontacts.live.com", "MBI"},        /* Live Contacts API, a simplified version of the Contacts SOAP service */
 	{"storage.live.com", "MBI"},             /* Storage REST API */
 };
