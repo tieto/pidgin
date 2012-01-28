@@ -43,7 +43,7 @@
 #define KWALLET_AUTHOR      "QuLogic (qulogic[at]pidgin.im)"
 #define KWALLET_ID          "keyring-kwallet"
 
-PurpleKeyring *keyring_handler;
+PurpleKeyring *keyring_handler = NULL;
 
 #define ERR_KWALLETPLUGIN 	kwallet_plugin_error_domain()
 
@@ -353,6 +353,9 @@ kwallet_unload(PurplePlugin *plugin)
 		return FALSE;
 
 	kwallet_close(NULL);
+
+	purple_keyring_free(keyring_handler);
+	keyring_handler = NULL;
 
 	return TRUE;
 }
