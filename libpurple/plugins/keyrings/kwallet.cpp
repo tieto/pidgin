@@ -43,7 +43,7 @@
 #define KWALLET_VERSION     "0.3b"
 #define KWALLET_DESCRIPTION N_("This plugin will store passwords in KWallet.")
 #define KWALLET_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define KWALLET_ID          "core-scrouaf-kwallet"
+#define KWALLET_ID          "keyring-kwallet"
 
 PurpleKeyring *keyring_handler;
 

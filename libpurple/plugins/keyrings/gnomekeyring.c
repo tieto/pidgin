@@ -40,8 +40,8 @@
 #define GNOMEKEYRING_NAME        N_("GNOME-Keyring")
 #define GNOMEKEYRING_VERSION     "0.3b"
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in GNOME Keyring.")
-#define	GNOMEKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define GNOMEKEYRING_ID          "core-scrouaf-gnomekeyring"
+#define GNOMEKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
+#define GNOMEKEYRING_ID          "keyring-gnomekeyring"
 
 #define ERR_GNOMEKEYRINGPLUGIN 	gkp_error_domain()
 

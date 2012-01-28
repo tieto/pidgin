@@ -36,7 +36,7 @@
 /**
  * Default keyring
  */
-#define PURPLE_DEFAULT_KEYRING "core-scrouaf-internalkeyring"
+#define PURPLE_DEFAULT_KEYRING "keyring-internal"
 
 /*******************************************************/
 /** @name data structures and types                    */
