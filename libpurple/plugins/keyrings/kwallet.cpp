@@ -4,7 +4,6 @@
  *
  * @todo
  *   cleanup error handling and reporting
- *   refuse unloading when active (in internal keyring too)
  */
 
 /* purple
@@ -350,7 +349,11 @@ kwallet_load(PurplePlugin *plugin)
 static gboolean
 kwallet_unload(PurplePlugin *plugin)
 {
+	if (purple_keyring_get_inuse() == keyring_handler)
+		return FALSE;
+
 	kwallet_close(NULL);
+
 	return TRUE;
 }
 

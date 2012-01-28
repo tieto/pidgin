@@ -211,6 +211,9 @@ internal_keyring_load(PurplePlugin *plugin)
 static gboolean
 internal_keyring_unload(PurplePlugin *plugin)
 {
+	if (purple_keyring_get_inuse() == keyring_handler)
+		return FALSE;
+
 	internal_keyring_uninit();
 
 	purple_keyring_free(keyring_handler);
