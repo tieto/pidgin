@@ -376,7 +376,7 @@ PurplePluginInfo plugininfo =
 	"KWallet Keyring Plugin",			/* summary */
 	KWALLET_DESCRIPTION,				/* description */
 	KWALLET_AUTHOR,						/* author */
-	"N/A",								/* homepage */
+	PURPLE_WEBSITE,						/* homepage */
 	kwallet_load,						/* load */
 	kwallet_unload,						/* unload */
 	NULL,								/* destroy */

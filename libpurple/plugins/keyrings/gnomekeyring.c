@@ -370,7 +370,7 @@ PurplePluginInfo plugininfo =
 	"GNOME Keyring Plugin",		/* summary */
 	GNOMEKEYRING_DESCRIPTION,	/* description */
 	GNOMEKEYRING_AUTHOR,		/* author */
-	"N/A",						/* homepage */
+	PURPLE_WEBSITE,				/* homepage */
 	gkp_load,					/* load */
 	gkp_unload,					/* unload */
 	NULL,						/* destroy */

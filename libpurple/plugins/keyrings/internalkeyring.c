@@ -238,7 +238,7 @@ PurplePluginInfo plugininfo =
 	"Internal Keyring Plugin",			/* summary */
 	INTERNALKEYRING_DESCRIPTION,		/* description */
 	INTERNALKEYRING_AUTHOR,				/* author */
-	"N/A",								/* homepage */
+	PURPLE_WEBSITE,						/* homepage */
 	internal_keyring_load,				/* load */
 	internal_keyring_unload,			/* unload */
 	NULL,								/* destroy */
