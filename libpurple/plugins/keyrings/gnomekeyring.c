@@ -38,7 +38,6 @@
 #include <gnome-keyring.h>
 
 #define GNOMEKEYRING_NAME        N_("GNOME-Keyring")
-#define GNOMEKEYRING_VERSION     "0.3b"
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in GNOME Keyring.")
 #define GNOMEKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define GNOMEKEYRING_ID          "keyring-gnomekeyring"
@@ -364,7 +363,7 @@ PurplePluginInfo plugininfo =
 	PURPLE_PRIORITY_DEFAULT,	/* priority */
 	GNOMEKEYRING_ID,			/* id */
 	GNOMEKEYRING_NAME,			/* name */
-	GNOMEKEYRING_VERSION,		/* version */
+	DISPLAY_VERSION,			/* version */
 	"GNOME Keyring Plugin",		/* summary */
 	GNOMEKEYRING_DESCRIPTION,	/* description */
 	GNOMEKEYRING_AUTHOR,		/* author */

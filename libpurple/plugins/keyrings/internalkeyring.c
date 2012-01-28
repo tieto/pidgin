@@ -35,7 +35,6 @@
 #include "version.h"
 
 #define INTERNALKEYRING_NAME        N_("Internal keyring")
-#define INTERNALKEYRING_VERSION     "0.8b"
 #define INTERNALKEYRING_DESCRIPTION N_("This plugin provides the default password storage behaviour for libpurple. Password will be stored unencrypted.")
 #define INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define INTERNALKEYRING_ID          PURPLE_DEFAULT_KEYRING
@@ -232,7 +231,7 @@ PurplePluginInfo plugininfo =
 	PURPLE_PRIORITY_DEFAULT,			/* priority */
 	INTERNALKEYRING_ID,					/* id */
 	INTERNALKEYRING_NAME,				/* name */
-	INTERNALKEYRING_VERSION,			/* version */
+	DISPLAY_VERSION,					/* version */
 	"Internal Keyring Plugin",			/* summary */
 	INTERNALKEYRING_DESCRIPTION,		/* description */
 	INTERNALKEYRING_AUTHOR,				/* author */

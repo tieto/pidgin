@@ -40,7 +40,6 @@
 #include <kwallet.h>
 
 #define KWALLET_NAME        N_("KWallet")
-#define KWALLET_VERSION     "0.3b"
 #define KWALLET_DESCRIPTION N_("This plugin will store passwords in KWallet.")
 #define KWALLET_AUTHOR      "QuLogic (qulogic[at]pidgin.im)"
 #define KWALLET_ID          "keyring-kwallet"
@@ -367,7 +366,7 @@ PurplePluginInfo plugininfo =
 	PURPLE_PRIORITY_DEFAULT,			/* priority */
 	KWALLET_ID,							/* id */
 	KWALLET_NAME,						/* name */
-	KWALLET_VERSION,					/* version */
+	DISPLAY_VERSION,					/* version */
 	"KWallet Keyring Plugin",			/* summary */
 	KWALLET_DESCRIPTION,				/* description */
 	KWALLET_AUTHOR,						/* author */
