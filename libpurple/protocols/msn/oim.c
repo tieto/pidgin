@@ -661,7 +661,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	}
 
 	if (charset && !((strncasecmp(charset, "UTF-8", 5) == 0) || (strncasecmp(charset, "UTF8", 4) == 0))) {
-		clean_msg = g_convert(decode_msg, strlen(decode_msg), "UTF-8", charset, NULL, NULL, NULL);
+		clean_msg = g_convert(decode_msg, body_len, "UTF-8", charset, NULL, NULL, NULL);
 
 		if (!clean_msg) {
 			char *clean = purple_utf8_salvage(decode_msg);
@@ -677,7 +677,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		g_free(decode_msg);
 
 	} else {
-		if (!g_utf8_validate(decode_msg, -1, NULL)) {
+		if (!g_utf8_validate(decode_msg, body_len, NULL)) {
 			char *clean = purple_utf8_salvage(decode_msg);
 
 			purple_debug_error("msn", "Received an OIM message that is not UTF-8,"
