@@ -36,8 +36,8 @@ typedef enum
 	MSN_AUTH_MESSENGER_WEB = 1,
 	MSN_AUTH_CONTACTS      = 2,
 	MSN_AUTH_LIVE_SECURE   = 3,
-	MSN_AUTH_LIVE_CONTACTS = 4,
-	MSN_AUTH_STORAGE       = 5
+	MSN_AUTH_STORAGE       = 4,
+	MSN_AUTH_WHATSNEW      = 5
 } MsnAuthDomains;
 
 #define MSN_SSO_SERVER	"login.live.com"
