@@ -76,8 +76,6 @@ typedef enum {
 
 } MsnUnifiedNotificationType;
 
-void uum_send_msg(MsnSession *session, MsnMessage *msg);
-
 void msn_notification_end(void);
 void msn_notification_init(void);
 
@@ -96,6 +94,8 @@ gboolean msn_notification_connect(MsnNotification *notification,
 				  const char *host, int port);
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
+
+void msn_notification_send_uum(MsnSession *session, MsnMessage *msg);
 
 void msn_notification_send_uux(MsnSession *session, const char *payload);
 

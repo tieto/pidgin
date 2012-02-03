@@ -359,7 +359,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 /*send Message to Yahoo Messenger*/
 void
-uum_send_msg(MsnSession *session,MsnMessage *msg)
+msn_notification_send_uum(MsnSession *session,MsnMessage *msg)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;

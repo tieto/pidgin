@@ -1601,7 +1601,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");
-				uum_send_msg(session, msg);
+				msn_notification_send_uum(session, msg);
 			} else {
 				purple_debug_info("msn", "send via switchboard\n");
 				msn_send_im_message(session, msg);
