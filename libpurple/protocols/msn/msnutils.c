@@ -490,6 +490,21 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 	*ret_port = port;
 }
 
+void
+msn_parse_user(const char *str, char **ret_user, int *ret_network)
+{
+	char **tokens;
+
+	tokens = g_strsplit(str, ":", 2);
+
+	*ret_network = atoi(tokens[0]);
+	*ret_user = tokens[1];
+
+	g_free(tokens[0]);
+	/* tokens[1] is returned */
+	g_free(tokens);
+}
+
 gboolean
 msn_email_is_valid(const char *passport)
 {
