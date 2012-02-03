@@ -1964,6 +1964,22 @@ msn_notification_send_uun(MsnSession *session, const char *user,
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
+void
+msn_notification_send_circle_auth(MsnSession *session, const char *ticket)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+	char *encoded;
+
+	cmdproc = session->notification->cmdproc;
+
+	encoded = purple_base64_encode((guchar *)ticket, strlen(ticket));
+	trans = msn_transaction_new(cmdproc, "USR", "SHA A %s", encoded);
+	msn_cmdproc_send_trans(cmdproc, trans);
+
+	g_free(encoded);
+}
+
 /**************************************************************************
  * Message Types
  **************************************************************************/

@@ -108,6 +108,8 @@ void msn_notification_send_uun(MsnSession *session,
                                MsnUnifiedNotificationType type,
                                const char *payload);
 
+void msn_notification_send_circle_auth(MsnSession *session, const char *ticket);
+
 /**
  * Closes a notification.
  *

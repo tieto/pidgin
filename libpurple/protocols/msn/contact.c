@@ -871,6 +871,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 	xmlnode *groups;
 	xmlnode *contacts;
 	xmlnode *abNode;
+	xmlnode *circleNode;
 	xmlnode *fault;
 
 	if ((fault = xmlnode_get_child(node, "Body/Fault"))) {
@@ -952,6 +953,15 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		purple_debug_info("msn", "AB DynamicItemLastChanged :{%s}\n", tmp ? tmp : "(null)");
 		purple_account_set_string(session->account, "DynamicItemLastChanged", tmp);
 		g_free(tmp);
+	}
+
+	circleNode = xmlnode_get_child(result, "CircleResult/CircleTicket");
+	if (circleNode != NULL && session->protocol_ver >= 18) {
+		char *data;
+
+		data = xmlnode_get_data(circleNode);
+		msn_notification_send_circle_auth(session, data);
+		g_free(data);
 	}
 
 	return TRUE;
