@@ -359,23 +359,34 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 /*send Message to Yahoo Messenger*/
 void
-msn_notification_send_uum(MsnSession *session,MsnMessage *msg)
+msn_notification_send_uum(MsnSession *session, MsnMessage *msg)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
 	char *payload;
 	gsize payload_len;
 	int type;
+	MsnUser *user;
+	int network;
+
+	g_return_if_fail(msg != NULL);
 
 	cmdproc = session->notification->cmdproc;
-	g_return_if_fail(msg     != NULL);
+
 	payload = msn_message_gen_payload(msg, &payload_len);
+	type = msg->type;
+	user = msn_userlist_find_user(session->userlist, msg->remote_user);
+	if (user)
+		network = msn_user_get_network(user);
+	else
+		network = MSN_NETWORK_PASSPORT;
+
 	purple_debug_info("msn",
 		"send UUM, payload{%s}, strlen:%" G_GSIZE_FORMAT ", len:%" G_GSIZE_FORMAT "\n",
 		payload, strlen(payload), payload_len);
-	type = msg->type;
-	trans = msn_transaction_new(cmdproc, "UUM", "%s 32 %d %" G_GSIZE_FORMAT,
-		msg->remote_user, type, payload_len);
+
+	trans = msn_transaction_new(cmdproc, "UUM", "%s %d %d %" G_GSIZE_FORMAT,
+		msg->remote_user, network, type, payload_len);
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
