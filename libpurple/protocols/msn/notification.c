@@ -1250,15 +1250,22 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnObject *msnobj;
 	unsigned long clientid, extcaps;
 	char *extcap_str;
+	char *passport;
 	int networkid;
-	const char *state, *passport, *friendly;
+	const char *state, *friendly;
 
 	session = cmdproc->session;
 
 	state    = cmd->params[0];
-	passport = cmd->params[1];
-	networkid = atoi(cmd->params[2]);
-	friendly = purple_url_decode(cmd->params[3]);
+	if (session->protocol_ver >= 18) {
+		const char *tmp = cmd->params[1];
+		msn_parse_user(tmp, &passport, &networkid);
+		friendly = purple_url_decode(cmd->params[2]);
+	} else {
+		passport = cmd->params[1];
+		networkid = atoi(cmd->params[2]);
+		friendly = purple_url_decode(cmd->params[3]);
+	}
 
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
@@ -1292,6 +1299,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
+
+	if (session->protocol_ver >= 18)
+		g_free(passport);
 }
 
 #if 0
