@@ -699,6 +699,14 @@ msn_user_get_endpoint_data(MsnUser *user, const char *input)
 	return NULL;
 }
 
+MsnNetwork
+msn_user_get_network(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, MSN_NETWORK_UNKNOWN);
+
+	return user->networkid;
+}
+
 MsnObject *
 msn_user_get_object(const MsnUser *user)
 {
