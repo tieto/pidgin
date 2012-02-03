@@ -1571,89 +1571,68 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		return 0;
 	}
 
-	if (msn_user_is_online(account, who) ||
-		msn_user_is_yahoo(account, who) ||
-		swboard != NULL) {
-		/*User online or have a swboard open because it's invisible
-		 * and sent us a message,then send Online Instant Message*/
-
-		if (msglen + strlen(msgformat) + strlen(VERSION) > 1564)
-		{
-			g_free(msgformat);
-			g_free(msgtext);
-
-			return -E2BIG;
-		}
-
-		msg = msn_message_new_plain(msgtext);
-		msg->remote_user = g_strdup(who);
-		msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
-
+	if (msglen + strlen(msgformat) + strlen(VERSION) > 1564)
+	{
 		g_free(msgformat);
 		g_free(msgtext);
 
-		purple_debug_info("msn", "prepare to send online Message\n");
-		if (g_ascii_strcasecmp(who, username))
-		{
-			if (flags & PURPLE_MESSAGE_AUTO_RESP) {
-				msn_message_set_flag(msg, 'U');
-			}
-			if (msn_user_is_yahoo(account, who)) {
-				/*we send the online and offline Message to Yahoo User via UBM*/
-				purple_debug_info("msn", "send to Yahoo User\n");
-				msn_notification_send_uum(session, msg);
-			} else {
-				purple_debug_info("msn", "send via switchboard\n");
-				msn_send_im_message(session, msg);
-			}
-		}
-		else
-		{
-			char *body_str, *body_enc, *pre, *post;
-			const char *format;
-			MsnIMData *imdata = g_new0(MsnIMData, 1);
-			/*
-			 * In MSN, you can't send messages to yourself, so
-			 * we'll fake like we received it ;)
-			 */
-			body_str = msn_message_to_string(msg);
-			body_enc = g_markup_escape_text(body_str, -1);
-			g_free(body_str);
-
-			format = msn_message_get_header_value(msg, "X-MMS-IM-Format");
-			msn_parse_format(format, &pre, &post);
-			body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
-									   body_enc ? body_enc : "", post ? post : "");
-			g_free(body_enc);
-			g_free(pre);
-			g_free(post);
-
-			serv_got_typing_stopped(gc, who);
-			imdata->gc = gc;
-			imdata->who = who;
-			imdata->msg = body_str;
-			imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
-			imdata->when = time(NULL);
-			purple_timeout_add(0, msn_send_me_im, imdata);
-		}
-
-		msn_message_unref(msg);
-	} else {
-		/*send Offline Instant Message,only to MSN Passport User*/
-		char *friendname;
-
-		purple_debug_info("msn", "prepare to send offline Message\n");
-
-		friendname = msn_encode_mime(purple_account_get_username(account));
-		msn_oim_prep_send_msg_info(session->oim,
-			purple_account_get_username(account),
-			friendname, who, msgtext);
-		msn_oim_send_msg(session->oim);
-
-		g_free(msgformat);
-		g_free(msgtext);
-		g_free(friendname);
+		return -E2BIG;
 	}
+
+	msg = msn_message_new_plain(msgtext);
+	msg->remote_user = g_strdup(who);
+	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
+
+	g_free(msgformat);
+	g_free(msgtext);
+
+	purple_debug_info("msn", "prepare to send online Message\n");
+	if (g_ascii_strcasecmp(who, username))
+	{
+		if (flags & PURPLE_MESSAGE_AUTO_RESP) {
+			msn_message_set_flag(msg, 'U');
+		}
+
+		if (msn_user_is_yahoo(account, who) || !(msn_user_is_online(account, who) || swboard != NULL)) {
+			/*we send the online and offline Message to Yahoo User via UBM*/
+			purple_debug_info("msn", "send to Yahoo User\n");
+			msn_notification_send_uum(session, msg);
+		} else {
+			purple_debug_info("msn", "send via switchboard\n");
+			msn_send_im_message(session, msg);
+		}
+	}
+	else
+	{
+		char *body_str, *body_enc, *pre, *post;
+		const char *format;
+		MsnIMData *imdata = g_new0(MsnIMData, 1);
+		/*
+		 * In MSN, you can't send messages to yourself, so
+		 * we'll fake like we received it ;)
+		 */
+		body_str = msn_message_to_string(msg);
+		body_enc = g_markup_escape_text(body_str, -1);
+		g_free(body_str);
+
+		format = msn_message_get_header_value(msg, "X-MMS-IM-Format");
+		msn_parse_format(format, &pre, &post);
+		body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
+								   body_enc ? body_enc : "", post ? post : "");
+		g_free(body_enc);
+		g_free(pre);
+		g_free(post);
+
+		serv_got_typing_stopped(gc, who);
+		imdata->gc = gc;
+		imdata->who = who;
+		imdata->msg = body_str;
+		imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
+		imdata->when = time(NULL);
+		purple_timeout_add(0, msn_send_me_im, imdata);
+	}
+
+	msn_message_unref(msg);
 
 	return 1;
 }
