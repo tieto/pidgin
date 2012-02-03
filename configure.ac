@@ -1398,6 +1398,17 @@ AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [co
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
 if test "x$enable_kwallet" = "xyes"; then
+	dnl Ensure C++ compiler works
+	AC_CHECK_PROG(CXXTEST, [$CXX], [$CXX])
+	if test "x$CXXTEST" = "x"; then
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
+A C++ compiler was not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		fi
+	fi
+
 	KWALLET_CXXFLAGS=""
 	KWALLET_LIBS=""
 	if test -z "$with_kwallet_includes" || test -z "$with_kwallet_libs"; then
