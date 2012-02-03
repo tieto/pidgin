@@ -1705,13 +1705,19 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnSession *session;
 	MsnUser *user;
-	const char *passport;
+	char *passport;
+	int network;
 	xmlnode *payloadNode;
 	char *psm_str, *str;
 
 	session = cmdproc->session;
 
-	passport = cmd->params[0];
+	if (session->protocol_ver >= 18) {
+		str = cmd->params[0];
+		msn_parse_user(str, &passport, &network);
+	} else {
+		passport = cmd->params[0];
+	}
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
 		char *str = g_strndup(payload, len);
@@ -1720,6 +1726,9 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		g_free(str);
 		return;
 	}
+
+	if (session->protocol_ver >= 18)
+		g_free(passport);
 
 	/* Free any existing media info for this user */
 	if (user->extinfo) {
@@ -1767,7 +1776,10 @@ ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "UBX received.\n");
 	cmdproc->last_cmd->payload_cb  = ubx_cmd_post;
-	cmd->payload_len = atoi(cmd->params[2]);
+	if (cmdproc->session->protocol_ver >= 18)
+		cmd->payload_len = atoi(cmd->params[1]);
+	else
+		cmd->payload_len = atoi(cmd->params[2]);
 }
 
 static void
