@@ -897,7 +897,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		return FALSE;
 	}
 
-	result = xmlnode_get_child(node, "Body/ABFindAllResponse/ABFindAllResult");
+	result = xmlnode_get_child(node, "Body/ABFindContactsPagedResponse/ABFindContactsPagedResult");
 	if (result == NULL) {
 		purple_debug_misc("msn", "Received no address book update\n");
 		return TRUE;
@@ -906,7 +906,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 	/* I don't see this "groups" tag documented on msnpiki, need to find out
 	   if they are really there, and update msnpiki */
 	/*Process Group List*/
-	groups = xmlnode_get_child(result, "groups");
+	groups = xmlnode_get_child(result, "Groups");
 	if (groups != NULL) {
 		msn_parse_addressbook_groups(session, groups);
 	}
@@ -931,12 +931,12 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 
 	/*Process contact List*/
 	purple_debug_info("msn", "Process contact list...\n");
-	contacts = xmlnode_get_child(result, "contacts");
+	contacts = xmlnode_get_child(result, "Contacts");
 	if (contacts != NULL) {
 		msn_parse_addressbook_contacts(session, contacts);
 	}
 
-	abNode = xmlnode_get_child(result, "ab");
+	abNode = xmlnode_get_child(result, "Ab");
 	if (abNode != NULL) {
 		xmlnode *node2;
 		char *tmp = NULL;
