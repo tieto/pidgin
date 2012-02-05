@@ -740,6 +740,20 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		}
 
 		passportName = xmlnode_get_child(contactInfo, "passportName");
+		if (passportName != NULL) {
+			xmlnode *messenger_user;
+			/* ignore non-messenger contacts */
+			if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
+				char *is_messenger_user = xmlnode_get_data(messenger_user);
+
+				if (is_messenger_user && !strcmp(is_messenger_user, "false")) {
+					passportName = NULL;
+				}
+
+				g_free(is_messenger_user);
+			}
+		}
+
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
 			xmlnode *messengerEnabledNode;
@@ -773,19 +787,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				}
 			}
 		} else {
-			xmlnode *messenger_user;
-			/* ignore non-messenger contacts */
-			if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
-				char *is_messenger_user = xmlnode_get_data(messenger_user);
-
-				if (is_messenger_user && !strcmp(is_messenger_user, "false")) {
-					g_free(is_messenger_user);
-					continue;
-				}
-
-				g_free(is_messenger_user);
-			}
-
 			passport = xmlnode_get_data(passportName);
 		}
 
