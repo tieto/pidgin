@@ -1273,9 +1273,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
-	if (cmd->param_count == 6)
+	if (cmd->param_count == 5)
 	{
-		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
+		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[4]));
 		msn_user_set_object(user, msnobj);
 	}
 	else
@@ -1283,7 +1283,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, NULL);
 	}
 
-	clientid = strtoul(cmd->params[4], &extcap_str, 10);
+	clientid = strtoul(cmd->params[3], &extcap_str, 10);
 	if (extcap_str && *extcap_str)
 		extcaps = strtoul(extcap_str+1, NULL, 10);
 	else
