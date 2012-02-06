@@ -865,6 +865,21 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 	g_free(alias);
 }
 
+static void
+msn_parse_addressbook_circles(MsnSession *session, xmlnode *node)
+{
+	xmlnode *ticket;
+
+	/* TODO: Parse groups */
+
+	ticket = xmlnode_get_child(node, "CircleTicket");
+	if (ticket) {
+		char *data = xmlnode_get_data(ticket);
+		msn_notification_send_circle_auth(session, data);
+		g_free(data);
+	}
+}
+
 static gboolean
 msn_parse_addressbook(MsnSession *session, xmlnode *node)
 {
@@ -956,13 +971,9 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		g_free(tmp);
 	}
 
-	circleNode = xmlnode_get_child(result, "CircleResult/CircleTicket");
-	if (circleNode != NULL && session->protocol_ver >= 18) {
-		char *data;
-
-		data = xmlnode_get_data(circleNode);
-		msn_notification_send_circle_auth(session, data);
-		g_free(data);
+	circleNode = xmlnode_get_child(result, "CircleResult");
+	if (circleNode != NULL) {
+		msn_parse_addressbook_circles(session, circleNode);
 	}
 
 	return TRUE;
