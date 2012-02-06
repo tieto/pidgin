@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	Finch:
+	* Support the conversation-extended signal for extending the
+	  conversation menu. (Howard Chu) (#14818)
+
 	libpurple:
 	* Support new connection states and signals for NetworkManager 0.9+.
 	  (Dan Williams) (#13859)
