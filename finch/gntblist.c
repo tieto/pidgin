@@ -50,6 +50,7 @@
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gntmenuutil.h"
 #include "gntpounce.h"
 #include "gntstyle.h"
 #include "gnttree.h"
@@ -1072,46 +1073,6 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 }
 
 static void
-context_menu_callback(GntMenuItem *item, gpointer data)
-{
-	PurpleMenuAction *action = data;
-	PurpleBlistNode *node = ggblist->cnode;
-	if (action) {
-		void (*callback)(PurpleBlistNode *, gpointer);
-		callback = (void (*)(PurpleBlistNode *, gpointer))
-			purple_menu_action_get_callback(action);
-		if (callback)
-			callback(node, purple_menu_action_get_data(action));
-		else
-			return;
-	}
-}
-
-static void
-gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer parent)
-{
-	GList *list;
-	GntMenuItem *item;
-
-	if (action == NULL)
-		return;
-
-	item = gnt_menuitem_new(purple_menu_action_get_label(action));
-	if (purple_menu_action_get_callback(action))
-		gnt_menuitem_set_callback(GNT_MENU_ITEM(item), context_menu_callback, action);
-	gnt_menu_add_item(menu, GNT_MENU_ITEM(item));
-
-	list = purple_menu_action_get_children(action);
-
-	if (list) {
-		GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
-		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
-		for (; list; list = list->next)
-			gnt_append_menu_action(GNT_MENU(sub), list->data, action);
-	}
-}
-
-static void
 append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 {
 	GList *list;
@@ -1127,9 +1088,7 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		if (!act)
 			continue;
 		purple_menu_action_set_data(act, node);
-		gnt_append_menu_action(menu, act, NULL);
-		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
-			G_CALLBACK(purple_menu_action_free), act);
+		gnt_append_menu_action(menu, act, node);
 	}
 }
 
@@ -1139,8 +1098,6 @@ add_custom_action(GntMenu *menu, const char *label, PurpleCallback callback,
 {
 	PurpleMenuAction *action = purple_menu_action_new(label, callback, data, NULL);
 	gnt_append_menu_action(menu, action, NULL);
-	g_signal_connect_swapped(G_OBJECT(menu), "destroy",
-			G_CALLBACK(purple_menu_action_free), action);
 }
 
 static void
@@ -1379,9 +1336,7 @@ append_extended_menu(GntMenu *menu, PurpleBlistNode *node)
 	for (iter = purple_blist_node_get_extended_menu(node);
 			iter; iter = g_list_delete_link(iter, iter))
 	{
-		gnt_append_menu_action(menu, iter->data, NULL);
-		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
-				G_CALLBACK(purple_menu_action_free), iter->data);
+		gnt_append_menu_action(menu, iter->data, node);
 	}
 }
 
