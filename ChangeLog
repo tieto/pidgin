@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.2 (02/22/2012):
+	AIM and ICQ:
+	* Allow signing on with usernames containing periods and
+	  underscores. (#13500)
+	* Allow adding buddies containing periods and underscores. (#13500)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
