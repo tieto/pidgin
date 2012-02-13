@@ -6,6 +6,13 @@ version 2.10.2 (02/22/2012):
 	  underscores. (#13500)
 	* Allow adding buddies containing periods and underscores. (#13500)
 
+	MSN:
+	* Fix possible crashes caused by not validating incoming messages as
+	  UTF-8. (Thijs Alkemade)(#14884)
+
+	Windows-Specific Changes:
+	* Fix compilation of the Bonjour protocol plugin. (#14802)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
