@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.2 (02/22/2012):
+	General:
+	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
+
 	AIM and ICQ:
 	* Allow signing on with usernames containing periods and
 	  underscores. (#13500)
