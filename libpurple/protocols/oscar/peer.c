@@ -656,6 +656,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	char *tmp;
 	FlapConnection *bos_conn;
 	const char *listener_ip;
+	const guchar *ip_atoi;
 	unsigned short listener_port;
 
 	conn = data;
@@ -690,11 +691,28 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 		listener_ip = purple_network_get_my_ip(bos_conn->gsc->fd);
 	else
 		listener_ip = purple_network_get_my_ip(bos_conn->fd);
+
+	ip_atoi = purple_network_ip_atoi(listener_ip);
+	if (ip_atoi == NULL) {
+		/* Could not convert IP to 4 byte array--weird, but this does
+		   happen for some users (#4829, Adium #15839).  Maybe they're
+		   connecting with IPv6...?  Maybe through a proxy? */
+		purple_debug_error("oscar", "Can't ask peer to connect to us "
+				"because purple_network_ip_atoi(%s) returned NULL. "
+				"fd=%d. is_ssl=%d\n",
+				listener_ip ? listener_ip : "(null)",
+				bos_conn->gsc ? bos_conn->gsc->fd : bos_conn->fd,
+				bos_conn->gsc ? 1 : 0);
+		peer_connection_trynext(conn);
+		return;
+	}
+
 	listener_port = purple_network_get_port_from_fd(conn->listenerfd);
+
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		aim_im_sendch2_odc_requestdirect(od,
-				conn->cookie, conn->bn, purple_network_ip_atoi(listener_ip),
+				conn->cookie, conn->bn, ip_atoi,
 				listener_port, ++conn->lastrequestnumber);
 
 		/* Print a message to a local conversation window */
@@ -706,17 +724,6 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
-		const guchar *ip_atoi = purple_network_ip_atoi(listener_ip);
-		if (ip_atoi == NULL) {
-			purple_debug_error("oscar", "Can't ask peer to connect to us "
-					"because purple_network_ip_atoi(%s) returned NULL. "
-					"fd=%d. is_ssl=%d\n",
-					listener_ip ? listener_ip : "(null)",
-					bos_conn->gsc ? bos_conn->gsc->fd : bos_conn->fd,
-					bos_conn->gsc ? 1 : 0);
-			peer_connection_trynext(conn);
-			return;
-		}
 		aim_im_sendch2_sendfile_requestdirect(od,
 				conn->cookie, conn->bn,
 				ip_atoi,
