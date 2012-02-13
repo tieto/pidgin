@@ -708,10 +708,12 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	{
 		const guchar *ip_atoi = purple_network_ip_atoi(listener_ip);
 		if (ip_atoi == NULL) {
-			purple_debug_error("oscar", "Cannot send file. atoi(%s) failed.\n"
-					"Other possibly useful information: fd = %d, port = %d\n",
-					listener_ip ? listener_ip : "(null!)", conn->listenerfd,
-					listener_port);
+			purple_debug_error("oscar", "Cannot send file. "
+					"purple_network_ip_atoi(%s) returned NULL. "
+					"fd=%d. is_ssl=%d\n",
+					listener_ip ? listener_ip : "(null!)",
+					bos_conn->gsc ? bos_conn->gsc->fd : bos_conn->fd,
+					bos_conn->gsc ? 1 : 0);
 			purple_xfer_cancel_local(conn->xfer);
 			return;
 		}
