@@ -1,5 +1,28 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.2 (02/22/2012):
+	General:
+	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
+
+	Pidgin:
+	* Add support for the GNOME3 Network dialog. (#13882)
+
+	libpurple:
+	* Support new connection states and signals for NetworkManager 0.9+.
+	  (Dan Williams) (#13859)
+
+	AIM and ICQ:
+	* Allow signing on with usernames containing periods and
+	  underscores. (#13500)
+	* Allow adding buddies containing periods and underscores. (#13500)
+
+	MSN:
+	* Fix possible crashes caused by not validating incoming messages as
+	  UTF-8. (Thijs Alkemade) (#14884)
+
+	Windows-Specific Changes:
+	* Fix compilation of the Bonjour protocol plugin. (#14802)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.

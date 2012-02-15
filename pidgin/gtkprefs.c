@@ -2036,6 +2036,14 @@ proxy_page(void)
 		path = g_find_program_in_path("gnome-network-properties");
 		if (path == NULL)
 			path = g_find_program_in_path("gnome-network-preferences");
+		if (path == NULL) {
+			path = g_find_program_in_path("gnome-control-center");
+			if (path != NULL) {
+				char *tmp = g_strdup_printf("%s network", path);
+				g_free(path);
+				path = tmp;
+			}
+		}
 
 		if (path == NULL) {
 			label = gtk_label_new(NULL);
