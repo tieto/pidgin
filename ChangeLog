@@ -5,14 +5,7 @@ version 3.0.0 (??/??/????):
 	* Support the conversation-extended signal for extending the
 	  conversation menu. (Howard Chu) (#14818)
 
-	libpurple:
-	* Support new connection states and signals for NetworkManager 0.9+.
-	  (Dan Williams) (#13859)
-
 	AIM and ICQ:
-	* Allow signing on with usernames containing periods and
-	  underscores. (#13500)
-	* Allow adding buddies containing periods and underscores. (#13500)
 	* Don't try to format ICQ usernames entered as email addresses.
 	  Gets rid of an "Unable to format username" error at login. (#13883)
 	* Make buddy list management code more efficient. (Oliver) (#4816)
