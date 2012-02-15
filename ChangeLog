@@ -4,6 +4,10 @@ version 2.10.2 (02/22/2012):
 	General:
 	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
 
+	libpurple:
+	* Support new connection states and signals for NetworkManager 0.9+.
+	  (Dan Williams) (#13859)
+
 	AIM and ICQ:
 	* Allow signing on with usernames containing periods and
 	  underscores. (#13500)
