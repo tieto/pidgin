@@ -4,6 +4,9 @@ version 2.10.2 (02/22/2012):
 	General:
 	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
 
+	Pidgin:
+	* Add support for the GNOME3 Network dialog. (#13882)
+
 	libpurple:
 	* Support new connection states and signals for NetworkManager 0.9+.
 	  (Dan Williams) (#13859)
