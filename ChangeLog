@@ -6,8 +6,6 @@ version 3.0.0 (??/??/????):
 	  conversation menu. (Howard Chu) (#14818)
 
 	AIM and ICQ:
-	* Don't try to format ICQ usernames entered as email addresses.
-	  Gets rid of an "Unable to format username" error at login. (#13883)
 	* Make buddy list management code more efficient. (Oliver) (#4816)
 
 	Bonjour:
