@@ -25,7 +25,7 @@
 
 
 #include "internal.h"
-#include <glib/gprintf.h>
+#include <glib.h>
 
 #include "purple.h"
 
