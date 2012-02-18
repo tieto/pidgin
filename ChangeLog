@@ -47,6 +47,31 @@ version 3.0.0 (??/??/????):
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
 	 backends. (Brad Smith) (#14414)
 
+version 2.10.2 (02/22/2012):
+	General:
+	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
+	* Fix compilation of the MXit protocol plugin with GLib 2.31. (#14773)
+
+	Pidgin:
+	* Add support for the GNOME3 Network dialog. (#13882)
+	* Fix rare crash. (#14392)
+
+	libpurple:
+	* Support new connection states and signals for NetworkManager 0.9+.
+	  (Dan Williams) (#13859)
+
+	AIM and ICQ:
+	* Allow signing on with usernames containing periods and
+	  underscores. (#13500)
+	* Allow adding buddies containing periods and underscores. (#13500)
+
+	MSN:
+	* Fix possible crashes caused by not validating incoming messages as
+	  UTF-8. (Thijs Alkemade) (#14884)
+
+	Windows-Specific Changes:
+	* Fix compilation of the Bonjour protocol plugin. (#14802)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.
