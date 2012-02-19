@@ -769,7 +769,7 @@ static void cleanlist_ensure_utf8_data(struct aim_ssi_item *item, guint16 tlvtyp
  * @param od The oscar odion.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_cleanlist(OscarData *od)
+static int aim_ssi_cleanlist(OscarData *od)
 {
 	struct aim_ssi_item *cur, *next;
 
@@ -1335,6 +1335,9 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		struct aim_ssi_item *cur;
 		for (cur=od->ssi.official.data; cur; cur=cur->next)
 			aim_ssi_itemlist_add(&od->ssi.local, cur->name, cur->gid, cur->bid, cur->type, cur->data);
+
+		/* Clean the buddy list */
+		aim_ssi_cleanlist(od);
 
 		od->ssi.received_data = TRUE;
 
