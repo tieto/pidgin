@@ -971,7 +971,7 @@ int aim_ssi_delgroup(OscarData *od, const char *group)
 	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Modify the parent group */
-	aim_ssi_itemlist_rebuildgroup(&od->ssi.local, group);
+	aim_ssi_itemlist_rebuildgroup(&od->ssi.local, NULL);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);
