@@ -186,7 +186,7 @@ msn_set_psm(MsnSession *session)
 	statusline_stripped = purple_markup_strip_html(statusline);
 	media = create_media_string(presence);
 	g_free(session->psm);
-	session->psm = msn_build_psm(statusline_stripped, media, session->protocol_ver >= 16 ? session->guid : NULL, session->protocol_ver);
+	session->psm = msn_build_psm(statusline_stripped, media, session->guid, session->protocol_ver);
 
 	payload = session->psm;
 
@@ -245,10 +245,8 @@ msn_change_status(MsnSession *session)
 
 	if (msnobj == NULL)
 	{
-		if (session->protocol_ver >= 16)
-			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u 0", state_text, caps, MSN_CLIENT_ID_EXT_CAPS);
-		else
-			trans = msn_transaction_new(cmdproc, "CHG", "%s %u", state_text, caps);
+		trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u 0", state_text,
+		                            caps, MSN_CLIENT_ID_EXT_CAPS);
 	}
 	else
 	{
@@ -256,12 +254,9 @@ msn_change_status(MsnSession *session)
 
 		msnobj_str = msn_object_to_string(msnobj);
 
-		if (session->protocol_ver >= 16)
-			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u %s", state_text,
-							 caps, MSN_CLIENT_ID_EXT_CAPS, purple_url_encode(msnobj_str));
-		else
-			trans = msn_transaction_new(cmdproc, "CHG", "%s %u %s", state_text,
-							 caps, purple_url_encode(msnobj_str));
+		trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u %s", state_text,
+		                            caps, MSN_CLIENT_ID_EXT_CAPS,
+		                            purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}

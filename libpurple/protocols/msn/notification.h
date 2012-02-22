@@ -76,8 +76,6 @@ typedef enum {
 
 } MsnUnifiedNotificationType;
 
-void uum_send_msg(MsnSession *session, MsnMessage *msg);
-
 void msn_notification_end(void);
 void msn_notification_init(void);
 
@@ -97,6 +95,8 @@ gboolean msn_notification_connect(MsnNotification *notification,
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
 
+void msn_notification_send_uum(MsnSession *session, MsnMessage *msg);
+
 void msn_notification_send_uux(MsnSession *session, const char *payload);
 
 void msn_notification_send_uux_endpointdata(MsnSession *session);
@@ -107,6 +107,8 @@ void msn_notification_send_uun(MsnSession *session,
                                const char *user,
                                MsnUnifiedNotificationType type,
                                const char *payload);
+
+void msn_notification_send_circle_auth(MsnSession *session, const char *ticket);
 
 /**
  * Closes a notification.

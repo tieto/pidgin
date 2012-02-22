@@ -707,10 +707,7 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "get UBM...\n");
-	if (cmdproc->session->protocol_ver >= 16)
-		cmd->payload_len = atoi(cmd->params[5]);
-	else
-		cmd->payload_len = atoi(cmd->params[3]);
+	cmd->payload_len = atoi(cmd->params[5]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -867,12 +864,9 @@ connect_cb(MsnServConn *servconn)
 	swboard = cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
-	if (servconn->session->protocol_ver >= 16)
-		username = g_strdup_printf("%s;{%s}",
-		                           purple_account_get_username(account),
-		                           servconn->session->guid);
-	else
-		username = g_strdup(purple_account_get_username(account));
+	username = g_strdup_printf("%s;{%s}",
+	                           purple_account_get_username(account),
+	                           servconn->session->guid);
 
 	if (msn_switchboard_is_invited(swboard))
 	{
