@@ -23,6 +23,8 @@ version 2.10.2 (02/22/2012):
 	MSN:
 	* Fix possible crashes caused by not validating incoming messages as
 	  UTF-8. (Thijs Alkemade) (#14884)
+	* Support new protocol version MSNP18. (#14753)
+	* Fix messages to offline contacts. (#14302)
 
 	Windows-Specific Changes:
 	* Fix compilation of the Bonjour protocol plugin. (#14802)
