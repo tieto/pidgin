@@ -824,14 +824,15 @@ void pidgin_dialogs_plugins_info(void)
 				pver, pwebsite, pid,
 				punloadable ? "<FONT COLOR=\"#FF0000\"><B>No</B></FONT>" : "Yes",
 				ploaded ? "Yes" : "No");
+
+		g_free(pname);
+		g_free(pauthor);
 	}
 
 	plugins_info = pidgin_build_help_dialog(title, "plugins_info", str);
 	g_signal_connect(G_OBJECT(plugins_info), "destroy",
 			G_CALLBACK(gtk_widget_destroyed), &plugins_info);
 	g_free(title);
-	g_free(pname);
-	g_free(pauthor);
 }
 
 static void
