@@ -349,13 +349,13 @@ add_translators(GString *str, const struct translator *list)
 {
 	for (; list->language != NULL; list++) {
 		if (list->email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - <a href=\"mailto:%s\">%s</a><br/>",
+			g_string_append_printf(str, "<dt>%s (%s)</dt><dd><a href=\"mailto:%s\">%s</a></dd>",
 			                       _(list->language),
 			                       list->abbr,
 			                       list->email,
 			                       _(list->name));
 		} else {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
+			g_string_append_printf(str, "<dt>%s (%s)</dt><dd>%s</dd>",
 			                       _(list->language),
 			                       list->abbr,
 			                       _(list->name));
@@ -780,15 +780,16 @@ void pidgin_dialogs_translators(void)
 	str = g_string_sized_new(4096);
 
 	/* Current Translators */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s</h3><dl>",
 						   _("Current Translators"));
 	add_translators(str, translators);
-	g_string_append(str, "<BR/>");
+	g_string_append(str, "</dl>");
 
 	/* Past Translators */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s:</h3><dl>",
 						   _("Past Translators"));
 	add_translators(str, past_translators);
+	g_string_append(str, "</dl>");
 
 	tmp = g_strdup_printf(_("%s Translator Information"), PIDGIN_NAME);
 	translator_info = pidgin_build_help_dialog(tmp, "translator_info", str);
