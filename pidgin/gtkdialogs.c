@@ -790,7 +790,7 @@ void pidgin_dialogs_translators(void)
 	g_string_append(str, "</dl>");
 
 	/* Past Translators */
-	g_string_append_printf(str, "<h3>%s:</h3><dl>",
+	g_string_append_printf(str, "<h3>%s</h3><dl>",
 						   _("Past Translators"));
 	add_translators(str, past_translators);
 	g_string_append(str, "</dl>");
