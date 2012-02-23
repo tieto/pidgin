@@ -3392,6 +3392,7 @@ regenerate_media_items(PidginWindow *win)
 static void
 regenerate_attention_items(PidginWindow *win)
 {
+	GtkWidget *attention;
 	GtkWidget *menu;
 	PurpleConversation *conv;
 	PurpleConnection *pc;
@@ -3403,8 +3404,11 @@ regenerate_attention_items(PidginWindow *win)
 	if (!conv)
 		return;
 
+	attention = gtk_ui_manager_get_widget(win->menu.ui,
+	                                      "/Conversation/ConversationMenu/GetAttention");
+
 	/* Remove the previous entries */
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.get_attention), NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(attention), NULL);
 
 	pc = purple_conversation_get_connection(conv);
 	if (pc != NULL)
@@ -3437,7 +3441,7 @@ regenerate_attention_items(PidginWindow *win)
 				list = g_list_delete_link(list, list);
 			}
 
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.get_attention), menu);
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(attention), menu);
 			gtk_widget_show_all(menu);
 		}
 	}
