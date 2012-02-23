@@ -232,7 +232,7 @@ static const struct translator translators[] = {
 	{N_("Slovenian"),           "sl", "Martin Srebotnjak", "miles@filmsi.net"},
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
-	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
+	{N_("Serbian Latin"),       "sr@latin", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
 	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
