@@ -8212,6 +8212,7 @@ static gboolean
 add_message_history_to_gtkconv(gpointer data)
 {
 	PidginConversation *gtkconv = data;
+	GtkWebView *webview = GTK_WEBVIEW(gtkconv->webview);
 	int count = 0;
 	int timer = gtkconv->attach.timer;
 	time_t when = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkconv->entry), "attach-start-time"));
@@ -8221,7 +8222,8 @@ add_message_history_to_gtkconv(gpointer data)
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
 		if (!im && when && when < purple_conversation_message_get_timestamp(msg)) {
-			gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
+			gtk_webview_append_html(webview, "<BR><HR>");
+			gtk_webview_scroll_to_end(webview, TRUE);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
 		pidgin_conv_write_conv(
@@ -8268,7 +8270,8 @@ add_message_history_to_gtkconv(gpointer data)
 					purple_conversation_message_get_flags(msg),
 					purple_conversation_message_get_timestamp(msg));
 		}
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
+		gtk_webview_append_html(webview, "<BR><HR>");
+		gtk_webview_scroll_to_end(webview, TRUE);
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	}
 

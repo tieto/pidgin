@@ -52,6 +52,7 @@
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gntmenuutil.h"
 #include "gntstyle.h"
 #include "gnttextview.h"
 #include "gnttree.h"
@@ -404,6 +405,30 @@ cleared_message_history_cb(PurpleConversation *conv, gpointer data)
 }
 
 static void
+gg_extended_menu(FinchConv *ggc)
+{
+	GntWidget *sub;
+	GList *list;
+
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(ggc->plugins, GNT_MENU(sub));
+
+	for (list = purple_conversation_get_extended_menu(ggc->active_conv);
+			list; list = g_list_delete_link(list, list))
+	{
+		gnt_append_menu_action(GNT_MENU(sub), list->data, ggc->active_conv);
+	}
+}
+
+static void
+conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
+{
+	if (type == PURPLE_CONV_UPDATE_FEATURES) {
+		gg_extended_menu(purple_conversation_get_ui_data(conv));
+	}
+}
+
+static void
 clear_scrollback_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
@@ -595,6 +620,12 @@ invite_cb(GntMenuItem *item, gpointer ggconv)
 }
 
 static void
+plugin_changed_cb(PurplePlugin *p, gpointer data)
+{
+	gg_extended_menu(data);
+}
+
+static void
 gg_create_menu(FinchConv *ggc)
 {
 	GntWidget *menu, *sub;
@@ -665,6 +696,12 @@ gg_create_menu(FinchConv *ggc)
 			!(ggc->flags & FINCH_CONV_NO_SOUND));
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(item, toggle_sound_cb, ggc);
+
+	item = gnt_menuitem_new(_("Plugins"));
+	gnt_menu_add_item(GNT_MENU(menu), item);
+	ggc->plugins = item;
+
+	gg_extended_menu(ggc);
 }
 
 static void
@@ -875,6 +912,11 @@ finch_create_conversation(PurpleConversation *conv)
 			G_CALLBACK(cmd_added_cb), ggc);
 	purple_signal_connect(purple_cmds_get_handle(), "cmd-removed", ggc,
 			G_CALLBACK(cmd_removed_cb), ggc);
+
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-load", ggc,
+				PURPLE_CALLBACK(plugin_changed_cb), ggc);
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload", ggc,
+				PURPLE_CALLBACK(plugin_changed_cb), ggc);
 
 	g_free(title);
 	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
@@ -1475,6 +1517,8 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(chat_left_cb), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "cleared-message-history", finch_conv_get_handle(),
 					PURPLE_CALLBACK(cleared_message_history_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "conversation-updated", finch_conv_get_handle(),
+					PURPLE_CALLBACK(conv_updated), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", finch_conv_get_handle(),
 					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", finch_conv_get_handle(),

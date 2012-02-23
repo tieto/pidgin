@@ -1,16 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
-	libpurple:
-	* Support new connection states and signals for NetworkManager 0.9+.
-	  (Dan Williams) (#13859)
+	Finch:
+	* Support the conversation-extended signal for extending the
+	  conversation menu. (Howard Chu) (#14818)
 
 	AIM and ICQ:
-	* Allow signing on with usernames containing periods and
-	  underscores. (#13500)
-	* Allow adding buddies containing periods and underscores. (#13500)
-	* Don't try to format ICQ usernames entered as email addresses.
-	  Gets rid of an "Unable to format username" error at login. (#13883)
 	* Make buddy list management code more efficient. (Oliver) (#4816)
 
 	Bonjour:
@@ -29,6 +24,8 @@ version 3.0.0 (??/??/????):
 	MSN:
 	* Fix file transfer with older Mac MSN clients.
 	* Support file transfers up to ~9 EiB.
+	* Support new protocol version MSNP18. (#14753)
+	* Fix messages to offline contacts. (#14302)
 
 	MXit:
 	* Remove all reference to Hidden Number.
@@ -47,6 +44,35 @@ version 3.0.0 (??/??/????):
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
 	 backends. (Brad Smith) (#14414)
+
+version 2.10.2 (02/22/2012):
+	General:
+	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
+	* Fix compilation of the MXit protocol plugin with GLib 2.31. (#14773)
+
+	Pidgin:
+	* Add support for the GNOME3 Network dialog. (#13882)
+	* Fix rare crash. (#14392)
+	* Add support for the GNOME3 Default Application dialog for configuring
+	  the Browser.
+
+	libpurple:
+	* Support new connection states and signals for NetworkManager 0.9+.
+	  (Dan Williams) (#13859)
+
+	AIM and ICQ:
+	* Allow signing on with usernames containing periods and
+	  underscores. (#13500)
+	* Allow adding buddies containing periods and underscores. (#13500)
+	* Don't try to format ICQ usernames entered as email addresses.
+	  Gets rid of an "Unable to format username" error at login. (#13883)
+
+	MSN:
+	* Fix possible crashes caused by not validating incoming messages as
+	  UTF-8. (Thijs Alkemade) (#14884)
+
+	Windows-Specific Changes:
+	* Fix compilation of the Bonjour protocol plugin. (#14802)
 
 version 2.10.1 (12/06/2011):
 	Finch:

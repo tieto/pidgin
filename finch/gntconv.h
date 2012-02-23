@@ -59,6 +59,7 @@ struct _FinchConv
 	GntWidget *tv;            /* text-view */
 	GntWidget *menu;
 	GntWidget *info;
+	GntMenuItem *plugins;
 	FinchConversationFlag flags;
 
 	union

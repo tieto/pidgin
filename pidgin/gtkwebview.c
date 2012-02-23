@@ -579,7 +579,6 @@ gtk_webview_append_html(GtkWebView *webview, const char *html)
 	char *script = g_strdup_printf("document.write(%s)", escaped);
 	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), script);
 	priv->empty = FALSE;
-	gtk_webview_scroll_to_end(webview, TRUE);
 	g_free(script);
 	g_free(escaped);
 }

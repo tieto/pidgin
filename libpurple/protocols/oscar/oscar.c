@@ -3924,9 +3924,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	purple_debug_info("oscar", "ssi: syncing local list and server list\n");
 
-	/* Clean the buddy list */
-	aim_ssi_cleanlist(od);
-
 	/*** Begin code for pruning buddies from local list if they're not in server list ***/
 
 	/* Buddies */
