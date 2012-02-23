@@ -53,6 +53,8 @@ version 2.10.2 (02/22/2012):
 	Pidgin:
 	* Add support for the GNOME3 Network dialog. (#13882)
 	* Fix rare crash. (#14392)
+	* Add support for the GNOME3 Default Application dialog for configuring
+	  the Browser.
 
 	libpurple:
 	* Support new connection states and signals for NetworkManager 0.9+.
