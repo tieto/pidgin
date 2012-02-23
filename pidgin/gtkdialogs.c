@@ -814,8 +814,7 @@ void pidgin_dialogs_plugins_info(void)
 
 	str = g_string_sized_new(4096);
 
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><BR/>",
-			_("Plugin Information"));
+	g_string_append_printf(str, "<h2>%s</h2><dl>", _("Plugin Information"));
 
 	for(l = purple_plugins_get_all(); l; l = l->next) {
 		plugin = (PurplePlugin *)l->data;
@@ -830,18 +829,24 @@ void pidgin_dialogs_plugins_info(void)
 		ploaded = purple_plugin_is_loaded(plugin);
 
 		g_string_append_printf(str,
-				"<FONT SIZE=\"3\"><B>%s</B></FONT><BR/><FONT SIZE=\"2\">"
-				"\t<B>Author:</B> %s<BR/>\t<B>Version:</B> %s<BR/>"
-				"\t<B>Website:</B> %s<BR/>\t<B>ID String:</B> %s<BR/>"
-				"\t<B>Loadable:</B> %s<BR/>\t<B>Loaded:</B> %s<BR/>"
-				"<BR/></FONT>", pname, pauthor ? pauthor : "(null)",
+				"<dt>%s</dt><dd>"
+				"<b>Author:</b> %s<br/>"
+				"<b>Version:</b> %s<br/>"
+				"<b>Website:</b> %s<br/>"
+				"<b>ID String:</b> %s<br/>"
+				"<b>Loadable:</b> %s<br/>"
+				"<b>Loaded:</b> %s"
+				"</dd><br/>",
+				pname, pauthor ? pauthor : "(null)",
 				pver, pwebsite, pid,
-				punloadable ? "<FONT COLOR=\"#FF0000\"><B>No</B></FONT>" : "Yes",
+				punloadable ? "<span style=\"color: #FF0000;\"><b>No</b></span>" : "Yes",
 				ploaded ? "Yes" : "No");
 
 		g_free(pname);
 		g_free(pauthor);
 	}
+
+	g_string_append(str, "</dl>");
 
 	plugins_info = pidgin_build_help_dialog(title, "plugins_info", str);
 	g_signal_connect(G_OBJECT(plugins_info), "destroy",
