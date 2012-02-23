@@ -485,37 +485,42 @@ void pidgin_dialogs_about(void)
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER> (libpurple %s)"
-		"<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION,
+		"<h2>%s %s</h2>"
+		"<strong>(libpurple %s)<br/>%s</strong>",
+		PIDGIN_NAME, DISPLAY_VERSION,
 		purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str,
-		_("%s is a messaging client based on libpurple which is capable of "
+		_("<p>%s is a messaging client based on libpurple which is capable of "
 		  "connecting to multiple messaging services at once.  %s is written "
 		  "in C using GTK+.  %s is released, and may be modified and "
 		  "redistributed,  under the terms of the GPL version 2 (or later).  "
 		  "A copy of the GPL is distributed with %s.  %s is copyrighted by "
 		  "its contributors, a list of whom is also distributed with %s.  "
-		  "There is no warranty for %s.<BR><BR>"), PIDGIN_NAME, PIDGIN_NAME,
+		  "There is no warranty for %s.</p>"), PIDGIN_NAME, PIDGIN_NAME,
 		PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 
 	g_string_append_printf(str,
-			_("<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A "
-			  "HREF=\"%s\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked "
-			  "Questions</A><BR>\tIRC Channel: #pidgin on irc.freenode.net<BR>"
-			  "\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"), PURPLE_WEBSITE,
+			_("<h3>Helpful Resources</h3>"
+			  "<ul>"
+			  "<li><a href=\"%s\">Website</a></li>"
+			  "<li><a href=\"%s\">Frequently Asked Questions</a></li>"
+			  "<li>IRC Channel: #pidgin on irc.freenode.net</li>"
+			  "<li>XMPP MUC: devel@conference.pidgin.im</li>"
+			  "</ul>"),
+			PURPLE_WEBSITE,
 			"http://developer.pidgin.im/wiki/FAQ");
 
 	g_string_append_printf(str,
-			_("<font size=\"4\"><b>Help from other Pidgin users</b></font> is "
-			  "available by e-mailing <a "
-			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
-			  "This is a <b>public</b> mailing list! "
+			_("<p><strong>Help from other Pidgin users</strong> is available "
+			  "by e-mailing <a "
+			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a>.<br/>"
+			  "This is a <strong>public</strong> mailing list! "
 			  "(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
 			  "We can't help with third-party protocols or plugins!<br/>"
-			  "This list's primary language is <b>English</b>.  You are "
-			  "welcome to post in another language, but the responses may "
-			  "be less helpful.<br/>"));
+			  "This list's primary language is <strong>English</strong>.  You "
+			  "are welcome to post in another language, but the responses may "
+			  "be less helpful.</p>"));
 
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	about = pidgin_build_help_dialog(tmp, "about", str);
