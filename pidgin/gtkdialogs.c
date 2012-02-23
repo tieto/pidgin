@@ -808,7 +808,8 @@ void pidgin_dialogs_plugins_info(void)
 		plugin = (PurplePlugin *)l->data;
 
 		pname = g_markup_escape_text(purple_plugin_get_name(plugin), -1);
-		pauthor = g_markup_escape_text(purple_plugin_get_author(plugin), -1);
+		if ((pauthor = (char *)purple_plugin_get_author(plugin)) != NULL)
+			pauthor = g_markup_escape_text(pauthor, -1);
 		pver = purple_plugin_get_version(plugin);
 		pwebsite = purple_plugin_get_homepage(plugin);
 		pid = purple_plugin_get_id(plugin);
