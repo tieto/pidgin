@@ -24,8 +24,6 @@ version 3.0.0 (??/??/????):
 	MSN:
 	* Fix file transfer with older Mac MSN clients.
 	* Support file transfers up to ~9 EiB.
-	* Support new protocol version MSNP18. (#14753)
-	* Fix messages to offline contacts. (#14302)
 
 	MXit:
 	* Remove all reference to Hidden Number.
