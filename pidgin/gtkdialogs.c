@@ -456,8 +456,6 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
-	/* TODO WEBKIT: This doesn't seem to stay at the top. */
-	webkit_web_view_move_cursor(WEBKIT_WEB_VIEW(webview), GTK_MOVEMENT_BUFFER_ENDS, -1);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
