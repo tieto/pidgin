@@ -76,6 +76,15 @@ void msn_import_html(const char *html, char **attributes, char **message);
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
 
 /**
+ * Parses a user name
+ *
+ * @param str         A network:username string.
+ * @param ret_user    Return of the user's passport.
+ * @param ret_network Return of the user's network.
+ */
+void msn_parse_user(const char *str, char **ret_user, int *ret_network);
+
+/**
  * Verify if the email is a vaild passport.
  *
  * @param passport 	The email

@@ -650,6 +650,9 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *bn, 
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
 
+	g_return_if_fail(bn != NULL);
+	g_return_if_fail(ip != NULL);
+
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
 	if (conn == NULL)
 		return;

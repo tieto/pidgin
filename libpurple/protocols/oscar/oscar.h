@@ -940,7 +940,6 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
 int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn);
-int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
 int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
