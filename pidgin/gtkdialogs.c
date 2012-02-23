@@ -542,174 +542,178 @@ void pidgin_dialogs_buildinfo(void)
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<FONT SIZE=\"4\"><B>%s %s</B></FONT> (libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
+		"<h2>%s %s</h2>"
+		"<strong>(libpurple %s)<br/>%s</strong>",
+		PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
-	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s</B></FONT><br/>", _("Build Information"));
+	g_string_append_printf(str, "<h3>%s</h3><dl>", _("Build Information"));
 
-	/* The following primarly intented for user/developer interaction and thus
-	   ought not be translated */
+	/* The following is primarily intended for user/developer interaction and
+	   thus ought not be translated */
 
 #ifdef CONFIG_ARGS /* win32 build doesn't use configure */
-	g_string_append(str, "  <b>Arguments to <i>./configure</i>:</b>  " CONFIG_ARGS "<br/>");
+	g_string_append(str, "<dt>Arguments to <em>./configure</em>:</dt><dd>" CONFIG_ARGS "</dd>");
 #endif
 
 #ifndef _WIN32
 #ifdef DEBUG
-	g_string_append(str, "  <b>Print debugging messages:</b> Yes<br/>");
+	g_string_append(str, "<dt>Print debugging messages:</dt><dd>Yes</dd>");
 #else
-	g_string_append(str, "  <b>Print debugging messages:</b> No<br/>");
+	g_string_append(str, "<dt>Print debugging messages:</dt><dd>No</dd>");
 #endif
 #endif
 
 #ifdef PURPLE_PLUGINS
-	g_string_append(str, "  <b>Plugins:</b> Enabled<br/>");
+	g_string_append(str, "<dt>Plugins:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "  <b>Plugins:</b> Disabled<br/>");
+	g_string_append(str, "<dt>Plugins:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef HAVE_SSL
-	g_string_append(str, "  <b>SSL:</b> SSL support is present.<br/>");
+	g_string_append(str, "<dt>SSL:</dt><dd>SSL support is present.</dd>");
 #else
-	g_string_append(str, "  <b>SSL:</b> SSL support was <b><i>NOT</i></b> compiled!<br/>");
+	g_string_append(str, "<dt>SSL:</dt><dd>SSL support was <strong><em>NOT</em></strong> compiled!</dd>");
 #endif
 
 /* This might be useful elsewhere too, but it is particularly useful for
- * debugging stuff known to be GTK+/Glib bugs on Windows */
+ * debugging stuff known to be GTK+/GLib bugs on Windows */
 #ifdef _WIN32
-	g_string_append_printf(str, "  <b>GTK+ Runtime:</b> %u.%u.%u<br/>"
-		"  <b>Glib Runtime:</b> %u.%u.%u<br/>",
+	g_string_append_printf(str, "<dt>GTK+ Runtime:</dt><dd>%u.%u.%u</dd>"
+		"<dt>GLib Runtime:</dt><dd>%u.%u.%u</dd>",
 		gtk_major_version, gtk_minor_version, gtk_micro_version,
 		glib_major_version, glib_minor_version, glib_micro_version);
 #endif
 
-g_string_append(str, "<br/>  <b>Library Support</b><br/>");
+	g_string_append(str, "</dl><h3>Library Support</h3><dl>");
 
 #ifdef HAVE_CYRUS_SASL
-	g_string_append_printf(str, "    <b>Cyrus SASL:</b> Enabled<br/>");
+	g_string_append_printf(str, "<dt>Cyrus SASL:</dt><dd>Enabled</dd>");
 #else
-	g_string_append_printf(str, "    <b>Cyrus SASL:</b> Disabled<br/>");
+	g_string_append_printf(str, "<dt>Cyrus SASL:</dt><dd>Disabled</dd>");
 #endif
 
 #ifndef _WIN32
 #ifdef HAVE_DBUS
-	g_string_append_printf(str, "    <b>D-Bus:</b> Enabled<br/>");
+	g_string_append_printf(str, "<dt>D-Bus:</dt><dd>Enabled</dd>");
 #else
-	g_string_append_printf(str, "    <b>D-Bus:</b> Disabled<br/>");
+	g_string_append_printf(str, "<dt>D-Bus:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef HAVE_EVOLUTION_ADDRESSBOOK
-	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Enabled<br/>");
+	g_string_append_printf(str, "<dt>Evolution Addressbook:</dt><dd>Enabled</dd>");
 #else
-	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Disabled<br/>");
+	g_string_append_printf(str, "<dt>Evolution Addressbook:</dt><dd>Disabled</dd>");
 #endif
 #endif
 
 #if defined(_WIN32) || defined(USE_INTERNAL_LIBGADU)
-	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Internal<br/>");
+	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Internal</dd>");
 #else
 #ifdef HAVE_LIBGADU
-	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Enabled<br/>");
+	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Disabled<br/>");
+	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
 #endif
 #endif
 
 #ifdef USE_GTKSPELL
-	g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
+	g_string_append(str, "<dt>GtkSpell:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>GtkSpell:</b> Disabled<br/>");
+	g_string_append(str, "<dt>GtkSpell:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef HAVE_GNUTLS
-	g_string_append(str, "    <b>GnuTLS:</b> Enabled<br/>");
+	g_string_append(str, "<dt>GnuTLS:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>GnuTLS:</b> Disabled<br/>");
+	g_string_append(str, "<dt>GnuTLS:</dt><dd>Disabled</dd>");
 #endif
 
 #ifndef _WIN32
 #ifdef USE_GSTREAMER
-	g_string_append(str, "    <b>GStreamer:</b> Enabled<br/>");
+	g_string_append(str, "<dt>GStreamer:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>GStreamer:</b> Disabled<br/>");
+	g_string_append(str, "<dt>GStreamer:</dt><dd>Disabled</dd>");
 #endif
 #endif
 
 #ifndef _WIN32
 #ifdef ENABLE_MONO
-	g_string_append(str, "    <b>Mono:</b> Enabled<br/>");
+	g_string_append(str, "<dt>Mono:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>Mono:</b> Disabled<br/>");
+	g_string_append(str, "<dt>Mono:</dt><dd>Disabled</dd>");
 #endif
 #endif
 
 #ifndef _WIN32
 #ifdef HAVE_NETWORKMANAGER
-	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
+	g_string_append(str, "<dt>NetworkManager:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
+	g_string_append(str, "<dt>NetworkManager:</dt><dd>Disabled</dd>");
 #endif
 #endif
 
 #ifdef HAVE_NSS
-	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
+	g_string_append(str, "<dt>Network Security Services (NSS):</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
+	g_string_append(str, "<dt>Network Security Services (NSS):</dt><dd>Disabled</dd>");
 #endif
 
-if (purple_plugins_find_with_id("core-perl") != NULL)
-	g_string_append(str, "    <b>Perl:</b> Enabled<br/>");
-else
-	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
+	if (purple_plugins_find_with_id("core-perl") != NULL)
+		g_string_append(str, "<dt>Perl:</dt><dd>Enabled</dd>");
+	else
+		g_string_append(str, "<dt>Perl:</dt><dd>Disabled</dd>");
 
-if (purple_plugins_find_with_id("core-tcl") != NULL) {
-	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
+	if (purple_plugins_find_with_id("core-tcl") != NULL) {
+		g_string_append(str, "<dt>Tcl:</dt><dd>Enabled</dd>");
 #ifdef HAVE_TK
-	g_string_append(str, "    <b>Tk:</b> Enabled<br/>");
+		g_string_append(str, "<dt>Tk:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
+		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
 #endif
-} else {
-	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
-	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
-}
+	} else {
+		g_string_append(str, "<dt>Tcl:</dt><dd>Disabled</dd>");
+		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
+	}
 
 #ifdef USE_IDN
-	g_string_append(str, "    <b>UTF-8 DNS (IDN):</b> Enabled<br/>");
+	g_string_append(str, "<dt>UTF-8 DNS (IDN):</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>UTF-8 DNS (IDN):</b> Disabled<br/>");
+	g_string_append(str, "<dt>UTF-8 DNS (IDN):</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef USE_VV
-	g_string_append(str, "    <b>Voice and Video:</b> Enabled<br/>");
+	g_string_append(str, "<dt>Voice and Video:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>Voice and Video:</b> Disabled<br/>");
+	g_string_append(str, "<dt>Voice and Video:</dt><dd>Disabled</dd>");
 #endif
 
 #ifndef _WIN32
 #ifdef USE_SM
-	g_string_append(str, "    <b>X Session Management:</b> Enabled<br/>");
+	g_string_append(str, "<dt>X Session Management:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>X Session Management:</b> Disabled<br/>");
+	g_string_append(str, "<dt>X Session Management:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef USE_SCREENSAVER
-	g_string_append(str, "    <b>XScreenSaver:</b> Enabled<br/>");
+	g_string_append(str, "<dt>XScreenSaver:</dt><dd>Enabled</dd>");
 #else
-	g_string_append(str, "    <b>XScreenSaver:</b> Disabled<br/>");
+	g_string_append(str, "<dt>XScreenSaver:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef LIBZEPHYR_EXT
-	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> External<br/>");
+	g_string_append(str, "<dt>Zephyr library (libzephyr):</dt><dd>External</dd>");
 #else
-	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Internal<br/>");
+	g_string_append(str, "<dt>Zephyr library (libzephyr):</dt><dd>Internal</dd>");
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS
-	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> Yes<br/>");
+	g_string_append(str, "<dt>Zephyr uses Kerberos:</dt><dd>Yes</dd>");
 #else
-	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> No<br/>");
+	g_string_append(str, "<dt>Zephyr uses Kerberos:</dt><dd>No</dd>");
 #endif
 #endif
+
+	g_string_append(str, "</dl>");
 
 	/* End of not to be translated section */
 
