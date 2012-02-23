@@ -334,8 +334,9 @@ add_developers(GString *str, const struct developer *list)
 {
 	for (; list->name != NULL; list++) {
 		if (list->email != NULL) {
-			g_string_append_printf(str, "<li><a href=\"mailto:%s\">%s</a>%s%s%s</li>",
-			                       list->email, _(list->name),
+			g_string_append_printf(str,
+			                       "<li><a href=\"mailto:%s\" title=\"%s\">%s</a>%s%s%s</li>",
+			                       list->email, list->email, _(list->name),
 			                       list->role ? " (" : "",
 			                       list->role ? _(list->role) : "",
 			                       list->role ? ")" : "");
@@ -358,8 +359,9 @@ add_translators(GString *str, const struct translator *list)
 			                       _(list->language), list->abbr);
 		}
 		if (list->email != NULL) {
-			g_string_append_printf(str, "<dd><a href=\"mailto:%s\">%s</a></dd>",
-			                       list->email,
+			g_string_append_printf(str,
+			                       "<dd><a href=\"mailto:%s\" title=\"%s\">%s</a></dd>",
+			                       list->email, list->email,
 			                       _(list->name));
 		} else {
 			g_string_append_printf(str, "<dd>%s</dd>", _(list->name));
@@ -507,24 +509,27 @@ void pidgin_dialogs_about(void)
 	g_string_append_printf(str,
 			_("<h3>Helpful Resources</h3>"
 			  "<ul>"
-			  "<li><a href=\"%s\">Website</a></li>"
-			  "<li><a href=\"%s\">Frequently Asked Questions</a></li>"
+			  "<li><a href=\"%s\" title=\"%s\">Website</a></li>"
+			  "<li><a href=\"%s\" title=\"%s\">Frequently Asked Questions</a></li>"
 			  "<li>IRC Channel: #pidgin on irc.freenode.net</li>"
 			  "<li>XMPP MUC: devel@conference.pidgin.im</li>"
 			  "</ul>"),
-			PURPLE_WEBSITE,
+			PURPLE_WEBSITE, PURPLE_WEBSITE,
+			"http://developer.pidgin.im/wiki/FAQ",
 			"http://developer.pidgin.im/wiki/FAQ");
 
 	g_string_append_printf(str,
 			_("<p><strong>Help from other Pidgin users</strong> is available "
-			  "by e-mailing <a "
-			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a>.<br/>"
+			  "by e-mailing <a href=\"mailto:%s\">%s</a>.<br/>"
 			  "This is a <strong>public</strong> mailing list! "
-			  "(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
+			  "(<a href=\"%s\" title=\"%s\">archive</a>)<br/>"
 			  "We can't help with third-party protocols or plugins!<br/>"
 			  "This list's primary language is <strong>English</strong>.  You "
 			  "are welcome to post in another language, but the responses may "
-			  "be less helpful.</p>"));
+			  "be less helpful.</p>"),
+			"support@pidgin.im", "support@pidgin.im",
+			"http://pidgin.im/pipermail/support/",
+			"http://pidgin.im/pipermail/support/");
 
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	about = pidgin_build_help_dialog(tmp, "about", str);
