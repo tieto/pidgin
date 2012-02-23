@@ -1660,11 +1660,11 @@ proxy_button_clicked_cb(GtkWidget *button, gchar *program)
 
 #ifndef _WIN32
 static void
-browser_button_clicked_cb(GtkWidget *button, gpointer null)
+browser_button_clicked_cb(GtkWidget *button, gchar *path)
 {
 	GError *err = NULL;
 
-	if (g_spawn_command_line_async ("gnome-default-applications-properties", &err))
+	if (g_spawn_command_line_async(path, &err))
 		return;
 
 	purple_notify_error(NULL, NULL, _("Cannot start browser configuration program."), err->message);
@@ -1935,8 +1935,8 @@ browser_page(void)
 
 	vbox = pidgin_make_frame (ret, _("Browser Selection"));
 
-	if(purple_running_gnome()) {
-		gchar *path = g_find_program_in_path("gnome-default-applications-properties");
+	if (purple_running_gnome()) {
+		gchar *path;
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		label = gtk_label_new(_("Browser preferences are configured in GNOME preferences"));
@@ -1946,19 +1946,28 @@ browser_page(void)
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-		if(path == NULL) {
+		path = g_find_program_in_path("gnome-control-center");
+		if (path != NULL) {
+			gchar *tmp = g_strdup_printf("%s info", path);
+			g_free(path);
+			path = tmp;
+		} else {
+			path = g_find_program_in_path("gnome-default-applications-properties");
+		}
+
+		if (path == NULL) {
 			label = gtk_label_new(NULL);
 			gtk_label_set_markup(GTK_LABEL(label),
 								 _("<b>Browser configuration program was not found.</b>"));
 			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		} else {
 			browser_button = gtk_button_new_with_mnemonic(_("Configure _Browser"));
-			g_signal_connect(G_OBJECT(browser_button), "clicked",
-							 G_CALLBACK(browser_button_clicked_cb), NULL);
+			g_signal_connect_data(G_OBJECT(browser_button), "clicked",
+			                      G_CALLBACK(browser_button_clicked_cb), path,
+			                      (GClosureNotify)g_free, 0);
 			gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
 		}
 
-		g_free(path);
 		gtk_widget_show_all(ret);
 	} else {
 		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
