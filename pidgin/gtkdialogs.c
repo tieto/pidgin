@@ -329,13 +329,13 @@ add_developers(GString *str, const struct developer *list)
 {
 	for (; list->name != NULL; list++) {
 		if (list->email != NULL) {
-			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+			g_string_append_printf(str, "<li><a href=\"mailto:%s\">%s</a>%s%s%s</li>",
 			                       list->email, _(list->name),
 			                       list->role ? " (" : "",
 			                       list->role ? _(list->role) : "",
 			                       list->role ? ")" : "");
 		} else {
-			g_string_append_printf(str, "  %s%s%s%s<br/>",
+			g_string_append_printf(str, "<li>%s%s%s%s</li>",
 			                       _(list->name),
 			                       list->role ? " (" : "",
 			                       list->role ? _(list->role) : "",
@@ -737,27 +737,28 @@ void pidgin_dialogs_developers(void)
 	str = g_string_sized_new(4096);
 
 	/* Current Developers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s</h3><ul>",
 						   _("Current Developers"));
 	add_developers(str, developers);
-	g_string_append(str, "<BR/>");
+	g_string_append(str, "</ul>");
 
 	/* Crazy Patch Writers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s</h3><ul>",
 						   _("Crazy Patch Writers"));
 	add_developers(str, patch_writers);
-	g_string_append(str, "<BR/>");
+	g_string_append(str, "</ul>");
 
 	/* Retired Developers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s</h3><ul>",
 						   _("Retired Developers"));
 	add_developers(str, retired_developers);
-	g_string_append(str, "<BR/>");
+	g_string_append(str, "</ul>");
 
 	/* Retired Crazy Patch Writers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+	g_string_append_printf(str, "<h3>%s</h3><ul>",
 						   _("Retired Crazy Patch Writers"));
 	add_developers(str, retired_patch_writers);
+	g_string_append(str, "</ul>");
 
 	tmp = g_strdup_printf(_("%s Developer Information"), PIDGIN_NAME);
 	developer_info = pidgin_build_help_dialog(tmp, "developer_info", str);
