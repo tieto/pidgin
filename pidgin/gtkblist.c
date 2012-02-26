@@ -5871,6 +5871,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	accel_group = gtk_ui_manager_get_accel_group(gtkblist->ui);
 	gtk_window_add_accel_group(GTK_WINDOW(gtkblist->window), accel_group);
+	pidgin_load_accels();
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed", G_CALLBACK(pidgin_save_accels_cb), NULL);
 
 	error = NULL;
 	if (!gtk_ui_manager_add_ui_from_string(gtkblist->ui, blist_menu, -1, &error))
