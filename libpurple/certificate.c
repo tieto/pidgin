@@ -518,6 +518,24 @@ purple_certificate_get_der_data(PurpleCertificate *crt)
 }
 
 gchar *
+purple_certificate_get_display_string(PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	gchar *str;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+
+	scheme = crt->scheme;
+
+	g_return_val_if_fail(scheme->get_display_string, NULL);
+
+	str = (scheme->get_display_string)(crt);
+
+	return str;
+}
+
+gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
 	gchar *path;
@@ -2168,43 +2186,10 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 void
 purple_certificate_display_x509(PurpleCertificate *crt)
 {
-	gchar *sha_asc;
-	GByteArray *sha_bin;
-	gchar *cn;
-	time_t activation, expiration;
-	gchar *activ_str, *expir_str;
 	gchar *secondary;
 
-	/* Pull out the SHA1 checksum */
-	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
-	/* Now decode it for display */
-	sha_asc = purple_base16_encode_chunked(sha_bin->data,
-					       sha_bin->len);
-
-	/* Get the cert Common Name */
-	/* TODO: Will break on CA certs */
-	cn = purple_certificate_get_subject_name(crt);
-
-	/* Get the certificate times */
-	/* TODO: Check the times against localtime */
-	/* TODO: errorcheck? */
-	if (!purple_certificate_get_times(crt, &activation, &expiration)) {
-		purple_debug_error("certificate",
-				   "Failed to get certificate times!\n");
-		activation = expiration = 0;
-	}
-	activ_str = g_strdup(ctime(&activation));
-	expir_str = g_strdup(ctime(&expiration));
-
 	/* Make messages */
-	secondary = g_strdup_printf(_("Common name: %s\n\n"
-								  "Fingerprint (SHA1): %s\n\n"
-								  "Activation date: %s\n"
-								  "Expiration date: %s\n"),
-								cn ? cn : "(null)",
-								sha_asc ? sha_asc : "(null)",
-								activ_str ? activ_str : "(null)",
-								expir_str ? expir_str : "(null)");
+	secondary = purple_certificate_get_display_string(crt);
 
 	/* Make a semi-pretty display */
 	purple_notify_info(
@@ -2214,12 +2199,7 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 		secondary);
 
 	/* Cleanup */
-	g_free(cn);
 	g_free(secondary);
-	g_free(sha_asc);
-	g_free(activ_str);
-	g_free(expir_str);
-	g_byte_array_free(sha_bin, TRUE);
 }
 
 void purple_certificate_add_ca_search_path(const char *path)

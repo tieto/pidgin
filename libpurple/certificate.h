@@ -261,8 +261,16 @@ struct _PurpleCertificateScheme
 	 */
 	GByteArray * (* get_der_data)(PurpleCertificate *crt);
 
+	/**
+	 * Retrieves a string representation of the certificate suitable for display
+	 *
+	 * @param crt   Certificate instance
+	 * @return User-displayable string representation of certificate - must be
+	 *         freed using g_free().
+	 */
+	gchar * (* get_display_string)(PurpleCertificate *crt);
+
 	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
 };
 
 /** A set of operations used to provide logic for verifying a Certificate's
@@ -576,6 +584,17 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
  */
 GByteArray *
 purple_certificate_get_der_data(PurpleCertificate *crt);
+
+/**
+ * Retrieves a string suitable for displaying a certificate to the user.
+ *
+ * @param crt Certificate instance
+ *
+ * @return String representing the certificate that may be displayed to the user
+ *         - must be freed using g_free().
+ */
+char *
+purple_certificate_get_display_string(PurpleCertificate *crt);
 
 /*@}*/
 

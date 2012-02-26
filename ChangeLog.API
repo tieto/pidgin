@@ -9,6 +9,7 @@ version 3.0.0 (??/??/????):
 		* purple_account_set_ui_data
 		* purple_account_register_completed
 		* purple_certificate_get_der_data
+		* purple_certificate_get_display_string
 		* purple_conv_chat_cb_get_alias
 		* purple_conv_chat_cb_get_flags
 		* purple_conv_chat_cb_is_buddy
