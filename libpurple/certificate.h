@@ -834,15 +834,6 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 
 
 /**
- * Displays a window showing X.509 certificate information
- *
- * @param crt    Certificate under an "x509" Scheme
- * @todo Will break on CA certs, as they have no Common Name
- */
-void
-purple_certificate_display_x509(PurpleCertificate *crt);
-
-/**
  * Add a search path for certificates.
  *
  * @param path   Path to search for certificates.

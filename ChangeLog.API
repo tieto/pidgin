@@ -164,6 +164,8 @@ version 3.0.0 (??/??/????):
 		* purple_buddy_icons_set_custom_icon
 		* purple_certificate_check_signature_chain_with_failing. Use
 		  purple_certificate_check_signature_chain, instead
+		* purple_certificate_display_x509. Use purple_request_certificate,
+		  instead
 		* purple_connection_error_reason
 		* purple_connection_new
 		* purple_connection_new_unregister

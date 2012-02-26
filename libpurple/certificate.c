@@ -2092,25 +2092,6 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 /* Scheme-specific functions                                                */
 /****************************************************************************/
 
-void
-purple_certificate_display_x509(PurpleCertificate *crt)
-{
-	gchar *secondary;
-
-	/* Make messages */
-	secondary = purple_certificate_get_display_string(crt);
-
-	/* Make a semi-pretty display */
-	purple_notify_info(
-		NULL,         /* TODO: Find what the handle ought to be */
-		_("Certificate Information"),
-		"",
-		secondary);
-
-	/* Cleanup */
-	g_free(secondary);
-}
-
 void purple_certificate_add_ca_search_path(const char *path)
 {
 	if (g_list_find_custom(x509_ca_paths, path, (GCompareFunc)strcmp))
