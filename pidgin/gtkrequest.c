@@ -1191,6 +1191,29 @@ create_list_field(PurpleRequestField *field)
 	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
 
+static GtkWidget *
+create_certificate_field(PurpleRequestField *field)
+{
+	GtkWidget *cert_label;
+	PurpleCertificate *cert;
+	char *str;
+	char *escaped;
+
+	cert = purple_request_field_certificate_get_value(field);
+	str = purple_certificate_get_display_string(cert);
+	escaped = g_markup_escape_text(str, -1);
+
+	cert_label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(cert_label), escaped);
+	gtk_label_set_line_wrap(GTK_LABEL(cert_label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(cert_label), 0, 0);
+
+	g_free(str);
+	g_free(escaped);
+
+	return cert_label;
+}
+
 static void *
 pidgin_request_fields(const char *title, const char *primary,
 						const char *secondary, PurpleRequestFields *fields,
@@ -1478,6 +1501,8 @@ pidgin_request_fields(const char *title, const char *primary,
 						widget = create_image_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 						widget = create_account_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_CERTIFICATE)
+						widget = create_certificate_field(field);
 					else
 						continue;
 				}
