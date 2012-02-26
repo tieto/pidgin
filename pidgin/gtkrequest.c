@@ -1214,7 +1214,7 @@ create_certificate_field(PurpleRequestField *field)
 	cert = purple_request_field_certificate_get_value(field);
 
 #ifdef ENABLE_GCR
-	der = purple_certificate_get_der_data(crt);
+	der = purple_certificate_get_der_data(cert);
 	g_return_val_if_fail(der, NULL);
 
 	gcrt = gcr_simple_certificate_new(der->data, der->len);
@@ -1225,7 +1225,7 @@ create_certificate_field(PurpleRequestField *field)
 	g_byte_array_free(der, TRUE);
 	g_object_unref(G_OBJECT(gcrt));
 
-	return cert_widget;
+	return GTK_WIDGET(cert_widget);
 #else
 	str = purple_certificate_get_display_string(cert);
 	escaped = g_markup_escape_text(str, -1);
