@@ -204,11 +204,15 @@ realize_toolbar_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkFontSelection *sel;
 
-	sel = GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->fontsel);
-	gtk_widget_hide_all(gtk_widget_get_parent(sel->size_entry));
-	gtk_widget_show_all(sel->family_list);
-	gtk_widget_show(gtk_widget_get_parent(sel->family_list));
-	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(sel->family_list)));
+	sel = GTK_FONT_SELECTION(
+		gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)));
+	gtk_widget_hide(gtk_widget_get_parent(
+		gtk_font_selection_get_size_entry(sel)));
+	gtk_widget_show_all(gtk_font_selection_get_family_list(sel));
+	gtk_widget_show(gtk_widget_get_parent(
+		gtk_font_selection_get_family_list(sel)));
+	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(
+		gtk_font_selection_get_family_list(sel))));
 }
 
 static void
@@ -270,10 +274,12 @@ toggle_font(GtkWidget *font, GtkWebViewToolbar *toolbar)
 
 			g_signal_connect(G_OBJECT(priv->font_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_font), toolbar);
-			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->ok_button), "clicked",
-							 G_CALLBACK(apply_font), toolbar);
-			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)->cancel_button), "clicked",
-							 G_CALLBACK(cancel_toolbar_font), toolbar);
+			g_signal_connect(G_OBJECT(
+				gtk_font_selection_dialog_get_ok_button(GTK_FONT_SELECTION_DIALOG(priv->font_dialog))),
+				"clicked", G_CALLBACK(apply_font), toolbar);
+			g_signal_connect(G_OBJECT(
+				gtk_font_selection_dialog_get_cancel_button(GTK_FONT_SELECTION_DIALOG(priv->font_dialog))),
+				"clicked", G_CALLBACK(cancel_toolbar_font), toolbar);
 			g_signal_connect_after(G_OBJECT(priv->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
@@ -320,7 +326,7 @@ do_fgcolor(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 	char *open_tag;
 
 	dialog = GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog);
-	colorsel = GTK_COLOR_SELECTION(dialog->colorsel);
+	colorsel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog));
 
 	open_tag = g_malloc(30);
 	gtk_color_selection_get_current_color(colorsel, &text_color);
@@ -344,18 +350,24 @@ toggle_fg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 		const char *color = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->fgcolor_dialog) {
+			GtkWidget *ok_button;
+			GtkWidget *cancel_button;
+
 			priv->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-			colorsel = GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->colorsel;
+			colorsel =
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog));
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
 			}
 
+			g_object_get(G_OBJECT(priv->fgcolor_dialog), "ok-button", &ok_button, NULL);
+			g_object_get(G_OBJECT(priv->fgcolor_dialog), "cancel-button", &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(priv->fgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->ok_button), "clicked",
+			g_signal_connect(G_OBJECT(ok_button), "clicked",
 							 G_CALLBACK(do_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog)->cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 		}
 
@@ -406,7 +418,7 @@ do_bgcolor(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 	char *open_tag;
 
 	dialog = GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog);
-	colorsel = GTK_COLOR_SELECTION(dialog->colorsel);
+	colorsel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog));
 
 	open_tag = g_malloc(30);
 	gtk_color_selection_get_current_color(colorsel, &text_color);
@@ -435,18 +447,26 @@ toggle_bg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 		const char *color = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->bgcolor_dialog) {
+			GtkWidget *ok_button;
+			GtkWidget *cancel_button;
+
 			priv->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
-			colorsel = GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->colorsel;
+			colorsel =
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog));
+
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
 			}
 
+			g_object_get(G_OBJECT(priv->bgcolor_dialog), "ok-button", &ok_button, NULL);
+			g_object_get(G_OBJECT(priv->bgcolor_dialog), "cancel-button",
+			             &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(priv->bgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->ok_button), "clicked",
+			g_signal_connect(G_OBJECT(ok_button), "clicked",
 							 G_CALLBACK(do_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog)->cancel_button), "clicked",
+			g_signal_connect(G_OBJECT(cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 		}
 
@@ -838,7 +858,7 @@ static gboolean
 smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event,
                        GtkWebViewToolbar *toolbar)
 {
-	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_Escape) ||
+	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_KEY_Escape) ||
 	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
 	{
 		close_smiley_dialog(toolbar);
@@ -1219,19 +1239,21 @@ menu_position_func(GtkMenu           *menu,
 {
 	GtkWidget *widget = GTK_WIDGET(data);
 	GtkRequisition menu_req;
-	gint ythickness = widget->style->ythickness;
+	GtkAllocation allocation;
+	gint ythickness = gtk_widget_get_style(widget)->ythickness;
 	int savy;
 
+	gtk_widget_get_allocation(widget, &allocation);
 	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
-	gdk_window_get_origin(widget->window, x, y);
-	*x += widget->allocation.x;
-	*y += widget->allocation.y + widget->allocation.height;
+	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
+	*x += allocation.x;
+	*y += allocation.y + allocation.height;
 	savy = *y;
 
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
 	if (savy > *y + ythickness + 1)
-		*y -= widget->allocation.height;
+		*y -= allocation.height;
 }
 
 static gboolean
@@ -1326,10 +1348,10 @@ webviewtoolbar_view_pref_changed(const char *name, PurplePrefType type,
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (value) {
-		gtk_widget_hide_all(priv->lean_view);
+		gtk_widget_hide(priv->lean_view);
 		gtk_widget_show_all(priv->wide_view);
 	} else {
-		gtk_widget_hide_all(priv->wide_view);
+		gtk_widget_hide(priv->wide_view);
 		gtk_widget_show_all(priv->lean_view);
 	}
 }
