@@ -70,8 +70,6 @@ struct _PidginWindow
 		GtkAction *show_formatting_toolbar;
 		GtkAction *show_timestamps;
 
-		GtkWidget *show_icon;
-
 		GtkWidget *send_to;
 
 		GtkWidget *tray;

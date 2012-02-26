@@ -3703,7 +3703,6 @@ setup_menubar(PidginWindow *win)
 	win->menu.show_timestamps =
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/ShowTimestamps");
-	win->menu.show_icon = NULL;
 
 	win->menu.tray = pidgin_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
