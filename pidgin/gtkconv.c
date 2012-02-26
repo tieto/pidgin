@@ -3372,7 +3372,7 @@ regenerate_media_items(PidginWindow *win)
 		gtk_action_set_sensitive(win->video_call,
 				caps & PURPLE_MEDIA_CAPS_VIDEO
 				? TRUE : FALSE);
-		gtk_action_set_sensitive(win->audio_video_call, 
+		gtk_action_set_sensitive(win->audio_video_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 				? TRUE : FALSE);
 	} else if (purple_conversation_get_type(conv)
@@ -3601,6 +3601,9 @@ setup_menubar(PidginWindow *win)
 	win->menu.menubar =
 		gtk_ui_manager_get_widget(win->menu.ui, "/Conversation");
 
+	/* Make sure the 'Conversation -> More' menuitems are regenerated whenever
+	 * the 'Conversation' menu pops up because the entries can change after the
+	 * conversation is created. */
 	menuitem = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/ConversationMenu");
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
 
