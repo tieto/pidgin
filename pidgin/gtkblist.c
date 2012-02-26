@@ -8324,7 +8324,6 @@ pidgin_blist_update_plugin_actions(void)
 	                        NULL);
 	gtk_ui_manager_insert_action_group(gtkblist->ui, plugins_action_group, 1);
 	plugins_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
-purple_debug_info("blist", "The plugins menu is {%s}\n", ui_string);
 
 	g_string_free(plugins_ui, TRUE);
 	g_free(ui_string);
