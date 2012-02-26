@@ -8113,7 +8113,7 @@ pidgin_blist_update_accounts_menu(void)
 
 				submenu = gtk_menu_new();
 				gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
-				gtk_menu_set_accel_path(GTK_MENU(submenu), N_("<main>/AccountsMenu/EnableAccount"));
+				gtk_menu_set_accel_path(GTK_MENU(submenu), "<Actions>/BListActions/EnableAccount");
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 				disabled_accounts = TRUE;
@@ -8168,7 +8168,7 @@ pidgin_blist_update_accounts_menu(void)
 		buf = g_strconcat(purple_account_get_username(account), " (",
 				purple_account_get_protocol_name(account), ")", NULL);
 		menuitem = gtk_image_menu_item_new_with_label(buf);
-		accel_path_buf = g_strconcat(N_("<main>/AccountsMenu/"), buf, NULL);
+		accel_path_buf = g_strconcat("<Actions>/AccountActions/", buf, NULL);
 		g_free(buf);
 
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
