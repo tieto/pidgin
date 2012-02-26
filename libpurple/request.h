@@ -1531,6 +1531,37 @@ void *purple_request_folder(void *handle, const char *title, const char *dirname
 	PurpleAccount *account, const char *who, PurpleConversation *conv,
 	void *user_data);
 
+/**
+ * Prompts the user for action over a certificate.
+ *
+ * This is often represented as a dialog with a button for each action.
+ *
+ * @param handle        The plugin or connection handle.  For some things this
+ *                      is <em>extremely</em> important.  See the comments on
+ *                      purple_request_input().
+ * @param title         The title of the message, or @c NULL if it should have
+ *                      no title.
+ * @param primary       The main point of the message, or @c NULL if you're
+ *                      feeling enigmatic.
+ * @param secondary     Secondary information, or @c NULL if there is none.
+ * @param cert          The #PurpleCertificate associated with this request.
+ * @param ok_text       The text for the @c OK button, which may not be @c NULL.
+ * @param ok_cb         The callback for the @c OK button, which may not be
+ *                      @c NULL.
+ * @param cancel_text   The text for the @c Cancel button, which may not be
+ *                      @c NULL.
+ * @param cancel_cb     The callback for the @c Cancel button, which may be
+ *                      @c NULL.
+ * @param user_data     The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *purple_request_certificate(void *handle, const char *title,
+	const char *primary, const char *secondary, PurpleCertificate *cert,
+	const char *ok_text, GCallback ok_cb,
+	const char *cancel_text, GCallback cancel_cb,
+	void *user_data);
+
 /*@}*/
 
 /**************************************************************************/
