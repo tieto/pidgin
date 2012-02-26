@@ -4549,6 +4549,7 @@ static const char *require_connection[] =
 	"/BList/BuddiesMenu/AddBuddy",
 	"/BList/BuddiesMenu/AddChat",
 	"/BList/BuddiesMenu/AddGroup",
+	"/BList/ToolsMenu/Privacy",
 };
 
 static const int require_connection_size = sizeof(require_connection)
@@ -4582,9 +4583,6 @@ update_menu_bar(PidginBuddyList *gtkblist)
 
 	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/BuddiesMenu/AddChat");
 	gtk_action_set_sensitive(action, pidgin_blist_joinchat_is_showable());
-
-	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/Privacy");
-	gtk_action_set_sensitive(action, sensitive);
 
 	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/RoomList");
 	gtk_action_set_sensitive(action, pidgin_roomlist_is_showable());
