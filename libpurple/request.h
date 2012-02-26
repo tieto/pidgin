@@ -76,7 +76,8 @@ typedef enum
 	PURPLE_REQUEST_FIELD_LIST,
 	PURPLE_REQUEST_FIELD_LABEL,
 	PURPLE_REQUEST_FIELD_IMAGE,
-	PURPLE_REQUEST_FIELD_ACCOUNT
+	PURPLE_REQUEST_FIELD_ACCOUNT,
+	PURPLE_REQUEST_FIELD_CERTIFICATE
 
 } PurpleRequestFieldType;
 
@@ -1165,6 +1166,36 @@ gboolean purple_request_field_account_get_show_all(
  * @return The account filter function.
  */
 PurpleFilterAccountFunc purple_request_field_account_get_filter(
+		const PurpleRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Certificate Field API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a certificate field.
+ *
+ * @param id   The field ID.
+ * @param text The label of the field.
+ * @param cert The certificate of the field.
+ *
+ * @return The new field.
+ */
+PurpleRequestField *purple_request_field_certificate_new(const char *id,
+														 const char *text,
+														 PurpleCertificate *cert);
+
+/**
+ * Returns the certificate in a certificate field.
+ *
+ * @param field The field.
+ *
+ * @return The certificate.
+ */
+PurpleCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
 
 /*@}*/

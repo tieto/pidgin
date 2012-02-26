@@ -119,6 +119,11 @@ struct _PurpleRequestField
 			gsize size;
 		} image;
 
+		struct
+		{
+			PurpleCertificate *cert;
+		} certificate;
+
 	} u;
 
 	void *ui_data;
@@ -1327,6 +1332,31 @@ purple_request_field_account_get_filter(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, FALSE);
 
 	return field->u.account.filter_func;
+}
+
+PurpleRequestField *
+purple_request_field_certificate_new(const char *id, const char *text, PurpleCertificate *cert)
+{
+	PurpleRequestField *field;
+
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
+	g_return_val_if_fail(cert != NULL, NULL);
+
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_CERTIFICATE);
+
+	field->u.certificate.cert = cert;
+
+	return field;
+}
+
+PurpleCertificate *
+purple_request_field_certificate_get_value(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CERTIFICATE, NULL);
+
+	return field->u.certificate.cert;
 }
 
 /* -- */
