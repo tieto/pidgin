@@ -235,7 +235,7 @@ type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);
-	gtk_widget_hide_all(dialog->button_box);
+	gtk_widget_hide(dialog->button_box);
 
 	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
@@ -363,12 +363,12 @@ privacy_dialog_new(void)
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
-	dialog->type_menu = gtk_combo_box_new_text();
+	dialog->type_menu = gtk_combo_box_text_new();
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->type_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->type_menu);
 
 	for (i = 0; i < menu_entry_count; i++) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(dialog->type_menu),
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(dialog->type_menu),
 		                          _(menu_entries[i].text));
 
 		if (menu_entries[i].num == purple_account_get_privacy_type(dialog->account))
@@ -434,7 +434,7 @@ pidgin_privacy_dialog_show(void)
 		privacy_dialog = privacy_dialog_new();
 
 	gtk_widget_show(privacy_dialog->win);
-	gdk_window_raise(privacy_dialog->win->window);
+	gdk_window_raise(gtk_widget_get_window(privacy_dialog->win));
 }
 
 void

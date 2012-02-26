@@ -266,11 +266,7 @@ smooth_scroll_cb(gpointer data)
 	g_return_val_if_fail(priv->scroll_time != NULL, FALSE);
 
 	adj = priv->vadj;
-#if GTK_CHECK_VERSION(2,14,0)
 	max_val = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
-#else
-	max_val = adj->upper - adj->page_size;
-#endif
 	scroll_val = gtk_adjustment_get_value(adj) +
 	             ((max_val - gtk_adjustment_get_value(adj)) / 3);
 
@@ -298,11 +294,7 @@ scroll_idle_cb(gpointer data)
 	gdouble max_val;
 
 	if (adj) {
-#if GTK_CHECK_VERSION(2,14,0)
 		max_val = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
-#else
-		max_val = adj->upper - adj->page_size;
-#endif
 		gtk_adjustment_set_value(adj, max_val);
 	}
 

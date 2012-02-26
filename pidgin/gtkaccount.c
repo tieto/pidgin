@@ -166,6 +166,42 @@ static void add_protocol_options(AccountPrefsDialog *dialog);
 static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_voice_options(AccountPrefsDialog *dialog);
 
+static const char *
+xmpp_default_domain_hackery(GtkWidget *protocol_combo)
+{
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	const char *value = NULL;
+
+	model = gtk_combo_box_get_model(GTK_COMBO_BOX(protocol_combo));
+	if (model != NULL && gtk_combo_box_get_active_iter(GTK_COMBO_BOX(protocol_combo), &iter)) {
+		char *protocol = NULL;
+
+		/* protocol is not stored as G_TYPE_STRING in the model so no g_free necessary */
+		gtk_tree_model_get(model, &iter, 2, &protocol, -1);
+		if (protocol && !strcmp("prpl-jabber", protocol)) {
+			char *item_name = NULL;
+
+			gtk_tree_model_get(model, &iter, 1, &item_name, -1);
+			if (item_name) {
+				if (!strcmp(item_name, _("Google Talk")))
+					value = "gmail.com";
+				g_free(item_name);
+			}
+			if (item_name) {
+				if (!strcmp(item_name, _("Facebook")))
+					value = "chat.facebook.com";
+				g_free(item_name);
+			}
+			/* If it's not GTalk, but still Jabber then the value is not NULL, it's empty */
+			if (NULL == value)
+				value = "";
+		}
+	}
+
+	return value;
+}
+
 static GtkWidget *
 add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 			 const char *text, GtkWidget *widget)
@@ -220,7 +256,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 }
 
 static void
-set_account_protocol_cb(GtkWidget *item, const char *id,
+set_account_protocol_cb(GtkWidget *widget, const char *id,
 						AccountPrefsDialog *dialog)
 {
 	PurplePlugin *new_plugin;
@@ -247,8 +283,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user ||
-	    g_object_get_data(G_OBJECT(item), "fake")) {
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user) {
 		gtk_widget_hide(dialog->register_button);
 	} else {
 		if (dialog->prpl_info != NULL &&
@@ -355,9 +390,11 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	gchar *name = (gchar *)sd->data;
+	const gchar *name = (gchar *) gtk_selection_data_get_data(sd);
+	gint length = gtk_selection_data_get_length(sd);
+	gint format = gtk_selection_data_get_format(sd);
 
-	if ((sd->length >= 0) && (sd->format == 8)) {
+	if (length >= 0 && format == 8) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -424,8 +461,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
-	GtkWidget *menu;
-	GtkWidget *item;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
@@ -564,15 +599,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			value = purple_account_user_split_get_default_value(split);
 
 		/* Google Talk default domain hackery! */
-		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-		item = gtk_menu_get_active(GTK_MENU(menu));
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakegoogle") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
-			value = "gmail.com";
-
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakefacebook") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
-			value = "chat.facebook.com";
+		if (!strcmp(_("Domain"), purple_account_user_split_get_text(split)) && !value)
+			value = xmpp_default_domain_hackery(dialog->protocol_menu);
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -808,8 +836,11 @@ add_protocol_options(AccountPrefsDialog *dialog)
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
 
+/* FIXME: Facebook forced-options hack */
+#if 0
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
+#endif
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
@@ -925,9 +956,12 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				opt_entry->widget = combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
 
+/* FIXME: Facebook forced-options hack */
+#if 0
 				if (g_object_get_data(G_OBJECT(item), "fakefacebook") &&
 					!strcmp(opt_entry->setting, "connection_security"))
 					str_value = "opportunistic_tls";
+#endif
 
 				/* Loop through list of PurpleKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {
@@ -1055,7 +1089,7 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
 		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
-		gtk_widget_hide_all(dialog->proxy_vbox);
+		gtk_widget_hide(dialog->proxy_vbox);
 	}
 	else
 		gtk_widget_show_all(dialog->proxy_vbox);
@@ -1758,7 +1792,9 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
+	GdkAtom target = gtk_selection_data_get_target(data);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
@@ -1829,13 +1865,16 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && data) {
 		gint dest_index;
 		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
-		memcpy(&a, sd->data, sizeof(a));
+		memcpy(&a, data, sizeof(a));
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
 											  &path, &position)) {
@@ -2725,5 +2764,3 @@ pidgin_account_uninit(void)
 	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
-
-

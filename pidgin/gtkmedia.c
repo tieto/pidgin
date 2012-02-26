@@ -561,7 +561,7 @@ realize_cb_cb(PidginMediaRealizeData *data)
 #ifdef _WIN32
 		window_id = GDK_WINDOW_HWND(window);
 #elif defined(HAVE_X11)
-		window_id = GDK_WINDOW_XWINDOW(window);
+		window_id = gdk_x11_window_get_xid(window);
 #elif defined(GDK_WINDOWING_QUARTZ)
 		window_id = (gulong) gdk_quartz_window_get_nsview(window);
 #else
