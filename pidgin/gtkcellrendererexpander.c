@@ -250,8 +250,13 @@ static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 		state = GTK_STATE_INSENSITIVE;
 	else if (flags & GTK_CELL_RENDERER_PRELIT)
 		state = GTK_STATE_PRELIGHT;
+#if GTK_CHECK_VERSION(2,18,0)
+	else if (gtk_widget_has_focus (widget) && flags & GTK_CELL_RENDERER_SELECTED)
+		state = GTK_STATE_ACTIVE;
+#else
 	else if (GTK_WIDGET_HAS_FOCUS (widget) && flags & GTK_CELL_RENDERER_SELECTED)
 		state = GTK_STATE_ACTIVE;
+#endif
 	else
 		state = GTK_STATE_NORMAL;
 

@@ -466,7 +466,11 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
 
+#if GTK_CHECK_VERSION(2,18,0)
+	gtk_widget_set_can_default(button, TRUE);
+#else
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+#endif
 	gtk_widget_grab_default(button);
 
 	gtk_widget_show_all(win);
@@ -972,7 +976,9 @@ pidgin_dialogs_ee(const char *ee)
 
 	gtk_container_set_border_width (GTK_CONTAINER(window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BOX_SPACE);
 
