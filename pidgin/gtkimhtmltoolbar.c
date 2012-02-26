@@ -348,7 +348,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 			colorsel =
-				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog));
 
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
