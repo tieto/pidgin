@@ -680,77 +680,62 @@ purple_certificate_pool_destroy_idlist(GList *idlist)
 /****************************************************************************/
 
 static void
-x509_singleuse_verify_cb (PurpleCertificateVerificationRequest *vrq, gint id)
+x509_singleuse_verify_accept_cb(PurpleCertificateVerificationRequest *vrq)
 {
 	g_return_if_fail(vrq);
 
 	purple_debug_info("certificate/x509_singleuse",
-			  "VRQ on cert from %s gave %d\n",
-			  vrq->subject_name, id);
+			  "VRQ on cert from %s accepted\n",
+			  vrq->subject_name);
 
-	/* Signal what happened back to the caller */
-	if (1 == id) {
-		/* Accepted! */
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_VALID);
-	} else {
-		/* Not accepted */
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
+}
 
-	}
+static void
+x509_singleuse_verify_reject_cb(PurpleCertificateVerificationRequest *vrq)
+{
+	g_return_if_fail(vrq);
+
+	purple_debug_info("certificate/x509_singleuse",
+			  "VRQ on cert from %s rejected\n",
+			  vrq->subject_name);
+
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
 }
 
 static void
 x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 {
-	gchar *sha_asc;
-	GByteArray *sha_bin;
 	gchar *cn;
 	const gchar *cn_match;
 	gchar *primary, *secondary;
-	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
+	PurpleCertificate *crt = (PurpleCertificate *)vrq->cert_chain->data;
 
-	/* Pull out the SHA1 checksum */
-	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
-	/* Now decode it for display */
-	sha_asc = purple_base16_encode_chunked(sha_bin->data,
-					       sha_bin->len);
-
-	/* Get the cert Common Name */
 	cn = purple_certificate_get_subject_name(crt);
 
-	/* Determine whether the name matches */
 	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
-		cn_match = "";
+		cn_match = _("(MATCH)");
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
 
-	/* Make messages */
 	primary = g_strdup_printf(_("%s has presented the following certificate for just-this-once use:"), vrq->subject_name);
-	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
+	secondary = g_strdup_printf(_("Common name: %s %s"), cn, cn_match);
 
 	/* Make a semi-pretty display */
-	purple_request_accept_cancel(
+	purple_request_certificate(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("Single-use Certificate Verification"),
 		primary,
 		secondary,
-		0,            /* Accept by default */
-		NULL,         /* No account */
-		NULL,         /* No other user */
-		NULL,         /* No associated conversation */
-		vrq,
-		x509_singleuse_verify_cb,
-		x509_singleuse_verify_cb );
+		crt,
+		_("Accept"), G_CALLBACK(x509_singleuse_verify_accept_cb),
+		_("Reject"), G_CALLBACK(x509_singleuse_verify_reject_cb),
+		vrq);
 
-	/* Cleanup */
 	g_free(cn);
 	g_free(primary);
 	g_free(secondary);
-	g_free(sha_asc);
-	g_byte_array_free(sha_bin, TRUE);
 }
 
 static void
@@ -1307,102 +1292,34 @@ static PurpleCertificatePool x509_tls_peers = {
 static PurpleCertificateVerifier x509_tls_cached;
 
 
-/* The following is several hacks piled together and needs to be fixed.
- * It exists because show_cert (see its comments) needs the original reason
- * given to user_auth in order to rebuild the dialog.
- */
-/* TODO: This will cause a ua_ctx to become memleaked if the request(s) get
-   closed by handle or otherwise abnormally. */
-typedef struct {
-	PurpleCertificateVerificationRequest *vrq;
-	gchar *reason;
-} x509_tls_cached_ua_ctx;
-
-static x509_tls_cached_ua_ctx *
-x509_tls_cached_ua_ctx_new(PurpleCertificateVerificationRequest *vrq,
-			   const gchar *reason)
-{
-	x509_tls_cached_ua_ctx *c;
-
-	c = g_new0(x509_tls_cached_ua_ctx, 1);
-	c->vrq = vrq;
-	c->reason = g_strdup(reason);
-
-	return c;
-}
-
-
 static void
-x509_tls_cached_ua_ctx_free(x509_tls_cached_ua_ctx *c)
+x509_tls_cached_user_auth_accept_cb(PurpleCertificateVerificationRequest *vrq)
 {
-	g_return_if_fail(c);
-	g_free(c->reason);
-	g_free(c);
-}
-
-static void
-x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
-			  const gchar *reason);
-
-static void
-x509_tls_cached_show_cert(x509_tls_cached_ua_ctx *c, gint id)
-{
-	PurpleCertificate *disp_crt = c->vrq->cert_chain->data;
-
-	/* Since clicking a button closes the request, show it again */
-	x509_tls_cached_user_auth(c->vrq, c->reason);
-
-	/* Show the certificate AFTER re-opening the dialog so that this
-	   appears above the other */
-	purple_certificate_display_x509(disp_crt);
-
-	x509_tls_cached_ua_ctx_free(c);
-}
-
-static void
-x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
-{
-	PurpleCertificateVerificationRequest *vrq;
 	PurpleCertificatePool *tls_peers;
+	gchar *cache_id;
 
-	g_return_if_fail(c);
-	g_return_if_fail(c->vrq);
+	g_return_if_fail(vrq);
 
-	vrq = c->vrq;
+	tls_peers = purple_certificate_find_pool("x509", "tls_peers");
 
-	x509_tls_cached_ua_ctx_free(c);
-
-	tls_peers = purple_certificate_find_pool("x509","tls_peers");
-
-	if (2 == id) {
-		gchar *cache_id = vrq->subject_name;
-		purple_debug_info("certificate/x509/tls_cached",
+	cache_id = vrq->subject_name;
+	purple_debug_info("certificate/x509/tls_cached",
 				  "User ACCEPTED cert\nCaching first in chain for future use as %s...\n",
 				  cache_id);
 
-		purple_certificate_pool_store(tls_peers, cache_id,
-					      vrq->cert_chain->data);
+	purple_certificate_pool_store(tls_peers, cache_id, vrq->cert_chain->data);
 
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_VALID);
-	} else {
-		purple_debug_warning("certificate/x509/tls_cached",
-				  "User REJECTED cert\n");
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
-	}
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
 }
 
 static void
-x509_tls_cached_user_auth_accept_cb(x509_tls_cached_ua_ctx *c, gint ignore)
+x509_tls_cached_user_auth_reject_cb(PurpleCertificateVerificationRequest *vrq)
 {
-	x509_tls_cached_user_auth_cb(c, 2);
-}
+	g_return_if_fail(vrq);
 
-static void
-x509_tls_cached_user_auth_reject_cb(x509_tls_cached_ua_ctx *c, gint ignore)
-{
-	x509_tls_cached_user_auth_cb(c, 1);
+	purple_debug_warning("certificate/x509/tls_cached", "User REJECTED cert\n");
+
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
 }
 
 /** Validates a certificate by asking the user
@@ -1416,27 +1333,19 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 {
 	gchar *primary;
 
-	/* Make messages */
 	primary = g_strdup_printf(_("Accept certificate for %s?"),
 				  vrq->subject_name);
 
-	/* Make a semi-pretty display */
-	purple_request_action(
+	purple_request_certificate(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("SSL Certificate Verification"),
 		primary,
 		reason,
-		0,            /* Accept by default */
-		NULL,         /* No account */
-		NULL,         /* No other user */
-		NULL,         /* No associated conversation */
-		x509_tls_cached_ua_ctx_new(vrq, reason),
-		3,            /* Number of actions */
-		_("Accept"), x509_tls_cached_user_auth_accept_cb,
-		_("Reject"),  x509_tls_cached_user_auth_reject_cb,
-		_("_View Certificate..."), x509_tls_cached_show_cert);
+		vrq->cert_chain->data,
+		_("Accept"), G_CALLBACK(x509_tls_cached_user_auth_accept_cb),
+		_("Reject"), G_CALLBACK(x509_tls_cached_user_auth_reject_cb),
+		vrq);
 
-	/* Cleanup */
 	g_free(primary);
 }
 
