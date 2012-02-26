@@ -39,6 +39,12 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#ifdef ENABLE_GCR
+#define GCR_API_SUBJECT_TO_CHANGE
+#include <gcr/gcr.h>
+#include <gcr/gcr-simple-certificate.h>
+#endif
+
 static GtkWidget * create_account_field(PurpleRequestField *field);
 
 typedef struct
@@ -1194,12 +1200,33 @@ create_list_field(PurpleRequestField *field)
 static GtkWidget *
 create_certificate_field(PurpleRequestField *field)
 {
-	GtkWidget *cert_label;
 	PurpleCertificate *cert;
+#ifdef ENABLE_GCR
+	GcrCertificateBasicsWidget *cert_widget;
+	GByteArray *der;
+	GcrCertificate *gcrt;
+#else
+	GtkWidget *cert_label;
 	char *str;
 	char *escaped;
+#endif
 
 	cert = purple_request_field_certificate_get_value(field);
+
+#ifdef ENABLE_GCR
+	der = purple_certificate_get_der_data(crt);
+	g_return_val_if_fail(der, NULL);
+
+	gcrt = gcr_simple_certificate_new(der->data, der->len);
+	g_return_val_if_fail(gcrt, NULL);
+
+	cert_widget = gcr_certificate_basics_widget_new(gcrt);
+
+	g_byte_array_free(der, TRUE);
+	g_object_unref(G_OBJECT(gcrt));
+
+	return cert_widget;
+#else
 	str = purple_certificate_get_display_string(cert);
 	escaped = g_markup_escape_text(str, -1);
 
@@ -1212,6 +1239,7 @@ create_certificate_field(PurpleRequestField *field)
 	g_free(escaped);
 
 	return cert_label;
+#endif
 }
 
 static void *
