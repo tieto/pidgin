@@ -42,7 +42,6 @@
 #ifdef ENABLE_GCR
 #define GCR_API_SUBJECT_TO_CHANGE
 #include <gcr/gcr.h>
-#include <gcr/gcr-simple-certificate.h>
 #endif
 
 static GtkWidget * create_account_field(PurpleRequestField *field);
