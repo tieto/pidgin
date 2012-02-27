@@ -314,6 +314,7 @@ static void
 webview_clear_formatting(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
 
 	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
 		return;
@@ -335,6 +336,9 @@ webview_clear_formatting(GtkWebView *webview)
 
 	g_free(priv->edit.background);
 	priv->edit.background = NULL;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	webkit_dom_document_exec_command(dom, "removeFormat", FALSE, "");
 }
 
 static void
