@@ -242,7 +242,7 @@ void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
  *
  * @return A string containing the font face or @c NULL if none is set.
  */
-const char *gtk_webview_get_current_fontface(GtkWebView *webview);
+char *gtk_webview_get_current_fontface(GtkWebView *webview);
 
 /**
  * Returns a string containing the selected foreground color at the current
@@ -252,7 +252,7 @@ const char *gtk_webview_get_current_fontface(GtkWebView *webview);
  *
  * @return A string containing the foreground color or @c NULL if none is set.
  */
-const char *gtk_webview_get_current_forecolor(GtkWebView *webview);
+char *gtk_webview_get_current_forecolor(GtkWebView *webview);
 
 /**
  * Returns a string containing the selected font background color at the current
@@ -262,7 +262,7 @@ const char *gtk_webview_get_current_forecolor(GtkWebView *webview);
  *
  * @return A string containing the background color or @c NULL if none is set.
  */
-const char *gtk_webview_get_current_backcolor(GtkWebView *webview);
+char *gtk_webview_get_current_backcolor(GtkWebView *webview);
 
 /**
  * Returns a string containing the selected background color at the current
@@ -272,7 +272,7 @@ const char *gtk_webview_get_current_backcolor(GtkWebView *webview);
  *
  * @return A string containg the background color or @c NULL if none is set.
  */
-const char *gtk_webview_get_current_background(GtkWebView *webview);
+char *gtk_webview_get_current_background(GtkWebView *webview);
 
 /**
  * Returns a integer containing the selected HTML font size at the current

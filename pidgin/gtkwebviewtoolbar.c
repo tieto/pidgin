@@ -253,7 +253,7 @@ toggle_font(GtkWidget *font, GtkWebViewToolbar *toolbar)
 	priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(font))) {
-		const char *fontname = gtk_webview_get_current_fontface(GTK_WEBVIEW(toolbar->webview));
+		char *fontname = gtk_webview_get_current_fontface(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->font_dialog) {
 			priv->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
@@ -279,6 +279,8 @@ toggle_font(GtkWidget *font, GtkWebViewToolbar *toolbar)
 		}
 
 		gtk_window_present(GTK_WINDOW(priv->font_dialog));
+
+		g_free(fontname);
 	} else {
 		cancel_toolbar_font(font, toolbar);
 	}
@@ -341,7 +343,7 @@ toggle_fg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor fgcolor;
-		const char *color = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
+		char *color = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->fgcolor_dialog) {
 			priv->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
@@ -360,6 +362,8 @@ toggle_fg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 		}
 
 		gtk_window_present(GTK_WINDOW(priv->fgcolor_dialog));
+
+		g_free(color);
 	} else {
 		cancel_toolbar_fgcolor(color, toolbar);
 	}
@@ -432,7 +436,7 @@ toggle_bg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor bgcolor;
-		const char *color = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
+		char *color = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->bgcolor_dialog) {
 			priv->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
@@ -451,6 +455,8 @@ toggle_bg_color(GtkWidget *color, GtkWebViewToolbar *toolbar)
 		}
 
 		gtk_window_present(GTK_WINDOW(priv->bgcolor_dialog));
+
+		g_free(color);
 	} else {
 		cancel_toolbar_bgcolor(color, toolbar);
 	}
@@ -1098,8 +1104,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	gboolean bold, italic, underline, strike;
-	const char *tmp;
-	const char *tmp2;
+	char *tmp, *tmp2;
 	GtkLabel *label = GTK_LABEL(priv->font_label);
 
 	gtk_label_set_label(label, _("_Font"));
@@ -1158,6 +1163,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 		gtk_label_set_markup_with_mnemonic(label, markup);
 		g_free(markup);
 	}
+	g_free(tmp);
 
 	tmp = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->fgcolor),
@@ -1168,6 +1174,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 		gtk_label_set_markup_with_mnemonic(label, markup);
 		g_free(markup);
 	}
+	g_free(tmp);
 
 	tmp = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
 	tmp2 = gtk_webview_get_current_background(GTK_WEBVIEW(toolbar->webview));
@@ -1179,6 +1186,8 @@ update_buttons(GtkWebViewToolbar *toolbar)
 		gtk_label_set_markup_with_mnemonic(label, markup);
 		g_free(markup);
 	}
+	g_free(tmp);
+	g_free(tmp2);
 }
 
 static void
