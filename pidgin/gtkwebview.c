@@ -68,7 +68,6 @@ typedef struct _GtkWebViewPriv {
 	GtkWebViewButtons format_functions;
 	struct {
 		gboolean wbfo:1;	/* Whole buffer formatting only. */
-		gchar *background;
 	} edit;
 
 } GtkWebViewPriv;
@@ -304,14 +303,10 @@ scroll_idle_cb(gpointer data)
 static void
 webview_clear_formatting(GtkWebView *webview)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	WebKitDOMDocument *dom;
 
 	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
 		return;
-
-	g_free(priv->edit.background);
-	priv->edit.background = NULL;
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	webkit_dom_document_exec_command(dom, "removeFormat", FALSE, "");
@@ -709,7 +704,7 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 		} else
 			strcpy(color, "");
 
-		gtk_webview_toggle_background(webview, color);
+		gtk_webview_toggle_backcolor(webview, color);
 
 		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
 			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
@@ -795,13 +790,6 @@ gtk_webview_get_current_backcolor(GtkWebView *webview)
 	WebKitDOMDocument *dom;
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	return webkit_dom_document_query_command_value(dom, "backColor");
-}
-
-char *
-gtk_webview_get_current_background(GtkWebView *webview)
-{
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	return g_strdup(priv->edit.background);
 }
 
 gint
@@ -892,17 +880,6 @@ gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	webkit_dom_document_exec_command(dom, "backColor", FALSE, color);
-
-	return FALSE;
-}
-
-gboolean
-gtk_webview_toggle_background(GtkWebView *webview, const char *color)
-{
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-
-	g_free(priv->edit.background);
-	priv->edit.background = g_strdup(color);
 
 	return FALSE;
 }

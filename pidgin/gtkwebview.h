@@ -48,14 +48,13 @@ typedef enum {
 	GTK_WEBVIEW_FACE          = 1 << 5,
 	GTK_WEBVIEW_FORECOLOR     = 1 << 6,
 	GTK_WEBVIEW_BACKCOLOR     = 1 << 7,
-	GTK_WEBVIEW_BACKGROUND    = 1 << 8,
-	GTK_WEBVIEW_LINK          = 1 << 9,
-	GTK_WEBVIEW_IMAGE         = 1 << 10,
-	GTK_WEBVIEW_SMILEY        = 1 << 11,
-	GTK_WEBVIEW_LINKDESC      = 1 << 12,
-	GTK_WEBVIEW_STRIKE        = 1 << 13,
+	GTK_WEBVIEW_LINK          = 1 << 8,
+	GTK_WEBVIEW_IMAGE         = 1 << 9,
+	GTK_WEBVIEW_SMILEY        = 1 << 10,
+	GTK_WEBVIEW_LINKDESC      = 1 << 11,
+	GTK_WEBVIEW_STRIKE        = 1 << 12,
 	/** Show custom smileys when appropriate. */
-	GTK_WEBVIEW_CUSTOM_SMILEY = 1 << 14,
+	GTK_WEBVIEW_CUSTOM_SMILEY = 1 << 13,
 	GTK_WEBVIEW_ALL           = -1
 } GtkWebViewButtons;
 
@@ -265,16 +264,6 @@ char *gtk_webview_get_current_forecolor(GtkWebView *webview);
 char *gtk_webview_get_current_backcolor(GtkWebView *webview);
 
 /**
- * Returns a string containing the selected background color at the current
- * position in a GtkWebView.
- *
- * @param webview The GtkWebView
- *
- * @return A string containg the background color or @c NULL if none is set.
- */
-char *gtk_webview_get_current_background(GtkWebView *webview);
-
-/**
  * Returns a integer containing the selected HTML font size at the current
  * position in a GtkWebView.
  *
@@ -349,17 +338,6 @@ gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
  * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color);
-
-/**
- * Toggles a background color at the current location or selection in a 
- * GtkWebView.
- *
- * @param webview The GtkWebView
- * @param color  The HTML-style color, or @c NULL or "" to clear the color.
- *
- * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
- */
-gboolean gtk_webview_toggle_background(GtkWebView *webview, const char *color);
 
 /**
  * Toggles a font face at the current location or selection in a GtkWebView.

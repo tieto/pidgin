@@ -377,12 +377,7 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (widget != NULL) {
-#if 0
-		if (gtk_text_buffer_get_selection_bounds(GTK_WEBVIEW(toolbar->webview)->text_buffer, NULL, NULL))
-			gtk_webview_toggle_backcolor(GTK_WEBVIEW(toolbar->webview), "");
-		else
-#endif
-			gtk_webview_toggle_background(GTK_WEBVIEW(toolbar->webview), "");
+		gtk_webview_toggle_backcolor(GTK_WEBVIEW(toolbar->webview), "");
 	}
 
 	if (priv->bgcolor_dialog != NULL)
@@ -418,12 +413,7 @@ do_bgcolor(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-#if 0
-	if (gtk_text_buffer_get_selection_bounds(GTK_WEBVIEW(toolbar->webview)->text_buffer, NULL, NULL))
-		gtk_webview_toggle_backcolor(GTK_WEBVIEW(toolbar->webview), open_tag);
-	else
-#endif
-		gtk_webview_toggle_background(GTK_WEBVIEW(toolbar->webview), open_tag);
+	gtk_webview_toggle_backcolor(GTK_WEBVIEW(toolbar->webview), open_tag);
 	g_free(open_tag);
 
 	cancel_toolbar_bgcolor(NULL, toolbar);
@@ -1104,7 +1094,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	gboolean bold, italic, underline, strike;
-	char *tmp, *tmp2;
+	char *tmp;
 	GtkLabel *label = GTK_LABEL(priv->font_label);
 
 	gtk_label_set_label(label, _("_Font"));
@@ -1177,9 +1167,8 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	g_free(tmp);
 
 	tmp = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
-	tmp2 = gtk_webview_get_current_background(GTK_WEBVIEW(toolbar->webview));
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(priv->bgcolor),
-								   (tmp != NULL || tmp2 != NULL), toolbar);
+								   (tmp != NULL), toolbar);
 	if (tmp != NULL) {
 		gchar *markup = g_strdup_printf("<span background=\"%s\">%s</span>",
 				tmp, gtk_label_get_label(label));
@@ -1187,7 +1176,6 @@ update_buttons(GtkWebViewToolbar *toolbar)
 		g_free(markup);
 	}
 	g_free(tmp);
-	g_free(tmp2);
 }
 
 static void
