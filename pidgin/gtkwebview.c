@@ -910,7 +910,6 @@ gtk_webview_font_set_size(GtkWebView *webview, gint size)
 void
 gtk_webview_font_shrink(GtkWebView *webview)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	WebKitDOMDocument *dom;
 	gint fontsize;
 	char *tmp;
@@ -927,7 +926,6 @@ gtk_webview_font_shrink(GtkWebView *webview)
 void
 gtk_webview_font_grow(GtkWebView *webview)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	WebKitDOMDocument *dom;
 	gint fontsize;
 	char *tmp;
