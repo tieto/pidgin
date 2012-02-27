@@ -238,8 +238,12 @@ plugin_load(PurplePlugin *plugin)
 	 *       between old libpurple clients and new libpurple clients.
 	 *                                             --Mark Doliner, 2011-01-03
 	 */
-	if(purple_prefs_get_bool(PREF_STRANGER_OLD))
-		purple_prefs_set_int(PREF_STRANGER, FT_REJECT);
+	if (!purple_prefs_exists(PREF_STRANGER)) {
+		if (purple_prefs_get_bool(PREF_STRANGER_OLD))
+			purple_prefs_add_int(PREF_STRANGER, FT_REJECT);
+		else
+			purple_prefs_set_int(PREF_STRANGER, FT_ASK);
+	}
 
 	purple_signal_connect(purple_xfers_get_handle(), "file-recv-request", plugin,
 						PURPLE_CALLBACK(file_recv_request_cb), plugin);
@@ -345,7 +349,6 @@ init_plugin(PurplePlugin *plugin) {
 	dirname = g_build_filename(purple_user_dir(), "autoaccept", NULL);
 	purple_prefs_add_none(PREF_PREFIX);
 	purple_prefs_add_string(PREF_PATH, dirname);
-	purple_prefs_add_int(PREF_STRANGER, FT_ASK);
 	purple_prefs_add_bool(PREF_NOTIFY, TRUE);
 	purple_prefs_add_bool(PREF_NEWDIR, TRUE);
 	purple_prefs_add_bool(PREF_ESCAPE, TRUE);
