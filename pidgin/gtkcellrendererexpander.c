@@ -257,7 +257,7 @@ static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	width = cell_area->width;
 	height = cell_area->height;
 
-	if (!gtk_widget_get_sensitive(GTK_WIDGET(cell)))
+	if (!gtk_widget_get_sensitive(widget))
 		state = GTK_STATE_INSENSITIVE;
 	else if (flags & GTK_CELL_RENDERER_PRELIT)
 		state = GTK_STATE_PRELIGHT;
