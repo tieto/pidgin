@@ -68,10 +68,6 @@ void
 purple_certificate_destroy(crt)
 	Purple::Certificate crt
 
-void
-purple_certificate_display_x509(crt)
-	Purple::Certificate crt
-
 ## changed order of arguments, so that $cert->export($file) could be used
 gboolean
 purple_certificate_export(crt, filename)
