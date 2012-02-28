@@ -92,9 +92,6 @@ pidgin_menu_tray_map(GtkWidget *widget)
 static void
 pidgin_menu_tray_finalize(GObject *obj)
 {
-#if !GTK_CHECK_VERSION(2,12,0)
-	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
-#endif
 #if 0
 	/* This _might_ be leaking, but I have a sneaking suspicion that the widget is
 	 * getting destroyed in GtkContainer's finalize function.  But if were are
@@ -104,12 +101,6 @@ pidgin_menu_tray_finalize(GObject *obj)
 
 	if(GTK_IS_WIDGET(tray->tray))
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
-#endif
-
-#if !GTK_CHECK_VERSION(2,12,0)
-	if (tray->tooltips) {
-		gtk_object_sink(GTK_OBJECT(tray->tooltips));
-	}
 #endif
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);

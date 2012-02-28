@@ -95,7 +95,7 @@ static const GtkStockItem stock_items[] =
 
 typedef struct {
 	const char *name;
-	const char *dir;
+ 	const char *dir;
 	const char *filename;
 	gboolean microscopic;
 	gboolean extra_small;

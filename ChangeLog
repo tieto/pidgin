@@ -74,6 +74,10 @@ version 2.10.2 (02/22/2012):
 	Windows-Specific Changes:
 	* Fix compilation of the Bonjour protocol plugin. (#14802)
 
+	Plugins:
+	* The autoaccept plugin will no longer reset the preference for unknown
+	  buddies to "Auto Reject" in certain cases. (#14964)
+
 version 2.10.1 (12/06/2011):
 	Finch:
 	* Fix compilation on OpenBSD.

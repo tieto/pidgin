@@ -124,8 +124,7 @@ typedef struct
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
-static guint accounts_merge_id;
-static GtkActionGroup *accounts_action_group = NULL;
+static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
 static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
@@ -2940,6 +2939,7 @@ static gboolean
 pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 {
 	GtkStyle *style;
+	cairo_t *cr;
 	int current_height, max_width;
 	int max_text_width;
 	int max_avatar_width;
@@ -2973,11 +2973,11 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	else
 		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
+	cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-		cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
 
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
@@ -2997,29 +2997,33 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		if (td->status_icon) {
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gdk_cairo_set_source_pixbuf(cr, td->status_icon,
-					max_width - TOOLTIP_BORDER - status_size, current_height);
+				                            max_width - TOOLTIP_BORDER - status_size,
+				                            current_height);
 				cairo_paint(cr);
 			} else {
-				gdk_cairo_set_source_pixbuf(cr, td->status_icon, TOOLTIP_BORDER, current_height);
+				gdk_cairo_set_source_pixbuf(cr, td->status_icon,
+				                            TOOLTIP_BORDER, current_height);
 				cairo_paint(cr);
 			}
 		}
 
 		if (td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-				gdk_cairo_set_source_pixbuf(cr, td->avatar, TOOLTIP_BORDER,
-					current_height);
+				gdk_cairo_set_source_pixbuf(cr, td->avatar,
+				                            TOOLTIP_BORDER, current_height);
 				cairo_paint(cr);
 			} else {
 				gdk_cairo_set_source_pixbuf(cr, td->avatar,
-					max_width - (td->avatar_width + TOOLTIP_BORDER), current_height);
+				                            max_width - (td->avatar_width + TOOLTIP_BORDER),
+				                            current_height);
 				cairo_paint(cr);
 			}
 		}
 
 		if (!td->avatar_is_prpl_icon && td->prpl_icon) {
 			gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
-				current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)));
+			                            current_height +
+			                               (td->name_height - PRPL_SIZE) / 2);
 			cairo_paint(cr);
 		}
 
@@ -3050,9 +3054,10 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 			}
 		}
 
-		cairo_destroy(cr);
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + td->padding;
 	}
+
+	cairo_destroy(cr);
 	return FALSE;
 }
 
@@ -3617,9 +3622,10 @@ set_mood_show(void)
 /***************************************************
  *            Crap                                 *
  ***************************************************/
-#if 1
 /* TODO: fill out tooltips... */
 static const GtkActionEntry blist_menu_entries[] = {
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by
+   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
 	/* Buddies menu */
 	{ "BuddiesMenu", NULL, N_("_Buddies"), NULL, NULL, NULL },
 	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, pidgin_dialogs_im },
@@ -3636,7 +3642,6 @@ static const GtkActionEntry blist_menu_entries[] = {
 	/* Accounts menu */
 	{ "AccountsMenu", NULL, N_("_Accounts"), NULL, NULL, NULL },
 	{ "ManageAccounts", NULL, N_("Manage Accounts"), "<control>A", NULL, pidgin_accounts_window_show },
-	{ "EnableAccountMenu", NULL, N_("Enable Account"), NULL, NULL, NULL },
 
 	/* Tools */
 	{ "ToolsMenu", NULL, N_("_Tools"), NULL, NULL, NULL },
@@ -3646,7 +3651,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "Plugins", PIDGIN_STOCK_TOOLBAR_PLUGINS, N_("Plu_gins"), "<control>U", NULL, pidgin_plugin_dialog_show },
 	{ "Preferences", GTK_STOCK_PREFERENCES, N_("Pr_eferences"), "<control>P", NULL, pidgin_prefs_show },
 	{ "Privacy", NULL, N_("Pr_ivacy"), NULL, NULL, pidgin_privacy_dialog_show },
-	{ "SetMood", NULL, N_("Set _Mood"), "<control>O", NULL, set_mood_show },
+	{ "SetMood", NULL, N_("Set _Mood"), "<control>D", NULL, set_mood_show },
 	{ "FileTransfers", PIDGIN_STOCK_TOOLBAR_TRANSFER, N_("_File Transfers"), "<control>T", NULL, G_CALLBACK(gtk_blist_show_xfer_dialog_cb) },
 	{ "RoomList", NULL, N_("R_oom List"), NULL, NULL, pidgin_roomlist_dialog_show },
 	{ "SystemLog", NULL, N_("System _Log"), NULL, NULL, gtk_blist_show_systemlog_cb },
@@ -3657,6 +3662,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "BuildInformation", NULL, N_("_Build Information"), NULL, NULL, pidgin_dialogs_buildinfo },
 	{ "DebugWindow", NULL, N_("_Debug Window"), NULL, NULL, toggle_debug },
 	{ "DeveloperInformation", NULL, N_("De_veloper Information"), NULL, NULL, pidgin_dialogs_developers },
+	{ "PluginInformation", NULL, N_("_Plugin Information"), NULL, NULL, pidgin_dialogs_plugins_info },
 	{ "TranslatorInformation", NULL, N_("_Translator Information"), NULL, NULL, pidgin_dialogs_translators },
 	{ "About", GTK_STOCK_ABOUT, N_("_About"), NULL, NULL, pidgin_dialogs_about },
 };
@@ -3700,9 +3706,6 @@ static const char *blist_menu =
 		"</menu>"
 		"<menu action='AccountsMenu'>"
 			"<menuitem action='ManageAccounts'/>"
-			"<menu action='EnableAccountMenu'/>"
-			"<separator/>"
-			"<placeholder name='Accounts'/>"
 		"</menu>"
 		"<menu action='ToolsMenu'>"
 			"<menuitem action='BuddyPounces'/>"
@@ -3726,72 +3729,13 @@ static const char *blist_menu =
 			"<menuitem action='BuildInformation'/>"
 			"<menuitem action='DebugWindow'/>"
 			"<menuitem action='DeveloperInformation'/>"
+			"<menuitem action='PluginInformation'/>"
 			"<menuitem action='TranslatorInformation'/>"
 			"<separator/>"
 			"<menuitem action='About'/>"
 		"</menu>"
 	"</menubar>"
 "</ui>";
-
-#else
-static GtkItemFactoryEntry blist_menu[] =
-{
-/* NOTE: Do not set any accelerator to Control+O. It is mapped by
-   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
-
-	/* Buddies menu */
-	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<StockItem>", PIDGIN_STOCK_CHAT },
-	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgin_dialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgin_dialogs_log, 0, "<Item>", NULL },
-	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/Sh_ow"), NULL, NULL, 0, "<Branch>", NULL},
-	{ N_("/Buddies/Show/_Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/_Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Buddy _Details"), NULL, pidgin_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Idle _Times"), NULL, pidgin_blist_show_idle_time_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/_Protocol Icons"), NULL, pidgin_blist_show_protocol_icons_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/_Sort Buddies"), NULL, NULL, 0, "<Branch>", NULL },
-	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", pidgin_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Buddies/Add C_hat..."), NULL, pidgin_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Buddies/Add _Group..."), NULL, purple_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/_Quit"), "<CTL>Q", purple_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
-
-	/* Accounts menu */
-	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Accounts/Manage Accounts"), "<CTL>A", pidgin_accounts_window_show, 0, "<Item>", NULL },
-
-	/* Tools */
-	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 1, "<Item>", NULL },
-	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Custom Smile_ys"), "<CTL>Y", pidgin_smiley_manager_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SMILEY },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
-	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Set _Mood"), "<CTL>D", set_mood_show, 0, "<Item>", NULL },
-	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
-	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
-	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/Mute _Sounds"), NULL, pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
-	/* Help */
-	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ "/Help/sep1", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Help/_Build Information"), NULL, pidgin_dialogs_buildinfo, 0, "<Item>", NULL },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/De_veloper Information"), NULL, pidgin_dialogs_developers, 0, "<Item>", NULL },
-	{ N_("/Help/_Plugin Information"), NULL, pidgin_dialogs_plugins_info, 0, "<Item>", NULL },
-	{ N_("/Help/_Translator Information"), NULL, pidgin_dialogs_translators, 0, "<Item>", NULL },
-	{ "/Help/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },
-};
-#endif
 
 /*********************************************************
  * Private Utility functions                             *
@@ -4602,21 +4546,13 @@ static void pidgin_blist_hide_node(PurpleBuddyList *list, PurpleBlistNode *node,
 
 static const char *require_connection[] =
 {
-#if 1
 	"/BList/BuddiesMenu/NewInstantMessage",
 	"/BList/BuddiesMenu/JoinAChat",
 	"/BList/BuddiesMenu/GetUserInfo",
 	"/BList/BuddiesMenu/AddBuddy",
 	"/BList/BuddiesMenu/AddChat",
 	"/BList/BuddiesMenu/AddGroup",
-#else
-	N_("/Buddies/New Instant Message..."),
-	N_("/Buddies/Join a Chat..."),
-	N_("/Buddies/Get User Info..."),
-	N_("/Buddies/Add Buddy..."),
-	N_("/Buddies/Add Chat..."),
-	N_("/Buddies/Add Group..."),
-#endif
+	"/BList/ToolsMenu/Privacy",
 };
 
 static const int require_connection_size = sizeof(require_connection)
@@ -4650,9 +4586,6 @@ update_menu_bar(PidginBuddyList *gtkblist)
 
 	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/BuddiesMenu/AddChat");
 	gtk_action_set_sensitive(action, pidgin_blist_joinchat_is_showable());
-
-	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/Privacy");
-	gtk_action_set_sensitive(action, sensitive);
 
 	action = gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/RoomList");
 	gtk_action_set_sensitive(action, pidgin_roomlist_is_showable());
@@ -5631,9 +5564,6 @@ headline_style_set (GtkWidget *widget,
 	g_object_ref_sink (tooltips);
 
 	gtk_tooltips_force_window (tooltips);
-#if GTK_CHECK_VERSION(2, 12, 0)
-	gtk_widget_set_name (tooltips->tip_window, "gtk-tooltips");
-#endif
 	gtk_widget_ensure_style (tooltips->tip_window);
 	style = gtk_widget_get_style (tooltips->tip_window);
 
@@ -5951,6 +5881,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	accel_group = gtk_ui_manager_get_accel_group(gtkblist->ui);
 	gtk_window_add_accel_group(GTK_WINDOW(gtkblist->window), accel_group);
+	pidgin_load_accels();
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed", G_CALLBACK(pidgin_save_accels_cb), NULL);
 
 	error = NULL;
 	if (!gtk_ui_manager_add_ui_from_string(gtkblist->ui, blist_menu, -1, &error))
@@ -5966,6 +5898,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_widget_show(gtkblist->menutray);
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->main_vbox), menu, FALSE, FALSE, 0);
+
+	menu = gtk_ui_manager_get_widget(gtkblist->ui, "/BList/AccountsMenu");
+	accountmenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(menu));
 
 	/****************************** Notebook *************************************/
 	gtkblist->notebook = gtk_notebook_new();
@@ -7550,7 +7485,7 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 static void
 set_urgent(void)
 {
-	if (gtkblist->window && !gtk_widget_is_focus(gtkblist->window))
+	if (gtkblist->window && !gtk_widget_has_focus(gtkblist->window))
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
@@ -8148,114 +8083,191 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 }
 
-
-
 void
 pidgin_blist_update_accounts_menu(void)
 {
-	GList *accounts = NULL;
+	GtkWidget *menuitem, *submenu;
+	GtkAccelGroup *accel_group;
+	GList *l, *accounts;
+	gboolean disabled_accounts = FALSE;
+	gboolean enabled_accounts = FALSE;
 
-	GtkAction *action;
-	GString *accounts_ui;
-	GString *enable_ui;
-	gchar *ui_string;
-	int count = 0;
-
-	if ((gtkblist == NULL) || (gtkblist->ui == NULL))
+	if (accountmenu == NULL)
 		return;
 
-	/* Clear the old menu */
-	if (accounts_action_group) {
-		gtk_ui_manager_remove_ui(gtkblist->ui, accounts_merge_id);
-		gtk_ui_manager_remove_action_group(gtkblist->ui, accounts_action_group);
-		g_object_unref(G_OBJECT(accounts_action_group));
+	/* Clear the old Accounts menu */
+	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = g_list_delete_link(l, l)) {
+		menuitem = l->data;
+
+		if (menuitem != gtk_ui_manager_get_widget(gtkblist->ui, "/BList/AccountsMenu/ManageAccounts"))
+			gtk_widget_destroy(menuitem);
 	}
 
-	accounts_action_group = gtk_action_group_new("Accounts");
-#ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(accounts_action_group, PACKAGE);
-#endif
-	accounts_ui = g_string_new(NULL);
-	enable_ui = g_string_new(NULL);
-
-	action = gtk_action_new("none-available", N_("No actions available"), NULL, NULL);
-	gtk_action_group_add_action(accounts_action_group, action);
-	gtk_action_set_sensitive(action, FALSE);
+	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
 	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
-		char *label;
-		char *base;
-		char *name;
+		char *buf = NULL;
+		GtkWidget *image = NULL;
 		PurpleAccount *account = NULL;
+		GdkPixbuf *pixbuf = NULL;
 
 		account = accounts->data;
 
-		base = name = g_strdup_printf("account%d", count);
-		label = g_strconcat(purple_account_get_username(account), " (",
-				purple_account_get_protocol_name(account), ")", NULL);
-		action = gtk_action_new(name, label, NULL, NULL);
-		g_free(label);
-		gtk_action_group_add_action(accounts_action_group, action);
-
 		if (!purple_account_get_enabled(account, PIDGIN_UI)) {
-			g_string_append_printf(enable_ui, "<menuitem action='%s'/>", name);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(enable_account_cb), account);
+			if (!disabled_accounts) {
+				menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
+				gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 
-		} else {
-			PurpleConnection *gc = NULL;
-			PurplePlugin *plugin = NULL;
+				submenu = gtk_menu_new();
+				gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+				gtk_menu_set_accel_path(GTK_MENU(submenu), "<Actions>/BListActions/EnableAccount");
+				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-			g_string_append_printf(accounts_ui, "<menu action='%s'>", name);
-
-			name = g_strconcat(base, "-edit", NULL);
-			action = gtk_action_new(name, N_("_Edit Account"), NULL, NULL);
-			gtk_action_group_add_action(accounts_action_group, action);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(modify_account_cb), account);
-			g_string_append_printf(accounts_ui, "<menuitem action='%s'/>", name);
-			g_free(name);
-
-			g_string_append(accounts_ui, "<separator/>");
-
-			gc = purple_account_get_connection(account);
-			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? purple_connection_get_prpl(gc) : NULL;
-			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				build_plugin_actions(accounts_action_group, accounts_ui, base, plugin, gc);
-			} else {
-				g_string_append(accounts_ui, "<menuitem action='none-available'/>");
+				disabled_accounts = TRUE;
 			}
 
-			g_string_append(accounts_ui, "<separator/>");
+			buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+			menuitem = gtk_image_menu_item_new_with_label(buf);
+			g_free(buf);
 
-			name = g_strconcat(base, "-disable", NULL);
-			action = gtk_action_new(name, N_("_Disable"), NULL, NULL);
-			gtk_action_group_add_action(accounts_action_group, action);
-			g_signal_connect(G_OBJECT(action), "activate",
-			                 G_CALLBACK(disable_account_cb), account);
-			g_string_append_printf(accounts_ui, "<menuitem action='%s'/>", name);
-			g_free(name);
+			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+			if (pixbuf != NULL) {
+				if (!purple_account_is_connected(account))
+					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
+				image = gtk_image_new_from_pixbuf(pixbuf);
+				g_object_unref(G_OBJECT(pixbuf));
+				gtk_widget_show(image);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+			}
 
-			g_string_append(accounts_ui, "</menu>");
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(enable_account_cb), account);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+		} else {
+			enabled_accounts = TRUE;
 		}
-
-		g_free(base);
-		count++;
 	}
 
-	ui_string = g_strconcat("<ui><menubar action='BList'><menu action='AccountsMenu'><menu action='EnableAccountMenu'>",
-	                        enable_ui->str,
-	                        "</menu><placeholder name='Accounts'>",
-	                        accounts_ui->str,
-	                        "</placeholder></menu></menubar></ui>",
-	                        NULL);
-	gtk_ui_manager_insert_action_group(gtkblist->ui, accounts_action_group, 1);
-	accounts_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
-purple_debug_info("blist", "The account menu is {%s}\n", ui_string);
+	if (!enabled_accounts) {
+		gtk_widget_show_all(accountmenu);
+		return;
+	}
 
-	g_string_free(enable_ui, TRUE);
-	g_string_free(accounts_ui, TRUE);
-	g_free(ui_string);
+	pidgin_separator(accountmenu);
+
+	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
+		char *buf = NULL;
+		char *accel_path_buf = NULL;
+		GtkWidget *image = NULL;
+		PurpleConnection *gc = NULL;
+		PurpleAccount *account = NULL;
+		GdkPixbuf *pixbuf = NULL;
+		PurplePlugin *plugin = NULL;
+		PurplePluginProtocolInfo *prpl_info;
+
+		account = accounts->data;
+
+		if (!purple_account_get_enabled(account, PIDGIN_UI))
+			continue;
+
+		buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+		menuitem = gtk_image_menu_item_new_with_label(buf);
+		accel_path_buf = g_strconcat("<Actions>/AccountActions/", buf, NULL);
+		g_free(buf);
+
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		if (pixbuf != NULL) {
+			if (!purple_account_is_connected(account))
+				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
+						0.0, FALSE);
+			image = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+		}
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
+		g_free(accel_path_buf);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(modify_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+		pidgin_separator(submenu);
+
+		gc = purple_account_get_connection(account);
+		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? purple_connection_get_prpl(gc) : NULL;
+		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
+
+		if (prpl_info &&
+		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
+			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
+			    (purple_connection_get_flags(gc) & PURPLE_CONNECTION_SUPPORT_MOODS)) {
+
+				if (purple_account_get_status(account, "mood")) {
+					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
+					g_signal_connect(G_OBJECT(menuitem), "activate",
+					         	G_CALLBACK(set_mood_cb), account);
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+				}
+			}
+
+			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+				GtkWidget *menuitem;
+				PurplePluginAction *action = NULL;
+				GList *actions, *l;
+
+				actions = PURPLE_PLUGIN_ACTIONS(plugin, gc);
+
+				for (l = actions; l != NULL; l = l->next)
+				{
+					if (l->data)
+					{
+						action = (PurplePluginAction *) l->data;
+						action->plugin = plugin;
+						action->context = gc;
+
+						menuitem = gtk_menu_item_new_with_label(action->label);
+						gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+						g_signal_connect(G_OBJECT(menuitem), "activate",
+								G_CALLBACK(plugin_act), action);
+						g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+											   action,
+											   (GDestroyNotify)purple_plugin_action_free);
+						gtk_widget_show(menuitem);
+					}
+					else
+						pidgin_separator(submenu);
+				}
+
+				g_list_free(actions);
+			}
+		} else {
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_set_sensitive(menuitem, FALSE);
+		}
+
+		pidgin_separator(submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(disable_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+	}
+
+	gtk_widget_show_all(accountmenu);
 }
 
 static guint plugins_merge_id;
@@ -8319,7 +8331,6 @@ pidgin_blist_update_plugin_actions(void)
 	                        NULL);
 	gtk_ui_manager_insert_action_group(gtkblist->ui, plugins_action_group, 1);
 	plugins_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
-purple_debug_info("blist", "The plugins menu is {%s}\n", ui_string);
 
 	g_string_free(plugins_ui, TRUE);
 	g_free(ui_string);
@@ -8396,3 +8407,4 @@ pidgin_blist_update_sort_methods(void)
 
 	g_string_free(ui_string, TRUE);
 }
+

@@ -212,11 +212,7 @@ docklet_update_status(void)
 		if (tooltip_text->len > 0)
 			tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len - 1);
 
-#if GTK_CHECK_VERSION(2,16,0)
 		gtk_status_icon_set_tooltip_text(docklet, tooltip_text->str);
-#else
-		gtk_status_icon_set_tooltip(docklet, tooltip_text->str);
-#endif
 
 		g_string_free(tooltip_text, TRUE);
 		g_list_free(convs);
@@ -224,11 +220,7 @@ docklet_update_status(void)
 	} else {
 		char *tooltip_text = g_strconcat(PIDGIN_NAME, " - ",
 			purple_savedstatus_get_title(saved_status), NULL);
-#if GTK_CHECK_VERSION(2,16,0)
 		gtk_status_icon_set_tooltip_text(docklet, tooltip_text);
-#else
-		gtk_status_icon_set_tooltip(docklet, tooltip_text);
-#endif
 		g_free(tooltip_text);
 	}
 

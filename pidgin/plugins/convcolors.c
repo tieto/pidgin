@@ -302,7 +302,7 @@ enable_toggled(const char *name, PurplePrefType type, gconstpointer val, gpointe
 }
 
 static void
-disconnect_prefs_callbacks(GtkWidget *widget, gpointer data)
+disconnect_prefs_callbacks(GtkObject *object, gpointer data)
 {
 	PurplePlugin *plugin = (PurplePlugin *)data;
 
@@ -383,7 +383,7 @@ get_config_frame(PurplePlugin *plugin)
 		purple_prefs_connect_callback(plugin, tmp2, enable_toggled, button);
 	}
 
-	g_signal_connect(ret, "destroy", G_CALLBACK(disconnect_prefs_callbacks), plugin);
+	g_signal_connect(GTK_OBJECT(ret), "destroy", G_CALLBACK(disconnect_prefs_callbacks), plugin);
 	frame = pidgin_make_frame(ret, _("General"));
 	pidgin_prefs_checkbox(_("Ignore incoming format"), PREF_IGNORE, frame);
 	pidgin_prefs_checkbox(_("Apply in Chats"), PREF_CHATS, frame);

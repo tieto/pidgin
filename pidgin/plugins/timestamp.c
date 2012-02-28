@@ -134,7 +134,7 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *ret;
 	GtkWidget *frame, *label;
 	GtkWidget *vbox, *hbox;
-	GtkAdjustment *adj;
+	GtkObject *adj;
 	GtkWidget *spinner;
 
 	ret = gtk_vbox_new(FALSE, 18);

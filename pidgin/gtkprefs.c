@@ -246,7 +246,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	int         int_value  = 0;
 	const char *str_value  = NULL;
 	gboolean    bool_value = FALSE;
-	GtkListStore *store;
+	GtkListStore *store = NULL;
 	GtkTreeIter iter;
 	GtkTreeIter active;
 	GtkCellRenderer *renderer;
@@ -262,6 +262,9 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	} else if (type == PURPLE_PREF_BOOLEAN) {
 		store = gtk_list_store_new(PREF_DROPDOWN_COUNT, G_TYPE_STRING, G_TYPE_BOOLEAN);
 		stored_bool = purple_prefs_get_bool(key);
+	} else {
+		g_warn_if_reached();
+		return NULL;
 	}
 
 	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
@@ -1344,50 +1347,36 @@ formatting_toggle_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *toolb
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/font_size",
 		                     gtk_webview_get_current_fontsize(webview));
 	if (buttons & GTK_WEBVIEW_FACE) {
-		const char *face = gtk_webview_get_current_fontface(webview);
-		if (!face)
-			face = "";
+		char *face = gtk_webview_get_current_fontface(webview);
 
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", face);
+		if (face)
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", face);
+		else
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", "");
+
+		g_free(face);
 	}
 
 	if (buttons & GTK_WEBVIEW_FORECOLOR) {
-		const char *color = gtk_webview_get_current_forecolor(webview);
-		if (!color)
-			color = "";
+		char *color = gtk_webview_get_current_forecolor(webview);
 
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", color);
+		if (color)
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", color);
+		else
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", "");
+
+		g_free(color);
 	}
 
 	if (buttons & GTK_WEBVIEW_BACKCOLOR) {
-		const char *color;
-		GObject *object;
+		char *color = gtk_webview_get_current_backcolor(webview);
 
-		color = gtk_webview_get_current_backcolor(webview);
-		if (!color)
-			color = "";
+		if (color)
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", color);
+		else
+			purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", "");
 
-		/* Block the signal to prevent a loop. */
-		object = g_object_ref(G_OBJECT(webview));
-		g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-		                                NULL, toolbar);
-		/* Clear the backcolor. */
-		gtk_webview_toggle_backcolor(webview, "");
-		/* Unblock the signal. */
-		g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0,
-		                                  NULL, NULL, toolbar);
-		g_object_unref(object);
-
-		/* This will fire a toggle signal and get saved below. */
-		gtk_webview_toggle_background(webview, color);
-	}
-
-	if (buttons & GTK_WEBVIEW_BACKGROUND) {
-		const char *color = gtk_webview_get_current_background(webview);
-		if (!color)
-			color = "";
-
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", color);
+		g_free(color);
 	}
 }
 
@@ -1741,8 +1730,7 @@ conv_page(void)
 	                                 GTK_WEBVIEW_SHRINK |
 	                                 GTK_WEBVIEW_FACE |
 	                                 GTK_WEBVIEW_FORECOLOR |
-	                                 GTK_WEBVIEW_BACKCOLOR |
-	                                 GTK_WEBVIEW_BACKGROUND);
+	                                 GTK_WEBVIEW_BACKCOLOR);
 
 	gtk_webview_append_html(GTK_WEBVIEW(webview),
 	                        _("This is how your outgoing message text will "
