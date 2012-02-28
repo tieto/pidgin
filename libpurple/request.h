@@ -76,7 +76,8 @@ typedef enum
 	PURPLE_REQUEST_FIELD_LIST,
 	PURPLE_REQUEST_FIELD_LABEL,
 	PURPLE_REQUEST_FIELD_IMAGE,
-	PURPLE_REQUEST_FIELD_ACCOUNT
+	PURPLE_REQUEST_FIELD_ACCOUNT,
+	PURPLE_REQUEST_FIELD_CERTIFICATE
 
 } PurpleRequestFieldType;
 
@@ -1170,6 +1171,36 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
 /*@}*/
 
 /**************************************************************************/
+/** @name Certificate Field API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a certificate field.
+ *
+ * @param id   The field ID.
+ * @param text The label of the field.
+ * @param cert The certificate of the field.
+ *
+ * @return The new field.
+ */
+PurpleRequestField *purple_request_field_certificate_new(const char *id,
+														 const char *text,
+														 PurpleCertificate *cert);
+
+/**
+ * Returns the certificate in a certificate field.
+ *
+ * @param field The field.
+ *
+ * @return The certificate.
+ */
+PurpleCertificate *purple_request_field_certificate_get_value(
+		const PurpleRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name Request API                                                     */
 /**************************************************************************/
 /*@{*/
@@ -1498,6 +1529,37 @@ void *purple_request_file(void *handle, const char *title, const char *filename,
 void *purple_request_folder(void *handle, const char *title, const char *dirname,
 	GCallback ok_cb, GCallback cancel_cb,
 	PurpleAccount *account, const char *who, PurpleConversation *conv,
+	void *user_data);
+
+/**
+ * Prompts the user for action over a certificate.
+ *
+ * This is often represented as a dialog with a button for each action.
+ *
+ * @param handle        The plugin or connection handle.  For some things this
+ *                      is <em>extremely</em> important.  See the comments on
+ *                      purple_request_input().
+ * @param title         The title of the message, or @c NULL if it should have
+ *                      no title.
+ * @param primary       The main point of the message, or @c NULL if you're
+ *                      feeling enigmatic.
+ * @param secondary     Secondary information, or @c NULL if there is none.
+ * @param cert          The #PurpleCertificate associated with this request.
+ * @param ok_text       The text for the @c OK button, which may not be @c NULL.
+ * @param ok_cb         The callback for the @c OK button, which may not be
+ *                      @c NULL.
+ * @param cancel_text   The text for the @c Cancel button, which may not be
+ *                      @c NULL.
+ * @param cancel_cb     The callback for the @c Cancel button, which may be
+ *                      @c NULL.
+ * @param user_data     The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *purple_request_certificate(void *handle, const char *title,
+	const char *primary, const char *secondary, PurpleCertificate *cert,
+	const char *ok_text, GCallback ok_cb,
+	const char *cancel_text, GCallback cancel_cb,
 	void *user_data);
 
 /*@}*/

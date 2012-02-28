@@ -8,6 +8,8 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libjabber
+FACEBOOK_TARGET = libfacebook
+GTALK_TARGET = libgtalk
 XMPP_TARGET = libxmpp
 TYPE = PLUGIN
 
@@ -90,6 +92,12 @@ C_SRC =	\
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
+FACEBOOK_C_SRC = libfacebook.c
+FACEBOOK_OBJECTS = $(FACEBOOK_C_SRC:%.c=%.o)
+
+GTALK_C_SRC = libgtalk.c
+GTALK_OBJECTS = $(GTALK_C_SRC:%.c=%.o)
+
 XMPP_C_SRC = libxmpp.c
 XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 
@@ -129,9 +137,11 @@ include $(PIDGIN_COMMON_RULES)
 ##
 .PHONY: all install clean
 
-all: $(TARGET).dll $(XMPP_TARGET).dll
+all: $(TARGET).dll $(FACEBOOK_TARGET).dll $(GTALK_TARGET).dll $(XMPP_TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
+	cp $(FACEBOOK_TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(GTALK_TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(XMPP_TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
 ifeq ($(CYRUS_SASL), 1)
@@ -145,6 +155,12 @@ $(OBJECTS): $(PURPLE_CONFIG_H)
 $(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
+$(FACEBOOK_TARGET).dll: $(TARGET).dll.a $(FACEBOOK_OBJECTS)
+	$(CC) -shared $(FACEBOOK_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(FACEBOOK_TARGET).dll
+
+$(GTALK_TARGET).dll: $(TARGET).dll.a $(GTALK_OBJECTS)
+	$(CC) -shared $(GTALK_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(GTALK_TARGET).dll
+
 $(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)
 	$(CC) -shared $(XMPP_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(XMPP_TARGET).dll
 
@@ -153,6 +169,8 @@ $(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)
 ##
 clean:
 	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
+	rm -f $(FACEBOOK_OBJECTS) $(FACEBOOK_TARGET).dll
+	rm -f $(GTALK_OBJECTS) $(GTALK_TARGET).dll
 	rm -f $(XMPP_OBJECTS) $(XMPP_TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)

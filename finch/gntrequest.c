@@ -571,6 +571,22 @@ create_account_field(PurpleRequestField *field)
 	return combo;
 }
 
+static GntWidget*
+create_certificate_field(PurpleRequestField *field)
+{
+	GntWidget *w;
+	PurpleCertificate *cert;
+	char *str;
+
+	cert = purple_request_field_certificate_get_value(field);
+	str = purple_certificate_get_display_string(cert);
+	w = gnt_label_new(str);
+
+	g_free(str);
+
+	return w;
+}
+
 static void *
 finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
@@ -649,6 +665,10 @@ finch_request_fields(const char *title, const char *primary,
 			{
 				accountlist = create_account_field(field);
 				purple_request_field_set_ui_data(field, accountlist);
+			}
+			else if (type == PURPLE_REQUEST_FIELD_CERTIFICATE)
+			{
+				purple_request_field_set_ui_data(field, create_certificate_field(field));
 			}
 			else
 			{

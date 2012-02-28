@@ -39,6 +39,27 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#ifdef ENABLE_GCR
+#define GCR_API_SUBJECT_TO_CHANGE
+#include <gcr/gcr.h>
+#include <gcr/gcr-simple-certificate.h>
+#endif
+
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_set_can_default(x,y) do {\
+	if (y) \
+		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_DEFAULT); \
+	else \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_DEFAULT); \
+} while(0)
+#define gtk_widget_set_can_focus(x,y) do {\
+	if (y) \
+		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_FOCUS); \
+	else \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_FOCUS); \
+} while(0)
+#endif
+
 static GtkWidget * create_account_field(PurpleRequestField *field);
 
 typedef struct
@@ -86,7 +107,9 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 {
 	GtkWidget *image;
 	GdkPixbuf *pixbuf;
+#if !GTK_CHECK_VERSION(2,12,0)
 	GtkTooltips *tips;
+#endif
 
 	if (!account)
 		return;
@@ -95,8 +118,12 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(image, purple_account_get_username(account));
+#else
 	tips = gtk_tooltips_new();
 	gtk_tooltips_set_tip(tips, image, purple_account_get_username(account), NULL);
+#endif
 
 	if (GTK_IS_DIALOG(cont)) {
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(cont)->action_area), image, FALSE, TRUE, 0);
@@ -257,7 +284,11 @@ multifield_ok_cb(GtkWidget *button, PidginRequestData *data)
 {
 	generic_response_start(data);
 
+#if GTK_CHECK_VERSION(2,18,0)
+	if (!gtk_widget_has_focus(button))
+#else
 	if (!GTK_WIDGET_HAS_FOCUS(button))
+#endif
 		gtk_widget_grab_focus(button);
 
 	if (data->cbs[0] != NULL)
@@ -356,7 +387,9 @@ pidgin_request_input(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	if (!multiline)
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
@@ -522,7 +555,9 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
@@ -644,7 +679,9 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
@@ -715,8 +752,8 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 
 
 	if (default_action == PURPLE_DEFAULT_ACTION_NONE) {
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_DEFAULT);
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_FOCUS);
+		gtk_widget_set_can_default(img, TRUE);
+		gtk_widget_set_can_focus(img, TRUE);
 		gtk_widget_grab_focus(img);
 		gtk_widget_grab_default(img);
 	} else
@@ -1191,6 +1228,51 @@ create_list_field(PurpleRequestField *field)
 	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
 
+static GtkWidget *
+create_certificate_field(PurpleRequestField *field)
+{
+	PurpleCertificate *cert;
+#ifdef ENABLE_GCR
+	GcrCertificateBasicsWidget *cert_widget;
+	GByteArray *der;
+	GcrCertificate *gcrt;
+#else
+	GtkWidget *cert_label;
+	char *str;
+	char *escaped;
+#endif
+
+	cert = purple_request_field_certificate_get_value(field);
+
+#ifdef ENABLE_GCR
+	der = purple_certificate_get_der_data(cert);
+	g_return_val_if_fail(der, NULL);
+
+	gcrt = gcr_simple_certificate_new(der->data, der->len);
+	g_return_val_if_fail(gcrt, NULL);
+
+	cert_widget = gcr_certificate_basics_widget_new(gcrt);
+
+	g_byte_array_free(der, TRUE);
+	g_object_unref(G_OBJECT(gcrt));
+
+	return GTK_WIDGET(cert_widget);
+#else
+	str = purple_certificate_get_display_string(cert);
+	escaped = g_markup_escape_text(str, -1);
+
+	cert_label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(cert_label), escaped);
+	gtk_label_set_line_wrap(GTK_LABEL(cert_label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(cert_label), 0, 0);
+
+	g_free(str);
+	g_free(escaped);
+
+	return cert_label;
+#endif
+}
+
 static void *
 pidgin_request_fields(const char *title, const char *primary,
 						const char *secondary, PurpleRequestFields *fields,
@@ -1254,12 +1336,12 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(button, TRUE);
 
 	/* OK button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
 	data->ok_button = button;
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
 	pidgin_widget_decorate_account(hbox, account);
@@ -1478,6 +1560,8 @@ pidgin_request_fields(const char *title, const char *primary,
 						widget = create_image_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 						widget = create_account_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_CERTIFICATE)
+						widget = create_certificate_field(field);
 					else
 						continue;
 				}

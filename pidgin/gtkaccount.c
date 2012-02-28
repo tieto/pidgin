@@ -221,7 +221,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 }
 
 static void
-set_account_protocol_cb(GtkWidget *item, const char *id,
+set_account_protocol_cb(GtkWidget *widget, const char *id,
 						AccountPrefsDialog *dialog)
 {
 	PurplePlugin *new_plugin;
@@ -248,8 +248,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user ||
-	    g_object_get_data(G_OBJECT(item), "fake")) {
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user) {
 		gtk_widget_hide(dialog->register_button);
 	} else {
 		if (dialog->prpl_info != NULL &&
@@ -425,8 +424,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
-	GtkWidget *menu;
-	GtkWidget *item;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
@@ -563,17 +560,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		}
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
-
-		/* Google Talk default domain hackery! */
-		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-		item = gtk_menu_get_active(GTK_MENU(menu));
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakegoogle") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
-			value = "gmail.com";
-
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakefacebook") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
-			value = "chat.facebook.com";
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -770,7 +756,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *vbox, *check, *entry, *combo, *menu, *item;
+	GtkWidget *vbox, *check, *entry, *combo;
 	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -808,9 +794,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	gtk_notebook_insert_page(GTK_NOTEBOOK(dialog->notebook), vbox,
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
-
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
@@ -925,10 +908,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				list = purple_account_option_get_list(option);
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				opt_entry->widget = combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
-
-				if (g_object_get_data(G_OBJECT(item), "fakefacebook") &&
-					!strcmp(opt_entry->setting, "connection_security"))
-					str_value = "opportunistic_tls";
 
 				/* Loop through list of PurpleKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {
@@ -1214,8 +1193,12 @@ add_voice_options(AccountPrefsDialog *dialog)
 		gtk_widget_show_all(dialog->voice_frame);
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check),
-								purple_account_get_silence_suppression(dialog->account));
+	if (dialog->account) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check),
+		                             purple_account_get_silence_suppression(dialog->account));
+	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->suppression_check), FALSE);
+	}
 #endif
 }
 
@@ -2744,5 +2727,4 @@ pidgin_account_uninit(void)
 	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
-
 
