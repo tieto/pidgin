@@ -2973,7 +2973,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	else
 		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
-	cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
+	cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{

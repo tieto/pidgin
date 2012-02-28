@@ -155,8 +155,9 @@ menu_cb(GtkWidget *item, gpointer data)
 	if (!frame)
 		return;
 
+	/* GTK_DIALOG_NO_SEPARATOR seems to be gone in gtk+ 3.0... */
 	dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, NULL,
-			GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);
 	g_signal_connect_after(G_OBJECT(dialog), "response", G_CALLBACK(gtk_widget_destroy), dialog);

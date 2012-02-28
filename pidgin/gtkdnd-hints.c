@@ -57,22 +57,27 @@ static HintWindowInfo hint_windows[] = {
 static GtkWidget *
 dnd_hints_init_window(const gchar *fname)
 {
+	/* TODO: this is likely very broken right now, I think this needs to be 
+	 * Caito-ified. */
 	GdkPixbuf *pixbuf;
-	GdkPixmap *pixmap;
-	GdkBitmap *bitmap;
-	GtkWidget *pix;
+	/*GdkPixmap *pixmap;*/
+	/*GdkBitmap *bitmap;*/
+	/*GtkWidget *pix;*/
 	GtkWidget *win;
-	GdkColormap *colormap;
+	/*GdkColormap *colormap;*/
 
 	pixbuf = gdk_pixbuf_new_from_file(fname, NULL);
 	g_return_val_if_fail(pixbuf, NULL);
 
 	win = gtk_window_new(GTK_WINDOW_POPUP);
+#if 0
 	colormap = gtk_widget_get_colormap(win);
 	gdk_pixbuf_render_pixmap_and_mask_for_colormap(pixbuf, colormap,
 	                                               &pixmap, &bitmap, 128);
+#endif
 	g_object_unref(G_OBJECT(pixbuf));
 
+#if 0
 	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
 	gtk_container_add(GTK_CONTAINER(win), pix);
 	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
@@ -81,6 +86,7 @@ dnd_hints_init_window(const gchar *fname)
 	g_object_unref(G_OBJECT(bitmap));
 
 	gtk_widget_show_all(pix);
+#endif
 
 	return win;
 }
@@ -89,17 +95,23 @@ static void
 get_widget_coords(GtkWidget *w, gint *x1, gint *y1, gint *x2, gint *y2)
 {
 	gint ox, oy, width, height;
+	GtkWidget *parent = gtk_widget_get_parent(w);
 
-	if (w->parent && w->parent->window == w->window)
+	if (parent && gtk_widget_get_window(parent) == gtk_widget_get_window(w))
 	{
-		get_widget_coords(w->parent, &ox, &oy, NULL, NULL);
-		height = w->allocation.height;
-		width = w->allocation.width;
+		GtkAllocation allocation;
+
+		gtk_widget_get_allocation(w, &allocation);
+		get_widget_coords(parent, &ox, &oy, NULL, NULL);
+		height = allocation.height;
+		width = allocation.width;
 	}
 	else
 	{
-		gdk_window_get_origin(w->window, &ox, &oy);
-		gdk_drawable_get_size(w->window, &width, &height);
+		GdkWindow *win = gtk_widget_get_window(w);
+		gdk_window_get_origin(win, &ox, &oy);
+		width = gdk_window_get_width(win);
+		height = gdk_window_get_height(win);
 	}
 
 	if (x1) *x1 = ox;
@@ -172,10 +184,13 @@ dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 {
 	gint x1, x2, y1, y2;
 	gint x = 0, y = 0;
+	GtkAllocation allocation;
+
+	gtk_widget_get_allocation(widget, &allocation);
 
 	get_widget_coords(widget, &x1, &y1, &x2, &y2);
-	x1 += widget->allocation.x;	x2 += widget->allocation.x;
-	y1 += widget->allocation.y;	y2 += widget->allocation.y;
+	x1 += allocation.x;	x2 += allocation.x;
+	y1 += allocation.y;	y2 += allocation.y;
 
 	switch (horiz)
 	{

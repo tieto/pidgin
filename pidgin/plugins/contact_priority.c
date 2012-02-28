@@ -75,7 +75,7 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *ret = NULL, *hbox = NULL, *frame = NULL, *vbox = NULL;
 	GtkWidget *label = NULL, *spin = NULL, *check = NULL;
 	GtkWidget *optmenu = NULL;
-	GtkObject *adj = NULL;
+	GtkAdjustment *adj = NULL;
 	GtkSizeGroup *sg = NULL;
 	PurpleAccount *account = NULL;
 	int i;
