@@ -54,39 +54,51 @@ static HintWindowInfo hint_windows[] = {
 	{ NULL, NULL, 0, 0 }
 };
 
+static void
+dnd_hints_realized_cb(GtkWidget *window, GtkWidget *pix)
+{
+	GdkPixbuf *pixbuf;
+	cairo_surface_t *surface;
+	cairo_region_t *region;
+	cairo_t *cr;
+
+	pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(pix));
+
+	surface = cairo_image_surface_create(CAIRO_FORMAT_A1,
+	                                     gdk_pixbuf_get_width(pixbuf),
+	                                     gdk_pixbuf_get_height(pixbuf));
+      
+	cr = cairo_create(surface);
+	gdk_cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
+	cairo_paint(cr);
+	cairo_destroy(cr);
+
+	region = gdk_cairo_region_create_from_surface(surface);
+	gtk_widget_shape_combine_region(window, region);
+	cairo_region_destroy(region);
+
+	cairo_surface_destroy(surface);
+}
+
 static GtkWidget *
 dnd_hints_init_window(const gchar *fname)
 {
-	/* TODO: this is likely very broken right now, I think this needs to be 
-	 * Caito-ified. */
 	GdkPixbuf *pixbuf;
-	/*GdkPixmap *pixmap;*/
-	/*GdkBitmap *bitmap;*/
-	/*GtkWidget *pix;*/
+	GtkWidget *pix;
 	GtkWidget *win;
-	/*GdkColormap *colormap;*/
 
 	pixbuf = gdk_pixbuf_new_from_file(fname, NULL);
 	g_return_val_if_fail(pixbuf, NULL);
 
 	win = gtk_window_new(GTK_WINDOW_POPUP);
-#if 0
-	colormap = gtk_widget_get_colormap(win);
-	gdk_pixbuf_render_pixmap_and_mask_for_colormap(pixbuf, colormap,
-	                                               &pixmap, &bitmap, 128);
-#endif
+	pix = gtk_image_new_from_pixbuf(pixbuf);
+	gtk_container_add(GTK_CONTAINER(win), pix);
+	gtk_widget_show_all(pix);
+
 	g_object_unref(G_OBJECT(pixbuf));
 
-#if 0
-	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
-	gtk_container_add(GTK_CONTAINER(win), pix);
-	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
-
-	g_object_unref(G_OBJECT(pixmap));
-	g_object_unref(G_OBJECT(bitmap));
-
-	gtk_widget_show_all(pix);
-#endif
+	g_signal_connect(G_OBJECT(win), "realize",
+	                 G_CALLBACK(dnd_hints_realized_cb), pix);
 
 	return win;
 }
