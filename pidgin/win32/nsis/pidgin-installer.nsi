@@ -71,8 +71,7 @@ RequestExecutionLevel highest
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
 
-!define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
-!define SPELL_DOWNLOAD_URL			"http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries"
+!define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
 
 !define MEMENTO_REGISTRY_ROOT			HKLM
 !define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
@@ -264,7 +263,7 @@ Section $(GTKSECTIONTITLE) SecGtk
 
   ; We need to download the GTK+ runtime
   retry:
-  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
+  StrCpy $R2 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
@@ -463,7 +462,7 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
 
   ; We need to download the debug symbols
   retry:
-  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=dbgsym"
+  StrCpy $R2 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
@@ -1274,7 +1273,7 @@ Function InstallDict
 
   ; We need to download and install dictionary
   StrCpy $R2 "$PLUGINSDIR\$R1"
-  StrCpy $R3 "${SPELL_DOWNLOAD_URL}/$R1"
+  StrCpy $R3 "${DOWNLOADER_URL}&dl_pkg=oo_dict&lang=$R1&lang_file=$R1"
   DetailPrint "Downloading the $R0 Dictionary... ($R3)"
   retry:
   NSISdl::download /TIMEOUT=10000 "$R3" "$R2"

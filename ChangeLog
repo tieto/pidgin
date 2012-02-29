@@ -29,6 +29,7 @@ version 2.10.2 (02/22/2012):
 	* Fix messages to offline contacts. (#14302)
 
 	Windows-Specific Changes:
+	* Fix the installer downloading of spell-checking dictionaries (#14612)
 	* Fix compilation of the Bonjour protocol plugin. (#14802)
 
 	Plugins:
