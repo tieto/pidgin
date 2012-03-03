@@ -99,6 +99,19 @@ read_info_plist(xmlnode *plist)
 	return info;
 }
 
+static gboolean
+pidgin_conv_loader_probe(const gchar *dir)
+{
+	gboolean result;
+	gchar *plist_file;
+
+	plist_file = g_build_filename(dir, "Contents", "Info.plist", NULL);
+	result = g_file_test(plist_file, G_FILE_TEST_IS_REGULAR);
+	g_free(plist_file);
+
+	return result;
+}
+
 static PurpleTheme *
 pidgin_conv_loader_build(const gchar *dir)
 {
@@ -252,6 +265,7 @@ pidgin_conv_theme_loader_class_init(PidginConvThemeLoaderClass *klass)
 	PurpleThemeLoaderClass *loader_klass = PURPLE_THEME_LOADER_CLASS(klass);
 
 	loader_klass->purple_theme_loader_build = pidgin_conv_loader_build;
+	loader_klass->probe_directory = pidgin_conv_loader_probe;
 }
 
 
