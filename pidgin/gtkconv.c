@@ -5714,7 +5714,8 @@ static void
 private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 {
 	PidginConversation *gtkconv;
-	PurpleTheme *theme;
+	const char *theme_name;
+	PurpleTheme *theme = NULL;
 	PurpleConversationType conv_type = purple_conversation_get_type(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
@@ -5740,7 +5741,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 #endif
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
-	theme = purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"), "conversation");
+	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme");
+	if (theme_name && *theme_name)
+		theme = purple_theme_manager_find_theme(theme_name, "conversation");
 	if (!theme)
 		theme = default_conv_theme;
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));

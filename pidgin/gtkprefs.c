@@ -1097,6 +1097,27 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	}
 }
 
+/* sets the current conversation theme variant */
+static void
+prefs_set_conv_variant_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginConvTheme *theme =  NULL;
+	GtkTreeIter iter;
+	gchar *name = NULL;
+
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(prefs_conv_themes_combo_box), &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
+		theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		g_free(name);
+
+		if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_variants), &iter, 0, &name, -1);
+			pidgin_conversation_theme_set_variant(theme, name);
+			g_free(name);
+		}
+	}
+}
+
 /* sets the current conversation theme */
 static void
 prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
@@ -1109,6 +1130,9 @@ prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/theme", name);
+
+		g_signal_handlers_block_by_func(prefs_conv_variants_combo_box,
+		                                prefs_set_conv_variant_cb, NULL);
 
 		/* Update list of variants */
 		gtk_list_store_clear(prefs_conv_variants);
@@ -1137,28 +1161,9 @@ prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 				gtk_combo_box_set_active(GTK_COMBO_BOX(prefs_conv_variants_combo_box), 0);
 		}
 
+		g_signal_handlers_unblock_by_func(prefs_conv_variants_combo_box,
+		                                  prefs_set_conv_variant_cb, NULL);
 		g_free(name);
-	}
-}
-
-/* sets the current conversation theme variant */
-static void
-prefs_set_conv_variant_cb(GtkComboBox *combo_box, gpointer user_data)
-{
-	PidginConvTheme *theme =  NULL;
-	GtkTreeIter iter;
-	gchar *name = NULL;
-
-	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(prefs_conv_themes_combo_box), &iter)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
-		theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
-		g_free(name);
-
-		if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_variants), &iter, 0, &name, -1);
-			pidgin_conversation_theme_set_variant(theme, name);
-			g_free(name);
-		}
 	}
 }
 
