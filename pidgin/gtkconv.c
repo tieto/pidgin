@@ -192,6 +192,8 @@ static GList *xa_list = NULL;
 static GList *offline_list = NULL;
 static GHashTable *prpl_lists = NULL;
 
+static PurpleTheme *default_conv_theme = NULL;
+
 static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
 
@@ -5740,7 +5742,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->unseen_count = 0;
 	theme = purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"), "conversation");
 	if (!theme)
-		theme = purple_theme_manager_find_theme("Default", "conversation");
+		theme = default_conv_theme;
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
@@ -8434,6 +8436,7 @@ pidgin_conversations_init(void)
 {
 	void *handle = pidgin_conversations_get_handle();
 	void *blist_handle = purple_blist_get_handle();
+	char *theme_dir;
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
@@ -8723,6 +8726,9 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
+	theme_dir = g_build_filename(DATADIR, "pidgin", "theme", NULL);
+	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
+	g_free(theme_dir);
 
 	{
 		/* Set default tab colors */
