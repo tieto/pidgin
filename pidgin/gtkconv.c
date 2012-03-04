@@ -6250,6 +6250,14 @@ replace_message_tokens(
 		} else if (g_str_has_prefix(cur, "%messageDirection%")) {
 			replace = purple_markup_is_rtl(message) ? "rtl" : "ltr";
 
+		} else if (g_str_has_prefix(cur, "%status%")) {
+			GString *classes = g_string_new(NULL);
+
+			if (flags & PURPLE_MESSAGE_ERROR)
+				g_string_append(classes, "error ");
+
+			replace = freeval = g_string_free(classes, FALSE);
+
 		} else {
 			cur++;
 			continue;
