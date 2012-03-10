@@ -26,6 +26,8 @@
 #ifndef _PIDGINSESSION_H_
 #define _PIDGINSESSION_H_
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name X Windows session subsystem                                     */
 /**************************************************************************/
@@ -50,5 +52,7 @@ void pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
 void pidgin_session_end(void);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif /* _PIDGINSESSION_H_ */

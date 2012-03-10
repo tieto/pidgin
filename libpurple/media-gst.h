@@ -32,8 +32,6 @@
 
 #include <gst/gst.h>
 
-G_BEGIN_DECLS
-
 #define PURPLE_TYPE_MEDIA_ELEMENT_TYPE           (purple_media_element_type_get_type())
 #define PURPLE_TYPE_MEDIA_ELEMENT_INFO           (purple_media_element_info_get_type())
 #define PURPLE_MEDIA_ELEMENT_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
@@ -73,16 +71,12 @@ typedef enum {
 	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,		/** can be set as an active sink */
 } PurpleMediaElementType;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Gets the element type's GType.
  *
  * @return The element type's GType.
- *
- * @since 2.6.0
  */
 GType purple_media_element_type_get_type(void);
 
@@ -90,8 +84,6 @@ GType purple_media_element_type_get_type(void);
  * Gets the element info's GType.
  *
  * @return The element info's GType.
- *
- * @since 2.6.0
  */
 GType purple_media_element_info_get_type(void);
 
@@ -102,8 +94,6 @@ GType purple_media_element_info_get_type(void);
  * @param sess_id The session id of the session to get the source from.
  *
  * @return The source retrieved.
- *
- * @since 2.6.0
  */
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
@@ -115,8 +105,6 @@ GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
  * @param participant Optionally, the participant of the stream to get the tee from.
  *
  * @return The GstTee element from the chosen session/stream.
- *
- * @since 2.6.0
  */
 GstElement *purple_media_get_tee(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
@@ -128,8 +116,6 @@ GstElement *purple_media_get_tee(PurpleMedia *media,
  * @param manager The media manager to get the pipeline from.
  *
  * @return The pipeline.
- *
- * @since 2.6.0
  */
 GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 
@@ -141,8 +127,6 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  * @param media The media call this element is requested for.
  * @param session_id The id of the session this element is requested for or NULL.
  * @param participant The remote user this element is requested for or NULL.
- *
- * @since 2.6.0
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -167,8 +151,6 @@ PurpleMediaElementInfo *purple_media_manager_get_active_element(
  *
  * @param manager The media manager to set the media formats.
  * @param caps Set of allowed media formats.
- *
- * @since 2.8.0
  */
 void purple_media_manager_set_video_caps(PurpleMediaManager *manager,
 		GstCaps *caps);
@@ -179,8 +161,6 @@ void purple_media_manager_set_video_caps(PurpleMediaManager *manager,
  * @param manager The media manager to get the media formats from.
  *
  * @return @c GstCaps limiting the video source's formats.
- *
- * @since 2.8.0
  */
 GstCaps *purple_media_manager_get_video_caps(PurpleMediaManager *manager);
 
@@ -191,10 +171,6 @@ PurpleMediaElementType purple_media_element_info_get_element_type(
 GstElement *purple_media_element_info_call_create(
 		PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

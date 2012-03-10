@@ -41,6 +41,8 @@ typedef enum {
 	PURPLE_PMP_TYPE_TCP
 } PurplePmpType;
 
+G_BEGIN_DECLS
+
 /**
  * Initialize nat-pmp
  */
@@ -54,24 +56,28 @@ char *purple_pmp_get_public_ip(void);
 /**
  * Remove the NAT-PMP mapping for a specified type on a specified port
  *
- * @param type The PurplePmpType
+ * @param type        The PurplePmpType
  * @param privateport The private port on which we are listening locally
- * @param publicport The public port on which we are expecting a response
- * @param lifetime The lifetime of the mapping. It is recommended that this be PURPLE_PMP_LIFETIME.
+ * @param publicport  The public port on which we are expecting a response
+ * @param lifetime    The lifetime of the mapping. It is recommended that this
+ *                    be PURPLE_PMP_LIFETIME.
  *
- * @returns TRUE if succesful; FALSE if unsuccessful
+ * @returns TRUE if successful; FALSE if unsuccessful
  */
-gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime);
+gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport,
+                               unsigned short publicport, int lifetime);
 
 /**
  * Remove the NAT-PMP mapping for a specified type on a specified port
  *
- * @param type The PurplePmpType
+ * @param type        The PurplePmpType
  * @param privateport The private port on which the mapping was previously made
  *
- * @returns TRUE if succesful; FALSE if unsuccessful
+ * @returns TRUE if successful; FALSE if unsuccessful
  */
 gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
+
+G_END_DECLS
 
 #endif
 

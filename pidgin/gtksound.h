@@ -28,6 +28,8 @@
 
 #include "sound.h"
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name GTK+ Sound API                                                  */
 /**************************************************************************/
@@ -67,11 +69,11 @@ void *pidgin_sound_get_handle(void);
  * Returns true Pidgin is using customized sounds
  *
  * @return TRUE if non default sounds are used.
- *
- * @since 2.6.0
  */
 gboolean pidgin_sound_is_customized(void);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif /* _PIDGINSOUND_H_ */

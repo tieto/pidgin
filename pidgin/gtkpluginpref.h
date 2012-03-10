@@ -31,9 +31,7 @@
 
 #include "pidgin.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Creates a Gtk Preference frame for a PurplePluginPrefFrame
@@ -43,8 +41,6 @@ extern "C" {
  */
 GtkWidget *pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PIDGINPLUGINPREF_H_ */

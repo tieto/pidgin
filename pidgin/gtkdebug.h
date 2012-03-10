@@ -28,6 +28,8 @@
 
 #include "debug.h"
 
+G_BEGIN_DECLS
+
 /**
  * Initializes the GTK+ debug system.
  */
@@ -61,5 +63,7 @@ void pidgin_debug_window_hide(void);
  * @return The GTK+ UI debug operations structure.
  */
 PurpleDebugUiOps *pidgin_debug_get_ui_ops(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINDEBUG_H_ */

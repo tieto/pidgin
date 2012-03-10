@@ -930,6 +930,78 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	return TRUE;
 }
 
+static GByteArray *
+x509_get_der_data(PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	SECItem *dercrt;
+	GByteArray *data;
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	dercrt = SEC_ASN1EncodeItem(NULL, NULL, crt_dat,
+	                            SEC_ASN1_GET(SEC_SignedCertificateTemplate));
+	g_return_val_if_fail(dercrt != NULL, FALSE);
+
+	data = g_byte_array_sized_new(dercrt->len);
+	memcpy(data->data, dercrt->data, dercrt->len);
+	data->len = dercrt->len;
+
+	SECITEM_FreeItem(dercrt, PR_TRUE);
+
+	return data;
+}
+
+static gchar *
+x509_display_string(PurpleCertificate *crt)
+{
+	gchar *sha_asc;
+	GByteArray *sha_bin;
+	gchar *cn;
+	time_t activation, expiration;
+	gchar *activ_str, *expir_str;
+	gchar *text;
+
+	/* Pull out the SHA1 checksum */
+	sha_bin = x509_sha1sum(crt);
+	sha_asc = purple_base16_encode_chunked(sha_bin->data, sha_bin->len);
+
+	/* Get the cert Common Name */
+	/* TODO: Will break on CA certs */
+	cn = x509_common_name(crt);
+
+	/* Get the certificate times */
+	/* TODO: Check the times against localtime */
+	/* TODO: errorcheck? */
+	if (!x509_times(crt, &activation, &expiration)) {
+		purple_debug_error("certificate",
+				   "Failed to get certificate times!\n");
+		activation = expiration = 0;
+	}
+	activ_str = g_strdup(ctime(&activation));
+	expir_str = g_strdup(ctime(&expiration));
+
+	/* Make messages */
+	text = g_strdup_printf(_("Common name: %s\n\n"
+	                         "Fingerprint (SHA1): %s\n\n"
+	                         "Activation date: %s\n"
+	                         "Expiration date: %s\n"),
+	                       cn ? cn : "(null)",
+	                       sha_asc ? sha_asc : "(null)",
+	                       activ_str ? activ_str : "(null)",
+	                       expir_str ? expir_str : "(null)");
+
+	/* Cleanup */
+	g_free(cn);
+	g_free(sha_asc);
+	g_free(activ_str);
+	g_free(expir_str);
+	g_byte_array_free(sha_bin, TRUE);
+
+	return text;
+}
+
 static PurpleCertificateScheme x509_nss = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
@@ -945,9 +1017,9 @@ static PurpleCertificateScheme x509_nss = {
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificate import function */
+	x509_get_der_data,               /* Binary DER data */
+	x509_display_string,             /* Display representation */
 
-	NULL,
-	NULL,
 	NULL
 };
 

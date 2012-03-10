@@ -37,6 +37,8 @@ typedef enum
 } PidginAccountDialogType;
 
 
+G_BEGIN_DECLS
+
 /**
  * Shows the accounts window.
  */
@@ -79,5 +81,7 @@ void pidgin_account_init(void);
  * Uninitializes the GTK+ account system
  */
 void pidgin_account_uninit(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINACCOUNT_H_ */

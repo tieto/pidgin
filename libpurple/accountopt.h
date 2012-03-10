@@ -28,54 +28,16 @@
 
 #include "prefs.h"
 
-/**
- * An option for an account.
- *
- * This is set by protocol plugins, and appears in the account settings
- * dialogs.
- */
-typedef struct
-{
-	PurplePrefType type;      /**< The type of value.                     */
+/**************************************************************************/
+/** Data Structures                                                       */
+/**************************************************************************/
 
-	char *text;             /**< The text that will appear to the user. */
-	char *pref_name;        /**< The name of the associated preference. */
+/** @copydoc _PurpleAccountOption */
+typedef struct _PurpleAccountOption		PurpleAccountOption;
+/** @copydoc _PurpleAccountUserSplit */
+typedef struct _PurpleAccountUserSplit	PurpleAccountUserSplit;
 
-	union
-	{
-		gboolean boolean;   /**< The default boolean value.             */
-		int integer;        /**< The default integer value.             */
-		char *string;       /**< The default string value.              */
-		GList *list;        /**< The default list value.                */
-
-	} default_value;
-
-	gboolean masked;        /**< Whether the value entered should be
-	                         *   obscured from view (for passwords and
-	                         *   similar options)
-	                         */
-} PurpleAccountOption;
-
-/**
- * A username split.
- *
- * This is used by some protocols to separate the fields of the username
- * into more human-readable components.
- */
-typedef struct
-{
-	char *text;             /**< The text that will appear to the user. */
-	char *default_value;    /**< The default value.                     */
-	char  field_sep;        /**< The field separator.                   */
-	gboolean reverse;       /**< TRUE if the separator should be found
-							  starting a the end of the string, FALSE
-							  otherwise                                 */
-
-} PurpleAccountUserSplit;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Account Option API                                              */
@@ -388,8 +350,6 @@ void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboole
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_ACCOUNTOPT_H_ */

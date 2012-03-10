@@ -26,10 +26,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @file mime.h
  * @ingroup core
@@ -47,6 +43,8 @@ typedef struct _PurpleMimeDocument PurpleMimeDocument;
  * A part of a multipart MIME document.
  */
 typedef struct _PurpleMimePart PurpleMimePart;
+
+G_BEGIN_DECLS
 
 /**
  * Allocate an empty MIME document.
@@ -211,8 +209,6 @@ gsize purple_mime_part_get_length(PurpleMimePart *part);
 
 void purple_mime_part_set_data(PurpleMimePart *part, const char *data);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif

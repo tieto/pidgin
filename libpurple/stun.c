@@ -338,7 +338,7 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 		return;
 	}
 
-	if (!purple_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
+	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, hosts)) {
 		while (hosts) {
 			hosts = g_slist_delete_link(hosts, hosts);
 			g_free(hosts->data);
@@ -365,7 +365,7 @@ static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
 	purple_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
 		results, servername, port);
 
-	purple_dnsquery_a_account(NULL, servername, port, hbn_cb, NULL);
+	purple_dnsquery_a(NULL, servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 
@@ -424,7 +424,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 	nattype.servername = g_strdup(servername);
 
 	callbacks = g_slist_append(callbacks, cb);
-	purple_srv_resolve_account(NULL, "stun", "udp", servername, do_test1,
+	purple_srv_resolve(NULL, "stun", "udp", servername, do_test1,
 		(gpointer) servername);
 
 	return &nattype;

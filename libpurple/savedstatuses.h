@@ -60,9 +60,7 @@ typedef struct _PurpleSavedStatusSub  PurpleSavedStatusSub;
 
 #include "status.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Saved status subsystem                                          */
@@ -418,8 +416,7 @@ void purple_savedstatuses_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_SAVEDSTATUSES_H_ */
+

@@ -28,6 +28,8 @@
 
 #include "roomlist.h"
 
+G_BEGIN_DECLS
+
 /**
  * Initializes the room list subsystem.
  */
@@ -52,5 +54,7 @@ void pidgin_roomlist_dialog_show(void);
  * @param account The account to use.
  */
 void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account);
+
+G_END_DECLS
 
 #endif /* _PIDGINROOMLIST_H_ */

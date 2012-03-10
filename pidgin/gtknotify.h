@@ -29,6 +29,8 @@
 #include "notify.h"
 #include "pounce.h"
 
+G_BEGIN_DECLS
+
 /**
  * Adds a buddy pounce to the buddy pounce dialog
  *
@@ -58,5 +60,7 @@ void pidgin_notify_init(void);
  * Uninitialized the GTK+ notifications subsystem.
  */
 void pidgin_notify_uninit(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINNOTIFY_H_ */

@@ -70,6 +70,16 @@
 /* Timeout for typing notifications in seconds */
 #define TYPING_TIMEOUT 4
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_is_sensitive(x) GTK_WIDGET_IS_SENSITIVE(x)
+#define gtk_widget_set_has_window(x, y) do { \
+	if (y) \
+		GTK_WIDGET_UNSET_FLAGS(x, GTK_WIDGET_NO_WINDOW); \
+	else \
+		GTK_WIDGET_SET_FLAGS(x, GTK_WIDGET_NO_WINDOW); \
+} while (0)
+#endif
+
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
 static void remove_typing_cb(PidginStatusBox *box);
@@ -412,7 +422,7 @@ statusbox_uri_handler(const char *proto, const char *cmd, GHashTable *params, vo
 	if (src == NULL)
 		return FALSE;
 
-	purple_util_fetch_url(src, TRUE, NULL, FALSE, statusbox_got_url, data);
+	purple_util_fetch_url(src, TRUE, NULL, FALSE, -1, statusbox_got_url, data);
 	return TRUE;
 }
 
@@ -1749,7 +1759,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	GtkWidget *toplevel;
 	GtkTreeSelection *sel;
 
-	GTK_WIDGET_SET_FLAGS (status_box, GTK_NO_WINDOW);
+	gtk_widget_set_has_window(GTK_WIDGET(status_box), FALSE);
 	status_box->imhtml_visible = FALSE;
 	status_box->network_available = purple_network_is_available();
 	status_box->connecting = FALSE;
@@ -2625,7 +2635,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
-	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+	if (gtk_widget_is_sensitive(GTK_WIDGET(status_box)))
 	{
 		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR || type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR)
 		{
@@ -2687,7 +2697,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	}
 	g_list_free(accounts);
 
-	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+	if (gtk_widget_is_sensitive(GTK_WIDGET(status_box)))
 	{
 		if (status_box->imhtml_visible)
 		{
@@ -2743,7 +2753,7 @@ get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 {
 	PidginStatusBox *status_box = (PidginStatusBox*)data;
-	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+	if (gtk_widget_is_sensitive(GTK_WIDGET(status_box)))
 	{
 		if (status_box->typing != 0) {
 			pidgin_status_box_pulse_typing(status_box);

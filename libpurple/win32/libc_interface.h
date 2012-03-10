@@ -138,7 +138,7 @@ wpurple_gettimeofday( timeval, timezone )
 #define vsnprintf _vsnprintf
 
 #define rename( oldname, newname ) \
-wpurple_rename( oldname, newname )
+g_rename( oldname, newname )
 
 /* sys/stat.h */
 #define fchmod(a,b)

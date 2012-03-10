@@ -42,6 +42,113 @@ typedef struct
 
 } PurpleRequestInfo;
 
+struct _PurpleRequestField
+{
+	PurpleRequestFieldType type;
+	PurpleRequestFieldGroup *group;
+
+	char *id;
+	char *label;
+	char *type_hint;
+
+	gboolean visible;
+	gboolean required;
+
+	union
+	{
+		struct
+		{
+			gboolean multiline;
+			gboolean masked;
+			gboolean editable;
+			char *default_value;
+			char *value;
+
+		} string;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+		} integer;
+
+		struct
+		{
+			gboolean default_value;
+			gboolean value;
+
+		} boolean;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+			GList *labels;
+
+		} choice;
+
+		struct
+		{
+			GList *items;
+			GList *icons;
+			GHashTable *item_data;
+			GList *selected;
+			GHashTable *selected_table;
+
+			gboolean multiple_selection;
+
+		} list;
+
+		struct
+		{
+			PurpleAccount *default_account;
+			PurpleAccount *account;
+			gboolean show_all;
+
+			PurpleFilterAccountFunc filter_func;
+
+		} account;
+
+		struct
+		{
+			unsigned int scale_x;
+			unsigned int scale_y;
+			const char *buffer;
+			gsize size;
+		} image;
+
+		struct
+		{
+			PurpleCertificate *cert;
+		} certificate;
+
+	} u;
+
+	void *ui_data;
+	char *tooltip;
+};
+
+struct _PurpleRequestFields
+{
+	GList *groups;
+
+	GHashTable *fields;
+
+	GList *required_fields;
+
+	void *ui_data;
+};
+
+struct _PurpleRequestFieldGroup
+{
+	PurpleRequestFields *fields_list;
+
+	char *title;
+
+	GList *fields;
+};
 
 PurpleRequestFields *
 purple_request_fields_new(void)
@@ -271,6 +378,20 @@ purple_request_fields_get_account(const PurpleRequestFields *fields,
 	return purple_request_field_account_get_value(field);
 }
 
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return fields->ui_data;
+}
+
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data)
+{
+	g_return_if_fail(fields != NULL);
+
+	fields->ui_data = ui_data;
+}
+
 PurpleRequestFieldGroup *
 purple_request_field_group_new(const char *title)
 {
@@ -337,6 +458,14 @@ purple_request_field_group_get_fields(const PurpleRequestFieldGroup *group)
 	return group->fields;
 }
 
+PurpleRequestFields *
+purple_request_field_group_get_fields_list(const PurpleRequestFieldGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->fields_list;
+}
+
 PurpleRequestField *
 purple_request_field_new(const char *id, const char *text,
 					   PurpleRequestFieldType type)
@@ -365,6 +494,7 @@ purple_request_field_destroy(PurpleRequestField *field)
 	g_free(field->id);
 	g_free(field->label);
 	g_free(field->type_hint);
+	g_free(field->tooltip);
 
 	if (field->type == PURPLE_REQUEST_FIELD_STRING)
 	{
@@ -425,6 +555,15 @@ purple_request_field_set_type_hint(PurpleRequestField *field,
 
 	g_free(field->type_hint);
 	field->type_hint = g_strdup(type_hint);
+}
+
+void
+purple_request_field_set_tooltip(PurpleRequestField *field, const char *tooltip)
+{
+	g_return_if_fail(field != NULL);
+
+	g_free(field->tooltip);
+	field->tooltip = g_strdup(tooltip);
 }
 
 void
@@ -500,6 +639,14 @@ purple_request_field_get_type_hint(const PurpleRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->type_hint;
+}
+
+const char *
+purple_request_field_get_tooltip(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+
+	return field->tooltip;
 }
 
 gboolean
@@ -847,13 +994,6 @@ purple_request_field_list_get_data(const PurpleRequestField *field,
 }
 
 void
-purple_request_field_list_add(PurpleRequestField *field, const char *item,
-							void *data)
-{
-	purple_request_field_list_add_icon(field, item, NULL, data);
-}
-
-void
 purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, const char* icon_path,
 							void *data)
 {
@@ -1194,6 +1334,31 @@ purple_request_field_account_get_filter(const PurpleRequestField *field)
 	return field->u.account.filter_func;
 }
 
+PurpleRequestField *
+purple_request_field_certificate_new(const char *id, const char *text, PurpleCertificate *cert)
+{
+	PurpleRequestField *field;
+
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
+	g_return_val_if_fail(cert != NULL, NULL);
+
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_CERTIFICATE);
+
+	field->u.certificate.cert = cert;
+
+	return field;
+}
+
+PurpleCertificate *
+purple_request_field_certificate_get_value(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CERTIFICATE, NULL);
+
+	return field->u.certificate.cert;
+}
+
 /* -- */
 
 void *
@@ -1499,6 +1664,29 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 	}
 
 	return NULL;
+}
+
+void *
+purple_request_certificate(void *handle, const char *title,
+                                  const char *primary, const char *secondary,
+                                  PurpleCertificate *cert,
+                                  const char *ok_text, GCallback ok_cb,
+                                  const char *cancel_text, GCallback cancel_cb,
+                                  void *user_data)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_certificate_new("certificate", "Certificate", cert);
+	purple_request_field_group_add_field(group, field);
+
+	return purple_request_fields(handle, title, primary, secondary, fields,
+	                             ok_text, ok_cb, cancel_text, cancel_cb,
+	                             NULL, NULL, NULL, user_data);
 }
 
 static void

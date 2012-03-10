@@ -28,11 +28,15 @@
 
 #include "request.h"
 
+G_BEGIN_DECLS
+
 /**
  * Returns the UI operations structure for GTK+ request functions.
  *
  * @return The GTK+ UI request operations structure.
  */
 PurpleRequestUiOps *pidgin_request_get_ui_ops(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINREQUEST_H_ */

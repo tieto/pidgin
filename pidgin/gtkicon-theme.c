@@ -26,7 +26,7 @@
 #include <gtk/gtk.h>
 
 #define PIDGIN_ICON_THEME_GET_PRIVATE(Gobject) \
-	((PidginIconThemePrivate *) ((PIDGIN_ICON_THEME(Gobject))->priv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_ICON_THEME, PidginIconThemePrivate))
 
 /******************************************************************************
  * Structs
@@ -53,8 +53,6 @@ pidgin_icon_theme_init(GTypeInstance *instance,
 {
 	PidginIconThemePrivate *priv;
 
-	(PIDGIN_ICON_THEME(instance))->priv = g_new0(PidginIconThemePrivate, 1);
-
 	priv = PIDGIN_ICON_THEME_GET_PRIVATE(instance);
 
 	priv->icon_files = g_hash_table_new_full(g_str_hash,
@@ -69,7 +67,6 @@ pidgin_icon_theme_finalize(GObject *obj)
 	priv = PIDGIN_ICON_THEME_GET_PRIVATE(obj);
 
 	g_hash_table_destroy(priv->icon_files);
-	g_free(priv);
 
 	parent_class->finalize(obj);
 }
@@ -82,6 +79,8 @@ pidgin_icon_theme_class_init(PidginIconThemeClass *klass)
 	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->finalize = pidgin_icon_theme_finalize;
+
+	g_type_class_add_private(klass, sizeof(PidginIconThemePrivate));
 }
 
 GType

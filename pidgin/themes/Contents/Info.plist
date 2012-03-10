@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>MessageViewVersion</key>
+	<integer>4</integer>
+	<key>CFBundleName</key>
+	<string>Default</string>
+	<key>CFBundleIdentifier</key>
+	<string>im.pidgin.Default.style</string>
+	<key>DefaultFontFamily</key>
+	<string>sans-serif</string>
+	<key>DefaultFontSize</key>
+	<integer>11</integer>
+</dict>
+</plist>

@@ -25,6 +25,8 @@
 #ifndef _PIDGINCONN_H_
 #define _PIDGINCONN_H_
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name GTK+ Connection API                                             */
 /**************************************************************************/
@@ -55,5 +57,7 @@ void pidgin_connection_init(void);
  * Uninitializes the GTK+ connection system.
  */
 void pidgin_connection_uninit(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINCONN_H_ */

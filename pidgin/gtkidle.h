@@ -28,6 +28,8 @@
 
 #include "idle.h"
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name GTK+ Idle API                                                  */
 /**************************************************************************/
@@ -41,5 +43,7 @@
 PurpleIdleUiOps *pidgin_idle_get_ui_ops(void);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif /* _PIDGIN_IDLE_H_ */

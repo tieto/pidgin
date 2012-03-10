@@ -1,5 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw \
+	win32-resolver.c \
+	win32-resolver.h \
 	lib/common.c \
 	lib/compat.h \
 	lib/COPYING \

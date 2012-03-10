@@ -27,9 +27,7 @@
 #ifndef _PURPLE_NTLM_H
 #define _PURPLE_NTLM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Generates the base64 encoded type 1 message needed for NTLM authentication
@@ -66,8 +64,6 @@ guint8 *purple_ntlm_parse_type2(const gchar *type2, guint32 *flags);
  */
 gchar *purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_NTLM_H */
