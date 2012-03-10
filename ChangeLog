@@ -16,6 +16,8 @@ version 2.10.2 (02/22/2012):
 	  (Dan Williams) (#13859)
 
 	AIM and ICQ:
+	* Fix a possible crash when receiving an unexpected message
+	  from the server. (Thijs Alkemade) (#14983)
 	* Allow signing on with usernames containing periods and
 	  underscores. (#13500)
 	* Allow adding buddies containing periods and underscores. (#13500)
