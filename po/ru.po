@@ -10,16 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-11 09:57-0500\n"
+"POT-Creation-Date: 2012-03-12 02:28-0700\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -898,7 +898,6 @@ msgstr "Звоню..."
 msgid "Hangup"
 msgstr "Приостановить разговор"
 
-#. Number of actions
 msgid "Accept"
 msgstr "Принять"
 
@@ -1734,21 +1733,24 @@ msgstr "Сертификат был аннулирован."
 msgid "An unknown certificate error occurred."
 msgstr "Произошла неизвестная ошибка сертификата."
 
+#, fuzzy
+msgid "(MATCH)"
+msgstr "НАБЛЮДАТЬ"
+
 msgid "(DOES NOT MATCH)"
 msgstr "(НЕ СОВПАДАЕТ)"
 
-#. Make messages
 #, c-format
 msgid "%s has presented the following certificate for just-this-once use:"
 msgstr "%s представил следующий сертификат для одноразового использования:"
 
-#, c-format
-msgid ""
-"Common name: %s %s\n"
-"Fingerprint (SHA1): %s"
+#, fuzzy, c-format
+msgid "Common name: %s %s"
 msgstr ""
-"Общее имя: %s %s\n"
-"Отпечаток (SHA1): %s"
+"Общее имя: %s\n"
+"\n"
+"Отпечаток SHA1:\n"
+"%s"
 
 #. TODO: Find what the handle ought to be
 msgid "Single-use Certificate Verification"
@@ -1764,7 +1766,6 @@ msgstr "Органы сертификации"
 msgid "SSL Peers Cache"
 msgstr "Временное хранилище приоритетов SSL"
 
-#. Make messages
 #, c-format
 msgid "Accept certificate for %s?"
 msgstr "Принять сертификат для %s?"
@@ -1772,9 +1773,6 @@ msgstr "Принять сертификат для %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "Проверка SSL-сертификата"
-
-msgid "_View Certificate..."
-msgstr "_Просмотреть сертификат..."
 
 #, c-format
 msgid "The certificate for %s could not be validated."
@@ -1794,27 +1792,6 @@ msgid ""
 msgstr ""
 "Вместо этого сертификат утверждает, что он от \"%s\". Это может означать, "
 "что вы подключены не к той услуге, к которой думаете."
-
-#. Make messages
-#, c-format
-msgid ""
-"Common name: %s\n"
-"\n"
-"Fingerprint (SHA1): %s\n"
-"\n"
-"Activation date: %s\n"
-"Expiration date: %s\n"
-msgstr ""
-"Общее имя: %s\n"
-"\n"
-"Отпечаток (SHA1): %s\n"
-"\n"
-"Дата активации: %s\n"
-"Дата истечения срока действия: %s\n"
-
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Информация о сертификате"
 
 #. show error to user
 msgid "Registration Error"
@@ -2884,6 +2861,23 @@ msgstr "Простой модуль"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Проверяет, всё ли работает."
+
+#. Make messages
+#, c-format
+msgid ""
+"Common name: %s\n"
+"\n"
+"Fingerprint (SHA1): %s\n"
+"\n"
+"Activation date: %s\n"
+"Expiration date: %s\n"
+msgstr ""
+"Общее имя: %s\n"
+"\n"
+"Отпечаток (SHA1): %s\n"
+"\n"
+"Дата активации: %s\n"
+"Дата истечения срока действия: %s\n"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5935,14 +5929,37 @@ msgstr ""
 "происходит, когда пользователь заблокирован или не существует."
 
 msgid "Message was not sent because messages are being sent too quickly."
-msgstr ""
-"Сообщение не отправлено, потому что вы отправляли их слишком быстро."
+msgstr "Сообщение не отправлено, потому что вы отправляли их слишком быстро."
 
 msgid "Message was not sent because an unknown encoding error occurred."
 msgstr "Сообщение не отправлено - произошла неизвестная ошибка кодирования."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Сообщение не отправлено - произошла неизвестная ошибка."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Произошла ошибка при преобразовании этого сообщения.\t Проверьте параметр "
+"\"Кодировка\" в редакторе учётных записей)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Произошла ошибка при получении этого сообщения. Либо у вас и %s выбраны "
+"разные кодировки, либо клиент %s содержит ошибки.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Произошла ошибка при преобразовании этого сообщения.\t Проверьте параметр "
+"\"Кодировка\" в редакторе учётных записей)"
 
 msgid "Writing error"
 msgstr "Ошибка записи"
@@ -6006,7 +6023,8 @@ msgstr "%s просит увидеть вашу веб-камеру, но это
 
 #, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr "%s пригласил вас увидеть свою веб-камеру, но это ещё не поддерживается."
+msgstr ""
+"%s пригласил вас увидеть свою веб-камеру, но это ещё не поддерживается."
 
 msgid "Away From Computer"
 msgstr "Отошёл от компьютера"
@@ -7640,14 +7658,14 @@ msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-"Вы не получили %hu сообщение от %s, потому что у вас слишком высокий "
-"уровень предупреждений."
+"Вы не получили %hu сообщение от %s, потому что у вас слишком высокий уровень "
+"предупреждений."
 msgstr[1] ""
-"Вы не получили %hu сообщения от %s, потому что у вас слишком высокий "
-"уровень предупреждений."
+"Вы не получили %hu сообщения от %s, потому что у вас слишком высокий уровень "
+"предупреждений."
 msgstr[2] ""
-"Вы не получили %hu сообщений от %s, потому что у вас слишком высокий "
-"уровень предупреждений."
+"Вы не получили %hu сообщений от %s, потому что у вас слишком высокий уровень "
+"предупреждений."
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
@@ -7829,16 +7847,13 @@ msgstr ""
 "собеседников не потерян и, вероятно, станет доступен в течение нескольких "
 "минут."
 
-msgid "Orphans"
-msgstr "Сироты"
-
 #, c-format
 msgid ""
 "Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Не удалось добавить собеседника %s потому, что у вас слишком много людей "
-"в списке собеседников. Пожалуйста, удалите одного и попробуйте снова."
+"Не удалось добавить собеседника %s потому, что у вас слишком много людей в "
+"списке собеседников. Пожалуйста, удалите одного и попробуйте снова."
 
 msgid "(no name)"
 msgstr "(нет имени)"
@@ -8403,8 +8418,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю %"
-"s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
+"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю "
+"%s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
 "пользователя в новую конференцию."
 
 msgid "Invite to Conference"
@@ -9797,8 +9812,8 @@ msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"Учётная запись заблокирована: вы слишком часто входили.  Подождите пару минут "
-"и попробуйте снова.  Вход на веб-сайт Yahoo!, возможно, исправит это."
+"Учётная запись заблокирована: вы слишком часто входили.  Подождите пару "
+"минут и попробуйте снова.  Вход на веб-сайт Yahoo!, возможно, исправит это."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -9836,8 +9851,7 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr ""
 "Ваша учётная запись была заблокирована из-за слишком большого количества "
-"неверных попыток входа.  Пожалуйста, попробуйте войти на веб-сайт "
-"Yahoo!."
+"неверных попыток входа.  Пожалуйста, попробуйте войти на веб-сайт Yahoo!."
 
 #, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
@@ -10494,8 +10508,8 @@ msgid ""
 "An error was encountered reading your %s.  The file has not been loaded, and "
 "the old file has been renamed to %s~."
 msgstr ""
-"Произошла ошибка при чтении вашего %s.  Файл не был загружен, а старый файл был "
-"переименован в %s~."
+"Произошла ошибка при чтении вашего %s.  Файл не был загружен, а старый файл "
+"был переименован в %s~."
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -10890,9 +10904,6 @@ msgstr "_Свернуть"
 msgid "_Expand"
 msgstr "Р_азвернуть"
 
-msgid "/Tools/Mute Sounds"
-msgstr "/Средства/Отключить звуки"
-
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -10916,122 +10927,152 @@ msgstr "Изменить настроение пользователя"
 #. NOTE: Do not set any accelerator to Control+O. It is mapped by
 #. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
-msgid "/_Buddies"
+#, fuzzy
+msgid "_Buddies"
 msgstr "/_Собеседники"
 
-msgid "/Buddies/New Instant _Message..."
-msgstr "/Собеседники/Новое мгновенное сооб_щение..."
+#, fuzzy
+msgid "New Instant _Message..."
+msgstr "Новое мгновенное сообщение"
 
-msgid "/Buddies/Join a _Chat..."
-msgstr "/Собеседники/Присоединиться к _чату..."
+#, fuzzy
+msgid "Join a _Chat..."
+msgstr "Присоединиться к чату..."
 
-msgid "/Buddies/Get User _Info..."
-msgstr "/Собеседники/Получить пользовательскую _информацию..."
+#, fuzzy
+msgid "Get User _Info..."
+msgstr "Установить пользовательскую информацию..."
 
-msgid "/Buddies/View User _Log..."
-msgstr "/Собеседники/Просмотреть _журнал пользователя..."
+#, fuzzy
+msgid "View User _Log..."
+msgstr "Просмотреть журнал пользователя"
 
-msgid "/Buddies/Sh_ow"
-msgstr "/Собеседники/_Показывать"
+msgid "Sh_ow"
+msgstr ""
 
-msgid "/Buddies/Show/_Offline Buddies"
-msgstr "/Собеседники/Показывать/Собеседников _не в сети"
+#, fuzzy
+msgid "_Sort Buddies"
+msgstr "Всего собеседников"
 
-msgid "/Buddies/Show/_Empty Groups"
-msgstr "/Собеседники/Показывать/П_устые группы"
+#, fuzzy
+msgid "_Add Buddy..."
+msgstr "Добавить _собеседника..."
 
-msgid "/Buddies/Show/Buddy _Details"
-msgstr "/Собеседники/Показывать/_Подробности о собеседниках"
+#, fuzzy
+msgid "Add _Group..."
+msgstr "Добавить группу"
 
-msgid "/Buddies/Show/Idle _Times"
-msgstr "/Собеседники/Показывать/_Время бездействия"
-
-msgid "/Buddies/Show/_Protocol Icons"
-msgstr "/Собеседники/Показывать/_Значки протоколов"
-
-msgid "/Buddies/_Sort Buddies"
-msgstr "/Собеседники/_Сортировать собеседников"
-
-msgid "/Buddies/_Add Buddy..."
-msgstr "/Собеседники/_Добавить собеседника..."
-
-msgid "/Buddies/Add C_hat..."
-msgstr "/Собеседники/Добавить ч_ат..."
-
-msgid "/Buddies/Add _Group..."
-msgstr "/Собеседники/Добавить _группу..."
-
-msgid "/Buddies/_Quit"
-msgstr "/Собеседники/В_ыйти"
+msgid "_Quit"
+msgstr "Вы_йти"
 
 #. Accounts menu
-msgid "/_Accounts"
-msgstr "/_Уч.записи"
+msgid "_Accounts"
+msgstr "_Учётные записи"
 
-msgid "/Accounts/Manage Accounts"
-msgstr "/Уч.записи/Управление учётными записями"
+#, fuzzy
+msgid "Manage Accounts"
+msgstr "Включить учётную запись"
 
 #. Tools
-msgid "/_Tools"
+#, fuzzy
+msgid "_Tools"
 msgstr "/Сре_дства"
 
-msgid "/Tools/Buddy _Pounces"
-msgstr "/Средства/_Слежение за собеседниками"
+#, fuzzy
+msgid "Buddy _Pounces"
+msgstr "Правила для собеседников"
 
-msgid "/Tools/_Certificates"
-msgstr "/Средства/С_ертификаты"
+#, fuzzy
+msgid "_Certificates"
+msgstr "Сертификаты"
 
-msgid "/Tools/Custom Smile_ys"
-msgstr "/Средства/Свои сма_йлики"
+#, fuzzy
+msgid "Custom Smile_ys"
+msgstr "Свой смайлик"
 
-msgid "/Tools/Plu_gins"
-msgstr "/Средства/_Модули"
+msgid "Plu_gins"
+msgstr "_Модули"
 
-msgid "/Tools/Pr_eferences"
-msgstr "/Средства/_Настройки"
+msgid "Pr_eferences"
+msgstr "На_стройки"
 
-msgid "/Tools/Pr_ivacy"
-msgstr "/Средства/К_онфиденциальность"
+#, fuzzy
+msgid "Pr_ivacy"
+msgstr "Конфиденциальность"
 
-msgid "/Tools/Set _Mood"
-msgstr "/Средства/Установить н_астроение"
+#, fuzzy
+msgid "Set _Mood"
+msgstr "Выставить _настроение..."
 
-msgid "/Tools/_File Transfers"
-msgstr "/Средства/Передача _файлов"
+#, fuzzy
+msgid "_File Transfers"
+msgstr "Передача файлов"
 
-msgid "/Tools/R_oom List"
-msgstr "/Средства/Список _комнат"
+#, fuzzy
+msgid "R_oom List"
+msgstr "Список комнат"
 
-msgid "/Tools/System _Log"
-msgstr "/Средства/Системный _журнал"
-
-msgid "/Tools/Mute _Sounds"
-msgstr "/Средства/Отключить _звуки"
+#, fuzzy
+msgid "System _Log"
+msgstr "Системный журнал"
 
 #. Help
-msgid "/_Help"
+#, fuzzy
+msgid "_Help"
 msgstr "/_Помощь"
 
-msgid "/Help/Online _Help"
+#, fuzzy
+msgid "Online _Help"
 msgstr "/Помощь/Помо_щь в сети"
 
-msgid "/Help/_Build Information"
-msgstr "/Помощь/Информация о _сборке"
+#, fuzzy
+msgid "_Build Information"
+msgstr "Информация о сборке"
 
-msgid "/Help/_Debug Window"
-msgstr "/Помощь/_Окно отладки"
+#, fuzzy
+msgid "_Debug Window"
+msgstr "Окно отладки"
 
-msgid "/Help/De_veloper Information"
-msgstr "/Помощь/Информация о _разработчике"
+#, fuzzy
+msgid "De_veloper Information"
+msgstr "Информация разработчика %s"
 
-msgid "/Help/_Plugin Information"
-msgstr "/Помощь/Информация о _модуле"
+#, fuzzy
+msgid "_Plugin Information"
+msgstr "Информация модуля"
 
-msgid "/Help/_Translator Information"
-msgstr "/Помощь/Информация о _переводчике"
+#, fuzzy
+msgid "_Translator Information"
+msgstr "Информация переводчика %s"
 
-msgid "/Help/_About"
-msgstr "/Помощь/О программ_е"
+#, fuzzy
+msgid "_About"
+msgstr "Про"
+
+#. Buddies->Show menu
+#, fuzzy
+msgid "_Offline Buddies"
+msgstr "Собеседников не в сети"
+
+#, fuzzy
+msgid "_Empty Groups"
+msgstr "Пустые группы"
+
+#, fuzzy
+msgid "Buddy _Details"
+msgstr "/Собеседники/Показывать/_Подробности о собеседниках"
+
+#, fuzzy
+msgid "Idle _Times"
+msgstr "Показывать время бездействия"
+
+#, fuzzy
+msgid "_Protocol Icons"
+msgstr "Протокол"
+
+#. Tools menu
+msgid "Mute _Sounds"
+msgstr "Отключить _звуки"
 
 #, c-format
 msgid "<b>Account:</b> %s"
@@ -11089,30 +11130,6 @@ msgstr "Бездействует %dч %02dм"
 msgid "Idle %dm"
 msgstr "Бездействует %dм"
 
-msgid "/Buddies/New Instant Message..."
-msgstr "/Собеседники/Новое мгновенное сообщение..."
-
-msgid "/Buddies/Join a Chat..."
-msgstr "/Собеседники/Присоединиться к чату..."
-
-msgid "/Buddies/Get User Info..."
-msgstr "/Собеседники/Получить пользовательскую информацию..."
-
-msgid "/Buddies/Add Buddy..."
-msgstr "/Собеседники/Добавить собеседника..."
-
-msgid "/Buddies/Add Chat..."
-msgstr "/Собеседники/Добавить чат..."
-
-msgid "/Buddies/Add Group..."
-msgstr "/Собеседники/Добавить группу..."
-
-msgid "/Tools/Privacy"
-msgstr "/Собеседники/Конфиденциальность"
-
-msgid "/Tools/Room List"
-msgstr "/Собеседники/Список комнат"
-
 #, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
@@ -11169,9 +11186,6 @@ msgstr "<b>Пароль:</b>"
 msgid "_Login"
 msgstr "_Вход"
 
-msgid "/Accounts"
-msgstr "/Учётные записи"
-
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #, c-format
 msgid ""
@@ -11184,27 +11198,8 @@ msgstr ""
 "<span weight='bold' size='larger'>Добро пожаловать в %s!</span>\n"
 "\n"
 "У вас нет включённых учётных записей. Включите их из окна <b>Учётные записи</"
-"b> через меню <b>Уч.записи->Управление учётными записями</b>. Сделав "
-"это, вы сможете войти в сеть, установить свой статус и начать общение с "
-"друзьями."
-
-#. set the Show Offline Buddies option. must be done
-#. * after the treeview or faceprint gets mad. -Robot101
-#.
-msgid "/Buddies/Show/Offline Buddies"
-msgstr "/Собеседники/Показывать/Собеседников не в сети"
-
-msgid "/Buddies/Show/Empty Groups"
-msgstr "/Собеседники/Показывать/Пустые группы"
-
-msgid "/Buddies/Show/Buddy Details"
-msgstr "/Собеседники/Показывать/Подробности о собеседниках"
-
-msgid "/Buddies/Show/Idle Times"
-msgstr "/Собеседники/Показывать/Время бездействия"
-
-msgid "/Buddies/Show/Protocol Icons"
-msgstr "/Собеседники/Показывать/Значки протоколов"
+"b> через меню <b>Уч.записи->Управление учётными записями</b>. Сделав это, вы "
+"сможете войти в сеть, установить свой статус и начать общение с друзьями."
 
 msgid "Add a buddy.\n"
 msgstr "Добавить собеседника.\n"
@@ -11254,12 +11249,6 @@ msgstr "Введите имя добавляемой группы."
 msgid "Enable Account"
 msgstr "Включить учётную запись"
 
-msgid "<PurpleMain>/Accounts/Enable Account"
-msgstr "<PurpleMain>/Уч.записи/Включить запись"
-
-msgid "<PurpleMain>/Accounts/"
-msgstr "<PurpleMain>/Уч.записи/"
-
 msgid "_Edit Account"
 msgstr "_Изменить учётную запись"
 
@@ -11272,14 +11261,13 @@ msgstr "Нет доступных действий"
 msgid "_Disable"
 msgstr "_Выключить"
 
-msgid "/Tools"
-msgstr "/Средства"
-
-msgid "/Buddies/Sort Buddies"
-msgstr "/Собеседники/Сортировать собеседников"
-
 msgid "Type the host name for this certificate."
 msgstr "Укажите имя узла для этого сертификата."
+
+#. Fire the notification
+#, fuzzy, c-format
+msgid "Certificate Information for %s"
+msgstr "Информация о сертификате"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11299,6 +11287,14 @@ msgstr "Подробная отладка сейчас включена."
 
 msgid "Supported debug options are: plugins version unsafe verbose"
 msgstr "Поддерживаемые параметры отладки: модули версия небезопасная подробная"
+
+#, fuzzy
+msgid ""
+"Use \"/help &lt;command&gt;\" for help on a specific command.<br/>The "
+"following commands are available in this context:<br/>"
+msgstr ""
+"Используйте \"/help &lt;команда&gt;\" для помощи по конкретной команде.\n"
+"Следующие команды доступны в этом контексте:\n"
 
 msgid "Unknown command."
 msgstr "Неизвестная команда."
@@ -11361,170 +11357,99 @@ msgid "Show All"
 msgstr "Показать всё"
 
 #. Conversation menu
-msgid "/_Conversation"
+#, fuzzy
+msgid "_Conversation"
 msgstr "/_Беседа"
 
-msgid "/Conversation/New Instant _Message..."
-msgstr "/Беседа/Новое мгновенное сооб_щение..."
+#, fuzzy
+msgid "_Find..."
+msgstr "Найти"
 
-msgid "/Conversation/Join a _Chat..."
-msgstr "/Беседа/Присоединиться к _чату..."
+#, fuzzy
+msgid "_Save As..."
+msgstr "Сохранить как..."
 
-msgid "/Conversation/_Find..."
-msgstr "/Беседа/_Найти..."
+#, fuzzy
+msgid "Clea_r Scrollback"
+msgstr "Очистить"
 
-msgid "/Conversation/View _Log"
-msgstr "/Беседа/Просмотреть _журнал"
+#, fuzzy
+msgid "M_edia"
+msgstr "/_Медиа"
 
-msgid "/Conversation/_Save As..."
-msgstr "/Беседа/Со_хранить как..."
+#, fuzzy
+msgid "Audio/Video _Call"
+msgstr "Аудио/Видео _звонок"
 
-msgid "/Conversation/Clea_r Scrollback"
-msgstr "/Беседа/О_чистить"
+#, fuzzy
+msgid "Se_nd File..."
+msgstr "_Отправить файл..."
 
-msgid "/Conversation/M_edia"
-msgstr "/Беседа/М_едиа"
+#, fuzzy
+msgid "Get _Attention"
+msgstr "_Внимание!"
 
-msgid "/Conversation/Media/_Audio Call"
-msgstr "/Беседа/Медиа/_Аудиозвонок"
+msgid "_Get Info"
+msgstr "Получить _информацию"
 
-msgid "/Conversation/Media/_Video Call"
-msgstr "/Беседа/Медиа/_Видеозвонок"
+#, fuzzy
+msgid "In_vite..."
+msgstr "Пригласить..."
 
-msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/Беседа/Медиа/Аудио\\/Видео_звонок"
+msgid "M_ore"
+msgstr ""
 
-msgid "/Conversation/Se_nd File..."
-msgstr "/Беседа/Отправить _файл..."
+#, fuzzy
+msgid "Al_ias..."
+msgstr "_Псевдоним..."
 
-msgid "/Conversation/Get _Attention"
-msgstr "/Беседа/Привлечь _внимание"
+#, fuzzy
+msgid "_Block..."
+msgstr "_Блокировать"
 
-msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Беседа/Добавить п_равило..."
+#, fuzzy
+msgid "_Unblock..."
+msgstr "Разблокировать"
 
-msgid "/Conversation/_Get Info"
-msgstr "/Беседа/Получить _информацию"
+msgid "_Add..."
+msgstr "_Добавить..."
 
-msgid "/Conversation/In_vite..."
-msgstr "/Беседа/Приг_ласить..."
+#, fuzzy
+msgid "_Remove..."
+msgstr "_Удалить"
 
-msgid "/Conversation/M_ore"
-msgstr "/Беседа/_Ещё"
+#, fuzzy
+msgid "Insert Lin_k..."
+msgstr "Вставить ссылку"
 
-msgid "/Conversation/Al_ias..."
-msgstr "/Беседа/_Псевдоним..."
+#, fuzzy
+msgid "Insert Imag_e..."
+msgstr "Вставить изображение"
 
-msgid "/Conversation/_Block..."
-msgstr "/Беседа/_Блокировать..."
-
-msgid "/Conversation/_Unblock..."
-msgstr "/Беседа/Раз_блокировать..."
-
-msgid "/Conversation/_Add..."
-msgstr "/Беседа/_Добавить..."
-
-msgid "/Conversation/_Remove..."
-msgstr "/Беседа/_Удалить..."
-
-msgid "/Conversation/Insert Lin_k..."
-msgstr "/Беседа/Вставить _ссылку..."
-
-msgid "/Conversation/Insert Imag_e..."
-msgstr "/Беседа/Вставить из_ображение..."
-
-msgid "/Conversation/_Close"
-msgstr "/Беседа/_Закрыть"
+#, fuzzy
+msgid "_Close"
+msgstr "Закрыть"
 
 #. Options
-msgid "/_Options"
+#, fuzzy
+msgid "_Options"
 msgstr "/_Параметры"
 
-msgid "/Options/Enable _Logging"
-msgstr "/Параметры/Вести _журнал"
+#, fuzzy
+msgid "Enable _Logging"
+msgstr "Вести журнал"
 
-msgid "/Options/Enable _Sounds"
-msgstr "/Параметры/Воспроизводить _звуки"
+#, fuzzy
+msgid "Enable _Sounds"
+msgstr "Включить звуки"
 
-msgid "/Options/Show Formatting _Toolbars"
+#, fuzzy
+msgid "Show Formatting _Toolbars"
 msgstr "/Параметры/Показывать _панели форматирования"
 
-msgid "/Options/Show Ti_mestamps"
-msgstr "/Параметры/Показывать _время сообщений"
-
-msgid "/Conversation/More"
-msgstr "/Беседа/Ещё"
-
-msgid "/Options"
-msgstr "/Параметры"
-
-#. The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
-#. * the 'Conversation' menu pops up.
-#. Make sure the 'Conversation -> More' menuitems are regenerated whenever
-#. * the 'Conversation' menu pops up because the entries can change after the
-#. * conversation is created.
-msgid "/Conversation"
-msgstr "/Беседа"
-
-msgid "/Conversation/View Log"
-msgstr "/Беседа/Просмотреть журнал"
-
-msgid "/Conversation/Media/Audio Call"
-msgstr "/Беседа/Медиа/Аудиозвонок"
-
-msgid "/Conversation/Media/Video Call"
-msgstr "/Беседа/Медиа/Видеозвонок"
-
-msgid "/Conversation/Media/Audio\\/Video Call"
-msgstr "/Беседа/Медиа/Аудио\\/Видеозвонок"
-
-msgid "/Conversation/Send File..."
-msgstr "/Беседа/Отправить файл..."
-
-msgid "/Conversation/Get Attention"
-msgstr "/Беседа/Привлечь внимание"
-
-msgid "/Conversation/Add Buddy Pounce..."
-msgstr "/Беседа/Добавить правило..."
-
-msgid "/Conversation/Get Info"
-msgstr "/Беседа/Получить информацию"
-
-msgid "/Conversation/Invite..."
-msgstr "/Беседа/Пригласить..."
-
-msgid "/Conversation/Alias..."
-msgstr "/Беседа/Псевдоним..."
-
-msgid "/Conversation/Block..."
-msgstr "/Беседа/Блокировать..."
-
-msgid "/Conversation/Unblock..."
-msgstr "/Беседа/Разблокировать..."
-
-msgid "/Conversation/Add..."
-msgstr "/Беседа/Добавить..."
-
-msgid "/Conversation/Remove..."
-msgstr "/Беседа/Удалить..."
-
-msgid "/Conversation/Insert Link..."
-msgstr "/Беседа/Вставить ссылку..."
-
-msgid "/Conversation/Insert Image..."
-msgstr "/Беседа/Вставить изображение..."
-
-msgid "/Options/Enable Logging"
-msgstr "/Параметры/Вести журнал"
-
-msgid "/Options/Enable Sounds"
-msgstr "/Параметры/Воспроизводить звуки"
-
-msgid "/Options/Show Formatting Toolbars"
-msgstr "/Параметры/Показывать панели форматирования"
-
-msgid "/Options/Show Timestamps"
-msgstr "/Параметры/Показывать время сообщений"
+#, fuzzy
+msgid "Show Ti_mestamps"
+msgstr "Показывать время сообщений"
 
 msgid "User is typing..."
 msgstr "Пользователь набирает сообщение..."
@@ -11914,6 +11839,10 @@ msgstr "Албанский"
 msgid "Serbian"
 msgstr "Сербский"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Белорусская латиница"
+
 msgid "Sinhala"
 msgstr "Сингальский"
 
@@ -11962,14 +11891,14 @@ msgstr "Амхарский"
 msgid "Lithuanian"
 msgstr "Литовский"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a messaging client based on libpurple which is capable of connecting "
-"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
-"is released, and may be modified and redistributed,  under the terms of the "
-"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"<p>%s is a messaging client based on libpurple which is capable of "
+"connecting to multiple messaging services at once.  %s is written in C using "
+"GTK+.  %s is released, and may be modified and redistributed,  under the "
+"terms of the GPL version 2 (or later).  A copy of the GPL is distributed "
+"with %s.  %s is copyrighted by its contributors, a list of whom is also "
+"distributed with %s.  There is no warranty for %s.</p>"
 msgstr ""
 "%s - клиент обмена сообщениями, основанный на библиотеке libpurple, которая "
 "позволяет одновременно подключаться по нескольким службам. %s написан на С с "
@@ -11978,26 +11907,25 @@ msgstr ""
 "%s. Права на %s защищены его участниками, список которых также "
 "распространяется с %s.  Гарантия на %s не предоставляется. <BR><BR>"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
-"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
-"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
-"im<BR><BR>"
+"<h3>Helpful Resources</h3><ul><li><a href=\"%s\" title=\"%s\">Website</a></"
+"li><li><a href=\"%s\" title=\"%s\">Frequently Asked Questions</a></"
+"li><li>IRC Channel: #pidgin on irc.freenode.net</li><li>XMPP MUC: "
+"devel@conference.pidgin.im</li></ul>"
 msgstr ""
 "<FONT SIZE=\"4\"><B>Полезные ресурсы</B></FONT><BR>\t<A HREF=\"%s\">Веб-"
 "сайт</A><BR>\t<A HREF=\"%s\">Часто задаваемые вопросы</A><BR>\tIRC канал: "
 "#pidgin на irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
-"support/\">archive</a>)<br/>We can't help with third-party protocols or "
-"plugins!<br/>This list's primary language is <b>English</b>.  You are "
-"welcome to post in another language, but the responses may be less helpful."
-"<br/>"
+"<p><strong>Help from other Pidgin users</strong> is available by e-mailing "
+"<a href=\"mailto:%s\">%s</a>.<br/>This is a <strong>public</strong> mailing "
+"list! (<a href=\"%s\" title=\"%s\">archive</a>)<br/>We can't help with third-"
+"party protocols or plugins!<br/>This list's primary language is "
+"<strong>English</strong>.  You are welcome to post in another language, but "
+"the responses may be less helpful.</p>"
 msgstr ""
 "<font size=\"4\"><b>Помощь от других пользователей Pidgin</b></font> "
 "доступна по эл.почте <a href=\"mailto:support@pidgin.im\">support@pidgin.im</"
@@ -12173,23 +12101,8 @@ msgstr "_Непрочитанные сообщения"
 msgid "New _Message..."
 msgstr "_Новое сообщение..."
 
-msgid "_Accounts"
-msgstr "_Учётные записи"
-
-msgid "Plu_gins"
-msgstr "_Модули"
-
-msgid "Pr_eferences"
-msgstr "На_стройки"
-
-msgid "Mute _Sounds"
-msgstr "Отключить _звуки"
-
 msgid "_Blink on New Message"
 msgstr "Мер_цать при наличии нового сообщения"
-
-msgid "_Quit"
-msgstr "Вы_йти"
 
 msgid "Not started"
 msgstr "Не начато"
@@ -12516,21 +12429,21 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Вы действительно хотите безвозвратно удалить системный журнал, начатый в %s?"
 
@@ -13510,12 +13423,6 @@ msgstr "Сохранённые статусы..."
 msgid "Status Selector"
 msgstr "Выбор состояния"
 
-msgid "Google Talk"
-msgstr "Google-общение"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Произошла следующая ошибка при загрузке %s: %s"
@@ -13651,17 +13558,11 @@ msgstr "_Псевдоним"
 msgid "Close _tabs"
 msgstr "_Закрыть вкладки"
 
-msgid "_Get Info"
-msgstr "Получить _информацию"
-
 msgid "_Invite"
 msgstr "П_ригласить"
 
 msgid "_Modify..."
 msgstr "_Изменить..."
-
-msgid "_Add..."
-msgstr "_Добавить..."
 
 msgid "_Open Mail"
 msgstr "Открыть _почту"
@@ -14925,8 +14826,8 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Ошибка при установке проверки орфографии ($R3).$\\rЕсли снова не будет "
 "получаться, инструкции по ручной установке здесь: http://developer.pidgin.im/"
@@ -15005,6 +14906,331 @@ msgstr "Посетите веб-страницу Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
+
+#~ msgid ""
+#~ "Common name: %s %s\n"
+#~ "Fingerprint (SHA1): %s"
+#~ msgstr ""
+#~ "Общее имя: %s %s\n"
+#~ "Отпечаток (SHA1): %s"
+
+#~ msgid "_View Certificate..."
+#~ msgstr "_Просмотреть сертификат..."
+
+#~ msgid "Orphans"
+#~ msgstr "Сироты"
+
+#~ msgid "/Tools/Mute Sounds"
+#~ msgstr "/Средства/Отключить звуки"
+
+#~ msgid "/Buddies/New Instant _Message..."
+#~ msgstr "/Собеседники/Новое мгновенное сооб_щение..."
+
+#~ msgid "/Buddies/Join a _Chat..."
+#~ msgstr "/Собеседники/Присоединиться к _чату..."
+
+#~ msgid "/Buddies/Get User _Info..."
+#~ msgstr "/Собеседники/Получить пользовательскую _информацию..."
+
+#~ msgid "/Buddies/View User _Log..."
+#~ msgstr "/Собеседники/Просмотреть _журнал пользователя..."
+
+#~ msgid "/Buddies/Sh_ow"
+#~ msgstr "/Собеседники/_Показывать"
+
+#~ msgid "/Buddies/Show/_Offline Buddies"
+#~ msgstr "/Собеседники/Показывать/Собеседников _не в сети"
+
+#~ msgid "/Buddies/Show/_Empty Groups"
+#~ msgstr "/Собеседники/Показывать/П_устые группы"
+
+#~ msgid "/Buddies/Show/Idle _Times"
+#~ msgstr "/Собеседники/Показывать/_Время бездействия"
+
+#~ msgid "/Buddies/Show/_Protocol Icons"
+#~ msgstr "/Собеседники/Показывать/_Значки протоколов"
+
+#~ msgid "/Buddies/_Sort Buddies"
+#~ msgstr "/Собеседники/_Сортировать собеседников"
+
+#~ msgid "/Buddies/_Add Buddy..."
+#~ msgstr "/Собеседники/_Добавить собеседника..."
+
+#~ msgid "/Buddies/Add C_hat..."
+#~ msgstr "/Собеседники/Добавить ч_ат..."
+
+#~ msgid "/Buddies/Add _Group..."
+#~ msgstr "/Собеседники/Добавить _группу..."
+
+#~ msgid "/Buddies/_Quit"
+#~ msgstr "/Собеседники/В_ыйти"
+
+#~ msgid "/_Accounts"
+#~ msgstr "/_Уч.записи"
+
+#~ msgid "/Accounts/Manage Accounts"
+#~ msgstr "/Уч.записи/Управление учётными записями"
+
+#~ msgid "/Tools/Buddy _Pounces"
+#~ msgstr "/Средства/_Слежение за собеседниками"
+
+#~ msgid "/Tools/_Certificates"
+#~ msgstr "/Средства/С_ертификаты"
+
+#~ msgid "/Tools/Custom Smile_ys"
+#~ msgstr "/Средства/Свои сма_йлики"
+
+#~ msgid "/Tools/Plu_gins"
+#~ msgstr "/Средства/_Модули"
+
+#~ msgid "/Tools/Pr_eferences"
+#~ msgstr "/Средства/_Настройки"
+
+#~ msgid "/Tools/Pr_ivacy"
+#~ msgstr "/Средства/К_онфиденциальность"
+
+#~ msgid "/Tools/Set _Mood"
+#~ msgstr "/Средства/Установить н_астроение"
+
+#~ msgid "/Tools/_File Transfers"
+#~ msgstr "/Средства/Передача _файлов"
+
+#~ msgid "/Tools/R_oom List"
+#~ msgstr "/Средства/Список _комнат"
+
+#~ msgid "/Tools/System _Log"
+#~ msgstr "/Средства/Системный _журнал"
+
+#~ msgid "/Tools/Mute _Sounds"
+#~ msgstr "/Средства/Отключить _звуки"
+
+#~ msgid "/Help/_Build Information"
+#~ msgstr "/Помощь/Информация о _сборке"
+
+#~ msgid "/Help/_Debug Window"
+#~ msgstr "/Помощь/_Окно отладки"
+
+#~ msgid "/Help/De_veloper Information"
+#~ msgstr "/Помощь/Информация о _разработчике"
+
+#~ msgid "/Help/_Plugin Information"
+#~ msgstr "/Помощь/Информация о _модуле"
+
+#~ msgid "/Help/_Translator Information"
+#~ msgstr "/Помощь/Информация о _переводчике"
+
+#~ msgid "/Help/_About"
+#~ msgstr "/Помощь/О программ_е"
+
+#~ msgid "/Buddies/New Instant Message..."
+#~ msgstr "/Собеседники/Новое мгновенное сообщение..."
+
+#~ msgid "/Buddies/Join a Chat..."
+#~ msgstr "/Собеседники/Присоединиться к чату..."
+
+#~ msgid "/Buddies/Get User Info..."
+#~ msgstr "/Собеседники/Получить пользовательскую информацию..."
+
+#~ msgid "/Buddies/Add Buddy..."
+#~ msgstr "/Собеседники/Добавить собеседника..."
+
+#~ msgid "/Buddies/Add Chat..."
+#~ msgstr "/Собеседники/Добавить чат..."
+
+#~ msgid "/Buddies/Add Group..."
+#~ msgstr "/Собеседники/Добавить группу..."
+
+#~ msgid "/Tools/Privacy"
+#~ msgstr "/Собеседники/Конфиденциальность"
+
+#~ msgid "/Tools/Room List"
+#~ msgstr "/Собеседники/Список комнат"
+
+#~ msgid "/Accounts"
+#~ msgstr "/Учётные записи"
+
+#~ msgid "/Buddies/Show/Offline Buddies"
+#~ msgstr "/Собеседники/Показывать/Собеседников не в сети"
+
+#~ msgid "/Buddies/Show/Empty Groups"
+#~ msgstr "/Собеседники/Показывать/Пустые группы"
+
+#~ msgid "/Buddies/Show/Buddy Details"
+#~ msgstr "/Собеседники/Показывать/Подробности о собеседниках"
+
+#~ msgid "/Buddies/Show/Idle Times"
+#~ msgstr "/Собеседники/Показывать/Время бездействия"
+
+#~ msgid "/Buddies/Show/Protocol Icons"
+#~ msgstr "/Собеседники/Показывать/Значки протоколов"
+
+#~ msgid "<PurpleMain>/Accounts/Enable Account"
+#~ msgstr "<PurpleMain>/Уч.записи/Включить запись"
+
+#~ msgid "<PurpleMain>/Accounts/"
+#~ msgstr "<PurpleMain>/Уч.записи/"
+
+#~ msgid "/Tools"
+#~ msgstr "/Средства"
+
+#~ msgid "/Buddies/Sort Buddies"
+#~ msgstr "/Собеседники/Сортировать собеседников"
+
+#~ msgid "/Conversation/New Instant _Message..."
+#~ msgstr "/Беседа/Новое мгновенное сооб_щение..."
+
+#~ msgid "/Conversation/Join a _Chat..."
+#~ msgstr "/Беседа/Присоединиться к _чату..."
+
+#~ msgid "/Conversation/_Find..."
+#~ msgstr "/Беседа/_Найти..."
+
+#~ msgid "/Conversation/View _Log"
+#~ msgstr "/Беседа/Просмотреть _журнал"
+
+#~ msgid "/Conversation/_Save As..."
+#~ msgstr "/Беседа/Со_хранить как..."
+
+#~ msgid "/Conversation/Clea_r Scrollback"
+#~ msgstr "/Беседа/О_чистить"
+
+#~ msgid "/Conversation/M_edia"
+#~ msgstr "/Беседа/М_едиа"
+
+#~ msgid "/Conversation/Media/_Audio Call"
+#~ msgstr "/Беседа/Медиа/_Аудиозвонок"
+
+#~ msgid "/Conversation/Media/_Video Call"
+#~ msgstr "/Беседа/Медиа/_Видеозвонок"
+
+#~ msgid "/Conversation/Media/Audio\\/Video _Call"
+#~ msgstr "/Беседа/Медиа/Аудио\\/Видео_звонок"
+
+#~ msgid "/Conversation/Se_nd File..."
+#~ msgstr "/Беседа/Отправить _файл..."
+
+#~ msgid "/Conversation/Get _Attention"
+#~ msgstr "/Беседа/Привлечь _внимание"
+
+#~ msgid "/Conversation/Add Buddy _Pounce..."
+#~ msgstr "/Беседа/Добавить п_равило..."
+
+#~ msgid "/Conversation/_Get Info"
+#~ msgstr "/Беседа/Получить _информацию"
+
+#~ msgid "/Conversation/In_vite..."
+#~ msgstr "/Беседа/Приг_ласить..."
+
+#~ msgid "/Conversation/M_ore"
+#~ msgstr "/Беседа/_Ещё"
+
+#~ msgid "/Conversation/Al_ias..."
+#~ msgstr "/Беседа/_Псевдоним..."
+
+#~ msgid "/Conversation/_Block..."
+#~ msgstr "/Беседа/_Блокировать..."
+
+#~ msgid "/Conversation/_Unblock..."
+#~ msgstr "/Беседа/Раз_блокировать..."
+
+#~ msgid "/Conversation/_Add..."
+#~ msgstr "/Беседа/_Добавить..."
+
+#~ msgid "/Conversation/_Remove..."
+#~ msgstr "/Беседа/_Удалить..."
+
+#~ msgid "/Conversation/Insert Lin_k..."
+#~ msgstr "/Беседа/Вставить _ссылку..."
+
+#~ msgid "/Conversation/Insert Imag_e..."
+#~ msgstr "/Беседа/Вставить из_ображение..."
+
+#~ msgid "/Conversation/_Close"
+#~ msgstr "/Беседа/_Закрыть"
+
+#~ msgid "/Options/Enable _Logging"
+#~ msgstr "/Параметры/Вести _журнал"
+
+#~ msgid "/Options/Enable _Sounds"
+#~ msgstr "/Параметры/Воспроизводить _звуки"
+
+#~ msgid "/Options/Show Ti_mestamps"
+#~ msgstr "/Параметры/Показывать _время сообщений"
+
+#~ msgid "/Conversation/More"
+#~ msgstr "/Беседа/Ещё"
+
+#~ msgid "/Options"
+#~ msgstr "/Параметры"
+
+#~ msgid "/Conversation"
+#~ msgstr "/Беседа"
+
+#~ msgid "/Conversation/View Log"
+#~ msgstr "/Беседа/Просмотреть журнал"
+
+#~ msgid "/Conversation/Media/Audio Call"
+#~ msgstr "/Беседа/Медиа/Аудиозвонок"
+
+#~ msgid "/Conversation/Media/Video Call"
+#~ msgstr "/Беседа/Медиа/Видеозвонок"
+
+#~ msgid "/Conversation/Media/Audio\\/Video Call"
+#~ msgstr "/Беседа/Медиа/Аудио\\/Видеозвонок"
+
+#~ msgid "/Conversation/Send File..."
+#~ msgstr "/Беседа/Отправить файл..."
+
+#~ msgid "/Conversation/Get Attention"
+#~ msgstr "/Беседа/Привлечь внимание"
+
+#~ msgid "/Conversation/Add Buddy Pounce..."
+#~ msgstr "/Беседа/Добавить правило..."
+
+#~ msgid "/Conversation/Get Info"
+#~ msgstr "/Беседа/Получить информацию"
+
+#~ msgid "/Conversation/Invite..."
+#~ msgstr "/Беседа/Пригласить..."
+
+#~ msgid "/Conversation/Alias..."
+#~ msgstr "/Беседа/Псевдоним..."
+
+#~ msgid "/Conversation/Block..."
+#~ msgstr "/Беседа/Блокировать..."
+
+#~ msgid "/Conversation/Unblock..."
+#~ msgstr "/Беседа/Разблокировать..."
+
+#~ msgid "/Conversation/Add..."
+#~ msgstr "/Беседа/Добавить..."
+
+#~ msgid "/Conversation/Remove..."
+#~ msgstr "/Беседа/Удалить..."
+
+#~ msgid "/Conversation/Insert Link..."
+#~ msgstr "/Беседа/Вставить ссылку..."
+
+#~ msgid "/Conversation/Insert Image..."
+#~ msgstr "/Беседа/Вставить изображение..."
+
+#~ msgid "/Options/Enable Logging"
+#~ msgstr "/Параметры/Вести журнал"
+
+#~ msgid "/Options/Enable Sounds"
+#~ msgstr "/Параметры/Воспроизводить звуки"
+
+#~ msgid "/Options/Show Formatting Toolbars"
+#~ msgstr "/Параметры/Показывать панели форматирования"
+
+#~ msgid "/Options/Show Timestamps"
+#~ msgstr "/Параметры/Показывать время сообщений"
+
+#~ msgid "Google Talk"
+#~ msgstr "Google-общение"
+
+#~ msgid "Facebook (XMPP)"
+#~ msgstr "Facebook (XMPP)"
 
 #~ msgid ""
 #~ "%s encountered errors migrating your settings from %s to %s. Please "
@@ -16132,11 +16358,13 @@ msgstr "У Вас нет прав на удаление этого прилож�
 #~ "%s %s\n"
 #~ "Использование: %s [КЛЮЧ]...\n"
 #~ "\n"
-#~ "  -c, --config=ДИР    использовать директорию ДИР для файлов конфигурации\n"
+#~ "  -c, --config=ДИР    использовать директорию ДИР для файлов "
+#~ "конфигурации\n"
 #~ "  -d, --debug         выводить отладочную информацию в стандартный вывод\n"
 #~ "  -f, --force-online  работать он-лайн, несмотря на состояние сети\n"
 #~ "  -h, --help          показать эту справку и выйти\n"
-#~ "  -m, --multiple      не ограничиваться запуском только одного экземпляра программы\n"
+#~ "  -m, --multiple      не ограничиваться запуском только одного экземпляра "
+#~ "программы\n"
 #~ "  -n, --nologin       не входить автоматически\n"
 #~ "  -l, --login[=ИМЯ]   включить указанную(-ые) учётную(-ые) запись(-и) \n"
 #~ "                      (необязательный аргумент ИМЯ задаёт одну или \n"
@@ -16153,8 +16381,8 @@ msgstr "У Вас нет прав на удаление этого прилож�
 #~ msgid ""
 #~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
 #~ msgstr ""
-#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что \"%"
-#~ "s\"."
+#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что "
+#~ "\"%s\"."
 
 #~ msgid "Invitation Rejected"
 #~ msgstr "Приглашение отвергнуто"
@@ -16595,9 +16823,6 @@ msgstr "У Вас нет прав на удаление этого прилож�
 
 #~ msgid "Could not write file header.  The file will not be transferred."
 #~ msgstr "Не удалось записать заголовок файла. Файл не будет передан."
-
-#~ msgid "Save As..."
-#~ msgstr "Сохранить как..."
 
 #~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 #~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
