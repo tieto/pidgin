@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-05-07 03:16+0900\n"
 "Last-Translator: Takayuki KUSANO <AE5T-KSN@asahi-net.or.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -3404,7 +3404,7 @@ msgstr "IRC プロトコル・プラグイン"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC プロトコルのプラグイン (Sucks Less)"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "サーバ"
 
@@ -5908,6 +5908,31 @@ msgstr "不明なエラーの発生により、メッセージは送信されま
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "不明なエラーの発生により、メッセージは送信されませんでした:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(このメッセージを変換する際にエラーが発生しました。\t アカウント・エディタの "
+"'エンコード' オプションを確認してください)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(このメッセージを受信する際にエラーが発生しました。%s さんとは異なるエンコー"
+"ディングで会話しているか、あるいは %s さんがおかしなクライアントを使っている"
+"と思われます。)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(このメッセージを変換する際にエラーが発生しました。\t アカウント・エディタの "
+"'エンコード' オプションを確認してください)"
 
 msgid "Writing error"
 msgstr "書き込み時にエラー"
@@ -8423,25 +8448,9 @@ msgstr "TEST 用アナウンスを送信する"
 msgid "Topic:"
 msgstr "トピック:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Sametime コミュニティ・サーバを指定してください"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"アカウント %s に対するホスト名または IP アドレスが指定されていません。次の欄"
-"に入力してログイン処理を続行してください。"
-
-msgid "Meanwhile Connection Setup"
-msgstr "接続の設定"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Sametime コミュニティ・サーバを指定してください"
-
-msgid "Connect"
-msgstr "接続"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "サーバが接続を閉じました"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12708,8 +12717,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "一時停止(_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15063,6 +15078,25 @@ msgstr "PidginのWebページを訪れてください。"
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 "あなたはこのアプリケーションをアンインストールする権限を持っていません。"
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Sametime コミュニティ・サーバを指定してください"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "アカウント %s に対するホスト名または IP アドレスが指定されていません。次の"
+#~ "欄に入力してログイン処理を続行してください。"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "接続の設定"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Sametime コミュニティ・サーバを指定してください"
+
+#~ msgid "Connect"
+#~ msgstr "接続"
 
 #~ msgid "/Help"
 #~ msgstr "/ヘルプ"

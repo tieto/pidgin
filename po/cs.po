@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-05-02 20:24+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -3422,7 +3422,7 @@ msgstr "Zásuvný modul protokolu IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Zásuvný modul protokolu IRC, který není tak špatný"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5818,6 +5818,30 @@ msgstr "Zpráva možná nebyla odeslána, protože došlo k neznámé chybě kó
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Zpráva možná nebyla odeslána, protože došlo k neznámé chybě."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Při konverzi této zprávy došlo k chybě. Zkontrolujte volbu 'Kódování' v "
+"Editoru účtů)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Při přijímání této zprávy došlo k chybě. Buď máte vy a %s zvolena jiná "
+"kódování, nebo má %s klienta s chybami.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Při konverzi této zprávy došlo k chybě. Zkontrolujte volbu 'Kódování' v "
+"Editoru účtů)"
 
 msgid "Writing error"
 msgstr "Chyba zápisu"
@@ -8254,25 +8278,9 @@ msgstr "Odeslat testovací oznámení"
 msgid "Topic:"
 msgstr "Téma:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nezadán server komunity Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Pro účet Meanwhile %s nebyl nastaven počítač ani IP adresa. Pro pokračování "
-"v přihlašování jej prosím zadejte níže."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Nastavení spojení Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nezadán server komunity Sametime"
-
-msgid "Connect"
-msgstr "Připojit"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server zavřel spojení."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12514,8 +12522,14 @@ msgstr "%s chce začít video rozhovor s vámi."
 msgid "Incoming Call"
 msgstr "Příchozí hovor"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pozastavit"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14830,6 +14844,25 @@ msgstr "Navštívit Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nezadán server komunity Sametime"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Pro účet Meanwhile %s nebyl nastaven počítač ani IP adresa. Pro "
+#~ "pokračování v přihlašování jej prosím zadejte níže."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Nastavení spojení Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nezadán server komunity Sametime"
+
+#~ msgid "Connect"
+#~ msgstr "Připojit"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Zpráva požadavku na autorizaci"

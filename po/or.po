@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: or\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-03-05 12:37+0530\n"
 "Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 "Language-Team: Oriya <oriya-it@googlegroups.com>\n"
@@ -3417,7 +3417,7 @@ msgstr "IRC ପ୍ରୋଟକଲ ପ୍ଲଗ-ଇନ୍"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr " IRC ପ୍ରୋଟକଲ ପ୍ଲଗ-ଇନ୍ ୟାହା କି କମ ଟାଣେ"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "ସେବକ"
 
@@ -5822,6 +5822,26 @@ msgstr "ସନ୍ଦେଶକୁ ପଠାଯାଇନାହିଁ କାରଣ 
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "ସନ୍ଦେଶକୁ ପଠାଯାଇନାହିଁ କାରଣ ଗୋଟିଏ ଅଜଣା ତ୍ରୁଟି ଘଟିଛି।"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(ଏହି ସଂଦେଶକୁ ପରିବର୍ତ୍ତନକରିବାରେ ତ୍ରୁଟି\tଆକାଉଣ୍ଟ ସଂପାଦକରେ'ଏନକୋଡିଙ୍ଗ' ବିକଳ୍ପକୁ ୟାଞ୍ଚ କର)."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(ଏହି ସଂଦେଶ ପାଇବା ସମଯରେ ଏକ ତୃଟି ଦେଖାଦେଲା । ତୁମର କିମ୍ବା %s ର ବିଭିନ୍ନ ମନୋନୀତ ଏନକୋଡିଙ୍ଗସବୁ "
+"ଅଛି, କିମ୍ବା %s ର ଏକ ବଗି ଗ୍ରାହକ ଅଛି। )"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(ଏହି ସଂଦେଶକୁ ପରିବର୍ତ୍ତନକରିବାରେ ତ୍ରୁଟି\tଆକାଉଣ୍ଟ ସଂପାଦକରେ'ଏନକୋଡିଙ୍ଗ' ବିକଳ୍ପକୁ ୟାଞ୍ଚ କର)."
 
 msgid "Writing error"
 msgstr "ଲେଖିବାରେ ତ୍ରୁଟି"
@@ -8252,25 +8272,9 @@ msgstr " TEST ଘୋଷଣା ପଠାଅ"
 msgid "Topic:"
 msgstr "ବିଷୟ:"
 
-msgid "No Sametime Community Server specified"
-msgstr "କୌଣସି ସେମଟାଇମ  କମ୍ଯୁନିଟି ସରଭର ନିଦ୍ଧିଷ୍ଟ ହୋଇନଥିଲା "
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"କୌଣସି ହୋଷ୍ଟ କିମ୍ବା IP ଠିକଣା ମିନହ୍ବାଇଲ ଆକାଉଣ୍ଟ ପାଇଁ କନଫିଗର ହୋଇ ନାହିଁ   %s ୤ ଲଗିଙ୍ଗି-ଇନ ଜାରି "
-"ରଖିବା ପାଇଁ ତଳେ ଦଯାକରି ଗୋଟିଏ ପ୍ରବିଷ୍ଟ କର ୤"
-
-msgid "Meanwhile Connection Setup"
-msgstr "ମିନହ୍ବାଇଲ ସଂୟୋଗ ସେଟଅପ"
-
-msgid "No Sametime Community Server Specified"
-msgstr "କୌଣସି ସେମଟାଇମ କମ୍ଯୁନିଟି ସରଭର ନିର୍ଦ୍ଦିଷ୍ଟ ହୋଇ ନଥିଲା ୤"
-
-msgid "Connect"
-msgstr "ସଂଯୋଗ କରନ୍ତୁ"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "ସର୍ଭର ସେହି ସଂଯୋଗକୁ ବନ୍ଦ କରିଛି"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12489,8 +12493,14 @@ msgstr "%s ଆପଣଙ୍କ ସହିତ ଗୋଟିଏ ଭିଡିଓ ଅ�
 msgid "Incoming Call"
 msgstr "ଆସୁଥିବା ଡ଼ାକରା"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_ବିରାମ"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14802,6 +14812,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "କୌଣସି ସେମଟାଇମ  କମ୍ଯୁନିଟି ସରଭର ନିଦ୍ଧିଷ୍ଟ ହୋଇନଥିଲା "
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "କୌଣସି ହୋଷ୍ଟ କିମ୍ବା IP ଠିକଣା ମିନହ୍ବାଇଲ ଆକାଉଣ୍ଟ ପାଇଁ କନଫିଗର ହୋଇ ନାହିଁ   %s ୤ ଲଗିଙ୍ଗି-ଇନ "
+#~ "ଜାରି ରଖିବା ପାଇଁ ତଳେ ଦଯାକରି ଗୋଟିଏ ପ୍ରବିଷ୍ଟ କର ୤"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "ମିନହ୍ବାଇଲ ସଂୟୋଗ ସେଟଅପ"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "କୌଣସି ସେମଟାଇମ କମ୍ଯୁନିଟି ସରଭର ନିର୍ଦ୍ଦିଷ୍ଟ ହୋଇ ନଥିଲା ୤"
+
+#~ msgid "Connect"
+#~ msgstr "ସଂଯୋଗ କରନ୍ତୁ"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "ବନ୍ଧୁ ତାଲିକାରେ ନ ଥିବା ଉପୟୋଗକର୍ତ୍ତାମାନଙ୍କ ଠାରୁ ସ୍ବଯଂଚାଳିତ ରୂପେ ଅସ୍ବୀକାର କର"

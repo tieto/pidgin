@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -3518,7 +3518,7 @@ msgstr "IRC 프로토콜 플러그인"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC 프로토콜 플러그인 (Sucks Less)"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "서버"
 
@@ -6077,6 +6077,30 @@ msgstr "알 수 없는 오류로 인해 메시지를 보내지 못했습니다:"
 msgid "Message was not sent because an unknown error occurred."
 msgstr "알 수 없는 오류로 인해 메시지를 보내지 못했습니다:"
 
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(이 메시지를 교환하는 동안 오류가 발생했습니다.\t 계정 편집기의 '인코딩' 설정"
+"을 확인해 주십시오.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(이 메시지를 받을 때 오류가 발생했습니다. %s 님과는 상이한 인코딩으로 대화하"
+"고 있거나 혹은 %s 님이 비정상 클라이언트를 사용하고 있는 것 같습니다.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(이 메시지를 교환하는 동안 오류가 발생했습니다.\t 계정 편집기의 '인코딩' 설정"
+"을 확인해 주십시오.)"
+
 # msgstr[1] ""
 # "MSN 서비스가 유지보수를 위해 %d 분간 정지하고 있습니다. 자동으로 접속이 끊길 예정이므로, 지금 수행되고 있는 대화를 종료해 주십시오.\n"
 # "\n"
@@ -8623,25 +8647,9 @@ msgstr "TEST 공지 전송"
 msgid "Topic:"
 msgstr "주제:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Sametime 커뮤니티 서버를 지정해 주십시오."
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"계정 %s 에 대한 호스트명 또는 IP 주소가 지정되어 있지 않습니다. 다음 빈 칸을 "
-"입력한 후, 로그인 처리를 계속하시기 바랍니다."
-
-msgid "Meanwhile Connection Setup"
-msgstr "접속 설정"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Sametime 커뮤니티 서버를 지정해 주십시오."
-
-msgid "Connect"
-msgstr "접속"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "서버가 접속을 닫았습니다."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13033,8 +13041,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "일시정지(_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15480,6 +15494,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Sametime 커뮤니티 서버를 지정해 주십시오."
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "계정 %s 에 대한 호스트명 또는 IP 주소가 지정되어 있지 않습니다. 다음 빈 칸"
+#~ "을 입력한 후, 로그인 처리를 계속하시기 바랍니다."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "접속 설정"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Sametime 커뮤니티 서버를 지정해 주십시오."
+
+#~ msgid "Connect"
+#~ msgstr "접속"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "친구 목록에 없는 사용자로부터의 요구는 거부"

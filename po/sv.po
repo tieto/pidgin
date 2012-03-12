@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-06-20 19:50+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@rymdraket.net>\n"
 "Language-Team: \n"
@@ -3440,7 +3440,7 @@ msgstr "Insticksmodul för IRC-protokoll"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Insticksmodulen för IRC-protokollet som inte suger lika mycket"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5890,6 +5890,30 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 "Meddelandet kunde kanske inte skickas på grund av att ett okänt fel uppstod."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Det blev ett fel vid konverteringen av detta meddelande.\t Kontrollera "
+"Kodningsinställningen för kontot.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Det uppstod ett fel vid mottagningen av detta meddelande. Antingen har du "
+"och %s olika teckenkodningar valda eller så har %s en buggig klient.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Det blev ett fel vid konverteringen av detta meddelande.\t Kontrollera "
+"Kodningsinställningen för kontot.)"
 
 msgid "Writing error"
 msgstr "Skrivfel"
@@ -8371,25 +8395,9 @@ msgstr "Skicka TEST-annonsering"
 msgid "Topic:"
 msgstr "Ämne:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Ingen Sametime communityserver specificerad"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ingen värd eller IP har konfigurerats för ditt Meanwhile-konto %s. Var god "
-"ange en nedan för att fortsätta inloggningen."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile anslutningsinställningar"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Ingen Sametime communityserver specificerad"
-
-msgid "Connect"
-msgstr "Anslut"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Servern stängde anslutningen"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12665,8 +12673,14 @@ msgstr "%s önskar påbörja en videosession med dig."
 msgid "Incoming Call"
 msgstr "Inkommande samtal"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pausa"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14994,6 +15008,25 @@ msgstr "Besök Pidgin hemsida"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har inte rättigheter att avinstallera den här applikationen."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Ingen Sametime communityserver specificerad"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ingen värd eller IP har konfigurerats för ditt Meanwhile-konto %s. Var "
+#~ "god ange en nedan för att fortsätta inloggningen."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile anslutningsinställningar"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Ingen Sametime communityserver specificerad"
+
+#~ msgid "Connect"
+#~ msgstr "Anslut"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Neka automatiskt från användare som inte är i min kompislista"

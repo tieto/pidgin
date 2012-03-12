@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-03-12 17:32+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -3465,7 +3465,7 @@ msgstr "Phần bổ sung giao thức IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Phần bổ sung giao thức IRC ít rắc rối"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Máy phục vụ"
 
@@ -5898,6 +5898,30 @@ msgstr "Tin nhẳn chưa đi được vì gặp một lỗi mã hoá không đư
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Tin nhẳn chưa đi được vì gặp một lỗi không được nhận ra."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Có lỗi khi chuyển đổi thông điệp này.\t Đánh dấu vào tùy chọn « Bảng mã » "
+"trong Bộ Sửa Tài Khoản)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Có lỗi khi nhận tin này. Hoặc bạn và %s đã chọn các bảng mã khác nhau, hoặc "
+"%s chạy trình khách bị lỗi.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Có lỗi khi chuyển đổi thông điệp này.\t Đánh dấu vào tùy chọn « Bảng mã » "
+"trong Bộ Sửa Tài Khoản)"
 
 msgid "Writing error"
 msgstr "Lỗi ghi"
@@ -8338,25 +8362,9 @@ msgstr "Gửi thông báo TEST"
 msgid "Topic:"
 msgstr "Chủ đề:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Chưa ghi rõ máy phục vụ công đồng Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Chưa cấu hình máy hay địa chỉ IP cho tài khoản Meanwhile %s. Hãy gõ nó bên "
-"dưới để tiếp tục đăng nhập."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Thiết lập Kết nối Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Chưa ghi rõ máy phục vụ công đồng Sametime"
-
-msgid "Connect"
-msgstr "Kết nối"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Máy phục vụ đã đóng kết nối"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12626,8 +12634,14 @@ msgstr "%s muốn bắt đầu một buổi hợp phim với bạn."
 msgid "Incoming Call"
 msgstr "Gọi gửi đến"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "Tạm _dừng"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14961,6 +14975,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Chưa ghi rõ máy phục vụ công đồng Sametime"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Chưa cấu hình máy hay địa chỉ IP cho tài khoản Meanwhile %s. Hãy gõ nó "
+#~ "bên dưới để tiếp tục đăng nhập."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Thiết lập Kết nối Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Chưa ghi rõ máy phục vụ công đồng Sametime"
+
+#~ msgid "Connect"
+#~ msgstr "Kết nối"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr ""

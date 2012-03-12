@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-05-06 19:16+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -3482,7 +3482,7 @@ msgstr "Plugin pour le protocole IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Plugin qui pue moins pour le protocole IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Serveur"
 
@@ -5923,6 +5923,30 @@ msgstr "Le message n'a pas été envoyé à cause d'une erreur de codage inconnu
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Le message n'a pas été envoyé à cause d'une erreur inconnue."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Erreur de conversion du message. Vérifiez l'option « Codage » dans les "
+"options du compte)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Une erreur s'est produite à la réception de ce message. %s et vous utilisez "
+"des encodages différents ou le client de %s est défectueux.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Erreur de conversion du message. Vérifiez l'option « Codage » dans les "
+"options du compte)"
 
 msgid "Writing error"
 msgstr "Erreur d'écriture"
@@ -8388,25 +8412,9 @@ msgstr "Envoyer une proclamation TEST"
 msgid "Topic:"
 msgstr "Sujet :"
 
-msgid "No Sametime Community Server specified"
-msgstr "Aucun serveur communautaire Sametime n'a été spécifié."
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Aucun hôte ou adresse IP n'a été configurée pour le compte Meanwhile %s. "
-"Veuillez en saisir un ci-dessous pour continuer la connexion."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Configuration de la connexion Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Aucun serveur communautaire Sametime n'a été spécifié."
-
-msgid "Connect"
-msgstr "Connecter"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Le serveur a fermé la connexion."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12691,8 +12699,14 @@ msgstr "%s veut engager une session vidéo."
 msgid "Incoming Call"
 msgstr "Appel entrant"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15047,6 +15061,25 @@ msgstr "Visitez la page web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Vous n'avez pas les permissions pour supprimer cette application."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Aucun serveur communautaire Sametime n'a été spécifié."
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Aucun hôte ou adresse IP n'a été configurée pour le compte Meanwhile %s. "
+#~ "Veuillez en saisir un ci-dessous pour continuer la connexion."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Configuration de la connexion Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Aucun serveur communautaire Sametime n'a été spécifié."
+
+#~ msgid "Connect"
+#~ msgstr "Connecter"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Message pour la demande d'autorisation :"

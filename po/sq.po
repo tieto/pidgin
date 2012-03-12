@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 22:40-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-11 13:02+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <besnik@programeshqip.org>\n"
@@ -3668,7 +3668,7 @@ msgstr "Shtojcë Protokolli IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Shtojca e Protokollit IRC e cila Është më pak e Bezdishme"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Shërbyes"
 
@@ -6152,6 +6152,30 @@ msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur kodimi."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Pati një gabim në shndërrimin e këtij mesazhi.\tkontrolloni mundësinë "
+"'Kodime' te Përpunues Llogarish)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Pati një gabim gjatë marrjes së këtij mesazhi.  Ose ju dhe %s keni të "
+"përzgjedhur kodime të ndryshëm, ose %s ka një klient me të meta.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Pati një gabim në shndërrimin e këtij mesazhi.\tkontrolloni mundësinë "
+"'Kodime' te Përpunues Llogarish)"
 
 msgid "Writing error"
 msgstr "Gabim shkrimi"
@@ -8674,27 +8698,9 @@ msgstr "Dërgo Njoftim TEST"
 msgid "Topic:"
 msgstr "Temë:"
 
-#  Progress
-msgid "No Sametime Community Server specified"
-msgstr "Nuk është treguar Shërbyes Bashkësie \"Sametime\""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Nuk është formësuar adresë strehe apo IP për llogarinë Meanwhile %s. Për të "
-"vazhduar hyrjen, ju lutem, jepni një më poshtë."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Rregullim Lidhjeje Meanwhile"
-
-#  Progress
-msgid "No Sametime Community Server Specified"
-msgstr "Nuk është treguar Shërbyes Bashkësie \"Sametime\""
-
-msgid "Connect"
-msgstr "Lidhu"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Shërbyesi e mbylli lidhjen"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13065,9 +13071,15 @@ msgstr "%s dëshiron të nisë një sesion video me ju."
 msgid "Incoming Call"
 msgstr "Thirrje Ardhëse"
 
+msgid "_Hold"
+msgstr ""
+
 #  Pause button
 msgid "_Pause"
 msgstr "_Pushim"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15589,6 +15601,27 @@ msgstr "Vizitoni Faqen Web të Pidgin-it"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nuk keni leje të çinstaloni këtë zbatim."
+
+#  Progress
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nuk është treguar Shërbyes Bashkësie \"Sametime\""
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Nuk është formësuar adresë strehe apo IP për llogarinë Meanwhile %s. Për "
+#~ "të vazhduar hyrjen, ju lutem, jepni një më poshtë."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Rregullim Lidhjeje Meanwhile"
+
+#  Progress
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nuk është treguar Shërbyes Bashkësie \"Sametime\""
+
+#~ msgid "Connect"
+#~ msgstr "Lidhu"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Mesazh Kërkese Autorizimi:"

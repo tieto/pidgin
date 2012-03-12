@@ -60,7 +60,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 22:55-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-17 16:19-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -3544,7 +3544,7 @@ msgstr "IRC 協定模組"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "較好的 IRC 協定模組"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "伺服器"
 
@@ -6170,6 +6170,26 @@ msgstr "因為發生不明的編碼錯誤，訊息無法送出："
 msgid "Message was not sent because an unknown error occurred."
 msgstr "因為發生不明的錯誤，訊息無法送出。"
 
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "（為這個訊息轉換編碼時發生了錯誤。請檢查帳號清單中的「編碼」選項）"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"（接收這個訊息時發生了錯誤。可能您和 %s 選用了不同的編碼，也有可能是 %s 在使"
+"用有問題的用戶端程式。）"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "（為這個訊息轉換編碼時發生了錯誤。請檢查帳號清單中的「編碼」選項）"
+
 msgid "Writing error"
 msgstr "寫入錯誤"
 
@@ -8649,27 +8669,9 @@ msgstr "送出測試通告"
 msgid "Topic:"
 msgstr "主題："
 
-msgid "No Sametime Community Server specified"
-msgstr "未指定 Sametime 社群伺服器"
-
-# NOTE「Meanwhile」指實作「Sametime」協定的一個軟體，不是連接詞
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Meanwhile 帳號「%s」尚未設定主機名稱或 IP 位址，請在下面輸入其一，以便繼續登"
-"入。"
-
-# NOTE「Meanwhile」指實作「Sametime」協定的一個軟體，不是連接詞
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile 連線設定"
-
-msgid "No Sametime Community Server Specified"
-msgstr "未指定 Sametime 社群伺服器"
-
-msgid "Connect"
-msgstr "連線"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "伺服器關閉了連線"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13053,8 +13055,14 @@ msgstr "%s 希望跟您進行視像通話。"
 msgid "Incoming Call"
 msgstr "來電通知"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "暫停(_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15443,6 +15451,27 @@ msgstr "瀏覽 Pidgin 官方網站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您沒有權限移除程式。"
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "未指定 Sametime 社群伺服器"
+
+# NOTE「Meanwhile」指實作「Sametime」協定的一個軟體，不是連接詞
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Meanwhile 帳號「%s」尚未設定主機名稱或 IP 位址，請在下面輸入其一，以便繼續"
+#~ "登入。"
+
+# NOTE「Meanwhile」指實作「Sametime」協定的一個軟體，不是連接詞
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile 連線設定"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "未指定 Sametime 社群伺服器"
+
+#~ msgid "Connect"
+#~ msgstr "連線"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "認證要求訊息："
