@@ -22,7 +22,7 @@ ifeq ($(DEB_BUILD_ARCH_OS),linux)
   auto DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
 else
   DEB_CONFIGURE_EXTRA_FLAGS += --disable-nm
-endif 
+endif
 
 
 DEB_INSTALL_DOCS_ALL := -XAUTHORS -XNEWS -XREADME
@@ -45,6 +45,9 @@ DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
 
 clean::
 	rm -f debian/copyright
+
+makebuilddir/pidgin::
+	touch configure # We don't want to regenerate autotools files
 
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
