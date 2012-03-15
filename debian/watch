@@ -1,2 +1,2 @@
 version=3
-http://pidgin.im/download/source/ .*/pidgin-([\d.]+)\.tar\.bz2
+http://sf.net/pidgin/pidgin-([\d.]+)\.tar\.bz2
