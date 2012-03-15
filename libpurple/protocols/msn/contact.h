@@ -62,7 +62,7 @@ typedef enum
 
 #define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
 
-#define MSN_CONTACT_SERVER	"omega.contacts.msn.com"
+#define MSN_CONTACT_SERVER	"local-bay.contacts.msn.com"
 
 /* Get Contact List */
 
@@ -142,11 +142,13 @@ typedef enum
 "</soap:Envelope>"
 
 /* Get AddressBook */
-#define MSN_GET_ADDRESS_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABFindAll"
+#define MSN_GET_ADDRESS_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABFindContactsPaged"
 #define MSN_GET_ADDRESS_FULL_TIME	"0001-01-01T00:00:00.0000000-08:00"
 #define MSN_GET_ADDRESS_UPDATE_XML \
-	"<deltasOnly>true</deltasOnly>"\
-	"<lastChange>%s</lastChange>"
+	"<filterOptions>"\
+		"<deltasOnly>true</deltasOnly>"\
+		"<lastChange>%s</lastChange>"\
+	"</filterOptions>"
 
 #define MSN_GET_GLEAM_UPDATE_XML \
 	"%s"\
@@ -171,11 +173,11 @@ typedef enum
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
-		"<ABFindAll xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<abId>00000000-0000-0000-0000-000000000000</abId>"\
+		"<ABFindContactsPaged xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<abView>Full</abView>"\
+			"<extendedContent>AB AllGroups CircleResult</extendedContent>"\
 			"%s"\
-		"</ABFindAll>"\
+		"</ABFindContactsPaged>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
 

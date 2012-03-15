@@ -1448,7 +1448,7 @@ bonjour_jabber_get_local_ips(int fd)
 }
 
 void
-append_iface_if_linklocal(char *ip, uint32_t interface) {
+append_iface_if_linklocal(char *ip, guint32 interface_param) {
 	struct in6_addr in6_addr;
 	int len_remain = INET6_ADDRSTRLEN - strlen(ip);
 
@@ -1460,5 +1460,5 @@ append_iface_if_linklocal(char *ip, uint32_t interface) {
 		return;
 
 	snprintf(ip + strlen(ip), len_remain, "%%%d",
-		 interface);
+		 interface_param);
 }

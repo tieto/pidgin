@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2004-06-28 14:03+0300\n"
 "Last-Translator: Metin Amiroff <metin@karegen.com>\n"
 "Language-Team: Azerbaijani <translation-team-az@lists.sourceforge.net>\n"
@@ -3497,7 +3497,7 @@ msgstr "IRC Protokolu Əlavəsi"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr ""
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Verici"
 
@@ -5949,6 +5949,24 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+
 msgid "Writing error"
 msgstr ""
 
@@ -8390,24 +8408,8 @@ msgid "Topic:"
 msgstr ""
 
 #, fuzzy
-msgid "No Sametime Community Server specified"
-msgstr "Transfer üçün bağlana bilmədi."
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-msgid "Meanwhile Connection Setup"
-msgstr ""
-
-#, fuzzy
-msgid "No Sametime Community Server Specified"
-msgstr "Transfer üçün bağlana bilmədi."
-
-msgid "Connect"
-msgstr ""
+msgid "A server is required to connect this account"
+msgstr "_Yenidən bağlan"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12744,8 +12746,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Fasilə ver"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15215,6 +15223,14 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Transfer üçün bağlana bilmədi."
+
+#, fuzzy
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Transfer üçün bağlana bilmədi."
 
 #, fuzzy
 #~ msgid "Pisces"

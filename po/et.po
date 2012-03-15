@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2008-09-30 08:10+0300\n"
 "Last-Translator: Ivar Smolin <okul@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -3454,7 +3454,7 @@ msgstr "IRC protokolli plugin"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC protokolli plugin, mis Imeb Vähem"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5921,6 +5921,31 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Sõnumit ei saadetud, kuna saatmisel tekkis tundmatu viga."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Sõnumi teisendamisel tekkis viga.\t Kontrolli kontoredaktorist "
+"'Kooditabeli' valikut.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Selle sõnumi vastuvõtmisel tekkis viga.  Selle võis põhjustada asjaolu, et "
+"sina oled valinud ühe kooditabeli ja %s teistsugust, või kasutab %s vigast "
+"klienti.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Sõnumi teisendamisel tekkis viga.\t Kontrolli kontoredaktorist "
+"'Kooditabeli' valikut.)"
 
 msgid "Writing error"
 msgstr "Viga kirjutamisel"
@@ -8413,25 +8438,9 @@ msgstr ""
 msgid "Topic:"
 msgstr "Teema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Sametime kogukonna serverit pole määratud"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Meanwhile kontole %s pole hostinime ega IP-aadressi määratud. Palun määra "
-"see ja jätka sisselogimist."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile ühenduse sätted"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Sametime kogukonna serverit pole määratud"
-
-msgid "Connect"
-msgstr "Ühendu"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server sulges ühenduse."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12640,8 +12649,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "Pa_us"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15034,6 +15049,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Sametime kogukonna serverit pole määratud"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Meanwhile kontole %s pole hostinime ega IP-aadressi määratud. Palun määra "
+#~ "see ja jätka sisselogimist."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile ühenduse sätted"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Sametime kogukonna serverit pole määratud"
+
+#~ msgid "Connect"
+#~ msgstr "Ühendu"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-11 08:24+0000\n"
 "Last-Translator: dumol <dumol@gnome.org>\n"
 "Language-Team: Romanian (http://www.transifex.net/projects/p/pidgin/team/"
@@ -3460,7 +3460,7 @@ msgstr "Modul de protocol IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Modul îmbunătățit de protocol IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5891,6 +5891,30 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Mesajul nu a fost trimis pentru că apărut o eroare necunoscută."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Eroare la conversia mesajului.\t Verificați opțiunea „Codare” în editorul "
+"de conturi)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(A intervenit o eroare la primirea acestui mesaj. Codarea proprie nu se "
+"potrivește cu cea aleasă de %s sau %s utilizează un client problematic)."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Eroare la conversia mesajului.\t Verificați opțiunea „Codare” în editorul "
+"de conturi)"
 
 msgid "Writing error"
 msgstr "Eroare la scriere"
@@ -8362,25 +8386,9 @@ msgstr "Trimite un anunț TEST"
 msgid "Topic:"
 msgstr "Subiect:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nu s-a specificat un server de comunitate Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Niciun nume de server sau adresă IP nu au fost configurate pentru contul "
-"Meanwhile %s. Introduceți una mai jos pentru a continua autentificarea."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Opțiuni conexiune Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nu s-a specificat un server de comunitate Sametime"
-
-msgid "Connect"
-msgstr "Conectare"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Serverul a închis conexiunea."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12672,8 +12680,14 @@ msgstr "%s dorește să inițieze o sesiune video."
 msgid "Incoming Call"
 msgstr "Apel primit"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pauză"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15002,3 +15016,22 @@ msgstr "Vizitaţi pagina de web Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nu s-a specificat un server de comunitate Sametime"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Niciun nume de server sau adresă IP nu au fost configurate pentru contul "
+#~ "Meanwhile %s. Introduceți una mai jos pentru a continua autentificarea."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Opțiuni conexiune Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nu s-a specificat un server de comunitate Sametime"
+
+#~ msgid "Connect"
+#~ msgstr "Conectare"

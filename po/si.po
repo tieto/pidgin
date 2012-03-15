@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: si\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2008-05-17 11:08+0530\n"
 "Last-Translator: Yajith Ajantha Dayarathna <yajith@gmail.com>\n"
 "Language-Team: Sinhala <sinhala@linux.lk>\n"
@@ -3300,7 +3300,7 @@ msgstr ""
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr ""
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "සේවා දායකය"
 
@@ -5675,6 +5675,24 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+
 msgid "Writing error"
 msgstr ""
 
@@ -8042,22 +8060,7 @@ msgstr ""
 msgid "Topic:"
 msgstr ""
 
-msgid "No Sametime Community Server specified"
-msgstr ""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-msgid "Meanwhile Connection Setup"
-msgstr ""
-
-msgid "No Sametime Community Server Specified"
-msgstr ""
-
-msgid "Connect"
+msgid "A server is required to connect this account"
 msgstr ""
 
 #, c-format
@@ -12162,8 +12165,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "විරාමය (_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."

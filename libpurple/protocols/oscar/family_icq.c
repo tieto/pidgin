@@ -91,13 +91,14 @@ int error(OscarData *od, aim_modsnac_t *error_snac, ByteStream *bs)
 
 	request_type = original_snac->data;
 	original_info_ptr = g_slist_find_custom(od->icq_info, &original_snac->id, compare_icq_infos);
-	original_info = original_info_ptr->data;
 
 	if (!original_info_ptr) {
 		purple_debug_misc("oscar", "icq: the request info for the error packet was not found");
 		g_free(original_snac);
 		return 0;
 	}
+
+	original_info = original_info_ptr->data;
 
 	reason = byte_stream_get16(bs);
 	uin = g_strdup_printf("%u", original_info->uin);

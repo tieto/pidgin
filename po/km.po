@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-02-25 15:29+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -3389,7 +3389,7 @@ msgstr "កម្មវិធី​ជំនួយ​ពិធីការ IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "កម្មវិធី​ជំនួយ​ពិធីការ IRC ដែល​ Sucks Less"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "ម៉ាស៊ីន​បម្រើ"
 
@@ -5832,6 +5832,26 @@ msgstr "សារ​មិន​ត្រូវ​បាន​ផ្ញើ​ទ
 msgid "Message was not sent because an unknown error occurred."
 msgstr "សារ​មិន​ត្រូវ​បាន​ផ្ញើ​បានទេ ពីព្រោះ​មាន​កំហុស​ដែលមិនស្គាល់​បានកើត​ឡើង ។"
 
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(មានកំហុសក្នុងបម្លែង​សារ​នេះ ។ គូសធីក​ជម្រើស 'ការ​អ៊ិនកូដ' នៅ ក្នុង​កម្មវិធី​កែសម្រួល​គណនី)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(មានកំហុស​មួយ​ក្នុងការ​ទទួល​សារ ។ អ្នក​ និង %s បាន​ជ្រើស​ការ​ការអ៊ិនកូដ​ផ្សេង​គ្នា ឬ %s មាន​ម៉ាស៊ីន​ភ្ញៀវ​"
+"មិត្តភក្ដិ ។)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(មានកំហុសក្នុងបម្លែង​សារ​នេះ ។ គូសធីក​ជម្រើស 'ការ​អ៊ិនកូដ' នៅ ក្នុង​កម្មវិធី​កែសម្រួល​គណនី)"
+
 msgid "Writing error"
 msgstr "កំហុស​ក្នុងការ​សរសេរ"
 
@@ -8249,25 +8269,9 @@ msgstr "ផ្ញើ​ការ​ប្រកាស​សាកល្បង"
 msgid "Topic:"
 msgstr "ប្រធានបទ ៖"
 
-msgid "No Sametime Community Server specified"
-msgstr "គ្មាន​ម៉ាស៊ីន​បម្រើ​សហគមន៍​បានបញ្ជាក់​ទេ"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"គ្មាន​ម៉ាស៊ីន ឬ​អាសយដ្ឋាន IP ត្រូវ​បានកំណត់​រចនាសម្ព័ន្ធ​សម្រាប់​គណនី %s ។ សូម​បញ្ចូល​អាសយដ្ឋាន IP មួយ​"
-"ខាងក្រោម​ដើម្បី​បន្ត​ចូល ។"
-
-msgid "Meanwhile Connection Setup"
-msgstr "រៀបចំ​ការ​តភ្ជាប់"
-
-msgid "No Sametime Community Server Specified"
-msgstr "គ្មាន​ម៉ាស៊ីន​បម្រើ​សហគមន៍​បាន​បញ្ជាក់​ទេ"
-
-msgid "Connect"
-msgstr "ត​ភ្ជាប់"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "ម៉ាស៊ីនបម្រើ​បាន​បិទ​ការ​តភ្ជាប់ ។"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12458,8 +12462,14 @@ msgstr "%s មាន​បំណង​ចាប់ផ្ដើម​សម័យ
 msgid "Incoming Call"
 msgstr "ការ​ហៅចូល"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "ផ្អាក"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14744,6 +14754,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "គ្មាន​ម៉ាស៊ីន​បម្រើ​សហគមន៍​បានបញ្ជាក់​ទេ"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "គ្មាន​ម៉ាស៊ីន ឬ​អាសយដ្ឋាន IP ត្រូវ​បានកំណត់​រចនាសម្ព័ន្ធ​សម្រាប់​គណនី %s ។ សូម​បញ្ចូល​អាសយដ្ឋាន IP មួយ​"
+#~ "ខាងក្រោម​ដើម្បី​បន្ត​ចូល ។"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "រៀបចំ​ការ​តភ្ជាប់"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "គ្មាន​ម៉ាស៊ីន​បម្រើ​សហគមន៍​បាន​បញ្ជាក់​ទេ"
+
+#~ msgid "Connect"
+#~ msgstr "ត​ភ្ជាប់"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "ច្រានចោល​ដោយ​ស្វ័យ​ប្រវត្តិ​ពី​អ្នក​ប្រើ​មិន​នៅ​ក្នុង​បញ្ជី​មិត្តភក្ដិទេ"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin_mai\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-09-02 18:48+0530\n"
 "Last-Translator: sangeeta_0975@yahoo.com>\n"
 "Language-Team: Maithili <http://code.google.com/p/bhashaghar>\n"
@@ -3351,7 +3351,7 @@ msgstr "IRC प्रोटोकोल प्लगिन"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "ओ IRC प्रोटोकोल जे थोड़ अधलाह अछि"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "सर्वर"
 
@@ -5715,6 +5715,24 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(एहि संदेशकेँ बदलैमे त्रुटि भेल.\t खाता संपादकमे 'एनकोडिंग' विकल्प केँ जांचू)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(एहि संदेशकेँ बदलैमे त्रुटि भेल.\t खाता संपादकमे 'एनकोडिंग' विकल्प केँ जांचू)"
 
 msgid "Writing error"
 msgstr "लिखैमे त्रुटि"
@@ -8091,25 +8109,9 @@ msgstr "जाँच घोषणा पठाउ"
 msgid "Topic:"
 msgstr "विषय:"
 
-msgid "No Sametime Community Server specified"
-msgstr "कोनो सेमटाइम समुदाय सर्वर निर्दिष्ट नहि छल"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"बिचबिचाऊ खाता %sक लेल कोनो मेजबान अथवा IP पता बिन्यस्त नहि कएल गेल अछि. कृप्या "
-"लागिन जारी रखबाक लेल नींच्चा एकटा डालू."
-
-msgid "Meanwhile Connection Setup"
-msgstr "बीचबिचाऊ संबंधन सेटअप"
-
-msgid "No Sametime Community Server Specified"
-msgstr "कोनो सेमटाइम समुदाय सर्वर निर्दिष्ट नहि"
-
-msgid "Connect"
-msgstr "जोड़ू"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "ई खाताक लेल ई मीत प्रतीकक प्रयोग करू (_i):"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12238,8 +12240,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "ठहरू (_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14502,6 +14510,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "कोनो सेमटाइम समुदाय सर्वर निर्दिष्ट नहि छल"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "बिचबिचाऊ खाता %sक लेल कोनो मेजबान अथवा IP पता बिन्यस्त नहि कएल गेल अछि. कृप्या "
+#~ "लागिन जारी रखबाक लेल नींच्चा एकटा डालू."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "बीचबिचाऊ संबंधन सेटअप"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "कोनो सेमटाइम समुदाय सर्वर निर्दिष्ट नहि"
+
+#~ msgid "Connect"
+#~ msgstr "जोड़ू"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "मीत सूचीमे नहि मोजुद प्रयोक्तासभक स्वतः अस्वीकार करू"

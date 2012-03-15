@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin.ne\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2006-06-27 21:08+0545\n"
 "Last-Translator: Shyam Krishna Bal <shyamkrishna_bal@yahoo.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -3582,7 +3582,7 @@ msgstr "IRC प्रोटोकल प्लगइन"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "कम अप्रिय IRC प्रोटोकल प्लगइन"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "सर्भर"
 
@@ -6196,6 +6196,28 @@ msgstr "सन्देश नगएको पनि हुनसक्छ क�
 msgid "Message was not sent because an unknown error occurred."
 msgstr "सन्देश नगएको पनि हुनसक्छ किनभने अज्ञात त्रुटि आएको छ :"
 
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(यो सन्देश रुपान्तरण गर्दा त्रुटि भेटियो ।\t खाता सम्पादकमा 'सङ्केतन' विकल्प जाँच गर्नुहोस्)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(यो सन्देश प्राप्त गर्दा एउटा त्रुटि भएको थियो ।  तपाईँ कुरा गरिरहनुभएको साथी सँग  एउटा "
+"बगी ग्राहक छ जस्तो छ ।)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(यो सन्देश रुपान्तरण गर्दा त्रुटि भेटियो ।\t खाता सम्पादकमा 'सङ्केतन' विकल्प जाँच गर्नुहोस्)"
+
 msgid "Writing error"
 msgstr "लेखन त्रुटि"
 
@@ -8801,24 +8823,9 @@ msgstr ""
 msgid "Topic:"
 msgstr "विषय:"
 
-msgid "No Sametime Community Server specified"
-msgstr ""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
 #, fuzzy
-msgid "Meanwhile Connection Setup"
-msgstr "टाढा जडान असफल भयो"
-
-msgid "No Sametime Community Server Specified"
-msgstr ""
-
-msgid "Connect"
-msgstr "जडान गर्नुहोस्"
+msgid "A server is required to connect this account"
+msgstr "जडान सिर्जना गर्दा त्रुटि"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13338,8 +13345,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "पज गर्नुहोस्"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15882,6 +15895,13 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "टाढा जडान असफल भयो"
+
+#~ msgid "Connect"
+#~ msgstr "जडान गर्नुहोस्"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

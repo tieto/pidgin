@@ -6216,7 +6216,15 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		return;
 
+	if ((tag = get_buddy_tag(conv, old_name, 0, FALSE)))
+		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
+		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+
 	old_cbuddy = purple_conv_chat_cb_find(chat, old_name);
+	if (!old_cbuddy)
+		return;
+
 	if (get_iter_from_chatbuddy(old_cbuddy, &iter)) {
 		GtkTreeRowReference *ref = old_cbuddy->ui_data;
 
@@ -6224,14 +6232,6 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 		gtk_tree_row_reference_free(ref);
 		old_cbuddy->ui_data = NULL;
 	}
-
-	if ((tag = get_buddy_tag(conv, old_name, 0, FALSE)))
-		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
-	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
-		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
-
-	if (!old_cbuddy)
-		return;
 
 	g_return_if_fail(new_alias != NULL);
 

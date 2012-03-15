@@ -8,6 +8,7 @@
 # Copyright (C) February 2010, Francisco Javier F. Serrador <fserrador@gmail.com>
 # Copyright (C) June 2002, April 2003, January 2004, March 2004, September 2004,
 # 	      January 2005, 2006-2008, July 2009, July 2010, August 2010, January 2011
+#             February 2012
 # 		Javier Fernández-Sanguino Peña  <jfs@debian.org>
 #
 # Agradecemos la ayuda de revisión realizada por:
@@ -53,8 +54,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
-"PO-Revision-Date: 2011-01-30 21:28+0100\n"
+"POT-Creation-Date: 2012-03-12 02:26-0700\n"
+"PO-Revision-Date: 2012-02-16 01:08+0100\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "Language: \n"
@@ -118,7 +119,17 @@ msgstr ""
 "X-POFile-SpellExtra: count prefs default gstreamer Vídeollamada GntFg\n"
 "X-POFile-SpellExtra: mDNSResponder RedirectEX GroupWise MSN Hing chat\n"
 "X-POFile-SpellExtra: nologin PINes nick Proxy Man users AP memoserv AV ICQ\n"
-"X-POFile-SpellExtra: roleando HMAC clientLogin vCard GetABacktrace\n"
+"X-POFile-SpellExtra: roleando HMAC clientLogin vCard GetABacktrace DN\n"
+"X-POFile-SpellExtra: indisponible verbose Tor delbuddy GUI unsafe Mari\n"
+"X-POFile-SpellExtra: operserv Win sgtkrc accountSettings download zu\n"
+"X-POFile-SpellExtra: chromium desinstalador Redimensionar GtkTreeView Core\n"
+"X-POFile-SpellExtra: rEs rSi manualwin chrome rPuede Maithili Chrome\n"
+"X-POFile-SpellExtra: Facebook persist ymsgr addbudy CLICK GPL\n"
+"X-POFile-SpellExtra: authserv TOC RC Installing Punjabí Indentar apilable\n"
+"X-POFile-SpellExtra: Evolution Maratí MultiMX Gtkrc kannada win debugwin\n"
+"X-POFile-SpellExtra: profileedit sobreescribirá blocklist STUN Comprobador\n"
+"X-POFile-SpellExtra: windows dlls IdUsuario gtkrc Name listicon Chromium\n"
+"X-POFile-SpellExtra: Pidgwin browser\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -319,9 +330,8 @@ msgstr "Nombre de usuario"
 msgid "Alias (optional)"
 msgstr "Apodo (opcional)"
 
-#, fuzzy
 msgid "Invite message (optional)"
-msgstr "Mensaje (opcional)"
+msgstr "Mensaje de invitación (opcional)"
 
 msgid "Add in group"
 msgstr "Añadir a un grupo"
@@ -2060,7 +2070,7 @@ msgid "Unknown reason"
 msgstr "Razón desconocida"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
-msgstr ""
+msgstr "Interrumpiendo la resolución DNS en modo proxy Tor."
 
 #, c-format
 msgid ""
@@ -3321,23 +3331,20 @@ msgstr "Introduzca su contraseña actual y la contraseña nueva para UIN: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Cambiar la contraseña Gadu-Gadu"
 
-#, fuzzy
 msgid "Show status to:"
-msgstr "Cambiar estado a"
+msgstr "Mostrar el estado a:"
 
 msgid "All people"
-msgstr ""
+msgstr "Todo el mundo"
 
-#, fuzzy
 msgid "Only buddies"
-msgstr "Amigos conectados"
+msgstr "Sólo amigos"
 
-#, fuzzy
 msgid "Change status broadcasting"
-msgstr "Cambiar estado a"
+msgstr "Cambiar la difusión de estado"
 
 msgid "Please, select who can see your status"
-msgstr ""
+msgstr "Por favor, seleccione quién debería poder ver su estado"
 
 #, c-format
 msgid "Select a chat for buddy: %s"
@@ -3583,7 +3590,7 @@ msgstr "Complemento de protocolo IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Complemento de protocolo IRC menos malo"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Servidor"
 
@@ -3786,9 +3793,8 @@ msgstr "Mensajes globales de %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;acción a realizar&gt;: Realiza una acción."
 
-#, fuzzy
 msgid "authserv: Send a command to authserv"
-msgstr "chanserv: Enviar un comando al servidor"
+msgstr "authserv: Enviar una orden a authserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -3801,7 +3807,7 @@ msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
 msgstr "ctcp <alias> <msj>: envía un mensaje ctcp al alias."
 
 msgid "chanserv: Send a command to chanserv"
-msgstr "chanserv: Enviar un comando al servidor"
+msgstr "chanserv: Enviar una orden a chanserv"
 
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
@@ -3858,7 +3864,7 @@ msgid "me &lt;action to perform&gt;:  Perform an action."
 msgstr "me &lt;acción a realizar&gt;:  Realizar una acción."
 
 msgid "memoserv: Send a command to memoserv"
-msgstr "memoserv: Enviar un comando al servidor"
+msgstr "memoserv: Enviar una orden a memoserv"
 
 msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
@@ -3882,7 +3888,7 @@ msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;nuevo apodo&gt;:  Cambia su apodo."
 
 msgid "nickserv: Send a command to nickserv"
-msgstr "nickserv: Enviar un comando al servidor."
+msgstr "nickserv: Enviar una orden a nickserv"
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
 msgstr "notice &lt;objetivo&gt;: enviar un aviso a un usuario o a un canal."
@@ -3902,7 +3908,7 @@ msgstr ""
 "utilizarlo."
 
 msgid "operserv: Send a command to operserv"
-msgstr "openserv: Enviar un comando al servidor"
+msgstr "openserv: Enviar una orden a operserv"
 
 msgid ""
 "part [room] [message]:  Leave the current channel, or a specified channel, "
@@ -3931,7 +3937,7 @@ msgstr ""
 "(opcional)."
 
 msgid "quote [...]:  Send a raw command to the server."
-msgstr "quote [...]:  Enviar un comando en crudo al servidor."
+msgstr "quote [...]:  Enviar una orden en crudo al servidor."
 
 msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
@@ -4874,10 +4880,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;usuario&gt; [mensaje]:  Invitar a un usuario a la sala."
 
-#, fuzzy
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr ""
-"join: &lt;sala&gt; [contraseña]:  Unirse a una sala en el servidor indicado."
+msgstr "join: &lt;sala[@servidor]&gt; [contraseña]:  Unirse a una sala."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;usuario&gt; [razón]:  Echar a un usuario de la sala."
@@ -5974,9 +5978,9 @@ msgstr "No puede eliminar el usuario"
 msgid "Mobile message was not sent because it was too long."
 msgstr "No se pudo enviar el mensaje al móvil porque es demasiado largo."
 
-#, fuzzy
 msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "No se pudo enviar el mensaje porque se produjo un error desconocido."
+msgstr ""
+"No se pudo enviar el mensaje móvil porque se produjo un error desconocido."
 
 #, c-format
 msgid ""
@@ -6026,6 +6030,30 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "No se pudo enviar el mensaje porque se produjo un error desconocido."
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"%s (Se produjo un error al recibir este mensaje. Falló la conversión de la "
+"codificación de %s a UTF-8.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"%s (Se produjo un error al recibir este mensaje. El código de caracteres era "
+"%s, pero no es un conjunto UTF-8 válido.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"%s (Se produjo un error al recibir este mensaje. Se omitió el código de "
+"caracteres, pero no es un conjunto UTF-8 válido.)"
 
 msgid "Writing error"
 msgstr "Error de escritura"
@@ -6176,13 +6204,12 @@ msgid "Display Name"
 msgstr "Mostrar nombre"
 
 #. about me
-#, fuzzy
 msgid "About Me"
 msgstr "Sobre mí"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "Dónde vivo"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6190,15 +6217,14 @@ msgstr "Número de teléfono móvil"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "Puede buscarse"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "Puede sugerirse"
 
-#, fuzzy
 msgid "Update your MXit Profile"
-msgstr "Actualizar su perfil"
+msgstr "Actualizar su perfil MXit"
 
 msgid "The PIN you entered is invalid."
 msgstr "La clave PIN introducida es inválida."
@@ -6213,9 +6239,8 @@ msgid "The two PINs you entered do not match."
 msgstr "Las dos PINes que introdujo no coinciden."
 
 #. show error to user
-#, fuzzy
 msgid "PIN Update Error"
-msgstr "Error de actualización de perfil"
+msgstr "Error de actualización de PIN"
 
 #. pin
 #. pin (required)
@@ -6227,13 +6252,11 @@ msgid "Verify PIN"
 msgstr "Verifique el PIN"
 
 #. (reference: "libpurple/request.h")
-#, fuzzy
 msgid "Change PIN"
-msgstr "Cambiar icono"
+msgstr "Cambiar PIN"
 
-#, fuzzy
 msgid "Change MXit PIN"
-msgstr "Cambiar icono"
+msgstr "Cambiar PIN MXit"
 
 msgid "View Splash"
 msgstr "Mostrar pantalla de bienvenida"
@@ -6244,17 +6267,14 @@ msgstr "No hay ninguna pantalla de bienvenida disponible"
 msgid "About"
 msgstr "Sobre"
 
-#, fuzzy
 msgid "Search for user"
-msgstr "Buscar un usuario"
+msgstr "Buscar por usuario"
 
-#, fuzzy
 msgid "Search for a MXit contact"
-msgstr "Buscar un usuario"
+msgstr "Buscar por contacto MXit"
 
-#, fuzzy
 msgid "Type search information"
-msgstr "Información de usuario"
+msgstr "Introduzca la información de búsqueda"
 
 msgid "_Search"
 msgstr "_Buscar"
@@ -6264,19 +6284,16 @@ msgid "Change Profile..."
 msgstr "Cambiar perfil..."
 
 #. change PIN
-#, fuzzy
 msgid "Change PIN..."
-msgstr "Cambiar su estado de ánimo..."
+msgstr "Cambiar PIN..."
 
 #. suggested friends
-#, fuzzy
 msgid "Suggested friends..."
-msgstr "Establecer su nombre de amigo..."
+msgstr "Amigos sugeridos..."
 
 #. search for contacts
-#, fuzzy
 msgid "Search for contacts..."
-msgstr "Buscar usuarios..."
+msgstr "Buscar por contactos..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6308,9 +6325,8 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Conectando..."
 
-#, fuzzy
 msgid "The Display Name you entered is too short."
-msgstr "El nombre que introdujo es inválido."
+msgstr "El nombre que introdujo es demasiado corto."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "El PIN que ha introducido no tiene una longitud válida [7-10]."
@@ -6413,21 +6429,18 @@ msgstr "Mensajes de rechazo"
 msgid "Hidden Number"
 msgstr "Número oculto"
 
-#, fuzzy
 msgid "No profile available"
-msgstr "No disponible"
+msgstr "No hay un perfil disponible"
 
-#, fuzzy
 msgid "This contact does not have a profile."
-msgstr "Esta cuenta no tiene correo activado."
+msgstr "Esta cuenta no tiene un perfil."
 
 msgid "Your MXit ID..."
 msgstr "Su MXit ID..."
 
 #. contact is in Deleted, Rejected or None state
-#, fuzzy
 msgid "Re-Invite"
-msgstr "Invitar"
+msgstr "Re-invitar"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6443,37 +6456,33 @@ msgstr "Activar la pantalla de bienvenida"
 msgid "Last Online"
 msgstr "Última conexión"
 
-#, fuzzy
 msgid "Invite Message"
-msgstr "Mensajes enviados"
+msgstr "Mensajes de invitación"
 
-#, fuzzy
 msgid "No results"
-msgstr "Resultados de la búsqueda"
+msgstr "No hay resultados"
 
-#, fuzzy
 msgid "No contacts found."
-msgstr "No se encontraron usuarios"
+msgstr "No se encontraron contactos."
 
 #. define columns
-#, fuzzy
 msgid "UserId"
-msgstr "Usuario"
+msgstr "IdUsuario"
 
 msgid "Where I live"
-msgstr ""
+msgstr "Donde yo vivo"
 
 #, c-format
 msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Tienes %i amigo sugerido."
+msgstr[1] "Tienes %i amigos sugeridos."
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hemos encontrado %i contacto que se ajusta a tu búsqueda."
+msgstr[1] "Hemos encontrado %i contactos que se ajustan a tu búsqueda."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8512,25 +8521,8 @@ msgstr "Enviar anuncio de prueba"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "No se ha especificado el servidor de comunidad «Sametime»"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"No se ha configurado ninguna dirección IP o nombre de equipo para la cuenta "
-"«Meanwhile» %s. Introduzca uno más abajo para continuar el registro."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Configuración de la conexión «Meanwhile»"
-
-msgid "No Sametime Community Server Specified"
-msgstr "No se ha especificado un servidor de comunidad «Sametime»"
-
-msgid "Connect"
-msgstr "Conectar"
+msgid "A server is required to connect this account"
+msgstr "Se necesita un servidor para conectarse a esta cuenta"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -10721,7 +10713,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 msgid "Tor/Privacy (SOCKS5)"
-msgstr ""
+msgstr "Tor/Privacidad (SOCKS5)"
 
 msgid "HTTP"
 msgstr "HTTP"
@@ -10753,13 +10745,11 @@ msgstr "_Puerto:"
 msgid "Pa_ssword:"
 msgstr "_Contraseña:"
 
-#, fuzzy
 msgid "Use _silence suppression"
-msgstr "Reanudando la sesión"
+msgstr "Utilizar supresión de _silencio"
 
-#, fuzzy
 msgid "_Voice and Video"
-msgstr "voz y vídeo"
+msgstr "_Voz y vídeo"
 
 msgid "Unable to save new account"
 msgstr "No se pudo guardar la nueva cuenta"
@@ -10807,19 +10797,20 @@ msgstr ""
 "Puede volver a esta ventana para añadir, editar o eliminar cuentas desde la "
 "ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
 "list%s%s"
-msgstr "%s%s%s%s quiere añadirle (%s) a su lista de amigos%s%s."
+msgstr ""
+"<a href=\"viewinfo\">%s</a>%s%s%s quiere añadirle (%s) a su lista de amigos%s"
+"%s."
 
 #, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s quiere añadirle (%s) a su lista de amigos%s%s."
 
-#, fuzzy
 msgid "Send Instant Message"
-msgstr "Mensaje instantáneo nuevo"
+msgstr "Mandar mensaje instantáneo"
 
 #. Buddy List
 msgid "Background Color"
@@ -11184,9 +11175,8 @@ msgstr "/Ayuda/Ventana de _depuración"
 msgid "/Help/De_veloper Information"
 msgstr "/Ayuda/Información de desa_rrollador"
 
-#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr "/Ayuda/Información de _compilación"
+msgstr "/Ayuda/Información de com_plementos"
 
 msgid "/Help/_Translator Information"
 msgstr "/Ayuda/Información de _traducción"
@@ -11373,9 +11363,8 @@ msgstr "Nombre de _usuario del amigo:"
 msgid "(Optional) A_lias:"
 msgstr "(Opcional) A_podo:"
 
-#, fuzzy
 msgid "(Optional) _Invite message:"
-msgstr "(Opcional) A_podo:"
+msgstr "(Opcional) Mensaje de _invitación:"
 
 msgid "Add buddy to _group:"
 msgstr "Añadir el amigo a un _grupo:"
@@ -11950,7 +11939,7 @@ msgid "Hindi"
 msgstr "Hindú"
 
 msgid "Croatian"
-msgstr ""
+msgstr "Croata"
 
 msgid "Hungarian"
 msgstr "Húngaro"
@@ -12197,13 +12186,12 @@ msgstr "Traductores anteriores"
 msgid "%s Translator Information"
 msgstr "Información de traducción de %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "Información de compilación de %s"
+msgstr "Información del complemento %s"
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "Información de conexión"
+msgstr "Información del complemento"
 
 msgid "_Name"
 msgstr "_Nombre"
@@ -12816,8 +12804,14 @@ msgstr "%s desea iniciar una sesión de vídeo con vd."
 msgid "Incoming Call"
 msgstr "Llamada entrante"
 
+msgid "_Hold"
+msgstr "_Retener"
+
 msgid "_Pause"
 msgstr "_Pausar"
+
+msgid "_Mute"
+msgstr "_Silenciar"
 
 #, c-format
 msgid "%s has %d new message."
@@ -13167,13 +13161,11 @@ msgstr "Utilizar paginado suave"
 msgid "F_lash window when IMs are received"
 msgstr "_Destello de ventana cuando se reciben MIs"
 
-#, fuzzy
 msgid "Resize incoming custom smileys"
-msgstr "_Gestionar emoticonos a medida"
+msgstr "Redimensionar emoticonos a medida entrantes"
 
-#, fuzzy
 msgid "Maximum size:"
-msgstr "Tiempo de espera máximo para respuestas:"
+msgstr "Tamañno máximo:"
 
 msgid "Minimum input area height in lines:"
 msgstr "Altura mínima del área de entrada en líneas:"
@@ -13245,9 +13237,8 @@ msgstr "Servidor _TURN:"
 msgid "_UDP Port:"
 msgstr "Puerto _UDP:"
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "Puerto _UDP:"
+msgstr "Puerto T_CP:"
 
 msgid "Use_rname:"
 msgstr "Nombre de usua_rio:"
@@ -14887,20 +14878,17 @@ msgstr "Di_spositivo"
 msgid "DROP"
 msgstr ""
 
-#, fuzzy
 msgid "Volume:"
-msgstr "V_olumen:"
+msgstr "Volumen:"
 
-#, fuzzy
 msgid "Silence threshold:"
-msgstr "Umbral:"
+msgstr "Umbral de silencio:"
 
 msgid "Input and Output Settings"
-msgstr ""
+msgstr "Valores de Entrada y Salida"
 
-#, fuzzy
 msgid "Microphone Test"
-msgstr "Micrófono"
+msgstr "Prueba de micrófono"
 
 #. *< magic
 #. *< major version
@@ -14921,7 +14909,7 @@ msgstr "Configurar su micrófono y cámara web."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
-msgstr "Configurar micrófono y camara web para llamadas por voz/vídeo."
+msgstr "Configurar el micrófono y la cámara web para llamadas por voz/vídeo."
 
 msgid "Opacity:"
 msgstr "Opacidad:"
@@ -15089,7 +15077,7 @@ msgid ""
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Se produjo un error al descargar el entorno de ejecución de GTK+ ($R2).$"
-"\\rESte entorno es necesario para que funcione Pidgin, si falla el reintento "
+"\\rEste entorno es necesario para que funcione Pidgin, si falla el reintento "
 "tendrá que utilizar el «Instalador fuera de línea» disponible en http://"
 "pidgin.im/download/windows/ ."
 
@@ -15136,7 +15124,7 @@ msgid ""
 "Runtime?"
 msgstr ""
 "Pidgin necesita un entorno de ejecución compatible GTK+ (que no parece que "
-"esté disponible).$\\r¿Está seguro que quiere omitir el paso de instalacio "
+"esté disponible).$\\r¿Está seguro que quiere omitir el paso de instalación "
 "del entorno de ejecución de GTK+?"
 
 #. Installer Subsection Text
@@ -15190,6 +15178,77 @@ msgstr "Visite la página Web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "No tiene permisos para desinstalar esta aplicación."
+
+#~ msgid "New password should be at most 15 characters long."
+#~ msgstr ""
+#~ "La nueva contraseña debería tener una longitud de al menos 15 caracteres."
+
+#~ msgid "Error connecting to proxy server"
+#~ msgstr "Error al conectarse al servidor proxy"
+
+#~ msgid "Error connecting to master server"
+#~ msgstr "Error al conectarse al servidor maestro"
+
+#~ msgid "Show links from strangers"
+#~ msgstr "Mostrar enlaces de desconocidos"
+
+#~ msgid "An encrypted message was received which could not be decrypted."
+#~ msgstr "Se recibió un mensaje cifrado que no pudo descifrarse."
+
+#~ msgid "DN"
+#~ msgstr "DN"
+
+#~ msgid "Certificate Information for %s"
+#~ msgstr "Información de certificado para %s"
+
+#~ msgid "Unsafe debugging is now disabled."
+#~ msgstr "Se ha deshabilitado la depuración insegura."
+
+#~ msgid "Unsafe debugging is now enabled."
+#~ msgstr "Se ha habilitado la depuración insegura."
+
+#~ msgid "Verbose debugging is now disabled."
+#~ msgstr "Se ha deshabilitado la depuración detallada."
+
+#~ msgid "Verbose debugging is now enabled."
+#~ msgstr "Se ha habilitado la depuración detallada."
+
+#~ msgid "Supported debug options are: plugins version unsafe verbose"
+#~ msgstr ""
+#~ "Las opciones de depuración soportadas son: «plugins» «version» «unsafe» "
+#~ "«verbose»"
+
+#~ msgid "Call in progress"
+#~ msgstr "Llamada en curso"
+
+#~ msgid "The default Pidgin conversation theme"
+#~ msgstr "El tema de conversación de Pidgin por omisión"
+
+#~ msgid "Conversation Theme:"
+#~ msgstr "Tema de conversación"
+
+#~ msgid "\tVariant:"
+#~ msgstr "\tVariante:"
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "No se ha especificado el servidor de comunidad «Sametime»"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "No se ha configurado ninguna dirección IP o nombre de equipo para la "
+#~ "cuenta «Meanwhile» %s. Introduzca uno más abajo para continuar el "
+#~ "registro."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Configuración de la conexión «Meanwhile»"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "No se ha especificado un servidor de comunidad «Sametime»"
+
+#~ msgid "Connect"
+#~ msgstr "Conectar"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Mensaje de solicitud de autorización:"

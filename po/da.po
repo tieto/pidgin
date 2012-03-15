@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2009-02-23 18:17+0100\n"
 "Last-Translator: Peter Bach <bach.peter@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -3477,7 +3477,7 @@ msgstr "IRC prokotolmodul"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC prokotolmodul"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5983,6 +5983,30 @@ msgstr "Besked blev ikke sendt, fordi en ukendt kodningsfejl opstod."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Besked blev ikke sendt, fordi en ukendt fejl opstod."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Der opstod en fejl, da denne besked skulle konverteres.\t Tjek 'Tegnsæt'-"
+"indstillingen i Konto-redigeringen)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Der opstod en fejl ved modtagelse af denne besked. Enten har du eller %s "
+"valgt forskellige indkodninger, eller har %s en fejlramt klient.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Der opstod en fejl, da denne besked skulle konverteres.\t Tjek 'Tegnsæt'-"
+"indstillingen i Konto-redigeringen)"
 
 msgid "Writing error"
 msgstr "Skrivningsfejl"
@@ -8543,25 +8567,9 @@ msgstr "Send TEST annoncering"
 msgid "Topic:"
 msgstr "Emne:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Ingen Sametime community server angivet"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ingen vært eller IP-adresse er blevet sat op for Meanwhile-kontoen %s. "
-"Indtast en forneden for at fortsætte med at logge ind."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile forbindelsesopsætning"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Ingen Sametime fællesskab server angivet"
-
-msgid "Connect"
-msgstr "Tilslut"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server lukkede forbindelsen."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12879,8 +12887,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15314,6 +15328,25 @@ msgstr "Besøg Pidgin's hjemmeside"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke tilladelse til at afinstallere dette program."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Ingen Sametime community server angivet"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ingen vært eller IP-adresse er blevet sat op for Meanwhile-kontoen %s. "
+#~ "Indtast en forneden for at fortsætte med at logge ind."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile forbindelsesopsætning"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Ingen Sametime fællesskab server angivet"
+
+#~ msgid "Connect"
+#~ msgstr "Tilslut"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Afvis automatisk fra brugere der ikke er i min venneliste"

@@ -300,6 +300,50 @@ wpurple_inet_ntop (int af, const void *src, char *dst, socklen_t cnt)
   return (const char *) dst;
 }
 
+int
+wpurple_inet_pton(int af, const char *src, void *dst)
+{
+	/* struct sockaddr can't accomodate struct sockaddr_in6. */
+	union {
+		struct sockaddr_in6 sin6;
+		struct sockaddr_in sin;
+	} sa;
+	size_t srcsize;
+	
+	switch(af)
+	{
+		case AF_INET:
+			sa.sin.sin_family = AF_INET;
+			srcsize = sizeof (sa.sin);
+		break;
+		case AF_INET6:
+			sa.sin6.sin6_family = AF_INET6;
+			srcsize = sizeof (sa.sin6);
+		break;
+		default:
+			errno = WSAEPFNOSUPPORT;
+			return -1;
+	}
+	
+	if (WSAStringToAddress(src, af, NULL, (struct sockaddr *) &sa, &srcsize) != 0)
+	{
+		errno = WSAGetLastError();
+		return -1;
+	}
+	
+	switch(af)
+	{
+		case AF_INET:
+			memcpy(dst, &sa.sin.sin_addr, sizeof(sa.sin.sin_addr));
+		break;
+		case AF_INET6:
+			memcpy(dst, &sa.sin6.sin6_addr, sizeof(sa.sin6.sin6_addr));
+		break;
+	}
+	
+	return 1;
+}
+
 
 /* netdb.h */
 struct hostent* wpurple_gethostbyname(const char *name) {

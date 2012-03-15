@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:33-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-11 07:30+0000\n"
 "Last-Translator: Dingoe <translations@gvmelle.com>\n"
 "Language-Team: Dutch (http://www.transifex.net/projects/p/pidgin/team/nl/)\n"
@@ -3458,7 +3458,7 @@ msgstr "IRC-protocol plug-in"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "De IRC-protocol plug-in die minder zuigt"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5874,6 +5874,30 @@ msgstr "Bericht is niet verstuurd wegens een onbekende coderingsfout:"
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Bericht is niet verstuurd wegens een onbekende fout:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Er is een fout opgetreden bij het converteren van het bericht.\t Controleer "
+"de optie 'Codering' in het account)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Er was een fout tijdens het ontvangen van het bericht. Of jij en %s hebben "
+"verschillende coderingmethoden ingesteld, of %s heeft een instabiele cliënt.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Er is een fout opgetreden bij het converteren van het bericht.\t Controleer "
+"de optie 'Codering' in het account)"
 
 msgid "Writing error"
 msgstr "Schrijffout"
@@ -8339,25 +8363,9 @@ msgstr "TEST-aankondiging versturen"
 msgid "Topic:"
 msgstr "Onderwerp:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Geen Sametime communityserver gegeven"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Er is geen computernaam of IP-adres ingesteld in Meanwhile-account %s. Vul "
-"hieronder één in om door te gaan met de aanmelding."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Instellen van verbinding"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Geen Sametime gemeenschapsserver gegeven"
-
-msgid "Connect"
-msgstr "Verbinden"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server heeft de verbinding verbroken"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12636,8 +12644,14 @@ msgstr "%s wil een videogesprek starten."
 msgid "Incoming Call"
 msgstr "Binnenkomende Gesprek"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pauzeren"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14974,3 +14988,22 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Geen Sametime communityserver gegeven"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Er is geen computernaam of IP-adres ingesteld in Meanwhile-account %s. "
+#~ "Vul hieronder één in om door te gaan met de aanmelding."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Instellen van verbinding"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Geen Sametime gemeenschapsserver gegeven"
+
+#~ msgid "Connect"
+#~ msgstr "Verbinden"
