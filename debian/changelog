@@ -1,3 +1,11 @@
+pidgin (2.10.2-1) unstable; urgency=medium
+
+  * Imported Upstream version 2.10.2
+    - Fixes a possible remote crash in XMPP (CVE-2011-4939) (Closes: #664028)
+    - Fixes a possible remote crash in XMPP (CVE-2012-1178) (Closes: #664030)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 14 Mar 2012 21:20:18 -0400
+
 pidgin (2.10.1-1) unstable; urgency=medium
 
   * Imported Upstream version 2.10.1
