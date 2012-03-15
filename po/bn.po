@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-05-05 13:37+0600\n"
 "Last-Translator: israt <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -3603,7 +3603,7 @@ msgstr "IRC প্রোটোকল প্লাগইন"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC প্রোটোকল প্লাগইন যা কম সমস্যা তৈরি করে"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "সার্ভার"
 
@@ -6258,6 +6258,29 @@ msgstr "অজানা এনকোডিং ত্রুটি সংঘটি
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "অজানা ত্রুটি সংঘটিত হওয়ায় বার্তা পাঠানো যায়নি।"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(এই বার্তাটি রূপান্তরে ত্রুটি হয়েছে।\t ‌‌‌‌অ্যাকাউন্ট সম্পাদকে 'এনকোডিং' অপশনটি দেখুন)"
+
+# tithi
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(এই বার্তাটি গ্রহণে একটি ত্রুটি হয়েছে। হয় আপনার এবং %s এর পৃথক এনকোডিং নির্বাচিত "
+"আছে, বা %s এর ক্লায়েন্টটি ত্রুটিপূর্ণ।)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(এই বার্তাটি রূপান্তরে ত্রুটি হয়েছে।\t ‌‌‌‌অ্যাকাউন্ট সম্পাদকে 'এনকোডিং' অপশনটি দেখুন)"
 
 # tithi
 msgid "Writing error"
@@ -9093,29 +9116,9 @@ msgstr "পরীক্ষামূলক ঘোষনা প্রেরণ"
 msgid "Topic:"
 msgstr "বিষয়:"
 
-# tithi
-msgid "No Sametime Community Server specified"
-msgstr "কোনো Sametime Community সার্ভার উল্লেখ করা হয়নি"
-
-# tithi
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Meanwhile অ্যাকাউন্ট %sএর জন্য কোনো হোস্ট বা আইপি ঠিকানা কনফিগার করা হয়নি। অনুগ্রহ "
-"করে লগইন অব্যাহত রাখতে নিচে এই তথ্য দিন।"
-
-# tithi
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile সংযোগ সেটআপ"
-
-# tithi
-msgid "No Sametime Community Server Specified"
-msgstr "কোনো Sametime Community সার্ভার উল্লেখিত নয়"
-
-msgid "Connect"
-msgstr "সংযোগ স্থাপন"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে"
 
 # tithi
 #, c-format
@@ -13716,8 +13719,14 @@ msgstr "%s আপনার সাথে একটি ভিডিও সেশ�
 msgid "Incoming Call"
 msgstr "আগত কল  "
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "বিরতি (_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -16215,6 +16224,29 @@ msgstr "পিজিনের ওয়েব পেজ দেখুন"
 # snigdha
 msgid "You do not have permission to uninstall this application."
 msgstr "আপনার এই অ্যাপ্লিকেশনটি আনইন্সটল করার অনুমতি নেই।"
+
+# tithi
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "কোনো Sametime Community সার্ভার উল্লেখ করা হয়নি"
+
+# tithi
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Meanwhile অ্যাকাউন্ট %sএর জন্য কোনো হোস্ট বা আইপি ঠিকানা কনফিগার করা হয়নি। "
+#~ "অনুগ্রহ করে লগইন অব্যাহত রাখতে নিচে এই তথ্য দিন।"
+
+# tithi
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile সংযোগ সেটআপ"
+
+# tithi
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "কোনো Sametime Community সার্ভার উল্লেখিত নয়"
+
+#~ msgid "Connect"
+#~ msgstr "সংযোগ স্থাপন"
 
 # tithi
 #~ msgid "Authorization Request Message:"

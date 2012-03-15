@@ -102,7 +102,6 @@ ifeq "$(origin CC)" "default"
 endif
 GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
-MAKENSISOPT ?= /
 PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip

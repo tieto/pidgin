@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -3439,7 +3439,7 @@ msgstr "IRC Protokol Eklentisi"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Daha az Hatası Olan IRC Eklentisi"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Sunucu"
 
@@ -5946,6 +5946,28 @@ msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana gel
 msgid "Message was not sent because an unknown error occurred."
 msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana geldi:"
 
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(İleti dönüştürülürken bir hata oluştu.\n"
+" Hesap Düzenleyiciden Kodlama seçeneğine bakın)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(İleti dönüştürülürken bir hata oluştu.\n"
+" Hesap Düzenleyiciden Kodlama seçeneğine bakın)"
+
 msgid "Writing error"
 msgstr "Yazma hatası"
 
@@ -8450,23 +8472,9 @@ msgstr "TEST Anonsu Gönder"
 msgid "Topic:"
 msgstr "Konu:"
 
-msgid "No Sametime Community Server specified"
-msgstr ""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-msgid "Meanwhile Connection Setup"
-msgstr ""
-
-msgid "No Sametime Community Server Specified"
-msgstr ""
-
-msgid "Connect"
-msgstr "Bağlan"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Sunucu bağlantıyı kapattı."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12752,8 +12760,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Durakla"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15195,6 +15209,9 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Connect"
+#~ msgstr "Bağlan"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2009-08-29 23:23+0200\n"
 "Last-Translator: Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>\n"
 "Language-Team:  <en@li.org>\n"
@@ -3450,7 +3450,7 @@ msgstr "IRC Protokolo-Plugina"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Arazo gutxien ematen dituen IRC Protokolo-Plugina"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Zerbitzaria"
 
@@ -5949,6 +5949,30 @@ msgstr "Ez da mezua bidali, kodeketa-errore ezezaguna gertatu delako."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Ez da mezua bidali, errore ezezaguna gertatu delako."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Errorea gertatu da mezu hau bihurtzean.\t 'Kodeketa' aukera egiaztatu ezazu "
+"Kontu-Editorean)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"((Errorea mezu hau jasotzean.  Kodeketa ezberdinak hautatu dituzue zuk eta %s"
+"(e)k, edo %s(e)k bezero akatsduna dauka.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Errorea gertatu da mezu hau bihurtzean.\t 'Kodeketa' aukera egiaztatu ezazu "
+"Kontu-Editorean)"
 
 msgid "Writing error"
 msgstr "Idazketa-errorea"
@@ -8502,25 +8526,9 @@ msgstr "FROGA Oharra Bidali"
 msgid "Topic:"
 msgstr "Gaia:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Ez da Sametime Komunitate Zerbitzaririk zehaztu"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ez ostalari edo IP helbiderik konfiguratu %s Meanwhile konturako. "
-"Konektatzeko, bat sartu ezazu azpian."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile Konexio Konfigurazioa"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Ez da Sametime Komunitate Zerbitzaririk Zehaztu"
-
-msgid "Connect"
-msgstr "Konektatu"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Zerbitzariak amaituarazi du konexioa"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12795,8 +12803,14 @@ msgstr "%s(e)k bideo-sesio bat hasiarazi nahi du zurekin."
 msgid "Incoming Call"
 msgstr "Deia Jasotzen"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pausarazi"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15165,6 +15179,25 @@ msgstr "Pidgin Webgunera etorri"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Ez da Sametime Komunitate Zerbitzaririk zehaztu"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ez ostalari edo IP helbiderik konfiguratu %s Meanwhile konturako. "
+#~ "Konektatzeko, bat sartu ezazu azpian."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile Konexio Konfigurazioa"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Ez da Sametime Komunitate Zerbitzaririk Zehaztu"
+
+#~ msgid "Connect"
+#~ msgstr "Konektatu"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Automatikoki ezetsi lagun-zerrendan ez dauden erabiltzaileak"

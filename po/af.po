@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 22:49-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-17 21:17+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
@@ -3456,7 +3456,7 @@ msgstr "IRC-protokolinprop"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Die IRC-protokolinprop wat minder suig"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Bediener"
 
@@ -5861,6 +5861,30 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Boodskap is nie gestuur nie omdat 'n onbekende fout voorgekom het."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Kon nie hierdie boodskap omskakel nie.\t Kontroleer die 'Enkodering'-opsie "
+"in die Rekeningredigeerder)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Kon nie hierdie boodskap ontvang nie.  Óf u en %s het verskillende "
+"enkoderings gekies, óf %s het 'n vrotterige kliënt.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Kon nie hierdie boodskap omskakel nie.\t Kontroleer die 'Enkodering'-opsie "
+"in die Rekeningredigeerder)"
 
 msgid "Writing error"
 msgstr "Skryffout"
@@ -8308,25 +8332,9 @@ msgstr "Stuur TEST-aankondiging"
 msgid "Topic:"
 msgstr "Onderwerp:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Geen Sametime-gemeenskapsbediener gespesifiseer nie"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Geen gasheer of IP-adres is vir die Intussen-rekening %s gekonfigureer nie. "
-"Tik gerus een hier onder om steeds aan te meld."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Opstelling van Intussen-koppeling"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Geen Sametime-gemeenskapsbediener gespesifiseer nie"
-
-msgid "Connect"
-msgstr "Koppel"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Bediener het die koppeling toegemaak"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12584,8 +12592,14 @@ msgstr "%s wil 'n videosessie met u begin."
 msgid "Incoming Call"
 msgstr "Inkomende oproep"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pouseer"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14924,6 +14938,25 @@ msgstr "Besoek die WinPidgin-webblad"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Geen Sametime-gemeenskapsbediener gespesifiseer nie"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Geen gasheer of IP-adres is vir die Intussen-rekening %s gekonfigureer "
+#~ "nie. Tik gerus een hier onder om steeds aan te meld."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Opstelling van Intussen-koppeling"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Geen Sametime-gemeenskapsbediener gespesifiseer nie"
+
+#~ msgid "Connect"
+#~ msgstr "Koppel"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Magtigingversoek:"

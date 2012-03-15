@@ -164,10 +164,7 @@ msn_got_login_params(MsnSession *session, const char *ticket, const char *respon
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
-	if (session->protocol_ver >= 16)
-		trans = msn_transaction_new(cmdproc, "USR", "SSO S %s %s %s", ticket, response, session->guid);
-	else
-		trans = msn_transaction_new(cmdproc, "USR", "SSO S %s %s", ticket, response);
+	trans = msn_transaction_new(cmdproc, "USR", "SSO S %s %s %s", ticket, response, session->guid);
 
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
@@ -359,23 +356,34 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 /*send Message to Yahoo Messenger*/
 void
-uum_send_msg(MsnSession *session,MsnMessage *msg)
+msn_notification_send_uum(MsnSession *session, MsnMessage *msg)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
 	char *payload;
 	gsize payload_len;
 	int type;
+	MsnUser *user;
+	int network;
+
+	g_return_if_fail(msg != NULL);
 
 	cmdproc = session->notification->cmdproc;
-	g_return_if_fail(msg     != NULL);
+
 	payload = msn_message_gen_payload(msg, &payload_len);
+	type = msg->type;
+	user = msn_userlist_find_user(session->userlist, msg->remote_user);
+	if (user)
+		network = msn_user_get_network(user);
+	else
+		network = MSN_NETWORK_PASSPORT;
+
 	purple_debug_info("msn",
 		"send UUM, payload{%s}, strlen:%" G_GSIZE_FORMAT ", len:%" G_GSIZE_FORMAT "\n",
 		payload, strlen(payload), payload_len);
-	type = msg->type;
-	trans = msn_transaction_new(cmdproc, "UUM", "%s 32 %d %" G_GSIZE_FORMAT,
-		msg->remote_user, type, payload_len);
+
+	trans = msn_transaction_new(cmdproc, "UUM", "%s %d %d %" G_GSIZE_FORMAT,
+		msg->remote_user, network, type, payload_len);
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
@@ -390,10 +398,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		if (cmdproc->session->protocol_ver >= 16)
-			cmd->payload_len = atoi(cmd->params[5]);
-		else
-			cmd->payload_len = atoi(cmd->params[3]);
+		cmd->payload_len = atoi(cmd->params[5]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -1042,7 +1047,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
 		clientid = strtoul(cmd->params[5], &extcap_str, 10);
-		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+		if (extcap_str && *extcap_str)
 			extcaps = strtoul(extcap_str+1, NULL, 10);
 		else
 			extcaps = 0;
@@ -1056,7 +1061,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
 		clientid = strtoul(cmd->params[5], &extcap_str, 10);
-		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+		if (extcap_str && *extcap_str)
 			extcaps = strtoul(extcap_str+1, NULL, 10);
 		else
 			extcaps = 0;
@@ -1069,7 +1074,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			networkid = atoi(cmd->params[3]);
 			friendly = g_strdup(purple_url_decode(cmd->params[4]));
 			clientid = strtoul(cmd->params[5], &extcap_str, 10);
-			if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+			if (extcap_str && *extcap_str)
 				extcaps = strtoul(extcap_str+1, NULL, 10);
 			else
 				extcaps = 0;
@@ -1077,7 +1082,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			/* MSNP8+ with Display Picture object */
 			friendly = g_strdup(purple_url_decode(cmd->params[3]));
 			clientid = strtoul(cmd->params[4], &extcap_str, 10);
-			if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+			if (extcap_str && *extcap_str)
 				extcaps = strtoul(extcap_str+1, NULL, 10);
 			else
 				extcaps = 0;
@@ -1087,7 +1092,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* MSNP8+ without Display Picture object */
 		friendly = g_strdup(purple_url_decode(cmd->params[3]));
 		clientid = strtoul(cmd->params[4], &extcap_str, 10);
-		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+		if (extcap_str && *extcap_str)
 			extcaps = strtoul(extcap_str+1, NULL, 10);
 		else
 			extcaps = 0;
@@ -1250,15 +1255,15 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnObject *msnobj;
 	unsigned long clientid, extcaps;
 	char *extcap_str;
+	char *passport;
 	int networkid;
-	const char *state, *passport, *friendly;
+	const char *state, *friendly;
 
 	session = cmdproc->session;
 
-	state    = cmd->params[0];
-	passport = cmd->params[1];
-	networkid = atoi(cmd->params[2]);
-	friendly = purple_url_decode(cmd->params[3]);
+	state = cmd->params[0];
+	msn_parse_user(cmd->params[1], &passport, &networkid);
+	friendly = purple_url_decode(cmd->params[2]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
@@ -1268,9 +1273,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
-	if (cmd->param_count == 6)
+	if (cmd->param_count == 5)
 	{
-		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
+		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[4]));
 		msn_user_set_object(user, msnobj);
 	}
 	else
@@ -1278,8 +1283,8 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, NULL);
 	}
 
-	clientid = strtoul(cmd->params[4], &extcap_str, 10);
-	if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+	clientid = strtoul(cmd->params[3], &extcap_str, 10);
+	if (extcap_str && *extcap_str)
 		extcaps = strtoul(extcap_str+1, NULL, 10);
 	else
 		extcaps = 0;
@@ -1292,6 +1297,8 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
+
+	g_free(passport);
 }
 
 #if 0
@@ -1705,21 +1712,26 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnSession *session;
 	MsnUser *user;
-	const char *passport;
+	char *passport;
+	int network;
 	xmlnode *payloadNode;
 	char *psm_str, *str;
 
 	session = cmdproc->session;
 
-	passport = cmd->params[0];
+	msn_parse_user(cmd->params[0], &passport, &network);
 	user = msn_userlist_find_user(session->userlist, passport);
+
 	if (user == NULL) {
-		char *str = g_strndup(payload, len);
+		str = g_strndup(payload, len);
 		purple_debug_info("msn", "unknown user %s, payload is %s\n",
 			passport, str);
+		g_free(passport);
 		g_free(str);
 		return;
 	}
+
+	g_free(passport);
 
 	/* Free any existing media info for this user */
 	if (user->extinfo) {
@@ -1767,7 +1779,7 @@ ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "UBX received.\n");
 	cmdproc->last_cmd->payload_cb  = ubx_cmd_post;
-	cmd->payload_len = atoi(cmd->params[2]);
+	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 static void
@@ -1812,10 +1824,7 @@ void msn_notification_send_uux_endpointdata(MsnSession *session)
 	epDataNode = xmlnode_new("EndpointData");
 
 	capNode = xmlnode_new_child(epDataNode, "Capabilities");
-	if (session->protocol_ver >= 16)
-		caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
-	else
-		caps = g_strdup_printf("%d", MSN_CLIENT_ID_CAPABILITIES);
+	caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
 	xmlnode_insert_data(capNode, caps, -1);
 	g_free(caps);
 
@@ -1940,6 +1949,22 @@ msn_notification_send_uun(MsnSession *session, const char *user,
 	                            user, type, len);
 	msn_transaction_set_payload(trans, payload, len);
 	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+void
+msn_notification_send_circle_auth(MsnSession *session, const char *ticket)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+	char *encoded;
+
+	cmdproc = session->notification->cmdproc;
+
+	encoded = purple_base64_encode((guchar *)ticket, strlen(ticket));
+	trans = msn_transaction_new(cmdproc, "USR", "SHA A %s", encoded);
+	msn_cmdproc_send_trans(cmdproc, trans);
+
+	g_free(encoded);
 }
 
 /**************************************************************************

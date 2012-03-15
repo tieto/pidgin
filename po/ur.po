@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Urdu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-11-14 14:00+0530\n"
 "Last-Translator: RKVS Raman <raman@cdacbangalore.in>\n"
 "Language-Team: C-DAC,Gist,Urdu Team / BharateeyaOO.o <info.gist@cdac.in / "
@@ -3525,7 +3525,7 @@ msgstr "IRCپروٹوکال پلگ ان"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr " IRCپروٹوکال پلگ ان جو کم سک کرتاہے"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "سرور"
 
@@ -6091,6 +6091,26 @@ msgstr "پیام نہیں بھیجا جا سکا کیونکہ نا معلوم خ
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "پیام نہیں بھیجا جا سکا کیونکہ نا معلوم خامی واقع ہوگئی:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(اس پیام کو تبدیل کرنے میں خامی تھی۔\t اکاؤنٹ ایڈیٹر میں 'این کوڈینگ'جانچیے)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(اس پیام کو تبدیل کرنے میں خامی تھی۔\t اکاؤنٹ ایڈیٹر میں 'این کوڈینگ'جانچیے)"
 
 msgid "Writing error"
 msgstr "لکھ رہا ہے خامی"
@@ -8674,25 +8694,9 @@ msgstr "TESTاعلان بھیجیں"
 msgid "Topic:"
 msgstr "عنوان"
 
-msgid "No Sametime Community Server specified"
-msgstr "كوئی بھی سیم ٹائم كمیونٹی كاسرورمختص نہیں"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-" %sدوران اكاؤنٹ كےلیے كوئی بھی ہوسٹ یاIP ایڈریس تشكیل نہیں دیاگیاہے۔براہ كرم "
-"لاگینگ ان جاری ركھنےكےلیےنیچےكاكوئی ڈالیں۔"
-
-msgid "Meanwhile Connection Setup"
-msgstr "اسی درمیان میں كنیكشن سیٹ اپ"
-
-msgid "No Sametime Community Server Specified"
-msgstr "كوئی بھی سیم ٹائم كمیونٹی كاسرورمختص نہیں"
-
-msgid "Connect"
-msgstr "کنیکٹ"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "سرورنےرابطہ بندكردیا۔"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13101,8 +13105,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "رکاوٹ"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15621,6 +15631,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "كوئی بھی سیم ٹائم كمیونٹی كاسرورمختص نہیں"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ " %sدوران اكاؤنٹ كےلیے كوئی بھی ہوسٹ یاIP ایڈریس تشكیل نہیں دیاگیاہے۔براہ "
+#~ "كرم لاگینگ ان جاری ركھنےكےلیےنیچےكاكوئی ڈالیں۔"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "اسی درمیان میں كنیكشن سیٹ اپ"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "كوئی بھی سیم ٹائم كمیونٹی كاسرورمختص نہیں"
+
+#~ msgid "Connect"
+#~ msgstr "کنیکٹ"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

@@ -462,6 +462,8 @@ disco_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
 	                         &val);
 	service = g_value_get_pointer(&val);
+	if (!service)
+		return FALSE;
 
 	switch (service->type) {
 		case XMPP_DISCO_SERVICE_TYPE_UNSET:

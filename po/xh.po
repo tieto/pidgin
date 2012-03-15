@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2005-03-23 12:21+0200\n"
 "Last-Translator: Canonical Ltd <translations@canonical.com>\n"
 "Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
@@ -3617,7 +3617,7 @@ msgstr "Imithetho yokuSebenza yokuNgenisa yeIRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Umthetho wokuSebenza wokuNgenisa iIRC eFunxa Kancinci"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Iseva"
 
@@ -6254,6 +6254,30 @@ msgstr "Umyalezo kunokwenzeka awuthunyelwanga ngenxa yempazamo engaziwayo:"
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Umyalezo kunokwenzeka awuthunyelwanga ngenxa yempazamo engaziwayo:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Kubekho impazamo ekuguquleni lomyalezo.\t Jonga ukhetho 'Lokunxulumanisa' "
+"kwi-Akhawunti yomHleli)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Kubekho impazamo ukufumana lo myalelzo.  Umhlobo othetha naye mhlawumbe "
+"unomboneleli wenkonzo onesiphene.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Kubekho impazamo ekuguquleni lomyalezo.\t Jonga ukhetho 'Lokunxulumanisa' "
+"kwi-Akhawunti yomHleli)"
 
 #, fuzzy
 msgid "Writing error"
@@ -8907,25 +8931,8 @@ msgid "Topic:"
 msgstr "isiHloko:"
 
 #, fuzzy
-msgid "No Sametime Community Server specified"
-msgstr "Ukunxibelelana neSeva yeSILC"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-#, fuzzy
-msgid "Meanwhile Connection Setup"
-msgstr "UThungelwano oluKwenye iNdawo aluphumelelanga"
-
-#, fuzzy
-msgid "No Sametime Community Server Specified"
-msgstr "Ukunxibelelana neSeva yeSILC"
-
-msgid "Connect"
-msgstr "Ukunxulumana"
+msgid "A server is required to connect this account"
+msgstr "Impazamo yokudala unxibelelwano"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13487,8 +13494,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Nqumama"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -16044,6 +16057,21 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Ukunxibelelana neSeva yeSILC"
+
+#, fuzzy
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "UThungelwano oluKwenye iNdawo aluphumelelanga"
+
+#, fuzzy
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Ukunxibelelana neSeva yeSILC"
+
+#~ msgid "Connect"
+#~ msgstr "Ukunxulumana"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -3439,7 +3439,7 @@ msgstr "Dodatak za IRC protokol"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Dodatak za IRC protokol"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5975,6 +5975,30 @@ msgstr "Poruka nije poslata zato što je došlo do nepoznate greške u kodiranju
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Poruka nije poslata zato što je došlo do nepoznate greške:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Došlo je do greške pri pretvaranju ove poruke.\t Proverite opciju „Način "
+"zapisa“ u Uredniku naloga)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Došlo je do greške pri prijemu ove poruke. Ili Vi i %s koristite različito "
+"kodiranje karaktera, ili %s ima neku grešku u programu.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Došlo je do greške pri pretvaranju ove poruke.\t Proverite opciju „Način "
+"zapisa“ u Uredniku naloga)"
 
 msgid "Writing error"
 msgstr "Greška pri pisanju"
@@ -8562,25 +8586,9 @@ msgstr "Pošalji izjavu"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nije određen Sametime server zajednice"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Nije podešena IP dresa domaćina za međuvremenu nalog %s. Unesite adresu "
-"ispod kako bi nastavili prijavu."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Podešavanje međuvremene konekcije"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nije određen Sametime server zajednice"
-
-msgid "Connect"
-msgstr "Uspostavi vezu"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server je prekinuo vezu"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12910,8 +12918,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Zastani"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15325,6 +15339,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nije određen Sametime server zajednice"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Nije podešena IP dresa domaćina za međuvremenu nalog %s. Unesite adresu "
+#~ "ispod kako bi nastavili prijavu."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Podešavanje međuvremene konekcije"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nije određen Sametime server zajednice"
+
+#~ msgid "Connect"
+#~ msgstr "Uspostavi vezu"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Dozvoli samo korisnicima sa mog spiska drugara"

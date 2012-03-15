@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-03-10 18:20+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -3341,7 +3341,7 @@ msgstr "IRC 协议插件"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "错误更少的 IRC 协议插件"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "服务器"
 
@@ -5665,6 +5665,26 @@ msgstr "消息未发出，因为发生了未知编码错误。"
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "消息未发出，因为发生了未知错误。"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(转换此信息出错。\t请检查帐号编辑器中的“编码”选项)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(接收此信息出错。可能是您与 %s 设置了不同的编码，或者 %s 的客户端有程序错"
+"误。)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(转换此信息出错。\t请检查帐号编辑器中的“编码”选项)"
 
 msgid "Writing error"
 msgstr "写入错误"
@@ -8008,23 +8028,9 @@ msgstr ""
 msgid "Topic:"
 msgstr "话题："
 
-msgid "No Sametime Community Server specified"
-msgstr ""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile 连接设置"
-
-msgid "No Sametime Community Server Specified"
-msgstr ""
-
-msgid "Connect"
-msgstr "连接"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "服务器关闭了连接。"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12142,8 +12148,14 @@ msgstr "%s 希望与您进行视频聊天。"
 msgid "Incoming Call"
 msgstr "来电"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "暂停(_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14415,6 +14427,12 @@ msgstr "访问 Pidgin 网站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile 连接设置"
+
+#~ msgid "Connect"
+#~ msgstr "连接"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "认证请求消息："
