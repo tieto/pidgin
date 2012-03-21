@@ -883,10 +883,7 @@ void pidgin_smiley_manager_show(void)
 			dialog);
 
 	/* The vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(win))),
-                    vbox);
-	gtk_widget_show(vbox);
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(win));
 
 	/* get the scrolled window with all stuff */
 	sw = smiley_list_create(dialog);
@@ -895,3 +892,4 @@ void pidgin_smiley_manager_show(void)
 
 	gtk_widget_show(win);
 }
+
