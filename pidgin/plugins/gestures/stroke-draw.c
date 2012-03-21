@@ -19,10 +19,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#if !GTK_CHECK_VERSION(2,14,0)
-#define gtk_widget_get_window(x) x->window
-#endif
-
 static void gstroke_invisible_window_init (GtkWidget *widget);
 /*FIXME: Maybe these should be put in a structure, and not static...*/
 static Display * gstroke_disp = NULL;
@@ -339,7 +335,7 @@ gstroke_invisible_window_init (GtkWidget *widget)
   unsigned int border_width;
   XSizeHints hints;
   Display *disp = GDK_WINDOW_XDISPLAY(gtk_widget_get_window(widget));
-  Window wind = GDK_WINDOW_XWINDOW (gtk_widget_get_window(widget));
+  Window wind = gdk_x11_window_get_xid(gtk_widget_get_window(widget));
   int screen = DefaultScreen (disp);
 
 	if (!gstroke_draw_strokes())

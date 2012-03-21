@@ -124,11 +124,6 @@ typedef struct
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
-#if !GTK_CHECK_VERSION(2,18,0)
-#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
-#define gtk_widget_has_focus(x) GTK_WIDGET_HAS_FOCUS(x)
-#endif
-
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
@@ -466,9 +461,9 @@ gtk_blist_do_personize(GList *merges)
 	GList *tmp;
 
 	/* First, we find the contact to merge the rest of the buddies into.
- 	 * This will be the contact with the most buddies in it; ties are broken
- 	 * by which contact is higher in the list
- 	 */
+	 * This will be the contact with the most buddies in it; ties are broken
+	 * by which contact is higher in the list
+	 */
 	for (tmp = merges; tmp; tmp = tmp->next) {
 		PurpleBlistNode *node = tmp->data;
 		PurpleBlistNode *b;
@@ -989,20 +984,23 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
+	/* TODO: set no separator in gtk+ 3... */
 	data->window = gtk_dialog_new_with_buttons(title,
-		blist_window, GTK_DIALOG_NO_SEPARATOR,
-		NULL);
+		blist_window, 0, NULL);
 
 	gtk_window_set_transient_for(GTK_WINDOW(data->window), blist_window);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                               PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), window_role);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
@@ -1067,7 +1065,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 
 		if (pce->is_int)
 		{
-			GtkObject *adjust;
+			GtkAdjustment *adjust;
 			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
 										1, 10, 10);
 			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
@@ -1563,7 +1561,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 		pidgin_append_blist_node_move_to_menu(menu, PURPLE_BLIST_NODE(contact));
 
 	if (node->parent && node->parent->child->next &&
-              !sub && !contact_expanded) {
+	    !sub && !contact_expanded) {
 		pidgin_separator(menu);
 		pidgin_append_blist_node_privacy_menu(menu, node);
 		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
@@ -1612,11 +1610,11 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 			pidgin_retrieve_user_info(purple_account_get_connection(purple_buddy_get_account(buddy)), purple_buddy_get_name(buddy));
 	} else {
 		switch (event->keyval) {
-			case GDK_F2:
+			case GDK_KEY_F2:
 				gtk_blist_menu_alias_cb(tv, node);
 				break;
 
-			case GDK_Left:
+			case GDK_KEY_Left:
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 				if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
 					/* Collapse the Group */
@@ -1638,7 +1636,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 				gtk_tree_path_free(path);
 				break;
 
-			case GDK_Right:
+			case GDK_KEY_Right:
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 				if (!gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
 					/* Expand the Group */
@@ -2251,9 +2249,9 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 											guint time,
 											gpointer null)
 {
+	GdkAtom target = gtk_selection_data_get_target(data);
 
-	if (data->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
-	{
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE)) {
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
@@ -2269,9 +2267,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 					sizeof (node));
 
 		gtk_tree_path_free(sourcerow);
-	}
-	else if (data->target == gdk_atom_intern("application/x-im-contact", FALSE))
-	{
+	} else if (target == gdk_atom_intern("application/x-im-contact", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *sourcerow;
 		GtkTreeIter iter;
@@ -2349,16 +2345,19 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
+
 	if (gtkblist->drag_timeout) {
 		g_source_remove(gtkblist->drag_timeout);
 		gtkblist->drag_timeout = 0;
 	}
 
-	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE) && sd->data) {
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE) && data) {
 		PurpleBlistNode *n = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
-		memcpy(&n, sd->data, sizeof(n));
+		memcpy(&n, data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
@@ -2494,12 +2493,10 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 
 			gtk_tree_path_free(path);
-			gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+			gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 		}
-	}
-	else if (sd->target == gdk_atom_intern("application/x-im-contact",
-										   FALSE) && sd->data)
-	{
+	} else if (target == gdk_atom_intern("application/x-im-contact",
+										   FALSE) && data) {
 		PurpleGroup *group = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
@@ -2534,7 +2531,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 		}
 
-		if (pidgin_parse_x_im_contact((const char *)sd->data, FALSE, &account,
+		if (pidgin_parse_x_im_contact((const char *) data, FALSE, &account,
 										&protocol, &username, &alias))
 		{
 			if (account == NULL)
@@ -2558,9 +2555,10 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		if (path != NULL)
 			gtk_tree_path_free(path);
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE,
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (sd->target == gdk_atom_intern("text/x-vcard", FALSE) && sd->data)
+	else if (target == gdk_atom_intern("text/x-vcard", FALSE) && data)
 	{
 		gboolean result;
 		PurpleGroup *group = NULL;
@@ -2593,10 +2591,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 		}
 
-		result = parse_vcard((const gchar *)sd->data, group);
+		result = parse_vcard((const gchar *) data, group);
 
-		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
-	} else if (sd->target == gdk_atom_intern("text/uri-list", FALSE) && sd->data) {
+		gtk_drag_finish(dc, result,
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
+	} else if (target == gdk_atom_intern("text/uri-list", FALSE) && data) {
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
@@ -2614,7 +2613,8 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 				if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
 					pidgin_dnd_file_manage(sd, purple_buddy_get_account(b), purple_buddy_get_name(b));
-					gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+					gtk_drag_finish(dc, TRUE,
+					                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 				} else {
 					gtk_drag_finish(dc, FALSE, FALSE, t);
 				}
@@ -2951,7 +2951,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	if(gtkblist->tooltipdata == NULL)
 		return FALSE;
 
-	style = gtkblist->tipwindow->style;
+	style = gtk_widget_get_style(gtkblist->tipwindow);
 
 	max_text_width = 0;
 	max_avatar_width = 0;
@@ -2973,7 +2973,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	else
 		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
-	cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
+	cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
@@ -2982,14 +2982,16 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
 			if (dir == GTK_TEXT_DIR_RTL)
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-						NULL, gtkblist->tipwindow, "tooltip",
-						TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2, td->avatar_height + 2);
+				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+						gtkblist->tipwindow, "tooltip",
+						TOOLTIP_BORDER - 1, current_height - 1,
+						td->avatar_width + 2, td->avatar_height + 2);
 			else
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-						NULL, gtkblist->tipwindow, "tooltip",
-						max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-						current_height-1,td->avatar_width+2, td->avatar_height+2);
+				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+						gtkblist->tipwindow, "tooltip",
+						max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
+						current_height - 1,
+						td->avatar_width + 2, td->avatar_height + 2);
 		}
 
 		if (td->status_icon) {
@@ -3005,7 +3007,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 			}
 		}
 
-		if(td->avatar) {
+		if (td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gdk_cairo_set_source_pixbuf(cr, td->avatar,
 				                            TOOLTIP_BORDER, current_height);
@@ -3027,25 +3029,25 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 
 		if (td->name_layout) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
-						max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+						gtkblist->tipwindow, "tooltip",
+						max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
 						current_height, td->name_layout);
 			} else {
-				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
+				gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
+						gtkblist->tipwindow, "tooltip",
 						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
 			}
 		}
 
 		if (td->layout) {
 			if (dir != GTK_TEXT_DIR_RTL) {
-				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
+				gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
+						gtkblist->tipwindow, "tooltip",
 						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height + td->name_height, td->layout);
 			} else {
-				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
+				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+						gtkblist->tipwindow, "tooltip",
 						max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
 						current_height + td->name_height,
 						td->layout);
@@ -3204,7 +3206,8 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 		pidgin_blist_expand_contact_cb(NULL, node);
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
-		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
+		gtkblist->contact_rect.width =
+		gdk_window_get_width(gtk_widget_get_window(tv));
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
 		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
@@ -3601,11 +3604,11 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	}
 
 	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
-                              NULL, fields,
-                              _("OK"), G_CALLBACK(edit_mood_cb),
-                              _("Cancel"), NULL,
-                              gc ? purple_connection_get_account(gc) : NULL,
-                              NULL, NULL, gc);
+	                      NULL, fields,
+	                      _("OK"), G_CALLBACK(edit_mood_cb),
+	                      _("Cancel"), NULL,
+	                      gc ? purple_connection_get_account(gc) : NULL,
+	                      NULL, NULL, gc);
 
 	g_free(global_moods);
 }
@@ -4999,7 +5002,7 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
 	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
-		if (gtk_bindings_activate(GTK_OBJECT(widget), event->keyval, event->state))
+		if (gtk_bindings_activate(G_OBJECT(widget), event->keyval, event->state))
 			return TRUE;
 	}
 	return FALSE;
@@ -5008,14 +5011,14 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 static gboolean
 headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
+	gdk_window_set_cursor(gtk_widget_get_window(widget), gtkblist->hand_cursor);
 	return FALSE;
 }
 
 static gboolean
 headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->arrow_cursor);
+	gdk_window_set_cursor(gtk_widget_get_window(widget), gtkblist->arrow_cursor);
 	return FALSE;
 }
 
@@ -5149,7 +5152,7 @@ generic_error_enable_cb(PurpleAccount *account)
 }
 
 static void
-generic_error_destroy_cb(GtkObject *dialog,
+generic_error_destroy_cb(GtkWidget *dialog,
                          PurpleAccount *account)
 {
 	/* If the error dialog is being destroyed in response to the
@@ -5492,17 +5495,22 @@ paint_headline_hbox  (GtkWidget      *widget,
 		      GdkEventExpose *event,
 		      gpointer user_data)
 {
-	gtk_paint_flat_box (widget->style,
-		      widget->window,
-		      GTK_STATE_NORMAL,
-		      GTK_SHADOW_OUT,
-		      NULL,
-		      widget,
-		      "tooltip",
-		      widget->allocation.x + 1,
-		      widget->allocation.y + 1,
-		      widget->allocation.width - 2,
-		      widget->allocation.height - 2);
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
+	GtkAllocation allocation;
+
+	gtk_widget_get_allocation(widget, &allocation);
+	gtk_paint_flat_box (gtk_widget_get_style(widget),
+		cr,
+		GTK_STATE_NORMAL,
+		GTK_SHADOW_OUT,
+		widget,
+		"tooltip",
+		allocation.x + 1,
+		allocation.y + 1,
+		allocation.width - 2,
+		allocation.height - 2);
+	cairo_destroy(cr);
+
 	return FALSE;
 }
 
@@ -5838,7 +5846,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-out-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
-	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
+
+	/* TODO: how is this done in gtk+ 3.0? */
+	/*GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;*/
 
 	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(gtkblist->main_vbox);
@@ -5912,7 +5922,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width") - 12, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.2);
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
@@ -5929,10 +5938,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline_hbox), 6);
 	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline_hbox);
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
-	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.0, 0);
+	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.5, 0.5);
 	gtkblist->headline_label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(gtkblist->headline_label,
-				    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
@@ -5942,7 +5949,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			 G_CALLBACK(headline_style_set),
 			 NULL);
 	g_signal_connect (gtkblist->headline_hbox,
-			  "expose_event",
+			  "draw",
 			  G_CALLBACK (paint_headline_hbox),
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
@@ -6987,7 +6994,6 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_free(priv);
 
 	g_free(gtkblist);
-	accountmenu = NULL;
 	gtkblist = NULL;
 	purple_prefs_disconnect_by_handle(pidgin_blist_get_handle());
 }
@@ -6998,7 +7004,8 @@ static void pidgin_blist_set_visible(PurpleBuddyList *list, gboolean show)
 		return;
 
 	if (show) {
-		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) && !gtk_widget_get_visible(gtkblist->window))
+		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) &&
+		   !gtk_widget_get_visible(gtkblist->window))
 			purple_signal_emit(pidgin_blist_get_handle(), "gtkblist-unhiding", gtkblist);
 		pidgin_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
@@ -7970,7 +7977,7 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			for (n2 = n->child; n2; n2 = n2->next) {
-                        	buddy = (PurpleBuddy*)n2;
+				buddy = (PurpleBuddy*)n2;
 				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 			}
 			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
@@ -8006,7 +8013,7 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 }
 
 static void
-plugin_act(GtkObject *obj, PurplePluginAction *pam)
+plugin_act(GtkWidget *obj, PurplePluginAction *pam)
 {
 	if (pam && pam->callback)
 		pam->callback(pam);

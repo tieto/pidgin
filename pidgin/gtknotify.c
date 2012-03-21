@@ -534,14 +534,19 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
+	/* TODO: not sure if there is a way to do this in gtk+ 3, or
+	   if we want to... */
+#if 0
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 #endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                  hbox);
 
 	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -786,11 +791,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		gtk_tree_selection_select_iter(sel, &iter);
 	}
 
-#if GTK_CHECK_VERSION(2,18,0)
 	if (!gtk_widget_get_visible(mail_dialog->dialog)) {
-#else
-	if (!GTK_WIDGET_VISIBLE(mail_dialog->dialog)) {
-#endif
 		GdkPixbuf *pixbuf = gtk_widget_render_icon(mail_dialog->dialog, PIDGIN_STOCK_DIALOG_MAIL,
 							   gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>%d new email.</b>",
@@ -806,11 +807,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		g_free(label_text);
 		if (pixbuf)
 			g_object_unref(pixbuf);
-#if GTK_CHECK_VERSION(2,18,0)
 	} else if (!gtk_widget_has_focus(mail_dialog->dialog))
-#else
-	} else if (!GTK_WIDGET_HAS_FOCUS(mail_dialog->dialog))
-#endif
 		pidgin_set_urgent(GTK_WINDOW(mail_dialog->dialog), TRUE);
 
 	return data;
@@ -819,7 +816,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 static gboolean
 formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 {
-	if (event->keyval == GDK_Escape)
+	if (event->keyval == GDK_KEY_Escape)
 	{
 		purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
 
@@ -851,7 +848,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 					 G_CALLBACK(formatted_close_cb), NULL);
 
 	/* Setup the main vbox */
-	vbox = GTK_DIALOG(window)->vbox;
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Setup the descriptive label */
 	primary_esc = g_markup_escape_text(primary, -1);
@@ -979,7 +976,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Setup the main vbox */
-	vbox = GTK_DIALOG(window)->vbox;
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Setup the descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -1512,14 +1509,17 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
-#if !GTK_CHECK_VERSION(2,22,0)
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BOX_SPACE);
+	/* TODO: not sure if this is possible (or necessary) in gtk+ 3 */
+#if 0
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 #endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
 
 	/* Vertical box */
-	vbox = GTK_DIALOG(dialog)->vbox;
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
 	/* Golden ratio it up! */
 	gtk_widget_set_size_request(dialog, 550, 400);

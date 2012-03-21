@@ -410,13 +410,15 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				GtkSelectionData *sd, guint info, guint t, gpointer data)
 {
 	PidginPounceDialog *dialog;
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *sd_data = gtk_selection_data_get_data(sd);
 
-	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
 		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
 
-		memcpy(&node, sd->data, sizeof(node));
+		memcpy(&node, sd_data, sizeof(node));
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 			buddy = purple_contact_get_priority_buddy((PurpleContact *)node);
@@ -431,15 +433,15 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		dialog->account = purple_buddy_get_account(buddy);
 		pidgin_account_option_menu_set_selected(dialog->account_menu, purple_buddy_get_account(buddy));
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 	}
-	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	else if (target == gdk_atom_intern("application/x-im-contact", FALSE))
 	{
 		char *protocol = NULL;
 		char *username = NULL;
 		PurpleAccount *account;
 
-		if (pidgin_parse_x_im_contact((const char *)sd->data, FALSE, &account,
+		if (pidgin_parse_x_im_contact((const char *) sd_data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)
@@ -461,7 +463,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		g_free(username);
 		g_free(protocol);
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 	}
 }
 
@@ -540,7 +542,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = GTK_DIALOG(window)->vbox;
+	vbox1 = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Create the vbox that will contain all the prefs stuff. */
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -1018,11 +1020,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 static gboolean
 pounces_manager_configure_cb(GtkWidget *widget, GdkEventConfigure *event, PouncesManager *dialog)
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	if (gtk_widget_get_visible(widget)) {
-#else
-	if (GTK_WIDGET_VISIBLE(widget)) {
-#endif
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height", event->height);
 	}
