@@ -1,7 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.4:
+	TODO
+
 version 2.10.3 (03/26/2012):
-	* Fix buddies not going offline.
+	MSN:
+	* Fix buddies not going offline. (#14997)
 
 version 2.10.2 (03/14/2012):
 	General:
