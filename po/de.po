@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2011, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2012, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
-"PO-Revision-Date: 2011-08-11 10:12+0200\n"
+"POT-Creation-Date: 2012-03-26 19:32+0200\n"
+"PO-Revision-Date: 2012-03-26 18:53+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -5930,29 +5930,29 @@ msgstr ""
 "Nachricht konnte nicht gesendet werden, da ein unbekannter Fehler "
 "aufgetreten ist."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Es gab einen Fehler beim Konvertieren dieser Nachricht.\tPrüfen Sie die "
-"Kodierungsoption 'Kodierung' im Konten-Editor)"
+"%s (Es gab einen Fehler beim Konvertieren dieser Nachricht. Die "
+"Konvertierung von %s zu UTF-8 ist gescheitert.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(Es gab einen Fehler beim Empfang dieser Nachricht.  Entweder benutzen Sie "
-"und %s ein unterschiedliches Encoding oder %s hat einen fehlerhaften Client.)"
+"%s (Es gab einen Fehler beim Empfang dieser Nachricht. Der Zeichensatz war "
+"%s, aber es war kein gültiges UTF-8.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Es gab einen Fehler beim Konvertieren dieser Nachricht.\tPrüfen Sie die "
-"Kodierungsoption 'Kodierung' im Konten-Editor)"
+"%s (Es gab einen Fehler beim Konvertieren dieser Nachricht. Der Zeichensatz "
+"fehlte und es war kein gültiges UTF-8.)"
 
 msgid "Writing error"
 msgstr "Schreibfehler"
@@ -8457,9 +8457,8 @@ msgstr "Sende TEST-Nachricht"
 msgid "Topic:"
 msgstr "Thema:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "Der Server hat die Verbindung beendet"
+msgstr "Es wird ein Server benötigt um dieses Konto zu verbinden"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12050,9 +12049,6 @@ msgstr "Urdu"
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh und das Gnome-Vi Team"
-
 msgid "Simplified Chinese"
 msgstr "Vereinfachtes Chinesisch"
 
@@ -12067,6 +12063,9 @@ msgstr "Amharisch"
 
 msgid "Lithuanian"
 msgstr "Litauisch"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh und das Gnome-Vi Team"
 
 #, c-format
 msgid ""
@@ -12788,13 +12787,13 @@ msgid "Incoming Call"
 msgstr "Eingehender Anruf"
 
 msgid "_Hold"
-msgstr ""
+msgstr "_Halten"
 
 msgid "_Pause"
 msgstr "_Pause"
 
 msgid "_Mute"
-msgstr ""
+msgstr "Stu_mmschalten"
 
 #, c-format
 msgid "%s has %d new message."
