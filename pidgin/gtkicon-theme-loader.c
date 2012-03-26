@@ -31,23 +31,26 @@
  *****************************************************************************/
 
 static PurpleTheme *
-pidgin_icon_loader_build(const gchar *dir)
+pidgin_icon_loader_build(const gchar *theme_dir)
 {
 	xmlnode *root_node = NULL, *sub_node;
-	gchar *filename_full, *data = NULL;
+	gchar *dir, *filename_full, *data = NULL;
 	PidginIconTheme *theme = NULL;
 	const gchar *name;
 
 	/* Find the theme file */
-	g_return_val_if_fail(dir != NULL, NULL);
+	g_return_val_if_fail(theme_dir != NULL, NULL);
+	dir = g_build_filename(theme_dir, "purple", "status-icon", NULL);
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
 		root_node = xmlnode_from_file(dir, "theme.xml", "icon themes", "icon-theme-loader");
 
 	g_free(filename_full);
-	if (root_node == NULL)
+	if (root_node == NULL) {
+		g_free(dir);
 		return NULL;
+	}
 
 	name = xmlnode_get_attrib(root_node, "name");
 

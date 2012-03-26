@@ -192,6 +192,8 @@ static GList *xa_list = NULL;
 static GList *offline_list = NULL;
 static GHashTable *prpl_lists = NULL;
 
+static PurpleTheme *default_conv_theme = NULL;
+
 static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
 
@@ -494,8 +496,8 @@ help_command_cb(PurpleConversation *conv,
 			g_string_append(s, _("No such command (in this context)."));
 		}
 	} else {
-		s = g_string_new(_("Use \"/help &lt;command&gt;\" for help on a specific command.\n"
-											 "The following commands are available in this context:\n"));
+		s = g_string_new(_("Use \"/help &lt;command&gt;\" for help on a specific command.<br/>"
+		                   "The following commands are available in this context:<br/>"));
 
 		text = purple_cmd_list(conv);
 		for (l = text; l; l = l->next)
@@ -5712,7 +5714,8 @@ static void
 private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 {
 	PidginConversation *gtkconv;
-	PurpleTheme *theme;
+	const char *theme_name;
+	PurpleTheme *theme = NULL;
 	PurpleConversationType conv_type = purple_conversation_get_type(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
@@ -5738,9 +5741,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 #endif
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
-	theme = purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"), "conversation");
+	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme");
+	if (theme_name && *theme_name)
+		theme = purple_theme_manager_find_theme(theme_name, "conversation");
 	if (!theme)
-		theme = purple_theme_manager_find_theme("Default", "conversation");
+		theme = default_conv_theme;
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
@@ -6249,6 +6254,14 @@ replace_message_tokens(
 
 		} else if (g_str_has_prefix(cur, "%messageDirection%")) {
 			replace = purple_markup_is_rtl(message) ? "rtl" : "ltr";
+
+		} else if (g_str_has_prefix(cur, "%status%")) {
+			GString *classes = g_string_new(NULL);
+
+			if (flags & PURPLE_MESSAGE_ERROR)
+				g_string_append(classes, "error ");
+
+			replace = freeval = g_string_free(classes, FALSE);
 
 		} else {
 			cur++;
@@ -8426,6 +8439,7 @@ pidgin_conversations_init(void)
 {
 	void *handle = pidgin_conversations_get_handle();
 	void *blist_handle = purple_blist_get_handle();
+	char *theme_dir;
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
@@ -8715,6 +8729,9 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
+	theme_dir = g_build_filename(DATADIR, "pidgin", "theme", NULL);
+	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
+	g_free(theme_dir);
 
 	{
 		/* Set default tab colors */

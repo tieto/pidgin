@@ -123,7 +123,7 @@ get_template_path(const char *dir)
 
 	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
 		g_free(file);
-		file = g_build_filename(DATADIR, "pidgin", "theme", "conversation", "Template.html", NULL);
+		file = g_build_filename(DATADIR, "pidgin", "theme", "Template.html", NULL);
 	}
 
 	return file;

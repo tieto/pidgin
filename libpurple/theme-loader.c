@@ -85,6 +85,21 @@ purple_theme_loader_set_property(GObject *obj, guint param_id, const GValue *val
 	}
 }
 
+static gboolean
+purple_theme_loader_probe_directory(PurpleThemeLoader *loader, const gchar *dir)
+{
+	const gchar *type = purple_theme_loader_get_type_string(loader);
+	char *themedir;
+	gboolean result;
+
+	/* Checks for directory as $root/purple/$type */
+	themedir = g_build_filename(dir, "purple", type, NULL);
+	result = g_file_test(themedir, G_FILE_TEST_IS_DIR);
+	g_free(themedir);
+
+	return result;
+}
+
 static void
 purple_theme_loader_finalize(GObject *obj)
 {
@@ -175,3 +190,13 @@ purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir)
 {
 	return PURPLE_THEME_LOADER_GET_CLASS(loader)->purple_theme_loader_build(dir);
 }
+
+gboolean
+purple_theme_loader_probe(PurpleThemeLoader *loader, const gchar *dir)
+{
+	if (PURPLE_THEME_LOADER_GET_CLASS(loader)->probe_directory != NULL)
+		return PURPLE_THEME_LOADER_GET_CLASS(loader)->probe_directory(dir);
+	else
+		return purple_theme_loader_probe_directory(loader, dir);
+}
+
