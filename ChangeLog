@@ -42,7 +42,9 @@ version 3.0.0 (??/??/????):
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
-	 backends. (Brad Smith) (#14414)
+	  backends. (Brad Smith) (#14414)
+	* The Offline Message Emulation plugin now adds a note that the message
+	  was an offline message. (Flavius Anton) (#2497)
 
 version 2.10.2 (02/22/2012):
 	General:
