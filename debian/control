@@ -31,27 +31,24 @@ Description: multi-protocol instant messaging library
  to write an IM client that connects to many IM networks.
  Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit.
  .
  Some extra packages are suggested to use increased functionality:
-  * tcl8.4, tk8.4:
+  * tcl8.5, tk8.5:
     - Support for writing plugins with Tcl/Tk
 
 Package: pidgin
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-Suggests: gnome-panel (>= 2.1) | kdebase-workspace-bin | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
+Suggests: ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular instant messaging client capable of using
  multiple networks at once. Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit.
  .
  Some extra packages are suggested to use increased functionality:
-  * gnome-panel | kdebase-workspace-bin | docker:
-    - To use the system tray icon functionality (minimizing to an icon, having
-      the icon blink when there are new messages, etc.)
   * libsqlite3-0:
     - To use Contact Availability Prediction plugin
 
@@ -83,7 +80,7 @@ Priority: extra
 Section: debug
 Architecture: any
 Depends: ${misc:Depends}, pidgin (= ${binary:Version}) | finch (= ${binary:Version}) | libpurple0 (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
-Description: Debugging symbols for Pidgin 
+Description: Debugging symbols for Pidgin
  This package includes the debugging symbols useful for debugging Pidgin
  and its plugins, contained in the pidgin package. The debugging symbols are
  used for execution tracing and core dump analysis.
@@ -96,7 +93,7 @@ Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
  using multiple networks at once. Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit.
  .
  Some extra packages are suggested to use increased functionality:
   * libx11-6
