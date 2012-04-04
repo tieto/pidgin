@@ -1067,7 +1067,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 {
 #ifdef USE_VV
 	PurpleMediaSession *session;
-	PurpleMediaStream *stream = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
@@ -1103,7 +1102,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	}
 
 	if (purple_media_get_stream(media, sess_id, who) == NULL) {
-		stream = purple_media_insert_stream(session, who, initiator);
+		purple_media_insert_stream(session, who, initiator);
 
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_NEW,
