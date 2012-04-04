@@ -2022,10 +2022,10 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			return FALSE;
 
 		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-				PURPLE_MEDIA_SEND_VIDEO))
+				PURPLE_MEDIA_SEND_VIDEO)) {
 			g_object_get(session->session,
 					"codecs-ready", &ret, NULL);
-		else
+		} else
 			ret = TRUE;
 	} else {
 		GList *values = g_hash_table_get_values(priv->sessions);
@@ -2033,14 +2033,13 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 		for (; values; values = g_list_delete_link(values, values)) {
 			PurpleMediaBackendFs2Session *session = values->data;
 			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-					PURPLE_MEDIA_SEND_VIDEO))
+					PURPLE_MEDIA_SEND_VIDEO)) {
 				g_object_get(session->session,
 						"codecs-ready", &ret, NULL);
-			else
+				if (ret == FALSE)
+					break;
+			} else
 				ret = TRUE;
-
-			if (ret == FALSE)
-				break;
 		}
 
 		if (values != NULL)
