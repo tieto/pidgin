@@ -1767,7 +1767,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	const gchar *stun_ip = purple_network_get_stun_ip();
 	const gchar *turn_ip = purple_network_get_turn_ip();
 	guint _num_params = num_params;
-	GParameter *_params = g_new0(GParameter, num_params + 3);
+	GParameter *_params;
 	FsStreamDirection type_direction =
 			session_type_to_fs_stream_direction(type);
 	PurpleMediaBackendFs2Session *session;
@@ -1779,6 +1779,22 @@ create_stream(PurpleMediaBackendFs2 *self,
 	gboolean got_turn_from_prpl = FALSE;
 	int i;
 
+	session = get_session(self, sess_id);
+
+	if (session == NULL) {
+		purple_debug_error("backend-fs2",
+				"Couldn't find session to create stream.\n");
+		return FALSE;
+	}
+
+	participant = get_participant(self, who);
+
+	if (participant == NULL) {
+		purple_debug_error("backend-fs2", "Couldn't find "
+				"participant to create stream.\n");
+		return FALSE;
+	}
+
 	for (i = 0 ; i < num_params ; i++) {
 		if (purple_strequal(params[i].name, "relay-info")) {
 			got_turn_from_prpl = TRUE;
@@ -1786,6 +1802,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		}
 	}
 
+	_params = g_new0(GParameter, num_params + 3);
 	memcpy(_params, params, sizeof(GParameter) * num_params);
 
 	/* set the controlling mode parameter */
@@ -1838,22 +1855,6 @@ create_stream(PurpleMediaBackendFs2 *self,
 			relay_info);
 		g_value_array_free(relay_info);
 		_num_params++;
-	}
-
-	session = get_session(self, sess_id);
-
-	if (session == NULL) {
-		purple_debug_error("backend-fs2",
-				"Couldn't find session to create stream.\n");
-		return FALSE;
-	}
-
-	participant = get_participant(self, who);
-
-	if (participant == NULL) {
-		purple_debug_error("backend-fs2", "Couldn't find "
-				"participant to create stream.\n");
-		return FALSE;
 	}
 
 	fsstream = fs_session_new_stream(session->session, participant,
