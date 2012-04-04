@@ -868,17 +868,17 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				purple_media_end(priv->media, NULL, NULL);
 				break;
 			case FS_ERROR_UNKNOWN_CNAME:
-			/*
-			 * Unknown CName is only a problem for the
-			 * multicast transmitter which isn't used.
-			 * It is also deprecated.
-			 */
+				/*
+				 * Unknown CName is only a problem for the
+				 * multicast transmitter which isn't used.
+				 * It is also deprecated.
+				 */
 				break;
 			default:
 				purple_debug_error("backend-fs2",
 						"farsight-error: %i: %s\n",
 						error_no,
-					  	gst_structure_get_string(
+						gst_structure_get_string(
 						msg->structure, "error-msg"));
 				break;
 		}
@@ -1739,7 +1739,7 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 				"port", G_TYPE_UINT, port,
 				"username", G_TYPE_STRING, username,
 				"password", G_TYPE_STRING, password,
-	            "relay-type", G_TYPE_STRING, type,
+				"relay-type", G_TYPE_STRING, type,
 				NULL);
 
 	if (turn_setup) {
