@@ -1657,11 +1657,7 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	 * receiving the src-pad-added signal.
 	 * Only works for non-multicast FsRtpSessions.
 	 */
-#ifdef HAVE_FARSIGHT
-	if (is_nice || !strcmp(transmitter, "rawudp"))
-#else
 	if (!!strcmp(transmitter, "multicast"))
-#endif
 		g_object_set(G_OBJECT(session->session),
 				"no-rtcp-timeout", 0, NULL);
 
