@@ -821,20 +821,26 @@ else
 fi
 
 dnl #######################################################################
-dnl # Check for Farsight
+dnl # Check for Farstream
 dnl #######################################################################
-AC_ARG_ENABLE(farsight,
-	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
-	enable_farsight="$enableval", enable_farsight="yes")
-if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.9], [
-		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
-		AC_SUBST(FARSIGHT_CFLAGS)
-		AC_SUBST(FARSIGHT_LIBS)
-	], [
-		enable_farsight="no"
-	])
-fi
+AC_ARG_ENABLE(farstream,
+	[AC_HELP_STRING([--disable-farstream], [compile without farstream support])],
+	enable_farstream="$enableval", enable_farstream="yes")
+if test "x$enable_farstream" != "xno"; then
+	PKG_CHECK_MODULES(FARSTREAM, [farstream-0.1], [
+		AC_SUBST(FARSTREAM_CFLAGS)
+		AC_SUBST(FARSTREAM_LIBS)
+ 	], [
+		# Try farsight.
+		PKG_CHECK_MODULES(FARSTREAM, [farsight2-0.10 >= 0.0.9], [
+		        AC_DEFINE(HAVE_FARSIGHT, 1, [Use Farsight instead of Farstream])
+			AC_SUBST(FARSTREAM_CFLAGS)
+			AC_SUBST(FARSTREAM_LIBS)
+		], [
+		        enable_farstream="no"
+		])
+ 	])
+ fi
 
 dnl #######################################################################
 dnl # Check for Voice and Video support
@@ -843,20 +849,20 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno"; then
+	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
 		if test "x$force_deps" = "xyes"; then
 			AC_MSG_ERROR([
 Dependencies for voice/video were not met.
-Install the necessary gstreamer and farsight packages first.
+Install the necessary gstreamer and farstream packages first.
 Or use --disable-vv if you do not need voice/video support.
 			])
 		fi
 	fi
 fi
-AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno")
+AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno")
 
 dnl #######################################################################
 dnl # Check for Internationalized Domain Name support

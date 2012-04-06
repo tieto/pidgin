@@ -1,5 +1,5 @@
 /**
- * @file backend-fs2.c Farsight 2 backend for media API
+ * @file backend-fs2.c Farstream backend for media API
  * @ingroup core
  */
 
@@ -34,8 +34,14 @@
 #include "network.h"
 #include "media-gst.h"
 
+#ifdef HAVE_FARSIGHT
 #include <gst/farsight/fs-conference-iface.h>
 #include <gst/farsight/fs-element-added-notifier.h>
+#else
+#include <farstream/fs-conference.h>
+#include <farstream/fs-element-added-notifier.h>
+#include <farstream/fs-utils.h>
+#endif
 
 /** @copydoc _PurpleMediaBackendFs2Class */
 typedef struct _PurpleMediaBackendFs2Class PurpleMediaBackendFs2Class;
@@ -112,6 +118,10 @@ struct _PurpleMediaBackendFs2Stream
 	gchar *participant;
 	FsStream *stream;
 
+#ifndef HAVE_FARSIGHT
+	gboolean supports_add;
+#endif
+
 	GstElement *src;
 	GstElement *tee;
 	GstElement *volume;
@@ -146,6 +156,10 @@ struct _PurpleMediaBackendFs2Private
 	GstElement *confbin;
 	FsConference *conference;
 	gchar *conference_type;
+
+#ifndef HAVE_FARSIGHT
+	FsElementAddedNotifier *notifier;
+#endif
 
 	GHashTable *sessions;
 	GHashTable *participants;
@@ -211,6 +225,13 @@ purple_media_backend_fs2_dispose(GObject *obj)
 	GList *iter = NULL;
 
 	purple_debug_info("backend-fs2", "purple_media_backend_fs2_dispose\n");
+
+#ifndef HAVE_FARSIGHT
+	if (priv->notifier) {
+		g_object_unref(priv->notifier);
+		priv->notifier = NULL;
+	}
+#endif
 
 	if (priv->confbin) {
 		GstElement *pipeline;
@@ -846,7 +867,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 			priv->conference != FS_CONFERENCE(src))
 		return;
 
+#ifdef HAVE_FARSIGHT
 	if (gst_structure_has_name(msg->structure, "farsight-error")) {
+#else
+	if (gst_structure_has_name(msg->structure, "farstream-error")) {
+#endif
 		FsError error_no;
 		gst_structure_get_enum(msg->structure, "error-no",
 				FS_TYPE_ERROR, (gint*)&error_no);
@@ -859,6 +884,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 						" packages."));
 				purple_media_end(priv->media, NULL, NULL);
 				break;
+#ifdef HAVE_FARSIGHT
 			case FS_ERROR_NO_CODECS_LEFT:
 				purple_media_error(priv->media, _("No codecs"
 						" left. Your codec"
@@ -868,28 +894,42 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				purple_media_end(priv->media, NULL, NULL);
 				break;
 			case FS_ERROR_UNKNOWN_CNAME:
-			/*
-			 * Unknown CName is only a problem for the
-			 * multicast transmitter which isn't used.
-			 * It is also deprecated.
-			 */
+				/*
+				 * Unknown CName is only a problem for the
+				 * multicast transmitter which isn't used.
+				 * It is also deprecated.
+				 */
 				break;
+#endif
 			default:
 				purple_debug_error("backend-fs2",
+#ifdef HAVE_FARSIGHT
 						"farsight-error: %i: %s\n",
+#else
+						"farstream-error: %i: %s\n",
+#endif
 						error_no,
-					  	gst_structure_get_string(
+						gst_structure_get_string(
 						msg->structure, "error-msg"));
 				break;
 		}
 
 		if (FS_ERROR_IS_FATAL(error_no)) {
+#ifdef HAVE_FARSIGHT
 			purple_media_error(priv->media, _("A non-recoverable "
 					"Farsight2 error has occurred."));
+#else
+			purple_media_error(priv->media, _("A non-recoverable "
+					"Farstream error has occurred."));
+#endif
 			purple_media_end(priv->media, NULL, NULL);
 		}
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-new-local-candidate")) {
+#else
+			"farstream-new-local-candidate")) {
+#endif
 		const GValue *value;
 		FsStream *stream;
 		FsCandidate *local_candidate;
@@ -924,7 +964,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				session->id, name, candidate);
 		g_object_unref(candidate);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-local-candidates-prepared")) {
+#else
+			"farstream-local-candidates-prepared")) {
+#endif
 		const GValue *value;
 		FsStream *stream;
 		FsParticipant *participant;
@@ -942,7 +986,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_signal_emit_by_name(self, "candidates-prepared",
 				session->id, name);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-new-active-candidate-pair")) {
+#else
+			"farstream-new-active-candidate-pair")) {
+#endif
 		const GValue *value;
 		FsStream *stream;
 		FsCandidate *local_candidate;
@@ -976,7 +1024,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_object_unref(lcandidate);
 		g_object_unref(rcandidate);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-recv-codecs-changed")) {
+#else
+			"farstream-recv-codecs-changed")) {
+#endif
 		const GValue *value;
 		GList *codecs;
 		FsCodec *codec;
@@ -986,10 +1038,18 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		codec = codecs->data;
 
 		purple_debug_info("backend-fs2",
+#ifdef HAVE_FARSIGHT
 				"farsight-recv-codecs-changed: %s\n",
+#else
+				"farstream-recv-codecs-changed: %s\n",
+#endif
 				codec->encoding_name);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-component-state-changed")) {
+#else
+			"farstream-component-state-changed")) {
+#endif
 		const GValue *value;
 		FsStreamState fsstate;
 		guint component;
@@ -1025,11 +1085,19 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		}
 
 		purple_debug_info("backend-fs2",
+#ifdef HAVE_FARSIGHT
 				"farsight-component-state-changed: "
+#else
+				"farstream-component-state-changed: "
+#endif
 				"component: %u state: %s\n",
 				component, state);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-send-codec-changed")) {
+#else
+			"farstream-send-codec-changed")) {
+#endif
 		const GValue *value;
 		FsCodec *codec;
 		gchar *codec_str;
@@ -1039,12 +1107,20 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		codec_str = fs_codec_to_string(codec);
 
 		purple_debug_info("backend-fs2",
+#ifdef HAVE_FARSIGHT
 				"farsight-send-codec-changed: codec: %s\n",
+#else
+				"farstream-send-codec-changed: codec: %s\n",
+#endif
 				codec_str);
 
 		g_free(codec_str);
 	} else if (gst_structure_has_name(msg->structure,
+#ifdef HAVE_FARSIGHT
 			"farsight-codecs-changed")) {
+#else
+			"farstream-codecs-changed")) {
+#endif
 		const GValue *value;
 		FsSession *fssession;
 		GList *sessions;
@@ -1220,8 +1296,17 @@ stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 				purple_media_is_initiator(media, sid, name))
 			return;
 
+#ifdef HAVE_FARSIGHT
 		fs_stream_set_remote_candidates(stream->stream,
 				stream->remote_candidates, &err);
+#else
+		if (stream->supports_add)
+			fs_stream_add_remote_candidates(stream->stream,
+					stream->remote_candidates, &err);
+		else
+			fs_stream_force_remote_candidates(stream->stream,
+					stream->remote_candidates, &err);
+#endif
 
 		if (err == NULL)
 			return;
@@ -1301,6 +1386,9 @@ init_conference(PurpleMediaBackendFs2 *self)
 	GstElement *pipeline;
 	GstBus *bus;
 	gchar *name;
+#ifndef HAVE_FARSIGHT
+	GKeyFile *default_props;
+#endif
 
 	priv->conference = FS_CONFERENCE(
 			gst_element_factory_make(priv->conference_type, NULL));
@@ -1342,6 +1430,16 @@ init_conference(PurpleMediaBackendFs2 *self)
 				"Couldn't get the pipeline's bus.\n");
 		return FALSE;
 	}
+
+#ifndef HAVE_FARSIGHT
+	default_props = fs_utils_get_default_element_properties(GST_ELEMENT(priv->conference));
+	if (default_props != NULL) {
+		priv->notifier = fs_element_added_notifier_new();
+		fs_element_added_notifier_add(priv->notifier,
+				GST_BIN(priv->confbin));
+		fs_element_added_notifier_set_properties_from_keyfile(priv->notifier, default_props);
+	}
+#endif
 
 	g_signal_connect(G_OBJECT(bus), "message",
 			G_CALLBACK(gst_bus_cb), self);
@@ -1559,7 +1657,7 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	 * receiving the src-pad-added signal.
 	 * Only works for non-multicast FsRtpSessions.
 	 */
-	if (is_nice || !strcmp(transmitter, "rawudp"))
+	if (!!strcmp(transmitter, "multicast"))
 		g_object_set(G_OBJECT(session->session),
 				"no-rtcp-timeout", 0, NULL);
 
@@ -1612,7 +1710,11 @@ create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 	GError *err = NULL;
 
 	participant = fs_conference_new_participant(
+#ifdef HAVE_FARSIGHT
 			priv->conference, name, &err);
+#else
+			priv->conference, &err);
+#endif
 
 	if (err) {
 		purple_debug_error("backend-fs2",
@@ -1621,6 +1723,13 @@ create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 		g_error_free(err);
 		return FALSE;
 	}
+
+#ifndef HAVE_FARSIGHT
+	if (g_object_class_find_property(G_OBJECT_GET_CLASS(participant),
+			"cname")) {
+		g_object_set(participant, "cname", name, NULL);
+	}
+#endif
 
 	if (!priv->participants) {
 		purple_debug_info("backend-fs2",
@@ -1739,7 +1848,7 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 				"port", G_TYPE_UINT, port,
 				"username", G_TYPE_STRING, username,
 				"password", G_TYPE_STRING, password,
-	            "relay-type", G_TYPE_STRING, type,
+				"relay-type", G_TYPE_STRING, type,
 				NULL);
 
 	if (turn_setup) {
@@ -1767,7 +1876,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	const gchar *stun_ip = purple_network_get_stun_ip();
 	const gchar *turn_ip = purple_network_get_turn_ip();
 	guint _num_params = num_params;
-	GParameter *_params = g_new0(GParameter, num_params + 3);
+	GParameter *_params;
 	FsStreamDirection type_direction =
 			session_type_to_fs_stream_direction(type);
 	PurpleMediaBackendFs2Session *session;
@@ -1779,6 +1888,41 @@ create_stream(PurpleMediaBackendFs2 *self,
 	gboolean got_turn_from_prpl = FALSE;
 	int i;
 
+	session = get_session(self, sess_id);
+
+	if (session == NULL) {
+		purple_debug_error("backend-fs2",
+				"Couldn't find session to create stream.\n");
+		return FALSE;
+	}
+
+	participant = get_participant(self, who);
+
+	if (participant == NULL) {
+		purple_debug_error("backend-fs2", "Couldn't find "
+				"participant to create stream.\n");
+		return FALSE;
+	}
+
+#ifndef HAVE_FARSIGHT
+	fsstream = fs_session_new_stream(session->session, participant,
+			initiator == TRUE ? type_direction :
+			(type_direction & FS_DIRECTION_RECV), &err);
+
+	if (fsstream == NULL) {
+		if (err) {
+			purple_debug_error("backend-fs2",
+					"Error creating stream: %s\n",
+					err && err->message ?
+					err->message : "NULL");
+			g_error_free(err);
+		} else
+			purple_debug_error("backend-fs2",
+					"Error creating stream\n");
+		return FALSE;
+	}
+#endif
+
 	for (i = 0 ; i < num_params ; i++) {
 		if (purple_strequal(params[i].name, "relay-info")) {
 			got_turn_from_prpl = TRUE;
@@ -1786,6 +1930,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		}
 	}
 
+	_params = g_new0(GParameter, num_params + 3);
 	memcpy(_params, params, sizeof(GParameter) * num_params);
 
 	/* set the controlling mode parameter */
@@ -1840,22 +1985,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		_num_params++;
 	}
 
-	session = get_session(self, sess_id);
-
-	if (session == NULL) {
-		purple_debug_error("backend-fs2",
-				"Couldn't find session to create stream.\n");
-		return FALSE;
-	}
-
-	participant = get_participant(self, who);
-
-	if (participant == NULL) {
-		purple_debug_error("backend-fs2", "Couldn't find "
-				"participant to create stream.\n");
-		return FALSE;
-	}
-
+#ifdef HAVE_FARSIGHT
 	fsstream = fs_session_new_stream(session->session, participant,
 			initiator == TRUE ? type_direction :
 			(type_direction & FS_DIRECTION_RECV), transmitter,
@@ -1874,11 +2004,26 @@ create_stream(PurpleMediaBackendFs2 *self,
 					"Error creating stream\n");
 		return FALSE;
 	}
+#else
+	if (!fs_stream_set_transmitter(fsstream, transmitter,
+			_params, _num_params, &err)) {
+		purple_debug_error("backend-fs2",
+				"Could not set transmitter %s: %s.\n",
+				transmitter, err->message);
+		g_clear_error(&err);
+		g_free(_params);
+		return FALSE;
+	}
+	g_free(_params);
+#endif
 
 	stream = g_new0(PurpleMediaBackendFs2Stream, 1);
 	stream->participant = g_strdup(who);
 	stream->session = session;
 	stream->stream = fsstream;
+#ifndef HAVE_FARSTREAM
+	stream->supports_add = !strcmp(transmitter, "nice");
+#endif
 
 	priv->streams =	g_list_append(priv->streams, stream);
 
@@ -1991,8 +2136,17 @@ purple_media_backend_fs2_add_remote_candidates(PurpleMediaBackend *self,
 	if (purple_media_is_initiator(priv->media, sess_id, participant) ||
 			purple_media_accepted(
 			priv->media, sess_id, participant)) {
+#ifdef HAVE_FARSIGHT
 		fs_stream_set_remote_candidates(stream->stream,
 				stream->remote_candidates, &err);
+#else
+		if (stream->supports_add)
+			fs_stream_add_remote_candidates(stream->stream,
+					stream->remote_candidates, &err);
+		else
+			fs_stream_force_remote_candidates(stream->stream,
+					stream->remote_candidates, &err);
+#endif
 
 		if (err) {
 			purple_debug_error("backend-fs2", "Error adding remote"
@@ -2021,25 +2175,50 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			return FALSE;
 
 		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-				PURPLE_MEDIA_SEND_VIDEO))
+				PURPLE_MEDIA_SEND_VIDEO)) {
+#ifdef HAVE_FARSIGHT
 			g_object_get(session->session,
-					"codecs-ready", &ret, NULL);
-		else
+					"codecs-ready", &ret, NULL);	
+#else
+			GList *codecs = NULL;
+
+			g_object_get(session->session,
+					"codecs", &codecs, NULL);
+			if (codecs) {
+				fs_codec_list_destroy (codecs);
+				ret = TRUE;
+			}
+#endif
+		} else
 			ret = TRUE;
 	} else {
 		GList *values = g_hash_table_get_values(priv->sessions);
 
 		for (; values; values = g_list_delete_link(values, values)) {
 			PurpleMediaBackendFs2Session *session = values->data;
+
 			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-					PURPLE_MEDIA_SEND_VIDEO))
+					PURPLE_MEDIA_SEND_VIDEO)) {
+#ifdef HAVE_FARSIGHT
 				g_object_get(session->session,
 						"codecs-ready", &ret, NULL);
-			else
-				ret = TRUE;
+				if (ret == FALSE)
+					break;
+#else
+				GList *codecs = NULL;
 
-			if (ret == FALSE)
-				break;
+				g_object_get(session->session,
+						"codecs", &codecs, NULL);
+				if (codecs) {
+					fs_codec_list_destroy (codecs);
+					ret = TRUE;
+				} else {
+					ret = FALSE;
+					break;
+				}
+#endif
+			} else
+				ret = TRUE;
 		}
 
 		if (values != NULL)
