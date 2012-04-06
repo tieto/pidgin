@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:28-0700\n"
+"POT-Creation-Date: 2012-03-12 02:26-0700\n"
 "PO-Revision-Date: 2012-02-17 23:15+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
@@ -50,6 +50,13 @@ msgstr ""
 "  -h, --help          izpiši to pomoč in končaj program\n"
 "  -n, --nologin       brez samodejne prijave\n"
 "  -v, --version       izpiši trenutno različico in končaj program\n"
+
+#, c-format
+msgid ""
+"%s encountered errors migrating your settings from %s to %s. Please "
+"investigate and complete the migration by hand. Please report this error at "
+"http://developer.pidgin.im"
+msgstr ""
 
 #. the user did not fill in the captcha
 msgid "Error"
@@ -202,8 +209,6 @@ msgstr "Izbrani račun ni povezan."
 msgid "Error adding buddy"
 msgstr "Napaka pri dodajanju prijatelja"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Username"
 msgstr "Uporabniško ime"
 
@@ -337,11 +342,7 @@ msgstr "Pokaži/skrij oznako"
 msgid "View Log"
 msgstr "Pokaži dnevnik"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. General
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Nickname"
 msgstr "Vzdevek"
 
@@ -794,11 +795,7 @@ msgid "Remaining"
 msgstr "Preostanek"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 #. presence
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Status"
 msgstr "Stanje"
 
@@ -904,6 +901,7 @@ msgstr "Klicanje ..."
 msgid "Hangup"
 msgstr "Odloži"
 
+#. Number of actions
 msgid "Accept"
 msgstr "Sprejmi"
 
@@ -1386,8 +1384,6 @@ msgstr "Naziv"
 msgid "Type"
 msgstr "Vrsta"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. Statuses are almost all the same. Define a macro to reduce code repetition.
 #. PurpleStatusPrimitive
 #. id - use default
@@ -1396,8 +1392,6 @@ msgstr "Vrsta"
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Message"
 msgstr "Sporočilo"
 
@@ -1736,24 +1730,21 @@ msgstr "Digitalno potrdilo je bilo preklicano."
 msgid "An unknown certificate error occurred."
 msgstr "Prišlo je do neznane napake digitalnega potrdila."
 
-#, fuzzy
-msgid "(MATCH)"
-msgstr "OPAZUJ"
-
 msgid "(DOES NOT MATCH)"
 msgstr "(SE NE UJEMA)"
 
+#. Make messages
 #, c-format
 msgid "%s has presented the following certificate for just-this-once use:"
 msgstr "%s je predstavil(a) naslednje digitalno potrdilo za enkratno uporabo:"
 
-#, fuzzy, c-format
-msgid "Common name: %s %s"
+#, c-format
+msgid ""
+"Common name: %s %s\n"
+"Fingerprint (SHA1): %s"
 msgstr ""
-"Skupno ime: %s\n"
-"\n"
-"Prstni odtis SHA1:\n"
-"%s"
+"Pogovorno ime: %s %s\n"
+"Prstni odtis (SHA1): %s"
 
 #. TODO: Find what the handle ought to be
 msgid "Single-use Certificate Verification"
@@ -1769,6 +1760,7 @@ msgstr "Izdajatelji digitalnih potrdil"
 msgid "SSL Peers Cache"
 msgstr "Medpomnilnik vrstnikov SSL"
 
+#. Make messages
 #, c-format
 msgid "Accept certificate for %s?"
 msgstr "Želite sprejeti digitalno potrdilo za %s?"
@@ -1776,6 +1768,9 @@ msgstr "Želite sprejeti digitalno potrdilo za %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "Preverjanje verodostojnosti digitalnega potrdila SSL"
+
+msgid "_View Certificate..."
+msgstr "_Pokaži digitalno potrdilo ..."
 
 #, c-format
 msgid "The certificate for %s could not be validated."
@@ -1796,6 +1791,27 @@ msgid ""
 msgstr ""
 "Predstavljeno digitalno potrdilo priča, da dejansko pripada \"%s\".  To "
 "pomeni, da se ne povezujete s storitvijo, s katero mislite, da se."
+
+#. Make messages
+#, c-format
+msgid ""
+"Common name: %s\n"
+"\n"
+"Fingerprint (SHA1): %s\n"
+"\n"
+"Activation date: %s\n"
+"Expiration date: %s\n"
+msgstr ""
+"Splošno ime: %s\n"
+"\n"
+"Prstni odtis (SHA1): %s\n"
+"\n"
+"Datum aktivacije: %s\n"
+"Rok veljavnosti: %s\n"
+
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Podatki o digitalnem potrdilu"
 
 #. show error to user
 msgid "Registration Error"
@@ -2880,23 +2896,6 @@ msgstr "Enostavni vtičnik"
 msgid "Tests to see that most things are working."
 msgstr "Preveri večino stvari, če delujejo."
 
-#. Make messages
-#, c-format
-msgid ""
-"Common name: %s\n"
-"\n"
-"Fingerprint (SHA1): %s\n"
-"\n"
-"Activation date: %s\n"
-"Expiration date: %s\n"
-msgstr ""
-"Splošno ime: %s\n"
-"\n"
-"Prstni odtis (SHA1): %s\n"
-"\n"
-"Datum aktivacije: %s\n"
-"Rok veljavnosti: %s\n"
-
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Digitalna potrdila X.509"
@@ -3029,29 +3028,19 @@ msgstr ""
 "Povezave s krajevnim strežnikom mDNS ni mogoče vzpostaviti. Ali je strežnik "
 "sploh zagnan?"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "First name"
 msgstr "Ime"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Last name"
 msgstr "Priimek"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. email
 msgid "Email"
 msgstr "E-pošta"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "AIM Account"
 msgstr "Račun AIM"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "XMPP Account"
 msgstr "Račun XMPP"
 
@@ -3166,8 +3155,6 @@ msgstr "Registrirajte nov račun za Gadu-Gadu"
 msgid "Please, fill in the following fields"
 msgstr "Prosimo, izpolnite naslednja polja"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "City"
 msgstr "Kraj"
 
@@ -3175,8 +3162,6 @@ msgid "Year of birth"
 msgstr "Leto rojstva"
 
 #. gender
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Gender"
 msgstr "Spol"
 
@@ -3199,35 +3184,26 @@ msgstr "Poišči prijatelje"
 msgid "Please, enter your search criteria below"
 msgstr "Spodaj vnesite svoje iskalne pogoje"
 
+msgid "Fill in the fields."
+msgstr "Izpolnite polja."
+
+msgid "Your current password is different from the one that you specified."
+msgstr "Vaše veljavno geslo se razlikuje od navedenega."
+
+msgid "Unable to change password. Error occurred.\n"
+msgstr "Gesla ni bilo mogoče spremeniti. Prišlo je do napake.\n"
+
 msgid "Change password for the Gadu-Gadu account"
 msgstr "Spremeni geslo za račun Gadu-Gadu"
 
 msgid "Password was changed successfully!"
 msgstr "Geslo je bilo uspešno spremenjeno!"
 
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Gesla ni bilo mogoče spremeniti. Prišlo je do napake.\n"
-
-msgid "Fill in the fields."
-msgstr "Izpolnite polja."
-
-msgid "New password should be at most 15 characters long."
-msgstr "Novo geslo mora imeti najmanj 15 znakov."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Vaše veljavno geslo se razlikuje od navedenega."
-
-msgid "Invalid email address"
-msgstr "Neveljaven naslov e-pošte"
-
 msgid "Current password"
 msgstr "Trenutno geslo"
 
 msgid "Password (retype)"
 msgstr "Geslo (ponovno vtipkajte)"
-
-msgid "Email Address"
-msgstr "E-naslov"
 
 msgid "Enter current token"
 msgstr "Vnesite trenutni žeton"
@@ -3283,20 +3259,14 @@ msgstr "Ne moti"
 msgid "Away"
 msgstr "Odsoten"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "UIN"
 msgstr "UIN"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. first name
 #. optional information
 msgid "First Name"
 msgstr "Ime"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Birth Year"
 msgstr "Leto rojstva"
 
@@ -3336,29 +3306,6 @@ msgstr "Seznam prijateljev je bil shranjen na strežniku."
 msgid "Connected"
 msgstr "Povezano"
 
-msgid "Unable to resolve hostname"
-msgstr "Imena strežnika ni mogoče razločiti"
-
-msgid "Incorrect password"
-msgstr "Neveljavno geslo"
-
-msgid "SSL Connection Failed"
-msgstr "Povezava SSL ni uspela"
-
-msgid ""
-"Your account has been disabled because too many incorrect passwords were "
-"entered"
-msgstr "Vaš račun je bil onemogočen, ker ste vnesli preveč napačnih gesel"
-
-msgid "Service temporarily unavailable"
-msgstr "Storitev trenutno ni na voljo"
-
-msgid "Error connecting to proxy server"
-msgstr "Napaka pri povezovanju s posredovalnim strežnikom"
-
-msgid "Error connecting to master server"
-msgstr "Napaka pri povezovanju z glavnim strežnikom"
-
 msgid "Connection failed"
 msgstr "Povezava ni uspela"
 
@@ -3367,12 +3314,6 @@ msgstr "Dodaj k pomenku"
 
 msgid "Chat _name:"
 msgstr "_Ime za klepet:"
-
-msgid "The username specified is invalid."
-msgstr "Navedeno uporabniško ime ni veljavno."
-
-msgid "SSL support unavailable"
-msgstr "Podpora SSL ni na voljo"
 
 #, c-format
 msgid "Unable to resolve hostname '%s': %s"
@@ -3392,11 +3333,11 @@ msgstr "Ime za pomenek že obstaja"
 msgid "Not connected to the server"
 msgstr "S strežnikom niste povezani"
 
-msgid "Change password..."
-msgstr "Spremeni geslo ..."
-
 msgid "Find buddies..."
 msgstr "Poišči prijatelje ..."
+
+msgid "Change password..."
+msgstr "Spremeni geslo ..."
 
 msgid "Upload buddylist to Server"
 msgstr "Izvozi seznam prijateljev na strežnik"
@@ -3428,23 +3369,25 @@ msgstr "Vtičnik za protokol Gadu-Gadu"
 msgid "Polish popular IM"
 msgstr "Olepšaj priljubljen program za neposredno sporočanje"
 
+#, fuzzy
+msgid "Gadu-Gadu User"
+msgstr "Spremeni geslo Gadu-Gadu"
+
 msgid "GG server"
 msgstr "Strežnik GG"
-
-msgid "Use encryption if available"
-msgstr "Uporabi šifriranje, če je na voljo"
-
-msgid "Require encryption"
-msgstr "Zahtevaj šifriranje"
 
 msgid "Don't use encryption"
 msgstr "Ne uporabi šifriranja"
 
+msgid "Use encryption if available"
+msgstr "Uporabi šifriranje, če je na voljo"
+
+#. TODO
+msgid "Require encryption"
+msgstr "Zahtevaj šifriranje"
+
 msgid "Connection security"
 msgstr "Varnost povezave"
-
-msgid "Show links from strangers"
-msgstr "Pokaži povezave neznancev"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3498,6 +3441,9 @@ msgstr "_Geslo:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC vzdevek in strežnik ne smejo vsebovati presledka"
 
+msgid "SSL support unavailable"
+msgstr "Podpora SSL ni na voljo"
+
 msgid "Unable to connect"
 msgstr "Ni se mogoče povezati"
 
@@ -3532,8 +3478,6 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Vtičnik za protokol IRC, ki je manj beden"
 
 #. set up account ID as user:server
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Server"
 msgstr "Strežnik"
 
@@ -4060,8 +4004,6 @@ msgstr "Povezave s strežnikom ni mogoče vzpostaviti: %s"
 msgid "Unable to establish SSL connection"
 msgstr "Povezave SSL ni mogoče vzpostaviti"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Full Name"
 msgstr "Polno ime"
 
@@ -4130,13 +4072,9 @@ msgid ""
 "comfortable."
 msgstr "Vsa spodnja polja so izbirna. Vnesite samo informacije, ki jih želite."
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Client"
 msgstr "Odjemalec"
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Operating System"
 msgstr "Operacijski sistem"
 
@@ -4146,8 +4084,6 @@ msgstr "Krajevni čas"
 msgid "Priority"
 msgstr "Prednost stika"
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Resource"
 msgstr "Vir"
 
@@ -4242,6 +4178,9 @@ msgstr "Ukazi strežniku: %s"
 
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "Izpolnite eno ali več polj za iskanje uporabnikov XMPP."
+
+msgid "Email Address"
+msgstr "E-naslov"
 
 msgid "Search for XMPP users"
 msgstr "Poišči uporabnike XMPP"
@@ -4448,8 +4387,6 @@ msgstr "Strežnik ne podpira blokiranja"
 msgid "Not Authorized"
 msgstr "Nepooblaščeno"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Mood"
 msgstr "Razpoloženje"
 
@@ -5288,6 +5225,9 @@ msgstr "Ni mogoče razčleniti sporočila"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Skladenjska napaka (verjetno hrošč v odjemalcu)"
 
+msgid "Invalid email address"
+msgstr "Neveljaven naslov e-pošte"
+
 msgid "User does not exist"
 msgstr "Uporabnik ne obstaja"
 
@@ -5353,6 +5293,9 @@ msgstr "Preveč zadetkov za FND"
 
 msgid "Not logged in"
 msgstr "Neprijavljen"
+
+msgid "Service temporarily unavailable"
+msgstr "Storitev trenutno ni na voljo"
 
 msgid "Database server error"
 msgstr "Napaka v podatkovni bazi strežnika"
@@ -5694,8 +5637,6 @@ msgstr "Starost"
 msgid "Occupation"
 msgstr "Zaposlitev"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Location"
 msgstr "Lokacija"
 
@@ -6094,6 +6035,9 @@ msgstr "Želite izbrisati prijatelja iz adresarja?"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "Ali želite izbrisati tega prijatelja tudi iz adresarja?"
 
+msgid "The username specified is invalid."
+msgstr "Navedeno uporabniško ime ni veljavno."
+
 msgid "The Display Name you entered is invalid."
 msgstr "Vneseno pojavno ime ni veljavno."
 
@@ -6107,8 +6051,6 @@ msgstr "Napaka pri posodobitvi profila"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Profile"
 msgstr "Profil"
 
@@ -6220,8 +6162,6 @@ msgstr "Pokaži pozdravno okno ..."
 msgid "About..."
 msgstr "O razširitvi ..."
 
-#. we are trying to send a file to MXit
-#. need to reserve some space for packet headers
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Datoteka, ki jo želite poslati, je prevelika!"
@@ -6333,13 +6273,16 @@ msgstr "Povabili ste uporabnika"
 msgid "Loading menu..."
 msgstr "Nalaganje menija ..."
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Status Message"
 msgstr "Sporočilo stanja"
 
 msgid "Rejection Message"
 msgstr "Sporočilo zavrnitve"
+
+#. hidden number
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Št. mobilnega telefona"
 
 msgid "No profile available"
 msgstr "Profil ni na voljo"
@@ -6425,10 +6368,6 @@ msgstr "%s vam je poslal šifrirano sporočilo, kar še ni podprto v odjemalcu."
 
 msgid "Message Error"
 msgstr "Napaka sporočila"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Prejeto je bilo šifrirano sporočilo, ki ga ni mogoče dešifrirati."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Preusmeritve ni mogoče izvršiti z navedenim protokolom"
@@ -6695,26 +6634,18 @@ msgstr "Ločljivost zaslona (točk na palec)"
 msgid "Base font size (points)"
 msgstr "Osnovna velikost pisave (točke)"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "User"
 msgstr "Uporabnik"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Headline"
 msgstr "Naslov"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Song"
 msgstr "Skladba"
 
 msgid "Total Friends"
 msgstr "Skupno prijateljev"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Client Version"
 msgstr "Različica odjemalca"
 
@@ -6916,6 +6847,9 @@ msgstr "Ni podprto"
 msgid "Password has expired"
 msgstr "Geslo je poteklo"
 
+msgid "Incorrect password"
+msgstr "Neveljavno geslo"
+
 msgid "Account has been disabled"
 msgstr "Račun je bil onemogočen"
 
@@ -6939,6 +6873,11 @@ msgstr "Glavni arhiv je narobe nastavljen"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "Gostitelja uporabniškega imena, ki ste ga vnesli, ni mogoče prepoznati"
+
+msgid ""
+"Your account has been disabled because too many incorrect passwords were "
+"entered"
+msgstr "Vaš račun je bil onemogočen, ker ste vnesli preveč napačnih gesel"
 
 msgid "You cannot add the same person twice to a conversation"
 msgstr "Iste osebe ne morete dvakrat dodati pomenku"
@@ -7061,10 +7000,12 @@ msgstr "StojPošta"
 msgid "User ID"
 msgstr "Uporabniška št."
 
-#, fuzzy
-msgid "DN"
-msgstr "DN"
-
+#. tag = _("DN");
+#. value = nm_user_record_get_dn(user_record);
+#. if (value) {
+#. purple_notify_user_info_add_pair(user_info, tag, value);
+#. }
+#.
 msgid "Full name"
 msgstr "Polno ime"
 
@@ -7869,6 +7810,9 @@ msgstr ""
 "Vaš seznam prijateljev ni izgubljen, verjetno pa bo postal dosegljiv v nekaj "
 "urah."
 
+msgid "Orphans"
+msgstr ""
+
 #, c-format
 msgid ""
 "Unable to add the buddy %s because you have too many buddies in your buddy "
@@ -8169,7 +8113,6 @@ msgstr "Podatki o uporabniku niso dostopni: %s"
 msgid "Mobile Phone"
 msgstr "Mobilni telefon"
 
-#. TODO: Is it correct to pass info->email here...?
 msgid "Personal Web Page"
 msgstr "Osebna spletna stran"
 
@@ -8190,7 +8133,6 @@ msgstr "Oddelek"
 msgid "Position"
 msgstr "Delovno mesto"
 
-#. TODO: Is it correct to pass info->email here...?
 msgid "Web Page"
 msgstr "Spletna stran"
 
@@ -8460,12 +8402,12 @@ msgstr "Tema:"
 msgid "A server is required to connect this account"
 msgstr "Za povezavo tega računa je potreben strežnik"
 
-msgid "Last Known Client"
-msgstr "Nazadnje znani odjemalec"
-
 #, c-format
 msgid "Unknown (0x%04x)<br>"
 msgstr "Neznano (0x%04x)<br>"
+
+msgid "Last Known Client"
+msgstr "Nazadnje znani odjemalec"
 
 msgid "User Name"
 msgstr "Uporabniško ime"
@@ -8780,33 +8722,21 @@ msgstr "Hiperaktiven"
 msgid "Robot"
 msgstr "Robot"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "User Modes"
 msgstr "Načini uporabnika"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Preferred Contact"
 msgstr "Priljubljen stik"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Preferred Language"
 msgstr "Priljubljen jezik"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Device"
 msgstr "Naprava"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Timezone"
 msgstr "Časovni pas"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Geolocation"
 msgstr "Lokacija"
 
@@ -9655,11 +9585,78 @@ msgstr "%s je poslal sporočilo na tablo v kanalu %s. Želite odpreti tablo?"
 msgid "Whiteboard"
 msgstr "Tabla"
 
+#, fuzzy
+msgid "No server statistics available"
+msgstr "Na voljo ni nobenega ukaza"
+
+#, fuzzy
+msgid "Error during connecting to SILC Server"
+msgstr "Napaka pri povezovanju s strežnikom SILC"
+
+#, c-format
+msgid "Failure: Version mismatch, upgrade your client"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not trust/support your public key"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not support proposed KE group"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not support proposed cipher"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not support proposed PKCS"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not support proposed hash function"
+msgstr ""
+
+#, c-format
+msgid "Failure: Remote does not support proposed HMAC"
+msgstr ""
+
+#, c-format
+msgid "Failure: Incorrect signature"
+msgstr ""
+
+#, c-format
+msgid "Failure: Invalid cookie"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failure: Authentication failed"
+msgstr "Overovitev ni uspela"
+
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
+msgstr "Povezave ni mogoče inicializirati"
+
+#, fuzzy
+msgid "John Noname"
+msgstr "Brez imena"
+
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
+msgstr "Para ključev SILC ni mogoče naložiti"
+
+#, fuzzy
+msgid "Unable to create connection"
+msgstr "Povezave ni mogoče inicializirati"
+
 msgid "Unknown server response"
 msgstr "Neznan odgovor strežnika"
 
 msgid "Unable to create listen socket"
 msgstr "Ni mogoče ustvariti vtičnice za poslušanje"
+
+msgid "Unable to resolve hostname"
+msgstr "Imena strežnika ni mogoče razločiti"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Uporabniška imena SIP ne smejo vsebovati presledka ali simbola @"
@@ -10129,8 +10126,6 @@ msgstr "Ni mogoče poslati klepetu %s,%s,%s"
 msgid "Hidden or not logged-in"
 msgstr "Skrit ali neprijavljen"
 
-#. TODO: Need to escape locs.host and locs.time?
-#. TODO: Need to escape the two strings that make up tmp?
 #, c-format
 msgid "<br>At %s since %s"
 msgstr "<br>Pri %s od %s"
@@ -10341,6 +10336,9 @@ msgstr "Shranjena slika"
 
 msgid "Stored Image. (that'll have to do for now)"
 msgstr "Shranjena slika."
+
+msgid "SSL Connection Failed"
+msgstr "Povezava SSL ni uspela"
 
 msgid "SSL Handshake Failed"
 msgstr "Rokovanje SSL ni uspelo"
@@ -10918,6 +10916,9 @@ msgstr "_Strni"
 msgid "_Expand"
 msgstr "_Razširi"
 
+msgid "/Tools/Mute Sounds"
+msgstr "/Orodja/Utišaj zvoke"
+
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -10941,152 +10942,122 @@ msgstr "Uredi razpoloženje uporabnika"
 #. NOTE: Do not set any accelerator to Control+O. It is mapped by
 #. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
-#, fuzzy
-msgid "_Buddies"
+msgid "/_Buddies"
 msgstr "/_Prijatelji"
 
-#, fuzzy
-msgid "New Instant _Message..."
-msgstr "Novo neposredno sporočilo"
+msgid "/Buddies/New Instant _Message..."
+msgstr "/Prijatelji/Novo _neposredno sporočilo ..."
 
-#, fuzzy
-msgid "Join a _Chat..."
-msgstr "Pridruži se klepetu ..."
+msgid "/Buddies/Join a _Chat..."
+msgstr "/Prijatelji/Pridruži se _pomenku ..."
 
-#, fuzzy
-msgid "Get User _Info..."
-msgstr "Nastavi informacije o uporabniku ..."
+msgid "/Buddies/Get User _Info..."
+msgstr "/Prijatelji/Informacije o _uporabniku ..."
 
-#, fuzzy
-msgid "View User _Log..."
-msgstr "Prikaži uporabniški dnevnik"
+msgid "/Buddies/View User _Log..."
+msgstr "/Prijatelji/Po_kaži uporabnikov dnevnik ..."
 
-msgid "Sh_ow"
-msgstr ""
+msgid "/Buddies/Sh_ow"
+msgstr "/Prijatelji/Poka_ži"
 
-#, fuzzy
-msgid "_Sort Buddies"
-msgstr "Skupaj prijateljev"
+msgid "/Buddies/Show/_Offline Buddies"
+msgstr "/Prijatelji/Pokaži/Prijatelji, ki niso na _zvezi"
 
-#, fuzzy
-msgid "_Add Buddy..."
-msgstr "Dodaj _prijatelja ..."
+msgid "/Buddies/Show/_Empty Groups"
+msgstr "/Prijatelji/Pokaži/Prazne _skupine"
 
-#, fuzzy
-msgid "Add _Group..."
-msgstr "Dodaj skupino"
-
-msgid "_Quit"
-msgstr "I_zhod"
-
-#. Accounts menu
-msgid "_Accounts"
-msgstr "_Računi"
-
-#, fuzzy
-msgid "Manage Accounts"
-msgstr "Omogoči račun"
-
-#. Tools
-#, fuzzy
-msgid "_Tools"
-msgstr "/_Orodja"
-
-#, fuzzy
-msgid "Buddy _Pounces"
-msgstr "Opozorila prijatelja"
-
-#, fuzzy
-msgid "_Certificates"
-msgstr "Digitalna potrdila"
-
-#, fuzzy
-msgid "Custom Smile_ys"
-msgstr "Smejček po meri"
-
-msgid "Plu_gins"
-msgstr "Vti_čniki"
-
-msgid "Pr_eferences"
-msgstr "_Nastavitve"
-
-#, fuzzy
-msgid "Pr_ivacy"
-msgstr "Zasebnost"
-
-#, fuzzy
-msgid "Set _Mood"
-msgstr "Nastavi _razpoloženje ..."
-
-#, fuzzy
-msgid "_File Transfers"
-msgstr "Prenosi datotek"
-
-#, fuzzy
-msgid "R_oom List"
-msgstr "Seznam sob"
-
-#, fuzzy
-msgid "System _Log"
-msgstr "Sistemski dnevnik"
-
-#. Help
-#, fuzzy
-msgid "_Help"
-msgstr "/Po_moč"
-
-#, fuzzy
-msgid "Online _Help"
-msgstr "/Pomoč/Pomoč _na spletu"
-
-#, fuzzy
-msgid "_Build Information"
-msgstr "Informacije o gradnji"
-
-#, fuzzy
-msgid "_Debug Window"
-msgstr "Razhroščevalno okno"
-
-#, fuzzy
-msgid "De_veloper Information"
-msgstr "Podatki o razvijalcih %s"
-
-#, fuzzy
-msgid "_Plugin Information"
-msgstr "Podatki o vtičniku"
-
-#, fuzzy
-msgid "_Translator Information"
-msgstr "Podatki o prevajalcih %s"
-
-#, fuzzy
-msgid "_About"
-msgstr "O programu"
-
-#. Buddies->Show menu
-#, fuzzy
-msgid "_Offline Buddies"
-msgstr "Nepovezani prijatelji"
-
-#, fuzzy
-msgid "_Empty Groups"
-msgstr "prazne skupine"
-
-#, fuzzy
-msgid "Buddy _Details"
+msgid "/Buddies/Show/Buddy _Details"
 msgstr "/Prijatelji/Pokaži/P_odrobnosti prijateljev"
 
-#, fuzzy
-msgid "Idle _Times"
-msgstr "Pokaži čas nedejavnosti"
+msgid "/Buddies/Show/Idle _Times"
+msgstr "/Prijatelji/Pokaži/_Časi nedejavnosti"
 
-#, fuzzy
-msgid "_Protocol Icons"
-msgstr "Protokol"
+msgid "/Buddies/Show/_Protocol Icons"
+msgstr "/Prijatelji/Pokaži/_Ikone protokolov"
 
-#. Tools menu
-msgid "Mute _Sounds"
-msgstr "_Utišaj zvoke"
+msgid "/Buddies/_Sort Buddies"
+msgstr "/Prijatelji/Razvrs_ti prijatelje"
+
+msgid "/Buddies/_Add Buddy..."
+msgstr "/Prijatelji/Dodaj p_rijatelja ..."
+
+msgid "/Buddies/Add C_hat..."
+msgstr "/Prijatelji/Dodaj p_omenek ..."
+
+msgid "/Buddies/Add _Group..."
+msgstr "/Prijatelji/Dodaj _skupino ..."
+
+msgid "/Buddies/_Quit"
+msgstr "/Prijatelji/Iz_hod"
+
+#. Accounts menu
+msgid "/_Accounts"
+msgstr "/_Računi"
+
+msgid "/Accounts/Manage Accounts"
+msgstr "/Računi/Upravljaj z računi"
+
+#. Tools
+msgid "/_Tools"
+msgstr "/_Orodja"
+
+msgid "/Tools/Buddy _Pounces"
+msgstr "/Orodja/_Opozorila prijateljev"
+
+msgid "/Tools/_Certificates"
+msgstr "/Orodja/_Digitalna potrdila"
+
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Orodja/Smejč_ki po meri"
+
+msgid "/Tools/Plu_gins"
+msgstr "/Orodja/Vtični_ki"
+
+msgid "/Tools/Pr_eferences"
+msgstr "/Orodja/_Nastavitve"
+
+msgid "/Tools/Pr_ivacy"
+msgstr "/Orodja/_Zasebnost"
+
+msgid "/Tools/Set _Mood"
+msgstr "/Orodja/Nastavi _razpoloženje"
+
+msgid "/Tools/_File Transfers"
+msgstr "/Orodja/_Prenosi datotek"
+
+msgid "/Tools/R_oom List"
+msgstr "/Orodja/_Seznam sob"
+
+msgid "/Tools/System _Log"
+msgstr "/Orodja/Siste_mski dnevnik"
+
+msgid "/Tools/Mute _Sounds"
+msgstr "/Orodja/_Utišaj zvoke"
+
+#. Help
+msgid "/_Help"
+msgstr "/Po_moč"
+
+msgid "/Help/Online _Help"
+msgstr "/Pomoč/Pomoč _na spletu"
+
+msgid "/Help/_Build Information"
+msgstr "/Pomoč/Podatki o _gradnji"
+
+msgid "/Help/_Debug Window"
+msgstr "/Pomoč/Raz_hroščevalno okno"
+
+msgid "/Help/De_veloper Information"
+msgstr "/Pomoč/Podatki o _razvijalcih"
+
+msgid "/Help/_Plugin Information"
+msgstr "/Pomoč/Podatki o v_tičniku"
+
+msgid "/Help/_Translator Information"
+msgstr "/Pomoč/Podatki o _prevajalcih"
+
+msgid "/Help/_About"
+msgstr "/Pomoč/_O programu"
 
 #, c-format
 msgid "<b>Account:</b> %s"
@@ -11143,6 +11114,30 @@ msgstr "Nedejaven %dh %02dm"
 #, c-format
 msgid "Idle %dm"
 msgstr "Nedejaven %dm"
+
+msgid "/Buddies/New Instant Message..."
+msgstr "/Prijatelji/Novo neposredno sporočilo ..."
+
+msgid "/Buddies/Join a Chat..."
+msgstr "/Prijatelji/Pridruži se pomenku ..."
+
+msgid "/Buddies/Get User Info..."
+msgstr "/Prijatelji/Informacije o uporabniku ..."
+
+msgid "/Buddies/Add Buddy..."
+msgstr "/Prijatelji/Dodaj prijatelja ..."
+
+msgid "/Buddies/Add Chat..."
+msgstr "/Prijatelji/Dodaj pomenek ..."
+
+msgid "/Buddies/Add Group..."
+msgstr "/Prijatelji/Dodaj skupino ..."
+
+msgid "/Tools/Privacy"
+msgstr "/Orodja/Zasebnost"
+
+msgid "/Tools/Room List"
+msgstr "/Orodja/Seznam sob"
 
 #, c-format
 msgid "%d unread message from %s\n"
@@ -11202,6 +11197,9 @@ msgstr "<b>Geslo:</b>"
 msgid "_Login"
 msgstr "_Prijavi"
 
+msgid "/Accounts"
+msgstr "/Računi"
+
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #, c-format
 msgid ""
@@ -11217,6 +11215,24 @@ msgstr ""
 "(IM) prek okna <b>Računi</b> z ukazom <b>Računi->Upravljaj z računi</b>. Ko "
 "račune omogočite, se boste lahko prijavili, nastavili svoje stanje in "
 "klepetali s svojimi prijatelji."
+
+#. set the Show Offline Buddies option. must be done
+#. * after the treeview or faceprint gets mad. -Robot101
+#.
+msgid "/Buddies/Show/Offline Buddies"
+msgstr "/Prijatelji/Pokaži/Prijatelji, ki niso na zvezi"
+
+msgid "/Buddies/Show/Empty Groups"
+msgstr "/Prijatelji/Pokaži/Prazne skupine"
+
+msgid "/Buddies/Show/Buddy Details"
+msgstr "/Prijatelji/Pokaži/Podrobnosti prijateljev"
+
+msgid "/Buddies/Show/Idle Times"
+msgstr "/Prijatelji/Pokaži/Časi nedejavnosti"
+
+msgid "/Buddies/Show/Protocol Icons"
+msgstr "/Prijatelji/Pokaži/Ikone protokolov"
 
 msgid "Add a buddy.\n"
 msgstr "Dodaj prijatelja.\n"
@@ -11267,6 +11283,12 @@ msgstr "Prosimo vnesite ime skupine, ki jo želite dodati."
 msgid "Enable Account"
 msgstr "Omogoči račun"
 
+msgid "<PurpleMain>/Accounts/Enable Account"
+msgstr "<PurpleMain>/Računi/Omogoči račun"
+
+msgid "<PurpleMain>/Accounts/"
+msgstr "<PurpleMain>/Računi/"
+
 msgid "_Edit Account"
 msgstr "_Uredi račun"
 
@@ -11279,40 +11301,18 @@ msgstr "Na voljo ni nobenega ukaza"
 msgid "_Disable"
 msgstr "_Onemogoči"
 
+msgid "/Tools"
+msgstr "/Orodja"
+
+msgid "/Buddies/Sort Buddies"
+msgstr "/Prijatelji/Razvrsti prijatelje"
+
 msgid "Type the host name for this certificate."
 msgstr "Vnesite ime gostitelja za to digitalno potrdilo."
-
-#. Fire the notification
-#, c-format
-msgid "Certificate Information for %s"
-msgstr "Podatki o digitalnem potrdilu %s"
 
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Strežniki SSL"
-
-msgid "Unsafe debugging is now disabled."
-msgstr "Nezaščiteno razhroščevanje je zdaj onemogočeno."
-
-msgid "Unsafe debugging is now enabled."
-msgstr "Nezaščiteno razhroščevanje je zdaj omogočeno."
-
-msgid "Verbose debugging is now disabled."
-msgstr "Gostobesedno razhroščevanje je zdaj onemogočeno."
-
-msgid "Verbose debugging is now enabled."
-msgstr "Gostobesedno razhroščevanje je zdaj omogočeno."
-
-msgid "Supported debug options are: plugins version unsafe verbose"
-msgstr "Podprte možnosti razhroščevanja: plugins version unsafe verbose"
-
-#, fuzzy
-msgid ""
-"Use \"/help &lt;command&gt;\" for help on a specific command.<br/>The "
-"following commands are available in this context:<br/>"
-msgstr ""
-"Uporabite \"/help &lt;ukaz&gt;\" za pomoč o določenem ukazu.\n"
-"V tem sklopu so na voljo naslednji ukazi:\n"
 
 msgid "Unknown command."
 msgstr "Neznan ukaz."
@@ -11347,6 +11347,10 @@ msgstr "Ne prezri"
 msgid "Ignore"
 msgstr "Prezri"
 
+#, fuzzy
+msgid "Get Away Message"
+msgstr "Poslal je sporočilo"
+
 msgid "Last Said"
 msgstr "Nazadnje rečeno"
 
@@ -11375,99 +11379,170 @@ msgid "Show All"
 msgstr "Pokaži vse"
 
 #. Conversation menu
-#, fuzzy
-msgid "_Conversation"
+msgid "/_Conversation"
 msgstr "/_Pogovor"
 
-#, fuzzy
-msgid "_Find..."
-msgstr "Najdi"
+msgid "/Conversation/New Instant _Message..."
+msgstr "/Pogovor/N_ovo neposredno sporočilo ..."
 
-#, fuzzy
-msgid "_Save As..."
-msgstr "Shrani ikono kot ..."
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Pogovor/Pridruži se klepetu ..."
 
-#, fuzzy
-msgid "Clea_r Scrollback"
-msgstr "Počisti pretekle izjave"
+msgid "/Conversation/_Find..."
+msgstr "/Pogovor/_Najdi ..."
 
-#, fuzzy
-msgid "M_edia"
-msgstr "_Mediji"
+msgid "/Conversation/View _Log"
+msgstr "/Pogovor/Pokaži _dnevnik ..."
 
-#, fuzzy
-msgid "Audio/Video _Call"
-msgstr "Zvočni/_video klic"
+msgid "/Conversation/_Save As..."
+msgstr "/Pogovor/_Shrani kot ..."
 
-#, fuzzy
-msgid "Se_nd File..."
-msgstr "_Pošlji datoteko ..."
+msgid "/Conversation/Clea_r Scrollback"
+msgstr "/Pogovor/Po_čisti pogovor"
 
-#, fuzzy
-msgid "Get _Attention"
-msgstr "_Pozor!"
+msgid "/Conversation/M_edia"
+msgstr "/Pogovor/M_ediji"
 
-msgid "_Get Info"
-msgstr "_Informacije"
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Pogovor/Mediji/_Zvočni klic"
 
-#, fuzzy
-msgid "In_vite..."
-msgstr "Povabi ..."
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Pogovor/Mediji/_Video klic"
 
-msgid "M_ore"
-msgstr ""
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Pogovor/Mediji/Zvočni\\/Video _klic"
 
-#, fuzzy
-msgid "Al_ias..."
-msgstr "Psevdo_nim ..."
+msgid "/Conversation/Se_nd File..."
+msgstr "/Pogovor/_Pošlji datoteko ..."
 
-#, fuzzy
-msgid "_Block..."
-msgstr "_Zavrni"
+msgid "/Conversation/Get _Attention"
+msgstr "/Pogovor/Pridobi _pozornost"
 
-#, fuzzy
-msgid "_Unblock..."
-msgstr "Prekliči zavrnitev"
+msgid "/Conversation/Add Buddy _Pounce..."
+msgstr "/Pogovor/Dodaj _opozorilo prijatelja ..."
 
-msgid "_Add..."
-msgstr "_Dodaj ..."
+msgid "/Conversation/_Get Info"
+msgstr "/Pogovor/_Informacije"
 
-#, fuzzy
-msgid "_Remove..."
-msgstr "Odst_rani"
+msgid "/Conversation/In_vite..."
+msgstr "/Pogovor/Pova_bi ..."
 
-#, fuzzy
-msgid "Insert Lin_k..."
-msgstr "Vstavi povezavo"
+msgid "/Conversation/M_ore"
+msgstr "/Pogovor/_Več"
 
-#, fuzzy
-msgid "Insert Imag_e..."
-msgstr "Vstavi sliko"
+msgid "/Conversation/Al_ias..."
+msgstr "/Pogovor/_Vzdevek ..."
 
-#, fuzzy
-msgid "_Close"
-msgstr "Zapri"
+msgid "/Conversation/_Block..."
+msgstr "/Pogovor/Zavr_ni ..."
+
+msgid "/Conversation/_Unblock..."
+msgstr "/Pogovor/Pre_kliči zavrnitev ..."
+
+msgid "/Conversation/_Add..."
+msgstr "/Pogovor/Dod_aj ..."
+
+msgid "/Conversation/_Remove..."
+msgstr "/Pogovor/Odst_rani ..."
+
+msgid "/Conversation/Insert Lin_k..."
+msgstr "/Pogovor/Vstavi pove_zavo ..."
+
+msgid "/Conversation/Insert Imag_e..."
+msgstr "/Pogovor/Vstavi _sliko ..."
+
+msgid "/Conversation/_Close"
+msgstr "/Pogovor/_Zapri"
 
 #. Options
-#, fuzzy
-msgid "_Options"
+msgid "/_Options"
 msgstr "/M_ožnosti"
 
-#, fuzzy
-msgid "Enable _Logging"
-msgstr "Vključi dnevnik"
+msgid "/Options/Enable _Logging"
+msgstr "/Možnosti/Vk_ljuči dnevnik"
 
-#, fuzzy
-msgid "Enable _Sounds"
-msgstr "Vključi zvoke"
+msgid "/Options/Enable _Sounds"
+msgstr "/Možnosti/Vključi _zvoke"
 
-#, fuzzy
-msgid "Show Formatting _Toolbars"
+msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Možnosti/Pokaži orodno vrstico za _oblikovanje"
 
-#, fuzzy
-msgid "Show Ti_mestamps"
-msgstr "Pokaži časovne žige"
+msgid "/Options/Show Ti_mestamps"
+msgstr "/Možnosti/Pokaži _časovne žige"
+
+msgid "/Conversation/More"
+msgstr "/Pogovor/Več"
+
+msgid "/Options"
+msgstr "/Možnosti"
+
+#. The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
+#. * the 'Conversation' menu pops up.
+#. Make sure the 'Conversation -> More' menuitems are regenerated whenever
+#. * the 'Conversation' menu pops up because the entries can change after the
+#. * conversation is created.
+msgid "/Conversation"
+msgstr "/Pogovor"
+
+msgid "/Conversation/View Log"
+msgstr "/Pogovor/Pokaži dnevnik"
+
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Pogovor/Mediji/Zvočni klic"
+
+msgid "/Conversation/Media/Video Call"
+msgstr "/Pogovor/Mediji/Video klic"
+
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Pogovor/Mediji/Zvočni\\/Video klic"
+
+msgid "/Conversation/Send File..."
+msgstr "/Pogovor/Pošlji datoteko ..."
+
+msgid "/Conversation/Get Attention"
+msgstr "/Pogovor/Pridobi pozornost"
+
+msgid "/Conversation/Add Buddy Pounce..."
+msgstr "/Pogovor/Dodaj opozorilo prijatelja ..."
+
+msgid "/Conversation/Get Info"
+msgstr "/Pogovor/Informacije"
+
+msgid "/Conversation/Invite..."
+msgstr "/Pogovor/Povabi ..."
+
+msgid "/Conversation/Alias..."
+msgstr "/Pogovor/Psevdonim ..."
+
+msgid "/Conversation/Block..."
+msgstr "/Pogovor/Zavrni ..."
+
+msgid "/Conversation/Unblock..."
+msgstr "/Pogovor/Prekliči zavrnitev ..."
+
+msgid "/Conversation/Add..."
+msgstr "/Pogovor/Dodaj ..."
+
+msgid "/Conversation/Remove..."
+msgstr "/Pogovor/Odstrani ..."
+
+msgid "/Conversation/Insert Link..."
+msgstr "/Pogovor/Vstavi povezavo ..."
+
+msgid "/Conversation/Insert Image..."
+msgstr "/Pogovor/Vstavi sliko ..."
+
+msgid "/Options/Enable Logging"
+msgstr "/Možnosti/Vključi dnevnik"
+
+msgid "/Options/Enable Sounds"
+msgstr "/Možnosti/Vključi zvoke"
+
+msgid "/Options/Show Formatting Toolbars"
+msgstr "/Možnosti/Pokaži orodno vrstico za oblikovanje"
+
+msgid "/Options/Show Timestamps"
+msgstr "/Možnosti/Pokaži časovne žige"
 
 msgid "User is typing..."
 msgstr "Uporabnik tipka ..."
@@ -11858,10 +11933,6 @@ msgstr "albansko"
 msgid "Serbian"
 msgstr "srbsko"
 
-#, fuzzy
-msgid "Serbian Latin"
-msgstr "belorusko (latinica)"
-
 msgid "Sinhala"
 msgstr "sinhalsko"
 
@@ -11910,14 +11981,14 @@ msgstr "amharsko"
 msgid "Lithuanian"
 msgstr "litvansko"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<p>%s is a messaging client based on libpurple which is capable of "
-"connecting to multiple messaging services at once.  %s is written in C using "
-"GTK+.  %s is released, and may be modified and redistributed,  under the "
-"terms of the GPL version 2 (or later).  A copy of the GPL is distributed "
-"with %s.  %s is copyrighted by its contributors, a list of whom is also "
-"distributed with %s.  There is no warranty for %s.</p>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s je odjemalec za neposredno sporočanje, ki se lahko hkrati povezuje z več "
 "storitvami sporočanja. %s je napisan v jeziku C s pomočjo Gtk+. %s je izdan "
@@ -11926,26 +11997,27 @@ msgstr ""
 "zaščitena znamka svojih avtorjev, njihov seznam se prav tako razširja s "
 "programom %s.  Za %s ni na voljo nikakršna garancija.<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<h3>Helpful Resources</h3><ul><li><a href=\"%s\" title=\"%s\">Website</a></"
-"li><li><a href=\"%s\" title=\"%s\">Frequently Asked Questions</a></"
-"li><li>IRC Channel: #pidgin on irc.freenode.net</li><li>XMPP MUC: "
-"devel@conference.pidgin.im</li></ul>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 "<font size=\"4\"><b>Viri pomoči</b></font><br />\t<a href=\"%s\">Spletno "
 "mesto</a><br />\t<A HREF=\"%s\">Pogosto zastavljena vprašanja</a><br />"
 "\tKanal IRC: #pidgin na irc.freenode.net<br />\tMUC XMPP: devel@conference."
 "pidgin.im<br /><br />"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<p><strong>Help from other Pidgin users</strong> is available by e-mailing "
-"<a href=\"mailto:%s\">%s</a>.<br/>This is a <strong>public</strong> mailing "
-"list! (<a href=\"%s\" title=\"%s\">archive</a>)<br/>We can't help with third-"
-"party protocols or plugins!<br/>This list's primary language is "
-"<strong>English</strong>.  You are welcome to post in another language, but "
-"the responses may be less helpful.</p>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 "<font size=\"4\"><b>Pomoč drugih uporabnikov Pidgina</b></font> je na voljo "
 "po e-pošti  na <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12018,6 +12090,14 @@ msgstr ""
 
 msgid "View User Log"
 msgstr "Prikaži uporabniški dnevnik"
+
+#, fuzzy
+msgid "Alias Contact"
+msgstr "Psevdonim pomenka"
+
+#, fuzzy
+msgid "Enter an alias for this contact."
+msgstr "Vnesite psevdonim za ta pomenek."
 
 #, c-format
 msgid "Enter an alias for %s."
@@ -12122,8 +12202,23 @@ msgstr "_Neprebrana sporočila"
 msgid "New _Message..."
 msgstr "Novo s_poročilo ..."
 
+msgid "_Accounts"
+msgstr "_Računi"
+
+msgid "Plu_gins"
+msgstr "Vti_čniki"
+
+msgid "Pr_eferences"
+msgstr "_Nastavitve"
+
+msgid "Mute _Sounds"
+msgstr "_Utišaj zvoke"
+
 msgid "_Blink on New Message"
 msgstr "_Utripaj ob novem sporočilu"
+
+msgid "_Quit"
+msgstr "I_zhod"
 
 msgid "Not started"
 msgstr "Ni zagnano"
@@ -12594,9 +12689,6 @@ msgstr "_Premor"
 msgid "_Mute"
 msgstr "_Nemo"
 
-msgid "Call in progress"
-msgstr "Klic je v teku"
-
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
@@ -12825,9 +12917,6 @@ msgstr "Privzeta zvočna tema za Pidgin"
 msgid "The default Pidgin buddy list theme"
 msgstr "Privzeta tema seznama prijateljev Pidgin"
 
-msgid "The default Pidgin conversation theme"
-msgstr "Privzeta tema pomenkov za Pidgin"
-
 msgid "The default Pidgin status icon theme"
 msgstr "Privzeta tema ikon stanja za Pidgin"
 
@@ -12854,12 +12943,6 @@ msgstr ""
 
 msgid "Buddy List Theme:"
 msgstr "Tema seznama prijateljev:"
-
-msgid "Conversation Theme:"
-msgstr "Tema pomenkov:"
-
-msgid "\tVariant:"
-msgstr "\tRazličica:"
 
 msgid "Status Icon Theme:"
 msgstr "Tema ikon stanja:"
@@ -13448,6 +13531,12 @@ msgstr "Shranjena stanja ..."
 msgid "Status Selector"
 msgstr "Izbirnik stanja"
 
+msgid "Google Talk"
+msgstr "Google Talk"
+
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Pri odpiranju %s je prišlo do neznane napake: %s"
@@ -13581,11 +13670,17 @@ msgstr "Psev_donim"
 msgid "Close _tabs"
 msgstr "Zapri _zavihke"
 
+msgid "_Get Info"
+msgstr "_Informacije"
+
 msgid "_Invite"
 msgstr "Povab_i"
 
 msgid "_Modify..."
 msgstr "_Spremeni ..."
+
+msgid "_Add..."
+msgstr "_Dodaj ..."
 
 msgid "_Open Mail"
 msgstr "_Odpri pošto"
@@ -14933,327 +15028,51 @@ msgstr "Obiščite spletno stran Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "Za odstranitev programa nimate ustreznih pravic."
 
-#~ msgid ""
-#~ "Common name: %s %s\n"
-#~ "Fingerprint (SHA1): %s"
-#~ msgstr ""
-#~ "Pogovorno ime: %s %s\n"
-#~ "Prstni odtis (SHA1): %s"
+#~ msgid "New password should be at most 15 characters long."
+#~ msgstr "Novo geslo mora imeti najmanj 15 znakov."
 
-#~ msgid "_View Certificate..."
-#~ msgstr "_Pokaži digitalno potrdilo ..."
+#~ msgid "Error connecting to proxy server"
+#~ msgstr "Napaka pri povezovanju s posredovalnim strežnikom"
 
-#~ msgid "Certificate Information"
-#~ msgstr "Podatki o digitalnem potrdilu"
+#~ msgid "Error connecting to master server"
+#~ msgstr "Napaka pri povezovanju z glavnim strežnikom"
 
-#~ msgid "/Tools/Mute Sounds"
-#~ msgstr "/Orodja/Utišaj zvoke"
+#~ msgid "Show links from strangers"
+#~ msgstr "Pokaži povezave neznancev"
 
-#~ msgid "/Buddies/New Instant _Message..."
-#~ msgstr "/Prijatelji/Novo _neposredno sporočilo ..."
+#~ msgid "An encrypted message was received which could not be decrypted."
+#~ msgstr "Prejeto je bilo šifrirano sporočilo, ki ga ni mogoče dešifrirati."
 
-#~ msgid "/Buddies/Join a _Chat..."
-#~ msgstr "/Prijatelji/Pridruži se _pomenku ..."
+#, fuzzy
+#~ msgid "DN"
+#~ msgstr "DN"
 
-#~ msgid "/Buddies/Get User _Info..."
-#~ msgstr "/Prijatelji/Informacije o _uporabniku ..."
+#~ msgid "Certificate Information for %s"
+#~ msgstr "Podatki o digitalnem potrdilu %s"
 
-#~ msgid "/Buddies/View User _Log..."
-#~ msgstr "/Prijatelji/Po_kaži uporabnikov dnevnik ..."
+#~ msgid "Unsafe debugging is now disabled."
+#~ msgstr "Nezaščiteno razhroščevanje je zdaj onemogočeno."
 
-#~ msgid "/Buddies/Sh_ow"
-#~ msgstr "/Prijatelji/Poka_ži"
+#~ msgid "Unsafe debugging is now enabled."
+#~ msgstr "Nezaščiteno razhroščevanje je zdaj omogočeno."
 
-#~ msgid "/Buddies/Show/_Offline Buddies"
-#~ msgstr "/Prijatelji/Pokaži/Prijatelji, ki niso na _zvezi"
+#~ msgid "Verbose debugging is now disabled."
+#~ msgstr "Gostobesedno razhroščevanje je zdaj onemogočeno."
 
-#~ msgid "/Buddies/Show/_Empty Groups"
-#~ msgstr "/Prijatelji/Pokaži/Prazne _skupine"
+#~ msgid "Verbose debugging is now enabled."
+#~ msgstr "Gostobesedno razhroščevanje je zdaj omogočeno."
 
-#~ msgid "/Buddies/Show/Idle _Times"
-#~ msgstr "/Prijatelji/Pokaži/_Časi nedejavnosti"
+#~ msgid "Supported debug options are: plugins version unsafe verbose"
+#~ msgstr "Podprte možnosti razhroščevanja: plugins version unsafe verbose"
 
-#~ msgid "/Buddies/Show/_Protocol Icons"
-#~ msgstr "/Prijatelji/Pokaži/_Ikone protokolov"
+#~ msgid "Call in progress"
+#~ msgstr "Klic je v teku"
 
-#~ msgid "/Buddies/_Sort Buddies"
-#~ msgstr "/Prijatelji/Razvrs_ti prijatelje"
+#~ msgid "The default Pidgin conversation theme"
+#~ msgstr "Privzeta tema pomenkov za Pidgin"
 
-#~ msgid "/Buddies/_Add Buddy..."
-#~ msgstr "/Prijatelji/Dodaj p_rijatelja ..."
+#~ msgid "Conversation Theme:"
+#~ msgstr "Tema pomenkov:"
 
-#~ msgid "/Buddies/Add C_hat..."
-#~ msgstr "/Prijatelji/Dodaj p_omenek ..."
-
-#~ msgid "/Buddies/Add _Group..."
-#~ msgstr "/Prijatelji/Dodaj _skupino ..."
-
-#~ msgid "/Buddies/_Quit"
-#~ msgstr "/Prijatelji/Iz_hod"
-
-#~ msgid "/_Accounts"
-#~ msgstr "/_Računi"
-
-#~ msgid "/Accounts/Manage Accounts"
-#~ msgstr "/Računi/Upravljaj z računi"
-
-#~ msgid "/Tools/Buddy _Pounces"
-#~ msgstr "/Orodja/_Opozorila prijateljev"
-
-#~ msgid "/Tools/_Certificates"
-#~ msgstr "/Orodja/_Digitalna potrdila"
-
-#~ msgid "/Tools/Custom Smile_ys"
-#~ msgstr "/Orodja/Smejč_ki po meri"
-
-#~ msgid "/Tools/Plu_gins"
-#~ msgstr "/Orodja/Vtični_ki"
-
-#~ msgid "/Tools/Pr_eferences"
-#~ msgstr "/Orodja/_Nastavitve"
-
-#~ msgid "/Tools/Pr_ivacy"
-#~ msgstr "/Orodja/_Zasebnost"
-
-#~ msgid "/Tools/Set _Mood"
-#~ msgstr "/Orodja/Nastavi _razpoloženje"
-
-#~ msgid "/Tools/_File Transfers"
-#~ msgstr "/Orodja/_Prenosi datotek"
-
-#~ msgid "/Tools/R_oom List"
-#~ msgstr "/Orodja/_Seznam sob"
-
-#~ msgid "/Tools/System _Log"
-#~ msgstr "/Orodja/Siste_mski dnevnik"
-
-#~ msgid "/Tools/Mute _Sounds"
-#~ msgstr "/Orodja/_Utišaj zvoke"
-
-#~ msgid "/Help/_Build Information"
-#~ msgstr "/Pomoč/Podatki o _gradnji"
-
-#~ msgid "/Help/_Debug Window"
-#~ msgstr "/Pomoč/Raz_hroščevalno okno"
-
-#~ msgid "/Help/De_veloper Information"
-#~ msgstr "/Pomoč/Podatki o _razvijalcih"
-
-#~ msgid "/Help/_Plugin Information"
-#~ msgstr "/Pomoč/Podatki o v_tičniku"
-
-#~ msgid "/Help/_Translator Information"
-#~ msgstr "/Pomoč/Podatki o _prevajalcih"
-
-#~ msgid "/Help/_About"
-#~ msgstr "/Pomoč/_O programu"
-
-#~ msgid "/Buddies/New Instant Message..."
-#~ msgstr "/Prijatelji/Novo neposredno sporočilo ..."
-
-#~ msgid "/Buddies/Join a Chat..."
-#~ msgstr "/Prijatelji/Pridruži se pomenku ..."
-
-#~ msgid "/Buddies/Get User Info..."
-#~ msgstr "/Prijatelji/Informacije o uporabniku ..."
-
-#~ msgid "/Buddies/Add Buddy..."
-#~ msgstr "/Prijatelji/Dodaj prijatelja ..."
-
-#~ msgid "/Buddies/Add Chat..."
-#~ msgstr "/Prijatelji/Dodaj pomenek ..."
-
-#~ msgid "/Buddies/Add Group..."
-#~ msgstr "/Prijatelji/Dodaj skupino ..."
-
-#~ msgid "/Tools/Privacy"
-#~ msgstr "/Orodja/Zasebnost"
-
-#~ msgid "/Tools/Room List"
-#~ msgstr "/Orodja/Seznam sob"
-
-#~ msgid "/Accounts"
-#~ msgstr "/Računi"
-
-#~ msgid "/Buddies/Show/Offline Buddies"
-#~ msgstr "/Prijatelji/Pokaži/Prijatelji, ki niso na zvezi"
-
-#~ msgid "/Buddies/Show/Empty Groups"
-#~ msgstr "/Prijatelji/Pokaži/Prazne skupine"
-
-#~ msgid "/Buddies/Show/Buddy Details"
-#~ msgstr "/Prijatelji/Pokaži/Podrobnosti prijateljev"
-
-#~ msgid "/Buddies/Show/Idle Times"
-#~ msgstr "/Prijatelji/Pokaži/Časi nedejavnosti"
-
-#~ msgid "/Buddies/Show/Protocol Icons"
-#~ msgstr "/Prijatelji/Pokaži/Ikone protokolov"
-
-#~ msgid "<PurpleMain>/Accounts/Enable Account"
-#~ msgstr "<PurpleMain>/Računi/Omogoči račun"
-
-#~ msgid "<PurpleMain>/Accounts/"
-#~ msgstr "<PurpleMain>/Računi/"
-
-#~ msgid "/Tools"
-#~ msgstr "/Orodja"
-
-#~ msgid "/Buddies/Sort Buddies"
-#~ msgstr "/Prijatelji/Razvrsti prijatelje"
-
-#~ msgid "/Conversation/New Instant _Message..."
-#~ msgstr "/Pogovor/N_ovo neposredno sporočilo ..."
-
-#~ msgid "/Conversation/Join a _Chat..."
-#~ msgstr "/Pogovor/Pridruži se klepetu ..."
-
-#~ msgid "/Conversation/_Find..."
-#~ msgstr "/Pogovor/_Najdi ..."
-
-#~ msgid "/Conversation/View _Log"
-#~ msgstr "/Pogovor/Pokaži _dnevnik ..."
-
-#~ msgid "/Conversation/_Save As..."
-#~ msgstr "/Pogovor/_Shrani kot ..."
-
-#~ msgid "/Conversation/Clea_r Scrollback"
-#~ msgstr "/Pogovor/Po_čisti pogovor"
-
-#~ msgid "/Conversation/M_edia"
-#~ msgstr "/Pogovor/M_ediji"
-
-#~ msgid "/Conversation/Media/_Audio Call"
-#~ msgstr "/Pogovor/Mediji/_Zvočni klic"
-
-#~ msgid "/Conversation/Media/_Video Call"
-#~ msgstr "/Pogovor/Mediji/_Video klic"
-
-#~ msgid "/Conversation/Media/Audio\\/Video _Call"
-#~ msgstr "/Pogovor/Mediji/Zvočni\\/Video _klic"
-
-#~ msgid "/Conversation/Se_nd File..."
-#~ msgstr "/Pogovor/_Pošlji datoteko ..."
-
-#~ msgid "/Conversation/Get _Attention"
-#~ msgstr "/Pogovor/Pridobi _pozornost"
-
-#~ msgid "/Conversation/Add Buddy _Pounce..."
-#~ msgstr "/Pogovor/Dodaj _opozorilo prijatelja ..."
-
-#~ msgid "/Conversation/_Get Info"
-#~ msgstr "/Pogovor/_Informacije"
-
-#~ msgid "/Conversation/In_vite..."
-#~ msgstr "/Pogovor/Pova_bi ..."
-
-#~ msgid "/Conversation/M_ore"
-#~ msgstr "/Pogovor/_Več"
-
-#~ msgid "/Conversation/Al_ias..."
-#~ msgstr "/Pogovor/_Vzdevek ..."
-
-#~ msgid "/Conversation/_Block..."
-#~ msgstr "/Pogovor/Zavr_ni ..."
-
-#~ msgid "/Conversation/_Unblock..."
-#~ msgstr "/Pogovor/Pre_kliči zavrnitev ..."
-
-#~ msgid "/Conversation/_Add..."
-#~ msgstr "/Pogovor/Dod_aj ..."
-
-#~ msgid "/Conversation/_Remove..."
-#~ msgstr "/Pogovor/Odst_rani ..."
-
-#~ msgid "/Conversation/Insert Lin_k..."
-#~ msgstr "/Pogovor/Vstavi pove_zavo ..."
-
-#~ msgid "/Conversation/Insert Imag_e..."
-#~ msgstr "/Pogovor/Vstavi _sliko ..."
-
-#~ msgid "/Conversation/_Close"
-#~ msgstr "/Pogovor/_Zapri"
-
-#~ msgid "/Options/Enable _Logging"
-#~ msgstr "/Možnosti/Vk_ljuči dnevnik"
-
-#~ msgid "/Options/Enable _Sounds"
-#~ msgstr "/Možnosti/Vključi _zvoke"
-
-#~ msgid "/Options/Show Ti_mestamps"
-#~ msgstr "/Možnosti/Pokaži _časovne žige"
-
-#~ msgid "/Conversation/More"
-#~ msgstr "/Pogovor/Več"
-
-#~ msgid "/Options"
-#~ msgstr "/Možnosti"
-
-#~ msgid "/Conversation"
-#~ msgstr "/Pogovor"
-
-#~ msgid "/Conversation/View Log"
-#~ msgstr "/Pogovor/Pokaži dnevnik"
-
-#~ msgid "/Conversation/Media/Audio Call"
-#~ msgstr "/Pogovor/Mediji/Zvočni klic"
-
-#~ msgid "/Conversation/Media/Video Call"
-#~ msgstr "/Pogovor/Mediji/Video klic"
-
-#~ msgid "/Conversation/Media/Audio\\/Video Call"
-#~ msgstr "/Pogovor/Mediji/Zvočni\\/Video klic"
-
-#~ msgid "/Conversation/Send File..."
-#~ msgstr "/Pogovor/Pošlji datoteko ..."
-
-#~ msgid "/Conversation/Get Attention"
-#~ msgstr "/Pogovor/Pridobi pozornost"
-
-#~ msgid "/Conversation/Add Buddy Pounce..."
-#~ msgstr "/Pogovor/Dodaj opozorilo prijatelja ..."
-
-#~ msgid "/Conversation/Get Info"
-#~ msgstr "/Pogovor/Informacije"
-
-#~ msgid "/Conversation/Invite..."
-#~ msgstr "/Pogovor/Povabi ..."
-
-#~ msgid "/Conversation/Alias..."
-#~ msgstr "/Pogovor/Psevdonim ..."
-
-#~ msgid "/Conversation/Block..."
-#~ msgstr "/Pogovor/Zavrni ..."
-
-#~ msgid "/Conversation/Unblock..."
-#~ msgstr "/Pogovor/Prekliči zavrnitev ..."
-
-#~ msgid "/Conversation/Add..."
-#~ msgstr "/Pogovor/Dodaj ..."
-
-#~ msgid "/Conversation/Remove..."
-#~ msgstr "/Pogovor/Odstrani ..."
-
-#~ msgid "/Conversation/Insert Link..."
-#~ msgstr "/Pogovor/Vstavi povezavo ..."
-
-#~ msgid "/Conversation/Insert Image..."
-#~ msgstr "/Pogovor/Vstavi sliko ..."
-
-#~ msgid "/Options/Enable Logging"
-#~ msgstr "/Možnosti/Vključi dnevnik"
-
-#~ msgid "/Options/Enable Sounds"
-#~ msgstr "/Možnosti/Vključi zvoke"
-
-#~ msgid "/Options/Show Formatting Toolbars"
-#~ msgstr "/Možnosti/Pokaži orodno vrstico za oblikovanje"
-
-#~ msgid "/Options/Show Timestamps"
-#~ msgstr "/Možnosti/Pokaži časovne žige"
-
-#~ msgid "Google Talk"
-#~ msgstr "Google Talk"
-
-#~ msgid "Facebook (XMPP)"
-#~ msgstr "Facebook (XMPP)"
+#~ msgid "\tVariant:"
+#~ msgstr "\tRazličica:"

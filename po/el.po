@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -3478,7 +3478,7 @@ msgstr "Πρόσθετο πρωτοκόλλου IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Το λιγότερο χάλια πρόσθετο για το πρωτόκολλο IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Εξυπηρετητής"
 
@@ -5974,6 +5974,31 @@ msgstr "Το μήνυμα δε στάλθηκε επειδή συνέβη ένα
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Το μήνυμα δε στάλθηκε επειδή συνέβη ένα άγνωστο σφάλμα."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Συνέβη ένα σφάλμα κατά τη μετατροπή αυτού του μηνύματος.\t Ελέγξτε την "
+"επιλογή 'Κωδικοποίηση' στον επεξεργαστή λογαριασμών)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Υπήρξε ένα σφάλμα κατά τη λήψη αυτού του μηνύματος.  Είτε εσείς και ο %s "
+"έχετε επιλεγμένες διαφορετικές κωδικοποιήσεις, ή ο %s έχει ελαττωματικό "
+"μελάτη.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Συνέβη ένα σφάλμα κατά τη μετατροπή αυτού του μηνύματος.\t Ελέγξτε την "
+"επιλογή 'Κωδικοποίηση' στον επεξεργαστή λογαριασμών)"
 
 msgid "Writing error"
 msgstr "Σφάλμα εγγραφής"
@@ -8554,25 +8579,9 @@ msgstr "Αποστολή ανακοίνωσης ΔΟΚΙΜΗΣ"
 msgid "Topic:"
 msgstr "Θέμα συζήτησης:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Δεν ορίστηκε εξυπηρετητής κοινότητας Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Δεν ορίστηκε κεντρικός υπολογιστής ή διεύθυνση IP για τον λογαριασμό "
-"Meanwhile  %s. Παρακαλούμε εισάγετε κάτι από αυτά παρακάτω για να συνδεθείτε."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Ρυθμίσεις σύνδεσης Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Δεν ορίστηκε εξυπηρετητής κοινότητας Sametime"
-
-msgid "Connect"
-msgstr "Σύνδεση"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Ο εξυπηρετητής έκλεισε τη σύνδεση"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12848,8 +12857,14 @@ msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία βί
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Παύση"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15243,6 +15258,26 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Δεν ορίστηκε εξυπηρετητής κοινότητας Sametime"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Δεν ορίστηκε κεντρικός υπολογιστής ή διεύθυνση IP για τον λογαριασμό "
+#~ "Meanwhile  %s. Παρακαλούμε εισάγετε κάτι από αυτά παρακάτω για να "
+#~ "συνδεθείτε."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Ρυθμίσεις σύνδεσης Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Δεν ορίστηκε εξυπηρετητής κοινότητας Sametime"
+
+#~ msgid "Connect"
+#~ msgstr "Σύνδεση"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Αυτόματη απόρριψη των χρηστών που δεν είναι στη λίστα φίλων"

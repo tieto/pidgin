@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-16 15:08+0300\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-16 15:08+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -3451,7 +3451,7 @@ msgstr "IRC-yhteyskäytäntöliitännäinen"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC-yhteyskäytäntöliitännäinen joka on vähemmän huono..."
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Palvelin"
 
@@ -5890,6 +5890,31 @@ msgstr "Viestiä ei voi lähettää tuntemattoman koodausvirheen vuoksi."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Viestiä ei voi lähettää tuntemattoman virheen vuoksi."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Tämän viestin muunnoksessa oli virhe.\t Tarkista \"Merkistö\"-valinta tilin "
+"muokkausikkunasta)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Tämän viestin vastaanotossa oli virhe. Joko sinulla tai käyttäjällä %s on "
+"eri merkistöasetukset käytössä, tai hänellä (%s) on virheellinen "
+"asiakasohjelma.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Tämän viestin muunnoksessa oli virhe.\t Tarkista \"Merkistö\"-valinta tilin "
+"muokkausikkunasta)"
 
 msgid "Writing error"
 msgstr "Virhe kirjoitettaessa"
@@ -8407,25 +8432,9 @@ msgstr "Lähetä TEST-ilmoitus"
 msgid "Topic:"
 msgstr "Aihe:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Sametime-yhteisöpalvelinta ei ole määritelty"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Isäntää tai IP-osoitetta ei ole asetettu Meanwhile-käyttäjätilille %s. Lisää "
-"sellainen alle ennen kirjautumista sisään."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhilen yhteysasetukset"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Sametime-yhteisöpalvelinta ei ole määritelty"
-
-msgid "Connect"
-msgstr "Yhdistä"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Palvelin on katkaissut yhteyden"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12676,8 +12685,14 @@ msgstr "%s haluaa aloittaa videoistunnon kanssasi."
 msgid "Incoming Call"
 msgstr "Saapuva puhelu"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Tauko"
+
+msgid "_Mute"
+msgstr "_Vaimenna"
 
 #, c-format
 msgid "%s has %d new message."
@@ -15004,6 +15019,25 @@ msgstr "Vieraile Pidginin WWW-sivustolla"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Sametime-yhteisöpalvelinta ei ole määritelty"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Isäntää tai IP-osoitetta ei ole asetettu Meanwhile-käyttäjätilille %s. "
+#~ "Lisää sellainen alle ennen kirjautumista sisään."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhilen yhteysasetukset"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Sametime-yhteisöpalvelinta ei ole määritelty"
+
+#~ msgid "Connect"
+#~ msgstr "Yhdistä"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Hylkää automaattisesti käyttäjiltä jotka eivät ole tuttavia"
@@ -17912,9 +17946,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
 #~ msgid "Connected to %s"
 #~ msgstr "Yhdistetty kohteeseen %s"
-
-#~ msgid "_Mute"
-#~ msgstr "_Vaimenna"
 
 #~ msgid "e-Mail"
 #~ msgstr "Sähköposti"

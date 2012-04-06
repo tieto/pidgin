@@ -247,6 +247,12 @@ version 3.0.0 (??/??/????):
 		* xmlnode_set_attrib_with_namespace
 		* xmlnode_set_attrib_with_prefix
 
+version 2.10.3:
+	* No changes
+
+version 2.10.2:
+	* No changes
+
 version 2.10.1:
 	* No changes
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -3478,7 +3478,7 @@ msgstr "Plugin pratakołu IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Nia samy fihovy plugin pratakołu IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -6011,6 +6011,30 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 "Paviedamleńnie moža być nie dasłanym, bo adbyłasia nieviadomaja pamyłka:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Adbbyłasia pamyłka kanvertacyi hetaha paviedamleńnia. Pravier opcyju "
+"\"Kadavańnie\" ŭ Redaktary kontaŭ)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Pry atrymańni hetaha paviedamleńnia adbyłasia pamyłka. Albo ty j %s abrali "
+"roznyja kadavańni, albo %s karystajecca prablemnym klijentam.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Adbbyłasia pamyłka kanvertacyi hetaha paviedamleńnia. Pravier opcyju "
+"\"Kadavańnie\" ŭ Redaktary kontaŭ)"
 
 msgid "Writing error"
 msgstr "Pamyłka zapisu"
@@ -8591,25 +8615,9 @@ msgstr "Dašli TESTAVUJU abviestku"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Supolny server Sametime nie akreśleny"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ani host, ani IP adras nie skanfihuravanyja dla kontu Meanwhile %s. Akreśl "
-"jaho nižej, kab praciahvać uvachod dalej."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Kanfihuravańnie spałučeńnia Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Supolny server Sametime nie akreśleny"
-
-msgid "Connect"
-msgstr "Spałučy"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server začyniŭ spałučeńnie."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12983,8 +12991,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Prypyni"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15428,6 +15442,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Supolny server Sametime nie akreśleny"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ani host, ani IP adras nie skanfihuravanyja dla kontu Meanwhile %s. "
+#~ "Akreśl jaho nižej, kab praciahvać uvachod dalej."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Kanfihuravańnie spałučeńnia Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Supolny server Sametime nie akreśleny"
+
+#~ msgid "Connect"
+#~ msgstr "Spałučy"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Aŭtamatyčna admaŭlaj ad karystalnikaŭ nie sa śpisu siabroŭ"

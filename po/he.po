@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-07-26 04:31+0000\n"
 "Last-Translator: scraimer <s.transifex@craimer.org>\n"
 "Language-Team: Hebrew (http://www.transifex.net/projects/p/pidgin/team/he/)\n"
@@ -3365,7 +3365,7 @@ msgstr "תוסף פרוטוקול IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "תוסף פרוטוקול IRC שפחות מבאס"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "שרת"
 
@@ -5726,6 +5726,26 @@ msgstr "ההודעה לא נשלחה מכיוון שקרתה הודעת-קידו
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "ההודעה לא נשלחה מכיוון שקרתה שגיאה לא מוכרת."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(הייתה שגיאה בהמרת ההודעה.\t בדוק את הגדרות ה'קידוד' בעורך החשבונות)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(הייתה תקלה בקבלת הודעה זו. או שלך ולמשתמש %s יש קידודים שונים,או שלמשתמש %s "
+"יש תוכנה עם באגים.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(הייתה שגיאה בהמרת ההודעה.\t בדוק את הגדרות ה'קידוד' בעורך החשבונות)"
 
 msgid "Writing error"
 msgstr "שגיאה בכתיבה"
@@ -8095,25 +8115,9 @@ msgstr "שלח הודעת ניסיון"
 msgid "Topic:"
 msgstr "כותרת:"
 
-msgid "No Sametime Community Server specified"
-msgstr "לא ניתן שרת קהילה של Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"לא הוגדר שם או כתובת IP עבור חשבון ה-Meanwhile %s. יש להזין אחת להלן כדי "
-"להמשיך בכניסה למערכת."
-
-msgid "Meanwhile Connection Setup"
-msgstr "הגדרות תקשורת Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "לא הוגדר שרת קהילת Sametime"
-
-msgid "Connect"
-msgstr "התחבר"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "השרת סגר את החיבור"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12286,8 +12290,14 @@ msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות וידאו �
 msgid "Incoming Call"
 msgstr "שיחה נכנסת"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "השהייה"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14577,3 +14587,22 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "לא ניתן שרת קהילה של Sametime"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "לא הוגדר שם או כתובת IP עבור חשבון ה-Meanwhile %s. יש להזין אחת להלן כדי "
+#~ "להמשיך בכניסה למערכת."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "הגדרות תקשורת Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "לא הוגדר שרת קהילת Sametime"
+
+#~ msgid "Connect"
+#~ msgstr "התחבר"

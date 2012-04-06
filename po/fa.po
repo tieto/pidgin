@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-04-10 20:37+0330\n"
 "Last-Translator: Elnaz Sarbar <elnaz@farsiweb.info>\n"
 "Language-Team: Persian\n"
@@ -3476,7 +3476,7 @@ msgstr "متصل شوندهٔ قرارداد IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "یک متصل‌شوندهٔ قرارداد IRC که کمتر حال آدم را به هم می‌زند"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "کارگزار"
 
@@ -6029,6 +6029,30 @@ msgstr "ممکن است پیغام فرستاده نشده باشد چون خط�
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "ممکن است پیغام فرستاده نشده باشد چون خطایی نامعلوم رخ داد:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(هنگام تبدیل این پیغام خطایی رخ داد.\t گزینهٔ «کُدگذاری» را در ویرایشگر حساب "
+"بررسی کنید)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(در دریافت این پیغام خطایی وجود داشت. یا شما و %s کدگذاری‌های متفاوتی انتخاب "
+"کرده‌اید یا %s کارگیر پر اشکالی دارد.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(هنگام تبدیل این پیغام خطایی رخ داد.\t گزینهٔ «کُدگذاری» را در ویرایشگر حساب "
+"بررسی کنید)"
 
 msgid "Writing error"
 msgstr "خطای نوشتن"
@@ -8608,25 +8632,9 @@ msgstr "ارسال اعلان آزمایشی"
 msgid "Topic:"
 msgstr "موضوع:"
 
-msgid "No Sametime Community Server specified"
-msgstr "کارگزار اجتماع Sametime مشخص نشده است"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"میزبان یا نشانیIP برای حساب %s در Meanwhile پیکربندی نشده است. لطفاً برای "
-"ادامهٔ ورود به سیستم یک نشانی IP را وارد کنید."
-
-msgid "Meanwhile Connection Setup"
-msgstr "اتصال دوردست شکست خورد"
-
-msgid "No Sametime Community Server Specified"
-msgstr "کارگزار اجتماع Sametime مشخص نشده است"
-
-msgid "Connect"
-msgstr "اتصال"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "کارگزار اتصال را قطع کرد."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13017,8 +13025,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_مکث"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15488,6 +15502,25 @@ msgstr "صفحه وبى پيجين را ببينيد"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "شما اجازه لازم براى حذف اين برنامه را نداريد."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "کارگزار اجتماع Sametime مشخص نشده است"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "میزبان یا نشانیIP برای حساب %s در Meanwhile پیکربندی نشده است. لطفاً برای "
+#~ "ادامهٔ ورود به سیستم یک نشانی IP را وارد کنید."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "اتصال دوردست شکست خورد"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "کارگزار اجتماع Sametime مشخص نشده است"
+
+#~ msgid "Connect"
+#~ msgstr "اتصال"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "رد خودکار درخواست کاربرانی که در فهرست رفقای شما نیستند"

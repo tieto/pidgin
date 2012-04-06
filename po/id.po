@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -3504,7 +3504,7 @@ msgstr "Plugin Protokol IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Plugin Protokol IRC yang Kurang Menyebalkan"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -6047,6 +6047,30 @@ msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Ada kesalahan dalam mengkonversi pesan ini.\t Periksa pilihan 'Enkoding' "
+"dalam Perubah Akun)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Terdapat kesalahan dalam menerima pesan ini.  Mungkin anda dan %s memiliki "
+"pengkodean berbeda terpilih, atau %s memiliki klien dengan bug.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Ada kesalahan dalam mengkonversi pesan ini.\t Periksa pilihan 'Enkoding' "
+"dalam Perubah Akun)"
 
 msgid "Writing error"
 msgstr "Kesalahan penulisan"
@@ -8621,25 +8645,9 @@ msgstr "Kirim Pengumuman TES"
 msgid "Topic:"
 msgstr "Topik:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Tidak Ada Sever Komunitas Sametime yang Ditentukan"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Tidak ada host atau alamat IP dikonfigurasi untuk akun Sementara %s. Mohon "
-"masukkan satu di bawah untuk melanjutkan login."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Pengaturan Sambungan Sementara"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Tidak Ada Sever Komunitas Sametime yang Ditentukan"
-
-msgid "Connect"
-msgstr "Sambung"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Server menutup sambungan."
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13028,8 +13036,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15491,6 +15505,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Tidak Ada Sever Komunitas Sametime yang Ditentukan"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Tidak ada host atau alamat IP dikonfigurasi untuk akun Sementara %s. "
+#~ "Mohon masukkan satu di bawah untuk melanjutkan login."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Pengaturan Sambungan Sementara"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Tidak Ada Sever Komunitas Sametime yang Ditentukan"
+
+#~ msgid "Connect"
+#~ msgstr "Sambung"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Tolak otomatis dari pengguna yang tidak terdapat dalam daftar teman"

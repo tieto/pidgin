@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-11-22 14:17+0300\n"
 "Last-Translator: Andrey Chemyshev <chemyshev.andrey@gmail.com>\n"
 "Language-Team: Mari <muter@lists.linux-ink.ru>\n"
@@ -3442,7 +3442,7 @@ msgstr "IRC ойвозыш плагин"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Уда гыч изирак IRC ойвозыш плагин"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Сервер"
 
@@ -5883,6 +5883,30 @@ msgstr "Каласымашым колтымо огыл, палыдыме код�
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Палыдыме йоҥылыш лиймылан кӧра каласымашым колтымо огыл."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Тиде каласымашын сыным вашталтыме годым йоҥылыш лийын.\t Шотышналме возыш "
+"редакторыште \"Кодировко\" ойыркалыме йӧным терге"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Тыште каласымашым налме годым йоҥылыш лийын.  Тыйын да %s тӱрлӧ кодировко "
+"кучылталтеш але %s клиентыште йоҥылыш.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Тиде каласымашын сыным вашталтыме годым йоҥылыш лийын.\t Шотышналме возыш "
+"редакторыште \"Кодировко\" ойыркалыме йӧным терге"
 
 msgid "Writing error"
 msgstr "Возымо йоҥылыш"
@@ -8363,25 +8387,9 @@ msgstr "ТЕСТ увертарымашым колташ"
 msgid "Topic:"
 msgstr "Теме:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Кызытсе мер серверым палемдыме огыл"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"%s жаплан шотыш налме возышлан ни хостым, ни IP-адресым келыштарыме огыл. "
-"Пурымашым шуяш ӱлнӧ иктаж-мом пурто."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Жаплан ушымашым шындымаш"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Кызытсе мер серверым палемдыме огыл"
-
-msgid "Connect"
-msgstr "Ушымашым шындаш"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Сервер ушымашым петырен"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12683,8 +12691,14 @@ msgstr "%s тый денет видеосеансым тӱҥалнеже."
 msgid "Incoming Call"
 msgstr "Пурышо йыҥгыр"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Жаплан шогалмаш"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15034,6 +15048,25 @@ msgstr "Pidgin вот-лаштыкыш пурен лек"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Тиде приложенийым кораҥдашлан тыйын прават уке."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Кызытсе мер серверым палемдыме огыл"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "%s жаплан шотыш налме возышлан ни хостым, ни IP-адресым келыштарыме огыл. "
+#~ "Пурымашым шуяш ӱлнӧ иктаж-мом пурто."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Жаплан ушымашым шындымаш"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Кызытсе мер серверым палемдыме огыл"
+
+#~ msgid "Connect"
+#~ msgstr "Ушымашым шындаш"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Мутланыше лӱмер гыч улдымо пайдаланыше-влакымвигак ӧрдыжтараш"

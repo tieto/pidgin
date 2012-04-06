@@ -94,10 +94,10 @@ ifndef DISABLE_NLS
 endif
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
-	mkdir -p $(PIDGIN_INSTALL_DIR)/spellcheck
+	mkdir -p $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(GTKSPELL_TOP)/bin/libgtkspell-0.dll $(PIDGIN_INSTALL_DIR)/spellcheck
 	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
-	cp -R $(ENCHANT_TOP)/lib $(PIDGIN_INSTALL_DIR)/spellcheck
+	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(WIN32_DEV_TOP)/pidgin-inst-deps-20100315/exchndl.dll $(PIDGIN_INSTALL_DIR)
 
 pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip:

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:28-0700\n"
+"POT-Creation-Date: 2012-03-12 02:26-0700\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -49,6 +49,16 @@ msgstr ""
 "  -h, --help          показать эту справку и выйти\n"
 "  -n, --nologin       не входить автоматически\n"
 "  -v, --version       показать текущую версию и выйти\n"
+
+#, c-format
+msgid ""
+"%s encountered errors migrating your settings from %s to %s. Please "
+"investigate and complete the migration by hand. Please report this error at "
+"http://developer.pidgin.im"
+msgstr ""
+"%s столкнулся с ошибками при переносе ваших настроек из %s в %s. Пожалуйста "
+"разберитесь в чём дело и завершите перенос вручную. Пожалуйста уведомите об "
+"этой ошибке на http://developer.pidgin.im"
 
 #. the user did not fill in the captcha
 msgid "Error"
@@ -200,8 +210,6 @@ msgstr "Выбранная учётная запись не в сети."
 msgid "Error adding buddy"
 msgstr "Ошибка добавления собеседника"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Username"
 msgstr "Имя пользователя"
 
@@ -335,11 +343,7 @@ msgstr "Обратить пометку"
 msgid "View Log"
 msgstr "Просмотреть журнал"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. General
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Nickname"
 msgstr "Псевдоним"
 
@@ -789,11 +793,7 @@ msgid "Remaining"
 msgstr "Осталось"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 #. presence
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Status"
 msgstr "Состояние"
 
@@ -898,6 +898,7 @@ msgstr "Звоню..."
 msgid "Hangup"
 msgstr "Приостановить разговор"
 
+#. Number of actions
 msgid "Accept"
 msgstr "Принять"
 
@@ -1381,8 +1382,6 @@ msgstr "Название"
 msgid "Type"
 msgstr "Тип"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. Statuses are almost all the same. Define a macro to reduce code repetition.
 #. PurpleStatusPrimitive
 #. id - use default
@@ -1391,8 +1390,6 @@ msgstr "Тип"
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Message"
 msgstr "Сообщение"
 
@@ -1733,24 +1730,21 @@ msgstr "Сертификат был аннулирован."
 msgid "An unknown certificate error occurred."
 msgstr "Произошла неизвестная ошибка сертификата."
 
-#, fuzzy
-msgid "(MATCH)"
-msgstr "НАБЛЮДАТЬ"
-
 msgid "(DOES NOT MATCH)"
 msgstr "(НЕ СОВПАДАЕТ)"
 
+#. Make messages
 #, c-format
 msgid "%s has presented the following certificate for just-this-once use:"
 msgstr "%s представил следующий сертификат для одноразового использования:"
 
-#, fuzzy, c-format
-msgid "Common name: %s %s"
+#, c-format
+msgid ""
+"Common name: %s %s\n"
+"Fingerprint (SHA1): %s"
 msgstr ""
-"Общее имя: %s\n"
-"\n"
-"Отпечаток SHA1:\n"
-"%s"
+"Общее имя: %s %s\n"
+"Отпечаток (SHA1): %s"
 
 #. TODO: Find what the handle ought to be
 msgid "Single-use Certificate Verification"
@@ -1766,6 +1760,7 @@ msgstr "Органы сертификации"
 msgid "SSL Peers Cache"
 msgstr "Временное хранилище приоритетов SSL"
 
+#. Make messages
 #, c-format
 msgid "Accept certificate for %s?"
 msgstr "Принять сертификат для %s?"
@@ -1773,6 +1768,9 @@ msgstr "Принять сертификат для %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "Проверка SSL-сертификата"
+
+msgid "_View Certificate..."
+msgstr "_Просмотреть сертификат..."
 
 #, c-format
 msgid "The certificate for %s could not be validated."
@@ -1792,6 +1790,27 @@ msgid ""
 msgstr ""
 "Вместо этого сертификат утверждает, что он от \"%s\". Это может означать, "
 "что вы подключены не к той услуге, к которой думаете."
+
+#. Make messages
+#, c-format
+msgid ""
+"Common name: %s\n"
+"\n"
+"Fingerprint (SHA1): %s\n"
+"\n"
+"Activation date: %s\n"
+"Expiration date: %s\n"
+msgstr ""
+"Общее имя: %s\n"
+"\n"
+"Отпечаток (SHA1): %s\n"
+"\n"
+"Дата активации: %s\n"
+"Дата истечения срока действия: %s\n"
+
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Информация о сертификате"
 
 #. show error to user
 msgid "Registration Error"
@@ -2862,23 +2881,6 @@ msgstr "Простой модуль"
 msgid "Tests to see that most things are working."
 msgstr "Проверяет, всё ли работает."
 
-#. Make messages
-#, c-format
-msgid ""
-"Common name: %s\n"
-"\n"
-"Fingerprint (SHA1): %s\n"
-"\n"
-"Activation date: %s\n"
-"Expiration date: %s\n"
-msgstr ""
-"Общее имя: %s\n"
-"\n"
-"Отпечаток (SHA1): %s\n"
-"\n"
-"Дата активации: %s\n"
-"Дата истечения срока действия: %s\n"
-
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Сертификаты X.509"
@@ -3011,29 +3013,19 @@ msgid ""
 msgstr ""
 "Не удаётся установить соединение с локальным mDNS-сервером. Он работает?"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "First name"
 msgstr "Имя"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Last name"
 msgstr "Фамилия"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. email
 msgid "Email"
 msgstr "Email"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "AIM Account"
 msgstr "Учётная запись AIM"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "XMPP Account"
 msgstr "Учётная запись XMPP"
 
@@ -3147,8 +3139,6 @@ msgstr "Зарегистрировать новую учётную запись 
 msgid "Please, fill in the following fields"
 msgstr "Заполните следующие поля"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "City"
 msgstr "Город"
 
@@ -3156,8 +3146,6 @@ msgid "Year of birth"
 msgstr "Год рождения"
 
 #. gender
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Gender"
 msgstr "Пол"
 
@@ -3180,35 +3168,26 @@ msgstr "Найти собеседников"
 msgid "Please, enter your search criteria below"
 msgstr "Пожалуйста, введите ваш критерий поиска ниже"
 
+msgid "Fill in the fields."
+msgstr "Заполните поля."
+
+msgid "Your current password is different from the one that you specified."
+msgstr "Ваш текущий пароль отличается от того, что вы указали."
+
+msgid "Unable to change password. Error occurred.\n"
+msgstr "Не удаётся изменить пароль. Произошла ошибка.\n"
+
 msgid "Change password for the Gadu-Gadu account"
 msgstr "Изменить пароль для учётной записи Gadu-Gadu"
 
 msgid "Password was changed successfully!"
 msgstr "Пароль был успешно изменён!"
 
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Не удаётся изменить пароль. Произошла ошибка.\n"
-
-msgid "Fill in the fields."
-msgstr "Заполните поля."
-
-msgid "New password should be at most 15 characters long."
-msgstr "Новый пароль не может быть длиннее 15 символов."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Ваш текущий пароль отличается от того, что вы указали."
-
-msgid "Invalid email address"
-msgstr "Неверный адрес email"
-
 msgid "Current password"
 msgstr "Текущий пароль"
 
 msgid "Password (retype)"
 msgstr "Пароль (наберите ещё раз)"
-
-msgid "Email Address"
-msgstr "Адрес email"
 
 msgid "Enter current token"
 msgstr "Введите текущий маркер"
@@ -3264,20 +3243,14 @@ msgstr "Не беспокоить"
 msgid "Away"
 msgstr "Отошёл"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "UIN"
 msgstr "UIN"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 #. first name
 #. optional information
 msgid "First Name"
 msgstr "Имя"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Birth Year"
 msgstr "Год рождения"
 
@@ -3317,31 +3290,6 @@ msgstr "Список собеседников был сохранён на се�
 msgid "Connected"
 msgstr "Соединение установлено"
 
-msgid "Unable to resolve hostname"
-msgstr "Не удаётся получить имя узла"
-
-msgid "Incorrect password"
-msgstr "Неправильный пароль"
-
-msgid "SSL Connection Failed"
-msgstr "Не удалось установить SSL-соединение"
-
-msgid ""
-"Your account has been disabled because too many incorrect passwords were "
-"entered"
-msgstr ""
-"Ваша учётная запись была отключена, так как было введено слишком много "
-"неправильных паролей"
-
-msgid "Service temporarily unavailable"
-msgstr "Служба временно недоступна"
-
-msgid "Error connecting to proxy server"
-msgstr "Ошибка соединения с прокси-сервером"
-
-msgid "Error connecting to master server"
-msgstr "Ошибка соединения с главным сервером"
-
 msgid "Connection failed"
 msgstr "Не удалось установить соединение"
 
@@ -3350,12 +3298,6 @@ msgstr "Добавить к чату"
 
 msgid "Chat _name:"
 msgstr "_Имя чата:"
-
-msgid "The username specified is invalid."
-msgstr "Указанное имя пользователя некорректно."
-
-msgid "SSL support unavailable"
-msgstr "Поддержка SSL недоступна"
 
 #, c-format
 msgid "Unable to resolve hostname '%s': %s"
@@ -3375,11 +3317,11 @@ msgstr "Это имя чата уже используется"
 msgid "Not connected to the server"
 msgstr "Не подсоединён к серверу"
 
-msgid "Change password..."
-msgstr "Изменить пароль..."
-
 msgid "Find buddies..."
 msgstr "Найти собеседников..."
+
+msgid "Change password..."
+msgstr "Изменить пароль..."
 
 msgid "Upload buddylist to Server"
 msgstr "Сохранить список собеседников на сервере"
@@ -3411,23 +3353,24 @@ msgstr "Модуль протокола Gadu-Gadu"
 msgid "Polish popular IM"
 msgstr "Популярный польский IM"
 
+msgid "Gadu-Gadu User"
+msgstr "Пользователь Gadu-Gadu"
+
 msgid "GG server"
 msgstr "GG сервер"
-
-msgid "Use encryption if available"
-msgstr "Если доступно, использовать шифрование"
-
-msgid "Require encryption"
-msgstr "Требовать шифрование"
 
 msgid "Don't use encryption"
 msgstr "Не использовать шифрование"
 
+msgid "Use encryption if available"
+msgstr "Если доступно, использовать шифрование"
+
+#. TODO
+msgid "Require encryption"
+msgstr "Требовать шифрование"
+
 msgid "Connection security"
 msgstr "Безопасность соединения"
-
-msgid "Show links from strangers"
-msgstr "Показывать ссылки от незнакомцев"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3481,6 +3424,9 @@ msgstr "_Пароль:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "Псевдоним и сервер IRC могут не содержать пробелов"
 
+msgid "SSL support unavailable"
+msgstr "Поддержка SSL недоступна"
+
 msgid "Unable to connect"
 msgstr "Не удаётся установить соединение"
 
@@ -3515,8 +3461,6 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Наименее плохой модуль протокола IRC"
 
 #. set up account ID as user:server
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Server"
 msgstr "Сервер"
 
@@ -4046,8 +3990,6 @@ msgstr "Не удалось установить соединение с сер�
 msgid "Unable to establish SSL connection"
 msgstr "Не удаётся установить SSL соединение"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Full Name"
 msgstr "Полное имя"
 
@@ -4117,13 +4059,9 @@ msgid ""
 msgstr ""
 "Все нижеследующие пункты не обязательны. Заполняйте по своему усмотрению."
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Client"
 msgstr "Клиент"
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Operating System"
 msgstr "Операционная система"
 
@@ -4133,8 +4071,6 @@ msgstr "Местное время"
 msgid "Priority"
 msgstr "Приоритет"
 
-#. TODO: Check whether it's correct to call prepend_pair_html,
-#. or if we should be using prepend_pair_plaintext
 msgid "Resource"
 msgstr "Ресурс"
 
@@ -4230,6 +4166,9 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Заполните одно или более полей для поиска любых совпадающих пользователей "
 "XMPP"
+
+msgid "Email Address"
+msgstr "Адрес email"
 
 msgid "Search for XMPP users"
 msgstr "Искать пользователей XMPP"
@@ -4434,8 +4373,6 @@ msgstr "Сервер не поддерживает блокировку"
 msgid "Not Authorized"
 msgstr "Не авторизован"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Mood"
 msgstr "Настроение"
 
@@ -5274,6 +5211,9 @@ msgstr "Не удаётся сделать разбор сообщения"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Синтаксическая ошибка (вероятно, ошибка в клиенте)"
 
+msgid "Invalid email address"
+msgstr "Неверный адрес email"
+
 msgid "User does not exist"
 msgstr "Пользователь не существует"
 
@@ -5339,6 +5279,9 @@ msgstr "Слишком много попаданий в FND"
 
 msgid "Not logged in"
 msgstr "Не в сети"
+
+msgid "Service temporarily unavailable"
+msgstr "Служба временно недоступна"
 
 msgid "Database server error"
 msgstr "Ошибка сервера базы данных"
@@ -5681,8 +5624,6 @@ msgstr "Возраст"
 msgid "Occupation"
 msgstr "Занятость"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Location"
 msgstr "Местоположение"
 
@@ -6078,6 +6019,9 @@ msgstr "Удалить собеседника из адресной книги?"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "Вы хотите удалить также и этого собеседника из вашей адресной книги?"
 
+msgid "The username specified is invalid."
+msgstr "Указанное имя пользователя некорректно."
+
 msgid "The Display Name you entered is invalid."
 msgstr "Введённое Вами имя отображения некорректно."
 
@@ -6091,8 +6035,6 @@ msgstr "Ошибка Обновления Профиля"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Profile"
 msgstr "Профиль"
 
@@ -6205,8 +6147,6 @@ msgstr "Показать заставку..."
 msgid "About..."
 msgstr "О модуле..."
 
-#. we are trying to send a file to MXit
-#. need to reserve some space for packet headers
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Файл, которые вы пытаетесь отправить слишком велик!"
@@ -6317,13 +6257,15 @@ msgstr "Вы приглашены"
 msgid "Loading menu..."
 msgstr "Загрузка меню..."
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Status Message"
 msgstr "Сообщения состояния"
 
 msgid "Rejection Message"
 msgstr "Сообщения отказа"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Скрытый номер"
 
 msgid "No profile available"
 msgstr "Нет доступных профилей"
@@ -6407,10 +6349,6 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Сообщение об ошибке"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Получено зашифрованное сообщение, которое нельзя расшифровать."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Не могу осуществить перенаправление используя указанный протокол"
@@ -6675,26 +6613,18 @@ msgstr "Разрешение экрана (точек на дюйм)"
 msgid "Base font size (points)"
 msgstr "Основной размер шрифта (единиц)"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "User"
 msgstr "Пользователь"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Headline"
 msgstr "Заголовок"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Song"
 msgstr "Песня"
 
 msgid "Total Friends"
 msgstr "Всего друзей"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Client Version"
 msgstr "Версия клиента"
 
@@ -6896,6 +6826,9 @@ msgstr "Не поддерживается"
 msgid "Password has expired"
 msgstr "Срок действия пароля истёк"
 
+msgid "Incorrect password"
+msgstr "Неправильный пароль"
+
 msgid "Account has been disabled"
 msgstr "Учётная запись была отключена"
 
@@ -6919,6 +6852,13 @@ msgstr "Главный архив не настроен"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "Не удалось узнать узел введённого имени пользователя"
+
+msgid ""
+"Your account has been disabled because too many incorrect passwords were "
+"entered"
+msgstr ""
+"Ваша учётная запись была отключена, так как было введено слишком много "
+"неправильных паролей"
 
 msgid "You cannot add the same person twice to a conversation"
 msgstr "Вы не можете добавить одну и ту же персону в беседу дважды"
@@ -7044,9 +6984,12 @@ msgstr "Стоп почты"
 msgid "User ID"
 msgstr "Пользовательский ID"
 
-msgid "DN"
-msgstr "DN"
-
+#. tag = _("DN");
+#. value = nm_user_record_get_dn(user_record);
+#. if (value) {
+#. purple_notify_user_info_add_pair(user_info, tag, value);
+#. }
+#.
 msgid "Full name"
 msgstr "Полное имя"
 
@@ -7847,6 +7790,9 @@ msgstr ""
 "собеседников не потерян и, вероятно, станет доступен в течение нескольких "
 "минут."
 
+msgid "Orphans"
+msgstr "Сироты"
+
 #, c-format
 msgid ""
 "Unable to add the buddy %s because you have too many buddies in your buddy "
@@ -8147,7 +8093,6 @@ msgstr "Пользовательская информация недоступн
 msgid "Mobile Phone"
 msgstr "Мобильный телефон"
 
-#. TODO: Is it correct to pass info->email here...?
 msgid "Personal Web Page"
 msgstr "Персональная web-страница"
 
@@ -8168,7 +8113,6 @@ msgstr "Отдел"
 msgid "Position"
 msgstr "Должность"
 
-#. TODO: Is it correct to pass info->email here...?
 msgid "Web Page"
 msgstr "Web-страница"
 
@@ -8437,12 +8381,12 @@ msgstr "Тема:"
 msgid "A server is required to connect this account"
 msgstr "Сервер требует присоединить эту учётную запись"
 
-msgid "Last Known Client"
-msgstr "Последний известный клиент"
-
 #, c-format
 msgid "Unknown (0x%04x)<br>"
 msgstr "Неизвестно (0x%04x)<br>"
+
+msgid "Last Known Client"
+msgstr "Последний известный клиент"
 
 msgid "User Name"
 msgstr "Имя пользователя"
@@ -8762,33 +8706,21 @@ msgstr "Гиперактивный"
 msgid "Robot"
 msgstr "Робот"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "User Modes"
 msgstr "Режимы пользователя"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Preferred Contact"
 msgstr "Предпочитаемый контакт"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Preferred Language"
 msgstr "Предпочитаемый язык"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Device"
 msgstr "Устройство"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Timezone"
 msgstr "Часовой пояс"
 
-#. TODO: Check whether it's correct to call add_pair_html,
-#. or if we should be using add_pair_plaintext
 msgid "Geolocation"
 msgstr "Географическое положение"
 
@@ -9649,11 +9581,73 @@ msgstr ""
 msgid "Whiteboard"
 msgstr "Белая доска"
 
+msgid "No server statistics available"
+msgstr "Нет доступной статистики сервера"
+
+msgid "Error during connecting to SILC Server"
+msgstr "Ошибка во время соединения с сервером SILC"
+
+#, c-format
+msgid "Failure: Version mismatch, upgrade your client"
+msgstr "Ошибка: Несоответствие версии, обновите свой клиент"
+
+#, c-format
+msgid "Failure: Remote does not trust/support your public key"
+msgstr "Ошибка: Удалённая система не признаёт/поддерживает ваш публичный ключ"
+
+#, c-format
+msgid "Failure: Remote does not support proposed KE group"
+msgstr "Ошибка: Удалённая система не поддерживает предложенную группу KE"
+
+#, c-format
+msgid "Failure: Remote does not support proposed cipher"
+msgstr "Ошибка: Удалённая система не поддерживает предложенный шифр"
+
+#, c-format
+msgid "Failure: Remote does not support proposed PKCS"
+msgstr "Ошибка: Удалённая система не поддерживает предложенный PKCS"
+
+#, c-format
+msgid "Failure: Remote does not support proposed hash function"
+msgstr "Ошибка: Удалённая система не поддерживает предложенную хэш-функцию"
+
+#, c-format
+msgid "Failure: Remote does not support proposed HMAC"
+msgstr "Ошибка: Удалённая система не поддерживает предложенный HMAC"
+
+#, c-format
+msgid "Failure: Incorrect signature"
+msgstr "Ошибка: Неправильная подпись"
+
+#, c-format
+msgid "Failure: Invalid cookie"
+msgstr "Ошибка: Неверные данные"
+
+#, c-format
+msgid "Failure: Authentication failed"
+msgstr "Ошибка: Аутентификация завершилась неудачно"
+
+msgid "Unable to initialize SILC Client connection"
+msgstr "Не удаётся инициализировать соединение SILC-клиента"
+
+msgid "John Noname"
+msgstr "Иван Безымянный"
+
+#, c-format
+msgid "Unable to load SILC key pair: %s"
+msgstr "Не удалось загрузить пару ключей SILC: %s"
+
+msgid "Unable to create connection"
+msgstr "Не удаётся создать соединение"
+
 msgid "Unknown server response"
 msgstr "Неизвестный ответ сервера"
 
 msgid "Unable to create listen socket"
 msgstr "Не удаётся создать прослушку сокета"
+
+msgid "Unable to resolve hostname"
+msgstr "Не удаётся получить имя узла"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Имена пользователей SIP не могут содержать пробелы или символы @"
@@ -10124,8 +10118,6 @@ msgstr "Не удаётся отправить в чат %s,%s,%s"
 msgid "Hidden or not logged-in"
 msgstr "Скрыт или не в сети"
 
-#. TODO: Need to escape locs.host and locs.time?
-#. TODO: Need to escape the two strings that make up tmp?
 #, c-format
 msgid "<br>At %s since %s"
 msgstr "<br>В %s с %s"
@@ -10331,6 +10323,9 @@ msgstr "Сохранённое изображение"
 
 msgid "Stored Image. (that'll have to do for now)"
 msgstr "Сохранённое изображение. (это предстоит сделать)"
+
+msgid "SSL Connection Failed"
+msgstr "Не удалось установить SSL-соединение"
 
 msgid "SSL Handshake Failed"
 msgstr "SSL-рукопожатие не удалось"
@@ -10904,6 +10899,9 @@ msgstr "_Свернуть"
 msgid "_Expand"
 msgstr "Р_азвернуть"
 
+msgid "/Tools/Mute Sounds"
+msgstr "/Средства/Отключить звуки"
+
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -10927,152 +10925,122 @@ msgstr "Изменить настроение пользователя"
 #. NOTE: Do not set any accelerator to Control+O. It is mapped by
 #. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
-#, fuzzy
-msgid "_Buddies"
+msgid "/_Buddies"
 msgstr "/_Собеседники"
 
-#, fuzzy
-msgid "New Instant _Message..."
-msgstr "Новое мгновенное сообщение"
+msgid "/Buddies/New Instant _Message..."
+msgstr "/Собеседники/Новое мгновенное сооб_щение..."
 
-#, fuzzy
-msgid "Join a _Chat..."
-msgstr "Присоединиться к чату..."
+msgid "/Buddies/Join a _Chat..."
+msgstr "/Собеседники/Присоединиться к _чату..."
 
-#, fuzzy
-msgid "Get User _Info..."
-msgstr "Установить пользовательскую информацию..."
+msgid "/Buddies/Get User _Info..."
+msgstr "/Собеседники/Получить пользовательскую _информацию..."
 
-#, fuzzy
-msgid "View User _Log..."
-msgstr "Просмотреть журнал пользователя"
+msgid "/Buddies/View User _Log..."
+msgstr "/Собеседники/Просмотреть _журнал пользователя..."
 
-msgid "Sh_ow"
-msgstr ""
+msgid "/Buddies/Sh_ow"
+msgstr "/Собеседники/_Показывать"
 
-#, fuzzy
-msgid "_Sort Buddies"
-msgstr "Всего собеседников"
+msgid "/Buddies/Show/_Offline Buddies"
+msgstr "/Собеседники/Показывать/Собеседников _не в сети"
 
-#, fuzzy
-msgid "_Add Buddy..."
-msgstr "Добавить _собеседника..."
+msgid "/Buddies/Show/_Empty Groups"
+msgstr "/Собеседники/Показывать/П_устые группы"
 
-#, fuzzy
-msgid "Add _Group..."
-msgstr "Добавить группу"
-
-msgid "_Quit"
-msgstr "Вы_йти"
-
-#. Accounts menu
-msgid "_Accounts"
-msgstr "_Учётные записи"
-
-#, fuzzy
-msgid "Manage Accounts"
-msgstr "Включить учётную запись"
-
-#. Tools
-#, fuzzy
-msgid "_Tools"
-msgstr "/Сре_дства"
-
-#, fuzzy
-msgid "Buddy _Pounces"
-msgstr "Правила для собеседников"
-
-#, fuzzy
-msgid "_Certificates"
-msgstr "Сертификаты"
-
-#, fuzzy
-msgid "Custom Smile_ys"
-msgstr "Свой смайлик"
-
-msgid "Plu_gins"
-msgstr "_Модули"
-
-msgid "Pr_eferences"
-msgstr "На_стройки"
-
-#, fuzzy
-msgid "Pr_ivacy"
-msgstr "Конфиденциальность"
-
-#, fuzzy
-msgid "Set _Mood"
-msgstr "Выставить _настроение..."
-
-#, fuzzy
-msgid "_File Transfers"
-msgstr "Передача файлов"
-
-#, fuzzy
-msgid "R_oom List"
-msgstr "Список комнат"
-
-#, fuzzy
-msgid "System _Log"
-msgstr "Системный журнал"
-
-#. Help
-#, fuzzy
-msgid "_Help"
-msgstr "/_Помощь"
-
-#, fuzzy
-msgid "Online _Help"
-msgstr "/Помощь/Помо_щь в сети"
-
-#, fuzzy
-msgid "_Build Information"
-msgstr "Информация о сборке"
-
-#, fuzzy
-msgid "_Debug Window"
-msgstr "Окно отладки"
-
-#, fuzzy
-msgid "De_veloper Information"
-msgstr "Информация разработчика %s"
-
-#, fuzzy
-msgid "_Plugin Information"
-msgstr "Информация модуля"
-
-#, fuzzy
-msgid "_Translator Information"
-msgstr "Информация переводчика %s"
-
-#, fuzzy
-msgid "_About"
-msgstr "Про"
-
-#. Buddies->Show menu
-#, fuzzy
-msgid "_Offline Buddies"
-msgstr "Собеседников не в сети"
-
-#, fuzzy
-msgid "_Empty Groups"
-msgstr "Пустые группы"
-
-#, fuzzy
-msgid "Buddy _Details"
+msgid "/Buddies/Show/Buddy _Details"
 msgstr "/Собеседники/Показывать/_Подробности о собеседниках"
 
-#, fuzzy
-msgid "Idle _Times"
-msgstr "Показывать время бездействия"
+msgid "/Buddies/Show/Idle _Times"
+msgstr "/Собеседники/Показывать/_Время бездействия"
 
-#, fuzzy
-msgid "_Protocol Icons"
-msgstr "Протокол"
+msgid "/Buddies/Show/_Protocol Icons"
+msgstr "/Собеседники/Показывать/_Значки протоколов"
 
-#. Tools menu
-msgid "Mute _Sounds"
-msgstr "Отключить _звуки"
+msgid "/Buddies/_Sort Buddies"
+msgstr "/Собеседники/_Сортировать собеседников"
+
+msgid "/Buddies/_Add Buddy..."
+msgstr "/Собеседники/_Добавить собеседника..."
+
+msgid "/Buddies/Add C_hat..."
+msgstr "/Собеседники/Добавить ч_ат..."
+
+msgid "/Buddies/Add _Group..."
+msgstr "/Собеседники/Добавить _группу..."
+
+msgid "/Buddies/_Quit"
+msgstr "/Собеседники/В_ыйти"
+
+#. Accounts menu
+msgid "/_Accounts"
+msgstr "/_Уч.записи"
+
+msgid "/Accounts/Manage Accounts"
+msgstr "/Уч.записи/Управление учётными записями"
+
+#. Tools
+msgid "/_Tools"
+msgstr "/Сре_дства"
+
+msgid "/Tools/Buddy _Pounces"
+msgstr "/Средства/_Слежение за собеседниками"
+
+msgid "/Tools/_Certificates"
+msgstr "/Средства/С_ертификаты"
+
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Средства/Свои сма_йлики"
+
+msgid "/Tools/Plu_gins"
+msgstr "/Средства/_Модули"
+
+msgid "/Tools/Pr_eferences"
+msgstr "/Средства/_Настройки"
+
+msgid "/Tools/Pr_ivacy"
+msgstr "/Средства/К_онфиденциальность"
+
+msgid "/Tools/Set _Mood"
+msgstr "/Средства/Установить н_астроение"
+
+msgid "/Tools/_File Transfers"
+msgstr "/Средства/Передача _файлов"
+
+msgid "/Tools/R_oom List"
+msgstr "/Средства/Список _комнат"
+
+msgid "/Tools/System _Log"
+msgstr "/Средства/Системный _журнал"
+
+msgid "/Tools/Mute _Sounds"
+msgstr "/Средства/Отключить _звуки"
+
+#. Help
+msgid "/_Help"
+msgstr "/_Помощь"
+
+msgid "/Help/Online _Help"
+msgstr "/Помощь/Помо_щь в сети"
+
+msgid "/Help/_Build Information"
+msgstr "/Помощь/Информация о _сборке"
+
+msgid "/Help/_Debug Window"
+msgstr "/Помощь/_Окно отладки"
+
+msgid "/Help/De_veloper Information"
+msgstr "/Помощь/Информация о _разработчике"
+
+msgid "/Help/_Plugin Information"
+msgstr "/Помощь/Информация о _модуле"
+
+msgid "/Help/_Translator Information"
+msgstr "/Помощь/Информация о _переводчике"
+
+msgid "/Help/_About"
+msgstr "/Помощь/О программ_е"
 
 #, c-format
 msgid "<b>Account:</b> %s"
@@ -11130,6 +11098,30 @@ msgstr "Бездействует %dч %02dм"
 msgid "Idle %dm"
 msgstr "Бездействует %dм"
 
+msgid "/Buddies/New Instant Message..."
+msgstr "/Собеседники/Новое мгновенное сообщение..."
+
+msgid "/Buddies/Join a Chat..."
+msgstr "/Собеседники/Присоединиться к чату..."
+
+msgid "/Buddies/Get User Info..."
+msgstr "/Собеседники/Получить пользовательскую информацию..."
+
+msgid "/Buddies/Add Buddy..."
+msgstr "/Собеседники/Добавить собеседника..."
+
+msgid "/Buddies/Add Chat..."
+msgstr "/Собеседники/Добавить чат..."
+
+msgid "/Buddies/Add Group..."
+msgstr "/Собеседники/Добавить группу..."
+
+msgid "/Tools/Privacy"
+msgstr "/Собеседники/Конфиденциальность"
+
+msgid "/Tools/Room List"
+msgstr "/Собеседники/Список комнат"
+
 #, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
@@ -11186,6 +11178,9 @@ msgstr "<b>Пароль:</b>"
 msgid "_Login"
 msgstr "_Вход"
 
+msgid "/Accounts"
+msgstr "/Учётные записи"
+
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #, c-format
 msgid ""
@@ -11200,6 +11195,24 @@ msgstr ""
 "У вас нет включённых учётных записей. Включите их из окна <b>Учётные записи</"
 "b> через меню <b>Уч.записи->Управление учётными записями</b>. Сделав это, вы "
 "сможете войти в сеть, установить свой статус и начать общение с друзьями."
+
+#. set the Show Offline Buddies option. must be done
+#. * after the treeview or faceprint gets mad. -Robot101
+#.
+msgid "/Buddies/Show/Offline Buddies"
+msgstr "/Собеседники/Показывать/Собеседников не в сети"
+
+msgid "/Buddies/Show/Empty Groups"
+msgstr "/Собеседники/Показывать/Пустые группы"
+
+msgid "/Buddies/Show/Buddy Details"
+msgstr "/Собеседники/Показывать/Подробности о собеседниках"
+
+msgid "/Buddies/Show/Idle Times"
+msgstr "/Собеседники/Показывать/Время бездействия"
+
+msgid "/Buddies/Show/Protocol Icons"
+msgstr "/Собеседники/Показывать/Значки протоколов"
 
 msgid "Add a buddy.\n"
 msgstr "Добавить собеседника.\n"
@@ -11249,6 +11262,12 @@ msgstr "Введите имя добавляемой группы."
 msgid "Enable Account"
 msgstr "Включить учётную запись"
 
+msgid "<PurpleMain>/Accounts/Enable Account"
+msgstr "<PurpleMain>/Уч.записи/Включить запись"
+
+msgid "<PurpleMain>/Accounts/"
+msgstr "<PurpleMain>/Уч.записи/"
+
 msgid "_Edit Account"
 msgstr "_Изменить учётную запись"
 
@@ -11261,40 +11280,18 @@ msgstr "Нет доступных действий"
 msgid "_Disable"
 msgstr "_Выключить"
 
+msgid "/Tools"
+msgstr "/Средства"
+
+msgid "/Buddies/Sort Buddies"
+msgstr "/Собеседники/Сортировать собеседников"
+
 msgid "Type the host name for this certificate."
 msgstr "Укажите имя узла для этого сертификата."
-
-#. Fire the notification
-#, fuzzy, c-format
-msgid "Certificate Information for %s"
-msgstr "Информация о сертификате"
 
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL-серверы"
-
-msgid "Unsafe debugging is now disabled."
-msgstr "Небезопасная отладка сейчас запрещена."
-
-msgid "Unsafe debugging is now enabled."
-msgstr "Небезопасная отладка сейчас разрешена."
-
-msgid "Verbose debugging is now disabled."
-msgstr "Подробная отладка сейчас отключена"
-
-msgid "Verbose debugging is now enabled."
-msgstr "Подробная отладка сейчас включена."
-
-msgid "Supported debug options are: plugins version unsafe verbose"
-msgstr "Поддерживаемые параметры отладки: модули версия небезопасная подробная"
-
-#, fuzzy
-msgid ""
-"Use \"/help &lt;command&gt;\" for help on a specific command.<br/>The "
-"following commands are available in this context:<br/>"
-msgstr ""
-"Используйте \"/help &lt;команда&gt;\" для помощи по конкретной команде.\n"
-"Следующие команды доступны в этом контексте:\n"
 
 msgid "Unknown command."
 msgstr "Неизвестная команда."
@@ -11329,6 +11326,9 @@ msgstr "Не игнорировать"
 msgid "Ignore"
 msgstr "Игнорировать"
 
+msgid "Get Away Message"
+msgstr "Получить сообщение об отсутствии"
+
 msgid "Last Said"
 msgstr "Последнее сказанное"
 
@@ -11357,99 +11357,170 @@ msgid "Show All"
 msgstr "Показать всё"
 
 #. Conversation menu
-#, fuzzy
-msgid "_Conversation"
+msgid "/_Conversation"
 msgstr "/_Беседа"
 
-#, fuzzy
-msgid "_Find..."
-msgstr "Найти"
+msgid "/Conversation/New Instant _Message..."
+msgstr "/Беседа/Новое мгновенное сооб_щение..."
 
-#, fuzzy
-msgid "_Save As..."
-msgstr "Сохранить как..."
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Беседа/Присоединиться к _чату..."
 
-#, fuzzy
-msgid "Clea_r Scrollback"
-msgstr "Очистить"
+msgid "/Conversation/_Find..."
+msgstr "/Беседа/_Найти..."
 
-#, fuzzy
-msgid "M_edia"
-msgstr "/_Медиа"
+msgid "/Conversation/View _Log"
+msgstr "/Беседа/Просмотреть _журнал"
 
-#, fuzzy
-msgid "Audio/Video _Call"
-msgstr "Аудио/Видео _звонок"
+msgid "/Conversation/_Save As..."
+msgstr "/Беседа/Со_хранить как..."
 
-#, fuzzy
-msgid "Se_nd File..."
-msgstr "_Отправить файл..."
+msgid "/Conversation/Clea_r Scrollback"
+msgstr "/Беседа/О_чистить"
 
-#, fuzzy
-msgid "Get _Attention"
-msgstr "_Внимание!"
+msgid "/Conversation/M_edia"
+msgstr "/Беседа/М_едиа"
 
-msgid "_Get Info"
-msgstr "Получить _информацию"
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Беседа/Медиа/_Аудиозвонок"
 
-#, fuzzy
-msgid "In_vite..."
-msgstr "Пригласить..."
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Беседа/Медиа/_Видеозвонок"
 
-msgid "M_ore"
-msgstr ""
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Беседа/Медиа/Аудио\\/Видео_звонок"
 
-#, fuzzy
-msgid "Al_ias..."
-msgstr "_Псевдоним..."
+msgid "/Conversation/Se_nd File..."
+msgstr "/Беседа/Отправить _файл..."
 
-#, fuzzy
-msgid "_Block..."
-msgstr "_Блокировать"
+msgid "/Conversation/Get _Attention"
+msgstr "/Беседа/Привлечь _внимание"
 
-#, fuzzy
-msgid "_Unblock..."
-msgstr "Разблокировать"
+msgid "/Conversation/Add Buddy _Pounce..."
+msgstr "/Беседа/Добавить п_равило..."
 
-msgid "_Add..."
-msgstr "_Добавить..."
+msgid "/Conversation/_Get Info"
+msgstr "/Беседа/Получить _информацию"
 
-#, fuzzy
-msgid "_Remove..."
-msgstr "_Удалить"
+msgid "/Conversation/In_vite..."
+msgstr "/Беседа/Приг_ласить..."
 
-#, fuzzy
-msgid "Insert Lin_k..."
-msgstr "Вставить ссылку"
+msgid "/Conversation/M_ore"
+msgstr "/Беседа/_Ещё"
 
-#, fuzzy
-msgid "Insert Imag_e..."
-msgstr "Вставить изображение"
+msgid "/Conversation/Al_ias..."
+msgstr "/Беседа/_Псевдоним..."
 
-#, fuzzy
-msgid "_Close"
-msgstr "Закрыть"
+msgid "/Conversation/_Block..."
+msgstr "/Беседа/_Блокировать..."
+
+msgid "/Conversation/_Unblock..."
+msgstr "/Беседа/Раз_блокировать..."
+
+msgid "/Conversation/_Add..."
+msgstr "/Беседа/_Добавить..."
+
+msgid "/Conversation/_Remove..."
+msgstr "/Беседа/_Удалить..."
+
+msgid "/Conversation/Insert Lin_k..."
+msgstr "/Беседа/Вставить _ссылку..."
+
+msgid "/Conversation/Insert Imag_e..."
+msgstr "/Беседа/Вставить из_ображение..."
+
+msgid "/Conversation/_Close"
+msgstr "/Беседа/_Закрыть"
 
 #. Options
-#, fuzzy
-msgid "_Options"
+msgid "/_Options"
 msgstr "/_Параметры"
 
-#, fuzzy
-msgid "Enable _Logging"
-msgstr "Вести журнал"
+msgid "/Options/Enable _Logging"
+msgstr "/Параметры/Вести _журнал"
 
-#, fuzzy
-msgid "Enable _Sounds"
-msgstr "Включить звуки"
+msgid "/Options/Enable _Sounds"
+msgstr "/Параметры/Воспроизводить _звуки"
 
-#, fuzzy
-msgid "Show Formatting _Toolbars"
+msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Параметры/Показывать _панели форматирования"
 
-#, fuzzy
-msgid "Show Ti_mestamps"
-msgstr "Показывать время сообщений"
+msgid "/Options/Show Ti_mestamps"
+msgstr "/Параметры/Показывать _время сообщений"
+
+msgid "/Conversation/More"
+msgstr "/Беседа/Ещё"
+
+msgid "/Options"
+msgstr "/Параметры"
+
+#. The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
+#. * the 'Conversation' menu pops up.
+#. Make sure the 'Conversation -> More' menuitems are regenerated whenever
+#. * the 'Conversation' menu pops up because the entries can change after the
+#. * conversation is created.
+msgid "/Conversation"
+msgstr "/Беседа"
+
+msgid "/Conversation/View Log"
+msgstr "/Беседа/Просмотреть журнал"
+
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Беседа/Медиа/Аудиозвонок"
+
+msgid "/Conversation/Media/Video Call"
+msgstr "/Беседа/Медиа/Видеозвонок"
+
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Беседа/Медиа/Аудио\\/Видеозвонок"
+
+msgid "/Conversation/Send File..."
+msgstr "/Беседа/Отправить файл..."
+
+msgid "/Conversation/Get Attention"
+msgstr "/Беседа/Привлечь внимание"
+
+msgid "/Conversation/Add Buddy Pounce..."
+msgstr "/Беседа/Добавить правило..."
+
+msgid "/Conversation/Get Info"
+msgstr "/Беседа/Получить информацию"
+
+msgid "/Conversation/Invite..."
+msgstr "/Беседа/Пригласить..."
+
+msgid "/Conversation/Alias..."
+msgstr "/Беседа/Псевдоним..."
+
+msgid "/Conversation/Block..."
+msgstr "/Беседа/Блокировать..."
+
+msgid "/Conversation/Unblock..."
+msgstr "/Беседа/Разблокировать..."
+
+msgid "/Conversation/Add..."
+msgstr "/Беседа/Добавить..."
+
+msgid "/Conversation/Remove..."
+msgstr "/Беседа/Удалить..."
+
+msgid "/Conversation/Insert Link..."
+msgstr "/Беседа/Вставить ссылку..."
+
+msgid "/Conversation/Insert Image..."
+msgstr "/Беседа/Вставить изображение..."
+
+msgid "/Options/Enable Logging"
+msgstr "/Параметры/Вести журнал"
+
+msgid "/Options/Enable Sounds"
+msgstr "/Параметры/Воспроизводить звуки"
+
+msgid "/Options/Show Formatting Toolbars"
+msgstr "/Параметры/Показывать панели форматирования"
+
+msgid "/Options/Show Timestamps"
+msgstr "/Параметры/Показывать время сообщений"
 
 msgid "User is typing..."
 msgstr "Пользователь набирает сообщение..."
@@ -11839,10 +11910,6 @@ msgstr "Албанский"
 msgid "Serbian"
 msgstr "Сербский"
 
-#, fuzzy
-msgid "Serbian Latin"
-msgstr "Белорусская латиница"
-
 msgid "Sinhala"
 msgstr "Сингальский"
 
@@ -11891,14 +11958,14 @@ msgstr "Амхарский"
 msgid "Lithuanian"
 msgstr "Литовский"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<p>%s is a messaging client based on libpurple which is capable of "
-"connecting to multiple messaging services at once.  %s is written in C using "
-"GTK+.  %s is released, and may be modified and redistributed,  under the "
-"terms of the GPL version 2 (or later).  A copy of the GPL is distributed "
-"with %s.  %s is copyrighted by its contributors, a list of whom is also "
-"distributed with %s.  There is no warranty for %s.</p>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s - клиент обмена сообщениями, основанный на библиотеке libpurple, которая "
 "позволяет одновременно подключаться по нескольким службам. %s написан на С с "
@@ -11907,25 +11974,26 @@ msgstr ""
 "%s. Права на %s защищены его участниками, список которых также "
 "распространяется с %s.  Гарантия на %s не предоставляется. <BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<h3>Helpful Resources</h3><ul><li><a href=\"%s\" title=\"%s\">Website</a></"
-"li><li><a href=\"%s\" title=\"%s\">Frequently Asked Questions</a></"
-"li><li>IRC Channel: #pidgin on irc.freenode.net</li><li>XMPP MUC: "
-"devel@conference.pidgin.im</li></ul>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 "<FONT SIZE=\"4\"><B>Полезные ресурсы</B></FONT><BR>\t<A HREF=\"%s\">Веб-"
 "сайт</A><BR>\t<A HREF=\"%s\">Часто задаваемые вопросы</A><BR>\tIRC канал: "
 "#pidgin на irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"<p><strong>Help from other Pidgin users</strong> is available by e-mailing "
-"<a href=\"mailto:%s\">%s</a>.<br/>This is a <strong>public</strong> mailing "
-"list! (<a href=\"%s\" title=\"%s\">archive</a>)<br/>We can't help with third-"
-"party protocols or plugins!<br/>This list's primary language is "
-"<strong>English</strong>.  You are welcome to post in another language, but "
-"the responses may be less helpful.</p>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 "<font size=\"4\"><b>Помощь от других пользователей Pidgin</b></font> "
 "доступна по эл.почте <a href=\"mailto:support@pidgin.im\">support@pidgin.im</"
@@ -11998,6 +12066,12 @@ msgstr ""
 
 msgid "View User Log"
 msgstr "Просмотреть журнал пользователя"
+
+msgid "Alias Contact"
+msgstr "Псевдоним контакта"
+
+msgid "Enter an alias for this contact."
+msgstr "Введите псевдоним для этого контакта."
 
 #, c-format
 msgid "Enter an alias for %s."
@@ -12101,8 +12175,23 @@ msgstr "_Непрочитанные сообщения"
 msgid "New _Message..."
 msgstr "_Новое сообщение..."
 
+msgid "_Accounts"
+msgstr "_Учётные записи"
+
+msgid "Plu_gins"
+msgstr "_Модули"
+
+msgid "Pr_eferences"
+msgstr "На_стройки"
+
+msgid "Mute _Sounds"
+msgstr "Отключить _звуки"
+
 msgid "_Blink on New Message"
 msgstr "Мер_цать при наличии нового сообщения"
+
+msgid "_Quit"
+msgstr "Вы_йти"
 
 msgid "Not started"
 msgstr "Не начато"
@@ -12573,9 +12662,6 @@ msgstr "_Пауза"
 msgid "_Mute"
 msgstr "_Без звука"
 
-msgid "Call in progress"
-msgstr "Разговор идёт"
-
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
@@ -12799,9 +12885,6 @@ msgstr "Звуковая тема Pidgin по умолчанию"
 msgid "The default Pidgin buddy list theme"
 msgstr "Тема списка собеседников Pidgin по умолчанию"
 
-msgid "The default Pidgin conversation theme"
-msgstr "Тема беседы Pidgin по умолчанию"
-
 msgid "The default Pidgin status icon theme"
 msgstr "Тема значков состояния Pidgin по умолчанию"
 
@@ -12828,12 +12911,6 @@ msgstr ""
 
 msgid "Buddy List Theme:"
 msgstr "Тема Списка собеседников:"
-
-msgid "Conversation Theme:"
-msgstr "Тема разговора:"
-
-msgid "\tVariant:"
-msgstr "\tВариант:"
 
 msgid "Status Icon Theme:"
 msgstr "Тема значков состояния:"
@@ -13423,6 +13500,12 @@ msgstr "Сохранённые статусы..."
 msgid "Status Selector"
 msgstr "Выбор состояния"
 
+msgid "Google Talk"
+msgstr "Google-общение"
+
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Произошла следующая ошибка при загрузке %s: %s"
@@ -13558,11 +13641,17 @@ msgstr "_Псевдоним"
 msgid "Close _tabs"
 msgstr "_Закрыть вкладки"
 
+msgid "_Get Info"
+msgstr "Получить _информацию"
+
 msgid "_Invite"
 msgstr "П_ригласить"
 
 msgid "_Modify..."
 msgstr "_Изменить..."
+
+msgid "_Add..."
+msgstr "_Добавить..."
 
 msgid "_Open Mail"
 msgstr "Открыть _почту"
@@ -14907,345 +14996,51 @@ msgstr "Посетите веб-страницу Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
 
-#~ msgid ""
-#~ "Common name: %s %s\n"
-#~ "Fingerprint (SHA1): %s"
+#~ msgid "New password should be at most 15 characters long."
+#~ msgstr "Новый пароль не может быть длиннее 15 символов."
+
+#~ msgid "Error connecting to proxy server"
+#~ msgstr "Ошибка соединения с прокси-сервером"
+
+#~ msgid "Error connecting to master server"
+#~ msgstr "Ошибка соединения с главным сервером"
+
+#~ msgid "Show links from strangers"
+#~ msgstr "Показывать ссылки от незнакомцев"
+
+#~ msgid "An encrypted message was received which could not be decrypted."
+#~ msgstr "Получено зашифрованное сообщение, которое нельзя расшифровать."
+
+#~ msgid "DN"
+#~ msgstr "DN"
+
+#~ msgid "Unsafe debugging is now disabled."
+#~ msgstr "Небезопасная отладка сейчас запрещена."
+
+#~ msgid "Unsafe debugging is now enabled."
+#~ msgstr "Небезопасная отладка сейчас разрешена."
+
+#~ msgid "Verbose debugging is now disabled."
+#~ msgstr "Подробная отладка сейчас отключена"
+
+#~ msgid "Verbose debugging is now enabled."
+#~ msgstr "Подробная отладка сейчас включена."
+
+#~ msgid "Supported debug options are: plugins version unsafe verbose"
 #~ msgstr ""
-#~ "Общее имя: %s %s\n"
-#~ "Отпечаток (SHA1): %s"
+#~ "Поддерживаемые параметры отладки: модули версия небезопасная подробная"
 
-#~ msgid "_View Certificate..."
-#~ msgstr "_Просмотреть сертификат..."
+#~ msgid "Call in progress"
+#~ msgstr "Разговор идёт"
 
-#~ msgid "Orphans"
-#~ msgstr "Сироты"
+#~ msgid "The default Pidgin conversation theme"
+#~ msgstr "Тема беседы Pidgin по умолчанию"
 
-#~ msgid "/Tools/Mute Sounds"
-#~ msgstr "/Средства/Отключить звуки"
+#~ msgid "Conversation Theme:"
+#~ msgstr "Тема разговора:"
 
-#~ msgid "/Buddies/New Instant _Message..."
-#~ msgstr "/Собеседники/Новое мгновенное сооб_щение..."
-
-#~ msgid "/Buddies/Join a _Chat..."
-#~ msgstr "/Собеседники/Присоединиться к _чату..."
-
-#~ msgid "/Buddies/Get User _Info..."
-#~ msgstr "/Собеседники/Получить пользовательскую _информацию..."
-
-#~ msgid "/Buddies/View User _Log..."
-#~ msgstr "/Собеседники/Просмотреть _журнал пользователя..."
-
-#~ msgid "/Buddies/Sh_ow"
-#~ msgstr "/Собеседники/_Показывать"
-
-#~ msgid "/Buddies/Show/_Offline Buddies"
-#~ msgstr "/Собеседники/Показывать/Собеседников _не в сети"
-
-#~ msgid "/Buddies/Show/_Empty Groups"
-#~ msgstr "/Собеседники/Показывать/П_устые группы"
-
-#~ msgid "/Buddies/Show/Idle _Times"
-#~ msgstr "/Собеседники/Показывать/_Время бездействия"
-
-#~ msgid "/Buddies/Show/_Protocol Icons"
-#~ msgstr "/Собеседники/Показывать/_Значки протоколов"
-
-#~ msgid "/Buddies/_Sort Buddies"
-#~ msgstr "/Собеседники/_Сортировать собеседников"
-
-#~ msgid "/Buddies/_Add Buddy..."
-#~ msgstr "/Собеседники/_Добавить собеседника..."
-
-#~ msgid "/Buddies/Add C_hat..."
-#~ msgstr "/Собеседники/Добавить ч_ат..."
-
-#~ msgid "/Buddies/Add _Group..."
-#~ msgstr "/Собеседники/Добавить _группу..."
-
-#~ msgid "/Buddies/_Quit"
-#~ msgstr "/Собеседники/В_ыйти"
-
-#~ msgid "/_Accounts"
-#~ msgstr "/_Уч.записи"
-
-#~ msgid "/Accounts/Manage Accounts"
-#~ msgstr "/Уч.записи/Управление учётными записями"
-
-#~ msgid "/Tools/Buddy _Pounces"
-#~ msgstr "/Средства/_Слежение за собеседниками"
-
-#~ msgid "/Tools/_Certificates"
-#~ msgstr "/Средства/С_ертификаты"
-
-#~ msgid "/Tools/Custom Smile_ys"
-#~ msgstr "/Средства/Свои сма_йлики"
-
-#~ msgid "/Tools/Plu_gins"
-#~ msgstr "/Средства/_Модули"
-
-#~ msgid "/Tools/Pr_eferences"
-#~ msgstr "/Средства/_Настройки"
-
-#~ msgid "/Tools/Pr_ivacy"
-#~ msgstr "/Средства/К_онфиденциальность"
-
-#~ msgid "/Tools/Set _Mood"
-#~ msgstr "/Средства/Установить н_астроение"
-
-#~ msgid "/Tools/_File Transfers"
-#~ msgstr "/Средства/Передача _файлов"
-
-#~ msgid "/Tools/R_oom List"
-#~ msgstr "/Средства/Список _комнат"
-
-#~ msgid "/Tools/System _Log"
-#~ msgstr "/Средства/Системный _журнал"
-
-#~ msgid "/Tools/Mute _Sounds"
-#~ msgstr "/Средства/Отключить _звуки"
-
-#~ msgid "/Help/_Build Information"
-#~ msgstr "/Помощь/Информация о _сборке"
-
-#~ msgid "/Help/_Debug Window"
-#~ msgstr "/Помощь/_Окно отладки"
-
-#~ msgid "/Help/De_veloper Information"
-#~ msgstr "/Помощь/Информация о _разработчике"
-
-#~ msgid "/Help/_Plugin Information"
-#~ msgstr "/Помощь/Информация о _модуле"
-
-#~ msgid "/Help/_Translator Information"
-#~ msgstr "/Помощь/Информация о _переводчике"
-
-#~ msgid "/Help/_About"
-#~ msgstr "/Помощь/О программ_е"
-
-#~ msgid "/Buddies/New Instant Message..."
-#~ msgstr "/Собеседники/Новое мгновенное сообщение..."
-
-#~ msgid "/Buddies/Join a Chat..."
-#~ msgstr "/Собеседники/Присоединиться к чату..."
-
-#~ msgid "/Buddies/Get User Info..."
-#~ msgstr "/Собеседники/Получить пользовательскую информацию..."
-
-#~ msgid "/Buddies/Add Buddy..."
-#~ msgstr "/Собеседники/Добавить собеседника..."
-
-#~ msgid "/Buddies/Add Chat..."
-#~ msgstr "/Собеседники/Добавить чат..."
-
-#~ msgid "/Buddies/Add Group..."
-#~ msgstr "/Собеседники/Добавить группу..."
-
-#~ msgid "/Tools/Privacy"
-#~ msgstr "/Собеседники/Конфиденциальность"
-
-#~ msgid "/Tools/Room List"
-#~ msgstr "/Собеседники/Список комнат"
-
-#~ msgid "/Accounts"
-#~ msgstr "/Учётные записи"
-
-#~ msgid "/Buddies/Show/Offline Buddies"
-#~ msgstr "/Собеседники/Показывать/Собеседников не в сети"
-
-#~ msgid "/Buddies/Show/Empty Groups"
-#~ msgstr "/Собеседники/Показывать/Пустые группы"
-
-#~ msgid "/Buddies/Show/Buddy Details"
-#~ msgstr "/Собеседники/Показывать/Подробности о собеседниках"
-
-#~ msgid "/Buddies/Show/Idle Times"
-#~ msgstr "/Собеседники/Показывать/Время бездействия"
-
-#~ msgid "/Buddies/Show/Protocol Icons"
-#~ msgstr "/Собеседники/Показывать/Значки протоколов"
-
-#~ msgid "<PurpleMain>/Accounts/Enable Account"
-#~ msgstr "<PurpleMain>/Уч.записи/Включить запись"
-
-#~ msgid "<PurpleMain>/Accounts/"
-#~ msgstr "<PurpleMain>/Уч.записи/"
-
-#~ msgid "/Tools"
-#~ msgstr "/Средства"
-
-#~ msgid "/Buddies/Sort Buddies"
-#~ msgstr "/Собеседники/Сортировать собеседников"
-
-#~ msgid "/Conversation/New Instant _Message..."
-#~ msgstr "/Беседа/Новое мгновенное сооб_щение..."
-
-#~ msgid "/Conversation/Join a _Chat..."
-#~ msgstr "/Беседа/Присоединиться к _чату..."
-
-#~ msgid "/Conversation/_Find..."
-#~ msgstr "/Беседа/_Найти..."
-
-#~ msgid "/Conversation/View _Log"
-#~ msgstr "/Беседа/Просмотреть _журнал"
-
-#~ msgid "/Conversation/_Save As..."
-#~ msgstr "/Беседа/Со_хранить как..."
-
-#~ msgid "/Conversation/Clea_r Scrollback"
-#~ msgstr "/Беседа/О_чистить"
-
-#~ msgid "/Conversation/M_edia"
-#~ msgstr "/Беседа/М_едиа"
-
-#~ msgid "/Conversation/Media/_Audio Call"
-#~ msgstr "/Беседа/Медиа/_Аудиозвонок"
-
-#~ msgid "/Conversation/Media/_Video Call"
-#~ msgstr "/Беседа/Медиа/_Видеозвонок"
-
-#~ msgid "/Conversation/Media/Audio\\/Video _Call"
-#~ msgstr "/Беседа/Медиа/Аудио\\/Видео_звонок"
-
-#~ msgid "/Conversation/Se_nd File..."
-#~ msgstr "/Беседа/Отправить _файл..."
-
-#~ msgid "/Conversation/Get _Attention"
-#~ msgstr "/Беседа/Привлечь _внимание"
-
-#~ msgid "/Conversation/Add Buddy _Pounce..."
-#~ msgstr "/Беседа/Добавить п_равило..."
-
-#~ msgid "/Conversation/_Get Info"
-#~ msgstr "/Беседа/Получить _информацию"
-
-#~ msgid "/Conversation/In_vite..."
-#~ msgstr "/Беседа/Приг_ласить..."
-
-#~ msgid "/Conversation/M_ore"
-#~ msgstr "/Беседа/_Ещё"
-
-#~ msgid "/Conversation/Al_ias..."
-#~ msgstr "/Беседа/_Псевдоним..."
-
-#~ msgid "/Conversation/_Block..."
-#~ msgstr "/Беседа/_Блокировать..."
-
-#~ msgid "/Conversation/_Unblock..."
-#~ msgstr "/Беседа/Раз_блокировать..."
-
-#~ msgid "/Conversation/_Add..."
-#~ msgstr "/Беседа/_Добавить..."
-
-#~ msgid "/Conversation/_Remove..."
-#~ msgstr "/Беседа/_Удалить..."
-
-#~ msgid "/Conversation/Insert Lin_k..."
-#~ msgstr "/Беседа/Вставить _ссылку..."
-
-#~ msgid "/Conversation/Insert Imag_e..."
-#~ msgstr "/Беседа/Вставить из_ображение..."
-
-#~ msgid "/Conversation/_Close"
-#~ msgstr "/Беседа/_Закрыть"
-
-#~ msgid "/Options/Enable _Logging"
-#~ msgstr "/Параметры/Вести _журнал"
-
-#~ msgid "/Options/Enable _Sounds"
-#~ msgstr "/Параметры/Воспроизводить _звуки"
-
-#~ msgid "/Options/Show Ti_mestamps"
-#~ msgstr "/Параметры/Показывать _время сообщений"
-
-#~ msgid "/Conversation/More"
-#~ msgstr "/Беседа/Ещё"
-
-#~ msgid "/Options"
-#~ msgstr "/Параметры"
-
-#~ msgid "/Conversation"
-#~ msgstr "/Беседа"
-
-#~ msgid "/Conversation/View Log"
-#~ msgstr "/Беседа/Просмотреть журнал"
-
-#~ msgid "/Conversation/Media/Audio Call"
-#~ msgstr "/Беседа/Медиа/Аудиозвонок"
-
-#~ msgid "/Conversation/Media/Video Call"
-#~ msgstr "/Беседа/Медиа/Видеозвонок"
-
-#~ msgid "/Conversation/Media/Audio\\/Video Call"
-#~ msgstr "/Беседа/Медиа/Аудио\\/Видеозвонок"
-
-#~ msgid "/Conversation/Send File..."
-#~ msgstr "/Беседа/Отправить файл..."
-
-#~ msgid "/Conversation/Get Attention"
-#~ msgstr "/Беседа/Привлечь внимание"
-
-#~ msgid "/Conversation/Add Buddy Pounce..."
-#~ msgstr "/Беседа/Добавить правило..."
-
-#~ msgid "/Conversation/Get Info"
-#~ msgstr "/Беседа/Получить информацию"
-
-#~ msgid "/Conversation/Invite..."
-#~ msgstr "/Беседа/Пригласить..."
-
-#~ msgid "/Conversation/Alias..."
-#~ msgstr "/Беседа/Псевдоним..."
-
-#~ msgid "/Conversation/Block..."
-#~ msgstr "/Беседа/Блокировать..."
-
-#~ msgid "/Conversation/Unblock..."
-#~ msgstr "/Беседа/Разблокировать..."
-
-#~ msgid "/Conversation/Add..."
-#~ msgstr "/Беседа/Добавить..."
-
-#~ msgid "/Conversation/Remove..."
-#~ msgstr "/Беседа/Удалить..."
-
-#~ msgid "/Conversation/Insert Link..."
-#~ msgstr "/Беседа/Вставить ссылку..."
-
-#~ msgid "/Conversation/Insert Image..."
-#~ msgstr "/Беседа/Вставить изображение..."
-
-#~ msgid "/Options/Enable Logging"
-#~ msgstr "/Параметры/Вести журнал"
-
-#~ msgid "/Options/Enable Sounds"
-#~ msgstr "/Параметры/Воспроизводить звуки"
-
-#~ msgid "/Options/Show Formatting Toolbars"
-#~ msgstr "/Параметры/Показывать панели форматирования"
-
-#~ msgid "/Options/Show Timestamps"
-#~ msgstr "/Параметры/Показывать время сообщений"
-
-#~ msgid "Google Talk"
-#~ msgstr "Google-общение"
-
-#~ msgid "Facebook (XMPP)"
-#~ msgstr "Facebook (XMPP)"
-
-#~ msgid ""
-#~ "%s encountered errors migrating your settings from %s to %s. Please "
-#~ "investigate and complete the migration by hand. Please report this error "
-#~ "at http://developer.pidgin.im"
-#~ msgstr ""
-#~ "%s столкнулся с ошибками при переносе ваших настроек из %s в %s. "
-#~ "Пожалуйста разберитесь в чём дело и завершите перенос вручную. Пожалуйста "
-#~ "уведомите об этой ошибке на http://developer.pidgin.im"
-
-#~ msgid "Gadu-Gadu User"
-#~ msgstr "Пользователь Gadu-Gadu"
-
-#~ msgid "Hidden Number"
-#~ msgstr "Скрытый номер"
+#~ msgid "\tVariant:"
+#~ msgstr "\tВариант:"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Не указан текущий сервер общества"
@@ -15265,64 +15060,6 @@ msgstr "У Вас нет прав на удаление этого прилож�
 
 #~ msgid "Connect"
 #~ msgstr "Установить соединение"
-
-#~ msgid "No server statistics available"
-#~ msgstr "Нет доступной статистики сервера"
-
-#~ msgid "Error during connecting to SILC Server"
-#~ msgstr "Ошибка во время соединения с сервером SILC"
-
-#~ msgid "Failure: Version mismatch, upgrade your client"
-#~ msgstr "Ошибка: Несоответствие версии, обновите свой клиент"
-
-#~ msgid "Failure: Remote does not trust/support your public key"
-#~ msgstr ""
-#~ "Ошибка: Удалённая система не признаёт/поддерживает ваш публичный ключ"
-
-#~ msgid "Failure: Remote does not support proposed KE group"
-#~ msgstr "Ошибка: Удалённая система не поддерживает предложенную группу KE"
-
-#~ msgid "Failure: Remote does not support proposed cipher"
-#~ msgstr "Ошибка: Удалённая система не поддерживает предложенный шифр"
-
-#~ msgid "Failure: Remote does not support proposed PKCS"
-#~ msgstr "Ошибка: Удалённая система не поддерживает предложенный PKCS"
-
-#~ msgid "Failure: Remote does not support proposed hash function"
-#~ msgstr "Ошибка: Удалённая система не поддерживает предложенную хэш-функцию"
-
-#~ msgid "Failure: Remote does not support proposed HMAC"
-#~ msgstr "Ошибка: Удалённая система не поддерживает предложенный HMAC"
-
-#~ msgid "Failure: Incorrect signature"
-#~ msgstr "Ошибка: Неправильная подпись"
-
-#~ msgid "Failure: Invalid cookie"
-#~ msgstr "Ошибка: Неверные данные"
-
-#~ msgid "Failure: Authentication failed"
-#~ msgstr "Ошибка: Аутентификация завершилась неудачно"
-
-#~ msgid "Unable to initialize SILC Client connection"
-#~ msgstr "Не удаётся инициализировать соединение SILC-клиента"
-
-#~ msgid "John Noname"
-#~ msgstr "Иван Безымянный"
-
-#~ msgid "Unable to load SILC key pair: %s"
-#~ msgstr "Не удалось загрузить пару ключей SILC: %s"
-
-#~ msgid "Unable to create connection"
-#~ msgstr "Не удаётся создать соединение"
-
-#~ msgid "Get Away Message"
-#~ msgstr "Получить сообщение об отсутствии"
-
-#~ msgid "Alias Contact"
-#~ msgstr "Псевдоним контакта"
-
-#~ msgid "Enter an alias for this contact."
-#~ msgstr "Введите псевдоним для этого контакта."
 
 #~ msgid "Your UID"
 #~ msgstr "Ваш UID"
@@ -16823,6 +16560,9 @@ msgstr "У Вас нет прав на удаление этого прилож�
 
 #~ msgid "Could not write file header.  The file will not be transferred."
 #~ msgstr "Не удалось записать заголовок файла. Файл не будет передан."
+
+#~ msgid "Save As..."
+#~ msgstr "Сохранить как..."
 
 #~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 #~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"

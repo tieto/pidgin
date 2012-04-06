@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-11 20:14+0200\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-14 22:12+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
@@ -3487,7 +3487,7 @@ msgstr "Connector per al protocol d'IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "El connector per al protocol d'IRC que és menys dolent"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Servidor"
 
@@ -5919,6 +5919,28 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 "No s'ha pogut enviar el missatge perquè s'ha produït un error desconegut."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Hi ha hagut un error al convertir aquest missatge. Comproveu l'opció de "
+"\"codificació\" a l'editor de comptes)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr "(Hi ha hagut un error al rebre aquest missatge)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Hi ha hagut un error al convertir aquest missatge. Comproveu l'opció de "
+"\"codificació\" a l'editor de comptes)"
 
 msgid "Writing error"
 msgstr "Error en escriure"
@@ -8397,25 +8419,9 @@ msgstr "Envia un anunci TEST"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "No s'ha especificat cap servidor de Sametime Community"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"No s'ha configurat cap ordinador o adreça IP per al compte Meanwhile %s. "
-"Introduïu-ne un aquí sota per poder-vos connectar."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Configuració de la connexió Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "No s'ha especificat cap servidor de Sametime Community"
-
-msgid "Connect"
-msgstr "Connecta"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "El servidor ha tancat la connexió"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12721,8 +12727,14 @@ msgstr "%s vol iniciar una sessió de vídeo."
 msgid "Incoming Call"
 msgstr "Trucada entrant"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pausa"
+
+msgid "_Mute"
+msgstr "_Silencia"
 
 #, c-format
 msgid "%s has %d new message."
@@ -15087,6 +15099,25 @@ msgstr "Visiteu la pàgina web del Pidgin per a Windows"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "No teniu permís per desinstal·lar aquesta aplicació."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "No s'ha especificat cap servidor de Sametime Community"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "No s'ha configurat cap ordinador o adreça IP per al compte Meanwhile %s. "
+#~ "Introduïu-ne un aquí sota per poder-vos connectar."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Configuració de la connexió Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "No s'ha especificat cap servidor de Sametime Community"
+
+#~ msgid "Connect"
+#~ msgstr "Connecta"
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Missatge de petició d'autorització:"
@@ -17684,9 +17715,6 @@ msgstr "No teniu permís per desinstal·lar aquesta aplicació."
 #~ msgid "Connected to %s"
 #~ msgstr "S'ha connectat a %s"
 
-#~ msgid "_Mute"
-#~ msgstr "_Silencia"
-
 #~ msgid "e-Mail"
 #~ msgstr "Correu electrònic"
 
@@ -18537,13 +18565,6 @@ msgstr "No teniu permís per desinstal·lar aquesta aplicació."
 #~ msgid "Received HTTP error. Please report this."
 #~ msgstr "S'ha rebut l'error d'HTTP. Si us plau, informeu-nos-en."
 
-#~ msgid ""
-#~ "(There was an error converting this message.  Check the 'Encoding' option "
-#~ "in the Account Editor)"
-#~ msgstr ""
-#~ "(Hi ha hagut un error al convertir aquest missatge. Comproveu l'opció de "
-#~ "\"codificació\" a l'editor de comptes)"
-
 #~ msgid "MSN error for account %s"
 #~ msgstr "S'ha produït un error MSN per al compte %s"
 
@@ -18552,6 +18573,3 @@ msgstr "No teniu permís per desinstal·lar aquesta aplicació."
 
 #~ msgid "Local Addressbook"
 #~ msgstr "Llibreta d'adreces local"
-
-#~ msgid "(There was an error receiving this message)"
-#~ msgstr "(Hi ha hagut un error al rebre aquest missatge)"

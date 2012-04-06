@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-07-18 00:04+0000\n"
 "Last-Translator: kelemeng <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian (http://www.transifex.net/projects/p/pidgin/team/"
@@ -3448,7 +3448,7 @@ msgstr "IRC protokollbővítmény"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Az IRC protokollbővítmény, amely kevésbé rossz"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Kiszolgáló"
 
@@ -5872,6 +5872,30 @@ msgstr "Az üzenet nem küldhető el, mivel ismeretlen kódolási hiba történt
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Az üzenet nem küldhető el, mivel ismeretlen hiba történt."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Hiba történt az üzenet konvertálása közben. \t Ellenőrizze a „Kódolás” "
+"beállításait a Fiókszerkesztőben)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Hiba történt ezen üzenet fogadásakor. Ön vagy %s eltérő kódolást választott "
+"ki, vagy %s hibás klienst használ.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Hiba történt az üzenet konvertálása közben. \t Ellenőrizze a „Kódolás” "
+"beállításait a Fiókszerkesztőben)"
 
 msgid "Writing error"
 msgstr "Írási hiba"
@@ -8319,25 +8343,9 @@ msgstr "TESZT bejelentés küldése"
 msgid "Topic:"
 msgstr "Téma:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nincs megadva Sametime közösségi kiszolgáló"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Nincs gép vagy IP cím megadva a(z) %s Meanwhile fiókhoz. A bejelentkezés "
-"folytatásához adjon meg egyet alább."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile kapcsolat beállítása"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nincs megadva Sametime közösségi kiszolgáló"
-
-msgid "Connect"
-msgstr "Kapcsolódás"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "A kiszolgáló lezárta a kapcsolatot"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12621,8 +12629,14 @@ msgstr "%s videókapcsolatot szeretne indítani."
 msgid "Incoming Call"
 msgstr "Bejövő hívás"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Szünet"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14963,3 +14977,22 @@ msgstr "A Pidgin weboldalának felkeresése"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nincs jogosultsága az alkalmazás eltávolításához."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nincs megadva Sametime közösségi kiszolgáló"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Nincs gép vagy IP cím megadva a(z) %s Meanwhile fiókhoz. A bejelentkezés "
+#~ "folytatásához adjon meg egyet alább."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile kapcsolat beállítása"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nincs megadva Sametime közösségi kiszolgáló"
+
+#~ msgid "Connect"
+#~ msgstr "Kapcsolódás"

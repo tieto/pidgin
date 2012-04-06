@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2005-01-19 07:55+1100\n"
 "Last-Translator: Peter (Bleeter) Lawler <trans@six-by-nine.com.au>\n"
 "Language-Team: English/AU <trans@six-by-nine.com.au>\n"
@@ -3602,7 +3602,7 @@ msgstr "IRC Protocol Plugin"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "The IRC Protocol Plugin that Sucks Less"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -6214,6 +6214,30 @@ msgstr "Message may have not been sent because an unknown error occurred:"
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Message may have not been sent because an unknown error occurred:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(There was an error converting this message.\t Check the 'Encoding' option "
+"in the Account Editor)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(There was an error receiving this message.  The buddy you are speaking to "
+"most likely has a buggy client.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(There was an error converting this message.\t Check the 'Encoding' option "
+"in the Account Editor)"
 
 msgid "Writing error"
 msgstr "Writing error"
@@ -8842,25 +8866,8 @@ msgid "Topic:"
 msgstr "Topic:"
 
 #, fuzzy
-msgid "No Sametime Community Server specified"
-msgstr "Connecting to SILC Server"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-#, fuzzy
-msgid "Meanwhile Connection Setup"
-msgstr "Remote Connection Failed"
-
-#, fuzzy
-msgid "No Sametime Community Server Specified"
-msgstr "Connecting to SILC Server"
-
-msgid "Connect"
-msgstr "Connect"
+msgid "A server is required to connect this account"
+msgstr "Error creating connection"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13385,8 +13392,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15928,6 +15941,21 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Connecting to SILC Server"
+
+#, fuzzy
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Remote Connection Failed"
+
+#, fuzzy
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Connecting to SILC Server"
+
+#~ msgid "Connect"
+#~ msgstr "Connect"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

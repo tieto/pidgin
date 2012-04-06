@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-05-03 14:42+0530\n"
 "Last-Translator: Sandeep Shedmake <sshedmak@redhat.com>\n"
 "Language-Team: Marathi <maajhe-sanganak@freelists.org>\n"
@@ -3398,7 +3398,7 @@ msgstr "IRCप्रोटोकॉल  प्लगईन"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr " IRC प्रोटोकॉल  प्लगइन कमी सक्स करते"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "सर्व्हर"
 
@@ -5789,6 +5789,28 @@ msgstr "अपरिचीत एनकोडिंग त्रुटी आढ
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "अपरिचीत त्रुटी आढळल्यामुळे संदेश पाठवणे अशक्य आहे."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(हा संदेश अनुवाद करताना तिथे दोष आहेत. \t खाते संपादकामध्ये 'सांकेतिक लिपी' पर्याय तपासा)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"हा संदेश प्राप्त होताना दोष होता.  आपण आणि %s ने निराळे संकेतीकरण निवडले आहे, किंवा %s "
+"हा बग्गी ग्राहक आहे.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(हा संदेश अनुवाद करताना तिथे दोष आहेत. \t खाते संपादकामध्ये 'सांकेतिक लिपी' पर्याय तपासा)"
 
 msgid "Writing error"
 msgstr "लिहण्यात दोष"
@@ -8212,25 +8234,9 @@ msgstr " TEST घोषणा पाठवा"
 msgid "Topic:"
 msgstr "विषय:"
 
-msgid "No Sametime Community Server specified"
-msgstr "सेमटाईमच्या पंथ सर्व्हरला निर्देशित केले नाही"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"आयोजकाची  किंवा IP पत्ता खात्याची  %s साठी दरम्यानच्या काळात अंतर्गत रचना करण्यात "
-"आली आहे. कृपया प्रवेश चालू ठेवण्यासाठी एका खाली एक ठेवा."
-
-msgid "Meanwhile Connection Setup"
-msgstr "दरम्यानच्या काळातील जोडणीची पूर्वतयारी"
-
-msgid "No Sametime Community Server Specified"
-msgstr "सेमटाईमच्या पंथ सर्व्हरला निर्देशित केले नाही"
-
-msgid "Connect"
-msgstr "जोडा"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "सर्व्हरने जोडणी खंडीत केली"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12450,8 +12456,14 @@ msgstr "%s ला तुमच्यासहविडिओ सत्र सु
 msgid "Incoming Call"
 msgstr "येणारे कॉल"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "थांबा (_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14751,6 +14763,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "सेमटाईमच्या पंथ सर्व्हरला निर्देशित केले नाही"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "आयोजकाची  किंवा IP पत्ता खात्याची  %s साठी दरम्यानच्या काळात अंतर्गत रचना करण्यात "
+#~ "आली आहे. कृपया प्रवेश चालू ठेवण्यासाठी एका खाली एक ठेवा."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "दरम्यानच्या काळातील जोडणीची पूर्वतयारी"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "सेमटाईमच्या पंथ सर्व्हरला निर्देशित केले नाही"
+
+#~ msgid "Connect"
+#~ msgstr "जोडा"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "बड्डी यादीत नसलेल्या वापरकर्त्याकडून स्वयंपणे नाकारा"

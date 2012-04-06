@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-02-11 12:17+0100\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
@@ -3451,7 +3451,7 @@ msgstr "IRC-protokolltillegg"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC-protokolltillegget som suger mindre"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Tjener"
 
@@ -5930,6 +5930,30 @@ msgstr "Meldingen ble ikke sendt fordi en ukjent kodingsfeil oppstod."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Meldingen ble ikke sendt fordi en ukjent feil oppstod."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(En feil oppstod under konverteringen av denne beskjeden.\t Kontroller "
+"«Tegnkoding»-valget i kontohåndteren)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Det oppstod en feil under mottaket av denne beskjeden. Enten har du og %s "
+"valgt ulike tegnkoding, eller så bruker %s en klient med feil i.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(En feil oppstod under konverteringen av denne beskjeden.\t Kontroller "
+"«Tegnkoding»-valget i kontohåndteren)"
 
 msgid "Writing error"
 msgstr "Feil ved skriving"
@@ -8427,25 +8451,9 @@ msgstr "Send TEST Kunngjøring"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Ingen Sametime fellesskapstjener oppgitt "
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ingen vert eller IP adresse har blitt konfigurert for Meanwhile kontoen %s. "
-"Skriv inn en under for å fortsette innloggingen."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile tilkoblingsinnstillinger"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Ingen Sametime fellesskapstjener oppgitt "
-
-msgid "Connect"
-msgstr "Koble til"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Tjeneren lukket forbindelsen"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12717,8 +12725,14 @@ msgstr "%s ønsker å starte en videoøkt med deg."
 msgid "Incoming Call"
 msgstr "Innkommende oppringing"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pause"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15048,6 +15062,25 @@ msgstr "Besøk Pidgin for Windows' Nettside"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Ingen Sametime fellesskapstjener oppgitt "
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ingen vert eller IP adresse har blitt konfigurert for Meanwhile kontoen "
+#~ "%s. Skriv inn en under for å fortsette innloggingen."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile tilkoblingsinnstillinger"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Ingen Sametime fellesskapstjener oppgitt "
+
+#~ msgid "Connect"
+#~ msgstr "Koble til"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Automatisk avvis fra brukere som ikke er i kontaktlisten"

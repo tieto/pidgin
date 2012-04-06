@@ -1,28 +1,31 @@
-# Polish translation of Pidgin
-# Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001.
-# Copyright (C) Krzysztof Foltman <kfoltman@onet.pl>, 2003.
-# Copyright (C) Artur Flinta <aflinta@at.kernel.pl>, 2004.
-# Copyright (C) Emil Nowak <emil5@go2.pl>, 2003-2007.
-# Copyright (C) Paweł Godlewski <pawel@endure.pl>, 2007.
-# Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007.
-# Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008.
-# -----------------------------------------------------------------
-# Copyright (C) Piotr Drąg <piotrdrag@gmail.com>, 2009.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
+# Translators:
+# Copyright (C) Artur Flinta <aflinta@at.kernel.pl>, 2004.
+# Copyright (C) Krzysztof Foltman <kfoltman@onet.pl>, 2003.
+# Copyright (C) Paweł Godlewski <pawel@endure.pl>, 2007.
+# Copyright (C) Piotr Drąg <piotrdrag@gmail.com>, 2009.
+# Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008.
+# Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001.
+# Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007.
+# Piotr Drąg <piotrdrag@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin Polish translation\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 22:32-0700\n"
-"PO-Revision-Date: 2011-08-11 18:08+0200\n"
+"POT-Creation-Date: 2012-03-25 20:20-0700\n"
+"PO-Revision-Date: 2012-03-23 16:04+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <pl@li.org>\n"
+"Language-Team: Polish (http://www.transifex.net/projects/p/pidgin/language/"
+"pl/)\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2)\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -3476,7 +3479,7 @@ msgstr "Wtyczka protokołu IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Mniej beznadziejna wtyczka protokołu IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Serwer"
 
@@ -5907,6 +5910,30 @@ msgstr "Nie wysłano wiadomości, ponieważ wystąpił nieznany błąd kodowania
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Nie wysłano wiadomości, ponieważ wystąpił nieznany błąd."
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"%s (Wystąpił błąd podczas pobierania tej wiadomości. Konwertowanie kodowania "
+"z %s na UTF-8 się nie powiodło.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"%s (Wystąpił błąd podczas pobierania tej wiadomości. Kodowaniem było %s, ale "
+"to nie jest prawidłowe UTF-8.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"%s (Wystąpił błąd podczas pobierania tej wiadomości. Brak kodowania, ale to "
+"nie jest prawidłowe UTF-8.)"
 
 msgid "Writing error"
 msgstr "Błąd zapisywania"
@@ -8393,25 +8420,8 @@ msgstr "Wyślij ogłoszenie TESTOWE"
 msgid "Topic:"
 msgstr "Temat:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nie podano serwera społeczności Sametime"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Żaden komputer lub adres IP nie został skonfigurowany dla konta Meanwhile "
-"%s. Proszę podać komputer lub adres IP poniżej, aby kontynuować logowanie."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Ustawienia połączenia Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nie podano serwera społeczności Sametime"
-
-msgid "Connect"
-msgstr "Połącz"
+msgid "A server is required to connect this account"
+msgstr "Wymagany jest serwer, aby połączyć to konto"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -11965,9 +11975,6 @@ msgstr "urdu"
 msgid "Vietnamese"
 msgstr "wietnamski"
 
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M. Thanh i Zespół Gnome-Vi"
-
 msgid "Simplified Chinese"
 msgstr "chiński uproszczony"
 
@@ -11982,6 +11989,9 @@ msgstr "amharski"
 
 msgid "Lithuanian"
 msgstr "litewski"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M. Thanh i Zespół Gnome-Vi"
 
 #, c-format
 msgid ""
@@ -12684,8 +12694,14 @@ msgstr "Użytkownik %s chce rozpocząć sesję wideo."
 msgid "Incoming Call"
 msgstr "Rozmowa przychodząca"
 
+msgid "_Hold"
+msgstr "_Wstrzymaj"
+
 msgid "_Pause"
 msgstr "_Wstrzymaj"
+
+msgid "_Mute"
+msgstr "Wy_cisz"
 
 #, c-format
 msgid "%s has %d new message."
@@ -13190,7 +13206,7 @@ msgid "Browser default"
 msgstr "Domyślna przeglądarka"
 
 msgid "Existing window"
-msgstr "Istnieje okno"
+msgstr "Istniejące okno"
 
 msgid "New tab"
 msgstr "Nowa karta"

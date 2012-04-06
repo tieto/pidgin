@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2009-08-30 15:07+0200\n"
 "Last-Translator: Laurynas Biveinis <laurynas.biveinis@gmail.com>\n"
 "Language-Team:\n"
@@ -3566,7 +3566,7 @@ msgstr "IRC protokolo papildinys"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Mažiau knisantis IRC protokolo papildinys"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Serveris"
 
@@ -6082,6 +6082,30 @@ msgstr "Žinutė nebuvo išsiųsta, nes įvyko nežinoma užkodavimo klaida."
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Žinutė nebuvo išsiųsta, nes įvyko nežinoma klaida."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Įvyko pranešimo konvertavimo klaida. Patikrinkite parinktį „Koduotė“ "
+"paskyrų redaktoriuje)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Šio pranešimo gavimo metu įvyko klaida.  Arba Jūs ir %s esate pasirinkę "
+"skirtingas koduotes, arba %s naudoja kliento programą su riktais.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Įvyko pranešimo konvertavimo klaida. Patikrinkite parinktį „Koduotė“ "
+"paskyrų redaktoriuje)"
 
 msgid "Writing error"
 msgstr "Rašymo klaida"
@@ -8697,25 +8721,9 @@ msgstr "Nusiųsti „TEST“ skelbimą"
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Nenurodytas „Sametime“ bendruomenės serveris"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Nenustatytas mazgo vardas ar IP adresas „Meanwhile“ paskyrai %s.  Įveskite "
-"vieną iš jų žemiau, jei norite pradėti seansą."
-
-msgid "Meanwhile Connection Setup"
-msgstr "„Meanwhile“ jungties sąranka"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Nenurodytas „Sametime“ bendruomenės serveris"
-
-msgid "Connect"
-msgstr "Jungtis"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Serveris uždarė jungtį"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13094,9 +13102,15 @@ msgstr "%s nori pradėti vaizdo pokalbį su jumis."
 msgid "Incoming Call"
 msgstr "Įeinantis skambutis"
 
+msgid "_Hold"
+msgstr ""
+
 #  Pause button
 msgid "_Pause"
 msgstr "_Sustabdyti"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15632,6 +15646,25 @@ msgstr "Aplankyti Pidgin tinklalapį"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Jūs neturite teisių išdiegti šios programos."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Nenurodytas „Sametime“ bendruomenės serveris"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Nenustatytas mazgo vardas ar IP adresas „Meanwhile“ paskyrai %s.  "
+#~ "Įveskite vieną iš jų žemiau, jei norite pradėti seansą."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "„Meanwhile“ jungties sąranka"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Nenurodytas „Sametime“ bendruomenės serveris"
+
+#~ msgid "Connect"
+#~ msgstr "Jungtis"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Automatiškai atmesti iš vartotojų, nesančių bičiulių sąraše"

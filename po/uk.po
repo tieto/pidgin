@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 22:43-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-08-11 10:21+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -3460,7 +3460,7 @@ msgstr "Додаток протоколу IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Найменш поганий додаток протоколу IRC"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Сервер"
 
@@ -5875,6 +5875,30 @@ msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Повідомлення не надіслано, тому що трапилась невідома помилка."
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
+"редакторі облікових записів)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Сталася помилка отримання цього повідомлення. Або ви та %s обрали різні "
+"кодування, або %s користується клієнтом з помилками.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
+"редакторі облікових записів)"
 
 msgid "Writing error"
 msgstr "Помилка запису"
@@ -8345,25 +8369,9 @@ msgstr "Надіслати оголошення TEST"
 msgid "Topic:"
 msgstr "Тема:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Не визначено жодного серверу Sametime Community"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Ні вузол, ні адреса IP не були налаштовані для облікового запису Meanwhile "
-"%s. Введіть якійсь, щоб налаштувати вхід."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Встановлення з'єднання Meanwhile"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Не визначено жодного серверу Sametime Community"
-
-msgid "Connect"
-msgstr "З'єднатися"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "Сервер закрив з'єднання"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12639,8 +12647,14 @@ msgstr "%s бажає розпочати з вами відеосеанс."
 msgid "Incoming Call"
 msgstr "Вхідний виклик"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Пауза"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14967,3 +14981,22 @@ msgstr "Відвідати сторінку тенет Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Не визначено жодного серверу Sametime Community"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Ні вузол, ні адреса IP не були налаштовані для облікового запису "
+#~ "Meanwhile %s. Введіть якійсь, щоб налаштувати вхід."
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Встановлення з'єднання Meanwhile"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Не визначено жодного серверу Sametime Community"
+
+#~ msgid "Connect"
+#~ msgstr "З'єднатися"

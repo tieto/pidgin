@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2010-04-16 12:58+0530\n"
 "Last-Translator: Amitakhya Phukan <aphukan@fedoraproject.org>\n"
 "Language-Team: American English <fedora-trans-as@redhat.com>\n"
@@ -3745,7 +3745,7 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "কম পৰিমাণ গোলযোগ সহ IRC আচাৰ বিধিেৰ প্লাগ ইন"
 
 #
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "সেৱক"
 
@@ -6716,6 +6716,32 @@ msgstr "এনকোডিং সংক্ৰান্ত অজ্ঞাত ত
 #
 msgid "Message was not sent because an unknown error occurred."
 msgstr "অজ্ঞাত ত্ৰুটি উৎপন্ন হোৱাৰ ফলত সম্বাদটি পঠিওৱা নহয় ।"
+
+#
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(এই সম্বাদটি ৰূপান্তৰ কৰিবলৈ ত্ৰুটি চোৱা দিয়েছে ।\t হিচাপ সম্পাদন ব্যৱস্থাত "
+"'এনকোডিং' বিকল্পটি পৰীক্ষা কৰক)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(এই সম্বাদ প্ৰাপ্ত কৰি ত্ৰুটি চোৱা দিয়েছে ।  সম্ভৱ আপুনি আৰু %s ভিন্ন এনকোডিং ব্যৱহাৰ "
+"কৰছেন বা %s দ্বাৰা ব্যৱহৃত ক্লায়েন্ট প্ৰোগ্ৰামটিত কিছু সমস্যা আছে ।)"
+
+#
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(এই সম্বাদটি ৰূপান্তৰ কৰিবলৈ ত্ৰুটি চোৱা দিয়েছে ।\t হিচাপ সম্পাদন ব্যৱস্থাত "
+"'এনকোডিং' বিকল্পটি পৰীক্ষা কৰক)"
 
 #
 msgid "Writing error"
@@ -9699,29 +9725,9 @@ msgstr "TEST ৰ ঘোষনা পঠিয়াই দিয়ক"
 msgid "Topic:"
 msgstr "প্ৰসঙ্গ:"
 
-#
-msgid "No Sametime Community Server specified"
-msgstr "কোনো Sametime Community সেৱক উল্লিখিত নহয়"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Meanwhile হিচাপ %s ৰ বাবে কোনো গৃহস্থ বা IP ঠিকনা বিন্যাস কৰা নহয় ।অনুগ্ৰহ কৰে "
-"প্ৰৱেশ কৰাৰ আগতে এটা উল্লেখ কৰক ।"
-
-#
-msgid "Meanwhile Connection Setup"
-msgstr "Meanwhile সংযোগ প্ৰস্তুতি"
-
-#
-msgid "No Sametime Community Server Specified"
-msgstr "কোনো Sametime Community সেৱক উল্লিখিত নহয়"
-
-#
-msgid "Connect"
-msgstr "সংযোগ"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "সেৱকেৰ সৈতে সংযোগ বন্ধ হৈছে"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -14945,9 +14951,15 @@ msgstr "%s আপোনাৰ সৈতে এটা ভিডিও অধি�
 msgid "Incoming Call"
 msgstr "আগমনকৰ্তা কল"
 
+msgid "_Hold"
+msgstr ""
+
 #
 msgid "_Pause"
 msgstr "স্থগিত (_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -17818,6 +17830,29 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "কোনো Sametime Community সেৱক উল্লিখিত নহয়"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "Meanwhile হিচাপ %s ৰ বাবে কোনো গৃহস্থ বা IP ঠিকনা বিন্যাস কৰা নহয় ।অনুগ্ৰহ কৰে "
+#~ "প্ৰৱেশ কৰাৰ আগতে এটা উল্লেখ কৰক ।"
+
+#
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Meanwhile সংযোগ প্ৰস্তুতি"
+
+#
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "কোনো Sametime Community সেৱক উল্লিখিত নহয়"
+
+#
+#~ msgid "Connect"
+#~ msgstr "সংযোগ"
 
 #
 #~ msgid "Automatically reject from users not in buddy list"

@@ -46,7 +46,14 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
-version 2.10.2 (02/22/2012):
+version 2.10.4:
+	TODO
+
+version 2.10.3 (03/26/2012):
+	MSN:
+	* Fix buddies not going offline. (#14997)
+
+version 2.10.2 (03/14/2012):
 	General:
 	* Fix compilation when using binutils 2.22 and new GDK pixbuf. (#14799)
 	* Fix compilation of the MXit protocol plugin with GLib 2.31. (#14773)

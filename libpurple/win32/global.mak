@@ -11,7 +11,7 @@
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.16
-ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.5.0-2_win32
+ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.6.0_win32
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0-2.14
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK

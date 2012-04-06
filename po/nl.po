@@ -1,17 +1,21 @@
-# This file is distributed under the same license as the Pidgin package.
-# Gideon van Melle <translations@gvmelle.com>, 2011.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
 # Daniël Heres <danielheres@gmail.com>, 2008.
+# Gideon van Melle <translations@gvmelle.com>, 2011.
 # Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006.
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:33-0700\n"
-"PO-Revision-Date: 2011-08-11 07:30+0000\n"
-"Last-Translator: Dingoe <translations@gvmelle.com>\n"
-"Language-Team: Dutch (http://www.transifex.net/projects/p/pidgin/team/nl/)\n"
+"POT-Creation-Date: 2012-03-25 20:19-0700\n"
+"PO-Revision-Date: 2012-03-22 09:33+0000\n"
+"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
+"Language-Team: Dutch (http://www.transifex.net/projects/p/pidgin/language/"
+"nl/)\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3458,7 +3462,7 @@ msgstr "IRC-protocol plug-in"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "De IRC-protocol plug-in die minder zuigt"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -5874,6 +5878,30 @@ msgstr "Bericht is niet verstuurd wegens een onbekende coderingsfout:"
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Bericht is niet verstuurd wegens een onbekende fout:"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"%s (Er is een fout opgetreden bij de ontvangst van dit bericht. Het omzetten "
+"van de codering van %s naar UTF-8 mislukte.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"%s (Er is een fout opgetreden bij de ontvangst van dit bericht. De "
+"lettertekenset was %s, maar het was geen geldige UTF-8.)"
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"%s (Er is een fout opgetreden bij de ontvangst van dit bericht. De "
+"lettertekenset ontbrak, maar was geen geldige UTF-8)."
 
 msgid "Writing error"
 msgstr "Schrijffout"
@@ -8339,25 +8367,8 @@ msgstr "TEST-aankondiging versturen"
 msgid "Topic:"
 msgstr "Onderwerp:"
 
-msgid "No Sametime Community Server specified"
-msgstr "Geen Sametime communityserver gegeven"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"Er is geen computernaam of IP-adres ingesteld in Meanwhile-account %s. Vul "
-"hieronder één in om door te gaan met de aanmelding."
-
-msgid "Meanwhile Connection Setup"
-msgstr "Instellen van verbinding"
-
-msgid "No Sametime Community Server Specified"
-msgstr "Geen Sametime gemeenschapsserver gegeven"
-
-msgid "Connect"
-msgstr "Verbinden"
+msgid "A server is required to connect this account"
+msgstr "Er is een server nodig om met dit account verbinding te maken"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -11918,9 +11929,6 @@ msgstr "Urdu"
 msgid "Vietnamese"
 msgstr "Vietnamees"
 
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh en het GNOME-Vi team"
-
 msgid "Simplified Chinese"
 msgstr "Eenvoudig Chinees"
 
@@ -11935,6 +11943,9 @@ msgstr "Amharic"
 
 msgid "Lithuanian"
 msgstr "Litouws"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh en het GNOME-Vi team"
 
 #, c-format
 msgid ""
@@ -12636,8 +12647,14 @@ msgstr "%s wil een videogesprek starten."
 msgid "Incoming Call"
 msgstr "Binnenkomende Gesprek"
 
+msgid "_Hold"
+msgstr "_Hold"
+
 msgid "_Pause"
 msgstr "_Pauzeren"
+
+msgid "_Mute"
+msgstr "_Mute"
 
 #, c-format
 msgid "%s has %d new message."

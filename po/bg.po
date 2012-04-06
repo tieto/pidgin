@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin-1.30\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2007-02-12 00:46+0200\n"
 "Last-Translator: Vladimir \"Kaladan\" Petkov <kaladan@gmail.com>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -3524,7 +3524,7 @@ msgstr "Модул за протокола IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr ""
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Сървър"
 
@@ -6024,6 +6024,24 @@ msgid "Message was not sent because an unknown encoding error occurred."
 msgstr ""
 
 msgid "Message was not sent because an unknown error occurred."
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
 msgstr ""
 
 msgid "Writing error"
@@ -8588,24 +8606,8 @@ msgid "Topic:"
 msgstr "Тема:"
 
 #, fuzzy
-msgid "No Sametime Community Server specified"
-msgstr "Свързване към сървър"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
-msgid "Meanwhile Connection Setup"
-msgstr ""
-
-#, fuzzy
-msgid "No Sametime Community Server Specified"
-msgstr "Свързване към сървър"
-
-msgid "Connect"
-msgstr "Свързване"
+msgid "A server is required to connect this account"
+msgstr "Грешка при установяването на връзката"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13009,8 +13011,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Пауза"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15493,6 +15501,17 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Нямате права да деинсталирате тази програма."
+
+#, fuzzy
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "Свързване към сървър"
+
+#, fuzzy
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "Свързване към сървър"
+
+#~ msgid "Connect"
+#~ msgstr "Свързване"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2005-10-27 16:55-0400\n"
 "Last-Translator: Lejla Hadialic <lejlah@gmail.com>\n"
 "Language-Team: bs <LL@li.org>\n"
@@ -3583,7 +3583,7 @@ msgstr "IRC protokol plugin"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Ne toliko loš IRC protokol plugin"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "Server"
 
@@ -6197,6 +6197,30 @@ msgstr "Poruka možda nije poslana, jer se pojavila nepoznata greška:"
 #, fuzzy
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Poruka možda nije poslana, jer se pojavila nepoznata greška:"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr ""
+"(Pojavila se greška prilikom konvertovanja ove poruke.\t Provjerite opciju "
+"'Kodiranje' u vašem Account Editoru)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(Pojavila se greška prilikom primanja ove poruke. Prijatelj sa kojim pricate "
+"vjerovatno ima klijenta sa bug-om.)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr ""
+"(Pojavila se greška prilikom konvertovanja ove poruke.\t Provjerite opciju "
+"'Kodiranje' u vašem Account Editoru)"
 
 msgid "Writing error"
 msgstr "Greška pri pisanju"
@@ -8820,24 +8844,9 @@ msgstr ""
 msgid "Topic:"
 msgstr "Tema:"
 
-msgid "No Sametime Community Server specified"
-msgstr ""
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-
 #, fuzzy
-msgid "Meanwhile Connection Setup"
-msgstr "Neuspjela udaljena konekcija"
-
-msgid "No Sametime Community Server Specified"
-msgstr ""
-
-msgid "Connect"
-msgstr "Spajanje"
+msgid "A server is required to connect this account"
+msgstr "Greška pri kreiranju konekcije"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -13364,8 +13373,14 @@ msgstr ""
 msgid "Incoming Call"
 msgstr ""
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "_Pauza"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -15915,6 +15930,13 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "Neuspjela udaljena konekcija"
+
+#~ msgid "Connect"
+#~ msgstr "Spajanje"
 
 #, fuzzy
 #~ msgid "Automatically reject from users not in buddy list"

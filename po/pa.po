@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"POT-Creation-Date: 2012-03-12 02:49-0700\n"
 "PO-Revision-Date: 2011-07-18 00:03+0000\n"
 "Last-Translator: aalam <apreet.alam@gmail.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.net/projects/p/pidgin/"
@@ -3363,7 +3363,7 @@ msgstr "IRC ਪ੍ਰੋਟੋਕਾਲ ਪਲੱਗਇਨ"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC ਪਰੋਟੋਕਾਲ ਪਲੱਗਇਨ ਘੱਟ ਤੰਗ ਕਰਦੀ ਹੈ।"
 
-#. host to connect to
+#. set up account ID as user:server
 msgid "Server"
 msgstr "ਸਰਵਰ"
 
@@ -5735,6 +5735,26 @@ msgstr "ਇੱਕ ਅਣਜਾਣੀ ਇੰਕੋਡਿੰਗ ਗਲਤੀ ਆ�
 
 msgid "Message was not sent because an unknown error occurred."
 msgstr "ਇੱਕ ਅਣਜਾਣੀ ਗਲਤੀ ਆਉਣ ਕਰਕੇ ਸੁਨੇਹਾ ਭੇਜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ ਹੈ।"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. Converting the encoding from "
+"%s to UTF-8 failed.)"
+msgstr "(ਇਸ ਸੁਨੇਹੇ ਨੂੰ ਬਦਲਣ ਲਈ ਗਲਤੀ ਆਈ ਹੈ।\t ਅਕਾਊਂਟ ਸੰਪਾਦਕ ਵਿੱਚ 'ਇੰਕੋਡਿੰਗ' ਚੋਣ ਵੇਖੋ)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was %s, but it "
+"was not valid UTF-8.)"
+msgstr ""
+"(ਇਹ ਸੁਨੇਹਾ ਪ੍ਰਾਪਤ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ ਹੈ। ਜਾਂ ਤਾਂ ਤੁਸੀਂ ਅਤੇ %s ਨੇ ਵੱਖਰੀ ਇੰਕੋਡਿੰਗ ਦੀ ਚੋਣ ਕੀਤੀ ਹੈ "
+"ਜਾਂ %s ਇੱਕ ਬੱਗੀ ਕਲਾਇਟ ਹੈ।)"
+
+#, fuzzy, c-format
+msgid ""
+"%s (There was an error receiving this message. The charset was missing, but "
+"it was not valid UTF-8.)"
+msgstr "(ਇਸ ਸੁਨੇਹੇ ਨੂੰ ਬਦਲਣ ਲਈ ਗਲਤੀ ਆਈ ਹੈ।\t ਅਕਾਊਂਟ ਸੰਪਾਦਕ ਵਿੱਚ 'ਇੰਕੋਡਿੰਗ' ਚੋਣ ਵੇਖੋ)"
 
 msgid "Writing error"
 msgstr "ਲਿਖਣ ਗਲਤੀ"
@@ -8109,24 +8129,9 @@ msgstr "ਟੈਸਟ ਐਲਾਨ ਭੇਜੋ"
 msgid "Topic:"
 msgstr "ਵਿਸ਼ਾ:"
 
-msgid "No Sametime Community Server specified"
-msgstr "ਕੋਈ ਸੇਮਟਾਈਮ ਕਮਿਊਨਟੀ ਸਰਵਰ ਦਿੱਤਾ"
-
-#, c-format
-msgid ""
-"No host or IP address has been configured for the Meanwhile account %s. "
-"Please enter one below to continue logging in."
-msgstr ""
-"ਮੀਨਵਾਇਲ ਅਕਾਊਂਟ %s ਲਈ ਕੋਈ ਹੋਸਟ ਜਾਂ IP ਐਡਰੈੱਸ ਸੰਰਚਿਤ ਨਹੀਂ ਹੈ। ਲਾਗਇਨ ਕਰਨ ਵਾਸਤੇ ਹੇਠਾਂ ਇੱਕ ਦਿਓ।"
-
-msgid "Meanwhile Connection Setup"
-msgstr "ਮੀਨਵਾਇਲ ਕੁਨੈਕਸ਼ਨ ਸੈੱਟਅੱਪ"
-
-msgid "No Sametime Community Server Specified"
-msgstr "ਕੋਈ ਸੇਮ-ਟਾਈਮ ਕਮਿਊਨਟੀ ਸਰਵਰ ਨਹੀਂ ਦਿੱਤਾ ਗਿਆ"
-
-msgid "Connect"
-msgstr "ਕੁਨੈਕਟ ਕਰੋ"
+#, fuzzy
+msgid "A server is required to connect this account"
+msgstr "ਸਰਵਰ ਕੁਨੈਕਸ਼ਨ ਬੰਦ ਕੀਤਾ ਗਿਆ ਹੈ।"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -12307,8 +12312,14 @@ msgstr "%s ਤੁਹਾਡੇ ਨਾਲ ਵੀਡਿਓ ਸ਼ੈਸ਼ਨ ਸ�
 msgid "Incoming Call"
 msgstr "ਆ ਰਹੀ ਕਾਲ"
 
+msgid "_Hold"
+msgstr ""
+
 msgid "_Pause"
 msgstr "ਵਿਰਾਮ(_P)"
+
+msgid "_Mute"
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -14595,3 +14606,22 @@ msgstr "ਪਿਡਗਿਨ ਵੈੱਬ ਪੇਜ਼ ਉੱਤੇ ਜਾਓ"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "ਤੁਹਾਨੂੰ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇੰਸਟਾਲ ਕਰਨ ਲਈ ਅਧਿਕਾਰ ਨਹੀਂ ਹਨ।"
+
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "ਕੋਈ ਸੇਮਟਾਈਮ ਕਮਿਊਨਟੀ ਸਰਵਰ ਦਿੱਤਾ"
+
+#~ msgid ""
+#~ "No host or IP address has been configured for the Meanwhile account %s. "
+#~ "Please enter one below to continue logging in."
+#~ msgstr ""
+#~ "ਮੀਨਵਾਇਲ ਅਕਾਊਂਟ %s ਲਈ ਕੋਈ ਹੋਸਟ ਜਾਂ IP ਐਡਰੈੱਸ ਸੰਰਚਿਤ ਨਹੀਂ ਹੈ। ਲਾਗਇਨ ਕਰਨ ਵਾਸਤੇ ਹੇਠਾਂ ਇੱਕ "
+#~ "ਦਿਓ।"
+
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "ਮੀਨਵਾਇਲ ਕੁਨੈਕਸ਼ਨ ਸੈੱਟਅੱਪ"
+
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "ਕੋਈ ਸੇਮ-ਟਾਈਮ ਕਮਿਊਨਟੀ ਸਰਵਰ ਨਹੀਂ ਦਿੱਤਾ ਗਿਆ"
+
+#~ msgid "Connect"
+#~ msgstr "ਕੁਨੈਕਟ ਕਰੋ"
