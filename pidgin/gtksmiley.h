@@ -1,7 +1,6 @@
 /**
  * @file gtksmiley.h GTK+ Custom Smiley API
  * @ingroup pidgin
- * @since 2.5.0
  */
 
 /* pidgin
@@ -31,6 +30,8 @@
 #include "smiley.h"
 
 typedef struct _PidginSmiley PidginSmiley;
+
+G_BEGIN_DECLS
 
 /**
  * Add a PurpleSmiley to the GtkIMHtmlSmiley's list to be able to use it
@@ -106,9 +107,9 @@ void pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image);
  * @param editor A smiley editor dialog
  * @param data A pointer to smiley's data
  * @param datasize The size of smiley's data
- *
- * @since 2.6.0
  */
 void pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize);
+
+G_END_DECLS
 
 #endif /* PIDGIN_GTKSMILEY_H */

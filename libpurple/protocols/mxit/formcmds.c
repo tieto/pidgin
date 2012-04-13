@@ -86,7 +86,6 @@ struct ii_url_request
 static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message)
 {
 	struct ii_url_request*	iireq		= (struct ii_url_request*) user_data;
-	char*					ii_data;
 	int*					intptr		= NULL;
 	int						id;
 
@@ -106,12 +105,8 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 		goto done;
 	}
 
-	/* make a copy of the data */
-	ii_data = g_malloc(len);
-	memcpy(ii_data, (const char*) url_text, len);
-
-	/* we now have the inline image, store it in the imagestore */
-	id = purple_imgstore_add_with_id(ii_data, len, NULL);
+	/* we now have the inline image, store a copy in the imagestore */
+	id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
 	/* map the inline image id to purple image id */
 	intptr = g_malloc(sizeof(int));
@@ -253,8 +248,8 @@ static void command_clear(struct MXitSession* session, const char* from, GHashTa
 
 /*------------------------------------------------------------------------
  * Process a Reply MXit command.
- *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
- *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
+ *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|displaymsg=Processing|id=12345:]
+ *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|displaymsg=Processing|id=12345:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -265,22 +260,26 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 	char* selmsg;
 	char* nm;
 
-	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
-	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
+	selmsg = g_hash_table_lookup(hash, "selmsg");			/* selection message */
+	replymsg = g_hash_table_lookup(hash, "replymsg");		/* reply message */
 	nm = g_hash_table_lookup(hash, "nm");					/* name parameter */
-	if ((selmsg) && (replymsg) && (nm)) {
-		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replycmd = g_strdup_printf("::type=reply|nm=%s|res=%s|err=0:", nm, replymsg);
 
-		mxit_add_html_link( mx, replycmd, seltext );
+	if ((selmsg == NULL) || (replymsg == NULL))
+		return;		/* these parameters are required */
+
+	if (nm) {		/* indicates response must be a structured response */
+		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
+		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, replymsg);
+
+		mxit_add_html_link( mx, replycmd, TRUE, seltext );
 
 		g_free(seltext);
 		g_free(replycmd);
 	}
-	else if ((selmsg) && (replymsg)) {
+	else {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
 
-		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
+		mxit_add_html_link( mx, purple_url_decode(replymsg), FALSE, seltext );
 
 		g_free(seltext);
 	}
@@ -317,6 +316,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 
 /*------------------------------------------------------------------------
  * Process an inline image MXit command.
+ *  [::op=img|dat=ASDF23408asdflkj2309flkjsadf%3d%3d|algn=1|w=120|h=12|t=100|replymsg=text:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -362,7 +362,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 				purple_debug_info(MXIT_PLUGIN_ID, "sending request for inline image '%s'\n", iireq->url);
 
 				/* request the image (reference: "libpurple/util.h") */
-				purple_util_fetch_url_request(iireq->url, TRUE, NULL, TRUE, NULL, FALSE, mxit_cb_ii_returned, iireq);
+				purple_util_fetch_url(iireq->url, TRUE, NULL, TRUE, -1, mxit_cb_ii_returned, iireq);
 				mx->img_count++;
 			}
 		}
@@ -372,7 +372,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, _( "click here" ));
+		mxit_add_html_link(mx, reply, FALSE, _( "click here" ));
 	}
 }
 

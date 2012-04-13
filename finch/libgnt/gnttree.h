@@ -47,7 +47,7 @@ typedef struct _GntTreeClass		GntTreeClass;
 typedef struct _GntTreeRow		GntTreeRow;
 typedef struct _GntTreeCol		GntTreeCol;
 
-typedef enum _GntTreeColumnFlag {
+typedef enum {
 	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
 	GNT_TREE_COLUMN_FIXED_SIZE   = 1 << 1,
 	GNT_TREE_COLUMN_BINARY_DATA  = 1 << 2,

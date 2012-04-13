@@ -29,11 +29,9 @@
 #ifndef _PURPLE_STRINGREF_H_
 #define _PURPLE_STRINGREF_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct _PurpleStringref PurpleStringref;
+
+G_BEGIN_DECLS
 
 /**
  * Creates an immutable reference-counted string object.  The newly
@@ -131,8 +129,6 @@ int purple_stringref_cmp(const PurpleStringref *s1, const PurpleStringref *s2);
  */
 size_t purple_stringref_len(const PurpleStringref *stringref);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_STRINGREF_H_ */

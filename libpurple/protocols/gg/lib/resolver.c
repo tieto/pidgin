@@ -26,25 +26,20 @@
  * \brief Funkcje rozwiązywania nazw
  */
 
-#ifndef _WIN32
-#  include <sys/wait.h>
-#  include <netdb.h>
-#endif
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifndef _WIN32
-#  include <signal.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "resolver.h"
 #include "compat.h"
 #include "session.h"
+
+#ifdef GG_CONFIG_HAVE_FORK
+#include <sys/wait.h>
+#include <signal.h>
+#endif
 
 /** Sposób rozwiązywania nazw serwerów */
 static gg_resolver_t gg_global_resolver_type = GG_RESOLVER_DEFAULT;
@@ -249,7 +244,8 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 #endif /* GG_CONFIG_HAVE_GETHOSTBYNAME_R */
 }
 
-#if defined(GG_CONFIG_HAVE_PTHREAD) || !defined(_WIN32)
+#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_HAVE_FORK)
+
 /**
  * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
  *
@@ -287,7 +283,8 @@ static int gg_resolver_run(int fd, const char *hostname)
 
 	return res;
 }
-#endif
+
+#endif /* GG_CONFIG_HAVE_PTHREAD || GG_CONFIG_HAVE_FORK */
 
 /**
  * \internal Odpowiednik \c gethostbyname zapewniający współbieżność.
@@ -312,6 +309,8 @@ struct in_addr *gg_gethostbyname(const char *hostname)
 	return result;
 }
 
+#ifdef GG_CONFIG_HAVE_FORK
+
 /**
  * \internal Struktura przekazywana do wątku rozwiązującego nazwę.
  */
@@ -319,280 +318,6 @@ struct gg_resolver_fork_data {
 	int pid;		/*< Identyfikator procesu */
 };
 
-#ifdef _WIN32
-/**
- *  Deal with the fact that you can't select() on a win32 file fd.
- *  This makes it practically impossible to tie into purple's event loop.
- *
- *  -This is thanks to Tor Lillqvist.
- *  XXX - Move this to where the rest of the the win32 compatiblity stuff goes when we push the changes back to libgadu.
- */
-static int
-socket_pipe (int *fds)
-{
-	SOCKET temp, socket1 = -1, socket2 = -1;
-	struct sockaddr_in saddr;
-	int len;
-	u_long arg;
-	fd_set read_set, write_set;
-	struct timeval tv;
-
-	temp = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (temp == INVALID_SOCKET) {
-		goto out0;
-	}
-
-	arg = 1;
-	if (ioctlsocket(temp, FIONBIO, &arg) == SOCKET_ERROR) {
-		goto out0;
-	}
-
-	memset(&saddr, 0, sizeof(saddr));
-	saddr.sin_family = AF_INET;
-	saddr.sin_port = 0;
-	saddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-
-	if (bind(temp, (struct sockaddr *)&saddr, sizeof (saddr))) {
-		goto out0;
-	}
-
-	if (listen(temp, 1) == SOCKET_ERROR) {
-		goto out0;
-	}
-
-	len = sizeof(saddr);
-	if (getsockname(temp, (struct sockaddr *)&saddr, &len)) {
-		goto out0;
-	}
-
-	socket1 = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (socket1 == INVALID_SOCKET) {
-		goto out0;
-	}
-
-	arg = 1;
-	if (ioctlsocket(socket1, FIONBIO, &arg) == SOCKET_ERROR) {
-		goto out1;
-	}
-
-	if (connect(socket1, (struct sockaddr  *)&saddr, len) != SOCKET_ERROR ||
-			WSAGetLastError() != WSAEWOULDBLOCK) {
-		goto out1;
-	}
-
-	FD_ZERO(&read_set);
-	FD_SET(temp, &read_set);
-
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-
-	if (select(0, &read_set, NULL, NULL, NULL) == SOCKET_ERROR) {
-		goto out1;
-	}
-
-	if (!FD_ISSET(temp, &read_set)) {
-		goto out1;
-	}
-
-	socket2 = accept(temp, (struct sockaddr *) &saddr, &len);
-	if (socket2 == INVALID_SOCKET) {
-		goto out1;
-	}
-
-	FD_ZERO(&write_set);
-	FD_SET(socket1, &write_set);
-
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-
-	if (select(0, NULL, &write_set, NULL, NULL) == SOCKET_ERROR) {
-		goto out2;
-	}
-
-	if (!FD_ISSET(socket1, &write_set)) {
-		goto out2;
-	}
-
-	arg = 0;
-	if (ioctlsocket(socket1, FIONBIO, &arg) == SOCKET_ERROR) {
-		goto out2;
-	}
-
-	arg = 0;
-	if (ioctlsocket(socket2, FIONBIO, &arg) == SOCKET_ERROR) {
-		goto out2;
-	}
-
-	fds[0] = socket1;
-	fds[1] = socket2;
-
-	closesocket (temp);
-
-	return 0;
-
-out2:
-	closesocket (socket2);
-out1:
-	closesocket (socket1);
-out0:
-	closesocket (temp);
-	errno = EIO;            /* XXX */
-
-	return -1;
-}
-#endif
-
-
-
-#ifdef _WIN32
-struct gg_resolve_win32thread_data {
-	char *hostname;
-	int fd;
-};
-
-static DWORD WINAPI gg_resolve_win32thread_thread(LPVOID arg)
-{
-	struct gg_resolve_win32thread_data *d = arg;
-	struct in_addr addr_ip[2], *addr_list;
-	int addr_count;
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() host: %s, fd: %i called\n", d->hostname, d->fd);
-
-	if ((addr_ip[0].s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
-		/* W przypadku błędu gg_gethostbyname_real() zwróci -1
-					 * i nie zmieni &addr. Tam jest już INADDR_NONE,
-					 * więc nie musimy robić nic więcej. */
-		if (gg_gethostbyname_real(d->hostname, &addr_list, &addr_count, 0) == -1)
-		{
-		    addr_list = addr_ip;
-		}
-	} else {
-		addr_list = addr_ip;
-		addr_ip[1].s_addr = INADDR_NONE;
-		addr_count = 1;
-	}
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() count = %d\n", addr_count);
-
-	write(d->fd, addr_list, (addr_count+1) * sizeof(struct in_addr));
-	close(d->fd);
-
-	free(d->hostname);
-	d->hostname = NULL;
-
-	free(d);
-
-    if (addr_list != addr_ip)
-		free(addr_list);
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() done\n");
-
-	return 0;
-}
-
-
-static int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname)
-{
-	struct gg_resolve_win32thread_data *d = NULL;
-	HANDLE h;
-	DWORD dwTId;
-	int pipes[2], new_errno;
-
-	gg_debug(GG_DEBUG_FUNCTION, "** gg_resolve_win32thread(%p, %p, \"%s\");\n", fd, resolver, hostname);
-
-	if (!resolver || !fd || !hostname) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() invalid arguments\n");
-		errno = EFAULT;
-		return -1;
-	}
-
-	if (socket_pipe(pipes) == -1) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() unable to create pipes (errno=%d, %s)\n", errno, strerror(errno));
-		return -1;
-	}
-
-	if (!(d = malloc(sizeof(*d)))) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() out of memory\n");
-		new_errno = errno;
-		goto cleanup;
-	}
-
-	d->hostname = NULL;
-
-	if (!(d->hostname = strdup(hostname))) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() out of memory\n");
-		new_errno = errno;
-		goto cleanup;
-	}
-
-	d->fd = pipes[1];
-
-	h = CreateThread(NULL, 0, gg_resolve_win32thread_thread,
-		d, 0, &dwTId);
-
-	if (h == NULL) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() unable to create thread\n");
-		new_errno = errno;
-		goto cleanup;
-	}
-
-	*resolver = h;
-	*fd = pipes[0];
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() done\n");
-
-	return 0;
-
-cleanup:
-	if (d) {
-		free(d->hostname);
-		free(d);
-	}
-
-	close(pipes[0]);
-	close(pipes[1]);
-
-	errno = new_errno;
-
-	return -1;
-
-}
-
-static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
-{
-	struct gg_resolve_win32thread_data *data;
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() force: %i called\n", force);
-
-	if (priv_data == NULL || *priv_data == NULL)
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() priv_data: NULL\n");
-		return;
-
-	data = (struct gg_resolve_win32thread_data*) *priv_data;
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() data: %s called\n", data->hostname);
-	*priv_data = NULL;
-
-	if (force) {
-		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() force called\n", force);
-		//pthread_cancel(data->thread);
-		//pthread_join(data->thread, NULL);
-	}
-
-	free(data->hostname);
-	data->hostname = NULL;
-
-	if (data->fd != -1) {
-		close(data->fd);
-		data->fd = -1;
-	}
-	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() done\n");
-	free(data);
-}
-#endif
-
-#ifndef _WIN32
 /**
  * \internal Rozwiązuje nazwę serwera w osobnym procesie.
  *
@@ -644,12 +369,17 @@ static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostnam
 	}
 
 	if (data->pid == 0) {
+		int status;
+
 		close(pipes[0]);
 
-		if (gg_resolver_run(pipes[1], hostname) == -1)
-			_exit(1);
-		else
-			_exit(0);
+		status = (gg_resolver_run(pipes[1], hostname) == -1) ? 1 : 0;
+
+#ifdef GG_CONFIG_HAVE__EXIT
+		_exit(status);
+#else
+		exit(status);
+#endif
 	}
 
 	close(pipes[1]);
@@ -698,7 +428,8 @@ static void gg_resolver_fork_cleanup(void **priv_data, int force)
 
 	free(data);
 }
-#endif
+
+#endif /* GG_CONFIG_HAVE_FORK */
 
 #ifdef GG_CONFIG_HAVE_PTHREAD
 
@@ -868,25 +599,15 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 			return 0;
 		}
 
-#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
-#  ifdef _WIN32
-		type = GG_RESOLVER_WIN32;
-#  else
-		type = GG_RESOLVER_FORK;
-#  endif
-#else
+#if defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(GG_CONFIG_HAVE_FORK)
+		type = GG_RESOLVER_FORK;
 #endif
 	}
 
 	switch (type) {
-#ifdef _WIN32
-		case GG_RESOLVER_WIN32:
-			gs->resolver_type = type;
-			gs->resolver_start = gg_resolve_win32thread;
-			gs->resolver_cleanup = gg_resolve_win32thread_cleanup;
-			return 0;
-#else
+#ifdef GG_CONFIG_HAVE_FORK
 		case GG_RESOLVER_FORK:
 			gs->resolver_type = type;
 			gs->resolver_start = gg_resolver_fork_start;
@@ -989,25 +710,15 @@ int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type)
 			return 0;
 		}
 
-#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
-#  ifdef _WIN32
-		type = GG_RESOLVER_WIN32;
-#  else
-		type = GG_RESOLVER_FORK;
-#  endif
-#else
+#if defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(GG_CONFIG_HAVE_FORK)
+		type = GG_RESOLVER_FORK;
 #endif
 	}
 
 	switch (type) {
-#ifdef _WIN32
-		case GG_RESOLVER_WIN32:
-			gh->resolver_type = type;
-			gh->resolver_start = gg_resolve_win32thread;
-			gh->resolver_cleanup = gg_resolve_win32thread_cleanup;
-			return 0;
-#else
+#ifdef GG_CONFIG_HAVE_FORK
 		case GG_RESOLVER_FORK:
 			gh->resolver_type = type;
 			gh->resolver_start = gg_resolver_fork_start;
@@ -1085,13 +796,7 @@ int gg_global_set_resolver(gg_resolver_t type)
 			gg_global_resolver_cleanup = NULL;
 			return 0;
 
-#ifdef _WIN32
-		case GG_RESOLVER_WIN32:
-			gg_global_resolver_type = type;
-			gg_global_resolver_start = gg_resolve_win32thread;
-			gg_global_resolver_cleanup = gg_resolve_win32thread_cleanup;
-			return 0;
-#else
+#ifdef GG_CONFIG_HAVE_FORK
 		case GG_RESOLVER_FORK:
 			gg_global_resolver_type = type;
 			gg_global_resolver_start = gg_resolver_fork_start;

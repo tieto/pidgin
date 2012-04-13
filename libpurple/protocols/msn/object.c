@@ -103,7 +103,7 @@ msn_object_new_from_string(const char *str)
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
 	 || obj->sha1d == NULL) {
 		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
-		msn_object_destroy(obj);
+		msn_object_destroy(obj, FALSE);
 		return NULL;
 	}
 
@@ -111,12 +111,12 @@ msn_object_new_from_string(const char *str)
 		/* Location/friendly are required for non-buddyicon objects */
 		if (obj->type != MSN_OBJECT_USERTILE) {
 			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
-			msn_object_destroy(obj);
+			msn_object_destroy(obj, FALSE);
 			return NULL;
 		/* Buddy icon object can contain Url/Url1 instead */
 		} else if (obj->url == NULL || obj->url1 == NULL) {
 			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
-			msn_object_destroy(obj);
+			msn_object_destroy(obj, FALSE);
 			return NULL;
 		}
 	}
@@ -193,9 +193,12 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 }
 
 void
-msn_object_destroy(MsnObject *obj)
+msn_object_destroy(MsnObject *obj, gboolean only_remote)
 {
 	g_return_if_fail(obj != NULL);
+
+	if (only_remote && obj->local)
+		return;
 
 	g_free(obj->creator);
 	g_free(obj->location);

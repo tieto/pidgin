@@ -57,6 +57,8 @@ struct _GtkSourceUndoManagerClass
     	void (*can_redo) (GtkSourceUndoManager *um, gboolean can_redo);
 };
 
+G_BEGIN_DECLS
+
 GType        		gtk_source_undo_manager_get_type	(void) G_GNUC_CONST;
 
 GtkSourceUndoManager* 	gtk_source_undo_manager_new 		(GtkTextBuffer 		*buffer);
@@ -77,6 +79,8 @@ gint			gtk_source_undo_manager_get_max_undo_levels
 void			gtk_source_undo_manager_set_max_undo_levels
 								(GtkSourceUndoManager 	*um,
 				  	     			 gint		 	 undo_levels);
+
+G_END_DECLS
 
 #endif /* __GTK_SOURCE_UNDO_MANAGER_H__ */
 

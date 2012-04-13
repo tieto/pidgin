@@ -43,10 +43,10 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [10])
-m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [10])
-m4_define([purple_micro_version], [4])
+m4_define([purple_lt_current], [20])
+m4_define([purple_major_version], [3])
+m4_define([purple_minor_version], [0])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -202,10 +202,10 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
-dnl Haiku does not use libm for the math functions, they are part
+dnl Windows and Haiku do not use libm for the math functions, they are part
 dnl of the C library
 AC_SEARCH_LIBS([ceil], [m], [], [
-  AC_MSG_ERROR([unable to find the floor() function])
+  AC_MSG_ERROR([unable to find the ceil() function])
 ])
 
 AC_MSG_CHECKING(for fileno())
@@ -334,6 +334,9 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.16 (required)
 dnl #######################################################################
+# TODO: gmodule-2.0 is only needed if enable_plugins is 'yes'.  It
+#       might be nice to change this check so that it's not required
+#       if enable_plugins is 'no'.
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.16.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
@@ -404,6 +407,10 @@ AC_ARG_ENABLE(gestures,
 	[AC_HELP_STRING([--disable-gestures],
 		[compile without the gestures plugin])],
 	enable_gestures="$enableval", enable_gestures="yes")
+AC_ARG_ENABLE(gcr,
+	[AC_HELP_STRING([--enable-gcr],
+		[compile with GCR certificate widgets])],
+	enable_gcr="$enableval", enable_gcr="no")
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -436,6 +443,16 @@ running configure.
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
+
+	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+You must have WebKit 1.1.1 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	AC_SUBST(WEBKIT_CFLAGS)
+	AC_SUBST(WEBKIT_LIBS)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
@@ -607,9 +624,26 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-        
+
+	dnl #######################################################################
+	dnl # Check for GCR for its certificate widgets
+	dnl #######################################################################
+	if test "x$enable_gcr" = "xyes"; then
+		PKG_CHECK_MODULES(GCR, gcr-0, [
+			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+			AC_MSG_RESULT(no)
+			enable_gcr="no"
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
+GCR development headers not found.
+Use --disable-gcr if you do not need GCR certificate widgets.
+])
+			fi])
+	fi
+
 
 else # GTK
+	enable_gcr=no
 	enable_cap=no
 	enable_gevolution=no
 	enable_gtkspell=no
@@ -622,6 +656,7 @@ AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$enable_gevolution" = "xyes")
 AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
 AM_CONDITIONAL(ENABLE_GESTURES, test "x$enable_gestures" = "xyes")
+AM_CONDITIONAL(ENABLE_GCR, test "x$enable_gcr" = "xyes")
 
 
 dnl #######################################################################
@@ -950,25 +985,6 @@ if test "x$silc_manual_check" = "xno"; then
 	], [
 		have_silc="no"
 	])
-	if test "x$have_silc" = "xno"; then
-		PKG_CHECK_MODULES(SILC, silcclient, [
-			have_silc="yes"
-			silc10includes="yes"
-			silc10client="yes"
-		], [
-			have_silc="no"
-		])
-		dnl If silcclient.pc wasn't found, check for just silc.pc
-		if test "x$have_silc" = "xno"; then
-			PKG_CHECK_MODULES(SILC, silc, [
-				have_silc="yes"
-				silc10includes="yes"
-				silc10client="yes"
-			], [
-				have_silc="no"
-			])
-		fi
-	fi
 else
 	if test "$ac_silc_includes" != "no"; then
 		SILC_CFLAGS="-I$ac_silc_includes"
@@ -986,17 +1002,6 @@ else
 
 	if test "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes"; then
 		have_silc="yes"
-	else
-		CPPFLAGS_save="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-		AC_CHECK_HEADER(silcincludes.h, [silc10includes=yes])
-		CPPFLAGS="$CPPFLAGS_save"
-
-		SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
-		AC_CHECK_LIB(silcclient, silc_client_init, [silc10client=yes], , $SILC_LIBS)
-		if test "x$silc10includes" = "xyes" -a "x$silc10client" = "xyes"; then
-			have_silc="yes"
-		fi
 	fi
 fi
 AC_SUBST(SILC_LIBS)
@@ -1004,20 +1009,6 @@ AC_SUBST(SILC_CFLAGS)
 dnl SILC Toolkit >= 1.0.1 has a new MIME API
 if test "x$silcclient" = "xyes"; then
 	AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
-elif test "x$silc10client" = "xyes"; then
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-		AC_MSG_CHECKING(for silcmime.h)
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <silcincludes.h>
-#include <silcmime.h>
-		]], [[]])], [
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
-		], [
-		AC_MSG_RESULT(no)
-		])
-	CPPFLAGS="$CPPFLAGS_save"
 fi
 
 dnl #######################################################################
@@ -1123,7 +1114,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1132,10 +1123,7 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
-fi
-if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc10//'`
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -1159,8 +1147,6 @@ for i in $STATIC_PRPLS ; do
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
-		elif test "x$i" = "xsilc10"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.la"
 		else
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 		fi
@@ -1173,15 +1159,14 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
-		myspace)	static_myspace=yes ;;
 		mxit)		static_mxit=yes ;;
+		myspace)	static_myspace=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
 		icq)		static_oscar=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
-		silc10)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
 		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
@@ -1193,8 +1178,8 @@ AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
-AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
+AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
@@ -1208,7 +1193,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1217,10 +1202,7 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
-fi
-if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc10//'`
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -1230,8 +1212,8 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
-		myspace)	dynamic_myspace=yes ;;
 		mxit)		dynamic_mxit=yes ;;
+		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
 		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
@@ -1239,7 +1221,6 @@ for i in $DYNAMIC_PRPLS ; do
 		icq)		dynamic_oscar=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
-		silc10)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
@@ -2542,10 +2523,8 @@ AC_CONFIG_FILES([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
-		   pidgin/pidgin.pc
-		   pidgin/pidgin-uninstalled.pc
-		   pidgin/pidgin-2.pc
-		   pidgin/pidgin-2-uninstalled.pc
+		   pidgin/pidgin-3.pc
+		   pidgin/pidgin-3-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2559,13 +2538,12 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
+		   pidgin/themes/Makefile
 		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
-		   libpurple/purple.pc
-		   libpurple/purple-uninstalled.pc
-		   libpurple/purple-2.pc
-		   libpurple/purple-2-uninstalled.pc
+		   libpurple/purple-3.pc
+		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
@@ -2588,7 +2566,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
-		   libpurple/protocols/silc10/Makefile
 		   libpurple/protocols/simple/Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
@@ -2645,6 +2622,7 @@ echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with GCR widgets........ : $enable_gcr
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono

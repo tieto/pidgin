@@ -32,9 +32,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 gint purple_dbus_pointer_to_id(gconstpointer node);
 gpointer purple_dbus_id_to_pointer(gint id, PurpleDBusType *type);
@@ -84,14 +82,10 @@ purple_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
 					int              first_arg_type,
 					va_list          var_args);
 
-dbus_int32_t* purple_dbusify_GList(GList *list, gboolean free_memory,
-				 dbus_int32_t *len);
-dbus_int32_t* purple_dbusify_GSList(GSList *list, gboolean free_memory,
-				  dbus_int32_t *len);
-gpointer* purple_GList_to_array(GList *list, gboolean free_memory,
-			      dbus_int32_t *len);
-gpointer* purple_GSList_to_array(GSList *list, gboolean free_memory,
-			      dbus_int32_t *len);
+dbus_int32_t* purple_dbusify_GList(GList *list, dbus_int32_t *len);
+dbus_int32_t* purple_dbusify_GSList(GSList *list, dbus_int32_t *len);
+gpointer* purple_GList_to_array(GList *list, dbus_int32_t *len);
+gpointer* purple_GSList_to_array(GSList *list, dbus_int32_t *len);
 GHashTable *purple_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
 
 const char* empty_to_null(const char *str);
@@ -107,8 +101,6 @@ void purple_dbus_register_bindings(void *handle, PurpleDBusBinding *bindings);
 
 DBusConnection *purple_dbus_get_connection(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif

@@ -161,6 +161,7 @@ struct MXitSession {
 	/* libpurple */
 	PurpleAccount*		acc;						/* pointer to the libpurple internal account struct */
 	PurpleConnection*	con;						/* pointer to the libpurple internal connection struct */
+	guint				inpa;						/* the input watcher */
 
 	/* transmit */
 	struct tx_queue		queue;						/* transmit packet queue (FIFO mode) */
@@ -191,7 +192,7 @@ char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );
 
 #ifdef	MXIT_LINK_CLICK
-void mxit_register_uri_handler(void);
+void mxit_register_uri_handler( void );
 #endif
 
 

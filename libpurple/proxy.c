@@ -41,6 +41,16 @@
 #include "proxy.h"
 #include "util.h"
 
+struct _PurpleProxyInfo
+{
+	PurpleProxyType type;   /**< The proxy type.  */
+
+	char *host;           /**< The host.        */
+	int   port;           /**< The port number. */
+	char *username;       /**< The username.    */
+	char *password;       /**< The password.    */
+};
+
 struct _PurpleProxyConnectData {
 	void *handle;
 	PurpleProxyConnectFunction connect_cb;
@@ -1369,7 +1379,7 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	} else {
-		connect_data->query_data = purple_dnsquery_a_account(
+		connect_data->query_data = purple_dnsquery_a(
 				connect_data->account, connect_data->host,
 				connect_data->port, s4_host_resolved, connect_data);
 
@@ -2014,7 +2024,6 @@ s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
 
 	if (purple_proxy_info_get_username(connect_data->gpi) != NULL) {
@@ -2088,7 +2097,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 
 /**
  * This function attempts to connect to the next IP address in the list
- * of IP addresses returned to us by purple_dnsquery_a() and attemps
+ * of IP addresses returned to us by purple_dnsquery_a() and attempts
  * to connect to each one.  This is called after the hostname is
  * resolved, and each time a connection attempt fails (assuming there
  * is another IP address to try).
@@ -2317,7 +2326,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
+	connect_data->query_data = purple_dnsquery_a(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
@@ -2385,7 +2394,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
+	connect_data->query_data = purple_dnsquery_a(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
@@ -2397,17 +2406,6 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 
 	return connect_data;
 }
-
-PurpleProxyConnectData *
-purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
-						  const char *host, int port,
-						  PurpleProxyConnectFunction connect_cb,
-						  gpointer data)
-{
-	return purple_proxy_connect_socks5_account(handle, NULL, gpi,
-						  host, port, connect_cb, data);
-}
-
 
 /* This is called when we connect to the SOCKS5 proxy server (through any
  * relevant account proxy)

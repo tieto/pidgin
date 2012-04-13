@@ -47,8 +47,6 @@ typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
  * Gets the type of the media candidate structure.
  *
  * @return The media canditate's GType
- *
- * @since 2.6.0
  */
 GType purple_media_candidate_get_type(void);
 
@@ -63,8 +61,6 @@ GType purple_media_candidate_get_type(void);
  * @param port The network port.
  *
  * @return The newly created PurpleMediaCandidate instance.
- *
- * @since 2.6.0
  */
 PurpleMediaCandidate *purple_media_candidate_new(
 		const gchar *foundation, guint component_id,
@@ -78,8 +74,6 @@ PurpleMediaCandidate *purple_media_candidate_new(
  * @param candidate The candidate to copy.
  *
  * @return The copy of the PurpleMediaCandidate.
- *
- * @since 2.7.0
  */
 PurpleMediaCandidate *purple_media_candidate_copy(
 		PurpleMediaCandidate *candidate);
@@ -90,8 +84,6 @@ PurpleMediaCandidate *purple_media_candidate_copy(
  * @param candidates The list of candidates to be copied.
  *
  * @return The copy of the GList.
- *
- * @since 2.6.0
  */
 GList *purple_media_candidate_list_copy(GList *candidates);
 
@@ -99,8 +91,6 @@ GList *purple_media_candidate_list_copy(GList *candidates);
  * Frees a GList of PurpleMediaCandidate and its contents.
  *
  * @param candidates The list of candidates to be freed.
- *
- * @since 2.6.0
  */
 void purple_media_candidate_list_free(GList *candidates);
 
@@ -110,8 +100,6 @@ void purple_media_candidate_list_free(GList *candidates);
  * @param candidate The candidate to get the foundation from.
  *
  * @return The foundation.
- *
- * @since 2.6.0
  */
 gchar *purple_media_candidate_get_foundation(PurpleMediaCandidate *candidate);
 
@@ -121,8 +109,6 @@ gchar *purple_media_candidate_get_foundation(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the compnent id from.
  *
  * @return The component id.
- *
- * @since 2.6.0
  */
 guint purple_media_candidate_get_component_id(PurpleMediaCandidate *candidate);
 
@@ -132,8 +118,6 @@ guint purple_media_candidate_get_component_id(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the IP address from.
  *
  * @return The IP address.
- *
- * @since 2.6.0
  */
 gchar *purple_media_candidate_get_ip(PurpleMediaCandidate *candidate);
 
@@ -143,8 +127,6 @@ gchar *purple_media_candidate_get_ip(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the port from.
  *
  * @return The port.
- *
- * @since 2.6.0
  */
 guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
 
@@ -156,8 +138,6 @@ guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the base IP address from.
  *
  * @return The base IP address.
- *
- * @since 2.6.0
  */
 gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
 
@@ -169,8 +149,6 @@ gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the base port.
  *
  * @return The base port.
- *
- * @since 2.6.0
  */
 guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate *candidate);
 
@@ -180,8 +158,6 @@ guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the protocol from.
  *
  * @return The protocol.
- *
- * @since 2.6.0
  */
 PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
 		PurpleMediaCandidate *candidate);
@@ -192,8 +168,6 @@ PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
  * @param candidate The candidate to get the priority from.
  *
  * @return The priority.
- *
- * @since 2.6.0
  */
 guint32 purple_media_candidate_get_priority(PurpleMediaCandidate *candidate);
 
@@ -203,8 +177,6 @@ guint32 purple_media_candidate_get_priority(PurpleMediaCandidate *candidate);
  * @param candidate The candidate to get the candidate type from.
  *
  * @return The candidate type.
- *
- * @since 2.6.0
  */
 PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
 		PurpleMediaCandidate *candidate);
@@ -217,8 +189,6 @@ PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
  * @param The candidate to get the username from.
  *
  * @return The username.
- *
- * @since 2.6.0
  */
 gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
 
@@ -230,8 +200,6 @@ gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
  * @param The candidate to get the password from.
  *
  * @return The password.
- *
- * @since 2.6.0
  */
 gchar *purple_media_candidate_get_password(PurpleMediaCandidate *candidate);
 
@@ -241,8 +209,6 @@ gchar *purple_media_candidate_get_password(PurpleMediaCandidate *candidate);
  * @param The candidate to get the TTL from.
  *
  * @return The TTL.
- *
- * @since 2.6.0
  */
 guint purple_media_candidate_get_ttl(PurpleMediaCandidate *candidate);
 

@@ -143,5 +143,18 @@ void ggp_status_fake_to_self(PurpleAccount *account)
 				    msg ? "message" : NULL, msg, NULL);
 }
 
+guint ggp_http_input_add(struct gg_http *http_req, PurpleInputFunction func,
+	gpointer user_data)
+{
+	PurpleInputCondition cond = 0;
+	int check = http_req->check;
+
+	if (check & GG_CHECK_READ)
+		cond |= PURPLE_INPUT_READ;
+	if (check & GG_CHECK_WRITE)
+		cond |= PURPLE_INPUT_WRITE;
+
+	return purple_input_add(http_req->fd, cond, func, user_data);
+}
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

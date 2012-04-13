@@ -24,7 +24,7 @@
 #include "sound-theme.h"
 
 #define PURPLE_SOUND_THEME_GET_PRIVATE(Gobject) \
-	((PurpleSoundThemePrivate *) ((PURPLE_SOUND_THEME(Gobject))->priv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemePrivate))
 
 /******************************************************************************
  * Structs
@@ -55,8 +55,6 @@ purple_sound_theme_init(GTypeInstance *instance,
 {
 	PurpleSoundThemePrivate *priv;
 
-	(PURPLE_SOUND_THEME(instance))->priv = g_new0(PurpleSoundThemePrivate, 1);
-
 	priv = PURPLE_SOUND_THEME_GET_PRIVATE(instance);
 
 	priv->sound_files = g_hash_table_new_full(g_str_hash,
@@ -81,6 +79,8 @@ purple_sound_theme_class_init(PurpleSoundThemeClass *klass)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PurpleSoundThemePrivate));
 
 	obj_class->finalize = purple_sound_theme_finalize;
 }

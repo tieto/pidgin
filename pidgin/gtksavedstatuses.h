@@ -29,6 +29,8 @@
 #include "savedstatuses.h"
 #include "status.h"
 
+G_BEGIN_DECLS
+
 /**
  * Shows the status window.
  */
@@ -84,5 +86,7 @@ void pidgin_status_init(void);
  * Uninitializes the GTK+ status system.
  */
 void pidgin_status_uninit(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINSAVEDSTATUSES_H_ */

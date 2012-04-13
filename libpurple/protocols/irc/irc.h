@@ -54,6 +54,7 @@ struct irc_conn {
 	GHashTable *cmds;
 	char *server;
 	int fd;
+	guint inpa;
 	guint timer;
 	guint who_channel_timer;
 	GHashTable *buddies;

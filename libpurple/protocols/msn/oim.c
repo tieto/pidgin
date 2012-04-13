@@ -828,7 +828,7 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 
 		/* XXX/khc: pretty sure this is wrong */
 		if (count > 0)
-			purple_notify_emails(session->account->gc, count, FALSE, NULL,
+			purple_notify_emails(purple_account_get_connection(session->account), count, FALSE, NULL,
 				NULL, passports, urls, NULL, NULL);
 		g_free(unread);
 	}

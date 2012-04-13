@@ -50,9 +50,7 @@ typedef enum {
 #include <glib.h>
 #include "prefs.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Plugin Preference API                                           */
@@ -262,8 +260,6 @@ PurpleStringFormatType purple_plugin_pref_get_format_type(PurplePluginPref *pref
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_PLUGINPREF_H_ */

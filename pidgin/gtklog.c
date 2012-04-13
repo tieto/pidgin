@@ -35,9 +35,9 @@
 
 #include "pidginstock.h"
 #include "gtkblist.h"
-#include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(PidginLogViewer *lv);
@@ -130,7 +130,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 		populate_log_tree(lv);
 		g_free(lv->search);
 		lv->search = NULL;
-		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
+		webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(lv->web_view));
 		select_first_log(lv);
 		return;
 	}
@@ -138,7 +138,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	if (lv->search != NULL && !strcmp(lv->search, search_term))
 	{
 		/* Searching for the same term acts as "Find Next" */
-		gtk_imhtml_search_find(GTK_IMHTML(lv->imhtml), lv->search);
+		webkit_web_view_search_text(WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, TRUE, TRUE);
 		return;
 	}
 
@@ -148,7 +148,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	lv->search = g_strdup(search_term);
 
 	gtk_tree_store_clear(lv->treestore);
-	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
+	webkit_web_view_open(WEBKIT_WEB_VIEW(lv->web_view), "about:blank"); /* clear the view */
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = purple_log_read((PurpleLog*)logs->data, NULL);
@@ -419,8 +419,9 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 static gboolean search_find_cb(gpointer data)
 {
 	PidginLogViewer *viewer = data;
-	gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
-	g_object_steal_data(G_OBJECT(viewer->entry), "search-find-cb");
+	webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(viewer->web_view), viewer->search, FALSE, 0);
+	webkit_web_view_set_highlight_text_matches(WEBKIT_WEB_VIEW(viewer->web_view), TRUE);
+	webkit_web_view_search_text(WEBKIT_WEB_VIEW(viewer->web_view), viewer->search, FALSE, TRUE, TRUE);
 	return FALSE;
 }
 
@@ -461,23 +462,16 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	read = purple_log_read(log, &flags);
 	viewer->flags = flags;
 
-	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(viewer->imhtml),
-	                            purple_account_get_protocol_name(log->account));
+	webkit_web_view_open(WEBKIT_WEB_VIEW(viewer->web_view), "about:blank");
 
 	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
 
-	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
-			       ((flags & PURPLE_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
+	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(viewer->web_view), read, "");
 	g_free(read);
 
 	if (viewer->search != NULL) {
-		guint source;
-		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
-		source = g_idle_add(search_find_cb, viewer);
-		g_object_set_data_full(G_OBJECT(viewer->entry), "search-find-cb",
-		                       GINT_TO_POINTER(source), (GDestroyNotify)g_source_remove);
+		webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(viewer->web_view));
+		g_idle_add(search_find_cb, viewer);
 	}
 
 	pidgin_clear_cursor(viewer->window);
@@ -581,7 +575,9 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_dialog_add_button(GTK_DIALOG(lv->window), _("_Browse logs folder"), GTK_RESPONSE_HELP);
 #endif
 	gtk_container_set_border_width (GTK_CONTAINER(lv->window), PIDGIN_HIG_BOX_SPACE);
+#if !GTK_CHECK_VERSION(2,22,0)
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response",
 					 G_CALLBACK(destroy_cb), ht);
@@ -620,7 +616,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
-	gtk_paned_add1(GTK_PANED(pane), 
+	gtk_paned_add1(GTK_PANED(pane),
 		pidgin_make_scrollable(lv->treeview, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
 
 	populate_log_tree(lv);
@@ -655,9 +651,9 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
-	frame = pidgin_create_imhtml(FALSE, &lv->imhtml, NULL, NULL);
-	gtk_widget_set_name(lv->imhtml, "pidgin_log_imhtml");
-	gtk_widget_set_size_request(lv->imhtml, 320, 200);
+	frame = pidgin_create_webview(FALSE, &lv->web_view, NULL, NULL);
+	gtk_widget_set_name(lv->web_view, "pidgin_log_web_view");
+	gtk_widget_set_size_request(lv->web_view, 320, 200);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 

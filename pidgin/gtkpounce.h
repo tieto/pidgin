@@ -28,6 +28,8 @@
 
 #include "pounce.h"
 
+G_BEGIN_DECLS
+
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
@@ -59,5 +61,7 @@ void *pidgin_pounces_get_handle(void);
  * Initializes the GTK+ pounces subsystem.
  */
 void pidgin_pounces_init(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINPOUNCE_H_ */

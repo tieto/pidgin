@@ -136,9 +136,9 @@ do_signon(gpointer data)
 }
 
 static void
-pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
-                                            PurpleConnectionError reason,
-                                            const char *text)
+pidgin_connection_report_disconnect(PurpleConnection *gc,
+                                    PurpleConnectionError reason,
+                                    const char *text)
 {
 	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
@@ -215,10 +215,9 @@ static PurpleConnectionUiOps conn_ui_ops =
 	pidgin_connection_connected,
 	pidgin_connection_disconnected,
 	pidgin_connection_notice,
-	NULL, /* report_disconnect */
 	pidgin_connection_network_connected,
 	pidgin_connection_network_disconnected,
-	pidgin_connection_report_disconnect_reason,
+	pidgin_connection_report_disconnect,
 	NULL,
 	NULL,
 	NULL

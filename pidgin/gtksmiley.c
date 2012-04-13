@@ -47,9 +47,9 @@ struct _PidginSmiley
 	GtkWidget *smiley_image;
 	gchar *filename;
 	GdkPixbuf *custom_pixbuf;
-	gpointer data; /** @since 2.6.0 */
-	gsize datasize; /** @since 2.6.0 */
-	gint entry_len; /** @since 2.6.0 */
+	gpointer data;
+	gsize datasize;
+	gint entry_len;
 };
 
 typedef struct
@@ -750,7 +750,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			purple_util_fetch_url(name, TRUE, NULL, FALSE, smiley_got_url, dialog);
+			purple_util_fetch_url(name, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
 		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
 			/* purple_util_fetch_url() doesn't support HTTPS */
 			char *tmp = g_strdup(name + 1);
@@ -759,7 +759,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			tmp[2] = 't';
 			tmp[3] = 'p';
 
-			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, smiley_got_url, dialog);
+			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
 			g_free(tmp);
 		}
 

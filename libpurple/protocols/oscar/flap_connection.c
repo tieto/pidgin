@@ -456,7 +456,7 @@ flap_connection_destroy_cb(gpointer data)
 	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
 	 * we should try to request one instead of disconnecting.
 	 */
-	if (!account->disconnecting && ((od->oscar_connections == NULL)
+	if (!purple_account_is_disconnecting(account) && ((od->oscar_connections == NULL)
 			|| (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
@@ -487,7 +487,7 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (tmp != NULL)
 		{
-			purple_connection_error_reason(od->gc, reason, tmp);
+			purple_connection_error(od->gc, reason, tmp);
 			g_free(tmp);
 		}
 	}
@@ -921,7 +921,7 @@ flap_connection_recv(FlapConnection *conn)
 						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
-			conn->od->gc->last_received = time(NULL);
+			purple_connection_update_last_received(conn->od->gc);
 
 			/* If we don't even have a complete FLAP header then do nothing */
 			conn->header_received += read;

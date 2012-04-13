@@ -29,6 +29,7 @@
 struct smiley_list {
 	char *sml;
 	GSList *smileys;
+	GHashTable *files; /**< map from smiley shortcut to filename */
 	struct smiley_list *next;
 };
 
@@ -45,26 +46,24 @@ struct smiley_theme {
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
+G_BEGIN_DECLS
+
 void pidgin_themes_init(void);
 
 gboolean pidgin_themes_smileys_disabled(void);
 
 void pidgin_themes_smiley_themeize(GtkWidget *);
 
-/**
- * @since 2.5.0
- */
 void pidgin_themes_smiley_themeize_custom(GtkWidget *);
 
 void pidgin_themes_smiley_theme_probe(void);
 
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load);
 
-/**
- * @since 2.1.0
- */
 void pidgin_themes_remove_smiley_theme(const char *file);
 
 GSList *pidgin_themes_get_proto_smileys(const char *id);
+
+G_END_DECLS
 
 #endif /* _PIDGINTHEMES_H_ */

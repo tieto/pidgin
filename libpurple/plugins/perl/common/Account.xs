@@ -199,9 +199,10 @@ purple_account_destroy_log(account)
     Purple::Account account
 
 void
-purple_account_add_buddies(account, list)
+purple_account_add_buddies(account, list, message)
     Purple::Account account
     SV * list
+    const char *message
 PREINIT:
     GList *t_GL;
     int i, t_len;
@@ -212,13 +213,14 @@ PPCODE:
     for (i = 0; i <= t_len; i++)
         t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(list), i, 0)));
 
-    purple_account_add_buddies(account, t_GL);
+    purple_account_add_buddies(account, t_GL, message);
     g_list_free(t_GL);
 
 void
-purple_account_add_buddy(account, buddy)
-    Purple::Account account
-    Purple::BuddyList::Buddy  buddy
+purple_account_add_buddy(account, buddy, message)
+    Purple::Account          account
+    Purple::BuddyList::Buddy buddy
+    const char *             message
 
 void
 purple_account_change_password(account, a, b)

@@ -264,9 +264,9 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore)
 {
 	GSList *list;
-	PurplePrivacyType type = account->perm_deny;
+	PurplePrivacyType type = purple_account_get_privacy_type(account);
 
-	switch (account->perm_deny) {
+	switch (type) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			return;
 		case PURPLE_PRIVACY_ALLOW_USERS:
@@ -287,13 +287,13 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 				}
 			}
 			purple_privacy_permit_add(account, who, local);
-			account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+			purple_account_set_privacy_type(account, PURPLE_PRIVACY_ALLOW_USERS);
 			break;
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
 			if (!purple_find_buddy(account, who)) {
 				add_all_buddies_to_permit_list(account, local);
 				purple_privacy_permit_add(account, who, local);
-				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+				purple_account_set_privacy_type(account, PURPLE_PRIVACY_ALLOW_USERS);
 			}
 			break;
 		default:
@@ -301,7 +301,7 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 	}
 
 	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
+	if (type != purple_account_get_privacy_type(account) && purple_account_is_connected(account))
 		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
@@ -316,9 +316,9 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 					gboolean restore)
 {
 	GSList *list;
-	PurplePrivacyType type = account->perm_deny;
+	PurplePrivacyType type = purple_account_get_privacy_type(account);
 
-	switch (account->perm_deny) {
+	switch (type) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			if (!restore) {
 				/* Empty the deny-list. */
@@ -331,7 +331,7 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 				}
 			}
 			purple_privacy_deny_add(account, who, local);
-			account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+			purple_account_set_privacy_type(account, PURPLE_PRIVACY_DENY_USERS);
 			break;
 		case PURPLE_PRIVACY_ALLOW_USERS:
 			purple_privacy_permit_remove(account, who, local);
@@ -345,7 +345,7 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 			if (purple_find_buddy(account, who)) {
 				add_all_buddies_to_permit_list(account, local);
 				purple_privacy_permit_remove(account, who, local);
-				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+				purple_account_set_privacy_type(account, PURPLE_PRIVACY_ALLOW_USERS);
 			}
 			break;
 		default:
@@ -353,7 +353,7 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 	}
 
 	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
+	if (type != purple_account_get_privacy_type(account) && purple_account_is_connected(account))
 		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
@@ -362,7 +362,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 {
 	GSList *list;
 
-	switch (account->perm_deny) {
+	switch (purple_account_get_privacy_type(account)) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			return TRUE;
 

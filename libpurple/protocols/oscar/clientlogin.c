@@ -182,7 +182,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		/* Note to translators: %s in this string is a URL */
 		msg = generate_error_message(response_node,
 				get_start_oscar_session_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		return FALSE;
@@ -204,7 +204,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				"missing statusCode: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_start_oscar_session_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		xmlnode_free(response_node);
@@ -232,7 +232,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				"was %s: %s\n", tmp, response);
 
 		if ((code == 401 && status_detail != 1014) || code == 607)
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("You have been connecting and disconnecting too "
 					  "frequently. Wait ten minutes and try again. If "
@@ -242,7 +242,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 			char *msg;
 			msg = generate_error_message(response_node,
 					get_start_oscar_session_url(od));
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
 			g_free(msg);
 		}
@@ -261,7 +261,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_start_oscar_session_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		xmlnode_free(response_node);
@@ -277,7 +277,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				purple_debug_warning("oscar", "We haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
 			} else {
 				purple_debug_error("oscar", "startOSCARSession was missing tlsCertName: %s\n", response);
-				purple_connection_error_reason(
+				purple_connection_error(
 					gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 					_("You required encryption in your account settings, but one of the servers doesn't support it."));
@@ -299,7 +299,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_start_oscar_session_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		g_free(*host);
@@ -337,7 +337,7 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
 				get_start_oscar_session_url(od), error_message ?
 				error_message : _("The server returned an empty response"));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -384,7 +384,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	g_free(signature);
 
 	/* Make the request */
-	od->url_data = purple_util_fetch_url_request_len_with_account(account,
+	od->url_data = purple_util_fetch_url_request(account,
 			url, TRUE, NULL, FALSE, NULL, FALSE, -1,
 			start_oscar_session_cb, od);
 	g_free(url);
@@ -395,7 +395,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
  * and extracts the useful information.
  *
  * @param gc           The PurpleConnection.  If the response data does
- *                     not indicate then purple_connection_error_reason()
+ *                     not indicate then purple_connection_error()
  *                     will be called to close this connection.
  * @param response     The response data from the clientLogin request.
  * @param response_len The length of the above response, or -1 if
@@ -431,7 +431,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"response as XML: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_client_login_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		return FALSE;
@@ -455,7 +455,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"missing statusCode: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_client_login_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		xmlnode_free(response_node);
@@ -482,23 +482,23 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 			PurpleAccount *account = purple_connection_get_account(gc);
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 					_("Incorrect password"));
 		} else if (status_code == 330 && status_detail_code == 3015) {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 					_("Server requested that you fill out a CAPTCHA in order to "
 					"sign in, but this client does not currently support CAPTCHAs."));
 		} else if (status_code == 401 && status_detail_code == 3019) {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("AOL does not allow your screen name to authenticate here"));
 		} else {
 			char *msg;
 			msg = generate_error_message(response_node,
 					get_client_login_url(od));
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
 			g_free(msg);
 		}
@@ -517,7 +517,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_client_login_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		xmlnode_free(response_node);
@@ -535,7 +535,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
 				get_client_login_url(od));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 		g_free(*token);
@@ -572,7 +572,7 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
 				get_client_login_url(od), error_message ?
 				error_message : _("The server returned an empty response"));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -646,7 +646,7 @@ void send_client_login(OscarData *od, const char *username)
 	g_string_free(body, TRUE);
 
 	/* Send the POST request  */
-	od->url_data = purple_util_fetch_url_request_len_with_account(
+	od->url_data = purple_util_fetch_url_request(
 			purple_connection_get_account(gc), get_client_login_url(od),
 			TRUE, NULL, FALSE, request->str, FALSE, -1,
 			client_login_cb, od);

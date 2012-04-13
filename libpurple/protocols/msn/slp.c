@@ -253,7 +253,7 @@ msn_request_user_display(MsnUser *user)
 			data->session = session;
 			data->remote_user = user->passport;
 			data->sha1 = info;
-			url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE, 200*1024,
+			url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE, 200*1024,
 			                                     fetched_user_display, data);
 			session->url_datas = g_slist_prepend(session->url_datas, url_data);
 		} else {
@@ -291,7 +291,7 @@ send_file_cb(MsnSlpCall *slpcall)
 static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
-	gsize size = 0;
+	goffset size = 0;
 	MsnFileContext context;
 	gchar *u8 = NULL;
 	gchar *ret;
@@ -322,7 +322,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 
 	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
 
-	context.length = MSN_FILE_CONTEXT_SIZE;
+	context.length = MSN_FILE_CONTEXT_SIZE_V2;
 	context.version = 2; /* V.3 contains additional unnecessary data */
 	context.file_size = size;
 	if (preview)
@@ -336,15 +336,17 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 	}
 	memset(&context.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
+#if 0
 	memset(&context.unknown1, 0, sizeof(context.unknown1));
 	context.unknown2 = 0xffffffff;
+#endif
 
 	/* Mind the cast, as in, don't free it after! */
 	context.preview = (char *)preview;
 	context.preview_len = preview_len;
 
 	u8 = msn_file_context_to_wire(&context);
-	ret = purple_base64_encode((const guchar *)u8, MSN_FILE_CONTEXT_SIZE + preview_len);
+	ret = purple_base64_encode((const guchar *)u8, MSN_FILE_CONTEXT_SIZE_V2 + preview_len);
 
 	g_free(uni);
 	g_free(u8);
@@ -364,7 +366,7 @@ msn_request_ft(PurpleXfer *xfer)
 	fn = purple_xfer_get_filename(xfer);
 	fp = purple_xfer_get_local_filename(xfer);
 
-	slplink = xfer->data;
+	slplink = purple_xfer_get_protocol_data(xfer);
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
@@ -384,7 +386,7 @@ msn_request_ft(PurpleXfer *xfer)
 	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
 	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
 
-	xfer->data = slpcall;
+	purple_xfer_set_protocol_data(xfer, slpcall);
 
 	context = gen_context(xfer, fn, fp);
 

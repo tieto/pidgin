@@ -77,26 +77,6 @@ gtk_imhtml_get_text(imhtml, start, end)
 	Gtk::TextIter end
 */
 
-/* This can't work at the moment since I don't have a typemap for Gdk::Pixbuf.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
-Pidgin::IMHtml::Scalable
-gtk_imhtml_image_new(img, filename, id)
-	Gdk::Pixbuf img
-	const gchar * filename
-	int id
-*/
-
-/* This can't work at the moment since I don't have a typemap for Gtk::Widget.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
-void
-gtk_imhtml_image_add_to(scale, imhtml, iter)
-	Pidgin::IMHtml::Scalable scale
-	Pidgin::IMHtml imhtml
-	Gtk::TextIter iter
-*/
-
 /* This can't work at the moment since I don't have a typemap for Gtk::Widget.
  * I thought about using the one from libgtk2-perl but wasn't sure how to go
  * about doing that.
@@ -322,19 +302,6 @@ PPCODE:
 	    av_push(lines, newSVpv(bufs[i], 0));
 	}
 	XPUSHs(sv_2mortal(newRV_noinc((SV *)lines)));
-
-MODULE = Pidgin::IMHtml  PACKAGE = Pidgin::IMHtml::Scalable  PREFIX = gtk_imhtml_image_
-PROTOTYPES: ENABLE
-
-void
-gtk_imhtml_image_free(scale)
-	Pidgin::IMHtml::Scalable scale
-
-void
-gtk_imhtml_image_scale(scale, width, height)
-	Pidgin::IMHtml::Scalable scale
-	int width
-	int height
 
 MODULE = Pidgin::IMHtml  PACKAGE = Pidgin::IMHtml::Hr  PREFIX = gtk_imhtml_hr_
 PROTOTYPES: ENABLE

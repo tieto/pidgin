@@ -30,8 +30,20 @@
 #include <glib-object.h>
 #include <glib.h>
 
-/** @copydoc _PurpleRequestField */
+/**
+ * A request field.
+ */
 typedef struct _PurpleRequestField PurpleRequestField;
+
+/**
+ * Multiple fields request data.
+ */
+typedef struct _PurpleRequestFields PurpleRequestFields;
+
+/**
+ * A group of fields with a title.
+ */
+typedef struct _PurpleRequestFieldGroup PurpleRequestFieldGroup;
 
 #include "account.h"
 
@@ -64,125 +76,10 @@ typedef enum
 	PURPLE_REQUEST_FIELD_LIST,
 	PURPLE_REQUEST_FIELD_LABEL,
 	PURPLE_REQUEST_FIELD_IMAGE,
-	PURPLE_REQUEST_FIELD_ACCOUNT
+	PURPLE_REQUEST_FIELD_ACCOUNT,
+	PURPLE_REQUEST_FIELD_CERTIFICATE
 
 } PurpleRequestFieldType;
-
-/**
- * Multiple fields request data.
- */
-typedef struct
-{
-	GList *groups;
-
-	GHashTable *fields;
-
-	GList *required_fields;
-
-	void *ui_data;
-
-} PurpleRequestFields;
-
-/**
- * A group of fields with a title.
- */
-typedef struct
-{
-	PurpleRequestFields *fields_list;
-
-	char *title;
-
-	GList *fields;
-
-} PurpleRequestFieldGroup;
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_REQUEST_C_)
-/**
- * A request field.
- */
-struct _PurpleRequestField
-{
-	PurpleRequestFieldType type;
-	PurpleRequestFieldGroup *group;
-
-	char *id;
-	char *label;
-	char *type_hint;
-
-	gboolean visible;
-	gboolean required;
-
-	union
-	{
-		struct
-		{
-			gboolean multiline;
-			gboolean masked;
-			gboolean editable;
-			char *default_value;
-			char *value;
-
-		} string;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-		} integer;
-
-		struct
-		{
-			gboolean default_value;
-			gboolean value;
-
-		} boolean;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-			GList *labels;
-
-		} choice;
-
-		struct
-		{
-			GList *items;
-			GList *icons;
-			GHashTable *item_data;
-			GList *selected;
-			GHashTable *selected_table;
-
-			gboolean multiple_selection;
-
-		} list;
-
-		struct
-		{
-			PurpleAccount *default_account;
-			PurpleAccount *account;
-			gboolean show_all;
-
-			PurpleFilterAccountFunc filter_func;
-
-		} account;
-
-		struct
-		{
-			unsigned int scale_x;
-			unsigned int scale_y;
-			const char *buffer;
-			gsize size;
-		} image;
-
-	} u;
-
-	void *ui_data;
-
-};
-#endif
 
 /**
  * Request UI operations.
@@ -262,9 +159,7 @@ typedef void (*PurpleRequestChoiceCb)(void *, int);
 typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
 typedef void (*PurpleRequestFileCb)(void *, const char *filename);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Field List API                                                  */
@@ -410,6 +305,25 @@ int purple_request_fields_get_choice(const PurpleRequestFields *fields,
 PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fields,
 											 const char *id);
 
+/**
+ * Returns the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ *
+ * @return The UI data associated with this object.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libuprple core.
+ */
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
+
+/**
+ * Set the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ * @param ui_data A pointer to associate with this object.
+ */
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data);
+
 /*@}*/
 
 /**************************************************************************/
@@ -460,6 +374,16 @@ const char *purple_request_field_group_get_title(
  * @constreturn The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
+		const PurpleRequestFieldGroup *group);
+
+/**
+ * Returns a list of all fields in a group.
+ *
+ * @param group The group.
+ *
+ * @constreturn The list of fields in the group.
+ */
+PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
 
 /*@}*/
@@ -517,6 +441,18 @@ void purple_request_field_set_type_hint(PurpleRequestField *field,
 									  const char *type_hint);
 
 /**
+ * Sets the tooltip for the field.
+ *
+ * This is optionally used by the UIs to provide a tooltip for
+ * the field.
+ *
+ * @param field     The field.
+ * @param tooltip   The tooltip text.
+ */
+void purple_request_field_set_tooltip(PurpleRequestField *field,
+									const char *tooltip);
+
+/**
  * Sets whether or not a field is required.
  *
  * @param field    The field.
@@ -540,8 +476,6 @@ PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *f
  * @param field The field.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 PurpleRequestFieldGroup *purple_request_field_get_group(const PurpleRequestField *field);
 
@@ -582,6 +516,15 @@ gboolean purple_request_field_is_visible(const PurpleRequestField *field);
 const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
 
 /**
+ * Returns the field's tooltip.
+ *
+ * @param field The field.
+ *
+ * @return The field's tooltip.
+ */
+const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
+
+/**
  * Returns whether or not a field is required.
  *
  * @param field The field.
@@ -596,8 +539,6 @@ gboolean purple_request_field_is_required(const PurpleRequestField *field);
  * @param field The field.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
 
@@ -608,8 +549,6 @@ gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
  * @param ui_data The UI data.
  *
  * @return The UI data.
- *
- * @since 2.6.0
  */
 void purple_request_field_set_ui_data(PurpleRequestField *field,
                                       gpointer ui_data);
@@ -961,18 +900,6 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  *
  * @param field The list field.
  * @param item  The list item.
- * @param data  The associated data.
- *
- * @deprecated Use purple_request_field_list_add_icon() instead.
- */
-void purple_request_field_list_add(PurpleRequestField *field,
-								 const char *item, void *data);
-
-/**
- * Adds an item to a list field.
- *
- * @param field The list field.
- * @param item  The list item.
  * @param icon_path The path to icon file, or @c NULL for no icon.
  * @param data  The associated data.
  */
@@ -1244,6 +1171,36 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
 /*@}*/
 
 /**************************************************************************/
+/** @name Certificate Field API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a certificate field.
+ *
+ * @param id   The field ID.
+ * @param text The label of the field.
+ * @param cert The certificate of the field.
+ *
+ * @return The new field.
+ */
+PurpleRequestField *purple_request_field_certificate_new(const char *id,
+														 const char *text,
+														 PurpleCertificate *cert);
+
+/**
+ * Returns the certificate in a certificate field.
+ *
+ * @param field The field.
+ *
+ * @return The certificate.
+ */
+PurpleCertificate *purple_request_field_certificate_get_value(
+		const PurpleRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name Request API                                                     */
 /**************************************************************************/
 /*@{*/
@@ -1402,8 +1359,7 @@ void *purple_request_action_varg(void *handle, const char *title,
 
 /**
  * Version of purple_request_action() supplying an image for the UI to
- * optionally display as an icon in the dialog; see its documentation
- * @since 2.7.0
+ * optionally display as an icon in the dialog; see its documentation.
  */
 void *purple_request_action_with_icon(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,
@@ -1414,7 +1370,6 @@ void *purple_request_action_with_icon(void *handle, const char *title,
 /**
  * <tt>va_list</tt> version of purple_request_action_with_icon();
  * see its documentation.
- * @since 2.7.0
  */
 void *purple_request_action_with_icon_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,
@@ -1576,6 +1531,37 @@ void *purple_request_folder(void *handle, const char *title, const char *dirname
 	PurpleAccount *account, const char *who, PurpleConversation *conv,
 	void *user_data);
 
+/**
+ * Prompts the user for action over a certificate.
+ *
+ * This is often represented as a dialog with a button for each action.
+ *
+ * @param handle        The plugin or connection handle.  For some things this
+ *                      is <em>extremely</em> important.  See the comments on
+ *                      purple_request_input().
+ * @param title         The title of the message, or @c NULL if it should have
+ *                      no title.
+ * @param primary       The main point of the message, or @c NULL if you're
+ *                      feeling enigmatic.
+ * @param secondary     Secondary information, or @c NULL if there is none.
+ * @param cert          The #PurpleCertificate associated with this request.
+ * @param ok_text       The text for the @c OK button, which may not be @c NULL.
+ * @param ok_cb         The callback for the @c OK button, which may not be
+ *                      @c NULL.
+ * @param cancel_text   The text for the @c Cancel button, which may not be
+ *                      @c NULL.
+ * @param cancel_cb     The callback for the @c Cancel button, which may be
+ *                      @c NULL.
+ * @param user_data     The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *purple_request_certificate(void *handle, const char *title,
+	const char *primary, const char *secondary, PurpleCertificate *cert,
+	const char *ok_text, GCallback ok_cb,
+	const char *cancel_text, GCallback cancel_cb,
+	void *user_data);
+
 /*@}*/
 
 /**************************************************************************/
@@ -1601,8 +1587,6 @@ PurpleRequestUiOps *purple_request_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_REQUEST_H_ */

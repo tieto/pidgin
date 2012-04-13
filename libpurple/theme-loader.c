@@ -24,7 +24,7 @@
 #include "theme-loader.h"
 
 #define PURPLE_THEME_LOADER_GET_PRIVATE(PurpleThemeLoader) \
-	((PurpleThemeLoaderPrivate *) ((PurpleThemeLoader)->priv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((PurpleThemeLoader), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderPrivate))
 
 void purple_theme_loader_set_type_string(PurpleThemeLoader *loader, const gchar *type);
 
@@ -85,12 +85,19 @@ purple_theme_loader_set_property(GObject *obj, guint param_id, const GValue *val
 	}
 }
 
-static void
-purple_theme_loader_init(GTypeInstance *instance,
-			gpointer klass)
+static gboolean
+purple_theme_loader_probe_directory(PurpleThemeLoader *loader, const gchar *dir)
 {
-	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(instance);
-	loader->priv = g_new0(PurpleThemeLoaderPrivate, 1);
+	const gchar *type = purple_theme_loader_get_type_string(loader);
+	char *themedir;
+	gboolean result;
+
+	/* Checks for directory as $root/purple/$type */
+	themedir = g_build_filename(dir, "purple", type, NULL);
+	result = g_file_test(themedir, G_FILE_TEST_IS_DIR);
+	g_free(themedir);
+
+	return result;
 }
 
 static void
@@ -100,7 +107,6 @@ purple_theme_loader_finalize(GObject *obj)
 	PurpleThemeLoaderPrivate *priv = PURPLE_THEME_LOADER_GET_PRIVATE(loader);
 
 	g_free(priv->type);
-	g_free(priv);
 
 	parent_class->finalize(obj);
 }
@@ -112,6 +118,8 @@ purple_theme_loader_class_init(PurpleThemeLoaderClass *klass)
 	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PurpleThemeLoaderPrivate));
 
 	obj_class->get_property = purple_theme_loader_get_property;
 	obj_class->set_property = purple_theme_loader_set_property;
@@ -139,7 +147,7 @@ purple_theme_loader_get_type(void)
 			NULL, /* class_data */
 			sizeof(PurpleThemeLoader),
 			0, /* n_preallocs */
-			purple_theme_loader_init, /* instance_init */
+			NULL, /* instance_init */
 			NULL, /* value table */
 		};
 		type = g_type_register_static(G_TYPE_OBJECT,
@@ -182,3 +190,13 @@ purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir)
 {
 	return PURPLE_THEME_LOADER_GET_CLASS(loader)->purple_theme_loader_build(dir);
 }
+
+gboolean
+purple_theme_loader_probe(PurpleThemeLoader *loader, const gchar *dir)
+{
+	if (PURPLE_THEME_LOADER_GET_CLASS(loader)->probe_directory != NULL)
+		return PURPLE_THEME_LOADER_GET_CLASS(loader)->probe_directory(dir);
+	else
+		return purple_theme_loader_probe_directory(loader, dir);
+}
+

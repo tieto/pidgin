@@ -31,14 +31,8 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef _WIN32
-#  include <sys/ioctl.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 #include <time.h>
 
@@ -1095,7 +1089,7 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 		case GG_STATE_CONNECTING:
 		{
 			int res = 0, error = 0;
-			unsigned int error_size = sizeof(error);
+			socklen_t error_size = sizeof(error);
 
 			gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_watch_fd() GG_STATE_CONNECTING\n");
 
@@ -1384,7 +1378,7 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 		case GG_STATE_CONNECTING_RELAY:
 		{
 			int res;
-			unsigned int res_size = sizeof(res);
+			socklen_t res_size = sizeof(res);
 			struct gg_dcc7_relay_req pkt;
 
 			gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_watch_fd() GG_STATE_CONNECTING_RELAY\n");

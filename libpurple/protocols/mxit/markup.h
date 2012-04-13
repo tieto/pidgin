@@ -31,7 +31,7 @@
 
 void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgtype, int msgflags );
 char* mxit_convert_markup_tx( const char* message, int* msgtype );
-void mxit_add_html_link( struct RXMsgData* mx, const char* linkname, const char* displayname );
+void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean isStructured, const char* displaytext );
 void mxit_show_message( struct RXMsgData* mx );
 
 void mxit_free_emoticon_cache( struct MXitSession* session );

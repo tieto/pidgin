@@ -9,30 +9,15 @@ ssl_nss_la_LDFLAGS    = -module -avoid-version
 
 if PLUGINS
 
-# I'm sorry to report that Automake Conditionals don't support
-#   if USE_GNUTLS && USE_NSS
-# but only support testing a single variable. Hence:
-
-if USE_GNUTLS
-if USE_NSS
-plugin_LTLIBRARIES = \
-	ssl.la           \
-	ssl-gnutls.la    \
-	ssl-nss.la
-else
-plugin_LTLIBRARIES = \
-	ssl.la           \
-	ssl-gnutls.la
-endif
-else
-if USE_NSS
-plugin_LTLIBRARIES = \
-	ssl.la           \
-	ssl-nss.la
-else
 plugin_LTLIBRARIES = \
 	ssl.la
+if USE_GNUTLS
+plugin_LTLIBRARIES += \
+	ssl-gnutls.la
 endif
+if USE_NSS
+plugin_LTLIBRARIES += \
+	ssl-nss.la
 endif
 
 ssl_la_SOURCES        = ssl.c
@@ -56,3 +41,4 @@ AM_CPPFLAGS = \
 
 ssl_gnutls_la_CFLAGS = $(AM_CPPFLAGS) $(GNUTLS_CFLAGS)
 ssl_nss_la_CFLAGS = $(AM_CPPFLAGS) $(NSS_CFLAGS)
+
