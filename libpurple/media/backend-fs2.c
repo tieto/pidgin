@@ -2021,7 +2021,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	stream->participant = g_strdup(who);
 	stream->session = session;
 	stream->stream = fsstream;
-#ifndef HAVE_FARSTREAM
+#ifndef HAVE_FARSIGHT
 	stream->supports_add = !strcmp(transmitter, "nice");
 #endif
 
