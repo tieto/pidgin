@@ -6,6 +6,7 @@ include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/utils.mk
+include /usr/share/cdbs/1/rules/autoreconf.mk
 
 
 # Build into a separate directory
@@ -15,7 +16,7 @@ LDFLAGS = -Wl,--as-needed
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution \
 	    --enable-cap --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no \
-	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farsight \
+	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farstream \
 	    --enable-tcl --enable-tk \
 	    --with-dynamic-prpls=bonjour,gg,irc,jabber,msn,myspace,mxit,novell,oscar,sametime,simple,yahoo,zephyr # disable silc
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
