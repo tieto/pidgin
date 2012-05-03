@@ -3,7 +3,7 @@
  *
  * purple
  *
- * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
+ * Copyright (C) 2003, 2012 Ethan Blanton <elb@pidgin.im>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +110,6 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	irc_blist_timeout(irc);
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
-    if (!irc->who_channel_timer)
-        irc->who_channel_timer = purple_timeout_add_seconds(300, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -463,6 +461,10 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		
 		flags = cb->flags;
 
+		/* FIXME: I'm not sure this is really a good idea, now
+		 * that we no longer do periodic WHO.  It seems to me
+		 * like it's more likely to be confusing than not.
+		 * Comments? */
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
 			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
