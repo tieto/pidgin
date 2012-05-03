@@ -55,8 +55,6 @@
 
 #define AIMHASHDATA "http://pidgin.im/aim_data.php3"
 
-#define OSCAR_CONNECT_STEPS 6
-
 static guint64 purple_caps =
 	OSCAR_CAPABILITY_CHAT
 		| OSCAR_CAPABILITY_BUDDYICON
@@ -89,7 +87,6 @@ struct oscar_ask_directim_data
 
 /* Only used when connecting with the old-style BUCP login */
 static int purple_parse_auth_resp  (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_login      (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_auth_securid_request(OscarData *, FlapConnection *, FlapFrame *, ...);
 
 static int purple_handle_redirect  (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -673,7 +670,6 @@ oscar_login(PurpleAccount *account)
 
 	/* These are only needed when connecting with the old-style BUCP login */
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0003, purple_parse_auth_resp, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0007, purple_parse_login, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_REQUEST, purple_parse_auth_securid_request, 0);
 
 	oscar_data_addhandler(od, SNAC_FAMILY_BART, SNAC_SUBTYPE_BART_RESPONSE, purple_icon_parseicon, 0);
@@ -1228,38 +1224,6 @@ purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame
 					   account, NULL, NULL,
 					   gc);
 	g_free(primary);
-
-	return 1;
-}
-
-/**
- * Only used when connecting with the old-style BUCP login.
- */
-static int
-purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	PurpleConnection *gc;
-	PurpleAccount *account;
-	ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
-	ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
-	va_list ap;
-	char *key;
-	gboolean truncate_pass;
-
-	gc = od->gc;
-	account = purple_connection_get_account(gc);
-
-	va_start(ap, fr);
-	key = va_arg(ap, char *);
-	truncate_pass = va_arg(ap, int);
-	va_end(ap);
-
-	aim_send_login(od, conn, purple_account_get_username(account),
-			purple_connection_get_password(gc), truncate_pass,
-			od->icq ? &icqinfo : &aiminfo, key,
-			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
-
-	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 
 	return 1;
 }

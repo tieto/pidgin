@@ -2095,6 +2095,12 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 	channel = byte_stream_get16(bs);
 	bnlen = byte_stream_get8(bs);
 	bn = byte_stream_getstr(bs, bnlen);
+	if (!g_utf8_validate(bn, -1, NULL)) {
+		purple_debug_warning("oscar", "Received SNAC %04hx/%04hx with "
+				"invalid UTF-8 buddy name.\n", snac->family, snac->subtype);
+		g_free(bn);
+		return 1;
+	}
 	event = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))

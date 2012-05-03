@@ -114,6 +114,8 @@ extern "C" {
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
+#define OSCAR_CONNECT_STEPS 6
+
 /*
  * Client info.  Filled in by the client and passed in to
  * aim_send_login().  The information ends up getting passed to OSCAR
