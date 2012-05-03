@@ -221,8 +221,6 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 
 	if (purple_xfer_get_status(x) != PURPLE_XFER_STATUS_ACCEPTED)
 		return;
-	if (!xfer)
-		return;
 
 	silc_socket_stream_get_info(silc_packet_stream_get_stream(xfer->sg->conn->stream),
 				    &sock, NULL, NULL, NULL);
