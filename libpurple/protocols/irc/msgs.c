@@ -115,7 +115,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 /* This function is ugly, but it's really an error handler. */
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	int i, directed_magic = TRUE;
+	int i;
 	char *convname, *end, *tmp, *cur;
 	PurpleConversation *convo;
 
