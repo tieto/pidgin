@@ -379,8 +379,7 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 	if (len > 1664)
 		len = 1664;
 
-	if (msg->body != NULL)
-		g_free(msg->body);
+	g_free(msg->body);
 
 	if (data != NULL && len > 0)
 	{
