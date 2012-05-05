@@ -1,10 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.4:
-	IRC:
-	* Disable periodic WHO timer.  IRC channel user lists will no
-	  longer automatically display away status, but libpurple will be
-	  much kinder to the network.
+	TODO
 
 version 2.10.3 (03/26/2012):
 	MSN:

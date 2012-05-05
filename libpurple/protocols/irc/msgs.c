@@ -112,64 +112,13 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
-/* This function is ugly, but it's really an error handler. */
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	int i, directed_magic = TRUE;
-	char *convname, *end, *tmp, *cur;
-	PurpleConversation *convo;
-
-	for (cur = args[0], i = 0; i < 4; i++) {
-		end = strchr(cur, ' ');
-		if (cur == NULL) {
-			goto undirected;
-		}
-		/* Check for 3-digit numeric in second position */
-		if (i == 1 && (end - cur != 3
-			       || !isdigit(cur[0]) || !isdigit(cur[1])
-			       || !isdigit(cur[2]))) {
-			goto undirected;
-		}
-		/* Hack! */
-		if (i != 3) {
-			cur = end + 1;
-		}
-	}
-
-	/* At this point, cur is the beginning of the fourth position,
-	 * end is the following space, and there are remaining
-	 * arguments.  We'll check to see if this argument is a
-	 * currently active conversation (private message or channel,
-	 * either one), and print the numeric to that conversation if it
-	 * is. */
-
-	tmp = g_strndup(cur, end - cur);
-	convname = purple_utf8_salvage(tmp);
-	g_free(tmp);
-
-	/* Check for an existing conversation */
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-						      convname,
-						      irc->account);
-	g_free(convname);
-
-	if (convo == NULL) {
-		goto undirected;
-	}
-
-	tmp = purple_utf8_salvage(args[0]);
-	purple_conversation_write(convo, "", tmp,
-				  PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG
-				  |PURPLE_MESSAGE_RAW|PURPLE_MESSAGE_NO_LINKIFY,
-				  time(NULL));
-	g_free(tmp);
-	return;
-
-  undirected:
+	char *clean;
 	/* This, too, should be escaped somehow (smarter) */
-	tmp = purple_utf8_salvage(args[0]);
-	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", tmp);
-	g_free(tmp);
+	clean = purple_utf8_salvage(args[0]);
+	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", clean);
+	g_free(clean);
 }
 
 void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
