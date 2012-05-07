@@ -18,7 +18,7 @@ version 2.10.4 (05/06/2012):
 	MSN:
 	* Fix a possible crash when receiving messages with certain characters
 	  or character encodings.  Thanks to Fabian Yamaguchi for reporting
-	  this!
+	  this! (CVE-2012-2318)
 
 	XMPP:
 	* Fix a possible crash when receiving a series of specially crafted
