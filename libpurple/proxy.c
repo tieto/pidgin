@@ -59,6 +59,8 @@ struct _PurpleProxyConnectData {
 	 */
 	GSList *hosts;
 
+	PurpleProxyConnectData *child;
+
 	/*
 	 * All of the following variables are used when establishing a
 	 * connection through a proxy.
@@ -559,6 +561,12 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 static void
 purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const gchar *error_message)
 {
+	if (connect_data->child != NULL)
+	{
+		purple_proxy_connect_cancel(connect_data->child);
+		connect_data->child = NULL;
+	}
+
 	if (connect_data->inpa > 0)
 	{
 		purple_input_remove(connect_data->inpa);
@@ -2417,12 +2425,19 @@ static void socks5_connected_to_proxy(gpointer data, gint source,
 	/* This is the PurpleProxyConnectData for the overall SOCKS5 connection */
 	PurpleProxyConnectData *connect_data = data;
 
+	purple_debug_error("proxy", "Connect Data is %p\n", connect_data);
+
 	/* Check that the overall SOCKS5 connection wasn't cancelled while we were
 	 * connecting to it (we don't have a way of associating the process of
 	 * connecting to the SOCKS5 server to the overall PurpleProxyConnectData)
 	 */
-	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
+	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data)) {
+		purple_debug_error("proxy", "Data had gone out of scope :(\n");
 		return;
+	}
+
+	/* Break the link between the two PurpleProxyConnectDatas  */
+	connect_data->child = NULL;
 
 	if (error_message != NULL) {
 		purple_debug_error("proxy", "Unable to connect to SOCKS5 host.\n");
@@ -2486,10 +2501,7 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 		return NULL;
 	}
 
-	/* The API doesn't really provide us with a way to cancel the specific
-	 * proxy connection attempt (account_proxy_conn_data) when the overall
-	 * SOCKS5 connection (connect_data) attempt is cancelled :(
-	 */
+	connect_data->child = account_proxy_conn_data;
 
 	handles = g_slist_prepend(handles, connect_data);
 
@@ -2499,6 +2511,8 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 void
 purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data)
 {
+	g_return_if_fail(connect_data != NULL);
+
 	purple_proxy_connect_data_disconnect(connect_data, NULL);
 	purple_proxy_connect_data_destroy(connect_data);
 }

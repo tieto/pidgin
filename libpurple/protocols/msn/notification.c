@@ -1013,11 +1013,16 @@ static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnUser *user;
+	char *passport;
+	int networkid;
 
 	/* Tell libpurple that the user has signed off */
-	user = msn_userlist_find_user(cmdproc->session->userlist, cmd->params[0]);
+	msn_parse_user(cmd->params[0], &passport, &networkid);
+	user = msn_userlist_find_user(cmdproc->session->userlist, passport);
 	msn_user_set_state(user, NULL);
 	msn_user_update(user);
+
+	g_free(passport);
 }
 
 static void
