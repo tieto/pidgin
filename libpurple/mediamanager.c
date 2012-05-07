@@ -39,7 +39,11 @@
 #ifdef USE_VV
 #include <media/backend-fs2.h>
 
+#ifdef HAVE_FARSIGHT
 #include <gst/farsight/fs-element-added-notifier.h>
+#else
+#include <farstream/fs-element-added-notifier.h>
+#endif
 #include <gst/interfaces/xoverlay.h>
 
 /** @copydoc _PurpleMediaManagerPrivate */

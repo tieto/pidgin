@@ -82,6 +82,9 @@
 /* Define to 1 if you have the <EXTERN.h> header file. */
 #undef HAVE_EXTERN_H
 
+/* Use Farsight instead of Farstream */
+#undef HAVE_FARSIGHT
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
@@ -443,9 +446,6 @@
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
-
-/* Use Farsight for voice and video */
-#undef USE_FARSIGHT
 
 /* Use GStreamer interfaces for X overlay support */
 #undef USE_GSTINTERFACES

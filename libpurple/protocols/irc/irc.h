@@ -3,7 +3,7 @@
  *
  * purple
  *
- * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
+ * Copyright (C) 2003, 2012 Ethan Blanton <elb@pidgin.im>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ struct irc_conn {
 	char *server;
 	int fd;
 	guint timer;
-	guint who_channel_timer;
 	GHashTable *buddies;
 
 	gboolean ison_outstanding;
