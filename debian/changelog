@@ -1,3 +1,12 @@
+pidgin (2.10.4-1) unstable; urgency=low
+
+  * Imported Upstream version 2.10.4
+    - Fixes a possible XMPP remote crash (CVE-2012-2214)
+    - Fixes a possible MSN remote crash (CVE-2012-2318)
+  * Switch back to farsight, but support for farstream is now present upstream
+
+ -- Ari Pollak <ari@debian.org>  Mon, 07 May 2012 20:14:56 -0400
+
 pidgin (2.10.2-1.1) experimental; urgency=low
 
   * Non-maintainer upload with Ari approval.
