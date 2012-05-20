@@ -465,6 +465,14 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	webkit_web_view_open(WEBKIT_WEB_VIEW(viewer->web_view), "about:blank");
 
 	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
+	
+	/* plaintext log (html one starts with <html> tag) */
+	if (read[0] != '<')
+	{
+		char *newRead = purple_strreplace(read, "\n", "<br>");
+		g_free(read);
+		read = newRead;
+	}
 
 	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(viewer->web_view), read, "");
 	g_free(read);
