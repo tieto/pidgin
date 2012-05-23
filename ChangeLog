@@ -39,6 +39,7 @@ version 3.0.0 (??/??/????):
 	  to the core (and UIs) as incoming messages (Thijs Alkemade).
 	  (#14529)
 	* Support file transfers up to ~9 EiB.
+	* Invalid user moods can no longer be sent to the server.
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer

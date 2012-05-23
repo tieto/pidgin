@@ -3575,16 +3575,32 @@ jabber_cmd_mood(PurpleConversation *conv,
 	JabberStream *js = purple_connection_get_protocol_data(purple_account_get_connection(account));
 
 	if (js->pep) {
-		/* if no argument was given, unset mood */
+		gboolean ret;
+
 		if (!args || !args[0]) {
-			jabber_mood_set(js, NULL, NULL);
-		} else if (!args[1]) {
-			jabber_mood_set(js, args[0], NULL);
+			/* No arguments; unset mood */
+			ret = jabber_mood_set(js, NULL, NULL);
 		} else {
-			jabber_mood_set(js, args[0], args[1]);
+			/* At least one argument.  Relying on the list of arguments
+			 * being NULL-terminated.
+			 */
+			ret = jabber_mood_set(js, args[0], args[1]);
+			if (!ret) {
+				/* Let's try again */
+				char *tmp = g_strjoin(" ", args[0], args[1], NULL);
+				ret = jabber_mood_set(js, "undefined", tmp);
+				g_free(tmp);
+			}
 		}
 
-		return PURPLE_CMD_RET_OK;
+		if (ret) {
+			return PURPLE_CMD_RET_OK;
+		} else {
+			purple_conversation_write(conv, NULL,
+				_("Failed to specify mood"),
+				PURPLE_MESSAGE_ERROR, time(NULL));
+			return PURPLE_CMD_RET_FAILED;
+		}
 	} else {
 		/* account does not support PEP, can't set a mood */
 		purple_conversation_write(conv, NULL,
@@ -3713,7 +3729,7 @@ static void jabber_register_commands(PurplePlugin *plugin)
 	    			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 	    			  PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 	    			  "prpl-jabber", jabber_cmd_mood,
-	    			  _("mood: Set current user mood"), NULL);
+	    			  _("mood &lt;mood&gt; [text]: Set current user mood"), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	g_hash_table_insert(jabber_cmds, plugin, commands);
