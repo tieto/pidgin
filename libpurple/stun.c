@@ -174,6 +174,8 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
 
+	memset(&in, 0, sizeof(in));
+
 	len = recv(source, buffer, sizeof(buffer) - 1, 0);
 	if (!len) {
 		purple_debug_warning("stun", "unable to read stun response\n");
