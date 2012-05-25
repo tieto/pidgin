@@ -1432,7 +1432,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	g_signal_connect(G_OBJECT(font_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(font_button), "activate", G_CALLBACK(pidgin_menu_clicked), font_menu);
-	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);
+	g_signal_connect_data(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate),
+	                      g_object_ref(font_button), (GClosureNotify)g_object_unref, 0);
 
 	/* Sep */
 	sep = gtk_vseparator_new();
@@ -1477,7 +1478,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	g_signal_connect(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
-	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
+	g_signal_connect_data(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate),
+	                      g_object_ref(insert_button), (GClosureNotify)g_object_unref, 0);
 	toolbar->sml = NULL;
 
 	/* Sep */
