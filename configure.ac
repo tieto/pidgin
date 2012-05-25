@@ -428,11 +428,11 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 3.0.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
@@ -444,7 +444,7 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
-	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+	PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= 1.1.1], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 You must have WebKit 1.1.1 or newer development headers installed to compile
@@ -565,6 +565,8 @@ Use --disable-sm if you do not need session management support.
 	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
+	dnl GtkSpell is not GTK+3 compatible yet
+	enable_gtkspell="no"
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
@@ -629,7 +631,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 	dnl # Check for GCR for its certificate widgets
 	dnl #######################################################################
 	if test "x$enable_gcr" = "xyes"; then
-		PKG_CHECK_MODULES(GCR, gcr-0, [
+		PKG_CHECK_MODULES(GCR, gcr-3, [
 			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
 			AC_MSG_RESULT(no)
 			enable_gcr="no"
