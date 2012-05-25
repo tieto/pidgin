@@ -52,6 +52,7 @@ purple_coresources = \
 	ft.c \
 	idle.c \
 	imgstore.c \
+	keyring.c \
 	log.c \
 	media/backend-fs2.c \
 	media/backend-iface.c \
@@ -119,6 +120,7 @@ purple_coreheaders = \
 	ft.h \
 	idle.h \
 	imgstore.h \
+	keyring.h \
 	log.h \
 	media.h \
 	media-gst.h \

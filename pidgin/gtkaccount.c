@@ -116,6 +116,7 @@ typedef struct
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
 	GtkWidget *password_box;
+	char *password;
 	GtkWidget *username_entry;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
@@ -591,10 +592,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account) &&
+		if (dialog->password &&
 		    purple_account_get_remember_password(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
-							   purple_account_get_password(dialog->account));
+				dialog->password);
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
@@ -1226,6 +1227,8 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	purple_signals_disconnect_by_handle(dialog);
 
+	g_free(dialog->password);
+
 	g_free(dialog);
 	return FALSE;
 }
@@ -1246,6 +1249,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
+	gboolean remember;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->username_entry)));
@@ -1351,9 +1355,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 
 	/* Remember Password */
-	purple_account_set_remember_password(account,
-			gtk_toggle_button_get_active(
-					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
+	remember = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check));
+	if(!remember)
+		purple_keyring_set_password(account, NULL, NULL, NULL);
+
+	purple_account_set_remember_password(account, remember);
 
 	/* Check Mail */
 	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
@@ -1371,9 +1377,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * don't want to prompt them.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
-		purple_account_set_password(account, value);
+		purple_account_set_password(account, value, NULL, NULL);
 	else
-		purple_account_set_password(account, NULL);
+		purple_account_set_password(account, NULL, NULL, NULL);
 
 	purple_account_set_username(account, username);
 	g_free(username);
@@ -1511,10 +1517,13 @@ static const GtkTargetEntry dnd_targets[] = {
 	{"STRING", 0, 2}
 };
 
-void
-pidgin_account_dialog_show(PidginAccountDialogType type,
-							 PurpleAccount *account)
+static void
+pidgin_account_dialog_show_continue(PurpleAccount *account,
+                                    const char *password,
+                                    GError *error,
+                                    gpointer data)
 {
+	PidginAccountDialogType type = (PidginAccountDialogType)GPOINTER_TO_INT(data);
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
 	GtkWidget *main_vbox;
@@ -1537,9 +1546,10 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 		g_hash_table_insert(account_pref_wins, account, dialog);
 	}
 
-	dialog->account = account;
-	dialog->type    = type;
-	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	dialog->account  = account;
+	dialog->password = g_strdup(password);
+	dialog->type     = type;
+	dialog->sg       = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (dialog->account == NULL) {
 		/* Select the first prpl in the list*/
@@ -1631,6 +1641,15 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	gtk_widget_show(win);
 	if (!account)
 		gtk_widget_grab_focus(dialog->protocol_menu);
+}
+
+void
+pidgin_account_dialog_show(PidginAccountDialogType type,
+                           PurpleAccount *account)
+{
+	/* this is to make sure the password will be cached */
+	purple_account_get_password(account,
+		pidgin_account_dialog_show_continue, GINT_TO_POINTER(type));
 }
 
 /**************************************************************************
