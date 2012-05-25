@@ -3998,6 +3998,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 }
 
+#if 0
 static gboolean
 compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 {
@@ -4011,6 +4012,7 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 		return FALSE;
 	return TRUE;
 }
+#endif
 
 static void
 generate_send_to_items(PidginWindow *win)
@@ -9474,6 +9476,9 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	stop_anim(NULL, gtkconv);
 }
+
+/* TODO: I don't know if this doable in GTK+ 3.0 */
+#if 0
 static void
 close_window(GtkWidget *w, PidginWindow *win)
 {
@@ -9539,8 +9544,6 @@ static void close_tab_cb(GtkWidget *w, GObject *menu)
 		close_conv_cb(NULL, gtkconv);
 }
 
-/* TODO: I don't know if this doable in GTK+ 3.0 */
-#if 0
 static gboolean
 right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *win)
 {
