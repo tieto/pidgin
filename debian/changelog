@@ -1,3 +1,11 @@
+pidgin (2.10.4-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Build-depends against libfarstream-0.1-dev instead of
+    libgstfarsight0.10-dev (Closes: #664527)
+
+ -- Laurent Bigonville <bigon@debian.org>  Tue, 15 May 2012 12:37:02 +0200
+
 pidgin (2.10.4-1) unstable; urgency=low
 
   * Imported Upstream version 2.10.4
