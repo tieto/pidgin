@@ -286,22 +286,10 @@
 			node.parentNode.replaceChild(a, node);
 		}
 
-		//Align our chat to the bottom of the window.  If true is passed, view will also be scrolled down
+		//If true is passed, view will be scrolled down
 		function alignChat(shouldScroll) {
-			var windowHeight = window.innerHeight;
-
-			if (windowHeight > 0) {
-				var contentElement = document.getElementById('Chat');
-				var heightDifference = (windowHeight - contentElement.offsetHeight);
-				if (heightDifference > 0) {
-					contentElement.style.position = 'relative';
-					contentElement.style.top = heightDifference + 'px';
-				} else {
-					contentElement.style.position = 'static';
-				}
-			}
-
-			if (shouldScroll) scrollToBottom();
+			if (shouldScroll)
+				scrollToBottom();
 		}
 
 		window.onresize = function windowDidResize(){
@@ -319,7 +307,7 @@
 		.actionMessageUserName { display:none; }
 		.actionMessageBody:before { content:"*"; }
 		.actionMessageBody:after { content:"*"; }
-		* { word-wrap:break-word; text-rendering: optimizelegibility; }
+		* { word-wrap:break-word }
 		img.scaledToFitImage { height: auto; max-width: 100%%; }
 	</style>
 

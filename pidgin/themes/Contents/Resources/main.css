@@ -1,19 +1,24 @@
 body {
 	word-wrap: break-word;
 	word-break: break-word;
+	
+	font-size: 13px;
+	margin: 2px;
+	overflow-y: scroll;
 }
 
 .x-container,
 .x-status_container
 {
 	line-height: 1.3em;
-	margin-bottom: 6px;
+	margin-bottom: 4px;
 }
 
 .x-container .x-time,
 .x-status_container .x-time
 {
 	display: inline;
+	font-size: 12px;
 }
 
 .x-container .x-sender

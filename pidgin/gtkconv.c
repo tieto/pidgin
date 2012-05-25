@@ -6412,7 +6412,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 	gtkconv->last_flags = flags;
 
-	smileyed = smiley_parse_markup(message, purple_account_get_protocol_id(account));
+	smileyed = smiley_parse_markup(displaying, purple_account_get_protocol_id(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = gtk_webview_quote_js_string(msg ? msg : "");
 	script = g_strdup_printf("%s(%s)", func, escape);
