@@ -34,7 +34,7 @@
 #include <errno.h>
 
 #include "libgadu.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 
 struct gg_http *gg_userlist_get(uin_t uin, const char *passwd, int async)
 {

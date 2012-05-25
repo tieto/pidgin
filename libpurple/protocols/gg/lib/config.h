@@ -1,6 +1,7 @@
 /* Local libgadu configuration. */
 
-#include "config.h"
+/* libpurple's config */
+#include <config.h>
 
 #ifndef __GG_LIBGADU_CONFIG_H
 #define __GG_LIBGADU_CONFIG_H

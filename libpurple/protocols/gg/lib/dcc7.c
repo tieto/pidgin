@@ -49,8 +49,8 @@
 #include "libgadu.h"
 #include "protocol.h"
 #include "resolver.h"
-#include "libgadu-internal.h"
-#include "libgadu-debug.h"
+#include "internal.h"
+#include "debug.h"
 
 #define gg_debug_dcc(dcc, level, fmt...) \
 	gg_debug_session(((dcc) != NULL) ? (dcc)->sess : NULL, level, fmt)

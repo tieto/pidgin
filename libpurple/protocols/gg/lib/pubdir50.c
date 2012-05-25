@@ -31,7 +31,7 @@
 #include <time.h>
 
 #include "libgadu.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 #include "encoding.h"
 
 /**

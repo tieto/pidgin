@@ -33,9 +33,9 @@
 #include "compat.h"
 #include "libgadu.h"
 #include "protocol.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 #include "encoding.h"
-#include "libgadu-debug.h"
+#include "debug.h"
 #include "session.h"
 
 #include <errno.h>

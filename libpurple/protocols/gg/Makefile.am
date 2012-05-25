@@ -17,9 +17,9 @@ EXTRA_DIST = \
 	lib/http.c \
 	lib/libgadu.h \
 	lib/libgadu.c \
-	lib/libgadu-config.h \
-	lib/libgadu-debug.h \
-	lib/libgadu-internal.h \
+	lib/config.h \
+	lib/debug.h \
+	lib/internal.h \
 	lib/message.c \
 	lib/message.h \
 	lib/obsolete.c \
@@ -49,8 +49,8 @@ INTGGSOURCES = \
 	lib/http.c \
 	lib/libgadu.h \
 	lib/libgadu.c \
-	lib/libgadu-config.h \
-	lib/libgadu-internal.h \
+	lib/config.h \
+	lib/internal.h \
 	lib/message.c \
 	lib/message.h \
 	lib/obsolete.c \
@@ -105,6 +105,7 @@ libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 endif
 
 AM_CPPFLAGS = \
+	-Wall -Wextra -Werror \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(INTGG_CFLAGS) \
