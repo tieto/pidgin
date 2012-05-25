@@ -49,8 +49,6 @@
 #  include "win32-resolver.h"
 #endif
 
-static PurplePlugin *my_protocol = NULL;
-
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
 static int ggp_to_gg_status(PurpleStatus *status, char **msg);
@@ -2975,6 +2973,9 @@ static void init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
+	purple_debug_info("gg", "init_plugin: [libgadu version: %s]\n",
+		gg_libgadu_version());
+
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
@@ -3001,8 +3002,6 @@ static void init_plugin(PurplePlugin *plugin)
 		"show_links_from_strangers", 1);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
-
-	my_protocol = plugin;
 
 	gg_debug_handler = purple_gg_debug_handler;
 	
