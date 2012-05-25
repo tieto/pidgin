@@ -3,7 +3,7 @@
  *
  * purple
  *
- * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
+ * Copyright (C) 2003, 2012 Ethan Blanton <elb@pidgin.im>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,13 +110,80 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	irc_blist_timeout(irc);
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
-    if (!irc->who_channel_timer)
-        irc->who_channel_timer = purple_timeout_add_seconds(300, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
 }
 
+/* This function is ugly, but it's really an error handler. */
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	char *clean;
+	int i;
+	const char *end, *cur, *numeric = NULL;
+	char *clean, *tmp, *convname;
+	PurpleConversation *convo;
+
+	for (cur = args[0], i = 0; i < 4; i++) {
+		end = strchr(cur, ' ');
+		if (end == NULL) {
+			goto undirected;
+		}
+		/* Check for 3-digit numeric in second position */
+		if (i == 1) {
+			if (end - cur != 3
+			    || !isdigit(cur[0]) || !isdigit(cur[1])
+			    || !isdigit(cur[2])) {
+				goto undirected;
+			}
+			/* Save the numeric for printing to the channel */
+			numeric = cur;
+		}
+		/* Don't advance cur if we're on the final iteration. */
+		if (i != 3) {
+			cur = end + 1;
+		}
+	}
+
+	/* At this point, cur is the beginning of the fourth position,
+	 * end is the following space, and there are remaining
+	 * arguments.  We'll check to see if this argument is a
+	 * currently active conversation (private message or channel,
+	 * either one), and print the numeric to that conversation if it
+	 * is. */
+
+	tmp = g_strndup(cur, end - cur);
+	convname = purple_utf8_salvage(tmp);
+	g_free(tmp);
+
+	/* Check for an existing conversation */
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+						      convname,
+						      irc->account);
+	g_free(convname);
+
+	if (convo == NULL) {
+		goto undirected;
+	}
+
+	/* end + 1 is the first argument past the target.  The initial
+	 * arguments we've skipped are routing info, numeric, recipient
+	 * (this account's nick, most likely), and target (this
+	 * channel).  If end + 1 is an ASCII :, skip it, because it's
+	 * meaningless in this context.  This won't catch all
+	 * :-arguments, but it'll catch the easy case. */
+	if (*++end == ':') {
+		end++;
+	}
+
+	/* We then print "numeric: remainder". */
+	clean = purple_utf8_salvage(end);
+	tmp = g_strdup_printf("%.3s: %s", numeric, clean);
+	g_free(clean);
+	purple_conversation_write(convo, "", tmp,
+				  PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG
+				  |PURPLE_MESSAGE_RAW|PURPLE_MESSAGE_NO_LINKIFY,
+				  time(NULL));
+	g_free(tmp);
+	return;
+
+  undirected:
 	/* This, too, should be escaped somehow (smarter) */
 	clean = purple_utf8_salvage(args[0]);
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", clean);
@@ -459,6 +526,10 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		
 		flags = purple_conv_chat_cb_get_flags(cb);
 
+		/* FIXME: I'm not sure this is really a good idea, now
+		 * that we no longer do periodic WHO.  It seems to me
+		 * like it's more likely to be confusing than not.
+		 * Comments? */
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
 			purple_conv_chat_user_set_flags(chat, purple_conv_chat_cb_get_name(cb), flags | PURPLE_CBFLAGS_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
