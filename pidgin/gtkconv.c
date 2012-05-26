@@ -3879,7 +3879,6 @@ update_send_to_selection(PidginWindow *win)
 	if (!(b = purple_find_buddy(account, purple_conversation_get_name(conv))))
 		return FALSE;
 
-#if 0 /* TODO */
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
@@ -3901,7 +3900,6 @@ update_send_to_selection(PidginWindow *win)
 			break;
 		}
 	}
-#endif
 
 	return FALSE;
 }
@@ -3994,7 +3992,6 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 }
 
-#if 0
 static gboolean
 compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 {
@@ -4008,12 +4005,10 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 		return FALSE;
 	return TRUE;
 }
-#endif
 
 static void
 generate_send_to_items(PidginWindow *win)
 {
-#if 0 /* TODO */
 	GtkWidget *menu;
 	GSList *group = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -4099,7 +4094,6 @@ generate_send_to_items(PidginWindow *win)
 	if (!group)
 		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
 	update_send_to_selection(win);
-#endif
 }
 
 static const char *
