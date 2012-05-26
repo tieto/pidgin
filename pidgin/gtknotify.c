@@ -534,11 +534,6 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	/* TODO: not sure if there is a way to do this in gtk+ 3, or
-	   if we want to... */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                    PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
@@ -1510,10 +1505,6 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                               PIDGIN_HIG_BOX_SPACE);
-	/* TODO: not sure if this is possible (or necessary) in gtk+ 3 */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                    PIDGIN_HIG_BORDER);
 

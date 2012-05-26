@@ -948,10 +948,6 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		                                GTK_RESPONSE_OK);
 		gtk_container_set_border_width(GTK_CONTAINER(invite_dialog), PIDGIN_HIG_BOX_SPACE);
 		gtk_window_set_resizable(GTK_WINDOW(invite_dialog), FALSE);
-		/* TODO: set no separator using GTK+ 3.0 */
-#if 0
-		gtk_dialog_set_has_separator(GTK_DIALOG(invite_dialog), FALSE);
-#endif
 
 		info->window = GTK_WIDGET(invite_dialog);
 
@@ -8910,12 +8906,6 @@ build_warn_close_dialog(PidginWindow *gtkwin)
 	gtk_container_set_border_width(GTK_CONTAINER(warn_close_dialog),
 	                               6);
 	gtk_window_set_resizable(GTK_WINDOW(warn_close_dialog), FALSE);
-
-	/* TODO: figure out how to set no separator in GTK+ 3.0 */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(warn_close_dialog),
-	                             FALSE);
-#endif
 
 	/* Setup the outside spacing. */
 	vbox = gtk_dialog_get_content_area(GTK_DIALOG(warn_close_dialog));

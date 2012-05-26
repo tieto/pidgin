@@ -362,10 +362,6 @@ pidgin_request_input(const char *title, const char *primary,
 	                               PIDGIN_HIG_BORDER / 2);
 	if (!multiline)
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	/* TODO: not sure how to do this with GTK+ 3 */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                    PIDGIN_HIG_BORDER);
@@ -534,10 +530,6 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	/* TODO: don't know if this is possible with GTK+ 3 */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                    PIDGIN_HIG_BORDER);
 
@@ -662,10 +654,6 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	/* TODO: this is probably not supported by GTK+ 3 */
-#if 0
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                    PIDGIN_HIG_BORDER);
 
