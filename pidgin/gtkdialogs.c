@@ -434,8 +434,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	AtkObject *obj;
 	char *filename, *tmp;
 
-	win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, role, TRUE);
-	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
+	win = pidgin_create_dialog(title, 0, role, TRUE);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, 0);
 	gtk_window_set_default_size(GTK_WINDOW(win), 450, 450);
 
 	/* Generate a logo with a version number */

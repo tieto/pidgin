@@ -536,7 +536,7 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	dialog->account = account;
 
 	/* Create the window. */
-	dialog->window = window = pidgin_create_dialog(_("Room List"), PIDGIN_HIG_BORDER, "room list", TRUE);
+	dialog->window = window = pidgin_create_dialog(_("Room List"), 0, "room list", TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

@@ -211,7 +211,6 @@ pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame) {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	parent = ret = gtk_vbox_new(FALSE, 16);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 	gtk_widget_show(ret);
 
 	for(pp = purple_plugin_pref_frame_get_prefs(frame);

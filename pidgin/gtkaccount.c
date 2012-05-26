@@ -2328,7 +2328,7 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
-	dialog->window = win = pidgin_create_dialog(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
+	dialog->window = win = pidgin_create_dialog(_("Accounts"), 0, "accounts", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

@@ -2981,7 +2981,7 @@ pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-	prefs = pidgin_create_dialog(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
+	prefs = pidgin_create_dialog(_("Preferences"), 0, "preferences", FALSE);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 

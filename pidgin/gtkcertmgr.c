@@ -613,7 +613,7 @@ pidgin_certmgr_show(void)
 
 	win = dlg->window =
 		pidgin_create_dialog(_("Certificate Manager"),/* Title */
-				     PIDGIN_HIG_BORDER, /*Window border*/
+				     0, /*Window border*/
 				     "certmgr",         /* Role */
 				     TRUE); /* Allow resizing */
 	g_signal_connect(G_OBJECT(win), "delete_event",

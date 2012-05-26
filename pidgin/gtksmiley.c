@@ -407,8 +407,6 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	if (smiley)
 		g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
-
 	gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 	g_signal_connect(window, "response", G_CALLBACK(do_add_select_cb), s);
 
@@ -874,7 +872,6 @@ void pidgin_smiley_manager_show(void)
 
 	gtk_window_set_default_size(GTK_WINDOW(win), 50, 400);
 	gtk_window_set_role(GTK_WINDOW(win), "custom_smiley_manager");
-	gtk_container_set_border_width(GTK_CONTAINER(win),PIDGIN_HIG_BORDER);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), GTK_RESPONSE_NO, FALSE);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(win),
 	                                  PIDGIN_RESPONSE_MODIFY, FALSE);
