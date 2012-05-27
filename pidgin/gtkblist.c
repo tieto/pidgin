@@ -6059,18 +6059,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->scrollbook = pidgin_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 
-	/* Create an vbox which holds the scrollbook which is actually used to
-	 * display connection errors.  The vbox needs to still exist for
-	 * backwards compatibility.
-	 */
-	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 0);
-
 	priv->error_scrollbook = PIDGIN_SCROLL_BOOK(pidgin_scroll_book_new());
-	gtk_box_pack_start(GTK_BOX(gtkblist->error_buttons),
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox),
 		GTK_WIDGET(priv->error_scrollbook), FALSE, FALSE, 0);
-
 
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();

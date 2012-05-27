@@ -116,7 +116,6 @@ struct _PidginBuddyList {
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
 
-	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 
