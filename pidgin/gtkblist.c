@@ -6083,7 +6083,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 	gtk_widget_set_name(gtkblist->statusbox, "pidgin_blist_statusbox");
-	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->statusbox), 3);
 	gtk_widget_show(gtkblist->statusbox);
 
 	/* set the Show Offline Buddies option. must be done
