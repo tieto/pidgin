@@ -5951,8 +5951,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE,
-		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC), NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -6947,9 +6945,6 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_return_if_fail(list->ui_data == gtkblist);
 
 	purple_signals_disconnect_by_handle(gtkblist);
-
-	if (gtkblist->headline_close)
-		g_object_unref(G_OBJECT(gtkblist->headline_close));
 
 	gtk_widget_destroy(gtkblist->window);
 
