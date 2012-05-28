@@ -8383,6 +8383,12 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	return TRUE;
 }
 
+PurpleTheme *
+pidgin_conversations_get_default_theme(void)
+{
+	return default_conv_theme;
+}
+
 void *
 pidgin_conversations_get_handle(void)
 {

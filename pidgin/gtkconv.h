@@ -172,6 +172,13 @@ G_BEGIN_DECLS
 PurpleConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
 
 /**
+ * Returns the default theme for GTK+ conversations.
+ *
+ * @return The default GTK+ conversation theme.
+ */
+PurpleTheme *pidgin_conversations_get_default_theme(void);
+
+/**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.
