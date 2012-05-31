@@ -1,7 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.5:
-	No changes
+	Pidgin:
+	* Fix a crash that may occur when trying to ignore a user who is
+	  not in the current chat room. (#15139)
 
 version 2.10.4 (05/06/2012):
 	General:

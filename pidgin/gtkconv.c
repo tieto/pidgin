@@ -6132,10 +6132,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *iter)
 {
-	GtkTreeRowReference *ref = cb->ui_data;
+	GtkTreeRowReference *ref;
 	GtkTreePath *path;
 	GtkTreeModel *model;
 
+	g_return_val_if_fail(cb != NULL, FALSE);
+
+	ref = cb->ui_data;
 	if (!ref)
 		return FALSE;
 
@@ -6315,6 +6318,9 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 		return;
 
 	cbuddy = purple_conv_chat_cb_find(chat, user);
+	if (!cbuddy)
+		return;
+
 	if (get_iter_from_chatbuddy(cbuddy, &iter)) {
 		GtkTreeRowReference *ref = cbuddy->ui_data;
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
