@@ -46,7 +46,8 @@ static void *xmpp_console_handle = NULL;
 
 #define EMPTY_HTML \
 "<html><head><style type='text/css'>" \
-	"body { white-space: pre-wrap; margin: 0; }" \
+	"body { word-wrap: break-word; margin: 0; }" \
+	"div.tab { padding-left: 1em; }" \
 	"div.info { color: #777777; }" \
 	"div.incoming { background-color: #ffcece; }" \
 	"div.outgoing { background-color: #dcecc4; }" \
@@ -58,19 +59,14 @@ static void *xmpp_console_handle = NULL;
 "</style></head></html>"
 
 static char *
-xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
+xmlnode_to_pretty_str(xmlnode *node, int *len)
 {
 	GString *text = g_string_new("");
 	xmlnode *c;
-	char *node_name, *esc, *esc2, *tab = NULL;
+	char *node_name, *esc, *esc2;
 	gboolean need_end = FALSE, pretty = TRUE;
 
 	g_return_val_if_fail(node != NULL, NULL);
-
-	if (pretty && depth) {
-		tab = g_strnfill(depth, '\t');
-		text = g_string_append(text, tab);
-	}
 
 	node_name = g_markup_escape_text(node->name, -1);
 	g_string_append_printf(text,
@@ -115,11 +111,16 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 		                       "<span class=bracket>&gt;</span>%s",
 		                       pretty ? "<br>" : "");
 
+		need_end = FALSE;
 		for (c = node->child; c; c = c->next)
 		{
 			if (c->type == XMLNODE_TYPE_TAG) {
 				int esc_len;
-				esc = xmlnode_to_pretty_str(c, &esc_len, depth+1);
+				esc = xmlnode_to_pretty_str(c, &esc_len);
+				if (!need_end) {
+					g_string_append(text, "<div class=tab>");
+					need_end = TRUE;
+				}
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
 			} else if (c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
@@ -129,8 +130,9 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 			}
 		}
 
-		if(tab && pretty)
-			text = g_string_append(text, tab);
+		if (need_end)
+			g_string_append(text, "</div>");
+
 		g_string_append_printf(text,
 		                       "<span class=bracket>&lt;</span>/"
 		                       "<span class=tag>%s</span>"
@@ -142,8 +144,6 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 	}
 
 	g_free(node_name);
-
-	g_free(tab);
 
 	if (len)
 		*len = text->len;
@@ -158,7 +158,7 @@ xmlnode_received_cb(PurpleConnection *gc, xmlnode **packet, gpointer null)
 
 	if (!console || console->gc != gc)
 		return;
-	str = xmlnode_to_pretty_str(*packet, NULL, 0);
+	str = xmlnode_to_pretty_str(*packet, NULL);
 	formatted = g_strdup_printf("<div class=incoming>%s</div>", str);
 	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
@@ -179,7 +179,7 @@ xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 	if (!node)
 		return;
 
-	str = xmlnode_to_pretty_str(node, NULL, 0);
+	str = xmlnode_to_pretty_str(node, NULL);
 	formatted = g_strdup_printf("<div class=outgoing>%s</div>", str);
 	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
@@ -750,8 +750,6 @@ console_destroy(GtkObject *window, gpointer nul)
 static void
 dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 {
-	PurpleAccount *account;
-
 	if (!console)
 		return;
 
