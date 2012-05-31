@@ -39,7 +39,7 @@
 #include "protocol.h"
 #include "encoding.h"
 #include "message.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 #include "deflate.h"
 
 #include <errno.h>
