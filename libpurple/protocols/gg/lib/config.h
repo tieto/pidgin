@@ -15,6 +15,9 @@
 /* Defined if this machine has gethostbyname_r(). */
 #undef GG_CONFIG_HAVE_GETHOSTBYNAME_R
 
+/* Define to 1 if you have the `_exit' function. */
+#define HAVE__EXIT 1
+
 /* Defined if libgadu was compiled and linked with fork support. */
 #undef GG_CONFIG_HAVE_FORK
 #ifndef _WIN32
@@ -22,7 +25,7 @@
 #endif
 
 /* Defined if libgadu was compiled and linked with pthread support. */
-/* We don't use pthreads due to stability issues. */
+/* We don't use pthreads - they may not be safe. */
 #undef GG_CONFIG_HAVE_PTHREAD
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
