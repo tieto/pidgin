@@ -654,16 +654,23 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 static void
 signing_on_cb(PurpleConnection *gc)
 {
+	PurpleAccount *account;
+
 	if (!console)
 		return;
 
-	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(purple_connection_get_account(gc)));
+	account = purple_connection_get_account(gc);
+	if (strcmp(purple_account_get_protocol_id(account), "prpl-jabber"))
+		return;
+
+	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(account));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
 	if (console->count == 1) {
 		console->gc = gc;
 		gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(console->dropdown), 0);
 	} else
 		gtk_widget_show_all(console->hbox);
 }
