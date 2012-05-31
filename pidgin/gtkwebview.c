@@ -551,12 +551,12 @@ void
 gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	char *escaped = gtk_webview_quote_js_string(html);
-	char *script = g_strdup_printf("document.write(%s)", escaped);
-	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), script);
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	webkit_dom_html_element_insert_adjacent_html(body, "beforeend", html, NULL);
 	priv->empty = FALSE;
-	g_free(script);
-	g_free(escaped);
 }
 
 void
