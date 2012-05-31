@@ -755,12 +755,7 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 	if (!console)
 		return;
 
-	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)),
-				    "prpl-jabber");
-	if (!account || !purple_account_get_connection(account))
-		return;
-
-	console->gc = purple_account_get_connection(account);
+	console->gc = g_list_nth_data(console->accounts, gtk_combo_box_get_active(GTK_COMBO_BOX(console->dropdown)));
 	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
 }
 
