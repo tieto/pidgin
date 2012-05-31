@@ -526,7 +526,7 @@ gtk_webview_safe_execute_script(GtkWebView *webview, const char *script)
 }
 
 void
-gtk_webview_load_html_string_with_imgstore(GtkWebView *webview, const char *html)
+gtk_webview_load_html_string(GtkWebView *webview, const char *html)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	char *html_imged;

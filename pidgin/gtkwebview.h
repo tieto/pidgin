@@ -120,7 +120,7 @@ void gtk_webview_append_html(GtkWebView *webview, const char *markup);
  * @param webview The GtkWebView object
  * @param html    The HTML content to load
  */
-void gtk_webview_load_html_string_with_imgstore(GtkWebView *webview, const char *html);
+void gtk_webview_load_html_string(GtkWebView *webview, const char *html);
 
 /**
  * Execute the JavaScript only after the webkit_webview_load_string

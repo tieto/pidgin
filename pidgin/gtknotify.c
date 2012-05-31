@@ -891,7 +891,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	/* Make sure URLs are clickable */
 	linked_text = purple_markup_linkify(text);
-	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(web_view), linked_text, "");
+	gtk_webview_load_html_string(GTK_WEBVIEW(web_view), linked_text);
 	g_free(linked_text);
 
 	g_object_set_data(G_OBJECT(window), "webview-widget", web_view);
@@ -1151,7 +1151,7 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	if (pinfo != NULL) {
 		GtkWidget *webview = g_object_get_data(G_OBJECT(pinfo->window), "webview-widget");
 		char *linked_text = purple_markup_linkify(info);
-		gtk_webview_load_html_string_with_imgstore(GTK_WEBVIEW(webview), linked_text);
+		gtk_webview_load_html_string(GTK_WEBVIEW(webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
 		ui_handle = pinfo->window;
