@@ -26,6 +26,7 @@
 #include "xmlnode.h"
 
 #include "gtkimhtml.h"
+#include "gtkwebview.h"
 #include "gtkutils.h"
 
 typedef struct {
@@ -33,7 +34,7 @@ typedef struct {
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *dropdown;
-	GtkWidget *imhtml;
+	GtkWidget *webview;
 	GtkWidget *entry;
 	GtkWidget *sw;
 	int count;
@@ -43,11 +44,18 @@ typedef struct {
 XmppConsole *console = NULL;
 static void *xmpp_console_handle = NULL;
 
-#define BRACKET_COLOR "#940f8c"
-#define TAG_COLOR "#8b1dab"
-#define ATTR_NAME_COLOR "#a02961"
-#define ATTR_VALUE_COLOR "#324aa4"
-#define XMLNS_COLOR "#2cb12f"
+#define EMPTY_HTML \
+"<html><head><style type='text/css'>" \
+	"body { white-space: pre-wrap; margin: 0; }" \
+	"div.info { color: #777777; }" \
+	"div.incoming { background-color: #ffcece; }" \
+	"div.outgoing { background-color: #dcecc4; }" \
+	"span.bracket { color: #940f8c; }" \
+	"span.tag { color: #8b1dab; font-weight: bold; }" \
+	"span.attr { color: #a02961; font-weight: bold; }" \
+	"span.value { color: #324aa4; }" \
+	"span.xmlns { color: #2cb12f; font-weight: bold;}" \
+"</style></head></html>"
 
 static char *
 xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
@@ -66,8 +74,8 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 
 	node_name = g_markup_escape_text(node->name, -1);
 	g_string_append_printf(text,
-	                       "<font color='" BRACKET_COLOR "'>&lt;</font>"
-	                       "<font color='" TAG_COLOR "'><b>%s</b></font>",
+	                       "<span class=bracket>&lt;</span>"
+	                       "<span class=tag>%s</span>",
 	                       node_name);
 
 	if (node->xmlns) {
@@ -78,8 +86,8 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 		{
 			char *xmlns = g_markup_escape_text(node->xmlns, -1);
 			g_string_append_printf(text,
-			                       " <font color='" ATTR_NAME_COLOR "'><b>xmlns</b></font>="
-			                       "'<font color='" XMLNS_COLOR "'><b>%s</b></font>'",
+			                       " <span class=attr>xmlns</span>="
+			                       "'<span class=xmlns>%s</span>'",
 			                       xmlns);
 			g_free(xmlns);
 		}
@@ -90,8 +98,8 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 			esc = g_markup_escape_text(c->name, -1);
 			esc2 = g_markup_escape_text(c->data, -1);
 			g_string_append_printf(text,
-			                       " <font color='" ATTR_NAME_COLOR "'><b>%s</b></font>="
-			                       "'<font color='" ATTR_VALUE_COLOR "'>%s</font>'",
+			                       " <span class=attr>%s</span>="
+			                       "'<span class=value>%s</span>'",
 			                       esc, esc2);
 			g_free(esc);
 			g_free(esc2);
@@ -104,7 +112,7 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 
 	if (need_end) {
 		g_string_append_printf(text,
-		                       "<font color='"BRACKET_COLOR"'>&gt;</font>%s",
+		                       "<span class=bracket>&gt;</span>%s",
 		                       pretty ? "<br>" : "");
 
 		for (c = node->child; c; c = c->next)
@@ -124,20 +132,20 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 		if(tab && pretty)
 			text = g_string_append(text, tab);
 		g_string_append_printf(text,
-		                       "<font color='" BRACKET_COLOR "'>&lt;</font>/"
-		                       "<font color='" TAG_COLOR "'><b>%s</b></font>"
-		                       "<font color='" BRACKET_COLOR "'>&gt;</font><br>",
+		                       "<span class=bracket>&lt;</span>/"
+		                       "<span class=tag>%s</span>"
+		                       "<span class=bracket>&gt;</span><br>",
 		                       node_name);
 	} else {
 		g_string_append_printf(text,
-		                       "/<font color='" BRACKET_COLOR "'>&gt;</font><br>");
+		                       "/<span class=bracket>&gt;</span><br>");
 	}
 
 	g_free(node_name);
 
 	g_free(tab);
 
-	if(len)
+	if (len)
 		*len = text->len;
 
 	return g_string_free(text, FALSE);
@@ -151,8 +159,8 @@ xmlnode_received_cb(PurpleConnection *gc, xmlnode **packet, gpointer null)
 	if (!console || console->gc != gc)
 		return;
 	str = xmlnode_to_pretty_str(*packet, NULL, 0);
-	formatted = g_strdup_printf("<body bgcolor='#ffcece'><pre>%s</pre></body>", str);
-	gtk_imhtml_append_text(GTK_IMHTML(console->imhtml), formatted, 0);
+	formatted = g_strdup_printf("<div class=incoming>%s</div>", str);
+	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
 	g_free(str);
 }
@@ -172,8 +180,8 @@ xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 		return;
 
 	str = xmlnode_to_pretty_str(node, NULL, 0);
-	formatted = g_strdup_printf("<body bgcolor='#dcecc4'><pre>%s</pre></body>", str);
-	gtk_imhtml_append_text(GTK_IMHTML(console->imhtml), formatted, 0);
+	formatted = g_strdup_printf("<div class=outgoing>%s</div>", str);
+	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
 	g_free(str);
 	xmlnode_free(node);
@@ -653,9 +661,10 @@ signing_on_cb(PurpleConnection *gc)
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
-	if (console->count == 1)
+	if (console->count == 1) {
 		console->gc = gc;
-	else
+		gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+	} else
 		gtk_widget_show_all(console->hbox);
 }
 
@@ -685,9 +694,11 @@ signed_off_cb(PurpleConnection *gc)
 	console->count--;
 
 	if (gc == console->gc) {
+		char *tmp = g_strdup_printf("<div class=info>%s</div>",
+		                            _("Logged out."));
+		gtk_webview_append_html(GTK_WEBVIEW(console->webview), tmp);
+		g_free(tmp);
 		console->gc = NULL;
-		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
-				       _("<font color='#777777'>Logged out.</font>"), 0);
 	}
 }
 
@@ -743,7 +754,7 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 		return;
 
 	console->gc = purple_account_get_connection(account);
-	gtk_imhtml_clear(GTK_IMHTML(console->imhtml));
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
 }
 
 static void
@@ -785,16 +796,20 @@ create_console(PurplePluginAction *action)
 				console->gc = gc;
 		}
 	}
-	gtk_combo_box_set_active(GTK_COMBO_BOX(console->dropdown),0);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(console->dropdown), 0);
 	gtk_box_pack_start(GTK_BOX(console->hbox), console->dropdown, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(console->dropdown), "changed", G_CALLBACK(dropdown_changed_cb), NULL);
 
-	console->imhtml = gtk_imhtml_new(NULL, NULL);
-	if (console->count == 0)
-		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
-				       _("<font color='#777777'>Not connected to XMPP</font>"), 0);
+	console->webview = gtk_webview_new();
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+	if (console->count == 0) {
+		char *tmp = g_strdup_printf("<div class=info>%s</div>",
+		                            _("Not connected to XMPP"));
+		gtk_webview_append_html(GTK_WEBVIEW(console->webview), tmp);
+		g_free(tmp);
+	}
 	gtk_box_pack_start(GTK_BOX(vbox), 
-		pidgin_make_scrollable(console->imhtml, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1),
+		pidgin_make_scrollable(console->webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1),
 		TRUE, TRUE, 0);
 
 	toolbar = gtk_toolbar_new();
