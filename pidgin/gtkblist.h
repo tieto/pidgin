@@ -82,18 +82,9 @@ struct _PidginBuddyList {
 
 	GtkCellRenderer *text_rend;
 
-	GtkItemFactory *ift;
+	GtkUIManager *ui;
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
-
-	/** Caches connection error messages; keys are #PurpleAccount and
-	 *  values are non-@c NULL <tt>const char *</tt>s containing localised
-	 *  error messages.  (If an account does not have an error, it will not
-	 *  appear in the table.)
-	 *  @deprecated in favour of purple_account_get_current_error(), which also
-	 *              gives you the #PurpleConnectionError value.
-	 */
-	GHashTable *connection_errors;
 
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
@@ -119,13 +110,11 @@ struct _PidginBuddyList {
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
-	GdkPixbuf *headline_close;      /**< @deprecated: Close image for closing the headline without triggering the callback */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
 
-	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 
@@ -135,6 +124,8 @@ struct _PidginBuddyList {
 #define PIDGIN_BLIST(list) ((PidginBuddyList *)purple_blist_get_ui_data())
 #define PIDGIN_IS_PIDGIN_BLIST(list) \
 	(purple_blist_get_ui_ops() == pidgin_blist_get_ui_ops())
+
+G_BEGIN_DECLS
 
 /**************************************************************************
  * @name GTK+ Buddy List API
@@ -259,8 +250,6 @@ void pidgin_blist_add_alert(GtkWidget *widget);
  * Sets the current theme for Pidgin to use
  *
  * @param theme	the new theme to use
- *
- * @since 2.6.0
  */
 void pidgin_blist_set_theme(PidginBlistTheme *theme);
 
@@ -268,8 +257,6 @@ void pidgin_blist_set_theme(PidginBlistTheme *theme);
  * Gets Pidgin's current buddy list theme
  *
  * @returns	the current theme
- *
- * @since 2.6.0
  */
 PidginBlistTheme *pidgin_blist_get_theme(void);
 
@@ -370,20 +357,6 @@ void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc,
 void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
- * Was used by the connection API to tell the blist if an account has a
- * connection error or no longer has a connection error, but the blist now does
- * this itself with the @ref account-error-changed signal.
- *
- * @param account The account that either has a connection error
- *        or no longer has a connection error.
- * @param message The connection error message, or NULL if this
- *        account is no longer in an error state.
- * @deprecated There was no good reason for code other than gtkconn to call
- *             this.
- */
-void pidgin_blist_update_account_error_state(PurpleAccount *account, const char *message);
-
-/**
  * Sets a headline notification
  *
  * This is currently used for mail notification, but could theoretically be used for anything.
@@ -405,8 +378,6 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
  * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
  * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
  * @return The markup for this buddy
- *
- * @since 2.1.0
  */
 gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gboolean aliased);
 
@@ -418,17 +389,14 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gbool
  *
  * @param node The buddy list node to show a tooltip for
  * @param widget The widget to draw the tooltip on
- *
- * @since 2.1.0
  */
 void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
 
 /**
  * Destroys the current (if any) Buddy List tooltip
- *
- * @since 2.1.0
  */
 void pidgin_blist_tooltip_destroy(void);
 
+G_END_DECLS
 
 #endif /* _PIDGINBLIST_H_ */

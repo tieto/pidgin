@@ -1,0 +1,66 @@
+body {
+	word-wrap: break-word;
+	word-break: break-word;
+	
+	font-size: 13px;
+	margin: 2px;
+	overflow-y: scroll;
+}
+
+.x-container,
+.x-status_container
+{
+	line-height: 1.3em;
+	margin-bottom: 4px;
+}
+
+.x-container .x-time,
+.x-status_container .x-time
+{
+	display: inline;
+	font-size: 12px;
+}
+
+.x-container .x-sender
+{
+	display: inline;
+	font-weight: bold;
+}
+
+.x-container .x-message,
+.x-status_container .x-message
+{
+	display: inline;
+}
+
+/* Colour-ify things */
+
+.x-container.incoming .x-time,
+.x-container.incoming .x-sender
+{
+	color: #cc0000;
+}
+
+.x-container.outgoing .x-time,
+.x-container.outgoing .x-sender
+{
+	color: #204a87;
+}
+
+.x-container.mention .x-time,
+.x-container.mention .x-sender
+{
+	color: #AF7F00;
+}
+
+.x-status_container
+{
+	color: #777777;
+}
+
+.x-status_container.error
+{
+	color: #ff0000;
+	font-weight: bold;
+}
+

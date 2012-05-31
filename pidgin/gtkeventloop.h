@@ -28,11 +28,15 @@
 
 #include "eventloop.h"
 
+G_BEGIN_DECLS
+
 /**
  * Returns the GTK+ event loop UI operations structure.
  *
  * @return The GTK+ event loop UI operations structure.
  */
 PurpleEventLoopUiOps *pidgin_eventloop_get_ui_ops(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINEVENTLOOP_H_ */

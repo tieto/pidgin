@@ -165,7 +165,6 @@ static PurpleConnectionUiOps ops =
 	NULL, /* connected */
 	NULL, /* disconnected */
 	NULL, /* notice */
-	NULL,
 	NULL, /* network_connected */
 	NULL, /* network_disconnected */
 	finch_connection_report_disconnect,

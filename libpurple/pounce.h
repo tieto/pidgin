@@ -59,34 +59,7 @@ typedef enum
 /** A pounce callback. */
 typedef void (*PurplePounceCb)(PurplePounce *, PurplePounceEvent, void *);
 
-/**
- * A buddy pounce structure.
- *
- * Buddy pounces are actions triggered by a buddy-related event. For
- * example, a sound can be played or an IM window opened when a buddy
- * signs on or returns from away. Such responses are handled in the
- * UI. The events themselves are done in the core.
- */
-struct _PurplePounce
-{
-	char *ui_type;                /**< The type of UI.            */
-
-	PurplePounceEvent events;       /**< The event(s) to pounce on. */
-	PurplePounceOption options;     /**< The pounce options         */
-	PurpleAccount *pouncer;         /**< The user who is pouncing.  */
-
-	char *pouncee;                /**< The buddy to pounce on.    */
-
-	GHashTable *actions;          /**< The registered actions.    */
-
-	gboolean save;                /**< Whether or not the pounce should
-	                                   be saved after activation. */
-	void *data;                   /**< Pounce-specific data.      */
-};
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Buddy Pounce API                                                */
@@ -126,8 +99,6 @@ void purple_pounce_destroy_all_by_account(PurpleAccount *account);
  * Destroys all buddy pounces for a buddy
  *
  * @param buddy The buddy whose pounces are to be removed
- *
- * @since 2.8.0
  */
 void purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy);
 
@@ -359,7 +330,6 @@ GList *purple_pounces_get_all(void);
  *
  * @return The list of buddy pounces. The list should be freed by
  *         the caller when it's no longer used.
- * @since  2.1.0
  */
 GList *purple_pounces_get_all_for_ui(const char *ui);
 
@@ -382,8 +352,6 @@ void purple_pounces_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_POUNCE_H_ */

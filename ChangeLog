@@ -1,5 +1,52 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 3.0.0 (??/??/????):
+	Finch:
+	* Support the conversation-extended signal for extending the
+	  conversation menu. (Howard Chu) (#14818)
+
+	AIM and ICQ:
+	* Make buddy list management code more efficient. (Oliver) (#4816)
+
+	Bonjour:
+	* Support file transfers up to ~9 EiB.
+
+	Gadu-Gadu:
+	* Possibility to require encryption. Also, using encryption when
+	  available is default option now. (Tomasz Wasilczyk)
+	* Show local time for incoming messages. (Tomasz Wasilczyk) (#4579)
+	* Fixed password change dialog and problems with connecting to accounts
+	  with non-ASCII passwords. (Tomasz Wasilczyk) (#14652)
+	* Option to show links from strangers. (Tomasz Wasilczyk) (#10591)
+	* Better handling of "invisible" and "chatty" statuses. (Tomasz
+	  Wasilczyk) (#13836)
+
+	MSN:
+	* Fix file transfer with older Mac MSN clients.
+	* Support file transfers up to ~9 EiB.
+	* Fix buddies not going offline.
+
+	MXit:
+	* Remove all reference to Hidden Number.
+	* Fix decoding of font-size changes in the markup of received messages.
+	* Ignore new invites to join a GroupChat if you're already joined, or
+	  still have a pending invite.
+	* The buddy's name was not centered vertically in the buddy-list if they
+	  did not have a status-message or mood set.
+
+	XMPP:
+	* Strip element prefixes from XHTML-IM messages as they're presented
+	  to the core (and UIs) as incoming messages (Thijs Alkemade).
+	  (#14529)
+	* Support file transfers up to ~9 EiB.
+	* Invalid user moods can no longer be sent to the server.
+
+	Plugins:
+	* The Voice/Video Settings plugin supports using the sndio GStreamer
+	  backends. (Brad Smith) (#14414)
+	* The Offline Message Emulation plugin now adds a note that the message
+	  was an offline message. (Flavius Anton) (#2497)
+
 version 2.10.5:
 	Pidgin:
 	* Fix a crash that may occur when trying to ignore a user who is

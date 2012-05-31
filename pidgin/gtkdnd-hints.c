@@ -62,19 +62,20 @@ dnd_hints_init_window(const gchar *fname)
 	GdkBitmap *bitmap;
 	GtkWidget *pix;
 	GtkWidget *win;
+	GdkColormap *colormap;
 
 	pixbuf = gdk_pixbuf_new_from_file(fname, NULL);
 	g_return_val_if_fail(pixbuf, NULL);
 
-	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, &bitmap, 128);
+	win = gtk_window_new(GTK_WINDOW_POPUP);
+	colormap = gtk_widget_get_colormap(win);
+	gdk_pixbuf_render_pixmap_and_mask_for_colormap(pixbuf, colormap,
+	                                               &pixmap, &bitmap, 128);
 	g_object_unref(G_OBJECT(pixbuf));
 
-	gtk_widget_push_colormap(gdk_rgb_get_colormap());
-	win = gtk_window_new(GTK_WINDOW_POPUP);
 	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
 	gtk_container_add(GTK_CONTAINER(win), pix);
 	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
-	gtk_widget_pop_colormap();
 
 	g_object_unref(G_OBJECT(pixmap));
 	g_object_unref(G_OBJECT(bitmap));

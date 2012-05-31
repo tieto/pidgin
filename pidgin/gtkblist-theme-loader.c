@@ -73,10 +73,10 @@ parse_color(xmlnode *node, const char *tag)
 }
 
 static PurpleTheme *
-pidgin_blist_loader_build(const gchar *dir)
+pidgin_blist_loader_build(const gchar *theme_dir)
 {
 	xmlnode *root_node = NULL, *sub_node, *sub_sub_node;
-	gchar *filename_full, *data = NULL;
+	gchar *dir, *filename_full, *data = NULL;
 	const gchar *temp, *name;
 	gboolean success = TRUE;
 	GdkColor *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *contact_color;
@@ -112,15 +112,18 @@ pidgin_blist_loader_build(const gchar *dir)
 	status            = NULL;
 
 	/* Find the theme file */
-	g_return_val_if_fail(dir != NULL, NULL);
+	g_return_val_if_fail(theme_dir != NULL, NULL);
+	dir = g_build_filename(theme_dir, "purple", "blist", NULL);
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
 		root_node = xmlnode_from_file(dir, "theme.xml", "buddy list themes", "blist-loader");
 
 	g_free(filename_full);
-	if (root_node == NULL)
+	if (root_node == NULL) {
+		g_free(dir);
 		return NULL;
+	}
 
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
@@ -227,6 +230,7 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	xmlnode_free(root_node);
 	g_free(data);
+	g_free(dir);
 
 	/* malformed xml file - also frees all partial data*/
 	if (!success) {

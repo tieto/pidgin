@@ -113,7 +113,7 @@ purple_xfer_get_type(xfer)
 	Purple::Xfer xfer
 
 gboolean 
-purple_xfer_is_canceled(xfer)
+purple_xfer_is_cancelled(xfer)
 	Purple::Xfer xfer
 
 gboolean 

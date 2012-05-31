@@ -26,6 +26,9 @@
 #ifndef _PURPLE_WHITEBOARD_H_
 #define _PURPLE_WHITEBOARD_H_
 
+/** @copydoc _PurpleWhiteboard */
+typedef struct _PurpleWhiteboard PurpleWhiteboard;
+
 /**
  * Whiteboard PRPL Operations
  */
@@ -33,22 +36,6 @@ typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
 
 #include "account.h"
 
-/**
- * A PurpleWhiteboard
- */
-typedef struct _PurpleWhiteboard
-{
-	int state;                       /**< State of whiteboard session */
-
-	PurpleAccount *account;            /**< Account associated with this session */
-	char *who;                       /**< Name of the remote user */
-
-	void *ui_data;                   /**< Graphical user-interface data */
-	void *proto_data;                /**< Protocol specific data */
-	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
-
-	GList *draw_list;                /**< List of drawing elements/deltas to send */
-} PurpleWhiteboard;
 
 /**
  * The PurpleWhiteboard UI Operations
@@ -92,9 +79,7 @@ struct _PurpleWhiteboardPrplOps
 	void (*_purple_reserved4)(void);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /******************************************************************************/
 /** @name PurpleWhiteboard API                                                  */
@@ -133,6 +118,41 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
  * @param wb The whiteboard.
  */
 void purple_whiteboard_destroy(PurpleWhiteboard *wb);
+
+/**
+ * Returns the whiteboard's account.
+ *
+ * @param wb		The whiteboard.
+ *
+ * @return The whiteboard's account.
+ */
+PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb);
+
+/**
+ * Return who you're drawing with.
+ *
+ * @param wb		The whiteboard
+ *
+ * @return Who you're drawing with.
+ */
+const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb);
+
+/**
+ * Set the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ * @param state		The state
+ */
+void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state);
+
+/**
+ * Return the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ *
+ * @return The state of the whiteboard.
+ */
+int purple_whiteboard_get_state(const PurpleWhiteboard *wb);
 
 /**
  * Starts a whiteboard
@@ -253,10 +273,61 @@ gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int 
  */
 void purple_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color);
 
+/**
+ * Return the drawing list.
+ *
+ * @param wb			The whiteboard.
+ *
+ * @return The drawing list
+ */
+GList *purple_whiteboard_get_draw_list(const PurpleWhiteboard *wb);
+
+/**
+ * Set the drawing list.
+ *
+ * @param wb			The whiteboard
+ * @param draw_list		The drawing list.
+ */
+void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list);
+
+/**
+ * Sets the protocol data for a whiteboard.
+ *
+ * @param wb			The whiteboard.
+ * @param proto_data	The protocol data to set for the whiteboard.
+ */
+void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data);
+
+/**
+ * Gets the protocol data for a whiteboard.
+ *
+ * @param wb			The whiteboard.
+ *
+ * @return The protocol data for the whiteboard.
+ */
+gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb);
+
+/**
+ * Set the UI data associated with this whiteboard.
+ *
+ * @param wb			The whiteboard.
+ * @param ui_data		A pointer to associate with this whiteboard.
+ */
+void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this whiteboard.
+ *
+ * @param wb			The whiteboard..
+ *
+ * @return The UI data associated with this whiteboard.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb);
+
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* _PURPLE_WHITEBOARD_H_ */

@@ -212,7 +212,7 @@ peer_connection_destroy_cb(gpointer data)
 	if (conn->xfer != NULL)
 	{
 		PurpleXferStatusType status;
-		conn->xfer->data = NULL;
+		purple_xfer_set_protocol_data(conn->xfer, NULL);
 		status = purple_xfer_get_status(conn->xfer);
 		if ((status != PURPLE_XFER_STATUS_DONE) &&
 			(status != PURPLE_XFER_STATUS_CANCEL_LOCAL) &&
@@ -603,15 +603,11 @@ void
 peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
-	OscarData *od;
-	PurpleConnection *gc;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
 	int flags;
 
 	conn = data;
-	od = conn->od;
-	gc = od->gc;
 
 	purple_debug_info("oscar", "Accepting connection on listener socket.\n");
 
@@ -851,7 +847,7 @@ peer_connection_trynext(PeerConnection *conn)
 		 */
 		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
 
-		conn->listen_data = purple_network_listen_range(5190, 5290, SOCK_STREAM,
+		conn->listen_data = purple_network_listen_range(5190, 5290, AF_UNSPEC, SOCK_STREAM, TRUE,
 				peer_connection_establish_listener_cb, conn);
 		if (conn->listen_data != NULL)
 		{
@@ -1081,7 +1077,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, bn);
 		if (conn->xfer)
 		{
-			conn->xfer->data = conn;
+			purple_xfer_set_protocol_data(conn->xfer, conn);
 			purple_xfer_ref(conn->xfer);
 			purple_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
 

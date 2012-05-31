@@ -391,14 +391,9 @@ purple_network_finish_pmp_map_cb(gpointer data)
 	return FALSE;
 }
 
-static gboolean listen_map_external = TRUE;
-void purple_network_listen_map_external(gboolean map_external)
-{
-	listen_map_external = map_external;
-}
-
 static PurpleNetworkListenData *
-purple_network_do_listen(unsigned short port, int socket_family, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_do_listen(unsigned short port, int socket_family, int socket_type, gboolean map_external,
+                             PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
 	int flags;
@@ -503,7 +498,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	listen_data->cb_data = cb_data;
 	listen_data->socket_type = socket_type;
 
-	if (!purple_socket_speaks_ipv4(listenfd) || !listen_map_external ||
+	if (!purple_socket_speaks_ipv4(listenfd) || !map_external ||
 			!purple_prefs_get_bool("/purple/network/map_ports"))
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
@@ -531,27 +526,19 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 }
 
 PurpleNetworkListenData *
-purple_network_listen_family(unsigned short port, int socket_family,
-                             int socket_type, PurpleNetworkListenCallback cb,
+purple_network_listen(unsigned short port, int socket_family, int socket_type,
+                             gboolean map_external, PurpleNetworkListenCallback cb,
                              gpointer cb_data)
 {
 	g_return_val_if_fail(port != 0, NULL);
 
-	return purple_network_do_listen(port, socket_family, socket_type,
+	return purple_network_do_listen(port, socket_family, socket_type, map_external,
 	                                cb, cb_data);
 }
 
 PurpleNetworkListenData *
-purple_network_listen(unsigned short port, int socket_type,
-		PurpleNetworkListenCallback cb, gpointer cb_data)
-{
-	return purple_network_listen_family(port, AF_UNSPEC, socket_type,
-	                                    cb, cb_data);
-}
-
-PurpleNetworkListenData *
-purple_network_listen_range_family(unsigned short start, unsigned short end,
-                                   int socket_family, int socket_type,
+purple_network_listen_range(unsigned short start, unsigned short end,
+                                   int socket_family, int socket_type, gboolean map_external,
                                    PurpleNetworkListenCallback cb,
                                    gpointer cb_data)
 {
@@ -566,21 +553,12 @@ purple_network_listen_range_family(unsigned short start, unsigned short end,
 	}
 
 	for (; start <= end; start++) {
-		ret = purple_network_do_listen(start, AF_UNSPEC, socket_type, cb, cb_data);
+		ret = purple_network_do_listen(start, AF_UNSPEC, socket_type, map_external, cb, cb_data);
 		if (ret != NULL)
 			break;
 	}
 
 	return ret;
-}
-
-PurpleNetworkListenData *
-purple_network_listen_range(unsigned short start, unsigned short end,
-                            int socket_type, PurpleNetworkListenCallback cb,
-                            gpointer cb_data)
-{
-	return purple_network_listen_range_family(start, end, AF_UNSPEC,
-	                                          socket_type, cb, cb_data);
 }
 
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
@@ -1003,7 +981,7 @@ purple_network_set_stun_server(const gchar *stun_server)
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a_account(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
+			purple_dnsquery_a(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
 				&stun_ip);
 		} else {
 			purple_debug_info("network",
@@ -1021,7 +999,7 @@ purple_network_set_turn_server(const gchar *turn_server)
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for TURN server\n");
-			purple_dnsquery_a_account(NULL, turn_server,
+			purple_dnsquery_a(NULL, turn_server,
 				purple_prefs_get_int("/purple/network/turn_port"),
 				purple_network_ip_lookup_cb, &turn_ip);
 		} else {

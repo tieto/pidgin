@@ -51,7 +51,6 @@ typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 struct _PurpleSoundTheme
 {
 	PurpleTheme parent;
-	gpointer priv;
 };
 
 struct _PurpleSoundThemeClass

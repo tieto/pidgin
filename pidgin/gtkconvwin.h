@@ -48,27 +48,26 @@ struct _PidginWindow
 	{
 		GtkWidget *menubar;
 
-		GtkWidget *view_log;
+		GtkAction *view_log;
 
-		GtkWidget *send_file;
-		GtkWidget *add_pounce;
-		GtkWidget *get_info;
-		GtkWidget *invite;
+		GtkAction *send_file;
+		GtkAction *get_attention;
+		GtkAction *add_pounce;
+		GtkAction *get_info;
+		GtkAction *invite;
 
-		GtkWidget *alias;
-		GtkWidget *block;
-		GtkWidget *unblock;
-		GtkWidget *add;
-		GtkWidget *remove;
+		GtkAction *alias;
+		GtkAction *block;
+		GtkAction *unblock;
+		GtkAction *add;
+		GtkAction *remove;
 
-		GtkWidget *insert_link;
-		GtkWidget *insert_image;
+		GtkAction *insert_link;
+		GtkAction *insert_image;
 
-		GtkWidget *logging;
-		GtkWidget *sounds;
-		GtkWidget *show_formatting_toolbar;
-		GtkWidget *show_timestamps;
-		GtkWidget *show_icon;
+		GtkAction *logging;
+		GtkAction *sounds;
+		GtkAction *show_formatting_toolbar;
 
 		GtkWidget *send_to;
 
@@ -76,7 +75,7 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
-		GtkItemFactory *item_factory;
+		GtkUIManager *ui;
 
 	} menu;
 
@@ -98,12 +97,14 @@ struct _PidginWindow
 	gint drag_leave_signal;
 
 	/* Media menu options. */
-	GtkWidget *audio_call;
-	GtkWidget *video_call;
-	GtkWidget *audio_video_call;
+	GtkAction *audio_call;
+	GtkAction *video_call;
+	GtkAction *audio_video_call;
 };
 
 /*@}*/
+
+G_BEGIN_DECLS
 
 /**************************************************************************
  * @name GTK+ Conversation Window API
@@ -150,5 +151,7 @@ PidginConvPlacementFunc pidgin_conv_placement_get_current_func(void);
 void pidgin_conv_placement_place(PidginConversation *gtkconv);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif /* _PIDGIN_CONVERSATION_WINDOW_H_ */

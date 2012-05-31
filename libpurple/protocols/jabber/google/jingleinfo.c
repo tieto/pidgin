@@ -117,7 +117,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 					purple_dnsquery_destroy(js->stun_query);
 
 				account = purple_connection_get_account(js->gc);
-				js->stun_query = purple_dnsquery_a_account(account, host, port,
+				js->stun_query = purple_dnsquery_a(account, host, port,
 					jabber_google_stun_lookup_cb, js);
 			}
 		}

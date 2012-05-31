@@ -115,9 +115,25 @@ static PurpleMood moods[] = {
 	{"undefined", N_("Undefined"), NULL},
 	{"weak", N_("Weak"), NULL},
 	{"worried", N_("Worried"), NULL},
-	/* Mark the last record. */
+	/* Mar last record. */
 	{NULL, NULL, NULL}
 };
+
+static const PurpleMood*
+find_mood_by_name(const gchar *name)
+{
+	int i;
+
+	g_return_val_if_fail(name && *name, NULL);
+
+	for (i = 0; moods[i].mood != NULL; ++i) {
+		if (g_str_equal(name, moods[i].mood)) {
+			return &moods[i];
+		}
+	}
+
+	return NULL;
+}
 
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
@@ -139,15 +155,13 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 				if (!moodtext) /* only pick the first one */
 					moodtext = xmlnode_get_data(moodinfo);
 			} else {
-				int i;
-				for (i = 0; moods[i].mood; ++i) {
-					/* verify that the mood is known (valid) */
-					if (!strcmp(moodinfo->name, moods[i].mood)) {
-						newmood = moods[i].mood;
-						break;
-					}
-				}
+				const PurpleMood *target_mood;
+
+				/* verify that the mood is known (valid) */
+				target_mood = find_mood_by_name(moodinfo->name);
+				newmood = target_mood ? target_mood->mood : NULL;
 			}
+
 			if (newmood != NULL && moodtext != NULL)
 			   break;
 		}
@@ -155,12 +169,12 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		   break;
 	}
 	if (newmood != NULL) {
-		purple_prpl_got_user_status(js->gc->account, from, "mood",
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), from, "mood",
 				PURPLE_MOOD_NAME, newmood,
 				PURPLE_MOOD_COMMENT, moodtext,
 				NULL);
 	} else {
-		purple_prpl_got_user_status_deactive(js->gc->account, from, "mood");
+		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), from, "mood");
 	}
 	g_free(moodtext);
 }
@@ -170,26 +184,41 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
-void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
+gboolean
+jabber_mood_set(JabberStream *js, const char *mood, const char *text)
+{
+	const PurpleMood *target_mood = NULL;
 	xmlnode *publish, *moodnode;
+
+	if (mood && *mood) {
+		target_mood = find_mood_by_name(mood);
+		/* Mood specified, but is invalid --
+		 * fail so that the command can handle this.
+		 */
+		if (!target_mood)
+			return FALSE;
+	}
 
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
 	moodnode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "mood");
 	xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
-	if (mood && *mood) {
-		/* if mood is NULL, set an empty mood node, meaning: unset mood */
-	    xmlnode_new_child(moodnode, mood);
-	}
 
-	if (text && *text) {
-		xmlnode *textnode = xmlnode_new_child(moodnode, "text");
-		xmlnode_insert_data(textnode, text, -1);
+	if (target_mood) {
+		/* If target_mood is not NULL, then
+		 * target_mood->mood == mood, and is a valid element name.
+		 */
+	    xmlnode_new_child(moodnode, mood);
+
+		/* Only set text when setting a mood */
+		if (text && *text) {
+			xmlnode *textnode = xmlnode_new_child(moodnode, "text");
+			xmlnode_insert_data(textnode, text, -1);
+		}
 	}
 
 	jabber_pep_publish(js, publish);
-	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
-	   (yay for well-defined memory management rules) */
+	return TRUE;
 }
 
 PurpleMood *jabber_get_moods(PurpleAccount *account)

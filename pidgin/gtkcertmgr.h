@@ -43,6 +43,8 @@ struct _PidginCertificateManager {
 	gchar *label;
 };
 
+G_BEGIN_DECLS
+
 /**************************************************************************/
 /** @name Certificate Manager API                                         */
 /**************************************************************************/
@@ -58,5 +60,7 @@ void pidgin_certmgr_show(void);
 void pidgin_certmgr_hide(void);
 
 /*@}*/
+
+G_END_DECLS
 
 #endif /* _PIDGINCERTMGR_H_ */

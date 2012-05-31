@@ -49,7 +49,6 @@ typedef struct _PurpleThemeClass   PurpleThemeClass;
 struct _PurpleTheme
 {
 	GObject parent;
-	gpointer priv;
 };
 
 struct _PurpleThemeClass

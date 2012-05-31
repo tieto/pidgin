@@ -30,9 +30,7 @@
 #include "conversation.h"
 #include "prpl.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Send a typing message to a given user over a given connection.
@@ -60,32 +58,6 @@ int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageF
  * @return The attention command numbered 'code' from the prpl's attention_types, or NULL.
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
-
-/** Send an attention request message.
- *
- * @deprecated Use purple_prpl_send_attention() instead.
- *
- * @param gc The connection to send the message on.
- * @param who Whose attention to request.
- * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send. 0 if prpl only defines one
- * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
- *
- * Note that you can't send arbitrary PurpleAttentionType's, because there is
- * only a fixed set of attention commands.
- */
-void serv_send_attention(PurpleConnection *gc, const char *who, guint type_code);
-
-/** Process an incoming attention message.
- *
- * @deprecated Use purple_prpl_got_attention() instead.
- *
- * @param gc The connection that received the attention message.
- * @param who Who requested your attention.
- * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send.
- */
-void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
 void serv_get_info(PurpleConnection *, const char *);
 void serv_set_info(PurpleConnection *, const char *);
@@ -211,8 +183,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_SERVER_H_ */
+

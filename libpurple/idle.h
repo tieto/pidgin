@@ -41,9 +41,7 @@ typedef struct
 	void (*_purple_reserved4)(void);
 } PurpleIdleUiOps;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Idle API                                                        */
@@ -97,8 +95,6 @@ void purple_idle_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_IDLE_H_ */

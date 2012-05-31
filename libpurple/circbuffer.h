@@ -26,10 +26,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct _PurpleCircBuffer {
 
 	/** A pointer to the starting address of our chunk of memory. */
@@ -54,6 +50,8 @@ typedef struct _PurpleCircBuffer {
 	gchar *outptr;
 
 } PurpleCircBuffer;
+
+G_BEGIN_DECLS
 
 /**
  * Creates a new circular buffer.  This will not allocate any memory for the
@@ -111,8 +109,6 @@ gsize purple_circ_buffer_get_max_read(const PurpleCircBuffer *buf);
  */
 gboolean purple_circ_buffer_mark_read(PurpleCircBuffer *buf, gsize len);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _CIRCBUFFER_H */

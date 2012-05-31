@@ -297,6 +297,10 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
 		if (rc < 0) {
+			if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK) {
+				/* Try again */
+				continue;
+			}
 			fprintf(stderr, "dns[%d]: Error: Could not read dns_params: "
 					"%s\n", getpid(), strerror(errno));
 			break;
@@ -910,7 +914,7 @@ initiate_resolving(gpointer data)
 }
 
 PurpleDnsQueryData *
-purple_dnsquery_a_account(PurpleAccount *account, const char *hostname, int port,
+purple_dnsquery_a(PurpleAccount *account, const char *hostname, int port,
 				PurpleDnsQueryConnectFunction callback, gpointer data)
 {
 	PurpleDnsQueryData *query_data;
@@ -938,13 +942,6 @@ purple_dnsquery_a_account(PurpleAccount *account, const char *hostname, int port
 	query_data->timeout = purple_timeout_add(0, initiate_resolving, query_data);
 
 	return query_data;
-}
-
-PurpleDnsQueryData *
-purple_dnsquery_a(const char *hostname, int port,
-				PurpleDnsQueryConnectFunction callback, gpointer data)
-{
-	return purple_dnsquery_a_account(NULL, hostname, port, callback, data);
 }
 
 void

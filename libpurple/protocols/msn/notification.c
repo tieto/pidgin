@@ -1203,7 +1203,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	if (id && strcmp(id, "1")) {
 		PurpleConversation *conv
 			= purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-			                                        who, gc->account);
+			                                        who, purple_connection_get_account(gc));
 		if (conv != NULL) {
 			const char *error;
 			if (!strcmp(id, "407"))
@@ -1402,7 +1402,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 
 	rru = cmd->params[1];
 	url = cmd->params[2];
@@ -2041,7 +2041,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -2092,7 +2092,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *mdata, *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -2164,7 +2164,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -2249,7 +2249,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account), NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

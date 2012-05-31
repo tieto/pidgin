@@ -114,6 +114,8 @@ extern "C" {
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
+#define OSCAR_CONNECT_STEPS 6
+
 /*
  * Client info.  Filled in by the client and passed in to
  * aim_send_login().  The information ends up getting passed to OSCAR
@@ -308,9 +310,14 @@ struct _IcbmCookie
 
 #include "peer.h"
 
-/*
- * AIM Session: The main client-data interface.
- *
+struct aim_ssi_itemlist {
+	struct aim_ssi_item *data;
+	GHashTable *idx_gid_bid;
+	GHashTable *idx_all_named_items;
+};
+
+/**
+ * The main client-data interface.
  */
 struct _OscarData
 {
@@ -387,8 +394,8 @@ struct _OscarData
 	struct {
 		gboolean received_data;
 		guint16 numitems;
-		struct aim_ssi_item *official;
-		struct aim_ssi_item *local;
+		struct aim_ssi_itemlist official;
+		struct aim_ssi_itemlist local;
 		struct aim_ssi_tmp *pending;
 		time_t timestamp;
 		gboolean waiting_for_ack;
@@ -916,15 +923,16 @@ struct aim_ssi_tmp
 /* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, const char *bn, guint8 reply, const char *msg);
 
 /* Client functions for retrieving SSI data */
-struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid);
-struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *bn, guint16 type);
-struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *bn);
-char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *bn);
-int aim_ssi_getpermdeny(struct aim_ssi_item *list);
-guint32 aim_ssi_getpresence(struct aim_ssi_item *list);
-char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *bn);
-char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *bn);
-gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *bn);
+struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_itemlist *list, guint16 gid, guint16 bid);
+struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_itemlist *list, const char *gn, const char *bn, guint16 type);
+struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_itemlist *list, const char *bn);
+char *aim_ssi_itemlist_findparentname(struct aim_ssi_itemlist *list, const char *bn);
+int aim_ssi_getpermdeny(struct aim_ssi_itemlist *list);
+guint32 aim_ssi_getpresence(struct aim_ssi_itemlist *list);
+char *aim_ssi_getalias(struct aim_ssi_itemlist *list, const char *gn, const char *bn);
+char *aim_ssi_getalias_from_item(struct aim_ssi_item *item);
+char *aim_ssi_getcomment(struct aim_ssi_itemlist *list, const char *gn, const char *bn);
+gboolean aim_ssi_waitingforauth(struct aim_ssi_itemlist *list, const char *gn, const char *bn);
 
 /* Client functions for changing SSI data */
 int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *tlvlist, const char *alias, const char *comment, const char *smsnum, gboolean needauth);
@@ -934,7 +942,6 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
 int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn);
-int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
 int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);

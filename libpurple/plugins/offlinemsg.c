@@ -80,6 +80,7 @@ record_pounce(OfflineMsg *offline)
 	PurplePounceEvent event;
 	PurplePounceOption option;
 	PurpleConversation *conv;
+	char *temp;
 
 	event = PURPLE_POUNCE_SIGNON;
 	option = PURPLE_POUNCE_OPTION_NONE;
@@ -88,7 +89,12 @@ record_pounce(OfflineMsg *offline)
 					event, option);
 
 	purple_pounce_action_set_enabled(pounce, "send-message", TRUE);
-	purple_pounce_action_set_attribute(pounce, "send-message", "message", offline->message);
+
+	temp = g_strdup_printf("(%s) %s", _("Offline message"),
+			offline->message);
+	purple_pounce_action_set_attribute(pounce, "send-message", "message",
+			temp);
+	g_free(temp);
 
 	conv = offline->conv;
 	if (!purple_conversation_get_data(conv, "plugin_pack:offlinemsg"))

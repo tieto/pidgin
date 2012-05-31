@@ -52,6 +52,8 @@ typedef enum {
 
 } DndHintPosition;
 
+G_BEGIN_DECLS
+
 /**
  * Shows a drag-and-drop hint at the specified location.
  *
@@ -83,5 +85,7 @@ void dnd_hints_hide_all(void);
  */
 void dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 							 DndHintPosition horiz, DndHintPosition vert);
+
+G_END_DECLS
 
 #endif /* _PIDGIN_DND_HINTS_H_ */

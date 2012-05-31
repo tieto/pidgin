@@ -29,7 +29,7 @@
 /**
  * Privacy data types.
  */
-typedef enum _PurplePrivacyType
+typedef enum
 {
 	PURPLE_PRIVACY_ALLOW_ALL = 1,
 	PURPLE_PRIVACY_DENY_ALL,
@@ -39,10 +39,6 @@ typedef enum _PurplePrivacyType
 } PurplePrivacyType;
 
 #include "account.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * Privacy core/UI operations.
@@ -59,6 +55,8 @@ typedef struct
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 } PurplePrivacyUiOps;
+
+G_BEGIN_DECLS
 
 /**
  * Adds a user to the account's permit list.
@@ -187,8 +185,6 @@ PurplePrivacyUiOps *purple_privacy_get_ui_ops(void);
  */
 void purple_privacy_init(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_PRIVACY_H_ */

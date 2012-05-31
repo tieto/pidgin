@@ -726,7 +726,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				char *name, *value;
 				name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
 				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
-				if (!strcmp(name, "MSN.IM.MPOP")) {
+				if (name && g_str_equal(name, "MSN.IM.MPOP")) {
 					if (!value || atoi(value) != 0)
 						session->enable_mpop = TRUE;
 					else
@@ -740,6 +740,20 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		}
 
 		passportName = xmlnode_get_child(contactInfo, "passportName");
+		if (passportName != NULL) {
+			xmlnode *messenger_user;
+			/* ignore non-messenger contacts */
+			if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
+				char *is_messenger_user = xmlnode_get_data(messenger_user);
+
+				if (is_messenger_user && !strcmp(is_messenger_user, "false")) {
+					passportName = NULL;
+				}
+
+				g_free(is_messenger_user);
+			}
+		}
+
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
 			xmlnode *messengerEnabledNode;
@@ -773,19 +787,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				}
 			}
 		} else {
-			xmlnode *messenger_user;
-			/* ignore non-messenger contacts */
-			if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
-				char *is_messenger_user = xmlnode_get_data(messenger_user);
-
-				if (is_messenger_user && !strcmp(is_messenger_user, "false")) {
-					g_free(is_messenger_user);
-					continue;
-				}
-
-				g_free(is_messenger_user);
-			}
-
 			passport = xmlnode_get_data(passportName);
 		}
 
@@ -802,9 +803,12 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			Name = g_strdup(passport);
 
 		for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
-				annotation; annotation = xmlnode_get_next_twin(annotation)) {
+		     annotation;
+		     annotation = xmlnode_get_next_twin(annotation)) {
 			char *name;
 			name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+			if (!name)
+				continue;
 			if (!strcmp(name, "AB.NickName"))
 				alias = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
 			else if (!strcmp(name, "MSN.IM.HasSharedFolder"))
@@ -989,7 +993,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	purple_debug_misc("msn", "Got the Address Book!\n");
 
 	if (msn_parse_addressbook(session, resp->xml)) {
-		msn_send_privacy(session->account->gc);
+		msn_send_privacy(purple_account_get_connection(session->account));
 		msn_notification_dump_contact(session);
 	} else {
 		/* This is making us loop infinitely when we fail to parse the
@@ -1272,7 +1276,7 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 		body = g_markup_escape_text(user->invite_message, -1);
 
 		/* Ignore the cast, we treat it as const anyway. */
-		tmp = (char *)purple_connection_get_display_name(session->account->gc);
+		tmp = (char *)purple_connection_get_display_name(purple_account_get_connection(session->account));
 		tmp = tmp ? g_markup_escape_text(tmp, -1) : g_strdup("");
 
 		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
