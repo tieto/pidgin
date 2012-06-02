@@ -1066,12 +1066,10 @@ menu_join_chat_cb(GtkAction *action, gpointer data)
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
-	/* TODO WEBKIT: I don't know how to support this using webkit yet. */
-#if 0
 	PurpleConversation *conv = (PurpleConversation *)user_data;
+	GtkWebView *webview;
 	FILE *fp;
 	const char *name;
-	char **lines;
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
@@ -1079,22 +1077,27 @@ savelog_writefile_cb(void *user_data, const char *filename)
 		return;
 	}
 
+	webview = GTK_WEBVIEW(PIDGIN_CONVERSATION(conv)->webview);
 	name = purple_conversation_get_name(conv);
-	fprintf(fp, "<html>\n<head>\n");
-	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
-	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
-	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
+	fprintf(fp, "<html>\n");
 
-	lines = gtk_imhtml_get_markup_lines(
-		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
-	text = g_strjoinv("<br>\n", lines);
+	fprintf(fp, "<head>\n");
+	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+	fprintf(fp, "<title>%s</title>\n", name);
+	text = gtk_webview_get_head_html(webview);
 	fprintf(fp, "%s", text);
 	g_free(text);
-	g_strfreev(lines);
+	fprintf(fp, "</head>\n");
 
-	fprintf(fp, "\n</body>\n</html>\n");
+	fprintf(fp, "<body>\n");
+	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
+	text = gtk_webview_get_body_html(webview);
+	fprintf(fp, "%s", text);
+	g_free(text);
+	fprintf(fp, "\n</body>\n");
+
+	fprintf(fp, "</html>\n");
 	fclose(fp);
-#endif /* if 0 */
 }
 
 /*
