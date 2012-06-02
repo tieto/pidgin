@@ -110,13 +110,11 @@ struct _PidginBuddyList {
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
-	GdkPixbuf *headline_close;      /**< @deprecated: Close image for closing the headline without triggering the callback */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
 
-	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 

@@ -1108,7 +1108,10 @@ prefs_set_conv_variant_cb(GtkComboBox *combo_box, gpointer user_data)
 
 	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(prefs_conv_themes_combo_box), &iter)) {
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
-		theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		if (name && *name)
+			theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		else
+			theme = PIDGIN_CONV_THEME(pidgin_conversations_get_default_theme());
 		g_free(name);
 
 		if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
@@ -1127,6 +1130,10 @@ prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 	if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
 		gchar *name = NULL;
+		PidginConvTheme *theme;
+		const char *current_variant;
+		const GList *variants;
+		gboolean unset = TRUE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
 
@@ -1138,29 +1145,26 @@ prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		/* Update list of variants */
 		gtk_list_store_clear(prefs_conv_variants);
 
-		if (name && *name) {
-			PidginConvTheme *theme;
-			const char *current_variant;
-			const GList *variants;
-			gboolean unset = TRUE;
-
+		if (name && *name)
 			theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
-			current_variant = pidgin_conversation_theme_get_variant(theme);
+		else
+			theme = PIDGIN_CONV_THEME(pidgin_conversations_get_default_theme());
 
-			variants = pidgin_conversation_theme_get_variants(theme);
-			for (; variants && current_variant; variants = g_list_next(variants)) {
-				gtk_list_store_append(prefs_conv_variants, &iter);
-				gtk_list_store_set(prefs_conv_variants, &iter, 0, variants->data, -1);
+		current_variant = pidgin_conversation_theme_get_variant(theme);
+
+		variants = pidgin_conversation_theme_get_variants(theme);
+		for (; variants && current_variant; variants = g_list_next(variants)) {
+			gtk_list_store_append(prefs_conv_variants, &iter);
+			gtk_list_store_set(prefs_conv_variants, &iter, 0, variants->data, -1);
 	
-				if (g_str_equal(variants->data, current_variant)) {
-					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(prefs_conv_variants_combo_box), &iter);
-					unset = FALSE;
-				}
+			if (g_str_equal(variants->data, current_variant)) {
+				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(prefs_conv_variants_combo_box), &iter);
+				unset = FALSE;
 			}
-
-			if (unset)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(prefs_conv_variants_combo_box), 0);
 		}
+
+		if (unset)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(prefs_conv_variants_combo_box), 0);
 
 		g_signal_handlers_unblock_by_func(prefs_conv_variants_combo_box,
 		                                  prefs_set_conv_variant_cb, NULL);

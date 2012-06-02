@@ -68,7 +68,6 @@ struct _PidginWindow
 		GtkAction *logging;
 		GtkAction *sounds;
 		GtkAction *show_formatting_toolbar;
-		GtkAction *show_timestamps;
 
 		GtkWidget *send_to;
 
