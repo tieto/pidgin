@@ -39,6 +39,7 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 	/* "esdmon",	"ESD", ? */
 	"osssrc",	"OSS",
 	"pulsesrc",	"PulseAudio",
+	"libsndiosrc",	"sndio",
 	/* "audiotestsrc wave=silence", "Silence", */
 	"audiotestsrc",	"Test Sound",
 	NULL
@@ -50,6 +51,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 	"esdsink",	"ESD",
 	"osssink",	"OSS",
 	"pulsesink",	"PulseAudio",
+	"libsndiosink",	"sndio",
 	NULL
 };
 
@@ -610,7 +612,7 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 			GstElement *valve;
 
 			percent = gst_msg_db_to_percent(msg, "rms");
-			gtk_progress_bar_set_fraction(ctx->level, percent * 5);
+			gtk_progress_bar_set_fraction(ctx->level, percent);
 
 			percent = gst_msg_db_to_percent(msg, "decay");
 			threshold = gtk_range_get_value(ctx->threshold) / 100.0;
@@ -627,7 +629,7 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 }
 
 static void
-voice_test_frame_destroy_cb(GtkObject *w, GstElement *pipeline)
+voice_test_frame_destroy_cb(GtkWidget *w, GstElement *pipeline)
 {
 	g_return_if_fail(GST_IS_ELEMENT(pipeline));
 
@@ -702,7 +704,7 @@ get_voice_test_frame(PurplePlugin *plugin)
 
 	gtk_range_set_value(GTK_RANGE(volume),
 			purple_prefs_get_int("/purple/media/audio/volume/input"));
-	gtk_widget_set(volume, "draw-value", FALSE, NULL);
+	gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
 
 	gtk_range_set_value(GTK_RANGE(threshold),
 			purple_prefs_get_int("/purple/media/audio/silence_threshold"));

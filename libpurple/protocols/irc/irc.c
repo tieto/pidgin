@@ -68,11 +68,11 @@ static void irc_view_motd(PurplePluginAction *action)
 	struct irc_conn *irc;
 	char *title;
 
-	if (gc == NULL || gc->proto_data == NULL) {
+	if (gc == NULL || purple_connection_get_protocol_data(gc) == NULL) {
 		purple_debug(PURPLE_DEBUG_ERROR, "irc", "got MOTD request for NULL gc\n");
 		return;
 	}
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 	if (irc->motd == NULL) {
 		purple_notify_error(gc, _("Error displaying MOTD"), _("No MOTD available"),
 				  _("There is no MOTD associated with this connection."));
@@ -98,7 +98,7 @@ static int do_send(struct irc_conn *irc, const char *buf, gsize len)
 
 static int irc_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
-	struct irc_conn *irc = (struct irc_conn*)gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	if (len == -1) {
 		len = strlen(buf);
 	}
@@ -128,7 +128,7 @@ irc_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 			g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -172,7 +172,7 @@ int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 			g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 	} else if (ret < buflen) {
@@ -331,16 +331,17 @@ static void irc_login(PurpleAccount *account)
 	const char *username = purple_account_get_username(account);
 
 	gc = purple_account_get_connection(account);
-	gc->flags |= PURPLE_CONNECTION_NO_NEWLINES;
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_NO_NEWLINES);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("IRC nick and server may not contain whitespace"));
 		return;
 	}
 
-	gc->proto_data = irc = g_new0(struct irc_conn, 1);
+	irc = g_new0(struct irc_conn, 1);
+	purple_connection_set_protocol_data(gc, irc);
 	irc->fd = -1;
 	irc->account = account;
 	irc->outbuf = purple_circ_buffer_new(512);
@@ -365,7 +366,7 @@ static void irc_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
 					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 		} else {
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 			return;
@@ -378,7 +379,7 @@ static void irc_login(PurpleAccount *account)
 				 purple_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc) == NULL)
 		{
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect"));
 			return;
@@ -390,7 +391,7 @@ static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
 	char *server;
 	const char *username, *realname;
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	const char *pass = purple_connection_get_password(gc);
 
 	if (pass && *pass) {
@@ -460,12 +461,12 @@ static void irc_login_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 
 	if (source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 			error_message);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -474,7 +475,7 @@ static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 	irc->fd = source;
 
 	if (do_login(gc)) {
-		gc->inpa = purple_input_add(irc->fd, PURPLE_INPUT_READ, irc_input_cb, gc);
+		irc->inpa = purple_input_add(irc->fd, PURPLE_INPUT_READ, irc_input_cb, gc);
 	}
 }
 
@@ -483,7 +484,7 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 		gpointer data)
 {
 	PurpleConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 
 	irc->gsc = NULL;
 
@@ -492,7 +493,7 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 static void irc_close(PurpleConnection *gc)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 
 	if (irc == NULL)
 		return;
@@ -500,8 +501,10 @@ static void irc_close(PurpleConnection *gc)
 	if (irc->gsc || (irc->fd >= 0))
 		irc_cmd_quit(irc, "quit", NULL, NULL);
 
-	if (gc->inpa)
-		purple_input_remove(gc->inpa);
+	if (irc->inpa) {
+		purple_input_remove(irc->inpa);
+		irc->inpa = 0;
+	}
 
 	g_free(irc->inbuf);
 	if (irc->gsc) {
@@ -531,7 +534,7 @@ static void irc_close(PurpleConnection *gc)
 
 static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	char *plain;
 	const char *args[2];
 
@@ -547,7 +550,7 @@ static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, 
 
 static void irc_get_info(PurpleConnection *gc, const char *who)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	const char *args[2];
 	args[0] = who;
 	args[1] = NULL;
@@ -562,7 +565,7 @@ static void irc_set_status(PurpleAccount *account, PurpleStatus *status)
 	const char *status_id = purple_status_get_id(status);
 
 	g_return_if_fail(gc != NULL);
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	if (!purple_status_is_active(status))
 		return;
@@ -579,9 +582,9 @@ static void irc_set_status(PurpleAccount *account, PurpleStatus *status)
 	}
 }
 
-static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
-	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	struct irc_buddy *ib;
 	const char *bname = purple_buddy_get_name(buddy);
 
@@ -606,7 +609,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 
 static void irc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	struct irc_buddy *ib;
 
 	ib = g_hash_table_lookup(irc->buddies, purple_buddy_get_name(buddy));
@@ -617,9 +620,10 @@ static void irc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 
 static void read_input(struct irc_conn *irc, int len)
 {
+	PurpleConnection *connection = purple_account_get_connection(irc->account);
 	char *cur, *end;
 
-	irc->account->gc->last_received = time(NULL);
+	purple_connection_update_last_received(connection);
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 
@@ -651,7 +655,7 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 {
 
 	PurpleConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	int len;
 
 	if(!g_list_find(purple_connections_get_all(), gc)) {
@@ -672,12 +676,12 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	} else if (len < 0) {
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Server closed the connection"));
 		return;
@@ -689,7 +693,7 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	int len;
 
 	if (irc->inbuflen < irc->inbufused + IRC_INITIAL_BUFSIZE) {
@@ -703,12 +707,12 @@ static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond)
 	} else if (len < 0) {
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Server closed the connection"));
 		return;
@@ -719,7 +723,7 @@ static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 static void irc_chat_join (PurpleConnection *gc, GHashTable *data)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	const char *args[2];
 
 	args[0] = g_hash_table_lookup(data, "channel");
@@ -733,7 +737,7 @@ static char *irc_get_chat_name(GHashTable *data) {
 
 static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = purple_find_chat(gc, id);
 	const char *args[2];
 
@@ -749,7 +753,7 @@ static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, c
 
 static void irc_chat_leave (PurpleConnection *gc, int id)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = purple_find_chat(gc, id);
 	const char *args[2];
 
@@ -764,7 +768,7 @@ static void irc_chat_leave (PurpleConnection *gc, int id)
 
 static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = purple_find_chat(gc, id);
 	const char *args[2];
 	char *tmp;
@@ -779,7 +783,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 	}
 #endif
 	purple_markup_html_to_xhtml(what, NULL, &tmp);
-	args[0] = convo->name;
+	args[0] = purple_conversation_get_name(convo);
 	args[1] = tmp;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
@@ -818,7 +822,7 @@ static void irc_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 	const char *name = NULL;
 	struct irc_conn *irc;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 	name = purple_conversation_get_name(purple_find_chat(gc, id));
 
 	if (name == NULL)
@@ -836,7 +840,7 @@ static PurpleRoomlist *irc_roomlist_get_list(PurpleConnection *gc)
 	PurpleRoomlistField *f;
 	char *buf;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	if (irc->roomlist)
 		purple_roomlist_unref(irc->roomlist);
@@ -863,13 +867,14 @@ static PurpleRoomlist *irc_roomlist_get_list(PurpleConnection *gc)
 
 static void irc_roomlist_cancel(PurpleRoomlist *list)
 {
-	PurpleConnection *gc = purple_account_get_connection(list->account);
+	PurpleAccount *account = purple_roomlist_get_account(list);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	struct irc_conn *irc;
 
 	if (gc == NULL)
 		return;
 
-	irc = gc->proto_data;
+	irc = purple_connection_get_protocol_data(gc);
 
 	purple_roomlist_set_in_progress(list, FALSE);
 
@@ -881,13 +886,14 @@ static void irc_roomlist_cancel(PurpleRoomlist *list)
 
 static void irc_keepalive(PurpleConnection *gc)
 {
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	if ((time(NULL) - irc->recv_time) > PING_TIMEOUT)
 		irc_cmd_ping(irc, NULL, NULL, NULL);
 }
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),    /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL |
 	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,					/* user_splits */
@@ -929,7 +935,6 @@ static PurplePluginProtocolInfo prpl_info =
 	irc_keepalive,		/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
-	NULL,					/* get_cb_away */
 	NULL,					/* alias_buddy */
 	NULL,					/* group_buddy */
 	NULL,					/* rename_group */
@@ -954,15 +959,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                   /* unregister_user */
 	NULL,                   /* send_attention */
 	NULL,                   /* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),    /* struct_size */
 	NULL,                    /* get_account_text_table */
 	NULL,                    /* initiate_media */
 	NULL,					 /* get_media_caps */
 	NULL,					 /* get_moods */
 	NULL,					 /* set_public_alias */
-	NULL,					 /* get_public_alias */
-	NULL,					 /* add_buddy_with_invite */
-	NULL					 /* add_buddies_with_invite */
+	NULL					 /* get_public_alias */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

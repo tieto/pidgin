@@ -319,7 +319,7 @@ process_urls(PurpleConversation *conv, GList *urls)
 			url = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL), purple_url_encode(tmp));
 		}
 		g_free(tmp);
-		purple_util_fetch_url(url, TRUE, "finch", FALSE, url_fetched, cbdata);
+		purple_util_fetch_url(url, TRUE, "finch", FALSE, -1, url_fetched, cbdata);
 		i = gnt_text_view_get_lines_below(tv);
 		str = g_strdup_printf(_("\nFetching TinyURL..."));
 		gnt_text_view_append_text_with_tag((tv), str, GNT_TEXT_FLAG_DIM, cbdata->tag);
@@ -383,7 +383,7 @@ tinyurl_notify_uri(const char *uri)
 	/* Store the return value of _fetch_url and destroy that when win is
 	   destroyed, so that the callback for _fetch_url does not try to molest a
 	   non-existent window */
-	urlcb = purple_util_fetch_url(fullurl, TRUE, "finch", FALSE, tinyurl_notify_fetch_cb, win);
+	urlcb = purple_util_fetch_url(fullurl, TRUE, "finch", FALSE, -1, tinyurl_notify_fetch_cb, win);
 	g_free(fullurl);
 	g_signal_connect_swapped(G_OBJECT(win), "destroy",
 			G_CALLBACK(purple_util_fetch_url_cancel), urlcb);

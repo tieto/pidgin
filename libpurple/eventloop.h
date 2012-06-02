@@ -28,10 +28,6 @@
 
 #include <glib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * An input condition.
  */
@@ -145,7 +141,6 @@ struct _PurpleEventLoopUiOps
 	 * #timeout_add.
 	 *
 	 * @see purple_timeout_add_seconds()
-	 * @since 2.1.0
 	 **/
 	guint (*timeout_add_seconds)(guint interval, GSourceFunc function,
 	                             gpointer data);
@@ -154,6 +149,8 @@ struct _PurpleEventLoopUiOps
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };
+
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Event Loop API                                                  */
@@ -192,8 +189,6 @@ guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
  * @param data		data to pass to @a function.
  * @return A handle to the timer which can be passed to
  *         purple_timeout_remove() to remove the timer.
- *
- * @since 2.1.0
  */
 guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data);
 
@@ -269,8 +264,6 @@ PurpleEventLoopUiOps *purple_eventloop_get_ui_ops(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_EVENTLOOP_H_ */

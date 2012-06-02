@@ -42,7 +42,7 @@ msn_xfer_init(PurpleXfer *xfer)
 
 	purple_debug_info("msn", "xfer_init\n");
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 
 	/* Send Ok */
 	content = g_strdup_printf("SessionID: %lu\r\n\r\n",
@@ -62,9 +62,9 @@ msn_xfer_cancel(PurpleXfer *xfer)
 	char *content;
 
 	g_return_if_fail(xfer != NULL);
-	g_return_if_fail(xfer->data != NULL);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
+	g_return_if_fail(slpcall != NULL);
 
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL)
 	{
@@ -102,7 +102,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 
 	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND, -1);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */
 	g_return_val_if_fail(slpcall != NULL, -1);
 
@@ -126,7 +126,7 @@ msn_xfer_read(guchar **data, PurpleXfer *xfer)
 
 	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE, -1);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */
 	g_return_val_if_fail(slpcall != NULL, -1);
 
@@ -166,7 +166,7 @@ msn_file_context_to_wire(MsnFileContext *context)
 {
 	gchar *ret, *tmp;
 
-	tmp = ret = g_new(gchar, MSN_FILE_CONTEXT_SIZE + context->preview_len + 1);
+	tmp = ret = g_new(gchar, MSN_FILE_CONTEXT_SIZE_V2 + context->preview_len + 1);
 
 	msn_push32le(tmp, context->length);
 	msn_push32le(tmp, context->version);
@@ -174,9 +174,15 @@ msn_file_context_to_wire(MsnFileContext *context)
 	msn_push32le(tmp, context->type);
 	memcpy(tmp, context->file_name, MAX_FILE_NAME_LEN * 2);
 	tmp += MAX_FILE_NAME_LEN * 2;
+#if 0
 	memcpy(tmp, context->unknown1, sizeof(context->unknown1));
 	tmp += sizeof(context->unknown1);
 	msn_push32le(tmp, context->unknown2);
+#else
+	memset(tmp, 0, sizeof(gchar[30]));
+	tmp += sizeof(gchar[30]);
+	msn_push32le(tmp, 0xffffffff);
+#endif
 	if (context->preview) {
 		memcpy(tmp, context->preview, context->preview_len);
 	}
@@ -190,21 +196,30 @@ msn_file_context_from_wire(const char *buf, gsize len)
 {
 	MsnFileContext *context;
 
-	if (!buf || len < MSN_FILE_CONTEXT_SIZE)
+	if (!buf || len < MSN_FILE_CONTEXT_SIZE_V0)
 		return NULL;
 
 	context = g_new(MsnFileContext, 1);
 
 	context->length = msn_pop32le(buf);
 	context->version = msn_pop32le(buf);
-	if (context->version == 2) {
-		/* The length field is broken for this version. No check. */
-		context->length = MSN_FILE_CONTEXT_SIZE;
-	} else if (context->version == 3) {
-		if (context->length != MSN_FILE_CONTEXT_SIZE + 63) {
+	if (context->version == 0) {
+		if (context->length != MSN_FILE_CONTEXT_SIZE_V0) {
 			g_free(context);
 			return NULL;
-		} else if (len < MSN_FILE_CONTEXT_SIZE + 63) {
+		}
+	} else if (context->version == 2) {
+		/* The length field is broken for this version. No check. */
+		context->length = MSN_FILE_CONTEXT_SIZE_V2;
+		if (len < MSN_FILE_CONTEXT_SIZE_V2) {
+			g_free(context);
+			return NULL;
+		}
+	} else if (context->version == 3) {
+		if (context->length != MSN_FILE_CONTEXT_SIZE_V3) {
+			g_free(context);
+			return NULL;
+		} else if (len < MSN_FILE_CONTEXT_SIZE_V3) {
 			g_free(context);
 			return NULL;
 		}
@@ -218,9 +233,15 @@ msn_file_context_from_wire(const char *buf, gsize len)
 	context->type = msn_pop32le(buf);
 	memcpy(context->file_name, buf, MAX_FILE_NAME_LEN * 2);
 	buf += MAX_FILE_NAME_LEN * 2;
-	memcpy(context->unknown1, buf, sizeof(context->unknown1));
-	buf += sizeof(context->unknown1);
-	context->unknown2 = msn_pop32le(buf);
+	if (context->version > 0) {
+#if 0
+		memcpy(context->unknown1, buf, sizeof(context->unknown1));
+		buf += sizeof(context->unknown1);
+		context->unknown2 = msn_pop32le(buf);
+#else
+		buf += sizeof(gchar[30]) + sizeof(guint32);
+#endif
+	}
 
 	if (context->type == 0 && len > context->length) {
 		context->preview_len = len - context->length;

@@ -511,12 +511,6 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 	return res;
 }
 
-/* stdio.h */
-
-int wpurple_rename (const char *oldname, const char *newname) {
-	return g_rename(oldname, newname);
-}
-
 /* time.h */
 
 struct tm * wpurple_localtime_r (const time_t *time, struct tm *resultp) {
@@ -1091,15 +1085,3 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 	purple_debug_warning("wpurple", "could not find a match for Windows timezone \"%s\"\n", tzname);
 	return "";
 }
-
-int wpurple_g_access (const gchar *filename, int mode);
-/**
- * @deprecated - remove for 3.0.0
- */
-int
-wpurple_g_access (const gchar *filename, int mode)
-{
-	return g_access(filename, mode);
-}
-
-

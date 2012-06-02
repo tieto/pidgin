@@ -30,7 +30,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 
 	if (conv == NULL)
 		return;
-	g_return_if_fail(conv->type == PURPLE_CONV_TYPE_IM);
+	g_return_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM);
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
 	if (buddy != purple_find_buddy(account, buddy_name))
@@ -42,7 +42,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 	g_snprintf(buf, sizeof(buf), message, escaped);
 	g_free(escaped);
 
-	purple_conv_im_write(conv->u.im, NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
 }
 
 static void

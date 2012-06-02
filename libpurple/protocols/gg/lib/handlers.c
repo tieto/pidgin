@@ -27,21 +27,13 @@
  */
 
 #include <sys/types.h>
-#ifndef _WIN32
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#endif
 #include <ctype.h>
-#ifndef _WIN32
-#  ifdef sun
-#    include <sys/filio.h>
-#  endif
+#ifdef sun
+#  include <sys/filio.h>
 #endif
 
 #include "compat.h"
 #include "libgadu.h"
-#include "libgadu-config.h"
 #include "resolver.h"
 #include "session.h"
 #include "protocol.h"
@@ -51,9 +43,6 @@
 #include "deflate.h"
 
 #include <errno.h>
-#ifndef _WIN32
-#  include <netdb.h>
-#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,7 +81,7 @@ static int gg_session_handle_welcome(struct gg_session *gs, uint32_t type, const
 	uint8_t hash_buf[64];
 	uint32_t local_ip;
 	struct sockaddr_in sin;
-	unsigned int sin_len = sizeof(sin);
+	socklen_t sin_len = sizeof(sin);
 
 	if (len < sizeof(struct gg_welcome)) {
 		ge->type = GG_EVENT_CONN_FAILED;

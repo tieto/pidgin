@@ -80,11 +80,14 @@ purple_theme_manager_is_theme_type(gchar *key,
 }
 
 static gboolean
-purple_theme_manager_is_theme(gchar *key,
-		gpointer value,
-		gchar *user_data)
+check_if_theme_or_loader(gchar *key, gpointer value, GSList **loaders)
 {
-	return PURPLE_IS_THEME(value);
+	if (PURPLE_IS_THEME(value))
+		return TRUE;
+	else if (PURPLE_IS_THEME_LOADER(value))
+		*loaders = g_slist_prepend(*loaders, value);
+
+	return FALSE;
 }
 
 static void
@@ -97,11 +100,12 @@ purple_theme_manager_function_wrapper(gchar *key,
 }
 
 static void
-purple_theme_manager_build_dir(const gchar *root)
+purple_theme_manager_build_dir(GSList *loaders, const gchar *root)
 {
-	gchar *purple_dir, *theme_dir;
-	const gchar *name = NULL, *type = NULL;
-	GDir *rdir, *tdir;
+	gchar *theme_dir;
+	const gchar *name;
+	GDir *rdir;
+	GSList *tmp;
 	PurpleThemeLoader *loader;
 
 	rdir = g_dir_open(root, 0, NULL);
@@ -109,33 +113,20 @@ purple_theme_manager_build_dir(const gchar *root)
 	if (!rdir)
 		return;
 
-	/* Parses directory by root/name/purple/type */
 	while ((name = g_dir_read_name(rdir))) {
-		purple_dir = g_build_filename(root, name, "purple", NULL);
-		tdir = g_dir_open(purple_dir, 0, NULL);
+		theme_dir = g_build_filename(root, name, NULL);
 
-		if (!tdir) {
-			g_free(purple_dir);
+		for (tmp = loaders; tmp; tmp = g_slist_next(tmp)) {
+			loader = PURPLE_THEME_LOADER(tmp->data);
 
-			continue;
-		}
-
-		while ((type = g_dir_read_name(tdir))) {
-			if ((loader = g_hash_table_lookup(theme_table, type))) {
-				PurpleTheme *theme = NULL;
-
-				theme_dir = g_build_filename(purple_dir, type, NULL);
-
-				theme = purple_theme_loader_build(loader, theme_dir);
-				g_free(theme_dir);
-
+			if (purple_theme_loader_probe(loader, theme_dir)) {
+				PurpleTheme *theme = purple_theme_loader_build(loader, theme_dir);
 				if (PURPLE_IS_THEME(theme))
 					purple_theme_manager_add_theme(theme);
 			}
 		}
 
-		g_dir_close(tdir);
-		g_free(purple_dir);
+		g_free(theme_dir);
 	}
 
 	g_dir_close(rdir);
@@ -155,16 +146,17 @@ purple_theme_manager_init(void)
 void
 purple_theme_manager_refresh(void)
 {
-	gchar *path = NULL;
-	const gchar *xdg = NULL;
-	gint i = 0;
+	gchar *path;
+	const gchar *xdg;
+	gint i;
+	GSList *loaders = NULL;
 
-	g_hash_table_foreach_remove(theme_table,
-			(GHRFunc) purple_theme_manager_is_theme, NULL);
+	g_hash_table_foreach_remove(theme_table, (GHRFunc)check_if_theme_or_loader,
+	                            &loaders);
 
 	/* Add themes from ~/.purple */
 	path = g_build_filename(purple_user_dir(), "themes", NULL);
-	purple_theme_manager_build_dir(path);
+	purple_theme_manager_build_dir(loaders, path);
 	g_free(path);
 
 	/* look for XDG_DATA_HOME.  If we don't have it use ~/.local, and add it */
@@ -173,7 +165,7 @@ purple_theme_manager_refresh(void)
 	else
 		path = g_build_filename(purple_home_dir(), ".local", "themes", NULL);
 
-	purple_theme_manager_build_dir(path);
+	purple_theme_manager_build_dir(loaders, path);
 	g_free(path);
 
 	/* now dig through XDG_DATA_DIRS and add those too */
@@ -183,12 +175,14 @@ purple_theme_manager_refresh(void)
 
 		for (i = 0; xdg_dirs[i]; i++) {
 			path = g_build_filename(xdg_dirs[i], "themes", NULL);
-			purple_theme_manager_build_dir(path);
+			purple_theme_manager_build_dir(loaders, path);
 			g_free(path);
 		}
 
 		g_strfreev(xdg_dirs);
 	}
+
+	g_slist_free(loaders);
 }
 
 void

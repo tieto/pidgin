@@ -54,7 +54,7 @@ msn_accept_add_cb(gpointer data)
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
-		MsnSession *session = pa->gc->proto_data;
+		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
 		MsnUserList *userlist = session->userlist;
 		PurpleAccount *account = purple_connection_get_account(pa->gc);
 
@@ -79,7 +79,7 @@ msn_cancel_add_cb(gpointer data)
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
-		MsnSession *session = pa->gc->proto_data;
+		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
 		MsnUserList *userlist = session->userlist;
 		MsnCallbackState *state = msn_callback_state_new(session);
 

@@ -29,6 +29,8 @@
 
 #include "prefs.h"
 
+G_BEGIN_DECLS
+
 /**
  * Initializes all UI-specific preferences.
  */
@@ -92,8 +94,6 @@ GtkWidget *pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
  * @return      An hbox containing both the label and the entry.  Can be used to set
  *               the widgets to sensitive or insensitive based on the value of a
  *               checkbox.
- *
- * @since 2.6.0
  */
 GtkWidget *pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
 										const char *key, GtkSizeGroup *sg);
@@ -129,5 +129,7 @@ GtkWidget *pidgin_prefs_dropdown_from_list(GtkWidget *page,
  * Rename legacy prefs and delete some that no longer exist.
  */
 void pidgin_prefs_update_old(void);
+
+G_END_DECLS
 
 #endif /* _PIDGINPREFS_H_ */

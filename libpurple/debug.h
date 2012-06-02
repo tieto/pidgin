@@ -59,9 +59,7 @@ typedef struct
 	void (*_purple_reserved4)(void);
 } PurpleDebugUiOps;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Debug API                                                       */
@@ -161,8 +159,6 @@ gboolean purple_debug_is_enabled(void);
  * plugins.
  *
  * @param verbose TRUE to enable verbose debugging or FALSE to disable it.
- *
- * @since 2.6.0
  */
 void purple_debug_set_verbose(gboolean verbose);
 
@@ -170,8 +166,6 @@ void purple_debug_set_verbose(gboolean verbose);
  * Check if verbose logging is enabled.
  *
  * @return TRUE if verbose debugging is enabled, FALSE if it is not.
- *
- * @since 2.6.0
  */
 gboolean purple_debug_is_verbose(void);
 
@@ -183,8 +177,6 @@ gboolean purple_debug_is_verbose(void);
  * @param unsafe TRUE to enable debug logging of messages that could
  *        potentially contain passwords and other sensitive information.
  *        FALSE to disable it.
- *
- * @since 2.6.0
  */
 void purple_debug_set_unsafe(gboolean unsafe);
 
@@ -194,8 +186,6 @@ void purple_debug_set_unsafe(gboolean unsafe);
  * @return TRUE if the debug logging of all messages is enabled, FALSE
  *         if messages that could potentially contain passwords and other
  *         sensitive information are not logged.
- *
- * @since 2.6.0
  */
 gboolean purple_debug_is_unsafe(void);
 
@@ -236,8 +226,6 @@ void purple_debug_init(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_DEBUG_H_ */

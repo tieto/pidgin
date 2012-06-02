@@ -299,11 +299,6 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 	jabber_presence_fake_to_self(js, status);
 }
 
-xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
-{
-    return jabber_presence_create_js(NULL, state, msg, priority);
-}
-
 xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, const char *msg, int priority)
 {
 	xmlnode *show, *status, *presence, *pri, *c;
@@ -393,7 +388,7 @@ static void authorize_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
 	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
-		jabber_presence_subscription_set(jap->gc->proto_data,
+		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
 			jap->who, "subscribed");
 	g_free(jap->who);
 	g_free(jap);
@@ -403,7 +398,7 @@ static void deny_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
 	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
-		jabber_presence_subscription_set(jap->gc->proto_data,
+		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
 			jap->who, "unsubscribed");
 	g_free(jap->who);
 	g_free(jap);
@@ -464,7 +459,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 					hash = jabber_calculate_data_hash(data, size, "sha1");
 			}
 
-			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+			purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, data, size, hash);
 
 			g_free(hash);
 		}

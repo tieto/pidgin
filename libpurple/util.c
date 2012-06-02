@@ -73,6 +73,14 @@ struct _PurpleUtilFetchUrlData
 	PurpleAccount *account;
 };
 
+struct _PurpleMenuAction
+{
+	char *label;
+	PurpleCallback callback;
+	gpointer data;
+	GList *children;
+};
+
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
@@ -96,6 +104,62 @@ purple_menu_action_free(PurpleMenuAction *act)
 
 	g_free(act->label);
 	g_free(act);
+}
+
+char * purple_menu_action_get_label(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->label;
+}
+
+PurpleCallback purple_menu_action_get_callback(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->callback;
+}
+
+gpointer purple_menu_action_get_data(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->data;
+}
+
+GList* purple_menu_action_get_children(const PurpleMenuAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->children;
+}
+
+void purple_menu_action_set_label(PurpleMenuAction *act, char *label)
+{
+	g_return_if_fail(act != NULL);
+
+	act-> label = label;
+}
+
+void purple_menu_action_set_callback(PurpleMenuAction *act, PurpleCallback callback)
+{
+	g_return_if_fail(act != NULL);
+
+	act->callback = callback;
+}
+
+void purple_menu_action_set_data(PurpleMenuAction *act, gpointer data)
+{
+	g_return_if_fail(act != NULL);
+
+	act->data = data;
+}
+
+void purple_menu_action_set_children(PurpleMenuAction *act, GList *children)
+{
+	g_return_if_fail(act != NULL);
+
+	act->children = children;
 }
 
 void
@@ -147,7 +211,7 @@ purple_base16_decode(const char *str, gsize *ret_len)
 
 	len = strlen(str);
 
-	g_return_val_if_fail(strlen(str) > 0, 0);
+	g_return_val_if_fail(*str, 0);
 	g_return_val_if_fail(len % 2 == 0,    0);
 
 	data = g_malloc(len / 2);
@@ -612,7 +676,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	}
 	else
 	{
-		purple_strlcpy(buf, utf8);
+		g_strlcpy(buf, utf8, sizeof(buf));
 		g_free(utf8);
 	}
 
@@ -1321,7 +1385,7 @@ purple_markup_extract_info_field(const char *str, int len, PurpleNotifyUserInfo 
 				g_string_append_len(dest, p, q - p);
 		}
 
-		purple_notify_user_info_add_pair(user_info, display_name, dest->str);
+		purple_notify_user_info_add_pair_html(user_info, display_name, dest->str);
 		g_string_free(dest, TRUE);
 
 		return TRUE;
@@ -2267,7 +2331,7 @@ purple_markup_linkify(const char *text)
 					url_buf = g_string_free(gurl_buf, FALSE);
 
 					/* strip off trailing periods */
-					if (strlen(url_buf) > 0) {
+					if (*url_buf) {
 						for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 							*d = '\0';
 					}
@@ -3267,9 +3331,9 @@ purple_strcasestr(const char *haystack, const char *needle)
 }
 
 char *
-purple_str_size_to_units(size_t size)
+purple_str_size_to_units(goffset size)
 {
-	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB" };
+	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3282,7 +3346,7 @@ purple_str_size_to_units(size_t size)
 	else {
 		size_mag = (float)size;
 
-		while ((size_index < 3) && (size_mag > 1024)) {
+		while ((size_index < G_N_ELEMENTS(size_str) - 1) && (size_mag > 1024)) {
 			size_mag /= 1024;
 			size_index++;
 		}
@@ -4103,30 +4167,7 @@ static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSs
 }
 
 PurpleUtilFetchUrlData *
-purple_util_fetch_url_request(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
-					     user_agent, http11,
-					     request, include_headers, -1,
-					     callback, user_data);
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
-			user_agent, http11, request, include_headers, max_len, callback,
-			user_data);
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+purple_util_fetch_url_request(PurpleAccount *account,
 		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
@@ -4413,11 +4454,10 @@ purple_ipv6_address_is_valid(const gchar *ip)
 	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
 }
 
-/* TODO 3.0.0: Add ipv6 check, too */
 gboolean
 purple_ip_address_is_valid(const char *ip)
 {
-	return purple_ipv4_address_is_valid(ip);
+	return (purple_ipv4_address_is_valid(ip) || purple_ipv6_address_is_valid(ip));
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
@@ -4597,7 +4637,7 @@ purple_utf8_strip_unprintables(const gchar *str)
  * This function is copied from g_strerror() but changed to use
  * gai_strerror().
  */
-G_CONST_RETURN gchar *
+const gchar *
 purple_gai_strerror(gint errnum)
 {
 	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
@@ -4941,18 +4981,6 @@ purple_escape_filename(const char *str)
 	buf[j] = '\0';
 
 	return buf;
-}
-
-const char *_purple_oscar_convert(const char *act, const char *protocol)
-{
-	if (act && purple_strequal(protocol, "prpl-oscar")) {
-		int i;
-		for (i = 0; act[i] != '\0'; i++)
-			if (!isdigit(act[i]))
-				return "prpl-aim";
-		return "prpl-icq";
-	}
-	return protocol;
 }
 
 void purple_restore_default_signal_handlers(void)

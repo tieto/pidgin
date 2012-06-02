@@ -27,6 +27,7 @@
  */
 
 #include "oscar.h"
+#include "oscarcommon.h"
 
 #include <ctype.h>
 
@@ -506,14 +507,29 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 static int
 keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int keylen, ret = 1;
-	aim_rxcallback_t userfunc;
+	int keylen;
 	char *keystr;
 	GSList *tlvlist;
 	gboolean truncate_pass;
+	PurpleConnection *gc;
+	PurpleAccount *account;
+	ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
+	ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
+
+	gc = od->gc;
+	account = purple_connection_get_account(gc);
 
 	keylen = byte_stream_get16(bs);
 	keystr = byte_stream_getstr(bs, keylen);
+	if (!g_utf8_validate(keystr, -1, NULL)) {
+		purple_debug_warning("oscar", "Received SNAC %04hx/%04hx with "
+				"invalid UTF-8 keystr.\n", snac->family, snac->subtype);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				_("Received unexpected response from server"));
+		g_free(keystr);
+		return 1;
+	}
+
 	tlvlist = aim_tlvlist_read(bs);
 
 	/*
@@ -527,13 +543,18 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 * for the netscape network.  This SNAC had a type 0x0058 TLV with length 10.
 	 * Data is 0x0007 0004 3e19 ae1e 0006 0004 0000 0005 */
 
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, keystr, (int)truncate_pass);
+	aim_send_login(od, conn, purple_account_get_username(account),
+			purple_connection_get_password(gc), truncate_pass,
+			od->icq ? &icqinfo : &aiminfo, keystr,
+			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
+
+	purple_connection_update_progress(gc,
+			_("Password sent"), 2, OSCAR_CONNECT_STEPS);
 
 	g_free(keystr);
 	aim_tlvlist_free(tlvlist);
 
-	return ret;
+	return 1;
 }
 
 /**

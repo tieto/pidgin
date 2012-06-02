@@ -12,7 +12,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-typedef enum _untar_opt {
+typedef enum {
 	UNTAR_LISTING =      (1 << 0),
 	UNTAR_QUIET =        (1 << 1),
 	UNTAR_VERBOSE =      (1 << 2),

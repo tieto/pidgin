@@ -86,44 +86,9 @@ typedef enum
 /**
  * A wrapper for a type, subtype, and specific type of value.
  */
-typedef struct
-{
-	PurpleType type;
-	unsigned short flags;
+typedef struct _PurpleValue PurpleValue;
 
-	union
-	{
-		char char_data;
-		unsigned char uchar_data;
-		gboolean boolean_data;
-		short short_data;
-		unsigned short ushort_data;
-		int int_data;
-		unsigned int uint_data;
-		long long_data;
-		unsigned long ulong_data;
-		gint64 int64_data;
-		guint64 uint64_data;
-		char *string_data;
-		void *object_data;
-		void *pointer_data;
-		int enum_data;
-		void *boxed_data;
-
-	} data;
-
-	union
-	{
-		unsigned int subtype;
-		char *specific_type;
-
-	} u;
-
-} PurpleValue;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**
  * Creates a new PurpleValue.
@@ -497,8 +462,6 @@ int purple_value_get_enum(const PurpleValue *value);
  */
 void *purple_value_get_boxed(const PurpleValue *value);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_VALUE_H_ */

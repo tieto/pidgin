@@ -32,7 +32,7 @@
 /*@{*/
 
 /** The possible results of running a command with purple_cmd_do_command(). */
-typedef enum _PurpleCmdStatus {
+typedef enum {
 	PURPLE_CMD_STATUS_OK,
 	PURPLE_CMD_STATUS_FAILED,
 	PURPLE_CMD_STATUS_NOT_FOUND,
@@ -48,7 +48,7 @@ typedef enum _PurpleCmdStatus {
  *  #PURPLE_CMD_RET_CONTINUE to cause the core to fall through to other
  *  commands with the same name.
  */
-typedef enum _PurpleCmdRet {
+typedef enum {
 	PURPLE_CMD_RET_OK,       /**< Everything's okay; Don't look for another command to call. */
 	PURPLE_CMD_RET_FAILED,   /**< The command failed, but stop looking.*/
 	PURPLE_CMD_RET_CONTINUE /**< Continue, looking for other commands with the same name to call. */
@@ -68,7 +68,7 @@ typedef PurpleCmdRet (*PurpleCmdFunc)(PurpleConversation *, const gchar *cmd,
  */
 typedef guint PurpleCmdId;
 
-typedef enum _PurpleCmdPriority {
+typedef enum {
 	PURPLE_CMD_P_VERY_LOW  = -1000,
 	PURPLE_CMD_P_LOW       =     0,
 	PURPLE_CMD_P_DEFAULT   =  1000,
@@ -85,7 +85,7 @@ typedef enum _PurpleCmdPriority {
  *
  *  @see purple_cmd_register
  */
-typedef enum _PurpleCmdFlag {
+typedef enum {
 	/** Command is usable in IMs. */
 	PURPLE_CMD_FLAG_IM               = 0x01,
 	/** Command is usable in multi-user chats. */
@@ -99,9 +99,7 @@ typedef enum _PurpleCmdFlag {
 
 /*@}*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /**************************************************************************/
 /** @name Commands API                                                    */
@@ -225,26 +223,21 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
 /**
  * Get the handle for the commands API
  * @return The handle
- * @since 2.5.0
  */
 gpointer purple_cmds_get_handle(void);
 
 /**
  * Initialize the commands subsystem.
- * @since 2.5.0
  */
 void purple_cmds_init(void);
 
 /**
  * Uninitialize the commands subsystem.
- * @since 2.5.0
  */
 void purple_cmds_uninit(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_CMDS_H_ */

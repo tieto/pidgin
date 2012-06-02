@@ -41,14 +41,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-typedef struct
-{
-	PurpleConnectionErrorInfo *current_error;
-} PurpleAccountPrivate;
-
-#define PURPLE_ACCOUNT_GET_PRIVATE(account) \
-	((PurpleAccountPrivate *) (account->priv))
-
 /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
 typedef struct
 {
@@ -361,8 +353,6 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 static xmlnode *
 account_to_xmlnode(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-
 	xmlnode *node, *child;
 	const char *tmp;
 	PurplePresence *presence;
@@ -419,7 +409,7 @@ account_to_xmlnode(PurpleAccount *account)
 		xmlnode_insert_child(node, child);
 	}
 
-	child = current_error_to_xmlnode(priv->current_error);
+	child = current_error_to_xmlnode(account->current_error);
 	xmlnode_insert_child(node, child);
 
 	return node;
@@ -874,7 +864,7 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
+	ret = purple_account_new(name, protocol_id);
 	g_free(name);
 	g_free(protocol_id);
 
@@ -923,15 +913,6 @@ parse_account(xmlnode *node)
 		if (g_file_get_contents(filename, &contents, &len, NULL))
 		{
 			purple_buddy_icons_set_account_icon(ret, (guchar *)contents, len);
-		}
-		else
-		{
-			/* Try to see if the icon got left behind in the old cache. */
-			g_free(filename);
-			filename = g_build_filename(g_get_home_dir(), ".gaim", "icons", data, NULL);
-			if (g_file_get_contents(filename, &contents, &len, NULL)) {
-				purple_buddy_icons_set_account_icon(ret, (guchar*)contents, len);
-			}
 		}
 
 		g_free(filename);
@@ -1005,7 +986,6 @@ PurpleAccount *
 purple_account_new(const char *username, const char *protocol_id)
 {
 	PurpleAccount *account = NULL;
-	PurpleAccountPrivate *priv = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleStatusType *status_type;
@@ -1020,8 +1000,6 @@ purple_account_new(const char *username, const char *protocol_id)
 
 	account = g_new0(PurpleAccount, 1);
 	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
-	priv = g_new0(PurpleAccountPrivate, 1);
-	account->priv = priv;
 
 	purple_account_set_username(account, username);
 
@@ -1064,7 +1042,6 @@ purple_account_new(const char *username, const char *protocol_id)
 void
 purple_account_destroy(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = NULL;
 	GList *l;
 
 	g_return_if_fail(account != NULL);
@@ -1095,7 +1072,8 @@ purple_account_destroy(PurpleAccount *account)
 
 	purple_account_set_status_types(account, NULL);
 
-	purple_presence_destroy(account->presence);
+	if (account->presence)
+		purple_presence_destroy(account->presence);
 
 	if(account->system_log)
 		purple_log_free(account->system_log);
@@ -1110,13 +1088,11 @@ purple_account_destroy(PurpleAccount *account)
 		account->permit = g_slist_delete_link(account->permit, account->permit);
 	}
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
-	if (priv->current_error) {
-		g_free(priv->current_error->description);
-		g_free(priv->current_error);
+	PURPLE_DBUS_UNREGISTER_POINTER(account->current_error);
+	if (account->current_error) {
+		g_free(account->current_error->description);
+		g_free(account->current_error);
 	}
-	g_free(priv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
@@ -1140,6 +1116,15 @@ purple_account_register(PurpleAccount *account)
 					purple_account_get_username(account));
 
 	_purple_connection_new(account, TRUE, purple_account_get_password(account));
+}
+
+void
+purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+{
+	g_return_if_fail(account != NULL);
+
+	if (account->registration_cb)
+		(account->registration_cb)(account, succeeded, account->registration_cb_user_data);
 }
 
 void
@@ -1287,6 +1272,14 @@ purple_account_disconnect(PurpleAccount *account)
 	purple_account_set_connection(account, NULL);
 
 	account->disconnecting = FALSE;
+}
+
+gboolean
+purple_account_is_disconnecting(const PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, TRUE);
+	
+	return account->disconnecting;
 }
 
 void
@@ -1615,7 +1608,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 	purple_request_input(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
-					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
+					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
@@ -2495,6 +2488,24 @@ purple_account_get_ui_bool(const PurpleAccount *account, const char *ui,
 	return setting->value.boolean;
 }
 
+gpointer
+purple_account_get_ui_data(const PurpleAccount *account)
+{
+        g_return_val_if_fail(account != NULL, NULL);
+
+        return account->ui_data;
+}
+
+void
+purple_account_set_ui_data(PurpleAccount *account,
+                                 gpointer ui_data)
+{
+        g_return_if_fail(account != NULL);
+
+        account->ui_data = ui_data;
+}
+
+
 PurpleLog *
 purple_account_get_log(PurpleAccount *account, gboolean create)
 {
@@ -2527,7 +2538,7 @@ purple_account_destroy_log(PurpleAccount *account)
 }
 
 void
-purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
+purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const char *message)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
@@ -2544,40 +2555,13 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info != NULL) {
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
-			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), NULL);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
-			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
+			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy), message);
 	}
 }
 
 void
-purple_account_add_buddy_with_invite(PurpleAccount *account, PurpleBuddy *buddy, const char *message)
-{
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc;
-	PurplePlugin *prpl = NULL;
-
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(buddy != NULL);
-
-	gc = purple_account_get_connection(account);
-	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
-
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info != NULL) {
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
-			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), message);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
-			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
-	}
-}
-
-void
-purple_account_add_buddies(PurpleAccount *account, GList *buddies)
+purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *message)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
@@ -2598,73 +2582,13 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
-			prpl_info->add_buddies_with_invite(gc, buddies, groups, NULL);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
-			prpl_info->add_buddies(gc, buddies, groups);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
-			GList *curb = buddies, *curg = groups;
-
-			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, NULL);
-				curb = curb->next;
-				curg = curg->next;
-			}
-		}
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
+			prpl_info->add_buddies(gc, buddies, groups, message);
 		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy(gc, curb->data, curg->data);
-				curb = curb->next;
-				curg = curg->next;
-			}
-		}
-
-		g_list_free(groups);
-	}
-}
-
-void
-purple_account_add_buddies_with_invite(PurpleAccount *account, GList *buddies, const char *message)
-{
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
-
-	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
-
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info) {
-		GList *cur, *groups = NULL;
-
-		/* Make a list of what group each buddy is in */
-		for (cur = buddies; cur != NULL; cur = cur->next) {
-			PurpleBuddy *buddy = cur->data;
-			groups = g_list_append(groups, purple_buddy_get_group(buddy));
-		}
-
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
-			prpl_info->add_buddies_with_invite(gc, buddies, groups, message);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
-			GList *curb = buddies, *curg = groups;
-
-			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, message);
-				curb = curb->next;
-				curg = curg->next;
-			}
-		}
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
-			prpl_info->add_buddies(gc, buddies, groups);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
-			GList *curb = buddies, *curg = groups;
-
-			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy(gc, curb->data, curg->data);
+				prpl_info->add_buddy(gc, curb->data, curg->data, message);
 				curb = curb->next;
 				curg = curg->next;
 			}
@@ -2804,18 +2728,16 @@ signed_off_cb(PurpleConnection *gc,
 static void
 set_current_error(PurpleAccount *account, PurpleConnectionErrorInfo *new_err)
 {
-	PurpleAccountPrivate *priv;
 	PurpleConnectionErrorInfo *old_err;
 
 	g_return_if_fail(account != NULL);
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	old_err = priv->current_error;
+	old_err = account->current_error;
 
 	if(new_err == old_err)
 		return;
 
-	priv->current_error = new_err;
+	account->current_error = new_err;
 
 	purple_signal_emit(purple_accounts_get_handle(),
 	                   "account-error-changed",
@@ -2857,8 +2779,7 @@ connection_error_cb(PurpleConnection *gc,
 const PurpleConnectionErrorInfo *
 purple_account_get_current_error(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	return priv->current_error;
+	return account->current_error;
 }
 
 void

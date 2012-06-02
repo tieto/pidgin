@@ -30,9 +30,20 @@
 
 void jabber_mood_init(void);
 
-void jabber_mood_set(JabberStream *js,
-		     const char *mood, /* must be one of the valid strings defined in the XEP */
-		     const char *text /* might be NULL */);
+/**
+ * Sets / unsets the mood for the specified account.  The mood passed in
+ * must either be NULL, "", or one of the moods returned by
+ * jabber_get_moods().
+ *
+ * @param js The JabberStream object.
+ * @param mood The mood to set, NULL, or ""
+ * @param text Optional text that goes along with a mood.  Only used when
+ *             setting a mood (not when unsetting a mood).
+ *
+ * @return FALSE if an invalid mood was specified, or TRUE otherwise.
+ */
+gboolean
+jabber_mood_set(JabberStream *js, const char *mood, const char *text);
 
 PurpleMood *jabber_get_moods(PurpleAccount *account);
 

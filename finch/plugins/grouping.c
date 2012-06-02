@@ -54,7 +54,7 @@ static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 		case PURPLE_BLIST_CONTACT_NODE:
 			{
 				PurpleContact *contact = (PurpleContact*)node;
-				if (contact->currentsize > 0)
+				if (purple_contact_get_contact_size(contact, FALSE) > 0)
 					return TRUE;
 				return FALSE;
 			}

@@ -34,7 +34,7 @@ static void jabber_sasl_build_callbacks(JabberStream *);
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	purple_connection_error_reason(purple_account_get_connection(account),
+	purple_connection_error(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		_("Server may require plaintext authentication over an unencrypted stream"));
 }
@@ -46,7 +46,7 @@ static void start_cyrus_wrapper(JabberStream *js)
 	JabberSaslState state = jabber_auth_start_cyrus(js, &response, &error);
 
 	if (state == JABBER_SASL_STATE_FAIL) {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 				error);
 		g_free(error);
@@ -167,7 +167,6 @@ static void
 auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
-	JabberStream *js;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
 	if (!PURPLE_CONNECTION_IS_VALID(gc))
@@ -361,30 +360,30 @@ jabber_sasl_build_callbacks(JabberStream *js)
 
 	id = 0;
 	js->sasl_cb[id].id = SASL_CB_GETREALM;
-	js->sasl_cb[id].proc = jabber_sasl_cb_realm;
+	js->sasl_cb[id].proc = (void *)jabber_sasl_cb_realm;
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
 	js->sasl_cb[id].id = SASL_CB_AUTHNAME;
-	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].proc = (void *)jabber_sasl_cb_simple;
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
 	js->sasl_cb[id].id = SASL_CB_USER;
-	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].proc = (void *)jabber_sasl_cb_simple;
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
 	account = purple_connection_get_account(js->gc);
 	if (purple_account_get_password(account) != NULL ) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
-		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
+		js->sasl_cb[id].proc = (void *)jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
 		id++;
 	}
 
 	js->sasl_cb[id].id = SASL_CB_LOG;
-	js->sasl_cb[id].proc = jabber_sasl_cb_log;
+	js->sasl_cb[id].proc = (void *)jabber_sasl_cb_log;
 	js->sasl_cb[id].context = (void*)js;
 	id++;
 

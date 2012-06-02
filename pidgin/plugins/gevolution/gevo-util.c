@@ -49,7 +49,7 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
-	purple_account_add_buddy(account, buddy);
+	purple_account_add_buddy(account, buddy, NULL);
 
 	if (conv != NULL)
 	{

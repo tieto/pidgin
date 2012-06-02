@@ -26,10 +26,6 @@
 #ifndef _PURPLE_STUN_H_
 #define _PURPLE_STUN_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**************************************************************************/
 /** @name STUN API                                                        */
 /**************************************************************************/
@@ -63,6 +59,8 @@ struct _PurpleStunNatDiscovery {
 
 typedef void (*StunCallback) (PurpleStunNatDiscovery *);
 
+G_BEGIN_DECLS
+
 /**
  * Starts a NAT discovery. It returns a PurpleStunNatDiscovery if the discovery
  * is already done. Otherwise the callback is called when the discovery is over
@@ -81,8 +79,6 @@ void purple_stun_init(void);
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* _PURPLE_STUN_H_ */
