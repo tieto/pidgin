@@ -283,6 +283,34 @@ gint gtk_webview_get_current_fontsize(GtkWebView *webview);
 gboolean gtk_webview_get_editable(GtkWebView *webview);
 
 /**
+ * Gets the content of the head element of a GtkWebView as HTML.
+ *
+ * @param webview The GtkWebView
+ *
+ * @return The HTML from the head element.
+ */
+gchar *gtk_webview_get_head_html(GtkWebView *webview);
+
+/**
+ * Gets the HTML content of a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ *
+ * @return The HTML that is currently displayed.
+ */
+gchar *gtk_webview_get_body_html(GtkWebView *webview);
+
+/**
+ * Gets the text content of a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ *
+ * @return The HTML-free text that is currently displayed.
+ */
+gchar *gtk_webview_get_body_text(GtkWebView *webview);
+gchar *gtk_webview_get_head_text(GtkWebView *webview);
+
+/**
  * Clear all the formatting on a GtkWebView.
  *
  * @param webview The GtkWebView

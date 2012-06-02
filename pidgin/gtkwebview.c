@@ -743,6 +743,48 @@ gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
 	g_object_unref(object);
 }
 
+gchar *
+gtk_webview_get_head_html(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLHeadElement *head;
+	gchar *html;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	head = webkit_dom_document_get_head(doc);
+	html = webkit_dom_html_element_get_inner_html(WEBKIT_DOM_HTML_ELEMENT(head));
+
+	return html;
+}
+
+gchar *
+gtk_webview_get_body_html(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+	gchar *html;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	html = webkit_dom_html_element_get_inner_html(body);
+
+	return html;
+}
+
+gchar *
+gtk_webview_get_body_text(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+	gchar *text;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	text = webkit_dom_html_element_get_inner_text(body);
+
+	return text;
+}
+
 GtkWebViewButtons
 gtk_webview_get_format_functions(GtkWebView *webview)
 {
