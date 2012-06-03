@@ -302,15 +302,39 @@ scroll_idle_cb(gpointer data)
 }
 
 static void
+do_formatting(GtkWebView *webview, const char *name, const char *value)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win = NULL;
+	WebKitDOMDOMSelection *sel;
+	WebKitDOMRange *range = NULL;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	if (priv->edit.wbfo) {
+		win = webkit_dom_document_get_default_view(dom);
+		sel = webkit_dom_dom_window_get_selection(win);
+		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+		webkit_web_view_select_all(WEBKIT_WEB_VIEW(webview));
+	}
+
+	webkit_dom_document_exec_command(dom, name, FALSE, value);
+
+	if (priv->edit.wbfo) {
+		sel = webkit_dom_dom_window_get_selection(win);
+		webkit_dom_dom_selection_remove_all_ranges(sel);
+		webkit_dom_dom_selection_add_range(sel, range);
+	}
+}
+
+static void
 webview_clear_formatting(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
 	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
 		return;
 
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "removeFormat", FALSE, "");
+	do_formatting(webview, "removeFormat", "");
 }
 
 static void
@@ -892,33 +916,6 @@ gtk_webview_clear_formatting(GtkWebView *webview)
 	gtk_widget_grab_focus(GTK_WIDGET(webview));
 
 	g_object_unref(object);
-}
-
-static void
-do_formatting(GtkWebView *webview, const char *name, const char *value)
-{
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	WebKitDOMDocument *dom;
-	WebKitDOMDOMWindow *win = NULL;
-	WebKitDOMDOMSelection *sel;
-	WebKitDOMRange *range = NULL;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-
-	if (priv->edit.wbfo) {
-		win = webkit_dom_document_get_default_view(dom);
-		sel = webkit_dom_dom_window_get_selection(win);
-		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
-		webkit_web_view_select_all(WEBKIT_WEB_VIEW(webview));
-	}
-
-	webkit_dom_document_exec_command(dom, name, FALSE, value);
-
-	if (priv->edit.wbfo) {
-		sel = webkit_dom_dom_window_get_selection(win);
-		webkit_dom_dom_selection_remove_all_ranges(sel);
-		webkit_dom_dom_selection_add_range(sel, range);
-	}
 }
 
 void
