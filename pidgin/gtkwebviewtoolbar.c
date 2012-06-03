@@ -494,14 +494,7 @@ do_insert_link_cb(GtkWebViewToolbar *toolbar, PurpleRequestFields *fields)
 	else
 		description = NULL;
 
-	if (description == NULL)
-		description = url;
-
-#if 0
-	gtk_webview_insert_link(GTK_WEBVIEW(toolbar->webview),
-	                       gtk_text_buffer_get_insert(GTK_WEBVIEW(toolbar->webview)->text_buffer),
-	                       url, description);
-#endif
+	gtk_webview_insert_link(GTK_WEBVIEW(toolbar->webview), url, description);
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->link), FALSE);
 

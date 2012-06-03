@@ -410,6 +410,16 @@ void gtk_webview_font_grow(GtkWebView *webview);
  */
 void gtk_webview_insert_hr(GtkWebView *webview);
 
+/**
+ * Inserts a link at the current location or selection in a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param url     The URL of the link
+ * @param desc    The text description of the link. If not supplied, the URL is
+ *                used instead.
+ */
+void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc);
+
 G_END_DECLS
 
 #endif /* _PIDGIN_WEBVIEW_H_ */
