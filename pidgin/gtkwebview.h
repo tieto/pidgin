@@ -74,6 +74,7 @@ struct _GtkWebViewClass
 	void (*toggle_format)(GtkWebView *, GtkWebViewButtons);
 	void (*clear_format)(GtkWebView *);
 	void (*update_format)(GtkWebView *);
+	void (*changed)(GtkWebView *);
 };
 
 G_BEGIN_DECLS

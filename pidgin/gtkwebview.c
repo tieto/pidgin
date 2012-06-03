@@ -43,6 +43,7 @@ enum {
 	TOGGLE_FORMAT,
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
+	CHANGED,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -343,6 +344,12 @@ webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
 	}
 }
 
+static void
+editable_input_cb(GtkWebView *webview, WebKitDOMEvent *event, void *data)
+{
+	g_signal_emit(webview, signals[CHANGED], 0);
+}
+
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -404,6 +411,12 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	                                      G_STRUCT_OFFSET(GtkWebViewClass, update_format),
 	                                      NULL, 0, g_cclosure_marshal_VOID__VOID,
 	                                      G_TYPE_NONE, 0);
+	signals[CHANGED] = g_signal_new("changed",
+	                                G_TYPE_FROM_CLASS(gobject_class),
+	                                G_SIGNAL_RUN_FIRST,
+	                                G_STRUCT_OFFSET(GtkWebViewClass, changed),
+	                                NULL, NULL, g_cclosure_marshal_VOID__VOID,
+	                                G_TYPE_NONE, 0);
 
 	klass->toggle_format = webview_toggle_format;
 	klass->clear_format = webview_clear_formatting;
@@ -625,7 +638,20 @@ gtk_webview_page_down(GtkWebView *webview)
 void
 gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 {
+	WebKitDOMDocument *doc;
+
 	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	if (editable) {
+		webkit_dom_event_target_add_event_listener(WEBKIT_DOM_EVENT_TARGET(doc),
+	    	                                       "input", G_CALLBACK(editable_input_cb),
+	    	                                       FALSE, NULL);
+	} else {
+		webkit_dom_event_target_remove_event_listener(WEBKIT_DOM_EVENT_TARGET(doc),
+		                                              "input", G_CALLBACK(editable_input_cb),
+		                                              FALSE);
+	}
 }
 
 void
