@@ -29,6 +29,8 @@
 #include "gtkwebview.h"
 #include "gtkutils.h"
 
+#include <gdk/gdkkeysyms.h>
+
 typedef struct {
 	PurpleConnection *gc;
 	GtkWidget *window;
@@ -187,44 +189,47 @@ xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 	xmlnode_free(node);
 }
 
-static void message_send_cb(GtkWidget *widget, gpointer p)
+static gboolean
+message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 {
-	GtkTextIter start, end;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
-	GtkTextBuffer *buffer;
-	char *text;
+	gchar *text;
+
+	if (event->keyval != GDK_KEY_KP_Enter && event->keyval != GDK_KEY_Return)
+		return FALSE;
 
 	gc = console->gc;
 
 	if (gc)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
-	gtk_text_buffer_get_start_iter(buffer, &start);
-	gtk_text_buffer_get_end_iter(buffer, &end);
-
-	text = gtk_imhtml_get_text(GTK_IMHTML(console->entry), &start, &end);
+	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
 
 	if (prpl_info && prpl_info->send_raw != NULL)
 		prpl_info->send_raw(gc, text, strlen(text));
 
 	g_free(text);
-	gtk_imhtml_clear(GTK_IMHTML(console->entry));
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), "");
+
+	return TRUE;
 }
 
-static void entry_changed_cb(GtkTextBuffer *buffer, void *data)
+static void
+entry_changed_cb(GtkWidget *webview, void *data)
 {
 	char *xmlstr, *str;
-	GtkTextIter iter;
+#if 0
 	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
 	int height;
 	int pad_top, pad_inside, pad_bottom;
-	GtkTextIter start, end;
+#endif
 	xmlnode *node;
 
+#if 0
+	/* TODO WebKit: Do entry auto-sizing... */
 	wrapped_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
 	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(console->entry), &iter, &oneline);
@@ -245,18 +250,17 @@ static void entry_changed_cb(GtkTextBuffer *buffer, void *data)
 	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtk_widget_set_size_request(console->sw, -1, height + 6);
+#endif
 
-	gtk_text_buffer_get_start_iter(buffer, &start);
-	gtk_text_buffer_get_end_iter(buffer, &end);
-       	str = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+	str = gtk_webview_get_body_text(GTK_WEBVIEW(webview));
 	if (!str)
 		return;
 	xmlstr = g_strdup_printf("<xml>%s</xml>", str);
 	node = xmlnode_from_str(xmlstr, -1);
 	if (node) {
-		gtk_imhtml_clear_formatting(GTK_IMHTML(console->entry));
+		gtk_webview_clear_formatting(GTK_WEBVIEW(console->entry));
 	} else {
-		gtk_imhtml_toggle_background(GTK_IMHTML(console->entry), "#ffcece");
+		gtk_webview_toggle_backcolor(GTK_WEBVIEW(console->entry), "#ffcece");
 	}
 	g_free(str);
 	g_free(xmlstr);
@@ -762,7 +766,6 @@ create_console(PurplePluginAction *action)
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
 	GtkWidget *label;
-	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
 	GList *connections;
 	GtkToolItem *button;
@@ -830,17 +833,16 @@ create_console(PurplePluginAction *action)
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-	console->entry = gtk_imhtml_new(NULL, NULL);
-	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(console->entry), TRUE);
-	g_signal_connect(G_OBJECT(console->entry),"message_send", G_CALLBACK(message_send_cb), console);
+	console->entry = gtk_webview_new();
+	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(console->entry), TRUE);
+	g_signal_connect(G_OBJECT(console->entry),"key-press-event", G_CALLBACK(message_send_cb), console);
 
 	console->sw = pidgin_make_scrollable(console->entry, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), console->sw, FALSE, FALSE, 0);
-	gtk_imhtml_set_editable(GTK_IMHTML(console->entry), TRUE);
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
-	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(entry_changed_cb), NULL);
+	gtk_webview_set_editable(GTK_WEBVIEW(console->entry), TRUE);
+	g_signal_connect(G_OBJECT(console->entry), "changed", G_CALLBACK(entry_changed_cb), NULL);
 
-	entry_changed_cb(buffer, NULL);
+	entry_changed_cb(console->entry, NULL);
 
 	gtk_widget_show_all(console->window);
 	if (console->count < 2)
