@@ -345,7 +345,7 @@ webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
 }
 
 static void
-editable_input_cb(GtkWebView *webview, WebKitDOMEvent *event, void *data)
+editable_input_cb(GObject *target, WebKitDOMEvent *event, GtkWebView *webview)
 {
 	g_signal_emit(webview, signals[CHANGED], 0);
 }
@@ -646,7 +646,7 @@ gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 	if (editable) {
 		webkit_dom_event_target_add_event_listener(WEBKIT_DOM_EVENT_TARGET(doc),
 	    	                                       "input", G_CALLBACK(editable_input_cb),
-	    	                                       FALSE, NULL);
+	    	                                       FALSE, webview);
 	} else {
 		webkit_dom_event_target_remove_event_listener(WEBKIT_DOM_EVENT_TARGET(doc),
 		                                              "input", G_CALLBACK(editable_input_cb),
