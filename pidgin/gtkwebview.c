@@ -69,6 +69,7 @@ typedef struct _GtkWebViewPriv {
 	GtkWebViewButtons format_functions;
 	struct {
 		gboolean wbfo:1;	/* Whole buffer formatting only. */
+		gboolean block_changed:1;
 	} edit;
 
 } GtkWebViewPriv;
@@ -319,7 +320,9 @@ do_formatting(GtkWebView *webview, const char *name, const char *value)
 		webkit_web_view_select_all(WEBKIT_WEB_VIEW(webview));
 	}
 
+	priv->edit.block_changed = TRUE;
 	webkit_dom_document_exec_command(dom, name, FALSE, value);
+	priv->edit.block_changed = FALSE;
 
 	if (priv->edit.wbfo) {
 		sel = webkit_dom_dom_window_get_selection(win);
@@ -371,7 +374,9 @@ webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
 static void
 editable_input_cb(GObject *target, WebKitDOMEvent *event, GtkWebView *webview)
 {
-	g_signal_emit(webview, signals[CHANGED], 0);
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	if (!priv->edit.block_changed)
+		g_signal_emit(webview, signals[CHANGED], 0);
 }
 
 /******************************************************************************
