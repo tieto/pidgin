@@ -868,49 +868,61 @@ gtk_webview_clear_formatting(GtkWebView *webview)
 	g_object_unref(object);
 }
 
+static void
+do_formatting(GtkWebView *webview, const char *name, const char *value)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win = NULL;
+	WebKitDOMDOMSelection *sel;
+	WebKitDOMRange *range = NULL;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	if (priv->edit.wbfo) {
+		win = webkit_dom_document_get_default_view(dom);
+		sel = webkit_dom_dom_window_get_selection(win);
+		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+		webkit_web_view_select_all(WEBKIT_WEB_VIEW(webview));
+	}
+
+	webkit_dom_document_exec_command(dom, name, FALSE, value);
+
+	if (priv->edit.wbfo) {
+		sel = webkit_dom_dom_window_get_selection(win);
+		webkit_dom_dom_selection_remove_all_ranges(sel);
+		webkit_dom_dom_selection_add_range(sel, range);
+	}
+}
+
 void
 gtk_webview_toggle_bold(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "bold", FALSE, "");
+	do_formatting(webview, "bold", "");
 }
 
 void
 gtk_webview_toggle_italic(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "italic", FALSE, "");
+	do_formatting(webview, "italic", "");
 }
 
 void
 gtk_webview_toggle_underline(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "underline", FALSE, "");
+	do_formatting(webview, "underline", "");
 }
 
 void
 gtk_webview_toggle_strike(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "strikethrough", FALSE, "");
+	do_formatting(webview, "strikethrough", "");
 }
 
 gboolean
 gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "foreColor", FALSE, color);
+	do_formatting(webview, "foreColor", color);
 
 	return FALSE;
 }
@@ -918,10 +930,7 @@ gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 gboolean
 gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "backColor", FALSE, color);
+	do_formatting(webview, "backColor", color);
 
 	return FALSE;
 }
@@ -929,10 +938,7 @@ gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 gboolean
 gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "fontName", FALSE, face);
+	do_formatting(webview, "fontName", face);
 
 	return FALSE;
 }
@@ -940,44 +946,36 @@ gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 void
 gtk_webview_font_set_size(GtkWebView *webview, gint size)
 {
-	WebKitDOMDocument *dom;
-	char *tmp;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	tmp = g_strdup_printf("%d", size);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
+	char *tmp = g_strdup_printf("%d", size);
+	do_formatting(webview, "fontSize", tmp);
 	g_free(tmp);
 }
 
 void
 gtk_webview_font_shrink(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
 	gint fontsize;
 	char *tmp;
 
 	fontsize = gtk_webview_get_current_fontsize(webview);
 	fontsize = MAX(fontsize - 1, 1);
 
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	tmp = g_strdup_printf("%d", fontsize);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
+	do_formatting(webview, "fontSize", tmp);
 	g_free(tmp);
 }
 
 void
 gtk_webview_font_grow(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
 	gint fontsize;
 	char *tmp;
 
 	fontsize = gtk_webview_get_current_fontsize(webview);
 	fontsize = MIN(fontsize + 1, MAX_FONT_SIZE);
 
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	tmp = g_strdup_printf("%d", fontsize);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
+	do_formatting(webview, "fontSize", tmp);
 	g_free(tmp);
 }
 
