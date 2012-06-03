@@ -509,9 +509,6 @@ insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 		PurpleRequestFields *fields;
 		PurpleRequestFieldGroup *group;
 		PurpleRequestField *field;
-#if 0
-		GtkTextIter start, end;
-#endif
 		char *msg;
 		char *desc = NULL;
 
@@ -525,11 +522,7 @@ insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 		purple_request_field_group_add_field(group, field);
 
 		if (gtk_webview_get_format_functions(GTK_WEBVIEW(toolbar->webview)) & GTK_WEBVIEW_LINKDESC) {
-#if 0
-			if (gtk_text_buffer_get_selection_bounds(GTK_WEBVIEW(toolbar->webview)->text_buffer, &start, &end)) {
-				desc = gtk_webview_get_text(GTK_WEBVIEW(toolbar->webview), &start, &end);
-			}
-#endif
+			desc = gtk_webview_get_selected_text(GTK_WEBVIEW(toolbar->webview));
 			field = purple_request_field_string_new("description", _("_Description"),
 							      desc, FALSE);
 			purple_request_field_group_add_field(group, field);

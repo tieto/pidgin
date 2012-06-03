@@ -309,7 +309,16 @@ gchar *gtk_webview_get_body_html(GtkWebView *webview);
  * @return The HTML-free text that is currently displayed.
  */
 gchar *gtk_webview_get_body_text(GtkWebView *webview);
-gchar *gtk_webview_get_head_text(GtkWebView *webview);
+
+/**
+ * Gets the selected text of a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ *
+ * @return The HTML-free text that is currently selected, or NULL if nothing is
+ *         currently selected.
+ */
+gchar *gtk_webview_get_selected_text(GtkWebView *webview);
 
 /**
  * Clear all the formatting on a GtkWebView.

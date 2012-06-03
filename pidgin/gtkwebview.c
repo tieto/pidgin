@@ -840,6 +840,22 @@ gtk_webview_get_body_text(GtkWebView *webview)
 	return text;
 }
 
+gchar *
+gtk_webview_get_selected_text(GtkWebView *webview)
+{
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win;
+	WebKitDOMDOMSelection *sel;
+	WebKitDOMRange *range;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	win = webkit_dom_document_get_default_view(dom);
+	sel = webkit_dom_dom_window_get_selection(win);
+	range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+
+	return webkit_dom_range_get_text(range);
+}
+
 GtkWebViewButtons
 gtk_webview_get_format_functions(GtkWebView *webview)
 {
