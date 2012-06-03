@@ -569,16 +569,7 @@ insert_link_cb(GtkWidget *w, GtkWebViewToolbar *toolbar)
 static void
 insert_hr_cb(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 {
-#if 0
-	GtkTextIter iter;
-	GtkTextMark *ins;
-	GtkIMHtmlScalable *hr;
-
-	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->webview)));
-	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->webview)), &iter, ins);
-	hr = gtk_webview_hr_new();
-	gtk_webview_hr_add_to(hr, GTK_WEBVIEW(toolbar->webview), &iter);
-#endif
+	gtk_webview_insert_hr(GTK_WEBVIEW(toolbar->webview));
 }
 
 static void

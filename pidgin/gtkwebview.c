@@ -1007,3 +1007,16 @@ gtk_webview_font_grow(GtkWebView *webview)
 	g_free(tmp);
 }
 
+void
+gtk_webview_insert_hr(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHorizontalRule", FALSE, "");
+	priv->edit.block_changed = FALSE;
+}
+

@@ -402,6 +402,14 @@ void gtk_webview_font_shrink(GtkWebView *webview);
  */
 void gtk_webview_font_grow(GtkWebView *webview);
 
+/**
+ * Inserts a horizontal rule at the current location or selection in a
+ * GtkWebView.
+ *
+ * @param webview The GtkWebView
+ */
+void gtk_webview_insert_hr(GtkWebView *webview);
+
 G_END_DECLS
 
 #endif /* _PIDGIN_WEBVIEW_H_ */
