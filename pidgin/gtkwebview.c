@@ -303,6 +303,14 @@ scroll_idle_cb(gpointer data)
 }
 
 static void
+emit_format_signal(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	g_object_ref(webview);
+	g_signal_emit(webview, signals[TOGGLE_FORMAT], 0, buttons);
+	g_object_unref(webview);
+}
+
+static void
 do_formatting(GtkWebView *webview, const char *name, const char *value)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
@@ -332,6 +340,34 @@ do_formatting(GtkWebView *webview, const char *name, const char *value)
 }
 
 static void
+webview_font_shrink(GtkWebView *webview)
+{
+	gint fontsize;
+	char *tmp;
+
+	fontsize = gtk_webview_get_current_fontsize(webview);
+	fontsize = MAX(fontsize - 1, 1);
+
+	tmp = g_strdup_printf("%d", fontsize);
+	do_formatting(webview, "fontSize", tmp);
+	g_free(tmp);
+}
+
+static void
+webview_font_grow(GtkWebView *webview)
+{
+	gint fontsize;
+	char *tmp;
+
+	fontsize = gtk_webview_get_current_fontsize(webview);
+	fontsize = MIN(fontsize + 1, MAX_FONT_SIZE);
+
+	tmp = g_strdup_printf("%d", fontsize);
+	do_formatting(webview, "fontSize", tmp);
+	g_free(tmp);
+}
+
+static void
 webview_clear_formatting(GtkWebView *webview)
 {
 	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
@@ -349,22 +385,22 @@ webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
 
 	switch (buttons) {
 	case GTK_WEBVIEW_BOLD:
-		gtk_webview_toggle_bold(webview);
+		do_formatting(webview, "bold", "");
 		break;
 	case GTK_WEBVIEW_ITALIC:
-		gtk_webview_toggle_italic(webview);
+		do_formatting(webview, "italic", "");
 		break;
 	case GTK_WEBVIEW_UNDERLINE:
-		gtk_webview_toggle_underline(webview);
+		do_formatting(webview, "underline", "");
 		break;
 	case GTK_WEBVIEW_STRIKE:
-		gtk_webview_toggle_strike(webview);
+		do_formatting(webview, "strikethrough", "");
 		break;
 	case GTK_WEBVIEW_SHRINK:
-		gtk_webview_font_shrink(webview);
+		webview_font_shrink(webview);
 		break;
 	case GTK_WEBVIEW_GROW:
-		gtk_webview_font_grow(webview);
+		webview_font_grow(webview);
 		break;
 	default:
 		break;
@@ -933,40 +969,40 @@ gtk_webview_clear_formatting(GtkWebView *webview)
 
 	object = g_object_ref(G_OBJECT(webview));
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
+	g_object_unref(object);
 
 	gtk_widget_grab_focus(GTK_WIDGET(webview));
-
-	g_object_unref(object);
 }
 
 void
 gtk_webview_toggle_bold(GtkWebView *webview)
 {
-	do_formatting(webview, "bold", "");
+	emit_format_signal(webview, GTK_WEBVIEW_BOLD);
 }
 
 void
 gtk_webview_toggle_italic(GtkWebView *webview)
 {
-	do_formatting(webview, "italic", "");
+	emit_format_signal(webview, GTK_WEBVIEW_ITALIC);
 }
 
 void
 gtk_webview_toggle_underline(GtkWebView *webview)
 {
-	do_formatting(webview, "underline", "");
+	emit_format_signal(webview, GTK_WEBVIEW_UNDERLINE);
 }
 
 void
 gtk_webview_toggle_strike(GtkWebView *webview)
 {
-	do_formatting(webview, "strikethrough", "");
+	emit_format_signal(webview, GTK_WEBVIEW_STRIKE);
 }
 
 gboolean
 gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 {
 	do_formatting(webview, "foreColor", color);
+	emit_format_signal(webview, GTK_WEBVIEW_FORECOLOR);
 
 	return FALSE;
 }
@@ -975,6 +1011,7 @@ gboolean
 gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 {
 	do_formatting(webview, "backColor", color);
+	emit_format_signal(webview, GTK_WEBVIEW_BACKCOLOR);
 
 	return FALSE;
 }
@@ -983,6 +1020,7 @@ gboolean
 gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 {
 	do_formatting(webview, "fontName", face);
+	emit_format_signal(webview, GTK_WEBVIEW_FACE);
 
 	return FALSE;
 }
@@ -992,35 +1030,20 @@ gtk_webview_font_set_size(GtkWebView *webview, gint size)
 {
 	char *tmp = g_strdup_printf("%d", size);
 	do_formatting(webview, "fontSize", tmp);
+	emit_format_signal(webview, GTK_WEBVIEW_SHRINK|GTK_WEBVIEW_GROW);
 	g_free(tmp);
 }
 
 void
 gtk_webview_font_shrink(GtkWebView *webview)
 {
-	gint fontsize;
-	char *tmp;
-
-	fontsize = gtk_webview_get_current_fontsize(webview);
-	fontsize = MAX(fontsize - 1, 1);
-
-	tmp = g_strdup_printf("%d", fontsize);
-	do_formatting(webview, "fontSize", tmp);
-	g_free(tmp);
+	emit_format_signal(webview, GTK_WEBVIEW_SHRINK);
 }
 
 void
 gtk_webview_font_grow(GtkWebView *webview)
 {
-	gint fontsize;
-	char *tmp;
-
-	fontsize = gtk_webview_get_current_fontsize(webview);
-	fontsize = MIN(fontsize + 1, MAX_FONT_SIZE);
-
-	tmp = g_strdup_printf("%d", fontsize);
-	do_formatting(webview, "fontSize", tmp);
-	g_free(tmp);
+	emit_format_signal(webview, GTK_WEBVIEW_GROW);
 }
 
 void
