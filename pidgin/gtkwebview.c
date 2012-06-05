@@ -374,6 +374,8 @@ webview_clear_formatting(GtkWebView *webview)
 		return;
 
 	do_formatting(webview, "removeFormat", "");
+	do_formatting(webview, "unlink", "");
+	do_formatting(webview, "backColor", "inherit");
 }
 
 static void
