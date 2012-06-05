@@ -820,6 +820,16 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 }
 
 void
+pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable)
+{
+	WebKitWebSettings *settings;
+	
+	settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview));
+	g_object_set(G_OBJECT(settings), "enable-spell-checking", enable, NULL);
+	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webview), settings);
+}
+
+void
 gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview, gboolean wbfo)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);

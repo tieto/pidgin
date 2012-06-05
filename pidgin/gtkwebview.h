@@ -192,6 +192,14 @@ void gtk_webview_set_editable(GtkWebView *webview, gboolean editable);
 void gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags);
 
 /**
+ * Setup spell-checking on a GtkWebView.
+ *
+ * @param webview The GtkWebView.
+ * @param enable  Whether to enable or disable spell-checking.
+ */
+void pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable);
+
+/**
  * Enables or disables whole buffer formatting only (wbfo) in a GtkWebView.
  * In this mode formatting options to the buffer take effect for the entire
  * buffer instead of specific text.
