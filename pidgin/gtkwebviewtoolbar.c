@@ -540,26 +540,21 @@ insert_hr_cb(GtkAction *action, GtkWebViewToolbar *toolbar)
 static void
 do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 {
-#if 0
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	gchar *filename, *name, *buf;
+	gchar *filename = NULL, *name, *buf;
 	char *filedata;
 	size_t size;
 	GError *error = NULL;
 	int id;
-	GtkTextIter iter;
-	GtkTextMark *ins;
 
-	if (response != GTK_RESPONSE_ACCEPT)
-		return;
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-
-	if (filename == NULL)
-		return;
+	if (response == GTK_RESPONSE_ACCEPT)
+		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 
 	/* The following triggers a callback that closes the widget */
 	gtk_action_activate(priv->image);
+
+	if (filename == NULL)
+		return;
 
 	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
 		purple_notify_error(NULL, NULL, error->message, NULL);
@@ -586,12 +581,8 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 
 	g_free(filename);
 
-	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->webview)));
-	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->webview)),
-									 &iter, ins);
-	gtk_webview_insert_image_at_iter(GTK_WEBVIEW(toolbar->webview), id, &iter);
+	gtk_webview_insert_image(GTK_WEBVIEW(toolbar->webview), id);
 	purple_imgstore_unref_by_id(id);
-#endif
 }
 
 static void
@@ -600,14 +591,14 @@ insert_image_cb(GtkAction *action, GtkWebViewToolbar *toolbar)
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *window;
 
-	if (priv->image_dialog) {
+	if (!priv->image_dialog) {
 		window = gtk_file_chooser_dialog_new(_("Insert Image"), NULL,
 		                                     GTK_FILE_CHOOSER_ACTION_OPEN,
 		                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 		                                     NULL);
 		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
-		g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(window)), "response",
+		g_signal_connect(G_OBJECT(window), "response",
 		                 G_CALLBACK(do_insert_image_cb), toolbar);
 
 		gtk_widget_show(window);

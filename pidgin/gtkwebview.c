@@ -1052,3 +1052,19 @@ gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc)
 	g_free(link);
 }
 
+void
+gtk_webview_insert_image(GtkWebView *webview, int id)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *img;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	img = g_strdup_printf("<img src='%s'/>", get_image_src_from_id(priv, id));
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);
+	priv->edit.block_changed = FALSE;
+	g_free(img);
+}
+

@@ -429,6 +429,14 @@ void gtk_webview_insert_hr(GtkWebView *webview);
  */
 void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc);
 
+/**
+ * Inserts an image at the current location or selection in a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param id      The PurpleStoredImage id
+ */
+void gtk_webview_insert_image(GtkWebView *webview, int id);
+
 G_END_DECLS
 
 #endif /* _PIDGIN_WEBVIEW_H_ */
