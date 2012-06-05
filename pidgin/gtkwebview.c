@@ -1044,7 +1044,7 @@ gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc)
 	char *link;
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	link = g_strdup_printf("<a href=%s>%s</a>", url, desc ? desc : url);
+	link = g_strdup_printf("<a href='%s'>%s</a>", url, desc ? desc : url);
 
 	priv->edit.block_changed = TRUE;
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, link);
