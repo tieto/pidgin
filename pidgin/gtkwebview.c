@@ -626,11 +626,6 @@ gtk_webview_load_html_string(GtkWebView *webview, const char *html)
 	g_free(html_imged);
 }
 
-/* this is a "hack", my plan is to eventually handle this
- * correctly using a signals and a plugin: the plugin will have
- * the information as to what javascript function to call. It seems
- * wrong to hardcode that here.
- */
 void
 gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
