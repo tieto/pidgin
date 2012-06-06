@@ -726,8 +726,6 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 	GtkWebViewButtons buttons;
 
 	if (flags & PURPLE_CONNECTION_HTML) {
-		char color[8];
-		GdkColor fg_color, bg_color;
 		gboolean bold, italic, underline, strike;
 
 		buttons = GTK_WEBVIEW_ALL;
@@ -769,34 +767,15 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 				gtk_webview_font_set_size(webview, size);
 		}
 
-		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
-							&fg_color);
-			g_snprintf(color, sizeof(color),
-			           "#%02x%02x%02x",
-			           fg_color.red   / 256,
-			           fg_color.green / 256,
-			           fg_color.blue  / 256);
-		} else
-			strcpy(color, "");
+		gtk_webview_toggle_forecolor(webview,
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
 
-		gtk_webview_toggle_forecolor(webview, color);
-
-		if (!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
-		    strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
-							&bg_color);
-			g_snprintf(color, sizeof(color),
-			           "#%02x%02x%02x",
-			           bg_color.red   / 256,
-			           bg_color.green / 256,
-			           bg_color.blue  / 256);
-		} else
-			strcpy(color, "");
-
-		gtk_webview_toggle_backcolor(webview, color);
+		if (!(flags & PURPLE_CONNECTION_NO_BGCOLOR)) {
+			gtk_webview_toggle_backcolor(webview,
+				purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
+		} else {
+			gtk_webview_toggle_backcolor(webview, "");
+		}		
 
 		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
 			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
