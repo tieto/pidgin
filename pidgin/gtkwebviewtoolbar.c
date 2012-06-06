@@ -438,6 +438,7 @@ static void
 clear_formatting_cb(GtkAction *clear, GtkWebViewToolbar *toolbar)
 {
 	gtk_webview_clear_formatting(GTK_WEBVIEW(toolbar->webview));
+	gtk_widget_grab_focus(toolbar->webview);
 }
 
 static void

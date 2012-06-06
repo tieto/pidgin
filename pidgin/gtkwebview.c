@@ -986,8 +986,6 @@ gtk_webview_clear_formatting(GtkWebView *webview)
 	object = g_object_ref(G_OBJECT(webview));
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
 	g_object_unref(object);
-
-	gtk_widget_grab_focus(GTK_WIDGET(webview));
 }
 
 void
