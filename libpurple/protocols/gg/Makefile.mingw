@@ -24,14 +24,14 @@ endif
 ##
 ## INCLUDE PATHS
 ##
-INCLUDE_PATHS +=	-I. \
+INCLUDE_PATHS +=\
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
 			-I./lib \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PURPLE_TOP) \
-			-I$(PURPLE_TOP)/win32 \
-			-I$(PIDGIN_TREE_TOP)
+			-I$(GTK_TOP)/lib/glib-2.0/include
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
@@ -61,7 +61,7 @@ C_SRC =	\
 	gg.c \
 	search.c \
 	gg-utils.c \
-	win32-resolver.c
+	resolver-purple.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

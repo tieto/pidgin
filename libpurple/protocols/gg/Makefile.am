@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw \
-	win32-resolver.c \
-	win32-resolver.h \
+	resolver-purple.c \
+	resolver-purple.h \
 	lib/common.c \
 	lib/compat.h \
 	lib/COPYING \
@@ -81,7 +81,9 @@ GGSOURCES = \
 	buddylist.h \
 	buddylist.c \
 	gg.h \
-	gg.c
+	gg.c \
+	resolver-purple.h \
+	resolver-purple.c
 
 AM_CFLAGS = $(st)
 

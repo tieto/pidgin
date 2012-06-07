@@ -44,10 +44,7 @@
 #include "search.h"
 #include "buddylist.h"
 #include "gg-utils.h"
-
-#ifdef _WIN32
-#  include "win32-resolver.h"
-#endif
+#include "resolver-purple.h"
 
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -3005,10 +3002,7 @@ static void init_plugin(PurplePlugin *plugin)
 
 	gg_debug_handler = purple_gg_debug_handler;
 	
-#ifdef _WIN32
-	gg_global_set_custom_resolver(ggp_resolver_win32thread_start,
-		ggp_resolver_win32thread_cleanup);
-#endif
+	ggp_resolver_purple_setup();
 }
 
 PURPLE_INIT_PLUGIN(gg, init_plugin, info);

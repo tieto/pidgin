@@ -240,6 +240,24 @@ gboolean purple_input_remove(guint handle);
 int
 purple_input_get_error(int fd, int *error);
 
+/**
+ * Creates a pipe - an unidirectional data channel that can be used for
+ * interprocess communication.
+ *
+ * File descriptors for both ends of pipe will be written into provided array.
+ * The first one (pipefd[0]) can be used for reading, the second one (pipefd[1])
+ * for writing.
+ *
+ * On Windows it's simulated by creating a pair of connected sockets, on other
+ * systems pipe() is used.
+ *
+ * @param pipefd Array used to return file descriptors for both ends of pipe.
+ *
+ * @return @c 0 on success, @c -1 on error.
+ */
+int
+purple_input_pipe(int pipefd[2]);
+
 
 /*@}*/
 
