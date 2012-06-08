@@ -417,7 +417,7 @@ static void
 editable_input_cb(GtkWebView *webview, gpointer data)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	if (!priv->edit.block_changed)
+	if (!priv->edit.block_changed && gtk_widget_is_sensitive(GTK_WIDGET(webview)))
 		g_signal_emit(webview, signals[CHANGED], 0);
 }
 
