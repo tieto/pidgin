@@ -1,10 +1,9 @@
-/* Local libgadu configuration. */
-
-#ifndef __GG_LIBGADU_CONFIG_H
-#define __GG_LIBGADU_CONFIG_H
+/* Local libgadu configuration file. */
 
 /* libpurple's config */
 #include <config.h>
+
+#define GG_LIBGADU_VERSION "1.11.1"
 
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef GG_CONFIG_BIGENDIAN
@@ -75,9 +74,4 @@
 #undef GG_CONFIG_HAVE_SYS_TYPES_H
 #ifdef HAVE_SYS_TYPES_H
 #  define GG_CONFIG_HAVE_SYS_TYPES_H
-#endif
-
-
-#define vnsprintf g_vnsprintf
-
 #endif

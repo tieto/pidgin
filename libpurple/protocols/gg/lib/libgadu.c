@@ -60,8 +60,6 @@
 #  include <openssl/rand.h>
 #endif
 
-#define GG_LIBGADU_VERSION "1.11.1"
-
 /**
  * Port gniazda nasłuchującego dla połączeń bezpośrednich.
  * 

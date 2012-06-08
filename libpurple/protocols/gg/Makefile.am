@@ -1,45 +1,18 @@
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+
 EXTRA_DIST = \
 	Makefile.mingw \
-	resolver-purple.c \
-	resolver-purple.h \
-	lib/common.c \
-	lib/compat.h \
-	lib/COPYING \
-	lib/dcc.c \
-	lib/dcc7.c \
-	lib/debug.c \
-	lib/deflate.c \
-	lib/deflate.h \
-	lib/encoding.c \
-	lib/encoding.h \
-	lib/events.c \
-	lib/handlers.c \
-	lib/http.c \
-	lib/libgadu.h \
-	lib/libgadu.c \
-	lib/config.h \
-	lib/debug.h \
-	lib/internal.h \
-	lib/message.c \
-	lib/message.h \
-	lib/obsolete.c \
-	lib/protocol.h \
-	lib/pubdir.c \
-	lib/pubdir50.c \
-	lib/resolver.c \
-	lib/resolver.h \
-	lib/session.h \
-	lib/sha1.c
-
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+	lib/COPYING
 
 if USE_INTERNAL_LIBGADU
 INTGGSOURCES = \
 	lib/common.c \
 	lib/compat.h \
+	lib/config.h \
 	lib/dcc.c \
 	lib/dcc7.c \
 	lib/debug.c \
+	lib/debug.h \
 	lib/deflate.c \
 	lib/deflate.h \
 	lib/encoding.c \
@@ -47,10 +20,9 @@ INTGGSOURCES = \
 	lib/events.c \
 	lib/handlers.c \
 	lib/http.c \
-	lib/libgadu.h \
-	lib/libgadu.c \
-	lib/config.h \
 	lib/internal.h \
+	lib/libgadu.c \
+	lib/libgadu.h \
 	lib/message.c \
 	lib/message.h \
 	lib/obsolete.c \
@@ -62,7 +34,7 @@ INTGGSOURCES = \
 	lib/session.h \
 	lib/sha1.c
 
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED -DUSE_INTERNAL_LIBGADU
+INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED
 endif
 
 if USE_GNUTLS
@@ -113,4 +85,3 @@ AM_CPPFLAGS = \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)
-

@@ -2332,24 +2332,19 @@ static void ggp_login(PurpleAccount *account)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
 	
 	address = purple_account_get_string(account, "gg_server", "");
-	if (address && *address) {
-		/* TODO: Make this non-blocking */
-		struct in_addr *addr = gg_gethostbyname(address);
-
-		purple_debug_info("gg", "Using gg server given by user (%s)\n", address);
-
-		if (addr == NULL) {
-			gchar *tmp = g_strdup_printf(_("Unable to resolve hostname '%s': %s"),
-					address, g_strerror(errno));
+	if (address && *address)
+	{
+		glp->server_addr = inet_addr(address);
+		glp->server_port = 8074;
+		
+		if (glp->server_addr == INADDR_NONE)
+		{
 			purple_connection_error(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, /* should this be a settings error? */
-				tmp);
-			g_free(tmp);
+				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+				_("Provided server IP address is not valid"));
+			g_free(glp);
 			return;
 		}
-
-		glp->server_addr = inet_addr(inet_ntoa(*addr));
-		glp->server_port = 8074;
 	} else
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
@@ -2970,7 +2965,7 @@ static void init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
-	purple_debug_info("gg", "init_plugin: [libgadu version: %s]\n",
+	purple_debug_info("gg", "Loading Gadu-Gadu plugin with libgadu %s...\n",
 		gg_libgadu_version());
 
 	option = purple_account_option_string_new(_("GG server"),
