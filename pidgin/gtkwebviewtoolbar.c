@@ -1126,17 +1126,11 @@ update_format_cb(GtkWebView *webview, GtkWebViewToolbar *toolbar)
 	update_buttons(toolbar);
 }
 
-#if 0
 static void
-mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *location, GtkTextMark *mark,
-            GtkWebViewToolbar *toolbar)
+mark_set_cb(GtkWebView *webview, GtkWebViewToolbar *toolbar)
 {
-	if(mark != gtk_text_buffer_get_insert(buffer))
-		return;
-
 	update_buttons(toolbar);
 }
-#endif
 
 /* This comes from gtkmenutoolbutton.c from gtk+
  * Copyright (C) 2003 Ricardo Fernandez Pascual
@@ -1587,9 +1581,8 @@ gtk_webviewtoolbar_attach(GtkWebViewToolbar *toolbar, GtkWidget *webview)
 	                       G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect(G_OBJECT(webview), "format-updated",
 	                 G_CALLBACK(update_format_cb), toolbar);
-#if 0
-	g_signal_connect_after(G_OBJECT(GTK_WEBVIEW(webview)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
-#endif
+	g_signal_connect_after(G_OBJECT(webview), "selection-changed",
+	                       G_CALLBACK(mark_set_cb), toolbar);
 
 	buttons = gtk_webview_get_format_functions(GTK_WEBVIEW(webview));
 	update_buttons_cb(GTK_WEBVIEW(webview), buttons, toolbar);
