@@ -8,6 +8,10 @@ version 2.10.5:
 	* Fix a crash that may occur when trying to ignore a user who is
 	  not in the current chat room. (#15139)
 
+	MSN:
+	* Fix building with MSVC on Windows (broken in 2.10.4). (Florian
+	  Quèze)
+
 version 2.10.4 (05/06/2012):
 	General:
 	* Support building against Farstream in addition to Farsight.
