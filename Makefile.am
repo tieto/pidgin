@@ -96,8 +96,7 @@ endif
 # successfully; the rm -f ensures both
 package_revision_raw.txt:
 	REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(cd $(srcdir) && $$REAL_BLDDIR/mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
-	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
 	if [ -f $< ]; then \

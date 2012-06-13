@@ -18,7 +18,7 @@ $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 	  /^m4_define..purple_micro_version/ {system("sed -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $@ > $@.tmp && mv $@.tmp $@"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
 
 $(PIDGIN_REVISION_RAW_TXT):
-	(cd $(PIDGIN_TREE_TOP) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	(hg --cwd $(PIDGIN_TREE_TOP) id -i --debug) 2>/dev/null >$@ \
 	|| rm -f $@
 
 $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
