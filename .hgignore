@@ -1,3 +1,4 @@
+syntax: regexp
 .*/?Makefile(\.in)?
 (.*/)?TAGS$
 .*/?.*\.pc$
