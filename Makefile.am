@@ -59,9 +59,9 @@ version-check: commit-check
 	head po/ChangeLog | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
-	test x`mtn automate select t:v$(PACKAGE_VERSION)` = x`mtn automate get_base_revision_id`
-# ... and have no changes in the working copy.
-	test "x`mtn diff | grep -v '^#'`" = x
+	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
+# ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
+	test "x`hg st -mard`" = x
 
 release: version-check distcheck packages
 
