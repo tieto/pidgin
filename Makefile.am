@@ -49,9 +49,9 @@ version-check: commit-check
 	head po/ChangeLog | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
-	test x`mtn automate select t:v$(PACKAGE_VERSION)` = x`mtn automate get_base_revision_id`
-# ... and have no changes in the working copy.
-	test "x`mtn diff | grep -v '^#'`" = x
+	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
+# ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
+	test "x`hg st -mard`" = x
 
 release: version-check distcheck packages
 
@@ -91,8 +91,7 @@ endif
 # successfully; the rm -f ensures both
 package_revision_raw.txt:
 	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(cd $(srcdir) && $$REAL_BLDDIR/mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
-	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
 	$(AM_V_GEN)if test -f $<; then \
