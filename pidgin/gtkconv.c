@@ -7604,7 +7604,7 @@ account_signing_off(PurpleConnection *gc)
 				purple_conversation_get_account(conv) == account) {
 			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-						"longer in this chat. You will be automatically rejoined in the chat when "
+						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
