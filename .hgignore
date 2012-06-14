@@ -9,9 +9,10 @@ syntax: regexp
 .*/perl/common/pm_to_blib$
 .*\.bs$
 .*\.def$
-.*\.dll$
+.*\.dll(\.a)?$
 .*\.exe$
 .*\.loT$
+.*\.o$
 Doxyfile(\.mingw)?$
 VERSION$
 aclocal.m4
@@ -90,6 +91,7 @@ pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
 po/Makefile.in.in
 po/POTFILES$
+po/.*\.gmo
 po/missing
 po/notexist
 po/pidgin.pot
