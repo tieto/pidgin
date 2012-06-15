@@ -59,6 +59,14 @@ static void *xmpp_console_handle = NULL;
 	"span.value { color: #324aa4; }" \
 	"span.xmlns { color: #2cb12f; font-weight: bold;}" \
 "</style></head></html>"
+#define SET_CURSOR \
+	"var s = window.getSelection();" \
+	"var r = document.createRange();" \
+	"var n = document.getElementById('caret');" \
+	"r.setStartBefore(n);" \
+	"r.setEndBefore(n);" \
+	"s.removeAllRanges();" \
+	"s.addRange(r);"
 
 static char *
 xmlnode_to_pretty_str(xmlnode *node, int *len)
@@ -272,9 +280,7 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 {
 	GtkWidget *vbox, *hbox, *to_entry, *label, *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	GtkTextIter iter;
-	GtkTextBuffer *buffer;
-	const char *to;
+	char *to;
 	int result;
 	char *stanza;
 
@@ -332,19 +338,21 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 		return;
 	}
 
-	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
+	to = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(to_entry)), -1);
 
-	stanza = g_strdup_printf("<iq %s%s%s id='console%x' type='%s'></iq>",
+	stanza = g_strdup_printf("&lt;iq %s%s%s id='console%x' type='%s'&gt;"
+	                         "<a id=caret></a>"
+	                         "&lt;/iq&gt;",
 				 to && *to ? "to='" : "",
 				 to && *to ? to : "",
 				 to && *to ? "'" : "",
 				 g_random_int(),
 				 gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)));
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
-	gtk_text_buffer_set_text(buffer, stanza, -1);
-	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</iq>") - stanza);
-	gtk_text_buffer_place_cursor(buffer, &iter);
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_widget_grab_focus(console->entry);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
+	g_free(to);
 	g_free(stanza);
 
 	gtk_widget_destroy(dialog);
@@ -362,9 +370,8 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	GtkWidget *show_combo;
 	GtkWidget *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	GtkTextIter iter;
-	GtkTextBuffer *buffer;
-	const char *to, *type, *status, *show, *priority;
+	char *to, *status, *priority;
+	const char *type, *show;
 	int result;
 	char *stanza;
 
@@ -465,21 +472,22 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 		return;
 	}
 
-	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
+	to = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(to_entry)), -1);
 	type = gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo));
 	if (!strcmp(type, "default"))
 		type = "";
 	show = gtk_combo_box_get_active_text(GTK_COMBO_BOX(show_combo));
 	if (!strcmp(show, "default"))
 		show = "";
-	status = gtk_entry_get_text(GTK_ENTRY(status_entry));
-	priority = gtk_entry_get_text(GTK_ENTRY(priority_entry));
+	status = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(status_entry)), -1);
+	priority = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(priority_entry)), -1);
 	if (!strcmp(priority, "0"))
-		priority = "";
+		*priority = '\0';
 
-	stanza = g_strdup_printf("<presence %s%s%s id='console%x' %s%s%s>"
+	stanza = g_strdup_printf("&lt;presence %s%s%s id='console%x' %s%s%s&gt;"
 	                         "%s%s%s%s%s%s%s%s%s"
-	                         "</presence>",
+	                         "<a id=caret></a>"
+	                         "&lt;/presence&gt;",
 	                         *to ? "to='" : "",
 	                         *to ? to : "",
 	                         *to ? "'" : "",
@@ -489,23 +497,25 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *type ? type : "",
 	                         *type ? "'" : "",
 
-	                         *show ? "<show>" : "",
+	                         *show ? "&lt;show&gt;" : "",
 	                         *show ? show : "",
-	                         *show ? "</show>" : "",
+	                         *show ? "&lt;/show&gt;" : "",
 
-	                         *status ? "<status>" : "",
+	                         *status ? "&lt;status&gt;" : "",
 	                         *status ? status : "",
-	                         *status ? "</status>" : "",
+	                         *status ? "&lt;/status&gt;" : "",
 
-	                         *priority ? "<priority>" : "",
+	                         *priority ? "&lt;priority&gt;" : "",
 	                         *priority ? priority : "",
-	                         *priority ? "</priority>" : "");
+	                         *priority ? "&lt;/priority&gt;" : "");
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
-	gtk_text_buffer_set_text(buffer, stanza, -1);
-	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</presence>") - stanza);
-	gtk_text_buffer_place_cursor(buffer, &iter);
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_widget_grab_focus(console->entry);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
 	g_free(stanza);
+	g_free(to);
+	g_free(status);
+	g_free(priority);
 
 	gtk_widget_destroy(dialog);
 	g_object_unref(sg);
@@ -522,9 +532,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	GtkWidget *label;
 	GtkWidget *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	GtkTextIter iter;
-	GtkTextBuffer *buffer;
-	const char *to, *body, *thread, *subject;
+	char *to, *body, *thread, *subject;
 	char *stanza;
 	int result;
 
@@ -618,14 +626,15 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 		return;
 	}
 
-	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
-	body = gtk_entry_get_text(GTK_ENTRY(body_entry));
-	thread = gtk_entry_get_text(GTK_ENTRY(thread_entry));
-	subject = gtk_entry_get_text(GTK_ENTRY(subject_entry));
+	to = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(to_entry)), -1);
+	body = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(body_entry)), -1);
+	thread = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(thread_entry)), -1);
+	subject = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(subject_entry)), -1);
 
-	stanza = g_strdup_printf("<message %s%s%s id='console%x' type='%s'>"
+	stanza = g_strdup_printf("&lt;message %s%s%s id='console%x' type='%s'&gt;"
 	                         "%s%s%s%s%s%s%s%s%s"
-	                         "</message>",
+	                         "<a id=caret></a>"
+	                         "&lt;/message&gt;",
 
 	                         *to ? "to='" : "",
 	                         *to ? to : "",
@@ -633,23 +642,26 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	                         g_random_int(),
 	                         gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)),
 
-	                         *body ? "<body>" : "",
+	                         *body ? "&lt;body&gt;" : "",
 	                         *body ? body : "",
-	                         *body ? "</body>" : "",
+	                         *body ? "&lt;/body&gt;" : "",
 
-	                         *subject ? "<subject>" : "",
+	                         *subject ? "&lt;subject&gt;" : "",
 	                         *subject ? subject : "",
-	                         *subject ? "</subject>" : "",
+	                         *subject ? "&lt;/subject&gt;" : "",
 
-	                         *thread ? "<thread>" : "",
+	                         *thread ? "&lt;thread&gt;" : "",
 	                         *thread ? thread : "",
-	                         *thread ? "</thread>" : "");
+	                         *thread ? "&lt;/thread&gt;" : "");
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
-	gtk_text_buffer_set_text(buffer, stanza, -1);
-	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</message>") - stanza);
-	gtk_text_buffer_place_cursor(buffer, &iter);
+	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_widget_grab_focus(console->entry);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
 	g_free(stanza);
+	g_free(to);
+	g_free(body);
+	g_free(thread);
+	g_free(subject);
 
 	gtk_widget_destroy(dialog);
 	g_object_unref(sg);
