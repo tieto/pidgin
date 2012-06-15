@@ -403,7 +403,9 @@ void mxit_show_message( struct RXMsgData* mx )
 			}
 			else {
 				/* insert img tag */
-				g_snprintf( tag, sizeof( tag ), "<img id=\"%i\">", *img_id );
+				g_snprintf( tag, sizeof( tag ),
+				            "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\">",
+				            *img_id );
 				g_string_insert( mx->msg, start, tag );
 			}
 		}
@@ -1066,7 +1068,7 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 	 *   Font colour:	<font color=#">...</font>
 	 *   Links:			<a href="">...</a>
 	 *   Newline:		<br>
-	 *   Inline image:  <IMG ID="">
+	 *   Inline image:  <IMG SRC="">
 	 * The following characters are also encoded:
 	 *   &amp;  &quot;  &lt;  &gt;
 	 */
@@ -1133,11 +1135,11 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 						g_free( tag );
 					}
 				}
-				else if ( purple_str_has_prefix( &message[i], "<IMG ID=" ) ) {
+				else if ( purple_str_has_prefix( &message[i], "<IMG SRC=" PURPLE_STORED_IMAGE_PROTOCOL) ) {
 					/* inline image */
 					int imgid;
 
-					if ( sscanf( &message[i+9], "%i", &imgid ) ) {
+					if ( sscanf( &message[i+sizeof("<IMG SRC=" PURPLE_STORED_IMAGE_PROTOCOL)-1], "%i", &imgid ) ) {
 						inline_image_add( mx, imgid );
 						*msgtype = CP_MSGTYPE_COMMAND;		/* inline image must be sent as a MXit command */
 					}

@@ -1204,7 +1204,8 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						char *hash;
 
 						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
-						img_text = g_strdup_printf("<img id='%d'>", GPOINTER_TO_INT(jbi->vcard_imgids->data));
+						img_text = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
+						                           GPOINTER_TO_INT(jbi->vcard_imgids->data));
 
 						purple_notify_user_info_add_pair_html(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 

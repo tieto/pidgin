@@ -306,7 +306,8 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 		int id = purple_imgstore_add_with_id(data, size, NULL);
 
 		message_with_img =
-			g_strdup_printf("<img id='%d'> %s", id, escaped);
+			g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'> %s",
+			                id, escaped);
 		purple_conversation_write(conv, NULL, message_with_img, flags,
 			time(NULL));
 		purple_imgstore_unref_by_id(id);

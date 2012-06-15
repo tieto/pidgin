@@ -50,6 +50,7 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkft.h"
+#include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"

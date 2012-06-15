@@ -43,6 +43,7 @@ enum {
 	TOGGLE_FORMAT,
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
+	CHANGED,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -52,7 +53,6 @@ static guint signals[LAST_SIGNAL] = { 0 };
  *****************************************************************************/
 
 typedef struct _GtkWebViewPriv {
-	GHashTable *images; /**< a map from id to temporary file for the image */
 	gboolean empty;     /**< whether anything has been appended **/
 
 	/* JS execute queue */
@@ -68,6 +68,7 @@ typedef struct _GtkWebViewPriv {
 	GtkWebViewButtons format_functions;
 	struct {
 		gboolean wbfo:1;	/* Whole buffer formatting only. */
+		gboolean block_changed:1;
 	} edit;
 
 } GtkWebViewPriv;
@@ -82,97 +83,44 @@ static WebKitWebViewClass *parent_class = NULL;
  * Helpers
  *****************************************************************************/
 
-static const char *
-get_image_src_from_id(GtkWebViewPriv *priv, int id)
+static void
+webview_resource_loading(WebKitWebView *webview,
+                         WebKitWebFrame *frame,
+                         WebKitWebResource *resource,
+                         WebKitNetworkRequest *request,
+                         WebKitNetworkResponse *response,
+                         gpointer user_data)
 {
-	char *src;
-	PurpleStoredImage *img;
+	const gchar *uri;
 
-	if (priv->images) {
-		/* Check for already loaded image */
-		src = (char *)g_hash_table_lookup(priv->images, GINT_TO_POINTER(id));
-		if (src)
-			return src;
-	} else {
-		priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-		                                     NULL, g_free);
-	}
+	uri = webkit_network_request_get_uri(request);
+	if (purple_str_has_prefix(uri, PURPLE_STORED_IMAGE_PROTOCOL)) {
+		int id;
+		PurpleStoredImage *img;
+		const char *filename;
 
-	/* Find image in store */
-	img = purple_imgstore_find_by_id(id);
+		uri += sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1;
+		id = strtoul(uri, NULL, 10);
 
-	src = (char *)purple_imgstore_get_filename(img);
-	if (src) {
-		src = g_strdup_printf("file://%s", src);
-	} else {
-		char *tmp;
-		tmp = purple_base64_encode(purple_imgstore_get_data(img),
-		                           purple_imgstore_get_size(img));
-		src = g_strdup_printf("data:base64,%s", tmp);
-		g_free(tmp);
-	}
+		img = purple_imgstore_find_by_id(id);
+		if (!img)
+			return;
 
-	g_hash_table_insert(priv->images, GINT_TO_POINTER(id), src);
-
-	return src;
-}
-
-/*
- * Replace all <img id=""> tags with <img src="">. I hoped to never
- * write any HTML parsing code, but I'm forced to do this, until
- * purple changes the way it works.
- */
-static char *
-replace_img_id_with_src(GtkWebViewPriv *priv, const char *html)
-{
-	GString *buffer = g_string_new(NULL);
-	const char *cur = html;
-	char *id;
-	int nid;
-
-	while (*cur) {
-		const char *img = strstr(cur, "<img");
-		if (!img) {
-			g_string_append(buffer, cur);
-			break;
-		} else
-			g_string_append_len(buffer, cur, img - cur);
-
-		cur = strstr(img, "/>");
-		if (!cur)
-			cur = strstr(img, ">");
-
-		if (!cur) { /* invalid html? */
-			g_string_printf(buffer, "%s", html);
-			break;
+		filename = purple_imgstore_get_filename(img);
+		if (filename && g_path_is_absolute(filename)) {
+			char *tmp = g_strdup_printf("file://%s", filename);
+			webkit_network_request_set_uri(request, tmp);
+			g_free(tmp);
+		} else {
+			char *b64 = purple_base64_encode(purple_imgstore_get_data(img),
+			                                 purple_imgstore_get_size(img));
+			const char *type = purple_imgstore_get_extension(img);
+			char *tmp = g_strdup_printf("data:image/%s;base64,%s", type, b64);
+			webkit_network_request_set_uri(request, tmp);
+			g_free(b64);
+			g_free(tmp);
 		}
-
-		if (strstr(img, "src=") || !strstr(img, "id=")) {
-			g_string_printf(buffer, "%s", html);
-			break;
-		}
-
-		/*
-		 * if this is valid HTML, then I can be sure that it
-		 * has an id= and does not have an src=, since
-		 * '=' cannot appear in parameters.
-		 */
-
-		id = strstr(img, "id=") + 3;
-
-		/* *id can't be \0, since a ">" appears after this */
-		if (isdigit(*id))
-			nid = atoi(id);
-		else
-			nid = atoi(id + 1);
-
-		/* let's dump this, tag and then dump the src information */
-		g_string_append_len(buffer, img, cur - img);
-
-		g_string_append_printf(buffer, " src='%s' ", get_image_src_from_id(priv, nid));
 	}
-
-	return g_string_free(buffer, FALSE);
 }
 
 static gboolean
@@ -293,15 +241,83 @@ scroll_idle_cb(gpointer data)
 }
 
 static void
+emit_format_signal(GtkWebView *webview, GtkWebViewButtons buttons)
+{
+	g_object_ref(webview);
+	g_signal_emit(webview, signals[TOGGLE_FORMAT], 0, buttons);
+	g_object_unref(webview);
+}
+
+static void
+do_formatting(GtkWebView *webview, const char *name, const char *value)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win;
+	WebKitDOMDOMSelection *sel = NULL;
+	WebKitDOMRange *range = NULL;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	if (priv->edit.wbfo) {
+		win = webkit_dom_document_get_default_view(dom);
+		sel = webkit_dom_dom_window_get_selection(win);
+		if (webkit_dom_dom_selection_get_range_count(sel) > 0)
+			range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+		webkit_web_view_select_all(WEBKIT_WEB_VIEW(webview));
+	}
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, name, FALSE, value);
+	priv->edit.block_changed = FALSE;
+
+	if (priv->edit.wbfo) {
+		if (range) {
+			webkit_dom_dom_selection_remove_all_ranges(sel);
+			webkit_dom_dom_selection_add_range(sel, range);
+		} else {
+			webkit_dom_dom_selection_collapse_to_end(sel, NULL);
+		}
+	}
+}
+
+static void
+webview_font_shrink(GtkWebView *webview)
+{
+	gint fontsize;
+	char *tmp;
+
+	fontsize = gtk_webview_get_current_fontsize(webview);
+	fontsize = MAX(fontsize - 1, 1);
+
+	tmp = g_strdup_printf("%d", fontsize);
+	do_formatting(webview, "fontSize", tmp);
+	g_free(tmp);
+}
+
+static void
+webview_font_grow(GtkWebView *webview)
+{
+	gint fontsize;
+	char *tmp;
+
+	fontsize = gtk_webview_get_current_fontsize(webview);
+	fontsize = MIN(fontsize + 1, MAX_FONT_SIZE);
+
+	tmp = g_strdup_printf("%d", fontsize);
+	do_formatting(webview, "fontSize", tmp);
+	g_free(tmp);
+}
+
+static void
 webview_clear_formatting(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
 	if (!webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview)))
 		return;
 
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "removeFormat", FALSE, "");
+	do_formatting(webview, "removeFormat", "");
+	do_formatting(webview, "unlink", "");
+	do_formatting(webview, "backColor", "inherit");
 }
 
 static void
@@ -313,26 +329,34 @@ webview_toggle_format(GtkWebView *webview, GtkWebViewButtons buttons)
 
 	switch (buttons) {
 	case GTK_WEBVIEW_BOLD:
-		gtk_webview_toggle_bold(webview);
+		do_formatting(webview, "bold", "");
 		break;
 	case GTK_WEBVIEW_ITALIC:
-		gtk_webview_toggle_italic(webview);
+		do_formatting(webview, "italic", "");
 		break;
 	case GTK_WEBVIEW_UNDERLINE:
-		gtk_webview_toggle_underline(webview);
+		do_formatting(webview, "underline", "");
 		break;
 	case GTK_WEBVIEW_STRIKE:
-		gtk_webview_toggle_strike(webview);
+		do_formatting(webview, "strikethrough", "");
 		break;
 	case GTK_WEBVIEW_SHRINK:
-		gtk_webview_font_shrink(webview);
+		webview_font_shrink(webview);
 		break;
 	case GTK_WEBVIEW_GROW:
-		gtk_webview_font_grow(webview);
+		webview_font_grow(webview);
 		break;
 	default:
 		break;
 	}
+}
+
+static void
+editable_input_cb(GtkWebView *webview, gpointer data)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	if (!priv->edit.block_changed && gtk_widget_is_sensitive(GTK_WIDGET(webview)))
+		g_signal_emit(webview, signals[CHANGED], 0);
 }
 
 /******************************************************************************
@@ -354,9 +378,6 @@ gtk_webview_finalize(GObject *webview)
 	while ((temp = g_queue_pop_head(priv->js_queue)))
 		g_free(temp);
 	g_queue_free(priv->js_queue);
-
-	if (priv->images)
-		g_hash_table_unref(priv->images);
 
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
@@ -396,6 +417,12 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	                                      G_STRUCT_OFFSET(GtkWebViewClass, update_format),
 	                                      NULL, 0, g_cclosure_marshal_VOID__VOID,
 	                                      G_TYPE_NONE, 0);
+	signals[CHANGED] = g_signal_new("changed",
+	                                G_TYPE_FROM_CLASS(gobject_class),
+	                                G_SIGNAL_RUN_FIRST,
+	                                G_STRUCT_OFFSET(GtkWebViewClass, changed),
+	                                NULL, NULL, g_cclosure_marshal_VOID__VOID,
+	                                G_TYPE_NONE, 0);
 
 	klass->toggle_format = webview_toggle_format;
 	klass->clear_format = webview_clear_formatting;
@@ -443,6 +470,9 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 
 	g_signal_connect(webview, "load-finished",
 			  G_CALLBACK(webview_load_finished), NULL);
+
+	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
+	                 G_CALLBACK(webview_resource_loading), NULL);
 }
 
 GType
@@ -520,25 +550,10 @@ gtk_webview_safe_execute_script(GtkWebView *webview, const char *script)
 void
 gtk_webview_load_html_string(GtkWebView *webview, const char *html)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	char *html_imged;
-
-	if (priv->images) {
-		g_hash_table_unref(priv->images);
-		priv->images = NULL;
-	}
-
-	html_imged = replace_img_id_with_src(priv, html);
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), html_imged, NULL,
-	                            NULL, "file:///");
-	g_free(html_imged);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), html, NULL, NULL,
+	                            "file:///");
 }
 
-/* this is a "hack", my plan is to eventually handle this
- * correctly using a signals and a plugin: the plugin will have
- * the information as to what javascript function to call. It seems
- * wrong to hardcode that here.
- */
 void
 gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
@@ -618,6 +633,15 @@ void
 gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 {
 	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+
+	if (editable) {
+		g_signal_connect(G_OBJECT(webview), "user-changed-contents",
+		                 G_CALLBACK(editable_input_cb), NULL);
+	} else {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(webview),
+		                                     G_CALLBACK(editable_input_cb),
+		                                     NULL);
+	}
 }
 
 void
@@ -626,8 +650,6 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 	GtkWebViewButtons buttons;
 
 	if (flags & PURPLE_CONNECTION_HTML) {
-		char color[8];
-		GdkColor fg_color, bg_color;
 		gboolean bold, italic, underline, strike;
 
 		buttons = GTK_WEBVIEW_ALL;
@@ -669,34 +691,15 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 				gtk_webview_font_set_size(webview, size);
 		}
 
-		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
-							&fg_color);
-			g_snprintf(color, sizeof(color),
-			           "#%02x%02x%02x",
-			           fg_color.red   / 256,
-			           fg_color.green / 256,
-			           fg_color.blue  / 256);
-		} else
-			strcpy(color, "");
+		gtk_webview_toggle_forecolor(webview,
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
 
-		gtk_webview_toggle_forecolor(webview, color);
-
-		if (!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
-		    strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
-							&bg_color);
-			g_snprintf(color, sizeof(color),
-			           "#%02x%02x%02x",
-			           bg_color.red   / 256,
-			           bg_color.green / 256,
-			           bg_color.blue  / 256);
-		} else
-			strcpy(color, "");
-
-		gtk_webview_toggle_backcolor(webview, color);
+		if (!(flags & PURPLE_CONNECTION_NO_BGCOLOR)) {
+			gtk_webview_toggle_backcolor(webview,
+				purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
+		} else {
+			gtk_webview_toggle_backcolor(webview, "");
+		}		
 
 		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
 			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
@@ -719,6 +722,16 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 }
 
 void
+pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable)
+{
+	WebKitWebSettings *settings;
+	
+	settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview));
+	g_object_set(G_OBJECT(settings), "enable-spell-checking", enable, NULL);
+	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webview), settings);
+}
+
+void
 gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview, gboolean wbfo)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
@@ -733,6 +746,64 @@ gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
 	priv->format_functions = buttons;
 	g_signal_emit(object, signals[BUTTONS_UPDATE], 0, buttons);
 	g_object_unref(object);
+}
+
+gchar *
+gtk_webview_get_head_html(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLHeadElement *head;
+	gchar *html;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	head = webkit_dom_document_get_head(doc);
+	html = webkit_dom_html_element_get_inner_html(WEBKIT_DOM_HTML_ELEMENT(head));
+
+	return html;
+}
+
+gchar *
+gtk_webview_get_body_html(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+	gchar *html;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	html = webkit_dom_html_element_get_inner_html(body);
+
+	return html;
+}
+
+gchar *
+gtk_webview_get_body_text(GtkWebView *webview)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+	gchar *text;
+
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	text = webkit_dom_html_element_get_inner_text(body);
+
+	return text;
+}
+
+gchar *
+gtk_webview_get_selected_text(GtkWebView *webview)
+{
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win;
+	WebKitDOMDOMSelection *sel;
+	WebKitDOMRange *range;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	win = webkit_dom_document_get_default_view(dom);
+	sel = webkit_dom_dom_window_get_selection(win);
+	range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+
+	return webkit_dom_range_get_text(range);
 }
 
 GtkWebViewButtons
@@ -812,55 +883,38 @@ gtk_webview_clear_formatting(GtkWebView *webview)
 
 	object = g_object_ref(G_OBJECT(webview));
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
-
-	gtk_widget_grab_focus(GTK_WIDGET(webview));
-
 	g_object_unref(object);
 }
 
 void
 gtk_webview_toggle_bold(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "bold", FALSE, "");
+	emit_format_signal(webview, GTK_WEBVIEW_BOLD);
 }
 
 void
 gtk_webview_toggle_italic(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "italic", FALSE, "");
+	emit_format_signal(webview, GTK_WEBVIEW_ITALIC);
 }
 
 void
 gtk_webview_toggle_underline(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "underline", FALSE, "");
+	emit_format_signal(webview, GTK_WEBVIEW_UNDERLINE);
 }
 
 void
 gtk_webview_toggle_strike(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "strikethrough", FALSE, "");
+	emit_format_signal(webview, GTK_WEBVIEW_STRIKE);
 }
 
 gboolean
 gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "foreColor", FALSE, color);
+	do_formatting(webview, "foreColor", color);
+	emit_format_signal(webview, GTK_WEBVIEW_FORECOLOR);
 
 	return FALSE;
 }
@@ -868,10 +922,8 @@ gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color)
 gboolean
 gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "backColor", FALSE, color);
+	do_formatting(webview, "backColor", color);
+	emit_format_signal(webview, GTK_WEBVIEW_BACKCOLOR);
 
 	return FALSE;
 }
@@ -879,10 +931,8 @@ gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color)
 gboolean
 gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 {
-	WebKitDOMDocument *dom;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	webkit_dom_document_exec_command(dom, "fontName", FALSE, face);
+	do_formatting(webview, "fontName", face);
+	emit_format_signal(webview, GTK_WEBVIEW_FACE);
 
 	return FALSE;
 }
@@ -890,44 +940,67 @@ gtk_webview_toggle_fontface(GtkWebView *webview, const char *face)
 void
 gtk_webview_font_set_size(GtkWebView *webview, gint size)
 {
-	WebKitDOMDocument *dom;
-	char *tmp;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	tmp = g_strdup_printf("%d", size);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
+	char *tmp = g_strdup_printf("%d", size);
+	do_formatting(webview, "fontSize", tmp);
+	emit_format_signal(webview, GTK_WEBVIEW_SHRINK|GTK_WEBVIEW_GROW);
 	g_free(tmp);
 }
 
 void
 gtk_webview_font_shrink(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-	gint fontsize;
-	char *tmp;
-
-	fontsize = gtk_webview_get_current_fontsize(webview);
-	fontsize = MAX(fontsize - 1, 1);
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	tmp = g_strdup_printf("%d", fontsize);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
-	g_free(tmp);
+	emit_format_signal(webview, GTK_WEBVIEW_SHRINK);
 }
 
 void
 gtk_webview_font_grow(GtkWebView *webview)
 {
-	WebKitDOMDocument *dom;
-	gint fontsize;
-	char *tmp;
+	emit_format_signal(webview, GTK_WEBVIEW_GROW);
+}
 
-	fontsize = gtk_webview_get_current_fontsize(webview);
-	fontsize = MIN(fontsize + 1, MAX_FONT_SIZE);
+void
+gtk_webview_insert_hr(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	tmp = g_strdup_printf("%d", fontsize);
-	webkit_dom_document_exec_command(dom, "fontSize", FALSE, tmp);
-	g_free(tmp);
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHorizontalRule", FALSE, "");
+	priv->edit.block_changed = FALSE;
+}
+
+void
+gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *link;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	link = g_strdup_printf("<a href='%s'>%s</a>", url, desc ? desc : url);
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, link);
+	priv->edit.block_changed = FALSE;
+	g_free(link);
+}
+
+void
+gtk_webview_insert_image(GtkWebView *webview, int id)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitDOMDocument *dom;
+	char *img;
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	img = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'/>",
+	                      id);
+
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);
+	priv->edit.block_changed = FALSE;
+	g_free(img);
 }
 

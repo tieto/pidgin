@@ -327,7 +327,6 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	const char*	img;
 	const char*	reply;
 	guchar*		rawimg;
-	char		link[256];
 	gsize		rawimglen;
 	int			imgid;
 
@@ -336,8 +335,9 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 		rawimg = purple_base64_decode(img, &rawimglen);
 		//purple_util_write_data_to_file_absolute("/tmp/mxitinline.png", (char*) rawimg, rawimglen);
 		imgid = purple_imgstore_add_with_id(rawimg, rawimglen, NULL);
-		g_snprintf(link, sizeof(link), "<img id=\"%i\">", imgid);
-		g_string_append_printf(msg, "%s", link);
+		g_string_append_printf(msg,
+		                       "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\">",
+		                       imgid);
 		mx->flags |= PURPLE_MESSAGE_IMAGES;
 	}
 	else {

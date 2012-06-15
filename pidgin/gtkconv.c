@@ -1058,12 +1058,10 @@ menu_join_chat_cb(GtkAction *action, gpointer data)
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
-	/* TODO WEBKIT: I don't know how to support this using webkit yet. */
-#if 0
 	PurpleConversation *conv = (PurpleConversation *)user_data;
+	GtkWebView *webview;
 	FILE *fp;
 	const char *name;
-	char **lines;
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
@@ -1071,22 +1069,27 @@ savelog_writefile_cb(void *user_data, const char *filename)
 		return;
 	}
 
+	webview = GTK_WEBVIEW(PIDGIN_CONVERSATION(conv)->webview);
 	name = purple_conversation_get_name(conv);
-	fprintf(fp, "<html>\n<head>\n");
-	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
-	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
-	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
+	fprintf(fp, "<html>\n");
 
-	lines = gtk_imhtml_get_markup_lines(
-		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
-	text = g_strjoinv("<br>\n", lines);
+	fprintf(fp, "<head>\n");
+	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+	fprintf(fp, "<title>%s</title>\n", name);
+	text = gtk_webview_get_head_html(webview);
 	fprintf(fp, "%s", text);
 	g_free(text);
-	g_strfreev(lines);
+	fprintf(fp, "</head>\n");
 
-	fprintf(fp, "\n</body>\n</html>\n");
+	fprintf(fp, "<body>\n");
+	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
+	text = gtk_webview_get_body_html(webview);
+	fprintf(fp, "%s", text);
+	g_free(text);
+	fprintf(fp, "\n</body>\n");
+
+	fprintf(fp, "</html>\n");
 	fclose(fp);
-#endif /* if 0 */
 }
 
 /*
@@ -5089,6 +5092,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 
 	str = g_string_new(NULL);
 	while ((cur = strchr(cur, '%'))) {
+		char *freeval = NULL;
 		const char *replace = NULL;
 		const char *fin = NULL;
 
@@ -5118,7 +5122,6 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 
 		} else if (g_str_has_prefix(cur, "%timeOpened")) {
 			const char *tmp = cur + strlen("%timeOpened");
-			char *format = NULL;
 
 			if (*tmp == '{') {
 				const char *end;
@@ -5126,17 +5129,20 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 				end = strstr(tmp, "}%");
 				if (!end) /* Invalid string */
 					continue;
-				format = g_strndup(tmp, end - tmp);
+				if (!tm) {
+					mtime = time(NULL);
+					tm = localtime(&mtime);
+				}
+				replace = freeval = purple_uts35_to_str(tmp, end - tmp, tm);
 				fin = end + 1;
-			}
+			} else {
+				if (!tm) {
+					mtime = time(NULL);
+					tm = localtime(&mtime);
+				}
 
-			if (!tm) {
-				mtime = time(NULL);
-				tm = localtime(&mtime);
+				replace = purple_utf8_strftime("%X", tm);
 			}
-
-			replace = purple_utf8_strftime(format ? format : "%X", tm);
-			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%dateOpened%")) {
 			if (!tm) {
@@ -5162,6 +5168,8 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 		} else {
 			prev = cur = strchr(cur + 1, '%') + 1;
 		}
+		g_free(freeval);
+		freeval = NULL;
 	}
 
 	/* And wrap it up */
@@ -6204,7 +6212,6 @@ replace_message_tokens(
 
 		} else if (g_str_has_prefix(cur, "%time")) {
 			const char *tmp = cur + strlen("%time");
-			char *format = NULL;
 
 			if (*tmp == '{') {
 				char *end;
@@ -6212,15 +6219,16 @@ replace_message_tokens(
 				end = strstr(tmp, "}%");
 				if (!end) /* Invalid string */
 					continue;
-				format = g_strndup(tmp, end - tmp);
+				if (!tm)
+					tm = localtime(&mtime);
+				replace = freeval = purple_uts35_to_str(tmp, end - tmp, tm);
 				fin = end + 1;
+			} else {
+				if (!tm)
+					tm = localtime(&mtime);
+
+				replace = purple_utf8_strftime("%X", tm);
 			}
-
-			if (!tm)
-				tm = localtime(&mtime);
-
-			replace = purple_utf8_strftime(format ? format : "%X", tm);
-			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%shortTime%")) {
 			if (!tm)
