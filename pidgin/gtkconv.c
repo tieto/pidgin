@@ -5088,6 +5088,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 
 	str = g_string_new(NULL);
 	while ((cur = strchr(cur, '%'))) {
+		char *freeval = NULL;
 		const char *replace = NULL;
 		const char *fin = NULL;
 
@@ -5117,7 +5118,6 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 
 		} else if (g_str_has_prefix(cur, "%timeOpened")) {
 			const char *tmp = cur + strlen("%timeOpened");
-			char *format = NULL;
 
 			if (*tmp == '{') {
 				const char *end;
@@ -5125,17 +5125,20 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 				end = strstr(tmp, "}%");
 				if (!end) /* Invalid string */
 					continue;
-				format = g_strndup(tmp, end - tmp);
+				if (!tm) {
+					mtime = time(NULL);
+					tm = localtime(&mtime);
+				}
+				replace = freeval = purple_uts35_to_str(tmp, end - tmp, tm);
 				fin = end + 1;
-			}
+			} else {
+				if (!tm) {
+					mtime = time(NULL);
+					tm = localtime(&mtime);
+				}
 
-			if (!tm) {
-				mtime = time(NULL);
-				tm = localtime(&mtime);
+				replace = purple_utf8_strftime("%X", tm);
 			}
-
-			replace = purple_utf8_strftime(format ? format : "%X", tm);
-			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%dateOpened%")) {
 			if (!tm) {
@@ -5161,6 +5164,8 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 		} else {
 			prev = cur = strchr(cur + 1, '%') + 1;
 		}
+		g_free(freeval);
+		freeval = NULL;
 	}
 
 	/* And wrap it up */
@@ -6190,7 +6195,6 @@ replace_message_tokens(
 
 		} else if (g_str_has_prefix(cur, "%time")) {
 			const char *tmp = cur + strlen("%time");
-			char *format = NULL;
 
 			if (*tmp == '{') {
 				char *end;
@@ -6198,15 +6202,16 @@ replace_message_tokens(
 				end = strstr(tmp, "}%");
 				if (!end) /* Invalid string */
 					continue;
-				format = g_strndup(tmp, end - tmp);
+				if (!tm)
+					tm = localtime(&mtime);
+				replace = freeval = purple_uts35_to_str(tmp, end - tmp, tm);
 				fin = end + 1;
+			} else {
+				if (!tm)
+					tm = localtime(&mtime);
+
+				replace = purple_utf8_strftime("%X", tm);
 			}
-
-			if (!tm)
-				tm = localtime(&mtime);
-
-			replace = purple_utf8_strftime(format ? format : "%X", tm);
-			g_free(format);
 
 		} else if (g_str_has_prefix(cur, "%shortTime%")) {
 			if (!tm)
