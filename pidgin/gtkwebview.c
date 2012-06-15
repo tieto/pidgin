@@ -53,7 +53,6 @@ static guint signals[LAST_SIGNAL] = { 0 };
  *****************************************************************************/
 
 typedef struct _GtkWebViewPriv {
-	GHashTable *images; /**< a map from id to temporary file for the image */
 	gboolean empty;     /**< whether anything has been appended **/
 
 	/* JS execute queue */
@@ -84,97 +83,44 @@ static WebKitWebViewClass *parent_class = NULL;
  * Helpers
  *****************************************************************************/
 
-static const char *
-get_image_src_from_id(GtkWebViewPriv *priv, int id)
+static void
+webview_resource_loading(WebKitWebView *webview,
+                         WebKitWebFrame *frame,
+                         WebKitWebResource *resource,
+                         WebKitNetworkRequest *request,
+                         WebKitNetworkResponse *response,
+                         gpointer user_data)
 {
-	char *src;
-	PurpleStoredImage *img;
+	const gchar *uri;
 
-	if (priv->images) {
-		/* Check for already loaded image */
-		src = (char *)g_hash_table_lookup(priv->images, GINT_TO_POINTER(id));
-		if (src)
-			return src;
-	} else {
-		priv->images = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-		                                     NULL, g_free);
-	}
+	uri = webkit_network_request_get_uri(request);
+	if (purple_str_has_prefix(uri, PURPLE_STORED_IMAGE_PROTOCOL)) {
+		int id;
+		PurpleStoredImage *img;
+		const char *filename;
 
-	/* Find image in store */
-	img = purple_imgstore_find_by_id(id);
+		uri += sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1;
+		id = strtoul(uri, NULL, 10);
 
-	src = (char *)purple_imgstore_get_filename(img);
-	if (src) {
-		src = g_strdup_printf("file://%s", src);
-	} else {
-		char *tmp;
-		tmp = purple_base64_encode(purple_imgstore_get_data(img),
-		                           purple_imgstore_get_size(img));
-		src = g_strdup_printf("data:base64,%s", tmp);
-		g_free(tmp);
-	}
+		img = purple_imgstore_find_by_id(id);
+		if (!img)
+			return;
 
-	g_hash_table_insert(priv->images, GINT_TO_POINTER(id), src);
-
-	return src;
-}
-
-/*
- * Replace all <img id=""> tags with <img src="">. I hoped to never
- * write any HTML parsing code, but I'm forced to do this, until
- * purple changes the way it works.
- */
-static char *
-replace_img_id_with_src(GtkWebViewPriv *priv, const char *html)
-{
-	GString *buffer = g_string_new(NULL);
-	const char *cur = html;
-	char *id;
-	int nid;
-
-	while (*cur) {
-		const char *img = strstr(cur, "<img");
-		if (!img) {
-			g_string_append(buffer, cur);
-			break;
-		} else
-			g_string_append_len(buffer, cur, img - cur);
-
-		cur = strstr(img, "/>");
-		if (!cur)
-			cur = strstr(img, ">");
-
-		if (!cur) { /* invalid html? */
-			g_string_printf(buffer, "%s", html);
-			break;
+		filename = purple_imgstore_get_filename(img);
+		if (filename && g_path_is_absolute(filename)) {
+			char *tmp = g_strdup_printf("file://%s", filename);
+			webkit_network_request_set_uri(request, tmp);
+			g_free(tmp);
+		} else {
+			char *b64 = purple_base64_encode(purple_imgstore_get_data(img),
+			                                 purple_imgstore_get_size(img));
+			const char *type = purple_imgstore_get_extension(img);
+			char *tmp = g_strdup_printf("data:image/%s;base64,%s", type, b64);
+			webkit_network_request_set_uri(request, tmp);
+			g_free(b64);
+			g_free(tmp);
 		}
-
-		if (strstr(img, "src=") || !strstr(img, "id=")) {
-			g_string_printf(buffer, "%s", html);
-			break;
-		}
-
-		/*
-		 * if this is valid HTML, then I can be sure that it
-		 * has an id= and does not have an src=, since
-		 * '=' cannot appear in parameters.
-		 */
-
-		id = strstr(img, "id=") + 3;
-
-		/* *id can't be \0, since a ">" appears after this */
-		if (isdigit(*id))
-			nid = atoi(id);
-		else
-			nid = atoi(id + 1);
-
-		/* let's dump this, tag and then dump the src information */
-		g_string_append_len(buffer, img, cur - img);
-
-		g_string_append_printf(buffer, " src='%s' ", get_image_src_from_id(priv, nid));
 	}
-
-	return g_string_free(buffer, FALSE);
 }
 
 static gboolean
@@ -441,9 +387,6 @@ gtk_webview_finalize(GObject *webview)
 		g_free(temp);
 	g_queue_free(priv->js_queue);
 
-	if (priv->images)
-		g_hash_table_unref(priv->images);
-
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
 
@@ -535,6 +478,9 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 
 	g_signal_connect(webview, "load-finished",
 			  G_CALLBACK(webview_load_finished), NULL);
+
+	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
+	                 G_CALLBACK(webview_resource_loading), NULL);
 }
 
 GType
@@ -612,18 +558,8 @@ gtk_webview_safe_execute_script(GtkWebView *webview, const char *script)
 void
 gtk_webview_load_html_string(GtkWebView *webview, const char *html)
 {
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	char *html_imged;
-
-	if (priv->images) {
-		g_hash_table_unref(priv->images);
-		priv->images = NULL;
-	}
-
-	html_imged = replace_img_id_with_src(priv, html);
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), html_imged, NULL,
-	                            NULL, "file:///");
-	g_free(html_imged);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), html, NULL, NULL,
+	                            "file:///");
 }
 
 void
@@ -1067,7 +1003,8 @@ gtk_webview_insert_image(GtkWebView *webview, int id)
 	char *img;
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	img = g_strdup_printf("<img src='%s'/>", get_image_src_from_id(priv, id));
+	img = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'/>",
+	                      id);
 
 	priv->edit.block_changed = TRUE;
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);

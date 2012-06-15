@@ -114,9 +114,7 @@ gboolean gtk_webview_is_empty(GtkWebView *webview);
 void gtk_webview_append_html(GtkWebView *webview, const char *markup);
 
 /**
- * Rather than use webkit_webview_load_string, this routine
- * parses and displays the \<img id=?\> tags that make use of the
- * Pidgin imgstore.
+ * Requests loading of the given content.
  *
  * @param webview The GtkWebView object
  * @param html    The HTML content to load
