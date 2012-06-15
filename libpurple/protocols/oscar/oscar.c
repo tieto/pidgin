@@ -3186,10 +3186,12 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 			g_string_append_len(msg, last, start - last);
 		}
 
-		id = g_datalist_get_data(&attribs, "id");
+		id = g_datalist_get_data(&attribs, "src");
 
 		/* ... if it refers to a valid purple image ... */
-		if (id && (image = purple_imgstore_find_by_id(atoi(id)))) {
+		if (id
+		 && strlen(id) > (sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1)
+		 && (image = purple_imgstore_find_by_id(atoi(id + sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1)))) {
 			/* ... append the message from start to the tag ... */
 			unsigned long size = purple_imgstore_get_size(image);
 			const char *filename = purple_imgstore_get_filename(image);

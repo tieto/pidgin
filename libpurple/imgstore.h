@@ -29,6 +29,8 @@
 
 #include <glib.h>
 
+#define PURPLE_STORED_IMAGE_PROTOCOL "purple-image:"
+
 /** A reference-counted immutable wrapper around an image's data and its
  *  filename.
  */
