@@ -28,9 +28,11 @@ typedef struct
 
 extern void ggp_resolver_purple_setup(void)
 {
-	purple_debug_info("gg", "setting up custom resolver\n");
-	gg_global_set_custom_resolver(ggp_resolver_purple_start,
-		ggp_resolver_purple_cleanup);
+	if (gg_global_set_custom_resolver(ggp_resolver_purple_start,
+		ggp_resolver_purple_cleanup) != 0)
+	{
+		purple_debug_error("gg", "failed to set custom resolver\n");
+	}
 }
 
 void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,

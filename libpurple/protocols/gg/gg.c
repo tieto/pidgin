@@ -2965,8 +2965,8 @@ static void init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
-	purple_debug_info("gg", "Loading Gadu-Gadu plugin with libgadu %s...\n",
-		gg_libgadu_version());
+	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
+		"libgadu %s...\n", gg_libgadu_version());
 
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
