@@ -1906,6 +1906,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			purple_debug_info("gg", "GG_EVENT_XML_EVENT\n");
 			ggp_xml_event_handler(gc, ev->event.xml_event.data);
 			break;
+		case GG_EVENT_USER_DATA:
+			purple_debug_misc("gg", "GG_EVENT_USER_DATA\n");
+			break;
 		default:
 			purple_debug_error("gg",
 				"unsupported event type=%d\n", ev->type);
@@ -2301,8 +2304,9 @@ static void ggp_login(PurpleAccount *account)
 	status = purple_presence_get_active_status(presence);
 
 	glp->encoding = GG_ENCODING_UTF8;
-	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC
-		|GG_FEATURE_TYPING_NOTIFICATION);
+	glp->protocol_features = (GG_FEATURE_DND_FFC |
+		GG_FEATURE_TYPING_NOTIFICATION | GG_FEATURE_MULTILOGON |
+		GG_FEATURE_USER_DATA);
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
