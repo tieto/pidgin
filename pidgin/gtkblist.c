@@ -985,8 +985,8 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
-	data->window = gtk_dialog_new_with_buttons(title, blist_window, 0, NULL);
-
+	data->window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(data->window), title);
 	gtk_window_set_transient_for(GTK_WINDOW(data->window), blist_window);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
@@ -6902,6 +6902,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_free(priv);
 
 	g_free(gtkblist);
+	accountmenu = NULL;
 	gtkblist = NULL;
 	purple_prefs_disconnect_by_handle(pidgin_blist_get_handle());
 }
