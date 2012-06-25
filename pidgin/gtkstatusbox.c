@@ -1942,14 +1942,16 @@ pidgin_status_box_get_preferred_height(GtkWidget *widget, gint *minimum_height,
 	*natural_height = MAX(*natural_height, 34) + border_width * 2;
 
 	/* If the gtkimhtml is visible, then add some additional padding */
-	gtk_widget_get_preferred_height(PIDGIN_STATUS_BOX(widget)->vbox,
-		&box_min_height, &box_nat_height);
+	if (PIDGIN_STATUS_BOX(widget)->imhtml_visible) {
+		gtk_widget_get_preferred_height(PIDGIN_STATUS_BOX(widget)->vbox,
+			&box_min_height, &box_nat_height);
 
-	if (box_min_height > 1)
-		*minimum_height += box_min_height + border_width * 2;
+		if (box_min_height > 1)
+			*minimum_height += box_min_height + border_width * 2;
 
-	if (box_nat_height > 1)
-		*natural_height += box_nat_height + border_width * 2;
+		if (box_nat_height > 1)
+			*natural_height += box_nat_height + border_width * 2;
+	}
 }
 
 /* From gnome-panel */
@@ -2039,8 +2041,6 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 	}
 	gtk_widget_size_allocate(status_box->toggle_button, &parent_alc);
   	gtk_widget_set_allocation(GTK_WIDGET(status_box), allocation);
-	purple_debug_info("pidgin", "statusbox allocation: width = %d, height = %d\n",
-	                  allocation->width, allocation->height);
 }
 
 static gboolean
