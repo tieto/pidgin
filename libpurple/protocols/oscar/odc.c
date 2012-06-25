@@ -376,7 +376,9 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		if (imgid != 0)
 		{
 			/* Write the new image tag */
-			g_string_append_printf(newmsg, "<IMG ID=\"%d\">", imgid);
+			g_string_append_printf(newmsg,
+			                       "<IMG SRC=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">",
+			                       imgid);
 		}
 
 		/* Continue from the end of the tag */

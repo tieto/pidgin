@@ -187,7 +187,8 @@ void splash_display(struct MXitSession* session)
 		imgid = purple_imgstore_add_with_id(g_memdup(imgdata, imglen), imglen, NULL);
 
 		/* Generate and display message */
-		g_snprintf(buf, sizeof(buf), "<img id=\"%d\">", imgid);
+		g_snprintf(buf, sizeof(buf),
+		           "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">", imgid);
 
 		/* Open a request-type popup to display the image */
 		{

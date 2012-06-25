@@ -828,7 +828,8 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	}
 
 	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
-	image_msg = g_strdup_printf("<IMG ID='%d'>", imgid);
+	image_msg = g_strdup_printf("<IMG SRC='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
+	                            imgid);
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&

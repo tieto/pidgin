@@ -48,6 +48,9 @@ version 3.0.0 (??/??/????):
 	  was an offline message. (Flavius Anton) (#2497)
 
 version 2.10.5:
+	libpurple:
+	* Add support for GNOME3 proxy settings. (Mihai Serban) (#15054)
+
 	Pidgin:
 	* Fix a crash that may occur when trying to ignore a user who is
 	  not in the current chat room. (#15139)

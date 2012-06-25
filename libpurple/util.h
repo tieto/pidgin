@@ -470,6 +470,19 @@ time_t purple_time_build(int year, int month, int day, int hour,
 time_t purple_str_to_time(const char *timestamp, gboolean utc,
                         struct tm *tm, long *tz_off, const char **rest);
 
+/**
+ * Formats a datetime according to a UTS-35 Date Format Pattern.
+ *
+ * @param format The formatting string, according to UTS #35
+ *               See http://unicode.org/reports/tr35/
+ *               (NOTE: not all formats are supported)
+ * @param len    The length of the formatting string
+ * @param tm     The time to format, or @c NULL to use the current local time
+ *
+ * @return The time, formatted as per the user's settings.
+ */
+char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
+
 /*@}*/
 
 

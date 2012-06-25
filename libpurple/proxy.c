@@ -232,41 +232,105 @@ purple_global_proxy_set_info(PurpleProxyInfo *info)
 	global_proxy_info = info;
 }
 
+
+/* index in gproxycmds below, keep them in sync */
+#define GNOME_PROXY_MODE 0
+#define GNOME_PROXY_USE_SAME_PROXY 1
+#define GNOME_PROXY_SOCKS_HOST 2
+#define GNOME_PROXY_SOCKS_PORT 3
+#define GNOME_PROXY_HTTP_HOST 4
+#define GNOME_PROXY_HTTP_PORT 5
+#define GNOME_PROXY_HTTP_USER 6
+#define GNOME_PROXY_HTTP_PASS 7
+#define GNOME2_CMDS 0
+#define GNOME3_CMDS 1
+
+/* detect proxy settings for gnome2/gnome3 */
+static const char* gproxycmds[][2] = {
+	{ "gconftool-2 -g /system/proxy/mode" , "gsettings get org.gnome.system.proxy mode" },
+	{ "gconftool-2 -g /system/http_proxy/use_same_proxy", "gsettings get org.gnome.system.proxy use-same-proxy" },
+	{ "gconftool-2 -g /system/proxy/socks_host", "gsettings get org.gnome.system.proxy.socks host" },
+	{ "gconftool-2 -g /system/proxy/socks_port", "gsettings get org.gnome.system.proxy.socks port" },
+	{ "gconftool-2 -g /system/http_proxy/host", "gsettings get org.gnome.system.proxy.http host" },
+	{ "gconftool-2 -g /system/http_proxy/port", "gsettings get org.gnome.system.proxy.http port"},
+	{ "gconftool-2 -g /system/http_proxy/authentication_user", "gsettings get org.gnome.system.proxy.http authentication-user" },
+	{ "gconftool-2 -g /system/http_proxy/authentication_password", "gsettings get org.gnome.system.proxy.http authentication-password" },
+};
+
+/**
+ * This is a utility function used to retrieve proxy parameter values from
+ * GNOME 2/3 environment.
+ *
+ * @param parameter	One of the GNOME_PROXY_x constants defined above
+ * @param gnome_version GNOME2_CMDS or GNOME3_CMDS
+ *
+ * @return The value of requested proxy parameter
+ */
+static char *
+purple_gnome_proxy_get_parameter(guint8 parameter, guint8 gnome_version)
+{
+	gchar *param, *err;
+	size_t param_len;
+
+	if (parameter > GNOME_PROXY_HTTP_PASS)
+		return NULL;
+	if (gnome_version > GNOME3_CMDS)
+		return NULL;
+
+	if (!g_spawn_command_line_sync(gproxycmds[parameter][gnome_version],
+			&param, &err, NULL, NULL))
+		return NULL;
+	g_free(err);
+
+	g_strstrip(param);
+	if (param[0] == '\'' || param[0] == '\"') {
+		param_len = strlen(param);
+		memmove(param, param + 1, param_len); /* copy last \0 too */
+		--param_len;
+		if (param_len > 0 && (param[param_len - 1] == '\'' || param[param_len - 1] == '\"'))
+			param[param_len - 1] = '\0';
+		g_strstrip(param);
+	}
+
+	return param;
+}
+
 static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
 	gboolean use_same_proxy = FALSE;
-	gchar *tmp, *err = NULL;
+	gchar *tmp;
+	guint8 gnome_version = GNOME3_CMDS;
 
-	tmp = g_find_program_in_path("gconftool-2");
+	tmp = g_find_program_in_path("gsettings");
+	if (tmp == NULL) {
+		tmp = g_find_program_in_path("gconftool-2");
+		gnome_version = GNOME2_CMDS;
+	}
 	if (tmp == NULL)
 		return purple_global_proxy_get_info();
 
 	g_free(tmp);
-	tmp = NULL;
 
 	/* Check whether to use a proxy. */
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode",
-			&tmp, &err, NULL, NULL))
+	tmp = purple_gnome_proxy_get_parameter(GNOME_PROXY_MODE, gnome_version);
+	if (!tmp)
 		return purple_global_proxy_get_info();
-	g_free(err);
-	err = NULL;
 
-	if (purple_strequal(tmp, "none\n")) {
+	if (purple_strequal(tmp, "none")) {
 		info.type = PURPLE_PROXY_NONE;
 		g_free(tmp);
 		return &info;
 	}
 
-	if (!purple_strequal(tmp, "manual\n")) {
+	if (!purple_strequal(tmp, "manual")) {
 		/* Unknown setting.  Fallback to using our global proxy settings. */
 		g_free(tmp);
 		return purple_global_proxy_get_info();
 	}
 
 	g_free(tmp);
-	tmp = NULL;
 
 	/* Free the old fields */
 	if (info.host) {
@@ -282,52 +346,40 @@ purple_gnome_proxy_get_info(void)
 		info.password = NULL;
 	}
 
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_same_proxy",
-			&tmp, &err, NULL, NULL))
+	tmp = purple_gnome_proxy_get_parameter(GNOME_PROXY_USE_SAME_PROXY, gnome_version);
+	if (!tmp)
 		return purple_global_proxy_get_info();
-	g_free(err);
-	err = NULL;
 
-	if (purple_strequal(tmp, "true\n"))
+	if (purple_strequal(tmp, "true"))
 		use_same_proxy = TRUE;
+
 	g_free(tmp);
-	tmp = NULL;
 
 	if (!use_same_proxy) {
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_host",
-			&info.host, &err, NULL, NULL))
+		info.host = purple_gnome_proxy_get_parameter(GNOME_PROXY_SOCKS_HOST, gnome_version);
+		if (!info.host)
 			return purple_global_proxy_get_info();
-		g_free(err);
-		err = NULL;
 	}
-
-	if(info.host != NULL)
-		g_strchomp(info.host);
 
 	if (!use_same_proxy && (info.host != NULL) && (*info.host != '\0')) {
 		info.type = PURPLE_PROXY_SOCKS5;
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_port",
-				&tmp, &err, NULL, NULL))
-		{
+		tmp = purple_gnome_proxy_get_parameter(GNOME_PROXY_SOCKS_PORT, gnome_version);
+		if (!tmp) {
 			g_free(info.host);
 			info.host = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
 		info.port = atoi(tmp);
 		g_free(tmp);
 	} else {
 		g_free(info.host);
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
-					&info.host, &err, NULL, NULL))
+		info.host = purple_gnome_proxy_get_parameter(GNOME_PROXY_HTTP_HOST, gnome_version);
+		if (!info.host)
 			return purple_global_proxy_get_info();
-		g_free(err);
-		err = NULL;
 
 		/* If we get this far then we know we're using an HTTP proxy */
 		info.type = PURPLE_PROXY_HTTP;
 
-		g_strchomp(info.host);
 		if (*info.host == '\0')
 		{
 			purple_debug_info("proxy", "Gnome proxy settings are set to "
@@ -338,19 +390,16 @@ purple_gnome_proxy_get_info(void)
 			return purple_global_proxy_get_info();
 		}
 
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
-					&info.username, &err, NULL, NULL))
+		info.username = purple_gnome_proxy_get_parameter(GNOME_PROXY_HTTP_USER, gnome_version);
+		if (!info.username)
 		{
 			g_free(info.host);
 			info.host = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
-		err = NULL;
-		g_strchomp(info.username);
 
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
-					&info.password, &err, NULL, NULL))
+		info.password = purple_gnome_proxy_get_parameter(GNOME_PROXY_HTTP_PASS, gnome_version);
+		if (!info.password)
 		{
 			g_free(info.host);
 			info.host = NULL;
@@ -358,12 +407,9 @@ purple_gnome_proxy_get_info(void)
 			info.username = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
-		err = NULL;
-		g_strchomp(info.password);
 
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
-					&tmp, &err, NULL, NULL))
+		tmp = purple_gnome_proxy_get_parameter(GNOME_PROXY_HTTP_PORT, gnome_version);
+		if (!tmp)
 		{
 			g_free(info.host);
 			info.host = NULL;
@@ -373,7 +419,6 @@ purple_gnome_proxy_get_info(void)
 			info.password = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
 		info.port = atoi(tmp);
 		g_free(tmp);
 	}

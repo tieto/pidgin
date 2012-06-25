@@ -2833,7 +2833,7 @@ static void im_recv_mime(struct mwConversation *conv,
 	if(align) g_string_append_printf(atstr, " align=\"%s\"", align);
 	if(border) g_string_append_printf(atstr, " border=\"%s\"", border);
 
-	mov = g_snprintf(start, len, "<img%s id=\"%i\"", atstr->str, img);
+	mov = g_snprintf(start, len, "<img%s src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\"", atstr->str, img);
 	while(mov < len) start[mov++] = ' ';
 
 	g_string_free(atstr, TRUE);
