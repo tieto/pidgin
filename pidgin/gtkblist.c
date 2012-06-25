@@ -3210,7 +3210,7 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
 		gtkblist->contact_rect.width =
-		gdk_window_get_width(gtk_widget_get_window(tv));
+				gdk_window_get_width(gtk_widget_get_window(tv));
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
 		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
