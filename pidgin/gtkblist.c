@@ -985,9 +985,7 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
-	/* TODO: set no separator in gtk+ 3... */
-	data->window = gtk_dialog_new_with_buttons(title,
-		blist_window, 0, NULL);
+	data->window = gtk_dialog_new_with_buttons(title, blist_window, 0, NULL);
 
 	gtk_window_set_transient_for(GTK_WINDOW(data->window), blist_window);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
