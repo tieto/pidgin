@@ -1113,7 +1113,7 @@ menu_position_func (GtkMenu           *menu,
 	gint ythickness = gtk_widget_get_style(widget)->ythickness;
 	int savy;
 
-	gtk_widget_get_allocation(widget, &allocation);    
+	gtk_widget_get_allocation(widget, &allocation);
 	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;

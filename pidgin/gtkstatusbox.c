@@ -1934,7 +1934,7 @@ pidgin_status_box_get_preferred_height(GtkWidget *widget, gint *minimum_height,
 {
 	gint box_min_height, box_nat_height;
 	gint border_width = gtk_container_get_border_width(GTK_CONTAINER (widget));
-	
+
 	gtk_widget_get_preferred_height(PIDGIN_STATUS_BOX(widget)->toggle_button,
 		minimum_height, natural_height);
 

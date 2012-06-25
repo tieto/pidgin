@@ -67,7 +67,7 @@ dnd_hints_realized_cb(GtkWidget *window, GtkWidget *pix)
 	surface = cairo_image_surface_create(CAIRO_FORMAT_A1,
 	                                     gdk_pixbuf_get_width(pixbuf),
 	                                     gdk_pixbuf_get_height(pixbuf));
-      
+
 	cr = cairo_create(surface);
 	gdk_cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
 	cairo_paint(cr);

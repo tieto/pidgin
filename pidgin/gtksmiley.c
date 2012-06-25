@@ -724,7 +724,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 {
 	SmileyManager *dialog = user_data;
 	gchar *name = g_strchomp((gchar *) gtk_selection_data_get_data(sd));
-    
+
 	if ((gtk_selection_data_get_length(sd) >= 0)
       && (gtk_selection_data_get_format(sd) == 8)) {
 		/* Well, it looks like the drag event was cool.

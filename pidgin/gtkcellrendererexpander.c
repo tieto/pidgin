@@ -206,7 +206,7 @@ static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 	gtk_widget_style_get(widget, "expander-size", &expander_size, NULL);
 
 	gtk_cell_renderer_get_padding(cell, &xpad, &ypad);
-	gtk_cell_renderer_get_alignment(cell, &xalign, &yalign); 
+	gtk_cell_renderer_get_alignment(cell, &xalign, &yalign);
 	calc_width = (gint) xpad * 2 + expander_size;
 	calc_height = (gint) ypad * 2 + expander_size;
 
