@@ -79,12 +79,6 @@ struct _PidginWindow
 
 	} menu;
 
-	struct
-	{
-		GtkWidget *search;
-
-	} dialogs;
-
 	/* Tab dragging stuff. */
 	gboolean in_drag;
 	gboolean in_predrag;
