@@ -55,7 +55,9 @@ GGSOURCES = \
 	gg.h \
 	gg.c \
 	resolver-purple.h \
-	resolver-purple.c
+	resolver-purple.c \
+	image.h \
+	image.c
 
 AM_CFLAGS = $(st)
 

@@ -30,6 +30,8 @@
 #include "search.h"
 #include "connection.h"
 
+#include "image.h"
+
 
 #define PUBDIR_RESULTS_MAX 20
 
@@ -64,9 +66,9 @@ typedef struct {
 	GList *chats;
 	GGPSearches *searches;
 	int chats_count;
-	GList *pending_richtext_messages;
-	GHashTable *pending_images;
 	gboolean status_broadcasting; //When TRUE status is visible to all, when FALSE status is visible only to friends.
+
+	ggp_image_connection_data image_data;
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */

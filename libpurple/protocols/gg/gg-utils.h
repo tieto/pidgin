@@ -37,6 +37,7 @@
 
 #include "gg.h"
 
+#define GGP_UIN_LEN_MAX 10
 
 /**
  * Convert a base 10 string to a UIN.
@@ -47,6 +48,8 @@
  */
 uin_t
 ggp_str_to_uin(const char *str);
+
+const char * ggp_uin_to_str(uin_t uin);
 
 /**
  * Calculate size of a NULL-terminated array.

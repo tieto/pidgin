@@ -50,6 +50,15 @@ uin_t ggp_str_to_uin(const char *str)
 }
 /* }}} */
 
+const char * ggp_uin_to_str(uin_t uin)
+{
+	static char buff[GGP_UIN_LEN_MAX + 1];
+	
+	g_snprintf(buff, GGP_UIN_LEN_MAX + 1, "%u", uin);
+	
+	return buff;
+}
+
 /* unsigned int ggp_array_size(char **array) {{{ */
 unsigned int ggp_array_size(char **array)
 {

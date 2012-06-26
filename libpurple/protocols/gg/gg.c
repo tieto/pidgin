@@ -1456,47 +1456,6 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 	}
 }
 
-static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *ev)
-{
-	gint imgid = 0;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GList *entry = g_list_first(info->pending_richtext_messages);
-	gchar *handlerid = g_strdup_printf("IMGID_HANDLER-%i", ev->event.image_reply.crc32);
-
-	imgid = purple_imgstore_add_with_id(
-		g_memdup(ev->event.image_reply.image, ev->event.image_reply.size),
-		ev->event.image_reply.size,
-		ev->event.image_reply.filename);
-
-	purple_debug_info("gg", "ggp_recv_image_handler: got image with crc32: %u\n", ev->event.image_reply.crc32);
-
-	while(entry) {
-		if (strstr((gchar *)entry->data, handlerid) != NULL) {
-			gchar **split = g_strsplit((gchar *)entry->data, handlerid, 3);
-			gchar *text = g_strdup_printf("%s%i%s", split[0], imgid, split[1]);
-			purple_debug_info("gg", "ggp_recv_image_handler: found message matching crc32: %s\n", (gchar *)entry->data);
-			g_strfreev(split);
-			info->pending_richtext_messages = g_list_remove(info->pending_richtext_messages, entry->data);
-			/* We don't have any more images to download */
-			if (strstr(text, "<IMG ID=\"IMGID_HANDLER") == NULL) {
-				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.image_reply.sender);
-				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, time(NULL));
-				g_free(buf);
-				purple_debug_info("gg", "ggp_recv_image_handler: richtext message: %s\n", text);
-				g_free(text);
-				break;
-			}
-			info->pending_richtext_messages = g_list_append(info->pending_richtext_messages, text);
-			break;
-		}
-		entry = g_list_next(entry);
-	}
-	g_free(handlerid);
-
-	return;
-}
-
-
 /**
  * Dispatch a message received from a buddy.
  *
@@ -1513,6 +1472,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	gchar *msg;
 	gchar *tmp;
 	time_t mtime;
+	uin_t sender = ev->event.msg.sender;
 
 	if (ev->event.msg.message == NULL)
 	{
@@ -1531,6 +1491,11 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	msg = g_markup_escape_text(tmp, -1);
 	g_free(tmp);
 
+	if (ev->event.msg.msgclass & GG_CLASS_QUEUED)
+		mtime = ev->event.msg.time;
+	else
+		mtime = time(NULL);
+
 	/* We got richtext message */
 	if (ev->event.msg.formats_length)
 	{
@@ -1541,7 +1506,6 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 		struct gg_msg_richtext_format *actformat;
 		struct gg_msg_richtext_image *actimage;
 		GString *message = g_string_new(msg);
-		gchar *handlerid;
 
 		purple_debug_info("gg", "ggp_recv_message_handler: richtext msg from (%s): %s %i formats\n", from, msg, ev->event.msg.formats_length);
 
@@ -1564,7 +1528,10 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 				(actformat->font & GG_FONT_UNDERLINE) != 0,
 				increased_len);
 
-			if (actformat->font & GG_FONT_IMAGE) {
+			if (actformat->font & GG_FONT_IMAGE)
+			{
+				const char *placeholder;
+			
 				got_image = TRUE;
 				actimage = (struct gg_msg_richtext_image*)(cformats);
 				cformats += sizeof(struct gg_msg_richtext_image);
@@ -1580,10 +1547,9 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 				gg_image_request(info->session, ev->event.msg.sender,
 					actimage->size, actimage->crc32);
 
-				handlerid = g_strdup_printf("<IMG ID=\"IMGID_HANDLER-%i\">", actimage->crc32);
-				g_string_insert(message, byteoffset, handlerid);
-				increased_len += strlen(handlerid);
-				g_free(handlerid);
+				placeholder = ggp_image_pending_placeholder(actimage->crc32);
+				g_string_insert(message, byteoffset, placeholder);
+				increased_len += strlen(placeholder);
 				continue;
 			}
 
@@ -1631,8 +1597,9 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 		msg = message->str;
 		g_string_free(message, FALSE);
 
-		if (got_image) {
-			info->pending_richtext_messages = g_list_append(info->pending_richtext_messages, msg);
+		if (got_image)
+		{
+			ggp_image_got_im(gc, sender, msg, mtime);
 			return;
 		}
 	}
@@ -1640,11 +1607,6 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	purple_debug_info("gg", "ggp_recv_message_handler: msg from (%s): %s (class = %d; rcpt_count = %d)\n",
 			from, msg, ev->event.msg.msgclass,
 			ev->event.msg.recipients_count);
-
-	if (ev->event.msg.msgclass & GG_CLASS_QUEUED)
-		mtime = ev->event.msg.time;
-	else
-		mtime = time(NULL);
 
 	if (ev->event.msg.recipients_count == 0) {
 		serv_got_im(gc, from, msg, 0, mtime);
@@ -1680,11 +1642,12 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	g_free(from);
 }
 
+/* TODO: image */
 static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleStoredImage *image;
-	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32)));
+	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->image_data.pending_images, GINT_TO_POINTER(ev->event.image_request.crc32)));
 
 	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u, imgid: %d\n", ev->event.image_request.crc32, imgid);
 
@@ -1701,7 +1664,7 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 		} else {
 			purple_debug_error("gg", "ggp_send_image_handler: image imgid: %i, crc: %u in hash but not found in imgstore!\n", imgid, ev->event.image_request.crc32);
 		}
-		g_hash_table_remove(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32));
+		g_hash_table_remove(info->image_data.pending_images, GINT_TO_POINTER(ev->event.image_request.crc32));
 	}
 }
 
@@ -1816,7 +1779,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 				ev->event.ack.seq);
 			break;
 		case GG_EVENT_IMAGE_REPLY:
-			ggp_recv_image_handler(gc, ev);
+			ggp_image_recv(gc, &ev->event.image_reply);
 			break;
 		case GG_EVENT_IMAGE_REQUEST:
 			ggp_send_image_handler(gc, ev);
@@ -2276,12 +2239,12 @@ static void ggp_login(PurpleAccount *account)
 	info->chats_count = 0;
 	info->token = NULL;
 	info->searches = ggp_search_new();
-	info->pending_richtext_messages = NULL;
-	info->pending_images = g_hash_table_new(g_direct_hash, g_direct_equal);
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
 	purple_connection_set_protocol_data(gc, info);
 
+	ggp_image_setup(gc);
+	
 	glp->uin = ggp_get_uin(account);
 	glp->password = charset_convert(purple_account_get_password(account),
 		"UTF-8", "CP1250");
@@ -2395,8 +2358,7 @@ static void ggp_close(PurpleConnection *gc)
 		purple_notify_close_with_handle(gc);
 
 		ggp_search_destroy(info->searches);
-		g_list_free(info->pending_richtext_messages);
-		g_hash_table_destroy(info->pending_images);
+		ggp_image_free(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);
@@ -2443,6 +2405,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 				g_string_append_len(string_buffer, last, start - last);
 			}
 
+			/* TODO: image */
 			if((id = g_datalist_get_data(&attribs, "id")) && (image = purple_imgstore_find_by_id(atoi(id)))) {
 				struct gg_msg_richtext_format actformat;
 				struct gg_msg_richtext_image actimage;
@@ -2451,7 +2414,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 				const char *image_filename = purple_imgstore_get_filename(image);
 				uint32_t crc32 = gg_crc32(0, image_bin, image_size);
 
-				g_hash_table_insert(info->pending_images, GINT_TO_POINTER(crc32), GINT_TO_POINTER(atoi(id)));
+				g_hash_table_insert(info->image_data.pending_images, GINT_TO_POINTER(crc32), GINT_TO_POINTER(atoi(id)));
 				purple_imgstore_ref(image);
 				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %u for imgid: %i\n", crc32, atoi(id));
 
