@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_GG_UTILS_H
-#define _PURPLE_GG_UTILS_H
+#ifndef _GGP_UTILS_H
+#define _GGP_UTILS_H
 
 #include <internal.h>
 #include <libgadu.h>
@@ -78,4 +78,4 @@ gchar * ggp_convert_from_cp1250(const gchar *src);
 guint ggp_http_input_add(struct gg_http *http_req, PurpleInputFunction func,
 	gpointer user_data);
 
-#endif /* _PURPLE_GG_UTILS_H */
+#endif /* _GGP_UTILS_H */

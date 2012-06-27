@@ -3,7 +3,9 @@
 /* libpurple's config */
 #include <config.h>
 
-#define GG_LIBGADU_VERSION "1.11.1"
+#define GGP_QUOTE(x) GGP_QUOTE2(x)
+#define GGP_QUOTE2(x) #x
+#define GG_LIBGADU_VERSION GGP_QUOTE(GG_INTERNAL_LIBGADU_VERSION)
 
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef GG_CONFIG_BIGENDIAN

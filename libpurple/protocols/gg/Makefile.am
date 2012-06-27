@@ -34,7 +34,9 @@ INTGGSOURCES = \
 	lib/session.h \
 	lib/sha1.c
 
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED
+INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib \
+	-DGG_IGNORE_DEPRECATED \
+	-DGG_INTERNAL_LIBGADU_VERSION=$(GADU_LIBGADU_VERSION)
 endif
 
 if USE_GNUTLS
