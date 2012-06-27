@@ -43,7 +43,7 @@
 #include "confer.h"
 #include "search.h"
 #include "buddylist.h"
-#include "gg-utils.h"
+#include "utils.h"
 #include "resolver-purple.h"
 
 /* Prototypes */
@@ -158,16 +158,12 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 {
-	PurpleAccount *account;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct gg_http *req;
-	GGPInfo *info;
-
-	account = purple_connection_get_account(gc);
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
-
-	info = purple_connection_get_protocol_data(gc);
 
 	if ((req = gg_token(1)) == NULL) {
 		purple_notify_error(account,
@@ -338,14 +334,11 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	gchar *email, *p1, *p2, *t;
 	GGPToken *token = info->token;
 
-	email = charset_convert(purple_request_fields_get_string(fields, "email"),
-			     "UTF-8", "CP1250");
-	p1  = charset_convert(purple_request_fields_get_string(fields, "password1"),
-			     "UTF-8", "CP1250");
-	p2  = charset_convert(purple_request_fields_get_string(fields, "password2"),
-			     "UTF-8", "CP1250");
-	t   = charset_convert(purple_request_fields_get_string(fields, "token"),
-			     "UTF-8", "CP1250");
+	// TODO: don't allow non-ascii passwords
+	email = g_strdup(purple_request_fields_get_string(fields, "email"));
+	p1 = g_strdup(purple_request_fields_get_string(fields, "password1"));
+	p2 = g_strdup(purple_request_fields_get_string(fields, "password2"));
+	t = g_strdup(purple_request_fields_get_string(fields, "token"));
 
 	account = purple_connection_get_account(gc);
 
@@ -717,7 +710,8 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 	purple_debug_info("gg", "Changing password with email \"%s\"...\n",
 		mail);
 
-	h = gg_change_passwd4(ggp_get_uin(account), mail,
+	h = gg_change_passwd4(
+		ggp_str_to_uin(purple_account_get_username(account)), mail,
 		purple_account_get_password(account), p1, info->token->id, t,
 		1);
 
@@ -793,9 +787,10 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 			_("Current token"), token->data, token->size);
 	purple_request_field_group_add_field(group, field);
 
-	msg = g_strdup_printf("%s %d",
+	msg = g_strdup_printf("%s %s",
 		_("Please, enter your current password and your new password "
-		"for UIN: "), ggp_get_uin(purple_connection_get_account(gc)));
+		"for UIN: "),
+		purple_account_get_username(purple_connection_get_account(gc)));
 
 	purple_request_fields(gc,
 		_("Change Gadu-Gadu Password"),
@@ -1482,10 +1477,6 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
-	/*
-	tmp = charset_convert((const char *)ev->event.msg.message,
-			      "CP1250", "UTF-8");
-	*/
 	tmp = g_strdup_printf("%s", ev->event.msg.message);
 	purple_str_strip_char(tmp, '\r');
 	msg = g_markup_escape_text(tmp, -1);
@@ -1613,7 +1604,6 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	} else {
 		const char *chat_name;
 		int chat_id;
-		char *buddy_name;
 
 		chat_name = ggp_confer_find_by_participants(gc,
 				ev->event.msg.recipients,
@@ -1633,10 +1623,9 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 		conv = ggp_confer_find_by_name(gc, chat_name);
 		chat_id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 
-		buddy_name = ggp_buddy_get_name(gc, ev->event.msg.sender);
-		serv_got_chat_in(gc, chat_id, buddy_name,
-				 PURPLE_MESSAGE_RECV, msg, mtime);
-		g_free(buddy_name);
+		serv_got_chat_in(gc, chat_id,
+			ggp_buddylist_get_buddy_name(gc, ev->event.msg.sender),
+			PURPLE_MESSAGE_RECV, msg, mtime);
 	}
 	g_free(msg);
 	g_free(from);
@@ -2245,9 +2234,8 @@ static void ggp_login(PurpleAccount *account)
 
 	ggp_image_setup(gc);
 	
-	glp->uin = ggp_get_uin(account);
-	glp->password = charset_convert(purple_account_get_password(account),
-		"UTF-8", "CP1250");
+	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
+	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
 
 	if (glp->uin == 0) {
 		purple_connection_error(gc,
@@ -2462,10 +2450,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		plain = purple_unescape_html(msg);
 	}
 
-	/*
-	tmp = charset_convert(plain, "UTF-8", "CP1250");
-	*/
-	tmp = g_strdup_printf("%s", plain);
+	tmp = g_strdup(plain);
 
 	if (tmp && (format_length - sizeof(struct gg_msg_richtext))) {
 		if(gg_send_message_richtext(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who), (unsigned char *)tmp, format, format_length) < 0) {
@@ -2567,13 +2552,7 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	new_msg = purple_status_get_attr_string(status, "message");
 
 	if(new_msg) {
-		/*
-		char *tmp = purple_markup_strip_html(new_msg);
-		*msg = charset_convert(tmp, "UTF-8", "CP1250");
-		g_free(tmp);
-		*/
 		*msg = purple_markup_strip_html(new_msg);
-
 		return new_status_descr;
 	} else {
 		*msg = NULL;
@@ -2605,22 +2584,39 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		gg_change_status_descr(info->session, new_status, new_msg);
 		g_free(new_msg);
 	}
-
-	ggp_status_fake_to_self(account);
-
 }
 
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
-	PurpleAccount *account;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	const gchar *name = purple_buddy_get_name(buddy);
 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
 
-	account = purple_connection_get_account(gc);
-	if (strcmp(purple_account_get_username(account), name) == 0) {
-		ggp_status_fake_to_self(account);
+	// gg server won't tell us our status
+	if (strcmp(purple_account_get_username(account), name) == 0)
+	{
+		PurpleStatus *status = purple_presence_get_active_status(
+			purple_account_get_presence(account));
+		const char *status_msg = purple_status_get_attr_string(status,
+			"message");
+		gchar *status_msg_gg = NULL;
+		
+		if (status_msg != NULL && status_msg[0] != '\0')
+		{
+			status_msg_gg = g_new0(gchar,
+				GG_STATUS_DESCR_MAXSIZE + 1);
+			g_utf8_strncpy(status_msg_gg, status_msg,
+				GG_STATUS_DESCR_MAXSIZE);
+		}
+		
+		purple_prpl_got_user_status(account,
+			purple_account_get_username(account),
+			purple_status_get_id(status),
+			status_msg_gg ? "message" : NULL, status_msg_gg, NULL);
+		
+		g_free(status_msg_gg);
 	}
 }
 
@@ -2707,11 +2703,6 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 		uins[count++] = uin;
 	}
 
-	/*
-	plain = purple_unescape_html(message);
-	msg = charset_convert(plain, "UTF-8", "CP1250");
-	g_free(plain);
-	*/
 	msg = purple_unescape_html(message);
 	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
 				(unsigned char *)msg);
@@ -2743,7 +2734,10 @@ static void ggp_keepalive(PurpleConnection *gc)
 static void ggp_register_user(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-
+	GGPInfo *info = g_new0(GGPInfo, 1); // TODO: init it properly
+	
+	purple_connection_set_protocol_data(gc, info);
+	
 	ggp_token_request(gc, ggp_register_user_dialog);
 }
 

@@ -27,7 +27,6 @@
 #include "connection.h"
 
 #include <libgadu.h>
-#include "gg.h"
 
 
 typedef enum {

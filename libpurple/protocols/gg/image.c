@@ -3,7 +3,7 @@
 #include <debug.h>
 
 #include "gg.h"
-#include "gg-utils.h"
+#include "utils.h"
 
 #define GGP_PENDING_IMAGE_ID_PREFIX "gg-pending-image-"
 
@@ -127,7 +127,8 @@ void ggp_image_recv(PurpleConnection *gc,
 			purple_debug_info("gg", "ggp_image_recv: "
 				"message is ready to display\n");
 			serv_got_im(gc, ggp_uin_to_str(pending_message->from),
-				pending_message->text, PURPLE_MESSAGE_IMAGES,
+				pending_message->text,
+				PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_IMAGES,
 				pending_message->mtime);
 			
 			ggp_image_pending_message_free(pending_message);

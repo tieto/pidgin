@@ -35,6 +35,8 @@
 
 #define PUBDIR_RESULTS_MAX 20
 
+#define GGP_UIN_LEN_MAX 10
+
 
 typedef struct
 {

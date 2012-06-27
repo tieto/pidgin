@@ -22,9 +22,10 @@
 
 
 #include <libgadu.h>
+#include <debug.h>
 
 #include "gg.h"
-#include "gg-utils.h"
+#include "utils.h"
 #include "buddylist.h"
 
 #define F_FIRSTNAME 0
@@ -81,7 +82,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	PurpleGroup *group;
 	gchar **users_tbl;
 	int i;
-	char *utf8buddylist = charset_convert(buddylist, "CP1250", "UTF-8");
+	char *utf8buddylist = ggp_convert_from_cp1250(buddylist);
 
 	/* Don't limit the number of records in a buddylist. */
 	users_tbl = g_strsplit(utf8buddylist, "\r\n", -1);
@@ -94,7 +95,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			continue;
 
 		data_tbl = g_strsplit(users_tbl[i], ";", 8);
-		if (ggp_array_size(data_tbl) < 8) {
+		if (g_strv_length(data_tbl) < 8) {
 			purple_debug_warning("gg",
 				"Something is wrong on line %d of the buddylist. Skipping.\n",
 				i + 1);
@@ -127,7 +128,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			/* XXX: Probably buddy should be added to all the groups. */
 			/* Hard limit to at most 50 groups */
 			gchar **group_tbl = g_strsplit(data_tbl[F_GROUP], ",", 50);
-			if (ggp_array_size(group_tbl) > 0) {
+			if (g_strv_length(group_tbl) > 0) {
 				g_free(g);
 				g = g_strdup(group_tbl[0]);
 			}
@@ -178,11 +179,22 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 				"", gname, bname, "", "");
 	}
 
-	ptr = charset_convert(buddylist->str, "UTF-8", "CP1250");
+	ptr = ggp_convert_to_cp1250(buddylist->str);
 	g_string_free(buddylist, TRUE);
 	return ptr;
 }
 /* }}} */
 
+const char * ggp_buddylist_get_buddy_name(PurpleConnection *gc, const uin_t uin)
+{
+	const char *uin_s = ggp_uin_to_str(uin);
+	PurpleBuddy *buddy = purple_find_buddy(
+		purple_connection_get_account(gc), uin_s);
+	
+	if (buddy != NULL)
+		return purple_buddy_get_alias(buddy);
+	else
+		return uin_s;
+}
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

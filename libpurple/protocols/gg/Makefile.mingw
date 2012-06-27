@@ -60,7 +60,7 @@ C_SRC =	\
 	confer.c \
 	gg.c \
 	search.c \
-	gg-utils.c \
+	utils.c \
 	resolver-purple.c
 
 OBJECTS = $(C_SRC:%.c=%.o)

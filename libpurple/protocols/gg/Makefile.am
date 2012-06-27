@@ -44,8 +44,8 @@ endif
 
 GGSOURCES = \
 	$(INTGGSOURCES) \
-	gg-utils.h \
-	gg-utils.c \
+	utils.h \
+	utils.c \
 	confer.h \
 	confer.c \
 	search.h \
