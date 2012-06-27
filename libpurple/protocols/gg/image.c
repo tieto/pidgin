@@ -34,8 +34,7 @@ void ggp_image_setup(PurpleConnection *gc)
 	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
 	
 	imgdata->pending_messages = NULL;
-	imgdata->pending_images =
-		g_hash_table_new(g_direct_hash, g_direct_equal);
+	imgdata->pending_images = g_hash_table_new(NULL, NULL);
 }
 
 void ggp_image_free(PurpleConnection *gc)
@@ -44,7 +43,7 @@ void ggp_image_free(PurpleConnection *gc)
 	
 	g_list_free_full(imgdata->pending_messages,
 		&ggp_image_pending_message_free);
-	g_hash_table_destroy(imgdata->pending_images); // TODO: remove content
+	g_hash_table_destroy(imgdata->pending_images);
 }
 
 const char * ggp_image_pending_placeholder(uint32_t id)
@@ -73,6 +72,50 @@ void ggp_image_got_im(PurpleConnection *gc, uin_t from, gchar *text,
 	
 	imgdata->pending_messages = g_list_append(imgdata->pending_messages,
 		pending_message);
+}
+
+ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
+	struct gg_msg_richtext_image *image_info)
+{
+	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	PurpleStoredImage *image = purple_imgstore_find_by_id(id);
+	size_t image_size;
+	gconstpointer image_data;
+	const char *image_filename;
+	uint32_t image_crc;
+	
+	if (!image)
+	{
+		purple_debug_error("gg", "ggp_image_prepare_to_send: image %d "
+			"not found in image store\n", id);
+		return GGP_IMAGE_PREPARE_FAILURE;
+	}
+	
+	image_size = purple_imgstore_get_size(image);
+	
+	if (image_size > GGP_IMAGE_SIZE_MAX)
+	{
+		purple_debug_warning("gg", "ggp_image_prepare_to_send: image "
+			"is too big (max bytes: %d)\n", GGP_IMAGE_SIZE_MAX);
+		return GGP_IMAGE_PREPARE_TOO_BIG;
+	}
+	
+	purple_imgstore_ref(image);
+	image_data = purple_imgstore_get_data(image);
+	image_filename = purple_imgstore_get_filename(image);
+	image_crc = gg_crc32(0, image_data, image_size);
+	
+	purple_debug_info("gg", "ggp_image_prepare_to_send: image prepared "
+		"[id=%d, crc=%u, size=%d, filename=%s]\n",
+		id, image_crc, image_size, image_filename);
+	g_hash_table_insert(imgdata->pending_images, GINT_TO_POINTER(image_crc),
+		GINT_TO_POINTER(id));
+	
+	image_info->unknown1 = 0x0109;
+	image_info->size = gg_fix32(image_size);
+	image_info->crc32 = gg_fix32(image_crc);
+	
+	return GGP_IMAGE_PREPARE_OK;
 }
 
 void ggp_image_recv(PurpleConnection *gc,
@@ -139,4 +182,51 @@ void ggp_image_recv(PurpleConnection *gc,
 		pending_messages_it = g_list_next(pending_messages_it);
 	}
 	g_free(imgtag_replace);
+}
+
+void ggp_image_send(PurpleConnection *gc,
+	const struct gg_event_image_request *image_request)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	int stored_id;
+	PurpleStoredImage *image;
+	
+	stored_id = GPOINTER_TO_INT(g_hash_table_lookup(imgdata->pending_images,
+		GINT_TO_POINTER(image_request->crc32)));
+	
+	purple_debug_info("gg", "ggp_image_send: got image request "
+		"[id=%d, uin=%u, crc=%u, size=%u]\n",
+		stored_id,
+		image_request->sender,
+		image_request->crc32,
+		image_request->size);
+	
+	if (!stored_id)
+	{
+		purple_debug_warning("gg", "ggp_image_send: requested image "
+			"not found\n");
+		return;
+	}
+	
+	g_hash_table_remove(imgdata->pending_images,
+		GINT_TO_POINTER(image_request->crc32));
+	
+	image = purple_imgstore_find_by_id(stored_id);
+	
+	if (!image)
+	{
+		purple_debug_error("gg", "ggp_image_send: requested image "
+			"found, but doesn't exists in image store\n");
+		return;
+	}
+	
+	//TODO: check sender
+	gg_image_reply(accdata->session, image_request->sender,
+		purple_imgstore_get_filename(image),
+		purple_imgstore_get_data(image),
+		purple_imgstore_get_size(image));
+	purple_imgstore_unref(image);
+	
+	purple_debug_misc("gg", "ggp_image_send: image sent\n");
 }
