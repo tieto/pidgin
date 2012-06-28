@@ -2381,7 +2381,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 
 			/* add the image itself */
 			prepare_result = ggp_image_prepare(
-				gc, atoi(id), &actimage);
+				gc, atoi(id), who, &actimage);
 			if (prepare_result == GGP_IMAGE_PREPARE_OK)
 			{
 				actformat.font = GG_FONT_IMAGE;

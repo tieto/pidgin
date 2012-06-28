@@ -14,12 +14,26 @@ typedef struct
 	time_t mtime;
 } ggp_image_pending_message;
 
+typedef struct
+{
+	int id;
+	gchar *conv_name;
+} ggp_image_pending_image;
+
 static void ggp_image_pending_message_free(gpointer data)
 {
 	ggp_image_pending_message *pending_message =
 		(ggp_image_pending_message*)data;
 	g_free(pending_message->text);
 	g_free(pending_message);
+}
+
+static void ggp_image_pending_image_free(gpointer data)
+{
+	ggp_image_pending_image *pending_image =
+		(ggp_image_pending_image*)data;
+	g_free(pending_image->conv_name);
+	g_free(pending_image);
 }
 
 static inline ggp_image_connection_data *
@@ -34,7 +48,8 @@ void ggp_image_setup(PurpleConnection *gc)
 	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
 	
 	imgdata->pending_messages = NULL;
-	imgdata->pending_images = g_hash_table_new(NULL, NULL);
+	imgdata->pending_images = g_hash_table_new_full(NULL, NULL, NULL,
+		ggp_image_pending_image_free);
 }
 
 void ggp_image_free(PurpleConnection *gc)
@@ -75,7 +90,7 @@ void ggp_image_got_im(PurpleConnection *gc, uin_t from, gchar *text,
 }
 
 ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
-	struct gg_msg_richtext_image *image_info)
+	const char *conv_name, struct gg_msg_richtext_image *image_info)
 {
 	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
 	PurpleStoredImage *image = purple_imgstore_find_by_id(id);
@@ -83,6 +98,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	gconstpointer image_data;
 	const char *image_filename;
 	uint32_t image_crc;
+	ggp_image_pending_image *pending_image;
 	
 	if (!image)
 	{
@@ -108,8 +124,12 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	purple_debug_info("gg", "ggp_image_prepare_to_send: image prepared "
 		"[id=%d, crc=%u, size=%d, filename=%s]\n",
 		id, image_crc, image_size, image_filename);
+	
+	pending_image = g_new(ggp_image_pending_image, 1);
+	pending_image->id = id;
+	pending_image->conv_name = g_strdup(conv_name);
 	g_hash_table_insert(imgdata->pending_images, GINT_TO_POINTER(image_crc),
-		GINT_TO_POINTER(id));
+		pending_image);
 	
 	image_info->unknown1 = 0x0109;
 	image_info->size = gg_fix32(image_size);
@@ -189,44 +209,57 @@ void ggp_image_send(PurpleConnection *gc,
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
-	int stored_id;
+	ggp_image_pending_image *pending_image;
 	PurpleStoredImage *image;
-	
-	stored_id = GPOINTER_TO_INT(g_hash_table_lookup(imgdata->pending_images,
-		GINT_TO_POINTER(image_request->crc32)));
+	PurpleConversation *conv;
 	
 	purple_debug_info("gg", "ggp_image_send: got image request "
-		"[id=%d, uin=%u, crc=%u, size=%u]\n",
-		stored_id,
+		"[uin=%u, crc=%u, size=%u]\n",
 		image_request->sender,
 		image_request->crc32,
 		image_request->size);
 	
-	if (!stored_id)
+	pending_image = g_hash_table_lookup(imgdata->pending_images,
+		GINT_TO_POINTER(image_request->crc32));
+	
+	if (pending_image == NULL)
 	{
 		purple_debug_warning("gg", "ggp_image_send: requested image "
 			"not found\n");
 		return;
 	}
 	
-	g_hash_table_remove(imgdata->pending_images,
-		GINT_TO_POINTER(image_request->crc32));
+	purple_debug_misc("gg", "ggp_image_send: requested image found "
+		"[id=%d, conv=%s]\n",
+		pending_image->id,
+		pending_image->conv_name);
 	
-	image = purple_imgstore_find_by_id(stored_id);
+	image = purple_imgstore_find_by_id(pending_image->id);
 	
 	if (!image)
 	{
 		purple_debug_error("gg", "ggp_image_send: requested image "
 			"found, but doesn't exists in image store\n");
+		g_hash_table_remove(imgdata->pending_images,
+			GINT_TO_POINTER(image_request->crc32));
 		return;
 	}
 	
-	//TODO: check sender
+	//TODO: check allowed recipients
 	gg_image_reply(accdata->session, image_request->sender,
 		purple_imgstore_get_filename(image),
 		purple_imgstore_get_data(image),
 		purple_imgstore_get_size(image));
 	purple_imgstore_unref(image);
 	
-	purple_debug_misc("gg", "ggp_image_send: image sent\n");
+	conv = purple_find_conversation_with_account(
+		PURPLE_CONV_TYPE_IM, pending_image->conv_name,
+		purple_connection_get_account(gc));
+	if (conv != NULL)
+		purple_conversation_write(conv, "", _("Image delivered."),
+			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY,
+			time(NULL));
+	
+	g_hash_table_remove(imgdata->pending_images,
+		GINT_TO_POINTER(image_request->crc32));
 }

@@ -27,7 +27,7 @@ const char * ggp_image_pending_placeholder(uint32_t id);
 void ggp_image_got_im(PurpleConnection *gc, uin_t from, gchar *msg,
 	time_t mtime);
 ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
-	struct gg_msg_richtext_image *image_info);
+	const char *conv_name, struct gg_msg_richtext_image *image_info);
 
 void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply);
