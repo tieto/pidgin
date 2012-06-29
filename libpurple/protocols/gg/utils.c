@@ -85,17 +85,3 @@ gchar * ggp_convert_from_cp1250(const gchar *src)
 {
 	return ggp_convert(src, "CP1250", "UTF-8");
 }
-
-guint ggp_http_input_add(struct gg_http *http_req, PurpleInputFunction func,
-	gpointer user_data)
-{
-	PurpleInputCondition cond = 0;
-	int check = http_req->check;
-
-	if (check & GG_CHECK_READ)
-		cond |= PURPLE_INPUT_READ;
-	if (check & GG_CHECK_WRITE)
-		cond |= PURPLE_INPUT_WRITE;
-
-	return purple_input_add(http_req->fd, cond, func, user_data);
-}

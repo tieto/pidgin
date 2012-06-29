@@ -63,7 +63,9 @@ GGSOURCES = \
 	account.h \
 	account.c \
 	deprecated.h \
-	deprecated.c
+	deprecated.c \
+	purple.h \
+	purple.c
 
 AM_CFLAGS = $(st)
 

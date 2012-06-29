@@ -47,6 +47,7 @@
 #include "resolver-purple.h"
 #include "account.h"
 #include "deprecated.h"
+#include "purple.h"
 
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -192,142 +193,6 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
-}
-
-static void ggp_callback_register_account_ok(PurpleConnection *gc,
-					     PurpleRequestFields *fields)
-{
-	PurpleAccount *account;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	struct gg_http *h = NULL;
-	struct gg_pubdir *s;
-	uin_t uin;
-	gchar *email, *p1, *p2, *t;
-	ggp_account_token *token = info->token;
-
-	// TODO: don't allow non-ascii passwords
-	email = g_strdup(purple_request_fields_get_string(fields, "email"));
-	p1 = g_strdup(purple_request_fields_get_string(fields, "password1"));
-	p2 = g_strdup(purple_request_fields_get_string(fields, "password2"));
-	t = g_strdup(purple_request_fields_get_string(fields, "token"));
-
-	account = purple_connection_get_account(gc);
-
-	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
-	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		purple_connection_error (gc,
-			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("You must fill in all registration fields"));
-		goto exit_err;
-	}
-
-	if (g_utf8_collate(p1, p2) != 0) {
-		purple_connection_error (gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-			_("Passwords do not match"));
-		goto exit_err;
-	}
-
-	purple_debug_info("gg", "register_account_ok: token_id = %s; t = %s\n",
-			token->id, t);
-	h = gg_register3(email, p1, token->id, t, 0);
-	if (h == NULL || !(s = h->data) || !s->success) {
-		purple_connection_error (gc,
-			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("Unable to register new account.  An unknown error occurred."));
-		goto exit_err;
-	}
-
-	uin = s->uin;
-	purple_debug_info("gg", "registered uin: %d\n", uin);
-
-	g_free(t);
-	t = g_strdup_printf("%u", uin);
-	purple_account_set_username(account, t);
-	purple_account_set_remember_password(account, TRUE); //TODO: option
-	purple_account_set_password(account, p1);
-
-	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
-			 _("Registration completed successfully!"), NULL);
-
-	purple_account_disconnect(account);
-	purple_account_register_completed(account, TRUE);
-
-	goto exit_ok;
-
-exit_err:
-	purple_account_disconnect(account);
-	purple_account_register_completed(account, FALSE);
-
-exit_ok:
-	gg_register_free(h);
-	g_free(email);
-	g_free(p1);
-	g_free(p2);
-	g_free(t);
-	//ggp_account_token_free(info->token);
-	info->token = NULL;
-}
-
-static void ggp_callback_register_account_cancel(PurpleConnection *gc,
-						 PurpleRequestFields *fields)
-{
-	PurpleAccount *account = purple_connection_get_account(gc);
-
-	purple_account_disconnect(account);
-	purple_account_register_completed(account, FALSE);
-}
-
-static void ggp_register_user_dialog(ggp_account_token *token, gpointer _gc)
-{
-	PurpleConnection *gc = _gc;
-	PurpleAccount *account;
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-
-	account = purple_connection_get_account(gc);
-	info->token = token;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_string_new("email",
-			_("Email"), "", FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("password1",
-			_("Password"), "", FALSE);
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("password2",
-			_("Password (again)"), "", FALSE);
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("token",
-			_("Enter captcha text"), "", FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	/* original size: 60x24 */
-	field = purple_request_field_image_new("token_img",
-			_("Captcha"), token->data, token->size);
-	purple_request_field_group_add_field(group, field);
-
-	purple_request_fields(account,
-		_("Register New Gadu-Gadu Account"),
-		_("Register New Gadu-Gadu Account"),
-		_("Please, fill in the following fields"),
-		fields,
-		_("OK"), G_CALLBACK(ggp_callback_register_account_ok),
-		_("Cancel"), G_CALLBACK(ggp_callback_register_account_cancel),
-		purple_connection_get_account(gc), NULL, NULL,
-		gc);
 }
 
 /* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
@@ -492,7 +357,7 @@ static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
 
 	if (req->http_req->state != GG_STATE_DONE)
 	{
-		req->inpa = ggp_http_input_add(req->http_req,
+		req->inpa = ggp_purple_http_input_add(req->http_req,
 			ggp_callback_change_passwd_handler, req);
 		return;
 	}
@@ -589,7 +454,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 		req->new_password = g_strdup(p1);
 		req->account = account;
 		
-		req->inpa = ggp_http_input_add(h,
+		req->inpa = ggp_purple_http_input_add(h,
 			ggp_callback_change_passwd_handler, req);
 	}
 	
@@ -601,9 +466,8 @@ exit_err:
 	g_free(mail);
 }
 
-static void ggp_change_passwd_dialog(ggp_account_token *token, gpointer _gc)
+static void ggp_change_passwd_dialog(PurpleConnection *gc, ggp_account_token *token, gpointer user_data)
 {
-	PurpleConnection *gc = _gc;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -611,12 +475,7 @@ static void ggp_change_passwd_dialog(ggp_account_token *token, gpointer _gc)
 	char *msg;
 	
 	if (!token)
-	{
-		purple_notify_error(purple_connection_get_account(gc),
-			_("Token Error"),
-			_("Unable to fetch the token.\n"), NULL);
 		return;
-	}
 	info->token = token;
 
 	fields = purple_request_fields_new();
@@ -674,7 +533,7 @@ static void ggp_change_passwd(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	ggp_account_token_request(gc, ggp_change_passwd_dialog, gc);
+	ggp_account_token_request(gc, ggp_change_passwd_dialog, NULL);
 }
 
 /* ----- CHANGE STATUS BROADCASTING ------------------------------------------------ */
@@ -2574,16 +2433,6 @@ static void ggp_keepalive(PurpleConnection *gc)
 	}
 }
 
-static void ggp_register_user(PurpleAccount *account)
-{
-	PurpleConnection *gc = purple_account_get_connection(account);
-	GGPInfo *info = g_new0(GGPInfo, 1); // TODO: init it properly
-	
-	purple_connection_set_protocol_data(gc, info);
-	
-	ggp_account_token_request(gc, ggp_register_user_dialog, gc);
-}
-
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -2672,7 +2521,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* chat_whisper */
 	ggp_chat_send,			/* chat_send */
 	ggp_keepalive,			/* keepalive */
-	ggp_register_user,		/* register_user */
+	ggp_account_register,		/* register_user */
 	NULL,				/* get_cb_info */
 	NULL,				/* alias_buddy */
 	NULL,				/* group_buddy */
