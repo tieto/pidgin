@@ -45,141 +45,12 @@
 #include "buddylist.h"
 #include "utils.h"
 #include "resolver-purple.h"
+#include "account.h"
+#include "deprecated.h"
 
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
 static int ggp_to_gg_status(PurpleStatus *status, char **msg);
-
-/* ---------------------------------------------------------------------- */
-/* ----- EXTERNAL CALLBACKS --------------------------------------------- */
-/* ---------------------------------------------------------------------- */
-
-
-/* ----- HELPERS -------------------------------------------------------- */
-
-/**
- * Set up libgadu's proxy.
- *
- * @param account Account for which to set up the proxy.
- *
- * @return Zero if proxy setup is valid, otherwise -1.
- */
-static int ggp_setup_proxy(PurpleAccount *account)
-{
-	PurpleProxyInfo *gpi;
-
-	gpi = purple_proxy_get_setup(account);
-
-	if ((purple_proxy_info_get_type(gpi) != PURPLE_PROXY_NONE) &&
-	    (purple_proxy_info_get_host(gpi) == NULL ||
-	     purple_proxy_info_get_port(gpi) <= 0)) {
-
-		gg_proxy_enabled = 0;
-		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
-				  _("Either the host name or port number specified for your given proxy type is invalid."));
-		return -1;
-	} else if (purple_proxy_info_get_type(gpi) != PURPLE_PROXY_NONE) {
-		gg_proxy_enabled = 1;
-		gg_proxy_host = g_strdup(purple_proxy_info_get_host(gpi));
-		gg_proxy_port = purple_proxy_info_get_port(gpi);
-		gg_proxy_username = g_strdup(purple_proxy_info_get_username(gpi));
-		gg_proxy_password = g_strdup(purple_proxy_info_get_password(gpi));
-	} else {
-		gg_proxy_enabled = 0;
-	}
-
-	return 0;
-}
-
-static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
-{
-	PurpleConnection *gc = _gc;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPToken *token = info->token;
-	GGPTokenCallback cb;
-
-	struct gg_token *t = NULL;
-
-	purple_debug_info("gg", "token_handler: token->req: check = %d; state = %d;\n",
-			token->req->check, token->req->state);
-
-	if (gg_token_watch_fd(token->req) == -1 || token->req->state == GG_STATE_ERROR) {
-		purple_debug_error("gg", "token error (1): %d\n", token->req->error);
-		purple_input_remove(token->inpa);
-		gg_token_free(token->req);
-		token->req = NULL;
-
-		purple_notify_error(purple_connection_get_account(gc),
-				  _("Token Error"),
-				  _("Unable to fetch the token.\n"), NULL);
-		return;
-	}
-
-	if (token->req->state != GG_STATE_DONE) {
-		purple_input_remove(token->inpa);
-		token->inpa = purple_input_add(token->req->fd,
-						   (token->req->check == 1)
-						   	? PURPLE_INPUT_WRITE
-							: PURPLE_INPUT_READ,
-						   ggp_async_token_handler, gc);
-		return;
-	}
-
-	if (!(t = token->req->data) || !token->req->body) {
-		purple_debug_error("gg", "token error (2): %d\n", token->req->error);
-		purple_input_remove(token->inpa);
-		gg_token_free(token->req);
-		token->req = NULL;
-
-		purple_notify_error(purple_connection_get_account(gc),
-				  _("Token Error"),
-				  _("Unable to fetch the token.\n"), NULL);
-		return;
-	}
-
-	purple_input_remove(token->inpa);
-
-	token->id = g_strdup(t->tokenid);
-	token->size = token->req->body_size;
-	token->data = g_new0(char, token->size);
-	memcpy(token->data, token->req->body, token->size);
-
-	purple_debug_info("gg", "TOKEN! tokenid = %s; size = %d\n",
-			token->id, token->size);
-
-	gg_token_free(token->req);
-	token->req = NULL;
-	token->inpa = 0;
-
-	cb = token->cb;
-	token->cb = NULL;
-	cb(gc);
-}
-
-static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
-{
-	PurpleAccount *account = purple_connection_get_account(gc);
-	struct gg_http *req;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-
-	if (ggp_setup_proxy(account) == -1)
-		return;
-
-	if ((req = gg_token(1)) == NULL) {
-		purple_notify_error(account,
-				  _("Token Error"),
-				  _("Unable to fetch the token.\n"), NULL);
-		return;
-	}
-
-	info->token = g_new(GGPToken, 1);
-	info->token->cb = cb;
-
-	info->token->req = req;
-	info->token->inpa = purple_input_add(req->fd, PURPLE_INPUT_READ,
-					   ggp_async_token_handler, gc);
-}
-/* }}} */
 
 /* ---------------------------------------------------------------------- */
 
@@ -332,7 +203,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	struct gg_pubdir *s;
 	uin_t uin;
 	gchar *email, *p1, *p2, *t;
-	GGPToken *token = info->token;
+	ggp_account_token *token = info->token;
 
 	// TODO: don't allow non-ascii passwords
 	email = g_strdup(purple_request_fields_get_string(fields, "email"));
@@ -373,60 +244,51 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	g_free(t);
 	t = g_strdup_printf("%u", uin);
 	purple_account_set_username(account, t);
-	/* Save the password if remembering passwords for the account */
+	purple_account_set_remember_password(account, TRUE); //TODO: option
 	purple_account_set_password(account, p1);
 
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
 
+	purple_account_disconnect(account);
 	purple_account_register_completed(account, TRUE);
 
-	/* TODO: the currently open Accounts Window will not be updated withthe
-	 * new username and etc, we need to somehow have it refresh at this
-	 * point
-	 */
-
-	/* Need to disconnect or actually log in. For now, we disconnect. */
-	purple_account_disconnect(account);
+	goto exit_ok;
 
 exit_err:
+	purple_account_disconnect(account);
 	purple_account_register_completed(account, FALSE);
 
+exit_ok:
 	gg_register_free(h);
 	g_free(email);
 	g_free(p1);
 	g_free(p2);
 	g_free(t);
-	g_free(token->id);
-	g_free(token);
+	//ggp_account_token_free(info->token);
+	info->token = NULL;
 }
 
 static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 						 PurpleRequestFields *fields)
 {
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPToken *token = info->token;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
-	purple_account_disconnect(purple_connection_get_account(gc));
-
-	g_free(token->id);
-	g_free(token->data);
-	g_free(token);
-
+	purple_account_disconnect(account);
+	purple_account_register_completed(account, FALSE);
 }
 
-static void ggp_register_user_dialog(PurpleConnection *gc)
+static void ggp_register_user_dialog(ggp_account_token *token, gpointer _gc)
 {
+	PurpleConnection *gc = _gc;
 	PurpleAccount *account;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPToken *token = info->token;
-
 
 	account = purple_connection_get_account(gc);
+	info->token = token;
 
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
@@ -737,21 +599,25 @@ exit_err:
 	g_free(p2);
 	g_free(t);
 	g_free(mail);
-	g_free(info->token->id);
-	g_free(info->token->data);
-	g_free(info->token);
 }
 
-static void ggp_change_passwd_dialog(PurpleConnection *gc)
+static void ggp_change_passwd_dialog(ggp_account_token *token, gpointer _gc)
 {
+	PurpleConnection *gc = _gc;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPToken *token = info->token;
-
 	char *msg;
+	
+	if (!token)
+	{
+		purple_notify_error(purple_connection_get_account(gc),
+			_("Token Error"),
+			_("Unable to fetch the token.\n"), NULL);
+		return;
+	}
+	info->token = token;
 
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
@@ -808,7 +674,7 @@ static void ggp_change_passwd(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	ggp_token_request(gc, ggp_change_passwd_dialog);
+	ggp_account_token_request(gc, ggp_change_passwd_dialog, gc);
 }
 
 /* ----- CHANGE STATUS BROADCASTING ------------------------------------------------ */
@@ -2181,7 +2047,7 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 
 static void ggp_login(PurpleAccount *account)
 {
-	PurpleConnection *gc;
+	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePresence *presence;
 	PurpleStatus *status;
 	struct gg_login_params *glp;
@@ -2189,10 +2055,9 @@ static void ggp_login(PurpleAccount *account)
 	const char *address;
 	const gchar *encryption_type;
 
-	if (ggp_setup_proxy(account) == -1)
+	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
-	gc = purple_account_get_connection(account);
 	glp = g_new0(struct gg_login_params, 1);
 	info = g_new0(GGPInfo, 1);
 
@@ -2716,7 +2581,7 @@ static void ggp_register_user(PurpleAccount *account)
 	
 	purple_connection_set_protocol_data(gc, info);
 	
-	ggp_token_request(gc, ggp_register_user_dialog);
+	ggp_account_token_request(gc, ggp_register_user_dialog, gc);
 }
 
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)

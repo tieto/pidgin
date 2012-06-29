@@ -31,6 +31,7 @@
 #include "connection.h"
 
 #include "image.h"
+#include "account.h"
 
 
 #define PUBDIR_RESULTS_MAX 20
@@ -45,26 +46,11 @@ typedef struct
 
 } GGPChat;
 
-typedef void (*GGPTokenCallback)(PurpleConnection *);
-
-typedef struct
-{
-	char *id;
-	char *data;
-	unsigned int size;
-
-	struct gg_http *req;
-	guint inpa;
-
-	GGPTokenCallback cb;
-
-} GGPToken;
-
 typedef struct {
 
 	struct gg_session *session;
 	guint inpa;
-	GGPToken *token;
+	ggp_account_token *token; //TODO: remove me
 	GList *chats;
 	GGPSearches *searches;
 	int chats_count;

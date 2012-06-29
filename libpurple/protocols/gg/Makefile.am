@@ -59,7 +59,11 @@ GGSOURCES = \
 	resolver-purple.h \
 	resolver-purple.c \
 	image.h \
-	image.c
+	image.c \
+	account.h \
+	account.c \
+	deprecated.h \
+	deprecated.c
 
 AM_CFLAGS = $(st)
 
