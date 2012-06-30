@@ -5,7 +5,7 @@
 #include <request.h>
 
 #include "deprecated.h"
-#include "purple.h"
+#include "purplew.h"
 #include "utils.h"
 
 /*******************************************************************************
@@ -19,7 +19,7 @@ typedef struct
 	void *user_data;
 	
 	struct gg_http *h;
-	ggp_purple_request_processing_handle *req_processing;
+	ggp_purplew_request_processing_handle *req_processing;
 	guint inpa;
 } ggp_account_token_reqdata;
 
@@ -45,7 +45,7 @@ static void ggp_account_token_cb_call(ggp_account_token_reqdata *reqdata, ggp_ac
 	
 	if (reqdata->req_processing)
 	{
-		ggp_purple_request_processing_done(reqdata->req_processing);
+		ggp_purplew_request_processing_done(reqdata->req_processing);
 		reqdata->req_processing = NULL;
 	}
 	reqdata->callback(reqdata->gc, token, reqdata->user_data);
@@ -83,7 +83,7 @@ void ggp_account_token_request(PurpleConnection *gc, ggp_account_token_cb callba
 	reqdata->gc = gc;
 	reqdata->user_data = user_data;
 	reqdata->h = h;
-	reqdata->req_processing = ggp_purple_request_processing(gc, NULL, reqdata, ggp_account_token_request_cancel);
+	reqdata->req_processing = ggp_purplew_request_processing(gc, NULL, reqdata, ggp_account_token_request_cancel);
 	reqdata->inpa = purple_input_add(h->fd, PURPLE_INPUT_READ, ggp_account_token_handler, reqdata);
 }
 

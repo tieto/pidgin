@@ -47,7 +47,7 @@
 #include "resolver-purple.h"
 #include "account.h"
 #include "deprecated.h"
-#include "purple.h"
+#include "purplew.h"
 
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -357,7 +357,7 @@ static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
 
 	if (req->http_req->state != GG_STATE_DONE)
 	{
-		req->inpa = ggp_purple_http_input_add(req->http_req,
+		req->inpa = ggp_purplew_http_input_add(req->http_req,
 			ggp_callback_change_passwd_handler, req);
 		return;
 	}
@@ -454,7 +454,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
 		req->new_password = g_strdup(p1);
 		req->account = account;
 		
-		req->inpa = ggp_purple_http_input_add(h,
+		req->inpa = ggp_purplew_http_input_add(h,
 			ggp_callback_change_passwd_handler, req);
 	}
 	
