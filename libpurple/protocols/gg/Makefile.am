@@ -65,7 +65,9 @@ GGSOURCES = \
 	deprecated.h \
 	deprecated.c \
 	purplew.h \
-	purplew.c
+	purplew.c \
+	libgaduw.h \
+	libgaduw.c
 
 AM_CFLAGS = $(st)
 

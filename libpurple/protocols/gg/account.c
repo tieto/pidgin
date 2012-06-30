@@ -7,6 +7,7 @@
 #include "deprecated.h"
 #include "purplew.h"
 #include "utils.h"
+#include "libgaduw.h"
 
 /*******************************************************************************
  * Token requesting.
@@ -17,16 +18,15 @@ typedef struct
 	ggp_account_token_cb callback;
 	PurpleConnection *gc;
 	void *user_data;
-	
-	struct gg_http *h;
+
+	gboolean cancelled;
+	ggp_libgaduw_http_req *req;
 	ggp_purplew_request_processing_handle *req_processing;
-	guint inpa;
 } ggp_account_token_reqdata;
 
-static void ggp_account_token_handler(gpointer _reqdata, gint fd, PurpleInputCondition cond);
+static void ggp_account_token_response(struct gg_http *h, gboolean success, void *_reqdata);
 
-/* user cancel isn't a failure */
-static void ggp_account_token_cb_call(ggp_account_token_reqdata *reqdata, ggp_account_token *token, gboolean failure);
+static void ggp_account_token_finish(ggp_account_token_reqdata *reqdata, ggp_account_token *token);
 
 static void ggp_account_token_request_cancel(PurpleConnection *gc, void *_reqdata);
 
@@ -37,26 +37,6 @@ void ggp_account_token_free(ggp_account_token *token)
 	g_free(token->id);
 	g_free(token->data);
 	g_free(token);
-}
-
-static void ggp_account_token_cb_call(ggp_account_token_reqdata *reqdata, ggp_account_token *token, gboolean failure)
-{
-	g_assert(!failure || !token); // failure => not token
-	
-	if (reqdata->req_processing)
-	{
-		ggp_purplew_request_processing_done(reqdata->req_processing);
-		reqdata->req_processing = NULL;
-	}
-	reqdata->callback(reqdata->gc, token, reqdata->user_data);
-	purple_input_remove(reqdata->inpa);
-	gg_token_free(reqdata->h);
-	g_free(reqdata);
-	
-	if (failure)
-		purple_notify_error(purple_connection_get_account(reqdata->gc),
-			_("Token Error"),
-			_("Unable to fetch the token.\n"), NULL);
 }
 
 void ggp_account_token_request(PurpleConnection *gc, ggp_account_token_cb callback, void *user_data)
@@ -82,9 +62,9 @@ void ggp_account_token_request(PurpleConnection *gc, ggp_account_token_cb callba
 	reqdata->callback = callback;
 	reqdata->gc = gc;
 	reqdata->user_data = user_data;
-	reqdata->h = h;
+	reqdata->cancelled = FALSE;
 	reqdata->req_processing = ggp_purplew_request_processing(gc, NULL, reqdata, ggp_account_token_request_cancel);
-	reqdata->inpa = purple_input_add(h->fd, PURPLE_INPUT_READ, ggp_account_token_handler, reqdata);
+	reqdata->req = ggp_libgaduw_http_watch(h, ggp_account_token_response, reqdata);
 }
 
 static void ggp_account_token_request_cancel(PurpleConnection *gc, void *_reqdata)
@@ -92,43 +72,21 @@ static void ggp_account_token_request_cancel(PurpleConnection *gc, void *_reqdat
 	ggp_account_token_reqdata *reqdata = _reqdata;
 
 	purple_debug_info("gg", "ggp_account_token_request_cancel\n");
+	reqdata->cancelled = TRUE;
 	reqdata->req_processing = NULL;
-	gg_http_stop(reqdata->h);
-	ggp_account_token_cb_call(reqdata, NULL, FALSE);
+	ggp_libgaduw_http_cancel(reqdata->req);
 }
 
-static void ggp_account_token_handler(gpointer _reqdata, gint fd, PurpleInputCondition cond)
+static void ggp_account_token_response(struct gg_http *h, gboolean success, void *_reqdata)
 {
 	ggp_account_token_reqdata *reqdata = _reqdata;
 	struct gg_token *token_info;
 	ggp_account_token *token;
 	
-	//TODO: verbose mode
-	purple_debug_misc("gg", "ggp_account_token_handler: got fd update [check=%d, state=%d]\n",
-		reqdata->h->check, reqdata->h->state);
-	
-	if (gg_token_watch_fd(reqdata->h) == -1 || reqdata->h->state == GG_STATE_ERROR)
+	if (!success)
 	{
-		purple_debug_error("gg", "ggp_account_token_handler: failed to request token: %d\n",
-			reqdata->h->error);
-		ggp_account_token_cb_call(reqdata, NULL, TRUE);
-		return;
-	}
-	
-	if (reqdata->h->state != GG_STATE_DONE)
-	{
-		purple_input_remove(reqdata->inpa);
-		reqdata->inpa = purple_input_add(reqdata->h->fd,
-			(reqdata->h->check == 1) ? PURPLE_INPUT_WRITE : PURPLE_INPUT_READ,
-			ggp_account_token_handler, reqdata);
-		return;
-	}
-	
-	if (!reqdata->h->data || !reqdata->h->body)
-	{
-		purple_debug_error("gg", "ggp_account_token_handler: failed to fetch token: %d\n",
-			reqdata->h->error); // TODO: will anything be here in that case?
-		ggp_account_token_cb_call(reqdata, NULL, TRUE);
+		gg_token_free(h);
+		ggp_account_token_finish(reqdata, NULL);
 		return;
 	}
 	
@@ -136,12 +94,32 @@ static void ggp_account_token_handler(gpointer _reqdata, gint fd, PurpleInputCon
 	
 	token = g_new(ggp_account_token, 1);
 	
-	token_info = reqdata->h->data;
+	token_info = h->data;
 	token->id = g_strdup(token_info->tokenid);
-	token->size = reqdata->h->body_size;
-	token->data = g_memdup(reqdata->h->body, token->size);
+	token->size = h->body_size;
+	token->data = g_memdup(h->body, token->size);
+	gg_token_free(h);
 	
-	ggp_account_token_cb_call(reqdata, token, FALSE);
+	ggp_account_token_finish(reqdata, token);
+}
+
+static void ggp_account_token_finish(ggp_account_token_reqdata *reqdata, ggp_account_token *token)
+{
+	g_assert(!reqdata->cancelled || !token); // cancelled => not token
+	
+	if (reqdata->req_processing)
+	{
+		ggp_purplew_request_processing_done(reqdata->req_processing);
+		reqdata->req_processing = NULL;
+	}
+	reqdata->callback(reqdata->gc, token, reqdata->user_data);
+	
+	if (!token && !reqdata->cancelled)
+		purple_notify_error(purple_connection_get_account(reqdata->gc),
+			_("Token Error"),
+			_("Unable to fetch the token.\n"), NULL);
+
+	g_free(reqdata);
 }
 
 /*******************************************************************************
