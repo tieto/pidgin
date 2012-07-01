@@ -21,7 +21,8 @@ typedef struct
 } ggp_libgaduw_http_req;
 
 ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
-	struct gg_http *h, ggp_libgaduw_http_cb cb, gpointer user_data, gboolean show_processing);
+	struct gg_http *h, ggp_libgaduw_http_cb cb, gpointer user_data,
+	gboolean show_processing);
 void ggp_libgaduw_http_cancel(ggp_libgaduw_http_req *req);
 
 

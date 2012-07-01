@@ -64,4 +64,6 @@ gchar * ggp_convert_to_cp1250(const gchar *src);
  */
 gchar * ggp_convert_from_cp1250(const gchar *src);
 
+gboolean ggp_password_validate(const gchar *password);
+
 #endif /* _GGP_UTILS_H */

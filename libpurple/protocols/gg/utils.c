@@ -85,3 +85,12 @@ gchar * ggp_convert_from_cp1250(const gchar *src)
 {
 	return ggp_convert(src, "CP1250", "UTF-8");
 }
+
+gboolean ggp_password_validate(const gchar *password)
+{
+	const int len = strlen(password);
+	if (len < 6 || len > 15)
+		return FALSE;
+	return g_regex_match_simple("^[ a-zA-Z0-9~`!@#$%^&*()_+=[\\]{};':\",./?"
+		"<>\\\\|-]+$", password, 0, 0);
+}

@@ -1,6 +1,7 @@
 #include "purplew.h"
 
 #include <request.h>
+#include <debug.h>
 
 guint ggp_purplew_http_input_add(struct gg_http *http_req,
 	PurpleInputFunction func, gpointer user_data)
@@ -13,6 +14,10 @@ guint ggp_purplew_http_input_add(struct gg_http *http_req,
 	if (check & GG_CHECK_WRITE)
 		cond |= PURPLE_INPUT_WRITE;
 
+	//TODO: verbose mode
+	//purple_debug_misc("gg", "ggp_purplew_http_input_add: "
+	//	"[req=%x, fd=%d, cond=%d]\n",
+	//	(unsigned int)http_req, http_req->fd, cond);
 	return purple_input_add(http_req->fd, cond, func, user_data);
 }
 

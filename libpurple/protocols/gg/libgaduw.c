@@ -24,8 +24,8 @@ ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 	gpointer user_data, gboolean show_processing)
 {
 	ggp_libgaduw_http_req *req;
-	purple_debug_misc("gg", "ggp_libgaduw_http_watch(h=%x, show_processing=%d)\n",
-		(unsigned int)h, show_processing);
+	purple_debug_misc("gg", "ggp_libgaduw_http_watch(h=%x, "
+		"show_processing=%d)\n", (unsigned int)h, show_processing);
 	
 	req = g_new(ggp_libgaduw_http_req, 1);
 	req->user_data = user_data;
@@ -55,7 +55,7 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 {
 	ggp_libgaduw_http_req *req = _req;
 	
-	if (gg_token_watch_fd(req->h) == -1 || req->h->state == GG_STATE_ERROR)
+	if (req->h->callback(req->h) == -1 || req->h->state == GG_STATE_ERROR)
 	{
 		purple_debug_error("gg", "ggp_libgaduw_http_handler: failed to "
 			"make http request: %d\n", req->h->error);
@@ -107,5 +107,6 @@ static void ggp_libgaduw_http_finish(ggp_libgaduw_http_req *req,
 	}
 	purple_input_remove(req->inpa);
 	req->cb(req->h, success, req->cancelled, req->user_data);
+	req->h->destroy(req->h);
 	g_free(req);
 }
