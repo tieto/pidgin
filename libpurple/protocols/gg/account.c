@@ -103,6 +103,14 @@ static void ggp_account_token_response(struct gg_http *h, gboolean success,
 	g_free(reqdata);
 }
 
+gboolean ggp_account_token_validate(ggp_account_token *token,
+	const gchar *value)
+{
+	if (strlen(value) != token->length)
+		return FALSE;
+	return g_regex_match_simple("^[a-zA-Z0-9]+$", value, 0, 0);
+}
+
 /*******************************************************************************
  * New account registration.
  ******************************************************************************/
@@ -119,7 +127,7 @@ typedef struct
 } ggp_account_register_data;
 
 static void ggp_account_register_dialog(PurpleConnection *gc,
-	ggp_account_token *token, gpointer user_data);
+	ggp_account_token *token, gpointer _register_data);
 static void ggp_account_register_dialog_ok(
 	ggp_account_register_data *register_data, PurpleRequestFields *fields);
 static void ggp_account_register_dialog_invalid(
@@ -153,7 +161,6 @@ void ggp_account_register(PurpleAccount *account)
 static void ggp_account_register_dialog(PurpleConnection *gc,
 	ggp_account_token *token, gpointer _register_data)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *main_group, *password_group, *token_group;
 	PurpleRequestField *field;
@@ -210,7 +217,6 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 	purple_request_field_group_add_field(token_group, field);
 	
 	register_data->token = token;
-	register_data->password = NULL;
 	
 	purple_request_fields(gc,
 		GGP_ACCOUNT_REGISTER_TITLE,
@@ -218,7 +224,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 		_("Please, fill in the following fields"), fields,
 		_("OK"), G_CALLBACK(ggp_account_register_dialog_ok),
 		_("Cancel"), G_CALLBACK(ggp_account_register_dialog_cancel),
-		account, NULL, NULL, register_data);
+		purple_connection_get_account(gc), NULL, NULL, register_data);
 }
 
 static void ggp_account_register_dialog_cancel(
@@ -280,9 +286,8 @@ static void ggp_account_register_dialog_ok(
 			_("Invalid email address"));
 		return;
 	}
-	if (strlen(register_data->token_value) != register_data->token->length
-		|| !g_regex_match_simple("^[a-zA-Z0-9]+$",
-			register_data->token_value, 0, 0))
+	if (!ggp_account_token_validate(register_data->token,
+		register_data->token_value))
 	{
 		ggp_account_register_dialog_invalid(register_data,
 			_("Captcha validation failed"));
@@ -343,7 +348,7 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	}
 
 	uin = register_result->uin;
-	purple_debug_info("gg", "ggp_account_register_dialog_ok: "
+	purple_debug_info("gg", "ggp_account_register_response: "
 		"registered uin %u\n", uin);
 	
 	purple_account_set_username(account, ggp_uin_to_str(uin));
@@ -352,7 +357,7 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	purple_account_set_password(account, register_data->password);
 	
 	tmp = g_strdup_printf(_("Your new GG number: %u."), uin);
-	purple_notify_info(NULL, GGP_ACCOUNT_REGISTER_TITLE,
+	purple_notify_info(account, GGP_ACCOUNT_REGISTER_TITLE,
 		_("Registration completed successfully!"), tmp);
 	g_free(tmp);
 	
@@ -376,4 +381,288 @@ static void ggp_account_register_completed(
 	
 	purple_account_disconnect(account);
 	purple_account_register_completed(account, success);
+}
+
+/*******************************************************************************
+ * Password change.
+ ******************************************************************************/
+
+typedef struct
+{
+	ggp_account_token *token;
+	PurpleConnection *gc;
+	
+	gchar *email;
+	gchar *password_current;
+	gchar *password_new;
+	gchar *token_value;
+} ggp_account_chpass_data;
+
+static void ggp_account_chpass_data_free(ggp_account_chpass_data *chpass_data);
+static void ggp_account_chpass_dialog(PurpleConnection *gc,
+	ggp_account_token *token, gpointer _chpass_data);
+static void ggp_account_chpass_dialog_ok(
+	ggp_account_chpass_data *chpass_data, PurpleRequestFields *fields);
+static void ggp_account_chpass_dialog_invalid(
+	ggp_account_chpass_data *chpass_data, const gchar *message);
+static void ggp_account_chpass_dialog_cancel(
+	ggp_account_chpass_data *chpass_data, PurpleRequestFields *fields);
+static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
+	gboolean cancelled, gpointer _chpass_data);
+
+#define GGP_ACCOUNT_CHPASS_TITLE _("Password change")
+
+/******************************************************************************/
+
+static void ggp_account_chpass_data_free(ggp_account_chpass_data *chpass_data)
+{
+	g_free(chpass_data->email);
+	g_free(chpass_data->password_current);
+	g_free(chpass_data->password_new);
+	g_free(chpass_data->token_value);
+	ggp_account_token_free(chpass_data->token);
+	g_free(chpass_data);
+}
+
+void ggp_account_chpass(PurpleConnection *gc)
+{
+	ggp_account_chpass_data *chpass_data;
+	void ggp_account_change_passwd(PurpleConnection *gc);
+	purple_debug_info("gg", "ggp_account_chpass\n");
+	
+	chpass_data = g_new0(ggp_account_chpass_data, 1);
+	chpass_data->gc = gc;
+	
+	ggp_account_token_request(gc, ggp_account_chpass_dialog, chpass_data);
+}
+
+static void ggp_account_chpass_dialog(PurpleConnection *gc,
+	ggp_account_token *token, gpointer _chpass_data)
+{
+	ggp_account_chpass_data *chpass_data = _chpass_data;
+	PurpleAccount *account = purple_connection_get_account(chpass_data->gc);
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *main_group, *password_group, *token_group;
+	PurpleRequestField *field;
+	gchar *primary;
+	
+	purple_debug_info("gg", "ggp_account_chpass_dialog(%p, %p, %p)\n",
+		gc, token, _chpass_data);
+	if (!token)
+	{
+		ggp_account_chpass_data_free(chpass_data);
+		return;
+	}
+	
+	fields = purple_request_fields_new();
+	main_group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, main_group);
+	
+	field = purple_request_field_string_new("email",
+		_("New email address"), chpass_data->email, FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(main_group, field);
+
+	password_group = purple_request_field_group_new(_("Password"));
+	purple_request_fields_add_group(fields, password_group);
+
+	field = purple_request_field_string_new("password_current",
+		_("Current password"), chpass_data->password_current, FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(password_group, field);
+	
+	field = purple_request_field_string_new("password_new1",
+		_("Password"), chpass_data->password_new, FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(password_group, field);
+	
+	field = purple_request_field_string_new("password_new2",
+		_("Password (retype)"), chpass_data->password_new, FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(password_group, field);
+	
+	token_group = purple_request_field_group_new(_("Captcha"));
+	purple_request_fields_add_group(fields, token_group);
+	
+	field = purple_request_field_string_new("token_value",
+		_("Enter text from image below"), chpass_data->token_value,
+		FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(token_group, field);
+	
+	field = purple_request_field_image_new("token_image", _("Captcha"),
+		token->data, token->size);
+	purple_request_field_group_add_field(token_group, field);
+	
+	chpass_data->token = token;
+	
+	primary = g_strdup_printf(_("Change password for %s"),
+		purple_account_get_username(account));
+	
+	purple_request_fields(gc, GGP_ACCOUNT_CHPASS_TITLE, primary,
+		_("Please enter your current password and your new password."),
+		fields,
+		_("OK"), G_CALLBACK(ggp_account_chpass_dialog_ok),
+		_("Cancel"), G_CALLBACK(ggp_account_chpass_dialog_cancel),
+		account, NULL, NULL, chpass_data);
+	
+	g_free(primary);
+}
+
+static void ggp_account_chpass_dialog_ok(
+	ggp_account_chpass_data *chpass_data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account = purple_connection_get_account(chpass_data->gc);
+	const gchar *password2;
+	struct gg_http *h;
+	uin_t uin;
+
+	purple_debug_misc("gg", "ggp_account_chpass_dialog_ok(%p, %p)\n",
+		chpass_data, fields);
+
+	g_free(chpass_data->email);
+	g_free(chpass_data->password_current);
+	g_free(chpass_data->password_new);
+	g_free(chpass_data->token_value);
+	
+	chpass_data->email = g_strdup(
+		purple_request_fields_get_string(fields, "email"));
+	chpass_data->password_current = g_strdup(
+		purple_request_fields_get_string(fields, "password_current"));
+	chpass_data->password_new = g_strdup(
+		purple_request_fields_get_string(fields, "password_new1"));
+	password2 = purple_request_fields_get_string(fields, "password_new2");
+	chpass_data->token_value = g_strdup(
+		purple_request_fields_get_string(fields, "token_value"));
+
+	g_assert(chpass_data->email != NULL);
+	g_assert(chpass_data->password_current != NULL);
+	g_assert(chpass_data->password_new != NULL);
+	g_assert(password2 != NULL);
+	g_assert(chpass_data->token_value != NULL);
+
+	if (g_utf8_collate(chpass_data->password_new, password2) != 0)
+	{
+		g_free(chpass_data->password_new);
+		chpass_data->password_new = NULL;
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("Passwords do not match"));
+		return;
+	}
+	if (g_utf8_collate(chpass_data->password_current,
+		purple_account_get_password(account)) != 0)
+	{
+		g_free(chpass_data->password_current);
+		chpass_data->password_current = NULL;
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("Your current password is different from the one that"
+			" you specified."));
+		return;
+	}
+	if (g_utf8_collate(chpass_data->password_current,
+		chpass_data->password_new) == 0)
+	{
+		g_free(chpass_data->password_new);
+		chpass_data->password_new = NULL;
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("New password have to be different from the current "
+			"one."));
+		return;
+	}
+	if (!ggp_password_validate(chpass_data->password_new))
+	{
+		g_free(chpass_data->password_new);
+		chpass_data->password_new = NULL;
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("Password can contain 6-15 alphanumeric characters"));
+		return;
+	}
+	if (!purple_email_is_valid(chpass_data->email))
+	{
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("Invalid email address"));
+		return;
+	}
+	if (!ggp_account_token_validate(chpass_data->token,
+		chpass_data->token_value))
+	{
+		ggp_account_chpass_dialog_invalid(chpass_data,
+			_("Captcha validation failed"));
+		return;
+	}
+
+	uin = ggp_str_to_uin(purple_account_get_username(account));
+	purple_debug_info("gg", "ggp_account_chpass_dialog_ok: validation ok "
+		"[token id=%s, value=%s]\n",
+		chpass_data->token->id, chpass_data->token_value);
+	h = gg_change_passwd4(uin, chpass_data->email,
+		chpass_data->password_current, chpass_data->password_new,
+		chpass_data->token->id, chpass_data->token_value, TRUE);
+	
+	ggp_libgaduw_http_watch(chpass_data->gc, h,
+		ggp_account_chpass_response, chpass_data, TRUE);
+}
+
+static void ggp_account_chpass_dialog_invalid(
+	ggp_account_chpass_data *chpass_data, const gchar *message)
+{
+	purple_debug_warning("gg", "ggp_account_chpass_dialog_invalid: %s\n",
+		message);
+	ggp_account_chpass_dialog(chpass_data->gc, chpass_data->token,
+		chpass_data);
+	purple_notify_error(purple_connection_get_account(chpass_data->gc),
+		GGP_ACCOUNT_CHPASS_TITLE, message, NULL);
+}
+
+static void ggp_account_chpass_dialog_cancel(
+	ggp_account_chpass_data *chpass_data, PurpleRequestFields *fields)
+{
+	ggp_account_chpass_data_free(chpass_data);
+}
+
+static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
+	gboolean cancelled, gpointer _chpass_data)
+{
+	ggp_account_chpass_data *chpass_data = _chpass_data;
+	PurpleAccount *account =
+		purple_connection_get_account(chpass_data->gc);
+	struct gg_pubdir *chpass_result = h->data;
+	
+	g_assert(!(success && cancelled));
+	
+	if (cancelled)
+	{
+		purple_debug_info("gg", "ggp_account_chpass_response: "
+			"cancelled\n");
+		ggp_account_chpass_data_free(chpass_data);
+		return;
+	}
+	if (!success || !chpass_result->success)
+	{
+		//TODO (libgadu 1.12.x): check chpass_result->error
+		purple_debug_error("gg", "ggp_account_chpass_response: "
+			"error\n");
+		purple_notify_error(NULL,
+			GGP_ACCOUNT_CHPASS_TITLE,
+			_("Unable to change password. "
+			"An unknown error occurred."), NULL);
+		ggp_account_chpass_data_free(chpass_data);
+		return;
+	}
+
+	purple_debug_info("gg", "ggp_account_chpass_response: "
+		"password changed\n");
+	
+	purple_account_set_password(account, chpass_data->password_new);
+
+	purple_notify_info(account, GGP_ACCOUNT_CHPASS_TITLE,
+		_("Your password has been changed."), NULL);
+	
+	ggp_account_chpass_data_free(chpass_data);
+	
+	//TODO: reconnect / check how it is done in original client
+	purple_account_disconnect(account);
 }

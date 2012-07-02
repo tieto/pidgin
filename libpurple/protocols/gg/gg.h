@@ -24,7 +24,6 @@
 #ifndef _PURPLE_GG_H
 #define _PURPLE_GG_H
 
-#undef printf
 #include <libgadu.h>
 #include "internal.h"
 #include "search.h"
@@ -50,7 +49,6 @@ typedef struct {
 
 	struct gg_session *session;
 	guint inpa;
-	ggp_account_token *token; //TODO: remove me
 	GList *chats;
 	GGPSearches *searches;
 	int chats_count;
@@ -60,5 +58,3 @@ typedef struct {
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */
-
-/* vim: set ts=8 sts=0 sw=8 noet: */

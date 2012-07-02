@@ -332,210 +332,6 @@ static void ggp_find_buddies(PurplePluginAction *action)
 		gc);
 }
 
-/* ----- CHANGE PASSWORD ---------------------------------------------------- */
-
-typedef struct
-{
-	guint inpa;
-	struct gg_http *http_req;
-	gchar *new_password;
-	PurpleAccount *account;
-} ggp_change_passwd_request;
-
-static void ggp_callback_change_passwd_handler(gpointer _req, gint fd,
-	PurpleInputCondition cond)
-{
-	ggp_change_passwd_request *req = _req;
-	const char *messagesTitle =
-		_("Change password for the Gadu-Gadu account");
-
-	purple_input_remove(req->inpa);
-
-	if (gg_change_passwd_watch_fd(req->http_req) == -1 ||
-		req->http_req->state == GG_STATE_ERROR)
-		goto exit_error;
-
-	if (req->http_req->state != GG_STATE_DONE)
-	{
-		req->inpa = ggp_purplew_http_input_add(req->http_req,
-			ggp_callback_change_passwd_handler, req);
-		return;
-	}
-
-	if (req->http_req->data != NULL &&
-		((struct gg_pubdir*)req->http_req->data)->success == 1)
-	{
-		purple_account_set_password(req->account, req->new_password);
-		purple_notify_info(req->account, messagesTitle,
-			_("Password was changed successfully!"), NULL);
-		goto exit_cleanup;
-	}
-
-exit_error:
-	purple_notify_error(req->account, messagesTitle,
-		_("Unable to change password. Error occurred.\n"), NULL);
-
-exit_cleanup:
-	gg_change_passwd_free(req->http_req);
-	g_free(req->new_password);
-	g_free(req);
-}
-
-static void ggp_callback_change_passwd_ok(PurpleConnection *gc,
-	PurpleRequestFields *fields)
-{
-	PurpleAccount *account;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	struct gg_http *h;
-	gchar *cur, *p1, *p2, *t, *mail;
-	const char *messagesTitle =
-		_("Change password for the Gadu-Gadu account");
-
-	cur = g_strdup(purple_request_fields_get_string(fields,
-		"password_cur"));
-	p1 = g_strdup(purple_request_fields_get_string(fields, "password1"));
-	p2 = g_strdup(purple_request_fields_get_string(fields, "password2"));
-	t = g_strdup(purple_request_fields_get_string(fields, "token"));
-	mail = g_strdup(purple_request_fields_get_string(fields, "email"));
-
-	account = purple_connection_get_account(gc);
-
-	if (cur == NULL || p1 == NULL || p2 == NULL || t == NULL ||
-		mail == NULL || *cur == '\0' || *p1 == '\0' || *p2 == '\0' ||
-		*t == '\0' || *mail == '\0') {
-		purple_notify_error(account, messagesTitle,
-			_("Fill in the fields."), NULL);
-		goto exit_err;
-	}
-
-	if (g_utf8_collate(p1, p2) != 0) {
-		purple_notify_error(account, messagesTitle,
-			_("New passwords do not match."), NULL);
-		goto exit_err;
-	}
-
-	if (strlen(p1) > 15) {
-		purple_notify_error(account, messagesTitle,
-			_("New password should be at most 15 characters long."),
-			NULL);
-		goto exit_err;
-	}
-
-	if (g_utf8_collate(cur, purple_account_get_password(account)) != 0) {
-		purple_notify_error(account, messagesTitle,
-			_("Your current password is different from the one that"
-			" you specified."), NULL);
-		goto exit_err;
-	}
-
-	if (!purple_email_is_valid(mail)) {
-		purple_notify_error(account, messagesTitle,
-			_("Invalid email address"), NULL);
-		goto exit_err;
-	}
-
-	purple_debug_info("gg", "Changing password with email \"%s\"...\n",
-		mail);
-
-	h = gg_change_passwd4(
-		ggp_str_to_uin(purple_account_get_username(account)), mail,
-		purple_account_get_password(account), p1, info->token->id, t,
-		1);
-
-	if (h == NULL)
-		purple_notify_error(account, messagesTitle,
-			_("Unable to change password. Error occurred.\n"),
-			NULL);
-	else
-	{
-		ggp_change_passwd_request *req =
-			g_new(ggp_change_passwd_request, 1);
-		req->http_req = h;
-		req->new_password = g_strdup(p1);
-		req->account = account;
-		
-		req->inpa = ggp_purplew_http_input_add(h,
-			ggp_callback_change_passwd_handler, req);
-	}
-	
-exit_err:
-	g_free(cur);
-	g_free(p1);
-	g_free(p2);
-	g_free(t);
-	g_free(mail);
-}
-
-static void ggp_change_passwd_dialog(PurpleConnection *gc, ggp_account_token *token, gpointer user_data)
-{
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	char *msg;
-	
-	if (!token)
-		return;
-	info->token = token;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_string_new("password_cur",
-			_("Current password"), "", FALSE);
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("password1",
-			_("Password"), "", FALSE);
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("password2",
-			_("Password (retype)"), "", FALSE);
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("email",
-			_("Email Address"), "", FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("token",
-			_("Enter current token"), "", FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	/* original size: 60x24 */
-	field = purple_request_field_image_new("token_img",
-			_("Current token"), token->data, token->size);
-	purple_request_field_group_add_field(group, field);
-
-	msg = g_strdup_printf("%s %s",
-		_("Please, enter your current password and your new password "
-		"for UIN: "),
-		purple_account_get_username(purple_connection_get_account(gc)));
-
-	purple_request_fields(gc,
-		_("Change Gadu-Gadu Password"),
-		_("Change Gadu-Gadu Password"),
-		msg,
-		fields, _("OK"), G_CALLBACK(ggp_callback_change_passwd_ok),
-		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL,
-		gc);
-
-	g_free(msg);
-}
-
-static void ggp_change_passwd(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-
-	ggp_account_token_request(gc, ggp_change_passwd_dialog, NULL);
-}
-
 /* ----- CHANGE STATUS BROADCASTING ------------------------------------------------ */
 
 static void ggp_action_change_status_broadcasting_ok(PurpleConnection *gc, PurpleRequestFields *fields)
@@ -1924,7 +1720,6 @@ static void ggp_login(PurpleAccount *account)
 	info->session = NULL;
 	info->chats = NULL;
 	info->chats_count = 0;
-	info->token = NULL;
 	info->searches = ggp_search_new();
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
@@ -2433,13 +2228,18 @@ static void ggp_keepalive(PurpleConnection *gc)
 	}
 }
 
+static void ggp_action_chpass(PurplePluginAction *action)
+{
+	ggp_account_chpass((PurpleConnection *)action->context);
+}
+
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
 	PurplePluginAction *act;
 
 	act = purple_plugin_action_new(_("Change password..."),
-				     ggp_change_passwd);
+		ggp_action_chpass);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Find buddies..."),
