@@ -2280,6 +2280,14 @@ static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+static GHashTable * ggp_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("GG number..."));
+	return table;
+}
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
@@ -2347,7 +2355,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* unregister_user */
 	NULL,				/* send_attention */
 	NULL,				/* get_attention_types */
-	NULL,                           /* get_account_text_table */
+	ggp_get_account_text_table,	/* get_account_text_table */
 	NULL,                           /* initiate_media */
 	NULL,                            /* can_do_media */
 	NULL,				/* get_moods */
