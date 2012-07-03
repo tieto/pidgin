@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.5:
+version 2.10.5 (07/05/2012):
 	libpurple:
 	* Add support for GNOME3 proxy settings. (Mihai Serban) (#15054)
 
@@ -11,6 +11,11 @@ version 2.10.5:
 	MSN:
 	* Fix building with MSVC on Windows (broken in 2.10.4). (Florian
 	  Quèze)
+
+	MXit:
+	* Fix a buffer overflow vulnerability when parsing incoming messages
+	  containing inline images.  Thanks to Ulf Härnhammar for reporting
+	  this!
 
 version 2.10.4 (05/06/2012):
 	General:
