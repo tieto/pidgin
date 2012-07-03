@@ -34,11 +34,15 @@ distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/comm
 
 commit-check:
 	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)
+
+# Ensure these files are sorted and contain no duplicates:
 	LC_ALL=C sort -c -t/ -u po/POTFILES.in
 	LC_ALL=C sort -c -t/ -u po/POTFILES.skip
+
+# Ensure COPYRIGHT is 100% UTF-8
 	iconv -f utf8 -t utf8 COPYRIGHT | cmp COPYRIGHT -
 
-version-check: commit-check
+version-check:
 # We don't want to release development versions.
 	test x`echo $(PACKAGE_VERSION) | grep dev` = x
 
@@ -55,7 +59,7 @@ version-check: commit-check
 # ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
 	test "x`hg st -mard`" = x
 
-release: version-check distcheck packages
+release: commit-check version-check distcheck packages
 
 packages:
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
