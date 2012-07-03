@@ -307,32 +307,6 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	}
 }
 
-static void
-register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
-{
-	int register_checked = gtk_toggle_button_get_active(
-		GTK_TOGGLE_BUTTON(dialog->register_button));
-	int opt_noscreenname = (dialog->prpl_info != NULL &&
-		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
-	int register_noscreenname = (opt_noscreenname && register_checked);
-	
-	if (register_noscreenname) {
-		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
-		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check), FALSE);
-	}
-	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
-	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
-	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
-	
-	if (dialog->ok_button) {
-		gtk_widget_set_sensitive(dialog->ok_button,
-			(opt_noscreenname && register_checked) ||
-			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
-				!= '\0');
-	}
-}
-
 static gboolean
 username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
@@ -359,6 +333,33 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 	}
 
 	return FALSE;
+}
+
+static void
+register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
+{
+	int register_checked = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(dialog->register_button));
+	int opt_noscreenname = (dialog->prpl_info != NULL &&
+		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+	int register_noscreenname = (opt_noscreenname && register_checked);
+	
+	if (register_noscreenname) {
+		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
+		username_nofocus_cb(dialog->username_entry, NULL, dialog);
+		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check), FALSE);
+	}
+	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
+	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
+	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
+	
+	if (dialog->ok_button) {
+		gtk_widget_set_sensitive(dialog->ok_button,
+			(opt_noscreenname && register_checked) ||
+			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
+				!= '\0');
+	}
 }
 
 static void
