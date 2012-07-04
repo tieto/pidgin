@@ -726,7 +726,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				char *name, *value;
 				name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
 				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
-				if (!strcmp(name, "MSN.IM.MPOP")) {
+				if (name && g_str_equal(name, "MSN.IM.MPOP")) {
 					if (!value || atoi(value) != 0)
 						session->enable_mpop = TRUE;
 					else
@@ -802,9 +802,12 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			Name = g_strdup(passport);
 
 		for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
-				annotation; annotation = xmlnode_get_next_twin(annotation)) {
+		     annotation;
+		     annotation = xmlnode_get_next_twin(annotation)) {
 			char *name;
 			name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+			if (!name)
+				continue;
 			if (!strcmp(name, "AB.NickName"))
 				alias = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
 			else if (!strcmp(name, "MSN.IM.HasSharedFolder"))

@@ -660,7 +660,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		charset = msn_message_get_charset(message);
 	}
 
-	if (charset && !((strncasecmp(charset, "UTF-8", 5) == 0) || (strncasecmp(charset, "UTF8", 4) == 0))) {
+	if (charset && !((g_ascii_strncasecmp(charset, "UTF-8", 5) == 0) || (g_ascii_strncasecmp(charset, "UTF8", 4) == 0))) {
 		clean_msg = g_convert(decode_msg, body_len, "UTF-8", charset, NULL, NULL, NULL);
 
 		if (!clean_msg) {
