@@ -6132,10 +6132,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *iter)
 {
-	GtkTreeRowReference *ref = cb->ui_data;
+	GtkTreeRowReference *ref;
 	GtkTreePath *path;
 	GtkTreeModel *model;
 
+	g_return_val_if_fail(cb != NULL, FALSE);
+
+	ref = cb->ui_data;
 	if (!ref)
 		return FALSE;
 
@@ -6315,6 +6318,9 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 		return;
 
 	cbuddy = purple_conv_chat_cb_find(chat, user);
+	if (!cbuddy)
+		return;
+
 	if (get_iter_from_chatbuddy(cbuddy, &iter)) {
 		GtkTreeRowReference *ref = cbuddy->ui_data;
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -7598,7 +7604,7 @@ account_signing_off(PurpleConnection *gc)
 				purple_conversation_get_account(conv) == account) {
 			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-						"longer in this chat. You will be automatically rejoined in the chat when "
+						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
