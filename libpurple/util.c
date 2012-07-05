@@ -3896,9 +3896,9 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 
 #define ADDR_CTRL "A-Za-z0-9.-"
 #define PORT_CTRL "0-9"
-#define PAGE_CTRL "A-Za-z0-9.~_/:*!@&%%?=+^-"
-#define USER_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
-#define PASSWD_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
+#define PAGE_CTRL "A-Za-z0-9.,~_/:*!@&%%?=+^-"
+#define USER_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
+#define PASSWD_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
 
 	g_return_val_if_fail(url != NULL, FALSE);
 
