@@ -67,7 +67,11 @@ GGSOURCES = \
 	purplew.h \
 	purplew.c \
 	libgaduw.h \
-	libgaduw.c
+	libgaduw.c \
+	avatar.h \
+	avatar.c \
+	libgadu-events.h \
+	libgadu-events.c
 
 AM_CFLAGS = $(st)
 

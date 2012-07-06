@@ -30,6 +30,7 @@
 #include "connection.h"
 
 #include "image.h"
+#include "avatar.h"
 #include "account.h"
 
 
@@ -55,6 +56,7 @@ typedef struct {
 	gboolean status_broadcasting; //When TRUE status is visible to all, when FALSE status is visible only to friends.
 
 	ggp_image_connection_data image_data;
+	ggp_avatar_session_data avatar_data;
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */

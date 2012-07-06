@@ -48,6 +48,7 @@
 #include "account.h"
 #include "deprecated.h"
 #include "purplew.h"
+#include "libgadu-events.h"
 
 /* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -481,164 +482,6 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-struct gg_fetch_avatar_data
-{
-	PurpleConnection *gc;
-	gchar *uin;
-	gchar *avatar_url;
-};
-
-
-static void gg_fetch_avatar_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-               const gchar *data, size_t len, const gchar *error_message) {
-	struct gg_fetch_avatar_data *d = user_data;
-	PurpleAccount *account;
-	PurpleBuddy *buddy;
-	gpointer buddy_icon_data;
-
-	purple_debug_info("gg", "gg_fetch_avatar_cb: got avatar image for %s\n",
-		d->uin);
-
-	/* FIXME: This shouldn't be necessary */
-	if (!PURPLE_CONNECTION_IS_VALID(d->gc)) {
-		g_free(d->uin);
-		g_free(d->avatar_url);
-		g_free(d);
-		g_return_if_reached();
-	}
-
-	account = purple_connection_get_account(d->gc);
-	buddy = purple_find_buddy(account, d->uin);
-
-	if (buddy == NULL)
-		goto out;
-
-	buddy_icon_data = g_memdup(data, len);
-
-	purple_buddy_icons_set_for_user(account, purple_buddy_get_name(buddy),
-			buddy_icon_data, len, d->avatar_url);
-	purple_debug_info("gg", "gg_fetch_avatar_cb: UIN %s should have avatar "
-		"now\n", d->uin);
-
-out:
-	g_free(d->uin);
-	g_free(d->avatar_url);
-	g_free(d);
-}
-
-static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-               const gchar *url_text, size_t len, const gchar *error_message) {
-	struct gg_fetch_avatar_data *data;
-	PurpleConnection *gc = user_data;
-	PurpleAccount *account;
-	PurpleBuddy *buddy;
-	const char *uin;
-	const char *is_blank;
-	const char *checksum;
-
-	gchar *bigavatar = NULL;
-	xmlnode *xml = NULL;
-	xmlnode *xmlnode_users;
-	xmlnode *xmlnode_user;
-	xmlnode *xmlnode_avatars;
-	xmlnode *xmlnode_avatar;
-	xmlnode *xmlnode_bigavatar;
-
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
-	account = purple_connection_get_account(gc);
-
-	if (error_message != NULL)
-		purple_debug_error("gg", "gg_get_avatars_cb error: %s\n", error_message);
-	else if (len > 0 && url_text && *url_text) {
-		xml = xmlnode_from_str(url_text, -1);
-		if (xml == NULL)
-			goto out;
-
-		xmlnode_users = xmlnode_get_child(xml, "users");
-		if (xmlnode_users == NULL)
-			goto out;
-
-		xmlnode_user = xmlnode_get_child(xmlnode_users, "user");
-		if (xmlnode_user == NULL)
-			goto out;
-
-		uin = xmlnode_get_attrib(xmlnode_user, "uin");
-
-		xmlnode_avatars = xmlnode_get_child(xmlnode_user, "avatars");
-		if (xmlnode_avatars == NULL)
-			goto out;
-
-		xmlnode_avatar = xmlnode_get_child(xmlnode_avatars, "avatar");
-		if (xmlnode_avatar == NULL)
-			goto out;
-
-		xmlnode_bigavatar = xmlnode_get_child(xmlnode_avatar, "originBigAvatar");
-		if (xmlnode_bigavatar == NULL)
-			goto out;
-
-		is_blank = xmlnode_get_attrib(xmlnode_avatar, "blank");
-		bigavatar = xmlnode_get_data(xmlnode_bigavatar);
-
-		purple_debug_info("gg", "gg_get_avatar_url_cb: UIN %s, IS_BLANK %s, "
-		                        "URL %s\n",
-		                  uin ? uin : "(null)", is_blank ? is_blank : "(null)",
-		                  bigavatar ? bigavatar : "(null)");
-
-		if (uin != NULL && bigavatar != NULL) {
-			buddy = purple_find_buddy(account, uin);
-			if (buddy == NULL)
-				goto out;
-
-			checksum = purple_buddy_icons_get_checksum_for_user(buddy);
-
-			if (purple_strequal(is_blank, "1")) {
-				purple_buddy_icons_set_for_user(account,
-						purple_buddy_get_name(buddy), NULL, 0, NULL);
-			} else if (!purple_strequal(checksum, bigavatar)) {
-				data = g_new0(struct gg_fetch_avatar_data, 1);
-				data->gc = gc;
-				data->uin = g_strdup(uin);
-				data->avatar_url = g_strdup(bigavatar);
-
-				purple_debug_info("gg", "gg_get_avatar_url_cb: "
-					"requesting avatar for %s\n", uin);
-				/* FIXME: This should be cancelled somewhere if not needed. */
-				url_data = purple_util_fetch_url_request(account,
-						bigavatar, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)",
-						FALSE, NULL, FALSE, -1, gg_fetch_avatar_cb, data);
-			}
-		}
-	}
-
-out:
-	if (xml)
-		xmlnode_free(xml);
-	g_free(bigavatar);
-}
-
-/**
- * Try to update avatar of the buddy.
- *
- * @param gc     PurpleConnection
- * @param uin    UIN of the buddy.
- */
-static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
-{
-	gchar *avatarurl;
-	PurpleUtilFetchUrlData *url_data;
-
-	purple_debug_info("gg", "ggp_update_buddy_avatar(gc, %u)\n", uin);
-
-	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%u/0.xml", uin);
-
-	/* FIXME: This should be cancelled somewhere if not needed. */
-	url_data = purple_util_fetch_url_request(
-			purple_connection_get_account(gc), avatarurl, TRUE,
-			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
-			gg_get_avatar_url_cb, gc);
-
-	g_free(avatarurl);
-}
 
 /**
  * Handle change of the status of the buddy.
@@ -654,8 +497,6 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 	gchar *from;
 	const char *st;
 	char *status_msg = NULL;
-
-	ggp_update_buddy_avatar(gc, uin);
 
 	from = g_strdup_printf("%u", uin);
 
@@ -1170,6 +1011,7 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
  * @param data Raw XML contents.
  *
  * @see http://toxygen.net/libgadu/protocol/#ch1.13
+ * @todo: this may not be necessary anymore
  */
 static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 {
@@ -1218,7 +1060,6 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 				purple_debug_info("gg",
 					"ggp_xml_event_handler: avatar updated (uid: %u)\n",
 					event_sender);
-				ggp_update_buddy_avatar(gc, event_sender);
 				break;
 			default:
 				purple_debug_error("gg",
@@ -1354,7 +1195,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_xml_event_handler(gc, ev->event.xml_event.data);
 			break;
 		case GG_EVENT_USER_DATA:
-			purple_debug_misc("gg", "GG_EVENT_USER_DATA\n");
+			ggp_events_user_data(gc, &ev->event.user_data);
 			break;
 		default:
 			purple_debug_error("gg",
@@ -1726,6 +1567,7 @@ static void ggp_login(PurpleAccount *account)
 	purple_connection_set_protocol_data(gc, info);
 
 	ggp_image_setup(gc);
+	ggp_avatar_setup(gc);
 	
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
@@ -1839,7 +1681,8 @@ static void ggp_close(PurpleConnection *gc)
 		purple_notify_close_with_handle(gc);
 
 		ggp_search_destroy(info->searches);
-		ggp_image_free(gc);
+		ggp_image_cleanup(gc);
+		ggp_avatar_cleanup(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);

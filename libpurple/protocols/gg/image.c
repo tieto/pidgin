@@ -52,7 +52,7 @@ void ggp_image_setup(PurpleConnection *gc)
 		ggp_image_pending_image_free);
 }
 
-void ggp_image_free(PurpleConnection *gc)
+void ggp_image_cleanup(PurpleConnection *gc)
 {
 	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
 	

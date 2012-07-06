@@ -20,7 +20,7 @@ typedef enum
 } ggp_image_prepare_result;
 
 void ggp_image_setup(PurpleConnection *gc);
-void ggp_image_free(PurpleConnection *gc);
+void ggp_image_cleanup(PurpleConnection *gc);
 
 const char * ggp_image_pending_placeholder(uint32_t id);
 
