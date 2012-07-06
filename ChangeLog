@@ -1,6 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.6:
+	Pidgin:
 	* Fix a bug that requires a triple-click to open a conversation
 	  window from the buddy list. (#15199)
 
