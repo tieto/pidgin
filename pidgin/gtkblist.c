@@ -1970,10 +1970,6 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 			pidgin_retrieve_user_info(b->account->gc, b->name);
 		handled = TRUE;
 	}
-	else if ((event->button == 1) && (event->type == GDK_2BUTTON_PRESS) &&
-	((PURPLE_BLIST_NODE_IS_CONTACT(node)) || (PURPLE_BLIST_NODE_IS_BUDDY(node)))) {
-               handled = TRUE;
-	}
 
 #if (1)
 	/*
