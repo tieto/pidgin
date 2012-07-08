@@ -344,9 +344,11 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
 	int register_noscreenname = (opt_noscreenname && register_checked);
 	
+	// get rid of login_label in username field
+	username_focus_cb(dialog->username_entry, NULL, dialog);
+	
 	if (register_noscreenname) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
-		username_nofocus_cb(dialog->username_entry, NULL, dialog);
 		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check), FALSE);
 	}
@@ -360,6 +362,8 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
 				!= '\0');
 	}
+	
+	username_nofocus_cb(dialog->username_entry, NULL, dialog);
 }
 
 static void
