@@ -1,6 +1,6 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Pidgin Myanmar (Burmese) (my_MM) translations
+# Copyright (C) 2012
+# This file is distributed under the same license as the Pidgin package.
 #
 # Translators:
 # Shwun Mi <shwunmi@gmail.com>, 2012.
