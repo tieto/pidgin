@@ -46,9 +46,14 @@ struct _PidginWindow
 
 	struct
 	{
+		GtkUIManager *ui;
 		GtkWidget *menubar;
 
 		GtkAction *view_log;
+
+		GtkAction *audio_call;
+		GtkAction *video_call;
+		GtkAction *audio_video_call;
 
 		GtkAction *send_file;
 		GtkAction *get_attention;
@@ -75,15 +80,7 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
-		GtkUIManager *ui;
-
 	} menu;
-
-	struct
-	{
-		GtkWidget *search;
-
-	} dialogs;
 
 	/* Tab dragging stuff. */
 	gboolean in_drag;
@@ -95,11 +92,6 @@ struct _PidginWindow
 
 	gint drag_motion_signal;
 	gint drag_leave_signal;
-
-	/* Media menu options. */
-	GtkAction *audio_call;
-	GtkAction *video_call;
-	GtkAction *audio_video_call;
 };
 
 /*@}*/
