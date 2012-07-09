@@ -570,8 +570,11 @@ gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char *htm
 		"var s = window.getSelection();"
 		"var r = document.createRange();"
 		"var n = document.getElementById('caret');"
-		"r.setStartBefore(n);"
-		"r.setEndBefore(n);"
+		"r.selectNodeContents(n);"
+		"var f = r.extractContents();"
+		"r.selectNode(n);"
+		"r.insertNode(f);"
+		"n.parentNode.removeChild(n);"
 		"s.removeAllRanges();"
 		"s.addRange(r);");
 }
