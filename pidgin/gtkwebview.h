@@ -122,6 +122,17 @@ void gtk_webview_append_html(GtkWebView *webview, const char *markup);
 void gtk_webview_load_html_string(GtkWebView *webview, const char *html);
 
 /**
+ * Requests loading of the given content and sets the selection. You must
+ * include an anchor tag with id='caret' in the HTML string, which will be
+ * used to set the selection. This tag is then removed so that querying the
+ * WebView's HTML contents will no longer return it.
+ *
+ * @param webview The GtkWebView object
+ * @param html    The HTML content to load
+ */
+void gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char *html);
+
+/**
  * Execute the JavaScript only after the webkit_webview_load_string
  * loads completely. We also guarantee that the scripts are executed
  * in the order they are called here. This is useful to avoid race

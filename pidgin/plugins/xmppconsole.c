@@ -59,14 +59,6 @@ static void *xmpp_console_handle = NULL;
 	"span.value { color: #324aa4; }" \
 	"span.xmlns { color: #2cb12f; font-weight: bold;}" \
 "</style></head></html>"
-#define SET_CURSOR \
-	"var s = window.getSelection();" \
-	"var r = document.createRange();" \
-	"var n = document.getElementById('caret');" \
-	"r.setStartBefore(n);" \
-	"r.setEndBefore(n);" \
-	"s.removeAllRanges();" \
-	"s.addRange(r);"
 
 static char *
 xmlnode_to_pretty_str(xmlnode *node, int *len)
@@ -349,9 +341,8 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 				 g_random_int(),
 				 gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)));
 
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
 	g_free(to);
 	g_free(stanza);
 
@@ -509,9 +500,8 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *priority ? priority : "",
 	                         *priority ? "&lt;/priority&gt;" : "");
 
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
 	g_free(stanza);
 	g_free(to);
 	g_free(status);
@@ -654,9 +644,8 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *thread ? thread : "",
 	                         *thread ? "&lt;/thread&gt;" : "");
 
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), stanza);
+	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(console->entry), SET_CURSOR);
 	g_free(stanza);
 	g_free(to);
 	g_free(body);

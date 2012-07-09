@@ -563,6 +563,20 @@ gtk_webview_load_html_string(GtkWebView *webview, const char *html)
 }
 
 void
+gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char *html)
+{
+	gtk_webview_load_html_string(webview, html);
+	gtk_webview_safe_execute_script(webview,
+		"var s = window.getSelection();"
+		"var r = document.createRange();"
+		"var n = document.getElementById('caret');"
+		"r.setStartBefore(n);"
+		"r.setEndBefore(n);"
+		"s.removeAllRanges();"
+		"s.addRange(r);");
+}
+
+void
 gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
