@@ -1,3 +1,5 @@
+V=0
+
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 EXTRA_DIST = \
@@ -35,8 +37,10 @@ INTGGSOURCES = \
 	lib/sha1.c
 
 INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib \
+	$(ZLIB_CFLAGS) \
 	-DGG_IGNORE_DEPRECATED \
 	-DGG_INTERNAL_LIBGADU_VERSION=$(GADU_LIBGADU_VERSION)
+GADU_LIBS += $(ZLIB_LIBS)
 endif
 
 if USE_GNUTLS
@@ -71,7 +75,11 @@ GGSOURCES = \
 	avatar.h \
 	avatar.c \
 	libgadu-events.h \
-	libgadu-events.c
+	libgadu-events.c \
+	roster.c \
+	roster.h \
+	xml.c \
+	xml.h
 
 AM_CFLAGS = $(st)
 

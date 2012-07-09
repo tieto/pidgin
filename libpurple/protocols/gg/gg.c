@@ -65,11 +65,9 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg);
 static void ggp_action_buddylist_get(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-
-	purple_debug_info("gg", "Downloading...\n");
-
-	gg_userlist_request(info->session, GG_USERLIST_GET, NULL);
+	// TODO: just for debugging
+	// we will drop this action when roster will be ready
+	ggp_roster_update(gc);
 }
 
 /**
@@ -1197,6 +1195,13 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_USER_DATA:
 			ggp_events_user_data(gc, &ev->event.user_data);
 			break;
+		case GG_EVENT_USERLIST100_VERSION:
+			purple_debug_info("gg", "GG_EVENT_USERLIST100_VERSION: %u\n",
+				ev->event.userlist100_version.version);
+			break;
+		case GG_EVENT_USERLIST100_REPLY:
+			ggp_roster_reply(gc, &ev->event.userlist100_reply);
+			break;
 		default:
 			purple_debug_error("gg",
 				"unsupported event type=%d\n", ev->type);
@@ -1568,6 +1573,7 @@ static void ggp_login(PurpleAccount *account)
 
 	ggp_image_setup(gc);
 	ggp_avatar_setup(gc);
+	ggp_roster_setup(gc);
 	
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
@@ -1683,6 +1689,7 @@ static void ggp_close(PurpleConnection *gc)
 		ggp_search_destroy(info->searches);
 		ggp_image_cleanup(gc);
 		ggp_avatar_cleanup(gc);
+		ggp_roster_cleanup(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);

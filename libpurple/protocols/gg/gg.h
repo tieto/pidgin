@@ -32,6 +32,7 @@
 #include "image.h"
 #include "avatar.h"
 #include "account.h"
+#include "roster.h"
 
 
 #define PUBDIR_RESULTS_MAX 20
@@ -57,6 +58,7 @@ typedef struct {
 
 	ggp_image_connection_data image_data;
 	ggp_avatar_session_data avatar_data;
+	ggp_roster_session_data roster_data;
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */

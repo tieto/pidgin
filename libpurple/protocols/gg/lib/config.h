@@ -58,7 +58,7 @@
 #undef GG_CONFIG_HAVE_OPENSSL
 
 /* Defined if libgadu was compiled and linked with zlib support. */
-#undef GG_CONFIG_HAVE_ZLIB
+#define GG_CONFIG_HAVE_ZLIB
 
 /* Defined if uintX_t types are defined in <stdint.h>. */
 #undef GG_CONFIG_HAVE_STDINT_H

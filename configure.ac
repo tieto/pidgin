@@ -765,6 +765,19 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 dnl #######################################################################
+dnl # Check for zlib (required)
+dnl #######################################################################
+
+PKG_CHECK_MODULES(ZLIB, [zlib >= 1.2.0], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have zlib >= 1.2.0 development headers installed to build.
+])])
+
+AC_SUBST(ZLIB_CFLAGS)
+AC_SUBST(ZLIB_LIBS)
+
+dnl #######################################################################
 dnl # GConf schemas
 dnl #######################################################################
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
