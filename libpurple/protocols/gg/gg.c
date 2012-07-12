@@ -1196,8 +1196,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_events_user_data(gc, &ev->event.user_data);
 			break;
 		case GG_EVENT_USERLIST100_VERSION:
-			purple_debug_info("gg", "GG_EVENT_USERLIST100_VERSION: %u\n",
-				ev->event.userlist100_version.version);
+			ggp_roster_version(gc, &ev->event.userlist100_version);
 			break;
 		case GG_EVENT_USERLIST100_REPLY:
 			ggp_roster_reply(gc, &ev->event.userlist100_reply);
@@ -2181,8 +2180,8 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_keepalive,			/* keepalive */
 	ggp_account_register,		/* register_user */
 	NULL,				/* get_cb_info */
-	NULL,				/* alias_buddy */
-	NULL,				/* group_buddy */
+	ggp_roster_alias_buddy,		/* alias_buddy */
+	ggp_roster_group_buddy,		/* group_buddy */
 	NULL,				/* rename_group */
 	NULL,				/* buddy_free */
 	NULL,				/* convo_closed */
