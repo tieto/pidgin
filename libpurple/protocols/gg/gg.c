@@ -1227,7 +1227,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				purple_connection_set_state(gc, PURPLE_CONNECTED);
 				
 				ggp_buddylist_send(gc);
-				ggp_roster_update(gc);
+				ggp_roster_request_update(gc);
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
@@ -1901,6 +1901,8 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 		
 		g_free(status_msg_gg);
 	}
+	
+	ggp_roster_add_buddy(gc, buddy, group, message);
 }
 
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
@@ -1909,6 +1911,7 @@ static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	gg_remove_notify(info->session, ggp_str_to_uin(purple_buddy_get_name(buddy)));
+	ggp_roster_remove_buddy(gc, buddy, group);
 }
 
 static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
@@ -2107,7 +2110,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* get_cb_info */
 	ggp_roster_alias_buddy,		/* alias_buddy */
 	ggp_roster_group_buddy,		/* group_buddy */
-	NULL,				/* rename_group */
+	ggp_roster_rename_group,	/* rename_group */
 	NULL,				/* buddy_free */
 	NULL,				/* convo_closed */
 	ggp_normalize,			/* normalize */
