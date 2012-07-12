@@ -53,3 +53,13 @@ void ggp_purplew_request_processing_done(
 	purple_request_close(PURPLE_REQUEST_ACTION, handle->request_handle);
 	g_free(handle);
 }
+
+PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy)
+{
+	PurpleGroup *group = purple_buddy_get_group(buddy);
+	if (!group)
+		return NULL;
+	if (0 == strcmp(_("Buddies"), purple_group_get_name(group)))
+		return NULL;
+	return group;
+}
