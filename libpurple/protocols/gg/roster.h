@@ -16,6 +16,7 @@ typedef struct
 } ggp_roster_session_data;
 
 // setup
+gboolean ggp_roster_enabled(void);
 void ggp_roster_setup(PurpleConnection *gc);
 void ggp_roster_cleanup(PurpleConnection *gc);
 
