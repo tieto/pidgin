@@ -16,8 +16,7 @@
  TODO:
 
 - remove_group
-- auto-sync at startup
-- group rename (w obie strony; rename_group)
+- group rename (both ways; rename_group)
 - buddy removal
 
 */
@@ -93,7 +92,7 @@ void ggp_roster_setup(PurpleConnection *gc)
 	rdata->sent_updates = NULL;
 	rdata->pending_updates = NULL;
 	
-	rdata->timer = purple_timeout_add_seconds(1, ggp_roster_timer_cb, gc); //TODO: 10s / check for value in original gg
+	rdata->timer = purple_timeout_add_seconds(2, ggp_roster_timer_cb, gc);
 }
 
 void ggp_roster_cleanup(PurpleConnection *gc)
@@ -131,8 +130,6 @@ static void ggp_roster_set_synchronized(PurpleConnection *gc, PurpleBuddy *buddy
 	uin_t uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 	ggp_roster_change *change;
 	
-	purple_debug_info("gg", "ggp_roster_set_synchronized [uin=%u, sync=%d]\n", uin, synchronized);
-	
 	purple_blist_node_set_bool(PURPLE_BLIST_NODE(buddy), GGP_ROSTER_SYNC_SETT, synchronized);
 	if (!synchronized)
 	{
@@ -146,7 +143,6 @@ static void ggp_roster_set_synchronized(PurpleConnection *gc, PurpleBuddy *buddy
 static gboolean ggp_roster_is_synchronized(PurpleBuddy *buddy)
 {
 	gboolean ret = purple_blist_node_get_bool(PURPLE_BLIST_NODE(buddy), GGP_ROSTER_SYNC_SETT);
-	purple_debug_info("gg", "ggp_roster_is_synchronized [uin=%s, sync=%d]\n", purple_buddy_get_name(buddy), ret);
 	return ret;
 }
 
@@ -335,7 +331,6 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		if (removable)
 		{
 			PurpleGroup *local_group;
-			purple_debug_misc("gg", "ggp_roster_reply_list: group %s [id=%s]\n", name, id);
 			
 			//TODO: group rename - first find by id and maybe rename local; if not found, do the following
 			local_group = purple_find_group(name);
@@ -455,9 +450,6 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 			alias = NULL;
 		}
 		
-		purple_debug_misc("gg", "ggp_roster_reply_list: user [uin=%u, alias=\"%s\", group=\"%s\"]\n",
-			uin, alias, group_name);
-		
 		if (group_name)
 		{
 			group = purple_find_group(group_name);
@@ -473,6 +465,7 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		if (buddy)
 		{
 			PurpleGroup *currentGroup;
+			gboolean alias_changed;
 			
 			// local list has priority
 			if (!ggp_roster_is_synchronized(buddy))
@@ -483,9 +476,21 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 				continue;
 			}
 			
-			purple_debug_misc("gg", "ggp_roster_reply_list: updating %s\n", purple_buddy_get_name(buddy));
-			purple_blist_alias_buddy(buddy, alias);
 			currentGroup = purple_buddy_get_group(buddy);
+			if (currentGroup && 0 == strcmp(GGP_ROSTER_GROUP_DEFAULT, purple_group_get_name(currentGroup)))
+				currentGroup = NULL;
+			alias_changed = (0 != g_strcmp0(alias, purple_buddy_get_alias_only(buddy)));
+			
+			if (currentGroup == group && !alias_changed)
+			{
+				g_free(alias);
+				curr_elem = xmlnode_get_next_twin(curr_elem);
+				continue;
+			}
+			
+			purple_debug_misc("gg", "ggp_roster_reply_list: updating %s [currentAlias=%s, alias=%s, currentGroup=%p, group=%p]\n", purple_buddy_get_name(buddy), purple_buddy_get_alias(buddy), alias, currentGroup, group);
+			if (alias_changed)
+				purple_blist_alias_buddy(buddy, alias);
 			if (currentGroup != group)
 				purple_blist_add_buddy(buddy, NULL, group, NULL);
 		}
@@ -585,23 +590,17 @@ static void ggp_roster_send_update(PurpleConnection *gc)
 	gchar *str;
 	int len;
 	
+	// an update is running now
 	if (rdata->sent_updates)
-	{
-		purple_debug_misc("gg", "ggp_roster_send_update: an update is running now\n");
 		return;
-	}
 
+	// no pending updates found
 	if (!rdata->pending_updates)
-	{
-		purple_debug_misc("gg", "ggp_roster_send_update: no pending updates found\n");
 		return;
-	}
 	
+	// not initialized
 	if (!content)
-	{
-		purple_debug_misc("gg", "ggp_roster_send_update: not initialized\n");
 		return;
-	}
 	
 	purple_debug_info("gg", "ggp_roster_send_update: pending updates found\n");
 	

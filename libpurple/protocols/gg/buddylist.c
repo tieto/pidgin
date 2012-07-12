@@ -37,6 +37,7 @@
 #define F_UIN 6
 
 /* void ggp_buddylist_send(PurpleConnection *gc) {{{ */
+// this is for for notify purposes, not synchronizing buddy list
 void ggp_buddylist_send(PurpleConnection *gc)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
