@@ -13,6 +13,8 @@ typedef struct
 	
 	GList *sent_updates;
 	GList *pending_updates;
+	
+	gboolean is_updating;
 } ggp_roster_session_data;
 
 // setup

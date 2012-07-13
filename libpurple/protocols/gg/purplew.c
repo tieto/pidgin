@@ -57,7 +57,7 @@ void ggp_purplew_request_processing_done(
 PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy)
 {
 	PurpleGroup *group = purple_buddy_get_group(buddy);
-	if (!group)
+	if (!group) // TODO: get contact's group
 		return NULL;
 	if (0 == strcmp(_("Buddies"), purple_group_get_name(group)))
 		return NULL;
