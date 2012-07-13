@@ -12,6 +12,7 @@
 #define GGP_ROSTER_GROUPID_DEFAULT "00000000-0000-0000-0000-000000000000"
 
 // TODO: ggp_purplew_buddy_get_group_only
+// TODO: ignored contacts synchronization
 
 typedef struct
 {
@@ -36,12 +37,14 @@ typedef struct
 	 * Value: (gchar*) group id
 	 */
 	GHashTable *group_ids;
-
+	
 	/**
 	 * Key: (gchar*) group id
 	 * Value: (gchar*) group name
 	 */
-	GHashTable *group_names; //TODO: wywalic? tylko zapamietujmy grupe "Pomocnicy" (dla botow)
+	GHashTable *group_names;
+
+	gchar *bots_group_id;
 
 	gboolean needs_update;
 } ggp_roster_content;
@@ -75,6 +78,7 @@ static const gchar * ggp_roster_add_group(ggp_roster_content *content, PurpleGro
 static gboolean ggp_roster_timer_cb(gpointer _gc);
 
 static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version);
+static void ggp_roster_reply_reject(PurpleConnection *gc, uint32_t version);
 static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const char *reply);
 static void ggp_roster_send_update(PurpleConnection *gc);
 
@@ -144,6 +148,8 @@ static void ggp_roster_content_free(ggp_roster_content *content)
 		g_hash_table_destroy(content->group_ids);
 	if (content->group_names)
 		g_hash_table_destroy(content->group_names);
+	if (content->bots_group_id)
+		g_free(content->bots_group_id);
 	g_free(content);
 }
 
@@ -224,7 +230,7 @@ void ggp_roster_reply(PurpleConnection *gc, struct gg_event_userlist100_reply *r
 	else if (reply->type == GG_USERLIST100_REPLY_ACK)
 		ggp_roster_reply_ack(gc, reply->version);
 	else if (reply->type == GG_USERLIST100_REPLY_REJECT)
-		purple_debug_error("gg", "ggp_roster_reply: not implemented (reject)\n");
+		ggp_roster_reply_reject(gc, reply->version);
 	else
 		purple_debug_error("gg", "ggp_roster_reply: unsupported reply (%x)\n", reply->type);
 }
@@ -246,9 +252,12 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 	PurpleAccount *account = purple_connection_get_account(gc);
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	ggp_roster_content *content = rdata->content;
+	GList *updates_it;
+
+	purple_debug_info("gg", "ggp_roster_reply_ack: version=%u\n", version);
 	
 	// set synchronization flag for all buddies, that were updated at roster
-	GList *updates_it = g_list_first(rdata->sent_updates);
+	updates_it = g_list_first(rdata->sent_updates);
 	while (updates_it)
 	{
 		ggp_roster_change *change = updates_it->data;
@@ -289,6 +298,7 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 	{
 		ggp_roster_content_free(rdata->content);
 		rdata->content = NULL;
+		rdata->version = 0;
 		// we have to wait for gg_event_userlist100_version
 		//ggp_roster_request_update(gc);
 	}
@@ -296,11 +306,28 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 		rdata->version = version;
 }
 
+static void ggp_roster_reply_reject(PurpleConnection *gc, uint32_t version)
+{
+	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
+
+	purple_debug_info("gg", "ggp_roster_reply_reject: version=%u\n", version);
+	
+	g_return_if_fail(rdata->sent_updates);
+	
+	rdata->pending_updates = g_list_concat(rdata->pending_updates, rdata->sent_updates);
+	rdata->sent_updates = NULL;
+	
+	ggp_roster_content_free(rdata->content);
+	rdata->content = NULL;
+	rdata->version = 0;
+	ggp_roster_request_update(gc);
+}
+
 static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_content *content)
 {
 	char *name, *id;
 	gboolean removable;
-	gboolean succ = TRUE;
+	gboolean succ = TRUE, is_bot, is_default;
 	
 	succ &= ggp_xml_get_string(node, "Id", &id);
 	succ &= ggp_xml_get_string(node, "Name", &name);
@@ -313,7 +340,16 @@ static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_conte
 		g_return_val_if_reached(FALSE);
 	}
 	
-	if (!removable)
+	is_bot = (strcmp(id, "0b345af6-0001-0000-0000-000000000004") == 0 ||
+		g_strcmp0(name, "Pomocnicy") == 0);
+	is_default = (strcmp(id, GGP_ROSTER_GROUPID_DEFAULT) == 0 ||
+		g_strcmp0(name, _("Buddies")) == 0 ||
+		g_strcmp0(name, _("[default]")) == 0);
+	
+	if (!content->bots_group_id && is_bot)
+		content->bots_group_id = g_strdup(id);
+	
+	if (!removable || is_bot || is_default)
 	{
 		g_free(id);
 		g_free(name);
@@ -366,14 +402,12 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 	while (group_elem != NULL)
 	{
 		gchar *id;
-		gboolean isbot, isdefault;
+		gboolean isbot;
 		
 		if (!ggp_xml_get_string(group_elem, NULL, &id))
 			continue;
+		isbot = (0 == g_strcmp0(id, content->bots_group_id));
 		group_name = g_hash_table_lookup(content->group_names, id);
-		isbot = (strcmp(id, "0b345af6-0001-0000-0000-000000000004") == 0 ||
-			g_strcmp0(group_name, "Pomocnicy") == 0);
-		isdefault = (0 == g_strcmp0(group_name, _("Buddies")));
 		g_free(id);
 		
 		// we don't want to import bots;
@@ -383,8 +417,6 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 			g_free(alias);
 			return TRUE;
 		}
-		if (isdefault)
-			group_name = NULL;
 		
 		if (group_name != NULL)
 			break;
@@ -432,7 +464,7 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 		return TRUE;
 	}
 	
-	purple_debug_misc("gg", "ggp_roster_reply_list: updating %s [currentAlias=%s, alias=%s, currentGroup=%p, group=%p]\n", purple_buddy_get_name(buddy), purple_buddy_get_alias(buddy), alias, currentGroup, group);
+	purple_debug_misc("gg", "ggp_roster_reply_list: updating %s [currentAlias=%s, alias=%s, currentGroup=%p, group=%p (%s)]\n", purple_buddy_get_name(buddy), purple_buddy_get_alias(buddy), alias, currentGroup, group, group_name);
 	if (alias_changed)
 		purple_blist_alias_buddy(buddy, alias);
 	if (currentGroup != group)
@@ -852,6 +884,8 @@ void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who, const char *a
 	
 	if (!ggp_roster_enabled())
 		return;
+	
+	purple_debug_misc("gg", "ggp_roster_alias_buddy(\"%s\", \"%s\")\n", who, alias);
 	
 	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	g_return_if_fail(buddy != NULL);
