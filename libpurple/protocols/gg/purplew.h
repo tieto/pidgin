@@ -4,6 +4,8 @@
 #include <internal.h>
 #include <libgadu.h>
 
+#define GGP_PURPLEW_GROUP_DEFAULT _("Buddies")
+
 /**
  * Adds an input handler in purple event loop for http request.
  *
@@ -38,5 +40,7 @@ void ggp_purplew_request_processing_done(
 
 // ignores default group
 PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy);
+
+GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account);
 
 #endif /* _GGP_PURPLEW_H */

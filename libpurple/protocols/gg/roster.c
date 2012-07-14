@@ -12,7 +12,6 @@
 #define GGP_ROSTER_GROUPID_DEFAULT "00000000-0000-0000-0000-000000000000"
 
 // TODO: ignored contacts synchronization (?)
-// TODO: rename default group
 
 typedef struct
 {
@@ -343,7 +342,7 @@ static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_conte
 	is_bot = (strcmp(id, "0b345af6-0001-0000-0000-000000000004") == 0 ||
 		g_strcmp0(name, "Pomocnicy") == 0);
 	is_default = (strcmp(id, GGP_ROSTER_GROUPID_DEFAULT) == 0 ||
-		g_strcmp0(name, _("Buddies")) == 0 ||
+		g_strcmp0(name, GGP_PURPLEW_GROUP_DEFAULT) == 0 ||
 		g_strcmp0(name, _("[default]")) == 0);
 	
 	if (!content->bots_group_id && is_bot)
@@ -792,10 +791,10 @@ static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc, ggp_
 
 static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_roster_change *change)
 {
+	PurpleAccount *account = purple_connection_get_account(gc);
 	ggp_roster_content *content = ggp_roster_get_rdata(gc)->content;
 	const char *old_name = change->data.group_rename.old_name;
 	const char *new_name = change->data.group_rename.new_name;
-	//PurpleGroup *group;
 	xmlnode *group_node;
 	const char *group_id;
 
@@ -803,15 +802,19 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_ro
 	
 	purple_debug_misc("gg", "ggp_roster_send_update_group_rename: old_name=%s, new_name=%s\n", old_name, new_name);
 
-	/*
-	group = purple_find_group(old_name);
-	if (!group)
+	if (0 == g_strcmp0(old_name, GGP_PURPLEW_GROUP_DEFAULT) ||
+		0 == g_strcmp0(new_name, GGP_PURPLEW_GROUP_DEFAULT))
 	{
-		purple_debug_info("gg", "ggp_roster_send_update_group_rename: %s not found\n", old_name);
+		PurpleGroup *group;
+		GList *group_buddies;
+		group = purple_find_group(new_name);
+		if (!group)
+			return TRUE;
+		purple_debug_info("gg", "ggp_roster_send_update_group_rename: invalidating buddies in default group\n");
+		for (group_buddies = ggp_purplew_group_get_buddies(group, account); group_buddies; group_buddies = g_list_remove_link(group_buddies, group_buddies))
+			ggp_roster_set_synchronized(gc, group_buddies->data, FALSE);
 		return TRUE;
 	}
-	*/
-	
 	group_id = g_hash_table_lookup(content->group_ids, old_name);
 	if (!group_id)
 	{

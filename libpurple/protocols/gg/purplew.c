@@ -59,7 +59,34 @@ PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy)
 	PurpleGroup *group = purple_buddy_get_group(buddy);
 	if (!group)
 		return NULL;
-	if (0 == strcmp(_("Buddies"), purple_group_get_name(group)))
+	if (0 == strcmp(GGP_PURPLEW_GROUP_DEFAULT, purple_group_get_name(group)))
 		return NULL;
 	return group;
+}
+
+GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account)
+{
+	GList *buddies = NULL;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+	
+	g_return_val_if_fail(group != NULL, NULL);
+	
+	gnode = PURPLE_BLIST_NODE(group);
+	for (cnode = gnode->child; cnode; cnode = cnode->next)
+	{
+		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+			continue;
+		for (bnode = cnode->child; bnode; bnode = bnode->next)
+		{
+			PurpleBuddy *buddy;
+			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
+			
+			buddy = PURPLE_BUDDY(bnode);
+			if (account == NULL || buddy->account == account)
+				buddies = g_list_append(buddies, buddy);
+		}
+	}
+	
+	return buddies;
 }
