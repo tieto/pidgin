@@ -11,8 +11,8 @@
 #define GGP_ROSTER_DEBUG 0
 #define GGP_ROSTER_GROUPID_DEFAULT "00000000-0000-0000-0000-000000000000"
 
-// TODO: ggp_purplew_buddy_get_group_only
-// TODO: ignored contacts synchronization
+// TODO: ignored contacts synchronization (?)
+// TODO: rename default group
 
 typedef struct
 {
@@ -474,18 +474,49 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 	return TRUE;
 }
 
+// get groups with contacts only from specified account
+// you must g_free returned object
+static GList * ggp_roster_get_groups_for_account_only(PurpleAccount *account)
+{
+	PurpleBlistNode *bnode;
+	GList *groups = NULL;
+	for (bnode = purple_blist_get_root(); bnode; bnode = bnode->next)
+	{
+		PurpleGroup *group;
+		GSList *accounts;
+		gboolean have_specified = FALSE, have_others = FALSE;
+		
+		if (!PURPLE_BLIST_NODE_IS_GROUP(bnode))
+			continue;
+		
+		group = PURPLE_GROUP(bnode);
+		for (accounts = purple_group_get_accounts(group); accounts; accounts = g_slist_delete_link(accounts, accounts))
+		{
+			if (accounts->data == account)
+				have_specified = TRUE;
+			else
+			{
+				have_others = TRUE;
+				break;
+			}
+		}
+		g_slist_free(accounts);
+		
+		if (have_specified && !have_others)
+			groups = g_list_append(groups, group);
+	}
+	return groups;
+}
+
 static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const char *data)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	xmlnode *xml, *curr_elem;
 	PurpleAccount *account;
 	GSList *buddies;
-	GHashTable *remove_buddies;//, *remove_groups;
-	GList *remove_buddies_list, *remove_buddies_it;//, *map_values, *it;
-	//GList *map_values, *it; TODO
-	GList *update_buddies = NULL, *update_buddies_it;
+	GHashTable *remove_buddies;
+	GList *remove_buddies_list, *update_buddies = NULL, *local_groups, *it;
 	ggp_roster_content *content;
-	//PurpleBlistNode *bnode;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(data != NULL);
@@ -534,6 +565,9 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		curr_elem = xmlnode_get_next_twin(curr_elem);
 	}
 	
+	// dumping current group list
+	local_groups = ggp_roster_get_groups_for_account_only(account);
+	
 	// dumping current buddy list
 	// we will:
 	// - remove synchronized ones, if not found in list at server
@@ -581,27 +615,21 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 	
 	// removing buddies, which are not present in roster
 	remove_buddies_list = g_hash_table_get_values(remove_buddies);
-	remove_buddies_it = g_list_first(remove_buddies_list);
-	while (remove_buddies_it)
+	it = g_list_first(remove_buddies_list);
+	while (it)
 	{
-		PurpleBuddy *buddy = remove_buddies_it->data;
-		if (ggp_roster_is_synchronized(buddy))
-		{
-			purple_debug_info("gg", "ggp_roster_reply_list: removing %s from buddy list\n", purple_buddy_get_name(buddy));
-			purple_blist_remove_buddy(buddy);
-		}
-		remove_buddies_it = g_list_next(remove_buddies_it);
+		PurpleBuddy *buddy = it->data;
+		it = g_list_next(it);
+		if (!ggp_roster_is_synchronized(buddy))
+			continue;
+		purple_debug_info("gg", "ggp_roster_reply_list: removing %s from buddy list\n", purple_buddy_get_name(buddy));
+		purple_blist_remove_buddy(buddy);
 	}
 	g_list_free(remove_buddies_list);
 	g_hash_table_destroy(remove_buddies);
 	
-	/* TODO: remove groups, which are empty, but had contacts before synchronization
-	// removing groups, which are:
-	// - not present in roster
-	// - were present in roster
-	// - are empty
-	map_values = g_hash_table_get_values(remove_groups);
-	it = g_list_first(map_values);
+	// remove groups, which are empty, but had contacts before synchronization
+	it = g_list_first(local_groups);
 	while (it)
 	{
 		PurpleGroup *group = it->data;
@@ -611,18 +639,17 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		purple_debug_info("gg", "ggp_roster_reply_list: removing group %s\n", purple_group_get_name(group));
 		purple_blist_remove_group(group);
 	}
-	g_list_free(map_values);
-	g_hash_table_destroy(remove_groups);
-	*/
+	g_list_free(local_groups);
 	
 	// adding not synchronized buddies
-	update_buddies_it = g_list_first(update_buddies);
-	while (update_buddies_it)
+	it = g_list_first(update_buddies);
+	while (it)
 	{
-		PurpleBuddy *buddy = update_buddies_it->data;
+		PurpleBuddy *buddy = it->data;
 		uin_t uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 		ggp_roster_change *change;
 		
+		it = g_list_next(it);
 		g_assert(uin > 0);
 		
 		purple_debug_misc("gg", "ggp_roster_reply_list: adding change of %u for roster\n", uin);
@@ -630,8 +657,6 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
 		change->data.uin = uin;
 		rdata->pending_updates = g_list_append(rdata->pending_updates, change);
-		
-		update_buddies_it = g_list_next(update_buddies_it);
 	}
 	g_list_free(update_buddies);
 
