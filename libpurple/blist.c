@@ -2068,11 +2068,13 @@ void purple_blist_remove_contact(PurpleContact *contact)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node, *gnode;
+	PurpleGroup *group;
 
 	g_return_if_fail(contact != NULL);
 
 	node = (PurpleBlistNode *)contact;
 	gnode = node->parent;
+	group = PURPLE_GROUP(gnode);
 
 	if (node->child) {
 		/*
@@ -2097,6 +2099,7 @@ void purple_blist_remove_contact(PurpleContact *contact)
 			node->prev->next = node->next;
 		if (node->next)
 			node->next->prev = node->prev;
+		group->totalsize--;
 
 		/* Update the UI */
 		if (ops && ops->remove)

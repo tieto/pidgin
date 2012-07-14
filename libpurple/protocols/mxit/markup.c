@@ -371,7 +371,7 @@ void mxit_show_message( struct RXMsgData* mx )
 	int					start;
 	unsigned int		end;
 	int					emo_ofs;
-	char				ii[128];
+	char*				ii;
 	char				tag[64];
 	int*				img_id;
 
@@ -389,8 +389,7 @@ void mxit_show_message( struct RXMsgData* mx )
 			if ( end == mx->msg->len )			/* end of emoticon tag not found */
 				break;
 
-			memset( ii, 0x00, sizeof( ii ) );
-			memcpy( ii, &mx->msg->str[emo_ofs], end - emo_ofs );
+			ii = g_strndup(&mx->msg->str[emo_ofs], end - emo_ofs);
 
 			/* remove inline image tag */
 			g_string_erase( mx->msg, start, ( end - start ) + 1 );
@@ -408,6 +407,8 @@ void mxit_show_message( struct RXMsgData* mx )
 				            *img_id );
 				g_string_insert( mx->msg, start, tag );
 			}
+
+			g_free(ii);
 		}
 	}
 

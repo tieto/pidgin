@@ -32,34 +32,35 @@ distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/comm
 
 commit-check:
 	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)
+
+# Ensure these files are sorted and contain no duplicates:
 	LC_ALL=C sort -c -t/ -u po/POTFILES.in
 	LC_ALL=C sort -c -t/ -u po/POTFILES.skip
+
+# Ensure COPYRIGHT is 100% UTF-8
 	iconv -f utf8 -t utf8 COPYRIGHT | cmp COPYRIGHT -
 
-version-check: commit-check
-# We don't want to release development versions.
+version-check:
+# Ensure our version string does not contain "dev"
 	test x`echo $(PACKAGE_VERSION) | grep dev` = x
 
-# When doing a new minor (or major) release (X.Y.0), there must be a section in
-# ChangeLog.API.
-	echo $(PACKAGE_VERSION) | grep -v "^[0-9]\+\.[0-9]\+\.0$$" >/dev/null || head ChangeLog.API | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
-
-# For all releases, check the ChangeLogs.
-	head ChangeLog | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
-	head po/ChangeLog | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
+# Ensure ChangeLogs have the correct version
+	head ChangeLog     | grep "^version $(PACKAGE_VERSION) (.*):$$" >/dev/null
+	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
+	head po/ChangeLog  | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
 	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
 # ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
 	test "x`hg st -mard`" = x
 
-release: version-check distcheck packages
-
 packages:
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.bz2
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.bz2.asc pidgin-$(PACKAGE_VERSION).tar.bz2
+
+release: commit-check version-check distcheck packages
 
 if INSTALL_I18N
 PO_DIR=po
