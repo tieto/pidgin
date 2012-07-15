@@ -286,8 +286,10 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 static void
 username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
-	int opt_noscreenname = (dialog->prpl_info != NULL &&
+	gboolean opt_noscreenname = (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+	gboolean username_valid = purple_validate(dialog->plugin,
+		gtk_entry_get_text(entry));
 	
 	if (dialog->ok_button) {
 		if (opt_noscreenname && dialog->register_button &&
@@ -296,14 +298,14 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 			gtk_widget_set_sensitive(dialog->ok_button, TRUE);
 		else
 			gtk_widget_set_sensitive(dialog->ok_button,
-				*gtk_entry_get_text(entry) != '\0');
+				username_valid);
 	}
 	if (dialog->register_button) {
 		if (opt_noscreenname)
 			gtk_widget_set_sensitive(dialog->register_button, TRUE);
 		else
 			gtk_widget_set_sensitive(dialog->register_button,
-					*gtk_entry_get_text(entry) != '\0');
+				username_valid);
 	}
 }
 
