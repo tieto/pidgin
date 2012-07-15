@@ -6,15 +6,13 @@
 
 typedef struct
 {
-	int version;
-	
-	guint timer;
 	gpointer content;
+	gboolean is_updating;
 	
 	GList *sent_updates;
 	GList *pending_updates;
 	
-	gboolean is_updating;
+	guint timer;
 } ggp_roster_session_data;
 
 // setup
@@ -22,7 +20,7 @@ gboolean ggp_roster_enabled(void);
 void ggp_roster_setup(PurpleConnection *gc);
 void ggp_roster_cleanup(PurpleConnection *gc);
 
-// control
+// synchronization control
 void ggp_roster_request_update(PurpleConnection *gc);
 
 // libgadu callbacks

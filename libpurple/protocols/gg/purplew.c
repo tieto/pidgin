@@ -90,3 +90,31 @@ GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account
 	
 	return buddies;
 }
+
+GList * ggp_purplew_account_get_groups(PurpleAccount *account, gboolean exclusive)
+{
+	PurpleBlistNode *bnode;
+	GList *groups = NULL;
+	for (bnode = purple_blist_get_root(); bnode; bnode = bnode->next)
+	{
+		PurpleGroup *group;
+		GSList *accounts;
+		gboolean have_specified = FALSE, have_others = FALSE;
+		
+		if (!PURPLE_BLIST_NODE_IS_GROUP(bnode))
+			continue;
+		
+		group = PURPLE_GROUP(bnode);
+		for (accounts = purple_group_get_accounts(group); accounts; accounts = g_slist_delete_link(accounts, accounts))
+		{
+			if (accounts->data == account)
+				have_specified = TRUE;
+			else
+				have_others = TRUE;
+		}
+		
+		if (have_specified && (!exclusive || !have_others))
+			groups = g_list_append(groups, group);
+	}
+	return groups;
+}
