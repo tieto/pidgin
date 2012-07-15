@@ -10,6 +10,7 @@
 #define GGP_ROSTER_SYNC_SETT "gg-synchronized"
 #define GGP_ROSTER_DEBUG 0
 #define GGP_ROSTER_GROUPID_DEFAULT "00000000-0000-0000-0000-000000000000"
+#define GGP_ROSTER_GROUPID_BOTS "0b345af6-0001-0000-0000-000000000004"
 
 // TODO: ignored contacts synchronization (?)
 
@@ -69,9 +70,11 @@ typedef struct
 	} data;
 } ggp_roster_change;
 
-static inline ggp_roster_session_data * ggp_roster_get_rdata(PurpleConnection *gc);
+static inline ggp_roster_session_data *
+ggp_roster_get_rdata(PurpleConnection *gc);
 static void ggp_roster_content_free(ggp_roster_content *content);
 static void ggp_roster_change_free(gpointer change);
+static int ggp_roster_get_version(PurpleConnection *gc);
 static gboolean ggp_roster_timer_cb(gpointer _gc);
 #if GGP_ROSTER_DEBUG
 static void ggp_roster_dump(ggp_roster_content *content);
@@ -79,18 +82,26 @@ static void ggp_roster_dump(ggp_roster_content *content);
 
 // synchronization control
 static gboolean ggp_roster_is_synchronized(PurpleBuddy *buddy);
-static void ggp_roster_set_synchronized(PurpleConnection *gc, PurpleBuddy *buddy, gboolean synchronized);
+static void ggp_roster_set_synchronized(PurpleConnection *gc,
+	PurpleBuddy *buddy, gboolean synchronized);
 
 // buddy list import
-static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_content *content);
-static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *node, ggp_roster_content *content, GHashTable *remove_buddies);
-static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const char *reply);
+static gboolean ggp_roster_reply_list_read_group(xmlnode *node,
+	ggp_roster_content *content);
+static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
+	xmlnode *node, ggp_roster_content *content, GHashTable *remove_buddies);
+static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version,
+	const char *reply);
 
 // buddy list export
-static const gchar * ggp_roster_send_update_group_add(ggp_roster_content *content, PurpleGroup *group);
-static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc, ggp_roster_change *change);
-static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc, ggp_roster_change *change);
-static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_roster_change *change);
+static const gchar * ggp_roster_send_update_group_add(
+	ggp_roster_content *content, PurpleGroup *group);
+static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc,
+	ggp_roster_change *change);
+static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc,
+	ggp_roster_change *change);
+static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc,
+	ggp_roster_change *change);
 static void ggp_roster_send_update(PurpleConnection *gc);
 static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version);
 static void ggp_roster_reply_reject(PurpleConnection *gc, uint32_t version);
@@ -136,6 +147,14 @@ static void ggp_roster_change_free(gpointer _change)
 	g_free(change);
 }
 
+static int ggp_roster_get_version(PurpleConnection *gc)
+{
+	ggp_roster_content *content = ggp_roster_get_rdata(gc)->content;
+	if (content == NULL)
+		return 0;
+	return content->version;
+}
+
 static gboolean ggp_roster_timer_cb(gpointer _gc)
 {
 	PurpleConnection *gc = _gc;
@@ -157,7 +176,7 @@ static void ggp_roster_dump(ggp_roster_content *content)
 	g_return_if_fail(content->xml != NULL);
 	
 	str = xmlnode_to_formatted_str(content->xml, &len);
-	purple_debug_misc("gg", "ggp_roster_reply_list: [%s]\n", str);
+	purple_debug_misc("gg", "ggp_roster_dump: [%s]\n", str);
 	g_free(str);
 }
 #endif
@@ -173,7 +192,8 @@ gboolean ggp_roster_enabled(void)
 	
 	if (!checked)
 	{
-		enabled = gg_libgadu_check_feature(GG_LIBGADU_FEATURE_USERLIST100);
+		enabled = gg_libgadu_check_feature(
+			GG_LIBGADU_FEATURE_USERLIST100);
 		checked = TRUE;
 	}
 	return enabled;
@@ -190,7 +210,8 @@ void ggp_roster_setup(PurpleConnection *gc)
 	rdata->is_updating = FALSE;
 	
 	if (ggp_roster_enabled())
-		rdata->timer = purple_timeout_add_seconds(2, ggp_roster_timer_cb, gc);
+		rdata->timer = purple_timeout_add_seconds(2,
+			ggp_roster_timer_cb, gc);
 }
 
 void ggp_roster_cleanup(PurpleConnection *gc)
@@ -210,52 +231,60 @@ void ggp_roster_cleanup(PurpleConnection *gc)
 
 static gboolean ggp_roster_is_synchronized(PurpleBuddy *buddy)
 {
-	gboolean ret = purple_blist_node_get_bool(PURPLE_BLIST_NODE(buddy), GGP_ROSTER_SYNC_SETT);
+	gboolean ret = purple_blist_node_get_bool(PURPLE_BLIST_NODE(buddy),
+		GGP_ROSTER_SYNC_SETT);
 	return ret;
 }
 
-static void ggp_roster_set_synchronized(PurpleConnection *gc, PurpleBuddy *buddy, gboolean synchronized)
+static void ggp_roster_set_synchronized(PurpleConnection *gc,
+	PurpleBuddy *buddy, gboolean synchronized)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	uin_t uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 	ggp_roster_change *change;
 	
-	purple_blist_node_set_bool(PURPLE_BLIST_NODE(buddy), GGP_ROSTER_SYNC_SETT, synchronized);
+	purple_blist_node_set_bool(PURPLE_BLIST_NODE(buddy),
+		GGP_ROSTER_SYNC_SETT, synchronized);
 	if (!synchronized)
 	{
 		change = g_new0(ggp_roster_change, 1);
 		change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
 		change->data.uin = uin;
-		rdata->pending_updates = g_list_append(rdata->pending_updates, change);
+		rdata->pending_updates =
+			g_list_append(rdata->pending_updates, change);
 	}
 }
 
 void ggp_roster_request_update(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
-	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	int local_version = rdata->content ? ((ggp_roster_content*)rdata->content)->version : 0;
+	int local_version = ggp_roster_get_version(gc);
 	
 	if (!ggp_roster_enabled())
 	{
-		purple_debug_warning("gg", "ggp_roster_request_update: feature disabled\n");
+		purple_debug_warning("gg", "ggp_roster_request_update: "
+			"feature disabled\n");
 		return;
 	}
 	
-	purple_debug_info("gg", "ggp_roster_request_update: local=%u\n", local_version);
+	purple_debug_info("gg", "ggp_roster_request_update: local=%u\n",
+		local_version);
 	
-	gg_userlist100_request(accdata->session, GG_USERLIST100_GET, local_version, GG_USERLIST100_FORMAT_TYPE_GG100, NULL);
+	gg_userlist100_request(accdata->session, GG_USERLIST100_GET,
+		local_version, GG_USERLIST100_FORMAT_TYPE_GG100, NULL);
 }
 
 /*******************************************************************************
  * Libgadu callbacks.
  ******************************************************************************/
 
-void ggp_roster_reply(PurpleConnection *gc, struct gg_event_userlist100_reply *reply)
+void ggp_roster_reply(PurpleConnection *gc,
+	struct gg_event_userlist100_reply *reply)
 {
 	if (GG_USERLIST100_FORMAT_TYPE_GG100 != reply->format_type)
 	{
-		purple_debug_warning("gg", "ggp_roster_reply: unsupported format type (%x)\n", reply->format_type);
+		purple_debug_warning("gg", "ggp_roster_reply: "
+			"unsupported format type (%x)\n", reply->format_type);
 		return;
 	}
 	
@@ -268,16 +297,18 @@ void ggp_roster_reply(PurpleConnection *gc, struct gg_event_userlist100_reply *r
 	else if (reply->type == GG_USERLIST100_REPLY_REJECT)
 		ggp_roster_reply_reject(gc, reply->version);
 	else
-		purple_debug_error("gg", "ggp_roster_reply: unsupported reply (%x)\n", reply->type);
+		purple_debug_error("gg", "ggp_roster_reply: "
+			"unsupported reply (%x)\n", reply->type);
 }
 
-void ggp_roster_version(PurpleConnection *gc, struct gg_event_userlist100_version *version)
+void ggp_roster_version(PurpleConnection *gc,
+	struct gg_event_userlist100_version *version)
 {
-	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	int local_version = rdata->content ? ((ggp_roster_content*)rdata->content)->version : 0;
+	int local_version = ggp_roster_get_version(gc);
 	int remote_version = version->version;
 
-	purple_debug_info("gg", "ggp_roster_version: local=%u, remote=%u\n", local_version, remote_version);
+	purple_debug_info("gg", "ggp_roster_version: local=%u, remote=%u\n",
+		local_version, remote_version);
 	
 	if (local_version < remote_version)
 		ggp_roster_request_update(gc);
@@ -287,7 +318,8 @@ void ggp_roster_version(PurpleConnection *gc, struct gg_event_userlist100_versio
  * Libpurple callbacks.
  ******************************************************************************/
 
-void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who, const char *alias)
+void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who,
+	const char *alias)
 {
 	PurpleBuddy *buddy;
 	
@@ -296,7 +328,8 @@ void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who, const char *a
 	if (!ggp_roster_enabled())
 		return;
 	
-	purple_debug_misc("gg", "ggp_roster_alias_buddy(\"%s\", \"%s\")\n", who, alias);
+	purple_debug_misc("gg", "ggp_roster_alias_buddy(\"%s\", \"%s\")\n",
+		who, alias);
 	
 	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	g_return_if_fail(buddy != NULL);
@@ -304,7 +337,8 @@ void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who, const char *a
 	ggp_roster_set_synchronized(gc, buddy, FALSE);
 }
 
-void ggp_roster_group_buddy(PurpleConnection *gc, const char *who, const char *old_group, const char *new_group)
+void ggp_roster_group_buddy(PurpleConnection *gc, const char *who,
+	const char *old_group, const char *new_group)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
@@ -314,7 +348,9 @@ void ggp_roster_group_buddy(PurpleConnection *gc, const char *who, const char *o
 	if (rdata->is_updating)
 		return;
 	
-	purple_debug_misc("gg", "ggp_roster_group_buddy(\"%s\", \"%s\", \"%s\")\n", who, old_group, new_group);
+	purple_debug_misc("gg", "ggp_roster_group_buddy: "
+		"who=\"%s\", group=\"%s\" -> \"%s\")\n",
+		who, old_group, new_group);
 	
 	// purple_find_buddy(..., who) is not accessible at this moment
 	change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
@@ -322,7 +358,8 @@ void ggp_roster_group_buddy(PurpleConnection *gc, const char *who, const char *o
 	rdata->pending_updates = g_list_append(rdata->pending_updates, change);
 }
 
-void ggp_roster_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup *group, GList *moved_buddies)
+void ggp_roster_rename_group(PurpleConnection *gc, const char *old_name,
+	PurpleGroup *group, GList *moved_buddies)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
@@ -332,11 +369,13 @@ void ggp_roster_rename_group(PurpleConnection *gc, const char *old_name, PurpleG
 	
 	change->type = GGP_ROSTER_CHANGE_GROUP_RENAME;
 	change->data.group_rename.old_name = g_strdup(old_name);
-	change->data.group_rename.new_name = g_strdup(purple_group_get_name(group));
+	change->data.group_rename.new_name =
+		g_strdup(purple_group_get_name(group));
 	rdata->pending_updates = g_list_append(rdata->pending_updates, change);
 }
 
-void ggp_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
+void ggp_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+	PurpleGroup *group, const char *message)
 {
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(buddy != NULL);
@@ -347,7 +386,8 @@ void ggp_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	ggp_roster_set_synchronized(gc, buddy, FALSE);
 }
 
-void ggp_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+void ggp_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+	PurpleGroup *group)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
@@ -364,7 +404,8 @@ void ggp_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
  * Buddy list import.
  ******************************************************************************/
 
-static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_content *content)
+static gboolean ggp_roster_reply_list_read_group(xmlnode *node,
+	ggp_roster_content *content)
 {
 	char *name, *id;
 	gboolean removable;
@@ -381,11 +422,11 @@ static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_conte
 		g_return_val_if_reached(FALSE);
 	}
 	
-	is_bot = (strcmp(id, "0b345af6-0001-0000-0000-000000000004") == 0 ||
+	is_bot = (strcmp(id, GGP_ROSTER_GROUPID_BOTS) == 0 ||
 		g_strcmp0(name, "Pomocnicy") == 0);
 	is_default = (strcmp(id, GGP_ROSTER_GROUPID_DEFAULT) == 0 ||
 		g_strcmp0(name, GGP_PURPLEW_GROUP_DEFAULT) == 0 ||
-		g_strcmp0(name, _("[default]")) == 0);
+		g_strcmp0(name, "[default]") == 0);
 	
 	if (!content->bots_group_id && is_bot)
 		content->bots_group_id = g_strdup(id);
@@ -404,7 +445,8 @@ static gboolean ggp_roster_reply_list_read_group(xmlnode *node, ggp_roster_conte
 	return TRUE;
 }
 
-static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *node, ggp_roster_content *content, GHashTable *remove_buddies)
+static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
+	xmlnode *node, ggp_roster_content *content, GHashTable *remove_buddies)
 {
 	gchar *alias, *group_name;
 	uin_t uin;
@@ -479,7 +521,8 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 	g_hash_table_remove(remove_buddies, GINT_TO_POINTER(uin));
 	if (!buddy)
 	{
-		purple_debug_info("gg", "ggp_roster_reply_list: adding %u (%s) to buddy list\n", uin, alias);
+		purple_debug_info("gg", "ggp_roster_reply_list_read_buddy: "
+			"adding %u (%s) to buddy list\n", uin, alias);
 		buddy = purple_buddy_new(account, ggp_uin_to_str(uin), alias);
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 		ggp_roster_set_synchronized(gc, buddy, TRUE);
@@ -491,13 +534,16 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 	// buddy exists, but is not synchronized - local list has priority
 	if (!ggp_roster_is_synchronized(buddy))
 	{
-		purple_debug_misc("gg", "ggp_roster_reply_list: ignoring not synchronized %s\n", purple_buddy_get_name(buddy));
+		purple_debug_misc("gg", "ggp_roster_reply_list_read_buddy: "
+			"ignoring not synchronized %u (%s)\n",
+			uin, purple_buddy_get_name(buddy));
 		g_free(alias);
 		return TRUE;
 	}
 	
 	currentGroup = ggp_purplew_buddy_get_group_only(buddy);
-	alias_changed = (0 != g_strcmp0(alias, purple_buddy_get_alias_only(buddy)));
+	alias_changed =
+		(0 != g_strcmp0(alias, purple_buddy_get_alias_only(buddy)));
 	
 	if (currentGroup == group && !alias_changed)
 	{
@@ -505,7 +551,11 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 		return TRUE;
 	}
 	
-	purple_debug_misc("gg", "ggp_roster_reply_list: updating %s [currentAlias=%s, alias=%s, currentGroup=%p, group=%p (%s)]\n", purple_buddy_get_name(buddy), purple_buddy_get_alias(buddy), alias, currentGroup, group, group_name);
+	purple_debug_misc("gg", "ggp_roster_reply_list_read_buddy: "
+		"updating %u (%s) - alias=\"%s\"->\"%s\", group=%p->%p (%s)\n",
+		uin, purple_buddy_get_name(buddy),
+		purple_buddy_get_alias(buddy), alias,
+		currentGroup, group, group_name);
 	if (alias_changed)
 		purple_blist_alias_buddy(buddy, alias);
 	if (currentGroup != group)
@@ -515,14 +565,15 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc, xmlnode *
 	return TRUE;
 }
 
-static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const char *data)
+static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version,
+	const char *data)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	xmlnode *xml, *curr_elem;
+	xmlnode *xml, *xml_it;
 	PurpleAccount *account;
-	GSList *buddies;
+	GSList *local_buddies;
 	GHashTable *remove_buddies;
-	GList *remove_buddies_list, *update_buddies = NULL, *local_groups, *it;
+	GList *update_buddies = NULL, *local_groups, *it, *table_values;
 	ggp_roster_content *content;
 
 	g_return_if_fail(gc != NULL);
@@ -530,12 +581,14 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 
 	account = purple_connection_get_account(gc);
 	
-	purple_debug_info("gg", "ggp_roster_reply_list: got list (version=%u)\n", version);
+	purple_debug_info("gg", "ggp_roster_reply_list: got list, version=%u\n",
+		version);
 
 	xml = xmlnode_from_str(data, -1);
 	if (xml == NULL)
 	{
-		purple_debug_warning("gg", "ggp_roster_reply_list: invalid xml\n");
+		purple_debug_warning("gg", "ggp_roster_reply_list: "
+			"invalid xml\n");
 		return;
 	}
 
@@ -546,9 +599,12 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 	content->version = version;
 	content->xml = xml;
 	content->contact_nodes = g_hash_table_new(NULL, NULL);
-	content->group_nodes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-	content->group_ids = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	content->group_names = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	content->group_nodes = g_hash_table_new_full(
+		g_str_hash, g_str_equal, g_free, NULL);
+	content->group_ids = g_hash_table_new_full(
+		g_str_hash, g_str_equal, g_free, g_free);
+	content->group_names = g_hash_table_new_full(
+		g_str_hash, g_str_equal, g_free, g_free);
 
 #if GGP_ROSTER_DEBUG
 	ggp_roster_dump(content);
@@ -561,16 +617,16 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		ggp_roster_content_free(content);
 		g_return_if_reached();
 	}
-	curr_elem = xmlnode_get_child(content->groups_node, "Group");
-	while (curr_elem != NULL)
+	xml_it = xmlnode_get_child(content->groups_node, "Group");
+	while (xml_it != NULL)
 	{
-		if (!ggp_roster_reply_list_read_group(curr_elem, content))
+		if (!ggp_roster_reply_list_read_group(xml_it, content))
 		{
 			ggp_roster_content_free(content);
 			g_return_if_reached();
 		}
 		
-		curr_elem = xmlnode_get_next_twin(curr_elem);
+		xml_it = xmlnode_get_next_twin(xml_it);
 	}
 	
 	// dumping current group list
@@ -580,22 +636,23 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 	// we will:
 	// - remove synchronized ones, if not found in list at server
 	// - upload not synchronized ones
-	buddies = purple_find_buddies(account, NULL);
+	local_buddies = purple_find_buddies(account, NULL);
 	remove_buddies = g_hash_table_new(g_direct_hash, g_direct_equal);
-	while (buddies)
+	while (local_buddies)
 	{
-		PurpleBuddy *buddy = buddies->data;
+		PurpleBuddy *buddy = local_buddies->data;
 		uin_t uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
-		
-		if (uin)
-		{
-			if (ggp_roster_is_synchronized(buddy))
-				g_hash_table_insert(remove_buddies, GINT_TO_POINTER(uin), buddy);
-			else
-				update_buddies = g_list_append(update_buddies, buddy);
-		}
+		local_buddies =
+			g_slist_delete_link(local_buddies, local_buddies);
 
-		buddies = g_slist_delete_link(buddies, buddies);
+		if (!uin)
+			continue;
+
+		if (ggp_roster_is_synchronized(buddy))
+			g_hash_table_insert(remove_buddies,
+				GINT_TO_POINTER(uin), buddy);
+		else
+			update_buddies = g_list_append(update_buddies, buddy);
 	}
 	
 	// reading buddies
@@ -607,10 +664,11 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		ggp_roster_content_free(content);
 		g_return_if_reached();
 	}
-	curr_elem = xmlnode_get_child(content->contacts_node, "Contact");
-	while (curr_elem != NULL)
+	xml_it = xmlnode_get_child(content->contacts_node, "Contact");
+	while (xml_it != NULL)
 	{
-		if (!ggp_roster_reply_list_read_buddy(gc, curr_elem, content, remove_buddies))
+		if (!ggp_roster_reply_list_read_buddy(gc, xml_it, content,
+			remove_buddies))
 		{
 			g_hash_table_destroy(remove_buddies);
 			g_list_free(update_buddies);
@@ -618,25 +676,28 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 			g_return_if_reached();
 		}
 	
-		curr_elem = xmlnode_get_next_twin(curr_elem);
+		xml_it = xmlnode_get_next_twin(xml_it);
 	}
 	
 	// removing buddies, which are not present in roster
-	remove_buddies_list = g_hash_table_get_values(remove_buddies);
-	it = g_list_first(remove_buddies_list);
+	table_values = g_hash_table_get_values(remove_buddies);
+	it = g_list_first(table_values);
 	while (it)
 	{
 		PurpleBuddy *buddy = it->data;
 		it = g_list_next(it);
 		if (!ggp_roster_is_synchronized(buddy))
 			continue;
-		purple_debug_info("gg", "ggp_roster_reply_list: removing %s from buddy list\n", purple_buddy_get_name(buddy));
+		purple_debug_info("gg", "ggp_roster_reply_list: "
+			"removing %s from buddy list\n",
+			purple_buddy_get_name(buddy));
 		purple_blist_remove_buddy(buddy);
 	}
-	g_list_free(remove_buddies_list);
+	g_list_free(table_values);
 	g_hash_table_destroy(remove_buddies);
 	
-	// remove groups, which are empty, but had contacts before synchronization
+	// remove groups, which are empty, but had contacts before
+	// synchronization
 	it = g_list_first(local_groups);
 	while (it)
 	{
@@ -644,7 +705,8 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		it = g_list_next(it);
 		if (purple_blist_get_group_size(group, TRUE) != 0)
 			continue;
-		purple_debug_info("gg", "ggp_roster_reply_list: removing group %s\n", purple_group_get_name(group));
+		purple_debug_info("gg", "ggp_roster_reply_list: "
+			"removing group %s\n", purple_group_get_name(group));
 		purple_blist_remove_group(group);
 	}
 	g_list_free(local_groups);
@@ -660,24 +722,28 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version, const 
 		it = g_list_next(it);
 		g_assert(uin > 0);
 		
-		purple_debug_misc("gg", "ggp_roster_reply_list: adding change of %u for roster\n", uin);
+		purple_debug_misc("gg", "ggp_roster_reply_list: "
+			"adding change of %u for roster\n", uin);
 		change = g_new0(ggp_roster_change, 1);
 		change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
 		change->data.uin = uin;
-		rdata->pending_updates = g_list_append(rdata->pending_updates, change);
+		rdata->pending_updates =
+			g_list_append(rdata->pending_updates, change);
 	}
 	g_list_free(update_buddies);
 
 	rdata->content = content;
 	rdata->is_updating = FALSE;
-	purple_debug_info("gg", "ggp_roster_reply_list: import done (version=%u)\n", version);
+	purple_debug_info("gg", "ggp_roster_reply_list: "
+		"import done, version=%u\n", version);
 }
 
 /*******************************************************************************
  * Buddy list export.
  ******************************************************************************/
 
-static const gchar * ggp_roster_send_update_group_add(ggp_roster_content *content, PurpleGroup *group)
+static const gchar * ggp_roster_send_update_group_add(
+	ggp_roster_content *content, PurpleGroup *group)
 {
 	gchar *id_dyn;
 	const char *id_existing, *group_name;
@@ -688,14 +754,16 @@ static const gchar * ggp_roster_send_update_group_add(ggp_roster_content *conten
 	if (group)
 	{
 		group_name = purple_group_get_name(group);
-		id_existing = g_hash_table_lookup(content->group_ids, group_name);
+		id_existing =
+			g_hash_table_lookup(content->group_ids, group_name);
 	}
 	else
 		id_existing = GGP_ROSTER_GROUPID_DEFAULT;
 	if (id_existing)
 		return id_existing;
 
-	purple_debug_info("gg", "ggp_roster_add_group: adding %s\n", purple_group_get_name(group));
+	purple_debug_info("gg", "ggp_roster_send_update_group_add: adding %s\n",
+		purple_group_get_name(group));
 
 	id_dyn = purple_uuid_random();
 	g_snprintf(id, sizeof(id), "%s", id_dyn);
@@ -708,7 +776,8 @@ static const gchar * ggp_roster_send_update_group_add(ggp_roster_content *conten
 	succ &= ggp_xml_set_string(group_node, "IsRemovable", "true");
 	content->needs_update = TRUE;
 	
-	g_hash_table_insert(content->group_ids, g_strdup(group_name), g_strdup(id));
+	g_hash_table_insert(content->group_ids, g_strdup(group_name),
+		g_strdup(id));
 	g_hash_table_insert(content->group_nodes, g_strdup(id), group_node);
 	
 	g_return_val_if_fail(succ, NULL);
@@ -716,32 +785,41 @@ static const gchar * ggp_roster_send_update_group_add(ggp_roster_content *conten
 	return id;
 }
 
-static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc, ggp_roster_change *change)
+static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc,
+	ggp_roster_change *change)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	ggp_roster_content *content = rdata->content;
+	ggp_roster_content *content = ggp_roster_get_rdata(gc)->content;
 	uin_t uin = change->data.uin;
-	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
-	xmlnode *buddy_node = g_hash_table_lookup(content->contact_nodes, GINT_TO_POINTER(uin));
-	xmlnode *contact_groups;
+	PurpleBuddy *buddy;
+	xmlnode *buddy_node, *contact_groups;
 	gboolean succ = TRUE;
+	const char *group_id;
 	
-	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_UPDATE, FALSE);
+	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_UPDATE,
+		FALSE);
 	
+	buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
 	if (!buddy)
 		return TRUE;
+	buddy_node = g_hash_table_lookup(content->contact_nodes,
+		GINT_TO_POINTER(uin));
+
+	group_id = ggp_roster_send_update_group_add(content,
+		ggp_purplew_buddy_get_group_only(buddy));
 
 	if (buddy_node)
 	{ // update existing
-		purple_debug_misc("gg", "ggp_roster_send_update_contact_update: updating %u...\n", uin);
+		purple_debug_misc("gg", "ggp_roster_send_update_contact_update:"
+			" updating %u...\n", uin);
 		
-		succ &= ggp_xml_set_string(buddy_node, "ShowName", purple_buddy_get_alias(buddy));
+		succ &= ggp_xml_set_string(buddy_node, "ShowName",
+			purple_buddy_get_alias(buddy));
 		
 		contact_groups = xmlnode_get_child(buddy_node, "Groups");
 		g_assert(contact_groups);
 		ggp_xmlnode_remove_children(contact_groups);
-		succ &= ggp_xml_set_string(contact_groups, "GroupId", ggp_roster_send_update_group_add(content, ggp_purplew_buddy_get_group_only(buddy)));
+		succ &= ggp_xml_set_string(contact_groups, "GroupId", group_id);
 	
 		g_return_val_if_fail(succ, FALSE);
 		
@@ -749,15 +827,17 @@ static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc, ggp_
 	}
 	
 	// add new
-	purple_debug_misc("gg", "ggp_roster_send_update_contact_update: adding %u...\n", uin);
+	purple_debug_misc("gg", "ggp_roster_send_update_contact_update: "
+		"adding %u...\n", uin);
 	buddy_node = xmlnode_new_child(content->contacts_node, "Contact");
 	succ &= ggp_xml_set_string(buddy_node, "Guid", purple_uuid_random());
 	succ &= ggp_xml_set_uint(buddy_node, "GGNumber", uin);
-	succ &= ggp_xml_set_string(buddy_node, "ShowName", purple_buddy_get_alias(buddy));
+	succ &= ggp_xml_set_string(buddy_node, "ShowName",
+		purple_buddy_get_alias(buddy));
 	
 	contact_groups = xmlnode_new_child(buddy_node, "Groups");
 	g_assert(contact_groups);
-	succ &= ggp_xml_set_string(contact_groups, "GroupId", ggp_roster_send_update_group_add(content, ggp_purplew_buddy_get_group_only(buddy)));
+	succ &= ggp_xml_set_string(contact_groups, "GroupId", group_id);
 	
 	xmlnode_new_child(buddy_node, "Avatars");
 	succ &= ggp_xml_set_bool(buddy_node, "FlagBuddy", TRUE);
@@ -767,41 +847,49 @@ static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc, ggp_
 	// we don't use Guid, so update is not needed
 	//content->needs_update = TRUE;
 	
-	g_hash_table_insert(content->contact_nodes, GINT_TO_POINTER(uin), buddy_node);
+	g_hash_table_insert(content->contact_nodes, GINT_TO_POINTER(uin),
+		buddy_node);
 	
 	g_return_val_if_fail(succ, FALSE);
 	
 	return TRUE;
 }
 
-static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc, ggp_roster_change *change)
+static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc,
+	ggp_roster_change *change)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	ggp_roster_content *content = rdata->content;
+	ggp_roster_content *content = ggp_roster_get_rdata(gc)->content;
 	uin_t uin = change->data.uin;
-	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
-	xmlnode *buddy_node = g_hash_table_lookup(content->contact_nodes, GINT_TO_POINTER(uin));
+	PurpleBuddy *buddy;
+	xmlnode *buddy_node;
 
-	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_REMOVE, FALSE);
+	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_REMOVE,
+		FALSE);
 	
+	buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
 	if (buddy)
 	{
-		purple_debug_info("gg", "ggp_roster_send_update_contact_remove: contact %u re-added\n", uin);
+		purple_debug_info("gg", "ggp_roster_send_update_contact_remove:"
+			" contact %u re-added\n", uin);
 		return TRUE;
 	}
 
+	buddy_node = g_hash_table_lookup(content->contact_nodes,
+		GINT_TO_POINTER(uin));
 	if (!buddy_node) // already removed
 		return TRUE;
 	
-	purple_debug_info("gg", "ggp_roster_send_update_contact_remove: removing %u\n", uin);
+	purple_debug_info("gg", "ggp_roster_send_update_contact_remove: "
+		"removing %u\n", uin);
 	xmlnode_free(buddy_node);
 	g_hash_table_remove(content->contact_nodes, GINT_TO_POINTER(uin));
 	
 	return TRUE;
 }
 
-static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_roster_change *change)
+static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc,
+	ggp_roster_change *change)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	ggp_roster_content *content = ggp_roster_get_rdata(gc)->content;
@@ -810,10 +898,13 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_ro
 	xmlnode *group_node;
 	const char *group_id;
 
-	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_GROUP_RENAME, FALSE);
+	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_GROUP_RENAME,
+		FALSE);
 	
-	purple_debug_misc("gg", "ggp_roster_send_update_group_rename: old_name=%s, new_name=%s\n", old_name, new_name);
+	purple_debug_misc("gg", "ggp_roster_send_update_group_rename: "
+		"\"%s\"->\"%s\"\n", old_name, new_name);
 
+	// moving to or from default group instead of renaming it
 	if (0 == g_strcmp0(old_name, GGP_PURPLEW_GROUP_DEFAULT) ||
 		0 == g_strcmp0(new_name, GGP_PURPLEW_GROUP_DEFAULT))
 	{
@@ -822,29 +913,40 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc, ggp_ro
 		group = purple_find_group(new_name);
 		if (!group)
 			return TRUE;
-		purple_debug_info("gg", "ggp_roster_send_update_group_rename: invalidating buddies in default group\n");
-		for (group_buddies = ggp_purplew_group_get_buddies(group, account); group_buddies; group_buddies = g_list_remove_link(group_buddies, group_buddies))
-			ggp_roster_set_synchronized(gc, group_buddies->data, FALSE);
+		purple_debug_info("gg", "ggp_roster_send_update_group_rename: "
+			"invalidating buddies in default group\n");
+		group_buddies = ggp_purplew_group_get_buddies(group, account);
+		while (group_buddies)
+		{
+			ggp_roster_set_synchronized(gc, group_buddies->data,
+				FALSE);
+			group_buddies = g_list_remove_link(group_buddies,
+				group_buddies);
+		}
 		return TRUE;
 	}
 	group_id = g_hash_table_lookup(content->group_ids, old_name);
 	if (!group_id)
 	{
-		purple_debug_info("gg", "ggp_roster_send_update_group_rename: %s is not present at roster\n", old_name);
+		purple_debug_info("gg", "ggp_roster_send_update_group_rename: "
+			"%s is not present at roster\n", old_name);
 		return TRUE;
 	}
 	
 	group_node = g_hash_table_lookup(content->group_nodes, group_id);
 	if (!group_node)
 	{
-		purple_debug_error("gg", "ggp_roster_send_update_group_rename: node for %s not found, id=%s\n", old_name, group_id);
+		purple_debug_error("gg", "ggp_roster_send_update_group_rename: "
+			"node for %s not found, id=%s\n", old_name, group_id);
 		g_hash_table_remove(content->group_ids, old_name);
 		return TRUE;
 	}
 	
 	g_hash_table_remove(content->group_ids, old_name);
-	g_hash_table_insert(content->group_ids, g_strdup(new_name), g_strdup(group_id));
-	g_hash_table_insert(content->group_nodes, g_strdup(group_id), group_node);
+	g_hash_table_insert(content->group_ids, g_strdup(new_name),
+		g_strdup(group_id));
+	g_hash_table_insert(content->group_nodes, g_strdup(group_id),
+		group_node);
 	return ggp_xml_set_string(group_node, "Name", new_name);
 }
 
@@ -869,7 +971,8 @@ static void ggp_roster_send_update(PurpleConnection *gc)
 	if (!content)
 		return;
 	
-	purple_debug_info("gg", "ggp_roster_send_update: pending updates found\n");
+	purple_debug_info("gg", "ggp_roster_send_update: "
+		"pending updates found\n");
 	
 	rdata->sent_updates = rdata->pending_updates;
 	rdata->pending_updates = NULL;
@@ -882,13 +985,16 @@ static void ggp_roster_send_update(PurpleConnection *gc)
 		updates_it = g_list_next(updates_it);
 		
 		if (change->type == GGP_ROSTER_CHANGE_CONTACT_UPDATE)
-			succ = ggp_roster_send_update_contact_update(gc, change);
+			succ = ggp_roster_send_update_contact_update(gc,
+				change);
 		else if (change->type == GGP_ROSTER_CHANGE_CONTACT_REMOVE)
-			succ = ggp_roster_send_update_contact_remove(gc, change);
+			succ = ggp_roster_send_update_contact_remove(gc,
+				change);
 		else if (change->type == GGP_ROSTER_CHANGE_GROUP_RENAME)
 			succ = ggp_roster_send_update_group_rename(gc, change);
 		else
-			purple_debug_fatal("gg", "ggp_roster_send_update: not handled\n");
+			purple_debug_fatal("gg", "ggp_roster_send_update: "
+				"not handled\n");
 		g_return_if_fail(succ);
 	}
 	
@@ -897,7 +1003,8 @@ static void ggp_roster_send_update(PurpleConnection *gc)
 #endif
 	
 	str = xmlnode_to_str(content->xml, &len);
-	gg_userlist100_request(accdata->session, GG_USERLIST100_PUT, content->version, GG_USERLIST100_FORMAT_TYPE_GG100, str);
+	gg_userlist100_request(accdata->session, GG_USERLIST100_PUT,
+		content->version, GG_USERLIST100_FORMAT_TYPE_GG100, str);
 	g_free(str);
 }
 
@@ -921,7 +1028,8 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 		if (change->type != GGP_ROSTER_CHANGE_CONTACT_UPDATE)
 			continue;
 		
-		buddy = purple_find_buddy(account, ggp_uin_to_str(change->data.uin));
+		buddy = purple_find_buddy(account,
+			ggp_uin_to_str(change->data.uin));
 		if (buddy)
 			ggp_roster_set_synchronized(gc, buddy, TRUE);
 	}
@@ -938,7 +1046,8 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 		if (change->type != GGP_ROSTER_CHANGE_CONTACT_UPDATE)
 			continue;
 		
-		buddy = purple_find_buddy(account, ggp_uin_to_str(change->data.uin));
+		buddy = purple_find_buddy(account,
+			ggp_uin_to_str(change->data.uin));
 		if (buddy && ggp_roster_is_synchronized(buddy))
 			ggp_roster_set_synchronized(gc, buddy, FALSE);
 	}
@@ -963,11 +1072,13 @@ static void ggp_roster_reply_reject(PurpleConnection *gc, uint32_t version)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 
-	purple_debug_info("gg", "ggp_roster_reply_reject: version=%u\n", version);
+	purple_debug_info("gg", "ggp_roster_reply_reject: version=%u\n",
+		version);
 	
 	g_return_if_fail(rdata->sent_updates);
 	
-	rdata->pending_updates = g_list_concat(rdata->pending_updates, rdata->sent_updates);
+	rdata->pending_updates = g_list_concat(rdata->pending_updates,
+		rdata->sent_updates);
 	rdata->sent_updates = NULL;
 	
 	ggp_roster_content_free(rdata->content);
