@@ -270,6 +270,11 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 	GHashTable *table;
 	const char *label;
 
+	if (!dialog->prpl_info || ! PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(
+		dialog->prpl_info, get_account_text_table)) {
+		return FALSE;
+	}
+
 	table = dialog->prpl_info->get_account_text_table(NULL);
 	label = g_hash_table_lookup(table, "login_label");
 
