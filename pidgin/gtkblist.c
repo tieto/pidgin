@@ -898,7 +898,7 @@ do_joinchat(GtkWidget *dialog, int id, PidginChatData *info)
  * strings are empty then don't allow the user to click on "OK."
  */
 static void
-set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
+set_sensitive_if_input_chat_cb(GtkWidget *entry, gpointer user_data)
 {
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnection *gc;
@@ -928,6 +928,21 @@ set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->rq_data.window), 1, sensitive);
+}
+
+static void
+set_sensitive_if_input_buddy_cb(GtkWidget *entry, gpointer user_data)
+{
+	PurplePlugin *prpl;
+	PidginAddBuddyData *data = user_data;
+	const char *text;
+	
+	prpl = purple_find_prpl(purple_account_get_protocol_id(
+		data->rq_data.account));
+	text = gtk_entry_get_text(GTK_ENTRY(entry));
+	
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->rq_data.window),
+		GTK_RESPONSE_OK, purple_validate(prpl, text));
 }
 
 static void
@@ -1093,7 +1108,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 			}
 			pidgin_add_widget_to_vbox(data->rq_data.vbox, pce->label, data->rq_data.sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
-							 G_CALLBACK(set_sensitive_if_input_cb), data);
+							 G_CALLBACK(set_sensitive_if_input_chat_cb), data);
 		}
 
 		/* Do the following for any type of input widget */
@@ -1114,7 +1129,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 	g_hash_table_destroy(defaults);
 
 	/* Set whether the "OK" button should be clickable initially */
-	set_sensitive_if_input_cb(NULL, data);
+	set_sensitive_if_input_chat_cb(NULL, data);
 
 	gtk_widget_show_all(GTK_WIDGET(data->rq_data.vbox));
 }
@@ -7054,6 +7069,7 @@ add_buddy_select_account_cb(GObject *w, PurpleAccount *account,
 		invite_enabled = FALSE;
 
 	gtk_widget_set_sensitive(data->entry_for_invite, invite_enabled);
+	set_sensitive_if_input_buddy_cb(data->entry, data);
 }
 
 static void
@@ -7179,8 +7195,8 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry), TRUE);
 
 	g_signal_connect(G_OBJECT(data->entry), "changed",
-	                 G_CALLBACK(pidgin_set_sensitive_if_input),
-	                 data->rq_data.window);
+	                 G_CALLBACK(set_sensitive_if_input_buddy_cb),
+	                 data);
 
 	data->entry_for_alias = gtk_entry_new();
 	pidgin_add_widget_to_vbox(data->rq_data.vbox, _("(Optional) A_lias:"),
