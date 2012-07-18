@@ -2047,7 +2047,6 @@ static gboolean
 pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 {
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
-	gtk_widget_draw(status_box->vbox, cr);
 	gtk_widget_draw(status_box->toggle_button, cr);
 
 	if (status_box->icon_box && status_box->icon_opaque) {
