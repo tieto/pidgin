@@ -295,7 +295,7 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
 	gboolean username_valid = purple_validate(dialog->plugin,
 		gtk_entry_get_text(entry));
-	
+
 	if (dialog->ok_button) {
 		if (opt_noscreenname && dialog->register_button &&
 			gtk_toggle_button_get_active(
@@ -305,6 +305,7 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 			gtk_widget_set_sensitive(dialog->ok_button,
 				username_valid);
 	}
+
 	if (dialog->register_button) {
 		if (opt_noscreenname)
 			gtk_widget_set_sensitive(dialog->register_button, TRUE);
@@ -350,10 +351,10 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	int opt_noscreenname = (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
 	int register_noscreenname = (opt_noscreenname && register_checked);
-	
-	// get rid of login_label in username field
+
+	/* get rid of login_label in username field */
 	username_focus_cb(dialog->username_entry, NULL, dialog);
-	
+
 	if (register_noscreenname) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
 		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
@@ -362,14 +363,14 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
 	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
 	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
-	
+
 	if (dialog->ok_button) {
 		gtk_widget_set_sensitive(dialog->ok_button,
 			(opt_noscreenname && register_checked) ||
 			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
 				!= '\0');
 	}
-	
+
 	username_nofocus_cb(dialog->username_entry, NULL, dialog);
 }
 
@@ -1294,7 +1295,7 @@ account_register_cb(PurpleAccount *account, gboolean succeeded, void *user_data)
 	{
 		const PurpleSavedStatus *saved_status = purple_savedstatus_get_current();
 		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
-		
+
 		if (saved_status != NULL && purple_account_get_remember_password(account)) {
 			purple_savedstatus_activate_for_account(saved_status, account);
 			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
