@@ -789,14 +789,6 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 
 		/* Makes an icon from the whiteboard's canvas 'image' */
 		pixbuf = gtkwb->pixbuf;
-/*
-		pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-											  (GdkDrawable*)(gtkwb->pixmap),
-											  gdk_drawable_get_colormap(gtkwb->pixmap),
-											  0, 0,
-											  0, 0,
-											  gtkwb->width, gtkwb->height);
-*/
 
 		if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
 			purple_debug_info("gtkwhiteboard", "File Saved...\n");
@@ -818,15 +810,6 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 
 	/* Makes an icon from the whiteboard's canvas 'image' */
 	pixbuf = gtkwb->pixbuf;
-/*
-	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-										  (GdkDrawable*)(gtkwb->pixmap),
-										  gdk_drawable_get_colormap(gtkwb->pixmap),
-										  0, 0,
-										  0, 0,
-										  gtkwb->width, gtkwb->height);
-*/
-
 	gtk_window_set_icon((GtkWindow*)(gtkwb->window), pixbuf);
 }
 
@@ -874,10 +857,6 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 	g_signal_connect(G_OBJECT(gtk_color_selection_dialog_get_color_selection(dialog)),
 	                 "color-changed", G_CALLBACK(change_color_cb), gtkwb);
 
-/*
-	gtk_widget_destroy(dialog->cancel_button);
-	gtk_widget_destroy(dialog->help_button);
-*/
 	g_object_get(G_OBJECT(dialog), "ok-button", &ok_button, NULL);
 
 	g_signal_connect(G_OBJECT(ok_button), "clicked",
