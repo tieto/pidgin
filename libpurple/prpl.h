@@ -467,11 +467,20 @@ struct _PurplePluginProtocolInfo
 	void (*convo_closed)(PurpleConnection *, const char *who);
 
 	/**
-	 *  Convert the username @a who to its canonical form.  (For example,
-	 *  AIM treats "fOo BaR" and "foobar" as the same user; this function
-	 *  should return the same normalized string for both of those.)
+	 * Convert the username @a who to its canonical form. Also checks for
+	 * validity.
+	 *
+	 * For example, AIM treats "fOo BaR" and "foobar" as the same user; this
+	 * function should return the same normalized string for both of those.
+	 * On the other hand, both of these are invalid for protocols with
+	 * number-based usernames, so function should return NULL in such case.
+	 *
+	 * @param account  The account, that username is related with. Can
+	 *                 be NULL.
+	 * @param who      The username to convert.
+	 * @return         Normalized username, or NULL, if it's invalid.
 	 */
-	const char *(*normalize)(const PurpleAccount *, const char *who);
+	const char *(*normalize)(const PurpleAccount *account, const char *who);
 
 	/**
 	 * Set the buddy icon for the given connection to @a img.  The prpl

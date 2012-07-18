@@ -2,16 +2,17 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Yngve Spjeld Landro <l10n@landro.net>, 2011.
+# Translators:
+# Yngve Spjeld Landro <l10n@landro.net>, 2011, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
-"PO-Revision-Date: 2011-07-28 16:21+0000\n"
-"Last-Translator: yslandro <l10n@landro.net>\n"
-"Language-Team: Norwegian Nynorsk (http://www.transifex.net/projects/p/pidgin/"
-"team/nn/)\n"
+"POT-Creation-Date: 2012-07-02 19:15-0700\n"
+"PO-Revision-Date: 2012-06-26 22:28+0000\n"
+"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
+"Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
+"language/nn/)\n"
 "Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2047,56 +2048,8 @@ msgstr "Filoverføringa til %s feila."
 msgid "File transfer from %s failed."
 msgstr "Filoverføringa frå %s feila."
 
-msgid "Run the command in a terminal"
-msgstr "Kjør kommandoen i eit terminalvindauge"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Handteraren av \"aim\"-adresser"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Handteraren av \"gg\"-adresser"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Handteraren av \"icq\"-adresser"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Handteraren av \"irc\"-adresser"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Handteraren av \"msnim\"-adresser"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Handteraren av \"sip\"-adresser"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Handteraren av \"xmpp\"-adresser"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Handteraren av \"ymsgr\"-adresser"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2105,54 +2058,14 @@ msgstr ""
 "Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
 "\"aim\"-adresser."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
-"\"-adresser."
+msgid "The handler for \"aim\" URLs"
+msgstr "Handteraren av \"aim\"-adresser"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"icq\"-adresser."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"irc\"-adresser."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"msnim\"-adresser."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"sip\"-adresser."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"xmpp\"-adresser."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"ymsgr\"-adresser."
+msgid "Run the command in a terminal"
+msgstr "Kjør kommandoen i eit terminalvindauge"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2161,29 +2074,117 @@ msgstr ""
 "Sann dersom kommandoen som skal handtera denne adressetypen bør kjørast i "
 "ein terminal."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"gg\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
+"\"-adresser."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Handteraren av \"gg\"-adresser"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"icq\"-adresser"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"icq\"-adresser."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Handteraren av \"icq\"-adresser"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"irc\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"irc\"-adresser."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Handteraren av \"irc\"-adresser"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"msnim\"-adresser"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"msnim\"-adresser."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Handteraren av \"msnim\"-adresser"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"sip\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"sip\"-adresser."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Handteraren av \"sip\"-adresser"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"xmpp\"-adresser"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"xmpp\"-adresser."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Handteraren av \"xmpp\"-adresser"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"ymsgr\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"ymsgr\"-adresser."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Handteraren av \"ymsgr\"-adresser"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Loggaren har ingen lesefunksjon</font></b>"
@@ -2245,6 +2246,9 @@ msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Det oppstod ein uoppretteleg Farsight2-feil."
+
+msgid "A non-recoverable Farstream error has occurred."
+msgstr "Det oppstod ein uoppretteleg Farstream-feil."
 
 msgid "Error with your microphone"
 msgstr "Mikrofonfeil"
@@ -5831,29 +5835,29 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Meldinga blei ikkje sendt sidan det oppstod ein ukjend feil."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Ein feil oppstod under konverteringa av denne meldinga.\t Kontroller "
-"'Teiknkoding'-valet i kontobehandlararen)"
+"%s (det oppstod ein feil under mottaket av denne meldinga. Klarte ikkje å "
+"endra kodinga frå %s til UTF-8)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(Det oppstod ein feil under mottaket av meldinga. Anten har du og %s vald "
-"ulike teiknkodingar, eller så nyttar %s ein klient med feil i.)"
+"%s (det oppstod ein feil under mottaket av denne meldinga. Teiknkodinga var "
+"%s, som ikkje er gyldig UTF-8)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Ein feil oppstod under konverteringa av denne meldinga.\t Kontroller "
-"'Teiknkoding'-valet i kontobehandlararen)"
+"%s (det oppstod ein feil under mottaket av denne meldinga. Teiknkodinga "
+"mangla og var ikkje gyldig UTF-8)."
 
 msgid "Writing error"
 msgstr "Skrivefeil"
@@ -6959,7 +6963,7 @@ msgstr "Vil du bli med i praten?"
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
-msgstr "%s verkar vera fråkopla. Brukaren fekk ikkje meldinga du nett sendte."
+msgstr "%s verkar vera fråkopla. Brukaren fekk ikkje meldinga du nett sende."
 
 msgid ""
 "Unable to connect to server. Please enter the address of the server to which "
@@ -8273,9 +8277,8 @@ msgstr "Send TEST-melding"
 msgid "Topic:"
 msgstr "Emne:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "Tenaren lukka tilkoplinga"
+msgstr "Kan ikkje kopla til denne kontoen utan ein tenar"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9456,13 +9459,13 @@ msgstr "Terminal"
 
 #, c-format
 msgid "%s sent message to whiteboard. Would you like to open the whiteboard?"
-msgstr "%s sendte ei melding til tavla. Vil du opna ho?"
+msgstr "%s sende ei melding til tavla. Vil du opna ho?"
 
 #, c-format
 msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
-msgstr "%s sendte ei melding til tavla i kanalen %s. Vil du opna tavla?"
+msgstr "%s sende ei melding til tavla i kanalen %s. Vil du opna tavla?"
 
 msgid "Whiteboard"
 msgstr "Tavle"
@@ -10227,7 +10230,7 @@ msgid "SSL Handshake Failed"
 msgstr "SSL-protokollsjekken feila"
 
 msgid "SSL peer presented an invalid certificate"
-msgstr "SSL-tenaren snte eitugldig sertifikat"
+msgstr "SSL-tenaren sende eit ugyldig sertifikat"
 
 msgid "Unknown SSL error"
 msgstr "Ukjend SSL-feil"
@@ -10396,17 +10399,17 @@ msgstr ""
 "Ein feil oppstod under lesinga av %s di. Fila er ikkje blitt lasta og den "
 "gamle fila har fått det nye namnet %s~."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Internett meldingsklient"
+
+msgid "Internet Messenger"
+msgstr "Lynmeldingsklient"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "Prat ved hjelp av lynmeldingar.  Støttar AIM, Google Talk, Jabber/XMPP, MSN, "
 "Yahoo og fleire"
-
-msgid "Internet Messenger"
-msgstr "Lynmeldingsklient"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Internett meldingsklient"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11324,7 +11327,7 @@ msgid "/Options/Enable _Sounds"
 msgstr "/Val/Bruk _lydar"
 
 msgid "/Options/Show Formatting _Toolbars"
-msgstr "/Val/Vis _formateringsverktøya"
+msgstr "/Val/Vis formateringsverktøy_linjene"
 
 msgid "/Options/Show Ti_mestamps"
 msgstr "/Val/Vis _tidsstempel"
@@ -11448,6 +11451,13 @@ msgstr "Ulesne meldingar"
 
 msgid "New Event"
 msgstr "Ny hending"
+
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Kontoen har kopla frå og du er ikkje lenger med i denne praten. Du vil "
+"automatisk bli med igjen når kontoen koplar seg til att."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Tømmer skjermen."
@@ -11820,9 +11830,6 @@ msgstr "Urdu"
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T. M. Thanh og Gnome-Vi-laget"
-
 msgid "Simplified Chinese"
 msgstr "Forenkla kinesisk"
 
@@ -11838,6 +11845,9 @@ msgstr "Amharisk"
 msgid "Lithuanian"
 msgstr "Litauisk"
 
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T. M. Thanh og Gnome-Vi-laget"
+
 #, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
@@ -11847,7 +11857,7 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with "
 "%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s er ein meldingsklient basert på libpurple som er i stand til å kopla seg "
+"%s er ein meldingsklient basert på libpurple. Han er i stand til å kopla seg "
 "opp mot fleire meldingstenester samstundes. %s er skriven i C ved å nytta GTK"
 "+. %s er gjeven ut og kan endrast og vidareformidlast i samsvar med vilkåra "
 "i GPL (utgåve 2 eller seinare). Ein kopi av GPL-avtalen kjem saman med %s. "
@@ -11863,7 +11873,7 @@ msgid ""
 msgstr ""
 "<FONT SIZE=\"4\"><B>Kjekke ressursar</B></FONT><BR>\t<A HREF=\"%s"
 "\">Nettstad</A><BR>\t<A HREF=\"%s\">Ofte stilte spørsmål</A><BR>\tIRC-kanal: "
-"#pidgin on irc.freenode.net<BR>\tXMPP fleirbrukarprat (MUC): "
+"#pidgin på irc.freenode.net<BR>\tXMPP fleirbrukarprat (MUC): "
 "devel@conference.pidgin.im<BR><BR>"
 
 #, c-format
@@ -12534,13 +12544,13 @@ msgid "Incoming Call"
 msgstr "Innkomande samtale"
 
 msgid "_Hold"
-msgstr ""
+msgstr "_Vent"
 
 msgid "_Pause"
 msgstr "_Pause"
 
 msgid "_Mute"
-msgstr ""
+msgstr "_Demp"
 
 #, c-format
 msgid "%s has %d new message."
@@ -13540,11 +13550,11 @@ msgstr "Pidgin-verktøyhint"
 msgid "Pidgin smileys"
 msgstr "Pidgin-smilefjes"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Å velja dette tek vekk bruk av grafiske smilefjes."
-
 msgid "none"
 msgstr "ingen"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Å velja dette tek vekk bruk av grafiske smilefjes."
 
 msgid "Small"
 msgstr "Liten"
@@ -14716,6 +14726,18 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
+msgid "The installer is already running."
+msgstr "Installasjonsprogrammet kjører allereie."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin kjører allereie. Avslutt Pidgin og prøv på nytt."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Neste >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14724,55 +14746,82 @@ msgstr ""
 "$(^Name) er utgjeve i samsvar med vilkåra i GNU General Public License "
 "(GPL). Lisensen blir  berre vist her for å opplysa. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
-"Ei fleirplattform verktøysamling for grafiske brukargrensesnitt, nytta av "
-"Pidgin"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin lynmeldingsklient (påkravd)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Pidgin kjører allereie. Avslutt Pidgin og prøv på nytt."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+-kjøremiljø (krevst om det ikkje allereie er til stades)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Snarvegar"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Skrivebord"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Startmeny"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Lokaliseringar"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgin kjerne- og biblioteksfiler"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Før opp Pidgin i startmenyen"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Snarvegar for å starta Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Lag ein snarveg til Pidgin på skrivebordet"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Før opp Pidgin i startmenyen"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+"Ei fleirplattform verktøysamling for grafiske brukargrensesnitt, nytta av "
+"Pidgin"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Feilsøkingssymbol (for å rapportera krasjar)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Besøk Pidgin sin nettstad"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Klarer ikkje å avinstallera den gjeldande utgåva av Pidgin. Den nye utgåva "
+"vil bli installert utan at den gamle blir fjerna."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin krev eit kompatibelt GTK+-kjøremiljø som no ikkje verkar vera til "
+"stades.$\\rEr du sikker på at du ikkje vil installera GTK+-kjøremiljøet?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Skrivebord"
+msgid "URI Handlers"
+msgstr "Adressehandterarar"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Klarte ikkje å lasta ned GTK+-kjøremiljøet ($R2).$\\rUtan dette vil ikkje "
-"Pidgin verka. Om du prøver igjen og det framleis feilar, kan du kanskje "
-"nytta 'den fråkopla installasjonen' frå http://pidgin.im/download/windows/ ."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Klarte ikkje å installera feilsøkingssymbola ($R2).$\\rOm du prøver igjen og "
-"det framleis feilar, kan du kanskje nytta 'den fråkopla installasjonen' frå "
-"http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Stavekontrollstøtte"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14786,53 +14835,29 @@ msgstr ""
 "developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+-kjøremiljø (krevst om det ikkje allereie er til stades)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Lokaliseringar"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Neste >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin lynmeldingsklient (påkravd)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin krev eit kompatibelt GTK+-kjøremiljø som no ikkje verkar vera til "
-"stades.$\\rEr du sikker på at du ikkje vil installera GTK+-kjøremiljøet?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Snarvegar"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Snarvegar for å starta Pidgin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Stavekontrollstøtte"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Startmeny"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Stavekontrollstøtte (krev internettsamband under installasjonen)."
 
-msgid "The installer is already running."
-msgstr "Installasjonsprogrammet kjører allereie."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Klarte ikkje å installera feilsøkingssymbola ($R2).$\\rOm du prøver igjen og "
+"det framleis feilar, kan du kanskje nytta 'den fråkopla installasjonen' frå "
+"http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Klarte ikkje å lasta ned GTK+-kjøremiljøet ($R2).$\\rUtan dette vil ikkje "
+"Pidgin verka. Om du prøver igjen og det framleis feilar, kan du kanskje "
+"nytta 'den fråkopla installasjonen' frå http://pidgin.im/download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -14841,39 +14866,5 @@ msgstr ""
 "Avinstalleraren fann ingen registerpostar for Pidgin.$\\rDet kan henda at "
 "ein annan brukar installerte programmet."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "Adressehandterarar"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Klarer ikkje å avinstallera den gjeldande utgåva av Pidgin. Den nye utgåva "
-"vil bli installert utan at den gamle blir fjerna."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Besøk Pidgin sin nettstad"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
-
-#~ msgid "No Sametime Community Server specified"
-#~ msgstr "Ingen Sametime felleskapstenar spesifisert"
-
-#~ msgid ""
-#~ "No host or IP address has been configured for the Meanwhile account %s. "
-#~ "Please enter one below to continue logging in."
-#~ msgstr ""
-#~ "Meanwhile-kontoen %s har ingen vert eller IP-adresse knytt til seg. Før "
-#~ "opp ein av desse verdiane for å logga deg på."
-
-#~ msgid "Meanwhile Connection Setup"
-#~ msgstr "Meanwhile tilkoplingsinnstillingar"
-
-#~ msgid "No Sametime Community Server Specified"
-#~ msgstr "Ingen Sametime felleskapstenar spesifisert"
-
-#~ msgid "Connect"
-#~ msgstr "Kopla til"

@@ -3487,6 +3487,28 @@ purple_normalize_nocase(const PurpleAccount *account, const char *str)
 	return buf;
 }
 
+gboolean
+purple_validate(const PurplePlugin *prpl, const char *str)
+{
+	PurplePluginProtocolInfo *prpl_info;
+	const char *normalized;
+
+	g_return_val_if_fail(prpl != NULL, FALSE);
+	g_return_val_if_fail(str != NULL, FALSE);
+
+	if (str[0] == '\0')
+		return FALSE;
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (!prpl_info->normalize)
+		return TRUE;
+
+	normalized = prpl_info->normalize(NULL, str);
+
+	return (NULL != normalized);
+}
+
 gchar *
 purple_strdup_withhtml(const gchar *src)
 {
@@ -3896,9 +3918,9 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 
 #define ADDR_CTRL "A-Za-z0-9.-"
 #define PORT_CTRL "0-9"
-#define PAGE_CTRL "A-Za-z0-9.~_/:*!@&%%?=+^-"
-#define USER_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
-#define PASSWD_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
+#define PAGE_CTRL "A-Za-z0-9.,~_/:*!@&%%?=+^-"
+#define USER_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
+#define PASSWD_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
 
 	g_return_val_if_fail(url != NULL, FALSE);
 

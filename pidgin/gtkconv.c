@@ -1209,9 +1209,9 @@ menu_initiate_media_call_cb(GtkAction *action, gpointer data)
 
 	purple_prpl_initiate_media(account,
 			purple_conversation_get_name(conv),
-			action == win->audio_call ? PURPLE_MEDIA_AUDIO :
-			action == win->video_call ? PURPLE_MEDIA_VIDEO :
-			action == win->audio_video_call ? PURPLE_MEDIA_AUDIO |
+			action == win->menu.audio_call ? PURPLE_MEDIA_AUDIO :
+			action == win->menu.video_call ? PURPLE_MEDIA_VIDEO :
+			action == win->menu.audio_video_call ? PURPLE_MEDIA_AUDIO |
 			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
 }
 #endif
@@ -3354,25 +3354,25 @@ regenerate_media_items(PidginWindow *win)
 				purple_prpl_get_media_caps(account,
 				purple_conversation_get_name(conv));
 
-		gtk_action_set_sensitive(win->audio_call,
+		gtk_action_set_sensitive(win->menu.audio_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO
 				? TRUE : FALSE);
-		gtk_action_set_sensitive(win->video_call,
+		gtk_action_set_sensitive(win->menu.video_call,
 				caps & PURPLE_MEDIA_CAPS_VIDEO
 				? TRUE : FALSE);
-		gtk_action_set_sensitive(win->audio_video_call,
+		gtk_action_set_sensitive(win->menu.audio_video_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 				? TRUE : FALSE);
 	} else if (purple_conversation_get_type(conv)
 			== PURPLE_CONV_TYPE_CHAT) {
 		/* for now, don't care about chats... */
-		gtk_action_set_sensitive(win->audio_call, FALSE);
-		gtk_action_set_sensitive(win->video_call, FALSE);
-		gtk_action_set_sensitive(win->audio_video_call, FALSE);
+		gtk_action_set_sensitive(win->menu.audio_call, FALSE);
+		gtk_action_set_sensitive(win->menu.video_call, FALSE);
+		gtk_action_set_sensitive(win->menu.audio_video_call, FALSE);
 	} else {
-		gtk_action_set_sensitive(win->audio_call, FALSE);
-		gtk_action_set_sensitive(win->video_call, FALSE);
-		gtk_action_set_sensitive(win->audio_video_call, FALSE);
+		gtk_action_set_sensitive(win->menu.audio_call, FALSE);
+		gtk_action_set_sensitive(win->menu.video_call, FALSE);
+		gtk_action_set_sensitive(win->menu.audio_video_call, FALSE);
 	}
 #endif
 }
@@ -3600,13 +3600,13 @@ setup_menubar(PidginWindow *win)
 		                          "/Conversation/ConversationMenu/ViewLog");
 
 #ifdef USE_VV
-	win->audio_call =
+	win->menu.audio_call =
 		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/AudioCall");
-	win->video_call =
+	win->menu.video_call =
 		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/VideoCall");
-	win->audio_video_call =
+	win->menu.audio_video_call =
 		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/AudioVideoCall");
 #endif
@@ -8142,7 +8142,7 @@ account_signing_off(PurpleConnection *gc)
 				purple_conversation_get_account(conv) == account) {
 			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-						"longer in this chat. You will be automatically rejoined in the chat when "
+						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
@@ -9959,10 +9959,6 @@ pidgin_conv_window_destroy(PidginWindow *win)
 {
 	purple_prefs_disconnect_by_handle(win);
 	window_list = g_list_remove(window_list, win);
-
-	/* Close the "Find" dialog if it's open */
-	if (win->dialogs.search)
-		gtk_widget_destroy(win->dialogs.search);
 
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
