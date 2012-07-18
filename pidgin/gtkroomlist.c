@@ -352,7 +352,7 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 #define TOOLTIP_BORDER 12
 
 static gboolean
-pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
+pidgin_roomlist_paint_tooltip(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 	PurpleRoomlist *list = user_data;
 	PidginRoomlist *grl = purple_roomlist_get_ui_data(list);
@@ -360,7 +360,6 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	int current_height, max_width;
 	int max_text_width;
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
-	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(grl->tipwindow));
 
 	style = gtk_widget_get_style(grl->tipwindow);
 
@@ -390,7 +389,6 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 				current_height + grl->tip_name_height,
 				grl->tip_layout);
 	}
-	cairo_destroy(cr);
 
 	return FALSE;
 }

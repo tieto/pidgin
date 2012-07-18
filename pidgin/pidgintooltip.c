@@ -111,7 +111,7 @@ pidgin_tooltip_draw_cb(GtkWidget *widget, cairo_t *cr, gpointer data)
 		gtk_paint_flat_box(gtk_widget_get_style(widget), cr,
 			GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			widget, "tooltip", 0, 0, allocation.width, allocation.height);
-		pidgin_tooltip.paint_tooltip(widget, data);
+		pidgin_tooltip.paint_tooltip(widget, cr, data);
 	}
 	return FALSE;
 }

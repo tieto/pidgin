@@ -2950,10 +2950,9 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 }
 
 static gboolean
-pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
+pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 {
 	GtkStyle *style;
-	cairo_t *cr;
 	int current_height, max_width;
 	int max_text_width;
 	int max_avatar_width;
@@ -2987,7 +2986,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	else
 		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
-	cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
@@ -3071,7 +3069,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + td->padding;
 	}
 
-	cairo_destroy(cr);
 	return FALSE;
 }
 
