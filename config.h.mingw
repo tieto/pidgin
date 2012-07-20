@@ -180,9 +180,6 @@
 /* Define to 1 if you have the `random' function. */
 /* #define HAVE_RANDOM 1 */
 
-/* Define to 1 if you have the <regex.h> header file. */
-/* #define HAVE_REGEX_H 1 */
-
 /* Define to 1 if you have the `setlocale' function. */
 #define HAVE_SETLOCALE 1
 
