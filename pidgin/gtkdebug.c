@@ -1165,7 +1165,8 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	else
 		cat_s = g_strdup_printf("<b>%s:</b> ", category);
 
-	esc_s = g_markup_escape_text(arg_s, -1);
+	tmp = purple_utf8_try_convert(arg_s);
+	esc_s = g_markup_escape_text(tmp, -1);
 
 	s = g_strdup_printf("<font color=\"%s\">%s%s%s</font>",
 						debug_fg_colors[level], ts_s, cat_s, esc_s);
@@ -1173,10 +1174,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	g_free(ts_s);
 	g_free(cat_s);
 	g_free(esc_s);
-
-	tmp = purple_utf8_try_convert(s);
-	g_free(s);
-	s = tmp;
+	g_free(tmp);
 
 	if (level == PURPLE_DEBUG_FATAL) {
 		tmp = g_strdup_printf("<b>%s</b>", s);
