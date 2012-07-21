@@ -234,18 +234,21 @@ regex_match(DebugWindow *win, const gchar *text) {
 		 */
 		do
 		{
-			gint m;
+			gint m, count;
 			gint start_pos, end_pos;
 			GtkTextIter ms, me;
 
 			if (!g_match_info_matches(match_info))
 				break;
 
-			for (m = 0; m < g_match_info_get_match_count(match_info); m++)
-			{
-				if (m == 1)
-					continue;
+			count = g_match_info_get_match_count(match_info);
+			if (count == 1)
+				m = 0;
+			else
+				m = 1;
 
+			for (; m < count; m++)
+			{
 				g_match_info_fetch_pos(match_info, m, &start_pos, &end_pos);
 
 				if (end_pos == -1)
