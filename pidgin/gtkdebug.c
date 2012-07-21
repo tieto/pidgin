@@ -340,7 +340,7 @@ regex_compile(DebugWindow *win) {
 
 	if (win->regex)
 		g_regex_unref(win->regex);
-	win->regex = g_regex_new(text, G_REGEX_EXTENDED | G_REGEX_CASELESS, 0, NULL);
+	win->regex = g_regex_new(text, G_REGEX_CASELESS, 0, NULL);
 	if(win->regex == NULL) {
 		/* failed to compile */
 		regex_change_color(win->expression, 0xFFFF, 0xAFFF, 0xAFFF);
