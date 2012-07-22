@@ -137,9 +137,6 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (url_data != NULL) {
 			yd = purple_connection_get_protocol_data(gc);
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-		} else {
-			g_free(data->who);
-			g_free(data);
 		}
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
