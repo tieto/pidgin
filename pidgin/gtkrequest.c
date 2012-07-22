@@ -341,11 +341,6 @@ text_to_stock(const char *text)
 	return text;
 }
 
-static void stop_emission_cb(GtkDialog *dialog, const gchar *signal_name)
-{
-	gtk_signal_emit_stop_by_name(GTK_OBJECT(dialog), signal_name);
-}
-
 static void *
 pidgin_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
@@ -660,8 +655,6 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	data->dialog = dialog = gtk_dialog_new();
 
 	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
-	g_signal_connect(G_OBJECT(dialog), "close",
-		G_CALLBACK(stop_emission_cb), "close");
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
