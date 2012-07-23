@@ -93,6 +93,8 @@ static void
 pidgin_menu_tray_finalize(GObject *obj)
 {
 #if 0
+	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
+
 	/* This _might_ be leaking, but I have a sneaking suspicion that the widget is
 	 * getting destroyed in GtkContainer's finalize function.  But if were are
 	 * leaking here, be sure to figure out why this causes a crash.
@@ -233,11 +235,6 @@ pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const cha
 void
 pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
-#if !GTK_CHECK_VERSION(2,12,0)
-	if (!menu_tray->tooltips)
-		menu_tray->tooltips = gtk_tooltips_new();
-#endif
-
 	/* Should we check whether widget is a child of menu_tray? */
 
 	/*
@@ -250,10 +247,6 @@ pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const
 	if (!gtk_widget_get_has_window(widget))
 		widget = gtk_widget_get_parent(widget);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, tooltip);
-#else
-	gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
-#endif
 }
 

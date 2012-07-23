@@ -55,7 +55,8 @@ static guint signals[LAST_SIGNAL] = { 0 };
 typedef struct _GtkWebViewPriv {
 	gboolean empty;     /**< whether anything has been appended **/
 
-	/* JS execute queue */
+	/* Processing queues */
+	GQueue *html_queue;
 	GQueue *js_queue;
 	gboolean is_loading;
 
@@ -139,6 +140,29 @@ process_js_script_queue(GtkWebView *webview)
 	g_free(script);
 
 	return TRUE; /* there may be more for now */
+}
+
+static gboolean
+process_html_queue(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	char *html;
+	WebKitDOMDocument *doc;
+	WebKitDOMHTMLElement *body;
+
+	if (priv->is_loading)
+		return FALSE;
+	if (!priv->html_queue || g_queue_is_empty(priv->html_queue))
+		return FALSE;
+
+	html = g_queue_pop_head(priv->html_queue);
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	body = webkit_dom_document_get_body(doc);
+	webkit_dom_html_element_insert_adjacent_html(body, "beforeend", html, NULL);
+	g_free(html);
+	priv->empty = FALSE;
+
+	return TRUE;
 }
 
 static void
@@ -375,6 +399,10 @@ gtk_webview_finalize(GObject *webview)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	gpointer temp;
 
+	while ((temp = g_queue_pop_head(priv->html_queue)))
+		g_free(temp);
+	g_queue_free(priv->html_queue);
+
 	while ((temp = g_queue_pop_head(priv->js_queue)))
 		g_free(temp);
 	g_queue_free(priv->js_queue);
@@ -460,6 +488,7 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
 	priv->empty = TRUE;
+	priv->html_queue = g_queue_new();
 	priv->js_queue = g_queue_new();
 
 	g_signal_connect(webview, "navigation-policy-decision-requested",
@@ -587,16 +616,12 @@ void
 gtk_webview_append_html(GtkWebView *webview, const char *html)
 {
 	GtkWebViewPriv *priv;
-	WebKitDOMDocument *doc;
-	WebKitDOMHTMLElement *body;
 
 	g_return_if_fail(webview != NULL);
 
 	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	body = webkit_dom_document_get_body(doc);
-	webkit_dom_html_element_insert_adjacent_html(body, "beforeend", html, NULL);
-	priv->empty = FALSE;
+	g_queue_push_tail(priv->html_queue, g_strdup(html));
+	g_idle_add((GSourceFunc)process_html_queue, webview);
 }
 
 void

@@ -125,6 +125,9 @@ typedef struct
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
+#define PIDGIN_WINDOW_ICONIFIED(x) \
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & GDK_WINDOW_STATE_ICONIFIED)
+
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;

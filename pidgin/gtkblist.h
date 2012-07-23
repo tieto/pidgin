@@ -104,7 +104,7 @@ struct _PidginBuddyList {
 	PurpleBlistNode *selected_node;    /**< The currently selected node */
 
 	GtkWidget *scrollbook;          /**< Scrollbook for alerts */
-	GtkWidget *headline;            /**< Hbox for headline notification */
+	GtkWidget *headline;            /**< Widget for headline notifications */
 	GtkWidget *headline_label;      /**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
 	GCallback headline_callback;    /**< Callback for headline notifications */
