@@ -130,6 +130,9 @@ typedef struct
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
+#define PIDGIN_WINDOW_ICONIFIED(x) \
+	(gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
+
 #if !GTK_CHECK_VERSION(2,18,0)
 #define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
 #define gtk_widget_has_focus(x) GTK_WIDGET_HAS_FOCUS(x)
