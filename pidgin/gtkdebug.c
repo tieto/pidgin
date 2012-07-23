@@ -74,7 +74,7 @@ typedef struct
 	/* Regex */ \
 	"div.hide{display:none;}" \
 	"span.regex{background-color:#ffafaf;font-weight:bold;}" \
-	"</style></head></html>"
+	"</style></head><body class=l%d></body></html>"
 
 static DebugWindow *debug_win = NULL;
 static guint debug_enabled_timer = 0;
@@ -152,7 +152,13 @@ save_cb(GtkWidget *w, DebugWindow *win)
 static void
 clear_cb(GtkWidget *w, DebugWindow *win)
 {
-	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), EMPTY_HTML);
+	char *tmp;
+	int level;
+
+	level = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel");
+	tmp = g_strdup_printf(EMPTY_HTML, level);
+	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), tmp);
+	g_free(tmp);
 }
 
 static void
@@ -817,7 +823,7 @@ debug_window_new(void)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), EMPTY_HTML);
+	clear_cb(NULL, win);
 
 	gtk_widget_show_all(win->window);
 
