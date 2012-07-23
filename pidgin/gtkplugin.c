@@ -718,10 +718,8 @@ void pidgin_plugin_dialog_show()
 		return;
 	}
 
-	plugin_dialog = gtk_dialog_new_with_buttons(_("Plugins"),
-						    NULL,
-						    0,
-						    NULL);
+	plugin_dialog = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(plugin_dialog), _("Plugins"));
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
