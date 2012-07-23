@@ -42,6 +42,8 @@ struct _PidginWindow
 {
 	GtkWidget *window;           /**< The window.                      */
 	GtkWidget *notebook;         /**< The notebook of conversations.   */
+	GtkWidget *notebook_menu;    /**< The menu on the notebook.        */
+	PidginConversation *clicked_tab; /**< The menu currently clicked.      */
 	GList *gtkconvs;
 
 	struct

@@ -9435,8 +9435,6 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	stop_anim(NULL, gtkconv);
 }
 
-/* TODO: I don't know if this doable in GTK+ 3.0 */
-#if 0
 static void
 close_window(GtkWidget *w, PidginWindow *win)
 {
@@ -9444,17 +9442,16 @@ close_window(GtkWidget *w, PidginWindow *win)
 }
 
 static void
-detach_tab_cb(GtkWidget *w, GObject *menu)
+detach_tab_cb(GtkWidget *w, PidginWindow *win)
 {
-	PidginWindow *win, *new_window;
+	PidginWindow *new_window;
 	PidginConversation *gtkconv;
 
-	gtkconv = g_object_get_data(menu, "clicked_tab");
+	gtkconv = win->clicked_tab;
 
 	if (!gtkconv)
 		return;
 
-	win = pidgin_conv_get_window(gtkconv);
 	/* Nothing to do if there's only one tab in the window */
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
 		return;
@@ -9467,18 +9464,15 @@ detach_tab_cb(GtkWidget *w, GObject *menu)
 }
 
 static void
-close_others_cb(GtkWidget *w, GObject *menu)
+close_others_cb(GtkWidget *w, PidginWindow *win)
 {
 	GList *iter;
 	PidginConversation *gtkconv;
-	PidginWindow *win;
 
-	gtkconv = g_object_get_data(menu, "clicked_tab");
+	gtkconv = win->clicked_tab;
 
 	if (!gtkconv)
 		return;
-
-	win = pidgin_conv_get_window(gtkconv);
 
 	for (iter = pidgin_conv_window_get_gtkconvs(win); iter; )
 	{
@@ -9492,22 +9486,101 @@ close_others_cb(GtkWidget *w, GObject *menu)
 	}
 }
 
-static void close_tab_cb(GtkWidget *w, GObject *menu)
+static void
+close_tab_cb(GtkWidget *w, PidginWindow *win)
 {
 	PidginConversation *gtkconv;
 
-	gtkconv = g_object_get_data(menu, "clicked_tab");
+	gtkconv = win->clicked_tab;
 
 	if (gtkconv)
 		close_conv_cb(NULL, gtkconv);
 }
 
-static gboolean
-right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *win)
+static void
+notebook_menu_switch_cb(GtkWidget *item, GtkWidget *child)
+{
+	GtkNotebook *notebook;
+	int index;
+
+	notebook = GTK_NOTEBOOK(gtk_widget_get_parent(child));
+	index = gtk_notebook_page_num(notebook, child);
+	gtk_notebook_set_current_page(notebook, index);
+}
+
+static void
+notebook_menu_update_label_cb(GtkWidget *child, GParamSpec *pspec,
+                              GtkNotebook *notebook)
 {
 	GtkWidget *item;
+	GtkWidget *label;
+
+	item = g_object_get_data(G_OBJECT(child), "popup-menu-item");
+	label = gtk_bin_get_child(GTK_BIN(item));
+	if (label)
+		gtk_container_remove(GTK_CONTAINER(item), label);
+
+	label = gtk_notebook_get_menu_label(notebook, child);
+	if (label) {
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(item), label);
+		gtk_widget_show(item);
+	} else {
+		gtk_widget_hide(item);
+	}
+}
+
+static void
+notebook_add_tab_to_menu_cb(GtkNotebook *notebook, GtkWidget *child,
+                            guint page_num, PidginWindow *win)
+{
+	GtkWidget *item;
+	GtkWidget *label;
+
+	item = gtk_menu_item_new();
+	label = gtk_notebook_get_menu_label(notebook, child);
+	if (label) {
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(item), label);
+		gtk_widget_show(item);
+	}
+
+	g_signal_connect(child, "child-notify::menu-label",
+	                 G_CALLBACK(notebook_menu_update_label_cb), notebook); 
+	g_signal_connect(item, "activate",
+	                 G_CALLBACK(notebook_menu_switch_cb), child);
+	g_object_set_data(G_OBJECT(child), "popup-menu-item", item);
+
+	gtk_menu_shell_insert(GTK_MENU_SHELL(win->notebook_menu), item, page_num);
+}
+
+static void
+notebook_remove_tab_from_menu_cb(GtkNotebook *notebook, GtkWidget *child,
+                                 guint page_num, PidginWindow *win)
+{
+	GtkWidget *item;
+
+	item = g_object_get_data(G_OBJECT(child), "popup-menu-item");
+	gtk_container_remove(GTK_CONTAINER(win->notebook_menu), item);
+}
+
+
+static void
+notebook_reorder_tab_in_menu_cb(GtkNotebook *notebook, GtkWidget *child,
+                                guint page_num, PidginWindow *win)
+{
+	GtkWidget *item;
+
+	item = g_object_get_data(G_OBJECT(child), "popup-menu-item");
+	gtk_menu_reorder_child(GTK_MENU(win->notebook_menu), item, page_num);
+}
+
+static gboolean
+notebook_right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event,
+                             PidginWindow *win)
+{
+	GtkWidget *menu;
 	PidginConversation *gtkconv;
-	GtkWidget *menu = gtk_notebook_get_menu
 
 	if (event->type != GDK_BUTTON_PRESS || event->button != 3)
 		return FALSE;
@@ -9515,46 +9588,14 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *
 	gtkconv = pidgin_conv_window_get_gtkconv_at_index(win,
 			pidgin_conv_get_tab_at_xy(win, event->x_root, event->y_root, NULL));
 
-	if (g_object_get_data(G_OBJECT(notebook->menu), "clicked_tab"))
-	{
-		g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
-		return FALSE;
-	}
+	win->clicked_tab = gtkconv;
 
-	g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
+	menu = win->notebook_menu;
 
-	menu = notebook->menu;
-	pidgin_separator(GTK_WIDGET(menu));
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
 
-	item = gtk_menu_item_new_with_label(_("Close other tabs"));
-	gtk_widget_show(item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	g_signal_connect(G_OBJECT(item), "activate",
-					G_CALLBACK(close_others_cb), menu);
-
-	item = gtk_menu_item_new_with_label(_("Close all tabs"));
-	gtk_widget_show(item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	g_signal_connect(G_OBJECT(item), "activate",
-					G_CALLBACK(close_window), win);
-
-	pidgin_separator(menu);
-
-	item = gtk_menu_item_new_with_label(_("Detach this tab"));
-	gtk_widget_show(item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	g_signal_connect(G_OBJECT(item), "activate",
-					G_CALLBACK(detach_tab_cb), menu);
-
-	item = gtk_menu_item_new_with_label(_("Close this tab"));
-	gtk_widget_show(item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	g_signal_connect(G_OBJECT(item), "activate",
-					G_CALLBACK(close_tab_cb), menu);
-
-	return FALSE;
+	return TRUE;
 }
-#endif
 
 static void
 remove_edit_entry(PidginConversation *gtkconv, GtkWidget *entry)
@@ -9853,6 +9894,8 @@ pidgin_conv_window_new()
 	GtkPositionType pos;
 	GtkWidget *testidea;
 	GtkWidget *menubar;
+	GtkWidget *menu;
+	GtkWidget *item;
 	GdkModifierType state;
 
 	win = g_malloc0(sizeof(PidginWindow));
@@ -9897,16 +9940,48 @@ pidgin_conv_window_new()
 #endif
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(win->notebook), pos);
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(win->notebook), TRUE);
-	gtk_notebook_popup_enable(GTK_NOTEBOOK(win->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
 	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), TRUE);
 
-	/* TODO: figure out how to add custom stuff to the right-click menu in
-	   GtkNotebook in GTK+ 3.0 */
-#if 0
+	menu = win->notebook_menu = gtk_menu_new();
+
+	pidgin_separator(GTK_WIDGET(menu));
+
+	item = gtk_menu_item_new_with_label(_("Close other tabs"));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_others_cb), win);
+
+	item = gtk_menu_item_new_with_label(_("Close all tabs"));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_window), win);
+
+	pidgin_separator(menu);
+
+	item = gtk_menu_item_new_with_label(_("Detach this tab"));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(detach_tab_cb), win);
+
+	item = gtk_menu_item_new_with_label(_("Close this tab"));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_tab_cb), win);
+
+	g_signal_connect(G_OBJECT(win->notebook), "page-added",
+	                 G_CALLBACK(notebook_add_tab_to_menu_cb), win);
+	g_signal_connect(G_OBJECT(win->notebook), "page-removed",
+	                 G_CALLBACK(notebook_remove_tab_from_menu_cb), win);
+	g_signal_connect(G_OBJECT(win->notebook), "page-reordered",
+	                 G_CALLBACK(notebook_reorder_tab_in_menu_cb), win);
+
 	g_signal_connect(G_OBJECT(win->notebook), "button-press-event",
-					G_CALLBACK(right_click_menu_cb), win);
-#endif
+					G_CALLBACK(notebook_right_click_menu_cb), win);
 
 	gtk_widget_show(win->notebook);
 
@@ -9969,6 +10044,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 		}
 		return;
 	}
+	gtk_widget_destroy(win->notebook_menu);
 	gtk_widget_destroy(win->window);
 
 	g_object_unref(G_OBJECT(win->menu.ui));
