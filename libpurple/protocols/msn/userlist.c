@@ -263,6 +263,7 @@ void
 msn_userlist_remove_user(MsnUserList *userlist, MsnUser *user)
 {
 	userlist->users = g_list_remove(userlist->users, user);
+	g_queue_remove(userlist->buddy_icon_requests, user);
 	msn_user_unref(user);
 }
 

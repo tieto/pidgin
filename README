@@ -6,7 +6,7 @@ libpurple is a library intended to be used by programmers seeking
 to write an IM client that connects to many IM networks.  It supports
 AIM, ICQ, XMPP, MSN and Yahoo!, among others.
 
-Pidgin is an graphical IM client written in C which uses the GTK+
+Pidgin is a graphical IM client written in C which uses the GTK+
 toolkit.
 
 Finch is a text-based IM client written in C which uses the ncurses
@@ -43,7 +43,7 @@ you only need to run 'pidgin' or 'finch'.
 
 To get started, simply add a new account.
 
-If you come across a bug, please report it at: http://pidgin.im
+If you come across a bug, please report it at: http://developer.pidgin.im
 
 PLUGINS
 =======

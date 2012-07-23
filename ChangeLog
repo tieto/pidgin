@@ -47,6 +47,14 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
+	MSN:
+	* Fix a crash when removing a user before its icon is loaded. (Mark
+	  Barfield) (#15217)
+
+	Yahoo!:
+	* Fix a double-free in profile/picture loading code. (Mihai Serban)
+	  (#15053)
+
 version 2.10.6 (07/06/2012):
 	Pidgin:
 	* Fix a bug that requires a triple-click to open a conversation
