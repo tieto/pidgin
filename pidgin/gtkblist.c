@@ -120,6 +120,11 @@ typedef struct
 	PidginMiniDialog *signed_on_elsewhere;
 
 	PidginBlistTheme *current_theme;
+
+	GdkCursor *hand_cursor;         /**< Hand cursor */
+	GdkCursor *arrow_cursor;        /**< Arrow cursor */
+	gboolean changing_style;        /**< True when changing GTK+ theme style */
+
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -5022,16 +5027,18 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 }
 
 static gboolean
-headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
+headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event,
+                      PidginBuddyListPrivate *priv)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
+	gdk_window_set_cursor(widget->window, priv->hand_cursor);
 	return FALSE;
 }
 
 static gboolean
-headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
+headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event,
+                      PidginBuddyListPrivate *priv)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->arrow_cursor);
+	gdk_window_set_cursor(widget->window, priv->arrow_cursor);
 	return FALSE;
 }
 
@@ -5056,14 +5063,14 @@ headline_click_callback(gpointer unused)
 static gboolean
 headline_close_press_cb(GtkButton *button, PidginBuddyList *gtkblist)
 {
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 	return FALSE;
 }
 
 static gboolean
 headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList *gtkblist)
 {
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 	if (gtkblist->headline_callback)
 		g_idle_add(headline_click_callback, NULL);
 	else {
@@ -5542,11 +5549,12 @@ static void
 headline_style_set (GtkWidget *widget,
 		    GtkStyle  *prev_style)
 {
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	GtkStyle *style;
 #if GTK_CHECK_VERSION(2,12,0)
 	GtkWidget *window;
 
-	if (gtkblist->changing_style)
+	if (priv->changing_style)
 		return;
 
 	/* This is a hack needed to use the tooltip background colour */
@@ -5555,13 +5563,13 @@ headline_style_set (GtkWidget *widget,
 	gtk_widget_ensure_style(window);
 	style = gtk_widget_get_style(window);
 
-	gtkblist->changing_style = TRUE;
-	gtk_widget_set_style(gtkblist->headline_hbox, style);
-	gtkblist->changing_style = FALSE;
+	priv->changing_style = TRUE;
+	gtk_widget_set_style(gtkblist->headline, style);
+	priv->changing_style = FALSE;
 
 	gtk_widget_destroy(window);
 
-	gtk_widget_queue_draw(gtkblist->headline_hbox);
+	gtk_widget_queue_draw(gtkblist->headline);
 #else
 	GtkTooltips *tooltips;
 
@@ -5575,9 +5583,9 @@ headline_style_set (GtkWidget *widget,
 	gtk_widget_ensure_style (tooltips->tip_window);
 	style = gtk_widget_get_style (tooltips->tip_window);
 
-	gtkblist->changing_style = TRUE;
-	gtk_widget_set_style (gtkblist->headline_hbox, style);
-	gtkblist->changing_style = FALSE;
+	priv->changing_style = TRUE;
+	gtk_widget_set_style (gtkblist->headline, style);
+	priv->changing_style = FALSE;
 
 	g_object_unref (tooltips);
 #endif
@@ -5941,42 +5949,42 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	ebox = gtk_event_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), ebox, FALSE, FALSE, 0);
-	gtkblist->headline_hbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline_hbox), 6);
-	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline_hbox);
+	gtkblist->headline = gtk_hbox_new(FALSE, 3);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline), 6);
+	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline);
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
 	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.0, 0);
 	gtkblist->headline_label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(gtkblist->headline_label,
 				    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
-	g_signal_connect(gtkblist->headline_label,   /* connecting on headline_hbox doesn't work, because
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_image, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_label, TRUE, TRUE, 0);
+	g_signal_connect(gtkblist->headline_label,   /* connecting on headline doesn't work, because
 	                                                the signal is not emitted when theme is changed */
 			"style-set",
 			 G_CALLBACK(headline_style_set),
 			 NULL);
-	g_signal_connect (gtkblist->headline_hbox,
+	g_signal_connect (gtkblist->headline,
 			  "expose_event",
 			  G_CALLBACK (paint_headline_hbox),
 			  NULL);
-	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
+	gtk_widget_set_name(gtkblist->headline, "gtk-tooltips");
 
-	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
-	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	priv->hand_cursor = gdk_cursor_new (GDK_HAND2);
+	priv->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
 	/* Close button. */
 	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 	close = pidgin_create_small_button(close);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), close, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), close, FALSE, FALSE, 0);
 #if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(close, _("Close"));
 #endif
 	g_signal_connect(close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
 
-	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
-	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), priv);
+	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), priv);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
 
 	/****************************** GtkTreeView **********************************/
@@ -6188,7 +6196,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	                      PURPLE_CALLBACK(conversation_created_cb),
 	                      gtkblist);
 
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 
 	show_initial_account_errors(gtkblist);
 
@@ -6978,12 +6986,13 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_object_unref(G_OBJECT(gtkblist->ui));
 	g_object_unref(G_OBJECT(gtkblist->empty_avatar));
 
-	gdk_cursor_unref(gtkblist->hand_cursor);
-	gdk_cursor_unref(gtkblist->arrow_cursor);
-	gtkblist->hand_cursor = NULL;
-	gtkblist->arrow_cursor = NULL;
-
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+	gdk_cursor_unref(priv->hand_cursor);
+	gdk_cursor_unref(priv->arrow_cursor);
+	priv->hand_cursor = NULL;
+	priv->arrow_cursor = NULL;
+
 	if (priv->current_theme)
 		g_object_unref(priv->current_theme);
 	g_free(priv);
@@ -7471,9 +7480,9 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 	gtkblist->headline_destroy = destroy;
 	if (text != NULL || pixbuf != NULL) {
 		set_urgent();
-		gtk_widget_show_all(gtkblist->headline_hbox);
+		gtk_widget_show_all(gtkblist->headline);
 	} else {
-		gtk_widget_hide(gtkblist->headline_hbox);
+		gtk_widget_hide(gtkblist->headline);
 	}
 }
 
