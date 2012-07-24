@@ -162,6 +162,16 @@ enum {
 static GdkColor *nick_colors = NULL;
 static guint nbr_nick_colors;
 
+/* These probably won't conflict with any WebKit values. */
+#define PIDGIN_DRAG_BLIST_NODE (1337)
+#define PIDGIN_DRAG_IM_CONTACT (31337)
+
+static const GtkTargetEntry dnd_targets[] =
+{
+	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, PIDGIN_DRAG_BLIST_NODE},
+	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
+};
+
 typedef struct {
 	GtkWidget *window;
 
@@ -840,16 +850,15 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 
 static void
 invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
-				GtkSelectionData *sd, guint inf, guint t, gpointer data)
+				GtkSelectionData *sd, guint dnd_info, guint t, gpointer data)
 {
 	InviteBuddyInfo *info = (InviteBuddyInfo *)data;
 	const char *convprotocol;
 	gboolean success = TRUE;
-	GdkAtom target = gtk_selection_data_get_target(sd);
 
 	convprotocol = purple_account_get_protocol_id(purple_conversation_get_account(info->conv));
 
-	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
+	if (dnd_info == PIDGIN_DRAG_BLIST_NODE)
 	{
 		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
@@ -877,7 +886,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		gtk_drag_finish(dc, success,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (target == gdk_atom_intern("application/x-im-contact", FALSE))
+	else if (dnd_info == PIDGIN_DRAG_IM_CONTACT)
 	{
 		char *protocol = NULL;
 		char *username = NULL;
@@ -912,12 +921,6 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
 }
-
-static const GtkTargetEntry dnd_targets[] =
-{
-	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, 0},
-	{"application/x-im-contact", 0, 1}
-};
 
 static void
 invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
@@ -5493,7 +5496,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	GdkAtom target = gtk_selection_data_get_target(sd);
 	const guchar *data = gtk_selection_data_get_data(sd);
 
-	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
+	if (info == PIDGIN_DRAG_BLIST_NODE)
 	{
 		PurpleBlistNode *n = NULL;
 		PurpleBuddy *b;
@@ -5552,7 +5555,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, TRUE,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (target == gdk_atom_intern("application/x-im-contact", FALSE))
+	else if (info == PIDGIN_DRAG_IM_CONTACT)
 	{
 		char *protocol = NULL;
 		char *username = NULL;
@@ -5607,8 +5610,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 static const GtkTargetEntry te[] =
 {
 	GTK_IMHTML_DND_TARGETS,
-	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, GTK_IMHTML_DRAG_NUM},
-	{"application/x-im-contact", 0, GTK_IMHTML_DRAG_NUM + 1}
+	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, PIDGIN_DRAG_BLIST_NODE},
+	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
 };
 
 static PidginConversation *
