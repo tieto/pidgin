@@ -386,7 +386,7 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	                     FALSE, gdk_visual_get_depth(GDK_VISUAL(window)),
 	                     allocation.width, allocation.height);
 #else
-	pix = gdk_pixmap_new(widget->window,
+	pix = gdk_pixmap_new(window,
 	                     allocation.width,
 	                     allocation.height,
 	                     -1);
@@ -395,7 +395,7 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	gtkwb->priv->pix = pix;
 
 #if GTK_CHECK_VERSION(3,0,0)
-	cr = gdk_cairo_create(gtk_widget_get_window(widget));
+	cr = gdk_cairo_create(window);
 #else
 	cr = gdk_cairo_create(GDK_DRAWABLE(pix));
 #endif
@@ -813,8 +813,8 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 		pixbuf = gtkwb->priv->pix;
 #else
 		pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-		                                      (GdkDrawable*)(gtkwb->priv->pixmap),
-		                                      gdk_drawable_get_colormap(gtkwb->priv->pixmap),
+		                                      (GdkDrawable*)(gtkwb->priv->pix),
+		                                      gdk_drawable_get_colormap(gtkwb->priv->pix),
 		                                      0, 0,
 		                                      0, 0,
 		                                      gtkwb->width, gtkwb->height);
@@ -843,8 +843,8 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 	pixbuf = gtkwb->priv->pix;
 #else
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-	                                      (GdkDrawable*)(gtkwb->priv->pixmap),
-	                                      gdk_drawable_get_colormap(gtkwb->priv->pixmap),
+	                                      (GdkDrawable*)(gtkwb->priv->pix),
+	                                      gdk_drawable_get_colormap(gtkwb->priv->pix),
 	                                      0, 0,
 	                                      0, 0,
 	                                      gtkwb->width, gtkwb->height);
