@@ -354,7 +354,7 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 	gchar *name = (gchar *) gtk_selection_data_get_data(sd);
 
 	if ((gtk_selection_data_get_length(sd) >= 0)
-      && (gtk_selection_data_get_format(sd) == 8)) {
+	  && (gtk_selection_data_get_format(sd) == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -379,7 +379,7 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 static void
 statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-                const gchar *themedata, size_t len, const gchar *error_message)
+                  const gchar *themedata, size_t len, const gchar *error_message)
 {
 	FILE *f;
 	gchar *path;
@@ -542,7 +542,7 @@ destroy_icon_box(PidginStatusBox *statusbox)
 
 static void
 pidgin_status_box_set_property(GObject *object, guint param_id,
-                                 const GValue *value, GParamSpec *pspec)
+                               const GValue *value, GParamSpec *pspec)
 {
 	PidginStatusBox *statusbox = PIDGIN_STATUS_BOX(object);
 
@@ -611,7 +611,7 @@ pidgin_status_box_finalize(GObject *obj)
 static GType
 pidgin_status_box_child_type (GtkContainer *container)
 {
-    return GTK_TYPE_WIDGET;
+	return GTK_TYPE_WIDGET;
 }
 
 static void
@@ -1134,7 +1134,7 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_change
 
 static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
 {
-  	pidgin_status_box_popup(PIDGIN_STATUS_BOX(w));
+	pidgin_status_box_popup(PIDGIN_STATUS_BOX(w));
 	return TRUE;
 }
 
@@ -1308,74 +1308,73 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, Pidg
 static void
 pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, int *width, int *height)
 {
-  GdkScreen *screen;
-  gint monitor_num;
-  GdkRectangle monitor;
-  GtkRequisition popup_req;
-  GtkPolicyType hpolicy, vpolicy;
-  GtkAllocation allocation;
+	GdkScreen *screen;
+	gint monitor_num;
+	GdkRectangle monitor;
+	GtkRequisition popup_req;
+	GtkPolicyType hpolicy, vpolicy;
+	GtkAllocation allocation;
 
-  gtk_widget_get_allocation(GTK_WIDGET(status_box), &allocation);
-  gdk_window_get_origin (gtk_widget_get_window(GTK_WIDGET(status_box)), x, y);
+	gtk_widget_get_allocation(GTK_WIDGET(status_box), &allocation);
+	gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(status_box)), x, y);
 
-  *x += allocation.x;
-  *y += allocation.y;
+	*x += allocation.x;
+	*y += allocation.y;
 
-  *width = allocation.width;
+	*width = allocation.width;
 
-  hpolicy = vpolicy = GTK_POLICY_NEVER;
+	hpolicy = vpolicy = GTK_POLICY_NEVER;
 	g_object_set(G_OBJECT(status_box->scrolled_window),
-		"hscrollbar-policy", hpolicy,
-		"vscrollbar-policy", vpolicy,
-		NULL);
-  gtk_widget_size_request (status_box->popup_frame, &popup_req);
+	             "hscrollbar-policy", hpolicy,
+	             "vscrollbar-policy", vpolicy,
+	             NULL);
+	gtk_widget_size_request(status_box->popup_frame, &popup_req);
 
-  if (popup_req.width > *width)
-    {
-      hpolicy = GTK_POLICY_ALWAYS;
-			g_object_set(G_OBJECT(status_box->scrolled_window),
-				"hscrollbar-policy", hpolicy,
-				"vscrollbar-policy", vpolicy,
-				NULL);
-      gtk_widget_size_request (status_box->popup_frame, &popup_req);
-    }
+	if (popup_req.width > *width) {
+		hpolicy = GTK_POLICY_ALWAYS;
+		g_object_set(G_OBJECT(status_box->scrolled_window),
+		             "hscrollbar-policy", hpolicy,
+		             "vscrollbar-policy", vpolicy,
+		             NULL);
+		gtk_widget_size_request(status_box->popup_frame, &popup_req);
+	}
 
-  *height = popup_req.height;
+	*height = popup_req.height;
 
-  screen = gtk_widget_get_screen (GTK_WIDGET (status_box));
-  monitor_num = gdk_screen_get_monitor_at_window (screen,
-						  gtk_widget_get_window(GTK_WIDGET (status_box)));
-  gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+	screen = gtk_widget_get_screen(GTK_WIDGET(status_box));
+	monitor_num = gdk_screen_get_monitor_at_window(screen,
+							gtk_widget_get_window(GTK_WIDGET(status_box)));
+	gdk_screen_get_monitor_geometry(screen, monitor_num, &monitor);
 
-  if (*x < monitor.x)
-    *x = monitor.x;
-  else if (*x + *width > monitor.x + monitor.width)
-    *x = monitor.x + monitor.width - *width;
+	if (*x < monitor.x)
+		*x = monitor.x;
+	else if (*x + *width > monitor.x + monitor.width)
+		*x = monitor.x + monitor.width - *width;
 
-  if (*y + allocation.height + *height <= monitor.y + monitor.height)
-	  *y += allocation.height;
-  else if (*y - *height >= monitor.y)
-	  *y -= *height;
-  else if (monitor.y + monitor.height - (*y + allocation.height) > *y - monitor.y)
-    {
-	    *y += allocation.height;
-	    *height = monitor.y + monitor.height - *y;
-    }
-  else
-    {
-	    *height = *y - monitor.y;
-	    *y = monitor.y;
-    }
+	if (*y + allocation.height + *height <= monitor.y + monitor.height)
+		*y += allocation.height;
+	else if (*y - *height >= monitor.y)
+		*y -= *height;
+	else if (monitor.y + monitor.height - (*y + allocation.height) > *y - monitor.y)
+	{
+		*y += allocation.height;
+		*height = monitor.y + monitor.height - *y;
+	}
+	else
+	{
+		*height = *y - monitor.y;
+		*y = monitor.y;
+	}
 
-  if (popup_req.height > *height)
-    {
-      vpolicy = GTK_POLICY_ALWAYS;
+	if (popup_req.height > *height)
+	{
+		vpolicy = GTK_POLICY_ALWAYS;
 
-			g_object_set(G_OBJECT(status_box->scrolled_window),
-				"hscrollbar-policy", hpolicy,
-				"vscrollbar-policy", vpolicy,
-				NULL);
-    }
+		g_object_set(G_OBJECT(status_box->scrolled_window),
+		             "hscrollbar-policy", hpolicy,
+		             "vscrollbar-policy", vpolicy,
+		             NULL);
+	}
 }
 
 static gboolean
@@ -2078,7 +2077,7 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 		gtk_widget_size_allocate(status_box->icon_box, &icon_alc);
 	}
 	gtk_widget_size_allocate(status_box->toggle_button, &parent_alc);
-  	gtk_widget_set_allocation(GTK_WIDGET(status_box), allocation);
+	gtk_widget_set_allocation(GTK_WIDGET(status_box), allocation);
 }
 
 #if GTK_CHECK_VERSION(3,0,0)
