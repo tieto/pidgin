@@ -45,6 +45,8 @@
 #include "gtkdocklet.h"
 #include "gtkdialogs.h"
 
+#include "gtk3compat.h"
+
 #ifndef DOCKLET_TOOLTIP_LINE_LIMIT
 #define DOCKLET_TOOLTIP_LINE_LIMIT 5
 #endif
@@ -104,11 +106,13 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 		gtk_status_icon_set_from_icon_name(docklet, icon_name);
 	}
 
+#if !GTK_CHECK_VERSION(3,0,0)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
 		gtk_status_icon_set_blinking(docklet, (pending && !connecting));
 	} else if (gtk_status_icon_get_blinking(docklet)) {
 		gtk_status_icon_set_blinking(docklet, FALSE);
 	}
+#endif
 }
 
 static GList *
@@ -196,7 +200,7 @@ docklet_update_status(void)
 		if (tooltip_text->len > 0)
 			tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len - 1);
 
-		gtk_status_icon_set_tooltip(docklet, tooltip_text->str);
+		gtk_status_icon_set_tooltip_text(docklet, tooltip_text->str);
 
 		g_string_free(tooltip_text, TRUE);
 		g_list_free(convs);
@@ -204,7 +208,7 @@ docklet_update_status(void)
 	} else {
 		char *tooltip_text = g_strconcat(PIDGIN_NAME, " - ",
 			purple_savedstatus_get_title(saved_status), NULL);
-		gtk_status_icon_set_tooltip(docklet, tooltip_text);
+		gtk_status_icon_set_tooltip_text(docklet, tooltip_text);
 		g_free(tooltip_text);
 	}
 
@@ -328,19 +332,23 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute",
+	                      gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static void
 docklet_toggle_blink(GtkWidget *toggle, void *data)
 {
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/blink",
+	                      gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
 }
+#endif
 
 static void
 docklet_toggle_blist(GtkWidget *toggle, void *data)
 {
-	purple_blist_set_visible(GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_blist_set_visible(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
 }
 
 #ifdef _WIN32
@@ -606,7 +614,7 @@ docklet_status_submenu(void)
 
 
 static void
-plugin_act(GtkObject *obj, PurplePluginAction *pam)
+plugin_act(GtkWidget *widget, PurplePluginAction *pam)
 {
 	if (pam && pam->callback)
 		pam->callback(pam);
@@ -748,10 +756,12 @@ docklet_menu(void)
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Blink on New Message"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+#endif
 
 	pidgin_separator(menu);
 

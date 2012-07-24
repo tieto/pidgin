@@ -53,11 +53,13 @@ typedef gboolean (*PidginTooltipCreate)(GtkWidget *tipwindow,
 
 /**
  * @param  tipwindow   The window for the tooltip.
+ * @param  cr          The cairo context for drawing.
  * @param  userdata    The userdata set during pidgin_tooltip_setup_for_treeview or pidgin_tooltip_show.
  *
  * @return  @c TRUE if the tooltip was painted correctly, @c FALSE otherwise.
  */
-typedef gboolean (*PidginTooltipPaint)(GtkWidget *tipwindow, gpointer userdata);
+typedef gboolean (*PidginTooltipPaint)(GtkWidget *tipwindow, cairo_t *cr,
+			gpointer userdata);
 
 G_BEGIN_DECLS
 

@@ -39,6 +39,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "gtk3compat.h"
+
 typedef struct
 {
 	GtkWidget *window;
@@ -108,11 +110,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	if (gtk_widget_get_visible(w)) {
-#else
-	if (GTK_WIDGET_VISIBLE(w)) {
-#endif
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/height", event->height);
 	}
@@ -511,12 +509,8 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
-	if(e->keyval == GDK_Return &&
-#if GTK_CHECK_VERSION(2,18,0)
+	if(e->keyval == GDK_KEY_Return &&
 	   gtk_widget_is_sensitive(win->filter) &&
-#else
-	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
-#endif
 	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 	{
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);
@@ -689,22 +683,14 @@ debug_window_new(void)
 		/* Save */
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
 		gtk_tool_item_set_is_important(item, TRUE);
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Save"));
-#else
-		gtk_tool_item_set_tooltip(item, tooltips, _("Save"), NULL);
-#endif
 		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(save_cb), win);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* Clear button */
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_CLEAR);
 		gtk_tool_item_set_is_important(item, TRUE);
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Clear"));
-#else
-		gtk_tool_item_set_tooltip(item, tooltips, _("Clear"), NULL);
-#endif
 		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(clear_cb), win);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
@@ -714,11 +700,7 @@ debug_window_new(void)
 		/* Pause */
 		item = gtk_toggle_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
 		gtk_tool_item_set_is_important(item, TRUE);
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Pause"));
-#else
-		gtk_tool_item_set_tooltip(item, tooltips, _("Pause"), NULL);
-#endif
 		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(pause_cb), win);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
@@ -731,11 +713,7 @@ debug_window_new(void)
 		gtk_tool_item_set_is_important(item, TRUE);
 		win->filter = GTK_WIDGET(item);
 		gtk_tool_button_set_label(GTK_TOOL_BUTTON(win->filter), _("Filter"));
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(win->filter), _("Filter"));
-#else
-		gtk_tooltips_set_tip(tooltips, win->filter, _("Filter"), NULL);
-#endif
 		g_signal_connect(G_OBJECT(win->filter), "clicked", G_CALLBACK(regex_filter_toggled_cb), win);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(win->filter));
 
@@ -753,11 +731,7 @@ debug_window_new(void)
 		/* regex entry */
 		win->expression = gtk_entry_new();
 		item = gtk_tool_item_new();
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(win->expression, _("Right click for more options."));
-#else
-		gtk_tooltips_set_tip(tooltips, win->expression, _("Right click for more options."), NULL);
-#endif
 		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
@@ -791,22 +765,18 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(item), gtk_label_new(_("Level ")));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		win->filterlevel = gtk_combo_box_new_text();
+		win->filterlevel = gtk_combo_box_text_new();
 		item = gtk_tool_item_new();
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(win->filterlevel, _("Select the debug filter level."));
-#else
-		gtk_tooltips_set_tip(tooltips, win->filterlevel, _("Select the debug filter level."), NULL);
-#endif
 		gtk_container_add(GTK_CONTAINER(item), win->filterlevel);
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("All"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Misc"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Info"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Warning"));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Error "));
-		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Fatal Error"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("All"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Misc"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Info"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Warning"));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Error "));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(win->filterlevel), _("Fatal Error"));
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel),
 					purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"));
 

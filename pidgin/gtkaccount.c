@@ -48,6 +48,8 @@
 #include "pidginstock.h"
 #include "minidialog.h"
 
+#include "gtk3compat.h"
+
 enum
 {
 	COLUMN_ICON,
@@ -406,9 +408,11 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	gchar *name = (gchar *)sd->data;
+	const gchar *name = (gchar *)gtk_selection_data_get_data(sd);
+	gint length = gtk_selection_data_get_length(sd);
+	gint format = gtk_selection_data_get_format(sd);
 
-	if ((sd->length >= 0) && (sd->format == 8)) {
+	if ((length >= 0) && (format == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -481,11 +485,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->protocol_menu != NULL)
 	{
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 		hbox = g_object_get_data(G_OBJECT(dialog->protocol_menu), "container");
 		gtk_container_remove(GTK_CONTAINER(hbox), dialog->protocol_menu);
 	}
@@ -512,21 +512,13 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	{
 		dialog->protocol_menu = pidgin_protocol_option_menu_new(
 				dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 	}
 
 	hbox = add_pref_box(dialog, vbox, _("Pro_tocol:"), dialog->protocol_menu);
 	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	g_object_unref(G_OBJECT(dialog->protocol_menu));
-#else
-	gtk_widget_unref(dialog->protocol_menu);
-#endif
 
 	/* Username */
 	dialog->username_entry = gtk_entry_new();
@@ -1086,7 +1078,7 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
 		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
-		gtk_widget_hide_all(dialog->proxy_vbox);
+		gtk_widget_hide(dialog->proxy_vbox);
 	}
 	else
 		gtk_widget_show_all(dialog->proxy_vbox);
@@ -1812,7 +1804,9 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
+	GdkAtom target = gtk_selection_data_get_target(data);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
@@ -1883,13 +1877,16 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && data) {
 		gint dest_index;
 		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
-		memcpy(&a, sd->data, sizeof(a));
+		memcpy(&a, data, sizeof(a));
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
 											  &path, &position)) {
@@ -2392,7 +2389,11 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
+#if GTK_CHECK_VERSION(3,0,0)
+	dialog->window = win = pidgin_create_dialog(_("Accounts"), 0, "accounts", TRUE);
+#else
 	dialog->window = win = pidgin_create_dialog(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

@@ -42,22 +42,16 @@
 #ifdef ENABLE_GCR
 #define GCR_API_SUBJECT_TO_CHANGE
 #include <gcr/gcr.h>
+#if !GTK_CHECK_VERSION(3,0,0)
 #include <gcr/gcr-simple-certificate.h>
 #endif
+#endif
 
-#if !GTK_CHECK_VERSION(2,18,0)
-#define gtk_widget_set_can_default(x,y) do {\
-	if (y) \
-		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_DEFAULT); \
-	else \
-		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_DEFAULT); \
-} while(0)
-#define gtk_widget_set_can_focus(x,y) do {\
-	if (y) \
-		GTK_WIDGET_SET_FLAGS(x, GTK_CAN_FOCUS); \
-	else \
-		GTK_WIDGET_UNSET_FLAGS(x, GTK_CAN_FOCUS); \
-} while(0)
+#include "gtk3compat.h"
+
+#if !GTK_CHECK_VERSION(2,12,0)
+#undef gtk_widget_set_tooltip_text
+#define gtk_widget_set_tooltip_text(x,y)
 #endif
 
 static GtkWidget * create_account_field(PurpleRequestField *field);
@@ -107,9 +101,6 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 {
 	GtkWidget *image;
 	GdkPixbuf *pixbuf;
-#if !GTK_CHECK_VERSION(2,12,0)
-	GtkTooltips *tips;
-#endif
 
 	if (!account)
 		return;
@@ -118,16 +109,13 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(image, purple_account_get_username(account));
-#else
-	tips = gtk_tooltips_new();
-	gtk_tooltips_set_tip(tips, image, purple_account_get_username(account), NULL);
-#endif
 
 	if (GTK_IS_DIALOG(cont)) {
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(cont)->action_area), image, FALSE, TRUE, 0);
-		gtk_box_reorder_child(GTK_BOX(GTK_DIALOG(cont)->action_area), image, 0);
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
+	                       image, FALSE, TRUE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
+	                          image, 0);
 	} else if (GTK_IS_HBOX(cont)) {
 		gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
 		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
@@ -284,11 +272,7 @@ multifield_ok_cb(GtkWidget *button, PidginRequestData *data)
 {
 	generic_response_start(data);
 
-#if GTK_CHECK_VERSION(2,18,0)
 	if (!gtk_widget_has_focus(button))
-#else
-	if (!GTK_WIDGET_HAS_FOCUS(button))
-#endif
 		gtk_widget_grab_focus(button);
 
 	if (data->cbs[0] != NULL)
@@ -384,18 +368,18 @@ pidgin_request_input(const char *title, const char *primary,
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BORDER / 2);
 	if (!multiline)
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                  hbox);
 
 	/* Dialog icon. */
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
@@ -553,16 +537,16 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                  hbox);
 
 	/* Dialog icon. */
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
@@ -677,16 +661,16 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                  hbox);
 
 	/* Dialog icon. */
 	if (icon_data) {
@@ -896,9 +880,7 @@ create_string_field(PurpleRequestField *field)
 			gtk_text_buffer_set_text(buffer, value, -1);
 		}
 
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(textview, purple_request_field_get_tooltip(field));
-#endif
 
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
 			purple_request_field_string_is_editable(field));
@@ -924,9 +906,7 @@ create_string_field(PurpleRequestField *field)
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(widget), value);
 
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 		if (purple_request_field_string_is_masked(field))
 		{
@@ -968,9 +948,7 @@ create_int_field(PurpleRequestField *field)
 		gtk_entry_set_text(GTK_ENTRY(widget), buf);
 	}
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 	g_signal_connect(G_OBJECT(widget), "focus-out-event",
 					 G_CALLBACK(field_int_focus_out_cb), field);
@@ -986,9 +964,7 @@ create_bool_field(PurpleRequestField *field)
 	widget = gtk_check_button_new_with_label(
 		purple_request_field_get_label(field));
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
 		purple_request_field_bool_get_default_value(field));
@@ -1009,20 +985,18 @@ create_choice_field(PurpleRequestField *field)
 
 	if (num_labels > 5)
 	{
-		widget = gtk_combo_box_new_text();
+		widget = gtk_combo_box_text_new();
 
 		for (l = labels; l != NULL; l = l->next)
 		{
 			const char *text = l->data;
-			gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
+			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
 		}
 
 		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
 						purple_request_field_choice_get_default_value(field));
 
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
@@ -1041,9 +1015,7 @@ create_choice_field(PurpleRequestField *field)
 
 		widget = box;
 
-#if GTK_CHECK_VERSION(2,12,0)
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 		for (l = labels, i = 0; l != NULL; l = l->next, i++)
 		{
@@ -1087,9 +1059,7 @@ create_image_field(PurpleRequestField *field)
 	g_object_unref(G_OBJECT(buf));
 	g_object_unref(G_OBJECT(scale));
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 	return widget;
 }
@@ -1106,9 +1076,7 @@ create_account_field(PurpleRequestField *field)
 		purple_request_field_account_get_filter(field),
 		field);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-#endif
 
 	return widget;
 }

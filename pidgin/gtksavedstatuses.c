@@ -41,6 +41,8 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
+#include "gtk3compat.h"
+
 /*
  * TODO: Should attach to the account-deleted and account-added signals
  *       and update the GtkListStores in any StatusEditor windows that
@@ -524,11 +526,7 @@ create_saved_status_list(StatusWindow *dialog)
 static gboolean
 configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	if (gtk_widget_get_visible(widget))
-#else
-	if (GTK_WIDGET_VISIBLE(widget))
-#endif
 	{
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/height", event->height);

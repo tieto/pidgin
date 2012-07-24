@@ -372,6 +372,9 @@ AC_ARG_WITH(x, [],
 AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
+AC_ARG_WITH(gtk, [AC_HELP_STRING([--with-gtk=<version>],
+		[compile with GTK+ 2 or 3 user interface (default: auto)])],
+	with_gtk="$withval", with_gtk="auto")
 AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
@@ -428,15 +431,35 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
-
+	if test "x$with_gtk" = "x3"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+You must have GTK+ 3.0.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	elif test "x$with_gtk" = "x2"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
 You must have GTK+ 2.10.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
-
+	elif test "x$with_gtk" = "xauto"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
+			AC_MSG_RESULT(no)
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], [with_gtk=2], [
+				AC_MSG_RESULT(no)
+				AC_MSG_ERROR([
+You must have GTK+ 2.10.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])])
+	else
+		AC_MSG_ERROR([--with-gtk must specify one of 2, 3 or auto.])
+	fi
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
@@ -444,13 +467,23 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
-	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
+	if test "x$with_gtk" = "x3"; then
+		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= 1.1.1], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
 You must have WebKit 1.1.1 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
+	else
+		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+You must have WebKit 1.1.1 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	fi
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 
@@ -565,6 +598,10 @@ Use --disable-sm if you do not need session management support.
 	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
+	dnl GtkSpell is not GTK+3 compatible yet
+	if test "x$with_gtk" = "x3"; then
+		enable_gtkspell="no"
+	fi
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
@@ -629,16 +666,29 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 	dnl # Check for GCR for its certificate widgets
 	dnl #######################################################################
 	if test "x$enable_gcr" = "xyes"; then
-		PKG_CHECK_MODULES(GCR, gcr-0, [
-			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
-			AC_MSG_RESULT(no)
-			enable_gcr="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
+		if test "x$with_gtk" = "x3"; then
+			PKG_CHECK_MODULES(GCR, gcr-3, [
+				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+				AC_MSG_RESULT(no)
+				enable_gcr="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
 GCR development headers not found.
 Use --disable-gcr if you do not need GCR certificate widgets.
 ])
-			fi])
+				fi])
+		else
+			PKG_CHECK_MODULES(GCR, gcr-0, [
+				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+				AC_MSG_RESULT(no)
+				enable_gcr="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
+GCR development headers not found.
+Use --disable-gcr if you do not need GCR certificate widgets.
+])
+				fi])
+		fi
 	fi
 
 
@@ -2589,7 +2639,10 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Build GTK+ 2.x UI............. : $enable_gtkui
+echo Build GTK+ UI................. : $enable_gtkui
+if test "x$enable_gtkui" = "xyes"; then
+	echo Build for GTK+ version........ : $with_gtk
+fi
 echo Build console UI.............. : $enable_consoleui
 echo Build for X11................. : $with_x
 echo
