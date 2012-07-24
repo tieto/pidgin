@@ -48,6 +48,7 @@ static GtkTooltips *tooltips = NULL;
 /******************************************************************************
  * Item Stuff
  *****************************************************************************/
+#if GTK_CHECK_VERSION(3,0,0)
 static void
 pidgin_menu_tray_select(GtkMenuItem *widget) {
 	/* this may look like nothing, but it's really overriding the
@@ -62,6 +63,21 @@ pidgin_menu_tray_deselect(GtkMenuItem *widget) {
 	 * overridding the select, so it makes sense to override deselect as well.
 	 */
 }
+#else
+static void
+pidgin_menu_tray_select(GtkItem *widget) {
+	/* this may look like nothing, but it's really overriding the
+	 * GtkMenuItem's select function so that it doesn't get highlighted like
+	 * a normal menu item would.
+	 */
+}
+static void
+pidgin_menu_tray_deselect(GtkItem *widget) {
+	/* Probably not necessary, but I'd rather be safe than sorry.  We're
+	 * overridding the select, so it makes sense to override deselect as well.
+	 */
+}
+#endif
 
 /******************************************************************************
  * Widget Stuff
@@ -126,7 +142,11 @@ pidgin_menu_tray_finalize(GObject *obj)
 static void
 pidgin_menu_tray_class_init(PidginMenuTrayClass *klass) {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+#if GTK_CHECK_VERSION(3,0,0)
 	GtkMenuItemClass *menu_item_class = GTK_MENU_ITEM_CLASS(klass);
+#else
+	GtkItemClass *menu_item_class = GTK_ITEM_CLASS(klass);
+#endif
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
 	GParamSpec *pspec;
 
