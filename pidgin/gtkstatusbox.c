@@ -1981,9 +1981,11 @@ pidgin_status_box_size_request(GtkWidget *widget,
 	requisition->height += border_width * 2;
 
 	/* If the gtkimhtml is visible, then add some additional padding */
-	gtk_widget_size_request(PIDGIN_STATUS_BOX(widget)->vbox, &box_req);
-	if (box_req.height > 1)
-		requisition->height += box_req.height + border_width * 2;
+	if (PIDGIN_STATUS_BOX(widget)->imhtml_visible) {
+		gtk_widget_size_request(PIDGIN_STATUS_BOX(widget)->vbox, &box_req);
+		if (box_req.height > 1)
+			requisition->height += box_req.height + border_width * 2;
+	}
 
 	requisition->width = 1;
 }
