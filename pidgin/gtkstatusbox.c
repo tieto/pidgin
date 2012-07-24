@@ -1380,15 +1380,14 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 
 static gboolean
 popup_grab_on_window (GdkWindow *window,
-		      guint32    activate_time,
-		      gboolean   grab_keyboard)
+		      guint32    activate_time)
 {
 	if ((gdk_pointer_grab (window, TRUE,
 			 GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
 			 GDK_POINTER_MOTION_MASK,
 			 NULL, NULL, activate_time) == 0))
 	{
-		if (!grab_keyboard || gdk_keyboard_grab (window, TRUE, activate_time) == 0)
+		if (gdk_keyboard_grab (window, TRUE, activate_time) == 0)
 			return TRUE;
 		else {
 			gdk_display_pointer_ungrab (gdk_window_get_display (window), activate_time);
@@ -1411,7 +1410,7 @@ pidgin_status_box_popup(PidginStatusBox *box)
 	gtk_widget_show(box->popup_window);
 	gtk_widget_grab_focus (box->tree_view);
 	if (!popup_grab_on_window (gtk_widget_get_window(box->popup_window),
-				   GDK_CURRENT_TIME, TRUE)) {
+				   GDK_CURRENT_TIME)) {
 		gtk_widget_hide (box->popup_window);
 		return;
 	}
@@ -1435,6 +1434,8 @@ pidgin_status_box_popdown(PidginStatusBox *box)
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
 				      FALSE);
 	gtk_grab_remove (box->popup_window);
+	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
 }
 
 static gboolean
