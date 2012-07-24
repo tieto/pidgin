@@ -545,24 +545,42 @@ gtk_imhtml_set_link_color(GtkIMHtml *imhtml, GtkTextTag *tag)
 	}
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static gboolean
+gtk_imhtml_tip_paint(GtkIMHtml *imhtml, cairo_t *cr, GtkWidget *w)
+#else
 static gint
-gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
+gtk_imhtml_tip_paint(GtkIMHtml *imhtml, GdkEvent *event, GtkWidget *w)
+#endif
 {
 	PangoLayout *layout;
-	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(imhtml->tip_window));
+	GtkStyle *style;
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
+	style = gtk_widget_get_style(imhtml->tip_window);
 
-	gtk_paint_flat_box (gtk_widget_get_style(imhtml->tip_window), cr,
-		GTK_STATE_NORMAL, GTK_SHADOW_OUT, imhtml->tip_window, "tooltip",
-		0, 0, -1, -1);
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_paint_flat_box(style, cr,
+	                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+	                   imhtml->tip_window, "tooltip",
+	                   0, 0, -1, -1);
 
-	gtk_paint_layout (gtk_widget_get_style(imhtml->tip_window), cr,
-		GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
+	gtk_paint_layout(style, cr,
+	                 GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL,
+	                 4, 4, layout);
+#else
+	gtk_paint_flat_box(style, gtk_widget_get_window(imhtml->tip_window),
+	                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+	                   NULL, imhtml->tip_window,
+	                   "tooltip", 0, 0, -1, -1);
 
-	cairo_destroy(cr);
+	gtk_paint_layout(style, gtk_widget_get_window(imhtml->tip_window),
+	                 GTK_STATE_NORMAL, FALSE, NULL, imhtml->tip_window, NULL,
+	                 4, 4, layout);
+#endif
+
 	g_object_unref(layout);
 	return FALSE;
 }
@@ -600,8 +618,13 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
 		GDK_WINDOW_TYPE_HINT_TOOLTIP);
-	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
-							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
+#if GTK_CHECK_VERSION(3,0,0)
+	g_signal_connect_swapped(G_OBJECT(imhtml->tip_window), "draw",
+	                         G_CALLBACK(gtk_imhtml_tip_paint), imhtml);
+#else
+	g_signal_connect_swapped(G_OBJECT(imhtml->tip_window), "expose_event",
+	                         G_CALLBACK(gtk_imhtml_tip_paint), imhtml);
+#endif
 
 	gtk_widget_ensure_style (imhtml->tip_window);
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
