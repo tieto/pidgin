@@ -2036,7 +2036,7 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 				  GtkAllocation *allocation)
 {
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
-	GtkRequisition req = {0,40/*FIXME: Why not 0?*/};
+	GtkRequisition req = {0,0};
 	GtkAllocation parent_alc, box_alc, icon_alc;
 	gint border_width = gtk_container_get_border_width(GTK_CONTAINER (widget));
 
