@@ -59,7 +59,6 @@ static PurpleStatusPrimitive status = PURPLE_STATUS_OFFLINE;
 static gboolean pending = FALSE;
 static gboolean connecting = FALSE;
 static gboolean enable_join_chat = FALSE;
-static guint docklet_blinking_timer = 0;
 static gboolean visible = FALSE;
 static gboolean visibility_manager = FALSE;
 
@@ -104,27 +103,6 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 	if (icon_name) {
 		gtk_status_icon_set_from_icon_name(docklet, icon_name);
 	}
-}
-
-static gboolean
-docklet_blink_icon(gpointer data)
-{
-	static gboolean blinked = FALSE;
-	gboolean ret = FALSE; /* by default, don't keep blinking */
-
-	blinked = !blinked;
-
-	if(pending && !connecting) {
-		if (!blinked) {
-			docklet_gtk_status_update_icon(status, connecting, pending);
-		}
-		ret = TRUE; /* keep blinking */
-	} else {
-		docklet_blinking_timer = 0;
-		blinked = FALSE;
-	}
-
-	return ret;
 }
 
 static GList *
@@ -818,10 +796,6 @@ pidgin_docklet_remove(void)
 		if (visibility_manager) {
 			pidgin_blist_visibility_manager_remove();
 			visibility_manager = FALSE;
-		}
-		if (docklet_blinking_timer) {
-			g_source_remove(docklet_blinking_timer);
-			docklet_blinking_timer = 0;
 		}
 		visible = FALSE;
 		status = PURPLE_STATUS_OFFLINE;

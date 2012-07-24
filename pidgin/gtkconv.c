@@ -1134,7 +1134,6 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 	PurpleConversation *conv;
 	PurpleLogType type;
 	PidginBuddyList *gtkblist;
-	GdkCursor *cursor;
 	const char *name;
 	PurpleAccount *account;
 	GSList *buddies;
@@ -1151,10 +1150,8 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
-	cursor = gdk_cursor_new(GDK_WATCH);
-	gdk_window_set_cursor(gtk_widget_get_window(gtkblist->window), cursor);
-	gdk_window_set_cursor(gtk_widget_get_window(win->window), cursor);
-	gdk_cursor_unref(cursor);
+	pidgin_set_cursor(gtkblist->window, GDK_WATCH);
+	pidgin_set_cursor(win->window, GDK_WATCH);
 
 	name = purple_conversation_get_name(conv);
 	account = purple_conversation_get_account(conv);
@@ -1167,8 +1164,8 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 		{
 			pidgin_log_show_contact((PurpleContact *)node->parent);
 			g_slist_free(buddies);
-			gdk_window_set_cursor(gtk_widget_get_window(gtkblist->window), NULL);
-			gdk_window_set_cursor(gtk_widget_get_window(win->window), NULL);
+			pidgin_clear_cursor(gtkblist->window);
+			pidgin_clear_cursor(win->window);
 			return;
 		}
 	}
@@ -1176,8 +1173,8 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 
 	pidgin_log_show(type, name, account);
 
-	gdk_window_set_cursor(gtk_widget_get_window(gtkblist->window), NULL);
-	gdk_window_set_cursor(gtk_widget_get_window(win->window), NULL);
+	pidgin_clear_cursor(gtkblist->window);
+	pidgin_clear_cursor(win->window);
 }
 
 static void
