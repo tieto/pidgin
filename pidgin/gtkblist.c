@@ -1092,9 +1092,10 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 		if (pce->is_int)
 		{
 			GtkAdjustment *adjust;
-			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
-										1, 10, 10);
-			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			adjust = GTK_ADJUSTMENT(gtk_adjustment_new(pce->min,
+			                                           pce->min, pce->max,
+			                                           1, 10, 10));
+			input = gtk_spin_button_new(adjust, 1, 0);
 			gtk_widget_set_size_request(input, 50, -1);
 			pidgin_add_widget_to_vbox(GTK_BOX(data->rq_data.vbox), pce->label, data->rq_data.sg, input, FALSE, NULL);
 		}

@@ -105,8 +105,9 @@ get_config_frame(PurplePlugin *plugin)
 		gtk_size_group_add_widget(sg, label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
-		adj = gtk_adjustment_new(purple_prefs_get_int(pref), -500, 500, 1, 1, 1);
-		spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
+		adj = GTK_ADJUSTMENT(gtk_adjustment_new(purple_prefs_get_int(pref),
+		                                        -500, 500, 1, 1, 1));
+		spin = gtk_spin_button_new(adj, 1, 0);
 		g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), pref);
 		gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 
@@ -138,8 +139,8 @@ get_config_frame(PurplePlugin *plugin)
 
 	/* make this here so I can use it in the option menu callback, we'll
 	 * actually set it up later */
-	adj = gtk_adjustment_new(0, -500, 500, 1, 1, 1);
-	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
+	adj = GTK_ADJUSTMENT(gtk_adjustment_new(0, -500, 500, 1, 1, 1));
+	spin = gtk_spin_button_new(adj, 1, 0);
 
 	optmenu = pidgin_account_option_menu_new(NULL, TRUE,
 	                                         G_CALLBACK(select_account),
