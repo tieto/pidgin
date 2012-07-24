@@ -137,8 +137,8 @@ static inline gint gdk_window_get_height(GdkWindow *x)
 #define gtk_adjustment_get_page_size(x) (x)->page_size
 #define gtk_adjustment_get_lower(x) (x)->lower
 #define gtk_adjustment_get_upper(x) (x)->upper
-#define gtk_font_selection_get_size_entry (x)->size_entry
-#define gtk_font_selection_get_family_list (x)->family_list
+#define gtk_font_selection_get_size_entry(x) (x)->size_entry
+#define gtk_font_selection_get_family_list(x) (x)->family_list
 #define gtk_font_selection_dialog_get_ok_button(x) (x)->ok_button
 #define gtk_font_selection_dialog_get_cancel_button(x) (x)->cancel_button
 #define gtk_color_selection_dialog_get_color_selection(x) (x)->colorsel
