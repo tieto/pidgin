@@ -43,6 +43,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#define GTK_TOOLTIPS_VAR toolbar->tooltips
 #include "gtk3compat.h"
 
 static GtkHBoxClass *parent_class = NULL;
