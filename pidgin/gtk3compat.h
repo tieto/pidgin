@@ -21,7 +21,7 @@
 #ifndef _PIDGINGTK3COMPAT_H_
 #define _PIDGINGTK3COMPAT_H_
 
-/* This file is internal to Pidgin. Do not use! 
+/* This file is internal to Pidgin. Do not use!
  * Also, any public API should not depend on this file.
  */
 
@@ -45,14 +45,14 @@ static inline gint gdk_window_get_width(GdkWindow *x)
 	gint w;
 	gdk_drawable_get_size(GDK_DRAWABLE(x), &w, NULL);
 	return w;
-}	
+}
 
 static inline gint gdk_window_get_height(GdkWindow *x)
 {
 	gint h;
 	gdk_drawable_get_size(GDK_DRAWABLE(x), NULL, &h);
 	return h;
-}	
+}
 
 #if !GTK_CHECK_VERSION(2,22,0)
 
@@ -119,7 +119,7 @@ static inline gint gdk_window_get_height(GdkWindow *x)
 	*(y) = (x)->xalign; \
 	*(z) = (x)->yalign; \
 } while (0)
-	
+
 #if !GTK_CHECK_VERSION(2,16,0)
 
 #define gtk_status_icon_set_tooltip_text gtk_status_icon_set_tooltip
