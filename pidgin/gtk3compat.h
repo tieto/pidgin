@@ -40,14 +40,14 @@
 #define gtk_combo_box_text_get_active_text gtk_combo_box_get_active_text
 #define gtk_combo_box_text_remove gtk_combo_box_remove_text
 
-gint inline gdk_window_get_width(GdkWindow *x)
+static inline gint gdk_window_get_width(GdkWindow *x)
 {
 	gint w;
 	gdk_drawable_get_size(GDK_DRAWABLE(x), &w, NULL);
 	return w;
 }	
 
-gint inline gdk_window_get_height(GdkWindow *x)
+static inline gint gdk_window_get_height(GdkWindow *x)
 {
 	gint h;
 	gdk_drawable_get_size(GDK_DRAWABLE(x), NULL, &h);
