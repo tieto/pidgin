@@ -44,6 +44,8 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
+#include "gtk3compat.h"
+
 static GList *dialogwindows = NULL;
 
 struct _PidginGroupMergeObject {
@@ -435,8 +437,13 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	AtkObject *obj;
 	char *filename, *tmp;
 
+#if GTK_CHECK_VERSION(3,0,0)
 	win = pidgin_create_dialog(title, 0, role, TRUE);
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, 0);
+#else
+	win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, role, TRUE);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), 475, 450);
 
 	/* Generate a logo with a version number */

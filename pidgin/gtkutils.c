@@ -71,6 +71,8 @@
 #include "gtkwebviewtoolbar.h"
 #include "pidgin/minidialog.h"
 
+#include "gtk3compat.h"
+
 enum {
 	AOP_ICON_COLUMN,
 	AOP_NAME_COLUMN,
@@ -2910,9 +2912,14 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 	GtkComboBoxText *ret = NULL;
 	GtkWidget *the_entry = NULL;
 
+#if GTK_CHECK_VERSION(2,24,0)
 	ret = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new_with_entry());
+	the_entry = gtk_bin_get_child(GTK_BIN(ret));
+#else
+	ret = GTK_COMBO_BOX(gtk_combo_box_entry_new_text());
 	the_entry = gtk_entry_new();
 	gtk_container_add(GTK_CONTAINER(ret), the_entry);
+#endif
 
 	if (default_item)
 		gtk_entry_set_text(GTK_ENTRY(the_entry), default_item);
@@ -3623,7 +3630,11 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 		if (width != -1 || height != -1)
 			gtk_widget_set_size_request(sw, width, height);
 		if (child) {
+#if GTK_CHECK_VERSION(3,0,0)
 			if (GTK_IS_SCROLLABLE(child))
+#else
+			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
+#endif
 				gtk_container_add(GTK_CONTAINER(sw), child);
 			else
 				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);

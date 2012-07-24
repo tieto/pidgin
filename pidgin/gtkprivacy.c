@@ -36,6 +36,8 @@
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 
+#include "gtk3compat.h"
+
 typedef struct
 {
 	GtkWidget *win;

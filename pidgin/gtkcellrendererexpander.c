@@ -32,6 +32,14 @@
 #include <gtk/gtk.h>
 #include "gtkcellrendererexpander.h"
 
+#include "gtk3compat.h"
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define GTK3_CONST const
+#else
+#define GTK3_CONST
+#endif
+
 static void pidgin_cell_renderer_expander_get_property  (GObject                    *object,
 						      guint                       param_id,
 						      GValue                     *value,
@@ -44,23 +52,30 @@ static void pidgin_cell_renderer_expander_init       (PidginCellRendererExpander
 static void pidgin_cell_renderer_expander_class_init (PidginCellRendererExpanderClass *class);
 static void pidgin_cell_renderer_expander_get_size   (GtkCellRenderer            *cell,
 						   GtkWidget                  *widget,
-						   const GdkRectangle               *cell_area,
+						   GTK3_CONST GdkRectangle    *cell_area,
 						   gint                       *x_offset,
 						   gint                       *y_offset,
 						   gint                       *width,
 						   gint                       *height);
 static void pidgin_cell_renderer_expander_render     (GtkCellRenderer            *cell,
+#if GTK_CHECK_VERSION(3,0,0)
 						   cairo_t                    *cr,
+#else
+						   GdkWindow                  *window,
+#endif
 						   GtkWidget                  *widget,
-						   const GdkRectangle         *background_area,
-						   const GdkRectangle         *cell_area,
+						   GTK3_CONST GdkRectangle    *background_area,
+						   GTK3_CONST GdkRectangle    *cell_area,
+#if !GTK_CHECK_VERSION(3,0,0)
+                           GdkRectangle               *export_area,
+#endif
 						   GtkCellRendererState        flags);
 static gboolean pidgin_cell_renderer_expander_activate  (GtkCellRenderer            *r,
 						      GdkEvent                   *event,
 						      GtkWidget                  *widget,
 						      const gchar                *p,
-						      const GdkRectangle         *bg,
-						      const GdkRectangle         *cell,
+						      GTK3_CONST GdkRectangle    *bg,
+						      GTK3_CONST GdkRectangle    *cell,
 						      GtkCellRendererState        flags);
 static void  pidgin_cell_renderer_expander_finalize (GObject *gobject);
 
@@ -187,9 +202,10 @@ GtkCellRenderer *pidgin_cell_renderer_expander_new(void)
 	return g_object_new(PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER, NULL);
 }
 
-static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
+static void
+pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 						 GtkWidget       *widget,
-						 const GdkRectangle    *cell_area,
+						 GTK3_CONST GdkRectangle *cell_area,
 						 gint            *x_offset,
 						 gint            *y_offset,
 						 gint            *width,
@@ -232,12 +248,20 @@ static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 }
 
 
-static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
-					       cairo_t              *cr,
-					       GtkWidget            *widget,
-					       const GdkRectangle   *background_area,
-					       const GdkRectangle   *cell_area,
-					       GtkCellRendererState flags)
+static void
+pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
+#if GTK_CHECK_VERSION(3,0,0)
+					       cairo_t                 *cr,
+#else
+					       GdkWindow               *window,
+#endif
+					       GtkWidget               *widget,
+					       GTK3_CONST GdkRectangle *background_area,
+					       GTK3_CONST GdkRectangle *cell_area,
+#if !GTK_CHECK_VERSION(3,0,0)
+					       GdkRectangle            *expose_area,
+#endif
+					       GtkCellRendererState    flags)
 {
 	PidginCellRendererExpander *cellexpander = (PidginCellRendererExpander *) cell;
 	gboolean set;
@@ -269,28 +293,44 @@ static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	width -= xpad*2;
 	height -= ypad*2;
 
+#if GTK_CHECK_VERSION(3,0,0)
 	gtk_paint_expander(gtk_widget_get_style(widget),
 	                   cr, state,
 	                   widget, "treeview",
 	                   cell_area->x + xpad + (width / 2),
 	                   cell_area->y + ypad + (height / 2),
 	                   is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
+#else
+	gtk_paint_expander(gtk_widget_get_style(widget),
+	                   window, state,
+	                   NULL, widget, "treeview",
+	                   cell_area->x + cell->xpad + (width / 2),
+	                   cell_area->y + cell->ypad + (height / 2),
+	                   is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
+#endif
 
 	/* only draw the line if the color isn't set - this prevents a bug where the hline appears only under the expander */
 	g_object_get(cellexpander, "cell-background-set", &set, NULL);
 	gtk_widget_get_allocation(widget, &allocation);
 
+#if GTK_CHECK_VERSION(3,0,0)
 	if (is_expanded && !set)
 		gtk_paint_hline(gtk_widget_get_style(widget), cr, state, widget, NULL, 0,
 		                allocation.width, cell_area->y + cell_area->height);
+#else
+	if (is_expanded && !set)
+		gtk_paint_hline(gtk_widget_get_style(widget), window, state, NULL, widget, NULL, 0,
+		                allocation.width, cell_area->y + cell_area->height);
+#endif
 }
 
-static gboolean pidgin_cell_renderer_expander_activate(GtkCellRenderer *r,
+static gboolean
+pidgin_cell_renderer_expander_activate(GtkCellRenderer *r,
 						     GdkEvent *event,
 						     GtkWidget *widget,
 						     const gchar *p,
-						     const GdkRectangle *bg,
-						     const GdkRectangle *cell,
+						     GTK3_CONST GdkRectangle *bg,
+						     GTK3_CONST GdkRectangle *cell,
 						     GtkCellRendererState flags)
 {
 	GtkTreePath *path = gtk_tree_path_new_from_string(p);

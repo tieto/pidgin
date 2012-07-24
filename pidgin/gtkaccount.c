@@ -48,6 +48,8 @@
 #include "pidginstock.h"
 #include "minidialog.h"
 
+#include "gtk3compat.h"
+
 enum
 {
 	COLUMN_ICON,
@@ -483,11 +485,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->protocol_menu != NULL)
 	{
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 		hbox = g_object_get_data(G_OBJECT(dialog->protocol_menu), "container");
 		gtk_container_remove(GTK_CONTAINER(hbox), dialog->protocol_menu);
 	}
@@ -514,21 +512,13 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	{
 		dialog->protocol_menu = pidgin_protocol_option_menu_new(
 				dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 	}
 
 	hbox = add_pref_box(dialog, vbox, _("Pro_tocol:"), dialog->protocol_menu);
 	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	g_object_unref(G_OBJECT(dialog->protocol_menu));
-#else
-	gtk_widget_unref(dialog->protocol_menu);
-#endif
 
 	/* Username */
 	dialog->username_entry = gtk_entry_new();
@@ -2399,7 +2389,11 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
+#if GTK_CHECK_VERSION(3,0,0)
 	dialog->window = win = pidgin_create_dialog(_("Accounts"), 0, "accounts", TRUE);
+#else
+	dialog->window = win = pidgin_create_dialog(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

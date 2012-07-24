@@ -368,27 +368,61 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 	current_height = 12;
 
+#if GTK_CHECK_VERSION(3,0,0)
 	if (dir == GTK_TEXT_DIR_RTL) {
 		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				grl->tipwindow, "tooltip",
-				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
-				current_height, grl->tip_name_layout);
-	} else {
-		gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
-				grl->tipwindow, "tooltip",
-				TOOLTIP_BORDER + SMALL_SPACE, current_height, grl->tip_name_layout);
-	}
-	if (dir != GTK_TEXT_DIR_RTL) {
-		gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
-				grl->tipwindow, "tooltip",
-				TOOLTIP_BORDER + SMALL_SPACE, current_height + grl->tip_name_height, grl->tip_layout);
+		                 grl->tipwindow, "tooltip",
+		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                 current_height,
+		                 grl->tip_name_layout);
 	} else {
 		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				grl->tipwindow, "tooltip",
-				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
-				current_height + grl->tip_name_height,
-				grl->tip_layout);
+		                 grl->tipwindow, "tooltip",
+		                 TOOLTIP_BORDER + SMALL_SPACE,
+		                 current_height,
+		                 grl->tip_name_layout);
 	}
+	if (dir != GTK_TEXT_DIR_RTL) {
+		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+		                 grl->tipwindow, "tooltip",
+		                 TOOLTIP_BORDER + SMALL_SPACE,
+		                 current_height + grl->tip_name_height,
+		                 grl->tip_layout);
+	} else {
+		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+		                 grl->tipwindow, "tooltip",
+		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                 current_height + grl->tip_name_height,
+		                 grl->tip_layout);
+	}
+#else
+	if (dir == GTK_TEXT_DIR_RTL) {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+		                 NULL, grl->tipwindow, "tooltip",
+		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                 current_height,
+		                 grl->tip_name_layout);
+	} else {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+		                 NULL, grl->tipwindow, "tooltip",
+		                 TOOLTIP_BORDER + SMALL_SPACE,
+		                 current_height,
+		                 grl->tip_name_layout);
+	}
+	if (dir != GTK_TEXT_DIR_RTL) {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+		                 NULL, grl->tipwindow, "tooltip",
+		                 TOOLTIP_BORDER + SMALL_SPACE,
+		                 current_height + grl->tip_name_height,
+		                 grl->tip_layout);
+	} else {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+		                 NULL, grl->tipwindow, "tooltip",
+		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                 current_height + grl->tip_name_height,
+		                 grl->tip_layout);
+	}
+#endif
 
 	return FALSE;
 }
@@ -534,7 +568,11 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	dialog->account = account;
 
 	/* Create the window. */
+#if GTK_CHECK_VERSION(3,0,0)
 	dialog->window = window = pidgin_create_dialog(_("Room List"), 0, "room list", TRUE);
+#else
+	dialog->window = window = pidgin_create_dialog(_("Room List"), PIDGIN_HIG_BORDER, "room list", TRUE);
+#endif
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

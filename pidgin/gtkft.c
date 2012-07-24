@@ -715,7 +715,11 @@ pidgin_xfer_dialog_new(void)
 		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished");
 
 	/* Create the window. */
+#if GTK_CHECK_VERSION(3,0,0)
 	dialog->window = window = pidgin_create_dialog(_("File Transfers"), 0, "file transfer", TRUE);
+#else
+	dialog->window = window = pidgin_create_dialog(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(window), 450, 250);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
@@ -768,7 +772,7 @@ pidgin_xfer_dialog_new(void)
 	gtk_container_add(GTK_CONTAINER(alignment), table);
 	gtk_widget_show(table);
 
-	bbox = gtk_dialog_get_action_area(GTK_DIALOG(window));
+	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(window));
 
 #define ADD_BUTTON(b, label, callback, callbackdata) do { \
 		GtkWidget *button = gtk_button_new_from_stock(label); \

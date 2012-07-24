@@ -836,6 +836,9 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(window), title);
+#if !GTK_CHECK_VERSION(3,0,0)
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
+#endif
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
@@ -1501,15 +1504,13 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 
 	dialog = gtk_dialog_new();
 
-	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-	                               PIDGIN_HIG_BOX_SPACE);
-	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-	                    PIDGIN_HIG_BORDER);
-
 	/* Vertical box */
 	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+	/* Setup the dialog */
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(vbox), PIDGIN_HIG_BORDER);
 
 	/* Golden ratio it up! */
 	gtk_widget_set_size_request(dialog, 550, 400);

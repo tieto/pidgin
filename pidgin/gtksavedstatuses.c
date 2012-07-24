@@ -41,6 +41,8 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
+#include "gtk3compat.h"
+
 /*
  * TODO: Should attach to the account-deleted and account-added signals
  *       and update the GtkListStores in any StatusEditor windows that

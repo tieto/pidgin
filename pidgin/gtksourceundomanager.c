@@ -532,8 +532,9 @@ gtk_source_undo_manager_undo (GtkSourceUndoManager *um)
 					um->priv->document,
 					undo_action->action.insert_anchor.pos,
 					undo_action->action.insert_anchor.pos + 1);
-				/* TODO: is this needed in GTK+3? */
-				/*gtk_text_child_anchor_set_segment(undo_action->action.insert_anchor.anchor, NULL); XXX: This may be a bug in GTK+ */
+#if !GTK_CHECK_VERSION(3,0,0)
+				undo_action->action.insert_anchor.anchor->segment = NULL; /* XXX: This may be a bug in GTK+ */
+#endif
 				break;
 			default:
 				/* Unknown action type. */

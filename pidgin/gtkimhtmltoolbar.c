@@ -43,6 +43,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "gtk3compat.h"
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,

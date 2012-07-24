@@ -34,6 +34,8 @@
 #include "win32dep.h"
 #endif
 
+#include "gtk3compat.h"
+
 typedef struct
 {
 	GtkWidget *widget;
@@ -53,6 +55,8 @@ static HintWindowInfo hint_windows[] = {
 	{ NULL, "arrow-right.xpm",  -16, -13/2 },
 	{ NULL, NULL, 0, 0 }
 };
+
+#if GTK_CHECK_VERSION(3,0,0)
 
 static void
 dnd_hints_realized_cb(GtkWidget *window, GtkWidget *pix)
@@ -102,6 +106,41 @@ dnd_hints_init_window(const gchar *fname)
 
 	return win;
 }
+
+#else
+
+static GtkWidget *
+dnd_hints_init_window(const gchar *fname)
+{
+	GdkPixbuf *pixbuf;
+	GdkPixmap *pixmap;
+	GdkBitmap *bitmap;
+	GtkWidget *pix;
+	GtkWidget *win;
+	GdkColormap *colormap;
+
+	pixbuf = gdk_pixbuf_new_from_file(fname, NULL);
+	g_return_val_if_fail(pixbuf, NULL);
+
+	win = gtk_window_new(GTK_WINDOW_POPUP);
+	colormap = gtk_widget_get_colormap(win);
+	gdk_pixbuf_render_pixmap_and_mask_for_colormap(pixbuf, colormap,
+	                                               &pixmap, &bitmap, 128);
+	g_object_unref(G_OBJECT(pixbuf));
+
+	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
+	gtk_container_add(GTK_CONTAINER(win), pix);
+	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
+
+	g_object_unref(G_OBJECT(pixmap));
+	g_object_unref(G_OBJECT(bitmap));
+
+	gtk_widget_show_all(pix);
+
+	return win;
+}
+
+#endif
 
 static void
 get_widget_coords(GtkWidget *w, gint *x1, gint *y1, gint *x2, gint *y2)

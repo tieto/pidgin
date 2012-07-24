@@ -35,6 +35,8 @@
 
 #include <string.h>
 
+#include "gtk3compat.h"
+
 #define PIDGIN_RESPONSE_CONFIGURE 98121
 
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
@@ -562,10 +564,15 @@ static gboolean
 pidgin_plugins_paint_tooltip(GtkWidget *tipwindow, cairo_t *cr, gpointer data)
 {
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
+#if GTK_CHECK_VERSION(3,0,0)
 	gtk_paint_layout(gtk_widget_get_style(tipwindow), cr, GTK_STATE_NORMAL, FALSE,
-			tipwindow, "tooltip",
-			6, 6, layout);
-
+	                 tipwindow, "tooltip",
+	                 6, 6, layout);
+#else
+	gtk_paint_layout(tipwindow->style, tipwindow->window, GTK_STATE_NORMAL, FALSE,
+	                 NULL, tipwindow, "tooltip",
+	                 6, 6, layout);
+#endif
 	return TRUE;
 }
 
@@ -788,7 +795,7 @@ void pidgin_plugin_dialog_show()
 	gtk_widget_set_sensitive(expander, FALSE);
 	gtk_container_add(GTK_CONTAINER(expander), create_details());
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
-	                    expander, FALSE, FALSE, 0);
+	                   expander, FALSE, FALSE, 0);
 
 
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);

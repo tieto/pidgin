@@ -441,7 +441,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		char *username = NULL;
 		PurpleAccount *account;
 
-		if (pidgin_parse_x_im_contact((const char *) sd_data, FALSE, &account,
+		if (pidgin_parse_x_im_contact((const char *)sd_data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)
@@ -536,11 +536,14 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->window = window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("Add Buddy Pounce") : _("Modify Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
+#if !GTK_CHECK_VERSION(3,0,0)
+	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
+#endif
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
-	/* Create the parent vbox for everything. */
+	/* Get the parent vbox for everything. */
 	vbox1 = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Create the vbox that will contain all the prefs stuff. */
@@ -1332,7 +1335,11 @@ pidgin_pounces_manager_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height");
 
+#if GTK_CHECK_VERSION(3,0,0)
 	dialog->window = win = pidgin_create_dialog(_("Buddy Pounces"), 0, "pounces", TRUE);
+#else
+	dialog->window = win = pidgin_create_dialog(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

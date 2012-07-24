@@ -80,6 +80,9 @@
 
 #include "gtknickcolors.h"
 
+#define GTK_TOOLTIPS_VAR gtkconv->tooltips
+#include "gtk3compat.h"
+
 /**
  * A GTK+ Instant Message pane.
  */
@@ -5049,12 +5052,7 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 
 	close = pidgin_create_small_button(gtk_label_new("×"));
 	gtk_box_pack_start(GTK_BOX(widget), close, FALSE, FALSE, 0);
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(close, _("Close Find bar"));
-#else
-	gtk_tooltips_set_tip(gtkconv->tooltips, close,
-	                     _("Close Find bar"), NULL);
-#endif
 
 	label = gtk_label_new(_("Find:"));
 	gtk_box_pack_start(GTK_BOX(widget), label, FALSE, FALSE, 10);
@@ -7303,13 +7301,8 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			topic = purple_conv_chat_get_topic(chat);
 
 			gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
-#if GTK_CHECK_VERSION(2,12,0)
 			gtk_widget_set_tooltip_text(gtkchat->topic_text,
 			                            topic ? topic : "");
-#else
-			gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
-			                     topic ? topic : "", NULL);
-#endif
 		}
 	}
 
@@ -10081,9 +10074,6 @@ pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 static gboolean
 gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversation *gtkconv)
 {
-#if GTK_CHECK_VERSION(2, 12, 0)
-#define gtk_tooltips_set_tip(tips, w, l, p)  gtk_widget_set_tooltip_text(w, l)
-#endif
 /* PANGO_VERSION_CHECK macro was introduced in 1.15. So we need this double check. */
 #ifndef PANGO_VERSION_CHECK
 #define pango_layout_is_ellipsized(l) TRUE
@@ -10093,13 +10083,12 @@ gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversati
 	PangoLayout *layout;
 
 	layout = gtk_label_get_layout(GTK_LABEL(gtkconv->tab_label));
-	gtk_tooltips_set_tip(gtkconv->tooltips, widget,
-			pango_layout_is_ellipsized(layout) ? gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)) : NULL,
-			NULL);
+	if (pango_layout_is_ellipsized(layout))
+		gtk_widget_set_tooltip_text(widget, gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	else
+		gtk_widget_set_tooltip_text(widget, NULL);
+
 	return FALSE;
-#if GTK_CHECK_VERSION(2, 12, 0)
-#undef gtk_tooltips_set_tip
-#endif
 }
 
 void
@@ -10122,12 +10111,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = pidgin_create_small_button(gtk_label_new("×"));
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(gtkconv->close, _("Close conversation"));
-#else
-	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
-	                     _("Close conversation"), NULL);
-#endif
 
 	g_signal_connect(gtkconv->close, "clicked", G_CALLBACK (close_conv_cb), gtkconv);
 

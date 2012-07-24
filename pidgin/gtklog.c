@@ -39,6 +39,8 @@
 #include "gtkutils.h"
 #include "gtkwebview.h"
 
+#include "gtk3compat.h"
+
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(PidginLogViewer *lv);
 static PidginLogViewer *syslog_viewer = NULL;

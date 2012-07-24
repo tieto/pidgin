@@ -39,6 +39,8 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
+#include "gtk3compat.h"
+
 #define ERROR_LENGTH 512
 
 static IceIOErrorHandler ice_installed_io_error_handler;

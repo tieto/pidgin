@@ -65,6 +65,8 @@
 
 #define TOOLTIP_TIMEOUT 500
 
+#include "gtk3compat.h"
+
 static GtkTextViewClass *parent_class = NULL;
 
 struct scalable_data {
@@ -802,7 +804,7 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 }
 
 /* TODO: I think this can be removed for GTK+ 3.0... */
-#if 0
+#if !GTK_CHECK_VERSION(3,0,0)
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
 			 GdkEventExpose *event)
@@ -1625,7 +1627,9 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
 	/* TODO: I _think_ this should be removed for GTK+ 3.0 */
-	/*widget_class->expose_event = gtk_imhtml_expose_event;*/
+#if !GTK_CHECK_VERSION(3,0,0)
+	widget_class->expose_event = gtk_imhtml_expose_event;
+#endif
 	parent_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
 	parent_style_set = widget_class->style_set;
@@ -4988,7 +4992,7 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 }
 
 /* TODO: I think this can be removed for GTK+ 3.0... */
-#if 0
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean
 image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
@@ -5118,9 +5122,10 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		 * images, and ensures that they are handled by the image
 		 * itself, without propagating to the textview and causing
 		 * a complete refresh */
-		/* TODO: I think this should be removed for GTK+ 3.0?
+		/* TODO: I think this should be removed for GTK+ 3.0? */
+#if !GTK_CHECK_VERSION(3,0,0)
 		g_signal_connect(G_OBJECT(icon), "expose-event", G_CALLBACK(image_expose), NULL);
-		*/
+#endif
 
 		gtk_widget_show(icon);
 		if (ebox)
@@ -5217,8 +5222,8 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 	static gchar buf[1024];
 	gchar *name = NULL;
 
-	g_return_val_if_fail(name != NULL, "");
 	g_object_get(G_OBJECT(tag), "name", &name, NULL);
+	g_return_val_if_fail(name != NULL, "");
 
 	if (strcmp(name, "BOLD") == 0) {
 		g_free(name);
@@ -5341,8 +5346,8 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 {
 	gchar *name;
 
-	g_return_val_if_fail(name != NULL, "");
 	g_object_get(G_OBJECT(tag), "name", &name, NULL);
+	g_return_val_if_fail(name != NULL, "");
 
 	if (strcmp(name, "BOLD") == 0) {
 		g_free(name);

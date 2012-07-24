@@ -67,6 +67,8 @@
 #  endif
 #endif
 
+#include "gtk3compat.h"
+
 /* Timeout for typing notifications in seconds */
 #define TYPING_TIMEOUT 4
 
@@ -82,10 +84,15 @@ static void pidgin_status_box_refresh(PidginStatusBox *status_box);
 static void status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed);
 static void pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed);
 static void pidgin_status_box_changed(PidginStatusBox *box);
+#if GTK_CHECK_VERSION(3,0,0)
 static void pidgin_status_box_get_preferred_height (GtkWidget *widget,
 	gint *minimum_height, gint *natural_height);
-static void pidgin_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
 static gboolean pidgin_status_box_draw (GtkWidget *widget, cairo_t *cr);
+#else
+static void pidgin_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
+static gboolean pidgin_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);
+#endif
+static void pidgin_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
 static void pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box);
 static void pidgin_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 static void pidgin_status_box_popup(PidginStatusBox *box);
@@ -617,9 +624,14 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	parent_class = g_type_class_peek_parent(klass);
 
 	widget_class = (GtkWidgetClass*)klass;
+#if GTK_CHECK_VERSION(3,0,0)
 	widget_class->get_preferred_height = pidgin_status_box_get_preferred_height;
+	widget_class->draw = pidgin_status_box_draw;
+#else
+	widget_class->size_request = pidgin_status_box_size_request;
+	widget_class->expose_event = pidgin_status_box_expose_event;
+#endif
 	widget_class->size_allocate = pidgin_status_box_size_allocate;
-  	widget_class->draw = pidgin_status_box_draw;
 
 	container_class->child_type = pidgin_status_box_child_type;
 	container_class->forall = pidgin_status_box_forall;
@@ -1928,6 +1940,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
 static void
 pidgin_status_box_get_preferred_height(GtkWidget *widget, gint *minimum_height,
                                        gint *natural_height)
@@ -1953,6 +1966,28 @@ pidgin_status_box_get_preferred_height(GtkWidget *widget, gint *minimum_height,
 			*natural_height += box_nat_height + border_width * 2;
 	}
 }
+#else
+static void
+pidgin_status_box_size_request(GtkWidget *widget,
+								 GtkRequisition *requisition)
+{
+	GtkRequisition box_req;
+	gint border_width = GTK_CONTAINER (widget)->border_width;
+
+	gtk_widget_size_request(PIDGIN_STATUS_BOX(widget)->toggle_button, requisition);
+
+	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
+	requisition->height = MAX(requisition->height, 34);
+	requisition->height += border_width * 2;
+
+	/* If the gtkimhtml is visible, then add some additional padding */
+	gtk_widget_size_request(PIDGIN_STATUS_BOX(widget)->vbox, &box_req);
+	if (box_req.height > 1)
+		requisition->height += box_req.height + border_width * 2;
+
+	requisition->width = 1;
+}
+#endif
 
 /* From gnome-panel */
 static void
@@ -1999,7 +2034,7 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 				  GtkAllocation *allocation)
 {
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
-	GtkRequisition req = {0,40};
+	GtkRequisition req = {0,40/*FIXME: Why not 0?*/};
 	GtkAllocation parent_alc, box_alc, icon_alc;
 	gint border_width = gtk_container_get_border_width(GTK_CONTAINER (widget));
 
@@ -2043,6 +2078,7 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
   	gtk_widget_set_allocation(GTK_WIDGET(status_box), allocation);
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
 static gboolean
 pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 {
@@ -2059,6 +2095,22 @@ pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 	}
 	return FALSE;
 }
+#else
+static gboolean
+pidgin_status_box_expose_event(GtkWidget *widget,
+				 GdkEventExpose *event)
+{
+	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
+	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
+	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
+	if (status_box->icon_box && status_box->icon_opaque) {
+		gtk_paint_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL,
+				status_box->icon_box, "button", status_box->icon_box->allocation.x-1, status_box->icon_box->allocation.y-1,
+				34, 34);
+	}
+	return FALSE;
+}
+#endif
 
 static void
 pidgin_status_box_forall(GtkContainer *container,

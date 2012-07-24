@@ -31,6 +31,8 @@
 #include <gdk/gdkkeysyms.h>
 #include "gtkwebview.h"
 
+#include "gtk3compat.h"
+
 #define MAX_FONT_SIZE 7
 #define MAX_SCROLL_TIME 0.4 /* seconds */
 #define SCROLL_DELAY 33 /* milliseconds */
@@ -667,13 +669,8 @@ gtk_webview_page_up(GtkWebView *webview)
 
 	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	vadj = priv->vadj;
-#if GTK_CHECK_VERSION(2,14,0)
 	scroll_val = gtk_adjustment_get_value(vadj) - gtk_adjustment_get_page_size(vadj);
 	scroll_val = MAX(scroll_val, gtk_adjustment_get_lower(vadj));
-#else
-	scroll_val = gtk_adjustment_get_value(vadj) - vadj->page_size;
-	scroll_val = MAX(scroll_val, vadj->lower);
-#endif
 
 	gtk_adjustment_set_value(vadj, scroll_val);
 }
@@ -690,15 +687,9 @@ gtk_webview_page_down(GtkWebView *webview)
 
 	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	vadj = priv->vadj;
-#if GTK_CHECK_VERSION(2,14,0)
 	page_size = gtk_adjustment_get_page_size(vadj);
 	scroll_val = gtk_adjustment_get_value(vadj) + page_size;
 	scroll_val = MIN(scroll_val, gtk_adjustment_get_upper(vadj) - page_size);
-#else
-	page_size = vadj->page_size;
-	scroll_val = gtk_adjustment_get_value(vadj) + page_size;
-	scroll_val = MIN(scroll_val, vadj->upper - page_size);
-#endif
 
 	gtk_adjustment_set_value(vadj, scroll_val);
 }

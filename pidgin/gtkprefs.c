@@ -58,6 +58,8 @@
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
 
+#include "gtk3compat.h"
+
 #define PROXYHOST 0
 #define PROXYPORT 1
 #define PROXYUSER 2
@@ -2737,12 +2739,12 @@ sound_page(void)
 								sound_changed2_cb, vbox);
 #endif
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
-	parent = gtk_widget_get_parent(vbox);
-	parent_parent = gtk_widget_get_parent(parent);
-	parent_parent_parent = gtk_widget_get_parent(parent_parent);
 
 	/* The following is an ugly hack to make the frame expand so the
 	 * sound events list is big enough to be usable */
+	parent = gtk_widget_get_parent(vbox);
+	parent_parent = gtk_widget_get_parent(parent);
+	parent_parent_parent = gtk_widget_get_parent(parent_parent);
 	gtk_box_set_child_packing(GTK_BOX(parent), vbox, TRUE, TRUE, 0,
 			GTK_PACK_START);
 	gtk_box_set_child_packing(GTK_BOX(parent_parent),
@@ -2985,7 +2987,11 @@ pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
+#if GTK_CHECK_VERSION(3,0,0)
 	prefs = pidgin_create_dialog(_("Preferences"), 0, "preferences", FALSE);
+#else
+	prefs = pidgin_create_dialog(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
+#endif
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
