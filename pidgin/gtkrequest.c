@@ -30,8 +30,7 @@
 #include "prefs.h"
 #include "util.h"
 
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
+#include "gtkwebview.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
@@ -149,7 +148,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
 		if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html")))
-			multiline_value = gtk_imhtml_get_markup(GTK_IMHTML(data->u.input.entry));
+			multiline_value = gtk_webview_get_body_html(GTK_WEBVIEW(data->u.input.entry));
 		else
 			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
 										 FALSE);
@@ -423,16 +422,17 @@ pidgin_request_input(const char *title, const char *primary,
 	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
 		GtkWidget *frame;
 
-		/* imhtml */
-		frame = pidgin_create_imhtml(TRUE, &entry, &toolbar, NULL);
+		/* webview */
+		frame = pidgin_create_webview(TRUE, &entry, &toolbar, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
-		gtk_widget_set_name(entry, "pidgin_request_imhtml");
-		if (default_value != NULL)
-			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
+		gtk_widget_set_name(entry, "pidgin_request_webview");
+		if (default_value != NULL) {
+			char *tmp = g_markup_escape_text(default_value, -1);
+			gtk_webview_append_html(GTK_WEBVIEW(entry), tmp);
+			g_free(tmp);
+		}
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
-
-		gtk_imhtml_set_return_inserts_newline(GTK_IMHTML(entry));
 	}
 	else {
 		if (multiline) {
