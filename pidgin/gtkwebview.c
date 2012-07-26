@@ -697,8 +697,10 @@ gtk_webview_page_down(GtkWebView *webview)
 void
 gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 {
+	GtkWebViewPriv *priv;
 	g_return_if_fail(webview != NULL);
 
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
 
 	if (editable) {
@@ -709,6 +711,8 @@ gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
 		                                     G_CALLBACK(editable_input_cb),
 		                                     NULL);
 	}
+
+	priv->format_functions = GTK_WEBVIEW_ALL;
 }
 
 void
