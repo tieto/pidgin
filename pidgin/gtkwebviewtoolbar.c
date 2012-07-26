@@ -1468,8 +1468,8 @@ gtk_webviewtoolbar_create_lean_view(GtkWebViewToolbar *toolbar)
 
 	g_signal_connect(G_OBJECT(font_button), "toggled",
 	                 G_CALLBACK(pidgin_menu_clicked), font_menu);
-	g_signal_connect(G_OBJECT(font_menu), "deactivate",
-	                 G_CALLBACK(pidgin_menu_deactivate), font_button);
+	g_signal_connect_object(G_OBJECT(font_menu), "deactivate",
+	                        G_CALLBACK(pidgin_menu_deactivate), font_button, 0);
 
 	gtk_container_foreach(GTK_CONTAINER(font_menu), enable_markup, NULL);
 
@@ -1494,8 +1494,8 @@ gtk_webviewtoolbar_create_lean_view(GtkWebViewToolbar *toolbar)
 
 	g_signal_connect(G_OBJECT(insert_button), "toggled",
 	                 G_CALLBACK(pidgin_menu_clicked), insert_menu);
-	g_signal_connect(G_OBJECT(insert_menu), "deactivate",
-	                 G_CALLBACK(pidgin_menu_deactivate), insert_button);
+	g_signal_connect_object(G_OBJECT(insert_menu), "deactivate",
+	                        G_CALLBACK(pidgin_menu_deactivate), insert_button, 0);
 
 	/* Sep */
 	sep = gtk_separator_tool_item_new();
