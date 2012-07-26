@@ -943,9 +943,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 													  "send-message",
 													  "message")) != NULL)
 		{
-			char *tmp = g_markup_escape_text(value, -1);
 			gtk_webview_append_html(GTK_WEBVIEW(dialog->send_msg_entry), value);
-			g_free(tmp);
 		}
 
 		if ((value = purple_pounce_action_get_attribute(cur_pounce,

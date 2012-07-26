@@ -426,11 +426,8 @@ pidgin_request_input(const char *title, const char *primary,
 		frame = pidgin_create_webview(TRUE, &entry, &toolbar, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
 		gtk_widget_set_name(entry, "pidgin_request_webview");
-		if (default_value != NULL) {
-			char *tmp = g_markup_escape_text(default_value, -1);
-			gtk_webview_append_html(GTK_WEBVIEW(entry), tmp);
-			g_free(tmp);
-		}
+		if (default_value != NULL)
+			gtk_webview_append_html(GTK_WEBVIEW(entry), default_value);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
 	}
