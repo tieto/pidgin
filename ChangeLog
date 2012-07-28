@@ -4,6 +4,10 @@ version 2.10.7:
 	Alien hatchery:
 	* No changes
 
+	Gadu-Gadu:
+	* Fix a crash at startup with large contact list. Avatar support for
+	  buddies will be disabled till 3.0.0. (#15226, #14305)
+
 	MSN:
 	* Fix a crash when removing a user before its icon is loaded. (Mark
 	  Barfield) (#15217)
