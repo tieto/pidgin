@@ -128,6 +128,9 @@ struct _PurpleRequestField
 
 	void *ui_data;
 	char *tooltip;
+
+	PurpleRequestFieldValidator validator;
+	void *validator_data;
 };
 
 struct _PurpleRequestFields
@@ -137,6 +140,8 @@ struct _PurpleRequestFields
 	GHashTable *fields;
 
 	GList *required_fields;
+
+	GList *validated_fields;
 
 	void *ui_data;
 };
@@ -171,6 +176,7 @@ purple_request_fields_destroy(PurpleRequestFields *fields)
 	g_list_foreach(fields->groups, (GFunc)purple_request_field_group_destroy, NULL);
 	g_list_free(fields->groups);
 	g_list_free(fields->required_fields);
+	g_list_free(fields->validated_fields);
 	g_hash_table_destroy(fields->fields);
 	g_free(fields);
 }
@@ -203,6 +209,11 @@ purple_request_fields_add_group(PurpleRequestFields *fields,
 				g_list_append(fields->required_fields, field);
 		}
 
+		if (purple_request_field_is_validated(field)) {
+			fields->validated_fields =
+				g_list_append(fields->validated_fields, field);
+		}
+
 	}
 }
 
@@ -229,6 +240,14 @@ purple_request_fields_get_required(const PurpleRequestFields *fields)
 	g_return_val_if_fail(fields != NULL, NULL);
 
 	return fields->required_fields;
+}
+
+GList *
+purple_request_fields_get_validated(const PurpleRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return fields->validated_fields;
 }
 
 gboolean
@@ -274,18 +293,26 @@ purple_request_fields_all_required_filled(const PurpleRequestFields *fields)
 	{
 		PurpleRequestField *field = (PurpleRequestField *)l->data;
 
-		switch (purple_request_field_get_type(field))
-		{
-			case PURPLE_REQUEST_FIELD_STRING:
-				if (purple_request_field_string_get_value(field) == NULL ||
-				    *(purple_request_field_string_get_value(field)) == '\0')
-					return FALSE;
+		if (!purple_request_field_is_filled(field))
+			return FALSE;
+	}
 
-				break;
+	return TRUE;
+}
 
-			default:
-				break;
-		}
+gboolean
+purple_request_fields_all_valid(const PurpleRequestFields *fields)
+{
+	GList *l;
+
+	g_return_val_if_fail(fields != NULL, FALSE);
+
+	for (l = fields->validated_fields; l != NULL; l = l->next)
+	{
+		PurpleRequestField *field = (PurpleRequestField *)l->data;
+
+		if (!purple_request_field_is_valid(field))
+			return FALSE;
 	}
 
 	return TRUE;
@@ -435,6 +462,12 @@ purple_request_field_group_add_field(PurpleRequestFieldGroup *group,
 		{
 			group->fields_list->required_fields =
 				g_list_append(group->fields_list->required_fields, field);
+		}
+		
+		if (purple_request_field_is_validated(field))
+		{
+			group->fields_list->validated_fields =
+				g_list_append(group->fields_list->validated_fields, field);
 		}
 	}
 
@@ -655,6 +688,68 @@ purple_request_field_is_required(const PurpleRequestField *field)
 	g_return_val_if_fail(field != NULL, FALSE);
 
 	return field->required;
+}
+
+gboolean
+purple_request_field_is_filled(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+
+	switch (purple_request_field_get_type(field))
+	{
+		case PURPLE_REQUEST_FIELD_STRING:
+			return (purple_request_field_string_get_value(field) != NULL &&
+				*(purple_request_field_string_get_value(field)) != '\0');
+		default:
+			return TRUE;
+	}
+}
+
+void
+purple_request_field_set_validator(PurpleRequestField *field,
+	PurpleRequestFieldValidator validator, void *user_data)
+{
+	g_return_if_fail(field != NULL);
+
+	field->validator = validator;
+	field->validator_data = validator ? user_data : NULL;
+
+	if (field->group != NULL)
+	{
+		if (validator)
+		{
+			field->group->fields_list->validated_fields = g_list_append(
+				field->group->fields_list->validated_fields, field);
+		}
+		else
+		{
+			field->group->fields_list->validated_fields = g_list_remove(
+				field->group->fields_list->validated_fields, field);
+		}
+	}
+}
+
+gboolean
+purple_request_field_is_validated(PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+
+	return field->validator != NULL;
+}
+
+gboolean
+purple_request_field_is_valid(PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+
+	if (!field->validator)
+		return TRUE;
+
+	if (!purple_request_field_is_required(field) &&
+		!purple_request_field_is_filled(field))
+		return TRUE;
+
+	return field->validator(field, field->validator_data);
 }
 
 PurpleRequestField *

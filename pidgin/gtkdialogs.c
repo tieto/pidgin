@@ -879,6 +879,21 @@ pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 	pidgin_dialogs_im_with_user(account, username);
 }
 
+static gboolean
+pidgin_dialogs_im_name_validator(PurpleRequestField *field, void *_fields)
+{
+	PurpleRequestFields *fields = _fields;
+	PurpleAccount *account;
+	PurplePlugin *prpl;
+	const char *username;
+
+	account = purple_request_fields_get_account(fields, "account");
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	username = purple_request_fields_get_string(fields, "screenname");
+
+	return purple_validate(prpl, username);
+}
+
 void
 pidgin_dialogs_im(void)
 {
@@ -894,6 +909,7 @@ pidgin_dialogs_im(void)
 	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	purple_request_field_set_type_hint(field, "screenname");
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field, pidgin_dialogs_im_name_validator, fields);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_account_new("account", _("_Account"), NULL);

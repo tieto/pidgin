@@ -150,6 +150,8 @@ typedef struct
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
 
+typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field, void *user_data);
+
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
  *  of actions of the one chosen.
@@ -219,6 +221,15 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
 GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
 
 /**
+ * Returns a list of all validated fields.
+ *
+ * @param fields The fields list.
+ *
+ * @constreturn The list of validated fields.
+ */
+GList *purple_request_fields_get_validated(const PurpleRequestFields *fields);
+
+/**
  * Returns whether or not a field with the specified ID is required.
  *
  * @param fields The fields list.
@@ -238,6 +249,15 @@ gboolean purple_request_fields_is_field_required(const PurpleRequestFields *fiel
  */
 gboolean purple_request_fields_all_required_filled(
 	const PurpleRequestFields *fields);
+
+/**
+ * Returns whether or not all fields are valid.
+ *
+ * @param fields The fields list.
+ *
+ * @return TRUE if all fields are valid, or FALSE.
+ */
+gboolean purple_request_fields_all_valid(const PurpleRequestFields *fields);
 
 /**
  * Return the field with the specified ID.
@@ -532,6 +552,45 @@ const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
  * @return TRUE if the field is required, or FALSE.
  */
 gboolean purple_request_field_is_required(const PurpleRequestField *field);
+
+/**
+ * Checks, if specified field has value.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the field has value, or FALSE.
+ */
+gboolean purple_request_field_is_filled(const PurpleRequestField *field);
+
+/**
+ * Sets validator for a single field.
+ *
+ * @param field The field.
+ * @param validator The validator callback, NULL to disable validation.
+ * @param user_data The data to pass to the callback.
+ */
+void purple_request_field_set_validator(PurpleRequestField *field,
+	PurpleRequestFieldValidator validator, void *user_data);
+
+/**
+ * Returns whether or not field has validator set.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the field has validator, or FALSE.
+ */
+gboolean purple_request_field_is_validated(PurpleRequestField *field);
+
+/**
+ * Checks, if specified field is valid.
+ *
+ * Note: empty, not required fields are valid.
+ *
+ * @param field The field.
+ *
+ * @return TRUE, if the field is valid, FALSE otherwise.
+ */
+gboolean purple_request_field_is_valid(PurpleRequestField *field);
 
 /**
  * Returns the ui_data for a field.

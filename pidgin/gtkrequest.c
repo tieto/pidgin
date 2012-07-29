@@ -766,10 +766,6 @@ pidgin_request_action(const char *title, const char *primary,
 static void
 req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
-	PurpleRequestFieldGroup *group;
-	PurpleRequestFields *fields;
-	PidginRequestData *req_data;
-
 	if (purple_request_field_string_is_multiline(field))
 	{
 		char *text;
@@ -788,13 +784,22 @@ req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 		text = gtk_entry_get_text(GTK_ENTRY(entry));
 		purple_request_field_string_set_value(field, (*text == '\0') ? NULL : text);
 	}
+}
+
+static void
+req_field_changed_cb(GtkWidget *widget, PurpleRequestField *field)
+{
+	PurpleRequestFieldGroup *group;
+	PurpleRequestFields *fields;
+	PidginRequestData *req_data;
 
 	group = purple_request_field_get_group(field);
 	fields = purple_request_field_group_get_fields_list(group);
 	req_data = purple_request_fields_get_ui_data(fields);
 
 	gtk_widget_set_sensitive(req_data->ok_button,
-		purple_request_fields_all_required_filled(fields));
+		purple_request_fields_all_required_filled(fields) &&
+		purple_request_fields_all_valid(fields));
 }
 
 static void
@@ -804,11 +809,10 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
-	if (purple_request_field_is_required(field))
-	{
-		g_signal_connect(G_OBJECT(entry), "changed",
-						 G_CALLBACK(req_entry_field_changed_cb), field);
-	}
+	g_signal_connect(G_OBJECT(entry), "changed",
+		G_CALLBACK(req_entry_field_changed_cb), field);
+	g_signal_connect(G_OBJECT(entry), "changed",
+		G_CALLBACK(req_field_changed_cb), field);
 
 	if ((type_hint = purple_request_field_get_type_hint(field)) != NULL)
 	{
@@ -968,6 +972,8 @@ create_bool_field(PurpleRequestField *field)
 
 	g_signal_connect(G_OBJECT(widget), "toggled",
 					 G_CALLBACK(field_bool_cb), field);
+	g_signal_connect(widget, "toggled",
+		G_CALLBACK(req_field_changed_cb), field);
 
 	return widget;
 }
@@ -1074,6 +1080,8 @@ create_account_field(PurpleRequestField *field)
 		field);
 
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+	g_signal_connect(widget, "changed",
+		G_CALLBACK(req_field_changed_cb), field);
 
 	return widget;
 }
@@ -1582,6 +1590,9 @@ pidgin_request_fields(const char *title, const char *primary,
 	g_object_unref(sg);
 
 	if (!purple_request_fields_all_required_filled(fields))
+		gtk_widget_set_sensitive(data->ok_button, FALSE);
+
+	if (!purple_request_fields_all_valid(fields))
 		gtk_widget_set_sensitive(data->ok_button, FALSE);
 
 	pidgin_auto_parent_window(win);
