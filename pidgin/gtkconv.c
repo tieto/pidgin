@@ -8725,7 +8725,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
 	PidginWindow *dest_win;
 	GtkNotebook *dest_notebook;
-	PurpleConversation *conv;
+	PidginConversation *active_gtkconv;
 	PidginConversation *gtkconv;
 	gint dest_page_num = 0;
 	gboolean new_window = FALSE;
@@ -8781,7 +8781,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
 
-	conv = pidgin_conv_window_get_active_conversation(win);
+	active_gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
 	if (dest_win == NULL) {
 		/* If the current window doesn't have any other conversations,
@@ -8835,7 +8835,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		}
 	}
 
-	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
+	gtk_widget_grab_focus(active_gtkconv->entry);
 
 	return TRUE;
 }
