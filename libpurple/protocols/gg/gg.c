@@ -54,6 +54,12 @@
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
 static int ggp_to_gg_status(PurpleStatus *status, char **msg);
 
+typedef struct
+{
+	gboolean blocked;
+} ggp_buddy_data;
+
+
 /* ---------------------------------------------------------------------- */
 // buddy list import/export from/to file
 
@@ -446,12 +452,16 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 	gchar *from;
 	const char *st;
 	char *status_msg = NULL;
+	ggp_buddy_data *buddy_data;
+	PurpleBuddy *buddy;
 
 	from = g_strdup_printf("%u", uin);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), from);
 
 	switch (status) {
 		case GG_STATUS_NOT_AVAIL:
 		case GG_STATUS_NOT_AVAIL_DESCR:
+		case GG_STATUS_BLOCKED:
 			st = purple_primitive_get_id_from_type(PURPLE_STATUS_OFFLINE);
 			break;
 		case GG_STATUS_FFC:
@@ -474,10 +484,6 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 		case GG_STATUS_DND_DESCR:
 			st = purple_primitive_get_id_from_type(PURPLE_STATUS_UNAVAILABLE);
 			break;
-		case GG_STATUS_BLOCKED:
-			/* user is blocking us.... */
-			st = "blocked";
-			break;
 		default:
 			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
 			purple_debug_info("gg",
@@ -493,6 +499,14 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 			status_msg = NULL;
 		}
 	}
+
+	buddy_data = purple_buddy_get_protocol_data(buddy);
+	if (!buddy_data)
+	{
+		buddy_data = g_new0(ggp_buddy_data, 1);
+		purple_buddy_set_protocol_data(buddy, buddy_data);
+	}
+	buddy_data->blocked = (status == GG_STATUS_BLOCKED);
 
 	purple_debug_info("gg", "status of %u is %s [%s]\n", uin, st,
 		status_msg ? status_msg : "");
@@ -1332,14 +1346,19 @@ static const char *ggp_normalize(const PurpleAccount *account, const char *who)
 
 static char *ggp_status_text(PurpleBuddy *b)
 {
-	PurpleStatus *status;
 	const char *msg;
 	char *text;
 	char *tmp;
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(b);
 
-	status = purple_presence_get_active_status(
-		purple_buddy_get_presence(b));
-	msg = purple_status_get_attr_string(status, "message");
+	if (buddy_data && buddy_data->blocked)
+		msg = _("Blocked");
+	else
+	{
+		PurpleStatus *status = purple_presence_get_active_status(
+			purple_buddy_get_presence(b));
+		msg = purple_status_get_attr_string(status, "message");
+	}
 
 	if (msg == NULL)
 		return NULL;
@@ -1422,15 +1441,6 @@ static GList *ggp_status_types(PurpleAccount *account)
 	 */
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
 		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	/*
-	 * This status is necessary to display guys who are blocking *us*.
-	 */
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
-		"blocked", _("Blocked"), TRUE, FALSE, FALSE,
 		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 		NULL);
 	types = g_list_append(types, type);
@@ -1648,10 +1658,15 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	gint pos = 0;
 	GData *attribs;
 	const char *start, *end = NULL, *last;
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(
+		purple_find_buddy(purple_connection_get_account(gc), who));
 
 	if (msg == NULL || *msg == '\0') {
 		return 0;
 	}
+
+	if (buddy_data && buddy_data->blocked)
+		return -1;
 
 	last = msg;
 
@@ -2052,6 +2067,31 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 	return m;
 }
 
+static const char* ggp_list_emblem(PurpleBuddy *buddy)
+{
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
+
+	if (!buddy_data)
+		return NULL;
+
+	if (buddy_data->blocked)
+		return "not-authorized";
+
+	return NULL;
+}
+
+static void ggp_buddy_free(PurpleBuddy *buddy)
+{
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
+
+	if (!buddy_data)
+		return;
+
+	g_free(buddy_data);
+
+	purple_buddy_set_protocol_data(buddy, NULL);
+}
+
 static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
@@ -2073,7 +2113,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* protocol_options */
 	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
 	ggp_list_icon,			/* list_icon */
-	NULL,				/* list_emblem */
+	ggp_list_emblem,		/* list_emblem */
 	ggp_status_text,		/* status_text */
 	ggp_tooltip_text,		/* tooltip_text */
 	ggp_status_types,		/* status_types */
@@ -2111,7 +2151,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_roster_alias_buddy,		/* alias_buddy */
 	ggp_roster_group_buddy,		/* group_buddy */
 	ggp_roster_rename_group,	/* rename_group */
-	NULL,				/* buddy_free */
+	ggp_buddy_free,			/* buddy_free */
 	NULL,				/* convo_closed */
 	ggp_normalize,			/* normalize */
 	NULL,				/* set_buddy_icon */
