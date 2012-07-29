@@ -44,6 +44,8 @@
 #include "gtkutils.h"
 #include "gtkwebview.h"
 
+#include <gdk/gdkkeysyms.h>
+
 /**
  * These are used for the GtkTreeView when you're scrolling through
  * all your saved pounces.
