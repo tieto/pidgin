@@ -5791,12 +5791,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 
 	g_signal_connect(G_OBJECT(pane), "button_press_event",
 	                 G_CALLBACK(ignore_middle_click), NULL);
-	g_signal_connect(G_OBJECT(pane), "drag_data_received",
-	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->webview), "drag_data_received",
-	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+// TODO: this crashes with webkit, fix it
+//	g_signal_connect(G_OBJECT(pane), "drag_data_received",
+//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+//	g_signal_connect(G_OBJECT(gtkconv->webview), "drag_data_received",
+//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+//	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
+//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 
 	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
