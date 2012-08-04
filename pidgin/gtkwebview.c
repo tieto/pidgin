@@ -196,12 +196,12 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 }
 
 static gboolean
-webview_link_clicked(WebKitWebView *webview,
-                     WebKitWebFrame *frame,
-                     WebKitNetworkRequest *request,
-                     WebKitWebNavigationAction *navigation_action,
-                     WebKitWebPolicyDecision *policy_decision,
-                     gpointer userdata)
+webview_navigation_decision(WebKitWebView *webview,
+                            WebKitWebFrame *frame,
+                            WebKitNetworkRequest *request,
+                            WebKitWebNavigationAction *navigation_action,
+                            WebKitWebPolicyDecision *policy_decision,
+                            gpointer userdata)
 {
 	const gchar *uri;
 	WebKitWebNavigationReason reason;
@@ -500,7 +500,7 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 	priv->load_queue = g_queue_new();
 
 	g_signal_connect(G_OBJECT(webview), "navigation-policy-decision-requested",
-	                 G_CALLBACK(webview_link_clicked), NULL);
+	                 G_CALLBACK(webview_navigation_decision), NULL);
 
 	g_signal_connect(G_OBJECT(webview), "load-started",
 	                 G_CALLBACK(webview_load_started), NULL);
