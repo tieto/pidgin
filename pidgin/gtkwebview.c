@@ -26,6 +26,7 @@
  */
 
 #include "internal.h"
+#include "debug.h"
 #include "pidgin.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -39,6 +40,11 @@
 
 #define GTK_WEBVIEW_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, GtkWebViewPriv))
+
+enum {
+	LOAD_HTML,
+	LOAD_JS
+};
 
 enum {
 	BUTTONS_UPDATE,
@@ -56,9 +62,9 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 typedef struct _GtkWebViewPriv {
 	/* Processing queues */
-	GQueue *html_queue;
-	GQueue *js_queue;
 	gboolean is_loading;
+	GQueue *load_queue;
+	guint loader;
 
 	/* Scroll adjustments */
 	GtkAdjustment *vadj;
@@ -125,41 +131,45 @@ webview_resource_loading(WebKitWebView *webview,
 }
 
 static gboolean
-process_js_script_queue(GtkWebView *webview)
+process_load_queue(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	char *script;
-
-	if (priv->is_loading)
-		return FALSE; /* we will be called when loaded */
-	if (!priv->js_queue || g_queue_is_empty(priv->js_queue))
-		return FALSE; /* nothing to do! */
-
-	script = g_queue_pop_head(priv->js_queue);
-	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), script);
-	g_free(script);
-
-	return TRUE; /* there may be more for now */
-}
-
-static gboolean
-process_html_queue(GtkWebView *webview)
-{
-	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	char *html;
+	int type;
+	char *str;
 	WebKitDOMDocument *doc;
 	WebKitDOMHTMLElement *body;
 
-	if (priv->is_loading)
+	if (priv->is_loading) {
+		priv->loader = 0;
 		return FALSE;
-	if (!priv->html_queue || g_queue_is_empty(priv->html_queue))
+	}
+	if (!priv->load_queue || g_queue_is_empty(priv->load_queue)) {
+		priv->loader = 0;
 		return FALSE;
+	}
 
-	html = g_queue_pop_head(priv->html_queue);
-	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	body = webkit_dom_document_get_body(doc);
-	webkit_dom_html_element_insert_adjacent_html(body, "beforeend", html, NULL);
-	g_free(html);
+	type = GPOINTER_TO_INT(g_queue_pop_head(priv->load_queue));
+	str = g_queue_pop_head(priv->load_queue);
+
+	switch (type) {
+		case LOAD_HTML:
+			doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+			body = webkit_dom_document_get_body(doc);
+			webkit_dom_html_element_insert_adjacent_html(body, "beforeend",
+			                                             str, NULL);
+			break;
+
+		case LOAD_JS:
+			webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), str);
+			break;
+
+		default:
+			purple_debug_error("webview",
+			                   "Got unknown loading queue type: %d\n", type);
+			break;
+	}
+
+	g_free(str);
 
 	return TRUE;
 }
@@ -181,7 +191,8 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
 	priv->is_loading = FALSE;
-	g_idle_add((GSourceFunc)process_js_script_queue, webview);
+	if (priv->loader == 0)
+		priv->loader = g_idle_add((GSourceFunc)process_load_queue, webview);
 }
 
 static gboolean
@@ -398,13 +409,14 @@ gtk_webview_finalize(GObject *webview)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	gpointer temp;
 
-	while ((temp = g_queue_pop_head(priv->html_queue)))
-		g_free(temp);
-	g_queue_free(priv->html_queue);
+	g_source_remove(priv->loader);
 
-	while ((temp = g_queue_pop_head(priv->js_queue)))
+	while (!g_queue_is_empty(priv->load_queue)) {
+		temp = g_queue_pop_head(priv->load_queue);
+		temp = g_queue_pop_head(priv->load_queue);
 		g_free(temp);
-	g_queue_free(priv->js_queue);
+	}
+	g_queue_free(priv->load_queue);
 
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
@@ -486,8 +498,7 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
-	priv->html_queue = g_queue_new();
-	priv->js_queue = g_queue_new();
+	priv->load_queue = g_queue_new();
 
 	g_signal_connect(webview, "navigation-policy-decision-requested",
 			  G_CALLBACK(webview_link_clicked), NULL);
@@ -567,8 +578,10 @@ gtk_webview_safe_execute_script(GtkWebView *webview, const char *script)
 	g_return_if_fail(webview != NULL);
 
 	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	g_queue_push_tail(priv->js_queue, g_strdup(script));
-	g_idle_add((GSourceFunc)process_js_script_queue, webview);
+	g_queue_push_tail(priv->load_queue, GINT_TO_POINTER(LOAD_JS));
+	g_queue_push_tail(priv->load_queue, g_strdup(script));
+	if (!priv->is_loading)
+		g_idle_add((GSourceFunc)process_load_queue, webview);
 }
 
 void
@@ -607,8 +620,10 @@ gtk_webview_append_html(GtkWebView *webview, const char *html)
 	g_return_if_fail(webview != NULL);
 
 	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	g_queue_push_tail(priv->html_queue, g_strdup(html));
-	g_idle_add((GSourceFunc)process_html_queue, webview);
+	g_queue_push_tail(priv->load_queue, GINT_TO_POINTER(LOAD_HTML));
+	g_queue_push_tail(priv->load_queue, g_strdup(html));
+	if (!priv->is_loading)
+		g_idle_add((GSourceFunc)process_load_queue, webview);
 }
 
 void
