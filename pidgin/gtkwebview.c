@@ -500,14 +500,14 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 
 	priv->load_queue = g_queue_new();
 
-	g_signal_connect(webview, "navigation-policy-decision-requested",
-			  G_CALLBACK(webview_link_clicked), NULL);
+	g_signal_connect(G_OBJECT(webview), "navigation-policy-decision-requested",
+	                 G_CALLBACK(webview_link_clicked), NULL);
 
-	g_signal_connect(webview, "load-started",
-			  G_CALLBACK(webview_load_started), NULL);
+	g_signal_connect(G_OBJECT(webview), "load-started",
+	                 G_CALLBACK(webview_load_started), NULL);
 
-	g_signal_connect(webview, "load-finished",
-			  G_CALLBACK(webview_load_finished), NULL);
+	g_signal_connect(G_OBJECT(webview), "load-finished",
+	                 G_CALLBACK(webview_load_finished), NULL);
 
 	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
 	                 G_CALLBACK(webview_resource_loading), NULL);
