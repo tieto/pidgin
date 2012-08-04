@@ -408,7 +408,8 @@ gtk_webview_finalize(GObject *webview)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	gpointer temp;
 
-	g_source_remove(priv->loader);
+	if (priv->loader)
+		g_source_remove(priv->loader);
 
 	while (!g_queue_is_empty(priv->load_queue)) {
 		temp = g_queue_pop_head(priv->load_queue);
