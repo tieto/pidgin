@@ -94,17 +94,6 @@ GType gtk_webview_get_type(void);
 GtkWidget *gtk_webview_new(void);
 
 /**
- * TODO WEBKIT: Right now this just tests whether an append has been called
- * since the last clear or since the Widget was created.  So it does not
- * test for load_string's called in between.
- *
- * @param webview The GtkWebView object
- *
- * @return gboolean indicating whether the webview is empty
- */
-gboolean gtk_webview_is_empty(GtkWebView *webview);
-
-/**
  * A very basic routine to append html, which can be considered
  * equivalent to a "document.write" using JavaScript.
  *

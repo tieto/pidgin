@@ -55,8 +55,6 @@ static guint signals[LAST_SIGNAL] = { 0 };
  *****************************************************************************/
 
 typedef struct _GtkWebViewPriv {
-	gboolean empty;     /**< whether anything has been appended **/
-
 	/* Processing queues */
 	GQueue *html_queue;
 	GQueue *js_queue;
@@ -162,7 +160,6 @@ process_html_queue(GtkWebView *webview)
 	body = webkit_dom_document_get_body(doc);
 	webkit_dom_html_element_insert_adjacent_html(body, "beforeend", html, NULL);
 	g_free(html);
-	priv->empty = FALSE;
 
 	return TRUE;
 }
@@ -489,7 +486,6 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
-	priv->empty = TRUE;
 	priv->html_queue = g_queue_new();
 	priv->js_queue = g_queue_new();
 
@@ -532,17 +528,6 @@ gtk_webview_get_type(void)
 /*****************************************************************************
  * Public API functions
  *****************************************************************************/
-
-gboolean
-gtk_webview_is_empty(GtkWebView *webview)
-{
-	GtkWebViewPriv *priv;
-
-	g_return_val_if_fail(webview != NULL, TRUE);
-
-	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	return priv->empty;
-}
 
 char *
 gtk_webview_quote_js_string(const char *text)
