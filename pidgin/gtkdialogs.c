@@ -880,18 +880,25 @@ pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 }
 
 static gboolean
-pidgin_dialogs_im_name_validator(PurpleRequestField *field, void *_fields)
+pidgin_dialogs_im_name_validator(PurpleRequestField *field, gchar **errmsg,
+	void *_fields)
 {
 	PurpleRequestFields *fields = _fields;
 	PurpleAccount *account;
 	PurplePlugin *prpl;
 	const char *username;
+	gboolean valid;
 
 	account = purple_request_fields_get_account(fields, "account");
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	username = purple_request_fields_get_string(fields, "screenname");
 
-	return purple_validate(prpl, username);
+	valid = purple_validate(prpl, username);
+
+	if (errmsg && !valid)
+		*errmsg = g_strdup(_("Invalid username"));
+
+	return valid;
 }
 
 void
