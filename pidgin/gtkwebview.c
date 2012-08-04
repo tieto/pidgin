@@ -248,7 +248,6 @@ smooth_scroll_cb(gpointer data)
 		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(priv->scroll_time);
 		priv->scroll_time = NULL;
-		g_source_remove(priv->scroll_src);
 		priv->scroll_src = 0;
 		return FALSE;
 	}
