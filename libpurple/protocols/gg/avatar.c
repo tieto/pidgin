@@ -117,9 +117,10 @@ void ggp_avatar_buddy_update(PurpleConnection *gc, uin_t uin, time_t timestamp)
 
 void ggp_avatar_buddy_remove(PurpleConnection *gc, uin_t uin)
 {
-	//TODO: verbose mode
-	//purple_debug_misc("gg", "ggp_avatar_buddy_remove(%p, %u) - "
-	//	"probably not necessary, thus not implemented\n", gc, uin);
+	purple_debug_info("gg", "ggp_avatar_buddy_remove(%p, %u)\n", gc, uin);
+
+	purple_buddy_icons_set_for_user(purple_connection_get_account(gc),
+		ggp_uin_to_str(uin), NULL, 0, NULL);
 }
 
 /* return TRUE if avatar update was performed or there is no new requests,

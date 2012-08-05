@@ -33,7 +33,14 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 				&data_user->attrs[attr_idx];
 			if (strcmp(data_attr->key, "avatar") == 0)
 			{
-				time_t timestamp = atoi(data_attr->value);
+				time_t timestamp;
+				if (data_attr->type == 0)
+				{
+					ggp_avatar_buddy_remove(gc, uin);
+					continue;
+				}
+				
+				timestamp = atoi(data_attr->value);
 				if (timestamp <= 0)
 					continue;
 				got_avatar = TRUE;
