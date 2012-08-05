@@ -467,21 +467,22 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
+	WEBKIT_VERSION=1.1.1
 	if test "x$with_gtk" = "x3"; then
-		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= 1.1.1], , [
+		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
-You must have WebKit 1.1.1 or newer development headers installed to compile
-Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
+You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
+installed to compile Pidgin.  If you want to build only Finch then specify
+--disable-gtkui when running configure.
 ])])
 	else
-		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
-You must have WebKit 1.1.1 or newer development headers installed to compile
-Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
+You must have WebKit for GTK+2 $WEBKIT_VERSION or newer development headers
+installed to compile Pidgin.  If you want to build only Finch then specify
+--disable-gtkui when running configure.
 ])])
 	fi
 	AC_SUBST(WEBKIT_CFLAGS)
@@ -673,7 +674,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 				enable_gcr="no"
 				if test "x$force_deps" = "xyes" ; then
 					AC_MSG_ERROR([
-GCR development headers not found.
+GCR for GTK+3 development headers not found.
 Use --disable-gcr if you do not need GCR certificate widgets.
 ])
 				fi])
@@ -684,7 +685,7 @@ Use --disable-gcr if you do not need GCR certificate widgets.
 				enable_gcr="no"
 				if test "x$force_deps" = "xyes" ; then
 					AC_MSG_ERROR([
-GCR development headers not found.
+GCR for GTK+2 development headers not found.
 Use --disable-gcr if you do not need GCR certificate widgets.
 ])
 				fi])
