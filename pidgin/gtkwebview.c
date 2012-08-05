@@ -30,6 +30,7 @@
 #include "pidgin.h"
 
 #include <gdk/gdkkeysyms.h>
+#include "gtkutils.h"
 #include "gtkwebview.h"
 
 #include "gtk3compat.h"
@@ -220,6 +221,94 @@ webview_navigation_decision(WebKitWebView *webview,
 		webkit_web_policy_decision_ignore(policy_decision);
 
 	return TRUE;
+}
+
+static void
+do_popup_menu(WebKitWebView *webview, int button, int time, int context)
+{
+	GtkWidget *menu;
+	GtkWidget *cut, *copy, *paste, *delete, *link, *select;
+
+	menu = gtk_menu_new();
+	g_signal_connect(menu, "selection-done",
+	                 G_CALLBACK(gtk_widget_destroy), NULL);
+
+	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
+		/* Do something special... */
+	} else {
+		/* Using connect_swapped means we don't need any wrapper functions */
+		cut = pidgin_new_item_from_stock(menu, _("Cu_t"), GTK_STOCK_CUT,
+		                                 NULL, NULL, 0, 0, NULL);
+		g_signal_connect_swapped(G_OBJECT(cut), "activate",
+		                         G_CALLBACK(webkit_web_view_cut_clipboard),
+		                         webview);
+
+		copy = pidgin_new_item_from_stock(menu, _("_Copy"), GTK_STOCK_COPY,
+		                                  NULL, NULL, 0, 0, NULL);
+		g_signal_connect_swapped(G_OBJECT(copy), "activate",
+		                         G_CALLBACK(webkit_web_view_copy_clipboard),
+		                         webview);
+
+		paste = pidgin_new_item_from_stock(menu, _("_Paste"), GTK_STOCK_PASTE,
+		                                   NULL, NULL, 0, 0, NULL);
+		g_signal_connect_swapped(G_OBJECT(paste), "activate",
+		                         G_CALLBACK(webkit_web_view_paste_clipboard),
+		                         webview);
+
+		delete = pidgin_new_item_from_stock(menu, _("_Delete"), GTK_STOCK_DELETE,
+		                                    NULL, NULL, 0, 0, NULL);
+		g_signal_connect_swapped(G_OBJECT(delete), "activate",
+		                         G_CALLBACK(webkit_web_view_delete_selection),
+		                         webview);
+
+		pidgin_separator(menu);
+
+		select = pidgin_new_item_from_stock(menu, _("Select _All"),
+		                                    GTK_STOCK_SELECT_ALL,
+		                                    NULL, NULL, 0, 0, NULL);
+		g_signal_connect_swapped(G_OBJECT(select), "activate",
+		                         G_CALLBACK(webkit_web_view_select_all),
+		                         webview);
+
+		gtk_widget_set_sensitive(cut,
+			webkit_web_view_can_cut_clipboard(webview));
+		gtk_widget_set_sensitive(copy,
+			webkit_web_view_can_copy_clipboard(webview));
+		gtk_widget_set_sensitive(paste,
+			webkit_web_view_can_paste_clipboard(webview));
+		gtk_widget_set_sensitive(delete,
+			webkit_web_view_can_cut_clipboard(webview));
+	}
+
+	g_signal_emit_by_name(G_OBJECT(webview), "populate-popup", menu);
+
+	gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(webview), NULL);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
+}
+
+static gboolean
+webview_popup_menu(WebKitWebView *webview)
+{
+	do_popup_menu(webview, 0, gtk_get_current_event_time(),
+	              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT);
+	return TRUE;
+}
+
+static gboolean
+webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
+{
+	if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+		WebKitHitTestResult *hit;
+		int context;
+
+		hit = webkit_web_view_get_hit_test_result(webview, event);
+		g_object_get(G_OBJECT(hit), "context", &context, NULL);
+
+		do_popup_menu(webview, event->button, event->time, context);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /*
@@ -499,6 +588,12 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
 	priv->load_queue = g_queue_new();
+
+	g_signal_connect(G_OBJECT(webview), "button-press-event",
+	                 G_CALLBACK(webview_button_pressed), NULL);
+
+	g_signal_connect(G_OBJECT(webview), "popup-menu",
+	                 G_CALLBACK(webview_popup_menu), NULL);
 
 	g_signal_connect(G_OBJECT(webview), "navigation-policy-decision-requested",
 	                 G_CALLBACK(webview_navigation_decision), NULL);
