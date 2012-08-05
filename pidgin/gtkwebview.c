@@ -61,6 +61,14 @@ static guint signals[LAST_SIGNAL] = { 0 };
  * Structs
  *****************************************************************************/
 
+typedef struct {
+	char *name;
+	int length;
+
+	gboolean (*activate)(GtkWebView *webview, const char *uri);
+	gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu);
+} GtkWebViewProtocol;
+
 typedef struct _GtkWebViewPriv {
 	/* Processing queues */
 	gboolean is_loading;
@@ -196,6 +204,27 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 		priv->loader = g_idle_add((GSourceFunc)process_load_queue, webview);
 }
 
+static GtkWebViewProtocol *
+webview_find_protocol(const char *url, gboolean reverse)
+{
+	GtkWebViewClass *klass;
+	GList *iter;
+	GtkWebViewProtocol *proto = NULL;
+	int length = reverse ? strlen(url) : -1;
+
+	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
+	for (iter = klass->protocols; iter; iter = iter->next) {
+		proto = iter->data;
+		if (g_ascii_strncasecmp(url, proto->name, reverse ? MIN(length, proto->length) : proto->length) == 0) {
+			g_type_class_unref(klass);
+			return proto;
+		}
+	}
+
+	g_type_class_unref(klass);
+	return NULL;
+}
+
 static gboolean
 webview_navigation_decision(WebKitWebView *webview,
                             WebKitWebFrame *frame,
@@ -211,9 +240,11 @@ webview_navigation_decision(WebKitWebView *webview,
 	reason = webkit_web_navigation_action_get_reason(navigation_action);
 
 	if (reason == WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED) {
-		/* the gtk imhtml way was to create an idle cb, not sure
-		 * why, so right now just using purple_notify_uri directly */
-		purple_notify_uri(NULL, uri);
+		GtkWebViewProtocol *proto = webview_find_protocol(uri, FALSE);
+		if (proto) {
+			/* XXX: Do something with the return value? */
+			proto->activate(GTK_WEBVIEW(webview), uri);
+		}
 		webkit_web_policy_decision_ignore(policy_decision);
 	} else if (reason == WEBKIT_WEB_NAVIGATION_REASON_OTHER)
 		webkit_web_policy_decision_use(policy_decision);
@@ -224,17 +255,37 @@ webview_navigation_decision(WebKitWebView *webview,
 }
 
 static void
-do_popup_menu(WebKitWebView *webview, int button, int time, int context)
+do_popup_menu(WebKitWebView *webview, int button, int time, int context,
+              WebKitDOMHTMLAnchorElement *link, const char *uri)
 {
 	GtkWidget *menu;
-	GtkWidget *cut, *copy, *paste, *delete, *link, *select;
+	GtkWidget *cut, *copy, *paste, *delete, *select;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
 	                 G_CALLBACK(gtk_widget_destroy), NULL);
 
 	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
-		/* Do something special... */
+		GtkWebViewProtocol *proto = NULL;
+		GList *children;
+
+		if (uri && link)
+			proto = webview_find_protocol(uri, FALSE);
+
+		if (proto && proto->context_menu) {
+			proto->context_menu(GTK_WEBVIEW(webview), link, menu);
+		}
+
+		children = gtk_container_get_children(GTK_CONTAINER(menu));
+		if (!children) {
+			GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_widget_show(item);
+			gtk_widget_set_sensitive(item, FALSE);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		} else {
+			g_list_free(children);
+		}
+
 	} else {
 		/* Using connect_swapped means we don't need any wrapper functions */
 		cut = pidgin_new_item_from_stock(menu, _("Cu_t"), GTK_STOCK_CUT,
@@ -290,7 +341,8 @@ static gboolean
 webview_popup_menu(WebKitWebView *webview)
 {
 	do_popup_menu(webview, 0, gtk_get_current_event_time(),
-	              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT);
+	              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
+	              NULL, NULL);
 	return TRUE;
 }
 
@@ -300,11 +352,27 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 	if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
 		WebKitHitTestResult *hit;
 		int context;
+		WebKitDOMNode *node;
+		char *uri;
 
 		hit = webkit_web_view_get_hit_test_result(webview, event);
-		g_object_get(G_OBJECT(hit), "context", &context, NULL);
+		g_object_get(G_OBJECT(hit),
+		             "context", &context,
+		             "inner-node", &node,
+		             "link-uri", &uri,
+		             NULL);
 
-		do_popup_menu(webview, event->button, event->time, context);
+		if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
+			while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
+				node = webkit_dom_node_get_parent_node(node);
+			}
+		}
+
+		do_popup_menu(webview, event->button, event->time, context,
+		              WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), uri);
+
+		g_free(uri);
+
 		return TRUE;
 	}
 
@@ -925,6 +993,41 @@ gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
 	priv->format_functions = buttons;
 	g_signal_emit(object, signals[BUTTONS_UPDATE], 0, buttons);
 	g_object_unref(object);
+}
+
+gboolean
+gtk_webview_class_register_protocol(const char *name,
+	gboolean (*activate)(GtkWebView *webview, const char *uri),
+	gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu))
+{
+	GtkWebViewClass *klass;
+	GtkWebViewProtocol *proto;
+
+	g_return_val_if_fail(name, FALSE);
+
+	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
+	g_return_val_if_fail(klass, FALSE);
+
+	if ((proto = webview_find_protocol(name, TRUE))) {
+		if (activate) {
+			return FALSE;
+		}
+		klass->protocols = g_list_remove(klass->protocols, proto);
+		g_free(proto->name);
+		g_free(proto);
+		return TRUE;
+	} else if (!activate) {
+		return FALSE;
+	}
+
+	proto = g_new0(GtkWebViewProtocol, 1);
+	proto->name = g_strdup(name);
+	proto->length = strlen(name);
+	proto->activate = activate;
+	proto->context_menu = context_menu;
+	klass->protocols = g_list_prepend(klass->protocols, proto);
+
+	return TRUE;
 }
 
 gchar *

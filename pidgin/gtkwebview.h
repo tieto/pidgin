@@ -70,6 +70,8 @@ struct _GtkWebViewClass
 {
 	WebKitWebViewClass parent;
 
+	GList *protocols;
+
 	void (*buttons_update)(GtkWebView *, GtkWebViewButtons);
 	void (*toggle_format)(GtkWebView *, GtkWebViewButtons);
 	void (*clear_format)(GtkWebView *);
@@ -216,6 +218,27 @@ void gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview,
  */
 void gtk_webview_set_format_functions(GtkWebView *webview,
                                       GtkWebViewButtons buttons);
+
+/**
+ * Register a protocol with the GtkWebView widget. Registering a protocol would
+ * allow certain text to be clickable.
+ *
+ * @param name      The name of the protocol (e.g. http://)
+ * @param activate  The callback to trigger when the protocol text is clicked.
+ *                  Removes any current protocol definition if @c NULL. The
+ *                  callback should return @c TRUE if the link was activated
+ *                  properly, @c FALSE otherwise.
+ * @param context_menu  The callback to trigger when the context menu is popped
+ *                      up on the protocol text. The callback should return
+ *                      @c TRUE if the request for context menu was processed
+ *                      successfully, @c FALSE otherwise.
+ *
+ * @return  @c TRUE if the protocol was successfully registered
+ *          (or unregistered, when \a activate is @c NULL)
+ */
+gboolean gtk_webview_class_register_protocol(const char *name,
+		gboolean (*activate)(GtkWebView *webview, const char *uri),
+		gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu));
 
 /**
  * Returns which formatting functions are enabled in a GtkWebView.
