@@ -118,7 +118,6 @@ void pidgin_setup_webview(GtkWidget *webview);
  * Create an GtkWebView widget and associated GtkIMHtmlToolbar widget.  This
  * function puts both widgets in a nice GtkFrame.  They're separated by an
  * attractive GtkSeparator.
- * TODO WEBKIT: editable isn't supported yet
  *
  * @param editable @c TRUE if this webview should be editable.  If this is
  *        @c FALSE, then the toolbar will NOT be created.  If this webview

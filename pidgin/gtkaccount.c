@@ -48,6 +48,8 @@
 #include "pidginstock.h"
 #include "minidialog.h"
 
+#include "gtk3compat.h"
+
 enum
 {
 	COLUMN_ICON,
@@ -270,6 +272,11 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 	GHashTable *table;
 	const char *label;
 
+	if (!dialog->prpl_info || ! PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(
+		dialog->prpl_info, get_account_text_table)) {
+		return FALSE;
+	}
+
 	table = dialog->prpl_info->get_account_text_table(NULL);
 	label = g_hash_table_lookup(table, "login_label");
 
@@ -286,9 +293,11 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 static void
 username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
-	int opt_noscreenname = (dialog->prpl_info != NULL &&
+	gboolean opt_noscreenname = (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
-	
+	gboolean username_valid = purple_validate(dialog->plugin,
+		gtk_entry_get_text(entry));
+
 	if (dialog->ok_button) {
 		if (opt_noscreenname && dialog->register_button &&
 			gtk_toggle_button_get_active(
@@ -296,14 +305,15 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 			gtk_widget_set_sensitive(dialog->ok_button, TRUE);
 		else
 			gtk_widget_set_sensitive(dialog->ok_button,
-				*gtk_entry_get_text(entry) != '\0');
+				username_valid);
 	}
+
 	if (dialog->register_button) {
 		if (opt_noscreenname)
 			gtk_widget_set_sensitive(dialog->register_button, TRUE);
 		else
 			gtk_widget_set_sensitive(dialog->register_button,
-					*gtk_entry_get_text(entry) != '\0');
+				username_valid);
 	}
 }
 
@@ -343,10 +353,10 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	int opt_noscreenname = (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
 	int register_noscreenname = (opt_noscreenname && register_checked);
-	
-	// get rid of login_label in username field
+
+	/* get rid of login_label in username field */
 	username_focus_cb(dialog->username_entry, NULL, dialog);
-	
+
 	if (register_noscreenname) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
 		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
@@ -355,14 +365,14 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
 	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
 	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
-	
+
 	if (dialog->ok_button) {
 		gtk_widget_set_sensitive(dialog->ok_button,
 			(opt_noscreenname && register_checked) ||
 			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
 				!= '\0');
 	}
-	
+
 	username_nofocus_cb(dialog->username_entry, NULL, dialog);
 }
 
@@ -398,9 +408,11 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	gchar *name = (gchar *)sd->data;
+	const gchar *name = (gchar *)gtk_selection_data_get_data(sd);
+	gint length = gtk_selection_data_get_length(sd);
+	gint format = gtk_selection_data_get_format(sd);
 
-	if ((sd->length >= 0) && (sd->format == 8)) {
+	if ((length >= 0) && (format == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -473,11 +485,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->protocol_menu != NULL)
 	{
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 		hbox = g_object_get_data(G_OBJECT(dialog->protocol_menu), "container");
 		gtk_container_remove(GTK_CONTAINER(hbox), dialog->protocol_menu);
 	}
@@ -504,21 +512,13 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	{
 		dialog->protocol_menu = pidgin_protocol_option_menu_new(
 				dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
-#if GTK_CHECK_VERSION(2,12,0)
 		g_object_ref(G_OBJECT(dialog->protocol_menu));
-#else
-		gtk_widget_ref(dialog->protocol_menu);
-#endif
 	}
 
 	hbox = add_pref_box(dialog, vbox, _("Pro_tocol:"), dialog->protocol_menu);
 	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	g_object_unref(G_OBJECT(dialog->protocol_menu));
-#else
-	gtk_widget_unref(dialog->protocol_menu);
-#endif
 
 	/* Username */
 	dialog->username_entry = gtk_entry_new();
@@ -1078,7 +1078,7 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
 		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
-		gtk_widget_hide_all(dialog->proxy_vbox);
+		gtk_widget_hide(dialog->proxy_vbox);
 	}
 	else
 		gtk_widget_show_all(dialog->proxy_vbox);
@@ -1287,7 +1287,7 @@ account_register_cb(PurpleAccount *account, gboolean succeeded, void *user_data)
 	{
 		const PurpleSavedStatus *saved_status = purple_savedstatus_get_current();
 		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
-		
+
 		if (saved_status != NULL && purple_account_get_remember_password(account)) {
 			purple_savedstatus_activate_for_account(saved_status, account);
 			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
@@ -1804,7 +1804,9 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
+	GdkAtom target = gtk_selection_data_get_target(data);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
@@ -1875,13 +1877,16 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && data) {
 		gint dest_index;
 		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
-		memcpy(&a, sd->data, sizeof(a));
+		memcpy(&a, data, sizeof(a));
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
 											  &path, &position)) {
@@ -2384,7 +2389,11 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
+#if GTK_CHECK_VERSION(3,0,0)
+	dialog->window = win = pidgin_create_dialog(_("Accounts"), 0, "accounts", TRUE);
+#else
 	dialog->window = win = pidgin_create_dialog(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

@@ -24,38 +24,24 @@
 #include "gtkticker.h"
 #include <gtk/gtk.h>
 
-#if !GTK_CHECK_VERSION(2,20,0)
-#define gtk_widget_get_mapped(x) GTK_WIDGET_MAPPED(x)
-#define gtk_widget_set_mapped(x,y) do {\
-	if (y) \
-		GTK_WIDGET_SET_FLAGS(x, GTK_MAPPED); \
-	else \
-		GTK_WIDGET_UNSET_FLAGS(x, GTK_MAPPED); \
-} while(0)
-#define gtk_widget_get_realized(x) GTK_WIDGET_REALIZED(x)
-#define gtk_widget_set_realized(x,y) do {\
-	if (y) \
-		GTK_WIDGET_SET_FLAGS(x, GTK_REALIZED); \
-	else \
-		GTK_WIDGET_UNSET_FLAGS(x, GTK_REALIZED); \
-} while(0)
-
-#if !GTK_CHECK_VERSION(2,18,0)
-#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
-
-#if !GTK_CHECK_VERSION(2,14,0)
-#define gtk_widget_get_window(x) x->window
-#endif
-#endif
-#endif
+#include "gtk3compat.h"
 
 static void gtk_ticker_compute_offsets (GtkTicker    *ticker);
 static void gtk_ticker_class_init    (GtkTickerClass    *klass);
 static void gtk_ticker_init          (GtkTicker         *ticker);
 static void gtk_ticker_map           (GtkWidget        *widget);
 static void gtk_ticker_realize       (GtkWidget        *widget);
+#if GTK_CHECK_VERSION(3,0,0)
+static void gtk_ticker_get_preferred_width (GtkWidget *widget,
+		gint      *minimal_width,
+		gint      *natural_width);
+static void gtk_ticker_get_preferred_height (GtkWidget *widget,
+		gint      *minimal_height,
+		gint      *natural_height);
+#else
 static void gtk_ticker_size_request  (GtkWidget        *widget,
 		GtkRequisition   *requisition);
+#endif
 static void gtk_ticker_size_allocate (GtkWidget        *widget,
 		GtkAllocation    *allocation);
 static void gtk_ticker_add_real      (GtkContainer     *container,
@@ -128,7 +114,12 @@ static void gtk_ticker_class_init (GtkTickerClass *class)
 
 	widget_class->map = gtk_ticker_map;
 	widget_class->realize = gtk_ticker_realize;
+#if GTK_CHECK_VERSION(3,0,0)
+	widget_class->get_preferred_width = gtk_ticker_get_preferred_width;
+	widget_class->get_preferred_height = gtk_ticker_get_preferred_height;
+#else
 	widget_class->size_request = gtk_ticker_size_request;
+#endif
 	widget_class->size_allocate = gtk_ticker_size_allocate;
 
 	container_class->add = gtk_ticker_add_real;
@@ -144,11 +135,7 @@ static GType gtk_ticker_child_type (GtkContainer *container)
 
 static void gtk_ticker_init (GtkTicker *ticker)
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_has_window (GTK_WIDGET (ticker), TRUE);
-#else
-	GTK_WIDGET_UNSET_FLAGS (ticker, GTK_NO_WINDOW);
-#endif
 
 	ticker->interval = (guint) 200;
 	ticker->scootch = (guint) 2;
@@ -308,9 +295,7 @@ static void gtk_ticker_realize (GtkWidget *widget)
 	gint attributes_mask;
 	GdkWindow *window;
 	GtkStyle *style;
-#if GTK_CHECK_VERSION(2,18,0)
 	GtkAllocation allocation;
-#endif
 
 	g_return_if_fail (widget != NULL);
 	g_return_if_fail (GTK_IS_TICKER (widget));
@@ -318,44 +303,109 @@ static void gtk_ticker_realize (GtkWidget *widget)
 	gtk_widget_set_realized (widget, TRUE);
 
 	attributes.window_type = GDK_WINDOW_CHILD;
-#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_get_allocation (widget, &allocation);
 	attributes.x = allocation.x;
 	attributes.y = allocation.y;
 	attributes.width = allocation.width;
 	attributes.height = allocation.height;
-#else
-	attributes.x = widget->allocation.x;
-	attributes.y = widget->allocation.y;
-	attributes.width = widget->allocation.width;
-	attributes.height = widget->allocation.height;
-#endif
 	attributes.wclass = GDK_INPUT_OUTPUT;
 	attributes.visual = gtk_widget_get_visual (widget);
+#if !GTK_CHECK_VERSION(3,0,0)
 	attributes.colormap = gtk_widget_get_colormap (widget);
+#endif
 	attributes.event_mask = gtk_widget_get_events (widget);
 	attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
+#else
 	attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+#endif
 
 	window = gdk_window_new (gtk_widget_get_parent_window (widget),
 			&attributes, attributes_mask);
-#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_window (widget, window);
-#else
-	widget->window = window;
-#endif
 	gdk_window_set_user_data (window, widget);
 
-#if GTK_CHECK_VERSION(2,14,0)
-	style = gtk_widget_get_style (widget);
-	style = gtk_style_attach (style, window);
+	style = gtk_style_attach (gtk_widget_get_style (widget), window);
 	gtk_widget_set_style (widget, style);
-#else
-	style = widget->style = gtk_style_attach (widget->style, window);
-#endif
 	gtk_style_set_background (style, window, GTK_STATE_NORMAL);
 }
+
+#if GTK_CHECK_VERSION(3,0,0)
+static void
+gtk_ticker_get_preferred_width (GtkWidget *widget,
+                                gint      *minimal_width,
+                                gint      *natural_width)
+{
+	GtkTicker *ticker;
+	GtkTickerChild *child;
+	GList *children;
+	gint child_min_width, child_nat_width;
+	gint width;
+	guint border_width;
+
+	ticker = GTK_TICKER (widget);
+	*minimal_width = width = 0;
+
+	children = ticker->children;
+	while (children)
+	{
+		child = children->data;
+		children = children->next;
+
+		if (gtk_widget_get_visible (child->widget))
+		{
+			gtk_widget_get_preferred_width (child->widget, &child_min_width, &child_nat_width);
+
+			width += child_nat_width + ticker->spacing;
+			*minimal_width = MAX(*minimal_width, child_min_width);
+		}
+	}
+	if ( width > ticker->spacing )
+		width -= ticker->spacing;
+
+	border_width = gtk_container_get_border_width (GTK_CONTAINER (ticker));
+	width += border_width * 2;
+
+	*natural_width = width;
+}
+
+static void
+gtk_ticker_get_preferred_height (GtkWidget *widget,
+                                 gint      *minimal_height,
+                                 gint      *natural_height)
+{
+	GtkTicker *ticker;
+	GtkTickerChild *child;
+	GList *children;
+	gint child_min_height, child_nat_height;
+	gint height;
+	guint border_width;
+
+	ticker = GTK_TICKER (widget);
+	height = 0;
+
+	children = ticker->children;
+	while (children)
+	{
+		child = children->data;
+		children = children->next;
+
+		if (gtk_widget_get_visible (child->widget))
+		{
+			gtk_widget_get_preferred_height (child->widget, &child_min_height, &child_nat_height);
+
+			height = MAX (height, child_nat_height);
+		}
+	}
+
+	border_width = gtk_container_get_border_width (GTK_CONTAINER (ticker));
+	height += border_width * 2;
+	*minimal_height = *natural_height = height;
+}
+
+#else
 
 static void gtk_ticker_size_request (GtkWidget *widget, GtkRequisition *requisition)
 {
@@ -395,9 +445,11 @@ static void gtk_ticker_size_request (GtkWidget *widget, GtkRequisition *requisit
 	requisition->height += border_width * 2;
 	requisition->width += border_width * 2;
 }
+#endif
 
 static void gtk_ticker_compute_offsets (GtkTicker *ticker)
 {
+	GtkAllocation allocation;
 	GtkTickerChild *child;
 	GtkRequisition child_requisition;
 	GList *children;
@@ -408,15 +460,8 @@ static void gtk_ticker_compute_offsets (GtkTicker *ticker)
 
 	border_width = gtk_container_get_border_width (GTK_CONTAINER (ticker));
 
-#if GTK_CHECK_VERSION(2,18,0)
-	{
-		GtkAllocation allocation;
-		gtk_widget_get_allocation (GTK_WIDGET (ticker), &allocation);
-		ticker->width = allocation.width;
-	}
-#else
-	ticker->width = GTK_WIDGET(ticker)->allocation.width;
-#endif
+	gtk_widget_get_allocation (GTK_WIDGET (ticker), &allocation);
+	ticker->width = allocation.width;
 	ticker->total = 0;
 	children = ticker->children;
 	while (children) {
@@ -438,6 +483,7 @@ static void gtk_ticker_size_allocate (GtkWidget *widget,
 		GtkAllocation *allocation)
 {
 	GtkTicker *ticker;
+	GtkAllocation a;
 	GtkTickerChild *child;
 	GtkAllocation child_allocation;
 	GtkRequisition child_requisition;
@@ -450,27 +496,15 @@ static void gtk_ticker_size_allocate (GtkWidget *widget,
 
 	ticker = GTK_TICKER (widget);
 
-#if GTK_CHECK_VERSION(2,18,0)
-	{
-		GtkAllocation a;
-		gtk_widget_get_allocation (GTK_WIDGET (ticker), &a);
-		if ( a.width != ticker->width )
-			ticker->dirty = TRUE;
-	}
-#else
-	if ( GTK_WIDGET(ticker)->allocation.width != ticker->width )
+	gtk_widget_get_allocation (GTK_WIDGET (ticker), &a);
+	if ( a.width != ticker->width )
 		ticker->dirty = TRUE;
-#endif
 
 	if ( ticker->dirty == TRUE ) {
 		gtk_ticker_compute_offsets( ticker );
 	}
 
-#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_allocation (widget, allocation);
-#else
-	widget->allocation = *allocation;
-#endif
 	if (gtk_widget_get_realized (widget))
 		gdk_window_move_resize (gtk_widget_get_window (widget),
 				allocation->x,

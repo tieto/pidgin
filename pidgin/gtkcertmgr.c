@@ -613,7 +613,11 @@ pidgin_certmgr_show(void)
 
 	win = dlg->window =
 		pidgin_create_dialog(_("Certificate Manager"),/* Title */
+#if GTK_CHECK_VERSION(3,0,0)
+				     0, /*Window border*/
+#else
 				     PIDGIN_HIG_BORDER, /*Window border*/
+#endif
 				     "certmgr",         /* Role */
 				     TRUE); /* Allow resizing */
 	g_signal_connect(G_OBJECT(win), "delete_event",

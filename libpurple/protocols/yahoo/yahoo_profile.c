@@ -1278,10 +1278,6 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, -1, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	else {
-		g_free(data->name);
-		g_free(data);
-	}
 
 	g_free(url);
 }

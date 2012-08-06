@@ -32,10 +32,10 @@
 #include "pluginpref.h"
 #include "prefs.h"
 
-#include "gtkimhtml.h"
 #include "gtkpluginpref.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 
 static gboolean
 entry_cb(GtkWidget *entry, gpointer data) {
@@ -48,24 +48,17 @@ entry_cb(GtkWidget *entry, gpointer data) {
 
 
 static void
-imhtml_cb(GtkTextBuffer *buffer, gpointer data)
+webview_cb(GtkWebView *webview, gpointer data)
 {
 	char *pref;
 	char *text;
-	GtkIMHtml *imhtml = data;
 
-	pref = g_object_get_data(G_OBJECT(imhtml), "pref-key");
+	pref = g_object_get_data(G_OBJECT(webview), "pref-key");
 	g_return_if_fail(pref);
 
-	text = gtk_imhtml_get_markup(imhtml);
+	text = gtk_webview_get_body_html(webview);
 	purple_prefs_set_string(pref, text);
 	g_free(text);
-}
-
-static void
-imhtml_format_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, gpointer data)
-{
-	imhtml_cb(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), data);
 }
 
 static void
@@ -115,7 +108,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 			{
 				GtkWidget *hbox;
 				GtkWidget *spacer;
-				GtkWidget *imhtml;
+				GtkWidget *webview;
 				GtkWidget *toolbar;
 				GtkWidget *frame;
 
@@ -140,19 +133,23 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
 				gtk_widget_show(spacer);
 
-				frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
+				frame = pidgin_create_webview(TRUE, &webview, &toolbar, NULL);
 				if (!(format & PURPLE_STRING_FORMAT_TYPE_HTML))
 					gtk_widget_destroy(toolbar);
 
-				gtk_imhtml_append_text(GTK_IMHTML(imhtml), purple_prefs_get_string(pref_name),
-						(format & PURPLE_STRING_FORMAT_TYPE_MULTILINE) ? 0 : GTK_IMHTML_NO_NEWLINE);
-				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), imhtml);
+				if (format & PURPLE_STRING_FORMAT_TYPE_MULTILINE) {
+					gchar *tmp = purple_strreplace(purple_prefs_get_string(pref_name), "\n", "<br>");
+					gtk_webview_append_html(GTK_WEBVIEW(webview), tmp);
+					g_free(tmp);
+				} else
+					gtk_webview_append_html(GTK_WEBVIEW(webview), purple_prefs_get_string(pref_name));
+				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), webview);
 				gtk_widget_show_all(frame);
-				g_object_set_data(G_OBJECT(imhtml), "pref-key", (gpointer)pref_name);
-				g_signal_connect(G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml))),
-								"changed", G_CALLBACK(imhtml_cb), imhtml);
-				g_signal_connect(G_OBJECT(imhtml),
-								"format_function_toggle", G_CALLBACK(imhtml_format_cb), imhtml);
+				g_object_set_data(G_OBJECT(webview), "pref-key", (gpointer)pref_name);
+				g_signal_connect(G_OBJECT(webview), "changed",
+				                 G_CALLBACK(webview_cb), NULL);
+				g_signal_connect(G_OBJECT(webview), "format-toggled",
+				                 G_CALLBACK(webview_cb), NULL);
 				gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 			}
 
@@ -211,7 +208,9 @@ pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame) {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	parent = ret = gtk_vbox_new(FALSE, 16);
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
+#endif
 	gtk_widget_show(ret);
 
 	for(pp = purple_plugin_pref_frame_get_prefs(frame);

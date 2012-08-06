@@ -46,6 +46,8 @@
 
 #include <gst/interfaces/xoverlay.h>
 
+#include "gtk3compat.h"
+
 #define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
 #define PIDGIN_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MEDIA, PidginMedia))
 #define PIDGIN_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MEDIA, PidginMediaClass))
@@ -540,20 +542,12 @@ realize_cb_cb(PidginMediaRealizeData *data)
 	GdkWindow *window = NULL;
 
 	if (data->participant == NULL)
-#if GTK_CHECK_VERSION(2, 14, 0)
 		window = gtk_widget_get_window(priv->local_video);
-#else
-		window = (priv->local_video)->window;
-#endif
 	else {
 		GtkWidget *widget = pidgin_media_get_widget(data->gtkmedia,
 				data->session_id, data->participant);
 		if (widget)
-#if GTK_CHECK_VERSION(2, 14, 0)
 			window = gtk_widget_get_window(widget);
-#else
-			window = widget->window;
-#endif
 	}
 
 	if (window) {
@@ -561,7 +555,7 @@ realize_cb_cb(PidginMediaRealizeData *data)
 #ifdef _WIN32
 		window_id = GDK_WINDOW_HWND(window);
 #elif defined(HAVE_X11)
-		window_id = GDK_WINDOW_XWINDOW(window);
+		window_id = gdk_x11_window_get_xid(window);
 #elif defined(GDK_WINDOWING_QUARTZ)
 		window_id = (gulong) gdk_quartz_window_get_nsview(window);
 #else

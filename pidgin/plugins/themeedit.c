@@ -306,9 +306,6 @@ pidgin_blist_theme_edit(PurplePluginAction *unused)
 		}
 	}
 
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), TRUE);
-#endif
 #ifdef NOT_SADRUL
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_blist_theme), dialog);
 #endif

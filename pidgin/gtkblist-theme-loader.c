@@ -65,7 +65,9 @@ parse_color(xmlnode *node, const char *tag)
 	GdkColor color;
 
 	if (temp && gdk_color_parse(temp, &color)) {
+#if !GTK_CHECK_VERSION(3,0,0)
 		gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, FALSE, TRUE);
+#endif
 		return gdk_color_copy(&color);
 	} else {
 		return NULL;

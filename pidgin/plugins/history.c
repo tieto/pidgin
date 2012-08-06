@@ -136,8 +136,11 @@ static void historize(PurpleConversation *c)
 			purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
 #endif
 
+#if 0
+	/* TODO WebKit: Do this properly... */
 	if (!gtk_webview_is_empty(GTK_WEBVIEW(gtkconv->webview)))
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR>");
+#endif
 
 	escaped_alias = g_markup_escape_text(alias, -1);
 
