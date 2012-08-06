@@ -78,6 +78,8 @@ GGSOURCES = \
 	libgadu-events.c \
 	roster.c \
 	roster.h \
+	validator.c \
+	validator.h \
 	xml.c \
 	xml.h \
 	oauth/oauth.c \

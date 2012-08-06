@@ -2,12 +2,12 @@
 
 #include <libgadu.h>
 #include <debug.h>
-#include <request.h>
 
 #include "deprecated.h"
 #include "purplew.h"
 #include "utils.h"
 #include "libgaduw.h"
+#include "validator.h"
 
 /*******************************************************************************
  * Token requesting.
@@ -130,8 +130,10 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 	ggp_account_token *token, gpointer _register_data);
 static void ggp_account_register_dialog_ok(
 	ggp_account_register_data *register_data, PurpleRequestFields *fields);
+#if 0
 static void ggp_account_register_dialog_invalid(
 	ggp_account_register_data *register_data, const gchar *message);
+#endif
 static void ggp_account_register_dialog_cancel(
 	ggp_account_register_data *register_data, PurpleRequestFields *fields);
 static void ggp_account_register_response(struct gg_http *h, gboolean success,
@@ -163,7 +165,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *main_group, *password_group, *token_group;
-	PurpleRequestField *field;
+	PurpleRequestField *field, *field_password;
 	ggp_account_register_data *register_data = _register_data;
 	
 	purple_debug_info("gg", "ggp_account_register_dialog(%x, %x, %x)\n",
@@ -182,6 +184,8 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 	field = purple_request_field_string_new("email", _("Email"),
 		register_data->email, FALSE);
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field,
+		purple_request_field_email_validator, NULL);
 	purple_request_field_group_add_field(main_group, field);
 
 	password_group = purple_request_field_group_new(_("Password"));
@@ -191,12 +195,16 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 		register_data->password, FALSE);
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_password, NULL);
 	purple_request_field_group_add_field(password_group, field);
+	field_password = field;
 	
 	field = purple_request_field_string_new("password2",
 		_("Password (again)"), register_data->password, FALSE);
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_password_equal,
+		field_password);
 	purple_request_field_group_add_field(password_group, field);
 	
 	field = purple_request_field_bool_new("password_remember",
@@ -210,12 +218,14 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 		_("Enter text from image below"), register_data->token_value,
 		FALSE);
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_token, token);
 	purple_request_field_group_add_field(token_group, field);
+	purple_debug_info("gg", "token set %p\n", register_data->token);
 	
 	field = purple_request_field_image_new("token_image", _("Captcha"),
 		token->data, token->size);
 	purple_request_field_group_add_field(token_group, field);
-	
+
 	register_data->token = token;
 	
 	purple_request_fields(gc,
@@ -239,7 +249,6 @@ static void ggp_account_register_dialog_cancel(
 static void ggp_account_register_dialog_ok(
 	ggp_account_register_data *register_data, PurpleRequestFields *fields)
 {
-	const gchar *password2;
 	struct gg_http *h;
 
 	purple_debug_misc("gg", "ggp_account_register_dialog_ok(%x, %x)\n",
@@ -253,7 +262,6 @@ static void ggp_account_register_dialog_ok(
 		purple_request_fields_get_string(fields, "email"));
 	register_data->password = g_strdup(
 		purple_request_fields_get_string(fields, "password1"));
-	password2 = purple_request_fields_get_string(fields, "password2");
 	register_data->password_remember =
 		purple_request_fields_get_bool(fields, "password_remember");
 	register_data->token_value = g_strdup(
@@ -261,42 +269,8 @@ static void ggp_account_register_dialog_ok(
 
 	g_assert(register_data->email != NULL);
 	g_assert(register_data->password != NULL);
-	g_assert(password2 != NULL);
 	g_assert(register_data->token_value != NULL);
 
-	if (g_utf8_collate(register_data->password, password2) != 0)
-	{
-		g_free(register_data->password);
-		register_data->password = NULL;
-		ggp_account_register_dialog_invalid(register_data,
-			_("Passwords do not match"));
-		return;
-	}
-	if (!ggp_password_validate(register_data->password))
-	{
-		g_free(register_data->password);
-		register_data->password = NULL;
-		ggp_account_register_dialog_invalid(register_data,
-			_("Password can contain 6-15 alphanumeric characters"));
-		return;
-	}
-	if (!purple_email_is_valid(register_data->email))
-	{
-		ggp_account_register_dialog_invalid(register_data,
-			_("Invalid email address"));
-		return;
-	}
-	if (!ggp_account_token_validate(register_data->token,
-		register_data->token_value))
-	{
-		ggp_account_register_dialog_invalid(register_data,
-			_("Captcha validation failed"));
-		return;
-	}
-
-	purple_debug_info("gg", "ggp_account_register_dialog_ok: validation ok "
-		"[token id=%s, value=%s]\n",
-		register_data->token->id, register_data->token_value);
 	h = gg_register3(register_data->email, register_data->password,
 		register_data->token->id, register_data->token_value, TRUE);
 	
@@ -304,6 +278,8 @@ static void ggp_account_register_dialog_ok(
 		ggp_account_register_response, register_data, TRUE);
 }
 
+#if 0
+// libgadu 1.12.x: use it for invalid token
 static void ggp_account_register_dialog_invalid(
 	ggp_account_register_data *register_data, const gchar *message)
 {
@@ -314,6 +290,7 @@ static void ggp_account_register_dialog_invalid(
 	purple_notify_error(purple_connection_get_account(register_data->gc),
 		GGP_ACCOUNT_REGISTER_TITLE, message, NULL);
 }
+#endif
 
 static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	gboolean cancelled, gpointer _register_data)
@@ -443,7 +420,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 	PurpleAccount *account = purple_connection_get_account(chpass_data->gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *main_group, *password_group, *token_group;
-	PurpleRequestField *field;
+	PurpleRequestField *field, *field_password;
 	gchar *primary;
 	
 	purple_debug_info("gg", "ggp_account_chpass_dialog(%p, %p, %p)\n",
@@ -461,6 +438,8 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 	field = purple_request_field_string_new("email",
 		_("New email address"), chpass_data->email, FALSE);
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field,
+		purple_request_field_email_validator, NULL);
 	purple_request_field_group_add_field(main_group, field);
 
 	password_group = purple_request_field_group_new(_("Password"));
@@ -476,12 +455,16 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 		_("Password"), chpass_data->password_new, FALSE);
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_password, NULL);
 	purple_request_field_group_add_field(password_group, field);
+	field_password = field;
 	
 	field = purple_request_field_string_new("password_new2",
 		_("Password (retype)"), chpass_data->password_new, FALSE);
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_password_equal,
+		field_password);
 	purple_request_field_group_add_field(password_group, field);
 	
 	token_group = purple_request_field_group_new(_("Captcha"));
@@ -491,6 +474,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 		_("Enter text from image below"), chpass_data->token_value,
 		FALSE);
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field, ggp_validator_token, token);
 	purple_request_field_group_add_field(token_group, field);
 	
 	field = purple_request_field_image_new("token_image", _("Captcha"),
@@ -516,7 +500,6 @@ static void ggp_account_chpass_dialog_ok(
 	ggp_account_chpass_data *chpass_data, PurpleRequestFields *fields)
 {
 	PurpleAccount *account = purple_connection_get_account(chpass_data->gc);
-	const gchar *password2;
 	struct gg_http *h;
 	uin_t uin;
 
@@ -534,24 +517,14 @@ static void ggp_account_chpass_dialog_ok(
 		purple_request_fields_get_string(fields, "password_current"));
 	chpass_data->password_new = g_strdup(
 		purple_request_fields_get_string(fields, "password_new1"));
-	password2 = purple_request_fields_get_string(fields, "password_new2");
 	chpass_data->token_value = g_strdup(
 		purple_request_fields_get_string(fields, "token_value"));
 
 	g_assert(chpass_data->email != NULL);
 	g_assert(chpass_data->password_current != NULL);
 	g_assert(chpass_data->password_new != NULL);
-	g_assert(password2 != NULL);
 	g_assert(chpass_data->token_value != NULL);
 
-	if (g_utf8_collate(chpass_data->password_new, password2) != 0)
-	{
-		g_free(chpass_data->password_new);
-		chpass_data->password_new = NULL;
-		ggp_account_chpass_dialog_invalid(chpass_data,
-			_("Passwords do not match"));
-		return;
-	}
 	if (g_utf8_collate(chpass_data->password_current,
 		purple_account_get_password(account)) != 0)
 	{
@@ -570,27 +543,6 @@ static void ggp_account_chpass_dialog_ok(
 		ggp_account_chpass_dialog_invalid(chpass_data,
 			_("New password have to be different from the current "
 			"one."));
-		return;
-	}
-	if (!ggp_password_validate(chpass_data->password_new))
-	{
-		g_free(chpass_data->password_new);
-		chpass_data->password_new = NULL;
-		ggp_account_chpass_dialog_invalid(chpass_data,
-			_("Password can contain 6-15 alphanumeric characters"));
-		return;
-	}
-	if (!purple_email_is_valid(chpass_data->email))
-	{
-		ggp_account_chpass_dialog_invalid(chpass_data,
-			_("Invalid email address"));
-		return;
-	}
-	if (!ggp_account_token_validate(chpass_data->token,
-		chpass_data->token_value))
-	{
-		ggp_account_chpass_dialog_invalid(chpass_data,
-			_("Captcha validation failed"));
 		return;
 	}
 
