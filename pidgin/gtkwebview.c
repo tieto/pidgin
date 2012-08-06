@@ -265,7 +265,8 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 	g_signal_connect(menu, "selection-done",
 	                 G_CALLBACK(gtk_widget_destroy), NULL);
 
-	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
+	if ((context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK)
+	 && !(context & WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION)) {
 		GtkWebViewProtocol *proto = NULL;
 		GList *children;
 
