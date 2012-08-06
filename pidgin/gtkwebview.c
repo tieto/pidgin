@@ -995,6 +995,18 @@ gtk_webview_set_format_functions(GtkWebView *webview, GtkWebViewButtons buttons)
 	g_object_unref(object);
 }
 
+void
+gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link)
+{
+	WebKitDOMDocument *doc;
+	WebKitDOMEvent *event;
+
+	doc = webkit_dom_node_get_owner_document(WEBKIT_DOM_NODE(link));
+	event = webkit_dom_document_create_event(doc, "MouseEvent", NULL);
+	webkit_dom_event_init_event(event, "click", TRUE, TRUE);
+	webkit_dom_node_dispatch_event(WEBKIT_DOM_NODE(link), event, NULL);
+}
+
 gboolean
 gtk_webview_class_register_protocol(const char *name,
 	gboolean (*activate)(GtkWebView *webview, const char *uri),

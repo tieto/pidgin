@@ -220,6 +220,15 @@ void gtk_webview_set_format_functions(GtkWebView *webview,
                                       GtkWebViewButtons buttons);
 
 /**
+ * Activates a WebKitDOMHTMLAnchorElement object. This triggers the navigation
+ * signals, and marks the link as visited (when possible).
+ *
+ * @param link   The WebKitDOMHTMLAnchorElement object
+ *
+ */
+void gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
+
+/**
  * Register a protocol with the GtkWebView widget. Registering a protocol would
  * allow certain text to be clickable.
  *
