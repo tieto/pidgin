@@ -990,7 +990,18 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	g_free(esc_s);
 	g_free(tmp);
 
-	gtk_webview_append_html(GTK_WEBVIEW(debug_win->text), s);
+	//XXX: gtk_webview_append_html does delayed insert of new div, which is
+	//     needed by filtering below
+	//gtk_webview_append_html(GTK_WEBVIEW(debug_win->text), s);
+	{
+		WebKitDOMDocument *dom = NULL;
+		WebKitDOMHTMLElement *body = NULL;
+		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(debug_win->text));
+		if (dom)
+			body = webkit_dom_document_get_body(dom);
+		if (body)
+			webkit_dom_html_element_insert_adjacent_html(body, "beforeend", s, NULL);
+	}
 
 	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(debug_win->filter))) {
 		WebKitDOMDocument *dom = NULL;
