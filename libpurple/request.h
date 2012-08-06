@@ -150,7 +150,8 @@ typedef struct
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
 
-typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field, void *user_data);
+typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
+	gchar **errmsg, void *user_data);
 
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
@@ -218,7 +219,8 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
  *
  * @constreturn The list of required fields.
  */
-GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
+const GList *purple_request_fields_get_required(
+	const PurpleRequestFields *fields);
 
 /**
  * Returns a list of all validated fields.
@@ -227,7 +229,8 @@ GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
  *
  * @constreturn The list of validated fields.
  */
-GList *purple_request_fields_get_validated(const PurpleRequestFields *fields);
+const GList *purple_request_fields_get_validatable(
+	const PurpleRequestFields *fields);
 
 /**
  * Returns whether or not a field with the specified ID is required.
@@ -579,18 +582,24 @@ void purple_request_field_set_validator(PurpleRequestField *field,
  *
  * @return TRUE if the field has validator, or FALSE.
  */
-gboolean purple_request_field_is_validated(PurpleRequestField *field);
+gboolean purple_request_field_is_validatable(PurpleRequestField *field);
 
 /**
  * Checks, if specified field is valid.
  *
+ * If detailed message about failure reason is needed, there is an option to
+ * return (via errmsg argument) pointer to newly allocated error message.
+ * It must be freed with g_free after use.
+ *
  * Note: empty, not required fields are valid.
  *
  * @param field The field.
+ * @param errmsg If non-NULL, the memory area, where the pointer to validation
+ *        failure message will be set.
  *
  * @return TRUE, if the field is valid, FALSE otherwise.
  */
-gboolean purple_request_field_is_valid(PurpleRequestField *field);
+gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
 
 /**
  * Returns the ui_data for a field.

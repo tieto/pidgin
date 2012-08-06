@@ -209,7 +209,7 @@ purple_request_fields_add_group(PurpleRequestFields *fields,
 				g_list_append(fields->required_fields, field);
 		}
 
-		if (purple_request_field_is_validated(field)) {
+		if (purple_request_field_is_validatable(field)) {
 			fields->validated_fields =
 				g_list_append(fields->validated_fields, field);
 		}
@@ -234,7 +234,7 @@ purple_request_fields_exists(const PurpleRequestFields *fields, const char *id)
 	return (g_hash_table_lookup(fields->fields, id) != NULL);
 }
 
-GList *
+const GList *
 purple_request_fields_get_required(const PurpleRequestFields *fields)
 {
 	g_return_val_if_fail(fields != NULL, NULL);
@@ -242,8 +242,8 @@ purple_request_fields_get_required(const PurpleRequestFields *fields)
 	return fields->required_fields;
 }
 
-GList *
-purple_request_fields_get_validated(const PurpleRequestFields *fields)
+const GList *
+purple_request_fields_get_validatable(const PurpleRequestFields *fields)
 {
 	g_return_val_if_fail(fields != NULL, NULL);
 
@@ -311,7 +311,7 @@ purple_request_fields_all_valid(const PurpleRequestFields *fields)
 	{
 		PurpleRequestField *field = (PurpleRequestField *)l->data;
 
-		if (!purple_request_field_is_valid(field))
+		if (!purple_request_field_is_valid(field, NULL))
 			return FALSE;
 	}
 
@@ -464,7 +464,7 @@ purple_request_field_group_add_field(PurpleRequestFieldGroup *group,
 				g_list_append(group->fields_list->required_fields, field);
 		}
 		
-		if (purple_request_field_is_validated(field))
+		if (purple_request_field_is_validatable(field))
 		{
 			group->fields_list->validated_fields =
 				g_list_append(group->fields_list->validated_fields, field);
@@ -716,21 +716,19 @@ purple_request_field_set_validator(PurpleRequestField *field,
 
 	if (field->group != NULL)
 	{
+		PurpleRequestFields *flist = field->group->fields_list;
+		flist->validated_fields = g_list_remove(flist->validated_fields,
+			field);
 		if (validator)
 		{
-			field->group->fields_list->validated_fields = g_list_append(
-				field->group->fields_list->validated_fields, field);
-		}
-		else
-		{
-			field->group->fields_list->validated_fields = g_list_remove(
-				field->group->fields_list->validated_fields, field);
+			flist->validated_fields = g_list_append(
+				flist->validated_fields, field);
 		}
 	}
 }
 
 gboolean
-purple_request_field_is_validated(PurpleRequestField *field)
+purple_request_field_is_validatable(PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
 
@@ -738,8 +736,10 @@ purple_request_field_is_validated(PurpleRequestField *field)
 }
 
 gboolean
-purple_request_field_is_valid(PurpleRequestField *field)
+purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg)
 {
+	gboolean valid;
+
 	g_return_val_if_fail(field != NULL, FALSE);
 
 	if (!field->validator)
@@ -749,7 +749,12 @@ purple_request_field_is_valid(PurpleRequestField *field)
 		!purple_request_field_is_filled(field))
 		return TRUE;
 
-	return field->validator(field, field->validator_data);
+	valid = field->validator(field, errmsg, field->validator_data);
+
+	if (valid && errmsg)
+		*errmsg = NULL;
+
+	return valid;
 }
 
 PurpleRequestField *
