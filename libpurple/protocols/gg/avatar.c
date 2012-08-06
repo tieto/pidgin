@@ -4,6 +4,7 @@
 
 #include "gg.h"
 #include "utils.h"
+#include "oauth/oauth-purple.h"
 
 // Common
 
@@ -33,6 +34,21 @@ static void ggp_avatar_buddy_update_received(PurpleUtilFetchUrlData *url_data,
 
 #define GGP_AVATAR_BUDDY_URL "http://avatars.gg.pl/%u/s,big"
 
+// Own avatar setting
+
+typedef struct
+{
+	PurpleStoredImage *img;
+} ggp_avatar_own_data;
+
+static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
+	gpointer img);
+static void ggp_avatar_own_sent(PurpleUtilFetchUrlData *url_data,
+	gpointer user_data, const gchar *url_text, gsize len,
+	const gchar *error_message);
+
+#define GGP_AVATAR_RESPONSE_MAX 10240
+
 /*******************************************************************************
  * Common.
  ******************************************************************************/
@@ -43,6 +59,7 @@ void ggp_avatar_setup(PurpleConnection *gc)
 
 	avdata->pending_updates = NULL;
 	avdata->current_update = NULL;
+	avdata->own_data = g_new0(ggp_avatar_own_data, 1);
 	
 	avdata->timer = purple_timeout_add_seconds(1, ggp_avatar_timer_cb, gc);
 }
@@ -62,6 +79,8 @@ void ggp_avatar_cleanup(PurpleConnection *gc)
 		g_free(current_update);
 	}
 	avdata->current_update = NULL;
+	
+	g_free(avdata->own_data);
 
 	g_list_free_full(avdata->pending_updates, &g_free);
 	avdata->pending_updates = NULL;
@@ -252,4 +271,93 @@ static void ggp_avatar_buddy_update_received(PurpleUtilFetchUrlData *url_data,
 		"got avatar for buddy %u [ts=%lu]\n", pending_update->uin,
 		pending_update->timestamp);
 	g_free(pending_update);
+}
+
+/*******************************************************************************
+ * Own avatar setting.
+ ******************************************************************************/
+
+/**
+ * TODO: use new, GG11 method, when IMToken will be provided by libgadu.
+ *
+ * POST https://avatars.mpa.gg.pl/avatars/user,<uin>/0
+ * Authorization: IMToken 0123456789abcdef0123456789abcdef01234567
+ * photo=<avatar content>
+ */
+
+void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
+{
+	ggp_avatar_own_data *own_data = ggp_avatar_get_avdata(gc)->own_data;
+	
+	purple_debug_info("gg", "ggp_avatar_own_set(%p, %p)", gc, img);
+	
+	if (img == NULL)
+	{
+		purple_debug_warning("gg", "ggp_avatar_own_set: avatar removing"
+			" is probably not possible within old protocol");
+		return;
+	}
+	
+	own_data->img = img;
+	
+	ggp_oauth_request(gc, ggp_avatar_own_got_token, img);
+}
+
+static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
+	gpointer img)
+{
+	ggp_avatar_own_data *own_data = ggp_avatar_get_avdata(gc)->own_data;
+	gchar *img_data, *img_data_e, *request, *request_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	uin_t uin = ggp_str_to_uin(purple_account_get_username(account));
+	
+	if (img != own_data->img)
+	{
+		purple_debug_warning("gg", "ggp_avatar_own_got_token: "
+			"avatar was changed in meantime\n");
+		return;
+	}
+	own_data->img = NULL;
+	
+	img_data = purple_base64_encode(purple_imgstore_get_data(img),
+		purple_imgstore_get_size(img));
+	img_data_e = g_uri_escape_string(img_data, NULL, FALSE);
+	g_free(img_data);
+	request_data = g_strdup_printf("uin=%d&photo=%s", uin, img_data_e);
+	g_free(img_data_e);
+	
+	request = g_strdup_printf(
+		"POST /upload HTTP/1.1\r\n"
+		"Host: avatars.nowe.gg\r\n"
+		"Authorization: %s\r\n"
+		"From: avatars to avatars\r\n"
+		"Content-Length: %u\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n"
+		"\r\n%s",
+		token, strlen(request_data), request_data);
+	g_free(request_data);
+	
+	purple_debug_misc("gg", "ggp_avatar_own_got_token: "
+		"uploading new avatar...\n");
+	purple_util_fetch_url_request(account, "http://avatars.nowe.gg/upload",
+		FALSE, NULL, TRUE, request, FALSE, GGP_AVATAR_RESPONSE_MAX,
+		ggp_avatar_own_sent, gc);
+	
+	g_free(request);
+}
+
+static void ggp_avatar_own_sent(PurpleUtilFetchUrlData *url_data,
+	gpointer user_data, const gchar *url_text, gsize len,
+	const gchar *error_message)
+{
+	PurpleConnection *gc = user_data;
+	
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
+		return;
+	
+	if (len == 0)
+		purple_debug_error("gg", "ggp_avatar_own_sent: "
+			"avatar not sent. %s\n", error_message);
+	else
+		purple_debug_info("gg", "ggp_avatar_own_sent: %s\n", url_text);
 }

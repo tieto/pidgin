@@ -2111,7 +2111,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_IM_IMAGE,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
-	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
+	{"png", 1, 1, 200, 200, 0, PURPLE_ICON_SCALE_DISPLAY | PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	ggp_list_icon,			/* list_icon */
 	ggp_list_emblem,		/* list_emblem */
 	ggp_status_text,		/* status_text */
@@ -2154,7 +2154,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_buddy_free,			/* buddy_free */
 	NULL,				/* convo_closed */
 	ggp_normalize,			/* normalize */
-	NULL,				/* set_buddy_icon */
+	ggp_avatar_own_set,		/* set_buddy_icon */
 	NULL,				/* remove_group */
 	NULL,				/* get_cb_real_name */
 	NULL,				/* set_chat_topic */
