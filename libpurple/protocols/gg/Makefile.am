@@ -79,7 +79,13 @@ GGSOURCES = \
 	roster.c \
 	roster.h \
 	xml.c \
-	xml.h
+	xml.h \
+	oauth/oauth.c \
+	oauth/oauth.h \
+	oauth/oauth-parameter.c \
+	oauth/oauth-parameter.h \
+	oauth/oauth-purple.c \
+	oauth/oauth-purple.h
 
 AM_CFLAGS = $(st)
 
