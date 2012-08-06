@@ -285,6 +285,7 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		} else {
 			g_list_free(children);
 		}
+		gtk_widget_show_all(menu);
 
 	} else {
 		/* Using connect_swapped means we don't need any wrapper functions */

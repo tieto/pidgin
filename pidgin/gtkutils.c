@@ -97,9 +97,8 @@ url_clicked_idle_cb(gpointer data)
 }
 
 static gboolean
-url_clicked_cb(GtkIMHtml *unused, GtkIMHtmlLink *link)
+url_clicked_cb(GtkWebView *unused, const char *uri)
 {
-	const char *uri = gtk_imhtml_link_get_url(link);
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 	return TRUE;
 }
@@ -3215,7 +3214,8 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
 	return pixbuf;
 }
 
-static void url_copy(GtkWidget *w, gchar *url)
+static void
+url_copy(GtkWidget *w, gchar *url)
 {
 	GtkClipboard *clipboard;
 
@@ -3227,54 +3227,63 @@ static void url_copy(GtkWidget *w, gchar *url)
 }
 
 static gboolean
-link_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+link_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
-	const char *url;
+	char *url;
 
-	url = gtk_imhtml_link_get_url(link);
+	url = webkit_dom_html_anchor_element_get_href(link);
 
 	/* Open Link */
 	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	g_signal_connect_swapped(G_OBJECT(item), "activate",
+	                         G_CALLBACK(gtk_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Copy Link Location */
 	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), (gpointer)url);
+	/* The signal owns url now: */
+	g_signal_connect_data(G_OBJECT(item), "activate", G_CALLBACK(url_copy),
+	                      (gpointer)url, (GClosureNotify)g_free, 0);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	return TRUE;
 }
 
 static gboolean
-copy_email_address(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+copy_email_address(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
-	const char *text;
+	char *text;
 	char *address;
 #define MAILTOSIZE  (sizeof("mailto:") - 1)
 
-	text = gtk_imhtml_link_get_url(link);
-	g_return_val_if_fail(text && strlen(text) > MAILTOSIZE, FALSE);
-	address = (char*)text + MAILTOSIZE;
+	text = webkit_dom_html_anchor_element_get_href(link);
+	if (!text || strlen(text) <= MAILTOSIZE) {
+		g_free(text);
+		return FALSE;
+	}
+	address = text + MAILTOSIZE;
 
 	/* Copy Email Address */
 	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Email Address"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), address);
+	g_signal_connect_data(G_OBJECT(item), "activate", G_CALLBACK(url_copy),
+	                      g_strdup(address), (GClosureNotify)g_free, 0);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	g_free(text);
 
 	return TRUE;
 }
 
 static void
-file_open_uri(GtkIMHtml *imhtml, const char *uri)
+file_open_uri(GtkWebView *webview, const char *uri)
 {
 	/* Copied from gtkft.c:open_button_cb */
 #ifdef _WIN32
@@ -3346,7 +3355,7 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 		{
 			tmp = g_strdup_printf(_("Error launching %s: %s"),
 							uri, error->message);
-			purple_notify_error(imhtml, NULL, _("Unable to open file."), tmp);
+			purple_notify_error(webview, NULL, _("Unable to open file."), tmp);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -3355,7 +3364,7 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 			char *primary = g_strdup_printf(_("Error running %s"), command);
 			char *secondary = g_strdup_printf(_("Process returned error code %d"),
 									exit_status);
-			purple_notify_error(imhtml, NULL, primary, secondary);
+			purple_notify_error(webview, NULL, primary, secondary);
 			g_free(tmp);
 		}
 	}
@@ -3364,43 +3373,45 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 
 #define FILELINKSIZE  (sizeof("file://") - 1)
 static gboolean
-file_clicked_cb(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+file_clicked_cb(GtkWebView *webview, const char *uri)
 {
-	const char *uri = gtk_imhtml_link_get_url(link) + FILELINKSIZE;
-	file_open_uri(imhtml, uri);
+	file_open_uri(webview, uri + FILELINKSIZE);
 	return TRUE;
 }
 
 static gboolean
-open_containing_cb(GtkIMHtml *imhtml, const char *url)
+open_containing_cb(GtkWebView *webview, const char *uri)
 {
-	char *dir = g_path_get_dirname(url + FILELINKSIZE);
-	file_open_uri(imhtml, dir);
+	char *dir = g_path_get_dirname(uri + FILELINKSIZE);
+	file_open_uri(webview, dir);
 	g_free(dir);
 	return TRUE;
 }
 
 static gboolean
-file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+file_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
-	const char *url;
+	char *url;
 
-	url = gtk_imhtml_link_get_url(link);
+	url = webkit_dom_html_anchor_element_get_href(link);
 
 	/* Open File */
 	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Open File"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	g_signal_connect_swapped(G_OBJECT(item), "activate",
+	                         G_CALLBACK(gtk_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
 	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
+	/* The signal owns url now: */
+	g_signal_connect_data(G_OBJECT(item), "activate",
+	                      G_CALLBACK(open_containing_cb), (gpointer)url,
+	                      (GClosureNotify)g_free, 0);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	return TRUE;
@@ -3408,14 +3419,12 @@ file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 
 #define AUDIOLINKSIZE  (sizeof("audio://") - 1)
 static gboolean
-audio_clicked_cb(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+audio_clicked_cb(GtkWebView *webview, const char *uri)
 {
-	const char *uri;
-	PidginConversation *conv = g_object_get_data(G_OBJECT(imhtml), "gtkconv");
+	PidginConversation *conv = g_object_get_data(G_OBJECT(webview), "gtkconv");
 	if (!conv) /* no playback in debug window */
 		return TRUE;
-	uri = gtk_imhtml_link_get_url(link) + AUDIOLINKSIZE;
-	purple_sound_play_file(uri, NULL);
+	purple_sound_play_file(uri + AUDIOLINKSIZE, NULL);
 	return TRUE;
 }
 
@@ -3431,8 +3440,10 @@ savefile_write_cb(gpointer user_data, char *file)
 		purple_debug_error("gtkutils", "Unable to read contents of %s: %s\n",
 		                   temp_file, error->message);
 		g_error_free(error);
+		g_free(temp_file);
 		return;
 	}
+	g_free(temp_file);
 
 	if (!purple_util_write_data_to_file_absolute(file, contents, length)) {
 		purple_debug_error("gtkutils", "Unable to write contents to %s\n",
@@ -3443,56 +3454,61 @@ savefile_write_cb(gpointer user_data, char *file)
 static gboolean
 save_file_cb(GtkWidget *item, const char *url)
 {
-	PidginConversation *conv = g_object_get_data(G_OBJECT(item), "gtkconv");
-	if (!conv)
+	PidginConversation *gtkconv = g_object_get_data(G_OBJECT(item), "gtkconv");
+	PurpleConversation *conv;
+	if (!gtkconv)
 		return TRUE;
-	purple_request_file(conv->active_conv, _("Save File"), NULL, TRUE,
-	                    G_CALLBACK(savefile_write_cb), NULL,
-	                    purple_conversation_get_account(conv->active_conv), NULL, conv->active_conv,
-	                    (void *)url);
+	conv = gtkconv->active_conv;
+	purple_request_file(conv, _("Save File"), NULL, TRUE,
+	                    G_CALLBACK(savefile_write_cb), G_CALLBACK(g_free),
+	                    purple_conversation_get_account(conv), NULL, conv,
+	                    (gpointer)g_strdup(url));
 	return TRUE;
 }
 
 static gboolean
-audio_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+audio_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
-	const char *url;
-	PidginConversation *conv = g_object_get_data(G_OBJECT(imhtml), "gtkconv");
+	char *url;
+	PidginConversation *conv = g_object_get_data(G_OBJECT(webview), "gtkconv");
 	if (!conv) /* No menu in debug window */
 		return TRUE;
 
-	url = gtk_imhtml_link_get_url(link);
+	url = webkit_dom_html_anchor_element_get_href(link);
 
 	/* Play Sound */
 	img = gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-
-	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	g_signal_connect_swapped(G_OBJECT(item), "activate",
+	                         G_CALLBACK(gtk_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Save File */
 	img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Save File"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(save_file_cb), (gpointer)(url+AUDIOLINKSIZE));
+	g_signal_connect_data(G_OBJECT(item), "activate",
+	                      G_CALLBACK(save_file_cb), g_strdup(url+AUDIOLINKSIZE),
+	                      (GClosureNotify)g_free, 0);
 	g_object_set_data(G_OBJECT(item), "gtkconv", conv);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	g_free(url);
 
 	return TRUE;
 }
 
 /* XXX: The following two functions are for demonstration purposes only! */
 static gboolean
-open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+open_dialog(GtkWebView *webview, const char *url)
 {
-	const char *url;
 	const char *str;
 
-	url = gtk_imhtml_link_get_url(link);
-	if (!url || strlen(url) < sizeof("open://"))
+	if (!url || strlen(url) < sizeof("open://")) {
 		return FALSE;
+	}
 
 	str = url + sizeof("open://") - 1;
 
@@ -3506,7 +3522,7 @@ open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
 }
 
 static gboolean
-dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+dummy(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	return TRUE;
 }
@@ -3571,7 +3587,7 @@ register_gnome_url_handlers(void)
 
 				protocol = g_strdup_printf("%s:", start);
 				registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
-				gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+				gtk_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
 			}
 			start = c + 1;
 		}
@@ -3604,7 +3620,7 @@ winpidgin_register_win32_url_handlers(void)
 					g_free(utf8);
 					registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
 					/* We still pass everything to the "http" "open" handler for security reasons */
-					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+					gtk_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
 				}
 				RegCloseKey(reg_key);
 			}
@@ -3647,17 +3663,17 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 
 void pidgin_utils_init(void)
 {
-	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
-	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
-	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
-	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
-	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
+	gtk_webview_class_register_protocol("http://", url_clicked_cb, link_context_menu);
+	gtk_webview_class_register_protocol("https://", url_clicked_cb, link_context_menu);
+	gtk_webview_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
+	gtk_webview_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
+	gtk_webview_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
 
-	gtk_imhtml_class_register_protocol("file://", file_clicked_cb, file_context_menu);
-	gtk_imhtml_class_register_protocol("audio://", audio_clicked_cb, audio_context_menu);
+	gtk_webview_class_register_protocol("file://", file_clicked_cb, file_context_menu);
+	gtk_webview_class_register_protocol("audio://", audio_clicked_cb, audio_context_menu);
 
 	/* Example custom URL handler. */
-	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+	gtk_webview_class_register_protocol("open://", open_dialog, dummy);
 
 	/* If we're under GNOME, try registering the system URL handlers. */
 	if (purple_running_gnome())
@@ -3684,7 +3700,7 @@ void pidgin_utils_init(void)
 
 void pidgin_utils_uninit(void)
 {
-	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
+	gtk_webview_class_register_protocol("open://", NULL, NULL);
 
 	/* If we have GNOME handlers registered, unregister them. */
 	if (registered_url_handlers)
@@ -3692,7 +3708,7 @@ void pidgin_utils_uninit(void)
 		GSList *l;
 		for (l = registered_url_handlers; l; l = l->next)
 		{
-			gtk_imhtml_class_register_protocol((char *)l->data, NULL, NULL);
+			gtk_webview_class_register_protocol((char *)l->data, NULL, NULL);
 			g_free(l->data);
 		}
 		g_slist_free(registered_url_handlers);
@@ -3700,12 +3716,12 @@ void pidgin_utils_uninit(void)
 		return;
 	}
 
-	gtk_imhtml_class_register_protocol("audio://", NULL, NULL);
-	gtk_imhtml_class_register_protocol("file://", NULL, NULL);
+	gtk_webview_class_register_protocol("audio://", NULL, NULL);
+	gtk_webview_class_register_protocol("file://", NULL, NULL);
 
-	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
-	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
-	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
-	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
-	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
+	gtk_webview_class_register_protocol("http://", NULL, NULL);
+	gtk_webview_class_register_protocol("https://", NULL, NULL);
+	gtk_webview_class_register_protocol("ftp://", NULL, NULL);
+	gtk_webview_class_register_protocol("mailto:", NULL, NULL);
+	gtk_webview_class_register_protocol("gopher://", NULL, NULL);
 }
