@@ -1461,6 +1461,122 @@ purple_request_field_certificate_get_value(const PurpleRequestField *field)
 
 /* -- */
 
+gboolean
+purple_request_field_email_validator(PurpleRequestField *field, gchar **errmsg,
+	void *user_data)
+{
+	const char *value;
+
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
+
+	value = purple_request_field_string_get_value(field);
+
+	if (value != NULL && purple_email_is_valid(value))
+		return TRUE;
+
+	if (errmsg)
+		*errmsg = g_strdup(_("Invalid email address"));
+	return FALSE;
+}
+
+gboolean
+purple_request_field_alphanumeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *allowed_characters)
+{
+	const char *value;
+	gchar invalid_char = '\0';
+
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
+
+	value = purple_request_field_string_get_value(field);
+
+	g_return_val_if_fail(value != NULL, FALSE);
+
+	if (allowed_characters)
+	{
+		gchar *value_r = g_strdup(value);
+		g_strcanon(value_r, allowed_characters, '\0');
+		invalid_char = value[strlen(value_r)];
+		g_free(value_r);
+	}
+	else
+	{
+		while (value)
+		{
+			if (!g_ascii_isalnum(*value))
+			{
+				invalid_char = *value;
+				break;
+			}
+			value++;
+		}
+	}
+	if (!invalid_char)
+		return TRUE;
+
+	if (errmsg)
+		*errmsg = g_strdup_printf(_("Invalid character '%c'"),
+			invalid_char);
+	return FALSE;
+}
+
+gboolean purple_request_field_numeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *range_p)
+{
+	gboolean succ = TRUE;
+	int value = 0;
+	int *range = range_p;
+	
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING ||
+		field->type == PURPLE_REQUEST_FIELD_INTEGER, FALSE);
+
+	if (field->type == PURPLE_REQUEST_FIELD_STRING)
+	{
+		const gchar *svalue, *it;
+		svalue = purple_request_field_string_get_value(field);
+		if (svalue == NULL || svalue[0] == '\0')
+			succ = FALSE;
+		it = svalue;
+		if (it[0] == '-')
+			it++;
+		while (succ && *it)
+		{
+			if (!g_ascii_isdigit(*it))
+				succ = FALSE;
+			it++;
+		}
+		if (succ)
+		{
+			char *endptr;
+			value = strtol(svalue, &endptr, 10);
+			succ = (errno != ERANGE && endptr[0] == '\0');
+		}
+	}
+	// TODO: integer fields doesn't seems to work, so this one needs testing
+	else if (field->type == PURPLE_REQUEST_FIELD_INTEGER)
+		value = purple_request_field_int_get_value(field);
+	else
+		g_return_val_if_reached(FALSE);
+
+	if (succ && range)
+		succ = (value >= range[0] && value <= range[1]);
+
+	if (succ)
+		return TRUE;
+
+	if (errmsg && !range)
+		*errmsg = g_strdup(_("Invalid number"));
+	if (errmsg && range)
+		*errmsg = g_strdup_printf(_("Value is not between %d and %d"),
+			range[0], range[1]);
+	return FALSE;
+}
+
+/* -- */
+
 void *
 purple_request_input(void *handle, const char *title, const char *primary,
 				   const char *secondary, const char *default_value,

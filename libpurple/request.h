@@ -1269,6 +1269,56 @@ PurpleCertificate *purple_request_field_certificate_get_value(
 /*@}*/
 
 /**************************************************************************/
+/** @name Validators for request fields.                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Validates a field which should contain an email address.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data Ignored.
+ *
+ * @return TRUE, if field contains valid email address.
+ */
+gboolean purple_request_field_email_validator(PurpleRequestField *field,
+	gchar **errmsg, void *user_data);
+
+/**
+ * Validates a field which should contain alphanumeric content.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data (Optional) allowed character list (NULL-terminated string).
+ *
+ * @return TRUE, if field contains only alphanumeric characters.
+ */
+gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *allowed_characters);
+
+/**
+ * Validates a field which should contain numeric content, within (optional)
+ * range.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data (Optional) an int[2] array containing specified range.
+ *
+ * @return TRUE, if field contains only alphanumeric characters.
+ */
+gboolean purple_request_field_numeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *range);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name Request API                                                     */
 /**************************************************************************/
 /*@{*/
