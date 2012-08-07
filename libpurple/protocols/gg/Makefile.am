@@ -82,6 +82,8 @@ GGSOURCES = \
 	validator.h \
 	xml.c \
 	xml.h \
+	multilogon.c \
+	multilogon.h \
 	oauth/oauth.c \
 	oauth/oauth.h \
 	oauth/oauth-parameter.c \

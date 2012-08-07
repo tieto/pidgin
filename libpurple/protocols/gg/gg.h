@@ -33,7 +33,7 @@
 #include "avatar.h"
 #include "account.h"
 #include "roster.h"
-
+#include "multilogon.h"
 
 #define PUBDIR_RESULTS_MAX 20
 
@@ -55,10 +55,14 @@ typedef struct {
 	GGPSearches *searches;
 	int chats_count;
 	gboolean status_broadcasting; //When TRUE status is visible to all, when FALSE status is visible only to friends.
+	gchar *old_status;
 
 	ggp_image_connection_data image_data;
 	ggp_avatar_session_data avatar_data;
 	ggp_roster_session_data roster_data;
+	ggp_multilogon_session_data *multilogon_data;
 } GGPInfo;
+
+void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon);
 
 #endif /* _PURPLE_GG_H */

@@ -66,4 +66,6 @@ gchar * ggp_convert_from_cp1250(const gchar *src);
 
 gboolean ggp_password_validate(const gchar *password);
 
+guint64 ggp_microtime(void);
+
 #endif /* _GGP_UTILS_H */
