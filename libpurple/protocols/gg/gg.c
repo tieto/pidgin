@@ -26,12 +26,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "internal.h"
+#include <internal.h>
 
 #include "plugin.h"
 #include "version.h"
 #include "notify.h"
-#include "status.h"
 #include "blist.h"
 #include "accountopt.h"
 #include "debug.h"
@@ -50,11 +49,9 @@
 #include "purplew.h"
 #include "libgadu-events.h"
 #include "multilogon.h"
+#include "status.h"
 
 /* Prototypes */
-static int ggp_to_gg_status(PurpleStatus *status, char **msg);
-static void ggp_set_purplestatus(PurpleAccount *account, PurpleStatus *status);
-static gboolean ggp_set_status(PurpleAccount *account, int status, const gchar* msg);
 
 typedef struct
 {
@@ -285,58 +282,6 @@ static void ggp_find_buddies(PurplePluginAction *action)
 		_("Please, enter your search criteria below"),
 		fields,
 		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
-		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL,
-		gc);
-}
-
-/* ----- CHANGE STATUS BROADCASTING ------------------------------------------------ */
-
-static void ggp_action_change_status_broadcasting_ok(PurpleConnection *gc, PurpleRequestFields *fields)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	int selected_field;
-	PurpleAccount *account = purple_connection_get_account(gc);
-
-	selected_field = purple_request_fields_get_choice(fields, "status_broadcasting");
-	
-	if (selected_field == 0)
-		info->status_broadcasting = TRUE;
-	else
-		info->status_broadcasting = FALSE;
-	
-	ggp_set_purplestatus(account, purple_account_get_active_status(account));
-}
-
-static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-	
-	field = purple_request_field_choice_new("status_broadcasting", _("Show status to:"), 0);
-	purple_request_field_choice_add(field, _("All people"));
-	purple_request_field_choice_add(field, _("Only buddies"));
-	purple_request_field_group_add_field(group, field);
-
-	if (info->status_broadcasting)
-		purple_request_field_choice_set_default_value(field, 0);
-	else
-		purple_request_field_choice_set_default_value(field, 1);
-
-	purple_request_fields(gc,
-		_("Change status broadcasting"),
-		_("Change status broadcasting"),
-		_("Please, select who can see your status"),
-		fields,
-		_("OK"), G_CALLBACK(ggp_action_change_status_broadcasting_ok),
 		_("Cancel"), NULL,
 		purple_connection_get_account(gc), NULL, NULL,
 		gc);
@@ -1519,8 +1464,6 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 static void ggp_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePresence *presence;
-	PurpleStatus *status;
 	struct gg_login_params *glp;
 	GGPInfo *info;
 	const char *address;
@@ -1537,14 +1480,15 @@ static void ggp_login(PurpleAccount *account)
 	info->chats = NULL;
 	info->chats_count = 0;
 	info->searches = ggp_search_new();
-	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
 	purple_connection_set_protocol_data(gc, info);
+
 
 	ggp_image_setup(gc);
 	ggp_avatar_setup(gc);
 	ggp_roster_setup(gc);
 	ggp_multilogon_setup(gc);
+	ggp_status_setup(gc);
 	
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
@@ -1563,17 +1507,12 @@ static void ggp_login(PurpleAccount *account)
 	if (purple_account_get_bool(account, "show_links_from_strangers", 1))
 		glp->status_flags |= GG_STATUS_FLAG_SPAM;
 
-	presence = purple_account_get_presence(account);
-	status = purple_presence_get_active_status(presence);
-
 	glp->encoding = GG_ENCODING_UTF8;
 	glp->protocol_features = (GG_FEATURE_DND_FFC |
 		GG_FEATURE_TYPING_NOTIFICATION | GG_FEATURE_MULTILOGON |
 		GG_FEATURE_USER_DATA);
 
 	glp->async = 1;
-	glp->status = ggp_to_gg_status(status, &glp->status_descr);
-	info->old_status = g_strdup(glp->status_descr);
 	
 	encryption_type = purple_account_get_string(account, "encryption",
 		"opportunistic_tls");
@@ -1596,8 +1535,7 @@ static void ggp_login(PurpleAccount *account)
 		glp->tls = GG_SSL_DISABLED;
 	purple_debug_info("gg", "TLS mode: %d\n", glp->tls);
 
-	if (!info->status_broadcasting)
-		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
+	ggp_status_set_initial(gc, glp);
 	
 	address = purple_account_get_string(account, "gg_server", "");
 	if (address && *address)
@@ -1649,7 +1587,7 @@ static void ggp_close(PurpleConnection *gc)
 		{
 			const gchar *status_msg = purple_status_get_attr_string(status, "message");
 			
-			if (ggp_set_status(account,
+			if (ggp_status_set(account,
 				status_msg ? GG_STATUS_NOT_AVAIL_DESCR : GG_STATUS_NOT_AVAIL,
 				status_msg))
 			{
@@ -1671,8 +1609,6 @@ static void ggp_close(PurpleConnection *gc)
 			gg_free_session(info->session);
 		}
 
-		purple_account_set_bool(account, "status_broadcasting", info->status_broadcasting);
-
 		/* Immediately close any notifications on this handle since that process depends
 		 * upon the contents of info->searches, which we are about to destroy.
 		 */
@@ -1683,8 +1619,8 @@ static void ggp_close(PurpleConnection *gc)
 		ggp_avatar_cleanup(gc);
 		ggp_roster_cleanup(gc);
 		ggp_multilogon_cleanup(gc);
+		ggp_status_cleanup(gc);
 
-		g_free(info->old_status);
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);
 
@@ -1858,98 +1794,6 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 	purple_debug_info("gg", "ggp_get_info(): Added seq %u", seq);
 }
 
-static int ggp_to_gg_status(PurpleStatus *status, char **msg)
-{
-	const char *status_id = purple_status_get_id(status);
-	int new_status, new_status_descr;
-	const char *new_msg;
-
-	g_return_val_if_fail(msg != NULL, 0);
-
-	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
-			status_id);
-
-	if (strcmp(status_id, "available") == 0) {
-		new_status = GG_STATUS_AVAIL;
-		new_status_descr = GG_STATUS_AVAIL_DESCR;
-	} else if (strcmp(status_id, "freeforchat") == 0) {
-		new_status = GG_STATUS_FFC;
-		new_status_descr = GG_STATUS_FFC_DESCR;
-	} else if (strcmp(status_id, "away") == 0) {
-		new_status = GG_STATUS_BUSY;
-		new_status_descr = GG_STATUS_BUSY_DESCR;
-	} else if (strcmp(status_id, "unavailable") == 0) {
-		new_status = GG_STATUS_DND;
-		new_status_descr = GG_STATUS_DND_DESCR;
-	} else if (strcmp(status_id, "invisible") == 0) {
-		new_status = GG_STATUS_INVISIBLE;
-		new_status_descr = GG_STATUS_INVISIBLE_DESCR;
-	} else if (strcmp(status_id, "offline") == 0) {
-		new_status = GG_STATUS_NOT_AVAIL;
-		new_status_descr = GG_STATUS_NOT_AVAIL_DESCR;
-	} else {
-		new_status = GG_STATUS_AVAIL;
-		new_status_descr = GG_STATUS_AVAIL_DESCR;
-		purple_debug_info("gg",
-			"ggp_set_status: unknown status requested (status_id=%s)\n",
-			status_id);
-	}
-
-	new_msg = purple_status_get_attr_string(status, "message");
-
-	if(new_msg) {
-		*msg = purple_markup_strip_html(new_msg);
-		return new_status_descr;
-	} else {
-		*msg = NULL;
-		return new_status;
-	}
-}
-
-static void ggp_set_purplestatus(PurpleAccount *account, PurpleStatus *status)
-{
-	int new_status;
-	gchar *new_msg = NULL;
-	
-	if (!purple_status_is_active(status))
-		return;
-
-	new_status = ggp_to_gg_status(status, &new_msg);
-	
-	ggp_set_status(account, new_status, new_msg);
-	g_free(new_msg);
-}
-
-static gboolean ggp_set_status(PurpleAccount *account, int status, const gchar* msg)
-{
-	PurpleConnection *gc;
-	GGPInfo *info;
-	gboolean new_msg_differs;
-
-	gc = purple_account_get_connection(account);
-	info = purple_connection_get_protocol_data(gc);
-
-	if (!info->status_broadcasting)
-		status = status|GG_STATUS_FRIENDS_MASK;
-	
-	new_msg_differs = (0 != g_strcmp0(info->old_status, msg));
-	g_free(info->old_status);
-	info->old_status = g_strdup(msg);
-	if (!new_msg_differs && (status == GG_STATUS_NOT_AVAIL || status == GG_STATUS_NOT_AVAIL_DESCR))
-	{
-		purple_debug_info("gg", "ggp_set_status: new status doesn't differ when closing connection - ignore\n");
-		return FALSE;
-	}
-	
-	if (msg == NULL) {
-		gg_change_status(info->session, status);
-	} else {
-		gg_change_status_descr(info->session, status, msg);
-	}
-	
-	return TRUE;
-}
-
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -2103,6 +1947,11 @@ static void ggp_action_chpass(PurplePluginAction *action)
 	ggp_account_chpass((PurpleConnection *)action->context);
 }
 
+static void ggp_action_status_broadcasting(PurplePluginAction *action)
+{
+	ggp_status_broadcasting_dialog((PurpleConnection *)action->context);
+}
+
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -2116,8 +1965,8 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 				     ggp_find_buddies);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Change status broadcasting"),
-				     ggp_action_change_status_broadcasting);
+	act = purple_plugin_action_new(_("Show status only for buddies"),
+		ggp_action_status_broadcasting);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
@@ -2192,7 +2041,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* set_info */
 	ggp_send_typing,		/* send_typing */
 	ggp_get_info,			/* get_info */
-	ggp_set_purplestatus,		/* set_away */
+	ggp_status_set_purplestatus,	/* set_away */
 	NULL,				/* set_idle */
 	NULL,				/* change_passwd */
 	ggp_add_buddy,			/* add_buddy */
