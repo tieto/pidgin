@@ -68,4 +68,6 @@ gboolean ggp_password_validate(const gchar *password);
 
 guint64 ggp_microtime(void);
 
+gchar * ggp_utf8_strndup(const gchar *str, gsize n);
+
 #endif /* _GGP_UTILS_H */

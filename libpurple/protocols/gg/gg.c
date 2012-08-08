@@ -1802,30 +1802,9 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
 
-	// gg server won't tell us our status
+	// gg server won't tell us our status here
 	if (strcmp(purple_account_get_username(account), name) == 0)
-	{
-		PurpleStatus *status = purple_presence_get_active_status(
-			purple_account_get_presence(account));
-		const char *status_msg = purple_status_get_attr_string(status,
-			"message");
-		gchar *status_msg_gg = NULL;
-		
-		if (status_msg != NULL && status_msg[0] != '\0')
-		{
-			status_msg_gg = g_new0(gchar,
-				GG_STATUS_DESCR_MAXSIZE + 1);
-			g_utf8_strncpy(status_msg_gg, status_msg,
-				GG_STATUS_DESCR_MAXSIZE);
-		}
-		
-		purple_prpl_got_user_status(account,
-			purple_account_get_username(account),
-			purple_status_get_id(status),
-			status_msg_gg ? "message" : NULL, status_msg_gg, NULL);
-		
-		g_free(status_msg_gg);
-	}
+		ggp_status_fake_to_self(gc);
 	
 	ggp_roster_add_buddy(gc, buddy, group, message);
 }

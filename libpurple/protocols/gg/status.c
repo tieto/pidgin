@@ -5,6 +5,7 @@
 #include <request.h>
 
 #include "gg.h"
+#include "utils.h"
 
 struct _ggp_status_session_data
 {
@@ -15,10 +16,8 @@ struct _ggp_status_session_data
 static inline ggp_status_session_data *
 ggp_status_get_ssdata(PurpleConnection *gc);
 
+gchar * ggp_status_validate_description(const gchar* msg);
 static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message);
-
-static void ggp_status_broadcasting_dialog_ok(PurpleConnection *gc,
-	PurpleRequestFields *fields);
 
 ////
 
@@ -48,6 +47,14 @@ void ggp_status_cleanup(PurpleConnection *gc)
 	g_free(ssdata);
 }
 
+gchar * ggp_status_validate_description(const gchar* msg)
+{
+	if (msg == NULL || msg[0] == '\0')
+		return NULL;
+	
+	return ggp_utf8_strndup(msg, GG_STATUS_DESCR_MAXSIZE);
+}
+
 static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 {
 	const char *status_id = purple_status_get_id(status);
@@ -58,7 +65,11 @@ static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 	
 	*message = NULL;
 	if (status_message)
-		*message = purple_markup_strip_html(status_message);
+	{
+		gchar *stripped = purple_markup_strip_html(status_message);
+		*message = ggp_status_validate_description(stripped);
+		g_free(stripped);
+	}
 	
 	if (0 == strcmp(status_id, "available"))
 		return status_message ? GG_STATUS_AVAIL_DESCR : GG_STATUS_AVAIL;
@@ -84,6 +95,11 @@ static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
  * Own status.
  ******************************************************************************/
 
+static void ggp_status_broadcasting_dialog_ok(PurpleConnection *gc,
+	PurpleRequestFields *fields);
+
+/******************************************************************************/
+
 void ggp_status_set_initial(PurpleConnection *gc, struct gg_login_params *glp)
 {
 	ggp_status_session_data *ssdata = ggp_status_get_ssdata(gc);
@@ -101,25 +117,27 @@ gboolean ggp_status_set(PurpleAccount *account, int status, const gchar* msg)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	ggp_status_session_data *ssdata = ggp_status_get_ssdata(gc);
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	gchar *new_description = ggp_status_validate_description(msg);
 	
 	if (!ssdata->status_broadcasting)
 		status |= GG_STATUS_FRIENDS_MASK;
 	
 	if ((status == GG_STATUS_NOT_AVAIL ||
 		status == GG_STATUS_NOT_AVAIL_DESCR) &&
-		0 == g_strcmp0(ssdata->current_description, msg))
+		0 == g_strcmp0(ssdata->current_description, new_description))
 	{
 		purple_debug_info("gg", "ggp_status_set: new status doesn't "
 			"differ when closing connection - ignore\n");
+		g_free(new_description);
 		return FALSE;
 	}
 	g_free(ssdata->current_description);
-	ssdata->current_description = g_strdup(msg);
+	ssdata->current_description = new_description;
 	
 	if (msg == NULL)
 		gg_change_status(accdata->session, status);
 	else
-		gg_change_status_descr(accdata->session, status, msg);
+		gg_change_status_descr(accdata->session, status, new_description);
 	
 	return TRUE;
 }
@@ -135,6 +153,30 @@ void ggp_status_set_purplestatus(PurpleAccount *account, PurpleStatus *status)
 	status_gg = ggp_status_from_purplestatus(status, &msg);
 	ggp_status_set(account, status_gg, msg);
 	g_free(msg);
+}
+
+void ggp_status_fake_to_self(PurpleConnection *gc)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleStatus *status = purple_presence_get_active_status(
+		purple_account_get_presence(account));
+	const char *status_msg = purple_status_get_attr_string(status,
+		"message");
+	gchar *status_msg_gg = NULL;
+	
+	if (status_msg != NULL && status_msg[0] != '\0')
+	{
+		status_msg_gg = g_new0(gchar, GG_STATUS_DESCR_MAXSIZE + 1);
+		g_utf8_strncpy(status_msg_gg, status_msg,
+			GG_STATUS_DESCR_MAXSIZE);
+	}
+	
+	purple_prpl_got_user_status(account,
+		purple_account_get_username(account),
+		purple_status_get_id(status),
+		status_msg_gg ? "message" : NULL, status_msg_gg, NULL);
+	
+	g_free(status_msg_gg);
 }
 
 gboolean ggp_status_get_status_broadcasting(PurpleConnection *gc)

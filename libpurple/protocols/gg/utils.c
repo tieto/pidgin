@@ -104,3 +104,26 @@ guint64 ggp_microtime(void)
 	
 	return ((guint64)time_s.tv_sec << 32) | time_s.tv_usec;
 }
+
+gchar * ggp_utf8_strndup(const gchar *str, gsize n)
+{
+	int raw_len = strlen(str);
+	gchar *end_ptr;
+	if (str == NULL)
+		return NULL;
+	if (raw_len <= n)
+		return g_strdup(str);
+	
+	end_ptr = g_utf8_offset_to_pointer(str, g_utf8_pointer_to_offset(str, &str[n]));
+	raw_len = end_ptr - str;
+	
+	if (raw_len > n)
+	{
+		end_ptr = g_utf8_prev_char(end_ptr);
+		raw_len = end_ptr - str;
+	}
+	
+	g_assert(raw_len <= n);
+	
+	return g_strndup(str, raw_len);
+}

@@ -15,6 +15,7 @@ void ggp_status_set_initial(PurpleConnection *gc, struct gg_login_params *glp);
 
 gboolean ggp_status_set(PurpleAccount *account, int status, const gchar* msg);
 void ggp_status_set_purplestatus(PurpleAccount *account, PurpleStatus *status);
+void ggp_status_fake_to_self(PurpleConnection *gc);
 
 gboolean ggp_status_get_status_broadcasting(PurpleConnection *gc);
 void ggp_status_set_status_broadcasting(PurpleConnection *gc,
