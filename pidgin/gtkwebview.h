@@ -77,6 +77,7 @@ struct _GtkWebViewClass
 	void (*clear_format)(GtkWebView *);
 	void (*update_format)(GtkWebView *);
 	void (*changed)(GtkWebView *);
+	void (*html_appended)(GtkWebView *, WebKitDOMRange *);
 };
 
 G_BEGIN_DECLS

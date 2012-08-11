@@ -53,6 +53,7 @@ enum {
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
 	CHANGED,
+	HTML_APPENDED,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -147,6 +148,8 @@ process_load_queue(GtkWebView *webview)
 	char *str;
 	WebKitDOMDocument *doc;
 	WebKitDOMHTMLElement *body;
+	WebKitDOMNode *start, *end;
+	WebKitDOMRange *range;
 
 	if (priv->is_loading) {
 		priv->loader = 0;
@@ -164,8 +167,28 @@ process_load_queue(GtkWebView *webview)
 		case LOAD_HTML:
 			doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 			body = webkit_dom_document_get_body(doc);
+			start = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+
 			webkit_dom_html_element_insert_adjacent_html(body, "beforeend",
 			                                             str, NULL);
+
+			range = webkit_dom_document_create_range(doc);
+			if (start) {
+				end = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+				webkit_dom_range_set_start_after(range,
+				                                 WEBKIT_DOM_NODE(start),
+				                                 NULL);
+				webkit_dom_range_set_end_after(range,
+				                               WEBKIT_DOM_NODE(end),
+				                               NULL);
+			} else {
+				webkit_dom_range_select_node_contents(range,
+				                                      WEBKIT_DOM_NODE(body),
+				                                      NULL);
+			}
+
+			g_signal_emit(webview, signals[HTML_APPENDED], 0, range);
+
 			break;
 
 		case LOAD_JS:
@@ -621,6 +644,14 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	                                G_STRUCT_OFFSET(GtkWebViewClass, changed),
 	                                NULL, NULL, g_cclosure_marshal_VOID__VOID,
 	                                G_TYPE_NONE, 0);
+	signals[HTML_APPENDED] = g_signal_new("html-appended",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_FIRST,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, html_appended),
+	                                      NULL, NULL,
+	                                      g_cclosure_marshal_VOID__OBJECT,
+	                                      G_TYPE_NONE, 1, WEBKIT_TYPE_DOM_RANGE,
+	                                      NULL);
 
 	klass->toggle_format = webview_toggle_format;
 	klass->clear_format = webview_clear_formatting;
