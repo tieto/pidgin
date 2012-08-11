@@ -1,6 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	Pidgin:
+	* Support building with the GTK+ 3.x toolkit.  When configuring the
+	  build, use --with-gtk=<2|3> to determine which toolkit to use.  Using
+	  either 2 or 3 will attempt to build with specifically 2.x or 3.x
+	  support.  The default is 'auto', which will first look for 3.x
+	  development headers and then 2.x development headers.
+
 	Finch:
 	* Support the conversation-extended signal for extending the
 	  conversation menu. (Howard Chu) (#14818)
