@@ -2265,9 +2265,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		return FALSE;
 	}
 
-	if (event->type == GDK_KEY_RELEASE)
-		gtk_widget_grab_focus(gtkconv->entry);
-
+	gtk_widget_grab_focus(gtkconv->entry);
 	gtk_widget_event(gtkconv->entry, (GdkEvent *)event);
 
 	return TRUE;
