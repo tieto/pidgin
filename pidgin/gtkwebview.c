@@ -419,9 +419,31 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 static gboolean
 webview_popup_menu(WebKitWebView *webview)
 {
+	WebKitDOMDocument *doc;
+	WebKitDOMElement *active;
+	WebKitDOMElement *link;
+	int context;
+	char *uri;
+
+	context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
+	uri = NULL;
+
+	doc = webkit_web_view_get_dom_document(webview);
+	active = webkit_dom_html_document_get_active_element(WEBKIT_DOM_HTML_DOCUMENT(doc));
+
+	link = active;
+	while (link && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link))
+		link = webkit_dom_node_get_parent_element(WEBKIT_DOM_NODE(link));
+	if (WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link)) {
+		context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
+		uri = webkit_dom_html_anchor_element_get_href(WEBKIT_DOM_HTML_ANCHOR_ELEMENT(link));
+	}
+
 	do_popup_menu(webview, 0, gtk_get_current_event_time(),
-	              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-	              NULL, NULL);
+	              context, WEBKIT_DOM_NODE(active), uri);
+
+	g_free(uri);
+
 	return TRUE;
 }
 
