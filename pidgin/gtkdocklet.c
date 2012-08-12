@@ -323,7 +323,6 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 		}
 		docklet_update_status();
 	}
-
 }
 
 /**************************************************************************
@@ -1010,6 +1009,12 @@ pidgin_docklet_get_handle()
 {
 	static int i;
 	return &i;
+}
+
+GtkStatusIcon *
+pidgin_docklet_get_status_icon(void)
+{
+	return docklet;
 }
 
 void

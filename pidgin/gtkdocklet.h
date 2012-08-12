@@ -27,6 +27,11 @@
 
 G_BEGIN_DECLS
 
+/**
+ * Returns the GtkStatusIcon used for the docklet.
+ */
+GtkStatusIcon *pidgin_docklet_get_status_icon(void);
+
 void pidgin_docklet_init(void);
 void pidgin_docklet_uninit(void);
 void*pidgin_docklet_get_handle(void);
