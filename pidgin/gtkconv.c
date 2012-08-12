@@ -2240,6 +2240,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 	if ((event->state & GDK_CONTROL_MASK) ||
 		(event->keyval == GDK_KEY_F6) ||
 		(event->keyval == GDK_KEY_F10) ||
+		(event->keyval == GDK_KEY_Menu) ||
 		(event->keyval == GDK_KEY_Shift_L) ||
 		(event->keyval == GDK_KEY_Shift_R) ||
 		(event->keyval == GDK_KEY_Control_L) ||
