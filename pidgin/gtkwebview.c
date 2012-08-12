@@ -78,6 +78,7 @@ typedef struct _GtkWebViewPriv {
 
 	/* Scroll adjustments */
 	GtkAdjustment *vadj;
+	gboolean autoscroll;
 	guint scroll_src;
 	GTimer *scroll_time;
 
@@ -150,6 +151,7 @@ process_load_queue(GtkWebView *webview)
 	WebKitDOMHTMLElement *body;
 	WebKitDOMNode *start, *end;
 	WebKitDOMRange *range;
+	gboolean require_scroll = FALSE;
 
 	if (priv->is_loading) {
 		priv->loader = 0;
@@ -169,6 +171,12 @@ process_load_queue(GtkWebView *webview)
 			body = webkit_dom_document_get_body(doc);
 			start = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
 
+			if (priv->autoscroll) {
+				require_scroll = (gtk_adjustment_get_value(priv->vadj)
+				                  >= (gtk_adjustment_get_upper(priv->vadj) -
+				                      gtk_adjustment_get_page_size(priv->vadj)));
+			}
+
 			webkit_dom_html_element_insert_adjacent_html(body, "beforeend",
 			                                             str, NULL);
 
@@ -185,6 +193,15 @@ process_load_queue(GtkWebView *webview)
 				webkit_dom_range_select_node_contents(range,
 				                                      WEBKIT_DOM_NODE(body),
 				                                      NULL);
+			}
+
+			if (require_scroll) {
+				if (start)
+					webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(start),
+					                                    TRUE);
+				else
+					webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(body),
+					                                    TRUE);
 			}
 
 			g_signal_emit(webview, signals[HTML_APPENDED], 0, range);
@@ -852,6 +869,28 @@ gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
 		priv->scroll_time = NULL;
 		priv->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, priv, NULL);
 	}
+}
+
+void
+gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->autoscroll = scroll;
+}
+
+gboolean
+gtk_webview_get_autoscroll(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_val_if_fail(webview != NULL, FALSE);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->autoscroll;
 }
 
 void

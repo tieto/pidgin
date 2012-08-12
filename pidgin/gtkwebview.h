@@ -163,6 +163,25 @@ void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj);
 void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
 
 /**
+ * Set whether the GtkWebView stays at its end when HTML content is appended. If
+ * not already at the end before appending, then scrolling will not occur.
+ *
+ * @param webview The GtkWebView object
+ * @param scroll  Whether to automatically scroll
+ */
+void gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll);
+
+/**
+ * Set whether the GtkWebView stays at its end when HTML content is appended. If
+ * not already at the end before appending, then scrolling will not occur.
+ *
+ * @param webview The GtkWebView object
+ *
+ * @return Whether to automatically scroll
+ */
+gboolean gtk_webview_get_autoscroll(GtkWebView *webview);
+
+/**
  * Scrolls a GtkWebView up by one page.
  *
  * @param webview The GtkWebView.
