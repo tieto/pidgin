@@ -63,6 +63,11 @@ static guint signals[LAST_SIGNAL] = { 0 };
  *****************************************************************************/
 
 typedef struct {
+	WebKitWebInspector *inspector;
+	WebKitDOMNode *node;
+} GtkWebViewInspectData;
+
+typedef struct {
 	char *name;
 	int length;
 
@@ -244,6 +249,12 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 		priv->loader = g_idle_add((GSourceFunc)process_load_queue, webview);
 }
 
+static void
+webview_show_inspector_cb(GtkWidget *item, GtkWebViewInspectData *data)
+{
+	webkit_web_inspector_inspect_node(data->inspector, data->node);
+}
+
 static GtkWebViewProtocol *
 webview_find_protocol(const char *url, gboolean reverse)
 {
@@ -296,10 +307,12 @@ webview_navigation_decision(WebKitWebView *webview,
 
 static void
 do_popup_menu(WebKitWebView *webview, int button, int time, int context,
-              WebKitDOMHTMLAnchorElement *link, const char *uri)
+              WebKitDOMNode *node, const char *uri)
 {
 	GtkWidget *menu;
 	GtkWidget *cut, *copy, *paste, *delete, *select;
+	WebKitWebSettings *settings;
+	gboolean inspector;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
@@ -310,11 +323,16 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		GtkWebViewProtocol *proto = NULL;
 		GList *children;
 
-		if (uri && link)
+		while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
+			node = webkit_dom_node_get_parent_node(node);
+		}
+
+		if (uri && node)
 			proto = webview_find_protocol(uri, FALSE);
 
 		if (proto && proto->context_menu) {
-			proto->context_menu(GTK_WEBVIEW(webview), link, menu);
+			proto->context_menu(GTK_WEBVIEW(webview),
+			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), menu);
 		}
 
 		children = gtk_container_get_children(GTK_CONTAINER(menu));
@@ -373,6 +391,25 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 			webkit_web_view_can_cut_clipboard(webview));
 	}
 
+	settings = webkit_web_view_get_settings(webview);
+	g_object_get(G_OBJECT(settings), "enable-developer-extras", &inspector, NULL);
+	if (inspector) {
+		GtkWidget *inspect;
+		GtkWebViewInspectData *data;
+
+		data = g_new0(GtkWebViewInspectData, 1);
+		data->inspector = webkit_web_view_get_inspector(webview);
+		data->node = node;
+
+		pidgin_separator(menu);
+
+		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"), NULL,
+		                                     NULL, NULL, 0, 0, NULL);
+		g_signal_connect_data(G_OBJECT(inspect), "activate",
+		                      G_CALLBACK(webview_show_inspector_cb),
+		                      data, (GClosureNotify)g_free, 0);
+	}
+
 	g_signal_emit_by_name(G_OBJECT(webview), "populate-popup", menu);
 
 	gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(webview), NULL);
@@ -404,14 +441,8 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 		             "link-uri", &uri,
 		             NULL);
 
-		if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
-			while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
-				node = webkit_dom_node_get_parent_node(node);
-			}
-		}
-
 		do_popup_menu(webview, event->button, event->time, context,
-		              WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), uri);
+		              node, uri);
 
 		g_free(uri);
 
