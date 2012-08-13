@@ -58,8 +58,13 @@ typedef enum {
 	GTK_WEBVIEW_ALL           = -1
 } GtkWebViewButtons;
 
+typedef enum {
+	GTK_WEBVIEW_SMILEY_CUSTOM = 1 << 0
+} GtkWebViewSmileyFlags;
+
 typedef struct _GtkWebView GtkWebView;
 typedef struct _GtkWebViewClass GtkWebViewClass;
+typedef struct _GtkWebViewSmiley GtkWebViewSmiley;
 
 struct _GtkWebView
 {
@@ -494,6 +499,95 @@ void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *d
  * @param id      The PurpleStoredImage id
  */
 void gtk_webview_insert_image(GtkWebView *webview, int id);
+
+/**
+ * Gets the protocol name associated with this GtkWebView.
+ *
+ * @param webview The GtkWebView
+ */
+const char *gtk_webview_get_protocol_name(GtkWebView *webview);
+
+/**
+ * Associates a protocol name with a GtkWebView.
+ *
+ * @param webview       The GtkWebView
+ * @param protocol_name The protocol name to associate with the GtkWebView
+ */
+void gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_name);
+
+/**
+ * Create a new GtkWebViewSmiley.
+ *
+ * @param file      The image file for the smiley
+ * @param shortcut  The key shortcut for the smiley
+ * @param hide      @c TRUE if the smiley should be hidden in the smiley dialog,
+ *                  @c FALSE otherwise
+ * @param flags     The smiley flags
+ *
+ * @return The newly created smiley
+ */
+GtkWebViewSmiley *gtk_webview_smiley_create(const char *file,
+                                            const char *shortcut,
+                                            gboolean hide,
+                                            GtkWebViewSmileyFlags flags);
+
+/**
+ * Reload the image data for the smiley.
+ *
+ * @param smiley    The smiley to reload
+ */
+void gtk_webview_smiley_reload(GtkWebViewSmiley *smiley);
+
+/**
+ * Destroy a GtkWebViewSmiley.
+ *
+ * @param smiley    The smiley to destroy
+ */
+void gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley);
+
+/**
+ * Returns the flags associated with a smiley.
+ *
+ * @param smiley    The smiley
+ */
+GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(GtkWebViewSmiley *smiley);
+
+/**
+ * Returns the smiley object associated with the text.
+ *
+ * @param webview The GtkWebView
+ * @param sml     The name of the smiley category
+ * @param text    The text associated with the smiley
+ */
+GtkWebViewSmiley *gtk_webview_smiley_find(GtkWebView *webview, const char *sml,
+                                          const char *text);
+
+/**
+ * Associates a smiley with a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param sml     The name of the smiley category
+ * @param smiley  The GtkWebViewSmiley to associate
+ */
+void gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
+                                  GtkWebViewSmiley *smiley);
+
+/**
+ * Removes all smileys associated with a GtkWebView.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_remove_smileys(GtkWebView *webview);
+
+/**
+ * Inserts a smiley at the current location or selection in a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param sml     The category of the smiley
+ * @param smiley  The text of the smiley to insert
+ */
+void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
+                               const char *smiley);
 
 G_END_DECLS
 

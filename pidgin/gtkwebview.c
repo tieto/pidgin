@@ -75,6 +75,26 @@ typedef struct {
 	gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu);
 } GtkWebViewProtocol;
 
+struct _GtkWebViewSmiley {
+	gchar *smile;
+	gchar *file;
+	GdkPixbufAnimation *icon;
+	gboolean hidden;
+	GdkPixbufLoader *loader;
+	GSList *anchors;
+	GtkWebViewSmileyFlags flags;
+	GtkWebView *webview;
+	gpointer data;
+	gsize datasize;
+};
+
+typedef struct _GtkSmileyTree GtkSmileyTree;
+struct _GtkSmileyTree {
+	GString *values;
+	GtkSmileyTree **children;
+	GtkWebViewSmiley *image;
+};
+
 typedef struct _GtkWebViewPriv {
 	/* Processing queues */
 	gboolean is_loading;
@@ -94,6 +114,10 @@ typedef struct _GtkWebViewPriv {
 		gboolean block_changed:1;
 	} edit;
 
+	/* Smileys */
+	char *protocol_name;
+	GHashTable *smiley_data;
+	GtkSmileyTree *default_smilies;
 } GtkWebViewPriv;
 
 /******************************************************************************
@@ -101,6 +125,484 @@ typedef struct _GtkWebViewPriv {
  *****************************************************************************/
 
 static WebKitWebViewClass *parent_class = NULL;
+
+/******************************************************************************
+ * Smileys
+ *****************************************************************************/
+
+const char *
+gtk_webview_get_protocol_name(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_val_if_fail(webview != NULL, NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->protocol_name;
+}
+
+void
+gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_name)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->protocol_name = g_strdup(protocol_name);
+}
+
+static GtkSmileyTree *
+gtk_smiley_tree_new(void)
+{
+	return g_new0(GtkSmileyTree, 1);
+}
+
+static void
+gtk_smiley_tree_insert(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *t = tree;
+	const char *x = smiley->smile;
+
+	if (!(*x))
+		return;
+
+	do {
+		char *pos;
+		gsize index;
+
+		if (!t->values)
+			t->values = g_string_new("");
+
+		pos = strchr(t->values->str, *x);
+		if (!pos) {
+			t->values = g_string_append_c(t->values, *x);
+			index = t->values->len - 1;
+			t->children = g_realloc(t->children, t->values->len * sizeof(GtkSmileyTree *));
+			t->children[index] = g_new0(GtkSmileyTree, 1);
+		} else
+			index = pos - t->values->str;
+
+		t = t->children[index];
+
+		x++;
+	} while (*x);
+
+	t->image = smiley;
+}
+
+static void
+gtk_smiley_tree_destroy(GtkSmileyTree *tree)
+{
+	GSList *list = g_slist_prepend(NULL, tree);
+
+	while (list) {
+		GtkSmileyTree *t = list->data;
+		gsize i;
+		list = g_slist_delete_link(list, list);
+		if (t && t->values) {
+			for (i = 0; i < t->values->len; i++)
+				list = g_slist_prepend(list, t->children[i]);
+			g_string_free(t->values, TRUE);
+			g_free(t->children);
+		}
+
+		g_free(t);
+	}
+}
+
+static void
+gtk_smiley_tree_remove(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *t = tree;
+	const gchar *x = smiley->smile;
+	int len = 0;
+
+	while (*x) {
+		char *pos;
+
+		if (!t->values)
+			return;
+
+		pos = strchr(t->values->str, *x);
+		if (pos)
+			t = t->children[pos - t->values->str];
+		else
+			return;
+
+		x++; len++;
+	}
+
+	t->image = NULL;
+}
+
+static int
+gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
+{
+	GtkSmileyTree *t = tree;
+	const char *x = text;
+	int len = 0;
+	const char *amp;
+	int alen;
+
+	while (*x) {
+		char *pos;
+
+		if (!t->values)
+			break;
+
+		if (*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
+			gboolean matched = TRUE;
+			/* Make sure all chars of the unescaped value match */
+			while (*(amp + 1)) {
+				pos = strchr(t->values->str, *amp);
+				if (pos)
+					t = t->children[pos - t->values->str];
+				else {
+					matched = FALSE;
+					break;
+				}
+				amp++;
+			}
+			if (!matched)
+				break;
+
+			pos = strchr(t->values->str, *amp);
+		}
+		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' char should
+		                     * only appear as the start of a tag.  Perhaps a
+		                     * safer (but costlier) check would be to call
+		                     * gtk_imhtml_is_tag on it */
+			break;
+		else {
+			alen = 1;
+			pos = strchr(t->values->str, *x);
+		}
+
+		if (pos)
+			t = t->children[pos - t->values->str];
+		else
+			break;
+
+		x += alen;
+		len += alen;
+	}
+
+	if (t->image)
+		return len;
+
+	return 0;
+}
+
+static void
+gtk_webview_disassociate_smiley_foreach(gpointer key, gpointer value,
+                                        gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *)value;
+	GtkWebViewSmiley *smiley = (GtkWebViewSmiley *)user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_webview_disconnect_smiley(GtkWebView *webview, GtkWebViewSmiley *smiley)
+{
+	smiley->webview = NULL;
+	g_signal_handlers_disconnect_matched(webview, G_SIGNAL_MATCH_DATA, 0, 0,
+	                                     NULL, NULL, smiley);
+}
+
+static void
+gtk_webview_disassociate_smiley(GtkWebViewSmiley *smiley)
+{
+	if (smiley->webview) {
+		GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(smiley->webview);
+		gtk_smiley_tree_remove(priv->default_smilies, smiley);
+		g_hash_table_foreach(priv->smiley_data,
+			gtk_webview_disassociate_smiley_foreach, smiley);
+		g_signal_handlers_disconnect_matched(smiley->webview,
+		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+		                                     NULL, smiley);
+		smiley->webview = NULL;
+	}
+}
+
+void
+gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
+                             GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *tree;
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	if (sml == NULL)
+		tree = priv->default_smilies;
+	else if (!(tree = g_hash_table_lookup(priv->smiley_data, sml))) {
+		tree = gtk_smiley_tree_new();
+		g_hash_table_insert(priv->smiley_data, g_strdup(sml), tree);
+	}
+
+	/* need to disconnect old webview, if there is one */
+	if (smiley->webview) {
+		g_signal_handlers_disconnect_matched(smiley->webview,
+		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+		                                     NULL, smiley);
+	}
+
+	smiley->webview = webview;
+
+	gtk_smiley_tree_insert(tree, smiley);
+
+	/* connect destroy signal for the webview */
+	g_signal_connect(webview, "destroy",
+	                 G_CALLBACK(gtk_webview_disconnect_smiley), smiley);
+}
+
+static gboolean
+gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
+                      int *len)
+{
+	GtkSmileyTree *tree;
+
+	if (!sml)
+		sml = priv->protocol_name;
+
+	if (!sml || !(tree = g_hash_table_lookup(priv->smiley_data, sml)))
+		tree = priv->default_smilies;
+
+	if (tree == NULL)
+		return FALSE;
+
+	*len = gtk_smiley_tree_lookup(tree, text);
+	return (*len > 0);
+}
+
+static GtkWebViewSmiley *
+gtk_webview_smiley_get_from_tree(GtkSmileyTree *t, const char *text)
+{
+	const char *x = text;
+	char *pos;
+
+	if (t == NULL)
+		return NULL;
+
+	while (*x) {
+		if (!t->values)
+			return NULL;
+
+		pos = strchr(t->values->str, *x);
+		if (!pos)
+			return NULL;
+
+		t = t->children[pos - t->values->str];
+		x++;
+	}
+
+	return t->image;
+}
+
+GtkWebViewSmiley *
+gtk_webview_smiley_find(GtkWebView *webview, const char *sml, const char *text)
+{
+	GtkWebViewPriv *priv;
+	GtkWebViewSmiley *ret;
+
+	g_return_val_if_fail(webview != NULL, NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	/* Look for custom smileys first */
+	if (sml != NULL) {
+		ret = gtk_webview_smiley_get_from_tree(g_hash_table_lookup(priv->smiley_data, sml), text);
+		if (ret != NULL)
+			return ret;
+	}
+
+	/* Fall back to check for default smileys */
+	return gtk_webview_smiley_get_from_tree(priv->default_smilies, text);
+}
+
+static GdkPixbufAnimation *
+gtk_smiley_get_image(GtkWebViewSmiley *smiley)
+{
+	if (!smiley->icon) {
+		if (smiley->file) {
+			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+		} else if (smiley->loader) {
+			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+			if (smiley->icon)
+				g_object_ref(G_OBJECT(smiley->icon));
+		}
+	}
+
+	return smiley->icon;
+}
+
+static void
+gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkWebViewSmiley *smiley;
+
+	smiley = (GtkWebViewSmiley *)user_data;
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+}
+
+static void
+gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkWebViewSmiley *smiley;
+	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor = NULL;
+	GSList *current = NULL;
+
+	smiley = (GtkWebViewSmiley *)user_data;
+	if (!smiley->webview) {
+		g_object_unref(G_OBJECT(loader));
+		smiley->loader = NULL;
+		return;
+	}
+
+	for (current = smiley->anchors; current; current = g_slist_next(current)) {
+		anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+		if (gtk_text_child_anchor_get_deleted(anchor))
+			icon = NULL;
+		else
+			icon = gtk_image_new_from_animation(smiley->icon);
+
+		if (icon) {
+			GList *wids;
+			gtk_widget_show(icon);
+
+			wids = gtk_text_child_anchor_get_widgets(anchor);
+
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext",
+			                       purple_unescape_html(smiley->smile), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext",
+			                       g_strdup(smiley->smile), g_free);
+
+			if (smiley->webview) {
+				if (wids) {
+					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
+					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
+					g_list_free(children);
+					gtk_container_add(GTK_CONTAINER(wids->data), icon);
+				} else
+					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->webview), icon, anchor);
+			}
+			g_list_free(wids);
+		}
+		g_object_unref(anchor);
+	}
+
+	g_slist_free(smiley->anchors);
+	smiley->anchors = NULL;
+
+	g_object_unref(G_OBJECT(loader));
+	smiley->loader = NULL;
+}
+
+static void
+gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
+{
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys")) {
+		int custom_smileys_size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size");
+		if (width <= custom_smileys_size && height <= custom_smileys_size)
+			return;
+
+		if (width >= height) {
+			height = height * custom_smileys_size / width;
+			width = custom_smileys_size;
+		} else {
+			width = width * custom_smileys_size / height;
+			height = custom_smileys_size;
+		}
+	}
+	gdk_pixbuf_loader_set_size(loader, width, height);
+}
+
+GtkWebViewSmiley *
+gtk_webview_smiley_create(const char *file, const char *shortcut, gboolean hide,
+                          GtkWebViewSmileyFlags flags)
+{
+	GtkWebViewSmiley *smiley = g_new0(GtkWebViewSmiley, 1);
+	smiley->file = g_strdup(file);
+	smiley->smile = g_strdup(shortcut);
+	smiley->hidden = hide;
+	smiley->flags = flags;
+	smiley->webview = NULL;
+	gtk_webview_smiley_reload(smiley);
+	return smiley;
+}
+
+void
+gtk_webview_smiley_reload(GtkWebViewSmiley *smiley)
+{
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);
+
+	smiley->icon = NULL;
+	smiley->loader = NULL;
+
+	if (smiley->file) {
+		/* We do not use the pixbuf loader for a smiley that can be loaded
+		 * from a file. (e.g., local custom smileys)
+		 */
+		return;
+	}
+
+	smiley->loader = gdk_pixbuf_loader_new();
+
+	g_signal_connect(smiley->loader, "area_prepared",
+	                 G_CALLBACK(gtk_custom_smiley_allocated), smiley);
+	g_signal_connect(smiley->loader, "closed",
+	                 G_CALLBACK(gtk_custom_smiley_closed), smiley);
+	g_signal_connect(smiley->loader, "size_prepared",
+	                 G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
+}
+
+GtkWebViewSmileyFlags
+gtk_webview_smiley_get_flags(GtkWebViewSmiley *smiley)
+{
+	return smiley->flags;
+}
+
+void
+gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley)
+{
+	gtk_webview_disassociate_smiley(smiley);
+	g_free(smiley->smile);
+	g_free(smiley->file);
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);
+	g_free(smiley->data);
+	g_free(smiley);
+}
+
+void
+gtk_webview_remove_smileys(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_hash_table_destroy(priv->smiley_data);
+	gtk_smiley_tree_destroy(priv->default_smilies);
+	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
+	priv->default_smilies = gtk_smiley_tree_new();
+}
 
 /******************************************************************************
  * Helpers
@@ -670,6 +1172,10 @@ gtk_webview_finalize(GObject *webview)
 	}
 	g_queue_free(priv->load_queue);
 
+	g_hash_table_destroy(priv->smiley_data);
+	gtk_smiley_tree_destroy(priv->default_smilies);
+	g_free(priv->protocol_name);
+
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
 
@@ -759,6 +1265,10 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
 	priv->load_queue = g_queue_new();
+
+	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
+	priv->default_smilies = gtk_smiley_tree_new();
 
 	g_signal_connect(G_OBJECT(webview), "button-press-event",
 	                 G_CALLBACK(webview_button_pressed), NULL);
