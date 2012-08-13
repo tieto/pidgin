@@ -178,8 +178,8 @@ process_load_queue(GtkWebView *webview)
 
 			if (priv->autoscroll) {
 				require_scroll = (gtk_adjustment_get_value(priv->vadj)
-				                  >= (gtk_adjustment_get_upper(priv->vadj) -
-				                      gtk_adjustment_get_page_size(priv->vadj)));
+				                 >= (gtk_adjustment_get_upper(priv->vadj) -
+				                 1.5*gtk_adjustment_get_page_size(priv->vadj)));
 			}
 
 			webkit_dom_html_element_insert_adjacent_html(body, "beforeend",
