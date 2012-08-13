@@ -1221,16 +1221,20 @@ gtk_webview_get_selected_text(GtkWebView *webview)
 	WebKitDOMDocument *dom;
 	WebKitDOMDOMWindow *win;
 	WebKitDOMDOMSelection *sel;
-	WebKitDOMRange *range;
+	WebKitDOMRange *range = NULL;
 
 	g_return_val_if_fail(webview != NULL, NULL);
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	win = webkit_dom_document_get_default_view(dom);
 	sel = webkit_dom_dom_window_get_selection(win);
-	range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+	if (webkit_dom_dom_selection_get_range_count(sel))
+		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
 
-	return webkit_dom_range_get_text(range);
+	if (range)
+		return webkit_dom_range_get_text(range);
+	else
+		return NULL;
 }
 
 GtkWebViewButtons
