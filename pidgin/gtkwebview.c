@@ -632,6 +632,35 @@ gtk_webview_remove_smileys(GtkWebView *webview)
 	priv->default_smilies = gtk_smiley_tree_new();
 }
 
+void
+gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
+                          const char *smiley)
+{
+	GtkWebViewPriv *priv;
+	char *unescaped;
+	GtkWebViewSmiley *webview_smiley;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	unescaped = purple_unescape_html(smiley);
+	webview_smiley = gtk_webview_smiley_find(webview, sml, unescaped);
+
+	if (priv->format_functions & GTK_WEBVIEW_SMILEY) {
+		char *tmp;
+		/* TODO Better smiley insertion... */
+		tmp = g_strdup_printf("<img isEmoticon src='purple-smiley:%p' alt='%s'>",
+		                      webview_smiley, smiley);
+		gtk_webview_append_html(webview, tmp);
+		g_free(tmp);
+	} else {
+		gtk_webview_append_html(webview, smiley);
+	}
+
+	g_free(unescaped);
+}
+
 /******************************************************************************
  * Helpers
  *****************************************************************************/
