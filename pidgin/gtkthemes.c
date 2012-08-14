@@ -30,9 +30,9 @@
 
 #include "gtkconv.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
 #include "gtksmiley.h"
 #include "gtkthemes.h"
+#include "gtkwebview.h"
 
 GSList *smiley_themes = NULL;
 struct smiley_theme *current_smiley_theme;
@@ -120,21 +120,19 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 	g_free(theme_dir);
 }
 
-static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
+static void _pidgin_themes_smiley_themeize(GtkWidget *webview, gboolean custom)
 {
-	/* TODO WEBKIT: move imhtml dependency to use webview. */
-#if 0
 	struct smiley_list *list;
 	if (!current_smiley_theme)
 		return;
 
-	gtk_imhtml_remove_smileys(GTK_IMHTML(imhtml));
+	gtk_webview_remove_smileys(GTK_WEBVIEW(webview));
 	list = current_smiley_theme->list;
 	while (list) {
 		char *sml = !strcmp(list->sml, "default") ? NULL : list->sml;
 		GSList *icons = list->smileys;
 		while (icons) {
-			gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
+			gtk_webview_associate_smiley(GTK_WEBVIEW(webview), sml, icons->data);
 			icons = icons->next;
 		}
 
@@ -142,50 +140,36 @@ static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 			icons = pidgin_smileys_get_all();
 
 			while (icons) {
-				gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
+				gtk_webview_associate_smiley(GTK_WEBVIEW(webview), sml, icons->data);
 				icons = icons->next;
 			}
 		}
 
 		list = list->next;
 	}
-#endif /* if 0 */
 }
 
-void pidgin_themes_smiley_themeize(GtkWidget *imhtml)
+void
+pidgin_themes_smiley_themeize(GtkWidget *webview)
 {
-	_pidgin_themes_smiley_themeize(imhtml, FALSE);
+	_pidgin_themes_smiley_themeize(webview, FALSE);
 }
 
-void pidgin_themes_smiley_themeize_custom(GtkWidget *imhtml)
+void
+pidgin_themes_smiley_themeize_custom(GtkWidget *webview)
 {
-	_pidgin_themes_smiley_themeize(imhtml, TRUE);
+	_pidgin_themes_smiley_themeize(webview, TRUE);
 }
 
 static void
 pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 {
-	GHashTable *already_freed;
 	struct smiley_list *wer;
 
-	already_freed = g_hash_table_new(g_direct_hash, g_direct_equal);
 	for (wer = theme->list; wer != NULL; wer = theme->list) {
 		while (wer->smileys) {
-			GtkIMHtmlSmiley *uio = wer->smileys->data;
-
-			if (uio->imhtml) {
-				g_signal_handlers_disconnect_matched(uio->imhtml, G_SIGNAL_MATCH_DATA,
-					0, 0, NULL, NULL, uio);
-			}
-
-			if (uio->icon)
-				g_object_unref(uio->icon);
-			if (g_hash_table_lookup(already_freed, uio->file) == NULL) {
-				g_free(uio->file);
-				g_hash_table_insert(already_freed, uio->file, GINT_TO_POINTER(1));
-			}
-			g_free(uio->smile);
-			g_free(uio);
+			GtkWebViewSmiley *uio = wer->smileys->data;
+			gtk_webview_smiley_destroy(uio);
 			wer->smileys = g_slist_delete_link(wer->smileys, wer->smileys);
 		}
 		theme->list = wer->next;
@@ -193,8 +177,6 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 		g_free(wer);
 	}
 	theme->list = NULL;
-
-	g_hash_table_destroy(already_freed);
 }
 
 static void
@@ -323,7 +305,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				if (!sfile) {
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
-					GtkIMHtmlSmiley *smiley = gtk_imhtml_smiley_create(sfile, l, hidden, 0);
+					GtkWebViewSmiley *smiley = gtk_webview_smiley_create(sfile, l, hidden, 0);
 					list->smileys = g_slist_prepend(list->smileys, smiley);
 					g_hash_table_insert (list->files, g_strdup(l), g_strdup(sfile));
 				}
