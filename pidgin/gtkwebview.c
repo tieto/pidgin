@@ -68,6 +68,16 @@ typedef struct {
 } GtkWebViewInspectData;
 
 typedef struct {
+	WebKitWebView *webview;
+	gunichar ch;
+} GtkWebViewInsertData;
+
+typedef struct {
+	const char *label;
+	gunichar ch;
+} GtkUnicodeMenuEntry;
+
+typedef struct {
 	char *name;
 	int length;
 
@@ -807,6 +817,105 @@ webview_navigation_decision(WebKitWebView *webview,
 	return TRUE;
 }
 
+static GtkWidget *
+get_input_methods_menu(WebKitWebView *webview)
+{
+	GtkSettings *settings;
+	gboolean show = TRUE;
+	GtkWidget *item;
+	GtkWidget *menu;
+	GtkIMContext *im;
+
+	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
+
+	if (settings)
+		g_object_get(settings, "gtk-show-input-method-menu", &show, NULL);
+	if (!show)
+		return NULL;
+
+	item = gtk_image_menu_item_new_with_mnemonic(_("Input _Methods"));
+
+	g_object_get(webview, "im-context", &im, NULL);
+	menu = gtk_menu_new();
+	gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(im),
+	                                     GTK_MENU_SHELL(menu));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+
+	return item;
+}
+
+/* Values taken from gtktextutil.c */
+static const GtkUnicodeMenuEntry bidi_menu_entries[] = {
+	{ N_("LRM _Left-to-right mark"), 0x200E },
+	{ N_("RLM _Right-to-left mark"), 0x200F },
+	{ N_("LRE Left-to-right _embedding"), 0x202A },
+	{ N_("RLE Right-to-left e_mbedding"), 0x202B },
+	{ N_("LRO Left-to-right _override"), 0x202D },
+	{ N_("RLO Right-to-left o_verride"), 0x202E },
+	{ N_("PDF _Pop directional formatting"), 0x202C },
+	{ N_("ZWS _Zero width space"), 0x200B },
+	{ N_("ZWJ Zero width _joiner"), 0x200D },
+	{ N_("ZWNJ Zero width _non-joiner"), 0x200C }
+};
+
+static void
+insert_control_character_cb(GtkMenuItem *item, GtkWebViewInsertData *data)
+{
+	WebKitWebView *webview = data->webview;
+	gunichar ch = data->ch;
+	GtkWebViewPriv *priv;
+	WebKitDOMDocument *dom;
+	char buf[6];
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(GTK_WEBVIEW(webview));
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	g_unichar_to_utf8(ch, buf);
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, buf);
+	priv->edit.block_changed = FALSE;
+}
+
+static GtkWidget *
+get_unicode_menu(WebKitWebView *webview)
+{
+	GtkSettings *settings;
+	gboolean show = TRUE;
+	GtkWidget *menuitem;
+	GtkWidget *menu;
+	int i;
+
+	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
+
+	if (settings)
+		g_object_get(settings, "gtk-show-unicode-menu", &show, NULL);
+	if (!show)
+		return NULL;
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Insert Unicode Control Character"));
+
+	menu = gtk_menu_new();
+	for (i = 0; i < G_N_ELEMENTS(bidi_menu_entries); i++) {
+		GtkWebViewInsertData *data;
+		GtkWidget *item;
+
+		data = g_new0(GtkWebViewInsertData, 1);
+		data->webview = webview;
+		data->ch = bidi_menu_entries[i].ch;
+
+		item = gtk_menu_item_new_with_mnemonic(_(bidi_menu_entries[i].label));
+		g_signal_connect_data(item, "activate",
+		                      G_CALLBACK(insert_control_character_cb), data,
+		                      (GClosureNotify)g_free, 0);
+		gtk_widget_show(item);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	}
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+
+	return menuitem;
+}
+
 static void
 do_popup_menu(WebKitWebView *webview, int button, int time, int context,
               WebKitDOMNode *node, const char *uri)
@@ -910,6 +1019,24 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		g_signal_connect_data(G_OBJECT(inspect), "activate",
 		                      G_CALLBACK(webview_show_inspector_cb),
 		                      data, (GClosureNotify)g_free, 0);
+	}
+
+	if (webkit_web_view_get_editable(webview)) {
+		GtkWidget *im = get_input_methods_menu(webview);
+		GtkWidget *unicode = get_unicode_menu(webview);
+
+		if (im || unicode)
+			pidgin_separator(menu);
+
+		if (im) {
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), im);
+			gtk_widget_show(im);
+		}
+
+		if (unicode) {
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), unicode);
+			gtk_widget_show(unicode);
+		}
 	}
 
 	g_signal_emit_by_name(G_OBJECT(webview), "populate-popup", menu);
