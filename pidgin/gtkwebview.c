@@ -53,6 +53,7 @@ enum {
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
 	CHANGED,
+	HTML_APPENDED,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -62,12 +63,47 @@ static guint signals[LAST_SIGNAL] = { 0 };
  *****************************************************************************/
 
 typedef struct {
+	WebKitWebInspector *inspector;
+	WebKitDOMNode *node;
+} GtkWebViewInspectData;
+
+typedef struct {
+	WebKitWebView *webview;
+	gunichar ch;
+} GtkWebViewInsertData;
+
+typedef struct {
+	const char *label;
+	gunichar ch;
+} GtkUnicodeMenuEntry;
+
+typedef struct {
 	char *name;
 	int length;
 
 	gboolean (*activate)(GtkWebView *webview, const char *uri);
 	gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu);
 } GtkWebViewProtocol;
+
+struct _GtkWebViewSmiley {
+	gchar *smile;
+	gchar *file;
+	GdkPixbufAnimation *icon;
+	gboolean hidden;
+	GdkPixbufLoader *loader;
+	GSList *anchors;
+	GtkWebViewSmileyFlags flags;
+	GtkWebView *webview;
+	gpointer data;
+	gsize datasize;
+};
+
+typedef struct _GtkSmileyTree GtkSmileyTree;
+struct _GtkSmileyTree {
+	GString *values;
+	GtkSmileyTree **children;
+	GtkWebViewSmiley *image;
+};
 
 typedef struct _GtkWebViewPriv {
 	/* Processing queues */
@@ -77,6 +113,7 @@ typedef struct _GtkWebViewPriv {
 
 	/* Scroll adjustments */
 	GtkAdjustment *vadj;
+	gboolean autoscroll;
 	guint scroll_src;
 	GTimer *scroll_time;
 
@@ -87,6 +124,10 @@ typedef struct _GtkWebViewPriv {
 		gboolean block_changed:1;
 	} edit;
 
+	/* Smileys */
+	char *protocol_name;
+	GHashTable *smiley_data;
+	GtkSmileyTree *default_smilies;
 } GtkWebViewPriv;
 
 /******************************************************************************
@@ -94,6 +135,531 @@ typedef struct _GtkWebViewPriv {
  *****************************************************************************/
 
 static WebKitWebViewClass *parent_class = NULL;
+
+/******************************************************************************
+ * Smileys
+ *****************************************************************************/
+
+const char *
+gtk_webview_get_protocol_name(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_val_if_fail(webview != NULL, NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->protocol_name;
+}
+
+void
+gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_name)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->protocol_name = g_strdup(protocol_name);
+}
+
+static GtkSmileyTree *
+gtk_smiley_tree_new(void)
+{
+	return g_new0(GtkSmileyTree, 1);
+}
+
+static void
+gtk_smiley_tree_insert(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *t = tree;
+	const char *x = smiley->smile;
+
+	if (!(*x))
+		return;
+
+	do {
+		char *pos;
+		gsize index;
+
+		if (!t->values)
+			t->values = g_string_new("");
+
+		pos = strchr(t->values->str, *x);
+		if (!pos) {
+			t->values = g_string_append_c(t->values, *x);
+			index = t->values->len - 1;
+			t->children = g_realloc(t->children, t->values->len * sizeof(GtkSmileyTree *));
+			t->children[index] = g_new0(GtkSmileyTree, 1);
+		} else
+			index = pos - t->values->str;
+
+		t = t->children[index];
+
+		x++;
+	} while (*x);
+
+	t->image = smiley;
+}
+
+static void
+gtk_smiley_tree_destroy(GtkSmileyTree *tree)
+{
+	GSList *list = g_slist_prepend(NULL, tree);
+
+	while (list) {
+		GtkSmileyTree *t = list->data;
+		gsize i;
+		list = g_slist_delete_link(list, list);
+		if (t && t->values) {
+			for (i = 0; i < t->values->len; i++)
+				list = g_slist_prepend(list, t->children[i]);
+			g_string_free(t->values, TRUE);
+			g_free(t->children);
+		}
+
+		g_free(t);
+	}
+}
+
+static void
+gtk_smiley_tree_remove(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *t = tree;
+	const gchar *x = smiley->smile;
+	int len = 0;
+
+	while (*x) {
+		char *pos;
+
+		if (!t->values)
+			return;
+
+		pos = strchr(t->values->str, *x);
+		if (pos)
+			t = t->children[pos - t->values->str];
+		else
+			return;
+
+		x++; len++;
+	}
+
+	t->image = NULL;
+}
+
+static int
+gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
+{
+	GtkSmileyTree *t = tree;
+	const char *x = text;
+	int len = 0;
+	const char *amp;
+	int alen;
+
+	while (*x) {
+		char *pos;
+
+		if (!t->values)
+			break;
+
+		if (*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
+			gboolean matched = TRUE;
+			/* Make sure all chars of the unescaped value match */
+			while (*(amp + 1)) {
+				pos = strchr(t->values->str, *amp);
+				if (pos)
+					t = t->children[pos - t->values->str];
+				else {
+					matched = FALSE;
+					break;
+				}
+				amp++;
+			}
+			if (!matched)
+				break;
+
+			pos = strchr(t->values->str, *amp);
+		}
+		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' char should
+		                     * only appear as the start of a tag.  Perhaps a
+		                     * safer (but costlier) check would be to call
+		                     * gtk_imhtml_is_tag on it */
+			break;
+		else {
+			alen = 1;
+			pos = strchr(t->values->str, *x);
+		}
+
+		if (pos)
+			t = t->children[pos - t->values->str];
+		else
+			break;
+
+		x += alen;
+		len += alen;
+	}
+
+	if (t->image)
+		return len;
+
+	return 0;
+}
+
+static void
+gtk_webview_disassociate_smiley_foreach(gpointer key, gpointer value,
+                                        gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *)value;
+	GtkWebViewSmiley *smiley = (GtkWebViewSmiley *)user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_webview_disconnect_smiley(GtkWebView *webview, GtkWebViewSmiley *smiley)
+{
+	smiley->webview = NULL;
+	g_signal_handlers_disconnect_matched(webview, G_SIGNAL_MATCH_DATA, 0, 0,
+	                                     NULL, NULL, smiley);
+}
+
+static void
+gtk_webview_disassociate_smiley(GtkWebViewSmiley *smiley)
+{
+	if (smiley->webview) {
+		GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(smiley->webview);
+		gtk_smiley_tree_remove(priv->default_smilies, smiley);
+		g_hash_table_foreach(priv->smiley_data,
+			gtk_webview_disassociate_smiley_foreach, smiley);
+		g_signal_handlers_disconnect_matched(smiley->webview,
+		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+		                                     NULL, smiley);
+		smiley->webview = NULL;
+	}
+}
+
+void
+gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
+                             GtkWebViewSmiley *smiley)
+{
+	GtkSmileyTree *tree;
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	if (sml == NULL)
+		tree = priv->default_smilies;
+	else if (!(tree = g_hash_table_lookup(priv->smiley_data, sml))) {
+		tree = gtk_smiley_tree_new();
+		g_hash_table_insert(priv->smiley_data, g_strdup(sml), tree);
+	}
+
+	/* need to disconnect old webview, if there is one */
+	if (smiley->webview) {
+		g_signal_handlers_disconnect_matched(smiley->webview,
+		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+		                                     NULL, smiley);
+	}
+
+	smiley->webview = webview;
+
+	gtk_smiley_tree_insert(tree, smiley);
+
+	/* connect destroy signal for the webview */
+	g_signal_connect(webview, "destroy",
+	                 G_CALLBACK(gtk_webview_disconnect_smiley), smiley);
+}
+
+static gboolean
+gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
+                      int *len)
+{
+	GtkSmileyTree *tree;
+
+	if (!sml)
+		sml = priv->protocol_name;
+
+	if (!sml || !(tree = g_hash_table_lookup(priv->smiley_data, sml)))
+		tree = priv->default_smilies;
+
+	if (tree == NULL)
+		return FALSE;
+
+	*len = gtk_smiley_tree_lookup(tree, text);
+	return (*len > 0);
+}
+
+static GtkWebViewSmiley *
+gtk_webview_smiley_get_from_tree(GtkSmileyTree *t, const char *text)
+{
+	const char *x = text;
+	char *pos;
+
+	if (t == NULL)
+		return NULL;
+
+	while (*x) {
+		if (!t->values)
+			return NULL;
+
+		pos = strchr(t->values->str, *x);
+		if (!pos)
+			return NULL;
+
+		t = t->children[pos - t->values->str];
+		x++;
+	}
+
+	return t->image;
+}
+
+GtkWebViewSmiley *
+gtk_webview_smiley_find(GtkWebView *webview, const char *sml, const char *text)
+{
+	GtkWebViewPriv *priv;
+	GtkWebViewSmiley *ret;
+
+	g_return_val_if_fail(webview != NULL, NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	/* Look for custom smileys first */
+	if (sml != NULL) {
+		ret = gtk_webview_smiley_get_from_tree(g_hash_table_lookup(priv->smiley_data, sml), text);
+		if (ret != NULL)
+			return ret;
+	}
+
+	/* Fall back to check for default smileys */
+	return gtk_webview_smiley_get_from_tree(priv->default_smilies, text);
+}
+
+static GdkPixbufAnimation *
+gtk_smiley_get_image(GtkWebViewSmiley *smiley)
+{
+	if (!smiley->icon) {
+		if (smiley->file) {
+			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+		} else if (smiley->loader) {
+			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+			if (smiley->icon)
+				g_object_ref(G_OBJECT(smiley->icon));
+		}
+	}
+
+	return smiley->icon;
+}
+
+static void
+gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkWebViewSmiley *smiley;
+
+	smiley = (GtkWebViewSmiley *)user_data;
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+}
+
+static void
+gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkWebViewSmiley *smiley;
+	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor = NULL;
+	GSList *current = NULL;
+
+	smiley = (GtkWebViewSmiley *)user_data;
+	if (!smiley->webview) {
+		g_object_unref(G_OBJECT(loader));
+		smiley->loader = NULL;
+		return;
+	}
+
+	for (current = smiley->anchors; current; current = g_slist_next(current)) {
+		anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+		if (gtk_text_child_anchor_get_deleted(anchor))
+			icon = NULL;
+		else
+			icon = gtk_image_new_from_animation(smiley->icon);
+
+		if (icon) {
+			GList *wids;
+			gtk_widget_show(icon);
+
+			wids = gtk_text_child_anchor_get_widgets(anchor);
+
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext",
+			                       purple_unescape_html(smiley->smile), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext",
+			                       g_strdup(smiley->smile), g_free);
+
+			if (smiley->webview) {
+				if (wids) {
+					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
+					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
+					g_list_free(children);
+					gtk_container_add(GTK_CONTAINER(wids->data), icon);
+				} else
+					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->webview), icon, anchor);
+			}
+			g_list_free(wids);
+		}
+		g_object_unref(anchor);
+	}
+
+	g_slist_free(smiley->anchors);
+	smiley->anchors = NULL;
+
+	g_object_unref(G_OBJECT(loader));
+	smiley->loader = NULL;
+}
+
+static void
+gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
+{
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys")) {
+		int custom_smileys_size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size");
+		if (width <= custom_smileys_size && height <= custom_smileys_size)
+			return;
+
+		if (width >= height) {
+			height = height * custom_smileys_size / width;
+			width = custom_smileys_size;
+		} else {
+			width = width * custom_smileys_size / height;
+			height = custom_smileys_size;
+		}
+	}
+	gdk_pixbuf_loader_set_size(loader, width, height);
+}
+
+GtkWebViewSmiley *
+gtk_webview_smiley_create(const char *file, const char *shortcut, gboolean hide,
+                          GtkWebViewSmileyFlags flags)
+{
+	GtkWebViewSmiley *smiley = g_new0(GtkWebViewSmiley, 1);
+	smiley->file = g_strdup(file);
+	smiley->smile = g_strdup(shortcut);
+	smiley->hidden = hide;
+	smiley->flags = flags;
+	smiley->webview = NULL;
+	gtk_webview_smiley_reload(smiley);
+	return smiley;
+}
+
+void
+gtk_webview_smiley_reload(GtkWebViewSmiley *smiley)
+{
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);
+
+	smiley->icon = NULL;
+	smiley->loader = NULL;
+
+	if (smiley->file) {
+		/* We do not use the pixbuf loader for a smiley that can be loaded
+		 * from a file. (e.g., local custom smileys)
+		 */
+		return;
+	}
+
+	smiley->loader = gdk_pixbuf_loader_new();
+
+	g_signal_connect(smiley->loader, "area_prepared",
+	                 G_CALLBACK(gtk_custom_smiley_allocated), smiley);
+	g_signal_connect(smiley->loader, "closed",
+	                 G_CALLBACK(gtk_custom_smiley_closed), smiley);
+	g_signal_connect(smiley->loader, "size_prepared",
+	                 G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
+}
+
+const char *
+gtk_webview_smiley_get_smile(const GtkWebViewSmiley *smiley)
+{
+	return smiley->smile;
+}
+
+const char *
+gtk_webview_smiley_get_file(const GtkWebViewSmiley *smiley)
+{
+	return smiley->file;
+}
+
+gboolean
+gtk_webview_smiley_get_hidden(const GtkWebViewSmiley *smiley)
+{
+	return smiley->hidden;
+}
+
+GtkWebViewSmileyFlags
+gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smiley)
+{
+	return smiley->flags;
+}
+
+void
+gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley)
+{
+	gtk_webview_disassociate_smiley(smiley);
+	g_free(smiley->smile);
+	g_free(smiley->file);
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);
+	g_free(smiley->data);
+	g_free(smiley);
+}
+
+void
+gtk_webview_remove_smileys(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	g_hash_table_destroy(priv->smiley_data);
+	gtk_smiley_tree_destroy(priv->default_smilies);
+	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
+	priv->default_smilies = gtk_smiley_tree_new();
+}
+
+void
+gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
+                          const char *smiley)
+{
+	GtkWebViewPriv *priv;
+	char *unescaped;
+	GtkWebViewSmiley *webview_smiley;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	unescaped = purple_unescape_html(smiley);
+	webview_smiley = gtk_webview_smiley_find(webview, sml, unescaped);
+
+	if (priv->format_functions & GTK_WEBVIEW_SMILEY) {
+		char *tmp;
+		/* TODO Better smiley insertion... */
+		tmp = g_strdup_printf("<img isEmoticon src='purple-smiley:%p' alt='%s'>",
+		                      webview_smiley, smiley);
+		gtk_webview_append_html(webview, tmp);
+		g_free(tmp);
+	} else {
+		gtk_webview_append_html(webview, smiley);
+	}
+
+	g_free(unescaped);
+}
 
 /******************************************************************************
  * Helpers
@@ -147,6 +713,9 @@ process_load_queue(GtkWebView *webview)
 	char *str;
 	WebKitDOMDocument *doc;
 	WebKitDOMHTMLElement *body;
+	WebKitDOMNode *start, *end;
+	WebKitDOMRange *range;
+	gboolean require_scroll = FALSE;
 
 	if (priv->is_loading) {
 		priv->loader = 0;
@@ -164,8 +733,43 @@ process_load_queue(GtkWebView *webview)
 		case LOAD_HTML:
 			doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 			body = webkit_dom_document_get_body(doc);
+			start = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+
+			if (priv->autoscroll) {
+				require_scroll = (gtk_adjustment_get_value(priv->vadj)
+				                 >= (gtk_adjustment_get_upper(priv->vadj) -
+				                 1.5*gtk_adjustment_get_page_size(priv->vadj)));
+			}
+
 			webkit_dom_html_element_insert_adjacent_html(body, "beforeend",
 			                                             str, NULL);
+
+			range = webkit_dom_document_create_range(doc);
+			if (start) {
+				end = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+				webkit_dom_range_set_start_after(range,
+				                                 WEBKIT_DOM_NODE(start),
+				                                 NULL);
+				webkit_dom_range_set_end_after(range,
+				                               WEBKIT_DOM_NODE(end),
+				                               NULL);
+			} else {
+				webkit_dom_range_select_node_contents(range,
+				                                      WEBKIT_DOM_NODE(body),
+				                                      NULL);
+			}
+
+			if (require_scroll) {
+				if (start)
+					webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(start),
+					                                    TRUE);
+				else
+					webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(body),
+					                                    TRUE);
+			}
+
+			g_signal_emit(webview, signals[HTML_APPENDED], 0, range);
+
 			break;
 
 		case LOAD_JS:
@@ -202,6 +806,12 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 	priv->is_loading = FALSE;
 	if (priv->loader == 0)
 		priv->loader = g_idle_add((GSourceFunc)process_load_queue, webview);
+}
+
+static void
+webview_show_inspector_cb(GtkWidget *item, GtkWebViewInspectData *data)
+{
+	webkit_web_inspector_inspect_node(data->inspector, data->node);
 }
 
 static GtkWebViewProtocol *
@@ -254,12 +864,113 @@ webview_navigation_decision(WebKitWebView *webview,
 	return TRUE;
 }
 
+static GtkWidget *
+get_input_methods_menu(WebKitWebView *webview)
+{
+	GtkSettings *settings;
+	gboolean show = TRUE;
+	GtkWidget *item;
+	GtkWidget *menu;
+	GtkIMContext *im;
+
+	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
+
+	if (settings)
+		g_object_get(settings, "gtk-show-input-method-menu", &show, NULL);
+	if (!show)
+		return NULL;
+
+	item = gtk_image_menu_item_new_with_mnemonic(_("Input _Methods"));
+
+	g_object_get(webview, "im-context", &im, NULL);
+	menu = gtk_menu_new();
+	gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(im),
+	                                     GTK_MENU_SHELL(menu));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+
+	return item;
+}
+
+/* Values taken from gtktextutil.c */
+static const GtkUnicodeMenuEntry bidi_menu_entries[] = {
+	{ N_("LRM _Left-to-right mark"), 0x200E },
+	{ N_("RLM _Right-to-left mark"), 0x200F },
+	{ N_("LRE Left-to-right _embedding"), 0x202A },
+	{ N_("RLE Right-to-left e_mbedding"), 0x202B },
+	{ N_("LRO Left-to-right _override"), 0x202D },
+	{ N_("RLO Right-to-left o_verride"), 0x202E },
+	{ N_("PDF _Pop directional formatting"), 0x202C },
+	{ N_("ZWS _Zero width space"), 0x200B },
+	{ N_("ZWJ Zero width _joiner"), 0x200D },
+	{ N_("ZWNJ Zero width _non-joiner"), 0x200C }
+};
+
+static void
+insert_control_character_cb(GtkMenuItem *item, GtkWebViewInsertData *data)
+{
+	WebKitWebView *webview = data->webview;
+	gunichar ch = data->ch;
+	GtkWebViewPriv *priv;
+	WebKitDOMDocument *dom;
+	char buf[6];
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(GTK_WEBVIEW(webview));
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+
+	g_unichar_to_utf8(ch, buf);
+	priv->edit.block_changed = TRUE;
+	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, buf);
+	priv->edit.block_changed = FALSE;
+}
+
+static GtkWidget *
+get_unicode_menu(WebKitWebView *webview)
+{
+	GtkSettings *settings;
+	gboolean show = TRUE;
+	GtkWidget *menuitem;
+	GtkWidget *menu;
+	int i;
+
+	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
+
+	if (settings)
+		g_object_get(settings, "gtk-show-unicode-menu", &show, NULL);
+	if (!show)
+		return NULL;
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Insert Unicode Control Character"));
+
+	menu = gtk_menu_new();
+	for (i = 0; i < G_N_ELEMENTS(bidi_menu_entries); i++) {
+		GtkWebViewInsertData *data;
+		GtkWidget *item;
+
+		data = g_new0(GtkWebViewInsertData, 1);
+		data->webview = webview;
+		data->ch = bidi_menu_entries[i].ch;
+
+		item = gtk_menu_item_new_with_mnemonic(_(bidi_menu_entries[i].label));
+		g_signal_connect_data(item, "activate",
+		                      G_CALLBACK(insert_control_character_cb), data,
+		                      (GClosureNotify)g_free, 0);
+		gtk_widget_show(item);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	}
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+
+	return menuitem;
+}
+
 static void
 do_popup_menu(WebKitWebView *webview, int button, int time, int context,
-              WebKitDOMHTMLAnchorElement *link, const char *uri)
+              WebKitDOMNode *node, const char *uri)
 {
 	GtkWidget *menu;
 	GtkWidget *cut, *copy, *paste, *delete, *select;
+	WebKitWebSettings *settings;
+	gboolean inspector;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
@@ -270,11 +981,16 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		GtkWebViewProtocol *proto = NULL;
 		GList *children;
 
-		if (uri && link)
+		while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
+			node = webkit_dom_node_get_parent_node(node);
+		}
+
+		if (uri && node)
 			proto = webview_find_protocol(uri, FALSE);
 
 		if (proto && proto->context_menu) {
-			proto->context_menu(GTK_WEBVIEW(webview), link, menu);
+			proto->context_menu(GTK_WEBVIEW(webview),
+			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), menu);
 		}
 
 		children = gtk_container_get_children(GTK_CONTAINER(menu));
@@ -333,6 +1049,43 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 			webkit_web_view_can_cut_clipboard(webview));
 	}
 
+	settings = webkit_web_view_get_settings(webview);
+	g_object_get(G_OBJECT(settings), "enable-developer-extras", &inspector, NULL);
+	if (inspector) {
+		GtkWidget *inspect;
+		GtkWebViewInspectData *data;
+
+		data = g_new0(GtkWebViewInspectData, 1);
+		data->inspector = webkit_web_view_get_inspector(webview);
+		data->node = node;
+
+		pidgin_separator(menu);
+
+		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"), NULL,
+		                                     NULL, NULL, 0, 0, NULL);
+		g_signal_connect_data(G_OBJECT(inspect), "activate",
+		                      G_CALLBACK(webview_show_inspector_cb),
+		                      data, (GClosureNotify)g_free, 0);
+	}
+
+	if (webkit_web_view_get_editable(webview)) {
+		GtkWidget *im = get_input_methods_menu(webview);
+		GtkWidget *unicode = get_unicode_menu(webview);
+
+		if (im || unicode)
+			pidgin_separator(menu);
+
+		if (im) {
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), im);
+			gtk_widget_show(im);
+		}
+
+		if (unicode) {
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), unicode);
+			gtk_widget_show(unicode);
+		}
+	}
+
 	g_signal_emit_by_name(G_OBJECT(webview), "populate-popup", menu);
 
 	gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(webview), NULL);
@@ -342,9 +1095,31 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 static gboolean
 webview_popup_menu(WebKitWebView *webview)
 {
+	WebKitDOMDocument *doc;
+	WebKitDOMElement *active;
+	WebKitDOMElement *link;
+	int context;
+	char *uri;
+
+	context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
+	uri = NULL;
+
+	doc = webkit_web_view_get_dom_document(webview);
+	active = webkit_dom_html_document_get_active_element(WEBKIT_DOM_HTML_DOCUMENT(doc));
+
+	link = active;
+	while (link && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link))
+		link = webkit_dom_node_get_parent_element(WEBKIT_DOM_NODE(link));
+	if (WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link)) {
+		context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
+		uri = webkit_dom_html_anchor_element_get_href(WEBKIT_DOM_HTML_ANCHOR_ELEMENT(link));
+	}
+
 	do_popup_menu(webview, 0, gtk_get_current_event_time(),
-	              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-	              NULL, NULL);
+	              context, WEBKIT_DOM_NODE(active), uri);
+
+	g_free(uri);
+
 	return TRUE;
 }
 
@@ -364,14 +1139,8 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 		             "link-uri", &uri,
 		             NULL);
 
-		if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
-			while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
-				node = webkit_dom_node_get_parent_node(node);
-			}
-		}
-
 		do_popup_menu(webview, event->button, event->time, context,
-		              WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), uri);
+		              node, uri);
 
 		g_free(uri);
 
@@ -577,6 +1346,10 @@ gtk_webview_finalize(GObject *webview)
 	}
 	g_queue_free(priv->load_queue);
 
+	g_hash_table_destroy(priv->smiley_data);
+	gtk_smiley_tree_destroy(priv->default_smilies);
+	g_free(priv->protocol_name);
+
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
 
@@ -621,6 +1394,14 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	                                G_STRUCT_OFFSET(GtkWebViewClass, changed),
 	                                NULL, NULL, g_cclosure_marshal_VOID__VOID,
 	                                G_TYPE_NONE, 0);
+	signals[HTML_APPENDED] = g_signal_new("html-appended",
+	                                      G_TYPE_FROM_CLASS(gobject_class),
+	                                      G_SIGNAL_RUN_FIRST,
+	                                      G_STRUCT_OFFSET(GtkWebViewClass, html_appended),
+	                                      NULL, NULL,
+	                                      g_cclosure_marshal_VOID__OBJECT,
+	                                      G_TYPE_NONE, 1, WEBKIT_TYPE_DOM_RANGE,
+	                                      NULL);
 
 	klass->toggle_format = webview_toggle_format;
 	klass->clear_format = webview_clear_formatting;
@@ -658,6 +1439,10 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 
 	priv->load_queue = g_queue_new();
+
+	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
+	priv->default_smilies = gtk_smiley_tree_new();
 
 	g_signal_connect(G_OBJECT(webview), "button-press-event",
 	                 G_CALLBACK(webview_button_pressed), NULL);
@@ -821,6 +1606,28 @@ gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
 		priv->scroll_time = NULL;
 		priv->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, priv, NULL);
 	}
+}
+
+void
+gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->autoscroll = scroll;
+}
+
+gboolean
+gtk_webview_get_autoscroll(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_val_if_fail(webview != NULL, FALSE);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	return priv->autoscroll;
 }
 
 void
@@ -1098,16 +1905,20 @@ gtk_webview_get_selected_text(GtkWebView *webview)
 	WebKitDOMDocument *dom;
 	WebKitDOMDOMWindow *win;
 	WebKitDOMDOMSelection *sel;
-	WebKitDOMRange *range;
+	WebKitDOMRange *range = NULL;
 
 	g_return_val_if_fail(webview != NULL, NULL);
 
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	win = webkit_dom_document_get_default_view(dom);
 	sel = webkit_dom_dom_window_get_selection(win);
-	range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+	if (webkit_dom_dom_selection_get_range_count(sel))
+		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
 
-	return webkit_dom_range_get_text(range);
+	if (range)
+		return webkit_dom_range_get_text(range);
+	else
+		return NULL;
 }
 
 GtkWebViewButtons

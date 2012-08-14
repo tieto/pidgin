@@ -812,6 +812,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	const char *str_value;
 	gboolean bool_value;
 	ProtocolOptEntry *opt_entry;
+	const GSList *str_hints;
 
 	if (dialog->protocol_frame != NULL) {
 		gtk_notebook_remove_page (GTK_NOTEBOOK(dialog->notebook), 1);
@@ -912,8 +913,25 @@ add_protocol_options(AccountPrefsDialog *dialog)
 						purple_account_option_get_default_string(option));
 				}
 
-				opt_entry->widget = entry = gtk_entry_new();
-				if (purple_account_option_get_masked(option))
+				str_hints = purple_account_option_string_get_hints(option);
+				if (str_hints)
+				{
+					const GSList *hint_it = str_hints;
+					entry = gtk_combo_box_entry_new_text();
+					while (hint_it)
+					{
+						const gchar *hint = hint_it->data;
+						hint_it = g_list_next(hint_it);
+						gtk_combo_box_append_text(GTK_COMBO_BOX(entry), hint);
+					}
+				}
+				else
+					entry = gtk_entry_new();
+				
+				opt_entry->widget = entry;
+				if (purple_account_option_string_get_masked(option) && str_hints)
+					g_warn_if_reached();
+				else if (purple_account_option_string_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 #if !GTK_CHECK_VERSION(2,16,0)
@@ -922,7 +940,9 @@ add_protocol_options(AccountPrefsDialog *dialog)
 #endif /* Less than GTK+ 2.16 */
 				}
 
-				if (str_value != NULL)
+				if (str_value != NULL && str_hints)
+					gtk_entry_set_text(GTK_ENTRY(GTK_BIN(entry)->child), str_value);
+				else
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
 				title = g_strdup_printf("_%s:",
@@ -1453,7 +1473,10 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 			switch (opt_entry->type) {
 				case PURPLE_PREF_STRING:
-					value = gtk_entry_get_text(GTK_ENTRY(opt_entry->widget));
+					if (GTK_IS_COMBO_BOX(opt_entry->widget))
+						value = gtk_combo_box_get_active_text(GTK_COMBO_BOX(opt_entry->widget));
+					else
+						value = gtk_entry_get_text(GTK_ENTRY(opt_entry->widget));
 					purple_account_set_string(account, opt_entry->setting, value);
 					break;
 

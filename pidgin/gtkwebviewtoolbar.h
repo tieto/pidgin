@@ -35,6 +35,27 @@
 #define GTK_IS_WEBVIEWTOOLBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEWTOOLBAR))
 #define GTK_WEBVIEWTOOLBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbarClass))
 
+typedef enum {
+	GTK_WEBVIEWTOOLBAR_ACTION_BOLD,
+	GTK_WEBVIEWTOOLBAR_ACTION_ITALIC,
+	GTK_WEBVIEWTOOLBAR_ACTION_UNDERLINE,
+	GTK_WEBVIEWTOOLBAR_ACTION_STRIKE,
+	GTK_WEBVIEWTOOLBAR_ACTION_LARGER,
+#if 0
+	GTK_WEBVIEWTOOLBAR_ACTION_NORMAL,
+#endif
+	GTK_WEBVIEWTOOLBAR_ACTION_SMALLER,
+	GTK_WEBVIEWTOOLBAR_ACTION_FONTFACE,
+	GTK_WEBVIEWTOOLBAR_ACTION_FGCOLOR,
+	GTK_WEBVIEWTOOLBAR_ACTION_BGCOLOR,
+	GTK_WEBVIEWTOOLBAR_ACTION_CLEAR,
+	GTK_WEBVIEWTOOLBAR_ACTION_IMAGE,
+	GTK_WEBVIEWTOOLBAR_ACTION_LINK,
+	GTK_WEBVIEWTOOLBAR_ACTION_HR,
+	GTK_WEBVIEWTOOLBAR_ACTION_SMILEY,
+	GTK_WEBVIEWTOOLBAR_ACTION_ATTENTION
+} GtkWebViewToolbarAction;
+
 typedef struct _GtkWebViewToolbar GtkWebViewToolbar;
 typedef struct _GtkWebViewToolbarClass GtkWebViewToolbarClass;
 
@@ -89,6 +110,15 @@ void gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
  */
 void gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
                                                    PurpleConversation *conv);
+
+/**
+ * Activate a GtkWebViewToolbar action
+ *
+ * @param toolbar The GtkWebViewToolbar object
+ * @param action  The GtkWebViewToolbarAction
+ */
+void gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
+                                 GtkWebViewToolbarAction action);
 
 G_END_DECLS
 

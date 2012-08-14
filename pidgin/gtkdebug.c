@@ -623,6 +623,28 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 	return FALSE;
 }
 
+static void
+regex_html_appended_cb(GtkWebView *webview, WebKitDOMRange *range, DebugWindow *win)
+{
+	if (!win || !win->window)
+		return;
+
+	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
+		WebKitDOMDocument *dom;
+		WebKitDOMHTMLElement *body;
+		WebKitDOMNode *div;
+
+		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
+		body = webkit_dom_document_get_body(dom);
+		div = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+
+		if (webkit_dom_element_webkit_matches_selector(WEBKIT_DOM_ELEMENT(div),
+		                                               "body>div:not(#pause)",
+		                                               NULL))
+			regex_match(win, dom, div);
+	}
+}
+
 static DebugWindow *
 debug_window_new(void)
 {
@@ -790,8 +812,12 @@ debug_window_new(void)
 	frame = pidgin_create_webview(FALSE, &win->text, NULL, NULL);
 	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
 	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
+	gtk_webview_set_autoscroll(GTK_WEBVIEW(win->text), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+
+	g_signal_connect(G_OBJECT(win->text), "html-appended",
+	                 G_CALLBACK(regex_html_appended_cb), win);
 
 	clear_cb(NULL, win);
 
@@ -990,31 +1016,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	g_free(esc_s);
 	g_free(tmp);
 
-	//XXX: gtk_webview_append_html does delayed insert of new div, which is
-	//     needed by filtering below
-	//gtk_webview_append_html(GTK_WEBVIEW(debug_win->text), s);
-	{
-		WebKitDOMDocument *dom = NULL;
-		WebKitDOMHTMLElement *body = NULL;
-		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(debug_win->text));
-		if (dom)
-			body = webkit_dom_document_get_body(dom);
-		if (body)
-			webkit_dom_html_element_insert_adjacent_html(body, "beforeend", s, NULL);
-	}
-
-	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(debug_win->filter))) {
-		WebKitDOMDocument *dom = NULL;
-		WebKitDOMHTMLElement *body = NULL;
-		WebKitDOMNode *div = NULL;
-		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(debug_win->text));
-		if (dom)
-			body = webkit_dom_document_get_body(dom);
-		if (body)
-			div = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
-		if (div)
-			regex_match(debug_win, dom, div);
-	}
+	gtk_webview_append_html(GTK_WEBVIEW(debug_win->text), s);
 
 	g_free(s);
 }

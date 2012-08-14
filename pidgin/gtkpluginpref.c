@@ -134,8 +134,10 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				gtk_widget_show(spacer);
 
 				frame = pidgin_create_webview(TRUE, &webview, &toolbar, NULL);
-				if (!(format & PURPLE_STRING_FORMAT_TYPE_HTML))
+				if (!(format & PURPLE_STRING_FORMAT_TYPE_HTML)) {
 					gtk_widget_destroy(toolbar);
+					gtk_webview_set_format_functions(GTK_WEBVIEW(webview), 0);
+				}
 
 				if (format & PURPLE_STRING_FORMAT_TYPE_MULTILINE) {
 					gchar *tmp = purple_strreplace(purple_prefs_get_string(pref_name), "\n", "<br>");

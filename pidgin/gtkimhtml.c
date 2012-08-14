@@ -1713,6 +1713,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Enable typing notification"),
 	                                        TRUE, G_PARAM_READABLE));
 
+#if 0
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
@@ -1728,6 +1729,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F14, 0, "undo", 0);
 	gtk_binding_entry_add_signal(binding_set, GDK_KEY_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
+#endif
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)

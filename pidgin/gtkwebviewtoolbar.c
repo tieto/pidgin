@@ -632,7 +632,6 @@ insert_image_cb(GtkAction *action, GtkWebViewToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
-#if 0
 static void
 destroy_smiley_dialog(GtkWebViewToolbar *toolbar)
 {
@@ -648,23 +647,21 @@ static gboolean
 close_smiley_dialog(GtkWebViewToolbar *toolbar)
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->smiley), FALSE);
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(priv->smiley), FALSE);
 	return FALSE;
 }
-
 
 static void
 insert_smiley_text(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 {
-	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	char *smiley_text, *escaped_smiley;
 
 	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
 	escaped_smiley = g_markup_escape_text(smiley_text, -1);
 
 	gtk_webview_insert_smiley(GTK_WEBVIEW(toolbar->webview),
-							 GTK_WEBVIEW(toolbar->webview)->protocol_name,
-							 escaped_smiley);
+	                          gtk_webview_get_protocol_name(GTK_WEBVIEW(toolbar->webview)),
+	                          escaped_smiley);
 
 	g_free(escaped_smiley);
 
@@ -675,34 +672,34 @@ insert_smiley_text(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 struct smiley_button_list {
 	int width, height;
 	GtkWidget *button;
-	const GtkIMHtmlSmiley *smiley;
+	const GtkWebViewSmiley *smiley;
 	struct smiley_button_list *next;
 };
 
 static struct smiley_button_list *
 sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
-			 int *width, const GtkIMHtmlSmiley *smiley)
+             int *width, const GtkWebViewSmiley *smiley)
 {
-	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *image;
 	GtkWidget *button;
 	GtkRequisition size;
 	struct smiley_button_list *cur;
 	struct smiley_button_list *it, *it_last;
-	const gchar *filename = smiley->file;
-	gchar *face = smiley->smile;
+	const gchar *filename = gtk_webview_smiley_get_file(smiley);
+	const gchar *face = gtk_webview_smiley_get_smile(smiley);
 	PurpleSmiley *psmiley = NULL;
 	gboolean supports_custom = (gtk_webview_get_format_functions(GTK_WEBVIEW(toolbar->webview)) & GTK_WEBVIEW_CUSTOM_SMILEY);
 
 	cur = g_new0(struct smiley_button_list, 1);
 	it = ls;
-	it_last = ls; /* list iterators*/
+	it_last = ls; /* list iterators */
 	image = gtk_image_new_from_file(filename);
 
 	gtk_widget_size_request(image, &size);
 
-	if (size.width > 24 &&
-			smiley->flags & GTK_WEBVIEW_SMILEY_CUSTOM) { /* This is a custom smiley, let's scale it */
+	if ((size.width > 24)
+	 && (gtk_webview_smiley_get_flags(smiley) & GTK_WEBVIEW_SMILEY_CUSTOM)) {
+		/* This is a custom smiley, let's scale it */
 		GdkPixbuf *pixbuf = NULL;
 		GtkImageType type;
 
@@ -734,7 +731,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 	button = gtk_button_new();
 	gtk_container_add(GTK_CONTAINER(button), image);
 
-	g_object_set_data(G_OBJECT(button), "smiley_text", face);
+	g_object_set_data_full(G_OBJECT(button), "smiley_text", g_strdup(face), g_free);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), toolbar);
 
 	gtk_widget_set_tooltip_text(button, face);
@@ -742,11 +739,12 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
-	psmiley = purple_smileys_find_by_shortcut(smiley->smile);
+	psmiley = purple_smileys_find_by_shortcut(face);
 	/* If this is a "non-custom" smiley, check to see if its shortcut is
 	  "shadowed" by any custom smiley. This can only happen if the connection
 	  is custom smiley-enabled */
-	if (supports_custom && psmiley && !(smiley->flags & GTK_WEBVIEW_SMILEY_CUSTOM)) {
+	if (supports_custom && psmiley
+	 && !(gtk_webview_smiley_get_flags(smiley) & GTK_WEBVIEW_SMILEY_CUSTOM)) {
 		gchar tip[128];
 		g_snprintf(tip, sizeof(tip),
 			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
@@ -779,12 +777,12 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 }
 
 static gboolean
-smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
+smiley_is_unique(GSList *list, GtkWebViewSmiley *smiley)
 {
-	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	const char *file = gtk_webview_smiley_get_file(smiley);
 	while (list) {
-		GtkIMHtmlSmiley *cur = (GtkIMHtmlSmiley *) list->data;
-		if (!strcmp(cur->file, smiley->file))
+		GtkWebViewSmiley *cur = (GtkWebViewSmiley *)list->data;
+		if (!strcmp(gtk_webview_smiley_get_file(cur), file))
 			return FALSE;
 		list = list->next;
 	}
@@ -818,7 +816,7 @@ add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
 	line = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
 	for (; list; list = list->next) {
-		if (custom != !!(list->smiley->flags & GTK_WEBVIEW_SMILEY_CUSTOM))
+		if (custom != !!(gtk_webview_smiley_get_flags(list->smiley) & GTK_WEBVIEW_SMILEY_CUSTOM))
 			continue;
 		gtk_box_pack_start(GTK_BOX(line), list->button, FALSE, FALSE, 0);
 		gtk_widget_show(list->button);
@@ -832,12 +830,10 @@ add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
 		}
 	}
 }
-#endif
 
 static void
 insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 {
-#if 0
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *dialog, *vbox;
 	GtkWidget *smiley_table = NULL;
@@ -858,13 +854,13 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 	else
 		smileys = pidgin_themes_get_proto_smileys(NULL);
 
-	/* Note: prepend smileys to list to avoid O(n^2) overhead when there is
-	  a large number of smileys... need to revers the list after for the dialog
-	  work... */
-	while(smileys) {
-		GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) smileys->data;
-		if(!smiley->hidden) {
-			if(smiley_is_unique(unique_smileys, smiley)) {
+	/* Note: prepend smileys to list to avoid O(n^2) overhead when there is a
+	   large number of smileys... need to reverse the list after for the dialog
+	   to work... */
+	while (smileys) {
+		GtkWebViewSmiley *smiley = (GtkWebViewSmiley *)smileys->data;
+		if (!gtk_webview_smiley_get_hidden(smiley)) {
+			if (smiley_is_unique(unique_smileys, smiley)) {
 				unique_smileys = g_slist_prepend(unique_smileys, smiley);
 			}
 		}
@@ -877,7 +873,7 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 
 		for (iterator = custom_smileys ; iterator ;
 			 iterator = g_slist_next(iterator)) {
-			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) iterator->data;
+			GtkWebViewSmiley *smiley = (GtkWebViewSmiley *)iterator->data;
 			unique_smileys = g_slist_prepend(unique_smileys, smiley);
 		}
 	}
@@ -913,8 +909,8 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 
 		/* create list of smileys sorted by height */
 		while (unique_smileys) {
-			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) unique_smileys->data;
-			if (!smiley->hidden) {
+			GtkWebViewSmiley *smiley = (GtkWebViewSmiley *)unique_smileys->data;
+			if (!gtk_webview_smiley_get_hidden(smiley)) {
 				ls = sort_smileys(ls, toolbar, &max_line_width, smiley);
 			}
 			unique_smileys = g_slist_delete_link(unique_smileys, unique_smileys);
@@ -941,7 +937,6 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK | GDK_BUTTON_PRESS_MASK);
 		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
-
 
 	scrolled = pidgin_make_scrollable(smiley_table, GTK_POLICY_NEVER, GTK_POLICY_NEVER, GTK_SHADOW_NONE, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
@@ -981,7 +976,6 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 	priv->smiley_dialog = dialog;
 
 	gtk_widget_grab_focus(toolbar->webview);
-#endif
 }
 
 static void
@@ -1347,7 +1341,7 @@ gtk_webviewtoolbar_create_actions(GtkWebViewToolbar *toolbar)
 		{&priv->image, "InsertImage", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, N_("_Image"), N_("Insert IM Image"), insert_image_cb, FALSE},
 		{&priv->link, "InsertLink", PIDGIN_STOCK_TOOLBAR_INSERT_LINK, N_("_Link"), N_("Insert Link"), insert_link_cb, TRUE},
 		{&priv->hr, "InsertHR", NULL, N_("_Horizontal rule"), N_("Insert Horizontal rule"), insert_hr_cb, FALSE},
-		{&priv->smiley, "InsertSmiley", PIDGIN_STOCK_TOOLBAR_SMILEY, N_("_Smile!"), N_("Insert Smiley"), insert_smiley_cb, FALSE},
+		{&priv->smiley, "InsertSmiley", PIDGIN_STOCK_TOOLBAR_SMILEY, N_("_Smile!"), N_("Insert Smiley"), insert_smiley_cb, TRUE},
 		{&priv->attention, "SendAttention", PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, N_("_Attention!"), N_("Send Attention"), send_attention_cb, FALSE},
 	};
 
@@ -1635,5 +1629,90 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	gtk_action_set_sensitive(priv->attention,
 		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
+}
+
+void
+gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
+                            GtkWebViewToolbarAction action)
+{
+	GtkWebViewToolbarPriv *priv;
+	GtkAction *act;
+
+	g_return_if_fail(toolbar != NULL);
+
+	priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	switch (action) {
+		case GTK_WEBVIEWTOOLBAR_ACTION_BOLD:
+			act = priv->bold;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_ITALIC:
+			act = priv->italic;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_UNDERLINE:
+			act = priv->underline;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_STRIKE:
+			act = priv->strike;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_LARGER:
+			act = priv->larger_size;
+			break;
+
+#if 0
+		case GTK_WEBVIEWTOOLBAR_ACTION_NORMAL:
+			act = priv->normal_size;
+			break;
+#endif
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_SMALLER:
+			act = priv->smaller_size;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_FONTFACE:
+			act = priv->font;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_FGCOLOR:
+			act = priv->fgcolor;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_BGCOLOR:
+			act = priv->bgcolor;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_CLEAR:
+			act = priv->clear;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_IMAGE:
+			act = priv->image;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_LINK:
+			act = priv->link;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_HR:
+			act = priv->hr;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_SMILEY:
+			act = priv->smiley;
+			break;
+
+		case GTK_WEBVIEWTOOLBAR_ACTION_ATTENTION:
+			act = priv->attention;
+			break;
+
+		default:
+			g_return_if_reached();
+			break;
+	}
+
+	gtk_action_activate(act);
 }
 

@@ -1,6 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	Pidgin:
+	* Support building with the GTK+ 3.x toolkit.  When configuring the
+	  build, use --with-gtk=<2|3> to determine which toolkit to use.  Using
+	  either 2 or 3 will attempt to build with specifically 2.x or 3.x
+	  support.  The default is 'auto', which will first look for 3.x
+	  development headers and then 2.x development headers.
+
 	Finch:
 	* Support the conversation-extended signal for extending the
 	  conversation menu. (Howard Chu) (#14818)
@@ -46,6 +53,11 @@ version 3.0.0 (??/??/????):
 	  backends. (Brad Smith) (#14414)
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
+
+version 2.10.7:
+	Gadu-Gadu:
+	* Fix a crash at startup with large contact list. Avatar support for
+	  buddies will be disabled till 3.0.0. (#15226, #14305)
 
 	MSN:
 	* Fix a crash when removing a user before its icon is loaded. (Mark

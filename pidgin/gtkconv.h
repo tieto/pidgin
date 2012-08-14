@@ -103,7 +103,6 @@ struct _PidginConversation
 	PidginConvTheme *theme;
 	PurpleMessageFlags last_flags;
 	GtkWidget *webview;
-	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 	gboolean auto_resize;   /* this is set to TRUE if the conversation
 				 * is being resized by a non-user-initiated
