@@ -29,7 +29,7 @@
 #define __PIDGIN_STATUS_BOX_H__
 
 #include <gtk/gtk.h>
-#include "gtkimhtml.h"
+#include "gtkwebview.h"
 #include "account.h"
 #include "imgstore.h"
 #include "savedstatuses.h"
@@ -87,7 +87,7 @@ struct _PidginStatusBox
 	PurpleAccount *token_status_account;
 
 	GtkWidget *vbox, *sw;
-	GtkWidget *imhtml;
+	GtkWidget *webview;
 
 	PurpleStoredImage *buddy_icon_img;
 	GdkPixbuf *buddy_icon;
@@ -101,7 +101,7 @@ struct _PidginStatusBox
 	int icon_size;
 	gboolean icon_opaque;
 
-	gboolean imhtml_visible;
+	gboolean webview_visible;
 
 	GtkWidget *cell_view;
 	GtkCellRenderer *icon_rend;
