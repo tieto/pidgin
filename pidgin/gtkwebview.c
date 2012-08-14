@@ -578,8 +578,26 @@ gtk_webview_smiley_reload(GtkWebViewSmiley *smiley)
 	                 G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
 }
 
+const char *
+gtk_webview_smiley_get_smile(const GtkWebViewSmiley *smiley)
+{
+	return smiley->smile;
+}
+
+const char *
+gtk_webview_smiley_get_file(const GtkWebViewSmiley *smiley)
+{
+	return smiley->file;
+}
+
+gboolean
+gtk_webview_smiley_get_hidden(const GtkWebViewSmiley *smiley)
+{
+	return smiley->hidden;
+}
+
 GtkWebViewSmileyFlags
-gtk_webview_smiley_get_flags(GtkWebViewSmiley *smiley)
+gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smiley)
 {
 	return smiley->flags;
 }

@@ -546,11 +546,40 @@ void gtk_webview_smiley_reload(GtkWebViewSmiley *smiley);
 void gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley);
 
 /**
+ * Returns the text associated with a smiley.
+ *
+ * @param smiley    The smiley
+ *
+ * @return The text
+ */
+const char *gtk_webview_smiley_get_smile(const GtkWebViewSmiley *smiley);
+
+/**
+ * Returns the file associated with a smiley.
+ *
+ * @param smiley    The smiley
+ *
+ * @return The file
+ */
+const char *gtk_webview_smiley_get_file(const GtkWebViewSmiley *smiley);
+
+/**
+ * Returns the invisibility of a smiley.
+ *
+ * @param smiley    The smiley
+ *
+ * @return The hidden status
+ */
+gboolean gtk_webview_smiley_get_hidden(const GtkWebViewSmiley *smiley);
+
+/**
  * Returns the flags associated with a smiley.
  *
  * @param smiley    The smiley
+ *
+ * @return The flags
  */
-GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(GtkWebViewSmiley *smiley);
+GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smiley);
 
 /**
  * Returns the smiley object associated with the text.
