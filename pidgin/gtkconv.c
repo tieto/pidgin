@@ -538,7 +538,6 @@ check_for_and_do_command(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 	char *cmd;
 	const char *prefix;
-	GtkTextIter start;
 	gboolean retval = FALSE;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -1622,12 +1621,17 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 static GtkTextMark *
 get_mark_for_user(PidginConversation *gtkconv, const char *who)
 {
+#if 0
+	/* TODO WebKit */
 	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->webview));
 	char *tmp = g_strconcat("user:", who, NULL);
 	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
 
 	g_free(tmp);
 	return mark;
+#else
+	return NULL;
+#endif
 }
 
 static void
@@ -4757,6 +4761,8 @@ entry_popup_menu_cb(GtkWebView *webview, GtkMenu *menu, gpointer data)
 static gboolean
 resize_webview_cb(PidginConversation *gtkconv)
 {
+#if 0
+	/* TODO WebKit: entry sizing */
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
 	int lines;
@@ -4820,6 +4826,8 @@ resize_webview_cb(PidginConversation *gtkconv)
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 		diff + lower_hbox_allocation.height);
+#endif
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, -1);
 
 	return FALSE;
 }
