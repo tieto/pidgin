@@ -294,7 +294,11 @@ static void gtk_ticker_realize (GtkWidget *widget)
 	GdkWindowAttr attributes;
 	gint attributes_mask;
 	GdkWindow *window;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+#else
 	GtkStyle *style;
+#endif
 	GtkAllocation allocation;
 
 	g_return_if_fail (widget != NULL);
@@ -327,9 +331,16 @@ static void gtk_ticker_realize (GtkWidget *widget)
 	gtk_widget_set_window (widget, window);
 	gdk_window_set_user_data (window, widget);
 
+#if GTK_CHECK_VERSION(3,0,0)
+	context = gtk_widget_get_style_context(widget);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_BACKGROUND);
+	gtk_style_context_set_state(context, GTK_STATE_NORMAL);
+	gtk_style_context_set_background(context, window);
+#else
 	style = gtk_style_attach (gtk_widget_get_style (widget), window);
 	gtk_widget_set_style (widget, style);
 	gtk_style_set_background (style, window, GTK_STATE_NORMAL);
+#endif
 }
 
 #if GTK_CHECK_VERSION(3,0,0)

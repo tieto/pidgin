@@ -2120,11 +2120,12 @@ pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 
 	if (status_box->icon_box && status_box->icon_opaque) {
 		GtkAllocation allocation;
+		GtkStyleContext *context;
 
 		gtk_widget_get_allocation(status_box->icon_box, &allocation);
-		gtk_paint_box(gtk_widget_get_style(widget), cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				status_box->icon_box, "button", allocation.x-1, allocation.y-1,
-				34, 34);
+		context = gtk_widget_get_style_context(widget);
+		gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+		gtk_render_frame(context, cr, allocation.x-1, allocation.y-1, 34, 34);
 	}
 	return FALSE;
 }

@@ -271,6 +271,9 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	gint ypad;
 	gboolean is_expanded;
 	GtkAllocation allocation;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+#endif
 
 	if (!cellexpander->is_expander)
 		return;
@@ -294,12 +297,18 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	height -= ypad*2;
 
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_paint_expander(gtk_widget_get_style(widget),
-	                   cr, state,
-	                   widget, "treeview",
-	                   cell_area->x + xpad + (width / 2),
-	                   cell_area->y + ypad + (height / 2),
-	                   is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
+	if (is_expanded)
+		state |= GTK_STATE_ACTIVE;
+	else
+		state &= ~GTK_STATE_ACTIVE;
+
+	context = gtk_widget_get_style_context(widget);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_EXPANDER);
+	gtk_style_context_set_state(context, state);
+	gtk_render_expander(context, cr,
+	                    cell_area->x + xpad, cell_area->y + ypad,
+	                    width, height);
 #else
 	gtk_paint_expander(gtk_widget_get_style(widget),
 	                   window, state,
@@ -315,7 +324,7 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 
 #if GTK_CHECK_VERSION(3,0,0)
 	if (is_expanded && !set)
-		gtk_paint_hline(gtk_widget_get_style(widget), cr, state, widget, NULL, 0,
+		gtk_render_line(context, cr, 0, cell_area->y + cell_area->height,
 		                allocation.width, cell_area->y + cell_area->height);
 #else
 	if (is_expanded && !set)

@@ -109,10 +109,10 @@ pidgin_tooltip_draw_cb(GtkWidget *widget, cairo_t *cr, gpointer data)
 	gtk_widget_get_allocation(widget, &allocation);
 
 	if (pidgin_tooltip.paint_tooltip) {
-		gtk_paint_flat_box(gtk_widget_get_style(widget), cr,
-		                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-		                   widget, "tooltip",
-		                   0, 0, allocation.width, allocation.height);
+		GtkStyleContext *context = gtk_widget_get_style_context(widget);
+		gtk_style_context_add_class(context, GTK_STYLE_CLASS_TOOLTIP);
+		gtk_render_background(context, cr,
+		                      0, 0, allocation.width, allocation.height);
 		pidgin_tooltip.paint_tooltip(widget, cr, data);
 	}
 	return FALSE;

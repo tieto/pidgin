@@ -356,12 +356,19 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, cairo_t *cr, gpointer user_data
 {
 	PurpleRoomlist *list = user_data;
 	PidginRoomlist *grl = purple_roomlist_get_ui_data(list);
-	GtkStyle *style;
 	int current_height, max_width;
 	int max_text_width;
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+
+	context = gtk_widget_get_style_context(grl->tipwindow);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_TOOLTIP);
+#else
+	GtkStyle *style;
 
 	style = gtk_widget_get_style(grl->tipwindow);
+#endif
 
 	max_text_width = MAX(grl->tip_width, grl->tip_name_width);
 	max_width = TOOLTIP_BORDER + SMALL_SPACE + max_text_width + TOOLTIP_BORDER;
@@ -370,30 +377,26 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 #if GTK_CHECK_VERSION(3,0,0)
 	if (dir == GTK_TEXT_DIR_RTL) {
-		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-		                 grl->tipwindow, "tooltip",
-		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
-		                 current_height,
-		                 grl->tip_name_layout);
+		gtk_render_layout(context, cr,
+		                  max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                  current_height,
+		                  grl->tip_name_layout);
 	} else {
-		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-		                 grl->tipwindow, "tooltip",
-		                 TOOLTIP_BORDER + SMALL_SPACE,
-		                 current_height,
-		                 grl->tip_name_layout);
+		gtk_render_layout(context, cr,
+		                  TOOLTIP_BORDER + SMALL_SPACE,
+		                  current_height,
+		                  grl->tip_name_layout);
 	}
 	if (dir != GTK_TEXT_DIR_RTL) {
-		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-		                 grl->tipwindow, "tooltip",
-		                 TOOLTIP_BORDER + SMALL_SPACE,
-		                 current_height + grl->tip_name_height,
-		                 grl->tip_layout);
+		gtk_render_layout(context, cr,
+		                  TOOLTIP_BORDER + SMALL_SPACE,
+		                  current_height + grl->tip_name_height,
+		                  grl->tip_layout);
 	} else {
-		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-		                 grl->tipwindow, "tooltip",
-		                 max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
-		                 current_height + grl->tip_name_height,
-		                 grl->tip_layout);
+		gtk_render_layout(context, cr,
+		                  max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+		                  current_height + grl->tip_name_height,
+		                  grl->tip_layout);
 	}
 #else
 	if (dir == GTK_TEXT_DIR_RTL) {
