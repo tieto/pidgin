@@ -36,6 +36,7 @@
 #define GtkComboBoxText GtkComboBox
 #define GTK_COMBO_BOX_TEXT GTK_COMBO_BOX
 #define gtk_combo_box_text_new gtk_combo_box_new_text
+#define gtk_combo_box_text_new_with_entry gtk_combo_box_entry_new_text
 #define gtk_combo_box_text_append_text gtk_combo_box_append_text
 #define gtk_combo_box_text_get_active_text gtk_combo_box_get_active_text
 #define gtk_combo_box_text_remove gtk_combo_box_remove_text
