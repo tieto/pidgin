@@ -86,6 +86,8 @@ GGSOURCES = \
 	multilogon.h \
 	status.c \
 	status.h \
+	servconn.c \
+	servconn.h \
 	oauth/oauth.c \
 	oauth/oauth.h \
 	oauth/oauth-parameter.c \

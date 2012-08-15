@@ -70,4 +70,16 @@ guint64 ggp_microtime(void);
 
 gchar * ggp_utf8_strndup(const gchar *str, gsize n);
 
+GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,
+	gpointer user_data);
+
+GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
+	gint max_tokens);
+
+gchar * ggp_strjoin_list(const gchar *separator, GList *list);
+
+const gchar * ggp_ipv4_to_str(uint32_t raw_ip);
+
+GList * ggp_list_truncate(GList *list, gint length, GDestroyNotify free_func);
+
 #endif /* _GGP_UTILS_H */

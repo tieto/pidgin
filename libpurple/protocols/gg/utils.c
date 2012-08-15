@@ -127,3 +127,85 @@ gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 	
 	return g_strndup(str, raw_len);
 }
+
+GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,
+	gpointer user_data)
+{
+	GSList *new_list = NULL;
+	GList *it;
+	
+	it = g_list_first(list);
+	while (it)
+	{
+		new_list = g_slist_append(new_list, func(it->data, user_data));
+		it = g_list_next(it);
+	}
+	return new_list;
+}
+
+GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
+	gint max_tokens)
+{
+	gchar **splitted, **it;
+	GList *list = NULL;
+	
+	it = splitted = g_strsplit(string, delimiter, max_tokens);
+	while (*it)
+	{
+		list = g_list_append(list, *it);
+		it++;
+	}
+	g_free(splitted);
+	
+	return list;
+}
+
+gchar * ggp_strjoin_list(const gchar *separator, GList *list)
+{
+	gchar **str_array;
+	gchar *joined;
+	gint list_len, i;
+	GList *it;
+	
+	list_len = g_list_length(list);
+	str_array = g_new(gchar*, list_len + 1);
+	
+	it = g_list_first(list);
+	i = 0;
+	while (it)
+	{
+		str_array[i++] = it->data;
+		it = g_list_next(it);
+	}
+	str_array[i] = NULL;
+	
+	joined = g_strjoinv(separator, str_array);
+	g_free(str_array);
+	
+	return joined;
+}
+
+const gchar * ggp_ipv4_to_str(uint32_t raw_ip)
+{
+	static gchar buff[INET_ADDRSTRLEN];
+	buff[0] = '\0';
+	
+	g_snprintf(buff, sizeof(buff), "%d.%d.%d.%d",
+		((raw_ip >>  0) & 0xFF),
+		((raw_ip >>  8) & 0xFF),
+		((raw_ip >> 16) & 0xFF),
+		((raw_ip >> 24) & 0xFF));
+	
+	return buff;
+}
+
+GList * ggp_list_truncate(GList *list, gint length, GDestroyNotify free_func)
+{
+	while (g_list_length(list) > length)
+	{
+		GList *last = g_list_last(list);
+		free_func(last->data);
+		list = g_list_delete_link(list, last);
+	}
+	return list;
+}

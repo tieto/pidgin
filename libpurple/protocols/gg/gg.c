@@ -50,6 +50,7 @@
 #include "libgadu-events.h"
 #include "multilogon.h"
 #include "status.h"
+#include "servconn.h"
 
 /* Prototypes */
 
@@ -1200,7 +1201,12 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
+				const gchar * server_ip = ggp_ipv4_to_str(
+					info->session->server_addr);
+				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS:"
+					" successfully connected to %s\n",
+					server_ip);
+				ggp_servconn_add_server(server_ip);
 				purple_input_remove(info->inpa);
 				info->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
@@ -1591,7 +1597,7 @@ static void ggp_close(PurpleConnection *gc)
 				status_msg ? GG_STATUS_NOT_AVAIL_DESCR : GG_STATUS_NOT_AVAIL,
 				status_msg))
 			{
-				struct gg_event *ev;
+				/*struct gg_event *ev;
 				guint64 wait_start = ggp_microtime(), now;
 				int sleep_time = 5000;
 				while ((ev = gg_watch_fd(info->session)) != NULL)
@@ -1603,7 +1609,8 @@ static void ggp_close(PurpleConnection *gc)
 						break;
 					usleep(sleep_time);
 					sleep_time *= 2;
-				}
+				}*/
+				usleep(100000);
 			}
 			gg_logoff(info->session);
 			gg_free_session(info->session);
@@ -2074,6 +2081,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL				/* get_public_alias */
 };
 
+static gboolean ggp_load(PurplePlugin *plugin);
+static gboolean ggp_unload(PurplePlugin *plugin);
+
 static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,			/* magic */
 	PURPLE_MAJOR_VERSION,			/* major_version */
@@ -2093,8 +2103,8 @@ static PurplePluginInfo info = {
 	"boler@sourceforge.net",		/* author */
 	PURPLE_WEBSITE,				/* homepage */
 
-	NULL,					/* load */
-	NULL,					/* unload */
+	ggp_load,				/* load */
+	ggp_unload,				/* unload */
 	NULL,					/* destroy */
 
 	NULL,					/* ui_info */
@@ -2132,18 +2142,20 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 	g_free(msg);
 }
 
+static PurpleAccountOption *ggp_server_option;
+
 static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
-	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
-		"libgadu %s...\n", gg_libgadu_version());
+	purple_prefs_add_none("/plugins/prpl/gg");
 
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
+	ggp_server_option = option;
 
 #define ADD_VALUE(list, desc, v) { \
 	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
@@ -2168,8 +2180,23 @@ static void init_plugin(PurplePlugin *plugin)
 		option);
 
 	gg_debug_handler = purple_gg_debug_handler;
-	
+}
+
+static gboolean ggp_load(PurplePlugin *plugin)
+{
+	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
+		"libgadu %s...\n", gg_libgadu_version());
+
 	ggp_resolver_purple_setup();
+	ggp_servconn_setup(ggp_server_option);
+	
+	return TRUE;
+}
+
+static gboolean ggp_unload(PurplePlugin *plugin)
+{
+	ggp_servconn_cleanup();
+	return TRUE;
 }
 
 PURPLE_INIT_PLUGIN(gg, init_plugin, info);
