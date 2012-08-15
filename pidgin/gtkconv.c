@@ -9021,9 +9021,12 @@ focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 }
 
 static void
-notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
+notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget, GdkEvent *event)
 {
 	static GdkCursor *cursor = NULL;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkDevice *device;
+#endif
 
 	gtkwin->in_drag = TRUE;
 
@@ -9038,6 +9041,14 @@ notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);
+#if GTK_CHECK_VERSION(3,0,0)
+	device = gdk_event_get_device(event);
+	if (!gdk_display_device_is_grabbed(gdk_device_get_display(device), device))
+		gdk_device_grab(device, gtk_widget_get_window(gtkwin->notebook),
+		                GDK_OWNERSHIP_WINDOW, FALSE,
+		                GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
+		                cursor, gdk_event_get_time(event));
+#else
 #ifndef _WIN32
 	/* Currently for win32 GTK+ (as of 2.2.1), gdk_pointer_is_grabbed will
 	   always be true after a button press. */
@@ -9045,7 +9056,8 @@ notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
 #endif
 		gdk_pointer_grab(gtk_widget_get_window(gtkwin->notebook), FALSE,
 		                 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
-		                 NULL, cursor, GDK_CURRENT_TIME);
+		                 NULL, cursor, gdk_event_get_time(event));
+#endif
 }
 
 static gboolean
@@ -9063,7 +9075,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		    e->y_root >= win->drag_max_y) {
 
 			    win->in_predrag = FALSE;
-			    notebook_init_grab(win, widget);
+			    notebook_init_grab(win, widget, (GdkEvent *)e);
 		    }
 	}
 	else { /* Otherwise, draw the arrows. */
@@ -9139,9 +9151,9 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 	    e->y_root <  win->drag_min_y ||
 	    e->y_root >= win->drag_max_y) {
 
-		    win->in_predrag = FALSE;
-		    notebook_init_grab(win, widget);
-	    }
+		win->in_predrag = FALSE;
+		notebook_init_grab(win, widget, (GdkEvent *)e);
+	}
 
 	return TRUE;
 }
@@ -9311,6 +9323,9 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 	gint dest_page_num = 0;
 	gboolean new_window = FALSE;
 	gboolean to_right = FALSE;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkDevice *device;
+#endif
 
 	/*
 	* Don't check to make sure that the event's window matches the
@@ -9320,10 +9335,18 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 	if (e->button != 1 && e->type != GDK_BUTTON_RELEASE)
 		return FALSE;
 
-	if (gdk_pointer_is_grabbed()) {
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
+#if GTK_CHECK_VERSION(3,0,0)
+	device = gdk_event_get_device((GdkEvent *)e);
+	if (gdk_display_device_is_grabbed(gdk_device_get_display(device), device)) {
+		gdk_device_ungrab(device, gdk_event_get_time((GdkEvent *)e));
 		gtk_grab_remove(widget);
 	}
+#else
+	if (gdk_pointer_is_grabbed()) {
+		gdk_pointer_ungrab(gdk_event_get_time((GdkEvent *)e));
+		gtk_grab_remove(widget);
+	}
+#endif
 
 	if (!win->in_predrag && !win->in_drag)
 		return FALSE;

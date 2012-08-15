@@ -491,7 +491,12 @@ static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion
 	GList *draw_list = purple_whiteboard_get_draw_list(wb);
 
 	if(event->is_hint)
+#if GTK_CHECK_VERSION(3,0,0)
+		gdk_window_get_device_position(event->window, event->device, &x, &y,
+		                               &state);
+#else
 		gdk_window_get_pointer(event->window, &x, &y, &state);
+#endif
 	else
 	{
 		x = event->x;
