@@ -480,7 +480,7 @@ static void gtk_ticker_compute_offsets (GtkTicker *ticker)
 
 		child->x = 0;
 		if (gtk_widget_get_visible (child->widget)) {
-			gtk_widget_get_child_requisition (child->widget, &child_requisition);
+			gtk_widget_get_preferred_size (child->widget, NULL, &child_requisition);
 			child->offset = ticker->total;
 			ticker->total +=
 				child_requisition.width + border_width + ticker->spacing;
@@ -532,7 +532,7 @@ static void gtk_ticker_size_allocate (GtkWidget *widget,
 		child->x -= ticker->scootch;
 
 		if (gtk_widget_get_visible (child->widget)) {
-			gtk_widget_get_child_requisition (child->widget, &child_requisition);
+			gtk_widget_get_preferred_size (child->widget, NULL, &child_requisition);
 			child_allocation.width = child_requisition.width;
 			child_allocation.x = child->offset + border_width + child->x;
 			if ( ( child_allocation.x + child_allocation.width ) < allocation->x  ) {
