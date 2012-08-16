@@ -25,6 +25,13 @@
  * Also, any public API should not depend on this file.
  */
 
+#if !GTK_CHECK_VERSION(3,2,0)
+
+#define GTK_FONT_CHOOSER GTK_FONT_SELECTION_DIALOG
+#define gtk_font_chooser_dialog_new(x,y) gtk_font_selection_dialog_new(x)
+#define gtk_font_chooser_get_font gtk_font_selection_dialog_get_font_name
+#define gtk_font_chooser_set_font gtk_font_selection_dialog_set_font_name
+
 #if !GTK_CHECK_VERSION(3,0,0)
 
 #define gdk_x11_window_get_xid GDK_WINDOW_XWINDOW
@@ -168,6 +175,8 @@ static inline gint gdk_window_get_height(GdkWindow *x)
 #endif /* 2.24.0 */
 
 #endif /* 3.0.0 */
+
+#endif /* 3.2.0 */
 
 #endif /* _PIDGINGTK3COMPAT_H_ */
 
