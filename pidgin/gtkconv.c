@@ -1618,38 +1618,49 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
 }
 
-static GtkTextMark *
+static char *
+get_class_for_user(const char *who)
+{
+	return g_strconcat("-pidgin-user:", who, NULL);
+}
+
+static WebKitDOMNode *
 get_mark_for_user(PidginConversation *gtkconv, const char *who)
 {
-#if 0
-	/* TODO WebKit */
-	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->webview));
-	char *tmp = g_strconcat("user:", who, NULL);
-	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
+	WebKitDOMDocument *doc;
+	WebKitDOMNodeList *nodes;
+	WebKitDOMNode *node = NULL;
+	gulong len;
+	char *tmp;
 
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(gtkconv->webview));
+
+	tmp = get_class_for_user(who);
+	nodes = webkit_dom_document_get_elements_by_class_name(doc, tmp);
 	g_free(tmp);
-	return mark;
-#else
-	return NULL;
-#endif
+
+	if (nodes != NULL) {
+		len = webkit_dom_node_list_get_length(nodes);
+		if (len > 0)
+			node = webkit_dom_node_list_item(nodes, len - 1);
+	}
+
+	return node;
 }
 
 static void
 menu_last_said_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
-/* TODO WEBKIT: This doesn't work yet, of course... */
-#if 0
-	GtkTextMark *mark;
+	WebKitDOMNode *node;
 	const char *who;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
-	mark = get_mark_for_user(gtkconv, who);
+	node = get_mark_for_user(gtkconv, who);
 
-	if (mark != NULL)
-		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
+	if (node != NULL)
+		webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(node), TRUE);
 	else
 		g_return_if_reached();
-#endif /* if 0 */
 }
 
 static GtkWidget *
@@ -1855,13 +1866,11 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
 		/* Move to user's anchor */
-/* TODO WEBKIT: This isn't implemented yet. */
-#if 0
-		GtkTextMark *mark = get_mark_for_user(gtkconv, who);
+		WebKitDOMNode *node = get_mark_for_user(gtkconv, who);
 
-		if(mark != NULL)
-			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
-#endif /* if 0 */
+		if (node != NULL)
+			webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(node), TRUE);
+
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -6228,6 +6237,7 @@ replace_message_tokens(
 			replace = message;
 
 		} else if (g_str_has_prefix(cur, "%messageClasses%")) {
+			char *user;
 			GString *classes = g_string_new(NULL);
 #define ADD_CLASS(f, class) \
 			if (flags & f) \
@@ -6239,6 +6249,9 @@ replace_message_tokens(
 			ADD_CLASS(PURPLE_MESSAGE_DELAYED, "history ");
 			ADD_CLASS(PURPLE_MESSAGE_NICK, "mention ");
 #undef ADD_CLASS
+			user = get_class_for_user(name);
+			g_string_append(classes, user);
+			g_free(user);
 
 			replace = freeval = g_string_free(classes, FALSE);
 
