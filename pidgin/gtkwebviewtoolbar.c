@@ -1256,10 +1256,8 @@ gtk_webviewtoolbar_finalize(GObject *object)
 
 	destroy_toolbar_font(toolbar);
 	if (priv->smiley_dialog != NULL) {
-#if 0
 		g_signal_handlers_disconnect_by_func(G_OBJECT(priv->smiley_dialog), close_smiley_dialog, toolbar);
 		destroy_smiley_dialog(toolbar);
-#endif
 	}
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
