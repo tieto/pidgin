@@ -6321,6 +6321,11 @@ replace_message_tokens(
 
 			replace = freeval = g_string_free(classes, FALSE);
 
+		} else if (g_str_has_prefix(cur, "%variant%")) {
+			replace = pidgin_conversation_theme_get_variant(PIDGIN_CONVERSATION(conv)->theme);
+			replace = freeval = g_strdup(replace);
+			purple_util_chrreplace(freeval, ' ', '_');
+
 		} else {
 			cur++;
 			continue;
