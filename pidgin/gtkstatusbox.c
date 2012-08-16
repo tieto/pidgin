@@ -1331,7 +1331,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 	             "hscrollbar-policy", hpolicy,
 	             "vscrollbar-policy", vpolicy,
 	             NULL);
-	gtk_widget_size_request(status_box->popup_frame, &popup_req);
+	gtk_widget_get_preferred_size(status_box->popup_frame, NULL, &popup_req);
 
 	if (popup_req.width > *width) {
 		hpolicy = GTK_POLICY_ALWAYS;
@@ -1339,7 +1339,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 		             "hscrollbar-policy", hpolicy,
 		             "vscrollbar-policy", vpolicy,
 		             NULL);
-		gtk_widget_size_request(status_box->popup_frame, &popup_req);
+		gtk_widget_get_preferred_size(status_box->popup_frame, NULL, &popup_req);
 	}
 
 	*height = popup_req.height;
@@ -2071,7 +2071,7 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 	GtkAllocation parent_alc, box_alc, icon_alc;
 	gint border_width = gtk_container_get_border_width(GTK_CONTAINER (widget));
 
-	gtk_widget_size_request(status_box->toggle_button, &req);
+	gtk_widget_get_preferred_size(status_box->toggle_button, NULL, &req);
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
 
 	req.height = MAX(req.height, 34);

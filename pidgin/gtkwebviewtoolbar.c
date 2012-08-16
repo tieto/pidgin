@@ -686,7 +686,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 	it_last = ls; /* list iterators */
 	image = gtk_image_new_from_file(filename);
 
-	gtk_widget_size_request(image, &size);
+	gtk_widget_get_preferred_size(image, NULL, &size);
 
 	if ((size.width > 24)
 	 && (gtk_webview_smiley_get_flags(smiley) & GTK_WEBVIEW_SMILEY_CUSTOM)) {
@@ -712,7 +712,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 					GDK_INTERP_HYPER);
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(image), resized); /* This unrefs pixbuf */
-			gtk_widget_size_request(image, &size);
+			gtk_widget_get_preferred_size(image, NULL, &size);
 			g_object_unref(G_OBJECT(resized));
 		}
 	}
@@ -894,7 +894,7 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
 					G_CALLBACK(gtk_widget_destroy), dialog);
 			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
-			gtk_widget_size_request(manage, &req);
+			gtk_widget_get_preferred_size(manage, NULL, &req);
 			button_width = req.width;
 		}
 
@@ -946,7 +946,7 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 	/* show everything */
 	gtk_widget_show_all(dialog);
 
-	gtk_widget_size_request(viewport, &req);
+	gtk_widget_get_preferred_size(viewport, NULL, &req);
 	gtk_widget_set_size_request(scrolled, MIN(300, req.width), MIN(290, req.height));
 
 	/* The window has to be made resizable, and the scrollbars in the scrolled window
@@ -1155,7 +1155,7 @@ menu_position_func(GtkMenu  *menu,
 	int savy;
 
 	gtk_widget_get_allocation(widget, &allocation);
-	gtk_widget_size_request(GTK_WIDGET(menu), &menu_req);
+	gtk_widget_get_preferred_size(GTK_WIDGET(menu), NULL, &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;
 	*y += allocation.y + allocation.height;

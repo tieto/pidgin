@@ -35,6 +35,7 @@
 #if !GTK_CHECK_VERSION(3,0,0)
 
 #define gdk_x11_window_get_xid GDK_WINDOW_XWINDOW
+#define gtk_widget_get_preferred_size(x,y,z) gtk_widget_size_request(x,z)
 
 #if !GTK_CHECK_VERSION(2,24,0)
 

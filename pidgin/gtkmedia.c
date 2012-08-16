@@ -443,7 +443,7 @@ pidgin_media_remove_widget(PidginMedia *gtkmedia,
 
 		gtk_widget_destroy(widget);
 
-		gtk_widget_size_request(GTK_WIDGET(gtkmedia), &req);
+		gtk_widget_get_preferred_size(GTK_WIDGET(gtkmedia), NULL, &req);
 		gtk_window_resize(GTK_WINDOW(gtkmedia), req.width, req.height);
 	}
 }

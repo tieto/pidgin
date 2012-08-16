@@ -1201,7 +1201,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 	 * if a size_request was queued while we weren't popped up,
 	 * the requisition won't have been recomputed yet.
 	 */
-	gtk_widget_size_request (widget, &requisition);
+	gtk_widget_get_preferred_size(widget, NULL, &requisition);
 
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
