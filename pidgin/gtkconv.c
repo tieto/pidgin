@@ -9100,7 +9100,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		gboolean to_right = FALSE;
 
 		/* Get the window that the cursor is over. */
-		dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
+		dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
 		if (dest_win == NULL) {
 			dnd_hints_hide_all();
@@ -9396,7 +9396,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	dnd_hints_hide_all();
 
-	dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
+	dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -10401,13 +10401,19 @@ pidgin_conv_window_has_focus(PidginWindow *win)
 }
 
 PidginWindow *
-pidgin_conv_window_get_at_xy(int x, int y)
+pidgin_conv_window_get_at_event(GdkEvent *event)
 {
 	PidginWindow *win;
 	GdkWindow *gdkwin;
 	GList *l;
+	int x, y;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	gdkwin = gdk_device_get_window_at_position(gdk_event_get_device(event),
+	                                           &x, &y);
+#else
 	gdkwin = gdk_window_at_pointer(&x, &y);
+#endif
 
 	if (gdkwin)
 		gdkwin = gdk_window_get_toplevel(gdkwin);

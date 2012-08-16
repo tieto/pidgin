@@ -59,11 +59,6 @@ gboolean
 pidgin_conv_window_has_focus(win)
 	Pidgin::Conversation::Window win
 
-Pidgin::Conversation::Window
-pidgin_conv_window_get_at_xy(x, y)
-	int x
-	int y
-
 void
 pidgin_conv_window_get_gtkconvs(win)
 	Pidgin::Conversation::Window win
