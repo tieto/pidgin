@@ -49,12 +49,14 @@ version 3.0.0 (??/??/????):
 	* Invalid user moods can no longer be sent to the server.
 
 	Plugins:
-	* The Voice/Video Settings plugin supports using the sndio GStreamer
-	  backends. (Brad Smith) (#14414)
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
 version 2.10.7:
+	Gadu-Gadu:
+	* Fix a crash at startup with large contact list. Avatar support for
+	  buddies will be disabled till 3.0.0. (#15226, #14305)
+
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
 	  buddies will be disabled till 3.0.0. (#15226, #14305)
@@ -66,6 +68,10 @@ version 2.10.7:
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
+
+	Plugins:
+	* The Voice/Video Settings plugin supports using the sndio GStreamer
+	 backends. (Brad Smith) (#14414)
 
 version 2.10.6 (07/06/2012):
 	Pidgin:
