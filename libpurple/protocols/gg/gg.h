@@ -63,6 +63,13 @@ typedef struct {
 	ggp_status_session_data *status_data;
 } GGPInfo;
 
+typedef struct
+{
+	gboolean blocked;
+} ggp_buddy_data;
+
 void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon);
+
+ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy);
 
 #endif /* _PURPLE_GG_H */

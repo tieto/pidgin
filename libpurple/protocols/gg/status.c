@@ -16,7 +16,7 @@ struct _ggp_status_session_data
 static inline ggp_status_session_data *
 ggp_status_get_ssdata(PurpleConnection *gc);
 
-gchar * ggp_status_validate_description(const gchar* msg);
+static gchar * ggp_status_validate_description(const gchar* msg);
 static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message);
 
 ////
@@ -47,12 +47,49 @@ void ggp_status_cleanup(PurpleConnection *gc)
 	g_free(ssdata);
 }
 
-gchar * ggp_status_validate_description(const gchar* msg)
+static gchar * ggp_status_validate_description(const gchar* msg)
 {
 	if (msg == NULL || msg[0] == '\0')
 		return NULL;
 	
 	return ggp_utf8_strndup(msg, GG_STATUS_DESCR_MAXSIZE);
+}
+
+GList * ggp_status_types(PurpleAccount *account)
+{
+	GList *types = NULL;
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_AVAILABLE, NULL, NULL,
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_AVAILABLE, "freeforchat", _("Chatty"),
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_AWAY, NULL, NULL,
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_UNAVAILABLE, NULL, NULL,
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_INVISIBLE, NULL, NULL,
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	types = g_list_append(types, purple_status_type_new_with_attrs(
+		PURPLE_STATUS_OFFLINE, NULL, NULL,
+		TRUE, TRUE, FALSE, "message", _("Message"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL));
+
+	return types;
 }
 
 static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
@@ -89,6 +126,41 @@ static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 	purple_debug_error("gg", "ggp_status_from_purplestatus: "
 		"unknown status requested (%s)\n", status_id);
 	return status_message ? GG_STATUS_AVAIL_DESCR : GG_STATUS_AVAIL;
+}
+
+const gchar * ggp_status_to_purplestatus(int status)
+{
+	switch (status)
+	{
+		case GG_STATUS_NOT_AVAIL:
+		case GG_STATUS_NOT_AVAIL_DESCR:
+		case GG_STATUS_BLOCKED:
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_OFFLINE);
+		case GG_STATUS_FFC:
+		case GG_STATUS_FFC_DESCR:
+			return "freeforchat";
+		case GG_STATUS_AVAIL:
+		case GG_STATUS_AVAIL_DESCR:
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_AVAILABLE);
+		case GG_STATUS_BUSY:
+		case GG_STATUS_BUSY_DESCR:
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_AWAY);
+		case GG_STATUS_INVISIBLE:
+		case GG_STATUS_INVISIBLE_DESCR:
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_INVISIBLE);
+		case GG_STATUS_DND:
+		case GG_STATUS_DND_DESCR:
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_UNAVAILABLE);
+		default:
+			purple_debug_warning("gg", "ggp_status_to_purplestatus: unknown status %d\n", status);
+			return purple_primitive_get_id_from_type(
+				PURPLE_STATUS_AVAILABLE);
+	}
 }
 
 /*******************************************************************************
@@ -152,6 +224,39 @@ void ggp_status_set_purplestatus(PurpleAccount *account, PurpleStatus *status)
 	
 	status_gg = ggp_status_from_purplestatus(status, &msg);
 	ggp_status_set(account, status_gg, msg);
+	g_free(msg);
+}
+
+void ggp_status_set_disconnected(PurpleAccount *account)
+{
+	gchar *msg = NULL;
+	
+	ggp_status_from_purplestatus(purple_account_get_active_status(account),
+		&msg);
+	if (!ggp_status_set(account,
+		msg ? GG_STATUS_NOT_AVAIL_DESCR : GG_STATUS_NOT_AVAIL, msg))
+	{
+		g_free(msg);
+		return;
+	}
+	
+	/*
+	struct gg_event *ev;
+	guint64 wait_start = ggp_microtime(), now;
+	int sleep_time = 5000;
+	while ((ev = gg_watch_fd(info->session)) != NULL)
+	{
+		if (ev->type == GG_EVENT_DISCONNECT_ACK)
+			break;
+		now = ggp_microtime();
+		if (now - wait_start + sleep_time >= 100000)
+			break;
+		usleep(sleep_time);
+		sleep_time *= 2;
+	}
+	*/
+	usleep(100000);
+	
 	g_free(msg);
 }
 
@@ -225,4 +330,105 @@ static void ggp_status_broadcasting_dialog_ok(PurpleConnection *gc,
 {
 	ggp_status_set_status_broadcasting(gc,
 		!purple_request_fields_get_bool(fields, "buddies_only"));
+}
+
+/*******************************************************************************
+ * Buddy status.
+ ******************************************************************************/
+
+void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
+	const char *descr);
+
+/******************************************************************************/
+
+void ggp_status_got_others(PurpleConnection *gc, struct gg_event *ev)
+{
+	if (ev->type == GG_EVENT_NOTIFY60)
+	{
+		struct gg_event_notify60 *notify = ev->event.notify60;
+		int i;
+		for (i = 0; notify[i].uin; i++)
+			ggp_status_got_others_buddy(gc, notify[i].uin,
+				GG_S(notify[i].status), notify[i].descr);
+	}
+	else if (ev->type == GG_EVENT_STATUS60)
+	{
+		struct gg_event_status60 *notify = &ev->event.status60;
+		ggp_status_got_others_buddy(gc, notify->uin,
+			GG_S(notify->status), notify->descr);
+	}
+	else
+		purple_debug_fatal("gg", "ggp_status_got_others: "
+			"unexpected event %d\n", ev->type);
+}
+
+void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
+	const char *descr)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	const gchar *purple_status = ggp_status_to_purplestatus(status);
+	gchar *status_message = NULL;
+	
+	if (!buddy)
+	{
+		purple_debug_warning("gg", "ggp_status_got_others_buddy: "
+			"buddy %u not found\n", uin);
+		return;
+	}
+	ggp_buddy_get_data(buddy)->blocked = (status == GG_STATUS_BLOCKED);
+	
+	if (descr != NULL)
+	{
+		status_message = g_strdup(descr);
+		g_strstrip(status_message);
+		if (status_message[0] == '\0')
+		{
+			g_free(status_message);
+			status_message = NULL;
+		}
+	}
+	
+	if (uin == ggp_str_to_uin(purple_account_get_username(account)))
+	{
+		purple_debug_info("gg", "ggp_status_got_others_buddy: "
+			"own status changed to %s [%s]\n",
+			purple_status, status_message ? status_message : "");
+	}
+	else
+	{
+		purple_debug_misc("gg", "ggp_status_got_others_buddy: "
+			"status of %u changed to %s [%s]\n", uin,
+			purple_status, status_message ? status_message : "");
+	}
+	
+	if (status_message)
+	{
+		purple_prpl_got_user_status(account, ggp_uin_to_str(uin),
+			purple_status, "message", status_message, NULL);
+	}
+	else
+	{
+		purple_prpl_got_user_status(account, ggp_uin_to_str(uin),
+			purple_status, NULL);
+	}
+	
+	g_free(status_message);
+}
+
+char * ggp_status_buddy_text(PurpleBuddy *buddy)
+{
+	ggp_buddy_data *buddy_data = ggp_buddy_get_data(buddy);
+	const gchar *purple_message;
+	
+	if (buddy_data->blocked)
+		return g_strdup(_("Blocked"));
+	
+	purple_message = purple_status_get_attr_string(
+		purple_presence_get_active_status(
+			purple_buddy_get_presence(buddy)), "message");
+	if (!purple_message)
+		return NULL;
+	
+	return g_markup_escape_text(purple_message, -1);
 }

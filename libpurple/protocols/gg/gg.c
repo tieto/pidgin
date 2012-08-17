@@ -52,13 +52,29 @@
 #include "status.h"
 #include "servconn.h"
 
-/* Prototypes */
+/* ---------------------------------------------------------------------- */
 
-typedef struct
+ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy)
 {
-	gboolean blocked;
-} ggp_buddy_data;
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
+	if (buddy_data)
+		return buddy_data;
+	
+	buddy_data = g_new0(ggp_buddy_data, 1);
+	purple_buddy_set_protocol_data(buddy, buddy_data);
+	return buddy_data;
+}
 
+static void ggp_buddy_free(PurpleBuddy *buddy)
+{
+	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
+
+	if (!buddy_data)
+		return;
+
+	g_free(buddy_data);
+	purple_buddy_set_protocol_data(buddy, NULL);
+}
 
 /* ---------------------------------------------------------------------- */
 // buddy list import/export from/to file
@@ -383,96 +399,6 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 /* ---------------------------------------------------------------------- */
 
 
-/**
- * Handle change of the status of the buddy.
- *
- * @param gc     PurpleConnection
- * @param uin    UIN of the buddy.
- * @param status ID of the status.
- * @param descr  Description.
- */
-static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
-				       int status, const char *descr)
-{
-	gchar *from;
-	const char *st;
-	char *status_msg = NULL;
-	ggp_buddy_data *buddy_data;
-	PurpleBuddy *buddy;
-	PurpleAccount *account = purple_connection_get_account(gc);
-
-	from = g_strdup_printf("%u", uin);
-	buddy = purple_find_buddy(purple_connection_get_account(gc), from);
-
-	switch (status) {
-		case GG_STATUS_NOT_AVAIL:
-		case GG_STATUS_NOT_AVAIL_DESCR:
-		case GG_STATUS_BLOCKED:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_OFFLINE);
-			break;
-		case GG_STATUS_FFC:
-		case GG_STATUS_FFC_DESCR:
-			st = "freeforchat";
-			break;
-		case GG_STATUS_AVAIL:
-		case GG_STATUS_AVAIL_DESCR:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
-			break;
-		case GG_STATUS_BUSY:
-		case GG_STATUS_BUSY_DESCR:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AWAY);
-			break;
-		case GG_STATUS_INVISIBLE:
-		case GG_STATUS_INVISIBLE_DESCR:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_INVISIBLE);
-			break;
-		case GG_STATUS_DND:
-		case GG_STATUS_DND_DESCR:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_UNAVAILABLE);
-			break;
-		default:
-			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
-			purple_debug_info("gg",
-				"GG_EVENT_NOTIFY: Unknown status: %d\n", status);
-			break;
-	}
-
-	if (descr != NULL) {
-		status_msg = g_strdup(descr);
-		g_strstrip(status_msg);
-		if (status_msg[0] == '\0') {
-			g_free(status_msg);
-			status_msg = NULL;
-		}
-	}
-
-	buddy_data = purple_buddy_get_protocol_data(buddy);
-	if (!buddy_data)
-	{
-		buddy_data = g_new0(ggp_buddy_data, 1);
-		purple_buddy_set_protocol_data(buddy, buddy_data);
-	}
-	buddy_data->blocked = (status == GG_STATUS_BLOCKED);
-
-	if (uin == ggp_str_to_uin(purple_account_get_username(account)))
-	{
-		purple_debug_info("gg", "own status changed to %s [%s]\n", st,
-			status_msg ? status_msg : "");
-	}
-
-	purple_debug_info("gg", "status of %u is %s [%s]\n", uin, st,
-		status_msg ? status_msg : "");
-	if (status_msg == NULL) {
-		purple_prpl_got_user_status(account,
-			from, st, NULL);
-	} else {
-		purple_prpl_got_user_status(account,
-			from, st, "message", status_msg, NULL);
-		g_free(status_msg);
-	}
-	g_free(from);
-}
-
 static void ggp_sr_close_cb(gpointer user_data)
 {
 	GGPSearchForm *form = user_data;
@@ -484,57 +410,26 @@ static void ggp_sr_close_cb(gpointer user_data)
 	ggp_search_form_destroy(form);
 }
 
-/**
- * Translate a status' ID to a more user-friendly name.
- *
- * @param id The ID of the status.
- *
- * @return The user-friendly name of the status.
- */
-static const char *ggp_status_by_id(unsigned int id)
-{
-	const char *st;
-
-	purple_debug_info("gg", "ggp_status_by_id: %d\n", id);
-	switch (id) {
-		case GG_STATUS_NOT_AVAIL:
-		case GG_STATUS_NOT_AVAIL_DESCR:
-			st = _("Offline");
-			break;
-		case GG_STATUS_AVAIL:
-		case GG_STATUS_AVAIL_DESCR:
-			st = _("Available");
-			break;
-		case GG_STATUS_FFC:
-		case GG_STATUS_FFC_DESCR:
-			return _("Chatty");
-		case GG_STATUS_DND:
-		case GG_STATUS_DND_DESCR:
-			return _("Do Not Disturb");
-		case GG_STATUS_BUSY:
-		case GG_STATUS_BUSY_DESCR:
-			st = _("Away");
-			break;
-		default:
-			st = _("Unknown");
-			break;
-	}
-
-	return st;
-}
-
 static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
 	PurpleNotifyUserInfo *user_info;
 	PurpleBuddy *buddy;
 	char *val, *who;
+	const gchar *status;
 
 	user_info = purple_notify_user_info_new();
 
+
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
-	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	status = ggp_status_to_purplestatus(atoi(val));
+	if (g_strcmp0(status, "freeforchat"))
+		//TODO: move to status.h or push to libpurple
+		status = _("Chatty");
+	else
+		status = purple_primitive_get_name_from_type(
+			purple_primitive_get_type_from_id(status));
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status);
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
@@ -1005,7 +900,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 	PurpleConnection *gc = _gc;
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	struct gg_event *ev;
-	int i;
 
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg",
@@ -1036,63 +930,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_IMAGE_REQUEST:
 			ggp_image_send(gc, &ev->event.image_request);
 			break;
-		case GG_EVENT_NOTIFY:
-		case GG_EVENT_NOTIFY_DESCR:
-			{
-				struct gg_notify_reply *n;
-				char *descr;
-
-				purple_debug_info("gg", "notify_pre: (%d) status: %d\n",
-						ev->event.notify->uin,
-						GG_S(ev->event.notify->status));
-
-				n = (ev->type == GG_EVENT_NOTIFY) ? ev->event.notify
-								  : ev->event.notify_descr.notify;
-
-				for (; n->uin; n++) {
-					descr = (ev->type == GG_EVENT_NOTIFY) ? NULL
-							: ev->event.notify_descr.descr;
-
-					purple_debug_info("gg",
-						"notify: (%d) status: %d; descr: %s\n",
-						n->uin, GG_S(n->status), descr ? descr : "(null)");
-
-					ggp_generic_status_handler(gc,
-						n->uin, GG_S(n->status), descr);
-				}
-			}
-			break;
 		case GG_EVENT_NOTIFY60:
-			for (i = 0; ev->event.notify60[i].uin; i++) {
-				purple_debug_info("gg",
-					"notify60: (%d) status=%d; version=%d; descr=%s\n",
-					ev->event.notify60[i].uin,
-					GG_S(ev->event.notify60[i].status),
-					ev->event.notify60[i].version,
-					ev->event.notify60[i].descr ? ev->event.notify60[i].descr : "(null)");
-
-				ggp_generic_status_handler(gc, ev->event.notify60[i].uin,
-					GG_S(ev->event.notify60[i].status),
-					ev->event.notify60[i].descr);
-			}
-			break;
-		case GG_EVENT_STATUS:
-			purple_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
-					ev->event.status.uin, GG_S(ev->event.status.status),
-					ev->event.status.descr ? ev->event.status.descr : "(null)");
-
-			ggp_generic_status_handler(gc, ev->event.status.uin,
-				GG_S(ev->event.status.status), ev->event.status.descr);
-			break;
 		case GG_EVENT_STATUS60:
-			purple_debug_info("gg",
-				"status60: (%d) status=%d; version=%d; descr=%s\n",
-				ev->event.status60.uin, GG_S(ev->event.status60.status),
-				ev->event.status60.version,
-				ev->event.status60.descr ? ev->event.status60.descr : "(null)");
-
-			ggp_generic_status_handler(gc, ev->event.status60.uin,
-				GG_S(ev->event.status60.status), ev->event.status60.descr);
+			ggp_status_got_others(gc, ev);
 			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
@@ -1319,32 +1159,6 @@ static const char *ggp_normalize(const PurpleAccount *account, const char *who)
 	return normalized;
 }
 
-static char *ggp_status_text(PurpleBuddy *b)
-{
-	const char *msg;
-	char *text;
-	char *tmp;
-	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(b);
-
-	if (buddy_data && buddy_data->blocked)
-		msg = _("Blocked");
-	else
-	{
-		PurpleStatus *status = purple_presence_get_active_status(
-			purple_buddy_get_presence(b));
-		msg = purple_status_get_attr_string(status, "message");
-	}
-
-	if (msg == NULL)
-		return NULL;
-
-	tmp = purple_markup_strip_html(msg);
-	text = g_markup_escape_text(tmp, -1);
-	g_free(tmp);
-
-	return text;
-}
-
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
@@ -1372,61 +1186,6 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);
 	}
-}
-
-static GList *ggp_status_types(PurpleAccount *account)
-{
-	PurpleStatusType *type;
-	GList *types = NULL;
-
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	/*
-	 * New status for GG 8.0: PoGGadaj ze mna (chatty).
-	 * NOTE: at this time, this is used only to set our own status.
-	 */
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
-		"freeforchat", _("Chatty"), TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	/*
-	 * New status for GG 8.0: Nie przeszkadzac (do not disturb).
-	 */
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	/*
-	 * It's used on buddy list if and only if it's showing our own
-	 * (invisible) status.
-	 */
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
-	types = g_list_append(types, type);
-
-	return types;
 }
 
 static GList *ggp_blist_node_menu(PurpleBlistNode *node)
@@ -1587,31 +1346,9 @@ static void ggp_close(PurpleConnection *gc)
 	info = purple_connection_get_protocol_data(gc);
 
 	if (info) {
-		PurpleStatus *status = purple_account_get_active_status(account);
-
 		if (info->session != NULL)
 		{
-			const gchar *status_msg = purple_status_get_attr_string(status, "message");
-			
-			if (ggp_status_set(account,
-				status_msg ? GG_STATUS_NOT_AVAIL_DESCR : GG_STATUS_NOT_AVAIL,
-				status_msg))
-			{
-				/*struct gg_event *ev;
-				guint64 wait_start = ggp_microtime(), now;
-				int sleep_time = 5000;
-				while ((ev = gg_watch_fd(info->session)) != NULL)
-				{
-					if (ev->type == GG_EVENT_DISCONNECT_ACK)
-						break;
-					now = ggp_microtime();
-					if (now - wait_start + sleep_time >= 100000)
-						break;
-					usleep(sleep_time);
-					sleep_time *= 2;
-				}*/
-				usleep(100000);
-			}
+			ggp_status_set_disconnected(account);
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
@@ -1649,14 +1386,14 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	gint pos = 0;
 	GData *attribs;
 	const char *start, *end = NULL, *last;
-	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(
+	ggp_buddy_data *buddy_data = ggp_buddy_get_data(
 		purple_find_buddy(purple_connection_get_account(gc), who));
 
 	if (msg == NULL || *msg == '\0') {
 		return 0;
 	}
 
-	if (buddy_data && buddy_data->blocked)
+	if (buddy_data->blocked)
 		return -1;
 
 	last = msg;
@@ -1970,27 +1707,12 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 
 static const char* ggp_list_emblem(PurpleBuddy *buddy)
 {
-	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
-
-	if (!buddy_data)
-		return NULL;
+	ggp_buddy_data *buddy_data = ggp_buddy_get_data(buddy);
 
 	if (buddy_data->blocked)
 		return "not-authorized";
 
 	return NULL;
-}
-
-static void ggp_buddy_free(PurpleBuddy *buddy)
-{
-	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
-
-	if (!buddy_data)
-		return;
-
-	g_free(buddy_data);
-
-	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 static gboolean ggp_offline_message(const PurpleBuddy *buddy)
@@ -2015,7 +1737,7 @@ static PurplePluginProtocolInfo prpl_info =
 	{"png", 1, 1, 200, 200, 0, PURPLE_ICON_SCALE_DISPLAY | PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	ggp_list_icon,			/* list_icon */
 	ggp_list_emblem,		/* list_emblem */
-	ggp_status_text,		/* status_text */
+	ggp_status_buddy_text,		/* status_text */
 	ggp_tooltip_text,		/* tooltip_text */
 	ggp_status_types,		/* status_types */
 	ggp_blist_node_menu,		/* blist_node_menu */
