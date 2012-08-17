@@ -171,6 +171,8 @@ static const GtkTargetEntry dnd_targets[] =
 	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
 };
 
+static GtkTargetList *webkit_dnd_targets = NULL;
+
 typedef struct {
 	GtkWidget *window;
 
@@ -337,7 +339,11 @@ static void
 conversation_entry_clear(PidginConversation *gtkconv)
 {
 	GtkWebView *webview = GTK_WEBVIEW(gtkconv->entry);
-	gtk_webview_load_html_string(webview, "");
+
+	//XXX: hotfix for not focused entry after sending a message
+	//gtk_webview_load_html_string(webview, "");
+	gtk_webview_load_html_string_with_selection(webview, "<div id='caret'></div>");
+
 #if 0
 	/* TODO WebKit */
 	gtk_source_undo_manager_begin_not_undoable_action(webview->undo_manager);
@@ -704,6 +710,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	conversation_entry_clear(gtkconv);
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
+	gtk_widget_grab_focus(gtkconv->entry); // XXX: doesn't work
 }
 
 static void
@@ -1618,38 +1625,49 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
 }
 
-static GtkTextMark *
+static char *
+get_class_for_user(const char *who)
+{
+	return g_strconcat("-pidgin-user:", who, NULL);
+}
+
+static WebKitDOMNode *
 get_mark_for_user(PidginConversation *gtkconv, const char *who)
 {
-#if 0
-	/* TODO WebKit */
-	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->webview));
-	char *tmp = g_strconcat("user:", who, NULL);
-	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
+	WebKitDOMDocument *doc;
+	WebKitDOMNodeList *nodes;
+	WebKitDOMNode *node = NULL;
+	gulong len;
+	char *tmp;
 
+	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(gtkconv->webview));
+
+	tmp = get_class_for_user(who);
+	nodes = webkit_dom_document_get_elements_by_class_name(doc, tmp);
 	g_free(tmp);
-	return mark;
-#else
-	return NULL;
-#endif
+
+	if (nodes != NULL) {
+		len = webkit_dom_node_list_get_length(nodes);
+		if (len > 0)
+			node = webkit_dom_node_list_item(nodes, len - 1);
+	}
+
+	return node;
 }
 
 static void
 menu_last_said_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
-/* TODO WEBKIT: This doesn't work yet, of course... */
-#if 0
-	GtkTextMark *mark;
+	WebKitDOMNode *node;
 	const char *who;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
-	mark = get_mark_for_user(gtkconv, who);
+	node = get_mark_for_user(gtkconv, who);
 
-	if (mark != NULL)
-		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
+	if (node != NULL)
+		webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(node), TRUE);
 	else
 		g_return_if_reached();
-#endif /* if 0 */
 }
 
 static GtkWidget *
@@ -1855,13 +1873,11 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
 		/* Move to user's anchor */
-/* TODO WEBKIT: This isn't implemented yet. */
-#if 0
-		GtkTextMark *mark = get_mark_for_user(gtkconv, who);
+		WebKitDOMNode *node = get_mark_for_user(gtkconv, who);
 
-		if(mark != NULL)
-			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
-#endif /* if 0 */
+		if (node != NULL)
+			webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(node), TRUE);
+
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -5527,7 +5543,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	PurpleAccount *convaccount = purple_conversation_get_account(conv);
 	PurpleConnection *gc = purple_account_get_connection(convaccount);
 	PurplePluginProtocolInfo *prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc)) : NULL;
-	GdkAtom target = gtk_selection_data_get_target(sd);
 	const guchar *data = gtk_selection_data_get_data(sd);
 
 	if (info == PIDGIN_DRAG_BLIST_NODE)
@@ -5630,7 +5645,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, TRUE,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (target == gdk_atom_intern("text/uri-list", FALSE)) {
+	else if (info == WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST) {
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			pidgin_dnd_file_manage(sd, convaccount, purple_conversation_get_name(conv));
 		gtk_drag_finish(dc, TRUE,
@@ -5640,12 +5655,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
-
-static const GtkTargetEntry te[] =
-{
-	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, PIDGIN_DRAG_BLIST_NODE},
-	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
-};
 
 static PidginConversation *
 pidgin_conv_find_gtkconv(PurpleConversation * conv)
@@ -5756,6 +5765,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
+	GtkTargetList *targets;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		purple_conversation_set_ui_data(conv, gtkconv);
@@ -5804,33 +5814,45 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	/* Setup drag-and-drop */
-	gtk_drag_dest_set(pane,
-	                  GTK_DEST_DEFAULT_MOTION |
-	                  GTK_DEST_DEFAULT_DROP,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
-	gtk_drag_dest_set(pane,
-	                  GTK_DEST_DEFAULT_MOTION |
-	                  GTK_DEST_DEFAULT_DROP,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
-	gtk_drag_dest_set(gtkconv->webview, 0,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
+	gtk_drag_dest_set(pane, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+	                  NULL, 0, GDK_ACTION_COPY);
+	targets = gtk_target_list_new(dnd_targets, G_N_ELEMENTS(dnd_targets));
+	gtk_target_list_add(targets, gdk_atom_intern("text/uri-list", FALSE), 0,
+	                    WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST);
+	gtk_drag_dest_set_target_list(pane, targets);
 
-	gtk_drag_dest_set(gtkconv->entry, 0,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
+	if (webkit_dnd_targets) {
+		targets = webkit_dnd_targets;
+	} else {
+		GtkTargetEntry *entries;
+		gint count;
+
+		targets = webkit_web_view_get_paste_target_list(WEBKIT_WEB_VIEW(gtkconv->webview));
+		entries = gtk_target_table_new_from_list(targets, &count);
+		targets = gtk_target_list_new(entries, count);
+		gtk_target_table_free(entries, count);
+
+		gtk_target_list_add_table(targets, dnd_targets, G_N_ELEMENTS(dnd_targets));
+		webkit_dnd_targets = targets;
+	}
+
+	gtk_drag_dest_set(gtkconv->webview, 0, NULL, 0, GDK_ACTION_COPY);
+	gtk_drag_dest_set_target_list(gtkconv->webview, targets);
+
+	gtk_drag_dest_set(gtkconv->entry, 0, NULL, 0, GDK_ACTION_COPY);
+	gtk_drag_dest_set_target_list(gtkconv->entry, targets);
 
 	g_signal_connect(G_OBJECT(pane), "button_press_event",
 	                 G_CALLBACK(ignore_middle_click), NULL);
-// TODO: this crashes with webkit, fix it
-//	g_signal_connect(G_OBJECT(pane), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-//	g_signal_connect(G_OBJECT(gtkconv->webview), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-//	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+	g_signal_connect(G_OBJECT(pane), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+#if 0
+	/* FIXME: WebKit confuses the dnd source when this is enabled */
+	g_signal_connect(G_OBJECT(gtkconv->webview), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+#endif
 
 	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
@@ -6228,6 +6250,7 @@ replace_message_tokens(
 			replace = message;
 
 		} else if (g_str_has_prefix(cur, "%messageClasses%")) {
+			char *user;
 			GString *classes = g_string_new(NULL);
 #define ADD_CLASS(f, class) \
 			if (flags & f) \
@@ -6239,6 +6262,9 @@ replace_message_tokens(
 			ADD_CLASS(PURPLE_MESSAGE_DELAYED, "history ");
 			ADD_CLASS(PURPLE_MESSAGE_NICK, "mention ");
 #undef ADD_CLASS
+			user = get_class_for_user(name);
+			g_string_append(classes, user);
+			g_free(user);
 
 			replace = freeval = g_string_free(classes, FALSE);
 
@@ -6307,6 +6333,11 @@ replace_message_tokens(
 				g_string_append(classes, "error ");
 
 			replace = freeval = g_string_free(classes, FALSE);
+
+		} else if (g_str_has_prefix(cur, "%variant%")) {
+			replace = pidgin_conversation_theme_get_variant(PIDGIN_CONVERSATION(conv)->theme);
+			replace = freeval = g_strdup(replace);
+			purple_util_chrreplace(freeval, ' ', '_');
 
 		} else {
 			cur++;
@@ -9021,9 +9052,12 @@ focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 }
 
 static void
-notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
+notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget, GdkEvent *event)
 {
 	static GdkCursor *cursor = NULL;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkDevice *device;
+#endif
 
 	gtkwin->in_drag = TRUE;
 
@@ -9038,6 +9072,14 @@ notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);
+#if GTK_CHECK_VERSION(3,0,0)
+	device = gdk_event_get_device(event);
+	if (!gdk_display_device_is_grabbed(gdk_device_get_display(device), device))
+		gdk_device_grab(device, gtk_widget_get_window(gtkwin->notebook),
+		                GDK_OWNERSHIP_WINDOW, FALSE,
+		                GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
+		                cursor, gdk_event_get_time(event));
+#else
 #ifndef _WIN32
 	/* Currently for win32 GTK+ (as of 2.2.1), gdk_pointer_is_grabbed will
 	   always be true after a button press. */
@@ -9045,7 +9087,8 @@ notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
 #endif
 		gdk_pointer_grab(gtk_widget_get_window(gtkwin->notebook), FALSE,
 		                 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
-		                 NULL, cursor, GDK_CURRENT_TIME);
+		                 NULL, cursor, gdk_event_get_time(event));
+#endif
 }
 
 static gboolean
@@ -9063,7 +9106,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		    e->y_root >= win->drag_max_y) {
 
 			    win->in_predrag = FALSE;
-			    notebook_init_grab(win, widget);
+			    notebook_init_grab(win, widget, (GdkEvent *)e);
 		    }
 	}
 	else { /* Otherwise, draw the arrows. */
@@ -9075,7 +9118,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		gboolean to_right = FALSE;
 
 		/* Get the window that the cursor is over. */
-		dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
+		dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
 		if (dest_win == NULL) {
 			dnd_hints_hide_all();
@@ -9139,9 +9182,9 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 	    e->y_root <  win->drag_min_y ||
 	    e->y_root >= win->drag_max_y) {
 
-		    win->in_predrag = FALSE;
-		    notebook_init_grab(win, widget);
-	    }
+		win->in_predrag = FALSE;
+		notebook_init_grab(win, widget, (GdkEvent *)e);
+	}
 
 	return TRUE;
 }
@@ -9306,11 +9349,14 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
 	PidginWindow *dest_win;
 	GtkNotebook *dest_notebook;
-	PurpleConversation *conv;
+	PidginConversation *active_gtkconv;
 	PidginConversation *gtkconv;
 	gint dest_page_num = 0;
 	gboolean new_window = FALSE;
 	gboolean to_right = FALSE;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkDevice *device;
+#endif
 
 	/*
 	* Don't check to make sure that the event's window matches the
@@ -9320,10 +9366,18 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 	if (e->button != 1 && e->type != GDK_BUTTON_RELEASE)
 		return FALSE;
 
-	if (gdk_pointer_is_grabbed()) {
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
+#if GTK_CHECK_VERSION(3,0,0)
+	device = gdk_event_get_device((GdkEvent *)e);
+	if (gdk_display_device_is_grabbed(gdk_device_get_display(device), device)) {
+		gdk_device_ungrab(device, gdk_event_get_time((GdkEvent *)e));
 		gtk_grab_remove(widget);
 	}
+#else
+	if (gdk_pointer_is_grabbed()) {
+		gdk_pointer_ungrab(gdk_event_get_time((GdkEvent *)e));
+		gtk_grab_remove(widget);
+	}
+#endif
 
 	if (!win->in_predrag && !win->in_drag)
 		return FALSE;
@@ -9360,9 +9414,9 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	dnd_hints_hide_all();
 
-	dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
+	dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
-	conv = pidgin_conv_window_get_active_conversation(win);
+	active_gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
 	if (dest_win == NULL) {
 		/* If the current window doesn't have any other conversations,
@@ -9416,7 +9470,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		}
 	}
 
-	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
+	gtk_widget_grab_focus(active_gtkconv->entry);
 
 	return TRUE;
 }
@@ -10045,18 +10099,20 @@ pidgin_conv_window_new()
 void
 pidgin_conv_window_destroy(PidginWindow *win)
 {
-	purple_prefs_disconnect_by_handle(win);
-	window_list = g_list_remove(window_list, win);
+	PidginConversation *gtkconv;
+	GList *iter;
 
 	if (win->gtkconvs) {
-		while (win->gtkconvs) {
-			gboolean last = (win->gtkconvs->next == NULL);
-			close_conv_cb(NULL, win->gtkconvs->data);
-			if (last)
-				break;
+		for (iter = win->gtkconvs; iter != NULL; iter = iter->next) {
+			gtkconv = iter->data;
+			close_conv_cb(NULL, gtkconv);
 		}
 		return;
 	}
+
+	purple_prefs_disconnect_by_handle(win);
+	window_list = g_list_remove(window_list, win);
+
 	gtk_widget_destroy(win->notebook_menu);
 	gtk_widget_destroy(win->window);
 
@@ -10365,13 +10421,19 @@ pidgin_conv_window_has_focus(PidginWindow *win)
 }
 
 PidginWindow *
-pidgin_conv_window_get_at_xy(int x, int y)
+pidgin_conv_window_get_at_event(GdkEvent *event)
 {
 	PidginWindow *win;
 	GdkWindow *gdkwin;
 	GList *l;
+	int x, y;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	gdkwin = gdk_device_get_window_at_position(gdk_event_get_device(event),
+	                                           &x, &y);
+#else
 	gdkwin = gdk_window_at_pointer(&x, &y);
+#endif
 
 	if (gdkwin)
 		gdkwin = gdk_window_get_toplevel(gdkwin);

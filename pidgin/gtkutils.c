@@ -62,8 +62,6 @@
 
 #include "gtkconv.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "pidginstock.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -103,49 +101,13 @@ url_clicked_cb(GtkWebView *unused, const char *uri)
 	return TRUE;
 }
 
-static GtkIMHtmlFuncs gtkimhtml_cbs = {
-	(GtkIMHtmlGetImageFunc)purple_imgstore_find_by_id,
-	(GtkIMHtmlGetImageDataFunc)purple_imgstore_get_data,
-	(GtkIMHtmlGetImageSizeFunc)purple_imgstore_get_size,
-	(GtkIMHtmlGetImageFilenameFunc)purple_imgstore_get_filename,
-	purple_imgstore_ref_by_id,
-	purple_imgstore_unref_by_id,
-};
-
-void
-pidgin_setup_imhtml(GtkWidget *imhtml)
-{
-	g_return_if_fail(imhtml != NULL);
-	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-
-	pidgin_themes_smiley_themeize(imhtml);
-
-	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
-
-#ifdef _WIN32
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
-		PangoFontDescription *desc;
-		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-		desc = pango_font_description_from_string(font);
-		if (desc) {
-			gtk_widget_modify_font(imhtml, desc);
-			pango_font_description_free(desc);
-		}
-	}
-#endif
-
-}
-
 void
 pidgin_setup_webview(GtkWidget *webview)
 {
 	g_return_if_fail(webview != NULL);
 	g_return_if_fail(GTK_IS_WEBVIEW(webview));
 
-#if 0
-/* TODO: WebKit this stuff... */
 	pidgin_themes_smiley_themeize(webview);
-#endif
 
 #ifdef _WIN32
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
@@ -249,66 +211,6 @@ GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
 		g_signal_connect(G_OBJECT(button), "clicked", callback, callbackdata);
 	gtk_widget_show(button);
 	return button;
-}
-
-GtkWidget *
-pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
-{
-	GtkWidget *frame;
-	GtkWidget *imhtml;
-	GtkWidget *sep;
-	GtkWidget *sw;
-	GtkWidget *toolbar = NULL;
-	GtkWidget *vbox;
-
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_widget_show(vbox);
-
-	if (editable) {
-		toolbar = gtk_imhtmltoolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-		gtk_widget_show(toolbar);
-
-		sep = gtk_hseparator_new();
-		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-		g_signal_connect_swapped(G_OBJECT(toolbar), "show", G_CALLBACK(gtk_widget_show), sep);
-		g_signal_connect_swapped(G_OBJECT(toolbar), "hide", G_CALLBACK(gtk_widget_hide), sep);
-		gtk_widget_show(sep);
-	}
-
-	imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), editable);
-	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
-#ifdef USE_GTKSPELL
-	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
-		pidgin_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
-#endif
-	gtk_widget_show(imhtml);
-
-	if (editable) {
-		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), imhtml);
-		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
-	}
-	pidgin_setup_imhtml(imhtml);
-
-	sw = pidgin_make_scrollable(imhtml, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-
-	if (imhtml_ret != NULL)
-		*imhtml_ret = imhtml;
-
-	if (editable && (toolbar_ret != NULL))
-		*toolbar_ret = toolbar;
-
-	if (sw_ret != NULL)
-		*sw_ret = sw;
-
-	return frame;
 }
 
 GtkWidget *
@@ -1299,7 +1201,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 	 * if a size_request was queued while we weren't popped up,
 	 * the requisition won't have been recomputed yet.
 	 */
-	gtk_widget_size_request (widget, &requisition);
+	gtk_widget_get_preferred_size(widget, NULL, &requisition);
 
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
@@ -1460,7 +1362,6 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	GError *err = NULL;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	GtkTextIter iter;
 	int id;
 	PurpleBuddy *buddy;
 	PurpleContact *contact;
@@ -1512,9 +1413,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		shortname = shortname ? shortname + 1 : data->filename;
 		id = purple_imgstore_add_with_id(filedata, size, shortname);
 
-		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
-						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
-		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
+		gtk_webview_insert_image(GTK_WEBVIEW(gtkconv->entry), id);
 		purple_imgstore_unref_by_id(id);
 
 		break;
@@ -1677,9 +1576,9 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			case PURPLE_DESKTOP_ITEM_TYPE_LINK:
 				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
 				gtkconv =  PIDGIN_CONVERSATION(conv);
-				gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry),
-						       gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer),
-						       purple_desktop_item_get_string(item, "URL"), itemname);
+				gtk_webview_insert_link(GTK_WEBVIEW(gtkconv->entry),
+				                        purple_desktop_item_get_string(item, "URL"),
+				                        itemname);
 				break;
 			default:
 				/* I don't know if we really want to do anything here.  Most of
@@ -3312,12 +3211,12 @@ file_open_uri(GtkWebView *webview, const char *uri)
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
-		purple_notify_error(imhtml, NULL,
+		purple_notify_error(webview, NULL,
 				_("There is no application configured to open this type of file."), NULL);
 	}
 	else if (code < 32)
 	{
-		purple_notify_error(imhtml, NULL,
+		purple_notify_error(webview, NULL,
 				_("An error occurred while opening the file."), NULL);
 		purple_debug_warning("gtkutils", "filename: %s; code: %d\n", uri, code);
 	}

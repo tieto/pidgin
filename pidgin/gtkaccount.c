@@ -917,12 +917,13 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				if (str_hints)
 				{
 					const GSList *hint_it = str_hints;
-					entry = gtk_combo_box_entry_new_text();
+					entry = gtk_combo_box_text_new_with_entry();
 					while (hint_it)
 					{
 						const gchar *hint = hint_it->data;
-						hint_it = g_list_next(hint_it);
-						gtk_combo_box_append_text(GTK_COMBO_BOX(entry), hint);
+						hint_it = g_slist_next(hint_it);
+						gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(entry),
+						                               hint);
 					}
 				}
 				else
@@ -941,7 +942,8 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				}
 
 				if (str_value != NULL && str_hints)
-					gtk_entry_set_text(GTK_ENTRY(GTK_BIN(entry)->child), str_value);
+					gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(entry))),
+					                   str_value);
 				else
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
@@ -1474,7 +1476,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			switch (opt_entry->type) {
 				case PURPLE_PREF_STRING:
 					if (GTK_IS_COMBO_BOX(opt_entry->widget))
-						value = gtk_combo_box_get_active_text(GTK_COMBO_BOX(opt_entry->widget));
+						value = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(opt_entry->widget));
 					else
 						value = gtk_entry_get_text(GTK_ENTRY(opt_entry->widget));
 					purple_account_set_string(account, opt_entry->setting, value);

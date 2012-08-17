@@ -431,11 +431,9 @@ disco_paint_tooltip(GtkWidget *tipwindow, cairo_t *cr, gpointer data)
 {
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_paint_layout(gtk_widget_get_style(tipwindow),
-	                 cr,
-	                 GTK_STATE_NORMAL, FALSE,
-	                 tipwindow, "tooltip",
-	                 6, 6, layout);
+	GtkStyleContext *context = gtk_widget_get_style_context(tipwindow);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_TOOLTIP);
+	gtk_render_layout(context, cr, 6, 6, layout);
 #else
 	gtk_paint_layout(gtk_widget_get_style(tipwindow),
 	                 gtk_widget_get_window(tipwindow),

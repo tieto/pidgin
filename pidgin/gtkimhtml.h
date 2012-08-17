@@ -171,7 +171,7 @@ typedef enum {
 	GTK_IMHTML_USE_POINTSIZE       = 1 << 8,
 	GTK_IMHTML_NO_FORMATTING       = 1 << 9,
 	GTK_IMHTML_USE_SMOOTHSCROLLING = 1 << 10,
-	GTK_IMHTML_NO_SMILEY           = 1 << 11,
+	GTK_IMHTML_NO_SMILEY           = 1 << 11
 } GtkIMHtmlOptions;
 
 enum {

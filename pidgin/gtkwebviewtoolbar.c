@@ -43,6 +43,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "gtk3compat.h"
+
 #define GTK_WEBVIEWTOOLBAR_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbarPriv))
 
@@ -160,27 +162,22 @@ do_big(GtkAction *large, GtkWebViewToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->webview);
 }
 
-static gboolean
-destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
-					 GtkWebViewToolbar *toolbar)
+static void
+destroy_toolbar_font(GtkWebViewToolbar *toolbar)
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-
-	if (widget != NULL)
-		gtk_webview_toggle_fontface(GTK_WEBVIEW(toolbar->webview), "");
 
 	if (priv->font_dialog != NULL)
 	{
 		gtk_widget_destroy(priv->font_dialog);
 		priv->font_dialog = NULL;
 	}
-
-	return FALSE;
 }
 
 static void
 realize_toolbar_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 {
+#if !GTK_CHECK_VERSION(3,2,0)
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkFontSelection *sel;
 
@@ -193,40 +190,38 @@ realize_toolbar_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
 		gtk_font_selection_get_family_list(sel)));
 	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(
 		gtk_font_selection_get_family_list(sel))));
+#endif
 }
 
 static void
-cancel_toolbar_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
-{
-	destroy_toolbar_font(widget, NULL, toolbar);
-}
-
-static void
-apply_font(GtkWidget *widget, GtkWebViewToolbar *toolbar)
+apply_font(GtkDialog *dialog, gint response, GtkWebViewToolbar *toolbar)
 {
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
-	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	GtkFontSelectionDialog *fontsel = GTK_FONT_SELECTION_DIALOG(priv->font_dialog);
-	gchar *fontname = gtk_font_selection_dialog_get_font_name(fontsel);
+	gchar *fontname = NULL;
+
+	if (response == GTK_RESPONSE_OK)
+		fontname = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(dialog));
 
 	if (fontname) {
-		const gchar *family_name = NULL;
-		PangoFontDescription *desc = NULL;
+		PangoFontDescription *desc;
+		const gchar *family_name;
 
 		desc = pango_font_description_from_string(fontname);
 		family_name = pango_font_description_get_family(desc);
 
 		if (family_name) {
 			gtk_webview_toggle_fontface(GTK_WEBVIEW(toolbar->webview),
-			                           family_name);
+			                            family_name);
 		}
 
 		pango_font_description_free(desc);
 		g_free(fontname);
+	} else {
+		gtk_webview_toggle_fontface(GTK_WEBVIEW(toolbar->webview), "");
 	}
 
-	cancel_toolbar_font(NULL, toolbar);
+	destroy_toolbar_font(toolbar);
 }
 
 static void
@@ -238,35 +233,31 @@ toggle_font(GtkAction *font, GtkWebViewToolbar *toolbar)
 		char *fontname = gtk_webview_get_current_fontface(GTK_WEBVIEW(toolbar->webview));
 
 		if (!priv->font_dialog) {
-			priv->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
+			GtkWindow *window;
+			window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar)));
+			priv->font_dialog = gtk_font_chooser_dialog_new(_("Select Font"), window);
 
 			if (fontname) {
 				char *fonttif = g_strdup_printf("%s 12", fontname);
-				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(priv->font_dialog),
-														fonttif);
+				gtk_font_chooser_set_font(GTK_FONT_CHOOSER(priv->font_dialog),
+				                          fonttif);
 				g_free(fonttif);
 			} else {
-				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(priv->font_dialog),
-														DEFAULT_FONT_FACE);
+				gtk_font_chooser_set_font(GTK_FONT_CHOOSER(priv->font_dialog),
+				                          DEFAULT_FONT_FACE);
 			}
 
-			g_signal_connect(G_OBJECT(priv->font_dialog), "delete_event",
-							 G_CALLBACK(destroy_toolbar_font), toolbar);
-			g_signal_connect(G_OBJECT(
-				gtk_font_selection_dialog_get_ok_button(GTK_FONT_SELECTION_DIALOG(priv->font_dialog))),
-				"clicked", G_CALLBACK(apply_font), toolbar);
-			g_signal_connect(G_OBJECT(
-				gtk_font_selection_dialog_get_cancel_button(GTK_FONT_SELECTION_DIALOG(priv->font_dialog))),
-				"clicked", G_CALLBACK(cancel_toolbar_font), toolbar);
+			g_signal_connect(G_OBJECT(priv->font_dialog), "response",
+			                 G_CALLBACK(apply_font), toolbar);
 			g_signal_connect_after(G_OBJECT(priv->font_dialog), "realize",
-							 G_CALLBACK(realize_toolbar_font), toolbar);
+			                       G_CALLBACK(realize_toolbar_font), toolbar);
 		}
 
 		gtk_window_present(GTK_WINDOW(priv->font_dialog));
 
 		g_free(fontname);
 	} else {
-		cancel_toolbar_font(GTK_WIDGET(toolbar), toolbar);
+		destroy_toolbar_font(toolbar);
 	}
 
 	gtk_widget_grab_focus(toolbar->webview);
@@ -695,7 +686,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 	it_last = ls; /* list iterators */
 	image = gtk_image_new_from_file(filename);
 
-	gtk_widget_size_request(image, &size);
+	gtk_widget_get_preferred_size(image, NULL, &size);
 
 	if ((size.width > 24)
 	 && (gtk_webview_smiley_get_flags(smiley) & GTK_WEBVIEW_SMILEY_CUSTOM)) {
@@ -721,7 +712,7 @@ sort_smileys(struct smiley_button_list *ls, GtkWebViewToolbar *toolbar,
 					GDK_INTERP_HYPER);
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(image), resized); /* This unrefs pixbuf */
-			gtk_widget_size_request(image, &size);
+			gtk_widget_get_preferred_size(image, NULL, &size);
 			g_object_unref(G_OBJECT(resized));
 		}
 	}
@@ -903,7 +894,7 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
 					G_CALLBACK(gtk_widget_destroy), dialog);
 			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
-			gtk_widget_size_request(manage, &req);
+			gtk_widget_get_preferred_size(manage, NULL, &req);
 			button_width = req.width;
 		}
 
@@ -955,7 +946,7 @@ insert_smiley_cb(GtkAction *smiley, GtkWebViewToolbar *toolbar)
 	/* show everything */
 	gtk_widget_show_all(dialog);
 
-	gtk_widget_size_request(viewport, &req);
+	gtk_widget_get_preferred_size(viewport, NULL, &req);
 	gtk_widget_set_size_request(scrolled, MIN(300, req.width), MIN(290, req.height));
 
 	/* The window has to be made resizable, and the scrollbars in the scrolled window
@@ -1164,7 +1155,7 @@ menu_position_func(GtkMenu  *menu,
 	int savy;
 
 	gtk_widget_get_allocation(widget, &allocation);
-	gtk_widget_size_request(GTK_WIDGET(menu), &menu_req);
+	gtk_widget_get_preferred_size(GTK_WIDGET(menu), NULL, &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;
 	*y += allocation.y + allocation.height;
@@ -1263,12 +1254,10 @@ gtk_webviewtoolbar_finalize(GObject *object)
 		priv->image_dialog = NULL;
 	}
 
-	destroy_toolbar_font(NULL, NULL, toolbar);
+	destroy_toolbar_font(toolbar);
 	if (priv->smiley_dialog != NULL) {
-#if 0
 		g_signal_handlers_disconnect_by_func(G_OBJECT(priv->smiley_dialog), close_smiley_dialog, toolbar);
 		destroy_smiley_dialog(toolbar);
-#endif
 	}
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);

@@ -2965,7 +2965,11 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 static gboolean
 pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 {
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+#else
 	GtkStyle *style;
+#endif
 	int current_height, max_width;
 	int max_text_width;
 	int max_avatar_width;
@@ -2977,7 +2981,12 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 	if(gtkblist->tooltipdata == NULL)
 		return FALSE;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	context = gtk_widget_get_style_context(gtkblist->tipwindow);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_TOOLTIP);
+#else
 	style = gtk_widget_get_style(gtkblist->tipwindow);
+#endif
 
 	max_text_width = 0;
 	max_avatar_width = 0;
@@ -3007,27 +3016,34 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
 #if GTK_CHECK_VERSION(3,0,0)
-			if (dir == GTK_TEXT_DIR_RTL)
-				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				                   gtkblist->tipwindow, "tooltip",
+			gtk_style_context_save(context);
+			gtk_style_context_add_class(context, GTK_STYLE_CLASS_FRAME);
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_render_frame(context, cr,
+				                 TOOLTIP_BORDER - 1, current_height - 1,
+				                 td->avatar_width + 2, td->avatar_height + 2);
+			} else {
+				gtk_render_frame(context, cr,
+				                 max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
+				                 current_height - 1,
+				                 td->avatar_width + 2, td->avatar_height + 2);
+			}
+			gtk_style_context_restore(context);
+#else
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window,
+				                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				                   NULL, gtkblist->tipwindow, "tooltip",
 				                   TOOLTIP_BORDER - 1, current_height - 1,
 				                   td->avatar_width + 2, td->avatar_height + 2);
-			else
-				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				                   gtkblist->tipwindow, "tooltip",
+			} else {
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window,
+				                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				                   NULL, gtkblist->tipwindow, "tooltip",
 				                   max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
-				                   current_height - 1,
-				                   td->avatar_width + 2, td->avatar_height + 2);
-#else
-			if (dir == GTK_TEXT_DIR_RTL)
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				                   NULL, gtkblist->tipwindow, "tooltip",
-				                   TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2, td->avatar_height + 2);
-			else
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				                   NULL, gtkblist->tipwindow, "tooltip",
-				                   max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-				                   current_height-1,td->avatar_width+2, td->avatar_height+2);
+				                   current_height - 1, td->avatar_width + 2,
+				                   td->avatar_height + 2);
+			}
 #endif
 		}
 
@@ -3067,14 +3083,13 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 		if (td->name_layout) {
 #if GTK_CHECK_VERSION(3,0,0)
 			if (dir == GTK_TEXT_DIR_RTL) {
-				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				                 gtkblist->tipwindow, "tooltip",
-				                 max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
-				                 current_height, td->name_layout);
+				gtk_render_layout(context, cr,
+				                  max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                  current_height, td->name_layout);
 			} else {
-				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				                 gtkblist->tipwindow, "tooltip",
-				                 TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
+				gtk_render_layout(context, cr,
+				                  TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                  current_height, td->name_layout);
 			}
 #else
 			if (dir == GTK_TEXT_DIR_RTL) {
@@ -3093,21 +3108,22 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 		if (td->layout) {
 #if GTK_CHECK_VERSION(3,0,0)
 			if (dir != GTK_TEXT_DIR_RTL) {
-				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				                 gtkblist->tipwindow, "tooltip",
-				                 TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height + td->name_height, td->layout);
+				gtk_render_layout(context, cr,
+				                  TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                  current_height + td->name_height,
+				                  td->layout);
 			} else {
-				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
-				                 gtkblist->tipwindow, "tooltip",
-				                 max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
-				                 current_height + td->name_height,
-				                 td->layout);
+				gtk_render_layout(context, cr,
+				                  max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                  current_height + td->name_height,
+				                  td->layout);
 			}
 #else
 			if (dir != GTK_TEXT_DIR_RTL) {
 				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				                 NULL, gtkblist->tipwindow, "tooltip",
-				                 TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height + td->name_height, td->layout);
+				                 TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                 current_height + td->name_height, td->layout);
 			} else {
 				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				                 NULL, gtkblist->tipwindow, "tooltip",
