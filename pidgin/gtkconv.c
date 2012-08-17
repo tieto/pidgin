@@ -171,6 +171,8 @@ static const GtkTargetEntry dnd_targets[] =
 	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
 };
 
+static GtkTargetList *webkit_dnd_targets = NULL;
+
 typedef struct {
 	GtkWidget *window;
 
@@ -5536,7 +5538,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	PurpleAccount *convaccount = purple_conversation_get_account(conv);
 	PurpleConnection *gc = purple_account_get_connection(convaccount);
 	PurplePluginProtocolInfo *prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc)) : NULL;
-	GdkAtom target = gtk_selection_data_get_target(sd);
 	const guchar *data = gtk_selection_data_get_data(sd);
 
 	if (info == PIDGIN_DRAG_BLIST_NODE)
@@ -5639,7 +5640,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, TRUE,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (target == gdk_atom_intern("text/uri-list", FALSE)) {
+	else if (info == WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST) {
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			pidgin_dnd_file_manage(sd, convaccount, purple_conversation_get_name(conv));
 		gtk_drag_finish(dc, TRUE,
@@ -5649,12 +5650,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
-
-static const GtkTargetEntry te[] =
-{
-	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, PIDGIN_DRAG_BLIST_NODE},
-	{"application/x-im-contact", 0, PIDGIN_DRAG_IM_CONTACT}
-};
 
 static PidginConversation *
 pidgin_conv_find_gtkconv(PurpleConversation * conv)
@@ -5765,6 +5760,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
+	GtkTargetList *targets;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		purple_conversation_set_ui_data(conv, gtkconv);
@@ -5813,33 +5809,45 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	/* Setup drag-and-drop */
-	gtk_drag_dest_set(pane,
-	                  GTK_DEST_DEFAULT_MOTION |
-	                  GTK_DEST_DEFAULT_DROP,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
-	gtk_drag_dest_set(pane,
-	                  GTK_DEST_DEFAULT_MOTION |
-	                  GTK_DEST_DEFAULT_DROP,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
-	gtk_drag_dest_set(gtkconv->webview, 0,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
+	gtk_drag_dest_set(pane, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+	                  NULL, 0, GDK_ACTION_COPY);
+	targets = gtk_target_list_new(dnd_targets, G_N_ELEMENTS(dnd_targets));
+	gtk_target_list_add(targets, gdk_atom_intern("text/uri-list", FALSE), 0,
+	                    WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST);
+	gtk_drag_dest_set_target_list(pane, targets);
 
-	gtk_drag_dest_set(gtkconv->entry, 0,
-	                  te, sizeof(te) / sizeof(GtkTargetEntry),
-	                  GDK_ACTION_COPY);
+	if (webkit_dnd_targets) {
+		targets = webkit_dnd_targets;
+	} else {
+		GtkTargetEntry *entries;
+		gint count;
+
+		targets = webkit_web_view_get_paste_target_list(WEBKIT_WEB_VIEW(gtkconv->webview));
+		entries = gtk_target_table_new_from_list(targets, &count);
+		targets = gtk_target_list_new(entries, count);
+		gtk_target_table_free(entries, count);
+
+		gtk_target_list_add_table(targets, dnd_targets, G_N_ELEMENTS(dnd_targets));
+		webkit_dnd_targets = targets;
+	}
+
+	gtk_drag_dest_set(gtkconv->webview, 0, NULL, 0, GDK_ACTION_COPY);
+	gtk_drag_dest_set_target_list(gtkconv->webview, targets);
+
+	gtk_drag_dest_set(gtkconv->entry, 0, NULL, 0, GDK_ACTION_COPY);
+	gtk_drag_dest_set_target_list(gtkconv->entry, targets);
 
 	g_signal_connect(G_OBJECT(pane), "button_press_event",
 	                 G_CALLBACK(ignore_middle_click), NULL);
-// TODO: this crashes with webkit, fix it
-//	g_signal_connect(G_OBJECT(pane), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-//	g_signal_connect(G_OBJECT(gtkconv->webview), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-//	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-//	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+	g_signal_connect(G_OBJECT(pane), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+#if 0
+	/* FIXME: WebKit confuses the dnd source when this is enabled */
+	g_signal_connect(G_OBJECT(gtkconv->webview), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "drag-data-received",
+	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+#endif
 
 	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
