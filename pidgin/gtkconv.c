@@ -339,7 +339,11 @@ static void
 conversation_entry_clear(PidginConversation *gtkconv)
 {
 	GtkWebView *webview = GTK_WEBVIEW(gtkconv->entry);
-	gtk_webview_load_html_string(webview, "");
+
+	//XXX: hotfix for not focused entry after sending a message
+	//gtk_webview_load_html_string(webview, "");
+	gtk_webview_load_html_string_with_selection(webview, "<div id='caret'></div>");
+
 #if 0
 	/* TODO WebKit */
 	gtk_source_undo_manager_begin_not_undoable_action(webview->undo_manager);
@@ -706,6 +710,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	conversation_entry_clear(gtkconv);
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
+	gtk_widget_grab_focus(gtkconv->entry); // XXX: doesn't work
 }
 
 static void

@@ -22,6 +22,8 @@
 #include "pidgin.h"
 #include "version.h"
 
+#include "gtk3compat.h"
+
 #include "theme-manager.h"
 
 #include "gtkblist.h"
