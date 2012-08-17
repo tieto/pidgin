@@ -16,6 +16,10 @@ version 2.10.7:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
 
+	Plugins:
+	* The Voice/Video Settings plugin supports using the sndio GStreamer
+	 backends. (Brad Smith) (#14414)
+
 version 2.10.6 (07/06/2012):
 	Pidgin:
 	* Fix a bug that requires a triple-click to open a conversation
@@ -105,10 +109,6 @@ version 2.10.2 (03/14/2012):
 	Plugins:
 	* The autoaccept plugin will no longer reset the preference for unknown
 	  buddies to "Auto Reject" in certain cases. (#14964)
-
-	Plugins:
-	* The Voice/Video Settings plugin supports using the sndio GStreamer
-	 backends. (Brad Smith) (#14414)
 
 version 2.10.1 (12/06/2011):
 	Finch:
