@@ -10,7 +10,9 @@ void ggp_status_setup(PurpleConnection *gc);
 void ggp_status_cleanup(PurpleConnection *gc);
 
 GList * ggp_status_types(PurpleAccount *account);
+int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message);
 const gchar * ggp_status_to_purplestatus(int status);
+const gchar * ggp_status_get_name(const gchar *purple_status);
 
 // own status
 

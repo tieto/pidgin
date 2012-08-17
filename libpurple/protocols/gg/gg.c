@@ -416,20 +416,13 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	PurpleNotifyUserInfo *user_info;
 	PurpleBuddy *buddy;
 	char *val, *who;
-	const gchar *status;
 
 	user_info = purple_notify_user_info_new();
 
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
-	status = ggp_status_to_purplestatus(atoi(val));
-	if (g_strcmp0(status, "freeforchat"))
-		//TODO: move to status.h or push to libpurple
-		status = _("Chatty");
-	else
-		status = purple_primitive_get_name_from_type(
-			purple_primitive_get_type_from_id(status));
-	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"),
+		ggp_status_get_name(ggp_status_to_purplestatus(atoi(val))));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
@@ -467,16 +460,16 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	 * Include a status message, if exists and buddy is in the blist.
 	 */
 	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
-	if (NULL != buddy) {
-		PurpleStatus *status;
-		const char *msg;
+	if (NULL != buddy)
+	{
+		gchar *msg;
 
-		status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
-		msg = purple_status_get_attr_string(status, "message");
-
-		if (msg != NULL) {
-			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
-		}
+		ggp_status_from_purplestatus(purple_presence_get_active_status(
+			purple_buddy_get_presence(buddy)), &msg);
+		if (msg != NULL)
+			purple_notify_user_info_add_pair_plaintext(user_info,
+				_("Message"), msg);
+		g_free(msg);
 	}
 
 	purple_notify_userinfo(gc, who, user_info, ggp_sr_close_cb, form);
@@ -1163,14 +1156,15 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 {
 	PurpleStatus *status;
 	char *tmp;
-	const char *msg, *name, *alias;
+	const char *name, *alias;
+	gchar *msg;
 
 	g_return_if_fail(b != NULL);
 
 	status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-	msg = purple_status_get_attr_string(status, "message");
 	name = purple_status_get_name(status);
 	alias = purple_buddy_get_alias(b);
+	ggp_status_from_purplestatus(status, &msg);
 
 	purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 
@@ -1182,6 +1176,7 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		} else {
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
+		g_free(msg);
 	/* We don't want to duplicate 'Status: Offline'. */
 	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);

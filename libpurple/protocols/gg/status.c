@@ -17,7 +17,6 @@ static inline ggp_status_session_data *
 ggp_status_get_ssdata(PurpleConnection *gc);
 
 static gchar * ggp_status_validate_description(const gchar* msg);
-static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message);
 
 ////
 
@@ -92,7 +91,7 @@ GList * ggp_status_types(PurpleAccount *account)
 	return types;
 }
 
-static int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
+int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 {
 	const char *status_id = purple_status_get_id(status);
 	const char *status_message =
@@ -161,6 +160,14 @@ const gchar * ggp_status_to_purplestatus(int status)
 			return purple_primitive_get_id_from_type(
 				PURPLE_STATUS_AVAILABLE);
 	}
+}
+
+const gchar * ggp_status_get_name(const gchar *purple_status)
+{
+	if (g_strcmp0(purple_status, "freeforchat") == 0)
+		return _("Chatty");
+	return purple_primitive_get_name_from_type(
+		purple_primitive_get_type_from_id(purple_status));
 }
 
 /*******************************************************************************
