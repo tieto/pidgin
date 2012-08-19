@@ -12,11 +12,13 @@ gboolean ggp_xml_get_string(const xmlnode *xml, gchar *childName, gchar **var)
 	if (childName != NULL)
 	{
 		xml = xmlnode_get_child(xml, childName);
-		g_return_val_if_fail(xml != NULL, FALSE);
+		if (xml == NULL)
+			return FALSE;
 	}
 	
 	str = xmlnode_get_data(xml);
-	g_return_val_if_fail(str != NULL, FALSE);
+	if (str == NULL)
+		return FALSE;
 	
 	*var = str;
 	return TRUE;
@@ -28,7 +30,8 @@ gboolean ggp_xml_get_bool(const xmlnode *xml, gchar *childName, gboolean *var)
 	gboolean succ;
 	
 	succ = ggp_xml_get_string(xml, childName, &str);
-	g_return_val_if_fail(succ, FALSE);
+	if (!succ)
+		return FALSE;
 	
 	*var = (strcmp(str, "true") == 0 ||
 		strcmp(str, "True") == 0 ||
@@ -46,7 +49,8 @@ gboolean ggp_xml_get_uint(const xmlnode *xml, gchar *childName, unsigned int *va
 	unsigned int val;
 	
 	succ = ggp_xml_get_string(xml, childName, &str);
-	g_return_val_if_fail(succ, FALSE);
+	if (!succ)
+		return FALSE;
 	
 	errno = 0;
 	val = strtoul(str, &endptr, 10);
@@ -100,4 +104,33 @@ void ggp_xmlnode_remove_children(xmlnode *xml)
 			xmlnode_free(child);
 		child = next;
 	}
+}
+
+unsigned int ggp_xml_child_count(xmlnode *xml, const gchar *childName)
+{
+	xmlnode *child;
+	unsigned int count = 0;
+	
+	g_return_val_if_fail(xml != NULL, 0);
+	
+	if (childName)
+	{
+		child = xmlnode_get_child(xml, childName);
+		while (child)
+		{
+			child = xmlnode_get_next_twin(child);
+			count++;
+		}
+	}
+	else
+	{
+		child = xml->child;
+		while (child)
+		{
+			child = child->next;
+			count++;
+		}
+	}
+	
+	return count;
 }

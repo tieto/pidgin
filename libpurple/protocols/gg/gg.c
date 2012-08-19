@@ -1670,6 +1670,21 @@ static void ggp_action_status_broadcasting(PurplePluginAction *action)
 	ggp_status_broadcasting_dialog((PurpleConnection *)action->context);
 }
 
+#include "pubdir-prpl.h"
+
+static void ggp_pubdir_debug_cb(PurpleConnection *gc, int records_count, const ggp_pubdir_record *records, void *user_data)
+{
+	purple_debug_info("gg", "ggp_action_debug_got: [%d]\n", records_count);
+}
+
+static void ggp_action_debug(PurplePluginAction *action)
+{
+	PurpleConnection *gc = action->context;
+	purple_debug_info("gg", "ggp_action_debug\n");
+	
+	ggp_pubdir_get_info(gc, 5110, ggp_pubdir_debug_cb, NULL);
+}
+
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -1695,6 +1710,9 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 
 	act = purple_plugin_action_new(_("Load buddylist from file..."),
 				     ggp_action_buddylist_load);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new("Debug action", ggp_action_debug);
 	m = g_list_append(m, act);
 
 	return m;

@@ -88,6 +88,8 @@ GGSOURCES = \
 	status.h \
 	servconn.c \
 	servconn.h \
+	pubdir-prpl.c \
+	pubdir-prpl.h \
 	oauth/oauth.c \
 	oauth/oauth.h \
 	oauth/oauth-parameter.c \

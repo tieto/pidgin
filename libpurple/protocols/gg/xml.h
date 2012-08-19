@@ -14,4 +14,6 @@ gboolean ggp_xml_set_uint(xmlnode *xml, gchar *childName, unsigned int val);
 
 void ggp_xmlnode_remove_children(xmlnode *xml);
 
+unsigned int ggp_xml_child_count(xmlnode *xml, const gchar *childName);
+
 #endif /* _GGP_XML_H */

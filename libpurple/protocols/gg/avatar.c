@@ -300,7 +300,7 @@ void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
 	
 	own_data->img = img;
 	
-	ggp_oauth_request(gc, ggp_avatar_own_got_token, img);
+	ggp_oauth_request(gc, ggp_avatar_own_got_token, img, NULL, NULL);
 }
 
 static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
