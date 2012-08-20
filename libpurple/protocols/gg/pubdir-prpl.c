@@ -33,6 +33,9 @@ static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, void *_uin);
 
+static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
+	int records_count, const ggp_pubdir_record *records, void *_uin);
+
 /******************************************************************************/
 
 void ggp_pubdir_record_free(ggp_pubdir_record *records, int count)
@@ -174,10 +177,6 @@ static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 			record->label = g_strdup(name);
 		else if (surname)
 			record->label = g_strdup(surname);
-		else
-			purple_debug_warning("gg",
-				"ggp_pubdir_get_info_got_data: "
-				"invalid record\n");
 		
 		if (g_strcmp0(record->label, ggp_uin_to_str(record->uin)) == 0)
 		{
@@ -301,4 +300,41 @@ static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	
 	purple_notify_userinfo(gc, ggp_uin_to_str(uin), info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
+}
+
+void ggp_pubdir_request_buddy_alias(PurpleConnection *gc, PurpleBuddy *buddy)
+{
+	uin_t uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
+
+	purple_debug_info("gg", "ggp_pubdir_request_buddy_alias: %u\n", uin);
+
+	ggp_pubdir_get_info(gc, uin, ggp_pubdir_request_buddy_alias_got, (void*)uin);
+}
+
+static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
+	int records_count, const ggp_pubdir_record *records, void *_uin)
+{
+	uin_t uin = (uin_t)_uin;
+	const gchar *alias;
+	
+	if (records_count < 0)
+	{
+		purple_debug_error("gg", "ggp_pubdir_request_buddy_alias_got: "
+			"couldn't get info for %u\n", uin);
+		return;
+	}
+	g_assert(uin == records[0].uin);
+	
+	alias = records[0].label;
+	if (!alias)
+	{
+		purple_debug_info("gg", "ggp_pubdir_request_buddy_alias_got: "
+			"public alias for %u is not available\n", uin);
+		return;
+	}
+
+	purple_debug_info("gg", "ggp_pubdir_request_buddy_alias_got: "
+		"public alias for %u is \"%s\"\n", uin, alias);
+	
+	serv_got_alias(gc, ggp_uin_to_str(uin), alias);
 }

@@ -51,6 +51,7 @@
 #include "multilogon.h"
 #include "status.h"
 #include "servconn.h"
+#include "pubdir-prpl.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -1463,6 +1464,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 		ggp_status_fake_to_self(gc);
 	
 	ggp_roster_add_buddy(gc, buddy, group, message);
+	ggp_pubdir_request_buddy_alias(gc, buddy);
 }
 
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
@@ -1726,8 +1728,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* send_attention */
 	NULL,				/* get_attention_types */
 	ggp_get_account_text_table,	/* get_account_text_table */
-	NULL,                           /* initiate_media */
-	NULL,                            /* can_do_media */
+	NULL,				/* initiate_media */
+	NULL,				/* can_do_media */
 	NULL,				/* get_moods */
 	NULL,				/* set_public_alias */
 	NULL				/* get_public_alias */

@@ -26,5 +26,6 @@ void ggp_pubdir_get_info(PurpleConnection *gc, uin_t uin,
 	ggp_pubdir_request_cb cb, void *user_data);
 
 void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name);
+void ggp_pubdir_request_buddy_alias(PurpleConnection *gc, PurpleBuddy *buddy);
 
 #endif /* _GGP_PUBDIR_PRPL_H */
