@@ -15,8 +15,12 @@ typedef struct
 {
 	uin_t uin;
 	gchar *label;
+	gchar *nickname;
+	gchar *first_name;
+	gchar *last_name;
 	ggp_pubdir_gender gender;
 	gchar *city;
+	unsigned int province;
 	time_t birth;
 	unsigned int age;
 } ggp_pubdir_record;
@@ -34,5 +38,7 @@ void ggp_pubdir_request_buddy_alias(PurpleConnection *gc, PurpleBuddy *buddy);
 
 void ggp_pubdir_search(PurpleConnection *gc,
 	const ggp_pubdir_search_form *form);
+
+void ggp_pubdir_set_info(PurpleConnection *gc);
 
 #endif /* _GGP_PUBDIR_PRPL_H */

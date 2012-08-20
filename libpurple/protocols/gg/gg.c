@@ -1301,6 +1301,11 @@ static void ggp_action_search(PurplePluginAction *action)
 	ggp_pubdir_search((PurpleConnection *)action->context, NULL);
 }
 
+static void ggp_action_set_info(PurplePluginAction *action)
+{
+	ggp_pubdir_set_info((PurpleConnection *)action->context);
+}
+
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -1310,12 +1315,18 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 		ggp_action_chpass);
 	m = g_list_append(m, act);
 
+	act = purple_plugin_action_new(_("Show status only for buddies"),
+		ggp_action_status_broadcasting);
+	m = g_list_append(m, act);
+
+	m = g_list_append(m, NULL);
+
 	act = purple_plugin_action_new(_("Find buddies..."),
 		ggp_action_search);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Show status only for buddies"),
-		ggp_action_status_broadcasting);
+	act = purple_plugin_action_new(_("Set User Info"),
+		ggp_action_set_info);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
