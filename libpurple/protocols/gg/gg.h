@@ -53,7 +53,6 @@ typedef struct {
 	struct gg_session *session;
 	guint inpa;
 	GList *chats;
-	GGPSearches *searches;
 	int chats_count;
 
 	ggp_image_connection_data image_data;

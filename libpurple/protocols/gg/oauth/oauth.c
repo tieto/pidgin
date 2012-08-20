@@ -61,7 +61,8 @@ static char *gg_oauth_generate_signature(const char *method, const char *url, co
 	char *text, *key, *res;
 	gchar *url_e, *request_e, *consumer_secret_e, *token_secret_e;
 
-	url_e = g_uri_escape_string(url, NULL, FALSE);
+	url_e = g_uri_escape_string(url, "?", FALSE);
+	g_strdelimit(url_e, "?", '\0');
 	request_e = g_uri_escape_string(request, NULL, FALSE);
 	text = g_strdup_printf("%s&%s&%s", method, url_e, request_e);
 	g_free(url_e);

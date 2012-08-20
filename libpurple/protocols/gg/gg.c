@@ -168,143 +168,6 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 			gc);
 }
 
-/* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
-
-static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPSearchForm *form = user_data;
-	guint32 seq;
-
-	form->page_number++;
-
-	ggp_search_remove(info->searches, form->seq);
-	purple_debug_info("gg", "ggp_callback_show_next(): Removed seq %u\n",
-		form->seq);
-
-	seq = ggp_search_start(gc, form);
-	ggp_search_add(info->searches, seq, form);
-	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u\n",
-		seq);
-}
-
-static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data)
-{
-	purple_blist_request_add_buddy(purple_connection_get_account(gc),
-				     g_list_nth_data(row, 0), NULL, NULL);
-}
-
-static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data)
-{
-	PurpleAccount *account;
-	PurpleConversation *conv;
-	char *name;
-
-	account = purple_connection_get_account(gc);
-
-	name = g_list_nth_data(row, 0);
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
-	purple_conversation_present(conv);
-}
-
-static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPSearchForm *form;
-	guint32 seq;
-
-	form = ggp_search_form_new(GGP_SEARCH_TYPE_FULL);
-
-	form->user_data = info;
-	form->lastname = g_strdup(
-		purple_request_fields_get_string(fields, "lastname"));
-	form->firstname = g_strdup(
-		purple_request_fields_get_string(fields, "firstname"));
-	form->nickname = g_strdup(
-		purple_request_fields_get_string(fields, "nickname"));
-	form->city = g_strdup(
-		purple_request_fields_get_string(fields, "city"));
-	form->birthyear = g_strdup(
-		purple_request_fields_get_string(fields, "year"));
-
-	switch (purple_request_fields_get_choice(fields, "gender")) {
-		case 1:
-			form->gender = g_strdup(GG_PUBDIR50_GENDER_MALE);
-			break;
-		case 2:
-			form->gender = g_strdup(GG_PUBDIR50_GENDER_FEMALE);
-			break;
-		default:
-			form->gender = NULL;
-			break;
-	}
-
-	form->active = purple_request_fields_get_bool(fields, "active")
-				   ? g_strdup(GG_PUBDIR50_ACTIVE_TRUE) : NULL;
-
-	seq = ggp_search_start(gc, form);
-	ggp_search_add(info->searches, seq, form);
-	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u\n",
-		seq);
-}
-
-static void ggp_find_buddies(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_string_new("lastname",
-			_("Last name"), NULL, FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("firstname",
-			_("First name"), NULL, FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("nickname",
-			_("Nickname"), NULL, FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("city",
-			_("City"), NULL, FALSE);
-	purple_request_field_string_set_masked(field, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("year",
-			_("Year of birth"), NULL, FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_choice_new("gender", _("Gender"), 0);
-	purple_request_field_choice_add(field, _("Male or female"));
-	purple_request_field_choice_add(field, _("Male"));
-	purple_request_field_choice_add(field, _("Female"));
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_bool_new("active",
-			_("Only online"), FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	purple_request_fields(gc,
-		_("Find buddies"),
-		_("Find buddies"),
-		_("Please, enter your search criteria below"),
-		fields,
-		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
-		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL,
-		gc);
-}
-
 /* ----- CONFERENCES ---------------------------------------------------- */
 
 static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
@@ -398,157 +261,6 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 /* ---------------------------------------------------------------------- */
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
-
-
-static void ggp_sr_close_cb(gpointer user_data)
-{
-	GGPSearchForm *form = user_data;
-	GGPInfo *info = form->user_data;
-
-	ggp_search_remove(info->searches, form->seq);
-	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u\n",
-		form->seq);
-	ggp_search_form_destroy(form);
-}
-
-static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
-				   GGPSearchForm *form)
-{
-	PurpleNotifySearchResults *results;
-	PurpleNotifySearchColumn *column;
-	int res_count;
-	int start;
-	int i;
-
-	g_return_if_fail(form != NULL);
-
-	res_count = gg_pubdir50_count(req);
-	res_count = (res_count > PUBDIR_RESULTS_MAX) ? PUBDIR_RESULTS_MAX : res_count;
-	if (form->page_size == 0)
-		form->page_size = res_count;
-
-	results = purple_notify_searchresults_new();
-
-	if (results == NULL) {
-		purple_debug_error("gg", "ggp_pubdir_reply_handler: "
-				 "Unable to display the search results.\n");
-		purple_notify_error(gc, NULL,
-				  _("Unable to display the search results."),
-				  NULL);
-		if (form->window == NULL)
-			ggp_sr_close_cb(form);
-		return;
-	}
-
-	column = purple_notify_searchresults_column_new(_("UIN"));
-	purple_notify_searchresults_column_add(results, column);
-
-	column = purple_notify_searchresults_column_new(_("First Name"));
-	purple_notify_searchresults_column_add(results, column);
-
-	column = purple_notify_searchresults_column_new(_("Nickname"));
-	purple_notify_searchresults_column_add(results, column);
-
-	column = purple_notify_searchresults_column_new(_("City"));
-	purple_notify_searchresults_column_add(results, column);
-
-	column = purple_notify_searchresults_column_new(_("Birth Year"));
-	purple_notify_searchresults_column_add(results, column);
-
-	purple_debug_info("gg", "Going with %d entries\n", res_count);
-
-	start = (int)ggp_str_to_uin(gg_pubdir50_get(req, 0, GG_PUBDIR50_START));
-	purple_debug_info("gg", "start = %d\n", start);
-
-	for (i = 0; i < res_count; i++) {
-		GList *row = NULL;
-		char *birth = ggp_search_get_result(req, i, GG_PUBDIR50_BIRTHYEAR);
-
-		/* TODO: Status will be displayed as an icon. */
-		/* row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_STATUS)); */
-		row = g_list_append(row, ggp_search_get_result(req, i,
-							GG_PUBDIR50_UIN));
-		row = g_list_append(row, ggp_search_get_result(req, i,
-							GG_PUBDIR50_FIRSTNAME));
-		row = g_list_append(row, ggp_search_get_result(req, i,
-							GG_PUBDIR50_NICKNAME));
-		row = g_list_append(row, ggp_search_get_result(req, i,
-							GG_PUBDIR50_CITY));
-		row = g_list_append(row,
-			(birth && strncmp(birth, "0", 1)) ? birth : g_strdup("-"));
-
-		purple_notify_searchresults_row_add(results, row);
-	}
-
-	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_CONTINUE,
-					     ggp_callback_show_next);
-	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_ADD,
-					     ggp_callback_add_buddy);
-	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_IM,
-					     ggp_callback_im);
-
-	if (form->window == NULL) {
-		void *h = purple_notify_searchresults(gc,
-				_("Gadu-Gadu Public Directory"),
-				_("Search results"), NULL, results,
-				(PurpleNotifyCloseCallback)ggp_sr_close_cb,
-				form);
-
-		if (h == NULL) {
-			purple_debug_error("gg", "ggp_pubdir_reply_handler: "
-					 "Unable to display the search results.\n");
-			purple_notify_error(gc, NULL,
-					  _("Unable to display the search results."),
-					  NULL);
-			return;
-		}
-
-		form->window = h;
-	} else {
-		purple_notify_searchresults_new_rows(gc, results, form->window);
-	}
-}
-
-static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPSearchForm *form;
-	int res_count;
-	guint32 seq;
-
-	seq = gg_pubdir50_seq(req);
-	form = ggp_search_get(info->searches, seq);
-	purple_debug_info("gg",
-		"ggp_pubdir_reply_handler(): seq %u --> form %p\n", seq, form);
-	/*
-	 * this can happen when user will request more results
-	 * and close the results window before they arrive.
-	 */
-	g_return_if_fail(form != NULL);
-
-	res_count = gg_pubdir50_count(req);
-	if (res_count < 1) {
-		purple_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
-		purple_notify_error(gc, NULL,
-			_("No matching users found"),
-			_("There are no users matching your search criteria."));
-		if (form->window == NULL)
-			ggp_sr_close_cb(form);
-		return;
-	}
-
-	switch (form->search_type) {
-		case GGP_SEARCH_TYPE_INFO:
-			purple_debug_fatal("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Unexpected info\n");
-			break;
-		case GGP_SEARCH_TYPE_FULL:
-			ggp_pubdir_handle_full(gc, req, form);
-			break;
-		default:
-			purple_debug_warning("gg", "Unknown search_type!\n");
-			break;
-	}
-}
 
 /**
  * Dispatch a message received from a buddy.
@@ -861,9 +573,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_STATUS60:
 			ggp_status_got_others(gc, ev);
 			break;
-		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
-			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
-			break;
 		case GG_EVENT_TYPING_NOTIFICATION:
 			ggp_typing_notification_handler(gc, ev->event.typing_notification.uin,
 				ev->event.typing_notification.length);
@@ -1173,7 +882,6 @@ static void ggp_login(PurpleAccount *account)
 	info->session = NULL;
 	info->chats = NULL;
 	info->chats_count = 0;
-	info->searches = ggp_search_new();
 	
 	purple_connection_set_protocol_data(gc, info);
 
@@ -1287,7 +995,6 @@ static void ggp_close(PurpleConnection *gc)
 		 */
 		purple_notify_close_with_handle(gc);
 
-		ggp_search_destroy(info->searches);
 		ggp_image_cleanup(gc);
 		ggp_avatar_cleanup(gc);
 		ggp_roster_cleanup(gc);
@@ -1589,19 +1296,9 @@ static void ggp_action_status_broadcasting(PurplePluginAction *action)
 	ggp_status_broadcasting_dialog((PurpleConnection *)action->context);
 }
 
-#include "pubdir-prpl.h"
-
-static void ggp_pubdir_debug_cb(PurpleConnection *gc, int records_count, const ggp_pubdir_record *records, void *user_data)
+static void ggp_action_search(PurplePluginAction *action)
 {
-	purple_debug_info("gg", "ggp_action_debug_got: [%d]\n", records_count);
-}
-
-static void ggp_action_debug(PurplePluginAction *action)
-{
-	PurpleConnection *gc = action->context;
-	purple_debug_info("gg", "ggp_action_debug\n");
-	
-	ggp_pubdir_get_info(gc, 5110, ggp_pubdir_debug_cb, NULL);
+	ggp_pubdir_search((PurpleConnection *)action->context, NULL);
 }
 
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
@@ -1614,7 +1311,7 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Find buddies..."),
-				     ggp_find_buddies);
+		ggp_action_search);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Show status only for buddies"),
@@ -1629,9 +1326,6 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 
 	act = purple_plugin_action_new(_("Load buddylist from file..."),
 				     ggp_action_buddylist_load);
-	m = g_list_append(m, act);
-
-	act = purple_plugin_action_new("Debug action", ggp_action_debug);
 	m = g_list_append(m, act);
 
 	return m;

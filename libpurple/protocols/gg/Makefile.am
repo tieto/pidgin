@@ -54,8 +54,6 @@ GGSOURCES = \
 	utils.c \
 	confer.h \
 	confer.c \
-	search.h \
-	search.c \
 	buddylist.h \
 	buddylist.c \
 	gg.h \
