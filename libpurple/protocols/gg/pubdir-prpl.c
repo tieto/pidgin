@@ -5,6 +5,7 @@
 #include "oauth/oauth-purple.h"
 #include "xml.h"
 #include "utils.h"
+#include "status.h"
 
 typedef struct
 {
@@ -28,6 +29,9 @@ static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 	gpointer user_data, const gchar *url_text, gsize len,
 	const gchar *error_message);
+
+static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
+	int records_count, const ggp_pubdir_record *records, void *_uin);
 
 /******************************************************************************/
 
@@ -171,11 +175,14 @@ static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 		else if (surname)
 			record->label = g_strdup(surname);
 		else
-		{
 			purple_debug_warning("gg",
 				"ggp_pubdir_get_info_got_data: "
 				"invalid record\n");
-			record->label = g_strdup("");
+		
+		if (g_strcmp0(record->label, ggp_uin_to_str(record->uin)) == 0)
+		{
+			g_free(record->label);
+			record->label = NULL;
 		}
 		
 		if (gender == 1)
@@ -192,10 +199,8 @@ static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 			record->birth = birth_g.tv_sec;
 		//TODO: calculate age from birth
 		
-		purple_debug_info("gg", "ggp_pubdir_get_info_got_data: [%d][%s][%s][%d]\n",
-			record->uin, record->label, record->city, record->gender);
-		purple_debug_info("gg", "ggp_pubdir_get_info_got_data: birth[%s][%lu]\n",
-			birth_s, birth);
+		purple_debug_info("gg", "ggp_pubdir_get_info_got_data: [%d][%s][%s][%d][%lu]\n",
+			record->uin, record->label, record->city, record->gender, record->birth);
 		
 		g_free(label);
 		g_free(nick);
@@ -210,4 +215,90 @@ static void ggp_pubdir_get_info_got_data(PurpleUtilFetchUrlData *url_data,
 	
 	ggp_pubdir_request_free(request);
 	ggp_pubdir_record_free(records, record_count);
+}
+
+void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name)
+{
+	uin_t uin = ggp_str_to_uin(name);
+
+	purple_debug_info("gg", "ggp_pubdir_get_info_prpl: %u\n", uin);
+
+	ggp_pubdir_get_info(gc, uin, ggp_pubdir_get_info_prpl_got, (void*)uin);
+}
+
+static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
+	int records_count, const ggp_pubdir_record *records, void *_uin)
+{
+	uin_t uin = (uin_t)_uin;
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	const ggp_pubdir_record *record = &records[0];
+	PurpleBuddy *buddy;
+	
+	if (records_count < 0)
+	{
+		purple_debug_error("gg", "ggp_pubdir_get_info_prpl_got: "
+			"couldn't get info for %u\n", uin);
+		purple_notify_user_info_add_pair_plaintext(info, NULL,
+			_("Cannot get user information"));
+		purple_notify_userinfo(gc, ggp_uin_to_str(uin), info,
+			NULL, NULL);
+		purple_notify_user_info_destroy(info);
+		return;
+	}
+	
+	purple_debug_info("gg", "ggp_pubdir_get_info_prpl_got: %u\n", uin);
+	g_assert(uin == record->uin);
+	
+	buddy = purple_find_buddy(purple_connection_get_account(gc),
+		ggp_uin_to_str(uin));
+	if (buddy)
+	{
+		const char *alias;
+		PurpleStatus *status;
+		gchar *status_message;
+		
+		alias = purple_buddy_get_alias_only(buddy);
+		if (alias)
+			purple_notify_user_info_add_pair_plaintext(info,
+				_("Alias"), alias);
+		
+		status = purple_presence_get_active_status(
+			purple_buddy_get_presence(buddy));
+		ggp_status_from_purplestatus(status, &status_message);
+		purple_notify_user_info_add_pair_plaintext(info, _("Status"),
+			purple_status_get_name(status));
+		if (status_message)
+			purple_notify_user_info_add_pair_plaintext(info,
+				_("Message"), status_message);
+	}
+	
+	if (record->label)
+		purple_notify_user_info_add_pair_plaintext(info, _("Name"),
+			record->label);
+	if (record->gender != GGP_PUBDIR_GENDER_UNSPECIFIED)
+		purple_notify_user_info_add_pair_plaintext(info, _("Gender"),
+			record->gender == GGP_PUBDIR_GENDER_FEMALE ?
+			_("Female") : _("Male"));
+	if (record->city)
+		purple_notify_user_info_add_pair_plaintext(info, _("City"),
+			record->city);
+	if (record->birth)
+	{
+		GDate date;
+		gchar buff[15];
+		g_date_set_time(&date, record->birth);
+		g_date_strftime(buff, sizeof(buff), "%Y-%m-%d", &date);
+		purple_notify_user_info_add_pair_plaintext(info, _("Birthday"),
+			buff);
+	}
+	else if (record->age)
+	{
+		gchar *age_s = g_strdup_printf("%d", record->age);
+		purple_notify_user_info_add_pair_plaintext(info, _("Age"),
+			age_s);
+		g_free(age_s);
+	}
+	
+	purple_notify_userinfo(gc, ggp_uin_to_str(uin), info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
 }

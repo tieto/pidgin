@@ -16,7 +16,7 @@ typedef struct
 	} gender;
 	gchar *city;
 	time_t birth;
-	int age;
+	unsigned int age;
 } ggp_pubdir_record;
 
 typedef void (*ggp_pubdir_request_cb)(PurpleConnection *gc, int records_count,
@@ -24,5 +24,7 @@ typedef void (*ggp_pubdir_request_cb)(PurpleConnection *gc, int records_count,
 
 void ggp_pubdir_get_info(PurpleConnection *gc, uin_t uin,
 	ggp_pubdir_request_cb cb, void *user_data);
+
+void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name);
 
 #endif /* _GGP_PUBDIR_PRPL_H */

@@ -410,73 +410,6 @@ static void ggp_sr_close_cb(gpointer user_data)
 	ggp_search_form_destroy(form);
 }
 
-static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
-				   GGPSearchForm *form)
-{
-	PurpleNotifyUserInfo *user_info;
-	PurpleBuddy *buddy;
-	char *val, *who;
-
-	user_info = purple_notify_user_info_new();
-
-
-	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
-	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"),
-		ggp_status_get_name(ggp_status_to_purplestatus(atoi(val))));
-	g_free(val);
-
-	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html(user_info, _("UIN"), who);
-
-	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html(user_info, _("First Name"), val);
-	g_free(val);
-
-	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html(user_info, _("Nickname"), val);
-	g_free(val);
-
-	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html(user_info, _("City"), val);
-	g_free(val);
-
-	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
-	if (strncmp(val, "0", 1)) {
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html(user_info, _("Birth Year"), val);
-	}
-	g_free(val);
-
-	/*
-	 * Include a status message, if exists and buddy is in the blist.
-	 */
-	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
-	if (NULL != buddy)
-	{
-		gchar *msg;
-
-		ggp_status_from_purplestatus(purple_presence_get_active_status(
-			purple_buddy_get_presence(buddy)), &msg);
-		if (msg != NULL)
-			purple_notify_user_info_add_pair_plaintext(user_info,
-				_("Message"), msg);
-		g_free(msg);
-	}
-
-	purple_notify_userinfo(gc, who, user_info, ggp_sr_close_cb, form);
-	g_free(who);
-	purple_notify_user_info_destroy(user_info);
-}
-
 static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
@@ -605,7 +538,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 
 	switch (form->search_type) {
 		case GGP_SEARCH_TYPE_INFO:
-			ggp_pubdir_handle_info(gc, req, form);
+			purple_debug_fatal("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Unexpected info\n");
 			break;
 		case GGP_SEARCH_TYPE_FULL:
 			ggp_pubdir_handle_full(gc, req, form);
@@ -1517,22 +1450,6 @@ static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, Purp
 	return 1; // wait 1 second before another notification
 }
 
-static void ggp_get_info(PurpleConnection *gc, const char *name)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPSearchForm *form;
-	guint32 seq;
-
-	form = ggp_search_form_new(GGP_SEARCH_TYPE_INFO);
-
-	form->user_data = info;
-	form->uin = g_strdup(name);
-
-	seq = ggp_search_start(gc, form);
-	ggp_search_add(info->searches, seq, form);
-	purple_debug_info("gg", "ggp_get_info(): Added seq %u", seq);
-}
-
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -1761,7 +1678,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_send_im,			/* send_im */
 	NULL,				/* set_info */
 	ggp_send_typing,		/* send_typing */
-	ggp_get_info,			/* get_info */
+	ggp_pubdir_get_info_prpl,	/* get_info */
 	ggp_status_set_purplestatus,	/* set_away */
 	NULL,				/* set_idle */
 	NULL,				/* change_passwd */
