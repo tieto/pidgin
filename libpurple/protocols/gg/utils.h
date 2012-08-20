@@ -1,9 +1,16 @@
-/**
- * @file utils.h
+/* purple
  *
- * purple
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
- * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
+ * Rewritten from scratch during Google Summer of Code 2012
+ * by Tomek Wasilczyk (http://www.wasilczyk.pl).
+ *
+ * Previously implemented by:
+ *  - Arkadiusz Miskiewicz <misiek@pld.org.pl> - first implementation (2001);
+ *  - Bartosz Oler <bartosz@bzimage.us> - reimplemented during GSoC 2005;
+ *  - Krzysztof Klinikowski <grommasher@gmail.com> - some parts (2009-2011).
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
