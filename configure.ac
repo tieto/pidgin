@@ -816,6 +816,19 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 dnl #######################################################################
+dnl # Check for zlib (required)
+dnl #######################################################################
+
+PKG_CHECK_MODULES(ZLIB, [zlib >= 1.2.0], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have zlib >= 1.2.0 development headers installed to build.
+])])
+
+AC_SUBST(ZLIB_CFLAGS)
+AC_SUBST(ZLIB_LIBS)
+
+dnl #######################################################################
 dnl # GConf schemas
 dnl #######################################################################
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
@@ -1069,13 +1082,14 @@ AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile 
 AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
+GADU_LIBGADU_VERSION=1.11.2
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
 	gadu_manual_check="yes"
 else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_VERSION], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1107,28 +1121,7 @@ if test "x$gadu_libs" = "xyes"; then
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
 	]])], [
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
-#endif
-		]])], [
-			AC_MSG_RESULT(yes)
-			AC_DEFINE([HAVE_LIBGADU], [1],
-				[Define to 1 if you have libgadu.])
-		], [
-			AC_MSG_RESULT(no)
-			echo
-			echo
-			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.11.0 or newer."
-			echo "Then rerun this ./configure"
-			echo
-			echo "Falling back to using our own copy of libgadu"
-			echo
-			GADU_LIBS=""
-			GADU_CFLAGS=""
-			gadu_libs=no
-		])
+		AC_MSG_RESULT(yes)
 	], [
 		AC_MSG_RESULT(no)
 		echo
@@ -1147,6 +1140,35 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
 fi
 
+if test "x$gadu_libs" = "xyes" -a "x$gadu_manual_check" = "xyes"; then
+	AC_MSG_CHECKING(for supplied libgadu compatibility)
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
+
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
+#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
+#error "Your libgadu version is too old."
+#endif
+	]])], [
+		AC_MSG_RESULT(yes)
+	], [
+		AC_MSG_RESULT(no)
+		echo
+		echo "Your supplied copy of libgadu is too old."
+		echo "Install version $GADU_LIBGADU_VERSION or newer."
+		echo "Then rerun this ./configure"
+		echo
+		echo "Falling back to using our own copy of libgadu"
+		echo
+		GADU_LIBS=""
+		GADU_CFLAGS=""
+		gadu_libs=no
+	])
+
+	CPPFLAGS="$CPPFLAGS_save"
+fi
+
+AM_CONDITIONAL(HAVE_LIBGADU, test "x$gadu_libs" = "xyes")
 AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 
 if test "x$gadu_libs" = "x"; then
@@ -1155,6 +1177,7 @@ fi
 
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
+AC_SUBST(GADU_LIBGADU_VERSION)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")

@@ -328,6 +328,111 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 	return result;
 }
 
+int wpurple_input_pipe(int pipefd[2])
+{
+	SOCKET sock_server, sock_client, sock_server_established;
+	struct sockaddr_in saddr_in;
+	struct sockaddr * const saddr_p = (struct sockaddr *)&saddr_in;
+	int saddr_len = sizeof(struct sockaddr_in);
+	u_long arg;
+	fd_set select_set;
+	char succ = 1;
+
+	sock_server = sock_client = sock_server_established = INVALID_SOCKET;
+
+	purple_debug_misc("wpurple", "wpurple_input_pipe(0x%x[%d,%d])\n",
+		(unsigned int)pipefd, pipefd[0], pipefd[1]);
+
+	/* create client and passive server sockets */
+	sock_server = socket(AF_INET, SOCK_STREAM, 0);
+	sock_client = socket(AF_INET, SOCK_STREAM, 0);
+	succ = (sock_server != INVALID_SOCKET || sock_client != INVALID_SOCKET);
+
+	/* set created sockets into nonblocking mode */
+	arg = 1;
+	succ = (succ &&
+		ioctlsocket(sock_server, FIONBIO, &arg) != SOCKET_ERROR);
+	arg = 1;
+	succ = (succ &&
+		ioctlsocket(sock_client, FIONBIO, &arg) != SOCKET_ERROR);
+
+	/* listen on server socket */
+	memset(&saddr_in, 0, saddr_len);
+	saddr_in.sin_family = AF_INET;
+	saddr_in.sin_port = 0;
+	saddr_in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	succ = (succ &&
+		bind(sock_server, saddr_p, saddr_len) != SOCKET_ERROR &&
+		listen(sock_server, 1) != SOCKET_ERROR &&
+		getsockname(sock_server, saddr_p, &saddr_len) != SOCKET_ERROR);
+
+	/* request a connection from client to server socket */
+	succ = (succ &&
+		connect(sock_client, saddr_p, saddr_len) == SOCKET_ERROR &&
+		WSAGetLastError() == WSAEWOULDBLOCK);
+
+	/* ensure, that server socket is readable */
+	if (succ)
+	{
+		FD_ZERO(&select_set);
+		FD_SET(sock_server, &select_set);
+	}
+	succ = (succ &&
+		select(0, &select_set, NULL, NULL, NULL) != SOCKET_ERROR &&
+		FD_ISSET(sock_server, &select_set));
+
+	/* accept (establish) connection from client socket */
+	if (succ)
+	{
+		sock_server_established =
+			accept(sock_server, saddr_p, &saddr_len);
+		succ = (sock_server_established != INVALID_SOCKET);
+	}
+
+	/* ensure, that client socket is writable */
+	if (succ)
+	{
+		FD_ZERO(&select_set);
+		FD_SET(sock_client, &select_set);
+	}
+	succ = (succ &&
+		select(0, NULL, &select_set, NULL, NULL) != SOCKET_ERROR &&
+		FD_ISSET(sock_client, &select_set));
+
+	/* set sockets into blocking mode */
+	arg = 0;
+	succ = (succ &&
+		ioctlsocket(sock_client, FIONBIO, &arg) != SOCKET_ERROR);
+	arg = 0;
+	succ = (succ &&
+		ioctlsocket(sock_server_established, FIONBIO, &arg)
+			!= SOCKET_ERROR);
+
+	/* we don't need (passive) server socket anymore */
+	if (sock_server != INVALID_SOCKET)
+		closesocket(sock_server);
+
+	if (succ)
+	{
+		purple_debug_misc("wpurple",
+			"wpurple_input_pipe created pipe [%d,%d]\n",
+			sock_client, sock_server_established);
+		pipefd[0] = sock_client; /* for reading */
+		pipefd[1] = sock_server_established; /* for writing */
+		return 0;
+	}
+	else
+	{
+		purple_debug_error("wpurple", "wpurple_input_pipe failed\n");
+		if (sock_client != INVALID_SOCKET)
+			closesocket(sock_client);
+		if (sock_server_established != INVALID_SOCKET)
+			closesocket(sock_server_established);
+		errno = EMFILE;
+		return -1;
+	}
+}
+
 void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;

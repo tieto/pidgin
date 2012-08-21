@@ -234,7 +234,7 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 	/* Kopiuj */
 
 	for (i = 0; he->h_addr_list[i] != NULL; i++)
-		memcpy(&((*result)[i]), he->h_addr_list[0], sizeof(struct in_addr));
+		memcpy(&((*result)[i]), he->h_addr_list[i], sizeof(struct in_addr));
 
 	(*result)[i].s_addr = INADDR_NONE;
 
@@ -249,6 +249,9 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 /**
  * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
  *
+ * \note Użycie logowania w tej funkcji może mieć negatywny wpływ na
+ * aplikacje jednowątkowe korzystające.
+ *
  * \param fd Deskryptor
  * \param hostname Nazwa serwera
  *
@@ -260,11 +263,10 @@ static int gg_resolver_run(int fd, const char *hostname)
 	int addr_count;
 	int res = 0;
 
-	gg_debug(GG_DEBUG_MISC, "// gg_resolver_run(%d, %s)\n", fd, hostname);
-
 	if ((addr_ip[0].s_addr = inet_addr(hostname)) == INADDR_NONE) {
 		if (gg_gethostbyname_real(hostname, &addr_list, &addr_count, 1) == -1) {
 			addr_list = addr_ip;
+			addr_count = 0;
 			/* addr_ip[0] już zawiera INADDR_NONE */
 		}
 	} else {
@@ -272,8 +274,6 @@ static int gg_resolver_run(int fd, const char *hostname)
 		addr_ip[1].s_addr = INADDR_NONE;
 		addr_count = 1;
 	}
-
-	gg_debug(GG_DEBUG_MISC, "// gg_resolver_run() count = %d\n", addr_count);
 
 	if (write(fd, addr_list, (addr_count + 1) * sizeof(struct in_addr)) != (addr_count + 1) * sizeof(struct in_addr))
 		res = -1;
@@ -375,7 +375,7 @@ static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostnam
 
 		status = (gg_resolver_run(pipes[1], hostname) == -1) ? 1 : 0;
 
-#ifdef GG_CONFIG_HAVE__EXIT
+#ifdef HAVE__EXIT
 		_exit(status);
 #else
 		exit(status);

@@ -32,7 +32,7 @@
 #include <string.h>
 
 #include "libgadu.h"
-#include "libgadu-debug.h"
+#include "debug.h"
 
 /**
  * Poziom rejestracji informacji odpluskwiających. Zmienna jest maską bitową

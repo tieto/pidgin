@@ -91,6 +91,16 @@ purple_input_get_error(int fd, int *error)
 	}
 }
 
+int
+purple_input_pipe(int pipefd[2])
+{
+#ifdef _WIN32
+	return wpurple_input_pipe(pipefd);
+#else
+	return pipe(pipefd);
+#endif
+}
+
 void
 purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops)
 {
