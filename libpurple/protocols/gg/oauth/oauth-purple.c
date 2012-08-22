@@ -168,7 +168,7 @@ static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
 	request = g_strdup_printf(
 		"POST /authorize HTTP/1.1\r\n"
 		"Host: login.gadu-gadu.pl\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %zu\r\n"
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"\r\n%s",
 		strlen(request_data), request_data);

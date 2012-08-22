@@ -197,9 +197,8 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 	PurpleRequestField *field, *field_password;
 	ggp_account_register_data *register_data = _register_data;
 	
-	purple_debug_info("gg", "ggp_account_register_dialog(%x, %x, %x)\n",
-		(unsigned int)gc, (unsigned int)token,
-		(unsigned int)_register_data);
+	purple_debug_info("gg", "ggp_account_register_dialog(%p, %p, %p)\n",
+		gc, token, _register_data);
 	if (!token)
 	{
 		ggp_account_register_completed(register_data, FALSE);
@@ -269,8 +268,8 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 static void ggp_account_register_dialog_cancel(
 	ggp_account_register_data *register_data, PurpleRequestFields *fields)
 {
-	purple_debug_info("gg", "ggp_account_register_dialog_cancel(%x, %x)\n",
-		(unsigned int)register_data, (unsigned int)fields);
+	purple_debug_info("gg", "ggp_account_register_dialog_cancel(%p, %p)\n",
+		register_data, fields);
 
 	ggp_account_register_completed(register_data, FALSE);
 }
@@ -280,8 +279,8 @@ static void ggp_account_register_dialog_ok(
 {
 	struct gg_http *h;
 
-	purple_debug_misc("gg", "ggp_account_register_dialog_ok(%x, %x)\n",
-		(unsigned int)register_data, (unsigned int)fields);
+	purple_debug_misc("gg", "ggp_account_register_dialog_ok(%p, %p)\n",
+		register_data, fields);
 
 	g_free(register_data->email);
 	g_free(register_data->password);

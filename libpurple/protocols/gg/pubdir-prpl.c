@@ -68,11 +68,11 @@ static void ggp_pubdir_got_data(PurpleUtilFetchUrlData *url_data,
 
 static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
-	void *_uin);
+	void *_uin_p);
 
 static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
-	void *_uin);
+	void *user_data);
 
 // Searching for buddies.
 
@@ -359,20 +359,25 @@ static void ggp_pubdir_got_data(PurpleUtilFetchUrlData *url_data,
 void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name)
 {
 	uin_t uin = ggp_str_to_uin(name);
+	uin_t *uin_p = g_new0(uin_t, 1);
+
+	*uin_p = uin;
 
 	purple_debug_info("gg", "ggp_pubdir_get_info_prpl: %u\n", uin);
 
-	ggp_pubdir_get_info(gc, uin, ggp_pubdir_get_info_prpl_got, (void*)uin);
+	ggp_pubdir_get_info(gc, uin, ggp_pubdir_get_info_prpl_got, uin_p);
 }
 
 static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
-	void *_uin)
+	void *_uin_p)
 {
-	uin_t uin = (uin_t)_uin;
+	uin_t uin = *((uin_t*)_uin_p);
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
 	const ggp_pubdir_record *record = &records[0];
 	PurpleBuddy *buddy;
+	
+	g_free(_uin_p);
 	
 	if (records_count < 1)
 	{
@@ -450,23 +455,23 @@ void ggp_pubdir_request_buddy_alias(PurpleConnection *gc, PurpleBuddy *buddy)
 
 	purple_debug_info("gg", "ggp_pubdir_request_buddy_alias: %u\n", uin);
 
-	ggp_pubdir_get_info(gc, uin, ggp_pubdir_request_buddy_alias_got, (void*)uin);
+	ggp_pubdir_get_info(gc, uin, ggp_pubdir_request_buddy_alias_got, NULL);
 }
 
 static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
-	void *_uin)
+	void *user_data)
 {
-	uin_t uin = (uin_t)_uin;
+	uin_t uin;
 	const gchar *alias;
 	
 	if (records_count < 0)
 	{
 		purple_debug_error("gg", "ggp_pubdir_request_buddy_alias_got: "
-			"couldn't get info for %u\n", uin);
+			"couldn't get info for user\n");
 		return;
 	}
-	g_assert(uin == records[0].uin);
+	uin = records[0].uin;
 	
 	alias = records[0].label;
 	if (!alias)
@@ -967,7 +972,7 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 		"PUT /users/%u.xml HTTP/1.1\r\n"
 		"Host: api.gadu-gadu.pl\r\n"
 		"%s\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %zu\r\n"
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"\r\n%s",
 		uin, token, strlen(request_data), request_data);

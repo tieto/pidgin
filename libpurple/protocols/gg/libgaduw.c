@@ -53,8 +53,8 @@ ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 	gpointer user_data, gboolean show_processing)
 {
 	ggp_libgaduw_http_req *req;
-	purple_debug_misc("gg", "ggp_libgaduw_http_watch(h=%x, "
-		"show_processing=%d)\n", (unsigned int)h, show_processing);
+	purple_debug_misc("gg", "ggp_libgaduw_http_watch(h=%p, "
+		"show_processing=%d)\n", h, show_processing);
 	
 	req = g_new(ggp_libgaduw_http_req, 1);
 	req->user_data = user_data;
@@ -126,9 +126,8 @@ void ggp_libgaduw_http_cancel(ggp_libgaduw_http_req *req)
 static void ggp_libgaduw_http_finish(ggp_libgaduw_http_req *req,
 	gboolean success)
 {
-	purple_debug_misc("gg", "ggp_libgaduw_http_finish(h=%x, processing=%x):"
-		" success=%d\n", (unsigned int)req->h,
-		(unsigned int)req->processing, success);
+	purple_debug_misc("gg", "ggp_libgaduw_http_finish(h=%p, processing=%p):"
+		" success=%d\n", req->h, req->processing, success);
 	if (req->processing)
 	{
 		ggp_purplew_request_processing_done(req->processing);

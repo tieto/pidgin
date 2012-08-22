@@ -151,7 +151,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	image_crc = gg_crc32(0, image_data, image_size);
 	
 	purple_debug_info("gg", "ggp_image_prepare_to_send: image prepared "
-		"[id=%d, crc=%u, size=%d, filename=%s]\n",
+		"[id=%d, crc=%u, size=%zu, filename=%s]\n",
 		id, image_crc, image_size, image_filename);
 	
 	pending_image = g_new(ggp_image_pending_image, 1);

@@ -1,4 +1,5 @@
-V=0
+#V=0
+#GADU_EXTRA_WARNINGS = -Wall -Wextra -Werror
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -117,7 +118,7 @@ libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 endif
 
 AM_CPPFLAGS = \
-	-Wall -Wextra -Werror \
+	$(GADU_EXTRA_WARNINGS) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(INTGG_CFLAGS) \

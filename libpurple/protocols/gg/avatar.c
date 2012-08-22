@@ -360,7 +360,7 @@ static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
 		"Host: avatars.nowe.gg\r\n"
 		"Authorization: %s\r\n"
 		"From: avatars to avatars\r\n"
-		"Content-Length: %u\r\n"
+		"Content-Length: %zu\r\n"
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"\r\n%s",
 		token, strlen(request_data), request_data);

@@ -72,8 +72,8 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 	int ipv4_count, all_count, write_size;
 	struct in_addr *addresses;
 	
-	purple_debug_misc("gg", "ggp_resolver_purple_cb(%x, %x, \"%s\")\n",
-		(unsigned int)hosts, (unsigned int)cbdata, error_message);
+	purple_debug_misc("gg", "ggp_resolver_purple_cb(%p, %p, \"%s\")\n",
+		hosts, cbdata, error_message);
 	
 	if (error_message)
 	{
@@ -137,8 +137,8 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	const char *hostname)
 {
 	ggp_resolver_purple_data *data;
-	purple_debug_misc("gg", "ggp_resolver_purple_start(%x, %x, \"%s\")\n",
-		(unsigned int)fd, (unsigned int)private_data, hostname);
+	purple_debug_misc("gg", "ggp_resolver_purple_start(%p, %p, \"%s\")\n",
+		fd, private_data, hostname);
 	
 	data = malloc(sizeof(ggp_resolver_purple_data));
 	*private_data = (void*)data;
@@ -176,8 +176,8 @@ void ggp_resolver_purple_cleanup(void **private_data, int force)
 	ggp_resolver_purple_data *data =
 		(ggp_resolver_purple_data*)(*private_data);
 	
-	purple_debug_misc("gg", "ggp_resolver_purple_cleanup(%x, %d)\n",
-		(unsigned int)private_data, force);
+	purple_debug_misc("gg", "ggp_resolver_purple_cleanup(%p, %d)\n",
+		private_data, force);
 	
 	if (!data)
 		return;
