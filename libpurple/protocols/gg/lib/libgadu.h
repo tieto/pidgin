@@ -101,7 +101,7 @@ extern "C" {
 /* Defined if uintX_t types are defined in <sys/types.h>. */
 #undef GG_CONFIG_HAVE_SYS_TYPES_H
 
-#include "libgadu-config.h"
+#include "config.h"
 
 #ifdef GG_CONFIG_HAVE_OPENSSL
 #include <openssl/ssl.h>

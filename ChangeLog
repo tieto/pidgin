@@ -1,6 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	Pidgin:
+	* Support building with the GTK+ 3.x toolkit.  When configuring the
+	  build, use --with-gtk=<2|3> to determine which toolkit to use.  Using
+	  either 2 or 3 will attempt to build with specifically 2.x or 3.x
+	  support.  The default is 'auto', which will first look for 3.x
+	  development headers and then 2.x development headers.
+
 	Finch:
 	* Support the conversation-extended signal for extending the
 	  conversation menu. (Howard Chu) (#14818)
@@ -42,13 +49,51 @@ version 3.0.0 (??/??/????):
 	* Invalid user moods can no longer be sent to the server.
 
 	Plugins:
-	* The Voice/Video Settings plugin supports using the sndio GStreamer
-	  backends. (Brad Smith) (#14414)
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
-version 2.10.5:
-	No changes
+version 2.10.7:
+	Gadu-Gadu:
+	* Fix a crash at startup with large contact list. Avatar support for
+	  buddies will be disabled till 3.0.0. (#15226, #14305)
+
+	Gadu-Gadu:
+	* Fix a crash at startup with large contact list. Avatar support for
+	  buddies will be disabled till 3.0.0. (#15226, #14305)
+
+	MSN:
+	* Fix a crash when removing a user before its icon is loaded. (Mark
+	  Barfield) (#15217)
+
+	Yahoo!:
+	* Fix a double-free in profile/picture loading code. (Mihai Serban)
+	  (#15053)
+
+	Plugins:
+	* The Voice/Video Settings plugin supports using the sndio GStreamer
+	 backends. (Brad Smith) (#14414)
+
+version 2.10.6 (07/06/2012):
+	Pidgin:
+	* Fix a bug that requires a triple-click to open a conversation
+	  window from the buddy list. (#15199)
+
+version 2.10.5 (07/05/2012):
+	libpurple:
+	* Add support for GNOME3 proxy settings. (Mihai Serban) (#15054)
+
+	Pidgin:
+	* Fix a crash that may occur when trying to ignore a user who is
+	  not in the current chat room. (#15139)
+
+	MSN:
+	* Fix building with MSVC on Windows (broken in 2.10.4). (Florian
+	  Quèze)
+
+	MXit:
+	* Fix a buffer overflow vulnerability when parsing incoming messages
+	  containing inline images.  Thanks to Ulf Härnhammar for reporting
+	  this! (CVE-2012-3374)
 
 version 2.10.4 (05/06/2012):
 	General:

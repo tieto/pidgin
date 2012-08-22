@@ -218,9 +218,7 @@ animation, otherwise only the first frame will be displayed.
 .TP
 .B Notify buddies that you are typing to them
 Some protocols allow clients to tell their buddies when they are typing.
-This option enables this feature for protocols that supports it.  For XMPP,
-this also enables sending the "User has left the conversation" message
-when ending the conversation.
+This option enables this feature for protocols that supports it.
 
 .TP
 .B Default Formatting

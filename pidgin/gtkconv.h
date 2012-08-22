@@ -103,7 +103,6 @@ struct _PidginConversation
 	PidginConvTheme *theme;
 	PurpleMessageFlags last_flags;
 	GtkWidget *webview;
-	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 	gboolean auto_resize;   /* this is set to TRUE if the conversation
 				 * is being resized by a non-user-initiated
@@ -170,6 +169,13 @@ G_BEGIN_DECLS
  * @return The GTK+ conversation operations structure.
  */
 PurpleConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
+
+/**
+ * Returns the default theme for GTK+ conversations.
+ *
+ * @return The default GTK+ conversation theme.
+ */
+PurpleTheme *pidgin_conversations_get_default_theme(void);
 
 /**
  * Updates the buddy icon on a conversation.

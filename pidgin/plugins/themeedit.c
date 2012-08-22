@@ -22,6 +22,8 @@
 #include "pidgin.h"
 #include "version.h"
 
+#include "gtk3compat.h"
+
 #include "theme-manager.h"
 
 #include "gtkblist.h"
@@ -98,7 +100,7 @@ static void
 theme_font_face_selected(GtkWidget *dialog, gint response, gpointer font)
 {
 	if (response == GTK_RESPONSE_OK || response == GTK_RESPONSE_APPLY) {
-		const char *fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(dialog));
+		const char *fontname = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(dialog));
 		pidgin_theme_font_set_font_face(font, fontname);
 		pidgin_blist_refresh(purple_get_blist());
 	}
@@ -108,6 +110,7 @@ theme_font_face_selected(GtkWidget *dialog, gint response, gpointer font)
 static void
 theme_font_select_face(GtkWidget *widget, gpointer prop)
 {
+	GtkWindow *window;
 	GtkWidget *dialog;
 	PidginBlistTheme *theme;
 	PidginThemeFont *font = NULL;
@@ -124,10 +127,10 @@ theme_font_select_face(GtkWidget *widget, gpointer prop)
 	}
 
 	face = pidgin_theme_font_get_font_face(font);
-	dialog = gtk_font_selection_dialog_new(_("Select Font"));
+	window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+	dialog = gtk_font_chooser_dialog_new(_("Select Font"), window);
 	if (face && *face)
-		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog),
-				face);
+		gtk_font_chooser_set_font(GTK_FONT_CHOOSER(dialog), face);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_font_face_selected),
 			font);
 	gtk_widget_show_all(dialog);
@@ -306,9 +309,6 @@ pidgin_blist_theme_edit(PurplePluginAction *unused)
 		}
 	}
 
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), TRUE);
-#endif
 #ifdef NOT_SADRUL
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_blist_theme), dialog);
 #endif

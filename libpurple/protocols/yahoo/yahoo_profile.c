@@ -1047,7 +1047,8 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 					" bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
-			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
+			tmp = g_strdup_printf("<img id=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\"><br>",
+			                      id);
 			purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 			g_free(tmp);
 		}
@@ -1277,10 +1278,6 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, -1, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	else {
-		g_free(data->name);
-		g_free(data);
-	}
 
 	g_free(url);
 }

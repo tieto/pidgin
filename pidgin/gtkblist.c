@@ -50,6 +50,7 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkft.h"
+#include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
@@ -69,6 +70,8 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
+
+#include "gtk3compat.h"
 
 typedef struct
 {
@@ -119,15 +122,20 @@ typedef struct
 	PidginMiniDialog *signed_on_elsewhere;
 
 	PidginBlistTheme *current_theme;
+
+#if !GTK_CHECK_VERSION(3,0,0)
+	GdkCursor *hand_cursor;         /**< Hand cursor */
+	GdkCursor *arrow_cursor;        /**< Arrow cursor */
+	gboolean changing_style;        /**< True when changing GTK+ theme style */
+#endif
+
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
-#if !GTK_CHECK_VERSION(2,18,0)
-#define gtk_widget_get_visible(x) GTK_WIDGET_VISIBLE(x)
-#define gtk_widget_has_focus(x) GTK_WIDGET_HAS_FOCUS(x)
-#endif
+#define PIDGIN_WINDOW_ICONIFIED(x) \
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & GDK_WINDOW_STATE_ICONIFIED)
 
 static GtkWidget *accountmenu = NULL;
 
@@ -466,9 +474,9 @@ gtk_blist_do_personize(GList *merges)
 	GList *tmp;
 
 	/* First, we find the contact to merge the rest of the buddies into.
- 	 * This will be the contact with the most buddies in it; ties are broken
- 	 * by which contact is higher in the list
- 	 */
+	 * This will be the contact with the most buddies in it; ties are broken
+	 * by which contact is higher in the list
+	 */
 	for (tmp = merges; tmp; tmp = tmp->next) {
 		PurpleBlistNode *node = tmp->data;
 		PurpleBlistNode *b;
@@ -897,7 +905,7 @@ do_joinchat(GtkWidget *dialog, int id, PidginChatData *info)
  * strings are empty then don't allow the user to click on "OK."
  */
 static void
-set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
+set_sensitive_if_input_chat_cb(GtkWidget *entry, gpointer user_data)
 {
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnection *gc;
@@ -927,6 +935,21 @@ set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->rq_data.window), 1, sensitive);
+}
+
+static void
+set_sensitive_if_input_buddy_cb(GtkWidget *entry, gpointer user_data)
+{
+	PurplePlugin *prpl;
+	PidginAddBuddyData *data = user_data;
+	const char *text;
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(
+		data->rq_data.account));
+	text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->rq_data.window),
+		GTK_RESPONSE_OK, purple_validate(prpl, text));
 }
 
 static void
@@ -989,20 +1012,21 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
-	data->window = gtk_dialog_new_with_buttons(title,
-		blist_window, GTK_DIALOG_NO_SEPARATOR,
-		NULL);
-
+	data->window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(data->window), title);
 	gtk_window_set_transient_for(GTK_WINDOW(data->window), blist_window);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                               PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), window_role);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
+	                  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
@@ -1067,10 +1091,11 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 
 		if (pce->is_int)
 		{
-			GtkObject *adjust;
-			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
-										1, 10, 10);
-			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			GtkAdjustment *adjust;
+			adjust = GTK_ADJUSTMENT(gtk_adjustment_new(pce->min,
+			                                           pce->min, pce->max,
+			                                           1, 10, 10));
+			input = gtk_spin_button_new(adjust, 1, 0);
 			gtk_widget_set_size_request(input, 50, -1);
 			pidgin_add_widget_to_vbox(GTK_BOX(data->rq_data.vbox), pce->label, data->rq_data.sg, input, FALSE, NULL);
 		}
@@ -1092,7 +1117,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 			}
 			pidgin_add_widget_to_vbox(data->rq_data.vbox, pce->label, data->rq_data.sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
-							 G_CALLBACK(set_sensitive_if_input_cb), data);
+							 G_CALLBACK(set_sensitive_if_input_chat_cb), data);
 		}
 
 		/* Do the following for any type of input widget */
@@ -1113,7 +1138,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 	g_hash_table_destroy(defaults);
 
 	/* Set whether the "OK" button should be clickable initially */
-	set_sensitive_if_input_cb(NULL, data);
+	set_sensitive_if_input_chat_cb(NULL, data);
 
 	gtk_widget_show_all(GTK_WIDGET(data->rq_data.vbox));
 }
@@ -1563,7 +1588,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 		pidgin_append_blist_node_move_to_menu(menu, PURPLE_BLIST_NODE(contact));
 
 	if (node->parent && node->parent->child->next &&
-              !sub && !contact_expanded) {
+	    !sub && !contact_expanded) {
 		pidgin_separator(menu);
 		pidgin_append_blist_node_privacy_menu(menu, node);
 		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
@@ -1612,11 +1637,11 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 			pidgin_retrieve_user_info(purple_account_get_connection(purple_buddy_get_account(buddy)), purple_buddy_get_name(buddy));
 	} else {
 		switch (event->keyval) {
-			case GDK_F2:
+			case GDK_KEY_F2:
 				gtk_blist_menu_alias_cb(tv, node);
 				break;
 
-			case GDK_Left:
+			case GDK_KEY_Left:
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 				if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
 					/* Collapse the Group */
@@ -1638,7 +1663,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 				gtk_tree_path_free(path);
 				break;
 
-			case GDK_Right:
+			case GDK_KEY_Right:
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 				if (!gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
 					/* Expand the Group */
@@ -1977,10 +2002,6 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 			pidgin_retrieve_user_info(purple_account_get_connection(purple_buddy_get_account(b)), purple_buddy_get_name(b));
 		handled = TRUE;
 	}
-	else if ((event->button == 1) && (event->type == GDK_2BUTTON_PRESS) &&
-	((PURPLE_BLIST_NODE_IS_CONTACT(node)) || (PURPLE_BLIST_NODE_IS_BUDDY(node)))) {
-               handled = TRUE;
-	}
 
 #if (1)
 	/*
@@ -2255,9 +2276,9 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 											guint time,
 											gpointer null)
 {
+	GdkAtom target = gtk_selection_data_get_target(data);
 
-	if (data->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
-	{
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE)) {
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
@@ -2273,9 +2294,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 					sizeof (node));
 
 		gtk_tree_path_free(sourcerow);
-	}
-	else if (data->target == gdk_atom_intern("application/x-im-contact", FALSE))
-	{
+	} else if (target == gdk_atom_intern("application/x-im-contact", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *sourcerow;
 		GtkTreeIter iter;
@@ -2353,16 +2372,19 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
+
 	if (gtkblist->drag_timeout) {
 		g_source_remove(gtkblist->drag_timeout);
 		gtkblist->drag_timeout = 0;
 	}
 
-	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE) && sd->data) {
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE) && data) {
 		PurpleBlistNode *n = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
-		memcpy(&n, sd->data, sizeof(n));
+		memcpy(&n, data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
@@ -2498,12 +2520,10 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 
 			gtk_tree_path_free(path);
-			gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+			gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 		}
-	}
-	else if (sd->target == gdk_atom_intern("application/x-im-contact",
-										   FALSE) && sd->data)
-	{
+	} else if (target == gdk_atom_intern("application/x-im-contact",
+										   FALSE) && data) {
 		PurpleGroup *group = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
@@ -2538,7 +2558,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 		}
 
-		if (pidgin_parse_x_im_contact((const char *)sd->data, FALSE, &account,
+		if (pidgin_parse_x_im_contact((const char *)data, FALSE, &account,
 										&protocol, &username, &alias))
 		{
 			if (account == NULL)
@@ -2562,9 +2582,10 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		if (path != NULL)
 			gtk_tree_path_free(path);
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE,
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
-	else if (sd->target == gdk_atom_intern("text/x-vcard", FALSE) && sd->data)
+	else if (target == gdk_atom_intern("text/x-vcard", FALSE) && data)
 	{
 		gboolean result;
 		PurpleGroup *group = NULL;
@@ -2597,10 +2618,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			}
 		}
 
-		result = parse_vcard((const gchar *)sd->data, group);
+		result = parse_vcard((const gchar *)data, group);
 
-		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
-	} else if (sd->target == gdk_atom_intern("text/uri-list", FALSE) && sd->data) {
+		gtk_drag_finish(dc, result,
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
+	} else if (target == gdk_atom_intern("text/uri-list", FALSE) && data) {
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
@@ -2618,7 +2640,8 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 				if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
 					pidgin_dnd_file_manage(sd, purple_buddy_get_account(b), purple_buddy_get_name(b));
-					gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+					gtk_drag_finish(dc, TRUE,
+					                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 				} else {
 					gtk_drag_finish(dc, FALSE, FALSE, t);
 				}
@@ -2940,10 +2963,13 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 }
 
 static gboolean
-pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
+pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 {
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+#else
 	GtkStyle *style;
-	cairo_t *cr;
+#endif
 	int current_height, max_width;
 	int max_text_width;
 	int max_avatar_width;
@@ -2955,7 +2981,12 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	if(gtkblist->tooltipdata == NULL)
 		return FALSE;
 
-	style = gtkblist->tipwindow->style;
+#if GTK_CHECK_VERSION(3,0,0)
+	context = gtk_widget_get_style_context(gtkblist->tipwindow);
+	gtk_style_context_add_class(context, GTK_STYLE_CLASS_TOOLTIP);
+#else
+	style = gtk_widget_get_style(gtkblist->tipwindow);
+#endif
 
 	max_text_width = 0;
 	max_avatar_width = 0;
@@ -2977,7 +3008,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	else
 		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
-	cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
@@ -2985,15 +3015,36 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
-			if (dir == GTK_TEXT_DIR_RTL)
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-						NULL, gtkblist->tipwindow, "tooltip",
-						TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2, td->avatar_height + 2);
-			else
-				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-						NULL, gtkblist->tipwindow, "tooltip",
-						max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-						current_height-1,td->avatar_width+2, td->avatar_height+2);
+#if GTK_CHECK_VERSION(3,0,0)
+			gtk_style_context_save(context);
+			gtk_style_context_add_class(context, GTK_STYLE_CLASS_FRAME);
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_render_frame(context, cr,
+				                 TOOLTIP_BORDER - 1, current_height - 1,
+				                 td->avatar_width + 2, td->avatar_height + 2);
+			} else {
+				gtk_render_frame(context, cr,
+				                 max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
+				                 current_height - 1,
+				                 td->avatar_width + 2, td->avatar_height + 2);
+			}
+			gtk_style_context_restore(context);
+#else
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window,
+				                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				                   NULL, gtkblist->tipwindow, "tooltip",
+				                   TOOLTIP_BORDER - 1, current_height - 1,
+				                   td->avatar_width + 2, td->avatar_height + 2);
+			} else {
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window,
+				                   GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				                   NULL, gtkblist->tipwindow, "tooltip",
+				                   max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
+				                   current_height - 1, td->avatar_width + 2,
+				                   td->avatar_height + 2);
+			}
+#endif
 		}
 
 		if (td->status_icon) {
@@ -3009,7 +3060,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 			}
 		}
 
-		if(td->avatar) {
+		if (td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gdk_cairo_set_source_pixbuf(cr, td->avatar,
 				                            TOOLTIP_BORDER, current_height);
@@ -3030,36 +3081,62 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		}
 
 		if (td->name_layout) {
+#if GTK_CHECK_VERSION(3,0,0)
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_render_layout(context, cr,
+				                  max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                  current_height, td->name_layout);
+			} else {
+				gtk_render_layout(context, cr,
+				                  TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                  current_height, td->name_layout);
+			}
+#else
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
-						max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
-						current_height, td->name_layout);
+				                 NULL, gtkblist->tipwindow, "tooltip",
+				                 max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                 current_height, td->name_layout);
 			} else {
-				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
-						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
+				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				                 NULL, gtkblist->tipwindow, "tooltip",
+				                 TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
 			}
+#endif
 		}
 
 		if (td->layout) {
+#if GTK_CHECK_VERSION(3,0,0)
 			if (dir != GTK_TEXT_DIR_RTL) {
-				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
-						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height + td->name_height, td->layout);
+				gtk_render_layout(context, cr,
+				                  TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                  current_height + td->name_height,
+				                  td->layout);
+			} else {
+				gtk_render_layout(context, cr,
+				                  max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                  current_height + td->name_height,
+				                  td->layout);
+			}
+#else
+			if (dir != GTK_TEXT_DIR_RTL) {
+				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				                 NULL, gtkblist->tipwindow, "tooltip",
+				                 TOOLTIP_BORDER + status_size + SMALL_SPACE,
+				                 current_height + td->name_height, td->layout);
 			} else {
 				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-						NULL, gtkblist->tipwindow, "tooltip",
-						max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
-						current_height + td->name_height,
-						td->layout);
+				                 NULL, gtkblist->tipwindow, "tooltip",
+				                 max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+				                 current_height + td->name_height,
+				                 td->layout);
 			}
+#endif
 		}
 
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + td->padding;
 	}
 
-	cairo_destroy(cr);
 	return FALSE;
 }
 
@@ -3208,7 +3285,8 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 		pidgin_blist_expand_contact_cb(NULL, node);
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
-		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
+		gtkblist->contact_rect.width =
+				gdk_window_get_width(gtk_widget_get_window(tv));
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
 		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
@@ -3605,11 +3683,11 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	}
 
 	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
-                              NULL, fields,
-                              _("OK"), G_CALLBACK(edit_mood_cb),
-                              _("Cancel"), NULL,
-                              gc ? purple_connection_get_account(gc) : NULL,
-                              NULL, NULL, gc);
+	                      NULL, fields,
+	                      _("OK"), G_CALLBACK(edit_mood_cb),
+	                      _("Cancel"), NULL,
+	                      gc ? purple_connection_get_account(gc) : NULL,
+	                      NULL, NULL, gc);
 
 	g_free(global_moods);
 }
@@ -5003,25 +5081,33 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
 	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
+#if GTK_CHECK_VERSION(3,0,0)
+		if (gtk_bindings_activate(G_OBJECT(widget), event->keyval, event->state))
+#else
 		if (gtk_bindings_activate(GTK_OBJECT(widget), event->keyval, event->state))
+#endif
 			return TRUE;
 	}
 	return FALSE;
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean
-headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
+headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event,
+                      PidginBuddyListPrivate *priv)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
+	gdk_window_set_cursor(widget->window, priv->hand_cursor);
 	return FALSE;
 }
 
 static gboolean
-headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
+headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event,
+                      PidginBuddyListPrivate *priv)
 {
-	gdk_window_set_cursor(widget->window, gtkblist->arrow_cursor);
+	gdk_window_set_cursor(widget->window, priv->arrow_cursor);
 	return FALSE;
 }
+#endif
 
 static void
 reset_headline(PidginBuddyList *gtkblist)
@@ -5041,17 +5127,54 @@ headline_click_callback(gpointer unused)
 	return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+
+static gboolean
+headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
+{
+	gtk_widget_hide(gtkblist->headline);
+
+	if (resp == GTK_RESPONSE_OK) {
+		if (gtkblist->headline_callback)
+			g_idle_add(headline_click_callback, NULL);
+		else {
+			if (gtkblist->headline_destroy)
+				gtkblist->headline_destroy(gtkblist->headline_data);
+			reset_headline(gtkblist);
+		}
+	}
+
+	return FALSE;
+}
+
+static void
+headline_realize_cb(GtkWidget *widget, gpointer data)
+{
+	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
+	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
+	gdk_cursor_unref(hand_cursor);
+}
+
+static gboolean
+headline_press_cb(GtkWidget *widget, GdkEventButton *event, GtkInfoBar *infobar)
+{
+	gtk_info_bar_response(infobar, GTK_RESPONSE_OK);
+	return TRUE;
+}
+
+#else
+
 static gboolean
 headline_close_press_cb(GtkButton *button, PidginBuddyList *gtkblist)
 {
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 	return FALSE;
 }
 
 static gboolean
 headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList *gtkblist)
 {
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 	if (gtkblist->headline_callback)
 		g_idle_add(headline_click_callback, NULL);
 	else {
@@ -5061,6 +5184,8 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 	}
 	return TRUE;
 }
+
+#endif
 
 /***********************************/
 /* Connection error handling stuff */
@@ -5153,7 +5278,7 @@ generic_error_enable_cb(PurpleAccount *account)
 }
 
 static void
-generic_error_destroy_cb(GtkObject *dialog,
+generic_error_destroy_cb(GtkWidget *dialog,
                          PurpleAccount *account)
 {
 	/* If the error dialog is being destroyed in response to the
@@ -5491,6 +5616,7 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
 	}
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean
 paint_headline_hbox  (GtkWidget      *widget,
 		      GdkEventExpose *event,
@@ -5509,6 +5635,7 @@ paint_headline_hbox  (GtkWidget      *widget,
 		      widget->allocation.height - 2);
 	return FALSE;
 }
+#endif
 
 /* This assumes there are not things like groupless buddies or multi-leveled groups.
  * I'm sure other things in this code assumes that also.
@@ -5526,15 +5653,17 @@ treeview_style_set (GtkWidget *widget,
 	}
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static void
 headline_style_set (GtkWidget *widget,
 		    GtkStyle  *prev_style)
 {
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	GtkStyle *style;
 #if GTK_CHECK_VERSION(2,12,0)
 	GtkWidget *window;
 
-	if (gtkblist->changing_style)
+	if (priv->changing_style)
 		return;
 
 	/* This is a hack needed to use the tooltip background colour */
@@ -5543,13 +5672,13 @@ headline_style_set (GtkWidget *widget,
 	gtk_widget_ensure_style(window);
 	style = gtk_widget_get_style(window);
 
-	gtkblist->changing_style = TRUE;
-	gtk_widget_set_style(gtkblist->headline_hbox, style);
-	gtkblist->changing_style = FALSE;
+	priv->changing_style = TRUE;
+	gtk_widget_set_style(gtkblist->headline, style);
+	priv->changing_style = FALSE;
 
 	gtk_widget_destroy(window);
 
-	gtk_widget_queue_draw(gtkblist->headline_hbox);
+	gtk_widget_queue_draw(gtkblist->headline);
 #else
 	GtkTooltips *tooltips;
 
@@ -5563,13 +5692,14 @@ headline_style_set (GtkWidget *widget,
 	gtk_widget_ensure_style (tooltips->tip_window);
 	style = gtk_widget_get_style (tooltips->tip_window);
 
-	gtkblist->changing_style = TRUE;
-	gtk_widget_set_style (gtkblist->headline_hbox, style);
-	gtkblist->changing_style = FALSE;
+	priv->changing_style = TRUE;
+	gtk_widget_set_style (gtkblist->headline, style);
+	priv->changing_style = FALSE;
 
 	g_object_unref (tooltips);
 #endif
 }
+#endif
 
 /******************************************/
 /* End of connection error handling stuff */
@@ -5799,8 +5929,13 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	void *handle;
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
-	GtkWidget *ebox;
 	GtkWidget *sep;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkWidget *infobar;
+	GtkWidget *content_area;
+#else
+	GtkWidget *ebox;
+#endif
 	GtkWidget *label;
 	GtkWidget *close;
 	char *pretty, *tmp;
@@ -5842,7 +5977,11 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-out-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
+
+	/* TODO: how is this done in gtk+ 3.0? */
+#if !GTK_CHECK_VERSION(3,0,0)
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
+#endif
 
 	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(gtkblist->main_vbox);
@@ -5916,7 +6055,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width") - 12, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.2);
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
@@ -5927,47 +6065,85 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_widget_show_all(gtkblist->notebook);
 	pidgin_blist_select_notebook_page(gtkblist);
 
+	/****************************** Headline **********************************/
+#if GTK_CHECK_VERSION(3,0,0)
+
+	gtkblist->headline = gtk_event_box_new();
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->headline,
+	                   FALSE, FALSE, 0);
+	infobar = gtk_info_bar_new();
+	gtk_container_add(GTK_CONTAINER(gtkblist->headline), infobar);
+	gtk_info_bar_set_default_response(GTK_INFO_BAR(infobar), GTK_RESPONSE_OK);
+	gtk_info_bar_set_message_type(GTK_INFO_BAR(infobar), GTK_MESSAGE_INFO);
+
+	content_area = gtk_info_bar_get_content_area(GTK_INFO_BAR(infobar));
+	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
+	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.5, 0.5);
+	gtkblist->headline_label = gtk_label_new(NULL);
+	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
+	gtk_box_pack_start(GTK_BOX(content_area), gtkblist->headline_image,
+	                   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(content_area), gtkblist->headline_label,
+	                   TRUE, TRUE, 0);
+
+	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	close = pidgin_create_small_button(close);
+	gtk_widget_set_tooltip_text(close, _("Close"));
+	gtk_info_bar_add_action_widget(GTK_INFO_BAR(infobar), close,
+	                               GTK_RESPONSE_CLOSE);
+
+	g_signal_connect(infobar, "response", G_CALLBACK(headline_response_cb),
+	                 gtkblist);
+	g_signal_connect(infobar, "close", G_CALLBACK(gtk_info_bar_response),
+	                 GINT_TO_POINTER(GTK_RESPONSE_CLOSE));
+	g_signal_connect(gtkblist->headline, "realize",
+	                 G_CALLBACK(headline_realize_cb), NULL);
+	g_signal_connect(gtkblist->headline, "button-press-event",
+	                 G_CALLBACK(headline_press_cb), infobar);
+
+#else
+
 	ebox = gtk_event_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), ebox, FALSE, FALSE, 0);
-	gtkblist->headline_hbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline_hbox), 6);
-	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline_hbox);
+	gtkblist->headline = gtk_hbox_new(FALSE, 3);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline), 6);
+	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline);
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
 	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.0, 0);
 	gtkblist->headline_label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(gtkblist->headline_label,
 				    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
-	g_signal_connect(gtkblist->headline_label,   /* connecting on headline_hbox doesn't work, because
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_image, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_label, TRUE, TRUE, 0);
+	g_signal_connect(gtkblist->headline_label,   /* connecting on headline doesn't work, because
 	                                                the signal is not emitted when theme is changed */
 			"style-set",
 			 G_CALLBACK(headline_style_set),
 			 NULL);
-	g_signal_connect (gtkblist->headline_hbox,
+	g_signal_connect (gtkblist->headline,
 			  "expose_event",
 			  G_CALLBACK (paint_headline_hbox),
 			  NULL);
-	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
+	gtk_widget_set_name(gtkblist->headline, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE,
-		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC), NULL);
-	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
-	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	priv->hand_cursor = gdk_cursor_new (GDK_HAND2);
+	priv->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
 	/* Close button. */
 	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 	close = pidgin_create_small_button(close);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), close, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline), close, FALSE, FALSE, 0);
 #if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(close, _("Close"));
 #endif
 	g_signal_connect(close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
 
-	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
-	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), priv);
+	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), priv);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
+
+#endif
 
 	/****************************** GtkTreeView **********************************/
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
@@ -6059,24 +6235,17 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->scrollbook = pidgin_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 
-	/* Create an vbox which holds the scrollbook which is actually used to
-	 * display connection errors.  The vbox needs to still exist for
-	 * backwards compatibility.
-	 */
-	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 0);
-
 	priv->error_scrollbook = PIDGIN_SCROLL_BOOK(pidgin_scroll_book_new());
-	gtk_box_pack_start(GTK_BOX(gtkblist->error_buttons),
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox),
 		GTK_WIDGET(priv->error_scrollbook), FALSE, FALSE, 0);
-
 
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 	gtk_widget_set_name(gtkblist->statusbox, "pidgin_blist_statusbox");
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->statusbox), 3);
+#endif
 	gtk_widget_show(gtkblist->statusbox);
 
 	/* set the Show Offline Buddies option. must be done
@@ -6187,7 +6356,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	                      PURPLE_CALLBACK(conversation_created_cb),
 	                      gtkblist);
 
-	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->headline);
 
 	show_initial_account_errors(gtkblist);
 
@@ -6957,9 +7126,6 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 
 	purple_signals_disconnect_by_handle(gtkblist);
 
-	if (gtkblist->headline_close)
-		g_object_unref(G_OBJECT(gtkblist->headline_close));
-
 	gtk_widget_destroy(gtkblist->window);
 
 	pidgin_blist_tooltip_destroy();
@@ -6980,12 +7146,15 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_object_unref(G_OBJECT(gtkblist->ui));
 	g_object_unref(G_OBJECT(gtkblist->empty_avatar));
 
-	gdk_cursor_unref(gtkblist->hand_cursor);
-	gdk_cursor_unref(gtkblist->arrow_cursor);
-	gtkblist->hand_cursor = NULL;
-	gtkblist->arrow_cursor = NULL;
-
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+#if !GTK_CHECK_VERSION(3,0,0)
+	gdk_cursor_unref(priv->hand_cursor);
+	gdk_cursor_unref(priv->arrow_cursor);
+	priv->hand_cursor = NULL;
+	priv->arrow_cursor = NULL;
+#endif
+
 	if (priv->current_theme)
 		g_object_unref(priv->current_theme);
 	g_free(priv);
@@ -7002,7 +7171,8 @@ static void pidgin_blist_set_visible(PurpleBuddyList *list, gboolean show)
 		return;
 
 	if (show) {
-		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) && !gtk_widget_get_visible(gtkblist->window))
+		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) &&
+		   !gtk_widget_get_visible(gtkblist->window))
 			purple_signal_emit(pidgin_blist_get_handle(), "gtkblist-unhiding", gtkblist);
 		pidgin_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
@@ -7071,6 +7241,7 @@ add_buddy_select_account_cb(GObject *w, PurpleAccount *account,
 		invite_enabled = FALSE;
 
 	gtk_widget_set_sensitive(data->entry_for_invite, invite_enabled);
+	set_sensitive_if_input_buddy_cb(data->entry, data);
 }
 
 static void
@@ -7196,8 +7367,8 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry), TRUE);
 
 	g_signal_connect(G_OBJECT(data->entry), "changed",
-	                 G_CALLBACK(pidgin_set_sensitive_if_input),
-	                 data->rq_data.window);
+	                 G_CALLBACK(set_sensitive_if_input_buddy_cb),
+	                 data);
 
 	data->entry_for_alias = gtk_entry_new();
 	pidgin_add_widget_to_vbox(data->rq_data.vbox, _("(Optional) A_lias:"),
@@ -7472,9 +7643,9 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 	gtkblist->headline_destroy = destroy;
 	if (text != NULL || pixbuf != NULL) {
 		set_urgent();
-		gtk_widget_show_all(gtkblist->headline_hbox);
+		gtk_widget_show_all(gtkblist->headline);
 	} else {
-		gtk_widget_hide(gtkblist->headline_hbox);
+		gtk_widget_hide(gtkblist->headline);
 	}
 }
 
@@ -7974,7 +8145,7 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			for (n2 = n->child; n2; n2 = n2->next) {
-                        	buddy = (PurpleBuddy*)n2;
+				buddy = (PurpleBuddy*)n2;
 				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 			}
 			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
@@ -8010,7 +8181,7 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 }
 
 static void
-plugin_act(GtkObject *obj, PurplePluginAction *pam)
+plugin_act(GtkWidget *obj, PurplePluginAction *pam)
 {
 	if (pam && pam->callback)
 		pam->callback(pam);

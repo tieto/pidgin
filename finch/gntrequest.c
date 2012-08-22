@@ -388,10 +388,11 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 	purple_notify_close_with_handle(button);
 
 	if (!g_object_get_data(G_OBJECT(button), "cancellation-function") &&
-			!purple_request_fields_all_required_filled(fields)) {
+			(!purple_request_fields_all_required_filled(fields) ||
+			!purple_request_fields_all_valid(fields))) {
 		purple_notify_error(button, _("Error"),
-				_("You must fill all the required fields."),
-				_("The required fields are underlined."));
+			_("You must properly fill all the required fields."),
+			_("The required fields are underlined."));
 		return;
 	}
 

@@ -42,13 +42,20 @@ struct _PidginWindow
 {
 	GtkWidget *window;           /**< The window.                      */
 	GtkWidget *notebook;         /**< The notebook of conversations.   */
+	GtkWidget *notebook_menu;    /**< The menu on the notebook.        */
+	PidginConversation *clicked_tab; /**< The menu currently clicked.      */
 	GList *gtkconvs;
 
 	struct
 	{
+		GtkUIManager *ui;
 		GtkWidget *menubar;
 
 		GtkAction *view_log;
+
+		GtkAction *audio_call;
+		GtkAction *video_call;
+		GtkAction *audio_video_call;
 
 		GtkAction *send_file;
 		GtkAction *get_attention;
@@ -68,7 +75,6 @@ struct _PidginWindow
 		GtkAction *logging;
 		GtkAction *sounds;
 		GtkAction *show_formatting_toolbar;
-		GtkAction *show_timestamps;
 
 		GtkWidget *send_to;
 
@@ -76,15 +82,7 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
-		GtkUIManager *ui;
-
 	} menu;
-
-	struct
-	{
-		GtkWidget *search;
-
-	} dialogs;
 
 	/* Tab dragging stuff. */
 	gboolean in_drag;
@@ -96,11 +94,6 @@ struct _PidginWindow
 
 	gint drag_motion_signal;
 	gint drag_leave_signal;
-
-	/* Media menu options. */
-	GtkAction *audio_call;
-	GtkAction *video_call;
-	GtkAction *audio_video_call;
 };
 
 /*@}*/
@@ -126,7 +119,7 @@ PidginConversation *pidgin_conv_window_get_active_gtkconv(const PidginWindow *wi
 PurpleConversation *pidgin_conv_window_get_active_conversation(const PidginWindow *win);
 gboolean pidgin_conv_window_is_active_conversation(const PurpleConversation *conv);
 gboolean pidgin_conv_window_has_focus(PidginWindow *win);
-PidginWindow *pidgin_conv_window_get_at_xy(int x, int y);
+PidginWindow *pidgin_conv_window_get_at_event(GdkEvent *event);
 GList *pidgin_conv_window_get_gtkconvs(PidginWindow *win);
 guint pidgin_conv_window_get_gtkconv_count(PidginWindow *win);
 

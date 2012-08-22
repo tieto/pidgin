@@ -150,6 +150,9 @@ typedef struct
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
 
+typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
+	gchar **errmsg, void *user_data);
+
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
  *  of actions of the one chosen.
@@ -216,7 +219,18 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
  *
  * @constreturn The list of required fields.
  */
-GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
+const GList *purple_request_fields_get_required(
+	const PurpleRequestFields *fields);
+
+/**
+ * Returns a list of all validated fields.
+ *
+ * @param fields The fields list.
+ *
+ * @constreturn The list of validated fields.
+ */
+const GList *purple_request_fields_get_validatable(
+	const PurpleRequestFields *fields);
 
 /**
  * Returns whether or not a field with the specified ID is required.
@@ -238,6 +252,15 @@ gboolean purple_request_fields_is_field_required(const PurpleRequestFields *fiel
  */
 gboolean purple_request_fields_all_required_filled(
 	const PurpleRequestFields *fields);
+
+/**
+ * Returns whether or not all fields are valid.
+ *
+ * @param fields The fields list.
+ *
+ * @return TRUE if all fields are valid, or FALSE.
+ */
+gboolean purple_request_fields_all_valid(const PurpleRequestFields *fields);
 
 /**
  * Return the field with the specified ID.
@@ -532,6 +555,51 @@ const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
  * @return TRUE if the field is required, or FALSE.
  */
 gboolean purple_request_field_is_required(const PurpleRequestField *field);
+
+/**
+ * Checks, if specified field has value.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the field has value, or FALSE.
+ */
+gboolean purple_request_field_is_filled(const PurpleRequestField *field);
+
+/**
+ * Sets validator for a single field.
+ *
+ * @param field The field.
+ * @param validator The validator callback, NULL to disable validation.
+ * @param user_data The data to pass to the callback.
+ */
+void purple_request_field_set_validator(PurpleRequestField *field,
+	PurpleRequestFieldValidator validator, void *user_data);
+
+/**
+ * Returns whether or not field has validator set.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the field has validator, or FALSE.
+ */
+gboolean purple_request_field_is_validatable(PurpleRequestField *field);
+
+/**
+ * Checks, if specified field is valid.
+ *
+ * If detailed message about failure reason is needed, there is an option to
+ * return (via errmsg argument) pointer to newly allocated error message.
+ * It must be freed with g_free after use.
+ *
+ * Note: empty, not required fields are valid.
+ *
+ * @param field The field.
+ * @param errmsg If non-NULL, the memory area, where the pointer to validation
+ *        failure message will be set.
+ *
+ * @return TRUE, if the field is valid, FALSE otherwise.
+ */
+gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
 
 /**
  * Returns the ui_data for a field.
@@ -1197,6 +1265,56 @@ PurpleRequestField *purple_request_field_certificate_new(const char *id,
  */
 PurpleCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Validators for request fields.                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Validates a field which should contain an email address.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data Ignored.
+ *
+ * @return TRUE, if field contains valid email address.
+ */
+gboolean purple_request_field_email_validator(PurpleRequestField *field,
+	gchar **errmsg, void *user_data);
+
+/**
+ * Validates a field which should contain alphanumeric content.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data (Optional) allowed character list (NULL-terminated string).
+ *
+ * @return TRUE, if field contains only alphanumeric characters.
+ */
+gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *allowed_characters);
+
+/**
+ * Validates a field which should contain numeric content, within (optional)
+ * range.
+ *
+ * @see purple_request_field_set_validator
+ *
+ * @param field The field.
+ * @param errmsg (Optional) destination for error message.
+ * @param user_data (Optional) an int[2] array containing specified range.
+ *
+ * @return TRUE, if field contains only alphanumeric characters.
+ */
+gboolean purple_request_field_numeric_validator(PurpleRequestField *field,
+	gchar **errmsg, void *range);
 
 /*@}*/
 

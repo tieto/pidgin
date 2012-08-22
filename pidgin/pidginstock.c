@@ -95,7 +95,7 @@ static const GtkStockItem stock_items[] =
 
 typedef struct {
 	const char *name;
- 	const char *dir;
+	const char *dir;
 	const char *filename;
 	gboolean microscopic;
 	gboolean extra_small;
@@ -520,8 +520,13 @@ pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 
 		if (stock_icons[i].dir == NULL) {
 			/* GTK+ Stock icon */
+#if GTK_CHECK_VERSION(3,0,0)
+			iconset = gtk_style_context_lookup_icon_set(gtk_widget_get_style_context(win),
+			                                            stock_icons[i].filename);
+#else
 			iconset = gtk_style_lookup_icon_set(gtk_widget_get_style(win),
-					stock_icons[i].filename);
+			                                    stock_icons[i].filename);
+#endif
 		} else {
 			filename = find_file(stock_icons[i].dir, stock_icons[i].filename);
 

@@ -23,7 +23,7 @@
 
 #include <libgadu.h>
 #include "gg.h"
-#include "gg-utils.h"
+#include "utils.h"
 #include "confer.h"
 
 /* PurpleConversation *ggp_confer_find_by_name(PurpleConnection *gc, const gchar *name) {{{ */

@@ -534,14 +534,14 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                               PIDGIN_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	                  hbox);
 
 	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -786,11 +786,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		gtk_tree_selection_select_iter(sel, &iter);
 	}
 
-#if GTK_CHECK_VERSION(2,18,0)
 	if (!gtk_widget_get_visible(mail_dialog->dialog)) {
-#else
-	if (!GTK_WIDGET_VISIBLE(mail_dialog->dialog)) {
-#endif
 		GdkPixbuf *pixbuf = gtk_widget_render_icon(mail_dialog->dialog, PIDGIN_STOCK_DIALOG_MAIL,
 							   gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>%d new email.</b>",
@@ -806,11 +802,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		g_free(label_text);
 		if (pixbuf)
 			g_object_unref(pixbuf);
-#if GTK_CHECK_VERSION(2,18,0)
 	} else if (!gtk_widget_has_focus(mail_dialog->dialog))
-#else
-	} else if (!GTK_WIDGET_HAS_FOCUS(mail_dialog->dialog))
-#endif
 		pidgin_set_urgent(GTK_WINDOW(mail_dialog->dialog), TRUE);
 
 	return data;
@@ -819,7 +811,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 static gboolean
 formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 {
-	if (event->keyval == GDK_Escape)
+	if (event->keyval == GDK_KEY_Escape)
 	{
 		purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
 
@@ -844,14 +836,16 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(window), title);
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
+#endif
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
 
 	/* Setup the main vbox */
-	vbox = GTK_DIALOG(window)->vbox;
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Setup the descriptive label */
 	primary_esc = g_markup_escape_text(primary, -1);
@@ -891,7 +885,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	/* Make sure URLs are clickable */
 	linked_text = purple_markup_linkify(text);
-	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(web_view), linked_text, "");
+	gtk_webview_load_html_string(GTK_WEBVIEW(web_view), linked_text);
 	g_free(linked_text);
 
 	g_object_set_data(G_OBJECT(window), "webview-widget", web_view);
@@ -979,7 +973,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Setup the main vbox */
-	vbox = GTK_DIALOG(window)->vbox;
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Setup the descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -1151,7 +1145,7 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	if (pinfo != NULL) {
 		GtkWidget *webview = g_object_get_data(G_OBJECT(pinfo->window), "webview-widget");
 		char *linked_text = purple_markup_linkify(info);
-		gtk_webview_load_html_string_with_imgstore(GTK_WEBVIEW(webview), linked_text);
+		gtk_webview_load_html_string(GTK_WEBVIEW(webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
 		ui_handle = pinfo->window;
@@ -1510,16 +1504,13 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 
 	dialog = gtk_dialog_new();
 
+	/* Vertical box */
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-#endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
-
-	/* Vertical box */
-	vbox = GTK_DIALOG(dialog)->vbox;
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(vbox), PIDGIN_HIG_BORDER);
 
 	/* Golden ratio it up! */
 	gtk_widget_set_size_request(dialog, 550, 400);

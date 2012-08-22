@@ -742,8 +742,13 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 			| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 			window_id_cb, ow);
 
-	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
-			GST_MESSAGE_SRC(msg)), ow->window_id);
+#if GST_CHECK_VERSION(0,10,31)
+	gst_x_overlay_set_window_handle(GST_X_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                                ow->window_id);
+#else
+	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                             ow->window_id);
+#endif
 }
 #endif
 

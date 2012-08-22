@@ -39,7 +39,7 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 	/* "esdmon",	"ESD", ? */
 	"osssrc",	"OSS",
 	"pulsesrc",	"PulseAudio",
-	"libsndiosrc",	"sndio",
+	"sndiosrc",	"sndio",
 	/* "audiotestsrc wave=silence", "Silence", */
 	"audiotestsrc",	"Test Sound",
 	NULL
@@ -51,7 +51,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 	"esdsink",	"ESD",
 	"osssink",	"OSS",
 	"pulsesink",	"PulseAudio",
-	"libsndiosink",	"sndio",
+	"sndiosink",	"sndio",
 	NULL
 };
 
@@ -505,14 +505,14 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static void
-config_destroy(GtkObject *w, gpointer nul)
+config_destroy(GtkWidget *w, gpointer nul)
 {
 	purple_debug_info("vvconfig", "closing vv configuration window\n");
 	window = NULL;
 }
 
 static void
-config_close(GtkObject *w, gpointer nul)
+config_close(GtkWidget *w, gpointer nul)
 {
 	gtk_widget_destroy(GTK_WIDGET(window));
 }

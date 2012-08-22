@@ -210,7 +210,9 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		imgid = purple_imgstore_add_with_id(g_memdup(data, data_len), data_len, "");
 		if (imgid) {
 			cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
-			g_snprintf(tmp, sizeof(tmp), "<IMG ID=\"%d\">", imgid);
+			g_snprintf(tmp, sizeof(tmp),
+			           "<IMG SRC=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">",
+			           imgid);
 
 			if (channel)
 				serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),

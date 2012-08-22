@@ -19,9 +19,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#if !GTK_CHECK_VERSION(2,14,0)
-#define gtk_widget_get_window(x) x->window
-#endif
+#include "gtk3compat.h"
 
 static void gstroke_invisible_window_init (GtkWidget *widget);
 /*FIXME: Maybe these should be put in a structure, and not static...*/
@@ -121,8 +119,11 @@ static void gstroke_cancel(GdkEvent *event)
 	timer_id = 0;
 
 	if( event != NULL )
+#if GTK_CHECK_VERSION(3,0,0)
+		gdk_device_ungrab(gdk_event_get_device(event), event->button.time);
+#else
 		gdk_pointer_ungrab (event->button.time);
-
+#endif
 
 	if (gstroke_draw_strokes() && gstroke_disp != NULL) {
 	    /* get rid of the invisible stroke window */
@@ -160,9 +161,16 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 	  if (cursor == NULL)
 		  cursor = gdk_cursor_new(GDK_PENCIL);
 
+#if GTK_CHECK_VERSION(3,0,0)
+      gdk_device_grab(gdk_event_get_device(event),
+                      gtk_widget_get_window(widget), GDK_OWNERSHIP_WINDOW,
+                      FALSE, GDK_BUTTON_RELEASE_MASK, cursor,
+                      event->button.time);
+#else
       gdk_pointer_grab (gtk_widget_get_window(widget), FALSE,
 			GDK_BUTTON_RELEASE_MASK, NULL, cursor,
 			event->button.time);
+#endif
       timer_id = g_timeout_add (GSTROKE_TIMEOUT_DURATION,
 				  gstroke_timeout, widget);
       return TRUE;
@@ -181,7 +189,11 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
       last_mouse_position.invalid = TRUE;
       original_widget = NULL;
       g_source_remove (timer_id);
+#if GTK_CHECK_VERSION(3,0,0)
+      gdk_device_ungrab(gdk_event_get_device(event), event->button.time);
+#else
       gdk_pointer_ungrab (event->button.time);
+#endif
       timer_id = 0;
 
       {
@@ -339,7 +351,7 @@ gstroke_invisible_window_init (GtkWidget *widget)
   unsigned int border_width;
   XSizeHints hints;
   Display *disp = GDK_WINDOW_XDISPLAY(gtk_widget_get_window(widget));
-  Window wind = GDK_WINDOW_XWINDOW (gtk_widget_get_window(widget));
+  Window wind = gdk_x11_window_get_xid(gtk_widget_get_window(widget));
   int screen = DefaultScreen (disp);
 
 	if (!gstroke_draw_strokes())

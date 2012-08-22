@@ -158,7 +158,19 @@ void purple_account_option_set_default_string(PurpleAccountOption *option,
  * @param masked The masking.
  */
 void
-purple_account_option_set_masked(PurpleAccountOption *option, gboolean masked);
+purple_account_option_string_set_masked(PurpleAccountOption *option, gboolean masked);
+
+/**
+ * Sets the hint list for an account option.
+ *
+ * The list passed will be owned by the account option, and the
+ * strings inside will be freed automatically.
+ *
+ * @param option The account option.
+ * @param hints The list of hints, stored as strings.
+ */
+void purple_account_option_string_set_hints(PurpleAccountOption *option,
+	GSList *hints);
 
 /**
  * Sets the list values for an account option.
@@ -261,7 +273,16 @@ const char *purple_account_option_get_default_list_value(
  * @return %TRUE if the option's value should be obscured.
  */
 gboolean
-purple_account_option_get_masked(const PurpleAccountOption *option);
+purple_account_option_string_get_masked(const PurpleAccountOption *option);
+
+/**
+ * Returns the list of hints for an account option.
+ *
+ * @param option The account option.
+ *
+ * @constreturn A list of hints, stored as strings.
+ */
+const GSList * purple_account_option_string_get_hints(const PurpleAccountOption *option);
 
 /**
  * Returns the list values for an account option.

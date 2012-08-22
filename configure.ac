@@ -124,7 +124,7 @@ AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h regex.h)
+AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -373,6 +373,9 @@ AC_ARG_WITH(x, [],
 AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
+AC_ARG_WITH(gtk, [AC_HELP_STRING([--with-gtk=<version>],
+		[compile with GTK+ 2 or 3 user interface (default: auto)])],
+	with_gtk="$withval", with_gtk="auto")
 AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
@@ -429,15 +432,35 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
-
+	if test "x$with_gtk" = "x3"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+You must have GTK+ 3.0.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	elif test "x$with_gtk" = "x2"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
 You must have GTK+ 2.10.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
-
+	elif test "x$with_gtk" = "xauto"; then
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
+			AC_MSG_RESULT(no)
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], [with_gtk=2], [
+				AC_MSG_RESULT(no)
+				AC_MSG_ERROR([
+You must have GTK+ 2.10.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])])
+	else
+		AC_MSG_ERROR([--with-gtk must specify one of 2, 3 or auto.])
+	fi
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
@@ -445,13 +468,24 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
-	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
-You must have WebKit 1.1.1 or newer development headers installed to compile
-Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
+	WEBKIT_VERSION=1.1.1
+	if test "x$with_gtk" = "x3"; then
+		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= $WEBKIT_VERSION], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
+installed to compile Pidgin.  If you want to build only Finch then specify
+--disable-gtkui when running configure.
 ])])
+	else
+		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= $WEBKIT_VERSION], , [
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR([
+You must have WebKit for GTK+2 $WEBKIT_VERSION or newer development headers
+installed to compile Pidgin.  If you want to build only Finch then specify
+--disable-gtkui when running configure.
+])])
+	fi
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 
@@ -566,6 +600,10 @@ Use --disable-sm if you do not need session management support.
 	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
+	dnl GtkSpell is not GTK+3 compatible yet
+	if test "x$with_gtk" = "x3"; then
+		enable_gtkspell="no"
+	fi
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
@@ -630,16 +668,29 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 	dnl # Check for GCR for its certificate widgets
 	dnl #######################################################################
 	if test "x$enable_gcr" = "xyes"; then
-		PKG_CHECK_MODULES(GCR, gcr-0, [
-			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
-			AC_MSG_RESULT(no)
-			enable_gcr="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-GCR development headers not found.
+		if test "x$with_gtk" = "x3"; then
+			PKG_CHECK_MODULES(GCR, gcr-3, [
+				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+				AC_MSG_RESULT(no)
+				enable_gcr="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
+GCR for GTK+3 development headers not found.
 Use --disable-gcr if you do not need GCR certificate widgets.
 ])
-			fi])
+				fi])
+		else
+			PKG_CHECK_MODULES(GCR, gcr-0, [
+				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+				AC_MSG_RESULT(no)
+				enable_gcr="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
+GCR for GTK+2 development headers not found.
+Use --disable-gcr if you do not need GCR certificate widgets.
+])
+				fi])
+		fi
 	fi
 
 
@@ -764,6 +815,19 @@ Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to 
 
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
+
+dnl #######################################################################
+dnl # Check for zlib (required)
+dnl #######################################################################
+
+PKG_CHECK_MODULES(ZLIB, [zlib >= 1.2.0], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have zlib >= 1.2.0 development headers installed to build.
+])])
+
+AC_SUBST(ZLIB_CFLAGS)
+AC_SUBST(ZLIB_LIBS)
 
 dnl #######################################################################
 dnl # GConf schemas
@@ -1019,13 +1083,14 @@ AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile 
 AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
+GADU_LIBGADU_VERSION=1.11.2
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
 	gadu_manual_check="yes"
 else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_VERSION], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1057,28 +1122,7 @@ if test "x$gadu_libs" = "xyes"; then
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
 	]])], [
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
-#endif
-		]])], [
-			AC_MSG_RESULT(yes)
-			AC_DEFINE([HAVE_LIBGADU], [1],
-				[Define to 1 if you have libgadu.])
-		], [
-			AC_MSG_RESULT(no)
-			echo
-			echo
-			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.11.0 or newer."
-			echo "Then rerun this ./configure"
-			echo
-			echo "Falling back to using our own copy of libgadu"
-			echo
-			GADU_LIBS=""
-			GADU_CFLAGS=""
-			gadu_libs=no
-		])
+		AC_MSG_RESULT(yes)
 	], [
 		AC_MSG_RESULT(no)
 		echo
@@ -1097,6 +1141,35 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
 fi
 
+if test "x$gadu_libs" = "xyes" -a "x$gadu_manual_check" = "xyes"; then
+	AC_MSG_CHECKING(for supplied libgadu compatibility)
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
+
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
+#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
+#error "Your libgadu version is too old."
+#endif
+	]])], [
+		AC_MSG_RESULT(yes)
+	], [
+		AC_MSG_RESULT(no)
+		echo
+		echo "Your supplied copy of libgadu is too old."
+		echo "Install version $GADU_LIBGADU_VERSION or newer."
+		echo "Then rerun this ./configure"
+		echo
+		echo "Falling back to using our own copy of libgadu"
+		echo
+		GADU_LIBS=""
+		GADU_CFLAGS=""
+		gadu_libs=no
+	])
+
+	CPPFLAGS="$CPPFLAGS_save"
+fi
+
+AM_CONDITIONAL(HAVE_LIBGADU, test "x$gadu_libs" = "xyes")
 AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 
 if test "x$gadu_libs" = "x"; then
@@ -1105,6 +1178,7 @@ fi
 
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
+AC_SUBST(GADU_LIBGADU_VERSION)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -2713,7 +2787,10 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Build GTK+ 2.x UI............. : $enable_gtkui
+echo Build GTK+ UI................. : $enable_gtkui
+if test "x$enable_gtkui" = "xyes"; then
+	echo Build for GTK+ version........ : $with_gtk
+fi
 echo Build console UI.............. : $enable_consoleui
 echo Build for X11................. : $with_x
 echo

@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  (C) Copyright 2009 Jakub Zawadzki <darkjames@darkjames.ath.cx>
+ *  (C) Copyright 2011 Bartosz Brachaczek <b.brachaczek@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version

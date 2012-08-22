@@ -56,6 +56,7 @@ typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 #include "signals.h"
 #include "xmlnode.h"
 #include "notify.h"
+#include "plugin.h"
 
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
@@ -469,6 +470,19 @@ time_t purple_time_build(int year, int month, int day, int hour,
  */
 time_t purple_str_to_time(const char *timestamp, gboolean utc,
                         struct tm *tm, long *tz_off, const char **rest);
+
+/**
+ * Formats a datetime according to a UTS-35 Date Format Pattern.
+ *
+ * @param format The formatting string, according to UTS #35
+ *               See http://unicode.org/reports/tr35/
+ *               (NOTE: not all formats are supported)
+ * @param len    The length of the formatting string
+ * @param tm     The time to format, or @c NULL to use the current local time
+ *
+ * @return The time, formatted as per the user's settings.
+ */
+char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
 
 /*@}*/
 
@@ -945,6 +959,16 @@ const char *purple_normalize(const PurpleAccount *account, const char *str);
  * @return A pointer to the normalized version stored in a static buffer.
  */
 const char *purple_normalize_nocase(const PurpleAccount *account, const char *str);
+
+/**
+ * Checks, if a string is valid.
+ *
+ * @param prpl     The protocol plugin the string belongs to.
+ * @param str      The string to validate.
+ *
+ * @return TRUE, if string is valid, otherwise FALSE.
+ */
+gboolean purple_validate(const PurplePlugin *prpl, const char *str);
 
 /**
  * Compares two strings to see if the first contains the second as

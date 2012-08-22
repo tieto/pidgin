@@ -44,6 +44,8 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
+#include "gtk3compat.h"
+
 static GList *dialogwindows = NULL;
 
 struct _PidginGroupMergeObject {
@@ -153,8 +155,8 @@ static const struct translator translators[] = {
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{NULL,                      NULL, "Vladimir (Kaladan) Petkov", "kaladan@gmail.com"},
-	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
-	{NULL,                      NULL, "Jamil Ahmed", "jamil@bengalinux.org"},
+	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
+	{NULL,                      NULL, "Israt Jahan", "israt@ankur.org.bd"},
 	{NULL,                      NULL, "Samia Nimatullah", "mailsamia2001@yahoo.com"},
 	{N_("Bengali-India"),       "bn_IN", "Runa Bhattacharjee", "runab@fedoraproject.org"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
@@ -162,8 +164,8 @@ static const struct translator translators[] = {
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
 	{NULL,                      NULL, "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),               "cs", "David Vachulka", "david@konstrukce-cad.com"},
-	{N_("Danish"),              "da", "Morten Brix Pedersen", "morten@wtf.dk"},
-	{NULL,                      NULL, "Peter Bach", "bach.peter@gmail.com"},
+	{N_("Danish"),              "da", "Peter Bach", "bach.peter@gmail.com"},
+	{NULL,                      NULL, "Morten Brix Pedersen", "morten@wtf.dk"},
 	{N_("German"),              "de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
 	{NULL,                      NULL, "Jochen Kemnade", "jochenkemnade@web.de"},
 	{N_("Dzongkha"),            "dz", "Norbu", "nor_den@hotmail.com"},
@@ -179,8 +181,8 @@ static const struct translator translators[] = {
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
 	{N_("Basque"),              "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
+	{NULL,                      NULL, "Roozbeh Pournader", "roozbeh@farsiweb.info"},
 	{NULL,                      NULL, "Meelad Zakaria", "meelad@farsiweb.info"},
-	{NULL,                      NULL, "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Irish"),               "ga", "Aaron Kearns", "ajkearns6@gmail.com"},
@@ -201,8 +203,8 @@ static const struct translator translators[] = {
 	{N_("Khmer"),               "km", "Khoem Sokhem", "khoemsokhem@khmeros.info"},
 	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Sushizang", "sushizang@empal.com"},
-	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
-	{NULL,                      NULL, "Amed Ç. Jiyan", "amedcj@hotmail.com"},
+	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
+	{NULL,                      NULL, "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{NULL,                      NULL, "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
 	{N_("Lao"),                 "lo", "Anousak Souphavah", "anousak@gmail.com"},
 	{N_("Maithili"),            "mai", "Sangeeta Kumari", "sangeeta_0975@yahoo.com"},
@@ -215,6 +217,7 @@ static const struct translator translators[] = {
 	{N_("Mongolian"),           "mn", "gooyo", NULL},
 	{N_("Marathi"),             "mr", "Sandeep Shedmake", "sandeep.shedmake@gmail.com"},
 	{N_("Malay"),               "ms_MY", "Muhammad Najmi bin Ahmad Zabidi", "najmi.zabidi@gmail.com"},
+	{N_("Burmese"),             "my_MM", "Thura Hlaing", "trhura@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", "hans@nordhaug.priv.no"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Gideon van Melle", "translations@gvmelle.com"},
@@ -235,8 +238,8 @@ static const struct translator translators[] = {
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Serbian Latin"),       "sr@latin", "Miloš Popović", "gpopac@gmail.com"},
-	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
-	{NULL,                      NULL, "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
+	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
+	{NULL,                      NULL, "Danishka Navin", "snavin@redhat.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Swahili"),             "sw", "Paul Msegeya", "msegeya@gmail.com"},
 	{N_("Tamil"),               "ta", "I. Felix", "ifelix25@gmail.com"},
@@ -261,7 +264,7 @@ static const struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
-	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
+	{N_("Bengali"),             "bn", "Indranil Das Gupta", "indradg@l2c2.org"},
 	{NULL,                      NULL, "Tisa Nafisa", "tisa_nafisa@yahoo.com"},
 	{N_("Catalan"),             "ca", "JM Pérez Cáncer", NULL},
 	{NULL,                      NULL, "Robert Millan", NULL},
@@ -279,9 +282,9 @@ static const struct translator past_translators[] = {
 	{N_("Finnish"),             "fi", "Arto Alakulju", NULL},
 	{NULL,                      NULL, "Tero Kuusela", NULL},
 	{N_("French"),              "fr", "Sébastien François", NULL},
+	{NULL,                      NULL, "Loïc Jeannin", NULL},
 	{NULL,                      NULL, "Stéphane Pontier", NULL},
 	{NULL,                      NULL, "Stéphane Wirtel", NULL},
-	{NULL,                      NULL, "Loïc Jeannin", NULL},
 	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", NULL},
 	{N_("Hebrew"),              "he", "Pavel Bibergal", NULL},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", NULL},
@@ -289,8 +292,8 @@ static const struct translator past_translators[] = {
 	{N_("Italian"),             "it", "Salvatore di Maggio", NULL},
 	{N_("Japanese"),            "ja", "Takashi Aihana", NULL},
 	{NULL,                      NULL, "Ryosuke Kutsuna", NULL},
-	{NULL,                      NULL, "Taku Yasui", NULL},
 	{NULL,                      NULL, "Junichi Uekawa", NULL},
+	{NULL,                      NULL, "Taku Yasui", NULL},
 	{N_("Georgian"),            "ka", "Temuri Doghonadze", NULL},
 	{N_("Korean"),              "ko", "Sang-hyun S", NULL},
 	{NULL,                      NULL, "A Ho-seok Lee", NULL},
@@ -303,25 +306,25 @@ static const struct translator past_translators[] = {
 	{NULL,                      NULL, "Petter Johan Olsen", NULL},
 	{NULL,                      NULL, "Espen Stefansen", "espenas@gmail.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
-	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
+	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
 	{NULL,                      NULL, "Paweł Godlewski", "pawel@bajk.pl"},
-	{NULL,                      NULL, "Krzysztof Foltman", "krzysztof@foltman.com"},
 	{NULL,                      NULL, "Piotr Makowski", NULL},
+	{NULL,                      NULL, "Emil Nowak", "emil5@go2.pl"},
 	{NULL,                      NULL, "Przemysław Sułek", NULL},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
 	{NULL,                      NULL, "Alexandre Prokoudine", NULL},
 	{NULL,                      NULL, "Sergey Volozhanin", NULL},
 	{N_("Slovak"),              "sk", "Daniel Režný", NULL},
-	{NULL,                      NULL, "helix84", NULL},
 	{NULL,                      NULL, "Richard Golier", NULL},
+	{NULL,                      NULL, "helix84", NULL},
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
 	{N_("Serbian"),             "sr", "Danilo Šegan", "dsegan@gmx.net"},
 	{NULL,                      NULL, "Aleksandar Urosevic", "urke@users.sourceforge.net"},
 	{N_("Swedish"),             "sv", "Tore Lundqvist", NULL},
 	{NULL,                      NULL, "Christian Rose", NULL},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
-	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
+	{N_("Turkish"),             "tr", "Ahmet Alp Balkan", NULL},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao", NULL},
 	{NULL,                      NULL, "Rocky S. Lee", NULL},
@@ -434,9 +437,14 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	AtkObject *obj;
 	char *filename, *tmp;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	win = pidgin_create_dialog(title, 0, role, TRUE);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, 0);
+#else
 	win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, role, TRUE);
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
-	gtk_window_set_default_size(GTK_WINDOW(win), 450, 450);
+#endif
+	gtk_window_set_default_size(GTK_WINDOW(win), 475, 450);
 
 	/* Generate a logo with a version number */
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
@@ -458,9 +466,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_webview(FALSE, &webview, NULL, NULL);
-	/* TODO WEBKIT: Compile now and fix it later when we have a proper replacement for this function
-	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
-	*/
+	gtk_webview_set_format_functions(GTK_WEBVIEW(webview), GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
@@ -468,11 +474,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
 
-#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_can_default(button, TRUE);
-#else
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-#endif
 	gtk_widget_grab_default(button);
 
 	gtk_widget_show_all(win);
@@ -877,6 +879,28 @@ pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 	pidgin_dialogs_im_with_user(account, username);
 }
 
+static gboolean
+pidgin_dialogs_im_name_validator(PurpleRequestField *field, gchar **errmsg,
+	void *_fields)
+{
+	PurpleRequestFields *fields = _fields;
+	PurpleAccount *account;
+	PurplePlugin *prpl;
+	const char *username;
+	gboolean valid;
+
+	account = purple_request_fields_get_account(fields, "account");
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	username = purple_request_fields_get_string(fields, "screenname");
+
+	valid = purple_validate(prpl, username);
+
+	if (errmsg && !valid)
+		*errmsg = g_strdup(_("Invalid username"));
+
+	return valid;
+}
+
 void
 pidgin_dialogs_im(void)
 {
@@ -892,6 +916,7 @@ pidgin_dialogs_im(void)
 	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	purple_request_field_set_type_hint(field, "screenname");
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_validator(field, pidgin_dialogs_im_name_validator, fields);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_account_new("account", _("_Account"), NULL);
@@ -978,14 +1003,13 @@ pidgin_dialogs_ee(const char *ee)
 
 	gtk_container_set_border_width (GTK_CONTAINER(window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-#if !GTK_CHECK_VERSION(2,22,0)
-	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-#endif
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(window))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
+	                               PIDGIN_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))), hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 

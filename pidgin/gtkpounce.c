@@ -38,11 +38,13 @@
 
 #include "gtkblist.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
 #include "gtkpounce.h"
 #include "gtknotify.h"
 #include "pidginstock.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
+
+#include <gdk/gdkkeysyms.h>
 
 /**
  * These are used for the GtkTreeView when you're scrolling through
@@ -304,7 +306,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 		events |= PURPLE_POUNCE_MESSAGE_RECEIVED;
 
 	/* Data fields */
-	message = gtk_imhtml_get_markup(GTK_IMHTML(dialog->send_msg_entry));
+	message = gtk_webview_get_body_html(GTK_WEBVIEW(dialog->send_msg_entry));
 	command = gtk_entry_get_text(GTK_ENTRY(dialog->exec_cmd_entry));
 	sound   = gtk_entry_get_text(GTK_ENTRY(dialog->play_sound_entry));
 	reason  = gtk_entry_get_text(GTK_ENTRY(dialog->popup_entry));
@@ -378,6 +380,19 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 	delete_win_cb(NULL, NULL, dialog);
 }
 
+static gboolean
+entry_key_press_cb(GtkWidget *widget, GdkEventKey *event,
+                      PidginPounceDialog *dialog)
+{
+	if ((event->keyval == GDK_KEY_Return)
+	 || (event->keyval == GDK_KEY_KP_Enter)) {
+		save_pounce_cb(widget, dialog);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 pounce_choose_cb(GtkWidget *item, PurpleAccount *account,
 				 PidginPounceDialog *dialog)
@@ -410,13 +425,15 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				GtkSelectionData *sd, guint info, guint t, gpointer data)
 {
 	PidginPounceDialog *dialog;
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *sd_data = gtk_selection_data_get_data(sd);
 
-	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
+	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
 		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
 
-		memcpy(&node, sd->data, sizeof(node));
+		memcpy(&node, sd_data, sizeof(node));
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 			buddy = purple_contact_get_priority_buddy((PurpleContact *)node);
@@ -431,15 +448,15 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		dialog->account = purple_buddy_get_account(buddy);
 		pidgin_account_option_menu_set_selected(dialog->account_menu, purple_buddy_get_account(buddy));
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 	}
-	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	else if (target == gdk_atom_intern("application/x-im-contact", FALSE))
 	{
 		char *protocol = NULL;
 		char *username = NULL;
 		PurpleAccount *account;
 
-		if (pidgin_parse_x_im_contact((const char *)sd->data, FALSE, &account,
+		if (pidgin_parse_x_im_contact((const char *)sd_data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)
@@ -461,7 +478,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		g_free(username);
 		g_free(protocol);
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, TRUE, (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
 	}
 }
 
@@ -475,7 +492,7 @@ static void
 reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
-	gtk_imhtml_setup_entry(GTK_IMHTML(dialog->send_msg_entry),
+	gtk_webview_setup_entry(GTK_WEBVIEW(dialog->send_msg_entry),
 			(account && purple_account_get_connection(account)) ? purple_connection_get_flags(purple_account_get_connection(account)) : PURPLE_CONNECTION_HTML);
 }
 
@@ -494,7 +511,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	GtkSizeGroup *sg;
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
-	GtkWidget *send_msg_imhtml;
+	GtkWidget *send_msg_webview;
 
 	g_return_if_fail((cur_pounce != NULL) ||
 	                 (account != NULL) ||
@@ -534,13 +551,15 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->window = window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("Add Buddy Pounce") : _("Modify Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
+#endif
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
-	/* Create the parent vbox for everything. */
-	vbox1 = GTK_DIALOG(window)->vbox;
+	/* Get the parent vbox for everything. */
+	vbox1 = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Create the vbox that will contain all the prefs stuff. */
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -679,7 +698,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->play_sound
 		= gtk_check_button_new_with_mnemonic(_("P_lay a sound"));
 
-	send_msg_imhtml = pidgin_create_imhtml(TRUE, &dialog->send_msg_entry, NULL, NULL);
+	send_msg_webview = pidgin_create_webview(TRUE, &dialog->send_msg_entry, NULL, NULL);
 	reset_send_msg_entry(dialog, NULL);
 	dialog->exec_cmd_entry    = gtk_entry_new();
 	dialog->popup_entry       = gtk_entry_new();
@@ -691,7 +710,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
 	dialog->play_sound_reset  = gtk_button_new_with_mnemonic(_("Reset"));
 
-	gtk_widget_set_sensitive(send_msg_imhtml,           FALSE);
+	gtk_widget_set_sensitive(send_msg_webview,          FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,    FALSE);
 	gtk_widget_set_sensitive(dialog->popup_entry,       FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_browse,   FALSE);
@@ -726,7 +745,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 5, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), send_msg_imhtml,          0, 5, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), send_msg_webview,         0, 5, 3, 4,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd,         0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
@@ -751,7 +770,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(dialog->popup);
 	gtk_widget_show(dialog->popup_entry);
 	gtk_widget_show(dialog->send_msg);
-	gtk_widget_show(send_msg_imhtml);
+	gtk_widget_show(send_msg_webview);
 	gtk_widget_show(dialog->exec_cmd);
 	gtk_widget_show(dialog->exec_cmd_entry);
 	gtk_widget_show(dialog->exec_cmd_browse);
@@ -767,7 +786,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	g_signal_connect(G_OBJECT(dialog->send_msg), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive),
-					 send_msg_imhtml);
+					 send_msg_webview);
 
 	g_signal_connect(G_OBJECT(dialog->popup), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive),
@@ -807,13 +826,13 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_object_set_data_full(G_OBJECT(dialog->window), "sound-widgets",
 				sound_widgets, (GDestroyNotify)g_ptr_array_free);
 
-	g_signal_connect_swapped(G_OBJECT(dialog->send_msg_entry), "format_function_clear",
+	g_signal_connect_swapped(G_OBJECT(dialog->send_msg_entry), "format-cleared",
 			G_CALLBACK(reset_send_msg_entry), dialog);
 	g_signal_connect_swapped(G_OBJECT(dialog->account_menu), "changed",
 			G_CALLBACK(reset_send_msg_entry), dialog);
 
-	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "message_send",
-					 G_CALLBACK(save_pounce_cb), dialog);
+	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "key-press-event",
+					 G_CALLBACK(entry_key_press_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->popup_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_entry), "activate",
@@ -926,7 +945,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 													  "send-message",
 													  "message")) != NULL)
 		{
-			gtk_imhtml_append_text(GTK_IMHTML(dialog->send_msg_entry), value, 0);
+			gtk_webview_append_html(GTK_WEBVIEW(dialog->send_msg_entry), value);
 		}
 
 		if ((value = purple_pounce_action_get_attribute(cur_pounce,
@@ -1018,11 +1037,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 static gboolean
 pounces_manager_configure_cb(GtkWidget *widget, GdkEventConfigure *event, PouncesManager *dialog)
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	if (gtk_widget_get_visible(widget)) {
-#else
-	if (GTK_WIDGET_VISIBLE(widget)) {
-#endif
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height", event->height);
 	}
@@ -1335,7 +1350,11 @@ pidgin_pounces_manager_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height");
 
+#if GTK_CHECK_VERSION(3,0,0)
+	dialog->window = win = pidgin_create_dialog(_("Buddy Pounces"), 0, "pounces", TRUE);
+#else
 	dialog->window = win = pidgin_create_dialog(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
+#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",

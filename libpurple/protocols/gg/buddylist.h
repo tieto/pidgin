@@ -50,6 +50,16 @@ ggp_buddylist_load(PurpleConnection *gc, char *buddylist);
 char *
 ggp_buddylist_dump(PurpleAccount *account);
 
+/**
+ * Returns the best name of a buddy from the buddylist.
+ *
+ * @param gc  PurpleConnection instance.
+ * @param uin UIN of the buddy.
+ *
+ * @return Name of the buddy, or UIN converted to string, if there is no such
+ * user on the list.
+ */
+const char * ggp_buddylist_get_buddy_name(PurpleConnection *gc, const uin_t uin);
 
 #endif /* _PURPLE_GG_BUDDYLIST_H */
 
