@@ -1447,6 +1447,29 @@ else
 fi
 
 dnl #######################################################################
+dnl # Check for Secret Service headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-secret-service], [disable Secret Service support])], enable_secret_service=$enableval, enable_secret_service=yes)
+
+dnl Check for libsecret; if we don't have it, oh well
+if test "x$enable_secret_service" = "xyes" ; then
+	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
+		AC_SUBST(SECRETSERVICE_CFLAGS)
+		AC_SUBST(SECRETSERVICE_LIBS)
+		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+	], [
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+Secret Service development headers not found.
+Use --disable-secret-service if you do not need Secret Service support.
+])
+		fi])
+fi
+
+AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
+
+dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
@@ -2806,6 +2829,7 @@ if test "x$enable_dbus" = "xyes" ; then
 fi
 echo Build with GNU Libidn......... : $enable_idn
 echo Build with NetworkManager..... : $enable_nm
+echo Build with Secret Service..... : $enable_secret_service
 echo Build with GNOME Keyring...... : $enable_gnome_keyring
 echo Build with KWallet............ : $enable_kwallet
 echo SSL Library/Libraries......... : $msg_ssl

@@ -8,6 +8,15 @@ internalkeyring_la_LDFLAGS = -module -avoid-version
 internalkeyring_la_SOURCES = internalkeyring.c
 internalkeyring_la_LIBADD  = $(GLIB_LIBS)
 
+if ENABLE_SECRETSERVICE
+
+secretservice_la_CFLAGS  = $(AM_CPPFLAGS) $(SECRETSERVICE_CFLAGS)
+secretservice_la_LDFLAGS = -module -avoid-version
+secretservice_la_SOURCES = secretservice.c
+secretservice_la_LIBADD  = $(GLIB_LIBS) $(SECRETSERVICE_LIBS)
+
+endif
+
 if ENABLE_GNOMEKEYRING
 
 gnomekeyring_la_CFLAGS  = $(AM_CPPFLAGS) $(GNOMEKEYRING_CFLAGS)
@@ -34,6 +43,11 @@ if PLUGINS
 
 plugin_LTLIBRARIES = \
 	internalkeyring.la
+
+if ENABLE_SECRETSERVICE
+plugin_LTLIBRARIES += \
+	secretservice.la
+endif
 
 if ENABLE_GNOMEKEYRING
 plugin_LTLIBRARIES += \
