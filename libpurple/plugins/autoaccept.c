@@ -239,7 +239,7 @@ plugin_load(PurplePlugin *plugin)
 	 *                                             --Mark Doliner, 2011-01-03
 	 */
 	if (!purple_prefs_exists(PREF_STRANGER)) {
-		if (purple_prefs_get_bool(PREF_STRANGER_OLD))
+		if (purple_prefs_exists(PREF_STRANGER_OLD) && purple_prefs_get_bool(PREF_STRANGER_OLD))
 			purple_prefs_add_int(PREF_STRANGER, FT_REJECT);
 		else
 			purple_prefs_set_int(PREF_STRANGER, FT_ASK);
