@@ -113,7 +113,7 @@ LIBS = \
 			-lpurple
 
 ifeq ($(CYRUS_SASL), 1)
-CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.22-daa1
+CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.25
 INCLUDE_PATHS += -I$(CYRUS_SASL_TOP)/include
 LIB_PATHS += -L$(CYRUS_SASL_TOP)/bin
 LIBS += -llibsasl

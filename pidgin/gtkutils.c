@@ -2162,7 +2162,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 static void
 icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 {
-	GdkPixbuf *pixbuf, *scale;
+	GdkPixbuf *pixbuf;
 	int height, width;
 	char *basename, *markup, *size;
 	struct stat st;
@@ -2171,7 +2171,7 @@ icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 	filename = gtk_file_chooser_get_preview_filename(
 					GTK_FILE_CHOOSER(dialog->icon_filesel));
 
-	if (!filename || g_stat(filename, &st) || !(pixbuf = pidgin_pixbuf_new_from_file(filename)))
+	if (!filename || g_stat(filename, &st) || !(pixbuf = pidgin_pixbuf_new_from_file_at_size(filename, 128, 128)))
 	{
 		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
 		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
@@ -2179,8 +2179,7 @@ icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 		return;
 	}
 
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
+	gdk_pixbuf_get_file_info(filename, &width, &height);
 	basename = g_path_get_basename(filename);
 	size = purple_str_size_to_units(st.st_size);
 	markup = g_strdup_printf(_("<b>File:</b> %s\n"
@@ -2188,13 +2187,10 @@ icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 							   "<b>Image size:</b> %dx%d"),
 							 basename, size, width, height);
 
-	scale = gdk_pixbuf_scale_simple(pixbuf, width * 50 / height,
-									50, GDK_INTERP_BILINEAR);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), scale);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), pixbuf);
 	gtk_label_set_markup(GTK_LABEL(dialog->icon_text), markup);
 
 	g_object_unref(G_OBJECT(pixbuf));
-	g_object_unref(G_OBJECT(scale));
 	g_free(filename);
 	g_free(basename);
 	g_free(size);

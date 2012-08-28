@@ -360,7 +360,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     ${AndIf} ${IsWinNT4}
       ;SILC
       Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+      Delete "$INSTDIR\libsilcclient-1-1-3.dll"
       Delete "$INSTDIR\libsilc-1-1-2.dll"
       ;GSSAPI
       Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
@@ -637,7 +637,7 @@ Section Uninstall
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
-    Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-3.dll"
     Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nss3.dll"
