@@ -60,13 +60,6 @@
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
-#ifdef USE_GTKSPELL
-#  include <gtkspell/gtkspell.h>
-#  ifdef _WIN32
-#    include "wspell.h"
-#  endif
-#endif
-
 #include "gtk3compat.h"
 
 /* Timeout for typing notifications in seconds */

@@ -33,13 +33,6 @@
 # include <X11/Xlib.h>
 #endif
 
-#ifdef USE_GTKSPELL
-# include <gtkspell/gtkspell.h>
-# ifdef _WIN32
-#  include "wspell.h"
-# endif
-#endif
-
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
@@ -7887,7 +7880,6 @@ static void
 spellcheck_pref_cb(const char *name, PurplePrefType type,
 				   gconstpointer value, gpointer data)
 {
-#ifdef USE_GTKSPELL
 	GList *cl;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
@@ -7901,9 +7893,9 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
-		pidgin_webview_set_spellcheck(GTK_WEBVIEW(gtkconv->entry), value);
+		pidgin_webview_set_spellcheck(GTK_WEBVIEW(gtkconv->entry),
+		                              (gboolean)GPOINTER_TO_INT(value));
 	}
-#endif
 }
 
 static void

@@ -1663,10 +1663,8 @@ conv_page(void)
 
 	pidgin_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/purple/conversations/im/send_typing", vbox);
-#ifdef USE_GTKSPELL
 	pidgin_prefs_checkbox(_("Highlight _misspelled words"),
 			PIDGIN_PREFS_ROOT "/conversations/spellcheck", vbox);
-#endif
 
 	pidgin_prefs_checkbox(_("Use smooth-scrolling"), PIDGIN_PREFS_ROOT "/conversations/use_smooth_scrolling", vbox);
 
