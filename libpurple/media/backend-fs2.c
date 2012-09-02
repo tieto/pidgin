@@ -809,11 +809,12 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 	GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
 	static guint level_id = 0;
+	const GstStructure *structure = gst_message_get_structure(msg);
 
 	if (level_id == 0)
 		level_id = g_signal_lookup("level", PURPLE_TYPE_MEDIA);
 
-	if (gst_structure_has_name(msg->structure, "level")) {
+	if (gst_structure_has_name(structure, "level")) {
 		GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
 		gchar *name;
 		gchar *participant = NULL;
@@ -868,12 +869,12 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		return;
 
 #ifdef HAVE_FARSIGHT
-	if (gst_structure_has_name(msg->structure, "farsight-error")) {
+	if (gst_structure_has_name(structure, "farsight-error")) {
 #else
-	if (gst_structure_has_name(msg->structure, "farstream-error")) {
+	if (gst_structure_has_name(structure, "farstream-error")) {
 #endif
 		FsError error_no;
-		gst_structure_get_enum(msg->structure, "error-no",
+		gst_structure_get_enum(structure, "error-no",
 				FS_TYPE_ERROR, (gint*)&error_no);
 		switch (error_no) {
 			case FS_ERROR_NO_CODECS:
@@ -910,7 +911,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 #endif
 						error_no,
 						gst_structure_get_string(
-						msg->structure, "error-msg"));
+						structure, "error-msg"));
 				break;
 		}
 
@@ -924,7 +925,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 #endif
 			purple_media_end(priv->media, NULL, NULL);
 		}
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-new-local-candidate")) {
 #else
@@ -939,9 +940,9 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaBackendFs2Stream *media_stream;
 		gchar *name;
 
-		value = gst_structure_get_value(msg->structure, "stream");
+		value = gst_structure_get_value(structure, "stream");
 		stream = g_value_get_object(value);
-		value = gst_structure_get_value(msg->structure, "candidate");
+		value = gst_structure_get_value(structure, "candidate");
 		local_candidate = g_value_get_boxed(value);
 
 		session = get_session_from_fs_stream(self, stream);
@@ -963,7 +964,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_signal_emit_by_name(self, "new-candidate",
 				session->id, name, candidate);
 		g_object_unref(candidate);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-local-candidates-prepared")) {
 #else
@@ -975,7 +976,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaBackendFs2Session *session;
 		gchar *name;
 
-		value = gst_structure_get_value(msg->structure, "stream");
+		value = gst_structure_get_value(structure, "stream");
 		stream = g_value_get_object(value);
 		session = get_session_from_fs_stream(self, stream);
 
@@ -985,7 +986,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 		g_signal_emit_by_name(self, "candidates-prepared",
 				session->id, name);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-new-active-candidate-pair")) {
 #else
@@ -1000,13 +1001,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaCandidate *lcandidate, *rcandidate;
 		gchar *name;
 
-		value = gst_structure_get_value(msg->structure, "stream");
+		value = gst_structure_get_value(structure, "stream");
 		stream = g_value_get_object(value);
-		value = gst_structure_get_value(msg->structure,
-				"local-candidate");
+		value = gst_structure_get_value(structure, "local-candidate");
 		local_candidate = g_value_get_boxed(value);
-		value = gst_structure_get_value(msg->structure,
-				"remote-candidate");
+		value = gst_structure_get_value(structure, "remote-candidate");
 		remote_candidate = g_value_get_boxed(value);
 
 		g_object_get(stream, "participant", &participant, NULL);
@@ -1023,7 +1022,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 		g_object_unref(lcandidate);
 		g_object_unref(rcandidate);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-recv-codecs-changed")) {
 #else
@@ -1033,7 +1032,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		GList *codecs;
 		FsCodec *codec;
 
-		value = gst_structure_get_value(msg->structure, "codecs");
+		value = gst_structure_get_value(structure, "codecs");
 		codecs = g_value_get_boxed(value);
 		codec = codecs->data;
 
@@ -1044,7 +1043,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				"farstream-recv-codecs-changed: %s\n",
 #endif
 				codec->encoding_name);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-component-state-changed")) {
 #else
@@ -1055,9 +1054,9 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		guint component;
 		const gchar *state;
 
-		value = gst_structure_get_value(msg->structure, "state");
+		value = gst_structure_get_value(structure, "state");
 		fsstate = g_value_get_enum(value);
-		value = gst_structure_get_value(msg->structure, "component");
+		value = gst_structure_get_value(structure, "component");
 		component = g_value_get_uint(value);
 
 		switch (fsstate) {
@@ -1092,7 +1091,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 #endif
 				"component: %u state: %s\n",
 				component, state);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-send-codec-changed")) {
 #else
@@ -1102,7 +1101,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		FsCodec *codec;
 		gchar *codec_str;
 
-		value = gst_structure_get_value(msg->structure, "codec");
+		value = gst_structure_get_value(structure, "codec");
 		codec = g_value_get_boxed(value);
 		codec_str = fs_codec_to_string(codec);
 
@@ -1115,7 +1114,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				codec_str);
 
 		g_free(codec_str);
-	} else if (gst_structure_has_name(msg->structure,
+	} else if (gst_structure_has_name(structure,
 #ifdef HAVE_FARSIGHT
 			"farsight-codecs-changed")) {
 #else
@@ -1125,7 +1124,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		FsSession *fssession;
 		GList *sessions;
 
-		value = gst_structure_get_value(msg->structure, "session");
+		value = gst_structure_get_value(structure, "session");
 		fssession = g_value_get_object(value);
 		sessions = g_hash_table_get_values(priv->sessions);
 
