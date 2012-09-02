@@ -786,17 +786,19 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				(participant == ow->participant)) &&
 				!strcmp(session_id, ow->session_id)) {
 			GstBus *bus;
-			GstElement *queue, *colorspace;
+			GstElement *queue, *convert;
 			GstElement *tee = purple_media_get_tee(media,
 					session_id, participant);
 
 			if (tee == NULL)
 				continue;
 
-			queue = gst_element_factory_make(
-					"queue", NULL);
-			colorspace = gst_element_factory_make(
-					"ffmpegcolorspace", NULL);
+			queue = gst_element_factory_make("queue", NULL);
+#if GST_CHECK_VERSION(0,11,0)
+			convert = gst_element_factory_make("videoconvert", NULL);
+#else
+			convert = gst_element_factory_make("ffmpegcolorspace", NULL);
+#endif
 			ow->sink = purple_media_manager_get_element(
 					manager, PURPLE_MEDIA_RECV_VIDEO,
 					ow->media, ow->session_id,
@@ -817,7 +819,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			}
 
 			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
-					queue, colorspace, ow->sink, NULL);
+					queue, convert, ow->sink, NULL);
 
 			bus = gst_pipeline_get_bus(GST_PIPELINE(
 					manager->priv->pipeline));
@@ -826,10 +828,10 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			gst_object_unref(bus);
 
 			gst_element_set_state(ow->sink, GST_STATE_PLAYING);
-			gst_element_set_state(colorspace, GST_STATE_PLAYING);
+			gst_element_set_state(convert, GST_STATE_PLAYING);
 			gst_element_set_state(queue, GST_STATE_PLAYING);
-			gst_element_link(colorspace, ow->sink);
-			gst_element_link(queue, colorspace);
+			gst_element_link(convert, ow->sink);
+			gst_element_link(queue, convert);
 			gst_element_link(tee, queue);
 		}
 	}
