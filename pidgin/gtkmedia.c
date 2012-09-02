@@ -44,8 +44,6 @@
 #include <gdk/gdkquartz.h>
 #endif
 
-#include <gst/interfaces/xoverlay.h>
-
 #include "gtk3compat.h"
 
 #define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
