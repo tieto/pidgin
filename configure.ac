@@ -840,27 +840,36 @@ AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
 if test "x$enable_gst" != "xno"; then
-	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+		enable_gst="11"
 		AC_SUBST(GSTREAMER_CFLAGS)
 		AC_SUBST(GSTREAMER_LIBS)
 	], [
-		AC_MSG_RESULT(no)
-		enable_gst="no"
-		if test "x$force_deps" = "xyes" ; then
-			AC_MSG_ERROR([
+		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+			enable_gst="10"
+			AC_SUBST(GSTREAMER_CFLAGS)
+			AC_SUBST(GSTREAMER_LIBS)
+		], [
+			AC_MSG_RESULT(no)
+			enable_gst="no"
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 GStreamer development headers not found.
 Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])
-		fi])
+			fi
+		])
+	])
 fi
 
 dnl #######################################################################
 dnl # Check for GStreamer Interfaces
 dnl #######################################################################
-if test "x$enable_gst" != "xno"; then
+if test "x$enable_gst" == "x10"; then
 	AC_ARG_ENABLE(gstreamer-interfaces,
-		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer interface support])],
+		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer 0.10 interface support])],
 			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
 	if test "x$enable_gstinterfaces" != "xno"; then
 		PKG_CHECK_MODULES(GSTINTERFACES, [gstreamer-interfaces-0.10], [
@@ -904,7 +913,9 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gst" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" == "x11" -a "x$enable_farstream" != "xno"; then
+		AC_DEFINE(USE_VV, 1, [Use voice and video])
+	elif test "x$enable_gst" == "x10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
