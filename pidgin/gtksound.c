@@ -527,7 +527,11 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 
+#if GST_CHECK_VERSION(0,11,0)
+	play = gst_element_factory_make("playbin", "play");
+#else
 	play = gst_element_factory_make("playbin2", "play");
+#endif
 
 	if (play == NULL) {
 		return;
