@@ -274,8 +274,11 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
 				G_CALLBACK(pipeline_bus_call), manager);
-		gst_bus_set_sync_handler(bus,
-				gst_bus_sync_signal_handler, NULL);
+#if GST_CHECK_VERSION(0,11,0)
+		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
+#else
+		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
+#endif
 		gst_object_unref(bus);
 
 		filename = g_build_filename(purple_user_dir(),
