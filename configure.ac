@@ -891,20 +891,29 @@ AC_ARG_ENABLE(farstream,
 	[AC_HELP_STRING([--disable-farstream], [compile without farstream support])],
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
-	PKG_CHECK_MODULES(FARSTREAM, [farstream-0.1], [
-		AC_SUBST(FARSTREAM_CFLAGS)
-		AC_SUBST(FARSTREAM_LIBS)
- 	], [
-		# Try farsight.
-		PKG_CHECK_MODULES(FARSTREAM, [farsight2-0.10 >= 0.0.9], [
-		        AC_DEFINE(HAVE_FARSIGHT, 1, [Use Farsight instead of Farstream])
+	if test "x$enable_gst" == "x11"; then
+		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
-		], [
+ 		], [
 		        enable_farstream="no"
 		])
- 	])
- fi
+	else
+		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.1], [
+			AC_SUBST(FARSTREAM_CFLAGS)
+			AC_SUBST(FARSTREAM_LIBS)
+ 		], [
+			# Try farsight.
+			PKG_CHECK_MODULES(FARSTREAM, [farsight2-0.10 >= 0.0.9], [
+			        AC_DEFINE(HAVE_FARSIGHT, 1, [Use Farsight instead of Farstream])
+				AC_SUBST(FARSTREAM_CFLAGS)
+				AC_SUBST(FARSTREAM_LIBS)
+			], [
+			        enable_farstream="no"
+			])
+ 		])
+	fi
+fi
 
 dnl #######################################################################
 dnl # Check for Voice and Video support
