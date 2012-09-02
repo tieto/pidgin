@@ -913,7 +913,7 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
@@ -926,7 +926,7 @@ Or use --disable-vv if you do not need voice/video support.
 		fi
 	fi
 fi
-AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno")
+AM_CONDITIONAL(USE_VV, test "x$enable_vv" != "xno")
 
 dnl #######################################################################
 dnl # Check for Internationalized Domain Name support
