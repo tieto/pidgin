@@ -459,7 +459,11 @@ purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 {
 #ifdef USE_VV
 	if (manager->priv->video_caps == NULL)
+#if GST_CHECK_VERSION(0,11,0)
+		manager->priv->video_caps = gst_caps_from_string("video/x-raw,"
+#else
 		manager->priv->video_caps = gst_caps_from_string("video/x-raw-yuv,"
+#endif
 			"width=[250,352], height=[200,288], framerate=[1/1,20/1]");
 	return manager->priv->video_caps;
 #else
