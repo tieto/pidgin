@@ -840,7 +840,7 @@ AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
 if test "x$enable_gst" != "xno"; then
-	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0 gstreamer-video-1.0], [
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		enable_gst="11"
 		AC_SUBST(GSTREAMER_CFLAGS)

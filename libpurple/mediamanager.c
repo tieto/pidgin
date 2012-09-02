@@ -44,7 +44,11 @@
 #else
 #include <farstream/fs-element-added-notifier.h>
 #endif
+#if GST_CHECK_VERSION(0,11,0)
+#include <gst/video/videooverlay.h>
+#else
 #include <gst/interfaces/xoverlay.h>
+#endif
 
 /** @copydoc _PurpleMediaManagerPrivate */
 typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
@@ -726,9 +730,12 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 {
 	GstElement *sink;
 
-	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT ||
-			!gst_structure_has_name(msg->structure,
-			"prepare-xwindow-id"))
+	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT
+#if GST_CHECK_VERSION(0,11,0)
+	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
+#else
+	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
+#endif
 		return;
 
 	sink = GST_ELEMENT(GST_MESSAGE_SRC(msg));
@@ -742,7 +749,10 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 			| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 			window_id_cb, ow);
 
-#if GST_CHECK_VERSION(0,10,31)
+#if GST_CHECK_VERSION(0,11,0)
+	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                                    ow->window_id);
+#elif GST_CHECK_VERSION(0,10,31)
 	gst_x_overlay_set_window_handle(GST_X_OVERLAY(GST_MESSAGE_SRC(msg)),
 	                                ow->window_id);
 #else
