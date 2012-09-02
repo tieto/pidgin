@@ -179,9 +179,10 @@ static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
 {}
 
-static gboolean
-event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
+static GstPadProbeReturn
+event_probe_cb(GstPad *srcpad, GstPadProbeInfo *info, gpointer unused)
 {
+	GstEvent *event = GST_PAD_PROBE_INFO_EVENT(info);
 	if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM
 		&& gst_event_has_name(event, "purple-unlink-tee")) {
 
@@ -189,22 +190,23 @@ event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
 
 		gst_pad_unlink(srcpad, gst_pad_get_peer(srcpad));
 
-		gst_pad_remove_event_probe(srcpad,
+		gst_pad_remove_probe(srcpad,
 			g_value_get_uint(gst_structure_get_value(s, "handler-id")));
 
 		if (g_value_get_boolean(gst_structure_get_value(s, "release-pad")))
 			gst_element_release_request_pad(GST_ELEMENT_PARENT(srcpad), srcpad);
 
-		return FALSE;
+		return GST_PAD_PROBE_DROP;
 	}
 
-	return TRUE;
+	return GST_PAD_PROBE_OK;
 }
 
 static void
 unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
 {
-	guint id = gst_pad_add_event_probe(srcpad, G_CALLBACK(event_probe_cb), NULL);
+	guint id = gst_pad_add_probe(srcpad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
+	                             event_probe_cb, NULL, NULL);
 
 	if (GST_IS_GHOST_PAD(srcpad))
 		srcpad = gst_ghost_pad_get_target(GST_GHOST_PAD(srcpad));
