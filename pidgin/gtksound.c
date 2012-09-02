@@ -530,7 +530,7 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 
-	play = gst_element_factory_make("playbin", "play");
+	play = gst_element_factory_make("playbin2", "play");
 
 	if (play == NULL) {
 		return;
