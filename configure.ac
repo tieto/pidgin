@@ -840,7 +840,7 @@ AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
 if test "x$enable_gst" != "xno"; then
-	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0 gstreamer-video-1.0], [
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		enable_gst="11"
 		AC_SUBST(GSTREAMER_CFLAGS)
@@ -862,6 +862,26 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 			fi
 		])
 	])
+fi
+
+dnl #######################################################################
+dnl # Check for GStreamer Video
+dnl #######################################################################
+if test "x$enable_gst" == "x11"; then
+	AC_ARG_ENABLE(gstreamer-video,
+		[AC_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 0.11 Video Overlay support])],
+			enable_gstvideo="$enableval", enable_gstvideo="yes")
+	if test "x$enable_gstvideo" != "xno"; then
+		PKG_CHECK_MODULES(GSTVIDEO, [gstreamer-video-1.0], [
+			AC_DEFINE(USE_GSTVIDEO, 1, [Use GStreamer Video Overlay support])
+			AC_SUBST(GSTVIDEO_CFLAGS)
+			AC_SUBST(GSTVIDEO_LIBS)
+		], [
+			enable_gstvideo="no"
+		])
+	fi
+else
+	enable_gstvideo="no"
 fi
 
 dnl #######################################################################
@@ -922,7 +942,7 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gst" == "x11" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" == "x11" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	elif test "x$enable_gst" == "x10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
