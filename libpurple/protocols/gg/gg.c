@@ -696,8 +696,11 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
-			purple_input_remove(info->inpa);
-			info->inpa = 0;
+			if (info->inpa > 0)
+			{
+				purple_input_remove(info->inpa);
+				info->inpa = 0;
+			}
 			purple_debug_info("gg", "Connection failure: %d\n",
 				ev->event.failure);
 			switch (ev->event.failure) {
