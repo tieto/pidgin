@@ -838,9 +838,6 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
-dnl
-dnl TODO: Depend on gstreamer >= 0.10.10, and remove the conditional use of
-dnl       gst_registry_fork_set_enabled.
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
@@ -849,10 +846,6 @@ if test "x$enable_gst" != "xno"; then
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		AC_SUBST(GSTREAMER_CFLAGS)
 		AC_SUBST(GSTREAMER_LIBS)
-		AC_CHECK_LIB(gstreamer-0.10, gst_registry_fork_set_enabled,
-			[ AC_DEFINE(GST_CAN_DISABLE_FORKING, [],
-			  [Define if gst_registry_fork_set_enabled exists])],
-			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
 		enable_gst="no"
