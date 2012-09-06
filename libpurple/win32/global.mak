@@ -57,6 +57,10 @@ PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 
 GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
+CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security
+LD_HARDENING_OPTIONS ?= -Wl,--dynamicbase -Wl,--nxcompat
+
+
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])
 #m4_define([purple_minor_version], [0])
@@ -84,17 +88,14 @@ endif
 
 DEFINES += -DHAVE_CONFIG_H -DWIN32_LEAN_AND_MEAN
 
-# Use -g flag when building debug version of Pidgin (including plugins).
-# Use -fnative-struct instead of -mms-bitfields when using mingw 1.1
-# (gcc 2.95)
-CFLAGS += -O2 -Wall $(GCCWARNINGS) -pipe -mno-cygwin -mms-bitfields -g
+CFLAGS += -O2 -Wall $(GCCWARNINGS) $(CC_HARDENING_OPTIONS) -pipe -mno-cygwin -mms-bitfields -g
 
 # If not specified, dlls are built with the default base address of 0x10000000.
 # When loaded into a process address space a dll will be rebased if its base
 # address colides with the base address of an existing dll.  To avoid rebasing 
 # we do the following.  Rebasing can slow down the load time of dlls and it
 # also renders debug info useless.
-DLL_LD_FLAGS += -Wl,--enable-auto-image-base
+DLL_LD_FLAGS += -Wl,--enable-auto-image-base $(LD_HARDENING_OPTIONS)
 
 # Build programs
 ifeq "$(origin CC)" "default"
