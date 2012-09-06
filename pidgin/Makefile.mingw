@@ -18,7 +18,7 @@ EXE_NAME := $(EXE_TARGET).exe
 
 WINAPP := -mwindows
 
-LDFLAGS := $(WINAPP) $(LD_HARDENING_OPTIONS)
+LDFLAGS := $(WINAPP) $(LD_HARDENING_OPTIONS) -Wl,--enable-auto-import -lssp
 
 ##
 ## INCLUDE PATHS
@@ -160,7 +160,7 @@ $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_OBJECTS)
 	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(PIDGIN_LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(PIDGIN_TARGET).def,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 
 $(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(EXE_OBJECTS) $(PIDGIN_TARGET).dll
-	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
+	$(CC) $(EXE_OBJECTS) $(LDFLAGS) -o $(EXE_TARGET).exe
 
 ##
 ## CLEAN RULES

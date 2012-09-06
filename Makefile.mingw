@@ -55,6 +55,7 @@ EXTERNAL_DLLS = \
 	libplc4.dll \
 	libplds4.dll \
 	libsasl.dll \
+	libssp-0.dll \
 	libxml2-2.dll \
 	nss3.dll \
 	nssckbi.dll \
@@ -99,6 +100,7 @@ endif
 	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
 	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(WIN32_DEV_TOP)/pidgin-inst-deps-20100315/exchndl.dll $(PIDGIN_INSTALL_DIR)
+	cp $(GCC_SSP_TOP)/bin/libssp-0.dll $(PIDGIN_INSTALL_DIR)
 
 pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip:
 	pidgin/win32/nsis/generate_gtk_zip.sh `pwd`

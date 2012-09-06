@@ -22,6 +22,7 @@ PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.10
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
+GCC_SSP_TOP ?= $(WIN32_DEV_TOP)/gcc-core-4.4.0-mingw32-dll
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
@@ -57,7 +58,7 @@ PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 
 GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
-CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security
+CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security -fstack-protector-all --param ssp-buffer-size=1
 LD_HARDENING_OPTIONS ?= -Wl,--dynamicbase -Wl,--nxcompat
 
 
@@ -95,7 +96,7 @@ CFLAGS += -O2 -Wall $(GCCWARNINGS) $(CC_HARDENING_OPTIONS) -pipe -mno-cygwin -mm
 # address colides with the base address of an existing dll.  To avoid rebasing 
 # we do the following.  Rebasing can slow down the load time of dlls and it
 # also renders debug info useless.
-DLL_LD_FLAGS += -Wl,--enable-auto-image-base $(LD_HARDENING_OPTIONS)
+DLL_LD_FLAGS += -Wl,--enable-auto-image-base -Wl,--enable-auto-import $(LD_HARDENING_OPTIONS) -lssp
 
 # Build programs
 ifeq "$(origin CC)" "default"

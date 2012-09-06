@@ -638,6 +638,7 @@ Section Uninstall
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
     Delete "$INSTDIR\libsilcclient-1-1-3.dll"
+    Delete "$INSTDIR\libssp-0.dll"
     Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nss3.dll"
