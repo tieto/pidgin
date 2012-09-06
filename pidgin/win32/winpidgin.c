@@ -41,6 +41,7 @@
 typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCWSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
+typedef BOOL (WINAPI* LPFNSETPROCESSDEPPOLICY)(DWORD);
 
 static BOOL portable_mode = FALSE;
 
@@ -642,16 +643,24 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		}
 	}
 
+	/* Permanently enable DEP if the OS supports it */
+	if ((hmod = GetModuleHandleW(L"kernel32.dll"))) {
+		LPFNSETPROCESSDEPPOLICY MySetProcessDEPPolicy =
+			(LPFNSETPROCESSDEPPOLICY)
+			GetProcAddress(hmod, "SetProcessDEPPolicy");
+		if (MySetProcessDEPPolicy)
+			MySetProcessDEPPolicy(1); //PROCESS_DEP_ENABLE
+	}
+
 	if (debug || help || version) {
 		/* If stdout hasn't been redirected to a file, alloc a console
 		 *  (_istty() doesn't work for stuff using the GUI subsystem) */
 		if (_fileno(stdout) == -1 || _fileno(stdout) == -2) {
 			LPFNATTACHCONSOLE MyAttachConsole = NULL;
-			if ((hmod = GetModuleHandleW(L"kernel32.dll"))) {
+			if (hmod)
 				MyAttachConsole =
 					(LPFNATTACHCONSOLE)
 					GetProcAddress(hmod, "AttachConsole");
-			}
 			if ((MyAttachConsole && MyAttachConsole(ATTACH_PARENT_PROCESS))
 					|| AllocConsole()) {
 				freopen("CONOUT$", "w", stdout);
