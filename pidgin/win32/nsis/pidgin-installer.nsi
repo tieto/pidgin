@@ -118,8 +118,8 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
 
   ;Finish Page config
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
-  !define MUI_FINISHPAGE_RUN_NOTCHECKED
+  ;!define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
+  ;!define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGINFINISHVISITWEBSITE)
   !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
