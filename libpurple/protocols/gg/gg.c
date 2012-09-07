@@ -406,10 +406,10 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 		}
 	}
 
-	purple_debug_info("gg", "ggp_recv_message_handler: msg from (%s): %s (class = %d; rcpt_count = %d; multilogon = %d)\n",
+	purple_debug_info("gg", "ggp_recv_message_handler: msg from (%s): %s (class = %d; rcpt_count = %d; multilogon = %d; chat_id = %llu)\n",
 			from, msg, ev->msgclass,
 			ev->recipients_count,
-			multilogon);
+			multilogon, ev->chat_id);
 
 	if (multilogon && ev->recipients_count != 0) {
 		purple_debug_warning("gg", "ggp_recv_message_handler: conference multilogon messages are not yet handled\n");
@@ -596,8 +596,14 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_MULTILOGON_INFO:
 			ggp_multilogon_info(gc, &ev->event.multilogon_info);
 			break;
+		case GG_EVENT_IMTOKEN:
+			purple_debug_info("gg", "gg11: got IMTOKEN %s\n", ev->event.imtoken.imtoken);
+			break;
+		case GG_EVENT_PONG110:
+			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
+			break;
 		default:
-			purple_debug_error("gg",
+			purple_debug_warning("gg",
 				"unsupported event type=%d\n", ev->type);
 			break;
 	}
@@ -642,6 +648,12 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_STATE_TLS_NEGOTIATION:
 			purple_debug_info("gg", "GG_STATE_TLS_NEGOTIATION\n");
+			break;
+		case GG_STATE_RESOLVING_HUB:
+			purple_debug_info("gg", "GG_STATE_RESOLVING_HUB\n");
+			break;
+		case GG_STATE_READING_HUB:
+			purple_debug_info("gg", "GG_STATE_READING_HUB\n");
 			break;
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
