@@ -27,6 +27,7 @@
 
 #include "accountopt.h"
 #include "util.h"
+#include "glibcompat.h"
 
 /**
  * An option for an account.
