@@ -38,9 +38,9 @@
 #include <sys/stat.h>
 #include "config.h"
 
-typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
-typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCWSTR);
-typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
+typedef int (__cdecl* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
+typedef void (WINAPI* LPFNSETDLLDIRECTORY)(LPCWSTR);
+typedef BOOL (WINAPI* LPFNATTACHCONSOLE)(DWORD);
 typedef BOOL (WINAPI* LPFNSETPROCESSDEPPOLICY)(DWORD);
 
 static BOOL portable_mode = FALSE;
@@ -692,24 +692,27 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 			wcscat(pidgin_dir, L"\\exchndl.dll");
 			if ((hmod = LoadLibraryW(pidgin_dir))) {
-				FARPROC proc;
+				typedef void (__cdecl* LPFNSETLOGFILE)(const LPCSTR);
+				LPFNSETLOGFILE MySetLogFile;
 				/* exchndl.dll is built without UNICODE */
 				char debug_dir[MAX_PATH];
 				printf("Loaded exchndl.dll\n");
 				/* Temporarily override exchndl.dll's logfile
 				 * to something sane (Pidgin will override it
 				 * again when it initializes) */
-				proc = GetProcAddress(hmod, "SetLogFile");
-				if (proc) {
+				MySetLogFile = (LPFNSETLOGFILE) GetProcAddress(hmod, "SetLogFile");
+				if (MySetLogFile) {
 					if (GetTempPathA(sizeof(debug_dir) * sizeof(char), debug_dir) != 0) {
 						strcat(debug_dir, "pidgin.RPT");
 						printf(" Setting exchndl.dll LogFile to %s\n",
 							debug_dir);
-						(proc)(debug_dir);
+						MySetLogFile(debug_dir);
 					}
 				}
-				proc = GetProcAddress(hmod, "SetDebugInfoDir");
-				if (proc) {
+				/* The function signature for SetDebugInfoDir is the same as SetLogFile,
+				 * so we can reuse the variable */
+				MySetLogFile = (LPFNSETLOGFILE) GetProcAddress(hmod, "SetDebugInfoDir");
+				if (MySetLogFile) {
 					char *pidgin_dir_ansi = NULL;
 					/* Restore pidgin_dir to point to where the executable is */
 					pidgin_dir_start[0] = L'\0';
@@ -731,7 +734,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 						debug_dir[sizeof(debug_dir) / sizeof(char) - 1] = '\0';
 						printf(" Setting exchndl.dll DebugInfoDir to %s\n",
 							debug_dir);
-						(proc)(debug_dir);
+						MySetLogFile(debug_dir);
 						free(pidgin_dir_ansi);
 					}
 				}

@@ -377,7 +377,8 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 }
 
 void winpidgin_init(HINSTANCE hint) {
-	FARPROC proc;
+	typedef void (__cdecl* LPFNSETLOGFILE)(const LPCSTR);
+	LPFNSETLOGFILE MySetLogFile;
 	gchar *exchndl_dll_path;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
@@ -385,10 +386,10 @@ void winpidgin_init(HINSTANCE hint) {
 	exe_hInstance = hint;
 
 	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
-	proc = wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
+	MySetLogFile = (LPFNSETLOGFILE) wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
 	g_free(exchndl_dll_path);
 	exchndl_dll_path = NULL;
-	if (proc) {
+	if (MySetLogFile) {
 		gchar *debug_dir, *locale_debug_dir;
 
 		debug_dir = g_build_filename(purple_user_dir(), "pidgin.RPT", NULL);
@@ -396,7 +397,7 @@ void winpidgin_init(HINSTANCE hint) {
 
 		purple_debug_info("winpidgin", "Setting exchndl.dll LogFile to %s\n", debug_dir);
 
-		(proc)(locale_debug_dir);
+		MySetLogFile(locale_debug_dir);
 
 		g_free(debug_dir);
 		g_free(locale_debug_dir);
