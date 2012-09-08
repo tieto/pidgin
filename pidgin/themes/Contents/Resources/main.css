@@ -10,8 +10,11 @@ body {
 .x-container,
 .x-status_container
 {
+	clear: left;
 	line-height: 1.3em;
 	margin-bottom: 4px;
+	height: 100%;
+	overflow: hidden;
 }
 
 .x-container .x-time,
@@ -23,14 +26,18 @@ body {
 
 .x-container .x-sender
 {
-	display: inline;
 	font-weight: bold;
 }
 
-.x-container .x-message,
-.x-status_container .x-message
+.x-time, .x-sender
 {
-	display: inline;
+	float: left;
+	margin-right: 4px;
+}
+
+.x-message p
+{
+	margin: 0;
 }
 
 /* Colour-ify things */

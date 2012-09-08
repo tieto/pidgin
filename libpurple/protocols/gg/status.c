@@ -132,6 +132,7 @@ int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 	if (status_message)
 	{
 		gchar *stripped = purple_markup_strip_html(status_message);
+		g_strstrip(stripped);
 		*message = ggp_status_validate_description(stripped);
 		g_free(stripped);
 	}
@@ -405,11 +406,16 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
 	const gchar *purple_status = ggp_status_to_purplestatus(status);
 	gchar *status_message = NULL;
+	gboolean is_own;
+	
+	is_own = 0 == g_strcmp0(ggp_uin_to_str(uin), purple_account_get_username(account));
 	
 	if (!buddy)
 	{
-		purple_debug_warning("gg", "ggp_status_got_others_buddy: "
-			"buddy %u not found\n", uin);
+		if (!is_own)
+			purple_debug_warning("gg",
+				"ggp_status_got_others_buddy: "
+				"buddy %u not found\n", uin);
 		return;
 	}
 	ggp_buddy_get_data(buddy)->blocked = (status == GG_STATUS_BLOCKED);
