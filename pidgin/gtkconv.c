@@ -7402,15 +7402,28 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			const char *topic = gtkconv->u.chat->topic_text
 				? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text))
 				: NULL;
-			char *esc = NULL, *tmp;
-			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
-			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
-			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
-						tmp, esc  && *esc ? "\n" : "",
+			const char *title = purple_conversation_get_title(conv);
+			const char *name = purple_conversation_get_name(conv);
+
+			char *topic_esc, *unaliased, *unaliased_esc, *title_esc;
+
+			topic_esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+			unaliased = g_utf8_collate(title, name) ? g_strdup_printf("(%s)", name) : NULL;
+			unaliased_esc = unaliased ? g_markup_escape_text(unaliased, -1) : NULL;
+			title_esc = g_markup_escape_text(title, -1);
+
+			markup = g_strdup_printf("%s%s<span size='smaller'>%s</span>%s<span color='%s' size='smaller'>%s</span>",
+						title_esc,
+						unaliased_esc ? " " : "",
+						unaliased_esc ? unaliased_esc : "",
+						topic_esc  && *topic_esc ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
-						esc ? esc : "");
-			g_free(tmp);
-			g_free(esc);
+						topic_esc ? topic_esc : "");
+
+			g_free(title_esc);
+			g_free(topic_esc);
+			g_free(unaliased);
+			g_free(unaliased_esc);
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
