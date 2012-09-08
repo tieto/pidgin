@@ -3884,8 +3884,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		{
 			pce = cur->data;
 
-			if (!pce->secret && (!pce->required &&
-				g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier) == NULL))
+			if (!pce->secret)
 			{
 				tmp = purple_text_strip_mnemonic(pce->label);
 				name = g_markup_escape_text(tmp, -1);
