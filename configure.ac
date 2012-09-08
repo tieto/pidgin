@@ -839,16 +839,37 @@ dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
+AC_ARG_WITH(gstreamer, [AC_HELP_STRING([--with-gstreamer=<version>],
+		[compile with GStreamer 0.10 or 1.0 interface (default: auto)])],
+	with_gstreamer="$withval", with_gstreamer="auto")
 if test "x$enable_gst" != "xno"; then
-	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
-		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-		enable_gst="11"
-		AC_SUBST(GSTREAMER_CFLAGS)
-		AC_SUBST(GSTREAMER_LIBS)
-	], [
-		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+	if test "x$with_gstreamer" == "xauto"; then
+		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-			enable_gst="10"
+			with_gstreamer="1.0"
+			AC_SUBST(GSTREAMER_CFLAGS)
+			AC_SUBST(GSTREAMER_LIBS)
+			dnl Check whether forking stuff is required for this version.
+		], [
+			PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+				AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+				with_gstreamer="0.10"
+				AC_SUBST(GSTREAMER_CFLAGS)
+				AC_SUBST(GSTREAMER_LIBS)
+			], [
+				AC_MSG_RESULT(no)
+				enable_gst="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
+GStreamer development headers not found.
+Use --disable-gstreamer if you do not need GStreamer (sound) support.
+])
+				fi
+			])
+		])
+	elif test "x$with_gstreamer" == "x1.0"; then
+		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
+			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer 1.0 for playing sounds])
 			AC_SUBST(GSTREAMER_CFLAGS)
 			AC_SUBST(GSTREAMER_LIBS)
 		], [
@@ -861,15 +882,32 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])
 			fi
 		])
-	])
+	elif test "x$with_gstreamer" == "x0.10"; then
+		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer 0.10 for playing sounds])
+			AC_SUBST(GSTREAMER_CFLAGS)
+			AC_SUBST(GSTREAMER_LIBS)
+		], [
+			AC_MSG_RESULT(no)
+			enable_gst="no"
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
+GStreamer development headers not found.
+Use --disable-gstreamer if you do not need GStreamer (sound) support.
+])
+			fi
+		])
+	else
+		AC_MSG_ERROR([--with-gstreamer must specify one of 0.10, 1.0 or auto.])
+	fi
 fi
 
 dnl #######################################################################
 dnl # Check for GStreamer Video
 dnl #######################################################################
-if test "x$enable_gst" == "x11"; then
+if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0"; then
 	AC_ARG_ENABLE(gstreamer-video,
-		[AC_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 0.11 Video Overlay support])],
+		[AC_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 1.0 Video Overlay support])],
 			enable_gstvideo="$enableval", enable_gstvideo="yes")
 	if test "x$enable_gstvideo" != "xno"; then
 		PKG_CHECK_MODULES(GSTVIDEO, [gstreamer-video-1.0], [
@@ -887,13 +925,13 @@ fi
 dnl #######################################################################
 dnl # Check for GStreamer Interfaces
 dnl #######################################################################
-if test "x$enable_gst" == "x10"; then
+if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x0.10"; then
 	AC_ARG_ENABLE(gstreamer-interfaces,
 		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer 0.10 interface support])],
 			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
 	if test "x$enable_gstinterfaces" != "xno"; then
 		PKG_CHECK_MODULES(GSTINTERFACES, [gstreamer-interfaces-0.10], [
-			AC_DEFINE(USE_GSTINTERFACES, 1, [Use GStreamer interfaces for X overlay support])
+			AC_DEFINE(USE_GSTINTERFACES, 1, [Use GStreamer 0.10 interfaces for X overlay support])
 			AC_SUBST(GSTINTERFACES_CFLAGS)
 			AC_SUBST(GSTINTERFACES_LIBS)
 		], [
@@ -911,7 +949,7 @@ AC_ARG_ENABLE(farstream,
 	[AC_HELP_STRING([--disable-farstream], [compile without farstream support])],
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
-	if test "x$enable_gst" == "x11"; then
+	if test "x$with_gstreamer" == "x1.0"; then
 		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
@@ -942,9 +980,9 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gst" == "x11" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
-	elif test "x$enable_gst" == "x10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
+	elif test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x0.10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
@@ -2706,6 +2744,7 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
+echo Build for GStreamer version... : $with_gstreamer
 echo Build with D-Bus support...... : $enable_dbus
 echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
