@@ -795,9 +795,12 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 	gdouble value_db;
 	gdouble percent;
 
-	list = gst_structure_get_value(
-				gst_message_get_structure(msg), value_name);
+	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
+#if GST_CHECK_VERSION(0,11,0)
+	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
+#else
 	value = gst_value_list_get_value(list, 0);
+#endif
 	value_db = g_value_get_double(value);
 	percent = pow(10, value_db / 20);
 	return (percent > 1.0) ? 1.0 : percent;
