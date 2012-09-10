@@ -1795,14 +1795,10 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			 *   audioresample ! audioconvert ! realsink
 			 */
 			stream->queue = gst_element_factory_make("queue", NULL);
-			stream->volume = gst_element_factory_make(
-					"volume", NULL);
-			g_object_set(stream->volume, "volume",
-					output_volume, NULL);
-			stream->level = gst_element_factory_make(
-					"level", NULL);
-			stream->src = gst_element_factory_make(
-					"liveadder", NULL);
+			stream->volume = gst_element_factory_make("volume", NULL);
+			g_object_set(stream->volume, "volume", output_volume, NULL);
+			stream->level = gst_element_factory_make("level", NULL);
+			stream->src = gst_element_factory_make("liveadder", NULL);
 			sink = purple_media_manager_get_element(
 					purple_media_get_manager(priv->media),
 					PURPLE_MEDIA_RECV_AUDIO, priv->media,
@@ -1821,10 +1817,12 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_element_link(stream->queue, stream->volume);
 			sink = stream->queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
-			stream->src = gst_element_factory_make(
-					"fsfunnel", NULL);
-			sink = gst_element_factory_make(
-					"fakesink", NULL);
+#if GST_CHECK_VERSION(0,11,0)
+			stream->src = gst_element_factory_make("funnel", NULL);
+#else
+			stream->src = gst_element_factory_make("fsfunnel", NULL);
+#endif
+			sink = gst_element_factory_make("fakesink", NULL);
 			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
 			gst_element_set_state(sink, GST_STATE_PLAYING);
