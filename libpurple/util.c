@@ -1891,7 +1891,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if (cdata && url &&
 									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
 									                                 g_utf8_collate(url->str + 7, cdata->str) != 0)))
-								g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+									g_string_append_printf(plain, " <%s>", g_strstrip(purple_unescape_html(url->str)));
 							if (cdata) {
 								g_string_free(cdata, TRUE);
 								cdata = NULL;
@@ -2022,33 +2022,39 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				if (!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
 					const char *p = c + 4;
 					GString *src = NULL, *alt = NULL;
+#define ESCAPE(from, to)        \
+		CHECK_QUOTE(from); \
+		while (VALID_CHAR(from)) { \
+			int len; \
+			if ((*from == '&') && (purple_markup_unescape_entity(from, &len) == NULL)) \
+				to = g_string_append(to, "&amp;"); \
+			else if (*from == '\'') \
+				to = g_string_append(to, "&apos;"); \
+			else \
+				to = g_string_append_c(to, *from); \
+			from++; \
+		}
+
 					while (*p && *p != '>') {
 						if (!g_ascii_strncasecmp(p, "src=", 4)) {
 							const char *q = p + 4;
 							if (src)
 								g_string_free(src, TRUE);
 							src = g_string_new("");
-							CHECK_QUOTE(q);
-							while (VALID_CHAR(q)) {
-								src = g_string_append_c(src, *q);
-								q++;
-							}
+							ESCAPE(q, src);
 							p = q;
 						} else if (!g_ascii_strncasecmp(p, "alt=", 4)) {
 							const char *q = p + 4;
 							if (alt)
 								g_string_free(alt, TRUE);
 							alt = g_string_new("");
-							CHECK_QUOTE(q);
-							while (VALID_CHAR(q)) {
-								alt = g_string_append_c(alt, *q);
-								q++;
-							}
+							ESCAPE(q, alt);
 							p = q;
 						} else {
 							p++;
 						}
 					}
+#undef ESCAPE
 					if ((c = strchr(p, '>')) != NULL)
 						c++;
 					else
@@ -2058,7 +2064,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt ? alt->str : "");
 					if(alt) {
 						if(plain)
-							plain = g_string_append(plain, alt->str);
+							plain = g_string_append(plain, purple_unescape_html(alt->str));
 						if(!src && xhtml)
 							xhtml = g_string_append(xhtml, alt->str);
 						g_string_free(alt, TRUE);
@@ -2083,6 +2089,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 								int len;
 								if ((*q == '&') && (purple_markup_unescape_entity(q, &len) == NULL))
 									url = g_string_append(url, "&amp;");
+								else if (*q == '"')
+									url = g_string_append(url, "&quot;");
 								else
 									url = g_string_append_c(url, *q);
 								q++;
@@ -2104,6 +2112,18 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						g_string_append_printf(xhtml, "<a href=\"%s\">", url ? g_strstrip(url->str) : "");
 					continue;
 				}
+#define ESCAPE(from, to)        \
+		CHECK_QUOTE(from); \
+		while (VALID_CHAR(from)) { \
+			int len; \
+			if ((*from == '&') && (purple_markup_unescape_entity(from, &len) == NULL)) \
+				to = g_string_append(to, "&amp;"); \
+			else if (*from == '\'') \
+				to = g_string_append_c(to, '\"'); \
+			else \
+				to = g_string_append_c(to, *from); \
+			from++; \
+		}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
 					const char *p = c + 5;
 					GString *style = g_string_new("");
@@ -2112,33 +2132,21 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						if (!g_ascii_strncasecmp(p, "back=", 5)) {
 							const char *q = p + 5;
 							GString *color = g_string_new("");
-							CHECK_QUOTE(q);
-							while (VALID_CHAR(q)) {
-								color = g_string_append_c(color, *q);
-								q++;
-							}
+							ESCAPE(q, color);
 							g_string_append_printf(style, "background: %s; ", color->str);
 							g_string_free(color, TRUE);
 							p = q;
 						} else if (!g_ascii_strncasecmp(p, "color=", 6)) {
 							const char *q = p + 6;
 							GString *color = g_string_new("");
-							CHECK_QUOTE(q);
-							while (VALID_CHAR(q)) {
-								color = g_string_append_c(color, *q);
-								q++;
-							}
+							ESCAPE(q, color);
 							g_string_append_printf(style, "color: %s; ", color->str);
 							g_string_free(color, TRUE);
 							p = q;
 						} else if (!g_ascii_strncasecmp(p, "face=", 5)) {
 							const char *q = p + 5;
 							GString *face = g_string_new("");
-							CHECK_QUOTE(q);
-							while (VALID_CHAR(q)) {
-								face = g_string_append_c(face, *q);
-								q++;
-							}
+							ESCAPE(q, face);
 							g_string_append_printf(style, "font-family: %s; ", g_strstrip(face->str));
 							g_string_free(face, TRUE);
 							p = q;
@@ -2193,6 +2201,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					g_string_free(style, TRUE);
 					continue;
 				}
+#undef ESCAPE
 				if (!g_ascii_strncasecmp(c, "<body ", 6)) {
 					const char *p = c + 6;
 					gboolean did_something = FALSE;

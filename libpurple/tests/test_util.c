@@ -167,14 +167,179 @@ START_TEST(test_markup_html_to_xhtml)
 {
 	gchar *xhtml = NULL;
 	gchar *plaintext = NULL;
+
 	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
 	assert_string_equal_free("<a href=\"\"></a>", xhtml);
 	assert_string_equal_free("", plaintext);
 
+	purple_markup_html_to_xhtml("<A href='URL'>ABOUT</a>", &xhtml, &plaintext);
+	assert_string_equal_free("<a href=\"URL\">ABOUT</a>", xhtml);
+	assert_string_equal_free("ABOUT <URL>", plaintext);
+
+	purple_markup_html_to_xhtml("<a href='URL'>URL</a>", &xhtml, &plaintext);
+	assert_string_equal_free("URL", plaintext);
+	assert_string_equal_free("<a href=\"URL\">URL</a>", xhtml);
+
+	purple_markup_html_to_xhtml("<a href='mailto:mail'>mail</a>", &xhtml, &plaintext);
+	assert_string_equal_free("mail", plaintext);
+	assert_string_equal_free("<a href=\"mailto:mail\">mail</a>", xhtml);
+
+	purple_markup_html_to_xhtml("<A href='\"U&apos;R&L'>ABOUT</a>", &xhtml, &plaintext);
+	assert_string_equal_free("<a href=\"&quot;U&apos;R&amp;L\">ABOUT</a>", xhtml);
+	assert_string_equal_free("ABOUT <\"U'R&L>", plaintext);
+
+	purple_markup_html_to_xhtml("<img src='SRC' alt='ALT'/>", &xhtml, &plaintext);
+	assert_string_equal_free("<img src='SRC' alt='ALT' />", xhtml);
+	assert_string_equal_free("ALT", plaintext);
+
+	purple_markup_html_to_xhtml("<img src=\"'S&apos;R&C\" alt=\"'A&apos;L&T\"/>", &xhtml, &plaintext);
+	assert_string_equal_free("<img src='&apos;S&apos;R&amp;C' alt='&apos;A&apos;L&amp;T' />", xhtml);
+	assert_string_equal_free("'A'L&T", plaintext);
+
+	purple_markup_html_to_xhtml("<unknown>", &xhtml, &plaintext);
+	assert_string_equal_free("&lt;unknown>", xhtml);
+	assert_string_equal_free("<unknown>", plaintext);
+
+	purple_markup_html_to_xhtml("&eacute;&amp;", &xhtml, &plaintext);
+	assert_string_equal_free("&eacute;&amp;", xhtml);
+	assert_string_equal_free("&eacute;&", plaintext);
+
+	purple_markup_html_to_xhtml("<h1>A<h2>B</h2>C</h1>", &xhtml, &plaintext);
+	assert_string_equal_free("<h1>A<h2>B</h2>C</h1>", xhtml);
+	assert_string_equal_free("ABC", plaintext);
+
+	purple_markup_html_to_xhtml("<h1><h2><h3><h4>", &xhtml, &plaintext);
+	assert_string_equal_free("<h1><h2><h3><h4></h4></h3></h2></h1>", xhtml);
+	assert_string_equal_free("", plaintext);
+        
+	purple_markup_html_to_xhtml("<italic/>", &xhtml, &plaintext);
+	assert_string_equal_free("<em/>", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("</", &xhtml, &plaintext);
+	assert_string_equal_free("&lt;/", xhtml);
+	assert_string_equal_free("</", plaintext);
+
+	purple_markup_html_to_xhtml("</div>", &xhtml, &plaintext);
+	assert_string_equal_free("", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("<hr/>", &xhtml, &plaintext);
+	assert_string_equal_free("<br/>", xhtml);
+	assert_string_equal_free("\n", plaintext);
+
+	purple_markup_html_to_xhtml("<hr>", &xhtml, &plaintext);
+	assert_string_equal_free("<br/>", xhtml);
+	assert_string_equal_free("\n", plaintext);
+
+	purple_markup_html_to_xhtml("<br />", &xhtml, &plaintext);
+	assert_string_equal_free("<br/>", xhtml);
+	assert_string_equal_free("\n", plaintext);
+
+	purple_markup_html_to_xhtml("<br>INSIDE</br>", &xhtml, &plaintext);
+	assert_string_equal_free("<br/>INSIDE", xhtml);
+	assert_string_equal_free("\nINSIDE", plaintext);
+
+	purple_markup_html_to_xhtml("<div></div>", &xhtml, &plaintext);
+	assert_string_equal_free("<div></div>", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("<div/>", &xhtml, &plaintext);
+	assert_string_equal_free("<div/>", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("<div attr='\"&<>'/>", &xhtml, &plaintext);
+	assert_string_equal_free("<div attr='&quot;&amp;&lt;&gt;'/>", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("<div attr=\"'\"/>", &xhtml, &plaintext);
+	assert_string_equal_free("<div attr=\"&apos;\"/>", xhtml);
+	assert_string_equal_free("", plaintext);
+
+	purple_markup_html_to_xhtml("<div/> < <div/>", &xhtml, &plaintext);
+	assert_string_equal_free("<div/> &lt; <div/>", xhtml);
+	assert_string_equal_free(" < ", plaintext);
+
+	purple_markup_html_to_xhtml("<div>x</div>", &xhtml, &plaintext);
+	assert_string_equal_free("<div>x</div>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<b>x</b>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='font-weight: bold;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<bold>x</bold>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='font-weight: bold;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<strong>x</strong>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='font-weight: bold;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<u>x</u>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='text-decoration: underline;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<underline>x</underline>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='text-decoration: underline;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<s>x</s>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='text-decoration: line-through;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<strike>x</strike>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='text-decoration: line-through;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<sub>x</sub>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='vertical-align:sub;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<sup>x</sup>", &xhtml, &plaintext);
+	assert_string_equal_free("<span style='vertical-align:super;'>x</span>", xhtml);
+	assert_string_equal_free("x", plaintext);
 
 	purple_markup_html_to_xhtml("<FONT>x</FONT>", &xhtml, &plaintext);
 	assert_string_equal_free("x", xhtml);
 	assert_string_equal_free("x", plaintext);
+
+	purple_markup_html_to_xhtml("<font face=\"'Times&gt;New & Roman'\">x</font>", &xhtml, &plaintext);
+	assert_string_equal_free("x", plaintext);
+	assert_string_equal_free("<span style='font-family: \"Times&gt;New &amp; Roman\";'>x</span>", xhtml);
+
+	purple_markup_html_to_xhtml("<font back=\"'color&gt;blue&red'\">x</font>", &xhtml, &plaintext);
+	assert_string_equal_free("x", plaintext);
+	assert_string_equal_free("<span style='background: \"color&gt;blue&amp;red\";'>x</span>", xhtml);
+
+	purple_markup_html_to_xhtml("<font color=\"'color&gt;blue&red'\">x</font>", &xhtml, &plaintext);
+	assert_string_equal_free("x", plaintext);
+	assert_string_equal_free("<span style='color: \"color&gt;blue&amp;red\";'>x</span>", xhtml);
+
+	purple_markup_html_to_xhtml("<font size=1>x</font>", &xhtml, &plaintext);
+	assert_string_equal_free("x", plaintext);
+	assert_string_equal_free("<span style='font-size: xx-small;'>x</span>", xhtml);
+
+	purple_markup_html_to_xhtml("<font size=432>x</font>", &xhtml, &plaintext);
+	assert_string_equal_free("x", plaintext);
+	assert_string_equal_free("<span style='font-size: medium;'>x</span>", xhtml);
+
+        /* The following tests document a behaviour that looks suspicious */
+
+        /* bug report http://developer.pidgin.im/ticket/13485 */
+        purple_markup_html_to_xhtml("<!--COMMENT-->", &xhtml, &plaintext);
+	assert_string_equal_free("<!--COMMENT-->", xhtml);
+	assert_string_equal_free("COMMENT-->", plaintext);
+
+        /* no bug report */
+	purple_markup_html_to_xhtml("<br  />", &xhtml, &plaintext);
+	assert_string_equal_free("&lt;br  />", xhtml);
+	assert_string_equal_free("<br  />", plaintext);
+
+        /* same code section as <br  /> */
+	purple_markup_html_to_xhtml("<hr  />", &xhtml, &plaintext);
+	assert_string_equal_free("&lt;hr  />", xhtml);
+	assert_string_equal_free("<hr  />", plaintext);
 }
 END_TEST
 
