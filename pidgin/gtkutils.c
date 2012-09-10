@@ -120,6 +120,7 @@ pidgin_setup_webview(GtkWidget *webview)
 		             NULL);
 
 		webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webview), settings);
+		g_object_unref(settings);
 	}
 #endif
 }
