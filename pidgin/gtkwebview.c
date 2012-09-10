@@ -1143,6 +1143,7 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 		              node, uri);
 
 		g_free(uri);
+		g_object_unref(hit);
 
 		return TRUE;
 	}
