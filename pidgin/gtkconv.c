@@ -150,9 +150,8 @@ enum {
 #define MIN_BRIGHTNESS_CONTRAST 75
 #define MIN_COLOR_CONTRAST 200
 
-#define NUM_NICK_COLORS 220
-static GdkColor *nick_colors = NULL;
-static guint nbr_nick_colors;
+#define NICK_COLOR_GENERATE_COUNT 220
+static GArray *nick_colors = NULL;
 
 /* These probably won't conflict with any WebKit values. */
 #define PIDGIN_DRAG_BLIST_NODE (1337)
@@ -208,7 +207,7 @@ static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState st
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
-static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
+static GArray* generate_nick_colors(guint numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
@@ -227,7 +226,7 @@ static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *n
 	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
 	float scale;
 
-	col = nick_colors[g_str_hash(name) % nbr_nick_colors];
+	col = g_array_index(nick_colors, GdkColor, g_str_hash(name) % nick_colors->len);
 	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
 		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 
@@ -5886,8 +5885,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		pidgin_conv_placement_place(gtkconv);
 
 	if (nick_colors == NULL) {
-		nbr_nick_colors = NUM_NICK_COLORS;
-		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
+		nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
 	}
 
 	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
@@ -10953,12 +10951,11 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 }
 
 
-static GdkColor*
-generate_nick_colors(guint *color_count, GdkColor background)
+static GArray*
+generate_nick_colors(guint numcolors, GdkColor background)
 {
-	guint numcolors = *color_count;
 	guint i = 0, j = 0;
-	GdkColor *colors = g_new(GdkColor, numcolors);
+	GArray *colors = g_array_new(FALSE, FALSE, sizeof(GdkColor));
 	GdkColor nick_highlight;
 	GdkColor send_color;
 	time_t breakout_time;
@@ -10982,7 +10979,7 @@ generate_nick_colors(guint *color_count, GdkColor background)
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
 		{
-			colors[i] = color;
+			g_array_append_val(colors, color);
 			i++;
 		}
 		j++;
@@ -11001,17 +10998,13 @@ generate_nick_colors(guint *color_count, GdkColor background)
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
 		{
-			colors[i] = color;
+			g_array_append_val(colors, color);
 			i++;
 		}
 	}
 
 	if (i < numcolors) {
-		GdkColor *c = colors;
 		purple_debug_warning("gtkconv", "Unable to generate enough random colors before timeout. %u colors found.\n", i);
-		colors = g_memdup(c, i * sizeof(GdkColor));
-		g_free(c);
-		*color_count = i;
 	}
 
 	return colors;
