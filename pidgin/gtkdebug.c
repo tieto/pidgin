@@ -207,7 +207,14 @@ regex_toggle_div(WebKitDOMNode *div)
 	if (!WEBKIT_DOM_IS_HTML_ELEMENT(div))
 		return;
 
+#if (WEBKIT_MAJOR_VERSION == 1 && \
+     WEBKIT_MINOR_VERSION == 9 && \
+     WEBKIT_MICRO_VERSION == 90)
+	/* Workaround WebKit API bug. */
+	classes = webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(div));
+#else
 	classes = webkit_dom_html_element_get_class_list(WEBKIT_DOM_HTML_ELEMENT(div));
+#endif
 	webkit_dom_dom_token_list_toggle(classes, "hide", NULL);
 }
 
