@@ -827,14 +827,6 @@ pidgin_docklet_remove(void)
 	}
 }
 
-static gboolean
-docklet_gtk_recreate_cb(gpointer data)
-{
-	docklet_gtk_status_create(TRUE);
-
-	return FALSE;
-}
-
 #ifndef _WIN32
 static gboolean
 docklet_gtk_embed_timeout_cb(gpointer data)
@@ -896,19 +888,6 @@ docklet_gtk_embedded_cb(GtkWidget *widget, gpointer data)
 #endif
 
 static void
-docklet_gtk_destroyed_cb(GtkWidget *widget, gpointer data)
-{
-	purple_debug_info("docklet", "destroyed\n");
-
-	pidgin_docklet_remove();
-
-	g_object_unref(G_OBJECT(docklet));
-	docklet = NULL;
-
-	g_idle_add(docklet_gtk_recreate_cb, NULL);
-}
-
-static void
 docklet_gtk_status_activated_cb(GtkStatusIcon *status_icon, gpointer user_data)
 {
 	pidgin_docklet_clicked(1);
@@ -939,7 +918,6 @@ docklet_gtk_status_destroy(void)
 	}
 
 	gtk_status_icon_set_visible(docklet, FALSE);
-	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_gtk_destroyed_cb), NULL);
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
@@ -965,7 +943,6 @@ docklet_gtk_status_create(gboolean recreate)
 #if GTK_CHECK_VERSION(2,12,0)
 	g_signal_connect(G_OBJECT(docklet), "notify::embedded", G_CALLBACK(docklet_gtk_embedded_cb), NULL);
 #endif
-	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_gtk_destroyed_cb), NULL);
 
 	gtk_status_icon_set_visible(docklet, TRUE);
 
