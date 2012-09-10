@@ -151,7 +151,7 @@ enum {
 #define MIN_COLOR_CONTRAST 200
 
 #define NICK_COLOR_GENERATE_COUNT 220
-static GArray *nick_colors = NULL;
+static GArray *generated_nick_colors = NULL;
 
 /* These probably won't conflict with any WebKit values. */
 #define PIDGIN_DRAG_BLIST_NODE (1337)
@@ -226,7 +226,7 @@ static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *n
 	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
 	float scale;
 
-	col = g_array_index(nick_colors, GdkColor, g_str_hash(name) % nick_colors->len);
+	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
 	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
 		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 
@@ -5787,6 +5787,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
+
 	if (conv_type == PURPLE_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(PidginImPane));
 	} else if (conv_type == PURPLE_CONV_TYPE_CHAT) {
@@ -5884,8 +5885,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	else
 		pidgin_conv_placement_place(gtkconv);
 
-	if (nick_colors == NULL) {
-		nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
+	if (generated_nick_colors == NULL) {
+		generated_nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
+	}
+
+	if(NULL == (gtkconv->nick_colors = pidgin_conversation_theme_get_nick_colors(gtkconv->theme)))
+	{
+		gtkconv->nick_colors = g_array_ref(generated_nick_colors);
 	}
 
 	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
@@ -6000,6 +6006,8 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	if (gtkconv->attach.timer) {
 		g_source_remove(gtkconv->attach.timer);
 	}
+
+	g_array_unref(gtkconv->nick_colors);
 
 	g_object_disconnect(G_OBJECT(gtkconv->theme), "any_signal::notify",
 	                    conv_variant_changed_cb, gtkconv, NULL);
