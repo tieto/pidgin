@@ -1645,6 +1645,8 @@ get_mark_for_user(PidginConversation *gtkconv, const char *who)
 			node = webkit_dom_node_list_item(nodes, len - 1);
 	}
 
+	g_object_unref(nodes);
+
 	return node;
 }
 
