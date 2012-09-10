@@ -6313,6 +6313,10 @@ replace_message_tokens(
 		} else if (g_str_has_prefix(cur, "%sender%")) {
 			replace = alias;
 
+		} else if (g_str_has_prefix(cur, "%senderColor%")) {
+			const GdkColor *color = get_nick_color(PIDGIN_CONVERSATION(conv), name);
+			replace = freeval = g_strdup_printf("#%02x%02x%02x", (color->red >> 8), (color->green >> 8), (color->blue >> 8));
+
 		} else if (g_str_has_prefix(cur, "%service%")) {
 			replace = purple_account_get_protocol_name(purple_conversation_get_account(conv));
 
