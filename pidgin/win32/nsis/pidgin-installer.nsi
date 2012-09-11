@@ -34,7 +34,6 @@ RequestExecutionLevel highest
 
 !include "MUI.nsh"
 !include "Sections.nsh"
-!include "WinVer.nsh"
 !include "LogicLib.nsh"
 !include "Memento.nsh"
 
@@ -344,21 +343,6 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
           WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
 
     perl_done:
-
-    ; If this is under NT4, delete the SILC support stuff
-    ; there is a bug that will prevent any account from connecting
-    ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
-    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
-    ; compatible with NT4.
-    ${If} ${IsNT}
-    ${AndIf} ${IsWinNT4}
-      ;SILC
-      Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\libsilcclient-1-1-3.dll"
-      Delete "$INSTDIR\libsilc-1-1-2.dll"
-      ;GSSAPI
-      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
-    ${EndIf}
 
     SetOutPath "$INSTDIR"
 
