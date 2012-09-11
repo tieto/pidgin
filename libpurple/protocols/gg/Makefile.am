@@ -1,4 +1,5 @@
 #V=0
+#CFLAGS = -g -O0
 GADU_EXTRA = -Wall -Wextra -Werror -fno-inline
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -124,5 +125,3 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GADU_EXTRA)
-
-CFLAGS = -g -O0

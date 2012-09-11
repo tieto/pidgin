@@ -32,7 +32,7 @@ static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin,
 	gboolean new_arrival);
 static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin);
 static const gchar * ggp_chat_get_name_from_id(uint64_t id);
-/*static uint64_t ggp_chat_get_id_from_name(const gchar * name);*/
+static uint64_t ggp_chat_get_id_from_name(const gchar * name);
 
 static inline ggp_chat_session_data *
 ggp_chat_get_sdata(PurpleConnection *gc)
@@ -87,7 +87,7 @@ static ggp_chat_local_info * ggp_chat_new(PurpleConnection *gc, uint64_t id)
 		return chat;
 	}
 
-	chat->conv = serv_got_joined_chat(gc, local_id,
+	chat->conv = serv_got_joined_chat(gc, chat->local_id,
 		ggp_chat_get_name_from_id(id));
 	if (chat->previously_joined)
 	{
@@ -217,6 +217,18 @@ GList * ggp_chat_info(PurpleConnection *gc)
 	return m;
 }
 
+GHashTable * ggp_chat_info_defaults(PurpleConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL && ggp_chat_get_id_from_name(chat_name) != 0)
+		g_hash_table_insert(defaults, "id", g_strdup(chat_name));
+
+	return defaults;
+}
+
 char * ggp_chat_get_name(GHashTable *components)
 {
 	return g_strdup((gchar*)g_hash_table_lookup(components, "id"));
@@ -229,7 +241,6 @@ static const gchar * ggp_chat_get_name_from_id(uint64_t id)
 	return buff;
 }
 
-# if 0
 static uint64_t ggp_chat_get_id_from_name(const gchar * name)
 {
 	uint64_t id;
@@ -245,7 +256,6 @@ static uint64_t ggp_chat_get_id_from_name(const gchar * name)
 
 	return id;
 }
-#endif
 
 void ggp_chat_join(PurpleConnection *gc, GHashTable *components)
 {
@@ -255,12 +265,14 @@ void ggp_chat_join(PurpleConnection *gc, GHashTable *components)
 	id = g_hash_table_lookup(components, "id");
 	if (id == NULL || id[0] != '\0')
 	{
+		purple_debug_error("gg", "ggp_chat_join; cannot join\n");
 		purple_serv_got_join_chat_failed(gc, components);
 		return;
 	}
 
 	if (gg_chat_create(info->session) < 0)
 	{
+		purple_debug_error("gg", "ggp_chat_join; cannot create\n");
 		purple_serv_got_join_chat_failed(gc, components);
 		return;
 	}
@@ -362,4 +374,64 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 		serv_got_chat_in(gc, chat->local_id, ggp_uin_to_str(who),
 			PURPLE_MESSAGE_RECV, message, time);
 	}
+}
+
+static gboolean ggp_chat_roomlist_get_list_finish(gpointer roomlist)
+{
+	purple_roomlist_set_in_progress((PurpleRoomlist*)roomlist, FALSE);
+	return FALSE;
+}
+
+PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
+{
+	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
+	PurpleRoomlist *roomlist;
+	GList *fields = NULL;
+	int i;
+
+	purple_debug_info("gg", "ggp_chat_roomlist_get_list\n");
+
+	roomlist = purple_roomlist_new(purple_connection_get_account(gc));
+
+	fields = g_list_append(fields, purple_roomlist_field_new(
+		PURPLE_ROOMLIST_FIELD_STRING, _("Conference identifier"), "id",
+		TRUE));
+
+	fields = g_list_append(fields, purple_roomlist_field_new(
+		PURPLE_ROOMLIST_FIELD_STRING, _("Start Date"), "date",
+		FALSE));
+
+	fields = g_list_append(fields, purple_roomlist_field_new(
+		PURPLE_ROOMLIST_FIELD_INT, _("User Count"), "users",
+		FALSE));
+
+	fields = g_list_append(fields, purple_roomlist_field_new(
+		PURPLE_ROOMLIST_FIELD_STRING, _("Status"), "status",
+		FALSE));
+
+	purple_roomlist_set_fields(roomlist, fields);
+
+	for (i = sdata->chats_count - 1; i >= 0 ; i--)
+	{
+		PurpleRoomlistRoom *room;
+		ggp_chat_local_info *chat = &sdata->chats[i];
+		const gchar *name;
+		time_t date;
+		
+		date = (uint32_t)(chat->id >> 32);
+		
+		name = ggp_chat_get_name_from_id(chat->id);
+		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM,
+			name, NULL);
+		purple_roomlist_room_add_field(roomlist, room, name);
+		purple_roomlist_room_add_field(roomlist, room, purple_date_format_full(localtime(&date)));
+		purple_roomlist_room_add_field(roomlist, room, GINT_TO_POINTER(123));
+		purple_roomlist_room_add_field(roomlist, room, _("Unknown"));
+		purple_roomlist_room_add(roomlist, room);
+	}
+
+	//TODO
+	//purple_roomlist_set_in_progress(roomlist, FALSE);
+	purple_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
+	return roomlist;
 }

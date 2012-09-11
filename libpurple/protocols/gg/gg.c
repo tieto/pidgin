@@ -1191,7 +1191,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_status_types,		/* status_types */
 	NULL,				/* blist_node_menu */
 	ggp_chat_info,			/* chat_info */
-	NULL,				/* chat_info_defaults */
+	ggp_chat_info_defaults,		/* chat_info_defaults */
 	ggp_login,			/* login */
 	ggp_close,			/* close */
 	ggp_send_im,			/* send_im */
@@ -1211,7 +1211,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_rem_deny,			/* rem_deny */
 	NULL,				/* set_permit_deny */
 	ggp_chat_join,			/* join_chat */
-	NULL,				/* reject_chat */
+	NULL, /* TODO */		/* reject_chat */
 	ggp_chat_get_name,		/* get_chat_name */
 	ggp_chat_invite,		/* chat_invite */
 	ggp_chat_leave,			/* chat_leave */
@@ -1231,7 +1231,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* get_cb_real_name */
 	NULL,				/* set_chat_topic */
 	NULL,				/* find_blist_chat */
-	NULL,				/* roomlist_get_list */
+	ggp_chat_roomlist_get_list,	/* roomlist_get_list */
 	NULL,				/* roomlist_cancel */
 	NULL,				/* roomlist_expand_category */
 	NULL,				/* can_receive_file */
