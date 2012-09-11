@@ -520,6 +520,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			purple_debug_info("gg", "gg11: got JSON event\n");
 			break;
 		case GG_EVENT_CHAT_INFO:
+		case GG_EVENT_CHAT_INFO_GOT_ALL:
 		case GG_EVENT_CHAT_INFO_UPDATE:
 		case GG_EVENT_CHAT_CREATED:
 		case GG_EVENT_CHAT_INVITE_ACK:

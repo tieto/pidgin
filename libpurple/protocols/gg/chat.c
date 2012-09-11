@@ -11,6 +11,9 @@ struct _ggp_chat_session_data
 {
 	ggp_chat_local_info *chats;
 	int chats_count;
+
+	gboolean got_all_chats_info;
+	GSList *pending_joins;
 };
 
 struct _ggp_chat_local_info
@@ -21,18 +24,23 @@ struct _ggp_chat_local_info
 	PurpleConversation *conv;
 	PurpleConnection *gc;
 	
+	gboolean left;
 	gboolean previously_joined;
+	
+	uin_t *participants;
+	int participants_count;
 };
 
 static ggp_chat_local_info * ggp_chat_new(PurpleConnection *gc, uint64_t id);
 static ggp_chat_local_info * ggp_chat_get(PurpleConnection *gc, uint64_t id);
+static void ggp_chat_open_conv(ggp_chat_local_info *chat);
 static ggp_chat_local_info * ggp_chat_get_local(PurpleConnection *gc,
 	int local_id);
-static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin,
-	gboolean new_arrival);
+static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin);
 static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin);
 static const gchar * ggp_chat_get_name_from_id(uint64_t id);
 static uint64_t ggp_chat_get_id_from_name(const gchar * name);
+static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id);
 
 static inline ggp_chat_session_data *
 ggp_chat_get_sdata(PurpleConnection *gc)
@@ -50,12 +58,15 @@ void ggp_chat_setup(PurpleConnection *gc)
 
 	sdata->chats = NULL;
 	sdata->chats_count = 0;
+	sdata->got_all_chats_info = FALSE;
+	sdata->pending_joins = NULL;
 }
 
 void ggp_chat_cleanup(PurpleConnection *gc)
 {
 	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
 
+	g_slist_free_full(sdata->pending_joins, g_free);
 	g_free(sdata->chats);
 	g_free(sdata);
 }
@@ -66,36 +77,22 @@ static ggp_chat_local_info * ggp_chat_new(PurpleConnection *gc, uint64_t id)
 	int local_id;
 	ggp_chat_local_info *chat;
 
-	if (NULL == (chat = ggp_chat_get(gc, id)))
-	{
-		local_id = sdata->chats_count++;
-		sdata->chats = realloc(sdata->chats,
-			sdata->chats_count * sizeof(ggp_chat_local_info));
-		chat = &sdata->chats[local_id];
-
-		chat->local_id = local_id;
-		chat->id = id;
-		chat->conv = NULL;
-		chat->gc = gc;
-		chat->previously_joined = FALSE;
-	}
-
-	if (chat->conv != NULL)
-	{
-		purple_debug_warning("gg", "ggp_chat_new: "
-			"chat %llu already exists\n", id);
+	if (NULL != (chat = ggp_chat_get(gc, id)))
 		return chat;
-	}
 
-	chat->conv = serv_got_joined_chat(gc, chat->local_id,
-		ggp_chat_get_name_from_id(id));
-	if (chat->previously_joined)
-	{
-		purple_conversation_write(chat->conv, NULL,
-			_("You have re-joined the chat"), PURPLE_MESSAGE_SYSTEM,
-			time(NULL));
-	}
-	chat->previously_joined = TRUE;
+	local_id = sdata->chats_count++;
+	sdata->chats = realloc(sdata->chats,
+		sdata->chats_count * sizeof(ggp_chat_local_info));
+	chat = &sdata->chats[local_id];
+
+	chat->local_id = local_id;
+	chat->id = id;
+	chat->conv = NULL;
+	chat->gc = gc;
+	chat->left = FALSE;
+	chat->previously_joined = FALSE;
+	chat->participants = NULL;
+	chat->participants_count = 0;
 
 	return chat;
 }
@@ -110,6 +107,32 @@ static ggp_chat_local_info * ggp_chat_get(PurpleConnection *gc, uint64_t id)
 			return &sdata->chats[i];
 
 	return NULL;
+}
+
+static void ggp_chat_open_conv(ggp_chat_local_info *chat)
+{
+	PurpleConvChat *pcchat;
+	int i;
+
+	if (chat->conv != NULL)
+		return;
+
+	chat->conv = serv_got_joined_chat(chat->gc, chat->local_id,
+		ggp_chat_get_name_from_id(chat->id));
+	if (chat->previously_joined)
+	{
+		purple_conversation_write(chat->conv, NULL,
+			_("You have re-joined the chat"), PURPLE_MESSAGE_SYSTEM,
+			time(NULL));
+	}
+	chat->previously_joined = TRUE;
+
+	pcchat = purple_conversation_get_chat_data(chat->conv);
+	purple_conv_chat_clear_users(pcchat);
+	for (i = 0; i < chat->participants_count; i++)
+		purple_conv_chat_add_user(pcchat,
+			ggp_uin_to_str(chat->participants[i]), NULL,
+			PURPLE_CBFLAGS_NONE, FALSE);
 }
 
 static ggp_chat_local_info * ggp_chat_get_local(PurpleConnection *gc,
@@ -127,6 +150,7 @@ static ggp_chat_local_info * ggp_chat_get_local(PurpleConnection *gc,
 
 void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 {
+	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
 	ggp_chat_local_info *chat;
 	int i;
 
@@ -135,7 +159,20 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 		const struct gg_event_chat_info *eci = &ev->event.chat_info;
 		chat = ggp_chat_new(gc, eci->id);
 		for (i = 0; i < eci->participants_count; i++)
-			ggp_chat_joined(chat, eci->participants[i], FALSE);
+			ggp_chat_joined(chat, eci->participants[i]);
+	}
+	else if (ev->type == GG_EVENT_CHAT_INFO_GOT_ALL)
+	{
+		GSList *it = sdata->pending_joins;
+		sdata->got_all_chats_info = TRUE;
+		while (it)
+		{
+			uint64_t *id_p = it->data;
+			ggp_chat_join_id(gc, *id_p);
+			it = g_slist_next(it);
+		}
+		g_slist_free_full(sdata->pending_joins, g_free);
+		sdata->pending_joins = NULL;
 	}
 	else if (ev->type == GG_EVENT_CHAT_INFO_UPDATE)
 	{
@@ -149,7 +186,7 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 			return;
 		}
 		if (eciu->type == GG_CHAT_INFO_UPDATE_ENTERED)
-			ggp_chat_joined(chat, eciu->participant, TRUE);
+			ggp_chat_joined(chat, eciu->participant);
 		else if (eciu->type == GG_CHAT_INFO_UPDATE_EXITED)
 			ggp_chat_left(chat, eciu->participant);
 		else
@@ -163,7 +200,8 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 		uin_t me = ggp_str_to_uin(purple_account_get_username(
 			purple_connection_get_account(gc)));
 		chat = ggp_chat_new(gc, ecc->id);
-		ggp_chat_joined(chat, me, FALSE);
+		ggp_chat_joined(chat, me);
+		ggp_chat_open_conv(chat);
 	}
 	else if (ev->type == GG_EVENT_CHAT_INVITE_ACK ||
 		ev->type == GG_EVENT_CHAT_SEND_MSG_ACK)
@@ -177,16 +215,55 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 	}
 }
 
-static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin,
-	gboolean new_arrival)
+static int ggp_chat_participant_find(ggp_chat_local_info *chat, uin_t uin)
 {
+	int i;
+	for (i = 0; i < chat->participants_count; i++)
+		if (chat->participants[i] == uin)
+			return i;
+	return -1;
+}
+
+static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin)
+{
+	int idx = ggp_chat_participant_find(chat, uin);
+	if (idx >= 0)
+	{
+		purple_debug_warning("gg", "ggp_chat_joined: "
+			"user %u is already present in chat %llu\n",
+			uin, chat->id);
+		return;
+	}
+	chat->participants_count++;
+	chat->participants = realloc(chat->participants,
+		sizeof(uin) * chat->participants_count);
+	chat->participants[chat->participants_count - 1] = uin;
+	
+	if (!chat->conv)
+		return;
 	purple_conv_chat_add_user(purple_conversation_get_chat_data(chat->conv),
-		ggp_uin_to_str(uin), NULL, PURPLE_CBFLAGS_NONE, new_arrival);
+		ggp_uin_to_str(uin), NULL, PURPLE_CBFLAGS_NONE, TRUE);
 }
 
 static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 {
 	uin_t me;
+	int idx = ggp_chat_participant_find(chat, uin);
+
+	if (idx < 0)
+	{
+		purple_debug_warning("gg", "ggp_chat_joined: "
+			"user %u isn't present in chat %llu\n", uin, chat->id);
+		return;
+	}
+	chat->participants[idx] =
+		chat->participants[chat->participants_count - 1];
+	chat->participants_count--;
+	chat->participants = realloc(chat->participants,
+		sizeof(uin) * chat->participants_count);
+
+	if (chat->conv == NULL)
+		return;
 
 	me = ggp_str_to_uin(purple_account_get_username(
 		purple_connection_get_account(chat->gc)));
@@ -198,6 +275,7 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 			time(NULL));
 		serv_got_chat_left(chat->gc, chat->local_id);
 		chat->conv = NULL;
+		chat->left = TRUE;
 	}
 	purple_conv_chat_remove_user(purple_conversation_get_chat_data(
 		chat->conv), ggp_uin_to_str(uin), NULL);
@@ -259,29 +337,89 @@ static uint64_t ggp_chat_get_id_from_name(const gchar * name)
 
 void ggp_chat_join(PurpleConnection *gc, GHashTable *components)
 {
+	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	const gchar *id;
+	const gchar *id_cs;
+	gchar *id_s;
+	uint64_t id;
 
-	id = g_hash_table_lookup(components, "id");
-	if (id == NULL || id[0] != '\0')
+	id_cs = g_hash_table_lookup(components, "id");
+	id_s = g_strdup(id_cs);
+	if (id_s)
+		g_strstrip(id_s);
+	if (id_s == NULL || id_s[0] == '\0')
 	{
-		purple_debug_error("gg", "ggp_chat_join; cannot join\n");
+		g_free(id_s);
+		if (gg_chat_create(info->session) < 0)
+		{
+			purple_debug_error("gg", "ggp_chat_join; "
+				"cannot create\n");
+			purple_serv_got_join_chat_failed(gc, components);
+		}
+		return;
+	}
+	id = ggp_chat_get_id_from_name(id_s);
+	g_free(id_s);
+
+	if (!id)
+	{
+		char *buff = g_strdup_printf(
+			_("%s is not a valid room identifier"), id_cs);
+		purple_notify_error(gc, _("Invalid Room Identifier"),
+			_("Invalid Room Identifier"), buff);
+		g_free(buff);
 		purple_serv_got_join_chat_failed(gc, components);
 		return;
 	}
 
-	if (gg_chat_create(info->session) < 0)
+	if (sdata->got_all_chats_info)
+		ggp_chat_join_id(gc, id);
+	else
 	{
-		purple_debug_error("gg", "ggp_chat_join; cannot create\n");
-		purple_serv_got_join_chat_failed(gc, components);
+		uint64_t *id_p = g_new(uint64_t, 1);
+		*id_p = id;
+		sdata->pending_joins = g_slist_append(sdata->pending_joins, id_p);
+	}
+
+}
+
+static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id)
+{
+	GHashTable *components;
+	ggp_chat_local_info *chat = ggp_chat_get(gc, id);
+
+	if (chat && !chat->left)
+	{
+		ggp_chat_open_conv(chat);
 		return;
 	}
+	
+	if (!chat)
+	{
+		char *buff = g_strdup_printf(
+			_("%llu is not a valid room identifier"), id);
+		purple_notify_error(gc, _("Invalid Room Identifier"),
+			_("Invalid Room Identifier"), buff);
+		g_free(buff);
+	}
+	else /* if (chat->left) */
+	{
+		purple_notify_error(gc, _("Could not join chat room"),
+			_("Could not join chat room"),
+			_("You have to ask for invitation from another chat "
+			"participant"));
+	}
+
+	components = ggp_chat_info_defaults(gc, ggp_chat_get_name_from_id(id));
+	purple_serv_got_join_chat_failed(gc, components);
+	g_hash_table_destroy(components);
 }
 
 void ggp_chat_leave(PurpleConnection *gc, int local_id)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	ggp_chat_local_info *chat;
+	uin_t me;
 	
 	chat = ggp_chat_get_local(gc, local_id);
 	if (!chat)
@@ -297,6 +435,12 @@ void ggp_chat_leave(PurpleConnection *gc, int local_id)
 			"unable to leave chat %llu\n", chat->id);
 	}
 	chat->conv = NULL;
+
+	me = ggp_str_to_uin(purple_account_get_username(
+		purple_connection_get_account(chat->gc)));
+
+	ggp_chat_left(chat, me);
+	chat->left = TRUE;
 }
 
 void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
@@ -364,6 +508,7 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 		return;
 	}
 
+	ggp_chat_open_conv(chat);
 	if (who == me)
 	{
 		purple_conversation_write(chat->conv, ggp_uin_to_str(who),
@@ -417,16 +562,28 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 		ggp_chat_local_info *chat = &sdata->chats[i];
 		const gchar *name;
 		time_t date;
+		const gchar *status;
+		int count = chat->participants_count;
 		
 		date = (uint32_t)(chat->id >> 32);
+		
+		if (chat->conv)
+			status = _("Joined");
+		else if (chat->left)
+			status = _("Chat left");
+		else
+		{
+			status = _("Can join chat");
+			count--;
+		}
 		
 		name = ggp_chat_get_name_from_id(chat->id);
 		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM,
 			name, NULL);
 		purple_roomlist_room_add_field(roomlist, room, name);
 		purple_roomlist_room_add_field(roomlist, room, purple_date_format_full(localtime(&date)));
-		purple_roomlist_room_add_field(roomlist, room, GINT_TO_POINTER(123));
-		purple_roomlist_room_add_field(roomlist, room, _("Unknown"));
+		purple_roomlist_room_add_field(roomlist, room, GINT_TO_POINTER(count));
+		purple_roomlist_room_add_field(roomlist, room, status);
 		purple_roomlist_room_add(roomlist, room);
 	}
 
