@@ -1,5 +1,5 @@
 #V=0
-#GADU_EXTRA_WARNINGS = -Wall -Wextra -Werror
+GADU_EXTRA = -Wall -Wextra -Werror -fno-inline
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -51,44 +51,44 @@ endif
 
 GGSOURCES = \
 	$(INTGGSOURCES) \
-	utils.h \
-	utils.c \
-	confer.h \
-	confer.c \
-	buddylist.h \
+	account.c \
+	account.h \
+	avatar.c \
+	avatar.h \
 	buddylist.c \
-	gg.h \
+	buddylist.h \
+	chat.c \
+	chat.h \
+	deprecated.c \
+	deprecated.h \
 	gg.c \
-	resolver-purple.h \
-	resolver-purple.c \
+	gg.h \
 	image.h \
 	image.c \
-	account.h \
-	account.c \
-	deprecated.h \
-	deprecated.c \
-	purplew.h \
-	purplew.c \
-	libgaduw.h \
-	libgaduw.c \
-	avatar.h \
-	avatar.c \
 	libgadu-events.h \
 	libgadu-events.c \
+	libgaduw.h \
+	libgaduw.c \
+	multilogon.c \
+	multilogon.h \
+	pubdir-prpl.c \
+	pubdir-prpl.h \
+	purplew.h \
+	purplew.c \
+	resolver-purple.h \
+	resolver-purple.c \
 	roster.c \
 	roster.h \
+	servconn.c \
+	servconn.h \
+	status.c \
+	status.h \
+	utils.h \
+	utils.c \
 	validator.c \
 	validator.h \
 	xml.c \
 	xml.h \
-	multilogon.c \
-	multilogon.h \
-	status.c \
-	status.h \
-	servconn.c \
-	servconn.h \
-	pubdir-prpl.c \
-	pubdir-prpl.h \
 	oauth/oauth.c \
 	oauth/oauth.h \
 	oauth/oauth-parameter.c \
@@ -118,9 +118,11 @@ libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 endif
 
 AM_CPPFLAGS = \
-	$(GADU_EXTRA_WARNINGS) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	$(GADU_EXTRA)
+
+CFLAGS = -g -O0

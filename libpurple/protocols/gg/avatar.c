@@ -152,7 +152,7 @@ void ggp_avatar_buddy_update(PurpleConnection *gc, uin_t uin, time_t timestamp)
 {
 	ggp_avatar_session_data *avdata = ggp_avatar_get_avdata(gc);
 	ggp_avatar_buddy_update_req *pending_update =
-		g_new(ggp_avatar_buddy_update_req, 1);
+		g_new(ggp_avatar_buddy_update_req, 1); //TODO: leak?
 
 	purple_debug_misc("gg", "ggp_avatar_buddy_update(%p, %u, %lu)\n", gc,
 		uin, timestamp);

@@ -35,31 +35,22 @@
 #include "roster.h"
 #include "multilogon.h"
 #include "status.h"
+#include "chat.h"
 
 #define PUBDIR_RESULTS_MAX 20
 
 #define GGP_UIN_LEN_MAX 10
 
-
-typedef struct
-{
-	char *name;
-	GList *participants;
-
-} GGPChat;
-
 typedef struct {
-
 	struct gg_session *session;
 	guint inpa;
-	GList *chats;
-	int chats_count;
 
 	ggp_image_connection_data image_data;
 	ggp_avatar_session_data avatar_data;
 	ggp_roster_session_data roster_data;
 	ggp_multilogon_session_data *multilogon_data;
 	ggp_status_session_data *status_data;
+	ggp_chat_session_data *chat_data;
 } GGPInfo;
 
 typedef struct

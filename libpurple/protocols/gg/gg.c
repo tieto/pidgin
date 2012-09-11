@@ -39,7 +39,7 @@
 #include "xmlnode.h"
 
 #include "gg.h"
-#include "confer.h"
+#include "chat.h"
 #include "search.h"
 #include "buddylist.h"
 #include "utils.h"
@@ -61,7 +61,7 @@ ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy)
 	if (buddy_data)
 		return buddy_data;
 	
-	buddy_data = g_new0(ggp_buddy_data, 1);
+	buddy_data = g_new0(ggp_buddy_data, 1); //TODO: leak
 	purple_buddy_set_protocol_data(buddy, buddy_data);
 	return buddy_data;
 }
@@ -168,72 +168,6 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 			gc);
 }
 
-/* ----- CONFERENCES ---------------------------------------------------- */
-
-static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
-{
-	PurpleConnection *conn;
-	PurpleRequestField *field;
-	GList *sel;
-
-	conn = purple_account_get_connection(purple_buddy_get_account(buddy));
-
-	g_return_if_fail(conn != NULL);
-
-	field = purple_request_fields_get_field(fields, "name");
-	sel = purple_request_field_list_get_selected(field);
-
-	if (sel == NULL) {
-		purple_debug_error("gg", "No chat selected\n");
-		return;
-	}
-
-	ggp_confer_participants_add_uin(conn, sel->data,
-					ggp_str_to_uin(purple_buddy_get_name(buddy)));
-}
-
-static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
-{
-	PurpleBuddy *buddy;
-	PurpleConnection *gc;
-	GGPInfo *info;
-
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-
-	GList *l;
-	gchar *msg;
-
-	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = purple_connection_get_protocol_data(gc);
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_list_new("name", "Chat name");
-	for (l = info->chats; l != NULL; l = l->next) {
-		GGPChat *chat = l->data;
-		purple_request_field_list_add_icon(field, chat->name, NULL, chat->name);
-	}
-	purple_request_field_group_add_field(group, field);
-
-	msg = g_strdup_printf(_("Select a chat for buddy: %s"),
-			      purple_buddy_get_alias(buddy));
-	purple_request_fields(gc,
-			_("Add to chat..."),
-			_("Add to chat..."),
-			msg,
-			fields,
-			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
-			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			buddy);
-	g_free(msg);
-}
-
 /* ----- BLOCK BUDDIES -------------------------------------------------- */
 
 static void ggp_add_deny(PurpleConnection *gc, const char *who)
@@ -273,7 +207,6 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	PurpleConversation *conv;
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
@@ -411,8 +344,8 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 			ev->recipients_count,
 			multilogon, ev->chat_id);
 
-	if (multilogon && ev->recipients_count != 0) {
-		purple_debug_warning("gg", "ggp_recv_message_handler: conference multilogon messages are not yet handled\n");
+	if (ev->chat_id != 0) {
+		ggp_chat_got_message(gc, ev->chat_id, msg, mtime, ev->sender);
 	} else if (multilogon) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv;
@@ -425,30 +358,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 	} else if (ev->recipients_count == 0) {
 		serv_got_im(gc, from, msg, 0, mtime);
 	} else {
-		const char *chat_name;
-		int chat_id;
-
-		chat_name = ggp_confer_find_by_participants(gc,
-				ev->recipients,
-				ev->recipients_count);
-
-		if (chat_name == NULL) {
-			chat_name = ggp_confer_add_new(gc, NULL);
-			serv_got_joined_chat(gc, info->chats_count, chat_name);
-
-			ggp_confer_participants_add_uin(gc, chat_name,
-							ev->sender);
-
-			ggp_confer_participants_add(gc, chat_name,
-						    ev->recipients,
-						    ev->recipients_count);
-		}
-		conv = ggp_confer_find_by_name(gc, chat_name);
-		chat_id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
-
-		serv_got_chat_in(gc, chat_id,
-			ggp_buddylist_get_buddy_name(gc, ev->sender),
-			PURPLE_MESSAGE_RECV, msg, mtime);
+		purple_debug_fatal("gg", "ggp_recv_message_handler: not handled\n");
 	}
 	g_free(msg);
 	g_free(from);
@@ -481,7 +391,11 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 
 	xml = xmlnode_from_str(data, -1);
 	if (xml == NULL)
+	{
+		purple_debug_error("gg", "ggp_xml_event_handler: "
+			"invalid xml: [%s]\n", data);
 		goto out;
+	}
 
 	xmlnode_next_event = xmlnode_get_child(xml, "event");
 	while (xmlnode_next_event != NULL)
@@ -601,6 +515,16 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_PONG110:
 			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
+			break;
+		case GG_EVENT_JSON_EVENT:
+			purple_debug_info("gg", "gg11: got JSON event\n");
+			break;
+		case GG_EVENT_CHAT_INFO:
+		case GG_EVENT_CHAT_INFO_UPDATE:
+		case GG_EVENT_CHAT_CREATED:
+		case GG_EVENT_CHAT_INVITE_ACK:
+		case GG_EVENT_CHAT_SEND_MSG_ACK:
+			ggp_chat_got_event(gc, ev);
 			break;
 		default:
 			purple_debug_warning("gg",
@@ -841,44 +765,6 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	}
 }
 
-static GList *ggp_blist_node_menu(PurpleBlistNode *node)
-{
-	PurpleMenuAction *act;
-	GList *m = NULL;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	GGPInfo *info;
-
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
-		return NULL;
-
-	account = purple_buddy_get_account((PurpleBuddy *) node);
-	gc = purple_account_get_connection(account);
-	info = purple_connection_get_protocol_data(gc);
-	if (info->chats) {
-		act = purple_menu_action_new(_("Add to chat"),
-			PURPLE_CALLBACK(ggp_bmenu_add_to_chat),
-			NULL, NULL);
-		m = g_list_append(m, act);
-	}
-
-	return m;
-}
-
-static GList *ggp_chat_info(PurpleConnection *gc)
-{
-	GList *m = NULL;
-	struct proto_chat_entry *pce;
-
-	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Chat _name:");
-	pce->identifier = "name";
-	pce->required = TRUE;
-	m = g_list_append(m, pce);
-
-	return m;
-}
-
 static void ggp_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
@@ -895,18 +781,16 @@ static void ggp_login(PurpleAccount *account)
 
 	/* Probably this should be moved to *_new() function. */
 	info->session = NULL;
-	info->chats = NULL;
-	info->chats_count = 0;
 	
 	purple_connection_set_protocol_data(gc, info);
-
 
 	ggp_image_setup(gc);
 	ggp_avatar_setup(gc);
 	ggp_roster_setup(gc);
 	ggp_multilogon_setup(gc);
 	ggp_status_setup(gc);
-	
+	ggp_chat_setup(gc);
+
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
 
@@ -1015,6 +899,7 @@ static void ggp_close(PurpleConnection *gc)
 		ggp_roster_cleanup(gc);
 		ggp_multilogon_cleanup(gc);
 		ggp_status_cleanup(gc);
+		ggp_chat_cleanup(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);
@@ -1198,94 +1083,6 @@ static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	ggp_roster_remove_buddy(gc, buddy, group);
 }
 
-static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPChat *chat;
-	char *chat_name;
-	GList *l;
-	PurpleConversation *conv;
-	PurpleAccount *account = purple_connection_get_account(gc);
-
-	chat_name = g_hash_table_lookup(data, "name");
-
-	if (chat_name == NULL)
-		return;
-
-	purple_debug_info("gg", "joined %s chat\n", chat_name);
-
-	for (l = info->chats; l != NULL; l = l->next) {
-		 chat = l->data;
-
-		 if (chat != NULL && g_utf8_collate(chat->name, chat_name) == 0) {
-			 purple_notify_error(gc, _("Chat error"),
-				 _("This chat name is already in use"), NULL);
-			 return;
-		 }
-	}
-
-	ggp_confer_add_new(gc, chat_name);
-	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
-	purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
-				purple_account_get_username(account), NULL,
-				PURPLE_CBFLAGS_NONE, TRUE);
-}
-
-static char *ggp_get_chat_name(GHashTable *data) {
-	return g_strdup(g_hash_table_lookup(data, "name"));
-}
-
-static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
-{
-	PurpleConversation *conv;
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	GGPChat *chat = NULL;
-	GList *l;
-	/* char *msg, *plain; */
-	gchar *msg;
-	uin_t *uins;
-	int count = 0;
-
-	if ((conv = purple_find_chat(gc, id)) == NULL)
-		return -EINVAL;
-
-	for (l = info->chats; l != NULL; l = l->next) {
-		chat = l->data;
-
-		if (g_utf8_collate(chat->name, purple_conversation_get_name(conv)) == 0) {
-			break;
-		}
-
-		chat = NULL;
-	}
-
-	if (chat == NULL) {
-		purple_debug_error("gg",
-			"ggp_chat_send: Hm... that's strange. No such chat?\n");
-		return -EINVAL;
-	}
-
-	uins = g_new0(uin_t, g_list_length(chat->participants));
-
-	for (l = chat->participants; l != NULL; l = l->next) {
-		uin_t uin = GPOINTER_TO_INT(l->data);
-
-		uins[count++] = uin;
-	}
-
-	msg = purple_unescape_html(message);
-	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
-				(unsigned char *)msg);
-	g_free(msg);
-	g_free(uins);
-
-	serv_got_chat_in(gc, id,
-			 purple_account_get_username(purple_connection_get_account(gc)),
-			 flags, message, time(NULL));
-
-	return 0;
-}
-
 static void ggp_keepalive(PurpleConnection *gc)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
@@ -1392,7 +1189,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_status_buddy_text,		/* status_text */
 	ggp_tooltip_text,		/* tooltip_text */
 	ggp_status_types,		/* status_types */
-	ggp_blist_node_menu,		/* blist_node_menu */
+	NULL,				/* blist_node_menu */
 	ggp_chat_info,			/* chat_info */
 	NULL,				/* chat_info_defaults */
 	ggp_login,			/* login */
@@ -1413,11 +1210,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* rem_permit */
 	ggp_rem_deny,			/* rem_deny */
 	NULL,				/* set_permit_deny */
-	ggp_join_chat,			/* join_chat */
+	ggp_chat_join,			/* join_chat */
 	NULL,				/* reject_chat */
-	ggp_get_chat_name,		/* get_chat_name */
-	NULL,				/* chat_invite */
-	NULL,				/* chat_leave */
+	ggp_chat_get_name,		/* get_chat_name */
+	ggp_chat_invite,		/* chat_invite */
+	ggp_chat_leave,			/* chat_leave */
 	NULL,				/* chat_whisper */
 	ggp_chat_send,			/* chat_send */
 	ggp_keepalive,			/* keepalive */
