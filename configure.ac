@@ -836,9 +836,6 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
-dnl
-dnl TODO: Depend on gstreamer >= 0.10.10, and remove the conditional use of
-dnl       gst_registry_fork_set_enabled.
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
@@ -847,10 +844,6 @@ if test "x$enable_gst" != "xno"; then
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		AC_SUBST(GSTREAMER_CFLAGS)
 		AC_SUBST(GSTREAMER_LIBS)
-		AC_CHECK_LIB(gstreamer-0.10, gst_registry_fork_set_enabled,
-			[ AC_DEFINE(GST_CAN_DISABLE_FORKING, [],
-			  [Define if gst_registry_fork_set_enabled exists])],
-			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
 		enable_gst="no"
@@ -911,7 +904,7 @@ AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
@@ -924,7 +917,7 @@ Or use --disable-vv if you do not need voice/video support.
 		fi
 	fi
 fi
-AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno")
+AM_CONDITIONAL(USE_VV, test "x$enable_vv" != "xno")
 
 dnl #######################################################################
 dnl # Check for Internationalized Domain Name support

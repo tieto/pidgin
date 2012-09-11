@@ -42,10 +42,9 @@ body {
 
 /* Colour-ify things */
 
-.x-container.incoming .x-time,
-.x-container.incoming .x-sender
+#Chat:not(.groupchat) .x-container.incoming .x-header
 {
-	color: #cc0000;
+	color: #cc0000 ! important;
 }
 
 .x-container.outgoing .x-time,

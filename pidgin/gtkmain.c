@@ -88,10 +88,6 @@ static const int catch_sig_list[] = {
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
-	SIGCHLD,
-#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
-	SIGALRM,
-#endif
 	-1
 };
 
@@ -135,29 +131,6 @@ static char *segfault_message;
 static int signal_sockets[2];
 
 static void sighandler(int sig);
-
-/*
- * This child process reaping stuff is currently only used for processes that
- * were forked to play sounds.  It's not needed for forked DNS child, which
- * have their own waitpid() call.  It might be wise to move this code into
- * gtksound.c.
- */
-static void
-clean_pid(void)
-{
-	int status;
-	pid_t pid;
-
-	do {
-		pid = waitpid(-1, &status, WNOHANG);
-	} while (pid != 0 && pid != (pid_t)-1);
-
-	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
-		char errmsg[BUFSIZ];
-		snprintf(errmsg, sizeof(errmsg), "Warning: waitpid() returned %d", pid);
-		perror(errmsg);
-	}
-}
 
 static void sighandler(int sig)
 {
@@ -209,33 +182,8 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 		return FALSE;
 	}
 
-	switch (sig) {
-#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
-/* By default, gstreamer forks when you initialize it, and waitpids for the
- * child.  But if libpurple reaps the child rather than leaving it to
- * gstreamer, gstreamer's initialization fails.  So, we wait a second before
- * reaping child processes, to give gst a chance to reap it if it wants to.
- *
- * This is not needed in later gstreamers, which let us disable the forking.
- * And, it breaks the world on some Real Unices.
- */
-	case SIGCHLD:
-		/* Restore signal catching */
-		signal(SIGCHLD, sighandler);
-		alarm(1);
-		break;
-	case SIGALRM:
-#else
-	case SIGCHLD:
-#endif
-		clean_pid();
-		/* Restore signal catching */
-		signal(SIGCHLD, sighandler);
-		break;
-	default:
-		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-		purple_core_quit();
-	}
+	purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+	purple_core_quit();
 
 	return TRUE;
 }

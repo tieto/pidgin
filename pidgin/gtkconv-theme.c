@@ -66,6 +66,8 @@ typedef struct {
 	char    *incoming_next_context_html;
 	char    *outgoing_next_context_html;
 	char    *basestyle_css;
+
+	GArray  *nick_colors;
 } PidginConvThemePrivate;
 
 /******************************************************************************
@@ -498,6 +500,8 @@ pidgin_conv_theme_finalize(GObject *obj)
 	}
 	g_free(priv->variant);
 
+	g_array_unref(priv->nick_colors);
+
 	parent_class->finalize(obj);
 }
 
@@ -747,5 +751,46 @@ pidgin_conversation_theme_get_css_path(PidginConvTheme *theme)
 		g_free(file);
 		return ret;
 	}
+}
+
+GArray *
+pidgin_conversation_theme_get_nick_colors(PidginConvTheme *theme)
+{
+	PidginConvThemePrivate *priv;
+	const char *dir;
+
+	g_return_val_if_fail(theme != NULL, NULL);
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	dir = purple_theme_get_dir(PURPLE_THEME(theme));
+	if (NULL == priv->nick_colors)
+	{
+		char *file = g_build_filename(dir, "Contents", "Resources", "Incoming", "SenderColors.txt", NULL);
+		char *contents;
+		priv->nick_colors = g_array_new(FALSE, FALSE, sizeof(GdkColor));
+		if (g_file_get_contents(file, &contents, NULL, NULL)) {
+			int i;
+			gchar ** color_strings = g_strsplit_set(contents, "\r\n:", -1);
+
+			for(i=0; color_strings[i]; i++)
+			{
+				GdkColor color;
+				if(gdk_color_parse(color_strings[i], &color))
+				{
+					g_array_append_val(priv->nick_colors, color);
+				}
+			}
+
+			g_strfreev(color_strings);
+			g_free(contents);
+		}
+		g_free(file);
+	}
+
+	if(priv->nick_colors->len)
+		return g_array_ref(priv->nick_colors);
+	else
+		return NULL;
 }
 
