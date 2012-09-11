@@ -57,6 +57,9 @@
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
+#if USE_VV
+#include "media-gst.h"
+#endif
 
 #include "gtk3compat.h"
 
@@ -2938,6 +2941,263 @@ away_page(void)
 	return ret;
 }
 
+#if USE_VV
+static const gchar *AUDIO_SRC_PLUGINS[] = {
+	"alsasrc",	"ALSA",
+	/* "esdmon",	"ESD", ? */
+	"osssrc",	"OSS",
+	"pulsesrc",	"PulseAudio",
+	"sndiosrc",	"sndio",
+	/* "audiotestsrc wave=silence", "Silence", */
+	"audiotestsrc",	"Test Sound",
+	NULL
+};
+
+static const gchar *AUDIO_SINK_PLUGINS[] = {
+	"alsasink",	"ALSA",
+	"artsdsink",	"aRts",
+	"esdsink",	"ESD",
+	"osssink",	"OSS",
+	"pulsesink",	"PulseAudio",
+	"sndiosink",	"sndio",
+	NULL
+};
+
+static const gchar *VIDEO_SRC_PLUGINS[] = {
+	"videotestsrc",	"Test Input",
+	"dshowvideosrc","DirectDraw",
+	"ksvideosrc",	"KS Video",
+	"qcamsrc",	"Quickcam",
+	"v4lsrc",	"Video4Linux",
+	"v4l2src",	"Video4Linux2",
+	"v4lmjpegsrc",	"Video4Linux MJPEG",
+	NULL
+};
+
+static const gchar *VIDEO_SINK_PLUGINS[] = {
+	/* "aasink",	"AALib", Didn't work for me */
+	"directdrawsink","DirectDraw",
+	"glimagesink",	"OpenGL",
+	"ximagesink",	"X Window System",
+	"xvimagesink",	"X Window System (Xv)",
+	NULL
+};
+
+static GList *
+get_vv_element_devices(const gchar *element_name)
+{
+	GList *ret = NULL;
+	GstElement *element;
+	GObjectClass *klass;
+#if !GST_CHECK_VERSION(0,11,0)
+	GstPropertyProbe *probe;
+	const GParamSpec *pspec;
+#endif
+
+	ret = g_list_prepend(ret, (gpointer)_("Default"));
+	ret = g_list_prepend(ret, "");
+
+	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
+		return g_list_reverse(ret);
+	}
+
+	element = gst_element_factory_make(element_name, "test");
+	if (!element) {
+		purple_debug_info("vvconfig", "'%s' - unable to find element\n",
+		                  element_name);
+		return g_list_reverse(ret);
+	}
+
+	klass = G_OBJECT_GET_CLASS (element);
+	if (!klass) {
+		purple_debug_info("vvconfig", "'%s' - unable to find GObject Class\n",
+		                  element_name);
+		return g_list_reverse(ret);
+	}
+
+#if GST_CHECK_VERSION(0,11,0)
+	purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
+#else
+	if (!g_object_class_find_property(klass, "device") ||
+			!GST_IS_PROPERTY_PROBE(element) ||
+			!(probe = GST_PROPERTY_PROBE(element)) ||
+			!(pspec = gst_property_probe_get_property(probe, "device"))) {
+		purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
+	} else {
+		gint n;
+		GValueArray *array;
+
+		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
+		if (g_object_class_find_property(klass, "autoprobe")) {
+			g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
+			if (g_object_class_find_property(klass, "autoprobe-fps")) {
+				g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
+			}
+		}
+
+		array = gst_property_probe_probe_and_get_values(probe, pspec);
+		if (array == NULL) {
+			purple_debug_info("vvconfig", "'%s' has no devices\n", element_name);
+			return g_list_reverse(ret);
+		}
+
+		for (n = 0; n < array->n_values; ++n) {
+			GValue *device;
+			const gchar *name;
+			const gchar *device_name;
+
+			device = g_value_array_get_nth(array, n);
+			g_object_set_property(G_OBJECT(element), "device", device);
+			if (gst_element_set_state(element, GST_STATE_READY) != GST_STATE_CHANGE_SUCCESS) {
+				purple_debug_warning("vvconfig", "Error changing state of %s\n",
+				                     element_name);
+				continue;
+			}
+
+			g_object_get(G_OBJECT(element), "device-name", &name, NULL);
+			device_name = g_value_get_string(device);
+			if (name == NULL)
+				name = _("Unknown");
+			purple_debug_info("vvconfig", "Found device %s : %s for %s\n",
+			                  device_name, name, element_name);
+			ret = g_list_prepend(ret, (gpointer)name);
+			ret = g_list_prepend(ret, (gpointer)device_name);
+			gst_element_set_state(element, GST_STATE_NULL);
+		}
+	}
+#endif
+	gst_object_unref(element);
+
+	return g_list_reverse(ret);
+}
+
+static GList *
+get_vv_element_plugins(const gchar **plugins)
+{
+	GList *ret = NULL;
+
+	ret = g_list_prepend(ret, (gpointer)_("Default"));
+	ret = g_list_prepend(ret, "");
+	for (; plugins[0] && plugins[1]; plugins += 2) {
+#if GST_CHECK_VERSION(0,11,0)
+		if (gst_registry_check_feature_version(gst_registry_get(),
+		                                       plugins[0], 0, 0, 0)) {
+#else
+		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)) {
+#endif
+			ret = g_list_prepend(ret, (gpointer)plugins[1]);
+			ret = g_list_prepend(ret, (gpointer)plugins[0]);
+		}
+	}
+
+	return g_list_reverse(ret);
+}
+
+static void
+vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
+                     gconstpointer value, gpointer data)
+{
+	GtkWidget *vbox = data;
+	GtkSizeGroup *sg;
+	GtkWidget *widget;
+	gchar *pref;
+	GList *devices;
+
+	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
+	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
+	gtk_widget_destroy(widget);
+
+	pref = g_strdup(name);
+	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
+	devices = get_vv_element_devices(value);
+	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, pref, devices);
+	g_list_free(devices);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	g_object_set_data(G_OBJECT(vbox), "device-hbox",
+	                  gtk_widget_get_parent(widget));
+	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
+}
+
+static void
+make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
+              const gchar *name, const gchar **plugin_strs,
+              const gchar *plugin_pref, const gchar *device_pref)
+{
+	GtkWidget *vbox, *widget;
+	GList *plugins, *devices;
+
+	vbox = pidgin_make_frame(parent, name);
+
+	/* Setup plugin preference */
+	plugins = get_vv_element_plugins(plugin_strs);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
+	                                         PURPLE_PREF_STRING, plugin_pref,
+	                                         plugins);
+	g_list_free(plugins);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	/* Setup device preference */
+	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, device_pref,
+	                                         devices);
+	g_list_free(devices);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	widget = gtk_widget_get_parent(widget);
+	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
+	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
+	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
+	                              vbox);
+	g_signal_connect_swapped(vbox, "destroy",
+	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
+}
+
+static GtkWidget *
+vv_page(void)
+{
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkSizeGroup *sg;
+
+	ret = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	vbox = pidgin_make_frame(ret, _("Audio"));
+	make_vv_frame(vbox, sg, _("Input"), AUDIO_SRC_PLUGINS,
+	              "/plugins/core/vvconfig/audio/src/plugin",
+	              "/plugins/core/vvconfig/audio/src/device");
+	make_vv_frame(vbox, sg, _("Output"), AUDIO_SINK_PLUGINS,
+	              "/plugins/core/vvconfig/audio/sink/plugin",
+	              "/plugins/core/vvconfig/audio/sink/device");
+
+	vbox = pidgin_make_frame(ret, _("Video"));
+	make_vv_frame(vbox, sg, _("Input"), VIDEO_SRC_PLUGINS,
+	              "/plugins/core/vvconfig/video/src/plugin",
+	              "/plugins/core/vvconfig/video/src/device");
+	make_vv_frame(vbox, sg, _("Output"), VIDEO_SINK_PLUGINS,
+	              "/plugins/gtk/vvconfig/video/sink/plugin",
+	              "/plugins/gtk/vvconfig/video/sink/device");
+
+	gtk_widget_show_all(ret);
+
+	return ret;
+}
+#endif
+
 static int
 prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
@@ -2964,6 +3224,9 @@ prefs_notebook_init(void)
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 	prefs_notebook_add_page(_("Themes"), theme_page(), notebook_page++);
+#if USE_VV
+	prefs_notebook_add_page(_("Voice/Video"), vv_page(), notebook_page++);
+#endif
 }
 
 void
