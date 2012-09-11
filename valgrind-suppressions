@@ -151,4 +151,17 @@
    fun:purple_plugins_load_saved
    fun:main
 }
-
+{
+   libfontconfig leak 1
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libfontconfig.so.*
+   ...
+}
+{
+   libfontconfig leak 2
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libfontconfig.so.*
+   ...
+}
