@@ -1147,6 +1147,10 @@ static void
 chat_select_account_cb(GObject *w, PurpleAccount *account,
                        PidginChatData *data)
 {
+	g_return_if_fail(w != NULL);
+	g_return_if_fail(data != NULL);
+	g_return_if_fail(account != NULL);
+
 	if (strcmp(purple_account_get_protocol_id(data->rq_data.account),
 	           purple_account_get_protocol_id(account)) == 0)
 	{
