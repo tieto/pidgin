@@ -557,7 +557,7 @@ static void handle_protocol(wchar_t *cmd) {
 	len = WideCharToMultiByte(CP_UTF8, 0, tmp1,
 			wlen, NULL, 0, NULL, NULL);
 	if (len) {
-		utf8msg = malloc(len * sizeof(char));
+		utf8msg = malloc(len);
 		len = WideCharToMultiByte(CP_UTF8, 0, tmp1,
 			wlen, utf8msg, len, NULL, NULL);
 	}
@@ -702,7 +702,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 				 * again when it initializes) */
 				MySetLogFile = (LPFNSETLOGFILE) GetProcAddress(hmod, "SetLogFile");
 				if (MySetLogFile) {
-					if (GetTempPathA(sizeof(debug_dir) * sizeof(char), debug_dir) != 0) {
+					if (GetTempPathA(sizeof(debug_dir), debug_dir) != 0) {
 						strcat(debug_dir, "pidgin.RPT");
 						printf(" Setting exchndl.dll LogFile to %s\n",
 							debug_dir);
@@ -719,7 +719,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 					i = WideCharToMultiByte(CP_ACP, 0, pidgin_dir,
 						-1, NULL, 0, NULL, NULL);
 					if (i != 0) {
-						pidgin_dir_ansi = malloc(i * sizeof(char));
+						pidgin_dir_ansi = malloc(i);
 						i = WideCharToMultiByte(CP_ACP, 0, pidgin_dir,
 							-1, pidgin_dir_ansi, i, NULL, NULL);
 						if (i == 0) {
@@ -728,10 +728,10 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 						}
 					}
 					if (pidgin_dir_ansi != NULL) {
-						_snprintf(debug_dir, sizeof(debug_dir) / sizeof(char),
+						_snprintf(debug_dir, sizeof(debug_dir),
 							"%s\\pidgin-%s-dbgsym",
 							pidgin_dir_ansi,  VERSION);
-						debug_dir[sizeof(debug_dir) / sizeof(char) - 1] = '\0';
+						debug_dir[sizeof(debug_dir) - 1] = '\0';
 						printf(" Setting exchndl.dll DebugInfoDir to %s\n",
 							debug_dir);
 						MySetLogFile(debug_dir);
@@ -812,7 +812,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			int len = WideCharToMultiByte(CP_UTF8, 0, szArglist[i],
 				-1, NULL, 0, NULL, NULL);
 			if (len != 0) {
-				char *arg = malloc(len * sizeof(char));
+				char *arg = malloc(len);
 				len = WideCharToMultiByte(CP_UTF8, 0, szArglist[i],
 					-1, arg, len, NULL, NULL);
 				if (len != 0) {
