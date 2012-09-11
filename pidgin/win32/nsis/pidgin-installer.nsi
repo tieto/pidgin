@@ -93,6 +93,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer"
 ;Reserve files used in .onInit
 ;for faster start-up
 ReserveFile "${NSISDIR}\Plugins\System.dll"
+ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
@@ -148,13 +149,6 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
 ;--------------------------------
-;Reserve Files
-  ; Only need this if using bzip2 compression
-
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_LANGDLL
-  ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start Install Sections ;;
