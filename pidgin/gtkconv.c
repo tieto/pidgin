@@ -9376,12 +9376,12 @@ pidgin_conv_window_new()
 void
 pidgin_conv_window_destroy(PidginWindow *win)
 {
-	PidginConversation *gtkconv;
-	GList *iter;
-
 	if (win->gtkconvs) {
-		for (iter = win->gtkconvs; iter != NULL; iter = iter->next) {
-			gtkconv = iter->data;
+		GList *iter = win->gtkconvs;
+		while (iter)
+		{
+			PidginConversation *gtkconv = iter->data;
+			iter = iter->next;
 			close_conv_cb(NULL, gtkconv);
 		}
 		return;
