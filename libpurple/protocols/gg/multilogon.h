@@ -38,7 +38,6 @@ typedef struct _ggp_multilogon_session_data ggp_multilogon_session_data;
 void ggp_multilogon_setup(PurpleConnection *gc);
 void ggp_multilogon_cleanup(PurpleConnection *gc);
 
-void ggp_multilogon_msg(PurpleConnection *gc, struct gg_event_msg *msg);
 void ggp_multilogon_info(PurpleConnection *gc,
 	struct gg_event_multilogon_info *msg);
 

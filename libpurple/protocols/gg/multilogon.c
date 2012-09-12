@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301 USA
  */
 
 #include "multilogon.h"
@@ -32,6 +32,8 @@
 #include <debug.h>
 
 #include "gg.h"
+#include "utils.h"
+#include "message-prpl.h"
 
 struct _ggp_multilogon_session_data
 {
@@ -54,7 +56,8 @@ void ggp_multilogon_setup(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	
-	ggp_multilogon_session_data *mldata = g_new0(ggp_multilogon_session_data, 1);
+	ggp_multilogon_session_data *mldata =
+		g_new0(ggp_multilogon_session_data, 1);
 	accdata->multilogon_data = mldata;
 }
 
@@ -62,11 +65,6 @@ void ggp_multilogon_cleanup(PurpleConnection *gc)
 {
 	ggp_multilogon_session_data *mldata = ggp_multilogon_get_mldata(gc);
 	g_free(mldata);
-}
-
-void ggp_multilogon_msg(PurpleConnection *gc, struct gg_event_msg *msg)
-{
-	ggp_recv_message_handler(gc, msg, TRUE);
 }
 
 void ggp_multilogon_info(PurpleConnection *gc,

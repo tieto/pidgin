@@ -52,6 +52,7 @@
 #include "status.h"
 #include "servconn.h"
 #include "pubdir-prpl.h"
+#include "message-prpl.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -196,174 +197,6 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-/**
- * Dispatch a message received from a buddy.
- *
- * @param gc PurpleConnection.
- * @param ev Gadu-Gadu event structure.
- *
- * Image receiving, some code borrowed from Kadu http://www.kadu.net
- */
-void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	gchar *from;
-	gchar *msg;
-	gchar *tmp;
-	time_t mtime;
-	uin_t sender = ev->sender;
-
-	if (ev->message == NULL)
-	{
-		purple_debug_warning("gg", "ggp_recv_message_handler: NULL as message pointer\n");
-		return;
-	}
-
-	from = g_strdup_printf("%lu", (unsigned long int)ev->sender);
-
-	tmp = g_strdup_printf("%s", ev->message);
-	purple_str_strip_char(tmp, '\r');
-	msg = g_markup_escape_text(tmp, -1);
-	g_free(tmp);
-
-	if (ev->msgclass & GG_CLASS_QUEUED)
-		mtime = ev->time;
-	else
-		mtime = time(NULL);
-
-	/* We got richtext message */
-	if (ev->formats_length)
-	{
-		gboolean got_image = FALSE, bold = FALSE, italic = FALSE, under = FALSE;
-		char *cformats = (char *)ev->formats;
-		char *cformats_end = cformats + ev->formats_length;
-		gint increased_len = 0;
-		struct gg_msg_richtext_format *actformat;
-		struct gg_msg_richtext_image *actimage;
-		GString *message = g_string_new(msg);
-
-		purple_debug_info("gg", "ggp_recv_message_handler: richtext msg from (%s): %s %i formats\n", from, msg, ev->formats_length);
-
-		while (cformats < cformats_end)
-		{
-			gint byteoffset;
-			actformat = (struct gg_msg_richtext_format *)cformats;
-			cformats += sizeof(struct gg_msg_richtext_format);
-			byteoffset = g_utf8_offset_to_pointer(message->str, actformat->position + increased_len) - message->str;
-
-			if(actformat->position == 0 && actformat->font == 0) {
-				purple_debug_warning("gg", "ggp_recv_message_handler: bogus formatting (inc: %i)\n", increased_len);
-				continue;
-			}
-			purple_debug_info("gg", "ggp_recv_message_handler: format at pos: %i, image:%i, bold:%i, italic: %i, under:%i (inc: %i)\n",
-				actformat->position,
-				(actformat->font & GG_FONT_IMAGE) != 0,
-				(actformat->font & GG_FONT_BOLD) != 0,
-				(actformat->font & GG_FONT_ITALIC) != 0,
-				(actformat->font & GG_FONT_UNDERLINE) != 0,
-				increased_len);
-
-			if (actformat->font & GG_FONT_IMAGE)
-			{
-				const char *placeholder;
-			
-				got_image = TRUE;
-				actimage = (struct gg_msg_richtext_image*)(cformats);
-				cformats += sizeof(struct gg_msg_richtext_image);
-				purple_debug_info("gg", "ggp_recv_message_handler: image received, size: %d, crc32: %i\n", actimage->size, actimage->crc32);
-
-				/* Checking for errors, image size shouldn't be
-				 * larger than 255.000 bytes */
-				if (actimage->size > 255000) {
-					purple_debug_warning("gg", "ggp_recv_message_handler: received image large than 255 kb\n");
-					continue;
-				}
-
-				gg_image_request(info->session, ev->sender,
-					actimage->size, actimage->crc32);
-
-				placeholder = ggp_image_pending_placeholder(actimage->crc32);
-				g_string_insert(message, byteoffset, placeholder);
-				increased_len += strlen(placeholder);
-				continue;
-			}
-
-			if (actformat->font & GG_FONT_BOLD) {
-				if (bold == FALSE) {
-					g_string_insert(message, byteoffset, "<b>");
-					increased_len += 3;
-					bold = TRUE;
-				}
-			} else if (bold) {
-				g_string_insert(message, byteoffset, "</b>");
-				increased_len += 4;
-				bold = FALSE;
-			}
-
-			if (actformat->font & GG_FONT_ITALIC) {
-				if (italic == FALSE) {
-					g_string_insert(message, byteoffset, "<i>");
-					increased_len += 3;
-					italic = TRUE;
-				}
-			} else if (italic) {
-				g_string_insert(message, byteoffset, "</i>");
-				increased_len += 4;
-				italic = FALSE;
-			}
-
-			if (actformat->font & GG_FONT_UNDERLINE) {
-				if (under == FALSE) {
-					g_string_insert(message, byteoffset, "<u>");
-					increased_len += 3;
-					under = TRUE;
-				}
-			} else if (under) {
-				g_string_insert(message, byteoffset, "</u>");
-				increased_len += 4;
-				under = FALSE;
-			}
-
-			if (actformat->font & GG_FONT_COLOR) {
-				cformats += sizeof(struct gg_msg_richtext_color);
-			}
-		}
-
-		msg = message->str;
-		g_string_free(message, FALSE);
-
-		if (got_image)
-		{
-			ggp_image_got_im(gc, sender, msg, mtime);
-			return;
-		}
-	}
-
-	purple_debug_info("gg", "ggp_recv_message_handler: msg from (%s): %s (class = %d; rcpt_count = %d; multilogon = %d; chat_id = %llu)\n",
-			from, msg, ev->msgclass,
-			ev->recipients_count,
-			multilogon, ev->chat_id);
-
-	if (ev->chat_id != 0) {
-		ggp_chat_got_message(gc, ev->chat_id, msg, mtime, ev->sender);
-	} else if (multilogon) {
-		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv;
-		const gchar *who = ggp_uin_to_str(ev->sender); // not really sender
-		conv = purple_find_conversation_with_account(
-			PURPLE_CONV_TYPE_IM, who, account);
-		if (conv == NULL)
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
-		purple_conversation_write(conv, purple_account_get_username(account), msg, PURPLE_MESSAGE_SEND, mtime);
-	} else if (ev->recipients_count == 0) {
-		serv_got_im(gc, from, msg, 0, mtime);
-	} else {
-		purple_debug_fatal("gg", "ggp_recv_message_handler: not handled\n");
-	}
-	g_free(msg);
-	g_free(from);
-}
-
 static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int length) {
 	gchar *from;
 
@@ -468,7 +301,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			/* Nothing happened. */
 			break;
 		case GG_EVENT_MSG:
-			ggp_recv_message_handler(gc, &ev->event.msg, FALSE);
+			ggp_message_got(gc, &ev->event.msg);
 			break;
 		case GG_EVENT_ACK:
 			/* Changing %u to %i fixes compiler warning */
@@ -505,7 +338,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_roster_reply(gc, &ev->event.userlist100_reply);
 			break;
 		case GG_EVENT_MULTILOGON_MSG:
-			ggp_multilogon_msg(gc, &ev->event.multilogon_msg);
+			ggp_message_got_multilogon(gc, &ev->event.multilogon_msg);
 			break;
 		case GG_EVENT_MULTILOGON_INFO:
 			ggp_multilogon_info(gc, &ev->event.multilogon_info);

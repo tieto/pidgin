@@ -70,6 +70,8 @@ GGSOURCES = \
 	libgadu-events.c \
 	libgaduw.h \
 	libgaduw.c \
+	message-prpl.h \
+	message-prpl.c \
 	multilogon.c \
 	multilogon.h \
 	pubdir-prpl.c \
