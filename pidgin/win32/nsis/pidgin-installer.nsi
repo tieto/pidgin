@@ -328,7 +328,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
 
-    File /r /x locale ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
+    File /r /x locale /x Gtk ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
 
     ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
