@@ -65,8 +65,11 @@ void ggp_chat_setup(PurpleConnection *gc)
 void ggp_chat_cleanup(PurpleConnection *gc)
 {
 	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
+	int i;
 
 	g_slist_free_full(sdata->pending_joins, g_free);
+	for (i = 0; i < sdata->chats_count; i++)
+		g_free(sdata->chats[i].participants);
 	g_free(sdata->chats);
 	g_free(sdata);
 }
@@ -81,7 +84,7 @@ static ggp_chat_local_info * ggp_chat_new(PurpleConnection *gc, uint64_t id)
 		return chat;
 
 	local_id = sdata->chats_count++;
-	sdata->chats = realloc(sdata->chats,
+	sdata->chats = g_realloc(sdata->chats,
 		sdata->chats_count * sizeof(ggp_chat_local_info));
 	chat = &sdata->chats[local_id];
 
@@ -235,7 +238,7 @@ static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin)
 		return;
 	}
 	chat->participants_count++;
-	chat->participants = realloc(chat->participants,
+	chat->participants = g_realloc(chat->participants,
 		sizeof(uin) * chat->participants_count);
 	chat->participants[chat->participants_count - 1] = uin;
 	
@@ -259,7 +262,7 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 	chat->participants[idx] =
 		chat->participants[chat->participants_count - 1];
 	chat->participants_count--;
-	chat->participants = realloc(chat->participants,
+	chat->participants = g_realloc(chat->participants,
 		sizeof(uin) * chat->participants_count);
 
 	if (chat->conv == NULL)
