@@ -152,16 +152,15 @@
    fun:main
 }
 {
-   libfontconfig leak 1
+   libfontconfig leaks
    Memcheck:Leak
-   fun:realloc
+   fun:*alloc
    obj:/usr/lib/libfontconfig.so.*
    ...
 }
 {
-   libfontconfig leak 2
-   Memcheck:Leak
-   fun:malloc
-   obj:/usr/lib/libfontconfig.so.*
+   webkitgtk uninitialized values
+   Memcheck:Cond
+   obj:/usr/lib/libwebkitgtk-*
    ...
 }
