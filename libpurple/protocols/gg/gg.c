@@ -610,6 +610,8 @@ static void ggp_login(PurpleAccount *account)
 	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
+
 	glp = g_new0(struct gg_login_params, 1);
 	info = g_new0(GGPInfo, 1);
 
@@ -743,132 +745,6 @@ static void ggp_close(PurpleConnection *gc)
 	}
 
 	purple_debug_info("gg", "Connection closed.\n");
-}
-
-static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
-		       PurpleMessageFlags flags)
-{
-	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	char *tmp, *plain;
-	int ret = 1;
-	unsigned char format[1024];
-	unsigned int format_length = sizeof(struct gg_msg_richtext);
-	gint pos = 0;
-	GData *attribs;
-	const char *start, *end = NULL, *last;
-	ggp_buddy_data *buddy_data = ggp_buddy_get_data(
-		purple_find_buddy(purple_connection_get_account(gc), who));
-
-	if (msg == NULL || *msg == '\0') {
-		return 0;
-	}
-
-	if (buddy_data->blocked)
-		return -1;
-
-	last = msg;
-
-	/* Check if the message is richtext */
-	/* TODO: Check formatting, too */
-	if(purple_markup_find_tag("img", last, &start, &end, &attribs)) {
-
-		GString *string_buffer = g_string_new(NULL);
-		struct gg_msg_richtext fmt;
-
-		do
-		{
-			const char *id = g_datalist_get_data(&attribs, "id");
-			struct gg_msg_richtext_format actformat;
-			struct gg_msg_richtext_image actimage;
-			ggp_image_prepare_result prepare_result;
-
-			/* Add text before the image */
-			if(start - last)
-			{
-				pos = pos + g_utf8_strlen(last, start - last);
-				g_string_append_len(string_buffer, last,
-					start - last);
-			}
-			last = end + 1;
-			
-			if (id == NULL)
-			{
-				g_datalist_clear(&attribs);
-				continue;
-			}
-
-			/* add the image itself */
-			prepare_result = ggp_image_prepare(
-				gc, atoi(id), who, &actimage);
-			if (prepare_result == GGP_IMAGE_PREPARE_OK)
-			{
-				actformat.font = GG_FONT_IMAGE;
-				actformat.position = pos;
-
-				memcpy(format + format_length, &actformat,
-					sizeof(actformat));
-				format_length += sizeof(actformat);
-				memcpy(format + format_length, &actimage,
-					sizeof(actimage));
-				format_length += sizeof(actimage);
-			}
-			else if (prepare_result == GGP_IMAGE_PREPARE_TOO_BIG)
-			{
-				PurpleConversation *conv =
-					purple_find_conversation_with_account(
-						PURPLE_CONV_TYPE_IM, who,
-						purple_connection_get_account(gc));
-				purple_conversation_write(conv, "",
-					_("Image is too large, please try "
-					"smaller one."), PURPLE_MESSAGE_ERROR,
-					time(NULL));
-			}
-			
-			g_datalist_clear(&attribs);
-		} while (purple_markup_find_tag("img", last, &start, &end,
-			&attribs));
-
-		/* Add text after the images */
-		if(last && *last) {
-			pos = pos + g_utf8_strlen(last, -1);
-			g_string_append(string_buffer, last);
-		}
-
-		fmt.flag = 2;
-		fmt.length = format_length - sizeof(fmt);
-		memcpy(format, &fmt, sizeof(fmt));
-
-		purple_debug_info("gg", "ggp_send_im: richtext msg = %s\n", string_buffer->str);
-		plain = purple_unescape_html(string_buffer->str);
-		g_string_free(string_buffer, TRUE);
-	} else {
-		purple_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
-		plain = purple_unescape_html(msg);
-	}
-
-	tmp = g_strdup(plain);
-
-	if (tmp && (format_length - sizeof(struct gg_msg_richtext))) {
-		if(gg_send_message_richtext(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who), (unsigned char *)tmp, format, format_length) < 0) {
-			ret = -1;
-		} else {
-			ret = 1;
-		}
-	} else if (NULL == tmp || *tmp == 0) {
-		ret = 0;
-	} else if (strlen(tmp) > GG_MSG_MAXSIZE) {
-		ret = -E2BIG;
-	} else if (gg_send_message(info->session, GG_CLASS_CHAT,
-				ggp_str_to_uin(who), (unsigned char *)tmp) < 0) {
-		ret = -1;
-	} else {
-		ret = 1;
-	}
-
-	g_free(plain);
-	g_free(tmp);
-
-	return ret;
 }
 
 static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
@@ -1028,7 +904,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_chat_info_defaults,		/* chat_info_defaults */
 	ggp_login,			/* login */
 	ggp_close,			/* close */
-	ggp_send_im,			/* send_im */
+	ggp_message_send_im,		/* send_im */
 	NULL,				/* set_info */
 	ggp_send_typing,		/* send_typing */
 	ggp_pubdir_get_info_prpl,	/* get_info */

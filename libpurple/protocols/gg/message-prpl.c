@@ -2,6 +2,7 @@
 
 #include <debug.h>
 
+#include "gg.h"
 #include "chat.h"
 #include "utils.h"
 
@@ -31,6 +32,7 @@ static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg);
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	const gchar *text);
+static gchar * ggp_message_format_to_gg(const gchar *text);
 
 /**************/
 
@@ -137,4 +139,73 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	g_free(tmp);
 
 	msg->text = text_new;
+}
+
+static gchar * ggp_message_format_to_gg(const gchar *text)
+{
+	gchar *text_new, *tmp;
+	GRegex *regex;
+
+	/* TODO: do it via xml parser*/
+
+	text_new = purple_strreplace(text, "<hr>", "<br>---<br>");
+
+	tmp = text_new;
+	text_new = purple_strreplace(text_new, "</a>&nbsp;", " ");
+	g_free(tmp);
+
+	tmp = text_new;
+	text_new = purple_strreplace(text_new, "</a>", "");
+	g_free(tmp);
+	
+	tmp = text_new;
+	text_new = purple_strreplace(text_new, "&nbsp;<a ", " <a ");
+	g_free(tmp);
+	
+	regex = g_regex_new("<a href=[^>]+>", G_REGEX_CASELESS /*| G_REGEX_OPTIMIZE */, 0, NULL);
+	tmp = text_new;
+	text_new = g_regex_replace_literal(regex, text_new, -1, 0, "", 0, NULL);
+	g_free(tmp);
+	g_regex_unref(regex);
+	
+	/* TODO: sent images */
+	return text_new;
+}
+
+/* sending */
+
+int ggp_message_send_im(PurpleConnection *gc, const char *who,
+	const char *message, PurpleMessageFlags flags)
+{
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
+	ggp_buddy_data *buddy_data;
+	gchar *gg_msg;
+	gboolean succ;
+
+	/* TODO: return -ENOTCONN, if not connected */
+
+	if (message == NULL || message[0] == '\0')
+		return 0;
+
+	buddy_data = ggp_buddy_get_data(purple_find_buddy(
+		purple_connection_get_account(gc), who));
+
+	if (buddy_data->blocked)
+		return -1;
+
+	gg_msg = ggp_message_format_to_gg(message);
+
+	/* TODO: splitting messages */
+	if (strlen(gg_msg) > GG_MSG_MAXSIZE)
+	{
+		g_free(gg_msg);
+		return -E2BIG;
+	}
+
+	succ = (gg_send_message_html(info->session, GG_CLASS_CHAT,
+		ggp_str_to_uin(who), (unsigned char *)gg_msg) >= 0);
+
+	g_free(gg_msg);
+
+	return succ ? 1 : -1;
 }
