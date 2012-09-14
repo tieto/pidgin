@@ -2983,6 +2983,14 @@ static const gchar *VIDEO_SINK_PLUGINS[] = {
 	NULL
 };
 
+typedef struct {
+	GtkWidget *level;
+	GtkWidget *threshold;
+	GtkWidget *volume;
+} BusCbCtx;
+
+static GstElement *pipeline;
+
 static GList *
 get_vv_element_devices(const gchar *element_name)
 {
@@ -3164,6 +3172,240 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
 }
 
+static GstElement *
+create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *info)
+{
+	char *tmp;
+	const gchar *plugin;
+	const gchar *device;
+	GstElement *ret;
+
+	tmp = g_strdup_printf("/plugins/core/vvconfig/%s/%s/plugin", type, dir);
+	plugin = purple_prefs_get_string(tmp);
+	g_free(tmp);
+
+	tmp = g_strdup_printf("/plugins/core/vvconfig/%s/%s/device", type, dir);
+	device = purple_prefs_get_string(tmp);
+	g_free(tmp);
+
+	if (plugin[0] == '\0')
+		return purple_media_element_info_call_create(info, NULL, NULL, NULL);
+
+	ret = gst_element_factory_make(plugin, NULL);
+	if (device[0] != '\0')
+		g_object_set(G_OBJECT(ret), "device", device, NULL);
+
+	return ret;
+}
+
+static GstElement *
+create_pipeline(void)
+{
+	GstElement *pipeline;
+	GstElement *src, *sink;
+	GstElement *volume;
+	GstElement *level;
+	GstElement *valve;
+
+	pipeline = gst_pipeline_new("voicetest");
+	src = create_test_element("audio", "src", NULL/*old_audio_src*/);
+	sink = create_test_element("audio", "sink", NULL/*old_sudio_sink*/);
+	volume = gst_element_factory_make("volume", "volume");
+	level = gst_element_factory_make("level", "level");
+	valve = gst_element_factory_make("valve", "valve");
+
+	gst_bin_add_many(GST_BIN(pipeline), src, volume, level, valve, sink, NULL);
+	gst_element_link_many(src, volume, level, valve, sink, NULL);
+
+	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+
+	return pipeline;
+}
+
+static void
+on_volume_change_cb(GtkWidget *w, GstBin *pipeline)
+{
+	GstElement *volume;
+
+	g_return_if_fail(pipeline != NULL);
+
+	volume = gst_bin_get_by_name(pipeline, "volume");
+	g_object_set(volume, "volume",
+	             gtk_scale_button_get_value(GTK_SCALE_BUTTON(w)) * 10.0, NULL);
+}
+
+static gdouble
+gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
+{
+	const GValue *list;
+	const GValue *value;
+	gdouble value_db;
+	gdouble percent;
+
+	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
+#if GST_CHECK_VERSION(0,11,0)
+	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
+#else
+	value = gst_value_list_get_value(list, 0);
+#endif
+	value_db = g_value_get_double(value);
+	percent = pow(10, value_db / 20);
+	return (percent > 1.0) ? 1.0 : percent;
+}
+
+static gboolean
+gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
+{
+	if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ELEMENT &&
+		gst_structure_has_name(gst_message_get_structure(msg), "level")) {
+
+		GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+		gchar *name = gst_element_get_name(src);
+
+		if (!strcmp(name, "level")) {
+			gdouble percent;
+			gdouble threshold;
+			GstElement *valve;
+
+			percent = gst_msg_db_to_percent(msg, "rms");
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), percent);
+
+			percent = gst_msg_db_to_percent(msg, "decay");
+			threshold = gtk_range_get_value(GTK_RANGE(ctx->threshold)) / 100.0;
+			valve = gst_bin_get_by_name(GST_BIN(GST_ELEMENT_PARENT(src)), "valve");
+			g_object_set(valve, "drop", (percent < threshold), NULL);
+			g_object_set(ctx->level, "text",
+			             (percent < threshold) ? _("DROP") : " ", NULL);
+		}
+
+		g_free(name);
+	}
+
+	return TRUE;
+}
+
+static void
+voice_test_destroy_cb(GtkWidget *w, gpointer data)
+{
+	if (!pipeline)
+		return;
+
+	gst_element_set_state(pipeline, GST_STATE_NULL);
+	gst_object_unref(pipeline);
+	pipeline = NULL;
+}
+
+static void
+toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
+{
+	BusCbCtx *ctx = data;
+	GstBus *bus;
+
+	if (gtk_toggle_button_get_active(test)) {
+		gtk_widget_set_sensitive(ctx->level, TRUE);
+		pipeline = create_pipeline();
+		bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+		gst_bus_add_signal_watch(bus);
+		g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), ctx);
+		gst_object_unref(bus);
+
+		g_signal_connect(ctx->volume, "value-changed",
+		                 G_CALLBACK(on_volume_change_cb), pipeline);
+		g_signal_connect(test, "destroy",
+		                 G_CALLBACK(voice_test_destroy_cb), NULL);
+	} else {
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), 0.0);
+		gtk_widget_set_sensitive(ctx->level, FALSE);
+		gst_element_set_state(pipeline, GST_STATE_NULL);
+		gst_object_unref(pipeline);
+		g_object_disconnect(ctx->volume, "any-signal::value-changed",
+		                    G_CALLBACK(on_volume_change_cb), pipeline,
+		                    NULL);
+		g_object_disconnect(test, "any-signal::destroy",
+		                    G_CALLBACK(voice_test_destroy_cb), NULL,
+		                    NULL);
+		pipeline = NULL;
+	}
+}
+
+static void
+scale_value_changed_cb(GtkScaleButton *button, gpointer data)
+{
+	const char *pref = data;
+	purple_prefs_set_int(pref,
+	                     gtk_scale_button_get_value(GTK_SCALE_BUTTON(button)) * 100);
+}
+
+static void
+threshold_value_changed_cb(GtkScale *scale, GtkWidget *label)
+{
+	int value;
+	char *tmp;
+
+	value = (int)gtk_range_get_value(GTK_RANGE(scale));
+	tmp = g_strdup_printf(_("Silence threshold: %d%%"), value);
+	gtk_label_set_label(GTK_LABEL(label), tmp);
+	g_free(tmp);
+
+	purple_prefs_set_int("/purple/media/audio/silence_threshold", value);
+}
+
+static void
+make_voice_test(GtkWidget *vbox)
+{
+	GtkWidget *test;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *level;
+	GtkWidget *volume;
+	GtkWidget *threshold;
+	BusCbCtx *ctx;
+	char *tmp;
+
+	label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Volume:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	volume = gtk_volume_button_new();
+	gtk_box_pack_start(GTK_BOX(hbox), volume, TRUE, TRUE, 0);
+	gtk_scale_button_set_value(GTK_SCALE_BUTTON(volume),
+			purple_prefs_get_int("/purple/media/audio/volume/input") / 100.0);
+	g_signal_connect(volume, "value-changed",
+	                 G_CALLBACK(scale_value_changed_cb),
+	                 "/purple/media/audio/volume/input");
+
+	tmp = g_strdup_printf(_("Silence threshold: %d%%"),
+	                      purple_prefs_get_int("/purple/media/audio/silence_threshold"));
+	label = gtk_label_new(tmp);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	g_free(tmp);
+	threshold = gtk_hscale_new_with_range(0, 100, 1);
+	gtk_box_pack_start(GTK_BOX(vbox), threshold, FALSE, FALSE, 0);
+	gtk_range_set_value(GTK_RANGE(threshold),
+			purple_prefs_get_int("/purple/media/audio/silence_threshold"));
+	gtk_scale_set_draw_value(GTK_SCALE(threshold), FALSE);
+	g_signal_connect(threshold, "value-changed",
+	                 G_CALLBACK(threshold_value_changed_cb), label);
+
+	test = gtk_toggle_button_new_with_label(_("Test Audio"));
+	gtk_box_pack_start(GTK_BOX(vbox), test, FALSE, FALSE, 0);
+
+	level = gtk_progress_bar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), level, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(level, FALSE);
+
+	ctx = g_new(BusCbCtx, 1);
+	ctx->volume = volume;
+	ctx->level = level;
+	ctx->threshold = threshold;
+	g_signal_connect(test, "toggled",
+	                 G_CALLBACK(toggle_voice_test_cb), ctx);
+}
+
 static GtkWidget *
 vv_page(void)
 {
@@ -3183,6 +3425,7 @@ vv_page(void)
 	make_vv_frame(vbox, sg, _("Output"), AUDIO_SINK_PLUGINS,
 	              "/plugins/core/vvconfig/audio/sink/plugin",
 	              "/plugins/core/vvconfig/audio/sink/device");
+	make_voice_test(vbox);
 
 	vbox = pidgin_make_frame(ret, _("Video"));
 	make_vv_frame(vbox, sg, _("Input"), VIDEO_SRC_PLUGINS,
