@@ -64,30 +64,32 @@ GGSOURCES = \
 	deprecated.h \
 	gg.c \
 	gg.h \
-	image.h \
+	html.c \
+	html.h \
 	image.c \
-	libgadu-events.h \
+	image.h \
 	libgadu-events.c \
-	libgaduw.h \
+	libgadu-events.h \
 	libgaduw.c \
-	message-prpl.h \
+	libgaduw.h \
 	message-prpl.c \
+	message-prpl.h \
 	multilogon.c \
 	multilogon.h \
 	pubdir-prpl.c \
 	pubdir-prpl.h \
-	purplew.h \
 	purplew.c \
-	resolver-purple.h \
+	purplew.h \
 	resolver-purple.c \
+	resolver-purple.h \
 	roster.c \
 	roster.h \
 	servconn.c \
 	servconn.h \
 	status.c \
 	status.h \
-	utils.h \
 	utils.c \
+	utils.h \
 	validator.c \
 	validator.h \
 	xml.c \
