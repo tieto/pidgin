@@ -143,7 +143,8 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 	ggp_message_got_data_free(msg);
 }
 
-void ggp_message_got_multilogon(PurpleConnection *gc, const struct gg_event_msg *ev)
+void ggp_message_got_multilogon(PurpleConnection *gc,
+	const struct gg_event_msg *ev)
 {
 	ggp_message_got_data *msg = g_new(ggp_message_got_data, 1);
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
@@ -220,7 +221,9 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 	gboolean font_changed = FALSE;
 	gboolean in_any_tag = FALSE;
 
-	purple_debug_info("gg", "ggp formatting text: [%s]\n", text);
+	/* TODO: verbose
+	 * purple_debug_info("gg", "ggp formatting text: [%s]\n", text);
+	 */
 
 	/* default font */
 	font_base = ggp_font_new();
@@ -412,7 +415,8 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 
 			g_hash_table_destroy(attribs);
 		}
-		else if ((tag == GGP_HTML_TAG_SPAN || tag == GGP_HTML_TAG_DIV) && !tag_close)
+		else if ((tag == GGP_HTML_TAG_SPAN || tag == GGP_HTML_TAG_DIV)
+			&& !tag_close)
 		{
 			GHashTable *attribs, *styles = NULL;
 			gchar *style = NULL;
@@ -450,8 +454,8 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 				g_hash_table_destroy(styles);
 			g_hash_table_destroy(attribs);
 		}
-		else if ((tag == GGP_HTML_TAG_FONT || tag == GGP_HTML_TAG_SPAN ||
-			tag == GGP_HTML_TAG_DIV) && tag_close)
+		else if ((tag == GGP_HTML_TAG_FONT || tag == GGP_HTML_TAG_SPAN
+			|| tag == GGP_HTML_TAG_DIV) && tag_close)
 		{
 			font_changed = TRUE;
 			
@@ -475,7 +479,7 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 			pending_objects = g_list_prepend(pending_objects,
 				g_strdup("<br><span>---</span><br>"));
 		}
-		else if (tag == GGP_HTML_TAG_EOM)
+		else if (tag == GGP_HTML_TAG_A || tag == GGP_HTML_TAG_EOM)
 		{
 			/* do nothing */
 		}
@@ -514,7 +518,9 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 	text_new = ggp_strjoin_list("", rt);
 	g_list_free_full(rt, g_free);
 
-	purple_debug_info("gg", "ggp reformatted text: [%s]\n", text_new);
+	/* TODO: verbose
+	 * purple_debug_info("gg", "reformatted text: [%s]\n", text_new);
+	 */
 
 	return text_new;
 }

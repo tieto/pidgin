@@ -138,6 +138,8 @@ ggp_html_tag ggp_html_parse_tag(const gchar *tag_str)
 		return GGP_HTML_TAG_DIV;
 	if (0 == strcmp(tag_str, "br"))
 		return GGP_HTML_TAG_BR;
+	if (0 == strcmp(tag_str, "a"))
+		return GGP_HTML_TAG_A;
 	if (0 == strcmp(tag_str, "b"))
 		return GGP_HTML_TAG_B;
 	if (0 == strcmp(tag_str, "i"))
