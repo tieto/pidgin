@@ -19,6 +19,9 @@ typedef enum
 	GGP_HTML_TAG_HR,
 } ggp_html_tag;
 
+void ggp_html_setup(void);
+void ggp_html_cleanup(void);
+
 GHashTable * ggp_html_tag_attribs(const gchar *attribs_str);
 GHashTable * ggp_html_css_attribs(const gchar *attribs_str);
 int ggp_html_decode_color(const gchar *str);

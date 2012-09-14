@@ -27,21 +27,12 @@ typedef struct
 	uint64_t chat_id;
 } ggp_message_got_data;
 
-typedef enum
+typedef struct
 {
-	GGP_TAG_UNKNOWN,
-	GGP_TAG_IGNORED,
-	GGP_TAG_EOM,
-	GGP_TAG_B,
-	GGP_TAG_I,
-	GGP_TAG_U,
-	GGP_TAG_S,
-	GGP_TAG_FONT,
-	GGP_TAG_SPAN,
-	GGP_TAG_DIV,
-	GGP_TAG_BR,
-	GGP_TAG_HR,
-} ggp_tag;
+	GRegex *re_html_tag;
+} ggp_message_global_data;
+
+static ggp_message_global_data global_data;
 
 typedef struct
 {
@@ -65,6 +56,18 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 static gchar * ggp_message_format_to_gg(const gchar *text);
 
 /**************/
+
+void ggp_message_setup_global(void)
+{
+	global_data.re_html_tag = g_regex_new(
+		"<(/)?([a-z]+)( [^>]+)?>",
+		G_REGEX_OPTIMIZE, 0, NULL);
+}
+
+void ggp_message_cleanup_global(void)
+{
+	g_regex_unref(global_data.re_html_tag);
+}
 
 static ggp_font * ggp_font_new(void)
 {
@@ -204,7 +207,6 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 
 static gchar * ggp_message_format_to_gg(const gchar *text)
 {
-	GRegex *re_tag = g_regex_new("<(/)?([a-z]+)( [^>]+)?>", G_REGEX_OPTIMIZE, 0, NULL);
 	gchar *text_new, *tmp;
 	GList *rt = NULL; /* reformatted text */
 	GMatchInfo *match;
@@ -241,7 +243,7 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 	text_new = g_strdup_printf("%s<eom></eom>", text_new);
 	g_free(tmp);
 
-	g_regex_match(re_tag, text_new, 0, &match);
+	g_regex_match(global_data.re_html_tag, text_new, 0, &match);
 	while (g_match_info_matches(match))
 	{
 		int m_start, m_end, m_pos;
@@ -493,7 +495,6 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 		g_free(attribs_str);
 	}
 	g_match_info_free(match);
-	g_regex_unref(re_tag); /* TODO: static */
 
 	if (pos < strlen(text_new) || in_any_tag)
 	{

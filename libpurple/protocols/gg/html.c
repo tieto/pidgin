@@ -2,9 +2,42 @@
 
 #include <debug.h>
 
+typedef struct
+{
+	GRegex *re_html_attr;
+	GRegex *re_css_attr;
+	GRegex *re_color_hex;
+	GRegex *re_color_rgb;
+} ggp_html_global_data;
+
+static ggp_html_global_data global_data;
+
+void ggp_html_setup(void)
+{
+	global_data.re_html_attr = g_regex_new(
+		"([a-z-]+)=\"([^\"]+)\"",
+		G_REGEX_OPTIMIZE, 0, NULL);
+	global_data.re_css_attr = g_regex_new(
+		"([a-z-]+): *([^;]+)",
+		G_REGEX_OPTIMIZE, 0, NULL);
+	global_data.re_color_hex = g_regex_new(
+		"^#([0-9a-fA-F]+){6}$",
+		G_REGEX_OPTIMIZE, 0, NULL);
+	global_data.re_color_rgb = g_regex_new(
+		"^rgb\\(([0-9]+), *([0-9]+), *([0-9]+)\\)$",
+		G_REGEX_OPTIMIZE, 0, NULL);
+}
+
+void ggp_html_cleanup(void)
+{
+	g_regex_unref(global_data.re_html_attr);
+	g_regex_unref(global_data.re_css_attr);
+	g_regex_unref(global_data.re_color_hex);
+	g_regex_unref(global_data.re_color_rgb);
+}
+
 GHashTable * ggp_html_tag_attribs(const gchar *attribs_str)
 {
-	GRegex *re_attr = g_regex_new("([a-z-]+)=\"([^\"]+)\"", G_REGEX_OPTIMIZE, 0, NULL);
 	GMatchInfo *match;
 	GHashTable *attribs = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, g_free);
@@ -12,7 +45,7 @@ GHashTable * ggp_html_tag_attribs(const gchar *attribs_str)
 	if (attribs_str == NULL)
 		return attribs;
 
-	g_regex_match(re_attr, attribs_str, 0, &match);
+	g_regex_match(global_data.re_html_attr, attribs_str, 0, &match);
 	while (g_match_info_matches(match))
 	{
 		g_hash_table_insert(attribs,
@@ -22,14 +55,12 @@ GHashTable * ggp_html_tag_attribs(const gchar *attribs_str)
 		g_match_info_next(match, NULL);
 	}
 	g_match_info_free(match);
-	g_regex_unref(re_attr); /* TODO: static */
 
 	return attribs;
 }
 
 GHashTable * ggp_html_css_attribs(const gchar *attribs_str)
 {
-	GRegex *re_css = g_regex_new("([a-z-]+): *([^;]+)", G_REGEX_OPTIMIZE, 0, NULL);
 	GMatchInfo *match;
 	GHashTable *attribs = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, g_free);
@@ -37,7 +68,7 @@ GHashTable * ggp_html_css_attribs(const gchar *attribs_str)
 	if (attribs_str == NULL)
 		return attribs;
 
-	g_regex_match(re_css, attribs_str, 0, &match);
+	g_regex_match(global_data.re_css_attr, attribs_str, 0, &match);
 	while (g_match_info_matches(match))
 	{
 		g_hash_table_insert(attribs,
@@ -47,19 +78,16 @@ GHashTable * ggp_html_css_attribs(const gchar *attribs_str)
 		g_match_info_next(match, NULL);
 	}
 	g_match_info_free(match);
-	g_regex_unref(re_css); /* TODO: static */
 
 	return attribs;
 }
 
 int ggp_html_decode_color(const gchar *str)
 {
-	GRegex *re_color_hex = g_regex_new("^#([0-9a-fA-F]+){6}$", G_REGEX_OPTIMIZE, 0, NULL); // TODO: static
-	GRegex *re_color_rgb = g_regex_new("^rgb\\(([0-9]+), *([0-9]+), *([0-9]+)\\)$", G_REGEX_OPTIMIZE, 0, NULL);
 	GMatchInfo *match;
 	int color = -1;
 
-	g_regex_match(re_color_hex, str, 0, &match);
+	g_regex_match(global_data.re_color_hex, str, 0, &match);
 	if (g_match_info_matches(match))
 	{
 		if (sscanf(str + 1, "%x", &color) != 1)
@@ -67,12 +95,9 @@ int ggp_html_decode_color(const gchar *str)
 	}
 	g_match_info_free(match);
 	if (color >= 0)
-	{
-		g_regex_unref(re_color_hex); g_regex_unref(re_color_rgb); /* TODO: static */
 		return color;
-	}
 
-	g_regex_match(re_color_rgb, str, 0, &match);
+	g_regex_match(global_data.re_color_rgb, str, 0, &match);
 	if (g_match_info_matches(match))
 	{
 		int r = -1, g = -1, b = -1;
@@ -97,7 +122,6 @@ int ggp_html_decode_color(const gchar *str)
 			color = (r << 16) | (g << 8) | b;
 	}
 	g_match_info_free(match);
-	g_regex_unref(re_color_hex); g_regex_unref(re_color_rgb); /* TODO: static */
 	if (color >= 0)
 		return color;
 

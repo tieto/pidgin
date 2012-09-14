@@ -53,6 +53,7 @@
 #include "servconn.h"
 #include "pubdir-prpl.h"
 #include "message-prpl.h"
+#include "html.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -1070,13 +1071,18 @@ static gboolean ggp_load(PurplePlugin *plugin)
 
 	ggp_resolver_purple_setup();
 	ggp_servconn_setup(ggp_server_option);
-	
+	ggp_html_setup();
+	ggp_message_setup_global();
+
 	return TRUE;
 }
 
 static gboolean ggp_unload(PurplePlugin *plugin)
 {
 	ggp_servconn_cleanup();
+	ggp_html_cleanup();
+	ggp_message_cleanup_global();
+
 	return TRUE;
 }
 

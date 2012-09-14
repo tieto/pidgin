@@ -4,6 +4,9 @@
 #include <internal.h>
 #include <libgadu.h>
 
+void ggp_message_setup_global(void);
+void ggp_message_cleanup_global(void);
+
 void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev);
 void ggp_message_got_multilogon(PurpleConnection *gc,
 	const struct gg_event_msg *ev);
