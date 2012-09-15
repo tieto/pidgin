@@ -63,6 +63,10 @@
 #include <gst/video/videooverlay.h>
 #else
 #include <gst/interfaces/xoverlay.h>
+#include <gst/interfaces/propertyprobe.h>
+#endif
+#ifdef HAVE_X11
+#include <gdk/gdkx.h>
 #endif
 #endif
 
