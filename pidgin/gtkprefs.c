@@ -3190,11 +3190,11 @@ create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *i
 	const gchar *device;
 	GstElement *ret;
 
-	tmp = g_strdup_printf("/plugins/core/vvconfig/%s/%s/plugin", type, dir);
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin", type, dir);
 	plugin = purple_prefs_get_string(tmp);
 	g_free(tmp);
 
-	tmp = g_strdup_printf("/plugins/core/vvconfig/%s/%s/device", type, dir);
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device", type, dir);
 	device = purple_prefs_get_string(tmp);
 	g_free(tmp);
 
@@ -3579,20 +3579,20 @@ vv_page(void)
 
 	vbox = pidgin_make_frame(ret, _("Audio"));
 	make_vv_frame(vbox, sg, _("Input"), AUDIO_SRC_PLUGINS,
-	              "/plugins/core/vvconfig/audio/src/plugin",
-	              "/plugins/core/vvconfig/audio/src/device");
+	              PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin",
+	              PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device");
 	make_vv_frame(vbox, sg, _("Output"), AUDIO_SINK_PLUGINS,
-	              "/plugins/core/vvconfig/audio/sink/plugin",
-	              "/plugins/core/vvconfig/audio/sink/device");
+	              PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin",
+	              PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device");
 	make_voice_test(vbox);
 
 	vbox = pidgin_make_frame(ret, _("Video"));
 	make_vv_frame(vbox, sg, _("Input"), VIDEO_SRC_PLUGINS,
-	              "/plugins/core/vvconfig/video/src/plugin",
-	              "/plugins/core/vvconfig/video/src/device");
+	              PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin",
+	              PIDGIN_PREFS_ROOT "/vvconfig/video/src/device");
 	make_vv_frame(vbox, sg, _("Output"), VIDEO_SINK_PLUGINS,
-	              "/plugins/gtk/vvconfig/video/sink/plugin",
-	              "/plugins/gtk/vvconfig/video/sink/device");
+	              PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin",
+	              PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device");
 	make_video_test(vbox);
 
 	gtk_widget_show_all(ret);
@@ -3761,6 +3761,26 @@ pidgin_prefs_init(void)
 	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
+#if USE_VV
+	/* Voice/Video */
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio/src");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device", "");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device", "");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video/src");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/device", "");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video/sink");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device", "");
+#endif
+
 	pidgin_prefs_update_old();
 }
 
@@ -3849,4 +3869,42 @@ pidgin_prefs_update_old(void)
 			PIDGIN_PREFS_ROOT "/conversations/im/x");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/y",
 			PIDGIN_PREFS_ROOT "/conversations/im/y");
+
+	/* Fixup vvconfig plugin prefs */
+	if (purple_prefs_exists("/plugins/core/vvconfig/audio/src/plugin")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin",
+				purple_prefs_get_string("/plugins/core/vvconfig/audio/src/plugin"));
+	}
+	if (purple_prefs_exists("/plugins/core/vvconfig/audio/src/device")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device",
+				purple_prefs_get_string("/plugins/core/vvconfig/audio/src/device"));
+	}
+	if (purple_prefs_exists("/plugins/core/vvconfig/audio/sink/plugin")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin",
+				purple_prefs_get_string("/plugins/core/vvconfig/audio/sink/plugin"));
+	}
+	if (purple_prefs_exists("/plugins/core/vvconfig/audio/sink/device")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device",
+				purple_prefs_get_string("/plugins/core/vvconfig/audio/sink/device"));
+	}
+	if (purple_prefs_exists("/plugins/core/vvconfig/video/src/plugin")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin",
+				purple_prefs_get_string("/plugins/core/vvconfig/video/src/plugin"));
+	}
+	if (purple_prefs_exists("/plugins/core/vvconfig/video/src/device")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/device",
+				purple_prefs_get_string("/plugins/core/vvconfig/video/src/device"));
+	}
+	if (purple_prefs_exists("/plugins/gtk/vvconfig/video/sink/plugin")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin",
+				purple_prefs_get_string("/plugins/gtk/vvconfig/video/sink/plugin"));
+	}
+	if (purple_prefs_exists("/plugins/gtk/vvconfig/video/sink/device")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device",
+				purple_prefs_get_string("/plugins/gtk/vvconfig/video/sink/device"));
+	}
+
+	purple_prefs_remove("/plugins/core/vvconfig");
+	purple_prefs_remove("/plugins/gtk/vvconfig");
 }
+
