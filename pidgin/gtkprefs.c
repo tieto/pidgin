@@ -59,6 +59,11 @@
 #include "pidginstock.h"
 #if USE_VV
 #include "media-gst.h"
+#if GST_CHECK_VERSION(0,11,0)
+#include <gst/video/videooverlay.h>
+#else
+#include <gst/interfaces/xoverlay.h>
+#endif
 #endif
 
 #include "gtk3compat.h"
@@ -2989,7 +2994,8 @@ typedef struct {
 	GtkWidget *volume;
 } BusCbCtx;
 
-static GstElement *pipeline;
+static GstElement *voice_pipeline;
+static GstElement *video_pipeline;
 
 static GList *
 get_vv_element_devices(const gchar *element_name)
@@ -3194,12 +3200,14 @@ create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *i
 	ret = gst_element_factory_make(plugin, NULL);
 	if (device[0] != '\0')
 		g_object_set(G_OBJECT(ret), "device", device, NULL);
+	if (!strcmp(plugin, "videotestsrc"))
+		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
 
 	return ret;
 }
 
 static GstElement *
-create_pipeline(void)
+create_voice_pipeline(void)
 {
 	GstElement *pipeline;
 	GstElement *src, *sink;
@@ -3287,12 +3295,12 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 static void
 voice_test_destroy_cb(GtkWidget *w, gpointer data)
 {
-	if (!pipeline)
+	if (!voice_pipeline)
 		return;
 
-	gst_element_set_state(pipeline, GST_STATE_NULL);
-	gst_object_unref(pipeline);
-	pipeline = NULL;
+	gst_element_set_state(voice_pipeline, GST_STATE_NULL);
+	gst_object_unref(voice_pipeline);
+	voice_pipeline = NULL;
 }
 
 static void
@@ -3303,28 +3311,26 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 
 	if (gtk_toggle_button_get_active(test)) {
 		gtk_widget_set_sensitive(ctx->level, TRUE);
-		pipeline = create_pipeline();
-		bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+		voice_pipeline = create_voice_pipeline();
+		bus = gst_pipeline_get_bus(GST_PIPELINE(voice_pipeline));
 		gst_bus_add_signal_watch(bus);
 		g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), ctx);
 		gst_object_unref(bus);
 
 		g_signal_connect(ctx->volume, "value-changed",
-		                 G_CALLBACK(on_volume_change_cb), pipeline);
+		                 G_CALLBACK(on_volume_change_cb), voice_pipeline);
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(voice_test_destroy_cb), NULL);
 	} else {
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), 0.0);
 		gtk_widget_set_sensitive(ctx->level, FALSE);
-		gst_element_set_state(pipeline, GST_STATE_NULL);
-		gst_object_unref(pipeline);
 		g_object_disconnect(ctx->volume, "any-signal::value-changed",
-		                    G_CALLBACK(on_volume_change_cb), pipeline,
+		                    G_CALLBACK(on_volume_change_cb), voice_pipeline,
 		                    NULL);
 		g_object_disconnect(test, "any-signal::destroy",
 		                    G_CALLBACK(voice_test_destroy_cb), NULL,
 		                    NULL);
-		pipeline = NULL;
+		voice_test_destroy_cb(NULL, NULL);
 	}
 }
 
@@ -3406,6 +3412,122 @@ make_voice_test(GtkWidget *vbox)
 	                 G_CALLBACK(toggle_voice_test_cb), ctx);
 }
 
+static GstElement *
+create_video_pipeline(void)
+{
+	GstElement *pipeline;
+	GstElement *src, *sink;
+
+	pipeline = gst_pipeline_new("videotest");
+	src = create_test_element("video", "src", NULL/*old_video_src*/);
+	sink = create_test_element("video", "sink", NULL/*old_video_sink*/);
+
+	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
+	gst_element_link_many(src, sink, NULL);
+
+	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+
+	return pipeline;
+}
+
+static void
+video_test_destroy_cb(GtkWidget *w, gpointer data)
+{
+	if (!video_pipeline)
+		return;
+
+	gst_element_set_state(video_pipeline, GST_STATE_NULL);
+	gst_object_unref(video_pipeline);
+	video_pipeline = NULL;
+}
+
+static void
+window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
+{
+	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT
+#if GST_CHECK_VERSION(0,11,0)
+	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
+#else
+	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
+#endif
+		return;
+
+	g_signal_handlers_disconnect_matched(bus,
+	                                     G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
+	                                     0, 0, NULL, window_id_cb,
+	                                     (gpointer)window_id);
+
+#if GST_CHECK_VERSION(0,11,0)
+	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                                    window_id);
+#elif GST_CHECK_VERSION(0,10,31)
+	gst_x_overlay_set_window_handle(GST_X_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                                window_id);
+#else
+	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(msg)),
+	                             window_id);
+#endif
+}
+
+static void
+toggle_video_test_cb(GtkToggleButton *test, gpointer data)
+{
+	GtkWidget *video = data;
+	GstBus *bus;
+
+	if (gtk_toggle_button_get_active(test)) {
+		GdkWindow *window = gtk_widget_get_window(video);
+		gulong window_id;
+#ifdef _WIN32
+		window_id = GDK_WINDOW_HWND(window);
+#elif defined(HAVE_X11)
+		window_id = gdk_x11_window_get_xid(window);
+#elif defined(GDK_WINDOWING_QUARTZ)
+		window_id = (gulong)gdk_quartz_window_get_nsview(window);
+#else
+#		error "Unsupported windowing system"
+#endif
+
+		video_pipeline = create_video_pipeline();
+		bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
+#if GST_CHECK_VERSION(0,11,0)
+		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
+#else
+		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
+#endif
+		g_signal_connect(bus, "sync-message::element",
+		                 G_CALLBACK(window_id_cb), (gpointer)window_id);
+		gst_object_unref(bus);
+
+		g_signal_connect(test, "destroy",
+		                 G_CALLBACK(video_test_destroy_cb), NULL);
+	} else {
+		g_object_disconnect(test, "any-signal::destroy",
+		                    G_CALLBACK(video_test_destroy_cb), NULL,
+		                    NULL);
+		video_test_destroy_cb(NULL, NULL);
+	}
+}
+
+static void
+make_video_test(GtkWidget *vbox)
+{
+	GtkWidget *test;
+	GtkWidget *video;
+	GdkColor color = {0, 0, 0, 0};
+
+	video = gtk_drawing_area_new();
+	gtk_box_pack_start(GTK_BOX(vbox), video, TRUE, TRUE, 0);
+	gtk_widget_modify_bg(video, GTK_STATE_NORMAL, &color);
+	gtk_widget_set_size_request(GTK_WIDGET(video), 240, 180);
+
+	test = gtk_toggle_button_new_with_label(_("Test Video"));
+	gtk_box_pack_start(GTK_BOX(vbox), test, FALSE, FALSE, 0);
+
+	g_signal_connect(test, "toggled",
+	                 G_CALLBACK(toggle_video_test_cb), video);
+}
+
 static GtkWidget *
 vv_page(void)
 {
@@ -3434,6 +3556,7 @@ vv_page(void)
 	make_vv_frame(vbox, sg, _("Output"), VIDEO_SINK_PLUGINS,
 	              "/plugins/gtk/vvconfig/video/sink/plugin",
 	              "/plugins/gtk/vvconfig/video/sink/device");
+	make_video_test(vbox);
 
 	gtk_widget_show_all(ret);
 
