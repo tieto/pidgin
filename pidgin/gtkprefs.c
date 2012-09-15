@@ -3206,6 +3206,13 @@ create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *i
 	return ret;
 }
 
+static void
+vv_test_switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint num, gpointer data)
+{
+	GtkWidget *test = data;
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(test), FALSE);
+}
+
 static GstElement *
 create_voice_pipeline(void)
 {
@@ -3321,6 +3328,8 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 		                 G_CALLBACK(on_volume_change_cb), voice_pipeline);
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(voice_test_destroy_cb), NULL);
+		g_signal_connect(prefsnotebook, "switch-page",
+		                 G_CALLBACK(vv_test_switch_page_cb), test);
 	} else {
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), 0.0);
 		gtk_widget_set_sensitive(ctx->level, FALSE);
@@ -3329,6 +3338,9 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 		                    NULL);
 		g_object_disconnect(test, "any-signal::destroy",
 		                    G_CALLBACK(voice_test_destroy_cb), NULL,
+		                    NULL);
+		g_object_disconnect(prefsnotebook, "any-signal::switch-page",
+		                    G_CALLBACK(vv_test_switch_page_cb), test,
 		                    NULL);
 		voice_test_destroy_cb(NULL, NULL);
 	}
@@ -3501,9 +3513,14 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(video_test_destroy_cb), NULL);
+		g_signal_connect(prefsnotebook, "switch-page",
+		                 G_CALLBACK(vv_test_switch_page_cb), test);
 	} else {
 		g_object_disconnect(test, "any-signal::destroy",
 		                    G_CALLBACK(video_test_destroy_cb), NULL,
+		                    NULL);
+		g_object_disconnect(prefsnotebook, "any-signal::switch-page",
+		                    G_CALLBACK(vv_test_switch_page_cb), test,
 		                    NULL);
 		video_test_destroy_cb(NULL, NULL);
 	}
