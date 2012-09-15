@@ -68,7 +68,7 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 	const char *error_message)
 {
 	ggp_resolver_purple_data *data = (ggp_resolver_purple_data*)cbdata;
-	const int fd = data->pipes[1];
+	const int fd = data->pipes[1]; /* TODO: invalid read after logoff */
 	int ipv4_count, all_count, write_size;
 	struct in_addr *addresses;
 	

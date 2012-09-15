@@ -12,6 +12,9 @@
 #define GGP_GG10_DEFAULT_FORMAT_REPLACEMENT "<span>"
 #define GGP_GG11_FORCE_COMPAT FALSE
 
+#define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-%016llx\">"
+#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%u\">"
+
 typedef struct
 {
 	enum
@@ -25,14 +28,21 @@ typedef struct
 	gchar *text;
 	time_t time;
 	uint64_t chat_id;
+	GList *pending_images;
 } ggp_message_got_data;
 
 typedef struct
 {
 	GRegex *re_html_tag;
+	GRegex *re_gg_img;
 } ggp_message_global_data;
 
 static ggp_message_global_data global_data;
+
+struct _ggp_message_session_data
+{
+	GList *pending_messages;
+};
 
 typedef struct
 {
@@ -49,6 +59,8 @@ static void ggp_font_free(gpointer font);
 static PurpleConversation * ggp_message_get_conv(PurpleConnection *gc,
 	uin_t uin);
 static void ggp_message_got_data_free(ggp_message_got_data *msg);
+static gboolean ggp_message_request_images(PurpleConnection *gc,
+	ggp_message_got_data *msg);
 static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg);
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
@@ -62,11 +74,39 @@ void ggp_message_setup_global(void)
 	global_data.re_html_tag = g_regex_new(
 		"<(/)?([a-z]+)( [^>]+)?>",
 		G_REGEX_OPTIMIZE, 0, NULL);
+	global_data.re_gg_img = g_regex_new(
+		"<img name=\"([0-9a-fA-F]+)\"/?>",
+		G_REGEX_OPTIMIZE, 0, NULL);
 }
 
 void ggp_message_cleanup_global(void)
 {
 	g_regex_unref(global_data.re_html_tag);
+	g_regex_unref(global_data.re_gg_img);
+}
+
+static inline ggp_message_session_data *
+ggp_message_get_sdata(PurpleConnection *gc)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	return accdata->message_data;
+}
+
+void ggp_message_setup(PurpleConnection *gc)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	ggp_message_session_data *sdata = g_new0(ggp_message_session_data, 1);
+
+	accdata->message_data = sdata;
+}
+
+void ggp_message_cleanup(PurpleConnection *gc)
+{
+	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
+	
+	g_list_free_full(sdata->pending_messages,
+		(GDestroyNotify)ggp_message_got_data_free);
+	g_free(sdata);
 }
 
 static ggp_font * ggp_font_new(void)
@@ -117,13 +157,95 @@ static PurpleConversation * ggp_message_get_conv(PurpleConnection *gc,
 
 static void ggp_message_got_data_free(ggp_message_got_data *msg)
 {
+	g_list_free_full(msg->pending_images, g_free);
 	g_free(msg->text);
 	g_free(msg);
 }
 
+static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
+	int stored_id, gpointer _msg)
+{
+	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
+	ggp_message_got_data *msg = _msg;
+	GList *m_it, *i_it;
+	gchar *tmp, *tag_search, *tag_replace;
+
+	m_it = g_list_find(sdata->pending_messages, msg);
+	if (!m_it)
+	{
+		purple_debug_error("gg", "ggp_message_request_images_got: "
+			"message %p is not in queue\n", msg);
+		return;
+	}
+
+	i_it = g_list_find_custom(msg->pending_images, &id, ggp_int64_compare);
+	if (!i_it)
+	{
+		purple_debug_error("gg", "ggp_message_request_images_got: "
+			"image %016llx is not present in this message\n", id);
+		return;
+	}
+
+	tag_search = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
+	tag_replace = g_strdup_printf(GGP_IMAGE_DESTINATION, stored_id);
+
+	tmp = msg->text;
+	msg->text = purple_strreplace(msg->text, tag_search, tag_replace);
+	g_free(tmp);
+
+	g_free(tag_search);
+	g_free(tag_replace);
+
+	g_free(i_it->data);
+	msg->pending_images = g_list_delete_link(msg->pending_images, i_it);
+	if (msg->pending_images != NULL)
+	{
+		purple_debug_info("gg", "ggp_message_request_images_got: "
+			"got image %016llx, but the message contains more "
+			"of them\n", id);
+		return;
+	}
+
+	ggp_message_got_display(gc, msg);
+	ggp_message_got_data_free(msg);
+	sdata->pending_messages = g_list_delete_link(sdata->pending_messages,
+		m_it);
+}
+
+static gboolean ggp_message_request_images(PurpleConnection *gc,
+	ggp_message_got_data *msg)
+{
+	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
+	GList *it;
+	uin_t from;
+	if (msg->pending_images == NULL)
+		return FALSE;
+	
+	if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON)
+	{
+		purple_debug_error("gg", "ggp_message_request_images: "
+			"not implemented for multilogon\n");
+		return FALSE;
+	}
+	else
+		from = msg->user;
+	
+	it = msg->pending_images;
+	while (it)
+	{
+		ggp_image_request(gc, from, *(uint64_t*)it->data,
+			ggp_message_request_images_got, msg);
+		it = g_list_next(it);
+	}
+
+	sdata->pending_messages = g_list_append(sdata->pending_messages, msg);
+
+	return TRUE;
+}
+
 void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 {
-	ggp_message_got_data *msg = g_new(ggp_message_got_data, 1);
+	ggp_message_got_data *msg = g_new0(ggp_message_got_data, 1);
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
 
 	msg->time = ev->time;
@@ -139,6 +261,9 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 		msg->type = GGP_MESSAGE_GOT_TYPE_IM;
 	}
 
+	if (ggp_message_request_images(gc, msg))
+		return;
+
 	ggp_message_got_display(gc, msg);
 	ggp_message_got_data_free(msg);
 }
@@ -146,12 +271,15 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 void ggp_message_got_multilogon(PurpleConnection *gc,
 	const struct gg_event_msg *ev)
 {
-	ggp_message_got_data *msg = g_new(ggp_message_got_data, 1);
+	ggp_message_got_data *msg = g_new0(ggp_message_got_data, 1);
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
 
 	msg->time = ev->time;
 	msg->user = ev->sender; /* not really a sender*/
 	msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
+
+	if (ggp_message_request_images(gc, msg))
+		return;
 
 	ggp_message_got_display(gc, msg);
 	ggp_message_got_data_free(msg);
@@ -184,6 +312,38 @@ static void ggp_message_got_display(PurpleConnection *gc,
 			"unexpected message type: %d\n", msg->type);
 }
 
+static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
+	GString *res, gpointer data)
+{
+	gchar *name, *replacement;
+	int64_t id;
+	ggp_message_got_data *msg = data;
+
+	name = g_match_info_fetch(info, 1);
+	if (sscanf(name, "%llx", &id) == 1)
+	{
+		if (NULL == g_list_find_custom(msg->pending_images, &id,
+			ggp_int64_compare))
+		{
+			msg->pending_images = g_list_append(msg->pending_images,
+				ggp_uint64dup(id));
+		}
+		
+		replacement = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
+		g_string_append(res, replacement);
+		g_free(replacement);
+	}
+	else
+	{
+		g_string_append(res, "[");
+		g_string_append(res, _("broken image"));
+		g_string_append(res, "]");
+	}
+	g_free(name);
+
+	return FALSE;
+}
+
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	const gchar *text)
 {
@@ -201,6 +361,11 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	tmp = text_new;
 	text_new = purple_strreplace(text_new, GGP_GG10_DEFAULT_FORMAT,
 		GGP_GG10_DEFAULT_FORMAT_REPLACEMENT);
+	g_free(tmp);
+
+	tmp = text_new;
+	text_new = g_regex_replace_eval(global_data.re_gg_img, text_new, -1, 0,
+		0, ggp_message_format_from_gg_found_img, msg, NULL);
 	g_free(tmp);
 
 	msg->text = text_new;

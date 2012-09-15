@@ -55,11 +55,6 @@ void ggp_chat_setup(PurpleConnection *gc)
 	ggp_chat_session_data *sdata = g_new0(ggp_chat_session_data, 1);
 
 	accdata->chat_data = sdata;
-
-	sdata->chats = NULL;
-	sdata->chats_count = 0;
-	sdata->got_all_chats_info = FALSE;
-	sdata->pending_joins = NULL;
 }
 
 void ggp_chat_cleanup(PurpleConnection *gc)

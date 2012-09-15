@@ -37,7 +37,7 @@
 
 typedef struct
 {
-	GList *pending_messages;
+	GHashTable *incoming_images;
 	GHashTable *pending_images;
 } ggp_image_connection_data;
 
@@ -47,6 +47,9 @@ typedef enum
 	GGP_IMAGE_PREPARE_FAILURE,
 	GGP_IMAGE_PREPARE_TOO_BIG
 } ggp_image_prepare_result;
+
+typedef void (*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id,
+	int stored_id, gpointer user_data);
 
 void ggp_image_setup(PurpleConnection *gc);
 void ggp_image_cleanup(PurpleConnection *gc);
@@ -62,5 +65,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply);
 void ggp_image_send(PurpleConnection *gc,
 	const struct gg_event_image_request *image_request);
+void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
+	ggp_image_request_cb cb, gpointer user_data);
 
 #endif /* _GGP_IMAGE_H */

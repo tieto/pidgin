@@ -95,4 +95,8 @@ const gchar * ggp_date_strftime(const gchar *format, time_t date);
 
 time_t ggp_date_from_iso8601(const gchar *str);
 
+uint64_t * ggp_uint64dup(uint64_t val);
+
+gint ggp_int64_compare(gconstpointer a, gconstpointer b);
+
 #endif /* _GGP_UTILS_H */

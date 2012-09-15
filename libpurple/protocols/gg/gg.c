@@ -301,6 +301,11 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
 			break;
+		case GG_EVENT_CONN_FAILED:
+			purple_connection_error (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Server disconnected"));
+			break;
 		case GG_EVENT_MSG:
 			ggp_message_got(gc, &ev->event.msg);
 			break;
@@ -627,6 +632,7 @@ static void ggp_login(PurpleAccount *account)
 	ggp_multilogon_setup(gc);
 	ggp_status_setup(gc);
 	ggp_chat_setup(gc);
+	ggp_message_setup(gc);
 
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
@@ -737,6 +743,7 @@ static void ggp_close(PurpleConnection *gc)
 		ggp_multilogon_cleanup(gc);
 		ggp_status_cleanup(gc);
 		ggp_chat_cleanup(gc);
+		ggp_message_cleanup(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);

@@ -36,6 +36,7 @@
 #include "multilogon.h"
 #include "status.h"
 #include "chat.h"
+#include "message-prpl.h"
 
 #define PUBDIR_RESULTS_MAX 20
 
@@ -51,6 +52,7 @@ typedef struct {
 	ggp_multilogon_session_data *multilogon_data;
 	ggp_status_session_data *status_data;
 	ggp_chat_session_data *chat_data;
+	ggp_message_session_data *message_data;
 } GGPInfo;
 
 typedef struct

@@ -248,3 +248,22 @@ time_t ggp_date_from_iso8601(const gchar *str)
 		return 0;
 	return g_timeval.tv_sec;
 }
+
+uint64_t * ggp_uint64dup(uint64_t val)
+{
+	uint64_t *ptr = g_new(uint64_t, 1);
+	*ptr = val;
+	return ptr;
+}
+
+gint ggp_int64_compare(gconstpointer _a, gconstpointer _b)
+{
+	const int64_t *ap = _a, *bp = _b;
+	const int64_t a = *ap, b = *bp;
+	if (a == b)
+		return 0;
+	if (a < b)
+		return -1;
+	else
+		return 1;
+}
