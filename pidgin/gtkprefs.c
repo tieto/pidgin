@@ -112,6 +112,60 @@ static GtkListStore *prefs_conv_variants;
 static GtkListStore *prefs_status_icon_themes;
 static GtkListStore *prefs_smiley_themes;
 
+#if USE_VV
+
+static const gchar *AUDIO_SRC_PLUGINS[] = {
+	"alsasrc",	"ALSA",
+	/* "esdmon",	"ESD", ? */
+	"osssrc",	"OSS",
+	"pulsesrc",	"PulseAudio",
+	"sndiosrc",	"sndio",
+	/* "audiotestsrc wave=silence", "Silence", */
+	"audiotestsrc",	"Test Sound",
+	NULL
+};
+
+static const gchar *AUDIO_SINK_PLUGINS[] = {
+	"alsasink",	"ALSA",
+	"artsdsink",	"aRts",
+	"esdsink",	"ESD",
+	"osssink",	"OSS",
+	"pulsesink",	"PulseAudio",
+	"sndiosink",	"sndio",
+	NULL
+};
+
+static const gchar *VIDEO_SRC_PLUGINS[] = {
+	"videotestsrc",	"Test Input",
+	"dshowvideosrc","DirectDraw",
+	"ksvideosrc",	"KS Video",
+	"qcamsrc",	"Quickcam",
+	"v4lsrc",	"Video4Linux",
+	"v4l2src",	"Video4Linux2",
+	"v4lmjpegsrc",	"Video4Linux MJPEG",
+	NULL
+};
+
+static const gchar *VIDEO_SINK_PLUGINS[] = {
+	/* "aasink",	"AALib", Didn't work for me */
+	"directdrawsink","DirectDraw",
+	"glimagesink",	"OpenGL",
+	"ximagesink",	"X Window System",
+	"xvimagesink",	"X Window System (Xv)",
+	NULL
+};
+
+typedef struct {
+	GtkWidget *level;
+	GtkWidget *threshold;
+	GtkWidget *volume;
+} BusCbCtx;
+
+static GstElement *voice_pipeline;
+static GstElement *video_pipeline;
+
+#endif
+
 /*
  * PROTOTYPES
  */
@@ -2947,56 +3001,6 @@ away_page(void)
 }
 
 #if USE_VV
-static const gchar *AUDIO_SRC_PLUGINS[] = {
-	"alsasrc",	"ALSA",
-	/* "esdmon",	"ESD", ? */
-	"osssrc",	"OSS",
-	"pulsesrc",	"PulseAudio",
-	"sndiosrc",	"sndio",
-	/* "audiotestsrc wave=silence", "Silence", */
-	"audiotestsrc",	"Test Sound",
-	NULL
-};
-
-static const gchar *AUDIO_SINK_PLUGINS[] = {
-	"alsasink",	"ALSA",
-	"artsdsink",	"aRts",
-	"esdsink",	"ESD",
-	"osssink",	"OSS",
-	"pulsesink",	"PulseAudio",
-	"sndiosink",	"sndio",
-	NULL
-};
-
-static const gchar *VIDEO_SRC_PLUGINS[] = {
-	"videotestsrc",	"Test Input",
-	"dshowvideosrc","DirectDraw",
-	"ksvideosrc",	"KS Video",
-	"qcamsrc",	"Quickcam",
-	"v4lsrc",	"Video4Linux",
-	"v4l2src",	"Video4Linux2",
-	"v4lmjpegsrc",	"Video4Linux MJPEG",
-	NULL
-};
-
-static const gchar *VIDEO_SINK_PLUGINS[] = {
-	/* "aasink",	"AALib", Didn't work for me */
-	"directdrawsink","DirectDraw",
-	"glimagesink",	"OpenGL",
-	"ximagesink",	"X Window System",
-	"xvimagesink",	"X Window System (Xv)",
-	NULL
-};
-
-typedef struct {
-	GtkWidget *level;
-	GtkWidget *threshold;
-	GtkWidget *volume;
-} BusCbCtx;
-
-static GstElement *voice_pipeline;
-static GstElement *video_pipeline;
-
 static GList *
 get_vv_element_devices(const gchar *element_name)
 {
