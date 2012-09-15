@@ -608,7 +608,7 @@ handle_next_queued_request(void)
 		if (number_of_dns_children >= MAX_DNS_CHILDREN)
 		{
 			/* Apparently all our children are busy */
-			g_queue_push_tail(queued_requests, query_data);
+			g_queue_push_head(queued_requests, query_data);
 			return;
 		}
 

@@ -151,4 +151,16 @@
    fun:purple_plugins_load_saved
    fun:main
 }
-
+{
+   libfontconfig leaks
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/libfontconfig.so.*
+   ...
+}
+{
+   webkitgtk uninitialized values
+   Memcheck:Cond
+   obj:/usr/lib/libwebkitgtk-*
+   ...
+}

@@ -191,6 +191,15 @@ char *pidgin_conversation_theme_get_template_path(PidginConvTheme *theme);
  */
 char *pidgin_conversation_theme_get_css_path(PidginConvTheme *theme);
 
+/**
+ * Get (and reference) the array of nick colors
+ *
+ * @param theme The conversation theme
+ *
+ * @return Pointer to GArray of nick colors, or NULL if no colors in theme
+ */
+GArray *pidgin_conversation_theme_get_nick_colors(PidginConvTheme *theme);
+
 G_END_DECLS
 #endif /* PIDGIN_CONV_THEME_H */
 
