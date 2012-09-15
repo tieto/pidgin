@@ -3220,15 +3220,23 @@ vv_test_switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint num, gpoint
 static GstElement *
 create_voice_pipeline(void)
 {
+	PurpleMediaManager *manager;
+	PurpleMediaElementInfo *audio_src, *audio_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 	GstElement *volume;
 	GstElement *level;
 	GstElement *valve;
 
+	manager = purple_media_manager_get();
+	audio_src = purple_media_manager_get_active_element(manager,
+			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
+	audio_sink = purple_media_manager_get_active_element(manager,
+			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
+
 	pipeline = gst_pipeline_new("voicetest");
-	src = create_test_element("audio", "src", NULL/*old_audio_src*/);
-	sink = create_test_element("audio", "sink", NULL/*old_sudio_sink*/);
+	src = create_test_element("audio", "src", audio_src);
+	sink = create_test_element("audio", "sink", audio_sink);
 	volume = gst_element_factory_make("volume", "volume");
 	level = gst_element_factory_make("level", "level");
 	valve = gst_element_factory_make("valve", "valve");
@@ -3431,12 +3439,20 @@ make_voice_test(GtkWidget *vbox)
 static GstElement *
 create_video_pipeline(void)
 {
+	PurpleMediaManager *manager;
+	PurpleMediaElementInfo *video_src, *video_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 
+	manager = purple_media_manager_get();
+	video_src = purple_media_manager_get_active_element(manager,
+			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
+	video_sink = purple_media_manager_get_active_element(manager,
+			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
+
 	pipeline = gst_pipeline_new("videotest");
-	src = create_test_element("video", "src", NULL/*old_video_src*/);
-	sink = create_test_element("video", "sink", NULL/*old_video_sink*/);
+	src = create_test_element("video", "src", video_src);
+	sink = create_test_element("video", "sink", video_sink);
 
 	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
 	gst_element_link_many(src, sink, NULL);
