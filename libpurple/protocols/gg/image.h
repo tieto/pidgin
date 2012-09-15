@@ -35,11 +35,7 @@
 
 #define GGP_IMAGE_SIZE_MAX 255000
 
-typedef struct
-{
-	GHashTable *incoming_images;
-	GHashTable *pending_images;
-} ggp_image_connection_data;
+typedef struct _ggp_image_session_data ggp_image_session_data;
 
 typedef enum
 {
@@ -54,10 +50,6 @@ typedef void (*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id,
 void ggp_image_setup(PurpleConnection *gc);
 void ggp_image_cleanup(PurpleConnection *gc);
 
-const char * ggp_image_pending_placeholder(uint32_t id);
-
-void ggp_image_got_im(PurpleConnection *gc, uin_t from, gchar *msg,
-	time_t mtime);
 ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	const char *conv_name, struct gg_msg_richtext_image *image_info);
 
@@ -67,5 +59,6 @@ void ggp_image_send(PurpleConnection *gc,
 	const struct gg_event_image_request *image_request);
 void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	ggp_image_request_cb cb, gpointer user_data);
+int ggp_image_get_cached(PurpleConnection *gc, uint64_t id);
 
 #endif /* _GGP_IMAGE_H */

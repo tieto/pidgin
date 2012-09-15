@@ -38,15 +38,13 @@
 #include "chat.h"
 #include "message-prpl.h"
 
-#define PUBDIR_RESULTS_MAX 20
-
 #define GGP_UIN_LEN_MAX 10
 
 typedef struct {
 	struct gg_session *session;
 	guint inpa;
 
-	ggp_image_connection_data image_data;
+	ggp_image_session_data *image_data;
 	ggp_avatar_session_data avatar_data;
 	ggp_roster_session_data roster_data;
 	ggp_multilogon_session_data *multilogon_data;

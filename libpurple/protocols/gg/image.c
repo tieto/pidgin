@@ -35,8 +35,12 @@
 #include "gg.h"
 #include "utils.h"
 
-#define GGP_PENDING_IMAGE_ID_PREFIX "gg-pending-image-"
-#define GGP_IMAGE_MAX_SIZE 255000
+struct _ggp_image_session_data
+{
+	GHashTable *got_images;
+	GHashTable *incoming_images;
+	GHashTable *pending_images;
+};
 
 typedef struct
 {
@@ -70,46 +74,43 @@ static void ggp_image_requested_free(gpointer data)
 	g_free(req);
 }
 
-static inline ggp_image_connection_data *
-ggp_image_get_imgdata(PurpleConnection *gc)
+static inline ggp_image_session_data *
+ggp_image_get_sdata(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
-	return &accdata->image_data;
+	return accdata->image_data;
 }
 
 void ggp_image_setup(PurpleConnection *gc)
 {
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	ggp_image_session_data *sdata = g_new0(ggp_image_session_data, 1);
 	
-	imgdata->incoming_images = g_hash_table_new_full(
+	accdata->image_data = sdata;
+	
+	sdata->got_images = g_hash_table_new_full(
+		g_int64_hash, g_int64_equal, g_free, NULL);
+	sdata->incoming_images = g_hash_table_new_full(
 		g_int64_hash, g_int64_equal,
 		g_free, ggp_image_requested_free);
-	imgdata->pending_images = g_hash_table_new_full(NULL, NULL, NULL,
+	sdata->pending_images = g_hash_table_new_full(NULL, NULL, NULL,
 		ggp_image_pending_image_free);
 }
 
 void ggp_image_cleanup(PurpleConnection *gc)
 {
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	
-	g_hash_table_destroy(imgdata->incoming_images);
-	g_hash_table_destroy(imgdata->pending_images);
-}
-
-const char * ggp_image_pending_placeholder(uint32_t id)
-{
-	static char buff[50];
-	
-	g_snprintf(buff, 50, "<img id=\"" GGP_PENDING_IMAGE_ID_PREFIX
-		"%u\">", id);
-	
-	return buff;
+	g_hash_table_destroy(sdata->got_images);
+	g_hash_table_destroy(sdata->incoming_images);
+	g_hash_table_destroy(sdata->pending_images);
+	g_free(sdata);
 }
 
 ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	const char *conv_name, struct gg_msg_richtext_image *image_info)
 {
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	PurpleStoredImage *image = purple_imgstore_find_by_id(id);
 	size_t image_size;
 	gconstpointer image_data;
@@ -145,7 +146,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 	pending_image = g_new(ggp_image_pending_image, 1);
 	pending_image->id = id;
 	pending_image->conv_name = g_strdup(conv_name);
-	g_hash_table_insert(imgdata->pending_images, GINT_TO_POINTER(image_crc),
+	g_hash_table_insert(sdata->pending_images, GINT_TO_POINTER(image_crc),
 		pending_image);
 	
 	image_info->unknown1 = 0x0109;
@@ -158,7 +159,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
 void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply)
 {
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	int stored_id;
 	ggp_image_requested *req;
 	GList *it;
@@ -178,7 +179,10 @@ void ggp_image_recv(PurpleConnection *gc,
 		image_reply->size,
 		id);
 
-	req = g_hash_table_lookup(imgdata->incoming_images, &id);
+	g_hash_table_insert(sdata->got_images, ggp_uint64dup(id),
+		GINT_TO_POINTER(stored_id));
+
+	req = g_hash_table_lookup(sdata->incoming_images, &id);
 	if (!req)
 	{
 		purple_debug_warning("gg", "ggp_image_recv: "
@@ -194,14 +198,14 @@ void ggp_image_recv(PurpleConnection *gc,
 		
 		listener->cb(gc, id, stored_id, listener->user_data);
 	}
-	g_hash_table_remove(imgdata->incoming_images, &id);
+	g_hash_table_remove(sdata->incoming_images, &id);
 }
 
 void ggp_image_send(PurpleConnection *gc,
 	const struct gg_event_image_request *image_request)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	ggp_image_pending_image *pending_image;
 	PurpleStoredImage *image;
 	PurpleConversation *conv;
@@ -212,7 +216,7 @@ void ggp_image_send(PurpleConnection *gc,
 		image_request->crc32,
 		image_request->size);
 	
-	pending_image = g_hash_table_lookup(imgdata->pending_images,
+	pending_image = g_hash_table_lookup(sdata->pending_images,
 		GINT_TO_POINTER(image_request->crc32));
 	
 	if (pending_image == NULL)
@@ -233,7 +237,7 @@ void ggp_image_send(PurpleConnection *gc,
 	{
 		purple_debug_error("gg", "ggp_image_send: requested image "
 			"found, but doesn't exists in image store\n");
-		g_hash_table_remove(imgdata->pending_images,
+		g_hash_table_remove(sdata->pending_images,
 			GINT_TO_POINTER(image_request->crc32));
 		return;
 	}
@@ -253,7 +257,7 @@ void ggp_image_send(PurpleConnection *gc,
 			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY,
 			time(NULL));
 	
-	g_hash_table_remove(imgdata->pending_images,
+	g_hash_table_remove(sdata->pending_images,
 		GINT_TO_POINTER(image_request->crc32));
 }
 
@@ -261,13 +265,13 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	ggp_image_request_cb cb, gpointer user_data)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
-	ggp_image_connection_data *imgdata = ggp_image_get_imgdata(gc);
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	ggp_image_requested *req;
 	ggp_image_requested_listener *listener;
 	uint32_t crc = id >> 32;
 	uint32_t size = id;
 	
-	if (size > GGP_IMAGE_MAX_SIZE && crc <= GGP_IMAGE_MAX_SIZE)
+	if (size > GGP_IMAGE_SIZE_MAX && crc <= GGP_IMAGE_SIZE_MAX)
 	{
 		uint32_t tmp;
 		purple_debug_warning("gg", "ggp_image_request: "
@@ -277,11 +281,11 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 		size = tmp;
 	}
 	
-	req = g_hash_table_lookup(imgdata->incoming_images, &id);
+	req = g_hash_table_lookup(sdata->incoming_images, &id);
 	if (!req)
 	{
 		req = g_new0(ggp_image_requested, 1);
-		g_hash_table_insert(imgdata->incoming_images,
+		g_hash_table_insert(sdata->incoming_images,
 			ggp_uint64dup(id), req);
 		purple_debug_info("gg", "ggp_image_request: "
 			"requesting image %016llx\n", id);
@@ -293,4 +297,11 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	listener->cb = cb;
 	listener->user_data = user_data;
 	req->listeners = g_list_append(req->listeners, listener);
+}
+
+int ggp_image_get_cached(PurpleConnection *gc, uint64_t id)
+{
+	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
+
+	return GPOINTER_TO_INT(g_hash_table_lookup(sdata->got_images, &id));
 }

@@ -29,6 +29,8 @@ typedef struct
 	time_t time;
 	uint64_t chat_id;
 	GList *pending_images;
+
+	PurpleConnection *gc;
 } ggp_message_got_data;
 
 typedef struct
@@ -217,23 +219,13 @@ static gboolean ggp_message_request_images(PurpleConnection *gc,
 {
 	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
 	GList *it;
-	uin_t from;
 	if (msg->pending_images == NULL)
 		return FALSE;
-	
-	if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON)
-	{
-		purple_debug_error("gg", "ggp_message_request_images: "
-			"not implemented for multilogon\n");
-		return FALSE;
-	}
-	else
-		from = msg->user;
 	
 	it = msg->pending_images;
 	while (it)
 	{
-		ggp_image_request(gc, from, *(uint64_t*)it->data,
+		ggp_image_request(gc, msg->user, *(uint64_t*)it->data,
 			ggp_message_request_images_got, msg);
 		it = g_list_next(it);
 	}
@@ -246,8 +238,8 @@ static gboolean ggp_message_request_images(PurpleConnection *gc,
 void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 {
 	ggp_message_got_data *msg = g_new0(ggp_message_got_data, 1);
-	ggp_message_format_from_gg(msg, ev->xhtml_message);
 
+	msg->gc = gc;
 	msg->time = ev->time;
 	msg->user = ev->sender;
 
@@ -261,6 +253,7 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 		msg->type = GGP_MESSAGE_GOT_TYPE_IM;
 	}
 
+	ggp_message_format_from_gg(msg, ev->xhtml_message);
 	if (ggp_message_request_images(gc, msg))
 		return;
 
@@ -272,12 +265,13 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 	const struct gg_event_msg *ev)
 {
 	ggp_message_got_data *msg = g_new0(ggp_message_got_data, 1);
-	ggp_message_format_from_gg(msg, ev->xhtml_message);
 
+	msg->gc = gc;
 	msg->time = ev->time;
 	msg->user = ev->sender; /* not really a sender*/
 	msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
 
+	ggp_message_format_from_gg(msg, ev->xhtml_message);
 	if (ggp_message_request_images(gc, msg))
 		return;
 
@@ -315,31 +309,45 @@ static void ggp_message_got_display(PurpleConnection *gc,
 static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	GString *res, gpointer data)
 {
+	ggp_message_got_data *msg = data;
 	gchar *name, *replacement;
 	int64_t id;
-	ggp_message_got_data *msg = data;
+	int stored_id;
 
 	name = g_match_info_fetch(info, 1);
-	if (sscanf(name, "%llx", &id) == 1)
-	{
-		if (NULL == g_list_find_custom(msg->pending_images, &id,
-			ggp_int64_compare))
-		{
-			msg->pending_images = g_list_append(msg->pending_images,
-				ggp_uint64dup(id));
-		}
-		
-		replacement = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
-		g_string_append(res, replacement);
-		g_free(replacement);
-	}
-	else
+	if (sscanf(name, "%llx", &id) != 1)
+		id = 0;
+	g_free(name);
+	if (!id)
 	{
 		g_string_append(res, "[");
 		g_string_append(res, _("broken image"));
 		g_string_append(res, "]");
+		return FALSE;
 	}
-	g_free(name);
+	
+	stored_id = ggp_image_get_cached(msg->gc, id);
+	
+	if (stored_id > 0)
+	{
+		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
+			"getting image %016llx from cache\n", id);
+		replacement = g_strdup_printf(GGP_IMAGE_DESTINATION, stored_id);
+		g_string_append(res, replacement);
+		g_free(replacement);
+		return FALSE;
+	}
+	
+	if (NULL == g_list_find_custom(msg->pending_images, &id,
+		ggp_int64_compare))
+	{
+		msg->pending_images = g_list_append(msg->pending_images,
+			ggp_uint64dup(id));
+	}
+	
+	replacement = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
+	g_string_append(res, replacement);
+	g_free(replacement);
 
 	return FALSE;
 }
@@ -689,8 +697,6 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 
 	return text_new;
 }
-
-/* sending */
 
 int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	const char *message, PurpleMessageFlags flags)
