@@ -796,7 +796,7 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 	gdouble percent;
 
 	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
 #else
 	value = gst_value_list_get_value(list, 0);
@@ -1573,7 +1573,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		srcpad = gst_element_get_static_pad(session->srcvalve, "src");
 		g_object_set(volume, "volume", input_volume, NULL);
 	} else {
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		srcpad = gst_element_get_request_pad(session->tee, "src_%u");
 #else
 		srcpad = gst_element_get_request_pad(session->tee, "src%d");
@@ -1817,7 +1817,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_element_link(stream->queue, stream->volume);
 			sink = stream->queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 			stream->src = gst_element_factory_make("funnel", NULL);
 #else
 			stream->src = gst_element_factory_make("fsfunnel", NULL);
@@ -1836,7 +1836,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		gst_element_link_many(stream->src, stream->tee, sink, NULL);
 	}
 
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	sinkpad = gst_element_get_request_pad(stream->src, "sink_%u");
 #else
 	sinkpad = gst_element_get_request_pad(stream->src, "sink%d");

@@ -44,7 +44,7 @@
 #else
 #include <farstream/fs-element-added-notifier.h>
 #endif
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
 #else
 #include <gst/interfaces/xoverlay.h>
@@ -274,7 +274,7 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
 				G_CALLBACK(pipeline_bus_call), manager);
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
 #else
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
@@ -408,7 +408,7 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 {
 	GstElement *parent = GST_ELEMENT_PARENT(pad);
 	GstIterator *iter;
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	GValue tmp = G_VALUE_INIT;
 #endif
 	GstPad *remaining_pad;
@@ -418,7 +418,7 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 
 	iter = gst_element_iterate_src_pads(parent);
 
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	result = gst_iterator_next(iter, &tmp);
 #else
 	result = gst_iterator_next(iter, (gpointer)&remaining_pad);
@@ -429,7 +429,7 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 		gst_element_set_state(parent, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(parent)), parent);
 	} else if (result == GST_ITERATOR_OK) {
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		remaining_pad = g_value_get_object(&tmp);
 		g_value_reset(&tmp);
 #endif
@@ -470,7 +470,7 @@ purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 {
 #ifdef USE_VV
 	if (manager->priv->video_caps == NULL)
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		manager->priv->video_caps = gst_caps_from_string("video/x-raw,"
 #else
 		manager->priv->video_caps = gst_caps_from_string("video/x-raw-yuv,"
@@ -557,7 +557,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		g_free(id);
 
 		tee = gst_bin_get_by_name(GST_BIN(ret), "tee");
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		pad = gst_element_get_request_pad(tee, "src_%u");
 #else
 		pad = gst_element_get_request_pad(tee, "src%d");
@@ -753,7 +753,7 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 	GstElement *sink;
 
 	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
 #else
 	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
@@ -771,7 +771,7 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 			| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 			window_id_cb, ow);
 
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(GST_MESSAGE_SRC(msg)),
 	                                    ow->window_id);
 #elif GST_CHECK_VERSION(0,10,31)
@@ -813,7 +813,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				continue;
 
 			queue = gst_element_factory_make("queue", NULL);
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 			convert = gst_element_factory_make("videoconvert", NULL);
 #else
 			convert = gst_element_factory_make("ffmpegcolorspace", NULL);

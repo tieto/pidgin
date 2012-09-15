@@ -59,7 +59,7 @@
 #include "pidginstock.h"
 #if USE_VV
 #include "media-gst.h"
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
 #else
 #include <gst/interfaces/xoverlay.h>
@@ -3007,7 +3007,7 @@ get_vv_element_devices(const gchar *element_name)
 	GList *ret = NULL;
 	GstElement *element;
 	GObjectClass *klass;
-#if !GST_CHECK_VERSION(0,11,0)
+#if !GST_CHECK_VERSION(1,0,0)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
 #endif
@@ -3033,7 +3033,7 @@ get_vv_element_devices(const gchar *element_name)
 		return g_list_reverse(ret);
 	}
 
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
 #else
 	if (!g_object_class_find_property(klass, "device") ||
@@ -3097,7 +3097,7 @@ get_vv_element_plugins(const gchar **plugins)
 	ret = g_list_prepend(ret, (gpointer)_("Default"));
 	ret = g_list_prepend(ret, "");
 	for (; plugins[0] && plugins[1]; plugins += 2) {
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		if (gst_registry_check_feature_version(gst_registry_get(),
 		                                       plugins[0], 0, 0, 0)) {
 #else
@@ -3270,7 +3270,7 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 	gdouble percent;
 
 	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
 #else
 	value = gst_value_list_get_value(list, 0);
@@ -3477,7 +3477,7 @@ static void
 window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 {
 	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
 #else
 	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
@@ -3489,7 +3489,7 @@ window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 	                                     0, 0, NULL, window_id_cb,
 	                                     (gpointer)window_id);
 
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(GST_MESSAGE_SRC(msg)),
 	                                    window_id);
 #elif GST_CHECK_VERSION(0,10,31)
@@ -3522,7 +3522,7 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 
 		video_pipeline = create_video_pipeline();
 		bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
-#if GST_CHECK_VERSION(0,11,0)
+#if GST_CHECK_VERSION(1,0,0)
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
 #else
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
