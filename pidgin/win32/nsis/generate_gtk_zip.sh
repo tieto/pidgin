@@ -85,7 +85,9 @@ do
 done
 
 #Generate zip file to be included in installer
-zip -9 -r ../gtk-runtime-$BUNDLE_VERSION.zip Gtk
+ZIPFILE=../gtk-runtime-$BUNDLE_VERSION.zip
+rm -f $ZIPFILE
+zip -9 -r $ZIPFILE Gtk
 
 exit 0
 
