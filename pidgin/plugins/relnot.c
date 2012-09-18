@@ -134,7 +134,7 @@ do_check(void)
 		gchar *url, *request;
 		const char *host = "pidgin.im";
 
-		url = g_strdup_printf("http://%s/version.php?version=%s&build=%s",
+		url = g_strdup_printf("https://%s/version.php?version=%s&build=%s",
 				host,
 				purple_core_get_version(),
 #ifdef _WIN32
