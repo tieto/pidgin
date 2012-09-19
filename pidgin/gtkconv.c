@@ -8790,6 +8790,7 @@ pidgin_conversations_init(void)
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 	{
 		/* Set default tab colors */
 		GString *str = g_string_new(NULL);
@@ -8825,6 +8826,7 @@ pidgin_conversations_init(void)
 		g_string_free(str, TRUE);
 		gtk_rc_reset_styles(settings);
 	}
+#endif
 }
 
 void
@@ -10185,6 +10187,49 @@ gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversati
 	return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static void set_default_tab_colors(GtkWidget *widget)
+{
+    GString *str;
+    GtkCssProvider *provider;
+    GError *error = NULL;
+    int iter;
+
+    struct {
+        const char *labelname;
+        const char *color;
+    } styles[] = {
+        {"tab-label-typing", "#4e9a06"},
+        {"tab-label-typed", "#c4a000"},
+        {"tab-label-attention", "#006aff"},
+        {"tab-label-unreadchat", "#cc0000"},
+        {"tab-label-event", "#888a85"},
+        {NULL, NULL}
+    };
+
+    str = g_string_new(NULL);
+
+    for (iter = 0; styles[iter].labelname; iter++) {
+        g_string_append_printf(str, "#%s {\n"
+                "    color: %s;\n"
+                "}\n",
+                styles[iter].labelname,
+                styles[iter].color);
+    }
+
+    provider = gtk_css_provider_new();
+
+    gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
+
+    gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
+            provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+    if (error)
+        g_error_free(error);
+    g_string_free(str, TRUE);
+}
+#endif
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -10223,6 +10268,9 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
+#if GTK_CHECK_VERSION(3,0,0)
+    set_default_tab_colors(gtkconv->tab_label);
+#endif
 	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
