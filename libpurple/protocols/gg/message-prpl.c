@@ -270,7 +270,16 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 	msg->gc = gc;
 	msg->time = ev->time;
 	msg->user = ev->sender; /* not really a sender*/
-	msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
+
+	if (ev->chat_id != 0)
+	{
+		msg->type = GGP_MESSAGE_GOT_TYPE_CHAT;
+		msg->chat_id = ev->chat_id;
+	}
+	else
+	{
+		msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
+	}
 
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
 	if (ggp_message_request_images(gc, msg))
