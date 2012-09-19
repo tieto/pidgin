@@ -17,5 +17,6 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 
 int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	const char *message, PurpleMessageFlags flags);
+gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text);
 
 #endif /* _GGP_MESSAGE_PRPL_H */

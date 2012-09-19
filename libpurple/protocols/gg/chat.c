@@ -4,6 +4,7 @@
 
 #include "gg.h"
 #include "utils.h"
+#include "message-prpl.h"
 
 typedef struct _ggp_chat_local_info ggp_chat_local_info;
 
@@ -468,9 +469,11 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 	PurpleMessageFlags flags)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
+	PurpleConversation *conv;
 	ggp_chat_local_info *chat;
 	gboolean succ = TRUE;
 	const gchar *me;
+	gchar *gg_msg;
 	
 	chat = ggp_chat_get_local(gc, local_id);
 	if (!chat)
@@ -480,8 +483,15 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 		return -1;
 	}
 	
-	if (gg_chat_send_message(info->session, chat->id, message, TRUE) < 0)
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
+		ggp_chat_get_name_from_id(chat->id),
+		purple_connection_get_account(gc));
+
+	gg_msg = ggp_message_format_to_gg(conv, message);
+
+	if (gg_chat_send_message(info->session, chat->id, gg_msg, TRUE) < 0)
 		succ = FALSE;
+	g_free(gg_msg);
 
 	me = purple_account_get_username(purple_connection_get_account(gc));
 	serv_got_chat_in(gc, chat->local_id, me, flags, message, time(NULL));

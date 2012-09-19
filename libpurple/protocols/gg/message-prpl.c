@@ -67,8 +67,6 @@ static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg);
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	const gchar *text);
-static gchar * ggp_message_format_to_gg(PurpleConversation *conv,
-	const gchar *text);
 
 /**************/
 
@@ -389,7 +387,7 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	msg->text = text_new;
 }
 
-static gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
+gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 {
 	gchar *text_new, *tmp;
 	GList *rt = NULL; /* reformatted text */
