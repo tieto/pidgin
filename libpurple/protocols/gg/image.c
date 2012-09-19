@@ -175,10 +175,11 @@ void ggp_image_recv(PurpleConnection *gc,
 	id = ggp_image_params_to_id(image_reply->crc32, image_reply->size);
 	
 	purple_debug_info("gg", "ggp_image_recv: got image "
-		"[stored_id=%d, crc=%u, size=%u, id=%016llx]\n",
+		"[stored_id=%d, crc=%u, size=%u, filename=%s, id=%016llx]\n",
 		stored_id,
 		image_reply->crc32,
 		image_reply->size,
+		image_reply->filename,
 		id);
 
 	g_hash_table_insert(sdata->got_images, ggp_uint64dup(id),
@@ -212,6 +213,7 @@ void ggp_image_send(PurpleConnection *gc,
 	PurpleStoredImage *image;
 	PurpleConversation *conv;
 	uint64_t id;
+	gchar *gg_filename;
 	
 	purple_debug_info("gg", "ggp_image_send: got image request "
 		"[uin=%u, crc=%u, size=%u]\n",
@@ -248,10 +250,12 @@ void ggp_image_send(PurpleConnection *gc,
 	}
 	
 	//TODO: check allowed recipients
+	gg_filename = g_strdup_printf("%016llx", id);
 	gg_image_reply(accdata->session, image_request->sender,
-		purple_imgstore_get_filename(image),
+		gg_filename,
 		purple_imgstore_get_data(image),
 		purple_imgstore_get_size(image));
+	g_free(gg_filename);
 	purple_imgstore_unref(image); /* conferences? */
 	
 	conv = purple_find_conversation_with_account(
