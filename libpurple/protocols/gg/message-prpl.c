@@ -67,7 +67,8 @@ static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg);
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	const gchar *text);
-static gchar * ggp_message_format_to_gg(const gchar *text);
+static gchar * ggp_message_format_to_gg(PurpleConversation *conv,
+	const gchar *text);
 
 /**************/
 
@@ -379,7 +380,7 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 	msg->text = text_new;
 }
 
-static gchar * ggp_message_format_to_gg(const gchar *text)
+static gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 {
 	gchar *text_new, *tmp;
 	GList *rt = NULL; /* reformatted text */
@@ -552,6 +553,48 @@ static gchar * ggp_message_format_to_gg(const gchar *text)
 			font_changed |= (font_new->s != !tag_close);
 			font_new->s = !tag_close;
 		}
+		else if (tag == GGP_HTML_TAG_IMG && !tag_close)
+		{
+			GHashTable *attribs = ggp_html_tag_attribs(attribs_str);
+			gchar *val = NULL;
+			uint64_t id;
+			int stored_id = -1;
+			ggp_image_prepare_result res = -1;
+		
+			if ((val = g_hash_table_lookup(attribs, "src")) != NULL
+				&& g_str_has_prefix(val,
+				PURPLE_STORED_IMAGE_PROTOCOL))
+			{
+				val += strlen(PURPLE_STORED_IMAGE_PROTOCOL);
+				if (sscanf(val, "%u", &stored_id) != 1)
+					stored_id = -1;
+			}
+			
+			if (stored_id >= 0)
+				res = ggp_image_prepare(conv, stored_id, &id);
+			
+			if (res == GGP_IMAGE_PREPARE_OK)
+			{
+				pending_objects = g_list_prepend(
+					pending_objects, g_strdup_printf(
+					"<img name=\"%016llx\">", id));
+			}
+			else if (res == GGP_IMAGE_PREPARE_TOO_BIG)
+			{
+				purple_conversation_write(conv, "",
+					_("Image is too large, please try "
+					"smaller one."), PURPLE_MESSAGE_ERROR,
+					time(NULL));
+			}
+			else
+			{
+				purple_conversation_write(conv, "",
+					_("Image cannot be sent."),
+					PURPLE_MESSAGE_ERROR, time(NULL));
+			}
+			
+			g_hash_table_destroy(attribs);
+		}
 		else if (tag == GGP_HTML_TAG_FONT && !tag_close)
 		{
 			GHashTable *attribs = ggp_html_tag_attribs(attribs_str);
@@ -702,6 +745,7 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	const char *message, PurpleMessageFlags flags)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
+	PurpleConversation *conv;
 	ggp_buddy_data *buddy_data;
 	gchar *gg_msg;
 	gboolean succ;
@@ -717,7 +761,10 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	if (buddy_data->blocked)
 		return -1;
 
-	gg_msg = ggp_message_format_to_gg(message);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+		who, purple_connection_get_account(gc));
+
+	gg_msg = ggp_message_format_to_gg(conv, message);
 
 	/* TODO: splitting messages */
 	if (strlen(gg_msg) > GG_MSG_MAXSIZE)

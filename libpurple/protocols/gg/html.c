@@ -148,6 +148,8 @@ ggp_html_tag ggp_html_parse_tag(const gchar *tag_str)
 		return GGP_HTML_TAG_U;
 	if (0 == strcmp(tag_str, "s"))
 		return GGP_HTML_TAG_S;
+	if (0 == strcmp(tag_str, "img"))
+		return GGP_HTML_TAG_IMG;
 	if (0 == strcmp(tag_str, "font"))
 		return GGP_HTML_TAG_FONT;
 	if (0 == strcmp(tag_str, "hr"))

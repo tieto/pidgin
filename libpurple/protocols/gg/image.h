@@ -50,8 +50,8 @@ typedef void (*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id,
 void ggp_image_setup(PurpleConnection *gc);
 void ggp_image_cleanup(PurpleConnection *gc);
 
-ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
-	const char *conv_name, struct gg_msg_richtext_image *image_info);
+ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
+	const int stored_id, uint64_t *id);
 
 void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply);
