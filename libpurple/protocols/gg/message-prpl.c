@@ -396,7 +396,6 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	GList *pending_objects = NULL;
 	GList *font_stack = NULL;
 	static int html_sizes_pt[7] = { 7, 8, 9, 10, 12, 14, 16 };
-	/* TODO: sent images */
 
 	ggp_font *font_new, *font_current, *font_base;
 	gboolean font_changed = FALSE;
