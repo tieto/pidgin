@@ -59,9 +59,16 @@ typedef struct
 	gpointer user_data;
 } ggp_image_requested_listener;
 
+static void ggp_image_got_free(gpointer data)
+{
+	int id = GPOINTER_TO_INT(data);
+	purple_imgstore_unref_by_id(id);
+}
+
 static void ggp_image_sent_free(gpointer data)
 {
 	ggp_image_sent *sent_image = (ggp_image_sent*)data;
+	purple_imgstore_unref_by_id(sent_image->id);
 	g_free(sent_image->conv_name);
 	g_free(sent_image);
 }
@@ -93,7 +100,8 @@ void ggp_image_setup(PurpleConnection *gc)
 	accdata->image_data = sdata;
 	
 	sdata->got_images = g_hash_table_new_full(
-		g_int64_hash, g_int64_equal, g_free, NULL);
+		g_int64_hash, g_int64_equal, g_free,
+		ggp_image_got_free);
 	sdata->incoming_images = g_hash_table_new_full(
 		g_int64_hash, g_int64_equal, g_free,
 		ggp_image_requested_free);
@@ -148,7 +156,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 		stored_id, image_crc, image_size);
 	
 	*id = ggp_image_params_to_id(image_crc, image_size);
-	
+
 	sent_image = g_new(ggp_image_sent, 1);
 	sent_image->id = stored_id;
 	sent_image->conv_name = g_strdup(purple_conversation_get_name(conv));
@@ -256,17 +264,19 @@ void ggp_image_send(PurpleConnection *gc,
 		purple_imgstore_get_data(image),
 		purple_imgstore_get_size(image));
 	g_free(gg_filename);
-	purple_imgstore_unref(image); /* conferences? */
 	
 	conv = purple_find_conversation_with_account(
 		PURPLE_CONV_TYPE_ANY, sent_image->conv_name,
 		purple_connection_get_account(gc));
 	if (conv != NULL)
-		purple_conversation_write(conv, "", _("Image delivered."),
+	{
+		gchar *msg = g_strdup_printf(_("Image delivered to %u."),
+			image_request->sender);
+		purple_conversation_write(conv, "", msg,
 			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY,
 			time(NULL));
-	
-	g_hash_table_remove(sdata->sent_images, &id); /* conferences? */
+		g_free(msg);
+	}
 }
 
 void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
