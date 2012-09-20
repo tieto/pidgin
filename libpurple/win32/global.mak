@@ -108,6 +108,7 @@ PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
 INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool_0.40.4-1_win32/bin/intltool-merge
+MONO_SIGNCODE ?= signcode
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak

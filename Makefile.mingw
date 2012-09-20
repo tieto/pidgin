@@ -139,13 +139,31 @@ create_release_install_dir: install
 	find $(STRIPPED_RELEASE_DIR) \( -name '*.dll' -o -name '*.exe' \) \
 	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) \
 	 -exec $(STRIP) --strip-unneeded {} ';'
+	$(MONO_SIGNCODE) \
+		-spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
+		-a sha1 -$$ commercial \
+		-n "Pidgin $(PIDGIN_VERSION)" -i "https://pidgin.im" \
+		-t "http://timestamp.verisign.com/scripts/timstamp.dll" -tr 10 \
+		$(STRIPPED_RELEASE_DIR)/pidgin.exe
 
 installer: generate_installer_includes
 	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" -DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(MONO_SIGNCODE) \
+		-spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
+		-a sha1 -$$ commercial \
+		-n "Pidgin Installer" -i "https://pidgin.im" \
+		-t "http://timestamp.verisign.com/scripts/timstamp.dll" -tr 10 \
+		pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe ./
 
 installer_offline: generate_installer_includes
 	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" -DOFFLINE_INSTALLER -DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(MONO_SIGNCODE) \
+		-spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
+		-a sha1 -$$ commercial \
+		-n "Pidgin Installer" -i "https://pidgin.im" \
+		-t "http://timestamp.verisign.com/scripts/timstamp.dll" -tr 10 \
+		pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-offline.exe
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-offline.exe ./
 
 installer_zip: create_release_install_dir
