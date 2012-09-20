@@ -23,6 +23,7 @@ SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.10
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 GCC_SSP_TOP ?= $(WIN32_DEV_TOP)/gcc-core-4.4.0-mingw32-dll
+CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1.25
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
