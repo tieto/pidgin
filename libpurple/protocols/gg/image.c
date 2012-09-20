@@ -233,6 +233,13 @@ void ggp_image_send(PurpleConnection *gc,
 	
 	sent_image = g_hash_table_lookup(sdata->sent_images, &id);
 	
+	if (sent_image == NULL && image_request->sender == ggp_str_to_uin(
+		purple_account_get_username(purple_connection_get_account(gc))))
+	{
+		purple_debug_misc("gg", "ggp_image_send: requested image "
+			"not found, but this may be another session request\n");
+		return;
+	}
 	if (sent_image == NULL)
 	{
 		purple_debug_warning("gg", "ggp_image_send: requested image "
@@ -309,6 +316,11 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 			"requesting image %016llx\n", id);
 		if (gg_image_request(accdata->session, uin, size, crc) != 0)
 			purple_debug_error("gg", "ggp_image_request: failed\n");
+	}
+	else
+	{
+		purple_debug_info("gg", "ggp_image_request: "
+			"image %016llx already requested\n", id);
 	}
 	
 	listener = g_new0(ggp_image_requested_listener, 1);
