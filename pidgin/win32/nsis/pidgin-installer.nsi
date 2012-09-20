@@ -70,7 +70,7 @@ RequestExecutionLevel highest
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
 
-!define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
+!define DOWNLOADER_URL				"https://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
 
 !define MEMENTO_REGISTRY_ROOT			HKLM
 !define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
@@ -255,15 +255,29 @@ Section $(GTKSECTIONTITLE) SecGtk
 !else
 
   ; We need to download the GTK+ runtime
+  StrCpy $R3 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   retry:
-  StrCpy $R2 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
+  StrCpy $R2 "$R3" ;$R2 is the current URL for error messages
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   ;StrCmp $R0 "cancel" done
-  StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+  StrCmp $R0 "success" 0 prompt_retry
 
+  retry_shasum:
+  StrCpy $R2 "$R3_sha1sum"
+  Push "$R2" ; URL
+  Push "$R1" ; Filename
+  Call CheckSHA1Sum
+  Pop $R0
+
+  StrCmp "$R0" "0" extract
+  StrCmp "$R0" "1" +3 ; Prompt to Retry Just the shasum download
+    prompt_retry:
+    MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry_shasum IDCANCEL done
+
+  extract:
 !endif
 
   ;Delete the old Gtk directory
@@ -439,15 +453,29 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
 !else
 
   ; We need to download the debug symbols
+  StrCpy $R3 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   retry:
-  StrCpy $R2 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
+  StrCpy $R2 "$R3"
   DetailPrint "Downloading Debug Symbols... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "cancel" done
-  StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+  StrCmp $R0 "success" 0 prompt_retry
 
+  retry_shasum:
+  StrCpy $R2 "$R3_sha1sum"
+  Push "$R2" ; URL
+  Push "$R1" ; Filename
+  Call CheckSHA1Sum
+  Pop $R0
+
+  StrCmp "$R0" "0" extract
+  StrCmp "$R0" "1" +3 ; Prompt to Retry Just the shasum download
+    prompt_retry:
+    MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry_shasum IDCANCEL done
+
+  extract:
 !endif
 
   SetOutPath "$INSTDIR"
@@ -1279,3 +1307,51 @@ Function InstallDict
   Pop $R0
   Exch $R1
 FunctionEnd
+
+!ifndef OFFLINE_INSTALLER
+; Input Stack: Filename, URL
+; Output Return Code: 0=Match; 1=sha1sum DL error; 2=FileSum error; 3=Mismatch
+Function CheckSHA1Sum
+  Push $R0
+  Exch
+  Pop $R0 ;Filename
+  Push $R1
+  Exch 2
+  Pop $R1 ;URL
+  Push $R2
+
+  DetailPrint "Downloading checksum file... ($R1)"
+  NSISdl::download /TIMEOUT=10000 "$R1" "$R0.sha1sum"
+  Pop $R1
+  StrCmp $R1 "success" +3
+    IntOp $R1 0 + 1
+    Goto done
+
+  FileOpen $R1 "$R0.sha1sum" r
+  FileRead $R1 $R2 40
+  FileClose $R1
+
+  SHA1Plugin::FileSum "$R0"
+  Pop $R1
+  Pop $R0
+
+  StrCmp "$R1" "0" +4
+    DetailPrint "SHA1Sum calculation error: $R0"
+    IntOp $R1 0 + 2
+    Goto done
+
+  ; Compare the SHA1Sums
+  StrCmp $R2 $R0 +4
+    DetailPrint "SHA1Sum mismatch... Expected $R2; got $R0"
+    IntOp $R1 0 + 3
+    Goto done
+
+  IntOp $R1 0 + 0
+
+  done:
+  Pop $R2
+  Pop $R0
+  Exch $R1 ;$R1 has the return code
+FunctionEnd
+!endif
+
