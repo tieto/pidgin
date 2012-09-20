@@ -1439,6 +1439,7 @@ static int
 irc_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	struct irc_conn *irc = ctx;
+	sasl_secret_t *sasl_secret;
 	const char *pw;
 	size_t len;
 
@@ -1450,7 +1451,7 @@ irc_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 	len = strlen(pw);
 	/* Not an off-by-one because sasl_secret_t defines char data[1] */
 	/* TODO: This can probably be moved to glib's allocator */
-	sasl_secret_t *sasl_secret = malloc(sizeof(sasl_secret_t) + len);
+	sasl_secret = malloc(sizeof(sasl_secret_t) + len);
 	if (!sasl_secret)
 		return SASL_NOMEM;
 
@@ -1603,21 +1604,18 @@ irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **arg
 	if (!args[1] || !args[2] || strncmp(args[2], "sasl ", 6))
 		return;
 	if (strncmp(args[1], "ACK", 4)) {
-
-		gchar *tmp = g_strdup_printf(_("SASL authentication failed: Server does not support SASL authentication."));
+		const char *tmp = _("SASL authentication failed: Server does not support SASL authentication.");
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE, tmp);
-		g_free(tmp);
 
 		irc_sasl_finish(irc);
 		return;
 	}
 
 	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
-		gchar *tmp = g_strdup_printf(_("SASL authentication failed: Initializing SASL failed."));
+		const char *tmp = _("SASL authentication failed: Initializing SASL failed.");
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR, tmp);
-		g_free(tmp);
 		return;
 	}
 
