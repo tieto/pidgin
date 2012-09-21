@@ -1017,7 +1017,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			pih(js, &presence, child);
 	}
 
-	if (presence.delayed && presence.idle) {
+	if (presence.delayed && presence.idle && !presence.absolute_idle) {
 		/* Delayed and idle, so update idle time */
 		presence.idle = presence.idle + (time(NULL) - presence.sent);
 	}
@@ -1172,11 +1172,33 @@ parse_delay(JabberStream *js, JabberPresence *presence, xmlnode *delay)
 }
 
 static void
+parse_apple_idle(JabberStream *js, JabberPresence *presence, xmlnode *x)
+{
+	xmlnode *since = xmlnode_get_child(x, "idle-since");
+	if (since) {
+		const char *stamp = xmlnode_get_data(since);
+		if (stamp) {
+			time_t tstamp = purple_str_to_time(stamp, TRUE, NULL, NULL, NULL);
+			if (tstamp != 0) {
+				presence->idle = time(NULL) - tstamp;
+				if(presence->idle < 0) {
+					purple_debug_warning("jabber", "Received bogus idle timestamp %s\n", stamp);
+					presence->idle = 0;
+				} else {
+					presence->absolute_idle = TRUE;
+				}
+			}
+		}
+	}
+}
+
+static void
 parse_idle(JabberStream *js, JabberPresence *presence, xmlnode *query)
 {
 	const gchar *seconds = xmlnode_get_attrib(query, "seconds");
 	if (seconds) {
 		presence->idle = atoi(seconds);
+		presence->absolute_idle = FALSE;
 		if (presence->idle < 0) {
 			purple_debug_warning("jabber", "Received bogus idle time %s\n", seconds);
 			presence->idle = 0;
@@ -1276,6 +1298,9 @@ void jabber_presence_init(void)
 	jabber_presence_register_handler("x", NS_DELAYED_DELIVERY_LEGACY, parse_delay);
 	jabber_presence_register_handler("x", "http://jabber.org/protocol/muc#user", parse_muc_user);
 	jabber_presence_register_handler("x", "vcard-temp:x:update", parse_vcard_avatar);
+
+	/* Apple idle */
+	jabber_presence_register_handler("x", NS_APPLE_IDLE, parse_apple_idle);
 }
 
 void jabber_presence_uninit(void)

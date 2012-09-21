@@ -109,4 +109,7 @@
 #define NS_GOOGLE_SESSION_PHONE "http://www.google.com/session/phone"
 #define NS_GOOGLE_SESSION_VIDEO "http://www.google.com/session/video"
 
+/* Apple extension(s) */
+#define NS_APPLE_IDLE "http://www.apple.com/xmpp/idle"
+
 #endif /* PURPLE_JABBER_NAMESPACES_H_ */
