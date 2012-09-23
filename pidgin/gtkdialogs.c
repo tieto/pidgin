@@ -512,6 +512,13 @@ void pidgin_dialogs_about(void)
 			"http://developer.pidgin.im/wiki/FAQ");
 
 	g_string_append_printf(str,
+			"<font size=\"4\"><b>Help for Oracle Employees</b></font> is "
+			"available from your normal internal helpdesk or IT department.  "
+			"The Pidgin developer and user communities cannot assist you in "
+			"the configuration or use of Pidgin within Oracle, as we know "
+			"nothing of Oracle's infrastructure.<br/><br/>");
+
+	g_string_append_printf(str,
 			_("<font size=\"4\"><b>Help from other Pidgin users</b></font> is "
 			  "available by e-mailing <a "
 			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
