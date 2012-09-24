@@ -71,9 +71,7 @@ struct _JabberPresence {
 	gboolean delayed;
 	time_t sent;
 	int idle;
-	/* this is TRUE if we got the idle time as an absolute timestamp
-	 * and it shouldn't be adjusted if the presence was delayed */
-	gboolean absolute_idle;
+	gboolean adjust_idle_for_delay;
 };
 
 typedef void (JabberPresenceHandler)(JabberStream *js, JabberPresence *presence,

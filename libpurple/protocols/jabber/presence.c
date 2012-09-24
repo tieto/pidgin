@@ -1017,7 +1017,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			pih(js, &presence, child);
 	}
 
-	if (presence.delayed && presence.idle && !presence.absolute_idle) {
+	if (presence.delayed && presence.idle && presence.adjust_idle_for_delay) {
 		/* Delayed and idle, so update idle time */
 		presence.idle = presence.idle + (time(NULL) - presence.sent);
 	}
@@ -1176,19 +1176,19 @@ parse_apple_idle(JabberStream *js, JabberPresence *presence, xmlnode *x)
 {
 	xmlnode *since = xmlnode_get_child(x, "idle-since");
 	if (since) {
-		const char *stamp = xmlnode_get_data(since);
+		char *stamp = xmlnode_get_data_unescaped(since);
 		if (stamp) {
 			time_t tstamp = purple_str_to_time(stamp, TRUE, NULL, NULL, NULL);
 			if (tstamp != 0) {
 				presence->idle = time(NULL) - tstamp;
+				presence->adjust_idle_for_delay = FALSE;
 				if(presence->idle < 0) {
 					purple_debug_warning("jabber", "Received bogus idle timestamp %s\n", stamp);
 					presence->idle = 0;
-				} else {
-					presence->absolute_idle = TRUE;
 				}
 			}
 		}
+		g_free(stamp);
 	}
 }
 
@@ -1198,7 +1198,7 @@ parse_idle(JabberStream *js, JabberPresence *presence, xmlnode *query)
 	const gchar *seconds = xmlnode_get_attrib(query, "seconds");
 	if (seconds) {
 		presence->idle = atoi(seconds);
-		presence->absolute_idle = FALSE;
+		presence->adjust_idle_for_delay = TRUE;
 		if (presence->idle < 0) {
 			purple_debug_warning("jabber", "Received bogus idle time %s\n", seconds);
 			presence->idle = 0;
