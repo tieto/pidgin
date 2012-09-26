@@ -14,19 +14,21 @@ INSTALL_DIR=Gtk
 CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.16.6.0
+BUNDLE_VERSION=2.16.6.1
 
-ATK="http://ftp.acc.umu.se/pub/gnome/binaries/win32/atk/1.26/atk_1.26.0-1_win32.zip ATK 1.26.0-1 97efc4c2640e7bae38f672c5e1ff66542a202756"
+ATK="http://ftp.gnome.org/pub/gnome/binaries/win32/atk/1.32/atk_1.32.0-2_win32.zip ATK 1.32.0-2 3c31c9d6b19af840e2bd8ccbfef4072a6548dc4e"
+#Cairo 1.10.2 has a bug that can be seen when selecting text
+#CAIRO="http://ftp.gnome.org/pub/GNOME/binaries/win32/dependencies/cairo_1.10.2-2_win32.zip Cairo 1.10.2-2 d44cd66a9f4d7d29a8f2c28d1c1c5f9b0525ba44"
 CAIRO="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/cairo_1.8.10-1_win32.zip Cairo 1.8.10-1 a08476cccd807943958610977a138c4d6097c7b8"
-EXPAT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/expat_2.0.1-1_win32.zip Expat 2.0.1-1 f47790b9e324cd8613acc9a17fd56bf2c14745fc"
+EXPAT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/expat_2.1.0-1_win32.zip Expat 2.1.0-1 607ba00b8c7c4be5f1701f914b972c2b12005062"
 FONTCONFIG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/fontconfig_2.8.0-2_win32.zip Fontconfig 2.8.0-2 37a3117ea6cc50c8a88fba9b6018f35a04fa71ce"
-FREETYPE="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/freetype_2.3.11-2_win32.zip Freetype 2.3.11-2 4d40ac1a44d818ac6720c2e93503346b91e99561"
-GETTEXT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime-0.17-1.zip Gettext 0.17-1 ad486eed8a531fba1d3cc7ad2f04e8e03367a962"
-GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.20/glib_2.20.5-1_win32.zip Glib 2.20.5-1 b670b37559ef4d088153f77960c6e24a2747efe7"
+FREETYPE="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/freetype_2.4.10-1_win32.zip Freetype 2.4.10-1 e4655cf2a590fd5fbe8861a9fcbfd32131e61cac"
+GETTEXT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime_0.18.1.1-2_win32.zip Gettext 0.18.1.1-2 a7cc1ce2b99b408d1bbea9a3b4520fcaf26783b3"
+GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip Glib 2.28.8-1 5d158f4c77ca0b5508e1042955be573dd940b574"
 GTK="http://ftp.acc.umu.se/pub/gnome/binaries/win32/gtk+/2.16/gtk+_2.16.6-2_win32.zip GTK+ 2.16.6-2 012853e6de814ebda0cc4459f9eed8ae680e6d17"
-LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.0-1_win32.zip libpng 1.4.0-1 9f08167d43a19e4e2efac458f776f64d61544cb5"
-PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.26/pango_1.26.2-1_win32.zip Pango 1.26.2-1 f0e70127f7bb7a784a66d406cabf244da8316d31"
-ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib-1.2.3.zip zlib 1.2.3 0ee1e581e99fb761a5b2d46c534c861ca0f58175"
+LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.12-1_win32.zip libpng 1.4.12-1 64f271ca9ae5dc6e5fc0a8129b9ef4297df7959f"
+PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.29/pango_1.29.4-1_win32.zip Pango 1.29.4-1 3959319bd04fbce513458857f334ada279b8cdd4"
+ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib_1.2.5-2_win32.zip zlib 1.2.5-2 568907188761df2d9309196e447d91bbc5555d2b"
 
 ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBPNG PANGO ZLIB"
 
