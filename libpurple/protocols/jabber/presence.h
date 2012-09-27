@@ -71,6 +71,7 @@ struct _JabberPresence {
 	gboolean delayed;
 	time_t sent;
 	int idle;
+	gboolean adjust_idle_for_delay;
 };
 
 typedef void (JabberPresenceHandler)(JabberStream *js, JabberPresence *presence,
