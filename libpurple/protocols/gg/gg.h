@@ -44,6 +44,9 @@ typedef struct {
 	struct gg_session *session;
 	guint inpa;
 
+	gchar *imtoken;
+	gboolean imtoken_warned;
+
 	ggp_image_session_data *image_data;
 	ggp_avatar_session_data avatar_data;
 	ggp_roster_session_data roster_data;
@@ -59,5 +62,9 @@ typedef struct
 } ggp_buddy_data;
 
 ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy);
+
+const gchar * ggp_get_imtoken(PurpleConnection *gc);
+
+uin_t ggp_own_uin(PurpleConnection *gc);
 
 #endif /* _PURPLE_GG_H */

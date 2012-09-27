@@ -54,6 +54,7 @@
 #include "pubdir-prpl.h"
 #include "message-prpl.h"
 #include "html.h"
+#include "ggdrive.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -77,6 +78,30 @@ static void ggp_buddy_free(PurpleBuddy *buddy)
 
 	g_free(buddy_data);
 	purple_buddy_set_protocol_data(buddy, NULL);
+}
+
+const gchar * ggp_get_imtoken(PurpleConnection *gc)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+
+	if (accdata->imtoken)
+		return accdata->imtoken;
+
+	if (accdata->imtoken_warned)
+		return NULL;
+	accdata->imtoken_warned = TRUE;
+
+	purple_notify_error(gc, _("Authentication failed"),
+		_("IMToken value has not been received."),
+		_("Some features will be disabled. "
+		"You may try again after a while."));
+	return NULL;
+}
+
+uin_t ggp_own_uin(PurpleConnection *gc)
+{
+	return ggp_str_to_uin(purple_account_get_username(
+		purple_connection_get_account(gc)));
 }
 
 /* ---------------------------------------------------------------------- */
@@ -350,7 +375,10 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_multilogon_info(gc, &ev->event.multilogon_info);
 			break;
 		case GG_EVENT_IMTOKEN:
-			purple_debug_info("gg", "gg11: got IMTOKEN %s\n", ev->event.imtoken.imtoken);
+			purple_debug_info("gg", "gg11: got IMTOKEN\n");
+			g_free(info->imtoken);
+			info->imtoken = g_strdup(ev->event.imtoken.imtoken);
+			ggp_ggdrive_test(gc);
 			break;
 		case GG_EVENT_PONG110:
 			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
@@ -621,9 +649,6 @@ static void ggp_login(PurpleAccount *account)
 	glp = g_new0(struct gg_login_params, 1);
 	info = g_new0(GGPInfo, 1);
 
-	/* Probably this should be moved to *_new() function. */
-	info->session = NULL;
-	
 	purple_connection_set_protocol_data(gc, info);
 
 	ggp_image_setup(gc);
@@ -716,13 +741,12 @@ static void ggp_close(PurpleConnection *gc)
 	PurpleAccount *account;
 	GGPInfo *info;;
 
-	if (gc == NULL) {
-		purple_debug_info("gg", "gc == NULL\n");
-		return;
-	}
+	g_return_if_fail(gc != NULL);
 
 	account = purple_connection_get_account(gc);
 	info = purple_connection_get_protocol_data(gc);
+
+	purple_notify_close_with_handle(gc);
 
 	if (info) {
 		if (info->session != NULL)
@@ -731,11 +755,6 @@ static void ggp_close(PurpleConnection *gc)
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
-
-		/* Immediately close any notifications on this handle since that process depends
-		 * upon the contents of info->searches, which we are about to destroy.
-		 */
-		purple_notify_close_with_handle(gc);
 
 		ggp_image_cleanup(gc);
 		ggp_avatar_cleanup(gc);
@@ -747,6 +766,7 @@ static void ggp_close(PurpleConnection *gc)
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);
+		g_free(info->imtoken);
 
 		purple_connection_set_protocol_data(gc, NULL);
 		g_free(info);

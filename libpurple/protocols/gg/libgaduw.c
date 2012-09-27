@@ -32,6 +32,7 @@
 #include <debug.h>
 
 #include "purplew.h"
+#include "gg.h"
 
 /*******************************************************************************
  * HTTP requests.
@@ -137,4 +138,14 @@ static void ggp_libgaduw_http_finish(ggp_libgaduw_http_req *req,
 	req->cb(req->h, success, req->cancelled, req->user_data);
 	req->h->destroy(req->h);
 	g_free(req);
+}
+
+const gchar * ggp_libgaduw_version(PurpleConnection *gc)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	const gchar *ver = accdata->session->client_version;
+	
+	if (ver != NULL && isdigit(ver[0]))
+		return ver;
+	return GG_DEFAULT_CLIENT_VERSION;
 }

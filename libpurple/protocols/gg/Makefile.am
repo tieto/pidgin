@@ -64,6 +64,8 @@ GGSOURCES = \
 	deprecated.h \
 	gg.c \
 	gg.h \
+	ggdrive.c \
+	ggdrive.h \
 	html.c \
 	html.h \
 	image.c \

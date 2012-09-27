@@ -54,5 +54,7 @@ ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 	gboolean show_processing);
 void ggp_libgaduw_http_cancel(ggp_libgaduw_http_req *req);
 
+const gchar * ggp_libgaduw_version(PurpleConnection *gc);
+
 
 #endif /* _GGP_LIBGADUW_H */
