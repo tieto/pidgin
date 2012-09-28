@@ -417,21 +417,40 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	g_signal_connect(window, "response", G_CALLBACK(do_add_select_cb), s);
 
 	/* The vbox */
+#if GTK_CHECK_VERSION(3,0,0)
+	vbox = gtk_grid_new();
+	gtk_grid_set_row_spacing(GTK_GRID(vbox), PIDGIN_HIG_BORDER);
+#else
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+#endif
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
                     vbox);
 	gtk_widget_show(vbox);
 
 	/* The hbox */
+#if GTK_CHECK_VERSION(3,0,0)
+	hbox = gtk_grid_new();
+	gtk_grid_set_column_spacing(GTK_GRID(hbox), PIDGIN_HIG_BORDER);
+	gtk_grid_attach(GTK_GRID(vbox), hbox, 0, 0, 1, 1);
+#else
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
+#endif
 
 	label = gtk_label_new_with_mnemonic(_("_Image:"));
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
+#else
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+#endif
 	gtk_widget_show(label);
 
 	filech = gtk_button_new();
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_grid_attach_next_to(GTK_GRID(hbox), filech, NULL, GTK_POS_RIGHT, 1, 1);
+#else
 	gtk_box_pack_end(GTK_BOX(hbox), filech, FALSE, FALSE, 0);
+#endif
 	pidgin_set_accessible_label(filech, label);
 
 	s->smiley_image = gtk_image_new();
@@ -453,12 +472,23 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	gtk_widget_show_all(hbox);
 
 	/* info */
+#if GTK_CHECK_VERSION(3,0,0)
+	hbox = gtk_grid_new();
+	gtk_grid_set_column_spacing(GTK_GRID(hbox), PIDGIN_HIG_BORDER);
+
+	gtk_grid_attach_next_to(GTK_GRID(vbox), hbox, NULL, GTK_POS_BOTTOM, 1, 1);
+#else
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)),hbox);
+#endif
 
 	/* Shortcut text */
 	label = gtk_label_new_with_mnemonic(_("S_hortcut text:"));
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
+#else
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+#endif
 	gtk_widget_show(label);
 
 	s->smile = gtk_entry_new();
@@ -476,7 +506,11 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	g_signal_connect(G_OBJECT(s->smile), "insert-text", G_CALLBACK(smiley_name_insert_cb), s);
 	g_signal_connect(G_OBJECT(s->smile), "delete-text", G_CALLBACK(smiley_name_delete_cb), s);
 
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_grid_attach_next_to(GTK_GRID(hbox), s->smile, NULL, GTK_POS_RIGHT, 1, 1);
+#else
 	gtk_box_pack_end(GTK_BOX(hbox), s->smile, FALSE, FALSE, 0);
+#endif
 	gtk_widget_show(s->smile);
 
 	gtk_widget_show(hbox);
