@@ -232,7 +232,7 @@ const gchar * ggp_date_strftime(const gchar *format, time_t date)
 	GDate g_date;
 	static gchar buff[30];
 	
-	g_date_set_time(&g_date, date);
+	g_date_set_time_t(&g_date, date);
 	if (0 == g_date_strftime(buff, sizeof(buff), format, &g_date))
 		return NULL;
 	return buff;
