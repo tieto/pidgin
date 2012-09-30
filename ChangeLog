@@ -9,7 +9,8 @@ version 2.10.7:
 	  buddies will be disabled till 3.0.0. (#15226, #14305)
 
 	IRC:
-	* Support for SASL authentication.  (Thijs Alkemade) (#13270)
+	* Support for SASL authentication.  (Thijs Alkemade, Andy Spencer)
+	  (#13270)
 
 	MSN:
 	* Fix a crash when removing a user before its icon is loaded. (Mark
