@@ -317,9 +317,14 @@ static void ggp_avatar_buddy_update_received(PurpleUtilFetchUrlData *url_data,
 
 void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	ggp_avatar_own_data *own_data = ggp_avatar_get_avdata(gc)->own_data;
+	ggp_avatar_own_data *own_data;
+	
+	if (!PURPLE_CONNECTION_IS_VALID(gc) || !PURPLE_CONNECTION_IS_CONNECTED(gc))
+		return;
 	
 	purple_debug_info("gg", "ggp_avatar_own_set(%p, %p)", gc, img);
+	
+	own_data = ggp_avatar_get_avdata(gc)->own_data;
 	
 	if (img == NULL)
 	{
