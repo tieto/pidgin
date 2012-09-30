@@ -168,6 +168,7 @@ pidgin_LDADD = \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
+	$(X11_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 if USE_INTERNAL_LIBGADU
@@ -188,6 +189,7 @@ AM_CPPFLAGS = \
 	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
