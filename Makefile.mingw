@@ -102,10 +102,10 @@ endif
 	cp $(WIN32_DEV_TOP)/pidgin-inst-deps-20100315/exchndl.dll $(PIDGIN_INSTALL_DIR)
 	cp $(GCC_SSP_TOP)/bin/libssp-0.dll $(PIDGIN_INSTALL_DIR)
 
-pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip:
+pidgin/win32/nsis/gtk-runtime-$(GTK_INSTALL_VERSION).zip:
 	pidgin/win32/nsis/generate_gtk_zip.sh `pwd`
 
-generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
+generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-runtime-$(GTK_INSTALL_VERSION).zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
 	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
 	find $(STRIPPED_RELEASE_DIR)/locale -maxdepth 1 -mindepth 1 \
 	 -exec basename {} ';' \
@@ -147,7 +147,12 @@ create_release_install_dir: install
 		$(STRIPPED_RELEASE_DIR)/pidgin.exe
 
 installer: generate_installer_includes
-	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" -DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(eval $@_DEBUG_SYMBOLS_SHA1SUM := $(shell sha1sum $(DEBUG_SYMBOLS_DIR).zip | sed -e "s/\ .*$$//"))
+	$(eval $@_GTK_SHA1SUM := $(shell sha1sum pidgin/win32/nsis/gtk-runtime-$(GTK_INSTALL_VERSION).zip | sed -e "s/\ .*$$//"))
+	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" \
+		-DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" \
+		-DDEBUG_SYMBOLS_SHA1SUM="$($@_DEBUG_SYMBOLS_SHA1SUM)" -DGTK_SHA1SUM="$($@_GTK_SHA1SUM)"\
+		pidgin/win32/nsis/pidgin-installer.nsi
 	$(MONO_SIGNCODE) \
 		-spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
 		-a sha1 -$$ commercial \
@@ -157,7 +162,10 @@ installer: generate_installer_includes
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe ./
 
 installer_offline: generate_installer_includes
-	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" -DOFFLINE_INSTALLER -DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" \
+		-DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" \
+		-DOFFLINE_INSTALLER \
+		pidgin/win32/nsis/pidgin-installer.nsi
 	$(MONO_SIGNCODE) \
 		-spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
 		-a sha1 -$$ commercial \

@@ -12,9 +12,32 @@ STAGE_DIR=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis/gtk_runtime_stage`
 #Subdirectory of $STAGE_DIR
 INSTALL_DIR=Gtk
 CONTENTS_FILE=$INSTALL_DIR/CONTENTS
+PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.16.6.1
+BUNDLE_SHA1SUM=5e16b7efb11943e8c80bc390f6c38df904fd36ed
+ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
+
+#Download the existing file (so that we distribute the exact same file for all releases with the same bundle version)
+FILE="$ZIP_FILE"
+if [ ! -e "$FILE" ]; then
+	wget "https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk" -O "$FILE"
+fi
+CHECK_SHA1SUM=`sha1sum $FILE`
+CHECK_SHA1SUM=${CHECK_SHA1SUM%%\ *}
+if [ "$CHECK_SHA1SUM" != "$BUNDLE_SHA1SUM" ]; then
+	echo "sha1sum ($CHECK_SHA1SUM) for $FILE doesn't match expected value of $BUNDLE_SHA1SUM"
+	# Allow "devel" versions to build their own bundles if the download doesn't succeed
+	if [[ "$PIDGIN_VERSION" == *"devel" ]]; then
+		echo "Continuing GTK+ Bundle creation for development version of Pidgin"
+	else
+		exit 1
+	fi
+else
+	exit 0
+fi
+
 
 ATK="http://ftp.gnome.org/pub/gnome/binaries/win32/atk/1.32/atk_1.32.0-2_win32.zip ATK 1.32.0-2 sha1sum:3c31c9d6b19af840e2bd8ccbfef4072a6548dc4e"
 #Cairo 1.10.2 has a bug that can be seen when selecting text
@@ -106,9 +129,8 @@ do
 done
 
 #Generate zip file to be included in installer
-ZIPFILE=../gtk-runtime-$BUNDLE_VERSION.zip
-rm -f $ZIPFILE
-zip -9 -r $ZIPFILE Gtk
+rm -f $ZIP_FILE
+zip -9 -r $ZIP_FILE Gtk
 
 exit 0
 
