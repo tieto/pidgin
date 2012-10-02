@@ -2,6 +2,7 @@
 # Script to generate zip file for GTK+ runtime to be included in Pidgin installer
 
 PIDGIN_BASE=$1
+GPG_SIGN=$2
 
 if [ ! -e $PIDGIN_BASE/ChangeLog ]; then
 	echo $(basename $0) must must have the pidgin base dir specified as a parameter.
@@ -89,13 +90,14 @@ function download_and_extract {
 			wget "$URL.asc" || exit 1
 		fi
 		#Use our own keyring to avoid adding stuff to the main keyring
-		GPG="gpg -q --keyring $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg" 
+		#This doesn't use $GPG_SIGN because we don't this validation to be bypassed when people are skipping signing output
+		GPG_BASE="gpg -q --keyring $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg" 
 		if [[ ! -e $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg \
-				|| `$GPG --list-keys "$VALIDATION_VALUE" > /dev/null && echo -n "0"` -ne 0 ]]; then
+				|| `$GPG_BASE --list-keys "$VALIDATION_VALUE" > /dev/null && echo -n "0"` -ne 0 ]]; then
 			touch $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg
-		       	$GPG --no-default-keyring --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
+		       	$GPG_BASE --no-default-keyring --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
 		fi
-		$GPG --verify "$FILE.asc" || (echo "$FILE failed signature verification"; exit 1) || exit 1
+		$GPG_BASE --verify "$FILE.asc" || (echo "$FILE failed signature verification"; exit 1) || exit 1
 	else
 		echo "Unrecognized validation type of $VALIDATION_TYPE"
 		exit 1
@@ -132,6 +134,7 @@ done
 #Generate zip file to be included in installer
 rm -f $ZIP_FILE
 zip -9 -r $ZIP_FILE Gtk
+($GPG_SIGN -ab $ZIP_FILE && $GPG_SIGN --verify $ZIP_FILE.asc) || exit 1
 
 exit 0
 

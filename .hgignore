@@ -9,6 +9,7 @@ syntax: regexp
 .*/perl/common/pm_to_blib$
 .*~$
 .*\.a$
+.*\.asc$
 .*\.bak$
 .*\.bs$
 .*\.def$
