@@ -89,10 +89,11 @@ function download_and_extract {
 			wget "$URL.asc" || exit 1
 		fi
 		#Use our own keyring to avoid adding stuff to the main keyring
-		GPG="gpg -q --keyring $VALIDATION_VALUE-keyring.gpg"
-		$GPG --list-keys "$VALIDATION_VALUE" > /dev/null
-		if [ $? -ne 0 ]; then
-		       	$GPG --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
+		GPG="gpg -q --keyring $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg" 
+		if [[ ! -e $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg \
+				|| `$GPG --list-keys "$VALIDATION_VALUE" > /dev/null && echo -n "0"` -ne 0 ]]; then
+			touch $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg
+		       	$GPG --no-default-keyring --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
 		fi
 		$GPG --verify "$FILE.asc" || (echo "$FILE failed signature verification"; exit 1) || exit 1
 	else
