@@ -22,7 +22,27 @@ version 2.10.7:
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
-	 backends. (Brad Smith) (#14414)
+	  backends. (Brad Smith) (#14414)
+
+	Windows-Specific Changes:
+	* Compile with secure flags (#15290)
+	* Installer downloads GTK+ Runtime and Debug Symbols more securely.
+	  (#15277)
+	* Updates to a number of dependencies, some of which have security
+	  related fixes. (#14571, #15285, #15286)
+	 * ATK 1.32.0-2
+	 * Cyrus SASL 2.1.25
+	 * expat 2.1.0-1
+	 * freetype 2.4.10-1
+	 * gettext 0.18.1.1-2
+	 * Glib 2.28.8-1
+	 * libpng 1.4.12-1
+	 * libxml2 2.9.0-1
+	 * NSS 3.13.6 and NSPR 4.9.2
+	 * Pango 1.29.4-1
+	 * SILC 1.1.10
+	 * zlib 1.2.5-2
+	* Patch libmeanwhile (sametime library) to fix crash. (#12637)
 
 version 2.10.6 (07/06/2012):
 	Pidgin:
