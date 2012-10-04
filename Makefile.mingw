@@ -181,6 +181,7 @@ debug_symbols_zip: install
 	tar -cf - `find $(PIDGIN_INSTALL_DIR) \( -name '*.dll' -o -name '*.exe' \) \
 	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -print` \
 	 | tar --strip 2 --xform s/$$/.dbgsym/ -xC $(DEBUG_SYMBOLS_DIR) -f -
+	cp $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll.unstripped $(DEBUG_SYMBOLS_DIR)/libmeanwhile-1.dll.dbgsym
 	zip -9 -r $(DEBUG_SYMBOLS_DIR).zip $(DEBUG_SYMBOLS_DIR) 
 	$(call gpg_sign, $(DEBUG_SYMBOLS_DIR).zip)
 
