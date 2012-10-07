@@ -10190,45 +10190,48 @@ gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversati
 }
 
 #if GTK_CHECK_VERSION(3,0,0)
-static void set_default_tab_colors(GtkWidget *widget)
+static void
+set_default_tab_colors(GtkWidget *widget)
 {
-    GString *str;
-    GtkCssProvider *provider;
-    GError *error = NULL;
-    int iter;
+	GString *str;
+	GtkCssProvider *provider;
+	GError *error = NULL;
+	int iter;
 
-    struct {
-        const char *labelname;
-        const char *color;
-    } styles[] = {
-        {"tab-label-typing", "#4e9a06"},
-        {"tab-label-typed", "#c4a000"},
-        {"tab-label-attention", "#006aff"},
-        {"tab-label-unreadchat", "#cc0000"},
-        {"tab-label-event", "#888a85"},
-        {NULL, NULL}
-    };
+	struct {
+		const char *labelname;
+		const char *color;
+	} styles[] = {
+		{"tab-label-typing", "#4e9a06"},
+		{"tab-label-typed", "#c4a000"},
+		{"tab-label-attention", "#006aff"},
+		{"tab-label-unreadchat", "#cc0000"},
+		{"tab-label-event", "#888a85"},
+		{NULL, NULL}
+	};
 
-    str = g_string_new(NULL);
+	str = g_string_new(NULL);
 
-    for (iter = 0; styles[iter].labelname; iter++) {
-        g_string_append_printf(str, "#%s {\n"
-                "    color: %s;\n"
-                "}\n",
-                styles[iter].labelname,
-                styles[iter].color);
-    }
+	for (iter = 0; styles[iter].labelname; iter++) {
+		g_string_append_printf(str,
+		                       "#%s {\n"
+		                       "	color: %s;\n"
+		                       "}\n",
+		                       styles[iter].labelname,
+		                       styles[iter].color);
+	}
 
-    provider = gtk_css_provider_new();
+	provider = gtk_css_provider_new();
 
-    gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
+	gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
 
-    gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
-            provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
+	                               provider,
+	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    if (error)
-        g_error_free(error);
-    g_string_free(str, TRUE);
+	if (error)
+		g_error_free(error);
+	g_string_free(str, TRUE);
 }
 #endif
 
@@ -10271,7 +10274,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
 #if GTK_CHECK_VERSION(3,0,0)
-    set_default_tab_colors(gtkconv->tab_label);
+	set_default_tab_colors(gtkconv->tab_label);
 #endif
 	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
