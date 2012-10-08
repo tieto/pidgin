@@ -42,7 +42,8 @@ version 2.10.7:
 	 * Pango 1.29.4-1
 	 * SILC 1.1.10
 	 * zlib 1.2.5-2
-	* Patch libmeanwhile (sametime library) to fix crash. (#12637)
+	* Patch libmeanwhile (sametime library) to fix crash. (Jonathan Rice)
+	  (#12637)
 
 version 2.10.6 (07/06/2012):
 	Pidgin:
