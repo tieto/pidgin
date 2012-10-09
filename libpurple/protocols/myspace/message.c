@@ -129,7 +129,7 @@ msim_unescape(const gchar *msg)
  *
  * @param first_key The first argument (a key), or NULL to take all arguments
  *    from argp.
- * @param argp A va_list of variadic arguments, already started with va_start(). Will be va_end()'d.
+ * @param argp A va_list of variadic arguments, already started with va_start().
  * @return New MsimMessage *, must be freed with msim_msg_free().
  *
  * For internal use - users probably want msim_msg_new() or msim_send().
@@ -211,7 +211,6 @@ msim_msg_new_v(gchar *first_key, va_list argp)
 				break;
 		}
 	} while(key);
-	va_end(argp);
 
 	return msg;
 }
@@ -227,14 +226,16 @@ msim_msg_new_v(gchar *first_key, va_list argp)
 MsimMessage *
 msim_msg_new(gchar *first_key, ...)
 {
+	MsimMessage *ret = NULL;
 	va_list argp;
 
 	if (first_key) {
-	va_start(argp, first_key);
-		return msim_msg_new_v(first_key, argp);
-	} else {
-		return NULL;
+		va_start(argp, first_key);
+		ret = msim_msg_new_v(first_key, argp);
+		va_end(argp);
 	}
+
+	return ret;
 }
 
 /**
@@ -960,6 +961,7 @@ msim_send(MsimSession *session, ...)
 
 	va_start(argp, session);
 	msg = msim_msg_new_v(NULL, argp);
+	va_end(argp);
 
 	/* Actually send the message. */
 	success = msim_msg_send(session, msg);
