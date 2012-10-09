@@ -2177,6 +2177,7 @@ static void ggp_login(PurpleAccount *account)
 
 		glp->server_addr = inet_addr(inet_ntoa(*addr));
 		glp->server_port = 8074;
+		free(addr);
 	} else
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
