@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "http.h"
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
@@ -251,6 +252,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	update_keepalive(gc, FALSE);
 
+	purple_http_conn_cancel_all(gc);
 	purple_proxy_connect_cancel_with_handle(gc);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);

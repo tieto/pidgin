@@ -55,10 +55,28 @@
 
 /* ---------------------------------------------------------------------- */
 
+#include <http.h>
+
+static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	purple_debug_info("http-test", "Testing http done %s.\n",
+		purple_http_response_is_successfull(response) ?
+		"successfully" : "without success");
+	purple_debug_info("http-test", "Returned http code: %d.\n",
+		purple_http_response_get_code(response));
+	purple_debug_info("http-test", "Returned content: [%s].\n",
+		purple_http_response_get_data(response));
+}
+
 static void ggp_action_test_http(PurplePluginAction *action)
 {
+	PurpleConnection *gc = (PurpleConnection *)action->context;
+
 	purple_debug_info("http-test", "Testing http...\n");
-	purple_debug_info("http-test", "Testing http done.\n");
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+	purple_debug_info("http-test", "Testing http started.\n");
 }
 
 /* ---------------------------------------------------------------------- */
