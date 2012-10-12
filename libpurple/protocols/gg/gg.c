@@ -55,6 +55,14 @@
 
 /* ---------------------------------------------------------------------- */
 
+static void ggp_action_test_http(PurplePluginAction *action)
+{
+	purple_debug_info("http-test", "Testing http...\n");
+	purple_debug_info("http-test", "Testing http done.\n");
+}
+
+/* ---------------------------------------------------------------------- */
+
 ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy)
 {
 	ggp_buddy_data *buddy_data = purple_buddy_get_protocol_data(buddy);
@@ -1313,6 +1321,10 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
 	PurplePluginAction *act;
+
+	act = purple_plugin_action_new(_("Test new HTTP API"),
+		ggp_action_test_http);
+	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Change password..."),
 		ggp_action_chpass);
