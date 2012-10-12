@@ -50,6 +50,7 @@ purple_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	http.c \
 	idle.c \
 	imgstore.c \
 	log.c \
