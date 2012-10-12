@@ -438,7 +438,7 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 	   example description URL: http://192.168.1.1:5678/rootDesc.xml */
 
 	/* parse the url into address, port, path variables */
-	if(!purple_url_parse(descriptionURL, &descriptionAddress,
+	if(!purple_url_parse(descriptionURL, NULL, &descriptionAddress,
 			&port, &descriptionXMLAddress, NULL, NULL)) {
 		return;
 	}
@@ -706,7 +706,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	int port = 0;
 
 	/* parse the url into address, port, path variables */
-	if(!purple_url_parse(control_info.control_url, &addressOfControl,
+	if(!purple_url_parse(control_info.control_url, NULL, &addressOfControl,
 			&port, &pathOfControl, NULL, NULL)) {
 		purple_debug_error("upnp",
 			"generate_action_message_and_send(): Failed In Parse URL\n");
@@ -837,7 +837,7 @@ lookup_internal_ip()
 	gchar* addressOfControl;
 	int port = 0;
 
-	if(!purple_url_parse(control_info.control_url, &addressOfControl, &port,
+	if(!purple_url_parse(control_info.control_url, NULL, &addressOfControl, &port,
 			NULL, NULL, NULL)) {
 		purple_debug_error("upnp",
 			"lookup_internal_ip(): Failed In Parse URL\n");

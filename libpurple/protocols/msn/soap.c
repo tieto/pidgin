@@ -274,7 +274,7 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 	char *host;
 	char *path;
 
-	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
+	if (purple_url_parse(url, NULL, &host, NULL, &path, NULL, NULL)) {
 		MsnSoapRequest *req = conn->current_request;
 		conn->current_request = NULL;
 

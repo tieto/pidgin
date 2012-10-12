@@ -871,7 +871,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	/* Setup the Yahoo-specific file transfer data */
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
 	xfer_data->gc = gc;
-	if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
+	if (!purple_url_parse(url, NULL, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
 		g_free(xfer_data);
 		return;
 	}
@@ -1045,7 +1045,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		hosts = g_slist_remove(hosts, hosts->data);
 	}
 
-	if (!purple_url_parse(url, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
+	if (!purple_url_parse(url, NULL, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
 		purple_xfer_cancel_remote(xfer);
 		g_free(url);
 		return;
@@ -1840,7 +1840,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
 	if(val_249 == 1 || val_249 == 3) {
 		PurpleAccount *account;
-		if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
+		if (!purple_url_parse(url, NULL, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
 			purple_xfer_cancel_remote(xfer);
 			return;
 		}
@@ -1933,7 +1933,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 
 	xfer_data = purple_xfer_get_protocol_data(xfer);
 	if(url)
-		purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL);
+		purple_url_parse(url, NULL, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL);
 
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
 	xfer_data->status_15 = ACCEPTED;

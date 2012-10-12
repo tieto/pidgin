@@ -202,7 +202,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	char *host, *path, *user, *passwd;
 	int port;
 
-	if (!purple_url_parse(url, &host, &port, &path, &user, &passwd)) {
+	if (!purple_url_parse(url, NULL, &host, &port, &path, &user, &passwd)) {
 		purple_debug_info("jabber", "Unable to parse given URL.\n");
 		return NULL;
 	}

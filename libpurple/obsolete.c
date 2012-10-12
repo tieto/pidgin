@@ -170,7 +170,7 @@ parse_redirect(const char *data, size_t data_len,
 	g_free(gfud->website.passwd);
 	g_free(gfud->website.address);
 	g_free(gfud->website.page);
-	purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
+	purple_url_parse(new_url, NULL, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if (purple_strcasestr(new_url, "https://") != NULL) {
@@ -647,7 +647,7 @@ purple_util_fetch_url_request(PurpleAccount *account,
 	gfud->max_len = max_len;
 	gfud->account = account;
 
-	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
+	purple_url_parse(url, NULL, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if (purple_strcasestr(url, "https://") != NULL) {

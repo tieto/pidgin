@@ -2278,7 +2278,7 @@ purple_proxy_get_setup(PurpleAccount *account)
 			/* http_proxy-format:
 			 * export http_proxy="http://user:passwd@your.proxy.server:port/"
 			 */
-			if(purple_url_parse(tmp, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
+			if(purple_url_parse(tmp, NULL, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
 				purple_proxy_info_set_host(gpi, proxyhost);
 				g_free(proxyhost);
 
