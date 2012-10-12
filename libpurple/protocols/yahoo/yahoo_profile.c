@@ -24,6 +24,7 @@
 #define PHOTO_SUPPORT 1
 
 #include "internal.h"
+#include "obsolete.h"
 #include "debug.h"
 #include "notify.h"
 #include "util.h"

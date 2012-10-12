@@ -22,6 +22,7 @@
  */
 
 #include "internal.h"
+#include "obsolete.h"
 
 #include "useravatar.h"
 #include "pep.h"

@@ -32,12 +32,6 @@
 #include <stdio.h>
 
 /**
-  * An opaque structure representing a URL request. Can be used to cancel
-  * the request.
-  */
-typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
-
-/**
  * A generic structure that contains information about an "action."  One
  * place this is is used is by PRPLs to tell the core the list of available
  * right-click actions for a buddy list row.
@@ -1163,70 +1157,6 @@ void purple_got_protocol_handler_uri(const char *uri);
  */
 gboolean purple_url_parse(const char *url, char **ret_host, int *ret_port,
 						char **ret_path, char **ret_user, char **ret_passwd);
-
-/**
- * This is the signature used for functions that act as the callback
- * to purple_util_fetch_url() or purple_util_fetch_url_request().
- *
- * @param url_data      The same value that was returned when you called
- *                      purple_fetch_url() or purple_fetch_url_request().
- * @param user_data     The user data that your code passed into either
- *                      purple_util_fetch_url() or purple_util_fetch_url_request().
- * @param url_text      This will be NULL on error.  Otherwise this
- *                      will contain the contents of the URL.
- * @param len           0 on error, otherwise this is the length of buf.
- * @param error_message If something went wrong then this will contain
- *                      a descriptive error message, and buf will be
- *                      NULL and len will be 0.
- */
-typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
- * @param cb         The callback function.
- * @param data       The user data to pass to the callback function.
- */
-#define purple_util_fetch_url(url, full, user_agent, http11, max_len, cb, data) \
-	purple_util_fetch_url_request(NULL, url, full, user_agent, http11, NULL, \
-		FALSE, max_len, cb, data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param account    The account for which the request is needed, or NULL.
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param request    A HTTP request to send to the server instead of the
- *                   standard GET
- * @param include_headers
- *                   If TRUE, include the HTTP headers in the response.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
- * @param callback   The callback function.
- * @param data       The user data to pass to the callback function.
- */
-PurpleUtilFetchUrlData *purple_util_fetch_url_request(
-		PurpleAccount *account, const gchar *url,
-		gboolean full, const gchar *user_agent, gboolean http11,
-		const gchar *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, gpointer data);
-
-/**
- * Cancel a pending URL request started with either
- * purple_util_fetch_url_request() or purple_util_fetch_url().
- *
- * @param url_data The data returned when you initiated the URL fetch.
- */
-void purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *url_data);
 
 /**
  * Decodes a URL into a plain string.

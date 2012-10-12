@@ -20,6 +20,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "obsolete.h"
 
 #include "relay.h"
 

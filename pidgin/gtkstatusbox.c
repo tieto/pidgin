@@ -43,6 +43,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "internal.h"
+#include "obsolete.h"
 
 #include "account.h"
 #include "buddyicon.h"

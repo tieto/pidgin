@@ -20,6 +20,8 @@
 #ifndef _MYSPACE_USER_H
 #define _MYSPACE_USER_H
 
+#include "obsolete.h"
+
 /* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
 /* GHashTable? */
 typedef struct _MsimUser

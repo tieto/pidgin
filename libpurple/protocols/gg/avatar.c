@@ -31,6 +31,7 @@
 
 #include <debug.h>
 #include <glibcompat.h>
+#include <obsolete.h>
 
 #include "gg.h"
 #include "utils.h"

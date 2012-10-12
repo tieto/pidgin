@@ -65,6 +65,7 @@ purple_coresources = \
 	network.c \
 	ntlm.c \
 	notify.c \
+	obsolete.c \
 	plugin.c \
 	pluginpref.c \
 	pounce.c \
@@ -283,6 +284,7 @@ libpurple_la_SOURCES = \
 
 noinst_HEADERS= \
 	internal.h \
+	obsolete.h \
 	media/backend-fs2.h \
 	valgrind.h
 
