@@ -3880,7 +3880,7 @@ purple_url_parse(const char *url, char **ret_proto, char **ret_host,
 #define PASSWD_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
 
 	g_return_val_if_fail(url != NULL, FALSE);
-	g_return_val_if_fail(strlen(url) >= 256, FALSE);
+	g_return_val_if_fail(strlen(url) < 256, FALSE);
 
 	colon = strchr(url, ':');
 	if (colon) {
