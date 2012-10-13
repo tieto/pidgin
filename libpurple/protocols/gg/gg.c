@@ -76,12 +76,12 @@ static void ggp_action_test_http(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	purple_debug_info("http-test", "Testing http...\n");
-//	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
-//		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
 //	purple_http_get(gc, "http://google.com",
 //		ggp_test_http_cb, NULL);
-	purple_http_get(gc, "http://wp.pl",
-		ggp_test_http_cb, NULL);
+//	purple_http_get(gc, "http://wp.pl",
+//		ggp_test_http_cb, NULL);
 	purple_debug_info("http-test", "Testing http started.\n");
 }
 
