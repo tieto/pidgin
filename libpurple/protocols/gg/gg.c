@@ -60,6 +60,9 @@
 static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
+	const gchar *data;
+	gchar *data_front, *data_tail;
+
 	purple_debug_info("http-test", "Testing http done %s.\n",
 		purple_http_response_is_successfull(response) ?
 		"successfully" : "without success");
@@ -67,8 +70,18 @@ static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 		purple_http_response_get_code(response));
 	purple_debug_info("http-test", "Returned error: %s.\n",
 		purple_http_response_get_error(response));
-	purple_debug_info("http-test", "Returned content: [%s].\n",
-		purple_http_response_get_data(response));
+
+	data = purple_http_response_get_data(response);
+	if (strlen(data) < 50)
+		purple_debug_info("http-test", "Returned content: [%s].\n", data);
+	else {
+		data_front = g_strndup(data, 20);
+		data_tail = g_strdup(data + strlen(data) - 20);
+		purple_debug_info("http-test", "Returned content: [%s ... %s].\n",
+			data_front, data_tail);
+		g_free(data_front);
+		g_free(data_tail);
+	}
 }
 
 static void ggp_action_test_http(PurplePluginAction *action)
@@ -76,12 +89,12 @@ static void ggp_action_test_http(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	purple_debug_info("http-test", "Testing http...\n");
-	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
-		ggp_test_http_cb, NULL);
+//	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+//		ggp_test_http_cb, NULL);
 //	purple_http_get(gc, "http://google.com",
 //		ggp_test_http_cb, NULL);
-//	purple_http_get(gc, "http://wp.pl",
-//		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wp.pl",
+		ggp_test_http_cb, NULL);
 	purple_debug_info("http-test", "Testing http started.\n");
 }
 
