@@ -72,11 +72,11 @@ static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 		purple_http_response_get_error(response));
 
 	data = purple_http_response_get_data(response);
-	if (strlen(data) < 50)
+	if (strlen(data) < 200)
 		purple_debug_info("http-test", "Returned content: [%s].\n", data);
 	else {
-		data_front = g_strndup(data, 20);
-		data_tail = g_strdup(data + strlen(data) - 20);
+		data_front = g_strndup(data, 100);
+		data_tail = g_strdup(data + strlen(data) - 100);
 		purple_debug_info("http-test", "Returned content: [%s ... %s].\n",
 			data_front, data_tail);
 		g_free(data_front);
