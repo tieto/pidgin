@@ -28,7 +28,6 @@
 #endif
 
 #include "internal.h"
-//#include "obsolete.h"
 
 #include <string.h>
 
