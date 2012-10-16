@@ -56,6 +56,7 @@
 /* ---------------------------------------------------------------------- */
 
 #include <http.h>
+#include <obsolete.h>
 
 static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
@@ -84,6 +85,31 @@ static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	}
 }
 
+/*
+static void ggp_test_http_cb2(PurpleUtilFetchUrlData *url_data,
+	gpointer user_data, const gchar *url_text, gsize len,
+	const gchar *error_message)
+{
+	const gchar *data = url_text;
+	gchar *data_front, *data_tail;
+
+	purple_debug_info("http-test", "Testing http done (err: %s)\n", error_message);
+
+	if (data == NULL)
+		data = "";
+	if (strlen(data) < 200)
+		purple_debug_info("http-test", "Returned content: [%s].\n", data);
+	else {
+		data_front = g_strndup(data, 100);
+		data_tail = g_strdup(data + strlen(data) - 100);
+		purple_debug_info("http-test", "Returned content: [%s ... %s].\n",
+			data_front, data_tail);
+		g_free(data_front);
+		g_free(data_tail);
+	}
+}
+*/
+
 static void ggp_action_test_http(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -93,8 +119,15 @@ static void ggp_action_test_http(PurplePluginAction *action)
 //		ggp_test_http_cb, NULL);
 //	purple_http_get(gc, "http://google.com",
 //		ggp_test_http_cb, NULL);
-	purple_http_get(gc, "http://www.wp.pl",
+	purple_http_get(gc, "http://wp.pl",
 		ggp_test_http_cb, NULL);
+
+//	purple_http_get(gc, "https://www.google.pl",
+//		ggp_test_http_cb, NULL);
+
+//	purple_util_fetch_url("https://www.google.pl",
+//		TRUE, NULL, TRUE, -1, ggp_test_http_cb2, NULL);
+
 	purple_debug_info("http-test", "Testing http started.\n");
 }
 
