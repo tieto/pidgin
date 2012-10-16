@@ -64,13 +64,13 @@ static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	const gchar *data;
 	gchar *data_front, *data_tail;
 
-	purple_debug_info("http-test", "Testing http done %s.\n",
-		purple_http_response_is_successfull(response) ?
-		"successfully" : "without success");
-	purple_debug_info("http-test", "Returned http code: %d.\n",
-		purple_http_response_get_code(response));
-	purple_debug_info("http-test", "Returned error: %s.\n",
-		purple_http_response_get_error(response));
+//	purple_debug_info("http-test", "Testing http done %s.\n",
+//		purple_http_response_is_successfull(response) ?
+//		"successfully" : "without success");
+//	purple_debug_info("http-test", "Returned http code: %d.\n",
+//		purple_http_response_get_code(response));
+//	purple_debug_info("http-test", "Returned error: %s.\n",
+//		purple_http_response_get_error(response));
 
 	data = purple_http_response_get_data(response);
 	if (strlen(data) < 200)
@@ -112,21 +112,43 @@ static void ggp_test_http_cb2(PurpleUtilFetchUrlData *url_data,
 
 static void ggp_action_test_http(PurplePluginAction *action)
 {
+	PurpleHttpRequest *request;
+	//PurpleHttpConnection *hc;
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	purple_debug_info("http-test", "Testing http...\n");
 //	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
 //		ggp_test_http_cb, NULL);
+/*
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
+		ggp_test_http_cb, NULL);
+*/
+
 //	purple_http_get(gc, "http://google.com",
 //		ggp_test_http_cb, NULL);
-	purple_http_get(gc, "http://wp.pl",
-		ggp_test_http_cb, NULL);
+//	purple_http_get(gc, "http://wp.pl",
+//		ggp_test_http_cb, NULL);
 
 //	purple_http_get(gc, "https://www.google.pl",
 //		ggp_test_http_cb, NULL);
 
 //	purple_util_fetch_url("https://www.google.pl",
 //		TRUE, NULL, TRUE, -1, ggp_test_http_cb2, NULL);
+
+
+	request = purple_http_request_new("http://wp.pl");
+//	purple_http_request_set_http11(request, FALSE);
+	purple_http_request_set_max_redirects(request, 1);
+	purple_http_request(gc, request, ggp_test_http_cb, NULL);
+	purple_http_request_unref(request);
 
 	purple_debug_info("http-test", "Testing http started.\n");
 }
