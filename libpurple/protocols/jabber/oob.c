@@ -209,7 +209,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	if (!purple_url_parse(url, NULL, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
+	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
 		g_free(url);
 		return;
 	}

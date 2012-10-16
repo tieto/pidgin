@@ -1530,7 +1530,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 	rl = purple_roomlist_new(account);
 	yrl->list = rl;
 
-	purple_url_parse(url, NULL, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "room", TRUE);
@@ -1624,7 +1624,7 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	proto_data = g_list_append(proto_data, yrl);
 	purple_roomlist_set_proto_data(list, proto_data);
 
-	purple_url_parse(url, NULL, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
 	yrl->ucat = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);

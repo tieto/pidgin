@@ -3859,20 +3859,31 @@ void purple_got_protocol_handler_uri(const char *uri)
 		g_hash_table_destroy(params);
 }
 
+/*
+ * TODO: Should probably add a "gboolean *ret_ishttps" parameter that
+ *       is set to TRUE if this URL is https, otherwise it is set to
+ *       FALSE.  But that change will break the API.
+ *
+ *       This is important for Yahoo! web messenger login.  They now
+ *       force https login, and if you access the web messenger login
+ *       page via http then it redirects you to the https version, but
+ *       purple_util_fetch_url() ignores the "https" and attempts to
+ *       fetch the URL via http again, which gets redirected again.
+ */
 gboolean
-purple_url_parse(const char *url, char **ret_proto, char **ret_host,
-	int *ret_port, char **ret_path, char **ret_user, char **ret_passwd)
+purple_url_parse(const char *url, char **ret_host, int *ret_port,
+			   char **ret_path, char **ret_user, char **ret_passwd)
 {
 	gboolean is_https = FALSE;
 	const char * scan_info;
 	char port_str[6];
 	int f;
-	const char *at, *slash, *colon;
-	char proto[256], host[256], path[256], user[256], passwd[256];
+	const char *at, *slash;
+	const char *turl;
+	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
 	/* hyphen at end includes it in control set */
 
-#define PROTO_CTRL "A-Za-z"
 #define ADDR_CTRL "A-Za-z0-9.-"
 #define PORT_CTRL "0-9"
 #define PAGE_CTRL "A-Za-z0-9.,~_/:*!@&%%?=+^-"
@@ -3880,22 +3891,18 @@ purple_url_parse(const char *url, char **ret_proto, char **ret_host,
 #define PASSWD_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
 
 	g_return_val_if_fail(url != NULL, FALSE);
-	g_return_val_if_fail(strlen(url) < 256, FALSE);
 
-	colon = strchr(url, ':');
-	if (colon) {
-		scan_info = "%255[" PROTO_CTRL "]:";
-		f = sscanf(url, scan_info, proto);
-
-		if (f == 1) {
-			url = colon + 1;
-			if (url[0] == '/') url++;
-			if (url[0] == '/') url++;
-		} else
-			proto[0] = '\0';
+	if ((turl = purple_strcasestr(url, "http://")) != NULL)
+	{
+		turl += 7;
+		url = turl;
 	}
-
-	is_https = (g_ascii_strcasecmp(proto, "https") == 0);
+	else if ((turl = purple_strcasestr(url, "https://")) != NULL)
+	{
+		is_https = TRUE;
+		turl += 8;
+		url = turl;
+	}
 
 	/* parse out authentication information if supplied */
 	/* Only care about @ char BEFORE the first / */
@@ -3943,7 +3950,6 @@ purple_url_parse(const char *url, char **ret_proto, char **ret_host,
 
 	sscanf(port_str, "%d", &port);
 
-	if (ret_proto != NULL) *ret_proto = g_strdup(proto);
 	if (ret_host != NULL) *ret_host = g_strdup(host);
 	if (ret_port != NULL) *ret_port = port;
 	if (ret_path != NULL) *ret_path = g_strdup(path);

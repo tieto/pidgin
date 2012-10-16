@@ -337,7 +337,7 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 	gboolean	ok;
 
 	/* extract the HTTP host name and host port number to connect to */
-	ok = purple_url_parse( session->http_server, NULL, &host_name, &host_port, NULL, NULL, NULL );
+	ok = purple_url_parse( session->http_server, &host_name, &host_port, NULL, NULL, NULL );
 	if ( !ok ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "HTTP POST error: (host name '%s' not valid)\n", session->http_server );
 	}

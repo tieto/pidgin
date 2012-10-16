@@ -197,7 +197,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
-	purple_url_parse(url, NULL, &webaddress, NULL, &webpage, NULL, NULL);
+	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 	request = g_strdup_printf("GET %s%s/%s HTTP/1.1\r\n"
 				 "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
@@ -321,7 +321,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
-	purple_url_parse(url, NULL, &webaddress, NULL, &webpage, NULL, NULL);
+	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 
 	if (cb->id == NULL) {
 		/* No id for this buddy, so create an address book entry */
@@ -479,7 +479,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 
 	content = xmlnode_to_formatted_str(node, &len);
 	xmlnode_free(node);
-	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, NULL, &webaddress, NULL, &webpage, NULL, NULL);
+	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, &webaddress, NULL, &webpage, NULL, NULL);
 
 	request = g_strdup_printf("POST %s HTTP/1.1\r\n"
 				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
