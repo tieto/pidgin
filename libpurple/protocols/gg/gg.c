@@ -146,7 +146,8 @@ static void ggp_action_test_http(PurplePluginAction *action)
 
 	request = purple_http_request_new("http://wp.pl");
 //	purple_http_request_set_http11(request, FALSE);
-	purple_http_request_set_max_redirects(request, 1);
+//	purple_http_request_set_max_redirects(request, 1);
+//	purple_http_request_set_max_len(request, 0);
 	purple_http_request(gc, request, ggp_test_http_cb, NULL);
 	purple_http_request_unref(request);
 
