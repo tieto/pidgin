@@ -23,6 +23,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "http.h"
 #include "ntlm.h"
 
 struct _PurpleUtilFetchUrlData
@@ -63,7 +64,62 @@ struct _PurpleUtilFetchUrlData
 	gssize max_len;
 	gboolean chunked;
 	PurpleAccount *account;
+
+	PurpleHttpConnection *wrapped_request;
+	gboolean cancelled;
 };
+
+typedef struct
+{
+	PurpleUtilFetchUrlData *url_data;
+	PurpleUtilFetchUrlCallback cb;
+	gpointer user_data;
+} PurpleUtilLegacyWrapData;
+
+static void purple_util_fetch_url_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _wrap_data)
+{
+	PurpleUtilLegacyWrapData *wrap_data = _wrap_data;
+
+	if (wrap_data->cb && !wrap_data->url_data->cancelled)
+		wrap_data->cb(wrap_data->url_data, wrap_data->user_data,
+			purple_http_response_get_data(response),
+			purple_http_response_get_data_len(response),
+			purple_http_response_get_error(response));
+
+	g_free(wrap_data->url_data);
+	g_free(wrap_data);
+}
+
+PurpleUtilFetchUrlData * purple_util_fetch_url(const gchar *url, gboolean full,
+	const gchar *user_agent, gboolean http11, gssize max_len,
+	PurpleUtilFetchUrlCallback cb, gpointer data)
+{
+	PurpleHttpRequest *request;
+	PurpleUtilFetchUrlData *url_data;
+	PurpleUtilLegacyWrapData *wrap_data;
+
+	wrap_data = g_new0(PurpleUtilLegacyWrapData, 1);
+	url_data = g_new0(PurpleUtilFetchUrlData, 1);
+	request = purple_http_request_new(url);
+
+	wrap_data->url_data = url_data;
+	wrap_data->cb = cb;
+	wrap_data->user_data = data;
+
+	if (user_agent)
+		purple_http_request_header_set(request,
+			"User-Agent", user_agent);
+	purple_http_request_set_http11(request, http11);
+	purple_http_request_set_max_len(request, max_len);
+
+	url_data->wrapped_request = purple_http_request(NULL, request,
+		purple_util_fetch_url_cb, wrap_data);
+
+	purple_http_request_unref(request);
+
+	return url_data;
+}
 
 /**
  * The arguments to this function are similar to printf.
@@ -682,6 +738,12 @@ purple_util_fetch_url_request(PurpleAccount *account,
 void
 purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *gfud)
 {
+	if (gfud->wrapped_request != NULL) {
+		gfud->cancelled = TRUE;
+		purple_http_conn_cancel(gfud->wrapped_request);
+		return;
+	}
+
 	if (gfud->ssl_connection != NULL)
 		purple_ssl_close(gfud->ssl_connection);
 

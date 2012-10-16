@@ -58,6 +58,7 @@
 #include <http.h>
 #include <obsolete.h>
 
+/*
 static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
@@ -84,8 +85,8 @@ static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 		g_free(data_tail);
 	}
 }
+*/
 
-/*
 static void ggp_test_http_cb2(PurpleUtilFetchUrlData *url_data,
 	gpointer user_data, const gchar *url_text, gsize len,
 	const gchar *error_message)
@@ -108,7 +109,6 @@ static void ggp_test_http_cb2(PurpleUtilFetchUrlData *url_data,
 		g_free(data_tail);
 	}
 }
-*/
 
 static void ggp_action_test_http(PurplePluginAction *action)
 {
@@ -141,15 +141,16 @@ static void ggp_action_test_http(PurplePluginAction *action)
 //		ggp_test_http_cb, NULL);
 
 //	purple_util_fetch_url("https://www.google.pl",
-//		TRUE, NULL, TRUE, -1, ggp_test_http_cb2, NULL);
+	purple_util_fetch_url("http://wp.pl",
+		TRUE, "My Browser", TRUE, -1, ggp_test_http_cb2, NULL);
 
 
-	request = purple_http_request_new("http://wp.pl");
+//	request = purple_http_request_new("http://wp.pl");
 //	purple_http_request_set_http11(request, FALSE);
 //	purple_http_request_set_max_redirects(request, 1);
 //	purple_http_request_set_max_len(request, 0);
-	purple_http_request(gc, request, ggp_test_http_cb, NULL);
-	purple_http_request_unref(request);
+//	purple_http_request(gc, request, ggp_test_http_cb, NULL);
+//	purple_http_request_unref(request);
 
 	purple_debug_info("http-test", "Testing http started.\n");
 }
