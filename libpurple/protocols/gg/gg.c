@@ -114,7 +114,7 @@ static void ggp_action_test_http(PurplePluginAction *action)
 	//PurpleHttpConnection *hc;
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-/*
+
 	purple_debug_info("http-test", "Testing http...\n");
 	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
 		ggp_test_http_cb, NULL);
@@ -138,7 +138,7 @@ static void ggp_action_test_http(PurplePluginAction *action)
 //	purple_util_fetch_url("https://www.google.pl",
 	purple_util_fetch_url("http://wp.pl",
 		TRUE, "My Browser", TRUE, -1, ggp_test_http_cb2, NULL);
-*/
+
 
 	request = purple_http_request_new("http://www.wasilczyk.pl/x_ip_simple.htm");
 //	purple_http_request_set_http11(request, FALSE);
