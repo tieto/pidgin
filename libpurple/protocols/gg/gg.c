@@ -58,6 +58,115 @@
 #include <http.h>
 #include <obsolete.h>
 
+static gchar *ggp_imtoken = NULL;
+
+/*
+static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	const gchar *data;
+	gchar *data_front, *data_tail;
+
+	purple_debug_info("gg-test", "Results: %d (code: %d)\n",
+		purple_http_response_is_successfull(response),
+		purple_http_response_get_code(response));
+
+	if (purple_http_response_get_error(response))
+		purple_debug_info("gg-test", "Returned error: %s.\n",
+			purple_http_response_get_error(response));
+
+	data = purple_http_response_get_data(response);
+	if (strlen(data) < 200)
+		purple_debug_info("gg-test", "Returned content: [%s].\n", data);
+	else {
+		data_front = g_strndup(data, 100);
+		data_tail = g_strdup(data + strlen(data) - 100);
+		purple_debug_info("gg-test", "Returned content: [%s ... %s].\n",
+			data_front, data_tail);
+		g_free(data_front);
+		g_free(data_tail);
+	}
+}
+*/
+
+static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	const gchar *security_token;
+
+	if (!purple_http_response_is_successfull(response))
+	{
+		purple_debug_error("gg-test", "signin failed\n");
+		return;
+	}
+
+	if (0 != strcmp(purple_http_response_get_data(response),
+		"{\"result\":{\"status\":0}}"))
+	{
+		purple_debug_error("gg-test", "signin failed - bad response\n");
+		return;
+	}
+
+	security_token = purple_http_response_get_header(response,
+		"X-gged-security-token");
+	if (!security_token)
+	{
+		purple_debug_error("gg-test", "signin failed - "
+			"no security token\n");
+		return;
+	}
+
+	if (purple_debug_is_unsafe())
+	{
+		purple_debug_misc("gg-test", "security token=%s\n",
+			security_token);
+	}
+}
+
+static void ggp_file_transfer_test(PurpleConnection *gc)
+{
+	PurpleHttpRequest *req;
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	const gchar *metadata;
+
+	if (ggp_imtoken == NULL)
+	{
+		purple_debug_error("gg-test", "IMToken not ready!\n");
+		return;
+	}
+
+	if (purple_debug_is_unsafe())
+		purple_debug_misc("gg-test", "IMToken=[%s]\n", ggp_imtoken);
+
+	req = purple_http_request_new("https://drive.mpa.gg.pl/signin");
+	purple_http_request_set_method(req, "PUT");
+
+	metadata = "{"
+		"\"id\": \"0123456789abcdef0123456789abcdef\", "
+		"\"name\": \"Hostname\", "
+		"\"os_version\": \"WINNT x86-msvc\", "
+		"\"client_version\": \"11.0.0.8169\", "
+		"\"type\": \"desktop\""
+		"}";
+
+	purple_http_request_header_set_printf(req, "Authorization",
+		"IMToken %s", ggp_imtoken);
+	purple_http_request_header_set_printf(req, "X-gged-user",
+		"gg/pl:%u", accdata->session->uin);
+	purple_http_request_header_set(req, "X-gged-client-metadata", metadata);
+	purple_http_request_header_set(req, "X-gged-api-version", "6");
+
+	purple_http_request_header_set(req, "Connection", "keep-alive");
+	
+	//purple_http_request_set_contents
+
+	purple_http_request(gc, req, ggp_file_transfer_test_signedin, NULL);
+	purple_http_request_unref(req);
+}
+
+/* ---------------------------------------------------------------------- */
+
+/*
 static void ggp_test_http_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
@@ -109,13 +218,18 @@ static void ggp_test_http_cb2(PurpleUtilFetchUrlData *url_data,
 		g_free(data_tail);
 	}
 }
+*/
 
 static void ggp_action_test_http(PurplePluginAction *action)
 {
-	PurpleHttpRequest *request;
-	//PurpleHttpConnection *hc;
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
+	ggp_file_transfer_test(gc);
+
+/*	PurpleHttpRequest *request;
+	//PurpleHttpConnection *hc;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
+*/
 /*
 	purple_debug_info("http-test", "Testing http...\n");
 	purple_http_get(gc, "http://www.wasilczyk.pl/x_ip_simple.htm",
@@ -132,11 +246,9 @@ static void ggp_action_test_http(PurplePluginAction *action)
 	purple_http_get(gc, "http://google.com",
 		ggp_test_http_cb, NULL);
 
-*/
 	purple_http_get(gc, "http://wp.pl",
 		ggp_test_http_cb, NULL);
 
-/*
 	purple_util_fetch_url_request(
 		purple_connection_get_account(gc),
 		"http://wp.pl/",
@@ -147,9 +259,7 @@ static void ggp_action_test_http(PurplePluginAction *action)
 		FALSE, // inc headers
 		-1, // max_len
 		ggp_test_http_cb2, NULL);
-*/
 
-/*
 	purple_http_get(gc, "https://www.google.pl",
 		ggp_test_http_cb, NULL);
 
@@ -165,8 +275,8 @@ static void ggp_action_test_http(PurplePluginAction *action)
 	purple_http_request_set_timeout(request, 3);
 	purple_http_request(gc, request, ggp_test_http_cb, NULL);
 	purple_http_request_unref(request);
-*/
 	purple_debug_info("http-test", "Testing http started.\n");
+*/
 }
 
 /* ---------------------------------------------------------------------- */
@@ -711,6 +821,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_MULTILOGON_INFO:
 			ggp_multilogon_info(gc, &ev->event.multilogon_info);
+			break;
+		case GG_EVENT_IMTOKEN:
+			ggp_imtoken = g_strdup(ev->event.imtoken.imtoken);
 			break;
 		default:
 			purple_debug_error("gg",
