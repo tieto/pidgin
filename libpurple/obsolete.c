@@ -99,6 +99,10 @@ PurpleUtilFetchUrlData * purple_util_fetch_url(const gchar *url, gboolean full,
 	PurpleUtilFetchUrlData *url_data;
 	PurpleUtilLegacyWrapData *wrap_data;
 
+	if (FALSE)
+		return purple_util_fetch_url_request(NULL, url, full,
+			user_agent, http11, NULL, FALSE, max_len, cb, data);
+
 	wrap_data = g_new0(PurpleUtilLegacyWrapData, 1);
 	url_data = g_new0(PurpleUtilFetchUrlData, 1);
 	request = purple_http_request_new(url);
