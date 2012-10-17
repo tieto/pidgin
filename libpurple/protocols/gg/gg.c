@@ -117,10 +117,8 @@ static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 	}
 
 	if (purple_debug_is_unsafe())
-	{
 		purple_debug_misc("gg-test", "security token=%s\n",
 			security_token);
-	}
 }
 
 static void ggp_file_transfer_test(PurpleConnection *gc)
@@ -157,8 +155,6 @@ static void ggp_file_transfer_test(PurpleConnection *gc)
 	purple_http_request_header_set(req, "X-gged-api-version", "6");
 
 	purple_http_request_header_set(req, "Connection", "keep-alive");
-	
-	//purple_http_request_set_contents
 
 	purple_http_request(gc, req, ggp_file_transfer_test_signedin, NULL);
 	purple_http_request_unref(req);
