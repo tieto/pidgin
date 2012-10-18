@@ -478,7 +478,7 @@ static gboolean ggp_roster_reply_list_read_group(xmlnode *node,
 static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
 	xmlnode *node, ggp_roster_content *content, GHashTable *remove_buddies)
 {
-	gchar *alias, *group_name;
+	gchar *alias, *group_name = NULL;
 	uin_t uin;
 	gboolean succ = TRUE;
 	xmlnode *group_list, *group_elem;
