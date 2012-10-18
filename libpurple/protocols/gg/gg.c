@@ -261,7 +261,9 @@ static void ggp_action_test_http(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	ggp_file_transfer_test(gc);
+//	ggp_file_transfer_test(gc);
+
+	purple_http_get(gc, "http://wasilczyk.pl/x_ip_ctest.htm", NULL, NULL);
 
 /*	PurpleHttpRequest *request;
 	//PurpleHttpConnection *hc;
