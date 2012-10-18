@@ -89,10 +89,29 @@ static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 }
 */
 
+uin_t ggp_file_transfer_test_recipient = 38522810;
+const gchar *ggp_file_transfer_test_filename = "plik.txt";
+const gchar *ggp_file_transfer_test_file = "ala ma kota";
+
+static void ggp_file_transfer_test_offered(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	if (!purple_http_response_is_successfull(response))
+	{
+		purple_debug_error("gg-test", "offer failed\n");
+		return;
+	}
+
+	purple_debug_info("gg-test", "offered: %s\n",
+		purple_http_response_get_data(response));
+}
+
 static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
+	PurpleHttpRequest *req;
 	const gchar *security_token;
+	gchar *data;
 
 	if (!purple_http_response_is_successfull(response))
 	{
@@ -119,6 +138,28 @@ static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 	if (purple_debug_is_unsafe())
 		purple_debug_misc("gg-test", "security token=%s\n",
 			security_token);
+
+	//req = purple_http_request_new("https://drive.mpa.gg.pl/send_ticket");
+	req = purple_http_request_new("http://drive.mpa.gg.pl/send_ticket");
+	purple_http_request_set_method(req, "PUT");
+
+	purple_http_request_header_set(req, "X-gged-api-version", "6");
+	purple_http_request_header_set(req, "X-gged-security-token", security_token);
+
+	data = g_strdup_printf("{\"send_ticket\":{"
+		"\"recipient\":\"%u\","
+		"\"file_name\":\"%s\","
+		"\"file_size\":\"%u\""
+		"}}",
+		ggp_file_transfer_test_recipient,
+		ggp_file_transfer_test_filename,
+		strlen(ggp_file_transfer_test_file));
+	purple_http_request_set_contents(req, data, -1);
+	g_free(data);
+
+	purple_http_request(purple_http_conn_get_purple_connection(http_conn),
+		req, ggp_file_transfer_test_offered, NULL);
+	purple_http_request_unref(req);
 }
 
 static void ggp_file_transfer_test(PurpleConnection *gc)
@@ -153,8 +194,6 @@ static void ggp_file_transfer_test(PurpleConnection *gc)
 		"gg/pl:%u", accdata->session->uin);
 	purple_http_request_header_set(req, "X-gged-client-metadata", metadata);
 	purple_http_request_header_set(req, "X-gged-api-version", "6");
-
-	purple_http_request_header_set(req, "Connection", "keep-alive");
 
 	purple_http_request(gc, req, ggp_file_transfer_test_signedin, NULL);
 	purple_http_request_unref(req);
