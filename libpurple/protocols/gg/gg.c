@@ -142,6 +142,8 @@ static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 	//req = purple_http_request_new("https://drive.mpa.gg.pl/send_ticket");
 	req = purple_http_request_new("http://drive.mpa.gg.pl/send_ticket");
 	purple_http_request_set_method(req, "PUT");
+	purple_http_request_set_cookie_jar(req,
+		purple_http_conn_get_cookie_jar(http_conn));
 
 	purple_http_request_header_set(req, "X-gged-api-version", "6");
 	purple_http_request_header_set(req, "X-gged-security-token", security_token);
