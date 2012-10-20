@@ -57,6 +57,7 @@
 
 #include <http.h>
 #include <obsolete.h>
+#include <json-glib/json-glib.h>
 
 static gchar *ggp_imtoken = NULL;
 
@@ -93,17 +94,125 @@ uin_t ggp_file_transfer_test_recipient = 38522810;
 const gchar *ggp_file_transfer_test_filename = "plik.txt";
 const gchar *ggp_file_transfer_test_file = "ala ma kota";
 
+gchar *ggp_file_transfer_ticket = NULL;
+gchar *ggp_file_transfer_security_token = NULL;
+PurpleHttpCookieJar *ggp_file_transfer_cookie = NULL;
+
+static void ggp_file_transfer_test_sent(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	purple_debug_info("gg-test", "offered: %s\n",
+		purple_http_response_get_data(response));
+
+	if (!purple_http_response_is_successfull(response))
+	{
+		purple_debug_error("gg-test", "offer failed\n");
+		return;
+	}
+}
+
+static void ggp_event_json_edisc_ticket_changed(PurpleConnection *gc, const gchar *data)
+{
+	JsonNode *n;
+	JsonParser *parser;
+	JsonObject *change;
+	int i, len;
+	gboolean is_allowed, is_good_ticket;
+	PurpleHttpRequest *req;
+	gchar *upload_url;
+
+	purple_debug_info("gg", "edisc: %s\n", data);
+
+	parser = json_parser_new();
+	if (!json_parser_load_from_data(parser, data, -1, NULL)) {
+		g_object_unref(parser);
+		purple_debug_error("gg", "invalid JSON\n");
+		return;
+	}
+
+	change = json_node_get_object(json_parser_get_root(parser));
+	purple_debug_info("gg", "edisc ticket change: id=[%s] ack_status=[%s] send_status=[%s]\n",
+		json_object_get_string_member(change, "id"),
+		json_object_get_string_member(change, "ack_status"),
+		json_object_get_string_member(change, "send_status"));
+
+	is_allowed = (0 == g_strcmp0("allowed", json_object_get_string_member(
+		change, "ack_status")));
+	is_good_ticket = (0 == g_strcmp0(ggp_file_transfer_ticket,
+		json_object_get_string_member(change, "id")));
+
+	g_object_unref(parser);
+
+	if (!is_allowed || !is_good_ticket) {
+		purple_debug_warning("http", "invalid ticket\n");
+		return;
+	}
+
+	upload_url = g_strdup_printf("https://drive.mpa.gg.pl/me/file/outbox/%s%%2C%s",
+		ggp_file_transfer_ticket,
+		purple_url_encode(ggp_file_transfer_test_filename));
+	req = purple_http_request_new(upload_url);
+	g_free(upload_url);
+
+	purple_http_request_set_method(req, "PUT");
+	purple_http_request_set_cookie_jar(req, ggp_file_transfer_cookie);
+
+	purple_http_request_header_set(req, "X-gged-api-version", "6");
+	purple_http_request_header_set(req, "X-gged-local-revision", "0");
+	purple_http_request_header_set(req, "X-gged-security-token", ggp_file_transfer_security_token);
+	purple_http_request_header_set(req, "X-gged-metadata", "{\"node_type\": \"file\"}");
+
+	purple_http_request_set_contents(req, ggp_file_transfer_test_file, -1);
+
+	purple_http_request(gc,
+		req, ggp_file_transfer_test_sent, NULL);
+	purple_http_request_unref(req);
+
+	ggp_file_transfer_ticket = NULL;
+}
+
+static void ggp_event_json(PurpleConnection *gc, struct gg_event_json_event *ev)
+{
+	if (g_strcmp0("edisc/send_ticket_changed", ev->type) == 0)
+		ggp_event_json_edisc_ticket_changed(gc, ev->data);
+	else
+		purple_debug_info("gg", "unknown json event %s\n", ev->type);
+}
+
 static void ggp_file_transfer_test_offered(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
+	JsonParser *parser;
+	JsonObject *change;
+	JsonObject *ticket;
+	const gchar *ticket_id;
+
+	purple_debug_info("gg-test", "offered: %s\n",
+		purple_http_response_get_data(response));
+
 	if (!purple_http_response_is_successfull(response))
 	{
 		purple_debug_error("gg-test", "offer failed\n");
 		return;
 	}
 
-	purple_debug_info("gg-test", "offered: %s\n",
-		purple_http_response_get_data(response));
+	parser = json_parser_new();
+	if (!json_parser_load_from_data(parser,
+		purple_http_response_get_data(response), -1, NULL)) {
+		g_object_unref(parser);
+		purple_debug_error("gg-test", "invalid JSON\n");
+		return;
+	}
+
+	ticket = json_node_get_object(json_parser_get_root(parser));
+	ticket = json_object_get_object_member(ticket, "result");
+	ticket = json_object_get_object_member(ticket, "send_ticket");
+	ticket_id = json_object_get_string_member(ticket, "id");
+	ggp_file_transfer_ticket = g_strdup(ticket_id);
+
+	purple_debug_info("gg", "ticket id=%s\n", ticket_id);
+
+	g_object_unref(parser);
 }
 
 static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
@@ -139,14 +248,17 @@ static void ggp_file_transfer_test_signedin(PurpleHttpConnection *http_conn,
 		purple_debug_misc("gg-test", "security token=%s\n",
 			security_token);
 
-	//req = purple_http_request_new("https://drive.mpa.gg.pl/send_ticket");
-	req = purple_http_request_new("http://drive.mpa.gg.pl/send_ticket");
+	req = purple_http_request_new("https://drive.mpa.gg.pl/send_ticket");
 	purple_http_request_set_method(req, "PUT");
 	purple_http_request_set_cookie_jar(req,
 		purple_http_conn_get_cookie_jar(http_conn));
 
+	ggp_file_transfer_cookie = purple_http_conn_get_cookie_jar(http_conn);
+	purple_http_cookie_jar_ref(ggp_file_transfer_cookie);
+
 	purple_http_request_header_set(req, "X-gged-api-version", "6");
 	purple_http_request_header_set(req, "X-gged-security-token", security_token);
+	ggp_file_transfer_security_token = g_strdup(security_token);
 
 	data = g_strdup_printf("{\"send_ticket\":{"
 		"\"recipient\":\"%u\","
@@ -261,9 +373,9 @@ static void ggp_action_test_http(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-//	ggp_file_transfer_test(gc);
+	ggp_file_transfer_test(gc);
 
-	purple_http_get(gc, "http://wasilczyk.pl/x_ip_ctest.htm", NULL, NULL);
+//	purple_http_get(gc, "http://wasilczyk.pl/x_ip_ctest.htm", NULL, NULL);
 
 /*	PurpleHttpRequest *request;
 	//PurpleHttpConnection *hc;
@@ -863,6 +975,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_IMTOKEN:
 			ggp_imtoken = g_strdup(ev->event.imtoken.imtoken);
+			break;
+		case GG_EVENT_JSON_EVENT:
+			ggp_event_json(gc, &ev->event.json_event);
 			break;
 		default:
 			purple_debug_error("gg",

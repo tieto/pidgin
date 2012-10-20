@@ -1,4 +1,4 @@
-#V=0
+V=1
 #GADU_EXTRA_WARNINGS = -Wall -Wextra -Werror
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -106,14 +106,14 @@ st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
 noinst_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_CFLAGS  = $(AM_CFLAGS)
-libgg_la_LIBADD  = $(GADU_LIBS)
+libgg_la_LIBADD  = $(GADU_LIBS) $(JSON_LIBS)
 
 else
 
 st = $(GADU_CFLAGS)
 pkg_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
-libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
+libgg_la_LIBADD  = $(GLIB_LIBS) $(JSON_LIBS) $(GADU_LIBS)
 
 endif
 
@@ -121,6 +121,7 @@ AM_CPPFLAGS = \
 	$(GADU_EXTRA_WARNINGS) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	$(JSON_CFLAGS)
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)
