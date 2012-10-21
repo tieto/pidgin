@@ -23,6 +23,7 @@
 
 
 #include "internal.h"
+#include "obsolete.h"
 
 #include "account.h"
 #include "accountopt.h"

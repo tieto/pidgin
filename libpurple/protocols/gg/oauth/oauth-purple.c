@@ -34,6 +34,7 @@
 #include "../xml.h"
 
 #include <debug.h>
+#include <obsolete.h>
 
 #define GGP_OAUTH_RESPONSE_MAX 10240
 

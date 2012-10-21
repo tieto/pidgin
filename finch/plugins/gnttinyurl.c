@@ -21,6 +21,7 @@
 
 #include "internal.h"
 #include <glib.h>
+#include "obsolete.h"
 
 #define PLUGIN_STATIC_NAME	TinyURL
 #define PREFS_BASE          "/plugins/gnt/tinyurl"

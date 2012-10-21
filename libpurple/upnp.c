@@ -34,6 +34,7 @@
 #include "signals.h"
 #include "util.h"
 #include "xmlnode.h"
+#include "obsolete.h"
 
 /***************************************************************
 ** General Defines                                             *

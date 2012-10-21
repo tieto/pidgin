@@ -27,6 +27,7 @@
 
 #include "debug.h"
 #include "request.h"
+#include "obsolete.h"
 
 #include "accountopt.h"
 #include "contact.h"

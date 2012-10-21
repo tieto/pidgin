@@ -21,9 +21,11 @@ typedef void (*ggp_ggdrive_authentication_cb)(const gchar *security_token,
 static void ggp_ggdrive_authenticate(PurpleConnection *gc,
 	ggp_ggdrive_authentication_cb cb, gpointer user_data);
 
+#if 0
 static void ggp_ggdrive_authenticate_done(PurpleUtilFetchUrlData *url_data,
 	gpointer _user_data, const gchar *url_text, gsize len,
 	const gchar *error_message);
+#endif
 
 typedef struct
 {
@@ -37,6 +39,7 @@ typedef struct
 static void ggp_ggdrive_authenticate(PurpleConnection *gc,
 	ggp_ggdrive_authentication_cb cb, gpointer user_data)
 {
+#if 0
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const gchar *imtoken;
 	gchar *request, *metadata;
@@ -81,8 +84,10 @@ static void ggp_ggdrive_authenticate(PurpleConnection *gc,
 
 	g_free(metadata);
 	g_free(request);
+#endif
 }
 
+#if 0
 static void ggp_ggdrive_authenticate_done(PurpleUtilFetchUrlData *url_data,
 	gpointer _user_data, const gchar *url_text, gsize len,
 	const gchar *error_message)
@@ -109,6 +114,7 @@ static void ggp_ggdrive_authenticate_done(PurpleUtilFetchUrlData *url_data,
 
 	purple_debug_info("gg", "ggp_ggdrive_authenticate_done: [%s]\n", url_text);
 }
+#endif
 
 /***/
 

@@ -31,6 +31,7 @@
 
 #include <debug.h>
 #include <request.h>
+#include <obsolete.h>
 
 #include "oauth/oauth-purple.h"
 #include "xml.h"

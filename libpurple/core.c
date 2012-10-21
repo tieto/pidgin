@@ -33,6 +33,7 @@
 #include "debug.h"
 #include "dnsquery.h"
 #include "ft.h"
+#include "http.h"
 #include "idle.h"
 #include "imgstore.h"
 #include "network.h"
@@ -174,6 +175,7 @@ purple_core_init(const char *ui)
 	purple_stun_init();
 	purple_xfers_init();
 	purple_idle_init();
+	purple_http_init();
 	purple_smileys_init();
 	/*
 	 * Call this early on to try to auto-detect our IP address and
@@ -222,6 +224,7 @@ purple_core_quit(void)
 
 	/* Save .xml files, remove signals, etc. */
 	purple_smileys_uninit();
+	purple_http_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
