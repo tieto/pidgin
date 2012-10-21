@@ -37,6 +37,7 @@
 #include "status.h"
 #include "chat.h"
 #include "message-prpl.h"
+#include "edisc.h"
 
 #define GGP_UIN_LEN_MAX 10
 
@@ -54,6 +55,7 @@ typedef struct {
 	ggp_status_session_data *status_data;
 	ggp_chat_session_data *chat_data;
 	ggp_message_session_data *message_data;
+	ggp_edisc_session_data *edisc_data;
 } GGPInfo;
 
 typedef struct

@@ -54,7 +54,6 @@
 #include "pubdir-prpl.h"
 #include "message-prpl.h"
 #include "html.h"
-#include "ggdrive.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -378,7 +377,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			purple_debug_info("gg", "gg11: got IMTOKEN\n");
 			g_free(info->imtoken);
 			info->imtoken = g_strdup(ev->event.imtoken.imtoken);
-			ggp_ggdrive_test(gc);
 			break;
 		case GG_EVENT_PONG110:
 			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
@@ -658,6 +656,7 @@ static void ggp_login(PurpleAccount *account)
 	ggp_status_setup(gc);
 	ggp_chat_setup(gc);
 	ggp_message_setup(gc);
+	ggp_edisc_setup(gc);
 
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
 	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
@@ -763,6 +762,7 @@ static void ggp_close(PurpleConnection *gc)
 		ggp_status_cleanup(gc);
 		ggp_chat_cleanup(gc);
 		ggp_message_cleanup(gc);
+		ggp_edisc_cleanup(gc);
 
 		if (info->inpa > 0)
 			purple_input_remove(info->inpa);
@@ -972,9 +972,9 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_chat_roomlist_get_list,	/* roomlist_get_list */
 	NULL,				/* roomlist_cancel */
 	NULL,				/* roomlist_expand_category */
-	NULL,				/* can_receive_file */
-	NULL,				/* send_file */
-	NULL,				/* new_xfer */
+	ggp_edisc_xfer_can_receive_file,/* can_receive_file */
+	ggp_edisc_xfer_send_file,	/* send_file */
+	ggp_edisc_xfer_new,		/* new_xfer */
 	ggp_offline_message,		/* offline_message */
 	NULL,				/* whiteboard_prpl_ops */
 	NULL,				/* send_raw */

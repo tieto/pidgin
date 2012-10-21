@@ -62,10 +62,10 @@ GGSOURCES = \
 	chat.h \
 	deprecated.c \
 	deprecated.h \
+	edisc.c \
+	edisc.h \
 	gg.c \
 	gg.h \
-	ggdrive.c \
-	ggdrive.h \
 	html.c \
 	html.h \
 	image.c \
