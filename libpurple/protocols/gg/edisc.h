@@ -8,6 +8,9 @@ typedef struct _ggp_edisc_session_data ggp_edisc_session_data;
 void ggp_edisc_setup(PurpleConnection *gc);
 void ggp_edisc_cleanup(PurpleConnection *gc);
 
+void ggp_edisc_event_send_ticket_changed(PurpleConnection *gc,
+	const char *data);
+
 gboolean ggp_edisc_xfer_can_receive_file(PurpleConnection *gc, const char *who);
 
 void ggp_edisc_xfer_send_file(PurpleConnection *gc, const char *who,

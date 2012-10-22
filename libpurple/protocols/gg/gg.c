@@ -361,6 +361,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_USER_DATA:
 			ggp_events_user_data(gc, &ev->event.user_data);
 			break;
+		case GG_EVENT_JSON_EVENT:
+			ggp_events_json(gc, &ev->event.json_event);
+			break;
 		case GG_EVENT_USERLIST100_VERSION:
 			ggp_roster_version(gc, &ev->event.userlist100_version);
 			break;
@@ -380,9 +383,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_PONG110:
 			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
-			break;
-		case GG_EVENT_JSON_EVENT:
-			purple_debug_info("gg", "gg11: got JSON event\n");
 			break;
 		case GG_EVENT_CHAT_INFO:
 		case GG_EVENT_CHAT_INFO_GOT_ALL:

@@ -32,6 +32,7 @@
 #include <debug.h>
 
 #include "avatar.h"
+#include "edisc.h"
 
 void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 {
@@ -80,4 +81,20 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 		if (!is_update && !got_avatar)
 			ggp_avatar_buddy_remove(gc, uin);
 	}
+}
+
+void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
+{
+	if (g_strcmp0("edisc/send_ticket_changed", ev->type) == 0) {
+		ggp_edisc_event_send_ticket_changed(gc, ev->data);
+		return;
+	}
+
+	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
+		purple_debug_warning("gg", "ggp_events_json: "
+			"unhandled event \"%s\": %s\n",
+			ev->type, ev->data);
+	else
+		purple_debug_warning("gg", "ggp_events_json: "
+			"unhandled event \"%s\"\n", ev->type);
 }

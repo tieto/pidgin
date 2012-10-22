@@ -36,4 +36,6 @@
 void ggp_events_user_data(PurpleConnection *gc,
 	struct gg_event_user_data *data);
 
+void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev);
+
 #endif /* _GGP_LIBGADU_EVENTS_H */

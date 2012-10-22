@@ -50,6 +50,8 @@ GADU_LIBS += $(GNUTLS_LIBS)
 GADU_CFLAGS += $(GNUTLS_CFLAGS)
 endif
 
+GADU_LIBS += $(JSON_LIBS)
+
 GGSOURCES = \
 	$(INTGGSOURCES) \
 	account.c \
@@ -129,5 +131,6 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(JSON_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GADU_EXTRA)
