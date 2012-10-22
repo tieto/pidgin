@@ -90,6 +90,10 @@ void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 		return;
 	}
 
+	if (g_strcmp0("edisc/scope_files_changed", ev->type) == 0) {
+		return;
+	}
+
 	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
 		purple_debug_warning("gg", "ggp_events_json: "
 			"unhandled event \"%s\": %s\n",

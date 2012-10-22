@@ -267,3 +267,16 @@ gint ggp_int64_compare(gconstpointer _a, gconstpointer _b)
 	else
 		return 1;
 }
+
+JsonParser * ggp_json_parse(const gchar *data)
+{
+	JsonParser *parser;
+
+	parser = json_parser_new();
+	if (json_parser_load_from_data(parser, data, -1, NULL))
+		return parser;
+
+	if (purple_debug_is_unsafe())
+		purple_debug_warning("gg", "Invalid JSON: %s\n", data);
+	return NULL;
+}
