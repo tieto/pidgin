@@ -40,6 +40,8 @@ struct _ggp_edisc_xfer
 
 	PurpleConnection *gc;
 	PurpleHttpConnection *hc;
+
+	int already_read;
 };
 
 typedef void (*ggp_ggdrive_auth_cb)(PurpleConnection *gc, gboolean success,
@@ -321,15 +323,49 @@ void ggp_edisc_event_send_ticket_changed(PurpleConnection *gc, const char *data)
 	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
+static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
+	gchar *buffer, size_t offset, size_t length, gpointer _xfer,
+	PurpleHttpContentReaderCb cb)
+{
+	PurpleXfer *xfer = _xfer;
+	ggp_edisc_xfer *edisc_xfer;
+	int stored;
+	gboolean success, eof = FALSE;
+
+	g_return_if_fail(xfer != NULL);
+	edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	g_return_if_fail(edisc_xfer != NULL);
+
+	if (edisc_xfer->already_read != offset) {
+		purple_debug_error("gg", "ggp_edisc_xfer_reader: "
+			"Invalid offset (%d != %d)\n",
+			edisc_xfer->already_read, offset);
+		ggp_edisc_xfer_error(xfer, _("Error while reading a file"));
+		return;
+	}
+
+	stored = fread(buffer, 1, length, xfer->dest_fp);
+	purple_debug_info("gg", "READ: %d\n", stored);
+	if (stored < 0)
+		success = FALSE;
+	else {
+		success = TRUE;
+		edisc_xfer->already_read += stored;
+		eof = (edisc_xfer->already_read >= purple_xfer_get_size(xfer));
+	}
+
+	/* TODO: this is a cheat, watch http connection to do it well */
+	purple_xfer_set_bytes_sent(xfer, edisc_xfer->already_read); 
+
+	cb(hc, success, eof, stored);
+}
+
 static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 {
 	ggp_edisc_session_data *sdata;
 	ggp_edisc_xfer *edisc_xfer;
 	gchar *upload_url;
 	PurpleHttpRequest *req;
-
-	gchar buff[102400];
-	int len;
 
 	g_return_if_fail(xfer != NULL);
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
@@ -360,16 +396,8 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 		sdata->security_token);
 	purple_http_request_header_set(req, "X-gged-metadata", "{\"node_type\": \"file\"}");
 
-	/* TODO: temporary */
-	len = fread(buff, 1, sizeof(buff), xfer->dest_fp);
-	if (len < 0 ||
-		len != purple_xfer_get_size(xfer)) {
-		ggp_edisc_xfer_error(xfer, _("Cannot read file"));
-		purple_http_request_unref(req);
-		return;
-	}
-	purple_http_request_set_contents(req, buff, len);
-	purple_xfer_set_bytes_sent(xfer, len);
+	purple_http_request_set_contents_reader(req, ggp_edisc_xfer_reader,
+		purple_xfer_get_size(xfer), xfer);
 
 	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
 		ggp_edisc_xfer_sent, xfer);
@@ -379,7 +407,6 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer)
 {
-//	ggp_edisc_session_data *sdata;
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	const gchar *data = purple_http_response_get_data(response);
@@ -389,7 +416,6 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 
 	g_return_if_fail(edisc_xfer != NULL);
 
-//	sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
 	edisc_xfer->hc = NULL;
 
 	if (!purple_http_response_is_successfull(response)) {
