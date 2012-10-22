@@ -131,6 +131,7 @@ static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg)
 		purple_xfer_get_remote_user(xfer),
 		msg);
 	ggp_edisc_xfer_free(xfer);
+	purple_xfer_end(xfer);
 }
 
 static int ggp_edisc_parse_error(const gchar *data)
@@ -356,6 +357,7 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 
 	/* TODO: this is a cheat, watch http connection to do it well */
 	purple_xfer_set_bytes_sent(xfer, edisc_xfer->already_read); 
+	purple_xfer_update_progress(xfer);
 
 	cb(hc, success, eof, stored);
 }
@@ -434,6 +436,7 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 
 	if (result_status == 0) {
 		purple_xfer_set_completed(xfer, TRUE);
+		purple_xfer_end(xfer);
 		ggp_edisc_xfer_free(xfer);
 	} else
 		ggp_edisc_xfer_error(xfer, _("Error while sending a file"));
