@@ -705,7 +705,7 @@ void purple_xfer_update_progress(PurpleXfer *xfer);
  * @param message The message to display.
  * @param is_error Is this an error message?.
  */
-void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error);
+void purple_xfer_conversation_write(PurpleXfer *xfer, const gchar *message, gboolean is_error);
 
 /**
  * Allows the UI to signal it's ready to send/receive data (depending on
