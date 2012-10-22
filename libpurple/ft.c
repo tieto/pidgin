@@ -319,7 +319,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 }
 
 void
-purple_xfer_conversation_write(PurpleXfer *xfer, gchar *message,
+purple_xfer_conversation_write(PurpleXfer *xfer, const gchar *message,
 	gboolean is_error)
 {
 	purple_xfer_conversation_write_internal(xfer, message, is_error, FALSE);
