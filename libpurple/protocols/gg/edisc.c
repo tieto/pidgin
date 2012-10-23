@@ -9,11 +9,13 @@
 
 #include <json-glib/json-glib.h>
 
-#define GGP_EDISC_HOSTNAME "MyComputer"
 #define GGP_EDISC_OS "WINNT x86-msvc"
 #define GGP_EDISC_TYPE "desktop"
 
 #define GGP_EDISC_RESPONSE_MAX 10240
+#define GGP_EDISC_FNAME_ALLOWED "1234567890" \
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" \
+	" [](){}-+=_;'<>,.&$!"
 
 typedef struct _ggp_edisc_auth_data ggp_edisc_auth_data;
 
@@ -51,6 +53,7 @@ static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 	gpointer user_data);
 
 static void ggp_edisc_xfer_free(PurpleXfer *xfer);
+static void ggp_edisc_set_defaults(PurpleHttpRequest *req);
 
 /*******************************************************************************
  * Setting up.
@@ -89,6 +92,32 @@ void ggp_edisc_cleanup(PurpleConnection *gc)
 }
 
 /*******************************************************************************
+ * Misc.
+ ******************************************************************************/
+
+static void ggp_edisc_set_defaults(PurpleHttpRequest *req)
+{
+	purple_http_request_set_max_len(req, GGP_EDISC_RESPONSE_MAX);
+	purple_http_request_header_set(req, "X-gged-api-version", "6");
+
+	/* optional fields */
+	purple_http_request_header_set(req, "User-Agent", "Mozilla/5.0 (Windows"
+		" NT 6.1; rv:11.0) Gecko/20120613 GG/11.0.0.8169 (WINNT_x86-msv"
+		"c; pl; beta; standard)");
+	purple_http_request_header_set(req, "Accept", "text/html,application/xh"
+		"tml+xml,application/xml;q=0.9,*/*;q=0.8");
+	purple_http_request_header_set(req, "Accept-Language",
+		"pl,en-us;q=0.7,en;q=0.3");
+	/* purple_http_request_header_set(req, "Accept-Encoding",
+	 * "gzip, deflate"); */
+	purple_http_request_header_set(req, "Accept-Charset",
+		"ISO-8859-2,utf-8;q=0.7,*;q=0.7");
+	purple_http_request_header_set(req, "Connection", "keep-alive");
+	purple_http_request_header_set(req, "Content-Type",
+		"application/x-www-form-urlencoded; charset=UTF-8");
+}
+
+/*******************************************************************************
  * Sending a file.
  ******************************************************************************/
 
@@ -113,8 +142,9 @@ static void ggp_edisc_xfer_free(PurpleXfer *xfer)
 	g_free(edisc_xfer->filename);
 
 	sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
-	g_hash_table_remove(sdata->xfers_initialized,
-		edisc_xfer->ticket_id);
+	if (edisc_xfer->ticket_id != NULL)
+		g_hash_table_remove(sdata->xfers_initialized,
+			edisc_xfer->ticket_id);
 
 	g_free(edisc_xfer);
 	purple_xfer_set_protocol_data(xfer, NULL);
@@ -169,7 +199,8 @@ static void ggp_edisc_xfer_init(PurpleXfer *xfer)
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_NOT_STARTED);
 
-	edisc_xfer->filename = g_strdup(purple_xfer_get_filename(xfer)); /* TODO: filter */
+	edisc_xfer->filename = g_strdup(purple_xfer_get_filename(xfer));
+	g_strcanon(edisc_xfer->filename, GGP_EDISC_FNAME_ALLOWED, '_');
 
 	ggp_ggdrive_auth(edisc_xfer->gc, ggp_edisc_xfer_init_authenticated, xfer);
 }
@@ -191,11 +222,9 @@ static void ggp_edisc_xfer_init_authenticated(PurpleConnection *gc,
 	req = purple_http_request_new("https://drive.mpa.gg.pl/send_ticket");
 	purple_http_request_set_method(req, "PUT");
 
-	/* TODO: defaults (browser name, etc) */
-	purple_http_request_set_max_len(req, GGP_EDISC_RESPONSE_MAX);
+	ggp_edisc_set_defaults(req);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
 
-	purple_http_request_header_set(req, "X-gged-api-version", "6");
 	purple_http_request_header_set(req, "X-gged-security-token",
 		sdata->security_token);
 
@@ -386,7 +415,7 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 {
 	ggp_edisc_session_data *sdata;
 	ggp_edisc_xfer *edisc_xfer;
-	gchar *upload_url;
+	gchar *upload_url, *filename_e;
 	PurpleHttpRequest *req;
 
 	g_return_if_fail(xfer != NULL);
@@ -400,19 +429,19 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 		return;
 	}
 
+	filename_e = purple_strreplace(edisc_xfer->filename, " ", "%20");
 	upload_url = g_strdup_printf("https://drive.mpa.gg.pl/me/file/outbox/"
-		"%s%%2C%s", edisc_xfer->ticket_id, edisc_xfer->filename);
+		"%s%%2C%s", edisc_xfer->ticket_id, filename_e);
+	g_free(filename_e);
 	req = purple_http_request_new(upload_url);
 	g_free(upload_url);
 
 	purple_http_request_set_method(req, "PUT");
 	purple_http_request_set_timeout(req, -1);
 
-	/* TODO: defaults (browser name, etc) */
-	purple_http_request_set_max_len(req, GGP_EDISC_RESPONSE_MAX);
+	ggp_edisc_set_defaults(req);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
 
-	purple_http_request_header_set(req, "X-gged-api-version", "6");
 	purple_http_request_header_set(req, "X-gged-local-revision", "0");
 	purple_http_request_header_set(req, "X-gged-security-token",
 		sdata->security_token);
@@ -582,17 +611,17 @@ static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 	req = purple_http_request_new("https://drive.mpa.gg.pl/signin");
 	purple_http_request_set_method(req, "PUT");
 
-	/* TODO: defaults (browser name, etc) */
-	purple_http_request_set_max_len(req, GGP_EDISC_RESPONSE_MAX);
+	ggp_edisc_set_defaults(req);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
 
 	metadata = g_strdup_printf("{"
 		"\"id\": \"%032x\", "
-		"\"name\": \"" GGP_EDISC_HOSTNAME "\", "
+		"\"name\": \"%s\", "
 		"\"os_version\": \"" GGP_EDISC_OS "\", "
 		"\"client_version\": \"%s\", "
 		"\"type\": \"" GGP_EDISC_TYPE "\"}",
 		g_random_int_range(1, 1 << 16),
+		purple_get_host_name(),
 		ggp_libgaduw_version(gc));
 
 	purple_http_request_header_set_printf(req, "Authorization",
@@ -600,7 +629,6 @@ static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 	purple_http_request_header_set_printf(req, "X-gged-user",
 		"gg/pl:%u", accdata->session->uin);
 	purple_http_request_header_set(req, "X-gged-client-metadata", metadata);
-	purple_http_request_header_set(req, "X-gged-api-version", "6");
 	g_free(metadata);
 
 	sdata->auth_request = purple_http_request(gc, req,
