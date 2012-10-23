@@ -74,8 +74,6 @@ gchar * ggp_convert_from_cp1250(const gchar *src);
 
 gboolean ggp_password_validate(const gchar *password);
 
-guint64 ggp_microtime(void);
-
 gchar * ggp_utf8_strndup(const gchar *str, gsize n);
 
 GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,

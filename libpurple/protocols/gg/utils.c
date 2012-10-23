@@ -102,16 +102,6 @@ gboolean ggp_password_validate(const gchar *password)
 		"<>\\\\|-]+$", password, 0, 0);
 }
 
-guint64 ggp_microtime(void)
-{
-	// replace with g_get_monotonic_time, when gtk 2.28 will be available
-	GTimeVal time_s;
-	
-	g_get_current_time(&time_s);
-	
-	return ((guint64)time_s.tv_sec << 32) | time_s.tv_usec;
-}
-
 gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 {
 	int raw_len = strlen(str);

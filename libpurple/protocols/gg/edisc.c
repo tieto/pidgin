@@ -346,7 +346,6 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 	}
 
 	stored = fread(buffer, 1, length, xfer->dest_fp);
-	purple_debug_info("gg", "READ: %d\n", stored);
 	if (stored < 0)
 		success = FALSE;
 	else {
@@ -355,11 +354,32 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 		eof = (edisc_xfer->already_read >= purple_xfer_get_size(xfer));
 	}
 
-	/* TODO: this is a cheat, watch http connection to do it well */
-	purple_xfer_set_bytes_sent(xfer, edisc_xfer->already_read); 
-	purple_xfer_update_progress(xfer);
-
 	cb(hc, success, eof, stored);
+}
+
+static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+	gboolean eof;
+	int total_real;
+
+	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
+		purple_debug_error("gg", "ggp_edisc_xfer_start: "
+			"Not yet implemented\n");
+		return;
+	}
+
+	if (reading_state)
+		return;
+
+	eof = (processed >= total);
+	total_real = purple_xfer_get_size(xfer);
+	if (eof || processed > total_real)
+		processed = total_real; /* just to be sure */
+
+	purple_xfer_set_bytes_sent(xfer, processed);
+	purple_xfer_update_progress(xfer);
 }
 
 static void ggp_edisc_xfer_start(PurpleXfer *xfer)
@@ -404,6 +424,9 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
 		ggp_edisc_xfer_sent, xfer);
 	purple_http_request_unref(req);
+
+	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
+		ggp_edisc_xfer_progress_watcher, xfer, 250000);
 }
 
 static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
