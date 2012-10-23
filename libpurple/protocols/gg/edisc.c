@@ -140,6 +140,7 @@ static void ggp_edisc_xfer_free(PurpleXfer *xfer)
 		return;
 
 	g_free(edisc_xfer->filename);
+	purple_http_conn_cancel(edisc_xfer->hc);
 
 	sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
 	if (edisc_xfer->ticket_id != NULL)
@@ -153,6 +154,8 @@ static void ggp_edisc_xfer_free(PurpleXfer *xfer)
 
 static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg)
 {
+	if (purple_xfer_is_cancelled(xfer))
+		g_return_if_reached();
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 	purple_xfer_conversation_write(xfer, msg, TRUE);
 	purple_xfer_error(
@@ -214,6 +217,9 @@ static void ggp_edisc_xfer_init_authenticated(PurpleConnection *gc,
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	gchar *data;
 
+	if (purple_xfer_is_cancelled(xfer))
+		return;
+
 	if (!success) {
 		ggp_edisc_xfer_error(xfer, _("Authentication failed"));
 		return;
@@ -254,6 +260,9 @@ static void ggp_edisc_xfer_init_ticket_sent(PurpleHttpConnection *hc,
 	const gchar *data = purple_http_response_get_data(response);
 	JsonParser *parser;
 	JsonObject *ticket;
+
+	if (purple_xfer_is_cancelled(xfer))
+		return;
 
 	edisc_xfer->hc = NULL;
 
@@ -374,7 +383,11 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 		return;
 	}
 
-	stored = fread(buffer, 1, length, xfer->dest_fp);
+	if (xfer->dest_fp == NULL)
+		stored = -1;
+	else
+		stored = fread(buffer, 1, length, xfer->dest_fp);
+
 	if (stored < 0)
 		success = FALSE;
 	else {
@@ -468,6 +481,9 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 	JsonObject *result;
 	int result_status;
 
+	if (purple_xfer_is_cancelled(xfer))
+		return;
+
 	g_return_if_fail(edisc_xfer != NULL);
 
 	edisc_xfer->hc = NULL;
@@ -498,26 +514,7 @@ static void ggp_edisc_xfer_cancel(PurpleXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
 
-	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
-		purple_debug_error("gg", "ggp_edisc_xfer_start: "
-			"Not yet implemented\n");
-		return;
-	}
-
-	purple_debug_info("gg", "ggp_edisc_xfer_cancel(%p)\n", xfer);
-}
-
-static void ggp_edisc_xfer_end(PurpleXfer *xfer)
-{
-	g_return_if_fail(xfer != NULL);
-
-	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
-		purple_debug_error("gg", "ggp_edisc_xfer_start: "
-			"Not yet implemented\n");
-		return;
-	}
-
-	purple_debug_info("gg", "ggp_edisc_xfer_end(%p)\n", xfer);
+	ggp_edisc_xfer_free(xfer);
 }
 
 PurpleXfer * ggp_edisc_xfer_new(PurpleConnection *gc, const char *who)
@@ -537,9 +534,7 @@ PurpleXfer * ggp_edisc_xfer_new(PurpleConnection *gc, const char *who)
 
 	purple_xfer_set_init_fnc(xfer, ggp_edisc_xfer_init);
 	purple_xfer_set_start_fnc(xfer, ggp_edisc_xfer_start);
-
 	purple_xfer_set_cancel_send_fnc(xfer, ggp_edisc_xfer_cancel);
-	purple_xfer_set_end_fnc(xfer, ggp_edisc_xfer_end);
 
 	return xfer;
 }
