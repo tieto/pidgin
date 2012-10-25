@@ -33,7 +33,7 @@
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb);
+bonjour_bytestreams_connect(PurpleXfer *xfer);
 static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
@@ -280,6 +280,25 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	xep_iq_send_and_free(iq);
 }
 
+/**
+ * Frees the whole tree of an xml node
+ *
+ * First determines the root of the xml tree and then frees the whole tree
+ * from there.
+ *
+ * @param node	The node to free the tree from
+ */
+static void
+xmlnode_free_tree(xmlnode *node)
+{
+	g_return_if_fail(node != NULL);
+
+	while(xmlnode_get_parent(node))
+		node = xmlnode_get_parent(node);
+
+	xmlnode_free(node);
+}
+
 static void
 bonjour_free_xfer(PurpleXfer *xfer)
 {
@@ -310,6 +329,9 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->proxy_host);
 		g_free(xf->buddy_ip);
 		g_free(xf->sid);
+
+		xmlnode_free_tree(xf->streamhost);
+
 		g_free(xf);
 		xfer->data = NULL;
 	}
@@ -546,20 +568,98 @@ out:
 	return !strcmp(host, buddy_ip);
 }
 
+static inline gint
+xep_addr_differ(const char *buddy_ip, const char *host)
+{
+	return !xep_cmp_addr(host, buddy_ip);
+}
+
+/**
+ * Create and insert an identical twin
+ *
+ * Creates a copy of the specified node and inserts it right after
+ * this original node.
+ *
+ * @param node	The node to clone
+ * @return	A pointer to the new, cloned twin if successful
+ *		or NULL otherwise.
+ */
+static xmlnode *
+xmlnode_insert_twin_copy(xmlnode *node) {
+	xmlnode *copy;
+
+	g_return_val_if_fail(node != NULL, NULL);
+
+	copy = xmlnode_copy(node);
+	g_return_val_if_fail(copy != NULL, NULL);
+
+	copy->next = node->next;
+	node->next = copy;
+
+	return copy;
+}
+
+/**
+ * Tries to append an interface scope to an IPv6 link local address.
+ *
+ * If the given address is a link local IPv6 address (with no
+ * interface scope) then we try to determine all fitting interfaces
+ * from our Bonjour IP address list.
+ *
+ * For any such found matches we insert a copy of our current xml
+ * streamhost entry right after this streamhost entry and append
+ * the determined interface to the host address of this copy.
+ *
+ * @param cur_streamhost	The XML streamhost node we examine
+ * @param host	The host address to examine in text form
+ * @param pb	Buddy to get the list of link local IPv6 addresses
+ *		and their interface from
+ * @return	Returns TRUE if the specified 'host' address is a
+ *		link local IPv6 address with no interface scope.
+ *		Otherwise returns FALSE.
+ */
 static gboolean
-__xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
+add_ipv6_link_local_ifaces(xmlnode *cur_streamhost, const char *host,
+			   const PurpleBuddy *pb) {
+	xmlnode *new_streamhost = NULL;
+	struct in6_addr in6_addr;
+	BonjourBuddy *bb;
+	GSList *ip_elem;
+
+	if (inet_pton(AF_INET6, host, &in6_addr) != 1 ||
+	    !IN6_IS_ADDR_LINKLOCAL(&in6_addr) ||
+	    strchr(host, '%'))
+		return FALSE;
+
+	bb = purple_buddy_get_protocol_data(pb);
+
+	for (ip_elem = bb->ips;
+	     (ip_elem = g_slist_find_custom(ip_elem, host, (GCompareFunc)&xep_addr_differ));
+	     ip_elem = ip_elem->next) {
+		purple_debug_info("bonjour", "Inserting an xmlnode twin copy for %s with new host address %s\n",
+				  host, (char*)ip_elem->data);
+		new_streamhost = xmlnode_insert_twin_copy(cur_streamhost);
+		xmlnode_set_attrib(new_streamhost, "host", ip_elem->data);
+	}
+
+	if (!new_streamhost)
+		purple_debug_info("bonjour", "No interface for this IPv6 link local address found: %s\n",
+				  host);
+
+	return TRUE;
+}
+
+static gboolean
+__xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *streamhost,
 			const char *iq_id)
 {
+	char *tmp_iq_id;
 	const char *jid, *host, *port;
 	int portnum;
-	xmlnode *streamhost;
 	XepXfer *xf = NULL;
 
 	xf = (XepXfer*)xfer->data;
-	for(streamhost = xmlnode_get_child(query, "streamhost");
-			streamhost;
-			streamhost = xmlnode_get_next_twin(streamhost)) {
-
+	for(; streamhost; streamhost = xmlnode_get_next_twin(streamhost)) {
 		if(!(jid = xmlnode_get_attrib(streamhost, "jid")) ||
 		   !(host = xmlnode_get_attrib(streamhost, "host")) ||
 		   !(port = xmlnode_get_attrib(streamhost, "port")) ||
@@ -568,29 +668,36 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *query,
 			continue;
 		}
 
-		if(!xep_cmp_addr(host, xf->buddy_ip))
+		/* skip IPv6 link local addresses with no interface scope
+		 * (but try to add a new one with an interface scope then) */
+		if(add_ipv6_link_local_ifaces(streamhost, host, pb))
 			continue;
 
+		tmp_iq_id = g_strdup(iq_id);
 		g_free(xf->iq_id);
-		xf->iq_id = g_strdup(iq_id);
+		g_free(xf->jid);
+		g_free(xf->proxy_host);
+
+		xf->iq_id = tmp_iq_id;
 		xf->jid = g_strdup(jid);
-		xf->proxy_host = g_strdup(xf->buddy_ip);
+		xf->proxy_host = g_strdup(host);
 		xf->proxy_port = portnum;
+		xf->streamhost = streamhost;
+		xf->pb = pb;
 		purple_debug_info("bonjour", "bytestream offer parse"
 				  "jid=%s host=%s port=%d.\n", jid, host, portnum);
-		bonjour_bytestreams_connect(xfer, pb);
+		bonjour_bytestreams_connect(xfer);
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-
 void
 xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 {
 	const char *type, *from, *iq_id, *sid;
-	xmlnode *query;
+	xmlnode *query, *streamhost;
 	BonjourData *bd;
 	PurpleXfer *xfer;
 
@@ -610,6 +717,10 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if(!type)
 		return;
 
+	query = xmlnode_copy(query);
+	if (!query)
+		return;
+
 	if(strcmp(type, "set")) {
 		purple_debug_info("bonjour", "bytestream offer Message type - Unknown-%s.\n", type);
 		return;
@@ -621,7 +732,9 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	sid = xmlnode_get_attrib(query, "sid");
 	xfer = bonjour_si_xfer_find(bd, sid, from);
-	if(xfer && __xep_bytestreams_parse(pb, xfer, query, iq_id))
+	streamhost = xmlnode_get_child(query, "streamhost");
+
+	if(xfer && streamhost && __xep_bytestreams_parse(pb, xfer, streamhost, iq_id))
 		return; /* success */
 
 	purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
@@ -874,15 +987,22 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	XepIq *iq;
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
+	gboolean ret = FALSE;
 
 	xf->proxy_connection = NULL;
 
 	if(source < 0) {
-		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
-			error_message ? error_message : "(null)");
-		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
-		/* Cancel the connection */
-		purple_xfer_cancel_local(xfer);
+		purple_debug_error("bonjour", "Error connecting via SOCKS5 to %s - %s\n",
+			xf->proxy_host, error_message ? error_message : "(null)");
+
+		tmp_node = xmlnode_get_next_twin(xf->streamhost);
+		ret = __xep_bytestreams_parse(xf->pb, xfer, tmp_node, xf->iq_id);
+
+		if (!ret) {
+			xep_ft_si_reject(xf->data, xf->iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
+			/* Cancel the connection */
+			purple_xfer_cancel_local(xfer);
+		}
 		return;
 	}
 
@@ -904,8 +1024,9 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 }
 
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
+bonjour_bytestreams_connect(PurpleXfer *xfer)
 {
+	PurpleBuddy *pb;
 	PurpleAccount *account = NULL;
 	XepXfer *xf;
 	char dstaddr[41];
@@ -923,6 +1044,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
+	pb = xf->pb;
 	name = purple_buddy_get_name(pb);
 	account = purple_buddy_get_account(pb);
 
