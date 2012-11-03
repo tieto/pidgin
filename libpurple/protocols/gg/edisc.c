@@ -660,12 +660,34 @@ static void ggp_ggdrive_auth_done(PurpleHttpConnection *hc,
 {
 	PurpleConnection *gc = purple_http_conn_get_purple_connection(hc);
 	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
+	JsonParser *parser;
+	JsonObject *result;
+	int status = -1;
 
 	sdata->auth_request = NULL;
 
-	if (!purple_http_response_is_successfull(response) ||
-		0 != strcmp(purple_http_response_get_data(response),
-		"{\"result\":{\"status\":0}}")) {
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_misc("gg", "ggp_ggdrive_auth_done: authentication "
+			"failed due to unsuccessful request (code = %d)\n",
+			purple_http_response_get_code(response));
+		ggp_ggdrive_auth_results(gc, FALSE);
+		return;
+	}
+
+	parser = ggp_json_parse(purple_http_response_get_data(response));
+	result = json_node_get_object(json_parser_get_root(parser));
+	result = json_object_get_object_member(result, "result");
+	if (json_object_has_member(result, "status"))
+		status = json_object_get_int_member(result, "status");
+	g_object_unref(parser);
+
+	if (status != 0 ) {
+		purple_debug_misc("gg", "ggp_ggdrive_auth_done: authentication "
+			"failed due to bad result (status=%d)\n", status);
+		if (purple_debug_is_verbose())
+			purple_debug_misc("gg", "ggp_ggdrive_auth_done: "
+				"result = %s\n",
+				purple_http_response_get_data(response));
 		ggp_ggdrive_auth_results(gc, FALSE);
 		return;
 	}
@@ -673,6 +695,8 @@ static void ggp_ggdrive_auth_done(PurpleHttpConnection *hc,
 	sdata->security_token = g_strdup(purple_http_response_get_header(
 		response, "X-gged-security-token"));
 	if (!sdata->security_token) {
+		purple_debug_misc("gg", "ggp_ggdrive_auth_done: authentication "
+			"failed due to missing security token header\n");
 		ggp_ggdrive_auth_results(gc, FALSE);
 		return;
 	}
