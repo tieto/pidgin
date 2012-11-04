@@ -53,6 +53,14 @@ uin_t ggp_str_to_uin(const char *str);
 const char * ggp_uin_to_str(uin_t uin);
 
 /**
+ * Gets UIN for the account.
+ *
+ * @param gc The connection, in which account is connected.
+ * @return UIN for this account.
+ */
+uin_t ggp_get_my_uin(PurpleConnection *gc);
+
+/**
  * Converts encoding of a given string from UTF-8 to CP1250.
  *
  * @param src Input string.

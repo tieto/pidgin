@@ -59,6 +59,14 @@ const char * ggp_uin_to_str(uin_t uin)
 	return buff;
 }
 
+uin_t ggp_get_my_uin(PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, 0);
+	
+	return ggp_str_to_uin(purple_account_get_username(
+		purple_connection_get_account(gc)));
+}
+
 static gchar * ggp_convert(const gchar *src, const char *srcenc,
 	const char *dstenc)
 {

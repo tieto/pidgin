@@ -974,7 +974,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* roomlist_expand_category */
 	ggp_edisc_xfer_can_receive_file,/* can_receive_file */
 	ggp_edisc_xfer_send_file,	/* send_file */
-	ggp_edisc_xfer_new,		/* new_xfer */
+	ggp_edisc_xfer_send_new,	/* new_xfer */
 	ggp_offline_message,		/* offline_message */
 	NULL,				/* whiteboard_prpl_ops */
 	NULL,				/* send_raw */

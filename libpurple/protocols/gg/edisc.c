@@ -49,11 +49,30 @@ struct _ggp_edisc_xfer
 typedef void (*ggp_ggdrive_auth_cb)(PurpleConnection *gc, gboolean success,
 	gpointer user_data);
 
+/* Setting up. */
+static inline ggp_edisc_session_data *
+ggp_edisc_get_sdata(PurpleConnection *gc);
+
+/* Misc. */
+static void ggp_edisc_set_defaults(PurpleHttpRequest *req);
+static int ggp_edisc_parse_error(const gchar *data);
+
+/* General xfer functions. */
+static void ggp_edisc_xfer_free(PurpleXfer *xfer);
+static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg);
+static void ggp_edisc_xfer_cancel(PurpleXfer *xfer);
+
+/* Sending a file. */
+void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc, PurpleXfer *xfer,
+	gboolean is_allowed);
+
+/* Receiving a file. */
+static void ggp_edisc_xfer_recv_ticket_changed(PurpleConnection *gc,
+	const gchar *ticket);
+
+/* Authentication. */
 static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 	gpointer user_data);
-
-static void ggp_edisc_xfer_free(PurpleXfer *xfer);
-static void ggp_edisc_set_defaults(PurpleHttpRequest *req);
 
 /*******************************************************************************
  * Setting up.
@@ -117,19 +136,27 @@ static void ggp_edisc_set_defaults(PurpleHttpRequest *req)
 		"application/x-www-form-urlencoded; charset=UTF-8");
 }
 
+static int ggp_edisc_parse_error(const gchar *data)
+{
+	JsonParser *parser;
+	JsonObject *result;
+	int error_id;
+
+	parser = ggp_json_parse(data);
+	result = json_node_get_object(json_parser_get_root(parser));
+	result = json_object_get_object_member(result, "result");
+	error_id = json_object_get_int_member(result, "appStatus");
+	purple_debug_info("gg", "edisc error: %s (%d)\n",
+		json_object_get_string_member(result, "errorMsg"),
+		error_id);
+	g_object_unref(parser);
+
+	return error_id;
+}
+
 /*******************************************************************************
- * Sending a file.
+ * General xfer functions.
  ******************************************************************************/
-
-static void ggp_edisc_xfer_init(PurpleXfer *xfer);
-static void ggp_edisc_xfer_init_authenticated(PurpleConnection *gc,
-	gboolean success, gpointer _xfer);
-static void ggp_edisc_xfer_init_ticket_sent(PurpleHttpConnection *hc,
-	PurpleHttpResponse *response, gpointer _xfer);
-static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
-	PurpleHttpResponse *response, gpointer _xfer);
-
-static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg);
 
 static void ggp_edisc_xfer_free(PurpleXfer *xfer)
 {
@@ -167,48 +194,96 @@ static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg)
 	purple_xfer_end(xfer);
 }
 
-static int ggp_edisc_parse_error(const gchar *data)
+void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 {
+	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
+	PurpleXfer *xfer;
 	JsonParser *parser;
-	JsonObject *result;
-	int error_id;
+	JsonObject *ticket;
+	const gchar *ticket_id, *ack_status;
+	gboolean is_allowed, is_rejected;
 
 	parser = ggp_json_parse(data);
-	result = json_node_get_object(json_parser_get_root(parser));
-	result = json_object_get_object_member(result, "result");
-	error_id = json_object_get_int_member(result, "appStatus");
-	purple_debug_info("gg", "edisc error: %s (%d)\n",
-		json_object_get_string_member(result, "errorMsg"),
-		error_id);
+	ticket = json_node_get_object(json_parser_get_root(parser));
+	ticket_id = json_object_get_string_member(ticket, "id");
+	ack_status = json_object_get_string_member(ticket, "ack_status");
+
+	xfer = g_hash_table_lookup(sdata->xfers_initialized, ticket_id);
+	if (xfer == NULL) {
+		purple_debug_misc("gg", "ggp_edisc_event_ticket_changed: "
+			"ticket %s not found, updating it...\n",
+			purple_debug_is_unsafe() ? ticket_id : "");
+		ggp_edisc_xfer_recv_ticket_changed(gc, ticket_id);
+		g_object_unref(parser);
+		return;
+	}
+
+	is_allowed = is_rejected = FALSE;
+	if (g_strcmp0("unknown", ack_status) == 0) {
+		/* do nothing */
+	} else if (g_strcmp0("rejected", ack_status) == 0)
+		is_rejected = TRUE;
+	else if (g_strcmp0("allowed", ack_status) == 0)
+		is_allowed = TRUE;
+	else {
+		purple_debug_warning("gg", "ggp_edisc_event_ticket_changed: "
+			"unknown ack_status=%s\n", ack_status);
+		g_object_unref(parser);
+		return;
+	}
+
 	g_object_unref(parser);
 
-	return error_id;
+	if (is_allowed || is_rejected)
+		ggp_edisc_xfer_send_ticket_changed(gc, xfer, is_allowed);
+
 }
 
-gboolean ggp_edisc_xfer_can_receive_file(PurpleConnection *gc, const char *who)
+static void ggp_edisc_xfer_cancel(PurpleXfer *xfer)
+{
+	g_return_if_fail(xfer != NULL);
+
+	ggp_edisc_xfer_free(xfer);
+}
+
+/*******************************************************************************
+ * Sending a file.
+ ******************************************************************************/
+
+static void ggp_edisc_xfer_send_init(PurpleXfer *xfer);
+static void ggp_edisc_xfer_send_init_authenticated(PurpleConnection *gc,
+	gboolean success, gpointer _xfer);
+static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer _xfer);
+static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
+	gchar *buffer, size_t offset, size_t length, gpointer _xfer,
+	PurpleHttpContentReaderCb cb);
+static void ggp_edisc_xfer_send_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer);
+static void ggp_edisc_xfer_send_start(PurpleXfer *xfer);
+static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer _xfer);
+
+gboolean ggp_edisc_xfer_can_receive_file(PurpleConnection *gc,
+	const char *who)
 {
 	return TRUE; /* TODO: only online, buddies (?) */
 }
 
-static void ggp_edisc_xfer_init(PurpleXfer *xfer)
+static void ggp_edisc_xfer_send_init(PurpleXfer *xfer)
 {
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
-
-	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
-		purple_debug_error("gg", "ggp_edisc_xfer_init: "
-			"Not yet implemented\n");
-		return;
-	}
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_NOT_STARTED);
 
 	edisc_xfer->filename = g_strdup(purple_xfer_get_filename(xfer));
 	g_strcanon(edisc_xfer->filename, GGP_EDISC_FNAME_ALLOWED, '_');
 
-	ggp_ggdrive_auth(edisc_xfer->gc, ggp_edisc_xfer_init_authenticated, xfer);
+	ggp_ggdrive_auth(edisc_xfer->gc, ggp_edisc_xfer_send_init_authenticated,
+		xfer);
 }
 
-static void ggp_edisc_xfer_init_authenticated(PurpleConnection *gc,
+static void ggp_edisc_xfer_send_init_authenticated(PurpleConnection *gc,
 	gboolean success, gpointer _xfer)
 {
 	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
@@ -246,11 +321,11 @@ static void ggp_edisc_xfer_init_authenticated(PurpleConnection *gc,
 	g_free(data);
 
 	edisc_xfer->hc = purple_http_request(gc, req,
-		ggp_edisc_xfer_init_ticket_sent, xfer);
+		ggp_edisc_xfer_send_init_ticket_created, xfer);
 	purple_http_request_unref(req);
 }
 
-static void ggp_edisc_xfer_init_ticket_sent(PurpleHttpConnection *hc,
+static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer)
 {
 	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(
@@ -269,12 +344,14 @@ static void ggp_edisc_xfer_init_ticket_sent(PurpleHttpConnection *hc,
 	if (!purple_http_response_is_successfull(response)) {
 		int error_id = ggp_edisc_parse_error(data);
 		if (error_id == 206) /* recipient not logged in */
-			ggp_edisc_xfer_error(xfer, _("Recipient not logged in"));
+			ggp_edisc_xfer_error(xfer,
+				_("Recipient not logged in"));
 		else if (error_id == 207) /* bad sender recipient relation */
 			ggp_edisc_xfer_error(xfer, _("Recipient didn't added "
 				"you to his buddy list"));
 		else
-			ggp_edisc_xfer_error(xfer, _("Cannot offer sending a file"));
+			ggp_edisc_xfer_error(xfer,
+				_("Cannot offer sending a file"));
 		return;
 	}
 
@@ -289,66 +366,30 @@ static void ggp_edisc_xfer_init_ticket_sent(PurpleHttpConnection *hc,
 
 	if (edisc_xfer->ticket_id == NULL) {
 		purple_debug_error("gg",
-			"ggp_edisc_xfer_init_ticket_sent: "
+			"ggp_edisc_xfer_send_init_ticket_created: "
 			"couldn't get ticket id\n");
 		return;
 	}
 
-	purple_debug_info("gg", "ggp_edisc_xfer_init_ticket_sent: "
+	purple_debug_info("gg", "ggp_edisc_xfer_send_init_ticket_created: "
 		"ticket \"%s\" created\n", edisc_xfer->ticket_id);
 
 	g_hash_table_insert(sdata->xfers_initialized,
 		edisc_xfer->ticket_id, xfer);
 }
 
-void ggp_edisc_event_send_ticket_changed(PurpleConnection *gc, const char *data)
+void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc, PurpleXfer *xfer,
+	gboolean is_allowed)
 {
-	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
-	PurpleXfer *xfer;
-	ggp_edisc_xfer *edisc_xfer;
-	JsonParser *parser;
-	JsonObject *ticket;
-	const gchar *ticket_id, *ack_status;
-	gboolean is_allowed;
-
-	parser = ggp_json_parse(data);
-	ticket = json_node_get_object(json_parser_get_root(parser));
-	ticket_id = json_object_get_string_member(ticket, "id");
-	ack_status = json_object_get_string_member(ticket, "ack_status");
-
-	if (g_strcmp0("unknown", ack_status) == 0) {
-		g_object_unref(parser);
-		return;
-	} else if (g_strcmp0("rejected", ack_status) == 0)
-		is_allowed = FALSE;
-	else if (g_strcmp0("allowed", ack_status) == 0)
-		is_allowed = TRUE;
-	else {
-		purple_debug_warning("gg", "ggp_edisc_event_send_ticket_changed: "
-			"unknown ack_status=%s\n", ack_status);
-		g_object_unref(parser);
-		return;
-	}
-
-	xfer = g_hash_table_lookup(sdata->xfers_initialized, ticket_id);
-	if (xfer == NULL) {
-		purple_debug_warning("gg", "ggp_edisc_event_send_ticket_changed: "
-			"ticket %s not found\n", ticket_id);
-		g_object_unref(parser);
-		return;
-	}
-
-	g_object_unref(parser);
-
-	edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	if (!edisc_xfer) {
-		purple_debug_fatal("gg", "ggp_edisc_event_send_ticket_changed: "
+		purple_debug_fatal("gg", "ggp_edisc_event_ticket_changed: "
 			"transfer %p already free'd\n", xfer);
 		return;
 	}
 
 	if (!is_allowed) {
-		purple_debug_info("gg", "ggp_edisc_event_send_ticket_changed: "
+		purple_debug_info("gg", "ggp_edisc_event_ticket_changed: "
 			"transfer %p rejected\n", xfer);
 		purple_xfer_cancel_remote(xfer);
 		ggp_edisc_xfer_free(xfer);
@@ -356,7 +397,7 @@ void ggp_edisc_event_send_ticket_changed(PurpleConnection *gc, const char *data)
 	}
 
 	if (edisc_xfer->allowed) {
-		purple_debug_misc("gg", "ggp_edisc_event_send_ticket_changed: "
+		purple_debug_misc("gg", "ggp_edisc_event_ticket_changed: "
 			"transfer %p already allowed\n", xfer);
 		return;
 	}
@@ -365,7 +406,7 @@ void ggp_edisc_event_send_ticket_changed(PurpleConnection *gc, const char *data)
 	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
-static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
+static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 	gchar *buffer, size_t offset, size_t length, gpointer _xfer,
 	PurpleHttpContentReaderCb cb)
 {
@@ -379,7 +420,7 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 	g_return_if_fail(edisc_xfer != NULL);
 
 	if (edisc_xfer->already_read != offset) {
-		purple_debug_error("gg", "ggp_edisc_xfer_reader: "
+		purple_debug_error("gg", "ggp_edisc_xfer_send_reader: "
 			"Invalid offset (%d != %d)\n",
 			edisc_xfer->already_read, offset);
 		ggp_edisc_xfer_error(xfer, _("Error while reading a file"));
@@ -402,18 +443,12 @@ static void ggp_edisc_xfer_reader(PurpleHttpConnection *hc,
 	cb(hc, success, eof, stored);
 }
 
-static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
+static void ggp_edisc_xfer_send_progress_watcher(PurpleHttpConnection *hc,
 	gboolean reading_state, int processed, int total, gpointer _xfer)
 {
 	PurpleXfer *xfer = _xfer;
 	gboolean eof;
 	int total_real;
-
-	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
-		purple_debug_error("gg", "ggp_edisc_xfer_start: "
-			"Not yet implemented\n");
-		return;
-	}
 
 	if (reading_state)
 		return;
@@ -427,7 +462,7 @@ static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
 	purple_xfer_update_progress(xfer);
 }
 
-static void ggp_edisc_xfer_start(PurpleXfer *xfer)
+static void ggp_edisc_xfer_send_start(PurpleXfer *xfer)
 {
 	ggp_edisc_session_data *sdata;
 	ggp_edisc_xfer *edisc_xfer;
@@ -438,12 +473,6 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	g_return_if_fail(edisc_xfer != NULL);
 	sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
-
-	if (purple_xfer_get_type(xfer) != PURPLE_XFER_SEND) {
-		purple_debug_error("gg", "ggp_edisc_xfer_start: "
-			"Not yet implemented\n");
-		return;
-	}
 
 	filename_e = purple_strreplace(edisc_xfer->filename, " ", "%20");
 	upload_url = g_strdup_printf("https://drive.mpa.gg.pl/me/file/outbox/"
@@ -461,20 +490,21 @@ static void ggp_edisc_xfer_start(PurpleXfer *xfer)
 	purple_http_request_header_set(req, "X-gged-local-revision", "0");
 	purple_http_request_header_set(req, "X-gged-security-token",
 		sdata->security_token);
-	purple_http_request_header_set(req, "X-gged-metadata", "{\"node_type\": \"file\"}");
+	purple_http_request_header_set(req, "X-gged-metadata",
+		"{\"node_type\": \"file\"}");
 
-	purple_http_request_set_contents_reader(req, ggp_edisc_xfer_reader,
+	purple_http_request_set_contents_reader(req, ggp_edisc_xfer_send_reader,
 		purple_xfer_get_size(xfer), xfer);
 
 	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
-		ggp_edisc_xfer_sent, xfer);
+		ggp_edisc_xfer_send_done, xfer);
 	purple_http_request_unref(req);
 
 	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
-		ggp_edisc_xfer_progress_watcher, xfer, 250000);
+		ggp_edisc_xfer_send_progress_watcher, xfer, 250000);
 }
 
-static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
+static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer)
 {
 	PurpleXfer *xfer = _xfer;
@@ -482,7 +512,7 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 	const gchar *data = purple_http_response_get_data(response);
 	JsonParser *parser;
 	JsonObject *result;
-	int result_status;
+	int result_status = -1;
 
 	if (purple_xfer_is_cancelled(xfer))
 		return;
@@ -501,8 +531,6 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 	result = json_object_get_object_member(result, "result");
 	if (json_object_has_member(result, "status"))
 		result_status = json_object_get_int_member(result, "status");
-	else
-		result_status = -1;
 	g_object_unref(parser);
 
 	if (result_status == 0) {
@@ -513,14 +541,7 @@ static void ggp_edisc_xfer_sent(PurpleHttpConnection *hc,
 		ggp_edisc_xfer_error(xfer, _("Error while sending a file"));
 }
 
-static void ggp_edisc_xfer_cancel(PurpleXfer *xfer)
-{
-	g_return_if_fail(xfer != NULL);
-
-	ggp_edisc_xfer_free(xfer);
-}
-
-PurpleXfer * ggp_edisc_xfer_new(PurpleConnection *gc, const char *who)
+PurpleXfer * ggp_edisc_xfer_send_new(PurpleConnection *gc, const char *who)
 {
 	PurpleXfer *xfer;
 	ggp_edisc_xfer *edisc_xfer;
@@ -535,8 +556,8 @@ PurpleXfer * ggp_edisc_xfer_new(PurpleConnection *gc, const char *who)
 
 	edisc_xfer->gc = gc;
 
-	purple_xfer_set_init_fnc(xfer, ggp_edisc_xfer_init);
-	purple_xfer_set_start_fnc(xfer, ggp_edisc_xfer_start);
+	purple_xfer_set_init_fnc(xfer, ggp_edisc_xfer_send_init);
+	purple_xfer_set_start_fnc(xfer, ggp_edisc_xfer_send_start);
 	purple_xfer_set_cancel_send_fnc(xfer, ggp_edisc_xfer_cancel);
 
 	return xfer;
@@ -551,9 +572,9 @@ void ggp_edisc_xfer_send_file(PurpleConnection *gc, const char *who,
 	g_return_if_fail(who != NULL);
 
 	/* Nothing interesting here, this code is common among prpls.
-	 * See ggp_edisc_new_xfer. */
+	 * See ggp_edisc_xfer_send_new. */
 
-	xfer = ggp_edisc_xfer_new(gc, who);
+	xfer = ggp_edisc_xfer_send_new(gc, who);
 	if (filename)
 		purple_xfer_request_accepted(xfer, filename);
 	else
@@ -561,7 +582,151 @@ void ggp_edisc_xfer_send_file(PurpleConnection *gc, const char *who,
 }
 
 /*******************************************************************************
- * Authentication
+ * Receiving a file.
+ ******************************************************************************/
+
+static void ggp_edisc_xfer_recv_ticket_update_authenticated(
+	PurpleConnection *gc, gboolean success, gpointer _ticket);
+static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer user_data);
+
+static void ggp_edisc_xfer_recv_ticket_changed(PurpleConnection *gc,
+	const gchar *ticket)
+{
+	ggp_ggdrive_auth(gc, ggp_edisc_xfer_recv_ticket_update_authenticated,
+		g_strdup(ticket));
+}
+
+static void ggp_edisc_xfer_recv_ticket_update_authenticated(
+	PurpleConnection *gc, gboolean success, gpointer _ticket)
+{
+	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
+	PurpleHttpRequest *req;
+	gchar *ticket = _ticket;
+	gchar *url;
+
+	if (!success) {
+		purple_debug_warning("gg",
+			"ggp_edisc_xfer_recv_ticket_update_authenticated: "
+			"update of ticket %s aborted due to authentication "
+			"failure\n", ticket);
+		g_free(ticket);
+		return;
+	}
+
+	url = g_strdup_printf("https://drive.mpa.gg.pl/send_ticket/%s", ticket);
+	g_free(ticket);
+
+	req = purple_http_request_new(url);
+	g_free(url);
+
+	ggp_edisc_set_defaults(req);
+	purple_http_request_set_cookie_jar(req, sdata->cookies);
+
+	purple_http_request_header_set(req, "X-gged-security-token",
+		sdata->security_token);
+
+	purple_http_request(gc, req, ggp_edisc_xfer_recv_ticket_update_got,
+		NULL);
+	purple_http_request_unref(req);
+}
+
+static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer user_data)
+{
+	PurpleConnection *gc = purple_http_conn_get_purple_connection(hc);
+	PurpleXfer *xfer;
+	JsonParser *parser;
+	JsonObject *result;
+	int status = -1;
+	ggp_edisc_session_data *sdata;
+
+	const gchar *ticket_id, *file_name, *send_mode_str;
+	uin_t sender, recipient;
+	int file_size;
+
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_error("gg",
+			"ggp_edisc_xfer_recv_ticket_update_got: "
+			"cannot fetch update for ticket (code=%d)\n",
+			purple_http_response_get_code(response));
+		return;
+	}
+
+	sdata = ggp_edisc_get_sdata(gc);
+
+	parser = ggp_json_parse(purple_http_response_get_data(response));
+	result = json_node_get_object(json_parser_get_root(parser));
+	result = json_object_get_object_member(result, "result");
+	if (json_object_has_member(result, "status"))
+		status = json_object_get_int_member(result, "status");
+	result = json_object_get_object_member(result, "send_ticket");
+
+	if (status != 0) {
+		purple_debug_warning("gg",
+			"ggp_edisc_xfer_recv_ticket_update_got: failed to get "
+			"update (status=%d)\n", status);
+		g_object_unref(parser);
+		return;
+	}
+
+	ticket_id = json_object_get_string_member(result, "id");
+	sender = ggp_str_to_uin(json_object_get_string_member(result,
+		"sender"));
+	recipient = ggp_str_to_uin(json_object_get_string_member(result,
+		"recipient"));
+	file_size = g_ascii_strtoll(json_object_get_string_member(result,
+		"file_size"), NULL, 10);
+	file_name = json_object_get_string_member(result, "file_name");
+
+	/* GG11: normal
+	 * AQQ 2.4.2.10: direct_inbox
+	 */
+	send_mode_str = json_object_get_string_member(result, "send_mode");
+
+	/* more fields:
+	 * send_progress (float), ack_status, send_status
+	 */
+
+	purple_debug_info("gg", "[tmp] ticket update: (id: %s, sender: %u, "
+		"recipient: %u, file name: \"%s\", file size: %d, "
+		"send mode: %s)\n",
+		ticket_id,
+		sender, recipient,
+		file_name, file_size,
+		send_mode_str);
+
+	xfer = g_hash_table_lookup(sdata->xfers_initialized, ticket_id);
+	if (xfer != NULL) {
+		purple_debug_misc("gg", "ggp_edisc_xfer_recv_ticket_update_got:"
+			" ticket %s already updated\n",
+			purple_debug_is_unsafe() ? ticket_id : "");
+		g_object_unref(parser);
+		return;
+	}
+
+	if (recipient != ggp_get_my_uin(gc)) {
+		purple_debug_misc("gg", "ggp_edisc_xfer_recv_ticket_update_got:"
+			" ticket %s is not for incoming transfer "
+			"(its from %u to %u)\n",
+			purple_debug_is_unsafe() ? ticket_id : "",
+			sender, recipient);
+		g_object_unref(parser);
+		return;
+	}
+/*
+	xfer = ggp_edisc_xfer_new(gc, ggp_uin_to_str(sender));
+	
+	if (filename)
+		purple_xfer_request_accepted(xfer, filename);
+	else
+		purple_xfer_request(xfer);
+*/
+	g_object_unref(parser);
+}
+
+/*******************************************************************************
+ * Authentication.
  ******************************************************************************/
 
 struct _ggp_edisc_auth_data

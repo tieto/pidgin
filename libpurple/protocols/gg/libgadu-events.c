@@ -86,7 +86,7 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 {
 	if (g_strcmp0("edisc/send_ticket_changed", ev->type) == 0) {
-		ggp_edisc_event_send_ticket_changed(gc, ev->data);
+		ggp_edisc_xfer_ticket_changed(gc, ev->data);
 		return;
 	}
 
