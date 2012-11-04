@@ -4,6 +4,10 @@ version 2.10.7:
 	Alien hatchery:
 	* No changes
 
+	libpurple:
+	* Don't link directly to libgcrypt when building with GnuTLS support.
+	 (Bartosz Brachaczek) (#15329)
+
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
 	  buddies will be disabled till 3.0.0. (#15226, #14305)
