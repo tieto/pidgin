@@ -23,6 +23,10 @@ version 2.10.7:
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
 	  backends. (Brad Smith) (#14414)
+	* Fix a crash in the Contact Availability Detection plugin. (Mark)
+	  (#15327)
+	* Make the Message Notification plugin more friendly to non-X11 GTK+,
+	  such as MacPorts' +no_x11 variant.
 
 	Windows-Specific Changes:
 	* Compile with secure flags (#15290)
