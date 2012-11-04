@@ -24,6 +24,7 @@ typedef struct _ggp_edisc_xfer ggp_edisc_xfer;
 struct _ggp_edisc_session_data
 {
 	GHashTable *xfers_initialized;
+	GHashTable *xfers_history;
 
 	PurpleHttpCookieJar *cookies;
 	gchar *security_token;
@@ -61,14 +62,16 @@ static int ggp_edisc_parse_error(const gchar *data);
 static void ggp_edisc_xfer_free(PurpleXfer *xfer);
 static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg);
 static void ggp_edisc_xfer_cancel(PurpleXfer *xfer);
+static const gchar * ggp_edisc_xfer_ticket_url(const gchar *ticket_id);
 
 /* Sending a file. */
 void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc, PurpleXfer *xfer,
 	gboolean is_allowed);
 
 /* Receiving a file. */
+static void ggp_edisc_xfer_recv_reject(PurpleXfer *xfer);
 static void ggp_edisc_xfer_recv_ticket_changed(PurpleConnection *gc,
-	const gchar *ticket);
+	const gchar *ticket_id);
 
 /* Authentication. */
 static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
@@ -81,7 +84,13 @@ static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 static inline ggp_edisc_session_data *
 ggp_edisc_get_sdata(PurpleConnection *gc)
 {
-	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	GGPInfo *accdata;
+
+	g_return_val_if_fail(PURPLE_CONNECTION_IS_VALID(gc), NULL);
+
+	accdata = purple_connection_get_protocol_data(gc);
+	g_return_val_if_fail(accdata != NULL, NULL);
+
 	return accdata->edisc_data;
 }
 
@@ -94,6 +103,7 @@ void ggp_edisc_setup(PurpleConnection *gc)
 
 	sdata->cookies = purple_http_cookie_jar_new();
 	sdata->xfers_initialized = g_hash_table_new(g_str_hash, g_str_equal);
+	sdata->xfers_history = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 void ggp_edisc_cleanup(PurpleConnection *gc)
@@ -106,6 +116,7 @@ void ggp_edisc_cleanup(PurpleConnection *gc)
 
 	purple_http_cookie_jar_unref(sdata->cookies);
 	g_hash_table_destroy(sdata->xfers_initialized);
+	g_hash_table_destroy(sdata->xfers_history);
 
 	g_free(sdata);
 }
@@ -246,6 +257,16 @@ static void ggp_edisc_xfer_cancel(PurpleXfer *xfer)
 	ggp_edisc_xfer_free(xfer);
 }
 
+static const gchar * ggp_edisc_xfer_ticket_url(const gchar *ticket_id)
+{
+	static gchar ticket_url[150];
+
+	g_snprintf(ticket_url, sizeof(ticket_url),
+		"https://drive.mpa.gg.pl/send_ticket/%s", ticket_id);
+
+	return ticket_url;
+}
+
 /*******************************************************************************
  * Sending a file.
  ******************************************************************************/
@@ -376,6 +397,8 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 
 	g_hash_table_insert(sdata->xfers_initialized,
 		edisc_xfer->ticket_id, xfer);
+	g_hash_table_insert(sdata->xfers_history,
+		g_strdup(edisc_xfer->ticket_id), GINT_TO_POINTER(1));
 }
 
 void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc, PurpleXfer *xfer,
@@ -589,12 +612,21 @@ static void ggp_edisc_xfer_recv_ticket_update_authenticated(
 	PurpleConnection *gc, gboolean success, gpointer _ticket);
 static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer user_data);
+static PurpleXfer * ggp_edisc_xfer_recv_new(PurpleConnection *gc,
+	const char *who);
+static void ggp_edisc_xfer_recv_accept(PurpleXfer *xfer);
+static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer);
 
 static void ggp_edisc_xfer_recv_ticket_changed(PurpleConnection *gc,
-	const gchar *ticket)
+	const gchar *ticket_id)
 {
+	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
+
+	if (g_hash_table_lookup(sdata->xfers_history, ticket_id))
+		return;
+
 	ggp_ggdrive_auth(gc, ggp_edisc_xfer_recv_ticket_update_authenticated,
-		g_strdup(ticket));
+		g_strdup(ticket_id));
 }
 
 static void ggp_edisc_xfer_recv_ticket_update_authenticated(
@@ -603,7 +635,6 @@ static void ggp_edisc_xfer_recv_ticket_update_authenticated(
 	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(gc);
 	PurpleHttpRequest *req;
 	gchar *ticket = _ticket;
-	gchar *url;
 
 	if (!success) {
 		purple_debug_warning("gg",
@@ -614,11 +645,8 @@ static void ggp_edisc_xfer_recv_ticket_update_authenticated(
 		return;
 	}
 
-	url = g_strdup_printf("https://drive.mpa.gg.pl/send_ticket/%s", ticket);
+	req = purple_http_request_new(ggp_edisc_xfer_ticket_url(ticket));
 	g_free(ticket);
-
-	req = purple_http_request_new(url);
-	g_free(url);
 
 	ggp_edisc_set_defaults(req);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
@@ -636,6 +664,7 @@ static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
 {
 	PurpleConnection *gc = purple_http_conn_get_purple_connection(hc);
 	PurpleXfer *xfer;
+	ggp_edisc_xfer *edisc_xfer;
 	JsonParser *parser;
 	JsonObject *result;
 	int status = -1;
@@ -714,15 +743,82 @@ static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
 		g_object_unref(parser);
 		return;
 	}
-/*
-	xfer = ggp_edisc_xfer_new(gc, ggp_uin_to_str(sender));
-	
-	if (filename)
-		purple_xfer_request_accepted(xfer, filename);
-	else
-		purple_xfer_request(xfer);
-*/
+
+	xfer = ggp_edisc_xfer_recv_new(gc, ggp_uin_to_str(sender));
+	purple_xfer_set_filename(xfer, file_name);
+	purple_xfer_set_size(xfer, file_size);
+	purple_xfer_request(xfer);
+	edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	edisc_xfer->ticket_id = g_strdup(ticket_id);
+	g_hash_table_insert(sdata->xfers_initialized,
+		edisc_xfer->ticket_id, xfer);
+	g_hash_table_insert(sdata->xfers_history,
+		g_strdup(ticket_id), GINT_TO_POINTER(1));
+
 	g_object_unref(parser);
+}
+
+static PurpleXfer * ggp_edisc_xfer_recv_new(PurpleConnection *gc,
+	const char *who)
+{
+	PurpleXfer *xfer;
+	ggp_edisc_xfer *edisc_xfer;
+
+	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(who != NULL, NULL);
+
+	xfer = purple_xfer_new(purple_connection_get_account(gc),
+		PURPLE_XFER_RECEIVE, who);
+	edisc_xfer = g_new0(ggp_edisc_xfer, 1);
+	purple_xfer_set_protocol_data(xfer, edisc_xfer);
+
+	edisc_xfer->gc = gc;
+
+	purple_xfer_set_init_fnc(xfer, ggp_edisc_xfer_recv_accept);
+	purple_xfer_set_start_fnc(xfer, ggp_edisc_xfer_recv_start);
+	purple_xfer_set_request_denied_fnc(xfer, ggp_edisc_xfer_recv_reject);
+	purple_xfer_set_cancel_recv_fnc(xfer, ggp_edisc_xfer_cancel);
+
+	return xfer;
+}
+
+static void ggp_edisc_xfer_recv_reject(PurpleXfer *xfer)
+{
+	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	ggp_edisc_session_data *sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
+	PurpleHttpRequest *req;
+
+	req = purple_http_request_new(ggp_edisc_xfer_ticket_url(
+		edisc_xfer->ticket_id));
+	purple_http_request_set_method(req, "PUT");
+
+	ggp_edisc_set_defaults(req);
+	purple_http_request_set_cookie_jar(req, sdata->cookies);
+	purple_http_request_header_set(req, "X-gged-security-token",
+		sdata->security_token);
+
+	purple_http_request_header_set(req, "X-gged-ack-status", "reject");
+
+	purple_http_request(edisc_xfer->gc, req, NULL, NULL);
+	purple_http_request_unref(req);
+
+	ggp_edisc_xfer_free(xfer);
+}
+
+static void ggp_edisc_xfer_recv_accept(PurpleXfer *xfer)
+{
+	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
+
+	purple_debug_warning("gg",
+		"ggp_edisc_xfer_recv_init: not implemented\n");
+
+	edisc_xfer->allowed = TRUE;
+}
+
+static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer)
+{
+	purple_debug_warning("gg",
+		"ggp_edisc_xfer_recv_start: not implemented\n");
 }
 
 /*******************************************************************************
