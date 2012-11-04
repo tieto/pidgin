@@ -1771,7 +1771,7 @@ if test "x$enable_gnutls" != "xno"; then
 
 		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
 		[
-			LIBS="$LIBS $with_gnutls_libs -lgnutls -lgcrypt"
+			LIBS="$LIBS $with_gnutls_libs -lgnutls"
 			AC_TRY_LINK_FUNC(gnutls_init, ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
 			LIBS="$LIBS_save"
 		])
@@ -1780,7 +1780,7 @@ if test "x$enable_gnutls" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
 			AC_DEFINE(HAVE_SSL)
 			msg_gnutls="GnuTLS"
-			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
+			GNUTLS_LIBS="$with_gnutls_libs -lgnutls"
 
 			enable_gnutls="yes"
 		else
