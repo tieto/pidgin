@@ -96,12 +96,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#ifdef HAVE_X11
-#include <X11/Xatom.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#endif
-
 #define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
 static PurplePlugin *my_plugin = NULL;
