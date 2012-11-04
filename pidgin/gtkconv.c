@@ -29,10 +29,6 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#ifndef _WIN32
-# include <X11/Xlib.h>
-#endif
-
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
 # ifdef _WIN32

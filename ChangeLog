@@ -8,6 +8,10 @@ version 2.10.7:
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	 (Bartosz Brachaczek) (#15329)
 
+	Pidgin:
+	* Make Pidgin more friendly to non-X11 GTK+, such as MacPorts' +no_x11
+	  variant.
+
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
 	  buddies will be disabled till 3.0.0. (#15226, #14305)

@@ -28,9 +28,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#ifndef _WIN32
-# include <X11/Xlib.h>
-#else
+#ifdef _WIN32
 # ifdef small
 #  undef small
 # endif
