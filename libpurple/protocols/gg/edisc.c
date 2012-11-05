@@ -64,6 +64,8 @@ static void ggp_edisc_xfer_free(PurpleXfer *xfer);
 static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg);
 static void ggp_edisc_xfer_cancel(PurpleXfer *xfer);
 static const gchar * ggp_edisc_xfer_ticket_url(const gchar *ticket_id);
+static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer);
 
 /* Sending a file. */
 static void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc,
@@ -288,6 +290,30 @@ static const gchar * ggp_edisc_xfer_ticket_url(const gchar *ticket_id)
 	return ticket_url;
 }
 
+static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+	gboolean eof;
+	int total_real;
+
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+		if (!reading_state)
+			return;
+	} else {
+		if (reading_state)
+			return;
+	}
+
+	eof = (processed >= total);
+	total_real = purple_xfer_get_size(xfer);
+	if (eof || processed > total_real)
+		processed = total_real; /* just to be sure */
+
+	purple_xfer_set_bytes_sent(xfer, processed);
+	purple_xfer_update_progress(xfer);
+}
+
 /*******************************************************************************
  * Sending a file.
  ******************************************************************************/
@@ -300,8 +326,6 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 	gchar *buffer, size_t offset, size_t length, gpointer _xfer,
 	PurpleHttpContentReaderCb cb);
-static void ggp_edisc_xfer_send_progress_watcher(PurpleHttpConnection *hc,
-	gboolean reading_state, int processed, int total, gpointer _xfer);
 static void ggp_edisc_xfer_send_start(PurpleXfer *xfer);
 static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer);
@@ -487,25 +511,6 @@ static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 	cb(hc, success, eof, stored);
 }
 
-static void ggp_edisc_xfer_send_progress_watcher(PurpleHttpConnection *hc,
-	gboolean reading_state, int processed, int total, gpointer _xfer)
-{
-	PurpleXfer *xfer = _xfer;
-	gboolean eof;
-	int total_real;
-
-	if (reading_state)
-		return;
-
-	eof = (processed >= total);
-	total_real = purple_xfer_get_size(xfer);
-	if (eof || processed > total_real)
-		processed = total_real; /* just to be sure */
-
-	purple_xfer_set_bytes_sent(xfer, processed);
-	purple_xfer_update_progress(xfer);
-}
-
 static void ggp_edisc_xfer_send_start(PurpleXfer *xfer)
 {
 	ggp_edisc_session_data *sdata;
@@ -545,7 +550,7 @@ static void ggp_edisc_xfer_send_start(PurpleXfer *xfer)
 	purple_http_request_unref(req);
 
 	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
-		ggp_edisc_xfer_send_progress_watcher, xfer, 250000);
+		ggp_edisc_xfer_progress_watcher, xfer, 250000);
 }
 
 static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
@@ -881,27 +886,6 @@ static void ggp_edisc_xfer_recv_ticket_completed(PurpleXfer *xfer)
 	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
-/*
-static void ggp_edisc_xfer_recv_progress_watcher(PurpleHttpConnection *hc,
-	gboolean reading_state, int processed, int total, gpointer _xfer)
-{
-	PurpleXfer *xfer = _xfer;
-	gboolean eof;
-	int total_real;
-
-	if (!reading_state)
-		return;
-
-	eof = (processed >= total);
-	total_real = purple_xfer_get_size(xfer);
-	if (eof || processed > total_real)
-		processed = total_real; / * just to be sure * /
-
-	purple_xfer_set_bytes_sent(xfer, processed);
-	purple_xfer_update_progress(xfer);
-}
-*/
-
 static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer)
 {
 	ggp_edisc_session_data *sdata;
@@ -926,15 +910,18 @@ static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer)
 	ggp_edisc_set_defaults(req);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
 
-//	purple_http_request_set_contents_reader(req, ggp_edisc_xfer_send_reader,
-//		purple_xfer_get_size(xfer), xfer);
+/* TODO
+	purple_http_request_set_response_writer(req, XXX, xfer);
+*/
 
 	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
 		ggp_edisc_xfer_recv_done, xfer);
 	purple_http_request_unref(req);
 
-//	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
-//		ggp_edisc_xfer_send_progress_watcher, xfer, 250000);
+/*
+	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
+		ggp_edisc_xfer_progress_watcher, xfer, 250000);
+*/
 }
 
 static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
@@ -958,22 +945,18 @@ static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
 	}
 
 	/* TODO */
-
 	stored = fwrite(data, 1, strlen(data), xfer->dest_fp);
 	purple_xfer_set_bytes_sent(xfer, stored);
 
-	purple_xfer_set_completed(xfer, TRUE);
-	purple_xfer_end(xfer);
-	ggp_edisc_xfer_free(xfer);
-
-/*
-	if (result_status == 0) {
+	if (purple_xfer_get_bytes_remaining(xfer) == 0) {
 		purple_xfer_set_completed(xfer, TRUE);
 		purple_xfer_end(xfer);
 		ggp_edisc_xfer_free(xfer);
-	} else
-		ggp_edisc_xfer_error(xfer, _("Error while sending a file"));
-*/
+	} else {
+		purple_debug_warning("gg", "ggp_edisc_xfer_recv_done: didn't "
+			"received everything\n");
+		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
+	}
 }
 
 /*******************************************************************************
