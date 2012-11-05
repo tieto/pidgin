@@ -199,10 +199,11 @@ event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
 
 #if GST_CHECK_VERSION(1,0,0)
 		gst_pad_remove_probe(srcpad,
+			g_value_get_ulong(gst_structure_get_value(s, "handler-id")));
 #else
 		gst_pad_remove_event_probe(srcpad,
-#endif
 			g_value_get_uint(gst_structure_get_value(s, "handler-id")));
+#endif
 
 		if (g_value_get_boolean(gst_structure_get_value(s, "release-pad")))
 			gst_element_release_request_pad(GST_ELEMENT_PARENT(srcpad), srcpad);
@@ -225,8 +226,8 @@ static void
 unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
 {
 #if GST_CHECK_VERSION(1,0,0)
-	guint id = gst_pad_add_probe(srcpad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
-	                             event_probe_cb, NULL, NULL);
+	gulong id = gst_pad_add_probe(srcpad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
+	                              event_probe_cb, NULL, NULL);
 #else
 	guint id = gst_pad_add_event_probe(srcpad, G_CALLBACK(event_probe_cb), NULL);
 #endif
@@ -238,7 +239,11 @@ unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
 		gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM,
 			gst_structure_new("purple-unlink-tee",
 				"release-pad", G_TYPE_BOOLEAN, release_pad,
+#if GST_CHECK_VERSION(1,0,0)
+				"handler-id", G_TYPE_ULONG, id,
+#else
 				"handler-id", G_TYPE_UINT, id,
+#endif
 				NULL)));
 }
 
