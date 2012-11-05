@@ -11,6 +11,7 @@
 
 #define GGP_EDISC_OS "WINNT x86-msvc"
 #define GGP_EDISC_TYPE "desktop"
+#define GGP_EDISC_API "6"
 
 #define GGP_EDISC_RESPONSE_MAX 10240
 #define GGP_EDISC_FNAME_ALLOWED "1234567890" \
@@ -129,7 +130,8 @@ void ggp_edisc_cleanup(PurpleConnection *gc)
 static void ggp_edisc_set_defaults(PurpleHttpRequest *req)
 {
 	purple_http_request_set_max_len(req, GGP_EDISC_RESPONSE_MAX);
-	purple_http_request_header_set(req, "X-gged-api-version", "6");
+	purple_http_request_header_set(req, "X-gged-api-version",
+		GGP_EDISC_API);
 
 	/* optional fields */
 	purple_http_request_header_set(req, "User-Agent", "Mozilla/5.0 (Windows"
@@ -638,6 +640,8 @@ static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer);
 static void ggp_edisc_xfer_recv_ack(PurpleXfer *xfer, gboolean accept);
 static void ggp_edisc_xfer_recv_ack_done(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer);
+static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer _xfer);
 
 static void ggp_edisc_xfer_recv_ticket_got(PurpleConnection *gc,
 	const gchar *ticket_id)
@@ -877,10 +881,99 @@ static void ggp_edisc_xfer_recv_ticket_completed(PurpleXfer *xfer)
 	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
+/*
+static void ggp_edisc_xfer_recv_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+	gboolean eof;
+	int total_real;
+
+	if (!reading_state)
+		return;
+
+	eof = (processed >= total);
+	total_real = purple_xfer_get_size(xfer);
+	if (eof || processed > total_real)
+		processed = total_real; / * just to be sure * /
+
+	purple_xfer_set_bytes_sent(xfer, processed);
+	purple_xfer_update_progress(xfer);
+}
+*/
+
 static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer)
 {
-	purple_debug_warning("gg",
-		"ggp_edisc_xfer_recv_start: not implemented\n");
+	ggp_edisc_session_data *sdata;
+	ggp_edisc_xfer *edisc_xfer;
+	gchar *upload_url;
+	PurpleHttpRequest *req;
+
+	g_return_if_fail(xfer != NULL);
+	edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	g_return_if_fail(edisc_xfer != NULL);
+	sdata = ggp_edisc_get_sdata(edisc_xfer->gc);
+
+	upload_url = g_strdup_printf("https://drive.mpa.gg.pl/me/file/inbox/"
+		"%s,%s?api_version=%s&security_token=%s",
+		edisc_xfer->ticket_id, purple_url_encode(purple_xfer_get_filename(xfer)),
+		GGP_EDISC_API, sdata->security_token);
+	req = purple_http_request_new(upload_url);
+	g_free(upload_url);
+
+	purple_http_request_set_timeout(req, -1);
+
+	ggp_edisc_set_defaults(req);
+	purple_http_request_set_cookie_jar(req, sdata->cookies);
+
+//	purple_http_request_set_contents_reader(req, ggp_edisc_xfer_send_reader,
+//		purple_xfer_get_size(xfer), xfer);
+
+	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
+		ggp_edisc_xfer_recv_done, xfer);
+	purple_http_request_unref(req);
+
+//	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
+//		ggp_edisc_xfer_send_progress_watcher, xfer, 250000);
+}
+
+static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
+	PurpleHttpResponse *response, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
+	const gchar *data = purple_http_response_get_data(response);
+	size_t stored;
+
+	if (purple_xfer_is_cancelled(xfer))
+		return;
+
+	g_return_if_fail(edisc_xfer != NULL);
+
+	edisc_xfer->hc = NULL;
+
+	if (!purple_http_response_is_successfull(response)) {
+		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
+		return;
+	}
+
+	/* TODO */
+
+	stored = fwrite(data, 1, strlen(data), xfer->dest_fp);
+	purple_xfer_set_bytes_sent(xfer, stored);
+
+	purple_xfer_set_completed(xfer, TRUE);
+	purple_xfer_end(xfer);
+	ggp_edisc_xfer_free(xfer);
+
+/*
+	if (result_status == 0) {
+		purple_xfer_set_completed(xfer, TRUE);
+		purple_xfer_end(xfer);
+		ggp_edisc_xfer_free(xfer);
+	} else
+		ggp_edisc_xfer_error(xfer, _("Error while sending a file"));
+*/
 }
 
 /*******************************************************************************
