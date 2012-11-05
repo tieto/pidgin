@@ -35,6 +35,7 @@
 #include "eventloop.h"
 #include "proxy.h"
 #include "sslconn.h"
+#include "obsolete.h"
 
 #include <stdio.h>
 #include <string.h>

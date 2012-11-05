@@ -821,11 +821,8 @@ dnl #######################################################################
 
 PKG_CHECK_MODULES([JSON], [json-glib-1.0], [enable_json="yes"], [enable_json="no"])
 
-dnl #######################################################################
-dnl # Check for libcurl (required)
-dnl #######################################################################
-
-PKG_CHECK_MODULES([LIBCURL], [libcurl])
+AC_SUBST(JSON_CFLAGS)
+AC_SUBST(JSON_LIBS)
 
 dnl #######################################################################
 dnl # Check for zlib (required)

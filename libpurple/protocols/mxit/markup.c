@@ -25,6 +25,7 @@
 
 #include    "internal.h"
 #include	"purple.h"
+#include	"obsolete.h"
 
 #include	"protocol.h"
 #include	"mxit.h"

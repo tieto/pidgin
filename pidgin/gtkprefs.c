@@ -26,6 +26,7 @@
  */
 #include "internal.h"
 #include "pidgin.h"
+#include "obsolete.h"
 
 #include "debug.h"
 #include "nat-pmp.h"
