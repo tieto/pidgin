@@ -429,18 +429,14 @@ jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 	jingle_actions[action_type].handler(session, jingle);
 }
 
-static void
-jingle_terminate_sessions_gh(gpointer key, gpointer value, gpointer user_data)
-{
-	g_object_unref(value);
-}
-
 void
 jingle_terminate_sessions(JabberStream *js)
 {
-	if (js->sessions)
-		g_hash_table_foreach(js->sessions,
-				jingle_terminate_sessions_gh, NULL);
+	if (js->sessions) {
+		GList *list = g_hash_table_get_values(js->sessions);
+		for (; list; list = g_list_delete_link(list, list))
+			g_object_unref(list->data);
+	}
 }
 
 #ifdef USE_VV

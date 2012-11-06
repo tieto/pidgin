@@ -211,7 +211,7 @@ START_TEST(test_markup_html_to_xhtml)
 	purple_markup_html_to_xhtml("<h1><h2><h3><h4>", &xhtml, &plaintext);
 	assert_string_equal_free("<h1><h2><h3><h4></h4></h3></h2></h1>", xhtml);
 	assert_string_equal_free("", plaintext);
-        
+
 	purple_markup_html_to_xhtml("<italic/>", &xhtml, &plaintext);
 	assert_string_equal_free("<em/>", xhtml);
 	assert_string_equal_free("", plaintext);

@@ -207,8 +207,16 @@ regex_toggle_div(WebKitDOMNode *div)
 	if (!WEBKIT_DOM_IS_HTML_ELEMENT(div))
 		return;
 
+#if (WEBKIT_MAJOR_VERSION == 1 && \
+     WEBKIT_MINOR_VERSION == 9 && \
+     WEBKIT_MICRO_VERSION == 90)
+	/* Workaround WebKit API bug. */
+	classes = webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(div));
+#else
 	classes = webkit_dom_html_element_get_class_list(WEBKIT_DOM_HTML_ELEMENT(div));
+#endif
 	webkit_dom_dom_token_list_toggle(classes, "hide", NULL);
+	g_object_unref(classes);
 }
 
 static void
@@ -235,6 +243,8 @@ regex_highlight_clear(WebKitDOMDocument *dom)
 
 		webkit_dom_node_replace_child(parent, WEBKIT_DOM_NODE(text), span, &err);
 	}
+
+	g_object_unref(nodes);
 }
 
 static void
@@ -395,10 +405,13 @@ regex_toggle_filter(DebugWindow *win, gboolean filter)
 	/* Re-show debug lines that didn't match regex */
 	list = webkit_dom_document_get_elements_by_class_name(dom, "hide");
 	i = webkit_dom_node_list_get_length(list);
+
 	while (i--) {
 		WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
 		regex_toggle_div(div);
 	}
+
+	g_object_unref(list);
 
 	if (filter) {
 		list = webkit_dom_document_get_elements_by_tag_name(dom, "div");
@@ -407,6 +420,8 @@ regex_toggle_filter(DebugWindow *win, gboolean filter)
 			WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
 			regex_match(win, dom, div);
 		}
+
+		g_object_unref(list);
 	}
 }
 

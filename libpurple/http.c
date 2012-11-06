@@ -66,6 +66,8 @@ struct _PurpleHttpRequest
 	int contents_length;
 	PurpleHttpContentReader contents_reader;
 	gpointer contents_reader_data;
+	PurpleHttpContentWriter response_writer;
+	gpointer response_writer_data;
 
 	int timeout;
 	int max_redirects;
@@ -524,16 +526,8 @@ static void _purple_http_gen_headers(PurpleHttpConnection *hc)
 
 	proxy_username = purple_proxy_info_get_username(proxy);
 	if (proxy_http && proxy_username != NULL && proxy_username[0] != '\0') {
-		char hostname[256];
 		gchar *proxy_auth, *ntlm_type1, *tmp;
 		int len;
-
-		if (gethostname(hostname, sizeof(hostname)) < 0 ||
-			hostname[0] == '\0') {
-			purple_debug_warning("http", "gethostname() failed "
-				"- is your hostname set?");
-			strcpy(hostname, "localhost");
-		}
 
 		proxy_password = purple_proxy_info_get_password(proxy);
 		if (proxy_password == NULL)
@@ -545,7 +539,7 @@ static void _purple_http_gen_headers(PurpleHttpConnection *hc)
 		memset(tmp, 0, len);
 		g_free(tmp);
 
-		ntlm_type1 = purple_ntlm_gen_type1(hostname, "");
+		ntlm_type1 = purple_ntlm_gen_type1(purple_get_host_name(), "");
 
 		g_string_append_printf(h, "Proxy-Authorization: Basic %s\r\n",
 			proxy_auth);
@@ -658,23 +652,41 @@ static gboolean _purple_http_recv_headers(PurpleHttpConnection *hc,
 	return TRUE;
 }
 
-static void _purple_http_recv_body_data(PurpleHttpConnection *hc,
+static gboolean _purple_http_recv_body_data(PurpleHttpConnection *hc,
 	const gchar *buf, int len)
 {
+	int current_offset = hc->data_length_got;
+
 	if (hc->request->max_length >= 0) {
 		if (hc->data_length_got + len > hc->request->max_length) {
 			len = hc->request->max_length - hc->data_length_got;
 			hc->length_expected = hc->length_got;
 		}
-		hc->data_length_got += len;
+	}
+	hc->data_length_got += len;
+
+	if (len == 0)
+		return TRUE;
+
+	if (hc->request->response_writer != NULL) {
+		gboolean succ;
+		succ = hc->request->response_writer(hc, hc->response, buf,
+			current_offset, len, hc->request->response_writer_data);
+		if (!succ) {
+			purple_debug_error("http",
+				"Cannot write using callback\n");
+			_purple_http_error(hc,
+				_("Error handling retrieved data"));
+			return FALSE;
+		}
+	} else {
+		if (hc->response->contents == NULL)
+			hc->response->contents = g_string_new("");
+		g_string_append_len(hc->response->contents, buf, len);
 	}
 
 	purple_http_conn_notify_progress_watcher(hc);
-
-	if (len == 0)
-		return;
-
-	g_string_append_len(hc->response->contents, buf, len);
+	return TRUE;
 }
 
 static gboolean _purple_http_recv_body_chunked(PurpleHttpConnection *hc,
@@ -703,8 +715,9 @@ static gboolean _purple_http_recv_body_chunked(PurpleHttpConnection *hc,
 				got_now = hc->chunk_length - hc->chunk_got;
 			hc->chunk_got += got_now;
 			
-			_purple_http_recv_body_data(hc,
-				hc->response_buffer->str, got_now);
+			if (!_purple_http_recv_body_data(hc,
+				hc->response_buffer->str, got_now))
+				return FALSE;
 
 			g_string_erase(hc->response_buffer, 0, got_now);
 			hc->in_chunk = (hc->chunk_got < hc->chunk_length);
@@ -767,9 +780,6 @@ static gboolean _purple_http_recv_body_chunked(PurpleHttpConnection *hc,
 static gboolean _purple_http_recv_body(PurpleHttpConnection *hc,
 	const gchar *buf, int len)
 {
-	if (hc->response->contents == NULL)
-		hc->response->contents = g_string_new("");
-
 	if (hc->is_chunked)
 	{
 		hc->length_got += len;
@@ -781,9 +791,7 @@ static gboolean _purple_http_recv_body(PurpleHttpConnection *hc,
 		len = hc->length_expected - hc->length_got;
 	hc->length_got += len;
 
-	_purple_http_recv_body_data(hc, buf, len);
-
-	return TRUE;
+	return _purple_http_recv_body_data(hc, buf, len);
 }
 
 static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
@@ -1777,6 +1785,17 @@ void purple_http_request_set_contents_reader(PurpleHttpRequest *request,
 	request->contents_length = contents_length;
 	request->contents_reader = reader;
 	request->contents_reader_data = user_data;
+}
+
+void purple_http_request_set_response_writer(PurpleHttpRequest *request,
+	PurpleHttpContentWriter writer, gpointer user_data)
+{
+	g_return_if_fail(request != NULL);
+
+	if (writer == NULL)
+		user_data = NULL;
+	request->response_writer = writer;
+	request->response_writer_data = user_data;
 }
 
 void purple_http_request_set_timeout(PurpleHttpRequest *request, int timeout)
