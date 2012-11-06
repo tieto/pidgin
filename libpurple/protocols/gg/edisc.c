@@ -252,9 +252,8 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 	is_completed = FALSE;
 	if (g_strcmp0("in_progress", send_status) == 0) {
 		/* do nothing */
-	} else if (g_strcmp0("completed", send_status) == 0)
+	} else if (g_strcmp0("completed", send_status) == 0) {
 		is_completed = TRUE;
-	else {
 	} else if (g_strcmp0("expired", send_status) == 0)
 		ggp_edisc_xfer_error(xfer, _("File transfer expired."));
 	else {
@@ -648,7 +647,7 @@ static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer);
 static void ggp_edisc_xfer_recv_ack(PurpleXfer *xfer, gboolean accept);
 static void ggp_edisc_xfer_recv_ack_done(PurpleHttpConnection *hc,
 	PurpleHttpResponse *response, gpointer _xfer);
-static void ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
+static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, const gchar *buffer, size_t offset,
 	size_t length, gpointer user_data);
 static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
@@ -914,24 +913,21 @@ static void ggp_edisc_xfer_recv_start(PurpleXfer *xfer)
 	purple_http_request_set_timeout(req, -1);
 
 	ggp_edisc_set_defaults(req);
+	purple_http_request_set_max_len(req, purple_xfer_get_size(xfer) + 1);
 	purple_http_request_set_cookie_jar(req, sdata->cookies);
 
-/* TODO
 	purple_http_request_set_response_writer(req, ggp_edisc_xfer_recv_writer,
 		xfer);
-*/
 
 	edisc_xfer->hc = purple_http_request(edisc_xfer->gc, req,
 		ggp_edisc_xfer_recv_done, xfer);
 	purple_http_request_unref(req);
 
-/*
 	purple_http_conn_set_progress_watcher(edisc_xfer->hc,
 		ggp_edisc_xfer_progress_watcher, xfer, 250000);
-*/
 }
 
-static void ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
+static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, const gchar *buffer, size_t offset,
 	size_t length, gpointer _xfer)
 {
@@ -939,9 +935,13 @@ static void ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	ggp_edisc_xfer *edisc_xfer;
 	int stored;
 
-	g_return_if_fail(xfer != NULL);
+	purple_debug_info("gg", "ggp_edisc_xfer_recv_writer: [tmp] WRITE! (%d, %d)\n", offset, length);
+
+	g_return_val_if_fail(xfer != NULL, FALSE);
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
-	g_return_if_fail(edisc_xfer != NULL);
+	g_return_val_if_fail(edisc_xfer != NULL, FALSE);
+
+	purple_debug_info("gg", "ggp_edisc_xfer_recv_writer: [tmp] FWRITE!\n");
 
 	if (xfer->dest_fp == NULL)
 		stored = -1;
@@ -951,18 +951,23 @@ static void ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	if (stored != length) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
 			"saved too less\n");
-		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
-		return;
+		return FALSE;
 	}
 
 	if (stored > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
-			"saved too much\n");
-		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
-		return;
+			"saved too much (%d > %d)\n",
+			stored, (int)purple_xfer_get_bytes_remaining(xfer));
+		return FALSE;
 	}
 
-	purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + stored);
+	/* May look redundant with ggp_edisc_xfer_progress_watcher,
+	 * but it isn't!
+	 */
+	purple_xfer_set_bytes_sent(xfer,
+		purple_xfer_get_bytes_sent(xfer) + stored);
+
+	return TRUE;
 }
 
 static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
@@ -970,7 +975,6 @@ static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
 {
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
-	const gchar *data = purple_http_response_get_data(response);
 
 	if (purple_xfer_is_cancelled(xfer))
 		return;
@@ -983,9 +987,6 @@ static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
 		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
 		return;
 	}
-
-	/* TODO */
-	ggp_edisc_xfer_recv_writer(hc, response, data, 0, strlen(data), xfer);
 
 	if (purple_xfer_get_bytes_remaining(xfer) == 0) {
 		purple_xfer_set_completed(xfer, TRUE);
