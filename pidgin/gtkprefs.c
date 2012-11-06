@@ -3364,10 +3364,9 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 }
 
 static void
-scale_value_changed_cb(GtkScaleButton *button, gpointer data)
+volume_changed_cb(GtkScaleButton *button, gpointer data)
 {
-	const char *pref = data;
-	purple_prefs_set_int(pref,
+	purple_prefs_set_int("/purple/media/audio/volume/input",
 	                     gtk_scale_button_get_value(GTK_SCALE_BUTTON(button)) * 100);
 }
 
@@ -3409,8 +3408,7 @@ make_voice_test(GtkWidget *vbox)
 	gtk_scale_button_set_value(GTK_SCALE_BUTTON(volume),
 			purple_prefs_get_int("/purple/media/audio/volume/input") / 100.0);
 	g_signal_connect(volume, "value-changed",
-	                 G_CALLBACK(scale_value_changed_cb),
-	                 "/purple/media/audio/volume/input");
+	                 G_CALLBACK(volume_changed_cb), NULL);
 
 	tmp = g_strdup_printf(_("Silence threshold: %d%%"),
 	                      purple_prefs_get_int("/purple/media/audio/silence_threshold"));
