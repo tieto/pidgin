@@ -66,8 +66,14 @@
 #include <gst/interfaces/xoverlay.h>
 #include <gst/interfaces/propertyprobe.h>
 #endif
-#ifdef HAVE_X11
+#ifdef GDK_WINDOWING_WIN32
+#include <gdk/gdkwin32.h>
+#endif
+#ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
+#endif
+#ifdef GDK_WINDOWING_QUARTZ
+#include <gdk/gdkquartz.h>
 #endif
 #endif
 
@@ -3512,15 +3518,27 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 
 	if (gtk_toggle_button_get_active(test)) {
 		GdkWindow *window = gtk_widget_get_window(video);
-		gulong window_id;
-#ifdef _WIN32
-		window_id = GDK_WINDOW_HWND(window);
-#elif defined(HAVE_X11)
-		window_id = gdk_x11_window_get_xid(window);
-#elif defined(GDK_WINDOWING_QUARTZ)
-		window_id = (gulong)gdk_quartz_window_get_nsview(window);
-#else
-#		error "Unsupported windowing system"
+		gulong window_id = 0;
+#ifdef GDK_WINDOWING_WIN32
+		if (GDK_IS_WIN32_WINDOW(window))
+			window_id = GDK_WINDOW_HWND(window);
+		else
+#endif
+#ifdef GDK_WINDOWING_X11
+		if (GDK_IS_X11_WINDOW(window))
+			window_id = gdk_x11_window_get_xid(window);
+		else
+#endif
+#ifdef GDK_WINDOWING_QUARTZ
+		if (GDK_IS_QUARTZ_WINDOW(window))
+			window_id = (gulong)gdk_quartz_window_get_nsview(window);
+		else
+#endif
+			g_warning("Unsupported GDK backend");
+#if !(defined(GDK_WINDOWING_WIN32) \
+   || defined(GDK_WINDOWING_X11) \
+   || defined(GDK_WINDOWING_QUARTZ))
+#		error "Unsupported GDK windowing system"
 #endif
 
 		video_pipeline = create_video_pipeline();
