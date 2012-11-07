@@ -351,7 +351,18 @@ static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
 gboolean ggp_edisc_xfer_can_receive_file(PurpleConnection *gc,
 	const char *who)
 {
-	return TRUE; /* TODO: only online, buddies (?) */
+	PurpleBuddy *buddy;
+
+	g_return_val_if_fail(gc != NULL, FALSE);
+	g_return_val_if_fail(who != NULL, FALSE);
+
+	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
+	if (buddy == NULL)
+		return FALSE;
+
+	/* TODO: check, if this buddy have us on his list */
+
+	return PURPLE_BUDDY_IS_ONLINE(buddy);
 }
 
 static void ggp_edisc_xfer_send_init(PurpleXfer *xfer)
