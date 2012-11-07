@@ -373,7 +373,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, FALSE, _( "click here" ));
+		mxit_add_html_link(mx, purple_url_decode(reply), FALSE, _( "click here" ));
 	}
 }
 
