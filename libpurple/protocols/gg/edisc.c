@@ -935,13 +935,9 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	ggp_edisc_xfer *edisc_xfer;
 	int stored;
 
-	purple_debug_info("gg", "ggp_edisc_xfer_recv_writer: [tmp] WRITE! (%d, %d)\n", offset, length);
-
 	g_return_val_if_fail(xfer != NULL, FALSE);
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	g_return_val_if_fail(edisc_xfer != NULL, FALSE);
-
-	purple_debug_info("gg", "ggp_edisc_xfer_recv_writer: [tmp] FWRITE!\n");
 
 	if (xfer->dest_fp == NULL)
 		stored = -1;
