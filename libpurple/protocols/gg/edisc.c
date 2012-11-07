@@ -48,6 +48,13 @@ struct _ggp_edisc_xfer
 	int already_read;
 };
 
+typedef enum
+{
+	GGP_EDISC_XFER_ACK_STATUS_UNKNOWN,
+	GGP_EDISC_XFER_ACK_STATUS_ALLOWED,
+	GGP_EDISC_XFER_ACK_STATUS_REJECTED
+} ggp_edisc_xfer_ack_status;
+
 typedef void (*ggp_ggdrive_auth_cb)(PurpleConnection *gc, gboolean success,
 	gpointer user_data);
 
@@ -66,6 +73,9 @@ static void ggp_edisc_xfer_cancel(PurpleXfer *xfer);
 static const gchar * ggp_edisc_xfer_ticket_url(const gchar *ticket_id);
 static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
 	gboolean reading_state, int processed, int total, gpointer _xfer);
+static ggp_edisc_xfer_ack_status
+ggp_edisc_xfer_parse_ack_status(const gchar *str);
+
 
 /* Sending a file. */
 static void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc,
@@ -216,13 +226,15 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 	PurpleXfer *xfer;
 	JsonParser *parser;
 	JsonObject *ticket;
-	const gchar *ticket_id, *ack_status, *send_status;
-	gboolean is_allowed, is_rejected, is_completed;
+	const gchar *ticket_id, *send_status;
+	ggp_edisc_xfer_ack_status ack_status;
+	gboolean is_completed;
 
 	parser = ggp_json_parse(data);
 	ticket = json_node_get_object(json_parser_get_root(parser));
 	ticket_id = json_object_get_string_member(ticket, "id");
-	ack_status = json_object_get_string_member(ticket, "ack_status");
+	ack_status = ggp_edisc_xfer_parse_ack_status(
+		json_object_get_string_member(ticket, "ack_status"));
 	send_status = json_object_get_string_member(ticket, "send_status");
 
 	xfer = g_hash_table_lookup(sdata->xfers_initialized, ticket_id);
@@ -231,20 +243,6 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 			"ticket %s not found, updating it...\n",
 			purple_debug_is_unsafe() ? ticket_id : "");
 		ggp_edisc_xfer_recv_ticket_got(gc, ticket_id);
-		g_object_unref(parser);
-		return;
-	}
-
-	is_allowed = is_rejected = FALSE;
-	if (g_strcmp0("unknown", ack_status) == 0) {
-		/* do nothing */
-	} else if (g_strcmp0("rejected", ack_status) == 0)
-		is_rejected = TRUE;
-	else if (g_strcmp0("allowed", ack_status) == 0)
-		is_allowed = TRUE;
-	else {
-		purple_debug_warning("gg", "ggp_edisc_event_ticket_changed: "
-			"unknown ack_status=%s\n", ack_status);
 		g_object_unref(parser);
 		return;
 	}
@@ -269,8 +267,9 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 		if (is_completed)
 			ggp_edisc_xfer_recv_ticket_completed(xfer);
 	} else {
-		if (is_allowed || is_rejected)
-			ggp_edisc_xfer_send_ticket_changed(gc, xfer, is_allowed);
+		if (ack_status != GGP_EDISC_XFER_ACK_STATUS_UNKNOWN)
+			ggp_edisc_xfer_send_ticket_changed(gc, xfer, ack_status
+				== GGP_EDISC_XFER_ACK_STATUS_ALLOWED);
 	}
 
 }
@@ -314,6 +313,23 @@ static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
 
 	purple_xfer_set_bytes_sent(xfer, processed);
 	purple_xfer_update_progress(xfer);
+}
+
+static ggp_edisc_xfer_ack_status
+ggp_edisc_xfer_parse_ack_status(const gchar *str)
+{
+	g_return_val_if_fail(str != NULL, GGP_EDISC_XFER_ACK_STATUS_UNKNOWN);
+
+	if (g_strcmp0("unknown", str) == 0)
+		return GGP_EDISC_XFER_ACK_STATUS_UNKNOWN;
+	if (g_strcmp0("allowed", str) == 0)
+		return GGP_EDISC_XFER_ACK_STATUS_ALLOWED;
+	if (g_strcmp0("rejected", str) == 0)
+		return GGP_EDISC_XFER_ACK_STATUS_REJECTED;
+
+	purple_debug_warning("gg", "ggp_edisc_xfer_parse_ack_status: "
+		"unknown status (%s)\n", str);
+	return GGP_EDISC_XFER_ACK_STATUS_UNKNOWN;
 }
 
 /*******************************************************************************
@@ -401,6 +417,7 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	const gchar *data = purple_http_response_get_data(response);
+	ggp_edisc_xfer_ack_status ack_status;
 	JsonParser *parser;
 	JsonObject *ticket;
 
@@ -429,6 +446,9 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 	ticket = json_object_get_object_member(ticket, "send_ticket");
 	edisc_xfer->ticket_id = g_strdup(json_object_get_string_member(
 		ticket, "id"));
+	ack_status = ggp_edisc_xfer_parse_ack_status(
+		json_object_get_string_member(ticket, "ack_status"));
+	/* send_mode: "normal", "publink" (for legacy clients) */
 
 	g_object_unref(parser);
 
@@ -446,6 +466,10 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 		edisc_xfer->ticket_id, xfer);
 	g_hash_table_insert(sdata->xfers_history,
 		g_strdup(edisc_xfer->ticket_id), GINT_TO_POINTER(1));
+
+	if (ack_status != GGP_EDISC_XFER_ACK_STATUS_UNKNOWN)
+		ggp_edisc_xfer_send_ticket_changed(edisc_xfer->gc, xfer,
+			ack_status == GGP_EDISC_XFER_ACK_STATUS_ALLOWED);
 }
 
 void ggp_edisc_xfer_send_ticket_changed(PurpleConnection *gc, PurpleXfer *xfer,
