@@ -111,6 +111,7 @@ struct _PurpleHttpConnection
 	gpointer watcher_user_data;
 	guint watcher_interval_threshold;
 	gint64 watcher_last_call;
+	guint watcher_delayed_handle;
 };
 
 struct _PurpleHttpResponse
@@ -430,7 +431,9 @@ static gchar * purple_http_headers_dump(PurpleHttpHeaders *hdrs)
 static void _purple_http_disconnect(PurpleHttpConnection *hc);
 
 static void _purple_http_gen_headers(PurpleHttpConnection *hc);
-static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond);
+static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd);
+static void _purple_http_recv(gpointer _hc, gint fd,
+	PurpleInputCondition cond);
 static void _purple_http_recv_ssl(gpointer _hc,
 	PurpleSslConnection *ssl_connection, PurpleInputCondition cond);
 static void _purple_http_send(gpointer _hc, gint fd, PurpleInputCondition cond);
@@ -794,25 +797,26 @@ static gboolean _purple_http_recv_body(PurpleHttpConnection *hc,
 	return _purple_http_recv_body_data(hc, buf, len);
 }
 
-static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
+static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 {
-	PurpleHttpConnection *hc = _hc;
 	PurpleHttpSocket *hs = &hc->socket;
 	int len;
 	gchar buf[4096];
+	gboolean got_anything;
 
 	if (hs->is_ssl)
 		len = purple_ssl_read(hs->ssl_connection, buf, sizeof(buf));
 	else
 		len = read(fd, buf, sizeof(buf));
+	got_anything = (len > 0);
 
 	if (len < 0 && errno == EAGAIN)
-		return;
+		return FALSE;
 
 	if (len < 0) {
 		_purple_http_error(hc, _("Error reading from %s: %s"),
 			hc->url->host, g_strerror(errno));
-		return;
+		return FALSE;
 	}
 
 	/* EOF */
@@ -822,7 +826,7 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 			purple_debug_warning("http", "No more data while reading"
 				" contents\n");
 			_purple_http_error(hc, _("Error parsing HTTP"));
-			return;
+			return FALSE;
 		}
 		if (hc->headers_got)
 			hc->length_expected = hc->length_got;
@@ -830,13 +834,13 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 			purple_debug_warning("http", "No more data while "
 				"parsing headers\n");
 			_purple_http_error(hc, _("Error parsing HTTP"));
-			return;
+			return FALSE;
 		}
 	}
 
 	if (!hc->headers_got && len > 0) {
 		if (!_purple_http_recv_headers(hc, buf, len))
-			return;
+			return FALSE;
 		len = 0;
 		if (hc->headers_got) {
 			if (!purple_http_headers_get_int(hc->response->headers,
@@ -854,12 +858,12 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 			_purple_http_recv_body(hc, buffer, buffer_len);
 		}
 		if (!hc->headers_got)
-			return;
+			return got_anything;
 	}
 
 	if (len > 0) {
 		if (!_purple_http_recv_body(hc, buf, len))
-			return;
+			return FALSE;
 	}
 
 	if (hc->is_chunked && hc->chunks_done)
@@ -872,7 +876,7 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 			hc->response->code = 0;
 			purple_debug_warning("http", "No headers got\n");
 			_purple_http_error(hc, _("Error parsing HTTP"));
-			return;
+			return FALSE;
 		}
 
 		if (purple_debug_is_unsafe() && purple_debug_is_verbose()) {
@@ -898,7 +902,7 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 
 		if (hc->response->code == 407) {
 			_purple_http_error(hc, _("Invalid proxy credentials"));
-			return;
+			return FALSE;
 		}
 
 		redirect = purple_http_headers_get(hc->response->headers,
@@ -924,13 +928,22 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 			purple_http_url_free(url);
 
 			_purple_http_reconnect(hc);
-			return;
+			return FALSE;
 		}
 
 		_purple_http_disconnect(hc);
 		purple_http_connection_terminate(hc);
-		return;
+		return FALSE;
 	}
+
+	return got_anything;
+}
+
+static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
+{
+	PurpleHttpConnection *hc = _hc;
+
+	while (_purple_http_recv_loopbody(hc, fd));
 }
 
 static void _purple_http_recv_ssl(gpointer _hc,
@@ -1281,6 +1294,7 @@ PurpleHttpConnection * purple_http_request(PurpleConnection *gc,
 /*** HTTP connection API ******************************************************/
 
 static void purple_http_connection_free(PurpleHttpConnection *hc);
+static gboolean purple_http_conn_notify_progress_watcher_timeout(gpointer _hc);
 
 static PurpleHttpConnection * purple_http_connection_new(
 	PurpleHttpRequest *request, PurpleConnection *gc)
@@ -1309,6 +1323,8 @@ static void purple_http_connection_free(PurpleHttpConnection *hc)
 {
 	if (hc->timeout_handle)
 		purple_timeout_remove(hc->timeout_handle);
+	if (hc->watcher_delayed_handle)
+		purple_timeout_remove(hc->watcher_delayed_handle);
 
 	purple_http_url_free(hc->url);
 	purple_http_request_unref(hc->request);
@@ -1449,10 +1465,30 @@ static void purple_http_conn_notify_progress_watcher(
 
 	now = g_get_monotonic_time();
 	if (hc->watcher_last_call + hc->watcher_interval_threshold
-		> now && processed != total)
+		> now && processed != total) {
+		if (hc->watcher_delayed_handle)
+			return;
+		hc->watcher_delayed_handle = purple_timeout_add_seconds(
+			1 + hc->watcher_interval_threshold / 1000000,
+			purple_http_conn_notify_progress_watcher_timeout, hc);
 		return;
+	}
+
+	if (hc->watcher_delayed_handle)
+		purple_timeout_remove(hc->watcher_delayed_handle);
+	hc->watcher_delayed_handle = 0;
+
 	hc->watcher_last_call = now;
 	hc->watcher(hc, reading_state, processed, total, hc->watcher_user_data);
+}
+
+static gboolean purple_http_conn_notify_progress_watcher_timeout(gpointer _hc)
+{
+	PurpleHttpConnection *hc = _hc;
+
+	purple_http_conn_notify_progress_watcher(hc);
+
+	return FALSE;
 }
 
 /*** Cookie jar API ***********************************************************/

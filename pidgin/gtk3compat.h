@@ -37,6 +37,16 @@
 #define gdk_x11_window_get_xid GDK_WINDOW_XWINDOW
 #define gtk_widget_get_preferred_size(x,y,z) gtk_widget_size_request(x,z)
 
+#ifdef GDK_WINDOWING_X11
+#define GDK_IS_X11_WINDOW(window) TRUE
+#endif
+#ifdef GDK_WINDOWING_WIN32
+#define GDK_IS_WIN32_WINDOW(window) TRUE
+#endif
+#ifdef GDK_WINDOWING_QUARTZ
+#define GDK_IS_QUARTZ_WINDOW(window) TRUE
+#endif
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id
