@@ -7,6 +7,7 @@ version 3.0.0 (??/??/????):
 	  either 2 or 3 will attempt to build with specifically 2.x or 3.x
 	  support.  The default is 'auto', which will first look for 3.x
 	  development headers and then 2.x development headers.
+	* Add email notification in the docklet area. (Alexei) (#3571)
 
 	Finch:
 	* Support the conversation-extended signal for extending the

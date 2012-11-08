@@ -46,7 +46,7 @@
  */
 static HWND systray_hwnd = NULL;
 /* additional two cached_icons entries for pending and connecting icons */
-static HICON cached_icons[PURPLE_STATUS_NUM_PRIMITIVES + 2];
+static HICON cached_icons[PURPLE_STATUS_NUM_PRIMITIVES + 3];
 static GtkWidget *image = NULL;
 /* This is used to trigger click events on so they appear to GTK+ as if they are triggered by input */
 static GtkWidget *dummy_button = NULL;
@@ -497,14 +497,16 @@ static void systray_remove_nid(void) {
 }
 
 static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
-		gboolean connecting, gboolean pending) {
+		PidginDockletFlag flags) {
 
 	int icon_index;
 	g_return_if_fail(image != NULL);
 
-	if(connecting)
+	if(flags & PIDGIN_DOCKLET_CONNECTING)
 		icon_index = PURPLE_STATUS_NUM_PRIMITIVES;
-	else if(pending)
+	else if(flags & PIDGIN_DOCKLET_EMAIL_PENDING)
+		icon_index = PURPLE_STATUS_NUM_PRIMITIVES+2;
+	else if(flags & PIDGIN_DOCKLET_CONV_PENDING)
 		icon_index = PURPLE_STATUS_NUM_PRIMITIVES+1;
 	else
 		icon_index = status;
@@ -535,9 +537,11 @@ static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
 				break;
 		}
 
-		if (pending)
+		if (flags & PIDGIN_DOCKLET_EMAIL_PENDING)
+			icon_name = PIDGDIN_STOCK_TRAY_EMAIL;
+		else if (flags & PIDGIN_DOCKLET_CONV_PENDING)
 			icon_name = PIDGIN_STOCK_TRAY_PENDING;
-		if (connecting)
+		else if (flags & PIDGIN_DOCKLET_CONNECTING)
 			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 
 		g_return_if_fail(icon_name != NULL);

@@ -5145,6 +5145,10 @@ headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
 				gtkblist->headline_destroy(gtkblist->headline_data);
 			reset_headline(gtkblist);
 		}
+	} else {
+		if (gtkblist->headline_destroy)
+			gtkblist->headline_destroy(gtkblist->headline_data);
+		reset_headline(gtkblist);
 	}
 
 	return FALSE;

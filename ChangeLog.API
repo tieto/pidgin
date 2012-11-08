@@ -3,6 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
+		* displaying-emails-clear signal (notification signal)
 		* pidgin_create_webview
 		* purple_account_is_disconnecting
 		* purple_account_get_ui_data
@@ -23,6 +24,8 @@ version 3.0.0 (??/??/????):
 		* purple_conversation_message_get_alias
 		* purple_conversation_message_get_conv
 		* purple_contact_get_contact_size
+		* purple_notify_emails_pending
+		* purple_notify_emails_present
 		* purple_notify_searchresult_column_get_title
 		* purple_notify_searchresult_column_is_visible
 		* purple_notify_searchresult_column_set_visible
@@ -72,6 +75,7 @@ version 3.0.0 (??/??/????):
 		* Various WebKit-related functions in gtkwebview.h
 		* xmlnode_get_default_namespace
 		* xmlnode_strip_prefixes
+		* PidginDockletFlag
 
 		Changed:
 		* purple_account_add_buddy now takes an invite message as the last
