@@ -5159,7 +5159,7 @@ headline_realize_cb(GtkWidget *widget, gpointer data)
 {
 	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
-	gdk_cursor_unref(hand_cursor);
+	g_object_unref(hand_cursor);
 }
 
 static gboolean
