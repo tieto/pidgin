@@ -202,8 +202,7 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 		ggp_chat_joined(chat, me);
 		ggp_chat_open_conv(chat);
 	}
-	else if (ev->type == GG_EVENT_CHAT_INVITE_ACK ||
-		ev->type == GG_EVENT_CHAT_SEND_MSG_ACK)
+	else if (ev->type == GG_EVENT_CHAT_INVITE_ACK)
 	{
 		/* ignore */
 	}

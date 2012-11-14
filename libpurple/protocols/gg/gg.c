@@ -333,12 +333,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_MSG:
 			ggp_message_got(gc, &ev->event.msg);
 			break;
-		case GG_EVENT_ACK:
-			/* Changing %u to %i fixes compiler warning */
-			purple_debug_info("gg",
-				"ggp_callback_recv: message sent to: %i, delivery status=%d, seq=%d\n",
-				ev->event.ack.recipient, ev->event.ack.status,
-				ev->event.ack.seq);
+		case GG_EVENT_ACK110:
 			break;
 		case GG_EVENT_IMAGE_REPLY:
 			ggp_image_recv(gc, &ev->event.image_reply);
@@ -389,7 +384,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_CHAT_INFO_UPDATE:
 		case GG_EVENT_CHAT_CREATED:
 		case GG_EVENT_CHAT_INVITE_ACK:
-		case GG_EVENT_CHAT_SEND_MSG_ACK:
 			ggp_chat_got_event(gc, ev);
 			break;
 		default:
