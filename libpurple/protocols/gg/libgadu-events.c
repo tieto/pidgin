@@ -85,13 +85,21 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 
 void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 {
+	static const gchar *ignored_events[] = {
+		"edisc/scope_files_changed",
+		"notifications/state",
+		NULL
+	};
+	const gchar **it;
+
 	if (g_strcmp0("edisc/send_ticket_changed", ev->type) == 0) {
 		ggp_edisc_xfer_ticket_changed(gc, ev->data);
 		return;
 	}
 
-	if (g_strcmp0("edisc/scope_files_changed", ev->type) == 0) {
-		return;
+	for (it = ignored_events; *it != NULL; it++) {
+		if (g_strcmp0(*it, ev->type) == 0)
+			return;
 	}
 
 	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
