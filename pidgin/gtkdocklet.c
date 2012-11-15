@@ -116,7 +116,11 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, PidginDockletFlag n
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
-		gtk_status_icon_set_blinking(docklet, (pending && !connecting));
+		gboolean pending = FALSE;
+		pending |= (newflag & PIDGIN_DOCKLET_EMAIL_PENDING);
+		pending |= (newflag & PIDGIN_DOCKLET_CONV_PENDING);
+		gtk_status_icon_set_blinking(docklet, pending &&
+			!(newflag & PIDGIN_DOCKLET_CONNECTING));
 	} else if (gtk_status_icon_get_blinking(docklet)) {
 		gtk_status_icon_set_blinking(docklet, FALSE);
 	}
