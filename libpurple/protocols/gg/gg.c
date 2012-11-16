@@ -595,6 +595,10 @@ static const char *ggp_normalize(const PurpleAccount *account, const char *who)
 	return normalized;
 }
 
+/* TODO:
+ * - move to status.c ?
+ * - add information about not adding to his buddy list (not_a_friend)
+ */
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
@@ -893,6 +897,8 @@ static const char* ggp_list_emblem(PurpleBuddy *buddy)
 
 	if (buddy_data->blocked)
 		return "not-authorized";
+	if (buddy_data->not_a_friend)
+		return "unavailable";
 
 	return NULL;
 }

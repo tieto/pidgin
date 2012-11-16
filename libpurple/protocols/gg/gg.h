@@ -61,6 +61,7 @@ typedef struct {
 typedef struct
 {
 	gboolean blocked;
+	gboolean not_a_friend;
 } ggp_buddy_data;
 
 ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy);
