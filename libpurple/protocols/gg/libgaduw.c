@@ -34,6 +34,68 @@
 #include "purplew.h"
 #include "gg.h"
 
+static void ggp_libgaduw_debug_handler(int level, const char * format,
+	va_list args);
+
+/*******************************************************************************
+ * Setup/cleanup.
+ ******************************************************************************/
+
+void ggp_libgaduw_setup(void)
+{
+	gg_debug_handler = ggp_libgaduw_debug_handler;
+}
+
+void ggp_libgaduw_cleanup(void)
+{
+	gg_debug_handler = NULL;
+}
+
+/*******************************************************************************
+ * General.
+ ******************************************************************************/
+
+const gchar * ggp_libgaduw_version(PurpleConnection *gc)
+{
+	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
+	const gchar *ver = accdata->session->client_version;
+	
+	if (ver != NULL && isdigit(ver[0]))
+		return ver;
+	return GG_DEFAULT_CLIENT_VERSION;
+}
+
+static void ggp_libgaduw_debug_handler(int level, const char * format,
+	va_list args)
+{
+	PurpleDebugLevel purple_level;
+	char *msg;
+
+	if ((level & GG_DEBUG_NET) ||
+		(level & GG_DEBUG_FUNCTION)) {
+		if (!purple_debug_is_verbose())
+			return;
+	}
+
+	if ((level & GG_DEBUG_DUMP) || /* GG session protocol packets */
+		(level & GG_DEBUG_TRAFFIC)) { /* HTTP traffic */
+		if (!purple_debug_is_verbose() || !purple_debug_is_unsafe())
+			return;
+	}
+
+	msg = g_strdup_vprintf(format, args);
+
+	if (level & GG_DEBUG_ERROR)
+		purple_level = PURPLE_DEBUG_ERROR;
+	else if (level & GG_DEBUG_WARNING)
+		purple_level = PURPLE_DEBUG_WARNING;
+	else
+		purple_level = PURPLE_DEBUG_MISC;
+
+	purple_debug(purple_level, "gg", "%s", msg);
+	g_free(msg);
+}
+
 /*******************************************************************************
  * HTTP requests.
  ******************************************************************************/
@@ -138,14 +200,4 @@ static void ggp_libgaduw_http_finish(ggp_libgaduw_http_req *req,
 	req->cb(req->h, success, req->cancelled, req->user_data);
 	req->h->destroy(req->h);
 	g_free(req);
-}
-
-const gchar * ggp_libgaduw_version(PurpleConnection *gc)
-{
-	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
-	const gchar *ver = accdata->session->client_version;
-	
-	if (ver != NULL && isdigit(ver[0]))
-		return ver;
-	return GG_DEFAULT_CLIENT_VERSION;
 }

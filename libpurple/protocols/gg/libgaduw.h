@@ -49,12 +49,14 @@ typedef struct
 	guint inpa;
 } ggp_libgaduw_http_req;
 
+void ggp_libgaduw_setup(void);
+void ggp_libgaduw_cleanup(void);
+
+const gchar * ggp_libgaduw_version(PurpleConnection *gc);
+
 ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 	struct gg_http *h, ggp_libgaduw_http_cb cb, gpointer user_data,
 	gboolean show_processing);
 void ggp_libgaduw_http_cancel(ggp_libgaduw_http_req *req);
-
-const gchar * ggp_libgaduw_version(PurpleConnection *gc);
-
 
 #endif /* _GGP_LIBGADUW_H */

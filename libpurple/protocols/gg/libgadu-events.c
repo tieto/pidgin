@@ -88,6 +88,7 @@ void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 	static const gchar *ignored_events[] = {
 		"edisc/scope_files_changed",
 		"notifications/state",
+		"invitations/list",
 		NULL
 	};
 	const gchar **it;

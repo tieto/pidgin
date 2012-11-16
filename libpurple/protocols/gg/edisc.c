@@ -237,6 +237,8 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 		json_object_get_string_member(ticket, "ack_status"));
 	send_status = json_object_get_string_member(ticket, "send_status");
 
+	if (ticket_id == NULL)
+		ticket_id = "";
 	xfer = g_hash_table_lookup(sdata->xfers_initialized, ticket_id);
 	if (xfer == NULL) {
 		purple_debug_misc("gg", "ggp_edisc_event_ticket_changed: "

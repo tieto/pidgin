@@ -54,6 +54,7 @@
 #include "pubdir-prpl.h"
 #include "message-prpl.h"
 #include "html.h"
+#include "libgaduw.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -1022,29 +1023,6 @@ static PurplePluginInfo info = {
 	NULL
 };
 
-static void purple_gg_debug_handler(int level, const char * format, va_list args) {
-	PurpleDebugLevel purple_level;
-	char *msg = g_strdup_vprintf(format, args);
-
-	/* This is pretty pointless since the GG_DEBUG levels don't correspond to
-	 * the purple ones */
-	switch (level) {
-		case GG_DEBUG_FUNCTION:
-			purple_level = PURPLE_DEBUG_INFO;
-			break;
-		case GG_DEBUG_MISC:
-		case GG_DEBUG_NET:
-		case GG_DEBUG_DUMP:
-		case GG_DEBUG_TRAFFIC:
-		default:
-			purple_level = PURPLE_DEBUG_MISC;
-			break;
-	}
-
-	purple_debug(purple_level, "gg", "%s", msg);
-	g_free(msg);
-}
-
 static PurpleAccountOption *ggp_server_option;
 
 static void init_plugin(PurplePlugin *plugin)
@@ -1081,8 +1059,6 @@ static void init_plugin(PurplePlugin *plugin)
 		"show_links_from_strangers", 1);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
-
-	gg_debug_handler = purple_gg_debug_handler;
 }
 
 static gboolean ggp_load(PurplePlugin *plugin)
@@ -1090,6 +1066,7 @@ static gboolean ggp_load(PurplePlugin *plugin)
 	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
 		"libgadu %s...\n", gg_libgadu_version());
 
+	ggp_libgaduw_setup();
 	ggp_resolver_purple_setup();
 	ggp_servconn_setup(ggp_server_option);
 	ggp_html_setup();
@@ -1103,6 +1080,7 @@ static gboolean ggp_unload(PurplePlugin *plugin)
 	ggp_servconn_cleanup();
 	ggp_html_cleanup();
 	ggp_message_cleanup_global();
+	ggp_libgaduw_cleanup();
 
 	return TRUE;
 }
