@@ -8,6 +8,8 @@ version 3.0.0 (??/??/????):
 	  support.  The default is 'auto', which will first look for 3.x
 	  development headers and then 2.x development headers.
 	* Add email notification in the docklet area. (Alexei) (#3571)
+	* Add a pref to select the type messages in conversation that triggers 
+	  the docklet notification. (Momchil) (#12598)
 
 	Finch:
 	* Support the conversation-extended signal for extending the
