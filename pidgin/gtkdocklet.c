@@ -141,7 +141,7 @@ get_pending_list(guint max)
 		return l_im;
 
 	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
-		 					 PIDGIN_UNSEEN_NICK,
+	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat"),
 							 FALSE, max);
 
 	if (l_im != NULL && l_chat != NULL)
@@ -1026,6 +1026,7 @@ pidgin_docklet_init()
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/docklet/show", "always");
 	purple_prefs_connect_callback(docklet_handle, PIDGIN_PREFS_ROOT "/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat", PIDGIN_UNSEEN_TEXT);
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/gtk");
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded")) {
