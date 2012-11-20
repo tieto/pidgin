@@ -259,7 +259,9 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	/* get the baseURL of the device */
 	if((baseURLNode = xmlnode_get_child(xmlRootNode, "URLBase")) != NULL) {
 		baseURL = xmlnode_get_data(baseURLNode);
-	} else {
+	}
+	/* fixes upnp-descriptions with empty urlbase-element */
+	if(baseURL == NULL){
 		baseURL = g_strdup(httpURL);
 	}
 
