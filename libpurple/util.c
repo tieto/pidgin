@@ -4692,6 +4692,27 @@ purple_escape_filename(const char *str)
 	return buf;
 }
 
+gchar * purple_escape_js(const gchar *str)
+{
+	gchar *tmp, *esc;
+
+	esc = tmp = purple_utf8_try_convert(str);
+
+	esc = purple_strreplace(esc, "\\", "\\\\");
+	g_free(tmp); tmp = esc;
+
+	esc = purple_strreplace(esc, "'", "\\'");
+	g_free(tmp); tmp = esc;
+
+	esc = purple_strreplace(esc, "\n", "\\n");
+	g_free(tmp); tmp = esc;
+
+	esc = purple_strreplace(esc, "\r", "");
+	g_free(tmp); tmp = esc;
+
+	return esc;
+}
+
 void purple_restore_default_signal_handlers(void)
 {
 #ifndef _WIN32

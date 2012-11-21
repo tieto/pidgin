@@ -1390,6 +1390,15 @@ const char *purple_unescape_filename(const char *str);
 const char *purple_escape_filename(const char *str);
 
 /**
+ * Escapes javascript-unfriendly substrings from a string.
+ *
+ * @param str The string to escape.
+ *
+ * @return The javascript-safe string (must be g_free'd after use).
+ */
+gchar * purple_escape_js(const gchar *str);
+
+/**
  * Restore default signal handlers for signals which might reasonably have
  * handlers. This should be called by a fork()'d child process, since child processes
  * inherit the handlers of the parent.
