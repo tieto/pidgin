@@ -818,6 +818,9 @@ purple_notify_init(void)
 						 purple_value_new(PURPLE_TYPE_POINTER),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
+	purple_signal_register(handle, "displaying-emails-clear",
+						 purple_marshal_VOID, NULL, 0);
+
 	purple_signal_register(handle, "displaying-userinfo",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,

@@ -1720,6 +1720,13 @@ conv_page(void)
 
 	vbox = pidgin_make_frame(ret, _("Conversations"));
 
+	pidgin_prefs_dropdown(vbox, _("Chat notification:"),
+		PURPLE_PREF_INT, PIDGIN_PREFS_ROOT "/conversations/notification_chat",
+		_("On unseen events"), PIDGIN_UNSEEN_EVENT,
+		_("On unseen text"), PIDGIN_UNSEEN_TEXT,
+		_("On unseen text and the nick was said"), PIDGIN_UNSEEN_NICK,
+		NULL);
+
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
 	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),

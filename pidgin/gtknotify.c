@@ -375,11 +375,37 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 static void
 reset_mail_dialog(GtkDialog *unused)
 {
+	g_return_if_fail(mail_dialog != NULL);
+
 	if (mail_dialog->in_use)
 		return;
 	gtk_widget_destroy(mail_dialog->dialog);
 	g_free(mail_dialog);
 	mail_dialog = NULL;
+	purple_signal_emit(purple_notify_get_handle(), "displaying-emails-clear");
+}
+
+gboolean
+pidgin_notify_emails_pending()
+{
+#if GTK_CHECK_VERSION(2,18,0)
+	return mail_dialog != NULL
+		&& !gtk_widget_get_visible(mail_dialog->dialog);
+#else
+	return mail_dialog != NULL
+		&& !GTK_WIDGET_VISIBLE(mail_dialog->dialog);
+#endif
+}
+
+void pidgin_notify_emails_present(void *data)
+{
+    if (pidgin_notify_emails_pending()) {
+		gtk_widget_show_all(mail_dialog->dialog);
+		mail_dialog->in_use = TRUE;
+		pidgin_blist_set_headline(NULL, NULL, NULL, NULL, NULL);
+		mail_dialog->in_use = FALSE;
+	}
+	purple_signal_emit(purple_notify_get_handle(), "displaying-emails-clear");
 }
 
 static void
@@ -796,7 +822,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 										   remove the notifications when replacing an
 										   old notification. */
 		pidgin_blist_set_headline(label_text,
-					    pixbuf, G_CALLBACK(gtk_widget_show_all), mail_dialog->dialog,
+					    pixbuf, G_CALLBACK(pidgin_notify_emails_present), mail_dialog->dialog,
 					    (GDestroyNotify)reset_mail_dialog);
 		mail_dialog->in_use = FALSE;
 		g_free(label_text);

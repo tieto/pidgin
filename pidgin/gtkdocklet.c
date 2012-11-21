@@ -44,6 +44,7 @@
 #include "pidginstock.h"
 #include "gtkdocklet.h"
 #include "gtkdialogs.h"
+#include "gtknotify.h"
 
 #include "gtk3compat.h"
 
@@ -58,8 +59,7 @@
 static GtkStatusIcon *docklet = NULL;
 static guint embed_timeout = 0;
 static PurpleStatusPrimitive status = PURPLE_STATUS_OFFLINE;
-static gboolean pending = FALSE;
-static gboolean connecting = FALSE;
+static PidginDockletFlag flags = 0;
 static gboolean enable_join_chat = FALSE;
 static gboolean visible = FALSE;
 static gboolean visibility_manager = FALSE;
@@ -71,8 +71,14 @@ static void docklet_gtk_status_destroy(void);
 /**************************************************************************
  * docklet status and utility functions
  **************************************************************************/
+static inline gboolean
+docklet_is_blinking()
+{
+	return flags && !(flags & PIDGIN_DOCKLET_CONNECTING);
+}
+
 static void
-docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting, gboolean pending)
+docklet_gtk_status_update_icon(PurpleStatusPrimitive status, PidginDockletFlag newflag)
 {
 	const gchar *icon_name = NULL;
 
@@ -97,9 +103,11 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 			break;
 	}
 
-	if (pending)
+	if (newflag & PIDGIN_DOCKLET_EMAIL_PENDING)
+		icon_name = PIDGIN_STOCK_TRAY_EMAIL;
+	if (newflag & PIDGIN_DOCKLET_CONV_PENDING)
 		icon_name = PIDGIN_STOCK_TRAY_PENDING;
-	if (connecting)
+	if (newflag & PIDGIN_DOCKLET_CONNECTING)
 		icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 
 	if (icon_name) {
@@ -108,7 +116,11 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
-		gtk_status_icon_set_blinking(docklet, (pending && !connecting));
+		gboolean pending = FALSE;
+		pending |= (newflag & PIDGIN_DOCKLET_EMAIL_PENDING);
+		pending |= (newflag & PIDGIN_DOCKLET_CONV_PENDING);
+		gtk_status_icon_set_blinking(docklet, pending &&
+			!(newflag & PIDGIN_DOCKLET_CONNECTING));
 	} else if (gtk_status_icon_get_blinking(docklet)) {
 		gtk_status_icon_set_blinking(docklet, FALSE);
 	}
@@ -129,7 +141,7 @@ get_pending_list(guint max)
 		return l_im;
 
 	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
-		 					 PIDGIN_UNSEEN_NICK,
+	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat"),
 							 FALSE, max);
 
 	if (l_im != NULL && l_chat != NULL)
@@ -147,7 +159,7 @@ docklet_update_status(void)
 	int count;
 	PurpleSavedStatus *saved_status;
 	PurpleStatusPrimitive newstatus = PURPLE_STATUS_OFFLINE;
-	gboolean newpending = FALSE, newconnecting = FALSE;
+	PidginDockletFlag newflags = 0;
 
 	/* get the current savedstatus */
 	saved_status = purple_savedstatus_get_current();
@@ -174,7 +186,7 @@ docklet_update_status(void)
 	if (convs != NULL) {
 		/* set tooltip if messages are pending */
 		GString *tooltip_text = g_string_new("");
-		newpending = TRUE;
+		newflags |= PIDGIN_DOCKLET_CONV_PENDING;
 
 		for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 			PurpleConversation *conv = (PurpleConversation *)l->data;
@@ -223,18 +235,20 @@ docklet_update_status(void)
 			continue;
 
 		if (purple_account_is_connecting(account))
-			newconnecting = TRUE;
+			newflags |= PIDGIN_DOCKLET_CONNECTING;
+
+		if (pidgin_notify_emails_pending())
+			newflags |= PIDGIN_DOCKLET_EMAIL_PENDING;
 	}
 
 	newstatus = purple_savedstatus_get_type(saved_status);
 
 	/* update the icon if we changed status */
-	if (status != newstatus || pending!=newpending || connecting!=newconnecting) {
+	if (status != newstatus || flags != newflags) {
 		status = newstatus;
-		pending = newpending;
-		connecting = newconnecting;
+		flags = newflags;
 
-		docklet_gtk_status_update_icon(status, connecting, pending);
+		docklet_gtk_status_update_icon(status, flags);
 	}
 
 	return FALSE; /* for when we're called by the glib idle handler */
@@ -709,7 +723,7 @@ docklet_menu(void)
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Unread Messages"));
 
-	if (pending) {
+	if (flags & PIDGIN_DOCKLET_CONV_PENDING) {
 		GtkWidget *submenu = gtk_menu_new();
 		GList *l = get_pending_list(0);
 		if (l == NULL) {
@@ -785,7 +799,9 @@ pidgin_docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if (pending) {
+			if (flags & PIDGIN_DOCKLET_EMAIL_PENDING) {
+				pidgin_notify_emails_present(NULL);
+			} else if (flags & PIDGIN_DOCKLET_CONV_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
 					pidgin_conv_present_conversation((PurpleConversation *)l->data);
@@ -811,7 +827,7 @@ pidgin_docklet_embedded(void)
 	}
 	visible = TRUE;
 	docklet_update_status();
-	docklet_gtk_status_update_icon(status, connecting, pending);
+	docklet_gtk_status_update_icon(status, flags);
 }
 
 static void
@@ -1002,6 +1018,7 @@ pidgin_docklet_init()
 	void *accounts_handle = purple_accounts_get_handle();
 	void *status_handle = purple_savedstatuses_get_handle();
 	void *docklet_handle = pidgin_docklet_get_handle();
+	void *notify_handle = purple_notify_get_handle();
 	gchar *tmp;
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet");
@@ -1009,6 +1026,7 @@ pidgin_docklet_init()
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/docklet/show", "always");
 	purple_prefs_connect_callback(docklet_handle, PIDGIN_PREFS_ROOT "/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat", PIDGIN_UNSEEN_TEXT);
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/gtk");
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded")) {
@@ -1040,6 +1058,12 @@ pidgin_docklet_init()
 	purple_signal_connect(conv_handle, "conversation-updated",
 			    docklet_handle, PURPLE_CALLBACK(docklet_conv_updated_cb), NULL);
 	purple_signal_connect(status_handle, "savedstatus-changed",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(notify_handle, "displaying-email-notification",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(notify_handle, "displaying-emails-notification",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(notify_handle, "displaying-emails-clear",
 			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
 #if 0
 	purple_signal_connect(purple_get_core(), "quitting",

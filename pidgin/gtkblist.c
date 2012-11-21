@@ -5145,6 +5145,10 @@ headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
 				gtkblist->headline_destroy(gtkblist->headline_data);
 			reset_headline(gtkblist);
 		}
+	} else {
+		if (gtkblist->headline_destroy)
+			gtkblist->headline_destroy(gtkblist->headline_data);
+		reset_headline(gtkblist);
 	}
 
 	return FALSE;
@@ -5155,7 +5159,7 @@ headline_realize_cb(GtkWidget *widget, gpointer data)
 {
 	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
-	gdk_cursor_unref(hand_cursor);
+	g_object_unref(hand_cursor);
 }
 
 static gboolean
