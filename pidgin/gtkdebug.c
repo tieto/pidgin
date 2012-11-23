@@ -1046,7 +1046,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 
 	esc_s = purple_escape_js(arg_s);
 
-	js = g_strdup_printf("append(%d, '%s', '%s', '%s');",
+	js = g_strdup_printf("append(%d, '%s', '%s', %s);",
 		level, mdate, category ? category : "", esc_s);
 	g_free(esc_s);
 

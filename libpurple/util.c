@@ -32,6 +32,8 @@
 #include "prefs.h"
 #include "util.h"
 
+#include <json-glib/json-glib.h>
+
 struct _PurpleMenuAction
 {
 	char *label;
@@ -43,6 +45,8 @@ struct _PurpleMenuAction
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
+static JsonNode *escape_js_node = NULL;
+static JsonGenerator *escape_js_gen = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -124,8 +128,8 @@ void purple_menu_action_set_children(PurpleMenuAction *act, GList *children)
 void
 purple_util_init(void)
 {
-	/* This does nothing right now.  It exists for symmetry with
-	 * purple_util_uninit() and forwards compatibility. */
+	escape_js_node = json_node_new(JSON_NODE_VALUE);
+	escape_js_gen = json_generator_new();
 }
 
 void
@@ -138,6 +142,12 @@ purple_util_uninit(void)
 
 	g_free(user_dir);
 	user_dir = NULL;
+
+	json_node_free(escape_js_node);
+	escape_js_node = NULL;
+
+	g_object_unref(escape_js_gen);
+	escape_js_gen = NULL;
 }
 
 /**************************************************************************
@@ -4694,23 +4704,14 @@ purple_escape_filename(const char *str)
 
 gchar * purple_escape_js(const gchar *str)
 {
-	gchar *tmp, *esc;
+	gchar *escaped;
 
-	esc = tmp = purple_utf8_try_convert(str);
+	json_node_set_string(escape_js_node, str);
+	json_generator_set_root(escape_js_gen, escape_js_node);
+	escaped = json_generator_to_data(escape_js_gen, NULL);
+	json_node_set_boolean(escape_js_node, FALSE);
 
-	esc = purple_strreplace(esc, "\\", "\\\\");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "'", "\\'");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "\n", "\\n");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "\r", "");
-	g_free(tmp); tmp = esc;
-
-	return esc;
+	return escaped;
 }
 
 void purple_restore_default_signal_handlers(void)
