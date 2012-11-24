@@ -109,7 +109,8 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 	}
-	g_regex_unref(debug_win->regex);
+	if (debug_win->regex != NULL)
+		g_regex_unref(debug_win->regex);
 
 	/* If the "Save Log" dialog is open then close it */
 	purple_request_close_with_handle(debug_win);
