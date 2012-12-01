@@ -7,6 +7,8 @@ version 2.10.7:
 	libpurple:
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	  (Bartosz Brachaczek) (#15329)
+	* Fix UPNP mappings on routers that return empty <URLBase/> elements
+	  in their response. (Ferdinand Stehle) (#15373)
 
 	Pidgin:
 	* Make Pidgin more friendly to non-X11 GTK+, such as MacPorts' +no_x11
