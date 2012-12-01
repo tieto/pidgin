@@ -73,7 +73,7 @@ static struct _irc_msg {
 	{ "324", "ncv:", irc_msg_chanmode },	/* Channel modes		*/
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
-	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
+	{ "333", "ncvv", irc_msg_topicinfo },	/* Topic setter stuff		*/
 	{ "352", "ncvvvnv:", irc_msg_who },	/* Channel WHO			*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/

@@ -646,6 +646,38 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	g_free(topic);
 }
 
+void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	PurpleConversation *convo;
+	struct tm *tm;
+	time_t t;
+	char *msg, *timestamp, *datestamp;
+	
+	if (!args || !args[1] || !args[2] || !args[3])
+		return;
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	if (!convo) {
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got topic info for %s, which doesn't exist\n", args[1]);
+		return;
+	}
+
+	t = (time_t)atol(args[3]);
+	if (t == 0) {
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got apparently nonsensical topic timestamp %s\n", args[3]);
+		return;
+	}
+	tm = localtime(&t);
+
+	timestamp = g_strdup(purple_time_format(tm));
+	datestamp = g_strdup(purple_date_format_short(tm));
+	msg = g_strdup_printf("Topic for %s set by %s at %s on %s", args[1], args[2], timestamp, datestamp);
+	purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "", msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+	g_free(timestamp);
+	g_free(datestamp);
+	g_free(msg);
+}
+
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);

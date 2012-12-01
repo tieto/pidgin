@@ -19,6 +19,7 @@ version 2.10.7:
 	IRC:
 	* Support for SASL authentication.  (Thijs Alkemade, Andy Spencer)
 	  (#13270)
+	* Print topic setter information at channel join. (#13317)
 
 	MSN:
 	* Fix a crash when removing a user before its icon is loaded. (Mark
