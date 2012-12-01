@@ -1185,7 +1185,7 @@ for i in $STATIC_PRPLS ; do
 		simple)		static_simple=yes ;;
 		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
-		*)			echo "Invalid static protocol $i!!" ; exit ;;
+		*)			echo "Invalid static protocol $i!!" ; exit 1 ;;
 	esac
 done
 AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes")
@@ -1243,7 +1243,7 @@ for i in $DYNAMIC_PRPLS ; do
 		simple)		dynamic_simple=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
-		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
+		*)			echo "Invalid dynamic protocol $i!!" ; exit 1 ;;
 	esac
 done
 
