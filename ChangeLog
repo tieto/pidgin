@@ -6,7 +6,7 @@ version 2.10.7:
 
 	libpurple:
 	* Don't link directly to libgcrypt when building with GnuTLS support.
-	 (Bartosz Brachaczek) (#15329)
+	  (Bartosz Brachaczek) (#15329)
 
 	Pidgin:
 	* Make Pidgin more friendly to non-X11 GTK+, such as MacPorts' +no_x11
@@ -27,6 +27,7 @@ version 2.10.7:
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
+	* Fix retrieving server-side buddy aliases. (Catalin Salgu) (#15381)
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
@@ -42,18 +43,18 @@ version 2.10.7:
 	  (#15277)
 	* Updates to a number of dependencies, some of which have security
 	  related fixes. (#14571, #15285, #15286)
-	 * ATK 1.32.0-2
-	 * Cyrus SASL 2.1.25
-	 * expat 2.1.0-1
-	 * freetype 2.4.10-1
-	 * gettext 0.18.1.1-2
-	 * Glib 2.28.8-1
-	 * libpng 1.4.12-1
-	 * libxml2 2.9.0-1
-	 * NSS 3.13.6 and NSPR 4.9.2
-	 * Pango 1.29.4-1
-	 * SILC 1.1.10
-	 * zlib 1.2.5-2
+		* ATK 1.32.0-2
+		* Cyrus SASL 2.1.25
+		* expat 2.1.0-1
+		* freetype 2.4.10-1
+		* gettext 0.18.1.1-2
+		* Glib 2.28.8-1
+		* libpng 1.4.12-1
+		* libxml2 2.9.0-1
+		* NSS 3.13.6 and NSPR 4.9.2
+		* Pango 1.29.4-1
+		* SILC 1.1.10
+		* zlib 1.2.5-2
 	* Patch libmeanwhile (sametime library) to fix crash. (Jonathan Rice)
 	  (#12637)
 
