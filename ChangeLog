@@ -4,6 +4,11 @@ version 2.10.7:
 	Alien hatchery:
 	* No changes
 
+	General:
+	* The configure script will now exit with status 1 when specifying
+	  invalid protocol plugins using the --with-static-prpls and
+	  --with-dynamic-prpls arguments. (Michael Fiedler) (#15316)
+
 	libpurple:
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	  (Bartosz Brachaczek) (#15329)
