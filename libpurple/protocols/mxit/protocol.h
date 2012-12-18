@@ -158,6 +158,7 @@
 #define		CP_MSG_ENCRYPTED		0x0010					/* message is encrypted */
 #define		CP_MSG_MARKUP			0x0200					/* message may contain markup */
 #define		CP_MSG_EMOTICON			0x0400					/* message may contain custom emoticons */
+#define		CP_MSG_FAREWELL			0x0800					/* this is a farewell message */
 
 /* redirect types */
 #define		CP_REDIRECT_PERMANENT	1						/* permanent redirect */

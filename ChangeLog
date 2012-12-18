@@ -32,6 +32,10 @@ version 2.10.7:
 	* Fix a crash when removing a user before its icon is loaded. (Mark
 	  Barfield) (#15217)
 
+	MXit:
+	* Display farewell messages in a different colour to distinguish
+	  them from normal messages.
+
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
