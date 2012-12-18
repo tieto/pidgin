@@ -163,6 +163,10 @@ char* mxit_decrypt_message( struct MXitSession* session, char* message )
 	/* base64 decode the message */
 	raw_message = purple_base64_decode( message, &raw_len );
 
+	/* AES-encrypted data is always blocks of 16 bytes */
+	if ( ( raw_len == 0 ) || ( raw_len % 16 != 0 ) )
+		return NULL;
+
 	/* build the AES key */
 	ExpandKey( (unsigned char*) transport_layer_key( session ), (unsigned char*) exkey );
 
