@@ -29,6 +29,18 @@
 #include	<glib.h>
 
 
+/* MXit relationship status types */
+#define MXIT_RELATIONSHIP_UNKNOWN		0
+#define MXIT_RELATIONSHIP_DONTSAY		1
+#define MXIT_RELATIONSHIP_SINGLE		2
+#define MXIT_RELATIONSHIP_INVOLVED		3
+#define MXIT_RELATIONSHIP_ENGAGED		4
+#define MXIT_RELATIONSHIP_MARRIED		5
+#define MXIT_RELATIONSHIP_COMPLICATED	6
+#define MXIT_RELATIONSHIP_WIDOWED		7
+#define MXIT_RELATIONSHIP_SEPARATED		8
+#define MXIT_RELATIONSHIP_DIVORCED		9
+
 struct MXitProfile {
 	/* required */
 	char		loginname[64];						/* name user uses to log into MXit with (aka 'mxitid') */
@@ -47,6 +59,7 @@ struct MXitProfile {
 	char		regcountry[3];						/* user's registered country code */
 	char		whereami[51];						/* where am I / where I live */
 	char		aboutme[513];						/* about me */
+	int			relationship;						/* relationship status */
 
 	int			flags;								/* user's profile flags */
 	gint64		lastonline;							/* user's last-online timestamp */
@@ -56,6 +69,7 @@ struct MXitProfile {
 struct MXitSession;
 void mxit_show_profile( struct MXitSession* session, const char* username, struct MXitProfile* profile );
 void mxit_show_search_results( struct MXitSession* session, int searchType, int maxResults, GList* entries );
+const char* mxit_relationship_to_name( short id );
 
 gboolean validateDate( const char* bday );
 

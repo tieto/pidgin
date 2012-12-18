@@ -35,6 +35,40 @@
 
 
 /*------------------------------------------------------------------------
+ * Return the MXit Relationship status as a string.
+ *
+ * @param id		The Relationship status value (see profile.h)
+ * @return			The relationship status as a text string.
+ */
+const char* mxit_relationship_to_name( short id )
+{
+	switch ( id ) {
+		case MXIT_RELATIONSHIP_UNKNOWN :
+			return _( "Unknown" );
+		case MXIT_RELATIONSHIP_DONTSAY :
+			return _( "Don't want to say" );
+		case MXIT_RELATIONSHIP_SINGLE :
+			return _( "Single" );
+		case MXIT_RELATIONSHIP_INVOLVED :
+			return _( "In a relationship" );
+		case MXIT_RELATIONSHIP_ENGAGED :
+			return _( "Engaged" );
+		case MXIT_RELATIONSHIP_MARRIED :
+			return _( "Married" );
+		case MXIT_RELATIONSHIP_COMPLICATED :
+			return _( "It's complicated" );
+		case MXIT_RELATIONSHIP_WIDOWED :
+			return _( "Widowed" );
+		case MXIT_RELATIONSHIP_SEPARATED :
+			return _( "Separated" );
+		case MXIT_RELATIONSHIP_DIVORCED :
+			return _( "Divorced" );
+		default :
+			return "";
+	}
+}
+
+/*------------------------------------------------------------------------
  * Returns true if it is a valid date.
  *
  * @param bday		Date-of-Birth string (YYYY-MM-DD)
@@ -192,6 +226,8 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		purple_notify_user_info_add_pair( info, _( "About Me" ), profile->aboutme );
 	if ( strlen( profile->whereami ) > 0 )
 		purple_notify_user_info_add_pair( info, _( "Where I Live" ), profile->whereami );
+
+	purple_notify_user_info_add_pair_plaintext( info, _( "Relationship Status" ), mxit_relationship_to_name( profile->relationship ) );
 
 	purple_notify_user_info_add_section_break( info );
 

@@ -205,9 +205,11 @@
 #define		CP_PROFILE_LASTSEEN		"lastseen"				/* Last-Online timestamp */
 #define		CP_PROFILE_WHEREAMI		"whereami"				/* Where am I / Where I live */
 #define		CP_PROFILE_ABOUTME		"aboutme"				/* About me */
+#define		CP_PROFILE_RELATIONSHIP	"relationship"			/* Relationship Status */
 
 /* extended profile field types */
 #define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean (0 or 1) */
+#define		CP_PROFILE_TYPE_SHORT	0x04					/* short (16-bit) */
 #define		CP_PROFILE_TYPE_INT		0x05					/* integer (32-bit) */
 #define		CP_PROFILE_TYPE_LONG	0x06					/* long (64-bit) */
 #define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string */
