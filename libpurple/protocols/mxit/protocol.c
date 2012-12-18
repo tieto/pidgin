@@ -2019,6 +2019,47 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 	g_list_foreach( entries, (GFunc)g_free, NULL );
 }
 
+/*------------------------------------------------------------------------
+ * Process a received message event packet.
+ *
+ *  @param session		The MXit session object
+ *  @param records		The packet's data records
+ *  @param rcount		The number of data records
+ */
+static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record** records, int rcount )
+{
+	int event;
+
+	/*
+	 * contactAddress \1 dateTime \1 id \1 event 
+	 */
+
+	/* strip off dummy domain */
+	mxit_strip_domain( records[0]->fields[0]->data );
+
+	event = atoi( records[0]->fields[3]->data );
+
+	switch ( event ) {
+		case CP_MSGEVENT_TYPING :							/* user is typing */
+		case CP_MSGEVENT_ANGRY :							/* user is typing angrily */
+			serv_got_typing( session->con, records[0]->fields[0]->data, 0, PURPLE_TYPING );
+			break;
+
+		case CP_MSGEVENT_STOPPED :							/* user has stopped typing */
+			serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
+			break;
+
+		case CP_MSGEVENT_ERASING :							/* user is erasing text */
+		case CP_MSGEVENT_DELIVERED :						/* message was delivered */
+		case CP_MSGEVENT_DISPLAYED :						/* message was viewed */
+			/* these are currently not supported by libPurple */
+			break;
+
+		default:
+			purple_debug_error( MXIT_PLUGIN_ID, "Unknown message event received (%i)\n", event );
+	}
+}
+
 
 /*------------------------------------------------------------------------
  * Return the length of a multimedia chunk
@@ -2296,6 +2337,11 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 		case CP_CMD_SUGGESTCONTACTS :
 				/* suggest contacts */
 				mxit_parse_cmd_suggestcontacts( session, &packet->records[2], packet->rcount - 2 );
+				break;
+
+		case CP_CMD_GOT_MSGEVENT :
+				/* received message event */
+				mxit_parse_cmd_msgevent( session, &packet->records[2], packet->rcount - 2 );
 				break;
 
 		case CP_CMD_MOOD :

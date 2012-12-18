@@ -35,6 +35,7 @@ version 2.10.7:
 	MXit:
 	* Display farewell messages in a different colour to distinguish
 	  them from normal messages.
+	* Add support for typing notification.
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
