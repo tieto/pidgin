@@ -43,7 +43,7 @@
  */
 static void mxit_profile_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= purple_connection_get_protocol_data( gc ) ;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 	PurpleRequestField*		field	= NULL;
 	const char*				name	= NULL;
 	const char*				bday	= NULL;

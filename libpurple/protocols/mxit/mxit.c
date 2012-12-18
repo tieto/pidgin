@@ -427,7 +427,7 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 	char*					statusmsg2;
 
 	/* Handle mood changes */
-	if ( purple_status_type_get_primitive(purple_status_get_type( status ) ) == PURPLE_STATUS_MOOD ) {
+	if ( purple_status_type_get_primitive( purple_status_get_type( status ) ) == PURPLE_STATUS_MOOD ) {
 		const char* moodid = purple_status_get_attr_string( status, PURPLE_MOOD_NAME );
 		int mood;
 

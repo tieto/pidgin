@@ -130,7 +130,7 @@ static int calculateAge( const char* date )
 	age = now.tm_year - bdate.tm_year;
 	if ( now.tm_mon < bdate.tm_mon )		/* is before month of birth */
 		age--;
-	else if ( (now.tm_mon == bdate.tm_mon ) && ( now.tm_mday < bdate.tm_mday ) )	/* before birthday in current month */
+	else if ( ( now.tm_mon == bdate.tm_mon ) && ( now.tm_mday < bdate.tm_mday ) )	/* before birthday in current month */
 		age--;
 
 	return age;
@@ -236,7 +236,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 				img_text = g_strdup_printf( "<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
 				                            contact->imgid );
 				purple_notify_user_info_add_pair_html( info, _( "Photo" ), img_text );
-				g_free(img_text);
+				g_free( img_text );
 			}
 
 			if ( contact->statusMsg ) {
