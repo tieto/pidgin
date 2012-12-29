@@ -733,6 +733,19 @@ prefs_themes_init(void)
 	prefs_smiley_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 }
 
+/**
+ * Attempt to load the given directory as a theme.  If we are unable to
+ * open the path as a theme then we recurse into path and attempt to
+ * load each subdirectory that we encounter.
+ *
+ * @param path A directory containing a theme.  The theme could be at the
+ *        top level of this directory or in any subdirectory thereof.
+ * @param type The type of theme to load.  The loader for this theme type
+ *        will be used and this loader will determine what constitutes a
+ *        "theme."
+ *
+ * @return A new reference to a PurpleTheme.
+ */
 static PurpleTheme *
 prefs_theme_find_theme(const gchar *path, const gchar *type)
 {
