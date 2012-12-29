@@ -835,7 +835,10 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 						fclose(image_file);
 
 						/* Attempt to not leave half-written files around. */
-						unlink(path);
+						if (g_unlink(path)) {
+							purple_debug_error("log", "Error deleting partial "
+									"file %s: %s\n", path, g_strerror(errno));
+						}
 					}
 					else
 					{
