@@ -948,7 +948,10 @@ theme_install_theme(char *path, struct theme_info *info)
 
 				prefs_themes_refresh();
 			} else {
-				g_remove(temp_path);
+				if (g_remove(temp_path)) {
+					purple_debug_error("gtkprefs", "Error removing %s: %s\n",
+							temp_path, g_strerror(errno));
+				}
 				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
 			}
 		} else {
