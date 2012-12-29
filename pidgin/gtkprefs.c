@@ -889,7 +889,11 @@ theme_install_theme(char *path, struct theme_info *info)
 						 "purple", info->type, NULL);
 
 			/* move the entire directory to new location */
-			g_rename(purple_theme_get_dir(theme), theme_dest);
+			if (g_rename(purple_theme_get_dir(theme), theme_dest)) {
+				purple_debug_error("gtkprefs", "Error renaming %s to %s: "
+						"%s\n", purple_theme_get_dir(theme), theme_dest,
+						g_strerror(errno));
+			}
 
 			g_free(theme_dest);
 			g_remove(destdir);
@@ -933,7 +937,11 @@ theme_install_theme(char *path, struct theme_info *info)
 				if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
 					purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
 
-				g_rename(purple_theme_get_dir(theme), theme_dest);
+				if (g_rename(purple_theme_get_dir(theme), theme_dest)) {
+					purple_debug_error("gtkprefs", "Error renaming %s to %s: "
+							"%s\n", purple_theme_get_dir(theme), theme_dest,
+							g_strerror(errno));
+				}
 
 				g_free(theme_dest);
 				g_object_unref(theme);
