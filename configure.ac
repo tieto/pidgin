@@ -816,10 +816,14 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 dnl #######################################################################
-dnl # Check for JSON-GLib (required, if compiled with Gadu-Gadu support)
+dnl # Check for JSON-GLib (required)
 dnl #######################################################################
 
-PKG_CHECK_MODULES([JSON], [json-glib-1.0], [enable_json="yes"], [enable_json="no"])
+PKG_CHECK_MODULES([JSON], [json-glib-1.0], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have JSON-GLib >= 0.12.0 development headers installed to build.
+])])
 
 AC_SUBST(JSON_CFLAGS)
 AC_SUBST(JSON_LIBS)
@@ -1389,10 +1393,6 @@ AC_CHECK_HEADERS(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
-
-if test \( "x$static_gg" = "xyes" -o "x$dynamic_gg" = "xyes" \) -a "x$enable_json" != "xyes" ; then
-	AC_MSG_ERROR([json-glib-1.0 not found (required, when compiling with Gadu-Gadu support)])
-fi
 
 DEBUG_CFLAGS="$DEBUG_CFLAGS -DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED"
 if test "x$GCC" = "xyes"; then
@@ -2783,7 +2783,6 @@ echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with GCR widgets........ : $enable_gcr
-echo Build with JSON support....... : $enable_json
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono
