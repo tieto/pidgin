@@ -176,6 +176,7 @@ version 3.0.0 (??/??/????):
 		* purple_connection_destroy
 		* purple_contact_set_alias
 		* purple_conv_chat_set_users
+		* purple_conversation_do_command
 		* purple_core_migrate
 		* purple_dnsquery_a_account
 		* purple_network_listen_family. Use purple_network_listen, instead.
