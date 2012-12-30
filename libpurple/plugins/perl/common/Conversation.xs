@@ -227,13 +227,6 @@ purple_conversation_write(conv, who, message, flags, mtime)
 	Purple::MessageFlags flags
 	time_t mtime
 
-gboolean
-purple_conversation_do_command(conv, cmdline, markup, error)
-	Purple::Conversation conv
-	const char *cmdline
-	const char *markup
-	char **error
-
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::IM  PREFIX = purple_conv_im_
 PROTOTYPES: ENABLE
 
