@@ -221,15 +221,12 @@ calc_resp(guint8 *keys, const guint8 *plaintext, unsigned char *results)
 }
 
 static void
-gensesskey(char *buffer, const char *oldkey)
+gensesskey(char *buffer)
 {
 	int i = 0;
-	if(oldkey == NULL) {
-		for(i=0; i<16; i++) {
-			buffer[i] = (char)(rand() & 0xff);
-		}
-	} else {
-		memcpy(buffer, oldkey, 16);
+
+	for (i = 0; i < 16; i++) {
+		buffer[i] = (char)(rand() & 0xff);
 	}
 }
 
@@ -366,7 +363,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	/* LCS Stuff */
 	if (flags) {
 		tmsg->flags = GUINT32_TO_LE(0x409082d4);
-		gensesskey(sesskey, NULL);
+		gensesskey(sesskey);
 		memcpy(tmp, sesskey, 0x10);
 	}
 
