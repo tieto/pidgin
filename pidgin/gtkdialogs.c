@@ -220,7 +220,7 @@ static const struct translator translators[] = {
 	{N_("Malay"),               "ms_MY", "Muhammad Najmi bin Ahmad Zabidi", "najmi.zabidi@gmail.com"},
 	{N_("Burmese"),             "my_MM", "Thura Hlaing", "trhura@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", "hans@nordhaug.priv.no"},
-	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
+	{N_("Nepali"),              "ne", "Shyam Krishna Bal", NULL},
 	{N_("Dutch, Flemish"),      "nl", "Gideon van Melle", "translations@gvmelle.com"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "l10n@landro.net"},
 	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
