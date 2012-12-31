@@ -3000,6 +3000,15 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 
+#ifndef _WIN32
+	/* Set file permissions */
+	if (fchmod(fileno(file), S_IRUSR | S_IWUSR) == -1)
+	{
+		purple_debug_error("util", "Error setting permissions of %s: %s\n",
+				filename_temp, g_strerror(errno));
+	}
+#endif
+
 	/* Write to file */
 	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
@@ -3078,15 +3087,6 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-
-#ifndef _WIN32
-	/* Set file permissions */
-	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
-	{
-		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
-						 filename_temp, g_strerror(errno));
-	}
-#endif
 
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
