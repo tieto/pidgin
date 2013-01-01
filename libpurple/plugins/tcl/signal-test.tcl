@@ -108,7 +108,7 @@ purple::signal connect [purple::plugins handle] plugin-unload args {
 	purple::debug -info "tcl signal" "plugin-unload [list $args]"
 }
 
-purple::signal connect [purple::savedstatuses handle] savedstatus-changed args {
+purple::signal connect [purple::savedstatus handle] savedstatus-changed args {
 	purple::debug -info "tcl signal" "savedstatus-changed [list $args]"
 	purple::debug -info "tcl signal" "purple::savedstatus current = [purple::savedstatus current]"
 }
