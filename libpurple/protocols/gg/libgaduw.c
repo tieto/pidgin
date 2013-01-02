@@ -72,7 +72,8 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 	char *msg;
 
 	if ((level & GG_DEBUG_NET) ||
-		(level & GG_DEBUG_FUNCTION)) {
+		(level & GG_DEBUG_FUNCTION) ||
+		(level & GG_DEBUG_VERBOSE)) {
 		if (!purple_debug_is_verbose())
 			return;
 	}
