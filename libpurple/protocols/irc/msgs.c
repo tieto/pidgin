@@ -1736,7 +1736,10 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 		return;
 	}
 
-	authinfo = purple_base64_encode((const guchar*)c_out, clen);
+	if (clen > 0)
+		authinfo = purple_base64_encode((const guchar*)c_out, clen);
+	else
+		authinfo = g_strdup("+");
 
 	buf = irc_format(irc, "vv", "AUTHENTICATE", authinfo);
 	irc_send(irc, buf);
