@@ -220,6 +220,13 @@ calc_resp(guint8 *keys, const guint8 *plaintext, unsigned char *results)
 	des_ecb_encrypt(plaintext, results + 16, key);
 }
 
+/*
+ * TODO: We think we should be using cryptographically secure random numbers
+ *       here.  We think the rand() function is probably bad.  We think
+ *       /dev/urandom is a step up, but using a random function from an SSL
+ *       library would probably be best.  In Windows we could possibly also
+ *       use CryptGenRandom.
+ */
 static void
 gensesskey(char *buffer)
 {
