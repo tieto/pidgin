@@ -2501,6 +2501,18 @@ gpointer purple_conversation_get_ui_data(const PurpleConversation *conv)
 	return conv->ui_data;
 }
 
+
+gboolean
+purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
+				const gchar *markup, gchar **error)
+{
+	char *mark = (markup && *markup) ? NULL : g_markup_escape_text(cmdline, -1), *err = NULL;
+	PurpleCmdStatus status = purple_cmd_do_command(conv, cmdline, mark ? mark : markup, error ? error : &err);
+	g_free(mark);
+	g_free(err);
+	return (status == PURPLE_CMD_STATUS_OK);
+}
+
 void *
 purple_conversations_get_handle(void)
 {

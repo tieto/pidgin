@@ -1361,6 +1361,19 @@ void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
  */
 GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
 
+/**
+ * Perform a command in a conversation. Similar to @see purple_cmd_do_command
+ *
+ * @param conv    The conversation.
+ * @param cmdline The entire command including the arguments.
+ * @param markup  @c NULL, or the formatted command line.
+ * @param error   If the command failed errormsg is filled in with the appropriate error
+ *                message, if not @c NULL. It must be freed by the caller with g_free().
+ *
+ * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
+ */
+gboolean purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline, const gchar *markup, gchar **error);
+
 /*@}*/
 
 /**************************************************************************/
