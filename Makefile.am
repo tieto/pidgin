@@ -56,7 +56,7 @@ version-check:
 # ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
 	test "x`hg st -mard`" = x
 
-sign-packages:
+sign-packages: dist
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.bz2
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
