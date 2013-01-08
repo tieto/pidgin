@@ -10226,7 +10226,7 @@ set_default_tab_colors(GtkWidget *widget)
 	gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
 
 	gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
-	                               provider,
+	                               GTK_STYLE_PROVIDER(provider),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	if (error)
