@@ -633,15 +633,6 @@ compare_handlers(gconstpointer a, gconstpointer b)
 	return subtype1 - subtype2;
 }
 
-#if !GLIB_CHECK_VERSION(2,14,0)
-static void hash_table_get_list_of_keys(gpointer key, gpointer value, gpointer user_data)
-{
-	GList **handlers = (GList **)user_data;
-
-	*handlers = g_list_prepend(*handlers, key);
-}
-#endif /* GLIB < 2.14.0 */
-
 void
 oscar_login(PurpleAccount *account)
 {
@@ -711,12 +702,7 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, 0x0003, purple_parse_searchreply, 0);
 
 	g_string_append(msg, "Registered handlers: ");
-#if GLIB_CHECK_VERSION(2,14,0)
 	handlers = g_hash_table_get_keys(od->handlerlist);
-#else
-	handlers = NULL;
-	g_hash_table_foreach(od->handlerlist, hash_table_get_list_of_keys, &handlers);
-#endif /* GLIB < 2.14.0 */
 	sorted_handlers = g_list_sort(g_list_copy(handlers), compare_handlers);
 	for (cur = sorted_handlers; cur; cur = cur->next) {
 		guint x = GPOINTER_TO_UINT(cur->data);
