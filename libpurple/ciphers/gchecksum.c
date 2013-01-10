@@ -17,13 +17,7 @@ purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
     checksum = purple_cipher_context_get_data(context);
     g_return_if_fail(checksum != NULL);
 
-#if GLIB_CHECK_VERSION(2,18,0)
     g_checksum_reset(checksum);
-#else
-    g_checksum_free(checksum);
-    checksum = g_checksum_new(type);
-    purple_cipher_context_set_data(context, checksum);
-#endif
 }
 
 static void
