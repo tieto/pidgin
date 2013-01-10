@@ -219,11 +219,7 @@ static PurpleEventLoopUiOps eventloop_ops =
 	gnt_input_add,
 	g_source_remove,
 	NULL, /* input_get_error */
-#if GLIB_CHECK_VERSION(2,14,0)
 	g_timeout_add_seconds,
-#else
-	NULL,
-#endif
 
 	/* padding */
 	NULL,
