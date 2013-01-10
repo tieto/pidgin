@@ -605,9 +605,10 @@ static int aim_ssi_sync(OscarData *od)
 				if (od->ssi.pending) {
 					for (cur=od->ssi.pending; cur->next; cur=cur->next);
 					cur->next = new;
-				} else
+				} else {
 					od->ssi.pending = new;
-					aim_ssi_item_debug_append(debugstr, "Deleting item ", cur1);
+				}
+				aim_ssi_item_debug_append(debugstr, "Deleting item ", cur1);
 			}
 		}
 	}
@@ -626,9 +627,10 @@ static int aim_ssi_sync(OscarData *od)
 				if (od->ssi.pending) {
 					for (cur=od->ssi.pending; cur->next; cur=cur->next);
 					cur->next = new;
-				} else
+				} else {
 					od->ssi.pending = new;
-					aim_ssi_item_debug_append(debugstr, "Adding item ", cur1);
+				}
+				aim_ssi_item_debug_append(debugstr, "Adding item ", cur1);
 			}
 		}
 	}
@@ -648,20 +650,23 @@ static int aim_ssi_sync(OscarData *od)
 				if (od->ssi.pending) {
 					for (cur=od->ssi.pending; cur->next; cur=cur->next);
 					cur->next = new;
-				} else
+				} else {
 					od->ssi.pending = new;
-					aim_ssi_item_debug_append(debugstr, "Modifying item ", cur1);
+				}
+				aim_ssi_item_debug_append(debugstr, "Modifying item ", cur1);
 			}
 		}
 	}
 	if (debugstr->len > 0) {
 		purple_debug_info("oscar", "%s", debugstr->str);
 		if (purple_debug_is_verbose()) {
+			PurpleAccount *account = purple_connection_get_account(od->gc);
 			g_string_truncate(debugstr, 0);
-			for (cur1 = od->ssi.local.data; cur1; cur1 = cur1->next)
+			for (cur1 = od->ssi.local.data; cur1; cur1 = cur1->next) {
 				aim_ssi_item_debug_append(debugstr, "\t", cur1);
+			}
 			purple_debug_misc("oscar", "Dumping item list of account %s:\n%s",
-				purple_account_get_username(purple_connection_get_account(od->gc)), debugstr->str);
+					purple_account_get_username(account), debugstr->str);
 		}
 	}
 	g_string_free(debugstr, TRUE);
