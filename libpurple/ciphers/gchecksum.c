@@ -1,7 +1,5 @@
 #include <cipher.h>
 
-#if GLIB_CHECK_VERSION(2,16,0)
-
 static void
 purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
 {
@@ -139,6 +137,3 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 PURPLE_G_CHECKSUM_IMPLEMENTATION(md5, MD5, G_CHECKSUM_MD5, 64);
 PURPLE_G_CHECKSUM_IMPLEMENTATION(sha1, SHA1, G_CHECKSUM_SHA1, 64);
 PURPLE_G_CHECKSUM_IMPLEMENTATION(sha256, SHA256, G_CHECKSUM_SHA256, 64);
-
-#endif /* GLIB_CHECK_VERSION(2,16,0) */
-

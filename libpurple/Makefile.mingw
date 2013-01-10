@@ -39,10 +39,7 @@ C_SRC =	\
 			ciphers/gchecksum.c \
 			ciphers/hmac.c \
 			ciphers/md4.c \
-			ciphers/md5.c \
 			ciphers/rc4.c \
-			ciphers/sha1.c \
-			ciphers/sha256.c \
 			circbuffer.c \
 			cmds.c \
 			connection.c \
