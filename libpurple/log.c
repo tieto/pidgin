@@ -1827,7 +1827,6 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					log->logger_data = data;
 					list = g_list_prepend(list, log);
 
-					/* XXX: There is apparently Is there a proper way to print a time_t? */
 					if (index != NULL)
 						fprintf(index, "%d\t%d\t%lu\n", data->offset, data->length, (unsigned long)log->time);
 				}
@@ -1887,9 +1886,8 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			log->logger_data = data;
 			list = g_list_prepend(list, log);
 
-			/* XXX: Is there a proper way to print a time_t? */
 			if (index != NULL)
-				fprintf(index, "%d\t%d\t%d\n", data->offset, data->length, (int)log->time);
+				fprintf(index, "%d\t%d\t%lu\n", data->offset, data->length, (unsigned long)log->time);
 		}
 	}
 
