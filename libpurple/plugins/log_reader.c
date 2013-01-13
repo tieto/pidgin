@@ -921,7 +921,6 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		xmlnode *to;
 		enum name_guesses name_guessed = NAME_GUESS_UNKNOWN;
 		const char *their_name;
-		time_t time_unix;
 		struct tm *tm;
 		char *timestamp;
 		char *tmp;
@@ -1101,7 +1100,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, ";\">");
 		}
 
-		time_unix = msn_logger_parse_timestamp(message, &tm);
+		msn_logger_parse_timestamp(message, &tm);
 
 		timestamp = g_strdup_printf("<font size=\"2\">(%02u:%02u:%02u)</font> ",
 				tm->tm_hour, tm->tm_min, tm->tm_sec);
