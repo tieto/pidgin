@@ -255,27 +255,22 @@ Section $(GTKSECTIONTITLE) SecGtk
 !else
 
   ; We need to download the GTK+ runtime
-  StrCpy $R3 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   retry:
-  StrCpy $R2 "$R3" ;$R2 is the current URL for error messages
+  StrCpy $R2 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   ;StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
 
-  retry_shasum:
-  StrCpy $R2 "$R3_sha1sum"
-  Push "$R2" ; URL
+  Push "${GTK_SHA1SUM}"
   Push "$R1" ; Filename
   Call CheckSHA1Sum
   Pop $R0
 
   StrCmp "$R0" "0" extract
-  StrCmp "$R0" "1" +3 ; Prompt to Retry Just the shasum download
     prompt_retry:
     MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
-    MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry_shasum IDCANCEL done
 
   extract:
 !endif
@@ -289,7 +284,9 @@ Section $(GTKSECTIONTITLE) SecGtk
   StrCmp $R0 "success" +2
     DetailPrint "$R0" ;print error message to log
 
+!ifndef OFFLINE_INSTALLER
   done:
+!endif
 SectionEnd ; end of GTK+ section
 
 ;--------------------------------
@@ -453,27 +450,22 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
 !else
 
   ; We need to download the debug symbols
-  StrCpy $R3 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   retry:
-  StrCpy $R2 "$R3"
+  StrCpy $R2 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
 
-  retry_shasum:
-  StrCpy $R2 "$R3_sha1sum"
-  Push "$R2" ; URL
+  Push "${DEBUG_SYMBOLS_SHA1SUM}"
   Push "$R1" ; Filename
   Call CheckSHA1Sum
   Pop $R0
 
   StrCmp "$R0" "0" extract
-  StrCmp "$R0" "1" +3 ; Prompt to Retry Just the shasum download
     prompt_retry:
     MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
-    MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry_shasum IDCANCEL done
 
   extract:
 !endif
@@ -484,7 +476,9 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   StrCmp $R0 "success" +2
     DetailPrint "$R0" ;print error message to log
 
+!ifndef OFFLINE_INSTALLER
   done:
+!endif
 SectionEnd
 
 ;--------------------------------
@@ -1309,27 +1303,16 @@ Function InstallDict
 FunctionEnd
 
 !ifndef OFFLINE_INSTALLER
-; Input Stack: Filename, URL
-; Output Return Code: 0=Match; 1=sha1sum DL error; 2=FileSum error; 3=Mismatch
+; Input Stack: Filename, SHA1sum
+; Output Return Code: 0=Match; 1=FileSum error; 2=Mismatch
 Function CheckSHA1Sum
   Push $R0
   Exch
   Pop $R0 ;Filename
-  Push $R1
-  Exch 2
-  Pop $R1 ;URL
   Push $R2
-
-  DetailPrint "Downloading checksum file... ($R1)"
-  NSISdl::download /TIMEOUT=10000 "$R1" "$R0.sha1sum"
-  Pop $R1
-  StrCmp $R1 "success" +3
-    IntOp $R1 0 + 1
-    Goto done
-
-  FileOpen $R1 "$R0.sha1sum" r
-  FileRead $R1 $R2 40
-  FileClose $R1
+  Exch 2
+  Pop $R2 ;SHA1sum
+  Push $R1
 
   SHA1Plugin::FileSum "$R0"
   Pop $R1
@@ -1337,13 +1320,13 @@ Function CheckSHA1Sum
 
   StrCmp "$R1" "0" +4
     DetailPrint "SHA1Sum calculation error: $R0"
-    IntOp $R1 0 + 2
+    IntOp $R1 0 + 1
     Goto done
 
   ; Compare the SHA1Sums
   StrCmp $R2 $R0 +4
     DetailPrint "SHA1Sum mismatch... Expected $R2; got $R0"
-    IntOp $R1 0 + 3
+    IntOp $R1 0 + 2
     Goto done
 
   IntOp $R1 0 + 0
