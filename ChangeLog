@@ -60,6 +60,21 @@ version 2.10.7:
 	* Fix a crash at startup with large contact list. Avatar support for
 	  buddies will be disabled till 3.0.0. (#15226, #14305)
 
+	General:
+	* The configure script will now exit with status 1 when specifying
+	  invalid protocol plugins using the --with-static-prpls and
+	  --with-dynamic-prpls arguments. (Michael Fiedler) (#15316)
+
+	libpurple:
+	* Don't link directly to libgcrypt when building with GnuTLS support.
+	  (Bartosz Brachaczek) (#15329)
+	* Fix UPNP mappings on routers that return empty <URLBase/> elements
+	  in their response. (Ferdinand Stehle) (#15373)
+
+	Pidgin:
+	* Make Pidgin more friendly to non-X11 GTK+, such as MacPorts' +no_x11
+	  variant.
+
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
 	  buddies will be disabled till 3.0.0. (#15226, #14305)
@@ -67,6 +82,7 @@ version 2.10.7:
 	IRC:
 	* Support for SASL authentication.  (Thijs Alkemade, Andy Spencer)
 	  (#13270)
+	* Print topic setter information at channel join. (#13317)
 
 	MSN:
 	* Fix a crash when removing a user before its icon is loaded. (Mark
@@ -75,10 +91,15 @@ version 2.10.7:
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
+	* Fix retrieving server-side buddy aliases. (Catalin Salgu) (#15381)
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
 	  backends. (Brad Smith) (#14414)
+	* Fix a crash in the Contact Availability Detection plugin. (Mark)
+	  (#15327)
+	* Make the Message Notification plugin more friendly to non-X11 GTK+,
+	  such as MacPorts' +no_x11 variant.
 
 	Windows-Specific Changes:
 	* Compile with secure flags (#15290)
@@ -86,18 +107,18 @@ version 2.10.7:
 	  (#15277)
 	* Updates to a number of dependencies, some of which have security
 	  related fixes. (#14571, #15285, #15286)
-	 * ATK 1.32.0-2
-	 * Cyrus SASL 2.1.25
-	 * expat 2.1.0-1
-	 * freetype 2.4.10-1
-	 * gettext 0.18.1.1-2
-	 * Glib 2.28.8-1
-	 * libpng 1.4.12-1
-	 * libxml2 2.9.0-1
-	 * NSS 3.13.6 and NSPR 4.9.2
-	 * Pango 1.29.4-1
-	 * SILC 1.1.10
-	 * zlib 1.2.5-2
+		* ATK 1.32.0-2
+		* Cyrus SASL 2.1.25
+		* expat 2.1.0-1
+		* freetype 2.4.10-1
+		* gettext 0.18.1.1-2
+		* Glib 2.28.8-1
+		* libpng 1.4.12-1
+		* libxml2 2.9.0-1
+		* NSS 3.13.6 and NSPR 4.9.2
+		* Pango 1.29.4-1
+		* SILC 1.1.10
+		* zlib 1.2.5-2
 	* Patch libmeanwhile (sametime library) to fix crash. (Jonathan Rice)
 	  (#12637)
 
