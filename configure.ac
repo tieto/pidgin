@@ -819,10 +819,10 @@ dnl #######################################################################
 dnl # Check for JSON-GLib (required)
 dnl #######################################################################
 
-PKG_CHECK_MODULES([JSON], [json-glib-1.0 >= 0.12.0], , [
+PKG_CHECK_MODULES([JSON], [json-glib-1.0 >= 0.14.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
-You must have JSON-GLib >= 0.12.0 development headers installed to build.
+You must have JSON-GLib >= 0.14.0 development headers installed to build.
 ])])
 
 AC_SUBST(JSON_CFLAGS)
