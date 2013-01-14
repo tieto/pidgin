@@ -413,8 +413,8 @@ show_usage(const char *name, gboolean terse)
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 /* suppress gcc "no previous prototype" warning */
-int pidgin_main(HINSTANCE hint, int argc, char *argv[]);
-int pidgin_main(HINSTANCE hint, int argc, char *argv[])
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 #endif

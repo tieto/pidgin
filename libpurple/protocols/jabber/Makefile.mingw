@@ -113,21 +113,9 @@ LIBS = \
 			-lpurple
 
 ifeq ($(CYRUS_SASL), 1)
-CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.25
 INCLUDE_PATHS += -I$(CYRUS_SASL_TOP)/include
 LIB_PATHS += -L$(CYRUS_SASL_TOP)/bin
 LIBS += -llibsasl
-CYRUS_SASL_DLLS = \
-			$(CYRUS_SASL_TOP)/bin/libsasl.dll
-
-CYRUS_SASL_PLUGINS = \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslANONYMOUS.dll \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslCRAMMD5.dll \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslDIGESTMD5.dll \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslGSSAPI.dll \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslLOGIN.dll \
-			$(CYRUS_SASL_TOP)/bin/sasl2/saslPLAIN.dll
-
 endif
 
 include $(PIDGIN_COMMON_RULES)
@@ -144,11 +132,6 @@ install: all $(DLL_INSTALL_DIR)
 	cp $(GTALK_TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(XMPP_TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
-ifeq ($(CYRUS_SASL), 1)
-	mkdir -p $(PURPLE_INSTALL_DIR)/sasl2
-	cp $(CYRUS_SASL_DLLS) $(PURPLE_INSTALL_DIR)
-	cp $(CYRUS_SASL_PLUGINS) $(PURPLE_INSTALL_DIR)/sasl2
-endif
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 

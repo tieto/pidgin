@@ -32,6 +32,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef HAVE_CYRUS_SASL
+#include <sasl/sasl.h>
+#endif
+
 static char *irc_mask_nick(const char *mask);
 static char *irc_mask_userhost(const char *mask);
 static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2]);
@@ -41,6 +45,10 @@ static void irc_connected(struct irc_conn *irc, const char *nick);
 static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
                                    const char *from, const char *to,
                                    const char *rawmsg, gboolean notice);
+
+#ifdef HAVE_CYRUS_SASL
+static void irc_sasl_finish(struct irc_conn *irc);
+#endif
 
 static char *irc_mask_nick(const char *mask)
 {
@@ -632,6 +640,38 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	}
 	g_free(tmp2);
 	g_free(topic);
+}
+
+void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	PurpleConversation *convo;
+	struct tm *tm;
+	time_t t;
+	char *msg, *timestamp, *datestamp;
+	
+	if (!args || !args[1] || !args[2] || !args[3])
+		return;
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	if (!convo) {
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got topic info for %s, which doesn't exist\n", args[1]);
+		return;
+	}
+
+	t = (time_t)atol(args[3]);
+	if (t == 0) {
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got apparently nonsensical topic timestamp %s\n", args[3]);
+		return;
+	}
+	tm = localtime(&t);
+
+	timestamp = g_strdup(purple_time_format(tm));
+	datestamp = g_strdup(purple_date_format_short(tm));
+	msg = g_strdup_printf("Topic for %s set by %s at %s on %s", args[1], args[2], timestamp, datestamp);
+	purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "", msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+	g_free(timestamp);
+	g_free(datestamp);
+	g_free(msg);
 }
 
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -1421,6 +1461,379 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 	purple_notify_info(gc, NULL, msg, args[0]);
 	g_free(msg);
 }
+
+#ifdef HAVE_CYRUS_SASL
+static int
+irc_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
+{
+	struct irc_conn *irc = ctx;
+	sasl_secret_t *sasl_secret;
+	const char *pw;
+	size_t len;
+
+	pw = purple_account_get_password(irc->account);
+
+	if (!conn || !secret || id != SASL_CB_PASS)
+		return SASL_BADPARAM;
+
+	len = strlen(pw);
+	/* Not an off-by-one because sasl_secret_t defines char data[1] */
+	/* TODO: This can probably be moved to glib's allocator */
+	sasl_secret = malloc(sizeof(sasl_secret_t) + len);
+	if (!sasl_secret)
+		return SASL_NOMEM;
+
+	sasl_secret->len = len;
+	strcpy((char*)sasl_secret->data, pw);
+
+	*secret = sasl_secret;
+	return SASL_OK;
+}
+
+static int
+irc_sasl_cb_log(void *context, int level, const char *message)
+{
+	if(level <= SASL_LOG_TRACE)
+		purple_debug_info("sasl", "%s\n", message);
+
+	return SASL_OK;
+}
+
+static int
+irc_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *len)
+{
+	struct irc_conn *irc = ctx;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
+
+	switch(id) {
+		case SASL_CB_AUTHNAME:
+			*res = purple_connection_get_display_name(gc);
+			break;
+		case SASL_CB_USER:
+			*res = "";
+			break;
+		default:
+			return SASL_BADPARAM;
+	}
+	if (len) *len = strlen((char *)*res);
+	return SASL_OK;
+}
+
+static void
+irc_auth_start_cyrus(struct irc_conn *irc)
+{
+	int ret = 0;
+	char *buf;
+	sasl_security_properties_t secprops;
+	PurpleAccount *account = irc->account;
+	PurpleConnection *gc = purple_account_get_connection(account);
+
+	gboolean plaintext;
+	gboolean again = FALSE;
+
+	/* Set up security properties and options */
+	secprops.min_ssf = 0;
+	secprops.security_flags = SASL_SEC_NOANONYMOUS;
+
+	if (!irc->gsc) {
+		secprops.max_ssf = -1;
+		secprops.maxbufsize = 4096;
+		plaintext = purple_account_get_bool(account, "auth_plain_in_clear", FALSE);
+		if (!plaintext)
+			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
+	} else {
+		secprops.max_ssf = 0;
+		secprops.maxbufsize = 0;
+		plaintext = TRUE;
+	}
+
+	secprops.property_names = 0;
+	secprops.property_values = 0;
+
+	do {
+		gchar *tmp = NULL;
+		again = FALSE;
+
+		ret = sasl_client_new("irc", irc->server, NULL, NULL, irc->sasl_cb, 0, &irc->sasl_conn);
+
+		if (ret != SASL_OK) {
+			purple_debug_error("irc", "sasl_client_new failed: %d\n", ret);
+			tmp = g_strdup_printf(_("Failed to initialize SASL authentication: %s"),
+				sasl_errdetail(irc->sasl_conn));
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_OTHER_ERROR, tmp);
+			g_free(tmp);
+			return;
+		}
+
+		sasl_setprop(irc->sasl_conn, SASL_AUTH_EXTERNAL, irc->account->username);
+		sasl_setprop(irc->sasl_conn, SASL_SEC_PROPS, &secprops);
+
+		ret = sasl_client_start(irc->sasl_conn, irc->sasl_mechs->str, NULL, NULL, NULL, &irc->current_mech);
+
+		switch (ret) {
+			case SASL_OK:
+			case SASL_CONTINUE:
+				irc->mech_works = FALSE;
+				break;
+			case SASL_NOMECH:
+				purple_connection_error_reason (gc,
+					PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+					_("SASL authentication failed: No worthy authentication mechanisms found."));
+
+				irc_sasl_finish(irc);
+				return;
+			case SASL_BADPARAM:
+			case SASL_NOMEM:
+				tmp = g_strdup_printf(_("SASL authentication failed: %s"), sasl_errdetail(irc->sasl_conn));
+				purple_connection_error_reason (gc,
+					PURPLE_CONNECTION_ERROR_OTHER_ERROR, tmp);
+				g_free(tmp);
+
+				irc_sasl_finish(irc);
+				return;
+			default:
+				purple_debug_error("irc", "sasl_client_start failed: %s\n", sasl_errdetail(irc->sasl_conn));
+
+				if (irc->current_mech && *irc->current_mech) {
+					char *pos;
+					if ((pos = strstr(irc->sasl_mechs->str, irc->current_mech))) {
+						size_t index = pos - irc->sasl_mechs->str;
+						g_string_erase(irc->sasl_mechs, index, strlen(irc->current_mech));
+
+						/* Remove space which separated this mech from the next */
+						if ((irc->sasl_mechs->str)[index] == ' ') {
+							g_string_erase(irc->sasl_mechs, index, 1);
+						}
+					}
+
+					again = TRUE;
+				}
+				irc_sasl_finish(irc);
+		}
+	} while (again);
+
+	purple_debug_info("irc", "Using SASL: %s\n", irc->current_mech);
+
+	buf = irc_format(irc, "vv", "AUTHENTICATE", irc->current_mech);
+	irc_send(irc, buf);
+	g_free(buf);
+}
+
+/* SASL authentication */
+void
+irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	int ret = 0;
+	int id = 0;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
+	const char *mech_list = NULL;
+
+	if (!args[1] || !args[2] || strncmp(args[2], "sasl ", 6))
+		return;
+	if (strncmp(args[1], "ACK", 4)) {
+		const char *tmp = _("SASL authentication failed: Server does not support SASL authentication.");
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE, tmp);
+
+		irc_sasl_finish(irc);
+		return;
+	}
+
+	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
+		const char *tmp = _("SASL authentication failed: Initializing SASL failed.");
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR, tmp);
+		return;
+	}
+
+	irc->sasl_cb = g_new0(sasl_callback_t, 5);
+
+	irc->sasl_cb[id].id = SASL_CB_AUTHNAME;
+	irc->sasl_cb[id].proc = irc_sasl_cb_simple;
+	irc->sasl_cb[id].context = (void *)irc;
+	id++;
+
+	irc->sasl_cb[id].id = SASL_CB_USER;
+	irc->sasl_cb[id].proc = irc_sasl_cb_simple;
+	irc->sasl_cb[id].context = (void *)irc;
+	id++;
+
+	irc->sasl_cb[id].id = SASL_CB_PASS;
+	irc->sasl_cb[id].proc = irc_sasl_cb_secret;
+	irc->sasl_cb[id].context = (void *)irc;
+	id++;
+
+	irc->sasl_cb[id].id = SASL_CB_LOG;
+	irc->sasl_cb[id].proc = irc_sasl_cb_log;
+	irc->sasl_cb[id].context = (void *)irc;
+	id++;
+
+	irc->sasl_cb[id].id = SASL_CB_LIST_END;
+
+	/* We need to do this to be able to list the mechanisms. */
+	ret = sasl_client_new("irc", irc->server, NULL, NULL, irc->sasl_cb, 0, &irc->sasl_conn);
+
+	sasl_listmech(irc->sasl_conn, NULL, "", " ", "", &mech_list, NULL, NULL);
+	purple_debug_info("irc", "SASL: we have available: %s\n", mech_list);
+
+	if (ret != SASL_OK) {
+		gchar *tmp;
+
+		purple_debug_error("irc", "sasl_client_new failed: %d\n", ret);
+		tmp = g_strdup_printf(_("Failed to initialize SASL authentication: %s"),
+			sasl_errdetail(irc->sasl_conn));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR, tmp);
+		g_free(tmp);
+
+		return;
+	}
+
+	irc->sasl_mechs = g_string_new(mech_list);
+
+	irc_auth_start_cyrus(irc);
+}
+
+void
+irc_msg_auth(struct irc_conn *irc, char *arg)
+{
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
+	char *buf, *authinfo;
+	char *serverin = NULL;
+	unsigned serverinlen = 0;
+	const gchar *c_out;
+	unsigned int clen;
+	int ret;
+
+	irc->mech_works = TRUE;
+
+	if (!arg)
+		return;
+
+	if (arg[0] != '+') {
+		serverin = arg;
+		serverinlen = strlen(serverin);
+	}
+
+	ret = sasl_client_step(irc->sasl_conn, serverin, serverinlen,
+		NULL, &c_out, &clen);
+
+	if (ret != SASL_OK && ret != SASL_CONTINUE) {
+
+		gchar *tmp = g_strdup_printf(_("SASL authentication failed: %s"),
+			sasl_errdetail(irc->sasl_conn));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE, tmp);
+		g_free(tmp);
+
+		irc_sasl_finish(irc);
+
+		return;
+	}
+
+	authinfo = purple_base64_encode((const guchar*)c_out, clen);
+
+	buf = irc_format(irc, "vv", "AUTHENTICATE", authinfo);
+	irc_send(irc, buf);
+	g_free(buf);
+	g_free(authinfo);
+}
+
+void
+irc_msg_authok(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	char *buf;
+
+	sasl_dispose(&irc->sasl_conn);
+	irc->sasl_conn = NULL;
+	purple_debug_info("irc", "Succesfully authenticated using SASL.\n");
+
+	/* Finish auth session */
+	buf = irc_format(irc, "vv", "CAP", "END");
+	irc_send(irc, buf);
+	g_free(buf);
+}
+
+void
+irc_msg_authtryagain(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
+
+	/* We already received at least one AUTHENTICATE reply from the
+	 * server. This suggests it supports this mechanism, but the
+	 * password was incorrect. It would be better to abort and inform
+	 * the user than to try again with a different mechanism, so they
+	 * aren't told the server supports no worthy mechanisms.
+	 */
+	if (irc->mech_works) {
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect Password"));
+
+		irc_sasl_finish(irc);
+
+		return;
+	}
+
+	if (irc->current_mech) {
+		char *pos;
+		if ((pos = strstr(irc->sasl_mechs->str, irc->current_mech))) {
+			size_t index = pos - irc->sasl_mechs->str;
+			g_string_erase(irc->sasl_mechs, index, strlen(irc->current_mech));
+
+			/* Remove space which separated this mech from the next */
+			if ((irc->sasl_mechs->str)[index] == ' ') {
+				g_string_erase(irc->sasl_mechs, index, 1);
+			}
+		}
+	}
+	if (*irc->sasl_mechs->str) {
+		sasl_dispose(&irc->sasl_conn);
+
+		purple_debug_info("irc", "Now trying with %s\n", irc->sasl_mechs->str);
+		irc_auth_start_cyrus(irc);
+	} else {
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+			_("SASL authentication failed: No worthy mechanisms found"));
+
+		irc_sasl_finish(irc);
+	}
+}
+
+void
+irc_msg_authfail(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
+
+	/* Only show an error if we did not abort ourselves. */
+	if (irc->sasl_conn) {
+		purple_debug_info("irc", "SASL authentication failed: %s", sasl_errdetail(irc->sasl_conn));
+
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect Password"));
+	}
+
+	irc_sasl_finish(irc);
+}
+
+static void
+irc_sasl_finish(struct irc_conn *irc)
+{
+	char *buf;
+
+	sasl_dispose(&irc->sasl_conn);
+	irc->sasl_conn = NULL;
+
+	g_free(irc->sasl_cb);
+	irc->sasl_cb = NULL;
+
+	/* Auth failed, abort */
+	buf = irc_format(irc, "vv", "CAP", "END");
+	irc_send(irc, buf);
+	g_free(buf);
+}
+#endif
 
 void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args)
 {

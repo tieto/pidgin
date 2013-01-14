@@ -48,6 +48,7 @@ static void mxit_profile_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 	const char*				name	= NULL;
 	const char*				bday	= NULL;
 	const char*				err		= NULL;
+	GList*					entry	= NULL;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_profile_cb\n" );
 
@@ -166,6 +167,14 @@ out:
 		g_string_append( attributes, attrib );
 		acount++;
 
+		/* relationship status */
+		field = purple_request_fields_get_field( fields, "relationship" );
+		entry = g_list_first( purple_request_field_list_get_selected( field ) );
+		profile->relationship = atoi( purple_request_field_list_get_data( field, entry->data ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%i", CP_PROFILE_RELATIONSHIP, CP_PROFILE_TYPE_SHORT, profile->relationship );
+		g_string_append( attributes, attrib );
+		acount++;
+
 		/* update flags */
 		field = purple_request_fields_get_field( fields, "searchable" );
 		if ( purple_request_field_bool_get_value( field ) )		/* is searchable -> clear not-searchable flag */
@@ -251,6 +260,22 @@ static void mxit_profile_action( PurplePluginAction* action )
 
 		/* where I live */
 		field = purple_request_field_string_new( "whereami", _( "Where I Live" ), profile->whereami, FALSE);
+		purple_request_field_group_add_field( public_group, field );
+
+		/* relationship status */
+		field = purple_request_field_list_new( "relationship", _( "Relationship Status" ) );
+		purple_request_field_list_set_multi_select( field, FALSE );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_UNKNOWN ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_UNKNOWN ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_DONTSAY ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_DONTSAY ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_SINGLE ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_SINGLE ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_INVOLVED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_INVOLVED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_ENGAGED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_ENGAGED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_MARRIED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_MARRIED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_COMPLICATED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_COMPLICATED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_WIDOWED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_WIDOWED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_SEPARATED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_SEPARATED ) );
+		purple_request_field_list_add_icon( field, mxit_relationship_to_name( MXIT_RELATIONSHIP_DIVORCED ), NULL, g_strdup_printf( "%i", MXIT_RELATIONSHIP_DIVORCED ) );
+		purple_request_field_list_add_selected( field, mxit_relationship_to_name( profile->relationship ) );
 		purple_request_field_group_add_field( public_group, field );
 
 		purple_request_fields_add_group( fields, public_group );
