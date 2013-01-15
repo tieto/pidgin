@@ -3963,8 +3963,7 @@ static void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml,
 
 	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
 
-	if(!gtk_check_version(2, 4, 0))
-		g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
+	g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
 
 	gtk_widget_show(GTK_WIDGET(image->image));
 	gtk_widget_show(box);
