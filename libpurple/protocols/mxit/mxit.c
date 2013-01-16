@@ -309,19 +309,18 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
  */
 char* mxit_status_text( PurpleBuddy* buddy )
 {
+	char* text = NULL;
 	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return NULL;
 
-	if ( contact->statusMsg ) {
-		/* status message */
+	if ( contact->statusMsg )							/* status message */
 		return g_strdup( contact-> statusMsg );
-	}
-	else {
-		/* mood */
+	else if ( contact->mood != MXIT_MOOD_NONE )			/* mood */
 		return g_strdup( mxit_convert_mood_to_name( contact->mood ) );
-	}
+
+	return text;
 }
 
 

@@ -43,6 +43,8 @@ version 2.10.7:
 	* Remove all reference to Hidden Number.
 	* Ignore new invites to join a GroupChat if you're already joined, or
 	  still have a pending invite.
+	* The buddy's name was not centered vertically in the buddy-list if they
+	  did not have a status-message or mood set.
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
