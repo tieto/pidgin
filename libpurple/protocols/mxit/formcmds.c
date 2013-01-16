@@ -86,7 +86,6 @@ struct ii_url_request
 static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message)
 {
 	struct ii_url_request*	iireq		= (struct ii_url_request*) user_data;
-	char*					ii_data;
 	int*					intptr		= NULL;
 	int						id;
 
@@ -106,12 +105,8 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 		goto done;
 	}
 
-	/* make a copy of the data */
-	ii_data = g_malloc(len);
-	memcpy(ii_data, (const char*) url_text, len);
-
-	/* we now have the inline image, store it in the imagestore */
-	id = purple_imgstore_add_with_id(ii_data, len, NULL);
+	/* we now have the inline image, store a copy in the imagestore */
+	id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
 	/* map the inline image id to purple image id */
 	intptr = g_malloc(sizeof(int));
