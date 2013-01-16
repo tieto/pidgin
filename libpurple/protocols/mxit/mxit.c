@@ -58,7 +58,7 @@ static int not_link_ref_count = 0;
 static void* mxit_link_click( const char* link64 )
 {
 	PurpleAccount*		account;
-	PurpleConnection*	con;
+	PurpleConnection*	gc;
 	gchar**				parts		= NULL;
 	gchar*				link		= NULL;
 	gsize				len;
@@ -75,10 +75,10 @@ static void* mxit_link_click( const char* link64 )
 	link = (gchar*) purple_base64_decode( link64 + strlen( MXIT_LINK_PREFIX ), &len );
 	purple_debug_info( MXIT_PLUGIN_ID, "Clicked Link: '%s'\n", link );
 
-	parts = g_strsplit( link, "|", 5 );
+	parts = g_strsplit( link, "|", 6 );
 
 	/* check if this is a valid mxit link */
-	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) ) {
+	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) || ( !parts[5] ) ) {
 		/* this is not for us */
 		goto skip;
 	}
@@ -91,15 +91,15 @@ static void* mxit_link_click( const char* link64 )
 	account = purple_accounts_find( parts[1], parts[2] );
 	if ( !account )
 		goto skip;
-	con = purple_account_get_connection( account );
-	if ( !con )
+	gc = purple_account_get_connection( account );
+	if ( !gc )
 		goto skip;
 
 	/* determine if it's a command-response to send */
-	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+	is_command = ( atoi( parts[4] ) == 1 );
 
 	/* send click message back to MXit */
-	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
+	mxit_send_message( purple_connection_get_protocol_data( gc ), parts[3], parts[5], FALSE, is_command );
 
 	g_free( link );
 	link = NULL;

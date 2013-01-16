@@ -126,10 +126,11 @@ static void hex_dump( const char* buf, int len )
  * Adds a link to a message
  *
  *  @param mx				The Markup message object
- *	@param linkname			This is the what will be returned when the link gets clicked
- *	@param displayname		This is the name for the link which will be displayed in the UI
+ *	@param replydata		This is the what will be returned when the link gets clicked
+ *	@param isStructured		Indicates that the reply is a structured reply
+ *	@param displaytext		This is the text for the link which will be displayed in the UI
  */
-void mxit_add_html_link( struct RXMsgData* mx, const char* linkname, const char* displayname )
+void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean isStructured, const char* displaytext )
 {
 #ifdef	MXIT_LINK_CLICK
 	char	retstr[256];
@@ -137,15 +138,24 @@ void mxit_add_html_link( struct RXMsgData* mx, const char* linkname, const char*
 	char	link[256];
 	int		len;
 
-	len = g_snprintf( retstr, sizeof( retstr ), "%s|%s|%s|%s|%s", MXIT_LINK_KEY, purple_account_get_username( mx->session->acc ),
-											purple_account_get_protocol_id( mx->session->acc ), mx->from, linkname );
+	/*
+	 * The link content is encoded as follows:
+	 *  MXIT_LINK_KEY | ACCOUNT_USER | ACCOUNT_PROTO | REPLY_TO | REPLY_FORMAT | REPLY_DATA
+	 */
+	len = g_snprintf( retstr, sizeof( retstr ), "%s|%s|%s|%s|%i|%s",
+			MXIT_LINK_KEY,
+			purple_account_get_username( mx->session->acc ),
+			purple_account_get_protocol_id( mx->session->acc ),
+			mx->from,
+			isStructured ? 1 : 0,
+			replydata );
 	retstr64 = purple_base64_encode( (const unsigned char*) retstr, len );
 	g_snprintf( link, sizeof( link ), "%s%s", MXIT_LINK_PREFIX, retstr64 );
 	g_free( retstr64 );
 
-	g_string_append_printf( mx->msg, "<a href=\"%s\">%s</a>", link, displayname );
+	g_string_append_printf( mx->msg, "<a href=\"%s\">%s</a>", link, displaytext );
 #else
-	g_string_append_printf( mx->msg, "<b>%s</b>", linkname );
+	g_string_append_printf( mx->msg, "<b>%s</b>", replydata );
 #endif
 }
 
@@ -826,7 +836,7 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 					if ( ch ) {
 						/* end found */
 						*ch = '\0';
-						mxit_add_html_link( mx, &message[i + 1], &message[i + 1] );
+						mxit_add_html_link( mx, &message[i + 1], FALSE, &message[i + 1] );
 						*ch = '$';
 						i += ( ch - &message[i + 1] ) + 1;
 					}
