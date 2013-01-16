@@ -63,7 +63,6 @@ struct MXitProfile {
 
 	int			flags;								/* user's profile flags */
 	gint64		lastonline;							/* user's last-online timestamp */
-	gboolean	hidden;								/* set if the user's mxitid should remain hidden */
 };
 
 struct MXitSession;

@@ -358,10 +358,6 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	/* rejection message */
 	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
 		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
-
-	/* hidden number */
-	if ( contact->flags & MXIT_CFLAG_HIDDEN )
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
 }
 
 

@@ -74,7 +74,7 @@
 
 
 /* MXit contact flags */
-#define		MXIT_CFLAG_HIDDEN			0x02
+//#define		MXIT_CFLAG_HIDDEN			0x02		/* (DEPRECATED) */
 #define		MXIT_CFLAG_GATEWAY			0x04
 #define		MXIT_CFLAG_FOCUS_SEND_BLANK	0x20000
 

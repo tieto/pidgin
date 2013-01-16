@@ -1448,7 +1448,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	PurpleStatus*	status;
 	int				presence;
 	const char*		statusmsg;
-	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
+	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
 									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_RELATIONSHIP, CP_PROFILE_FLAGS };
 
@@ -1809,10 +1809,6 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		else if ( strcmp( CP_PROFILE_GENDER, fname ) == 0 ) {
 			/* gender */
 			profile->male = ( fvalue[0] == '1' );
-		}
-		else if ( strcmp( CP_PROFILE_HIDENUMBER, fname ) == 0 ) {
-			/* hide number */
-			profile->hidden = ( fvalue[0] == '1' );
 		}
 		else if ( strcmp( CP_PROFILE_FULLNAME, fname ) == 0 ) {
 			/* nickname */

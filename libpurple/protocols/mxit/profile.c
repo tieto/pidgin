@@ -251,9 +251,6 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 		/* subscription type */
 		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
-
-		/* hidden number */
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), ( contact->flags & MXIT_CFLAG_HIDDEN ) ? _( "Yes" ) : _( "No" ) );
 	}
 	else {
 		/* this is an invite */

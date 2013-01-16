@@ -40,6 +40,7 @@ version 2.10.7:
 	  them from normal messages.
 	* Add support for typing notification.
 	* Add support for the Relationship Status profile attribute.
+	* Remove all reference to Hidden Number.
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
