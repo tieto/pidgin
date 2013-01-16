@@ -2166,7 +2166,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					contact = get_mxit_invite_contact( session, chunk.mxitid );
 					if ( contact ) {
 						/* this is an invite (add image to the internal image store) */
-						contact->imgid = purple_imgstore_add_with_id( chunk.data, chunk.length, NULL );
+						contact->imgid = purple_imgstore_add_with_id( g_memdup( chunk.data, chunk.length ), chunk.length, NULL );
 						/* show the profile */
 						mxit_show_profile( session, chunk.mxitid, contact->profile );
 					}
