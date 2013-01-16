@@ -41,6 +41,8 @@ version 2.10.7:
 	* Add support for typing notification.
 	* Add support for the Relationship Status profile attribute.
 	* Remove all reference to Hidden Number.
+	* Ignore new invites to join a GroupChat if you're already joined, or
+	  still have a pending invite.
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
