@@ -657,6 +657,17 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 
 
 /*------------------------------------------------------------------------
+ * Return Chat-room default settings.
+ *
+ *  @return		Chat defaults list
+ */
+static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *chat_name )
+{
+    return g_hash_table_new_full( g_str_hash, g_str_equal, NULL, g_free );
+}
+
+
+/*------------------------------------------------------------------------
  * Send a typing indicator event.
  *
  *  @param gc		The connection object
@@ -729,7 +740,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_status_types,		/* status types				[roster.c] */
 	mxit_blist_menu,		/* blist_node_menu */
 	mxit_chat_info,			/* chat_info				[multimx.c] */
-	NULL,					/* chat_info_defaults */
+	mxit_chat_info_defaults,/* chat_info_defaults */
 	mxit_login,				/* login					[login.c] */
 	mxit_close,				/* close */
 	mxit_send_im,			/* send_im */
