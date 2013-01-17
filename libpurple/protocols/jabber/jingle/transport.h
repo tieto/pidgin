@@ -55,6 +55,8 @@ struct _JingleTransportClass
 	const gchar *transport_type;
 	xmlnode *(*to_xml) (JingleTransport *transport, xmlnode *content, JingleActionType action);
 	JingleTransport *(*parse) (xmlnode *transport);
+	void (*add_local_candidate) (JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
+	GList *(*get_remote_candidates) (JingleTransport *transport);
 };
 
 /** The transport class's private data */
@@ -77,7 +79,9 @@ GType jingle_transport_get_type(void);
 
 JingleTransport *jingle_transport_create(const gchar *type);
 const gchar *jingle_transport_get_transport_type(JingleTransport *transport);
-void jingle_transport_add_candidate();
+
+void jingle_transport_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
+GList *jingle_transport_get_remote_candidates(JingleTransport *transport);
 
 JingleTransport *jingle_transport_parse(xmlnode *transport);
 xmlnode *jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action);

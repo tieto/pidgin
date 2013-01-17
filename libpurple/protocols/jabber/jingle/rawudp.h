@@ -92,8 +92,6 @@ GType jingle_rawudp_get_type(void);
 
 JingleRawUdpCandidate *jingle_rawudp_candidate_new(const gchar *id,
 		guint generation, guint component, const gchar *ip, guint port);
-void jingle_rawudp_add_local_candidate(JingleRawUdp *rawudp, JingleRawUdpCandidate *candidate);
-GList *jingle_rawudp_get_remote_candidates(JingleRawUdp *rawudp);
 
 #ifdef __cplusplus
 }

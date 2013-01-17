@@ -67,10 +67,10 @@ struct _JingleIceUdp
 
 struct _JingleIceUdpCandidate
 {
+	gchar *id;
 	guint component;
 	gchar *foundation;
 	guint generation;
-	gchar *id;
 	gchar *ip;
 	guint network;
 	guint port;
@@ -100,13 +100,11 @@ GType jingle_iceudp_candidate_get_type(void);
  */
 GType jingle_iceudp_get_type(void);
 
-JingleIceUdpCandidate *jingle_iceudp_candidate_new(guint component,
-		const gchar *foundation, guint generation, const gchar *id,
+JingleIceUdpCandidate *jingle_iceudp_candidate_new(const gchar *id,
+		guint component, const gchar *foundation, guint generation,
 		const gchar *ip, guint network, guint port, guint priority,
 		const gchar *protocol, const gchar *type,
 		const gchar *username, const gchar *password);
-void jingle_iceudp_add_local_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *candidate);
-GList *jingle_iceudp_get_remote_candidates(JingleIceUdp *iceudp);
 
 #ifdef __cplusplus
 }

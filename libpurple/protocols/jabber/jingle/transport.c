@@ -44,6 +44,8 @@ static void jingle_transport_get_property (GObject *object, guint prop_id, GValu
 static void jingle_transport_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 JingleTransport *jingle_transport_parse_internal(xmlnode *transport);
 xmlnode *jingle_transport_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action);
+static void jingle_transport_add_local_candidate_internal(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
+static GList *jingle_transport_get_remote_candidates_internal(JingleTransport *transport);
 
 static GObjectClass *parent_class = NULL;
 
@@ -85,6 +87,8 @@ jingle_transport_class_init (JingleTransportClass *klass)
 	gobject_class->get_property = jingle_transport_get_property;
 	klass->to_xml = jingle_transport_to_xml_internal;
 	klass->parse = jingle_transport_parse_internal;
+	klass->add_local_candidate = jingle_transport_add_local_candidate_internal;
+	klass->get_remote_candidates = jingle_transport_get_remote_candidates_internal;
 
 	g_type_class_add_private(klass, sizeof(JingleTransportPrivate));
 }
@@ -141,6 +145,32 @@ const gchar *
 jingle_transport_get_transport_type(JingleTransport *transport)
 {
 	return JINGLE_TRANSPORT_GET_CLASS(transport)->transport_type;
+}
+
+void
+jingle_transport_add_local_candidate(JingleTransport *transport, const gchar *id,
+                                     guint generation, PurpleMediaCandidate *candidate)
+{
+	JINGLE_TRANSPORT_GET_CLASS(transport)->add_local_candidate(transport, id,
+	                                                           generation, candidate);
+}
+
+void
+jingle_transport_add_local_candidate_internal(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate)
+{
+	/* Nothing to do */
+}
+
+GList *
+jingle_transport_get_remote_candidates(JingleTransport *transport)
+{
+	return JINGLE_TRANSPORT_GET_CLASS(transport)->get_remote_candidates(transport);
+}
+
+static GList *
+jingle_transport_get_remote_candidates_internal(JingleTransport *transport)
+{
+	return NULL;
 }
 
 JingleTransport *

@@ -45,6 +45,8 @@ static void jingle_rawudp_get_property (GObject *object, guint prop_id, GValue *
 static void jingle_rawudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 static JingleTransport *jingle_rawudp_parse_internal(xmlnode *rawudp);
 static xmlnode *jingle_rawudp_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action);
+static void jingle_rawudp_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
+static GList *jingle_rawudp_get_remote_candidates(JingleTransport *transport);
 
 static JingleTransportClass *parent_class = NULL;
 
@@ -137,6 +139,8 @@ jingle_rawudp_class_init (JingleRawUdpClass *klass)
 	klass->parent_class.to_xml = jingle_rawudp_to_xml_internal;
 	klass->parent_class.parse = jingle_rawudp_parse_internal;
 	klass->parent_class.transport_type = JINGLE_TRANSPORT_RAWUDP;
+	klass->parent_class.add_local_candidate = jingle_rawudp_add_local_candidate;
+	klass->parent_class.get_remote_candidates = jingle_rawudp_get_remote_candidates;
 
 	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
 			g_param_spec_pointer("local-candidates",
@@ -218,36 +222,58 @@ jingle_rawudp_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	}
 }
 
-void
-jingle_rawudp_add_local_candidate(JingleRawUdp *rawudp, JingleRawUdpCandidate *candidate)
+static void
+jingle_rawudp_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate)
 {
-	GList *iter = rawudp->priv->local_candidates;
+	JingleRawUdp *rawudp = JINGLE_RAWUDP(transport);
+	gchar *ip;
+	JingleRawUdpCandidate *rawudp_candidate;
+	GList *iter;
 
-	for (; iter; iter = g_list_next(iter)) {
+	ip = purple_media_candidate_get_ip(candidate);
+	rawudp_candidate = jingle_rawudp_candidate_new(id, generation,
+			purple_media_candidate_get_component_id(candidate),
+			ip, purple_media_candidate_get_port(candidate));
+	g_free(ip);
+
+	for (iter = rawudp->priv->local_candidates; iter; iter = g_list_next(iter)) {
 		JingleRawUdpCandidate *c = iter->data;
-		if (!strcmp(c->id, candidate->id)) {
-			guint generation = c->generation + 1;
+		if (!strcmp(c->id, id)) {
+			generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_RAWUDP_CANDIDATE, c);
 			rawudp->priv->local_candidates = g_list_delete_link(
 					rawudp->priv->local_candidates, iter);
 
-			candidate->generation = generation;
+			rawudp_candidate->generation = generation;
 
 			rawudp->priv->local_candidates = g_list_append(
-					rawudp->priv->local_candidates, candidate);
+					rawudp->priv->local_candidates, rawudp_candidate);
 			return;
 		}
 	}
 
 	rawudp->priv->local_candidates = g_list_append(
-			rawudp->priv->local_candidates, candidate);
+			rawudp->priv->local_candidates, rawudp_candidate);
 }
 
-GList *
-jingle_rawudp_get_remote_candidates(JingleRawUdp *rawudp)
+static GList *
+jingle_rawudp_get_remote_candidates(JingleTransport *transport)
 {
-	return g_list_copy(rawudp->priv->remote_candidates);
+	JingleRawUdp *rawudp = JINGLE_RAWUDP(transport);
+	GList *candidates = rawudp->priv->remote_candidates;
+	GList *ret = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		JingleRawUdpCandidate *candidate = candidates->data;
+		ret = g_list_append(ret, purple_media_candidate_new("",
+					candidate->component,
+					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
+					candidate->ip, candidate->port));
+	}
+
+	return ret;
 }
 
 static JingleRawUdpCandidate *
