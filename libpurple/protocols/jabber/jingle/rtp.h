@@ -65,10 +65,6 @@ struct _JingleRtp
 	JingleRtpPrivate *priv;      /**< The private data of this object. */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Gets the rtp class's GType
  *
@@ -83,10 +79,6 @@ gboolean jingle_rtp_initiate_media(JabberStream *js,
 				   const gchar *who,
 				   PurpleMediaSessionType type);
 void jingle_rtp_terminate_session(JabberStream *js, const gchar *who);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

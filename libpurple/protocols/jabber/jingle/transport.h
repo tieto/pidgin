@@ -66,10 +66,6 @@ struct _JingleTransport
 	JingleTransportPrivate *priv;      /**< The private data of this object. */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Gets the transport class's GType
  *
@@ -85,10 +81,6 @@ GList *jingle_transport_get_remote_candidates(JingleTransport *transport);
 
 JingleTransport *jingle_transport_parse(xmlnode *transport);
 xmlnode *jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

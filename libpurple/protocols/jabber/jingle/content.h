@@ -68,10 +68,6 @@ struct _JingleContent
 	JingleContentPrivate *priv;      /**< The private data of this object. */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Gets the content class's GType
  *
@@ -110,10 +106,6 @@ void jingle_content_modify(JingleContent *content, const gchar *senders);
 JingleContent *jingle_content_parse(xmlnode *content);
 xmlnode *jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action);
 void jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

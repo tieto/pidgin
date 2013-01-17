@@ -77,10 +77,6 @@ struct _JingleRawUdpCandidate
 				 * about this candidate */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 GType jingle_rawudp_candidate_get_type(void);
 
 /**
@@ -92,10 +88,6 @@ GType jingle_rawudp_get_type(void);
 
 JingleRawUdpCandidate *jingle_rawudp_candidate_new(const gchar *id,
 		guint generation, guint component, const gchar *ip, guint port);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

@@ -87,10 +87,6 @@ struct _JingleIceUdpCandidate
 				 * about this candidate */
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 GType jingle_iceudp_candidate_get_type(void);
 
 /**
@@ -105,10 +101,6 @@ JingleIceUdpCandidate *jingle_iceudp_candidate_new(const gchar *id,
 		const gchar *ip, guint network, guint port, guint priority,
 		const gchar *protocol, const gchar *type,
 		const gchar *username, const gchar *password);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 
