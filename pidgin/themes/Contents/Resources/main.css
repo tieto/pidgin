@@ -29,12 +29,6 @@ body {
 	font-weight: bold;
 }
 
-.x-time, .x-sender
-{
-	float: left;
-	margin-right: 4px;
-}
-
 .x-message p
 {
 	margin: 0;
