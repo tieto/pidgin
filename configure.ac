@@ -463,6 +463,9 @@ running configure.
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
+	GTK_PC_MODULE="gtk+-${with_gtk}.0"
+	AC_SUBST(GTK_PC_MODULE)
+
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
