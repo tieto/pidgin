@@ -171,7 +171,6 @@ jingle_iceudp_class_init (JingleIceUdpClass *klass)
 	klass->parent_class.add_local_candidate = jingle_iceudp_add_local_candidate;
 	klass->parent_class.get_remote_candidates = jingle_iceudp_get_remote_candidates;
 
-
 	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
 			g_param_spec_pointer("local-candidates",
 			"Local candidates",
@@ -307,7 +306,7 @@ jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 			iceudp->priv->local_candidates, iceudp_candidate);
 }
 
-GList *
+static GList *
 jingle_iceudp_get_remote_candidates(JingleTransport *transport)
 {
 	JingleIceUdp *iceudp = JINGLE_ICEUDP(transport);
