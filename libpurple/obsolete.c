@@ -80,12 +80,15 @@ static void purple_util_fetch_url_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _wrap_data)
 {
 	PurpleUtilLegacyWrapData *wrap_data = _wrap_data;
+	const char *data = NULL;
+	size_t len;
 
-	if (wrap_data->cb && !wrap_data->url_data->cancelled)
-		wrap_data->cb(wrap_data->url_data, wrap_data->user_data,
-			purple_http_response_get_data(response),
-			purple_http_response_get_data_len(response),
+	if (wrap_data->cb && !wrap_data->url_data->cancelled) {
+		data = purple_http_response_get_data(response, &len);
+
+		wrap_data->cb(wrap_data->url_data, wrap_data->user_data, data, len,
 			purple_http_response_get_error(response));
+	}
 
 	g_free(wrap_data->url_data);
 	g_free(wrap_data);

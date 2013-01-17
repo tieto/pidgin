@@ -74,7 +74,7 @@ static void version_fetch_cb(PurpleHttpConnection *hc,
 	if(!purple_http_response_is_successfull(response))
 		return;
 
-	changelog = purple_http_response_get_data(response);
+	changelog = purple_http_response_get_data(response, NULL);
 
 	while(changelog[i] && changelog[i] != '\n') i++;
 
