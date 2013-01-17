@@ -58,7 +58,7 @@
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
-#if USE_VV
+#ifdef USE_VV
 #include "media-gst.h"
 #if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
@@ -123,7 +123,7 @@ static GtkListStore *prefs_conv_variants;
 static GtkListStore *prefs_status_icon_themes;
 static GtkListStore *prefs_smiley_themes;
 
-#if USE_VV
+#ifdef USE_VV
 
 static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"alsasrc",	"ALSA",
@@ -3042,7 +3042,7 @@ away_page(void)
 	return ret;
 }
 
-#if USE_VV
+#ifdef USE_VV
 static GList *
 get_vv_element_devices(const gchar *element_name)
 {
@@ -3678,7 +3678,7 @@ prefs_notebook_init(void)
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 	prefs_notebook_add_page(_("Themes"), theme_page(), notebook_page++);
-#if USE_VV
+#ifdef USE_VV
 	prefs_notebook_add_page(_("Voice/Video"), vv_page(), notebook_page++);
 #endif
 }
@@ -3812,7 +3812,7 @@ pidgin_prefs_init(void)
 	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
-#if USE_VV
+#ifdef USE_VV
 	/* Voice/Video */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio");
