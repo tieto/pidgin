@@ -265,7 +265,7 @@ disco_type_from_string(const gchar *str)
 	g_return_val_if_fail(str != NULL, "");
 
 	for ( ; disco_type_mappings[i].from; ++i) {
-		if (!strcasecmp(str, disco_type_mappings[i].from))
+		if (!g_ascii_strcasecmp(str, disco_type_mappings[i].from))
 			return disco_type_mappings[i].to;
 	}
 

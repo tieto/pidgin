@@ -3401,10 +3401,9 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 }
 
 static void
-volume_changed_cb(GtkScaleButton *button, gpointer data)
+volume_changed_cb(GtkScaleButton *button, gdouble value, gpointer data)
 {
-	purple_prefs_set_int("/purple/media/audio/volume/input",
-	                     gtk_scale_button_get_value(GTK_SCALE_BUTTON(button)) * 100);
+	purple_prefs_set_int("/purple/media/audio/volume/input", value * 100);
 }
 
 static void
