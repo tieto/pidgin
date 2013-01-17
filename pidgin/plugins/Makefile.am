@@ -45,7 +45,6 @@ relnot_la_LDFLAGS           = -module -avoid-version
 sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 themeedit_la_LDFLAGS        = -module -avoid-version
-vvconfig_la_LDFLAGS         = -module -avoid-version
 webkit_la_LDFLAGS           = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
