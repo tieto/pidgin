@@ -500,7 +500,8 @@ pidgin_conv_theme_finalize(GObject *obj)
 	}
 	g_free(priv->variant);
 
-	g_array_unref(priv->nick_colors);
+	if (priv->nick_colors)
+		g_array_unref(priv->nick_colors);
 
 	parent_class->finalize(obj);
 }
