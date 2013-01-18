@@ -1377,6 +1377,9 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 		secondary = g_strconcat(tmp, " ", error, NULL);
 		g_free(tmp);
 
+		purple_debug_error("certificate/x509/tls_cached",
+		                   "Unable to validate certificate: %s\n", secondary);
+
 		purple_notify_error(NULL, /* TODO: Probably wrong. */
 					_("SSL Certificate Error"),
 					_("Unable to validate certificate"),
@@ -1611,7 +1614,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	 * CA, or is a trusted CA (based on fingerprint).
 	 */
 	/* If, for whatever reason, there is no Certificate Authority pool
-	   loaded, we'll verify the subject name and then warn about thsi. */
+	   loaded, we'll verify the subject name and then warn about this. */
 	if ( !ca ) {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "No X.509 Certificate Authority pool "
@@ -1637,8 +1640,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 			  "Also checking for a CA with DN=%s\n",
 			  ca2_id);
 	ca_crts = g_slist_concat(x509_ca_get_certs(ca_id), x509_ca_get_certs(ca2_id));
-	g_free(ca_id);
-	g_free(ca2_id);
 	if ( NULL == ca_crts ) {
 		flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 
@@ -1647,6 +1648,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 				  "found. I'll prompt the user, I guess.\n");
 
 		x509_tls_cached_check_subject_name(vrq, flags);
+		g_free(ca_id);
+		g_free(ca2_id);
 		return;
 	}
 
@@ -1681,12 +1684,19 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		g_byte_array_free(ca_fpr, TRUE);
 	}
 
-	if (valid == FALSE)
+	if (valid == FALSE) {
+		purple_debug_error("certificate/x509/tls_cached",
+		                   "Unable to verify final certificate %s signed by %s. "
+		                   "Not a trusted root or signed by a trusted root.\n",
+		                   ca2_id, ca_id);
 		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+	}
 
 	g_slist_foreach(ca_crts, (GFunc)purple_certificate_destroy, NULL);
 	g_slist_free(ca_crts);
 	g_byte_array_free(last_fpr, TRUE);
+	g_free(ca_id);
+	g_free(ca2_id);
 
 	x509_tls_cached_check_subject_name(vrq, flags);
 }
