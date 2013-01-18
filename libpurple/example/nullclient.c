@@ -214,10 +214,6 @@ init_libpurple(void)
 		abort();
 	}
 
-	/* Create and load the buddylist. */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* Load the preferences. */
 	purple_prefs_load();
 

@@ -754,10 +754,6 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	/* TODO: Move blist loading into purple_blist_init() */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
 

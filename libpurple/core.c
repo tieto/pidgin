@@ -189,6 +189,9 @@ purple_core_init(const char *ui)
 	/* The UI may have registered some theme types, so refresh them */
 	purple_theme_manager_refresh();
 
+	/* Load the buddy list after UI init */
+	purple_blist_boot();
+
 	return TRUE;
 }
 

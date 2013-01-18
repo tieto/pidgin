@@ -377,10 +377,6 @@ init_libpurple(int argc, char **argv)
 		abort();
 	}
 
-	/* TODO: Move blist loading into purple_blist_init() */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
 

@@ -164,6 +164,9 @@ version 3.0.0 (??/??/????):
 		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
+		* purple_blist_load
+		* purple_blist_new
+		* purple_set_blist
 		* purple_blist_update_buddy_icon
 		* purple_buddy_get_local_alias
 		* purple_buddy_icons_has_custom_icon
