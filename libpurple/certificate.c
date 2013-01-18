@@ -41,53 +41,8 @@ static GList *cert_verifiers = NULL;
 /** List of registered Pools */
 static GList *cert_pools = NULL;
 
-/*
- * TODO: Merge this with PurpleCertificateVerificationStatus for 3.0.0 */
-typedef enum {
-	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
-
-	/* Not an error */
-	PURPLE_CERTIFICATE_NO_PROBLEMS = 0,
-
-	/* Non-fatal */
-	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
-
-	/* The certificate is self-signed. */
-	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
-
-	/* The CA is not in libpurple's pool of certificates. */
-	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
-
-	/* The current time is before the certificate's specified
-	 * activation time.
-	 */
-	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
-
-	/* The current time is after the certificate's specified expiration time */
-	PURPLE_CERTIFICATE_EXPIRED = 0x08,
-
-	/* The certificate's subject name doesn't match the expected */
-	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
-
-	/* No CA pool was found. This shouldn't happen... */
-	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
-
-	/* Fatal */
-	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
-
-	/* The signature chain could not be validated. Due to limitations in the
-	 * the current API, this also indicates one of the CA certificates in the
-	 * chain is expired (or not yet activated). FIXME 3.0.0 */
-	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
-
-	/* The signature has been revoked. */
-	PURPLE_CERTIFICATE_REVOKED = 0x20000,
-
-	PURPLE_CERTIFICATE_LAST = 0x40000,
-} PurpleCertificateInvalidityFlags;
-
 static const gchar *
-invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
+invalidity_reason_to_string(PurpleCertificateVerificationStatus flag)
 {
 	switch (flag) {
 		case PURPLE_CERTIFICATE_SELF_SIGNED:
@@ -120,6 +75,9 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			break;
 		case PURPLE_CERTIFICATE_REVOKED:
 			return _("The certificate has been revoked.");
+			break;
+		case PURPLE_CERTIFICATE_REJECTED:
+			return _("The certificate was rejected by the user.");
 			break;
 		case PURPLE_CERTIFICATE_UNKNOWN_ERROR:
 		default:
@@ -700,7 +658,7 @@ x509_singleuse_verify_reject_cb(PurpleCertificateVerificationRequest *vrq)
 			  "VRQ on cert from %s rejected\n",
 			  vrq->subject_name);
 
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_REJECTED);
 }
 
 static void
@@ -1319,7 +1277,7 @@ x509_tls_cached_user_auth_reject_cb(PurpleCertificateVerificationRequest *vrq)
 
 	purple_debug_warning("certificate/x509/tls_cached", "User REJECTED cert\n");
 
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_REJECTED);
 }
 
 /** Validates a certificate by asking the user
@@ -1351,11 +1309,11 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
-                             PurpleCertificateInvalidityFlags flags);
+                             PurpleCertificateVerificationStatus flags);
 
 static void
 x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
-                         PurpleCertificateInvalidityFlags flags)
+                         PurpleCertificateVerificationStatus flags)
 {
 	PurpleCertificatePool *tls_peers;
 	PurpleCertificate *peer_crt = vrq->cert_chain->data;
@@ -1386,7 +1344,7 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 					secondary);
 		g_free(secondary);
 
-		purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
+		purple_certificate_verify_complete(vrq, flags);
 		return;
 	} else if (flags & PURPLE_CERTIFICATE_NON_FATALS_MASK) {
 		/* Non-fatal error. Prompt the user. */
@@ -1451,7 +1409,7 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 
 static void
 x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq,
-                              PurpleCertificateInvalidityFlags flags)
+                              PurpleCertificateVerificationStatus flags)
 {
 	/* TODO: Looking this up by name over and over is expensive.
 	   Fix, please! */
@@ -1505,7 +1463,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq,
  */
 static void
 x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
-                                   PurpleCertificateInvalidityFlags flags)
+                                   PurpleCertificateVerificationStatus flags)
 {
 	PurpleCertificate *peer_crt;
 	GList *chain = vrq->cert_chain;
@@ -1534,7 +1492,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
  */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
-                             PurpleCertificateInvalidityFlags flags)
+                             PurpleCertificateVerificationStatus flags)
 {
 	PurpleCertificatePool *ca;
 	PurpleCertificate *peer_crt;
@@ -1707,7 +1665,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
 	time_t now, activation, expiration;
-	PurpleCertificateInvalidityFlags flags = PURPLE_CERTIFICATE_NO_PROBLEMS;
+	PurpleCertificateVerificationStatus flags = PURPLE_CERTIFICATE_VALID;
 	gboolean ret;
 
 	g_return_if_fail(vrq);

@@ -118,6 +118,9 @@ version 3.0.0 (??/??/????):
 		* purple_xfer_set_bytes_sent now takes a goffset as the bytes_sent
 		  parameter
 		* purple_xfer_set_size now takes a goffset as the size parameter
+		* PurpleCertificateVerificationStatus enumeration is now merged with
+		  internal flags, thus removing PURPLE_CERTIFICATE_INVALID and
+		  replacing it with more precise errors.
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
 		* PurpleXfer.bytes_remaining is now a goffset
@@ -216,6 +219,7 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request, instead.
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request, instead.
+		* PurpleCertificateVerificationStatus.PURPLE_CERTIFICATE_INVALID
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite

@@ -36,8 +36,49 @@
 
 typedef enum
 {
-	PURPLE_CERTIFICATE_INVALID = 0,
-	PURPLE_CERTIFICATE_VALID = 1
+	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
+
+	/* Not an error */
+	PURPLE_CERTIFICATE_VALID = 0,
+
+	/* Non-fatal */
+	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
+
+	/* The certificate is self-signed. */
+	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
+
+	/* The CA is not in libpurple's pool of certificates. */
+	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
+
+	/* The current time is before the certificate's specified
+	 * activation time.
+	 */
+	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
+
+	/* The current time is after the certificate's specified expiration time */
+	PURPLE_CERTIFICATE_EXPIRED = 0x08,
+
+	/* The certificate's subject name doesn't match the expected */
+	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
+
+	/* No CA pool was found. This shouldn't happen... */
+	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
+
+	/* Fatal */
+	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
+
+	/* The signature chain could not be validated. Due to limitations in the
+	 * the current API, this also indicates one of the CA certificates in the
+	 * chain is expired (or not yet activated). FIXME 3.0.0 */
+	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
+
+	/* The signature has been revoked. */
+	PURPLE_CERTIFICATE_REVOKED = 0x20000,
+
+	/* The certificate was rejected by the user. */
+	PURPLE_CERTIFICATE_REJECTED = 0x40000,
+
+	PURPLE_CERTIFICATE_LAST = 0x80000,
 } PurpleCertificateVerificationStatus;
 
 typedef struct _PurpleCertificate PurpleCertificate;
