@@ -761,9 +761,6 @@ int main(int argc, char *argv[])
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
 
-	/* TODO: Move pounces loading into purple_pounces_init() */
-	purple_pounces_load();
-
 	ui_main();
 
 #ifdef USE_SM

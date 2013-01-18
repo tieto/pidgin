@@ -387,9 +387,6 @@ init_libpurple(int argc, char **argv)
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved("/finch/plugins/loaded");
 
-	/* TODO: Move pounces loading into purple_pounces_init() */
-	purple_pounces_load();
-
 	if (opt_nologin)
 	{
 		/* Set all accounts to "offline" */

@@ -224,9 +224,6 @@ init_libpurple(void)
 	/* Load the desired plugins. The client should save the list of loaded plugins in
 	 * the preferences using purple_plugins_save_loaded(PLUGIN_SAVE_PREF) */
 	purple_plugins_load_saved(PLUGIN_SAVE_PREF);
-
-	/* Load the pounces. */
-	purple_pounces_load();
 }
 
 static void

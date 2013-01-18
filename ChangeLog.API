@@ -195,6 +195,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unregister_load_notify_cb
 		* purple_plugins_unregister_probe_notify_cb
 		* purple_plugins_unregister_unload_notify_cb
+		* purple_pounces_load
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* purple_proxy_connect_socks5
