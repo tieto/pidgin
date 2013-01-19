@@ -45,6 +45,7 @@ gpg_sign = $(GPG_SIGN) -ab $(1) && $(GPG_SIGN) --verify $(1).asc
 STRIPPED_RELEASE_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-win32bin
 DEBUG_SYMBOLS_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-dbgsym
 
+PIDGIN_INST_DEP_DIR="$(WIN32_DEV_TOP)/pidgin-inst-deps-20120910"
 
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
@@ -108,7 +109,7 @@ endif
 	cp $(GTKSPELL_TOP)/bin/libgtkspell-0.dll $(PIDGIN_INSTALL_DIR)/spellcheck
 	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
 	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
-	cp $(WIN32_DEV_TOP)/pidgin-inst-deps-20100315/exchndl.dll $(PIDGIN_INSTALL_DIR)
+	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
 	cp $(GCC_SSP_TOP)/bin/libssp-0.dll $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:

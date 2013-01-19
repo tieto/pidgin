@@ -90,7 +90,7 @@ endif
 
 DEFINES += -DHAVE_CONFIG_H -DWIN32_LEAN_AND_MEAN
 
-CFLAGS += -O2 -Wall $(GCCWARNINGS) $(CC_HARDENING_OPTIONS) -pipe -mno-cygwin -mms-bitfields -g
+CFLAGS += -O2 -Wall $(GCCWARNINGS) $(CC_HARDENING_OPTIONS) -pipe -mms-bitfields -g
 
 # If not specified, dlls are built with the default base address of 0x10000000.
 # When loaded into a process address space a dll will be rebased if its base
