@@ -440,7 +440,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 		if (si && (profile = xmlnode_get_attrib(si, "profile"))
 				&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
 			const char *filename = NULL, *filesize_str = NULL;
-			int filesize = 0;
+			goffset filesize = 0;
 			xmlnode *file;
 
 			const char *sid = xmlnode_get_attrib(si, "id");
@@ -448,7 +448,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			if ((file = xmlnode_get_child(si, "file"))) {
 				filename = xmlnode_get_attrib(file, "name");
 				if((filesize_str = xmlnode_get_attrib(file, "size")))
-					filesize = atoi(filesize_str);
+					filesize = g_ascii_strtoll(filesize_str, NULL, 10);
 			}
 
 			/* TODO: Make sure that it is advertising a bytestreams transfer */
