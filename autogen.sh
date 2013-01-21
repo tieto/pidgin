@@ -160,5 +160,8 @@ run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 ###############################################################################
 # Run configure
 ###############################################################################
-echo "running ./configure ${CONFIGURE_FLAGS} $@"
-./configure ${CONFIGURE_FLAGS} $@
+if test -z "$NOCONFIGURE"; then
+	echo "running ./configure ${CONFIGURE_FLAGS} $@"
+	./configure ${CONFIGURE_FLAGS} $@
+fi
+
