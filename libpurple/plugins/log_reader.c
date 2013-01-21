@@ -2580,7 +2580,7 @@ static void log_reader_init_prefs(void) {
 		/* Read talk.ini file to find the log directory. */
 		GError *error = NULL;
 
-#if 0 && GLIB_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
+#if 0 /* FIXME: Not tested yet. */
 		GKeyFile *key_file;
 
 		purple_debug_info("Trillian talk.ini read", "Reading %s\n", path);
@@ -2607,7 +2607,7 @@ static void log_reader_init_prefs(void) {
 
 			g_key_file_free(key_file);
 		}
-#else /* !GLIB_CHECK_VERSION(2,6,0) */
+#else
 		gchar *contents = NULL;
 
 		purple_debug_info("Trillian talk.ini read",
@@ -2643,7 +2643,7 @@ static void log_reader_init_prefs(void) {
 			g_free(contents);
 		}
 		g_free(path);
-#endif /* !GLIB_CHECK_VERSION(2,6,0) */
+#endif
 	} /* path */
 
 	if (!found) {
