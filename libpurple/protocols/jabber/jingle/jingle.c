@@ -29,6 +29,7 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
+#include "google/google_p2p.h"
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
@@ -58,6 +59,8 @@ jingle_get_type(const gchar *type)
 #ifdef USE_VV
 	else if (!strcmp(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
+	else if (!strcmp(type, NS_GOOGLE_TRANSPORT_P2P))
+		return JINGLE_TYPE_GOOGLE_P2P;
 #endif
 #if 0
 	else if (!strcmp(type, JINGLE_APP_FT))
