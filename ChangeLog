@@ -68,11 +68,11 @@ version 2.10.7:
 	libpurple:
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	  (Bartosz Brachaczek) (#15329)
-	* Fix UPNP mappings on routers that return empty <URLBase/> elements
+	* Fix UPnP mappings on routers that return empty <URLBase/> elements
 	  in their response. (Ferdinand Stehle) (#15373)
 	* Tcl plugin uses saner, race-free plugin loading.
 	* Fix the Tcl signals-test plugin for savedstatus-changed.
-          (Andrew Shadura) (#15443)
+	  (Andrew Shadura) (#15443)
 
 	Pidgin:
 	* Make Pidgin more friendly to non-X11 GTK+, such as MacPorts' +no_x11
@@ -88,6 +88,7 @@ version 2.10.7:
 	* Print topic setter information at channel join. (#13317)
 
 	MSN:
+	* Fix SSL certificate issue when signing into MSN for some users.
 	* Fix a crash when removing a user before its icon is loaded. (Mark
 	  Barfield) (#15217)
 
