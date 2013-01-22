@@ -596,7 +596,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	}
 
 	/* we now have the emoticon, store it in the imagestore */
-	id = purple_imgstore_add_with_id( em_data, em_size, NULL );
+	id = purple_imgstore_new_with_id( em_data, em_size, NULL );
 
 	/* map the mxit emoticon id to purple image id */
 	intptr = g_malloc( sizeof( int ) );

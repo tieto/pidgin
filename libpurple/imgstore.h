@@ -42,9 +42,9 @@ G_BEGIN_DECLS
 /**
  * Create a new PurpleStoredImage.
  *
- * Despite the name of this function, the image is NOT added to the image
- * store and no ID is assigned.  If you need to reference the image by an
- * ID, use purple_imgstore_add_with_id() instead.
+ * The image is not added to the image store and no ID is assigned.  If you
+ * need to reference the image by an ID, use purple_imgstore_new_with_id()
+ * instead.
  *
  * The caller owns a reference to this image and must dereference it with
  * purple_imgstore_unref() for it to be freed.
@@ -62,18 +62,18 @@ G_BEGIN_DECLS
  *                  disk, make sure the filename is appropriately escaped.
  *                  You may wish to use purple_escape_filename().
  *
- * @return The stored image, or NULL if the image was not added (because of
+ * @return The image, or NULL if the image could not be created (because of
  *         empty data or size).
  */
 PurpleStoredImage *
-purple_imgstore_add(gpointer data, size_t size, const char *filename);
+purple_imgstore_new(gpointer data, size_t size, const char *filename);
 
 /**
- * Create a PurpleStoredImage using purple_imgstore_add() by reading the
+ * Create a PurpleStoredImage using purple_imgstore_new() by reading the
  * given filename from disk.
  *
  * The image is not added to the image store and no ID is assigned.  If you
- * need to reference the image by an ID, use purple_imgstore_add_with_id()
+ * need to reference the image by an ID, use purple_imgstore_new_with_id()
  * instead.
  *
  * Make sure the filename is appropriately escaped.  You may wish to use
@@ -83,16 +83,16 @@ purple_imgstore_add(gpointer data, size_t size, const char *filename);
  * The caller owns a reference to this image and must dereference it with
  * purple_imgstore_unref() for it to be freed.
  *
- * @param path  The path to the image.
+ * @param path The path to the image.
  *
- * @return The stored image, or NULL if the image was not added (because of
+ * @return The image, or NULL if the image could not be created (because of
  *         empty data or size).
  */
 PurpleStoredImage *
 purple_imgstore_new_from_file(const char *path);
 
 /**
- * Create a PurpleStoredImage using purple_imgstore_add() and add the
+ * Create a PurpleStoredImage using purple_imgstore_new() and add the
  * image to the image store.  A unique ID will be assigned to the image.
  *
  * The caller owns a reference to the image and must dereference it with
@@ -114,9 +114,9 @@ purple_imgstore_new_from_file(const char *path);
  *
  * @return ID for the image.  This is a unique number that can be used
  *         within libpurple to reference the image.  0 is returned if the
- *         image was not added (because of empty data or size).
+ *         image could not be created (because of empty data or size).
  */
-int purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename);
+int purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename);
 
 /**
  * Retrieve an image from the store. The caller does not own a

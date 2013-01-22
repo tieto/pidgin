@@ -89,6 +89,8 @@ version 3.0.0 (??/??/????):
 		* purple_conversation_get_gc renamed to
 		  purple_conversation_get_connection
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
+		* purple_imgstore_add renamed to purple_imgstore_new
+		* purple_imgstore_add_with_id renamed to purple_imgstore_new_with_id
 		* purple_network_listen now takes the protocol family as the second
 		  parameter
 		* purple_network_listen now takes a boolean indicating external port

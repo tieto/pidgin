@@ -303,7 +303,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;
 		gpointer data = g_memdup(thumbnail_data, size);
-		int id = purple_imgstore_add_with_id(data, size, NULL);
+		int id = purple_imgstore_new_with_id(data, size, NULL);
 
 		message_with_img =
 			g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'> %s",

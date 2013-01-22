@@ -1410,7 +1410,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		}
 		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
 		shortname = shortname ? shortname + 1 : data->filename;
-		id = purple_imgstore_add_with_id(filedata, size, shortname);
+		id = purple_imgstore_new_with_id(filedata, size, shortname);
 
 		gtk_webview_insert_image(GTK_WEBVIEW(gtkconv->entry), id);
 		purple_imgstore_unref_by_id(id);

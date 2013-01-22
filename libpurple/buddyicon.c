@@ -270,7 +270,7 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filen
 		return purple_imgstore_ref(img);
 	}
 
-	img = purple_imgstore_add(icon_data, icon_len, file);
+	img = purple_imgstore_new(icon_data, icon_len, file);
 
 	/* This will take ownership of file and g_free it either now or later. */
 	g_hash_table_insert(icon_data_cache, file, img);
