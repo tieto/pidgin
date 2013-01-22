@@ -43,9 +43,9 @@ struct _PurpleStoredImage
 {
 	int id;
 	guint8 refcount;
-	size_t size;		/**< The image data's size.	*/
-	char *filename;		/**< The filename (for the UI)	*/
-	gpointer data;		/**< The image data.		*/
+	size_t size;     /**< The image data's size. */
+	char *filename;  /**< The filename (for the UI) */
+	gpointer data;   /**< The image data. */
 };
 
 PurpleStoredImage *
@@ -107,7 +107,8 @@ purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename)
 	return img->id;
 }
 
-PurpleStoredImage *purple_imgstore_find_by_id(int id) {
+PurpleStoredImage *purple_imgstore_find_by_id(int id)
+{
 	PurpleStoredImage *img = g_hash_table_lookup(imgstore, &id);
 
 	if (img != NULL)
@@ -116,7 +117,8 @@ PurpleStoredImage *purple_imgstore_find_by_id(int id) {
 	return img;
 }
 
-gconstpointer purple_imgstore_get_data(PurpleStoredImage *img) {
+gconstpointer purple_imgstore_get_data(PurpleStoredImage *img)
+{
 	g_return_val_if_fail(img != NULL, NULL);
 
 	return img->data;

@@ -39,10 +39,11 @@ extern "C" {
 #endif
 
 /**
- * Add an image to the store.
+ * Create a new PurpleStoredImage.
  *
- * The caller owns a reference to the image in the store, and must dereference
- * the image with purple_imgstore_unref() for it to be freed.
+ * Despite the name of this function, the image is NOT added to the image
+ * store.  The caller owns a reference to this image and must dereference
+ * it with purple_imgstore_unref() for it to be freed.
  *
  * No ID is allocated when using this function.  If you need to reference the
  * image by an ID, use purple_imgstore_add_with_id() instead.
@@ -57,24 +58,32 @@ extern "C" {
  *                  without any directory information.  It can also be
  *                  NULL, if you don't need to keep track of a filename.
  *
- * @return The stored image.
+ * @return The stored image, or NULL if the image was not added (because of
+ *         empty data or size).
  */
 PurpleStoredImage *
 purple_imgstore_add(gpointer data, size_t size, const char *filename);
 
 /**
- * Create an image and add it to the store.
+ * Create a PurpleStoredImage using purple_imgstore_add() by reading the
+ * given filename from disk.
+ *
+ * No ID is allocated when using this function.  If you need to reference the
+ * image by an ID, use purple_imgstore_add_with_id() instead.
  *
  * @param path  The path to the image.
  *
- * @return  The stored image.
- * @since 2.X.X
+ * @return The stored image, or NULL if the image was not added (because of
+ *         empty data or size).
+ *
+ * @since 2.5.0
  */
 PurpleStoredImage *
 purple_imgstore_new_from_file(const char *path);
 
 /**
- * Add an image to the store, allocating an ID.
+ * Create a PurpleStoredImage using purple_imgstore_add() and add the
+ * image to the image store.  A unique ID will be assigned to the image.
  *
  * The caller owns a reference to the image in the store, and must dereference
  * the image with purple_imgstore_unref_by_id() or purple_imgstore_unref()
