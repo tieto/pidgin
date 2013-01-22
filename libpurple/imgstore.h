@@ -58,6 +58,9 @@ G_BEGIN_DECLS
  *                  image or, more commonly, the filename of the image
  *                  without any directory information.  It can also be
  *                  NULL, if you don't need to keep track of a filename.
+ *                  If you intend to use this filename to write the file to
+ *                  disk, make sure the filename is appropriately escaped.
+ *                  You may wish to use purple_escape_filename().
  *
  * @return The stored image, or NULL if the image was not added (because of
  *         empty data or size).
@@ -105,7 +108,10 @@ purple_imgstore_new_from_file(const char *path);
  *                  image or, more commonly, the filename of the image
  *                  without any directory information.  It can also be
  *                  NULL, if you don't need to keep track of a filename.
-
+ *                  If you intend to use this filename to write the file to
+ *                  disk, make sure the filename is appropriately escaped.
+ *                  You may wish to use purple_escape_filename()
+ *
  * @return ID for the image.  This is a unique number that can be used
  *         within libpurple to reference the image.  0 is returned if the
  *         image was not added (because of empty data or size).
@@ -143,7 +149,10 @@ gconstpointer purple_imgstore_get_data(PurpleStoredImage *img);
 size_t purple_imgstore_get_size(PurpleStoredImage *img);
 
 /**
- * Retrieves a pointer to the image's filename.
+ * Retrieves a pointer to the image's filename.  If you intend to use this
+ * filename to write the file to disk, make sure the filename was
+ * appropriately escaped when you created the PurpleStoredImage.  You may
+ * wish to use purple_escape_filename().
  *
  * @param img The image.
  *
