@@ -342,13 +342,13 @@ purple_buddy_icon_ref(PurpleBuddyIcon *icon)
 	return icon;
 }
 
-PurpleBuddyIcon *
+void
 purple_buddy_icon_unref(PurpleBuddyIcon *icon)
 {
 	if (icon == NULL)
-		return NULL;
+		return;
 
-	g_return_val_if_fail(icon->ref_count > 0, NULL);
+	g_return_if_fail(icon->ref_count > 0);
 
 	icon->ref_count--;
 
@@ -365,11 +365,7 @@ purple_buddy_icon_unref(PurpleBuddyIcon *icon)
 
 		PURPLE_DBUS_UNREGISTER_POINTER(icon);
 		g_slice_free(PurpleBuddyIcon, icon);
-
-		return NULL;
 	}
-
-	return icon;
 }
 
 void

@@ -82,6 +82,7 @@ version 3.0.0 (??/??/????):
 		  parameter
 		* purple_account_add_buddies now takes an invite message as the last
 		  parameter
+		* purple_buddy_icon_unref no longer has a return value
 		* purple_certificate_check_signature_chain now returns a list of failing
 		  PurpleCertificate*s as the second parameter
 		* purple_connection_error now takes a PurpleConnectionError

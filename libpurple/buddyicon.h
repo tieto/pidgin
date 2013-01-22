@@ -79,10 +79,8 @@ PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
  * If the reference count reaches 0, the icon will be destroyed.
  *
  * @param icon The buddy icon.
- *
- * @return @a icon, or @c NULL if the reference count reached 0.
  */
-PurpleBuddyIcon *purple_buddy_icon_unref(PurpleBuddyIcon *icon);
+void purple_buddy_icon_unref(PurpleBuddyIcon *icon);
 
 /**
  * Updates every instance of this icon.
