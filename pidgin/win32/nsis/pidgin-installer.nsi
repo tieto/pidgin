@@ -643,7 +643,6 @@ Section Uninstall
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nss3.dll"
     Delete "$INSTDIR\nssutil3.dll"
-    Delete "$INSTDIR\nssckbi.dll"
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\pidgin.exe"
     Delete "$INSTDIR\smime3.dll"
