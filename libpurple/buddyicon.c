@@ -42,7 +42,7 @@ struct _PurpleBuddyIcon
 	                                the icon data.                       */
 	char *username;            /**< The username the icon belongs to.    */
 	char *checksum;            /**< The protocol checksum.               */
-	int ref_count;             /**< The buddy icon reference count.      */
+	unsigned int ref_count;    /**< The buddy icon reference count.      */
 };
 
 /**
