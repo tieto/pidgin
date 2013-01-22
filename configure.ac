@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.50])
+AC_PREREQ([2.63])
 
 # UPDATING VERSION NUMBERS FOR RELEASES
 #
