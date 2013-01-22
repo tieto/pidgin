@@ -91,7 +91,8 @@ purple_imgstore_new_from_file(const char *path);
  *                  NULL, if you don't need to keep track of a filename.
 
  * @return ID for the image.  This is a unique number that can be used
- *         within libpurple to reference the image.
+ *         within libpurple to reference the image.  0 is returned if the
+ *         image was not added (because of empty data or size).
  */
 int purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename);
 
