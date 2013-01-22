@@ -219,7 +219,6 @@ purple_imgstore_init()
 	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                        PURPLE_SUBTYPE_STORED_IMAGE));
 
-	// Use _new_full and free the objects when done.
 	imgstore = g_hash_table_new(g_int_hash, g_int_equal);
 }
 
