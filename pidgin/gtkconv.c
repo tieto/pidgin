@@ -3315,17 +3315,16 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			return FALSE;
 
 		buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
-
-		if ((buddy == NULL) && (gtkconv->webview != NULL)) {
+		if (!buddy && gtkconv->webview) {
 			buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
-		}
 
-		if ((buddy == NULL) && (gtkconv->webview != NULL)) {
-			buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
-			purple_blist_node_set_flags((PurpleBlistNode *)buddy,
-					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
-			g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
-					buddy, (GDestroyNotify)purple_buddy_destroy);
+			if (!buddy) {
+				buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
+				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
+						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+				g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
+						buddy, (GDestroyNotify)purple_buddy_destroy);
+			}
 		}
 	}
 
