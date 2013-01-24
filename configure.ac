@@ -1911,7 +1911,7 @@ if test "x$enable_gnutls" != "xno"; then
 		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
 		[
 			LIBS="$LIBS $with_gnutls_libs -lgnutls"
-			AC_TRY_LINK_FUNC(gnutls_init, ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
+			AC_LINK_IFELSE([AC_LANG_CALL([], [gnutls_init])], ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
 			LIBS="$LIBS_save"
 		])
 
@@ -2114,7 +2114,7 @@ if test "x$enable_nss" != "xno"; then
 					LDFLAGS="$LDFLAGS"
 				fi
 
-				AC_TRY_LINK_FUNC(PR_Init,
+				AC_LINK_IFELSE([AC_LANG_CALL([], [PR_Init])],
 					[ac_cv_moz_nspr_libs="yes"],
 					[ac_cv_moz_nspr_libs="no"])
 
@@ -2202,7 +2202,7 @@ if test "x$enable_nss" != "xno"; then
 				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 				LIBS="$nsslibs $nsprlibs"
 
-				AC_TRY_LINK_FUNC(NSS_Init,
+				AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
 					[ac_cv_moz_nss_libs="yes"],
 					[ac_cv_moz_nss_libs="no"])
 
@@ -2210,7 +2210,7 @@ if test "x$enable_nss" != "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
-					AC_TRY_LINK_FUNC(NSS_Init,
+					AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
 						[ac_cv_moz_nss_libs="yes"],
 						[ac_cv_moz_nss_libs="no"])
 				fi
