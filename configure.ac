@@ -157,7 +157,7 @@ AC_CHECK_FUNC(getaddrinfo,
 	[AC_DEFINE([HAVE_GETADDRINFO], [1],
 		[Define to 1 if you have the getaddrinfo function.])],
 	[AC_CHECK_LIB(socket, getaddrinfo,
-		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
+		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lnsl $LIBS"], , -lnsl)])
 AC_CHECK_FUNCS(inet_ntop)
 AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
