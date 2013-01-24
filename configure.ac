@@ -207,7 +207,7 @@ AC_SEARCH_LIBS([ceil], [m], [], [
   AC_MSG_ERROR([unable to find the ceil() function])
 ])
 
-AC_MSG_CHECKING(for fileno())
+AC_MSG_CHECKING([for fileno()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 	AC_MSG_RESULT(no)
 ])
 
-AC_MSG_CHECKING(for the %z format string in strftime())
+AC_MSG_CHECKING([for the %z format string in strftime()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
