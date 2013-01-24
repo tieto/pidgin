@@ -109,8 +109,8 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+LT_PREREQ([2.2.6])
+LT_INIT([disable-static])
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
