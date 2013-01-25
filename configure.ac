@@ -1534,7 +1534,7 @@ dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-secret-service], [disable Secret Service support])], enable_secret_service=$enableval, enable_secret_service=yes)
+AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--enable-libsecret], [enable Secret Service support])], enable_secret_service=$enableval, enable_secret_service=no)
 
 dnl Check for libsecret; if we don't have it, oh well
 if test "x$enable_secret_service" = "xyes" ; then
@@ -1546,7 +1546,7 @@ if test "x$enable_secret_service" = "xyes" ; then
 		if test "x$force_deps" = "xyes" ; then
 			AC_MSG_ERROR([
 Secret Service development headers not found.
-Use --disable-secret-service if you do not need Secret Service support.
+Use --disable-libsecret if you do not need Secret Service support.
 ])
 		fi])
 fi
