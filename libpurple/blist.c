@@ -597,9 +597,8 @@ parse_group(xmlnode *groupnode)
 	}
 }
 
-/* TODO: Make static and rename to load_blist */
-void
-purple_blist_load()
+static void
+load_blist(void)
 {
 	xmlnode *purple, *blist, *privacy;
 
@@ -721,7 +720,8 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
  * Public API functions                                                      *
  *****************************************************************************/
 
-PurpleBuddyList *purple_blist_new()
+void
+purple_blist_boot(void)
 {
 	PurpleBlistUiOps *ui_ops;
 	GList *account;
@@ -749,13 +749,9 @@ PurpleBuddyList *purple_blist_new()
 	if (ui_ops != NULL && ui_ops->new_list != NULL)
 		ui_ops->new_list(gbl);
 
-	return gbl;
-}
+	purplebuddylist = gbl;
 
-void
-purple_set_blist(PurpleBuddyList *list)
-{
-	purplebuddylist = list;
+	load_blist();
 }
 
 PurpleBuddyList *

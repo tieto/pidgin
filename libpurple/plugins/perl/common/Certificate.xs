@@ -43,8 +43,20 @@ BOOT:
 
 	static const constiv *civ, const_iv[] = {
 #define const_iv(name) {#name, (IV)PURPLE_CERTIFICATE_##name}
-		const_iv(INVALID),
+		const_iv(UNKNOWN_ERROR),
 		const_iv(VALID),
+		const_iv(NON_FATALS_MASK),
+		const_iv(SELF_SIGNED),
+		const_iv(CA_UNKNOWN),
+		const_iv(NOT_ACTIVATED),
+		const_iv(EXPIRED),
+		const_iv(NAME_MISMATCH),
+		const_iv(NO_CA_POOL),
+		const_iv(FATALS_MASK),
+		const_iv(INVALID_CHAIN),
+		const_iv(REVOKED),
+		const_iv(REJECTED),
+		const_iv(LAST),
 	};
 
 	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )

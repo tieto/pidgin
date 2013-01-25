@@ -10,8 +10,11 @@ body {
 .x-container,
 .x-status_container
 {
+	clear: left;
 	line-height: 1.3em;
 	margin-bottom: 4px;
+	height: 100%;
+	overflow: hidden;
 }
 
 .x-container .x-time,
@@ -23,22 +26,19 @@ body {
 
 .x-container .x-sender
 {
-	display: inline;
 	font-weight: bold;
 }
 
-.x-container .x-message,
-.x-status_container .x-message
+.x-message p
 {
-	display: inline;
+	margin: 0;
 }
 
 /* Colour-ify things */
 
-.x-container.incoming .x-time,
-.x-container.incoming .x-sender
+#Chat:not(.groupchat) .x-container.incoming .x-header
 {
-	color: #cc0000;
+	color: #cc0000 ! important;
 }
 
 .x-container.outgoing .x-time,

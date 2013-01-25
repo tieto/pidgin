@@ -579,7 +579,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 
 	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
 
-	id = purple_imgstore_add_with_id(filedata, size, name);
+	id = purple_imgstore_new_with_id(filedata, size, name);
 
 	if (id == 0) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
@@ -594,7 +594,9 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 	g_free(filename);
 
 	gtk_webview_insert_image(GTK_WEBVIEW(toolbar->webview), id);
-	purple_imgstore_unref_by_id(id);
+	/* TODO: do it after passing an image to prpl, not before
+	 * purple_imgstore_unref_by_id(id);
+	 */
 }
 
 static void

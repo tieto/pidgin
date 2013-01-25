@@ -271,7 +271,6 @@ typedef PurpleStringref *			Purple__Stringref;
 
 /* util.h */
 typedef PurpleInfoFieldFormatCallback	Purple__Util__InfoFieldFormatCallback;
-typedef PurpleUtilFetchUrlData	Purple__Util__FetchUrlData;
 typedef PurpleMenuAction *		Purple__Menu__Action;
 
 /* value.h */

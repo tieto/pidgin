@@ -43,6 +43,7 @@ SMILEYS = \
     excruciating.png \
     eyeroll.png \
     girl.png \
+    glasses-cool.png \
     happy.png \
     hug-left.png \
     hug-right.png \
@@ -65,6 +66,7 @@ SMILEYS = \
     question.png \
     rose.png \
     sad.png \
+    sarcastic.png \
     shame.png \
     shocked.png \
     shut-mouth.png  \

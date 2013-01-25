@@ -297,6 +297,7 @@ PROTOCOLS_48 = \
 		protocols/48/bonjour.png \
 		protocols/48/facebook.png \
 		protocols/48/gadu-gadu.png \
+		protocols/48/google-talk.png \
 		protocols/48/novell.png \
 		protocols/48/icq.png \
 		protocols/48/irc.png \

@@ -36,16 +36,9 @@ typedef struct _GntProgressBarPrivate
 struct _GntProgressBar
 {
 	GntWidget parent;
-#if !GLIB_CHECK_VERSION(2,4,0)
-	GntProgressBarPrivate priv;
-#endif
 };
 
-#if GLIB_CHECK_VERSION(2,4,0)
 #define GNT_PROGRESS_BAR_GET_PRIVATE(o)   (G_TYPE_INSTANCE_GET_PRIVATE ((o), GNT_TYPE_PROGRESS_BAR, GntProgressBarPrivate))
-#else
-#define GNT_PROGRESS_BAR_GET_PRIVATE(o)   &(GNT_PROGRESS_BAR(o)->priv)
-#endif
 
 static GntWidgetClass *parent_class = NULL;
 
@@ -128,9 +121,7 @@ gnt_progress_bar_class_init (gpointer klass, gpointer class_data)
 
 	parent_class = GNT_WIDGET_CLASS (klass);
 
-#if GLIB_CHECK_VERSION(2,4,0)
 	g_type_class_add_private (g_class, sizeof (GntProgressBarPrivate));
-#endif
 
 	parent_class->draw = gnt_progress_bar_draw;
 	parent_class->size_request = gnt_progress_bar_size_request;

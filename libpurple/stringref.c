@@ -73,7 +73,9 @@ PurpleStringref *purple_stringref_new(const char *value)
 	len = strlen(value);
 
 	newref = g_malloc(sizeof(PurpleStringref) + len);
-	g_strlcpy(newref->value, value, len);
+	/* g_strlcpy() takes the size of the buffer, including the NUL.
+	   strlen() returns the length of the string, without the NUL. */
+	g_strlcpy(newref->value, value, len + 1);
 	newref->ref = 1;
 
 	return newref;

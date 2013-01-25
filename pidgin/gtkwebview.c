@@ -38,6 +38,7 @@
 #define MAX_FONT_SIZE 7
 #define MAX_SCROLL_TIME 0.4 /* seconds */
 #define SCROLL_DELAY 33 /* milliseconds */
+#define GTK_WEBVIEW_MAX_PROCESS_TIME 100000 /* microseconds */
 
 #define GTK_WEBVIEW_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, GtkWebViewPriv))
@@ -705,8 +706,8 @@ webview_resource_loading(WebKitWebView *webview,
 	}
 }
 
-static gboolean
-process_load_queue(GtkWebView *webview)
+static void
+process_load_queue_element(GtkWebView *webview)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	int type;
@@ -716,15 +717,6 @@ process_load_queue(GtkWebView *webview)
 	WebKitDOMNode *start, *end;
 	WebKitDOMRange *range;
 	gboolean require_scroll = FALSE;
-
-	if (priv->is_loading) {
-		priv->loader = 0;
-		return FALSE;
-	}
-	if (!priv->load_queue || g_queue_is_empty(priv->load_queue)) {
-		priv->loader = 0;
-		return FALSE;
-	}
 
 	type = GPOINTER_TO_INT(g_queue_pop_head(priv->load_queue));
 	str = g_queue_pop_head(priv->load_queue);
@@ -783,7 +775,35 @@ process_load_queue(GtkWebView *webview)
 	}
 
 	g_free(str);
+}
 
+static gboolean
+process_load_queue(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	gint64 start_time;
+
+	if (priv->is_loading) {
+		priv->loader = 0;
+		return FALSE;
+	}
+	if (!priv->load_queue || g_queue_is_empty(priv->load_queue)) {
+		priv->loader = 0;
+		return FALSE;
+	}
+
+	start_time = g_get_monotonic_time();
+	while (!g_queue_is_empty(priv->load_queue)) {
+		process_load_queue_element(webview);
+		if (g_get_monotonic_time() - start_time >
+			GTK_WEBVIEW_MAX_PROCESS_TIME)
+			break;
+	}
+
+	if (g_queue_is_empty(priv->load_queue)) {
+		priv->loader = 0;
+		return FALSE;
+	}
 	return TRUE;
 }
 
@@ -1143,6 +1163,7 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 		              node, uri);
 
 		g_free(uri);
+		g_object_unref(hit);
 
 		return TRUE;
 	}

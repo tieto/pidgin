@@ -220,16 +220,39 @@ calc_resp(guint8 *keys, const guint8 *plaintext, unsigned char *results)
 	des_ecb_encrypt(plaintext, results + 16, key);
 }
 
+/*
+ * TODO: We think we should be using cryptographically secure random numbers
+ *       here.  We think the rand() function is probably bad.  We think
+ *       /dev/urandom is a step up, but using a random function from an SSL
+ *       library would probably be best.  In Windows we could possibly also
+ *       use CryptGenRandom.
+ */
 static void
-gensesskey(char *buffer, const char *oldkey)
+gensesskey(char *buffer)
 {
-	int i = 0;
-	if(oldkey == NULL) {
-		for(i=0; i<16; i++) {
-			buffer[i] = (char)(rand() & 0xff);
+	int fd;
+	int i;
+	ssize_t red = 0;
+
+	fd = open("/dev/urandom", O_RDONLY);
+	if (fd >= 0) {
+		red = read(fd, buffer, 16);
+		if (red < 0) {
+			purple_debug_warning("ntlm", "Error reading from /dev/urandom: %s."
+					"  Falling back to inferior method.\n", g_strerror(errno));
+			red = 0;
+		} else if (red < 16) {
+			purple_debug_warning("ntlm", "Tried reading 16 bytes from "
+					"/dev/urandom but only got %zd.  Falling back to "
+					"inferior method\n", red);
 		}
 	} else {
-		memcpy(buffer, oldkey, 16);
+		purple_debug_warning("ntlm", "Error opening /dev/urandom: %s."
+				"  Falling back to inferior method.\n", g_strerror(errno));
+	}
+
+	for (i = red; i < 16; i++) {
+		buffer[i] = (char)(rand() & 0xff);
 	}
 }
 
@@ -366,7 +389,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	/* LCS Stuff */
 	if (flags) {
 		tmsg->flags = GUINT32_TO_LE(0x409082d4);
-		gensesskey(sesskey, NULL);
+		gensesskey(sesskey);
 		memcpy(tmp, sesskey, 0x10);
 	}
 

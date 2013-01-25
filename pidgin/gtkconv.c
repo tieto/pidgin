@@ -33,13 +33,6 @@
 # include <X11/Xlib.h>
 #endif
 
-#ifdef USE_GTKSPELL
-# include <gtkspell/gtkspell.h>
-# ifdef _WIN32
-#  include "wspell.h"
-# endif
-#endif
-
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
@@ -157,9 +150,8 @@ enum {
 #define MIN_BRIGHTNESS_CONTRAST 75
 #define MIN_COLOR_CONTRAST 200
 
-#define NUM_NICK_COLORS 220
-static GdkColor *nick_colors = NULL;
-static guint nbr_nick_colors;
+#define NICK_COLOR_GENERATE_COUNT 220
+static GArray *generated_nick_colors = NULL;
 
 /* These probably won't conflict with any WebKit values. */
 #define PIDGIN_DRAG_BLIST_NODE (1337)
@@ -215,7 +207,7 @@ static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState st
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
-static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
+static GArray* generate_nick_colors(guint numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
@@ -234,7 +226,7 @@ static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *n
 	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
 	float scale;
 
-	col = nick_colors[g_str_hash(name) % nbr_nick_colors];
+	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
 	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
 		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 
@@ -1651,6 +1643,8 @@ get_mark_for_user(PidginConversation *gtkconv, const char *who)
 		if (len > 0)
 			node = webkit_dom_node_list_item(nodes, len - 1);
 	}
+
+	g_object_unref(nodes);
 
 	return node;
 }
@@ -3321,15 +3315,10 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			return FALSE;
 
 		buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
+		if (!buddy && gtkconv->webview) {
+			buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
 
-		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
-		 * removing "isolated" buddy nodes well */
-		if (purple_version_check(2, 0, 2) == NULL) {
-			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
-				buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
-			}
-
-			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
+			if (!buddy) {
 				buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
@@ -5795,6 +5784,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
+
 	if (conv_type == PURPLE_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(PidginImPane));
 	} else if (conv_type == PURPLE_CONV_TYPE_CHAT) {
@@ -5892,9 +5882,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	else
 		pidgin_conv_placement_place(gtkconv);
 
-	if (nick_colors == NULL) {
-		nbr_nick_colors = NUM_NICK_COLORS;
-		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
+	if (generated_nick_colors == NULL) {
+		generated_nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
+	}
+
+	if(NULL == (gtkconv->nick_colors = pidgin_conversation_theme_get_nick_colors(gtkconv->theme)))
+	{
+		gtkconv->nick_colors = g_array_ref(generated_nick_colors);
 	}
 
 	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
@@ -6009,6 +6003,8 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	if (gtkconv->attach.timer) {
 		g_source_remove(gtkconv->attach.timer);
 	}
+
+	g_array_unref(gtkconv->nick_colors);
 
 	g_object_disconnect(G_OBJECT(gtkconv->theme), "any_signal::notify",
 	                    conv_variant_changed_cb, gtkconv, NULL);
@@ -6319,6 +6315,10 @@ replace_message_tokens(
 
 		} else if (g_str_has_prefix(cur, "%sender%")) {
 			replace = alias;
+
+		} else if (g_str_has_prefix(cur, "%senderColor%")) {
+			const GdkColor *color = get_nick_color(PIDGIN_CONVERSATION(conv), name);
+			replace = freeval = g_strdup_printf("#%02x%02x%02x", (color->red >> 8), (color->green >> 8), (color->blue >> 8));
 
 		} else if (g_str_has_prefix(cur, "%service%")) {
 			replace = purple_account_get_protocol_name(purple_conversation_get_account(conv));
@@ -7409,15 +7409,28 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			const char *topic = gtkconv->u.chat->topic_text
 				? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text))
 				: NULL;
-			char *esc = NULL, *tmp;
-			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
-			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
-			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
-						tmp, esc  && *esc ? "\n" : "",
+			const char *title = purple_conversation_get_title(conv);
+			const char *name = purple_conversation_get_name(conv);
+
+			char *topic_esc, *unaliased, *unaliased_esc, *title_esc;
+
+			topic_esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+			unaliased = g_utf8_collate(title, name) ? g_strdup_printf("(%s)", name) : NULL;
+			unaliased_esc = unaliased ? g_markup_escape_text(unaliased, -1) : NULL;
+			title_esc = g_markup_escape_text(title, -1);
+
+			markup = g_strdup_printf("%s%s<span size='smaller'>%s</span>%s<span color='%s' size='smaller'>%s</span>",
+						title_esc,
+						unaliased_esc ? " " : "",
+						unaliased_esc ? unaliased_esc : "",
+						topic_esc  && *topic_esc ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
-						esc ? esc : "");
-			g_free(tmp);
-			g_free(esc);
+						topic_esc ? topic_esc : "");
+
+			g_free(title_esc);
+			g_free(topic_esc);
+			g_free(unaliased);
+			g_free(unaliased_esc);
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
@@ -7887,7 +7900,6 @@ static void
 spellcheck_pref_cb(const char *name, PurplePrefType type,
 				   gconstpointer value, gpointer data)
 {
-#ifdef USE_GTKSPELL
 	GList *cl;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
@@ -7901,9 +7913,9 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
-		pidgin_webview_set_spellcheck(GTK_WEBVIEW(gtkconv->entry), value);
+		pidgin_webview_set_spellcheck(GTK_WEBVIEW(gtkconv->entry),
+		                              (gboolean)GPOINTER_TO_INT(value));
 	}
-#endif
 }
 
 static void
@@ -8775,6 +8787,7 @@ pidgin_conversations_init(void)
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 	{
 		/* Set default tab colors */
 		GString *str = g_string_new(NULL);
@@ -8810,6 +8823,7 @@ pidgin_conversations_init(void)
 		g_string_free(str, TRUE);
 		gtk_rc_reset_styles(settings);
 	}
+#endif
 }
 
 void
@@ -10099,12 +10113,12 @@ pidgin_conv_window_new()
 void
 pidgin_conv_window_destroy(PidginWindow *win)
 {
-	PidginConversation *gtkconv;
-	GList *iter;
-
 	if (win->gtkconvs) {
-		for (iter = win->gtkconvs; iter != NULL; iter = iter->next) {
-			gtkconv = iter->data;
+		GList *iter = win->gtkconvs;
+		while (iter)
+		{
+			PidginConversation *gtkconv = iter->data;
+			iter = iter->next;
 			close_conv_cb(NULL, gtkconv);
 		}
 		return;
@@ -10170,6 +10184,52 @@ gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversati
 	return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static void
+set_default_tab_colors(GtkWidget *widget)
+{
+	GString *str;
+	GtkCssProvider *provider;
+	GError *error = NULL;
+	int iter;
+
+	struct {
+		const char *labelname;
+		const char *color;
+	} styles[] = {
+		{"tab-label-typing", "#4e9a06"},
+		{"tab-label-typed", "#c4a000"},
+		{"tab-label-attention", "#006aff"},
+		{"tab-label-unreadchat", "#cc0000"},
+		{"tab-label-event", "#888a85"},
+		{NULL, NULL}
+	};
+
+	str = g_string_new(NULL);
+
+	for (iter = 0; styles[iter].labelname; iter++) {
+		g_string_append_printf(str,
+		                       "#%s {\n"
+		                       "	color: %s;\n"
+		                       "}\n",
+		                       styles[iter].labelname,
+		                       styles[iter].color);
+	}
+
+	provider = gtk_css_provider_new();
+
+	gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
+
+	gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
+	                               GTK_STYLE_PROVIDER(provider),
+	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	if (error)
+		g_error_free(error);
+	g_string_free(str, TRUE);
+}
+#endif
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -10208,6 +10268,9 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
+#if GTK_CHECK_VERSION(3,0,0)
+	set_default_tab_colors(gtkconv->tab_label);
+#endif
 	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -10944,12 +11007,11 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 }
 
 
-static GdkColor*
-generate_nick_colors(guint *color_count, GdkColor background)
+static GArray*
+generate_nick_colors(guint numcolors, GdkColor background)
 {
-	guint numcolors = *color_count;
 	guint i = 0, j = 0;
-	GdkColor *colors = g_new(GdkColor, numcolors);
+	GArray *colors = g_array_new(FALSE, FALSE, sizeof(GdkColor));
 	GdkColor nick_highlight;
 	GdkColor send_color;
 	time_t breakout_time;
@@ -10973,7 +11035,7 @@ generate_nick_colors(guint *color_count, GdkColor background)
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
 		{
-			colors[i] = color;
+			g_array_append_val(colors, color);
 			i++;
 		}
 		j++;
@@ -10992,17 +11054,13 @@ generate_nick_colors(guint *color_count, GdkColor background)
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
 		{
-			colors[i] = color;
+			g_array_append_val(colors, color);
 			i++;
 		}
 	}
 
 	if (i < numcolors) {
-		GdkColor *c = colors;
 		purple_debug_warning("gtkconv", "Unable to generate enough random colors before timeout. %u colors found.\n", i);
-		colors = g_memdup(c, i * sizeof(GdkColor));
-		g_free(c);
-		*color_count = i;
 	}
 
 	return colors;

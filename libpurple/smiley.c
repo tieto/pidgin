@@ -608,7 +608,7 @@ purple_smiley_data_new(guchar *smiley_data, size_t smiley_data_len)
 		return NULL;
 	}
 
-	stored_img = purple_imgstore_add(smiley_data, smiley_data_len, filename);
+	stored_img = purple_imgstore_new(smiley_data, smiley_data_len, filename);
 
 	g_free(filename);
 

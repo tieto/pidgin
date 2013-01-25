@@ -102,7 +102,7 @@ install: all $(PURPLE_INSTALL_PERL_DIR)/Purple.pm
 $(C_FILES): $(PIDGIN_CONFIG_H)
 
 $(TARGET).dll: $(PIDGIN_DLL).a $(PURPLE_PERL_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(DLL_LD_FLAGS) $(LIBS) -o $(TARGET).dll
 
 ##
 ## CLEAN

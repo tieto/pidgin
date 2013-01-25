@@ -4,13 +4,13 @@ MODULE = Purple::ImgStore  PACKAGE = Purple::ImgStore  PREFIX = purple_imgstore_
 PROTOTYPES: ENABLE
 
 Purple::StoredImage
-purple_imgstore_add(data, size, filename)
+purple_imgstore_new(data, size, filename)
 	void *data
 	size_t size
 	const char *filename
 
 int
-purple_imgstore_add_with_id(data, size, filename)
+purple_imgstore_new_with_id(data, size, filename)
 	void *data
 	size_t size
 	const char *filename

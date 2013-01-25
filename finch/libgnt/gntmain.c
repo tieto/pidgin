@@ -675,7 +675,6 @@ gchar *gnt_get_clipboard_string()
 	return gnt_clipboard_get_string(clipboard);
 }
 
-#if GLIB_CHECK_VERSION(2,4,0)
 typedef struct
 {
 	void (*callback)(int status, gpointer data);
@@ -697,13 +696,11 @@ reap_child(GPid pid, gint status, gpointer data)
 	refresh();
 	refresh_screen();
 }
-#endif
 
 gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 		gint *stin, gint *stout, gint *sterr,
 		void (*callback)(int status, gpointer data), gpointer data)
 {
-#if GLIB_CHECK_VERSION(2,4,0)
 	GPid pid = 0;
 	ChildProcess *cp = NULL;
 
@@ -721,18 +718,11 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 	g_child_watch_add(pid, reap_child, cp);
 
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 gboolean gnt_is_refugee()
 {
-#if GLIB_CHECK_VERSION(2,4,0)
 	return (wm && wm->mode == GNT_KP_MODE_WAIT_ON_CHILD);
-#else
-	return FALSE;
-#endif
 }
 
 const char *C_(const char *x)

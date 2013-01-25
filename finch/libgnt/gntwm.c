@@ -37,14 +37,7 @@
 #endif
 
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#	include <sys/types.h>
-#	include <sys/stat.h>
-#	include <fcntl.h>
-#	define g_fopen open
-#endif
+#include <glib/gstdio.h>
 #include <ctype.h>
 #include <gmodule.h>
 #include <stdlib.h>
@@ -337,7 +330,6 @@ refresh_node(GntWidget *widget, GntNode *node, gpointer m)
 static void
 read_window_positions(GntWM *wm)
 {
-#if GLIB_CHECK_VERSION(2,6,0)
 	GKeyFile *gfile = g_key_file_new();
 	char *filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
 	GError *error = NULL;
@@ -379,7 +371,6 @@ read_window_positions(GntWM *wm)
 
 	g_free(filename);
 	g_key_file_free(gfile);
-#endif
 }
 
 static gboolean check_idle(gpointer n)
@@ -1752,31 +1743,6 @@ match_title(gpointer title, gpointer n, gpointer wid_title)
 		return TRUE;
 	return FALSE;
 }
-
-#if !GLIB_CHECK_VERSION(2,4,0)
-struct
-{
-	gpointer data;
-	gpointer value;
-} table_find_data;
-
-static void
-table_find_helper(gpointer key, gpointer value, gpointer data)
-{
-	GHRFunc func = data;
-	if (func(key, value, table_find_data.data))
-		table_find_data.value = value;
-}
-
-static gpointer
-g_hash_table_find(GHashTable * table, GHRFunc func, gpointer data)
-{
-	table_find_data.data = data;
-	table_find_data.value = NULL;
-	g_hash_table_foreach(table, table_find_helper, func);
-	return table_find_data.value;
-}
-#endif
 
 static GntWS *
 new_widget_find_workspace(GntWM *wm, GntWidget *widget)

@@ -45,6 +45,8 @@ static void jingle_iceudp_get_property (GObject *object, guint prop_id, GValue *
 static void jingle_iceudp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 static JingleTransport *jingle_iceudp_parse_internal(xmlnode *iceudp);
 static xmlnode *jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action);
+static void jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
+static GList *jingle_iceudp_get_remote_candidates(JingleTransport *transport);
 
 static JingleTransportClass *parent_class = NULL;
 
@@ -58,10 +60,10 @@ static JingleIceUdpCandidate *
 jingle_iceudp_candidate_copy(JingleIceUdpCandidate *candidate)
 {
 	JingleIceUdpCandidate *new_candidate = g_new0(JingleIceUdpCandidate, 1);
+	new_candidate->id = g_strdup(candidate->id);
 	new_candidate->component = candidate->component;
 	new_candidate->foundation = g_strdup(candidate->foundation);
 	new_candidate->generation = candidate->generation;
-	new_candidate->id = g_strdup(candidate->id);
 	new_candidate->ip = g_strdup(candidate->ip);
 	new_candidate->network = candidate->network;
 	new_candidate->port = candidate->port;
@@ -105,17 +107,18 @@ jingle_iceudp_candidate_get_type()
 }
 
 JingleIceUdpCandidate *
-jingle_iceudp_candidate_new(guint component, const gchar *foundation,
-		guint generation, const gchar *id, const gchar *ip,
+jingle_iceudp_candidate_new(const gchar *id,
+		guint component, const gchar *foundation,
+		guint generation, const gchar *ip,
 		guint network, guint port, guint priority,
 		const gchar *protocol, const gchar *type,
 		const gchar *username, const gchar *password)
 {
 	JingleIceUdpCandidate *candidate = g_new0(JingleIceUdpCandidate, 1);
+	candidate->id = g_strdup(id);
 	candidate->component = component;
 	candidate->foundation = g_strdup(foundation);
 	candidate->generation = generation;
-	candidate->id = g_strdup(id);
 	candidate->ip = g_strdup(ip);
 	candidate->network = network;
 	candidate->port = port;
@@ -165,6 +168,8 @@ jingle_iceudp_class_init (JingleIceUdpClass *klass)
 	klass->parent_class.to_xml = jingle_iceudp_to_xml_internal;
 	klass->parent_class.parse = jingle_iceudp_parse_internal;
 	klass->parent_class.transport_type = JINGLE_TRANSPORT_ICEUDP;
+	klass->parent_class.add_local_candidate = jingle_iceudp_add_local_candidate;
+	klass->parent_class.get_remote_candidates = jingle_iceudp_get_remote_candidates;
 
 	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
 			g_param_spec_pointer("local-candidates",
@@ -246,36 +251,93 @@ jingle_iceudp_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	}
 }
 
-void
-jingle_iceudp_add_local_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *candidate)
+static void
+jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate)
 {
-	GList *iter = iceudp->priv->local_candidates;
+	JingleIceUdp *iceudp = JINGLE_ICEUDP(transport);
+	PurpleMediaCandidateType type;
+	gchar *ip;
+	gchar *username;
+	gchar *password;
+	JingleIceUdpCandidate *iceudp_candidate;
+	GList *iter;
 
-	for (; iter; iter = g_list_next(iter)) {
+	ip = purple_media_candidate_get_ip(candidate);
+	username = purple_media_candidate_get_username(candidate);
+	password = purple_media_candidate_get_password(candidate);
+	type = purple_media_candidate_get_candidate_type(candidate);
+
+	iceudp_candidate = jingle_iceudp_candidate_new(id,
+			purple_media_candidate_get_component_id(candidate),
+			purple_media_candidate_get_foundation(candidate),
+			generation, ip, 0,
+			purple_media_candidate_get_port(candidate),
+			purple_media_candidate_get_priority(candidate), "udp",
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" :
+			"", username, password);
+	iceudp_candidate->reladdr = purple_media_candidate_get_base_ip(candidate);
+	iceudp_candidate->relport = purple_media_candidate_get_base_port(candidate);
+
+	g_free(password);
+	g_free(username);
+	g_free(ip);
+
+	for (iter = iceudp->priv->local_candidates; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *c = iter->data;
-		if (!strcmp(c->id, candidate->id)) {
-			guint generation = c->generation + 1;
+		if (!strcmp(c->id, id)) {
+			generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_ICEUDP_CANDIDATE, c);
 			iceudp->priv->local_candidates = g_list_delete_link(
 					iceudp->priv->local_candidates, iter);
 
-			candidate->generation = generation;
+			iceudp_candidate->generation = generation;
 
 			iceudp->priv->local_candidates = g_list_append(
-					iceudp->priv->local_candidates, candidate);
+					iceudp->priv->local_candidates, iceudp_candidate);
 			return;
 		}
 	}
 
 	iceudp->priv->local_candidates = g_list_append(
-			iceudp->priv->local_candidates, candidate);
+			iceudp->priv->local_candidates, iceudp_candidate);
 }
 
-GList *
-jingle_iceudp_get_remote_candidates(JingleIceUdp *iceudp)
+static GList *
+jingle_iceudp_get_remote_candidates(JingleTransport *transport)
 {
-	return g_list_copy(iceudp->priv->remote_candidates);
+	JingleIceUdp *iceudp = JINGLE_ICEUDP(transport);
+	GList *candidates = iceudp->priv->remote_candidates;
+	GList *ret = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		JingleIceUdpCandidate *candidate = candidates->data;
+		PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
+					candidate->foundation, candidate->component,
+					!strcmp(candidate->type, "host") ?
+						PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
+						!strcmp(candidate->type, "srflx") ?
+							PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
+							!strcmp(candidate->type, "prflx") ?
+								PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
+								!strcmp(candidate->type, "relay") ?
+									PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
+					candidate->ip, candidate->port);
+		g_object_set(new_candidate,
+		             "base-ip", candidate->reladdr,
+		             "base-port", candidate->relport,
+		             "username", candidate->username,
+		             "password", candidate->password,
+		             "priority", candidate->priority,
+		             NULL);
+		ret = g_list_append(ret, new_candidate);
+	}
+
+	return ret;
 }
 
 static JingleIceUdpCandidate *
@@ -335,10 +397,10 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 			continue;
 
 		iceudp_candidate = jingle_iceudp_candidate_new(
+				id,
 				atoi(component),
 				foundation,
 				atoi(generation),
-				id,
 				ip,
 				atoi(network),
 				atoi(port),

@@ -1510,31 +1510,13 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 		if (command != NULL)
 		{
-#ifndef _WIN32
-			char *localecmd = g_locale_from_utf8(command, -1, NULL,
-					NULL, NULL);
-
-			if (localecmd != NULL)
-			{
-				int pid = fork();
-
-				if (pid == 0) {
-					char *args[4];
-
-					args[0] = "sh";
-					args[1] = "-c";
-					args[2] = (char *)localecmd;
-					args[3] = NULL;
-
-					execvp(args[0], args);
-
-					_exit(0);
-				}
-				g_free(localecmd);
+			GError *error = NULL;
+			if (!g_spawn_command_line_async(command, &error)) {
+				purple_debug_error("gtkpounce",
+				                   "pounce command could not be launched: %s\n",
+				                   error->message);
+				g_error_free(error);
 			}
-#else /* !_WIN32 */
-			winpidgin_shell_execute(command, "open", NULL);
-#endif /* !_WIN32 */
 		}
 	}
 

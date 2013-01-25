@@ -44,6 +44,7 @@
 #include "util.h"
 #include "version.h"
 #include "xmlnode.h"
+#include "obsolete.h"
 
 #include "auth.h"
 #include "buddy.h"

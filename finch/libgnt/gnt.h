@@ -40,19 +40,6 @@
 #include "gntkeys.h"
 
 /**
- * Get things to compile in Glib < 2.8
- */
-#if !GLIB_CHECK_VERSION(2,8,0)
-	#define G_PARAM_STATIC_NAME  G_PARAM_PRIVATE
-	#define G_PARAM_STATIC_NICK  G_PARAM_PRIVATE
-	#define G_PARAM_STATIC_BLURB  G_PARAM_PRIVATE
-#endif
-
-#if !GLIB_CHECK_VERSION(2,14,0)
-	#define g_timeout_add_seconds(time, callback, data)  g_timeout_add(time * 1000, callback, data)
-#endif
-
-/**
  * Initialize GNT.
  */
 void gnt_init(void);

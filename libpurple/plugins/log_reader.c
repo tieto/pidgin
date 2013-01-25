@@ -921,7 +921,6 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		xmlnode *to;
 		enum name_guesses name_guessed = NAME_GUESS_UNKNOWN;
 		const char *their_name;
-		time_t time_unix;
 		struct tm *tm;
 		char *timestamp;
 		char *tmp;
@@ -1101,7 +1100,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, ";\">");
 		}
 
-		time_unix = msn_logger_parse_timestamp(message, &tm);
+		msn_logger_parse_timestamp(message, &tm);
 
 		timestamp = g_strdup_printf("<font size=\"2\">(%02u:%02u:%02u)</font> ",
 				tm->tm_hour, tm->tm_min, tm->tm_sec);
@@ -2581,7 +2580,7 @@ static void log_reader_init_prefs(void) {
 		/* Read talk.ini file to find the log directory. */
 		GError *error = NULL;
 
-#if 0 && GLIB_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
+#if 0 /* FIXME: Not tested yet. */
 		GKeyFile *key_file;
 
 		purple_debug_info("Trillian talk.ini read", "Reading %s\n", path);
@@ -2608,7 +2607,7 @@ static void log_reader_init_prefs(void) {
 
 			g_key_file_free(key_file);
 		}
-#else /* !GLIB_CHECK_VERSION(2,6,0) */
+#else
 		gchar *contents = NULL;
 
 		purple_debug_info("Trillian talk.ini read",
@@ -2644,7 +2643,7 @@ static void log_reader_init_prefs(void) {
 			g_free(contents);
 		}
 		g_free(path);
-#endif /* !GLIB_CHECK_VERSION(2,6,0) */
+#endif
 	} /* path */
 
 	if (!found) {

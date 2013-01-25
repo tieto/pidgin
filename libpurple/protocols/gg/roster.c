@@ -35,6 +35,7 @@
 #include "purplew.h"
 
 #include <debug.h>
+#include <glibcompat.h>
 
 #define GGP_ROSTER_SYNC_SETT "gg-synchronized"
 #define GGP_ROSTER_DEBUG 0

@@ -71,7 +71,6 @@ void gnt_init_colors(void);
  */
 void gnt_uninit_colors(void);
 
-#if GLIB_CHECK_VERSION(2,6,0)
 /**
  * Parse color information from a file.
  *
@@ -96,7 +95,6 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
  * @since 2.4.0
  */
 int gnt_colors_get_color(char *key);
-#endif
 
 /**
  * Return the appropriate character attribute for a specified color.

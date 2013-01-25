@@ -1147,6 +1147,10 @@ static void
 chat_select_account_cb(GObject *w, PurpleAccount *account,
                        PidginChatData *data)
 {
+	g_return_if_fail(w != NULL);
+	g_return_if_fail(data != NULL);
+	g_return_if_fail(account != NULL);
+
 	if (strcmp(purple_account_get_protocol_id(data->rq_data.account),
 	           purple_account_get_protocol_id(account)) == 0)
 	{
@@ -3884,8 +3888,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		{
 			pce = cur->data;
 
-			if (!pce->secret && (!pce->required &&
-				g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier) == NULL))
+			if (!pce->secret)
 			{
 				tmp = purple_text_strip_mnemonic(pce->label);
 				name = g_markup_escape_text(tmp, -1);
@@ -5142,6 +5145,10 @@ headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
 				gtkblist->headline_destroy(gtkblist->headline_data);
 			reset_headline(gtkblist);
 		}
+	} else {
+		if (gtkblist->headline_destroy)
+			gtkblist->headline_destroy(gtkblist->headline_data);
+		reset_headline(gtkblist);
 	}
 
 	return FALSE;
@@ -5152,7 +5159,7 @@ headline_realize_cb(GtkWidget *widget, gpointer data)
 {
 	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
-	gdk_cursor_unref(hand_cursor);
+	g_object_unref(hand_cursor);
 }
 
 static gboolean

@@ -572,7 +572,7 @@ static GMarkupParser pounces_parser =
 	NULL
 };
 
-gboolean
+static gboolean
 purple_pounces_load(void)
 {
 	gchar *filename = g_build_filename(purple_user_dir(), "pounces.xml", NULL);
@@ -1190,6 +1190,8 @@ purple_pounces_init(void)
 
 	purple_signal_connect(conv_handle, "received-im-msg",
 						handle, PURPLE_CALLBACK(received_message_cb), NULL);
+
+	purple_pounces_load();
 }
 
 void

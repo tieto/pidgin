@@ -475,7 +475,7 @@ struct _PurplePluginProtocolInfo
 	 * On the other hand, both of these are invalid for protocols with
 	 * number-based usernames, so function should return NULL in such case.
 	 *
-	 * @param account  The account, that username is related with. Can
+	 * @param account  The account the username is related to. Can
 	 *                 be NULL.
 	 * @param who      The username to convert.
 	 * @return         Normalized username, or NULL, if it's invalid.

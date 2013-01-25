@@ -7,8 +7,10 @@ syntax: regexp
 .*/perl/common/[^/]+\.c$
 .*/perl/common/blib.*
 .*/perl/common/pm_to_blib$
+.*/perl/common/MYMETA\.(json|yml)
 .*~$
 .*\.a$
+.*\.asc$
 .*\.bak$
 .*\.bs$
 .*\.def$

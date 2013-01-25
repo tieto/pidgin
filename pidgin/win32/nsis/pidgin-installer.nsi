@@ -34,7 +34,6 @@ RequestExecutionLevel highest
 
 !include "MUI.nsh"
 !include "Sections.nsh"
-!include "WinVer.nsh"
 !include "LogicLib.nsh"
 !include "Memento.nsh"
 
@@ -71,7 +70,7 @@ RequestExecutionLevel highest
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
 
-!define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
+!define DOWNLOADER_URL				"https://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
 
 !define MEMENTO_REGISTRY_ROOT			HKLM
 !define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
@@ -93,6 +92,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer"
 ;Reserve files used in .onInit
 ;for faster start-up
 ReserveFile "${NSISDIR}\Plugins\System.dll"
+ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
@@ -118,8 +118,8 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
 
   ;Finish Page config
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
-  !define MUI_FINISHPAGE_RUN_NOTCHECKED
+  ;!define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
+  ;!define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGINFINISHVISITWEBSITE)
   !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
@@ -148,13 +148,6 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
 ;--------------------------------
-;Reserve Files
-  ; Only need this if using bzip2 compression
-
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_LANGDLL
-  ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start Install Sections ;;
@@ -268,9 +261,18 @@ Section $(GTKSECTIONTITLE) SecGtk
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   ;StrCmp $R0 "cancel" done
-  StrCmp $R0 "success" +2
+  StrCmp $R0 "success" 0 prompt_retry
+
+  Push "${GTK_SHA1SUM}"
+  Push "$R1" ; Filename
+  Call CheckSHA1Sum
+  Pop $R0
+
+  StrCmp "$R0" "0" extract
+    prompt_retry:
     MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
+  extract:
 !endif
 
   ;Delete the old Gtk directory
@@ -282,7 +284,9 @@ Section $(GTKSECTIONTITLE) SecGtk
   StrCmp $R0 "success" +2
     DetailPrint "$R0" ;print error message to log
 
+!ifndef OFFLINE_INSTALLER
   done:
+!endif
 SectionEnd ; end of GTK+ section
 
 ;--------------------------------
@@ -335,7 +339,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
 
-    File /r /x locale ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
+    File /r /x locale /x Gtk ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
 
     ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
@@ -350,21 +354,6 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
           WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
 
     perl_done:
-
-    ; If this is under NT4, delete the SILC support stuff
-    ; there is a bug that will prevent any account from connecting
-    ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
-    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
-    ; compatible with NT4.
-    ${If} ${IsNT}
-    ${AndIf} ${IsWinNT4}
-      ;SILC
-      Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\libsilcclient-1-1-2.dll"
-      Delete "$INSTDIR\libsilc-1-1-2.dll"
-      ;GSSAPI
-      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
-    ${EndIf}
 
     SetOutPath "$INSTDIR"
 
@@ -467,9 +456,18 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "cancel" done
-  StrCmp $R0 "success" +2
+  StrCmp $R0 "success" 0 prompt_retry
+
+  Push "${DEBUG_SYMBOLS_SHA1SUM}"
+  Push "$R1" ; Filename
+  Call CheckSHA1Sum
+  Pop $R0
+
+  StrCmp "$R0" "0" extract
+    prompt_retry:
     MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
+  extract:
 !endif
 
   SetOutPath "$INSTDIR"
@@ -478,7 +476,9 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   StrCmp $R0 "success" +2
     DetailPrint "$R0" ;print error message to log
 
+!ifndef OFFLINE_INSTALLER
   done:
+!endif
 SectionEnd
 
 ;--------------------------------
@@ -637,7 +637,8 @@ Section Uninstall
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
-    Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-3.dll"
+    Delete "$INSTDIR\libssp-0.dll"
     Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nss3.dll"
@@ -1300,3 +1301,40 @@ Function InstallDict
   Pop $R0
   Exch $R1
 FunctionEnd
+
+!ifndef OFFLINE_INSTALLER
+; Input Stack: Filename, SHA1sum
+; Output Return Code: 0=Match; 1=FileSum error; 2=Mismatch
+Function CheckSHA1Sum
+  Push $R0
+  Exch
+  Pop $R0 ;Filename
+  Push $R2
+  Exch 2
+  Pop $R2 ;SHA1sum
+  Push $R1
+
+  SHA1Plugin::FileSum "$R0"
+  Pop $R1
+  Pop $R0
+
+  StrCmp "$R1" "0" +4
+    DetailPrint "SHA1Sum calculation error: $R0"
+    IntOp $R1 0 + 1
+    Goto done
+
+  ; Compare the SHA1Sums
+  StrCmp $R2 $R0 +4
+    DetailPrint "SHA1Sum mismatch... Expected $R2; got $R0"
+    IntOp $R1 0 + 2
+    Goto done
+
+  IntOp $R1 0 + 0
+
+  done:
+  Pop $R2
+  Pop $R0
+  Exch $R1 ;$R1 has the return code
+FunctionEnd
+!endif
+

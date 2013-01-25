@@ -80,8 +80,7 @@ struct _PurpleDnsQueryResolverProcess {
 };
 
 static GSList *free_dns_children = NULL;
-/* TODO: Make me a GQueue when we require >= glib 2.4 */
-static GSList *queued_requests = NULL;
+static GQueue *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
 
@@ -581,12 +580,11 @@ handle_next_queued_request(void)
 	PurpleDnsQueryData *query_data;
 	PurpleDnsQueryResolverProcess *resolver;
 
-	if (queued_requests == NULL)
+	if (g_queue_is_empty(queued_requests))
 		/* No more DNS queries, yay! */
 		return;
 
-	query_data = queued_requests->data;
-	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
+	query_data = g_queue_pop_head(queued_requests);
 
 	/*
 	 * If we have any children, attempt to have them perform the DNS
@@ -610,7 +608,7 @@ handle_next_queued_request(void)
 		if (number_of_dns_children >= MAX_DNS_CHILDREN)
 		{
 			/* Apparently all our children are busy */
-			queued_requests = g_slist_prepend(queued_requests, query_data);
+			g_queue_push_head(queued_requests, query_data);
 			return;
 		}
 
@@ -696,7 +694,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 static void
 resolve_host(PurpleDnsQueryData *query_data)
 {
-	queued_requests = g_slist_append(queued_requests, query_data);
+	g_queue_push_tail(queued_requests, query_data);
 
 	handle_next_queued_request();
 }
@@ -953,7 +951,7 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 		ops->destroy(query_data);
 
 #if defined(PURPLE_DNSQUERY_USE_FORK)
-	queued_requests = g_slist_remove(queued_requests, query_data);
+	g_queue_remove(queued_requests, query_data);
 
 	if (query_data->resolver != NULL)
 		/*
@@ -1030,6 +1028,9 @@ purple_dnsquery_get_ui_ops(void)
 void
 purple_dnsquery_init(void)
 {
+#if defined(PURPLE_DNSQUERY_USE_FORK)
+	queued_requests = g_queue_new();
+#endif
 }
 
 void
@@ -1041,5 +1042,9 @@ purple_dnsquery_uninit(void)
 		purple_dnsquery_resolver_destroy(free_dns_children->data);
 		free_dns_children = g_slist_remove(free_dns_children, free_dns_children->data);
 	}
+
+	g_queue_free(queued_requests);
+	queued_requests = NULL;
 #endif /* end PURPLE_DNSQUERY_USE_FORK */
 }
+

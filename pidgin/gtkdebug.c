@@ -76,7 +76,22 @@ typedef struct
 	/* Regex */ \
 	"div.hide{display:none;}" \
 	"span.regex{background-color:#ffafaf;font-weight:bold;}" \
-	"</style></head><body class=l%d></body></html>"
+	"</style><script>" \
+	"function append(level, time, cat, msg) {" \
+		"var div = document.createElement('div');" \
+		"div.className = 'l' + level;" \
+		"div.appendChild(document.createTextNode('(' + time + ') '));" \
+		"if (cat) {" \
+			"var cat_n = document.createElement('b');" \
+			"cat_n.appendChild(document.createTextNode(cat + ':'));" \
+			"div.appendChild(cat_n);" \
+			"div.appendChild(document.createTextNode(' '));" \
+		"}" \
+		"div.appendChild(document.createTextNode(msg));" \
+		"document.body.appendChild(div);" \
+		"alert('appended');" \
+	"}" \
+	"</script></head><body class=l%d></body></html>"
 
 static DebugWindow *debug_win = NULL;
 static guint debug_enabled_timer = 0;
@@ -94,7 +109,8 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 	}
-	g_regex_unref(debug_win->regex);
+	if (debug_win->regex != NULL)
+		g_regex_unref(debug_win->regex);
 
 	/* If the "Save Log" dialog is open then close it */
 	purple_request_close_with_handle(debug_win);
@@ -207,8 +223,16 @@ regex_toggle_div(WebKitDOMNode *div)
 	if (!WEBKIT_DOM_IS_HTML_ELEMENT(div))
 		return;
 
+#if (WEBKIT_MAJOR_VERSION == 1 && \
+     WEBKIT_MINOR_VERSION == 9 && \
+     WEBKIT_MICRO_VERSION == 90)
+	/* Workaround WebKit API bug. */
+	classes = webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(div));
+#else
 	classes = webkit_dom_html_element_get_class_list(WEBKIT_DOM_HTML_ELEMENT(div));
+#endif
 	webkit_dom_dom_token_list_toggle(classes, "hide", NULL);
+	g_object_unref(classes);
 }
 
 static void
@@ -235,6 +259,8 @@ regex_highlight_clear(WebKitDOMDocument *dom)
 
 		webkit_dom_node_replace_child(parent, WEBKIT_DOM_NODE(text), span, &err);
 	}
+
+	g_object_unref(nodes);
 }
 
 static void
@@ -395,10 +421,13 @@ regex_toggle_filter(DebugWindow *win, gboolean filter)
 	/* Re-show debug lines that didn't match regex */
 	list = webkit_dom_document_get_elements_by_class_name(dom, "hide");
 	i = webkit_dom_node_list_get_length(list);
+
 	while (i--) {
 		WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
 		regex_toggle_div(div);
 	}
+
+	g_object_unref(list);
 
 	if (filter) {
 		list = webkit_dom_document_get_elements_by_tag_name(dom, "div");
@@ -407,6 +436,8 @@ regex_toggle_filter(DebugWindow *win, gboolean filter)
 			WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
 			regex_match(win, dom, div);
 		}
+
+		g_object_unref(list);
 	}
 }
 
@@ -624,25 +655,39 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 }
 
 static void
-regex_html_appended_cb(GtkWebView *webview, WebKitDOMRange *range, DebugWindow *win)
+debug_window_appended(DebugWindow *win)
 {
-	if (!win || !win->window)
+	WebKitDOMDocument *dom;
+	WebKitDOMHTMLElement *body;
+	WebKitDOMNode *div;
+
+	if (!gtk_toggle_tool_button_get_active(
+		GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		return;
 
-	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
-		WebKitDOMDocument *dom;
-		WebKitDOMHTMLElement *body;
-		WebKitDOMNode *div;
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
+	body = webkit_dom_document_get_body(dom);
+	div = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
 
-		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
-		body = webkit_dom_document_get_body(dom);
-		div = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
+	if (webkit_dom_element_webkit_matches_selector(
+		WEBKIT_DOM_ELEMENT(div), "body>div:not(#pause)", NULL))
+		regex_match(win, dom, div);
+}
 
-		if (webkit_dom_element_webkit_matches_selector(WEBKIT_DOM_ELEMENT(div),
-		                                               "body>div:not(#pause)",
-		                                               NULL))
-			regex_match(win, dom, div);
+static gboolean debug_window_alert_cb(WebKitWebView *webview,
+	WebKitWebFrame *frame, gchar *message, gpointer _win)
+{
+	DebugWindow *win = _win;
+
+	if (!win || !win->window)
+		return FALSE;
+
+	if (g_strcmp0(message, "appended") == 0) {
+		debug_window_appended(win);
+		return TRUE;
 	}
+
+	return FALSE;
 }
 
 static DebugWindow *
@@ -816,8 +861,8 @@ debug_window_new(void)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	g_signal_connect(G_OBJECT(win->text), "html-appended",
-	                 G_CALLBACK(regex_html_appended_cb), win);
+	g_signal_connect(G_OBJECT(win->text), "script-alert",
+		G_CALLBACK(debug_window_alert_cb), win);
 
 	clear_cb(NULL, win);
 
@@ -943,6 +988,7 @@ pidgin_debug_init(void)
 	REGISTER_G_LOG_HANDLER("GModule");
 	REGISTER_G_LOG_HANDLER("GLib-GObject");
 	REGISTER_G_LOG_HANDLER("GThread");
+	REGISTER_G_LOG_HANDLER("Json");
 #ifdef USE_GSTREAMER
 	REGISTER_G_LOG_HANDLER("GStreamer");
 #endif
@@ -984,41 +1030,29 @@ pidgin_debug_window_hide(void)
 
 static void
 pidgin_debug_print(PurpleDebugLevel level, const char *category,
-					 const char *arg_s)
+	const char *arg_s)
 {
-	gchar *ts_s;
-	gchar *esc_s, *cat_s, *tmp, *s;
+	gchar *esc_s;
 	const char *mdate;
 	time_t mtime;
+	gchar *js;
 
-	if (debug_win == NULL ||
-		!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"))
-	{
+	if (debug_win == NULL)
 		return;
-	}
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"))
+		return;
 
 	mtime = time(NULL);
 	mdate = purple_utf8_strftime("%H:%M:%S", localtime(&mtime));
-	ts_s = g_strdup_printf("(%s) ", mdate);
-	if (category == NULL)
-		cat_s = g_strdup("");
-	else
-		cat_s = g_strdup_printf("<b>%s:</b> ", category);
 
-	tmp = purple_utf8_try_convert(arg_s);
-	esc_s = g_markup_escape_text(tmp, -1);
+	esc_s = purple_escape_js(arg_s);
 
-	s = g_strdup_printf("<div class=\"l%d\">%s%s%s</div>",
-	                    level, ts_s, cat_s, esc_s);
-
-	g_free(ts_s);
-	g_free(cat_s);
+	js = g_strdup_printf("append(%d, '%s', '%s', %s);",
+		level, mdate, category ? category : "", esc_s);
 	g_free(esc_s);
-	g_free(tmp);
 
-	gtk_webview_append_html(GTK_WEBVIEW(debug_win->text), s);
-
-	g_free(s);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(debug_win->text), js);
+	g_free(js);
 }
 
 static gboolean

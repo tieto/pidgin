@@ -151,7 +151,7 @@ smiley_parse_markup(const char *markup, const char *proto_id)
 	}
 
 	/* now for each theme smiley, observe that this does look nasty */
-	if (!current_smiley_theme || !(current_smiley_theme->list)) {
+	if (!current_smiley_theme) {
 		purple_debug_warning("smiley", "theme does not exist\n");
 		return temp;
 	}

@@ -29,6 +29,7 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
+#include "google/google_p2p.h"
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
@@ -58,6 +59,8 @@ jingle_get_type(const gchar *type)
 #ifdef USE_VV
 	else if (!strcmp(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
+	else if (!strcmp(type, NS_GOOGLE_TRANSPORT_P2P))
+		return JINGLE_TYPE_GOOGLE_P2P;
 #endif
 #if 0
 	else if (!strcmp(type, JINGLE_APP_FT))
@@ -429,18 +432,14 @@ jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 	jingle_actions[action_type].handler(session, jingle);
 }
 
-static void
-jingle_terminate_sessions_gh(gpointer key, gpointer value, gpointer user_data)
-{
-	g_object_unref(value);
-}
-
 void
 jingle_terminate_sessions(JabberStream *js)
 {
-	if (js->sessions)
-		g_hash_table_foreach(js->sessions,
-				jingle_terminate_sessions_gh, NULL);
+	if (js->sessions) {
+		GList *list = g_hash_table_get_values(js->sessions);
+		for (; list; list = g_list_delete_link(list, list))
+			g_object_unref(list->data);
+	}
 }
 
 #ifdef USE_VV

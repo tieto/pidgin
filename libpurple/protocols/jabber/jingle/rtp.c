@@ -28,6 +28,7 @@
 
 #include "jabber.h"
 #include "jingle.h"
+#include "google/google_p2p.h"
 #include "media.h"
 #include "mediamanager.h"
 #include "iceudp.h"
@@ -226,134 +227,23 @@ jingle_rtp_get_media(JingleSession *session)
 	return media;
 }
 
-static JingleRawUdpCandidate *
-jingle_rtp_candidate_to_rawudp(JingleSession *session, guint generation,
-		PurpleMediaCandidate *candidate)
-{
-	gchar *id = jabber_get_next_id(jingle_session_get_js(session));
-	gchar *ip = purple_media_candidate_get_ip(candidate);
-	JingleRawUdpCandidate *rawudp_candidate =
-			jingle_rawudp_candidate_new(id, generation,
-			purple_media_candidate_get_component_id(candidate),
-			ip, purple_media_candidate_get_port(candidate));
-	g_free(ip);
-	g_free(id);
-	return rawudp_candidate;
-}
-
-static JingleIceUdpCandidate *
-jingle_rtp_candidate_to_iceudp(JingleSession *session, guint generation,
-		PurpleMediaCandidate *candidate)
-{
-	gchar *id = jabber_get_next_id(jingle_session_get_js(session));
-	gchar *ip = purple_media_candidate_get_ip(candidate);
-	gchar *username = purple_media_candidate_get_username(candidate);
-	gchar *password = purple_media_candidate_get_password(candidate);
-	PurpleMediaCandidateType type =
-			purple_media_candidate_get_candidate_type(candidate);
-
-	JingleIceUdpCandidate *iceudp_candidate = jingle_iceudp_candidate_new(
-			purple_media_candidate_get_component_id(candidate),
-			purple_media_candidate_get_foundation(candidate),
-			generation, id, ip, 0,
-			purple_media_candidate_get_port(candidate),
-			purple_media_candidate_get_priority(candidate), "udp",
-			type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
-			type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
-			type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
-			type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" :
-			"", username, password);
-	iceudp_candidate->reladdr =
-			purple_media_candidate_get_base_ip(candidate);
-	iceudp_candidate->relport =
-			purple_media_candidate_get_base_port(candidate);
-	g_free(password);
-	g_free(username);
-	g_free(ip);
-	g_free(id);
-	return iceudp_candidate;
-}
-
 static JingleTransport *
-jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint generation, GList *candidates)
+jingle_rtp_candidates_to_transport(JingleSession *session, const gchar *type, guint generation, GList *candidates)
 {
-	if (type == JINGLE_TYPE_RAWUDP) {
-		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
-		JingleRawUdpCandidate *rawudp_candidate;
-		for (; candidates; candidates = g_list_next(candidates)) {
-			PurpleMediaCandidate *candidate = candidates->data;
-			rawudp_candidate = jingle_rtp_candidate_to_rawudp(
-					session, generation, candidate);
-			jingle_rawudp_add_local_candidate(
-					JINGLE_RAWUDP(transport),
-					rawudp_candidate);
-		}
-		return transport;
-	} else if (type == JINGLE_TYPE_ICEUDP) {
-		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
-		JingleIceUdpCandidate *iceudp_candidate;
-		for (; candidates; candidates = g_list_next(candidates)) {
-			PurpleMediaCandidate *candidate = candidates->data;
-			iceudp_candidate = jingle_rtp_candidate_to_iceudp(
-					session, generation, candidate);
-			jingle_iceudp_add_local_candidate(
-					JINGLE_ICEUDP(transport),
-					iceudp_candidate);
-		}
-		return transport;
-	} else {
+	JingleTransport *transport;
+
+	transport = jingle_transport_create(type);
+	if (!transport)
 		return NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		PurpleMediaCandidate *candidate = candidates->data;
+		gchar *id = jabber_get_next_id(jingle_session_get_js(session));
+		jingle_transport_add_local_candidate(transport, id, generation, candidate);
+		g_free(id);
 	}
-}
 
-static GList *
-jingle_rtp_transport_to_candidates(JingleTransport *transport)
-{
-	const gchar *type = jingle_transport_get_transport_type(transport);
-	GList *ret = NULL;
-	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP)) {
-		GList *candidates = jingle_rawudp_get_remote_candidates(JINGLE_RAWUDP(transport));
-
-		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
-			JingleRawUdpCandidate *candidate = candidates->data;
-			ret = g_list_append(ret, purple_media_candidate_new(
-					"", candidate->component,
-					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
-					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
-					candidate->ip, candidate->port));
-		}
-
-		return ret;
-	} else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP)) {
-		GList *candidates = jingle_iceudp_get_remote_candidates(JINGLE_ICEUDP(transport));
-
-		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
-			JingleIceUdpCandidate *candidate = candidates->data;
-			PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
-					candidate->foundation, candidate->component,
-					!strcmp(candidate->type, "host") ?
-					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
-					!strcmp(candidate->type, "srflx") ?
-					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
-					!strcmp(candidate->type, "prflx") ?
-					PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
-					!strcmp(candidate->type, "relay") ?
-					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
-					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
-					candidate->ip, candidate->port);
-			g_object_set(new_candidate,
-					"base-ip", candidate->reladdr,
-					"base-port", candidate->relport,
-					"username", candidate->username,
-					"password", candidate->password,
-					"priority", candidate->priority, NULL);
-			ret = g_list_append(ret, new_candidate);
-		}
-
-		return ret;
-	} else {
-		return NULL;
-	}
+	return transport;
 }
 
 static void jingle_rtp_ready(JingleSession *session);
@@ -378,10 +268,9 @@ jingle_rtp_candidates_prepared_cb(PurpleMedia *media,
 
 	oldtransport = jingle_content_get_transport(content);
 	candidates = purple_media_get_local_candidates(media, sid, name);
-	transport = JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
-			session, JINGLE_IS_RAWUDP(oldtransport) ?
-				JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
-			0, candidates));
+	transport = jingle_rtp_candidates_to_transport(
+			session, jingle_transport_get_transport_type(oldtransport),
+			0, candidates);
 
 	g_list_free(candidates);
 	g_object_unref(oldtransport);
@@ -404,9 +293,9 @@ jingle_rtp_codecs_changed_cb(PurpleMedia *media, gchar *sid,
 static void
 jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleMediaCandidate *candidate, JingleSession *session)
 {
-	JingleContent *content = jingle_session_find_content(
-			session, sid, NULL);
+	JingleContent *content = jingle_session_find_content(session, sid, NULL);
 	JingleTransport *transport;
+	gchar *id;
 
 	purple_debug_info("jingle-rtp", "jingle_rtp_new_candidate_cb\n");
 
@@ -419,19 +308,13 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleM
 
 	transport = jingle_content_get_transport(content);
 
-	if (JINGLE_IS_ICEUDP(transport))
-		jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport),
-				jingle_rtp_candidate_to_iceudp(
-				session, 1, candidate));
-	else if (JINGLE_IS_RAWUDP(transport))
-		jingle_rawudp_add_local_candidate(JINGLE_RAWUDP(transport),
-				jingle_rtp_candidate_to_rawudp(
-				session, 1, candidate));
+	id = jabber_get_next_id(jingle_session_get_js(session));
+	jingle_transport_add_local_candidate(transport, id, 1, candidate);
+	g_free(id);
 
 	g_object_unref(transport);
 
-	jabber_iq_send(jingle_session_to_packet(session,
-			JINGLE_TRANSPORT_INFO));
+	jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
 }
 
 static void
@@ -603,6 +486,8 @@ jingle_rtp_init_media(JingleContent *content)
 	if (JINGLE_IS_RAWUDP(transport))
 		transmitter = "rawudp";
 	else if (JINGLE_IS_ICEUDP(transport))
+		transmitter = "nice";
+	else if (JINGLE_IS_GOOGLE_P2P(transport))
 		transmitter = "nice";
 	else
 		transmitter = "notransmitter";
@@ -827,7 +712,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
 			description = xmlnode_get_child(xmlcontent, "description");
-			candidates = jingle_rtp_transport_to_candidates(transport);
+			candidates = jingle_transport_get_remote_candidates(transport);
 			codecs = jingle_rtp_parse_codecs(description);
 			name = jingle_content_get_name(content);
 			remote_jid = jingle_session_get_remote_jid(session);
@@ -863,7 +748,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			JingleSession *session = jingle_content_get_session(content);
 			JingleTransport *transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
-			GList *candidates = jingle_rtp_transport_to_candidates(transport);
+			GList *candidates = jingle_transport_get_remote_candidates(transport);
 			gchar *name = jingle_content_get_name(content);
 			gchar *remote_jid =
 					jingle_session_get_remote_jid(session);
@@ -973,6 +858,8 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		transport_type = JINGLE_TRANSPORT_ICEUDP;
 	} else if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_RAWUDP)) {
 		transport_type = JINGLE_TRANSPORT_RAWUDP;
+	} else if (jabber_resource_has_capability(jbr, NS_GOOGLE_TRANSPORT_P2P)) {
+		transport_type = NS_GOOGLE_TRANSPORT_P2P;
 	} else {
 		purple_debug_error("jingle-rtp", "Resource doesn't support "
 				"the same transport types\n");

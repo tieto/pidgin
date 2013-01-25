@@ -101,6 +101,7 @@ struct _PidginConversation
 	GtkWidget *menu_tabby;
 
 	PidginConvTheme *theme;
+	GArray *nick_colors;
 	PurpleMessageFlags last_flags;
 	GtkWidget *webview;
 	GtkWidget *entry;

@@ -319,9 +319,6 @@ pidgin_sound_init(void)
 
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
-#ifdef GST_CAN_DISABLE_FORKING
-	gst_registry_fork_set_enabled (FALSE);
-#endif
 	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
 		purple_notify_error(NULL, _("GStreamer Failure"),
 					_("GStreamer failed to initialize."),
@@ -530,7 +527,11 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 
+#if GST_CHECK_VERSION(1,0,0)
 	play = gst_element_factory_make("playbin", "play");
+#else
+	play = gst_element_factory_make("playbin2", "play");
+#endif
 
 	if (play == NULL) {
 		return;

@@ -43,6 +43,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "internal.h"
+#include "obsolete.h"
 
 #include "account.h"
 #include "buddyicon.h"
@@ -59,13 +60,6 @@
 #include "pidginstock.h"
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
-
-#ifdef USE_GTKSPELL
-#  include <gtkspell/gtkspell.h>
-#  ifdef _WIN32
-#    include "wspell.h"
-#  endif
-#endif
 
 #include "gtk3compat.h"
 

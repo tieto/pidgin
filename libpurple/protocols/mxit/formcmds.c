@@ -28,6 +28,7 @@
 #include <glib.h>
 
 #include "purple.h"
+#include "obsolete.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -106,7 +107,7 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 	}
 
 	/* we now have the inline image, store a copy in the imagestore */
-	id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
+	id = purple_imgstore_new_with_id(g_memdup(url_text, len), len, NULL);
 
 	/* map the inline image id to purple image id */
 	intptr = g_malloc(sizeof(int));
@@ -334,7 +335,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	if (img) {
 		rawimg = purple_base64_decode(img, &rawimglen);
 		//purple_util_write_data_to_file_absolute("/tmp/mxitinline.png", (char*) rawimg, rawimglen);
-		imgid = purple_imgstore_add_with_id(rawimg, rawimglen, NULL);
+		imgid = purple_imgstore_new_with_id(rawimg, rawimglen, NULL);
 		g_string_append_printf(msg,
 		                       "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\">",
 		                       imgid);
@@ -372,7 +373,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, FALSE, _( "click here" ));
+		mxit_add_html_link(mx, purple_url_decode(reply), FALSE, _( "click here" ));
 	}
 }
 

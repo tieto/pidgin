@@ -252,22 +252,6 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Creates a new buddy list
- *
- * @return The new buddy list.
- * @deprecated In 3.0.0, this will be handled by purple_blist_init()
- */
-PurpleBuddyList *purple_blist_new(void);
-
-/**
- * Sets the main buddy list.
- *
- * @param blist The buddy list you want to use.
- * @deprecated In 3.0.0, this will be handled by purple_blist_init()
- */
-void purple_set_blist(PurpleBuddyList *blist);
-
-/**
  * Returns the main buddy list.
  *
  * @return The main buddy list.
@@ -1008,11 +992,6 @@ int purple_blist_get_group_online_count(PurpleGroup *group);
 /****************************************************************************************/
 
 /**
- * Loads the buddy list from ~/.purple/blist.xml.
- */
-void purple_blist_load(void);
-
-/**
  * Schedule a save of the blist.xml file.  This is used by the privacy
  * API whenever the privacy settings are changed.  If you make a change
  * to blist.xml using one of the functions in the buddy list API, then
@@ -1202,6 +1181,13 @@ void *purple_blist_get_handle(void);
  * Initializes the buddy list subsystem.
  */
 void purple_blist_init(void);
+
+/**
+ * Loads the buddy list.
+ *
+ * You shouldn't call this. purple_core_init() will do it for you.
+ */
+void purple_blist_boot(void);
 
 /**
  * Uninitializes the buddy list subsystem.

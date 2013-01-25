@@ -24,6 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "obsolete.h"
 
 #include "slp.h"
 #include "slpcall.h"

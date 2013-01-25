@@ -633,15 +633,6 @@ compare_handlers(gconstpointer a, gconstpointer b)
 	return subtype1 - subtype2;
 }
 
-#if !GLIB_CHECK_VERSION(2,14,0)
-static void hash_table_get_list_of_keys(gpointer key, gpointer value, gpointer user_data)
-{
-	GList **handlers = (GList **)user_data;
-
-	*handlers = g_list_prepend(*handlers, key);
-}
-#endif /* GLIB < 2.14.0 */
-
 void
 oscar_login(PurpleAccount *account)
 {
@@ -711,12 +702,7 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, 0x0003, purple_parse_searchreply, 0);
 
 	g_string_append(msg, "Registered handlers: ");
-#if GLIB_CHECK_VERSION(2,14,0)
 	handlers = g_hash_table_get_keys(od->handlerlist);
-#else
-	handlers = NULL;
-	g_hash_table_foreach(od->handlerlist, hash_table_get_list_of_keys, &handlers);
-#endif /* GLIB < 2.14.0 */
 	sorted_handlers = g_list_sort(g_list_copy(handlers), compare_handlers);
 	for (cur = sorted_handlers; cur; cur = cur->next) {
 		guint x = GPOINTER_TO_UINT(cur->data);
@@ -2317,6 +2303,7 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 	va_list ap;
 	guint16 chan, reason;
 	char *who;
+	int ret = 1;
 
 	va_start(ap, fr);
 	chan = (guint16)va_arg(ap, unsigned int);
@@ -2325,7 +2312,7 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 
 	if (chan == 0x0002) { /* File transfer declined */
 		guchar *cookie = va_arg(ap, guchar *);
-		return purple_parse_clientauto_ch2(od, who, reason, cookie);
+		ret = purple_parse_clientauto_ch2(od, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
 		guint32 state = 0;
 		char *msg = NULL;
@@ -2333,12 +2320,12 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 			state = va_arg(ap, guint32);
 			msg = va_arg(ap, char *);
 		}
-		return purple_parse_clientauto_ch4(od, who, reason, state, msg);
+		ret = purple_parse_clientauto_ch4(od, who, reason, state, msg);
 	}
 
 	va_end(ap);
 
-	return 1;
+	return ret;
 }
 
 static int purple_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {

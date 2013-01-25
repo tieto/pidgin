@@ -24,6 +24,7 @@
 #define PHOTO_SUPPORT 1
 
 #include "internal.h"
+#include "obsolete.h"
 #include "debug.h"
 #include "notify.h"
 #include "util.h"
@@ -1045,7 +1046,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		} else {
 			purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT
 					" bytes\n", photo_url_text, len);
-			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
+			id = purple_imgstore_new_with_id(g_memdup(url_text, len), len, NULL);
 
 			tmp = g_strdup_printf("<img id=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\"><br>",
 			                      id);
