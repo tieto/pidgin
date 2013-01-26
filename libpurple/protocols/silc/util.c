@@ -309,6 +309,13 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	if (fd != -1)
 		close(fd);
 
+#ifdef _WIN32
+	/* on win32, we calloc pw so pass it to free
+	 * (see the getpwuid code below)
+	 */
+	free(pw);
+#endif
+
 	return TRUE;
 }
 
