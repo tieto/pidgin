@@ -2583,18 +2583,93 @@ free_auth_request(struct auth_request *ar)
 }
 
 static void
-authorize_and_add_cb(struct auth_request *ar)
+authorize_and_add_cb(struct auth_request *ar, const char *message)
 {
-	ar->auth_cb(NULL, ar->data);
+	ar->auth_cb(message, ar->data);
 	if (ar->add_buddy_after_auth) {
 		purple_blist_request_add_buddy(ar->account, ar->username, NULL, ar->alias);
 	}
 }
 
 static void
-deny_no_add_cb(struct auth_request *ar)
+authorize_noreason_cb(struct auth_request *ar)
+{
+	authorize_and_add_cb(ar, NULL);
+}
+
+static void
+authorize_reason_cb(struct auth_request *ar)
+{
+	const char *protocol_id;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	protocol_id = purple_account_get_protocol_id(ar->account);
+	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+
+	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
+		/* Duplicate information because ar is freed by closing minidialog */
+		struct auth_request *aa = g_new0(struct auth_request, 1);
+		aa->auth_cb = ar->auth_cb;
+		aa->deny_cb = ar->deny_cb;
+		aa->data = ar->data;
+		aa->account = ar->account;
+		aa->username = g_strdup(ar->username);
+		aa->alias = g_strdup(ar->alias);
+		aa->add_buddy_after_auth = ar->add_buddy_after_auth;
+		purple_request_input(ar->account, NULL, _("Authorization acceptance message:"),
+		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
+		                     _("OK"), G_CALLBACK(authorize_and_add_cb),
+		                     _("Cancel"), G_CALLBACK(authorize_noreason_cb),
+		                     ar->account, ar->username, NULL,
+		                     aa);
+		/* FIXME: aa is going to leak now. */
+	} else {
+		authorize_noreason_cb(ar);
+	}
+}
+
+static void
+deny_no_add_cb(struct auth_request *ar, const char *message)
+{
+	ar->deny_cb(message, ar->data);
+}
+
+static void
+deny_noreason_cb(struct auth_request *ar)
 {
 	ar->deny_cb(NULL, ar->data);
+}
+
+static void
+deny_reason_cb(struct auth_request *ar)
+{
+	const char *protocol_id;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	protocol_id = purple_account_get_protocol_id(ar->account);
+	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+
+	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {
+		/* Duplicate information because ar is freed by closing minidialog */
+		struct auth_request *aa = g_new0(struct auth_request, 1);
+		aa->auth_cb = ar->auth_cb;
+		aa->deny_cb = ar->deny_cb;
+		aa->data = ar->data;
+		aa->add_buddy_after_auth = ar->add_buddy_after_auth;
+		purple_request_input(ar->account, NULL, _("Authorization denied message:"),
+		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
+		                     _("OK"), G_CALLBACK(deny_no_add_cb),
+		                     _("Cancel"), G_CALLBACK(deny_noreason_cb),
+		                     ar->account, ar->username, NULL,
+		                     aa);
+		/* FIXME: aa is going to leak now. */
+	} else {
+		deny_noreason_cb(ar);
+	}
 }
 
 static gboolean
@@ -2689,8 +2764,8 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	alert = pidgin_make_mini_dialog_with_custom_icon(
 		gc, prpl_icon,
 		_("Authorize buddy?"), NULL, aa,
-		_("Authorize"), authorize_and_add_cb,
-		_("Deny"), deny_no_add_cb,
+		_("Authorize"), authorize_reason_cb,
+		_("Deny"), deny_reason_cb,
 		NULL);
 
 	dialog = PIDGIN_MINI_DIALOG(alert);
