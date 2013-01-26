@@ -1424,23 +1424,9 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 	ui_ops = purple_accounts_get_ui_ops();
 
 	plugin_return = GPOINTER_TO_INT(
-			purple_signal_emit_return_1(purple_accounts_get_handle(),
-				"account-authorization-requested", account, remote_user));
-
-	if (plugin_return > 0) {
-		if (auth_cb != NULL)
-			auth_cb(user_data);
-		return NULL;
-	} else if (plugin_return < 0) {
-		if (deny_cb != NULL)
-			deny_cb(user_data);
-		return NULL;
-	}
-
-	plugin_return = GPOINTER_TO_INT(
 			purple_signal_emit_return_1(
 				purple_accounts_get_handle(),
-				"account-authorization-requested-with-message",
+				"account-authorization-requested",
 				account, remote_user, message
 			));
 
@@ -3088,19 +3074,13 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-authorization-requested",
-						purple_marshal_INT__POINTER_POINTER,
-						purple_value_new(PURPLE_TYPE_INT), 2,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						purple_value_new(PURPLE_TYPE_STRING));
-
-	purple_signal_register(handle, "account-authorization-requested-with-message",
 						purple_marshal_INT__POINTER_POINTER_POINTER,
 						purple_value_new(PURPLE_TYPE_INT), 3,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
 						purple_value_new(PURPLE_TYPE_STRING),
 						purple_value_new(PURPLE_TYPE_STRING));
+
 	purple_signal_register(handle, "account-authorization-denied",
 						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,

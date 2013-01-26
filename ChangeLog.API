@@ -78,6 +78,7 @@ version 3.0.0 (??/??/????):
 		* PidginDockletFlag
 
 		Changed:
+		* account-authorization-requested signal merged with account-authorization-requested-with-message signal
 		* purple_account_add_buddy now takes an invite message as the last
 		  parameter
 		* purple_account_add_buddies now takes an invite message as the last
@@ -148,6 +149,7 @@ version 3.0.0 (??/??/????):
 		* _PurplePrivacyType
 		* _PurpleSoundEventID
 		* _XMLNodeType
+		* account-authorization-requested-with-message signal
 		* GtkIMHtml.clipboard_html_string
 		* GtkIMHtml.clipboard_text_string
 		* GtkIMHtmlFontDetail
