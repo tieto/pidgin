@@ -583,7 +583,7 @@ void mxit_update_blist( struct MXitSession* session )
  *
  *  @param user_data	Object associated with the invite
  */
-static void mxit_cb_buddy_auth( gpointer user_data )
+static void mxit_cb_buddy_auth( const char *message, gpointer user_data )
 {
 	struct contact_invite*	invite	= (struct contact_invite*) user_data;
 
@@ -612,7 +612,7 @@ static void mxit_cb_buddy_auth( gpointer user_data )
  *
  *  @param user_data	Object associated with the invite
  */
-static void mxit_cb_buddy_deny( gpointer user_data )
+static void mxit_cb_buddy_deny( const char *message, gpointer user_data )
 {
 	struct contact_invite*	invite	= (struct contact_invite*) user_data;
 

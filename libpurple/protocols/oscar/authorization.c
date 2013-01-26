@@ -67,7 +67,7 @@ oscar_auth_sendrequest(PurpleConnection *gc, const char *bname, const char *msg)
 }
 
 static void
-oscar_auth_grant(gpointer cbdata)
+oscar_auth_grant(const char *message, gpointer cbdata)
 {
 	struct name_data *data = cbdata;
 	PurpleConnection *gc = data->gc;
@@ -79,26 +79,15 @@ oscar_auth_grant(gpointer cbdata)
 }
 
 static void
-oscar_auth_dontgrant(struct name_data *data, char *msg)
+oscar_auth_dontgrant(const char *msg, gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	PurpleConnection *gc = data->gc;
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
 	aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
 
 	oscar_free_name_data(data);
-}
-
-static void
-oscar_auth_dontgrant_msgprompt(gpointer cbdata)
-{
-	struct name_data *data = cbdata;
-	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
-					   NULL, _("No reason given."), TRUE, FALSE, NULL,
-					   _("_OK"), G_CALLBACK(oscar_auth_dontgrant),
-					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
-					   purple_connection_get_account(data->gc), data->name, NULL,
-					   data);
 }
 
 void
@@ -127,5 +116,5 @@ oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *re
 
 	purple_account_request_authorization(account, data->name, NULL, data->nick,
 		reason, purple_find_buddy(account, data->name) != NULL,
-		oscar_auth_grant, oscar_auth_dontgrant_msgprompt, data);
+		oscar_auth_grant, oscar_auth_dontgrant, data);
 }

@@ -1197,7 +1197,7 @@ struct yahoo_add_request {
 };
 
 static void
-yahoo_buddy_add_authorize_cb(gpointer data)
+yahoo_buddy_add_authorize_cb(const char *message, gpointer data)
 {
 	struct yahoo_add_request *add_req = data;
 	struct yahoo_packet *pkt;
@@ -1230,7 +1230,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 }
 
 static void
-yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
+yahoo_buddy_add_deny_cb(const char *msg, struct yahoo_add_request *add_req)
 {
 	YahooData *yd = purple_connection_get_protocol_data(add_req->gc);
 	struct yahoo_packet *pkt;
@@ -1272,23 +1272,6 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req);
-}
-
-static void
-yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*msg)
-{
-	yahoo_buddy_add_deny_cb(add_req, NULL);
-}
-
-static void
-yahoo_buddy_add_deny_reason_cb(gpointer data) {
-	struct yahoo_add_request *add_req = data;
-	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("No reason given."), TRUE, FALSE, NULL,
-			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
-			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
-			purple_connection_get_account(add_req->gc), add_req->who, NULL,
-			add_req);
 }
 
 static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
@@ -1453,7 +1436,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 					alias, dec_msg,
 					purple_find_buddy(account, add_req->who) != NULL,
 					yahoo_buddy_add_authorize_cb,
-					yahoo_buddy_add_deny_reason_cb,
+					yahoo_buddy_add_deny_cb,
 					add_req);
 			g_free(alias);
 			g_free(dec_msg);
@@ -1518,7 +1501,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 				NULL, dec_msg,
 				purple_find_buddy(account,add_req->who) != NULL,
 						yahoo_buddy_add_authorize_cb,
-						yahoo_buddy_add_deny_reason_cb, add_req);
+						yahoo_buddy_add_deny_cb, add_req);
 		g_free(dec_msg);
 	} else {
 		g_free(add_req->id);

@@ -2585,7 +2585,7 @@ free_auth_request(struct auth_request *ar)
 static void
 authorize_and_add_cb(struct auth_request *ar)
 {
-	ar->auth_cb(ar->data);
+	ar->auth_cb(NULL, ar->data);
 	if (ar->add_buddy_after_auth) {
 		purple_blist_request_add_buddy(ar->account, ar->username, NULL, ar->alias);
 	}
@@ -2594,7 +2594,7 @@ authorize_and_add_cb(struct auth_request *ar)
 static void
 deny_no_add_cb(struct auth_request *ar)
 {
-	ar->deny_cb(ar->data);
+	ar->deny_cb(NULL, ar->data);
 }
 
 static gboolean

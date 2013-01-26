@@ -1378,14 +1378,14 @@ purple_account_request_close(void *ui_handle)
 }
 
 static void
-request_auth_cb(void *data)
+request_auth_cb(const char *message, void *data)
 {
 	PurpleAccountRequestInfo *info = data;
 
 	handles = g_list_remove(handles, info);
 
 	if (info->auth_cb != NULL)
-		info->auth_cb(info->userdata);
+		info->auth_cb(message, info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-granted", info->account, info->user);
@@ -1394,14 +1394,14 @@ request_auth_cb(void *data)
 }
 
 static void
-request_deny_cb(void *data)
+request_deny_cb(const char *message, void *data)
 {
 	PurpleAccountRequestInfo *info = data;
 
 	handles = g_list_remove(handles, info);
 
 	if (info->deny_cb != NULL)
-		info->deny_cb(info->userdata);
+		info->deny_cb(message, info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-denied", info->account, info->user);
@@ -1436,11 +1436,11 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 			return NULL;
 		case PURPLE_ACCOUNT_RESPONSE_ACCEPT:
 			if (auth_cb != NULL)
-				auth_cb(user_data);
+				auth_cb(NULL, user_data);
 			return NULL;
 		case PURPLE_ACCOUNT_RESPONSE_DENY:
 			if (deny_cb != NULL)
-				deny_cb(user_data);
+				deny_cb(NULL, user_data);
 			return NULL;
 	}
 
