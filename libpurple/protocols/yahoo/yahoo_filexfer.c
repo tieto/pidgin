@@ -1420,6 +1420,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 		purple_debug_warning("yahoo","p2p-ft: Wrong HEAD/GET request from peer, disconnecting host\n");
 		purple_input_remove(xd->input_event);
 		purple_xfer_cancel_remote(xfer);
+		g_free(url_get);
 		g_free(url_head);
 		return;
 	}
