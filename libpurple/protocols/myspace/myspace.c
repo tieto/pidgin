@@ -3577,7 +3577,10 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 
 	gc = purple_account_get_connection(account);
 	session = purple_connection_get_protocol_data(gc);
-	g_return_val_if_fail(session != NULL, FALSE);
+	if (session == NULL) {
+		g_free(cid_str);
+		return FALSE;
+	}
 
 	/* Lookup userid to username. TODO: push this down, to IM sending/contact
 	 * adding functions. */
@@ -3595,6 +3598,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 		return TRUE;
 	}
 
+	g_free(cid_str);
 	return FALSE;
 }
 
