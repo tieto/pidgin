@@ -46,6 +46,7 @@ version 2.10.7:
 	  still have a pending invite.
 	* The buddy's name was not centered vertically in the buddy-list if they
 	  did not have a status-message or mood set.
+	* Fix decoding of font-size changes in the markup of received messages.
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
