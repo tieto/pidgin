@@ -211,6 +211,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	jox = g_new0(JabberOOBXfer, 1);
 	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
 		g_free(url);
+		g_free(jox);
 		return;
 	}
 	g_free(url);
