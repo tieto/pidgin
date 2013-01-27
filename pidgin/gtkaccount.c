@@ -271,6 +271,34 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 	}
 }
 
+static void
+username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
+{
+	gboolean opt_noscreenname = (dialog->prpl_info != NULL &&
+		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+	gboolean username_valid = purple_validate(dialog->plugin,
+		gtk_entry_get_text(entry));
+
+	if (dialog->ok_button) {
+		if (opt_noscreenname && dialog->register_button &&
+			gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(dialog->register_button)))
+			gtk_widget_set_sensitive(dialog->ok_button, TRUE);
+		else
+			gtk_widget_set_sensitive(dialog->ok_button,
+				username_valid);
+	}
+
+	if (dialog->register_button) {
+		if (opt_noscreenname)
+			gtk_widget_set_sensitive(dialog->register_button, TRUE);
+		else
+			gtk_widget_set_sensitive(dialog->register_button,
+				username_valid);
+	}
+}
+
+#if !GTK_CHECK_VERSION(3,2,0)
 static gboolean
 username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
@@ -297,33 +325,6 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 	g_hash_table_destroy(table);
 
 	return FALSE;
-}
-
-static void
-username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
-{
-	gboolean opt_noscreenname = (dialog->prpl_info != NULL &&
-		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
-	gboolean username_valid = purple_validate(dialog->plugin,
-		gtk_entry_get_text(entry));
-
-	if (dialog->ok_button) {
-		if (opt_noscreenname && dialog->register_button &&
-			gtk_toggle_button_get_active(
-				GTK_TOGGLE_BUTTON(dialog->register_button)))
-			gtk_widget_set_sensitive(dialog->ok_button, TRUE);
-		else
-			gtk_widget_set_sensitive(dialog->ok_button,
-				username_valid);
-	}
-
-	if (dialog->register_button) {
-		if (opt_noscreenname)
-			gtk_widget_set_sensitive(dialog->register_button, TRUE);
-		else
-			gtk_widget_set_sensitive(dialog->register_button,
-				username_valid);
-	}
 }
 
 static gboolean
@@ -355,37 +356,6 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 	}
 
 	return FALSE;
-}
-
-static void
-register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
-{
-	int register_checked = gtk_toggle_button_get_active(
-		GTK_TOGGLE_BUTTON(dialog->register_button));
-	int opt_noscreenname = (dialog->prpl_info != NULL &&
-		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
-	int register_noscreenname = (opt_noscreenname && register_checked);
-
-	/* get rid of login_label in username field */
-	username_focus_cb(dialog->username_entry, NULL, dialog);
-
-	if (register_noscreenname) {
-		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
-		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check), FALSE);
-	}
-	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
-	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
-	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
-
-	if (dialog->ok_button) {
-		gtk_widget_set_sensitive(dialog->ok_button,
-			(opt_noscreenname && register_checked) ||
-			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
-				!= '\0');
-	}
-
-	username_nofocus_cb(dialog->username_entry, NULL, dialog);
 }
 
 static gboolean
@@ -463,6 +433,42 @@ username_themechange_cb(GObject *widget, GdkEventFocus *event, AccountPrefsDialo
 	g_hash_table_destroy(table);
 
 	return FALSE;
+}
+#endif
+
+static void
+register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
+{
+	int register_checked = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(dialog->register_button));
+	int opt_noscreenname = (dialog->prpl_info != NULL &&
+		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+	int register_noscreenname = (opt_noscreenname && register_checked);
+
+#if !GTK_CHECK_VERSION(3,2,0)
+	/* get rid of login_label in username field */
+	username_focus_cb(dialog->username_entry, NULL, dialog);
+#endif
+
+	if (register_noscreenname) {
+		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
+		gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), "");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check), FALSE);
+	}
+	gtk_widget_set_sensitive(dialog->username_entry, !register_noscreenname);
+	gtk_widget_set_sensitive(dialog->password_entry, !register_noscreenname);
+	gtk_widget_set_sensitive(dialog->remember_pass_check, !register_noscreenname);
+
+	if (dialog->ok_button) {
+		gtk_widget_set_sensitive(dialog->ok_button,
+			(opt_noscreenname && register_checked) ||
+			*gtk_entry_get_text(GTK_ENTRY(dialog->username_entry))
+				!= '\0');
+	}
+
+#if !GTK_CHECK_VERSION(3,2,0)
+	username_nofocus_cb(dialog->username_entry, NULL, dialog);
+#endif
 }
 
 static void
@@ -625,6 +631,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		table = dialog->prpl_info->get_account_text_table(NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
+#if GTK_CHECK_VERSION(3,2,0)
+		gtk_entry_set_placeholder_text(GTK_ENTRY(dialog->username_entry), label);
+#else
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), label);
 		username_themechange_cb(G_OBJECT(dialog->username_entry), NULL, dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "style-set",
@@ -633,6 +642,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				G_CALLBACK(username_focus_cb), dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-out-event",
 				G_CALLBACK(username_nofocus_cb), dialog);
+#endif
+
 		g_hash_table_destroy(table);
 	}
 
