@@ -514,7 +514,7 @@ void mxit_chat_reject(PurpleConnection *gc, GHashTable* components)
 	}
 
 	/* Send Subscription Reject to MXit */
-	mxit_send_deny_sub(session, multimx->roomid);
+	mxit_send_deny_sub(session, multimx->roomid, NULL);
 
 	/* Remove from our list of rooms */
 	room_remove(session, multimx);
