@@ -60,22 +60,5 @@
 #define PIDGIN_HIG_BORDER        12
 #define PIDGIN_HIG_BOX_SPACE      6
 
-#if !GTK_CHECK_VERSION(2,16,0) || !defined(PIDGIN_DISABLE_DEPRECATED)
-/*
- * Older versions of GNOME defaulted to using an asterisk as the invisible
- * character.  But this is ugly and we want to use something nicer.
- *
- * The default invisible character was changed in GNOME revision 21446
- * (GTK+ 2.16) from an asterisk to the first available character out of
- * 0x25cf, 0x2022, 0x2731, 0x273a.  See GNOME bugs 83935 and 307304 for
- * discussion leading up to the change.
- *
- * Here's the change:
- * http://svn.gnome.org/viewvc/gtk%2B?view=revision&revision=21446
- *
- */
-#define PIDGIN_INVISIBLE_CHAR (gunichar)0x25cf
-#endif /* Less than GTK+ 2.16 */
-
 #endif /* _PIDGIN_H_ */
 

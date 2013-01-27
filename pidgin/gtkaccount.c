@@ -665,10 +665,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
@@ -983,10 +979,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				else if (purple_account_option_string_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 				}
 
 				if (str_value != NULL && str_hints)
@@ -1224,10 +1216,6 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->proxy_pass_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&
@@ -2770,33 +2758,22 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 			(purple_connection_get_display_name(gc) != NULL) ? purple_connection_get_display_name(gc) :
 			purple_account_get_username(account);
 
-	if (pidgin_mini_dialog_links_supported()) {
-		char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
-		char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
-		char *escaped_our_name = g_markup_escape_text(our_name, -1);
-		char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
-		buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-					escaped_remote_user,
-					(have_valid_alias ? " ("  : ""),
-					escaped_alias,
-					(have_valid_alias ? ")"   : ""),
-					escaped_our_name,
-					(have_valid_alias ? ": " : "."),
-					escaped_message);
-		g_free(escaped_remote_user);
-		g_free(escaped_alias);
-		g_free(escaped_our_name);
-		g_free(escaped_message);
-	} else {
-		buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-					remote_user,
-					(have_valid_alias ? " ("  : ""),
-					(have_valid_alias ? alias : ""),
-					(have_valid_alias ? ")"   : ""),
-					our_name,
-					(message != NULL ? ": " : "."),
-					(message != NULL ? message  : ""));
-	}
+	char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
+	char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
+	char *escaped_our_name = g_markup_escape_text(our_name, -1);
+	char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
+	buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+				escaped_remote_user,
+				(have_valid_alias ? " ("  : ""),
+				escaped_alias,
+				(have_valid_alias ? ")"   : ""),
+				escaped_our_name,
+				(have_valid_alias ? ": " : "."),
+				escaped_message);
+	g_free(escaped_remote_user);
+	g_free(escaped_alias);
+	g_free(escaped_our_name);
+	g_free(escaped_message);
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -2817,10 +2794,8 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 		NULL);
 
 	dialog = PIDGIN_MINI_DIALOG(alert);
-	if (pidgin_mini_dialog_links_supported()) {
-		pidgin_mini_dialog_enable_description_markup(dialog);
-		pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
-	}
+	pidgin_mini_dialog_enable_description_markup(dialog);
+	pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
 	pidgin_mini_dialog_set_description(dialog, buffer);
 	pidgin_mini_dialog_add_non_closing_button(dialog, _("Send Instant Message"), send_im_cb, aa);
 

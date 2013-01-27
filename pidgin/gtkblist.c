@@ -1110,10 +1110,6 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 			if (pce->secret)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
-					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 			}
 			pidgin_add_widget_to_vbox(data->rq_data.vbox, pce->label, data->rq_data.sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -5473,6 +5469,7 @@ create_account_label(PurpleAccount *account)
 	GtkWidget *hbox, *label;
 	const char *username = purple_account_get_username(account);
 	char *markup;
+	char *description;
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	g_object_set_data(G_OBJECT(hbox), OBJECT_DATA_KEY_ACCOUNT, account);
@@ -5485,14 +5482,9 @@ create_account_label(PurpleAccount *account)
 	g_free(markup);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#if GTK_CHECK_VERSION(2,12,0)
-	{ /* avoid unused variable warnings on pre-2.12 Gtk */
-		char *description =
-			purple_account_get_current_error(account)->description;
-		if (description != NULL && *description != '\0')
-			gtk_widget_set_tooltip_text(label, description);
-	}
-#endif
+	description = purple_account_get_current_error(account)->description;
+	if (description != NULL && *description != '\0')
+		gtk_widget_set_tooltip_text(label, description);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	return hbox;
@@ -5536,12 +5528,10 @@ static void
 update_signed_on_elsewhere_tooltip(PurpleAccount *account,
                                    const char *description)
 {
-#if GTK_CHECK_VERSION(2,12,0)
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
 	GtkWidget *label = find_child_widget_by_account(c, account);
 	gtk_widget_set_tooltip_text(label, description);
-#endif
 }
 
 
@@ -5667,7 +5657,6 @@ headline_style_set (GtkWidget *widget,
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	GtkStyle *style;
-#if GTK_CHECK_VERSION(2,12,0)
 	GtkWidget *window;
 
 	if (priv->changing_style)
@@ -5686,25 +5675,6 @@ headline_style_set (GtkWidget *widget,
 	gtk_widget_destroy(window);
 
 	gtk_widget_queue_draw(gtkblist->headline);
-#else
-	GtkTooltips *tooltips;
-
-	if (gtkblist->changing_style)
-		return;
-
-	tooltips = gtk_tooltips_new ();
-	g_object_ref_sink (tooltips);
-
-	gtk_tooltips_force_window (tooltips);
-	gtk_widget_ensure_style (tooltips->tip_window);
-	style = gtk_widget_get_style (tooltips->tip_window);
-
-	priv->changing_style = TRUE;
-	gtk_widget_set_style (gtkblist->headline, style);
-	priv->changing_style = FALSE;
-
-	g_object_unref (tooltips);
-#endif
 }
 #endif
 
@@ -6141,9 +6111,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 	close = pidgin_create_small_button(close);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline), close, FALSE, FALSE, 0);
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(close, _("Close"));
-#endif
 	g_signal_connect(close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
 
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), priv);
@@ -7811,10 +7779,6 @@ void pidgin_blist_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/y", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/width", 250); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/height", 405); /* Golden ratio, baby */
-#if !GTK_CHECK_VERSION(2,14,0)
-	/* This pref is used in pidgintooltip.c. */
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay", 500);
-#endif
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_BLIST_THEME_LOADER, "type", "blist", NULL));

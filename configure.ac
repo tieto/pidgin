@@ -379,7 +379,7 @@ AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
-dnl # Check for GTK+ 2.10 and other things used by the GTK UI
+dnl # Check for GTK+ 2.18 and other things used by the GTK UI
 dnl #######################################################################
 AC_ARG_ENABLE(screensaver,
 	[AS_HELP_STRING([--disable-screensaver],
@@ -439,20 +439,20 @@ Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "x2"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "xauto"; then
 		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
 			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], [with_gtk=2], [
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])])

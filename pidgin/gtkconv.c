@@ -5771,9 +5771,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
-#if !GTK_CHECK_VERSION(2,12,0)
-	gtkconv->tooltips = gtk_tooltips_new();
-#endif
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
 	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme");
@@ -5991,10 +5988,6 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		purple_signals_disconnect_by_handle(gtkconv->u.chat);
 		g_free(gtkconv->u.chat);
 	}
-
-#if !GTK_CHECK_VERSION(2,12,0)
-	gtk_object_sink(GTK_OBJECT(gtkconv->tooltips));
-#endif
 
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);

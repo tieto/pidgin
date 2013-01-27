@@ -1758,7 +1758,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "weight", PANGO_WEIGHT_NORMAL,
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 			"invisible", FALSE,
 #endif
 			NULL);
@@ -3398,7 +3398,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 					wpos = g_snprintf (ws, len, "%s", tag);
 					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
 #else
@@ -3576,7 +3576,7 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 	GtkTextTag *tag;
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
 	if (tag)
