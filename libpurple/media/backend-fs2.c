@@ -41,6 +41,7 @@
 #include <farstream/fs-conference.h>
 #include <farstream/fs-element-added-notifier.h>
 #include <farstream/fs-utils.h>
+#include <gst/gststructure.h>
 #endif
 
 /** @copydoc _PurpleMediaBackendFs2Class */
@@ -2366,14 +2367,44 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 	return TRUE;
 }
 
+static const gchar **
+purple_media_backend_fs2_get_available_params(void)
+{
+	static const gchar *supported_params[] = {
+		"sdes-cname", "sdes-email", "sdes-location", "sdes-name", "sdes-note",
+		"sdes-phone", "sdes-tool", NULL
+	};
+
+	return supported_params;
+}
+
+static const gchar*
+param_to_sdes_type(const gchar *param)
+{
+	const gchar **supported = purple_media_backend_fs2_get_available_params();
+	static const gchar *sdes_types[] = {
+		"cname", "email", "location", "name", "note", "phone", "tool", NULL
+	};
+	guint i;
+
+	for (i = 0; supported[i] != NULL; ++i) {
+		if (!strcmp(param, supported[i])) {
+			return sdes_types[i];
+		}
+	}
+
+	return NULL;
+}
+
 static void
 purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 		guint num_params, GParameter *params)
 {
 	PurpleMediaBackendFs2Private *priv;
-	const gchar **supported = purple_media_backend_fs2_get_available_params();
-	const gchar **p;
 	guint i;
+#ifndef HAVE_FARSIGHT
+	GstStructure *sdes;
+#endif
 
 	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
 
@@ -2386,27 +2417,30 @@ purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 		return;
 	}
 
+#ifdef HAVE_FARSIGHT
 	for (i = 0; i != num_params; ++i) {
-		for (p = supported; *p != NULL; ++p) {
-			if (!strcmp(params[i].name, *p)) {
-				g_object_set(priv->conference,
-						params[i].name, g_value_get_string(&params[i].value),
-						NULL);
-				break;
-			}
+		if (param_to_sdes_type(params[i].name)) {
+			g_object_set(priv->conference,
+			             params[i].name, g_value_get_string(&params[i].value),
+			             NULL);
 		}
 	}
-}
+#else
+	g_object_get(G_OBJECT(priv->conference), "sdes", &sdes, NULL);
 
-static const gchar **
-purple_media_backend_fs2_get_available_params(void)
-{
-	static const gchar *supported_params[] = {
-		"sdes-cname", "sdes-email", "sdes-location", "sdes-name", "sdes-note",
-		"sdes-phone", "sdes-tool", NULL
-	};
+	for (i = 0; i != num_params; ++i) {
+		const gchar *sdes_type = param_to_sdes_type(params[i].name);
+		if (!sdes_type)
+			continue;
 
-	return supported_params;
+		gst_structure_set(sdes, sdes_type,
+		                  G_TYPE_STRING, g_value_get_string(&params[i].value),
+		                  NULL);
+	}
+
+	g_object_set(G_OBJECT(priv->conference), "sdes", sdes, NULL);
+	gst_structure_free(sdes);
+#endif /* HAVE_FARSIGHT */
 }
 #else
 GType
