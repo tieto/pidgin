@@ -2748,20 +2748,28 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	GdkPixbuf *prpl_icon;
 	struct auth_request *aa;
 	const char *our_name;
-	gboolean have_valid_alias = alias && *alias;
+	gboolean have_valid_alias;
+	char *escaped_remote_user;
+	char *escaped_alias;
+	char *escaped_our_name;
+	char *escaped_message;
 
 	gc = purple_account_get_connection(account);
-	if (message != NULL && *message == '\0')
-		message = NULL;
+	if (message != NULL && *message != '\0')
+		escaped_message = g_markup_escape_text(message, -1);
+	else
+		escaped_message = g_strdup("");
 
 	our_name = (id != NULL) ? id :
 			(purple_connection_get_display_name(gc) != NULL) ? purple_connection_get_display_name(gc) :
 			purple_account_get_username(account);
+	escaped_our_name = g_markup_escape_text(our_name, -1);
 
-	char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
-	char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
-	char *escaped_our_name = g_markup_escape_text(our_name, -1);
-	char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
+	escaped_remote_user = g_markup_escape_text(remote_user, -1);
+
+	have_valid_alias = alias && *alias;
+	escaped_alias = have_valid_alias ? g_markup_escape_text(alias, -1) : g_strdup("");
+
 	buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
 				escaped_remote_user,
 				(have_valid_alias ? " ("  : ""),
@@ -2770,6 +2778,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 				escaped_our_name,
 				(have_valid_alias ? ": " : "."),
 				escaped_message);
+
 	g_free(escaped_remote_user);
 	g_free(escaped_alias);
 	g_free(escaped_our_name);
