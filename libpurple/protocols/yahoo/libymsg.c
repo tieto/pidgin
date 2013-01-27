@@ -2953,7 +2953,7 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 			msg = pair->value;
 			break;
 		case 232:
-			/* weird number (md5 hash?), like 8ebab9094156135f5dcbaccbeee662a5c5fd1420 */
+			/* SHA-1 hash of audible SWF file (eg: 4e8691499d9c0fb8374478ff9720f4a9ea4a4915) */
 			break;
 		}
 
@@ -2974,7 +2974,7 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		return;
 	}
 	if (id) {
-		/* "http://us.dl1.yimg.com/download.yahoo.com/dl/aud/"+locale+"/"+id+".swf" */
+		/* "http://l.yimg.com/pu/dl/aud/"+locale+"/"+id+".swf" */
 		char **audible_locale = g_strsplit(id, ".", 0);
 		char *buf = g_strdup_printf(_("[ Audible %s/%s/%s.swf ] %s"), YAHOO_AUDIBLE_URL, audible_locale[1], id, msg);
 		g_strfreev(audible_locale);

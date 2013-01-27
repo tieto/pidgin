@@ -61,7 +61,7 @@
 #define YAHOOJP_ROOMLIST_URL "http://insider.msg.yahoo.co.jp/ycontent/"
 #define YAHOOJP_ROOMLIST_LOCALE "ja"
 
-#define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
+#define YAHOO_AUDIBLE_URL "http://l.yimg.com/pu/dl/aud"
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
