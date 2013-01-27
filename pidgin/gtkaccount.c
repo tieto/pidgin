@@ -119,6 +119,7 @@ typedef struct
 	GtkWidget *protocol_menu;
 	GtkWidget *password_box;
 	GtkWidget *username_entry;
+	GdkColor *username_entry_hint_color;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
 	GtkWidget *remember_pass_check;
@@ -320,7 +321,6 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 static gboolean
 username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
-	GdkColor color = {0, 34952, 35466, 34181};
 	GHashTable *table = NULL;
 	const char *label = NULL;
 
@@ -336,7 +336,7 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 			gtk_entry_set_text(GTK_ENTRY(widget), label);
 			/* Make sure we can hit it again */
 			g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
-			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
+			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, dialog->username_entry_hint_color);
 		}
 
 		g_hash_table_destroy(table);
@@ -374,6 +374,53 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	}
 
 	username_nofocus_cb(dialog->username_entry, NULL, dialog);
+}
+
+static gboolean
+username_themechange_cb(GObject *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+{
+	GHashTable *table;
+	const char *label, *text;
+	char *temp_text = NULL;
+	GtkStyle *style;
+	const GtkBorder *border = NULL;
+	gint xsize;
+
+	table = dialog->prpl_info->get_account_text_table(NULL);
+	label = g_hash_table_lookup(table, "login_label");
+	text = gtk_entry_get_text(GTK_ENTRY(widget));
+
+	g_signal_handlers_block_by_func(widget, G_CALLBACK(username_themechange_cb), dialog);
+	g_signal_handlers_block_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
+	if (strcmp(text, label)) {
+		temp_text = g_strdup (text);
+		gtk_entry_set_text(GTK_ENTRY(widget), label);
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+	}
+
+	style = gtk_rc_get_style(dialog->username_entry);
+	dialog->username_entry_hint_color = &(style->fg[GTK_STATE_INSENSITIVE]);
+
+	pango_layout_get_pixel_size(gtk_entry_get_layout(GTK_ENTRY(widget)), &xsize, NULL);
+	xsize += 2 * style->xthickness;
+	gtk_style_get (style, GTK_TYPE_ENTRY, "inner-border", &border, NULL);
+	if (border)
+		xsize += border->left + border->right;
+	else
+		xsize += 4; /* 2 * default inner-border */
+	gtk_widget_set_size_request(GTK_WIDGET(widget), xsize, -1);
+	if (temp_text) {
+		gtk_entry_set_text(GTK_ENTRY(widget), temp_text);
+		g_free(temp_text);
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+	} else
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, dialog->username_entry_hint_color);
+
+	g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_themechange_cb), dialog);
+	g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
+	g_hash_table_destroy(table);
+
+	return FALSE;
 }
 
 static void
@@ -531,18 +578,19 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (!username && dialog->prpl_info
 			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
-		GdkColor color = {0, 34952, 35466, 34181};
 		GHashTable *table;
 		const char *label;
 		table = dialog->prpl_info->get_account_text_table(NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), label);
+		username_themechange_cb(G_OBJECT(dialog->username_entry), NULL, dialog);
+		g_signal_connect(G_OBJECT(dialog->username_entry), "style-set",
+				G_CALLBACK(username_themechange_cb), dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-in-event",
 				G_CALLBACK(username_focus_cb), dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-out-event",
 				G_CALLBACK(username_nofocus_cb), dialog);
-		gtk_widget_modify_text(dialog->username_entry, GTK_STATE_NORMAL, &color);
 		g_hash_table_destroy(table);
 	}
 
