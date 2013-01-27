@@ -617,10 +617,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
@@ -935,10 +931,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				else if (purple_account_option_string_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 				}
 
 				if (str_value != NULL && str_hints)
@@ -1176,10 +1168,6 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->proxy_pass_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&

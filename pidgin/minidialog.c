@@ -148,11 +148,7 @@ pidgin_mini_dialog_enable_description_markup(PidginMiniDialog *mini_dialog)
 gboolean
 pidgin_mini_dialog_links_supported()
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallback cb, gpointer user_data)

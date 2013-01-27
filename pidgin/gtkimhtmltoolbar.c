@@ -1177,9 +1177,6 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	}
 
 	g_free(toolbar->sml);
-#if !GTK_CHECK_VERSION(2,12,0)
-	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
-#endif
 
 	menu = g_object_get_data(object, "font_menu");
 	if (menu)
@@ -1376,10 +1373,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->link_dialog = NULL;
 	toolbar->smiley_dialog = NULL;
 	toolbar->image_dialog = NULL;
-
-#if !GTK_CHECK_VERSION(2,12,0)
-	toolbar->tooltips = gtk_tooltips_new();
-#endif
 
 	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
 
