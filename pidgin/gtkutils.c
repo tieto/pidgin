@@ -2019,7 +2019,7 @@ repopulate_autocomplete(gpointer something, gpointer data)
 }
 
 void
-pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
+pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
 {
 	PidginCompletionData *data;
 

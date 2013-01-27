@@ -1005,7 +1005,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 		/* Now the Buddy drop-down entry field. */
 		info->entry = gtk_entry_new();
-		pidgin_setup_screenname_autocomplete_with_filter(info->entry, NULL, chat_invite_filter,
+		pidgin_setup_screenname_autocomplete(info->entry, NULL, chat_invite_filter,
 				purple_conversation_get_account(conv));
 		gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);

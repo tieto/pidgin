@@ -844,7 +844,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 					}
 				}
 			}
-			pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
+			pidgin_setup_screenname_autocomplete(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
 		}
 	}
 }

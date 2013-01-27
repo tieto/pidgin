@@ -107,6 +107,8 @@ version 3.0.0 (??/??/????):
 		  a GList
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
+		* pidgin_setup_screenname_autocomplete now takes a filter function and
+		  its data as final two arguments
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_str_size_to_units now takes a goffset as the size parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
@@ -164,7 +166,7 @@ version 3.0.0 (??/??/????):
 		* PIDGIN_DIALOG
 		* pidgin_dialogs_alias_contact
 		* pidgin_set_custom_buddy_icon
-		* pidgin_setup_screenname_autocomplete
+		* pidgin_setup_screenname_autocomplete_with_filter
 		* PidginBuddyList.connection_errors
 		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
