@@ -68,7 +68,6 @@ EXTERNAL_DLLS = \
 	libssp-0.dll \
 	libxml2-2.dll \
 	nss3.dll \
-	nssckbi.dll \
 	nssutil3.dll \
 	saslANONYMOUS.dll \
 	saslCRAMMD5.dll \

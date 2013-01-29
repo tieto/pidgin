@@ -326,7 +326,7 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 void mxit_send_invite( struct MXitSession* session, const char* username, gboolean mxitid, const char* alias, const char* groupname, const char* message );
 void mxit_send_remove( struct MXitSession* session, const char* username );
 void mxit_send_allow_sub( struct MXitSession* session, const char* username, const char* alias );
-void mxit_send_deny_sub( struct MXitSession* session, const char* username );
+void mxit_send_deny_sub( struct MXitSession* session, const char* username, const char* reason );
 void mxit_send_update_contact( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
 void mxit_send_splashclick( struct MXitSession* session, const char* splashid );
 void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event);

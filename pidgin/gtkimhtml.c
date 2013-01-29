@@ -5267,8 +5267,10 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		g_free(name);
 
 		if (tmp) {
-			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", tmp);
+			gchar *escaped = purple_markup_escape_text(tmp, -1);
+			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", escaped);
 			buf[sizeof(buf)-1] = '\0';
+			g_free(escaped);
 			return buf;
 		} else {
 			return "";

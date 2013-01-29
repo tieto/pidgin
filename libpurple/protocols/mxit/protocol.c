@@ -1065,8 +1065,9 @@ void mxit_send_allow_sub( struct MXitSession* session, const char* username, con
  *
  *  @param session		The MXit session object
  *  @param username		The username of the contact being denied
+ *  @param reason		The message describing the reason for the rejection (can be NULL).
  */
-void mxit_send_deny_sub( struct MXitSession* session, const char* username )
+void mxit_send_deny_sub( struct MXitSession* session, const char* username, const char* reason )
 {
 	char		data[CP_MAX_PACKET];
 	int			datalen;
@@ -1076,6 +1077,10 @@ void mxit_send_deny_sub( struct MXitSession* session, const char* username )
 								"ms=%s",	/* "ms"=username */
 								username
 	);
+
+	/* append reason (if one is set) */
+	if ( reason )
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, reason );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_DENY );
