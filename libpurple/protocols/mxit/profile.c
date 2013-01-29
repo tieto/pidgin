@@ -266,6 +266,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 				char* img_text;
 				img_text = g_strdup_printf( "<img id='%d'>", contact->imgid );
 				purple_notify_user_info_add_pair( info, _( "Photo" ), img_text );
+				g_free( img_text );
 			}
 
 			if ( contact->statusMsg )
