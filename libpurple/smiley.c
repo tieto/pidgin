@@ -272,9 +272,8 @@ purple_smileys_load(void)
 		smiley_node = xmlnode_get_child(smileyset_node, XML_SMILEY_TAG);
 		for (; smiley_node != NULL;
 				smiley_node = xmlnode_get_next_twin(smiley_node)) {
-			PurpleSmiley *smiley;
 
-			smiley = parse_smiley(smiley_node);
+			parse_smiley(smiley_node);
 		}
 	}
 
