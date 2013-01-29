@@ -619,7 +619,7 @@ static void mxit_cb_buddy_deny( const char *message, gpointer user_data )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_buddy_deny '%s'\n", invite->contact->username );
 
 	/* send a deny subscription packet to MXit */
-	mxit_send_deny_sub( invite->session, invite->contact->username, NULL );
+	mxit_send_deny_sub( invite->session, invite->contact->username, message );
 
 	/* remove the invite from our internal invites list */
 	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
