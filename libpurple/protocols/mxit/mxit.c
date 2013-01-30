@@ -725,11 +725,10 @@ static PurplePluginProtocolInfo proto_info = {
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{						/* icon_spec */
-		"png",												/* format */
+		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
-		MXIT_AVATAR_SIZE,									/* max width */
-		MXIT_AVATAR_SIZE,									/* max height */
-		100000,												/* max filesize */
+		800, 800,											/* max width & height */
+		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
 	},
 	mxit_list_icon,			/* list_icon */
