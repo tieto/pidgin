@@ -47,7 +47,7 @@ version 2.10.7:
 	* The buddy's name was not centered vertically in the buddy-list if they
 	  did not have a status-message or mood set.
 	* Fix decoding of font-size changes in the markup of received messages.
-	* Increase the maximum file size that can be transferred to 1 Mb.
+	* Increase the maximum file size that can be transferred to 1 MB.
 	* When setting an avatar image, no longer downscale it to 96x96.
 
 	Yahoo!:
