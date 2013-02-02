@@ -8195,7 +8195,7 @@ account_signing_off(PurpleConnection *gc)
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
 						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
-					PURPLE_MESSAGE_SYSTEM, time(NULL));
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		}
 		list = list->next;
 	}
