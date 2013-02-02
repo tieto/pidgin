@@ -429,7 +429,7 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 		purple_http_conn_get_purple_connection(hc));
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
-	const gchar *data = purple_http_response_get_data(response);
+	const gchar *data = purple_http_response_get_data(response, NULL);
 	ggp_edisc_xfer_ack_status ack_status;
 	JsonParser *parser;
 	JsonObject *ticket;
@@ -597,7 +597,7 @@ static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
 {
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer = purple_xfer_get_protocol_data(xfer);
-	const gchar *data = purple_http_response_get_data(response);
+	const gchar *data = purple_http_response_get_data(response, NULL);
 	JsonParser *parser;
 	JsonObject *result;
 	int result_status = -1;
@@ -757,7 +757,7 @@ static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
 
 	sdata = ggp_edisc_get_sdata(gc);
 
-	parser = ggp_json_parse(purple_http_response_get_data(response));
+	parser = ggp_json_parse(purple_http_response_get_data(response, NULL));
 	result = json_node_get_object(json_parser_get_root(parser));
 	result = json_object_get_object_member(result, "result");
 	if (json_object_has_member(result, "status"))
@@ -914,7 +914,7 @@ static void ggp_edisc_xfer_recv_ack_done(PurpleHttpConnection *hc,
 	}
 
 	purple_debug_info("gg", "ggp_edisc_xfer_recv_ack_done: [%s]\n",
-		purple_http_response_get_data(response));
+		purple_http_response_get_data(response, NULL));
 }
 
 static void ggp_edisc_xfer_recv_ticket_completed(PurpleXfer *xfer)
@@ -1146,7 +1146,7 @@ static void ggp_ggdrive_auth_done(PurpleHttpConnection *hc,
 		return;
 	}
 
-	parser = ggp_json_parse(purple_http_response_get_data(response));
+	parser = ggp_json_parse(purple_http_response_get_data(response, NULL));
 	result = json_node_get_object(json_parser_get_root(parser));
 	result = json_object_get_object_member(result, "result");
 	if (json_object_has_member(result, "status"))
@@ -1159,7 +1159,7 @@ static void ggp_ggdrive_auth_done(PurpleHttpConnection *hc,
 		if (purple_debug_is_verbose())
 			purple_debug_misc("gg", "ggp_ggdrive_auth_done: "
 				"result = %s\n",
-				purple_http_response_get_data(response));
+				purple_http_response_get_data(response, NULL));
 		ggp_ggdrive_auth_results(gc, FALSE);
 		return;
 	}
