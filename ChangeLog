@@ -10,6 +10,8 @@ version 3.0.0 (??/??/????):
 	* Add email notification in the docklet area. (Alexei) (#3571)
 	* Add a pref to select the type messages in conversation that triggers 
 	  the docklet notification. (Momchil) (#12598)
+	* Complete support for receiving a limited amount of history when
+	  joining a room. (Kha) (#15458)
 
 	Finch:
 	* Support the conversation-extended signal for extending the
