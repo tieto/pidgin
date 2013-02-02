@@ -96,6 +96,7 @@ void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 		"edisc/scope_files_changed",
 		"notifications/state",
 		"invitations/list",
+		"notifications/list", /* gifts */
 		NULL
 	};
 	const gchar **it;
