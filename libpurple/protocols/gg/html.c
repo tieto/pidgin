@@ -130,31 +130,29 @@ int ggp_html_decode_color(const gchar *str)
 
 ggp_html_tag ggp_html_parse_tag(const gchar *tag_str)
 {
-	if (0 == strcmp(tag_str, "eom"))
+	if (0 == g_ascii_strcasecmp(tag_str, "eom"))
 		return GGP_HTML_TAG_EOM;
-	if (0 == strcmp(tag_str, "span"))
+	if (0 == g_ascii_strcasecmp(tag_str, "span"))
 		return GGP_HTML_TAG_SPAN;
-	if (0 == strcmp(tag_str, "div"))
+	if (0 == g_ascii_strcasecmp(tag_str, "div"))
 		return GGP_HTML_TAG_DIV;
-	if (0 == strcmp(tag_str, "br"))
+	if (0 == g_ascii_strcasecmp(tag_str, "br"))
 		return GGP_HTML_TAG_BR;
-	if (0 == strcmp(tag_str, "a"))
+	if (0 == g_ascii_strcasecmp(tag_str, "a"))
 		return GGP_HTML_TAG_A;
-	if (0 == strcmp(tag_str, "b"))
+	if (0 == g_ascii_strcasecmp(tag_str, "b"))
 		return GGP_HTML_TAG_B;
-	if (0 == strcmp(tag_str, "i"))
+	if (0 == g_ascii_strcasecmp(tag_str, "i"))
 		return GGP_HTML_TAG_I;
-	if (0 == strcmp(tag_str, "u"))
+	if (0 == g_ascii_strcasecmp(tag_str, "u"))
 		return GGP_HTML_TAG_U;
-	if (0 == strcmp(tag_str, "s"))
+	if (0 == g_ascii_strcasecmp(tag_str, "s"))
 		return GGP_HTML_TAG_S;
-	if (0 == strcmp(tag_str, "img"))
+	if (0 == g_ascii_strcasecmp(tag_str, "img"))
 		return GGP_HTML_TAG_IMG;
-	if (0 == strcmp(tag_str, "font"))
+	if (0 == g_ascii_strcasecmp(tag_str, "font"))
 		return GGP_HTML_TAG_FONT;
-	if (0 == strcmp(tag_str, "hr"))
+	if (0 == g_ascii_strcasecmp(tag_str, "hr"))
 		return GGP_HTML_TAG_HR;
-	if (0 == strcmp(tag_str, "a"))
-		return GGP_HTML_TAG_IGNORED;
 	return GGP_HTML_TAG_UNKNOWN;
 }

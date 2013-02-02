@@ -73,7 +73,7 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 void ggp_message_setup_global(void)
 {
 	global_data.re_html_tag = g_regex_new(
-		"<(/)?([a-z]+)( [^>]+)?>",
+		"<(/)?([a-zA-Z]+)( [^>]+)?>",
 		G_REGEX_OPTIMIZE, 0, NULL);
 	global_data.re_gg_img = g_regex_new(
 		"<img name=\"([0-9a-fA-F]+)\"/?>",
