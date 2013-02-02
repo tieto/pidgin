@@ -109,7 +109,8 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 	}
-	g_regex_unref(debug_win->regex);
+	if (debug_win->regex != NULL)
+		g_regex_unref(debug_win->regex);
 
 	/* If the "Save Log" dialog is open then close it */
 	purple_request_close_with_handle(debug_win);
@@ -699,9 +700,6 @@ debug_window_new(void)
 	gint width, height;
 	void *handle;
 	GtkToolItem *item;
-#if !GTK_CHECK_VERSION(2,12,0)
-	GtkTooltips *tooltips;
-#endif
 
 	win = g_new0(DebugWindow, 1);
 
@@ -728,12 +726,6 @@ debug_window_new(void)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
-#if !GTK_CHECK_VERSION(2,12,0)
-		tooltips = gtk_tooltips_new();
-#endif
-#if !GTK_CHECK_VERSION(2,14,0)
-		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
-#endif
 		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
@@ -1046,7 +1038,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 
 	esc_s = purple_escape_js(arg_s);
 
-	js = g_strdup_printf("append(%d, '%s', '%s', '%s');",
+	js = g_strdup_printf("append(%d, '%s', '%s', %s);",
 		level, mdate, category ? category : "", esc_s);
 	g_free(esc_s);
 

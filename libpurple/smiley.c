@@ -272,9 +272,8 @@ purple_smileys_load(void)
 		smiley_node = xmlnode_get_child(smileyset_node, XML_SMILEY_TAG);
 		for (; smiley_node != NULL;
 				smiley_node = xmlnode_get_next_twin(smiley_node)) {
-			PurpleSmiley *smiley;
 
-			smiley = parse_smiley(smiley_node);
+			parse_smiley(smiley_node);
 		}
 	}
 
@@ -608,7 +607,7 @@ purple_smiley_data_new(guchar *smiley_data, size_t smiley_data_len)
 		return NULL;
 	}
 
-	stored_img = purple_imgstore_add(smiley_data, smiley_data_len, filename);
+	stored_img = purple_imgstore_new(smiley_data, smiley_data_len, filename);
 
 	g_free(filename);
 

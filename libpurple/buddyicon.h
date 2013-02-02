@@ -49,8 +49,8 @@ G_BEGIN_DECLS
 /**
  * Creates a new buddy icon structure and populates it.
  *
- * If the buddy icon already exists, you'll get a reference to that structure,
- * which will have been updated with the data supplied.
+ * If an icon for this account+username already exists, you'll get a reference
+ * to that structure, which will have been updated with the data supplied.
  *
  * @param account   The account the user is on.
  * @param username  The username the icon belongs to.
@@ -79,10 +79,8 @@ PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
  * If the reference count reaches 0, the icon will be destroyed.
  *
  * @param icon The buddy icon.
- *
- * @return @a icon, or @c NULL if the reference count reached 0.
  */
-PurpleBuddyIcon *purple_buddy_icon_unref(PurpleBuddyIcon *icon);
+void purple_buddy_icon_unref(PurpleBuddyIcon *icon);
 
 /**
  * Updates every instance of this icon.
@@ -331,7 +329,7 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 /**
  * Sets whether or not buddy icon caching is enabled.
  *
- * @param caching TRUE of buddy icon caching should be enabled, or
+ * @param caching TRUE if buddy icon caching should be enabled, or
  *                FALSE otherwise.
  */
 void purple_buddy_icons_set_caching(gboolean caching);

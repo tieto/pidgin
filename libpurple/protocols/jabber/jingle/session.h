@@ -62,10 +62,6 @@ struct _JingleSession
 
 struct _JingleContent;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Gets the session class's GType
  *
@@ -108,10 +104,6 @@ void jingle_session_accept_content(JingleSession *session, const gchar *name, co
 void jingle_session_accept_session(JingleSession *session);
 JabberIq *jingle_session_terminate_packet(JingleSession *session, const gchar *reason);
 JabberIq *jingle_session_redirect_packet(JingleSession *session, const gchar *sid);
-
-#ifdef __cplusplus
-}
-#endif
 
 G_END_DECLS
 

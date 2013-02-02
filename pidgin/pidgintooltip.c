@@ -61,22 +61,15 @@ typedef struct
 static void
 initialize_tooltip_delay()
 {
-#if GTK_CHECK_VERSION(2,14,0)
 	GtkSettings *settings;
-#endif
 
 	if (tooltip_delay != -1)
 		return;
 
-#if GTK_CHECK_VERSION(2,14,0)
 	settings = gtk_settings_get_default();
 
 	g_object_get(settings, "gtk-enable-tooltips", &enable_tooltips, NULL);
 	g_object_get(settings, "gtk-tooltip-timeout", &tooltip_delay, NULL);
-#else
-	tooltip_delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
-	enable_tooltips = (tooltip_delay != 0);
-#endif
 }
 
 static void

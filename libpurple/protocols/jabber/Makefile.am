@@ -31,6 +31,8 @@ JABBERSOURCES = \
 			  google/gmail.h \
 			  google/google.c \
 			  google/google.h \
+			  google/google_p2p.c \
+			  google/google_p2p.h \
 			  google/google_presence.c \
 			  google/google_presence.h \
 			  google/google_roster.c \

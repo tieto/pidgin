@@ -219,11 +219,7 @@ static PurpleEventLoopUiOps eventloop_ops =
 	gnt_input_add,
 	g_source_remove,
 	NULL, /* input_get_error */
-#if GLIB_CHECK_VERSION(2,14,0)
 	g_timeout_add_seconds,
-#else
-	NULL,
-#endif
 
 	/* padding */
 	NULL,
@@ -381,18 +377,11 @@ init_libpurple(int argc, char **argv)
 		abort();
 	}
 
-	/* TODO: Move blist loading into purple_blist_init() */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
 
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved("/finch/plugins/loaded");
-
-	/* TODO: Move pounces loading into purple_pounces_init() */
-	purple_pounces_load();
 
 	if (opt_nologin)
 	{

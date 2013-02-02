@@ -7,7 +7,7 @@ Purple::Buddy::Icon
 purple_buddy_icon_ref(icon)
 	Purple::Buddy::Icon icon
 
-Purple::Buddy::Icon
+void
 purple_buddy_icon_unref(icon)
 	Purple::Buddy::Icon icon
 

@@ -42,7 +42,7 @@ struct _PurpleBuddyIcon
 	                                the icon data.                       */
 	char *username;            /**< The username the icon belongs to.    */
 	char *checksum;            /**< The protocol checksum.               */
-	int ref_count;             /**< The buddy icon reference count.      */
+	unsigned int ref_count;    /**< The buddy icon reference count.      */
 };
 
 /**
@@ -75,7 +75,7 @@ static GHashTable *account_cache = NULL;
 static GHashTable *icon_data_cache = NULL;
 
 /**
- * This hash table contains references counts for how many times each
+ * This hash table contains reference counts for how many times each
  * icon in the ~/.purple/icons/ directory is being used.  It's pretty
  * crazy.  It maintains the reference count across sessions, too, so
  * if you exit Pidgin then this hash table is reconstructed the next
@@ -156,7 +156,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 	if (!purple_buddy_icons_is_caching())
 		return;
 
-	dirname  = purple_buddy_icons_get_cache_dir();
+	dirname = purple_buddy_icons_get_cache_dir();
 	path = g_build_filename(dirname, purple_imgstore_get_filename(img), NULL);
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
@@ -189,7 +189,7 @@ purple_buddy_icon_data_uncache_file(const char *filename)
 	if (GPOINTER_TO_INT(g_hash_table_lookup(icon_file_cache, filename)))
 		return;
 
-	dirname  = purple_buddy_icons_get_cache_dir();
+	dirname = purple_buddy_icons_get_cache_dir();
 	path = g_build_filename(dirname, filename, NULL);
 
 	if (g_file_test(path, G_FILE_TEST_EXISTS))
@@ -243,36 +243,26 @@ image_deleting_cb(const PurpleStoredImage *img, gpointer data)
 }
 
 static PurpleStoredImage *
-purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filename)
+purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len)
 {
 	char *file;
 	PurpleStoredImage *img;
 
 	g_return_val_if_fail(icon_data != NULL, NULL);
-	g_return_val_if_fail(icon_len  > 0,     NULL);
+	g_return_val_if_fail(icon_len > 0, NULL);
 
-	if (filename == NULL)
-	{
-		file = purple_util_get_image_filename(icon_data, icon_len);
-		if (file == NULL)
-		{
-			g_free(icon_data);
-			return NULL;
-		}
-	}
-	else
-		file = g_strdup(filename);
+	file = purple_util_get_image_filename(icon_data, icon_len);
 
-	if ((img = g_hash_table_lookup(icon_data_cache, file)))
-	{
+	img = g_hash_table_lookup(icon_data_cache, file);
+	if (img) {
 		g_free(file);
 		g_free(icon_data);
 		return purple_imgstore_ref(img);
 	}
 
-	img = purple_imgstore_add(icon_data, icon_len, file);
+	img = purple_imgstore_new(icon_data, icon_len, file);
 
-	/* This will take ownership of file and g_free it either now or later. */
+	/* This will take ownership of file and free it as needed */
 	g_hash_table_insert(icon_data_cache, file, img);
 
 	purple_buddy_icon_data_cache(img);
@@ -352,13 +342,13 @@ purple_buddy_icon_ref(PurpleBuddyIcon *icon)
 	return icon;
 }
 
-PurpleBuddyIcon *
+void
 purple_buddy_icon_unref(PurpleBuddyIcon *icon)
 {
 	if (icon == NULL)
-		return NULL;
+		return;
 
-	g_return_val_if_fail(icon->ref_count > 0, NULL);
+	g_return_if_fail(icon->ref_count > 0);
 
 	icon->ref_count--;
 
@@ -375,11 +365,7 @@ purple_buddy_icon_unref(PurpleBuddyIcon *icon)
 
 		PURPLE_DBUS_UNREGISTER_POINTER(icon);
 		g_slice_free(PurpleBuddyIcon, icon);
-
-		return NULL;
 	}
-
-	return icon;
 }
 
 void
@@ -469,7 +455,7 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
 	if (data != NULL)
 	{
 		if (len > 0)
-			icon->img = purple_buddy_icon_data_new(data, len, NULL);
+			icon->img = purple_buddy_icon_data_new(data, len);
 		else
 			g_free(data);
 	}
@@ -638,6 +624,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 
 	if ((icon_cache == NULL) || ((icon = g_hash_table_lookup(icon_cache, username)) == NULL))
 	{
+		/* The icon is not currently cached in memory--try reading from disk */
 		PurpleBuddy *b = purple_find_buddy(account, username);
 		const char *protocol_icon_file;
 		const char *dirname;
@@ -729,9 +716,8 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	PurpleStoredImage *img = NULL;
 	char *old_icon;
 
-	if (icon_data != NULL && icon_len > 0)
-	{
-		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
+	if (icon_data != NULL && icon_len > 0) {
+		img = purple_buddy_icon_data_new(icon_data, icon_len);
 	}
 
 	old_icon = g_strdup(purple_account_get_string(account, "buddy_icon", NULL));
@@ -864,7 +850,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 	old_img = g_hash_table_lookup(pointer_icon_cache, node);
 
 	if (icon_data != NULL && icon_len > 0) {
-		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
+		img = purple_buddy_icon_data_new(icon_data, icon_len);
 	}
 
 	old_icon = g_strdup(purple_blist_node_get_string(node,
@@ -1093,7 +1079,7 @@ purple_buddy_icons_init()
 	pointer_icon_cache = g_hash_table_new(g_direct_hash, g_direct_equal);
 
     if (!cache_dir)
-    	cache_dir = g_build_filename(purple_user_dir(), "icons", NULL);
+		cache_dir = g_build_filename(purple_user_dir(), "icons", NULL);
 
 	purple_signal_connect(purple_imgstore_get_handle(), "image-deleting",
 	                      purple_buddy_icons_get_handle(),

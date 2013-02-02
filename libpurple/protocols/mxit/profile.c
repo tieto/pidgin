@@ -35,6 +35,40 @@
 
 
 /*------------------------------------------------------------------------
+ * Return the MXit Relationship status as a string.
+ *
+ * @param id		The Relationship status value (see profile.h)
+ * @return			The relationship status as a text string.
+ */
+const char* mxit_relationship_to_name( short id )
+{
+	switch ( id ) {
+		case MXIT_RELATIONSHIP_UNKNOWN :
+			return _( "Unknown" );
+		case MXIT_RELATIONSHIP_DONTSAY :
+			return _( "Don't want to say" );
+		case MXIT_RELATIONSHIP_SINGLE :
+			return _( "Single" );
+		case MXIT_RELATIONSHIP_INVOLVED :
+			return _( "In a relationship" );
+		case MXIT_RELATIONSHIP_ENGAGED :
+			return _( "Engaged" );
+		case MXIT_RELATIONSHIP_MARRIED :
+			return _( "Married" );
+		case MXIT_RELATIONSHIP_COMPLICATED :
+			return _( "It's complicated" );
+		case MXIT_RELATIONSHIP_WIDOWED :
+			return _( "Widowed" );
+		case MXIT_RELATIONSHIP_SEPARATED :
+			return _( "Separated" );
+		case MXIT_RELATIONSHIP_DIVORCED :
+			return _( "Divorced" );
+		default :
+			return "";
+	}
+}
+
+/*------------------------------------------------------------------------
  * Returns true if it is a valid date.
  *
  * @param bday		Date-of-Birth string (YYYY-MM-DD)
@@ -130,7 +164,7 @@ static int calculateAge( const char* date )
 	age = now.tm_year - bdate.tm_year;
 	if ( now.tm_mon < bdate.tm_mon )		/* is before month of birth */
 		age--;
-	else if ( (now.tm_mon == bdate.tm_mon ) && ( now.tm_mday < bdate.tm_mday ) )	/* before birthday in current month */
+	else if ( ( now.tm_mon == bdate.tm_mon ) && ( now.tm_mday < bdate.tm_mday ) )	/* before birthday in current month */
 		age--;
 
 	return age;
@@ -195,6 +229,8 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	if ( *profile->whereami )
 		purple_notify_user_info_add_pair_plaintext( info, _( "Where I Live" ), profile->whereami );
 
+	purple_notify_user_info_add_pair_plaintext( info, _( "Relationship Status" ), mxit_relationship_to_name( profile->relationship ) );
+
 	purple_notify_user_info_add_section_break( info );
 
 	if ( contact ) {
@@ -236,7 +272,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 				img_text = g_strdup_printf( "<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
 				                            contact->imgid );
 				purple_notify_user_info_add_pair_html( info, _( "Photo" ), img_text );
-				g_free(img_text);
+				g_free( img_text );
 			}
 
 			if ( contact->statusMsg ) {

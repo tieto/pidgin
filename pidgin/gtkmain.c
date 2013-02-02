@@ -413,8 +413,8 @@ show_usage(const char *name, gboolean terse)
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 /* suppress gcc "no previous prototype" warning */
-int pidgin_main(HINSTANCE hint, int argc, char *argv[]);
-int pidgin_main(HINSTANCE hint, int argc, char *argv[])
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 #endif
@@ -754,15 +754,8 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	/* TODO: Move blist loading into purple_blist_init() */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
-
-	/* TODO: Move pounces loading into purple_pounces_init() */
-	purple_pounces_load();
 
 	ui_main();
 

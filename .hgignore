@@ -10,6 +10,7 @@ syntax: regexp
 .*/perl/common/MYMETA\.(json|yml)
 .*~$
 .*\.a$
+.*\.asc$
 .*\.bak$
 .*\.bs$
 .*\.def$

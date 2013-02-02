@@ -14,7 +14,6 @@
   @signal account-actions-changed
   @signal account-alias-changed
   @signal account-authorization-requested
-  @signal account-authorization-requested-with-message
   @signal account-authorization-denied
   @signal account-authorization-granted
   @signal account-error-changed
@@ -145,51 +144,41 @@ void (*account_alias_changed)(PurpleAccount *account, const char *old);
 
  @signaldef account-authorization-requested
   @signalproto
-int (*account_authorization_requested)(PurpleAccount *account, const char *user);
+int (*account_authorization_requested)(PurpleAccount *account, const char *user, const char *message, char **response);
   @endsignalproto
   @signaldesc
    Emitted when a user requests authorization.
-  @param account The account.
-  @param user    The name of the user requesting authorization.
-  @return Less than zero to deny the request without prompting, greater
-          than zero if the request should be granted. If zero is returned,
-          then the user will be prompted with the request.
- @endsignaldef
-
- @signaldef account-authorization-requested-with-message
-  @signalproto
-int (*account_authorization_requested)(PurpleAccount *account, const char *user, const char *message);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user requests authorization.
-  @param account The account.
-  @param user    The name of the user requesting authorization.
-  @param message The authorization request message
+  @param account  The account.
+  @param user     The name of the user requesting authorization.
+  @param message  The authorization request message.
+  @param response The message to send in the response.
   @return PURPLE_ACCOUNT_RESPONSE_IGNORE to silently ignore the request,
           PURPLE_ACCOUNT_RESPONSE_DENY to block the request (the sender might
-          get informed, PURPLE_ACCOUNT_RESPONSE_ACCEPT if the request should be
+          get informed), PURPLE_ACCOUNT_RESPONSE_ACCEPT if the request should be
           granted. If PURPLE_ACCOUNT_RESPONSE_PASS is returned, then the user
           will be prompted with the request.
  @endsignaldef
 
  @signaldef account-authorization-denied
   @signalproto
-void (*account_authorization_denied)(PurpleAccount *account, const char *user);
+void (*account_authorization_denied)(PurpleAccount *account, const char *user, const char *message);
   @endsignalproto
   @signaldesc
    Emitted when the authorization request for a buddy is denied.
   @param account The account.
   @param user    The name of the user requesting authorization.
+  @param message The message to tell the buddy who was denied.
  @endsignaldef
 
  @signaldef account-authorization-granted
   @signalproto
-void (*account_authorization_granted)(PurpleAccount *account, const char *user);
+void (*account_authorization_granted)(PurpleAccount *account, const char *user, const char *message);
   @endsignalproto
   @signaldesc
    Emitted when the authorization request for a buddy is granted.
   @param account The account.
   @param user    The name of the user requesting authorization.
+  @param message The message to tell the buddy who was granted authorization.
  @endsignaldef
 
  @signaldef account-error-changed

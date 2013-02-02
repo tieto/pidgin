@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.50])
+AC_PREREQ([2.63])
 
 # UPDATING VERSION NUMBERS FOR RELEASES
 #
@@ -74,9 +74,8 @@ fi
 
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
-dnl TODO: Always use AM_SILENT_RULES when we depend on automake >= 1.11
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AM_INIT_AUTOMAKE([1.11 -Wno-portability dist-bzip2])
+AM_SILENT_RULES([yes])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -110,8 +109,8 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+LT_PREREQ([2.2.6])
+LT_INIT([disable-static])
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
@@ -158,7 +157,7 @@ AC_CHECK_FUNC(getaddrinfo,
 	[AC_DEFINE([HAVE_GETADDRINFO], [1],
 		[Define to 1 if you have the getaddrinfo function.])],
 	[AC_CHECK_LIB(socket, getaddrinfo,
-		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
+		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lnsl $LIBS"], , -lnsl)])
 AC_CHECK_FUNCS(inet_ntop)
 AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
@@ -208,7 +207,7 @@ AC_SEARCH_LIBS([ceil], [m], [], [
   AC_MSG_ERROR([unable to find the ceil() function])
 ])
 
-AC_MSG_CHECKING(for fileno())
+AC_MSG_CHECKING([for fileno()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 
@@ -232,7 +231,7 @@ int main(int argc, char *argv[])
 	AC_MSG_RESULT(no)
 ])
 
-AC_MSG_CHECKING(for the %z format string in strftime())
+AC_MSG_CHECKING([for the %z format string in strftime()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
@@ -297,10 +296,10 @@ esac
 dnl #######################################################################
 dnl # Disable creation and installation of translation files
 dnl #######################################################################
-AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
+AC_ARG_ENABLE(nls, AS_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
 
 if test x$enable_i18n = xyes; then
-	AC_PROG_INTLTOOL
+	IT_PROG_INTLTOOL
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
@@ -332,16 +331,16 @@ fi #enable_i18n
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
-dnl # Check for GLib 2.16 (required)
+dnl # Check for GLib 2.20 (required)
 dnl #######################################################################
 # TODO: gmodule-2.0 is only needed if enable_plugins is 'yes'.  It
 #       might be nice to change this check so that it's not required
 #       if enable_plugins is 'no'.
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.16.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have GLib 2.16.0 or newer development headers installed to build.
+You must have GLib 2.20.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -353,7 +352,7 @@ GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
 AC_SUBST(GLIB_GENMARSHAL)
 
 AC_ARG_WITH([extraversion],
-			AC_HELP_STRING([--with-extraversion=STRING],
+			AS_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
 						   EXTRA_VERSION=$withval)
 
@@ -363,55 +362,55 @@ else
 	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION", [display version info])
 fi
 
-AC_ARG_ENABLE(missing-dependencies, [AC_HELP_STRING([--disable-missing-dependencies],
+AC_ARG_ENABLE(missing-dependencies, [AS_HELP_STRING([--disable-missing-dependencies],
 		[skip missing dependencies instead of aborting configure])],
 	force_deps="$enableval", force_deps="yes")
 
 AC_ARG_WITH(x, [],
 	with_x="$withval", with_x="yes")
-AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
+AC_ARG_ENABLE(gtkui, [AS_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
-AC_ARG_WITH(gtk, [AC_HELP_STRING([--with-gtk=<version>],
+AC_ARG_WITH(gtk, [AS_HELP_STRING([--with-gtk=<version>],
 		[compile with GTK+ 2 or 3 user interface (default: auto)])],
 	with_gtk="$withval", with_gtk="auto")
-AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
+AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
-dnl # Check for GTK+ 2.10 and other things used by the GTK UI
+dnl # Check for GTK+ 2.18 and other things used by the GTK UI
 dnl #######################################################################
 AC_ARG_ENABLE(screensaver,
-	[AC_HELP_STRING([--disable-screensaver],
+	[AS_HELP_STRING([--disable-screensaver],
 		[compile without X screensaver extension (used to detect idleness)])],
 	enable_screensaver="$enableval", enable_screensaver="yes")
 AC_ARG_ENABLE(sm,
-	[AC_HELP_STRING([--disable-sm],
+	[AS_HELP_STRING([--disable-sm],
 		[compile without X session management support])],
 	enable_sm="$enableval", enable_sm="yes")
 AC_ARG_ENABLE(startup-notification,
-	[AC_HELP_STRING([--disable-startup-notification],
+	[AS_HELP_STRING([--disable-startup-notification],
 		[compile without startup notification support])],
 	enable_startup_notification="$enableval", enable_startup_notification="yes")
 AC_ARG_ENABLE(gtkspell,
-	[AC_HELP_STRING([--disable-gtkspell],
+	[AS_HELP_STRING([--disable-gtkspell],
 		[compile without GtkSpell automatic spell checking])],
 	enable_gtkspell="$enableval", enable_gtkspell="yes")
 AC_ARG_ENABLE(gevolution,
-	[AC_HELP_STRING([--enable-gevolution],
+	[AS_HELP_STRING([--enable-gevolution],
 		[compile with the Evolution plugin])],
 	enable_gevolution="$enableval", enable_gevolution="no")
 AC_ARG_ENABLE(cap,
-	[AC_HELP_STRING([--enable-cap],
+	[AS_HELP_STRING([--enable-cap],
 		[compile with Contact Availability Prediction plugin])],
 	enable_cap="$enableval", enable_cap="no")
 AC_ARG_ENABLE(gestures,
-	[AC_HELP_STRING([--disable-gestures],
+	[AS_HELP_STRING([--disable-gestures],
 		[compile without the gestures plugin])],
 	enable_gestures="$enableval", enable_gestures="yes")
 AC_ARG_ENABLE(gcr,
-	[AC_HELP_STRING([--enable-gcr],
+	[AS_HELP_STRING([--enable-gcr],
 		[compile with GCR certificate widgets])],
 	enable_gcr="$enableval", enable_gcr="no")
 
@@ -440,20 +439,20 @@ Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "x2"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "xauto"; then
 		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
 			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], [with_gtk=2], [
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])])
@@ -462,6 +461,9 @@ running configure.
 	fi
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
+
+	GTK_PC_MODULE="gtk+-${with_gtk}.0"
+	AC_SUBST(GTK_PC_MODULE)
 
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
@@ -715,7 +717,7 @@ dnl # Check for ncurses and other things used by the console UI
 dnl #######################################################################
 GNT_LIBS=""
 GNT_CFLAGS=""
-AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
+AC_ARG_WITH(ncurses-headers, [AS_HELP_STRING([--with-ncurses-headers=DIR],
 		[compile finch against the ncurses includes in DIR])],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
@@ -816,10 +818,14 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 dnl #######################################################################
-dnl # Check for JSON-GLib (required, if compiled with Gadu-Gadu support)
+dnl # Check for JSON-GLib (required)
 dnl #######################################################################
 
-PKG_CHECK_MODULES([JSON], [json-glib-1.0], [enable_json="yes"], [enable_json="no"])
+PKG_CHECK_MODULES([JSON], [json-glib-1.0 >= 0.14.0], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have JSON-GLib >= 0.14.0 development headers installed to build.
+])])
 
 AC_SUBST(JSON_CFLAGS)
 AC_SUBST(JSON_LIBS)
@@ -846,9 +852,9 @@ dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
-	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
+	[AS_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
-AC_ARG_WITH(gstreamer, [AC_HELP_STRING([--with-gstreamer=<version>],
+AC_ARG_WITH(gstreamer, [AS_HELP_STRING([--with-gstreamer=<version>],
 		[compile with GStreamer 0.10 or 1.0 interface (default: auto)])],
 	with_gstreamer="$withval", with_gstreamer="auto")
 if test "x$enable_gst" != "xno"; then
@@ -916,7 +922,7 @@ dnl # Check for GStreamer Video
 dnl #######################################################################
 if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0"; then
 	AC_ARG_ENABLE(gstreamer-video,
-		[AC_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 1.0 Video Overlay support])],
+		[AS_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 1.0 Video Overlay support])],
 			enable_gstvideo="$enableval", enable_gstvideo="yes")
 	if test "x$enable_gstvideo" != "xno"; then
 		PKG_CHECK_MODULES(GSTVIDEO, [gstreamer-video-1.0], [
@@ -936,7 +942,7 @@ dnl # Check for GStreamer Interfaces
 dnl #######################################################################
 if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x0.10"; then
 	AC_ARG_ENABLE(gstreamer-interfaces,
-		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer 0.10 interface support])],
+		[AS_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer 0.10 interface support])],
 			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
 	if test "x$enable_gstinterfaces" != "xno"; then
 		PKG_CHECK_MODULES(GSTINTERFACES, [gstreamer-interfaces-0.10], [
@@ -955,7 +961,7 @@ dnl #######################################################################
 dnl # Check for Farstream
 dnl #######################################################################
 AC_ARG_ENABLE(farstream,
-	[AC_HELP_STRING([--disable-farstream], [compile without farstream support])],
+	[AS_HELP_STRING([--disable-farstream], [compile without farstream support])],
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
 	if test "x$with_gstreamer" == "x1.0"; then
@@ -986,7 +992,7 @@ dnl #######################################################################
 dnl # Check for Voice and Video support
 dnl #######################################################################
 AC_ARG_ENABLE(vv,
-	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+	[AS_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
 	if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
@@ -1011,7 +1017,7 @@ dnl # Check for Internationalized Domain Name support
 dnl #######################################################################
 
 AC_ARG_ENABLE(idn,
-	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
+	[AS_HELP_STRING([--disable-idn], [compile without IDN support])],
 	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
 if test "x$enable_idn" != "xno"; then
 	PKG_CHECK_MODULES(IDN, libidn >= 0.0.0, [
@@ -1034,7 +1040,7 @@ dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
 AC_ARG_ENABLE(meanwhile,
-	[AC_HELP_STRING([--disable-meanwhile],
+	[AS_HELP_STRING([--disable-meanwhile],
 		[compile without meanwhile (required for Sametime support)])],
 	enable_meanwhile="$enableval", enable_meanwhile="yes")
 if test "x$enable_meanwhile" = "xyes"; then
@@ -1056,13 +1062,13 @@ dnl #######################################################################
 dnl # Check for Native Avahi headers (for Bonjour)
 dnl #######################################################################
 AC_ARG_ENABLE(avahi,
-	[AC_HELP_STRING([--disable-avahi],
+	[AS_HELP_STRING([--disable-avahi],
 		[compile without avahi (required for Bonjour support)])],
 	enable_avahi="$enableval", enable_avahi="yes")
 
 if test "x$enable_avahi" = "xyes"; then
-	AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
-	AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
+	AC_ARG_WITH(avahi-client-includes, [AS_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
+	AC_ARG_WITH(avahi-client-libs, [AS_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
 	AVAHI_CFLAGS=""
 	AVAHI_LIBS=""
 
@@ -1109,8 +1115,8 @@ AC_SUBST(AVAHI_LIBS)
 dnl #######################################################################
 dnl # Check for SILC client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
-AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+AC_ARG_WITH(silc-includes, [AS_HELP_STRING([--with-silc-includes=DIR], [compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
+AC_ARG_WITH(silc-libs, [AS_HELP_STRING([--with-silc-libs=DIR], [compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
 have_silc="no"
@@ -1156,8 +1162,8 @@ fi
 dnl #######################################################################
 dnl # Check for Gadu-Gadu client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
+AC_ARG_WITH(gadu-includes, [AS_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
+AC_ARG_WITH(gadu-libs, [AS_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
 GADU_LIBGADU_VERSION=1.11.2
@@ -1260,7 +1266,7 @@ AC_SUBST(GADU_LIBGADU_VERSION)
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 DYNAMIC_PRPLS=all
-AC_ARG_WITH(static-prpls, [AC_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
+AC_ARG_WITH(static-prpls, [AS_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 	DYNAMIC_PRPLS=""
 fi
@@ -1322,7 +1328,7 @@ for i in $STATIC_PRPLS ; do
 		simple)		static_simple=yes ;;
 		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
-		*)			echo "Invalid static protocol $i!!" ; exit ;;
+		*)			echo "Invalid static protocol $i!!" ; exit 1 ;;
 	esac
 done
 AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes")
@@ -1343,7 +1349,7 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init(void) { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
-AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
+AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
@@ -1376,23 +1382,19 @@ for i in $DYNAMIC_PRPLS ; do
 		simple)		dynamic_simple=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
-		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
+		*)			echo "Invalid dynamic protocol $i!!" ; exit 1 ;;
 	esac
 done
 
-AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
-AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")
-AC_ARG_WITH(zephyr, [AC_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
+AC_ARG_ENABLE(plugins, [AS_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
+AC_ARG_WITH(krb4, [AS_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")
+AC_ARG_WITH(zephyr, [AS_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
 AC_CHECK_HEADERS(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
-
-if test \( "x$static_gg" = "xyes" -o "x$dynamic_gg" = "xyes" \) -a "x$enable_json" != "xyes" ; then
-	AC_MSG_ERROR([json-glib-1.0 not found (required, when compiling with Gadu-Gadu support)])
-fi
+AC_ARG_ENABLE(fortify, [AS_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
 DEBUG_CFLAGS="$DEBUG_CFLAGS -DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED"
 if test "x$GCC" = "xyes"; then
@@ -1485,8 +1487,8 @@ dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AC_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
+AC_ARG_ENABLE(dbus, [AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
+AC_ARG_ENABLE(nm, [AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1544,7 +1546,7 @@ dnl Alternatively, these python scripts could be rewritten
 dnl in C (brrrr ...).
 
 AC_ARG_WITH([python],
-			AC_HELP_STRING([--with-python=PATH],
+			AS_HELP_STRING([--with-python=PATH],
 						   [which python interpreter to use for dbus code generation]),
 			PYTHON=$withval)
 
@@ -1578,7 +1580,7 @@ dnl # This is still prone to error if one of the legacy directories exist
 dnl # although a newer dbus is installed.  But I have tried to order the
 dnl # directory searching to keep this situation at a minimum.
 dnl ###########################################################################
-AC_ARG_WITH(dbus-services, [AC_HELP_STRING([--with-dbus-services=<dir>], [where the D-Bus services directory is located.])])
+AC_ARG_WITH(dbus-services, [AS_HELP_STRING([--with-dbus-services=<dir>], [where the D-Bus services directory is located.])])
 
 DBUS_SERVICES_DIR=""
 
@@ -1659,7 +1661,7 @@ AC_SUBST(PY_LIBS)
 dnl #######################################################################
 dnl # Check for Mono support
 dnl #######################################################################
-AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
+AC_ARG_ENABLE(mono, [AS_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
 if test x"$enable_mono" = x"yes" ; then
 	PKG_CHECK_MODULES(MONO, mono, [
 		AC_SUBST(MONO_CFLAGS)
@@ -1700,7 +1702,7 @@ AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
-AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
+AC_ARG_ENABLE(perl, [AS_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
 
 if test "$enable_plugins" = no ; then
 	enable_perl=no
@@ -1823,7 +1825,7 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
-AC_ARG_WITH(system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])], [ssl_certificates_dir=$withval])
+AC_ARG_WITH(system-ssl-certs, [AS_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])], [ssl_certificates_dir=$withval])
 
 SSL_CERTIFICATES_DIR=""
 if ! test -z "$ssl_certificates_dir" ; then
@@ -1893,7 +1895,7 @@ if test "x$enable_gnutls" != "xno"; then
 	fi
 
 	AC_ARG_WITH(gnutls-libs,
-		[AC_HELP_STRING([--with-gnutls-libs=PREFIX], [location of GnuTLS libraries.])],
+		[AS_HELP_STRING([--with-gnutls-libs=PREFIX], [location of GnuTLS libraries.])],
 		[ with_gnutls_libs="$withval" ])
 
 	if test "x$with_gnutls_libs"     != "xno" -a \
@@ -1908,8 +1910,8 @@ if test "x$enable_gnutls" != "xno"; then
 
 		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
 		[
-			LIBS="$LIBS $with_gnutls_libs -lgnutls -lgcrypt"
-			AC_TRY_LINK_FUNC(gnutls_init, ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
+			LIBS="$LIBS $with_gnutls_libs -lgnutls"
+			AC_LINK_IFELSE([AC_LANG_CALL([], [gnutls_init])], ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
 			LIBS="$LIBS_save"
 		])
 
@@ -1917,7 +1919,7 @@ if test "x$enable_gnutls" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
 			AC_DEFINE(HAVE_SSL)
 			msg_gnutls="GnuTLS"
-			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
+			GNUTLS_LIBS="$with_gnutls_libs -lgnutls"
 
 			enable_gnutls="yes"
 		else
@@ -1980,19 +1982,19 @@ if test "x$enable_nss" != "xno"; then
 	looked_for_nss="yes"
 
 	AC_ARG_WITH(nspr-includes,
-		[AC_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
+		[AS_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
 		[with_nspr_includes="$withval"])
 
 	AC_ARG_WITH(nspr-libs,
-		[AC_HELP_STRING([--with-nspr-libs=PREFIX], [specify location of Mozilla nspr4 libs.])],
+		[AS_HELP_STRING([--with-nspr-libs=PREFIX], [specify location of Mozilla nspr4 libs.])],
 		[with_nspr_libs="$withval"])
 
 	AC_ARG_WITH(nss-includes,
-		[AC_HELP_STRING([--with-nss-includes=PREFIX], [specify location of Mozilla nss3 includes.])],
+		[AS_HELP_STRING([--with-nss-includes=PREFIX], [specify location of Mozilla nss3 includes.])],
 		[with_nss_includes="$withval"])
 
 	AC_ARG_WITH(nss-libs,
-		[AC_HELP_STRING([--with-nss-libs=PREFIX], [specify location of Mozilla nss3 libs.])],
+		[AS_HELP_STRING([--with-nss-libs=PREFIX], [specify location of Mozilla nss3 libs.])],
 		[with_nss_libs="$withval"])
 
 
@@ -2112,7 +2114,7 @@ if test "x$enable_nss" != "xno"; then
 					LDFLAGS="$LDFLAGS"
 				fi
 
-				AC_TRY_LINK_FUNC(PR_Init,
+				AC_LINK_IFELSE([AC_LANG_CALL([], [PR_Init])],
 					[ac_cv_moz_nspr_libs="yes"],
 					[ac_cv_moz_nspr_libs="no"])
 
@@ -2200,7 +2202,7 @@ if test "x$enable_nss" != "xno"; then
 				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 				LIBS="$nsslibs $nsprlibs"
 
-				AC_TRY_LINK_FUNC(NSS_Init,
+				AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
 					[ac_cv_moz_nss_libs="yes"],
 					[ac_cv_moz_nss_libs="no"])
 
@@ -2208,7 +2210,7 @@ if test "x$enable_nss" != "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
-					AC_TRY_LINK_FUNC(NSS_Init,
+					AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
 						[ac_cv_moz_nss_libs="yes"],
 						[ac_cv_moz_nss_libs="no"])
 				fi
@@ -2280,9 +2282,9 @@ fi
 dnl #######################################################################
 dnl # Check for Tcl
 dnl #######################################################################
-AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl],
+AC_ARG_ENABLE(tcl, [AS_HELP_STRING([--disable-tcl],
 	[compile without Tcl scripting])], enable_tcl="$enableval", enable_tcl="yes")
-AC_ARG_WITH(tclconfig, [AC_HELP_STRING([--with-tclconfig=DIR],
+AC_ARG_WITH(tclconfig, [AS_HELP_STRING([--with-tclconfig=DIR],
 	[directory containing tclConfig.sh])])
 
 if test "$enable_plugins" = no; then
@@ -2359,9 +2361,9 @@ fi
 dnl #######################################################################
 dnl # Check for Tk
 dnl #######################################################################
-AC_ARG_ENABLE(tk, [AC_HELP_STRING([--disable-tk],
+AC_ARG_ENABLE(tk, [AS_HELP_STRING([--disable-tk],
 	[compile without Tcl support for Tk])], enable_tk="$enableval", enable_tk="yes")
-AC_ARG_WITH(tkconfig, [AC_HELP_STRING([--with-tkconfig=DIR],
+AC_ARG_WITH(tkconfig, [AS_HELP_STRING([--with-tkconfig=DIR],
 	[directory containing tkConfig.sh])])
 
 if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
@@ -2443,7 +2445,7 @@ dnl #######################################################################
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
 AC_SUBST(SASL_LIBS)
-AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
+AC_ARG_ENABLE(cyrus-sasl, AS_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
 if test "x$enable_cyrus_sasl" = "xyes" ; then
 	AC_CHECK_LIB(sasl2, sasl_client_init, [
 			AM_CONDITIONAL(USE_CYRUS_SASL, true)
@@ -2594,14 +2596,14 @@ AC_SUBST(CHECK_LIBS)
 dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
-AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files - Pidgin still needs them!]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+AC_ARG_ENABLE(pixmaps-install, AS_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files - Pidgin still needs them!]), enable_pixmaps="$enableval", enable_pixmaps=yes)
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
 
 dnl #######################################################################
 dnl # Tweak status tray icon installation directory
 dnl #######################################################################
-AC_ARG_ENABLE(trayicon-compat, AC_HELP_STRING([--enable-trayicon-compat], [install tray icons in location compatible with older releases of hicolor-icon-theme]), enable_traycompat="$enableval", enable_traycompat=no)
+AC_ARG_ENABLE(trayicon-compat, AS_HELP_STRING([--enable-trayicon-compat], [install tray icons in location compatible with older releases of hicolor-icon-theme]), enable_traycompat="$enableval", enable_traycompat=no)
 
 AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 
@@ -2609,15 +2611,15 @@ dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
 AC_ARG_ENABLE(doxygen,
-	[AC_HELP_STRING([--disable-doxygen],
+	[AS_HELP_STRING([--disable-doxygen],
 		[disable documentation with doxygen])],
 	enable_doxygen="$enableval", enable_doxygen="yes")
 AC_ARG_ENABLE(dot,
-	[AC_HELP_STRING([--disable-dot],
+	[AS_HELP_STRING([--disable-dot],
 		[disable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
 AC_ARG_ENABLE(devhelp,
-	[AC_HELP_STRING([--disable-devhelp],
+	[AS_HELP_STRING([--disable-devhelp],
 		[disable building index for devhelp documentation browser])],
 	enable_devhelp="$enableval", enable_devhelp="yes")
 
@@ -2662,7 +2664,7 @@ AC_SUBST(enable_devhelp)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
 
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
+AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
 
 if test "x$enable_debug" = "xyes" ; then
@@ -2783,7 +2785,6 @@ echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with GCR widgets........ : $enable_gcr
-echo Build with JSON support....... : $enable_json
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono

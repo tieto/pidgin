@@ -28,9 +28,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#ifndef _WIN32
-# include <X11/Xlib.h>
-#else
+#ifdef _WIN32
 # ifdef small
 #  undef small
 # endif
@@ -1412,7 +1410,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		}
 		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
 		shortname = shortname ? shortname + 1 : data->filename;
-		id = purple_imgstore_add_with_id(filedata, size, shortname);
+		id = purple_imgstore_new_with_id(filedata, size, shortname);
 
 		gtk_webview_insert_image(GTK_WEBVIEW(gtkconv->entry), id);
 		purple_imgstore_unref_by_id(id);
@@ -2021,7 +2019,7 @@ repopulate_autocomplete(gpointer something, gpointer data)
 }
 
 void
-pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
+pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
 {
 	PidginCompletionData *data;
 

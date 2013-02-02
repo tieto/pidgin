@@ -119,6 +119,11 @@ typedef struct
 	GtkWidget *protocol_menu;
 	GtkWidget *password_box;
 	GtkWidget *username_entry;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkRGBA username_entry_hint_color;
+#else
+	GdkColor *username_entry_hint_color;
+#endif
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
 	GtkWidget *remember_pass_check;
@@ -184,7 +189,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	if (data != NULL)
 	{
 		if (len > 0)
-			dialog->icon_img = purple_imgstore_add(data, len, new_icon_path);
+			dialog->icon_img = purple_imgstore_new(data, len, new_icon_path);
 		else
 			g_free(data);
 	}
@@ -266,30 +271,6 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 	}
 }
 
-static gboolean
-username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
-{
-	GHashTable *table;
-	const char *label;
-
-	if (!dialog->prpl_info || ! PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(
-		dialog->prpl_info, get_account_text_table)) {
-		return FALSE;
-	}
-
-	table = dialog->prpl_info->get_account_text_table(NULL);
-	label = g_hash_table_lookup(table, "login_label");
-
-	if(!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
-		gtk_entry_set_text(GTK_ENTRY(widget), "");
-		gtk_widget_modify_text(widget, GTK_STATE_NORMAL,NULL);
-	}
-
-	g_hash_table_destroy(table);
-
-	return FALSE;
-}
-
 static void
 username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
@@ -317,10 +298,38 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	}
 }
 
+#if !GTK_CHECK_VERSION(3,2,0)
+static gboolean
+username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+{
+	GHashTable *table;
+	const char *label;
+
+	if (!dialog->prpl_info || ! PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(
+		dialog->prpl_info, get_account_text_table)) {
+		return FALSE;
+	}
+
+	table = dialog->prpl_info->get_account_text_table(NULL);
+	label = g_hash_table_lookup(table, "login_label");
+
+	if(!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
+		gtk_entry_set_text(GTK_ENTRY(widget), "");
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_color(widget, GTK_STATE_NORMAL, NULL);
+#else
+		gtk_widget_modify_text(widget, GTK_STATE_NORMAL,NULL);
+#endif
+	}
+
+	g_hash_table_destroy(table);
+
+	return FALSE;
+}
+
 static gboolean
 username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
-	GdkColor color = {0, 34952, 35466, 34181};
 	GHashTable *table = NULL;
 	const char *label = NULL;
 
@@ -336,7 +345,11 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 			gtk_entry_set_text(GTK_ENTRY(widget), label);
 			/* Make sure we can hit it again */
 			g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
-			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
+#if GTK_CHECK_VERSION(3,0,0)
+			gtk_widget_override_color(widget, GTK_STATE_NORMAL, &dialog->username_entry_hint_color);
+#else
+			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, dialog->username_entry_hint_color);
+#endif
 		}
 
 		g_hash_table_destroy(table);
@@ -344,6 +357,84 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 
 	return FALSE;
 }
+
+static gboolean
+username_themechange_cb(GObject *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+{
+	GHashTable *table;
+	const char *label, *text;
+	char *temp_text = NULL;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+	GtkBorder border;
+#else
+	GtkStyle *style;
+	const GtkBorder *border = NULL;
+#endif
+	gint xsize;
+
+	table = dialog->prpl_info->get_account_text_table(NULL);
+	label = g_hash_table_lookup(table, "login_label");
+	text = gtk_entry_get_text(GTK_ENTRY(widget));
+
+	g_signal_handlers_block_by_func(widget, G_CALLBACK(username_themechange_cb), dialog);
+	g_signal_handlers_block_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
+	if (strcmp(text, label)) {
+		temp_text = g_strdup(text);
+		gtk_entry_set_text(GTK_ENTRY(widget), label);
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_color(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+#else
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+#endif
+	}
+
+#if GTK_CHECK_VERSION(3,0,0)
+	context = gtk_widget_get_style_context(dialog->username_entry);
+	gtk_style_context_get_color(context, GTK_STATE_FLAG_INSENSITIVE,
+	                            &dialog->username_entry_hint_color);
+#else
+	style = gtk_rc_get_style(dialog->username_entry);
+	dialog->username_entry_hint_color = &(style->fg[GTK_STATE_INSENSITIVE]);
+#endif
+
+	pango_layout_get_pixel_size(gtk_entry_get_layout(GTK_ENTRY(widget)), &xsize, NULL);
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_style_context_get_margin(context, GTK_STATE_FLAG_NORMAL, &border);
+	xsize += border.left + border.right;
+	gtk_style_context_get_padding(context, GTK_STATE_FLAG_NORMAL, &border);
+	xsize += border.left + border.right;
+#else
+	xsize += 2 * style->xthickness;
+	gtk_style_get(style, GTK_TYPE_ENTRY, "inner-border", &border, NULL);
+	if (border)
+		xsize += border->left + border->right;
+	else
+		xsize += 4; /* 2 * default inner-border */
+#endif
+	gtk_widget_set_size_request(GTK_WIDGET(widget), xsize, -1);
+	if (temp_text) {
+		gtk_entry_set_text(GTK_ENTRY(widget), temp_text);
+		g_free(temp_text);
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_color(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+#else
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, NULL);
+#endif
+	} else
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_color(GTK_WIDGET(widget), GTK_STATE_NORMAL, &dialog->username_entry_hint_color);
+#else
+		gtk_widget_modify_text(GTK_WIDGET(widget), GTK_STATE_NORMAL, dialog->username_entry_hint_color);
+#endif
+
+	g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_themechange_cb), dialog);
+	g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
+	g_hash_table_destroy(table);
+
+	return FALSE;
+}
+#endif
 
 static void
 register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
@@ -354,8 +445,10 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
 	int register_noscreenname = (opt_noscreenname && register_checked);
 
+#if !GTK_CHECK_VERSION(3,2,0)
 	/* get rid of login_label in username field */
 	username_focus_cb(dialog->username_entry, NULL, dialog);
+#endif
 
 	if (register_noscreenname) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), "");
@@ -373,7 +466,9 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 				!= '\0');
 	}
 
+#if !GTK_CHECK_VERSION(3,2,0)
 	username_nofocus_cb(dialog->username_entry, NULL, dialog);
+#endif
 }
 
 static void
@@ -531,18 +626,24 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (!username && dialog->prpl_info
 			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
-		GdkColor color = {0, 34952, 35466, 34181};
 		GHashTable *table;
 		const char *label;
 		table = dialog->prpl_info->get_account_text_table(NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
+#if GTK_CHECK_VERSION(3,2,0)
+		gtk_entry_set_placeholder_text(GTK_ENTRY(dialog->username_entry), label);
+#else
 		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), label);
+		username_themechange_cb(G_OBJECT(dialog->username_entry), NULL, dialog);
+		g_signal_connect(G_OBJECT(dialog->username_entry), "style-set",
+				G_CALLBACK(username_themechange_cb), dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-in-event",
 				G_CALLBACK(username_focus_cb), dialog);
 		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-out-event",
 				G_CALLBACK(username_nofocus_cb), dialog);
-		gtk_widget_modify_text(dialog->username_entry, GTK_STATE_NORMAL, &color);
+#endif
+
 		g_hash_table_destroy(table);
 	}
 
@@ -617,10 +718,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
@@ -935,10 +1032,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				else if (purple_account_option_string_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 				}
 
 				if (str_value != NULL && str_hints)
@@ -1176,10 +1269,6 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->proxy_pass_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&
@@ -2583,18 +2672,93 @@ free_auth_request(struct auth_request *ar)
 }
 
 static void
-authorize_and_add_cb(struct auth_request *ar)
+authorize_and_add_cb(struct auth_request *ar, const char *message)
 {
-	ar->auth_cb(ar->data);
+	ar->auth_cb(message, ar->data);
 	if (ar->add_buddy_after_auth) {
 		purple_blist_request_add_buddy(ar->account, ar->username, NULL, ar->alias);
 	}
 }
 
 static void
-deny_no_add_cb(struct auth_request *ar)
+authorize_noreason_cb(struct auth_request *ar)
 {
-	ar->deny_cb(ar->data);
+	authorize_and_add_cb(ar, NULL);
+}
+
+static void
+authorize_reason_cb(struct auth_request *ar)
+{
+	const char *protocol_id;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	protocol_id = purple_account_get_protocol_id(ar->account);
+	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+
+	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
+		/* Duplicate information because ar is freed by closing minidialog */
+		struct auth_request *aa = g_new0(struct auth_request, 1);
+		aa->auth_cb = ar->auth_cb;
+		aa->deny_cb = ar->deny_cb;
+		aa->data = ar->data;
+		aa->account = ar->account;
+		aa->username = g_strdup(ar->username);
+		aa->alias = g_strdup(ar->alias);
+		aa->add_buddy_after_auth = ar->add_buddy_after_auth;
+		purple_request_input(ar->account, NULL, _("Authorization acceptance message:"),
+		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
+		                     _("OK"), G_CALLBACK(authorize_and_add_cb),
+		                     _("Cancel"), G_CALLBACK(authorize_noreason_cb),
+		                     ar->account, ar->username, NULL,
+		                     aa);
+		/* FIXME: aa is going to leak now. */
+	} else {
+		authorize_noreason_cb(ar);
+	}
+}
+
+static void
+deny_no_add_cb(struct auth_request *ar, const char *message)
+{
+	ar->deny_cb(message, ar->data);
+}
+
+static void
+deny_noreason_cb(struct auth_request *ar)
+{
+	ar->deny_cb(NULL, ar->data);
+}
+
+static void
+deny_reason_cb(struct auth_request *ar)
+{
+	const char *protocol_id;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	protocol_id = purple_account_get_protocol_id(ar->account);
+	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+
+	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {
+		/* Duplicate information because ar is freed by closing minidialog */
+		struct auth_request *aa = g_new0(struct auth_request, 1);
+		aa->auth_cb = ar->auth_cb;
+		aa->deny_cb = ar->deny_cb;
+		aa->data = ar->data;
+		aa->add_buddy_after_auth = ar->add_buddy_after_auth;
+		purple_request_input(ar->account, NULL, _("Authorization denied message:"),
+		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
+		                     _("OK"), G_CALLBACK(deny_no_add_cb),
+		                     _("Cancel"), G_CALLBACK(deny_noreason_cb),
+		                     ar->account, ar->username, NULL,
+		                     aa);
+		/* FIXME: aa is going to leak now. */
+	} else {
+		deny_noreason_cb(ar);
+	}
 }
 
 static gboolean
@@ -2637,43 +2801,41 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	GdkPixbuf *prpl_icon;
 	struct auth_request *aa;
 	const char *our_name;
-	gboolean have_valid_alias = alias && *alias;
+	gboolean have_valid_alias;
+	char *escaped_remote_user;
+	char *escaped_alias;
+	char *escaped_our_name;
+	char *escaped_message;
 
 	gc = purple_account_get_connection(account);
-	if (message != NULL && *message == '\0')
-		message = NULL;
+	if (message != NULL && *message != '\0')
+		escaped_message = g_markup_escape_text(message, -1);
+	else
+		escaped_message = g_strdup("");
 
 	our_name = (id != NULL) ? id :
 			(purple_connection_get_display_name(gc) != NULL) ? purple_connection_get_display_name(gc) :
 			purple_account_get_username(account);
+	escaped_our_name = g_markup_escape_text(our_name, -1);
 
-	if (pidgin_mini_dialog_links_supported()) {
-		char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
-		char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
-		char *escaped_our_name = g_markup_escape_text(our_name, -1);
-		char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
-		buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-					escaped_remote_user,
-					(have_valid_alias ? " ("  : ""),
-					escaped_alias,
-					(have_valid_alias ? ")"   : ""),
-					escaped_our_name,
-					(have_valid_alias ? ": " : "."),
-					escaped_message);
-		g_free(escaped_remote_user);
-		g_free(escaped_alias);
-		g_free(escaped_our_name);
-		g_free(escaped_message);
-	} else {
-		buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-					remote_user,
-					(have_valid_alias ? " ("  : ""),
-					(have_valid_alias ? alias : ""),
-					(have_valid_alias ? ")"   : ""),
-					our_name,
-					(message != NULL ? ": " : "."),
-					(message != NULL ? message  : ""));
-	}
+	escaped_remote_user = g_markup_escape_text(remote_user, -1);
+
+	have_valid_alias = alias && *alias;
+	escaped_alias = have_valid_alias ? g_markup_escape_text(alias, -1) : g_strdup("");
+
+	buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+				escaped_remote_user,
+				(have_valid_alias ? " ("  : ""),
+				escaped_alias,
+				(have_valid_alias ? ")"   : ""),
+				escaped_our_name,
+				(have_valid_alias ? ": " : "."),
+				escaped_message);
+
+	g_free(escaped_remote_user);
+	g_free(escaped_alias);
+	g_free(escaped_our_name);
+	g_free(escaped_message);
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -2689,15 +2851,13 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	alert = pidgin_make_mini_dialog_with_custom_icon(
 		gc, prpl_icon,
 		_("Authorize buddy?"), NULL, aa,
-		_("Authorize"), authorize_and_add_cb,
-		_("Deny"), deny_no_add_cb,
+		_("Authorize"), authorize_reason_cb,
+		_("Deny"), deny_reason_cb,
 		NULL);
 
 	dialog = PIDGIN_MINI_DIALOG(alert);
-	if (pidgin_mini_dialog_links_supported()) {
-		pidgin_mini_dialog_enable_description_markup(dialog);
-		pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
-	}
+	pidgin_mini_dialog_enable_description_markup(dialog);
+	pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
 	pidgin_mini_dialog_set_description(dialog, buffer);
 	pidgin_mini_dialog_add_non_closing_button(dialog, _("Send Instant Message"), send_im_cb, aa);
 

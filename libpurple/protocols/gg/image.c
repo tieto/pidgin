@@ -175,7 +175,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	GList *it;
 	uint64_t id;
 	
-	stored_id = purple_imgstore_add_with_id(
+	stored_id = purple_imgstore_new_with_id(
 		g_memdup(image_reply->image, image_reply->size),
 		image_reply->size,
 		image_reply->filename);

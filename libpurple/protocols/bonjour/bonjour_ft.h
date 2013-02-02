@@ -50,6 +50,8 @@ struct _XepXfer
 	char *jid;
 	char *proxy_host;
 	int proxy_port;
+	xmlnode *streamhost;
+	PurpleBuddy *pb;
 };
 
 /**

@@ -174,37 +174,17 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 	Tcl_Interp *interp;
 	Tcl_Parse parse;
 	Tcl_Obj *result, **listitems;
-	struct stat st;
-	FILE *fp;
-	char *buf, *cur;
+	char *buf;
 	const char *next;
-	int len, found = 0, err = 0, nelems;
+	int found = 0, err = 0, nelems;
+	gsize len;
 	gboolean status = FALSE;
-	if ((fp = g_fopen(plugin->path, "r")) == NULL)
-		return FALSE;
-	if (fstat(fileno(fp), &st)) {
-		fclose(fp);
-		return FALSE;
-	}
-	len = st.st_size;
 
-	buf = g_malloc(len + 1);
-
-	cur = buf;
-	while (fgets(cur, GPOINTER_TO_INT(buf) - (buf - cur), fp)) {
-		cur += strlen(cur);
-		if (feof(fp))
-			break;
-	}
-
-	if (ferror(fp)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, g_strerror(errno));
-		g_free(buf);
-		fclose(fp);
+	if (!g_file_get_contents(plugin->path, &buf, &len, NULL)) {
+		purple_debug(PURPLE_DEBUG_INFO, "tcl", "Error opening plugin %s\n",
+			     plugin->path);
 		return FALSE;
 	}
-
-	fclose(fp);
 
 	if ((interp = tcl_create_interp()) == NULL) {
 		return FALSE;

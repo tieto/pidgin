@@ -58,7 +58,7 @@
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
-#if USE_VV
+#ifdef USE_VV
 #include "media-gst.h"
 #if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
@@ -123,7 +123,7 @@ static GtkListStore *prefs_conv_variants;
 static GtkListStore *prefs_status_icon_themes;
 static GtkListStore *prefs_smiley_themes;
 
-#if USE_VV
+#ifdef USE_VV
 
 static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"alsasrc",	"ALSA",
@@ -733,6 +733,19 @@ prefs_themes_init(void)
 	prefs_smiley_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 }
 
+/**
+ * Attempt to load the given directory as a theme.  If we are unable to
+ * open the path as a theme then we recurse into path and attempt to
+ * load each subdirectory that we encounter.
+ *
+ * @param path A directory containing a theme.  The theme could be at the
+ *        top level of this directory or in any subdirectory thereof.
+ * @param type The type of theme to load.  The loader for this theme type
+ *        will be used and this loader will determine what constitutes a
+ *        "theme."
+ *
+ * @return A new reference to a PurpleTheme.
+ */
 static PurpleTheme *
 prefs_theme_find_theme(const gchar *path, const gchar *type)
 {
@@ -876,7 +889,11 @@ theme_install_theme(char *path, struct theme_info *info)
 						 "purple", info->type, NULL);
 
 			/* move the entire directory to new location */
-			g_rename(purple_theme_get_dir(theme), theme_dest);
+			if (g_rename(purple_theme_get_dir(theme), theme_dest)) {
+				purple_debug_error("gtkprefs", "Error renaming %s to %s: "
+						"%s\n", purple_theme_get_dir(theme), theme_dest,
+						g_strerror(errno));
+			}
 
 			g_free(theme_dest);
 			g_remove(destdir);
@@ -920,14 +937,21 @@ theme_install_theme(char *path, struct theme_info *info)
 				if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
 					purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
 
-				g_rename(purple_theme_get_dir(theme), theme_dest);
+				if (g_rename(purple_theme_get_dir(theme), theme_dest)) {
+					purple_debug_error("gtkprefs", "Error renaming %s to %s: "
+							"%s\n", purple_theme_get_dir(theme), theme_dest,
+							g_strerror(errno));
+				}
 
 				g_free(theme_dest);
 				g_object_unref(theme);
 
 				prefs_themes_refresh();
 			} else {
-				g_remove(temp_path);
+				if (g_remove(temp_path)) {
+					purple_debug_error("gtkprefs", "Error removing %s: %s\n",
+							temp_path, g_strerror(errno));
+				}
 				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
 			}
 		} else {
@@ -2435,10 +2459,6 @@ proxy_page(void)
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-		if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-			gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
 
@@ -3018,7 +3038,7 @@ away_page(void)
 	return ret;
 }
 
-#if USE_VV
+#ifdef USE_VV
 static GList *
 get_vv_element_devices(const gchar *element_name)
 {
@@ -3377,10 +3397,9 @@ toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
 }
 
 static void
-volume_changed_cb(GtkScaleButton *button, gpointer data)
+volume_changed_cb(GtkScaleButton *button, gdouble value, gpointer data)
 {
-	purple_prefs_set_int("/purple/media/audio/volume/input",
-	                     gtk_scale_button_get_value(GTK_SCALE_BUTTON(button)) * 100);
+	purple_prefs_set_int("/purple/media/audio/volume/input", value * 100);
 }
 
 static void
@@ -3655,7 +3674,7 @@ prefs_notebook_init(void)
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 	prefs_notebook_add_page(_("Themes"), theme_page(), notebook_page++);
-#if USE_VV
+#ifdef USE_VV
 	prefs_notebook_add_page(_("Voice/Video"), vv_page(), notebook_page++);
 #endif
 }
@@ -3789,7 +3808,7 @@ pidgin_prefs_init(void)
 	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
-#if USE_VV
+#ifdef USE_VV
 	/* Voice/Video */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio");

@@ -78,7 +78,7 @@ char *gg_vsaprintf(const char *format, va_list ap)
 		size = 128;
 		do {
 			size *= 2;
-			if (!(tmp = realloc(buf, size))) {
+			if (!(tmp = realloc(buf, size + 1))) {
 				free(buf);
 				return NULL;
 			}
@@ -268,6 +268,7 @@ int gg_connect(void *addr, int port, int async)
 		}
 	}
 
+	memset(&sin, 0, sizeof(sin));
 	sin.sin_port = htons(port);
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = a->s_addr;

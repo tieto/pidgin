@@ -109,6 +109,8 @@
 #define NS_GOOGLE_SESSION_PHONE "http://www.google.com/session/phone"
 #define NS_GOOGLE_SESSION_VIDEO "http://www.google.com/session/video"
 
+#define NS_GOOGLE_TRANSPORT_P2P "http://www.google.com/transport/p2p"
+
 /* Apple extension(s) */
 #define NS_APPLE_IDLE "http://www.apple.com/xmpp/idle"
 

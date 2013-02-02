@@ -74,7 +74,7 @@ static void version_fetch_cb(PurpleHttpConnection *hc,
 	if(!purple_http_response_is_successfull(response))
 		return;
 
-	changelog = purple_http_response_get_data(response);
+	changelog = purple_http_response_get_data(response, NULL);
 
 	while(changelog[i] && changelog[i] != '\n') i++;
 
@@ -113,7 +113,7 @@ do_check(void)
 		gchar *url;
 		const char *host = "pidgin.im";
 
-		url = g_strdup_printf("http://%s/version.php?version=%s&build=%s",
+		url = g_strdup_printf("https://%s/version.php?version=%s&build=%s",
 				host,
 				purple_core_get_version(),
 #ifdef _WIN32

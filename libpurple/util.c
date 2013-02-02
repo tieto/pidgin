@@ -32,6 +32,8 @@
 #include "prefs.h"
 #include "util.h"
 
+#include <json-glib/json-glib.h>
+
 struct _PurpleMenuAction
 {
 	char *label;
@@ -43,6 +45,8 @@ struct _PurpleMenuAction
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
+static JsonNode *escape_js_node = NULL;
+static JsonGenerator *escape_js_gen = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -124,8 +128,8 @@ void purple_menu_action_set_children(PurpleMenuAction *act, GList *children)
 void
 purple_util_init(void)
 {
-	/* This does nothing right now.  It exists for symmetry with
-	 * purple_util_uninit() and forwards compatibility. */
+	escape_js_node = json_node_new(JSON_NODE_VALUE);
+	escape_js_gen = json_generator_new();
 }
 
 void
@@ -138,6 +142,12 @@ purple_util_uninit(void)
 
 	g_free(user_dir);
 	user_dir = NULL;
+
+	json_node_free(escape_js_node);
+	escape_js_node = NULL;
+
+	g_object_unref(escape_js_gen);
+	escape_js_gen = NULL;
 }
 
 /**************************************************************************
@@ -2990,6 +3000,15 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 
+#ifndef _WIN32
+	/* Set file permissions */
+	if (fchmod(fileno(file), S_IRUSR | S_IWUSR) == -1)
+	{
+		purple_debug_error("util", "Error setting permissions of %s: %s\n",
+				filename_temp, g_strerror(errno));
+	}
+#endif
+
 	/* Write to file */
 	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
@@ -3068,15 +3087,6 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-
-#ifndef _WIN32
-	/* Set file permissions */
-	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
-	{
-		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
-						 filename_temp, g_strerror(errno));
-	}
-#endif
 
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
@@ -3389,12 +3399,7 @@ purple_socket_speaks_ipv4(int fd)
 gboolean
 purple_strequal(const gchar *left, const gchar *right)
 {
-#if GLIB_CHECK_VERSION(2,16,0)
 	return (g_strcmp0(left, right) == 0);
-#else
-	return ((left == NULL && right == NULL) ||
-	        (left != NULL && right != NULL && strcmp(left, right) == 0));
-#endif
 }
 
 const char *
@@ -4694,23 +4699,14 @@ purple_escape_filename(const char *str)
 
 gchar * purple_escape_js(const gchar *str)
 {
-	gchar *tmp, *esc;
+	gchar *escaped;
 
-	esc = tmp = purple_utf8_try_convert(str);
+	json_node_set_string(escape_js_node, str);
+	json_generator_set_root(escape_js_gen, escape_js_node);
+	escaped = json_generator_to_data(escape_js_gen, NULL);
+	json_node_set_boolean(escape_js_node, FALSE);
 
-	esc = purple_strreplace(esc, "\\", "\\\\");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "'", "\\'");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "\n", "\\n");
-	g_free(tmp); tmp = esc;
-
-	esc = purple_strreplace(esc, "\r", "");
-	g_free(tmp); tmp = esc;
-
-	return esc;
+	return escaped;
 }
 
 void purple_restore_default_signal_handlers(void)

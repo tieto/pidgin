@@ -78,25 +78,25 @@ account_alias_changed(PurpleAccount *account, const char *old, gpointer data)
 }
 
 static int
-account_authorization_requested_cb(PurpleAccount *account, const char *user, gpointer data)
+account_authorization_requested_cb(PurpleAccount *account, const char *user, const char *message, char *response, gpointer data)
 {
-	purple_debug_misc("signals test", "account-authorization-requested (%s, %s)\n",
-			purple_account_get_username(account), user);
-	return 0;
+	purple_debug_misc("signals test", "account-authorization-requested (%s, %s, %s)\n",
+			purple_account_get_username(account), user, message);
+	return PURPLE_ACCOUNT_RESPONSE_PASS;
 }
 
 static void
-account_authorization_granted_cb(PurpleAccount *account, const char *user, gpointer data)
+account_authorization_granted_cb(PurpleAccount *account, const char *user, const char *message, gpointer data)
 {
-	purple_debug_misc("signals test", "account-authorization-granted (%s, %s)\n",
-			purple_account_get_username(account), user);
+	purple_debug_misc("signals test", "account-authorization-granted (%s, %s, %s)\n",
+			purple_account_get_username(account), user, message);
 }
 
 static void
-account_authorization_denied_cb(PurpleAccount *account, const char *user, gpointer data)
+account_authorization_denied_cb(PurpleAccount *account, const char *user, const char *message, gpointer data)
 {
-	purple_debug_misc("signals test", "account-authorization-denied (%s, %s)\n",
-			purple_account_get_username(account), user);
+	purple_debug_misc("signals test", "account-authorization-denied (%s, %s, %s)\n",
+			purple_account_get_username(account), user, message);
 }
 
 /**************************************************************************

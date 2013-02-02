@@ -1592,7 +1592,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 		/* Disconnect others, if MPOP is disabled */
 		if (is_me
 		 && !session->enable_mpop
-		 && strncasecmp(id + 1, session->guid, 36) != 0) {
+		 && g_ascii_strncasecmp(id + 1, session->guid, 36) != 0) {
 			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
 
 			tmp = g_strdup_printf("%s;%s", user->passport, id);

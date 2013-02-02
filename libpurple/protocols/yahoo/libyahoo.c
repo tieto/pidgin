@@ -195,7 +195,7 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
 	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},

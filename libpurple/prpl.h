@@ -193,7 +193,19 @@ typedef enum
 	 * Indicates that this protocol supports sending a user-supplied message
 	 * along with an invitation.
 	 */
-	OPT_PROTO_INVITE_MESSAGE = 0x00000800
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an authorization acceptance.
+	 */
+	OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE = 0x00001000,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an authorization denial.
+	 */
+	OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE = 0x00002000
 
 } PurpleProtocolOptions;
 
@@ -475,7 +487,7 @@ struct _PurplePluginProtocolInfo
 	 * On the other hand, both of these are invalid for protocols with
 	 * number-based usernames, so function should return NULL in such case.
 	 *
-	 * @param account  The account, that username is related with. Can
+	 * @param account  The account the username is related to. Can
 	 *                 be NULL.
 	 * @param who      The username to convert.
 	 * @return         Normalized username, or NULL, if it's invalid.

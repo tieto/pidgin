@@ -427,7 +427,7 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 	char*					statusmsg2;
 
 	/* Handle mood changes */
-	if ( purple_status_type_get_primitive(purple_status_get_type( status ) ) == PURPLE_STATUS_MOOD ) {
+	if ( purple_status_type_get_primitive( purple_status_get_type( status ) ) == PURPLE_STATUS_MOOD ) {
 		const char* moodid = purple_status_get_attr_string( status, PURPLE_MOOD_NAME );
 		int mood;
 
@@ -669,7 +669,7 @@ static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *ch
 
 static PurplePluginProtocolInfo proto_info = {
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
-	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE,			/* options */
+	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,	/* options */
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{						/* icon_spec */

@@ -1005,7 +1005,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 		/* Now the Buddy drop-down entry field. */
 		info->entry = gtk_entry_new();
-		pidgin_setup_screenname_autocomplete_with_filter(info->entry, NULL, chat_invite_filter,
+		pidgin_setup_screenname_autocomplete(info->entry, NULL, chat_invite_filter,
 				purple_conversation_get_account(conv));
 		gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);
@@ -3315,15 +3315,10 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			return FALSE;
 
 		buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
+		if (!buddy && gtkconv->webview) {
+			buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
 
-		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
-		 * removing "isolated" buddy nodes well */
-		if (purple_version_check(2, 0, 2) == NULL) {
-			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
-				buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
-			}
-
-			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
+			if (!buddy) {
 				buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
@@ -5776,9 +5771,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
-#if !GTK_CHECK_VERSION(2,12,0)
-	gtkconv->tooltips = gtk_tooltips_new();
-#endif
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
 	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme");
@@ -5996,10 +5988,6 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		purple_signals_disconnect_by_handle(gtkconv->u.chat);
 		g_free(gtkconv->u.chat);
 	}
-
-#if !GTK_CHECK_VERSION(2,12,0)
-	gtk_object_sink(GTK_OBJECT(gtkconv->tooltips));
-#endif
 
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
@@ -6725,6 +6713,47 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		pidgin_themes_smiley_themeize(gtkconv->webview);
 	}
 #endif
+
+
+	/* on rejoin only request message history from after this message */
+	if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV) &&
+		purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		PurpleChat *chat = purple_blist_find_chat(
+			purple_conversation_get_account(conv),
+			purple_conversation_get_name(conv));
+		if (chat) {
+			GHashTable *comps = purple_chat_get_components(chat);
+			time_t now, history_since, prev_history_since = 0;
+			struct tm *history_since_tm;
+			const char *history_since_s, *prev_history_since_s;
+
+			history_since = mtime + 1;
+
+			prev_history_since_s = g_hash_table_lookup(comps,
+				"history_since");
+			if (prev_history_since_s != NULL)
+				prev_history_since = purple_str_to_time(
+					prev_history_since_s, TRUE, NULL, NULL,
+					NULL);
+
+			now = time(NULL);
+			/* in case of incorrectly stored timestamps */
+			if (prev_history_since > now)
+				prev_history_since = now;
+			/* in case of delayed messages */
+			if (history_since < prev_history_since)
+				history_since = prev_history_since;
+
+			history_since_tm = gmtime(&history_since);
+			history_since_s = purple_utf8_strftime(
+				"%Y-%m-%dT%H:%M:%SZ", history_since_tm);
+			if (g_strcmp0(prev_history_since_s,
+				history_since_s) != 0)
+				g_hash_table_replace(comps,
+					g_strdup("history_since"),
+					g_strdup(history_since_s));
+		}
+	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
 		(type == PURPLE_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
@@ -8207,7 +8236,7 @@ account_signing_off(PurpleConnection *gc)
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
 						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
-					PURPLE_MESSAGE_SYSTEM, time(NULL));
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		}
 		list = list->next;
 	}
@@ -10226,7 +10255,7 @@ set_default_tab_colors(GtkWidget *widget)
 	gtk_css_provider_load_from_data(provider, str->str, str->len, &error);
 
 	gtk_style_context_add_provider(gtk_widget_get_style_context(widget),
-	                               provider,
+	                               GTK_STYLE_PROVIDER(provider),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	if (error)

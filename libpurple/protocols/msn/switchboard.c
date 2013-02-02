@@ -827,7 +827,7 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 		return;
 	}
 
-	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
+	imgid = purple_imgstore_new_with_id(image_data, image_len, NULL);
 	image_msg = g_strdup_printf("<IMG SRC='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
 	                            imgid);
 

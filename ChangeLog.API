@@ -78,10 +78,12 @@ version 3.0.0 (??/??/????):
 		* PidginDockletFlag
 
 		Changed:
+		* account-authorization-requested signal merged with account-authorization-requested-with-message signal
 		* purple_account_add_buddy now takes an invite message as the last
 		  parameter
 		* purple_account_add_buddies now takes an invite message as the last
 		  parameter
+		* purple_buddy_icon_unref no longer has a return value
 		* purple_certificate_check_signature_chain now returns a list of failing
 		  PurpleCertificate*s as the second parameter
 		* purple_connection_error now takes a PurpleConnectionError
@@ -89,6 +91,8 @@ version 3.0.0 (??/??/????):
 		* purple_conversation_get_gc renamed to
 		  purple_conversation_get_connection
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
+		* purple_imgstore_add renamed to purple_imgstore_new
+		* purple_imgstore_add_with_id renamed to purple_imgstore_new_with_id
 		* purple_network_listen now takes the protocol family as the second
 		  parameter
 		* purple_network_listen now takes a boolean indicating external port
@@ -103,6 +107,8 @@ version 3.0.0 (??/??/????):
 		  a GList
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
+		* pidgin_setup_screenname_autocomplete now takes a filter function and
+		  its data as final two arguments
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_str_size_to_units now takes a goffset as the size parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
@@ -118,6 +124,9 @@ version 3.0.0 (??/??/????):
 		* purple_xfer_set_bytes_sent now takes a goffset as the bytes_sent
 		  parameter
 		* purple_xfer_set_size now takes a goffset as the size parameter
+		* PurpleCertificateVerificationStatus enumeration is now merged with
+		  internal flags, thus removing PURPLE_CERTIFICATE_INVALID and
+		  replacing it with more precise errors.
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
 		* PurpleXfer.bytes_remaining is now a goffset
@@ -142,6 +151,7 @@ version 3.0.0 (??/??/????):
 		* _PurplePrivacyType
 		* _PurpleSoundEventID
 		* _XMLNodeType
+		* account-authorization-requested-with-message signal
 		* GtkIMHtml.clipboard_html_string
 		* GtkIMHtml.clipboard_text_string
 		* GtkIMHtmlFontDetail
@@ -155,12 +165,16 @@ version 3.0.0 (??/??/????):
 		* pidgin_check_if_dir
 		* PIDGIN_DIALOG
 		* pidgin_dialogs_alias_contact
+		* pidgin_mini_dialog_links_supported
 		* pidgin_set_custom_buddy_icon
-		* pidgin_setup_screenname_autocomplete
+		* pidgin_setup_screenname_autocomplete_with_filter
 		* PidginBuddyList.connection_errors
 		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
+		* purple_blist_load
+		* purple_blist_new
+		* purple_set_blist
 		* purple_blist_update_buddy_icon
 		* purple_buddy_get_local_alias
 		* purple_buddy_icons_has_custom_icon
@@ -192,6 +206,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unregister_load_notify_cb
 		* purple_plugins_unregister_probe_notify_cb
 		* purple_plugins_unregister_unload_notify_cb
+		* purple_pounces_load
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* purple_proxy_connect_socks5
@@ -216,6 +231,7 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request, instead.
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request, instead.
+		* PurpleCertificateVerificationStatus.PURPLE_CERTIFICATE_INVALID
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite

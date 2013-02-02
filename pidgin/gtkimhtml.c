@@ -1758,7 +1758,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "weight", PANGO_WEIGHT_NORMAL,
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 			"invisible", FALSE,
 #endif
 			NULL);
@@ -2523,7 +2523,7 @@ static gboolean smooth_scroll_cb(gpointer data);
 [19:58] <Robot101> marv: images go into the imgstore, a refcounted... well.. hash. :)
 [19:59] <KingAnt> marv: I think the image tag used by the core is something like <img id="#"/>
 [19:59] Ro0tSiEgE robert42 RobFlynn Robot101 ross22 roz
-[20:00] <KingAnt> marv: Where the ID is the what is returned when you add the image to the imgstore using purple_imgstore_add
+[20:00] <KingAnt> marv: Where the ID is the what is returned when you add the image to the imgstore using purple_imgstore_new
 [20:00] <marv> Robot101: so how does the image get passed to serv_got_im() and serv_send_im()? just as the <img id="#" and then the prpl looks it up from the store?
 [20:00] <KingAnt> marv: Right
 [20:00] <marv> alright
@@ -3398,7 +3398,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 					wpos = g_snprintf (ws, len, "%s", tag);
 					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
 #else
@@ -3576,7 +3576,7 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 	GtkTextTag *tag;
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
 	if (tag)
@@ -3963,8 +3963,7 @@ static void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml,
 
 	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
 
-	if(!gtk_check_version(2, 4, 0))
-		g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
+	g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
 
 	gtk_widget_show(GTK_WIDGET(image->image));
 	gtk_widget_show(box);
@@ -5268,8 +5267,10 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		g_free(name);
 
 		if (tmp) {
-			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", tmp);
+			gchar *escaped = purple_markup_escape_text(tmp, -1);
+			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", escaped);
 			buf[sizeof(buf)-1] = '\0';
+			g_free(escaped);
 			return buf;
 		} else {
 			return "";

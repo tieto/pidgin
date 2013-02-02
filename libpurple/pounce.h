@@ -289,14 +289,6 @@ void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
 PurplePounce *purple_find_pounce(const PurpleAccount *pouncer,
 							 const char *pouncee, PurplePounceEvent events);
 
-
-/**
- * Loads the pounces.
- *
- * @return @c TRUE if the pounces could be loaded.
- */
-gboolean purple_pounces_load(void);
-
 /**
  * Registers a pounce handler for a UI.
  *

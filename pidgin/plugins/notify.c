@@ -96,16 +96,10 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#ifndef _WIN32
-#include <X11/Xatom.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#endif
-
 #define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
 static PurplePlugin *my_plugin = NULL;
-#ifndef _WIN32
+#ifdef HAVE_X11
 static GdkAtom _Cardinal = GDK_NONE;
 static GdkAtom _PurpleUnseenCount = GDK_NONE;
 #endif
@@ -525,7 +519,7 @@ handle_count_title(PidginWindow *purplewin)
 static void
 handle_count_xprop(PidginWindow *purplewin)
 {
-#ifndef _WIN32
+#ifdef HAVE_X11
 	guint count;
 	GtkWidget *window;
 	GdkWindow *gdkwin;
@@ -542,11 +536,7 @@ handle_count_xprop(PidginWindow *purplewin)
 	}
 
 	count = count_messages(purplewin);
-#if GTK_CHECK_VERSION(2,14,0)
 	gdkwin = gtk_widget_get_window(window);
-#else
-	gdkwin = window->window;
-#endif
 
 	gdk_property_change(gdkwin, _PurpleUnseenCount, _Cardinal, 32,
 	                    GDK_PROP_MODE_REPLACE, (guchar *) &count, 1);
@@ -757,7 +747,7 @@ get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_count");
 
-#ifndef _WIN32
+#ifdef HAVE_X11
 	/* Count xprop method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Insert count of new message into _X property"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);

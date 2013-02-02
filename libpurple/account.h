@@ -36,7 +36,7 @@ typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
-typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
+typedef void (*PurpleAccountRequestAuthorizationCb)(const char *, void *);
 typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
 typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
 typedef void (*PurpleSetPublicAliasSuccessCallback)(PurpleAccount *account, const char *new_alias);
@@ -97,7 +97,8 @@ struct _PurpleAccountUiOps
 
 	/** Prompt for authorization when someone adds this account to their buddy
 	 * list.  To authorize them to see this account's presence, call \a
-	 * authorize_cb (\a user_data); otherwise call \a deny_cb (\a user_data);
+	 * authorize_cb (\a message, \a user_data); otherwise call
+	 * \a deny_cb (\a message, \a user_data);
 	 * @return a UI-specific handle, as passed to #close_account_request.
 	 */
 	void *(*request_authorize)(PurpleAccount *account,

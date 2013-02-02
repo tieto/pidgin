@@ -60,7 +60,9 @@ struct tag {
 };
 
 
-#define		MXIT_VIBE_MSG_COLOR		"#9933FF"
+#define		MXIT_VIBE_MSG_COLOR			"#9933FF"
+#define		MXIT_FAREWELL_MSG_COLOR		"#949494"
+
 
 /* vibes */
 static const char*	vibes[] = {
@@ -594,7 +596,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	}
 
 	/* we now have the emoticon, store it in the imagestore */
-	id = purple_imgstore_add_with_id( em_data, em_size, NULL );
+	id = purple_imgstore_new_with_id( em_data, em_size, NULL );
 
 	/* map the mxit emoticon id to purple image id */
 	intptr = g_malloc( sizeof( int ) );
@@ -1003,6 +1005,12 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 					g_string_append_c( mx->msg, message[i] );
 					break;
 		}
+	}
+
+	if ( msgflags & CP_MSG_FAREWELL ) {
+		/* this is a farewell message */
+		g_string_prepend( mx->msg, "<font color=\""MXIT_FAREWELL_MSG_COLOR"\"><i>" );
+		g_string_append( mx->msg, "</i></font>" );
 	}
 }
 

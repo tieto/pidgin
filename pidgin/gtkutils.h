@@ -359,7 +359,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  *                    should be shown. This can be @c NULL.
  * @param user_data  The data to be passed to the filter_func function.
  */
-void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
+void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
 
 /**
  * The default filter function for username autocomplete.

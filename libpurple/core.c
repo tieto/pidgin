@@ -189,6 +189,9 @@ purple_core_init(const char *ui)
 	/* The UI may have registered some theme types, so refresh them */
 	purple_theme_manager_refresh();
 
+	/* Load the buddy list after UI init */
+	purple_blist_boot();
+
 	return TRUE;
 }
 
@@ -261,9 +264,11 @@ purple_core_quit(void)
 #endif
 
 	purple_cmds_uninit();
-	/* Everything after util_uninit cannot try to write things to the confdir */
-	purple_util_uninit();
 	purple_log_uninit();
+	/* Everything after util_uninit cannot try to write things to the
+	 * confdir nor use purple_escape_js
+	 */
+	purple_util_uninit();
 
 	purple_signals_uninit();
 

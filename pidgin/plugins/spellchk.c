@@ -319,6 +319,10 @@ spellchk_inside_word(GtkTextIter *iter)
 	 * Part 1 of 2: This marks . as being an inside-word character. */
 	if (c == '.')
 		return TRUE;
+	if (c == '+')
+		return TRUE;
+	if (c == '-')
+		return TRUE;
 
 	/* Avoid problems with \r, for example (SF #1289031). */
 	if (c == '\\')
