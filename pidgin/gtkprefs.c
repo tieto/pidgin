@@ -3288,7 +3288,7 @@ create_voice_pipeline(void)
 }
 
 static void
-on_volume_change_cb(GtkWidget *w, GstBin *pipeline)
+on_volume_change_cb(GtkWidget *w, gdouble value, GstBin *pipeline)
 {
 	GstElement *volume;
 
