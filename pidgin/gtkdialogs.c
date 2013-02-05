@@ -44,6 +44,12 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
+#ifndef _WIN32
+#ifdef USE_GSTREAMER
+#include <gst/gst.h>
+#endif
+#endif
+
 #include "gtk3compat.h"
 
 static GList *dialogwindows = NULL;
@@ -593,14 +599,10 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>SSL:</dt><dd>SSL support was <strong><em>NOT</em></strong> compiled!</dd>");
 #endif
 
-/* This might be useful elsewhere too, but it is particularly useful for
- * debugging stuff known to be GTK+/GLib bugs on Windows */
-#ifdef _WIN32
 	g_string_append_printf(str, "<dt>GTK+ Runtime:</dt><dd>%u.%u.%u</dd>"
 		"<dt>GLib Runtime:</dt><dd>%u.%u.%u</dd>",
 		gtk_major_version, gtk_minor_version, gtk_micro_version,
 		glib_major_version, glib_minor_version, glib_micro_version);
-#endif
 
 	g_string_append(str, "</dl><h3>Library Support</h3><dl>");
 
@@ -648,7 +650,9 @@ void pidgin_dialogs_buildinfo(void)
 
 #ifndef _WIN32
 #ifdef USE_GSTREAMER
-	g_string_append(str, "<dt>GStreamer:</dt><dd>Enabled</dd>");
+	tmp = gst_version_string();
+	g_string_append_printf(str, "<dt>GStreamer:</dt><dd>%s</dd>", tmp);
+	g_free(tmp);
 #else
 	g_string_append(str, "<dt>GStreamer:</dt><dd>Disabled</dd>");
 #endif
