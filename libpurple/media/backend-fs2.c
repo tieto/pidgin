@@ -838,6 +838,17 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static void
+purple_media_error_fs(PurpleMedia *media, const gchar *error,
+		const GstStructure *fs_error)
+{
+	const gchar *error_msg = gst_structure_get_string(fs_error, "error-msg");
+
+	purple_media_error(media, "%s%s%s", error,
+	                   error_msg ? _("\n\nMessage from Farsight: ") : "",
+	                   error_msg ? error_msg : "");
+}
+
+static void
 gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaBackendFs2 *self)
 {
@@ -910,25 +921,57 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 	if (gst_structure_has_name(structure, "farstream-error")) {
 #endif
 		FsError error_no;
+		gboolean error_emitted = FALSE;
 		gst_structure_get_enum(structure, "error-no",
 				FS_TYPE_ERROR, (gint*)&error_no);
 		switch (error_no) {
+			case FS_ERROR_CONSTRUCTION:
+				purple_media_error_fs(priv->media,
+				                      _("Error initializing the call. "
+				                        "This probably denotes problem in "
+#ifdef HAVE_FARSIGHT
+				                        "installation of GStreamer or Farsight."),
+#else
+				                        "installation of GStreamer or Farstream."),
+#endif
+				                      structure);
+				error_emitted = TRUE;
+				break;
+			case FS_ERROR_NETWORK:
+				purple_media_error_fs(priv->media, _("Network error."),
+				                      structure);
+				error_emitted = TRUE;
+				purple_media_end(priv->media, NULL, NULL);
+				break;
+			case FS_ERROR_NEGOTIATION_FAILED:
+				purple_media_error_fs(priv->media,
+				                      _("Codec negotiation failed. "
+				                        "This problem might be resolved by installing"
+				                        "more GStreamer codecs."),
+				                      structure);
+				error_emitted = TRUE;
+				purple_media_end(priv->media, NULL, NULL);
+				break;
 			case FS_ERROR_NO_CODECS:
-				purple_media_error(priv->media, _("No codecs"
-						" found. Install some"
-						" GStreamer codecs found"
-						" in GStreamer plugins"
-						" packages."));
+				purple_media_error(priv->media,
+				                   _("No codecs found. "
+				                     "Install some GStreamer codecs found "
+				                     " in GStreamer plugins packages."));
+				error_emitted = TRUE;
 				purple_media_end(priv->media, NULL, NULL);
 				break;
 #ifdef HAVE_FARSIGHT
 			case FS_ERROR_NO_CODECS_LEFT:
-				purple_media_error(priv->media, _("No codecs"
-						" left. Your codec"
-						" preferences in"
-						" fs-codecs.conf are too"
-						" strict."));
+				purple_media_error(priv->media,
+				                   _("No codecs left. Your codec preferences "
+				                     "in fs-codecs.conf are too strict."));
+				error_emitted = TRUE;
 				purple_media_end(priv->media, NULL, NULL);
+				break;
+			case FS_ERROR_CONNECTION_FAILED:
+				purple_media_error(priv->media,
+				                   _("Could not connect to the remote party"));
+				error_emitted = TRUE;
 				break;
 			case FS_ERROR_UNKNOWN_CNAME:
 				/*
@@ -946,18 +989,18 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 						"farstream-error: %i: %s\n",
 #endif
 						error_no,
-						gst_structure_get_string(
-						structure, "error-msg"));
+						gst_structure_get_string(structure, "error-msg"));
 				break;
 		}
 
 		if (FS_ERROR_IS_FATAL(error_no)) {
+			if (!error_emitted)
 #ifdef HAVE_FARSIGHT
-			purple_media_error(priv->media, _("A non-recoverable "
-					"Farsight2 error has occurred."));
+			purple_media_error(priv->media,
+			                   _("A non-recoverable Farsight2 error has occurred."));
 #else
-			purple_media_error(priv->media, _("A non-recoverable "
-					"Farstream error has occurred."));
+			purple_media_error(priv->media,
+			                   _("A non-recoverable Farstream error has occurred."));
 #endif
 			purple_media_end(priv->media, NULL, NULL);
 		}
