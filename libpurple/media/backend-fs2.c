@@ -826,7 +826,9 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 
 	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
 #if GST_CHECK_VERSION(1,0,0)
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 #else
 	value = gst_value_list_get_value(list, 0);
 #endif
@@ -1894,7 +1896,9 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 		memset(&value, 0, sizeof(GValue));
 		g_value_init(&value, GST_TYPE_STRUCTURE);
 		gst_value_set_structure(&value, turn_setup);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		relay_info = g_value_array_append(relay_info, &value);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gst_structure_free(turn_setup);
 	}
 
@@ -1989,7 +1993,9 @@ create_stream(PurpleMediaBackendFs2 *self,
 	}
 
 	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		GValueArray *relay_info = g_value_array_new(0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gint port;
 		const gchar *username =	purple_prefs_get_string(
 				"/purple/network/turn_username");
@@ -2016,11 +2022,11 @@ create_stream(PurpleMediaBackendFs2 *self,
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";
-		g_value_init(&_params[_num_params].value,
-			G_TYPE_VALUE_ARRAY);
-		g_value_set_boxed(&_params[_num_params].value,
-			relay_info);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+		g_value_init(&_params[_num_params].value, G_TYPE_VALUE_ARRAY);
+		g_value_set_boxed(&_params[_num_params].value, relay_info);
 		g_value_array_free(relay_info);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		_num_params++;
 	}
 
