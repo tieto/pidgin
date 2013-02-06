@@ -528,7 +528,7 @@ static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 
 	if (edisc_xfer->already_read != offset) {
 		purple_debug_error("gg", "ggp_edisc_xfer_send_reader: "
-			"Invalid offset (%d != %d)\n",
+			"Invalid offset (%d != %" G_GSIZE_FORMAT ")\n",
 			edisc_xfer->already_read, offset);
 		ggp_edisc_xfer_error(xfer, _("Error while reading a file"));
 		return;

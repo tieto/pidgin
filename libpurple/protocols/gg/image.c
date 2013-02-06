@@ -183,7 +183,8 @@ void ggp_image_recv(PurpleConnection *gc,
 	id = ggp_image_params_to_id(image_reply->crc32, image_reply->size);
 	
 	purple_debug_info("gg", "ggp_image_recv: got image "
-		"[stored_id=%d, crc=%u, size=%u, filename=%s, id=%016llx]\n",
+		"[stored_id=%d, crc=%u, size=%u, filename=%s, id="
+		GGP_IMAGE_ID_FORMAT "]\n",
 		stored_id,
 		image_reply->crc32,
 		image_reply->size,
@@ -197,7 +198,8 @@ void ggp_image_recv(PurpleConnection *gc,
 	if (!req)
 	{
 		purple_debug_warning("gg", "ggp_image_recv: "
-			"image %016llx wasn't requested\n", id);
+			"image " GGP_IMAGE_ID_FORMAT " wasn't requested\n",
+			id);
 		return;
 	}
 
@@ -248,7 +250,7 @@ void ggp_image_send(PurpleConnection *gc,
 	}
 	
 	purple_debug_misc("gg", "ggp_image_send: requested image found "
-		"[id=%016llx, stored id=%d, conv=%s]\n",
+		"[id=" GGP_IMAGE_ID_FORMAT ", stored id=%d, conv=%s]\n",
 		id,
 		sent_image->id,
 		sent_image->conv_name);
@@ -265,7 +267,7 @@ void ggp_image_send(PurpleConnection *gc,
 	}
 	
 	//TODO: check allowed recipients
-	gg_filename = g_strdup_printf("%016llx", id);
+	gg_filename = g_strdup_printf(GGP_IMAGE_ID_FORMAT, id);
 	gg_image_reply(accdata->session, image_request->sender,
 		gg_filename,
 		purple_imgstore_get_data(image),
@@ -313,14 +315,15 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 		g_hash_table_insert(sdata->incoming_images,
 			ggp_uint64dup(id), req);
 		purple_debug_info("gg", "ggp_image_request: "
-			"requesting image %016llx\n", id);
+			"requesting image " GGP_IMAGE_ID_FORMAT "\n", id);
 		if (gg_image_request(accdata->session, uin, size, crc) != 0)
 			purple_debug_error("gg", "ggp_image_request: failed\n");
 	}
 	else
 	{
 		purple_debug_info("gg", "ggp_image_request: "
-			"image %016llx already requested\n", id);
+			"image " GGP_IMAGE_ID_FORMAT " already requested\n",
+			id);
 	}
 	
 	listener = g_new0(ggp_image_requested_listener, 1);

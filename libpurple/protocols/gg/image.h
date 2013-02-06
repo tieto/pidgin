@@ -34,6 +34,7 @@
 #include <libgadu.h>
 
 #define GGP_IMAGE_SIZE_MAX 255000
+#define GGP_IMAGE_ID_FORMAT "%016" G_GINT64_MODIFIER "x"
 
 typedef struct _ggp_image_session_data ggp_image_session_data;
 

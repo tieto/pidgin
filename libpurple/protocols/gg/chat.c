@@ -181,7 +181,8 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 		if (!chat)
 		{
 			purple_debug_error("gg", "ggp_chat_got_event: "
-				"chat %llu not found\n", eciu->id);
+				"chat %" G_GUINT64_FORMAT " not found\n",
+				eciu->id);
 			return;
 		}
 		if (eciu->type == GG_CHAT_INFO_UPDATE_ENTERED)
@@ -228,8 +229,8 @@ static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin)
 	if (idx >= 0)
 	{
 		purple_debug_warning("gg", "ggp_chat_joined: "
-			"user %u is already present in chat %llu\n",
-			uin, chat->id);
+			"user %u is already present in chat %" G_GUINT64_FORMAT
+			"\n", uin, chat->id);
 		return;
 	}
 	chat->participants_count++;
@@ -251,7 +252,8 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 	if (idx < 0)
 	{
 		purple_debug_warning("gg", "ggp_chat_joined: "
-			"user %u isn't present in chat %llu\n", uin, chat->id);
+			"user %u isn't present in chat %" G_GUINT64_FORMAT "\n",
+			uin, chat->id);
 		return;
 	}
 	chat->participants[idx] =
@@ -313,7 +315,7 @@ char * ggp_chat_get_name(GHashTable *components)
 static const gchar * ggp_chat_get_name_from_id(uint64_t id)
 {
 	static gchar buff[30];
-	g_snprintf(buff, sizeof(buff), "%llu", id);
+	g_snprintf(buff, sizeof(buff), "%" G_GUINT64_FORMAT, id);
 	return buff;
 }
 
@@ -394,8 +396,10 @@ static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id)
 	
 	if (!chat)
 	{
+		char *id_s = g_strdup_printf("%" G_GUINT64_FORMAT, id);
 		char *buff = g_strdup_printf(
-			_("%llu is not a valid room identifier"), id);
+			_("%s is not a valid room identifier"), id_s);
+		g_free(id_s);
 		purple_notify_error(gc, _("Invalid Room Identifier"),
 			_("Invalid Room Identifier"), buff);
 		g_free(buff);
@@ -430,7 +434,8 @@ void ggp_chat_leave(PurpleConnection *gc, int local_id)
 	if (gg_chat_leave(info->session, chat->id) < 0)
 	{
 		purple_debug_error("gg", "ggp_chat_leave: "
-			"unable to leave chat %llu\n", chat->id);
+			"unable to leave chat %" G_GUINT64_FORMAT "\n",
+			chat->id);
 	}
 	chat->conv = NULL;
 
@@ -460,7 +465,8 @@ void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 	if (gg_chat_invite(info->session, chat->id, &invited, 1) < 0)
 	{
 		purple_debug_error("gg", "ggp_chat_invite: "
-			"unable to invite %s to chat %llu\n", who, chat->id);
+			"unable to invite %s to chat %" G_GUINT64_FORMAT "\n",
+			who, chat->id);
 	}
 }
 
@@ -511,7 +517,7 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 	if (!chat)
 	{
 		purple_debug_error("gg", "ggp_chat_got_message: "
-			"chat %llu doesn't exists\n", chat_id);
+			"chat %" G_GUINT64_FORMAT " doesn't exists\n", chat_id);
 		return;
 	}
 

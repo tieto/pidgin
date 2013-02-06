@@ -12,7 +12,7 @@
 #define GGP_GG10_DEFAULT_FORMAT_REPLACEMENT "<span>"
 #define GGP_GG11_FORCE_COMPAT FALSE
 
-#define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-%016llx\">"
+#define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-" GGP_IMAGE_ID_FORMAT "\">"
 #define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%u\">"
 
 typedef struct
@@ -183,7 +183,8 @@ static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
 	if (!i_it)
 	{
 		purple_debug_error("gg", "ggp_message_request_images_got: "
-			"image %016llx is not present in this message\n", id);
+			"image " GGP_IMAGE_ID_FORMAT " is not present in this "
+			"message\n", id);
 		return;
 	}
 
@@ -202,8 +203,8 @@ static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
 	if (msg->pending_images != NULL)
 	{
 		purple_debug_info("gg", "ggp_message_request_images_got: "
-			"got image %016llx, but the message contains more "
-			"of them\n", id);
+			"got image " GGP_IMAGE_ID_FORMAT ", but the message "
+			"contains more of them\n", id);
 		return;
 	}
 
@@ -323,7 +324,7 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	int stored_id;
 
 	name = g_match_info_fetch(info, 1);
-	if (sscanf(name, "%llx", &id) != 1)
+	if (sscanf(name, "%" G_GINT64_MODIFIER "x", &id) != 1)
 		id = 0;
 	g_free(name);
 	if (!id)
@@ -339,7 +340,8 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	if (stored_id > 0)
 	{
 		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
-			"getting image %016llx from cache\n", id);
+			"getting image " GGP_IMAGE_ID_FORMAT " from cache\n",
+			id);
 		replacement = g_strdup_printf(GGP_IMAGE_DESTINATION, stored_id);
 		g_string_append(res, replacement);
 		g_free(replacement);
@@ -583,7 +585,8 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			{
 				pending_objects = g_list_prepend(
 					pending_objects, g_strdup_printf(
-					"<img name=\"%016llx\">", id));
+					"<img name=\"" GGP_IMAGE_ID_FORMAT
+					"\">", id));
 			}
 			else if (res == GGP_IMAGE_PREPARE_TOO_BIG)
 			{
