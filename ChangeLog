@@ -10,6 +10,8 @@ version 2.10.7 (02/13/2013):
 	  --with-dynamic-prpls arguments. (Michael Fiedler) (#15316)
 
 	libpurple:
+	* Fix a crash when receiving UPnP responses with abnormally long values.
+	  (CVE-2013-0274)
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	  (Bartosz Brachaczek) (#15329)
 	* Fix UPnP mappings on routers that return empty <URLBase/> elements

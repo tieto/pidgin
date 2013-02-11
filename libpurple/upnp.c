@@ -409,7 +409,7 @@ upnp_parse_description_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		: PURPLE_UPNP_STATUS_UNABLE_TO_DISCOVER;
 	control_info.lookup_time = time(NULL);
 	control_info.control_url = control_url;
-	strncpy(control_info.service_type, dd->service_type,
+	g_strlcpy(control_info.service_type, dd->service_type,
 		sizeof(control_info.service_type));
 
 	fire_discovery_callbacks(control_url != NULL);
@@ -601,9 +601,9 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 		sentSuccess = FALSE;
 
 		if((dd->retry_count % 2) == 0) {
-			strncpy(dd->service_type, WAN_IP_CONN_SERVICE, sizeof(dd->service_type));
+			g_strlcpy(dd->service_type, WAN_IP_CONN_SERVICE, sizeof(dd->service_type));
 		} else {
-			strncpy(dd->service_type, WAN_PPP_CONN_SERVICE, sizeof(dd->service_type));
+			g_strlcpy(dd->service_type, WAN_PPP_CONN_SERVICE, sizeof(dd->service_type));
 		}
 
 		sendMessage = g_strdup_printf(SEARCH_REQUEST_STRING, dd->service_type);
@@ -787,7 +787,7 @@ looked_up_public_ip_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	}
 	*temp2 = '\0';
 
-	strncpy(control_info.publicip, temp + 1,
+	g_strlcpy(control_info.publicip, temp + 1,
 			sizeof(control_info.publicip));
 
 	purple_debug_info("upnp", "NAT Returned IP: %s\n", control_info.publicip);
@@ -822,7 +822,7 @@ static void
 looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 {
 	if (source != -1) {
-		strncpy(control_info.internalip,
+		g_strlcpy(control_info.internalip,
 			purple_network_get_local_system_ip(source),
 			sizeof(control_info.internalip));
 		purple_debug_info("upnp", "Local IP: %s\n",
@@ -975,7 +975,7 @@ purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 	ar->cb_data = cb_data;
 	ar->add = TRUE;
 	ar->portmap = portmap;
-	strncpy(ar->protocol, protocol, sizeof(ar->protocol));
+	g_strlcpy(ar->protocol, protocol, sizeof(ar->protocol));
 
 	/* If we're waiting for a discovery, add to the callbacks list */
 	if(control_info.status == PURPLE_UPNP_STATUS_DISCOVERING) {
@@ -1022,7 +1022,7 @@ purple_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 	ar->cb_data = cb_data;
 	ar->add = FALSE;
 	ar->portmap = portmap;
-	strncpy(ar->protocol, protocol, sizeof(ar->protocol));
+	g_strlcpy(ar->protocol, protocol, sizeof(ar->protocol));
 
 	/* If we're waiting for a discovery, add to the callbacks list */
 	if(control_info.status == PURPLE_UPNP_STATUS_DISCOVERING) {
