@@ -55,6 +55,10 @@ version 2.10.7 (02/13/2013):
 	* Increase the maximum file size that can be transferred to 1 MB.
 	* When setting an avatar image, no longer downscale it to 96x96.
 
+	Sametime:
+	* Fix a crash in Sametime when a malicious server sends us an abnormally
+	  long user ID. (CVE-2013-0273)
+
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
