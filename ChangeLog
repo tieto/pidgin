@@ -24,10 +24,10 @@ version 2.10.7 (02/13/2013):
 
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
-	  buddies will be disabled till 3.0.0. (#15226, #14305)
+	  buddies will be disabled until 3.0.0. (#15226, #14305)
 
 	IRC:
-	* Support for SASL authentication.  (Thijs Alkemade, Andy Spencer)
+	* Support for SASL authentication. (Thijs Alkemade, Andy Spencer)
 	  (#13270)
 	* Print topic setter information at channel join. (#13317)
 
