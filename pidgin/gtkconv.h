@@ -83,6 +83,7 @@ enum {
 struct _PidginConversation
 {
 	PurpleConversation *active_conv;
+	PurpleConversation *last_conversed;
 	GList *convs;
 	GList *send_history;
 
