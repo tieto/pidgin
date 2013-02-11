@@ -37,6 +37,8 @@ version 2.10.7 (02/13/2013):
 	  Barfield) (#15217)
 
 	MXit:
+	* Fix a bug where a remote MXit user could possibly specify a local
+	  file path to be written to. (CVE-2013-0271)
 	* Display farewell messages in a different colour to distinguish
 	  them from normal messages.
 	* Add support for typing notification.

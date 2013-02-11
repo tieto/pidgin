@@ -405,19 +405,29 @@ static void command_imagestrip(struct MXitSession* session, const char* from, GH
 		guchar*		rawimg;
 		gsize		rawimglen;
 		char*		dir;
+		char*		escfrom;
+		char*		escname;
+		char*		escvalidator;
 		char*		filename;
 
 		/* base64 decode the image data */
 		rawimg = purple_base64_decode(tmp, &rawimglen);
 
 		/* save it to a file */
-		dir = g_strdup_printf("%s/mxit/imagestrips", purple_user_dir());
+		dir = g_build_filename(purple_user_dir(), "mxit", "imagestrips", NULL);
 		purple_build_dir(dir, S_IRUSR | S_IWUSR | S_IXUSR);		/* ensure directory exists */
 
-		filename = g_strdup_printf("%s/%s-%s-%s.png", dir, from, name, validator);
+		escfrom = g_strdup(purple_escape_filename(from));
+		escname = g_strdup(purple_escape_filename(name));
+		escvalidator = g_strdup(purple_escape_filename(validator));
+		filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s-%s-%s.png", dir, escfrom, escname, escvalidator);
+
 		purple_util_write_data_to_file_absolute(filename, (char*) rawimg, rawimglen);
 
 		g_free(dir);
+		g_free(escfrom);
+		g_free(escname);
+		g_free(escvalidator);
 		g_free(filename);
 	}
 
