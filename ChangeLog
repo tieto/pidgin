@@ -39,6 +39,9 @@ version 2.10.7 (02/13/2013):
 	MXit:
 	* Fix a bug where a remote MXit user could possibly specify a local
 	  file path to be written to. (CVE-2013-0271)
+	* Fix a bug where the MXit server or a man-in-the-middle could
+	  potentially send specially crafted data that could overflow a buffer
+	  and lead to a crash or remote code execution. (CVE-2013-0272)
 	* Display farewell messages in a different colour to distinguish
 	  them from normal messages.
 	* Add support for typing notification.
