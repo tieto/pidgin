@@ -1,1 +1,5 @@
 libnssckbi_path.patch
+CVE-2013-0271.diff
+CVE-2013-0272.diff
+CVE-2013-0273.diff
+CVE-2013-0274.diff
