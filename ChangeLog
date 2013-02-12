@@ -64,11 +64,14 @@ version 2.10.7 (02/13/2013):
 	  such as MacPorts' +no_x11 variant.
 
 	Windows-Specific Changes:
-	* Compile with secure flags (#15290)
+	* Compile with secure flags (Jurre van Bergen) (#15290)
 	* Installer downloads GTK+ Runtime and Debug Symbols more securely.
-	  (#15277)
+	  Thanks goes to Jacob Appelbaum of the Tor Project for identifying
+	  this issue and suggesting solutions. (#15277)
 	* Updates to a number of dependencies, some of which have security
-	  related fixes. (#14571, #15285, #15286)
+	  related fixes. Thanks again to Jacob Appelbaum and Jurre van Bergen
+	  for identifying the vulnerable libraries and to Dieter Verfaillie 
+	  for helping getting the libraries updated. (#14571, #15285, #15286)
 		* ATK 1.32.0-2
 		* Cyrus SASL 2.1.25
 		* expat 2.1.0-1
