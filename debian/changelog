@@ -1,3 +1,10 @@
+pidgin (2.10.6-3) unstable; urgency=high
+
+  * Apply patches from 2.10.7 to fix CVE-2013-0271, CVE-2013-0272,
+    CVE-2013-0273, and CVE-2013-0274
+
+ -- Ari Pollak <ari@debian.org>  Mon, 11 Feb 2013 20:41:21 -0500
+
 pidgin (2.10.6-2) unstable; urgency=low
 
   * Rebuild with no changes to enable xz compression (Closes: #688692)
