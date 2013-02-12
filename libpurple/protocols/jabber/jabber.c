@@ -666,7 +666,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	else {
 		gchar *tmp;
 		if (len == 0)
-			tmp = g_strdup_printf(_("Server closed the connection"));
+			tmp = g_strdup(_("Server closed the connection"));
 		else
 			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
@@ -724,7 +724,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	} else {
 		gchar *tmp;
 		if (len == 0)
-			tmp = g_strdup_printf(_("Server closed the connection"));
+			tmp = g_strdup(_("Server closed the connection"));
 		else
 			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
