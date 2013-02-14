@@ -38,7 +38,7 @@ authenticode_sign = $(MONO_SIGNCODE) \
 		    -a sha1 -$$ commercial \
 		    -n "$(2)" -i "https://pidgin.im" \
 		    -t "http://timestamp.verisign.com/scripts/timstamp.dll" -tr 10 \
-		    $(1)
+		    $(1) && rm -f $(1).bak
 
 gpg_sign = $(GPG_SIGN) -ab $(1) && $(GPG_SIGN) --verify $(1).asc
 
