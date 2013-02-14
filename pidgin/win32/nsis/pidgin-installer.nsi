@@ -258,7 +258,7 @@ Section $(GTKSECTIONTITLE) SecGtk
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
-  NSISdl::download /TIMEOUT=10000 $R2 $R1
+  NSISdl::download /TIMEOUT=10000 "$R2" "$R1"
   Pop $R0
   ;StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
@@ -453,7 +453,7 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
-  NSISdl::download /TIMEOUT=10000 $R2 $R1
+  NSISdl::download /TIMEOUT=10000 "$R2" "$R1"
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
@@ -1331,9 +1331,11 @@ Function CheckSHA1Sum
   IntOp $R1 0 + 0
 
   done:
-  Pop $R2
-  Pop $R0
   Exch $R1 ;$R1 has the return code
+  Exch
+  Pop $R2
+  Exch
+  Pop $R0
 FunctionEnd
 !endif
 
