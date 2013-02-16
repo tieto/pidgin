@@ -21,6 +21,7 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/pidgin.git
 Homepage: http://www.pidgin.im
 
 Package: libpurple0
+Section: devel
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}, libsasl2-modules
 Recommends: ca-certificates, libpurple-bin
