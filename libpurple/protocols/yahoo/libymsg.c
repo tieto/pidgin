@@ -1230,8 +1230,9 @@ yahoo_buddy_add_authorize_cb(const char *message, gpointer data)
 }
 
 static void
-yahoo_buddy_add_deny_cb(const char *msg, struct yahoo_add_request *add_req)
+yahoo_buddy_add_deny_cb(const char *msg, gpointer data)
 {
+	struct yahoo_add_request *add_req = data;
 	YahooData *yd = purple_connection_get_protocol_data(add_req->gc);
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
@@ -1415,7 +1416,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			{
 				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 						  add_req->who);
-				yahoo_buddy_add_deny_cb(add_req, NULL);
+				yahoo_buddy_add_deny_cb(NULL, add_req);
 				return;
 			}
 
@@ -1487,7 +1488,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (!purple_privacy_check(account, add_req->who)) {
 			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 					  add_req->who);
-			yahoo_buddy_add_deny_cb(add_req, NULL);
+			yahoo_buddy_add_deny_cb(NULL, add_req);
 			return;
 		}
 
