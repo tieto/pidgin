@@ -543,7 +543,7 @@ void pidgin_dialogs_about(void)
 			  "This is a <strong>public</strong> mailing list! "
 			  "(<a href=\"%s\" title=\"%s\">archive</a>)<br/>"
 			  "We can't help with third-party protocols or plugins!<br/>"
-			  "This list's primary language is <strong>English</strong>.  You "
+			  "This list's primary language is English.  You "
 			  "are welcome to post in another language, but the responses may "
 			  "be less helpful.</p>"),
 			"support@pidgin.im", "support@pidgin.im",
