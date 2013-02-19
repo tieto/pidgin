@@ -62,7 +62,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		return FALSE;
 	}
 
- 	jid_norm = g_strdup(jabber_normalize(account, jid));
+	jid_norm = g_strdup(jabber_normalize(account, jid));
 
 	on_block_list = NULL != g_slist_find_custom(account->deny, jid_norm,
 	                                            (GCompareFunc)strcmp);
@@ -70,12 +70,14 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		/* Hidden; don't show this buddy. */
 		GSList *buddies = purple_find_buddies(account, jid_norm);
-		if (buddies)
+		if (buddies) {
 			purple_debug_info("jabber", "Removing %s from local buddy list\n",
 			                  jid_norm);
 
-		for ( ; buddies; buddies = g_slist_delete_link(buddies, buddies)) {
-			purple_blist_remove_buddy(buddies->data);
+			do {
+				purple_blist_remove_buddy(buddies->data);
+				buddies = g_slist_delete_link(buddies, buddies);
+			} while (buddies);
 		}
 
 		g_free(jid_norm);
@@ -113,14 +115,12 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 	if(!buddies)
 		return;
 
-	b = buddies->data;
-
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
 	query = xmlnode_get_child(iq->node, "query");
 	item = xmlnode_new_child(query, "item");
 
-	while(buddies) {
+	do {
 		PurpleGroup *g;
 
 		b = buddies->data;
@@ -129,8 +129,8 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		group = xmlnode_new_child(item, "group");
 		xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
-		buddies = buddies->next;
-	}
+		buddies = g_slist_delete_link(buddies, buddies);
+	} while (buddies);
 
 	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
@@ -173,14 +173,12 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 	if(!buddies)
 		return;
 
-	b = buddies->data;
-
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
 	query = xmlnode_get_child(iq->node, "query");
 	item = xmlnode_new_child(query, "item");
 
-	while(buddies) {
+	do {
 		PurpleGroup *g;
 
 		b = buddies->data;
@@ -189,8 +187,8 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 		group = xmlnode_new_child(item, "group");
 		xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
-		buddies = buddies->next;
-	}
+		buddies = g_slist_delete_link(buddies, buddies);
+	} while (buddies);
 
 	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
