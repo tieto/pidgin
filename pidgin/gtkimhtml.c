@@ -2430,10 +2430,11 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			if (len)
+			if (len) {
 				*len = e - string + strlen ("-->");
-			if (tag)
-				*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+				if (tag)
+					*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			}
 			return TRUE;
 		}
 	}

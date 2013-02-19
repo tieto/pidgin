@@ -348,10 +348,8 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 		 * sent immediately), queue up the data and start a timer to flush
 		 * the buffer.
 		 */
-		if (data) {
-			int len = data ? strlen(data) : 0;
-			purple_circ_buffer_append(conn->pending, data, len);
-		}
+		if (data)
+			purple_circ_buffer_append(conn->pending, data, strlen(data));
 
 		if (purple_debug_is_verbose())
 			purple_debug_misc("jabber", "bosh: %p has %" G_GSIZE_FORMAT " bytes in "

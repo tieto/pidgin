@@ -747,7 +747,6 @@ const gchar *
 purple_upnp_get_public_ip()
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
-			&& control_info.publicip
 			&& *control_info.publicip)
 		return control_info.publicip;
 
@@ -806,7 +805,6 @@ static const gchar *
 purple_upnp_get_internal_ip(void)
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
-			&& control_info.internalip
 			&& *control_info.internalip)
 		return control_info.internalip;
 

@@ -2769,7 +2769,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	}
 
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (user_data && url_text && len != 0)
+	if (url_text && len != 0)
 	{
 		if (strstr(url_text, "400 Bad Request")
 			|| strstr(url_text, "403 Forbidden")
