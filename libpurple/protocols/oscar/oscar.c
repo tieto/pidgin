@@ -4180,7 +4180,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
-			}
+			} break;
 
 			case 0x000e: { /* buddy requires authorization */
 				if ((retval->action == SNAC_SUBTYPE_FEEDBAG_ADD) && (retval->name))
