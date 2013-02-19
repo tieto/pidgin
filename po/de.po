@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2012, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2013, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-12 17:36+0200\n"
-"PO-Revision-Date: 2012-07-12 17:36+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2013-02-19 12:13+0100\n"
+"PO-Revision-Date: 2013-02-19 10:33+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -3452,7 +3452,6 @@ msgstr "Verbindung nicht möglich"
 msgid "Unable to connect: %s"
 msgstr "Verbinden nicht möglich: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Der Server hat die Verbindung beendet"
 
@@ -3500,6 +3499,12 @@ msgstr "Echter Name"
 #.
 msgid "Use SSL"
 msgstr "Benutze SSL"
+
+msgid "Authenticate with SASL"
+msgstr "Mit SASL authentifizieren"
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Erlaube Klartext-Authentifikation über einen unverschlüsselten Kanal"
 
 msgid "Bad mode"
 msgstr "Falscher Modus"
@@ -3561,6 +3566,10 @@ msgstr "%s hat das Thema entfernt."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Das Thema für %s ist: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr "Das Thema für %s gesetzt von %s um %s auf %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3675,6 +3684,37 @@ msgstr "Der Spitzname oder Kanal ist zur Zeit nicht verfügbar."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops von %s"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Initialisierung der SASL-Authenfikation fehlgeschlagen: %s"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+"SASL-Authentifikation fehlgeschlagen: Keine brauchbaren "
+"Authentifizierungsmechanismen gefunden."
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-Authentifizierung fehlgeschlagen: %s"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Der Server unterstützt keine SASL-"
+"Authentifizierung."
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Initialisierung von SASL "
+"fehlgeschlagen."
+
+msgid "Incorrect Password"
+msgstr "Falsches Passwort"
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Keine brauchbaren Mechanismen gefunden"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;Aktion&gt;:  Führe eine Aktion durch."
@@ -6122,6 +6162,10 @@ msgstr "Über mich"
 msgid "Where I Live"
 msgstr "Wo ich wohne"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr "Beziehungsstatus"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Handynummer"
@@ -6340,10 +6384,6 @@ msgstr "Status-Nachricht"
 msgid "Rejection Message"
 msgstr "Ablehnungsnachricht"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Versteckte Nummer"
-
 msgid "No profile available"
 msgstr "Kein Profil verfügbar"
 
@@ -6367,6 +6407,33 @@ msgstr "Über HTTP verbinden"
 
 msgid "Enable splash-screen popup"
 msgstr "Startbildschirm-Popup aktivieren"
+
+msgid "Don't want to say"
+msgstr "Das möchte ich nicht sagen"
+
+msgid "Single"
+msgstr "Ledig"
+
+msgid "In a relationship"
+msgstr "In einer Beziehung"
+
+msgid "Engaged"
+msgstr "Verlobt"
+
+msgid "Married"
+msgstr "Verheiratet"
+
+msgid "It's complicated"
+msgstr "Es ist kompliziert"
+
+msgid "Widowed"
+msgstr "Verwitwet"
+
+msgid "Separated"
+msgstr "Getrennt"
+
+msgid "Divorced"
+msgstr "Geschieden"
 
 msgid "Last Online"
 msgstr "Zuletzt online"
@@ -6426,6 +6493,12 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Nachrichtenfehler"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
+"Es wurde eine verschlüsselte Nachricht empfangen, die nicht entschlüsselt "
+"werden kann."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kann die Umleitung nicht mit dem angegebenen Protokoll durchführen"
@@ -9951,7 +10024,6 @@ msgstr ""
 "Ihr Konto wurde aufgrund zu vieler fehlgeschlagener Login-Versuche gesperrt. "
 "Bitte versuchen Sie sich auf der Yahoo!-Webseite anzumelden."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Unbekannter Fehler 52. Ein Neu-Verbinden sollte dies beheben."
 
@@ -11957,6 +12029,9 @@ msgstr "Kurdisch"
 msgid "Lao"
 msgstr "Laotisch"
 
+msgid "Lithuanian"
+msgstr "Litauisch"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -12074,9 +12149,6 @@ msgstr "Traditionelles Chinesisch"
 msgid "Amharic"
 msgstr "Amharisch"
 
-msgid "Lithuanian"
-msgstr "Litauisch"
-
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh und das Gnome-Vi Team"
 
@@ -12110,7 +12182,6 @@ msgstr ""
 "\tIRC-Channel: #pidgin auf irc.freenode.net<BR>\tXMPP-MUC: devel@conference."
 "pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -14782,7 +14853,6 @@ msgstr "Zeige alle N Minuten iChat-ähnliche Zeitstempel an."
 msgid "Timestamp Format Options"
 msgstr "Zeitstempelformat-Optionen"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Erzwinge Zeitformat:"
 
@@ -15161,6 +15231,9 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Hidden Number"
+#~ msgstr "Versteckte Nummer"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Kein Sametime-Community Server angegeben"
