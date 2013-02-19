@@ -407,7 +407,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 	icon_to_set = icon->img ? icon : NULL;
 
 	/* Ensure that icon remains valid throughout */
-	if (icon) purple_buddy_icon_ref(icon);
+	purple_buddy_icon_ref(icon);
 
 	buddies = purple_find_buddies(account, username);
 	while (buddies != NULL)

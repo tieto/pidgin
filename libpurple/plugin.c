@@ -587,11 +587,8 @@ purple_plugin_load(PurplePlugin *plugin)
 
 	if (plugin->native_plugin)
 	{
-		if (plugin->info != NULL && plugin->info->load != NULL)
-		{
-			if (!plugin->info->load(plugin))
-				return FALSE;
-		}
+		if (plugin->info->load != NULL && !plugin->info->load(plugin))
+			return FALSE;
 	}
 	else {
 		PurplePlugin *loader;

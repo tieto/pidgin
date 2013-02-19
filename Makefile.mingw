@@ -38,14 +38,14 @@ authenticode_sign = $(MONO_SIGNCODE) \
 		    -a sha1 -$$ commercial \
 		    -n "$(2)" -i "https://pidgin.im" \
 		    -t "http://timestamp.verisign.com/scripts/timstamp.dll" -tr 10 \
-		    $(1)
+		    $(1) && rm -f $(1).bak
 
 gpg_sign = $(GPG_SIGN) -ab $(1) && $(GPG_SIGN) --verify $(1).asc
 
 STRIPPED_RELEASE_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-win32bin
 DEBUG_SYMBOLS_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-dbgsym
 
-PIDGIN_INST_DEP_DIR="$(WIN32_DEV_TOP)/pidgin-inst-deps-20120910"
+PIDGIN_INST_DEP_DIR="$(WIN32_DEV_TOP)/pidgin-inst-deps-20130214"
 
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
@@ -109,7 +109,7 @@ endif
 	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
 	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
-	cp $(GCC_SSP_TOP)/bin/libssp-0.dll $(PIDGIN_INSTALL_DIR)
+	cp $(GCC_SSP_TOP)/libssp-0.dll $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:
 	pidgin/win32/nsis/generate_gtk_zip.sh "`pwd`" "$(GPG_SIGN)"
