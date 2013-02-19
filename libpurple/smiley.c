@@ -348,7 +348,8 @@ purple_smiley_set_property(GObject *object, guint param_id, const GValue *value,
 
 				smiley->img = img;
 				if (img) {
-					smiley->checksum = purple_util_get_image_checksum(
+					smiley->checksum = g_compute_checksum_for_data(
+							G_CHECKSUM_SHA1,
 							purple_imgstore_get_data(img),
 							purple_imgstore_get_size(img));
 					purple_smiley_data_store(img);

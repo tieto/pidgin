@@ -231,6 +231,8 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request, instead.
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request, instead.
+		* purple_util_get_image_checksum.  Use
+		  g_compute_checksum_for_data(G_CHECKSUM_SHA1, ...), instead.
 		* PurpleCertificateVerificationStatus.PURPLE_CERTIFICATE_INVALID
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
