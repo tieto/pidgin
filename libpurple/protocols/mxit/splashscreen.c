@@ -93,7 +93,7 @@ void splash_remove(struct MXitSession* session)
 		purple_debug_info(MXIT_PLUGIN_ID, "Removing splashId: '%s'\n", splashId);
 
 		/* Delete stored splash image */
-		filename = g_strdup_printf("%s/mxit/%s.png", purple_user_dir(), splashId);
+		filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit" G_DIR_SEPARATOR_S "%s.png", purple_user_dir(), splashId);
 		g_unlink(filename);
 		g_free(filename);
 
@@ -179,7 +179,7 @@ void splash_display(struct MXitSession* session)
 	purple_debug_info(MXIT_PLUGIN_ID, "Display Splash: '%s'\n", splashId);
 
 	/* Load splash-screen image from file */
-	filename = g_strdup_printf("%s/mxit/%s.png", purple_user_dir(), splashId);
+	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit" G_DIR_SEPARATOR_S "%s.png", purple_user_dir(), splashId);
 	if (g_file_get_contents(filename, &imgdata, &imglen, NULL)) {
 		char buf[128];
 
