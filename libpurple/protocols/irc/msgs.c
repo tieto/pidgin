@@ -667,7 +667,7 @@ void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from,
 
 	timestamp = g_strdup(purple_time_format(tm));
 	datestamp = g_strdup(purple_date_format_short(tm));
-	msg = g_strdup_printf("Topic for %s set by %s at %s on %s", args[1], args[2], timestamp, datestamp);
+	msg = g_strdup_printf(_("Topic for %s set by %s at %s on %s"), args[1], args[2], timestamp, datestamp);
 	purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "", msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
 	g_free(timestamp);
 	g_free(datestamp);

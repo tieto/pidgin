@@ -422,8 +422,8 @@ static PurplePluginInfo tcl_info =
 };
 
 #ifdef _WIN32
-typedef Tcl_Interp* (CALLBACK* LPFNTCLCREATEINTERP)(void);
-typedef void        (CALLBACK* LPFNTKINIT)(Tcl_Interp*);
+typedef Tcl_Interp* (__cdecl* LPFNTCLCREATEINTERP)(void);
+typedef void        (__cdecl* LPFNTKINIT)(Tcl_Interp*);
 
 LPFNTCLCREATEINTERP wtcl_CreateInterp = NULL;
 LPFNTKINIT wtk_Init = NULL;

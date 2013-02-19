@@ -57,10 +57,9 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
-version 2.10.7:
-	Gadu-Gadu:
-	* Fix a crash at startup with large contact list. Avatar support for
-	  buddies will be disabled till 3.0.0. (#15226, #14305)
+version 2.10.7 (02/13/2013):
+	Alien hatchery:
+	* No changes
 
 	General:
 	* The configure script will now exit with status 1 when specifying
@@ -68,6 +67,8 @@ version 2.10.7:
 	  --with-dynamic-prpls arguments. (Michael Fiedler) (#15316)
 
 	libpurple:
+	* Fix a crash when receiving UPnP responses with abnormally long values.
+	  (CVE-2013-0274)
 	* Don't link directly to libgcrypt when building with GnuTLS support.
 	  (Bartosz Brachaczek) (#15329)
 	* Fix UPnP mappings on routers that return empty <URLBase/> elements
@@ -82,10 +83,10 @@ version 2.10.7:
 
 	Gadu-Gadu:
 	* Fix a crash at startup with large contact list. Avatar support for
-	  buddies will be disabled till 3.0.0. (#15226, #14305)
+	  buddies will be disabled until 3.0.0. (#15226, #14305)
 
 	IRC:
-	* Support for SASL authentication.  (Thijs Alkemade, Andy Spencer)
+	* Support for SASL authentication. (Thijs Alkemade, Andy Spencer)
 	  (#13270)
 	* Print topic setter information at channel join. (#13317)
 
@@ -95,6 +96,11 @@ version 2.10.7:
 	  Barfield) (#15217)
 
 	MXit:
+	* Fix two bugs where a remote MXit user could possibly specify a local
+	  file path to be written to. (CVE-2013-0271)
+	* Fix a bug where the MXit server or a man-in-the-middle could
+	  potentially send specially crafted data that could overflow a buffer
+	  and lead to a crash or remote code execution. (CVE-2013-0272)
 	* Display farewell messages in a different colour to distinguish
 	  them from normal messages.
 	* Add support for typing notification.
@@ -105,6 +111,12 @@ version 2.10.7:
 	* The buddy's name was not centered vertically in the buddy-list if they
 	  did not have a status-message or mood set.
 	* Fix decoding of font-size changes in the markup of received messages.
+	* Increase the maximum file size that can be transferred to 1 MB.
+	* When setting an avatar image, no longer downscale it to 96x96.
+
+	Sametime:
+	* Fix a crash in Sametime when a malicious server sends us an abnormally
+	  long user ID. (CVE-2013-0273)
 
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
@@ -120,11 +132,14 @@ version 2.10.7:
 	  such as MacPorts' +no_x11 variant.
 
 	Windows-Specific Changes:
-	* Compile with secure flags (#15290)
+	* Compile with secure flags (Jurre van Bergen) (#15290)
 	* Installer downloads GTK+ Runtime and Debug Symbols more securely.
-	  (#15277)
+	  Thanks goes to Jacob Appelbaum of the Tor Project for identifying
+	  this issue and suggesting solutions. (#15277)
 	* Updates to a number of dependencies, some of which have security
-	  related fixes. (#14571, #15285, #15286)
+	  related fixes. Thanks again to Jacob Appelbaum and Jurre van Bergen
+	  for identifying the vulnerable libraries and to Dieter Verfaillie 
+	  for helping getting the libraries updated. (#14571, #15285, #15286)
 		* ATK 1.32.0-2
 		* Cyrus SASL 2.1.25
 		* expat 2.1.0-1

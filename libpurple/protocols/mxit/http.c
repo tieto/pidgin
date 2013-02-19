@@ -116,11 +116,12 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		buflen = session->rx_i;
 
 		/* read bytes from the socket */
-		len = read( session->fd, buf + buflen, sizeof( buf ) - buflen );
+		len = read( session->fd, buf + buflen, sizeof( buf ) - ( buflen + 1 ) );
 		if ( len <= 0 ) {
 			/* connection has been terminated, or error occurred */
 			goto done;
 		}
+		buf[buflen+len] = '\0';
 
 //nextpacket:
 
@@ -181,7 +182,11 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		g_free( tmp );
 		tmp = NULL;
 
-		if ( buflen > ( ( body - buf ) + bodylen ) ) {
+		if ( buflen + bodylen >= CP_MAX_PACKET ) {
+			/* this packet is way to big */
+			goto done;
+		}
+		else if ( buflen > ( ( body - buf ) + bodylen ) ) {
 			/* we have a second packet here */
 			next = body + bodylen;
 			session->rx_res = 0;

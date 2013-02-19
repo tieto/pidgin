@@ -121,10 +121,10 @@ void splash_update(struct MXitSession* session, const char* splashId, const char
 	splash_remove(session);
 
 	/* Save the new splash image */
-	dir = g_strdup_printf("%s/mxit",  purple_user_dir());
+	dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit",  purple_user_dir());
 	purple_build_dir(dir, S_IRUSR | S_IWUSR | S_IXUSR);		/* ensure directory exists */
 
-	filename = g_strdup_printf("%s/%s.png", dir, splashId);
+	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.png", dir, purple_escape_filename(splashId));
 	if (purple_util_write_data_to_file_absolute(filename, data, datalen)) {
 		/* Store new splash-screen ID to settings */
 		purple_account_set_string(session->acc, MXIT_CONFIG_SPLASHID, splashId);
