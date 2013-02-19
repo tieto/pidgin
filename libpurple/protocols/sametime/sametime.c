@@ -2780,6 +2780,14 @@ static void im_recv_mime(struct mwConversation *conv,
       cid = make_cid(cid);
 
       /* add image to the purple image store */
+      /* TODO: This PurpleStoredImage will be rendered within the IM window
+         and right-clicking the image will allow the user to save the image
+         to disk.  The default filename used in this dialog is the filename
+         that we pass to purple_imgstore_new_with_id(), so we should call
+         g_path_get_basename() and purple_escape_filename() on it before
+         passing it in.  This is easy, but it's not clear if there might be
+         other implications because this filename is used elsewhere within
+         this PRPL. */
       img = purple_imgstore_new_with_id(d_dat, d_len, cid);
 
       /* map the cid to the image store identifier */
