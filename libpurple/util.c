@@ -33,6 +33,10 @@
 #include "prefs.h"
 #include "util.h"
 
+/* 512KiB Default value for maximum HTTP download size (when the client hasn't
+   specified a length) */
+#define DEFAULT_MAX_HTTP_DOWNLOAD (512 * 1024)
+
 struct _PurpleUtilFetchUrlData
 {
 	PurpleUtilFetchUrlCallback callback;
@@ -68,7 +72,7 @@ struct _PurpleUtilFetchUrlData
 	char *webdata;
 	gsize len;
 	unsigned long data_len;
-	gssize max_len;
+	gsize max_len;
 	gboolean chunked;
 	PurpleAccount *account;
 };
@@ -3239,24 +3243,26 @@ purple_strcasereplace(const char *string, const char *delimiter,
 	return ret;
 }
 
-const char *
-purple_strcasestr(const char *haystack, const char *needle)
+/** TODO: Expose this when we can add API */
+static const char *
+purple_strcasestr_len(const char *haystack, gssize hlen, const char *needle, gssize nlen)
 {
-	size_t hlen, nlen;
 	const char *tmp, *ret;
 
 	g_return_val_if_fail(haystack != NULL, NULL);
 	g_return_val_if_fail(needle != NULL, NULL);
 
-	hlen = strlen(haystack);
-	nlen = strlen(needle);
+	if (hlen == -1)
+		hlen = strlen(haystack);
+	if (nlen == -1)
+		nlen = strlen(needle);
 	tmp = haystack,
 	ret = NULL;
 
 	g_return_val_if_fail(hlen > 0, NULL);
 	g_return_val_if_fail(nlen > 0, NULL);
 
-	while (*tmp && !ret) {
+	while (*tmp && !ret && (hlen - (tmp - haystack)) >= nlen) {
 		if (!g_ascii_strncasecmp(needle, tmp, nlen))
 			ret = tmp;
 		else
@@ -3264,6 +3270,12 @@ purple_strcasestr(const char *haystack, const char *needle)
 	}
 
 	return ret;
+}
+
+const char *
+purple_strcasestr(const char *haystack, const char *needle)
+{
+	return purple_strcasestr_len(haystack, -1, needle, -1);
 }
 
 char *
@@ -3576,7 +3588,7 @@ static void ssl_url_fetch_connect_cb(gpointer data, PurpleSslConnection *ssl_con
 static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSslErrorType error, gpointer data);
 
 static gboolean
-parse_redirect(const char *data, size_t data_len,
+parse_redirect(const char *data, gsize data_len,
 			   PurpleUtilFetchUrlData *gfud)
 {
 	gchar *s;
@@ -3681,20 +3693,21 @@ parse_redirect(const char *data, size_t data_len,
 	return TRUE;
 }
 
+/* find the starting point of the content for the specified header and make
+ * sure that the content is safe to pass to sscanf */
 static const char *
-find_header_content(const char *data, size_t data_len, const char *header, size_t header_len)
+find_header_content(const char *data, gsize data_len, const char *header)
 {
 	const char *p = NULL;
 
-	if (header_len <= 0)
-		header_len = strlen(header);
+	gsize header_len = strlen(header);
 
-	/* Note: data is _not_ nul-terminated.  */
 	if (data_len > header_len) {
+		/* Check if the first header matches (data won't start with a \n") */
 		if (header[0] == '\n')
 			p = (g_ascii_strncasecmp(data, header + 1, header_len - 1) == 0) ? data : NULL;
 		if (!p)
-			p = purple_strcasestr(data, header);
+			p = purple_strcasestr_len(data, data_len, header, header_len);
 		if (p)
 			p += header_len;
 	}
@@ -3710,13 +3723,13 @@ find_header_content(const char *data, size_t data_len, const char *header, size_
 	return NULL;
 }
 
-static size_t
-parse_content_len(const char *data, size_t data_len)
+static gsize 
+parse_content_len(const char *data, gsize data_len)
 {
-	size_t content_len = 0;
+	gsize content_len = 0;
 	const char *p = NULL;
 
-	p = find_header_content(data, data_len, "\nContent-Length: ", sizeof("\nContent-Length: ") - 1);
+	p = find_header_content(data, data_len, "\nContent-Length: ");
 	if (p) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
 		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
@@ -3726,9 +3739,9 @@ parse_content_len(const char *data, size_t data_len)
 }
 
 static gboolean
-content_is_chunked(const char *data, size_t data_len)
+content_is_chunked(const char *data, gsize data_len)
 {
-	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
+	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ");
 	if (p && g_ascii_strncasecmp(p, "chunked", 7) == 0)
 		return TRUE;
 
@@ -3811,7 +3824,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	while ((gfud->is_ssl && ((len = purple_ssl_read(gfud->ssl_connection, buf, sizeof(buf))) > 0)) ||
 			(!gfud->is_ssl && (len = read(source, buf, sizeof(buf))) > 0))
 	{
-		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
+		if((gfud->len + len) > gfud->max_len) {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
 						    gfud->website.address, gfud->max_len);
 			return;
@@ -3839,9 +3852,8 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 			/* See if we've reached the end of the headers yet */
 			end_of_headers = strstr(gfud->webdata, "\r\n\r\n");
 			if (end_of_headers) {
-				char *new_data;
 				guint header_len = (end_of_headers + 4 - gfud->webdata);
-				size_t content_len;
+				gsize content_len;
 
 				purple_debug_misc("util", "Response headers: '%.*s'\n",
 					header_len, gfud->webdata);
@@ -3861,15 +3873,36 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					content_len = 8192;
 				} else {
 					gfud->has_explicit_data_len = TRUE;
+					if (content_len > gfud->max_len) {
+						purple_debug_error("util",
+								"Overriding explicit Content-Length of %" G_GSIZE_FORMAT " with max of %" G_GSSIZE_FORMAT "\n",
+								content_len, gfud->max_len);
+						content_len = gfud->max_len;
+					}
 				}
 
 
 				/* If we're returning the headers too, we don't need to clean them out */
 				if (gfud->include_headers) {
+					char *new_data;
 					gfud->data_len = content_len + header_len;
-					gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
+					new_data = g_try_realloc(gfud->webdata, gfud->data_len);
+					if (new_data == NULL) {
+						purple_debug_error("util",
+								"Failed to allocate %" G_GSIZE_FORMAT " bytes: %s\n",
+								content_len, g_strerror(errno));
+						purple_util_fetch_url_error(gfud,
+								_("Unable to allocate enough memory to hold "
+								  "the contents from %s.  The web server may "
+								  "be trying something malicious."),
+								gfud->website.address);
+
+						return;
+					}
+					gfud->webdata = new_data;
 				} else {
-					size_t body_len = gfud->len - header_len;
+					char *new_data;
+					gsize body_len = gfud->len - header_len;
 
 					content_len = MAX(content_len, body_len);
 
@@ -4155,7 +4188,11 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
 	gfud->fd = -1;
-	gfud->max_len = max_len;
+	if (max_len <= 0) {
+		max_len = DEFAULT_MAX_HTTP_DOWNLOAD;
+		purple_debug_error("util", "Defaulting max download from %s to %" G_GSSIZE_FORMAT "\n", url, max_len);
+	}
+	gfud->max_len = (gsize) max_len;
 	gfud->account = account;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
