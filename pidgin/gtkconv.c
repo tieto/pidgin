@@ -4278,7 +4278,7 @@ tab_complete(PurpleConversation *conv)
 											 matches->data, -1);
 
 		g_free(matches->data);
-		matches = g_list_remove(matches, matches->data);
+		g_list_free(matches);
 	}
 	else {
 		/*
