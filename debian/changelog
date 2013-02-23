@@ -1,3 +1,10 @@
+pidgin (2.10.7-1) unstable; urgency=low
+
+  * Imported Upstream version 2.10.7
+  * Move libpurple0 to section devel, to reflect #700141
+
+ -- Ari Pollak <ari@debian.org>  Sat, 23 Feb 2013 11:32:27 -0500
+
 pidgin (2.10.6-3) unstable; urgency=high
 
   * Apply patches from 2.10.7 to fix CVE-2013-0271, CVE-2013-0272,
