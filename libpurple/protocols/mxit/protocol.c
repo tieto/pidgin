@@ -458,7 +458,7 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->headerlen = 0;
 
 	/* create generic packet header */
-	hlen = snprintf( header, sizeof( header ), "id=%s%c", session->acc->username, CP_REC_TERM );			/* client msisdn */
+	hlen = snprintf( header, sizeof( header ), "id=%s%c", purple_account_get_username( session->acc ), CP_REC_TERM );			/* client msisdn */
 
 	if ( session->http ) {
 		/* http connection only */
@@ -1064,8 +1064,9 @@ void mxit_send_allow_sub( struct MXitSession* session, const char* username, con
  *
  *  @param session		The MXit session object
  *  @param username		The username of the contact being denied
+ *  @param reason		The message describing the reason for the rejection (can be NULL).
  */
-void mxit_send_deny_sub( struct MXitSession* session, const char* username )
+void mxit_send_deny_sub( struct MXitSession* session, const char* username, const char* reason )
 {
 	char		data[CP_MAX_PACKET];
 	int			datalen;
@@ -1075,6 +1076,10 @@ void mxit_send_deny_sub( struct MXitSession* session, const char* username )
 								"ms=%s",	/* "ms"=username */
 								username
 	);
+
+	/* append reason (if one is set) */
+	if ( reason )
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, reason );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_DENY );
@@ -1448,9 +1453,9 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	PurpleStatus*	status;
 	int				presence;
 	const char*		statusmsg;
-	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
+	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
-									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_FLAGS };
+									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_RELATIONSHIP, CP_PROFILE_FLAGS };
 
 	purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
@@ -1516,6 +1521,7 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 {
 	struct RXMsgData*	mx			= NULL;
 	char*				message		= NULL;
+	char*				sender		= NULL;
 	int					msglen		= 0;
 	int					msgflags	= 0;
 	int					msgtype		= 0;
@@ -1529,10 +1535,11 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 	msglen = strlen( message );
 
 	/* strip off dummy domain */
-	mxit_strip_domain( records[0]->fields[0]->data );
+	sender = records[0]->fields[0]->data;
+	mxit_strip_domain( sender );
 
 #ifdef	DEBUG_PROTOCOL
-	purple_debug_info( MXIT_PLUGIN_ID, "Message received from '%s'\n", records[0]->fields[0]->data );
+	purple_debug_info( MXIT_PLUGIN_ID, "Message received from '%s'\n", sender );
 #endif
 
 	/* decode message flags (if any) */
@@ -1540,33 +1547,42 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		msgflags = atoi( records[0]->fields[4]->data );
 	msgtype = atoi( records[0]->fields[2]->data );
 
-	if ( msgflags & CP_MSG_ENCRYPTED ) {
-		/* this is an encrypted message. we do not currently support those so ignore it */
+	if ( msgflags & CP_MSG_PWD_ENCRYPTED ) {
+		/* this is a password encrypted message. we do not currently support those so ignore it */
 		PurpleBuddy*	buddy;
 		const char*		name;
 		char			msg[128];
 
-		buddy = purple_find_buddy( session->acc, records[0]->fields[0]->data );
+		buddy = purple_find_buddy( session->acc, sender );
 		if ( buddy )
 			name = purple_buddy_get_alias( buddy );
 		else
-			name = records[0]->fields[0]->data;
+			name = sender;
 		g_snprintf( msg, sizeof( msg ), _( "%s sent you an encrypted message, but it is not supported on this client." ), name );
 		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), msg );
 		return;
+	}
+	else if ( msgflags & CP_MSG_TL_ENCRYPTED ) {
+		/* this is a transport-layer encrypted message. */
+		message = mxit_decrypt_message( session, message );
+		if ( !message ) {
+			/* could not be decrypted */
+			serv_got_im( session->con, sender, _( "An encrypted message was received which could not be decrypted." ), PURPLE_MESSAGE_ERROR, time( NULL ) );
+			return;
+		}
 	}
 
 	if ( msgflags & CP_MSG_NOTIFY_DELIVERY ) {
 		/* delivery notification is requested */
 		if ( records[0]->fcount >= 4 )
-			mxit_send_msgevent( session, records[0]->fields[0]->data, records[0]->fields[3]->data, CP_MSGEVENT_DELIVERED );
+			mxit_send_msgevent( session, sender, records[0]->fields[3]->data, CP_MSGEVENT_DELIVERED );
 	}
 
 	/* create and initialise new markup struct */
 	mx = g_new0( struct RXMsgData, 1 );
 	mx->msg = g_string_sized_new( msglen );
 	mx->session = session;
-	mx->from = g_strdup( records[0]->fields[0]->data );
+	mx->from = g_strdup( sender );
 	mx->timestamp = atoi( records[0]->fields[1]->data );
 	mx->got_img = FALSE;
 	mx->chatid = -1;
@@ -1597,6 +1613,10 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		 * so the image received callback function will eventually display
 		 * the message. */
 	}
+
+	/* cleanup */
+	if ( msgflags & CP_MSG_TL_ENCRYPTED )
+		g_free( message );
 }
 
 
@@ -1810,10 +1830,6 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* gender */
 			profile->male = ( fvalue[0] == '1' );
 		}
-		else if ( strcmp( CP_PROFILE_HIDENUMBER, fname ) == 0 ) {
-			/* hide number */
-			profile->hidden = ( fvalue[0] == '1' );
-		}
 		else if ( strcmp( CP_PROFILE_FULLNAME, fname ) == 0 ) {
 			/* nickname */
 			g_strlcpy( profile->nickname, fvalue, sizeof( profile->nickname ) );
@@ -1865,6 +1881,10 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		else if ( strcmp( CP_PROFILE_ABOUTME, fname ) == 0) {
 			/* about me */
 			g_strlcpy( profile->aboutme, fvalue, sizeof( profile->aboutme ) );
+		}
+		else if ( strcmp( CP_PROFILE_RELATIONSHIP, fname ) == 0) {
+			/* relatinship status */
+			profile->relationship = strtol( fvalue, NULL, 10 );
 		}
 		else {
 			/* invalid profile attribute */
@@ -2019,6 +2039,47 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 	g_list_foreach( entries, (GFunc)g_free, NULL );
 }
 
+/*------------------------------------------------------------------------
+ * Process a received message event packet.
+ *
+ *  @param session		The MXit session object
+ *  @param records		The packet's data records
+ *  @param rcount		The number of data records
+ */
+static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record** records, int rcount )
+{
+	int event;
+
+	/*
+	 * contactAddress \1 dateTime \1 id \1 event 
+	 */
+
+	/* strip off dummy domain */
+	mxit_strip_domain( records[0]->fields[0]->data );
+
+	event = atoi( records[0]->fields[3]->data );
+
+	switch ( event ) {
+		case CP_MSGEVENT_TYPING :							/* user is typing */
+		case CP_MSGEVENT_ANGRY :							/* user is typing angrily */
+			serv_got_typing( session->con, records[0]->fields[0]->data, 0, PURPLE_TYPING );
+			break;
+
+		case CP_MSGEVENT_STOPPED :							/* user has stopped typing */
+			serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
+			break;
+
+		case CP_MSGEVENT_ERASING :							/* user is erasing text */
+		case CP_MSGEVENT_DELIVERED :						/* message was delivered */
+		case CP_MSGEVENT_DISPLAYED :						/* message was viewed */
+			/* these are currently not supported by libPurple */
+			break;
+
+		default:
+			purple_debug_error( MXIT_PLUGIN_ID, "Unknown message event received (%i)\n", event );
+	}
+}
+
 
 /*------------------------------------------------------------------------
  * Return the length of a multimedia chunk
@@ -2125,7 +2186,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					contact = get_mxit_invite_contact( session, chunk.mxitid );
 					if ( contact ) {
 						/* this is an invite (add image to the internal image store) */
-						contact->imgid = purple_imgstore_add_with_id( chunk.data, chunk.length, NULL );
+						contact->imgid = purple_imgstore_add_with_id( g_memdup( chunk.data, chunk.length ), chunk.length, NULL );
 						/* show the profile */
 						mxit_show_profile( session, chunk.mxitid, contact->profile );
 					}
@@ -2296,6 +2357,11 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 		case CP_CMD_SUGGESTCONTACTS :
 				/* suggest contacts */
 				mxit_parse_cmd_suggestcontacts( session, &packet->records[2], packet->rcount - 2 );
+				break;
+
+		case CP_CMD_GOT_MSGEVENT :
+				/* received message event */
+				mxit_parse_cmd_msgevent( session, &packet->records[2], packet->rcount - 2 );
 				break;
 
 		case CP_CMD_MOOD :

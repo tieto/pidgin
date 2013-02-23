@@ -29,10 +29,6 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#ifndef _WIN32
-# include <X11/Xlib.h>
-#endif
-
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
 # ifdef _WIN32
@@ -8725,7 +8721,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
 	PidginWindow *dest_win;
 	GtkNotebook *dest_notebook;
-	PurpleConversation *conv;
+	PidginConversation *active_gtkconv;
 	PidginConversation *gtkconv;
 	gint dest_page_num = 0;
 	gboolean new_window = FALSE;
@@ -8781,7 +8777,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	dest_win = pidgin_conv_window_get_at_xy(e->x_root, e->y_root);
 
-	conv = pidgin_conv_window_get_active_conversation(win);
+	active_gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
 	if (dest_win == NULL) {
 		/* If the current window doesn't have any other conversations,
@@ -8835,7 +8831,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		}
 	}
 
-	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
+	gtk_widget_grab_focus(active_gtkconv->entry);
 
 	return TRUE;
 }
@@ -9380,6 +9376,17 @@ pidgin_conv_window_new()
 void
 pidgin_conv_window_destroy(PidginWindow *win)
 {
+	if (win->gtkconvs) {
+		GList *iter = win->gtkconvs;
+		while (iter)
+		{
+			PidginConversation *gtkconv = iter->data;
+			iter = iter->next;
+			close_conv_cb(NULL, gtkconv);
+		}
+		return;
+	}
+
 	purple_prefs_disconnect_by_handle(win);
 	window_list = g_list_remove(window_list, win);
 
@@ -9387,15 +9394,6 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	if (win->dialogs.search)
 		gtk_widget_destroy(win->dialogs.search);
 
-	if (win->gtkconvs) {
-		while (win->gtkconvs) {
-			gboolean last = (win->gtkconvs->next == NULL);
-			close_conv_cb(NULL, win->gtkconvs->data);
-			if (last)
-				break;
-		}
-		return;
-	}
 	gtk_widget_destroy(win->window);
 
 	g_object_unref(G_OBJECT(win->menu.item_factory));

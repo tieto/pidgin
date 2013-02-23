@@ -1,6 +1,7 @@
 CERTIFICATES = \
 		AddTrust_External_Root.pem \
 		America_Online_Root_Certification_Authority_1.pem \
+		Baltimore_CyberTrust_Root.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
 		Deutsche_Telekom_Root_CA_2.pem \

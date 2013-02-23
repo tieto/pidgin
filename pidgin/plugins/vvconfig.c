@@ -39,6 +39,7 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 	/* "esdmon",	"ESD", ? */
 	"osssrc",	"OSS",
 	"pulsesrc",	"PulseAudio",
+	"sndiosrc",	"sndio",
 	/* "audiotestsrc wave=silence", "Silence", */
 	"audiotestsrc",	"Test Sound",
 	NULL
@@ -50,6 +51,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 	"esdsink",	"ESD",
 	"osssink",	"OSS",
 	"pulsesink",	"PulseAudio",
+	"sndiosink",	"sndio",
 	NULL
 };
 

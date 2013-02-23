@@ -138,6 +138,7 @@ guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 	GGPInfo *info = gc->proto_data;
 	gg_pubdir50_t req;
 	guint seq, offset;
+	gchar *tmp;
 
 	purple_debug_info("gg", "It's time to perform a search...\n");
 
@@ -190,10 +191,13 @@ guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 	offset = form->page_size * form->page_number;
 	purple_debug_info("gg", "page number: %u, page size: %u, offset: %u\n",
 		form->page_number, form->page_size, offset);
-	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup_printf("%u", offset));
+	tmp = g_strdup_printf("%u", offset);
+	gg_pubdir50_add(req, GG_PUBDIR50_START, tmp);
+	g_free(tmp);
 
 	if ((seq = gg_pubdir50(info->session, req)) == 0) {
 		purple_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
+		gg_pubdir50_free(req);
 		return 0;
 	}
 

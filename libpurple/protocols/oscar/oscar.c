@@ -2342,6 +2342,7 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 	va_list ap;
 	guint16 chan, reason;
 	char *who;
+	int ret = 1;
 
 	va_start(ap, fr);
 	chan = (guint16)va_arg(ap, unsigned int);
@@ -2350,7 +2351,7 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 
 	if (chan == 0x0002) { /* File transfer declined */
 		guchar *cookie = va_arg(ap, guchar *);
-		return purple_parse_clientauto_ch2(od, who, reason, cookie);
+		ret = purple_parse_clientauto_ch2(od, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
 		guint32 state = 0;
 		char *msg = NULL;
@@ -2358,12 +2359,12 @@ static int purple_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFram
 			state = va_arg(ap, guint32);
 			msg = va_arg(ap, char *);
 		}
-		return purple_parse_clientauto_ch4(od, who, reason, state, msg);
+		ret = purple_parse_clientauto_ch4(od, who, reason, state, msg);
 	}
 
 	va_end(ap);
 
-	return 1;
+	return ret;
 }
 
 static int purple_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {

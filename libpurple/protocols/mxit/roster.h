@@ -74,7 +74,7 @@
 
 
 /* MXit contact flags */
-#define		MXIT_CFLAG_HIDDEN			0x02
+//#define		MXIT_CFLAG_HIDDEN			0x02		/* (DEPRECATED) */
 #define		MXIT_CFLAG_GATEWAY			0x04
 #define		MXIT_CFLAG_FOCUS_SEND_BLANK	0x20000
 
@@ -82,6 +82,7 @@
 /* MXit presence flags */
 #define		MXIT_PFLAG_VOICE			0x1
 #define		MXIT_PFLAG_VIDEO			0x2
+#define		MXIT_PFLAG_TYPING			0x4
 
 
 /* Subscription types */
@@ -96,7 +97,7 @@
 /* client protocol constants */
 #define		MXIT_CP_MAX_JID_LEN			64
 #define		MXIT_CP_MAX_GROUP_LEN		32
-#define		MXIT_CP_MAX_ALIAS_LEN		48
+#define		MXIT_CP_MAX_ALIAS_LEN		100
 
 #define		MXIT_DEFAULT_GROUP			"MXit"
 
@@ -106,8 +107,8 @@
  */
 struct contact {
 	char		username[MXIT_CP_MAX_JID_LEN+1];	/* unique contact name (with domain) */
-	char		alias[MXIT_CP_MAX_GROUP_LEN+1];		/* contact alias (what will be seen) */
-	char		groupname[MXIT_CP_MAX_ALIAS_LEN+1];	/* contact group name */
+	char		alias[MXIT_CP_MAX_ALIAS_LEN+1];		/* contact alias (what will be seen) */
+	char		groupname[MXIT_CP_MAX_GROUP_LEN+1];	/* contact group name */
 
 	short		type;								/* contact type */
 	short		mood;								/* contact current mood */

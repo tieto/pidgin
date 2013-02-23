@@ -73,7 +73,7 @@ static struct _irc_msg {
 	{ "324", "ncv:", irc_msg_chanmode },	/* Channel modes		*/
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
-	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
+	{ "333", "ncvv", irc_msg_topicinfo },	/* Topic setter stuff		*/
 	{ "352", "ncvvvnv:", irc_msg_who },	/* Channel WHO			*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
@@ -102,6 +102,14 @@ static struct _irc_msg {
 	{ "501", "n:", irc_msg_badmode },	/* Unknown mode flag		*/
 	{ "506", "nc:", irc_msg_nosend },	/* Must identify to send	*/
 	{ "515", "nc:", irc_msg_regonly },	/* Registration required	*/
+#ifdef HAVE_CYRUS_SASL
+	{ "903", "*", irc_msg_authok},		/* SASL auth successful		*/
+	{ "904", "*", irc_msg_authtryagain },	/* SASL auth failed, can recover		*/
+	{ "905", "*", irc_msg_authfail },	/* SASL auth failed		*/
+	{ "906", "*", irc_msg_authfail },	/* SASL auth failed		*/
+	{ "907", "*", irc_msg_authfail },	/* SASL auth failed		*/
+	{ "cap", "vv:", irc_msg_cap },		/* SASL capable			*/
+#endif
 	{ "invite", "n:", irc_msg_invite },	/* Invited			*/
 	{ "join", ":", irc_msg_join },		/* Joined a channel		*/
 	{ "kick", "cn:", irc_msg_kick },	/* KICK				*/
@@ -678,6 +686,11 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Disconnected."));
 		return;
+#ifdef HAVE_CYRUS_SASL
+	} else if (!strncmp(input, "AUTHENTICATE ", 13)) {
+		irc_msg_auth(irc, input + 13);
+		return;
+#endif
 	}
 
 	if (input[0] != ':' || (cur = strchr(input, ' ')) == NULL) {

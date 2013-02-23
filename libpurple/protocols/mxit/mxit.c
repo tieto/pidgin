@@ -58,7 +58,7 @@ static int not_link_ref_count = 0;
 static void* mxit_link_click( const char* link64 )
 {
 	PurpleAccount*		account;
-	PurpleConnection*	con;
+	PurpleConnection*	gc;
 	gchar**				parts		= NULL;
 	gchar*				link		= NULL;
 	gsize				len;
@@ -75,10 +75,10 @@ static void* mxit_link_click( const char* link64 )
 	link = (gchar*) purple_base64_decode( link64 + strlen( MXIT_LINK_PREFIX ), &len );
 	purple_debug_info( MXIT_PLUGIN_ID, "Clicked Link: '%s'\n", link );
 
-	parts = g_strsplit( link, "|", 5 );
+	parts = g_strsplit( link, "|", 6 );
 
 	/* check if this is a valid mxit link */
-	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) ) {
+	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) || ( !parts[5] ) ) {
 		/* this is not for us */
 		goto skip;
 	}
@@ -91,15 +91,15 @@ static void* mxit_link_click( const char* link64 )
 	account = purple_accounts_find( parts[1], parts[2] );
 	if ( !account )
 		goto skip;
-	con = purple_account_get_connection( account );
-	if ( !con )
+	gc = purple_account_get_connection( account );
+	if ( !gc )
 		goto skip;
 
 	/* determine if it's a command-response to send */
-	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+	is_command = ( atoi( parts[4] ) == 1 );
 
 	/* send click message back to MXit */
-	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
+	mxit_send_message( purple_connection_get_protocol_data( gc ), parts[3], parts[5], FALSE, is_command );
 
 	g_free( link );
 	link = NULL;
@@ -309,19 +309,18 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
  */
 char* mxit_status_text( PurpleBuddy* buddy )
 {
+	char* text = NULL;
 	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return NULL;
 
-	if ( contact->statusMsg ) {
-		/* status message */
+	if ( contact->statusMsg )							/* status message */
 		return g_strdup( contact-> statusMsg );
-	}
-	else {
-		/* mood */
+	else if ( contact->mood != MXIT_MOOD_NONE )			/* mood */
 		return g_strdup( mxit_convert_mood_to_name( contact->mood ) );
-	}
+
+	return text;
 }
 
 
@@ -358,10 +357,6 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	/* rejection message */
 	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
 		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
-
-	/* hidden number */
-	if ( contact->flags & MXIT_CFLAG_HIDDEN )
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
 }
 
 
@@ -565,7 +560,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
-												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME };
+												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_RELATIONSHIP };
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
@@ -659,6 +654,70 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 	return m;
 }
 
+
+/*------------------------------------------------------------------------
+ * Return Chat-room default settings.
+ *
+ *  @return		Chat defaults list
+ */
+static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *chat_name )
+{
+    return g_hash_table_new_full( g_str_hash, g_str_equal, NULL, g_free );
+}
+
+
+/*------------------------------------------------------------------------
+ * Send a typing indicator event.
+ *
+ *  @param gc		The connection object
+ *  @param name		The username of the contact
+ *  @param state	The typing state to be reported.
+ */
+static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleTypingState state )
+{
+	PurpleAccount*		account		= purple_connection_get_account( gc );
+	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
+	PurpleBuddy*		buddy;
+	struct contact*		contact;
+	gchar*				messageId	= NULL;
+
+	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	buddy = purple_find_buddy( account, name );
+	if ( !buddy ) {
+		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_send_typing: unable to find the buddy '%s'\n", name );
+		return 0;
+	}
+
+	contact = purple_buddy_get_protocol_data( buddy );
+	if ( !contact )
+		return 0;
+
+	/* does this contact support and want typing notification? */
+	if ( ! ( contact->capabilities & MXIT_PFLAG_TYPING ) )
+		return 0;
+
+	messageId = purple_uuid_random();		/* generate a unique message id */
+
+	switch ( state ) {
+		case PURPLE_TYPING :		/* currently typing */
+			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_TYPING );
+			break;
+
+		case PURPLE_TYPED :			/* stopped typing */
+		case PURPLE_NOT_TYPING :	/* not typing / erased all text */
+			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_STOPPED );
+			break;
+
+		default:
+			break;
+	}
+
+	g_free( messageId );
+
+	return 0;
+}
+
+
 /*========================================================================================================================*/
 
 static PurplePluginProtocolInfo proto_info = {
@@ -666,11 +725,10 @@ static PurplePluginProtocolInfo proto_info = {
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{						/* icon_spec */
-		"png",												/* format */
+		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
-		MXIT_AVATAR_SIZE,									/* max width */
-		MXIT_AVATAR_SIZE,									/* max height */
-		100000,												/* max filesize */
+		800, 800,											/* max width & height */
+		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
 	},
 	mxit_list_icon,			/* list_icon */
@@ -680,12 +738,12 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_status_types,		/* status types				[roster.c] */
 	mxit_blist_menu,		/* blist_node_menu */
 	mxit_chat_info,			/* chat_info				[multimx.c] */
-	NULL,					/* chat_info_defaults */
+	mxit_chat_info_defaults,/* chat_info_defaults */
 	mxit_login,				/* login					[login.c] */
 	mxit_close,				/* close */
 	mxit_send_im,			/* send_im */
 	NULL,					/* set_info */
-	NULL,					/* send_typing */
+	mxit_send_typing,		/* send_typing */
 	mxit_get_info,			/* get_info */
 	mxit_set_status,		/* set_status */
 	NULL,					/* set_idle */
