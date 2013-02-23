@@ -4,23 +4,23 @@
 #
 # Translators:
 # Daniël Heres <danielheres@gmail.com>, 2008.
-# Gideon van Melle <translations@gvmelle.com>, 2011.
+# Gideon van Melle <translations@gvmelle.com>, 2011-2013.
 # Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006.
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 20:19-0700\n"
-"PO-Revision-Date: 2012-03-22 09:33+0000\n"
+"POT-Creation-Date: 2013-02-11 00:04-0800\n"
+"PO-Revision-Date: 2013-01-27 08:26+0000\n"
 "Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
-"Language-Team: Dutch (http://www.transifex.net/projects/p/pidgin/language/"
+"Language-Team: Dutch (http://www.transifex.com/projects/p/pidgin/language/"
 "nl/)\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -2059,64 +2059,8 @@ msgstr "Bestandsoverdracht naar %s mislukt."
 msgid "File transfer from %s failed."
 msgstr "Bestandsoverdracht van %s mislukt."
 
-msgid "Run the command in a terminal"
-msgstr "Voer het commando uit in een terminal venster"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"aim\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"gg\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"icq\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"irc\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"msnim\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"sip\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"xmpp\" URLs af te handelen, indien ingeschakeld."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Het commando gebruikt om \"ymsgr\" URL's af te handelen, indien ingeschakeld."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "De handler voor \"aim\" URL's"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "De handler voor \"gg\" URL's"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "De handler voor \"icq\" URL's"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "De handler voor \"irc\" URL's"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "De handler voor \"msnim\" URL's"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "De handler voor \"sip\" URL's"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "De handler voor \"xmpp\" URL's"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "De handler voor \"ymsgr\" URL's"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Of de opdracht \"aim\" URL's moet afhandelen"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2125,54 +2069,15 @@ msgstr ""
 "Waar indien de opdracht in de \"command\" sleutel \"aim\" URL's moet "
 "afhandelen."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"gg\" URL's moet "
-"afhandelen."
+msgid "The handler for \"aim\" URLs"
+msgstr "De handler voor \"aim\" URL's"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
+msgid "The command used to handle \"aim\" URLs, if enabled."
 msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"icq\" URL's moet "
-"afhandelen."
+"Het commando gebruikt om \"aim\" URLs af te handelen, indien ingeschakeld."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"irc\" URL's moet "
-"afhandelen."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"msnim\" URL's moet "
-"afhandelen."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"sip\" URL's moet "
-"afhandelen."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"xmpp\" URL's moet "
-"afhandelen."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Waar indien de opdracht in de \"command\" sleutel \"ymsgr\" URL's moet "
-"afhandelen."
+msgid "Run the command in a terminal"
+msgstr "Voer het commando uit in een terminal venster"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2181,29 +2086,124 @@ msgstr ""
 "Waar indien de opdracht die gebruikt wordt om dit type URL's af te handelen "
 "moet uitgevoerd worden in een terminal."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Of de opdracht \"aim\" URL's moet afhandelen"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Of de opdracht \"gg\" URL's moet afhandelen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"gg\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "De handler voor \"gg\" URL's"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"gg\" URLs af te handelen, indien ingeschakeld."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Of de opdracht \"icq\" URL's moet afhandelen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"icq\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "De handler voor \"icq\" URL's"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"icq\" URLs af te handelen, indien ingeschakeld."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Of de opdracht \"irc\" URL's moet afhandelen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"irc\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "De handler voor \"irc\" URL's"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"irc\" URLs af te handelen, indien ingeschakeld."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Of de opdracht \"msnim\" URL's moet afhandelen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"msnim\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "De handler voor \"msnim\" URL's"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"msnim\" URLs af te handelen, indien ingeschakeld."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Of de opdracht \"sip\" URL's moet afhandelen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"sip\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "De handler voor \"sip\" URL's"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"sip\" URLs af te handelen, indien ingeschakeld."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Of de opdracht \"xmpp\" URL's moet afhandelen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"xmpp\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "De handler voor \"xmpp\" URL's"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"xmpp\" URLs af te handelen, indien ingeschakeld."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Of de opdracht \"ymsgr\" URL's moet afhandelen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Waar indien de opdracht in de \"command\" sleutel \"ymsgr\" URL's moet "
+"afhandelen."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "De handler voor \"ymsgr\" URL's"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Het commando gebruikt om \"ymsgr\" URL's af te handelen, indien ingeschakeld."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">De logger heeft geen leesfunctie</font></b>"
@@ -2264,6 +2264,9 @@ msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "een onherstelbare Farsight2 fout is opgetreden."
+
+msgid "A non-recoverable Farstream error has occurred."
+msgstr "Een onherstelbare Farstream fout is opgetreden."
 
 msgid "Error with your microphone"
 msgstr "Fout opgetreden bij uw microfoon"
@@ -3486,6 +3489,14 @@ msgstr "Echte naam"
 msgid "Use SSL"
 msgstr "SSL gebruiken"
 
+msgid "Authenticate with SASL"
+msgstr "Authenticatie met SASL"
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr ""
+"Toestaan van SASL auth met platte tekst over een niet-versleutelde "
+"verbinding "
+
 msgid "Bad mode"
 msgstr "Slechte modus"
 
@@ -3546,6 +3557,10 @@ msgstr "%s heeft het onderwerp gewist."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Het onderwerp voor %s is: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3660,6 +3675,32 @@ msgstr "Nick of Kanaal is tijdelijk niet bereikbaar."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops van %s"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Het initialiseren van SASL authenticatie is mislukt: %s "
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+"SASL authenticatie mislukt: geen waardig authenticatiesysteem gevonden."
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL authenticatie mislukt: %s"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+"SASL authenticatie mislukt: de server ondersteunt SASL authenticatie niet."
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL authenticatie mislukt: Initialiseren SASL is mislukt."
+
+msgid "Incorrect Password"
+msgstr "Ongeldig wachtwoord"
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL authenticatie mislukt: geen waardig mechanisme gevonden"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "actie &lt;uit te voeren actie&gt;:  Een bepaalde actie uitvoeren."
@@ -6057,6 +6098,10 @@ msgstr "Over mij"
 msgid "Where I Live"
 msgstr "Waar ik woon"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr "Relatiestatus"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Mobiele Nummer"
@@ -6268,10 +6313,6 @@ msgstr "Status Bericht"
 msgid "Rejection Message"
 msgstr "Afgewezen bericht"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Verborgen nummer"
-
 msgid "No profile available"
 msgstr "Geen profiel beschikbaar"
 
@@ -6295,6 +6336,33 @@ msgstr "Verbinden via HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "inschakelen splashscreen pop-up"
+
+msgid "Don't want to say"
+msgstr "Zeg ik liever niet"
+
+msgid "Single"
+msgstr "Vrijgezel"
+
+msgid "In a relationship"
+msgstr "In een relatie"
+
+msgid "Engaged"
+msgstr "Verloofd"
+
+msgid "Married"
+msgstr "Getrouwd"
+
+msgid "It's complicated"
+msgstr "'t is gecompliceerd"
+
+msgid "Widowed"
+msgstr "Weduwe/weduwnaar"
+
+msgid "Separated"
+msgstr "Uit elkaar"
+
+msgid "Divorced"
+msgstr "Gescheiden"
 
 msgid "Last Online"
 msgstr "Laatste Online"
@@ -6354,6 +6422,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Berichtenfout"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan geen omleiding maken met het gebruikte protocol"
@@ -10496,16 +10568,16 @@ msgstr ""
 "Er is een fout opgetreden bij lezen van uw %s. Het bestand is niet geladen "
 "en het oude bestand is hernoemd tot %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
-"Chat over IM. Ondersteunt AIM, Google Talk, Jabber/XMPP, MSN, Yahoo en meer"
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Internet Messenger"
 
 msgid "Internet Messenger"
 msgstr "Internet Messenger"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Internet Messenger"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"Chat over IM. Ondersteunt AIM, Google Talk, Jabber/XMPP, MSN, Yahoo en meer"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11558,6 +11630,14 @@ msgstr "Ongelezen berichten"
 msgid "New Event"
 msgstr "Nieuwe gebeurtenis"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"De verbinding met het account is verbroken en u bent niet langer in de "
+"chatruimte. U wordt automatisch weer toegelaten in de chatruimte als het "
+"account weer verbonden is."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Maakt alle gespreksvensters schoon."
 
@@ -11847,6 +11927,9 @@ msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Maleis"
+
+msgid "Burmese"
+msgstr "Burmees"
 
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Noors"
@@ -13659,11 +13742,11 @@ msgstr "Pidgin-tooltip"
 msgid "Pidgin smileys"
 msgstr "Pidgin emoticons"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Als u dit selecteert, schakel u graphische emoticons uit."
-
 msgid "none"
 msgstr "geen"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Als u dit selecteert, schakel u graphische emoticons uit."
 
 msgid "Small"
 msgstr "Klein"
@@ -14844,17 +14927,8 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Deze plug-in is handig voor het fouten oplossen van XMPP servers of cliënten."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-"$(^Naam) is uitgegeven onder de GNU Generale Publieke Licentie (GPL). De "
-"licentie wordt hier slechts gegeven voor informatieve doeleinden. $_CLICK"
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Een multi-platform gebruikersinterface, gebruikt door Pidgin"
+msgid "The installer is already running."
+msgstr "Er is al een installatie actief."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -14863,44 +14937,94 @@ msgstr ""
 "Pidgin wordt op dit moment uitgevoerd. Sluit Pidgin af en start de "
 "installatie opnieuw."
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Volgende >"
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Naam) is uitgegeven onder de GNU Generale Publieke Licentie (GPL). De "
+"licentie wordt hier slechts gegeven voor informatieve doeleinden. $_CLICK"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Cliënt (vereist)"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ runtime (vereist indien niet aanwezig)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Snelkoppelingen"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Bureaublad"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Start Menu"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Localisaties"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgin hoofdbestanden en dll's"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "Snelkoppelingen voor Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Maak een snelkoppeling naar Pidgin op het bureaublad"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Maak een Start Menu item voor Pidgin"
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr "Maak een snelkoppeling naar Pidgin op het bureaublad"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Een multi-platform gebruikersinterface, gebruikt door Pidgin"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Debug Symbolen (voor herhaalde crashes)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Neem een kijkje op de Pidgin webpagina"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Kan de huidige geïnstalleerde versie van Pidgin niet de-installeren. De "
+"nieuwe versie zal geïnstalleerd worden zonder de huidige versie te "
+"verwijderen."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin vereist een compatibele versie van GTK+ Runtime (die niet aanwezig "
+"lijkt te zijn).$\\rWeet u zeker dat u de installatie van GTK+ Runtime wilt "
+"overslaan?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Bureaublad"
+msgid "URI Handlers"
+msgstr "URI Handlers"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Fout bij ophalen van GTK+ Runtime ($R2).$\\rDit is vereist voor het "
-"functioneren van Pidgin. Indien een herhaalde poging mislukt kunt u de "
-"'Offline Installer' van http://pidgin.im/download/windows/  gebruiken."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Fout bij installeren van debug symbolen ($R2).$\\rIndien een herhaalde "
-"poging mislukt, kunt u de  'Offline Installer' van http://pidgin.im/download/"
-"windows/  gebruiken."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Spellingscontrole"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14914,47 +15038,6 @@ msgstr ""
 "http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ runtime (vereist indien niet aanwezig)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Localisaties"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Volgende >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Instant Messaging Cliënt (vereist)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin vereist een compatibele versie van GTK+ Runtime (die niet aanwezig "
-"lijkt te zijn).$\\rWeet u zeker dat u de installatie van GTK+ Runtime wilt "
-"overslaan?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Snelkoppelingen"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Snelkoppelingen voor Pidgin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Spellingscontrole"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Start Menu"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
@@ -14962,8 +15045,24 @@ msgstr ""
 "Ondersteuning voor spellingscontrole. (Internetverbinding nodig voor "
 "installatie)"
 
-msgid "The installer is already running."
-msgstr "Er is al een installatie actief."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Fout bij installeren van debug symbolen ($R2).$\\rIndien een herhaalde "
+"poging mislukt, kunt u de  'Offline Installer' van http://pidgin.im/download/"
+"windows/  gebruiken."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Fout bij ophalen van GTK+ Runtime ($R2).$\\rDit is vereist voor het "
+"functioneren van Pidgin. Indien een herhaalde poging mislukt kunt u de "
+"'Offline Installer' van http://pidgin.im/download/windows/  gebruiken."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -14972,22 +15071,6 @@ msgstr ""
 "Het verwijderingsprogramma voor Pidgin kon geen registervermeldingen voor "
 "Pidgin vinden.$\\rWaarschijnlijk heeft een andere gebruiker het programma "
 "geïnstalleerd."
-
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI Handlers"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Kan de huidige geïnstalleerde versie van Pidgin niet de-installeren. De "
-"nieuwe versie zal geïnstalleerd worden zonder de huidige versie te "
-"verwijderen."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."

@@ -84,7 +84,7 @@ libgnt_lainclude_HEADERS = \
 	$(libgnt_la_headers)
 
 libgnt_la_DEPENDENCIES = 
-libgnt_la_LDFLAGS = -export-dynamic -version_info $(GNT_LT_VERSION_INFO) -no-undefined
+libgnt_la_LDFLAGS = -export-dynamic -version-info $(GNT_LT_VERSION_INFO) -no-undefined
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GNT_LIBS) \

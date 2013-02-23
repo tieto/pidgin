@@ -47,6 +47,8 @@
 #include "buddylist.h"
 #include "gg-utils.h"
 
+#define DISABLE_AVATARS 1
+
 static PurplePlugin *my_protocol = NULL;
 
 /* Prototypes */
@@ -903,6 +905,8 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
+#if !DISABLE_AVATARS
+
 struct gg_fetch_avatar_data
 {
 	PurpleConnection *gc;
@@ -1037,6 +1041,8 @@ out:
 	g_free(bigavatar);
 }
 
+#endif
+
 /**
  * Try to update avatar of the buddy.
  *
@@ -1045,6 +1051,10 @@ out:
  */
 static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
 {
+#if DISABLE_AVATARS
+	purple_debug_warning("gg", "ggp_update_buddy_avatar: disabled, please "
+		"update to 3.0.0, when available\n");
+#else
 	gchar *avatarurl;
 	PurpleUtilFetchUrlData *url_data;
 
@@ -1058,6 +1068,7 @@ static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
 			gg_get_avatar_url_cb, gc);
 
 	g_free(avatarurl);
+#endif
 }
 
 /**
@@ -2166,6 +2177,7 @@ static void ggp_login(PurpleAccount *account)
 
 		glp->server_addr = inet_addr(inet_ntoa(*addr));
 		glp->server_port = 8074;
+		free(addr);
 	} else
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 

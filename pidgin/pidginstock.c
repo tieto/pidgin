@@ -67,7 +67,7 @@ static struct StockIcon
 	{ PIDGIN_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ PIDGIN_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
-	{ PIDGIN_STOCK_ADD,             NULL,	   GTK_STOCK_ADD			  },
+	{ PIDGIN_STOCK_ADD,             NULL,	   GTK_STOCK_ADD              },
 	{ PIDGIN_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
 	{ PIDGIN_STOCK_POUNCE,          NULL,      GTK_STOCK_REDO             },
 	{ PIDGIN_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
@@ -80,17 +80,17 @@ static struct StockIcon
 
 static const GtkStockItem stock_items[] =
 {
-	{ PIDGIN_STOCK_ALIAS,               N_("_Alias"),      0, 0, NULL },
-	{ PIDGIN_STOCK_CHAT,                N_("_Join"),       0, 0, NULL },
-	{ PIDGIN_STOCK_CLOSE_TABS,          N_("Close _tabs"), 0, 0, NULL },
-	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("I_M"),         0, 0, NULL },
-	{ PIDGIN_STOCK_TOOLBAR_USER_INFO,   N_("_Get Info"),   0, 0, NULL },
-	{ PIDGIN_STOCK_INVITE,              N_("_Invite"),     0, 0, NULL },
-	{ PIDGIN_STOCK_MODIFY,              N_("_Modify..."),  0, 0, NULL },
-	{ PIDGIN_STOCK_ADD,                 N_("_Add..."),     0, 0, NULL },
-	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, NULL },
-	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, NULL },
-	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, NULL }
+	{ PIDGIN_STOCK_ALIAS,               N_("_Alias"),      0, 0, PACKAGE },
+	{ PIDGIN_STOCK_CHAT,                N_("_Join"),       0, 0, PACKAGE },
+	{ PIDGIN_STOCK_CLOSE_TABS,          N_("Close _tabs"), 0, 0, PACKAGE },
+	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("I_M"),         0, 0, PACKAGE },
+	{ PIDGIN_STOCK_TOOLBAR_USER_INFO,   N_("_Get Info"),   0, 0, PACKAGE },
+	{ PIDGIN_STOCK_INVITE,              N_("_Invite"),     0, 0, PACKAGE },
+	{ PIDGIN_STOCK_MODIFY,              N_("_Modify..."),  0, 0, PACKAGE },
+	{ PIDGIN_STOCK_ADD,                 N_("_Add..."),     0, 0, PACKAGE },
+	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, PACKAGE },
+	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, PACKAGE },
+	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, PACKAGE }
 };
 
 typedef struct {

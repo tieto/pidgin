@@ -43,9 +43,9 @@ struct _PurpleStoredImage
 {
 	int id;
 	guint8 refcount;
-	size_t size;		/**< The image data's size.	*/
-	char *filename;		/**< The filename (for the UI)	*/
-	gpointer data;		/**< The image data.		*/
+	size_t size;     /**< The image data's size. */
+	char *filename;  /**< The filename (for the UI) */
+	gpointer data;   /**< The image data. */
 };
 
 PurpleStoredImage *
@@ -89,23 +89,26 @@ int
 purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename)
 {
 	PurpleStoredImage *img = purple_imgstore_add(data, size, filename);
-	if (img) {
-		/*
-		 * Use the next unused id number.  We do it in a loop on the
-		 * off chance that nextid wraps back around to 0 and the hash
-		 * table still contains entries from the first time around.
-		 */
-		do {
-			img->id = ++nextid;
-		} while (img->id == 0 || g_hash_table_lookup(imgstore, &(img->id)) != NULL);
-
-		g_hash_table_insert(imgstore, &(img->id), img);
+	if (!img) {
+		return 0;
 	}
 
-	return (img ? img->id : 0);
+	/*
+	 * Use the next unused id number.  We do it in a loop on the
+	 * off chance that nextid wraps back around to 0 and the hash
+	 * table still contains entries from the first time around.
+	 */
+	do {
+		img->id = ++nextid;
+	} while (img->id == 0 || g_hash_table_lookup(imgstore, &(img->id)) != NULL);
+
+	g_hash_table_insert(imgstore, &(img->id), img);
+
+	return img->id;
 }
 
-PurpleStoredImage *purple_imgstore_find_by_id(int id) {
+PurpleStoredImage *purple_imgstore_find_by_id(int id)
+{
 	PurpleStoredImage *img = g_hash_table_lookup(imgstore, &id);
 
 	if (img != NULL)
@@ -114,7 +117,8 @@ PurpleStoredImage *purple_imgstore_find_by_id(int id) {
 	return img;
 }
 
-gconstpointer purple_imgstore_get_data(PurpleStoredImage *img) {
+gconstpointer purple_imgstore_get_data(PurpleStoredImage *img)
+{
 	g_return_val_if_fail(img != NULL, NULL);
 
 	return img->data;

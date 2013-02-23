@@ -198,7 +198,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
 	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 	request = g_strdup_printf("GET %s%s/%s HTTP/1.1\r\n"
-				 "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+				 "User-Agent: " YAHOO_CLIENT_USERAGENT_ALIAS "\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
 				 "Host: %s\r\n"
 				 "Cache-Control: no-cache\r\n\r\n",
@@ -366,7 +366,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 
 	request = g_strdup_printf("POST %s%s/%s HTTP/1.1\r\n"
-				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+				  "User-Agent: " YAHOO_CLIENT_USERAGENT_ALIAS "\r\n"
 				  "Cookie: T=%s; Y=%s\r\n"
 				  "Host: %s\r\n"
 				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
@@ -481,7 +481,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, &webaddress, NULL, &webpage, NULL, NULL);
 
 	request = g_strdup_printf("POST %s HTTP/1.1\r\n"
-				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+				  "User-Agent: " YAHOO_CLIENT_USERAGENT_ALIAS "\r\n"
 				  "Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
 				  "Host: %s\r\n"
 				  "Content-Length: %d\r\n"
@@ -518,7 +518,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 #endif
 
 	url_data = purple_util_fetch_url_request_len_with_account(account, webaddress, FALSE,
-			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
+			YAHOO_CLIENT_USERAGENT_ALIAS, TRUE, request, FALSE, -1,
 			yahoo_fetch_aliases_cb, gc);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
