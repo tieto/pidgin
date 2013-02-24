@@ -19,7 +19,7 @@ DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution \
 	    --enable-tcl --enable-tk \
 	    --with-dynamic-prpls=bonjour,gg,irc,jabber,msn,myspace,mxit,novell,oscar,sametime,simple,yahoo,zephyr # disable silc
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
-  auto DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
+  DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
 else
   DEB_CONFIGURE_EXTRA_FLAGS += --disable-nm
 endif
