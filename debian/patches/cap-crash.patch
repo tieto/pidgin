@@ -1,0 +1,16 @@
+Description: Fix from David Walser for a crash in the CAP plugin.
+Origin: upstream, 33754:a860609d9c9e
+Bug-Debian: http://bugs.debian.org/701544
+diff -r 75999131f023 -r a860609d9c9e pidgin/plugins/cap/cap.c
+--- a/pidgin/plugins/cap/cap.c	Thu Feb 14 00:42:20 2013 -0500
++++ b/pidgin/plugins/cap/cap.c	Thu Feb 14 21:58:02 2013 +0000
+@@ -43,7 +43,7 @@
+ 	int threshold = purple_prefs_get_int("/plugins/gtk/cap/threshold");
+ 	int min_minute = (current_minute - threshold) % 1440;
+ 	int max_minute = (current_minute + threshold) % 1440;
+-	char *sql, sta_id = NULL;
++	char *sql, *sta_id = NULL;
+ 	sqlite3_stmt *stmt = NULL;
+ 	const char *tail = NULL;
+ 	int rc;
+
