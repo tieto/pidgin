@@ -100,8 +100,17 @@ struct _GtkSourceUndoAction
 	guint modified  : 1;
 };
 
+/* G_DEFINE_QUARK requires Glib 2.34 */
+static gpointer INVALID_quark(void) {
+	static volatile gsize g_define_quark__volatile = 0;
+	if (g_once_init_enter (&g_define_quark__volatile)) {
+		GQuark g_define_quark = g_quark_from_string ("IA");
+		g_once_init_leave (&g_define_quark__volatile, g_define_quark);
+	}
+	return GSIZE_TO_POINTER(g_define_quark__volatile);
+}
 /* INVALID is a pointer to an invalid action */
-#define INVALID ((void *) "IA")
+#define INVALID INVALID_quark()
 
 struct _GtkSourceUndoManagerPrivate
 {
