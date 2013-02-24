@@ -1,3 +1,11 @@
+pidgin (2.10.7-2) unstable; urgency=low
+
+  * Fix IRC protocol loading by linking with SASL (Closes: #701541)
+  * Apply patch from upstream to fix crash in Contact Availability Plugin
+    (Closes: #701544)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 24 Feb 2013 11:13:12 -0500
+
 pidgin (2.10.7-1) unstable; urgency=low
 
   * Imported Upstream version 2.10.7
