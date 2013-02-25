@@ -966,7 +966,8 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	g_free(resource);
 
 	if (!jbr) {
-		purple_debug_error("jingle-rtp", "Could not find buddy's resource\n");
+		purple_debug_error("jingle-rtp", "Could not find buddy's resource - %s\n", resource);
+		return FALSE;
 	}
 
 	if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_ICEUDP)) {
