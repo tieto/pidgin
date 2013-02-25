@@ -743,7 +743,7 @@ void mxit_login( PurpleAccount* account )
 	 * if we don't have any info saved from a previous login, we need to get it from the MXit WAP site.
 	 * we do cache it, so this step is only done on the very first login for each account.
 	 */
-	if ( ( session->distcode == NULL ) || ( strlen( session->distcode ) == 0 ) ) {
+	if ( strlen( session->distcode ) == 0 ) {
 		/* this must be the very first login, so we need to retrieve the user information */
 		get_clientinfo( session );
 	}
