@@ -100,18 +100,6 @@ struct _GtkSourceUndoAction
 	guint modified  : 1;
 };
 
-/* G_DEFINE_QUARK requires Glib 2.34 */
-static gpointer INVALID_quark(void) {
-	static volatile gsize g_define_quark__volatile = 0;
-	if (g_once_init_enter (&g_define_quark__volatile)) {
-		GQuark g_define_quark = g_quark_from_string ("IA");
-		g_once_init_leave (&g_define_quark__volatile, g_define_quark);
-	}
-	return GSIZE_TO_POINTER(g_define_quark__volatile);
-}
-/* INVALID is a pointer to an invalid action */
-#define INVALID INVALID_quark()
-
 struct _GtkSourceUndoManagerPrivate
 {
 	GtkTextBuffer	*document;
@@ -136,9 +124,7 @@ struct _GtkSourceUndoManagerPrivate
 	guint	 	 modified_undoing_group : 1;
 
 	/* Pointer to the action (in the action list) marked as "modified".
-	 * It is NULL when no action is marked as "modified".
-	 * It is INVALID when the action marked as "modified" has been removed
-	 * from the action list (freeing the list or resizing it) */
+	 * It is NULL when no action is marked as "modified". */
 	GtkSourceUndoAction *modified_action;
 };
 
@@ -715,7 +701,7 @@ gtk_source_undo_manager_free_action_list (GtkSourceUndoManager *um)
 			--um->priv->num_of_groups;
 
 		if (action->modified)
-			um->priv->modified_action = INVALID;
+			um->priv->modified_action = NULL;
 
 		gtk_source_undo_action_free (action);
 
@@ -908,7 +894,7 @@ gtk_source_undo_manager_free_first_n_actions (GtkSourceUndoManager	*um,
 			--um->priv->num_of_groups;
 
 		if (action->modified)
-			um->priv->modified_action = INVALID;
+			um->priv->modified_action = NULL;
 
 		gtk_source_undo_action_free (action);
 
@@ -949,7 +935,7 @@ gtk_source_undo_manager_check_list_size (GtkSourceUndoManager *um)
 				--um->priv->num_of_groups;
 
 			if (undo_action->modified)
-				um->priv->modified_action = INVALID;
+				um->priv->modified_action = NULL;
 
 			gtk_source_undo_action_free (undo_action);
 
@@ -1174,9 +1160,7 @@ gtk_source_undo_manager_modified_changed_handler (GtkTextBuffer        *buffer,
 
 		if (um->priv->modified_action != NULL)
 		{
-			if (um->priv->modified_action != INVALID)
-				um->priv->modified_action->modified = FALSE;
-
+			um->priv->modified_action->modified = FALSE;
 			um->priv->modified_action = NULL;
 		}
 
