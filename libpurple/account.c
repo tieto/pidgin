@@ -1550,7 +1550,7 @@ purple_account_request_change_password(PurpleAccount *account)
 	field = purple_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -1558,7 +1558,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -1566,7 +1566,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password (again)"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
