@@ -1375,7 +1375,7 @@ purple_plugins_probe(const char *ext)
 				path = g_build_filename(search_path, file, NULL);
 
 				if (ext == NULL || has_file_extension(file, ext))
-					plugin = purple_plugin_probe(path);
+					purple_plugin_probe(path);
 
 				g_free(path);
 			}
