@@ -266,7 +266,16 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 
 	streamhost = jsx->streamhosts->data;
 
-	jsx->connect_data = NULL;
+	if (jsx->connect_data) {
+		purple_debug_info("jabber",
+				"jabber_si_bytestreams_attempt_connect: "
+				"cancelling existing connection attempt and restarting\n");
+		purple_proxy_connect_cancel(jsx->connect_data);
+		jsx->connect_data = NULL;
+		if (jsx->connect_timeout > 0)
+			purple_timeout_remove(jsx->connect_timeout);
+		jsx->connect_timeout = 0;
+	}
 	if (jsx->gpi != NULL)
 		purple_proxy_info_destroy(jsx->gpi);
 	jsx->gpi = NULL;
