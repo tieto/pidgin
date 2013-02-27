@@ -99,7 +99,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
-	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
+	if (purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
 		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 		prpl_info->set_status(irc->account, status);
 	}
