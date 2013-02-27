@@ -1388,8 +1388,7 @@ silcpurple_send_im_resolved(SilcClient client,
 
 	/* Check for images */
 	if (im->gflags & PURPLE_MESSAGE_IMAGES) {
-		list = silcpurple_image_message(im->message,
-						(SilcUInt32 *)(void *)&im->flags);
+		list = silcpurple_image_message(im->message, &im->flags);
 		if (list) {
 			/* Send one or more MIME message.  If more than one, they
 			   are MIME fragments due to over large message */
@@ -1438,7 +1437,7 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 	SilcClientConnection conn = sg->conn;
 	SilcDList clients;
 	SilcClientEntry client_entry;
-	SilcUInt32 mflags;
+	SilcMessageFlags mflags;
 	char *msg, *tmp;
 	int ret = 0;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
