@@ -2367,7 +2367,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (len)
 		*len = close - string + 1;
 	if (tag)
-		*tag = g_strndup(string, *len - 1);
+		*tag = g_strndup(string, close - string);
 	return TRUE;
 }
 
