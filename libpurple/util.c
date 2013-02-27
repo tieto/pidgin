@@ -4525,7 +4525,7 @@ purple_utf8_try_convert(const char *str)
 }
 
 #define utf8_first(x) ((x & 0x80) == 0 || (x & 0xe0) == 0xc0 \
-		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf)
+		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf0)
 gchar *
 purple_utf8_salvage(const char *str)
 {
