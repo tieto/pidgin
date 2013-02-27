@@ -245,7 +245,7 @@ pounce_to_xmlnode(PurplePounce *pounce)
 	g_hash_table_foreach(pounce->actions, action_parameter_list_to_xmlnode, child);
 
 	if (purple_pounce_get_save(pounce))
-		child = xmlnode_new_child(node, "save");
+		xmlnode_new_child(node, "save");
 
 	return node;
 }

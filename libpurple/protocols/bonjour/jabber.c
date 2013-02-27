@@ -181,7 +181,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 			/* Types of messages sent by iChat */
 			if (html_body_font_node != NULL) {
 				gchar *html_body;
-				const char *font_face, *font_size, *font_color,
+				const char *font_face, *font_size,
 					*ichat_balloon_color, *ichat_text_color;
 
 				font_face = xmlnode_get_attrib(html_body_font_node, "face");
@@ -189,7 +189,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
-				font_color = xmlnode_get_attrib(html_body_font_node, "color");
+				/*font_color = xmlnode_get_attrib(html_body_font_node, "color");*/
 				ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
 				ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 
@@ -413,16 +413,18 @@ static void
 _client_socket_handler(gpointer data, gint socket, PurpleInputCondition condition)
 {
 	BonjourJabberConversation *bconv = data;
-	gint len, message_length;
+	gssize len;
 	static char message[4096];
 
 	/* Read the data from the socket */
-	if ((len = recv(socket, message, sizeof(message) - 1, 0)) == -1) {
+	if ((len = recv(socket, message, sizeof(message) - 1, 0)) < 0) {
 		/* There have been an error reading from the socket */
-		if (errno != EAGAIN) {
+		if (len != -1 || errno != EAGAIN) {
 			const char *err = g_strerror(errno);
 
-			purple_debug_warning("bonjour", "receive error: %s\n", err ? err : "(null)");
+			purple_debug_warning("bonjour",
+					"receive of %" G_GSSIZE_FORMAT " error: %s\n",
+					len, err ? err : "(null)");
 
 			bonjour_jabber_close_conversation(bconv);
 			if (bconv->pb != NULL) {
@@ -441,19 +443,12 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		purple_debug_warning("bonjour", "Connection closed (without stream end) by %s.\n", (name) ? name : "(unknown)");
 		bonjour_jabber_stream_ended(bconv);
 		return;
-	} else {
-		message_length = len;
-		message[message_length] = '\0';
-
-		while (message_length > 0 && g_ascii_iscntrl(message[message_length - 1])) {
-			message[message_length - 1] = '\0';
-			message_length--;
-		}
 	}
 
-	purple_debug_info("bonjour", "Receive: -%s- %d bytes\n", message, len);
+	message[len] = '\0';
 
-	bonjour_parser_process(bconv, message, message_length);
+	purple_debug_info("bonjour", "Receive: -%s- %" G_GSSIZE_FORMAT " bytes\n", message, len);
+	bonjour_parser_process(bconv, message, len);
 }
 
 struct _stream_start_data {

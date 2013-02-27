@@ -438,7 +438,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 		purple_conv_im_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
 
 	/* icon's refcount was incremented above */
-	if (icon) purple_buddy_icon_unref(icon);
+	purple_buddy_icon_unref(icon);
 }
 
 void

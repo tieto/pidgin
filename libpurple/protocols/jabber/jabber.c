@@ -3295,7 +3295,7 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
-	char *resource;
+	char *resource = NULL;
 
 	if (!js) {
 		purple_debug_error("jabber",
@@ -3303,26 +3303,11 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		return FALSE;
 	}
 
-	if((resource = jabber_get_resource(who)) != NULL) {
-		/* they've specified a resource, no need to ask or
-		 * default or anything, just do it */
-
-		jb = jabber_buddy_find(js, who, FALSE);
-		jbr = jabber_buddy_find_resource(jb, resource);
-		g_free(resource);
-
-		if (type & PURPLE_MEDIA_AUDIO &&
-			!jabber_resource_has_capability(jbr,
-			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-			jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
-			return jabber_google_session_initiate(js, who, type);
-		else
-			return jingle_rtp_initiate_media(js, who, type);
-	}
-
 	jb = jabber_buddy_find(js, who, FALSE);
 
-	if(!jb || !jb->resources) {
+	if(!jb || !jb->resources ||
+			(((resource = jabber_get_resource(who)) != NULL)
+			 && (jbr = jabber_buddy_find_resource(jb, resource)) == NULL)) {
 		/* no resources online, we're trying to initiate with someone
 		 * whose presence we're not subscribed to, or
 		 * someone who is offline.  Let's inform the user */
@@ -3330,8 +3315,10 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 
 		if(!jb) {
 			msg = g_strdup_printf(_("Unable to initiate media with %s: invalid JID"), who);
-		} else if(jb->subscription & JABBER_SUB_TO) {
+		} else if(jb->subscription & JABBER_SUB_TO && !jb->resources) {
 			msg = g_strdup_printf(_("Unable to initiate media with %s: user is not online"), who);
+		} else if(resource) {
+			msg = g_strdup_printf(_("Unable to initiate media with %s: resource is not online"), who);
 		} else {
 			msg = g_strdup_printf(_("Unable to initiate media with %s: not subscribed to user presence"), who);
 		}
@@ -3339,7 +3326,21 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		purple_notify_error(account, _("Media Initiation Failed"),
 				_("Media Initiation Failed"), msg);
 		g_free(msg);
+		g_free(resource);
 		return FALSE;
+	} else if(jbr != NULL) {
+		/* they've specified a resource, no need to ask or
+		 * default or anything, just do it */
+
+		g_free(resource);
+
+		if (type & PURPLE_MEDIA_AUDIO &&
+			!jabber_resource_has_capability(jbr,
+				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+			jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
+			return jabber_google_session_initiate(js, who, type);
+		else
+			return jingle_rtp_initiate_media(js, who, type);
 	} else if(!jb->resources->next) {
 		/* only 1 resource online (probably our most common case)
 		 * so no need to ask who to initiate with */

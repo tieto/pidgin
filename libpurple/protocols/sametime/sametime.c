@@ -987,7 +987,6 @@ static void blist_merge(PurpleConnection *gc, struct mwSametimeList *stlist) {
   struct mwSametimeUser *stuser;
 
   PurpleGroup *group;
-  PurpleBuddy *buddy;
 
   GList *gl, *gtl, *ul, *utl;
 
@@ -1001,7 +1000,7 @@ static void blist_merge(PurpleConnection *gc, struct mwSametimeList *stlist) {
     for(; ul; ul = ul->next) {
 
       stuser = (struct mwSametimeUser *) ul->data;
-      buddy = buddy_ensure(gc, group, stuser);
+      buddy_ensure(gc, group, stuser);
     }
     g_list_free(utl);
   }
