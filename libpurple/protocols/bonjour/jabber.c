@@ -181,7 +181,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 			/* Types of messages sent by iChat */
 			if (html_body_font_node != NULL) {
 				gchar *html_body;
-				const char *font_face, *font_size,
+				const char *font_face, *font_size, *font_color,
 					*ichat_balloon_color, *ichat_text_color;
 
 				font_face = xmlnode_get_attrib(html_body_font_node, "face");
@@ -189,7 +189,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
-				/*font_color = xmlnode_get_attrib(html_body_font_node, "color");*/
+				font_color = xmlnode_get_attrib(html_body_font_node, "color");
 				ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
 				ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 
