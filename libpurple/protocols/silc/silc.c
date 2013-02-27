@@ -1798,7 +1798,7 @@ static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 	}
 
 	silcargs = g_strjoinv(" ", args);
-	silccmd = g_strconcat(cmd, " ", args ? silcargs : NULL, NULL);
+	silccmd = g_strconcat(cmd, " ", silcargs, NULL);
 	g_free(silcargs);
 	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
 		g_free(silccmd);
