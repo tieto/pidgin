@@ -559,14 +559,16 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 		return buf;
 	} else if (!strncmp(cur, "PING ", 5)) {
 		if (notice) { /* reply */
-			/* TODO: Should this read in the timestamp as a double? */
-			sscanf(cur, "PING %lu", &timestamp);
 			gc = purple_account_get_connection(irc->account);
 			if (!gc)
 				return NULL;
-			buf = g_strdup_printf(_("Reply time from %s: %lu seconds"), from, time(NULL) - timestamp);
-			purple_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
-			g_free(buf);
+			/* TODO: Should this read in the timestamp as a double? */
+			if (sscanf(cur, "PING %lu", &timestamp) == 1) {
+				buf = g_strdup_printf(_("Reply time from %s: %lu seconds"), from, time(NULL) - timestamp);
+				purple_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
+				g_free(buf);
+			} else
+				purple_debug(PURPLE_DEBUG_ERROR, "irc", "Unable to parse PING timestamp");
 			return NULL;
 		} else {
 			buf = irc_format(irc, "vt:", "NOTICE", from, msg);
