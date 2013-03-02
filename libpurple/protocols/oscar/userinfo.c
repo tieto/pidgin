@@ -309,7 +309,6 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 {
 	OscarData *od;
 	PurpleAccount *account;
-	PurplePresence *presence = NULL;
 	PurpleGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
@@ -331,7 +330,6 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 		bname = purple_buddy_get_name(b);
 		g = purple_buddy_get_group(b);
 		gname = purple_group_get_name(g);
-		presence = purple_buddy_get_presence(b);
 	}
 
 	if (userinfo != NULL)
@@ -386,7 +384,6 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
-	const gchar *alias;
 
 	if (!info->uin)
 		return;

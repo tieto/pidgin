@@ -2725,7 +2725,6 @@ purple_icons_fetch(PurpleConnection *gc)
 }
 
 static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	int warning_level;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -2734,15 +2733,6 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	va_end(ap);
 
 	purple_connection_set_display_name(od->gc, info->bn);
-
-	/*
-	 * What's with the + 0.5?
-	 * The 0.5 is basically poor-man's rounding.  Normally
-	 * casting "13.7" to an int will truncate to "13," but
-	 * with 13.7 + 0.5 = 14.2, which becomes "14" when
-	 * truncated.
-	 */
-	warning_level = info->warnlevel/10.0 + 0.5;
 
 	return 1;
 }
@@ -4606,7 +4596,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 	OscarData *od = NULL;
 	PurpleAccount *account = NULL;
 	PurplePresence *presence;
-	PurpleStatus *status;
 	aim_userinfo_t *userinfo = NULL;
 	const char *name;
 
@@ -4620,7 +4609,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 		userinfo = aim_locate_finduserinfo(od, name);
 
 	presence = purple_buddy_get_presence(b);
-	status = purple_presence_get_active_status(presence);
 
 	if (purple_presence_is_online(presence) == FALSE) {
 		char *gname;
