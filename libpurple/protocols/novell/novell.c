@@ -3314,7 +3314,6 @@ novell_set_permit_deny(PurpleConnection *gc)
 				for (node = purple_connection_get_account(gc)->permit; node; node = node->next) {
 					dn = nm_lookup_dn(user, (char *)node->data);
 					if (dn) {
-						user_record = nm_find_user_record(user, dn);
 
 						if (!g_slist_find_custom(user->allow_list,
 												 dn, (GCompareFunc)purple_utf8_strcasecmp)) {

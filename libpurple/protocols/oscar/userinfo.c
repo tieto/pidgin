@@ -382,7 +382,6 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
-	const gchar *alias;
 
 	if (!info->uin)
 		return;

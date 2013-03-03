@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-20 23:46+0100\n"
-"PO-Revision-Date: 2013-02-20 23:45+0100\n"
+"POT-Creation-Date: 2013-02-27 12:00+0100\n"
+"PO-Revision-Date: 2013-02-27 11:58+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -4635,6 +4635,12 @@ msgstr "Medien-Sitzung mit %s konnte nicht gestartet werden: ungültige JID"
 msgid "Unable to initiate media with %s: user is not online"
 msgstr ""
 "Medien-Sitzung mit %s konnte nicht gestartet werden: Benutzer ist nicht "
+"online"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr ""
+"Medien-Sitzung mit %s konnte nicht gestartet werden: Ressource ist nicht "
 "online"
 
 #, c-format

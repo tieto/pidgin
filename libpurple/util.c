@@ -3925,7 +3925,8 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (f <= 1)
 		*path = '\0';
 
-	sscanf(port_str, "%d", &port);
+	if (sscanf(port_str, "%d", &port) != 1)
+		purple_debug_error("util", "Error parsing URL port from %s\n", url);
 
 	if (ret_host != NULL) *ret_host = g_strdup(host);
 	if (ret_port != NULL) *ret_port = port;
@@ -4251,7 +4252,7 @@ purple_utf8_try_convert(const char *str)
 }
 
 #define utf8_first(x) ((x & 0x80) == 0 || (x & 0xe0) == 0xc0 \
-		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf)
+		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf0)
 gchar *
 purple_utf8_salvage(const char *str)
 {

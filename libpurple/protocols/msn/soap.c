@@ -426,7 +426,8 @@ msn_soap_process(MsnSoapConnection *conn)
 					g_free(line);
 					return;
 				} else if (strcmp(key, "Content-Length") == 0) {
-					sscanf(value, "%" G_GSIZE_FORMAT, &(conn->body_len));
+					if (sscanf(value, "%" G_GSIZE_FORMAT, &(conn->body_len)) != 1)
+						purple_debug_error("soap", "Unable to parse Content-Length\n");
 				} else if (strcmp(key, "Connection") == 0) {
 					if (strcmp(value, "close") == 0) {
 						conn->close_when_done = TRUE;

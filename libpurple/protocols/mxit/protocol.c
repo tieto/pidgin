@@ -868,9 +868,15 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 	);
 
 	/* add attributes */
-	for ( i = 1; i < nr_attrib * 3; i+=3 )
+	for ( i = 1; i < nr_attrib * 3; i+=3 ) {
+		if ( parts == NULL || parts[i] == NULL || parts[i + 1] == NULL || parts[i + 2] == NULL ) {
+			purple_debug_error( MXIT_PLUGIN_ID, "Invalid profile update attributes = '%s' - nbr=%u\n", attributes, nr_attrib );
+			g_strfreev( parts );
+			return;
+		}
 		datalen += sprintf( data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
 								CP_FLD_TERM, parts[i], CP_FLD_TERM, parts[i + 1], CP_FLD_TERM, parts[i + 2] );
+	}
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_SET );
