@@ -5244,7 +5244,7 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
-	static gchar buf[1024];
+	static gchar buf[16384];
 	gchar *name = NULL;
 
 	g_object_get(G_OBJECT(tag), "name", &name, NULL);
