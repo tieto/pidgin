@@ -328,5 +328,8 @@ void mxit_http_send_request( struct MXitSession* session, char* host, int port, 
 
 	/* open connection to the HTTP server */
 	con = purple_proxy_connect( NULL, session->acc, host, port, mxit_cb_http_connect, req );
+	if ( !con ) {
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect" ) );
+	}
 }
 

@@ -389,6 +389,9 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP RESPONSE: '%s'\n", url_text );
 #endif
 
+	/* remove request from the async outstanding calls list */
+	session->async_calls = g_slist_remove( session->async_calls, url_data );
+
 	if ( !url_text ) {
 		/* no reply from the WAP site */
 		purple_connection_error( session->con, _( "Error contacting the MXit WAP site. Please try again later." ) );
@@ -552,6 +555,8 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
 			captcha_resp, session->logindata->cc, session->logindata->locale, ( state == MXIT_STATE_REGISTER1 ) ? 0 : 1, MXIT_CP_PLATFORM, MXIT_CP_OS,
 			MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
 	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo2, session );
+	if ( url_data )
+		session->async_calls = g_slist_prepend( session->async_calls, url_data );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );
@@ -608,6 +613,9 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "RESPONSE: %s\n", url_text );
 #endif
+
+	/* remove request from the async outstanding calls list */
+	session->async_calls = g_slist_remove( session->async_calls, url_data );
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
@@ -716,6 +724,8 @@ static void get_clientinfo( struct MXitSession* session )
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&h=%i&w=%i&ts=%li", wapserver, MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
 	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo1, session );
+	if ( url_data )
+		session->async_calls = g_slist_prepend( session->async_calls, url_data );
 
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP REQUEST: '%s'\n", url );

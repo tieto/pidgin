@@ -487,6 +487,9 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	purple_debug_info( MXIT_PLUGIN_ID, "emoticon_returned\n" );
 #endif
 
+	/* remove request from the async outstanding calls list */
+	mx->session->async_calls = g_slist_remove( mx->session->async_calls, url_data );
+
 	if ( !url_text ) {
 		/* no reply from the WAP site */
 		purple_debug_error( MXIT_PLUGIN_ID, "Error contacting the MXit WAP site. Please try again later (emoticon).\n" );
@@ -632,6 +635,9 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver, MXIT_EMOTICON_SIZE, id, time( NULL ) );
 	url_data = purple_util_fetch_url_request( url, TRUE, NULL, TRUE, NULL, FALSE, emoticon_returned, mx );
+	if ( url_data )
+		mx->session->async_calls = g_slist_prepend( mx->session->async_calls, url_data );
+
 	g_free( url );
 }
 
