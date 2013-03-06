@@ -412,6 +412,8 @@ static void command_imagestrip(struct MXitSession* session, const char* from, GH
 
 		/* base64 decode the image data */
 		rawimg = purple_base64_decode(tmp, &rawimglen);
+		if (!rawimg)
+			return;
 
 		/* save it to a file */
 		dir = g_build_filename(purple_user_dir(), "mxit", "imagestrips", NULL);
