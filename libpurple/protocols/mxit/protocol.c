@@ -1244,7 +1244,7 @@ void mxit_send_file( struct MXitSession* session, const char* username, const ch
 	purple_debug_info( MXIT_PLUGIN_ID, "SENDING FILE '%s' of %i bytes to user '%s'\n", filename, buflen, username );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
@@ -1280,7 +1280,7 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_reject\n" );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
@@ -1318,7 +1318,7 @@ void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_accept\n" );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
@@ -1354,7 +1354,7 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_received\n" );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
@@ -1391,7 +1391,7 @@ void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_set_avatar: %i bytes\n", avatarlen );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
@@ -1430,7 +1430,7 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_avatar: %s\n", mxitId );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data, "ms=" );
+	datalen = snprintf( data, sizeof( data ), "ms=" );
 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
