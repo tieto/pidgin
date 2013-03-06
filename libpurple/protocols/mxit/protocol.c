@@ -268,7 +268,7 @@ static void mxit_cb_http_rx( PurpleUtilFetchUrlData* url_data, gpointer user_dat
 	struct MXitSession*		session		= (struct MXitSession*) user_data;
 
 	/* clear outstanding request */
-	session->http_out_req = NULL;
+	session->async_calls = g_slist_remove( session->async_calls, url_data );
 
 	if ( ( !url_text ) || ( len == 0 ) ) {
 		/* error with request */
@@ -294,6 +294,7 @@ static void mxit_cb_http_rx( PurpleUtilFetchUrlData* url_data, gpointer user_dat
  */
 static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* packet )
 {
+	PurpleUtilFetchUrlData*	url_data;
 	char*		part	= NULL;
 	char*		url		= NULL;
 
@@ -312,7 +313,9 @@ static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* 
 #endif
 
 	/* send the HTTP request */
-	session->http_out_req = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_http_rx, session );
+	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_http_rx, session );
+	if ( url_data )
+		session->async_calls = g_slist_prepend( session->async_calls, url_data );
 
 	g_free( url );
 	if ( part )
@@ -2874,10 +2877,10 @@ void mxit_close_connection( struct MXitSession* session )
 	}
 	session->flags &= ~MXIT_FLAG_CONNECTED;
 
-	/* cancel outstanding HTTP request */
-	if ( ( session->http ) && ( session->http_out_req ) ) {
-		purple_util_fetch_url_cancel( (PurpleUtilFetchUrlData*) session->http_out_req );
-		session->http_out_req = NULL;
+	/* cancel all outstanding async calls */
+	while ( session->async_calls ) {
+		purple_util_fetch_url_cancel( session->async_calls->data );
+		session->async_calls = g_slist_delete_link(session->async_calls, session->async_calls);
 	}
 
 	/* remove the input cb function */
