@@ -461,23 +461,23 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->headerlen = 0;
 
 	/* create generic packet header */
-	hlen = snprintf( header, sizeof( header ), "id=%s%c", purple_account_get_username( session->acc ), CP_REC_TERM );			/* client msisdn */
+	hlen = snprintf( header, sizeof( header ), "id=%s%c", purple_account_get_username( session->acc ), CP_REC_TERM );	/* client mxitid */
 
 	if ( session->http ) {
 		/* http connection only */
-		hlen += sprintf( header + hlen,	"s=" );
+		hlen += snprintf( header + hlen, sizeof( header ) - hlen, "s=" );
 		if ( session->http_sesid > 0 ) {
-			hlen += sprintf( header + hlen,	"%u%c", session->http_sesid, CP_FLD_TERM );	/* http session id */
+			hlen += snprintf( header + hlen, sizeof( header ) - hlen, "%u%c", session->http_sesid, CP_FLD_TERM );	/* http session id */
 		}
 		session->http_seqno++;
-		hlen += sprintf( header + hlen,	"%u%c", session->http_seqno, CP_REC_TERM );		/* http request sequence id */
+		hlen += snprintf( header + hlen, sizeof( header ) - hlen, "%u%c", session->http_seqno, CP_REC_TERM );		/* http request sequence id */
 	}
 
-	hlen += sprintf( header + hlen,	"cm=%i%c", cmd, CP_REC_TERM ); 						/* packet command */
+	hlen += snprintf( header + hlen, sizeof( header ) - hlen, "cm=%i%c", cmd, CP_REC_TERM ); 						/* packet command */
 
 	if ( !session->http ) {
 		/* socket connection only */
-		packet->headerlen += sprintf( packet->header, "ln=%i%c", ( datalen + hlen ), CP_REC_TERM );		/* packet length */
+		packet->headerlen = snprintf( packet->header, sizeof( packet->header ), "ln=%i%c", ( datalen + hlen ), CP_REC_TERM );		/* packet length */
 	}
 
 	/* copy the header to packet */
@@ -774,7 +774,7 @@ void mxit_send_login( struct MXitSession* session )
 	/* include "custom resource" information */
 	splashId = splash_current( session );
 	if ( splashId != NULL )
-		datalen += sprintf( data + datalen, "%ccr=%s", CP_REC_TERM, splashId );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%ccr=%s", CP_REC_TERM, splashId );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_LOGIN );
@@ -838,7 +838,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
@@ -876,7 +876,8 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 			g_strfreev( parts );
 			return;
 		}
-		datalen += sprintf(	data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen,
+								"%c%s%c%s%c%s",		/* \1name\1type\1value  */
 								CP_FLD_TERM, parts[i], CP_FLD_TERM, parts[i + 1], CP_FLD_TERM, parts[i + 2] );
 	}
 
@@ -909,7 +910,7 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -938,7 +939,7 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -965,7 +966,7 @@ void mxit_send_presence( struct MXitSession* session, int presence, const char* 
 
 	/* append status message (if one is set) */
 	if ( statusmsg )
-		datalen += sprintf( data + datalen, "%s", statusmsg );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%s", statusmsg );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_STATUS );
@@ -1088,7 +1089,7 @@ void mxit_send_deny_sub( struct MXitSession* session, const char* username, cons
 
 	/* append reason (if one is set) */
 	if ( reason )
-		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, reason );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, reason );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_DENY );
@@ -1189,7 +1190,7 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_CREATE );
@@ -1218,7 +1219,7 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += snprintf( data + datalen, sizeof( data ) - datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_INVITE );
