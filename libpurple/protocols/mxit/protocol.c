@@ -2450,12 +2450,12 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 					return 0;
 				}
 				else {
-					snprintf( errmsg, sizeof( errmsg ), _( "Login error: %s (%i)" ), errdesc, packet->errcode );
+					g_snprintf( errmsg, sizeof( errmsg ), _( "Login error: %s (%i)" ), errdesc, packet->errcode );
 					purple_connection_error( session->con, errmsg );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
-				snprintf( errmsg, sizeof( errmsg ), _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
+				g_snprintf( errmsg, sizeof( errmsg ), _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
 				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NAME_IN_USE, _( errmsg ) );
 				return -1;
 		case CP_CMD_CONTACT :
