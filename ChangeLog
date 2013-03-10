@@ -4,6 +4,10 @@ version 2.10.8:
 	Stock market:
 	* Didn't really increase, but didn't plummet, either.
 
+	Windows-Specific Changes:
+	* Updates to dependencies:
+		* NSS 3.14.3 and NSPR 4.9.5
+
 version 2.10.7 (02/13/2013):
 	Alien hatchery:
 	* No changes
