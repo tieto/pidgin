@@ -439,7 +439,7 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 			"own status changed to %s [%s]\n",
 			purple_status, status_message ? status_message : "");
 	}
-	else
+	else if (purple_debug_is_verbose())
 	{
 		purple_debug_misc("gg", "ggp_status_got_others_buddy: "
 			"status of %u changed to %s [%s]\n", uin,

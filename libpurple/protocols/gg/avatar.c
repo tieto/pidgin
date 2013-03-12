@@ -155,8 +155,10 @@ void ggp_avatar_buddy_update(PurpleConnection *gc, uin_t uin, time_t timestamp)
 	ggp_avatar_buddy_update_req *pending_update =
 		g_new(ggp_avatar_buddy_update_req, 1); //TODO: leak?
 
-	purple_debug_misc("gg", "ggp_avatar_buddy_update(%p, %u, %lu)\n", gc,
-		uin, timestamp);
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("gg", "ggp_avatar_buddy_update(%p, %u, %lu)\n", gc,
+			uin, timestamp);
+	}
 
 	pending_update->uin = uin;
 	pending_update->timestamp = timestamp;
@@ -167,7 +169,9 @@ void ggp_avatar_buddy_update(PurpleConnection *gc, uin_t uin, time_t timestamp)
 
 void ggp_avatar_buddy_remove(PurpleConnection *gc, uin_t uin)
 {
-	purple_debug_info("gg", "ggp_avatar_buddy_remove(%p, %u)\n", gc, uin);
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("gg", "ggp_avatar_buddy_remove(%p, %u)\n", gc, uin);
+	}
 
 	purple_buddy_icons_set_for_user(purple_connection_get_account(gc),
 		ggp_uin_to_str(uin), NULL, 0, NULL);
@@ -220,10 +224,12 @@ static gboolean ggp_avatar_buddy_update_next(PurpleConnection *gc)
 		old_timestamp_str, NULL, 10) : 0;
 	if (old_timestamp == pending_update->timestamp)
 	{
-		purple_debug_misc("gg",
-			"ggp_avatar_buddy_update_next(%p): "
-			"%u have up to date avatar with ts=%lu\n", gc,
-			pending_update->uin, pending_update->timestamp);
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("gg",
+				"ggp_avatar_buddy_update_next(%p): "
+				"%u have up to date avatar with ts=%lu\n", gc,
+				pending_update->uin, pending_update->timestamp);
+		}
 		return FALSE;
 	}
 	if (old_timestamp > pending_update->timestamp)
