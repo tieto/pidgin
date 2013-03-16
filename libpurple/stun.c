@@ -175,7 +175,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	struct sockaddr_in *sinptr;
 
 	len = recv(source, buffer, sizeof(buffer) - 1, 0);
-	if (!len) {
+	if (len < 0) {
 		purple_debug_warning("stun", "unable to read stun response\n");
 		return;
 	}
