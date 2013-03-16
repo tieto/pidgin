@@ -178,6 +178,8 @@ msn_message_parse_payload(MsnMessage *msg,
 		g_free(tmp_base);
 		g_return_if_reached();
 	}
+
+	/* NUL-terminate the end of the headers - it'll get skipped over below */
 	*end = '\0';
 
 	/* Split the headers and parse each one */
@@ -195,10 +197,12 @@ msn_message_parse_payload(MsnMessage *msg,
 
 			/* The only one I care about is 'boundary' (which is folded from
 			   the key 'Content-Type'), so only process that. */
-			if (!strcmp(key, "boundary")) {
+			if (!strcmp(key, "boundary") && value) {
 				char *end = strchr(value, '\"');
-				*end = '\0';
-				msn_message_set_header(msg, key, value);
+				if (end) {
+					*end = '\0';
+					msn_message_set_header(msg, key, value);
+				}
 			}
 
 			g_strfreev(tokens);
@@ -210,18 +214,15 @@ msn_message_parse_payload(MsnMessage *msg,
 		key = tokens[0];
 		value = tokens[1];
 
-		/*if not MIME content ,then return*/
 		if (!strcmp(key, "MIME-Version"))
 		{
-			g_strfreev(tokens);
-			continue;
+			/* Ignore MIME-Version header */
 		}
-
-		if (!strcmp(key, "Content-Type"))
+		else if (!strcmp(key, "Content-Type"))
 		{
 			char *charset, *c;
 
-			if ((c = strchr(value, ';')) != NULL)
+			if (value && (c = strchr(value, ';')) != NULL)
 			{
 				if ((charset = strchr(c, '=')) != NULL)
 				{
