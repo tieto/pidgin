@@ -1426,7 +1426,7 @@ purple_plugins_probe(const char *ext)
 			}
 
 			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
-								(GCompareFunc)compare_prpl);
+													(GCompareFunc)compare_prpl);
 		}
 	}
 #endif /* PURPLE_PLUGINS */

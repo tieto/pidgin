@@ -75,7 +75,7 @@ typedef struct
 {
 	PurpleCallback cb;
 	gpointer data;
-} CbInfo;
+} PurpleCallbackBundle;
 
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
@@ -193,7 +193,8 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 		gboolean boolean_value = purple_value_get_boolean(attr_value);
 		if (boolean_value == purple_value_get_boolean(default_value))
 			return NULL;
-		value = g_strdup(boolean_value ? "true" : "false");
+		value = g_strdup(boolean_value ?
+								"true" : "false");
 	}
 	else
 	{
@@ -1183,13 +1184,13 @@ purple_account_unregister_got_password_cb(PurpleAccount *account,
                                           GError *error,
                                           gpointer data)
 {
-	CbInfo *info = data;
+	PurpleCallbackBundle *cbb = data;
 	PurpleAccountUnregistrationCb cb;
 
-	cb = (PurpleAccountUnregistrationCb)info->cb;
-	_purple_connection_new_unregister(account, password, cb, info->data);
+	cb = (PurpleAccountUnregistrationCb)cbb->cb;
+	_purple_connection_new_unregister(account, password, cb, cbb->data);
 
-	g_free(info);
+	g_free(cbb);
 }
 
 void
@@ -1204,18 +1205,18 @@ purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
 void
 purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
-	CbInfo *info;
+	PurpleCallbackBundle *cbb;
 
 	g_return_if_fail(account != NULL);
 
 	purple_debug_info("account", "Unregistering account %s\n",
 					  purple_account_get_username(account));
 
-	info = g_new0(CbInfo, 1);
-	info->cb = PURPLE_CALLBACK(cb);
-	info->data = user_data;
+	cbb = g_new0(PurpleCallbackBundle, 1);
+	cbb->cb = PURPLE_CALLBACK(cb);
+	cbb->data = user_data;
 
-	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, info);
+	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, cbb);
 }
 
 static void
@@ -1367,7 +1368,7 @@ gboolean
 purple_account_is_disconnecting(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, TRUE);
-
+	
 	return account->disconnecting;
 }
 
@@ -2253,7 +2254,7 @@ purple_account_get_password_async_finish(PurpleAccount *account,
                                          GError *error,
                                          gpointer data)
 {
-	CbInfo *info = data;
+	PurpleCallbackBundle *cbb = data;
 	PurpleKeyringReadCallback cb;
 
 	purple_debug_info("account",
@@ -2264,11 +2265,11 @@ purple_account_get_password_async_finish(PurpleAccount *account,
 	g_free(account->password);
 	account->password = g_strdup(password);
 
-	cb = (PurpleKeyringReadCallback)info->cb;
+	cb = (PurpleKeyringReadCallback)cbb->cb;
 	if (cb != NULL)
-		cb(account, password, error, info->data);
+		cb(account, password, error, cbb->data);
 
-	g_free(info);
+	g_free(cbb);
 }
 
 void
@@ -2289,16 +2290,16 @@ purple_account_get_password(PurpleAccount *account,
 		cb(account, account->password, NULL, data);
 
 	} else {
-		CbInfo *info = g_new0(CbInfo, 1);
-		info->cb = PURPLE_CALLBACK(cb);
-		info->data = data;
+		PurpleCallbackBundle *cbb = g_new0(PurpleCallbackBundle, 1);
+		cbb->cb = PURPLE_CALLBACK(cb);
+		cbb->data = data;
 
 		purple_debug_info("account",
 			"Reading password for account %s (%s) from async keyring.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		purple_keyring_get_password(account, 
-			purple_account_get_password_async_finish, info);
+			purple_account_get_password_async_finish, cbb);
 	}
 }
 
