@@ -1476,6 +1476,7 @@ if test "x$GCC" = "xyes"; then
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
+DEBUG_CPPFLAGS=`echo "$DEBUG_CFLAGS" | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//'`
 
 if test "x$SUNCC" = "xyes"; then
         CFLAGS="$CFLAGS -features=extensions" 
@@ -2570,6 +2571,7 @@ if test "$ac_cv_cygwin" = yes ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AC_SUBST(DEBUG_CPPFLAGS)
 AC_SUBST(DEBUG_CFLAGS)
 AC_SUBST(LDADD)
 AC_SUBST(LIBS)

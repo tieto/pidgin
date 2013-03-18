@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 		Makefile.mingw
+CLEANFILES =
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -39,6 +40,8 @@ kwallet.cpp: kwallet.moc
 kwallet.moc:
 	$(AM_V_GEN)$(MOC) $(kwallet_la_CXXFLAGS) -i kwallet.cpp -o $@
 
+CLEANFILES += kwallet.moc
+
 endif
 
 if PLUGINS
@@ -63,10 +66,10 @@ endif
 
 endif
 
+#XXX: that might be done better than adding DEBUG_CPPFLAGS to all objects (not only C++ ones)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
-	$(DEBUG_CFLAGS) \
+	$(DEBUG_CPPFLAGS) \
 	$(PLUGIN_CFLAGS)
-
