@@ -244,12 +244,8 @@ purplerc_color_response(GtkDialog *color_dialog, gint response, gpointer data)
 	if (response == GTK_RESPONSE_OK) {
 		GdkColor color;
 		gchar colorstr[8];
-#if GTK_CHECK_VERSION(2,14,0)
 		GtkWidget *colorsel =
 			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog));
-#else
-		GtkWidget *colorsel = GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel;
-#endif
 
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
 
@@ -280,13 +276,9 @@ purplerc_set_color(GtkWidget *widget, gpointer data)
 
 	if (pref != NULL && strcmp(pref, "")) {
 		if (gdk_color_parse(pref, &color)) {
-#if GTK_CHECK_VERSION(2,14,0)
 			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
 				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog))),
 				&color);
-#else
-			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel), &color);
-#endif
 		}
 	}
 

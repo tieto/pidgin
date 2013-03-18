@@ -454,11 +454,9 @@ setup_icon_box(PidginStatusBox *status_box)
 	gtk_widget_set_parent(status_box->icon_box, GTK_WIDGET(status_box));
 	gtk_widget_show(status_box->icon_box);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(status_box->icon_box,
 			status_box->account ? _("Click to change your buddyicon for this account.") :
 				_("Click to change your buddyicon for all accounts."));
-#endif
 
 	if (status_box->account &&
 		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))

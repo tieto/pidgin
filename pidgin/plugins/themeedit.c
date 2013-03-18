@@ -67,12 +67,8 @@ theme_color_selected(GtkDialog *dialog, gint response, const char *prop)
 		GdkColor color;
 		PidginBlistTheme *theme;
 
-#if GTK_CHECK_VERSION(2,14,0)
 		colorsel =
 			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog));
-#else
-		colorsel = GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel;
-#endif
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
 
 		theme = pidgin_blist_get_theme();
@@ -155,16 +151,10 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 	}
 
 	dialog = gtk_color_selection_dialog_new(_("Select Color"));
-#if GTK_CHECK_VERSION(2,14,0)
 	if (color)
 		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
 			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog))),
 			color);
-#else
-	if (color)
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel),
-				color);
-#endif
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_color_selected),
 			prop);
 
@@ -184,9 +174,7 @@ pidgin_theme_create_color_selector(const char *text, const char *blurb, const ch
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sizegroup, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-#if GTK_CHECK_VERSION(2, 12, 0)
 	gtk_widget_set_tooltip_text(label, blurb);
-#endif
 
 	color = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR,
 			PIDGIN_BUTTON_HORIZONTAL);
@@ -210,9 +198,7 @@ pidgin_theme_create_font_selector(const char *text, const char *blurb, const cha
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sizegroup, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-#if GTK_CHECK_VERSION(2, 12, 0)
 	gtk_widget_set_tooltip_text(label, blurb);
-#endif
 
 	font = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
 			PIDGIN_BUTTON_HORIZONTAL);

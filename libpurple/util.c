@@ -3180,42 +3180,14 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 	return "icon";
 }
 
-/*
- * We thought about using non-cryptographic hashes like CRC32 here.
- * They would be faster, but we think using something more secure is
- * important, so that it is more difficult for someone to maliciously
- * replace one buddy's icon with something else.
- */
-char *
-purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
-{
-	PurpleCipherContext *context;
-	gchar digest[41];
-
-	context = purple_cipher_context_new_by_name("sha1", NULL);
-	if (context == NULL)
-	{
-		purple_debug_error("util", "Could not find sha1 cipher\n");
-		g_return_val_if_reached(NULL);
-	}
-
-	/* Hash the image data */
-	purple_cipher_context_append(context, image_data, image_len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
-	{
-		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
-		g_return_val_if_reached(NULL);
-	}
-	purple_cipher_context_destroy(context);
-
-	return g_strdup(digest);
-}
-
 char *
 purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
 {
-	/* Return the filename */
-	char *checksum = purple_util_get_image_checksum(image_data, image_len);
+	/* Use a cryptographic hash to avoid the possibility of user A
+	   intentionally causing a collision with user B.  It's not a
+	   horrible problem, but it's something we should try to avoid. */
+	char *checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1,
+			image_data, image_len);
 	char *filename = g_strdup_printf("%s.%s", checksum,
 	                       purple_util_get_image_extension(image_data, image_len));
 	g_free(checksum);
@@ -3953,7 +3925,8 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (f <= 1)
 		*path = '\0';
 
-	sscanf(port_str, "%d", &port);
+	if (sscanf(port_str, "%d", &port) != 1)
+		purple_debug_error("util", "Error parsing URL port from %s\n", url);
 
 	if (ret_host != NULL) *ret_host = g_strdup(host);
 	if (ret_port != NULL) *ret_port = port;
@@ -4279,7 +4252,7 @@ purple_utf8_try_convert(const char *str)
 }
 
 #define utf8_first(x) ((x & 0x80) == 0 || (x & 0xe0) == 0xc0 \
-		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf)
+		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf0)
 gchar *
 purple_utf8_salvage(const char *str)
 {

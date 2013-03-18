@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [9])
+m4_define([gnt_micro_version], [10])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -380,7 +380,7 @@ AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
-dnl # Check for GTK+ 2.10 and other things used by the GTK UI
+dnl # Check for GTK+ 2.18 and other things used by the GTK UI
 dnl #######################################################################
 AC_ARG_ENABLE(screensaver,
 	[AS_HELP_STRING([--disable-screensaver],
@@ -440,20 +440,20 @@ Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "x2"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "xauto"; then
 		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
 			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], [with_gtk=2], [
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])])
@@ -2586,12 +2586,12 @@ fi
 AC_SUBST(PLUGINS_DEFINE)
 
 dnl #######################################################################
-dnl # Check for Cyrus-SASL (for Jabber)
+dnl # Check for Cyrus-SASL (for xmpp/irc)
 dnl #######################################################################
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
 AC_SUBST(SASL_LIBS)
-AC_ARG_ENABLE(cyrus-sasl, AS_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
+AC_ARG_ENABLE(cyrus-sasl, AS_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for xmpp/irc]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
 if test "x$enable_cyrus_sasl" = "xyes" ; then
 	AC_CHECK_LIB(sasl2, sasl_client_init, [
 			AM_CONDITIONAL(USE_CYRUS_SASL, true)

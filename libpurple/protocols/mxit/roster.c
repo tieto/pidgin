@@ -583,7 +583,7 @@ void mxit_update_blist( struct MXitSession* session )
  *
  *  @param user_data	Object associated with the invite
  */
-static void mxit_cb_buddy_auth( gpointer user_data )
+static void mxit_cb_buddy_auth( const char *message, gpointer user_data )
 {
 	struct contact_invite*	invite	= (struct contact_invite*) user_data;
 
@@ -612,14 +612,14 @@ static void mxit_cb_buddy_auth( gpointer user_data )
  *
  *  @param user_data	Object associated with the invite
  */
-static void mxit_cb_buddy_deny( gpointer user_data )
+static void mxit_cb_buddy_deny( const char *message, gpointer user_data )
 {
 	struct contact_invite*	invite	= (struct contact_invite*) user_data;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_buddy_deny '%s'\n", invite->contact->username );
 
 	/* send a deny subscription packet to MXit */
-	mxit_send_deny_sub( invite->session, invite->contact->username );
+	mxit_send_deny_sub( invite->session, invite->contact->username, message );
 
 	/* remove the invite from our internal invites list */
 	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
@@ -750,8 +750,10 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 
 		if ( buddy_name[0] == '#' ) {
 			gchar *tmp = (gchar*) purple_base64_decode( buddy_name + 1, NULL );
-			mxit_send_invite( session, tmp, FALSE, buddy_alias, group_name, message );
-			g_free( tmp );
+			if ( tmp ) {
+				mxit_send_invite( session, tmp, FALSE, buddy_alias, group_name, message );
+				g_free( tmp );
+			}
 		}
 		else
 			mxit_send_invite( session, buddy_name, TRUE, buddy_alias, group_name, message );

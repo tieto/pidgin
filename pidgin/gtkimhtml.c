@@ -1758,7 +1758,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "weight", PANGO_WEIGHT_NORMAL,
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 			"invisible", FALSE,
 #endif
 			NULL);
@@ -2430,10 +2430,11 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			if (len)
+			if (len) {
 				*len = e - string + strlen ("-->");
-			if (tag)
-				*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+				if (tag)
+					*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			}
 			return TRUE;
 		}
 	}
@@ -2443,7 +2444,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (len)
 		*len = close - string + 1;
 	if (tag)
-		*tag = g_strndup(string, *len - 1);
+		*tag = g_strndup(string, close - string);
 	return TRUE;
 }
 
@@ -3398,7 +3399,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 					wpos = g_snprintf (ws, len, "%s", tag);
 					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
 #else
@@ -3576,7 +3577,7 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-#if FALSE && GTK_CHECK_VERSION(2,10,10)
+#if FALSE
 	GtkTextTag *tag;
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
 	if (tag)
@@ -5243,7 +5244,7 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
-	static gchar buf[1024];
+	static gchar buf[16384];
 	gchar *name = NULL;
 
 	g_object_get(G_OBJECT(tag), "name", &name, NULL);
@@ -5267,8 +5268,10 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		g_free(name);
 
 		if (tmp) {
-			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", tmp);
+			gchar *escaped = purple_markup_escape_text(tmp, -1);
+			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", escaped);
 			buf[sizeof(buf)-1] = '\0';
+			g_free(escaped);
 			return buf;
 		} else {
 			return "";

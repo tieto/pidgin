@@ -83,6 +83,7 @@ enum {
 struct _PidginConversation
 {
 	PurpleConversation *active_conv;
+	PurpleConversation *last_conversed;
 	GList *convs;
 	GList *send_history;
 
@@ -90,11 +91,7 @@ struct _PidginConversation
 
 	gboolean make_sound;
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gpointer depr2;
-#else
-	GtkTooltips *tooltips;
-#endif
 
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;

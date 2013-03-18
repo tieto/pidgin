@@ -700,9 +700,6 @@ debug_window_new(void)
 	gint width, height;
 	void *handle;
 	GtkToolItem *item;
-#if !GTK_CHECK_VERSION(2,12,0)
-	GtkTooltips *tooltips;
-#endif
 
 	win = g_new0(DebugWindow, 1);
 
@@ -729,12 +726,6 @@ debug_window_new(void)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
-#if !GTK_CHECK_VERSION(2,12,0)
-		tooltips = gtk_tooltips_new();
-#endif
-#if !GTK_CHECK_VERSION(2,14,0)
-		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
-#endif
 		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 

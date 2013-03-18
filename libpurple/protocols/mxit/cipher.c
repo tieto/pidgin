@@ -110,13 +110,11 @@ char* mxit_encrypt_password( struct MXitSession* session )
 	char		key[16 + 1];
 	char		exkey[512];
 	GString*	pass			= NULL;
-	char		encrypted[64];
+	GString*	encrypted		= NULL;
 	char*		base64;
 	int			i;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_encrypt_password\n" );
-
-	memset( encrypted, 0x00, sizeof( encrypted ) );
 
 	/* build the AES encryption key */
 	g_strlcpy( key, INITIAL_KEY, sizeof( key ) );
@@ -129,11 +127,17 @@ char* mxit_encrypt_password( struct MXitSession* session )
 	padding_add( pass );		/* add ISO10126 padding */
 
 	/* now encrypt the secret. we encrypt each block separately (ECB mode) */
-	for ( i = 0; i < pass->len; i += 16 )
-		Encrypt( (unsigned char*) pass->str + i, (unsigned char*) exkey, (unsigned char*) encrypted + i );
+	encrypted = g_string_sized_new( pass->len );
+	for ( i = 0; i < pass->len; i += 16 ) {
+		char	block[16];
+
+		Encrypt( (unsigned char*) pass->str + i, (unsigned char*) exkey, (unsigned char*) block );
+		g_string_append_len( encrypted, block, 16 );
+	}
 
 	/* now base64 encode the encrypted password */
-	base64 = purple_base64_encode( (unsigned char*) encrypted, pass->len );
+	base64 = purple_base64_encode( (unsigned char*) encrypted->str, encrypted->len );
+	g_string_free( encrypted, TRUE );
 
 	g_string_free( pass, TRUE );
 

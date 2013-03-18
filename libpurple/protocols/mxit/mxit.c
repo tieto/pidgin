@@ -669,15 +669,14 @@ static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *ch
 
 static PurplePluginProtocolInfo proto_info = {
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
-	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE,			/* options */
+	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,	/* options */
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{						/* icon_spec */
-		"png",												/* format */
+		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
-		MXIT_AVATAR_SIZE,									/* max width */
-		MXIT_AVATAR_SIZE,									/* max height */
-		100000,												/* max filesize */
+		800, 800,											/* max width & height */
+		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
 	},
 	mxit_list_icon,			/* list_icon */

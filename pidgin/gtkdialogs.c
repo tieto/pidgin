@@ -172,7 +172,7 @@ static const struct translator translators[] = {
 	{NULL,                      NULL, "Jurmey Rabgay", "jur_gay@yahoo.com"},
 	{NULL,                      NULL, "Wangmo Sherpa", "rinwanshe@yahoo.com"},
 	{N_("Greek"),               "el", "Katsaloulis Panayotis", "panayotis@panayotis.com"},
-	{NULL,                      NULL, "Bouklis Panos", "panos@echidna-band.com"},
+	{NULL,                      NULL, "Panos Bouklis", "panos@echidna-band.com"},
 	{N_("Australian English"),  "en_AU", "Peter Lawler", "trans@six-by-nine.com.au"},
 	{N_("British English"),     "en_GB", "Phil Hannent", "phil@hannent.co.uk"},
 	{N_("Canadian English"),    "en_CA", "Adam Weinberger", "adamw@gnome.org"},
@@ -186,6 +186,7 @@ static const struct translator translators[] = {
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Irish"),               "ga", "Aaron Kearns", "ajkearns6@gmail.com"},
+	{N_("Irish"),               "ga", "Kevin Scannell", "NULL"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
 	{NULL,                      NULL, "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
@@ -227,8 +228,8 @@ static const struct translator translators[] = {
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Piotr Drąg", "piotrdrag@gmail.com"},
-	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
-	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
+	{N_("Portuguese"),          "pt", "Paulo Ribeiro", "paulo@diffraction.pt"},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Renato Silva", "br.renatosilva@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
 	{N_("Romanian"),            "ro", "Mișu Moldovan", "dumol@gnome.org"},
 	{NULL,                      NULL, "Andrei Popescu", "andreimpopescu@gmail.com"},
@@ -311,7 +312,9 @@ static const struct translator past_translators[] = {
 	{NULL,                      NULL, "Piotr Makowski", NULL},
 	{NULL,                      NULL, "Emil Nowak", "emil5@go2.pl"},
 	{NULL,                      NULL, "Przemysław Sułek", NULL},
+	{N_("Portuguese"),          "pt", "Duarte Henriques", NULL},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
 	{NULL,                      NULL, "Alexandre Prokoudine", NULL},
 	{NULL,                      NULL, "Sergey Volozhanin", NULL},
@@ -527,13 +530,20 @@ void pidgin_dialogs_about(void)
 			"http://developer.pidgin.im/wiki/FAQ",
 			"http://developer.pidgin.im/wiki/FAQ");
 
+	g_string_append(str,
+			"<p><strong>Help for Oracle Employees</strong> is "
+			"available from your normal internal helpdesk or IT department.  "
+			"The Pidgin developer and user communities cannot assist you in "
+			"the configuration or use of Pidgin within Oracle, as we know "
+			"nothing of Oracle's infrastructure.</p>");
+
 	g_string_append_printf(str,
 			_("<p><strong>Help from other Pidgin users</strong> is available "
 			  "by e-mailing <a href=\"mailto:%s\">%s</a>.<br/>"
 			  "This is a <strong>public</strong> mailing list! "
 			  "(<a href=\"%s\" title=\"%s\">archive</a>)<br/>"
 			  "We can't help with third-party protocols or plugins!<br/>"
-			  "This list's primary language is <strong>English</strong>.  You "
+			  "This list's primary language is English.  You "
 			  "are welcome to post in another language, but the responses may "
 			  "be less helpful.</p>"),
 			"support@pidgin.im", "support@pidgin.im",

@@ -1467,33 +1467,33 @@ purple_account_request_close(void *ui_handle)
 }
 
 static void
-request_auth_cb(void *data)
+request_auth_cb(const char *message, void *data)
 {
 	PurpleAccountRequestInfo *info = data;
 
 	handles = g_list_remove(handles, info);
 
 	if (info->auth_cb != NULL)
-		info->auth_cb(info->userdata);
+		info->auth_cb(message, info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
-			"account-authorization-granted", info->account, info->user);
+			"account-authorization-granted", info->account, info->user, message);
 
 	purple_account_request_info_unref(info);
 }
 
 static void
-request_deny_cb(void *data)
+request_deny_cb(const char *message, void *data)
 {
 	PurpleAccountRequestInfo *info = data;
 
 	handles = g_list_remove(handles, info);
 
 	if (info->deny_cb != NULL)
-		info->deny_cb(info->userdata);
+		info->deny_cb(message, info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
-			"account-authorization-denied", info->account, info->user);
+			"account-authorization-denied", info->account, info->user, message);
 
 	purple_account_request_info_unref(info);
 }
@@ -1506,6 +1506,7 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 	PurpleAccountUiOps *ui_ops;
 	PurpleAccountRequestInfo *info;
 	int plugin_return;
+	char *response = NULL;
 
 	g_return_val_if_fail(account     != NULL, NULL);
 	g_return_val_if_fail(remote_user != NULL, NULL);
@@ -1513,39 +1514,30 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 	ui_ops = purple_accounts_get_ui_ops();
 
 	plugin_return = GPOINTER_TO_INT(
-			purple_signal_emit_return_1(purple_accounts_get_handle(),
-				"account-authorization-requested", account, remote_user));
-
-	if (plugin_return > 0) {
-		if (auth_cb != NULL)
-			auth_cb(user_data);
-		return NULL;
-	} else if (plugin_return < 0) {
-		if (deny_cb != NULL)
-			deny_cb(user_data);
-		return NULL;
-	}
-
-	plugin_return = GPOINTER_TO_INT(
 			purple_signal_emit_return_1(
 				purple_accounts_get_handle(),
-				"account-authorization-requested-with-message",
-				account, remote_user, message
+				"account-authorization-requested",
+				account, remote_user, message, &response
 			));
 
 	switch (plugin_return)
 	{
 		case PURPLE_ACCOUNT_RESPONSE_IGNORE:
+			g_free(response);
 			return NULL;
 		case PURPLE_ACCOUNT_RESPONSE_ACCEPT:
 			if (auth_cb != NULL)
-				auth_cb(user_data);
+				auth_cb(response, user_data);
+			g_free(response);
 			return NULL;
 		case PURPLE_ACCOUNT_RESPONSE_DENY:
 			if (deny_cb != NULL)
-				deny_cb(user_data);
+				deny_cb(response, user_data);
+			g_free(response);
 			return NULL;
 	}
+
+	g_free(response);
 
 	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
 		info            = g_new0(PurpleAccountRequestInfo, 1);
@@ -1632,7 +1624,7 @@ purple_account_request_change_password(PurpleAccount *account)
 	field = purple_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -1640,7 +1632,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -1648,7 +1640,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password (again)"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -3251,29 +3243,26 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-authorization-requested",
-						purple_marshal_INT__POINTER_POINTER,
-						purple_value_new(PURPLE_TYPE_INT), 2,
+						purple_marshal_INT__POINTER_POINTER_POINTER,
+						purple_value_new(PURPLE_TYPE_INT), 4,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING),
+						purple_value_new(PURPLE_TYPE_STRING),
 						purple_value_new(PURPLE_TYPE_STRING));
 
-	purple_signal_register(handle, "account-authorization-requested-with-message",
-						purple_marshal_INT__POINTER_POINTER_POINTER,
-						purple_value_new(PURPLE_TYPE_INT), 3,
+	purple_signal_register(handle, "account-authorization-denied",
+						purple_marshal_VOID__POINTER_POINTER, NULL, 3,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
 						purple_value_new(PURPLE_TYPE_STRING),
 						purple_value_new(PURPLE_TYPE_STRING));
-	purple_signal_register(handle, "account-authorization-denied",
-						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-authorization-granted",
-						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						purple_marshal_VOID__POINTER_POINTER, NULL, 3,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING),
 						purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-error-changed",

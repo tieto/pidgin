@@ -219,6 +219,7 @@ static void handle_groupchat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
 	JabberChat *chat;
+	PurpleMessageFlags messageFlags = 0;
 
 	if(!jid)
 		return;
@@ -231,6 +232,7 @@ static void handle_groupchat(JabberMessage *jm)
 	if(jm->subject) {
 		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
+		messageFlags |= PURPLE_MESSAGE_NO_LOG;
 		if(!jm->xhtml && !jm->body) {
 			char *msg, *tmp, *tmp2;
 			tmp = g_markup_escape_text(jm->subject, -1);
@@ -239,7 +241,7 @@ static void handle_groupchat(JabberMessage *jm)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", msg, PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -249,12 +251,12 @@ static void handle_groupchat(JabberMessage *jm)
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
 			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
-							jm->delayed ? PURPLE_MESSAGE_DELAYED : 0,
+							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
 			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
 							jm->xhtml ? jm->xhtml : jm->body,
-							PURPLE_MESSAGE_SYSTEM, jm->sent);
+							messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 	}
 
 	jabber_id_free(jid);

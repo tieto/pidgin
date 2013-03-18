@@ -29,7 +29,6 @@
  * Jonathon Blandford <jrb@redhat.com> for RedHat, Inc.
  */
 
-#include <gtk/gtk.h>
 #include "gtkcellrendererexpander.h"
 
 #include "gtk3compat.h"

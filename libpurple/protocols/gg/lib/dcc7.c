@@ -140,7 +140,7 @@ static struct gg_dcc7 *gg_dcc7_session_find(struct gg_session *sess, gg_dcc7_id_
 
 	for (tmp = sess->dcc7_list; tmp; tmp = tmp->next) {
 		if (empty) {
-			if (tmp->peer_uin == uin && !tmp->state == GG_STATE_WAITING_FOR_ACCEPT)
+			if (tmp->peer_uin == uin /*&& tmp->state != GG_STATE_WAITING_FOR_ACCEPT*/)
 				return tmp;
 		} else {
 			if (!memcmp(&tmp->cid, &id, sizeof(id)))
@@ -239,6 +239,7 @@ static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint32_t addr, uint16_t port)
 		return -1;
 	}
 
+	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = addr;
 	sin.sin_port = htons(port);
@@ -649,7 +650,7 @@ int gg_dcc7_handle_id(struct gg_session *sess, struct gg_event *e, const void *p
 				s.uin_to = gg_fix32(tmp->peer_uin);
 				s.size = gg_fix32(tmp->size);
 
-				strncpy((char*) s.filename, (char*) tmp->filename, GG_DCC7_FILENAME_LEN);
+				memcpy((char*) s.filename, (char*) tmp->filename, GG_DCC7_FILENAME_LEN);
 
 				tmp->state = GG_STATE_WAITING_FOR_ACCEPT;
 				tmp->timeout = GG_DCC7_TIMEOUT_FILE_ACK;

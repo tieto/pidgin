@@ -388,13 +388,8 @@ reset_mail_dialog(GtkDialog *unused)
 gboolean
 pidgin_notify_emails_pending()
 {
-#if GTK_CHECK_VERSION(2,18,0)
 	return mail_dialog != NULL
 		&& !gtk_widget_get_visible(mail_dialog->dialog);
-#else
-	return mail_dialog != NULL
-		&& !GTK_WIDGET_VISIBLE(mail_dialog->dialog);
-#endif
 }
 
 void pidgin_notify_emails_present(void *data)
@@ -937,7 +932,7 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 	gtk_list_store_clear(data->model);
 
-	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), 0.5);
+	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), PIDGIN_PRPL_ICON_SMALL);
 
 	for (row = results->rows; row != NULL; row = row->next) {
 

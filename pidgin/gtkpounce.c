@@ -601,7 +601,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	dialog->buddy_entry = gtk_entry_new();
 
-	pidgin_setup_screenname_autocomplete_with_filter(dialog->buddy_entry, dialog->account_menu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(FALSE));
+	pidgin_setup_screenname_autocomplete(dialog->buddy_entry, dialog->account_menu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(FALSE));
 
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_entry);
@@ -1433,10 +1433,8 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 	if (purple_pounce_action_is_enabled(pounce, "open-window"))
 	{
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
-
-		if (conv == NULL)
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
+		if (!purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account))
+			purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 	}
 
 	if (purple_pounce_action_is_enabled(pounce, "popup-notify"))

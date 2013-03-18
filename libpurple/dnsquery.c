@@ -531,12 +531,12 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	 * instance, we can't use it. */
 	pid = waitpid(resolver->dns_pid, NULL, WNOHANG);
 	if (pid > 0) {
-		purple_debug_warning("dns", "DNS child %d no longer exists\n",
+		purple_debug_info("dns", "DNS child %d no longer exists\n",
 				resolver->dns_pid);
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	} else if (pid < 0) {
-		purple_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
+		purple_debug_info("dns", "Wait for DNS child %d failed: %s\n",
 				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;

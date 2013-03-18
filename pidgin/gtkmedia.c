@@ -666,30 +666,18 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,12,0)
 pidgin_media_input_volume_changed(GtkScaleButton *range, double value,
 		PurpleMedia *media)
 {
 	double val = (double)value * 100.0;
-#else
-pidgin_media_input_volume_changed(GtkRange *range, PurpleMedia *media)
-{
-	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-#endif
 	purple_media_set_input_volume(media, NULL, val);
 }
 
 static void
-#if GTK_CHECK_VERSION(2,12,0)
 pidgin_media_output_volume_changed(GtkScaleButton *range, double value,
 		PurpleMedia *media)
 {
 	double val = (double)value * 100.0;
-#else
-pidgin_media_output_volume_changed(GtkRange *range, PurpleMedia *media)
-{
-	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-#endif
 	purple_media_set_output_volume(media, NULL, NULL, val);
 }
 
@@ -717,7 +705,6 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 	} else
 		g_return_val_if_reached(NULL);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	/* Setup widget structure */
 	volume_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	progress_parent = gtk_vbox_new(FALSE, 0);
@@ -729,19 +716,6 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 	gtk_scale_button_set_value(GTK_SCALE_BUTTON(volume), value/100.0);
 	gtk_box_pack_end(GTK_BOX(volume_widget),
 			volume, FALSE, FALSE, 0);
-#else
-	/* Setup widget structure */
-	volume_widget = gtk_vbox_new(FALSE, 0);
-	progress_parent = volume_widget;
-
-	/* Volume slider */
-	volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
-	gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(volume), value);
-	gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
-	gtk_box_pack_end(GTK_BOX(volume_widget),
-			volume, TRUE, FALSE, 0);
-#endif
 
 	/* Volume level indicator */
 	progress = gtk_progress_bar_new();

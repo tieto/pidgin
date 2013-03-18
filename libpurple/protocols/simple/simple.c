@@ -902,11 +902,11 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 		for(item = xmlnode_get_child(isc, "contact"); item; item = xmlnode_get_next_twin(item))
 		{
-			const char *uri, *name, *groups;
+			const char *uri;
 			char *buddy_name;
 			uri = xmlnode_get_attrib(item, "uri");
-			name = xmlnode_get_attrib(item, "name");
-			groups = xmlnode_get_attrib(item, "groups");
+			/*name = xmlnode_get_attrib(item, "name");
+			groups = xmlnode_get_attrib(item, "groups");*/
 			purple_debug_info("simple", "URI->%s\n", uri);
 
 			buddy_name = g_strdup_printf("sip:%s", uri);

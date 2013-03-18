@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "internal.h"
+
 #include "debug.h"
 
 #include "gtkmenutray.h"
-
-#include <gtk/gtk.h>
 
 #include "gtk3compat.h"
 
@@ -37,10 +37,6 @@ enum {
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
-#if !GTK_CHECK_VERSION(2,12,0)
-static GtkTooltips *tooltips = NULL;
-#endif
-
 /******************************************************************************
  * Internal Stuff
  *****************************************************************************/
@@ -76,20 +72,6 @@ pidgin_menu_tray_deselect(GtkItem *widget) {
 	/* Probably not necessary, but I'd rather be safe than sorry.  We're
 	 * overridding the select, so it makes sense to override deselect as well.
 	 */
-}
-#endif
-
-/******************************************************************************
- * Widget Stuff
- *****************************************************************************/
-#if !GTK_CHECK_VERSION(2,12,0)
-static void
-tooltips_unref_cb(gpointer data, GObject *object, gboolean is_last_ref)
-{
-	if (is_last_ref) {
-		g_object_unref(tooltips);
-		tooltips = NULL;
-	}
 }
 #endif
 
@@ -270,14 +252,6 @@ pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const cha
 void
 pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
-#if !GTK_CHECK_VERSION(2,12,0)
-	gboolean notify_tooltips = FALSE;
-	if (!tooltips) {
-		tooltips = gtk_tooltips_new();
-		notify_tooltips = TRUE;
-	}
-#endif
-
 	/* Should we check whether widget is a child of menu_tray? */
 
 	/*
@@ -290,13 +264,5 @@ pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const
 	if (!gtk_widget_get_has_window(widget))
 		widget = gtk_widget_get_parent(widget);
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(widget, tooltip);
-#else
-	gtk_tooltips_set_tip(tooltips, widget, tooltip, NULL);
-
-	if (notify_tooltips)
-		g_object_add_toggle_ref(G_OBJECT(tooltips), tooltips_unref_cb, NULL);
-#endif
 }
-

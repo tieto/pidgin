@@ -46,7 +46,7 @@ typedef struct
  * Callbacks
  **************************************************************************/
 static void
-msn_accept_add_cb(gpointer data)
+msn_accept_add_cb(const char *message, gpointer data)
 {
 	MsnPermitAdd *pa = data;
 
@@ -71,7 +71,7 @@ msn_accept_add_cb(gpointer data)
 }
 
 static void
-msn_cancel_add_cb(gpointer data)
+msn_cancel_add_cb(const char *message, gpointer data)
 {
 	MsnPermitAdd *pa = data;
 

@@ -309,6 +309,13 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	if (fd != -1)
 		close(fd);
 
+#ifdef _WIN32
+	/* on win32, we calloc pw so pass it to free
+	 * (see the getpwuid code below)
+	 */
+	free(pw);
+#endif
+
 	return TRUE;
 }
 
@@ -646,7 +653,7 @@ char *silcpurple_file2mime(const char *filename)
    there are multiple images and/or text with images multipart MIME
    message is created. */
 
-SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
+SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags)
 {
 	SilcMime mime = NULL, p;
 	SilcDList list, parts = NULL;

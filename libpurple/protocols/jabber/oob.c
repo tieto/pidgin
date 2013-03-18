@@ -138,8 +138,13 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 			lenstr = strstr(jox->headers->str, "Content-Length: ");
 			if(lenstr) {
 				goffset size;
-				sscanf(lenstr, "Content-Length: %" G_GOFFSET_FORMAT, &size);
-				purple_xfer_set_size(xfer, size);
+				if (sscanf(lenstr, "Content-Length: %" G_GOFFSET_FORMAT, &size) == 1)
+					purple_xfer_set_size(xfer, size);
+				else {
+					purple_debug_error("jabber", "Unable to parse Content-Length!\n");
+					purple_xfer_cancel_local(xfer);
+					return 0;
+				}
 			}
 			purple_xfer_set_read_fnc(xfer, NULL);
 
@@ -211,6 +216,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	jox = g_new0(JabberOOBXfer, 1);
 	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
 		g_free(url);
+		g_free(jox);
 		return;
 	}
 	g_free(url);

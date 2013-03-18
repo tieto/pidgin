@@ -930,12 +930,10 @@ static int  free_parse_tree(parse_tree* tree) {
 	}
 	else {
 		int i;
-		if (tree->children) {
-			for(i=0;i<tree->num_children;i++){
-				if (tree->children[i]) {
-					free_parse_tree(tree->children[i]);
-					g_free(tree->children[i]);
-				}
+		for(i=0;i<tree->num_children;i++){
+			if (tree->children[i]) {
+				free_parse_tree(tree->children[i]);
+				g_free(tree->children[i]);
 			}
 		}
 		if ((tree != &null_parse_tree) && (tree->contents != NULL))
@@ -1501,6 +1499,7 @@ static void process_zsubs(zephyr_account *zephyr)
 		}
 		fclose(f);
 	}
+	g_free(fname);
 }
 
 static void process_anyone(PurpleConnection *gc)
@@ -1521,10 +1520,10 @@ static void process_anyone(PurpleConnection *gc)
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
-				if (!(b = purple_find_buddy(purple_connection_get_account(gc), buff))) {
+				if (!purple_find_buddy(purple_connection_get_account(gc), buff)) {
 					char *stripped_user = zephyr_strip_local_realm(zephyr,buff);
 					purple_debug_info("zephyr","stripped_user %s\n",stripped_user);
-					if (!(b = purple_find_buddy(purple_connection_get_account(gc),stripped_user))){
+					if (!purple_find_buddy(purple_connection_get_account(gc),stripped_user)) {
 						b = purple_buddy_new(purple_connection_get_account(gc), stripped_user, NULL);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
@@ -2166,11 +2165,15 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		len = strlen(zsendstr);
 		result = write(zephyr->totzc[ZEPHYR_FD_WRITE], zsendstr, len);
 		if (result != len) {
+			g_free(tzc_sig);
+			g_free(tzc_body);
 			g_free(zsendstr);
 			g_free(html_buf2);
 			g_free(html_buf);
 			return errno;
 		}
+		g_free(tzc_sig);
+		g_free(tzc_body);
 		g_free(zsendstr);
 	} else if (use_zeph02(zephyr)) {
 		ZNotice_t notice;
@@ -2591,6 +2594,7 @@ static PurpleCmdRet zephyr_purple_cmd_msg(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	char *recipient;
+	PurpleCmdRet ret;
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);;
 	if (!g_ascii_strcasecmp(args[0],"*"))
@@ -2598,13 +2602,17 @@ static PurpleCmdRet zephyr_purple_cmd_msg(PurpleConversation *conv,
 	else
 		recipient = local_zephyr_normalize(zephyr,args[0]);
 
-	if (strlen(recipient) < 1)
+	if (strlen(recipient) < 1) {
+		g_free(recipient);
 		return PURPLE_CMD_RET_FAILED; /* a null recipient is a chat message, not an IM */
+	}
 
 	if (zephyr_send_message(zephyr,"MESSAGE","PERSONAL",recipient,args[1],zephyr_get_signature(),""))
-		return PURPLE_CMD_RET_OK;
+		ret = PURPLE_CMD_RET_OK;
 	else
-		return PURPLE_CMD_RET_FAILED;
+		ret = PURPLE_CMD_RET_FAILED;
+	g_free(recipient);
+	return ret;
 }
 
 static PurpleCmdRet zephyr_purple_cmd_zlocate(PurpleConversation *conv,
@@ -2808,10 +2816,12 @@ static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 		title = g_strdup_printf("Server subscriptions for %s", zephyr->username);
 
 		if (zephyr->port == 0) {
+			g_free(title);
 			purple_debug_error("zephyr", "error while retrieving port\n");
 			return;
 		}
 		if ((retval = ZRetrieveSubscriptions(zephyr->port,&nsubs)) != ZERR_NONE) {
+			g_free(title);
 			/* XXX better error handling */
 			purple_debug_error("zephyr", "error while retrieving subscriptions from server\n");
 			return;
@@ -2820,6 +2830,7 @@ static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 			one = 1;
 			if ((retval = ZGetSubscriptions(&subs,&one)) != ZERR_NONE) {
 				/* XXX better error handling */
+				g_free(title);
 				purple_debug_error("zephyr", "error while retrieving individual subscription\n");
 				return;
 			}
@@ -2828,6 +2839,8 @@ static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 					       subs.zsub_recipient);
 		}
 		purple_notify_formatted(gc, title, title, NULL,  subout->str, NULL, NULL);
+		g_free(title);
+		g_string_free(subout, TRUE);
 	} else {
 		/* XXX fix */
 		purple_notify_error(gc,"","tzc doesn't support this action",NULL);

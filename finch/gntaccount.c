@@ -1043,7 +1043,7 @@ free_auth_and_add(auth_and_add *aa)
 static void
 authorize_and_add_cb(auth_and_add *aa)
 {
-	aa->auth_cb(aa->data);
+	aa->auth_cb(NULL, aa->data);
 	purple_blist_request_add_buddy(aa->account, aa->username,
 	 	                    NULL, aa->alias);
 }
@@ -1051,7 +1051,7 @@ authorize_and_add_cb(auth_and_add *aa)
 static void
 deny_no_add_cb(auth_and_add *aa)
 {
-	aa->deny_cb(aa->data);
+	aa->deny_cb(NULL, aa->data);
 }
 
 static void *

@@ -1556,12 +1556,10 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			const char *itemname = NULL;
 
 			const char * const *langs;
-			int i;
 			langs = g_get_language_names();
-			for (i = 0; langs[i]; i++) {
-				g_snprintf(key, sizeof(key), "Name[%s]", langs[i]);
+			if (langs[0]) {
+				g_snprintf(key, sizeof(key), "Name[%s]", langs[0]);
 				itemname = purple_desktop_item_get_string(item, key);
-				break;
 			}
 
 			if (!itemname)
@@ -2019,7 +2017,7 @@ repopulate_autocomplete(gpointer something, gpointer data)
 }
 
 void
-pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
+pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
 {
 	PidginCompletionData *data;
 

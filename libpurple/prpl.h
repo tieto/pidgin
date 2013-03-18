@@ -193,7 +193,19 @@ typedef enum
 	 * Indicates that this protocol supports sending a user-supplied message
 	 * along with an invitation.
 	 */
-	OPT_PROTO_INVITE_MESSAGE = 0x00000800
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an authorization acceptance.
+	 */
+	OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE = 0x00001000,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an authorization denial.
+	 */
+	OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE = 0x00002000
 
 } PurpleProtocolOptions;
 

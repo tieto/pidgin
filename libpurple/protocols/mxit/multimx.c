@@ -275,7 +275,6 @@ static void member_update(PurpleConversation* convo, char* data)
 void multimx_invite(struct MXitSession* session, struct contact* contact, const char* creator)
 {
 	GHashTable *components;
-	struct multimx* multimx = NULL;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat invite to '%s' (roomid='%s') by '%s'\n", contact->alias, contact->username, creator);
 
@@ -284,7 +283,7 @@ void multimx_invite(struct MXitSession* session, struct contact* contact, const 
 		return;
 
 	/* Create a new room */
-	multimx = room_create(session, contact->username, contact->alias, STATE_INVITED);
+	room_create(session, contact->username, contact->alias, STATE_INVITED);
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	g_hash_table_insert(components, g_strdup("room"), g_strdup(contact->alias));
@@ -514,7 +513,7 @@ void mxit_chat_reject(PurpleConnection *gc, GHashTable* components)
 	}
 
 	/* Send Subscription Reject to MXit */
-	mxit_send_deny_sub(session, multimx->roomid);
+	mxit_send_deny_sub(session, multimx->roomid, NULL);
 
 	/* Remove from our list of rooms */
 	room_remove(session, multimx);

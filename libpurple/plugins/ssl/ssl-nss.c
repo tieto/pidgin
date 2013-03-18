@@ -125,18 +125,8 @@ static gchar *get_error_text(void)
 static void
 ssl_nss_init_nss(void)
 {
-	char *lib;
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
-
-	/* TODO: Fix this so autoconf does the work trying to find this lib. */
-#ifndef _WIN32
-	lib = g_strdup(LIBDIR "/libnssckbi.so");
-#else
-	lib = g_strdup("nssckbi.dll");
-#endif
-	SECMOD_AddNewModule("Builtins", lib, 0, 0);
-	g_free(lib);
 	NSS_SetDomesticPolicy();
 
 	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_256_CBC_SHA, 1);
@@ -766,7 +756,7 @@ x509_signed_by(PurpleCertificate * crt,
 	subjectCert = X509_NSS_DATA(crt);
 	g_return_val_if_fail(subjectCert, FALSE);
 
-	if (subjectCert->issuerName == NULL
+	if (subjectCert->issuerName == NULL || issuerCert->subjectName == NULL
 			|| PORT_Strcmp(subjectCert->issuerName, issuerCert->subjectName) != 0)
 		return FALSE;
 	st = CERT_VerifySignedData(&subjectCert->signatureWrap, issuerCert, PR_Now(), NULL);

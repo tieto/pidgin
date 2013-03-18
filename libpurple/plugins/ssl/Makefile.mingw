@@ -19,7 +19,6 @@ NEEDED_DLLS = \
 			$(NSS_TOP)/lib/libplc4.dll \
 			$(NSS_TOP)/lib/libplds4.dll \
 			$(NSS_TOP)/lib/nss3.dll \
-			$(NSS_TOP)/lib/nssckbi.dll \
 			$(NSS_TOP)/lib/nssutil3.dll \
 			$(NSS_TOP)/lib/smime3.dll \
 			$(NSS_TOP)/lib/softokn3.dll \

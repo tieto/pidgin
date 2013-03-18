@@ -258,7 +258,7 @@ Section $(GTKSECTIONTITLE) SecGtk
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
-  NSISdl::download /TIMEOUT=10000 $R2 $R1
+  NSISdl::download /TIMEOUT=10000 "$R2" "$R1"
   Pop $R0
   ;StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
@@ -453,7 +453,7 @@ Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
-  NSISdl::download /TIMEOUT=10000 $R2 $R1
+  NSISdl::download /TIMEOUT=10000 "$R2" "$R1"
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" 0 prompt_retry
@@ -532,6 +532,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\AddTrust_External_Root.pem"
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
     Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
+    Delete "$INSTDIR\ca-certs\Baltimore_CyberTrust_Root.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Deutsche_Telekom_Root_CA_2.pem"
@@ -549,7 +550,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
     Delete "$INSTDIR\ca-certs\Thawte_Premium_Server_CA.pem"
     Delete "$INSTDIR\ca-certs\Thawte_Primary_Root_CA.pem"
-    Delete "$INSTDIR\ca-certs\ValiCert_Class_2_VA.crt"
+    Delete "$INSTDIR\ca-certs\ValiCert_Class_2_VA.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class3_Extended_Validation_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G2.pem"
@@ -643,7 +644,6 @@ Section Uninstall
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nss3.dll"
     Delete "$INSTDIR\nssutil3.dll"
-    Delete "$INSTDIR\nssckbi.dll"
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\pidgin.exe"
     Delete "$INSTDIR\smime3.dll"
@@ -1332,9 +1332,11 @@ Function CheckSHA1Sum
   IntOp $R1 0 + 0
 
   done:
-  Pop $R2
-  Pop $R0
   Exch $R1 ;$R1 has the return code
+  Exch
+  Pop $R2
+  Exch
+  Pop $R0
 FunctionEnd
 !endif
 

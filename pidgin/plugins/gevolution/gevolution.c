@@ -489,7 +489,7 @@ get_config_frame(PurplePlugin *plugin)
 
 		gtk_list_store_append(model, &iter);
 
-		pixbuf = pidgin_create_prpl_icon(account, 0.5);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 		if ((pixbuf != NULL) && (!purple_account_is_connected(account)))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
