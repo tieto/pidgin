@@ -78,6 +78,7 @@ class engine : private QObject, private QQueue<request*>
 	private:
 		QCoreApplication *app;
 		bool connected;
+		bool failed;
 		KWallet::Wallet *wallet;
 		static engine *pinstance;
 		gint idle_handle;
@@ -124,8 +125,12 @@ KWalletPlugin::engine::engine()
 	app = new QCoreApplication(argc, NULL);
 
 	connected = FALSE;
+	failed = FALSE;
 	wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous);
-	connect(wallet, SIGNAL(walletOpened(bool)), SLOT(walletOpened(bool)));
+	if (wallet == NULL || !connect(wallet, SIGNAL(walletOpened(bool)), SLOT(walletOpened(bool)))) {
+		failed = TRUE;
+		purple_debug_error("keyring-kwallet", "failed connecting to wallet %p\n", wallet);
+	}
 }
 
 KWalletPlugin::engine::~engine()
@@ -192,12 +197,14 @@ KWalletPlugin::engine::ExecuteRequests()
 	if (idle_handle == 0)
 		idle_handle = g_idle_add((GSourceFunc)idle_cb, this);
 
-	if (connected) {
+	if (connected || failed) {
 		while (!isEmpty()) {
 			request *req = dequeue();
-			req->execute(wallet);
+			req->execute(connected ? wallet : NULL);
 			delete req;
 		}
+	} else {
+		purple_debug_misc("keyring-kwallet", "not yet connected\n");
 	}
 }
 
@@ -249,6 +256,16 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 	int result;
 	QString key;
 
+	if (wallet == NULL) {
+		GError *error;
+		error = g_error_new(ERR_KWALLETPLUGIN,
+			PURPLE_KEYRING_ERROR_UNKNOWN,
+			"No wallet opened");
+		callback(account, NULL, error, data);
+		g_error_free(error);
+		return;
+	}
+
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
 	result = wallet->readPassword(key, password);
 
@@ -263,6 +280,16 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 {
 	int result;
 	QString key;
+
+	if (wallet == NULL) {
+		GError *error;
+		error = g_error_new(ERR_KWALLETPLUGIN,
+			PURPLE_KEYRING_ERROR_UNKNOWN,
+			"No wallet opened");
+		callback(account, error, data);
+		g_error_free(error);
+		return;
+	}
 
 	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
 	result = wallet->writePassword(key, password);

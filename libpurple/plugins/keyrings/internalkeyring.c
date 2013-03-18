@@ -66,7 +66,7 @@ internal_keyring_read(PurpleAccount *account,
 
 	ACTIVATE();
 
-	purple_debug_info("keyring-internal",
+	purple_debug_misc("keyring-internal",
 		"Reading password for account %s (%s).\n",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));

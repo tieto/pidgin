@@ -361,13 +361,13 @@ account_to_xmlnode(PurpleAccount *account)
 {
 	xmlnode *node, *child;
 	const char *tmp;
-	const char *keyring_id;
-	const char *mode;
-	char *data;
+	const char *keyring_id = NULL;
+	const char *mode = NULL;
+	char *data = NULL;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
 	GError *error = NULL;
-	GDestroyNotify destroy;
+	GDestroyNotify destroy = NULL;
 
 	node = xmlnode_new("account");
 

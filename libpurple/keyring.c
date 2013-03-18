@@ -34,6 +34,7 @@
 #include "core.h"
 #include "debug.h"
 #include "internal.h"
+#include "dbus-maybe.h"
 
 typedef struct _PurpleKeyringCbInfo PurpleKeyringCbInfo;
 typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
@@ -622,6 +623,7 @@ purple_keyring_register(PurpleKeyring *keyring)
 
 	core = purple_get_core();
 
+	PURPLE_DBUS_REGISTER_POINTER(keyring, PurpleKeyring);
 	purple_signal_emit(core, "keyring-register", keyring_id, keyring);
 	purple_debug_info("keyring", "Registered keyring : %s.\n", keyring_id);
 
@@ -645,6 +647,7 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 	core = purple_get_core();
 	keyring_id = purple_keyring_get_id(keyring);
 	purple_signal_emit(core, "keyring-unregister", keyring_id, keyring);
+	PURPLE_DBUS_UNREGISTER_POINTER(keyring);
 
 	inuse = purple_keyring_get_inuse();
 	fallback = purple_keyring_find_keyring_by_id(PURPLE_DEFAULT_KEYRING);
@@ -788,6 +791,7 @@ purple_keyring_get_password(PurpleAccount *account,
 	PurpleKeyringRead read;
 
 	if (account == NULL) {
+		purple_debug_error("keyring", "No account passed to the function.");
 		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"No account passed to the function.");
 
@@ -800,6 +804,7 @@ purple_keyring_get_password(PurpleAccount *account,
 		inuse = purple_keyring_get_inuse();
 
 		if (inuse == NULL) {
+			purple_debug_error("keyring", "No keyring configured.");
 			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 				"No keyring configured.");
 
@@ -812,6 +817,7 @@ purple_keyring_get_password(PurpleAccount *account,
 			read = purple_keyring_get_read_password(inuse);
 
 			if (read == NULL) {
+				purple_debug_warning("keyring", "Keyring cannot read password.");
 				error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 					"Keyring cannot read password.");
 
@@ -821,6 +827,9 @@ purple_keyring_get_password(PurpleAccount *account,
 				g_error_free(error);
 
 			} else {
+				purple_debug_info("keyring", "Reading password for account %s (%s).\n",
+					purple_account_get_username(account),
+					purple_account_get_protocol_id(account));
 				read(account, cb, data);
 			}
 		}
