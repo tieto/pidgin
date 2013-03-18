@@ -399,7 +399,7 @@ PurplePluginInfo plugininfo =
 	PURPLE_MINOR_VERSION,				/* minor_version */
 	PURPLE_PLUGIN_STANDARD,				/* type */
 	NULL,								/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
+	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
 	NULL,								/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,			/* priority */
 	(char*)KWALLET_ID,							/* id */
@@ -422,11 +422,9 @@ PurplePluginInfo plugininfo =
 	NULL,
 };
 
-void init_plugin(PurplePlugin *plugin);
-void
+static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_debug_info("keyring-kwallet", "init plugin called.\n");
 }
 
 PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)

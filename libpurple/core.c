@@ -148,6 +148,7 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	purple_keyring_load_plugins();
 	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */
@@ -221,6 +222,7 @@ purple_core_quit(void)
 
 	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
+	purple_keyring_uninit();
 
 	/* Unload all non-loader, non-prpl plugins before shutting down
 	 * subsystems. */

@@ -227,6 +227,11 @@ PurpleKeyring *purple_keyring_find_keyring_by_id(const char *id);
 GList *purple_keyring_get_options(void);
 
 /**
+ * Load keyring plugins.
+ */
+void purple_keyring_load_plugins(void);
+
+/**
  * Prepare stuff at startup.
  */
 void purple_keyring_init(void);

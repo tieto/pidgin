@@ -232,6 +232,7 @@ static GList *purple_keyring_keyrings;              /* list of available keyring
 static const PurpleKeyring *purple_keyring_inuse;   /* keyring being used         */
 static char *purple_keyring_to_use;
 static guint purple_keyring_pref_cb_id;
+static GList *purple_keyring_loaded_plugins = NULL;
 
 static void
 purple_keyring_pref_cb(const char *pref,
@@ -249,6 +250,30 @@ purple_keyring_pref_cb(const char *pref,
 	g_return_if_fail(new != NULL);
 
 	purple_keyring_set_inuse(new, FALSE, NULL, data);
+}
+
+void purple_keyring_load_plugins(void)
+{
+	GList *it;
+
+	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
+	{
+		PurplePlugin *plugin = (PurplePlugin *)it->data;
+
+		if (plugin->info == NULL || plugin->info->id == NULL)
+			continue;
+		if (strncmp(plugin->info->id, "keyring-", 8) != 0)
+			continue;
+
+		if (purple_plugin_is_loaded(plugin))
+			continue;
+
+		if (purple_plugin_load(plugin))
+		{
+			purple_keyring_loaded_plugins = g_list_append(
+				purple_keyring_loaded_plugins, plugin);
+		}
+	}
 }
 
 void
@@ -297,8 +322,20 @@ purple_keyring_init(void)
 void
 purple_keyring_uninit(void)
 {
+	GList *it;
+
 	g_free(purple_keyring_to_use);
-	purple_debug_info("keyring", "purple_keyring_uninit() done.\n");
+
+	for (it = g_list_first(purple_keyring_loaded_plugins); it != NULL;
+		it = g_list_next(it))
+	{
+		PurplePlugin *plugin = (PurplePlugin *)it->data;
+		if (g_list_find(purple_plugins_get_loaded(), plugin) == NULL)
+			continue;
+		purple_plugin_unload(plugin);
+	}
+	g_list_free(purple_keyring_loaded_plugins);
+	purple_keyring_loaded_plugins = NULL;
 }
 
 PurpleKeyring *
@@ -791,7 +828,7 @@ purple_keyring_get_password(PurpleAccount *account,
 	PurpleKeyringRead read;
 
 	if (account == NULL) {
-		purple_debug_error("keyring", "No account passed to the function.");
+		purple_debug_error("keyring", "No account passed to the function.\n");
 		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"No account passed to the function.");
 
@@ -804,7 +841,7 @@ purple_keyring_get_password(PurpleAccount *account,
 		inuse = purple_keyring_get_inuse();
 
 		if (inuse == NULL) {
-			purple_debug_error("keyring", "No keyring configured.");
+			purple_debug_error("keyring", "No keyring configured.\n");
 			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 				"No keyring configured.");
 
@@ -817,7 +854,7 @@ purple_keyring_get_password(PurpleAccount *account,
 			read = purple_keyring_get_read_password(inuse);
 
 			if (read == NULL) {
-				purple_debug_warning("keyring", "Keyring cannot read password.");
+				purple_debug_warning("keyring", "Keyring cannot read password.\n");
 				error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 					"Keyring cannot read password.");
 
