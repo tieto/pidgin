@@ -1557,9 +1557,8 @@ dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring=$enableval, enable_gnome_keyring=yes)
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--enable-gnome-keyring], [enable GNOME Keyring support])], enable_gnome_keyring=$enableval, enable_gnome_keyring=no)
 
-dnl Check for gnome-keyring.h; if we don't have it, oh well
 if test "x$enable_gnome_keyring" = "xyes" ; then
 	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
 		AC_SUBST(GNOMEKEYRING_CFLAGS)

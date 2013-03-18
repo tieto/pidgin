@@ -34,8 +34,10 @@ kwallet_la_SOURCES = kwallet.cpp
 kwallet_la_BUILTSOURCES = kwallet.moc
 kwallet_la_LIBADD  = $(GLIB_LIBS) $(KWALLET_LIBS) $(QT4_LIBS)
 
-kwallet.moc: kwallet.cpp
-	$(AM_V_GEN)$(MOC) $(kwallet_la_CXXFLAGS) -i $< -o $@
+kwallet.cpp: kwallet.moc
+
+kwallet.moc:
+	$(AM_V_GEN)$(MOC) $(kwallet_la_CXXFLAGS) -i kwallet.cpp -o $@
 
 endif
 
