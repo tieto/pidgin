@@ -1476,7 +1476,7 @@ if test "x$GCC" = "xyes"; then
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
-DEBUG_CPPFLAGS=`echo "$DEBUG_CFLAGS" | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//'`
+DEBUG_CPPFLAGS=`echo "$DEBUG_CFLAGS" | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//' | $sedpath 's/-Waggregate-return//'`
 
 if test "x$SUNCC" = "xyes"; then
         CFLAGS="$CFLAGS -features=extensions" 

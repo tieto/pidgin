@@ -52,6 +52,7 @@ namespace KWalletPlugin {
 class request
 {
 	public:
+		virtual ~request();
 		virtual void abort() = 0;
 		virtual void execute(KWallet::Wallet *wallet) = 0;
 
@@ -118,6 +119,10 @@ kwallet_plugin_error_domain(void)
 }
 
 KWalletPlugin::engine *KWalletPlugin::engine::pinstance = NULL;
+
+KWalletPlugin::request::~request()
+{
+}
 
 KWalletPlugin::engine::engine()
 {
@@ -397,13 +402,13 @@ PurplePluginInfo plugininfo =
 	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
 	NULL,								/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,			/* priority */
-	KWALLET_ID,							/* id */
-	KWALLET_NAME,						/* name */
-	DISPLAY_VERSION,					/* version */
-	"KWallet Keyring Plugin",			/* summary */
-	KWALLET_DESCRIPTION,				/* description */
-	KWALLET_AUTHOR,						/* author */
-	PURPLE_WEBSITE,						/* homepage */
+	(char*)KWALLET_ID,							/* id */
+	(char*)KWALLET_NAME,						/* name */
+	(char*)DISPLAY_VERSION,					/* version */
+	(char*)"KWallet Keyring Plugin",			/* summary */
+	(char*)KWALLET_DESCRIPTION,				/* description */
+	(char*)KWALLET_AUTHOR,						/* author */
+	(char*)PURPLE_WEBSITE,						/* homepage */
 	kwallet_load,						/* load */
 	kwallet_unload,						/* unload */
 	NULL,								/* destroy */
