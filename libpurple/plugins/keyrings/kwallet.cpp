@@ -43,6 +43,10 @@
 #define KWALLET_AUTHOR      "QuLogic (qulogic[at]pidgin.im)"
 #define KWALLET_ID          "keyring-kwallet"
 
+#define KWALLET_WALLET_NAME KWallet::Wallet::NetworkWallet()
+#define KWALLET_APP_NAME "Libpurple"
+#define KWALLET_FOLDER_NAME "libpurple"
+
 PurpleKeyring *keyring_handler = NULL;
 
 #define ERR_KWALLETPLUGIN 	kwallet_plugin_error_domain()
@@ -71,19 +75,23 @@ class engine : private QObject, private QQueue<request*>
 		~engine();
 		void queue(request *req);
 		static engine *Instance();
+		static void closeInstance();
 		bool closing;
 
 	private slots:
 		void walletOpened(bool opened);
+		void walletClosed();
 
 	private:
 		QCoreApplication *app;
 		bool connected;
 		bool failed;
+		bool externallyClosed;
 		KWallet::Wallet *wallet;
 		static engine *pinstance;
 		gint idle_handle;
 		static bool idle_cb(engine *me);
+		void reopenWallet();
 
 		void ExecuteRequests();
 };
@@ -126,16 +134,33 @@ KWalletPlugin::request::~request()
 
 KWalletPlugin::engine::engine()
 {
+	closing = FALSE;
+
 	int argc = 0;
 	app = new QCoreApplication(argc, NULL);
+	app->setApplicationName(KWALLET_APP_NAME);
 
+	reopenWallet();
+}
+
+void
+KWalletPlugin::engine::reopenWallet()
+{
 	connected = FALSE;
 	failed = FALSE;
-	wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous);
-	if (wallet == NULL || !connect(wallet, SIGNAL(walletOpened(bool)), SLOT(walletOpened(bool)))) {
+	externallyClosed = FALSE;
+
+	wallet = KWallet::Wallet::openWallet(KWALLET_WALLET_NAME, 0, KWallet::Wallet::Asynchronous);
+	if (wallet == NULL) {
 		failed = TRUE;
-		purple_debug_error("keyring-kwallet", "failed connecting to wallet %p\n", wallet);
+		purple_debug_error("keyring-kwallet", "failed opening a wallet\n");
+		return;
 	}
+
+	failed |= !connect(wallet, SIGNAL(walletClosed()), SLOT(walletClosed()));
+	failed |= !connect(wallet, SIGNAL(walletOpened(bool)), SLOT(walletOpened(bool)));
+	if (failed)
+		purple_debug_error("keyring-kwallet", "failed connecting to wallet signal\n");
 }
 
 KWalletPlugin::engine::~engine()
@@ -151,9 +176,9 @@ KWalletPlugin::engine::~engine()
 		delete req;
 	}
 
-	KWallet::Wallet::closeWallet(KWallet::Wallet::NetworkWallet(), TRUE);
 	delete wallet;
 	delete app;
+
 	pinstance = NULL;
 }
 
@@ -166,19 +191,48 @@ KWalletPlugin::engine::Instance()
 }
 
 void
+KWalletPlugin::engine::closeInstance()
+{
+	if (pinstance == NULL)
+		return;
+	if (pinstance->closing)
+		return;
+	delete pinstance;
+}
+
+void
 KWalletPlugin::engine::walletOpened(bool opened)
 {
 	connected = opened;
 
-	if (opened) {
-		ExecuteRequests();
-	} else {
+	if (!opened) {
 		while (!isEmpty()) {
 			request *req = dequeue();
 			req->abort();
 			delete req;
 		}
 		delete this;
+		return;
+	}
+
+	if (!wallet->hasFolder(KWALLET_FOLDER_NAME)) {
+		if (!wallet->createFolder(KWALLET_FOLDER_NAME)) {
+			purple_debug_error("keyring-kwallet", "couldn't create \"" KWALLET_FOLDER_NAME "\" folder in wallet\n");
+			failed = TRUE;
+		}
+	}
+	if (!failed)
+		wallet->setFolder(KWALLET_FOLDER_NAME);
+
+	ExecuteRequests();
+}
+
+void
+KWalletPlugin::engine::walletClosed()
+{
+	if (!closing) {
+		externallyClosed = TRUE;
+		purple_debug_info("keyring-kwallet", "wallet was externally closed\n");
 	}
 }
 
@@ -202,10 +256,15 @@ KWalletPlugin::engine::ExecuteRequests()
 	if (idle_handle == 0)
 		idle_handle = g_idle_add((GSourceFunc)idle_cb, this);
 
-	if (connected || failed) {
+	if (externallyClosed) {
+		reopenWallet();
+	} else if (connected || failed) {
 		while (!isEmpty()) {
 			request *req = dequeue();
-			req->execute(connected ? wallet : NULL);
+			if (connected)
+				req->execute(wallet);
+			else
+				req->abort();
 			delete req;
 		}
 	} else {
@@ -255,27 +314,25 @@ KWalletPlugin::read_request::abort()
 	}
 }
 
+static QString kwallet_account_key(PurpleAccount *account)
+{
+	return QString(purple_account_get_protocol_id(account)) + ":" +
+		purple_account_get_username(account);
+}
+
 void
 KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 {
 	int result;
-	QString key;
 
-	if (wallet == NULL) {
-		GError *error;
-		error = g_error_new(ERR_KWALLETPLUGIN,
-			PURPLE_KEYRING_ERROR_UNKNOWN,
-			"No wallet opened");
-		callback(account, NULL, error, data);
-		g_error_free(error);
-		return;
-	}
+	g_return_if_fail(wallet != NULL);
 
-	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet->readPassword(key, password);
+	result = wallet->readPassword(kwallet_account_key(account), password);
 
-	if (result != 0)
+	if (result != 0) {
+		purple_debug_warning("keyring-kwallet", "failed to read password, result was %d\n", result);
 		abort();
+	}
 	else if (callback != NULL)
 		callback(account, password.toUtf8().constData(), NULL, data);
 }
@@ -284,7 +341,6 @@ void
 KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 {
 	int result;
-	QString key;
 
 	if (wallet == NULL) {
 		GError *error;
@@ -296,8 +352,7 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 		return;
 	}
 
-	key = QString("purple-") + purple_account_get_username(account) + " " + purple_account_get_protocol_id(account);
-	result = wallet->writePassword(key, password);
+	result = wallet->writePassword(kwallet_account_key(account), password);
 
 	if (result != 0)
 		abort();
@@ -315,7 +370,13 @@ kwallet_read(PurpleAccount *account,
 {
 	KWalletPlugin::read_request *req;
 	req = new KWalletPlugin::read_request(account, cb, data);
-	KWalletPlugin::engine::Instance()->queue(req);
+
+	if (KWallet::Wallet::keyDoesNotExist(KWALLET_WALLET_NAME, KWALLET_FOLDER_NAME, kwallet_account_key(account))) {
+		req->abort();
+		delete req;
+	}
+	else
+		KWalletPlugin::engine::Instance()->queue(req);
 }
 
 static void
@@ -332,8 +393,7 @@ kwallet_save(PurpleAccount *account,
 static void
 kwallet_close(GError **error)
 {
-	if (!KWalletPlugin::engine::Instance()->closing)
-		delete KWalletPlugin::engine::Instance();
+	KWalletPlugin::engine::closeInstance();
 }
 
 static gboolean
@@ -381,8 +441,10 @@ kwallet_load(PurplePlugin *plugin)
 static gboolean
 kwallet_unload(PurplePlugin *plugin)
 {
-	if (purple_keyring_get_inuse() == keyring_handler)
+	if (purple_keyring_get_inuse() == keyring_handler) {
+		purple_debug_warning("keyring-kwallet", "keyring in use, cannot unload\n");
 		return FALSE;
+	}
 
 	kwallet_close(NULL);
 

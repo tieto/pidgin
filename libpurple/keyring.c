@@ -325,6 +325,7 @@ purple_keyring_uninit(void)
 	GList *it;
 
 	g_free(purple_keyring_to_use);
+	purple_keyring_inuse = NULL;
 
 	for (it = g_list_first(purple_keyring_loaded_plugins); it != NULL;
 		it = g_list_next(it))
