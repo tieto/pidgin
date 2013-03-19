@@ -48,6 +48,7 @@
 #define KWALLET_FOLDER_NAME "libpurple"
 
 PurpleKeyring *keyring_handler = NULL;
+QCoreApplication *qCoreApp = NULL;
 
 #define ERR_KWALLETPLUGIN kwallet_plugin_error_domain()
 
@@ -90,11 +91,7 @@ class engine : private QObject, private QQueue<request*>
 		bool closing;
 		bool externallyClosed;
 
-		QCoreApplication *app;
 		KWallet::Wallet *wallet;
-
-		gint idle_handle;
-		static bool idle_cb(engine *me);
 
 		void reopenWallet();
 		void executeRequests();
@@ -151,11 +148,6 @@ KWalletPlugin::engine::engine()
 	closing = false;
 	externallyClosed = false;
 	wallet = NULL;
-	idle_handle = 0;
-
-	int argc = 0;
-	app = new QCoreApplication(argc, NULL);
-	app->setApplicationName(KWALLET_APP_NAME);
 
 	reopenWallet();
 }
@@ -197,9 +189,6 @@ KWalletPlugin::engine::~engine()
 {
 	closing = true;
 
-	if (idle_handle)
-		g_source_remove(idle_handle);
-
 	while (!isEmpty()) {
 		request *req = dequeue();
 		req->abort();
@@ -207,7 +196,6 @@ KWalletPlugin::engine::~engine()
 	}
 
 	delete wallet;
-	delete app;
 
 	pinstance = NULL;
 }
@@ -278,19 +266,9 @@ KWalletPlugin::engine::queue(request *req)
 	executeRequests();
 }
 
-bool
-KWalletPlugin::engine::idle_cb(KWalletPlugin::engine *me)
-{
-	me->app->processEvents();
-	return true;
-}
-
 void
 KWalletPlugin::engine::executeRequests()
 {
-	if (idle_handle == 0)
-		idle_handle = g_idle_add((GSourceFunc)idle_cb, this);
-
 	if (externallyClosed) {
 		reopenWallet();
 	} else if (connected || failed) {
@@ -447,6 +425,12 @@ kwallet_export(PurpleAccount *account, const char **mode, char **data,
 static gboolean
 kwallet_load(PurplePlugin *plugin)
 {
+	if (!qCoreApp) {
+		int argc = 0;
+		qCoreApp = new QCoreApplication(argc, NULL);
+		qCoreApp->setApplicationName(KWALLET_APP_NAME);
+	}
+
 	keyring_handler = purple_keyring_new();
 
 	purple_keyring_set_name(keyring_handler, KWALLET_NAME);
@@ -476,6 +460,11 @@ kwallet_unload(PurplePlugin *plugin)
 
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
+
+	if (qCoreApp) {
+		delete qCoreApp;
+		qCoreApp = NULL;
+	}
 
 	return TRUE;
 }
