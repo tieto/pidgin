@@ -90,6 +90,8 @@ class engine : private QObject, private QQueue<request*>
 		bool failed;
 		bool closing;
 		bool externallyClosed;
+		bool busy;
+		bool closeAfterBusy;
 
 		KWallet::Wallet *wallet;
 
@@ -154,6 +156,8 @@ KWalletPlugin::engine::engine()
 	closing = false;
 	externallyClosed = false;
 	wallet = NULL;
+	busy = false;
+	closeAfterBusy = false;
 
 	reopenWallet();
 }
@@ -203,7 +207,8 @@ KWalletPlugin::engine::~engine()
 
 	delete wallet;
 
-	pinstance = NULL;
+	if (pinstance == this)
+		pinstance = NULL;
 }
 
 KWalletPlugin::engine *
@@ -221,7 +226,13 @@ KWalletPlugin::engine::closeInstance()
 		return;
 	if (pinstance->closing)
 		return;
-	delete pinstance;
+	if (pinstance->busy) {
+		purple_debug_misc("keyring-kwallet",
+			"current instance is busy, will be freed later\n");
+		pinstance->closeAfterBusy = true;
+	} else
+		delete pinstance;
+	pinstance = NULL;
 }
 
 void
@@ -275,6 +286,9 @@ KWalletPlugin::engine::queue(request *req)
 void
 KWalletPlugin::engine::executeRequests()
 {
+	if (closing || busy)
+		return;
+	busy = true;
 	if (externallyClosed) {
 		reopenWallet();
 	} else if (connected || failed) {
@@ -288,6 +302,12 @@ KWalletPlugin::engine::executeRequests()
 		}
 	} else {
 		purple_debug_misc("keyring-kwallet", "not yet connected\n");
+	}
+	busy = false;
+	if (closeAfterBusy) {
+		purple_debug_misc("keyring-kwallet",
+			"instance freed after being busy\n");
+		delete this;
 	}
 }
 

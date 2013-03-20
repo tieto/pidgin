@@ -468,11 +468,11 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 				"/purple/keyring/active", purple_keyring_pref_cb, NULL);
 
 		} else {
+			purple_keyring_drop_passwords(tracker->old);
+
 			close = purple_keyring_get_close_keyring(tracker->old);
 			if (close != NULL)
 				close(&error);
-
-			purple_keyring_drop_passwords(tracker->old);
 
 			purple_debug_info("keyring", "Successfully changed keyring.\n");
 
