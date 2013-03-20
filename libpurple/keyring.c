@@ -274,6 +274,14 @@ void purple_keyring_load_plugins(void)
 				purple_keyring_loaded_plugins, plugin);
 		}
 	}
+
+	if (purple_keyring_inuse == NULL) {
+		purple_debug_error("keyring", "selected keyring failed to load\n");
+		purple_notify_error(NULL, _("Keyrings"),
+			_("Failed to load selected keyring."),
+			_("Check your system configuration or select another "
+			"one in Preferences dialog."));
+	}
 }
 
 void
@@ -620,10 +628,18 @@ purple_keyring_get_options(void)
 	const GList *keyrings;
 	PurpleKeyring *keyring;
 	GList *list = NULL;
+	static char currentDisabledName[40];
 
-	for (keyrings = purple_keyring_get_keyrings();
-	     keyrings != NULL;
-	     keyrings = keyrings->next) {
+	if (purple_keyring_get_inuse() == NULL && purple_keyring_to_use != NULL
+		&& purple_keyring_to_use[0] != '\0') {
+		g_snprintf(currentDisabledName, sizeof(currentDisabledName),
+			_("%s (disabled)"), purple_keyring_to_use);
+		list = g_list_append(list, currentDisabledName);
+		list = g_list_append(list, purple_keyring_to_use);
+	}
+
+	for (keyrings = purple_keyring_get_keyrings(); keyrings != NULL;
+		keyrings = keyrings->next) {
 
 		keyring = keyrings->data;
 		list = g_list_append(list, keyring->name);
@@ -690,6 +706,9 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 	inuse = purple_keyring_get_inuse();
 	fallback = purple_keyring_find_keyring_by_id(PURPLE_DEFAULT_KEYRING);
 
+	/* TODO: is there a possibility for (unneeded) password migration at
+	 * Pidgin's exit?
+	 */
 	if (inuse == keyring) {
 		if (inuse != fallback) {
 			purple_keyring_set_inuse(fallback, TRUE, NULL, NULL);
@@ -973,8 +992,9 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
-			"Keyring doesn't support master passwords.");
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
+			"No keyring configured, cannot change master password.");
+		purple_debug_info("keyring", "No keyring configured, cannot change master password.\n");
 		if (cb)
 			cb(FALSE, error, data);
 		g_error_free(error);

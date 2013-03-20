@@ -129,6 +129,12 @@ kwallet_plugin_error_domain(void)
 
 }
 
+static gboolean
+kwallet_is_enabled(void)
+{
+	return KWallet::Wallet::isEnabled() ? TRUE : FALSE;
+}
+
 KWalletPlugin::engine *KWalletPlugin::engine::pinstance = NULL;
 
 KWalletPlugin::request::~request()
@@ -429,6 +435,12 @@ kwallet_load(PurplePlugin *plugin)
 		int argc = 0;
 		qCoreApp = new QCoreApplication(argc, NULL);
 		qCoreApp->setApplicationName(KWALLET_APP_NAME);
+	}
+
+	if (!kwallet_is_enabled()) {
+		purple_debug_info("keyring-kwallet",
+			"KWallet service is disabled\n");
+		return FALSE;
 	}
 
 	keyring_handler = purple_keyring_new();

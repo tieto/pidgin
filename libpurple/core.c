@@ -148,7 +148,6 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
-	purple_keyring_load_plugins();
 	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */
@@ -188,6 +187,9 @@ purple_core_init(const char *ui)
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
+
+	/* Selected keyring may have failed to load, so UI should be notified */
+	purple_keyring_load_plugins();
 
 	/* The UI may have registered some theme types, so refresh them */
 	purple_theme_manager_refresh();

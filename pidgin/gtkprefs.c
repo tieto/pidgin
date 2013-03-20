@@ -2532,8 +2532,12 @@ keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 	 */
 
 	keyring = purple_keyring_find_keyring_by_id(val);
+	if (keyring == NULL) {
+		purple_notify_error(NULL, _("Keyring"),
+			_("Selected keyring is disabled"), NULL);
+	}
 
-	if (purple_keyring_get_change_master(keyring))
+	if (keyring && purple_keyring_get_change_master(keyring))
 		gtk_widget_set_sensitive(button, TRUE);
 	else
 		gtk_widget_set_sensitive(button, FALSE);
@@ -2561,7 +2565,7 @@ keyring_page(void)
 	/*  Keyring selection */
 	vbox = pidgin_make_frame(ret, _("Keyring"));
 	names = purple_keyring_get_options();
-	pidgin_prefs_dropdown_from_list(vbox, _("Keyring :"), PURPLE_PREF_STRING,
+	pidgin_prefs_dropdown_from_list(vbox, _("Keyring:"), PURPLE_PREF_STRING,
 				 "/purple/keyring/active", names);
 	g_list_free(names);
 
@@ -2571,7 +2575,7 @@ keyring_page(void)
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(change_master_password_cb), NULL);
 	purple_prefs_connect_callback (prefs, "/purple/keyring/active", keyring_page_pref_changed, button);
 
-	if (purple_keyring_get_change_master(keyring))
+	if (keyring && purple_keyring_get_change_master(keyring))
 		gtk_widget_set_sensitive(button, TRUE);
 	else
 		gtk_widget_set_sensitive(button, FALSE);
