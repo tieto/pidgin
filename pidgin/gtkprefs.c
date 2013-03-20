@@ -280,7 +280,8 @@ typedef struct
 	} value;
 } PidginPrefValue;
 
-typedef void (*PidginPrefsDropdownCallback)(GtkComboBox *combo_box, PidginPrefValue value);
+typedef void (*PidginPrefsDropdownCallback)(GtkComboBox *combo_box,
+	PidginPrefValue value, gint previous_index);
 
 static void
 dropdown_set(GtkComboBox *combo_box, gpointer _cb)
@@ -289,11 +290,16 @@ dropdown_set(GtkComboBox *combo_box, gpointer _cb)
 	GtkTreeIter iter;
 	GtkTreeModel *tree_model;
 	PidginPrefValue active;
+	gint previous_active;
 
 	tree_model = gtk_combo_box_get_model(combo_box);
 	if (!gtk_combo_box_get_active_iter(combo_box, &iter))
 		return;
 	active.type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(combo_box), "type"));
+	previous_active = GPOINTER_TO_INT(g_object_get_data(
+		G_OBJECT(combo_box), "previously_active"));
+	g_object_set_data(G_OBJECT(combo_box), "previously_active",
+		GINT_TO_POINTER(gtk_combo_box_get_active(combo_box)));
 
 	if (active.type == PURPLE_PREF_INT) {
 		gtk_tree_model_get(tree_model, &iter, PREF_DROPDOWN_VALUE,
@@ -308,12 +314,22 @@ dropdown_set(GtkComboBox *combo_box, gpointer _cb)
 			&active.value.boolean, -1);
 	}
 
-	cb(combo_box, active);
+	cb(combo_box, active, previous_active);
+}
+
+static void pidgin_prefs_dropdown_revert_active(GtkComboBox *combo_box,
+	gint previous_index)
+{
+	g_return_if_fail(combo_box != NULL);
+
+	gtk_combo_box_set_active(combo_box, previous_index);
+	g_object_set_data(G_OBJECT(combo_box), "previously_active",
+		GINT_TO_POINTER(previous_index));
 }
 
 static GtkWidget *
 pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
-	GtkWidget **dropdown_out, GList *menuitems,
+	GtkComboBox **dropdown_out, GList *menuitems,
 	PidginPrefValue initial, PidginPrefsDropdownCallback cb)
 {
 	GtkWidget *dropdown;
@@ -339,7 +355,7 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 
 	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
 	if (dropdown_out != NULL)
-		*dropdown_out = dropdown;
+		*dropdown_out = GTK_COMBO_BOX(dropdown);
 	g_object_set_data(G_OBJECT(dropdown), "type", GINT_TO_POINTER(initial.type));
 
 	while (menuitems != NULL && (text = (char *)menuitems->data) != NULL) {
@@ -394,6 +410,9 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 	                               NULL);
 
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(dropdown), &active);
+	g_object_set_data(G_OBJECT(dropdown), "previously_active",
+		GINT_TO_POINTER(gtk_combo_box_get_active(GTK_COMBO_BOX(
+		dropdown))));
 
 	g_signal_connect(G_OBJECT(dropdown), "changed",
 		G_CALLBACK(dropdown_set), cb);
@@ -404,7 +423,8 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 }
 
 static void
-pidgin_prefs_dropdown_from_list_cb(GtkComboBox *combo_box, PidginPrefValue value)
+pidgin_prefs_dropdown_from_list_cb(GtkComboBox *combo_box,
+	PidginPrefValue value, gint previous)
 {
 	const char *key;
 
@@ -426,7 +446,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		PurplePrefType type, const char *key, GList *menuitems)
 {
 	PidginPrefValue initial;
-	GtkWidget *dropdown = NULL;
+	GtkComboBox *dropdown = NULL;
 	GtkWidget *label;
 
 	initial.type = type;
@@ -2561,32 +2581,34 @@ change_master_password_cb(GtkWidget *button, gpointer ptr)
 }
 
 static void
-keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value,
+	gint previous)
 {
-	GtkWidget *button = data;
+	const char *keyring_id;
 	PurpleKeyring *keyring;
+	GtkWidget *change_master_button;
 
-	g_return_if_fail(type == PURPLE_PREF_STRING);
-	g_return_if_fail(g_strcmp0(name, "/purple/keyring/active") == 0);
+	g_return_if_fail(combo_box != NULL);
+	g_return_if_fail(value.type == PURPLE_PREF_STRING);
 
-	/**
-	 * This part is annoying.
-	 * Since we do not know if purple_keyring_inuse was changed yet,
-	 * as we do not know the order the callbacks are called in, we
-	 * have to rely on the prefs system, and find the keyring that
-	 * is (or will be) used, from there.
-	 */
+	change_master_button = g_object_get_data(G_OBJECT(combo_box),
+		"change_master_button");
 
-	keyring = purple_keyring_find_keyring_by_id(val);
+	keyring_id = value.value.string;
+	keyring = purple_keyring_find_keyring_by_id(keyring_id);
 	if (keyring == NULL) {
+		pidgin_prefs_dropdown_revert_active(combo_box, previous);
 		purple_notify_error(NULL, _("Keyring"),
 			_("Selected keyring is disabled"), NULL);
+		return;
 	}
 
-	if (keyring && purple_keyring_get_change_master(keyring))
-		gtk_widget_set_sensitive(button, TRUE);
+	purple_prefs_set_string("/purple/keyring/active", keyring_id);
+
+	if (purple_keyring_get_change_master(keyring))
+		gtk_widget_set_sensitive(change_master_button, TRUE);
 	else
-		gtk_widget_set_sensitive(button, FALSE);
+		gtk_widget_set_sensitive(change_master_button, FALSE);
 }
 
 static GtkWidget *
@@ -2596,30 +2618,31 @@ keyring_page(void)
 	GtkWidget *vbox;
 	GtkWidget *button;
 	GList *names;
-	void *prefs;
 	const char *keyring_id;
 	PurpleKeyring *keyring;
+	PidginPrefValue initial;
+	GtkComboBox *dropdown = NULL;
 
 	keyring_id = purple_prefs_get_string("/purple/keyring/active");
 	keyring = purple_keyring_find_keyring_by_id(keyring_id);
 
-	prefs = purple_prefs_get_handle();
-
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+
+	/* Change master password */
+	button = gtk_button_new_with_mnemonic(_("_Change master password."));
 
 	/*  Keyring selection */
 	vbox = pidgin_make_frame(ret, _("Keyring"));
 	names = purple_keyring_get_options();
-	pidgin_prefs_dropdown_from_list(vbox, _("Keyring:"), PURPLE_PREF_STRING,
-				 "/purple/keyring/active", names);
+	initial.type = PURPLE_PREF_STRING;
+	initial.value.string = purple_prefs_get_string("/purple/keyring/active");
+	pidgin_prefs_dropdown_from_list_with_cb(vbox, _("Keyring:"), &dropdown,
+		names, initial, keyring_page_pref_changed);
+	g_object_set_data(G_OBJECT(dropdown), "change_master_button", button);
 	g_list_free(names);
 
-	/* Change master password */
-	button = gtk_button_new_with_mnemonic(_("_Change master password."));
-	
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(change_master_password_cb), NULL);
-	purple_prefs_connect_callback (prefs, "/purple/keyring/active", keyring_page_pref_changed, button);
 
 	if (keyring && purple_keyring_get_change_master(keyring))
 		gtk_widget_set_sensitive(button, TRUE);
