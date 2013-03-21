@@ -199,11 +199,18 @@ KWalletPlugin::engine::reopenWallet()
 KWalletPlugin::engine::~engine()
 {
 	closing = true;
+	int abortedCount = 0;
 
 	while (!isEmpty()) {
 		request *req = dequeue();
 		req->abort();
 		delete req;
+		abortedCount++;
+	}
+
+	if (abortedCount > 0) {
+		purple_debug_info("keyring-kwallet", "aborted requests: %d\n",
+			abortedCount);
 	}
 
 	delete wallet;
@@ -242,11 +249,8 @@ KWalletPlugin::engine::walletOpened(bool opened)
 	connected = opened;
 
 	if (!opened) {
-		while (!isEmpty()) {
-			request *req = dequeue();
-			req->abort();
-			delete req;
-		}
+		purple_debug_warning("keyring-kwallet",
+			"failed to open a wallet\n");
 		delete this;
 		return;
 	}
@@ -378,8 +382,13 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 			"failed to read password, result was %d\n", result);
 		abort();
 	}
-	else if (callback != NULL)
+	else if (callback != NULL) {
+		purple_debug_misc("keyring-kwallet",
+			"Got password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 		callback(account, password.toUtf8().constData(), NULL, data);
+	}
 }
 
 void
@@ -400,8 +409,14 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 		purple_debug_warning("keyring-kwallet",
 			"failed to write password, result was %d\n", result);
 		abort();
-	} else if (callback != NULL)
+	} else if (callback != NULL) {
+		purple_debug_misc("keyring-kwallet",
+			"Password %s for account %s (%s).\n",
+			(noPassword ? "removed" : "saved"),
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 		callback(account, NULL, data);
+	}
 }
 
 extern "C"

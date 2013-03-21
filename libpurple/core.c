@@ -114,6 +114,7 @@ purple_core_init(const char *ui)
 		purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *")); /* Parameters */
 
 	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
+	purple_signal_register(core, "core-initialized", purple_marshal_VOID, NULL, 0);
 
 	/* The prefs subsystem needs to be initialized before static protocols
 	 * for protocol prefs to work. */
@@ -136,7 +137,6 @@ purple_core_init(const char *ui)
 
 	purple_ciphers_init();
 	purple_cmds_init();
-	purple_keyring_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
@@ -148,6 +148,7 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	purple_keyring_init();
 	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */
@@ -188,14 +189,13 @@ purple_core_init(const char *ui)
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
 
-	/* Selected keyring may have failed to load, so UI should be notified */
-	purple_keyring_load_plugins();
-
 	/* The UI may have registered some theme types, so refresh them */
 	purple_theme_manager_refresh();
 
 	/* Load the buddy list after UI init */
 	purple_blist_boot();
+
+	purple_signal_emit(purple_get_core(), "core-initialized");
 
 	return TRUE;
 }
@@ -222,9 +222,8 @@ purple_core_quit(void)
 	 */
 	purple_certificate_uninit();
 
-	/* The SSL and keyring plugins must be uninit before they're unloaded */
+	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
-	purple_keyring_uninit();
 
 	/* Unload all non-loader, non-prpl plugins before shutting down
 	 * subsystems. */
@@ -245,6 +244,7 @@ purple_core_quit(void)
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
 	purple_accounts_uninit();
+	purple_keyring_uninit(); /* after accounts */
 	purple_sound_uninit();
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();

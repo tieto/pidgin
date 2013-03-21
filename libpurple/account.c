@@ -380,16 +380,12 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
-		purple_debug_info("account", "Exporting password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-
 		purple_keyring_export_password(account, &keyring_id, 
 			&mode, &data, &error, &destroy);
 
 		if (error != NULL) {
 
-			purple_debug_info("account",
+			purple_debug_error("account",
 				"Failed to export password for account %s : %s.\n",
 				purple_account_get_username(account),
 				error->message);
@@ -980,8 +976,7 @@ parse_account(xmlnode *node)
 		result = purple_keyring_import_password(ret, keyring_id, mode, data, NULL);
 
 		if (result == TRUE) {
-			purple_debug_info("account", "Password imported successfully.\n");
-			purple_account_set_remember_password(ret, TRUE);		
+			purple_account_set_remember_password(ret, TRUE);
 		} else {
 			purple_debug_info("account", "Failed to import password.\n");
 		} 

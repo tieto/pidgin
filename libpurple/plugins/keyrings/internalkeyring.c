@@ -66,17 +66,20 @@ internal_keyring_read(PurpleAccount *account,
 
 	ACTIVATE();
 
-	purple_debug_misc("keyring-internal",
-		"Reading password for account %s (%s).\n",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
-
 	password = g_hash_table_lookup(internal_keyring_passwords, account);
 
 	if (password != NULL) {
+		purple_debug_misc("keyring-internal",
+			"Got password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 		if (cb != NULL)
 			cb(account, password, NULL, data);
 	} else {
+		purple_debug_misc("keyring-internal",
+			"No password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_NOPASSWD, "Password not found.");
 		if (cb != NULL)
@@ -93,20 +96,19 @@ internal_keyring_save(PurpleAccount *account,
 {
 	ACTIVATE();
 
-	if (password == NULL || *password == '\0') {
-		g_hash_table_remove(internal_keyring_passwords, account);
-		purple_debug_info("keyring-internal",
-			"Deleted password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-	} else {
-		g_hash_table_replace(internal_keyring_passwords, account, g_strdup(password));
-		purple_debug_info("keyring-internal",
-			"Updated password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+	if (password[0] == '\0')
+		password = NULL;
 
-	}
+	if (password == NULL)
+		g_hash_table_remove(internal_keyring_passwords, account);
+	else
+		g_hash_table_replace(internal_keyring_passwords, account, g_strdup(password));
+
+	purple_debug_misc("keyring-internal",
+		"Password %s for account %s (%s).\n",
+		(password == NULL ? "removed" : "saved"),
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
 
 	if (cb != NULL)
 		cb(account, NULL, data);
@@ -127,21 +129,21 @@ internal_keyring_import_password(PurpleAccount *account,
                                  const char *data,
                                  GError **error)
 {
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(data != NULL);
+
 	ACTIVATE();
 
-	purple_debug_info("keyring-internal", "Importing password.\n");
-
-	if (account != NULL &&
-	    data != NULL &&
-	    (mode == NULL || g_strcmp0(mode, "cleartext") == 0)) {
-
+	if (mode == NULL || g_strcmp0(mode, "cleartext") == 0) {
 		g_hash_table_replace(internal_keyring_passwords, account, g_strdup(data));
 		return TRUE;
-
 	} else {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOPASSWD, "No password for account.");
+		if (error != NULL) {
+			*error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_WRONGFORMAT,
+				"invalid mode");
+		}
 		return FALSE;
-
 	}
 
 	return TRUE;
@@ -157,8 +159,6 @@ internal_keyring_export_password(PurpleAccount *account,
 	gchar *password;
 
 	ACTIVATE();
-
-	purple_debug_info("keyring-internal", "Exporting password.\n");
 
 	password = g_hash_table_lookup(internal_keyring_passwords, account);
 

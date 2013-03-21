@@ -227,11 +227,6 @@ PurpleKeyring *purple_keyring_find_keyring_by_id(const char *id);
 GList *purple_keyring_get_options(void);
 
 /**
- * Load keyring plugins.
- */
-void purple_keyring_load_plugins(void);
-
-/**
  * Prepare stuff at startup.
  */
 void purple_keyring_init(void);
@@ -240,6 +235,13 @@ void purple_keyring_init(void);
  * Do some cleanup.
  */
 void purple_keyring_uninit(void);
+
+/**
+ * Returns the keyring subsystem handle.
+ *
+ * @return The keyring subsystem handle.
+ */
+void *purple_keyring_get_handle(void);
 
 /**
  * Get the keyring list. Used by the UI.
