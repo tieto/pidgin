@@ -123,6 +123,8 @@ typedef struct
 
 	PidginBlistTheme *current_theme;
 
+	guint select_notebook_page_timeout;
+
 #if !GTK_CHECK_VERSION(3,0,0)
 	GdkCursor *hand_cursor;         /**< Hand cursor */
 	GdkCursor *arrow_cursor;        /**< Arrow cursor */
@@ -5033,12 +5035,15 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 	} else
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 0);
 
+	priv->select_notebook_page_timeout = 0;
 	return FALSE;
 }
 
 static void pidgin_blist_select_notebook_page(PidginBuddyList *gtkblist)
 {
-	purple_timeout_add(0, pidgin_blist_select_notebook_page_cb, gtkblist);
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	priv->select_notebook_page_timeout = purple_timeout_add(0,
+		pidgin_blist_select_notebook_page_cb, gtkblist);
 }
 
 static void account_modified(PurpleAccount *account, PidginBuddyList *gtkblist)
@@ -7132,6 +7137,8 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 
 	if (priv->current_theme)
 		g_object_unref(priv->current_theme);
+	if (priv->select_notebook_page_timeout)
+		purple_timeout_remove(priv->select_notebook_page_timeout);
 	g_free(priv);
 
 	g_free(gtkblist);

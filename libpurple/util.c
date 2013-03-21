@@ -130,6 +130,7 @@ purple_util_init(void)
 {
 	escape_js_node = json_node_new(JSON_NODE_VALUE);
 	escape_js_gen = json_generator_new();
+	json_node_set_boolean(escape_js_node, FALSE);
 }
 
 void
