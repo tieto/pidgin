@@ -1036,7 +1036,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 #if PHOTO_SUPPORT
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (data && url_text && len != 0) {
+	if (url_text && len != 0) {
 		if (strstr(url_text, "400 Bad Request")
 				|| strstr(url_text, "403 Forbidden")
 				|| strstr(url_text, "404 Not Found")) {

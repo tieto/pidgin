@@ -653,7 +653,7 @@ char *silcpurple_file2mime(const char *filename)
    there are multiple images and/or text with images multipart MIME
    message is created. */
 
-SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
+SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags)
 {
 	SilcMime mime = NULL, p;
 	SilcDList list, parts = NULL;

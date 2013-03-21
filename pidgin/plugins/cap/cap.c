@@ -43,7 +43,7 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 	int threshold = purple_prefs_get_int("/plugins/gtk/cap/threshold");
 	int min_minute = (current_minute - threshold) % 1440;
 	int max_minute = (current_minute + threshold) % 1440;
-	char *sql, sta_id = NULL;
+	char *sql, *sta_id = NULL;
 	sqlite3_stmt *stmt = NULL;
 	const char *tail = NULL;
 	int rc;

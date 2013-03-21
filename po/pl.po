@@ -10,22 +10,22 @@
 # Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008.
 # Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001.
 # Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007.
-# Piotr Drąg <piotrdrag@gmail.com>, 2012.
+# Piotr Drąg <piotrdrag@gmail.com>, 2012-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-05 22:52-0700\n"
-"PO-Revision-Date: 2012-04-07 13:40+0000\n"
+"POT-Creation-Date: 2013-02-11 00:04-0800\n"
+"PO-Revision-Date: 2013-01-27 14:59+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish (http://www.transifex.net/projects/p/pidgin/language/"
+"Language-Team: Polish (http://www.transifex.com/projects/p/pidgin/language/"
 "pl/)\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2)\n"
+"|| n%100>=20) ? 1 : 2);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -2077,56 +2077,8 @@ msgstr "Przesyłanie pliku do %s się nie powiodło."
 msgid "File transfer from %s failed."
 msgstr "Przesyłanie pliku od %s się nie powiodło."
 
-msgid "Run the command in a terminal"
-msgstr "Wykonanie polecenie w terminalu"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"aim\", jeśli włączone."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"gg\", jeśli włączone."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"icq\", jeśli włączone."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"irc\", jeśli włączone."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"msnim\", jeśli włączone."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"sip\", jeśli włączone."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"xmpp\", jeśli włączone."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"ymsgr\", jeśli włączone."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Obsługa adresów URL \"aim\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Obsługa adresów URL \"gg\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Obsługa adresów URL \"icq\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Obsługa adresów URL \"irc\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Obsługa adresów URL \"msnim\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Obsługa adresów URL \"sip\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Obsługa adresów URL \"xmpp\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Obsługa adresów URL \"ymsgr\""
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"aim\""
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2135,54 +2087,14 @@ msgstr ""
 "Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
 "obsługiwać adresy URL \"aim\"."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"gg\"."
+msgid "The handler for \"aim\" URLs"
+msgstr "Obsługa adresów URL \"aim\""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"icq\"."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"aim\", jeśli włączone."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"irc\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"msnim\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"sip\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"xmpp\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"ymsgr\"."
+msgid "Run the command in a terminal"
+msgstr "Wykonanie polecenie w terminalu"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2191,29 +2103,117 @@ msgstr ""
 "Wartość \"prawda\", jeśli polecenie użyte do obsługi tego typu adresów URL "
 "powinno być wykonywane w terminalu."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"aim\""
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Obsługa adresów URL \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"gg\", jeśli włączone."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"icq\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Obsługa adresów URL \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"icq\", jeśli włączone."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Obsługa adresów URL \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"irc\", jeśli włączone."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"msnim\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Obsługa adresów URL \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"msnim\", jeśli włączone."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Obsługa adresów URL \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"sip\", jeśli włączone."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"xmpp\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Obsługa adresów URL \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"xmpp\", jeśli włączone."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
+"obsługiwać adresy URL \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Obsługa adresów URL \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Polecenie używane do obsługi adresów URL \"ymsgr\", jeśli włączone."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Dziennik nie ma funkcji odczytu</font></b>"
@@ -3506,6 +3506,14 @@ msgstr "Imię i nazwisko"
 msgid "Use SSL"
 msgstr "Użycie SSL"
 
+msgid "Authenticate with SASL"
+msgstr "Uwierzytelnienie za pomocą SASL"
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr ""
+"Zezwolenie na uwierzytelnianie zwykłym tekstem SASL przez niezaszyfrowane "
+"połączenie"
+
 msgid "Bad mode"
 msgstr "Błędny tryb"
 
@@ -3566,6 +3574,10 @@ msgstr "Użytkownik %s wyczyścił temat."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Temat dla %s to: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3680,6 +3692,37 @@ msgstr "Pseudonim lub kanał jest chwilowo niedostępny."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Zbiorowe nadawanie praw operatora od %s"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Zainicjowanie uwierzytelniania SASL się nie powiodło: %s"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+"Uwierzytelnienie SASL się nie powiodło: nie odnaleziono wartościowych "
+"mechanizmów uwierzytelniania."
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Uwierzytelnienie SASL się nie powiodło: %s"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+"Uwierzytelnienie SASL się nie powiodło: serwer nie obsługuje "
+"uwierzytelniania SASL."
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr ""
+"Uwierzytelnienie SASL się nie powiodło: zainicjowanie SASL się nie powiodło."
+
+msgid "Incorrect Password"
+msgstr "Niepoprawne hasło"
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr ""
+"Uwierzytelnienie SASL się nie powiodło: nie odnaleziono wartościowych "
+"mechanizmów"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;czynność do wykonania&gt;: wykonuje czynność."
@@ -6094,6 +6137,10 @@ msgstr "O mnie"
 msgid "Where I Live"
 msgstr "Gdzie mieszkam"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr "Stan cywilny"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Numer telefonu komórkowego"
@@ -6305,10 +6352,6 @@ msgstr "Wiadomość stanu"
 msgid "Rejection Message"
 msgstr "Wiadomość odrzucenia"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Ukryty numer"
-
 msgid "No profile available"
 msgstr "Brak dostępnego profilu"
 
@@ -6332,6 +6375,33 @@ msgstr "Połączenie przez HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Włączenie wyskakującego ekranu powitalnego"
+
+msgid "Don't want to say"
+msgstr "Nie chcę podać"
+
+msgid "Single"
+msgstr "Singiel"
+
+msgid "In a relationship"
+msgstr "W związku"
+
+msgid "Engaged"
+msgstr "Zaręczony/zaręczona"
+
+msgid "Married"
+msgstr "W związku małżeńskim"
+
+msgid "It's complicated"
+msgstr "To skomplikowane"
+
+msgid "Widowed"
+msgstr "Wdowa/wdowiec"
+
+msgid "Separated"
+msgstr "W separacji"
+
+msgid "Divorced"
+msgstr "Po rozwodzie"
 
 msgid "Last Online"
 msgstr "Ostatnio online"
@@ -6392,6 +6462,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Błąd wiadomości"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr "Otrzymano zaszyfrowaną wiadomość, której nie można odszyfrować."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Nie można wykonać przekierowania używając podanego protokołu"
@@ -10546,17 +10620,17 @@ msgstr ""
 "Wystąpił błąd podczas odczytywania %s. Plik nie został wczytany, a nazwa "
 "poprzedniego została zmieniona na %s~."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Komunikator internetowy Pidgin"
+
+msgid "Internet Messenger"
+msgstr "Komunikator internetowy"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "Rozmawianie przez komunikator. Obsługuje sieci AIM, Google Talk, Jabber/"
 "XMPP, MSN, Yahoo oraz więcej"
-
-msgid "Internet Messenger"
-msgstr "Komunikator internetowy"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Komunikator internetowy Pidgin"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11090,7 +11164,7 @@ msgid ""
 "<b>Occupants:</b> %d"
 msgstr ""
 "\n"
-"<b>Mieszkańcy:</b> %d"
+"<b>Użytkownicy:</b> %d"
 
 #, c-format
 msgid ""
@@ -11607,6 +11681,13 @@ msgstr "Nieprzeczytane wiadomości"
 msgid "New Event"
 msgstr "Nowe zdarzenie"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Konto zostało rozłączone i użytkownik nie jest już obecny w tej konferencji. "
+"Po nawiązaniu połączenia nastąpi ponowne dołączenie."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: czyści wszystkie okna rozmów."
 
@@ -11896,6 +11977,9 @@ msgstr "marathi"
 
 msgid "Malay"
 msgstr "malajski"
+
+msgid "Burmese"
+msgstr "birmański"
 
 msgid "Bokmål Norwegian"
 msgstr "norweski bokmål"
@@ -13709,11 +13793,11 @@ msgstr "Podpowiedź programu Pidgin"
 msgid "Pidgin smileys"
 msgstr "Emotikony programu Pidgin"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Wybranie tego motywu wyłącza graficzne emotikony."
-
 msgid "none"
 msgstr "brak"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Wybranie tego motywu wyłącza graficzne emotikony."
 
 msgid "Small"
 msgstr "Małe"
@@ -14901,6 +14985,20 @@ msgstr "Wysyłanie i odbieranie surowych strof XMPP."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Ta wtyczka jest przydatna do debugowania serwerów lub klientów XMPP."
 
+msgid "The installer is already running."
+msgstr "Instalator jest już uruchomiony."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+"Program Pidgin jest obecnie uruchomiony. Proszę zakończyć program Pidgin i "
+"spróbować ponownie."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Dalej >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14910,58 +15008,82 @@ msgstr ""
 "Publicznej GNU (GPL). Licencja jest tu podana wyłącznie w celach "
 "informacyjnych. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
-"Wieloplatformowy zestaw narzędzi do tworzenia graficznych interfejsów "
-"użytkownika, używany przez program Pidgin"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Klient komunikatora Pidgin (wymagane)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr ""
-"Program Pidgin jest obecnie uruchomiony. Proszę zakończyć program Pidgin i "
-"spróbować ponownie."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Biblioteka GTK+ (wymagana, jeśli nie jest obecna)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Skróty"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Pulpit"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Menu Start"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Tłumaczenia"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Główne pliki programu Pidgin i biblioteki DLL"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Utworzenie wpisu w menu Start dla programu Pidgin"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Skróty do uruchamiania programu Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Utworzenie skrótu do programu Pidgin na pulpicie"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Utworzenie wpisu w menu Start dla programu Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+"Wieloplatformowy zestaw narzędzi do tworzenia graficznych interfejsów "
+"użytkownika, używany przez program Pidgin"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Symbole debugowania (do zgłaszania awarii)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Odwiedź stronę WWW programu Pidgin"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Nie można odinstalować obecnie zainstalowanej wersji programu Pidgin. Nowa "
+"wersja zostanie zainstalowana bez usuwania obecnej."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Program Pidgin wymaga zgodnej biblioteki GTK+ (która nie jest jeszcze "
+"obecna).$\\rNa pewno pominąć instalowanie biblioteki GTK+?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Pulpit"
+msgid "URI Handlers"
+msgstr "Obsługa adresów URI"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Błąd podczas pobierania biblioteki GTK+ ($R2).$\\rJest ona wymagana do "
-"działania programu Pidgin. Jeśli ponowienie się nie powiedzie, być może "
-"należy użyć 'Instalatora w trybie offline' ze strony http://pidgin.im/"
-"download/windows/ ."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Błąd podczas pobierania symboli debugowania ($R2).$\\rJeśli ponowienie się "
-"nie powiedzie, być może należy użyć 'Instalatora w trybie offline' ze strony "
-"http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Obsługa sprawdzania pisowni"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14975,46 +15097,6 @@ msgstr ""
 "developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "Biblioteka GTK+ (wymagana, jeśli nie jest obecna)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Tłumaczenia"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Dalej >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Klient komunikatora Pidgin (wymagane)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Program Pidgin wymaga zgodnej biblioteki GTK+ (która nie jest jeszcze "
-"obecna).$\\rNa pewno pominąć instalowanie biblioteki GTK+?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Skróty"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Skróty do uruchamiania programu Pidgin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Obsługa sprawdzania pisowni"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Menu Start"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
@@ -15022,8 +15104,25 @@ msgstr ""
 "Obsługa sprawdzania pisowni (do instalacji wymagane jest połączenie z "
 "Internetem)."
 
-msgid "The installer is already running."
-msgstr "Instalator jest już uruchomiony."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Błąd podczas pobierania symboli debugowania ($R2).$\\rJeśli ponowienie się "
+"nie powiedzie, być może należy użyć 'Instalatora w trybie offline' ze strony "
+"http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Błąd podczas pobierania biblioteki GTK+ ($R2).$\\rJest ona wymagana do "
+"działania programu Pidgin. Jeśli ponowienie się nie powiedzie, być może "
+"należy użyć 'Instalatora w trybie offline' ze strony http://pidgin.im/"
+"download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -15031,21 +15130,6 @@ msgid ""
 msgstr ""
 "Instalator nie może odnaleźć wpisów w rejestrze dla programu Pidgin.$"
 "\\rMożliwe, że inny użytkownik zainstalował ten program."
-
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "Obsługa adresów URI"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Nie można odinstalować obecnie zainstalowanej wersji programu Pidgin. Nowa "
-"wersja zostanie zainstalowana bez usuwania obecnej."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Odwiedź stronę WWW programu Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Brak uprawnień do odinstalowania tego programu."

@@ -75,6 +75,8 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 	purple_debug_misc("gg", "ggp_resolver_purple_cb(%p, %p, \"%s\")\n",
 		hosts, cbdata, error_message);
 	
+	data->purpleQuery = NULL;
+	
 	if (error_message)
 	{
 		purple_debug_error("gg", "ggp_resolver_purple_cb failed: %s\n",
@@ -183,6 +185,8 @@ void ggp_resolver_purple_cleanup(void **private_data, int force)
 		return;
 	*private_data = NULL;
 	
+	if (data->purpleQuery)
+		purple_dnsquery_destroy(data->purpleQuery);
 	if (data->pipes[0])
 		close(data->pipes[0]);
 	if (data->pipes[1])

@@ -356,7 +356,13 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 
 			if ((embedded_data != NULL) && (embedded_data->size == size))
 			{
-				imgid = purple_imgstore_new_with_id(g_memdup(embedded_data->data, size), size, src);
+				char *basename;
+				char *escaped;
+				basename = g_path_get_basename(src);
+				escaped = g_strdup(purple_escape_filename(basename));
+				g_free(basename);
+				imgid = purple_imgstore_new_with_id(g_memdup(embedded_data->data, size), size, escaped);
+				g_free(escaped);
 
 				/* Record the image number */
 				images = g_slist_append(images, GINT_TO_POINTER(imgid));

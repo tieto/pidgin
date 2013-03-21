@@ -1149,7 +1149,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				if (account != NULL && name != NULL && *name != '\0')
+				if (account != NULL && *name != '\0')
 					set->buddy = (purple_find_buddy(account, name) != NULL);
 				else
 					set->buddy = FALSE;

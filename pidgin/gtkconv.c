@@ -4454,7 +4454,7 @@ tab_complete(PurpleConversation *conv)
 											 matches->data, -1);
 
 		g_free(matches->data);
-		matches = g_list_remove(matches, matches->data);
+		g_list_free(matches);
 	}
 	else {
 		/*
@@ -6459,8 +6459,11 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTENT);
 
 	} else if ((flags & PURPLE_MESSAGE_RECV) && (old_flags & PURPLE_MESSAGE_RECV)) {
-		GList *history = purple_conversation_get_message_history(conv);
-		PurpleConvMessage *last_msg = (PurpleConvMessage *)history->data;
+		GList *history = purple_conversation_get_message_history(gtkconv->last_conversed);
+		PurpleConvMessage *last_msg = history ? (PurpleConvMessage *)history->data : NULL;
+
+		g_assert(history != NULL);
+		g_assert(last_msg != NULL);
 
 		/* If the senders are the same, use appendNextMessage */
 		if (purple_strequal(purple_conversation_message_get_sender(last_msg), name)) {
@@ -6480,6 +6483,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			PIDGIN_CONVERSATION_THEME_TEMPLATE_STATUS);
 	}
 	gtkconv->last_flags = flags;
+	gtkconv->last_conversed = conv;
 
 	smileyed = smiley_parse_markup(displaying, purple_account_get_protocol_id(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
@@ -7190,7 +7194,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_action_set_visible(win->menu.unblock, TRUE);
 		}
 
-		if ((account == NULL) || purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
+		if (purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
 			gtk_action_set_visible(win->menu.add, TRUE);
 			gtk_action_set_visible(win->menu.remove, FALSE);
 		} else {

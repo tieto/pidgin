@@ -1546,17 +1546,13 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	if (!client_entry)
 		return;
 
-	if (client_entry->nickname)
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html(user_info, _("Nickname"),
-					       client_entry->nickname);
-	if (client_entry->username && client_entry->hostname) {
-		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html(user_info, _("Username"), tmp);
-	}
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("Nickname"), client_entry->nickname);
+	g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("Username"), tmp);
 	if (client_entry->mode) {
 		memset(tmp, 0, sizeof(tmp));
 		silcpurple_get_umode_string(client_entry->mode,

@@ -1243,7 +1243,11 @@ ignore_keys_start(GntBindable *bindable, GList *n)
 static gboolean
 ignore_keys_end(GntBindable *bindable, GList *n)
 {
-	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
+	if (ignore_keys) {
+		ignore_keys = FALSE;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static gboolean

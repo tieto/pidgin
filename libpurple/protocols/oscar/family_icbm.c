@@ -156,7 +156,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	purple_debug_error("oscar",
 			   "Message error with bn %s and reason %hu and errcode %hu\n",
-				(bn != NULL ? bn : ""), reason, errcode);
+				bn, reason, errcode);
 
 #ifdef TODOFT
 	/* If this was a file transfer request, bn is a cookie */

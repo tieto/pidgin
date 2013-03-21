@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Yngve Spjeld Landro <l10n@landro.net>, 2011, 2012.
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012.
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012, 2012-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-02 19:15-0700\n"
-"PO-Revision-Date: 2012-06-26 22:28+0000\n"
+"POT-Creation-Date: 2013-02-11 00:04-0800\n"
+"PO-Revision-Date: 2013-02-07 22:35+0000\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
 "language/nn/)\n"
@@ -17,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -3206,7 +3207,7 @@ msgstr "Tilgjengeleg"
 
 #. 2
 msgid "Chatty"
-msgstr "Snakkesaleg"
+msgstr "Pratsam"
 
 #. 3
 msgid "Do Not Disturb"
@@ -3460,6 +3461,12 @@ msgstr "Eigentleg namn"
 msgid "Use SSL"
 msgstr "Bruk SSL"
 
+msgid "Authenticate with SASL"
+msgstr "Autentiser med SASL"
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Tillat reintekst SASL-autentisering over ukryptert samband"
+
 msgid "Bad mode"
 msgstr "Ugyldig tilstand"
 
@@ -3520,6 +3527,10 @@ msgstr "%s har nullstilt emnet."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Emnet i %s er: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3634,6 +3645,30 @@ msgstr "Kallenamn eller kanal er mellombels utilgjengeleg."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Banking frå %s"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Klarte ikkje å starta SASL-autentisering: %s"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr "SASL-autentiseringa feila: fann ingen gode autentiseringsmekanismar."
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-autentiseringa feila: %s"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr "SASL-autentiseringa feila: tenaren nyttar ikkje SASL-autentisering."
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL-autentiseringa feila: klarte ikkje å starta SASL."
+
+msgid "Incorrect Password"
+msgstr "Feil passord"
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL-autentiseringa feila: fann ingen gode mekanismar"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;handling å utføra&gt;: utfører ei handling."
@@ -6009,6 +6044,10 @@ msgstr "Om meg"
 msgid "Where I Live"
 msgstr "Kor eg bur"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr "Forhold"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Mobilnummer"
@@ -6215,10 +6254,6 @@ msgstr "Statusmelding"
 msgid "Rejection Message"
 msgstr "Avvisingsmelding"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Skjult nummer"
-
 msgid "No profile available"
 msgstr "Ingen profil er tilgjengeleg"
 
@@ -6242,6 +6277,33 @@ msgstr "Kopla til over HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Bruk oppstartsvindauge"
+
+msgid "Don't want to say"
+msgstr "Vil ikkje seia det"
+
+msgid "Single"
+msgstr "Einsleg"
+
+msgid "In a relationship"
+msgstr "I eit forhold"
+
+msgid "Engaged"
+msgstr "Trulova"
+
+msgid "Married"
+msgstr "Gift"
+
+msgid "It's complicated"
+msgstr "Det er komplisert"
+
+msgid "Widowed"
+msgstr "Enkje(-mann)"
+
+msgid "Separated"
+msgstr "Separert"
+
+msgid "Divorced"
+msgstr "Skild"
 
 msgid "Last Online"
 msgstr "Sist tilkopla"
@@ -6299,6 +6361,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Meldingsfeil"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr "Klarte ikkje å dekryptera den mottekne, krypterte meldinga."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan ikkje nytta den spesifiserte protokollen til å vidaresenda"
@@ -11748,6 +11814,9 @@ msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malayisk"
+
+msgid "Burmese"
+msgstr "Burmesisk"
 
 msgid "Bokmål Norwegian"
 msgstr "Norsk (bokmål)"

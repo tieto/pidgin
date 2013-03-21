@@ -114,6 +114,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 		 *       and width.
 		 */
 		/* A PNG header, including the IHDR, but nothing else */
+		/* ATTN: this is in network byte order! */
 		const struct {
 			guchar signature[8]; /* must be hex 89 50 4E 47 0D 0A 1A 0A */
 			struct {
@@ -127,10 +128,13 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 				guchar filter;
 				guchar interlace;
 			} ihdr;
-		} *png = purple_imgstore_get_data(img); /* ATTN: this is in network byte order! */
+		} *png = NULL;
+
+		if (purple_imgstore_get_size(img) > sizeof(*png))
+			png = purple_imgstore_get_data(img);
 
 		/* check if the data is a valid png file (well, at least to some extent) */
-		if(png->signature[0] == 0x89 &&
+		if(png && png->signature[0] == 0x89 &&
 		   png->signature[1] == 0x50 &&
 		   png->signature[2] == 0x4e &&
 		   png->signature[3] == 0x47 &&

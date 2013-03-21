@@ -216,13 +216,10 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 
 			if (channel)
 				serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
-				 		 sender->nickname ?
-				 		  sender->nickname :
-						 "<unknown>", cflags,
+				 		 sender->nickname, cflags,
 						 tmp, time(NULL));
 			else
-				serv_got_im(gc, sender->nickname ?
-					    sender->nickname : "<unknown>",
+				serv_got_im(gc, sender->nickname,
 					    tmp, cflags, time(NULL));
 
 			purple_imgstore_unref_by_id(imgid);
@@ -363,15 +360,14 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 {
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
-	PurpleConversation *convo = NULL;
+	PurpleConversation *convo;
 	char *msg, *tmp;
 
 	if (!message)
 		return;
 
-	if (sender->nickname)
-		/* XXX - Should this be PURPLE_CONV_TYPE_IM? */
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+	/* XXX - Should this be PURPLE_CONV_TYPE_IM? */
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 							      sender->nickname, sg->account);
 
 	if (flags & SILC_MESSAGE_FLAG_SIGNED &&

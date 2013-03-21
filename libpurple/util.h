@@ -383,7 +383,8 @@ const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso);
  *
  * @param tm The time to format, or @c NULL to use the current local time
  *
- * @return The date, formatted as per the user's settings.
+ * @return The date, formatted as per the user's settings.  In the USA this
+ *         is something like "02/18/13"
  */
 const char *purple_date_format_short(const struct tm *tm);
 
@@ -395,7 +396,8 @@ const char *purple_date_format_short(const struct tm *tm);
  *
  * @param tm The time to format, or @c NULL to use the current local time
  *
- * @return The timestamp, formatted as per the user's settings.
+ * @return The timestamp, formatted as per the user's settings.  In the USA
+ *         this is something like "02/18/13 15:26:44"
  */
 const char *purple_date_format_long(const struct tm *tm);
 
@@ -407,7 +409,8 @@ const char *purple_date_format_long(const struct tm *tm);
  *
  * @param tm The time to format, or @c NULL to use the current local time
  *
- * @return The date and time, formatted as per the user's settings.
+ * @return The date and time, formatted as per the user's settings.  In the
+ *         USA this is something like "Mon Feb 18 15:26:44 2013"
  */
 const char *purple_date_format_full(const struct tm *tm);
 
@@ -419,7 +422,8 @@ const char *purple_date_format_full(const struct tm *tm);
  *
  * @param tm The time to format, or @c NULL to use the current local time
  *
- * @return The time, formatted as per the user's settings.
+ * @return The time, formatted as per the user's settings.  In the USA this
+ *         is something like "15:26:44"
  */
 const char *purple_time_format(const struct tm *tm);
 
@@ -817,11 +821,6 @@ FILE *purple_mkstemp(char **path, gboolean binary);
  */
 const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
-
-/**
- * Returns a SHA-1 hash string of the data passed in.
- */
-char *purple_util_get_image_checksum(gconstpointer image_data, size_t image_len);
 
 /**
  * @return A hex encoded version of the SHA-1 hash of the data passed

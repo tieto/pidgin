@@ -514,7 +514,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);
 			gtk_tree_store_set(lv->treestore, &toplevel, 0, month, 1, NULL, -1);
 
-			strncpy(prev_top_month, month, sizeof(prev_top_month));
+			g_strlcpy(prev_top_month, month, sizeof(prev_top_month));
 		}
 
 		/* sub */
