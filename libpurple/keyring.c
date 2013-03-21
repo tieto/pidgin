@@ -593,6 +593,10 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 				close(NULL);  /* we can't do much about errors at this point */
 
 		} else {
+			purple_debug_misc("keyring",
+				"Starting migration from: %s.\n",
+				oldkeyring->id);
+
 			tracker = g_new(PurpleKeyringChangeTracker, 1);
 
 			purple_keyring_inuse = newkeyring;

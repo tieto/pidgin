@@ -66,6 +66,7 @@ class request
 		gpointer data;
 		PurpleAccount *account;
 		QString password;
+		bool noPassword;
 };
 
 class engine : private QObject, private QQueue<request*>
@@ -318,6 +319,7 @@ KWalletPlugin::save_request::save_request(PurpleAccount *acc, const char *pw,
 	data = userdata;
 	callback = cb;
 	password = QString(pw);
+	noPassword = (pw == NULL);
 }
 
 KWalletPlugin::read_request::read_request(PurpleAccount *acc,
@@ -387,7 +389,12 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 
 	g_return_if_fail(wallet != NULL);
 
-	result = wallet->writePassword(kwallet_account_key(account), password);
+	if (noPassword)
+		result = wallet->removeEntry(kwallet_account_key(account));
+	else {
+		result = wallet->writePassword(kwallet_account_key(account),
+			password);
+	}
 
 	if (result != 0) {
 		purple_debug_warning("keyring-kwallet",
@@ -420,8 +427,16 @@ static void
 kwallet_save(PurpleAccount *account, const char *password,
 	PurpleKeyringSaveCallback cb, gpointer data)
 {
-	KWalletPlugin::engine::instance()->queue(
-		new KWalletPlugin::save_request(account, password, cb, data));
+	if (password == NULL && KWallet::Wallet::keyDoesNotExist(
+		KWALLET_WALLET_NAME, KWALLET_FOLDER_NAME,
+		kwallet_account_key(account))) {
+		if (cb != NULL)
+			cb(account, NULL, data);
+	}
+	else
+		KWalletPlugin::engine::instance()->queue(
+			new KWalletPlugin::save_request(account, password, cb,
+			data));
 }
 
 static void
