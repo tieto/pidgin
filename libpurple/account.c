@@ -879,7 +879,6 @@ parse_account(xmlnode *node)
 	const char *mode = NULL;
 	char *data = NULL;
 	gboolean result = FALSE;
-	GError *error = NULL;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -978,7 +977,7 @@ parse_account(xmlnode *node)
 		mode = xmlnode_get_attrib(child, "mode");
 		data = xmlnode_get_data(child);
 
-		result = purple_keyring_import_password(ret, keyring_id, mode, data, &error);
+		result = purple_keyring_import_password(ret, keyring_id, mode, data, NULL);
 
 		if (result == TRUE) {
 			purple_debug_info("account", "Password imported successfully.\n");

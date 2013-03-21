@@ -490,6 +490,7 @@ kwallet_unload(PurplePlugin *plugin)
 
 	kwallet_close(NULL);
 
+	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
 

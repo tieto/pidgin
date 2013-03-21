@@ -222,7 +222,7 @@ purple_core_quit(void)
 	 */
 	purple_certificate_uninit();
 
-	/* The SSL plugins must be uninit before they're unloaded */
+	/* The SSL and keyring plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
 	purple_keyring_uninit();
 

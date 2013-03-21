@@ -86,6 +86,8 @@ purple_keyring_new(void)
 void
 purple_keyring_free(PurpleKeyring *keyring)
 {
+	g_free(keyring->name);
+	g_free(keyring->id);
 	g_free(keyring);
 }
 
@@ -331,6 +333,7 @@ void
 purple_keyring_uninit(void)
 {
 	GList *it;
+	PurpleCore *core = purple_get_core();
 
 	g_free(purple_keyring_to_use);
 	purple_keyring_inuse = NULL;
@@ -345,6 +348,11 @@ purple_keyring_uninit(void)
 	}
 	g_list_free(purple_keyring_loaded_plugins);
 	purple_keyring_loaded_plugins = NULL;
+
+	purple_signal_unregister(core, "keyring-register");
+	purple_signal_unregister(core, "keyring-unregister");
+	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
+	purple_keyring_pref_cb_id = 0;
 }
 
 PurpleKeyring *
@@ -752,8 +760,12 @@ purple_keyring_import_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured, cannot import password info");
+		if (error != NULL) {
+			*error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_NOKEYRING,
+				"No keyring configured, cannot import password "
+				"info");
+		}
 		purple_debug_info("Keyring",
 			"No keyring configured, cannot import password info for account %s (%s).\n",
 			purple_account_get_username(account), purple_account_get_protocol_id(account));
@@ -768,9 +780,12 @@ purple_keyring_import_password(PurpleAccount *account,
 	 */
 	if ((keyringid != NULL && g_strcmp0(realid, keyringid) != 0) ||
 	    (keyringid == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
-
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
-			"Specified keyring id does not match the configured one.");
+		if (error != NULL) {
+			*error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_INVALID,
+				"Specified keyring id does not match the "
+				"configured one.");
+		}
 		purple_debug_info("keyring",
 			"Specified keyring id does not match the configured one (%s vs. %s). Data will be lost.\n",
 			keyringid, realid);
@@ -779,8 +794,11 @@ purple_keyring_import_password(PurpleAccount *account,
 
 	import = purple_keyring_get_import_password(inuse);
 	if (import == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
-			"Keyring cannot import password info.");
+		if (error != NULL) {
+			*error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_NOCAP,
+				"Keyring cannot import password info.");
+		}
 		purple_debug_info("Keyring", "Configured keyring cannot import password info. This might be normal.\n");
 		return FALSE;
 	}
