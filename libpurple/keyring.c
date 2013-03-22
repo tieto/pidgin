@@ -419,8 +419,6 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 
 	tracker = (PurpleKeyringChangeTracker *)data;
 
-	g_return_if_fail(tracker->abort == FALSE);
-
 	tracker->read_outstanding--;
 
 	name = purple_account_get_username(account);
@@ -431,34 +429,37 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 		switch(error->code) {
 			case PURPLE_KEYRING_ERROR_NOCAP:
 				purple_debug_info("keyring",
-					"Keyring could not save password for account %s: %s.\n",
+					"Keyring does not support saving a password for account %s: %s.\n",
 					name, error->message);
 				break;
 
 			case PURPLE_KEYRING_ERROR_NOPASSWD:
-				purple_debug_info("keyring",
-					"No password found while changing keyring for account %s: %s.\n",
-					name, error->message);
+				if (purple_debug_is_verbose()) {
+					purple_debug_misc("keyring",
+						"No password found while changing keyring for account %s: %s.\n",
+						name, error->message);
+				}
 				break;
 
 			case PURPLE_KEYRING_ERROR_NOCHANNEL:
-				purple_debug_info("keyring",
+				purple_debug_error("keyring",
 					"Failed to communicate with backend while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
 				tracker->abort = TRUE;
 				break;
 
 			default:
-				purple_debug_info("keyring",
-					"Unknown error while changing keyring for account %s: %s.\n",
+				purple_debug_error("keyring",
+					"Unknown error while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
+				tracker->abort = TRUE;
 				break;
 		}
 	}
 
 	/* if this was the last one */
-	if (tracker->finished == TRUE && tracker->read_outstanding == 0) {
-		if (tracker->abort == TRUE && tracker->force == FALSE) {
+	if ((tracker->finished && tracker->read_outstanding == 0) || (tracker->abort && !tracker->force)) {
+		if (tracker->abort && !tracker->force) {
 			if (tracker->cb != NULL)
 				tracker->cb(tracker->old, FALSE, tracker->error, tracker->data);
 
@@ -468,7 +469,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			if (close != NULL)
 				close(NULL);
 
-			purple_debug_info("keyring",
+			purple_debug_error("keyring",
 				"Failed to change keyring, aborting.\n");
 
 			purple_notify_error(NULL, _("Keyrings"), _("Failed to change the keyring."),
@@ -526,14 +527,12 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWD ||
 		    error->code == PURPLE_KEYRING_ERROR_NOACCOUNT ||
 		    tracker->force == TRUE) {
-			/* don't save password, and directly trigger callback */
-			purple_keyring_set_inuse_check_error_cb(account, error, data);
-
+			/* don't save password, and ignore it */
 		} else {
 			/* fatal error, abort all */
 			tracker->abort = TRUE;
 		}
-
+		purple_keyring_set_inuse_check_error_cb(account, error, data);
 	} else {
 		save = purple_keyring_get_save_password(new);
 

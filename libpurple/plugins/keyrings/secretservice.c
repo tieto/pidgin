@@ -33,8 +33,6 @@
 #define SECRETSERVICE_NAME        N_("Secret Service")
 #define SECRETSERVICE_ID          "keyring-libsecret"
 
-#define ERR_SECRETSERVICEPLUGIN   (ss_error_domain())
-
 static PurpleKeyring *keyring_handler = NULL;
 
 static const SecretSchema purple_schema = {
@@ -57,13 +55,6 @@ struct _InfoStorage
 	gpointer user_data;
 };
 
-static GQuark
-ss_error_domain(void)
-{
-	return g_quark_from_static_string("SecretService plugin");
-}
-
-
 /***********************************************/
 /*     Keyring interface                       */
 /***********************************************/
@@ -85,7 +76,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 		switch (code) {
 			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
 			case G_DBUS_ERROR_IO_ERROR:
-				error = g_error_new(ERR_SECRETSERVICEPLUGIN,
+				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Failed to communicate with Secret Service (account : %s).",
 				                    purple_account_get_username(account));
@@ -95,7 +86,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 				break;
 
 			default:
-				error = g_error_new(ERR_SECRETSERVICEPLUGIN,
+				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Unknown error (account : %s).",
 				                    purple_account_get_username(account));
@@ -106,7 +97,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 		}
 
 	} else if (password == NULL) {
-		error = g_error_new(ERR_SECRETSERVICEPLUGIN,
+		error = g_error_new(PURPLE_KEYRING_ERROR,
 		                    PURPLE_KEYRING_ERROR_NOPASSWD,
 		                    "No password found for account: %s",
 		                    purple_account_get_username(account));
@@ -162,7 +153,7 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 				                  "Failed to communicate with Secret Service (account : %s (%s)).\n",
 				                  purple_account_get_username(account),
 				                  purple_account_get_protocol_id(account));
-				error = g_error_new(ERR_SECRETSERVICEPLUGIN,
+				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Failed to communicate with Secret Service (account : %s).",
 				                    purple_account_get_username(account));
@@ -176,7 +167,7 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 				                  "Unknown error (account : %s (%s)).\n",
 				                  purple_account_get_username(account),
 				                  purple_account_get_protocol_id(account));
-				error = g_error_new(ERR_SECRETSERVICEPLUGIN,
+				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Unknown error (account : %s).",
 				                    purple_account_get_username(account));

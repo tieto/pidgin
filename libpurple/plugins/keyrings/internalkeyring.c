@@ -79,10 +79,12 @@ internal_keyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 		if (cb != NULL)
 			cb(account, password, NULL, data);
 	} else {
-		purple_debug_misc("keyring-internal",
-			"No password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("keyring-internal",
+				"No password for account %s (%s).\n",
+				purple_account_get_username(account),
+				purple_account_get_protocol_id(account));
+		}
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_NOPASSWD, "Password not found.");
 		if (cb != NULL)
@@ -95,7 +97,10 @@ static void
 internal_keyring_save(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data)
 {
+	void *old_password;
 	internal_keyring_open();
+
+	old_password = g_hash_table_lookup(internal_keyring_passwords, account);
 
 	if (password == NULL)
 		g_hash_table_remove(internal_keyring_passwords, account);
@@ -104,11 +109,18 @@ internal_keyring_save(PurpleAccount *account, const gchar *password,
 			g_strdup(password));
 	}
 
-	purple_debug_misc("keyring-internal",
-		"Password %s for account %s (%s).\n",
-		(password == NULL ? "removed" : "saved"),
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
+	if (!(password == NULL && old_password == NULL)) {
+		purple_debug_misc("keyring-internal",
+			"Password %s for account %s (%s).\n",
+			(password == NULL ? "removed" : (old_password == NULL ? "saved" : "updated")),
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+	} else if (purple_debug_is_verbose()) {
+		purple_debug_misc("keyring-internal",
+			"Password for account %s (%s) was already removed.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+	}
 
 	if (cb != NULL)
 		cb(account, NULL, data);

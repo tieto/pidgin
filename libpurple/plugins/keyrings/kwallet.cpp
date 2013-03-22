@@ -50,8 +50,6 @@
 PurpleKeyring *keyring_handler = NULL;
 QCoreApplication *qCoreApp = NULL;
 
-#define ERR_KWALLETPLUGIN kwallet_plugin_error_domain()
-
 namespace KWalletPlugin {
 
 class request
@@ -124,12 +122,6 @@ class read_request : public request
 		PurpleKeyringReadCallback callback;
 };
 
-static GQuark
-kwallet_plugin_error_domain(void)
-{
-	return g_quark_from_static_string("KWallet keyring");
-}
-
 }
 
 static gboolean
@@ -147,7 +139,7 @@ KWalletPlugin::request::~request()
 void
 KWalletPlugin::request::abort()
 {
-	detailedAbort(PURPLE_KEYRING_ERROR_UNKNOWN);
+	detailedAbort(PURPLE_KEYRING_ERROR_NOCHANNEL);
 }
 
 KWalletPlugin::engine::engine()
@@ -342,7 +334,7 @@ KWalletPlugin::save_request::detailedAbort(enum PurpleKeyringError error)
 	if (callback == NULL)
 		return;
 
-	gerror = g_error_new(ERR_KWALLETPLUGIN, error,
+	gerror = g_error_new(PURPLE_KEYRING_ERROR, error,
 		"Failed to save password");
 	callback(account, gerror, data);
 	g_error_free(gerror);
@@ -355,7 +347,7 @@ KWalletPlugin::read_request::detailedAbort(enum PurpleKeyringError error)
 	if (callback == NULL)
 		return;
 
-	gerror = g_error_new(ERR_KWALLETPLUGIN, error,
+	gerror = g_error_new(PURPLE_KEYRING_ERROR, error,
 		"Failed to read password");
 	callback(account, NULL, gerror, data);
 	g_error_free(gerror);
