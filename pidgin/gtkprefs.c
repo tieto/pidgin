@@ -281,7 +281,7 @@ typedef struct
 } PidginPrefValue;
 
 typedef void (*PidginPrefsDropdownCallback)(GtkComboBox *combo_box,
-	PidginPrefValue value, gint previous_index);
+	PidginPrefValue value);
 
 static void
 dropdown_set(GtkComboBox *combo_box, gpointer _cb)
@@ -290,15 +290,16 @@ dropdown_set(GtkComboBox *combo_box, gpointer _cb)
 	GtkTreeIter iter;
 	GtkTreeModel *tree_model;
 	PidginPrefValue active;
-	gint previous_active;
 
 	tree_model = gtk_combo_box_get_model(combo_box);
 	if (!gtk_combo_box_get_active_iter(combo_box, &iter))
 		return;
-	active.type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(combo_box), "type"));
-	previous_active = GPOINTER_TO_INT(g_object_get_data(
-		G_OBJECT(combo_box), "previously_active"));
+	active.type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(combo_box),
+		"type"));
+
 	g_object_set_data(G_OBJECT(combo_box), "previously_active",
+		g_object_get_data(G_OBJECT(combo_box), "current_active"));
+	g_object_set_data(G_OBJECT(combo_box), "current_active",
 		GINT_TO_POINTER(gtk_combo_box_get_active(combo_box)));
 
 	if (active.type == PURPLE_PREF_INT) {
@@ -314,17 +315,21 @@ dropdown_set(GtkComboBox *combo_box, gpointer _cb)
 			&active.value.boolean, -1);
 	}
 
-	cb(combo_box, active, previous_active);
+	cb(combo_box, active);
 }
 
-static void pidgin_prefs_dropdown_revert_active(GtkComboBox *combo_box,
-	gint previous_index)
+static void pidgin_prefs_dropdown_revert_active(GtkComboBox *combo_box)
 {
+	gint previously_active;
+
 	g_return_if_fail(combo_box != NULL);
 
-	gtk_combo_box_set_active(combo_box, previous_index);
-	g_object_set_data(G_OBJECT(combo_box), "previously_active",
-		GINT_TO_POINTER(previous_index));
+	previously_active = GPOINTER_TO_INT(g_object_get_data(
+		G_OBJECT(combo_box), "previously_active"));
+	g_object_set_data(G_OBJECT(combo_box), "current_active",
+		GINT_TO_POINTER(previously_active));
+
+	gtk_combo_box_set_active(combo_box, previously_active);
 }
 
 static GtkWidget *
@@ -339,6 +344,7 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 	GtkTreeIter iter;
 	GtkTreeIter active;
 	GtkCellRenderer *renderer;
+	gpointer current_active;
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
@@ -410,9 +416,10 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 	                               NULL);
 
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(dropdown), &active);
-	g_object_set_data(G_OBJECT(dropdown), "previously_active",
-		GINT_TO_POINTER(gtk_combo_box_get_active(GTK_COMBO_BOX(
-		dropdown))));
+	current_active = GINT_TO_POINTER(gtk_combo_box_get_active(GTK_COMBO_BOX(
+		dropdown)));
+	g_object_set_data(G_OBJECT(dropdown), "current_active", current_active);
+	g_object_set_data(G_OBJECT(dropdown), "previously_active", current_active);
 
 	g_signal_connect(G_OBJECT(dropdown), "changed",
 		G_CALLBACK(dropdown_set), cb);
@@ -424,7 +431,7 @@ pidgin_prefs_dropdown_from_list_with_cb(GtkWidget *box, const gchar *title,
 
 static void
 pidgin_prefs_dropdown_from_list_cb(GtkComboBox *combo_box,
-	PidginPrefValue value, gint previous)
+	PidginPrefValue value)
 {
 	const char *key;
 
@@ -2581,8 +2588,7 @@ change_master_password_cb(GtkWidget *button, gpointer ptr)
 }
 
 static void
-keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value,
-	gint previous)
+keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value)
 {
 	const char *keyring_id;
 	PurpleKeyring *keyring;
@@ -2597,7 +2603,7 @@ keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value,
 	keyring_id = value.value.string;
 	keyring = purple_keyring_find_keyring_by_id(keyring_id);
 	if (keyring == NULL) {
-		pidgin_prefs_dropdown_revert_active(combo_box, previous);
+		pidgin_prefs_dropdown_revert_active(combo_box);
 		purple_notify_error(NULL, _("Keyring"),
 			_("Selected keyring is disabled"), NULL);
 		return;
