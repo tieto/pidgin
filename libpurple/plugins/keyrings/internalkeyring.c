@@ -1,9 +1,6 @@
 /**
  * @file internalkeyring.c internal keyring
  * @ingroup plugins
- *
- * @todo
- *   cleanup error handling and reporting
  */
 
 /* purple

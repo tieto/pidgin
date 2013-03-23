@@ -1,9 +1,6 @@
 /**
  * @file kwallet.cpp KWallet password storage
  * @ingroup plugins
- *
- * @todo
- *   cleanup error handling and reporting
  */
 
 /* purple

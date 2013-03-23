@@ -424,8 +424,6 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 	name = purple_account_get_username(account);
 
 	if ((error != NULL) && (error->domain == PURPLE_KEYRING_ERROR)) {
-		tracker->error = error;
-
 		switch(error->code) {
 			case PURPLE_KEYRING_ERROR_NOCAP:
 				purple_debug_info("keyring",
@@ -446,6 +444,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 					"Failed to communicate with backend while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
 				tracker->abort = TRUE;
+				tracker->error = error;
 				break;
 
 			default:
@@ -453,6 +452,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 					"Unknown error while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
 				tracker->abort = TRUE;
+				tracker->error = error;
 				break;
 		}
 	}
@@ -472,8 +472,6 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			purple_debug_error("keyring",
 				"Failed to change keyring, aborting.\n");
 
-			purple_notify_error(NULL, _("Keyrings"), _("Failed to change the keyring."),
-				_("Aborting changes."));
 			purple_keyring_inuse = tracker->old;
 			purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 			purple_prefs_set_string("/purple/keyring/active",
@@ -491,7 +489,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			purple_debug_info("keyring", "Successfully changed keyring.\n");
 
 			if (tracker->cb != NULL)
-				tracker->cb(tracker->new, TRUE, error, tracker->data);
+				tracker->cb(tracker->new, TRUE, NULL, tracker->data);
 		}
 
 		g_free(tracker);
@@ -565,10 +563,19 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 	PurpleKeyringClose close;
 	PurpleKeyringChangeTracker *tracker;
 
+	oldkeyring = purple_keyring_get_inuse();
+
+	if (oldkeyring == newkeyring) {
+		purple_debug_misc("keyring",
+			"Old and new keyring are the same: %s.\n",
+			(newkeyring != NULL) ? newkeyring->id : "(null)");
+		if (cb != NULL)
+			cb(newkeyring, TRUE, NULL, data);
+		return;
+	}
+
 	purple_debug_info("keyring", "Attempting to set new keyring: %s.\n",
 		(newkeyring != NULL) ? newkeyring->id : "(null)");
-
-	oldkeyring = purple_keyring_get_inuse();
 
 	if (oldkeyring != NULL) {
 		read = purple_keyring_get_read_password(oldkeyring);

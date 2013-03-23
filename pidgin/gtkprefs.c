@@ -111,6 +111,9 @@ static GtkWidget *prefs_conv_variants_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
+/* Keyrings page */
+static gpointer keyring_page_pref_set_instance = NULL;
+
 /* Sound theme specific */
 static GtkWidget *sound_entry = NULL;
 static int sound_row_sel = 0;
@@ -537,6 +540,8 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_conv_variants_combo_box = NULL;
 	prefs_status_themes_combo_box = NULL;
 	prefs_smiley_themes_combo_box = NULL;
+
+	keyring_page_pref_set_instance = NULL;
 
 	sample_webview = NULL;
 
@@ -2588,6 +2593,33 @@ change_master_password_cb(GtkWidget *button, gpointer ptr)
 }
 
 static void
+keyring_page_pref_set_inuse(const PurpleKeyring *keyring, gboolean result,
+	GError *error, gpointer _combo_box)
+{
+	GtkComboBox *combo_box = _combo_box;
+	const PurpleKeyring *in_use = purple_keyring_get_inuse();
+
+	if (keyring_page_pref_set_instance != combo_box) {
+		purple_debug_info("gtkprefs", "pref window already closed\n");
+		return;
+	}
+	keyring_page_pref_set_instance = NULL;
+
+	gtk_widget_set_sensitive(GTK_WIDGET(combo_box), TRUE);
+
+	if (error != NULL) {
+		pidgin_prefs_dropdown_revert_active(combo_box);
+		purple_notify_error(NULL, _("Keyring"),
+			_("Failed to set new keyring"), error->message);
+		return;
+	}
+
+	g_return_if_fail(in_use != NULL);
+	purple_prefs_set_string("/purple/keyring/active",
+		purple_keyring_get_id(in_use));
+}
+
+static void
 keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value)
 {
 	const char *keyring_id;
@@ -2609,7 +2641,11 @@ keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value)
 		return;
 	}
 
-	purple_prefs_set_string("/purple/keyring/active", keyring_id);
+	gtk_widget_set_sensitive(GTK_WIDGET(combo_box), FALSE);
+
+	keyring_page_pref_set_instance = combo_box;
+	purple_keyring_set_inuse(keyring, FALSE, keyring_page_pref_set_inuse,
+		combo_box);
 
 	if (purple_keyring_get_change_master(keyring))
 		gtk_widget_set_sensitive(change_master_button, TRUE);
@@ -2638,7 +2674,7 @@ keyring_page(void)
 	/* Change master password */
 	button = gtk_button_new_with_mnemonic(_("_Change master password."));
 
-	/*  Keyring selection */
+	/* Keyring selection */
 	vbox = pidgin_make_frame(ret, _("Keyring"));
 	names = purple_keyring_get_options();
 	initial.type = PURPLE_PREF_STRING;
