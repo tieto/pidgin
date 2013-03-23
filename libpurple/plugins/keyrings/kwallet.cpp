@@ -450,24 +450,6 @@ kwallet_close(GError **error)
 }
 
 static gboolean
-kwallet_import(PurpleAccount *account, const char *mode, const char *data,
-	GError **error)
-{
-	return TRUE;
-}
-
-static gboolean
-kwallet_export(PurpleAccount *account, const char **mode, char **data,
-	GError **error, GDestroyNotify *destroy)
-{
-	*mode = NULL;
-	*data = NULL;
-	*destroy = NULL;
-
-	return TRUE;
-}
-
-static gboolean
 kwallet_load(PurplePlugin *plugin)
 {
 	if (!qCoreApp) {
@@ -489,8 +471,6 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_read_password(keyring_handler, kwallet_read);
 	purple_keyring_set_save_password(keyring_handler, kwallet_save);
 	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
-	purple_keyring_set_import_password(keyring_handler, kwallet_import);
-	purple_keyring_set_export_password(keyring_handler, kwallet_export);
 
 	purple_keyring_register(keyring_handler);
 

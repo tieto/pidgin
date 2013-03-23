@@ -236,31 +236,6 @@ ss_close(GError **error)
 }
 
 static gboolean
-ss_import_password(PurpleAccount *account,
-                    const char *mode,
-                    const char *data,
-                    GError **error)
-{
-	purple_debug_info("keyring-libsecret", "Importing password.\n");
-	return TRUE;
-}
-
-static gboolean
-ss_export_password(PurpleAccount *account,
-                    const char **mode,
-                    char **data,
-                    GError **error,
-                    GDestroyNotify *destroy)
-{
-	purple_debug_info("keyring-libsecret", "Exporting password.\n");
-	*data = NULL;
-	*mode = NULL;
-	*destroy = NULL;
-
-	return TRUE;
-}
-
-static gboolean
 ss_init(void)
 {
 	purple_debug_info("keyring-libsecret", "Init.\n");
@@ -272,8 +247,6 @@ ss_init(void)
 	purple_keyring_set_read_password(keyring_handler, ss_read);
 	purple_keyring_set_save_password(keyring_handler, ss_save);
 	purple_keyring_set_close_keyring(keyring_handler, ss_close);
-	purple_keyring_set_import_password(keyring_handler, ss_import_password);
-	purple_keyring_set_export_password(keyring_handler, ss_export_password);
 
 	purple_keyring_register(keyring_handler);
 

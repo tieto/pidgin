@@ -380,17 +380,15 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
-		purple_keyring_export_password(account, &keyring_id, 
-			&mode, &data, &error, &destroy);
+		gboolean exported = purple_keyring_export_password(account,
+			&keyring_id, &mode, &data, &error, &destroy);
 
 		if (error != NULL) {
-
 			purple_debug_error("account",
 				"Failed to export password for account %s : %s.\n",
 				purple_account_get_username(account),
 				error->message);
-
-		} else {
+		} else if (exported) {
 			child = xmlnode_new_child(node, "password");
 			if (keyring_id != NULL)
 				xmlnode_set_attrib(child, "keyring_id", keyring_id);
@@ -978,7 +976,7 @@ parse_account(xmlnode *node)
 		if (result == TRUE) {
 			purple_account_set_remember_password(ret, TRUE);
 		} else {
-			purple_debug_info("account", "Failed to import password.\n");
+			purple_debug_error("account", "Failed to import password.\n");
 		} 
 		g_free(data); 
 	}

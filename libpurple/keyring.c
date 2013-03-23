@@ -822,13 +822,12 @@ purple_keyring_import_password(PurpleAccount *account,
 
 	import = purple_keyring_get_import_password(inuse);
 	if (import == NULL) {
-		if (error != NULL) {
-			*error = g_error_new(PURPLE_KEYRING_ERROR,
-				PURPLE_KEYRING_ERROR_NOCAP,
-				"Keyring cannot import password info.");
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("Keyring", "Configured keyring "
+				"cannot import password info. This might be "
+				"normal.\n");
 		}
-		purple_debug_info("Keyring", "Configured keyring cannot import password info. This might be normal.\n");
-		return FALSE;
+		return TRUE;
 	}
 
 	return import(account, mode, data, error);
@@ -876,11 +875,15 @@ purple_keyring_export_password(PurpleAccount *account,
 	export = purple_keyring_get_export_password(inuse);
 
 	if (export == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
-			"Keyring cannot export password info.");
-		purple_debug_info("keyring",
-			"Keyring cannot export password info. This might be normal.\n");
-		return FALSE;
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("Keyring", "Configured keyring "
+				"cannot export password info. This might be "
+				"normal.\n");
+		}
+		*mode = NULL;
+		*data = NULL;
+		*destroy = NULL;
+		return TRUE;
 	}
 
 	return export(account, mode, data, error, destroy);
