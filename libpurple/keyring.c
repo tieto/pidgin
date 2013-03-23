@@ -470,7 +470,6 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			purple_debug_error("keyring",
 				"Failed to change keyring, aborting.\n");
 
-			purple_keyring_inuse = tracker->old;
 			purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 			purple_prefs_set_string("/purple/keyring/active",
 				purple_keyring_get_id(tracker->old));
@@ -490,6 +489,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 
 			purple_debug_info("keyring", "Successfully changed keyring.\n");
 
+			purple_keyring_inuse = tracker->new;
 			purple_keyring_inuse_under_change = FALSE;
 
 			if (tracker->cb != NULL)
@@ -626,8 +626,6 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 				oldkeyring->id);
 
 			tracker = g_new(PurpleKeyringChangeTracker, 1);
-
-			purple_keyring_inuse = newkeyring;
 
 			tracker->cb = cb;
 			tracker->data = data;
@@ -993,7 +991,7 @@ purple_keyring_set_password(PurpleAccount *account,
 
 	g_return_if_fail(account != NULL);
 
-	inuse = purple_keyring_get_inuse();
+	inuse = purple_keyring_get_inuse(); /* TODO: if in change, don't save */
 	if (inuse == NULL) {
 		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
 			"No keyring configured.");
@@ -1054,7 +1052,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 	PurpleKeyringChangeMaster change;
 	const PurpleKeyring *inuse;
 
-	inuse = purple_keyring_get_inuse();
+	inuse = purple_keyring_get_inuse(); /* TODO: if in change, don't mess */
 
 	if (inuse == NULL) {
 		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,

@@ -489,7 +489,6 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_read_password(keyring_handler, kwallet_read);
 	purple_keyring_set_save_password(keyring_handler, kwallet_save);
 	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
-	/* purple_keyring_set_change_master */
 	purple_keyring_set_import_password(keyring_handler, kwallet_import);
 	purple_keyring_set_export_password(keyring_handler, kwallet_export);
 
