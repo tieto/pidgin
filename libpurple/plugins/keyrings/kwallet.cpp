@@ -370,14 +370,16 @@ KWalletPlugin::read_request::execute(KWallet::Wallet *wallet)
 		purple_debug_warning("keyring-kwallet",
 			"failed to read password, result was %d\n", result);
 		abort();
+		return;
 	}
-	else if (callback != NULL) {
-		purple_debug_misc("keyring-kwallet",
-			"Got password for account %s (%s).\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+
+	purple_debug_misc("keyring-kwallet",
+		"Got password for account %s (%s).\n",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
+	if (callback != NULL)
 		callback(account, password.toUtf8().constData(), NULL, data);
-	}
 }
 
 void
@@ -398,14 +400,17 @@ KWalletPlugin::save_request::execute(KWallet::Wallet *wallet)
 		purple_debug_warning("keyring-kwallet",
 			"failed to write password, result was %d\n", result);
 		abort();
-	} else if (callback != NULL) {
-		purple_debug_misc("keyring-kwallet",
-			"Password %s for account %s (%s).\n",
-			(noPassword ? "removed" : "saved"),
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-		callback(account, NULL, data);
+		return;
 	}
+
+	purple_debug_misc("keyring-kwallet",
+		"Password %s for account %s (%s).\n",
+		(noPassword ? "removed" : "saved"),
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
+	if (callback != NULL)
+		callback(account, NULL, data);
 }
 
 extern "C"

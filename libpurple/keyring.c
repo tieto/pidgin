@@ -459,7 +459,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 	}
 
 	/* if this was the last one */
-	if ((tracker->finished && tracker->read_outstanding == 0) || (tracker->abort && !tracker->force)) {
+	if (tracker->finished && tracker->read_outstanding == 0) {
 		if (tracker->abort && !tracker->force) {
 			purple_keyring_drop_passwords(tracker->new);
 
@@ -523,7 +523,11 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 	tracker = (PurpleKeyringChangeTracker *)data;
 	new = tracker->new;
 
-	g_return_if_fail(tracker->abort == FALSE);
+	g_return_if_fail(tracker != NULL);
+	if (tracker->abort) {
+		purple_keyring_set_inuse_check_error_cb(account, NULL, data);
+		return;
+	}
 
 	if (error != NULL) {
 		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWD ||
@@ -638,9 +642,13 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 			tracker->error = NULL;
 
 			for (cur = purple_accounts_get_all();
-			    (cur != NULL) && (tracker->abort == FALSE);
+			    cur != NULL;
 			    cur = cur->next) {
-
+				
+				if (tracker->abort) {
+					tracker->finished = TRUE;
+					break;
+				}
 				tracker->read_outstanding++;
 
 				if (cur->next == NULL)
