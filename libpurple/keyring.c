@@ -58,7 +58,7 @@ struct _PurpleKeyring
 
 struct _PurpleKeyringChangeTracker
 {
-	GError *error;  /* could probably be dropped */
+	GError *error;
 	PurpleKeyringSetInUseCallback cb;
 	gpointer data;
 	const PurpleKeyring *new;
@@ -74,6 +74,14 @@ struct _PurpleKeyringCbInfo
 	gpointer cb;
 	gpointer data;
 };
+
+static void
+purple_keyring_change_tracker_free(PurpleKeyringChangeTracker *tracker)
+{
+	if (tracker->error)
+		g_error_free(tracker->error);
+	g_free(tracker);
+}
 
 /* Constructor */
 PurpleKeyring *
@@ -445,7 +453,9 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 					"Failed to communicate with backend while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
 				tracker->abort = TRUE;
-				tracker->error = error;
+				if (tracker->error != NULL)
+					g_error_free(tracker->error);
+				tracker->error = g_error_copy(error);
 				break;
 
 			default:
@@ -453,7 +463,8 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 					"Unknown error while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
 				tracker->abort = TRUE;
-				tracker->error = error;
+				if (tracker->error == NULL)
+					tracker->error = g_error_copy(error);
 				break;
 		}
 	}
@@ -496,7 +507,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 				tracker->cb(tracker->new, TRUE, NULL, tracker->data);
 		}
 
-		g_free(tracker);
+		purple_keyring_change_tracker_free(tracker);
 	}
 
 	/**
