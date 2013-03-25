@@ -143,6 +143,14 @@ typedef void (*PurpleKeyringSave)(PurpleAccount *account,
                                   gpointer data);
 
 /**
+ * Cancel all running requests.
+ *
+ * After calling that, all queued requests should run their callbacks (most
+ * probably, with failure result).
+ */
+typedef void (*PurpleKeyringCancelRequests)(void);
+
+/**
  * Close the keyring.
  *
  * This will be called so the keyring can do any cleanup it wants.
@@ -398,6 +406,7 @@ const char *purple_keyring_get_name(const PurpleKeyring *info);
 const char *purple_keyring_get_id(const PurpleKeyring *info);
 PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring *info);
 PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring *info);
+PurpleKeyringCancelRequests purple_keyring_get_cancel_requests(const PurpleKeyring *info);
 PurpleKeyringClose purple_keyring_get_close_keyring(const PurpleKeyring *info);
 PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring *info);
 PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring *info);
@@ -407,6 +416,7 @@ void purple_keyring_set_name(PurpleKeyring *info, const char *name);
 void purple_keyring_set_id(PurpleKeyring *info, const char *id);
 void purple_keyring_set_read_password(PurpleKeyring *info, PurpleKeyringRead read);
 void purple_keyring_set_save_password(PurpleKeyring *info, PurpleKeyringSave save);
+void purple_keyring_set_cancel_requests(PurpleKeyring *info, PurpleKeyringCancelRequests cancel_requests);
 void purple_keyring_set_close_keyring(PurpleKeyring *info, PurpleKeyringClose close);
 void purple_keyring_set_change_master(PurpleKeyring *info, PurpleKeyringChangeMaster change_master);
 void purple_keyring_set_import_password(PurpleKeyring *info, PurpleKeyringImportPassword import_password);

@@ -50,6 +50,7 @@ struct _PurpleKeyring
 	char *id;   /* same as plugin id    */
 	PurpleKeyringRead read_password;
 	PurpleKeyringSave save_password;
+	PurpleKeyringCancelRequests cancel_requests;
 	PurpleKeyringClose close_keyring;
 	PurpleKeyringChangeMaster change_master;
 	PurpleKeyringImportPassword import_password;
@@ -132,6 +133,14 @@ purple_keyring_get_save_password(const PurpleKeyring *keyring)
 	return keyring->save_password;
 }
 
+PurpleKeyringCancelRequests
+purple_keyring_get_cancel_requests(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->cancel_requests;
+}
+
 PurpleKeyringClose
 purple_keyring_get_close_keyring(const PurpleKeyring *keyring)
 {
@@ -196,6 +205,14 @@ purple_keyring_set_save_password(PurpleKeyring *keyring, PurpleKeyringSave save)
 	g_return_if_fail(keyring != NULL);
 
 	keyring->save_password = save;
+}
+
+void
+purple_keyring_set_cancel_requests(PurpleKeyring *keyring, PurpleKeyringCancelRequests cancel_requests)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->cancel_requests = cancel_requests;
 }
 
 void
@@ -273,6 +290,17 @@ static void purple_keyring_core_initialized_cb()
 	}
 }
 
+static void purple_keyring_core_quitting_cb()
+{
+	if (purple_keyring_inuse != NULL) {
+		PurpleKeyringCancelRequests cancel;
+		cancel = purple_keyring_get_cancel_requests(
+			purple_keyring_inuse);
+		if (cancel)
+			cancel();
+	}
+}
+
 void
 purple_keyring_init(void)
 {
@@ -335,6 +363,9 @@ purple_keyring_init(void)
 	purple_signal_connect(purple_get_core(), "core-initialized",
 		purple_keyring_get_handle(),
 		PURPLE_CALLBACK(purple_keyring_core_initialized_cb), NULL);
+	purple_signal_connect(purple_get_core(), "quitting",
+		purple_keyring_get_handle(),
+		PURPLE_CALLBACK(purple_keyring_core_quitting_cb), NULL);
 }
 
 void

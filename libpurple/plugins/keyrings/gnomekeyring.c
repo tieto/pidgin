@@ -43,7 +43,6 @@
 static PurpleKeyring *keyring_handler = NULL;
 static GList *request_queue = NULL;
 static gpointer current_request = NULL;
-static gboolean is_closing = FALSE; /* TODO */
 
 typedef struct
 {
@@ -344,9 +343,19 @@ gnomekeyring_save(PurpleAccount *account, const gchar *password,
 }
 
 static void
+gnomekeyring_cancel()
+{
+	gnomekeyring_cancel_queue();
+	if (current_request) {
+		gnome_keyring_cancel_request(current_request);
+		while (g_main_iteration(FALSE));
+	}
+}
+
+static void
 gnomekeyring_close(GError **error)
 {
-	is_closing = TRUE;
+	gnomekeyring_cancel();
 }
 
 static gboolean
@@ -364,6 +373,7 @@ gnomekeyring_load(PurplePlugin *plugin)
 	purple_keyring_set_id(keyring_handler, GNOMEKEYRING_ID);
 	purple_keyring_set_read_password(keyring_handler, gnomekeyring_read);
 	purple_keyring_set_save_password(keyring_handler, gnomekeyring_save);
+	purple_keyring_set_cancel_requests(keyring_handler, gnomekeyring_cancel);
 	purple_keyring_set_close_keyring(keyring_handler, gnomekeyring_close);
 
 	purple_keyring_register(keyring_handler);
