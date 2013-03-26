@@ -72,7 +72,8 @@ class engine : private QObject, private QQueue<request*>
 		engine();
 		~engine();
 		void queue(request *req);
-		static engine *instance();
+		void abortAll();
+		static engine *instance(bool create);
 		static void closeInstance();
 
 	private slots:
@@ -188,6 +189,18 @@ KWalletPlugin::engine::reopenWallet()
 KWalletPlugin::engine::~engine()
 {
 	closing = true;
+
+	abortAll();
+
+	delete wallet;
+
+	if (pinstance == this)
+		pinstance = NULL;
+}
+
+void
+KWalletPlugin::engine::abortAll()
+{
 	int abortedCount = 0;
 
 	while (!isEmpty()) {
@@ -201,17 +214,12 @@ KWalletPlugin::engine::~engine()
 		purple_debug_info("keyring-kwallet", "aborted requests: %d\n",
 			abortedCount);
 	}
-
-	delete wallet;
-
-	if (pinstance == this)
-		pinstance = NULL;
 }
 
 KWalletPlugin::engine *
-KWalletPlugin::engine::instance()
+KWalletPlugin::engine::instance(bool create)
 {
-	if (pinstance == NULL)
+	if (pinstance == NULL && create)
 		pinstance = new engine;
 	return pinstance;
 }
@@ -429,7 +437,7 @@ kwallet_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 		delete req;
 	}
 	else
-		KWalletPlugin::engine::instance()->queue(req);
+		KWalletPlugin::engine::instance(true)->queue(req);
 }
 
 static void
@@ -443,9 +451,17 @@ kwallet_save(PurpleAccount *account, const char *password,
 			cb(account, NULL, data);
 	}
 	else
-		KWalletPlugin::engine::instance()->queue(
+		KWalletPlugin::engine::instance(true)->queue(
 			new KWalletPlugin::save_request(account, password, cb,
 			data));
+}
+
+static void
+kwallet_cancel(void)
+{
+	KWalletPlugin::engine *instance = KWalletPlugin::engine::instance(false);
+	if (instance)
+		instance->abortAll();
 }
 
 static void
@@ -475,6 +491,7 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_id(keyring_handler, KWALLET_ID);
 	purple_keyring_set_read_password(keyring_handler, kwallet_read);
 	purple_keyring_set_save_password(keyring_handler, kwallet_save);
+	purple_keyring_set_cancel_requests(keyring_handler, kwallet_cancel);
 	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
 
 	purple_keyring_register(keyring_handler);

@@ -240,6 +240,9 @@ gnomekeyring_cancel_queue(void)
 {
 	GList *cancel_list = request_queue;
 
+	if (request_queue == NULL)
+		return;
+
 	purple_debug_info("gnome-keyring", "cancelling all pending requests\n");
 	request_queue = NULL;
 
@@ -343,7 +346,7 @@ gnomekeyring_save(PurpleAccount *account, const gchar *password,
 }
 
 static void
-gnomekeyring_cancel()
+gnomekeyring_cancel(void)
 {
 	gnomekeyring_cancel_queue();
 	if (current_request) {

@@ -260,7 +260,7 @@ static const PurpleKeyring *purple_keyring_inuse;   /* keyring being used       
 static char *purple_keyring_to_use;
 static guint purple_keyring_pref_cb_id;
 static GList *purple_keyring_loaded_plugins = NULL;
-static gboolean purple_keyring_inuse_under_change = FALSE;
+static PurpleKeyringChangeTracker *current_change_tracker = NULL;
 
 static void
 purple_keyring_pref_cb(const char *pref,
@@ -292,6 +292,25 @@ static void purple_keyring_core_initialized_cb()
 
 static void purple_keyring_core_quitting_cb()
 {
+	if (current_change_tracker != NULL) {
+		PurpleKeyringChangeTracker *tracker;
+		PurpleKeyringCancelRequests cancel = NULL;
+
+		tracker = current_change_tracker;
+		tracker->abort = TRUE;
+		if (tracker->old) {
+			cancel = purple_keyring_get_cancel_requests(
+				tracker->old);
+			if (cancel)
+				cancel();
+		}
+		if (current_change_tracker == tracker && tracker->new) {
+			cancel = purple_keyring_get_cancel_requests(
+				tracker->new);
+			if (cancel)
+				cancel();
+		}
+	}
 	if (purple_keyring_inuse != NULL) {
 		PurpleKeyringCancelRequests cancel;
 		cancel = purple_keyring_get_cancel_requests(
@@ -518,7 +537,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			purple_keyring_pref_cb_id = purple_prefs_connect_callback(NULL,
 				"/purple/keyring/active", purple_keyring_pref_cb, NULL);
 
-			purple_keyring_inuse_under_change = FALSE;
+			current_change_tracker = NULL;
 
 			if (tracker->cb != NULL)
 				tracker->cb(tracker->old, FALSE, tracker->error, tracker->data);
@@ -532,7 +551,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 			purple_debug_info("keyring", "Successfully changed keyring.\n");
 
 			purple_keyring_inuse = tracker->new;
-			purple_keyring_inuse_under_change = FALSE;
+			current_change_tracker = NULL;
 
 			if (tracker->cb != NULL)
 				tracker->cb(tracker->new, TRUE, NULL, tracker->data);
@@ -615,7 +634,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 
 	oldkeyring = purple_keyring_get_inuse();
 
-	if (purple_keyring_inuse_under_change) {
+	if (current_change_tracker != NULL) {
 		GError *error;
 		purple_debug_error("keyring", "There is password migration "
 			"session already running.\n");
@@ -628,13 +647,11 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		g_error_free(error);
 		return;
 	}
-	purple_keyring_inuse_under_change = TRUE;
 
 	if (oldkeyring == newkeyring) {
 		purple_debug_misc("keyring",
 			"Old and new keyring are the same: %s.\n",
 			(newkeyring != NULL) ? newkeyring->id : "(null)");
-		purple_keyring_inuse_under_change = FALSE;
 		if (cb != NULL)
 			cb(newkeyring, TRUE, NULL, data);
 		return;
@@ -672,6 +689,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 				oldkeyring->id);
 
 			tracker = g_new(PurpleKeyringChangeTracker, 1);
+			current_change_tracker = tracker;
 
 			tracker->cb = cb;
 			tracker->data = data;
@@ -707,7 +725,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		}
 
 		purple_keyring_inuse = newkeyring;
-		purple_keyring_inuse_under_change = FALSE;
+		g_assert(current_change_tracker == NULL);
 		if (cb != NULL)
 			cb(newkeyring, TRUE, NULL, data);
 	}
