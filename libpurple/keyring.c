@@ -527,7 +527,7 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 		current_change_tracker = NULL;
 
 		if (tracker->cb != NULL)
-			tracker->cb(tracker->new, TRUE, NULL, tracker->data);
+			tracker->cb(tracker->new, NULL, tracker->data);
 	} else {
 		PurpleKeyringClose close =
 			purple_keyring_get_close_keyring(tracker->new);
@@ -545,8 +545,13 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 
 		current_change_tracker = NULL;
 
+		if (tracker->error == NULL) {
+			tracker->error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_UNKNOWN,
+				"Unknown error has occured");
+		}
 		if (tracker->cb != NULL)
-			tracker->cb(tracker->old, FALSE, tracker->error, tracker->data);
+			tracker->cb(tracker->old, tracker->error, tracker->data);
 	}
 
 	purple_keyring_change_tracker_free(tracker);
@@ -685,7 +690,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_UNKNOWN,
 			"There is password migration session already running");
-		cb(oldkeyring, FALSE, error, data);
+		cb(oldkeyring, error, data);
 		g_error_free(error);
 		return;
 	}
@@ -695,7 +700,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 			"Old and new keyring are the same: %s.\n",
 			(newkeyring != NULL) ? newkeyring->id : "(null)");
 		if (cb != NULL)
-			cb(newkeyring, TRUE, NULL, data);
+			cb(newkeyring, NULL, data);
 		return;
 	}
 
@@ -745,7 +750,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		purple_keyring_inuse = newkeyring;
 		g_assert(current_change_tracker == NULL);
 		if (cb != NULL)
-			cb(newkeyring, TRUE, NULL, data);
+			cb(newkeyring, NULL, data);
 	}
 }
 
@@ -1167,7 +1172,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCHANNEL,
 			"Cannot change a master password at the moment.");
 		if (cb != NULL)
-			cb(FALSE, error, data);
+			cb(error, data);
 		g_error_free(error);
 		return;
 	}
@@ -1177,7 +1182,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 			"No keyring configured, cannot change master password.");
 		purple_debug_error("keyring", "No keyring configured, cannot change master password.\n");
 		if (cb)
-			cb(FALSE, error, data);
+			cb(error, data);
 		g_error_free(error);
 
 	} else {
@@ -1187,7 +1192,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Keyring doesn't support master passwords.");
 			if (cb)
-				cb(FALSE, error, data);
+				cb(error, data);
 
 			g_error_free(error);
 

@@ -2593,8 +2593,8 @@ change_master_password_cb(GtkWidget *button, gpointer ptr)
 }
 
 static void
-keyring_page_pref_set_inuse(const PurpleKeyring *keyring, gboolean result,
-	GError *error, gpointer _combo_box)
+keyring_page_pref_set_inuse(const PurpleKeyring *keyring, GError *error,
+	gpointer _combo_box)
 {
 	GtkComboBox *combo_box = _combo_box;
 	const PurpleKeyring *in_use = purple_keyring_get_inuse();

@@ -89,24 +89,20 @@ typedef void (*PurpleKeyringSaveCallback)(PurpleAccount *account,
 /**
  * Callback for once the master password for a keyring has been changed.
  *
- * @param result TRUE if the password has been changed, FALSE otherwise.
  * @param error  Error that has occurred.
  * @param data   Data passed to the callback.
  */
-typedef void (*PurpleKeyringChangeMasterCallback)(gboolean result,
-                                                  GError *error,
+typedef void (*PurpleKeyringChangeMasterCallback)(GError *error,
                                                   gpointer data);
 
 /**
  * Callback for when we change the keyring.
  *
  * @param keyring The keyring that is in use.
- * @param result  TRUE if the keyring was changed, FALSE otherwise.
  * @param error   An error that might have occurred.
  * @param data    A pointer to user supplied data.
  */
 typedef void (*PurpleKeyringSetInUseCallback)(const PurpleKeyring *keyring,
-                                              gboolean result,
                                               GError *error,
                                               gpointer data);
 
