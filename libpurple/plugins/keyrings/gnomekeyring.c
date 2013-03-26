@@ -128,6 +128,13 @@ gnomekeyring_read_cb(GnomeKeyringResult result, const char *password,
 			"Got password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
+	} else if (result == GNOME_KEYRING_RESULT_NO_MATCH) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_info("keyring-gnome",
+				"Password for account %s (%s) isn't stored.\n",
+				purple_account_get_username(account),
+				purple_account_get_protocol_id(account));
+		}
 	} else {
 		password = NULL;
 		purple_debug_warning("keyring-gnome", "Failed to read "
@@ -153,6 +160,7 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 	gnomekeyring_request *req = _req;
 	PurpleAccount *account;
 	GError *error = NULL;
+	gboolean already_removed = FALSE;
 
 	g_return_if_fail(req != NULL);
 
@@ -161,6 +169,10 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 
 	if (result == GNOME_KEYRING_RESULT_OK) {
 		error = NULL;
+	} else if (result == GNOME_KEYRING_RESULT_NO_MATCH &&
+		req->password == NULL) {
+		error = NULL;
+		already_removed = TRUE;
 	} else if (result == GNOME_KEYRING_RESULT_DENIED ||
 		result == GNOME_KEYRING_RESULT_CANCELLED) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
@@ -178,7 +190,9 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 			"Unknown error (code: %d)", result);
 	}
 
-	if (error == NULL) {
+	if (already_removed) {
+		/* no operation */
+	} else if (error == NULL) {
 		purple_debug_misc("keyring-gnome",
 			"Password %s for account %s (%s).\n",
 			req->password ? "saved" : "removed",
