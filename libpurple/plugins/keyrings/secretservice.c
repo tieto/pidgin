@@ -1,6 +1,7 @@
 /* purple
  * @file secretservice.c Secret Service password storage
  * @ingroup plugins
+ * @todo rewrite it with Complete API
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -71,7 +72,6 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 
 	if (error != NULL) {
 		int code = error->code;
-		g_error_free(error);
 
 		switch (code) {
 			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
@@ -86,6 +86,11 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 				break;
 
 			default:
+				purple_debug_error("keyring-libsecret",
+				                  "Unknown error (account: %s (%s), domain: %s, code: %d): %s.\n",
+				                  purple_account_get_username(account),
+				                  purple_account_get_protocol_id(account),
+				                  g_quark_to_string(error->domain), code, error->message);
 				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Unknown error (account : %s).",
@@ -144,7 +149,6 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 
 	if (error != NULL) {
 		int code = error->code;
-		g_error_free(error);
 
 		switch (code) {
 			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
@@ -163,10 +167,11 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 				break;
 
 			default:
-				purple_debug_info("keyring-libsecret",
-				                  "Unknown error (account : %s (%s)).\n",
+				purple_debug_error("keyring-libsecret",
+				                  "Unknown error (account: %s (%s), domain: %s, code: %d): %s.\n",
 				                  purple_account_get_username(account),
-				                  purple_account_get_protocol_id(account));
+				                  purple_account_get_protocol_id(account),
+				                  g_quark_to_string(error->domain), code, error->message);
 				error = g_error_new(PURPLE_KEYRING_ERROR,
 				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
 				                    "Unknown error (account : %s).",
@@ -238,8 +243,6 @@ ss_close(GError **error)
 static gboolean
 ss_init(void)
 {
-	purple_debug_info("keyring-libsecret", "Init.\n");
-
 	keyring_handler = purple_keyring_new();
 
 	purple_keyring_set_name(keyring_handler, SECRETSERVICE_NAME);
@@ -256,7 +259,6 @@ ss_init(void)
 static void
 ss_uninit(void)
 {
-	purple_debug_info("keyring-libsecret", "Uninit.\n");
 	ss_close(NULL);
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
