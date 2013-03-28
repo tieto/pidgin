@@ -26,6 +26,7 @@
 
 #include "internal.h"
 #include "account.h"
+#include "core.h"
 #include "debug.h"
 #include "keyring.h"
 #include "plugin.h"
@@ -470,6 +471,21 @@ kwallet_close(GError **error)
 	KWalletPlugin::engine::closeInstance();
 }
 
+static void *
+kwallet_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+static void kwallet_core_initialized_cb(void)
+{
+	const gchar *appName = g_get_application_name();
+	if (qCoreApp && appName)
+		qCoreApp->setApplicationName(appName);
+}
+
 static gboolean
 kwallet_load(PurplePlugin *plugin)
 {
@@ -496,6 +512,10 @@ kwallet_load(PurplePlugin *plugin)
 
 	purple_keyring_register(keyring_handler);
 
+	purple_signal_connect(purple_get_core(), "core-initialized",
+		kwallet_get_handle(),
+		PURPLE_CALLBACK(kwallet_core_initialized_cb), NULL);
+
 	return TRUE;
 }
 
@@ -507,6 +527,8 @@ kwallet_unload(PurplePlugin *plugin)
 			"keyring in use, cannot unload\n");
 		return FALSE;
 	}
+
+	purple_signals_disconnect_by_handle(kwallet_get_handle());
 
 	kwallet_close(NULL);
 

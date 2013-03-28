@@ -54,7 +54,7 @@ internal_keyring_open(void)
 	internal_keyring_opened = TRUE;
 
 	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
-		g_direct_equal, NULL, g_free);
+		g_direct_equal, NULL, (GDestroyNotify)purple_str_wipe);
 }
 
 static void
@@ -175,7 +175,7 @@ internal_keyring_export_password(PurpleAccount *account, const char **mode,
 	} else {
 		*mode = "cleartext";
 		*data = g_strdup(password);
-		*destroy = g_free;
+		*destroy = (GDestroyNotify)purple_str_wipe;
 		return TRUE;
 	}
 }

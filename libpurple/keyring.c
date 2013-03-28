@@ -294,7 +294,7 @@ purple_keyring_pref_cb(const char *pref,
 	purple_keyring_set_inuse(new, FALSE, NULL, data);
 }
 
-static void purple_keyring_core_initialized_cb()
+static void purple_keyring_core_initialized_cb(void)
 {
 	if (purple_keyring_inuse == NULL) {
 		purple_notify_error(NULL, _("Keyrings"),
@@ -422,6 +422,7 @@ purple_keyring_uninit(void)
 	purple_keyring_loaded_plugins = NULL;
 
 	purple_signals_unregister_by_instance(purple_keyring_get_handle());
+	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
 	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 	purple_keyring_pref_cb_id = 0;
 }
@@ -1129,7 +1130,8 @@ purple_keyring_set_password(PurpleAccount *account,
 		cbinfo = g_new(PurpleKeyringCbInfo, 1);
 		cbinfo->cb = cb;
 		cbinfo->data = data;
-		purple_debug_info("keyring", "Saving password for account %s (%s)...\n",
+		purple_debug_info("keyring", "%s password for account %s (%s)...\n",
+			(password ? "Saving" : "Removing"),
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		save(account, password, purple_keyring_set_password_async_cb, cbinfo);

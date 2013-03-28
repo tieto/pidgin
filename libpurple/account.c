@@ -976,7 +976,7 @@ parse_account(xmlnode *node)
 		} else {
 			purple_debug_error("account", "Failed to import password.\n");
 		} 
-		g_free(data); 
+		purple_str_wipe(data);
 	}
 
 	return ret;
@@ -1098,7 +1098,7 @@ purple_account_destroy(PurpleAccount *account)
 
 	g_free(account->username);
 	g_free(account->alias);
-	g_free(account->password);
+	purple_str_wipe(account->password);
 	g_free(account->user_info);
 	g_free(account->buddy_icon_path);
 	g_free(account->protocol_id);
@@ -1327,7 +1327,13 @@ purple_account_connect(PurpleAccount *account)
 	purple_debug_info("account", "Connecting to account %s.\n", username);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	purple_keyring_get_password(account, purple_account_connect_got_password_cb, prpl_info);
+	if (account->password != NULL) {
+		purple_account_connect_got_password_cb(account,
+			account->password, NULL, prpl_info);
+	} else {
+		purple_keyring_get_password(account,
+			purple_account_connect_got_password_cb, prpl_info);
+	}
 }
 
 void
@@ -1710,13 +1716,12 @@ purple_account_set_password(PurpleAccount *account, const gchar *password,
 {
 	g_return_if_fail(account != NULL);
 
-	g_free(account->password);
+	purple_str_wipe(account->password);
 	account->password = g_strdup(password);
 
 	schedule_accounts_save();
 
 	if (!purple_account_get_remember_password(account)) {
-		account->password = g_strdup(password);
 		purple_debug_info("account",
 			"Password for %s set, not sent to keyring.\n",
 			purple_account_get_username(account));
