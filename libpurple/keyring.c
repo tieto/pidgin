@@ -696,9 +696,12 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 	}
 
 	if (oldkeyring == newkeyring) {
-		purple_debug_misc("keyring",
-			"Old and new keyring are the same: %s.\n",
-			(newkeyring != NULL) ? newkeyring->id : "(null)");
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("keyring",
+				"Old and new keyring are the same: %s.\n",
+				(newkeyring != NULL) ?
+					newkeyring->id : "(null)");
+		}
 		if (cb != NULL)
 			cb(newkeyring, NULL, data);
 		return;

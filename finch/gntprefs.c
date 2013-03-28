@@ -1,7 +1,7 @@
 /**
  * @file gntprefs.c GNT Preferences API
  * @ingroup finch
- * @todo : add support for master password changing.
+ * @todo: add support for master password changing.
  */
 
 /* finch
@@ -72,13 +72,6 @@ typedef struct
 	const char *label;
 	GList *(*lv)(void);   /* If the value is to be selected from a number of choices */
 } Prefs;
-
-static GList *
-get_keyring_options(void)
-{
-	return purple_keyring_get_options();
-}
-
 
 static GList *
 get_log_options(void)
@@ -205,7 +198,8 @@ static Prefs logging[] =
 
 static Prefs keyring[] =
 {
-	{PURPLE_PREF_STRING, "/purple/keyring/active", N_("Active keyring"), get_keyring_options}
+	{PURPLE_PREF_STRING, "/purple/keyring/active", N_("Active keyring"), purple_keyring_get_options},
+	{PURPLE_PREF_NONE, NULL, NULL, NULL}
 };
 
 static Prefs idle[] =

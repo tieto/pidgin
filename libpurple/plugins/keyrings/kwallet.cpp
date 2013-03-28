@@ -302,7 +302,7 @@ KWalletPlugin::engine::executeRequests()
 				req->abort();
 			delete req;
 		}
-	} else {
+	} else if (purple_debug_is_verbose()) {
 		purple_debug_misc("keyring-kwallet", "not yet connected\n");
 	}
 	busy = false;

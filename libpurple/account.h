@@ -375,10 +375,8 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  * @param cb       A callback for once the password is saved.
  * @param data     A pointer to be passed to the callback.
  */
-void purple_account_set_password(PurpleAccount *account,
-                                 const gchar *password,
-                                 PurpleKeyringSaveCallback cb,
-                                 gpointer data);
+void purple_account_set_password(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data);
 
 /**
  * Sets the account's alias.
@@ -698,8 +696,7 @@ const char *purple_account_get_username(const PurpleAccount *account);
  * @param data    A pointer passed to the callback.
  */
 void purple_account_get_password(PurpleAccount *account,
-                                 PurpleKeyringReadCallback cb,
-                                 gpointer data);
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
  * Returns the account's alias.

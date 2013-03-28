@@ -362,13 +362,8 @@ account_to_xmlnode(PurpleAccount *account)
 {
 	xmlnode *node, *child;
 	const char *tmp;
-	const char *keyring_id = NULL;
-	const char *mode = NULL;
-	char *data = NULL;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
-	GError *error = NULL;
-	GDestroyNotify destroy = NULL;
 
 	node = xmlnode_new("account");
 
@@ -380,6 +375,11 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
+		const char *keyring_id = NULL;
+		const char *mode = NULL;
+		char *data = NULL;
+		GError *error = NULL;
+		GDestroyNotify destroy = NULL;
 		gboolean exported = purple_keyring_export_password(account,
 			&keyring_id, &mode, &data, &error, &destroy);
 
@@ -869,10 +869,7 @@ parse_account(xmlnode *node)
 	xmlnode *child;
 	char *protocol_id = NULL;
 	char *name = NULL;
-	const char *keyring_id = NULL;
-	const char *mode = NULL;
-	char *data = NULL;
-	gboolean result = FALSE;
+	char *data;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -967,10 +964,11 @@ parse_account(xmlnode *node)
 	child = xmlnode_get_child(node, "password");
 	if (child != NULL)
 	{
-		keyring_id = xmlnode_get_attrib(child, "keyring_id");
-		mode = xmlnode_get_attrib(child, "mode");
-		data = xmlnode_get_data(child);
+		const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
+		const char *mode = xmlnode_get_attrib(child, "mode");
+		gboolean result;
 
+		data = xmlnode_get_data(child);
 		result = purple_keyring_import_password(ret, keyring_id, mode, data, NULL);
 
 		if (result == TRUE) {
@@ -1150,9 +1148,7 @@ purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegist
 
 static void
 purple_account_register_got_password_cb(PurpleAccount *account,
-                                        const char *password,
-                                        GError *error,
-                                        gpointer data)
+	const gchar *password, GError *error, gpointer data)
 {
 	g_return_if_fail(account != NULL);
 
@@ -1167,14 +1163,13 @@ purple_account_register(PurpleAccount *account)
 	purple_debug_info("account", "Registering account %s\n",
 					purple_account_get_username(account));
 
-	purple_keyring_get_password(account, purple_account_register_got_password_cb, NULL);
+	purple_keyring_get_password(account,
+		purple_account_register_got_password_cb, NULL);
 }
 
 static void
 purple_account_unregister_got_password_cb(PurpleAccount *account,
-                                          const char *password,
-                                          GError *error,
-                                          gpointer data)
+	const gchar *password, GError *error, gpointer data)
 {
 	PurpleCallbackBundle *cbb = data;
 	PurpleAccountUnregistrationCb cb;
@@ -1208,7 +1203,8 @@ purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb 
 	cbb->cb = PURPLE_CALLBACK(cb);
 	cbb->data = user_data;
 
-	purple_keyring_get_password(account, purple_account_unregister_got_password_cb, cbb);
+	purple_keyring_get_password(account,
+		purple_account_unregister_got_password_cb, cbb);
 }
 
 static void
@@ -1286,16 +1282,16 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 
 static void
 purple_account_connect_got_password_cb(PurpleAccount *account,
-                                       const gchar *password,
-                                       GError *error,
-                                       gpointer data)
+	const gchar *password, GError *error, gpointer data)
 {
 	PurplePluginProtocolInfo *prpl_info = data;
 
 	if ((password == NULL || *password == '\0') &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
-		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
+		purple_account_request_password(account,
+			G_CALLBACK(request_password_ok_cb),
+			G_CALLBACK(request_password_cancel_cb), account);
 	else
 		_purple_connection_new(account, FALSE, password);
 }
@@ -1709,10 +1705,8 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 }
 
 void 
-purple_account_set_password(PurpleAccount *account,
-                            const gchar *password,
-                            PurpleKeyringSaveCallback cb,
-                            gpointer data)
+purple_account_set_password(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data)
 {
 	g_return_if_fail(account != NULL);
 
@@ -1721,8 +1715,7 @@ purple_account_set_password(PurpleAccount *account,
 
 	schedule_accounts_save();
 
-	if (purple_account_get_remember_password(account) == FALSE) {
-
+	if (!purple_account_get_remember_password(account)) {
 		account->password = g_strdup(password);
 		purple_debug_info("account",
 			"Password for %s set, not sent to keyring.\n",
@@ -1730,7 +1723,6 @@ purple_account_set_password(PurpleAccount *account,
 
 		if (cb != NULL)
 			cb(account, NULL, data);
-
 	} else {
 		purple_keyring_set_password(account, password, cb, data);
 	}
@@ -2242,9 +2234,7 @@ purple_account_get_username(const PurpleAccount *account)
 
 static void
 purple_account_get_password_async_finish(PurpleAccount *account,
-                                         const char *password,
-                                         GError *error,
-                                         gpointer data)
+	const gchar *password, GError *error, gpointer data)
 {
 	PurpleCallbackBundle *cbb = data;
 	PurpleKeyringReadCallback cb;
@@ -2254,7 +2244,7 @@ purple_account_get_password_async_finish(PurpleAccount *account,
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));
 
-	g_free(account->password);
+	purple_str_wipe(account->password);
 	account->password = g_strdup(password);
 
 	cb = (PurpleKeyringReadCallback)cbb->cb;
@@ -2266,8 +2256,7 @@ purple_account_get_password_async_finish(PurpleAccount *account,
 
 void
 purple_account_get_password(PurpleAccount *account,
-                            PurpleKeyringReadCallback cb,
-                            gpointer data)
+	PurpleKeyringReadCallback cb, gpointer data)
 {
 	if (account == NULL) {
 		cb(NULL, NULL, NULL, data);
@@ -2280,7 +2269,6 @@ purple_account_get_password(PurpleAccount *account,
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 		cb(account, account->password, NULL, data);
-
 	} else {
 		PurpleCallbackBundle *cbb = g_new0(PurpleCallbackBundle, 1);
 		cbb->cb = PURPLE_CALLBACK(cb);

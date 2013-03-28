@@ -3762,6 +3762,15 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 	return g_string_free(ret, FALSE);
 }
 
+void
+purple_str_wipe(gchar *str)
+{
+	if (str == NULL)
+		return;
+	memset(str, 0, strlen(str));
+	g_free(str);
+}
+
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/

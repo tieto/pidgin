@@ -1132,6 +1132,15 @@ char *purple_str_seconds_to_string(guint sec);
  * @return A newly allocated ASCIIZ string.
  */
 char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
+
+/**
+ * Fills a NUL-terminated string with zeros and frees it.
+ *
+ * It should be used to free sensitive data, like passwords.
+ *
+ * @param str A NUL-terminated string to free, or a NULL-pointer.
+ */
+void purple_str_wipe(gchar *str);
 /*@}*/
 
 

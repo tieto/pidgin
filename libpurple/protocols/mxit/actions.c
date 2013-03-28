@@ -408,7 +408,7 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Change PIN" ), _( "Change MXit PIN" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, session->acc, NULL, NULL, gc );
+			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
 }
 
 

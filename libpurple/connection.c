@@ -284,7 +284,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	purple_account_set_connection(account, NULL);
 
-	g_free(gc->password);
+	purple_str_wipe(gc->password);
 	g_free(gc->display_name);
 
 	if (gc->disconnect_timeout > 0)
@@ -453,10 +453,6 @@ purple_connection_get_prpl(const PurpleConnection *gc)
 	return gc->prpl;
 }
 
-
-/**
- * FIXME : all the calling tree needs to be async.
- */
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
