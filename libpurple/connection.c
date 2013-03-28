@@ -476,14 +476,6 @@ purple_connection_get_protocol_data(const PurpleConnection *connection) {
 	return connection->proto_data;
 }
 
-gboolean
-purple_connection_had_error(const PurpleConnection *gc)
-{
-	g_return_val_if_fail(gc != NULL, FALSE);
-
-	return gc->disconnect_timeout != 0;
-}
-
 void
 purple_connection_update_progress(PurpleConnection *gc, const char *text,
 								size_t step, size_t count)
