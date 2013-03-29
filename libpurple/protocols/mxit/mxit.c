@@ -316,9 +316,9 @@ char* mxit_status_text( PurpleBuddy* buddy )
 		return NULL;
 
 	if ( contact->statusMsg )							/* status message */
-		return g_strdup( contact-> statusMsg );
+		text = g_strdup( contact-> statusMsg );
 	else if ( contact->mood != MXIT_MOOD_NONE )			/* mood */
-		return g_strdup( mxit_convert_mood_to_name( contact->mood ) );
+		text = g_strdup( mxit_convert_mood_to_name( contact->mood ) );
 
 	return text;
 }
@@ -367,7 +367,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
  */
 static void mxit_close( PurpleConnection* gc )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	/* disable signals */
 	mxit_disable_signals( session );
@@ -403,7 +403,7 @@ static int mxit_send_im( PurpleConnection* gc, const char* who, const char* mess
 {
 	purple_debug_info( MXIT_PLUGIN_ID, "Sending message '%s' to buddy '%s'\n", message, who );
 
-	mxit_send_message( gc->proto_data, who, message, TRUE, FALSE );
+	mxit_send_message( purple_connection_get_protocol_data( gc ), who, message, TRUE, FALSE );
 
 	return 1;		/* echo to conversation window */
 }
@@ -417,7 +417,7 @@ static int mxit_send_im( PurpleConnection* gc, const char* who, const char* mess
  */
 static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 {
-	struct MXitSession*		session =	purple_account_get_connection( account )->proto_data;
+	struct MXitSession*		session =	purple_connection_get_protocol_data( purple_account_get_connection( account ) );
 	const char*				statusid;
 	int						presence;
 	char*					statusmsg1;
@@ -510,7 +510,7 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
  */
 static void mxit_keepalive( PurpleConnection *gc )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	/* if not logged in, there is nothing to do */
 	if ( !( session->flags & MXIT_FLAG_LOGGEDIN ) )
@@ -538,7 +538,7 @@ static void mxit_keepalive( PurpleConnection *gc )
  */
 static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	if ( img == NULL )
 		mxit_set_avatar( session, NULL, 0 );
@@ -557,7 +557,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
 	PurpleBuddy*			buddy;
 	struct contact*			contact;
-	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
 												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_RELATIONSHIP };
@@ -607,14 +607,10 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
  */
 static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
 {
-	PurpleBuddy*		buddy;
+	PurpleBuddy*		buddy		= (PurpleBuddy *) node;
+	PurpleConnection*	gc			= purple_account_get_connection( purple_buddy_get_account( buddy ) );
+	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
 	struct contact*		contact;
-	PurpleConnection*	gc;
-	struct MXitSession*	session;
-
-	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection( purple_buddy_get_account( buddy ) );
-	session = gc->proto_data;
 
 	contact = purple_buddy_get_protocol_data( (PurpleBuddy*) node );
 	if ( !contact )

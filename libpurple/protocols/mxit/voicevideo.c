@@ -63,7 +63,7 @@ gboolean mxit_video_enabled(void)
  */
 PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 {
-	struct MXitSession*	session	= purple_account_get_connection(account)->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data(purple_account_get_connection(account));
 	PurpleBuddy*		buddy;
 	struct contact*		contact;
 	PurpleMediaCaps		capa	= PURPLE_MEDIA_CAPS_NONE;

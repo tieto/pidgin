@@ -144,7 +144,7 @@ void splash_update(struct MXitSession* session, const char* splashId, const char
  */
 static void splash_click_ok(PurpleConnection* gc, PurpleRequestFields* fields)
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data(gc);
 	const char* splashId;
 
 	/* Get current splash ID */
