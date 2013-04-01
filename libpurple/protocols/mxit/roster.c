@@ -82,9 +82,9 @@ GList* mxit_status_types( PurpleAccount* account )
 	}
 
 	/* add Mood option */
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD, "mood", NULL, FALSE, TRUE, TRUE,
-		PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new( PURPLE_TYPE_STRING ),
-		NULL);
+	type = purple_status_type_new_with_attrs( PURPLE_STATUS_MOOD, "mood", NULL, FALSE, TRUE, TRUE,
+		PURPLE_MOOD_NAME, _( "Mood Name" ), purple_value_new( PURPLE_TYPE_STRING ),
+		NULL );
 	statuslist = g_list_append( statuslist, type );
 
 	return statuslist;
@@ -135,21 +135,21 @@ const char* mxit_convert_presence_to_name( short no )
 
 /* moods (reference: libpurple/status.h) */
 static PurpleMood mxit_moods[] = {
-	{"angry",		N_("Angry"),		NULL},
-	{"excited",		N_("Excited"),		NULL},
-	{"grumpy",		N_("Grumpy"),		NULL},
-	{"happy",		N_("Happy"),		NULL},
-	{"in_love",		N_("In love"),		NULL},
-	{"invincible",	N_("Invincible"),	NULL},
-	{"sad",			N_("Sad"),			NULL},
-	{"hot",			N_("Hot"),			NULL},
-	{"sick",		N_("Sick"),			NULL},
-	{"sleepy",		N_("Sleepy"),		NULL},
-	{"bored",		N_("Bored"),		NULL},
-	{"cold",		N_("Cold"),			NULL},
-	{"confused",	N_("Confused"),		NULL},
-	{"hungry",		N_("Hungry"),		NULL},
-	{"stressed",	N_("Stressed"),		NULL},
+	{ "angry",		N_( "Angry" ),		NULL },
+	{ "excited",	N_( "Excited" ),	NULL },
+	{ "grumpy",		N_( "Grumpy" ),		NULL },
+	{ "happy",		N_( "Happy" ),		NULL },
+	{ "in_love",	N_( "In love" ),	NULL },
+	{ "invincible",	N_( "Invincible" ),	NULL },
+	{ "sad",		N_( "Sad" ),		NULL },
+	{ "hot",		N_( "Hot" ),		NULL },
+	{ "sick",		N_( "Sick" ),		NULL },
+	{ "sleepy",		N_( "Sleepy" ),		NULL },
+	{ "bored",		N_( "Bored" ),		NULL },
+	{ "cold",		N_( "Cold" ),		NULL },
+	{ "confused",	N_( "Confused" ),	NULL },
+	{ "hungry",		N_( "Hungry" ),		NULL },
+	{ "stressed",	N_( "Stressed" ),	NULL },
 	/* Mark the last record. */
 	{ NULL, NULL, NULL }
 };
@@ -183,7 +183,7 @@ int mxit_convert_mood( const char* id )
  *
  *  @param account	The MXit account object
  */
-PurpleMood* mxit_get_moods(PurpleAccount *account)
+PurpleMood* mxit_get_moods( PurpleAccount *account )
 {
 	return mxit_moods;
 }
@@ -396,7 +396,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 
 		/* create new buddy */
 		buddy = purple_buddy_new( session->acc, contact->username, contact->alias );
-		purple_buddy_set_protocol_data(buddy, contact);
+		purple_buddy_set_protocol_data( buddy, contact );
 
 		/* add new buddy to list */
 		purple_blist_add_buddy( buddy, NULL, group, NULL );

@@ -86,7 +86,7 @@ void mxit_popup( int type, const char* heading, const char* message )
 void mxit_strip_domain( char* username )
 {
 	if ( g_str_has_suffix( username, "@m" ) )
-		username[ strlen(username) - 2 ] = '\0';
+		username[ strlen( username ) - 2 ] = '\0';
 }
 
 
@@ -707,9 +707,9 @@ void mxit_send_register( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
-	else if (mxit_audio_enabled())
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
@@ -751,8 +751,8 @@ void mxit_send_login( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
 	else if (mxit_audio_enabled())
 		features |= MXIT_CF_VOICE;
 
@@ -1150,7 +1150,7 @@ void mxit_send_splashclick( struct MXitSession* session, const char* splashid )
  *  @param id			The identifier of the event (received in message)
  *  @param event		Identified the type of event
  */
-void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event)
+void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event )
 {
 	char		data[CP_MAX_PACKET];
 	int			datalen;
@@ -2061,7 +2061,7 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
 	int event;
 
 	/*
-	 * contactAddress \1 dateTime \1 id \1 event 
+	 * contactAddress \1 dateTime \1 id \1 event
 	 */
 
 	/* strip off dummy domain */
@@ -2202,7 +2202,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					}
 					else {
 						/* this is a contact's avatar, so update it */
-						purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length), chunk.length, chunk.avatarid );
+						purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length ), chunk.length, chunk.avatarid );
 					}
 				}
 			}
@@ -2341,7 +2341,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 
 		case CP_CMD_PRESENCE :
 				/* presence update */
-				mxit_parse_cmd_presence(session, &packet->records[2], packet->rcount - 3 );
+				mxit_parse_cmd_presence( session, &packet->records[2], packet->rcount - 3 );
 				break;
 
 		case CP_CMD_RX_MSG :
@@ -2880,7 +2880,7 @@ void mxit_close_connection( struct MXitSession* session )
 	/* cancel all outstanding async calls */
 	while ( session->async_calls ) {
 		purple_util_fetch_url_cancel( session->async_calls->data );
-		session->async_calls = g_slist_delete_link(session->async_calls, session->async_calls);
+		session->async_calls = g_slist_delete_link( session->async_calls, session->async_calls );
 	}
 
 	/* remove the input cb function */
