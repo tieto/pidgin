@@ -186,7 +186,7 @@ out:
 			profile->flags &= ~CP_PROF_NOT_SUGGESTABLE;
 		else
 			profile->flags |= CP_PROF_NOT_SUGGESTABLE;
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%i", CP_PROFILE_FLAGS, CP_PROFILE_TYPE_LONG, profile->flags);
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%" G_GINT64_FORMAT, CP_PROFILE_FLAGS, CP_PROFILE_TYPE_LONG, profile->flags);
 		g_string_append( attributes, attrib );
 		acount++;
 

@@ -1879,11 +1879,11 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		}
 		else if ( strcmp( CP_PROFILE_FLAGS, fname ) == 0 ) {
 			/* profile flags */
-			profile->flags = strtoll( fvalue, NULL, 10 );
+			profile->flags = g_ascii_strtoll( fvalue, NULL, 10 );
 		}
 		else if ( strcmp( CP_PROFILE_LASTSEEN, fname ) == 0 ) {
 			/* last seen online */
-			profile->lastonline = strtoll( fvalue, NULL, 10 );
+			profile->lastonline = g_ascii_strtoll( fvalue, NULL, 10 );
 		}
 		else if ( strcmp( CP_PROFILE_WHEREAMI, fname ) == 0 ) {
 			/* where am I */
