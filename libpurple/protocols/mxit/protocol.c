@@ -37,6 +37,7 @@
 #include	"login.h"
 #include	"formcmds.h"
 #include	"http.h"
+#include	"cipher.h"
 #include	"voicevideo.h"
 
 
