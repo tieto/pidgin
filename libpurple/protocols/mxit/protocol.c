@@ -612,7 +612,6 @@ gboolean mxit_manage_polling( gpointer user_data )
 	struct MXitSession* session		= (struct MXitSession*) user_data;
 	gboolean			poll		= FALSE;
 	gint64				now			= mxit_now_milli();
-	int					polldiff;
 	gint64				rxdiff;
 
 	if ( !( session->flags & MXIT_FLAG_LOGGEDIN ) ) {
@@ -622,7 +621,6 @@ gboolean mxit_manage_polling( gpointer user_data )
 
 	/* calculate the time differences */
 	rxdiff = now - session->last_rx;
-	polldiff = now - session->http_last_poll;
 
 	if ( rxdiff < MXIT_HTTP_POLL_MIN ) {
 		/* we received some reply a few moments ago, so reset the poll interval */
@@ -639,7 +637,7 @@ gboolean mxit_manage_polling( gpointer user_data )
 	}
 
 	/* debugging */
-	//purple_debug_info( MXIT_PLUGIN_ID, "POLL TIMER: %i (%i,%i)\n", session->http_interval, rxdiff, polldiff );
+	//purple_debug_info( MXIT_PLUGIN_ID, "POLL TIMER: %i (%i)\n", session->http_interval, rxdiff );
 
 	if ( poll ) {
 		/* send poll request */
