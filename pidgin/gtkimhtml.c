@@ -2430,10 +2430,11 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			if (len)
+			if (len) {
 				*len = e - string + strlen ("-->");
-			if (tag)
-				*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+				if (tag)
+					*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			}
 			return TRUE;
 		}
 	}
@@ -2443,7 +2444,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (len)
 		*len = close - string + 1;
 	if (tag)
-		*tag = g_strndup(string, *len - 1);
+		*tag = g_strndup(string, close - string);
 	return TRUE;
 }
 
@@ -5243,7 +5244,7 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
-	static gchar buf[1024];
+	static gchar buf[16384];
 	gchar *name = NULL;
 
 	g_object_get(G_OBJECT(tag), "name", &name, NULL);

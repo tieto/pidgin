@@ -1,7 +1,21 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.7
+version 2.10.8
 	No changes
+
+version 2.10.7
+	* Burmese translation updated (Thura Hlaing)
+	* Dutch translation updated (Gideon van Melle)
+	* Estonian translation updated (Ivar Smolin)
+	* Greek translation updated (Panos Bouklis)
+	* Hebrew translation updated (Shalom Craimer)
+	* Irish translation added (Aaron Kearns, Kevin Scannell)
+	* Lithuanian translation updated (Algimantas Margevičius)
+	* Norwegian Nynorsk translation updated (Yngve Spjeld Landro)
+	* Polish translation updated (Piotr Drąg)
+	* Portuguese translation updated (Paulo Ribeiro)
+	* Portuguese (Brazilian) translation updated (Renato Silva)
+	* Punjabi translation updated (Amanpreet Singh Alam)
 
 version 2.10.6
 	No changes
@@ -321,7 +335,7 @@ version 2.6.0
 	* French translation updated (Éric Boumaour)
 	* Galician translation updated (Frco. Javier Rial Rodríguez)
 	* German translation updated (Jochen Kemnade and Björn Voigt)
-	* Greek translation updated (Bouklis Panos)
+	* Greek translation updated (Panos Bouklis)
 	* Hebrew translation updated (Shalom Craimer)
 	* Italian translation updated (Claudio Satriano)
 	* Khmer translation added (Khoem Sokhem)
@@ -402,7 +416,7 @@ version 2.5.3
 	* French translation updated (Éric Boumaour)
 	* Galician translation updated (Frco. Javier Rial Rodríguez)
 	* German translation updated (Jochen Kemnade, Björn Voigt)
-	* Greek translation updated (Bouklis Panos)
+	* Greek translation updated (Panos Bouklis)
 	* Hungarian translation updated (Gabor Kelemen)
 	* Norwegian Nynorsk translation updated (Yngve Spjeld Landro)
 	* Portuguese (Brazilian) translation updated (Rodrigo Luiz
@@ -524,7 +538,7 @@ version 2.4.0
 	* Finnish translation updated (Timo Jyrinki)
 	* French translation updated (Éric Boumaour)
 	* German translation updated (Jochen Kemnade, Björn Voigt)
-	* Greek translation updated (Bouklis Panos)
+	* Greek translation updated (Panos Bouklis)
 	* Hebrew translation updated (Shalom Craimer)
 	* Norwegian Bokmål translation updated (Hallvard Glad, Espen Stefansen)
 	* Norwegian Nynorsk translation updated (Yngve Spjeld Landro)
@@ -660,7 +674,7 @@ version 2.0.1
 	* French win32 translation updated (Éric Boumaour)
 	* German translation updated (Bjoern Voigt)
 	* German win32 translation updated (Bjoern Voigt)
-	* Greek translation added (snos Bouklis)
+	* Greek translation added (Panos Bouklis)
 	* Hebrew translation updated (Shalom Craimer)
 	* Hebrew win32 translation updated (Shalom Craimer)
 	* Hungarian translation updated (Gabor Kelemen)
@@ -704,7 +718,7 @@ version 2.0.0 (5/3/2007):
 	* Georgian translation updated (Ubuntu Georgian Translators Team)
 	* German translation updated (Bjoern Voigt,Jochen Kemnade)
 	* German win32 translation updated (Bjoern Voigt)
-	* Greek translation added (Bouklis Panos)
+	* Greek translation added (Panos Bouklis)
 	* Gujarati translation updated (Ankit Patel)
 	* Hebrew translation updated (Shalom Craimer)
 	* Hungarian translation updated (Gabor Kelemen)

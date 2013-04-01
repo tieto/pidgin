@@ -2860,7 +2860,7 @@ webview_format_changed_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *
 char *pidgin_status_box_get_message(PidginStatusBox *status_box)
 {
 	if (status_box->webview_visible)
-		return gtk_webview_get_body_html(GTK_WEBVIEW(status_box->webview));
+		return g_strstrip(gtk_webview_get_body_text(GTK_WEBVIEW(status_box->webview)));
 	else
 		return NULL;
 }

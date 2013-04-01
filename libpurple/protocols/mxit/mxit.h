@@ -141,7 +141,6 @@ struct MXitSession {
 	int					http_interval;				/* poll inverval */
 	gint64				http_last_poll;				/* the last time a poll has been sent */
 	guint				http_handler;				/* HTTP connection handler */
-	void*				http_out_req;				/* HTTP outstanding request */
 
 	/* other servers */
 	char				voip_server[HOST_NAME_MAX];	/* voice/video server */
@@ -169,6 +168,7 @@ struct MXitSession {
 	int					outack;						/* outstanding ack packet */
 	guint				q_slow_timer_id;			/* timer handle for slow tx queue */
 	guint				q_fast_timer_id;			/* timer handle for fast tx queue */
+	GSList*				async_calls;				/* list of current outstanding async calls */
 
 	/* receive */
 	char				rx_lbuf[16];				/* receive byte buffer (socket packet length) */

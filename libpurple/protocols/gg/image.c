@@ -177,6 +177,14 @@ void ggp_image_recv(PurpleConnection *gc,
 	gchar *imgtag_replace;
 	GList *pending_messages_it;
 	
+	/* TODO: This PurpleStoredImage will be rendered within the IM window
+	   and right-clicking the image will allow the user to save the image
+	   to disk.  The default filename used in this dialog is the filename
+	   that we pass to purple_imgstore_new_with_id(), so we should call
+	   g_path_get_basename() and purple_escape_filename() on it before
+	   passing it in.  This is easy, but it's not clear if there might be
+	   other implications because this filename is used elsewhere within
+	   this PRPL. */
 	stored_id = purple_imgstore_new_with_id(
 		g_memdup(image_reply->image, image_reply->size),
 		image_reply->size,

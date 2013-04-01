@@ -750,8 +750,10 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 
 		if ( buddy_name[0] == '#' ) {
 			gchar *tmp = (gchar*) purple_base64_decode( buddy_name + 1, NULL );
-			mxit_send_invite( session, tmp, FALSE, buddy_alias, group_name, message );
-			g_free( tmp );
+			if ( tmp ) {
+				mxit_send_invite( session, tmp, FALSE, buddy_alias, group_name, message );
+				g_free( tmp );
+			}
 		}
 		else
 			mxit_send_invite( session, buddy_name, TRUE, buddy_alias, group_name, message );

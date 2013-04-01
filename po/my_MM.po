@@ -1,6 +1,6 @@
-# Pidgin Myanmar (Burmese) (my_MM) translations
-# Copyright (C) 2012
-# This file is distributed under the same license as the Pidgin package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
 # Shwun Mi <shwunmi@gmail.com>, 2012.
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-02 19:15-0700\n"
-"PO-Revision-Date: 2012-06-23 07:55+0000\n"
+"POT-Creation-Date: 2013-02-11 00:04-0800\n"
+"PO-Revision-Date: 2013-01-27 08:26+0000\n"
 "Last-Translator: Thura Hlaing <trhura@gmail.com>\n"
 "Language-Team: Burmese (Myanmar) (http://www.transifex.com/projects/p/pidgin/"
 "language/my_MM/)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -3410,6 +3410,12 @@ msgstr "အမည်ရင်း"
 msgid "Use SSL"
 msgstr "SSL သုံးရန်"
 
+msgid "Authenticate with SASL"
+msgstr ""
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr ""
+
 msgid "Bad mode"
 msgstr "ဆိုးရွားသော စနစ်"
 
@@ -3470,6 +3476,10 @@ msgstr "%s သည် ခေါင်းစဉ်ကို ရှင်းလင�
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr " %s အတွက် ခေါင်းစဉ်မှာ - %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3581,6 +3591,30 @@ msgstr "အမည်ပြောင် (သို့) ချာနယ်ကိ�
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s မှ ရိုက်ချက်များ"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr ""
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr ""
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr ""
+
+msgid "Incorrect Password"
+msgstr ""
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr ""
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt; -  လှုပ်ရှားမှုတစ်ခု ဆောင်ရွက်ပါ။"
@@ -5915,6 +5949,10 @@ msgstr "ကျွန်တော့်အကြောင်း"
 msgid "Where I Live"
 msgstr "ကျွန်တော် နေထိုင်ရာ နေရာ"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr ""
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "လက်ကိုင်ဖုန်း နံပါတ်"
@@ -6118,10 +6156,6 @@ msgstr "Status စာတန်း"
 msgid "Rejection Message"
 msgstr "ပေးစာ ငြင်းဆိုချက်"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "လျှို့ဝှက်ဂဏန်း"
-
 msgid "No profile available"
 msgstr "ပရိုဖိုင် မရှိပါ"
 
@@ -6145,6 +6179,33 @@ msgstr "HTTP မှတဆင့် ဆက်သွယ်ရန်"
 
 msgid "Enable splash-screen popup"
 msgstr "Splash-screen ပွင့်ထွက် စာမျက်နှာကို ဖွင့်ထားရန်"
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+msgid "Married"
+msgstr ""
+
+msgid "It's complicated"
+msgstr ""
+
+msgid "Widowed"
+msgstr ""
+
+msgid "Separated"
+msgstr ""
+
+msgid "Divorced"
+msgstr ""
 
 msgid "Last Online"
 msgstr "နောက်ဆုံး အွန်လိုင်း၌ တည်ရှိမှု"
@@ -6199,6 +6260,10 @@ msgstr "%s သည် သင့်ထံ စာဝှက်ထားသော ​
 
 msgid "Message Error"
 msgstr "ပေးစာ ချို့ယွင်းချက်"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "သတ်မှတ်ထားသော ပရိုတိုကော သုံးပြီး လမ်းလွှဲမပေးနိုင်ပါ"
@@ -11539,6 +11604,9 @@ msgstr "မာရသီ"
 
 msgid "Malay"
 msgstr "မလေး"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr ""

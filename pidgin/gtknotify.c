@@ -932,7 +932,7 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 	gtk_list_store_clear(data->model);
 
-	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), 0.5);
+	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), PIDGIN_PRPL_ICON_SMALL);
 
 	for (row = results->rows; row != NULL; row = row->next) {
 

@@ -1127,12 +1127,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m = m2;
 		purple_util_chrreplace(m, '\r', '\n');
 		if (!strcmp(m, "<ding>")) {
-			PurpleConversation *conv = NULL;
 			char *username;
 
 			username = g_markup_escape_text(im->fed_from, -1);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-				username, account);
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
@@ -1230,8 +1227,9 @@ yahoo_buddy_add_authorize_cb(const char *message, gpointer data)
 }
 
 static void
-yahoo_buddy_add_deny_cb(const char *msg, struct yahoo_add_request *add_req)
+yahoo_buddy_add_deny_cb(const char *msg, gpointer data)
 {
+	struct yahoo_add_request *add_req = data;
 	YahooData *yd = purple_connection_get_protocol_data(add_req->gc);
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
@@ -1415,7 +1413,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			{
 				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 						  add_req->who);
-				yahoo_buddy_add_deny_cb(add_req, NULL);
+				yahoo_buddy_add_deny_cb(NULL, add_req);
 				return;
 			}
 
@@ -1487,7 +1485,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (!purple_privacy_check(account, add_req->who)) {
 			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 					  add_req->who);
-			yahoo_buddy_add_deny_cb(add_req, NULL);
+			yahoo_buddy_add_deny_cb(NULL, add_req);
 			return;
 		}
 
@@ -2251,7 +2249,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	case 52:
 		/* See #9660. As much as we know, reconnecting shouldn't hurt */
 		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
-		msg = g_strdup_printf(_("Unknown error 52.  Reconnecting should fix this."));
+		msg = g_strdup(_("Unknown error 52.  Reconnecting should fix this."));
 		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		break;
 	case 1013:
