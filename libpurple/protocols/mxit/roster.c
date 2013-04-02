@@ -83,7 +83,7 @@ GList* mxit_status_types( PurpleAccount* account )
 
 	/* add Mood option */
 	type = purple_status_type_new_with_attrs( PURPLE_STATUS_MOOD, "mood", NULL, FALSE, TRUE, TRUE,
-		PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new( PURPLE_TYPE_STRING ),
+		PURPLE_MOOD_NAME, _( "Mood Name" ), purple_value_new( PURPLE_TYPE_STRING ),
 		NULL );
 	statuslist = g_list_append( statuslist, type );
 
@@ -183,7 +183,7 @@ int mxit_convert_mood( const char* id )
  *
  *  @param account	The MXit account object
  */
-PurpleMood* mxit_get_moods(PurpleAccount *account)
+PurpleMood* mxit_get_moods( PurpleAccount *account )
 {
 	return mxit_moods;
 }

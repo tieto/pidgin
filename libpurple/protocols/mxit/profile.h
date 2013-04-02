@@ -61,7 +61,7 @@ struct MXitProfile {
 	char		aboutme[513];						/* about me */
 	int			relationship;						/* relationship status */
 
-	int			flags;								/* user's profile flags */
+	gint64		flags;								/* user's profile flags */
 	gint64		lastonline;							/* user's last-online timestamp */
 };
 
