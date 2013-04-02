@@ -249,12 +249,12 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 {
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
-	int				pos		= 0;
-	int				start	= 0;
-	int				l_nl	= 0;
-	int				l_sp	= 0;
-	int				l_gt	= 0;
-	int				stop	= 0;
+	unsigned int	pos		= 0;
+	unsigned int	start	= 0;
+	unsigned int	l_nl	= 0;
+	unsigned int	l_sp	= 0;
+	unsigned int	l_gt	= 0;
+	unsigned int	stop	= 0;
 	int				tags	= 0;
 	gboolean		intag	= FALSE;
 
@@ -651,7 +651,7 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
  */
 static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 {
-	int		vibeid;
+	unsigned int	vibeid;
 
 	vibeid = message[2] - '0';
 
