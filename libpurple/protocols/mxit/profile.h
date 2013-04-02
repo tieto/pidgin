@@ -26,8 +26,6 @@
 #ifndef		_MXIT_PROFILE_H_
 #define		_MXIT_PROFILE_H_
 
-#include	<glib.h>
-
 
 /* MXit relationship status types */
 #define MXIT_RELATIONSHIP_UNKNOWN		0

@@ -24,9 +24,9 @@
  */
 
 #include "internal.h"
-
-#include "purple.h"
+#include "debug.h"
 #include "imgstore.h"
+#include "request.h"
 
 #include "protocol.h"
 #include "mxit.h"

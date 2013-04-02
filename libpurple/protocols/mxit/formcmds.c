@@ -25,9 +25,7 @@
 
 
 #include "internal.h"
-#include <glib.h>
-
-#include "purple.h"
+#include "debug.h"
 
 #include "protocol.h"
 #include "mxit.h"
