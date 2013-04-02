@@ -100,26 +100,27 @@ void mxit_strip_domain( char* username )
  */
 void dump_bytes( struct MXitSession* session, const char* buf, int len )
 {
-	char		msg[( len * 3 ) + 1];
-	int			i;
-
-	memset( msg, 0x00, sizeof( msg ) );
+	char*	msg	= g_malloc0( len + 1 );
+	int		i;
 
 	for ( i = 0; i < len; i++ ) {
-		if ( buf[i] == CP_REC_TERM )		/* record terminator */
+		char ch	= buf[i];
+
+		if ( ch == CP_REC_TERM )		/* record terminator */
 			msg[i] = '!';
-		else if ( buf[i] == CP_FLD_TERM )	/* field terminator */
+		else if ( ch == CP_FLD_TERM )	/* field terminator */
 			msg[i] = '^';
-		else if ( buf[i] == CP_PKT_TERM )	/* packet terminator */
+		else if ( ch == CP_PKT_TERM )	/* packet terminator */
 			msg[i] = '@';
-		else if ( buf[i] < 0x20 )
+		else if ( ( ch < 0x20 ) || ( ch > 0x7E ) )		/* non-printable character */
 			msg[i] = '_';
 		else
-			msg[i] = buf[i];
-
+			msg[i] = ch;
 	}
 
 	purple_debug_info( MXIT_PLUGIN_ID, "DUMP: '%s'\n", msg );
+
+	g_free( msg );
 }
 
 
