@@ -202,7 +202,7 @@ static unsigned int asn_getlength( const char* data, int* size )
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const char* data, char type, char** utf8 )
+static int asn_getUtf8( const char* data, unsigned char type, char** utf8 )
 {
 	int		len;
 
