@@ -26,8 +26,7 @@
 #define		_XOPEN_SOURCE
 #include	<time.h>
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
 
 #include	"mxit.h"
 #include	"profile.h"

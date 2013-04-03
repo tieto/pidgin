@@ -23,8 +23,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
+#include	"version.h"
 #include	"obsolete.h"
 
 #include	"protocol.h"
@@ -100,26 +101,27 @@ void mxit_strip_domain( char* username )
  */
 void dump_bytes( struct MXitSession* session, const char* buf, int len )
 {
-	char		msg[( len * 3 ) + 1];
-	int			i;
-
-	memset( msg, 0x00, sizeof( msg ) );
+	char*	msg	= g_malloc0( len + 1 );
+	int		i;
 
 	for ( i = 0; i < len; i++ ) {
-		if ( buf[i] == CP_REC_TERM )		/* record terminator */
+		char ch	= buf[i];
+
+		if ( ch == CP_REC_TERM )		/* record terminator */
 			msg[i] = '!';
-		else if ( buf[i] == CP_FLD_TERM )	/* field terminator */
+		else if ( ch == CP_FLD_TERM )	/* field terminator */
 			msg[i] = '^';
-		else if ( buf[i] == CP_PKT_TERM )	/* packet terminator */
+		else if ( ch == CP_PKT_TERM )	/* packet terminator */
 			msg[i] = '@';
-		else if ( buf[i] < 0x20 )
+		else if ( ( ch < 0x20 ) || ( ch > 0x7E ) )		/* non-printable character */
 			msg[i] = '_';
 		else
-			msg[i] = buf[i];
-
+			msg[i] = ch;
 	}
 
 	purple_debug_info( MXIT_PLUGIN_ID, "DUMP: '%s'\n", msg );
+
+	g_free( msg );
 }
 
 
@@ -721,7 +723,7 @@ void mxit_send_register( struct MXitSession* session )
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
 								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */
-								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_PACKET, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
 								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
 								CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
@@ -768,7 +770,7 @@ void mxit_send_login( struct MXitSession* session )
 								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
-								CP_MAX_PACKET, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
+								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* include "custom resource" information */

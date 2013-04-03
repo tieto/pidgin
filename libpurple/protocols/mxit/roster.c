@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
 
 #include	"protocol.h"
 #include	"mxit.h"
@@ -672,7 +672,7 @@ struct contact* get_mxit_invite_contact( struct MXitSession* session, const char
 {
 	struct contact*		con		= NULL;
 	struct contact*		match	= NULL;
-	int					i;
+	unsigned int		i;
 
 	/* run through all the invites and try and find the match */
 	for ( i = 0; i < g_list_length( session->invites ); i++ ) {
