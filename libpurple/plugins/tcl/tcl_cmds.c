@@ -1532,7 +1532,8 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 	switch (cmd) {
 	case CMD_STATUS_ATTR:
-#if !(defined PURPLE_DISABLE_DEPRECATED)
+# if (0)
+/* #if !(defined PURPLE_DISABLE_DEPRECATED) */
 		if (objc != 4 && objc != 5) {
 			Tcl_WrongNumArgs(interp, 2, objv, "status attr_id ?value?");
 			return TCL_ERROR;

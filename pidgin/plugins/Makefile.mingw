@@ -26,8 +26,11 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/include/cairo \
+			-I$(GTK_TOP)/include/gdk-pixbuf-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(LIBSOUP_TOP)/include/libsoup-2.4 \
+			-I$(WEBKITGTK_TOP)/include/webkitgtk-1.0 \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
@@ -35,6 +38,7 @@ INCLUDE_PATHS +=	\
 			-I$(PIDGIN_TOP)/win32
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(WEBKITGTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP)
 
@@ -51,6 +55,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lcairo \
 			-lintl \
 			-lws2_32 \
+			-lwebkitgtk-1.0 \
 			-lpurple \
 			-lpidgin
 
@@ -101,7 +106,7 @@ plugins: \
 		spellchk.dll \
 		themeedit.dll \
 		timestamp_format.dll \
-		timestamp.dll \
+		webkit.dll \
 		xmppconsole.dll
 
 ##

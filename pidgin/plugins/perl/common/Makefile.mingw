@@ -28,8 +28,11 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/gdk-pixbuf-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(LIBSOUP_TOP)/include/libsoup-2.4 \
+			-I$(WEBKITGTK_TOP)/include/webkitgtk-1.0 \
 			-I$(PERL_LIB_TOP)/CORE
 
 LIB_PATHS += 		-L$(PERL_LIB_TOP) \

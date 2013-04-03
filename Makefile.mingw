@@ -31,7 +31,7 @@ awk 'BEGIN {FS="."} { \
     exit; \
 }' VERSION)
 
-GTK_INSTALL_VERSION = 2.16.6.1
+GTK_INSTALL_VERSION = 2.24.14.0
 
 authenticode_sign = $(MONO_SIGNCODE) \
 		    -spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \

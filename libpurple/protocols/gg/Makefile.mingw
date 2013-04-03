@@ -56,12 +56,28 @@ C_SRC =	\
 	lib/pubdir50.c \
 	lib/resolver.c \
 	lib/sha1.c \
-	buddylist.c \
-	confer.c \
-	gg.c \
-	search.c \
 	utils.c \
-	resolver-purple.c
+	confer.c \
+	buddylist.c \
+	gg.c \
+	resolver-purple.c \
+	image.c \
+	account.c \
+	deprecated.c \
+	purplew.c \
+	libgaduw.c \
+	avatar.c \
+	libgadu-events.c \
+	roster.c \
+	validator.c \
+	xml.c \
+	multilogon.c \
+	status.c \
+	servconn.c \
+	pubdir-prpl.c \
+	oauth/oauth.c \
+	oauth/oauth-parameter.c \
+	oauth/oauth-purple.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
@@ -72,7 +88,8 @@ LIBS =	\
 			-lglib-2.0 \
 			-lintl \
 			-lpurple \
-			-lws2_32
+			-lws2_32 \
+			-lz
 
 include $(PIDGIN_COMMON_RULES)
 

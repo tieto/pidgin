@@ -33,9 +33,11 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(JSON_GLIB_TOP)/include/json-glib-1.0 \
 			-I$(LIBXML2_TOP)/include/libxml2
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(JSON_GLIB_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib
 
 ##
@@ -63,15 +65,19 @@ C_SRC =	\
 			dnssrv.c \
 			eventloop.c \
 			ft.c \
+			http.c \
 			idle.c \
 			imgstore.c \
 			log.c \
+			media/candidate.c \
+			media/enum-types.c \
 			mediamanager.c \
 			media.c \
 			mime.c \
 			nat-pmp.c \
 			network.c \
 			notify.c \
+			obsolete.c \
 			ntlm.c \
 			plugin.c \
 			pluginpref.c \
@@ -120,7 +126,8 @@ LIBS =	\
 		-lgmodule-2.0 \
 		-lintl \
 		-lws2_32 \
-		-lxml2
+		-lxml2 \
+		-ljson-glib-1.0
 
 include $(PIDGIN_COMMON_RULES)
 
