@@ -754,7 +754,7 @@ void mxit_send_login( struct MXitSession* session )
 	/* Voice and Video supported */
 	if ( mxit_audio_enabled() && mxit_video_enabled() )
 		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
-	else if (mxit_audio_enabled())
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
