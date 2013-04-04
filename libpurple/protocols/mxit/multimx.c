@@ -24,8 +24,7 @@
  */
 
 #include "internal.h"
-#include "purple.h"
-#include "prpl.h"
+#include "debug.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -310,7 +309,7 @@ void multimx_created(struct MXitSession* session, struct contact* contact)
 	multimx = find_room_by_username(session, contact->username);
 	if (multimx == NULL) {
 		multimx = room_create(session, contact->username, contact->alias, TRUE);
-		}
+	}
 	else if (multimx->state == STATE_INVITED) {
 		/* After successfully accepting an invitation */
 		multimx->state = STATE_JOINED;

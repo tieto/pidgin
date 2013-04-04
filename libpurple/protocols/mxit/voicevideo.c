@@ -23,7 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "purple.h"
+#include "internal.h"
+
 #include "mxit.h"
 #include "roster.h"
 #include "voicevideo.h"
@@ -63,7 +64,7 @@ gboolean mxit_video_enabled(void)
  */
 PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 {
-	struct MXitSession*	session	= purple_account_get_connection(account)->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data(purple_account_get_connection(account));
 	PurpleBuddy*		buddy;
 	struct contact*		contact;
 	PurpleMediaCaps		capa	= PURPLE_MEDIA_CAPS_NONE;
@@ -95,7 +96,7 @@ PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 
 	/* and only when they're online */
 	if (contact->presence == MXIT_PRESENCE_OFFLINE)
-		return MXIT_PRESENCE_OFFLINE;
+		return PURPLE_MEDIA_CAPS_NONE;
 
 	/* they support voice-only */
 	if (contact->capabilities & MXIT_PFLAG_VOICE)
@@ -196,7 +197,7 @@ gboolean mxit_media_initiate(PurpleAccount *account, const char *who, PurpleMedi
 	g_signal_connect(G_OBJECT(media), "state-changed", G_CALLBACK(mxit_state_changed_cb), NULL);
 
 	/* initiate audio session */
-	if ((type & PURPLE_MEDIA_AUDIO) && 
+	if ((type & PURPLE_MEDIA_AUDIO) &&
 			(!purple_media_add_stream(media, "audio", who, PURPLE_MEDIA_AUDIO, TRUE, transmitter, 0, NULL))) {
 		purple_media_end(media, NULL, NULL);
 		return FALSE;

@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
 
 #include	"protocol.h"
 #include	"mxit.h"
@@ -202,7 +202,7 @@ static unsigned int asn_getlength( const char* data, int* size )
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const char* data, char type, char** utf8 )
+static int asn_getUtf8( const char* data, unsigned char type, char** utf8 )
 {
 	int		len;
 
@@ -249,12 +249,12 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 {
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
-	int				pos		= 0;
-	int				start	= 0;
-	int				l_nl	= 0;
-	int				l_sp	= 0;
-	int				l_gt	= 0;
-	int				stop	= 0;
+	unsigned int	pos		= 0;
+	unsigned int	start	= 0;
+	unsigned int	l_nl	= 0;
+	unsigned int	l_sp	= 0;
+	unsigned int	l_gt	= 0;
+	unsigned int	stop	= 0;
 	int				tags	= 0;
 	gboolean		intag	= FALSE;
 
@@ -391,7 +391,7 @@ void mxit_show_message( struct RXMsgData* mx )
 			if ( end == mx->msg->len )			/* end of emoticon tag not found */
 				break;
 
-			ii = g_strndup(&mx->msg->str[emo_ofs], end - emo_ofs);
+			ii = g_strndup( &mx->msg->str[emo_ofs], end - emo_ofs );
 
 			/* remove inline image tag */
 			g_string_erase( mx->msg, start, ( end - start ) + 1 );
@@ -408,7 +408,7 @@ void mxit_show_message( struct RXMsgData* mx )
 				g_string_insert( mx->msg, start, tag );
 			}
 
-			g_free(ii);
+			g_free( ii );
 		}
 	}
 
@@ -651,7 +651,7 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
  */
 static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 {
-	int		vibeid;
+	unsigned int	vibeid;
 
 	vibeid = message[2] - '0';
 

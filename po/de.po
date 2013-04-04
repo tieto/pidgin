@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-27 12:00+0100\n"
-"PO-Revision-Date: 2013-02-27 11:58+0100\n"
+"POT-Creation-Date: 2013-04-03 20:47+0200\n"
+"PO-Revision-Date: 2013-04-03 20:46+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -6267,6 +6267,14 @@ msgstr "Über..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Die Datei, die Sie senden möchten ist zu groß!"
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Kann nicht auf die lokale Datei zugreifen"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Kann die Datei nicht speichern"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
