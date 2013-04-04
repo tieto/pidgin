@@ -6,7 +6,7 @@ PIDGIN_BASE="$PIDGIN_BASE/../../.."
 GPG_SIGN=$1
 
 if [ ! -e $PIDGIN_BASE/ChangeLog ]; then
-	echo pidgin base dir not found
+	echo "Pidgin base directory not found"
 	exit 1
 fi
 
@@ -84,7 +84,12 @@ PANGO="${DOWNLOAD_HOST}mingw32-pango-1.30.1-1.4.noarch.rpm Pango 1.30.1-1.4 sha1
 PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.4.noarch.rpm pixman 0.26.0-1.4 sha1sum:f751fe428ea83996daf7e57bff6f4f79361b0d29"
 PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
 SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-1.6 sha1sum:f61529bc0c996d9af28a94648ce6102d579ed928"
-WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.10.2-1.3.noarch.rpm WebKitGTK+ 1.10.2-1.3 sha1sum:33b558d2110fc2caf2c3c0ab24a6c18645814893"
+
+#webkit 1.10 crashes when calling document.createElement, so I grabbed 1.8 from openSUSE_Factory instead
+#TODO: investigate it
+#WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.10.2-1.3.noarch.rpm WebKitGTK+ 1.10.2-1.3 sha1sum:33b558d2110fc2caf2c3c0ab24a6c18645814893"
+WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
+
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
 ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSTDCPP LIBTIFF LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
 

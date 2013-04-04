@@ -247,6 +247,7 @@ gtk_smiley_tree_remove(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
 	t->image = NULL;
 }
 
+#if 0
 static int
 gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
 {
@@ -304,6 +305,7 @@ gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
 
 	return 0;
 }
+#endif
 
 static void
 gtk_webview_disassociate_smiley_foreach(gpointer key, gpointer value,
@@ -372,6 +374,7 @@ gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
 	                 G_CALLBACK(gtk_webview_disconnect_smiley), smiley);
 }
 
+#if 0
 static gboolean
 gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
                       int *len)
@@ -390,6 +393,7 @@ gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
 	*len = gtk_smiley_tree_lookup(tree, text);
 	return (*len > 0);
 }
+#endif
 
 static GtkWebViewSmiley *
 gtk_webview_smiley_get_from_tree(GtkSmileyTree *t, const char *text)
@@ -436,6 +440,7 @@ gtk_webview_smiley_find(GtkWebView *webview, const char *sml, const char *text)
 	return gtk_webview_smiley_get_from_tree(priv->default_smilies, text);
 }
 
+#if 0
 static GdkPixbufAnimation *
 gtk_smiley_get_image(GtkWebViewSmiley *smiley)
 {
@@ -451,6 +456,7 @@ gtk_smiley_get_image(GtkWebViewSmiley *smiley)
 
 	return smiley->icon;
 }
+#endif
 
 static void
 gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
