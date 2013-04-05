@@ -63,7 +63,7 @@ FONTCONFIG="${DOWNLOAD_HOST}mingw32-fontconfig-2.10.1-1.4.noarch.rpm fontconfig 
 FREETYPE="${DOWNLOAD_HOST}mingw32-freetype-2.4.10-1.4.noarch.rpm freetype 2.4.10-1.4 sha1sum:62a8a494df380c982d6d131ffa0846b498f3d7d0"
 GDK_PIXBUF="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-2.26.3-1.4.noarch.rpm gdk-pixbuf 2.26.3-1.4 sha1sum:e454ffc771d923a443553599c1981a3cc9e56bab"
 GEOCLUE="${DOWNLOAD_HOST}mingw32-libgeoclue-0.12.99-1.4.noarch.rpm Geoclue 0.12.99-1.4 sha1sum:cf3df30e75c5b38fbe2f63689cadcc2930823b9c"
-GLIB="${DOWNLOAD_HOST}mingw32-glib2-2.34.1-1.4.noarch.rpm Glib 2.34.1-1.4 sha1sum:34317487546e5ca5d493c38794c927ff94b6a5b7"
+GLIB="${DOWNLOAD_HOST}mingw32-glib2-2.36.0-2.2.noarch.rpm Glib 2.36.0-2.2 sha1sum:1b788be9f7b15cde9452f135831feebc51f3a5a4"
 GST="${DOWNLOAD_HOST}mingw32-libgstreamer-0.10.35-1.4.noarch.rpm GStreamer 0.10.35-1.4 sha1sum:fd5bb6f8a9083eb3ca402670e7c38474f7270efe"
 GST_INT="${DOWNLOAD_HOST}mingw32-libgstinterfaces-0.10.32-5.4.noarch.rpm GStreamer-interfaces 0.10.32-5.4 sha1sum:cec1dd36bbcc10716e9f8776e4bd53fb0b07d8bb"
 GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.14-1.4.noarch.rpm GTK+ 2.24.14-1.4 sha1sum:71971fe63d355aa893536b691f249ace78d89a2b"
@@ -77,6 +77,7 @@ LIBJSON="${DOWNLOAD_HOST}mingw32-libjson-glib-0.14.2-1.4.noarch.rpm json-glib 0.
 LIBLZMA="${DOWNLOAD_HOST}mingw32-liblzma-5.0.4-1.4.noarch.rpm liblzma 5.0.4-1.4 sha1sum:ef360fab4b6c77d1618891ccc8f52c2421f37c09"
 LIBPNG="${DOWNLOAD_HOST}mingw32-libpng-1.5.11-1.4.noarch.rpm libpng 1.5.11-1.4 sha1sum:99d0a077f70e83f7df10f28915a2137a0ff34462"
 LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.40.3-1.4.noarch.rpm libsoup 2.40.3-1.4 sha1sum:3f2d836acea04741508a341b2bddaa55fd49f720"
+LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
 LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.7.2-2.4.noarch.rpm libstdc++ 4.7.2-2.4 sha1sum:e031fad6b7bf54c9846d5a857bb8de6faefdcd1b"
 LIBTIFF="${DOWNLOAD_HOST}mingw32-libtiff-4.0.2-1.4.noarch.rpm libtiff 4.0.2-1.4 sha1sum:9a8f8b018e8bafd47067fe6fd0debc1e887239b1"
 LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.27-1.4.noarch.rpm libxslt 1.1.27-1.4 sha1sum:4a08612ad73235b0fab95e17644d72e8f24097c3"
@@ -91,7 +92,7 @@ SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
 
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSTDCPP LIBTIFF LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR
