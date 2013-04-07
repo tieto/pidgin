@@ -21,14 +21,35 @@ BUNDLE_VERSION=2.24.14.0
 BUNDLE_SHA1SUM="402c265590f304537e31a1f3b04aad32c6eea620"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 
+function download() {
+	if [ -e "$2" ]; then
+		echo "File exists"
+		exit 1
+	fi
+	failed=0
+	wget -t 3 "$1" -O "$2" -o "wget.log" --retry-connrefused --waitretry=2 \
+		--ca-certificate="${STAGE_DIR}/../cacert.pem" \
+		|| failed=1
+	if [ $failed != 0 ] ; then
+		if [ "$3" != "quiet" ] ; then
+			echo "Download failed"
+			cat "wget.log"
+		fi
+		rm "wget.log"
+		rm -f "$2"
+		return 1
+	fi
+	rm "wget.log"
+	return 0
+}
+
+cat $PIDGIN_BASE/share/ca-certs/*.pem > $STAGE_DIR/../cacert.pem
+
 #Download the existing file (so that we distribute the exact same file for all releases with the same bundle version)
 FILE="$ZIP_FILE"
 if [ ! -e "$FILE" ]; then
 	echo "Downloading the existing file"
-	wget -q "https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk" -O "$FILE"
-	if [ `stat -c %s $FILE` == 0 ]; then
-		rm $FILE
-	fi
+	download "https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk" "$FILE" "quiet"
 fi
 if [ -e "$FILE" ]; then
 	CHECK_SHA1SUM=`sha1sum $FILE`
@@ -52,7 +73,7 @@ fi
 
 #DOWNLOAD_HOST="http://download.opensuse.org/repositories/windows:/mingw:/win32/openSUSE_12.3/noarch/"
 #TODO: this is just a temporary mirror - Tomek Wasilczyk's <tomkiewicz@cpw.pidgin.im> Dropbox
-DOWNLOAD_HOST="http://dl.dropbox.com/u/5448886/pidgin-win32/runtime-deps/"
+DOWNLOAD_HOST="https://dl.dropbox.com/u/5448886/pidgin-win32/runtime-deps/"
 
 ATK="${DOWNLOAD_HOST}mingw32-atk-2.6.0-1.4.noarch.rpm ATK 2.6.0-1.4 sha1sum:d0792a3355b22cf4f0e218382dde71b1e22a2b03"
 CAIRO2="${DOWNLOAD_HOST}mingw32-libcairo2-1.10.2-8.4.noarch.rpm Cairo 1.10.2-8.4 sha1sum:f69af74753c7fcd95b7778eee7c3d731d64749ba"
@@ -80,6 +101,7 @@ LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.40.3-1.4.noarch.rpm libsoup 2.40.3-1.
 LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
 LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.7.2-2.4.noarch.rpm libstdc++ 4.7.2-2.4 sha1sum:e031fad6b7bf54c9846d5a857bb8de6faefdcd1b"
 LIBTIFF="${DOWNLOAD_HOST}mingw32-libtiff-4.0.2-1.4.noarch.rpm libtiff 4.0.2-1.4 sha1sum:9a8f8b018e8bafd47067fe6fd0debc1e887239b1"
+LIBXML="${DOWNLOAD_HOST}mingw32-libxml2-2.8.0-2.6.noarch.rpm libxml 2.8.0-2.6 sha1sum:9be07823d7074362abac17bf7a7b092659aed002"
 LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.27-1.4.noarch.rpm libxslt 1.1.27-1.4 sha1sum:4a08612ad73235b0fab95e17644d72e8f24097c3"
 PANGO="${DOWNLOAD_HOST}mingw32-pango-1.30.1-1.4.noarch.rpm Pango 1.30.1-1.4 sha1sum:69c4515babdf99b0ded04c24dc3a7f33debac934"
 PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.4.noarch.rpm pixman 0.26.0-1.4 sha1sum:f751fe428ea83996daf7e57bff6f4f79361b0d29"
@@ -92,7 +114,7 @@ SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
 
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR
@@ -104,13 +126,13 @@ mkdir $INSTALL_DIR
 echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
 
 #TODO: temporary mirror also
-CPIO_URL="http://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.zip"
+CPIO_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.zip"
 CPIO_SHA1SUM="0cb99adb2c2d759c9a21228223e55c8bf227f736"
 CPIO_DIR="bsdcpio"
 FILE="bsdcpio.zip"
 if [ ! -e "$FILE" ]; then
 	echo "Downloading bsdcpio"
-	wget -q "$CPIO_URL" -O "$FILE" || exit 1
+	download "$CPIO_URL" "$FILE" || exit 1
 fi
 CHECK_SHA1SUM=`sha1sum $FILE`
 CHECK_SHA1SUM=${CHECK_SHA1SUM%%\ *}
@@ -131,8 +153,8 @@ function download_and_extract {
 	MINGW_DIR="usr/i686-w64-mingw32/sys-root/mingw"
 	MINGW_DIR_TOP="usr"
 	if [ ! -e $FILE ]; then
-		echo Downloading $NAME
-		wget -q $URL || exit 1
+		echo "Downloading $NAME"
+		download "$URL" "$FILE" || exit 1
 	fi
 	VALIDATION_TYPE=${VALIDATION%%:*}
 	VALIDATION_VALUE=${VALIDATION##*:}
@@ -146,7 +168,7 @@ function download_and_extract {
 	elif [ $VALIDATION_TYPE == 'gpg' ]; then
 		if [ ! -e "$FILE.asc" ]; then
 			echo Downloading GPG key for $NAME
-			wget -q "$URL.asc" || exit 1
+			download "$URL.asc" "$FILE.asc" || exit 1
 		fi
 		#Use our own keyring to avoid adding stuff to the main keyring
 		#This doesn't use $GPG_SIGN because we don't this validation to be bypassed when people are skipping signing output
@@ -181,6 +203,7 @@ do
 	download_and_extract "$VAR"
 done
 rm -rf $CPIO_DIR
+rm "${STAGE_DIR}/../cacert.pem"
 echo "All components ready"
 
 cp $INSTALL_DIR/bin/libintl-8.dll $INSTALL_DIR/bin/intl.dll

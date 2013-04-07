@@ -8,10 +8,9 @@ PIDGIN_TREE_TOP := ..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libpurple
-NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2-2.dll
 
 ifeq ($(CYRUS_SASL), 1)
-NEEDED_DLLS += $(CYRUS_SASL_TOP)/bin/libsasl.dll
+NEEDED_DLLS = $(CYRUS_SASL_TOP)/bin/libsasl.dll
 
 CYRUS_SASL_PLUGINS = \
                         $(CYRUS_SASL_TOP)/bin/sasl2/saslANONYMOUS.dll \

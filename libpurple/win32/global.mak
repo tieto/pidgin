@@ -106,7 +106,7 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base -Wl,--enable-auto-import $(LD_HARDE
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
-GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
+GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.18/bin/msgfmt
 MAKENSIS ?= makensis.exe
 PERL ?= perl
 WINDRES ?= windres
