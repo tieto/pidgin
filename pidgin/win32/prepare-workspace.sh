@@ -68,16 +68,16 @@ ARCHIVES+="ARC_GT7 "
 ARC_GT8="${DOWNLOAD_HOST}mingw32-pango-devel-1.30.1-1.7.noarch.rpm;gtk: Pango;1.30.1-1.7;8cd9e088f5355f499c3b25af1a451c7e63383f98;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT8 "
 
-ARC_ENC="${DOWNLOAD_HOST}enchant_1.6.0_win32.zip;Enchant;1.6.0;831ec6bd4da4f58015415d6e17301a91ab11675a;enchant_1.6.0_win32;enchant_1.6.0_win32"
+ARC_ENC="${DOWNLOAD_HOST}mingw32-enchant-devel-1.6.0-3.7.noarch.rpm;Enchant;1.6.0-3.7;a535ac09423ba84fcd484ffa2251ab7ceea0121f;${OBS_SKIP};enchant-1.6"
 ARCHIVES+="ARC_ENC "
 
-ARC_GSP="${DOWNLOAD_HOST}gtkspell-2.0.16.tar.bz2;GtkSpell;2.0.16;fd3fddeccb0ad4990708129731a5e93b899fca93;gtkspell-2.0.16;gtkspell-2.0.16"
+ARC_GSP="${DOWNLOAD_HOST}mingw32-gtkspell-devel-2.0.16-2.5.noarch.rpm;GtkSpell;2.0.16-2.5;ededc099c2ad5ede6b27cf5f70753f693fa1f0e3;${OBS_SKIP};gtkspell-2.0"
 ARCHIVES+="ARC_GSP "
 
 ARC_INT="${DOWNLOAD_HOST}intltool_0.40.4-1_win32.zip;intltool;0.40.4-1;e609c31dee8aa60b738c839ea958ec241109e1bd;;intltool_0.40.4-1_win32"
 ARCHIVES+="ARC_INT "
 
-ARC_MWH="${DOWNLOAD_HOST}meanwhile-1.0.2_daa3-win32.zip;meanwhile;1.0.2_daa3;9653fcd8736d3eb947c4e58726dcc7c23859fac7;meanwhile-1.0.2_daa3;meanwhile-1.0.2_daa3"
+ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-2.6.noarch.rpm;meanwhile;1.0.2-2.6;1a1ceda731486c28aca0b866e4746992bc7ba121;${OBS_SKIP};meanwhile-1.0"
 ARCHIVES+="ARC_MWH "
 
 ARC_PRL="${DOWNLOAD_HOST}perl_5-10-0.tar.gz;Perl;5.10.0;863b2f879698a5407a3edb73a310bdfc9dea8f12;perl-5.10.0;perl-5.10.0"
@@ -86,8 +86,11 @@ ARCHIVES+="ARC_PRL "
 ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10.tar.gz;SILC Toolkit;1.1.10;42f835ed28d9567acde8bd3e553c8a5c94b799c5;silc-toolkit-1.1.10;silc-toolkit-1.1.10"
 ARCHIVES+="ARC_SIL "
 
-ARC_TCL="${DOWNLOAD_HOST}tcl-8.4.5.tar.gz;Tcl;8.4.5;2d4ae9e6f3609ac3c41c88be81deb2a26f2e82b5;tcl-8.4.5;tcl-8.4.5"
+ARC_TCL="${DOWNLOAD_HOST}mingw32-tcl-devel-8.5.9-13.6.noarch.rpm;Tcl;8.5.9-13.6;22a6d0e748d7c7c5863f15199a21019a57a46748;${OBS_SKIP};tcl-8.5"
 ARCHIVES+="ARC_TCL "
+
+ARC_TK="${DOWNLOAD_HOST}mingw32-tk-devel-8.5.9-8.6.noarch.rpm;Tk;8.5.9-8.6;17fc995bbdca21579b52991c2e74bead1815c76a;${OBS_SKIP};tcl-8.5"
+ARCHIVES+="ARC_TK "
 
 ARC_JSG="${DOWNLOAD_HOST}mingw32-json-glib-devel-0.14.2-1.7.noarch.rpm;json-glib;0.14.2-1.7;e86a81d5c4bbc7a2ea6b808dd5819c883c4303cc;${OBS_SKIP};json-glib-0.14"
 ARCHIVES+="ARC_JSG "

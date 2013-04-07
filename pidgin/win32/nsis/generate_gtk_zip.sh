@@ -88,6 +88,7 @@ GLIB="${DOWNLOAD_HOST}mingw32-glib2-2.36.0-2.2.noarch.rpm Glib 2.36.0-2.2 sha1su
 GST="${DOWNLOAD_HOST}mingw32-libgstreamer-0.10.35-1.4.noarch.rpm GStreamer 0.10.35-1.4 sha1sum:fd5bb6f8a9083eb3ca402670e7c38474f7270efe"
 GST_INT="${DOWNLOAD_HOST}mingw32-libgstinterfaces-0.10.32-5.4.noarch.rpm GStreamer-interfaces 0.10.32-5.4 sha1sum:cec1dd36bbcc10716e9f8776e4bd53fb0b07d8bb"
 GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.14-1.4.noarch.rpm GTK+ 2.24.14-1.4 sha1sum:71971fe63d355aa893536b691f249ace78d89a2b"
+GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.5.noarch.rpm GtkSpell 2.0.16-2.5 sha1sum:49381274b248ffe56ef733a90908541dc587c9af"
 LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.10-2.4.noarch.rpm libffi 3.0.10-2.4 sha1sum:871f13d5f02c03d62b882cc1fa4c98dcff76d4c5"
 LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.7.2-2.4.noarch.rpm libgcc 4.7.2-2.4 sha1sum:9023897a5faf380efc89699ac5145c985d03a8bf"
 LIBJASPER="${DOWNLOAD_HOST}mingw32-libjasper-1.900.1-6.4.noarch.rpm JasPer 1.900.1-6.4 sha1sum:25e01ed277b8dda6191afb7dd0e0928558c1f2d6"
@@ -103,10 +104,13 @@ LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.7.2-2.4.noarch.rpm libstdc++ 4.7.
 LIBTIFF="${DOWNLOAD_HOST}mingw32-libtiff-4.0.2-1.4.noarch.rpm libtiff 4.0.2-1.4 sha1sum:9a8f8b018e8bafd47067fe6fd0debc1e887239b1"
 LIBXML="${DOWNLOAD_HOST}mingw32-libxml2-2.8.0-2.6.noarch.rpm libxml 2.8.0-2.6 sha1sum:9be07823d7074362abac17bf7a7b092659aed002"
 LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.27-1.4.noarch.rpm libxslt 1.1.27-1.4 sha1sum:4a08612ad73235b0fab95e17644d72e8f24097c3"
+MEANW="${DOWNLOAD_HOST}mingw32-meanwhile-1.0.2-2.6.noarch.rpm Meanwhile 1.0.2-2.6 sha1sum:afce5c0157c270ee30c049fdabd7328fa3b3233e"
 PANGO="${DOWNLOAD_HOST}mingw32-pango-1.30.1-1.4.noarch.rpm Pango 1.30.1-1.4 sha1sum:69c4515babdf99b0ded04c24dc3a7f33debac934"
 PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.4.noarch.rpm pixman 0.26.0-1.4 sha1sum:f751fe428ea83996daf7e57bff6f4f79361b0d29"
 PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
 SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-1.6 sha1sum:f61529bc0c996d9af28a94648ce6102d579ed928"
+TCL="${DOWNLOAD_HOST}mingw32-tcl-8.5.9-13.6.noarch.rpm Tcl 8.5.9-13.6 sha1sum:442eaf5e761d59bb527cb1f9f93749ebc13b4367"
+TK="${DOWNLOAD_HOST}mingw32-tk-8.5.9-8.6.noarch.rpm Tk 8.5.9-8.6 sha1sum:d0884c56f767f76981ddf7bc6d74d3c47237740a"
 
 #webkit 1.10 crashes when calling document.createElement, so I grabbed 1.8 from openSUSE_Factory instead
 #TODO: investigate it
@@ -114,7 +118,7 @@ SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
 
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT PANGO PIXMAN PTHREADS SQLITE WEBKITGTK ZLIB"
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR

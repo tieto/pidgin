@@ -56,11 +56,6 @@ EXTERNAL_DLLS = \
 	gssapi32.dll \
 	k5sprt32.dll \
 	krb5_32.dll \
-	libenchant.dll \
-	libenchant_ispell.dll \
-	libenchant_myspell.dll \
-	libgtkspell-0.dll \
-	libmeanwhile-1.dll \
 	libnspr4.dll \
 	libplc4.dll \
 	libplds4.dll \
@@ -103,10 +98,6 @@ ifndef DISABLE_NLS
 endif
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
-	mkdir -p $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
-	cp $(GTKSPELL_TOP)/bin/libgtkspell-0.dll $(PIDGIN_INSTALL_DIR)/spellcheck
-	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
-	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:
