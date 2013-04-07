@@ -11,5 +11,5 @@ plugindir=${libdir}/pidgin
 Name: Pidgin
 Description: Pidgin is a GTK2-based instant messenger application.
 Version: @VERSION@
-Requires: @GTK_PC_MODULE@ purple-3
+Requires: @GTK_PC_MODULE@ @WEBKIT_PC_MODULE@ purple-3
 Cflags: -I${includedir}

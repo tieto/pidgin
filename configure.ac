@@ -471,7 +471,8 @@ running configure.
 
 	WEBKIT_VERSION=1.1.1
 	if test "x$with_gtk" = "x3"; then
-		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= $WEBKIT_VERSION], , [
+		WEBKIT_PC_MODULE="webkitgtk-3.0"
+		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
 You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
@@ -479,7 +480,8 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 --disable-gtkui when running configure.
 ])])
 	else
-		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= $WEBKIT_VERSION], , [
+		WEBKIT_PC_MODULE="webkit-1.0"
+		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
 You must have WebKit for GTK+2 $WEBKIT_VERSION or newer development headers
@@ -489,6 +491,7 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 	fi
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
+	AC_SUBST(WEBKIT_PC_MODULE)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
