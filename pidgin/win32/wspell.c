@@ -87,7 +87,6 @@ static void load_gtkspell() {
 	g_free(tmp);
 	g_setenv("PATH", tmp2, TRUE);
 	g_free(tmp2);
-	g_free(tmp);
 
 	/* Suppress error popups */
 	wpidginspell_new_attach_proxy = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_new_attach" );
