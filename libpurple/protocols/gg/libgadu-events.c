@@ -38,8 +38,8 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 	int user_idx;
 	gboolean is_update;
 	
-	purple_debug_info("gg", "GG_EVENT_USER_DATA [type=%d, user_count=%zu]\n",
-		data->type, data->user_count);
+	purple_debug_info("gg", "GG_EVENT_USER_DATA [type=%d, user_count=%"
+		G_GSIZE_FORMAT "]\n", data->type, data->user_count);
 	
 	/*
 	type = 

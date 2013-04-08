@@ -432,7 +432,7 @@ static void ggp_account_chpass_data_free(ggp_account_chpass_data *chpass_data)
 void ggp_account_chpass(PurpleConnection *gc)
 {
 	ggp_account_chpass_data *chpass_data;
-	void ggp_account_change_passwd(PurpleConnection *gc);
+
 	purple_debug_info("gg", "ggp_account_chpass\n");
 	
 	chpass_data = g_new0(ggp_account_chpass_data, 1);
