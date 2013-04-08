@@ -65,6 +65,7 @@ GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -We
 CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security -fstack-protector-all --param ssp-buffer-size=1
 LD_HARDENING_OPTIONS ?= -Wl,--dynamicbase -Wl,--nxcompat
 
+TAG := @$(PURPLE_TOP)/win32/tag.sh
 
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])
@@ -106,6 +107,9 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base -Wl,--enable-auto-import $(LD_HARDE
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
+# comment out the next line to make output more verbose
+CC := $(TAG) "auto" $(CC)
+
 GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.18/bin/msgfmt
 MAKENSIS ?= makensis.exe
 PERL ?= perl
