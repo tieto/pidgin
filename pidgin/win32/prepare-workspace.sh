@@ -50,7 +50,7 @@ ARC_MG9="${DOWNLOAD_HOST}mingw32-headers-20130216-1.1.noarch.rpm;mingw: headers;
 ARCHIVES+="ARC_MG9 "
 
 #gtk and friends
-GTK_DIR="gtk_2_0-2.24"
+GTK_DIR="gtk2-2.24"
 ARC_GT1="${DOWNLOAD_HOST}mingw32-glib2-devel-2.36.0-2.2.noarch.rpm;gtk: Glib;2.36.0-2.2;dd1a632960673c5a3e86a01015a15564d023f8d0;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT1 "
 ARC_GT2="${DOWNLOAD_HOST}mingw32-gtk2-devel-2.24.14-2.2.noarch.rpm;gtk: GTK+2;2.24.14-2.2;8be2b1c9dc94fa9e19f9f95a9b716340bbab643f;${OBS_SKIP};${GTK_DIR}"
@@ -95,7 +95,7 @@ ARCHIVES+="ARC_TK "
 ARC_JSG="${DOWNLOAD_HOST}mingw32-json-glib-devel-0.14.2-1.7.noarch.rpm;json-glib;0.14.2-1.7;e86a81d5c4bbc7a2ea6b808dd5819c883c4303cc;${OBS_SKIP};json-glib-0.14"
 ARCHIVES+="ARC_JSG "
 
-ARC_XML="${DOWNLOAD_HOST}mingw32-libxml2-devel-2.8.0-2.6.noarch.rpm;libxml2;2.8.0-2.6;5ee322c0a3a5b39f690714b1cff9d22338d83bc8;${OBS_SKIP};libxml2-2.8.0"
+ARC_XML="${DOWNLOAD_HOST}mingw32-libxml2-devel-2.8.0-2.6.noarch.rpm;libxml2;2.8.0-2.6;5ee322c0a3a5b39f690714b1cff9d22338d83bc8;${OBS_SKIP};libxml2-2.8"
 ARCHIVES+="ARC_XML "
 
 ARC_WKG="${DOWNLOAD_HOST}mingw32-libwebkitgtk-devel-1.8.3-1.14.noarch.rpm;WebKitGTK+;1.8.3-1.14;5f2ae2c8c04c4ad4309ba677de886f450db1fe6d;${OBS_SKIP};libwebkitgtk-1.10"
