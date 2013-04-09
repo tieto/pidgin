@@ -79,7 +79,8 @@ ARCHIVES+="ARC_ENC "
 ARC_GSP="${DOWNLOAD_HOST}mingw32-gtkspell-devel-2.0.16-2.5.noarch.rpm;GtkSpell;2.0.16-2.5;ededc099c2ad5ede6b27cf5f70753f693fa1f0e3;${OBS_SKIP};gtkspell-2.0"
 ARCHIVES+="ARC_GSP "
 
-ARC_INT="${DOWNLOAD_HOST}intltool_0.40.4-1_win32.zip;intltool;0.40.4-1;e609c31dee8aa60b738c839ea958ec241109e1bd;;intltool_0.40.4-1_win32"
+# TODO: is it really necessary?
+ARC_INT="${DOWNLOAD_HOST}intltool-0.50.2-4.1.1.noarch.rpm;intltool;0.50.2-4.1.1;92c42de2b8a9827b6dca65090dd4b0e293397689;usr;intltool-0.50"
 ARCHIVES+="ARC_INT "
 
 ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-2.6.noarch.rpm;meanwhile;1.0.2-2.6;1a1ceda731486c28aca0b866e4746992bc7ba121;${OBS_SKIP};meanwhile-1.0"

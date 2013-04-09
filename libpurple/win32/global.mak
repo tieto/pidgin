@@ -115,7 +115,7 @@ MAKENSIS ?= makensis.exe
 PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
-INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool_0.40.4-1_win32/bin/intltool-merge
+INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool-0.50/bin/intltool-merge
 MONO_SIGNCODE ?= signcode
 GPG_SIGN ?= gpg
 
