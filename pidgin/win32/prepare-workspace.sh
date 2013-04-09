@@ -23,8 +23,11 @@ ARCHIVES+="ARC_CPI "
 
 ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;;"
 ARCHIVES+="ARC_CSA "
-ARC_NSS="${DOWNLOAD_HOST}nss-3.14.3-nspr-4.9.5.tar.gz;NSS;3.14.3;fb11968ac5e3fabc9594324327856f7fba0ba4b0;;"
+
+ARC_NSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-devel-3.13.3-1.6.noarch.rpm;NSS;3.13.3-1.6;91ea7f1208264da343de51fba882e11336066190;${OBS_SKIP};nss-3.13"
 ARCHIVES+="ARC_NSS "
+ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9-2.6.noarch.rpm;NSPR;4.9-2.6;bd348943b8250cf9fc15da0b7c743141f9404033;${OBS_SKIP};nss-3.13"
+ARCHIVES+="ARC_NSP "
 
 ARC_PID="${DOWNLOAD_HOST}pidgin-inst-deps-20130214.tar.gz;inst-deps;20130214;372218ab472c4070cd45489dae175dea5638cf17;;"
 ARCHIVES+="ARC_PID "
@@ -95,7 +98,7 @@ ARCHIVES+="ARC_TK "
 ARC_JSG="${DOWNLOAD_HOST}mingw32-json-glib-devel-0.14.2-1.7.noarch.rpm;json-glib;0.14.2-1.7;e86a81d5c4bbc7a2ea6b808dd5819c883c4303cc;${OBS_SKIP};json-glib-0.14"
 ARCHIVES+="ARC_JSG "
 
-ARC_XML="${DOWNLOAD_HOST}mingw32-libxml2-devel-2.8.0-2.6.noarch.rpm;libxml2;2.8.0-2.6;5ee322c0a3a5b39f690714b1cff9d22338d83bc8;${OBS_SKIP};libxml2-2.8"
+ARC_XML="${DOWNLOAD_HOST}mingw32-libxml2-devel-2.9.0-2.1.noarch.rpm;libxml2;2.9.0-2.1;bd63823e0be2436ee7d2369aa254e7214a0dd692;${OBS_SKIP};libxml2-2.9"
 ARCHIVES+="ARC_XML "
 
 ARC_WKG="${DOWNLOAD_HOST}mingw32-libwebkitgtk-devel-1.8.3-1.14.noarch.rpm;WebKitGTK+;1.8.3-1.14;5f2ae2c8c04c4ad4309ba677de886f450db1fe6d;${OBS_SKIP};libwebkitgtk-1.10"

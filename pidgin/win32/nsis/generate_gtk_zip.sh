@@ -102,9 +102,11 @@ LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.40.3-1.4.noarch.rpm libsoup 2.40.3-1.
 LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
 LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.7.2-2.4.noarch.rpm libstdc++ 4.7.2-2.4 sha1sum:e031fad6b7bf54c9846d5a857bb8de6faefdcd1b"
 LIBTIFF="${DOWNLOAD_HOST}mingw32-libtiff-4.0.2-1.4.noarch.rpm libtiff 4.0.2-1.4 sha1sum:9a8f8b018e8bafd47067fe6fd0debc1e887239b1"
-LIBXML="${DOWNLOAD_HOST}mingw32-libxml2-2.8.0-2.6.noarch.rpm libxml 2.8.0-2.6 sha1sum:9be07823d7074362abac17bf7a7b092659aed002"
-LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.27-1.4.noarch.rpm libxslt 1.1.27-1.4 sha1sum:4a08612ad73235b0fab95e17644d72e8f24097c3"
+LIBXML="${DOWNLOAD_HOST}mingw32-libxml2-2.9.0-2.1.noarch.rpm libxml 2.9.0-2.1 sha1sum:de73090544effcd167f94fcfe8e2d1f005adbea7"
+LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.28-1.1.noarch.rpm libxslt 1.1.28-1.1 sha1sum:b43448edbbb04d72e355bd45d5bee94414395589"
 MEANW="${DOWNLOAD_HOST}mingw32-meanwhile-1.0.2-2.6.noarch.rpm Meanwhile 1.0.2-2.6 sha1sum:afce5c0157c270ee30c049fdabd7328fa3b3233e"
+MOZNSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-3.13.3-1.6.noarch.rpm NSS 3.13.3-1.6 sha1sum:5eebc0aba6849a782d245c4a6938cc26449dbdb9"
+MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.9-2.6.noarch.rpm NSPR 4.9-2.6 sha1sum:72cf92fde08ea72d62399f1fd709b918e6339df5"
 PANGO="${DOWNLOAD_HOST}mingw32-pango-1.30.1-1.4.noarch.rpm Pango 1.30.1-1.4 sha1sum:69c4515babdf99b0ded04c24dc3a7f33debac934"
 PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.4.noarch.rpm pixman 0.26.0-1.4 sha1sum:f751fe428ea83996daf7e57bff6f4f79361b0d29"
 PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
@@ -118,7 +120,7 @@ TK="${DOWNLOAD_HOST}mingw32-tk-8.5.9-8.6.noarch.rpm Tk 8.5.9-8.6 sha1sum:d0884c5
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
 
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW MOZNSS MOZNSPR PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR
@@ -209,8 +211,6 @@ done
 rm -rf $CPIO_DIR
 rm "${STAGE_DIR}/../cacert.pem"
 echo "All components ready"
-
-cp $INSTALL_DIR/bin/libintl-8.dll $INSTALL_DIR/bin/intl.dll
 
 #Default GTK+ Theme to MS-Windows (already set)
 #echo gtk-theme-name = \"MS-Windows\" > $INSTALL_DIR/etc/gtk-2.0/gtkrc
