@@ -51,6 +51,8 @@ ARC_MG8="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm;mingw: zlib;1.2.7-1.4
 ARCHIVES+="ARC_MG8 "
 ARC_MG9="${DOWNLOAD_HOST}mingw32-headers-20130216-1.1.noarch.rpm;mingw: headers;20130216-1.1;313bdc131e15bbca1e4332395c536f2caa9e54b0;${OBS_SKIP}/include;mingw/lib/gcc/i686-w64-mingw32/4.8.0/include"
 ARCHIVES+="ARC_MG9 "
+ARC_MGA="${DOWNLOAD_HOST}mingw32-libgcc-4.8.0-6.1.noarch.rpm;mingw: libgcc;4.8.0-6.1;ab599bf07bf2d56367c57b442440598358c943af;${OBS_SKIP};mingw"
+ARCHIVES+="ARC_MGA "
 
 #gtk and friends
 GTK_DIR="gtk2-2.24"
@@ -109,6 +111,8 @@ ARCHIVES+="ARC_SOU "
 
 ARC_GTT="${DOWNLOAD_HOST}mingw32-gettext-runtime-0.18.1.1-13.6.noarch.rpm;gettext;0.18.1.1-13.6;e3785e932427d63bf5cf27f258d1236e49437143;${OBS_SKIP};gettext-0.18"
 ARCHIVES+="ARC_GTT "
+ARC_GTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.4.noarch.rpm;gettext: libintl;0.18.1.1-13.4;043c3b8eb9c872681faed5ec5263456a24bf29e4;${OBS_SKIP};gettext-0.18"
+ARCHIVES+="ARC_GTL "
 
 # implementation
 
