@@ -86,7 +86,7 @@ ARCHIVES+="ARC_INT "
 ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-2.6.noarch.rpm;meanwhile;1.0.2-2.6;1a1ceda731486c28aca0b866e4746992bc7ba121;${OBS_SKIP};meanwhile-1.0"
 ARCHIVES+="ARC_MWH "
 
-ARC_PRL="${DOWNLOAD_HOST}perl_5-10-0.tar.gz;Perl;5.10.0;863b2f879698a5407a3edb73a310bdfc9dea8f12;perl-5.10.0;perl-5.10.0"
+ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;f7cb9e70260962fac8e186bfa9a108da3acd4621;perl-5.10.0;perl-5.10"
 ARCHIVES+="ARC_PRL "
 
 ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10.tar.gz;SILC Toolkit;1.1.10;42f835ed28d9567acde8bd3e553c8a5c94b799c5;silc-toolkit-1.1.10;silc-toolkit-1.1.10"

@@ -25,9 +25,10 @@ INCLUDE_PATHS +=		-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_LIB_TOP)/CORE
+			-I$(PERL_LIB_TOP)/include
 
-LIB_PATHS += 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += \
+			-L$(PERL_LIB_TOP)/lib \
 			-L$(PERL_PLUGIN_TOP) \
 			-L$(PURPLE_TOP) \
 			-L$(GTK_TOP)/lib

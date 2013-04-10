@@ -631,7 +631,7 @@ void
 purple_request_fields_get_required(fields)
 	Purple::Request::Fields fields
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = purple_request_fields_get_required(fields); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Request::Field")));
