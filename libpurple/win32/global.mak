@@ -18,7 +18,7 @@ BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
 JSON_GLIB_TOP ?= $(WIN32_DEV_TOP)/json-glib-0.14
 LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0
-NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.13
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.14
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.5
@@ -26,7 +26,9 @@ GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10
 GCC_SSP_TOP ?= $(shell dirname $(shell which $(CC)))
 CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1
 WEBKITGTK_TOP ?= $(WIN32_DEV_TOP)/libwebkitgtk-1.10
-LIBSOUP_TOP ?= $(WIN32_DEV_TOP)/libsoup-2.36
+LIBSOUP_TOP ?= $(WIN32_DEV_TOP)/libsoup-2.40
+GETTEXT_TOP ?= $(WIN32_DEV_TOP)/gettext-0.18
+INTLTOOL_TOP ?= $(WIN32_DEV_TOP)/intltool-0.50
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
@@ -110,12 +112,12 @@ endif
 # comment out the next line to make output more verbose
 CC := $(TAG) "auto" $(CC)
 
-GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.18/bin/msgfmt
+GMSGFMT ?= $(GETTEXT_TOP)/bin/msgfmt
 MAKENSIS ?= makensis.exe
 PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
-INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool-0.50/bin/intltool-merge
+INTLTOOL_MERGE ?= $(INTLTOOL_TOP)/bin/intltool-merge
 MONO_SIGNCODE ?= signcode
 GPG_SIGN ?= gpg
 

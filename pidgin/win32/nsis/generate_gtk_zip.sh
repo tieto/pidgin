@@ -77,12 +77,12 @@ DOWNLOAD_HOST="https://dl.dropbox.com/u/5448886/pidgin-win32/runtime-deps/"
 
 ATK="${DOWNLOAD_HOST}mingw32-atk-2.6.0-1.4.noarch.rpm ATK 2.6.0-1.4 sha1sum:d0792a3355b22cf4f0e218382dde71b1e22a2b03"
 CAIRO2="${DOWNLOAD_HOST}mingw32-libcairo2-1.10.2-8.4.noarch.rpm Cairo 1.10.2-8.4 sha1sum:f69af74753c7fcd95b7778eee7c3d731d64749ba"
-DBUS="${DOWNLOAD_HOST}mingw32-dbus-1-1.4.16-1.4.noarch.rpm D-Bus 1.4.16-1.4 sha1sum:f623a75dedc9646246582f5c62310627b323b30b"
+DBUS="${DOWNLOAD_HOST}mingw32-dbus-1-1.7.0-2.1.noarch.rpm D-Bus 1.7.0-2.1 sha1sum:6961e4df15172b057e91b266dbb7cbd01a736e56"
 DBUS_GLIB="${DOWNLOAD_HOST}mingw32-dbus-1-glib-0.92-3.4.noarch.rpm dbus-glib 0.92-3.4 sha1sum:3af1dd35cbe2cdf62ee5144862934f5f8dd5e20d"
 ENCHANT="${DOWNLOAD_HOST}mingw32-enchant-1.6.0-3.7.noarch.rpm Enchant 1.6.0-3.4 sha1sum:f7e0571ef98833b087be6c9d71008b3c4c4435d6"
-FONTCONFIG="${DOWNLOAD_HOST}mingw32-fontconfig-2.10.1-1.4.noarch.rpm fontconfig 2.10.1-1.4 sha1sum:64fa2a6f8576209dd2253fe52dc59ef8ac92ba6f"
-FREETYPE="${DOWNLOAD_HOST}mingw32-freetype-2.4.10-1.4.noarch.rpm freetype 2.4.10-1.4 sha1sum:62a8a494df380c982d6d131ffa0846b498f3d7d0"
-GDK_PIXBUF="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-2.26.3-1.4.noarch.rpm gdk-pixbuf 2.26.3-1.4 sha1sum:e454ffc771d923a443553599c1981a3cc9e56bab"
+FONTCONFIG="${DOWNLOAD_HOST}mingw32-fontconfig-2.10.92-1.2.noarch.rpm fontconfig 2.10.92-1.2 sha1sum:d8da351f5d4d9816f02ac5287dd7887c711902ed"
+FREETYPE="${DOWNLOAD_HOST}mingw32-freetype-2.4.11-2.1.noarch.rpm freetype 2.4.11-2.1 sha1sum:0eee29696e87d47e7487ba5e90530bf20159f31e"
+GDK_PIXBUF="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-2.28.0-1.1.noarch.rpm gdk-pixbuf 2.28.0-1.1 sha1sum:f75f3c989d8d8ee3f92555d269465d1bc26ea428"
 GEOCLUE="${DOWNLOAD_HOST}mingw32-libgeoclue-0.12.99-1.4.noarch.rpm Geoclue 0.12.99-1.4 sha1sum:cf3df30e75c5b38fbe2f63689cadcc2930823b9c"
 GLIB="${DOWNLOAD_HOST}mingw32-glib2-2.36.0-2.2.noarch.rpm Glib 2.36.0-2.2 sha1sum:1b788be9f7b15cde9452f135831feebc51f3a5a4"
 GST="${DOWNLOAD_HOST}mingw32-libgstreamer-0.10.35-1.4.noarch.rpm GStreamer 0.10.35-1.4 sha1sum:fd5bb6f8a9083eb3ca402670e7c38474f7270efe"
@@ -91,6 +91,7 @@ GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.14-1.4.noarch.rpm GTK+ 2.24.14-1.4 sha1s
 GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.5.noarch.rpm GtkSpell 2.0.16-2.5 sha1sum:49381274b248ffe56ef733a90908541dc587c9af"
 LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.10-2.4.noarch.rpm libffi 3.0.10-2.4 sha1sum:871f13d5f02c03d62b882cc1fa4c98dcff76d4c5"
 LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.0-6.1.noarch.rpm libgcc 4.8.0-6.1 sha1sum:ab599bf07bf2d56367c57b442440598358c943af"
+LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz0-0.9.14-1.5.noarch.rpm libharfbuzz 0.9.14-1.5 sha1sum:54106eb1e8ff42c79ea52c1ef64a066f1f2cb133"
 LIBJASPER="${DOWNLOAD_HOST}mingw32-libjasper-1.900.1-6.4.noarch.rpm JasPer 1.900.1-6.4 sha1sum:25e01ed277b8dda6191afb7dd0e0928558c1f2d6"
 LIBICU="${DOWNLOAD_HOST}mingw32-libicu-51.1-2.1.noarch.rpm ICU 51.1-2.1 sha1sum:97ec8264e38abceeadda4631730bb0b5f3f3ebfe"
 LIBINTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.4.noarch.rpm libintl 0.18.1.1-13.4 sha1sum:043c3b8eb9c872681faed5ec5263456a24bf29e4"
@@ -98,16 +99,16 @@ LIBJPEG="${DOWNLOAD_HOST}mingw32-libjpeg-8d-3.4.noarch.rpm libjpeg 8d-3.4 sha1su
 LIBJSON="${DOWNLOAD_HOST}mingw32-libjson-glib-0.14.2-1.4.noarch.rpm json-glib 0.14.2-1.4 sha1sum:698194c97baf732bd6b109778f2834d71eedc524"
 LIBLZMA="${DOWNLOAD_HOST}mingw32-liblzma-5.0.4-1.4.noarch.rpm liblzma 5.0.4-1.4 sha1sum:ef360fab4b6c77d1618891ccc8f52c2421f37c09"
 LIBPNG="${DOWNLOAD_HOST}mingw32-libpng-1.5.11-1.4.noarch.rpm libpng 1.5.11-1.4 sha1sum:99d0a077f70e83f7df10f28915a2137a0ff34462"
-LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.40.3-1.4.noarch.rpm libsoup 2.40.3-1.4 sha1sum:3f2d836acea04741508a341b2bddaa55fd49f720"
+LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.40.3-1.9.noarch.rpm libsoup 2.40.3-1.9 sha1sum:d343f6f0661c4527901a0ba446f00af2f925e70f"
 LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
-LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.7.2-2.4.noarch.rpm libstdc++ 4.7.2-2.4 sha1sum:e031fad6b7bf54c9846d5a857bb8de6faefdcd1b"
+LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.8.0-6.1.noarch.rpm libstdc++ 4.8.0-6.1 sha1sum:627860950e951764fe1aa229d3a63bb01618ba90"
 LIBTIFF="${DOWNLOAD_HOST}mingw32-libtiff-4.0.2-1.4.noarch.rpm libtiff 4.0.2-1.4 sha1sum:9a8f8b018e8bafd47067fe6fd0debc1e887239b1"
 LIBXML="${DOWNLOAD_HOST}mingw32-libxml2-2.9.0-2.1.noarch.rpm libxml 2.9.0-2.1 sha1sum:de73090544effcd167f94fcfe8e2d1f005adbea7"
 LIBXSLT="${DOWNLOAD_HOST}mingw32-libxslt-1.1.28-1.1.noarch.rpm libxslt 1.1.28-1.1 sha1sum:b43448edbbb04d72e355bd45d5bee94414395589"
-MEANW="${DOWNLOAD_HOST}mingw32-meanwhile-1.0.2-2.6.noarch.rpm Meanwhile 1.0.2-2.6 sha1sum:afce5c0157c270ee30c049fdabd7328fa3b3233e"
-MOZNSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-3.13.3-1.6.noarch.rpm NSS 3.13.3-1.6 sha1sum:5eebc0aba6849a782d245c4a6938cc26449dbdb9"
-MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.9-2.6.noarch.rpm NSPR 4.9-2.6 sha1sum:72cf92fde08ea72d62399f1fd709b918e6339df5"
-PANGO="${DOWNLOAD_HOST}mingw32-pango-1.30.1-1.4.noarch.rpm Pango 1.30.1-1.4 sha1sum:69c4515babdf99b0ded04c24dc3a7f33debac934"
+MEANW="${DOWNLOAD_HOST}mingw32-meanwhile-1.0.2-3.1.noarch.rpm Meanwhile 1.0.2-3.1 sha1sum:89fc8c6c15bf4825a7d750a15134f14c8ae05c9c"
+MOZNSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-3.14.3-2.1.noarch.rpm NSS 3.14.3-2.1 sha1sum:0eec79ddee11f2453af34f85c5939e6d33f6c0c5"
+MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.9.6-3.1.noarch.rpm NSPR 4.9.6-3.1 sha1sum:87b562845f8e46d44e57262752dae406620ae6df"
+PANGO="${DOWNLOAD_HOST}mingw32-pango-1.34.0-2.1.noarch.rpm Pango 1.34.0-2.1 sha1sum:f382abb3dfb822f647a902266039571c0506bfa4"
 PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.4.noarch.rpm pixman 0.26.0-1.4 sha1sum:f751fe428ea83996daf7e57bff6f4f79361b0d29"
 PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
 SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-1.6 sha1sum:f61529bc0c996d9af28a94648ce6102d579ed928"
@@ -120,7 +121,7 @@ TK="${DOWNLOAD_HOST}mingw32-tk-8.5.9-8.6.noarch.rpm Tk 8.5.9-8.6 sha1sum:d0884c5
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.8.3-1.14.noarch.rpm WebKitGTK+ 1.8.3-1.14 sha1sum:ade86455fc2da257f4fe5831367f500a61a1af9a"
 
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW MOZNSS MOZNSPR PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBHB LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW MOZNSS MOZNSPR PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR
@@ -208,8 +209,10 @@ do
 	VAR=${!VAL}
 	download_and_extract "$VAR"
 done
+mv "${STAGE_DIR}/${INSTALL_DIR}/share/tcl8.5" "${STAGE_DIR}/${INSTALL_DIR}/lib/"
 rm -rf $CPIO_DIR
 rm "${STAGE_DIR}/../cacert.pem"
+
 echo "All components ready"
 
 #Default GTK+ Theme to MS-Windows (already set)

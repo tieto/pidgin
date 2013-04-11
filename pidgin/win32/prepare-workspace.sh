@@ -24,9 +24,9 @@ ARCHIVES+="ARC_CPI "
 ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;cyrus-sasl-2.1.25;cyrus-sasl-2.1"
 ARCHIVES+="ARC_CSA "
 
-ARC_NSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-devel-3.13.3-1.6.noarch.rpm;NSS;3.13.3-1.6;91ea7f1208264da343de51fba882e11336066190;${OBS_SKIP};nss-3.13"
+ARC_NSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-devel-3.14.3-2.1.noarch.rpm;NSS;3.14.3-2.1;8851c7989589ab76848f0c7b330a1f283c6d6819;${OBS_SKIP};nss-3.14"
 ARCHIVES+="ARC_NSS "
-ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9-2.6.noarch.rpm;NSPR;4.9-2.6;bd348943b8250cf9fc15da0b7c743141f9404033;${OBS_SKIP};nss-3.13"
+ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9.6-3.1.noarch.rpm;NSPR;4.9.6-3.1;19e2b11cfb4990cd442ccb413875e4f35ef0b00c;${OBS_SKIP};nss-3.14"
 ARCHIVES+="ARC_NSP "
 
 ARC_PID="${DOWNLOAD_HOST}pidgin-inst-deps-20130214.tar.gz;inst-deps;20130214;372218ab472c4070cd45489dae175dea5638cf17;;"
@@ -68,9 +68,9 @@ ARC_GT5="${DOWNLOAD_HOST}mingw32-atk-devel-2.8.0-1.3.noarch.rpm;gtk: ATK;2.8.0-1
 ARCHIVES+="ARC_GT5 "
 ARC_GT6="${DOWNLOAD_HOST}mingw32-cairo-devel-1.10.2-8.8.noarch.rpm;gtk: Cairo;1.10.2-8.8;9b6acea60968eb218a0eedbcca05820576d8d8df;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT6 "
-ARC_GT7="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-devel-2.26.3-1.7.noarch.rpm;gtk: GDK-PixBuf;2.26.3-1.7;6a82f4b03ed83b8d68a414d5631b85d8589471c7;${OBS_SKIP};${GTK_DIR}"
+ARC_GT7="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-devel-2.28.0-1.1.noarch.rpm;gtk: GDK-PixBuf;2.28.0-1.1;94b3d4662ef02338c1b7ae936c3e1271652b1f62;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT7 "
-ARC_GT8="${DOWNLOAD_HOST}mingw32-pango-devel-1.30.1-1.7.noarch.rpm;gtk: Pango;1.30.1-1.7;8cd9e088f5355f499c3b25af1a451c7e63383f98;${OBS_SKIP};${GTK_DIR}"
+ARC_GT8="${DOWNLOAD_HOST}mingw32-pango-devel-1.34.0-2.1.noarch.rpm;gtk: Pango;1.34.0-2.1;d00aed92fb549096234507a431e21567e63c3977;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT8 "
 
 ARC_ENC="${DOWNLOAD_HOST}mingw32-enchant-devel-1.6.0-3.7.noarch.rpm;Enchant;1.6.0-3.7;a535ac09423ba84fcd484ffa2251ab7ceea0121f;${OBS_SKIP};enchant-1.6"
@@ -83,7 +83,7 @@ ARCHIVES+="ARC_GSP "
 ARC_INT="${DOWNLOAD_HOST}intltool-0.50.2-4.1.1.noarch.rpm;intltool;0.50.2-4.1.1;92c42de2b8a9827b6dca65090dd4b0e293397689;usr;intltool-0.50"
 ARCHIVES+="ARC_INT "
 
-ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-2.6.noarch.rpm;meanwhile;1.0.2-2.6;1a1ceda731486c28aca0b866e4746992bc7ba121;${OBS_SKIP};meanwhile-1.0"
+ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-3.1.noarch.rpm;meanwhile;1.0.2-3.1;5a7cfa0057d865149e56445ca100489dc73843ee;${OBS_SKIP};meanwhile-1.0"
 ARCHIVES+="ARC_MWH "
 
 ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;46496029a80cabdfa119cbd70bc14d14bfde8071;perl-5.10.0;perl-5.10"
@@ -107,7 +107,7 @@ ARCHIVES+="ARC_XML "
 ARC_WKG="${DOWNLOAD_HOST}mingw32-libwebkitgtk-devel-1.8.3-1.14.noarch.rpm;WebKitGTK+;1.8.3-1.14;5f2ae2c8c04c4ad4309ba677de886f450db1fe6d;${OBS_SKIP};libwebkitgtk-1.10"
 ARCHIVES+="ARC_WKG "
 
-ARC_SOU="${DOWNLOAD_HOST}mingw32-libsoup-devel-2.36.0-1.4.noarch.rpm;libsoup;2.36.0-1.4;bc0a402add235cc263b972453fe4f1afa6a07ba5;${OBS_SKIP};libsoup-2.36"
+ARC_SOU="${DOWNLOAD_HOST}mingw32-libsoup-devel-2.40.3-1.9.noarch.rpm;libsoup;2.40.3-1.9;8eed05e330ec00edb1b8bcb672a9e1aecbe66560;${OBS_SKIP};libsoup-2.40"
 ARCHIVES+="ARC_SOU "
 
 ARC_GTT="${DOWNLOAD_HOST}mingw32-gettext-runtime-0.18.1.1-13.6.noarch.rpm;gettext;0.18.1.1-13.6;e3785e932427d63bf5cf27f258d1236e49437143;${OBS_SKIP};gettext-0.18"
