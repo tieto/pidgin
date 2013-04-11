@@ -51,8 +51,8 @@ fi
 
 shift 1
 if [ "$object" == "" ]; then
-	echo "$@" > /dev/stderr
+	echo "$@" >&2
 else
-	echo -e "  $tag\t$object" > /dev/stderr
+	echo -e "  $tag\t$object" >&2
 fi
 "$@"

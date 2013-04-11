@@ -21,7 +21,7 @@ OBS_SKIP="usr/i686-w64-mingw32/sys-root/mingw"
 ARC_CPI="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.zip;bsdcpio;3.0.3-1.4;0cb99adb2c2d759c9a21228223e55c8bf227f736;;"
 ARCHIVES+="ARC_CPI "
 
-ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;;"
+ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;cyrus-sasl-2.1.25;cyrus-sasl-2.1"
 ARCHIVES+="ARC_CSA "
 
 ARC_NSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-devel-3.13.3-1.6.noarch.rpm;NSS;3.13.3-1.6;91ea7f1208264da343de51fba882e11336066190;${OBS_SKIP};nss-3.13"
@@ -86,10 +86,10 @@ ARCHIVES+="ARC_INT "
 ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-2.6.noarch.rpm;meanwhile;1.0.2-2.6;1a1ceda731486c28aca0b866e4746992bc7ba121;${OBS_SKIP};meanwhile-1.0"
 ARCHIVES+="ARC_MWH "
 
-ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;f7cb9e70260962fac8e186bfa9a108da3acd4621;perl-5.10.0;perl-5.10"
+ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;46496029a80cabdfa119cbd70bc14d14bfde8071;perl-5.10.0;perl-5.10"
 ARCHIVES+="ARC_PRL "
 
-ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10.tar.gz;SILC Toolkit;1.1.10;42f835ed28d9567acde8bd3e553c8a5c94b799c5;silc-toolkit-1.1.10;silc-toolkit-1.1.10"
+ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10.tar.gz;SILC Toolkit;1.1.10;42f835ed28d9567acde8bd3e553c8a5c94b799c5;silc-toolkit-1.1.10;silc-toolkit-1.1"
 ARCHIVES+="ARC_SIL "
 
 ARC_TCL="${DOWNLOAD_HOST}mingw32-tcl-devel-8.5.9-13.6.noarch.rpm;Tcl;8.5.9-13.6;22a6d0e748d7c7c5863f15199a21019a57a46748;${OBS_SKIP};tcl-8.5"
@@ -298,8 +298,8 @@ path_real "$WIN32DEV_BASE"
 WIN32DEV_BASE="$path_ret"
 
 echo "Installing Bonjour SDK..."
-mkdir "$WIN32DEV_BASE/Bonjour_SDK"
-cp -r "${BONJOUR_SDK_DIR}"/* "$WIN32DEV_BASE/Bonjour_SDK/"
+mkdir "$WIN32DEV_BASE/bonjour-sdk"
+cp -r "${BONJOUR_SDK_DIR}"/* "$WIN32DEV_BASE/bonjour-sdk/"
 
 for ARCHIVE in $ARCHIVES ; do
 	ARCHIVE=${!ARCHIVE}
