@@ -110,8 +110,8 @@ all-local: common/Makefile
 		if [ ! -f Makefile ]; then \
 			$(perlpath) Makefile.PL; \
 		fi && \
-		($(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
-		 $(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
+		($(MAKE) CC="@../../../tag.sh CC $(CC)" PERLRUN="@../../../tag.sh PERL $(PERL)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
+		 $(MAKE) CC="@../../../tag.sh CC $(CC)" PERLRUN="@../../../tag.sh PERL $(PERL)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
 		cd ..; \
 	done
 

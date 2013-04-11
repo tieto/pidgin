@@ -65,7 +65,7 @@ GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -We
 CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security -fstack-protector-all --param ssp-buffer-size=1
 LD_HARDENING_OPTIONS ?= -Wl,--dynamicbase -Wl,--nxcompat
 
-TAG := @$(PURPLE_TOP)/win32/tag.sh
+TAG := @$(PURPLE_TOP)/tag.sh
 
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])
