@@ -197,7 +197,9 @@ static void generate_send_to_items(PidginWindow *win);
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void load_conv_theme(PidginConversation *gtkconv);
 static gboolean infopane_entry_activate(PidginConversation *gtkconv);
+#if 0
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
+#endif
 static void gray_stuff_out(PidginConversation *gtkconv);
 static void add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const char *old_name);
 static gboolean tab_complete(PurpleConversation *conv);
@@ -2439,6 +2441,7 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	pidgin_conv_switch_active_conversation(conv);
 }
 
+#if 0
 static void
 insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 			   gchar *new_text, gint new_text_length, gpointer user_data)
@@ -2485,6 +2488,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 		got_typing_keypress(gtkconv, FALSE);
 	}
 }
+#endif
 
 /**************************************************************************
  * A bunch of buddy icon functions
@@ -3738,6 +3742,7 @@ setup_menubar(PidginWindow *win)
  * Utility functions
  **************************************************************************/
 
+#if 0
 static void
 got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 {
@@ -3766,7 +3771,6 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
-#if 0
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
@@ -4248,6 +4252,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	g_free(alias_key);
 }
 
+#if 0
 /**
  * @param most_matched Used internally by this function.
  * @param entered The partial string that the user types before hitting the
@@ -4303,6 +4308,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 	*matches = g_list_insert_sorted(*matches, g_strdup(name),
 								   (GCompareFunc)purple_utf8_strcasecmp);
 }
+#endif
 
 static gboolean
 tab_complete(PurpleConversation *conv)
@@ -5267,12 +5273,23 @@ set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
 {
 	WebKitWebSettings *settings;
 	const GValue *val;
-
+	
 	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
 
 	val = pidgin_conversation_theme_lookup(theme, "DefaultFontFamily", TRUE);
 	if (val && G_VALUE_HOLDS_STRING(val))
-		g_object_set(G_OBJECT(settings), "default-font-family", g_value_get_string(val), NULL);
+	{
+		const gchar *font_family = g_value_get_string(val);
+#ifdef _WIN32
+		/* XXX: a hack for not converting backslash to yen sign.
+		 * See gtkwebview.c: gtk_webview_new.
+		 */
+		if (g_ascii_strcasecmp(font_family, "sans-serif") == 0)
+			font_family = NULL;
+#endif
+		if (font_family)
+			g_object_set(G_OBJECT(settings), "default-font-family", font_family, NULL);
+	}
 
 	val = pidgin_conversation_theme_lookup(theme, "DefaultFontSize", TRUE);
 	if (val && G_VALUE_HOLDS_INT(val))
@@ -6376,8 +6393,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *str;
 	char *with_font_tag;
 	char *sml_attrib = NULL;
-#endif
 	size_t length;
+#endif
 	PurpleConversationType type;
 	char *displaying;
 	gboolean plugin_return;
@@ -6446,7 +6463,9 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		g_free(displaying);
 		return;
 	}
+#if 0
 	length = strlen(displaying) + 1;
+#endif
 
 	old_flags = gtkconv->last_flags;
 	if ((flags & PURPLE_MESSAGE_SEND) && (old_flags & PURPLE_MESSAGE_SEND)) {

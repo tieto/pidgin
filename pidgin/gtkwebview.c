@@ -1354,7 +1354,21 @@ editable_input_cb(GtkWebView *webview, gpointer data)
 GtkWidget *
 gtk_webview_new(void)
 {
-	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
+	WebKitWebView *webview = WEBKIT_WEB_VIEW(g_object_new(gtk_webview_get_type(), NULL));
+	WebKitWebSettings *settings = webkit_web_view_get_settings(webview);
+	
+	g_object_set(G_OBJECT(settings), "default-encoding", "utf-8", NULL);
+#ifdef _WIN32
+	/* XXX: win32 WebKitGTK replaces backslash with yen sign for
+	 * "sans-serif" font. We should figure out, how to disable this
+	 * behavior, but for now I will just apply this simple hack (using other
+	 * font family).
+	 */
+	g_object_set(G_OBJECT(settings), "default-font-family", "Verdana", NULL);
+#endif
+	webkit_web_view_set_settings(webview, settings);
+	
+	return GTK_WIDGET(webview);
 }
 
 static void
