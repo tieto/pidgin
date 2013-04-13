@@ -117,6 +117,7 @@ OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 LIBS =	\
+		-ldnsapi \
 		-lglib-2.0 \
 		-lgthread-2.0 \
 		-lgobject-2.0 \
