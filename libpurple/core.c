@@ -33,6 +33,7 @@
 #include "debug.h"
 #include "dnsquery.h"
 #include "ft.h"
+#include "glibcompat.h"
 #include "http.h"
 #include "idle.h"
 #include "imgstore.h"
