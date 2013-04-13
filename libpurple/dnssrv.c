@@ -61,13 +61,6 @@ typedef union {
 	HEADER hdr;
 	u_char buf[1024];
 } queryans;
-#else
-static DNS_STATUS (WINAPI *MyDnsQuery_UTF8) (
-	PCSTR lpstrName, WORD wType, DWORD fOptions,
-	PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet,
-	PVOID* pReserved) = NULL;
-static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
-	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
 struct _PurpleSrvTxtQueryData {
@@ -646,7 +639,7 @@ res_thread(gpointer data)
 	DNS_STATUS ds;
 	PurpleSrvTxtQueryData *query_data = data;
 	type = query_data->type;
-	ds = MyDnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
+	ds = DnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		gchar *msg = g_win32_error_message(ds);
 		if (type == DNS_TYPE_SRV) {
@@ -679,7 +672,7 @@ res_thread(gpointer data)
 				lst = g_list_prepend(lst, srvres);
 			}
 
-			MyDnsRecordListFree(dr, DnsFreeRecordList);
+			DnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = purple_srv_sort(lst);
 		} else if (type == DNS_TYPE_TXT) {
 			PDNS_RECORD dr_tmp;
@@ -707,7 +700,7 @@ res_thread(gpointer data)
 				lst = g_list_append(lst, txtres);
 			}
 
-			MyDnsRecordListFree(dr, DnsFreeRecordList);
+			DnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = lst;
 		} else {
 
@@ -739,7 +732,6 @@ purple_srv_resolve(PurpleAccount *account, const char *protocol,
 	int pid;
 #else
 	GError* err = NULL;
-	static gboolean initialized = FALSE;
 #endif
 
 	if (!protocol || !*protocol || !transport || !*transport || !domain || !*domain) {
@@ -834,21 +826,10 @@ purple_srv_resolve(PurpleAccount *account, const char *protocol,
 
 	return query_data;
 #else
-	if (!initialized) {
-		MyDnsQuery_UTF8 = (void*) wpurple_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF8");
-		MyDnsRecordListFree = (void*) wpurple_find_and_loadproc(
-			"dnsapi.dll", "DnsRecordListFree");
-		initialized = TRUE;
-	}
-
-	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
-		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
-	else {
-		query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
-		if (query_data->resolver == NULL) {
-			query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", (err && err->message) ? err->message : "");
-			g_error_free(err);
-		}
+	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+	if (query_data->resolver == NULL) {
+		query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", (err && err->message) ? err->message : "");
+		g_error_free(err);
 	}
 
 	/* The query isn't going to happen, so finish the SRV lookup now.
@@ -875,7 +856,6 @@ PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account,
 	int pid;
 #else
 	GError* err = NULL;
-	static gboolean initialized = FALSE;
 #endif
 
 	proxy_type = purple_proxy_info_get_type(
@@ -965,21 +945,10 @@ PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account,
 
 	return query_data;
 #else
-	if (!initialized) {
-		MyDnsQuery_UTF8 = (void*) wpurple_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF8");
-		MyDnsRecordListFree = (void*) wpurple_find_and_loadproc(
-			"dnsapi.dll", "DnsRecordListFree");
-		initialized = TRUE;
-	}
-
-	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
-		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
-	else {
-		query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
-		if (query_data->resolver == NULL) {
-			query_data->error_message = g_strdup_printf("TXT thread create failure: %s\n", (err && err->message) ? err->message : "");
-			g_error_free(err);
-		}
+	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+	if (query_data->resolver == NULL) {
+		query_data->error_message = g_strdup_printf("TXT thread create failure: %s\n", (err && err->message) ? err->message : "");
+		g_error_free(err);
 	}
 
 	/* The query isn't going to happen, so finish the TXT lookup now.

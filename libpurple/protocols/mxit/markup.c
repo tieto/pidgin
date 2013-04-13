@@ -134,27 +134,26 @@ static void hex_dump( const char* buf, int len )
 void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean isStructured, const char* displaytext )
 {
 #ifdef	MXIT_LINK_CLICK
-	char	retstr[256];
-	gchar*	retstr64;
-	char	link[256];
-	int		len;
+	gchar*	link	= NULL;
+	gchar*	link64	= NULL;
 
 	/*
 	 * The link content is encoded as follows:
 	 *  MXIT_LINK_KEY | ACCOUNT_USER | ACCOUNT_PROTO | REPLY_TO | REPLY_FORMAT | REPLY_DATA
 	 */
-	len = g_snprintf( retstr, sizeof( retstr ), "%s|%s|%s|%s|%i|%s",
+	link = g_strdup_printf( "%s|%s|%s|%s|%i|%s",
 			MXIT_LINK_KEY,
 			purple_account_get_username( mx->session->acc ),
 			purple_account_get_protocol_id( mx->session->acc ),
 			mx->from,
 			isStructured ? 1 : 0,
 			replydata );
-	retstr64 = purple_base64_encode( (const unsigned char*) retstr, len );
-	g_snprintf( link, sizeof( link ), "%s%s", MXIT_LINK_PREFIX, retstr64 );
-	g_free( retstr64 );
+	link64 = purple_base64_encode( (const unsigned char*) link, strlen( link ) );
 
-	g_string_append_printf( mx->msg, "<a href=\"%s\">%s</a>", link, displaytext );
+	g_string_append_printf( mx->msg, "<a href=\"%s%s\">%s</a>", MXIT_LINK_PREFIX, link64, displaytext );
+
+	g_free( link64 );
+	g_free( link );
 #else
 	g_string_append_printf( mx->msg, "<b>%s</b>", replydata );
 #endif
