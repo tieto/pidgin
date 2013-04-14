@@ -27,6 +27,7 @@
 #include <winuser.h>
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "notify.h"
 
 /*

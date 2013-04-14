@@ -3354,7 +3354,7 @@ purple_socket_speaks_ipv4(int fd)
 	case AF_INET6:
 	{
 		int val = 0;
-		guint len = sizeof(val);
+		socklen_t len = sizeof(val);
 
 		if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &val, &len) != 0)
 			return FALSE;
