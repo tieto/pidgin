@@ -862,7 +862,10 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
  * @param account The account this buddy belongs to
  * @param name    The buddy's name (or NULL to return all buddies for the account)
  *
- * @return        A GSList of buddies (which must be freed), or NULL if the buddy doesn't exist
+ * @return        NULL if the buddy doesn't exist, or a GSList of
+ *                PurpleBuddy structs.  You must free the GSList using
+ *                g_slist_free.  Do not free the PurpleBuddy structs that
+ *                the list points to.
  */
 GSList *purple_find_buddies(PurpleAccount *account, const char *name);
 
