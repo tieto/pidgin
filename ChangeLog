@@ -1,8 +1,8 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.8:
-	Stock market:
-	* Didn't really increase, but didn't plummet, either.
+	libpurple:
+	* Impose maximum download size for all HTTP fetches.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:
