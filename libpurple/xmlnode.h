@@ -33,9 +33,9 @@
  */
 typedef enum
 {
-	XMLNODE_TYPE_TAG,		/**< Just a tag */
-	XMLNODE_TYPE_ATTRIB,		/**< Has attributes */
-	XMLNODE_TYPE_DATA		/**< Has data */
+	XMLNODE_TYPE_TAG,     /**< Just a tag */
+	XMLNODE_TYPE_ATTRIB,  /**< Has attributes */
+	XMLNODE_TYPE_DATA     /**< Has data */
 } XMLNodeType;
 
 /**
@@ -44,11 +44,11 @@ typedef enum
 typedef struct _xmlnode xmlnode;
 struct _xmlnode
 {
-	char *name;			/**< The name of the node. */
-	char *xmlns;		/**< The namespace of the node */
-	XMLNodeType type;		/**< The type of the node. */
-	char *data;			/**< The data for the node. */
-	size_t data_sz;			/**< The size of the data. */
+	char *name;                 /**< The name of the node. */
+	char *xmlns;                /**< The namespace of the node */
+	XMLNodeType type;           /**< The type of the node. */
+	char *data;                 /**< The data for the node. */
+	size_t data_sz;             /**< The size of the data. */
 	xmlnode *parent;            /**< The parent node or @c NULL.*/
 	xmlnode *child;             /**< The child node or @c NULL.*/
 	xmlnode *lastchild;         /**< The last child node or @c NULL.*/
@@ -165,7 +165,7 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
  * @param value  The value of the attribute
  */
 void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
-	const char *prefix, const char *value);
+		const char *prefix, const char *value);
 
 /**
  * Gets an attribute from a node.
@@ -349,14 +349,14 @@ void xmlnode_free(xmlnode *node);
  * @param dir  The directory where the file is located
  * @param filename  The filename
  * @param description  A description of the file being parsed. Displayed to
- * 			the user if the file cannot be read.
+ *        the user if the file cannot be read.
  * @param process  The subsystem that is calling xmlnode_from_file. Used as
- * 			the category for debugging.
+ *        the category for debugging.
  *
  * @return The new node or NULL if an error occurred.
  */
 xmlnode *xmlnode_from_file(const char *dir, const char *filename,
-			   const char *description, const char *process);
+		const char *description, const char *process);
 
 G_END_DECLS
 
