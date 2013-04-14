@@ -104,7 +104,9 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 	int					len;
 	char*				tmp;
 	int					res;
+#if 0
 	char*				next;
+#endif
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_http_read\n" );
 
@@ -188,7 +190,10 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		}
 		else if ( buflen > ( ( body - buf ) + bodylen ) ) {
 			/* we have a second packet here */
+#if 0
 			next = body + bodylen;
+#endif
+			purple_debug_warning(MXIT_PLUGIN_ID, "Recieved many packets at once\n");
 			session->rx_res = 0;
 		}
 		else {
