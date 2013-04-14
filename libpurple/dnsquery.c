@@ -818,8 +818,8 @@ resolve_host(PurpleDnsQueryData *query_data)
 	 * Spin off a separate thread to perform the DNS lookup so
 	 * that we don't block the UI.
 	 */
-	query_data->resolver = g_thread_create(dns_thread,
-			query_data, FALSE, &err);
+	query_data->resolver = g_thread_try_new("dnsquery resolver", dns_thread,
+		query_data, &err);
 	if (query_data->resolver == NULL)
 	{
 		char message[1024];
@@ -828,6 +828,8 @@ resolve_host(PurpleDnsQueryData *query_data)
 		g_error_free(err);
 		purple_dnsquery_failed(query_data, message);
 	}
+	else
+		g_thread_unref(query_data->resolver);
 }
 
 #else /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */

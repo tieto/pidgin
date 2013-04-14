@@ -1129,7 +1129,10 @@ purple_network_init(void)
 	else {
 		current_network_count = cnt;
 		if ((MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
-			if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
+			GThread *thread = g_thread_try_new("Network Monitor thread", wpurple_network_change_thread, NULL, &err);
+			if (thread)
+				g_thread_unref(thread);
+			else
 				purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
 		}
 	}

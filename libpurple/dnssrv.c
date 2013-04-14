@@ -826,11 +826,13 @@ purple_srv_resolve(PurpleAccount *account, const char *protocol,
 
 	return query_data;
 #else
-	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+	query_data->resolver = g_thread_try_new("dnssrv srv resolver", res_thread, query_data, &err);
 	if (query_data->resolver == NULL) {
 		query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", (err && err->message) ? err->message : "");
 		g_error_free(err);
 	}
+	else
+		g_thread_unref(query_data->resolver);
 
 	/* The query isn't going to happen, so finish the SRV lookup now.
 	 * Asynchronously call the callback since stuff may not expect
@@ -945,11 +947,13 @@ PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account,
 
 	return query_data;
 #else
-	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+	query_data->resolver = g_thread_try_new("dnssrv srv resolver", res_thread, query_data, &err);
 	if (query_data->resolver == NULL) {
 		query_data->error_message = g_strdup_printf("TXT thread create failure: %s\n", (err && err->message) ? err->message : "");
 		g_error_free(err);
 	}
+	else
+		g_thread_unref(query_data->resolver);
 
 	/* The query isn't going to happen, so finish the TXT lookup now.
 	 * Asynchronously call the callback since stuff may not expect
