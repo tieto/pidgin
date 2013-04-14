@@ -76,8 +76,8 @@ C_SRC =	\
 			nat-pmp.c \
 			network.c \
 			notify.c \
-			obsolete.c \
 			ntlm.c \
+			obsolete.c \
 			plugin.c \
 			pluginpref.c \
 			pounce.c \
