@@ -980,7 +980,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		error = (major == 0) || (*p != '.');
 		if(!error) {
 			p++;
-			/* minor = strtol(p, &p, 10); */
+			/* minor = */ strtol(p, &p, 10);
 			error = (*p != ' ');
 			if(!error) {
 				p++;
