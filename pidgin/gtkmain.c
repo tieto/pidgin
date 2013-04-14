@@ -469,8 +469,13 @@ int main(int argc, char *argv[])
 	debug_enabled = FALSE;
 #endif
 
-	/* Initialize GThread before calling any Glib or GTK+ functions. */
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+	/* GLib threading system is automaticaly initialized since 2.32.
+	 * For earlier versions, it have to be initialized before calling any
+	 * Glib or GTK+ functions.
+	 */
 	g_thread_init(NULL);
+#endif
 
 	g_set_prgname("Pidgin");
 

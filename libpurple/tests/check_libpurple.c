@@ -33,7 +33,10 @@ static PurpleEventLoopUiOps eventloop_ui_ops = {
 
 static void
 purple_check_init(void) {
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+	/* GLib type system is automaticaly initialized since 2.36. */
 	g_type_init();
+#endif
 
 	purple_eventloop_set_ui_ops(&eventloop_ui_ops);
 

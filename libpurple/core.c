@@ -93,7 +93,10 @@ purple_core_init(const char *ui)
 	wpurple_init();
 #endif
 
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+	/* GLib type system is automaticaly initialized since 2.36. */
 	g_type_init();
+#endif
 
 	_core = core = g_new0(PurpleCore, 1);
 	core->ui = g_strdup(ui);

@@ -66,7 +66,10 @@ void purple_init(void)
 {
 	GError *error = NULL;
 
-	g_type_init ();
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+	/* GLib type system is automaticaly initialized since 2.36. */
+	g_type_init();
+#endif
 
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus)
