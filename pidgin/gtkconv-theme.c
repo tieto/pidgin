@@ -461,9 +461,11 @@ static void
 pidgin_conv_theme_init(GTypeInstance *instance,
 		gpointer klass)
 {
+#if 0
 	PidginConvThemePrivate *priv;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(instance);
+#endif
 }
 
 static void

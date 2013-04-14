@@ -2128,11 +2128,11 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *buf;
 	va_list ap;
-	guint16 chan, nummissed, reason;
+	guint16 nummissed, reason;
 	aim_userinfo_t *userinfo;
 
 	va_start(ap, fr);
-	chan = (guint16)va_arg(ap, unsigned int);
+	va_arg(ap, unsigned int); /* guint16 chan */
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	nummissed = (guint16)va_arg(ap, unsigned int);
 	reason = (guint16)va_arg(ap, unsigned int);
@@ -2615,12 +2615,12 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 	PurpleConnection *gc = od->gc;
 	va_list ap;
 	char *bn;
-	guint8 iconcsumtype, *iconcsum, *icon;
+	guint8 *iconcsum, *icon;
 	guint16 iconcsumlen, iconlen;
 
 	va_start(ap, fr);
 	bn = va_arg(ap, char *);
-	iconcsumtype = va_arg(ap, int);
+	va_arg(ap, int); /* iconcsumtype */
 	iconcsum = va_arg(ap, guint8 *);
 	iconcsumlen = va_arg(ap, int);
 	icon = va_arg(ap, guint8 *);
@@ -2925,14 +2925,13 @@ static int purple_popup(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	gchar *text;
 	va_list ap;
 	char *msg, *url;
-	guint16 wid, hei, delay;
 
 	va_start(ap, fr);
 	msg = va_arg(ap, char *);
 	url = va_arg(ap, char *);
-	wid = (guint16) va_arg(ap, int);
-	hei = (guint16) va_arg(ap, int);
-	delay = (guint16) va_arg(ap, int);
+	va_arg(ap, int); /* guint16 wid */
+	va_arg(ap, int); /* guint16 hei */
+	va_arg(ap, int); /* guint16 delay */
 	va_end(ap);
 
 	text = g_strdup_printf("%s<br><a href=\"%s\">%s</a>", msg, url, url);
@@ -3845,8 +3844,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	guint32 tmp;
 	PurpleStoredImage *img;
 	va_list ap;
-	guint16 fmtver, numitems;
-	guint32 timestamp;
 	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 
 	gc = od->gc;
@@ -3854,9 +3851,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
-	fmtver = (guint16)va_arg(ap, int);
-	numitems = (guint16)va_arg(ap, int);
-	timestamp = va_arg(ap, guint32);
+	va_arg(ap, int); /* guint16 fmtver */
+	va_arg(ap, int); /* guint16 numitems */
+	va_arg(ap, guint32); /* timestamp */
 	va_end(ap);
 
 	/* Don't attempt to re-request our buddy list later */
@@ -4236,14 +4233,14 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	char *bn, *msg;
+	char *bn;
 	gchar *dialog_msg, *nombre;
 	struct name_data *data;
 	PurpleBuddy *buddy;
 
 	va_start(ap, fr);
 	bn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
+	va_arg(ap, char *); /* msg */
 	va_end(ap);
 
 	purple_debug_info("oscar",

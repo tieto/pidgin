@@ -469,7 +469,6 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 	GList *roomies = NULL;
 	char *room = NULL;
 	char *topic = NULL;
-	char *someid, *someotherid, *somebase64orhashosomething, *somenegativenumber;
 
 	if (pkt->status == -1) {
 		/* We can't join */
@@ -505,19 +504,15 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			g_free(topic);
 			topic = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
-		case 128:
-			someid = pair->value;
+		case 128: /* some id */
 			break;
 		case 108: /* number of joiners */
 			break;
-		case 129:
-			someotherid = pair->value;
+		case 129: /* some other id */
 			break;
-		case 130:
-			somebase64orhashosomething = pair->value;
+		case 130: /* some base64 or hash or something */
 			break;
-		case 126:
-			somenegativenumber = pair->value;
+		case 126: /* some negative number */
 			break;
 		case 13: /* this is 1. maybe its the type of room? (normal, user created, private, etc?) */
 			break;

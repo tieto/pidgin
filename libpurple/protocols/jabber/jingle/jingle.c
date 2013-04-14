@@ -455,8 +455,7 @@ jingle_create_relay_info(const gchar *ip, guint port, const gchar *username,
 		"password", G_TYPE_STRING, password,
 		"relay-type", G_TYPE_STRING, relay_type,
 		NULL);
-	purple_debug_info("jabber", "created gst_structure %" GST_PTR_FORMAT "\n",
-		turn_setup);
+	purple_debug_info("jabber", "created gst_structure %p\n", turn_setup);
 	if (turn_setup) {
 		memset(&value, 0, sizeof(GValue));
 		g_value_init(&value, GST_TYPE_STRUCTURE);

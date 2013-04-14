@@ -979,13 +979,15 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		major = strtol(p, &p, 10);
 		error = (major == 0) || (*p != '.');
 		if(!error) {
+			int minor;
 			p++;
-			/* minor = */ strtol(p, &p, 10);
+			minor = strtol(p, &p, 10);
 			error = (*p != ' ');
 			if(!error) {
 				p++;
 				status = strtol(p, &p, 10);
 				error = (*p != ' ');
+				(void)minor; /* we don't need it's value */
 			}
 		}
 	}

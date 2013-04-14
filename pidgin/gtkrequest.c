@@ -1649,8 +1649,10 @@ pidgin_request_file(const char *title, const char *filename,
 {
 	PidginRequestData *data;
 	GtkWidget *filesel;
+#ifdef _WIN32
 	const gchar *current_folder;
 	gboolean folder_set = FALSE;
+#endif
 
 	data = g_new0(PidginRequestData, 1);
 	data->type = PURPLE_REQUEST_FILE;
@@ -1674,24 +1676,26 @@ pidgin_request_file(const char *title, const char *filename,
 						NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
 
-	if (savedialog) {
-		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
-	} else {
-		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder");
-	}
-
 	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
 		else if (g_file_test(filename, G_FILE_TEST_EXISTS))
 			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
 	}
+
+#ifdef _WIN32
+
+	if (savedialog) {
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
+	} else {
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder");
+	}
+
 	if ((filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS)) &&
 				(current_folder != NULL) && (*current_folder != '\0')) {
 		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
 	}
 
-#ifdef _WIN32
 	if (!folder_set && (filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS))) {
 		char *my_documents = wpurple_get_special_folder(CSIDL_PERSONAL);
 

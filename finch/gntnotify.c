@@ -88,13 +88,13 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 		 * PurpleNotifyType.  Also, the if() followed by the
 		 * inner switch doesn't make much sense.
 		 */
-		if (type == PURPLE_NOTIFY_FORMATTED) {
+		if ((int)type == (int)PURPLE_NOTIFY_FORMATTED) {
 			int width = -1, height = -1;
 			char *plain = (char*)secondary;
 			msg = gnt_text_view_new();
 			gnt_text_view_set_flag(GNT_TEXT_VIEW(msg), GNT_TEXT_VIEW_TOP_ALIGN | GNT_TEXT_VIEW_NO_SCROLL);
-			switch (type) {
-				case PURPLE_NOTIFY_FORMATTED:
+			switch ((int)type) {
+				case (int)PURPLE_NOTIFY_FORMATTED:
 					plain = purple_markup_strip_html(secondary);
 					if (gnt_util_parse_xhtml_to_textview(secondary, GNT_TEXT_VIEW(msg)))
 						break;
