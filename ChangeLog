@@ -4,6 +4,10 @@ version 2.10.8:
 	libpurple:
 	* Impose maximum download size for all HTTP fetches.
 
+	AIM and ICQ:
+	* Fix a possible crash when receiving a malformed message in a Direct IM
+	  session.
+
 	Windows-Specific Changes:
 	* Updates to dependencies:
 		* NSS 3.14.3 and NSPR 4.9.5
