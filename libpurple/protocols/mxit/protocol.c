@@ -1684,6 +1684,30 @@ static void mxit_parse_cmd_new_sub( struct MXitSession* session, struct record**
 
 
 /*------------------------------------------------------------------------
+ * Parse the received presence value, and ensure that it is supported.
+ *
+ *  @param value		The received presence value.
+ *  @return				A valid presence value.
+ */
+static short mxit_parse_presence( const char* value )
+{
+	short presence = atoi( value );
+
+	/* ensure that the presence value is valid */
+	switch ( presence ) {
+		case MXIT_PRESENCE_OFFLINE :
+		case MXIT_PRESENCE_ONLINE :
+		case MXIT_PRESENCE_AWAY :
+		case MXIT_PRESENCE_DND :
+			return presence;
+
+		default :
+			return MXIT_PRESENCE_ONLINE;
+	}
+}
+
+
+/*------------------------------------------------------------------------
  * Process a received contact update packet.
  *
  *  @param session		The MXit session object
@@ -1714,7 +1738,7 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
 		mxit_strip_domain( contact->username );				/* remove dummy domain */
 		g_strlcpy( contact->alias, rec->fields[2]->data, sizeof( contact->alias ) );
 
-		contact->presence = atoi( rec->fields[3]->data );
+		contact->presence = mxit_parse_presence( rec->fields[3]->data );
 		contact->type = atoi( rec->fields[4]->data );
 		contact->mood = atoi( rec->fields[5]->data );
 
@@ -1773,7 +1797,7 @@ static void mxit_parse_cmd_presence( struct MXitSession* session, struct record*
 		if ( rec->fcount >= 7 )		/* flags field is included */
 			flags = atoi( rec->fields[6]->data );
 
-		mxit_update_buddy_presence( session, rec->fields[0]->data, atoi( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
+		mxit_update_buddy_presence( session, rec->fields[0]->data, mxit_parse_presence( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
 				rec->fields[3]->data, rec->fields[4]->data, flags );
 		mxit_update_buddy_avatar( session, rec->fields[0]->data, rec->fields[5]->data );
 	}
