@@ -21,6 +21,11 @@ purple_network_get_public_ip()
 const unsigned char *
 purple_network_ip_atoi(ip)
 	const char *ip
+PPCODE:
+	RETVAL = purple_network_ip_atoi(ip);
+	sv_setpvn(TARG, (const char *)RETVAL, 4);
+	XSprePUSH;
+	PUSHTARG;
 
 Purple::NetworkListenData
 purple_network_listen(port, socket_type, cb, cb_data)
