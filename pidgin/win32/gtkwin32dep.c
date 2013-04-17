@@ -25,7 +25,9 @@
 #ifndef WINVER
 #define WINVER 0x0500 /* W2K */
 #endif
-#include <windows.h>
+
+#include "internal.h"
+
 #include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,8 +37,6 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
-
-#include "internal.h"
 
 #include "debug.h"
 #include "notify.h"
