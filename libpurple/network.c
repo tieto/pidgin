@@ -121,28 +121,6 @@ static gchar *turn_ip = NULL;
 static GHashTable *upnp_port_mappings = NULL;
 static GHashTable *nat_pmp_port_mappings = NULL;
 
-const unsigned char *
-purple_network_ip_atoi(const char *ip)
-{
-	static unsigned char ret[4];
-	gchar *delimiter = ".";
-	gchar **split;
-	int i;
-
-	g_return_val_if_fail(ip != NULL, NULL);
-
-	split = g_strsplit(ip, delimiter, 4);
-	for (i = 0; split[i] != NULL; i++)
-		ret[i] = atoi(split[i]);
-	g_strfreev(split);
-
-	/* i should always be 4 */
-	if (i != 4)
-		return NULL;
-
-	return ret;
-}
-
 void
 purple_network_set_public_ip(const char *ip)
 {
@@ -287,6 +265,24 @@ purple_network_get_all_local_system_ips(void)
 #endif /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 }
 
+/**
+ * Checks, if specified hostname is valid ipv4 address.
+ *
+ * @param hostname The hostname to be verified.
+ * @return TRUE, if the hostname is valid.
+ */
+static gboolean
+purple_network_is_ipv4(const gchar *hostname)
+{
+	g_return_val_if_fail(hostname != NULL, FALSE);
+
+	/* We don't accept ipv6 here. */
+	if (strchr(hostname, ':') != NULL)
+		return FALSE;
+
+	return g_hostname_is_ip_address(hostname);
+}
+
 const char *
 purple_network_get_my_ip(int fd)
 {
@@ -297,7 +293,7 @@ purple_network_get_my_ip(int fd)
 	if (!purple_prefs_get_bool("/purple/network/auto_ip")) {
 		ip = purple_network_get_public_ip();
 		/* Make sure the IP address entered by the user is valid */
-		if ((ip != NULL) && (purple_network_ip_atoi(ip) != NULL))
+		if ((ip != NULL) && (purple_network_is_ipv4(ip)))
 			return ip;
 	} else {
 		/* Check if STUN discovery was already done */

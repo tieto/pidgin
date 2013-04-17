@@ -40,20 +40,6 @@ typedef struct _PurpleNetworkListenData PurpleNetworkListenData;
 typedef void (*PurpleNetworkListenCallback) (int listenfd, gpointer data);
 
 /**
- * Converts a dot-decimal IP address to an array of unsigned
- * chars.  For example, converts 192.168.0.1 to a 4 byte
- * array containing 192, 168, 0 and 1.
- *
- * @param ip An IP address in dot-decimal notiation.
- * @return An array of 4 bytes containing an IP addresses
- *         equivalent to the given parameter, or NULL if
- *         the given IP address is invalid.  This value
- *         is statically allocated and should not be
- *         freed.
- */
-const unsigned char *purple_network_ip_atoi(const char *ip);
-
-/**
  * Sets the IP address of the local system in preferences.  This
  * is the IP address that should be used for incoming connections
  * (file transfer, direct IM, etc.) and should therefore be

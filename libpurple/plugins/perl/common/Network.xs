@@ -18,10 +18,6 @@ purple_network_get_port_from_fd(fd)
 const char *
 purple_network_get_public_ip()
 
-const unsigned char *
-purple_network_ip_atoi(ip)
-	const char *ip
-
 Purple::NetworkListenData
 purple_network_listen(port, socket_family, socket_type, map_external, cb, cb_data)
 	unsigned short port
