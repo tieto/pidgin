@@ -121,7 +121,6 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		SilcMime p;
 		const char *mtype;
 		SilcDList parts = silc_mime_get_multiparts(mime, &mtype);
-		SilcBool ret;
 
 		if (!strcmp(mtype, "mixed")) {
 			/* Contains multiple messages */
