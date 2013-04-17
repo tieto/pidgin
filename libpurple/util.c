@@ -166,7 +166,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hx", data[i] & 0xFF);
 
 	return ascii;
 }
@@ -234,7 +234,7 @@ purple_base16_encode_chunked(const guchar *data, gsize len)
 	ascii = g_malloc(len * 3 + 1);
 
 	for (i = 0; i < len; i++)
-		g_snprintf(&ascii[i * 3], 4, "%02hhx:", data[i]);
+		g_snprintf(&ascii[i * 3], 4, "%02hx:", data[i] & 0xFF);
 
 	/* Replace the final colon with NULL */
 	ascii[len * 3 - 1] = 0;
@@ -3753,7 +3753,7 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 
 	for (i = 0; i < len; i++)
 		if (binary[i] < 32 || binary[i] > 126)
-			g_string_append_printf(ret, "\\x%02hhx", binary[i]);
+			g_string_append_printf(ret, "\\x%02hx", binary[i] & 0xFF);
 		else if (binary[i] == '\\')
 			g_string_append(ret, "\\\\");
 		else
