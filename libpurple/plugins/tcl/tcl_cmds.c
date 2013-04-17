@@ -1516,7 +1516,8 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
 	int error;
-#if !(defined PURPLE_DISABLE_DEPRECATED)
+# if (0)
+/* #if !(defined PURPLE_DISABLE_DEPRECATED) */
 	PurpleValue *value;
 	const char *attr;
 	int v;

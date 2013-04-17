@@ -2740,7 +2740,10 @@ static GtkWidget *
 sound_page(void)
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *vbox2, *sw, *button, *parent, *parent_parent, *parent_parent_parent;
+	GtkWidget *vbox, *vbox2, *button, *parent, *parent_parent, *parent_parent_parent;
+#ifdef USE_GSTREAMER
+	GtkWidget *sw;
+#endif
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
