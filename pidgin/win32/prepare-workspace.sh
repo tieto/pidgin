@@ -18,7 +18,7 @@ ARCHIVES=""
 OBS_SKIP="usr/i686-w64-mingw32/sys-root/mingw"
 
 # bsdcpio is used for extracting rpms
-ARC_CPI="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.zip;bsdcpio;3.0.3-1.4;0cb99adb2c2d759c9a21228223e55c8bf227f736;;"
+ARC_CPI="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.tar.gz;bsdcpio;3.0.3-1.4;0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da;bsdcpio-3.0.3-1.4;bsdcpio"
 ARCHIVES+="ARC_CPI "
 
 ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;cyrus-sasl-2.1.25;cyrus-sasl-2.1"
@@ -237,7 +237,7 @@ function extract_archive() {
 		$UNZIP -q "$file" -d "tmp" || exit 1
 	elif [ "$ext" == "rpm" ]; then
 		cd "tmp"
-		( ${WIN32DEV_BASE}/bsdcpio/bsdcpio.exe --quiet -di < "../${file}" 2>&1 || exit 1 ) | grep -v -P "${filter_output}" 1>&2
+		( ${WIN32DEV_BASE}/bsdcpio/bsdcpio.exe --quiet -di < "../${file}" 2>&1 ) | grep -v -P "${filter_output}" 1>&2
 		cd ..
 	else
 		echo "Uknown extension: $ext"
