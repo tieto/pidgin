@@ -28,6 +28,8 @@ ARC_NSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-devel-3.14.3-2.1.noarch.rpm;NSS;3.1
 ARCHIVES+="ARC_NSS "
 ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9.6-3.1.noarch.rpm;NSPR;4.9.6-3.1;19e2b11cfb4990cd442ccb413875e4f35ef0b00c;${OBS_SKIP};nss-3.14"
 ARCHIVES+="ARC_NSP "
+ARC_NSPP="${DOWNLOAD_HOST}nspr-warnings-1.patch;NSPR patch;1;dd433456895b7232b61b272a99809f19f804e2ea;0;nss-3.14"
+ARCHIVES+="ARC_NSPP "
 
 ARC_PID="${DOWNLOAD_HOST}pidgin-inst-deps-20130214.tar.gz;inst-deps;20130214;372218ab472c4070cd45489dae175dea5638cf17;;"
 ARCHIVES+="ARC_PID "
@@ -89,13 +91,15 @@ ARCHIVES+="ARC_MWH "
 ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;46496029a80cabdfa119cbd70bc14d14bfde8071;perl-5.10.0;perl-5.10"
 ARCHIVES+="ARC_PRL "
 
-ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10.tar.gz;SILC Toolkit;1.1.10;42f835ed28d9567acde8bd3e553c8a5c94b799c5;silc-toolkit-1.1.10;silc-toolkit-1.1"
+ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10-1.tar.gz;SILC Toolkit;1.1.10-1;ead4463ea2ac9e24f18486d9c827dbf40119de80;silc-toolkit-1.1.10-1;silc-toolkit-1.1"
 ARCHIVES+="ARC_SIL "
 
-ARC_TCL="${DOWNLOAD_HOST}mingw32-tcl-devel-8.5.9-13.6.noarch.rpm;Tcl;8.5.9-13.6;22a6d0e748d7c7c5863f15199a21019a57a46748;${OBS_SKIP};tcl-8.5"
+ARC_TCL="${DOWNLOAD_HOST}mingw32-tcl-devel-8.5.9-13.6.noarch.rpm;Tcl;8.5.9-13.6;22a6d0e748d7c7c5863f15199a21019a57a46748;${OBS_SKIP};tcl-8.5;include/tcl-private/generic/(tcl|tclDecls|tclPlatDecls|tclTomMath|tclTomMathDecls)\\.h"
 ARCHIVES+="ARC_TCL "
+ARC_TCLP="${DOWNLOAD_HOST}tcl-warnings-1.patch;Tcl patch;1;54bc9252c2af4b7ce7436aea7f1fa09a1e849202;0;tcl-8.5"
+ARCHIVES+="ARC_TCLP "
 
-ARC_TK="${DOWNLOAD_HOST}mingw32-tk-devel-8.5.9-8.6.noarch.rpm;Tk;8.5.9-8.6;17fc995bbdca21579b52991c2e74bead1815c76a;${OBS_SKIP};tcl-8.5"
+ARC_TK="${DOWNLOAD_HOST}mingw32-tk-devel-8.5.9-8.6.noarch.rpm;Tk;8.5.9-8.6;17fc995bbdca21579b52991c2e74bead1815c76a;${OBS_SKIP};tcl-8.5;include/tk-private/generic/(tk|tkDecls|tkIntXlibDecls|tkPlatDecls)\\.h"
 ARCHIVES+="ARC_TK "
 
 ARC_JSG="${DOWNLOAD_HOST}mingw32-json-glib-devel-0.14.2-1.7.noarch.rpm;json-glib;0.14.2-1.7;e86a81d5c4bbc7a2ea6b808dd5819c883c4303cc;${OBS_SKIP};json-glib-0.14"
@@ -197,12 +201,32 @@ function extract_archive() {
 	name=`echo "$1" | $CUT -d';' -f2`
 	dir_skip=`echo "$1" | $CUT -d';' -f5`
 	dir_extract=`echo "$1" | $CUT -d';' -f6`
+	filter_output=`echo "$1" | $CUT -d';' -f7`
 	file=`$BASENAME "$url"`
 	ext=`echo "$file" | $SED 's|.*\.\(.*\)|\1|'`
 	
 	old_dir=`pwd`
 	cd "$WIN32DEV_STORE"
 
+	if [ "${filter_output}" == "" ]; then
+		# don't match anything (only rpm)
+		filter_output="$$"
+	fi
+	
+	if [ "$ext" == "patch" ]; then
+		echo "Applying ${name}..."
+		
+		old_tmp="$TMP"
+		TMP="."
+		
+		patch --strip=${dir_skip} --directory="${WIN32DEV_BASE}/${dir_extract}" --forward --quiet --input="$WIN32DEV_STORE/${file}" || exit 1
+		
+		TMP="${old_tmp}"
+		
+		cd "${old_dir}"
+		continue
+	fi
+	
 	echo "Installing ${name}..."
 	
 	rm -rf "tmp"
@@ -213,7 +237,7 @@ function extract_archive() {
 		$UNZIP -q "$file" -d "tmp" || exit 1
 	elif [ "$ext" == "rpm" ]; then
 		cd "tmp"
-		${WIN32DEV_BASE}/bsdcpio/bsdcpio.exe --quiet -di < "../${file}" || exit 1
+		( ${WIN32DEV_BASE}/bsdcpio/bsdcpio.exe --quiet -di < "../${file}" 2>&1 || exit 1 ) | grep -v -P "${filter_output}" 1>&2
 		cd ..
 	else
 		echo "Uknown extension: $ext"
