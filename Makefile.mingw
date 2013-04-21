@@ -99,6 +99,7 @@ endif
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
 	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
+	chmod -R 777 $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:
 	pidgin/win32/nsis/generate_gtk_zip.sh "`pwd`" "$(GPG_SIGN)"

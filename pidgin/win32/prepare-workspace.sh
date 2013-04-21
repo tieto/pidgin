@@ -4,12 +4,14 @@
 #
 # Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>, licensed under GNU GPL
 
-# TODO:
-# * check, if PATH was correctly set (for mingw, perl, nsis)
-
 # configuration
 
 BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB"
+ACTIVEPERL_GUID_PACKED="BC98F31FB8440B94CB3674649419766C 547A2C684F806164DB756F228DAB5840 5E7EC16051106BB43818746C209BC8D7"
+PERL_DIR_FALLBACK="/cygdrive/c/Perl/bin"
+
+DEBUG_SKIP_DOWNLOADING=0
+DEBUG_SKIP_INSTALL=0
 
 #TODO: this is just a temporary mirror - Tomek Wasilczyk's <tomkiewicz@cpw.pidgin.im> Dropbox
 DOWNLOAD_HOST="https://dl.dropbox.com/u/5448886/pidgin-win32/devel-deps/"
@@ -140,14 +142,36 @@ function path_real() {
 }
 
 function reg_get_install_path() {
-	guid_packed=$1
-	reg_key="/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Installer/UserData/S-1-5-18/Products/${guid_packed}/InstallProperties/InstallLocation"
-	if [ -f $reg_key ] ; then
-		path_win32_to_cygwin "`cat ${reg_key}`"
-		reg_ret="${path_ret}"
-	else
-		reg_ret=""
+	reg_ret=""
+	for guid_packed in $1 ; do
+		reg_key="/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Installer/UserData/S-1-5-18/Products/${guid_packed}/InstallProperties/InstallLocation"
+		if [ -f $reg_key ] ; then
+			path_win32_to_cygwin "`cat ${reg_key}`"
+			reg_ret="${path_ret}"
+			break
+		fi
+	done
+}
+
+function check_path() {
+	chk_cmd="$1"
+	expected="$2"
+	
+	expected=`${REALPATH} -e "$expected"`
+	current=`which "${chk_cmd}"`
+	if [ "$expected" == "" ] || [ "$current" == "" ]; then
+		echo "Error while checking path"
+		exit 1
 	fi
+	
+	if [ "$expected" != "$current" ]; then
+		dir=`dirname "${expected}"` || exit 1
+		echo "Adding $dir to PATH"
+		echo "" >> ~/.bashrc
+		echo "export PATH=\"$dir\":\$PATH" >> ~/.bashrc
+		return 1
+	fi
+	return 0
 }
 
 function download() {
@@ -255,7 +279,7 @@ function extract_archive() {
 }
 
 # required and optional system dependencies
-REALPATH=`which realpath 2>/dev/null`
+REALPATH=`which realpath`
 BASENAME=`which basename`
 SED=`which sed`
 CUT=`which cut`
@@ -266,7 +290,7 @@ UNZIP=`which unzip`
 
 if [ "$SED" == "" ] || [ "$CUT" == "" ] || [ "$BASENAME" == "" ] ||
 	[ "$WGET" == "" ] || [ "$SHA1SUM" == "" ] || [ "$TAR" == "" ] ||
-	[ "$UNZIP" == "" ]; then
+	[ "$UNZIP" == "" ] || [ "$REALPATH" == "" ]; then
 	echo
 	echo ERROR: One or more required utilities were not found. Use Cygwin\'s setup.exe to
 	echo install all packages listed above.
@@ -284,7 +308,7 @@ if [ ! -e "${PIDGIN_BASE}/ChangeLog" ]; then
 	exit 1
 fi
 
-if [ -e "$WIN32DEV_BASE" ]; then
+if [ -e "$WIN32DEV_BASE" ] && [ $DEBUG_SKIP_INSTALL == 0 ]; then
 	echo "win32-dev directory exists, please remove it before proceeding"
 	exit 1
 fi
@@ -309,18 +333,39 @@ if [ "$BONJOUR_SDK_DIR" == "" ]; then
 	exit 1;
 fi
 
+# checking for Perl
+
+reg_get_install_path "$ACTIVEPERL_GUID_PACKED"
+ACTIVEPERL_DIR=$reg_ret
+PERL_DIR=""
+if [ "$ACTIVEPERL_DIR" != "" ]; then
+	PERL_DIR="$ACTIVEPERL_DIR/bin"
+else
+	PERL_DIR="$PERL_DIR_FALLBACK"
+fi
+
+if ! ${REALPATH} -e "${PERL_DIR}/perl" &> /dev/null ; then
+	echo "Perl not found in \"${PERL_DIR}\", please install it."
+	exit 1
+fi
+
 # downloading archives
+if [ $DEBUG_SKIP_DOWNLOADING == 0 ]; then
 echo "Downloading and verifying archives..."
 for ARCHIVE in $ARCHIVES ; do
 	ARCHIVE=${!ARCHIVE}
 	download_archive "$ARCHIVE"
 done
+fi
 
 echo "Composing workspace..."
+if [ $DEBUG_SKIP_INSTALL == 0 ]; then
 mkdir "$WIN32DEV_BASE" || exit 1
+fi
 path_real "$WIN32DEV_BASE"
 WIN32DEV_BASE="$path_ret"
 
+if [ $DEBUG_SKIP_INSTALL == 0 ]; then
 echo "Installing Bonjour SDK..."
 mkdir "$WIN32DEV_BASE/bonjour-sdk"
 cp -r "${BONJOUR_SDK_DIR}"/* "$WIN32DEV_BASE/bonjour-sdk/"
@@ -329,8 +374,20 @@ for ARCHIVE in $ARCHIVES ; do
 	ARCHIVE=${!ARCHIVE}
 	extract_archive "$ARCHIVE"
 done
+fi
 
 echo "Removing bsdcpio..."
 rm -rf "${WIN32DEV_BASE}/bsdcpio"
+
+echo "Checking PATH..."
+path_changed=0
+check_path "gcc" "${WIN32DEV_BASE}/mingw/bin/gcc" || path_changed=1
+check_path "perl" "${PERL_DIR}/perl" || path_changed=1
+if [ $path_changed == 1 ]; then
+	echo "PATH changed - executing sub-shell"
+	bash
+	echo "This session uses outdated PATH variable - please exit"
+	exit 1
+fi
 
 echo "Done."
