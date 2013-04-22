@@ -18,8 +18,10 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.24.14.0
-BUNDLE_SHA1SUM="402c265590f304537e31a1f3b04aad32c6eea620"
+BUNDLE_SHA1SUM="f2f1f74295ab237bedddbe38586bb7e5191178f1"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
+#BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
+BUNDLE_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/gtk-runtime-2.24.14.0.zip"
 
 function download() {
 	if [ -e "$2" ]; then
@@ -49,7 +51,7 @@ cat $PIDGIN_BASE/share/ca-certs/*.pem > $STAGE_DIR/../cacert.pem
 FILE="$ZIP_FILE"
 if [ ! -e "$FILE" ]; then
 	echo "Downloading the existing file"
-	download "https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk" "$FILE" "quiet"
+	download "$BUNDLE_URL" "$FILE" "quiet"
 fi
 if [ -e "$FILE" ]; then
 	CHECK_SHA1SUM=`sha1sum $FILE`
@@ -133,10 +135,10 @@ mkdir $INSTALL_DIR
 echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
 
 #TODO: temporary mirror also
-CPIO_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.zip"
-CPIO_SHA1SUM="0cb99adb2c2d759c9a21228223e55c8bf227f736"
+CPIO_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.tar.gz"
+CPIO_SHA1SUM="0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da"
 CPIO_DIR="bsdcpio"
-FILE="bsdcpio.zip"
+FILE="bsdcpio.tar.gz"
 if [ ! -e "$FILE" ]; then
 	echo "Downloading bsdcpio"
 	download "$CPIO_URL" "$FILE" || exit 1
@@ -148,8 +150,9 @@ if [ "$CHECK_SHA1SUM" != "$CPIO_SHA1SUM" ]; then
 	rm $FILE
 	exit 1
 fi
-rm -rf $CPIO_DIR
-unzip -q $FILE -d . || exit 1
+rm -rf "$CPIO_DIR"
+mkdir "$CPIO_DIR"
+tar xf "$FILE" --strip-components=1 --directory="$CPIO_DIR" || exit 1
 
 function download_and_extract {
 	URL=${1%%\ *}
@@ -231,8 +234,11 @@ echo "All components ready"
 #Generate zip file to be included in installer
 rm -f $ZIP_FILE
 zip -9 -r $ZIP_FILE Gtk
-if [ "x$GPG_SIGN" != "x" ]; then
+
+if [ "`$GPG_SIGN -K 2> /dev/null`" != "" ]; then
 	($GPG_SIGN -ab $ZIP_FILE && $GPG_SIGN --verify $ZIP_FILE.asc) || exit 1
+else
+	echo "Warning: cannot sign generated bundle"
 fi
 
 exit 0

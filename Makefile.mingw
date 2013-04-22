@@ -102,7 +102,7 @@ endif
 	chmod -R 777 $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:
-	pidgin/win32/nsis/generate_gtk_zip.sh "`pwd`" "$(GPG_SIGN)"
+	cd pidgin/win32/nsis/ ; ./generate_gtk_zip.sh "$(GPG_SIGN)"
 
 generate_installer_includes: create_release_install_dir gtk_runtime_zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
 	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
