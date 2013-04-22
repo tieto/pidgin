@@ -29,7 +29,7 @@ function download() {
 		exit 1
 	fi
 	failed=0
-	wget -t 3 "$1" -O "$2" -o "wget.log" --retry-connrefused --waitretry=2 \
+	wget -t 5 "$1" -O "$2" -o "wget.log" --retry-connrefused --waitretry=5 \
 		--ca-certificate="${STAGE_DIR}/../cacert.pem" \
 		|| failed=1
 	if [ $failed != 0 ] ; then

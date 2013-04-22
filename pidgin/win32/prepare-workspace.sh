@@ -9,6 +9,7 @@
 BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB"
 ACTIVEPERL_GUID_PACKED="BC98F31FB8440B94CB3674649419766C 547A2C684F806164DB756F228DAB5840 5E7EC16051106BB43818746C209BC8D7"
 PERL_DIR_FALLBACK="/cygdrive/c/Perl/bin"
+NSIS_DIR_REGKEY="HKEY_LOCAL_MACHINE/SOFTWARE/NSIS/@"
 
 DEBUG_SKIP_DOWNLOADING=0
 DEBUG_SKIP_INSTALL=0
@@ -89,6 +90,8 @@ ARCHIVES+="ARC_INT "
 
 ARC_MWH="${DOWNLOAD_HOST}mingw32-meanwhile-devel-1.0.2-3.1.noarch.rpm;meanwhile;1.0.2-3.1;5a7cfa0057d865149e56445ca100489dc73843ee;${OBS_SKIP};meanwhile-1.0"
 ARCHIVES+="ARC_MWH "
+ARC_MWHD="${DOWNLOAD_HOST}mingw32-meanwhile-debug-1.0.2-3.1.noarch.rpm;meanwhile debug symbols;1.0.2-3.1;ad1b315089d0ccb9605c287c382ef307cd864a6a;${OBS_SKIP};meanwhile-1.0"
+ARCHIVES+="ARC_MWHD "
 
 ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;46496029a80cabdfa119cbd70bc14d14bfde8071;perl-5.10.0;perl-5.10"
 ARCHIVES+="ARC_PRL "
@@ -141,16 +144,23 @@ function path_real() {
 	fi
 }
 
+function reg_get_path() {
+	reg_ret=""
+	reg_key="/proc/registry/$1"
+	if [ -f $reg_key ] ; then
+		path_win32_to_cygwin "`cat ${reg_key}`"
+		reg_ret="${path_ret}"
+		return 0
+	fi
+	return 1
+}
+
 function reg_get_install_path() {
 	reg_ret=""
 	for guid_packed in $1 ; do
-		reg_key="/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Installer/UserData/S-1-5-18/Products/${guid_packed}/InstallProperties/InstallLocation"
-		if [ -f $reg_key ] ; then
-			path_win32_to_cygwin "`cat ${reg_key}`"
-			reg_ret="${path_ret}"
-			break
-		fi
+		reg_get_path "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Installer/UserData/S-1-5-18/Products/${guid_packed}/InstallProperties/InstallLocation" && return 0
 	done
+	return 1
 }
 
 function check_path() {
@@ -158,8 +168,8 @@ function check_path() {
 	expected="$2"
 	
 	expected=`${REALPATH} -e "$expected"`
-	current=`which "${chk_cmd}"`
-	if [ "$expected" == "" ] || [ "$current" == "" ]; then
+	current=`which "${chk_cmd}" 2> /dev/null`
+	if [ "$expected" == "" ]; then
 		echo "Error while checking path"
 		exit 1
 	fi
@@ -349,6 +359,25 @@ if ! ${REALPATH} -e "${PERL_DIR}/perl" &> /dev/null ; then
 	exit 1
 fi
 
+# checking for NSIS
+
+reg_get_path "${NSIS_DIR_REGKEY}"
+NSIS_DIR=$reg_ret
+if [ "${NSIS_DIR}" == "" ]; then
+	echo "NSIS not found, please install it."
+	exit 1
+fi
+
+if ! ${REALPATH} -e "${NSIS_DIR}/Plugins/nsisunz.dll" &> /dev/null ; then
+	echo "NSIS plugin \"nsisunz.dll\" not found in \"${NSIS_DIR}/Plugins\", please install it."
+	exit 1
+fi
+
+if ! ${REALPATH} -e "${NSIS_DIR}/Plugins/SHA1Plugin.dll" &> /dev/null ; then
+	echo "NSIS plugin \"SHA1Plugin.dll\" not found in \"${NSIS_DIR}/Plugins\", please install it."
+	exit 1
+fi
+
 # downloading archives
 if [ $DEBUG_SKIP_DOWNLOADING == 0 ]; then
 echo "Downloading and verifying archives..."
@@ -383,6 +412,7 @@ echo "Checking PATH..."
 path_changed=0
 check_path "gcc" "${WIN32DEV_BASE}/mingw/bin/gcc" || path_changed=1
 check_path "perl" "${PERL_DIR}/perl" || path_changed=1
+check_path "makensis" "${NSIS_DIR}/makensis" || path_changed=1
 if [ $path_changed == 1 ]; then
 	echo "PATH changed - executing sub-shell"
 	bash
