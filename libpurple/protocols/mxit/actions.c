@@ -385,7 +385,6 @@ out:
 static void mxit_change_pin_action( PurplePluginAction* action )
 {
 	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= purple_connection_get_protocol_data( gc );
 
 	PurpleRequestFields*		fields	= NULL;
 	PurpleRequestFieldGroup*	group	= NULL;
