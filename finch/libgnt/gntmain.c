@@ -508,7 +508,10 @@ void gnt_init()
 	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
 
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+	/* GLib type system is automaticaly initialized since 2.36. */
 	g_type_init();
+#endif
 
 	init_wm();
 

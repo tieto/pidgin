@@ -767,14 +767,16 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 			if ((now & A_COLOR) != (old & A_COLOR) ||
 				(now & A_REVERSE) != (old & A_REVERSE))
 			{
-				int ret;
 				short fgp, bgp, r, g, b;
 				struct
 				{
 					int r, g, b;
 				} fg, bg;
 
-				ret = pair_content(PAIR_NUMBER(now & A_COLOR), &fgp, &bgp);
+				if (pair_content(PAIR_NUMBER(now & A_COLOR), &fgp, &bgp) != OK) {
+					fgp = -1;
+					bgp = -1;
+				}
 				if (fgp == -1)
 					fgp = COLOR_BLACK;
 				if (bgp == -1)
@@ -785,9 +787,13 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 					fgp = bgp;
 					bgp = tmp;
 				}
-				ret = color_content(fgp, &r, &g, &b);
+				if (color_content(fgp, &r, &g, &b) != OK) {
+					r = g = b = 0;
+				}
 				fg.r = r; fg.b = b; fg.g = g;
-				ret = color_content(bgp, &r, &g, &b);
+				if (color_content(bgp, &r, &g, &b) != OK) {
+					r = g = b = 255;
+				}
 				bg.r = r; bg.b = b; bg.g = g;
 #define ADJUST(x) (x = x * 255 / 1000)
 				ADJUST(fg.r);
@@ -1135,13 +1141,11 @@ toggle_clipboard(GntBindable *bindable, GList *n)
 {
 	static GntWidget *clip;
 	gchar *text;
-	int maxx, maxy;
 	if (clip) {
 		gnt_widget_destroy(clip);
 		clip = NULL;
 		return TRUE;
 	}
-	getmaxyx(stdscr, maxy, maxx);
 	text = gnt_get_clipboard_string();
 	clip = gnt_hwindow_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_TRANSIENT);

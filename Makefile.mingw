@@ -31,7 +31,7 @@ awk 'BEGIN {FS="."} { \
     exit; \
 }' VERSION)
 
-GTK_INSTALL_VERSION = 2.16.6.1
+GTK_INSTALL_VERSION = 2.24.14.0
 
 authenticode_sign = $(MONO_SIGNCODE) \
 		    -spc "$(SIGNCODE_SPC)" -v "$(SIGNCODE_PVK)" \
@@ -50,25 +50,8 @@ PIDGIN_INST_DEP_DIR="$(WIN32_DEV_TOP)/pidgin-inst-deps-20130214"
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
 EXTERNAL_DLLS = \
-	comerr32.dll \
 	exchndl.dll \
-	freebl3.dll \
-	gssapi32.dll \
-	k5sprt32.dll \
-	krb5_32.dll \
-	libenchant.dll \
-	libenchant_ispell.dll \
-	libenchant_myspell.dll \
-	libgtkspell-0.dll \
-	libmeanwhile-1.dll \
-	libnspr4.dll \
-	libplc4.dll \
-	libplds4.dll \
 	libsasl.dll \
-	libssp-0.dll \
-	libxml2-2.dll \
-	nss3.dll \
-	nssutil3.dll \
 	saslANONYMOUS.dll \
 	saslCRAMMD5.dll \
 	saslDIGESTMD5.dll \
@@ -76,11 +59,7 @@ EXTERNAL_DLLS = \
 	saslLOGIN.dll \
 	saslPLAIN.dll \
 	libsilc-1-1-2.dll \
-	libsilcclient-1-1-3.dll \
-	smime3.dll \
-	softokn3.dll \
-	sqlite3.dll \
-	ssl3.dll
+	libsilcclient-1-1-3.dll
 
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
@@ -104,15 +83,11 @@ ifndef DISABLE_NLS
 endif
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
-	mkdir -p $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
-	cp $(GTKSPELL_TOP)/bin/libgtkspell-0.dll $(PIDGIN_INSTALL_DIR)/spellcheck
-	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
-	cp -R $(ENCHANT_TOP)/lib/enchant/*.dll $(PIDGIN_INSTALL_DIR)/spellcheck/lib/enchant
 	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
-	cp $(GCC_SSP_TOP)/libssp-0.dll $(PIDGIN_INSTALL_DIR)
+	chmod -R 777 $(PIDGIN_INSTALL_DIR)
 
 gtk_runtime_zip:
-	pidgin/win32/nsis/generate_gtk_zip.sh "`pwd`" "$(GPG_SIGN)"
+	cd pidgin/win32/nsis/ ; ./generate_gtk_zip.sh "$(GPG_SIGN)"
 
 generate_installer_includes: create_release_install_dir gtk_runtime_zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
 	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
@@ -148,7 +123,9 @@ create_release_install_dir: install
 	find $(STRIPPED_RELEASE_DIR) \( -name '*.dll' -o -name '*.exe' \) \
 	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) \
 	 -exec $(STRIP) --strip-unneeded {} ';'
+ifdef SIGN_EXECUTABLES
 	$(call authenticode_sign, $(STRIPPED_RELEASE_DIR)/pidgin.exe, "Pidgin $(PIDGIN_VERSION)")
+endif
 
 installer: generate_installer_includes
 	$(eval $@_DEBUG_SYMBOLS_SHA1SUM := $(shell sha1sum $(DEBUG_SYMBOLS_DIR).zip | sed -e "s/\ .*$$//"))
@@ -157,23 +134,33 @@ installer: generate_installer_includes
 		-DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" \
 		-DDEBUG_SYMBOLS_SHA1SUM="$($@_DEBUG_SYMBOLS_SHA1SUM)" -DGTK_SHA1SUM="$($@_GTK_SHA1SUM)"\
 		pidgin/win32/nsis/pidgin-installer.nsi
+ifdef SIGN_EXECUTABLES
 	$(call authenticode_sign, pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe, "Pidgin Installer")
+endif
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe ./
+ifdef SIGN_EXECUTABLES
 	$(call gpg_sign, pidgin-$(PIDGIN_VERSION).exe)
+endif
 
 installer_offline: generate_installer_includes
 	$(MAKENSIS) -V3 -DPIDGIN_VERSION="$(PIDGIN_VERSION)" -DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" \
 		-DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" \
 		-DOFFLINE_INSTALLER \
 		pidgin/win32/nsis/pidgin-installer.nsi
+ifdef SIGN_EXECUTABLES
 	$(call authenticode_sign, pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-offline.exe, "Pidgin Installer")
+endif
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-offline.exe ./
+ifdef SIGN_EXECUTABLES
 	$(call gpg_sign, pidgin-$(PIDGIN_VERSION)-offline.exe)
+endif
 
 installer_zip: create_release_install_dir
 	rm -f pidgin-$(PIDGIN_VERSION)-win32-bin.zip
 	zip -9 -r pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(STRIPPED_RELEASE_DIR)
+ifdef SIGN_EXECUTABLES
 	$(call gpg_sign, pidgin-$(PIDGIN_VERSION)-win32-bin.zip)
+endif
 
 debug_symbols_zip: install
 	rm -rf $(DEBUG_SYMBOLS_DIR) $(DEBUG_SYMBOLS_DIR).zip
@@ -181,9 +168,11 @@ debug_symbols_zip: install
 	tar -cf - `find $(PIDGIN_INSTALL_DIR) \( -name '*.dll' -o -name '*.exe' \) \
 	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -print` \
 	 | tar --strip 2 --xform s/$$/.dbgsym/ -xC $(DEBUG_SYMBOLS_DIR) -f -
-	cp $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll.unstripped $(DEBUG_SYMBOLS_DIR)/libmeanwhile-1.dll.dbgsym
+	cp $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll.debug $(DEBUG_SYMBOLS_DIR)/libmeanwhile-1.dll.dbgsym
 	zip -9 -r $(DEBUG_SYMBOLS_DIR).zip $(DEBUG_SYMBOLS_DIR) 
+ifdef SIGN_EXECUTABLES
 	$(call gpg_sign, $(DEBUG_SYMBOLS_DIR).zip)
+endif
 
 installers: installer installer_offline debug_symbols_zip installer_zip
 

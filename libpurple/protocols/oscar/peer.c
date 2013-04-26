@@ -642,6 +642,40 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 /**
+ * Converts a dot-decimal IP address to an array of unsigned
+ * chars.  For example, converts 192.168.0.1 to a 4 byte
+ * array containing 192, 168, 0 and 1.
+ *
+ * @param ip An IP address in dot-decimal notiation.
+ * @return An array of 4 bytes containing an IP addresses
+ *         equivalent to the given parameter, or NULL if
+ *         the given IP address is invalid.  This value
+ *         is statically allocated and should not be
+ *         freed.
+ */
+static const unsigned char *
+peer_ip_atoi(const char *ip)
+{
+	static unsigned char ret[4];
+	gchar *delimiter = ".";
+	gchar **split;
+	int i;
+
+	g_return_val_if_fail(ip != NULL, NULL);
+
+	split = g_strsplit(ip, delimiter, 4);
+	for (i = 0; split[i] != NULL; i++)
+		ret[i] = atoi(split[i]);
+	g_strfreev(split);
+
+	/* i should always be 4 */
+	if (i != 4)
+		return NULL;
+
+	return ret;
+}
+
+/**
  * We've just opened a listener socket, so we send the remote
  * user an ICBM and ask them to connect to us.
  */
@@ -692,13 +726,13 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	else
 		listener_ip = purple_network_get_my_ip(bos_conn->fd);
 
-	ip_atoi = purple_network_ip_atoi(listener_ip);
+	ip_atoi = peer_ip_atoi(listener_ip);
 	if (ip_atoi == NULL) {
 		/* Could not convert IP to 4 byte array--weird, but this does
 		   happen for some users (#4829, Adium #15839).  Maybe they're
 		   connecting with IPv6...?  Maybe through a proxy? */
 		purple_debug_error("oscar", "Can't ask peer to connect to us "
-				"because purple_network_ip_atoi(%s) returned NULL. "
+				"because peer_ip_atoi(%s) returned NULL. "
 				"fd=%d. is_ssl=%d\n",
 				listener_ip ? listener_ip : "(null)",
 				bos_conn->gsc ? bos_conn->gsc->fd : bos_conn->fd,

@@ -546,8 +546,8 @@ slpmsg_add_part(MsnSlpMessage *slpmsg, MsnSlpMessagePart *part)
 				|| (offset + part->size) > slpmsg->size
 				|| msn_p2p_info_get_offset(slpmsg->p2p_info) != offset) {
 			purple_debug_error("msn",
-				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
-				slpmsg->size, offset, part->size);
+				"Oversized slpmsg - msgsize=%" G_GSIZE_FORMAT " offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
+				(gsize)slpmsg->size, offset, (gsize)part->size);
 			g_return_if_reached();
 		} else {
 			memcpy(slpmsg->buffer + offset, part->buffer, part->size);

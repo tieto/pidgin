@@ -39,10 +39,14 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/include/cairo \
+			-I$(GTK_TOP)/include/gdk-pixbuf-2.0 \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GTKSPELL_TOP)/include/gtkspell-2.0
+			-I$(GTKSPELL_TOP)/include/gtkspell-2.0 \
+			-I$(LIBSOUP_TOP)/include/libsoup-2.4 \
+			-I$(WEBKITGTK_TOP)/include/webkitgtk-1.0
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(WEBKITGTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP)
 
@@ -129,7 +133,8 @@ PIDGIN_LIBS =	\
 		-lgdk-win32-2.0 \
 		-lgdk_pixbuf-2.0 \
 		-lgdi32 \
-		-lwinmm
+		-lwinmm \
+		-lwebkitgtk-1.0
 
 include $(PIDGIN_COMMON_RULES)
 
@@ -148,6 +153,8 @@ win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 
 install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	cp $(EXE_TARGET).exe $(PIDGIN_TARGET).dll $(PIDGIN_INSTALL_DIR)
+	mkdir -p "$(PIDGIN_INSTALL_DIR)/pidgin/theme/"
+	cp -r themes/* "$(PIDGIN_INSTALL_DIR)/pidgin/theme/"
 
 install: install_shallow all
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install

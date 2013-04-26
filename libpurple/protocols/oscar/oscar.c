@@ -898,7 +898,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 
 	msg = g_string_new("Sending hash: ");
 	for (x = 0; x < 16; x++)
-		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
+		g_string_append_printf(msg, "%02hx ", m[x] & 0xFF);
 	g_string_append(msg, "\n");
 	purple_debug_misc("oscar", "%s", msg->str);
 	g_string_free(msg, TRUE);
@@ -2072,7 +2072,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		default: {
 			purple_debug_info("oscar",
 					   "Received a channel 4 message of unknown type "
-					   "(type 0x%02hhx).\n", args->type);
+					   "(type 0x%02hx).\n", args->type & 0xFF);
 		} break;
 	}
 
@@ -2128,11 +2128,11 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *buf;
 	va_list ap;
-	guint16 chan, nummissed, reason;
+	guint16 nummissed, reason;
 	aim_userinfo_t *userinfo;
 
 	va_start(ap, fr);
-	chan = (guint16)va_arg(ap, unsigned int);
+	va_arg(ap, unsigned int); /* guint16 chan */
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	nummissed = (guint16)va_arg(ap, unsigned int);
 	reason = (guint16)va_arg(ap, unsigned int);
@@ -2418,7 +2418,7 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
-			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %hhd, Exchange List (%d total): ", maxrooms, exchangecount);
+			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %hd, Exchange List (%d total): ", maxrooms, exchangecount);
 			for (i = 0; i < exchangecount; i++) {
 				g_string_append_printf(msg, "%hu", exchanges[i].number);
 				if (exchanges[i].name) {
@@ -2459,7 +2459,7 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			ck = va_arg(ap, char *);
 
 			purple_debug_misc("oscar",
-					"created room: %s %hu %hu %hu %u %hu %hu %hhu %hu %s %s\n",
+					"created room: %s %hu %hu %hu %u %hu %hu %hu %hu %s %s\n",
 					fqcn ? fqcn : "(null)", exchange, instance, flags, createtime,
 					maxmsglen, maxoccupancy, createperms, unknown,
 					name ? name : "(null)", ck);
@@ -2615,12 +2615,12 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 	PurpleConnection *gc = od->gc;
 	va_list ap;
 	char *bn;
-	guint8 iconcsumtype, *iconcsum, *icon;
+	guint8 *iconcsum, *icon;
 	guint16 iconcsumlen, iconlen;
 
 	va_start(ap, fr);
 	bn = va_arg(ap, char *);
-	iconcsumtype = va_arg(ap, int);
+	va_arg(ap, int); /* iconcsumtype */
 	iconcsum = va_arg(ap, guint8 *);
 	iconcsumlen = va_arg(ap, int);
 	icon = va_arg(ap, guint8 *);
@@ -2925,14 +2925,13 @@ static int purple_popup(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	gchar *text;
 	va_list ap;
 	char *msg, *url;
-	guint16 wid, hei, delay;
 
 	va_start(ap, fr);
 	msg = va_arg(ap, char *);
 	url = va_arg(ap, char *);
-	wid = (guint16) va_arg(ap, int);
-	hei = (guint16) va_arg(ap, int);
-	delay = (guint16) va_arg(ap, int);
+	va_arg(ap, int); /* guint16 wid */
+	va_arg(ap, int); /* guint16 hei */
+	va_arg(ap, int); /* guint16 delay */
 	va_end(ap);
 
 	text = g_strdup_printf("%s<br><a href=\"%s\">%s</a>", msg, url, url);
@@ -3845,8 +3844,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	guint32 tmp;
 	PurpleStoredImage *img;
 	va_list ap;
-	guint16 fmtver, numitems;
-	guint32 timestamp;
 	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 
 	gc = od->gc;
@@ -3854,9 +3851,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
-	fmtver = (guint16)va_arg(ap, int);
-	numitems = (guint16)va_arg(ap, int);
-	timestamp = va_arg(ap, guint32);
+	va_arg(ap, int); /* guint16 fmtver */
+	va_arg(ap, int); /* guint16 numitems */
+	va_arg(ap, guint32); /* timestamp */
 	va_end(ap);
 
 	/* Don't attempt to re-request our buddy list later */
@@ -3959,7 +3956,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL)) {
 			/* Got node with invalid UTF-8 in the name.  Skip it. */
 			purple_debug_warning("oscar", "ssi: server list contains item of "
-					"type 0x%04hhx with a non-utf8 name\n", curitem->type);
+					"type 0x%04hx with a non-utf8 name\n", curitem->type);
 			continue;
 		}
 
@@ -4052,7 +4049,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					if (perm_deny != 0 && perm_deny != purple_account_get_privacy_type(account))
 					{
 						purple_debug_info("oscar",
-								   "ssi: changing permdeny from %d to %hhu\n", purple_account_get_privacy_type(account), perm_deny);
+								   "ssi: changing permdeny from %d to %hu\n", purple_account_get_privacy_type(account), perm_deny);
 						purple_account_set_privacy_type(account, perm_deny);
 					}
 				}
@@ -4236,14 +4233,14 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	char *bn, *msg;
+	char *bn;
 	gchar *dialog_msg, *nombre;
 	struct name_data *data;
 	PurpleBuddy *buddy;
 
 	va_start(ap, fr);
 	bn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
+	va_arg(ap, char *); /* msg */
 	va_end(ap);
 
 	purple_debug_info("oscar",
@@ -4316,7 +4313,7 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", bn, reply);
+			   "ssi: received authorization reply from %s.  Reply is 0x%04hx\n", bn, reply);
 
 	buddy = purple_find_buddy(purple_connection_get_account(gc), bn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))

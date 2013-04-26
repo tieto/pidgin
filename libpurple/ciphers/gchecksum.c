@@ -1,4 +1,5 @@
 #include <cipher.h>
+#include "ciphers.h"
 
 static void
 purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)

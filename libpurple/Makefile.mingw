@@ -8,10 +8,9 @@ PIDGIN_TREE_TOP := ..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libpurple
-NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2-2.dll
 
 ifeq ($(CYRUS_SASL), 1)
-NEEDED_DLLS += $(CYRUS_SASL_TOP)/bin/libsasl.dll
+NEEDED_DLLS = $(CYRUS_SASL_TOP)/bin/libsasl.dll
 
 CYRUS_SASL_PLUGINS = \
                         $(CYRUS_SASL_TOP)/bin/sasl2/saslANONYMOUS.dll \
@@ -33,9 +32,11 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(JSON_GLIB_TOP)/include/json-glib-1.0 \
 			-I$(LIBXML2_TOP)/include/libxml2
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(JSON_GLIB_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib
 
 ##
@@ -63,9 +64,12 @@ C_SRC =	\
 			dnssrv.c \
 			eventloop.c \
 			ft.c \
+			http.c \
 			idle.c \
 			imgstore.c \
 			log.c \
+			media/candidate.c \
+			media/enum-types.c \
 			mediamanager.c \
 			media.c \
 			mime.c \
@@ -73,6 +77,7 @@ C_SRC =	\
 			network.c \
 			notify.c \
 			ntlm.c \
+			obsolete.c \
 			plugin.c \
 			pluginpref.c \
 			pounce.c \
@@ -114,13 +119,15 @@ OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 LIBS =	\
+		-ldnsapi \
 		-lglib-2.0 \
 		-lgthread-2.0 \
 		-lgobject-2.0 \
 		-lgmodule-2.0 \
 		-lintl \
 		-lws2_32 \
-		-lxml2
+		-lxml2 \
+		-ljson-glib-1.0
 
 include $(PIDGIN_COMMON_RULES)
 

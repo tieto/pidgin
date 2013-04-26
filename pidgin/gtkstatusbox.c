@@ -2326,15 +2326,15 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 				&error) || error)
 		{
 			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_write() "
-					"failed with size=%zu: %s\n",
-					purple_imgstore_get_size(status_box->buddy_icon_img),
+					"failed with size=%" G_GSIZE_FORMAT ": %s\n",
+					(gsize)purple_imgstore_get_size(status_box->buddy_icon_img),
 					error ? error->message : "(no error message)");
 			if (error)
 				g_error_free(error);
 		} else if (!gdk_pixbuf_loader_close(loader, &error) || error) {
 			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_close() "
-					"failed for image of size %zu: %s\n",
-					purple_imgstore_get_size(status_box->buddy_icon_img),
+					"failed for image of size %" G_GSIZE_FORMAT ": %s\n",
+					(gsize)purple_imgstore_get_size(status_box->buddy_icon_img),
 					error ? error->message : "(no error message)");
 			if (error)
 				g_error_free(error);

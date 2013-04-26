@@ -40,6 +40,13 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 C_SRC =	\
+	account.c \
+	avatar.c \
+	buddylist.c \
+	confer.c \
+	deprecated.c \
+	gg.c \
+	image.c \
 	lib/common.c \
 	lib/dcc.c \
 	lib/dcc7.c \
@@ -56,12 +63,21 @@ C_SRC =	\
 	lib/pubdir50.c \
 	lib/resolver.c \
 	lib/sha1.c \
-	buddylist.c \
-	confer.c \
-	gg.c \
-	search.c \
+	libgadu-events.c \
+	libgaduw.c \
+	multilogon.c \
+	oauth/oauth.c \
+	oauth/oauth-parameter.c \
+	oauth/oauth-purple.c \
+	pubdir-prpl.c \
+	purplew.c \
+	resolver-purple.c \
+	roster.c \
+	servconn.c \
+	status.c \
 	utils.c \
-	resolver-purple.c
+	validator.c \
+	xml.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
@@ -72,7 +88,8 @@ LIBS =	\
 			-lglib-2.0 \
 			-lintl \
 			-lpurple \
-			-lws2_32
+			-lws2_32 \
+			-lz
 
 include $(PIDGIN_COMMON_RULES)
 

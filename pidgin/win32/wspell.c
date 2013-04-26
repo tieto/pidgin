@@ -27,7 +27,6 @@
 #include <config.h>
 #endif
 #ifdef USE_GTKSPELL
-#include <windows.h>
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
@@ -88,19 +87,17 @@ static void load_gtkspell() {
 	g_setenv("PATH", tmp2, TRUE);
 	g_free(tmp2);
 
-	tmp = g_build_filename(wpurple_install_dir(), "spellcheck", GTKSPELL_DLL, NULL);
 	/* Suppress error popups */
-	wpidginspell_new_attach_proxy = (void*) wpurple_find_and_loadproc(tmp, "gtkspell_new_attach" );
+	wpidginspell_new_attach_proxy = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_new_attach" );
 	if (wpidginspell_new_attach_proxy) {
-		wpidginspell_get_from_text_view = (void*) wpurple_find_and_loadproc(tmp, "gtkspell_get_from_text_view");
-		wpidginspell_detach = (void*) wpurple_find_and_loadproc(tmp, "gtkspell_detach");
-		wpidginspell_set_language = (void*) wpurple_find_and_loadproc(tmp, "gtkspell_set_language");
-		wpidginspell_recheck_all = (void*) wpurple_find_and_loadproc(tmp, "gtkspell_recheck_all");
+		wpidginspell_get_from_text_view = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_get_from_text_view");
+		wpidginspell_detach = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_detach");
+		wpidginspell_set_language = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_set_language");
+		wpidginspell_recheck_all = (void*) wpurple_find_and_loadproc(GTKSPELL_DLL, "gtkspell_recheck_all");
 	} else {
-		purple_debug_warning("wspell", "Couldn't load gtkspell (%s) \n", tmp);
+		purple_debug_warning("wspell", "Couldn't load gtkspell (%s) \n", GTKSPELL_DLL);
 		/*wpidginspell_new_attach = wgtkspell_new_attach;*/
 	}
-	g_free(tmp);
 	SetErrorMode(old_error_mode);
 }
 

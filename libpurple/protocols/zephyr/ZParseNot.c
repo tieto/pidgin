@@ -120,6 +120,9 @@ Code_t ZParseNotice(buffer, len, notice)
 	Z_debug ("ZParseNotice: bad packet from %s/%d (line %d)",
 		 inet_ntoa (notice->z_uid.zuid_addr.s_addr),
 		 notice->z_port, lineno);
+#else
+	/* We won't use lineno anywhere else, so let's silence a warning. */
+	(void)lineno;
 #endif
 #else
     badpkt:

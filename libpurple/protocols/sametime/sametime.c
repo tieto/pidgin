@@ -433,12 +433,9 @@ static int mw_session_io_write(struct mwSession *session,
 
 static void mw_session_io_close(struct mwSession *session) {
   struct mwPurplePluginData *pd;
-  PurpleConnection *gc;
 
   pd = mwSession_getClientData(session);
   g_return_if_fail(pd != NULL);
-
-  gc = pd->gc;
 
   if(pd->outpa) {
     purple_input_remove(pd->outpa);
@@ -1337,13 +1334,11 @@ static void blist_menu_nab(PurpleBlistNode *node, gpointer data) {
 static void blist_node_menu_cb(PurpleBlistNode *node,
                                GList **menu, struct mwPurplePluginData *pd) {
   const char *owner;
-  PurpleGroup *group;
   PurpleAccount *acct;
   PurpleMenuAction *act;
 
   /* we only want groups */
   if(! PURPLE_BLIST_NODE_IS_GROUP(node)) return;
-  group = (PurpleGroup *) node;
 
   acct = purple_connection_get_account(pd->gc);
   g_return_if_fail(acct != NULL);
@@ -1354,6 +1349,7 @@ static void blist_node_menu_cb(PurpleBlistNode *node,
 #if 0
   /* if there's anyone in the group for this acct, offer to invite
      them all to a conference */
+  group = (PurpleGroup *) node;
   if(purple_group_on_account(group, acct)) {
     act = purple_menu_action_new(_("Invite Group to Conference..."),
                                PURPLE_CALLBACK(blist_menu_group_invite),
@@ -2026,20 +2022,11 @@ static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
 static void mw_conf_peer_joined(struct mwConference *conf,
 				struct mwLoginInfo *peer) {
 
-  struct mwServiceConference *srvc;
-  struct mwSession *session;
-  struct mwPurplePluginData *pd;
-  PurpleConnection *gc;
   PurpleConvChat *g_conf;
 
   const char *n = mwConference_getName(conf);
 
   DEBUG_INFO("%s joined conf %s\n", NSTR(peer->user_id), NSTR(n));
-
-  srvc = mwConference_getService(conf);
-  session = mwService_getSession(MW_SERVICE(srvc));
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
 
   g_conf = mwConference_getClientData(conf);
   g_return_if_fail(g_conf != NULL);
@@ -2052,20 +2039,11 @@ static void mw_conf_peer_joined(struct mwConference *conf,
 static void mw_conf_peer_parted(struct mwConference *conf,
 				struct mwLoginInfo *peer) {
 
-  struct mwServiceConference *srvc;
-  struct mwSession *session;
-  struct mwPurplePluginData *pd;
-  PurpleConnection *gc;
   PurpleConvChat *g_conf;
 
   const char *n = mwConference_getName(conf);
 
   DEBUG_INFO("%s left conf %s\n", NSTR(peer->user_id), NSTR(n));
-
-  srvc = mwConference_getService(conf);
-  session = mwService_getSession(MW_SERVICE(srvc));
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
 
   g_conf = mwConference_getClientData(conf);
   g_return_if_fail(g_conf != NULL);
@@ -3052,20 +3030,11 @@ static void mw_place_closed(struct mwPlace *place, guint32 code) {
 
 static void mw_place_peerJoined(struct mwPlace *place,
 				const struct mwIdBlock *peer) {
-  struct mwServicePlace *srvc;
-  struct mwSession *session;
-  struct mwPurplePluginData *pd;
-  PurpleConnection *gc;
   PurpleConversation *gconf;
 
   const char *n = mwPlace_getName(place);
 
   DEBUG_INFO("%s joined place %s\n", NSTR(peer->user), NSTR(n));
-
-  srvc = mwPlace_getService(place);
-  session = mwService_getSession(MW_SERVICE(srvc));
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
 
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
@@ -3077,20 +3046,11 @@ static void mw_place_peerJoined(struct mwPlace *place,
 
 static void mw_place_peerParted(struct mwPlace *place,
 				const struct mwIdBlock *peer) {
-  struct mwServicePlace *srvc;
-  struct mwSession *session;
-  struct mwPurplePluginData *pd;
-  PurpleConnection *gc;
   PurpleConversation *gconf;
 
   const char *n = mwPlace_getName(place);
 
   DEBUG_INFO("%s left place %s\n", NSTR(peer->user), NSTR(n));
-
-  srvc = mwPlace_getService(place);
-  session = mwService_getSession(MW_SERVICE(srvc));
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
 
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
@@ -5041,6 +5001,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   const char *filename;
   gsize filesize;
   FILE *fp;
+  char *remote_user = NULL;
 
   struct mwIdBlock idb = { NULL, NULL };
 
@@ -5051,9 +5012,11 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   pd = purple_connection_get_protocol_data(gc);
   srvc = pd->srvc_ft;
 
+  remote_user = g_strdup(purple_xfer_get_remote_user(xfer));
+
   filename = purple_xfer_get_local_filename(xfer);
   filesize = purple_xfer_get_size(xfer);
-  idb.user = purple_xfer_get_remote_user(xfer);
+  idb.user = remote_user;
 
   purple_xfer_update_progress(xfer);
 
@@ -5064,6 +5027,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
 				filename, g_strerror(errno));
     purple_xfer_error(purple_xfer_get_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
     g_free(msg);
+    g_free(remote_user);
     return;
   }
   fclose(fp);
@@ -5080,6 +5044,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   purple_xfer_set_protocol_data(xfer, ft);
 
   mwFileTransfer_offer(ft);
+  g_free(remote_user);
 }
 
 

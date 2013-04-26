@@ -616,11 +616,11 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		return;
 	}
 
-	purple_debug_info("jabber", "going to test %hhu different methods\n", jsx->rxqueue[1]);
+	purple_debug_info("jabber", "going to test %hu different methods\n", jsx->rxqueue[1]);
 
 	for(i=0; i<jsx->rxqueue[1]; i++) {
 
-		purple_debug_info("jabber", "testing %hhu\n", jsx->rxqueue[i+2]);
+		purple_debug_info("jabber", "testing %hu\n", jsx->rxqueue[i+2]);
 		if(jsx->rxqueue[i+2] == 0x00) {
 			g_free(jsx->rxqueue);
 			jsx->rxlen = 0;

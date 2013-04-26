@@ -25,7 +25,7 @@ INCLUDE_PATHS +=	-I. \
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(TCL_LIB_TOP)
+			-L$(TCL_LIB_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -47,8 +47,8 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lpurple \
-			-ltclstub84 \
-			-ltkstub84
+			-ltclstub85 \
+			-ltkstub85
 
 include $(PIDGIN_COMMON_RULES)
 

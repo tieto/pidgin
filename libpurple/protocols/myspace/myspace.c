@@ -1842,11 +1842,11 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
-							"%zu characters, which is longer than the "
+							"%" G_GSIZE_FORMAT " characters, which is longer than the "
 							"maximum length of %d.  Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg,
-							strlen(purple_connection_get_password(session->gc)),
+							(gsize)strlen(purple_connection_get_password(session->gc)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */

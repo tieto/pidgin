@@ -1558,7 +1558,6 @@ imhtml_url_clicked(GtkIMHtml *imhtml, const char *url)
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
-	GtkBindingSet *binding_set;
 	GObjectClass   *gobject_class;
 	gobject_class = (GObjectClass*) klass;
 	parent_class = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
@@ -1714,6 +1713,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        TRUE, G_PARAM_READABLE));
 
 #if 0
+	GtkBindingSet *binding_set;
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);

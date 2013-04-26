@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
 
 #include	"mxit.h"
 #include	"cipher.h"
@@ -107,12 +107,12 @@ static char* transport_layer_key( struct MXitSession* session )
  */
 char* mxit_encrypt_password( struct MXitSession* session )
 {
-	char		key[16 + 1];
-	char		exkey[512];
-	GString*	pass			= NULL;
-	GString*	encrypted		= NULL;
-	char*		base64;
-	int			i;
+	char			key[16 + 1];
+	char			exkey[512];
+	GString*		pass			= NULL;
+	GString*		encrypted		= NULL;
+	char*			base64;
+	unsigned int	i;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_encrypt_password\n" );
 
@@ -154,11 +154,11 @@ char* mxit_encrypt_password( struct MXitSession* session )
  */
 char* mxit_decrypt_message( struct MXitSession* session, char* message )
 {
-	guchar*		raw_message;
-	gsize		raw_len;
-	char		exkey[512];
-	GString*	decoded		= NULL;
-	int			i;
+	guchar*			raw_message;
+	gsize			raw_len;
+	char			exkey[512];
+	GString*		decoded		= NULL;
+	unsigned int	i;
 
 	/* remove optional header: <mxitencrypted ver="5.2"/> */
 	if ( strncmp( message, ENCRYPT_HEADER, strlen( ENCRYPT_HEADER ) ) == 0 )
@@ -209,11 +209,11 @@ char* mxit_decrypt_message( struct MXitSession* session, char* message )
  */
 char* mxit_encrypt_message( struct MXitSession* session, char* message )
 {
-	GString*	raw_message	= NULL;
-	char		exkey[512];
-	GString*	encoded		= NULL;
-	gchar*		base64;
-	int			i;
+	GString*		raw_message	= NULL;
+	char			exkey[512];
+	GString*		encoded		= NULL;
+	gchar*			base64;
+	unsigned int	i;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "encrypt message: '%s'\n", message );
 

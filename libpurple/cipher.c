@@ -35,6 +35,7 @@
  */
 #include "internal.h"
 #include "cipher.h"
+#include "ciphers/ciphers.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "signals.h"
@@ -222,20 +223,6 @@ purple_ciphers_get_handle() {
 
 	return &handle;
 }
-
-/* These are implemented in the purple-ciphers sublibrary built in the ciphers
- * directory.  We could put a header file in there, but it's less hassle for
- * the developer to just add it here since they have to register it here as
- * well.
- */
-PurpleCipherOps *purple_des_cipher_get_ops();
-PurpleCipherOps *purple_des3_cipher_get_ops();
-PurpleCipherOps *purple_hmac_cipher_get_ops();
-PurpleCipherOps *purple_md4_cipher_get_ops();
-PurpleCipherOps *purple_md5_cipher_get_ops();
-PurpleCipherOps *purple_rc4_cipher_get_ops();
-PurpleCipherOps *purple_sha1_cipher_get_ops();
-PurpleCipherOps *purple_sha256_cipher_get_ops();
 
 void
 purple_ciphers_init() {

@@ -826,13 +826,26 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 
 	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
 #if GST_CHECK_VERSION(1,0,0)
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 #else
 	value = gst_value_list_get_value(list, 0);
 #endif
 	value_db = g_value_get_double(value);
 	percent = pow(10, value_db / 20);
 	return (percent > 1.0) ? 1.0 : percent;
+}
+
+static void
+purple_media_error_fs(PurpleMedia *media, const gchar *error,
+		const GstStructure *fs_error)
+{
+	const gchar *error_msg = gst_structure_get_string(fs_error, "error-msg");
+
+	purple_media_error(media, "%s%s%s", error,
+	                   error_msg ? _("\n\nMessage from Farsight: ") : "",
+	                   error_msg ? error_msg : "");
 }
 
 static void
@@ -908,25 +921,57 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 	if (gst_structure_has_name(structure, "farstream-error")) {
 #endif
 		FsError error_no;
+		gboolean error_emitted = FALSE;
 		gst_structure_get_enum(structure, "error-no",
 				FS_TYPE_ERROR, (gint*)&error_no);
 		switch (error_no) {
+			case FS_ERROR_CONSTRUCTION:
+				purple_media_error_fs(priv->media,
+				                      _("Error initializing the call. "
+				                        "This probably denotes problem in "
+#ifdef HAVE_FARSIGHT
+				                        "installation of GStreamer or Farsight."),
+#else
+				                        "installation of GStreamer or Farstream."),
+#endif
+				                      structure);
+				error_emitted = TRUE;
+				break;
+			case FS_ERROR_NETWORK:
+				purple_media_error_fs(priv->media, _("Network error."),
+				                      structure);
+				error_emitted = TRUE;
+				purple_media_end(priv->media, NULL, NULL);
+				break;
+			case FS_ERROR_NEGOTIATION_FAILED:
+				purple_media_error_fs(priv->media,
+				                      _("Codec negotiation failed. "
+				                        "This problem might be resolved by installing"
+				                        "more GStreamer codecs."),
+				                      structure);
+				error_emitted = TRUE;
+				purple_media_end(priv->media, NULL, NULL);
+				break;
 			case FS_ERROR_NO_CODECS:
-				purple_media_error(priv->media, _("No codecs"
-						" found. Install some"
-						" GStreamer codecs found"
-						" in GStreamer plugins"
-						" packages."));
+				purple_media_error(priv->media,
+				                   _("No codecs found. "
+				                     "Install some GStreamer codecs found "
+				                     " in GStreamer plugins packages."));
+				error_emitted = TRUE;
 				purple_media_end(priv->media, NULL, NULL);
 				break;
 #ifdef HAVE_FARSIGHT
 			case FS_ERROR_NO_CODECS_LEFT:
-				purple_media_error(priv->media, _("No codecs"
-						" left. Your codec"
-						" preferences in"
-						" fs-codecs.conf are too"
-						" strict."));
+				purple_media_error(priv->media,
+				                   _("No codecs left. Your codec preferences "
+				                     "in fs-codecs.conf are too strict."));
+				error_emitted = TRUE;
 				purple_media_end(priv->media, NULL, NULL);
+				break;
+			case FS_ERROR_CONNECTION_FAILED:
+				purple_media_error(priv->media,
+				                   _("Could not connect to the remote party"));
+				error_emitted = TRUE;
 				break;
 			case FS_ERROR_UNKNOWN_CNAME:
 				/*
@@ -944,18 +989,18 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 						"farstream-error: %i: %s\n",
 #endif
 						error_no,
-						gst_structure_get_string(
-						structure, "error-msg"));
+						gst_structure_get_string(structure, "error-msg"));
 				break;
 		}
 
 		if (FS_ERROR_IS_FATAL(error_no)) {
+			if (!error_emitted)
 #ifdef HAVE_FARSIGHT
-			purple_media_error(priv->media, _("A non-recoverable "
-					"Farsight2 error has occurred."));
+			purple_media_error(priv->media,
+			                   _("A non-recoverable Farsight2 error has occurred."));
 #else
-			purple_media_error(priv->media, _("A non-recoverable "
-					"Farstream error has occurred."));
+			purple_media_error(priv->media,
+			                   _("A non-recoverable Farstream error has occurred."));
 #endif
 			purple_media_end(priv->media, NULL, NULL);
 		}
@@ -1894,7 +1939,9 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 		memset(&value, 0, sizeof(GValue));
 		g_value_init(&value, GST_TYPE_STRUCTURE);
 		gst_value_set_structure(&value, turn_setup);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		relay_info = g_value_array_append(relay_info, &value);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gst_structure_free(turn_setup);
 	}
 
@@ -1989,7 +2036,9 @@ create_stream(PurpleMediaBackendFs2 *self,
 	}
 
 	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		GValueArray *relay_info = g_value_array_new(0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gint port;
 		const gchar *username =	purple_prefs_get_string(
 				"/purple/network/turn_username");
@@ -2016,11 +2065,11 @@ create_stream(PurpleMediaBackendFs2 *self,
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";
-		g_value_init(&_params[_num_params].value,
-			G_TYPE_VALUE_ARRAY);
-		g_value_set_boxed(&_params[_num_params].value,
-			relay_info);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+		g_value_init(&_params[_num_params].value, G_TYPE_VALUE_ARRAY);
+		g_value_set_boxed(&_params[_num_params].value, relay_info);
 		g_value_array_free(relay_info);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		_num_params++;
 	}
 

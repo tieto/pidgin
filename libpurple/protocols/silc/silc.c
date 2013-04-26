@@ -919,7 +919,9 @@ silcpurple_attrs(PurplePluginAction *action)
 		mbored = FALSE, mexcited = FALSE, manxious = FALSE;
 	gboolean cemail = FALSE, ccall = FALSE, csms = FALSE,
 		cmms = FALSE, cchat = TRUE, cvideo = FALSE;
+#ifdef HAVE_SYS_UTSNAME_H
 	gboolean device = TRUE;
+#endif
 	char status[1024], tz[16];
 
 	sg = purple_connection_get_protocol_data(gc);
@@ -967,10 +969,12 @@ silcpurple_attrs(PurplePluginAction *action)
 					 NULL, (void *)&attr))
 			silc_attribute_get_object(attr, &status, sizeof(status));
 
+#ifdef HAVE_SYS_UTSNAME_H
 		if (!silc_hash_table_find(attrs,
 					  SILC_32_TO_PTR(SILC_ATTRIBUTE_DEVICE_INFO),
 					  NULL, (void *)&attr))
 			device = FALSE;
+#endif
 	}
 
 	fields = purple_request_fields_new();

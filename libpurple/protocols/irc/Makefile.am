@@ -27,7 +27,7 @@ else
 st =
 pkg_LTLIBRARIES   = libirc.la
 libirc_la_SOURCES = $(IRCSOURCES)
-libirc_la_LIBADD  = $(GLIB_LIBS)
+libirc_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS)
 
 endif
 

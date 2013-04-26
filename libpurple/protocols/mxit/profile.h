@@ -26,8 +26,6 @@
 #ifndef		_MXIT_PROFILE_H_
 #define		_MXIT_PROFILE_H_
 
-#include	<glib.h>
-
 
 /* MXit relationship status types */
 #define MXIT_RELATIONSHIP_UNKNOWN		0
@@ -61,7 +59,7 @@ struct MXitProfile {
 	char		aboutme[513];						/* about me */
 	int			relationship;						/* relationship status */
 
-	int			flags;								/* user's profile flags */
+	gint64		flags;								/* user's profile flags */
 	gint64		lastonline;							/* user's last-online timestamp */
 };
 

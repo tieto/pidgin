@@ -8,7 +8,6 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libsametime
-NEEDED_DLLS = $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -67,7 +66,6 @@ all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 

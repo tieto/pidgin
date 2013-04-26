@@ -764,6 +764,9 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 
 	/* This is frivolous. (Thank you SmarterChild.) */
 	vercount = byte_stream_bytes_left(bs)/4;
+
+	/* XXX: vercount probably should be used for reading versions. */
+	(void)vercount;
 	versions = byte_stream_getraw(bs, byte_stream_bytes_left(bs));
 	g_free(versions);
 

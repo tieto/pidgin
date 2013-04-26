@@ -4,7 +4,7 @@
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
 
 %.c: %.xs
-	$(PERL) -MExtUtils::ParseXS -e 'ExtUtils::ParseXS::process_file(filename => "$<", output => "$@", typemap => "$(PURPLE_PERL_TOP)/common/typemap");'
+	$(TAG) "PERL" $(PERL) -MExtUtils::ParseXS -e 'ExtUtils::ParseXS::process_file(filename => "$<", output => "$@", typemap => "$(PURPLE_PERL_TOP)/common/typemap");'
 
 %.o: %.rc
 	$(WINDRES) -I$(PURPLE_TOP) -i $< -o $@

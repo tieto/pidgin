@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
 #include	"obsolete.h"
 
 #include	"protocol.h"
@@ -134,27 +134,26 @@ static void hex_dump( const char* buf, int len )
 void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean isStructured, const char* displaytext )
 {
 #ifdef	MXIT_LINK_CLICK
-	char	retstr[256];
-	gchar*	retstr64;
-	char	link[256];
-	int		len;
+	gchar*	link	= NULL;
+	gchar*	link64	= NULL;
 
 	/*
 	 * The link content is encoded as follows:
 	 *  MXIT_LINK_KEY | ACCOUNT_USER | ACCOUNT_PROTO | REPLY_TO | REPLY_FORMAT | REPLY_DATA
 	 */
-	len = g_snprintf( retstr, sizeof( retstr ), "%s|%s|%s|%s|%i|%s",
+	link = g_strdup_printf( "%s|%s|%s|%s|%i|%s",
 			MXIT_LINK_KEY,
 			purple_account_get_username( mx->session->acc ),
 			purple_account_get_protocol_id( mx->session->acc ),
 			mx->from,
 			isStructured ? 1 : 0,
 			replydata );
-	retstr64 = purple_base64_encode( (const unsigned char*) retstr, len );
-	g_snprintf( link, sizeof( link ), "%s%s", MXIT_LINK_PREFIX, retstr64 );
-	g_free( retstr64 );
+	link64 = purple_base64_encode( (const unsigned char*) link, strlen( link ) );
 
-	g_string_append_printf( mx->msg, "<a href=\"%s\">%s</a>", link, displaytext );
+	g_string_append_printf( mx->msg, "<a href=\"%s%s\">%s</a>", MXIT_LINK_PREFIX, link64, displaytext );
+
+	g_free( link64 );
+	g_free( link );
 #else
 	g_string_append_printf( mx->msg, "<b>%s</b>", replydata );
 #endif
@@ -203,7 +202,7 @@ static unsigned int asn_getlength( const char* data, int* size )
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const char* data, char type, char** utf8 )
+static int asn_getUtf8( const char* data, unsigned char type, char** utf8 )
 {
 	int		len;
 
@@ -250,12 +249,12 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 {
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
-	int				pos		= 0;
-	int				start	= 0;
-	int				l_nl	= 0;
-	int				l_sp	= 0;
-	int				l_gt	= 0;
-	int				stop	= 0;
+	unsigned int	pos		= 0;
+	unsigned int	start	= 0;
+	unsigned int	l_nl	= 0;
+	unsigned int	l_sp	= 0;
+	unsigned int	l_gt	= 0;
+	unsigned int	stop	= 0;
 	int				tags	= 0;
 	gboolean		intag	= FALSE;
 
@@ -392,7 +391,7 @@ void mxit_show_message( struct RXMsgData* mx )
 			if ( end == mx->msg->len )			/* end of emoticon tag not found */
 				break;
 
-			ii = g_strndup(&mx->msg->str[emo_ofs], end - emo_ofs);
+			ii = g_strndup( &mx->msg->str[emo_ofs], end - emo_ofs );
 
 			/* remove inline image tag */
 			g_string_erase( mx->msg, start, ( end - start ) + 1 );
@@ -411,7 +410,7 @@ void mxit_show_message( struct RXMsgData* mx )
 				g_string_insert( mx->msg, start, tag );
 			}
 
-			g_free(ii);
+			g_free( ii );
 		}
 	}
 
@@ -654,7 +653,7 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
  */
 static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 {
-	int		vibeid;
+	unsigned int	vibeid;
 
 	vibeid = message[2] - '0';
 

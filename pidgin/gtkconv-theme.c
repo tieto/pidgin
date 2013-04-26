@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "internal.h"
+
 #include "gtkconv-theme.h"
 
 #include "conversation.h"
@@ -28,7 +30,6 @@
 #include "xmlnode.h"
 
 #include "pidgin.h"
-#include "internal.h"
 #include "gtkconv.h"
 #include "gtkwebview.h"
 
@@ -461,9 +462,11 @@ static void
 pidgin_conv_theme_init(GTypeInstance *instance,
 		gpointer klass)
 {
+#if 0
 	PidginConvThemePrivate *priv;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(instance);
+#endif
 }
 
 static void

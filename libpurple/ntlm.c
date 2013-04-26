@@ -243,8 +243,9 @@ gensesskey(char *buffer)
 			red = 0;
 		} else if (red < 16) {
 			purple_debug_warning("ntlm", "Tried reading 16 bytes from "
-					"/dev/urandom but only got %zd.  Falling back to "
-					"inferior method\n", red);
+					"/dev/urandom but only got %"
+					G_GSSIZE_FORMAT ".  Falling back to "
+					"inferior method\n", (gssize)red);
 		}
 	} else {
 		purple_debug_warning("ntlm", "Error opening /dev/urandom: %s."
