@@ -479,11 +479,18 @@ kwallet_get_handle(void)
 	return &handle;
 }
 
-static void kwallet_core_initialized_cb(void)
+static const char *kwallet_get_ui_name(void)
 {
-	const gchar *appName = g_get_application_name();
-	if (qCoreApp && appName)
-		qCoreApp->setApplicationName(appName);
+	GHashTable *ui_info;
+	const char *ui_name = NULL;
+
+	ui_info = purple_core_get_ui_info();
+	if (ui_info != NULL)
+		ui_name = (const char*)g_hash_table_lookup(ui_info, "name");
+	if (ui_name == NULL)
+		ui_name = KWALLET_APP_NAME;
+
+	return ui_name;
 }
 
 static gboolean
@@ -492,7 +499,7 @@ kwallet_load(PurplePlugin *plugin)
 	if (!qCoreApp) {
 		int argc = 0;
 		qCoreApp = new QCoreApplication(argc, NULL);
-		qCoreApp->setApplicationName(KWALLET_APP_NAME);
+		qCoreApp->setApplicationName(kwallet_get_ui_name());
 	}
 
 	if (!kwallet_is_enabled()) {
@@ -511,10 +518,6 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
 
 	purple_keyring_register(keyring_handler);
-
-	purple_signal_connect(purple_get_core(), "core-initialized",
-		kwallet_get_handle(),
-		PURPLE_CALLBACK(kwallet_core_initialized_cb), NULL);
 
 	return TRUE;
 }
