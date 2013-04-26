@@ -203,21 +203,21 @@ purple_keyring_set_id(PurpleKeyring *keyring, const char *id)
 }
 
 void
-purple_keyring_set_read_password(PurpleKeyring *keyring, PurpleKeyringRead read)
+purple_keyring_set_read_password(PurpleKeyring *keyring, PurpleKeyringRead read_cb)
 {
 	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(read != NULL);
+	g_return_if_fail(read_cb != NULL);
 
-	keyring->read_password = read;
+	keyring->read_password = read_cb;
 }
 
 void
-purple_keyring_set_save_password(PurpleKeyring *keyring, PurpleKeyringSave save)
+purple_keyring_set_save_password(PurpleKeyring *keyring, PurpleKeyringSave save_cb)
 {
 	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(save != NULL);
+	g_return_if_fail(save_cb != NULL);
 
-	keyring->save_password = save;
+	keyring->save_password = save_cb;
 }
 
 void
@@ -229,11 +229,11 @@ purple_keyring_set_cancel_requests(PurpleKeyring *keyring, PurpleKeyringCancelRe
 }
 
 void
-purple_keyring_set_close_keyring(PurpleKeyring *keyring, PurpleKeyringClose close)
+purple_keyring_set_close_keyring(PurpleKeyring *keyring, PurpleKeyringClose close_cb)
 {
 	g_return_if_fail(keyring != NULL);
 
-	keyring->close_keyring = close;
+	keyring->close_keyring = close_cb;
 }
 
 void
@@ -487,13 +487,13 @@ purple_keyring_drop_passwords(const PurpleKeyring *keyring,
 	PurpleKeyringDropCallback cb, gpointer data)
 {
 	GList *cur;
-	PurpleKeyringSave save;
+	PurpleKeyringSave save_cb;
 	PurpleKeyringDropTracker *tracker;
 
 	g_return_if_fail(keyring != NULL);
 
-	save = purple_keyring_get_save_password(keyring);
-	g_return_if_fail(save != NULL);
+	save_cb = purple_keyring_get_save_password(keyring);
+	g_return_if_fail(save_cb != NULL);
 
 	tracker = g_new0(PurpleKeyringDropTracker, 1);
 	tracker->cb = cb;
@@ -504,7 +504,7 @@ purple_keyring_drop_passwords(const PurpleKeyring *keyring,
 		if (cur->next == NULL)
 			tracker->finished = TRUE;
 
-		save(cur->data, NULL, purple_keyring_drop_passwords_cb,
+		save_cb(cur->data, NULL, purple_keyring_drop_passwords_cb,
 			tracker);
 	}
 }
@@ -517,10 +517,10 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 	g_return_if_fail(tracker != NULL);
 
 	if (tracker->succeeded) {
-		PurpleKeyringClose close =
+		PurpleKeyringClose close_cb =
 			purple_keyring_get_close_keyring(tracker->old);
-		if (close != NULL)
-			close(NULL);
+		if (close_cb != NULL)
+			close_cb(NULL);
 
 		purple_debug_info("keyring", "Successfully changed keyring.\n");
 
@@ -530,10 +530,10 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 		if (tracker->cb != NULL)
 			tracker->cb(tracker->new, NULL, tracker->data);
 	} else {
-		PurpleKeyringClose close =
+		PurpleKeyringClose close_cb =
 			purple_keyring_get_close_keyring(tracker->new);
-		if (close != NULL)
-			close(NULL);
+		if (close_cb != NULL)
+			close_cb(NULL);
 
 		purple_debug_error("keyring",
 			"Failed to change keyring, aborting.\n");
@@ -638,7 +638,7 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
                                    gpointer data)
 {
 	const PurpleKeyring *new;
-	PurpleKeyringSave save;
+	PurpleKeyringSave save_cb;
 	PurpleKeyringChangeTracker *tracker;
 
 	tracker = (PurpleKeyringChangeTracker *)data;
@@ -661,10 +661,10 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 		}
 		purple_keyring_set_inuse_check_error_cb(account, error, data);
 	} else {
-		save = purple_keyring_get_save_password(new);
-		g_return_if_fail(save != NULL);
+		save_cb = purple_keyring_get_save_password(new);
+		g_return_if_fail(save_cb != NULL);
 
-		save(account, password, purple_keyring_set_inuse_check_error_cb,
+		save_cb(account, password, purple_keyring_set_inuse_check_error_cb,
 			tracker);
 	}
 }
@@ -677,7 +677,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 {
 	GList *cur;
 	const PurpleKeyring *oldkeyring;
-	PurpleKeyringRead read = NULL;
+	PurpleKeyringRead read_cb = NULL;
 	PurpleKeyringChangeTracker *tracker;
 
 	oldkeyring = purple_keyring_get_inuse();
@@ -712,8 +712,8 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		(newkeyring != NULL) ? newkeyring->id : "(null)");
 
 	if (oldkeyring != NULL) {
-		read = purple_keyring_get_read_password(oldkeyring);
-		g_return_if_fail(read != NULL);
+		read_cb = purple_keyring_get_read_password(oldkeyring);
+		g_return_if_fail(read_cb != NULL);
 
 		purple_debug_misc("keyring", "Starting migration from: %s.\n",
 			oldkeyring->id);
@@ -743,7 +743,7 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 			if (cur->next == NULL)
 				tracker->finished = TRUE;
 
-			read(cur->data, purple_keyring_set_inuse_got_pw_cb, tracker);
+			read_cb(cur->data, purple_keyring_set_inuse_got_pw_cb, tracker);
 		}
 	} else { /* no keyring was set before. */
 		if (purple_debug_is_verbose()) {
@@ -998,7 +998,7 @@ purple_keyring_get_password(PurpleAccount *account,
 {
 	GError *error = NULL;
 	const PurpleKeyring *inuse;
-	PurpleKeyringRead read;
+	PurpleKeyringRead read_cb;
 
 	if (purple_keyring_is_quitting) {
 		purple_debug_error("keyring", "Cannot request a password while quitting.\n");
@@ -1034,13 +1034,13 @@ purple_keyring_get_password(PurpleAccount *account,
 			g_error_free(error);
 
 		} else {
-			read = purple_keyring_get_read_password(inuse);
-			g_return_if_fail(read != NULL);
+			read_cb = purple_keyring_get_read_password(inuse);
+			g_return_if_fail(read_cb != NULL);
 
 			purple_debug_info("keyring", "Reading password for account %s (%s)...\n",
 				purple_account_get_username(account),
 				purple_account_get_protocol_id(account));
-			read(account, cb, data);
+			read_cb(account, cb, data);
 		}
 	}
 }
@@ -1090,7 +1090,7 @@ purple_keyring_set_password(PurpleAccount *account,
 {
 	GError *error = NULL;
 	const PurpleKeyring *inuse;
-	PurpleKeyringSave save;
+	PurpleKeyringSave save_cb;
 	PurpleKeyringCbInfo *cbinfo;
 
 	g_return_if_fail(account != NULL);
@@ -1124,8 +1124,8 @@ purple_keyring_set_password(PurpleAccount *account,
 		g_error_free(error);
 
 	} else {
-		save = purple_keyring_get_save_password(inuse);
-		g_return_if_fail(save != NULL);
+		save_cb = purple_keyring_get_save_password(inuse);
+		g_return_if_fail(save_cb != NULL);
 
 		cbinfo = g_new(PurpleKeyringCbInfo, 1);
 		cbinfo->cb = cb;
@@ -1134,28 +1134,28 @@ purple_keyring_set_password(PurpleAccount *account,
 			(password ? "Saving" : "Removing"),
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
-		save(account, password, purple_keyring_set_password_async_cb, cbinfo);
+		save_cb(account, password, purple_keyring_set_password_async_cb, cbinfo);
 	}
 }
 
 void
 purple_keyring_close(PurpleKeyring *keyring, GError **error)
 {
-	PurpleKeyringClose close;
+	PurpleKeyringClose close_cb;
 
 	if (keyring == NULL) {
 		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
 			"No keyring passed to the function.");
 
 	} else {
-		close = purple_keyring_get_close_keyring(keyring);
+		close_cb = purple_keyring_get_close_keyring(keyring);
 
-		if (close == NULL) {
+		if (close_cb == NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
 				"Keyring doesn't support being closed.");
 
 		} else {
-			close(error);
+			close_cb(error);
 
 		}
 	}

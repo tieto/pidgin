@@ -67,6 +67,7 @@ C_SRC =	\
 			http.c \
 			idle.c \
 			imgstore.c \
+			keyring.c \
 			log.c \
 			media/candidate.c \
 			media/enum-types.c \
