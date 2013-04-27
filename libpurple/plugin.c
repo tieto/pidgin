@@ -573,7 +573,7 @@ purple_plugin_load(PurplePlugin *plugin)
 	for (l = dep_list; l != NULL; l = l->next)
 	{
 		PurplePlugin *dep_plugin = (PurplePlugin *)l->data;
-		dep_plugin->dependent_plugins = g_list_prepend(dep_plugin->dependent_plugins, plugin->info->id);
+		dep_plugin->dependent_plugins = g_list_prepend(dep_plugin->dependent_plugins, (gpointer)plugin->info->id);
 	}
 
 	g_list_free(dep_list);
