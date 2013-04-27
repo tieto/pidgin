@@ -971,7 +971,7 @@ parse_account(xmlnode *node)
 		data = xmlnode_get_data(child);
 		result = purple_keyring_import_password(ret, keyring_id, mode, data, NULL);
 
-		if (result == TRUE) {
+		if (result == TRUE || purple_keyring_get_inuse() == NULL) {
 			purple_account_set_remember_password(ret, TRUE);
 		} else {
 			purple_debug_error("account", "Failed to import password.\n");

@@ -278,6 +278,25 @@ static guint purple_keyring_pref_cb_id;
 static GList *purple_keyring_loaded_plugins = NULL;
 static PurpleKeyringChangeTracker *current_change_tracker = NULL;
 static gboolean purple_keyring_is_quitting = FALSE;
+static GHashTable *purple_keyring_failed_imports = NULL;
+
+typedef struct
+{
+	gchar *keyring_id;
+	gchar *mode;
+	gchar *data;
+} purple_keyring_failed_import;
+
+static void
+purple_keyring_failed_import_free(purple_keyring_failed_import *import)
+{
+	g_return_if_fail(import != NULL);
+
+	g_free(import->keyring_id);
+	g_free(import->mode);
+	g_free(import->data);
+	g_free(import);
+}
 
 static void
 purple_keyring_pref_cb(const char *pref,
@@ -346,6 +365,10 @@ purple_keyring_init(void)
 
 	purple_keyring_keyrings = NULL;
 	purple_keyring_inuse = NULL;
+
+	purple_keyring_failed_imports = g_hash_table_new_full(g_direct_hash,
+		g_direct_equal, NULL,
+		(GDestroyNotify)purple_keyring_failed_import_free);
 
 	purple_signal_register(purple_keyring_get_handle(),
 		"keyring-register",
@@ -428,6 +451,9 @@ purple_keyring_uninit(void)
 	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
 	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 	purple_keyring_pref_cb_id = 0;
+
+	g_hash_table_destroy(purple_keyring_failed_imports);
+	purple_keyring_failed_imports = NULL;
 }
 
 void *
@@ -860,14 +886,14 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 /*@}*/
 
 
-/***************************************/
-/** @name Keyring plugin wrappers      */
-/***************************************/
+/**************************************************************************/
+/** @name Keyring plugin wrappers                                         */
+/**************************************************************************/
 /*@{*/
 
 gboolean
 purple_keyring_import_password(PurpleAccount *account,
-                               const char *keyringid,
+                               const char *keyring_id,
                                const char *mode,
                                const char *data,
                                GError **error)
@@ -879,31 +905,38 @@ purple_keyring_import_password(PurpleAccount *account,
 	purple_debug_misc("keyring", "Importing password for account %s (%s) to keyring %s.\n",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account),
-		keyringid);
+		keyring_id);
 
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
+		purple_keyring_failed_import *import;
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_NOKEYRING,
 				"No keyring configured, cannot import password "
 				"info");
 		}
-		purple_debug_error("Keyring",
+		purple_debug_warning("Keyring",
 			"No keyring configured, cannot import password info for account %s (%s).\n",
 			purple_account_get_username(account), purple_account_get_protocol_id(account));
+
+		import = g_new0(purple_keyring_failed_import, 1);
+		import->keyring_id = g_strdup(keyring_id);
+		import->mode = g_strdup(mode);
+		import->data = g_strdup(data);
+		g_hash_table_insert(purple_keyring_failed_imports, account, import);
 		return FALSE;
 	}
 
 	realid = purple_keyring_get_id(inuse);
 	/*
 	 * we want to be sure that either :
-	 *  - there is a keyringid specified and it matches the one configured
+	 *  - there is a keyring_id specified and it matches the one configured
 	 *  - or the configured keyring is the fallback, compatible one.
 	 */
-	if ((keyringid != NULL && g_strcmp0(realid, keyringid) != 0) ||
-	    (keyringid == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
+	if ((keyring_id != NULL && g_strcmp0(realid, keyring_id) != 0) ||
+	    (keyring_id == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_INTERNAL,
@@ -912,7 +945,7 @@ purple_keyring_import_password(PurpleAccount *account,
 		}
 		purple_debug_info("keyring",
 			"Specified keyring id does not match the configured one (%s vs. %s). Data will be lost.\n",
-			keyringid, realid);
+			keyring_id, realid);
 		return FALSE;
 	}
 
@@ -931,7 +964,7 @@ purple_keyring_import_password(PurpleAccount *account,
 
 gboolean
 purple_keyring_export_password(PurpleAccount *account,
-                               const char **keyringid,
+                               const char **keyring_id,
                                const char **mode,
                                char **data,
                                GError **error,
@@ -943,24 +976,39 @@ purple_keyring_export_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured, cannot export password info");
-		purple_debug_error("keyring",
-			"No keyring configured, cannot export password info.\n");
-		return FALSE;
+		purple_keyring_failed_import *import = g_hash_table_lookup(
+			purple_keyring_failed_imports, account);
+
+		if (import == NULL) {
+			*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
+				"No keyring configured, cannot export password info");
+			purple_debug_warning("keyring",
+				"No keyring configured, cannot export password info.\n");
+			return FALSE;
+		} else {
+			purple_debug_info("keyring", "No keyring configured, getting fallback export data for %s (%s).\n",
+				purple_account_get_username(account),
+				purple_account_get_protocol_id(account));
+
+			*keyring_id = import->keyring_id;
+			*mode = import->mode;
+			*data = g_strdup(import->data);
+			*destroy = g_free;
+			return TRUE;
+		}
 	}
 
-	*keyringid = purple_keyring_get_id(inuse);
+	*keyring_id = purple_keyring_get_id(inuse);
 
 	if (purple_debug_is_verbose()) {
 		purple_debug_misc("keyring",
 			"Exporting password for account %s (%s) from keyring "
 			"%s...\n",
 			purple_account_get_username(account),
-			purple_account_get_protocol_id(account), *keyringid);
+			purple_account_get_protocol_id(account), *keyring_id);
 	}
 
-	if (*keyringid == NULL) {
+	if (*keyring_id == NULL) {
 		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Plugin does not have a keyring id");
 		purple_debug_info("keyring",

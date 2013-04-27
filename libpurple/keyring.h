@@ -264,17 +264,15 @@ purple_keyring_get_options(void);
  *
  * It's used by account.c while reading a password from xml.
  *
- * @param account   The account.
- * @param keyringid The plugin ID that was stored in the xml file. Can be NULL.
- * @param mode      A keyring specific option that was stored. Can be NULL.
- * @param data      Data that was stored, can be NULL.
+ * @param account    The account.
+ * @param keyring_id The plugin ID that was stored in the xml file. Can be NULL.
+ * @param mode       A keyring specific option that was stored. Can be NULL.
+ * @param data       Data that was stored, can be NULL.
  *
  * @return TRUE if the input was accepted, FALSE otherwise.
- *
- * @todo Get rid of keyringid.
  */
 gboolean
-purple_keyring_import_password(PurpleAccount *account, const gchar *keyringid,
+purple_keyring_import_password(PurpleAccount *account, const gchar *keyring_id,
 	const gchar *mode, const gchar *data, GError **error);
 
 /**
@@ -282,23 +280,21 @@ purple_keyring_import_password(PurpleAccount *account, const gchar *keyringid,
  *
  * It's used by account.c while syncing accounts to xml.
  *
- * @param account   The account for which we want the info.
- * @param keyringid The plugin id to be stored in the XML node. This will be
- *                  NULL or a string that can be considered static.
- * @param mode      An option field that can be used by the plugin. This will be
- *                  NULL or a string that can be considered static.
- * @param data      The data to be stored in the XML node. This string must be
- *                  freed using destroy() once not needed anymore if it is not
- *                  NULL.
- * @param error     Will be set if a problem occured.
- * @param destroy   A function to be called, if non NULL, to free data.
+ * @param account    The account for which we want the info.
+ * @param keyring_id The plugin id to be stored in the XML node. This will be
+ *                   NULL or a string that can be considered static.
+ * @param mode       An option field that can be used by the plugin. This will
+ *                   be NULL or a string that can be considered static.
+ * @param data       The data to be stored in the XML node. This string must be
+ *                   freed using destroy() once not needed anymore if it is not
+ *                   NULL.
+ * @param error      Will be set if a problem occured.
+ * @param destroy    A function to be called, if non NULL, to free data.
  *
  * @return TRUE if the info was exported successfully, FALSE otherwise.
- *
- * @todo Get rid of keyringid.
  */
 gboolean
-purple_keyring_export_password(PurpleAccount *account, const gchar **keyringid,
+purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 	const gchar **mode, gchar **data, GError **error,
 	GDestroyNotify *destroy);
 
