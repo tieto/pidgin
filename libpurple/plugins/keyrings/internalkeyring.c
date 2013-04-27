@@ -124,7 +124,7 @@ internal_keyring_save(PurpleAccount *account, const gchar *password,
 }
 
 static void
-internal_keyring_close(GError **error)
+internal_keyring_close(void)
 {
 	if (!internal_keyring_opened)
 		return;
@@ -211,7 +211,7 @@ internal_keyring_unload(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	internal_keyring_close(NULL);
+	internal_keyring_close();
 
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);

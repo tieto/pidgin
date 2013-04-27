@@ -1,9 +1,6 @@
 /**
- * @file keyring.h Keyring plugin API
+ * @file keyring.h Keyring API
  * @ingroup core
- *
- * @todo
- *  - Offer a way to prompt the user for a password or for a password change.
  */
 
 /* purple
@@ -24,38 +21,36 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
 #ifndef _PURPLE_KEYRING_H_
 #define _PURPLE_KEYRING_H_
 
-#include <glib.h>
 #include "account.h"
 
 /**
- * Default keyring
+ * Default keyring ID.
  */
 #define PURPLE_DEFAULT_KEYRING "keyring-internal"
 
-/*******************************************************/
-/** @name data structures and types                    */
-/*******************************************************/
+/**
+ * Keyring subsystem error domain.
+ */
+#define PURPLE_KEYRING_ERROR purple_keyring_error_domain()
+
+/**************************************************************************/
+/** @name Data structures and types                                       */
+/**************************************************************************/
 /*@{*/
+
 typedef struct _PurpleKeyring PurpleKeyring;
 
 /*@}*/
 
-/**
- * XXX maybe strip a couple GError* if they're not used,
- * since they should only be interresting for the callback
- *  --> ability to forward errors ?
- *
- */
-
-/********************************************************/
-/** @name Callbacks for basic keyring operation         */
-/********************************************************/
+/**************************************************************************/
+/** @name Callbacks for keyrings access functions                        */
+/**************************************************************************/
 /*@{*/
 
 /**
@@ -69,9 +64,7 @@ typedef struct _PurpleKeyring PurpleKeyring;
  * @param data     Data passed to the callback.
  */
 typedef void (*PurpleKeyringReadCallback)(PurpleAccount *account,
-                                          const gchar *password,
-                                          GError *error,
-                                          gpointer data);
+	const gchar *password, GError *error, gpointer data);
 
 /**
  * Callback for once a password has been stored.
@@ -82,9 +75,8 @@ typedef void (*PurpleKeyringReadCallback)(PurpleAccount *account,
  * @param error   Error that may have occurred.
  * @param data    Data passed to the callback.
  */
-typedef void (*PurpleKeyringSaveCallback)(PurpleAccount *account,
-                                          GError *error,
-                                          gpointer data);
+typedef void (*PurpleKeyringSaveCallback)(PurpleAccount *account, GError *error,
+	gpointer data);
 
 /**
  * Callback for once the master password for a keyring has been changed.
@@ -92,8 +84,7 @@ typedef void (*PurpleKeyringSaveCallback)(PurpleAccount *account,
  * @param error  Error that has occurred.
  * @param data   Data passed to the callback.
  */
-typedef void (*PurpleKeyringChangeMasterCallback)(GError *error,
-                                                  gpointer data);
+typedef void (*PurpleKeyringChangeMasterCallback)(GError *error, gpointer data);
 
 /**
  * Callback for when we change the keyring.
@@ -102,27 +93,25 @@ typedef void (*PurpleKeyringChangeMasterCallback)(GError *error,
  * @param error   An error that might have occurred.
  * @param data    A pointer to user supplied data.
  */
-typedef void (*PurpleKeyringSetInUseCallback)(const PurpleKeyring *keyring,
-                                              GError *error,
-                                              gpointer data);
+typedef void (*PurpleKeyringSetInUseCallback)(PurpleKeyring *keyring,
+	GError *error, gpointer data);
 
 /*@}*/
 
-/********************************************************/
-/** @name pointers to the keyring's functions           */
-/********************************************************/
+/**************************************************************************/
+/** @name Keyrings access functions                                       */
+/**************************************************************************/
 /*@{*/
 
 /**
- * Read the password for an account
+ * Read the password for an account.
  *
  * @param account The account.
  * @param cb      A callback for once the password is found.
  * @param data    Data to be passed to the callback.
  */
 typedef void (*PurpleKeyringRead)(PurpleAccount *account,
-				  PurpleKeyringReadCallback cb,
-				  gpointer data);
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
  * Store a password in the keyring.
@@ -133,10 +122,8 @@ typedef void (*PurpleKeyringRead)(PurpleAccount *account,
  * @param cb       A callback for once the password is saved.
  * @param data     Data to be passed to the callback.
  */
-typedef void (*PurpleKeyringSave)(PurpleAccount *account,
-                                  const gchar *password,
-                                  PurpleKeyringSaveCallback cb,
-                                  gpointer data);
+typedef void (*PurpleKeyringSave)(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data);
 
 /**
  * Cancel all running requests.
@@ -149,11 +136,9 @@ typedef void (*PurpleKeyringCancelRequests)(void);
 /**
  * Close the keyring.
  *
- * This will be called so the keyring can do any cleanup it wants.
- *
- * @param error An error that may occur.
+ * This will be called so the keyring can do any cleanup it needs.
  */
-typedef void (*PurpleKeyringClose)(GError **error);
+typedef void (*PurpleKeyringClose)(void);
 
 /**
  * Change the master password for the keyring.
@@ -162,10 +147,10 @@ typedef void (*PurpleKeyringClose)(GError **error);
  * @param data  Data to be passed to the callback.
  */
 typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
-                                          gpointer data);
+	gpointer data);
 
 /**
- * Import info on an XML node.
+ * Import serialized (and maybe encrypted) password.
  *
  * This is not async because it is not meant to prompt for a master password and
  * decrypt passwords.
@@ -177,15 +162,10 @@ typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
  * @return TRUE on success, FALSE on failure.
  */
 typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount *account,
-                                                const char *mode,
-                                                const char *data,
-                                                GError **error);
+	const gchar *mode, const gchar *data, GError **error);
 
 /**
- * Export information that will be stored in an XML node.
- *
- * This is not async because it is not meant to prompt for a master password or
- * encrypt passwords.
+ * Export serialized (and maybe encrypted) password.
  *
  * @param account The account.
  * @param mode    An option field that can be used by the plugin. This is
@@ -198,72 +178,41 @@ typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount *account,
  * @return TRUE on success, FALSE on failure.
  */
 typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount *account,
-                                                const char **mode,
-                                                char **data,
-                                                GError **error,
-                                                GDestroyNotify *destroy);
+	const gchar **mode, gchar **data, GError **error,
+	GDestroyNotify *destroy);
 
 /*@}*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
-/***************************************/
-/** @name Keyring API                  */
-/***************************************/
+/**************************************************************************/
+/** @name Setting used keyrings                                           */
+/**************************************************************************/
 /*@{*/
 
 /**
- * Find a keyring from its keyring id.
+ * Find a keyring by an id.
  *
  * @param id The id for the keyring.
  *
  * @return The keyring, or NULL if not found.
  */
-PurpleKeyring *purple_keyring_find_keyring_by_id(const char *id);
-
-/**
- * Get a list of id/name pairs (for preferences)
- *
- * @return The list.
- */
-GList *purple_keyring_get_options(void);
-
-/**
- * Prepare stuff at startup.
- */
-void purple_keyring_init(void);
-
-/**
- * Do some cleanup.
- */
-void purple_keyring_uninit(void);
-
-/**
- * Returns the keyring subsystem handle.
- *
- * @return The keyring subsystem handle.
- */
-void *purple_keyring_get_handle(void);
-
-/**
- * Get the keyring list. Used by the UI.
- */
-const GList *
-purple_keyring_get_keyrings(void);
+PurpleKeyring *
+purple_keyring_find_keyring_by_id(const gchar *id);
 
 /**
  * Get the keyring being used.
  */
-const PurpleKeyring *
+PurpleKeyring *
 purple_keyring_get_inuse(void);
 
 /**
  * Set the keyring to use. This function will move all passwords from
- * the old keyring to the new one. If it fails, it will cancel all changes,
- * close the new keyring, and notify the callback. If it succeeds, it will
- * remove all passwords from the old safe and close that safe.
+ * the old keyring to the new one.
+ *
+ * If it fails, it will cancel all changes, close the new keyring, and notify
+ * the callback. If it succeeds, it will remove all passwords from the old safe
+ * and close that safe.
  *
  * @param newkeyring The new keyring to use.
  * @param force      FALSE if the change can be cancelled. If this is TRUE and
@@ -272,10 +221,8 @@ purple_keyring_get_inuse(void);
  * @param data       Data to be passed to the callback.
  */
 void
-purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
-                         gboolean force,
-                         PurpleKeyringSetInUseCallback cb,
-                         gpointer data);
+purple_keyring_set_inuse(PurpleKeyring *newkeyring, gboolean force,
+	PurpleKeyringSetInUseCallback cb, gpointer data);
 
 /**
  * Register a keyring plugin.
@@ -296,15 +243,26 @@ purple_keyring_register(PurpleKeyring *keyring);
 void
 purple_keyring_unregister(PurpleKeyring *keyring);
 
+/**
+ * Returns a GList containing the IDs and names of the registered
+ * keyrings.
+ *
+ * @return The list of IDs and names.
+ */
+GList *
+purple_keyring_get_options(void);
+
 /*@}*/
 
-/***************************************/
-/** @name Keyring plugin wrappers      */
-/***************************************/
+/**************************************************************************/
+/** @name Keyring plugin wrappers                                         */
+/**************************************************************************/
 /*@{*/
 
 /**
- * used by account.c while reading a password from xml.
+ * Import serialized (and maybe encrypted) password into current keyring.
+ *
+ * It's used by account.c while reading a password from xml.
  *
  * @param account   The account.
  * @param keyringid The plugin ID that was stored in the xml file. Can be NULL.
@@ -312,15 +270,17 @@ purple_keyring_unregister(PurpleKeyring *keyring);
  * @param data      Data that was stored, can be NULL.
  *
  * @return TRUE if the input was accepted, FALSE otherwise.
+ *
+ * @todo Get rid of keyringid.
  */
-gboolean purple_keyring_import_password(PurpleAccount *account,
-                                        const char *keyringid,
-                                        const char *mode,
-                                        const char *data,
-                                        GError **error);
+gboolean
+purple_keyring_import_password(PurpleAccount *account, const gchar *keyringid,
+	const gchar *mode, const gchar *data, GError **error);
 
 /**
- * used by account.c while syncing accounts
+ * Export serialized (and maybe encrypted) password out of current keyring.
+ *
+ * It's used by account.c while syncing accounts to xml.
  *
  * @param account   The account for which we want the info.
  * @param keyringid The plugin id to be stored in the XML node. This will be
@@ -334,17 +294,16 @@ gboolean purple_keyring_import_password(PurpleAccount *account,
  * @param destroy   A function to be called, if non NULL, to free data.
  *
  * @return TRUE if the info was exported successfully, FALSE otherwise.
+ *
+ * @todo Get rid of keyringid.
  */
 gboolean
-purple_keyring_export_password(PurpleAccount *account,
-                               const char **keyringid,
-                               const char **mode,
-                               char **data,
-                               GError **error,
-                               GDestroyNotify *destroy);
+purple_keyring_export_password(PurpleAccount *account, const gchar **keyringid,
+	const gchar **mode, gchar **data, GError **error,
+	GDestroyNotify *destroy);
 
 /**
- * Read a password from the active safe.
+ * Read a password from the current keyring.
  *
  * @param account The account.
  * @param cb      A callback for once the password is read.
@@ -352,11 +311,10 @@ purple_keyring_export_password(PurpleAccount *account,
  */
 void
 purple_keyring_get_password(PurpleAccount *account,
-                            PurpleKeyringReadCallback cb,
-                            gpointer data);
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
- * Set a password to be remembered.
+ * Save a password to the current keyring.
  *
  * @param account  The account.
  * @param password The password to save.
@@ -364,76 +322,121 @@ purple_keyring_get_password(PurpleAccount *account,
  * @param data     Data to be passed to the callback.
  */
 void
-purple_keyring_set_password(PurpleAccount *account,
-                            const gchar *password,
-                            PurpleKeyringSaveCallback cb,
-                            gpointer data);
-
-/**
- * Close a safe.
- *
- * @param keyring The safe to close.
- * @param error   Error that might occur.
- */
-void
-purple_keyring_close(PurpleKeyring *keyring, GError **error);
+purple_keyring_set_password(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data);
 
 /**
  * Change the master password for a safe (if the safe supports it).
  *
  * @param cb   A callback for once the master password has been changed.
  * @param data Data to be passed to the callback.
+ *
+ * @todo Where is the master password string, that is being changed?
  */
 void
 purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
-                             gpointer data);
+	gpointer data);
 
 /*@}*/
 
-/***************************************/
-/** @name PurpleKeyring Accessors      */
-/***************************************/
-/*@{*/
-
-PurpleKeyring *purple_keyring_new(void);
-void purple_keyring_free(PurpleKeyring *keyring);
-
-const char *purple_keyring_get_name(const PurpleKeyring *info);
-const char *purple_keyring_get_id(const PurpleKeyring *info);
-PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring *info);
-PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring *info);
-PurpleKeyringCancelRequests purple_keyring_get_cancel_requests(const PurpleKeyring *info);
-PurpleKeyringClose purple_keyring_get_close_keyring(const PurpleKeyring *info);
-PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring *info);
-PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring *info);
-PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyring *info);
-
-void purple_keyring_set_name(PurpleKeyring *info, const char *name);
-void purple_keyring_set_id(PurpleKeyring *info, const char *id);
-void purple_keyring_set_read_password(PurpleKeyring *info, PurpleKeyringRead read);
-void purple_keyring_set_save_password(PurpleKeyring *info, PurpleKeyringSave save);
-void purple_keyring_set_cancel_requests(PurpleKeyring *info, PurpleKeyringCancelRequests cancel_requests);
-void purple_keyring_set_close_keyring(PurpleKeyring *info, PurpleKeyringClose close);
-void purple_keyring_set_change_master(PurpleKeyring *info, PurpleKeyringChangeMaster change_master);
-void purple_keyring_set_import_password(PurpleKeyring *info, PurpleKeyringImportPassword import_password);
-void purple_keyring_set_export_password(PurpleKeyring *info, PurpleKeyringExportPassword export_password);
-
-/*@}*/
-
-/***************************************/
-/** @name Error Codes                  */
-/***************************************/
+/**************************************************************************/
+/** @name PurpleKeyring accessors                                         */
+/**************************************************************************/
 /*@{*/
 
 /**
- * Error domain GQuark.
- * See @ref purple_keyring_error_domain .
+ * Creates a new keyring wrapper.
  */
-#define PURPLE_KEYRING_ERROR purple_keyring_error_domain()
-/** stuff here too */
-GQuark purple_keyring_error_domain(void);
+PurpleKeyring *
+purple_keyring_new(void);
 
-/** error codes for keyrings. */
+/**
+ * Frees all data allocated with purple_keyring_new.
+ *
+ * @param keyring Keyring wrapper struct.
+ */
+void
+purple_keyring_free(PurpleKeyring *keyring);
+
+const gchar *
+purple_keyring_get_name(const PurpleKeyring *keyring);
+
+const gchar *
+purple_keyring_get_id(const PurpleKeyring *keyring);
+
+PurpleKeyringRead
+purple_keyring_get_read_password(const PurpleKeyring *keyring);
+
+PurpleKeyringSave
+purple_keyring_get_save_password(const PurpleKeyring *keyring);
+
+PurpleKeyringCancelRequests
+purple_keyring_get_cancel_requests(const PurpleKeyring *keyring);
+
+PurpleKeyringClose
+purple_keyring_get_close_keyring(const PurpleKeyring *keyring);
+
+PurpleKeyringChangeMaster
+purple_keyring_get_change_master(const PurpleKeyring *keyring);
+
+PurpleKeyringImportPassword
+purple_keyring_get_import_password(const PurpleKeyring *keyring);
+
+PurpleKeyringExportPassword
+purple_keyring_get_export_password(const PurpleKeyring *keyring);
+
+void
+purple_keyring_set_name(PurpleKeyring *keyring, const gchar *name);
+
+void
+purple_keyring_set_id(PurpleKeyring *keyring, const gchar *id);
+
+void
+purple_keyring_set_read_password(PurpleKeyring *keyring,
+	PurpleKeyringRead read);
+
+void
+purple_keyring_set_save_password(PurpleKeyring *keyring,
+	PurpleKeyringSave save);
+
+void
+purple_keyring_set_cancel_requests(PurpleKeyring *keyring,
+	PurpleKeyringCancelRequests cancel_requests);
+
+void
+purple_keyring_set_close_keyring(PurpleKeyring *keyring,
+	PurpleKeyringClose close);
+
+void
+purple_keyring_set_change_master(PurpleKeyring *keyring,
+	PurpleKeyringChangeMaster change_master);
+
+void
+purple_keyring_set_import_password(PurpleKeyring *keyring,
+	PurpleKeyringImportPassword import_password);
+
+void
+purple_keyring_set_export_password(PurpleKeyring *keyring,
+	PurpleKeyringExportPassword export_password);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Error Codes                                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Gets keyring subsystem error domain.
+ *
+ * @return keyring subsystem error domain.
+ */
+GQuark
+purple_keyring_error_domain(void);
+
+/**
+ * Error codes for keyring subsystem.
+ */
 enum PurpleKeyringError
 {
 	PURPLE_KEYRING_ERROR_UNKNOWN = 0,     /**< Unknown error. */
@@ -449,9 +452,33 @@ enum PurpleKeyringError
 
 /*}@*/
 
-#ifdef __cplusplus
-}
-#endif
+/**************************************************************************/
+/** @name Keyring Subsystem                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the keyring subsystem.
+ */
+void
+purple_keyring_init(void);
+
+/**
+ * Uninitializes the keyring subsystem.
+ */
+void
+purple_keyring_uninit(void);
+
+/**
+ * Returns the keyring subsystem handle.
+ *
+ * @return The keyring subsystem handle.
+ */
+void *
+purple_keyring_get_handle(void);
+
+/*}@*/
+
+G_END_DECLS
 
 #endif /* _PURPLE_KEYRING_H_ */
-

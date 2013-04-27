@@ -75,7 +75,7 @@ class engine : private QObject, private QQueue<request*>
 		void queue(request *req);
 		void abortAll();
 		static engine *instance(bool create);
-		static void closeInstance();
+		static void closeInstance(void);
 
 	private slots:
 		void walletOpened(bool opened);
@@ -226,7 +226,7 @@ KWalletPlugin::engine::instance(bool create)
 }
 
 void
-KWalletPlugin::engine::closeInstance()
+KWalletPlugin::engine::closeInstance(void)
 {
 	if (pinstance == NULL)
 		return;
@@ -465,12 +465,6 @@ kwallet_cancel(void)
 		instance->abortAll();
 }
 
-static void
-kwallet_close(GError **error)
-{
-	KWalletPlugin::engine::closeInstance();
-}
-
 static void *
 kwallet_get_handle(void)
 {
@@ -515,7 +509,7 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_read_password(keyring_handler, kwallet_read);
 	purple_keyring_set_save_password(keyring_handler, kwallet_save);
 	purple_keyring_set_cancel_requests(keyring_handler, kwallet_cancel);
-	purple_keyring_set_close_keyring(keyring_handler, kwallet_close);
+	purple_keyring_set_close_keyring(keyring_handler, KWalletPlugin::engine::closeInstance);
 
 	purple_keyring_register(keyring_handler);
 
@@ -533,7 +527,7 @@ kwallet_unload(PurplePlugin *plugin)
 
 	purple_signals_disconnect_by_handle(kwallet_get_handle());
 
-	kwallet_close(NULL);
+	KWalletPlugin::engine::closeInstance();
 
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);

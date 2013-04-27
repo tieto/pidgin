@@ -370,7 +370,7 @@ gnomekeyring_cancel(void)
 }
 
 static void
-gnomekeyring_close(GError **error)
+gnomekeyring_close(void)
 {
 	gnomekeyring_cancel();
 }
@@ -407,7 +407,7 @@ gnomekeyring_unload(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	gnomekeyring_close(NULL);
+	gnomekeyring_close();
 
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);

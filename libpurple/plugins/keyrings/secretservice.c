@@ -236,7 +236,7 @@ ss_save(PurpleAccount *account,
 }
 
 static void
-ss_close(GError **error)
+ss_close(void)
 {
 }
 
@@ -259,7 +259,7 @@ ss_init(void)
 static void
 ss_uninit(void)
 {
-	ss_close(NULL);
+	ss_close();
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
