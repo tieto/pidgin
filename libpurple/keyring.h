@@ -354,9 +354,21 @@ purple_keyring_new(void);
 void
 purple_keyring_free(PurpleKeyring *keyring);
 
+/**
+ * Gets friendly user name.
+ *
+ * @param keyring The keyring.
+ * @return Friendly user name.
+ */
 const gchar *
 purple_keyring_get_name(const PurpleKeyring *keyring);
 
+/**
+ * Gets keyring ID.
+ *
+ * @param keyring The keyring.
+ * @return Keyring ID.
+ */
 const gchar *
 purple_keyring_get_id(const PurpleKeyring *keyring);
 

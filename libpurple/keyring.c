@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program ; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
 #include <glib.h>
@@ -34,18 +34,15 @@
 #include "internal.h"
 #include "dbus-maybe.h"
 
-typedef struct _PurpleKeyringCbInfo PurpleKeyringCbInfo;
-typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
-
-/******************************************/
-/** @name PurpleKeyring                   */
-/******************************************/
+/**************************************************************************/
+/** @name PurpleKeyring                                                   */
+/**************************************************************************/
 /*@{*/
 
 struct _PurpleKeyring
 {
-	char *name; /* a user friendly name */
-	char *id;   /* same as plugin id    */
+	char *name;
+	char *id;
 	PurpleKeyringRead read_password;
 	PurpleKeyringSave save_password;
 	PurpleKeyringCancelRequests cancel_requests;
@@ -55,25 +52,24 @@ struct _PurpleKeyring
 	PurpleKeyringExportPassword export_password;
 };
 
-struct _PurpleKeyringChangeTracker
+typedef struct
 {
 	GError *error;
 	PurpleKeyringSetInUseCallback cb;
-	gpointer data;
+	gpointer cb_data;
 	PurpleKeyring *new;
-	PurpleKeyring *old; /* we are done when: finished == TRUE && read_outstanding == 0 */
-	int read_outstanding;
+	PurpleKeyring *old;
+
+	/**
+	 * We are done when finished is positive and read_outstanding is zero.
+	 */
 	gboolean finished;
+	int read_outstanding;
+
 	gboolean abort;
 	gboolean force;
 	gboolean succeeded;
-};
-
-struct _PurpleKeyringCbInfo
-{
-	gpointer cb;
-	gpointer data;
-};
+} PurpleKeyringChangeTracker;
 
 typedef void (*PurpleKeyringDropCallback)(gpointer data);
 
@@ -81,9 +77,16 @@ typedef struct
 {
 	PurpleKeyringDropCallback cb;
 	gpointer cb_data;
-	int drop_outstanding;
+
 	gboolean finished;
+	int drop_outstanding;
 } PurpleKeyringDropTracker;
+
+typedef struct
+{
+	PurpleKeyringSaveCallback cb;
+	gpointer cb_data;
+} PurpleKeyringSetPasswordData;
 
 static void
 purple_keyring_close(PurpleKeyring *keyring);
@@ -96,14 +99,12 @@ purple_keyring_change_tracker_free(PurpleKeyringChangeTracker *tracker)
 	g_free(tracker);
 }
 
-/* Constructor */
 PurpleKeyring *
 purple_keyring_new(void)
 {
 	return g_new0(PurpleKeyring, 1);
 }
 
-/* Destructor */
 void
 purple_keyring_free(PurpleKeyring *keyring)
 {
@@ -112,7 +113,6 @@ purple_keyring_free(PurpleKeyring *keyring)
 	g_free(keyring);
 }
 
-/* Accessors */
 const char *
 purple_keyring_get_name(const PurpleKeyring *keyring)
 {
@@ -548,7 +548,7 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 		current_change_tracker = NULL;
 
 		if (tracker->cb != NULL)
-			tracker->cb(tracker->new, NULL, tracker->data);
+			tracker->cb(tracker->new, NULL, tracker->cb_data);
 	} else {
 		purple_debug_error("keyring",
 			"Failed to change keyring, aborting.\n");
@@ -569,7 +569,7 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 				"Unknown error has occured");
 		}
 		if (tracker->cb != NULL)
-			tracker->cb(tracker->old, tracker->error, tracker->data);
+			tracker->cb(tracker->old, tracker->error, tracker->cb_data);
 	}
 
 	purple_keyring_change_tracker_free(tracker);
@@ -742,7 +742,7 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 		current_change_tracker = tracker;
 
 		tracker->cb = cb;
-		tracker->data = data;
+		tracker->cb_data = data;
 		tracker->new = newkeyring;
 		tracker->old = oldkeyring;
 		tracker->read_outstanding = 0;
@@ -1090,16 +1090,12 @@ purple_keyring_get_password(PurpleAccount *account,
 static void
 purple_keyring_set_password_async_cb(PurpleAccount *account,
                                      GError *error,
-                                     gpointer data)
+                                     gpointer _sp_data)
 {
-	PurpleKeyringCbInfo *cbinfo;
-	PurpleKeyringSaveCallback cb;
+	PurpleKeyringSetPasswordData *sp_data = _sp_data;
 
-	g_return_if_fail(data != NULL);
 	g_return_if_fail(account != NULL);
-
-	cbinfo = data;
-	cb = cbinfo->cb;
+	g_return_if_fail(sp_data != NULL);
 
 	if (error == NULL && purple_debug_is_verbose()) {
 		purple_debug_misc("keyring", "Password for account %s (%s) "
@@ -1119,9 +1115,9 @@ purple_keyring_set_password_async_cb(PurpleAccount *account,
 			error->message);
 	}
 
-	if (cb != NULL)
-		cb(account, error, cbinfo->data);
-	g_free(data);
+	if (sp_data->cb != NULL)
+		sp_data->cb(account, error, sp_data->cb_data);
+	g_free(sp_data);
 }
 
 void
@@ -1133,7 +1129,6 @@ purple_keyring_set_password(PurpleAccount *account,
 	GError *error = NULL;
 	PurpleKeyring *inuse;
 	PurpleKeyringSave save_cb;
-	PurpleKeyringCbInfo *cbinfo;
 
 	g_return_if_fail(account != NULL);
 
@@ -1166,17 +1161,19 @@ purple_keyring_set_password(PurpleAccount *account,
 		g_error_free(error);
 
 	} else {
+		PurpleKeyringSetPasswordData *sp_data;
+
 		save_cb = purple_keyring_get_save_password(inuse);
 		g_return_if_fail(save_cb != NULL);
 
-		cbinfo = g_new(PurpleKeyringCbInfo, 1);
-		cbinfo->cb = cb;
-		cbinfo->data = data;
+		sp_data = g_new(PurpleKeyringSetPasswordData, 1);
+		sp_data->cb = cb;
+		sp_data->cb_data = data;
 		purple_debug_info("keyring", "%s password for account %s (%s)...\n",
 			(password ? "Saving" : "Removing"),
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
-		save_cb(account, password, purple_keyring_set_password_async_cb, cbinfo);
+		save_cb(account, password, purple_keyring_set_password_async_cb, sp_data);
 	}
 }
 
