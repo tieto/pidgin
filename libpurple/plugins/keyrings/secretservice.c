@@ -77,7 +77,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
 			case G_DBUS_ERROR_IO_ERROR:
 				error = g_error_new(PURPLE_KEYRING_ERROR,
-				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
+				                    PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				                    "Failed to communicate with Secret Service (account : %s).",
 				                    purple_account_get_username(account));
 				if (cb != NULL)
@@ -92,7 +92,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 				                  purple_account_get_protocol_id(account),
 				                  g_quark_to_string(error->domain), code, error->message);
 				error = g_error_new(PURPLE_KEYRING_ERROR,
-				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
+				                    PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				                    "Unknown error (account : %s).",
 				                    purple_account_get_username(account));
 				if (cb != NULL)
@@ -103,7 +103,7 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 
 	} else if (password == NULL) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-		                    PURPLE_KEYRING_ERROR_NOPASSWD,
+		                    PURPLE_KEYRING_ERROR_NOPASSWORD,
 		                    "No password found for account: %s",
 		                    purple_account_get_username(account));
 		if (cb != NULL)
@@ -158,7 +158,7 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 				                  purple_account_get_username(account),
 				                  purple_account_get_protocol_id(account));
 				error = g_error_new(PURPLE_KEYRING_ERROR,
-				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
+				                    PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				                    "Failed to communicate with Secret Service (account : %s).",
 				                    purple_account_get_username(account));
 				if (cb != NULL)
@@ -173,7 +173,7 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 				                  purple_account_get_protocol_id(account),
 				                  g_quark_to_string(error->domain), code, error->message);
 				error = g_error_new(PURPLE_KEYRING_ERROR,
-				                    PURPLE_KEYRING_ERROR_NOCHANNEL,
+				                    PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				                    "Unknown error (account : %s).",
 				                    purple_account_get_username(account));
 				if (cb != NULL)

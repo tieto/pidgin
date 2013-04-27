@@ -83,7 +83,7 @@ internal_keyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 				purple_account_get_protocol_id(account));
 		}
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOPASSWD, "Password not found.");
+			PURPLE_KEYRING_ERROR_NOPASSWORD, "Password not found.");
 		if (cb != NULL)
 			cb(account, NULL, error, data);
 		g_error_free(error);
@@ -153,8 +153,8 @@ internal_keyring_import_password(PurpleAccount *account, const char *mode,
 	} else {
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
-				PURPLE_KEYRING_ERROR_WRONGFORMAT,
-				"invalid mode");
+				PURPLE_KEYRING_ERROR_BACKENDFAIL,
+				"Invalid password storage mode");
 		}
 		return FALSE;
 	}

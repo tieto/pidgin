@@ -138,7 +138,7 @@ KWalletPlugin::request::~request()
 void
 KWalletPlugin::request::abort()
 {
-	detailedAbort(PURPLE_KEYRING_ERROR_NOCHANNEL);
+	detailedAbort(PURPLE_KEYRING_ERROR_CANCELLED);
 }
 
 KWalletPlugin::engine::engine()
@@ -434,7 +434,7 @@ kwallet_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 
 	if (KWallet::Wallet::keyDoesNotExist(KWALLET_WALLET_NAME,
 		KWALLET_FOLDER_NAME, kwallet_account_key(account))) {
-		req->detailedAbort(PURPLE_KEYRING_ERROR_NOPASSWD);
+		req->detailedAbort(PURPLE_KEYRING_ERROR_NOPASSWORD);
 		delete req;
 	}
 	else

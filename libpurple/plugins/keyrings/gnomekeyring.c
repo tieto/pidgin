@@ -98,28 +98,28 @@ gnomekeyring_read_cb(GnomeKeyringResult result, const char *password,
 		error = NULL;
 	} else if (result == GNOME_KEYRING_RESULT_NO_MATCH) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOPASSWD,
+			PURPLE_KEYRING_ERROR_NOPASSWORD,
 			"No password found for account");
 	} else if (result == GNOME_KEYRING_RESULT_DENIED ||
 		result == GNOME_KEYRING_RESULT_CANCELLED) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_WRONGPASS,
+			PURPLE_KEYRING_ERROR_ACCESSDENIED,
 			"Access denied");
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
 		GNOME_KEYRING_RESULT_IO_ERROR) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOCHANNEL,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Communication with GNOME Keyring failed");
 	} else {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOCHANNEL,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Unknown error (code: %d)", result);
 	}
 
 	if (error == NULL && password == NULL) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOCHANNEL,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Unknown error (password empty)");
 	}
 
@@ -176,17 +176,17 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 	} else if (result == GNOME_KEYRING_RESULT_DENIED ||
 		result == GNOME_KEYRING_RESULT_CANCELLED) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_WRONGPASS,
+			PURPLE_KEYRING_ERROR_ACCESSDENIED,
 			"Access denied");
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
 		GNOME_KEYRING_RESULT_IO_ERROR) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOCHANNEL,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Communication with GNOME Keyring failed");
 	} else {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOCHANNEL,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Unknown error (code: %d)", result);
 	}
 
@@ -237,7 +237,7 @@ gnomekeyring_request_cancel(gpointer _req)
 
 	account = req->account;
 	error = g_error_new(PURPLE_KEYRING_ERROR,
-		PURPLE_KEYRING_ERROR_NOCHANNEL,
+		PURPLE_KEYRING_ERROR_CANCELLED,
 		"Operation cancelled");
 	if (req->type == GNOMEKEYRING_REQUEST_READ && req->cb.read)
 		req->cb.read(account, NULL, error, req->cb_data);

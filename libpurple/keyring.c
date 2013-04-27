@@ -574,13 +574,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 
 	if ((error != NULL) && (error->domain == PURPLE_KEYRING_ERROR)) {
 		switch(error->code) {
-			case PURPLE_KEYRING_ERROR_NOCAP:
-				purple_debug_info("keyring",
-					"Keyring does not support saving a password for account %s: %s.\n",
-					name, error->message);
-				break;
-
-			case PURPLE_KEYRING_ERROR_NOPASSWD:
+			case PURPLE_KEYRING_ERROR_NOPASSWORD:
 				if (purple_debug_is_verbose()) {
 					purple_debug_misc("keyring",
 						"No password found while changing keyring for account %s: %s.\n",
@@ -588,7 +582,17 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 				}
 				break;
 
-			case PURPLE_KEYRING_ERROR_NOCHANNEL:
+			case PURPLE_KEYRING_ERROR_CANCELLED:
+				purple_debug_info("keyring",
+					"Operation cancelled while changing keyring for account %s: %s.\n",
+					name, error->message);
+				tracker->abort = TRUE;
+				if (tracker->error != NULL)
+					g_error_free(tracker->error);
+				tracker->error = g_error_copy(error);
+				break;
+
+			case PURPLE_KEYRING_ERROR_BACKENDFAIL:
 				purple_debug_error("keyring",
 					"Failed to communicate with backend while changing keyring for account %s: %s. Aborting changes.\n",
 					name, error->message);
@@ -651,9 +655,8 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 	}
 
 	if (error != NULL) {
-		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWD ||
-		    error->code == PURPLE_KEYRING_ERROR_NOACCOUNT ||
-		    tracker->force == TRUE) {
+		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWORD ||
+			tracker->force == TRUE) {
 			/* don't save password, and ignore it */
 		} else {
 			/* fatal error, abort all */
@@ -689,8 +692,8 @@ purple_keyring_set_inuse(const PurpleKeyring *newkeyring,
 		if (cb == NULL)
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_UNKNOWN,
-			"There is password migration session already running");
+			PURPLE_KEYRING_ERROR_INTERNAL,
+			"There is a password migration session already running");
 		cb(oldkeyring, error, data);
 		g_error_free(error);
 		return;
@@ -912,7 +915,7 @@ purple_keyring_import_password(PurpleAccount *account,
 	    (keyringid == NULL && g_strcmp0(PURPLE_DEFAULT_KEYRING, realid))) {
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
-				PURPLE_KEYRING_ERROR_INVALID,
+				PURPLE_KEYRING_ERROR_INTERNAL,
 				"Specified keyring id does not match the "
 				"configured one.");
 		}
@@ -967,7 +970,7 @@ purple_keyring_export_password(PurpleAccount *account,
 	}
 
 	if (*keyringid == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
+		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Plugin does not have a keyring id");
 		purple_debug_info("keyring",
 			"Configured keyring does not have a keyring id, cannot export password.\n");
@@ -1002,7 +1005,7 @@ purple_keyring_get_password(PurpleAccount *account,
 
 	if (purple_keyring_is_quitting) {
 		purple_debug_error("keyring", "Cannot request a password while quitting.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCHANNEL,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot request a password while quitting.");
 		if (cb != NULL)
 			cb(account, NULL, error, data);
@@ -1012,7 +1015,7 @@ purple_keyring_get_password(PurpleAccount *account,
 
 	if (account == NULL) {
 		purple_debug_error("keyring", "No account passed to the function.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"No account passed to the function.");
 
 		if (cb != NULL)
@@ -1097,7 +1100,7 @@ purple_keyring_set_password(PurpleAccount *account,
 
 	if (purple_keyring_is_quitting) {
 		purple_debug_error("keyring", "Cannot save a password while quitting.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCHANNEL,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot save a password while quitting.");
 		if (cb != NULL)
 			cb(account, error, data);
@@ -1107,7 +1110,7 @@ purple_keyring_set_password(PurpleAccount *account,
 
 	if (current_change_tracker != NULL) {
 		purple_debug_error("keyring", "Cannot save a password during password migration.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCHANNEL,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot save a password during password migration.");
 		if (cb != NULL)
 			cb(account, error, data);
@@ -1138,27 +1141,18 @@ purple_keyring_set_password(PurpleAccount *account,
 	}
 }
 
+/* TODO: get rid of GError */
 void
 purple_keyring_close(PurpleKeyring *keyring, GError **error)
 {
 	PurpleKeyringClose close_cb;
 
-	if (keyring == NULL) {
-		*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INVALID,
-			"No keyring passed to the function.");
+	g_return_if_fail(keyring != NULL);
 
-	} else {
-		close_cb = purple_keyring_get_close_keyring(keyring);
+	close_cb = purple_keyring_get_close_keyring(keyring);
 
-		if (close_cb == NULL) {
-			*error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
-				"Keyring doesn't support being closed.");
-
-		} else {
-			close_cb(error);
-
-		}
-	}
+	if (close_cb != NULL)
+		close_cb(error);
 }
 
 
@@ -1174,7 +1168,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 
 	if (purple_keyring_is_quitting || current_change_tracker != NULL) {
 		purple_debug_error("keyring", "Cannot change a master password at the moment.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCHANNEL,
+		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot change a master password at the moment.");
 		if (cb != NULL)
 			cb(error, data);
@@ -1194,7 +1188,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 		change = purple_keyring_get_change_master(inuse);
 
 		if (change == NULL) {
-			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOCAP,
+			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				"Keyring doesn't support master passwords.");
 			if (cb)
 				cb(error, data);

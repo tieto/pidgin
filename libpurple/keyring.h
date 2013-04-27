@@ -436,16 +436,15 @@ GQuark purple_keyring_error_domain(void);
 /** error codes for keyrings. */
 enum PurpleKeyringError
 {
-	PURPLE_KEYRING_ERROR_OK = 0,         /**< No error. */
-	PURPLE_KEYRING_ERROR_NOPASSWD = 1,   /**< No stored password. */
-	PURPLE_KEYRING_ERROR_NOACCOUNT,      /**< Account not found. */
-	PURPLE_KEYRING_ERROR_WRONGPASS,      /**< User submitted wrong password when prompted. */
-	PURPLE_KEYRING_ERROR_WRONGFORMAT,    /**< Data passed is not in suitable format. */
-	PURPLE_KEYRING_ERROR_NOKEYRING,      /**< No keyring configured. */
-	PURPLE_KEYRING_ERROR_NOCHANNEL,      /**< Failed to communicate with the backend */
-	PURPLE_KEYRING_ERROR_INVALID,        /**< Invalid input */
-	PURPLE_KEYRING_ERROR_NOCAP,          /**< Keyring doesn't support this */
-	PURPLE_KEYRING_ERROR_UNKNOWN         /**< Unknown error */
+	PURPLE_KEYRING_ERROR_UNKNOWN = 0,     /**< Unknown error. */
+
+	PURPLE_KEYRING_ERROR_NOKEYRING = 10,  /**< No keyring configured. */
+	PURPLE_KEYRING_ERROR_INTERNAL,        /**< Internal keyring system error. */
+	PURPLE_KEYRING_ERROR_BACKENDFAIL,     /**< Failed to communicate with the backend or internal backend error. */
+
+	PURPLE_KEYRING_ERROR_NOPASSWORD = 20, /**< No password stored for the specified account. */
+	PURPLE_KEYRING_ERROR_ACCESSDENIED,    /**< Access denied for the specified keyring or entry. */
+	PURPLE_KEYRING_ERROR_CANCELLED        /**< Operation was cancelled. */
 };
 
 /*}@*/
