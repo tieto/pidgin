@@ -49,7 +49,7 @@ typedef struct _PurpleKeyring PurpleKeyring;
 /*@}*/
 
 /**************************************************************************/
-/** @name Callbacks for keyrings access functions                        */
+/** @name Callbacks for keyrings access functions                         */
 /**************************************************************************/
 /*@{*/
 
