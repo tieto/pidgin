@@ -113,15 +113,15 @@ static void
 purple_keyring_close(PurpleKeyring *keyring);
 
 /* A list of available keyrings */
-static GList *purple_keyring_keyrings;
+static GList *purple_keyring_keyrings = NULL;
 
 /* Keyring being used. */
-static PurpleKeyring *purple_keyring_inuse;
+static PurpleKeyring *purple_keyring_inuse = NULL;
 
 /* Keyring id marked to use (may not be loadable). */
-static gchar *purple_keyring_to_use;
+static gchar *purple_keyring_to_use = NULL;
 
-static guint purple_keyring_pref_cb_id;
+static guint purple_keyring_pref_cbid = 0;
 static GList *purple_keyring_loaded_plugins = NULL;
 static PurpleKeyringChangeTracker *current_change_tracker = NULL;
 static gboolean purple_keyring_is_quitting = FALSE;
@@ -135,13 +135,11 @@ static GHashTable *purple_keyring_failed_imports = NULL;
 PurpleKeyring *
 purple_keyring_find_keyring_by_id(const gchar *id)
 {
-	GList *l;
-	PurpleKeyring *keyring;
-	const gchar *curr_id;
+	GList *it;
 
-	for (l = purple_keyring_keyrings; l != NULL; l = l->next) {
-		keyring = l->data;
-		curr_id = purple_keyring_get_id(keyring);
+	for (it = purple_keyring_keyrings; it != NULL; it = it->next) {
+		PurpleKeyring *keyring = it->data;
+		const gchar *curr_id = purple_keyring_get_id(keyring);
 
 		if (g_strcmp0(id, curr_id) == 0)
 			return keyring;
@@ -151,21 +149,37 @@ purple_keyring_find_keyring_by_id(const gchar *id)
 }
 
 static void
-purple_keyring_pref_cb(const gchar *pref,
-		       PurplePrefType type,
-		       gconstpointer id,
-		       gpointer data)
+purple_keyring_pref_callback(const gchar *pref, PurplePrefType type,
+	gconstpointer id, gpointer data)
 {
-	PurpleKeyring *new;
+	PurpleKeyring *new_keyring;
 
 	g_return_if_fail(g_strcmp0(pref, "/purple/keyring/active") == 0);
 	g_return_if_fail(type == PURPLE_PREF_STRING);
 	g_return_if_fail(id != NULL);
 
-	new = purple_keyring_find_keyring_by_id(id);
-	g_return_if_fail(new != NULL);
+	new_keyring = purple_keyring_find_keyring_by_id(id);
+	g_return_if_fail(new_keyring != NULL);
 
-	purple_keyring_set_inuse(new, FALSE, NULL, data);
+	purple_keyring_set_inuse(new_keyring, FALSE, NULL, NULL);
+}
+
+static void
+purple_keyring_pref_connect(void)
+{
+	g_return_if_fail(purple_keyring_pref_cbid == 0);
+
+	purple_keyring_pref_cbid = purple_prefs_connect_callback(NULL,
+		"/purple/keyring/active", purple_keyring_pref_callback, NULL);
+}
+
+static void
+purple_keyring_pref_disconnect(void)
+{
+	g_return_if_fail(purple_keyring_pref_cbid != 0);
+
+	purple_prefs_disconnect_callback(purple_keyring_pref_cbid);
+	purple_keyring_pref_cbid = 0;
 }
 
 PurpleKeyring *
@@ -240,11 +254,10 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 
 		purple_keyring_close(tracker->new);
 
-		purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
+		purple_keyring_pref_disconnect();
 		purple_prefs_set_string("/purple/keyring/active",
 			purple_keyring_get_id(tracker->old));
-		purple_keyring_pref_cb_id = purple_prefs_connect_callback(NULL,
-			"/purple/keyring/active", purple_keyring_pref_cb, NULL);
+		purple_keyring_pref_connect();
 
 		current_change_tracker = NULL;
 
@@ -1189,8 +1202,7 @@ purple_keyring_init(void)
 		purple_keyring_to_use = g_strdup(touse);
 	}
 
-	purple_keyring_pref_cb_id = purple_prefs_connect_callback(NULL,
-		"/purple/keyring/active", purple_keyring_pref_cb, NULL);
+	purple_keyring_pref_connect();
 
 	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
 	{
@@ -1243,8 +1255,7 @@ purple_keyring_uninit(void)
 
 	purple_signals_unregister_by_instance(purple_keyring_get_handle());
 	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
-	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
-	purple_keyring_pref_cb_id = 0;
+	purple_keyring_pref_disconnect();
 
 	g_hash_table_destroy(purple_keyring_failed_imports);
 	purple_keyring_failed_imports = NULL;
