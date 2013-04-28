@@ -112,6 +112,10 @@ purple_keyring_failed_import_free(PurpleKeyringFailedImport *import)
 static void
 purple_keyring_close(PurpleKeyring *keyring);
 
+static void
+purple_keyring_drop_passwords(PurpleKeyring *keyring,
+	PurpleKeyringDropCallback cb, gpointer data);
+
 /* A list of available keyrings */
 static GList *purple_keyring_keyrings = NULL;
 
@@ -189,49 +193,6 @@ purple_keyring_get_inuse(void)
 }
 
 static void
-purple_keyring_drop_passwords_cb(PurpleAccount *account, GError *error,
-	gpointer _tracker)
-{
-	PurpleKeyringDropTracker *tracker = _tracker;
-
-	tracker->drop_outstanding--;
-
-	if (!tracker->finished || tracker->drop_outstanding > 0)
-		return;
-
-	if (tracker->cb)
-		tracker->cb(tracker->cb_data);
-	g_free(tracker);
-}
-
-static void
-purple_keyring_drop_passwords(PurpleKeyring *keyring,
-	PurpleKeyringDropCallback cb, gpointer data)
-{
-	GList *cur;
-	PurpleKeyringSave save_cb;
-	PurpleKeyringDropTracker *tracker;
-
-	g_return_if_fail(keyring != NULL);
-
-	save_cb = purple_keyring_get_save_password(keyring);
-	g_return_if_fail(save_cb != NULL);
-
-	tracker = g_new0(PurpleKeyringDropTracker, 1);
-	tracker->cb = cb;
-	tracker->cb_data = data;
-
-	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next) {
-		tracker->drop_outstanding++;
-		if (cur->next == NULL)
-			tracker->finished = TRUE;
-
-		save_cb(cur->data, NULL, purple_keyring_drop_passwords_cb,
-			tracker);
-	}
-}
-
-static void
 purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 {
 	PurpleKeyringChangeTracker *tracker = _tracker;
@@ -274,7 +235,7 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 }
 
 static void
-purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
+purple_keyring_set_inuse_save_cb(PurpleAccount *account,
 					GError *error,
 					gpointer data)
 {
@@ -351,7 +312,7 @@ purple_keyring_set_inuse_check_error_cb(PurpleAccount *account,
 }
 
 static void
-purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
+purple_keyring_set_inuse_read_cb(PurpleAccount *account,
                                    const gchar *password,
                                    GError *error,
                                    gpointer data)
@@ -365,7 +326,7 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 
 	g_return_if_fail(tracker != NULL);
 	if (tracker->abort) {
-		purple_keyring_set_inuse_check_error_cb(account, NULL, data);
+		purple_keyring_set_inuse_save_cb(account, NULL, data);
 		return;
 	}
 
@@ -377,12 +338,12 @@ purple_keyring_set_inuse_got_pw_cb(PurpleAccount *account,
 			/* fatal error, abort all */
 			tracker->abort = TRUE;
 		}
-		purple_keyring_set_inuse_check_error_cb(account, error, data);
+		purple_keyring_set_inuse_save_cb(account, error, data);
 	} else {
 		save_cb = purple_keyring_get_save_password(new);
 		g_return_if_fail(save_cb != NULL);
 
-		save_cb(account, password, purple_keyring_set_inuse_check_error_cb,
+		save_cb(account, password, purple_keyring_set_inuse_save_cb,
 			tracker);
 	}
 }
@@ -461,7 +422,7 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 			if (cur->next == NULL)
 				tracker->finished = TRUE;
 
-			read_cb(cur->data, purple_keyring_set_inuse_got_pw_cb, tracker);
+			read_cb(cur->data, purple_keyring_set_inuse_read_cb, tracker);
 		}
 	} else { /* no keyring was set before. */
 		if (purple_debug_is_verbose()) {
@@ -597,6 +558,49 @@ purple_keyring_close(PurpleKeyring *keyring)
 
 	if (close_cb != NULL)
 		close_cb();
+}
+
+static void
+purple_keyring_drop_passwords_cb(PurpleAccount *account, GError *error,
+	gpointer _tracker)
+{
+	PurpleKeyringDropTracker *tracker = _tracker;
+
+	tracker->drop_outstanding--;
+
+	if (!tracker->finished || tracker->drop_outstanding > 0)
+		return;
+
+	if (tracker->cb)
+		tracker->cb(tracker->cb_data);
+	g_free(tracker);
+}
+
+static void
+purple_keyring_drop_passwords(PurpleKeyring *keyring,
+	PurpleKeyringDropCallback cb, gpointer data)
+{
+	GList *cur;
+	PurpleKeyringSave save_cb;
+	PurpleKeyringDropTracker *tracker;
+
+	g_return_if_fail(keyring != NULL);
+
+	save_cb = purple_keyring_get_save_password(keyring);
+	g_return_if_fail(save_cb != NULL);
+
+	tracker = g_new0(PurpleKeyringDropTracker, 1);
+	tracker->cb = cb;
+	tracker->cb_data = data;
+
+	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next) {
+		tracker->drop_outstanding++;
+		if (cur->next == NULL)
+			tracker->finished = TRUE;
+
+		save_cb(cur->data, NULL, purple_keyring_drop_passwords_cb,
+			tracker);
+	}
 }
 
 gboolean
