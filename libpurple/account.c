@@ -2907,6 +2907,14 @@ connection_error_cb(PurpleConnection *gc,
 	                   account, type, description);
 }
 
+static void
+password_migration_cb(PurpleAccount *account)
+{
+	g_return_if_fail(account != NULL);
+
+	schedule_accounts_save();
+}
+
 const PurpleConnectionErrorInfo *
 purple_account_get_current_error(PurpleAccount *account)
 {
@@ -3282,6 +3290,8 @@ purple_accounts_init(void)
 	                      PURPLE_CALLBACK(signed_off_cb), NULL);
 	purple_signal_connect(conn_handle, "connection-error", handle,
 	                      PURPLE_CALLBACK(connection_error_cb), NULL);
+	purple_signal_connect(purple_keyring_get_handle(), "password-migration", handle,
+	                      PURPLE_CALLBACK(password_migration_cb), NULL);
 
 	load_accounts();
 

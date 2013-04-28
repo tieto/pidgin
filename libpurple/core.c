@@ -152,7 +152,7 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
-	purple_keyring_init();
+	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */

@@ -292,17 +292,8 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 			tracker->error = g_error_copy(error);
 	}
 
-	/**
-	 * This is kind of hackish. It will schedule an account save.
-	 *
-	 * Another way to do this would be to expose the
-	 * schedule_accounts_save() function, but other such functions
-	 * are not exposed. So these was done for consistency.
-	 *
-	 * TODO: put a signal here
-	 */
-	purple_account_set_remember_password(account,
-		purple_account_get_remember_password(account));
+	purple_signal_emit(purple_keyring_get_handle(), "password-migration",
+		account);
 
 	if (!tracker->finished || tracker->read_outstanding > 0)
 		return;
@@ -1193,6 +1184,12 @@ purple_keyring_init(void)
 		NULL, 2,
 		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
 		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
+
+	purple_signal_register(purple_keyring_get_handle(),
+		"password-migration",
+		purple_marshal_VOID__POINTER,
+		NULL, 1,
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleAccount *")); /* a pointer to the account */
 
 	/* see what keyring we want to use */
 	touse = purple_prefs_get_string("/purple/keyring/active");
