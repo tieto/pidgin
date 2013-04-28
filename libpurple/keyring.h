@@ -89,12 +89,10 @@ typedef void (*PurpleKeyringChangeMasterCallback)(GError *error, gpointer data);
 /**
  * Callback for when we change the keyring.
  *
- * @param keyring The keyring that is in use.
  * @param error   An error that might have occurred.
  * @param data    A pointer to user supplied data.
  */
-typedef void (*PurpleKeyringSetInUseCallback)(PurpleKeyring *keyring,
-	GError *error, gpointer data);
+typedef void (*PurpleKeyringSetInUseCallback)(GError *error, gpointer data);
 
 /*@}*/
 

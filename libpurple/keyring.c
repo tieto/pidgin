@@ -208,85 +208,88 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 		current_change_tracker = NULL;
 
 		if (tracker->cb != NULL)
-			tracker->cb(tracker->new, NULL, tracker->cb_data);
-	} else {
-		purple_debug_error("keyring",
-			"Failed to change keyring, aborting.\n");
-
-		purple_keyring_close(tracker->new);
-
-		purple_keyring_pref_disconnect();
-		purple_prefs_set_string("/purple/keyring/active",
-			purple_keyring_get_id(tracker->old));
-		purple_keyring_pref_connect();
-
-		current_change_tracker = NULL;
-
-		if (tracker->error == NULL) {
-			tracker->error = g_error_new(PURPLE_KEYRING_ERROR,
-				PURPLE_KEYRING_ERROR_UNKNOWN,
-				"Unknown error has occured");
-		}
-		if (tracker->cb != NULL)
-			tracker->cb(tracker->old, tracker->error, tracker->cb_data);
+			tracker->cb(NULL, tracker->cb_data);
+		purple_keyring_change_tracker_free(tracker);
+		return;
 	}
+
+	purple_debug_error("keyring", "Failed to change keyring, aborting.\n");
+
+	purple_keyring_close(tracker->new);
+
+	purple_keyring_pref_disconnect();
+	purple_prefs_set_string("/purple/keyring/active",
+		purple_keyring_get_id(tracker->old));
+	purple_keyring_pref_connect();
+
+	current_change_tracker = NULL;
+
+	if (tracker->error == NULL) {
+		tracker->error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_UNKNOWN,
+			"Unknown error has occured");
+	}
+
+	if (tracker->cb != NULL)
+		tracker->cb(tracker->error, tracker->cb_data);
 
 	purple_keyring_change_tracker_free(tracker);
 }
 
 static void
-purple_keyring_set_inuse_save_cb(PurpleAccount *account,
-					GError *error,
-					gpointer data)
+purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
+	gpointer _tracker)
 {
-	const gchar *name;
-	PurpleKeyringChangeTracker *tracker;
+	const gchar *account_name;
+	PurpleKeyringChangeTracker *tracker = _tracker;
 
-	tracker = (PurpleKeyringChangeTracker *)data;
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(tracker != NULL);
 
 	tracker->read_outstanding--;
 
-	name = purple_account_get_username(account);
+	account_name = purple_account_get_username(account);
 
-	if ((error != NULL) && (error->domain == PURPLE_KEYRING_ERROR)) {
-		switch(error->code) {
-			case PURPLE_KEYRING_ERROR_NOPASSWORD:
-				if (purple_debug_is_verbose()) {
-					purple_debug_misc("keyring",
-						"No password found while changing keyring for account %s: %s.\n",
-						name, error->message);
-				}
-				break;
-
-			case PURPLE_KEYRING_ERROR_CANCELLED:
-				purple_debug_info("keyring",
-					"Operation cancelled while changing keyring for account %s: %s.\n",
-					name, error->message);
-				tracker->abort = TRUE;
-				if (tracker->error != NULL)
-					g_error_free(tracker->error);
-				tracker->error = g_error_copy(error);
-				break;
-
-			case PURPLE_KEYRING_ERROR_BACKENDFAIL:
-				purple_debug_error("keyring",
-					"Failed to communicate with backend while changing keyring for account %s: %s. Aborting changes.\n",
-					name, error->message);
-				tracker->abort = TRUE;
-				if (tracker->error != NULL)
-					g_error_free(tracker->error);
-				tracker->error = g_error_copy(error);
-				break;
-
-			default:
-				purple_debug_error("keyring",
-					"Unknown error while changing keyring for account %s: %s. Aborting changes.\n",
-					name, error->message);
-				tracker->abort = TRUE;
-				if (tracker->error == NULL)
-					tracker->error = g_error_copy(error);
-				break;
+	if (g_error_matches(PURPLE_KEYRING_ERROR,
+		PURPLE_KEYRING_ERROR_NOPASSWORD)) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("keyring", "No password found while "
+				"changing keyring for account %s: %s.\n",
+				account_name, error->message);
 		}
+	} else if (g_error_matches(PURPLE_KEYRING_ERROR,
+		PURPLE_KEYRING_ERROR_ACCESSDENIED)) {
+		purple_debug_info("keyring", "Access denied while changing "
+			"keyring for account %s: %s.\n",
+			account_name, error->message);
+		tracker->abort = TRUE;
+		if (tracker->error != NULL)
+			g_error_free(tracker->error);
+		tracker->error = g_error_copy(error);
+	} else if (g_error_matches(PURPLE_KEYRING_ERROR,
+		PURPLE_KEYRING_ERROR_CANCELLED)) {
+		purple_debug_info("keyring", "Operation cancelled while "
+			"changing keyring for account %s: %s.\n",
+			account_name, error->message);
+		tracker->abort = TRUE;
+		if (tracker->error == NULL)
+			tracker->error = g_error_copy(error);
+	} else if (g_error_matches(PURPLE_KEYRING_ERROR,
+		PURPLE_KEYRING_ERROR_BACKENDFAIL)) {
+		purple_debug_error("keyring", "Failed to communicate with "
+			"backend while changing keyring for account %s: %s. "
+			"Aborting changes.\n", account_name, error->message);
+		tracker->abort = TRUE;
+		if (tracker->error != NULL)
+			g_error_free(tracker->error);
+		tracker->error = g_error_copy(error);
+	} else if (error != NULL) {
+		purple_debug_error("keyring", "Unknown error while changing "
+			"keyring for account %s: %s. Aborting changes.\n",
+			account_name, error->message);
+		tracker->abort = TRUE;
+		if (tracker->error == NULL)
+			tracker->error = g_error_copy(error);
 	}
 
 	/**
@@ -295,71 +298,68 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account,
 	 * Another way to do this would be to expose the
 	 * schedule_accounts_save() function, but other such functions
 	 * are not exposed. So these was done for consistency.
+	 *
+	 * TODO: put a signal here
 	 */
 	purple_account_set_remember_password(account,
 		purple_account_get_remember_password(account));
 
-	/* if this was the last one */
-	if (tracker->finished && tracker->read_outstanding == 0) {
-		if (tracker->abort && !tracker->force) {
-			tracker->succeeded = FALSE;
-			purple_keyring_drop_passwords(tracker->new, purple_keyring_set_inuse_drop_cb, tracker);
-		} else {
-			tracker->succeeded = TRUE;
-			purple_keyring_drop_passwords(tracker->old, purple_keyring_set_inuse_drop_cb, tracker);
-		}
+	if (!tracker->finished || tracker->read_outstanding > 0)
+		return;
+
+	/* This was the last one. */
+	if (tracker->abort && !tracker->force) {
+		tracker->succeeded = FALSE;
+		purple_keyring_drop_passwords(tracker->new,
+			purple_keyring_set_inuse_drop_cb, tracker);
+	} else {
+		tracker->succeeded = TRUE;
+		purple_keyring_drop_passwords(tracker->old,
+			purple_keyring_set_inuse_drop_cb, tracker);
 	}
 }
 
 static void
-purple_keyring_set_inuse_read_cb(PurpleAccount *account,
-                                   const gchar *password,
-                                   GError *error,
-                                   gpointer data)
+purple_keyring_set_inuse_read_cb(PurpleAccount *account, const gchar *password,
+	GError *error, gpointer _tracker)
 {
-	PurpleKeyring *new;
+	PurpleKeyringChangeTracker *tracker = _tracker;
 	PurpleKeyringSave save_cb;
-	PurpleKeyringChangeTracker *tracker;
 
-	tracker = (PurpleKeyringChangeTracker *)data;
-	new = tracker->new;
-
+	g_return_if_fail(account != NULL);
 	g_return_if_fail(tracker != NULL);
+
 	if (tracker->abort) {
 		purple_keyring_set_inuse_save_cb(account, NULL, data);
 		return;
 	}
 
 	if (error != NULL) {
-		if (error->code == PURPLE_KEYRING_ERROR_NOPASSWORD ||
-			tracker->force == TRUE) {
-			/* don't save password, and ignore it */
+		if (tracker->force == TRUE || g_error_matches(
+			PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_NOPASSWORD)) {
+			/* Don't save password, and ignore it. */
 		} else {
-			/* fatal error, abort all */
 			tracker->abort = TRUE;
 		}
 		purple_keyring_set_inuse_save_cb(account, error, data);
-	} else {
-		save_cb = purple_keyring_get_save_password(new);
-		g_return_if_fail(save_cb != NULL);
-
-		save_cb(account, password, purple_keyring_set_inuse_save_cb,
-			tracker);
+		return;
 	}
+
+	save_cb = purple_keyring_get_save_password(tracker->new);
+	g_assert(save_cb != NULL);
+
+	save_cb(account, password, purple_keyring_set_inuse_save_cb, tracker);
 }
 
 void
-purple_keyring_set_inuse(PurpleKeyring *newkeyring,
-                         gboolean force,
-                         PurpleKeyringSetInUseCallback cb,
-                         gpointer data)
+purple_keyring_set_inuse(PurpleKeyring *newkeyring, gboolean force,
+	PurpleKeyringSetInUseCallback cb, gpointer data)
 {
-	GList *cur;
 	PurpleKeyring *oldkeyring;
-	PurpleKeyringRead read_cb = NULL;
 	PurpleKeyringChangeTracker *tracker;
-
-	oldkeyring = purple_keyring_get_inuse();
+	GList *it;
+	PurpleKeyringRead read_cb;
 
 	if (current_change_tracker != NULL) {
 		GError *error;
@@ -370,10 +370,12 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_INTERNAL,
 			"There is a password migration session already running");
-		cb(oldkeyring, error, data);
+		cb(error, data);
 		g_error_free(error);
 		return;
 	}
+
+	oldkeyring = purple_keyring_get_inuse();
 
 	if (oldkeyring == newkeyring) {
 		if (purple_debug_is_verbose()) {
@@ -383,48 +385,14 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 					newkeyring->id : "(null)");
 		}
 		if (cb != NULL)
-			cb(newkeyring, NULL, data);
+			cb(NULL, data);
 		return;
 	}
 
 	purple_debug_info("keyring", "Attempting to set new keyring: %s.\n",
 		(newkeyring != NULL) ? newkeyring->id : "(null)");
 
-	if (oldkeyring != NULL) {
-		read_cb = purple_keyring_get_read_password(oldkeyring);
-		g_return_if_fail(read_cb != NULL);
-
-		purple_debug_misc("keyring", "Starting migration from: %s.\n",
-			oldkeyring->id);
-
-		tracker = g_new(PurpleKeyringChangeTracker, 1);
-		current_change_tracker = tracker;
-
-		tracker->cb = cb;
-		tracker->cb_data = data;
-		tracker->new = newkeyring;
-		tracker->old = oldkeyring;
-		tracker->read_outstanding = 0;
-		tracker->finished = FALSE;
-		tracker->abort = FALSE;
-		tracker->force = force;
-		tracker->error = NULL;
-
-		for (cur = purple_accounts_get_all(); cur != NULL;
-			cur = cur->next) {
-
-			if (tracker->abort) {
-				tracker->finished = TRUE;
-				break;
-			}
-			tracker->read_outstanding++;
-
-			if (cur->next == NULL)
-				tracker->finished = TRUE;
-
-			read_cb(cur->data, purple_keyring_set_inuse_read_cb, tracker);
-		}
-	} else { /* no keyring was set before. */
+	if (oldkeyring == NULL) { /* No keyring was set before. */
 		if (purple_debug_is_verbose()) {
 			purple_debug_misc("keyring", "Setting keyring for the "
 				"first time: %s.\n", newkeyring->id);
@@ -433,7 +401,38 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 		purple_keyring_inuse = newkeyring;
 		g_assert(current_change_tracker == NULL);
 		if (cb != NULL)
-			cb(newkeyring, NULL, data);
+			cb(NULL, data);
+		return;
+	}
+
+	/* Starting a migration. */
+
+	read_cb = purple_keyring_get_read_password(oldkeyring);
+	g_assert(read_cb != NULL);
+
+	purple_debug_misc("keyring", "Starting migration from: %s.\n",
+		oldkeyring->id);
+
+	tracker = g_new0(PurpleKeyringChangeTracker, 1);
+	current_change_tracker = tracker
+
+	tracker->cb = cb;
+	tracker->cb_data = data;
+	tracker->new = newkeyring;
+	tracker->old = oldkeyring;
+	tracker->force = force;
+
+	for (it = purple_accounts_get_all(); it != NULL; it = it->next) {
+		if (tracker->abort) {
+			tracker->finished = TRUE;
+			break;
+		}
+		tracker->read_outstanding++;
+
+		if (it->next == NULL)
+			tracker->finished = TRUE;
+
+		read_cb(it->data, purple_keyring_set_inuse_read_cb, tracker);
 	}
 }
 
