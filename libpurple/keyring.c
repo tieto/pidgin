@@ -34,11 +34,6 @@
 #include "internal.h"
 #include "dbus-maybe.h"
 
-/**************************************************************************/
-/** @name PurpleKeyring                                                   */
-/**************************************************************************/
-/*@{*/
-
 struct _PurpleKeyring
 {
 	char *name;
@@ -88,8 +83,12 @@ typedef struct
 	gpointer cb_data;
 } PurpleKeyringSetPasswordData;
 
-static void
-purple_keyring_close(PurpleKeyring *keyring);
+typedef struct
+{
+	gchar *keyring_id;
+	gchar *mode;
+	gchar *data;
+} PurpleKeyringFailedImport;
 
 static void
 purple_keyring_change_tracker_free(PurpleKeyringChangeTracker *tracker)
@@ -99,177 +98,19 @@ purple_keyring_change_tracker_free(PurpleKeyringChangeTracker *tracker)
 	g_free(tracker);
 }
 
-PurpleKeyring *
-purple_keyring_new(void)
+static void
+purple_keyring_failed_import_free(PurpleKeyringFailedImport *import)
 {
-	return g_new0(PurpleKeyring, 1);
+	g_return_if_fail(import != NULL);
+
+	g_free(import->keyring_id);
+	g_free(import->mode);
+	g_free(import->data);
+	g_free(import);
 }
 
-void
-purple_keyring_free(PurpleKeyring *keyring)
-{
-	g_free(keyring->name);
-	g_free(keyring->id);
-	g_free(keyring);
-}
-
-const char *
-purple_keyring_get_name(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->name;
-}
-
-const char *
-purple_keyring_get_id(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->id;
-}
-
-PurpleKeyringRead
-purple_keyring_get_read_password(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->read_password;
-}
-
-PurpleKeyringSave
-purple_keyring_get_save_password(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->save_password;
-}
-
-PurpleKeyringCancelRequests
-purple_keyring_get_cancel_requests(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->cancel_requests;
-}
-
-PurpleKeyringClose
-purple_keyring_get_close_keyring(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->close_keyring;
-}
-
-PurpleKeyringChangeMaster
-purple_keyring_get_change_master(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->change_master;
-}
-
-PurpleKeyringImportPassword
-purple_keyring_get_import_password(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->import_password;
-}
-
-PurpleKeyringExportPassword
-purple_keyring_get_export_password(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->export_password;
-}
-
-void
-purple_keyring_set_name(PurpleKeyring *keyring, const char *name)
-{
-	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(name != NULL);
-
-	g_free(keyring->name);
-	keyring->name = g_strdup(name);
-}
-
-void
-purple_keyring_set_id(PurpleKeyring *keyring, const char *id)
-{
-	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(id != NULL);
-
-	g_free(keyring->id);
-	keyring->id = g_strdup(id);
-}
-
-void
-purple_keyring_set_read_password(PurpleKeyring *keyring, PurpleKeyringRead read_cb)
-{
-	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(read_cb != NULL);
-
-	keyring->read_password = read_cb;
-}
-
-void
-purple_keyring_set_save_password(PurpleKeyring *keyring, PurpleKeyringSave save_cb)
-{
-	g_return_if_fail(keyring != NULL);
-	g_return_if_fail(save_cb != NULL);
-
-	keyring->save_password = save_cb;
-}
-
-void
-purple_keyring_set_cancel_requests(PurpleKeyring *keyring, PurpleKeyringCancelRequests cancel_requests)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->cancel_requests = cancel_requests;
-}
-
-void
-purple_keyring_set_close_keyring(PurpleKeyring *keyring, PurpleKeyringClose close_cb)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->close_keyring = close_cb;
-}
-
-void
-purple_keyring_set_change_master(PurpleKeyring *keyring, PurpleKeyringChangeMaster change)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->change_master = change;
-}
-
-void
-purple_keyring_set_import_password(PurpleKeyring *keyring, PurpleKeyringImportPassword import)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->import_password = import;
-}
-
-void
-purple_keyring_set_export_password(PurpleKeyring *keyring, PurpleKeyringExportPassword export)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->export_password = export;
-}
-
-/*@}*/
-
-
-/***************************************/
-/** @name Keyring API                  */
-/***************************************/
-/*@{*/
+static void
+purple_keyring_close(PurpleKeyring *keyring);
 
 static GList *purple_keyring_keyrings;              /* list of available keyrings */
 static PurpleKeyring *purple_keyring_inuse; /* keyring being used */
@@ -280,22 +121,27 @@ static PurpleKeyringChangeTracker *current_change_tracker = NULL;
 static gboolean purple_keyring_is_quitting = FALSE;
 static GHashTable *purple_keyring_failed_imports = NULL;
 
-typedef struct
-{
-	gchar *keyring_id;
-	gchar *mode;
-	gchar *data;
-} purple_keyring_failed_import;
 
-static void
-purple_keyring_failed_import_free(purple_keyring_failed_import *import)
-{
-	g_return_if_fail(import != NULL);
+/**************************************************************************/
+/* Setting used keyrings                                                  */
+/**************************************************************************/
 
-	g_free(import->keyring_id);
-	g_free(import->mode);
-	g_free(import->data);
-	g_free(import);
+PurpleKeyring *
+purple_keyring_find_keyring_by_id(const char *id)
+{
+	GList *l;
+	PurpleKeyring *keyring;
+	const char *curr_id;
+
+	for (l = purple_keyring_keyrings; l != NULL; l = l->next) {
+		keyring = l->data;
+		curr_id = purple_keyring_get_id(keyring);
+
+		if (g_strcmp0(id, curr_id) == 0)
+			return keyring;
+	}
+
+	return NULL;
 }
 
 static void
@@ -316,178 +162,11 @@ purple_keyring_pref_cb(const char *pref,
 	purple_keyring_set_inuse(new, FALSE, NULL, data);
 }
 
-static void purple_keyring_core_initialized_cb(void)
-{
-	if (purple_keyring_inuse == NULL) {
-		purple_notify_error(NULL, _("Keyrings"),
-			_("Failed to load selected keyring."),
-			_("Check your system configuration or select another "
-			"one in Preferences dialog."));
-	}
-}
-
-static void purple_keyring_core_quitting_cb()
-{
-	if (current_change_tracker != NULL) {
-		PurpleKeyringChangeTracker *tracker;
-		PurpleKeyringCancelRequests cancel = NULL;
-
-		tracker = current_change_tracker;
-		tracker->abort = TRUE;
-		if (tracker->old) {
-			cancel = purple_keyring_get_cancel_requests(
-				tracker->old);
-			if (cancel)
-				cancel();
-		}
-		if (current_change_tracker == tracker && tracker->new) {
-			cancel = purple_keyring_get_cancel_requests(
-				tracker->new);
-			if (cancel)
-				cancel();
-		}
-	}
-	purple_keyring_is_quitting = TRUE;
-	if (purple_keyring_inuse != NULL) {
-		PurpleKeyringCancelRequests cancel;
-		cancel = purple_keyring_get_cancel_requests(
-			purple_keyring_inuse);
-		if (cancel)
-			cancel();
-	}
-}
-
-void
-purple_keyring_init(void)
-{
-	const char *touse;
-	GList *it;
-
-	purple_keyring_keyrings = NULL;
-	purple_keyring_inuse = NULL;
-
-	purple_keyring_failed_imports = g_hash_table_new_full(g_direct_hash,
-		g_direct_equal, NULL,
-		(GDestroyNotify)purple_keyring_failed_import_free);
-
-	purple_signal_register(purple_keyring_get_handle(),
-		"keyring-register",
-		purple_marshal_VOID__POINTER_POINTER,
-		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
-
-	purple_signal_register(purple_keyring_get_handle(),
-		"keyring-unregister",
-		purple_marshal_VOID__POINTER_POINTER,
-		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
-
-	/* see what keyring we want to use */
-	touse = purple_prefs_get_string("/purple/keyring/active");
-
-	if (touse == NULL) {
-		purple_prefs_add_none("/purple/keyring");
-		purple_prefs_add_string("/purple/keyring/active", PURPLE_DEFAULT_KEYRING);
-		purple_keyring_to_use = g_strdup(PURPLE_DEFAULT_KEYRING);
-	} else {
-		purple_keyring_to_use = g_strdup(touse);
-	}
-
-	purple_keyring_pref_cb_id = purple_prefs_connect_callback(NULL,
-		"/purple/keyring/active", purple_keyring_pref_cb, NULL);
-
-	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
-	{
-		PurplePlugin *plugin = (PurplePlugin *)it->data;
-
-		if (plugin->info == NULL || plugin->info->id == NULL)
-			continue;
-		if (strncmp(plugin->info->id, "keyring-", 8) != 0)
-			continue;
-
-		if (purple_plugin_is_loaded(plugin))
-			continue;
-
-		if (purple_plugin_load(plugin))
-		{
-			purple_keyring_loaded_plugins = g_list_append(
-				purple_keyring_loaded_plugins, plugin);
-		}
-	}
-
-	if (purple_keyring_inuse == NULL)
-		purple_debug_error("keyring", "selected keyring failed to load\n");
-
-	purple_signal_connect(purple_get_core(), "core-initialized",
-		purple_keyring_get_handle(),
-		PURPLE_CALLBACK(purple_keyring_core_initialized_cb), NULL);
-	purple_signal_connect(purple_get_core(), "quitting",
-		purple_keyring_get_handle(),
-		PURPLE_CALLBACK(purple_keyring_core_quitting_cb), NULL);
-}
-
-void
-purple_keyring_uninit(void)
-{
-	GList *it;
-
-	g_free(purple_keyring_to_use);
-	purple_keyring_inuse = NULL;
-
-	for (it = g_list_first(purple_keyring_loaded_plugins); it != NULL;
-		it = g_list_next(it))
-	{
-		PurplePlugin *plugin = (PurplePlugin *)it->data;
-		if (g_list_find(purple_plugins_get_loaded(), plugin) == NULL)
-			continue;
-		purple_plugin_unload(plugin);
-	}
-	g_list_free(purple_keyring_loaded_plugins);
-	purple_keyring_loaded_plugins = NULL;
-
-	purple_signals_unregister_by_instance(purple_keyring_get_handle());
-	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
-	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
-	purple_keyring_pref_cb_id = 0;
-
-	g_hash_table_destroy(purple_keyring_failed_imports);
-	purple_keyring_failed_imports = NULL;
-}
-
-void *
-purple_keyring_get_handle(void)
-{
-	static int handle;
-
-	return &handle;
-}
-
-PurpleKeyring *
-purple_keyring_find_keyring_by_id(const char *id)
-{
-	GList *l;
-	PurpleKeyring *keyring;
-	const char *curr_id;
-
-	for (l = purple_keyring_keyrings; l != NULL; l = l->next) {
-		keyring = l->data;
-		curr_id = purple_keyring_get_id(keyring);
-
-		if (g_strcmp0(id, curr_id) == 0)
-			return keyring;
-	}
-
-	return NULL;
-}
-
 PurpleKeyring *
 purple_keyring_get_inuse(void)
 {
 	return purple_keyring_inuse;
 }
-
 
 static void
 purple_keyring_drop_passwords_cb(PurpleAccount *account, GError *error,
@@ -778,33 +457,6 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring,
 	}
 }
 
-GList *
-purple_keyring_get_options(void)
-{
-	const GList *keyrings;
-	PurpleKeyring *keyring;
-	GList *list = NULL;
-	static char currentDisabledName[40];
-
-	if (purple_keyring_get_inuse() == NULL && purple_keyring_to_use != NULL
-		&& purple_keyring_to_use[0] != '\0') {
-		g_snprintf(currentDisabledName, sizeof(currentDisabledName),
-			_("%s (disabled)"), purple_keyring_to_use);
-		list = g_list_append(list, currentDisabledName);
-		list = g_list_append(list, purple_keyring_to_use);
-	}
-
-	for (keyrings = purple_keyring_keyrings; keyrings != NULL;
-		keyrings = keyrings->next) {
-
-		keyring = keyrings->data;
-		list = g_list_append(list, keyring->name);
-		list = g_list_append(list, keyring->id);
-	}
-
-	return list;
-}
-
 void
 purple_keyring_register(PurpleKeyring *keyring)
 {
@@ -883,13 +535,50 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 		keyring);
 }
 
-/*@}*/
+GList *
+purple_keyring_get_options(void)
+{
+	const GList *keyrings;
+	PurpleKeyring *keyring;
+	GList *list = NULL;
+	static char currentDisabledName[40];
+
+	if (purple_keyring_get_inuse() == NULL && purple_keyring_to_use != NULL
+		&& purple_keyring_to_use[0] != '\0') {
+		g_snprintf(currentDisabledName, sizeof(currentDisabledName),
+			_("%s (disabled)"), purple_keyring_to_use);
+		list = g_list_append(list, currentDisabledName);
+		list = g_list_append(list, purple_keyring_to_use);
+	}
+
+	for (keyrings = purple_keyring_keyrings; keyrings != NULL;
+		keyrings = keyrings->next) {
+
+		keyring = keyrings->data;
+		list = g_list_append(list, keyring->name);
+		list = g_list_append(list, keyring->id);
+	}
+
+	return list;
+}
 
 
 /**************************************************************************/
-/** @name Keyring plugin wrappers                                         */
+/* Keyring plugin wrappers                                                */
 /**************************************************************************/
-/*@{*/
+
+static void
+purple_keyring_close(PurpleKeyring *keyring)
+{
+	PurpleKeyringClose close_cb;
+
+	g_return_if_fail(keyring != NULL);
+
+	close_cb = purple_keyring_get_close_keyring(keyring);
+
+	if (close_cb != NULL)
+		close_cb();
+}
 
 gboolean
 purple_keyring_import_password(PurpleAccount *account,
@@ -910,7 +599,7 @@ purple_keyring_import_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		purple_keyring_failed_import *import;
+		PurpleKeyringFailedImport *import;
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_NOKEYRING,
@@ -921,7 +610,7 @@ purple_keyring_import_password(PurpleAccount *account,
 			"No keyring configured, cannot import password info for account %s (%s).\n",
 			purple_account_get_username(account), purple_account_get_protocol_id(account));
 
-		import = g_new0(purple_keyring_failed_import, 1);
+		import = g_new0(PurpleKeyringFailedImport, 1);
 		import->keyring_id = g_strdup(keyring_id);
 		import->mode = g_strdup(mode);
 		import->data = g_strdup(data);
@@ -976,7 +665,7 @@ purple_keyring_export_password(PurpleAccount *account,
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
-		purple_keyring_failed_import *import = g_hash_table_lookup(
+		PurpleKeyringFailedImport *import = g_hash_table_lookup(
 			purple_keyring_failed_imports, account);
 
 		if (import == NULL) {
@@ -1177,20 +866,6 @@ purple_keyring_set_password(PurpleAccount *account,
 	}
 }
 
-static void
-purple_keyring_close(PurpleKeyring *keyring)
-{
-	PurpleKeyringClose close_cb;
-
-	g_return_if_fail(keyring != NULL);
-
-	close_cb = purple_keyring_get_close_keyring(keyring);
-
-	if (close_cb != NULL)
-		close_cb();
-}
-
-
 void
 purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
                              gpointer data)
@@ -1237,18 +912,342 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 	}
 }
 
-/*@}*/
+
+/**************************************************************************/
+/* PurpleKeyring accessors                                                */
+/**************************************************************************/
+
+PurpleKeyring *
+purple_keyring_new(void)
+{
+	return g_new0(PurpleKeyring, 1);
+}
+
+void
+purple_keyring_free(PurpleKeyring *keyring)
+{
+	g_return_if_fail(keyring != NULL);
+
+	g_free(keyring->name);
+	g_free(keyring->id);
+	g_free(keyring);
+}
+
+const char *
+purple_keyring_get_name(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->name;
+}
+
+const char *
+purple_keyring_get_id(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->id;
+}
+
+PurpleKeyringRead
+purple_keyring_get_read_password(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->read_password;
+}
+
+PurpleKeyringSave
+purple_keyring_get_save_password(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->save_password;
+}
+
+PurpleKeyringCancelRequests
+purple_keyring_get_cancel_requests(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->cancel_requests;
+}
+
+PurpleKeyringClose
+purple_keyring_get_close_keyring(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->close_keyring;
+}
+
+PurpleKeyringChangeMaster
+purple_keyring_get_change_master(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->change_master;
+}
+
+PurpleKeyringImportPassword
+purple_keyring_get_import_password(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->import_password;
+}
+
+PurpleKeyringExportPassword
+purple_keyring_get_export_password(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->export_password;
+}
+
+void
+purple_keyring_set_name(PurpleKeyring *keyring, const char *name)
+{
+	g_return_if_fail(keyring != NULL);
+	g_return_if_fail(name != NULL);
+
+	g_free(keyring->name);
+	keyring->name = g_strdup(name);
+}
+
+void
+purple_keyring_set_id(PurpleKeyring *keyring, const char *id)
+{
+	g_return_if_fail(keyring != NULL);
+	g_return_if_fail(id != NULL);
+
+	g_free(keyring->id);
+	keyring->id = g_strdup(id);
+}
+
+void
+purple_keyring_set_read_password(PurpleKeyring *keyring,
+	PurpleKeyringRead read_cb)
+{
+	g_return_if_fail(keyring != NULL);
+	g_return_if_fail(read_cb != NULL);
+
+	keyring->read_password = read_cb;
+}
+
+void
+purple_keyring_set_save_password(PurpleKeyring *keyring,
+	PurpleKeyringSave save_cb)
+{
+	g_return_if_fail(keyring != NULL);
+	g_return_if_fail(save_cb != NULL);
+
+	keyring->save_password = save_cb;
+}
+
+void
+purple_keyring_set_cancel_requests(PurpleKeyring *keyring,
+	PurpleKeyringCancelRequests cancel_requests)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->cancel_requests = cancel_requests;
+}
+
+void
+purple_keyring_set_close_keyring(PurpleKeyring *keyring,
+	PurpleKeyringClose close_cb)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->close_keyring = close_cb;
+}
+
+void
+purple_keyring_set_change_master(PurpleKeyring *keyring,
+	PurpleKeyringChangeMaster change_master)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->change_master = change_master;
+}
+
+void
+purple_keyring_set_import_password(PurpleKeyring *keyring,
+	PurpleKeyringImportPassword import_password)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->import_password = import_password;
+}
+
+void
+purple_keyring_set_export_password(PurpleKeyring *keyring,
+	PurpleKeyringExportPassword export_password)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->export_password = export_password;
+}
 
 
-/***************************************/
-/** @name Error Codes                  */
-/***************************************/
-/*@{*/
+/**************************************************************************/
+/* Error Codes                                                            */
+/**************************************************************************/
 
 GQuark purple_keyring_error_domain(void)
 {
 	return g_quark_from_static_string("libpurple keyring");
 }
 
-/*}@*/
+/**************************************************************************/
+/* Keyring Subsystem                                                      */
+/**************************************************************************/
 
+static void purple_keyring_core_initialized_cb(void)
+{
+	if (purple_keyring_inuse == NULL) {
+		purple_notify_error(NULL, _("Keyrings"),
+			_("Failed to load selected keyring."),
+			_("Check your system configuration or select another "
+			"one in Preferences dialog."));
+	}
+}
+
+static void purple_keyring_core_quitting_cb()
+{
+	if (current_change_tracker != NULL) {
+		PurpleKeyringChangeTracker *tracker;
+		PurpleKeyringCancelRequests cancel = NULL;
+
+		tracker = current_change_tracker;
+		tracker->abort = TRUE;
+		if (tracker->old) {
+			cancel = purple_keyring_get_cancel_requests(
+				tracker->old);
+			if (cancel)
+				cancel();
+		}
+		if (current_change_tracker == tracker && tracker->new) {
+			cancel = purple_keyring_get_cancel_requests(
+				tracker->new);
+			if (cancel)
+				cancel();
+		}
+	}
+	purple_keyring_is_quitting = TRUE;
+	if (purple_keyring_inuse != NULL) {
+		PurpleKeyringCancelRequests cancel;
+		cancel = purple_keyring_get_cancel_requests(
+			purple_keyring_inuse);
+		if (cancel)
+			cancel();
+	}
+}
+
+void
+purple_keyring_init(void)
+{
+	const char *touse;
+	GList *it;
+
+	purple_keyring_keyrings = NULL;
+	purple_keyring_inuse = NULL;
+
+	purple_keyring_failed_imports = g_hash_table_new_full(g_direct_hash,
+		g_direct_equal, NULL,
+		(GDestroyNotify)purple_keyring_failed_import_free);
+
+	purple_signal_register(purple_keyring_get_handle(),
+		"keyring-register",
+		purple_marshal_VOID__POINTER_POINTER,
+		NULL, 2,
+		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
+
+	purple_signal_register(purple_keyring_get_handle(),
+		"keyring-unregister",
+		purple_marshal_VOID__POINTER_POINTER,
+		NULL, 2,
+		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
+
+	/* see what keyring we want to use */
+	touse = purple_prefs_get_string("/purple/keyring/active");
+
+	if (touse == NULL) {
+		purple_prefs_add_none("/purple/keyring");
+		purple_prefs_add_string("/purple/keyring/active", PURPLE_DEFAULT_KEYRING);
+		purple_keyring_to_use = g_strdup(PURPLE_DEFAULT_KEYRING);
+	} else {
+		purple_keyring_to_use = g_strdup(touse);
+	}
+
+	purple_keyring_pref_cb_id = purple_prefs_connect_callback(NULL,
+		"/purple/keyring/active", purple_keyring_pref_cb, NULL);
+
+	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
+	{
+		PurplePlugin *plugin = (PurplePlugin *)it->data;
+
+		if (plugin->info == NULL || plugin->info->id == NULL)
+			continue;
+		if (strncmp(plugin->info->id, "keyring-", 8) != 0)
+			continue;
+
+		if (purple_plugin_is_loaded(plugin))
+			continue;
+
+		if (purple_plugin_load(plugin))
+		{
+			purple_keyring_loaded_plugins = g_list_append(
+				purple_keyring_loaded_plugins, plugin);
+		}
+	}
+
+	if (purple_keyring_inuse == NULL)
+		purple_debug_error("keyring", "selected keyring failed to load\n");
+
+	purple_signal_connect(purple_get_core(), "core-initialized",
+		purple_keyring_get_handle(),
+		PURPLE_CALLBACK(purple_keyring_core_initialized_cb), NULL);
+	purple_signal_connect(purple_get_core(), "quitting",
+		purple_keyring_get_handle(),
+		PURPLE_CALLBACK(purple_keyring_core_quitting_cb), NULL);
+}
+
+void
+purple_keyring_uninit(void)
+{
+	GList *it;
+
+	g_free(purple_keyring_to_use);
+	purple_keyring_inuse = NULL;
+
+	for (it = g_list_first(purple_keyring_loaded_plugins); it != NULL;
+		it = g_list_next(it))
+	{
+		PurplePlugin *plugin = (PurplePlugin *)it->data;
+		if (g_list_find(purple_plugins_get_loaded(), plugin) == NULL)
+			continue;
+		purple_plugin_unload(plugin);
+	}
+	g_list_free(purple_keyring_loaded_plugins);
+	purple_keyring_loaded_plugins = NULL;
+
+	purple_signals_unregister_by_instance(purple_keyring_get_handle());
+	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
+	purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
+	purple_keyring_pref_cb_id = 0;
+
+	g_hash_table_destroy(purple_keyring_failed_imports);
+	purple_keyring_failed_imports = NULL;
+}
+
+void *
+purple_keyring_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}

@@ -401,11 +401,11 @@ purple_keyring_set_id(PurpleKeyring *keyring, const gchar *id);
 
 void
 purple_keyring_set_read_password(PurpleKeyring *keyring,
-	PurpleKeyringRead read);
+	PurpleKeyringRead read_cb);
 
 void
 purple_keyring_set_save_password(PurpleKeyring *keyring,
-	PurpleKeyringSave save);
+	PurpleKeyringSave save_cb);
 
 void
 purple_keyring_set_cancel_requests(PurpleKeyring *keyring,
@@ -413,7 +413,7 @@ purple_keyring_set_cancel_requests(PurpleKeyring *keyring,
 
 void
 purple_keyring_set_close_keyring(PurpleKeyring *keyring,
-	PurpleKeyringClose close);
+	PurpleKeyringClose close_cb);
 
 void
 purple_keyring_set_change_master(PurpleKeyring *keyring,
