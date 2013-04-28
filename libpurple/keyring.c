@@ -105,7 +105,7 @@ purple_keyring_failed_import_free(PurpleKeyringFailedImport *import)
 
 	g_free(import->keyring_id);
 	g_free(import->mode);
-	g_free(import->data);
+	purple_str_wipe(import->data);
 	g_free(import);
 }
 
@@ -730,7 +730,7 @@ purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 			*keyring_id = import->keyring_id;
 			*mode = import->mode;
 			*data = g_strdup(import->data);
-			*destroy = g_free;
+			*destroy = purple_str_wipe;
 			return TRUE;
 		}
 	}
