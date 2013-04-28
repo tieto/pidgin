@@ -385,7 +385,7 @@ account_to_xmlnode(PurpleAccount *account)
 
 		if (error != NULL) {
 			purple_debug_error("account",
-				"Failed to export password for account %s : %s.\n",
+				"Failed to export password for account %s: %s.\n",
 				purple_account_get_username(account),
 				error->message);
 		} else if (exported) {
@@ -2238,16 +2238,15 @@ purple_account_get_username(const PurpleAccount *account)
 }
 
 static void
-purple_account_get_password_async_finish(PurpleAccount *account,
+purple_account_get_password_got(PurpleAccount *account,
 	const gchar *password, GError *error, gpointer data)
 {
 	PurpleCallbackBundle *cbb = data;
 	PurpleKeyringReadCallback cb;
 
 	purple_debug_info("account",
-		"Read password for account %s (%s) from async keyring.\n",
-		purple_account_get_username(account),
-		purple_account_get_protocol_id(account));
+		"Read password for account %s from async keyring.\n",
+		purple_account_get_username(account));
 
 	purple_str_wipe(account->password);
 	account->password = g_strdup(password);
@@ -2270,9 +2269,8 @@ purple_account_get_password(PurpleAccount *account,
 
 	if (account->password != NULL) {
 		purple_debug_info("account",
-			"Reading password for account %s (%s) from cache.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+			"Reading password for account %s from cache.\n",
+			purple_account_get_username(account));
 		cb(account, account->password, NULL, data);
 	} else {
 		PurpleCallbackBundle *cbb = g_new0(PurpleCallbackBundle, 1);
@@ -2280,11 +2278,10 @@ purple_account_get_password(PurpleAccount *account,
 		cbb->data = data;
 
 		purple_debug_info("account",
-			"Reading password for account %s (%s) from async keyring.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+			"Reading password for account %s from async keyring.\n",
+			purple_account_get_username(account));
 		purple_keyring_get_password(account, 
-			purple_account_get_password_async_finish, cbb);
+			purple_account_get_password_got, cbb);
 	}
 }
 
@@ -2960,7 +2957,7 @@ purple_accounts_remove(PurpleAccount *account)
 }
 
 static void
-purple_accounts_delete_finish(PurpleAccount *account, GError *error, gpointer data)
+purple_accounts_delete_set(PurpleAccount *account, GError *error, gpointer data)
 {
 	purple_account_destroy(account);
 }
@@ -3035,11 +3032,11 @@ purple_accounts_delete(PurpleAccount *account)
 	/* This will cause the deletion of an old buddy icon. */
 	purple_buddy_icons_set_account_icon(account, NULL, 0);
 
-	/* this is async because we do not want the
-	 * account overwritten before we are done.
+	/* This is async because we do not want the
+	 * account being overwritten before we are done.
 	 */
 	purple_keyring_set_password(account, NULL,
-		purple_accounts_delete_finish, NULL);
+		purple_accounts_delete_set, NULL);
 }
 
 void

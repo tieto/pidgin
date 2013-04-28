@@ -302,7 +302,9 @@ gnomekeyring_process_queue(void)
 			NULL);
 	} else if (req->type == GNOMEKEYRING_REQUEST_SAVE &&
 		req->password != NULL) {
-		gchar *display_name = g_strdup("test name [TODO]");
+		gchar *display_name = g_strdup_printf(
+			_("Pidgin IM password for account %s"),
+			purple_account_get_username(account));
 		current_request = gnome_keyring_store_password(
 			GNOME_KEYRING_NETWORK_PASSWORD, GNOME_KEYRING_DEFAULT,
 			display_name, req->password, gnomekeyring_save_cb, req,
@@ -390,7 +392,8 @@ gnomekeyring_load(PurplePlugin *plugin)
 	purple_keyring_set_id(keyring_handler, GNOMEKEYRING_ID);
 	purple_keyring_set_read_password(keyring_handler, gnomekeyring_read);
 	purple_keyring_set_save_password(keyring_handler, gnomekeyring_save);
-	purple_keyring_set_cancel_requests(keyring_handler, gnomekeyring_cancel);
+	purple_keyring_set_cancel_requests(keyring_handler,
+		gnomekeyring_cancel);
 	purple_keyring_set_close_keyring(keyring_handler, gnomekeyring_close);
 
 	purple_keyring_register(keyring_handler);

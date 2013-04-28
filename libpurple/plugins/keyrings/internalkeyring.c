@@ -109,7 +109,8 @@ internal_keyring_save(PurpleAccount *account, const gchar *password,
 	if (!(password == NULL && old_password == NULL)) {
 		purple_debug_misc("keyring-internal",
 			"Password %s for account %s (%s).\n",
-			(password == NULL ? "removed" : (old_password == NULL ? "saved" : "updated")),
+			(password == NULL ? "removed" : (old_password == NULL ?
+				"saved" : "updated")),
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 	} else if (purple_debug_is_verbose()) {
@@ -191,11 +192,16 @@ internal_keyring_load(PurplePlugin *plugin)
 
 	purple_keyring_set_name(keyring_handler, INTERNALKEYRING_NAME);
 	purple_keyring_set_id(keyring_handler, INTERNALKEYRING_ID);
-	purple_keyring_set_read_password(keyring_handler, internal_keyring_read);
-	purple_keyring_set_save_password(keyring_handler, internal_keyring_save);
-	purple_keyring_set_close_keyring(keyring_handler, internal_keyring_close);
-	purple_keyring_set_import_password(keyring_handler, internal_keyring_import_password);
-	purple_keyring_set_export_password(keyring_handler, internal_keyring_export_password);
+	purple_keyring_set_read_password(keyring_handler,
+		internal_keyring_read);
+	purple_keyring_set_save_password(keyring_handler,
+		internal_keyring_save);
+	purple_keyring_set_close_keyring(keyring_handler,
+		internal_keyring_close);
+	purple_keyring_set_import_password(keyring_handler,
+		internal_keyring_import_password);
+	purple_keyring_set_export_password(keyring_handler,
+		internal_keyring_export_password);
 
 	purple_keyring_register(keyring_handler);
 

@@ -460,7 +460,8 @@ kwallet_save(PurpleAccount *account, const char *password,
 static void
 kwallet_cancel(void)
 {
-	KWalletPlugin::engine *instance = KWalletPlugin::engine::instance(false);
+	KWalletPlugin::engine *instance =
+		KWalletPlugin::engine::instance(false);
 	if (instance)
 		instance->abortAll();
 }
@@ -509,7 +510,8 @@ kwallet_load(PurplePlugin *plugin)
 	purple_keyring_set_read_password(keyring_handler, kwallet_read);
 	purple_keyring_set_save_password(keyring_handler, kwallet_save);
 	purple_keyring_set_cancel_requests(keyring_handler, kwallet_cancel);
-	purple_keyring_set_close_keyring(keyring_handler, KWalletPlugin::engine::closeInstance);
+	purple_keyring_set_close_keyring(keyring_handler,
+		KWalletPlugin::engine::closeInstance);
 
 	purple_keyring_register(keyring_handler);
 

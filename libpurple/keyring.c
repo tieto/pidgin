@@ -730,7 +730,7 @@ purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 			*keyring_id = import->keyring_id;
 			*mode = import->mode;
 			*data = g_strdup(import->data);
-			*destroy = purple_str_wipe;
+			*destroy = (GDestroyNotify)purple_str_wipe;
 			return TRUE;
 		}
 	}
