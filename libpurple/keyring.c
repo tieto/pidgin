@@ -762,192 +762,192 @@ purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 
 void
 purple_keyring_get_password(PurpleAccount *account,
-                            PurpleKeyringReadCallback cb,
-                            gpointer data)
+	PurpleKeyringReadCallback cb, gpointer data)
 {
-	GError *error = NULL;
+	GError *error;
 	PurpleKeyring *inuse;
 	PurpleKeyringRead read_cb;
 
+	g_return_if_fail(account != NULL);
+
 	if (purple_keyring_is_quitting) {
-		purple_debug_error("keyring", "Cannot request a password while quitting.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
+		purple_debug_error("keyring", "Cannot request a password while "
+			"quitting.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot request a password while quitting.");
-		if (cb != NULL)
-			cb(account, NULL, error, data);
+		cb(account, NULL, error, data);
 		g_error_free(error);
 		return;
 	}
 
-	if (account == NULL) {
-		purple_debug_error("keyring", "No account passed to the function.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
-			"No account passed to the function.");
+	inuse = purple_keyring_get_inuse();
 
-		if (cb != NULL)
-			cb(account, NULL, error, data);
+	if (inuse == NULL) {
+		purple_debug_error("keyring", "No keyring configured.\n");
+		if (cb == NULL)
+			return;
 
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_NOKEYRING,
+			"No keyring configured.");
+		cb(account, NULL, error, data);
 		g_error_free(error);
-
-	} else {
-		inuse = purple_keyring_get_inuse();
-
-		if (inuse == NULL) {
-			purple_debug_error("keyring", "No keyring configured.\n");
-			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
-				"No keyring configured.");
-
-			if (cb != NULL)
-				cb(account, NULL, error, data);
-
-			g_error_free(error);
-
-		} else {
-			read_cb = purple_keyring_get_read_password(inuse);
-			g_return_if_fail(read_cb != NULL);
-
-			purple_debug_info("keyring", "Reading password for account %s (%s)...\n",
-				purple_account_get_username(account),
-				purple_account_get_protocol_id(account));
-			read_cb(account, cb, data);
-		}
 	}
+
+	read_cb = purple_keyring_get_read_password(inuse);
+	g_assert(read_cb != NULL);
+
+	purple_debug_info("keyring", "Reading password for account %s...\n",
+		purple_keyring_print_account(account));
+	read_cb(account, cb, data);
 }
 
 static void
-purple_keyring_set_password_async_cb(PurpleAccount *account,
-                                     GError *error,
-                                     gpointer _sp_data)
+purple_keyring_set_password_save_cb(PurpleAccount *account, GError *error,
+	gpointer _set_data)
 {
-	PurpleKeyringSetPasswordData *sp_data = _sp_data;
+	PurpleKeyringSetPasswordData *set_data = _set_data;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(sp_data != NULL);
+	g_return_if_fail(set_data != NULL);
 
 	if (error == NULL && purple_debug_is_verbose()) {
-		purple_debug_misc("keyring", "Password for account %s (%s) "
+		purple_debug_misc("keyring", "Password for account %s "
 			"saved successfully.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+			purple_keyring_print_account(account));
 	} else if (purple_debug_is_verbose()) {
-		purple_debug_warning("keyring", "Password for account %s (%s) "
+		purple_debug_warning("keyring", "Password for account %s "
 			"not saved successfully.\n",
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
+			purple_keyring_print_account(account));
 	}
 
 	if (error != NULL) {
 		purple_notify_error(NULL, _("Keyrings"),
-			_("Failed to save password in keyring."),
+			_("Failed to save a password in keyring."),
 			error->message);
 	}
 
-	if (sp_data->cb != NULL)
-		sp_data->cb(account, error, sp_data->cb_data);
-	g_free(sp_data);
+	if (set_data->cb != NULL)
+		set_data->cb(account, error, set_data->cb_data);
+	g_free(set_data);
 }
 
 void
-purple_keyring_set_password(PurpleAccount *account,
-                            const gchar *password,
-                            PurpleKeyringSaveCallback cb,
-                            gpointer data)
+purple_keyring_set_password(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data)
 {
-	GError *error = NULL;
+	GError *error;
 	PurpleKeyring *inuse;
 	PurpleKeyringSave save_cb;
+	PurpleKeyringSetPasswordData *set_data;
 
 	g_return_if_fail(account != NULL);
 
 	if (purple_keyring_is_quitting) {
-		purple_debug_error("keyring", "Cannot save a password while quitting.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
+		purple_debug_error("keyring", "Cannot save a password while "
+			"quitting.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot save a password while quitting.");
-		if (cb != NULL)
-			cb(account, error, data);
+		cb(account, error, data);
 		g_error_free(error);
 		return;
 	}
 
 	if (current_change_tracker != NULL) {
-		purple_debug_error("keyring", "Cannot save a password during password migration.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
+		purple_debug_error("keyring", "Cannot save a password during "
+			"password migration.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot save a password during password migration.");
-		if (cb != NULL)
-			cb(account, error, data);
+		cb(account, error, data);
 		g_error_free(error);
 		return;
 	}
 
 	inuse = purple_keyring_get_inuse();
 	if (inuse == NULL) {
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_NOKEYRING,
 			"No keyring configured.");
-		if (cb != NULL)
-			cb(account, error, data);
+		cb(account, error, data);
 		g_error_free(error);
-
-	} else {
-		PurpleKeyringSetPasswordData *sp_data;
-
-		save_cb = purple_keyring_get_save_password(inuse);
-		g_return_if_fail(save_cb != NULL);
-
-		sp_data = g_new(PurpleKeyringSetPasswordData, 1);
-		sp_data->cb = cb;
-		sp_data->cb_data = data;
-		purple_debug_info("keyring", "%s password for account %s (%s)...\n",
-			(password ? "Saving" : "Removing"),
-			purple_account_get_username(account),
-			purple_account_get_protocol_id(account));
-		save_cb(account, password, purple_keyring_set_password_async_cb, sp_data);
+		return;
 	}
+
+	save_cb = purple_keyring_get_save_password(inuse);
+	g_assert(save_cb != NULL);
+
+	set_data = g_new(PurpleKeyringSetPasswordData, 1);
+	set_data->cb = cb;
+	set_data->cb_data = data;
+	purple_debug_info("keyring", "%s password for account %s...\n",
+		(password ? "Saving" : "Removing"),
+		purple_keyring_print_account(account));
+	save_cb(account, password, purple_keyring_set_password_save_cb, set_data);
 }
 
+/* TODO: is it usable at all? */
 void
 purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
-                             gpointer data)
+	gpointer data)
 {
-	GError *error = NULL;
-	PurpleKeyringChangeMaster change;
+	GError *error;
 	PurpleKeyring *inuse;
-
-	inuse = purple_keyring_get_inuse();
+	PurpleKeyringChangeMaster change;
 
 	if (purple_keyring_is_quitting || current_change_tracker != NULL) {
-		purple_debug_error("keyring", "Cannot change a master password at the moment.\n");
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_INTERNAL,
+		purple_debug_error("keyring", "Cannot change a master password "
+			"at the moment.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_INTERNAL,
 			"Cannot change a master password at the moment.");
-		if (cb != NULL)
-			cb(error, data);
+		cb(error, data);
 		g_error_free(error);
 		return;
 	}
 
+	inuse = purple_keyring_get_inuse();
 	if (inuse == NULL) {
-		error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured, cannot change master password.");
-		purple_debug_error("keyring", "No keyring configured, cannot change master password.\n");
-		if (cb)
-			cb(error, data);
+		purple_debug_error("keyring", "No keyring configured, cannot "
+			"change master password.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_NOKEYRING,
+			"No keyring configured, cannot change master "
+			"password.");
+		cb(error, data);
 		g_error_free(error);
-
-	} else {
-		change = purple_keyring_get_change_master(inuse);
-
-		if (change == NULL) {
-			error = g_error_new(PURPLE_KEYRING_ERROR, PURPLE_KEYRING_ERROR_BACKENDFAIL,
-				"Keyring doesn't support master passwords.");
-			if (cb)
-				cb(error, data);
-
-			g_error_free(error);
-
-		} else {
-			change(cb, data);
-
-		}
+		return;
 	}
+
+	change = purple_keyring_get_change_master(inuse);
+	if (change == NULL) {
+		purple_debug_error("keyring", "Keyring doesn't support master "
+			"passwords.\n");
+		if (cb == NULL)
+			return;
+		error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
+			"Keyring doesn't support master passwords.");
+		cb(error, data);
+		g_error_free(error);
+		return;
+	}
+
+	change(cb, data);
 }
 
 
@@ -1154,11 +1154,10 @@ static void purple_keyring_core_initialized_cb(void)
 
 static void purple_keyring_core_quitting_cb()
 {
-	if (current_change_tracker != NULL) {
-		PurpleKeyringChangeTracker *tracker;
-		PurpleKeyringCancelRequests cancel = NULL;
+	PurpleKeyringCancelRequests cancel;
 
-		tracker = current_change_tracker;
+	if (current_change_tracker != NULL) {
+		PurpleKeyringChangeTracker *tracker = current_change_tracker;
 		tracker->abort = TRUE;
 		if (tracker->old) {
 			cancel = purple_keyring_get_cancel_requests(
@@ -1173,9 +1172,9 @@ static void purple_keyring_core_quitting_cb()
 				cancel();
 		}
 	}
+
 	purple_keyring_is_quitting = TRUE;
 	if (purple_keyring_inuse != NULL) {
-		PurpleKeyringCancelRequests cancel;
 		cancel = purple_keyring_get_cancel_requests(
 			purple_keyring_inuse);
 		if (cancel)
@@ -1196,36 +1195,57 @@ purple_keyring_init(void)
 		g_direct_equal, NULL,
 		(GDestroyNotify)purple_keyring_failed_import_free);
 
+	/* void keyring_register(const char *keyring_id,
+	 *      PurpleKeyring * keyring);
+	 *
+	 * A signal called when keyring is registered.
+	 *
+	 * @param keyring_id The keyring ID.
+	 * @param keyring    The keyring.
+	 */
 	purple_signal_register(purple_keyring_get_handle(),
 		"keyring-register",
 		purple_marshal_VOID__POINTER_POINTER,
 		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
+		purple_value_new(PURPLE_TYPE_STRING),
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *"));
 
+	/* void keyring_unregister(const char *keyring_id,
+	 *      PurpleKeyring * keyring);
+	 *
+	 * A signal called when keyring is unregistered.
+	 *
+	 * @param keyring_id The keyring ID.
+	 * @param keyring    The keyring.
+	 */
 	purple_signal_register(purple_keyring_get_handle(),
 		"keyring-unregister",
 		purple_marshal_VOID__POINTER_POINTER,
 		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),                    /* keyring ID */
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *")); /* a pointer to the keyring */
+		purple_value_new(PURPLE_TYPE_STRING),
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *"));
 
+	/* void password_migration(PurpleAccount* account);
+	 *
+	 * A signal called, when a password for the account was moved to another
+	 * keyring.
+	 *
+	 * @param account The account.
+	 */
 	purple_signal_register(purple_keyring_get_handle(),
 		"password-migration",
 		purple_marshal_VOID__POINTER,
 		NULL, 1,
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleAccount *")); /* a pointer to the account */
+		purple_value_new(PURPLE_TYPE_BOXED, "PurpleAccount *"));
 
-	/* see what keyring we want to use */
 	touse = purple_prefs_get_string("/purple/keyring/active");
-
 	if (touse == NULL) {
 		purple_prefs_add_none("/purple/keyring");
-		purple_prefs_add_string("/purple/keyring/active", PURPLE_DEFAULT_KEYRING);
+		purple_prefs_add_string("/purple/keyring/active",
+			PURPLE_DEFAULT_KEYRING);
 		purple_keyring_to_use = g_strdup(PURPLE_DEFAULT_KEYRING);
-	} else {
+	} else
 		purple_keyring_to_use = g_strdup(touse);
-	}
 
 	purple_keyring_pref_connect();
 
@@ -1249,7 +1269,7 @@ purple_keyring_init(void)
 	}
 
 	if (purple_keyring_inuse == NULL)
-		purple_debug_error("keyring", "selected keyring failed to load\n");
+		purple_debug_error("keyring", "Selected keyring failed to load\n");
 
 	purple_signal_connect(purple_get_core(), "core-initialized",
 		purple_keyring_get_handle(),
@@ -1264,8 +1284,13 @@ purple_keyring_uninit(void)
 {
 	GList *it;
 
+	purple_keyring_pref_disconnect();
+
 	g_free(purple_keyring_to_use);
 	purple_keyring_inuse = NULL;
+
+	g_hash_table_destroy(purple_keyring_failed_imports);
+	purple_keyring_failed_imports = NULL;
 
 	for (it = g_list_first(purple_keyring_loaded_plugins); it != NULL;
 		it = g_list_next(it))
@@ -1280,10 +1305,6 @@ purple_keyring_uninit(void)
 
 	purple_signals_unregister_by_instance(purple_keyring_get_handle());
 	purple_signals_disconnect_by_handle(purple_keyring_get_handle());
-	purple_keyring_pref_disconnect();
-
-	g_hash_table_destroy(purple_keyring_failed_imports);
-	purple_keyring_failed_imports = NULL;
 }
 
 void *
