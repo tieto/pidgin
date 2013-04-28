@@ -391,16 +391,48 @@ purple_keyring_get_import_password(const PurpleKeyring *keyring);
 PurpleKeyringExportPassword
 purple_keyring_get_export_password(const PurpleKeyring *keyring);
 
+/**
+ * Sets friendly user name.
+ *
+ * This field is required.
+ *
+ * @param keyring The keyring.
+ * @param name    Friendly user name.
+ */
 void
 purple_keyring_set_name(PurpleKeyring *keyring, const gchar *name);
 
+/**
+ * Sets keyring ID.
+ *
+ * This field is required.
+ *
+ * @param keyring The keyring.
+ * @param name    Keyring ID.
+ */
 void
 purple_keyring_set_id(PurpleKeyring *keyring, const gchar *id);
 
+/**
+ * Sets read password method.
+ *
+ * This field is required.
+ *
+ * @param keyring The keyring.
+ * @param read_cb Read password method.
+ */
 void
 purple_keyring_set_read_password(PurpleKeyring *keyring,
 	PurpleKeyringRead read_cb);
 
+/**
+ * Sets save password method.
+ *
+ * This field is required.
+ *
+ * @param keyring The keyring.
+ * @param save_cb Save password method.
+ */
 void
 purple_keyring_set_save_password(PurpleKeyring *keyring,
 	PurpleKeyringSave save_cb);

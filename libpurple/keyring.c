@@ -436,27 +436,25 @@ purple_keyring_register(PurpleKeyring *keyring)
 
 	keyring_id = purple_keyring_get_id(keyring);
 
-	purple_debug_info("keyring", "Registering keyring: %s.\n",
-		keyring->id ? keyring->id : "(null)");
+	purple_debug_info("keyring", "Registering keyring: %s\n",
+		keyring_id ? keyring_id : "(null)");
 
 	if (purple_keyring_get_id(keyring) == NULL ||
 		purple_keyring_get_name(keyring) == NULL ||
 		purple_keyring_get_read_password(keyring) == NULL ||
 		purple_keyring_get_save_password(keyring) == NULL) {
-		purple_debug_error("keyring", "Invalid keyring %s, some "
+		purple_debug_error("keyring", "Cannot register %s, some "
 			"required fields are missing.\n",
-			keyring->id ? keyring->id : "(null)");
+			keyring_id ? keyring_id : "(null)");
 		return;
 	}
 
 	/* If this is the configured keyring, use it. */
 	if (purple_keyring_inuse == NULL &&
-	    g_strcmp0(keyring_id, purple_keyring_to_use) == 0) {
-
-		purple_debug_info("keyring", "Keyring %s matches keyring to use, using it.\n",
-			keyring->id);
+		g_strcmp0(keyring_id, purple_keyring_to_use) == 0) {
+		purple_debug_info("keyring", "Keyring %s matches keyring to "
+			"use, using it.\n", keyring_id);
 		purple_keyring_set_inuse(keyring, TRUE, NULL, NULL);
-
 	}
 
 	PURPLE_DBUS_REGISTER_POINTER(keyring, PurpleKeyring);
@@ -480,10 +478,11 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 
 	g_return_if_fail(keyring != NULL);
 
-	purple_debug_info("keyring", "Unregistering keyring: %s.\n",
-		purple_keyring_get_id(keyring));
-
 	keyring_id = purple_keyring_get_id(keyring);
+
+	purple_debug_info("keyring", "Unregistering keyring: %s.\n",
+		keyring_id);
+
 	purple_signal_emit(purple_keyring_get_handle(), "keyring-unregister",
 		keyring_id, keyring);
 	PURPLE_DBUS_UNREGISTER_POINTER(keyring);
@@ -494,7 +493,6 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 	if (inuse == keyring) {
 		if (inuse != fallback) {
 			purple_keyring_set_inuse(fallback, TRUE, NULL, NULL);
-
 		} else {
 			fallback = NULL;
 			purple_keyring_set_inuse(NULL, TRUE, NULL, NULL);
@@ -508,28 +506,29 @@ purple_keyring_unregister(PurpleKeyring *keyring)
 GList *
 purple_keyring_get_options(void)
 {
-	const GList *keyrings;
-	PurpleKeyring *keyring;
-	GList *list = NULL;
+	GList *options = NULL;
+	GList *it;
 	static gchar currentDisabledName[40];
 
 	if (purple_keyring_get_inuse() == NULL && purple_keyring_to_use != NULL
 		&& purple_keyring_to_use[0] != '\0') {
 		g_snprintf(currentDisabledName, sizeof(currentDisabledName),
 			_("%s (disabled)"), purple_keyring_to_use);
-		list = g_list_append(list, currentDisabledName);
-		list = g_list_append(list, purple_keyring_to_use);
+
+		options = g_list_append(options, currentDisabledName);
+		options = g_list_append(options, purple_keyring_to_use);
 	}
 
-	for (keyrings = purple_keyring_keyrings; keyrings != NULL;
-		keyrings = keyrings->next) {
+	for (it = purple_keyring_keyrings; it != NULL; it = it->next) {
+		PurpleKeyring *keyring = it->data;
 
-		keyring = keyrings->data;
-		list = g_list_append(list, keyring->name);
-		list = g_list_append(list, keyring->id);
+		options = g_list_append(options,
+			(gpointer)purple_keyring_get_name(keyring));
+		options = g_list_append(options,
+			(gpointer)purple_keyring_get_id(keyring));
 	}
 
-	return list;
+	return options;
 }
 
 
