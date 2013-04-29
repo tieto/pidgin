@@ -1134,6 +1134,14 @@ char *purple_str_seconds_to_string(guint sec);
 char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
 
 /**
+ * Calculates UTF-16 string size (in bytes).
+ *
+ * @param str String to check.
+ * @return    Number of bytes (including NUL character) that string occupies.
+ */
+size_t purple_utf16_size(const gunichar2 *str);
+
+/**
  * Fills a NUL-terminated string with zeros and frees it.
  *
  * It should be used to free sensitive data, like passwords.
@@ -1141,6 +1149,16 @@ char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
  * @param str A NUL-terminated string to free, or a NULL-pointer.
  */
 void purple_str_wipe(gchar *str);
+
+/**
+ * Fills a NUL-terminated UTF-16 string with zeros and frees it.
+ *
+ * It should be used to free sensitive data, like passwords.
+ *
+ * @param str A NUL-terminated string to free, or a NULL-pointer.
+ */
+void purple_utf16_wipe(gunichar2 *str);
+
 /*@}*/
 
 

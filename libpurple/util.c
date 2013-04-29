@@ -3762,12 +3762,38 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 	return g_string_free(ret, FALSE);
 }
 
+size_t
+purple_utf16_size(const gunichar2 *str)
+{
+	/* UTF16 cannot contain two consequent NUL bytes starting at even
+	 * position - see Unicode standards Chapter 3.9 D91 or RFC2781
+	 * Chapter 2.
+	 */
+
+	size_t i = 0;
+
+	g_return_val_if_fail(str != NULL, 0);
+
+	while (str[i++]);
+
+	return i * sizeof(gunichar2);
+}
+
 void
 purple_str_wipe(gchar *str)
 {
 	if (str == NULL)
 		return;
 	memset(str, 0, strlen(str));
+	g_free(str);
+}
+
+void
+purple_utf16_wipe(gunichar2 *str)
+{
+	if (str == NULL)
+		return;
+	memset(str, 0, purple_utf16_size(str));
 	g_free(str);
 }
 
