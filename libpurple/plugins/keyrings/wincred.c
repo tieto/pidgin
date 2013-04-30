@@ -127,6 +127,10 @@ wincred_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Cannot convert password");
+	} else {
+		purple_debug_misc("keyring-wincred",
+			"Got password for account %s.\n",
+			purple_account_get_username(account));
 	}
 
 	if (cb != NULL)
@@ -162,7 +166,12 @@ wincred_save(PurpleAccount *account, const gchar *password,
 			DWORD error_code = GetLastError();
 
 			if (error_code == ERROR_NOT_FOUND) {
-				/* Pasword doesn't existed. */
+				if (purple_debug_is_verbose()) {
+					purple_debug_misc("keyring-wincred",
+					"Password for account %s was already "
+					"removed.\n",
+					purple_account_get_username(account));
+				}
 			} else if (error_code == ERROR_NO_SUCH_LOGON_SESSION) {
 				purple_debug_error("keyring-wincred",
 					"Cannot remove password, no valid "
@@ -229,6 +238,10 @@ wincred_save(PurpleAccount *account, const gchar *password,
 				PURPLE_KEYRING_ERROR_BACKENDFAIL,
 				"Cannot store password, error %lx", error_code);
 		}
+	} else {
+		purple_debug_misc("keyring-wincred",
+			"Password updated for account %s.\n",
+			purple_account_get_username(account));
 	}
 
 	g_free(target_name);
