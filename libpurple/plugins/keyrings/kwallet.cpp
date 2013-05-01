@@ -553,13 +553,13 @@ PurplePluginInfo plugininfo =
 	PURPLE_PLUGIN_FLAG_INVISIBLE,		/* flags */
 	NULL,					/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,		/* priority */
-	(char*)KWALLET_ID,			/* id */
-	(char*)KWALLET_NAME,			/* name */
-	(char*)DISPLAY_VERSION,			/* version */
-	(char*)"KWallet Keyring Plugin",	/* summary */
-	(char*)KWALLET_DESCRIPTION,		/* description */
-	(char*)KWALLET_AUTHOR,			/* author */
-	(char*)PURPLE_WEBSITE,			/* homepage */
+	KWALLET_ID,				/* id */
+	KWALLET_NAME,				/* name */
+	DISPLAY_VERSION,			/* version */
+	"KWallet Keyring Plugin",		/* summary */
+	KWALLET_DESCRIPTION,			/* description */
+	KWALLET_AUTHOR,				/* author */
+	PURPLE_WEBSITE,				/* homepage */
 	kwallet_load,				/* load */
 	kwallet_unload,				/* unload */
 	NULL,					/* destroy */
