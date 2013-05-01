@@ -50,6 +50,16 @@ struct tcl_plugin_data {
 	Tcl_Interp *interp;
 };
 
+typedef struct {
+	char *id;
+	char *name;
+	char *version;
+	char *summary;
+	char *description;
+	char *author;
+	char *homepage;
+} tcl_plugin_info_strings;
+
 PurpleStringref *PurpleTclRefAccount;
 PurpleStringref *PurpleTclRefConnection;
 PurpleStringref *PurpleTclRefConversation;
@@ -67,6 +77,21 @@ static GHashTable *tcl_plugins = NULL;
 PurplePlugin *_tcl_plugin;
 
 static gboolean tcl_loaded = FALSE;
+
+static void tcl_plugin_info_strings_free(tcl_plugin_info_strings *strings)
+{
+	if (strings == NULL)
+		return;
+
+	g_free(strings->id);
+	g_free(strings->name);
+	g_free(strings->version);
+	g_free(strings->summary);
+	g_free(strings->description);
+	g_free(strings->author);
+	g_free(strings->homepage);
+	g_free(strings);
+}
 
 PurplePlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
 {
@@ -219,7 +244,9 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 			result = Tcl_GetObjResult(interp);
 			if (Tcl_ListObjGetElements(interp, result, &nelems, &listitems) == TCL_OK) {
 				if ((nelems == 6) || (nelems == 7)) {
+					tcl_plugin_info_strings *strings = g_new0(tcl_plugin_info_strings, 1);
 					info = g_new0(PurplePluginInfo, 1);
+					info->extra_info = strings;
 
 					info->magic = PURPLE_PLUGIN_MAGIC;
 					info->major_version = PURPLE_MAJOR_VERSION;
@@ -227,17 +254,17 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 					info->type = PURPLE_PLUGIN_STANDARD;
 					info->dependencies = g_list_append(info->dependencies, "core-tcl");
 
-					info->name = g_strdup(Tcl_GetString(listitems[0]));
-					info->version = g_strdup(Tcl_GetString(listitems[1]));
-					info->summary = g_strdup(Tcl_GetString(listitems[2]));
-					info->description = g_strdup(Tcl_GetString(listitems[3]));
-					info->author = g_strdup(Tcl_GetString(listitems[4]));
-					info->homepage = g_strdup(Tcl_GetString(listitems[5]));
+					info->name = strings->name = g_strdup(Tcl_GetString(listitems[0]));
+					info->version = strings->version = g_strdup(Tcl_GetString(listitems[1]));
+					info->summary = strings->summary = g_strdup(Tcl_GetString(listitems[2]));
+					info->description = strings->description = g_strdup(Tcl_GetString(listitems[3]));
+					info->author = strings->author = g_strdup(Tcl_GetString(listitems[4]));
+					info->homepage = strings->homepage = g_strdup(Tcl_GetString(listitems[5]));
 
 					if (nelems == 6)
-						info->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[0]));
+						info->id = strings->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[0]));
 					else if (nelems == 7)
-						info->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[6]));
+						info->id = strings->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[6]));
 
 					plugin->info = info;
 
@@ -314,12 +341,9 @@ static gboolean tcl_unload_plugin(PurplePlugin *plugin)
 static void tcl_destroy_plugin(PurplePlugin *plugin)
 {
 	if (plugin->info != NULL) {
-		g_free(plugin->info->id);
-		g_free(plugin->info->name);
-		g_free(plugin->info->version);
-		g_free(plugin->info->description);
-		g_free(plugin->info->author);
-		g_free(plugin->info->homepage);
+		tcl_plugin_info_strings *info_strings = plugin->info->extra_info;
+		tcl_plugin_info_strings_free(info_strings);
+		plugin->info->extra_info = NULL;
 	}
 
 	return;

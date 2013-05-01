@@ -35,9 +35,12 @@
 #define PURPLE_PERL_BOOT(x) \
 	purple_perl_callXS(boot_Purple__##x, cv, mark)
 
+typedef struct _PurplePerlInfoStrings PurplePerlInfoStrings;
+
 typedef struct
 {
 	PurplePlugin *plugin;
+	PurplePerlInfoStrings *info_strings;
 	char *package;
 	char *load_sub;
 	char *unload_sub;
