@@ -104,6 +104,9 @@ typedef struct
 			"parent.removeChild(pause);" \
 		"}" \
 	"}" \
+	"function setFilterLevel(l) {" \
+		"document.body.className = 'l'+l;" \
+	"}" \
 	"</script></head><body class=l0></body></html>"
 
 static DebugWindow *debug_win = NULL;
@@ -584,18 +587,14 @@ static void
 filter_level_pref_changed(const char *name, PurplePrefType type, gconstpointer value, gpointer data)
 {
 	DebugWindow *win = data;
-	WebKitDOMDocument *dom;
-	WebKitDOMHTMLElement *body;
 	int level = GPOINTER_TO_INT(value);
 	char *tmp;
 
 	if (level != gtk_combo_box_get_active(GTK_COMBO_BOX(win->filterlevel)))
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel), level);
 
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
-	body = webkit_dom_document_get_body(dom);
-	tmp = g_strdup_printf("l%d", level);
-	webkit_dom_html_element_set_class_name(body, tmp);
+	tmp = g_strdup_printf("setFilterLevel('%d');", level);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), tmp);
 	g_free(tmp);
 }
 
