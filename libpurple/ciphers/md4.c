@@ -219,8 +219,7 @@ md4_append(PurpleCipherContext *context, const guchar *data, size_t len)
 }
 
 	static gboolean
-md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
-		size_t *out_len)
+md4_digest(PurpleCipherContext *context, guchar *out, size_t len)
 {
 	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
 	const unsigned int offset = mctx->byte_count & 0x3f;
@@ -228,8 +227,7 @@ md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
 	int padding = 56 - (offset + 1);
 
 
-	if(in_len<16) return FALSE;
-	if(out_len) *out_len = 16;
+	if(len<16) return FALSE;
 	*p++ = 0x80;
 	if (padding < 0) {
 		memset(p, 0x00, padding + sizeof (guint64));
@@ -248,6 +246,12 @@ md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
 	memcpy(out, mctx->hash, sizeof(mctx->hash));
 	memset(mctx, 0, sizeof(*mctx));
 	return TRUE;
+}
+
+	static size_t
+md4_get_digest_size(PurpleCipherContext *context)
+{
+	return 16;
 }
 
 static void
@@ -279,6 +283,7 @@ static PurpleCipherOps MD4Ops = {
 	NULL,                   /* set iv */
 	md4_append,             /* append */
 	md4_digest,             /* digest */
+	md4_get_digest_size,    /* get digest size */
 	NULL,                   /* encrypt */
 	NULL,                   /* decrypt */
 	NULL,                   /* set salt */

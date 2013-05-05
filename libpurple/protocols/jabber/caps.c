@@ -900,8 +900,8 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	}
 
 	/* generate hash */
-	success = purple_cipher_context_digest(context, checksum_size,
-	                                       checksum, &checksum_size);
+	success = purple_cipher_context_digest(context, checksum, checksum_size);
+	checksum_size = purple_cipher_context_get_digest_size(context);
 
 	purple_cipher_context_destroy(context);
 

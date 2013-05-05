@@ -584,7 +584,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	/* Compute password hash */
 	purple_cipher_digest_region("sha1", (guchar *)password_utf16le,
-			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+			conv_bytes_written, hash_pw, sizeof(hash_pw));
 	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -599,7 +599,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	key_context = purple_cipher_context_new(sha1, NULL);
 	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
 	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
-	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
+	purple_cipher_context_digest(key_context, key, sizeof(key));
 	purple_cipher_context_destroy(key_context);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE

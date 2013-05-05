@@ -284,7 +284,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			purple_cipher_context_set_option(hmac, "hash", "md5");
 			purple_cipher_context_set_key(hmac, (guchar *)pw, strlen(pw));
 			purple_cipher_context_append(hmac, (guchar *)challenge, strlen(challenge));
-			purple_cipher_context_digest_to_str(hmac, 33, digest, NULL);
+			purple_cipher_context_digest_to_str(hmac, digest, 33);
 			purple_cipher_context_destroy(hmac);
 
 			/* Create the response query */

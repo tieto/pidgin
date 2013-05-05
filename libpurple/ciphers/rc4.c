@@ -137,6 +137,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set iv        */
 	NULL,          /* append        */
 	NULL,          /* digest        */
+	NULL,          /* get digest size */
 	rc4_encrypt,   /* encrypt       */
 	NULL,          /* decrypt       */
 	NULL,          /* set salt      */

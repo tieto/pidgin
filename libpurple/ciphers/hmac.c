@@ -99,7 +99,7 @@ hmac_append(PurpleCipherContext *context, const guchar *data, size_t len)
 }
 
 	static gboolean
-hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *out_len)
+hmac_digest(PurpleCipherContext *context, guchar *out, size_t len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 	PurpleCipherContext *hash = hctx->hash;
@@ -109,8 +109,11 @@ hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *ou
 
 	g_return_val_if_fail(hash != NULL, FALSE);
 
-	inner_hash = g_malloc(100); /* TODO: Should be enough for now... */
-	result = purple_cipher_context_digest(hash, 100, inner_hash, &hash_len);
+	hash_len = purple_cipher_context_get_digest_size(hash);
+	g_return_val_if_fail(hash_len > 0, FALSE);
+
+	inner_hash = g_malloc(hash_len);
+	result = purple_cipher_context_digest(hash, inner_hash, hash_len);
 
 	purple_cipher_context_reset(hash, NULL);
 
@@ -119,9 +122,20 @@ hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *ou
 
 	g_free(inner_hash);
 
-	result = result && purple_cipher_context_digest(hash, in_len, out, out_len);
+	result = result && purple_cipher_context_digest(hash, out, len);
 
 	return result;
+}
+
+	static size_t
+hmac_get_digest_size(PurpleCipherContext *context)
+{
+	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
+	PurpleCipherContext *hash = hctx->hash;
+
+	g_return_val_if_fail(hash != NULL, 0);
+
+	return purple_cipher_context_get_digest_size(hash);
 }
 
 	static void
@@ -155,8 +169,10 @@ hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 	if (key_len > blocksize) {
 		purple_cipher_context_reset(hctx->hash, NULL);
 		purple_cipher_context_append(hctx->hash, key, key_len);
-		full_key = g_malloc(100); /* TODO: Should be enough for now... */
-		purple_cipher_context_digest(hctx->hash, 100, full_key, &key_len);
+
+		key_len = purple_cipher_context_get_digest_size(hctx->hash);
+		full_key = g_malloc(key_len);
+		purple_cipher_context_digest(hctx->hash, full_key, key_len);
 	} else
 		full_key = g_memdup(key, key_len);
 
@@ -194,6 +210,7 @@ static PurpleCipherOps HMACOps = {
 	NULL,                   /* set iv */
 	hmac_append,             /* append */
 	hmac_digest,             /* digest */
+	hmac_get_digest_size,   /* get digest size */
 	NULL,                   /* encrypt */
 	NULL,                   /* decrypt */
 	NULL,                   /* set salt */

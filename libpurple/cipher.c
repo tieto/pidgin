@@ -96,6 +96,8 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 		caps |= PURPLE_CIPHER_CAPS_APPEND;
 	if(ops->digest)
 		caps |= PURPLE_CIPHER_CAPS_DIGEST;
+	if(ops->get_digest_size)
+		caps |= PURPLE_CIPHER_CAPS_GET_DIGEST_SIZE;
 	if(ops->encrypt)
 		caps |= PURPLE_CIPHER_CAPS_ENCRYPT;
 	if(ops->decrypt)
@@ -118,8 +120,7 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 
 gboolean
 purple_cipher_digest_region(const gchar *name, const guchar *data,
-						  size_t data_len, size_t in_len,
-						  guchar digest[], size_t *out_len)
+	size_t data_len, guchar digest[], size_t out_size)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
@@ -141,7 +142,7 @@ purple_cipher_digest_region(const gchar *name, const guchar *data,
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, data, data_len);
-	ret = purple_cipher_context_digest(context, in_len, digest, out_len);
+	ret = purple_cipher_context_digest(context, digest, out_size);
 	purple_cipher_context_destroy(context);
 
 	return ret;
@@ -403,8 +404,8 @@ purple_cipher_context_append(PurpleCipherContext *context, const guchar *data,
 }
 
 gboolean
-purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
-						   guchar digest[], size_t *out_len)
+purple_cipher_context_digest(PurpleCipherContext *context, guchar digest[],
+	size_t len)
 {
 	PurpleCipher *cipher = NULL;
 
@@ -413,7 +414,7 @@ purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
 	cipher = context->cipher;
 
 	if(cipher->ops && cipher->ops->digest)
-		return cipher->ops->digest(context, in_len, digest, out_len);
+		return cipher->ops->digest(context, digest, len);
 	else {
 		purple_debug_warning("cipher", "the %s cipher does not support the digest "
 						"operation\n", cipher->name);
@@ -422,33 +423,52 @@ purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
 }
 
 gboolean
-purple_cipher_context_digest_to_str(PurpleCipherContext *context, size_t in_len,
-								   gchar digest_s[], size_t *out_len)
+purple_cipher_context_digest_to_str(PurpleCipherContext *context,
+	gchar digest_s[], size_t len)
 {
 	/* 8k is a bit excessive, will tweak later. */
 	guchar digest[BUF_LEN * 4];
 	gint n = 0;
-	size_t dlen = 0;
+	size_t digest_size;
 
 	g_return_val_if_fail(context, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
 
-	if(!purple_cipher_context_digest(context, sizeof(digest), digest, &dlen))
+	digest_size = purple_cipher_context_get_digest_size(context);
+
+	g_return_val_if_fail(digest_size <= BUF_LEN * 4, FALSE);
+
+	if(!purple_cipher_context_digest(context, digest, sizeof(digest)))
 		return FALSE;
 
-	/* in_len must be greater than dlen * 2 so we have room for the NUL. */
-	if(in_len <= dlen * 2)
-		return FALSE;
+	/* Every digest byte occupies 2 chars + the NUL at the end. */
+	g_return_val_if_fail(digest_size * 2 + 1 <= len, FALSE);
 
-	for(n = 0; n < dlen; n++)
+	for(n = 0; n < digest_size; n++)
 		sprintf(digest_s + (n * 2), "%02x", digest[n]);
 
 	digest_s[n * 2] = '\0';
 
-	if(out_len)
-		*out_len = dlen * 2;
-
 	return TRUE;
+}
+
+size_t
+purple_cipher_context_get_digest_size(PurpleCipherContext *context)
+{
+	PurpleCipher *cipher = NULL;
+
+	g_return_val_if_fail(context, 0);
+
+	cipher = context->cipher;
+	g_return_val_if_fail(cipher, 0);
+
+	if(cipher->ops && cipher->ops->get_digest_size)
+		return cipher->ops->get_digest_size(context);
+	else {
+		purple_debug_warning("cipher", "The %s cipher does not support "
+			"the get_digest_size operation\n", cipher->name);
+		return 0;
+	}
 }
 
 gint
@@ -500,7 +520,7 @@ purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[],
 }
 
 void
-purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt) {
+purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt, size_t len) {
 	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
@@ -509,7 +529,7 @@ purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt) {
 	g_return_if_fail(cipher);
 
 	if(cipher->ops && cipher->ops->set_salt)
-		cipher->ops->set_salt(context, salt);
+		cipher->ops->set_salt(context, salt, len);
 	else
 		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_salt operation\n", cipher->name);
@@ -665,7 +685,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 			return NULL;
 		}
 
-		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		purple_cipher_context_digest(context, digest, sizeof(digest));
 		purple_cipher_context_destroy(context);
 
 		context = purple_cipher_context_new(cipher, NULL);
@@ -676,7 +696,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 		purple_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
 	}
 
-	purple_cipher_context_digest_to_str(context, sizeof(hash), hash, NULL);
+	purple_cipher_context_digest_to_str(context, hash, sizeof(hash));
 	purple_cipher_context_destroy(context);
 
 	return g_strdup(hash);
@@ -737,14 +757,14 @@ gchar *purple_cipher_http_digest_calculate_response(
 
 		context2 = purple_cipher_context_new(cipher, NULL);
 		purple_cipher_context_append(context2, (guchar *)entity, strlen(entity));
-		purple_cipher_context_digest_to_str(context2, sizeof(entity_hash), entity_hash, NULL);
+		purple_cipher_context_digest_to_str(context2, entity_hash, sizeof(entity_hash));
 		purple_cipher_context_destroy(context2);
 
 		purple_cipher_context_append(context, (guchar *)":", 1);
 		purple_cipher_context_append(context, (guchar *)entity_hash, strlen(entity_hash));
 	}
 
-	purple_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	purple_cipher_context_digest_to_str(context, hash2, sizeof(hash2));
 	purple_cipher_context_destroy(context);
 
 	context = purple_cipher_context_new(cipher, NULL);
@@ -780,7 +800,7 @@ gchar *purple_cipher_http_digest_calculate_response(
 	}
 
 	purple_cipher_context_append(context, (guchar *)hash2, strlen(hash2));
-	purple_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	purple_cipher_context_digest_to_str(context, hash2, sizeof(hash2));
 	purple_cipher_context_destroy(context);
 
 	return g_strdup(hash2);

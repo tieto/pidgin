@@ -471,6 +471,7 @@ static PurpleCipherOps DESOps = {
 	NULL,              /* set iv */
 	NULL,              /* append */
 	NULL,              /* digest */
+	NULL,              /* get_digest_size */
 	des_encrypt,       /* encrypt */
 	des_decrypt,       /* decrypt */
 	NULL,              /* set salt */
@@ -823,6 +824,7 @@ static PurpleCipherOps DES3Ops = {
 	des3_set_iv,       /* set iv */
 	NULL,              /* append */
 	NULL,              /* digest */
+	NULL,              /* get_digest_size */
 	des3_encrypt,      /* encrypt */
 	des3_decrypt,      /* decrypt */
 	NULL,              /* set salt */

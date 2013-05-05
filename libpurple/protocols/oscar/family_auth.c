@@ -98,14 +98,14 @@ aim_encode_password_md5(const char *password, size_t password_len, const char *k
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)password, password_len);
-	purple_cipher_context_digest(context, 16, passdigest, NULL);
+	purple_cipher_context_digest(context, passdigest, sizeof(passdigest));
 	purple_cipher_context_destroy(context);
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
 	purple_cipher_context_append(context, passdigest, 16);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_cipher_context_digest(context, 16, digest, NULL);
+	purple_cipher_context_digest(context, digest, 16);
 	purple_cipher_context_destroy(context);
 
 	return 0;
