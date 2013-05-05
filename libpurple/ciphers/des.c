@@ -351,6 +351,11 @@ des_set_key (PurpleCipherContext *context, const guchar * key, size_t len)
 	}
 }
 
+static size_t
+des_get_key_size(PurpleCipherContext *context)
+{
+	return 8;
+}
 
 /*
  *  Electronic Codebook Mode DES encryption/decryption of data according
@@ -477,7 +482,7 @@ static PurpleCipherOps DESOps = {
 	NULL,              /* set salt */
 	NULL,              /* get salt size */
 	des_set_key,       /* set key */
-	NULL,              /* get key size */
+	des_get_key_size,  /* get key size */
 	NULL,              /* set batch mode */
 	NULL,              /* get batch mode */
 	NULL,              /* get block size */
@@ -525,6 +530,12 @@ des3_set_key(PurpleCipherContext *context, const guchar * key, size_t len)
 		ctx->key3.decrypt_subkeys[i]    = ctx->key3.encrypt_subkeys[30-i];
 		ctx->key3.decrypt_subkeys[i+1]  = ctx->key3.encrypt_subkeys[31-i];
 	}
+}
+
+static size_t
+des3_get_key_size(PurpleCipherContext *context)
+{
+	return 24;
 }
 
 static gint
@@ -830,6 +841,7 @@ static PurpleCipherOps DES3Ops = {
 	NULL,              /* set salt */
 	NULL,              /* get salt size */
 	des3_set_key,      /* set key */
+	des3_get_key_size, /* get_key_size */
 	des3_set_batch,    /* set batch mode */
 	des3_get_batch,    /* get batch mode */
 	NULL,              /* get block size */

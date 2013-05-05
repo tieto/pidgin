@@ -108,6 +108,8 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 		caps |= PURPLE_CIPHER_CAPS_GET_SALT_SIZE;
 	if(ops->set_key)
 		caps |= PURPLE_CIPHER_CAPS_SET_KEY;
+	if (ops->get_key_size)
+		caps |= PURPLE_CIPHER_CAPS_GET_KEY_SIZE;
 	if(ops->set_batch_mode)
 		caps |= PURPLE_CIPHER_CAPS_SET_BATCH_MODE;
 	if(ops->get_batch_mode)
@@ -568,6 +570,25 @@ purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key, s
 	else
 		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_key operation\n", cipher->name);
+}
+
+size_t
+purple_cipher_context_get_key_size(PurpleCipherContext *context) {
+	PurpleCipher *cipher = NULL;
+
+	g_return_val_if_fail(context, 0);
+
+	cipher = context->cipher;
+	g_return_val_if_fail(cipher, 0);
+
+	if (cipher->ops && cipher->ops->get_key_size)
+		return cipher->ops->get_key_size(context);
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not support "
+			"the get_key_size operation\n", cipher->name);
+
+		return 0;
+	}
 }
 
 void

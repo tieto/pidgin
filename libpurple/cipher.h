@@ -50,24 +50,25 @@ typedef enum {
  * The operation flags for a cipher
  */
 typedef enum {
-	PURPLE_CIPHER_CAPS_SET_OPT          = 1 << 1,   /**< Set option flag	*/
-	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag	*/
-	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag			*/
-	PURPLE_CIPHER_CAPS_RESET            = 1 << 4,   /**< Reset flag			*/
-	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 5,   /**< Uninit flag		*/
-	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 6,   /**< Set IV flag		*/
-	PURPLE_CIPHER_CAPS_APPEND           = 1 << 7,   /**< Append flag		*/
-	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 8,   /**< Digest flag		*/
+	PURPLE_CIPHER_CAPS_SET_OPT          = 1 << 1,   /**< Set option flag */
+	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag */
+	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag */
+	PURPLE_CIPHER_CAPS_RESET            = 1 << 4,   /**< Reset flag */
+	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 5,   /**< Uninit flag */
+	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 6,   /**< Set IV flag */
+	PURPLE_CIPHER_CAPS_APPEND           = 1 << 7,   /**< Append flag */
+	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 8,   /**< Digest flag */
 	PURPLE_CIPHER_CAPS_GET_DIGEST_SIZE  = 1 << 9,   /**< The get digest size flag */
-	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 10,  /**< Encrypt flag		*/
-	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 11,  /**< Decrypt flag		*/
-	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 12,  /**< Set salt flag		*/
-	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 13,  /**< Get salt size flag	*/
-	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 14,  /**< Set key flag		*/
-	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 15,  /**< Set batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 16,  /**< Get batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 17,  /**< The get block size flag */
-	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 18   /**< Unknown			*/
+	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 10,  /**< Encrypt flag */
+	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 11,  /**< Decrypt flag */
+	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 12,  /**< Set salt flag */
+	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 13,  /**< Get salt size flag */
+	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 14,  /**< Set key flag */
+	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 15,  /**< Get key size flag */
+	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 16,  /**< Set batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 17,  /**< Get batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 18,  /**< The get block size flag */
+	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 19   /**< Unknown */
 } PurpleCipherCaps;
 
 /**
@@ -115,6 +116,9 @@ struct _PurpleCipherOps {
 
 	/** The set key function */
 	void (*set_key)(PurpleCipherContext *context, const guchar *key, size_t len);
+
+	/** The get key size function */
+	size_t (*get_key_size)(PurpleCipherContext *context);
 
 	/** The set batch mode function */
 	void (*set_batch_mode)(PurpleCipherContext *context, PurpleCipherBatchMode mode);
@@ -392,6 +396,15 @@ size_t purple_cipher_context_get_salt_size(PurpleCipherContext *context);
  * @param len     The size of the key
  */
 void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key, size_t len);
+
+/**
+ * Gets the size of the key if the cipher supports it
+ *
+ * @param context The context whose key size to get
+ *
+ * @return The size of the key
+ */
+size_t purple_cipher_context_get_key_size(PurpleCipherContext *context);
 
 /**
  * Sets the batch mode of a context

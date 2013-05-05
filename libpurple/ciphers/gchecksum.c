@@ -121,6 +121,7 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 		NULL,                     /* set salt */         \
 		NULL,                     /* get salt size */    \
 		NULL,                     /* set key */          \
+		NULL,                     /* get key size */     \
 		NULL,                     /* set batch mode */   \
 		NULL,                     /* get batch mode */   \
 		lower##_get_block_size,   /* get block size */   \

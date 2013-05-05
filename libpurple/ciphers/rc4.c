@@ -143,6 +143,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set salt      */
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
+	NULL,          /* get key size */
 	NULL,          /* set batch mode */
 	NULL,          /* get batch mode */
 	NULL,          /* get block size */
