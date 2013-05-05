@@ -614,8 +614,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	/* Note: 'key' variable is 0x14 bytes (from SHA-1 hash),
 	 * but only first 0x10 used for the RC4 key. */
-	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
-	purple_cipher_context_set_key(rc4, key);
+	purple_cipher_context_set_key(rc4, key, 0x10);
 
 	/* rc4 encrypt:
 	 * nonce1+email+IP list */

@@ -335,10 +335,12 @@ des_key_schedule (const guint8 * rawkey, guint32 * subkey)
  *  Does not check for weak keys.
  **/
 static void
-des_set_key (PurpleCipherContext *context, const guchar * key)
+des_set_key (PurpleCipherContext *context, const guchar * key, size_t len)
 {
 	struct _des_ctx *ctx = purple_cipher_context_get_data(context);
 	int i;
+
+	g_return_if_fail(len != 8);
 
 	des_key_schedule (key, ctx->encrypt_subkeys);
 
@@ -478,7 +480,6 @@ static PurpleCipherOps DESOps = {
 	NULL,              /* set batch mode */
 	NULL,              /* get batch mode */
 	NULL,              /* get block size */
-	NULL               /* set key with len */
 };
 
 /******************************************************************************
@@ -503,10 +504,12 @@ typedef struct _des3_ctx
  *  Does not check for weak keys.
  **/
 static void
-des3_set_key(PurpleCipherContext *context, const guchar * key)
+des3_set_key(PurpleCipherContext *context, const guchar * key, size_t len)
 {
 	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
 	int i;
+
+	g_return_if_fail(len != 24);
 
 	des_key_schedule (key +  0, ctx->key1.encrypt_subkeys);
 	des_key_schedule (key +  8, ctx->key2.encrypt_subkeys);
@@ -825,11 +828,9 @@ static PurpleCipherOps DES3Ops = {
 	NULL,              /* set salt */
 	NULL,              /* get salt size */
 	des3_set_key,      /* set key */
-	NULL,              /* get key size */
 	des3_set_batch,    /* set batch mode */
 	des3_get_batch,    /* get batch mode */
 	NULL,              /* get block size */
-	NULL               /* set key with len */
 };
 
 /******************************************************************************
@@ -844,4 +845,3 @@ PurpleCipherOps *
 purple_des3_cipher_get_ops(void) {
 	return &DES3Ops;
 }
-

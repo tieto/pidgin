@@ -196,7 +196,7 @@ des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 
 	cipher = purple_ciphers_find_cipher("des");
 	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_set_key(context, key);
+	purple_cipher_context_set_key(context, key, 8);
 	purple_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
 	purple_cipher_context_destroy(context);
 }

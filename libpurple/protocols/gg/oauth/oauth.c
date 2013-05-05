@@ -53,7 +53,7 @@ static gchar *gg_hmac_sha1(const char *key, const char *message)
 	
 	context = purple_cipher_context_new_by_name("hmac", NULL);
 	purple_cipher_context_set_option(context, "hash", "sha1");
-	purple_cipher_context_set_key(context, (guchar *)key);
+	purple_cipher_context_set_key(context, (guchar *)key, strlen(key));
 	purple_cipher_context_append(context, (guchar *)message, strlen(message));
 	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	purple_cipher_context_destroy(context);

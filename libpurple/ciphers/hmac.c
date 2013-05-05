@@ -137,7 +137,7 @@ hmac_uninit(PurpleCipherContext *context)
 }
 
 	static void
-hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t key_len)
+hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 	int blocksize, i;
@@ -177,12 +177,6 @@ hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t k
 	g_free(ipad);
 }
 
-	static void
-hmac_set_key(PurpleCipherContext *context, const guchar * key)
-{
-	hmac_set_key_with_len(context, key, strlen((char *)key));
-}
-
 	static size_t
 hmac_get_block_size(PurpleCipherContext *context)
 {
@@ -205,11 +199,9 @@ static PurpleCipherOps HMACOps = {
 	NULL,                   /* set salt */
 	NULL,                   /* get salt size */
 	hmac_set_key,           /* set key */
-	NULL,                   /* get key size */
 	NULL,                   /* set batch mode */
 	NULL,                   /* get batch mode */
 	hmac_get_block_size,    /* get block size */
-	hmac_set_key_with_len   /* set key with len */
 };
 
 PurpleCipherOps *

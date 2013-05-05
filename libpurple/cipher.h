@@ -63,12 +63,10 @@ typedef enum {
 	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 11,  /**< Set salt flag		*/
 	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 12,  /**< Get salt size flag	*/
 	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 13,  /**< Set key flag		*/
-	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 14,  /**< Get key size flag	*/
-	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 15,  /**< Set batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 16,  /**< Get batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 17,  /**< The get block size flag */
-	PURPLE_CIPHER_CAPS_SET_KEY_WITH_LEN = 1 << 18,  /**< The set key with length flag */
-	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 19   /**< Unknown			*/
+	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 14,  /**< Set batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 15,  /**< Get batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 16,  /**< The get block size flag */
+	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 17   /**< Unknown			*/
 } PurpleCipherCaps;
 
 /**
@@ -112,10 +110,7 @@ struct _PurpleCipherOps {
 	size_t (*get_salt_size)(PurpleCipherContext *context);
 
 	/** The set key function */
-	void (*set_key)(PurpleCipherContext *context, const guchar *key);
-
-	/** The get key size function */
-	size_t (*get_key_size)(PurpleCipherContext *context);
+	void (*set_key)(PurpleCipherContext *context, const guchar *key, size_t len);
 
 	/** The set batch mode function */
 	void (*set_batch_mode)(PurpleCipherContext *context, PurpleCipherBatchMode mode);
@@ -126,8 +121,10 @@ struct _PurpleCipherOps {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleCipherContext *context);
 
-	/** The set key with length function */
-	void (*set_key_with_len)(PurpleCipherContext *context, const guchar *key, size_t len);
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
@@ -381,17 +378,9 @@ size_t purple_cipher_context_get_salt_size(PurpleCipherContext *context);
  *
  * @param context The context whose key to set
  * @param key     The key
+ * @param len     The size of the key
  */
-void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key);
-
-/**
- * Gets the key size for a context
- *
- * @param context The context whose key size to get
- *
- * @return The size of the key
- */
-size_t purple_cipher_context_get_key_size(PurpleCipherContext *context);
+void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key, size_t len);
 
 /**
  * Sets the batch mode of a context
@@ -419,16 +408,6 @@ PurpleCipherBatchMode purple_cipher_context_get_batch_mode(PurpleCipherContext *
  * @return The block size of the context
  */
 size_t purple_cipher_context_get_block_size(PurpleCipherContext *context);
-
-/**
- * Sets the key with a given length on a context
- *
- * @param context The context whose key to set
- * @param key     The key
- * @param len     The length of the key
- *
- */
-void purple_cipher_context_set_key_with_len(PurpleCipherContext *context, const guchar *key, size_t len);
 
 /**
  * Sets the cipher data for a context

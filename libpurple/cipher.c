@@ -106,16 +106,12 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 		caps |= PURPLE_CIPHER_CAPS_GET_SALT_SIZE;
 	if(ops->set_key)
 		caps |= PURPLE_CIPHER_CAPS_SET_KEY;
-	if(ops->get_key_size)
-		caps |= PURPLE_CIPHER_CAPS_GET_KEY_SIZE;
 	if(ops->set_batch_mode)
 		caps |= PURPLE_CIPHER_CAPS_SET_BATCH_MODE;
 	if(ops->get_batch_mode)
 		caps |= PURPLE_CIPHER_CAPS_GET_BATCH_MODE;
 	if(ops->get_block_size)
 		caps |= PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE;
-	if(ops->set_key_with_len)
-		caps |= PURPLE_CIPHER_CAPS_SET_KEY_WITH_LEN;
 
 	return caps;
 }
@@ -539,7 +535,7 @@ purple_cipher_context_get_salt_size(PurpleCipherContext *context) {
 }
 
 void
-purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key) {
+purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key, size_t len) {
 	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
@@ -548,29 +544,10 @@ purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key) {
 	g_return_if_fail(cipher);
 
 	if(cipher->ops && cipher->ops->set_key)
-		cipher->ops->set_key(context, key);
+		cipher->ops->set_key(context, key, len);
 	else
 		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_key operation\n", cipher->name);
-}
-
-size_t
-purple_cipher_context_get_key_size(PurpleCipherContext *context) {
-	PurpleCipher *cipher = NULL;
-
-	g_return_val_if_fail(context, -1);
-
-	cipher = context->cipher;
-	g_return_val_if_fail(cipher, -1);
-
-	if(cipher->ops && cipher->ops->get_key_size)
-		return cipher->ops->get_key_size(context);
-	else {
-		purple_debug_warning("cipher", "the %s cipher does not support the "
-						"get_key_size operation\n", cipher->name);
-
-		return -1;
-	}
 }
 
 void
@@ -627,24 +604,6 @@ purple_cipher_context_get_block_size(PurpleCipherContext *context)
 		                            "get_block_size operation\n", cipher->name);
 		return -1;
 	}
-}
-
-void
-purple_cipher_context_set_key_with_len(PurpleCipherContext *context,
-                                       const guchar *key, size_t len)
-{
-	PurpleCipher *cipher = NULL;
-
-	g_return_if_fail(context);
-
-	cipher = context->cipher;
-	g_return_if_fail(cipher);
-
-	if(cipher->ops && cipher->ops->set_key_with_len)
-		cipher->ops->set_key_with_len(context, key, len);
-	else
-		purple_debug_warning("cipher", "The %s cipher does not support the "
-		                            "set_key_with_len operation\n", cipher->name);
 }
 
 void

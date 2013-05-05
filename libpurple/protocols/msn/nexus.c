@@ -106,14 +106,14 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	hmac = purple_cipher_context_new_by_name("hmac", NULL);
 
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);
 	purple_cipher_context_digest(hmac, sizeof(hash1), hash1, NULL);
 
 	purple_cipher_context_reset(hmac, NULL);
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
 	purple_cipher_context_append(hmac, hash1, 20);
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);
@@ -121,13 +121,13 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 
 	purple_cipher_context_reset(hmac, NULL);
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
 	purple_cipher_context_append(hmac, hash1, 20);
 	purple_cipher_context_digest(hmac, sizeof(hash3), hash3, NULL);
 
 	purple_cipher_context_reset(hmac, NULL);
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
 	purple_cipher_context_append(hmac, hash3, sizeof(hash3));
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);
@@ -150,7 +150,7 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 	size_t outlen;
 
 	des3 = purple_cipher_context_new_by_name("des3", NULL);
-	purple_cipher_context_set_key(des3, (guchar *)key);
+	purple_cipher_context_set_key(des3, (guchar *)key, 24);
 	purple_cipher_context_set_batch_mode(des3, PURPLE_CIPHER_BATCH_MODE_CBC);
 	purple_cipher_context_set_iv(des3, (guchar *)iv, 8);
 
@@ -208,7 +208,7 @@ msn_rps_encrypt(MsnNexus *nexus)
 	len = strlen(nexus->nonce);
 	hmac = purple_cipher_context_new_by_name("hmac", NULL);
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key2, 24);
+	purple_cipher_context_set_key(hmac, (guchar *)key2, 24);
 	purple_cipher_context_append(hmac, (guchar *)nexus->nonce, len);
 	purple_cipher_context_digest(hmac, 20, hash, NULL);
 	purple_cipher_context_destroy(hmac);
@@ -607,7 +607,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	key = rps_create_key(nexus->secret, 24, (char *)nonce, sizeof(nonce));
 	hmac = purple_cipher_context_new_by_name("hmac", NULL);
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, 24);
+	purple_cipher_context_set_key(hmac, (guchar *)key, 24);
 	purple_cipher_context_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
 	purple_cipher_context_digest(hmac, 20, signature, NULL);
 	purple_cipher_context_destroy(hmac);
