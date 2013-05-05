@@ -94,6 +94,16 @@ typedef struct
 	"function clear() {" \
 		"document.body.innerHTML = '';" \
 	"}" \
+	"function pauseOutput() {" \
+		"document.body.insertAdjacentHTML('beforeEnd', '<div id=pause></div>');" \
+	"}" \
+	"function resumeOutput() {" \
+		"var pause = document.getElementById('pause');" \
+		"if (pause) {" \
+			"var parent = pause.parentNode;" \
+			"parent.removeChild(pause);" \
+		"}" \
+	"}" \
 	"</script></head><body class=l0></body></html>"
 
 static DebugWindow *debug_win = NULL;
@@ -177,20 +187,10 @@ pause_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->paused = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w));
 
-	if (win->paused) {
-		gtk_webview_append_html(GTK_WEBVIEW(win->text), "<div id=pause></div>");
-	} else {
-		WebKitDOMDocument *dom;
-		WebKitDOMElement *pause;
-
-		dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
-		pause = webkit_dom_document_get_element_by_id(dom, "pause");
-		if (pause) {
-			WebKitDOMNode *parent;
-			parent = webkit_dom_node_get_parent_node(WEBKIT_DOM_NODE(pause));
-			webkit_dom_node_remove_child(parent, WEBKIT_DOM_NODE(pause), NULL);
-		}
-	}
+	if (win->paused)
+		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "pauseOutput();");
+	else
+		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "resumeOutput();");
 }
 
 /******************************************************************************
