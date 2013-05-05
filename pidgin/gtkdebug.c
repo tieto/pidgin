@@ -91,7 +91,10 @@ typedef struct
 		"document.body.appendChild(div);" \
 		"alert('appended');" \
 	"}" \
-	"</script></head><body class=l%d></body></html>"
+	"function clear() {" \
+		"document.body.innerHTML = '';" \
+	"}" \
+	"</script></head><body class=l0></body></html>"
 
 static DebugWindow *debug_win = NULL;
 static guint debug_enabled_timer = 0;
@@ -166,13 +169,7 @@ save_cb(GtkWidget *w, DebugWindow *win)
 static void
 clear_cb(GtkWidget *w, DebugWindow *win)
 {
-	char *tmp;
-	int level;
-
-	level = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel");
-	tmp = g_strdup_printf(EMPTY_HTML, level);
-	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), tmp);
-	g_free(tmp);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "clear();");
 }
 
 static void
@@ -849,6 +846,7 @@ debug_window_new(void)
 	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
 	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
 	gtk_webview_set_autoscroll(GTK_WEBVIEW(win->text), TRUE);
+	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), EMPTY_HTML);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
