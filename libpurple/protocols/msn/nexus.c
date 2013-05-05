@@ -147,7 +147,6 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 {
 	PurpleCipherContext *des3;
 	char *out;
-	size_t outlen;
 
 	des3 = purple_cipher_context_new_by_name("des3", NULL);
 	purple_cipher_context_set_key(des3, (guchar *)key, 24);
@@ -156,9 +155,9 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 
 	out = g_malloc(len);
 	if (decrypt)
-		purple_cipher_context_decrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
+		purple_cipher_context_decrypt(des3, (guchar *)data, len, (guchar *)out, len);
 	else
-		purple_cipher_context_encrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
+		purple_cipher_context_encrypt(des3, (guchar *)data, len, (guchar *)out, len);
 
 	purple_cipher_context_destroy(des3);
 

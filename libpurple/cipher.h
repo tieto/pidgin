@@ -103,10 +103,10 @@ struct _PurpleCipherOps {
 	size_t (*get_digest_size)(PurpleCipherContext *context);
 
 	/** The encrypt function */
-	int (*encrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*encrypt)(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The decrypt function */
-	int (*decrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*decrypt)(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The set salt function */
 	void (*set_salt)(PurpleCipherContext *context, guchar *salt, size_t len);
@@ -347,28 +347,28 @@ size_t purple_cipher_context_get_digest_size(PurpleCipherContext *context);
 /**
  * Encrypts data using the context
  *
- * @param context The context
- * @param data    The data to encrypt
- * @param len     The length of the data
- * @param output  The output buffer
- * @param outlen  The len of data that was outputed
+ * @param context  The context
+ * @param input    The data to encrypt
+ * @param in_len   The length of the data
+ * @param output   The output buffer
+ * @param out_size The size of the output buffer
  *
- * @return A cipher specific status code
+ * @return A length of data that was outputed or -1, if failed
  */
-gint purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+ssize_t purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
  * Decrypts data using the context
  *
- * @param context The context
- * @param data    The data to encrypt
- * @param len     The length of the returned value
- * @param output  The output buffer
- * @param outlen  The len of data that was outputed
+ * @param context  The context
+ * @param input    The data to encrypt
+ * @param in_len   The length of the returned value
+ * @param output   The output buffer
+ * @param out_size The size of the output buffer
  *
- * @return A cipher specific status code
+ * @return A length of data that was outputed or -1, if failed
  */
-gint purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+ssize_t purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
  * Sets the salt on a context

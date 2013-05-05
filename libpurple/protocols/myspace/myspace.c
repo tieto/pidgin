@@ -640,8 +640,8 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	data_out = g_new0(guchar, data->len);
 
-	purple_cipher_context_encrypt(rc4, (const guchar *)data->str,
-			data->len, data_out, &data_out_len);
+	data_out_len = purple_cipher_context_encrypt(rc4,
+		(const guchar *)data->str, data->len, data_out, data->len);
 	purple_cipher_context_destroy(rc4);
 
 	if (data_out_len != data->len) {

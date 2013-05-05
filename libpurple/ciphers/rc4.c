@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
 #include <cipher.h>
 #include "ciphers.h"
 #include <util.h>
@@ -95,9 +97,10 @@ rc4_set_key (PurpleCipherContext *context, const guchar * key, size_t len) {
 	}
 }
 
-static gint
-rc4_encrypt(PurpleCipherContext *context, const guchar data[],
-            size_t len, guchar output[], size_t *outlen) {
+
+static ssize_t
+rc4_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
+	guchar output[], size_t out_size) {
 	struct RC4Context *ctx;
 	guchar temp_swap;
 	guchar x, y, z;
@@ -110,7 +113,7 @@ rc4_encrypt(PurpleCipherContext *context, const guchar data[],
 	y = ctx->y;
 	state = &ctx->state[0];
 
-	for(i = 0; i < len; i++)
+	for(i = 0; i < in_len; i++)
 	{
 		x = (x + 1) % 256;
 		y = (state[x] + y) % 256;
@@ -118,14 +121,12 @@ rc4_encrypt(PurpleCipherContext *context, const guchar data[],
 		state[x] = state[y];
 		state[y] = temp_swap;
 		z = state[x] + (state[y]) % 256;
-		output[i] = data[i] ^ state[z];
+		output[i] = input[i] ^ state[z];
 	}
 	ctx->x = x;
 	ctx->y = y;
-	if(outlen)
-		*outlen = len;
 
-	return 0;
+	return in_len;
 }
 
 static PurpleCipherOps RC4Ops = {

@@ -1,3 +1,4 @@
+#include "internal.h"
 #include <cipher.h>
 #include "ciphers.h"
 

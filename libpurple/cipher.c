@@ -473,49 +473,48 @@ purple_cipher_context_get_digest_size(PurpleCipherContext *context)
 	}
 }
 
-gint
-purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[],
-							size_t len, guchar output[], size_t *outlen)
+ssize_t
+purple_cipher_context_encrypt(PurpleCipherContext *context,
+	const guchar input[], size_t in_len, guchar output[], size_t out_size)
 {
 	PurpleCipher *cipher = NULL;
 
-	g_return_val_if_fail(context, -1);
+	g_return_val_if_fail(context != NULL, -1);
+	g_return_val_if_fail(input != NULL, -1);
+	g_return_val_if_fail(output != NULL, -1);
+	g_return_val_if_fail(out_size < in_len, -1);
 
 	cipher = context->cipher;
 	g_return_val_if_fail(cipher, -1);
 
 	if(cipher->ops && cipher->ops->encrypt)
-		return cipher->ops->encrypt(context, data, len, output, outlen);
+		return cipher->ops->encrypt(context, input, in_len, output, out_size);
 	else {
 		purple_debug_warning("cipher", "the %s cipher does not support the encrypt"
 						"operation\n", cipher->name);
-
-		if(outlen)
-			*outlen = -1;
 
 		return -1;
 	}
 }
 
-gint
-purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[],
-							size_t len, guchar output[], size_t *outlen)
+ssize_t
+purple_cipher_context_decrypt(PurpleCipherContext *context,
+	const guchar input[], size_t in_len, guchar output[], size_t out_size)
 {
 	PurpleCipher *cipher = NULL;
 
-	g_return_val_if_fail(context, -1);
+	g_return_val_if_fail(context != NULL, -1);
+	g_return_val_if_fail(input != NULL, -1);
+	g_return_val_if_fail(output != NULL, -1);
 
 	cipher = context->cipher;
 	g_return_val_if_fail(cipher, -1);
 
 	if(cipher->ops && cipher->ops->decrypt)
-		return cipher->ops->decrypt(context, data, len, output, outlen);
+		return cipher->ops->decrypt(context, input, in_len, output, out_size);
 	else {
 		purple_debug_warning("cipher", "the %s cipher does not support the decrypt"
 						"operation\n", cipher->name);
-
-		if(outlen)
-			*outlen = -1;
 
 		return -1;
 	}
