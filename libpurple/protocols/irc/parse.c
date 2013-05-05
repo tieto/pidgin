@@ -64,6 +64,7 @@ static struct _irc_msg {
 	{ "318", "nt:", irc_msg_endwhois },	/* End of WHOIS			*/
 	{ "319", "nn:", irc_msg_whois },	/* Whois channels		*/
 	{ "320", "nn:", irc_msg_whois },	/* Whois (fn ident)		*/
+	{ "330", "nnv:", irc_msg_whois },	/* Whois (fn login)		*/
 	{ "314", "nnnvv:", irc_msg_whois },	/* Whowas user			*/
 	{ "315", "nt:", irc_msg_who },      /* end of WHO channel   */
 	{ "369", "nt:", irc_msg_endwhois },	/* End of WHOWAS		*/

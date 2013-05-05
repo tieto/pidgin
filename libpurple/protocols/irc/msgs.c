@@ -382,8 +382,9 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!strcmp(name, "301")) {
 		irc->whois.away = g_strdup(args[2]);
 	} else if (!strcmp(name, "311") || !strcmp(name, "314")) {
-		irc->whois.userhost = g_strdup_printf("%s@%s", args[2], args[3]);
-		irc->whois.name = g_strdup(args[5]);
+		irc->whois.ident = g_strdup(args[2]);
+		irc->whois.host = g_strdup(args[3]);
+		irc->whois.real = g_strdup(args[5]);
 	} else if (!strcmp(name, "312")) {
 		irc->whois.server = g_strdup(args[2]);
 		irc->whois.serverinfo = g_strdup(args[3]);
@@ -401,6 +402,11 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 		}
 	} else if (!strcmp(name, "320")) {
 		irc->whois.identified = 1;
+	} else if (!strcmp(name, "330")) {
+		g_message("msg %s: 1=[%s] 2=[%s] 3=[%s]",
+				name, args[1], args[2], args[3]);
+		if (!strcmp(args[3], "is logged in as"))
+			irc->whois.login = g_strdup(args[2]);
 	}
 }
 
@@ -437,13 +443,21 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		purple_notify_user_info_add_pair(user_info, _("Away"), tmp);
 		g_free(tmp);
 	}
-	if (irc->whois.userhost) {
-		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
-		g_free(irc->whois.name);
-		purple_notify_user_info_add_pair(user_info, _("Username"), irc->whois.userhost);
-		purple_notify_user_info_add_pair(user_info, _("Real name"), tmp);
-		g_free(irc->whois.userhost);
-		g_free(tmp);
+	if (irc->whois.real) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.real);
+		g_free(irc->whois.real);
+	}
+	if (irc->whois.login) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Login name"), irc->whois.login);
+		g_free(irc->whois.login);
+	}
+	if (irc->whois.ident) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Ident name"), irc->whois.ident);
+		g_free(irc->whois.ident);
+	}
+	if (irc->whois.host) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Host name"), irc->whois.host);
+		g_free(irc->whois.host);
 	}
 	if (irc->whois.server) {
 		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
