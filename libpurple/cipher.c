@@ -120,34 +120,42 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 	return caps;
 }
 
-gboolean
+ssize_t
 purple_cipher_digest_region(const gchar *name, const guchar *data,
 	size_t data_len, guchar digest[], size_t out_size)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
-	gboolean ret = FALSE;
+	ssize_t digest_size;
+	gboolean succ;
 
-	g_return_val_if_fail(name, FALSE);
-	g_return_val_if_fail(data, FALSE);
+	g_return_val_if_fail(name, -1);
+	g_return_val_if_fail(data, -1);
 
 	cipher = purple_ciphers_find_cipher(name);
 
-	g_return_val_if_fail(cipher, FALSE);
+	g_return_val_if_fail(cipher, -1);
 
-	if(!cipher->ops->append || !cipher->ops->digest) {
+	if(!cipher->ops->append || !cipher->ops->digest || !cipher->ops->get_digest_size) {
 		purple_debug_warning("cipher", "purple_cipher_region failed: "
 						"the %s cipher does not support appending and or "
 						"digesting.", cipher->name);
-		return FALSE;
+		return -1;
 	}
 
 	context = purple_cipher_context_new(cipher, NULL);
+	digest_size = purple_cipher_context_get_digest_size(context);
+	if (out_size < digest_size) {
+		purple_debug_error("cipher", "purple_cipher_region failed: "
+			"provided output buffer too small\n");
+		purple_cipher_context_destroy(context);
+		return -1;
+	}
 	purple_cipher_context_append(context, data, data_len);
-	ret = purple_cipher_context_digest(context, digest, out_size);
+	succ = purple_cipher_context_digest(context, digest, out_size);
 	purple_cipher_context_destroy(context);
 
-	return ret;
+	return succ ? digest_size : -1;
 }
 
 /******************************************************************************

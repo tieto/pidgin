@@ -169,9 +169,9 @@ guint purple_cipher_get_capabilities(PurpleCipher *cipher);
  * @param digest   The returned digest
  * @param out_size The size of digest buffer
  *
- * @return @c TRUE if successful, @c FALSE otherwise
+ * @return The count of bytes written, or -1 if failed
  */
-gboolean purple_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, guchar digest[], size_t out_size);
+ssize_t purple_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, guchar digest[], size_t out_size);
 
 /*@}*/
 /******************************************************************************/
