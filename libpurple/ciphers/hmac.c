@@ -30,7 +30,7 @@ struct HMAC_Context {
 	PurpleCipherContext *hash;
 	char *name;
 	int blocksize;
-	guchar *opad;
+	guchar *opad, *ipad;
 };
 
 	static void
@@ -57,6 +57,8 @@ hmac_reset(PurpleCipherContext *context, gpointer extra)
 	hctx->blocksize = 0;
 	g_free(hctx->opad);
 	hctx->opad = NULL;
+	g_free(hctx->ipad);
+	hctx->ipad = NULL;
 }
 
 	static void
@@ -66,8 +68,10 @@ hmac_reset_state(PurpleCipherContext *context, gpointer extra)
 
 	hctx = purple_cipher_context_get_data(context);
 
-	if (hctx->hash)
-		purple_cipher_context_reset_state(hctx->hash, extra);
+	if (hctx->hash) {
+		purple_cipher_context_reset_state(hctx->hash, NULL);
+		purple_cipher_context_append(hctx->hash, hctx->ipad, hctx->blocksize);
+	}
 }
 
 	static void
@@ -168,15 +172,15 @@ hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 	int blocksize, i;
-	guchar *ipad;
 	guchar *full_key;
 
 	g_return_if_fail(hctx->hash != NULL);
 
 	g_free(hctx->opad);
+	g_free(hctx->ipad);
 
 	blocksize = hctx->blocksize;
-	ipad = g_malloc(blocksize);
+	hctx->ipad = g_malloc(blocksize);
 	hctx->opad = g_malloc(blocksize);
 
 	if (key_len > blocksize) {
@@ -195,15 +199,14 @@ hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 	}
 
 	for(i = 0; i < blocksize; i++) {
-		ipad[i] = 0x36 ^ full_key[i];
+		hctx->ipad[i] = 0x36 ^ full_key[i];
 		hctx->opad[i] = 0x5c ^ full_key[i];
 	}
 
 	g_free(full_key);
 
 	purple_cipher_context_reset(hctx->hash, NULL);
-	purple_cipher_context_append(hctx->hash, ipad, blocksize);
-	g_free(ipad);
+	purple_cipher_context_append(hctx->hash, hctx->ipad, blocksize);
 }
 
 	static size_t
