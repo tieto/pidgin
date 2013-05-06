@@ -41,6 +41,8 @@
 
 #include "gtk3compat.h"
 
+#include "gtkdebug.html.h"
+
 typedef struct
 {
 	GtkWidget *window;
@@ -56,58 +58,6 @@ typedef struct
 	guint timer;
 	GRegex *regex;
 } DebugWindow;
-
-#define EMPTY_HTML \
-	"<html><head><style>" \
-	"body{white-space:pre-wrap;}" \
-	"div.l0{color:#000000;}"                    /* All debug levels. */ \
-	"div.l1{color:#666666;}"                    /* Misc.             */ \
-	"div.l2{color:#000000;}"                    /* Information.      */ \
-	"div.l3{color:#660000;}"                    /* Warnings.         */ \
-	"div.l4{color:#FF0000;}"                    /* Errors.           */ \
-	"div.l5{color:#FF0000;font-weight:bold;}"   /* Fatal errors.     */ \
-	/* Filter levels */ \
-	"div#pause~div{display:none;}" \
-	"body.l1 div.l0{display:none;}" \
-	"body.l2 div.l0,body.l2 div.l1{display:none;}" \
-	"body.l3 div.l0,body.l3 div.l1,body.l3 div.l2{display:none;}" \
-	"body.l4 div.l0,body.l4 div.l1,body.l4 div.l2,body.l4 div.l3{display:none;}" \
-	"body.l5 div.l0,body.l5 div.l1,body.l5 div.l2,body.l5 div.l3,body.l5 div.l4{display:none;}" \
-	/* Regex */ \
-	"div.hide{display:none;}" \
-	"span.regex{background-color:#ffafaf;font-weight:bold;}" \
-	"</style><script>" \
-	"function append(level, time, cat, msg) {" \
-		"var div = document.createElement('div');" \
-		"div.className = 'l' + level;" \
-		"div.appendChild(document.createTextNode('(' + time + ') '));" \
-		"if (cat) {" \
-			"var cat_n = document.createElement('b');" \
-			"cat_n.appendChild(document.createTextNode(cat + ':'));" \
-			"div.appendChild(cat_n);" \
-			"div.appendChild(document.createTextNode(' '));" \
-		"}" \
-		"div.appendChild(document.createTextNode(msg));" \
-		"document.body.appendChild(div);" \
-		"alert('appended');" \
-	"}" \
-	"function clear() {" \
-		"document.body.innerHTML = '';" \
-	"}" \
-	"function pauseOutput() {" \
-		"document.body.insertAdjacentHTML('beforeEnd', '<div id=pause></div>');" \
-	"}" \
-	"function resumeOutput() {" \
-		"var pause = document.getElementById('pause');" \
-		"if (pause) {" \
-			"var parent = pause.parentNode;" \
-			"parent.removeChild(pause);" \
-		"}" \
-	"}" \
-	"function setFilterLevel(l) {" \
-		"document.body.className = 'l'+l;" \
-	"}" \
-	"</script></head><body class=l0></body></html>"
 
 static DebugWindow *debug_win = NULL;
 static guint debug_enabled_timer = 0;
@@ -845,7 +795,7 @@ debug_window_new(void)
 	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
 	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
 	gtk_webview_set_autoscroll(GTK_WEBVIEW(win->text), TRUE);
-	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), EMPTY_HTML);
+	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), gtkdebug_html);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
