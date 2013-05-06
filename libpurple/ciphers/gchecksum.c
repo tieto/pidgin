@@ -112,6 +112,7 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 		NULL,                     /* Get option */       \
 		lower##_init,             /* init */             \
 		lower##_reset,            /* reset */            \
+		lower##_reset,            /* reset state */      \
 		purple_g_checksum_uninit, /* uninit */           \
 		NULL,                     /* set iv */           \
 		purple_g_checksum_append, /* append */           \

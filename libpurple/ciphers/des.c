@@ -484,6 +484,7 @@ static PurpleCipherOps DESOps = {
 	NULL,              /* Get option */
 	des_init,          /* init */
  	NULL,              /* reset */
+ 	NULL,              /* reset state */
 	des_uninit,        /* uninit */
 	NULL,              /* set iv */
 	NULL,              /* append */
@@ -863,6 +864,7 @@ static PurpleCipherOps DES3Ops = {
 	NULL,              /* Get option */
 	des3_init,         /* init */
 	NULL,              /* reset */
+	NULL,              /* reset state */
 	des3_uninit,       /* uninit */
 	des3_set_iv,       /* set iv */
 	NULL,              /* append */

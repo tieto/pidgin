@@ -54,21 +54,22 @@ typedef enum {
 	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag */
 	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag */
 	PURPLE_CIPHER_CAPS_RESET            = 1 << 4,   /**< Reset flag */
-	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 5,   /**< Uninit flag */
-	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 6,   /**< Set IV flag */
-	PURPLE_CIPHER_CAPS_APPEND           = 1 << 7,   /**< Append flag */
-	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 8,   /**< Digest flag */
-	PURPLE_CIPHER_CAPS_GET_DIGEST_SIZE  = 1 << 9,   /**< The get digest size flag */
-	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 10,  /**< Encrypt flag */
-	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 11,  /**< Decrypt flag */
-	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 12,  /**< Set salt flag */
-	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 13,  /**< Get salt size flag */
-	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 14,  /**< Set key flag */
-	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 15,  /**< Get key size flag */
-	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 16,  /**< Set batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 17,  /**< Get batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 18,  /**< The get block size flag */
-	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 19   /**< Unknown */
+	PURPLE_CIPHER_CAPS_RESET_STATE      = 1 << 5,   /**< Reset state flag */
+	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 6,   /**< Uninit flag */
+	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 7,   /**< Set IV flag */
+	PURPLE_CIPHER_CAPS_APPEND           = 1 << 8,   /**< Append flag */
+	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 9,   /**< Digest flag */
+	PURPLE_CIPHER_CAPS_GET_DIGEST_SIZE  = 1 << 10,   /**< The get digest size flag */
+	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 11,  /**< Encrypt flag */
+	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 12,  /**< Decrypt flag */
+	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 13,  /**< Set salt flag */
+	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 14,  /**< Get salt size flag */
+	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 15,  /**< Set key flag */
+	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 16,  /**< Get key size flag */
+	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 17,  /**< Set batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 18,  /**< Get batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 19,  /**< The get block size flag */
+	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 20   /**< Unknown */
 } PurpleCipherCaps;
 
 /**
@@ -86,6 +87,9 @@ struct _PurpleCipherOps {
 
 	/** The reset function */
 	void (*reset)(PurpleCipherContext *context, void *extra);
+
+	/** The reset state function */
+	void (*reset_state)(PurpleCipherContext *context, void *extra);
 
 	/** The uninit function */
 	void (*uninit)(PurpleCipherContext *context);
@@ -290,6 +294,18 @@ PurpleCipherContext *purple_cipher_context_new_by_name(const gchar *name, void *
  * @param extra   Extra data for the specific cipher
  */
 void purple_cipher_context_reset(PurpleCipherContext *context, gpointer extra);
+
+/**
+ * Resets a cipher state to it's default value, but doesn't touch stateless
+ * configuration.
+ *
+ * That means, IV and digest context will be wiped out, but keys, ops or salt
+ * will remain untouched.
+ *
+ * @param context The context to reset
+ * @param extra   Extra data for the specific cipher
+ */
+void purple_cipher_context_reset_state(PurpleCipherContext *context, gpointer extra);
 
 /**
  * Destorys a cipher context and deinitializes it

@@ -134,6 +134,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* Get Option    */
 	rc4_init,      /* init          */
 	rc4_reset,     /* reset         */
+	NULL,          /* reset state   */
 	rc4_uninit,    /* uninit        */
 	NULL,          /* set iv        */
 	NULL,          /* append        */
@@ -144,7 +145,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set salt      */
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
-	NULL,          /* get key size */
+	NULL,          /* get key size  */
 	NULL,          /* set batch mode */
 	NULL,          /* get batch mode */
 	NULL,          /* get block size */

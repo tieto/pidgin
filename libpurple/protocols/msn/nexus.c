@@ -104,30 +104,24 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	char *result;
 
 	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-
 	purple_cipher_context_set_option(hmac, "hash", "sha1");
 	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
+
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);
 	purple_cipher_context_digest(hmac, hash1, sizeof(hash1));
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
+	purple_cipher_context_reset_state(hmac, NULL);
 	purple_cipher_context_append(hmac, hash1, 20);
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);
 	purple_cipher_context_digest(hmac, hash2, sizeof(hash2));
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
+	purple_cipher_context_reset_state(hmac, NULL);
 	purple_cipher_context_append(hmac, hash1, 20);
 	purple_cipher_context_digest(hmac, hash3, sizeof(hash3));
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
+	purple_cipher_context_reset_state(hmac, NULL);
 	purple_cipher_context_append(hmac, hash3, sizeof(hash3));
 	purple_cipher_context_append(hmac, magic, magic_len);
 	purple_cipher_context_append(hmac, (guchar *)data, data_len);

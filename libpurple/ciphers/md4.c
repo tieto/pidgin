@@ -281,6 +281,7 @@ static PurpleCipherOps MD4Ops = {
 	NULL,                   /* Get option */
 	md4_init,               /* init */
 	md4_reset,              /* reset */
+	md4_reset,              /* reset state */
 	md4_uninit,             /* uninit */
 	NULL,                   /* set iv */
 	md4_append,             /* append */

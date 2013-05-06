@@ -60,6 +60,17 @@ hmac_reset(PurpleCipherContext *context, gpointer extra)
 }
 
 	static void
+hmac_reset_state(PurpleCipherContext *context, gpointer extra)
+{
+	struct HMAC_Context *hctx;
+
+	hctx = purple_cipher_context_get_data(context);
+
+	if (hctx->hash)
+		purple_cipher_context_reset_state(hctx->hash, extra);
+}
+
+	static void
 hmac_set_opt(PurpleCipherContext *context, const gchar *name, void *value)
 {
 	struct HMAC_Context *hctx;
@@ -206,12 +217,13 @@ hmac_get_block_size(PurpleCipherContext *context)
 static PurpleCipherOps HMACOps = {
 	hmac_set_opt,           /* Set option */
 	hmac_get_opt,           /* Get option */
-	hmac_init,               /* init */
-	hmac_reset,              /* reset */
-	hmac_uninit,             /* uninit */
+	hmac_init,              /* init */
+	hmac_reset,             /* reset */
+	hmac_reset_state,       /* reset state */
+	hmac_uninit,            /* uninit */
 	NULL,                   /* set iv */
-	hmac_append,             /* append */
-	hmac_digest,             /* digest */
+	hmac_append,            /* append */
+	hmac_digest,            /* digest */
 	hmac_get_digest_size,   /* get digest size */
 	NULL,                   /* encrypt */
 	NULL,                   /* decrypt */

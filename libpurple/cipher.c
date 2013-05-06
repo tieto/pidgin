@@ -88,6 +88,8 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 		caps |= PURPLE_CIPHER_CAPS_INIT;
 	if(ops->reset)
 		caps |= PURPLE_CIPHER_CAPS_RESET;
+	if(ops->reset_state)
+		caps |= PURPLE_CIPHER_CAPS_RESET_STATE;
 	if(ops->uninit)
 		caps |= PURPLE_CIPHER_CAPS_UNINIT;
 	if(ops->set_iv)
@@ -356,6 +358,26 @@ purple_cipher_context_reset(PurpleCipherContext *context, void *extra) {
 
 	if(cipher->ops && cipher->ops->reset)
 		context->cipher->ops->reset(context, extra);
+}
+
+void
+purple_cipher_context_reset_state(PurpleCipherContext *context, void *extra) {
+	PurpleCipher *cipher = NULL;
+
+	g_return_if_fail(context);
+
+	cipher = context->cipher;
+	g_return_if_fail(cipher);
+	g_return_if_fail(cipher->ops);
+
+	if (cipher->ops->reset_state) {
+		context->cipher->ops->reset_state(context, extra);
+		return;
+	}
+
+	purple_debug_warning("cipher", "the %s cipher does not support the "
+		"reset_state operation\n", cipher->name);
+	purple_cipher_context_reset(context, extra);
 }
 
 void
