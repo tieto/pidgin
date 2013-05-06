@@ -25,6 +25,7 @@ BOOT:
 		const_iv(SET_IV),
 		const_iv(APPEND),
 		const_iv(DIGEST),
+		const_iv(GET_DIGEST_SIZE),
 		const_iv(ENCRYPT),
 		const_iv(DECRYPT),
 		const_iv(SET_SALT),
@@ -34,7 +35,6 @@ BOOT:
 		const_iv(SET_BATCH_MODE),
 		const_iv(GET_BATCH_MODE),
 		const_iv(GET_BLOCK_SIZE),
-		const_iv(SET_KEY_WITH_LEN),
 		const_iv(UNKNOWN),
 #undef const_iv
 	};
@@ -54,28 +54,30 @@ guint
 purple_cipher_get_capabilities(cipher)
 	Purple::Cipher cipher
 
-size_t
-purple_cipher_digest_region(name, data_sv, in_len, digest)
+gboolean
+purple_cipher_digest_region(name, data_sv, data_len, digest)
 	const gchar *name
 	SV *data_sv
-	size_t in_len
+	size_t data_len
 	SV *digest
 	PREINIT:
-		gboolean ret;
 		guchar *buff = NULL;
 		guchar *data = NULL;
-		size_t data_len;
+		ssize_t digest_len;
+		size_t max_digest_len = 100;
 	CODE:
 		data = (guchar *)SvPV(data_sv, data_len);
 		SvUPGRADE(digest, SVt_PV);
-		buff = (guchar *)SvGROW(digest, in_len);
-		ret = purple_cipher_digest_region(name, data, data_len, in_len, buff, &RETVAL);
-		if(!ret) {
+		buff = (guchar *)SvGROW(digest, max_digest_len);
+		digest_len = purple_cipher_digest_region(name, data, data_len, buff, max_digest_len);
+		if(digest_len == -1) {
 			SvSetSV_nosteal(digest, &PL_sv_undef);
-			XSRETURN_UNDEF;
+			RETVAL = 0;
+		} else {
+			SvCUR_set(digest, digest_len);
+			SvPOK_only(digest);
+			RETVAL = 1;
 		}
-		SvCUR_set(digest, RETVAL);
-		SvPOK_only(digest);
 	OUTPUT:
 		RETVAL
 
@@ -171,110 +173,120 @@ void
 purple_cipher_context_append(Purple::Cipher::Context context, guchar *data, size_t length(data))
 	PROTOTYPE: $$
 
-size_t
-purple_cipher_context_digest(context, in_len, digest)
+gboolean
+purple_cipher_context_digest(context, digest)
 	Purple::Cipher::Context context
-	size_t in_len
 	SV *digest
 	PREINIT:
-		gboolean ret;
 		guchar *buff = NULL;
+		size_t digest_size;
 	CODE:
+		digest_size = purple_cipher_context_get_digest_size(context);
 		SvUPGRADE(digest, SVt_PV);
-		buff = (guchar *)SvGROW(digest, in_len);
-		ret = purple_cipher_context_digest(context, in_len, buff, &RETVAL);
-		if(!ret) {
+		buff = (guchar *)SvGROW(digest, digest_size);
+		if (purple_cipher_context_digest(context, buff, digest_size)) {
+			SvCUR_set(digest, digest_size);
+			SvPOK_only(digest);
+			RETVAL = 1;
+		} else {
 			SvSetSV_nosteal(digest, &PL_sv_undef);
-			XSRETURN_UNDEF;
+			RETVAL = 0;
 		}
-		SvCUR_set(digest, RETVAL);
-		SvPOK_only(digest);
 	OUTPUT:
 		RETVAL
 
-size_t
-purple_cipher_context_digest_to_str(context, in_len, digest_s)
+gboolean
+purple_cipher_context_digest_to_str(context, digest_s)
 	Purple::Cipher::Context context
-	size_t in_len
 	SV *digest_s
 	PREINIT:
-		gboolean ret;
 		gchar *buff = NULL;
+		size_t digest_size, str_len;
 	CODE:
-		in_len += 1; /* perl shouldn't need to care about '\0' at the end */
+		digest_size = purple_cipher_context_get_digest_size(context);
+		str_len = 2 * digest_size;
 		SvUPGRADE(digest_s, SVt_PV);
-		buff = SvGROW(digest_s, in_len);
-		ret = purple_cipher_context_digest_to_str(context, in_len, buff, &RETVAL);
-		if(!ret) {
+		buff = SvGROW(digest_s, str_len + 1);
+		if (purple_cipher_context_digest_to_str(context, buff, str_len + 1)) {
+			SvCUR_set(digest_s, str_len);
+			SvPOK_only(digest_s);
+			RETVAL = 1;
+		} else {
 			SvSetSV_nosteal(digest_s, &PL_sv_undef);
-			XSRETURN_UNDEF;
+			RETVAL = 0;
 		}
-		SvCUR_set(digest_s, RETVAL);
-		SvPOK_only(digest_s);
 	OUTPUT:
 		RETVAL
 
-gint
-purple_cipher_context_encrypt(context, data_sv, output, OUTLIST size_t outlen)
+gboolean
+purple_cipher_context_encrypt(context, input, output)
 	Purple::Cipher::Context context
-	SV *data_sv
+	SV *input
 	SV *output
-	PROTOTYPE: $$$
 	PREINIT:
-		size_t datalen;
+		size_t input_len, output_len;
+		ssize_t ret;
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = (guchar *)SvPV(data_sv, datalen);
+		data = (guchar *)SvPV(input, input_len);
+		output_len = input_len + purple_cipher_context_get_block_size(context);
 		SvUPGRADE(output, SVt_PV);
-		buff = (guchar *)SvGROW(output, datalen);
-		RETVAL = purple_cipher_context_encrypt(context, data, datalen, buff, &outlen);
-		if(outlen != 0) {
+		buff = (guchar *)SvGROW(output, output_len);
+		ret = purple_cipher_context_encrypt(context, data, input_len, buff, output_len);
+		if (ret >= 0) {
+			RETVAL = 1;
 			SvPOK_only(output);
-			SvCUR_set(output, outlen);
+			SvCUR_set(output, ret);
 		} else {
+			RETVAL = 0;
 			SvSetSV_nosteal(output, &PL_sv_undef);
 		}
 	OUTPUT:
 		RETVAL
 
-gint
-purple_cipher_context_decrypt(context, data_sv, output, OUTLIST size_t outlen)
+gboolean
+purple_cipher_context_decrypt(context, input, output)
 	Purple::Cipher::Context context
-	SV *data_sv
+	SV *input
 	SV *output
-	PROTOTYPE: $$$
 	PREINIT:
-		size_t datalen;
+		size_t input_len, output_len;
+		ssize_t ret;
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = (guchar *)SvPV(data_sv, datalen);
+		data = (guchar *)SvPV(input, input_len);
+		output_len = input_len + purple_cipher_context_get_block_size(context);
 		SvUPGRADE(output, SVt_PV);
-		buff = (guchar *)SvGROW(output, datalen);
-		RETVAL = purple_cipher_context_decrypt(context, data, datalen, buff, &outlen);
-		if(outlen != 0) {
+		buff = (guchar *)SvGROW(output, output_len);
+		ret = purple_cipher_context_decrypt(context, data, input_len, buff, output_len);
+		if (ret >= 0) {
+			RETVAL = 1;
 			SvPOK_only(output);
-			SvCUR_set(output, outlen);
+			SvCUR_set(output, ret);
 		} else {
+			RETVAL = 0;
 			SvSetSV_nosteal(output, &PL_sv_undef);
 		}
 	OUTPUT:
 		RETVAL
 
 void
-purple_cipher_context_set_salt(context, salt)
+purple_cipher_context_set_salt(context, salt, len)
 	Purple::Cipher::Context context
 	guchar *salt
+	size_t len
 
 size_t
 purple_cipher_context_get_salt_size(context)
 	Purple::Cipher::Context context
 
 void
-purple_cipher_context_set_key(context, key)
+purple_cipher_context_set_key(context, key, len)
 	Purple::Cipher::Context context
 	guchar *key
+	size_t len
 
 size_t
 purple_cipher_context_get_key_size(context)
@@ -301,8 +313,4 @@ void
 purple_cipher_context_set_batch_mode(context, mode)
 	Purple::Cipher::Context context
 	Purple::Cipher::BatchMode mode
-
-void
-purple_cipher_context_set_key_with_len(Purple::Cipher::Context context, guchar *key, size_t length(key))
-	PROTOTYPE: $$
 

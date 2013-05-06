@@ -133,9 +133,9 @@ static gchar *hmac_sha256(const char *key, const char *message)
 
 	context = purple_cipher_context_new_by_name("hmac", NULL);
 	purple_cipher_context_set_option(context, "hash", "sha256");
-	purple_cipher_context_set_key(context, (guchar *)key);
+	purple_cipher_context_set_key(context, (guchar *)key, strlen(key));
 	purple_cipher_context_append(context, (guchar *)message, strlen(message));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest(context, digest, sizeof(digest));
 	purple_cipher_context_destroy(context);
 
 	return purple_base64_encode(digest, sizeof(digest));

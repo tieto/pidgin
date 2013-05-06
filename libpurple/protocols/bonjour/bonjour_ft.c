@@ -1039,8 +1039,8 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 	account = purple_buddy_get_account(pb);
 
 	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
-	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
-				    sizeof(hashval), hashval, NULL);
+	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p), hashval,
+		sizeof(hashval));
 	g_free(p);
 
 	memset(dstaddr, 0, 41);

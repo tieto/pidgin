@@ -748,7 +748,7 @@ jabber_calculate_data_hash(gconstpointer data, size_t len,
 
 	/* Hash the data */
 	purple_cipher_context_append(context, data, len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	if (!purple_cipher_context_digest_to_str(context, digest, sizeof(digest)))
 	{
 		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
 		    hash_algo);
