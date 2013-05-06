@@ -13,5 +13,7 @@ noinst_HEADERS =\
 INCLUDES = -I$(top_srcdir)/libpurple
 
 AM_CPPFLAGS = \
-	$(GLIB_CFLAGS)
-
+	$(INTGG_CFLAGS) \
+	$(AM_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(DEBUG_CFLAGS)

@@ -499,6 +499,7 @@ static PurpleCipherOps DESOps = {
 	NULL,              /* set batch mode */
 	NULL,              /* get batch mode */
 	NULL,              /* get block size */
+	NULL, NULL, NULL, NULL /* reserved */
 };
 
 /******************************************************************************
@@ -612,8 +613,8 @@ des3_cbc_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	int i = 0;
 	int tmp;
 	guint8 buf[8];
-	memcpy(buf, ctx->iv, 8);
 	ssize_t out_len;
+	memcpy(buf, ctx->iv, 8);
 
 	g_return_val_if_fail(out_size < in_len, -1);
 
@@ -879,6 +880,7 @@ static PurpleCipherOps DES3Ops = {
 	des3_set_batch,    /* set batch mode */
 	des3_get_batch,    /* get batch mode */
 	NULL,              /* get block size */
+	NULL, NULL, NULL, NULL /* reserved */
 };
 
 /******************************************************************************

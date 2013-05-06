@@ -296,6 +296,7 @@ static PurpleCipherOps MD4Ops = {
 	NULL,                   /* set batch mode */
 	NULL,                   /* get batch mode */
 	md4_get_block_size,     /* get block size */
+	NULL, NULL, NULL, NULL  /* reserved */
 };
 
 PurpleCipherOps *

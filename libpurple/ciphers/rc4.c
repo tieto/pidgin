@@ -149,6 +149,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set batch mode */
 	NULL,          /* get batch mode */
 	NULL,          /* get block size */
+	NULL, NULL, NULL, NULL /* reserved */
 };
 
 PurpleCipherOps *
