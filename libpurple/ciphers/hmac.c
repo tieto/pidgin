@@ -234,6 +234,7 @@ static PurpleCipherOps HMACOps = {
 	NULL,                   /* set batch mode */
 	NULL,                   /* get batch mode */
 	hmac_get_block_size,    /* get block size */
+	NULL, NULL, NULL, NULL  /* reserved */
 };
 
 PurpleCipherOps *
