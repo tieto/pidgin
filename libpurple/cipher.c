@@ -551,7 +551,7 @@ purple_cipher_context_decrypt(PurpleCipherContext *context,
 }
 
 void
-purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt, size_t len) {
+purple_cipher_context_set_salt(PurpleCipherContext *context, const guchar *salt, size_t len) {
 	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);

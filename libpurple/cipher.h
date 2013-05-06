@@ -113,7 +113,7 @@ struct _PurpleCipherOps {
 	ssize_t (*decrypt)(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The set salt function */
-	void (*set_salt)(PurpleCipherContext *context, guchar *salt, size_t len);
+	void (*set_salt)(PurpleCipherContext *context, const guchar *salt, size_t len);
 
 	/** The get salt size function */
 	size_t (*get_salt_size)(PurpleCipherContext *context);
@@ -393,7 +393,7 @@ ssize_t purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar
  * @param salt    The salt
  * @param len     The length of the salt
  */
-void purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt, size_t len);
+void purple_cipher_context_set_salt(PurpleCipherContext *context, const guchar *salt, size_t len);
 
 /**
  * Gets the size of the salt if the cipher supports it
