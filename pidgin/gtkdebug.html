@@ -21,6 +21,168 @@
 		span.regex{background-color:#ffafaf;font-weight:bold;}
 	</style>
 	<script>
+		regex = {
+			clear: function () {
+				var list, i;
+				/* Remove highlighting SPANs */
+				list = document.getElementsByClassName('regex');
+				i = list.length;
+				while (i--) {
+					var span = list[i];
+					var parent = span.parentNode;
+					var content = span.textContent;
+					var text = document.createTextNode(content);
+					parent.replaceChild(text, span);
+				}
+
+				/* Remove hidden DIVs */
+				list = document.getElementsByClassName('hide');
+				i = list.length;
+				while (i--) {
+					list[i].classList.remove('hide');
+				}
+
+				this.enabled = false;
+			},
+
+			highlightTextNodes: function (div, start_pos, end_pos) {
+				var data = [], node, range, span, contents;
+				var ind, end_ind
+				var this_start, this_end;
+
+				ind = 0;
+				div.normalize();
+				node = div;
+
+				/* First, find the container nodes and offsets to apply highlighting. */
+				do {
+					if (node.nodeType === Node.TEXT_NODE) {
+						end_ind = ind + node.length;
+
+						if (start_pos <= ind)
+							this_start = 0;
+						else if (start_pos < end_ind)
+							this_start = start_pos - ind;
+						else
+							this_start = -1;
+
+						if (end_pos < end_ind)
+							this_end = end_pos - ind;
+						else
+							this_end = end_ind - ind;
+
+						if (this_start != -1 && this_start < this_end) {
+							data.push(this_end, this_start, node);
+						}
+
+						ind = end_ind;
+					}
+
+					if (node.hasChildNodes()) {
+						node = node.firstChild;
+					} else {
+						while (node != div) {
+							var next = node.nextSibling;
+							if (next) {
+								node = next;
+								break;
+							} else {
+								node = node.parentNode;
+							}
+						}
+					}
+				} while (node != div);
+
+				/* Second, apply highlighting to saved sections. Changing the DOM is
+				   automatically reflected in all WebKit API, so we have to do this after
+				   finding the offsets, or things could get complicated. */
+				while (data.length) {
+					node = data.pop();
+					this_start = data.pop();
+					this_end = data.pop();
+
+					range = document.createRange();
+					range.setStart(node, this_start);
+					range.setEnd(node, this_end);
+
+					span = document.createElement('span');
+					span.className = 'regex';
+
+					contents = range.extractContents();
+					range.insertNode(span);
+					span.appendChild(contents);
+				}
+			},
+
+			match: function (div) {
+				var text, match_info;
+				var m, count, start_pos, end_pos;
+
+				text = div.textContent;
+				if (!text)
+					return;
+
+				/* We do a first pass to see if it matches at all.  If it does we work out
+				 * the offsets to highlight.
+				 */
+				this.regex.lastIndex = 0;
+				var match_info = this.regex.exec(text);
+				if ((match_info != null) != this.invert) {
+					/* If we're not highlighting or the expression is inverted, we're
+					 * done and move on.
+					 */
+					if (!this.highlight || this.invert)
+						return;
+
+					do {
+						if (match_info === null)
+							break;
+
+						count = match_info.length;
+						if (count === 1)
+							m = 0;
+						else 
+							m = 1;
+
+						/* We do this because JS doesn't provide a sufficient means to
+						   determine the indices of matched groups. So we're just going
+						   to highlight the entire match instead. */
+						m = 0; count = 1;
+
+						for (; m < count; m++) {
+							start_pos = match_info.index;
+							end_pos = this.regex.lastIndex;
+							if (end_pos == -1)
+								break;
+
+							this.highlightTextNodes(div, start_pos, end_pos);
+						}
+
+						/* Workaround broken API for empty matches */
+						if (match_info.index == this.regex.lastIndex)
+							this.regex.lastIndex++;
+					} while (match_info = this.regex.exec(text));
+				} else {
+					div.classList.add('hide');
+				}
+			},
+
+			filterAll: function (str, inv, high) {
+				this.regex = new RegExp(str, 'gi');
+				this.invert = inv;
+				this.highlight = high;
+				this.enabled = true;
+				var list = document.getElementsByTagName('div');
+				for (var i = 0; i < list.length; i++)
+					this.match(list[i]);
+			},
+
+			highlight: false,
+			invert: false,
+			enabled: false,
+			regex: undefined
+		}
+
 		function append(level, time, cat, msg) {
 			var div = document.createElement('div');
 			div.className = 'l' + level;
@@ -32,8 +194,9 @@
 				div.appendChild(document.createTextNode(' '));
 			}
 			div.appendChild(document.createTextNode(msg));
+			if (regex.enabled)
+				regex.match(div);
 			document.body.appendChild(div);
-			alert('appended');
 		}
 
 		function clear() {

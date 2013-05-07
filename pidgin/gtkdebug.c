@@ -166,228 +166,24 @@ regex_change_color(GtkWidget *w, guint16 r, guint16 g, guint16 b) {
 }
 
 static void
-regex_toggle_div(WebKitDOMNode *div)
-{
-	WebKitDOMDOMTokenList *classes;
-
-	if (!WEBKIT_DOM_IS_HTML_ELEMENT(div))
-		return;
-
-#if (WEBKIT_MAJOR_VERSION == 1 && \
-     WEBKIT_MINOR_VERSION == 9 && \
-     WEBKIT_MICRO_VERSION == 90)
-	/* Workaround WebKit API bug. */
-	classes = webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(div));
-#else
-	classes = webkit_dom_html_element_get_class_list(WEBKIT_DOM_HTML_ELEMENT(div));
-#endif
-	webkit_dom_dom_token_list_toggle(classes, "hide", NULL);
-	g_object_unref(classes);
-}
-
-static void
-regex_highlight_clear(WebKitDOMDocument *dom)
-{
-	WebKitDOMNodeList *nodes;
-	gulong i;
-
-	/* Remove highlighting SPANs */
-	nodes = webkit_dom_document_get_elements_by_class_name(dom, "regex");
-	i = webkit_dom_node_list_get_length(nodes);
-	while (i--) {
-		WebKitDOMNode *span, *parent;
-		char *content;
-		WebKitDOMText *text;
-		GError *err = NULL;
-
-		span = webkit_dom_node_list_item(nodes, i);
-		parent = webkit_dom_node_get_parent_node(span);
-
-		content = webkit_dom_node_get_text_content(span);
-		text = webkit_dom_document_create_text_node(dom, content);
-		g_free(content);
-
-		webkit_dom_node_replace_child(parent, WEBKIT_DOM_NODE(text), span, &err);
-	}
-
-	g_object_unref(nodes);
-}
-
-static void
-regex_highlight_text_nodes(WebKitDOMDocument *dom, WebKitDOMNode *div,
-                           gint start_pos, gint end_pos)
-{
-	GSList *data = NULL;
-	WebKitDOMNode *node;
-	WebKitDOMRange *range;
-	WebKitDOMElement *span;
-	gint ind, end_ind;
-	gint this_start, this_end;
-
-	ind = 0;
-	webkit_dom_node_normalize(div);
-	node = div;
-
-	/* First, find the container nodes and offsets to apply highlighting. */
-	do {
-		if (webkit_dom_node_get_node_type(node) == 3/*TEXT_NODE*/) {
-			/* The GObject model does not correctly reflect the type, hence the
-			   regular cast. */
-			end_ind = ind + webkit_dom_character_data_get_length((WebKitDOMCharacterData*)node);
-
-			if (start_pos <= ind)
-				this_start = 0;
-			else if (start_pos < end_ind)
-				this_start = start_pos - ind;
-			else
-				this_start = -1;
-
-			if (end_pos < end_ind)
-				this_end = end_pos - ind;
-			else
-				this_end = end_ind - ind;
-
-			if (this_start != -1 && this_start < this_end) {
-				data = g_slist_prepend(data, GINT_TO_POINTER(this_end));
-				data = g_slist_prepend(data, GINT_TO_POINTER(this_start));
-				data = g_slist_prepend(data, node);
-			}
-
-			ind = end_ind;
-		}
-
-		if (webkit_dom_node_has_child_nodes(node)) {
-			node = webkit_dom_node_get_first_child(node);
-		} else {
-			while (node != div) {
-				WebKitDOMNode *next;
-
-				next = webkit_dom_node_get_next_sibling(node);
-				if (next) {
-					node = next;
-					break;
-				} else {
-					node = webkit_dom_node_get_parent_node(node);
-				}
-			}
-		}
-	} while (node != div);
-
-	/* Second, apply highlighting to saved sections. Changing the DOM is
-	   automatically reflected in all WebKit API, so we have to do this after
-	   finding the offsets, or things could get complicated. */
-	while (data) {
-		node = WEBKIT_DOM_NODE(data->data);
-		data = g_slist_delete_link(data, data);
-		this_start = GPOINTER_TO_INT(data->data);
-		data = g_slist_delete_link(data, data);
-		this_end = GPOINTER_TO_INT(data->data);
-		data = g_slist_delete_link(data, data);
-
-		range = webkit_dom_document_create_range(dom);
-		webkit_dom_range_set_start(range, node, this_start, NULL);
-		webkit_dom_range_set_end(range, node, this_end, NULL);
-		span = webkit_dom_document_create_element(dom, "span", NULL);
-		webkit_dom_html_element_set_class_name(WEBKIT_DOM_HTML_ELEMENT(span),
-		                                       "regex");
-		webkit_dom_range_surround_contents(range, WEBKIT_DOM_NODE(span), NULL);
-	}
-}
-
-static void
-regex_match(DebugWindow *win, WebKitDOMDocument *dom, WebKitDOMNode *div)
-{
-	GMatchInfo *match_info;
-	gchar *text;
-	gchar *plaintext;
-
-	text = webkit_dom_node_get_text_content(div);
-	if (!text)
-		return;
-
-	/* I don't like having to do this, but we need it for highlighting.  Plus
-	 * it makes the ^ and $ operators work :)
-	 */
-	plaintext = purple_markup_strip_html(text);
-
-	/* We do a first pass to see if it matches at all.  If it does we work out
-	 * the offsets to highlight.
-	 */
-	if (g_regex_match(win->regex, plaintext, 0, &match_info) != win->invert) {
-		/* If we're not highlighting or the expression is inverted, we're
-		 * done and move on.
-		 */
-		if (!win->highlight || win->invert) {
-			g_free(plaintext);
-			g_match_info_free(match_info);
-			return;
-		}
-
-		do {
-			gint m, count;
-			gint start_pos, end_pos;
-
-			if (!g_match_info_matches(match_info))
-				break;
-
-			count = g_match_info_get_match_count(match_info);
-			if (count == 1)
-				m = 0;
-			else
-				m = 1;
-
-			for (; m < count; m++)
-			{
-				g_match_info_fetch_pos(match_info, m, &start_pos, &end_pos);
-
-				if (end_pos == -1)
-					break;
-
-				regex_highlight_text_nodes(dom, div, start_pos, end_pos);
-			}
-		} while (g_match_info_next(match_info, NULL));
-
-		g_match_info_free(match_info);
-	} else {
-		regex_toggle_div(div);
-	}
-
-	g_free(plaintext);
-	g_free(text);
-}
-
-static void
 regex_toggle_filter(DebugWindow *win, gboolean filter)
 {
-	WebKitDOMDocument *dom;
-	WebKitDOMNodeList *list;
-	gulong i;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
-
-	if (win->highlight)
-		regex_highlight_clear(dom);
-
-	/* Re-show debug lines that didn't match regex */
-	list = webkit_dom_document_get_elements_by_class_name(dom, "hide");
-	i = webkit_dom_node_list_get_length(list);
-
-	while (i--) {
-		WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
-		regex_toggle_div(div);
-	}
-
-	g_object_unref(list);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "regex.clear();");
 
 	if (filter) {
-		list = webkit_dom_document_get_elements_by_tag_name(dom, "div");
+		const char *text;
+		char *regex;
+		char *script;
 
-		for (i = 0; i < webkit_dom_node_list_get_length(list); i++) {
-			WebKitDOMNode *div = webkit_dom_node_list_item(list, i);
-			regex_match(win, dom, div);
-		}
-
-		g_object_unref(list);
+		text = gtk_entry_get_text(GTK_ENTRY(win->expression));
+		regex = gtk_webview_quote_js_string(text);
+		script = g_strdup_printf("regex.filterAll(%s, %s, %s);",
+		                         regex,
+		                         win->invert ? "true" : "false",
+		                         win->highlight ? "true" : "false");
+		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), script);
+		g_free(script);
+		g_free(regex);
 	}
 }
 
@@ -476,7 +272,11 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 	if (win->regex)
 		g_regex_unref(win->regex);
+#if GLIB_CHECK_VERSION(2,34,0)
+	win->regex = g_regex_new(text, G_REGEX_CASELESS|G_REGEX_JAVASCRIPT_COMPAT, 0, NULL);
+#else
 	win->regex = g_regex_new(text, G_REGEX_CASELESS, 0, NULL);
+#endif
 	if (win->regex == NULL) {
 		/* failed to compile */
 		regex_change_color(win->expression, 0xFFFF, 0xAFFF, 0xAFFF);
@@ -597,42 +397,6 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 	gtk_widget_show_all(menu);
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
-	return FALSE;
-}
-
-static void
-debug_window_appended(DebugWindow *win)
-{
-	WebKitDOMDocument *dom;
-	WebKitDOMHTMLElement *body;
-	WebKitDOMNode *div;
-
-	if (!gtk_toggle_tool_button_get_active(
-		GTK_TOGGLE_TOOL_BUTTON(win->filter)))
-		return;
-
-	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(win->text));
-	body = webkit_dom_document_get_body(dom);
-	div = webkit_dom_node_get_last_child(WEBKIT_DOM_NODE(body));
-
-	if (webkit_dom_element_webkit_matches_selector(
-		WEBKIT_DOM_ELEMENT(div), "body>div:not(#pause)", NULL))
-		regex_match(win, dom, div);
-}
-
-static gboolean debug_window_alert_cb(WebKitWebView *webview,
-	WebKitWebFrame *frame, gchar *message, gpointer _win)
-{
-	DebugWindow *win = _win;
-
-	if (!win || !win->window)
-		return FALSE;
-
-	if (g_strcmp0(message, "appended") == 0) {
-		debug_window_appended(win);
-		return TRUE;
-	}
-
 	return FALSE;
 }
 
@@ -798,9 +562,6 @@ debug_window_new(void)
 	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), gtkdebug_html);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
-
-	g_signal_connect(G_OBJECT(win->text), "script-alert",
-		G_CALLBACK(debug_window_alert_cb), win);
 
 	clear_cb(NULL, win);
 
