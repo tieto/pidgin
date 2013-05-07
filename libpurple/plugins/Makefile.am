@@ -147,7 +147,11 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
-	$(DBUS_CFLAGS)
+	$(DBUS_CFLAGS) \
+	$(NSS_CFLAGS)
+
+PLUGIN_LIBS = \
+	$(NSS_LIBS)
 
 #
 # This part allows people to build their own plugins in here.

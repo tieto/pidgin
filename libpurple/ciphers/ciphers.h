@@ -34,5 +34,8 @@ PurpleCipherOps * purple_hmac_cipher_get_ops(void);
 /* md4.c */
 PurpleCipherOps * purple_md4_cipher_get_ops(void);
 
+/* pbkdf2.c */
+PurpleCipherOps * purple_pbkdf2_cipher_get_ops(void);
+
 /* rc4.c */
 PurpleCipherOps * purple_rc4_cipher_get_ops(void);

@@ -231,6 +231,207 @@ cipher_test_digest(void)
 }
 
 /**************************************************************************
+ * PBKDF2 stuff
+ **************************************************************************/
+
+#include <nss.h>
+#include <secmod.h>
+#include <pk11func.h>
+#include <prerror.h>
+#include <secerr.h>
+
+typedef struct {
+	const gchar *hash;
+	const guint iter_count;
+	const gchar *passphrase;
+	const gchar *salt;
+	const guint out_len;
+	const gchar *answer;
+} pbkdf2_test;
+
+pbkdf2_test pbkdf2_tests[] = {
+	{ "sha256", 1, "password", "salt", 32, "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b"},
+	{ "sha1", 1, "password", "salt", 32, "0c60c80f961f0e71f3a9b524af6012062fe037a6e0f0eb94fe8fc46bdc637164"},
+	{ "sha1", 1000, "ala ma kota", "", 16, "924dba137b5bcf6d0de84998f3d8e1f9"},
+	{ "sha1", 1, "", "", 32, "1e437a1c79d75be61e91141dae20affc4892cc99abcc3fe753887bccc8920176"},
+	{ "sha256", 100, "some password", "and salt", 1, "c7"},
+	{ "sha1", 10000, "pretty long password W Szczebrzeszynie chrzaszcz brzmi w trzcinie i Szczebrzeszyn z tego slynie", "Grzegorz Brzeczyszczykiewicz", 32, "8cb0cb164f2554733ae02f5751b0e84a88fb385446e85a3991bdcdf1ea11795c"},
+	{ NULL, 0, NULL, NULL, 0, NULL}
+};
+
+static gchar*
+cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
+	guint iter_count, guint out_len)
+{
+	PK11SlotInfo *slot;
+	SECAlgorithmID *algorithm = NULL;
+	PK11SymKey *symkey = NULL;
+	const SECItem *symkey_data = NULL;
+	SECItem salt_item, passphrase_item;
+	guchar *passphrase_buff, *salt_buff;
+	gchar *ret;
+
+	g_return_val_if_fail(passphrase != NULL, NULL);
+	g_return_val_if_fail(iter_count > 0, NULL);
+	g_return_val_if_fail(out_len > 0, NULL);
+
+	NSS_NoDB_Init(NULL);
+
+	slot = PK11_GetBestSlot(PK11_AlgtagToMechanism(SEC_OID_PKCS5_PBKDF2),
+		NULL);
+	if (slot == NULL) {
+		purple_debug_error("cipher-test", "NSS: couldn't get slot: "
+			"%d\n", PR_GetError());
+		return NULL;
+	}
+
+	salt_buff = (guchar*)g_strdup(salt ? salt : "");
+	salt_item.type = siBuffer;
+	salt_item.data = salt_buff;
+	salt_item.len = salt ? strlen(salt) : 0;
+
+	algorithm = PK11_CreatePBEV2AlgorithmID(SEC_OID_PKCS5_PBKDF2,
+		SEC_OID_AES_256_CBC, SEC_OID_HMAC_SHA1, out_len, iter_count,
+		&salt_item);
+	if (algorithm == NULL) {
+		purple_debug_error("cipher-test", "NSS: couldn't create "
+			"algorithm ID: %d\n", PR_GetError());
+		PK11_FreeSlot(slot);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	passphrase_buff = (guchar*)g_strdup(passphrase);
+	passphrase_item.type = siBuffer;
+	passphrase_item.data = passphrase_buff;
+	passphrase_item.len = strlen(passphrase);
+
+	symkey = PK11_PBEKeyGen(slot, algorithm, &passphrase_item, PR_FALSE,
+		NULL);
+	if (symkey == NULL) {
+		purple_debug_error("cipher-test", "NSS: Couldn't generate key: "
+			"%d\n", PR_GetError());
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	if (PK11_ExtractKeyValue(symkey) == SECSuccess)
+		symkey_data = PK11_GetKeyData(symkey);
+
+	if (symkey_data == NULL || symkey_data->data == NULL) {
+		purple_debug_error("cipher-test", "NSS: Couldn't extract key "
+			"value: %d\n", PR_GetError());
+		PK11_FreeSymKey(symkey);
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	if (symkey_data->len != out_len) {
+		purple_debug_error("cipher-test", "NSS: Invalid key length: %d "
+			"(should be %d)\n", symkey_data->len, out_len);
+		PK11_FreeSymKey(symkey);
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	ret = purple_base16_encode(symkey_data->data, symkey_data->len);
+
+	PK11_FreeSymKey(symkey);
+	SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+	PK11_FreeSlot(slot);
+	g_free(passphrase_buff);
+	g_free(salt_buff);
+	return ret;
+}
+
+static void
+cipher_test_pbkdf2(void)
+{
+	PurpleCipherContext *context;
+	int i = 0;
+	gboolean fail = FALSE;
+
+	purple_debug_info("cipher-test", "Running PBKDF2 tests\n");
+
+	context = purple_cipher_context_new_by_name("pbkdf2", NULL);
+
+	while (pbkdf2_tests[i].answer) {
+		pbkdf2_test *test = &pbkdf2_tests[i];
+		gchar digest[2 * 32 + 1 + 10];
+		gchar *digest_nss = NULL;
+		gboolean ret, skip_nss = FALSE;
+
+		i++;
+
+		purple_debug_info("cipher-test", "Test %02d:\n", i);
+		purple_debug_info("cipher-test",
+			"\tTesting '%s' with salt:'%s' hash:%s iter_count:%d \n",
+			test->passphrase, test->salt, test->hash,
+			test->iter_count);
+
+		purple_cipher_context_set_option(context, "hash", (gpointer)test->hash);
+		purple_cipher_context_set_option(context, "iter_count", GUINT_TO_POINTER(test->iter_count));
+		purple_cipher_context_set_option(context, "out_len", GUINT_TO_POINTER(test->out_len));
+		purple_cipher_context_set_salt(context, (const guchar*)test->salt, test->salt ? strlen(test->salt): 0);
+		purple_cipher_context_set_key(context, (const guchar*)test->passphrase, strlen(test->passphrase));
+
+		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
+		purple_cipher_context_reset(context, NULL);
+
+		if (!ret) {
+			purple_debug_info("cipher-test", "\tfailed\n");
+			fail = TRUE;
+			continue;
+		}
+
+		if (g_strcmp0(test->hash, "sha1") != 0)
+			skip_nss = TRUE;
+		if (test->out_len != 16 && test->out_len != 32)
+			skip_nss = TRUE;
+
+		if (!skip_nss) {
+			digest_nss = cipher_pbkdf2_nss_sha1(test->passphrase,
+				test->salt, test->iter_count, test->out_len);
+		}
+
+		if (!ret) {
+			purple_debug_info("cipher-test", "\tnss test failed\n");
+			fail = TRUE;
+		}
+
+		if (g_strcmp0(digest, test->answer) == 0 &&
+			(skip_nss || g_strcmp0(digest, digest_nss) == 0)) {
+			purple_debug_info("cipher-test", "\tTest OK\n");
+		}
+		else {
+			purple_debug_info("cipher-test", "\twrong answer\n");
+			fail = TRUE;
+		}
+
+		purple_debug_info("cipher-test", "\tGot:          %s\n", digest);
+		if (digest_nss)
+			purple_debug_info("cipher-test", "\tGot from NSS: %s\n", digest_nss);
+		purple_debug_info("cipher-test", "\tWanted:       %s\n", test->answer);
+	}
+
+	purple_cipher_context_destroy(context);
+
+	if (fail)
+		purple_debug_info("cipher-test", "PBKDF2 tests FAILED\n\n");
+	else
+		purple_debug_info("cipher-test", "PBKDF2 tests completed successfully\n\n");
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -238,6 +439,7 @@ plugin_load(PurplePlugin *plugin) {
 	cipher_test_md5();
 	cipher_test_sha1();
 	cipher_test_digest();
+	cipher_test_pbkdf2();
 
 	return TRUE;
 }

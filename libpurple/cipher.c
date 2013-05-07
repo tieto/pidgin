@@ -255,6 +255,7 @@ purple_ciphers_init() {
 	purple_ciphers_register_cipher("hmac", purple_hmac_cipher_get_ops());
 	purple_ciphers_register_cipher("des", purple_des_cipher_get_ops());
 	purple_ciphers_register_cipher("des3", purple_des3_cipher_get_ops());
+	purple_ciphers_register_cipher("pbkdf2", purple_pbkdf2_cipher_get_ops());
 	purple_ciphers_register_cipher("rc4", purple_rc4_cipher_get_ops());
 }
 
