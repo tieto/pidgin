@@ -53,6 +53,7 @@ C_SRC =	\
 			ciphers/gchecksum.c \
 			ciphers/hmac.c \
 			ciphers/md4.c \
+			ciphers/pbkdf2.c \
 			ciphers/rc4.c \
 			circbuffer.c \
 			cmds.c \
