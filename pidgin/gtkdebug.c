@@ -604,7 +604,6 @@ debug_window_new(void)
 	frame = pidgin_create_webview(FALSE, &win->text, NULL, NULL);
 	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
 	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
-	gtk_webview_set_autoscroll(GTK_WEBVIEW(win->text), TRUE);
 	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), gtkdebug_html);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);

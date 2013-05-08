@@ -21,9 +21,19 @@
 		span.regex{background-color:#ffafaf;font-weight:bold;}
 	</style>
 	<script>
+		function nearBottom() {
+			return ( document.body.scrollTop >= ( document.body.offsetHeight - ( window.innerHeight * 1.5 ) ) );
+		}
+
+		function scrollToBottom() {
+			document.body.scrollTop = document.body.offsetHeight;
+		}
+
 		regex = {
 			clear: function () {
 				var list, i;
+				var scroll = nearBottom();
+
 				/* Remove highlighting SPANs */
 				list = document.getElementsByClassName('regex');
 				i = list.length;
@@ -42,6 +52,8 @@
 					list[i].classList.remove('hide');
 				}
 
+				if (scroll)
+					scrollToBottom();
 				this.enabled = false;
 			},
 
@@ -186,17 +198,25 @@
 		function append(level, time, cat, msg) {
 			var div = document.createElement('div');
 			div.className = 'l' + level;
+
 			div.appendChild(document.createTextNode('(' + time + ') '));
+
 			if (cat) {
 				var cat_n = document.createElement('b');
 				cat_n.appendChild(document.createTextNode(cat + ':'));
 				div.appendChild(cat_n);
 				div.appendChild(document.createTextNode(' '));
 			}
+
 			div.appendChild(document.createTextNode(msg));
+
 			if (regex.enabled)
 				regex.match(div);
+
+			var scroll = nearBottom();
 			document.body.appendChild(div);
+			if (scroll)
+				scrollToBottom();
 		}
 
 		function clear() {
@@ -212,11 +232,17 @@
 			if (pause) {
 				var parent = pause.parentNode;
 				parent.removeChild(pause);
+				scrollToBottom();
 			}
 		}
 
 		function setFilterLevel(l) {
+			var scroll = nearBottom();
+
 			document.body.className = 'l'+l;
+
+			if (scroll)
+				scrollToBottom();
 		}
 	</script>
 	</head>
