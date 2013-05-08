@@ -26,7 +26,7 @@ GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10
 GCC_SSP_TOP ?= $(shell dirname $(shell which $(CC)))
 CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1
 WEBKITGTK_TOP ?= $(WIN32_DEV_TOP)/libwebkitgtk-1.10
-LIBSOUP_TOP ?= $(WIN32_DEV_TOP)/libsoup-2.40
+LIBSOUP_TOP ?= $(WIN32_DEV_TOP)/libsoup-2.42
 GETTEXT_TOP ?= $(WIN32_DEV_TOP)/gettext-0.18
 INTLTOOL_TOP ?= $(WIN32_DEV_TOP)/intltool-0.50
 
