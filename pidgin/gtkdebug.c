@@ -151,18 +151,42 @@ pause_cb(GtkWidget *w, DebugWindow *win)
  *****************************************************************************/
 static void
 regex_clear_color(GtkWidget *w) {
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context = gtk_widget_get_style_context(w);
+	gtk_style_context_remove_class(context, "good-filter");
+	gtk_style_context_remove_class(context, "bad-filter");
+#else
 	gtk_widget_modify_base(w, GTK_STATE_NORMAL, NULL);
+#endif
 }
 
 static void
-regex_change_color(GtkWidget *w, guint16 r, guint16 g, guint16 b) {
+regex_change_color(GtkWidget *w, gboolean success) {
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context = gtk_widget_get_style_context(w);
+
+	if (success) {
+		gtk_style_context_add_class(context, "good-filter");
+		gtk_style_context_remove_class(context, "bad-filter");
+	} else {
+		gtk_style_context_add_class(context, "bad-filter");
+		gtk_style_context_remove_class(context, "good-filter");
+	}
+#else
 	GdkColor color;
 
-	color.red = r;
-	color.green = g;
-	color.blue = b;
+	if (success) {
+		color.red = 0xAFFF;
+		color.green = 0xFFFF;
+		color.blue = 0xAFFF;
+	} else {
+		color.red = 0xFFFF;
+		color.green = 0xAFFF;
+		color.blue = 0xAFFF;
+	}
 
 	gtk_widget_modify_base(w, GTK_STATE_NORMAL, &color);
+#endif
 }
 
 static void
@@ -279,11 +303,11 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 #endif
 	if (win->regex == NULL) {
 		/* failed to compile */
-		regex_change_color(win->expression, 0xFFFF, 0xAFFF, 0xAFFF);
+		regex_change_color(win->expression, FALSE);
 		gtk_widget_set_sensitive(win->filter, FALSE);
 	} else {
 		/* compiled successfully */
-		regex_change_color(win->expression, 0xAFFF, 0xFFFF, 0xAFFF);
+		regex_change_color(win->expression, TRUE);
 		gtk_widget_set_sensitive(win->filter, TRUE);
 	}
 }
@@ -410,6 +434,21 @@ debug_window_new(void)
 	gint width, height;
 	void *handle;
 	GtkToolItem *item;
+	GtkStyleContext *context;
+	GtkCssProvider *filter_css;
+	const gchar filter_style[] =
+		".bad-filter {"
+			"color: @error_fg_color;"
+			"text-shadow: 0 1px @error_text_shadow;"
+			"background-image: none;"
+			"background-color: @error_bg_color;"
+		"}"
+		".good-filter {"
+			"color: @question_fg_color;"
+			"text-shadow: 0 1px @question_text_shadow;"
+			"background-image: none;"
+			"background-color: @success_color;"
+		"}";
 
 	win = g_new0(DebugWindow, 1);
 
@@ -502,6 +541,13 @@ debug_window_new(void)
 		gtk_widget_set_tooltip_text(win->expression, _("Right click for more options."));
 		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+
+		filter_css = gtk_css_provider_new();
+		gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
+		context = gtk_widget_get_style_context(win->expression);
+		gtk_style_context_add_provider(context,
+		                               GTK_STYLE_PROVIDER(filter_css),
+		                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 		/* this needs to be before the text is set from the pref if we want it
 		 * to colorize a stored expression.
