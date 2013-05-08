@@ -57,9 +57,7 @@ EXTERNAL_DLLS = \
 	saslDIGESTMD5.dll \
 	saslGSSAPI.dll \
 	saslLOGIN.dll \
-	saslPLAIN.dll \
-	libsilc-1-1-2.dll \
-	libsilcclient-1-1-3.dll
+	saslPLAIN.dll
 
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))

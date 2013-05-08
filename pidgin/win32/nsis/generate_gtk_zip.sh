@@ -18,7 +18,7 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.24.14.0
-BUNDLE_SHA1SUM="0a7794262790fd1858fa2c488e3be45b50e9c9bd"
+BUNDLE_SHA1SUM="835a5ac2760e967c71611539d3d4da3e9b4675ed"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/gtk-runtime-2.24.14.0.zip"
@@ -93,6 +93,7 @@ GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.14-2.7.noarch.rpm GTK+ 2.24.14-2.7 sha1s
 GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.10.noarch.rpm GtkSpell 2.0.16-2.10 sha1sum:623afdc7cc2c43c1f5d39be797c3ec8ee1ab5570"
 LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.10-2.7.noarch.rpm libffi 3.0.10-2.7 sha1sum:628b014349dc132d3aa46362b30fc1cdd61f6b97"
 LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.0-6.1.noarch.rpm libgcc 4.8.0-6.1 sha1sum:ab599bf07bf2d56367c57b442440598358c943af"
+LIBGNURX="${DOWNLOAD_HOST}mingw32-libgnurx-2.5-4.6.noarch.rpm libgnurx 2.5-4.6 sha1sum:51571e6b1e5e9fb865c110cae04c582ff3c44cb7"
 LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz0-0.9.16-1.1.noarch.rpm libharfbuzz 0.9.16-1.1 sha1sum:9bd7d5132f3f7bace01202b380be474f9a1ae771"
 LIBJASPER="${DOWNLOAD_HOST}mingw32-libjasper-1.900.1-6.6.noarch.rpm JasPer 1.900.1-6.6 sha1sum:1a0f0072e0b0f73bd8d4e26aed93baa10d77e504"
 LIBICU="${DOWNLOAD_HOST}mingw32-libicu-51.1-2.3.noarch.rpm ICU 51.1-2.3 sha1sum:c259c9d7f9f58934ebb49ecc80b15b7492e5a245"
@@ -101,6 +102,8 @@ LIBJPEG="${DOWNLOAD_HOST}mingw32-libjpeg-8d-3.6.noarch.rpm libjpeg 8d-3.6 sha1su
 LIBJSON="${DOWNLOAD_HOST}mingw32-libjson-glib-0.14.2-2.1.noarch.rpm json-glib 0.14.2-2.1 sha1sum:366bf545855ced7fdfefc57b75ef7bbb5ebc249b"
 LIBLZMA="${DOWNLOAD_HOST}mingw32-liblzma-5.0.4-1.6.noarch.rpm liblzma 5.0.4-1.6 sha1sum:67bad5204ae09d163f799adec3286fff297e3bc8"
 LIBPNG="${DOWNLOAD_HOST}mingw32-libpng-1.5.11-1.6.noarch.rpm libpng 1.5.11-1.6 sha1sum:bb28549351c1f0d7a8afd129ac656be18a616149"
+LIBSILC="${DOWNLOAD_HOST}mingw32-libsilc-1.1.10-2.1.noarch.rpm libsilc 1.1.10-2.1 sha1sum:b7690eac1a91caf2b02b058483a3768705a6f3df"
+LIBSILCCL="${DOWNLOAD_HOST}mingw32-libsilcclient-1.1.10-2.1.noarch.rpm libsilcclient 1.1.10-2.1 sha1sum:88b84ff4c43643ce4b8ec1eb345e73c139cc164a"
 LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.42.2-1.1.noarch.rpm libsoup 2.42.2-1.1 sha1sum:f0af29ceb420daaa549dd5dc470fbd62bc732252"
 LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
 LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.8.0-6.1.noarch.rpm libstdc++ 4.8.0-6.1 sha1sum:627860950e951764fe1aa229d3a63bb01618ba90"
@@ -117,9 +120,9 @@ SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-
 TCL="${DOWNLOAD_HOST}mingw32-tcl-8.5.9-14.1.noarch.rpm Tcl 8.5.9-14.1 sha1sum:1178fc95ab97d274504f3d76c3ebe9bdbb39847a"
 TK="${DOWNLOAD_HOST}mingw32-tk-8.5.9-8.7.noarch.rpm Tk 8.5.9-8.7 sha1sum:4ec1595fdf06eaa9f4d38b433edc430217697995"
 WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.10.2-9.2.noarch.rpm WebKitGTK+ 1.10.2-9.2 sha1sum:010dbad413f824696cd1e32fe70046c9a1cb425f"
-
 ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
-ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBHB LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW MOZNSS MOZNSPR PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
+
+ALL="ATK CAIRO2 DBUS DBUS_GLIB ENCHANT FONTCONFIG FREETYPE GDK_PIXBUF GEOCLUE GLIB GST GST_INT GTK2 GTKSPELL LIBFFI LIBGCC LIBGNURX LIBHB LIBJASPER LIBICU LIBINTL LIBJPEG LIBJSON LIBLZMA LIBPNG LIBSILC LIBSILCCL LIBSOUP LIBSSP LIBSTDCPP LIBTIFF LIBXML LIBXSLT MEANW MOZNSS MOZNSPR PANGO PIXMAN PTHREADS SQLITE TCL TK WEBKITGTK ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR

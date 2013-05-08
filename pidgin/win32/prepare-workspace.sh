@@ -94,8 +94,7 @@ ARCHIVES+="ARC_MWHD "
 ARC_PRL="${DOWNLOAD_HOST}perl-5.10.0.tar.gz;Perl;5.10.0;46496029a80cabdfa119cbd70bc14d14bfde8071;perl-5.10.0;perl-5.10"
 ARCHIVES+="ARC_PRL "
 
-#TODO: cc92fc87c013a085bdd0664e8fba1acc5a2ccb18 mingw32-silc-toolkit-devel-1.1.10-2.1.noarch.rpm
-ARC_SIL="${DOWNLOAD_HOST}silc-toolkit-1.1.10-1.tar.gz;SILC Toolkit;1.1.10-1;ead4463ea2ac9e24f18486d9c827dbf40119de80;silc-toolkit-1.1.10-1;silc-toolkit-1.1"
+ARC_SIL="${DOWNLOAD_HOST}mingw32-silc-toolkit-devel-1.1.10-2.1.noarch.rpm;SILC Toolkit;1.1.10-2.1;cc92fc87c013a085bdd0664e8fba1acc5a2ccb18;${OBS_SKIP};silc-toolkit-1.1"
 ARCHIVES+="ARC_SIL "
 
 ARC_TCL="${DOWNLOAD_HOST}mingw32-tcl-devel-8.5.9-14.1.noarch.rpm;Tcl;8.5.9-14.1;22a64967654629e01a2f52226c3de431a43683f8;${OBS_SKIP};tcl-8.5;include/tcl-private/generic/(tcl|tclDecls|tclPlatDecls|tclTomMath|tclTomMathDecls)\\.h"
