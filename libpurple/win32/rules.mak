@@ -11,3 +11,9 @@
 
 %.desktop: %.desktop.in $(wildcard $(PIDGIN_TREE_TOP)/po/*.po)
 	LC_ALL=C $(PERL) $(INTLTOOL_MERGE) -d -u -c $(PIDGIN_TREE_TOP)/po/.intltool-merge-cache $(PIDGIN_TREE_TOP)/po $< $@
+
+%.html.h: %.html
+	@echo -e "  GEN\t$@"
+	@echo "static const char $*_html[] = {" > $@
+	@sed -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | xxd -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
+	@echo "};" >> $@
