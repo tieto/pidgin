@@ -234,11 +234,13 @@ cipher_test_digest(void)
  * PBKDF2 stuff
  **************************************************************************/
 
-#include <nss.h>
-#include <secmod.h>
-#include <pk11func.h>
-#include <prerror.h>
-#include <secerr.h>
+#ifdef HAVE_NSS
+#  include <nss.h>
+#  include <secmod.h>
+#  include <pk11func.h>
+#  include <prerror.h>
+#  include <secerr.h>
+#endif
 
 typedef struct {
 	const gchar *hash;
@@ -258,6 +260,8 @@ pbkdf2_test pbkdf2_tests[] = {
 	{ "sha1", 10000, "pretty long password W Szczebrzeszynie chrzaszcz brzmi w trzcinie i Szczebrzeszyn z tego slynie", "Grzegorz Brzeczyszczykiewicz", 32, "8cb0cb164f2554733ae02f5751b0e84a88fb385446e85a3991bdcdf1ea11795c"},
 	{ NULL, 0, NULL, NULL, 0, NULL}
 };
+
+#ifdef HAVE_NSS
 
 static gchar*
 cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
@@ -353,6 +357,8 @@ cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
 	return ret;
 }
 
+#endif /* HAVE_NSS */
+
 static void
 cipher_test_pbkdf2(void)
 {
@@ -364,7 +370,7 @@ cipher_test_pbkdf2(void)
 
 	context = purple_cipher_context_new_by_name("pbkdf2", NULL);
 
-	while (pbkdf2_tests[i].answer) {
+	while (!fail && pbkdf2_tests[i].answer) {
 		pbkdf2_test *test = &pbkdf2_tests[i];
 		gchar digest[2 * 32 + 1 + 10];
 		gchar *digest_nss = NULL;
@@ -398,15 +404,24 @@ cipher_test_pbkdf2(void)
 		if (test->out_len != 16 && test->out_len != 32)
 			skip_nss = TRUE;
 
+#ifdef HAVE_NSS
 		if (!skip_nss) {
 			digest_nss = cipher_pbkdf2_nss_sha1(test->passphrase,
 				test->salt, test->iter_count, test->out_len);
 		}
+#else
+		skip_nss = TRUE;
+#endif
 
 		if (!ret) {
 			purple_debug_info("cipher-test", "\tnss test failed\n");
 			fail = TRUE;
 		}
+
+		purple_debug_info("cipher-test", "\tGot:          %s\n", digest);
+		if (digest_nss)
+			purple_debug_info("cipher-test", "\tGot from NSS: %s\n", digest_nss);
+		purple_debug_info("cipher-test", "\tWanted:       %s\n", test->answer);
 
 		if (g_strcmp0(digest, test->answer) == 0 &&
 			(skip_nss || g_strcmp0(digest, digest_nss) == 0)) {
@@ -416,11 +431,6 @@ cipher_test_pbkdf2(void)
 			purple_debug_info("cipher-test", "\twrong answer\n");
 			fail = TRUE;
 		}
-
-		purple_debug_info("cipher-test", "\tGot:          %s\n", digest);
-		if (digest_nss)
-			purple_debug_info("cipher-test", "\tGot from NSS: %s\n", digest_nss);
-		purple_debug_info("cipher-test", "\tWanted:       %s\n", test->answer);
 	}
 
 	purple_cipher_context_destroy(context);
@@ -432,6 +442,132 @@ cipher_test_pbkdf2(void)
 }
 
 /**************************************************************************
+ * AES stuff
+ **************************************************************************/
+
+typedef struct {
+	const gchar *iv;
+	const gchar *key;
+	const gchar *plaintext;
+	const gchar *cipher;
+} aes_test;
+
+aes_test aes_tests[] = {
+	{ NULL, "000102030405060708090a0b0c0d0e0f", "plaintext", "152e5b950e5f28fafadee9e96fcc59c9" },
+	{ NULL, "000102030405060708090a0b0c0d0e0f", NULL, "954f64f2e4e86e9eee82d20216684899" },
+	{ "01010101010101010101010101010101", "000102030405060708090a0b0c0d0e0f", NULL, "35d14e6d3e3a279cf01e343e34e7ded3" },
+	{ "01010101010101010101010101010101", "000102030405060708090a0b0c0d0e0f", "plaintext", "19d1996e8c098cf3c94bba5dcf5bc57e" },
+	{ "01010101010101010101010101010101", "000102030405060708090a0b0c0d0e0f1011121314151617", "plaintext", "e8fba0deae94f63fe72ae9b8ef128aed" },
+	{ "01010101010101010101010101010101", "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "plaintext", "e2dc50f6c60b33ac3b5953b6503cb684" },
+	{ "01010101010101010101010101010101", "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "W Szczebrzeszynie chrzaszcz brzmi w trzcinie i Szczebrzeszyn z tego slynie", "8fcc068964e3505f0c2fac61c24592e5c8a9582d3a3264217cf605e9fd1cb056e679e159c4ac3110e8ce6c76c6630d42658c566ba3750c0e6da385b3a9baaa8b3a735b4c1ecaacf58037c8c281e523d2" },
+	{ NULL, NULL, NULL, NULL }
+};
+
+static void
+cipher_test_aes(void)
+{
+	PurpleCipherContext *context;
+	int i = 0;
+	gboolean fail = FALSE;
+
+	purple_debug_info("cipher-test", "Running AES tests\n");
+
+	context = purple_cipher_context_new_by_name("aes", NULL);
+	if (context == NULL) {
+		purple_debug_error("cipher-test", "AES cipher not found\n");
+		fail = TRUE;
+	}
+
+	while (!fail && aes_tests[i].cipher) {
+		aes_test *test = &aes_tests[i];
+		gsize key_size;
+		guchar *key;
+		guchar cipher[1024], decipher[1024];
+		ssize_t cipher_len, decipher_len;
+		gchar *cipher_b16, *deciphered;
+
+		purple_debug_info("cipher-test", "Test %02d:\n", i);
+		purple_debug_info("cipher-test", "\tTesting '%s' (%dbit) \n",
+			test->plaintext ? test->plaintext : "(null)",
+			strlen(test->key) * 8 / 2);
+
+		i++;
+
+		purple_cipher_context_reset(context, NULL);
+
+		if (test->iv) {
+			gsize iv_size;
+			guchar *iv = purple_base16_decode(test->iv, &iv_size);
+			g_assert(iv != NULL);
+			purple_cipher_context_set_iv(context, iv, iv_size);
+			g_free(iv);
+		}
+
+		key = purple_base16_decode(test->key, &key_size);
+		g_assert(key != NULL);
+		purple_cipher_context_set_key(context, key, key_size);
+		g_free(key);
+
+		if (purple_cipher_context_get_key_size(context) != key_size) {
+			purple_debug_info("cipher-test", "\tinvalid key size\n");
+			fail = TRUE;
+			continue;
+		}
+
+		cipher_len = purple_cipher_context_encrypt(context,
+			(const guchar*)(test->plaintext ? test->plaintext : ""),
+			test->plaintext ? (strlen(test->plaintext) + 1) : 0,
+			cipher, sizeof(cipher));
+		if (cipher_len < 0) {
+			purple_debug_info("cipher-test", "\tencryption failed\n");
+			fail = TRUE;
+			continue;
+		}
+
+		cipher_b16 = purple_base16_encode(cipher, cipher_len);
+
+		purple_debug_info("cipher-test", "\tGot:          %s\n", cipher_b16);
+		purple_debug_info("cipher-test", "\tWanted:       %s\n", test->cipher);
+
+		if (g_strcmp0(cipher_b16, test->cipher) != 0) {
+			purple_debug_info("cipher-test",
+				"\tencrypted data doesn't match\n");
+			g_free(cipher_b16);
+			fail = TRUE;
+			continue;
+		}
+		g_free(cipher_b16);
+
+		decipher_len = purple_cipher_context_decrypt(context,
+			cipher, cipher_len, decipher, sizeof(decipher));
+		if (decipher_len < 0) {
+			purple_debug_info("cipher-test", "\tdecryption failed\n");
+			fail = TRUE;
+			continue;
+		}
+
+		deciphered = (decipher_len > 0) ? (gchar*)decipher : NULL;
+
+		if (g_strcmp0(deciphered, test->plaintext) != 0) {
+			purple_debug_info("cipher-test",
+				"\tdecrypted data doesn't match\n");
+			fail = TRUE;
+			continue;
+		}
+
+		purple_debug_info("cipher-test", "\tTest OK\n");
+	}
+
+	if (context != NULL)
+		purple_cipher_context_destroy(context);
+
+	if (fail)
+		purple_debug_info("cipher-test", "AES tests FAILED\n\n");
+	else
+		purple_debug_info("cipher-test", "AES tests completed successfully\n\n");
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -440,6 +576,7 @@ plugin_load(PurplePlugin *plugin) {
 	cipher_test_sha1();
 	cipher_test_digest();
 	cipher_test_pbkdf2();
+	cipher_test_aes();
 
 	return TRUE;
 }

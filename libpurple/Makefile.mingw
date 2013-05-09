@@ -49,6 +49,7 @@ C_SRC =	\
 			buddyicon.c \
 			certificate.c \
 			cipher.c \
+			ciphers/aes.c \
 			ciphers/des.c \
 			ciphers/gchecksum.c \
 			ciphers/hmac.c \

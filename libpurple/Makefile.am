@@ -317,6 +317,8 @@ libpurple_la_LIBADD = \
 	$(GSTINTERFACES_LIBS) \
 	$(IDN_LIBS) \
 	$(JSON_LIBS) \
+	$(GNUTLS_LIBS) \
+	$(NSS_LIBS) \
 	ciphers/libpurple-ciphers.la \
 	-lm
 
