@@ -434,6 +434,7 @@ debug_window_new(void)
 	gint width, height;
 	void *handle;
 	GtkToolItem *item;
+#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *filter_css;
 	const gchar filter_style[] =
@@ -449,6 +450,7 @@ debug_window_new(void)
 			"background-image: none;"
 			"background-color: @success_color;"
 		"}";
+#endif
 
 	win = g_new0(DebugWindow, 1);
 
@@ -542,12 +544,15 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
+#if GTK_CHECK_VERSION(3,0,0)
+		/* TODO: implement it for GTK2 */
 		filter_css = gtk_css_provider_new();
 		gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
 		context = gtk_widget_get_style_context(win->expression);
 		gtk_style_context_add_provider(context,
 		                               GTK_STYLE_PROVIDER(filter_css),
 		                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
 
 		/* this needs to be before the text is set from the pref if we want it
 		 * to colorize a stored expression.

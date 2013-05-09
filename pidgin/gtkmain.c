@@ -429,8 +429,10 @@ int main(int argc, char *argv[])
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
 	char *search_path;
+#if GTK_CHECK_VERSION(3,0,0)
 	GtkCssProvider *provider;
 	GdkScreen *screen;
+#endif
 	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */

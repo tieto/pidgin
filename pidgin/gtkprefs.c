@@ -2034,6 +2034,7 @@ network_page(void)
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
+#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *ip_css;
 	const gchar ip_style[] =
@@ -2049,6 +2050,7 @@ network_page(void)
 			"background-image: none;"
 			"background-color: @success_color;"
 		"}";
+#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -2090,12 +2092,15 @@ network_page(void)
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
+#if GTK_CHECK_VERSION(3,0,0)
+	/* TODO: implement it for GTK2 */
 	ip_css = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(ip_css, ip_style, -1, NULL);
 	context = gtk_widget_get_style_context(entry);
 	gtk_style_context_add_provider(context,
 	                               GTK_STYLE_PROVIDER(ip_css),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
 			sg, entry, TRUE, NULL);
