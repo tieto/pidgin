@@ -86,8 +86,7 @@ cipher_test_md5(void) {
 		purple_cipher_context_append(context, (guchar *)md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
-		ret = purple_cipher_context_digest_to_str(context, sizeof(digest),
-												digest, NULL);
+		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");
@@ -155,8 +154,7 @@ cipher_test_sha1(void) {
 				purple_cipher_context_append(context, buff, 1000);
 		}
 
-		ret = purple_cipher_context_digest_to_str(context, sizeof(digest),
-												digest, NULL);
+		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");

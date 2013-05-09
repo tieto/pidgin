@@ -159,7 +159,7 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 
 	ctx = purple_cipher_context_new_by_name("sha1", NULL);
 	purple_cipher_context_append(ctx, data, size);
-	purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest(ctx, digest, sizeof(digest));
 
 	base64 = purple_base64_encode(digest, sizeof(digest));
 	msn_object_set_sha1d(msnobj, base64);
@@ -181,7 +181,7 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 
 	purple_cipher_context_reset(ctx, NULL);
 	purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest(ctx, digest, sizeof(digest));
 	purple_cipher_context_destroy(ctx);
 	g_free(buf);
 

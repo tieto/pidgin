@@ -565,7 +565,7 @@ msn_handle_chl(char *input, char *output)
 
 	purple_cipher_context_append(context, (guchar *)input, strlen(input));
 	purple_cipher_context_append(context, productKey, sizeof(productKey) - 1);
-	purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
+	purple_cipher_context_digest(context, md5Hash, sizeof(md5Hash));
 	purple_cipher_context_destroy(context);
 
 	/* Split it into four integers */

@@ -5343,7 +5343,7 @@ void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 		context = purple_cipher_context_new_by_name("md5", NULL);
 		purple_cipher_context_append(context, data, len);
-		purple_cipher_context_digest(context, 16, md5, NULL);
+		purple_cipher_context_digest(context, md5, sizeof(md5));
 		purple_cipher_context_destroy(context);
 
 		aim_ssi_seticon(od, md5, 16);

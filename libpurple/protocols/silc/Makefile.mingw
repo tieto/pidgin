@@ -10,8 +10,6 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
 
 TARGET = libsilc
-NEEDED_DLLS =		$(SILC_TOOLKIT)/bin/libsilc-1-1-2.dll \
-			$(SILC_TOOLKIT)/bin/libsilcclient-1-1-3.dll
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -76,7 +74,6 @@ all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 

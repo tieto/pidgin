@@ -1703,7 +1703,7 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	md5_cipher = purple_ciphers_find_cipher("md5");
 	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
 	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest), md5_digest, NULL);
+	purple_cipher_context_digest(md5_ctx, md5_digest, sizeof(md5_digest));
 
 	to_y64(base64_string, md5_digest, 16);
 

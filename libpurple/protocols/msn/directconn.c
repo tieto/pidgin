@@ -47,7 +47,7 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 		PurpleCipher *cipher = purple_ciphers_find_cipher("sha1");
 		PurpleCipherContext *context = purple_cipher_context_new(cipher, NULL);
 		purple_cipher_context_append(context, nonce, nonce_len);
-		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		purple_cipher_context_digest(context, digest, sizeof(digest));
 		purple_cipher_context_destroy(context);
 	} else if (type == DC_NONCE_PLAIN) {
 		memcpy(digest, nonce, nonce_len);

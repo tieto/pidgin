@@ -1696,7 +1696,7 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
 		purple_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
-		purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+		purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
 		pwlen=16;
 	} else {
 		memcpy(Kxoripad, passwd, pwlen);
@@ -1711,12 +1711,12 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	purple_cipher_context_reset(ctx, NULL);
 	purple_cipher_context_append(ctx, Kxoripad, 64);
 	purple_cipher_context_append(ctx, challenge, challen);
-	purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+	purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
 
 	purple_cipher_context_reset(ctx, NULL);
 	purple_cipher_context_append(ctx, Kxoropad, 64);
 	purple_cipher_context_append(ctx, Kxoripad, 16);
-	purple_cipher_context_digest(ctx, 16, response, NULL);
+	purple_cipher_context_digest(ctx, response, 16);
 
 	purple_cipher_context_destroy(ctx);
 }
