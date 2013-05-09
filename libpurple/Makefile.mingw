@@ -33,11 +33,14 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(JSON_GLIB_TOP)/include/json-glib-1.0 \
-			-I$(LIBXML2_TOP)/include/libxml2
+			-I$(LIBXML2_TOP)/include/libxml2 \
+			-I$(NSS_TOP)/include/nspr4 \
+			-I$(NSS_TOP)/include/nss3
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(JSON_GLIB_TOP)/lib \
-			-L$(LIBXML2_TOP)/lib
+			-L$(LIBXML2_TOP)/lib \
+			-L$(NSS_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -130,7 +133,9 @@ LIBS =	\
 		-lintl \
 		-lws2_32 \
 		-lxml2 \
-		-ljson-glib-1.0
+		-ljson-glib-1.0 \
+		-lnss3 \
+		-lnspr4
 
 include $(PIDGIN_COMMON_RULES)
 
