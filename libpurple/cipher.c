@@ -512,7 +512,7 @@ purple_cipher_context_encrypt(PurpleCipherContext *context,
 	g_return_val_if_fail(context != NULL, -1);
 	g_return_val_if_fail(input != NULL, -1);
 	g_return_val_if_fail(output != NULL, -1);
-	g_return_val_if_fail(out_size < in_len, -1);
+	g_return_val_if_fail(out_size >= in_len, -1);
 
 	cipher = context->cipher;
 	g_return_val_if_fail(cipher, -1);
