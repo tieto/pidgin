@@ -166,6 +166,8 @@ win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
 
+gtkdebug.c: gtkdebug.html.h
+
 $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_OBJECTS)
 	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(PIDGIN_LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(PIDGIN_TARGET).def,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 

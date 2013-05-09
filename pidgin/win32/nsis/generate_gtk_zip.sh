@@ -18,7 +18,7 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.24.14.0
-BUNDLE_SHA1SUM="835a5ac2760e967c71611539d3d4da3e9b4675ed"
+BUNDLE_SHA1SUM="f9945cbdcd591eed7af569d2c4ac806fe27ea97a"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/gtk-runtime-2.24.14.0.zip"
@@ -94,7 +94,7 @@ GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.10.noarch.rpm GtkSpell 2.0.1
 LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.10-2.7.noarch.rpm libffi 3.0.10-2.7 sha1sum:628b014349dc132d3aa46362b30fc1cdd61f6b97"
 LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.0-6.1.noarch.rpm libgcc 4.8.0-6.1 sha1sum:ab599bf07bf2d56367c57b442440598358c943af"
 LIBGNURX="${DOWNLOAD_HOST}mingw32-libgnurx-2.5-4.6.noarch.rpm libgnurx 2.5-4.6 sha1sum:51571e6b1e5e9fb865c110cae04c582ff3c44cb7"
-LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz0-0.9.16-1.1.noarch.rpm libharfbuzz 0.9.16-1.1 sha1sum:9bd7d5132f3f7bace01202b380be474f9a1ae771"
+LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz0-0.9.16-3.1.noarch.rpm libharfbuzz 0.9.16-3.1 sha1sum:5c377190429f45e566b07439c99937798c4c13f0"
 LIBJASPER="${DOWNLOAD_HOST}mingw32-libjasper-1.900.1-6.6.noarch.rpm JasPer 1.900.1-6.6 sha1sum:1a0f0072e0b0f73bd8d4e26aed93baa10d77e504"
 LIBICU="${DOWNLOAD_HOST}mingw32-libicu-51.1-2.3.noarch.rpm ICU 51.1-2.3 sha1sum:c259c9d7f9f58934ebb49ecc80b15b7492e5a245"
 LIBINTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm libintl 0.18.1.1-13.6 sha1sum:0e6fde8e86788874366f308e25634f95613e906a"
