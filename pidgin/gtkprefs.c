@@ -1948,6 +1948,26 @@ conv_page(void)
 static void
 network_ip_changed(GtkEntry *entry, gpointer data)
 {
+#if GTK_CHECK_VERSION(3,0,0)
+	const gchar *text = gtk_entry_get_text(entry);
+	GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(entry));
+
+	if (text && *text) {
+		if (purple_ip_address_is_valid(text)) {
+			purple_network_set_public_ip(text);
+			gtk_style_context_add_class(context, "good-ip");
+			gtk_style_context_remove_class(context, "bad-ip");
+		} else {
+			gtk_style_context_add_class(context, "bad-ip");
+			gtk_style_context_remove_class(context, "good-ip");
+		}
+
+	} else {
+		purple_network_set_public_ip("");
+		gtk_style_context_remove_class(context, "bad-ip");
+		gtk_style_context_remove_class(context, "good-ip");
+	}
+#else
 	const gchar *text = gtk_entry_get_text(entry);
 	GdkColor color;
 
@@ -1970,6 +1990,7 @@ network_ip_changed(GtkEntry *entry, gpointer data)
 		purple_network_set_public_ip("");
 		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, NULL);
 	}
+#endif
 }
 
 static gboolean
@@ -2092,6 +2113,23 @@ network_page(void)
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+	GtkCssProvider *ip_css;
+	const gchar ip_style[] =
+		".bad-ip {"
+			"color: @error_fg_color;"
+			"text-shadow: 0 1px @error_text_shadow;"
+			"background-image: none;"
+			"background-color: @error_bg_color;"
+		"}"
+		".good-ip {"
+			"color: @question_fg_color;"
+			"text-shadow: 0 1px @question_text_shadow;"
+			"background-image: none;"
+			"background-color: @success_color;"
+		"}";
+#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -2132,6 +2170,16 @@ network_page(void)
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
+
+#if GTK_CHECK_VERSION(3,0,0)
+	/* TODO: implement it for GTK2 */
+	ip_css = gtk_css_provider_new();
+	gtk_css_provider_load_from_data(ip_css, ip_style, -1, NULL);
+	context = gtk_widget_get_style_context(entry);
+	gtk_style_context_add_provider(context,
+	                               GTK_STYLE_PROVIDER(ip_css),
+	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
 			sg, entry, TRUE, NULL);

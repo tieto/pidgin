@@ -152,6 +152,14 @@ pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
 	$(pidgin_headers)
 
+pidgin_builtheaders = gtkdebug.html.h
+
+BUILT_SOURCES = $(pidgin_builtheaders)
+
+%.html.h: %.html
+	$(AM_V_GEN)echo "static const char $*_html[] = {" > $@
+	$(AM_V_at)$(sedpath) -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | $(xxdpath) -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
+	$(AM_V_at)echo "};" >> $@
 
 pidgin_DEPENDENCIES = @LIBOBJS@
 pidgin_LDFLAGS = -export-dynamic

@@ -429,6 +429,10 @@ int main(int argc, char *argv[])
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
 	char *search_path;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkCssProvider *provider;
+	GdkScreen *screen;
+#endif
 	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
@@ -440,6 +444,8 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
 	char *segfault_message_tmp;
 #endif
+#endif
+#if defined(HAVE_SIGNAL_H) || GTK_CHECK_VERSION(3,0,0)
 	GError *error;
 #endif
 	int opt;
@@ -690,9 +696,11 @@ int main(int argc, char *argv[])
 
 	purple_debug_set_enabled(debug_enabled);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 	search_path = g_build_filename(purple_user_dir(), "gtkrc-2.0", NULL);
 	gtk_rc_add_default_file(search_path);
 	g_free(search_path);
+#endif
 
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
@@ -708,6 +716,26 @@ int main(int argc, char *argv[])
 
 		return 1;
 	}
+
+#if GTK_CHECK_VERSION(3,0,0)
+	search_path = g_build_filename(purple_user_dir(), "gtk-3.0.css", NULL);
+
+	error = NULL;
+	provider = gtk_css_provider_new();
+	gui_check = gtk_css_provider_load_from_path(provider, search_path, &error);
+
+	if (gui_check && !error) {
+		screen = gdk_screen_get_default();
+		gtk_style_context_add_provider_for_screen(screen,
+		                                          GTK_STYLE_PROVIDER(provider),
+		                                          GTK_STYLE_PROVIDER_PRIORITY_USER);
+	} else {
+		purple_debug_error("gtk", "Unable to load custom gtk-3.0.css: %s\n",
+		                   error ? error->message : "(unknown error)");
+	}
+
+	g_free(search_path);
+#endif
 
 	g_set_application_name(PIDGIN_NAME);
 

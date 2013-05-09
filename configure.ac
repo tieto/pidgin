@@ -102,6 +102,7 @@ GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
+AC_PATH_PROG(xxdpath, xxd)
 
 dnl Storing configure arguments
 AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
