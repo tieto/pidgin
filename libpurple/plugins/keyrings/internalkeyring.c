@@ -195,7 +195,16 @@ internal_keyring_read_settings(void)
 	field = purple_request_field_bool_new("encrypt", "Use encryption", FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	/* TODO: master password setting */
+	group = purple_request_field_group_new("Master password");
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("passphrase1", "New passphrase:", "", FALSE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_string_new("passphrase2", "Re-enter passphrase:", "", FALSE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
 	return fields;
 }

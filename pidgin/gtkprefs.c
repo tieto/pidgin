@@ -2655,8 +2655,20 @@ keyring_page_settings_toggled(GtkToggleButton *togglebutton, gpointer _unused)
 		gtk_toggle_button_get_active(togglebutton));
 }
 
+static void
+keyring_page_settings_string_changed(GtkWidget *widget, gpointer _unused)
+{
+	PurpleRequestField *setting;
+
+	gtk_widget_set_sensitive(keyring_apply, TRUE);
+
+	setting = g_object_get_data(G_OBJECT(widget), "setting");
+	purple_request_field_string_set_value(setting,
+		gtk_entry_get_text(GTK_ENTRY(widget)));
+}
+
 static GtkWidget *
-keyring_page_add_settings_field(PurpleRequestField *setting)
+keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting)
 {
 	GtkWidget *widget, *hbox;
 	PurpleRequestFieldType field_type;
@@ -2672,15 +2684,23 @@ keyring_page_add_settings_field(PurpleRequestField *setting)
 			purple_request_field_bool_get_default_value(setting));
 		g_signal_connect(G_OBJECT(widget), "toggled",
 			G_CALLBACK(keyring_page_settings_toggled), NULL);
+	} else if (field_type == PURPLE_REQUEST_FIELD_STRING) {
+		widget = gtk_entry_new();
+		gtk_entry_set_text(GTK_ENTRY(widget),
+			purple_request_field_string_get_default_value(setting));
+		if (purple_request_field_string_is_masked(setting))
+			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
+		g_signal_connect(G_OBJECT(widget), "changed",
+			G_CALLBACK(keyring_page_settings_string_changed), NULL);
 	} else {
 		purple_debug_error("gtkprefs", "Unsupported field type\n");
 		return NULL;
 	}
 
 	g_object_set_data(G_OBJECT(widget), "setting", setting);
-	hbox = pidgin_add_widget_to_vbox(keyring_vbox, label, NULL, widget,
+	hbox = pidgin_add_widget_to_vbox(vbox, label, NULL, widget,
 		FALSE, NULL);
-	return ((void*)hbox == (void*)keyring_vbox) ? widget : hbox;
+	return ((void*)hbox == (void*)vbox) ? widget : hbox;
 }
 
 /* XXX: it could be available for all plugins, not keyrings only */
@@ -2694,13 +2714,26 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 	groups = purple_request_fields_get_groups(settings);
 	for (it = g_list_first(groups); it != NULL; it = g_list_next(it)) {
 		GList *it2, *fields;
+		GtkBox *vbox;
+		PurpleRequestFieldGroup *group;
+		const gchar *group_title;
 
-		fields = purple_request_field_group_get_fields(it->data);
+		group = it->data;
+		group_title = purple_request_field_group_get_title(group);
+		if (group_title) {
+			vbox = GTK_BOX(pidgin_make_frame(
+				GTK_WIDGET(keyring_vbox), group_title));
+			added_fields = g_list_prepend(added_fields,
+				g_object_get_data(G_OBJECT(vbox), "main-vbox"));
+		} else
+			vbox = keyring_vbox;
+
+		fields = purple_request_field_group_get_fields(group);
 		for (it2 = g_list_first(fields); it2 != NULL;
 			it2 = g_list_next(it2)) {
-			GtkWidget *added = keyring_page_add_settings_field(
+			GtkWidget *added = keyring_page_add_settings_field(vbox,
 				it2->data);
-			if (added == NULL)
+			if (added == NULL || vbox != keyring_vbox)
 				continue;
 			added_fields = g_list_prepend(added_fields, added);
 		}
@@ -2793,6 +2826,7 @@ keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value)
 		gtk_container_remove(
 			GTK_CONTAINER(gtk_widget_get_parent(widget)), widget);
 	}
+	gtk_widget_show_all(keyring_page_instance);
 	g_list_free(keyring_settings_fields);
 	keyring_settings_fields = NULL;
 	if (keyring_settings)
