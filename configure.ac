@@ -1636,13 +1636,13 @@ dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
 if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
-	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; print sys.exec_prefix'`
+	PY_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.prefix)'`
+	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.exec_prefix)'`
 	changequote(<<, >>)dnl
-	PY_VERSION=`$PYTHON -c 'import sys ; print sys.version[0:3]'`
-	PY_MAJOR=`$PYTHON -c 'import sys ; print sys.version[0:2]'`
+	PY_VERSION=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:3])'`
+	PY_MAJOR=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:2])'`
 	changequote([, ])dnl
-	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h; then
 		AC_MSG_RESULT()
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )

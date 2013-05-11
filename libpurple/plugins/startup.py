@@ -21,16 +21,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 #
 
+from __future__ import print_function
 import sys
 import dbus
 import os
 
 if len(sys.argv) == 1:
-	print "Usage:", sys.argv[0], """<purple-client> [arguments]
-
-Example:
-	""", sys.argv[0], "pidgin -d -c /my/home"
-	sys.exit(1)
+    print("Usage:", sys.argv[0], "<purple-client> [arguments]")
+    print("\nExample:\n   ", sys.argv[0], "pidgin -d -c /my/home")
+    sys.exit(1)
 
 home = os.path.expanduser('~/.purple/')
 for arg in range(1, len(sys.argv[1:])):
@@ -47,10 +46,10 @@ try:
 	if not os.path.isabs(userdir):
 		userdir = os.path.join(purple.PurpleHomeDir(), userdir)
 	if home == userdir:
-		print "Already running."
+		print("Already running.")
 		purple.PurpleBlistShow()
 	else:
-		print "Starting client from a different home directory."
+		print("Starting client from a different home directory.")
 		raise
 except:
 	os.execlp(sys.argv[1], " ".join(sys.argv[2:]))
