@@ -2093,7 +2093,6 @@ network_page(void)
 					 G_CALLBACK(network_ip_changed), NULL);
 
 #if GTK_CHECK_VERSION(3,0,0)
-	/* TODO: implement it for GTK2 */
 	ip_css = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(ip_css, ip_style, -1, NULL);
 	context = gtk_widget_get_style_context(entry);

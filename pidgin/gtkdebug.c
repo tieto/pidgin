@@ -545,7 +545,6 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 #if GTK_CHECK_VERSION(3,0,0)
-		/* TODO: implement it for GTK2 */
 		filter_css = gtk_css_provider_new();
 		gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
 		context = gtk_widget_get_style_context(win->expression);
