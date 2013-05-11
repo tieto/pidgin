@@ -4,6 +4,9 @@ version 2.10.8:
 	Stock market:
 	* Didn't really increase, but didn't plummet, either.
 
+	General:
+	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
+
 	Windows-Specific Changes:
 	* Updates to dependencies:
 		* NSS 3.14.3 and NSPR 4.9.5
