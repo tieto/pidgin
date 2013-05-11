@@ -46,6 +46,10 @@ struct _PurpleKeyring
 	PurpleKeyringExportPassword export_password;
 	PurpleKeyringReadSettings read_settings;
 	PurpleKeyringApplySettings apply_settings;
+
+	gboolean is_closing;
+	gboolean is_cancelling;
+	gboolean close_after_cancel;
 };
 
 typedef struct
@@ -564,10 +568,44 @@ purple_keyring_close(PurpleKeyring *keyring)
 
 	g_return_if_fail(keyring != NULL);
 
+	if (keyring->is_cancelling) {
+		keyring->close_after_cancel = TRUE;
+		return;
+	}
+	if (keyring->is_closing)
+		return;
+	keyring->is_closing = TRUE;
+
 	close_cb = purple_keyring_get_close_keyring(keyring);
 
 	if (close_cb != NULL)
 		close_cb();
+
+	keyring->is_closing = FALSE;
+}
+
+static void
+purple_keyring_cancel_requests(PurpleKeyring *keyring)
+{
+	PurpleKeyringCancelRequests cancel_cb;
+
+	g_return_if_fail(keyring != NULL);
+
+	if (keyring->is_cancelling)
+		return;
+	keyring->is_cancelling = TRUE;
+
+	cancel_cb = purple_keyring_get_cancel_requests(keyring);
+
+	if (cancel_cb != NULL)
+		cancel_cb();
+
+	keyring->is_cancelling = FALSE;
+
+	if (keyring->close_after_cancel) {
+		keyring->close_after_cancel = FALSE;
+		purple_keyring_close(keyring);
+	}
 }
 
 static void
@@ -1170,32 +1208,18 @@ static void purple_keyring_core_initialized_cb(void)
 
 static void purple_keyring_core_quitting_cb()
 {
-	PurpleKeyringCancelRequests cancel;
-
 	if (current_change_tracker != NULL) {
 		PurpleKeyringChangeTracker *tracker = current_change_tracker;
 		tracker->abort = TRUE;
-		if (tracker->old) {
-			cancel = purple_keyring_get_cancel_requests(
-				tracker->old);
-			if (cancel)
-				cancel();
-		}
-		if (current_change_tracker == tracker && tracker->new) {
-			cancel = purple_keyring_get_cancel_requests(
-				tracker->new);
-			if (cancel)
-				cancel();
-		}
+		if (tracker->old)
+			purple_keyring_cancel_requests(tracker->old);
+		if (current_change_tracker == tracker && tracker->new)
+			purple_keyring_cancel_requests(tracker->new);
 	}
 
 	purple_keyring_is_quitting = TRUE;
-	if (purple_keyring_inuse != NULL) {
-		cancel = purple_keyring_get_cancel_requests(
-			purple_keyring_inuse);
-		if (cancel)
-			cancel();
-	}
+	if (purple_keyring_inuse != NULL)
+		purple_keyring_cancel_requests(purple_keyring_inuse);
 }
 
 void
