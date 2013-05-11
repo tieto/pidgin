@@ -181,6 +181,31 @@ internal_keyring_export_password(PurpleAccount *account, const char **mode,
 	}
 }
 
+static PurpleRequestFields *
+internal_keyring_read_settings(void)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_bool_new("encrypt", "Use encryption", FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	/* TODO: master password setting */
+
+	return fields;
+}
+
+static gboolean
+internal_keyring_apply_settings(PurpleRequestFields *fields)
+{
+	return TRUE;
+}
+
 /***********************************************/
 /*     Plugin interface                        */
 /***********************************************/
@@ -202,6 +227,10 @@ internal_keyring_load(PurplePlugin *plugin)
 		internal_keyring_import_password);
 	purple_keyring_set_export_password(keyring_handler,
 		internal_keyring_export_password);
+	purple_keyring_set_read_settings(keyring_handler,
+		internal_keyring_read_settings);
+	purple_keyring_set_apply_settings(keyring_handler,
+		internal_keyring_apply_settings);
 
 	purple_keyring_register(keyring_handler);
 

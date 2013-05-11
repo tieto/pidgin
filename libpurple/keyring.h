@@ -28,6 +28,7 @@
 #define _PURPLE_KEYRING_H_
 
 #include "account.h"
+#include "request.h"
 
 /**
  * Default keyring ID.
@@ -139,15 +140,6 @@ typedef void (*PurpleKeyringCancelRequests)(void);
 typedef void (*PurpleKeyringClose)(void);
 
 /**
- * Change the master password for the keyring.
- *
- * @param cb    A callback for once the master password has been changed.
- * @param data  Data to be passed to the callback.
- */
-typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
-	gpointer data);
-
-/**
  * Import serialized (and maybe encrypted) password.
  *
  * This is not async because it is not meant to prompt for a master password and
@@ -178,6 +170,12 @@ typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount *account,
 typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount *account,
 	const gchar **mode, gchar **data, GError **error,
 	GDestroyNotify *destroy);
+
+/* TODO: documentation */
+typedef PurpleRequestFields * (*PurpleKeyringReadSettings)(void);
+
+/* TODO: documentation */
+typedef gboolean (*PurpleKeyringApplySettings)(PurpleRequestFields *fields);
 
 /*@}*/
 
@@ -319,17 +317,13 @@ void
 purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data);
 
-/**
- * Change the master password for a safe (if the safe supports it).
- *
- * @param cb   A callback for once the master password has been changed.
- * @param data Data to be passed to the callback.
- *
- * @todo Where is the master password string, that is being changed?
- */
-void
-purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
-	gpointer data);
+/* TODO: documentation */
+PurpleRequestFields *
+purple_keyring_read_settings(void);
+
+/* TODO: documentation */
+gboolean
+purple_keyring_apply_settings(PurpleRequestFields *fields);
 
 /*@}*/
 
@@ -382,14 +376,17 @@ purple_keyring_get_cancel_requests(const PurpleKeyring *keyring);
 PurpleKeyringClose
 purple_keyring_get_close_keyring(const PurpleKeyring *keyring);
 
-PurpleKeyringChangeMaster
-purple_keyring_get_change_master(const PurpleKeyring *keyring);
-
 PurpleKeyringImportPassword
 purple_keyring_get_import_password(const PurpleKeyring *keyring);
 
 PurpleKeyringExportPassword
 purple_keyring_get_export_password(const PurpleKeyring *keyring);
+
+PurpleKeyringReadSettings
+purple_keyring_get_read_settings(const PurpleKeyring *keyring);
+
+PurpleKeyringApplySettings
+purple_keyring_get_apply_settings(const PurpleKeyring *keyring);
 
 /**
  * Sets friendly user name.
@@ -446,16 +443,20 @@ purple_keyring_set_close_keyring(PurpleKeyring *keyring,
 	PurpleKeyringClose close_cb);
 
 void
-purple_keyring_set_change_master(PurpleKeyring *keyring,
-	PurpleKeyringChangeMaster change_master);
-
-void
 purple_keyring_set_import_password(PurpleKeyring *keyring,
 	PurpleKeyringImportPassword import_password);
 
 void
 purple_keyring_set_export_password(PurpleKeyring *keyring,
 	PurpleKeyringExportPassword export_password);
+
+void
+purple_keyring_set_read_settings(PurpleKeyring *keyring,
+PurpleKeyringReadSettings read_settings);
+
+void
+purple_keyring_set_apply_settings(PurpleKeyring *keyring,
+PurpleKeyringApplySettings apply_settings);
 
 /*@}*/
 

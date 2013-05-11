@@ -42,9 +42,10 @@ struct _PurpleKeyring
 	PurpleKeyringSave save_password;
 	PurpleKeyringCancelRequests cancel_requests;
 	PurpleKeyringClose close_keyring;
-	PurpleKeyringChangeMaster change_master;
 	PurpleKeyringImportPassword import_password;
 	PurpleKeyringExportPassword export_password;
+	PurpleKeyringReadSettings read_settings;
+	PurpleKeyringApplySettings apply_settings;
 };
 
 typedef struct
@@ -896,60 +897,58 @@ purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 	save_cb(account, password, purple_keyring_set_password_save_cb, set_data);
 }
 
-/* TODO: is it usable at all? */
-void
-purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
-	gpointer data)
+PurpleRequestFields *
+purple_keyring_read_settings(void)
 {
-	GError *error;
 	PurpleKeyring *inuse;
-	PurpleKeyringChangeMaster change;
+	PurpleKeyringReadSettings read_settings;
 
 	if (purple_keyring_is_quitting || current_change_tracker != NULL) {
-		purple_debug_error("keyring", "Cannot change a master password "
-			"at the moment.\n");
-		if (cb == NULL)
-			return;
-		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_INTERNAL,
-			"Cannot change a master password at the moment.");
-		cb(error, data);
-		g_error_free(error);
-		return;
+		purple_debug_error("keyring", "Cannot read settngs at the "
+			"moment.\n");
+		return NULL;
 	}
 
 	inuse = purple_keyring_get_inuse();
 	if (inuse == NULL) {
-		purple_debug_error("keyring", "No keyring configured, cannot "
-			"change master password.\n");
-		if (cb == NULL)
-			return;
-		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured, cannot change master "
-			"password.");
-		cb(error, data);
-		g_error_free(error);
-		return;
+		purple_debug_error("keyring", "No keyring in use.\n");
+		return NULL;
 	}
 
-	change = purple_keyring_get_change_master(inuse);
-	if (change == NULL) {
-		purple_debug_error("keyring", "Keyring doesn't support master "
-			"passwords.\n");
-		if (cb == NULL)
-			return;
-		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_BACKENDFAIL,
-			"Keyring doesn't support master passwords.");
-		cb(error, data);
-		g_error_free(error);
-		return;
-	}
-
-	change(cb, data);
+	read_settings = purple_keyring_get_read_settings(inuse);
+	if (read_settings == NULL)
+		return NULL;
+	return read_settings();
 }
 
+gboolean
+purple_keyring_apply_settings(PurpleRequestFields *fields)
+{
+	PurpleKeyring *inuse;
+	PurpleKeyringApplySettings apply_settings;
+
+	g_return_val_if_fail(fields != NULL, FALSE);
+
+	if (purple_keyring_is_quitting || current_change_tracker != NULL) {
+		purple_debug_error("keyring", "Cannot apply settngs at the "
+			"moment.\n");
+		return FALSE;
+	}
+
+	inuse = purple_keyring_get_inuse();
+	if (inuse == NULL) {
+		purple_debug_error("keyring", "No keyring in use.\n");
+		return FALSE;
+	}
+
+	apply_settings = purple_keyring_get_apply_settings(inuse);
+	if (apply_settings == NULL) {
+		purple_debug_warning("keyring", "Applying settings not "
+			"supported.\n");
+		return FALSE;
+	}
+	return apply_settings(fields);
+}
 
 /**************************************************************************/
 /* PurpleKeyring accessors                                                */
@@ -1019,14 +1018,6 @@ purple_keyring_get_close_keyring(const PurpleKeyring *keyring)
 	return keyring->close_keyring;
 }
 
-PurpleKeyringChangeMaster
-purple_keyring_get_change_master(const PurpleKeyring *keyring)
-{
-	g_return_val_if_fail(keyring != NULL, NULL);
-
-	return keyring->change_master;
-}
-
 PurpleKeyringImportPassword
 purple_keyring_get_import_password(const PurpleKeyring *keyring)
 {
@@ -1041,6 +1032,22 @@ purple_keyring_get_export_password(const PurpleKeyring *keyring)
 	g_return_val_if_fail(keyring != NULL, NULL);
 
 	return keyring->export_password;
+}
+
+PurpleKeyringReadSettings
+purple_keyring_get_read_settings(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->read_settings;
+}
+
+PurpleKeyringApplySettings
+purple_keyring_get_apply_settings(const PurpleKeyring *keyring)
+{
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	return keyring->apply_settings;
 }
 
 void
@@ -1102,15 +1109,6 @@ purple_keyring_set_close_keyring(PurpleKeyring *keyring,
 }
 
 void
-purple_keyring_set_change_master(PurpleKeyring *keyring,
-	PurpleKeyringChangeMaster change_master)
-{
-	g_return_if_fail(keyring != NULL);
-
-	keyring->change_master = change_master;
-}
-
-void
 purple_keyring_set_import_password(PurpleKeyring *keyring,
 	PurpleKeyringImportPassword import_password)
 {
@@ -1126,6 +1124,24 @@ purple_keyring_set_export_password(PurpleKeyring *keyring,
 	g_return_if_fail(keyring != NULL);
 
 	keyring->export_password = export_password;
+}
+
+void
+purple_keyring_set_read_settings(PurpleKeyring *keyring,
+PurpleKeyringReadSettings read_settings)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->read_settings = read_settings;
+}
+
+void
+purple_keyring_set_apply_settings(PurpleKeyring *keyring,
+PurpleKeyringApplySettings apply_settings)
+{
+	g_return_if_fail(keyring != NULL);
+
+	keyring->apply_settings = apply_settings;
 }
 
 
