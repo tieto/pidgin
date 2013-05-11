@@ -1,7 +1,6 @@
 /**
  * @file gntprefs.c GNT Preferences API
  * @ingroup finch
- * @todo: add support for master password changing.
  */
 
 /* finch
@@ -42,6 +41,7 @@ static struct {
 	GList *freestrings;  /* strings to be freed when the pref-window is closed */
 	gboolean showing;
 	GntWidget *window;
+	GntWidget *keyring_window;
 } pref_request;
 
 void finch_prefs_init()
@@ -253,6 +253,10 @@ void finch_prefs_show_all()
 		return;
 	}
 
+	if (pref_request.keyring_window != NULL)
+		purple_request_close(PURPLE_REQUEST_FIELDS,
+			pref_request.keyring_window);
+
 	fields = purple_request_fields_new();
 
 	add_pref_group(fields, _("Buddy List"), blist);
@@ -268,3 +272,40 @@ void finch_prefs_show_all()
 			NULL);
 }
 
+static void
+finch_prefs_keyring_save(void *data, PurpleRequestFields *fields)
+{
+	pref_request.keyring_window = NULL;
+
+	purple_keyring_apply_settings(NULL, fields);
+}
+
+static void
+finch_prefs_keyring_cancel(void)
+{
+	pref_request.keyring_window = NULL;
+}
+
+void finch_prefs_show_keyring(void)
+{
+	PurpleRequestFields *fields;
+
+	if (pref_request.keyring_window != NULL) {
+		gnt_window_present(pref_request.keyring_window);
+		return;
+	}
+
+	fields = purple_keyring_read_settings();
+	if (fields == NULL) {
+		purple_notify_info(NULL, _("Keyring settings"),
+			_("Selected keyring doesn't allow any configuration"),
+			NULL);
+		return;
+	}
+
+	pref_request.keyring_window = purple_request_fields(NULL,
+		_("Keyring settings"), NULL, NULL, fields,
+		_("Save"), G_CALLBACK(finch_prefs_keyring_save),
+		_("Cancel"), G_CALLBACK(finch_prefs_keyring_cancel),
+		NULL, NULL, NULL, NULL);
+}
