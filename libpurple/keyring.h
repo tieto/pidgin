@@ -171,10 +171,22 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount *account,
 	const gchar **mode, gchar **data, GError **error,
 	GDestroyNotify *destroy);
 
-/* TODO: documentation */
+/**
+ * Read keyring settings.
+ *
+ * @return New copy of current settings (must be free'd with
+ *         purple_request_fields_destroy).
+ */
 typedef PurpleRequestFields * (*PurpleKeyringReadSettings)(void);
 
-/* TODO: documentation */
+/**
+ * Applies modified keyring settings.
+ *
+ * @param notify_handle A handle that can be passed to purple_notify_message.
+ * @param fields        Modified settings (originally taken from
+ *                      PurpleKeyringReadSettings).
+ * @return TRUE, if succeeded, FALSE otherwise.
+ */
 typedef gboolean (*PurpleKeyringApplySettings)(void *notify_handle,
 	PurpleRequestFields *fields);
 
@@ -318,11 +330,23 @@ void
 purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data);
 
-/* TODO: documentation */
+/**
+ * Reads settings from current keyring.
+ *
+ * @return New copy of current settings (must be free'd with
+ *         purple_request_fields_destroy).
+ */
 PurpleRequestFields *
 purple_keyring_read_settings(void);
 
-/* TODO: documentation */
+/**
+ * Applies modified settings to current keyring.
+ *
+ * @param notify_handle A handle that can be passed to purple_notify_message.
+ * @param fields        Modified settings (originally taken from
+ *                      PurpleKeyringReadSettings).
+ * @return TRUE, if succeeded, FALSE otherwise.
+ */
 gboolean
 purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 
