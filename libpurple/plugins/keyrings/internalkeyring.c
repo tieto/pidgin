@@ -192,17 +192,20 @@ internal_keyring_read_settings(void)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_bool_new("encrypt", _("Encrypt passwords"), FALSE);
+	field = purple_request_field_bool_new("encrypt",
+		_("Encrypt passwords"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	group = purple_request_field_group_new(_("Master password"));
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("passphrase1", _("New passphrase:"), "", FALSE);
+	field = purple_request_field_string_new("passphrase1",
+		_("New passphrase:"), "", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_string_new("passphrase2", _("New passphrase (again):"), "", FALSE);
+	field = purple_request_field_string_new("passphrase2",
+		_("New passphrase (again):"), "", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
