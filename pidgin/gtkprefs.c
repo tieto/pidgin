@@ -2668,7 +2668,8 @@ keyring_page_settings_string_changed(GtkWidget *widget, gpointer _unused)
 }
 
 static GtkWidget *
-keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting)
+keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting,
+	GtkSizeGroup *sg)
 {
 	GtkWidget *widget, *hbox;
 	PurpleRequestFieldType field_type;
@@ -2698,7 +2699,7 @@ keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting)
 	}
 
 	g_object_set_data(G_OBJECT(widget), "setting", setting);
-	hbox = pidgin_add_widget_to_vbox(vbox, label, NULL, widget,
+	hbox = pidgin_add_widget_to_vbox(vbox, label, sg, widget,
 		FALSE, NULL);
 	return ((void*)hbox == (void*)vbox) ? widget : hbox;
 }
@@ -2708,9 +2709,9 @@ static GList *
 keyring_page_add_settings(PurpleRequestFields *settings)
 {
 	GList *it, *groups, *added_fields;
+	GtkSizeGroup *sg;
 
 	added_fields = NULL;
-
 	groups = purple_request_fields_get_groups(settings);
 	for (it = g_list_first(groups); it != NULL; it = g_list_next(it)) {
 		GList *it2, *fields;
@@ -2728,15 +2729,19 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 		} else
 			vbox = keyring_vbox;
 
+		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
 		fields = purple_request_field_group_get_fields(group);
 		for (it2 = g_list_first(fields); it2 != NULL;
 			it2 = g_list_next(it2)) {
 			GtkWidget *added = keyring_page_add_settings_field(vbox,
-				it2->data);
+				it2->data, sg);
 			if (added == NULL || vbox != keyring_vbox)
 				continue;
 			added_fields = g_list_prepend(added_fields, added);
 		}
+
+		g_object_unref(sg);
 	}
 
 	return added_fields;
