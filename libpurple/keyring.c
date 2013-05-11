@@ -922,7 +922,7 @@ purple_keyring_read_settings(void)
 }
 
 gboolean
-purple_keyring_apply_settings(PurpleRequestFields *fields)
+purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields)
 {
 	PurpleKeyring *inuse;
 	PurpleKeyringApplySettings apply_settings;
@@ -947,7 +947,7 @@ purple_keyring_apply_settings(PurpleRequestFields *fields)
 			"supported.\n");
 		return FALSE;
 	}
-	return apply_settings(fields);
+	return apply_settings(notify_handle, fields);
 }
 
 /**************************************************************************/

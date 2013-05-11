@@ -533,6 +533,8 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	/* Close any "select sound" request dialogs */
 	purple_request_close_with_handle(prefs);
 
+	purple_notify_close_with_handle(prefs);
+
 	/* Unregister callbacks. */
 	purple_prefs_disconnect_by_handle(prefs);
 
@@ -2750,7 +2752,7 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 static void
 keyring_page_settings_apply(GtkButton *button, gpointer _unused)
 {
-	if (!purple_keyring_apply_settings(keyring_settings))
+	if (!purple_keyring_apply_settings(prefs, keyring_settings))
 		return;
 
 	gtk_widget_set_sensitive(keyring_apply, FALSE);

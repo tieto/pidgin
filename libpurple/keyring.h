@@ -175,7 +175,8 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount *account,
 typedef PurpleRequestFields * (*PurpleKeyringReadSettings)(void);
 
 /* TODO: documentation */
-typedef gboolean (*PurpleKeyringApplySettings)(PurpleRequestFields *fields);
+typedef gboolean (*PurpleKeyringApplySettings)(void *notify_handle,
+	PurpleRequestFields *fields);
 
 /*@}*/
 
@@ -323,7 +324,7 @@ purple_keyring_read_settings(void);
 
 /* TODO: documentation */
 gboolean
-purple_keyring_apply_settings(PurpleRequestFields *fields);
+purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 
 /*@}*/
 

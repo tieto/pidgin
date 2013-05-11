@@ -192,17 +192,17 @@ internal_keyring_read_settings(void)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_bool_new("encrypt", "Use encryption", FALSE);
+	field = purple_request_field_bool_new("encrypt", _("Encrypt passwords"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	group = purple_request_field_group_new("Master password");
+	group = purple_request_field_group_new(_("Master password"));
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("passphrase1", "New passphrase:", "", FALSE);
+	field = purple_request_field_string_new("passphrase1", _("New passphrase:"), "", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_string_new("passphrase2", "Re-enter passphrase:", "", FALSE);
+	field = purple_request_field_string_new("passphrase2", _("New passphrase (again):"), "", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -210,8 +210,33 @@ internal_keyring_read_settings(void)
 }
 
 static gboolean
-internal_keyring_apply_settings(PurpleRequestFields *fields)
+internal_keyring_apply_settings(void *notify_handle,
+	PurpleRequestFields *fields)
 {
+	const gchar *passphrase, *passphrase2;
+
+	passphrase = purple_request_fields_get_string(fields, "passphrase1");
+	if (g_strcmp0(passphrase, "") == 0)
+		passphrase = NULL;
+	passphrase2 = purple_request_fields_get_string(fields, "passphrase2");
+	if (g_strcmp0(passphrase2, "") == 0)
+		passphrase2 = NULL;
+
+	if (g_strcmp0(passphrase, passphrase2) != 0) {
+		purple_notify_error(notify_handle,
+			_("Internal keyring settings"),
+			_("Passphrases do not match"), NULL);
+		return FALSE;
+	}
+
+	if (purple_request_fields_get_bool(fields, "encrypt") && !passphrase) {
+		purple_notify_error(notify_handle,
+			_("Internal keyring settings"),
+			_("You have to set up a Master password, if you want "
+			"to enable encryption"), NULL);
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
