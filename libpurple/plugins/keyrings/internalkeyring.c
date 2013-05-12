@@ -26,47 +26,267 @@
 
 #include "internal.h"
 #include "account.h"
+#include "cipher.h"
 #include "debug.h"
 #include "keyring.h"
 #include "plugin.h"
 #include "version.h"
 
-#define INTERNALKEYRING_NAME        N_("Internal keyring")
-#define INTERNALKEYRING_DESCRIPTION N_("This plugin provides the default" \
-	" password storage behaviour for libpurple. Password will be stored" \
-	" unencrypted.")
-#define INTERNALKEYRING_AUTHOR      "Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define INTERNALKEYRING_ID          PURPLE_DEFAULT_KEYRING
+#define INTKEYRING_NAME N_("Internal keyring")
+#define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
+	"storage behaviour for libpurple.")
+#define INTKEYRING_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define INTKEYRING_ID          PURPLE_DEFAULT_KEYRING
 
-static gboolean internal_keyring_opened = FALSE;
-static GHashTable *internal_keyring_passwords = NULL;
+#define INTKEYRING_VERIFY_STR "[verification-string]"
+#define INTKEYRING_PBKDF2_ITERATIONS 10000
+#define INTKEYRING_PBKDF2_ITERATIONS_MIN 1000
+#define INTKEYRING_PBKDF2_ITERATIONS_MAX 1000000000
+#define INTKEYRING_KEY_LEN (256/8)
+#define INTKEYRING_ENCRYPT_BUFF_LEN 1000
+
+#define INTKEYRING_PREFS "/plugins/keyrings/internal/"
+
+typedef struct
+{
+	guchar *data;
+	size_t len;
+} intkeyring_buff_t;
+
+static gboolean intkeyring_opened = FALSE;
+static GHashTable *intkeyring_passwords = NULL;
 static PurpleKeyring *keyring_handler = NULL;
 
-/***********************************************/
-/*     Keyring interface                       */
-/***********************************************/
+static intkeyring_buff_t *
+intkeyring_buff_new(guchar *data, size_t len)
+{
+	intkeyring_buff_t *ret = g_new(intkeyring_buff_t, 1);
+
+	ret->data = data;
+	ret->len = len;
+
+	return ret;
+}
 
 static void
-internal_keyring_open(void)
+intkeyring_buff_free(intkeyring_buff_t *buff)
 {
-	if (internal_keyring_opened)
-		return;
-	internal_keyring_opened = TRUE;
+	memset(buff->data, 0, buff->len);
+	g_free(buff->data);
+	g_free(buff);
+}
 
-	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
+static intkeyring_buff_t *
+intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
+{
+	PurpleCipherContext *context;
+	gboolean succ;
+	intkeyring_buff_t *ret;
+
+	g_return_val_if_fail(passphrase != NULL, NULL);
+
+	context = purple_cipher_context_new_by_name("pbkdf2", NULL);
+	g_return_val_if_fail(context != NULL, NULL);
+
+	purple_cipher_context_set_option(context, "hash", "sha256");
+	purple_cipher_context_set_option(context, "iter_count",
+		GUINT_TO_POINTER(purple_prefs_get_int(INTKEYRING_PREFS
+		"pbkdf2_iterations")));
+	purple_cipher_context_set_option(context, "out_len", GUINT_TO_POINTER(
+		INTKEYRING_KEY_LEN));
+	purple_cipher_context_set_salt(context, salt->data, salt->len);
+	purple_cipher_context_set_key(context, (const guchar*)passphrase,
+		strlen(passphrase));
+
+	ret = intkeyring_buff_new(g_new(guchar, INTKEYRING_KEY_LEN),
+		INTKEYRING_KEY_LEN);
+	succ = purple_cipher_context_digest(context, ret->data, ret->len);
+
+	purple_cipher_context_destroy(context);
+
+	if (!succ) {
+		intkeyring_buff_free(ret);
+		return NULL;
+	}
+
+	return ret;
+}
+
+static intkeyring_buff_t *
+intkeyring_gen_salt(size_t len)
+{
+	intkeyring_buff_t *ret;
+	size_t filled = 0;
+
+	g_return_val_if_fail(len > 0, NULL);
+
+	ret = intkeyring_buff_new(g_new(guchar, len), len);
+
+	while (filled < len) {
+		guint32 r = g_random_int();
+		int i;
+
+		for (i = 0; i < 4; i++) {
+			ret->data[filled++] = r & 0xFF;
+			if (filled >= len)
+				break;
+			r >>= 8;
+		}
+	}
+
+	return ret;
+}
+
+/* TODO: describe encrypted contents structure */
+static gchar *
+intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
+{
+	PurpleCipherContext *context;
+	intkeyring_buff_t *iv;
+	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
+	size_t plaintext_len, text_len, verify_len;
+	guchar encrypted_raw[INTKEYRING_ENCRYPT_BUFF_LEN];
+	ssize_t encrypted_size;
+
+	g_return_val_if_fail(key != NULL, NULL);
+	g_return_val_if_fail(str != NULL, NULL);
+
+	text_len = strlen(str);
+	verify_len = strlen(INTKEYRING_VERIFY_STR);
+	g_return_val_if_fail(text_len + verify_len <= sizeof(plaintext), NULL);
+
+	context = purple_cipher_context_new_by_name("aes", NULL);
+	g_return_val_if_fail(context != NULL, NULL);
+
+	memcpy(plaintext, str, text_len);
+	memcpy(plaintext + text_len, INTKEYRING_VERIFY_STR, verify_len);
+	plaintext_len = text_len + verify_len;
+
+	iv = intkeyring_gen_salt(purple_cipher_context_get_block_size(context));
+	purple_cipher_context_set_iv(context, iv->data, iv->len);
+	purple_cipher_context_set_key(context, key->data, key->len);
+	purple_cipher_context_set_batch_mode(context,
+		PURPLE_CIPHER_BATCH_MODE_CBC);
+
+	memcpy(encrypted_raw, iv->data, iv->len);
+
+	encrypted_size = purple_cipher_context_encrypt(context,
+		plaintext, plaintext_len, encrypted_raw + iv->len,
+		sizeof(encrypted_raw) - iv->len);
+	encrypted_size += iv->len;
+
+	memset(plaintext, 0, plaintext_len);
+	intkeyring_buff_free(iv);
+	purple_cipher_context_destroy(context);
+
+	if (encrypted_size < 0)
+		return NULL;
+
+	return purple_base64_encode(encrypted_raw, encrypted_size);
+
+}
+
+static gchar *
+intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
+{
+	PurpleCipherContext *context;
+	guchar *encrypted_raw;
+	gsize encrypted_size;
+	size_t iv_len, verify_len, text_len;
+	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
+	ssize_t plaintext_len;
+	gchar *ret;
+
+	g_return_val_if_fail(key != NULL, NULL);
+	g_return_val_if_fail(str != NULL, NULL);
+
+	context = purple_cipher_context_new_by_name("aes", NULL);
+	g_return_val_if_fail(context != NULL, NULL);
+
+	encrypted_raw = purple_base64_decode(str, &encrypted_size);
+	g_return_val_if_fail(encrypted_raw != NULL, NULL);
+
+	iv_len = purple_cipher_context_get_block_size(context);
+	if (encrypted_size < iv_len) {
+		g_free(encrypted_raw);
+		return NULL;
+	}
+
+	purple_cipher_context_set_iv(context, encrypted_raw, iv_len);
+	purple_cipher_context_set_key(context, key->data, key->len);
+	purple_cipher_context_set_batch_mode(context,
+		PURPLE_CIPHER_BATCH_MODE_CBC);
+
+	plaintext_len = purple_cipher_context_decrypt(context,
+		encrypted_raw + iv_len, encrypted_size - iv_len,
+		plaintext, sizeof(plaintext));
+
+	g_free(encrypted_raw);
+	purple_cipher_context_destroy(context);
+
+	verify_len = strlen(INTKEYRING_VERIFY_STR);
+	if (plaintext_len < verify_len || strncmp(
+		(gchar*)plaintext + plaintext_len - verify_len,
+		INTKEYRING_VERIFY_STR, verify_len) != 0) {
+		purple_debug_warning("keyring-internal",
+			"Verification failed on decryption\n");
+		memset(plaintext, 0, sizeof(plaintext));
+		return NULL;
+	}
+
+	text_len = plaintext_len - verify_len;
+	ret = g_new(gchar, text_len + 1);
+	memcpy(ret, plaintext, text_len);
+	memset(plaintext, 0, plaintext_len);
+	ret[text_len] = '\0';
+
+	return ret;
+}
+
+static void
+intkeyring_change_master_password(const gchar *new_password)
+{
+	intkeyring_buff_t *salt, *key;
+	gchar *verifier, *test;
+
+	salt = intkeyring_gen_salt(32);
+	key = intkeyring_derive_key(new_password, salt);
+
+	/* In fact, verify str will be concatenated twice before encryption
+	 * (it's used as a suffix in encryption routine), but it's not
+	 * a problem.
+	 */
+	verifier = intkeyring_encrypt(key, INTKEYRING_VERIFY_STR);
+	purple_debug_info("test-tmp", "verifier=[%s]\n", verifier);
+
+	test = intkeyring_decrypt(key, verifier);
+	purple_debug_info("test-tmp", "test=[%s]\n", test);
+
+	g_free(test);
+	g_free(verifier);
+}
+
+static void
+intkeyring_open(void)
+{
+	if (intkeyring_opened)
+		return;
+	intkeyring_opened = TRUE;
+
+	intkeyring_passwords = g_hash_table_new_full(g_direct_hash,
 		g_direct_equal, NULL, (GDestroyNotify)purple_str_wipe);
 }
 
 static void
-internal_keyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
+intkeyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 	gpointer data)
 {
 	const char *password;
 	GError *error;
 
-	internal_keyring_open();
+	intkeyring_open();
 
-	password = g_hash_table_lookup(internal_keyring_passwords, account);
+	password = g_hash_table_lookup(intkeyring_passwords, account);
 
 	if (password != NULL) {
 		purple_debug_misc("keyring-internal",
@@ -91,18 +311,18 @@ internal_keyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 }
 
 static void
-internal_keyring_save(PurpleAccount *account, const gchar *password,
+intkeyring_save(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data)
 {
 	void *old_password;
-	internal_keyring_open();
+	intkeyring_open();
 
-	old_password = g_hash_table_lookup(internal_keyring_passwords, account);
+	old_password = g_hash_table_lookup(intkeyring_passwords, account);
 
 	if (password == NULL)
-		g_hash_table_remove(internal_keyring_passwords, account);
+		g_hash_table_remove(intkeyring_passwords, account);
 	else {
-		g_hash_table_replace(internal_keyring_passwords, account,
+		g_hash_table_replace(intkeyring_passwords, account,
 			g_strdup(password));
 	}
 
@@ -125,30 +345,30 @@ internal_keyring_save(PurpleAccount *account, const gchar *password,
 }
 
 static void
-internal_keyring_close(void)
+intkeyring_close(void)
 {
-	if (!internal_keyring_opened)
+	if (!intkeyring_opened)
 		return;
-	internal_keyring_opened = FALSE;
+	intkeyring_opened = FALSE;
 
-	g_hash_table_destroy(internal_keyring_passwords);
-	internal_keyring_passwords = NULL;
+	g_hash_table_destroy(intkeyring_passwords);
+	intkeyring_passwords = NULL;
 }
 
 static gboolean
-internal_keyring_import_password(PurpleAccount *account, const char *mode,
+intkeyring_import_password(PurpleAccount *account, const char *mode,
 	const char *data, GError **error)
 {
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	internal_keyring_open();
+	intkeyring_open();
 
 	if (mode == NULL)
 		mode = "cleartext";
 
 	if (g_strcmp0(mode, "cleartext") == 0) {
-		g_hash_table_replace(internal_keyring_passwords, account,
+		g_hash_table_replace(intkeyring_passwords, account,
 			g_strdup(data));
 		return TRUE;
 	} else {
@@ -162,14 +382,14 @@ internal_keyring_import_password(PurpleAccount *account, const char *mode,
 }
 
 static gboolean
-internal_keyring_export_password(PurpleAccount *account, const char **mode,
+intkeyring_export_password(PurpleAccount *account, const char **mode,
 	char **data, GError **error, GDestroyNotify *destroy)
 {
 	gchar *password;
 
-	internal_keyring_open();
+	intkeyring_open();
 
-	password = g_hash_table_lookup(internal_keyring_passwords, account);
+	password = g_hash_table_lookup(intkeyring_passwords, account);
 
 	if (password == NULL) {
 		return FALSE;
@@ -182,7 +402,7 @@ internal_keyring_export_password(PurpleAccount *account, const char **mode,
 }
 
 static PurpleRequestFields *
-internal_keyring_read_settings(void)
+intkeyring_read_settings(void)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -192,8 +412,9 @@ internal_keyring_read_settings(void)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_bool_new("encrypt",
-		_("Encrypt passwords"), FALSE);
+	field = purple_request_field_bool_new("encrypt_passwords",
+		_("Encrypt passwords"), purple_prefs_get_bool(
+			INTKEYRING_PREFS "encrypt_passwords"));
 	purple_request_field_group_add_field(group, field);
 
 	group = purple_request_field_group_new(_("Master password"));
@@ -209,11 +430,21 @@ internal_keyring_read_settings(void)
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
+	group = purple_request_field_group_new(_("Advanced settings"));
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_int_new("pbkdf2_desired_iterations",
+		_("Number of PBKDF2 iterations:"), purple_prefs_get_int(
+			INTKEYRING_PREFS "pbkdf2_desired_iterations"),
+		INTKEYRING_PBKDF2_ITERATIONS_MIN,
+		INTKEYRING_PBKDF2_ITERATIONS_MAX);
+	purple_request_field_group_add_field(group, field);
+
 	return fields;
 }
 
 static gboolean
-internal_keyring_apply_settings(void *notify_handle,
+intkeyring_apply_settings(void *notify_handle,
 	PurpleRequestFields *fields)
 {
 	const gchar *passphrase, *passphrase2;
@@ -232,7 +463,7 @@ internal_keyring_apply_settings(void *notify_handle,
 		return FALSE;
 	}
 
-	if (purple_request_fields_get_bool(fields, "encrypt") && !passphrase) {
+	if (purple_request_fields_get_bool(fields, "encrypt_passwords") && !passphrase) {
 		purple_notify_error(notify_handle,
 			_("Internal keyring settings"),
 			_("You have to set up a Master password, if you want "
@@ -240,34 +471,40 @@ internal_keyring_apply_settings(void *notify_handle,
 		return FALSE;
 	}
 
+	purple_prefs_set_bool(INTKEYRING_PREFS "encrypt_passwords",
+		purple_request_fields_get_bool(fields, "encrypt_passwords"));
+
+	purple_prefs_set_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
+		purple_request_fields_get_integer(fields,
+			"pbkdf2_desired_iterations"));
+
+	if (passphrase)
+		intkeyring_change_master_password(passphrase);
+
 	return TRUE;
 }
 
-/***********************************************/
-/*     Plugin interface                        */
-/***********************************************/
-
 static gboolean
-internal_keyring_load(PurplePlugin *plugin)
+intkeyring_load(PurplePlugin *plugin)
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, INTERNALKEYRING_NAME);
-	purple_keyring_set_id(keyring_handler, INTERNALKEYRING_ID);
+	purple_keyring_set_name(keyring_handler, INTKEYRING_NAME);
+	purple_keyring_set_id(keyring_handler, INTKEYRING_ID);
 	purple_keyring_set_read_password(keyring_handler,
-		internal_keyring_read);
+		intkeyring_read);
 	purple_keyring_set_save_password(keyring_handler,
-		internal_keyring_save);
+		intkeyring_save);
 	purple_keyring_set_close_keyring(keyring_handler,
-		internal_keyring_close);
+		intkeyring_close);
 	purple_keyring_set_import_password(keyring_handler,
-		internal_keyring_import_password);
+		intkeyring_import_password);
 	purple_keyring_set_export_password(keyring_handler,
-		internal_keyring_export_password);
+		intkeyring_export_password);
 	purple_keyring_set_read_settings(keyring_handler,
-		internal_keyring_read_settings);
+		intkeyring_read_settings);
 	purple_keyring_set_apply_settings(keyring_handler,
-		internal_keyring_apply_settings);
+		intkeyring_apply_settings);
 
 	purple_keyring_register(keyring_handler);
 
@@ -275,7 +512,7 @@ internal_keyring_load(PurplePlugin *plugin)
 }
 
 static gboolean
-internal_keyring_unload(PurplePlugin *plugin)
+intkeyring_unload(PurplePlugin *plugin)
 {
 	if (purple_keyring_get_inuse() == keyring_handler) {
 		purple_debug_warning("keyring-internal",
@@ -283,7 +520,7 @@ internal_keyring_unload(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	internal_keyring_close();
+	intkeyring_close();
 
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
@@ -302,15 +539,15 @@ PurplePluginInfo plugininfo =
 	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
 	NULL,				/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,	/* priority */
-	INTERNALKEYRING_ID,		/* id */
-	INTERNALKEYRING_NAME,		/* name */
+	INTKEYRING_ID,			/* id */
+	INTKEYRING_NAME,		/* name */
 	DISPLAY_VERSION,		/* version */
 	"Internal Keyring Plugin",	/* summary */
-	INTERNALKEYRING_DESCRIPTION,	/* description */
-	INTERNALKEYRING_AUTHOR,		/* author */
+	INTKEYRING_DESCRIPTION,		/* description */
+	INTKEYRING_AUTHOR,		/* author */
 	PURPLE_WEBSITE,			/* homepage */
-	internal_keyring_load,		/* load */
-	internal_keyring_unload,	/* unload */
+	intkeyring_load,		/* load */
+	intkeyring_unload,		/* unload */
 	NULL,				/* destroy */
 	NULL,				/* ui_info */
 	NULL,				/* extra_info */
@@ -322,6 +559,17 @@ PurplePluginInfo plugininfo =
 static void
 init_plugin(PurplePlugin *plugin)
 {
+	purple_prefs_add_none("/plugins/keyrings");
+	purple_prefs_add_none(INTKEYRING_PREFS);
+	purple_prefs_add_bool(INTKEYRING_PREFS "encrypt_passwords", FALSE);
+	purple_prefs_add_string(INTKEYRING_PREFS "encryption_method",
+		"pbkdf2-sha256-aes256");
+	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
+		INTKEYRING_PBKDF2_ITERATIONS);
+	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_iterations",
+		INTKEYRING_PBKDF2_ITERATIONS);
+	purple_prefs_add_string(INTKEYRING_PREFS "pbkdf2_salt", "");
+	purple_prefs_add_string(INTKEYRING_PREFS "key_verifier", "");
 }
 
 PURPLE_INIT_PLUGIN(internal_keyring, init_plugin, plugininfo)

@@ -2645,27 +2645,28 @@ logging_page(void)
 /*** keyring page *******************************************************/
 
 static void
-keyring_page_settings_toggled(GtkToggleButton *togglebutton, gpointer _unused)
+keyring_page_settings_changed(GtkWidget *widget, gpointer _setting)
 {
-	PurpleRequestField *setting;
+	PurpleRequestField *setting = _setting;
+	PurpleRequestFieldType field_type;
 
 	gtk_widget_set_sensitive(keyring_apply, TRUE);
 
-	setting = g_object_get_data(G_OBJECT(togglebutton), "setting");
-	purple_request_field_bool_set_value(setting,
-		gtk_toggle_button_get_active(togglebutton));
-}
+	field_type = purple_request_field_get_type(setting);
 
-static void
-keyring_page_settings_string_changed(GtkWidget *widget, gpointer _unused)
-{
-	PurpleRequestField *setting;
-
-	gtk_widget_set_sensitive(keyring_apply, TRUE);
-
-	setting = g_object_get_data(G_OBJECT(widget), "setting");
-	purple_request_field_string_set_value(setting,
-		gtk_entry_get_text(GTK_ENTRY(widget)));
+	if (field_type == PURPLE_REQUEST_FIELD_BOOLEAN) {
+		purple_request_field_bool_set_value(setting,
+			gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(widget)));
+	} else if (field_type == PURPLE_REQUEST_FIELD_STRING) {
+		purple_request_field_string_set_value(setting,
+			gtk_entry_get_text(GTK_ENTRY(widget)));
+	} else if (field_type == PURPLE_REQUEST_FIELD_INTEGER) {
+		purple_request_field_int_set_value(setting,
+			gtk_spin_button_get_value_as_int(
+				GTK_SPIN_BUTTON(widget)));
+	} else
+		g_return_if_reached();
 }
 
 static GtkWidget *
@@ -2683,23 +2684,30 @@ keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting,
 		widget = gtk_check_button_new_with_label(label);
 		label = NULL;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-			purple_request_field_bool_get_default_value(setting));
+			purple_request_field_bool_get_value(setting));
 		g_signal_connect(G_OBJECT(widget), "toggled",
-			G_CALLBACK(keyring_page_settings_toggled), NULL);
+			G_CALLBACK(keyring_page_settings_changed), setting);
 	} else if (field_type == PURPLE_REQUEST_FIELD_STRING) {
 		widget = gtk_entry_new();
 		gtk_entry_set_text(GTK_ENTRY(widget),
-			purple_request_field_string_get_default_value(setting));
+			purple_request_field_string_get_value(setting));
 		if (purple_request_field_string_is_masked(setting))
 			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
 		g_signal_connect(G_OBJECT(widget), "changed",
-			G_CALLBACK(keyring_page_settings_string_changed), NULL);
+			G_CALLBACK(keyring_page_settings_changed), setting);
+	} else if (field_type == PURPLE_REQUEST_FIELD_INTEGER) {
+		widget = gtk_spin_button_new_with_range(
+			purple_request_field_int_get_lower_bound(setting),
+			purple_request_field_int_get_upper_bound(setting), 1);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget),
+			purple_request_field_int_get_value(setting));
+		g_signal_connect(G_OBJECT(widget), "value-changed",
+			G_CALLBACK(keyring_page_settings_changed), setting);
 	} else {
 		purple_debug_error("gtkprefs", "Unsupported field type\n");
 		return NULL;
 	}
 
-	g_object_set_data(G_OBJECT(widget), "setting", setting);
 	hbox = pidgin_add_widget_to_vbox(vbox, label, sg, widget,
 		FALSE, NULL);
 	return ((void*)hbox == (void*)vbox) ? widget : hbox;
@@ -2711,6 +2719,8 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 {
 	GList *it, *groups, *added_fields;
 	GtkSizeGroup *sg;
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	added_fields = NULL;
 	groups = purple_request_fields_get_groups(settings);
@@ -2730,8 +2740,6 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 		} else
 			vbox = keyring_vbox;
 
-		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
 		fields = purple_request_field_group_get_fields(group);
 		for (it2 = g_list_first(fields); it2 != NULL;
 			it2 = g_list_next(it2)) {
@@ -2741,9 +2749,9 @@ keyring_page_add_settings(PurpleRequestFields *settings)
 				continue;
 			added_fields = g_list_prepend(added_fields, added);
 		}
-
-		g_object_unref(sg);
 	}
+
+	g_object_unref(sg);
 
 	return added_fields;
 }
