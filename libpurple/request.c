@@ -918,8 +918,8 @@ purple_request_field_int_set_value(PurpleRequestField *field, int value)
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
 
-	if (field->u.integer.value < field->u.integer.lower_bound ||
-		field->u.integer.value > field->u.integer.upper_bound) {
+	if (value < field->u.integer.lower_bound ||
+		value > field->u.integer.upper_bound) {
 		purple_debug_error("request", "Int value out of bounds\n");
 		return;
 	}
