@@ -222,16 +222,6 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 	return FALSE;
 }
 
-static gboolean
-field_int_focus_out_cb(GtkEntry *entry, GdkEventFocus *event,
-					   PurpleRequestField *field)
-{
-	purple_request_field_int_set_value(field,
-			atoi(gtk_entry_get_text(entry)));
-
-	return FALSE;
-}
-
 static void
 field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 {
@@ -757,6 +747,12 @@ pidgin_request_action(const char *title, const char *primary,
 static void
 req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
+	if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER) {
+		int value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(entry));
+		purple_request_field_int_set_value(field, value);
+		return;
+	}
+
 	if (purple_request_field_string_is_multiline(field))
 	{
 		char *text;
@@ -921,25 +917,16 @@ create_int_field(PurpleRequestField *field)
 	int value;
 	GtkWidget *widget;
 
-	widget = gtk_entry_new();
+	widget = gtk_spin_button_new_with_range(
+		purple_request_field_int_get_lower_bound(field),
+		purple_request_field_int_get_upper_bound(field), 1);
 
 	setup_entry_field(widget, field);
 
 	value = purple_request_field_int_get_default_value(field);
-
-	if (value != 0)
-	{
-		char buf[32];
-
-		g_snprintf(buf, sizeof(buf), "%d", value);
-
-		gtk_entry_set_text(GTK_ENTRY(widget), buf);
-	}
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), value);
 
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
-
-	g_signal_connect(G_OBJECT(widget), "focus-out-event",
-					 G_CALLBACK(field_int_focus_out_cb), field);
 
 	return widget;
 }

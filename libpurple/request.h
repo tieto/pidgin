@@ -741,12 +741,13 @@ gboolean purple_request_field_string_is_editable(const PurpleRequestField *field
  * @param id            The field ID.
  * @param text          The text label of the field.
  * @param default_value The default value.
+ * @param lower_bound   The lower bound.
+ * @param upper_bound   The upper bound.
  *
  * @return The new field.
  */
 PurpleRequestField *purple_request_field_int_new(const char *id,
-											 const char *text,
-											 int default_value);
+	const char *text, int default_value, int lower_bound, int upper_bound);
 
 /**
  * Sets the default value in an integer field.
@@ -756,6 +757,22 @@ PurpleRequestField *purple_request_field_int_new(const char *id,
  */
 void purple_request_field_int_set_default_value(PurpleRequestField *field,
 											  int default_value);
+
+/**
+ * Sets the lower bound in an integer field.
+ *
+ * @param field       The field.
+ * @param lower_bound The lower bound.
+ */
+void purple_request_field_int_set_lower_bound(PurpleRequestField *field, int lower_bound);
+
+/**
+ * Sets the upper bound in an integer field.
+ *
+ * @param field       The field.
+ * @param upper_bound The upper bound.
+ */
+void purple_request_field_int_set_upper_bound(PurpleRequestField *field, int lower_bound);
 
 /**
  * Sets the value in an integer field.
@@ -773,6 +790,24 @@ void purple_request_field_int_set_value(PurpleRequestField *field, int value);
  * @return The default value.
  */
 int purple_request_field_int_get_default_value(const PurpleRequestField *field);
+
+/**
+ * Returns the lower bound in an integer field.
+ *
+ * @param field The field.
+ *
+ * @return The lower bound.
+ */
+int purple_request_field_int_get_lower_bound(const PurpleRequestField *field);
+
+/**
+ * Returns the upper bound in an integer field.
+ *
+ * @param field The field.
+ *
+ * @return The upper bound.
+ */
+int purple_request_field_int_get_upper_bound(const PurpleRequestField *field);
 
 /**
  * Returns the user-entered value in an integer field.
@@ -1302,21 +1337,6 @@ gboolean purple_request_field_email_validator(PurpleRequestField *field,
  */
 gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 	gchar **errmsg, void *allowed_characters);
-
-/**
- * Validates a field which should contain numeric content, within (optional)
- * range.
- *
- * @see purple_request_field_set_validator
- *
- * @param field The field.
- * @param errmsg (Optional) destination for error message.
- * @param user_data (Optional) an int[2] array containing specified range.
- *
- * @return TRUE, if field contains only alphanumeric characters.
- */
-gboolean purple_request_field_numeric_validator(PurpleRequestField *field,
-	gchar **errmsg, void *range);
 
 /*@}*/
 
