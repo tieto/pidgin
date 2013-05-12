@@ -70,7 +70,8 @@ struct _PurpleRequestField
 		{
 			int default_value;
 			int value;
-
+			int lower_bound;
+			int upper_bound;
 		} integer;
 
 		struct
@@ -864,7 +865,7 @@ purple_request_field_string_is_editable(const PurpleRequestField *field)
 
 PurpleRequestField *
 purple_request_field_int_new(const char *id, const char *text,
-						   int default_value)
+	int default_value, int lower_bound, int upper_bound)
 {
 	PurpleRequestField *field;
 
@@ -873,6 +874,8 @@ purple_request_field_int_new(const char *id, const char *text,
 
 	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_INTEGER);
 
+	purple_request_field_int_set_lower_bound(field, lower_bound);
+	purple_request_field_int_set_upper_bound(field, upper_bound);
 	purple_request_field_int_set_default_value(field, default_value);
 	purple_request_field_int_set_value(field, default_value);
 
@@ -890,10 +893,36 @@ purple_request_field_int_set_default_value(PurpleRequestField *field,
 }
 
 void
+purple_request_field_int_set_lower_bound(PurpleRequestField *field,
+	int lower_bound)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
+
+	field->u.integer.lower_bound = lower_bound;
+}
+
+void
+purple_request_field_int_set_upper_bound(PurpleRequestField *field,
+	int upper_bound)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
+
+	field->u.integer.upper_bound = upper_bound;
+}
+
+void
 purple_request_field_int_set_value(PurpleRequestField *field, int value)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
+
+	if (field->u.integer.value < field->u.integer.lower_bound ||
+		field->u.integer.value > field->u.integer.upper_bound) {
+		purple_debug_error("request", "Int value out of bounds\n");
+		return;
+	}
 
 	field->u.integer.value = value;
 }
@@ -905,6 +934,24 @@ purple_request_field_int_get_default_value(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER, 0);
 
 	return field->u.integer.default_value;
+}
+
+int
+purple_request_field_int_get_lower_bound(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER, 0);
+
+	return field->u.integer.lower_bound;
+}
+
+int
+purple_request_field_int_get_upper_bound(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER, 0);
+
+	return field->u.integer.upper_bound;
 }
 
 int
@@ -1519,59 +1566,6 @@ purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 	if (errmsg)
 		*errmsg = g_strdup_printf(_("Invalid character '%c'"),
 			invalid_char);
-	return FALSE;
-}
-
-gboolean purple_request_field_numeric_validator(PurpleRequestField *field,
-	gchar **errmsg, void *range_p)
-{
-	gboolean succ = TRUE;
-	int value = 0;
-	int *range = range_p;
-	
-	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING ||
-		field->type == PURPLE_REQUEST_FIELD_INTEGER, FALSE);
-
-	if (field->type == PURPLE_REQUEST_FIELD_STRING)
-	{
-		const gchar *svalue, *it;
-		svalue = purple_request_field_string_get_value(field);
-		if (svalue == NULL || svalue[0] == '\0')
-			succ = FALSE;
-		it = svalue;
-		if (it[0] == '-')
-			it++;
-		while (succ && *it)
-		{
-			if (!g_ascii_isdigit(*it))
-				succ = FALSE;
-			it++;
-		}
-		if (succ)
-		{
-			char *endptr;
-			value = strtol(svalue, &endptr, 10);
-			succ = (errno != ERANGE && endptr[0] == '\0');
-		}
-	}
-	// TODO: integer fields doesn't seems to work, so this one needs testing
-	else if (field->type == PURPLE_REQUEST_FIELD_INTEGER)
-		value = purple_request_field_int_get_value(field);
-	else
-		g_return_val_if_reached(FALSE);
-
-	if (succ && range)
-		succ = (value >= range[0] && value <= range[1]);
-
-	if (succ)
-		return TRUE;
-
-	if (errmsg && !range)
-		*errmsg = g_strdup(_("Invalid number"));
-	if (errmsg && range)
-		*errmsg = g_strdup_printf(_("Value is not between %d and %d"),
-			range[0], range[1]);
 	return FALSE;
 }
 

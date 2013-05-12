@@ -701,7 +701,7 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 			const char *str = g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier);
 			if (!str || sscanf(str, "%d", &val) != 1)
 				val = pce->min;
-			field = purple_request_field_int_new(pce->identifier, pce->label, val);
+			field = purple_request_field_int_new(pce->identifier, pce->label, val, INT_MIN, INT_MAX);
 		} else {
 			field = purple_request_field_string_new(pce->identifier, pce->label,
 					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);

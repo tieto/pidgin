@@ -123,7 +123,7 @@ get_pref_field(Prefs *prefs)
 				break;
 			case PURPLE_PREF_INT:
 				field = purple_request_field_int_new(prefs->pref, _(prefs->label),
-						purple_prefs_get_int(prefs->pref));
+						purple_prefs_get_int(prefs->pref), INT_MIN, INT_MAX);
 				break;
 			case PURPLE_PREF_STRING:
 				field = purple_request_field_string_new(prefs->pref, _(prefs->label),

@@ -327,11 +327,13 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_int_new(clas, id, text, default_value = 0)
+purple_request_field_int_new(clas, id, text, default_value = 0, lower_bound = INT_MIN, upper_bound = INT_MAX)
 	const char *id
 	const char *text
 	int default_value
-	C_ARGS: id, text, default_value
+	int lower_bound
+	int upper_bound
+	C_ARGS: id, text, default_value, lower_bound, upper_bound
 
 int
 purple_request_field_int_get_default_value(field)
