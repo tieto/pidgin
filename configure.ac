@@ -1539,18 +1539,19 @@ dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
+# disabled - see secretservice.c
+#AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
 
-dnl Check for libsecret; if we don't have it, oh well
-if test "x$enable_secret_service" = "xyes" ; then
-	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
-		AC_SUBST(SECRETSERVICE_CFLAGS)
-		AC_SUBST(SECRETSERVICE_LIBS)
-		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
-	])
-fi
+#if test "x$enable_secret_service" = "xyes" ; then
+#	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
+#		AC_SUBST(SECRETSERVICE_CFLAGS)
+#		AC_SUBST(SECRETSERVICE_LIBS)
+#		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+#	])
+#fi
 
-AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
+#AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
+AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x1" = "x2")
 
 dnl #######################################################################
 dnl # Check for GNOME Keyring headers
@@ -2939,9 +2940,9 @@ echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with GCR widgets........ : $enable_gcr
 echo
-echo Build with Secret Service..... : $enable_secret_service
 echo Build with GNOME Keyring...... : $enable_gnome_keyring
 echo Build with KWallet............ : $enable_kwallet
+#echo Build with Secret Service..... : $enable_secret_service
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono

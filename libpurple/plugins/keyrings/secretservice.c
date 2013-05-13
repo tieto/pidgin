@@ -1,7 +1,6 @@
 /* purple
  * @file secretservice.c Secret Service password storage
  * @ingroup plugins
- * @todo rewrite it with Complete API
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,6 +19,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program ; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
+#error "This keyring needs some more work (see TODO)"
+
+/* TODO
+ *
+ * This keyring needs some more work, so it will be disabled until its quality
+ * was raised. Some of the pain points:
+ *  - throws a lot of g_warnings
+ *  - it doesn't notify about some backend faults (like access denied), some of
+ *    them are not handled at all
+ *  - it could use libsecret's Complete API
+ *  - code formatting could be better
  */
 
 #include "internal.h"
