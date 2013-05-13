@@ -1222,9 +1222,6 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 		return;
 	}
 
-	if (!remember)
-		purple_keyring_set_password(account, NULL, NULL, NULL);
-
 	purple_account_set_remember_password(account, remember);
 
 	purple_account_set_password(account, entry, NULL, NULL);
@@ -2907,7 +2904,7 @@ connection_error_cb(PurpleConnection *gc,
 static void
 password_migration_cb(PurpleAccount *account)
 {
-	g_return_if_fail(account != NULL);
+	/* account may be NULL (means: all) */
 
 	schedule_accounts_save();
 }

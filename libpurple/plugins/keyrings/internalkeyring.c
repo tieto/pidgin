@@ -35,8 +35,8 @@
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
 	"storage behaviour for libpurple.")
-#define INTKEYRING_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
-#define INTKEYRING_ID          PURPLE_DEFAULT_KEYRING
+#define INTKEYRING_AUTHOR "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define INTKEYRING_ID PURPLE_DEFAULT_KEYRING
 
 #define INTKEYRING_VERIFY_STR "[verification-string]"
 #define INTKEYRING_PBKDF2_ITERATIONS 10000
@@ -44,8 +44,27 @@
 #define INTKEYRING_PBKDF2_ITERATIONS_MAX 1000000000
 #define INTKEYRING_KEY_LEN (256/8)
 #define INTKEYRING_ENCRYPT_BUFF_LEN 1000
+#define INTKEYRING_ENCRYPTED_MIN_LEN 50
+#define INTKEYRING_ENCRYPTION_METHOD "pbkdf2-sha256-aes256"
 
 #define INTKEYRING_PREFS "/plugins/keyrings/internal/"
+
+typedef struct
+{
+	enum
+	{
+		INTKEYRING_REQUEST_READ,
+		INTKEYRING_REQUEST_SAVE
+	} type;
+	PurpleAccount *account;
+	gchar *password;
+	union
+	{
+		PurpleKeyringReadCallback read;
+		PurpleKeyringSaveCallback save;
+	} cb;
+	gpointer cb_data;
+} intkeyring_request;
 
 typedef struct
 {
@@ -53,9 +72,37 @@ typedef struct
 	size_t len;
 } intkeyring_buff_t;
 
-static gboolean intkeyring_opened = FALSE;
+static intkeyring_buff_t *intkeyring_key;
 static GHashTable *intkeyring_passwords = NULL;
+static GHashTable *intkeyring_ciphertexts = NULL;
+
+static gboolean intkeyring_opened = FALSE;
+static gboolean intkeyring_unlocked = FALSE;
+
+static GList *intkeyring_pending_requests = NULL;
+static void *intkeyring_masterpw_uirequest = NULL;
+
 static PurpleKeyring *keyring_handler = NULL;
+
+static void
+intkeyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
+	gpointer data);
+static void
+intkeyring_save(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data);
+static void
+intkeyring_reencrypt_passwords(void);
+static void
+intkeyring_unlock(const gchar *message);
+
+static void
+intkeyring_request_free(intkeyring_request *req)
+{
+	g_return_if_fail(req != NULL);
+
+	purple_str_wipe(req->password);
+	g_free(req);
+}
 
 static intkeyring_buff_t *
 intkeyring_buff_new(guchar *data, size_t len)
@@ -71,10 +118,28 @@ intkeyring_buff_new(guchar *data, size_t len)
 static void
 intkeyring_buff_free(intkeyring_buff_t *buff)
 {
+	if (buff == NULL)
+		return;
+
 	memset(buff->data, 0, buff->len);
 	g_free(buff->data);
 	g_free(buff);
 }
+
+static intkeyring_buff_t *
+intkeyring_buff_from_base64(const gchar *base64)
+{
+	guchar *data;
+	gsize len;
+
+	data = purple_base64_decode(base64, &len);
+
+	return intkeyring_buff_new(data, len);
+}
+
+/************************************************************************/
+/* Generic encryption stuff                                             */
+/************************************************************************/
 
 static intkeyring_buff_t *
 intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
@@ -137,7 +202,27 @@ intkeyring_gen_salt(size_t len)
 	return ret;
 }
 
-/* TODO: describe encrypted contents structure */
+/**
+ * Encrypts a plaintext using the specified key.
+ *
+ * Random IV will be generated and stored with ciphertext.
+ *
+ * Encryption scheme:
+ * [ IV ] ++ AES( [ plaintext ] ++ [ min length padding ] ++
+ *                [ control string ] ++ [ pkcs7 padding ] )
+ * where:
+ *  IV:                 Random, 128bit IV.
+ *  plaintext:          The plaintext.
+ *  min length padding: The padding used to hide the rough length of short
+ *                      plaintexts, may have a length of 0.
+ *  control string:     Constant string, verifies corectness of decryption.
+ *  pkcs7 padding:      The padding used to determine total length of encrypted
+ *                      content (also provides some verification).
+ *
+ * @param key The AES key.
+ * @param str The NUL-terminated plaintext.
+ * @return    The ciphertext with IV, encoded as base64. Must be g_free'd.
+ */
 static gchar *
 intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 {
@@ -153,14 +238,20 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 
 	text_len = strlen(str);
 	verify_len = strlen(INTKEYRING_VERIFY_STR);
-	g_return_val_if_fail(text_len + verify_len <= sizeof(plaintext), NULL);
+	plaintext_len = INTKEYRING_ENCRYPTED_MIN_LEN;
+	if (plaintext_len < text_len)
+		plaintext_len = text_len;
+
+	g_return_val_if_fail(plaintext_len + verify_len <= sizeof(plaintext),
+		NULL);
 
 	context = purple_cipher_context_new_by_name("aes", NULL);
 	g_return_val_if_fail(context != NULL, NULL);
 
+	memset(plaintext, 0, plaintext_len);
 	memcpy(plaintext, str, text_len);
-	memcpy(plaintext + text_len, INTKEYRING_VERIFY_STR, verify_len);
-	plaintext_len = text_len + verify_len;
+	memcpy(plaintext + plaintext_len, INTKEYRING_VERIFY_STR, verify_len);
+	plaintext_len += verify_len;
 
 	iv = intkeyring_gen_salt(purple_cipher_context_get_block_size(context));
 	purple_cipher_context_set_iv(context, iv->data, iv->len);
@@ -243,27 +334,267 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	return ret;
 }
 
-static void
-intkeyring_change_master_password(const gchar *new_password)
+/************************************************************************/
+/* Password encryption                                                  */
+/************************************************************************/
+
+static gboolean
+intkeyring_change_masterpw(const gchar *new_password)
 {
 	intkeyring_buff_t *salt, *key;
-	gchar *verifier, *test;
+	gchar *verifier = NULL, *salt_b64 = NULL;
+	int old_iter;
+	gboolean succ = TRUE;;
+
+	g_return_val_if_fail(intkeyring_unlocked, FALSE);
+
+	old_iter = purple_prefs_get_int(INTKEYRING_PREFS "pbkdf2_iterations");
+	purple_prefs_set_int(INTKEYRING_PREFS "pbkdf2_iterations",
+		purple_prefs_get_int(INTKEYRING_PREFS
+			"pbkdf2_desired_iterations"));
 
 	salt = intkeyring_gen_salt(32);
 	key = intkeyring_derive_key(new_password, salt);
 
-	/* In fact, verify str will be concatenated twice before encryption
-	 * (it's used as a suffix in encryption routine), but it's not
-	 * a problem.
-	 */
-	verifier = intkeyring_encrypt(key, INTKEYRING_VERIFY_STR);
-	purple_debug_info("test-tmp", "verifier=[%s]\n", verifier);
+	if (salt && key && key->len == INTKEYRING_KEY_LEN) {
+		/* In fact, verify str will be concatenated twice before
+		 * encryption (it's used as a suffix in encryption routine),
+		 * but it's not a problem.
+		 */
+		verifier = intkeyring_encrypt(key, INTKEYRING_VERIFY_STR);
+		salt_b64 = purple_base64_encode(salt->data, salt->len);
+	}
 
-	test = intkeyring_decrypt(key, verifier);
-	purple_debug_info("test-tmp", "test=[%s]\n", test);
+	if (!verifier || !salt_b64) {
+		purple_debug_error("keyring-internal", "Failed to change "
+			"master password\n");
+		succ = FALSE;
+		purple_prefs_set_int(INTKEYRING_PREFS "pbkdf2_iterations",
+			old_iter);
+	} else {
+		purple_prefs_set_string(INTKEYRING_PREFS "pbkdf2_salt",
+			salt_b64);
+		purple_prefs_set_string(INTKEYRING_PREFS "key_verifier",
+			verifier);
 
-	g_free(test);
+		intkeyring_buff_free(intkeyring_key);
+		intkeyring_key = key;
+		key = NULL;
+
+		intkeyring_reencrypt_passwords();
+
+		purple_signal_emit(purple_keyring_get_handle(),
+			"password-migration", NULL);
+	}
+
+	g_free(salt_b64);
 	g_free(verifier);
+	intkeyring_buff_free(salt);
+	intkeyring_buff_free(key);
+
+	return succ;
+}
+
+static void
+intkeyring_process_queue(void)
+{
+	GList *requests, *it;
+	gboolean open = intkeyring_unlocked;
+
+	requests = g_list_first(intkeyring_pending_requests);
+	intkeyring_pending_requests = NULL;
+
+	for (it = requests; it != NULL; it = g_list_next(it))
+	{
+		intkeyring_request *req = it->data;
+
+		if (open && req->type == INTKEYRING_REQUEST_READ) {
+			intkeyring_read(req->account, req->cb.read,
+				req->cb_data);
+		} else if (open && req->type == INTKEYRING_REQUEST_SAVE) {
+			intkeyring_save(req->account, req->password,
+				req->cb.save, req->cb_data);
+		} else if (open)
+			g_assert_not_reached();
+		else if (req->cb.read != NULL /* || req->cb.write != NULL */ ) {
+			GError *error = g_error_new(PURPLE_KEYRING_ERROR,
+				PURPLE_KEYRING_ERROR_CANCELLED,
+				"Operation cancelled.");
+			if (req->type == INTKEYRING_REQUEST_READ) {
+				req->cb.read(req->account, NULL, error,
+					req->cb_data);
+			} else if (req->type == INTKEYRING_REQUEST_SAVE)
+				req->cb.save(req->account, error, req->cb_data);
+			else
+				g_assert_not_reached();
+			g_error_free(error);
+		}
+
+		intkeyring_request_free(req);
+	}
+	g_list_free(requests);
+}
+
+static void
+intkeyring_decrypt_password(PurpleAccount *account, const gchar *ciphertext)
+{
+	gchar *plaintext;
+
+	plaintext = intkeyring_decrypt(intkeyring_key, ciphertext);
+	if (plaintext == NULL) {
+		purple_debug_warning("keyring-internal",
+			"Failed to decrypt a password\n");
+		return;
+	}
+
+	g_hash_table_replace(intkeyring_passwords, account, plaintext);
+}
+
+static void
+intkeyring_encrypt_password_if_needed(PurpleAccount *account)
+{
+	const gchar *plaintext;
+	gchar *ciphertext;
+
+	ciphertext = g_hash_table_lookup(intkeyring_ciphertexts, account);
+	if (ciphertext != NULL)
+		return;
+
+	plaintext = g_hash_table_lookup(intkeyring_passwords, account);
+	if (plaintext == NULL)
+		return;
+
+	ciphertext = intkeyring_encrypt(intkeyring_key, plaintext);
+	g_return_if_fail(ciphertext != NULL);
+
+	g_hash_table_replace(intkeyring_ciphertexts, account, ciphertext);
+}
+
+static void
+intkeyring_encrypt_passwords_if_needed_it(gpointer account, gpointer plaintext,
+	gpointer _unused)
+{
+	intkeyring_encrypt_password_if_needed(account);
+}
+
+static void
+intkeyring_reencrypt_passwords(void)
+{
+	g_hash_table_remove_all(intkeyring_ciphertexts);
+	g_hash_table_foreach(intkeyring_passwords,
+		intkeyring_encrypt_passwords_if_needed_it, NULL);
+}
+
+static void
+intkeyring_unlock_decrypt(gpointer account, gpointer ciphertext,
+	gpointer _unused)
+{
+	intkeyring_decrypt_password(account, ciphertext);
+}
+
+/************************************************************************/
+/* Opening and unlocking keyring                                        */
+/************************************************************************/
+
+static void
+intkeyring_unlock_ok(gpointer _unused,
+	PurpleRequestFields *fields)
+{
+	const gchar *masterpw;
+	gchar *verifier;
+	intkeyring_buff_t *salt, *key;
+
+	intkeyring_masterpw_uirequest = NULL;
+
+	if (g_strcmp0(purple_prefs_get_string(INTKEYRING_PREFS
+		"encryption_method"), INTKEYRING_ENCRYPTION_METHOD) != 0) {
+		purple_notify_error(NULL,
+			_("Unlocking internal keyring"),
+			_("Selected encryption method is not supported."),
+			_("Most probably, your passwords were encrypted with "
+			"newer Pidgin/libpurple version, please update."));
+		return;
+	}
+
+	masterpw = purple_request_fields_get_string(fields, "password");
+
+	if (masterpw == NULL || masterpw[0] == '\0') {
+		intkeyring_unlock(_("No password entered."));
+		return;
+	}
+
+	salt = intkeyring_buff_from_base64(purple_prefs_get_string(
+		INTKEYRING_PREFS "pbkdf2_salt"));
+	key = intkeyring_derive_key(masterpw, salt);
+	intkeyring_buff_free(salt);
+
+	verifier = intkeyring_decrypt(key, purple_prefs_get_string(
+		INTKEYRING_PREFS "key_verifier"));
+
+	if (g_strcmp0(verifier, INTKEYRING_VERIFY_STR) != 0) {
+		g_free(verifier);
+		intkeyring_buff_free(key);
+		intkeyring_unlock(_("Invalid master password entered, "
+			"try again."));
+		return;
+	}
+
+	g_free(verifier);
+	intkeyring_key = key;
+	intkeyring_unlocked = TRUE;
+
+	g_hash_table_foreach(intkeyring_ciphertexts,
+		intkeyring_unlock_decrypt, NULL);
+
+	intkeyring_process_queue();
+}
+
+static void
+intkeyring_unlock_cancel(gpointer _unused,
+	PurpleRequestFields *fields)
+{
+	intkeyring_masterpw_uirequest = NULL;
+	intkeyring_process_queue();
+}
+
+static void
+intkeyring_unlock(const gchar *message)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	const gchar *primary_msg, *secondary_msg = NULL;
+
+	if (intkeyring_unlocked || intkeyring_masterpw_uirequest != NULL)
+		return;
+
+	if (!purple_prefs_get_bool(INTKEYRING_PREFS "encrypt_passwords")) {
+		intkeyring_unlocked = TRUE;
+		intkeyring_process_queue();
+		return;
+	}
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("password",
+		_("Master password"), "", FALSE);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	primary_msg = _("Please, enter master password");
+	if (message) {
+		secondary_msg = primary_msg;
+		primary_msg = message;
+	}
+
+	intkeyring_masterpw_uirequest = purple_request_fields(NULL,
+		_("Unlocking internal keyring"),
+		primary_msg, secondary_msg, fields,
+		_("OK"), G_CALLBACK(intkeyring_unlock_ok),
+		_("Cancel"), G_CALLBACK(intkeyring_unlock_cancel),
+		NULL, NULL, NULL, NULL);
 }
 
 static void
@@ -275,7 +606,13 @@ intkeyring_open(void)
 
 	intkeyring_passwords = g_hash_table_new_full(g_direct_hash,
 		g_direct_equal, NULL, (GDestroyNotify)purple_str_wipe);
+	intkeyring_ciphertexts = g_hash_table_new_full(g_direct_hash,
+		g_direct_equal, NULL, g_free);
 }
+
+/************************************************************************/
+/* Keyring interface implementation                                     */
+/************************************************************************/
 
 static void
 intkeyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
@@ -285,6 +622,22 @@ intkeyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 	GError *error;
 
 	intkeyring_open();
+
+	if (!intkeyring_unlocked && g_hash_table_lookup(intkeyring_ciphertexts,
+		account) != NULL)
+	{
+		intkeyring_request *req = g_new0(intkeyring_request, 1);
+
+		req->type = INTKEYRING_REQUEST_READ;
+		req->account = account;
+		req->cb.read = cb;
+		req->cb_data = data;
+		intkeyring_pending_requests =
+			g_list_append(intkeyring_pending_requests, req);
+
+		intkeyring_unlock(NULL);
+		return;
+	}
 
 	password = g_hash_table_lookup(intkeyring_passwords, account);
 
@@ -315,7 +668,33 @@ intkeyring_save(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data)
 {
 	void *old_password;
+
 	intkeyring_open();
+
+	if (!intkeyring_unlocked) {
+		if (password == NULL) {
+			g_hash_table_remove(intkeyring_ciphertexts, account);
+			g_hash_table_remove(intkeyring_passwords, account);
+			if (cb)
+				cb(account, NULL, data);
+			return;
+		}
+
+		intkeyring_request *req = g_new0(intkeyring_request, 1);
+
+		req->type = INTKEYRING_REQUEST_SAVE;
+		req->account = account;
+		req->password = g_strdup(password);
+		req->cb.save = cb;
+		req->cb_data = data;
+		intkeyring_pending_requests =
+			g_list_append(intkeyring_pending_requests, req);
+
+		intkeyring_unlock(NULL);
+		return;
+	}
+
+	g_hash_table_remove(intkeyring_ciphertexts, account);
 
 	old_password = g_hash_table_lookup(intkeyring_passwords, account);
 
@@ -325,6 +704,8 @@ intkeyring_save(PurpleAccount *account, const gchar *password,
 		g_hash_table_replace(intkeyring_passwords, account,
 			g_strdup(password));
 	}
+
+	intkeyring_encrypt_password_if_needed(account);
 
 	if (!(password == NULL && old_password == NULL)) {
 		purple_debug_misc("keyring-internal",
@@ -350,9 +731,21 @@ intkeyring_close(void)
 	if (!intkeyring_opened)
 		return;
 	intkeyring_opened = FALSE;
+	intkeyring_unlocked = FALSE;
 
+	if (intkeyring_masterpw_uirequest) {
+		purple_request_close(PURPLE_REQUEST_FIELDS,
+			intkeyring_masterpw_uirequest);
+	}
+	g_warn_if_fail(intkeyring_masterpw_uirequest == NULL);
+	g_warn_if_fail(intkeyring_pending_requests == NULL);
+
+	intkeyring_buff_free(intkeyring_key);
+	intkeyring_key = NULL;
 	g_hash_table_destroy(intkeyring_passwords);
 	intkeyring_passwords = NULL;
+	g_hash_table_destroy(intkeyring_ciphertexts);
+	intkeyring_ciphertexts = NULL;
 }
 
 static gboolean
@@ -371,6 +764,14 @@ intkeyring_import_password(PurpleAccount *account, const char *mode,
 		g_hash_table_replace(intkeyring_passwords, account,
 			g_strdup(data));
 		return TRUE;
+	} else if (g_strcmp0(mode, "ciphertext") == 0) {
+		if (intkeyring_unlocked)
+			intkeyring_decrypt_password(account, data);
+		else {
+			g_hash_table_replace(intkeyring_ciphertexts, account,
+				g_strdup(data));
+		}
+		return TRUE;
 	} else {
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
@@ -385,20 +786,44 @@ static gboolean
 intkeyring_export_password(PurpleAccount *account, const char **mode,
 	char **data, GError **error, GDestroyNotify *destroy)
 {
-	gchar *password;
-
+	gchar *ciphertext = NULL;
 	intkeyring_open();
 
-	password = g_hash_table_lookup(intkeyring_passwords, account);
+	if (!purple_prefs_get_bool(INTKEYRING_PREFS "encrypt_passwords")) {
+		gchar *cleartext = g_hash_table_lookup(intkeyring_passwords,
+			account);
 
-	if (password == NULL) {
-		return FALSE;
-	} else {
+		if (cleartext == NULL)
+			return FALSE;
+
 		*mode = "cleartext";
-		*data = g_strdup(password);
+		*data = g_strdup(cleartext);
 		*destroy = (GDestroyNotify)purple_str_wipe;
 		return TRUE;
 	}
+
+	ciphertext = g_strdup(g_hash_table_lookup(intkeyring_ciphertexts,
+		account));
+
+	if (ciphertext == NULL && intkeyring_unlocked) {
+		gchar *plaintext = g_hash_table_lookup(intkeyring_passwords,
+			account);
+
+		if (plaintext == NULL)
+			return FALSE;
+
+		purple_debug_warning("keyring-internal", "Encrypted password "
+			"is missing at export (it shouldn't happen)\n");
+		ciphertext = intkeyring_encrypt(intkeyring_key, plaintext);
+	}
+
+	if (ciphertext == NULL)
+		return FALSE;
+
+	*mode = "ciphertext";
+	*data = ciphertext;
+	*destroy = (GDestroyNotify)g_free;
+	return TRUE;
 }
 
 static PurpleRequestFields *
@@ -449,6 +874,10 @@ intkeyring_apply_settings(void *notify_handle,
 {
 	const gchar *passphrase, *passphrase2;
 
+	intkeyring_unlock(_("You have to unlock the keyring first."));
+	if (!intkeyring_unlocked)
+		return FALSE;
+
 	passphrase = purple_request_fields_get_string(fields, "passphrase1");
 	if (g_strcmp0(passphrase, "") == 0)
 		passphrase = NULL;
@@ -463,7 +892,9 @@ intkeyring_apply_settings(void *notify_handle,
 		return FALSE;
 	}
 
-	if (purple_request_fields_get_bool(fields, "encrypt_passwords") && !passphrase) {
+	if (purple_request_fields_get_bool(fields, "encrypt_passwords") &&
+		!passphrase && !intkeyring_key)
+	{
 		purple_notify_error(notify_handle,
 			_("Internal keyring settings"),
 			_("You have to set up a Master password, if you want "
@@ -471,15 +902,34 @@ intkeyring_apply_settings(void *notify_handle,
 		return FALSE;
 	}
 
-	purple_prefs_set_bool(INTKEYRING_PREFS "encrypt_passwords",
-		purple_request_fields_get_bool(fields, "encrypt_passwords"));
+	if (!purple_request_fields_get_bool(fields, "encrypt_passwords") &&
+		passphrase)
+	{
+		purple_notify_error(notify_handle,
+			_("Internal keyring settings"),
+			_("You don't need any master password, if you won't "
+			"enable passwords encryption"), NULL);
+		return FALSE;
+	}
+
+	purple_prefs_set_string(INTKEYRING_PREFS "encryption_method",
+		INTKEYRING_ENCRYPTION_METHOD);
 
 	purple_prefs_set_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
 		purple_request_fields_get_integer(fields,
 			"pbkdf2_desired_iterations"));
 
-	if (passphrase)
-		intkeyring_change_master_password(passphrase);
+	if (passphrase != NULL) {
+		if (!intkeyring_change_masterpw(passphrase))
+			return FALSE;
+	}
+
+	purple_prefs_set_bool(INTKEYRING_PREFS "encrypt_passwords",
+		purple_request_fields_get_bool(fields, "encrypt_passwords"));
+
+	purple_signal_emit(purple_keyring_get_handle(), "password-migration",
+		NULL);
+
 
 	return TRUE;
 }
@@ -526,6 +976,13 @@ intkeyring_unload(PurplePlugin *plugin)
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
 
+	if (intkeyring_key != NULL) {
+		purple_debug_warning("keyring-internal", "Master key should be "
+			"cleaned up at this point\n");
+		intkeyring_buff_free(intkeyring_key);
+		intkeyring_key = NULL;
+	}
+
 	return TRUE;
 }
 
@@ -560,10 +1017,10 @@ static void
 init_plugin(PurplePlugin *plugin)
 {
 	purple_prefs_add_none("/plugins/keyrings");
-	purple_prefs_add_none(INTKEYRING_PREFS);
+	purple_prefs_add_none("/plugins/keyrings/internal");
 	purple_prefs_add_bool(INTKEYRING_PREFS "encrypt_passwords", FALSE);
 	purple_prefs_add_string(INTKEYRING_PREFS "encryption_method",
-		"pbkdf2-sha256-aes256");
+		INTKEYRING_ENCRYPTION_METHOD);
 	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
 		INTKEYRING_PBKDF2_ITERATIONS);
 	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_iterations",
