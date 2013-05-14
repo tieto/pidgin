@@ -49,6 +49,9 @@
 
 #define INTKEYRING_PREFS "/plugins/keyrings/internal/"
 
+/* win32 build defines such macro to override read() routine */
+#undef read
+
 typedef struct
 {
 	enum
@@ -673,6 +676,8 @@ intkeyring_save(PurpleAccount *account, const gchar *password,
 	intkeyring_open();
 
 	if (!intkeyring_unlocked) {
+		intkeyring_request *req;
+
 		if (password == NULL) {
 			g_hash_table_remove(intkeyring_ciphertexts, account);
 			g_hash_table_remove(intkeyring_passwords, account);
@@ -681,8 +686,7 @@ intkeyring_save(PurpleAccount *account, const gchar *password,
 			return;
 		}
 
-		intkeyring_request *req = g_new0(intkeyring_request, 1);
-
+		req = g_new0(intkeyring_request, 1);
 		req->type = INTKEYRING_REQUEST_SAVE;
 		req->account = account;
 		req->password = g_strdup(password);
