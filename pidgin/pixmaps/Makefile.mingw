@@ -13,7 +13,7 @@ datadir := $(PIDGIN_INSTALL_DIR)
 .PHONY: install clean
 
 install: ./Makefile.am.mingw
-	if test '$(SUBDIRS)'; then \
+	$(MAKE_at) if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
 	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
 	  done; \
@@ -35,7 +35,7 @@ install: ./Makefile.am.mingw
 	fi;
 
 clean: ./Makefile.am.mingw
-	if test '$(SUBDIRS)'; then \
+	$(MAKE_at) if test '$(SUBDIRS)'; then \
 		list='$(SUBDIRS)'; for subdir in $$list; do \
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) clean;\
 		done; \

@@ -144,10 +144,11 @@ include $(PIDGIN_COMMON_RULES)
 .PHONY: all install install_shallow clean
 
 all: $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
-	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
 
 win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
-	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
+	@echo -e "  GEN\t$@"
+	@sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
 	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
 	    $@.in > $@
 
@@ -157,11 +158,12 @@ install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	cp -r themes/* "$(PIDGIN_INSTALL_DIR)/pidgin/theme/"
 
 install: install_shallow all
-	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) install
 
 win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
-	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
+	@echo -e "  GEN\t$@"
+	@sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
 	    $@.in > $@
 
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
@@ -178,8 +180,8 @@ $(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(EXE_OBJECTS) $(PIDGIN_TA
 ## CLEAN RULES
 ##
 clean:
-	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_OBJECTS) $(PIDGIN_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
 	rm -f $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a $(PIDGIN_TARGET).def
 	rm -f $(EXE_TARGET).exe

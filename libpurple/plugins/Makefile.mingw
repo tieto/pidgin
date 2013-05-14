@@ -46,15 +46,15 @@ LIBS =	\
 .PHONY: all clean plugins install
 
 all: $(PURPLE_DLL).a plugins
-	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PURPLE_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
@@ -78,9 +78,9 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
 include $(PIDGIN_COMMON_TARGETS)

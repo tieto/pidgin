@@ -108,9 +108,10 @@ install: all
 $(C_FILES): $(PURPLE_CONFIG_H)
 
 $(AUTOSPLIT):
-	mkdir -p ./lib/auto
-	cp Purple.pm ./lib
-	$(PERL) -MAutoSplit -e 'autosplit("lib/Purple.pm")'
+	@echo -e "  GEN\t$@"
+	@mkdir -p ./lib/auto
+	@cp Purple.pm ./lib
+	@$(PERL) -MAutoSplit -e 'autosplit("lib/Purple.pm")'
 
 $(TARGET).dll: $(PURPLE_DLL).a $(PURPLE_PERL_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
