@@ -48,13 +48,6 @@ typedef struct
 
 } PurplePerlPrefsHandler;
 
-typedef struct
-{
-	SV *callback;
-	SV *data;
-
-} PurplePerlAccountPasswordHandler;
-
 void purple_perl_plugin_action_cb(PurplePluginAction * gpa);
 GList *purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context);
 

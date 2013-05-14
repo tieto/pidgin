@@ -4,6 +4,12 @@
 #include "debug.h"
 #include "signals.h"
 
+typedef struct
+{
+	SV *callback;
+	SV *data;
+} PurplePerlAccountPasswordHandler;
+
 extern PerlInterpreter *my_perl;
 static GSList *cmd_handlers = NULL;
 static GSList *signal_handlers = NULL;
@@ -847,41 +853,33 @@ void purple_perl_pref_cb_clear_for_plugin(PurplePlugin *plugin)
 }
 
 static void
-perl_account_save_cb(PurpleAccount *account, GError *error, gpointer data)
+perl_account_save_cb(PurpleAccount *account, GError *error, gpointer _handler)
 {
-	int count;
+	PurplePerlAccountPasswordHandler *handler = _handler;
 	SV *accountSV, *errorSV;
-	PurplePerlAccountPasswordHandler *handler = data;
 
 	dSP;
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
 
-	/* Push the account onto the perl stack */
-	accountSV = sv_2mortal(purple_perl_bless_object(account, "Purple::Account"));
+	accountSV = sv_2mortal(purple_perl_bless_object(account,
+		"Purple::Account"));
 	XPUSHs(accountSV);
 
-	/* Push the error onto the perl stack */
-	errorSV = sv_2mortal(purple_perl_bless_object(account, "GLib::Error"));
+	errorSV = sv_2mortal(purple_perl_bless_object(error, "GLib::Error"));
 	XPUSHs(errorSV);
 
-	/* Push the data onto the perl stack */
 	XPUSHs((SV *)handler->data);
 
 	PUTBACK;
-	count = call_sv(handler->callback, G_EVAL | G_SCALAR);
-
-	if (count != 0)
-		croak("call_sv: Did not return the correct number of values.\n");
+	call_sv(handler->callback, G_EVAL | G_SCALAR);
+	SPAGAIN;
 
 	if (SvTRUE(ERRSV)) {
-		purple_debug_error("perl",
-		                 "Perl plugin command function exited abnormally: %s\n",
-		                 SvPVutf8_nolen(ERRSV));
+		purple_debug_error("perl", "Perl plugin command function "
+			"exited abnormally: %s\n", SvPVutf8_nolen(ERRSV));
 	}
-
-	SPAGAIN;
 
 	PUTBACK;
 	FREETMPS;
@@ -892,46 +890,36 @@ perl_account_save_cb(PurpleAccount *account, GError *error, gpointer data)
 
 static void
 perl_account_read_cb(PurpleAccount *account, const gchar *password,
-                     GError *error, gpointer data)
+	GError *error, gpointer _handler)
 {
-	int count;
+	PurplePerlAccountPasswordHandler *handler = _handler;
 	SV *accountSV, *passwordSV, *errorSV;
-	PurplePerlAccountPasswordHandler *handler = data;
 
 	dSP;
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
 
-	/* Push the account onto the perl stack */
-	accountSV = sv_2mortal(purple_perl_bless_object(account, "Purple::Account"));
+	accountSV = sv_2mortal(purple_perl_bless_object(account,
+		"Purple::Account"));
 	XPUSHs(accountSV);
 
-	/* Push the password onto the perl stack */
-	passwordSV = newSVpv(password, 0);
-	passwordSV = sv_2mortal(passwordSV);
+	passwordSV = sv_2mortal(newSVpv(password, 0));
 	XPUSHs(passwordSV);
 
-	/* Push the error onto the perl stack */
-	errorSV = sv_2mortal(purple_perl_bless_object(account, "GLib::Error"));
+	errorSV = sv_2mortal(purple_perl_bless_object(error, "GLib::Error"));
 	XPUSHs(errorSV);
 
-	/* Push the data onto the perl stack */
 	XPUSHs((SV *)handler->data);
 
 	PUTBACK;
-	count = call_sv(handler->callback, G_EVAL | G_SCALAR);
-
-	if (count != 0)
-		croak("call_sv: Did not return the correct number of values.\n");
+	call_sv(handler->callback, G_EVAL | G_SCALAR);
+	SPAGAIN;
 
 	if (SvTRUE(ERRSV)) {
-		purple_debug_error("perl",
-		                 "Perl plugin command function exited abnormally: %s\n",
-		                 SvPVutf8_nolen(ERRSV));
+		purple_debug_error("perl", "Perl plugin command function "
+			"exited abnormally: %s\n", SvPVutf8_nolen(ERRSV));
 	}
-
-	SPAGAIN;
 
 	PUTBACK;
 	FREETMPS;
@@ -945,27 +933,33 @@ purple_perl_account_get_password(PurpleAccount *account, SV *func, SV *data)
 {
 	PurplePerlAccountPasswordHandler *handler;
 
-	handler = g_new0(PurplePerlAccountPasswordHandler, 1);
-	handler->callback = (func != NULL &&
-	                     func != &PL_sv_undef ? newSVsv(func) : NULL);
-	handler->data     = (data != NULL &&
-	                     data != &PL_sv_undef ? newSVsv(data) : NULL);
+	if (func == &PL_sv_undef)
+		func = NULL;
+	if (data == &PL_sv_undef)
+		data = NULL;
 
-	purple_account_get_password(account, perl_account_read_cb, data);
+	handler = g_new0(PurplePerlAccountPasswordHandler, 1);
+	handler->callback = (func != NULL ? newSVsv(func) : NULL);
+	handler->data = (data != NULL ? newSVsv(data) : NULL);
+
+	purple_account_get_password(account, perl_account_read_cb, handler);
 }
 
 void
-purple_perl_account_set_password(PurpleAccount *account, const char *password,
-                                 SV *func, SV *data)
+purple_perl_account_set_password(PurpleAccount *account, const gchar *password,
+	SV *func, SV *data)
 {
 	PurplePerlAccountPasswordHandler *handler;
 
+	if (func == &PL_sv_undef)
+		func = NULL;
+	if (data == &PL_sv_undef)
+		data = NULL;
+
 	handler = g_new0(PurplePerlAccountPasswordHandler, 1);
-	handler->callback = (func != NULL &&
-	                     func != &PL_sv_undef ? newSVsv(func) : NULL);
-	handler->data     = (data != NULL &&
-	                     data != &PL_sv_undef ? newSVsv(data) : NULL);
+	handler->callback = (func != NULL ? newSVsv(func) : NULL);
+	handler->data = (data != NULL ? newSVsv(data) : NULL);
 
-	purple_account_set_password(account, password, perl_account_save_cb, data);
+	purple_account_set_password(account, password, perl_account_save_cb,
+		handler);
 }
-

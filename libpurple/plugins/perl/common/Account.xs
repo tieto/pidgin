@@ -51,7 +51,7 @@ purple_account_set_password(account, password, func, data = 0)
     SV *func
     SV *data
 CODE:
-	purple_perl_account_set_password(account, password, func, data);
+    purple_perl_account_set_password(account, password, func, data);
 
 void
 purple_account_set_alias(account, alias)
@@ -141,7 +141,7 @@ purple_account_get_password(account, func, data = 0)
     SV *func
     SV *data
 CODE:
-	purple_perl_account_get_password(account, func, data);
+    purple_perl_account_get_password(account, func, data);
 
 const char *
 purple_account_get_alias(account)
