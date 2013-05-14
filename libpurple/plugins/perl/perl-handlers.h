@@ -86,6 +86,6 @@ void
 purple_perl_account_get_password(PurpleAccount *account, SV *func, SV *data);
 void
 purple_perl_account_set_password(PurpleAccount *account, const char *password,
-                                 SV *func, SV *data);
+	SV *func, SV *data);
 
 #endif /* _PURPLE_PERL_HANDLERS_H_ */

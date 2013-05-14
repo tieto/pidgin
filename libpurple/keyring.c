@@ -247,7 +247,7 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 	if (tracker->error == NULL) {
 		tracker->error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_UNKNOWN,
-			"Unknown error has occured");
+			_("An unknown error has occured."));
 	}
 
 	if (tracker->cb != NULL)
@@ -379,7 +379,8 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring, gboolean force,
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_INTERNAL,
-			"There is a password migration session already running");
+			_("There is a password migration session already "
+			"running."));
 		cb(error, data);
 		g_error_free(error);
 		return;
@@ -675,7 +676,7 @@ purple_keyring_import_password(PurpleAccount *account, const gchar *keyring_id,
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_BACKENDFAIL,
-				"Specified keyring is not registered.");
+				_("Specified keyring is not registered."));
 		}
 		purple_debug_warning("Keyring", "Specified keyring is not "
 			"registered, cannot import password info for account "
@@ -689,8 +690,8 @@ purple_keyring_import_password(PurpleAccount *account, const gchar *keyring_id,
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_NOKEYRING,
-				"No keyring loaded, cannot import password "
-				"info");
+				_("No keyring loaded, cannot import password "
+				"info."));
 		}
 		purple_debug_warning("Keyring",
 			"No keyring loaded, cannot import password info for "
@@ -709,8 +710,8 @@ purple_keyring_import_password(PurpleAccount *account, const gchar *keyring_id,
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_INTERNAL,
-				"Specified keyring id does not match the "
-				"loaded one.");
+				_("Specified keyring id does not match the "
+				"loaded one."));
 		}
 		purple_debug_error("keyring",
 			"Specified keyring %s is not currently used (%s). "
@@ -755,8 +756,8 @@ purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 		if (import == NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_NOKEYRING,
-				"No keyring configured, cannot export password "
-				"info");
+				_("No keyring configured, cannot export "
+				"password info."));
 			purple_debug_warning("keyring",
 				"No keyring configured, cannot export password "
 				"info.\n");
@@ -816,7 +817,7 @@ purple_keyring_get_password(PurpleAccount *account,
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_INTERNAL,
-			"Cannot request a password while quitting.");
+			_("Cannot request a password while quitting."));
 		cb(account, NULL, error, data);
 		g_error_free(error);
 		return;
@@ -831,7 +832,7 @@ purple_keyring_get_password(PurpleAccount *account,
 
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured.");
+			_("No keyring configured."));
 		cb(account, NULL, error, data);
 		g_error_free(error);
 	}
@@ -892,7 +893,7 @@ purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_INTERNAL,
-			"Cannot save a password while quitting.");
+			_("Cannot save a password while quitting."));
 		cb(account, error, data);
 		g_error_free(error);
 		return;
@@ -905,7 +906,7 @@ purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_INTERNAL,
-			"Cannot save a password during password migration.");
+			_("Cannot save a password during password migration."));
 		cb(account, error, data);
 		g_error_free(error);
 		return;
@@ -917,7 +918,7 @@ purple_keyring_set_password(PurpleAccount *account, const gchar *password,
 			return;
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_NOKEYRING,
-			"No keyring configured.");
+			_("No keyring configured."));
 		cb(account, error, data);
 		g_error_free(error);
 		return;

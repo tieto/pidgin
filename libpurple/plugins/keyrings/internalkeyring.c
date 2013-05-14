@@ -419,7 +419,7 @@ intkeyring_process_queue(void)
 		else if (req->cb.read != NULL /* || req->cb.write != NULL */ ) {
 			GError *error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_CANCELLED,
-				"Operation cancelled.");
+				_("Operation cancelled."));
 			if (req->type == INTKEYRING_REQUEST_READ) {
 				req->cb.read(req->account, NULL, error,
 					req->cb_data);
@@ -656,7 +656,8 @@ intkeyring_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 				purple_account_get_protocol_id(account));
 		}
 		error = g_error_new(PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOPASSWORD, "Password not found.");
+			PURPLE_KEYRING_ERROR_NOPASSWORD,
+			_("Password not found."));
 		if (cb != NULL)
 			cb(account, NULL, error, data);
 		g_error_free(error);
@@ -776,7 +777,7 @@ intkeyring_import_password(PurpleAccount *account, const char *mode,
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_BACKENDFAIL,
-				"Invalid password storage mode");
+				_("Invalid password storage mode."));
 		}
 		return FALSE;
 	}

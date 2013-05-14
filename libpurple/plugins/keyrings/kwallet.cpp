@@ -341,7 +341,7 @@ KWalletPlugin::save_request::detailedAbort(enum PurpleKeyringError error)
 		return;
 
 	gerror = g_error_new(PURPLE_KEYRING_ERROR, error,
-		"Failed to save password");
+		_("Failed to save password."));
 	callback(account, gerror, data);
 	g_error_free(gerror);
 }
@@ -354,7 +354,7 @@ KWalletPlugin::read_request::detailedAbort(enum PurpleKeyringError error)
 		return;
 
 	gerror = g_error_new(PURPLE_KEYRING_ERROR, error,
-		"Failed to read password");
+		_("Failed to read password."));
 	callback(account, NULL, gerror, data);
 	g_error_free(gerror);
 }
