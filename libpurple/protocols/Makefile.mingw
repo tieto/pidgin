@@ -13,17 +13,17 @@ SUBDIRS = gg irc jabber msn mxit novell null oscar sametime silc simple yahoo bo
 .PHONY: all install clean
 
 all:
-	for subdir in $(SUBDIRS); do \
+	$(MAKE_at) for subdir in $(SUBDIRS); do \
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) || exit 1; \
 	done;
 
 install: all
-	for subdir in $(SUBDIRS); do \
+	$(MAKE_at) for subdir in $(SUBDIRS); do \
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1; \
 	done;
 
 clean:
-	for subdir in $(SUBDIRS); do \
+	$(MAKE_at) for subdir in $(SUBDIRS); do \
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) clean || exit 1; \
 	done;
 

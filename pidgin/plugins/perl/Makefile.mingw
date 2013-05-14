@@ -13,13 +13,13 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 .PHONY: all install clean
 
 all:
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE)
 
 install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean

@@ -67,20 +67,20 @@ include $(PIDGIN_COMMON_RULES)
 .PHONY: all docs install installer installer_offline installer_zip debug_symbols_zip installers clean uninstall create_release_install_dir generate_installer_includes $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) gtk_runtime_zip
 
 all: $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H)
-	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
 ifndef DISABLE_NLS
-	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
 endif
 
 install: all $(PIDGIN_INSTALL_DIR)
-	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
 ifndef DISABLE_NLS
-	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
 endif
-	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
 	cp $(PIDGIN_INST_DEP_DIR)/exchndl.dll $(PIDGIN_INSTALL_DIR)
 	chmod -R 777 $(PIDGIN_INSTALL_DIR)
 
@@ -182,10 +182,10 @@ docs: Doxyfile.mingw
 	@doxygen Doxyfile.mingw
 
 clean:
-	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(DEBUG_SYMBOLS_DIR).zip
 	rm -rf doc/html Doxyfile.mingw
 
