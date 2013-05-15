@@ -288,6 +288,7 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	gsize encrypted_size;
 	size_t iv_len, verify_len, text_len;
 	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
+	const gchar *verify_str = NULL;
 	ssize_t plaintext_len;
 	gchar *ret;
 
@@ -319,9 +320,14 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	purple_cipher_context_destroy(context);
 
 	verify_len = strlen(INTKEYRING_VERIFY_STR);
-	if (plaintext_len < verify_len || strncmp(
-		(gchar*)plaintext + plaintext_len - verify_len,
-		INTKEYRING_VERIFY_STR, verify_len) != 0) {
+	/* Don't remove the len > 0 check! */
+	if (plaintext_len > 0 && plaintext_len > verify_len &&
+		plaintext[plaintext_len] == '\0')
+	{
+		verify_str = (gchar*)plaintext + plaintext_len - verify_len;
+	}
+
+	if (g_strcmp0(verify_str, INTKEYRING_VERIFY_STR) != 0) {
 		purple_debug_warning("keyring-internal",
 			"Verification failed on decryption\n");
 		memset(plaintext, 0, sizeof(plaintext));
