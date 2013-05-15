@@ -1,5 +1,6 @@
 EXTRA_DIST = \
-		Makefile.mingw
+		Makefile.mingw \
+		wincred.c
 CLEANFILES =
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
