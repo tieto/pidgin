@@ -1747,12 +1747,37 @@ pidgin_request_folder(const char *title, const char *dirname,
 	return (void *)data;
 }
 
+#ifdef _WIN32
+
+/* Not needed (yet) for non-win32, but should work everywhere. */
+static void
+pidgin_window_detach_children(GtkWindow* parent)
+{
+	GList *it;
+
+	g_return_if_fail(parent != NULL);
+
+	it = gtk_window_list_toplevels();
+	for (it = g_list_first(it); it != NULL; it = g_list_next(it)) {
+		GtkWindow *win = GTK_WINDOW(it->data);
+		if (gtk_window_get_transient_for(win) == parent)
+			gtk_window_set_transient_for(win, NULL);
+	}
+}
+
+#endif
+
 static void
 pidgin_close_request(PurpleRequestType type, void *ui_handle)
 {
 	PidginRequestData *data = (PidginRequestData *)ui_handle;
 
 	g_free(data->cbs);
+
+#ifdef _WIN32
+	/* Win32 gtk ignores gtk_window_set_destroy_with_parent(..., FALSE). */
+	pidgin_window_detach_children(GTK_WINDOW(data->dialog));
+#endif
 
 	gtk_widget_destroy(data->dialog);
 
