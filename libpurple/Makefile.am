@@ -2,6 +2,7 @@ EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-signals.py \
 		dbus-analyze-types.py \
+		glibcompat.h \
 		marshallers.list \
 		purple-notifications-example \
 		purple-remote \
@@ -11,6 +12,7 @@ EXTRA_DIST = \
 		purple.h.in \
 		purple-3.pc.in \
 		purple-3-uninstalled.pc.in \
+		tag.sh \
 		version.h.in \
 		Makefile.mingw \
 		win32/global.mak \

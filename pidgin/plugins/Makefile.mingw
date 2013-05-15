@@ -105,7 +105,6 @@ plugins: \
 		sendbutton.dll \
 		spellchk.dll \
 		themeedit.dll \
-		timestamp_format.dll \
 		webkit.dll \
 		xmppconsole.dll
 
