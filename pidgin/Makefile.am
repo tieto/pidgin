@@ -2,6 +2,8 @@ EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
+		gtk3compat.h \
+		gtkdebug.html \
 		Makefile.mingw \
 		pidgin-3.pc.in \
 		pidgin-3-uninstalled.pc.in \
@@ -9,6 +11,7 @@ EXTRA_DIST = \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
 		win32/pidgin_exe_rc.rc.in \
+		win32/prepare-workspace.sh \
 		win32/gtkdocklet-win32.c \
 		win32/gtkwin32dep.c \
 		win32/gtkwin32dep.h \
@@ -19,7 +22,6 @@ EXTRA_DIST = \
 		win32/wspell.c \
 		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
-		win32/nsis/rpm2zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
