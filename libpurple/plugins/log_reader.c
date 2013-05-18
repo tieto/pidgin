@@ -297,9 +297,9 @@ static int adium_logger_size (PurpleLog *log)
 	data = log->logger_data;
 
 	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
-		struct stat st;
+		GStatBuf st;
 
-		if (!data->path || stat(data->path, &st))
+		if (!data->path || g_stat(data->path, &st))
 			st.st_size = 0;
 
 		return st.st_size;

@@ -265,7 +265,7 @@ init_libpurple(int argc, char **argv)
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
 	gboolean debug_enabled = FALSE;
-	struct stat st;
+	GStatBuf st;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},

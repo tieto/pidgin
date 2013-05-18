@@ -46,7 +46,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 
 #define SPELLCHECK_PLUGIN_ID "gtk-spellcheck"
 #define SPELLCHK_OBJECT_KEY "spellchk"

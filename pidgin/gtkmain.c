@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	GList *active_accounts;
-	struct stat st;
+	GStatBuf st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},

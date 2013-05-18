@@ -39,7 +39,7 @@ char *getarg(char *, int, int);
 void
 run_commands()
 {
-	struct stat finfo;
+	GStatBuf finfo;
 	char filename[MAXPATHLEN];
 	char buffer[1024];
 	char *command, *arg1, *arg2;
@@ -143,7 +143,7 @@ void
 init_file()
 {
 	/* most of this was taken from Bash v2.04 by the FSF */
-	struct stat finfo;
+	GStatBuf finfo;
 	char filename[MAXPATHLEN];
 
 	snprintf(filename, MAXPATHLEN, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
@@ -159,7 +159,7 @@ gboolean
 check_file()
 {
 	/* most of this was taken from Bash v2.04 by the FSF */
-	struct stat finfo;
+	GStatBuf finfo;
 	char filename[MAXPATHLEN];
 
 	snprintf(filename, MAXPATHLEN, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
