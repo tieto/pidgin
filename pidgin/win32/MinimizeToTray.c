@@ -14,7 +14,7 @@
  *
  * Copyright 2000 Matthew Ellis <m.t.ellis@bigfoot.com>
  */
-#define _WIN32_WINNT 0x0500
+#include <config.h>
 #include <windows.h>
 #include "MinimizeToTray.h"
 

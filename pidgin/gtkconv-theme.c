@@ -126,7 +126,11 @@ get_template_path(const char *dir)
 
 	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
 		g_free(file);
+#ifdef _WIN32
+		file = g_build_filename(DATADIR, "theme", "Template.html", NULL);
+#else
 		file = g_build_filename(DATADIR, "pidgin", "theme", "Template.html", NULL);
+#endif
 	}
 
 	return file;

@@ -154,8 +154,9 @@ win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 
 install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	cp $(EXE_TARGET).exe $(PIDGIN_TARGET).dll $(PIDGIN_INSTALL_DIR)
-	mkdir -p "$(PIDGIN_INSTALL_DIR)/pidgin/theme/"
-	cp -r themes/* "$(PIDGIN_INSTALL_DIR)/pidgin/theme/"
+	mkdir -p "$(PIDGIN_INSTALL_DIR)/theme"
+	cp -r themes/* "$(PIDGIN_INSTALL_DIR)/theme/"
+	chmod -R 777 "$(PIDGIN_INSTALL_DIR)/theme/"
 
 install: install_shallow all
 	$(MAKE_at) $(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
