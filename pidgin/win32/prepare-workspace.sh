@@ -32,6 +32,9 @@ ARCHIVES+="ARC_NSS "
 ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9.6-4.1.noarch.rpm;NSPR;4.9.6-4.1;b15aefbf99ade3042d0e4ed32f9368ff38064ecd;${OBS_SKIP};nss-3.14"
 ARCHIVES+="ARC_NSP "
 
+ARC_GTLS="${DOWNLOAD_HOST}mingw32-libgnutls-devel-2.12.22-2.2.noarch.rpm;GnuTLS;2.12.22-2.2;22ae0425842b2c905bdbb93e8e5f3f813db4680f;${OBS_SKIP};gnutls-2.12"
+ARCHIVES+="ARC_GTLS "
+
 ARC_PID="${DOWNLOAD_HOST}pidgin-inst-deps-20130214.tar.gz;inst-deps;20130214;372218ab472c4070cd45489dae175dea5638cf17;;"
 ARCHIVES+="ARC_PID "
 

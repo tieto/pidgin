@@ -29,7 +29,8 @@
 /* #undef HAVE_CONNECT */
 
 /* Define to 1 if Cyrus SASL is present */
-#define HAVE_CYRUS_SASL 1
+/* It's defined in global.mak. */
+/* #undef HAVE_CYRUS_SASL */
 
 /* Define if you have the external 'daylight' variable. */
 #define HAVE_DAYLIGHT 1
@@ -75,10 +76,10 @@
 /* #define HAVE_GETTEXT 1 */
 
 /* Define if you have GNUTLS */
-/* #define HAVE_GNUTLS 1 */
+#define HAVE_GNUTLS 1
 
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
-/* #define HAVE_GNUTLS_GNUTLS_H 1 */
+#define HAVE_GNUTLS_GNUTLS_H 1
 
 /* Define if <inttypes.h> exists and doesn't clash with <sys/types.h>. */
 #define HAVE_INTTYPES_H 1

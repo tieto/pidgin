@@ -12,6 +12,7 @@
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant-1.6
+GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-2.12
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk2-2.24
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
