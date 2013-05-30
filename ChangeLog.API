@@ -196,6 +196,7 @@ version 3.0.0 (??/??/????):
 		* purple_network_listen_map_external
 		* purple_network_listen_range_family. Use purple_network_listen,
 		  instead.
+		* purple_network_ip_atoi
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count

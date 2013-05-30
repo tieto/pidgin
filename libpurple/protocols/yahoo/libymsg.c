@@ -1703,7 +1703,7 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	md5_cipher = purple_ciphers_find_cipher("md5");
 	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
 	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest), md5_digest, NULL);
+	purple_cipher_context_digest(md5_ctx, md5_digest, sizeof(md5_digest));
 
 	to_y64(base64_string, md5_digest, 16);
 
@@ -1775,7 +1775,6 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	gboolean try_login_on_error = FALSE;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
@@ -1860,7 +1859,9 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 				default:
 					/* if we have everything we need, why not try to login irrespective of response */
 					if((crumb != NULL) && (yd->cookie_y != NULL) && (yd->cookie_t != NULL)) {
+#if 0
 						try_login_on_error = TRUE;
+#endif
 						break;
 					}
 					error_reason = g_strdup(_("Unknown error"));
@@ -2048,7 +2049,6 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *seed = NULL;
-	char *sn   = NULL;
 	GSList *l = pkt->hash;
 	int m = 0;
 	gchar *buf;
@@ -2057,8 +2057,7 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 94)
 			seed = pair->value;
-		if (pair->key == 1)
-			sn = pair->value;
+		/* (pair->key == 1) -> sn */
 		if (pair->key == 13)
 			m = atoi(pair->value);
 		l = l->next;
@@ -2121,7 +2120,6 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleBuddy *b;
 	GSList *l;
 	gchar *who = NULL;
-	gchar *me = NULL;
 	gchar buf[BUF_LONG];
 	gboolean ignore = TRUE;
 	gint status = 0;
@@ -2132,9 +2130,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 0:
 			who = pair->value;
 			break;
-		case 1:
-			me = pair->value;
-			break;
+		/* 1 -> me */
 		case 13:
 			/* 1 == ignore, 2 == unignore */
 			ignore = (strtol(pair->value, NULL, 10) == 1);

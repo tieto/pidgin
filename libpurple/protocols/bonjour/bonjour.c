@@ -690,6 +690,8 @@ initialize_default_account_values(void)
 {
 #ifndef _WIN32
 	struct passwd *info;
+#else
+	GThread *lookup_thread;
 #endif
 	const char *fullname = NULL, *splitpoint, *tmp;
 	gchar *conv = NULL;
@@ -705,7 +707,11 @@ initialize_default_account_values(void)
 		fullname = NULL;
 #else
 	/* The Win32 username lookup functions are synchronous so we do it in a thread */
-	g_thread_create(_win32_name_lookup_thread, NULL, FALSE, NULL);
+	lookup_thread = g_thread_try_new("bonjour dns thread", _win32_name_lookup_thread, NULL, NULL);
+	if (lookup_thread)
+		g_thread_unref(lookup_thread);
+	else
+		purple_debug_fatal("bonjour", "failed to create lookup thread\n");
 #endif
 
 	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */

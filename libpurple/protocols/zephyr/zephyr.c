@@ -831,14 +831,13 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 		int len;
 		char *stripped_sender;
 		int signature_length = strlen(notice.z_message);
-		int message_has_no_body = 0;
 		PurpleMessageFlags flags = 0;
 		gchar *tmpescape;
 
 		/* Need to deal with 0 length  messages to handle typing notification (OPCODE) ping messages */
 		/* One field zephyrs would have caused purple to crash */
 		if ( (notice.z_message_len == 0) || (signature_length >= notice.z_message_len - 1)) {
-			message_has_no_body = 1;
+			/* message has no body */
 			len = 0;
 			purple_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
 			buf3 = g_strdup("");
@@ -1083,7 +1082,12 @@ static parse_tree  *read_from_tzc(zephyr_account* zephyr){
 
 	while (select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, &tv)) {
 		selected = 1;
-		read(zephyr->fromtzc[ZEPHYR_FD_READ], bufcur, 1);
+		if (read(zephyr->fromtzc[ZEPHYR_FD_READ], bufcur, 1) != 1) {
+			purple_debug_error("zephyr", "couldn't read\n");
+			purple_connection_error(purple_account_get_connection(zephyr->account), PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "couldn't read");
+			free(buf);
+			return NULL;
+		}
 		bufcur++;
 		if ((bufcur - buf) > (bufsize - 1)) {
 			if ((buf = realloc(buf, bufsize * 2)) == NULL) {
@@ -1687,7 +1691,12 @@ static void zephyr_login(PurpleAccount * account)
 			FD_SET(zephyr->fromtzc[ZEPHYR_FD_READ], &rfds);
 			while (select_status > 0 &&
 			       select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, &tv) > 0) {
-				read(zephyr->fromtzc[ZEPHYR_FD_READ], bufcur, 1);
+				if (read(zephyr->fromtzc[ZEPHYR_FD_READ], bufcur, 1) != 1) {
+					purple_debug_error("zephyr", "couldn't read\n");
+					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "couldn't read");
+					free(buf);
+					return;
+				}
 				bufcur++;
 				if ((bufcur - buf) > (bufsize - 1)) {
 					if ((buf = realloc(buf, bufsize * 2)) == NULL) {

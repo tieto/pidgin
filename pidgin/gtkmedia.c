@@ -601,6 +601,9 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, error,
 				PURPLE_MESSAGE_ERROR, time(NULL));
+	else
+		purple_notify_error(NULL, NULL, _("Media error"), error);
+
 	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
 			0, error);
 }

@@ -3,7 +3,8 @@
 static void markup_find_tag_foreach(GQuark key_id, char *data, HV *hv) {
 	const char *key = NULL;
 	key = g_quark_to_string(key_id);
-	hv_store(hv, key, strlen(key), newSVpv(data, 0), 0);
+	if (hv_store(hv, key, strlen(key), newSVpv(data, 0), 0) == NULL)
+		purple_debug_error("perl", "hv_store failed\n");
 }
 
 MODULE = Purple::Util  PACKAGE = Purple::Util  PREFIX = purple_

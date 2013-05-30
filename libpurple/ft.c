@@ -368,7 +368,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 {
 	PurpleXfer *xfer;
 	PurpleXferType type;
-	struct stat st;
+	GStatBuf st;
 	gchar *dir;
 
 	xfer = (PurpleXfer *)user_data;
@@ -624,7 +624,7 @@ void
 purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 {
 	PurpleXferType type;
-	struct stat st;
+	GStatBuf st;
 	char *msg, *utf8, *base;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;

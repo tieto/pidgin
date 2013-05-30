@@ -2,6 +2,8 @@ EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
+		gtk3compat.h \
+		gtkdebug.html \
 		Makefile.mingw \
 		pidgin-3.pc.in \
 		pidgin-3-uninstalled.pc.in \
@@ -9,6 +11,7 @@ EXTRA_DIST = \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
 		win32/pidgin_exe_rc.rc.in \
+		win32/prepare-workspace.sh \
 		win32/gtkdocklet-win32.c \
 		win32/gtkwin32dep.c \
 		win32/gtkwin32dep.h \
@@ -19,7 +22,6 @@ EXTRA_DIST = \
 		win32/wspell.c \
 		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
-		win32/nsis/rpm2zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
@@ -152,6 +154,14 @@ pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
 	$(pidgin_headers)
 
+pidgin_builtheaders = gtkdebug.html.h
+
+BUILT_SOURCES = $(pidgin_builtheaders)
+
+%.html.h: %.html
+	$(AM_V_GEN)echo "static const char $*_html[] = {" > $@
+	$(AM_V_at)$(sedpath) -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | $(xxdpath) -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
+	$(AM_V_at)echo "};" >> $@
 
 pidgin_DEPENDENCIES = @LIBOBJS@
 pidgin_LDFLAGS = -export-dynamic
@@ -161,6 +171,8 @@ pidgin_LDADD = \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
+	$(GSTVIDEO_LIBS) \
+	$(GSTINTERFACES_LIBS) \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
@@ -187,6 +199,8 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(X11_CFLAGS) \

@@ -23,8 +23,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
+#include	"request.h"
+#include	"version.h"
 #include	"obsolete.h"
 
 #include	"protocol.h"
@@ -58,7 +60,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 		const char* username	= purple_account_get_username( account );
 
 		if ( username[0] == '+' ) {
-			char* fixed	= g_strdup( &username[1] );
+			char* fixed = g_strdup( &username[1] );
 			purple_account_set_username( account, fixed );
 			g_free( fixed );
 		}

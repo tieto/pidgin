@@ -1,5 +1,7 @@
 /* Local libgadu configuration file. */
 
+#undef printf
+
 /* libpurple's config */
 #include <config.h>
 

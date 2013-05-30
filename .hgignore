@@ -88,6 +88,7 @@ pidgin-.*.tar.gz
 pidgin.apspec$
 pidgin.desktop$
 pidgin.spec$
+pidgin/.*\.html\.h$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
@@ -97,6 +98,7 @@ pidgin/plugins/perl/common/Makefile.PL$
 pidgin/plugins/perl/common/Makefile.old
 pidgin/win32/nsis/gtk-runtime-*.*.*.*.zip
 pidgin/win32/nsis/gtk_runtime_stage$
+pidgin/win32/nsis/cacert.pem
 pidgin/win32/nsis/langmacros.nsh
 pidgin/win32/nsis/nsis_translations.desktop
 pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh

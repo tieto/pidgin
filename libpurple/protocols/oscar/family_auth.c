@@ -98,14 +98,14 @@ aim_encode_password_md5(const char *password, size_t password_len, const char *k
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)password, password_len);
-	purple_cipher_context_digest(context, 16, passdigest, NULL);
+	purple_cipher_context_digest(context, passdigest, sizeof(passdigest));
 	purple_cipher_context_destroy(context);
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
 	purple_cipher_context_append(context, passdigest, 16);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_cipher_context_digest(context, 16, digest, NULL);
+	purple_cipher_context_digest(context, digest, 16);
 	purple_cipher_context_destroy(context);
 
 	return 0;
@@ -584,7 +584,6 @@ aim_auth_securid_send(OscarData *od, const char *securid)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;
-	aim_snacid_t snacid;
 	int len;
 
 	if (!od || !(conn = flap_connection_getbytype_all(od, SNAC_FAMILY_AUTH)) || !securid)
@@ -594,7 +593,7 @@ aim_auth_securid_send(OscarData *od, const char *securid)
 
 	frame = flap_frame_new(od, 0x02, 10+2+len);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
+	/* aim_snacid_t snacid = */aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0);
 
 	byte_stream_put16(&frame->data, len);

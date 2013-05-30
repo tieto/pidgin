@@ -28,9 +28,14 @@
 #if !GTK_CHECK_VERSION(3,2,0)
 
 #define GTK_FONT_CHOOSER GTK_FONT_SELECTION_DIALOG
-#define gtk_font_chooser_dialog_new(x,y) gtk_font_selection_dialog_new(x)
 #define gtk_font_chooser_get_font gtk_font_selection_dialog_get_font_name
 #define gtk_font_chooser_set_font gtk_font_selection_dialog_set_font_name
+
+static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
+	GtkWindow *parent)
+{
+	return gtk_font_selection_dialog_new(title);
+}
 
 #if !GTK_CHECK_VERSION(3,0,0)
 

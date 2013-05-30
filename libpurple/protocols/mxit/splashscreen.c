@@ -24,9 +24,9 @@
  */
 
 #include "internal.h"
-
-#include "purple.h"
+#include "debug.h"
 #include "imgstore.h"
+#include "request.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -121,7 +121,7 @@ void splash_update(struct MXitSession* session, const char* splashId, const char
 	splash_remove(session);
 
 	/* Save the new splash image */
-	dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit",  purple_user_dir());
+	dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit", purple_user_dir());
 	purple_build_dir(dir, S_IRUSR | S_IWUSR | S_IXUSR);		/* ensure directory exists */
 
 	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.png", dir, purple_escape_filename(splashId));

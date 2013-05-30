@@ -73,12 +73,10 @@ uploadack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	guint16 something, somethingelse;
-	guint8 onemorething;
 
-	something = byte_stream_get16(bs);
-	somethingelse = byte_stream_get16(bs);
-	onemorething = byte_stream_get8(bs);
+	byte_stream_get16(bs);
+	byte_stream_get16(bs);
+	byte_stream_get8(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame);
@@ -139,7 +137,7 @@ parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	char *bn;
-	guint16 flags, iconlen;
+	guint16 iconlen;
 	guint8 iconcsumtype, iconcsumlen, *iconcsum, *icon;
 
 	bn = byte_stream_getstr(bs, byte_stream_get8(bs));
@@ -149,7 +147,7 @@ parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 		g_free(bn);
 		return 1;
 	}
-	flags = byte_stream_get16(bs);
+	byte_stream_get16(bs); /* flags */
 	iconcsumtype = byte_stream_get8(bs);
 	iconcsumlen = byte_stream_get8(bs);
 	iconcsum = byte_stream_getraw(bs, iconcsumlen);

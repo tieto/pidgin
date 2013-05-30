@@ -64,6 +64,26 @@ gboolean silcpurple_ip_is_private(const char *ip)
 	return FALSE;
 }
 
+/* there is no fstat alternative for GStatBuf */
+static int g_fstat(int fd, GStatBuf *st)
+{
+	struct stat sst;
+	int ret;
+
+	g_return_val_if_fail(st != NULL, -1);
+
+	ret = fstat(fd, &sst);
+	if (ret != 0)
+		return ret;
+
+	memset(st, 0, sizeof(GStatBuf));
+	/* only these two are used here */
+	st->st_uid = sst.st_uid;
+	st->st_mode = sst.st_mode;
+
+	return 0;
+}
+
 /* This checks stats for various SILC files and directories. First it
    checks if ~/.silc directory exist and is owned by the correct user. If
    it doesn't exist, it will create the directory. After that it checks if
@@ -74,7 +94,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	char filename[256], file_public_key[256], file_private_key[256];
 	char servfilename[256], clientfilename[256], friendsfilename[256];
 	char pkd[256], prd[256];
-	struct stat st;
+	GStatBuf st;
 	struct passwd *pw;
 	int fd;
 
@@ -238,7 +258,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 #endif
 
 	if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
-		if ((fstat(fd, &st)) == -1) {
+		if ((g_fstat(fd, &st)) == -1) {
 			purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 					   file_private_key, g_strerror(errno));
 			close(fd);
@@ -260,7 +280,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 
 			if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
-				if ((fstat(fd, &st)) == -1) {
+				if ((g_fstat(fd, &st)) == -1) {
 					purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							   file_private_key, g_strerror(errno));
 					close(fd);

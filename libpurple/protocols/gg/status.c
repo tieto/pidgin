@@ -293,7 +293,7 @@ void ggp_status_set_disconnected(PurpleAccount *account)
 		sleep_time *= 2;
 	}
 	*/
-	usleep(100000);
+	g_usleep(100000);
 	
 	g_free(msg);
 }

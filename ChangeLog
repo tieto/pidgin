@@ -57,6 +57,13 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
+	General:
+	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
+
+	Windows-Specific Changes:
+	* Updates to dependencies:
+		* NSS 3.14.3 and NSPR 4.9.5
+
 version 2.10.7 (02/13/2013):
 	Alien hatchery:
 	* No changes

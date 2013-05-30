@@ -1017,7 +1017,7 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 		    strlen(filename) >= (17 + strlen(ext)))
 		{
 			char *tmp = g_build_filename(path, filename, NULL);
-			struct stat st;
+			GStatBuf st;
 			if (g_stat(tmp, &st))
 			{
 				purple_debug_error("log", "Error stating log file: %s\n", tmp);
@@ -1035,7 +1035,7 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 
 int purple_log_common_sizer(PurpleLog *log)
 {
-	struct stat st;
+	GStatBuf st;
 	PurpleLogCommonLoggerData *data = log->logger_data;
 
 	g_return_val_if_fail(data != NULL, 0);
@@ -1675,7 +1675,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	char *logfile = g_strdup_printf("%s.log", purple_normalize(account, sn));
 	char *pathstr = g_build_filename(purple_user_dir(), "logs", logfile, NULL);
 	PurpleStringref *pathref = purple_stringref_new(pathstr);
-	struct stat st;
+	GStatBuf st;
 	time_t log_last_modified;
 	FILE *index;
 	FILE *file;
@@ -1926,7 +1926,7 @@ static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 	char *logfile = g_strdup_printf("%s.log", purple_normalize(account, name));
 	char *pathstr = g_build_filename(purple_user_dir(), "logs", logfile, NULL);
 	int size;
-	struct stat st;
+	GStatBuf st;
 
 	if (g_stat(pathstr, &st))
 		size = 0;

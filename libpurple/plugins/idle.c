@@ -151,7 +151,7 @@ idle_action(PurplePluginAction *action)
 	purple_request_field_account_set_show_all(field, FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_int_new("mins", _("Minutes"), 10);
+	field = purple_request_field_int_new("mins", _("Minutes"), 10, 0, 9999);
 	purple_request_field_group_add_field(group, field);
 
 	request = purple_request_fields_new();
@@ -211,7 +211,7 @@ idle_all_action(PurplePluginAction *action)
 
 	group = purple_request_field_group_new(NULL);
 
-	field = purple_request_field_int_new("mins", _("Minutes"), 10);
+	field = purple_request_field_int_new("mins", _("Minutes"), 10, 0, 9999);
 	purple_request_field_group_add_field(group, field);
 
 	request = purple_request_fields_new();

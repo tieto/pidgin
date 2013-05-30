@@ -19,7 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
 #include <cipher.h>
+#include "ciphers.h"
 #include <util.h>
 
 struct RC4Context {
@@ -71,7 +74,7 @@ rc4_uninit(PurpleCipherContext *context) {
 
 
 static void
-rc4_set_key (PurpleCipherContext *context, const guchar * key) {
+rc4_set_key (PurpleCipherContext *context, const guchar * key, size_t len) {
 	struct RC4Context *ctx;
 	guchar *state;
 	guchar temp_swap;
@@ -83,57 +86,21 @@ rc4_set_key (PurpleCipherContext *context, const guchar * key) {
 	x = 0;
 	y = 0;
 	state = &ctx->state[0];
+	ctx->key_len = len;
 	for(i = 0; i < 256; i++)
 	{
 		y = (key[x] + state[i] + y) % 256;
 		temp_swap = state[i];
 		state[i] = state[y];
 		state[y] = temp_swap;
-		x = (x + 1) % ctx->key_len;
+		x = (x + 1) % len;
 	}
 }
 
-static void
-rc4_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
-	struct RC4Context *ctx;
 
-	ctx = purple_cipher_context_get_data(context);
-
-	if(purple_strequal(name, "key_len")) {
-		ctx->key_len = GPOINTER_TO_INT(value);
-	}
-}
-
-static size_t
-rc4_get_key_size (PurpleCipherContext *context)
-{
-	struct RC4Context *ctx;
-
-	g_return_val_if_fail(context, -1);
-
-	ctx = purple_cipher_context_get_data(context);
-
-	g_return_val_if_fail(ctx, -1);
-
-	return ctx->key_len;
-}
-
-static void *
-rc4_get_opt(PurpleCipherContext *context, const gchar *name) {
-	struct RC4Context *ctx;
-
-	ctx = purple_cipher_context_get_data(context);
-
-	if(purple_strequal(name, "key_len")) {
-		return GINT_TO_POINTER(ctx->key_len);
-	}
-
-	return NULL;
-}
-
-static gint
-rc4_encrypt(PurpleCipherContext *context, const guchar data[],
-            size_t len, guchar output[], size_t *outlen) {
+static ssize_t
+rc4_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
+	guchar output[], size_t out_size) {
 	struct RC4Context *ctx;
 	guchar temp_swap;
 	guchar x, y, z;
@@ -146,7 +113,7 @@ rc4_encrypt(PurpleCipherContext *context, const guchar data[],
 	y = ctx->y;
 	state = &ctx->state[0];
 
-	for(i = 0; i < len; i++)
+	for(i = 0; i < in_len; i++)
 	{
 		x = (x + 1) % 256;
 		y = (state[x] + y) % 256;
@@ -154,35 +121,35 @@ rc4_encrypt(PurpleCipherContext *context, const guchar data[],
 		state[x] = state[y];
 		state[y] = temp_swap;
 		z = state[x] + (state[y]) % 256;
-		output[i] = data[i] ^ state[z];
+		output[i] = input[i] ^ state[z];
 	}
 	ctx->x = x;
 	ctx->y = y;
-	if(outlen)
-		*outlen = len;
 
-	return 0;
+	return in_len;
 }
 
 static PurpleCipherOps RC4Ops = {
-	rc4_set_opt,   /* Set Option    */
-	rc4_get_opt,   /* Get Option    */
+	NULL,          /* Set Option    */
+	NULL,          /* Get Option    */
 	rc4_init,      /* init          */
 	rc4_reset,     /* reset         */
+	NULL,          /* reset state   */
 	rc4_uninit,    /* uninit        */
 	NULL,          /* set iv        */
 	NULL,          /* append        */
 	NULL,          /* digest        */
+	NULL,          /* get digest size */
 	rc4_encrypt,   /* encrypt       */
 	NULL,          /* decrypt       */
 	NULL,          /* set salt      */
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
-	rc4_get_key_size, /* get key size  */
+	NULL,          /* get key size  */
 	NULL,          /* set batch mode */
 	NULL,          /* get batch mode */
 	NULL,          /* get block size */
-	NULL           /* set key with len */
+	NULL, NULL, NULL, NULL /* reserved */
 };
 
 PurpleCipherOps *

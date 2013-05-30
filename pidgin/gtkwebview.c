@@ -247,6 +247,7 @@ gtk_smiley_tree_remove(GtkSmileyTree *tree, GtkWebViewSmiley *smiley)
 	t->image = NULL;
 }
 
+#if 0
 static int
 gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
 {
@@ -304,6 +305,7 @@ gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
 
 	return 0;
 }
+#endif
 
 static void
 gtk_webview_disassociate_smiley_foreach(gpointer key, gpointer value,
@@ -372,6 +374,7 @@ gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
 	                 G_CALLBACK(gtk_webview_disconnect_smiley), smiley);
 }
 
+#if 0
 static gboolean
 gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
                       int *len)
@@ -390,6 +393,7 @@ gtk_webview_is_smiley(GtkWebViewPriv *priv, const char *sml, const char *text,
 	*len = gtk_smiley_tree_lookup(tree, text);
 	return (*len > 0);
 }
+#endif
 
 static GtkWebViewSmiley *
 gtk_webview_smiley_get_from_tree(GtkSmileyTree *t, const char *text)
@@ -436,6 +440,7 @@ gtk_webview_smiley_find(GtkWebView *webview, const char *sml, const char *text)
 	return gtk_webview_smiley_get_from_tree(priv->default_smilies, text);
 }
 
+#if 0
 static GdkPixbufAnimation *
 gtk_smiley_get_image(GtkWebViewSmiley *smiley)
 {
@@ -451,6 +456,7 @@ gtk_smiley_get_image(GtkWebViewSmiley *smiley)
 
 	return smiley->icon;
 }
+#endif
 
 static void
 gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
@@ -1348,7 +1354,21 @@ editable_input_cb(GtkWebView *webview, gpointer data)
 GtkWidget *
 gtk_webview_new(void)
 {
-	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
+	WebKitWebView *webview = WEBKIT_WEB_VIEW(g_object_new(gtk_webview_get_type(), NULL));
+	WebKitWebSettings *settings = webkit_web_view_get_settings(webview);
+	
+	g_object_set(G_OBJECT(settings), "default-encoding", "utf-8", NULL);
+#ifdef _WIN32
+	/* XXX: win32 WebKitGTK replaces backslash with yen sign for
+	 * "sans-serif" font. We should figure out, how to disable this
+	 * behavior, but for now I will just apply this simple hack (using other
+	 * font family).
+	 */
+	g_object_set(G_OBJECT(settings), "default-font-family", "Verdana", NULL);
+#endif
+	webkit_web_view_set_settings(webview, settings);
+	
+	return GTK_WIDGET(webview);
 }
 
 static void

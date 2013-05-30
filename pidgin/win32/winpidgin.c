@@ -25,10 +25,8 @@
  *
  */
 
-/* This is for ATTACH_PARENT_PROCESS */
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x501
-#endif
+#include "config.h"
+
 #include <windows.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -36,7 +34,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "config.h"
 
 typedef int (__cdecl* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
 typedef void (WINAPI* LPFNSETDLLDIRECTORY)(LPCWSTR);

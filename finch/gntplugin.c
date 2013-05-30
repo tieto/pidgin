@@ -510,7 +510,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 					field = purple_request_field_bool_new(name, label, purple_prefs_get_bool(name));
 					break;
 				case PURPLE_PREF_INT:
-					field = purple_request_field_int_new(name, label, purple_prefs_get_int(name));
+					field = purple_request_field_int_new(name, label, purple_prefs_get_int(name), INT_MIN, INT_MAX);
 					break;
 				case PURPLE_PREF_STRING:
 					field = purple_request_field_string_new(name, label, purple_prefs_get_string(name),

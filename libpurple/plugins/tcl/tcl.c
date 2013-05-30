@@ -30,7 +30,6 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -50,6 +49,16 @@ struct tcl_plugin_data {
 	Tcl_Interp *interp;
 };
 
+typedef struct {
+	char *id;
+	char *name;
+	char *version;
+	char *summary;
+	char *description;
+	char *author;
+	char *homepage;
+} tcl_plugin_info_strings;
+
 PurpleStringref *PurpleTclRefAccount;
 PurpleStringref *PurpleTclRefConnection;
 PurpleStringref *PurpleTclRefConversation;
@@ -67,6 +76,21 @@ static GHashTable *tcl_plugins = NULL;
 PurplePlugin *_tcl_plugin;
 
 static gboolean tcl_loaded = FALSE;
+
+static void tcl_plugin_info_strings_free(tcl_plugin_info_strings *strings)
+{
+	if (strings == NULL)
+		return;
+
+	g_free(strings->id);
+	g_free(strings->name);
+	g_free(strings->version);
+	g_free(strings->summary);
+	g_free(strings->description);
+	g_free(strings->author);
+	g_free(strings->homepage);
+	g_free(strings);
+}
 
 PurplePlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
 {
@@ -219,7 +243,9 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 			result = Tcl_GetObjResult(interp);
 			if (Tcl_ListObjGetElements(interp, result, &nelems, &listitems) == TCL_OK) {
 				if ((nelems == 6) || (nelems == 7)) {
+					tcl_plugin_info_strings *strings = g_new0(tcl_plugin_info_strings, 1);
 					info = g_new0(PurplePluginInfo, 1);
+					info->extra_info = strings;
 
 					info->magic = PURPLE_PLUGIN_MAGIC;
 					info->major_version = PURPLE_MAJOR_VERSION;
@@ -227,17 +253,17 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 					info->type = PURPLE_PLUGIN_STANDARD;
 					info->dependencies = g_list_append(info->dependencies, "core-tcl");
 
-					info->name = g_strdup(Tcl_GetString(listitems[0]));
-					info->version = g_strdup(Tcl_GetString(listitems[1]));
-					info->summary = g_strdup(Tcl_GetString(listitems[2]));
-					info->description = g_strdup(Tcl_GetString(listitems[3]));
-					info->author = g_strdup(Tcl_GetString(listitems[4]));
-					info->homepage = g_strdup(Tcl_GetString(listitems[5]));
+					info->name = strings->name = g_strdup(Tcl_GetString(listitems[0]));
+					info->version = strings->version = g_strdup(Tcl_GetString(listitems[1]));
+					info->summary = strings->summary = g_strdup(Tcl_GetString(listitems[2]));
+					info->description = strings->description = g_strdup(Tcl_GetString(listitems[3]));
+					info->author = strings->author = g_strdup(Tcl_GetString(listitems[4]));
+					info->homepage = strings->homepage = g_strdup(Tcl_GetString(listitems[5]));
 
 					if (nelems == 6)
-						info->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[0]));
+						info->id = strings->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[0]));
 					else if (nelems == 7)
-						info->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[6]));
+						info->id = strings->id = g_strdup_printf("tcl-%s", Tcl_GetString(listitems[6]));
 
 					plugin->info = info;
 
@@ -314,12 +340,9 @@ static gboolean tcl_unload_plugin(PurplePlugin *plugin)
 static void tcl_destroy_plugin(PurplePlugin *plugin)
 {
 	if (plugin->info != NULL) {
-		g_free(plugin->info->id);
-		g_free(plugin->info->name);
-		g_free(plugin->info->version);
-		g_free(plugin->info->description);
-		g_free(plugin->info->author);
-		g_free(plugin->info->homepage);
+		tcl_plugin_info_strings *info_strings = plugin->info->extra_info;
+		tcl_plugin_info_strings_free(info_strings);
+		plugin->info->extra_info = NULL;
 	}
 
 	return;
@@ -433,60 +456,20 @@ LPFNTKINIT wtk_Init = NULL;
 #define Tk_Init wtk_Init
 
 static gboolean tcl_win32_init() {
-	const char regkey[] = "SOFTWARE\\ActiveState\\ActiveTcl\\";
-	char *version = NULL;
 	gboolean retval = FALSE;
 
-	if ((version = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey, "CurrentVersion"))
-			|| (version = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey, "CurrentVersion"))) {
-		char *path = NULL;
-		char *regkey2;
-		char **tokens;
-		int major = 0, minor = 0, micro = 0;
-
-		tokens = g_strsplit(version, ".", 0);
-		if (tokens[0] && tokens[1] && tokens[2]) {
-			major = atoi(tokens[0]);
-			minor = atoi(tokens[1]);
-			micro = atoi(tokens[2]);
+	if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wpurple_find_and_loadproc("tcl85.dll", "Tcl_CreateInterp"))) {
+		purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
+	} else {
+		if(!(wtk_Init = (LPFNTKINIT) wpurple_find_and_loadproc("tk85.dll", "Tk_Init"))) {
+			HMODULE mod;
+			purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
+			if((mod = GetModuleHandle("tcl85.dll")))
+				FreeLibrary(mod);
+		} else {
+			retval = TRUE;
 		}
-		g_strfreev(tokens);
-
-		regkey2 = g_strdup_printf("%s%s\\", regkey, version);
-		if (!(major == 8 && minor == 4 && micro >= 5))
-			purple_debug(PURPLE_DEBUG_INFO, "tcl", "Unsupported ActiveTCL version %s found.\n", version);
-		else if ((path = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
-			char *tclpath;
-			char *tkpath;
-
-			purple_debug(PURPLE_DEBUG_INFO, "tcl", "Loading ActiveTCL version %s from \"%s\"\n", version, path);
-
-			tclpath = g_build_filename(path, "bin", "tcl84.dll", NULL);
-			tkpath = g_build_filename(path, "bin", "tk84.dll", NULL);
-
-			if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wpurple_find_and_loadproc(tclpath, "Tcl_CreateInterp"))) {
-				purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
-			} else {
-				if(!(wtk_Init = (LPFNTKINIT) wpurple_find_and_loadproc(tkpath, "Tk_Init"))) {
-					HMODULE mod;
-					purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
-					if((mod = GetModuleHandle("tcl84.dll")))
-						FreeLibrary(mod);
-				} else {
-					retval = TRUE;
-				}
-			}
-			g_free(tclpath);
-			g_free(tkpath);
-		}
-		g_free(path);
-		g_free(regkey2);
 	}
-
-	g_free(version);
-
-	if (!retval)
-		purple_debug(PURPLE_DEBUG_INFO, "tcl", _("Unable to detect ActiveTCL installation. If you wish to use TCL plugins, install ActiveTCL from http://www.activestate.com\n"));
 
 	return retval;
 }

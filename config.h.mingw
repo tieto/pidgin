@@ -29,6 +29,7 @@
 /* #undef HAVE_CONNECT */
 
 /* Define to 1 if Cyrus SASL is present */
+/* It's defined in global.mak. */
 /* #undef HAVE_CYRUS_SASL */
 
 /* Define if you have the external 'daylight' variable. */
@@ -62,9 +63,8 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
 
-/* Define to 1 if you have the getaddrinfo function. */
-/* TODO: Use this on new enough versions of Windows */
-/* #define HAVE_GETADDRINFO 1 */
+/* Define to 1 if you have the getaddrinfo function (since WinXP). */
+#define HAVE_GETADDRINFO 1
 
 /* Define to 1 if you have the `gethostid' function. */
 /* #define HAVE_GETHOSTID 1 */
@@ -76,10 +76,10 @@
 /* #define HAVE_GETTEXT 1 */
 
 /* Define if you have GNUTLS */
-/* #define HAVE_GNUTLS 1 */
+#define HAVE_GNUTLS 1
 
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
-/* #define HAVE_GNUTLS_GNUTLS_H 1 */
+#define HAVE_GNUTLS_GNUTLS_H 1
 
 /* Define if <inttypes.h> exists and doesn't clash with <sys/types.h>. */
 #define HAVE_INTTYPES_H 1
@@ -148,13 +148,13 @@
 /* #undef HAVE_MONO_METADATA_OBJECT_H */
 
 /* Define to 1 if you have the <nspr.h> header file. */
-/* #undef HAVE_NSPR_H */
+#define HAVE_NSPR_H 1
 
 /* Define if you have Mozilla NSS */
 #define HAVE_NSS 1
 
 /* Define to 1 if you have the <nss.h> header file. */
-/* #undef HAVE_NSS_H */
+#define HAVE_NSS_H 1
 
 /* Define if we have Pango 1.4 or newer. */
 #define HAVE_PANGO14 1
@@ -409,4 +409,7 @@
 
 #define HAVE_FILENO 1
 
-
+#ifndef _WIN32_WINNT
+/* _WIN32_WINNT_WINXP = 0x0501 */
+#define _WIN32_WINNT 0x0501
+#endif

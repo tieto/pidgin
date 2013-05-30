@@ -166,7 +166,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hx", data[i] & 0xFF);
 
 	return ascii;
 }
@@ -234,7 +234,7 @@ purple_base16_encode_chunked(const guchar *data, gsize len)
 	ascii = g_malloc(len * 3 + 1);
 
 	for (i = 0; i < len; i++)
-		g_snprintf(&ascii[i * 3], 4, "%02hhx:", data[i]);
+		g_snprintf(&ascii[i * 3], 4, "%02hx:", data[i] & 0xFF);
 
 	/* Replace the final colon with NULL */
 	ascii[len * 3 - 1] = 0;
@@ -2967,7 +2967,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	gchar *filename_temp;
 	FILE *file;
 	size_t real_size, byteswritten;
-	struct stat st;
+	GStatBuf st;
 #ifndef HAVE_FILENO
 	int fd;
 #endif
@@ -3354,7 +3354,7 @@ purple_socket_speaks_ipv4(int fd)
 	case AF_INET6:
 	{
 		int val = 0;
-		guint len = sizeof(val);
+		socklen_t len = sizeof(val);
 
 		if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &val, &len) != 0)
 			return FALSE;
@@ -3753,7 +3753,7 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 
 	for (i = 0; i < len; i++)
 		if (binary[i] < 32 || binary[i] > 126)
-			g_string_append_printf(ret, "\\x%02hhx", binary[i]);
+			g_string_append_printf(ret, "\\x%02hx", binary[i] & 0xFF);
 		else if (binary[i] == '\\')
 			g_string_append(ret, "\\\\");
 		else
@@ -4328,7 +4328,11 @@ purple_utf8_strip_unprintables(const gchar *str)
 const gchar *
 purple_gai_strerror(gint errnum)
 {
+#if GLIB_CHECK_VERSION(2, 32, 0)
+	static GPrivate msg_private = G_PRIVATE_INIT(g_free);
+#else
 	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
+#endif
 	char *msg;
 	int saved_errno = errno;
 
@@ -4356,11 +4360,19 @@ purple_gai_strerror(gint errnum)
 		}
 	}
 
+#if GLIB_CHECK_VERSION(2, 32, 0)
+	msg = g_private_get(&msg_private);
+#else
 	msg = g_static_private_get(&msg_private);
+#endif
 	if (!msg)
 	{
 		msg = g_new(gchar, 64);
+#if GLIB_CHECK_VERSION(2, 32, 0)
+		g_private_set(&msg_private, msg);
+#else
 		g_static_private_set(&msg_private, msg, g_free);
+#endif
 	}
 
 	sprintf(msg, "unknown error (%d)", errnum);

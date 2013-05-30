@@ -973,7 +973,7 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 		"PUT /users/%u.xml HTTP/1.1\r\n"
 		"Host: api.gadu-gadu.pl\r\n"
 		"%s\r\n"
-		"Content-Length: %zu\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"\r\n%s",
 		uin, token, strlen(request_data), request_data);

@@ -102,6 +102,7 @@ GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
+AC_PATH_PROG(xxdpath, xxd)
 
 dnl Storing configure arguments
 AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
@@ -471,7 +472,8 @@ running configure.
 
 	WEBKIT_VERSION=1.1.1
 	if test "x$with_gtk" = "x3"; then
-		PKG_CHECK_MODULES(WEBKIT, [webkitgtk-3.0 >= $WEBKIT_VERSION], , [
+		WEBKIT_PC_MODULE="webkitgtk-3.0"
+		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
 You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
@@ -479,7 +481,8 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 --disable-gtkui when running configure.
 ])])
 	else
-		PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= $WEBKIT_VERSION], , [
+		WEBKIT_PC_MODULE="webkit-1.0"
+		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([
 You must have WebKit for GTK+2 $WEBKIT_VERSION or newer development headers
@@ -489,6 +492,7 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 	fi
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
+	AC_SUBST(WEBKIT_PC_MODULE)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
@@ -915,6 +919,14 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 	else
 		AC_MSG_ERROR([--with-gstreamer must specify one of 0.10, 1.0 or auto.])
 	fi
+fi
+
+if test "x$with_gtk" == "x3" -a "x$with_gstreamer" == "x0.10"; then
+	AC_MSG_ERROR([WebKitGTK+ 3.0 cannot be mixed with GStreamer 0.10.
+Please switch to WebKitGTK+ 2.0 or GStreamer 1.0.])
+elif test "x$with_gtk" == "x2" -a "x$with_gstreamer" == "x1.0"; then
+	AC_MSG_ERROR([WebKitGTK+ 2.0 cannot be mixed with GStreamer 1.0.
+Please switch to WebKitGTK+ 3.0 or GStreamer 0.10.])
 fi
 
 dnl #######################################################################
@@ -1632,13 +1644,13 @@ dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
 if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
-	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; print sys.exec_prefix'`
+	PY_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.prefix)'`
+	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.exec_prefix)'`
 	changequote(<<, >>)dnl
-	PY_VERSION=`$PYTHON -c 'import sys ; print sys.version[0:3]'`
-	PY_MAJOR=`$PYTHON -c 'import sys ; print sys.version[0:2]'`
+	PY_VERSION=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:3])'`
+	PY_MAJOR=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:2])'`
 	changequote([, ])dnl
-	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h; then
 		AC_MSG_RESULT()
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )

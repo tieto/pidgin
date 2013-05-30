@@ -37,6 +37,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <glib/gstdio.h>
+
 #if 0
 #include <glob.h>
 #endif
@@ -159,9 +161,9 @@ local_read_fn(const char *path, GList **files, GError **error)
 
 	while ((str = g_dir_read_name(dir)) != NULL) {
 		char *fp = g_build_filename(path, str, NULL);
-		struct stat st;
+		GStatBuf st;
 
-		if (stat(fp, &st)) {
+		if (g_stat(fp, &st)) {
 			gnt_warning("Error stating location %s", fp);
 		} else {
 			if (S_ISDIR(st.st_mode)) {
@@ -281,7 +283,7 @@ location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 #if 0
 	int count;
 	glob_t gl;
-	struct stat st;
+	GStatBuf st;
 	int glob_ret;
 #endif
 	if (strcmp(key, "\r") && strcmp(key, "\n"))
@@ -313,7 +315,7 @@ location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 	if (!glob_ret) {  /* XXX: do something with the return value */
 		char *loc = g_path_get_dirname(gl.gl_pathv[0]);
 
-		stat(gl.gl_pathv[0], &st);
+		g_stat(gl.gl_pathv[0], &st);
 		gnt_file_sel_set_current_location(sel, loc);  /* XXX: check the return value */
 		g_free(loc);
 		if (!S_ISDIR(st.st_mode) && !sel->dirsonly) {

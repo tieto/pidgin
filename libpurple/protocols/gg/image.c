@@ -152,7 +152,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 	image_crc = gg_crc32(0, image_data, image_size);
 	
 	purple_debug_info("gg", "ggp_image_prepare: image prepared "
-		"[id=%d, crc=%u, size=%zu]\n",
+		"[id=%d, crc=%u, size=%" G_GSIZE_FORMAT "]\n",
 		stored_id, image_crc, image_size);
 	
 	*id = ggp_image_params_to_id(image_crc, image_size);

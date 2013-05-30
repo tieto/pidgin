@@ -7,8 +7,13 @@ libpurple_ciphers_la_SOURCES=\
 	md4.c \
 	rc4.c
 
+noinst_HEADERS =\
+	ciphers.h
+
 INCLUDES = -I$(top_srcdir)/libpurple
 
 AM_CPPFLAGS = \
-	$(GLIB_CFLAGS)
-
+	$(INTGG_CFLAGS) \
+	$(AM_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(DEBUG_CFLAGS)

@@ -75,7 +75,6 @@
 #define BUF_LEN MSG_LEN
 #define BUF_LONG BUF_LEN * 2
 
-#include <sys/stat.h>
 #include <sys/types.h>
 #ifndef _WIN32
 #include <sys/time.h>

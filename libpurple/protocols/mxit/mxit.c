@@ -23,10 +23,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
-#include	"notify.h"
-#include	"plugin.h"
+#include	"internal.h"
+#include	"debug.h"
+#include	"accountopt.h"
 #include	"version.h"
 
 #include	"mxit.h"
@@ -563,7 +562,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
-												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME };
+												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_RELATIONSHIP };
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
@@ -665,6 +664,58 @@ static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *ch
 }
 
 
+/*------------------------------------------------------------------------
+ * Send a typing indicator event.
+ *
+ *  @param gc		The connection object
+ *  @param name		The username of the contact
+ *  @param state	The typing state to be reported.
+ */
+static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleTypingState state )
+{
+	PurpleAccount*		account		= purple_connection_get_account( gc );
+	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
+	PurpleBuddy*		buddy;
+	struct contact*		contact;
+	gchar*				messageId	= NULL;
+
+	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	buddy = purple_find_buddy( account, name );
+	if ( !buddy ) {
+		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_send_typing: unable to find the buddy '%s'\n", name );
+		return 0;
+	}
+
+	contact = purple_buddy_get_protocol_data( buddy );
+	if ( !contact )
+		return 0;
+
+	/* does this contact support and want typing notification? */
+	if ( ! ( contact->capabilities & MXIT_PFLAG_TYPING ) )
+		return 0;
+
+	messageId = purple_uuid_random();		/* generate a unique message id */
+
+	switch ( state ) {
+		case PURPLE_TYPING :		/* currently typing */
+			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_TYPING );
+			break;
+
+		case PURPLE_TYPED :			/* stopped typing */
+		case PURPLE_NOT_TYPING :	/* not typing / erased all text */
+			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_STOPPED );
+			break;
+
+		default:
+			break;
+	}
+
+	g_free( messageId );
+
+	return 0;
+}
+
+
 /*========================================================================================================================*/
 
 static PurplePluginProtocolInfo proto_info = {
@@ -691,7 +742,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_close,				/* close */
 	mxit_send_im,			/* send_im */
 	NULL,					/* set_info */
-	NULL,					/* send_typing */
+	mxit_send_typing,		/* send_typing */
 	mxit_get_info,			/* get_info */
 	mxit_set_status,		/* set_status */
 	NULL,					/* set_idle */

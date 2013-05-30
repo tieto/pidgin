@@ -232,7 +232,6 @@ purple_certificate_verify(verifier, subject_name, cert_chain, cb, cb_data)
 	Purple::Certificate::Verifier verifier
 	const gchar* subject_name
 	AV* cert_chain
-	CV *cb
 	SV *cb_data
 	PREINIT:
 		GList *l = NULL;

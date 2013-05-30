@@ -124,8 +124,9 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			}
 
 			g_snprintf(tag, sizeof(tag),
-					   "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">",
-					   colors[0], colors[1], colors[2]);
+				"<FONT COLOR=\"#%02hx%02hx%02hx\">",
+				colors[0] & 0xFF, colors[1] & 0xFF,
+				colors[2] & 0xFF);
 
 			pre = g_string_append(pre, tag);
 			post = g_string_prepend(post, "</FONT>");
@@ -564,7 +565,7 @@ msn_handle_chl(char *input, char *output)
 
 	purple_cipher_context_append(context, (guchar *)input, strlen(input));
 	purple_cipher_context_append(context, productKey, sizeof(productKey) - 1);
-	purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
+	purple_cipher_context_digest(context, md5Hash, sizeof(md5Hash));
 	purple_cipher_context_destroy(context);
 
 	/* Split it into four integers */

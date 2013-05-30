@@ -192,12 +192,11 @@ des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
-	size_t outlen;
 
 	cipher = purple_ciphers_find_cipher("des");
 	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_set_key(context, key);
-	purple_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
+	purple_cipher_context_set_key(context, key, 8);
+	purple_cipher_context_encrypt(context, plaintext, 8, result, 8);
 	purple_cipher_context_destroy(context);
 }
 
@@ -243,8 +242,9 @@ gensesskey(char *buffer)
 			red = 0;
 		} else if (red < 16) {
 			purple_debug_warning("ntlm", "Tried reading 16 bytes from "
-					"/dev/urandom but only got %zd.  Falling back to "
-					"inferior method\n", red);
+					"/dev/urandom but only got %"
+					G_GSSIZE_FORMAT ".  Falling back to "
+					"inferior method\n", (gssize)red);
 		}
 	} else {
 		purple_debug_warning("ntlm", "Error opening /dev/urandom: %s."
@@ -378,7 +378,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	cipher = purple_ciphers_find_cipher("md4");
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (guint8 *)nt_pw, 2 * lennt);
-	purple_cipher_context_digest(context, 21, nt_hpw, NULL);
+	purple_cipher_context_digest(context, nt_hpw, sizeof(nt_hpw));
 	purple_cipher_context_destroy(context);
 
 	memset(nt_hpw + 16, 0, 5);

@@ -308,7 +308,7 @@ wpurple_inet_pton(int af, const char *src, void *dst)
 		struct sockaddr_in6 sin6;
 		struct sockaddr_in sin;
 	} sa;
-	size_t srcsize;
+	int srcsize;
 	
 	switch(af)
 	{
@@ -325,7 +325,7 @@ wpurple_inet_pton(int af, const char *src, void *dst)
 			return -1;
 	}
 	
-	if (WSAStringToAddress(src, af, NULL, (struct sockaddr *) &sa, &srcsize) != 0)
+	if (WSAStringToAddress((LPTSTR)src, af, NULL, (struct sockaddr *) &sa, &srcsize) != 0)
 	{
 		errno = WSAGetLastError();
 		return -1;

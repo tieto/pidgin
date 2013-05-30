@@ -21,9 +21,8 @@
  * 02111-1301, USA.
  *
  */
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
-#endif
+
+#include "config.h"
 #include <gdk/gdkwin32.h>
 #include "internal.h"
 

@@ -25,9 +25,7 @@
 
 
 #include "internal.h"
-#include <glib.h>
-
-#include "purple.h"
+#include "debug.h"
 #include "obsolete.h"
 
 #include "protocol.h"
@@ -478,7 +476,7 @@ static void command_screeninfo(struct MXitSession* session, const char* from)
  *   menu ::= <menuitem> { ";" <menuitem> }
  *     menuitem ::= { type "," <text> "," <name> "," <meta> }
  *   colors ::= <color> { ";" <color> }
- *     color ::= <colorid> "," <ARGB hex color>   
+ *     color ::= <colorid> "," <ARGB hex color>
  *
  *  @param session		The MXit session object
  *  @param from			The sender of the message.
@@ -533,7 +531,7 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 
 	/* number of columns */
 	tmp = g_hash_table_lookup(hash, "col");
-	nr_columns = atoi(tmp);	
+	nr_columns = atoi(tmp);
 
 	/* number of rows */
 	tmp = g_hash_table_lookup(hash, "row");

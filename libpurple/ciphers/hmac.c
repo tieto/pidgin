@@ -19,7 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
 #include <cipher.h>
+#include "ciphers.h"
 
 #include <util.h>
 
@@ -27,7 +30,7 @@ struct HMAC_Context {
 	PurpleCipherContext *hash;
 	char *name;
 	int blocksize;
-	guchar *opad;
+	guchar *opad, *ipad;
 };
 
 	static void
@@ -54,6 +57,21 @@ hmac_reset(PurpleCipherContext *context, gpointer extra)
 	hctx->blocksize = 0;
 	g_free(hctx->opad);
 	hctx->opad = NULL;
+	g_free(hctx->ipad);
+	hctx->ipad = NULL;
+}
+
+	static void
+hmac_reset_state(PurpleCipherContext *context, gpointer extra)
+{
+	struct HMAC_Context *hctx;
+
+	hctx = purple_cipher_context_get_data(context);
+
+	if (hctx->hash) {
+		purple_cipher_context_reset_state(hctx->hash, NULL);
+		purple_cipher_context_append(hctx->hash, hctx->ipad, hctx->blocksize);
+	}
 }
 
 	static void
@@ -98,7 +116,7 @@ hmac_append(PurpleCipherContext *context, const guchar *data, size_t len)
 }
 
 	static gboolean
-hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *out_len)
+hmac_digest(PurpleCipherContext *context, guchar *out, size_t len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 	PurpleCipherContext *hash = hctx->hash;
@@ -108,8 +126,11 @@ hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *ou
 
 	g_return_val_if_fail(hash != NULL, FALSE);
 
-	inner_hash = g_malloc(100); /* TODO: Should be enough for now... */
-	result = purple_cipher_context_digest(hash, 100, inner_hash, &hash_len);
+	hash_len = purple_cipher_context_get_digest_size(hash);
+	g_return_val_if_fail(hash_len > 0, FALSE);
+
+	inner_hash = g_malloc(hash_len);
+	result = purple_cipher_context_digest(hash, inner_hash, hash_len);
 
 	purple_cipher_context_reset(hash, NULL);
 
@@ -118,9 +139,20 @@ hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *ou
 
 	g_free(inner_hash);
 
-	result = result && purple_cipher_context_digest(hash, in_len, out, out_len);
+	result = result && purple_cipher_context_digest(hash, out, len);
 
 	return result;
+}
+
+	static size_t
+hmac_get_digest_size(PurpleCipherContext *context)
+{
+	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
+	PurpleCipherContext *hash = hctx->hash;
+
+	g_return_val_if_fail(hash != NULL, 0);
+
+	return purple_cipher_context_get_digest_size(hash);
 }
 
 	static void
@@ -136,26 +168,28 @@ hmac_uninit(PurpleCipherContext *context)
 }
 
 	static void
-hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t key_len)
+hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 	int blocksize, i;
-	guchar *ipad;
 	guchar *full_key;
 
 	g_return_if_fail(hctx->hash != NULL);
 
 	g_free(hctx->opad);
+	g_free(hctx->ipad);
 
 	blocksize = hctx->blocksize;
-	ipad = g_malloc(blocksize);
+	hctx->ipad = g_malloc(blocksize);
 	hctx->opad = g_malloc(blocksize);
 
 	if (key_len > blocksize) {
 		purple_cipher_context_reset(hctx->hash, NULL);
 		purple_cipher_context_append(hctx->hash, key, key_len);
-		full_key = g_malloc(100); /* TODO: Should be enough for now... */
-		purple_cipher_context_digest(hctx->hash, 100, full_key, &key_len);
+
+		key_len = purple_cipher_context_get_digest_size(hctx->hash);
+		full_key = g_malloc(key_len);
+		purple_cipher_context_digest(hctx->hash, full_key, key_len);
 	} else
 		full_key = g_memdup(key, key_len);
 
@@ -165,21 +199,14 @@ hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t k
 	}
 
 	for(i = 0; i < blocksize; i++) {
-		ipad[i] = 0x36 ^ full_key[i];
+		hctx->ipad[i] = 0x36 ^ full_key[i];
 		hctx->opad[i] = 0x5c ^ full_key[i];
 	}
 
 	g_free(full_key);
 
 	purple_cipher_context_reset(hctx->hash, NULL);
-	purple_cipher_context_append(hctx->hash, ipad, blocksize);
-	g_free(ipad);
-}
-
-	static void
-hmac_set_key(PurpleCipherContext *context, const guchar * key)
-{
-	hmac_set_key_with_len(context, key, strlen((char *)key));
+	purple_cipher_context_append(hctx->hash, hctx->ipad, blocksize);
 }
 
 	static size_t
@@ -193,12 +220,14 @@ hmac_get_block_size(PurpleCipherContext *context)
 static PurpleCipherOps HMACOps = {
 	hmac_set_opt,           /* Set option */
 	hmac_get_opt,           /* Get option */
-	hmac_init,               /* init */
-	hmac_reset,              /* reset */
-	hmac_uninit,             /* uninit */
+	hmac_init,              /* init */
+	hmac_reset,             /* reset */
+	hmac_reset_state,       /* reset state */
+	hmac_uninit,            /* uninit */
 	NULL,                   /* set iv */
-	hmac_append,             /* append */
-	hmac_digest,             /* digest */
+	hmac_append,            /* append */
+	hmac_digest,            /* digest */
+	hmac_get_digest_size,   /* get digest size */
 	NULL,                   /* encrypt */
 	NULL,                   /* decrypt */
 	NULL,                   /* set salt */
@@ -208,7 +237,7 @@ static PurpleCipherOps HMACOps = {
 	NULL,                   /* set batch mode */
 	NULL,                   /* get batch mode */
 	hmac_get_block_size,    /* get block size */
-	hmac_set_key_with_len   /* set key with len */
+	NULL, NULL, NULL, NULL  /* reserved */
 };
 
 PurpleCipherOps *

@@ -121,7 +121,6 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		SilcMime p;
 		const char *mtype;
 		SilcDList parts = silc_mime_get_multiparts(mime, &mtype);
-		SilcBool ret;
 
 		if (!strcmp(mtype, "mixed")) {
 			/* Contains multiple messages */
@@ -1170,7 +1169,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 	case SILC_COMMAND_WHOIS:
 		{
-			SilcUInt32 idle, *user_modes;
+			SilcUInt32 *user_modes;
 			SilcDList channels;
 			SilcClientEntry client_entry;
 			char tmp[1024];
@@ -1190,7 +1189,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			(void)va_arg(ap, char *);
 			channels = va_arg(ap, SilcDList);
 			(void)va_arg(ap, SilcUInt32);
-			idle = va_arg(ap, SilcUInt32);
+			(void)va_arg(ap, SilcUInt32); /* idle */
 			(void)va_arg(ap, unsigned char *);
 			user_modes = va_arg(ap, SilcUInt32 *);
 

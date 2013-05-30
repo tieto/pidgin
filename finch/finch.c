@@ -265,7 +265,7 @@ init_libpurple(int argc, char **argv)
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
 	gboolean debug_enabled = FALSE;
-	struct stat st;
+	GStatBuf st;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -424,7 +424,13 @@ int main(int argc, char *argv[])
 {
 	signal(SIGPIPE, SIG_IGN);
 
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+	/* GLib threading system is automaticaly initialized since 2.32.
+	 * For earlier versions, it have to be initialized before calling any
+	 * Glib or GTK+ functions.
+	 */
 	g_thread_init(NULL);
+#endif
 
 	g_set_prgname("Finch");
 	g_set_application_name(_("Finch"));

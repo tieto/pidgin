@@ -24,11 +24,11 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_LIB_TOP)/CORE
+			-I$(PERL_LIB_TOP)/include
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(PERL_LIB_TOP)
+			-L$(PERL_LIB_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -59,11 +59,11 @@ include $(PIDGIN_COMMON_RULES)
 .PHONY: all install clean
 
 all: $(TARGET).dll
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE)
 
 install: all $(PURPLE_INSTALL_PLUGINS_DIR)
 	cp $(TARGET).dll $(PURPLE_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
@@ -79,6 +79,6 @@ $(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll $(TARGET).dll.a
-	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean
 
 include $(PIDGIN_COMMON_TARGETS)

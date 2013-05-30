@@ -86,13 +86,13 @@ struct _PurplePluginInfo
 	GList *dependencies;
 	PurplePluginPriority priority;
 
-	char *id;
-	char *name;
-	char *version;
-	char *summary;
-	char *description;
-	char *author;
-	char *homepage;
+	const char *id;
+	const char *name;
+	const char *version;
+	const char *summary;
+	const char *description;
+	const char *author;
+	const char *homepage;
 
 	/**
 	 * If a plugin defines a 'load' function, and it returns FALSE,

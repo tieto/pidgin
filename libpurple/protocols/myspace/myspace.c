@@ -584,7 +584,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	/* Compute password hash */
 	purple_cipher_digest_region("sha1", (guchar *)password_utf16le,
-			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+			conv_bytes_written, hash_pw, sizeof(hash_pw));
 	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -599,7 +599,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	key_context = purple_cipher_context_new(sha1, NULL);
 	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
 	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
-	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
+	purple_cipher_context_digest(key_context, key, sizeof(key));
 	purple_cipher_context_destroy(key_context);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -614,8 +614,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	/* Note: 'key' variable is 0x14 bytes (from SHA-1 hash),
 	 * but only first 0x10 used for the RC4 key. */
-	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
-	purple_cipher_context_set_key(rc4, key);
+	purple_cipher_context_set_key(rc4, key, 0x10);
 
 	/* rc4 encrypt:
 	 * nonce1+email+IP list */
@@ -641,8 +640,8 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	data_out = g_new0(guchar, data->len);
 
-	purple_cipher_context_encrypt(rc4, (const guchar *)data->str,
-			data->len, data_out, &data_out_len);
+	data_out_len = purple_cipher_context_encrypt(rc4,
+		(const guchar *)data->str, data->len, data_out, data->len);
 	purple_cipher_context_destroy(rc4);
 
 	if (data_out_len != data->len) {
@@ -1842,11 +1841,11 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
-							"%zu characters, which is longer than the "
+							"%" G_GSIZE_FORMAT " characters, which is longer than the "
 							"maximum length of %d.  Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg,
-							strlen(purple_account_get_password(session->account)),
+							(gsize)strlen(purple_account_get_password(session->account)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */

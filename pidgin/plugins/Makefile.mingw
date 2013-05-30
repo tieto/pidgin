@@ -26,8 +26,11 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/include/cairo \
+			-I$(GTK_TOP)/include/gdk-pixbuf-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(LIBSOUP_TOP)/include/libsoup-2.4 \
+			-I$(WEBKITGTK_TOP)/include/webkitgtk-1.0 \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
@@ -35,6 +38,7 @@ INCLUDE_PATHS +=	\
 			-I$(PIDGIN_TOP)/win32
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(WEBKITGTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP)
 
@@ -51,6 +55,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lcairo \
 			-lintl \
 			-lws2_32 \
+			-lwebkitgtk-1.0 \
 			-lpurple \
 			-lpidgin
 
@@ -60,18 +65,18 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean plugins install
 
 all: plugins
-	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PIDGIN_INSTALL_PLUGINS_DIR)
 
 THEMEEDIT_SRC = themeedit.c themeedit-icon.c
@@ -100,8 +105,7 @@ plugins: \
 		sendbutton.dll \
 		spellchk.dll \
 		themeedit.dll \
-		timestamp_format.dll \
-		timestamp.dll \
+		webkit.dll \
 		xmppconsole.dll
 
 ##
@@ -109,10 +113,10 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
 include $(PIDGIN_COMMON_TARGETS)

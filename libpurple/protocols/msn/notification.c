@@ -1417,7 +1417,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	cipher = purple_cipher_context_new_by_name("md5", NULL);
 	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest_to_str(cipher, sizeof(creds), creds, NULL);
+	purple_cipher_context_digest_to_str(cipher, creds, sizeof(creds));
 	purple_cipher_context_destroy(cipher);
 	g_free(buf);
 

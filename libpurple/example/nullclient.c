@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 		PurplePluginInfo *info = plugin->info;
 		if (info && info->name) {
 			printf("\t%d: %s\n", i++, info->name);
-			names = g_list_append(names, info->id);
+			names = g_list_append(names, (gpointer)info->id);
 		}
 	}
 	printf("Select the protocol [0-%d]: ", i-1);

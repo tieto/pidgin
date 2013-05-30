@@ -1097,7 +1097,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		media->priv->participants = g_list_prepend(
 				media->priv->participants, g_strdup(who));
 
-		g_signal_emit_by_name(media, "state-changed",
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED], 0,
 				PURPLE_MEDIA_STATE_NEW, NULL, who);
 	}
 

@@ -23,7 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "purple.h"
+#include "internal.h"
+
 #include "mxit.h"
 #include "roster.h"
 #include "voicevideo.h"
@@ -196,7 +197,7 @@ gboolean mxit_media_initiate(PurpleAccount *account, const char *who, PurpleMedi
 	g_signal_connect(G_OBJECT(media), "state-changed", G_CALLBACK(mxit_state_changed_cb), NULL);
 
 	/* initiate audio session */
-	if ((type & PURPLE_MEDIA_AUDIO) && 
+	if ((type & PURPLE_MEDIA_AUDIO) &&
 			(!purple_media_add_stream(media, "audio", who, PURPLE_MEDIA_AUDIO, TRUE, transmitter, 0, NULL))) {
 		purple_media_end(media, NULL, NULL);
 		return FALSE;

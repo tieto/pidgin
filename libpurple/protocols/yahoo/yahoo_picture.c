@@ -74,7 +74,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	YahooData *yd;
 	GSList *l = pkt->hash;
-	char *who = NULL, *us = NULL;
+	char *who = NULL;
 	gboolean got_icon_info = FALSE, send_icon_info = FALSE;
 	char *url = NULL;
 	int checksum = 0;
@@ -87,8 +87,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 4:
 			who = pair->value;
 			break;
-		case 5:
-			us = pair->value;
+		case 5: /* us */
 			break;
 		case 13: {
 				int tmp;

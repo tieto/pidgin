@@ -1810,13 +1810,12 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
  */
 static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	guint16 ch;
 	guchar *cookie;
 	char *bn;
 	int ret = 0;
 
 	cookie = byte_stream_getraw(bs, 8);
-	ch = byte_stream_get16(bs);
+	byte_stream_get16(bs); /* ch */
 	bn = byte_stream_getstr(bs, byte_stream_get8(bs));
 
 	purple_debug_info("oscar", "Sent message to %s.\n", bn);

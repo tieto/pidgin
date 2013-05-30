@@ -50,25 +50,26 @@ typedef enum {
  * The operation flags for a cipher
  */
 typedef enum {
-	PURPLE_CIPHER_CAPS_SET_OPT          = 1 << 1,   /**< Set option flag	*/
-	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag	*/
-	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag			*/
-	PURPLE_CIPHER_CAPS_RESET            = 1 << 4,   /**< Reset flag			*/
-	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 5,   /**< Uninit flag		*/
-	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 6,   /**< Set IV flag		*/
-	PURPLE_CIPHER_CAPS_APPEND           = 1 << 7,   /**< Append flag		*/
-	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 8,   /**< Digest flag		*/
-	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 9,   /**< Encrypt flag		*/
-	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 10,  /**< Decrypt flag		*/
-	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 11,  /**< Set salt flag		*/
-	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 12,  /**< Get salt size flag	*/
-	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 13,  /**< Set key flag		*/
-	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 14,  /**< Get key size flag	*/
-	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 15,  /**< Set batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 16,  /**< Get batch mode flag */
-	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 17,  /**< The get block size flag */
-	PURPLE_CIPHER_CAPS_SET_KEY_WITH_LEN = 1 << 18,  /**< The set key with length flag */
-	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 19   /**< Unknown			*/
+	PURPLE_CIPHER_CAPS_SET_OPT          = 1 << 1,   /**< Set option flag */
+	PURPLE_CIPHER_CAPS_GET_OPT          = 1 << 2,   /**< Get option flag */
+	PURPLE_CIPHER_CAPS_INIT             = 1 << 3,   /**< Init flag */
+	PURPLE_CIPHER_CAPS_RESET            = 1 << 4,   /**< Reset flag */
+	PURPLE_CIPHER_CAPS_RESET_STATE      = 1 << 5,   /**< Reset state flag */
+	PURPLE_CIPHER_CAPS_UNINIT           = 1 << 6,   /**< Uninit flag */
+	PURPLE_CIPHER_CAPS_SET_IV           = 1 << 7,   /**< Set IV flag */
+	PURPLE_CIPHER_CAPS_APPEND           = 1 << 8,   /**< Append flag */
+	PURPLE_CIPHER_CAPS_DIGEST           = 1 << 9,   /**< Digest flag */
+	PURPLE_CIPHER_CAPS_GET_DIGEST_SIZE  = 1 << 10,   /**< The get digest size flag */
+	PURPLE_CIPHER_CAPS_ENCRYPT          = 1 << 11,  /**< Encrypt flag */
+	PURPLE_CIPHER_CAPS_DECRYPT          = 1 << 12,  /**< Decrypt flag */
+	PURPLE_CIPHER_CAPS_SET_SALT         = 1 << 13,  /**< Set salt flag */
+	PURPLE_CIPHER_CAPS_GET_SALT_SIZE    = 1 << 14,  /**< Get salt size flag */
+	PURPLE_CIPHER_CAPS_SET_KEY          = 1 << 15,  /**< Set key flag */
+	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 16,  /**< Get key size flag */
+	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 17,  /**< Set batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 18,  /**< Get batch mode flag */
+	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 19,  /**< The get block size flag */
+	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 20   /**< Unknown */
 } PurpleCipherCaps;
 
 /**
@@ -87,6 +88,9 @@ struct _PurpleCipherOps {
 	/** The reset function */
 	void (*reset)(PurpleCipherContext *context, void *extra);
 
+	/** The reset state function */
+	void (*reset_state)(PurpleCipherContext *context, void *extra);
+
 	/** The uninit function */
 	void (*uninit)(PurpleCipherContext *context);
 
@@ -97,22 +101,25 @@ struct _PurpleCipherOps {
 	void (*append)(PurpleCipherContext *context, const guchar *data, size_t len);
 
 	/** The digest function */
-	gboolean (*digest)(PurpleCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
+	gboolean (*digest)(PurpleCipherContext *context, guchar digest[], size_t len);
+
+	/** The get digest size function */
+	size_t (*get_digest_size)(PurpleCipherContext *context);
 
 	/** The encrypt function */
-	int (*encrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*encrypt)(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The decrypt function */
-	int (*decrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*decrypt)(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The set salt function */
-	void (*set_salt)(PurpleCipherContext *context, guchar *salt);
+	void (*set_salt)(PurpleCipherContext *context, const guchar *salt, size_t len);
 
 	/** The get salt size function */
 	size_t (*get_salt_size)(PurpleCipherContext *context);
 
 	/** The set key function */
-	void (*set_key)(PurpleCipherContext *context, const guchar *key);
+	void (*set_key)(PurpleCipherContext *context, const guchar *key, size_t len);
 
 	/** The get key size function */
 	size_t (*get_key_size)(PurpleCipherContext *context);
@@ -126,8 +133,10 @@ struct _PurpleCipherOps {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleCipherContext *context);
 
-	/** The set key with length function */
-	void (*set_key_with_len)(PurpleCipherContext *context, const guchar *key, size_t len);
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
@@ -161,13 +170,12 @@ guint purple_cipher_get_capabilities(PurpleCipher *cipher);
  * @param name     The cipher's name
  * @param data     The data to hash
  * @param data_len The length of the data
- * @param in_len   The length of the buffer
  * @param digest   The returned digest
- * @param out_len  The length written
+ * @param out_size The size of digest buffer
  *
- * @return @c TRUE if successful, @c FALSE otherwise
+ * @return The count of bytes written, or -1 if failed
  */
-gboolean purple_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, size_t in_len, guchar digest[], size_t *out_len);
+ssize_t purple_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, guchar digest[], size_t out_size);
 
 /*@}*/
 /******************************************************************************/
@@ -288,6 +296,18 @@ PurpleCipherContext *purple_cipher_context_new_by_name(const gchar *name, void *
 void purple_cipher_context_reset(PurpleCipherContext *context, gpointer extra);
 
 /**
+ * Resets a cipher state to it's default value, but doesn't touch stateless
+ * configuration.
+ *
+ * That means, IV and digest context will be wiped out, but keys, ops or salt
+ * will remain untouched.
+ *
+ * @param context The context to reset
+ * @param extra   Extra data for the specific cipher
+ */
+void purple_cipher_context_reset_state(PurpleCipherContext *context, gpointer extra);
+
+/**
  * Destorys a cipher context and deinitializes it
  *
  * @param context The cipher context to destory
@@ -317,55 +337,63 @@ void purple_cipher_context_append(PurpleCipherContext *context, const guchar *da
  * Digests a context
  *
  * @param context The context to digest
- * @param in_len  The length of the buffer
  * @param digest  The return buffer for the digest
- * @param out_len The length of the returned value
+ * @param len     The length of the buffer
  */
-gboolean purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
+gboolean purple_cipher_context_digest(PurpleCipherContext *context, guchar digest[], size_t len);
 
 /**
  * Converts a guchar digest into a hex string
  *
  * @param context  The context to get a digest from
- * @param in_len   The length of the buffer
  * @param digest_s The return buffer for the string digest
- * @param out_len  The length of the returned value
+ * @param len      The length of the buffer
  */
-gboolean purple_cipher_context_digest_to_str(PurpleCipherContext *context, size_t in_len, gchar digest_s[], size_t *out_len);
+gboolean purple_cipher_context_digest_to_str(PurpleCipherContext *context, gchar digest_s[], size_t len);
+
+/**
+ * Gets the digest size of a context
+ *
+ * @param context The context whose digest size to get
+ *
+ * @return The digest size of the context
+ */
+size_t purple_cipher_context_get_digest_size(PurpleCipherContext *context);
 
 /**
  * Encrypts data using the context
  *
- * @param context The context
- * @param data    The data to encrypt
- * @param len     The length of the data
- * @param output  The output buffer
- * @param outlen  The len of data that was outputed
+ * @param context  The context
+ * @param input    The data to encrypt
+ * @param in_len   The length of the data
+ * @param output   The output buffer
+ * @param out_size The size of the output buffer
  *
- * @return A cipher specific status code
+ * @return A length of data that was outputed or -1, if failed
  */
-gint purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+ssize_t purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
  * Decrypts data using the context
  *
- * @param context The context
- * @param data    The data to encrypt
- * @param len     The length of the returned value
- * @param output  The output buffer
- * @param outlen  The len of data that was outputed
+ * @param context  The context
+ * @param input    The data to encrypt
+ * @param in_len   The length of the returned value
+ * @param output   The output buffer
+ * @param out_size The size of the output buffer
  *
- * @return A cipher specific status code
+ * @return A length of data that was outputed or -1, if failed
  */
-gint purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+ssize_t purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
  * Sets the salt on a context
  *
  * @param context The context whose salt to set
  * @param salt    The salt
+ * @param len     The length of the salt
  */
-void purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt);
+void purple_cipher_context_set_salt(PurpleCipherContext *context, const guchar *salt, size_t len);
 
 /**
  * Gets the size of the salt if the cipher supports it
@@ -381,11 +409,12 @@ size_t purple_cipher_context_get_salt_size(PurpleCipherContext *context);
  *
  * @param context The context whose key to set
  * @param key     The key
+ * @param len     The size of the key
  */
-void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key);
+void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key, size_t len);
 
 /**
- * Gets the key size for a context
+ * Gets the size of the key if the cipher supports it
  *
  * @param context The context whose key size to get
  *
@@ -419,16 +448,6 @@ PurpleCipherBatchMode purple_cipher_context_get_batch_mode(PurpleCipherContext *
  * @return The block size of the context
  */
 size_t purple_cipher_context_get_block_size(PurpleCipherContext *context);
-
-/**
- * Sets the key with a given length on a context
- *
- * @param context The context whose key to set
- * @param key     The key
- * @param len     The length of the key
- *
- */
-void purple_cipher_context_set_key_with_len(PurpleCipherContext *context, const guchar *key, size_t len);
 
 /**
  * Sets the cipher data for a context

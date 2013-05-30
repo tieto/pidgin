@@ -775,7 +775,7 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			purple_debug_info("proxy", "UDP Connection in progress\n");
+			purple_debug_info("proxy", "UDP connection in progress\n");
 			connect_data->inpa = purple_input_add(connect_data->fd,
 					PURPLE_INPUT_WRITE, socket_ready_cb, connect_data);
 		}
@@ -987,6 +987,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				p++;
 				status = strtol(p, &p, 10);
 				error = (*p != ' ');
+				(void)minor; /* we don't need it's value */
 			}
 		}
 	}
@@ -1276,7 +1277,7 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 
 	if (connect(connect_data->fd, addr, addrlen) != 0) {
 		if (errno == EINPROGRESS || errno == EINTR) {
-			purple_debug_info("proxy", "Connection in progress\n");
+			purple_debug_info("proxy", "HTTP connection in progress\n");
 
 			connect_data->inpa = purple_input_add(connect_data->fd,
 					PURPLE_INPUT_WRITE, http_canwrite, connect_data);
@@ -1472,7 +1473,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			purple_debug_info("proxy", "Connection in progress.\n");
+			purple_debug_info("proxy", "SOCKS4 connection in progress\n");
 			connect_data->inpa = purple_input_add(connect_data->fd,
 					PURPLE_INPUT_WRITE, s4_canwrite, connect_data);
 		}
@@ -1695,7 +1696,7 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
 		purple_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
-		purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+		purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
 		pwlen=16;
 	} else {
 		memcpy(Kxoripad, passwd, pwlen);
@@ -1710,12 +1711,12 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	purple_cipher_context_reset(ctx, NULL);
 	purple_cipher_context_append(ctx, Kxoripad, 64);
 	purple_cipher_context_append(ctx, challenge, challen);
-	purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+	purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
 
 	purple_cipher_context_reset(ctx, NULL);
 	purple_cipher_context_append(ctx, Kxoropad, 64);
 	purple_cipher_context_append(ctx, Kxoripad, 16);
-	purple_cipher_context_digest(ctx, 16, response, NULL);
+	purple_cipher_context_digest(ctx, response, 16);
 
 	purple_cipher_context_destroy(ctx);
 }
@@ -2131,7 +2132,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			purple_debug_info("socks5 proxy", "Connection in progress\n");
+			purple_debug_info("proxy", "SOCKS5 connection in progress\n");
 			connect_data->inpa = purple_input_add(connect_data->fd,
 					PURPLE_INPUT_WRITE, s5_canwrite, connect_data);
 		}

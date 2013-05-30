@@ -740,7 +740,6 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *message = NULL;
 	char *command = NULL;
 	char *imv     = NULL;
-	char *unknown = NULL;
 
 	/* Get all the necessary values from this new packet */
 	while(l != NULL)
@@ -767,7 +766,6 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 			imv = pair->value;
 			break;
 		case 64:        /* Not sure, but it does vary with initialization of Doodle */
-			unknown = pair->value; /* So, I'll keep it (for a little while atleast) */
 			break;
 		}
 
@@ -793,11 +791,9 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *from = NULL;
-	char *to = NULL;
 	char *msg = NULL;
 	char *url = NULL;
 	char *imv = NULL;
-	long expires = 0;
 	PurpleXfer *xfer;
 	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
@@ -815,8 +811,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 4:
 			from = pair->value;
 			break;
-		case 5:
-			to = pair->value;
+		case 5: /* to */
 			break;
 		case 14:
 			msg = pair->value;
@@ -824,8 +819,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 20:
 			url = pair->value;
 			break;
-		case 38:
-			expires = strtol(pair->value, NULL, 10);
+		case 38: /* expires = strtol(pair->value, NULL, 10); */
 			break;
 		case 27:
 			filename = pair->value;
@@ -1593,7 +1587,6 @@ static void yahoo_p2p_client_send_ft_info(PurpleConnection *gc, PurpleXfer *xfer
 void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *from = NULL;
-	char *to = NULL;
 	char *imv = NULL;
 	long val_222 = 0L;
 	PurpleXfer *xfer;
@@ -1618,8 +1611,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 4:
 			from = pair->value;
 			break;
-		case 5:
-			to = pair->value;
+		case 5: /* to */
 			break;
 		case 265:
 			xfer_peer_idstring = pair->value;
@@ -1773,15 +1765,12 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	char *from = NULL;
-	char *to = NULL;
 	char *url = NULL;
 	long val_249 = 0;
 	long val_66 = 0;
 	PurpleXfer *xfer;
 	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
-	char *filename = NULL;
 	char *xfer_peer_idstring = NULL;
 	char *xfer_idstring_for_relay = NULL;
 	GSList *l;
@@ -1794,17 +1783,14 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 		struct yahoo_pair *pair = l->data;
 
 		switch (pair->key) {
-		case 4:
-			from = pair->value;
+		case 4: /* from */
 			break;
-		case 5:
-			to = pair->value;
+		case 5: /* to */
 			break;
 		case 265:
 			xfer_peer_idstring = pair->value;
 			break;
-		case 27:
-			filename = pair->value;
+		case 27: /* filename */
 			break;
 		case 66:
 			val_66 = strtol(pair->value, NULL, 10);
