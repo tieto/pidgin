@@ -636,14 +636,14 @@ static void ggp_login(PurpleAccount *account)
 	struct gg_login_params *glp;
 	GGPInfo *info;
 	const char *address;
-	const gchar *encryption_type;
+	const gchar *encryption_type, *protocol_version;
 
 	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
 
-	glp = g_new0(struct gg_login_params, 1);
+	glp = g_new0(struct gg_login_params, 1); // TODO: definitely lost
 	info = g_new0(GGPInfo, 1);
 
 	purple_connection_set_protocol_data(gc, info);
@@ -700,7 +700,16 @@ static void ggp_login(PurpleAccount *account)
 	}
 	else /* encryption_type == "none" */
 		glp->tls = GG_SSL_DISABLED;
-	purple_debug_info("gg", "TLS mode: %d\n", glp->tls);
+	purple_debug_misc("gg", "TLS mode: %d\n", glp->tls);
+
+	protocol_version = purple_account_get_string(account,
+		"protocol_version", "default");
+	purple_debug_info("gg", "Requested protocol version: %s\n",
+		protocol_version);
+	if (g_strcmp0(protocol_version, "gg10") == 0)
+		glp->protocol_version = GG_PROTOCOL_VERSION_100;
+	else if (g_strcmp0(protocol_version, "gg11") == 0)
+		glp->protocol_version = GG_PROTOCOL_VERSION_110;
 
 	ggp_status_set_initial(gc, glp);
 	
@@ -1035,6 +1044,7 @@ static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
+	GList *protocol_version = NULL;
 
 	purple_prefs_add_none("/plugins/prpl/gg");
 
@@ -1058,6 +1068,15 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
+
+	ADD_VALUE(protocol_version, _("Default"), "default");
+	ADD_VALUE(protocol_version, "GG 10", "gg10");
+	ADD_VALUE(protocol_version, "GG 11", "gg11");
+
+	option = purple_account_option_list_new(_("Protocol version"),
+		"protocol_version", protocol_version);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
 
