@@ -1520,7 +1520,7 @@ conversation_usetabs_cb(const char *name, PurplePrefType type,
 }
 
 
-#define CONVERSATION_CLOSE_ACCEL_PATH "<main>/Conversation/Close"
+#define CONVERSATION_CLOSE_ACCEL_PATH "<Actions>/ConversationActions/Close"
 
 /* Filled in in keyboard_shortcuts(). */
 static GtkAccelKey ctrl_w = { 0, 0, 0 };
