@@ -1057,6 +1057,49 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 }
 
 static GstElement *
+create_configured_vv_element(const gchar *type, const gchar *dir)
+{
+	gchar *tmp;
+	const gchar *plugin, *device;
+	GstElement *ret;
+
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin", type, dir);
+	plugin = purple_prefs_get_string(tmp);
+	g_free(tmp);
+
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device", type, dir);
+	device = purple_prefs_get_string(tmp);
+	g_free(tmp);
+
+	if (plugin == NULL || plugin[0] == '\0')
+		return NULL;
+
+	if (g_strcmp0(type, "video") == 0 && g_strcmp0(dir, "src") == 0 &&
+		g_strcmp0(plugin, "disabled") == 0)
+	{
+		ret = gst_element_factory_make("videotestsrc", NULL);
+		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
+		if (g_strcmp0(device, "snow") == 0) {
+			/* GST_VIDEO_TEST_SRC_SNOW */
+			g_object_set(G_OBJECT(ret), "pattern", 1, NULL);
+		} else {
+			/* GST_VIDEO_TEST_SRC_BLACK */
+			g_object_set(G_OBJECT(ret), "pattern", 2, NULL);
+		}
+		return ret;
+	}
+
+	ret = gst_element_factory_make(plugin, NULL);
+	if (device != NULL && device[0] != '\0')
+		g_object_set(G_OBJECT(ret), "device", device, NULL);
+
+	if (g_strcmp0(plugin, "videotestsrc") == 0)
+		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
+
+	return ret;
+}
+
+static GstElement *
 create_default_video_src(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
@@ -1064,19 +1107,24 @@ create_default_video_src(PurpleMedia *media,
 	GstPad *pad;
 	GstPad *ghost;
 
+	src = create_configured_vv_element("video", "src");
+
 #ifdef _WIN32
 	/* autovideosrc doesn't pick ksvideosrc for some reason */
-	src = gst_element_factory_make("ksvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("ksvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("dshowvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
 #elif defined(__APPLE__)
-	src = gst_element_factory_make("osxvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("osxvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
 #else
-	src = gst_element_factory_make("gconfvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("gconfvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
 	if (src == NULL)
@@ -1111,7 +1159,12 @@ static GstElement *
 create_default_video_sink(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	GstElement *sink = gst_element_factory_make("gconfvideosink", NULL);
+	GstElement *sink;
+
+	sink = create_configured_vv_element("video", "sink");
+
+	if (sink == NULL)
+		sink = gst_element_factory_make("gconfvideosink", NULL);
 	if (sink == NULL)
 		sink = gst_element_factory_make("autovideosink", NULL);
 	if (sink == NULL)
@@ -1125,7 +1178,11 @@ create_default_audio_src(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *src;
-	src = gst_element_factory_make("gconfaudiosrc", NULL);
+
+	src = create_configured_vv_element("audio", "src");
+
+	if (src == NULL)
+		src = gst_element_factory_make("gconfaudiosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autoaudiosrc", NULL);
 	if (src == NULL)
@@ -1150,7 +1207,11 @@ create_default_audio_sink(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sink;
-	sink = gst_element_factory_make("gconfaudiosink", NULL);
+
+	sink = create_configured_vv_element("audio", "sink");
+
+	if (sink == NULL)
+		sink = gst_element_factory_make("gconfaudiosink", NULL);
 	if (sink == NULL)
 		sink = gst_element_factory_make("autoaudiosink",NULL);
 	if (sink == NULL) {

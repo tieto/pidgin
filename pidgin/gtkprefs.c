@@ -147,6 +147,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 };
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
+	"disabled",	N_("Disabled"),
 	"videotestsrc",	"Test Input",
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
@@ -3106,6 +3107,13 @@ get_vv_element_devices(const gchar *element_name)
 		return g_list_reverse(ret);
 	}
 
+	if (g_strcmp0(element_name, "disabled") == 0) {
+		ret = g_list_prepend(ret, (gpointer)_("Random noise"));
+		ret = g_list_prepend(ret, "snow");
+
+		return g_list_reverse(ret);
+	}
+
 	element = gst_element_factory_make(element_name, "test");
 	if (!element) {
 		purple_debug_info("vvconfig", "'%s' - unable to find element\n",
@@ -3186,10 +3194,12 @@ get_vv_element_plugins(const gchar **plugins)
 	for (; plugins[0] && plugins[1]; plugins += 2) {
 #if GST_CHECK_VERSION(1,0,0)
 		if (gst_registry_check_feature_version(gst_registry_get(),
-		                                       plugins[0], 0, 0, 0)) {
+			plugins[0], 0, 0, 0)
 #else
-		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)) {
+		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)
 #endif
+			|| g_strcmp0(plugins[0], "disabled") == 0)
+		{
 			ret = g_list_prepend(ret, (gpointer)plugins[1]);
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
 		}
@@ -3270,31 +3280,16 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 }
 
 static GstElement *
-create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *info)
+create_test_element(PurpleMediaElementType type)
 {
-	char *tmp;
-	const gchar *plugin;
-	const gchar *device;
-	GstElement *ret;
+	PurpleMediaElementInfo *element_info;
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin", type, dir);
-	plugin = purple_prefs_get_string(tmp);
-	g_free(tmp);
+	element_info = purple_media_manager_get_active_element(purple_media_manager_get(), type);
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device", type, dir);
-	device = purple_prefs_get_string(tmp);
-	g_free(tmp);
+	g_return_val_if_fail(element_info, NULL);
 
-	if (plugin[0] == '\0')
-		return purple_media_element_info_call_create(info, NULL, NULL, NULL);
-
-	ret = gst_element_factory_make(plugin, NULL);
-	if (device[0] != '\0')
-		g_object_set(G_OBJECT(ret), "device", device, NULL);
-	if (!strcmp(plugin, "videotestsrc"))
-		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
-
-	return ret;
+	return purple_media_element_info_call_create(element_info,
+		NULL, NULL, NULL);
 }
 
 static void
@@ -3307,23 +3302,16 @@ vv_test_switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint num, gpoint
 static GstElement *
 create_voice_pipeline(void)
 {
-	PurpleMediaManager *manager;
-	PurpleMediaElementInfo *audio_src, *audio_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 	GstElement *volume;
 	GstElement *level;
 	GstElement *valve;
 
-	manager = purple_media_manager_get();
-	audio_src = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
-	audio_sink = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
-
 	pipeline = gst_pipeline_new("voicetest");
-	src = create_test_element("audio", "src", audio_src);
-	sink = create_test_element("audio", "sink", audio_sink);
+
+	src = create_test_element(PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
+	sink = create_test_element(PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
 	volume = gst_element_factory_make("volume", "volume");
 	level = gst_element_factory_make("level", "level");
 	valve = gst_element_factory_make("valve", "valve");
@@ -3525,20 +3513,12 @@ make_voice_test(GtkWidget *vbox)
 static GstElement *
 create_video_pipeline(void)
 {
-	PurpleMediaManager *manager;
-	PurpleMediaElementInfo *video_src, *video_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 
-	manager = purple_media_manager_get();
-	video_src = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
-	video_sink = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
-
 	pipeline = gst_pipeline_new("videotest");
-	src = create_test_element("video", "src", video_src);
-	sink = create_test_element("video", "sink", video_sink);
+	src = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
+	sink = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
 
 	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
 	gst_element_link_many(src, sink, NULL);
