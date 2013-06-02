@@ -127,6 +127,7 @@ static GtkListStore *prefs_smiley_themes;
 
 static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"alsasrc",	"ALSA",
+	"directsoundsrc", "DirectSound",
 	/* "esdmon",	"ESD", ? */
 	"osssrc",	"OSS",
 	"pulsesrc",	"PulseAudio",
@@ -138,6 +139,8 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 
 static const gchar *AUDIO_SINK_PLUGINS[] = {
 	"alsasink",	"ALSA",
+	"directsoundsink", "DirectSound",
+	/* "gconfaudiosink", "GConf", */
 	"artsdsink",	"aRts",
 	"esdsink",	"ESD",
 	"osssink",	"OSS",
@@ -160,7 +163,8 @@ static const gchar *VIDEO_SRC_PLUGINS[] = {
 
 static const gchar *VIDEO_SINK_PLUGINS[] = {
 	/* "aasink",	"AALib", Didn't work for me */
-	"directdrawsink","DirectDraw",
+	"directdrawsink", "DirectDraw",
+	/* "gconfvideosink", "GConf", */
 	"glimagesink",	"OpenGL",
 	"ximagesink",	"X Window System",
 	"xvimagesink",	"X Window System (Xv)",
@@ -2555,7 +2559,6 @@ logging_page(void)
 	return ret;
 }
 
-#ifndef _WIN32
 static gint
 sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
@@ -2583,7 +2586,6 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
-#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -2596,7 +2598,9 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(method, "automatic") ||
 			!strcmp(method, "alsa") ||
-			!strcmp(method, "esd"));
+			!strcmp(method, "esd") ||
+			!strcmp(method, "waveform") ||
+			!strcmp(method, "directsound"));
 }
 #endif /* USE_GSTREAMER */
 
@@ -2804,11 +2808,9 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
-#ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;
 	const char *cmd;
-#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -2820,16 +2822,24 @@ sound_page(void)
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
 
-#ifndef _WIN32
 	dd = pidgin_prefs_dropdown(vbox2, _("_Method:"), PURPLE_PREF_STRING,
 			PIDGIN_PREFS_ROOT "/sound/method",
-			_("Console beep"), "beep",
-#ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
+#ifdef USE_GSTREAMER
+#ifdef _WIN32
+/*			"WaveForm", "waveform", */
+			"DirectSound", "directsound",
+#else
 			"ESD", "esd",
 			"ALSA", "alsa",
-#endif
+#endif /* _WIN32 */
+#endif /* USE_GSTREAMER */
+#ifdef _WIN32
+			"PlaySound", "playsoundw",
+#else
+			_("Console beep"), "beep",
 			_("Command"), "custom",
+#endif /* _WIN32 */
 			_("No sounds"), "none",
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
@@ -2849,7 +2859,6 @@ sound_page(void)
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
 					"custom"));
-#endif /* _WIN32 */
 
 	button = pidgin_prefs_checkbox(_("M_ute sounds"), PIDGIN_PREFS_ROOT "/sound/mute", vbox);
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/mute", mute_changed_cb, button);
@@ -2881,12 +2890,10 @@ sound_page(void)
 			  purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), hbox);
 #endif
 
-#ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
-#endif
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
 
 	/* The following is an ugly hack to make the frame expand so the
@@ -3319,7 +3326,10 @@ create_voice_pipeline(void)
 	gst_bin_add_many(GST_BIN(pipeline), src, volume, level, valve, sink, NULL);
 	gst_element_link_many(src, volume, level, valve, sink, NULL);
 
+	purple_debug_info("gtkprefs", "create_voice_pipeline: setting pipeline "
+		"state to GST_STATE_PLAYING - it may hang here on win32\n");
 	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+	purple_debug_info("gtkprefs", "create_voice_pipeline: state is set\n");
 
 	return pipeline;
 }
@@ -3520,10 +3530,10 @@ create_video_pipeline(void)
 	src = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
 	sink = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
 
+	g_object_set_data(G_OBJECT(pipeline), "sink", sink);
+
 	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
 	gst_element_link_many(src, sink, NULL);
-
-	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
 
 	return pipeline;
 }
@@ -3546,6 +3556,7 @@ window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 #if GST_CHECK_VERSION(1,0,0)
 	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
 #else
+	/* there may be have-xwindow-id also, in case something went wrong */
 	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
 #endif
 		return;
@@ -3576,9 +3587,10 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 	if (gtk_toggle_button_get_active(test)) {
 		GdkWindow *window = gtk_widget_get_window(video);
 		gulong window_id = 0;
+
 #ifdef GDK_WINDOWING_WIN32
 		if (GDK_IS_WIN32_WINDOW(window))
-			window_id = GDK_WINDOW_HWND(window);
+			window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
 		else
 #endif
 #ifdef GDK_WINDOWING_X11
@@ -3608,6 +3620,8 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 		g_signal_connect(bus, "sync-message::element",
 		                 G_CALLBACK(window_id_cb), (gpointer)window_id);
 		gst_object_unref(bus);
+
+		gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
 
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(video_test_destroy_cb), NULL);

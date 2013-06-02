@@ -44,10 +44,8 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
-#ifndef _WIN32
 #ifdef USE_GSTREAMER
 #include <gst/gst.h>
-#endif
 #endif
 
 #include "gtk3compat.h"
@@ -658,14 +656,12 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>GnuTLS:</dt><dd>Disabled</dd>");
 #endif
 
-#ifndef _WIN32
 #ifdef USE_GSTREAMER
 	tmp = gst_version_string();
 	g_string_append_printf(str, "<dt>GStreamer:</dt><dd>%s</dd>", tmp);
 	g_free(tmp);
 #else
 	g_string_append(str, "<dt>GStreamer:</dt><dd>Disabled</dd>");
-#endif
 #endif
 
 #ifndef _WIN32

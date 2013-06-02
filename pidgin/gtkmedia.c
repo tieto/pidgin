@@ -556,7 +556,7 @@ realize_cb_cb(PidginMediaRealizeData *data)
 		gulong window_id = 0;
 #ifdef GDK_WINDOWING_WIN32
 		if (GDK_IS_WIN32_WINDOW(window))
-			window_id = GDK_WINDOW_HWND(window);
+			window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
 		else
 #endif
 #ifdef GDK_WINDOWING_X11
@@ -1164,6 +1164,8 @@ create_default_video_sink(PurpleMedia *media,
 	sink = create_configured_vv_element("video", "sink");
 
 	if (sink == NULL)
+		sink = gst_element_factory_make("directdrawsink", NULL);
+	if (sink == NULL)
 		sink = gst_element_factory_make("gconfvideosink", NULL);
 	if (sink == NULL)
 		sink = gst_element_factory_make("autovideosink", NULL);
@@ -1181,6 +1183,8 @@ create_default_audio_src(PurpleMedia *media,
 
 	src = create_configured_vv_element("audio", "src");
 
+	if (src == NULL)
+		src = gst_element_factory_make("directsoundsrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("gconfaudiosrc", NULL);
 	if (src == NULL)
@@ -1210,6 +1214,8 @@ create_default_audio_sink(PurpleMedia *media,
 
 	sink = create_configured_vv_element("audio", "sink");
 
+	if (sink == NULL)
+		sink = gst_element_factory_make("directsoundsink", NULL);
 	if (sink == NULL)
 		sink = gst_element_factory_make("gconfaudiosink", NULL);
 	if (sink == NULL)
