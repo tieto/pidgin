@@ -1085,6 +1085,11 @@ create_default_video_src(PurpleMedia *media,
 		src = gst_element_factory_make("v4lsrc", NULL);
 #endif
 	if (src == NULL) {
+		src = gst_element_factory_make("videotestsrc", NULL);
+		if (src != NULL)
+			g_object_set(G_OBJECT(src), "is-live", TRUE, NULL);
+	}
+	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video source.\n");
 		return NULL;
