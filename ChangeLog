@@ -722,7 +722,7 @@ version 2.7.6 (11/21/2010):
 	* Added extended capabilities support (none implemented).
 	* Merged the work done on the Google SoC (major rewrite of SLP code)
 	* Reworked the data transfer architecture.
-	  (http://developer.pidgin.im/wiki/SlpArchitecture)
+	  (https://developer.pidgin.im/wiki/SlpArchitecture)
 	* Lots of little changes.
 	* Don't process zero-length DC messages. (#12660)
 	* Fixed a bunch of memory leaks.
@@ -2123,7 +2123,7 @@ version 2.4.3 (07/01/2008):
 	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
-	http://developer.pidgin.im/query?status=closed&milestone=2.4.2
+	https://developer.pidgin.im/query?status=closed&milestone=2.4.2
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.
@@ -2189,7 +2189,7 @@ version 2.4.2 (05/17/2008):
 	  enabled).
 
 version 2.4.1 (03/31/2008):
-	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
+	https://developer.pidgin.im/query?status=closed&milestone=2.4.1
 
 	libpurple:
 	* Treat AIM Unicode messages as UTF-16 rather than UCS-2; this
@@ -2225,7 +2225,7 @@ version 2.4.1 (03/31/2008):
 	  on the right to show it.
 
 version 2.4.0 (02/29/2008):
-	http://developer.pidgin.im/query?status=closed&milestone=2.4.0
+	https://developer.pidgin.im/query?status=closed&milestone=2.4.0
 
 	libpurple:
 	* Added support for offline messages for AIM accounts (thanks to
@@ -2284,7 +2284,7 @@ version 2.4.0 (02/29/2008):
 	* Fixed a bug preventing finch working on x86_64
 
 version 2.3.1 (12/7/2007):
-	http://developer.pidgin.im/query?status=closed&milestone=2.3.1
+	https://developer.pidgin.im/query?status=closed&milestone=2.3.1
 		NOTE: Due to the way this release was made, it is possible that
 		      bugs marked as fixed in 2.3.1 will not be fixed until the
 		      next release.
@@ -2305,7 +2305,7 @@ version 2.3.1 (12/7/2007):
 	* Prevent autoaccept plugin overwriting existing files
 
 version 2.3.0 (11/24/2007):
-	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
+	https://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not
 		      have been fixed until this release (2.3.0).
 
@@ -2378,7 +2378,7 @@ version 2.3.0 (11/24/2007):
 	* 'yank' operation for the entry boxes. The default binding is ctrl+y.
 
 version 2.2.2 (10/23/2007):
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+	https://developer.pidgin.im/query?status=closed&milestone=2.2.2
 		NOTE: Due to the way this release was made, it is possible that
 			  bugs marked as fixed in 2.2.1 or 2.2.2 will not be fixed
 			  until the next release.
@@ -2390,7 +2390,7 @@ version 2.2.2 (10/23/2007):
 	  how this is done on other platforms.
 
 version 2.2.1 (09/29/2007):
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+	https://developer.pidgin.im/query?status=closed&milestone=2.2.1
 		NOTE: Due to the backporting that happened for the actual
 		      release, it is possible bugs marked as fixed in 2.2.1
 		      will not be fixed until 2.2.2.
@@ -2415,7 +2415,7 @@ version 2.2.1 (09/29/2007):
 	  dialog.
 
 version 2.2.0 (09/13/2007):
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
+	https://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
 	libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
@@ -2793,7 +2793,7 @@ version 2.0.0 (5/3/2007):
 	  Summer of Code)
 	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
 	  Code).  This requires the libgadu library.  See
-	  http://pidgin.im/faq.php#libgadu for more information.
+	  https://pidgin.im/faq.php#libgadu for more information.
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net

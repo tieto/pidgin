@@ -35,6 +35,7 @@ INCLUDE_PATHS +=	\
 			$(PURPLE_INCLUDE_PATHS) \
 			-I$(PIDGIN_TOP) \
 			-I$(PIDGIN_TOP)/win32 \
+			$(VV_INCLUDE_PATHS) \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
@@ -48,7 +49,8 @@ INCLUDE_PATHS +=	\
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(WEBKITGTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(PIDGIN_TOP)
+			-L$(PIDGIN_TOP) \
+			$(VV_LIB_PATHS)
 
 ##
 ##  SOURCES, OBJECTS
@@ -134,6 +136,7 @@ PIDGIN_LIBS =	\
 		-lgdk_pixbuf-2.0 \
 		-lgdi32 \
 		-lwinmm \
+		$(VV_LIBS) \
 		-lwebkitgtk-1.0
 
 include $(PIDGIN_COMMON_RULES)
@@ -145,6 +148,8 @@ include $(PIDGIN_COMMON_RULES)
 
 all: $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	$(MAKE_at) $(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
+
+gtkdialogs.c: $(PIDGIN_REVISION_H)
 
 win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"

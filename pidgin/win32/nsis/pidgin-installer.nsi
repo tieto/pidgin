@@ -121,7 +121,7 @@ ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
   ;!define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   ;!define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGINFINISHVISITWEBSITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"https://pidgin.im"
 
 ;--------------------------------
 ;Pages
@@ -310,7 +310,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\pidgin.exe"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
-    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "https://developer.pidgin.im/wiki/Using Pidgin"
     WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
@@ -324,7 +324,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\pidgin.exe"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
-    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "https://developer.pidgin.im/wiki/Using Pidgin"
     WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
     WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"

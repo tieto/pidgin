@@ -34,16 +34,24 @@ INCLUDE_PATHS +=	-I. \
 			-I$(LIBXML2_TOP)/include/libxml2 \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
-			-I$(PIDGIN_TREE_TOP)
+			-I$(PIDGIN_TREE_TOP) \
+			$(VV_INCLUDE_PATHS)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L.
+			-L. \
+			$(VV_LIB_PATHS)
 
 ##
 ##  SOURCES, OBJECTS
 ##
+ifeq "$(USE_VV)" "1"
+VV_SRC = google/google_p2p.c
+else
+VV_SRC =
+endif
+
 C_SRC =	\
 			adhoccommands.c \
 			auth.c \
@@ -88,7 +96,8 @@ C_SRC =	\
 			usernick.c \
 			usertune.c \
 			xdata.c \
-			win32/posix.uname.c
+			win32/posix.uname.c \
+			$(VV_SRC)
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
@@ -107,6 +116,7 @@ XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 LIBS = \
 			-lglib-2.0 \
 			-lgobject-2.0 \
+			$(VV_LIBS) \
 			-lxml2 \
 			-lws2_32 \
 			-lintl \

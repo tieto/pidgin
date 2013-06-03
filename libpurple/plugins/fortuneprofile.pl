@@ -51,7 +51,7 @@ use Gaim;
 	summary          => "Sets your AIM profile to a fortune (with a header and footer of your choice).",
 	description      => "Sets your AIM profile to a fortune (with a header and footer of your choice).",
 	author           => "Sean Egan <seanegan\@gmail.com>",
-	url              => "http://pidgin.im/",
+	url              => "https://pidgin.im/",
 
 	load             => "plugin_load"
 );

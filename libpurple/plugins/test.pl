@@ -7,7 +7,7 @@ use Purple;
 	summary          => 'Provides as a test base for the perl plugin.',
 	description      => 'Provides as a test base for the perl plugin.',
 	author           => 'Etan Reisner <deryni\@pidgin.im>',
-	url              => 'http://pidgin.im',
+	url              => 'https://pidgin.im',
 
 	load             => "plugin_load"
 );

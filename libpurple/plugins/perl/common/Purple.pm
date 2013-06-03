@@ -77,7 +77,7 @@ loaded in Purple as plugins. The scripts can interact with IMs, chats,
 accounts, the buddy list, libpurple signals, and more.
 
 The API for the perl interface is very similar to that of the Purple C
-API, which can be viewed at http://developer.pidgin.im/doxygen/ or in
+API, which can be viewed at https://developer.pidgin.im/doxygen/ or in
 the header files in the Purple source tree.
 
 =head1 FUNCTIONS
@@ -112,9 +112,9 @@ Returns a list of all instant messages currently open.
 
 =head1 SEE ALSO
 
-Purple C API documentation - http://developer.pidgin.im/doxygen/
+Purple C API documentation - https://developer.pidgin.im/doxygen/
 
-Purple website - http://pidgin.im/
+Purple website - https://pidgin.im/
 
 =head1 AUTHOR
 

@@ -1661,10 +1661,13 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	gst_object_unref(session->src);
 	gst_object_unref(sinkpad);
 
-	gst_element_set_state(session->src, GST_STATE_PLAYING);
-
 	purple_media_manager_create_output_window(purple_media_get_manager(
 			priv->media), priv->media, sess_id, NULL);
+
+	purple_debug_info("backend-fs2", "create_src: setting source "
+		"state to GST_STATE_PLAYING - it may hang here on win32\n");
+	gst_element_set_state(session->src, GST_STATE_PLAYING);
+	purple_debug_info("backend-fs2", "create_src: state set\n");
 
 	return TRUE;
 }
@@ -2096,8 +2099,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 	if (!fs_stream_set_transmitter(fsstream, transmitter,
 			_params, _num_params, &err)) {
 		purple_debug_error("backend-fs2",
-				"Could not set transmitter %s: %s.\n",
-				transmitter, err->message);
+			"Could not set transmitter %s: %s.\n",
+			transmitter, err ? err->message : NULL);
 		g_clear_error(&err);
 		g_free(_params);
 		return FALSE;

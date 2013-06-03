@@ -44,10 +44,8 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
-#ifndef _WIN32
 #ifdef USE_GSTREAMER
 #include <gst/gst.h>
-#endif
 #endif
 
 #include "gtk3compat.h"
@@ -100,6 +98,7 @@ static const struct developer developers[] = {
 	{"Will 'resiak' Thompson",             NULL,                  NULL},
 	{"Stu 'nosnilmot' Tomlinson",          NULL,                  NULL},
 	{"Jorge 'Masca' Villaseñor",           NULL,                  NULL},
+	{"Tomasz Wasilczyk",                   NULL,                  NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -108,9 +107,6 @@ static const struct developer patch_writers[] = {
 	{"Jakub 'haakon' Adam",            NULL,                        NULL},
 	{"Krzysztof Klinikowski",          NULL,                        NULL},
 	{"Eion Robb",                      NULL,                        NULL},
-	{"Peter 'Fmoo' Ruibal",            NULL,                        NULL},
-	{"Gabriel 'Nix' Schulhof",         NULL,                        NULL},
-	{"Tomasz Wasilczyk",               NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -144,10 +140,12 @@ static const struct developer retired_developers[] = {
 static const struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",    NULL, NULL},
 	{"Decklin Foster",            NULL, NULL},
-	{"Dennis 'EvilDennisR' Ristuccia", N_("Senior Contributor/QA"), NULL},
 	{"Peter 'Bleeter' Lawler",    NULL, NULL},
 	{"Robert 'Robot101' McQueen", NULL, NULL},
 	{"Benjamin Miller",           NULL, NULL},
+	{"Dennis 'EvilDennisR' Ristuccia", N_("Senior Contributor/QA"), NULL},
+	{"Peter 'Fmoo' Ruibal",       NULL, NULL},
+	{"Gabriel 'Nix' Schulhof",    NULL, NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -533,8 +531,8 @@ void pidgin_dialogs_about(void)
 			  "<li>XMPP MUC: devel@conference.pidgin.im</li>"
 			  "</ul>"),
 			PURPLE_WEBSITE, PURPLE_WEBSITE,
-			"http://developer.pidgin.im/wiki/FAQ",
-			"http://developer.pidgin.im/wiki/FAQ");
+			"https://developer.pidgin.im/wiki/FAQ",
+			"https://developer.pidgin.im/wiki/FAQ");
 
 	g_string_append(str,
 			"<p><strong>Help for Oracle Employees</strong> is "
@@ -553,8 +551,8 @@ void pidgin_dialogs_about(void)
 			  "are welcome to post in another language, but the responses may "
 			  "be less helpful.</p>"),
 			"support@pidgin.im", "support@pidgin.im",
-			"http://pidgin.im/pipermail/support/",
-			"http://pidgin.im/pipermail/support/");
+			"https://pidgin.im/pipermail/support/",
+			"https://pidgin.im/pipermail/support/");
 
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	about = pidgin_build_help_dialog(tmp, "about", str);
@@ -658,14 +656,12 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>GnuTLS:</dt><dd>Disabled</dd>");
 #endif
 
-#ifndef _WIN32
 #ifdef USE_GSTREAMER
 	tmp = gst_version_string();
 	g_string_append_printf(str, "<dt>GStreamer:</dt><dd>%s</dd>", tmp);
 	g_free(tmp);
 #else
 	g_string_append(str, "<dt>GStreamer:</dt><dd>Disabled</dd>");
-#endif
 #endif
 
 #ifndef _WIN32
