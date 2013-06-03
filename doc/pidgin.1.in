@@ -610,43 +610,27 @@ Pidgin's active developers are:
 .br
   Ethan 'Paco-Paco' Blanton (developer)
 .br
-  Thomas Butter (developer)
-.br
-  Ka-Hing Cheung (developer)
-.br
   Sadrul Habib Chowdhury (developer)
 .br
   Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
-.br
-  Sean Egan (developer) <\fIseanegan@gmail.com\fR>
-.br
-  Casey Harkins (developer)
-.br
-  Ivan Komarov
 .br
   Gary 'grim' Kramlich (developer)
 .br
   Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
 .br
+  Marcus 'malu' Lundblad (developer)
+.br
   Sulabh 'sulabh_m' Mahajan (developer)
 .br
   Richard 'wabz' Nelson (developer)
 .br
-  Christopher 'siege' O'Brien (developer)
-.br
-  Bartosz Oler (developer)
-.br
   Etan 'deryni' Reisner (developer)
-.br
-  Tim 'marv' Ringenbach (developer) <\fImarv_sf@users.sf.net\fR>
 .br
   Michael 'Maiku' Ruprecht (developer, voice and video)
 .br
   Elliott 'QuLogic' Sales de Andrade (developer)
 .br
   Luke 'LSchiere' Schierer (support)
-.br
-  Megan 'Cae' Schneider (support/QA)
 .br
   Evan Schoenberg (developer)
 .br
@@ -656,21 +640,23 @@ Pidgin's active developers are:
 .br
   Stu 'nosnilmot' Tomlinson (developer)
 .br
-  Nathan 'faceprint' Walp (developer)
+  Jorge 'Masca' Villaseñor
 .br
 
 
 Our crazy patch writers include:
 .br
-  Marcus 'malu' Lundblad
+  Jakub 'haakon' Adam
 .br
-  Dennis 'EvilDennisR' Ristuccia
+  Krzysztof Klinikowski
+.br
+  Eion Robb
 .br
   Peter 'fmoo' Ruibal
 .br
   Gabriel 'Nix' Schulhof
 .br
-  Jorge 'Masca' Villaseñor
+  Tomasz Wasilczyk
 .br
 
 
@@ -684,7 +670,13 @@ Our retired developers are:
 .br
   Herman Bloggs (win32 port) <\fIherman@bluedigits.com\fR>
 .br
+  Thomas Butter (developer)
+.br
+  Ka-Hing Cheung (developer)
+.br
   Jim Duchek <\fIjim@linuxpimps.com\fR> (maintainer)
+.br
+  Sean Egan (developer) <\fIseanegan@gmail.com\fR>
 .br
   Rob Flynn <\fIgaim@robflynn.com\fR> (maintainer)
 .br
@@ -692,11 +684,25 @@ Our retired developers are:
 .br
   Christian 'ChipX86' Hammond (developer & webmaster) <\fIchipx86@chipx86.com\fR>
 .br
+  Casey Harkins (developer)
+.br
+  Ivan Komarov
+.br
   Syd Logan (hacker and designated driver [lazy bum])
+.br
+  Christopher 'siege' O'Brien (developer)
+.br
+  Bartosz Oler (developer)
+.br
+  Tim 'marv' Ringenbach (developer) <\fImarv_sf@users.sf.net\fR>
+.br
+  Megan 'Cae' Schneider (support/QA)
 .br
   Jim Seymour (XMPP developer)
 .br
   Mark Spencer (original author) <\fImarkster@marko.net\fR>
+.br
+  Nathan 'faceprint' Walp (developer)
 .br
   Eric Warmenhoven (former lead developer) <\fIeric@warmenhoven.org\fR>
 .br
@@ -713,6 +719,8 @@ Our retired crazy patch writers include:
   Robert 'Robot101' McQueen
 .br
   Benjamin Miller
+.br
+  Dennis 'EvilDennisR' Ristuccia
 .br
 
 
