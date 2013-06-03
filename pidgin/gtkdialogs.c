@@ -531,8 +531,8 @@ void pidgin_dialogs_about(void)
 			  "<li>XMPP MUC: devel@conference.pidgin.im</li>"
 			  "</ul>"),
 			PURPLE_WEBSITE, PURPLE_WEBSITE,
-			"http://developer.pidgin.im/wiki/FAQ",
-			"http://developer.pidgin.im/wiki/FAQ");
+			"https://developer.pidgin.im/wiki/FAQ",
+			"https://developer.pidgin.im/wiki/FAQ");
 
 	g_string_append(str,
 			"<p><strong>Help for Oracle Employees</strong> is "
@@ -551,8 +551,8 @@ void pidgin_dialogs_about(void)
 			  "are welcome to post in another language, but the responses may "
 			  "be less helpful.</p>"),
 			"support@pidgin.im", "support@pidgin.im",
-			"http://pidgin.im/pipermail/support/",
-			"http://pidgin.im/pipermail/support/");
+			"https://pidgin.im/pipermail/support/",
+			"https://pidgin.im/pipermail/support/");
 
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	about = pidgin_build_help_dialog(tmp, "about", str);

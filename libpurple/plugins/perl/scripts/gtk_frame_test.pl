@@ -9,7 +9,7 @@ use Purple;
 	summary => "Test plugin for the Perl interpreter.", 
 	description => "Implements a set of test proccedures to ensure all functions that work in the C API still work in the Perl plugin interface.  As XSUBs are added, this *should* be updated to test the changes.  Furthermore, this will function as the tutorial perl plugin.", 
 	author => "John H. Kelm <johnhkelm\@gmail.com>", 
-	url => "http://pidgin.im", 
+	url => "https://pidgin.im", 
 	
 	GTK_UI => TRUE,
 	gtk_prefs_info => "foo",

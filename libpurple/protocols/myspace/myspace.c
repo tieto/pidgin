@@ -363,7 +363,7 @@ static const gchar *
 msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
 	/* Use a MySpace icon submitted by hbons at
-	 * http://developer.pidgin.im/wiki/MySpaceIM. */
+	 * https://developer.pidgin.im/wiki/MySpaceIM. */
 	return "myspace";
 }
 
@@ -3211,7 +3211,7 @@ static PurplePluginInfo info = {
 	                                                  /**  description    */
 	"MySpaceIM Protocol Plugin",
 	"Jeff Connelly <jeff2@soc.pidgin.im>",            /**< author         */
-	"http://developer.pidgin.im/wiki/MySpaceIM/",     /**< homepage       */
+	"https://developer.pidgin.im/wiki/MySpaceIM/",    /**< homepage       */
 
 	msim_load,                                        /**< load           */
 	NULL,                                             /**< unload         */

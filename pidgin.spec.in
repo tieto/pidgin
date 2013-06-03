@@ -23,7 +23,7 @@ Version:    %pidginver
 Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
-URL:        http://pidgin.im/
+URL:        https://pidgin.im/
 Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 

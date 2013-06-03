@@ -37,7 +37,7 @@ proc plugin_init { } {
 		"Example plugin registration" \
 		"Example of how to register a plugin for the Tcl HOWTO" \
 		"Ethan Blanton <eblanton@cs.purdue.edu>" \
-		"http://pidgin.im/" ]
+		"https://pidgin.im/" ]
 }
 @endcode
 

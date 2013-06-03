@@ -216,7 +216,7 @@ static void
 purplerc_write(GtkWidget *widget, gpointer data)
 {
 	GString *str = make_gtkrc_string();
-	str = g_string_prepend(str, "# This file automatically written by the Pidgin GTK+ Theme Control plugin.\n# Any changes to this file will be overwritten by the plugin when told to\n# write the settings again.\n# The FAQ (http://developer.pidgin.im/wiki/FAQ) contains some further examples\n# of possible pidgin gtkrc settings.\n");
+	str = g_string_prepend(str, "# This file automatically written by the Pidgin GTK+ Theme Control plugin.\n# Any changes to this file will be overwritten by the plugin when told to\n# write the settings again.\n# The FAQ (https://developer.pidgin.im/wiki/FAQ) contains some further examples\n# of possible pidgin gtkrc settings.\n");
 	purple_util_write_data_to_file("gtkrc-2.0", str->str, -1);
 	g_string_free(str, TRUE);
 }

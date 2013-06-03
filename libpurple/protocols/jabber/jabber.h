@@ -78,7 +78,7 @@ typedef struct _JabberStream JabberStream;
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://pidgin.im/"
+#define CAPS0115_NODE "https://pidgin.im/"
 
 #define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
@@ -150,9 +150,9 @@ struct _JabberStream
 	 * when we receive a roster push.
 	 *
 	 * See these bug reports:
-	 * http://trac.adiumx.com/ticket/8834
-	 * http://developer.pidgin.im/ticket/5484
-	 * http://developer.pidgin.im/ticket/6188
+	 * https://trac.adiumx.com/ticket/8834
+	 * https://developer.pidgin.im/ticket/5484
+	 * https://developer.pidgin.im/ticket/6188
 	 */
 	gboolean currently_parsing_roster_push;
 
