@@ -107,8 +107,6 @@ static const struct developer patch_writers[] = {
 	{"Jakub 'haakon' Adam",            NULL,                        NULL},
 	{"Krzysztof Klinikowski",          NULL,                        NULL},
 	{"Eion Robb",                      NULL,                        NULL},
-	{"Peter 'Fmoo' Ruibal",            NULL,                        NULL},
-	{"Gabriel 'Nix' Schulhof",         NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -146,6 +144,8 @@ static const struct developer retired_patch_writers[] = {
 	{"Robert 'Robot101' McQueen", NULL, NULL},
 	{"Benjamin Miller",           NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia", N_("Senior Contributor/QA"), NULL},
+	{"Peter 'Fmoo' Ruibal",       NULL, NULL},
+	{"Gabriel 'Nix' Schulhof",    NULL, NULL},
 	{NULL, NULL, NULL}
 };
 
