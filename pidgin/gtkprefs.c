@@ -150,7 +150,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 };
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
-	"disabled",	N_("Disabled"),
+	"videodisabledsrc",	N_("Disabled"),
 	"videotestsrc",	"Test Input",
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
@@ -3114,7 +3114,7 @@ get_vv_element_devices(const gchar *element_name)
 		return g_list_reverse(ret);
 	}
 
-	if (g_strcmp0(element_name, "disabled") == 0) {
+	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
 		ret = g_list_prepend(ret, (gpointer)_("Random noise"));
 		ret = g_list_prepend(ret, "snow");
 
@@ -3205,7 +3205,7 @@ get_vv_element_plugins(const gchar **plugins)
 #else
 		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)
 #endif
-			|| g_strcmp0(plugins[0], "disabled") == 0)
+			|| g_strcmp0(plugins[0], "videodisabledsrc") == 0)
 		{
 			ret = g_list_prepend(ret, (gpointer)plugins[1]);
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
