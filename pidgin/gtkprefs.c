@@ -3105,18 +3105,25 @@ get_vv_element_devices(const gchar *element_name)
 #if !GST_CHECK_VERSION(1,0,0)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
+	gint i;
+	GValueArray *array;
+	enum {
+		PROBE_NONE,
+		PROBE_DEVICE,
+		PROBE_NAME
+	} probe_attr;
 #endif
 
-	ret = g_list_prepend(ret, (gpointer)_("Default"));
-	ret = g_list_prepend(ret, "");
+	ret = g_list_prepend(ret, g_strdup(_("Default")));
+	ret = g_list_prepend(ret, g_strdup(""));
 
 	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
 		return g_list_reverse(ret);
 	}
 
 	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
-		ret = g_list_prepend(ret, (gpointer)_("Random noise"));
-		ret = g_list_prepend(ret, "snow");
+		ret = g_list_prepend(ret, g_strdup(_("Random noise")));
+		ret = g_list_prepend(ret, g_strdup("snow"));
 
 		return g_list_reverse(ret);
 	}
@@ -3124,70 +3131,114 @@ get_vv_element_devices(const gchar *element_name)
 	element = gst_element_factory_make(element_name, "test");
 	if (!element) {
 		purple_debug_info("vvconfig", "'%s' - unable to find element\n",
-		                  element_name);
+			element_name);
 		return g_list_reverse(ret);
 	}
 
 	klass = G_OBJECT_GET_CLASS (element);
 	if (!klass) {
-		purple_debug_info("vvconfig", "'%s' - unable to find GObject Class\n",
-		                  element_name);
+		purple_debug_info("vvconfig", "'%s' - unable to find GObject "
+			"Class\n", element_name);
 		return g_list_reverse(ret);
 	}
 
 #if GST_CHECK_VERSION(1,0,0)
-	purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
+	purple_debug_info("vvconfig", "'%s' - gstreamer-1.0 doesn't suport "
+		"property probing\n", element_name);
 #else
-	if (!g_object_class_find_property(klass, "device") ||
-			!GST_IS_PROPERTY_PROBE(element) ||
-			!(probe = GST_PROPERTY_PROBE(element)) ||
-			!(pspec = gst_property_probe_get_property(probe, "device"))) {
-		purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
-	} else {
-		gint n;
-		GValueArray *array;
+	if (g_object_class_find_property(klass, "device"))
+		probe_attr = PROBE_DEVICE;
+	else if (g_object_class_find_property(klass, "device-index") &&
+		g_object_class_find_property(klass, "device-name"))
+		probe_attr = PROBE_NAME;
+	else
+		probe_attr = PROBE_NONE;
+	
+	if (!GST_IS_PROPERTY_PROBE(element))
+		probe_attr = PROBE_NONE;
+	
+	if (probe_attr == PROBE_NONE)
+	{
+		purple_debug_info("vvconfig", "'%s' - no possibility to probe "
+			"for devices\n", element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
 
-		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
-		if (g_object_class_find_property(klass, "autoprobe")) {
-			g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
-			if (g_object_class_find_property(klass, "autoprobe-fps")) {
-				g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
-			}
-		}
+	probe = GST_PROPERTY_PROBE(element);
 
-		array = gst_property_probe_probe_and_get_values(probe, pspec);
-		if (array == NULL) {
-			purple_debug_info("vvconfig", "'%s' has no devices\n", element_name);
-			return g_list_reverse(ret);
-		}
+	if (probe_attr == PROBE_DEVICE)
+		pspec = gst_property_probe_get_property(probe, "device");
+	else /* probe_attr == PROBE_NAME */
+		pspec = gst_property_probe_get_property(probe, "device-name");
 
-		for (n = 0; n < array->n_values; ++n) {
-			GValue *device;
-			const gchar *name;
-			const gchar *device_name;
+	if (!pspec) {
+		purple_debug_info("vvconfig", "'%s' - creating probe failed\n",
+			element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
 
-			device = g_value_array_get_nth(array, n);
-			g_object_set_property(G_OBJECT(element), "device", device);
-			if (gst_element_set_state(element, GST_STATE_READY) != GST_STATE_CHANGE_SUCCESS) {
-				purple_debug_warning("vvconfig", "Error changing state of %s\n",
-				                     element_name);
+	/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
+	if (g_object_class_find_property(klass, "autoprobe"))
+		g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
+	if (g_object_class_find_property(klass, "autoprobe-fps"))
+		g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
+
+	array = gst_property_probe_probe_and_get_values(probe, pspec);
+	if (array == NULL) {
+		purple_debug_info("vvconfig", "'%s' has no devices\n",
+			element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
+
+	for (i = 0; i < array->n_values; i++) {
+		GValue *device;
+		const gchar *name;
+		const gchar *device_name;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+		/* GValueArray is in gstreamer-0.10 API */
+		device = g_value_array_get_nth(array, i);
+#pragma GCC diagnostic pop
+
+		if (probe_attr == PROBE_DEVICE) {
+			g_object_set_property(G_OBJECT(element), "device",
+				device);
+			if (gst_element_set_state(element, GST_STATE_READY)
+				!= GST_STATE_CHANGE_SUCCESS)
+			{
+				purple_debug_warning("vvconfig", "Error "
+					"changing state of %s\n", element_name);
 				continue;
 			}
 
-			g_object_get(G_OBJECT(element), "device-name", &name, NULL);
-			device_name = g_value_get_string(device);
-			if (name == NULL)
-				name = _("Unknown");
-			purple_debug_info("vvconfig", "Found device %s : %s for %s\n",
-			                  device_name, name, element_name);
-			ret = g_list_prepend(ret, (gpointer)name);
-			ret = g_list_prepend(ret, (gpointer)device_name);
-			gst_element_set_state(element, GST_STATE_NULL);
+			g_object_get(G_OBJECT(element), "device-name", &name,
+				NULL);
+			device_name = g_strdup(g_value_get_string(device));
+		} else /* probe_attr == PROBE_NAME */ {
+			name = g_strdup(g_value_get_string(device));
+			device_name = g_strdup_printf("%d", i);
 		}
-	}
-#endif
-	gst_object_unref(element);
 
+		if (name == NULL)
+			name = _("Unknown");
+		purple_debug_info("vvconfig", "Found device %s: %s for %s\n",
+			device_name, name, element_name);
+		ret = g_list_prepend(ret, (gpointer)name);
+		ret = g_list_prepend(ret, (gpointer)device_name);
+		gst_element_set_state(element, GST_STATE_NULL);
+	}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	/* GValueArray is in gstreamer-0.10 API */
+	g_value_array_free(array);
+#pragma GCC diagnostic pop
+#endif
+
+	gst_object_unref(element);
 	return g_list_reverse(ret);
 }
 
@@ -3237,7 +3288,7 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 		purple_prefs_set_string(pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, pref, devices);
-	g_list_free(devices);
+	g_list_free_full(devices, g_free);
 	gtk_size_group_add_widget(sg, widget);
 	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
 
@@ -3273,7 +3324,7 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, device_pref,
 	                                         devices);
-	g_list_free(devices);
+	g_list_free_full(devices, g_free);
 	gtk_size_group_add_widget(sg, widget);
 	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
 

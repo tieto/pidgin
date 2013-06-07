@@ -1059,7 +1059,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 static GstElement *
 create_vv_element(const gchar *plugin, const gchar *device)
 {
-	GstElement *element;
+	GstElement *element, *source;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 	g_return_val_if_fail(plugin[0] != '\0', NULL);
@@ -1098,15 +1098,25 @@ create_vv_element(const gchar *plugin, const gchar *device)
 		gst_element_add_pad(ksv_bin, ksv_ghost);
 
 		element = ksv_bin;
+		source = ksv_src;
 	}
 	else
-		element = gst_element_factory_make(plugin, NULL);
+		element = source = gst_element_factory_make(plugin, NULL);
 
 	if (element == NULL)
 		return NULL;
 
-	if (device != NULL)
-		g_object_set(G_OBJECT(element), "device", device, NULL);
+	if (device != NULL) {
+		GObjectClass *klass = G_OBJECT_GET_CLASS(source);
+		if (g_object_class_find_property(klass, "device"))
+			g_object_set(G_OBJECT(source), "device", device, NULL);
+		else if (g_object_class_find_property(klass, "device-index"))
+			g_object_set(G_OBJECT(source), "device-index",
+				g_ascii_strtoull(device, NULL, 10), NULL);
+		else
+			purple_debug_warning("gtkmedia", "No possibility to "
+				"set device\n");
+	}
 
 	if (g_strcmp0(plugin, "videotestsrc") == 0)
 		g_object_set(G_OBJECT(element), "is-live", TRUE, NULL);
