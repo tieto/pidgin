@@ -3198,11 +3198,10 @@ get_vv_element_devices(const gchar *element_name)
 		const gchar *name;
 		const gchar *device_name;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		/* GValueArray is in gstreamer-0.10 API */
 		device = g_value_array_get_nth(array, i);
-#pragma GCC diagnostic pop
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 		if (probe_attr == PROBE_DEVICE) {
 			g_object_set_property(G_OBJECT(element), "device",
@@ -3231,11 +3230,10 @@ get_vv_element_devices(const gchar *element_name)
 		ret = g_list_prepend(ret, (gpointer)device_name);
 		gst_element_set_state(element, GST_STATE_NULL);
 	}
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	/* GValueArray is in gstreamer-0.10 API */
 	g_value_array_free(array);
-#pragma GCC diagnostic pop
+G_GNUC_END_IGNORE_DEPRECATIONS
 #endif
 
 	gst_object_unref(element);
