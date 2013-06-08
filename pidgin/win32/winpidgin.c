@@ -74,6 +74,11 @@ static BOOL reg_value_exists(HKEY key, wchar_t *sub_key, wchar_t *val_name) {
 	if (retv != ERROR_SUCCESS)
 		return FALSE;
 
+	if (val_name[0] == L'\0') {
+		RegCloseKey(hkey);
+		return TRUE;
+	}
+
 	index = 0;
 	while (TRUE)
 	{
@@ -505,7 +510,8 @@ static void winpidgin_add_stuff_to_path() {
 	printf("%s", "Looking for Perl... ");
 
 	plen = sizeof(perl_path) / sizeof(wchar_t);
-	if (read_reg_string(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Perl", L"",
+	if (reg_value_exists(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Perl", L"") &&
+		read_reg_string(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Perl", L"",
 			    (LPBYTE) &perl_path, &plen)) {
 		/* We *could* check for perl510.dll, but it seems unnecessary. */
 		wprintf(L"found in '%s'.\n", perl_path);
