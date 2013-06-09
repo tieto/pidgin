@@ -128,7 +128,7 @@ PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
 MINGW_MAKEFILE := Makefile.mingw
 MAKE_at := @
 
-USE_VV ?= 0
+USE_VV ?= 1
 
 ifeq "$(USE_VV)" "1"
 VV_LIBS := \

@@ -49,6 +49,7 @@ libpurple/desktopitem.c
 libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
+libpurple/keyring.c
 libpurple/log.c
 libpurple/media/backend-fs2.c
 libpurple/plugin.c
@@ -61,6 +62,11 @@ libpurple/plugins/idle.c
 libpurple/plugins/ipc-test-client.c
 libpurple/plugins/ipc-test-server.c
 libpurple/plugins/joinpart.c
+libpurple/plugins/keyrings/gnomekeyring.c
+libpurple/plugins/keyrings/internalkeyring.c
+libpurple/plugins/keyrings/kwallet.cpp
+libpurple/plugins/keyrings/secretservice.c
+libpurple/plugins/keyrings/wincred.c
 libpurple/plugins/log_reader.c
 libpurple/plugins/mono/loader/mono.c
 libpurple/plugins/newline.c

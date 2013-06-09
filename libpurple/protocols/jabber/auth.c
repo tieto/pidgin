@@ -110,7 +110,7 @@ auth_old_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	if (remember)
 		purple_account_set_remember_password(account, TRUE);
 
-	purple_account_set_password(account, entry);
+	purple_account_set_password(account, entry, NULL, NULL);
 
 	/* Restart our connection */
 	jabber_auth_start_old(js);
@@ -228,7 +228,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(account))
-				purple_account_set_password(account, NULL);
+				purple_account_set_password(account, NULL, NULL, NULL);
 		}
 
 		purple_connection_error(js->gc, reason, msg);
@@ -372,7 +372,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 * password prompting here
 	 */
 
-	if (!purple_account_get_password(account)) {
+	if (!purple_connection_get_password(js->gc)) {
 		purple_account_request_password(account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 		return;
 	}

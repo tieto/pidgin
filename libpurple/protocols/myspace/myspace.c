@@ -704,7 +704,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
 	response_len = 0;
-	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_account_get_password(account), &response_len);
+	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_connection_get_password(session->gc), &response_len);
 
 	g_free(nc);
 
@@ -1835,9 +1835,9 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_INCORRECT_PASSWORD: /* Incorrect password */
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
-				if (purple_account_get_password(session->account) && (strlen(purple_account_get_password(session->account)) > MSIM_MAX_PASSWORD_LENGTH)) {
+				if (purple_connection_get_password(session->gc) && (strlen(purple_connection_get_password(session->gc)) > MSIM_MAX_PASSWORD_LENGTH)) {
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
@@ -1845,7 +1845,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 							"maximum length of %d.  Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg,
-							(gsize)strlen(purple_account_get_password(session->account)),
+							(gsize)strlen(purple_connection_get_password(session->gc)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */
@@ -1860,7 +1860,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_LOGGED_IN_ELSEWHERE: /* Logged in elsewhere */
 				reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 				break;
 		}
 		purple_connection_error(session->gc, reason, full_errmsg);

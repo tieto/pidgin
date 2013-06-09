@@ -1057,46 +1057,93 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 }
 
 static GstElement *
+create_vv_element(const gchar *plugin, const gchar *device)
+{
+	GstElement *element, *source;
+
+	g_return_val_if_fail(plugin != NULL, NULL);
+	g_return_val_if_fail(plugin[0] != '\0', NULL);
+
+	if (device != NULL && device[0] == '\0')
+		device = NULL;
+
+	if (g_strcmp0(plugin, "videodisabledsrc") == 0) {
+		element = gst_element_factory_make("videotestsrc", NULL);
+		g_object_set(G_OBJECT(element), "is-live", TRUE, NULL);
+		if (g_strcmp0(device, "snow") == 0) {
+			/* GST_VIDEO_TEST_SRC_SNOW */
+			g_object_set(G_OBJECT(element), "pattern", 1, NULL);
+		} else {
+			/* GST_VIDEO_TEST_SRC_BLACK */
+			g_object_set(G_OBJECT(element), "pattern", 2, NULL);
+		}
+		return element;
+	}
+
+	if (g_strcmp0(plugin, "ksvideosrc") == 0) {
+		GstElement *ksv_bin, *ksv_src, *ksv_filter;
+		GstPad *ksv_pad, *ksv_ghost;
+
+		ksv_bin = gst_bin_new("ksvideofilteredsrc");
+		ksv_src = gst_element_factory_make("ksvideosrc", NULL);
+		ksv_filter = gst_element_factory_make("ffmpegcolorspace", NULL);
+
+		gst_bin_add_many(GST_BIN(ksv_bin), ksv_src, ksv_filter, NULL);
+
+		gst_element_link(ksv_src, ksv_filter);
+
+		ksv_pad = gst_element_get_static_pad(ksv_filter, "src");
+		ksv_ghost = gst_ghost_pad_new("src", ksv_pad);
+		gst_object_unref(ksv_pad);
+		gst_element_add_pad(ksv_bin, ksv_ghost);
+
+		element = ksv_bin;
+		source = ksv_src;
+	}
+	else
+		element = source = gst_element_factory_make(plugin, NULL);
+
+	if (element == NULL)
+		return NULL;
+
+	if (device != NULL) {
+		GObjectClass *klass = G_OBJECT_GET_CLASS(source);
+		if (g_object_class_find_property(klass, "device"))
+			g_object_set(G_OBJECT(source), "device", device, NULL);
+		else if (g_object_class_find_property(klass, "device-index"))
+			g_object_set(G_OBJECT(source), "device-index",
+				g_ascii_strtoull(device, NULL, 10), NULL);
+		else
+			purple_debug_warning("gtkmedia", "No possibility to "
+				"set device\n");
+	}
+
+	if (g_strcmp0(plugin, "videotestsrc") == 0)
+		g_object_set(G_OBJECT(element), "is-live", TRUE, NULL);
+
+	return element;
+}
+
+static GstElement *
 create_configured_vv_element(const gchar *type, const gchar *dir)
 {
 	gchar *tmp;
 	const gchar *plugin, *device;
-	GstElement *ret;
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin", type, dir);
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin",
+		type, dir);
 	plugin = purple_prefs_get_string(tmp);
 	g_free(tmp);
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device", type, dir);
+	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device",
+		type, dir);
 	device = purple_prefs_get_string(tmp);
 	g_free(tmp);
 
 	if (plugin == NULL || plugin[0] == '\0')
 		return NULL;
 
-	if (g_strcmp0(type, "video") == 0 && g_strcmp0(dir, "src") == 0 &&
-		g_strcmp0(plugin, "disabled") == 0)
-	{
-		ret = gst_element_factory_make("videotestsrc", NULL);
-		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
-		if (g_strcmp0(device, "snow") == 0) {
-			/* GST_VIDEO_TEST_SRC_SNOW */
-			g_object_set(G_OBJECT(ret), "pattern", 1, NULL);
-		} else {
-			/* GST_VIDEO_TEST_SRC_BLACK */
-			g_object_set(G_OBJECT(ret), "pattern", 2, NULL);
-		}
-		return ret;
-	}
-
-	ret = gst_element_factory_make(plugin, NULL);
-	if (device != NULL && device[0] != '\0')
-		g_object_set(G_OBJECT(ret), "device", device, NULL);
-
-	if (g_strcmp0(plugin, "videotestsrc") == 0)
-		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
-
-	return ret;
+	return create_vv_element(plugin, device);
 }
 
 static GstElement *
@@ -1110,33 +1157,29 @@ create_default_video_src(PurpleMedia *media,
 	src = create_configured_vv_element("video", "src");
 
 #ifdef _WIN32
-	/* autovideosrc doesn't pick ksvideosrc for some reason */
 	if (src == NULL)
-		src = gst_element_factory_make("ksvideosrc", NULL);
+		src = create_vv_element("ksvideosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("dshowvideosrc", NULL);
+		src = create_vv_element("dshowvideosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("autovideosrc", NULL);
+		src = create_vv_element("autovideosrc", NULL);
 #elif defined(__APPLE__)
 	if (src == NULL)
-		src = gst_element_factory_make("osxvideosrc", NULL);
+		src = create_vv_element("osxvideosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("autovideosrc", NULL);
+		src = create_vv_element("autovideosrc", NULL);
 #else
 	if (src == NULL)
-		src = gst_element_factory_make("gconfvideosrc", NULL);
+		src = create_vv_element("gconfvideosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("autovideosrc", NULL);
+		src = create_vv_element("autovideosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("v4l2src", NULL);
+		src = create_vv_element("v4l2src", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("v4lsrc", NULL);
+		src = create_vv_element("v4lsrc", NULL);
 #endif
-	if (src == NULL) {
-		src = gst_element_factory_make("videotestsrc", NULL);
-		if (src != NULL)
-			g_object_set(G_OBJECT(src), "is-live", TRUE, NULL);
-	}
+	if (src == NULL)
+		src = create_vv_element("videotestsrc", NULL);
 	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video source.\n");
@@ -1164,11 +1207,11 @@ create_default_video_sink(PurpleMedia *media,
 	sink = create_configured_vv_element("video", "sink");
 
 	if (sink == NULL)
-		sink = gst_element_factory_make("directdrawsink", NULL);
+		sink = create_vv_element("directdrawsink", NULL);
 	if (sink == NULL)
-		sink = gst_element_factory_make("gconfvideosink", NULL);
+		sink = create_vv_element("gconfvideosink", NULL);
 	if (sink == NULL)
-		sink = gst_element_factory_make("autovideosink", NULL);
+		sink = create_vv_element("autovideosink", NULL);
 	if (sink == NULL)
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video sink.\n");
@@ -1184,19 +1227,19 @@ create_default_audio_src(PurpleMedia *media,
 	src = create_configured_vv_element("audio", "src");
 
 	if (src == NULL)
-		src = gst_element_factory_make("directsoundsrc", NULL);
+		src = create_vv_element("directsoundsrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("gconfaudiosrc", NULL);
+		src = create_vv_element("gconfaudiosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("autoaudiosrc", NULL);
+		src = create_vv_element("autoaudiosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("alsasrc", NULL);
+		src = create_vv_element("alsasrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("osssrc", NULL);
+		src = create_vv_element("osssrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("dshowaudiosrc", NULL);
+		src = create_vv_element("dshowaudiosrc", NULL);
 	if (src == NULL)
-		src = gst_element_factory_make("osxaudiosrc", NULL);
+		src = create_vv_element("osxaudiosrc", NULL);
 	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default audio source.\n");
@@ -1215,11 +1258,11 @@ create_default_audio_sink(PurpleMedia *media,
 	sink = create_configured_vv_element("audio", "sink");
 
 	if (sink == NULL)
-		sink = gst_element_factory_make("directsoundsink", NULL);
+		sink = create_vv_element("directsoundsink", NULL);
 	if (sink == NULL)
-		sink = gst_element_factory_make("gconfaudiosink", NULL);
+		sink = create_vv_element("gconfaudiosink", NULL);
 	if (sink == NULL)
-		sink = gst_element_factory_make("autoaudiosink",NULL);
+		sink = create_vv_element("autoaudiosink",NULL);
 	if (sink == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default audio sink.\n");

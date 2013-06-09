@@ -1,4 +1,5 @@
 #include "module.h"
+#include "../perl-handlers.h"
 
 MODULE = Purple::Account  PACKAGE = Purple::Account  PREFIX = purple_account_
 PROTOTYPES: ENABLE
@@ -44,9 +45,13 @@ purple_account_set_username(account, username)
     const char * username
 
 void
-purple_account_set_password(account, password)
+purple_account_set_password(account, password, func, data = 0)
     Purple::Account account
     const char * password
+    SV *func
+    SV *data
+CODE:
+    purple_perl_account_set_password(account, password, func, data);
 
 void
 purple_account_set_alias(account, alias)
@@ -130,9 +135,13 @@ const char *
 purple_account_get_username(account)
     Purple::Account account
 
-const char *
-purple_account_get_password(account)
+void
+purple_account_get_password(account, func, data = 0)
     Purple::Account account
+    SV *func
+    SV *data
+CODE:
+    purple_perl_account_get_password(account, func, data);
 
 const char *
 purple_account_get_alias(account)

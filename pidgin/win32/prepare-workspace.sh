@@ -123,6 +123,13 @@ ARCHIVES+="ARC_GTT "
 ARC_GTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm;gettext: libintl;0.18.1.1-13.6;0e6fde8e86788874366f308e25634f95613e906a;${OBS_SKIP};gettext-0.18"
 ARCHIVES+="ARC_GTL "
 
+ARC_VV1="${DOWNLOAD_HOST}mingw32-gstreamer-devel-0.10.36-10.1.noarch.rpm;gstreamer;0.10.36-10.1;a54b53b31a47dd3d4243b8e772553e0b05430aaf;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV1 "
+ARC_VV2="${DOWNLOAD_HOST}mingw32-gst-plugins-base-devel-0.10.36-15.1.noarch.rpm;gst-plugins-base;0.10.36-15.1;5bc0d94abdce4f2f2bafceda8046f01a5b29bd71;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV2 "
+ARC_VV3="${DOWNLOAD_HOST}mingw32-farstream-devel-0.1.2-19.1.noarch.rpm;farstream;0.1.2-19.1;6c9f29de289b661d192c88998ed5bdf17de7bcec;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV3 "
+
 # implementation
 
 if [ `uname -o` != "Cygwin" ]; then

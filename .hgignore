@@ -28,6 +28,7 @@ syntax: regexp
 .*\.pyo$
 .*\.rej$
 .*\.so$
+.*\.moc$
 Doxyfile(\.mingw)?$
 VERSION$
 aclocal.m4

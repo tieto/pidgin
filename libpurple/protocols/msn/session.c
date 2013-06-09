@@ -385,7 +385,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			msg = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
+				purple_account_set_password(session->account, NULL, NULL, NULL);
 			break;
 		case MSN_ERROR_SERV_UNAVAILABLE:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
@@ -405,7 +405,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 								  _("Unknown error") : info);
 			/* Clear the password if it isn't being saved */
 			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
+				purple_account_set_password(session->account, NULL, NULL, NULL);
 			break;
 		case MSN_ERROR_BAD_BLIST:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;

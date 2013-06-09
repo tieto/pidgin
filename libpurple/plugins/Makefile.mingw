@@ -10,6 +10,7 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 PERL_PLUGIN := ./perl
 TCL_PLUGIN := ./tcl
 SSL_PLUGIN := ./ssl
+KEYRING_PLUGIN := ./keyrings
 
 .SUFFIXES:
 .SUFFIXES: .c .dll
@@ -48,11 +49,13 @@ all: $(PURPLE_DLL).a plugins
 	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PURPLE_INSTALL_PLUGINS_DIR)
 	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
 %.dll: %.c $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
@@ -78,5 +81,6 @@ clean:
 	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
 include $(PIDGIN_COMMON_TARGETS)
