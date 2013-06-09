@@ -31,10 +31,13 @@ INCLUDE_PATHS +=\
 			-I./lib \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/lib/glib-2.0/include
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GNUTLS_TOP)/include
 
-LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(PURPLE_TOP) \
+LIB_PATHS += \
+			-L$(GTK_TOP)/lib \
+			-L$(GNUTLS_TOP)/lib \
+			-L$(PURPLE_TOP)
 
 ##
 ##  SOURCES, OBJECTS
@@ -86,6 +89,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgnutls \
 			-lintl \
 			-lpurple \
 			-lws2_32 \

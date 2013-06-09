@@ -136,6 +136,7 @@ static GtkListStore *prefs_smiley_themes;
 
 static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"alsasrc",	"ALSA",
+	"directsoundsrc", "DirectSound",
 	/* "esdmon",	"ESD", ? */
 	"osssrc",	"OSS",
 	"pulsesrc",	"PulseAudio",
@@ -147,6 +148,8 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 
 static const gchar *AUDIO_SINK_PLUGINS[] = {
 	"alsasink",	"ALSA",
+	"directsoundsink", "DirectSound",
+	/* "gconfaudiosink", "GConf", */
 	"artsdsink",	"aRts",
 	"esdsink",	"ESD",
 	"osssink",	"OSS",
@@ -156,6 +159,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 };
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
+	"videodisabledsrc",	N_("Disabled"),
 	"videotestsrc",	"Test Input",
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
@@ -168,7 +172,8 @@ static const gchar *VIDEO_SRC_PLUGINS[] = {
 
 static const gchar *VIDEO_SINK_PLUGINS[] = {
 	/* "aasink",	"AALib", Didn't work for me */
-	"directdrawsink","DirectDraw",
+	"directdrawsink", "DirectDraw",
+	/* "gconfvideosink", "GConf", */
 	"glimagesink",	"OpenGL",
 	"ximagesink",	"X Window System",
 	"xvimagesink",	"X Window System (Xv)",
@@ -1603,7 +1608,7 @@ conversation_usetabs_cb(const char *name, PurplePrefType type,
 }
 
 
-#define CONVERSATION_CLOSE_ACCEL_PATH "<main>/Conversation/Close"
+#define CONVERSATION_CLOSE_ACCEL_PATH "<Actions>/ConversationActions/Close"
 
 /* Filled in in keyboard_shortcuts(). */
 static GtkAccelKey ctrl_w = { 0, 0, 0 };
@@ -2898,7 +2903,6 @@ keyring_page(void)
 
 /*** keyring page - end *************************************************/
 
-#ifndef _WIN32
 static gint
 sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
@@ -2926,7 +2930,6 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
-#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -2939,7 +2942,9 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(method, "automatic") ||
 			!strcmp(method, "alsa") ||
-			!strcmp(method, "esd"));
+			!strcmp(method, "esd") ||
+			!strcmp(method, "waveform") ||
+			!strcmp(method, "directsound"));
 }
 #endif /* USE_GSTREAMER */
 
@@ -3147,11 +3152,9 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
-#ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;
 	const char *cmd;
-#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -3163,16 +3166,24 @@ sound_page(void)
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
 
-#ifndef _WIN32
 	dd = pidgin_prefs_dropdown(vbox2, _("_Method:"), PURPLE_PREF_STRING,
 			PIDGIN_PREFS_ROOT "/sound/method",
-			_("Console beep"), "beep",
-#ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
+#ifdef USE_GSTREAMER
+#ifdef _WIN32
+/*			"WaveForm", "waveform", */
+			"DirectSound", "directsound",
+#else
 			"ESD", "esd",
 			"ALSA", "alsa",
-#endif
+#endif /* _WIN32 */
+#endif /* USE_GSTREAMER */
+#ifdef _WIN32
+			"PlaySound", "playsoundw",
+#else
+			_("Console beep"), "beep",
 			_("Command"), "custom",
+#endif /* _WIN32 */
 			_("No sounds"), "none",
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
@@ -3192,7 +3203,6 @@ sound_page(void)
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
 					"custom"));
-#endif /* _WIN32 */
 
 	button = pidgin_prefs_checkbox(_("M_ute sounds"), PIDGIN_PREFS_ROOT "/sound/mute", vbox);
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/mute", mute_changed_cb, button);
@@ -3224,12 +3234,10 @@ sound_page(void)
 			  purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), hbox);
 #endif
 
-#ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
-#endif
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
 
 	/* The following is an ugly hack to make the frame expand so the
@@ -3441,82 +3449,138 @@ get_vv_element_devices(const gchar *element_name)
 #if !GST_CHECK_VERSION(1,0,0)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
+	gint i;
+	GValueArray *array;
+	enum {
+		PROBE_NONE,
+		PROBE_DEVICE,
+		PROBE_NAME
+	} probe_attr;
 #endif
 
-	ret = g_list_prepend(ret, (gpointer)_("Default"));
-	ret = g_list_prepend(ret, "");
+	ret = g_list_prepend(ret, g_strdup(_("Default")));
+	ret = g_list_prepend(ret, g_strdup(""));
 
 	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
+		return g_list_reverse(ret);
+	}
+
+	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
+		ret = g_list_prepend(ret, g_strdup(_("Random noise")));
+		ret = g_list_prepend(ret, g_strdup("snow"));
+
 		return g_list_reverse(ret);
 	}
 
 	element = gst_element_factory_make(element_name, "test");
 	if (!element) {
 		purple_debug_info("vvconfig", "'%s' - unable to find element\n",
-		                  element_name);
+			element_name);
 		return g_list_reverse(ret);
 	}
 
 	klass = G_OBJECT_GET_CLASS (element);
 	if (!klass) {
-		purple_debug_info("vvconfig", "'%s' - unable to find GObject Class\n",
-		                  element_name);
+		purple_debug_info("vvconfig", "'%s' - unable to find GObject "
+			"Class\n", element_name);
 		return g_list_reverse(ret);
 	}
 
 #if GST_CHECK_VERSION(1,0,0)
-	purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
+	purple_debug_info("vvconfig", "'%s' - gstreamer-1.0 doesn't suport "
+		"property probing\n", element_name);
 #else
-	if (!g_object_class_find_property(klass, "device") ||
-			!GST_IS_PROPERTY_PROBE(element) ||
-			!(probe = GST_PROPERTY_PROBE(element)) ||
-			!(pspec = gst_property_probe_get_property(probe, "device"))) {
-		purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
-	} else {
-		gint n;
-		GValueArray *array;
+	if (g_object_class_find_property(klass, "device"))
+		probe_attr = PROBE_DEVICE;
+	else if (g_object_class_find_property(klass, "device-index") &&
+		g_object_class_find_property(klass, "device-name"))
+		probe_attr = PROBE_NAME;
+	else
+		probe_attr = PROBE_NONE;
+	
+	if (!GST_IS_PROPERTY_PROBE(element))
+		probe_attr = PROBE_NONE;
+	
+	if (probe_attr == PROBE_NONE)
+	{
+		purple_debug_info("vvconfig", "'%s' - no possibility to probe "
+			"for devices\n", element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
 
-		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
-		if (g_object_class_find_property(klass, "autoprobe")) {
-			g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
-			if (g_object_class_find_property(klass, "autoprobe-fps")) {
-				g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
-			}
-		}
+	probe = GST_PROPERTY_PROBE(element);
 
-		array = gst_property_probe_probe_and_get_values(probe, pspec);
-		if (array == NULL) {
-			purple_debug_info("vvconfig", "'%s' has no devices\n", element_name);
-			return g_list_reverse(ret);
-		}
+	if (probe_attr == PROBE_DEVICE)
+		pspec = gst_property_probe_get_property(probe, "device");
+	else /* probe_attr == PROBE_NAME */
+		pspec = gst_property_probe_get_property(probe, "device-name");
 
-		for (n = 0; n < array->n_values; ++n) {
-			GValue *device;
-			const gchar *name;
-			const gchar *device_name;
+	if (!pspec) {
+		purple_debug_info("vvconfig", "'%s' - creating probe failed\n",
+			element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
 
-			device = g_value_array_get_nth(array, n);
-			g_object_set_property(G_OBJECT(element), "device", device);
-			if (gst_element_set_state(element, GST_STATE_READY) != GST_STATE_CHANGE_SUCCESS) {
-				purple_debug_warning("vvconfig", "Error changing state of %s\n",
-				                     element_name);
+	/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
+	if (g_object_class_find_property(klass, "autoprobe"))
+		g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
+	if (g_object_class_find_property(klass, "autoprobe-fps"))
+		g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
+
+	array = gst_property_probe_probe_and_get_values(probe, pspec);
+	if (array == NULL) {
+		purple_debug_info("vvconfig", "'%s' has no devices\n",
+			element_name);
+		gst_object_unref(element);
+		return g_list_reverse(ret);
+	}
+
+	for (i = 0; i < array->n_values; i++) {
+		GValue *device;
+		const gchar *name;
+		const gchar *device_name;
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+		/* GValueArray is in gstreamer-0.10 API */
+		device = g_value_array_get_nth(array, i);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+		if (probe_attr == PROBE_DEVICE) {
+			g_object_set_property(G_OBJECT(element), "device",
+				device);
+			if (gst_element_set_state(element, GST_STATE_READY)
+				!= GST_STATE_CHANGE_SUCCESS)
+			{
+				purple_debug_warning("vvconfig", "Error "
+					"changing state of %s\n", element_name);
 				continue;
 			}
 
-			g_object_get(G_OBJECT(element), "device-name", &name, NULL);
-			device_name = g_value_get_string(device);
-			if (name == NULL)
-				name = _("Unknown");
-			purple_debug_info("vvconfig", "Found device %s : %s for %s\n",
-			                  device_name, name, element_name);
-			ret = g_list_prepend(ret, (gpointer)name);
-			ret = g_list_prepend(ret, (gpointer)device_name);
-			gst_element_set_state(element, GST_STATE_NULL);
+			g_object_get(G_OBJECT(element), "device-name", &name,
+				NULL);
+			device_name = g_strdup(g_value_get_string(device));
+		} else /* probe_attr == PROBE_NAME */ {
+			name = g_strdup(g_value_get_string(device));
+			device_name = g_strdup_printf("%d", i);
 		}
-	}
-#endif
-	gst_object_unref(element);
 
+		if (name == NULL)
+			name = _("Unknown");
+		purple_debug_info("vvconfig", "Found device %s: %s for %s\n",
+			device_name, name, element_name);
+		ret = g_list_prepend(ret, (gpointer)name);
+		ret = g_list_prepend(ret, (gpointer)device_name);
+		gst_element_set_state(element, GST_STATE_NULL);
+	}
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+	/* GValueArray is in gstreamer-0.10 API */
+	g_value_array_free(array);
+G_GNUC_END_IGNORE_DEPRECATIONS
+#endif
+
+	gst_object_unref(element);
 	return g_list_reverse(ret);
 }
 
@@ -3530,10 +3594,12 @@ get_vv_element_plugins(const gchar **plugins)
 	for (; plugins[0] && plugins[1]; plugins += 2) {
 #if GST_CHECK_VERSION(1,0,0)
 		if (gst_registry_check_feature_version(gst_registry_get(),
-		                                       plugins[0], 0, 0, 0)) {
+			plugins[0], 0, 0, 0)
 #else
-		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)) {
+		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)
 #endif
+			|| g_strcmp0(plugins[0], "videodisabledsrc") == 0)
+		{
 			ret = g_list_prepend(ret, (gpointer)plugins[1]);
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
 		}
@@ -3564,7 +3630,7 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 		purple_prefs_set_string(pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, pref, devices);
-	g_list_free(devices);
+	g_list_free_full(devices, g_free);
 	gtk_size_group_add_widget(sg, widget);
 	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
 
@@ -3600,7 +3666,7 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, device_pref,
 	                                         devices);
-	g_list_free(devices);
+	g_list_free_full(devices, g_free);
 	gtk_size_group_add_widget(sg, widget);
 	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
 
@@ -3614,31 +3680,16 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 }
 
 static GstElement *
-create_test_element(const char *type, const char *dir, PurpleMediaElementInfo *info)
+create_test_element(PurpleMediaElementType type)
 {
-	char *tmp;
-	const gchar *plugin;
-	const gchar *device;
-	GstElement *ret;
+	PurpleMediaElementInfo *element_info;
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/plugin", type, dir);
-	plugin = purple_prefs_get_string(tmp);
-	g_free(tmp);
+	element_info = purple_media_manager_get_active_element(purple_media_manager_get(), type);
 
-	tmp = g_strdup_printf(PIDGIN_PREFS_ROOT "/vvconfig/%s/%s/device", type, dir);
-	device = purple_prefs_get_string(tmp);
-	g_free(tmp);
+	g_return_val_if_fail(element_info, NULL);
 
-	if (plugin[0] == '\0')
-		return purple_media_element_info_call_create(info, NULL, NULL, NULL);
-
-	ret = gst_element_factory_make(plugin, NULL);
-	if (device[0] != '\0')
-		g_object_set(G_OBJECT(ret), "device", device, NULL);
-	if (!strcmp(plugin, "videotestsrc"))
-		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
-
-	return ret;
+	return purple_media_element_info_call_create(element_info,
+		NULL, NULL, NULL);
 }
 
 static void
@@ -3651,23 +3702,16 @@ vv_test_switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint num, gpoint
 static GstElement *
 create_voice_pipeline(void)
 {
-	PurpleMediaManager *manager;
-	PurpleMediaElementInfo *audio_src, *audio_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 	GstElement *volume;
 	GstElement *level;
 	GstElement *valve;
 
-	manager = purple_media_manager_get();
-	audio_src = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
-	audio_sink = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
-
 	pipeline = gst_pipeline_new("voicetest");
-	src = create_test_element("audio", "src", audio_src);
-	sink = create_test_element("audio", "sink", audio_sink);
+
+	src = create_test_element(PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
+	sink = create_test_element(PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
 	volume = gst_element_factory_make("volume", "volume");
 	level = gst_element_factory_make("level", "level");
 	valve = gst_element_factory_make("valve", "valve");
@@ -3675,7 +3719,10 @@ create_voice_pipeline(void)
 	gst_bin_add_many(GST_BIN(pipeline), src, volume, level, valve, sink, NULL);
 	gst_element_link_many(src, volume, level, valve, sink, NULL);
 
+	purple_debug_info("gtkprefs", "create_voice_pipeline: setting pipeline "
+		"state to GST_STATE_PLAYING - it may hang here on win32\n");
 	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+	purple_debug_info("gtkprefs", "create_voice_pipeline: state is set\n");
 
 	return pipeline;
 }
@@ -3869,25 +3916,17 @@ make_voice_test(GtkWidget *vbox)
 static GstElement *
 create_video_pipeline(void)
 {
-	PurpleMediaManager *manager;
-	PurpleMediaElementInfo *video_src, *video_sink;
 	GstElement *pipeline;
 	GstElement *src, *sink;
 
-	manager = purple_media_manager_get();
-	video_src = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
-	video_sink = purple_media_manager_get_active_element(manager,
-			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
-
 	pipeline = gst_pipeline_new("videotest");
-	src = create_test_element("video", "src", video_src);
-	sink = create_test_element("video", "sink", video_sink);
+	src = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
+	sink = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
+
+	g_object_set_data(G_OBJECT(pipeline), "sink", sink);
 
 	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
 	gst_element_link_many(src, sink, NULL);
-
-	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
 
 	return pipeline;
 }
@@ -3910,6 +3949,7 @@ window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 #if GST_CHECK_VERSION(1,0,0)
 	 || !gst_is_video_overlay_prepare_window_handle_message(msg))
 #else
+	/* there may be have-xwindow-id also, in case something went wrong */
 	 || !gst_structure_has_name(msg->structure, "prepare-xwindow-id"))
 #endif
 		return;
@@ -3940,9 +3980,10 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 	if (gtk_toggle_button_get_active(test)) {
 		GdkWindow *window = gtk_widget_get_window(video);
 		gulong window_id = 0;
+
 #ifdef GDK_WINDOWING_WIN32
 		if (GDK_IS_WIN32_WINDOW(window))
-			window_id = GDK_WINDOW_HWND(window);
+			window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
 		else
 #endif
 #ifdef GDK_WINDOWING_X11
@@ -3972,6 +4013,8 @@ toggle_video_test_cb(GtkToggleButton *test, gpointer data)
 		g_signal_connect(bus, "sync-message::element",
 		                 G_CALLBACK(window_id_cb), (gpointer)window_id);
 		gst_object_unref(bus);
+
+		gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
 
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(video_test_destroy_cb), NULL);

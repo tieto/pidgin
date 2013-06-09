@@ -922,6 +922,14 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 	fi
 fi
 
+if test "x$with_gtk" == "x3" -a "x$with_gstreamer" == "x0.10"; then
+	AC_MSG_ERROR([WebKitGTK+ 3.0 cannot be mixed with GStreamer 0.10.
+Please switch to WebKitGTK+ 2.0 or GStreamer 1.0.])
+elif test "x$with_gtk" == "x2" -a "x$with_gstreamer" == "x1.0"; then
+	AC_MSG_ERROR([WebKitGTK+ 2.0 cannot be mixed with GStreamer 1.0.
+Please switch to WebKitGTK+ 3.0 or GStreamer 0.10.])
+fi
+
 dnl #######################################################################
 dnl # Check for GStreamer Video
 dnl #######################################################################

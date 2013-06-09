@@ -7,7 +7,7 @@ WriteMakefile(
     'VERSION_FROM'     => '@srcdir@/Pidgin.pm', # finds $VERSION
     ($] >= 5.005 ? ## Add these new keywords supported since 5.005
       ('ABSTRACT_FROM' => '@srcdir@/Pidgin.pm', # finds $ABSTRACT
-       'AUTHOR'        => 'Pidgin <http://pidgin.im/>') :  ()),
+       'AUTHOR'        => 'Pidgin <https://pidgin.im/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
     'dynamic_lib'       => { 'OTHERLDFLAGS' => '@LDFLAGS@' },
     'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@ @WEBKIT_CFLAGS@',

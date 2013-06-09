@@ -1359,7 +1359,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	const gchar *shortname;
 	gchar *filedata;
 	size_t size;
-	struct stat st;
+	GStatBuf st;
 	GError *err = NULL;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
@@ -2164,7 +2164,7 @@ icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 	GdkPixbuf *pixbuf;
 	int height, width;
 	char *basename, *markup, *size;
-	struct stat st;
+	GStatBuf st;
 	char *filename;
 
 	filename = gtk_file_chooser_get_preview_filename(

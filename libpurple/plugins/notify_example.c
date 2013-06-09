@@ -87,7 +87,7 @@ static void
 notify_uri_cb(PurplePluginAction *action)
 {
 	/* This one should open your web browser of choice. */
-	purple_notify_uri(notify_example, "http://www.pidgin.im/");
+	purple_notify_uri(notify_example, "https://www.pidgin.im/");
 }
 
 static GList *
@@ -139,7 +139,7 @@ static PurplePluginInfo info = {
 	"Notify API Example",       /* summary */
 	"Notify API Example",       /* description */
 	PLUGIN_AUTHOR,              /* author */
-	"http://pidgin.im",         /* homepage */
+	"https://pidgin.im",        /* homepage */
 
 	plugin_load,                /* load */
 	NULL,                       /* unload */

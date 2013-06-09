@@ -10,7 +10,7 @@ use Purple;
 	description => "Demonstrate the use of purple signals from " .
 		       "a perl plugin.",
 	author => "Sadrul Habib Chowdhury <sadrul\@pidgin.im>",
-	url => "http://developer.pidgin.im/wiki/sadrul/",
+	url => "https://developer.pidgin.im/wiki/sadrul/",
 
 	load => "plugin_load",
 	unload => "plugin_unload"

@@ -16,7 +16,7 @@ shiniest features -- but it will prevent users from having to deal with ugly
 development bugs that we already know about but haven't gotten around to fixing.
 
 If you are interested in hacking on Pidgin, Finch, and/or libpurple, please
-check out the information available at: http://developer.pidgin.im
+check out the information available at: https://developer.pidgin.im
 
 By far the best documentation, however, is the documented code.  If you have
 doxygen, you can run "make docs" in the toplevel directory to generate pretty
@@ -30,4 +30,4 @@ libpurple developers by email at devel@pidgin.im or on IRC at irc.freenode.net
 in #pidgin.  Please do as much homework as you can before contacting us; the
 more you know about your question, the faster and more effectively we can help!
 
-Patches should be posted as Trac tickets at: http://developer.pidgin.im
+Patches should be posted as Trac tickets at: https://developer.pidgin.im

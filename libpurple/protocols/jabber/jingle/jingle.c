@@ -460,7 +460,9 @@ jingle_create_relay_info(const gchar *ip, guint port, const gchar *username,
 		memset(&value, 0, sizeof(GValue));
 		g_value_init(&value, GST_TYPE_STRUCTURE);
 		gst_value_set_structure(&value, turn_setup);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		relay_info = g_value_array_append(relay_info, &value);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gst_structure_free(turn_setup);
 	}
 	return relay_info;
@@ -500,7 +502,9 @@ jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 		}
 
 		if (relay_ip) {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 			GValueArray *relay_info = g_value_array_new(0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 			if (relay_udp) {
 				relay_info =
@@ -518,9 +522,11 @@ jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 						relay_password, "tls", relay_info);
 			}
 			params[next_index].name = "relay-info";
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 			g_value_init(&params[next_index].value, G_TYPE_VALUE_ARRAY);
 			g_value_set_boxed(&params[next_index].value, relay_info);
 			g_value_array_free(relay_info);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		}
 	}
 

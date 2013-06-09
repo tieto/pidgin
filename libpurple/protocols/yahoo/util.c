@@ -830,9 +830,9 @@ char *yahoo_html_to_codes(const char *src)
 
 					/*
 					 * TODO: Ideally we would replace this:
-					 * <a href="http://pidgin.im/">Pidgin</a>
+					 * <a href="https://pidgin.im/">Pidgin</a>
 					 * with this:
-					 * Pidgin (http://pidgin.im/)
+					 * Pidgin (https://pidgin.im/)
 					 *
 					 * Currently we drop the text within the <a> tag and
 					 * just show the URL.  Doing it the fancy way is

@@ -8840,7 +8840,11 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
+#ifdef _WIN32
+	theme_dir = g_build_filename(DATADIR, "theme", NULL);
+#else
 	theme_dir = g_build_filename(DATADIR, "pidgin", "theme", NULL);
+#endif
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);
 

@@ -922,7 +922,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 
 	if (usign_success || ssign_success) {
 		struct passwd *pw;
-		struct stat st;
+		GStatBuf st;
 
 		memset(filename2, 0, sizeof(filename2));
 

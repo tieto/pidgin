@@ -81,7 +81,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 
 	/*
 	 * Make sure that random people aren't sending us STUN servers. Per
-	 * http://code.google.com/apis/talk/jep_extensions/jingleinfo.html, these
+	 * https://developers.google.com/talk/jep_extensions/jingleinfo, these
 	 * stanzas are stamped from our bare JID.
 	 */
 	if (from) {

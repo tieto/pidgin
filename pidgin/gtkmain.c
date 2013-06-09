@@ -320,8 +320,8 @@ static GHashTable *pidgin_ui_get_info(void)
 
 		g_hash_table_insert(ui_info, "name", (char*)PIDGIN_NAME);
 		g_hash_table_insert(ui_info, "version", VERSION);
-		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
-		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "website", "https://pidgin.im");
+		g_hash_table_insert(ui_info, "dev_website", "https://developer.pidgin.im");
 		g_hash_table_insert(ui_info, "client_type", "pc");
 
 		/*
@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	GList *active_accounts;
-	struct stat st;
+	GStatBuf st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},

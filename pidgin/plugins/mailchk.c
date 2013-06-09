@@ -22,21 +22,21 @@ check_mail()
 	static off_t oldsize = 0;
 	gchar *filename;
 	off_t newsize;
-	struct stat s;
+	GStatBuf st;
 	gint ret = 0;
 
 	filename = g_strdup(g_getenv("MAIL"));
 	if (!filename)
 		filename = g_strconcat("/var/spool/mail/", g_get_user_name(), NULL);
 
-	if (g_stat(filename, &s) < 0) {
+	if (g_stat(filename, &st) < 0) {
 		g_free(filename);
 		return -1;
 	}
 
-	newsize = s.st_size;
+	newsize = st.st_size;
 	if (newsize) ret |= ANY_MAIL;
-	if (s.st_mtime > s.st_atime && newsize) ret |= UNREAD_MAIL;
+	if (st.st_mtime > st.st_atime && newsize) ret |= UNREAD_MAIL;
 	if (newsize != oldsize && (ret & UNREAD_MAIL)) ret |= NEW_MAIL;
 	oldsize = newsize;
 

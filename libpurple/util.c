@@ -2967,7 +2967,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	gchar *filename_temp;
 	FILE *file;
 	size_t real_size, byteswritten;
-	struct stat st;
+	GStatBuf st;
 #ifndef HAVE_FILENO
 	int fd;
 #endif

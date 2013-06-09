@@ -35,16 +35,28 @@ INCLUDE_PATHS +=	\
 			-I$(JSON_GLIB_TOP)/include/json-glib-1.0 \
 			-I$(LIBXML2_TOP)/include/libxml2 \
 			-I$(NSS_TOP)/include/nspr4 \
-			-I$(NSS_TOP)/include/nss3
+			-I$(NSS_TOP)/include/nss3 \
+			$(VV_INCLUDE_PATHS)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(JSON_GLIB_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
-			-L$(NSS_TOP)/lib
+			-L$(NSS_TOP)/lib \
+			$(VV_LIB_PATHS)
 
 ##
 ##  SOURCES, OBJECTS
 ##
+ifeq "$(USE_VV)" "1"
+VV_SRC = \
+	media/backend-fs2.c \
+	media/backend-iface.c \
+	media/codec.c \
+	marshallers.c
+else
+VV_SRC =
+endif
+
 C_SRC =	\
 			account.c \
 			accountopt.c \
@@ -115,7 +127,8 @@ C_SRC =	\
 			xmlnode.c \
 			win32/giowin32.c \
 			win32/libc_interface.c \
-			win32/win32dep.c
+			win32/win32dep.c \
+			$(VV_SRC)
 
 RC_SRC = win32/libpurplerc.rc
 
@@ -135,7 +148,8 @@ LIBS =	\
 		-lxml2 \
 		-ljson-glib-1.0 \
 		-lnss3 \
-		-lnspr4
+		-lnspr4 \
+		$(VV_LIBS)
 
 include $(PIDGIN_COMMON_RULES)
 
@@ -167,6 +181,19 @@ install: install_shallow all
 
 $(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)
 
+marshallers.h: marshallers.list
+	@echo -e "  GEN\t$@"
+	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --header > marshallers.h
+
+marshallers.c: marshallers.list marshallers.h
+	@echo -e "  GEN\t$@"
+	@echo "#include \"marshallers.h\"" > marshallers.c
+	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body >> marshallers.c
+
+ifeq "$(USE_VV)" "1"
+mediamanager.c media/backend-iface.c: marshallers.h
+endif
+
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
@@ -174,7 +201,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)
+	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c
 	rm -f $(TARGET).dll $(TARGET).dll.a $(TARGET).def
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean

@@ -12,6 +12,7 @@
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant-1.6
+GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-2.12
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk2-2.24
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
@@ -120,11 +121,33 @@ STRIP ?= strip
 INTLTOOL_MERGE ?= $(INTLTOOL_TOP)/bin/intltool-merge
 MONO_SIGNCODE ?= signcode
 GPG_SIGN ?= gpg
+GLIB_GENMARSHAL ?= $(GTK_BIN)/glib-genmarshal
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
 MINGW_MAKEFILE := Makefile.mingw
 MAKE_at := @
+
+USE_VV ?= 1
+
+ifeq "$(USE_VV)" "1"
+VV_LIBS := \
+	-lgstreamer-0.10 \
+	-lgstvideo-0.10 \
+	-lgstinterfaces-0.10 \
+	-lfarstream-0.1
+VV_INCLUDE_PATHS := \
+	-I$(GSTREAMER_TOP)/include/gstreamer-0.10 \
+	-I$(GSTREAMER_TOP)/include/farstream-0.1 \
+	-I$(LIBXML2_TOP)/include/libxml2
+VV_LIB_PATHS := \
+	-L$(GSTREAMER_TOP)/lib
+DEFINES += -DUSE_GSTREAMER -DUSE_VV
+else
+VV_LIBS :=
+VV_INCLUDE_PATHS :=
+VV_LIB_PATHS :=
+endif
 
 INSTALL_PIXMAPS ?= 1
 INSTALL_SSL_CERTIFICATES ?= 1

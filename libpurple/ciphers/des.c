@@ -425,7 +425,7 @@ des_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	return out_len;
 }
 
-static gint
+static ssize_t
 des_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
@@ -680,7 +680,7 @@ des3_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	return 0;
 }
 
-static gint
+static ssize_t
 des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
@@ -734,7 +734,7 @@ des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	return out_len;
 }
 
-static gint
+static ssize_t
 des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
@@ -795,7 +795,7 @@ des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	return out_len;
 }
 
-static gint
+static ssize_t
 des3_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {

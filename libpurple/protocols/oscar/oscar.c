@@ -53,7 +53,7 @@
 #include "oscar.h"
 #include "peer.h"
 
-#define AIMHASHDATA "http://pidgin.im/aim_data.php3"
+#define AIMHASHDATA "https://pidgin.im/aim_data.php3"
 
 static guint64 purple_caps =
 	OSCAR_CAPABILITY_CHAT

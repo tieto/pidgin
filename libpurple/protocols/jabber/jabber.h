@@ -37,7 +37,7 @@ typedef enum {
 	JABBER_CAP_IQ_REGISTER    = 1 << 8,
 
 	/* Google Talk extensions:
-	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
+	 * https://developers.google.com/talk/jep_extensions/extensions
 	 */
 	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
@@ -78,7 +78,7 @@ typedef struct _JabberStream JabberStream;
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://pidgin.im/"
+#define CAPS0115_NODE "https://pidgin.im/"
 
 #define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
@@ -150,9 +150,9 @@ struct _JabberStream
 	 * when we receive a roster push.
 	 *
 	 * See these bug reports:
-	 * http://trac.adiumx.com/ticket/8834
-	 * http://developer.pidgin.im/ticket/5484
-	 * http://developer.pidgin.im/ticket/6188
+	 * https://trac.adium.im/ticket/8834
+	 * https://developer.pidgin.im/ticket/5484
+	 * https://developer.pidgin.im/ticket/6188
 	 */
 	gboolean currently_parsing_roster_push;
 
@@ -353,7 +353,7 @@ void jabber_remove_feature(const gchar *namespace);
 
 /** Adds an identity to this jabber library instance. For list of valid values
  * visit the website of the XMPP Registrar
- * (http://www.xmpp.org/registrar/disco-categories.html#client).
+ * (http://xmpp.org/registrar/disco-categories.html#client)
  *
  * Like with jabber_add_feature, if you call this while accounts are connected,
  * Bad Things will happen.
