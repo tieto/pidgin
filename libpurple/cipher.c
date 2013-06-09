@@ -248,14 +248,7 @@ purple_ciphers_init() {
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CIPHER));
 
-	purple_ciphers_register_cipher("md5", purple_md5_cipher_get_ops());
-	purple_ciphers_register_cipher("sha1", purple_sha1_cipher_get_ops());
-	purple_ciphers_register_cipher("sha256", purple_sha256_cipher_get_ops());
-	purple_ciphers_register_cipher("md4", purple_md4_cipher_get_ops());
-	purple_ciphers_register_cipher("hmac", purple_hmac_cipher_get_ops());
-	purple_ciphers_register_cipher("des", purple_des_cipher_get_ops());
-	purple_ciphers_register_cipher("des3", purple_des3_cipher_get_ops());
-	purple_ciphers_register_cipher("rc4", purple_rc4_cipher_get_ops());
+	purple_ciphers_register_all();
 }
 
 void

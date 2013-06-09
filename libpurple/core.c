@@ -37,6 +37,7 @@
 #include "http.h"
 #include "idle.h"
 #include "imgstore.h"
+#include "keyring.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -117,6 +118,7 @@ purple_core_init(const char *ui)
 		purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *")); /* Parameters */
 
 	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
+	purple_signal_register(core, "core-initialized", purple_marshal_VOID, NULL, 0);
 
 	/* The prefs subsystem needs to be initialized before static protocols
 	 * for protocol prefs to work. */
@@ -150,6 +152,7 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */
@@ -195,6 +198,8 @@ purple_core_init(const char *ui)
 
 	/* Load the buddy list after UI init */
 	purple_blist_boot();
+
+	purple_signal_emit(purple_get_core(), "core-initialized");
 
 	return TRUE;
 }
@@ -243,6 +248,7 @@ purple_core_quit(void)
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
 	purple_accounts_uninit();
+	purple_keyring_uninit(); /* after accounts */
 	purple_sound_uninit();
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();

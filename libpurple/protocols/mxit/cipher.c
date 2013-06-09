@@ -79,7 +79,7 @@ static void padding_remove( GString* data )
 static char* transport_layer_key( struct MXitSession* session )
 {
 	static char	key[16 + 1];
-	const char*	password		= purple_account_get_password( session->acc );
+	const char*	password		= purple_connection_get_password( session->con );
 	int			passlen			= strlen( password );
 
 	/* initialize with initial key */
@@ -123,7 +123,7 @@ char* mxit_encrypt_password( struct MXitSession* session )
 
 	/* build the secret data to be encrypted: SECRET_HEADER + password */
 	pass = g_string_new( SECRET_HEADER );
-	g_string_append( pass, purple_account_get_password( session->acc) );
+	g_string_append( pass, purple_connection_get_password( session->con ) );
 	padding_add( pass );		/* add ISO10126 padding */
 
 	/* now encrypt the secret. we encrypt each block separately (ECB mode) */

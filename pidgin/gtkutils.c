@@ -483,7 +483,7 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 GtkWidget *
 pidgin_make_frame(GtkWidget *parent, const char *title)
 {
-	GtkWidget *vbox, *label, *hbox;
+	GtkWidget *vbox, *vbox2, *label, *hbox;
 	char *labeltitle;
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -509,11 +509,13 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-	gtk_widget_show(vbox);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
+	gtk_widget_show(vbox2);
 
-	return vbox;
+	g_object_set_data(G_OBJECT(vbox2), "main-vbox", vbox);
+
+	return vbox2;
 }
 
 static gpointer

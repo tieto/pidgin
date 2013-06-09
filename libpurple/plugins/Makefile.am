@@ -1,4 +1,4 @@
-DIST_SUBDIRS = mono perl ssl tcl
+DIST_SUBDIRS = mono perl ssl tcl keyrings
 
 if USE_PERL
 PERL_DIR = perl
@@ -20,7 +20,8 @@ SUBDIRS = \
 	$(MONO_DIR) \
 	$(PERL_DIR) \
 	ssl \
-	$(TCL_DIR)
+	$(TCL_DIR) \
+	keyrings
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -146,7 +147,11 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
-	$(DBUS_CFLAGS)
+	$(DBUS_CFLAGS) \
+	$(NSS_CFLAGS)
+
+PLUGIN_LIBS = \
+	$(NSS_LIBS)
 
 #
 # This part allows people to build their own plugins in here.

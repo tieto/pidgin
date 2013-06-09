@@ -3694,7 +3694,7 @@ static void mw_prpl_login(PurpleAccount *account) {
     return;
   }
 
-  pass = g_strdup(purple_account_get_password(account));
+  pass = g_strdup(purple_connection_get_password(gc));
   port = purple_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   DEBUG_INFO("user: '%s'\n", user);

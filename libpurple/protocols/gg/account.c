@@ -359,7 +359,8 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	purple_account_set_username(account, ggp_uin_to_str(uin));
 	purple_account_set_remember_password(account,
 		register_data->password_remember);
-	purple_account_set_password(account, register_data->password);
+	purple_account_set_password(account, register_data->password,
+		NULL, NULL);
 	
 	tmp = g_strdup_printf(_("Your new GG number: %u."), uin);
 	purple_notify_info(account, GGP_ACCOUNT_REGISTER_TITLE,
@@ -554,7 +555,7 @@ static void ggp_account_chpass_dialog_ok(
 	g_assert(chpass_data->token_value != NULL);
 
 	if (g_utf8_collate(chpass_data->password_current,
-		purple_account_get_password(account)) != 0)
+		purple_connection_get_password(chpass_data->gc)) != 0)
 	{
 		g_free(chpass_data->password_current);
 		chpass_data->password_current = NULL;
@@ -636,7 +637,8 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 	purple_debug_info("gg", "ggp_account_chpass_response: "
 		"password changed\n");
 	
-	purple_account_set_password(account, chpass_data->password_new);
+	purple_account_set_password(account, chpass_data->password_new,
+		NULL, NULL);
 
 	purple_notify_info(account, GGP_ACCOUNT_CHPASS_TITLE,
 		_("Your password has been changed."), NULL);

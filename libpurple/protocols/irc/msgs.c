@@ -1471,7 +1471,8 @@ irc_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 	const char *pw;
 	size_t len;
 
-	pw = purple_account_get_password(irc->account);
+	pw = purple_connection_get_password(purple_account_get_connection(
+		irc->account));
 
 	if (!conn || !secret || id != SASL_CB_PASS)
 		return SASL_BADPARAM;

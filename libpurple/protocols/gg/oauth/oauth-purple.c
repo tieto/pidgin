@@ -88,7 +88,7 @@ void ggp_oauth_request(PurpleConnection *gc, ggp_oauth_request_cb callback,
 
 	auth = gg_oauth_generate_header(method, url,
 		purple_account_get_username(account),
-		purple_account_get_password(account), NULL, NULL);
+		purple_connection_get_password(gc), NULL, NULL);
 	request = g_strdup_printf(
 		"POST /request_token HTTP/1.1\r\n"
 		"Host: api.gadu-gadu.pl\r\n"
@@ -165,7 +165,7 @@ static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
 		"callback_url=http://www.mojageneracja.pl&request_token=%s&"
 		"uin=%s&password=%s", data->token,
 		purple_account_get_username(account),
-		purple_account_get_password(account));
+		purple_connection_get_password(data->gc));
 	request = g_strdup_printf(
 		"POST /authorize HTTP/1.1\r\n"
 		"Host: login.gadu-gadu.pl\r\n"
@@ -206,7 +206,7 @@ static void ggp_oauth_authorization_done(PurpleUtilFetchUrlData *url_data,
 
 	auth = gg_oauth_generate_header("POST", url,
 		purple_account_get_username(account),
-		purple_account_get_password(account),
+		purple_connection_get_password(data->gc),
 		data->token, data->token_secret);
 
 	request = g_strdup_printf(
@@ -267,7 +267,7 @@ static void ggp_oauth_access_token_got(PurpleUtilFetchUrlData *url_data,
 		auth = gg_oauth_generate_header(
 			data->sign_method, data->sign_url,
 			purple_account_get_username(account),
-			purple_account_get_password(account),
+			purple_connection_get_password(data->gc),
 			token, token_secret);
 		data->callback(data->gc, auth, data->user_data);
 	}
