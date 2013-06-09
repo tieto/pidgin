@@ -36,12 +36,14 @@ INCLUDE_PATHS +=	\
 			-I$(LIBXML2_TOP)/include/libxml2 \
 			-I$(NSS_TOP)/include/nspr4 \
 			-I$(NSS_TOP)/include/nss3 \
+			-I$(GNUTLS_TOP)/include \
 			$(VV_INCLUDE_PATHS)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(JSON_GLIB_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
 			-L$(NSS_TOP)/lib \
+			-L$(GNUTLS_TOP)/lib \
 			$(VV_LIB_PATHS)
 
 ##
@@ -149,6 +151,7 @@ LIBS =	\
 		-ljson-glib-1.0 \
 		-lnss3 \
 		-lnspr4 \
+		-lgnutls \
 		$(VV_LIBS)
 
 include $(PIDGIN_COMMON_RULES)
