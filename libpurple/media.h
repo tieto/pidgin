@@ -41,11 +41,43 @@
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
-/** An opaque structure representing a media call. */
+/** A structure representing a media call. */
 typedef struct _PurpleMedia PurpleMedia;
 
 #include "signals.h"
 #include "util.h"
+
+#ifdef USE_VV
+
+/** @copydoc _PurpleMediaClass */
+typedef struct _PurpleMediaClass    PurpleMediaClass;
+/** @copydoc _PurpleMediaPrivate */
+typedef struct _PurpleMediaPrivate  PurpleMediaPrivate;
+
+/** The media instance */
+struct _PurpleMedia
+{
+	GObject parent;                /**< The parent of this object. */
+	PurpleMediaPrivate *priv;      /**< The private data of this object. */
+
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
+};
+
+/** The media class */
+struct _PurpleMediaClass
+{
+	GObjectClass parent_class;     /**< The parent class. */
+
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
+};
+
+#endif
 
 G_BEGIN_DECLS
 

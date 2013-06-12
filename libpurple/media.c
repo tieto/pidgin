@@ -44,23 +44,6 @@
 typedef struct _PurpleMediaSession PurpleMediaSession;
 /** @copydoc _PurpleMediaStream */
 typedef struct _PurpleMediaStream PurpleMediaStream;
-/** @copydoc _PurpleMediaClass */
-typedef struct _PurpleMediaClass PurpleMediaClass;
-/** @copydoc _PurpleMediaPrivate */
-typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
-
-/** The media class */
-struct _PurpleMediaClass
-{
-	GObjectClass parent_class;     /**< The parent class. */
-};
-
-/** The media class's private data */
-struct _PurpleMedia
-{
-	GObject parent;                /**< The parent of this object. */
-	PurpleMediaPrivate *priv;      /**< The private data of this object. */
-};
 
 struct _PurpleMediaSession
 {
