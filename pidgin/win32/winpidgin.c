@@ -146,8 +146,10 @@ static void common_dll_prep(const wchar_t *path) {
 	HKEY hkey;
 	wchar_t alt_path_buff[MAX_PATH + 1];
 	wchar_t tmp_path[MAX_PATH + 1];
-	/* Hold strlen("FS_PLUGIN_PATH=") + MAX_PATH + 1 */
-	wchar_t farstream_path[MAX_PATH + 16];
+	/* Hold strlen("FS_PLUGIN_PATH=" or "GST_PLUGIN_SYSTEM_PATH") +
+	 * MAX_PATH + 1
+	 */
+	wchar_t set_path[MAX_PATH + 24];
 
 	if (!check_for_gtk(path)) {
 		const wchar_t *winpath = _wgetenv(L"PATH");
@@ -186,10 +188,22 @@ static void common_dll_prep(const wchar_t *path) {
 	wcsncpy(tmp_path, path, MAX_PATH);
 	tmp_path[MAX_PATH] = L'\0';
 	wcsrchr(tmp_path, L'\\')[0] = L'\0';
-	_snwprintf(farstream_path, sizeof(farstream_path) / sizeof(wchar_t),
+	/* tmp_path now contains \path\to\Pidgin\Gtk */
+
+	_snwprintf(set_path, sizeof(set_path) / sizeof(wchar_t),
 		L"FS_PLUGIN_PATH=%s\\lib\\farstream-0.1", tmp_path);
-	farstream_path[sizeof(farstream_path) / sizeof(wchar_t) - 1] = L'\0';
-	_wputenv(farstream_path);
+	set_path[sizeof(set_path) / sizeof(wchar_t) - 1] = L'\0';
+	_wputenv(set_path);
+
+	_snwprintf(set_path, sizeof(set_path) / sizeof(wchar_t),
+		L"GST_PLUGIN_SYSTEM_PATH=%s\\lib\\gstreamer-0.10", tmp_path);
+	set_path[sizeof(set_path) / sizeof(wchar_t) - 1] = L'\0';
+	_wputenv(set_path);
+
+	_snwprintf(set_path, sizeof(set_path) / sizeof(wchar_t),
+		L"GST_PLUGIN_PATH=%s\\lib\\gstreamer-0.10", tmp_path);
+	set_path[sizeof(set_path) / sizeof(wchar_t) - 1] = L'\0';
+	_wputenv(set_path);
 
 	if ((hmod = GetModuleHandleW(L"kernel32.dll"))) {
 		MySetDllDirectory = (LPFNSETDLLDIRECTORY) GetProcAddress(
