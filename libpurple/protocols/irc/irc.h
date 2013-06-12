@@ -89,7 +89,7 @@ struct irc_conn {
 
 	gboolean quitting;
 
-	PurpleCircBuffer *outbuf;
+	PurpleCircularBuffer *outbuf;
 	guint writeh;
 
 	time_t recv_time;

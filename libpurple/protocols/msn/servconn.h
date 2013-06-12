@@ -85,7 +85,7 @@ struct _MsnServConn
 						  It's only set when we've received a command that
 						  has a payload. */
 
-	PurpleCircBuffer *tx_buf;
+	PurpleCircularBuffer *tx_buf;
 	guint tx_handler;
 	guint timeout_sec;
 	guint timeout_handle;

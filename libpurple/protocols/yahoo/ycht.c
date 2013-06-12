@@ -267,8 +267,9 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 {
 	YchtConn *ycht = data;
 	int ret, writelen;
+	const gchar *output = NULL;
 
-	writelen = purple_circ_buffer_get_max_read(ycht->txbuf);
+	writelen = purple_circular_buffer_get_max_read(ycht->txbuf);
 
 	if (writelen == 0) {
 		purple_input_remove(ycht->tx_handler);
@@ -276,7 +277,9 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 		return;
 	}
 
-	ret = write(ycht->fd, ycht->txbuf->outptr, writelen);
+	output = purple_circular_buffer_get_output(ycht->txbuf);
+
+	ret = write(ycht->fd, output, writelen);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -292,7 +295,7 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 		return;
 	}
 
-	purple_circ_buffer_mark_read(ycht->txbuf, ret);
+	purple_circular_buffer_mark_read(ycht->txbuf, ret);
 
 }
 
@@ -345,7 +348,7 @@ static void ycht_packet_send(YchtConn *ycht, YchtPkt *pkt)
 			ycht->tx_handler = purple_input_add(ycht->fd,
 				PURPLE_INPUT_WRITE, ycht_packet_send_write_cb,
 				ycht);
-		purple_circ_buffer_append(ycht->txbuf, buf + written,
+		purple_circular_buffer_append(ycht->txbuf, buf + written,
 			len - written);
 	}
 
@@ -444,7 +447,7 @@ void ycht_connection_close(YchtConn *ycht)
 	if (ycht->tx_handler)
 		purple_input_remove(ycht->tx_handler);
 
-	purple_circ_buffer_destroy(ycht->txbuf);
+	g_object_unref(G_OBJECT(ycht->txbuf));
 
 	g_free(ycht->rxqueue);
 

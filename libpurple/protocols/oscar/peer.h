@@ -184,7 +184,7 @@ struct _PeerConnection
 	guint8 proxy_header[12];
 	gssize proxy_header_received;
 	ByteStream buffer_incoming;
-	PurpleCircBuffer *buffer_outgoing;
+	PurpleCircularBuffer *buffer_outgoing;
 	guint watcher_incoming;
 	guint watcher_outgoing;
 

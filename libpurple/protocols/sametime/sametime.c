@@ -221,7 +221,7 @@ struct mwPurplePluginData {
   gint outpa;  /* like inpa, but the other way */
 
   /** circular buffer for outgoing data */
-  PurpleCircBuffer *sock_buf;
+  PurpleCircularBuffer *sock_buf;
 
   PurpleConnection *gc;
 };
@@ -343,7 +343,7 @@ static PurpleConnection *session_to_gc(struct mwSession *session) {
 
 static void write_cb(gpointer data, gint source, PurpleInputCondition cond) {
   struct mwPurplePluginData *pd = data;
-  PurpleCircBuffer *circ = pd->sock_buf;
+  PurpleCircularBuffer *circ = pd->sock_buf;
   gsize avail;
   int ret;
 
@@ -351,17 +351,17 @@ static void write_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
   g_return_if_fail(circ != NULL);
 
-  avail = purple_circ_buffer_get_max_read(circ);
+  avail = purple_circular_buffer_get_max_read(circ);
   if(BUF_LONG < avail) avail = BUF_LONG;
 
   while(avail) {
-    ret = write(pd->socket, circ->outptr, avail);
+    ret = write(pd->socket, purple_circular_buffer_get_output(circ), avail);
 
     if(ret <= 0)
       break;
 
-    purple_circ_buffer_mark_read(circ, ret);
-    avail = purple_circ_buffer_get_max_read(circ);
+    purple_circular_buffer_mark_read(circ, ret);
+    avail = purple_circular_buffer_get_max_read(circ);
     if(BUF_LONG < avail) avail = BUF_LONG;
   }
 
@@ -386,7 +386,7 @@ static int mw_session_io_write(struct mwSession *session,
 
   if(pd->outpa) {
     DEBUG_INFO("already pending INPUT_WRITE, buffering\n");
-    purple_circ_buffer_append(pd->sock_buf, buf, len);
+    purple_circular_buffer_append(pd->sock_buf, buf, len);
     return 0;
   }
 
@@ -406,7 +406,7 @@ static int mw_session_io_write(struct mwSession *session,
   if(err == EAGAIN) {
     /* append remainder to circular buffer */
     DEBUG_INFO("EAGAIN\n");
-    purple_circ_buffer_append(pd->sock_buf, buf, len);
+    purple_circular_buffer_append(pd->sock_buf, buf, len);
     pd->outpa = purple_input_add(pd->socket, PURPLE_INPUT_WRITE, write_cb, pd);
 
   } else if(len > 0) {
@@ -3150,7 +3150,7 @@ static struct mwPurplePluginData *mwPurplePluginData_new(PurpleConnection *gc) {
   pd->srvc_resolve = mw_srvc_resolve_new(pd->session);
   pd->srvc_store = mw_srvc_store_new(pd->session);
   pd->group_list_map = g_hash_table_new(g_direct_hash, g_direct_equal);
-  pd->sock_buf = purple_circ_buffer_new(0);
+  pd->sock_buf = purple_circular_buffer_new(0);
 
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_aware));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_conf));
@@ -3197,7 +3197,7 @@ static void mwPurplePluginData_free(struct mwPurplePluginData *pd) {
   mwSession_free(pd->session);
 
   g_hash_table_destroy(pd->group_list_map);
-  purple_circ_buffer_destroy(pd->sock_buf);
+  g_object_unref(G_OBJECT(pd->sock_buf));
 
   g_free(pd);
 }

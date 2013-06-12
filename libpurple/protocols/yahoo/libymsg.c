@@ -3668,7 +3668,7 @@ void yahoo_login(PurpleAccount *account) {
 	yd->fd = -1;
 	yd->txhandler = 0;
 	/* TODO: Is there a good grow size for the buffer? */
-	yd->txbuf = purple_circ_buffer_new(0);
+	yd->txbuf = purple_circular_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
@@ -3762,7 +3762,7 @@ void yahoo_close(PurpleConnection *gc) {
 	if (yd->txhandler)
 		purple_input_remove(yd->txhandler);
 
-	purple_circ_buffer_destroy(yd->txbuf);
+	g_object_unref(G_OBJECT(yd->txbuf));
 
 	if (yd->fd >= 0)
 		close(yd->fd);

@@ -89,7 +89,7 @@ bonjour_jabber_conv_new(PurpleBuddy *pb, PurpleAccount *account, const char *ip)
 
 	BonjourJabberConversation *bconv = g_new0(BonjourJabberConversation, 1);
 	bconv->socket = -1;
-	bconv->tx_buf = purple_circ_buffer_new(512);
+	bconv->tx_buf = purple_circular_buffer_new(512);
 	bconv->tx_handler = 0;
 	bconv->rx_handler = 0;
 	bconv->pb = pb;
@@ -280,7 +280,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	BonjourJabberConversation *bconv = bb->conversation;
 	int ret, writelen;
 
-	writelen = purple_circ_buffer_get_max_read(bconv->tx_buf);
+	writelen = purple_circular_buffer_get_max_read(bconv->tx_buf);
 
 	if (writelen == 0) {
 		purple_input_remove(bconv->tx_handler);
@@ -288,7 +288,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	ret = send(bconv->socket, bconv->tx_buf->outptr, writelen, 0);
+	ret = send(bconv->socket, purple_circular_buffer_get_output(bconv->tx_buf), writelen, 0);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -313,7 +313,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	purple_circ_buffer_mark_read(bconv->tx_buf, ret);
+	purple_circular_buffer_mark_read(bconv->tx_buf, ret);
 }
 
 static gint
@@ -329,7 +329,7 @@ _send_data(PurpleBuddy *pb, char *message)
 			|| bconv->connect_data != NULL
 			|| bconv->sent_stream_start != FULLY_SENT
 			|| !bconv->recv_stream_start
-			|| purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
+			|| purple_circular_buffer_get_max_read(bconv->tx_buf) > 0) {
 		ret = -1;
 		errno = EAGAIN;
 	} else {
@@ -364,7 +364,7 @@ _send_data(PurpleBuddy *pb, char *message)
 		if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start && bconv->tx_handler == 0)
 			bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 				_send_data_write_cb, pb);
-		purple_circ_buffer_append(bconv->tx_buf, message + ret, len - ret);
+		purple_circular_buffer_append(bconv->tx_buf, message + ret, len - ret);
 	}
 
 	return ret;
@@ -616,7 +616,7 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 	/* If the stream has been completely started and we know who we're talking to, we can start doing stuff. */
 	/* I don't think the circ_buffer can actually contain anything without a buddy being associated, but lets be explicit. */
 	if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start
-			&& bconv->pb && purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
+			&& bconv->pb && purple_circular_buffer_get_max_read(bconv->tx_buf) > 0) {
 		/* Watch for when we can write the buffered messages */
 		bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 			_send_data_write_cb, bconv->pb);
@@ -1189,7 +1189,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 			purple_input_remove(bconv->tx_handler);
 
 		/* Free all the data related to the conversation */
-		purple_circ_buffer_destroy(bconv->tx_buf);
+		g_object_unref(G_OBJECT(bconv->tx_buf));
 		if (bconv->connect_data != NULL)
 			purple_proxy_connect_cancel(bconv->connect_data);
 		if (bconv->stream_data != NULL) {

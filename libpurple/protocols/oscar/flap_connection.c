@@ -336,7 +336,7 @@ flap_connection_new(OscarData *od, int type)
 
 	conn = g_new0(FlapConnection, 1);
 	conn->od = od;
-	conn->buffer_outgoing = purple_circ_buffer_new(0);
+	conn->buffer_outgoing = purple_circular_buffer_new(0);
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
@@ -410,7 +410,7 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 	g_free(conn->buffer_incoming.data.data);
 	conn->buffer_incoming.data.data = NULL;
 
-	purple_circ_buffer_destroy(conn->buffer_outgoing);
+	g_object_unref(G_OBJECT(conn->buffer_outgoing));
 	conn->buffer_outgoing = NULL;
 }
 
@@ -1020,9 +1020,11 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	FlapConnection *conn;
 	int writelen, ret;
+	const gchar *output = NULL;
 
 	conn = data;
-	writelen = purple_circ_buffer_get_max_read(conn->buffer_outgoing);
+	writelen = purple_circular_buffer_get_max_read(conn->buffer_outgoing);
+	output = purple_circular_buffer_get_output(conn->buffer_outgoing);
 
 	if (writelen == 0)
 	{
@@ -1032,10 +1034,9 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	if (conn->gsc)
-		ret = purple_ssl_write(conn->gsc, conn->buffer_outgoing->outptr,
-				writelen);
+		ret = purple_ssl_write(conn->gsc, output, writelen);
 	else
-		ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
+		ret = send(conn->fd, output, writelen, 0);
 	if (ret <= 0)
 	{
 		if (ret < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
@@ -1057,7 +1058,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	purple_circ_buffer_mark_read(conn->buffer_outgoing, ret);
+	purple_circular_buffer_mark_read(conn->buffer_outgoing, ret);
 }
 
 static void
@@ -1074,7 +1075,7 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 		return;
 
 	/* Add everything to our outgoing buffer */
-	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
+	purple_circular_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
 	if (conn->watcher_outgoing == 0)

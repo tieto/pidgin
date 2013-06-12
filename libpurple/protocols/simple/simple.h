@@ -101,7 +101,7 @@ struct simple_account_data {
 	guint resendtimeout;
 	gboolean connecting;
 	PurpleAccount *account;
-	PurpleCircBuffer *txbuf;
+	PurpleCircularBuffer *txbuf;
 	guint tx_handler;
 	gchar *regcallid;
 	GSList *transactions;

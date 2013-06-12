@@ -190,7 +190,7 @@ struct _JabberStream
 
 	GSList *pending_buddy_info_requests;
 
-	PurpleCircBuffer *write_buffer;
+	PurpleCircularBuffer *write_buffer;
 	guint writeh;
 
 	gboolean reinit;

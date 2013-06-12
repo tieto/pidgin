@@ -71,7 +71,7 @@ typedef struct _JabberSIXfer {
 
 	JabberIBBSession *ibb_session;
 	guint ibb_timeout_handle;
-	PurpleCircBuffer *ibb_buffer;
+	PurpleCircularBuffer *ibb_buffer;
 } JabberSIXfer;
 
 /* some forward declarations */
@@ -1011,7 +1011,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_info("jabber", "about to write %" G_GSIZE_FORMAT " bytes from IBB stream\n",
 			size);
-		purple_circ_buffer_append(jsx->ibb_buffer, data, size);
+		purple_circular_buffer_append(jsx->ibb_buffer, data, size);
 		purple_xfer_prpl_ready(xfer);
 	} else {
 		/* trying to write past size of file transfers negotiated size,
@@ -1028,15 +1028,15 @@ jabber_si_xfer_ibb_read(guchar **out_buffer, PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 	guchar *buffer;
-	gsize size;
+	gsize size = purple_circular_buffer_get_used(jsx->ibb_buffer);
 	gsize tmp;
 
-	size = jsx->ibb_buffer->bufused;
 	*out_buffer = buffer = g_malloc(size);
-	while ((tmp = purple_circ_buffer_get_max_read(jsx->ibb_buffer))) {
-		memcpy(buffer, jsx->ibb_buffer->outptr, tmp);
+	while ((tmp = purple_circular_buffer_get_max_read(jsx->ibb_buffer))) {
+		const gchar *output = purple_circular_buffer_get_output(jsx->ibb_buffer);
+		memcpy(buffer, output, tmp);
 		buffer += tmp;
-		purple_circ_buffer_mark_read(jsx->ibb_buffer, tmp);
+		purple_circular_buffer_mark_read(jsx->ibb_buffer, tmp);
 	}
 
 	return size;
@@ -1069,7 +1069,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 			 clients interpreting the block-size attribute as that
 			 (see also remark in ibb.c) */
 			jsx->ibb_buffer =
-				purple_circ_buffer_new(jabber_ibb_session_get_block_size(sess));
+				purple_circular_buffer_new(jabber_ibb_session_get_block_size(sess));
 
 			/* set up read function */
 			purple_xfer_set_read_fnc(xfer, jabber_si_xfer_ibb_read);
@@ -1157,7 +1157,7 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 		purple_xfer_set_write_fnc(xfer, jabber_si_xfer_ibb_write);
 
 		jsx->ibb_buffer =
-			purple_circ_buffer_new(jabber_ibb_session_get_max_data_size(jsx->ibb_session));
+			purple_circular_buffer_new(jabber_ibb_session_get_max_data_size(jsx->ibb_session));
 
 		/* open the IBB session */
 		jabber_ibb_session_open(jsx->ibb_session);
@@ -1334,7 +1334,7 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		}
 
 		if (jsx->ibb_buffer) {
-			purple_circ_buffer_destroy(jsx->ibb_buffer);
+			g_object_unref(G_OBJECT(jsx->ibb_buffer));
 		}
 
 		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);

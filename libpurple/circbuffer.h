@@ -21,37 +21,48 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _CIRCBUFFER_H
-#define _CIRCBUFFER_H
+#ifndef PURPLE_CIRCULAR_BUFFER_H
+#define PURPLE_CIRCULAR_BUFFER_H
 
 #include <glib.h>
+#include <glib-object.h>
 
-typedef struct _PurpleCircBuffer {
+#define PURPLE_TYPE_CIRCULAR_BUFFER            (purple_circular_buffer_get_type())
+#define PURPLE_CIRCULAR_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CIRCULAR_BUFFER, PurpleCircularBuffer))
+#define PURPLE_CIRCULAR_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CIRCULAR_BUFFER, PurpleCircularBufferClass))
+#define PURPLE_IS_CIRCULAR_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CIRCULAR_BUFFER))
+#define PURPLE_IS_CIRCULAR_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CIRCULAR_BUFFER))
+#define PURPLE_CIRCULAR_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CIRCULAR_BUFFER, PurpleCircularBufferClass))
 
-	/** A pointer to the starting address of our chunk of memory. */
-	gchar *buffer;
+typedef struct _PurpleCircularBuffer           PurpleCircularBuffer;
+typedef struct _PurpleCircularBufferClass      PurpleCircularBufferClass;
 
-	/** The incremental amount to increase this buffer by when
-	 *  the buffer is not big enough to hold incoming data, in bytes. */
-	gsize growsize;
+struct _PurpleCircularBuffer {
+	GObject parent;
 
-	/** The length of this buffer, in bytes. */
-	gsize buflen;
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
+};
 
-	/** The number of bytes of this buffer that contain unread data. */
-	gsize bufused;
+struct _PurpleCircularBufferClass {
+	GObjectClass parent;
 
-	/** A pointer to the next byte where new incoming data is
-	 *  buffered to. */
-	gchar *inptr;
+	void (*grow)(PurpleCircularBuffer *buffer, gsize len);
+	void (*append)(PurpleCircularBuffer *buffer, gconstpointer src, gsize len);
+	gsize (*max_read_size)(const PurpleCircularBuffer *buffer);
+	gboolean (*mark_read)(PurpleCircularBuffer *buffer, gsize len);
 
-	/** A pointer to the next byte of buffered data that should be
-	 *  read by the consumer. */
-	gchar *outptr;
-
-} PurpleCircBuffer;
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
+
+GType purple_circular_buffer_get_type(void);
 
 /**
  * Creates a new circular buffer.  This will not allocate any memory for the
@@ -64,15 +75,7 @@ G_BEGIN_DECLS
  * @return The new PurpleCircBuffer. This should be freed with
  *         purple_circ_buffer_destroy when you are done with it
  */
-PurpleCircBuffer *purple_circ_buffer_new(gsize growsize);
-
-/**
- * Dispose of the PurpleCircBuffer and free any memory used by it (including any
- * memory used by the internal buffer).
- *
- * @param buf The PurpleCircBuffer to free
- */
-void purple_circ_buffer_destroy(PurpleCircBuffer *buf);
+PurpleCircularBuffer *purple_circular_buffer_new(gsize growsize);
 
 /**
  * Append data to the PurpleCircBuffer.  This will grow the internal
@@ -82,7 +85,7 @@ void purple_circ_buffer_destroy(PurpleCircBuffer *buf);
  * @param src pointer to the data to copy into the buffer
  * @param len number of bytes to copy into the buffer
  */
-void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize len);
+void purple_circular_buffer_append(PurpleCircularBuffer *buf, gconstpointer src, gsize len);
 
 /**
  * Determine the maximum number of contiguous bytes that can be read from the
@@ -96,7 +99,7 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
  *
  * @return the number of bytes that can be read from the PurpleCircBuffer
  */
-gsize purple_circ_buffer_get_max_read(const PurpleCircBuffer *buf);
+gsize purple_circular_buffer_get_max_read(const PurpleCircularBuffer *buf);
 
 /**
  * Mark the number of bytes that have been read from the buffer.
@@ -107,8 +110,16 @@ gsize purple_circ_buffer_get_max_read(const PurpleCircBuffer *buf);
  * @return TRUE if we successfully marked the bytes as having been read, FALSE
  *         otherwise.
  */
-gboolean purple_circ_buffer_mark_read(PurpleCircBuffer *buf, gsize len);
+gboolean purple_circular_buffer_mark_read(PurpleCircularBuffer *buf, gsize len);
+
+void purple_circular_buffer_grow(PurpleCircularBuffer *buffer, gsize len);
+gsize purple_circular_buffer_get_grow_size(const PurpleCircularBuffer *buffer);
+gsize purple_circular_buffer_get_used(const PurpleCircularBuffer *buffer);
+const gchar *purple_circular_buffer_get_input(const PurpleCircularBuffer *buffer);
+const gchar *purple_circular_buffer_get_output(const PurpleCircularBuffer *buffer);
+void purple_circular_buffer_reset(PurpleCircularBuffer *buffer);
 
 G_END_DECLS
 
-#endif /* _CIRCBUFFER_H */
+#endif /* PURPLE_CIRCULAR_BUFFER_H */
+

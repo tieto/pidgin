@@ -353,9 +353,11 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnHttpConn *httpconn;
 	gssize ret;
 	int writelen;
+	const gchar *output = NULL;
 
 	httpconn = data;
-	writelen = purple_circ_buffer_get_max_read(httpconn->tx_buf);
+	writelen = purple_circular_buffer_get_max_read(httpconn->tx_buf);
+	output = purple_circular_buffer_get_output(httpconn->tx_buf);
 
 	if (writelen == 0)
 	{
@@ -364,7 +366,7 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	ret = write(httpconn->fd, httpconn->tx_buf->outptr, writelen);
+	ret = write(httpconn->fd, output, writelen);
 	if (ret <= 0)
 	{
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
@@ -376,7 +378,7 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	purple_circ_buffer_mark_read(httpconn->tx_buf, ret);
+	purple_circular_buffer_mark_read(httpconn->tx_buf, ret);
 
 	/* TODO: I don't think these 2 lines are needed.  Remove them? */
 	if (ret == writelen)
@@ -409,7 +411,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 		if (httpconn->tx_handler == 0 && httpconn->fd)
 			httpconn->tx_handler = purple_input_add(httpconn->fd,
 				PURPLE_INPUT_WRITE, httpconn_write_cb, httpconn);
-		purple_circ_buffer_append(httpconn->tx_buf, data + res,
+		purple_circular_buffer_append(httpconn->tx_buf, data + res,
 			data_len - res);
 	}
 
@@ -612,7 +614,7 @@ msn_httpconn_new(MsnServConn *servconn)
 
 	httpconn->servconn = servconn;
 
-	httpconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
+	httpconn->tx_buf = purple_circular_buffer_new(MSN_BUF_LEN);
 	httpconn->tx_handler = 0;
 
 	httpconn->fd = -1;
@@ -647,7 +649,7 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 		g_free(queue_data);
 	}
 
-	purple_circ_buffer_destroy(httpconn->tx_buf);
+	g_object_unref(G_OBJECT(httpconn->tx_buf));
 	if (httpconn->tx_handler > 0)
 		purple_input_remove(httpconn->tx_handler);
 

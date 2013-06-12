@@ -392,8 +392,11 @@ static int jabber_do_send(JabberStream *js, const char *data, int len)
 static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	JabberStream *js = data;
+	const gchar *output = NULL;
 	int ret, writelen;
-	writelen = purple_circ_buffer_get_max_read(js->write_buffer);
+
+	writelen = purple_circular_buffer_get_max_read(js->write_buffer);
+	output = purple_circular_buffer_get_output(js->write_buffer);
 
 	if (writelen == 0) {
 		purple_input_remove(js->writeh);
@@ -401,7 +404,7 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 		return;
 	}
 
-	ret = jabber_do_send(js, js->write_buffer->outptr, writelen);
+	ret = jabber_do_send(js, output, writelen);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -414,7 +417,7 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 		return;
 	}
 
-	purple_circ_buffer_mark_read(js->write_buffer, ret);
+	purple_circular_buffer_mark_read(js->write_buffer, ret);
 }
 
 static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
@@ -457,7 +460,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 			js->writeh = purple_input_add(
 				js->gsc ? js->gsc->fd : js->fd,
 				PURPLE_INPUT_WRITE, jabber_send_cb, js);
-		purple_circ_buffer_append(js->write_buffer,
+		purple_circular_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
 
@@ -994,7 +997,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
 	js->next_id = g_random_int();
-	js->write_buffer = purple_circ_buffer_new(512);
+	js->write_buffer = purple_circular_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = 0;
 	js->max_inactivity = DEFAULT_INACTIVITY_TIME;
@@ -1653,7 +1656,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->caps_hash);
 
 	if (js->write_buffer)
-		purple_circ_buffer_destroy(js->write_buffer);
+		g_object_unref(G_OBJECT(js->write_buffer));
 	if(js->writeh)
 		purple_input_remove(js->writeh);
 	if (js->auth_mech && js->auth_mech->dispose)

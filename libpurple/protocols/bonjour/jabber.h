@@ -50,7 +50,7 @@ typedef struct _BonjourJabberConversation
 	guint rx_handler;
 	guint tx_handler;
 	guint close_timeout;
-	PurpleCircBuffer *tx_buf;
+	PurpleCircularBuffer *tx_buf;
 	int sent_stream_start; /* 0 = Unsent, 1 = Partial, 2 = Complete */
 	gboolean recv_stream_start;
 	PurpleProxyConnectData *connect_data;

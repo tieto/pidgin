@@ -280,7 +280,7 @@ struct _FlapConnection
 	guint8 header[6];
 	gssize header_received;
 	FlapFrame buffer_incoming;
-	PurpleCircBuffer *buffer_outgoing;
+	PurpleCircularBuffer *buffer_outgoing;
 	guint watcher_incoming;
 	guint watcher_outgoing;
 

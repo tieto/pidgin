@@ -192,7 +192,7 @@ typedef struct {
 	guint inpa;
 	guchar *rxqueue;
 	int rxlen;
-	PurpleCircBuffer *txbuf;
+	PurpleCircularBuffer *txbuf;
 	guint txhandler;
 	GHashTable *friends;
 

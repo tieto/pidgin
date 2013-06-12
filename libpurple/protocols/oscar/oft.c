@@ -360,7 +360,7 @@ start_transfer_when_done_sending_data(gpointer data)
 
 	conn = data;
 
-	if (purple_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
+	if (purple_circular_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
 		int fd = conn->fd;
 		conn->sending_data_timer = 0;
@@ -385,7 +385,7 @@ destroy_connection_when_done_sending_data(gpointer data)
 
 	conn = data;
 
-	if (purple_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
+	if (purple_circular_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
 		conn->sending_data_timer = 0;
 		peer_connection_destroy(conn, conn->disconnect_reason, NULL);

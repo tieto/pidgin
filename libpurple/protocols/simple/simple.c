@@ -416,8 +416,9 @@ static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition 
 	struct simple_account_data *sip = purple_connection_get_protocol_data(gc);
 	gsize max_write;
 	gssize written;
+	const gchar *output = NULL;
 
-	max_write = purple_circ_buffer_get_max_read(sip->txbuf);
+	max_write = purple_circular_buffer_get_max_read(sip->txbuf);
 
 	if(max_write == 0) {
 		purple_input_remove(sip->tx_handler);
@@ -425,7 +426,9 @@ static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition 
 		return;
 	}
 
-	written = write(sip->fd, sip->txbuf->outptr, max_write);
+	output = purple_circular_buffer_get_output(sip->txbuf);
+
+	written = write(sip->fd, output, max_write);
 
 	if(written < 0 && errno == EAGAIN)
 		written = 0;
@@ -439,7 +442,7 @@ static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition 
 		return;
 	}
 
-	purple_circ_buffer_mark_read(sip->txbuf, written);
+	purple_circular_buffer_mark_read(sip->txbuf, written);
 }
 
 static void simple_input_cb(gpointer data, gint source, PurpleInputCondition cond);
@@ -465,7 +468,7 @@ static void send_later_cb(gpointer data, gint source, const gchar *error_message
 	simple_canwrite_cb(gc, sip->fd, PURPLE_INPUT_WRITE);
 
 	/* If there is more to write now, we need to register a handler */
-	if(sip->txbuf->bufused > 0)
+	if(purple_circular_buffer_get_used(sip->txbuf) > 0)
 		sip->tx_handler = purple_input_add(sip->fd, PURPLE_INPUT_WRITE,
 			simple_canwrite_cb, gc);
 
@@ -485,10 +488,10 @@ static void sendlater(PurpleConnection *gc, const char *buf) {
 		sip->connecting = TRUE;
 	}
 
-	if(purple_circ_buffer_get_max_read(sip->txbuf) > 0)
-		purple_circ_buffer_append(sip->txbuf, "\r\n", 2);
+	if(purple_circular_buffer_get_max_read(sip->txbuf) > 0)
+		purple_circular_buffer_append(sip->txbuf, "\r\n", 2);
 
-	purple_circ_buffer_append(sip->txbuf, buf, strlen(buf));
+	purple_circular_buffer_append(sip->txbuf, buf, strlen(buf));
 }
 
 static void sendout_pkt(PurpleConnection *gc, const char *buf) {
@@ -529,10 +532,10 @@ static void sendout_pkt(PurpleConnection *gc, const char *buf) {
 
 			/* XXX: is it OK to do this? You might get part of a request sent
 			   with part of another. */
-			if(sip->txbuf->bufused > 0)
-				purple_circ_buffer_append(sip->txbuf, "\r\n", 2);
+			if(purple_circular_buffer_get_used(sip->txbuf) > 0)
+				purple_circular_buffer_append(sip->txbuf, "\r\n", 2);
 
-			purple_circ_buffer_append(sip->txbuf, buf + ret,
+			purple_circular_buffer_append(sip->txbuf, buf + ret,
 				writelen - ret);
 		}
 	}
@@ -1941,7 +1944,7 @@ static void simple_login(PurpleAccount *account)
 	sip->udp = purple_account_get_bool(account, "udp", FALSE);
 	/* TODO: is there a good default grow size? */
 	if(!sip->udp)
-		sip->txbuf = purple_circ_buffer_new(0);
+		sip->txbuf = purple_circular_buffer_new(0);
 
 	userserver = g_strsplit(username, "@", 2);
 	if (userserver[1] == NULL || userserver[1][0] == '\0') {
@@ -2037,7 +2040,7 @@ static void simple_close(PurpleConnection *gc)
 		transactions_remove(sip, sip->transactions->data);
 	g_free(sip->publish_etag);
 	if (sip->txbuf)
-		purple_circ_buffer_destroy(sip->txbuf);
+		g_object_unref(G_OBJECT(sip->txbuf));
 	g_free(sip->realhostname);
 
 	g_free(sip);
