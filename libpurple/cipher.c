@@ -55,6 +55,22 @@ static void
 purple_cipher_class_init(PurpleCipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+	klass->reset = NULL;
+	klass->set_iv = NULL;
+	klass->append = NULL;
+	klass->digest = NULL;
+	klass->encrypt = NULL;
+	klass->decrypt = NULL;
+	klass->set_salt = NULL;
+	klass->get_salt_size = NULL;
+	klass->set_key = NULL;
+	klass->get_key_size = NULL;
+	klass->set_batch_mode = NULL;
+	klass->get_batch_mode = NULL;
+	klass->get_block_size = NULL;
+	klass->set_key_with_len = NULL;
+	klass->get_name = NULL;
+
 	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->finalize = purple_cipher_finalize;
