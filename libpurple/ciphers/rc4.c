@@ -19,74 +19,67 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "rc4.h"
 
-#include "internal.h"
-#include <cipher.h>
-#include "ciphers.h"
-#include <util.h>
+/*******************************************************************************
+ * Structs
+ ******************************************************************************/
+#define PURPLE_RC4_CIPHER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_RC4_CIPHER, PurpleRC4CipherPrivate))
 
-struct RC4Context {
-	guchar state[256];
-	guchar x;
-	guchar y;
-	gint key_len;
+typedef struct {
+  guchar state[256];
+  guchar x;
+  guchar y;
+  gint key_len;
+} PurpleRC4CipherPrivate;
+
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+enum {
+	PROP_ZERO,
+	PROP_KEY_LEN,
+	PROP_KEY,
+	PROP_LAST,
 };
 
-static void
-rc4_init(PurpleCipherContext *context, void *extra) {
-	struct RC4Context *rc4_ctx;
-	rc4_ctx = g_new0(struct RC4Context, 1);
-	purple_cipher_context_set_data(context, rc4_ctx);
-	purple_cipher_context_reset(context, extra);
-}
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+static GObjectClass *parent_class = NULL;
 
-
+/******************************************************************************
+ * Cipher Stuff
+ *****************************************************************************/
 static void
-rc4_reset(PurpleCipherContext *context, void *extra) {
-	struct RC4Context *rc4_ctx;
+purple_rc4_cipher_reset(PurpleCipher *cipher) {
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(cipher);
+	PurpleRC4CipherPrivate *priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 	guint i;
 
-	rc4_ctx = purple_cipher_context_get_data(context);
-
-	g_return_if_fail(rc4_ctx);
-
 	for(i = 0; i < 256; i++)
-		rc4_ctx->state[i] = i;
-	rc4_ctx->x = 0;
-	rc4_ctx->y = 0;
+		priv->state[i] = i;
+	priv->x = 0;
+	priv->y = 0;
 
 	/* default is 5 bytes (40bit key) */
-	rc4_ctx->key_len = 5;
-
+	priv->key_len = 5;
 }
 
 static void
-rc4_uninit(PurpleCipherContext *context) {
-	struct RC4Context *rc4_ctx;
-
-	rc4_ctx = purple_cipher_context_get_data(context);
-	memset(rc4_ctx, 0, sizeof(*rc4_ctx));
-
-	g_free(rc4_ctx);
-	rc4_ctx = NULL;
-}
-
-
-
-static void
-rc4_set_key (PurpleCipherContext *context, const guchar * key, size_t len) {
-	struct RC4Context *ctx;
+purple_rc4_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(cipher);
+	PurpleRC4CipherPrivate *priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 	guchar *state;
 	guchar temp_swap;
 	guchar x, y;
 	guint i;
 
-	ctx = purple_cipher_context_get_data(context);
-
 	x = 0;
 	y = 0;
-	state = &ctx->state[0];
-	ctx->key_len = len;
+	state = &priv->state[0];
+	priv->key_len = len;
 	for(i = 0; i < 256; i++)
 	{
 		y = (key[x] + state[i] + y) % 256;
@@ -95,23 +88,35 @@ rc4_set_key (PurpleCipherContext *context, const guchar * key, size_t len) {
 		state[y] = temp_swap;
 		x = (x + 1) % len;
 	}
+
+	g_object_notify(G_OBJECT(rc4_cipher), "key");
+}
+
+
+static size_t
+purple_rc4_cipher_get_key_size(PurpleCipher *cipher)
+{
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(cipher);
+	PurpleRC4CipherPrivate *priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
+
+	return priv->key_len;
 }
 
 
 static ssize_t
-rc4_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
-	guchar output[], size_t out_size) {
-	struct RC4Context *ctx;
+purple_rc4_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_len,
+							guchar output[], size_t out_size)
+{
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(cipher);
 	guchar temp_swap;
 	guchar x, y, z;
 	guchar *state;
 	guint i;
+	PurpleRC4CipherPrivate *priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 
-	ctx = purple_cipher_context_get_data(context);
-
-	x = ctx->x;
-	y = ctx->y;
-	state = &ctx->state[0];
+	x = priv->x;
+	y = priv->y;
+	state = &priv->state[0];
 
 	for(i = 0; i < in_len; i++)
 	{
@@ -123,37 +128,144 @@ rc4_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 		z = state[x] + (state[y]) % 256;
 		output[i] = input[i] ^ state[z];
 	}
-	ctx->x = x;
-	ctx->y = y;
+	priv->x = x;
+	priv->y = y;
 
 	return in_len;
 }
 
-static PurpleCipherOps RC4Ops = {
-	NULL,          /* Set Option    */
-	NULL,          /* Get Option    */
-	rc4_init,      /* init          */
-	rc4_reset,     /* reset         */
-	NULL,          /* reset state   */
-	rc4_uninit,    /* uninit        */
-	NULL,          /* set iv        */
-	NULL,          /* append        */
-	NULL,          /* digest        */
-	NULL,          /* get digest size */
-	rc4_encrypt,   /* encrypt       */
-	NULL,          /* decrypt       */
-	NULL,          /* set salt      */
-	NULL,          /* get salt size */
-	rc4_set_key,   /* set key       */
-	NULL,          /* get key size  */
-	NULL,          /* set batch mode */
-	NULL,          /* get batch mode */
-	NULL,          /* get block size */
-	NULL, NULL, NULL, NULL /* reserved */
-};
+/******************************************************************************
+ * Object Stuff
+ *****************************************************************************/
+static void
+purple_rc4_cipher_set_property(GObject *obj, guint param_id,
+							   const GValue *value, GParamSpec *pspec)
+{
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(obj);
 
-PurpleCipherOps *
-purple_rc4_cipher_get_ops(void) {
-	return &RC4Ops;
+	switch(param_id) {
+		case PROP_KEY_LEN:
+			purple_rc4_cipher_set_key_len(rc4_cipher, g_value_get_int(value));
+			break;
+		case PROP_KEY:
+			{
+				guchar *key = (guchar *)g_value_get_string(value);
+				purple_rc4_cipher_set_key(cipher, key, strlen((gchar *) key));
+			}
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
 }
 
+static void
+purple_rc4_cipher_get_property(GObject *obj, guint param_id, GValue *value,
+							   GParamSpec *pspec)
+{
+	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(obj);
+
+	switch(param_id) {
+		case PROP_KEY_LEN:
+			g_value_set_int(value,
+							purple_rc4_cipher_get_key_len(rc4_cipher));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	GParamSpec *pspec = NULL;
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->set_property = purple_rc4_cipher_set_property;
+	obj_class->get_property = purple_rc4_cipher_get_property;
+
+	cipher_class->reset = purple_rc4_cipher_reset;
+	cipher_class->encrypt = purple_rc4_cipher_encrypt;
+	cipher_class->set_key = purple_rc4_cipher_set_key;
+	cipher_class->get_key_size = purple_rc4_cipher_get_key_size;
+
+	pspec = g_param_spec_int("key_len", "key_len", "key_len",
+							 G_MININT, G_MAXINT, 0,
+							 G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_KEY_LEN, pspec);
+
+	pspec = g_param_spec_string("key", "key", "key", NULL,
+								G_PARAM_WRITABLE);
+	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+
+	g_type_class_add_private(klass, sizeof(PurpleRC4CipherPrivate));
+}
+
+static void
+purple_rc4_cipher_init(PurpleCipher *cipher) {
+	purple_rc4_cipher_reset(cipher);
+}
+
+/******************************************************************************
+ * API
+ *****************************************************************************/
+GType
+purple_rc4_cipher_get_gtype(void) {
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleRC4CipherClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_rc4_cipher_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleRC4Cipher),
+			0,
+			(GInstanceInitFunc)purple_rc4_cipher_init,
+			NULL,
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+									  "PurpleRC4Cipher",
+									  &info, 0);
+	}
+
+	return type;
+}
+
+PurpleCipher *
+purple_rc4_cipher_new(void) {
+	return g_object_new(PURPLE_TYPE_RC4_CIPHER, NULL);
+}
+
+void
+purple_rc4_cipher_set_key_len(PurpleRC4Cipher *rc4_cipher,
+							  gint key_len)
+{
+	PurpleRC4CipherPrivate *priv;
+
+	g_return_if_fail(PURPLE_IS_RC4_CIPHER(rc4_cipher));
+
+	priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
+	priv->key_len = key_len;
+
+	g_object_notify(G_OBJECT(rc4_cipher), "key_len");
+}
+
+gint
+purple_rc4_cipher_get_key_len(PurpleRC4Cipher *rc4_cipher)
+{
+	PurpleRC4CipherPrivate *priv;
+
+	g_return_val_if_fail(PURPLE_IS_RC4_CIPHER(rc4_cipher), 0);
+
+	priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
+
+	return priv->key_len;
+}

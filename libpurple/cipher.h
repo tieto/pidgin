@@ -28,9 +28,10 @@
 #define PURPLE_CIPHER_H
 
 #include <glib.h>
+#include <glib-object.h>
 #include <string.h>
 
-#include <glib-object.h>
+#include "internal.h"
 
 #define PURPLE_TYPE_CIPHER				(purple_cipher_get_type())
 #define PURPLE_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CIPHER, PurpleCipher))
