@@ -83,6 +83,9 @@ struct _PurpleCipherClass {
 	/** The reset function */
 	void (*reset)(PurpleCipher *cipher);
 
+	/** The reset state function */
+	void (*reset_state)(PurpleCipher *cipher);
+
 	/** The set initialization vector function */
 	void (*set_iv)(PurpleCipher *cipher, guchar *iv, size_t len);
 
@@ -90,22 +93,25 @@ struct _PurpleCipherClass {
 	void (*append)(PurpleCipher *cipher, const guchar *data, size_t len);
 
 	/** The digest function */
-	gboolean (*digest)(PurpleCipher *cipher, size_t in_len, guchar digest[], size_t *out_len);
+	gboolean (*digest)(PurpleCipher *cipher, guchar digest[], size_t len);
+
+	/** The get digest size function */
+	size_t (*get_digest_size)(PurpleCipher *cipher);
 
 	/** The encrypt function */
-	gint (*encrypt)(PurpleCipher *cipher, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*encrypt)(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The decrypt function */
-	gint (*decrypt)(PurpleCipher *cipher, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	ssize_t (*decrypt)(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 	/** The set salt function */
-	void (*set_salt)(PurpleCipher *cipher, guchar *salt);
+	void (*set_salt)(PurpleCipher *cipher, const guchar *salt, size_t len);
 
 	/** The get salt size function */
 	size_t (*get_salt_size)(PurpleCipher *cipher);
 
 	/** The set key function */
-	void (*set_key)(PurpleCipher *cipher, const guchar *key);
+	void (*set_key)(PurpleCipher *cipher, const guchar *key, size_t len);
 
 	/** The get key size function */
 	size_t (*get_key_size)(PurpleCipher *cipher);
@@ -118,9 +124,6 @@ struct _PurpleCipherClass {
 
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleCipher *cipher);
-
-	/** The set key with length function */
-	void (*set_key_with_len)(PurpleCipher *cipher, const guchar *key, size_t len);
 
 	/** The get cipher name function */
 	const gchar* (*get_name)(PurpleCipher *cipher);
@@ -139,20 +142,21 @@ GType purple_cipher_batch_mode_get_type(void);
 const gchar *purple_cipher_get_name(PurpleCipher *cipher);
 
 void purple_cipher_reset(PurpleCipher *cipher);
+void purple_cipher_reset_state(PurpleCipher *cipher);
 void purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len);
 
 void purple_cipher_append(PurpleCipher *cipher, const guchar *data, size_t len);
-gboolean purple_cipher_digest(PurpleCipher *cipher, size_t in_len, guchar digest[], size_t *out_len);
-gboolean purple_cipher_digest_to_str(PurpleCipher *cipher, size_t in_len, gchar digest_s[], size_t *out_len);
+gboolean purple_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len);
+gboolean purple_cipher_digest_to_str(PurpleCipher *cipher, gchar digest_s[], size_t len);
+size_t purple_cipher_get_digest_size(PurpleCipher *cipher);
 
-gint purple_cipher_encrypt(PurpleCipher *cipher, const guchar data[], size_t len, guchar output[], size_t *outlen);
-gint purple_cipher_decrypt(PurpleCipher *cipher, const guchar data[], size_t len, guchar output[], size_t *outlen);
+ssize_t purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
+ssize_t purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
-void purple_cipher_set_salt(PurpleCipher *cipher, guchar *salt);
+void purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len);
 size_t purple_cipher_get_salt_size(PurpleCipher *cipher);
 
-void purple_cipher_set_key(PurpleCipher *cipher, const guchar *key);
-void purple_cipher_set_key_with_len(PurpleCipher *cipher, const guchar *key, size_t len);
+void purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len);
 size_t purple_cipher_get_key_size(PurpleCipher *cipher);
 
 void purple_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mode);
