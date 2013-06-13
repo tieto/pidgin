@@ -11,14 +11,12 @@ endif
 libpurple_ciphers_la_SOURCES=\
 	$(AES_SOURCE) \
 	des.c \
+	des3.c \
 	gchecksum.c \
 	hmac.c \
 	md4.c \
 	pbkdf2.c \
 	rc4.c
-
-noinst_HEADERS =\
-	ciphers.h
 
 INCLUDES = -I$(top_srcdir)/libpurple
 
