@@ -486,6 +486,12 @@ purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 	return out_len;
 }
 
+static const gchar*
+purple_des_cipher_get_name(PurpleCipher *cipher)
+{
+	return "des";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -528,17 +534,13 @@ purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 	cipher_class->decrypt = purple_des_cipher_decrypt;
 	cipher_class->set_key = purple_des_cipher_set_key;
 	cipher_class->get_key_size = purple_des_cipher_get_key_size;
+	cipher_class->get_name = purple_des_cipher_get_name;
 
 	pspec = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE);
 	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurpleDESCipherPrivate));
-}
-
-static void
-purple_des_cipher_init(PurpleCipher *cipher)
-{
 }
 
 /******************************************************************************
@@ -553,7 +555,6 @@ purple_des_cipher_get_type(void) {
 			.class_size = sizeof(PurpleDESCipherClass),
 			.class_init = (GClassInitFunc)purple_des_cipher_class_init,
 			.instance_size = sizeof(PurpleDESCipher),
-			.instance_init = (GInstanceInitFunc)purple_des_cipher_init,
 		};
 
 		type = g_type_register_static(PURPLE_TYPE_CIPHER,

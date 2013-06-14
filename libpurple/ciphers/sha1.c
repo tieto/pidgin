@@ -107,6 +107,12 @@ purple_sha1_cipher_get_digest_size(PurpleCipher *cipher)
 	return g_checksum_type_get_length(G_CHECKSUM_SHA1);
 }
 
+static const gchar*
+purple_sha1_cipher_get_name(PurpleCipher *cipher)
+{
+	return "sha1";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -138,6 +144,7 @@ purple_sha1_cipher_class_init(PurpleSHA1CipherClass *klass) {
 	cipher_class->digest = purple_sha1_cipher_digest;
 	cipher_class->get_digest_size = purple_sha1_cipher_get_digest_size;
 	cipher_class->get_block_size = purple_sha1_cipher_get_block_size;
+	cipher_class->get_name = purple_sha1_cipher_get_name;
 
 	g_type_class_add_private(klass, sizeof(PurpleSHA1CipherPrivate));
 }

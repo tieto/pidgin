@@ -107,6 +107,12 @@ purple_md5_cipher_get_digest_size(PurpleCipher *cipher)
 	return g_checksum_type_get_length(G_CHECKSUM_MD5);
 }
 
+static const gchar*
+purple_md5_cipher_get_name(PurpleCipher *cipher)
+{
+	return "md5";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -138,6 +144,7 @@ purple_md5_cipher_class_init(PurpleMD5CipherClass *klass) {
 	cipher_class->digest = purple_md5_cipher_digest;
 	cipher_class->get_digest_size = purple_md5_cipher_get_digest_size;
 	cipher_class->get_block_size = purple_md5_cipher_get_block_size;
+	cipher_class->get_name = purple_md5_cipher_get_name;
 
 	g_type_class_add_private(klass, sizeof(PurpleMD5CipherPrivate));
 }

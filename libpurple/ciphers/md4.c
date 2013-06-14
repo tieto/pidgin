@@ -256,6 +256,12 @@ purple_md4_cipher_get_block_size(PurpleCipher *cipher)
 	return 64;
 }
 
+static const gchar*
+purple_md4_cipher_get_name(PurpleCipher *cipher)
+{
+	return "md4";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -273,6 +279,7 @@ purple_md4_cipher_class_init(PurpleMD4CipherClass *klass) {
 	cipher_class->digest = purple_md4_cipher_digest;
 	cipher_class->get_digest_size = purple_md4_cipher_get_digest_size;
 	cipher_class->get_block_size = purple_md4_cipher_get_block_size;
+	cipher_class->get_name = purple_md4_cipher_get_name;
 }
 
 /******************************************************************************

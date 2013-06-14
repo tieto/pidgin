@@ -375,6 +375,12 @@ purple_des3_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 	g_object_notify(G_OBJECT(des3_cipher), "iv");
 }
 
+static const gchar*
+purple_des3_cipher_get_name(PurpleCipher *cipher)
+{
+	return "des3";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -456,6 +462,7 @@ purple_des3_cipher_class_init(PurpleDES3CipherClass *klass) {
 	cipher_class->set_batch_mode = purple_des3_cipher_set_batch_mode;
 	cipher_class->get_batch_mode = purple_des3_cipher_get_batch_mode;
 	cipher_class->get_key_size = purple_des3_cipher_get_key_size;
+	cipher_class->get_name = purple_des3_cipher_get_name;
 
 	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
 							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,

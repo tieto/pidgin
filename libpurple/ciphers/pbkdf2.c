@@ -254,6 +254,12 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 	return TRUE;
 }
 
+static const gchar*
+purple_pbkdf2_cipher_get_name(PurpleCipher *cipher)
+{
+	return "pbkdf2";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -333,6 +339,7 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	cipher_class->get_digest_size = purple_pbkdf2_cipher_get_digest_size;
 	cipher_class->set_salt = purple_pbkdf2_cipher_set_salt;
 	cipher_class->set_key = purple_pbkdf2_cipher_set_key;
+	cipher_class->get_name = purple_pbkdf2_cipher_get_name;
 
 	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_CIPHER,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);

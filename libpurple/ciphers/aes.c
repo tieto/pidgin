@@ -529,6 +529,12 @@ purple_aes_cipher_get_block_size(PurpleCipher *cipher)
 	return PURPLE_AES_BLOCK_SIZE;
 }
 
+static const gchar*
+purple_aes_cipher_get_name(PurpleCipher *cipher)
+{
+	return "aes";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -594,6 +600,7 @@ purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 	cipher_class->set_batch_mode = purple_aes_cipher_set_batch_mode;
 	cipher_class->get_batch_mode = purple_aes_cipher_get_batch_mode;
 	cipher_class->get_block_size = purple_aes_cipher_get_block_size;
+	cipher_class->get_name = purple_aes_cipher_get_name;
 
 	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
 							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,

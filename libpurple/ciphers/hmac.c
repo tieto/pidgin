@@ -214,6 +214,12 @@ purple_hmac_cipher_get_block_size(PurpleCipher *cipher)
 	return purple_hmac_cipher_get_block_size(priv->hash);
 }
 
+static const gchar*
+purple_hmac_cipher_get_name(PurpleCipher *cipher)
+{
+	return "hmac";
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -284,6 +290,7 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 	cipher_class->get_digest_size = purple_hmac_cipher_get_digest_size;
 	cipher_class->set_key = purple_hmac_cipher_set_key;
 	cipher_class->get_block_size = purple_hmac_cipher_get_block_size;
+	cipher_class->get_name = purple_hmac_cipher_get_name;
 
 	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_CIPHER,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
