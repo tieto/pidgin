@@ -22,10 +22,10 @@
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
 
-#include "internal.h"
-#include "cipher.h"
-#include "ciphers.h"
+#include "aes.h"
 #include "debug.h"
+
+#include <string.h>
 
 #if defined(HAVE_GNUTLS)
 #  define PURPLE_AES_USE_GNUTLS 1
@@ -43,102 +43,93 @@
 /* 128bit */
 #define PURPLE_AES_BLOCK_SIZE 16
 
-typedef struct
-{
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+#define PURPLE_AES_CIPHER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_AES_CIPHER, PurpleAESCipherPrivate))
+
+typedef struct {
 	guchar iv[PURPLE_AES_BLOCK_SIZE];
 	guchar key[32];
 	guint key_size;
 	gboolean failure;
-} AESContext;
+} PurpleAESCipherPrivate;
 
-typedef gboolean (*purple_aes_crypt_func)(
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+enum {
+	PROP_NONE,
+	PROP_BATCH_MODE,
+	PROP_IV,
+	PROP_KEY,
+	PROP_LAST,
+};
+
+/******************************************************************************
+ * Cipher Stuff
+ *****************************************************************************/
+
+typedef gboolean (*purple_aes_cipher_crypt_func)(
 	const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size);
 
 static void
-purple_aes_init(PurpleCipherContext *context, void *extra)
+purple_aes_cipher_reset(PurpleCipher *cipher)
 {
-	AESContext *ctx_data;
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	ctx_data = g_new0(AESContext, 1);
-	purple_cipher_context_set_data(context, ctx_data);
+	g_return_if_fail(priv != NULL);
 
-	purple_cipher_context_reset(context, extra);
+	memset(priv->iv, 0, sizeof(priv->iv));
+	memset(priv->key, 0, sizeof(priv->key));
+	priv->key_size = 32; /* 256bit */
+	priv->failure = FALSE;
 }
 
 static void
-purple_aes_uninit(PurpleCipherContext *context)
+purple_aes_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 {
-	AESContext *ctx_data;
-
-	purple_cipher_context_reset(context, NULL);
-
-	ctx_data = purple_cipher_context_get_data(context);
-	g_free(ctx_data);
-	purple_cipher_context_set_data(context, NULL);
-}
-
-static void
-purple_aes_reset(PurpleCipherContext *context, void *extra)
-{
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
-
-	g_return_if_fail(ctx_data != NULL);
-
-	memset(ctx_data->iv, 0, sizeof(ctx_data->iv));
-	memset(ctx_data->key, 0, sizeof(ctx_data->key));
-	ctx_data->key_size = 32; /* 256bit */
-	ctx_data->failure = FALSE;
-}
-
-static void
-purple_aes_set_option(PurpleCipherContext *context, const gchar *name,
-	void *value)
-{
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
-
-	purple_debug_error("cipher-aes", "set_option not supported\n");
-	ctx_data->failure = TRUE;
-}
-
-static void
-purple_aes_set_iv(PurpleCipherContext *context, guchar *iv, size_t len)
-{
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
 	if ((len > 0 && iv == NULL) ||
-		(len != 0 && len != sizeof(ctx_data->iv))) {
+		(len != 0 && len != sizeof(priv->iv))) {
 		purple_debug_error("cipher-aes", "invalid IV length\n");
-		ctx_data->failure = TRUE;
+		priv->failure = TRUE;
 		return;
 	}
 
 	if (len == 0)
-		memset(ctx_data->iv, 0, sizeof(ctx_data->iv));
+		memset(priv->iv, 0, sizeof(priv->iv));
 	else
-		memcpy(ctx_data->iv, iv, len);
+		memcpy(priv->iv, iv, len);
+
+	g_object_notify(G_OBJECT(cipher), "iv");
 }
 
 static void
-purple_aes_set_key(PurpleCipherContext *context, const guchar *key, size_t len)
+purple_aes_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 {
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
 	if ((len > 0 && key == NULL) ||
 		(len != 0 && len != 16 && len != 24 && len != 32)) {
 		purple_debug_error("cipher-aes", "invalid key length\n");
-		ctx_data->failure = TRUE;
+		priv->failure = TRUE;
 		return;
 	}
 
-	ctx_data->key_size = len;
-	memset(ctx_data->key, 0, sizeof(ctx_data->key));
+	priv->key_size = len;
+	memset(priv->key, 0, sizeof(priv->key));
 	if (len > 0)
-		memcpy(ctx_data->key, key, len);
+		memcpy(priv->key, key, len);
+
+	g_object_notify(G_OBJECT(cipher), "key");
 }
 
 static guchar *
-purple_aes_pad_pkcs7(const guchar input[], size_t in_len, size_t *out_len)
+purple_aes_cipher_pad_pkcs7(const guchar input[], size_t in_len, size_t *out_len)
 {
 	int padding_len, total_len;
 	guchar *padded;
@@ -160,7 +151,7 @@ purple_aes_pad_pkcs7(const guchar input[], size_t in_len, size_t *out_len)
 }
 
 static ssize_t
-purple_aes_unpad_pkcs7(guchar input[], size_t in_len)
+purple_aes_cipher_unpad_pkcs7(guchar input[], size_t in_len)
 {
 	int padding_len, i;
 	size_t out_len;
@@ -172,7 +163,7 @@ purple_aes_unpad_pkcs7(guchar input[], size_t in_len)
 	if (padding_len <= 0 || padding_len > PURPLE_AES_BLOCK_SIZE ||
 		padding_len > in_len) {
 		purple_debug_warning("cipher-aes",
-			"Invalid padding length: %d (total %d) - "
+			"Invalid padding length: %d (total %lu) - "
 			"most probably, the key was invalid\n",
 			padding_len, in_len);
 		return -1;
@@ -197,7 +188,7 @@ purple_aes_unpad_pkcs7(guchar input[], size_t in_len)
 #ifdef PURPLE_AES_USE_GNUTLS
 
 static gnutls_cipher_hd_t
-purple_aes_crypt_gnutls_init(guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32],
+purple_aes_cipher_gnutls_crypt_init(guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32],
 	guint key_size)
 {
 	gnutls_cipher_hd_t handle;
@@ -231,17 +222,17 @@ purple_aes_crypt_gnutls_init(guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32],
 }
 
 static gboolean
-purple_aes_encrypt_gnutls(const guchar *input, guchar *output, size_t len,
+purple_aes_cipher_gnutls_encrypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
 {
 	gnutls_cipher_hd_t handle;
 	int ret;
 
-	handle = purple_aes_crypt_gnutls_init(iv, key, key_size);
+	handle = purple_aes_cipher_gnutls_crypt_init(iv, key, key_size);
 	if (handle == NULL)
 		return FALSE;
 
-	ret = gnutls_cipher_encrypt2(handle, input, len, output, len);
+	ret = gnutls_cipher_encrypt2(handle, (guchar *) input, len, output, len);
 	gnutls_cipher_deinit(handle);
 
 	if (ret != 0) {
@@ -254,13 +245,13 @@ purple_aes_encrypt_gnutls(const guchar *input, guchar *output, size_t len,
 }
 
 static gboolean
-purple_aes_decrypt_gnutls(const guchar *input, guchar *output, size_t len,
+purple_aes_cipher_gnutls_decrypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
 {
 	gnutls_cipher_hd_t handle;
 	int ret;
 
-	handle = purple_aes_crypt_gnutls_init(iv, key, key_size);
+	handle = purple_aes_cipher_gnutls_crypt_init(iv, key, key_size);
 	if (handle == NULL)
 		return FALSE;
 
@@ -280,44 +271,43 @@ purple_aes_decrypt_gnutls(const guchar *input, guchar *output, size_t len,
 
 #ifdef PURPLE_AES_USE_NSS
 
-typedef struct
-{
+typedef struct {
 	PK11SlotInfo *slot;
 	PK11SymKey *sym_key;
 	SECItem *sec_param;
 	PK11Context *enc_context;
-} purple_aes_encrypt_nss_context;
+} PurpleAESCipherNSSContext;
 
 static void
-purple_aes_encrypt_nss_context_cleanup(purple_aes_encrypt_nss_context *ctx)
+purple_aes_cipher_nss_cleanup(PurpleAESCipherNSSContext *context)
 {
-	g_return_if_fail(ctx != NULL);
+	g_return_if_fail(context != NULL);
 
-	if (ctx->enc_context != NULL)
-		PK11_DestroyContext(ctx->enc_context, TRUE);
-	if (ctx->sec_param != NULL)
-		SECITEM_FreeItem(ctx->sec_param, TRUE);
-	if (ctx->sym_key != NULL)
-		PK11_FreeSymKey(ctx->sym_key);
-	if (ctx->slot != NULL)
-		PK11_FreeSlot(ctx->slot);
+	if (context->enc_context != NULL)
+		PK11_DestroyContext(context->enc_context, TRUE);
+	if (context->sec_param != NULL)
+		SECITEM_FreeItem(context->sec_param, TRUE);
+	if (context->sym_key != NULL)
+		PK11_FreeSymKey(context->sym_key);
+	if (context->slot != NULL)
+		PK11_FreeSlot(context->slot);
 
-	memset(ctx, 0, sizeof(purple_aes_encrypt_nss_context));
+	memset(context, 0, sizeof(PurpleAESCipherNSSContext));
 }
 
 static gboolean
-purple_aes_crypt_nss(const guchar *input, guchar *output, size_t len,
+purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
 	CK_ATTRIBUTE_TYPE operation)
 {
-	purple_aes_encrypt_nss_context ctx;
+	PurpleAESCipherNSSContext context;
 	CK_MECHANISM_TYPE cipher_mech = CKM_AES_CBC;
 	SECItem key_item, iv_item;
 	SECStatus ret;
 	int outlen = 0;
 	unsigned int outlen_tmp = 0;
 
-	memset(&ctx, 0, sizeof(purple_aes_encrypt_nss_context));
+	memset(&context, 0, sizeof(PurpleAESCipherNSSContext));
 
 	if (NSS_NoDB_Init(NULL) != SECSuccess) {
 		purple_debug_error("cipher-aes",
@@ -325,8 +315,8 @@ purple_aes_crypt_nss(const guchar *input, guchar *output, size_t len,
 		return FALSE;
 	}
 
-	ctx.slot = PK11_GetBestSlot(cipher_mech, NULL);
-	if (ctx.slot == NULL) {
+	context.slot = PK11_GetBestSlot(cipher_mech, NULL);
+	if (context.slot == NULL) {
 		purple_debug_error("cipher-aes",
 			"PK11_GetBestSlot failed: %d\n", PR_GetError());
 		return FALSE;
@@ -335,59 +325,59 @@ purple_aes_crypt_nss(const guchar *input, guchar *output, size_t len,
 	key_item.type = siBuffer;
 	key_item.data = key;
 	key_item.len = key_size;
-	ctx.sym_key = PK11_ImportSymKey(ctx.slot, cipher_mech,
+	context.sym_key = PK11_ImportSymKey(context.slot, cipher_mech,
 		PK11_OriginUnwrap, CKA_ENCRYPT, &key_item, NULL);
-	if (ctx.sym_key == NULL) {
+	if (context.sym_key == NULL) {
 		purple_debug_error("cipher-aes",
 			"PK11_ImportSymKey failed: %d\n", PR_GetError());
-		purple_aes_encrypt_nss_context_cleanup(&ctx);
+		purple_aes_cipher_nss_cleanup(&context);
 		return FALSE;
 	}
 
 	iv_item.type = siBuffer;
 	iv_item.data = iv;
 	iv_item.len = PURPLE_AES_BLOCK_SIZE;
-	ctx.sec_param = PK11_ParamFromIV(cipher_mech, &iv_item);
-	if (ctx.sec_param == NULL) {
+	context.sec_param = PK11_ParamFromIV(cipher_mech, &iv_item);
+	if (context.sec_param == NULL) {
 		purple_debug_error("cipher-aes",
 			"PK11_ParamFromIV failed: %d\n", PR_GetError());
-		purple_aes_encrypt_nss_context_cleanup(&ctx);
+		purple_aes_cipher_nss_cleanup(&context);
 		return FALSE;
 	}
 
-	ctx.enc_context = PK11_CreateContextBySymKey(cipher_mech, operation,
-		ctx.sym_key, ctx.sec_param);
-	if (ctx.enc_context == NULL) {
+	context.enc_context = PK11_CreateContextBySymKey(cipher_mech, operation,
+		context.sym_key, context.sec_param);
+	if (context.enc_context == NULL) {
 		purple_debug_error("cipher-aes",
 			"PK11_CreateContextBySymKey failed: %d\n",
 				PR_GetError());
-		purple_aes_encrypt_nss_context_cleanup(&ctx);
+		purple_aes_cipher_nss_cleanup(&context);
 		return FALSE;
 	}
 
-	ret = PK11_CipherOp(ctx.enc_context, output, &outlen, len, input, len);
+	ret = PK11_CipherOp(context.enc_context, output, &outlen, len, input, len);
 	if (ret != SECSuccess) {
 		purple_debug_error("cipher-aes",
 			"PK11_CipherOp failed: %d\n", PR_GetError());
-		purple_aes_encrypt_nss_context_cleanup(&ctx);
+		purple_aes_cipher_nss_cleanup(&context);
 		return FALSE;
 	}
 
-	ret = PK11_DigestFinal(ctx.enc_context, output + outlen, &outlen_tmp,
+	ret = PK11_DigestFinal(context.enc_context, output + outlen, &outlen_tmp,
 		len - outlen);
 	if (ret != SECSuccess) {
 		purple_debug_error("cipher-aes",
 			"PK11_DigestFinal failed: %d\n", PR_GetError());
-		purple_aes_encrypt_nss_context_cleanup(&ctx);
+		purple_aes_cipher_nss_cleanup(&context);
 		return FALSE;
 	}
 
-	purple_aes_encrypt_nss_context_cleanup(&ctx);
+	purple_aes_cipher_nss_cleanup(&context);
 
 	outlen += outlen_tmp;
 	if (outlen != len) {
 		purple_debug_error("cipher-aes",
-			"resulting length doesn't match: %d (expected: %d)\n",
+			"resulting length doesn't match: %d (expected: %lu)\n",
 			outlen, len);
 		return FALSE;
 	}
@@ -396,37 +386,37 @@ purple_aes_crypt_nss(const guchar *input, guchar *output, size_t len,
 }
 
 static gboolean
-purple_aes_encrypt_nss(const guchar *input, guchar *output, size_t len,
+purple_aes_cipher_nss_encrypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
 {
-	return purple_aes_crypt_nss(input, output, len, iv, key, key_size,
+	return purple_aes_cipher_nss_crypt(input, output, len, iv, key, key_size,
 		CKA_ENCRYPT);
 }
 
 static gboolean
-purple_aes_decrypt_nss(const guchar *input, guchar *output, size_t len,
+purple_aes_cipher_nss_decrypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
 {
-	return purple_aes_crypt_nss(input, output, len, iv, key, key_size,
+	return purple_aes_cipher_nss_crypt(input, output, len, iv, key, key_size,
 		CKA_DECRYPT);
 }
 
 #endif /* PURPLE_AES_USE_NSS */
 
 static ssize_t
-purple_aes_encrypt(PurpleCipherContext *context, const guchar input[],
+purple_aes_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	size_t in_len, guchar output[], size_t out_size)
 {
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
-	purple_aes_crypt_func encrypt_func;
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
+	purple_aes_cipher_crypt_func encrypt_func;
 	guchar *input_padded;
 	size_t out_len = 0;
 	gboolean succ;
 
-	if (ctx_data->failure)
+	if (priv->failure)
 		return -1;
 
-	input_padded = purple_aes_pad_pkcs7(input, in_len, &out_len);
+	input_padded = purple_aes_cipher_pad_pkcs7(input, in_len, &out_len);
 
 	if (out_len > out_size) {
 		purple_debug_error("cipher-aes", "Output buffer too small\n");
@@ -436,15 +426,15 @@ purple_aes_encrypt(PurpleCipherContext *context, const guchar input[],
 	}
 
 #if defined(PURPLE_AES_USE_GNUTLS)
-	encrypt_func = purple_aes_encrypt_gnutls;
+	encrypt_func = purple_aes_cipher_gnutls_encrypt;
 #elif defined(PURPLE_AES_USE_NSS)
-	encrypt_func = purple_aes_encrypt_nss;
+	encrypt_func = purple_aes_cipher_nss_encrypt;
 #else
 #  error "No matching encrypt_func"
 #endif
 
-	succ = encrypt_func(input_padded, output, out_len, ctx_data->iv,
-		ctx_data->key, ctx_data->key_size);
+	succ = encrypt_func(input_padded, output, out_len, priv->iv,
+		priv->key, priv->key_size);
 
 	memset(input_padded, 0, out_len);
 	g_free(input_padded);
@@ -458,15 +448,15 @@ purple_aes_encrypt(PurpleCipherContext *context, const guchar input[],
 }
 
 static ssize_t
-purple_aes_decrypt(PurpleCipherContext *context, const guchar input[],
+purple_aes_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 	size_t in_len, guchar output[], size_t out_size)
 {
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
-	purple_aes_crypt_func decrypt_func;
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
+	purple_aes_cipher_crypt_func decrypt_func;
 	gboolean succ;
 	ssize_t out_len;
 
-	if (ctx_data->failure)
+	if (priv->failure)
 		return -1;
 
 	if (in_len > out_size) {
@@ -480,22 +470,22 @@ purple_aes_decrypt(PurpleCipherContext *context, const guchar input[],
 	}
 
 #if defined(PURPLE_AES_USE_GNUTLS)
-	decrypt_func = purple_aes_decrypt_gnutls;
+	decrypt_func = purple_aes_cipher_gnutls_decrypt;
 #elif defined(PURPLE_AES_USE_NSS)
-	decrypt_func = purple_aes_decrypt_nss;
+	decrypt_func = purple_aes_cipher_nss_decrypt;
 #else
 #  error "No matching encrypt_func"
 #endif
 
-	succ = decrypt_func(input, output, in_len, ctx_data->iv, ctx_data->key,
-		ctx_data->key_size);
+	succ = decrypt_func(input, output, in_len, priv->iv, priv->key,
+		priv->key_size);
 
 	if (!succ) {
 		memset(output, 0, in_len);
 		return -1;
 	}
 
-	out_len = purple_aes_unpad_pkcs7(output, in_len);
+	out_len = purple_aes_cipher_unpad_pkcs7(output, in_len);
 	if (out_len < 0) {
 		memset(output, 0, in_len);
 		return -1;
@@ -505,62 +495,157 @@ purple_aes_decrypt(PurpleCipherContext *context, const guchar input[],
 }
 
 static size_t
-purple_aes_get_key_size(PurpleCipherContext *context)
+purple_aes_cipher_get_key_size(PurpleCipher *cipher)
 {
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	return ctx_data->key_size;
+	return priv->key_size;
 }
 
 static void
-purple_aes_set_batch_mode(PurpleCipherContext *context,
+purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 	PurpleCipherBatchMode mode)
 {
-	AESContext *ctx_data = purple_cipher_context_get_data(context);
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	if (mode == PURPLE_CIPHER_BATCH_MODE_CBC)
+	if (mode == PURPLE_CIPHER_BATCH_MODE_CBC) {
+		g_object_notify(G_OBJECT(cipher), "batch_mode");
 		return;
+	}
 
 	purple_debug_error("cipher-aes", "unsupported batch mode\n");
-	ctx_data->failure = TRUE;
+	priv->failure = TRUE;
 }
 
 static PurpleCipherBatchMode
-purple_aes_get_batch_mode(PurpleCipherContext *context)
+purple_aes_cipher_get_batch_mode(PurpleCipher *cipher)
 {
 	return PURPLE_CIPHER_BATCH_MODE_CBC;
 }
 
 static size_t
-purple_aes_get_block_size(PurpleCipherContext *context)
+purple_aes_cipher_get_block_size(PurpleCipher *cipher)
 {
 	return PURPLE_AES_BLOCK_SIZE;
 }
 
-static PurpleCipherOps AESOps = {
-	purple_aes_set_option,     /* set_option */
-	NULL,                      /* get_option */
-	purple_aes_init,           /* init */
-	purple_aes_reset,          /* reset */
-	NULL,                      /* reset_state */
-	purple_aes_uninit,         /* uninit */
-	purple_aes_set_iv,         /* set_iv */
-	NULL,                      /* append */
-	NULL,                      /* digest */
-	NULL,                      /* get_digest_size */
-	purple_aes_encrypt,        /* encrypt */
-	purple_aes_decrypt,        /* decrypt */
-	NULL,                      /* set_salt */
-	NULL,                      /* get_salt_size */
-	purple_aes_set_key,        /* set_key */
-	purple_aes_get_key_size,   /* get_key_size */
-	purple_aes_set_batch_mode, /* set_batch_mode */
-	purple_aes_get_batch_mode, /* get_batch_mode */
-	purple_aes_get_block_size, /* get_block_size */
-	NULL, NULL, NULL, NULL     /* reserved */
-};
+/******************************************************************************
+ * Object Stuff
+ *****************************************************************************/
+static void
+purple_aes_cipher_get_property(GObject *obj, guint param_id, GValue *value,
+								GParamSpec *pspec)
+{
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
 
-PurpleCipherOps *
-purple_aes_cipher_get_ops(void) {
-	return &AESOps;
+	switch(param_id) {
+		case PROP_BATCH_MODE:
+			g_value_set_enum(value,
+							 purple_cipher_get_batch_mode(cipher));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_aes_cipher_set_property(GObject *obj, guint param_id,
+								const GValue *value, GParamSpec *pspec)
+{
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
+
+	switch(param_id) {
+		case PROP_BATCH_MODE:
+			purple_cipher_set_batch_mode(cipher,
+										 g_value_get_enum(value));
+			break;
+		case PROP_IV:
+			{
+				guchar *iv = (guchar *)g_value_get_string(value);
+				purple_cipher_set_iv(cipher, iv, strlen((gchar*)iv));
+			}
+			break;
+		case PROP_KEY:
+			purple_cipher_set_key(cipher, (guchar *)g_value_get_string(value),
+				purple_aes_cipher_get_key_size(cipher));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	GParamSpec *pspec;
+
+	obj_class->get_property = purple_aes_cipher_get_property;
+	obj_class->set_property = purple_aes_cipher_set_property;
+
+	cipher_class->reset = purple_aes_cipher_reset;
+	cipher_class->set_iv = purple_aes_cipher_set_iv;
+	cipher_class->encrypt = purple_aes_cipher_encrypt;
+	cipher_class->decrypt = purple_aes_cipher_decrypt;
+	cipher_class->set_key = purple_aes_cipher_set_key;
+	cipher_class->get_key_size = purple_aes_cipher_get_key_size;
+	cipher_class->set_batch_mode = purple_aes_cipher_set_batch_mode;
+	cipher_class->get_batch_mode = purple_aes_cipher_get_batch_mode;
+	cipher_class->get_block_size = purple_aes_cipher_get_block_size;
+
+	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
+							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
+							  G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
+
+	pspec = g_param_spec_string("iv", "iv", "iv", NULL,
+								G_PARAM_WRITABLE);
+	g_object_class_install_property(obj_class, PROP_IV, pspec);
+
+	pspec = g_param_spec_string("key", "key", "key", NULL,
+								G_PARAM_WRITABLE);
+	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+
+	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));
+}
+
+static void
+purple_aes_cipher_init(PurpleCipher *cipher) {
+	purple_cipher_reset(cipher);
+}
+
+/******************************************************************************
+ * API
+ *****************************************************************************/
+GType
+purple_aes_cipher_get_gtype(void) {
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleAESCipherClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_aes_cipher_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleAESCipher),
+			0,
+			(GInstanceInitFunc)purple_aes_cipher_init,
+			NULL
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+									  "PurpleAESCipher",
+									  &info, 0);
+	}
+
+	return type;
+}
+
+PurpleCipher *
+purple_aes_cipher_new(void) {
+	return g_object_new(PURPLE_TYPE_AES_CIPHER, NULL);
 }
