@@ -1,10 +1,4 @@
 /*
- * purple
- *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
- *
  * Original md4 taken from linux kernel
  * MD4 Message Digest Algorithm (RFC1320).
  *
@@ -18,80 +12,83 @@
  * Copyright (c) Cryptoapi developers.
  * Copyright (c) 2002 David S. Miller (davem@redhat.com)
  * Copyright (c) 2002 James Morris <jmorris@intercode.com.au>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "md4.h"
 
-#include "internal.h"
-#include <cipher.h>
-#include "ciphers.h"
+#include <string.h>
 
-#define MD4_DIGEST_SIZE     16
-#define MD4_HMAC_BLOCK_SIZE 64
-#define MD4_BLOCK_WORDS     16
-#define MD4_HASH_WORDS      4
+#define MD4_DIGEST_SIZE		16
+#define MD4_BLOCK_WORDS		16
+#define MD4_CIPHER_WORDS		4
 
-struct MD4_Context {
-	guint32 hash[MD4_HASH_WORDS];
+#define PURPLE_MD4_CIPHER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MD4_CIPHER, PurpleMD4CipherPrivate))
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+typedef struct {
+	guint32 hash[MD4_CIPHER_WORDS];
 	guint32 block[MD4_BLOCK_WORDS];
 	guint64 byte_count;
-};
+} PurpleMD4CipherPrivate;
 
-static inline guint32 lshift(guint32 x, unsigned int s)
-{
-	x &= 0xFFFFFFFF;
-	return ((x << s) & 0xFFFFFFFF) | (x >> (32 - s));
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+static GObjectClass *parent_class = NULL;
+
+/******************************************************************************
+ * Helpers
+ *****************************************************************************/
+#define ROUND1(a,b,c,d,k,s) \
+	(a = lshift(a + F(b,c,d) + k, s))
+
+#define ROUND2(a,b,c,d,k,s) \
+	(a = lshift(a + G(b,c,d) + k + (guint32)0x5a827999,s))
+
+#define ROUND3(a,b,c,d,k,s) \
+	(a = lshift(a + H(b,c,d) + k + (guint32)0x6ed9eba1,s))
+
+static inline guint32
+lshift(guint32 x, unsigned int s) {
+	x &= 0xffffffff;
+	return (((x << s) & 0xffffffff) | (x >> (32 - s)));
 }
 
-static inline guint32 F(guint32 x, guint32 y, guint32 z)
-{
-	return (x & y) | ((~x) & z);
+static inline guint32
+F(guint32 x, guint32 y, guint32 z) {
+	return ((x & y) | ((~x) & z));
 }
 
-static inline guint32 G(guint32 x, guint32 y, guint32 z)
-{
-	return (x & y) | (x & z) | (y & z);
+static inline guint32
+G(guint32 x, guint32 y, guint32 z) {
+	return ((x & y) | (x & z) | (y & z));
 }
 
-static inline guint32 H(guint32 x, guint32 y, guint32 z)
-{
-	return x ^ y ^ z;
+static inline guint32
+H(guint32 x, guint32 y, guint32 z) {
+	return (x ^ y ^ z);
 }
 
-#define ROUND1(a,b,c,d,k,s) (a = lshift(a + F(b,c,d) + k, s))
-#define ROUND2(a,b,c,d,k,s) (a = lshift(a + G(b,c,d) + k + (guint32)0x5A827999,s))
-#define ROUND3(a,b,c,d,k,s) (a = lshift(a + H(b,c,d) + k + (guint32)0x6ED9EBA1,s))
-
-static inline void le32_to_cpu_array(guint32 *buf, unsigned int words)
-{
-	while (words--) {
-		*buf=GUINT_FROM_LE(*buf);
+static inline void
+le32_to_cpu_array(guint32 *buf, unsigned int words) {
+	while(words--) {
+		*buf = GUINT_FROM_LE(*buf);
 		buf++;
 	}
 }
 
-static inline void cpu_to_le32_array(guint32 *buf, unsigned int words)
-{
-	while (words--) {
-		*buf=GUINT_TO_LE(*buf);
+static inline void
+cpu_to_le32_array(guint32 *buf, unsigned int words) {
+	while(words--) {
+		*buf = GUINT_TO_LE(*buf);
 		buf++;
 	}
 }
 
-static void md4_transform(guint32 *hash, guint32 const *in)
-{
+static void
+md4_transform(guint32 *hash, guint32 const *in) {
 	guint32 a, b, c, d;
 
 	a = hash[0];
@@ -156,151 +153,150 @@ static void md4_transform(guint32 *hash, guint32 const *in)
 	hash[3] += d;
 }
 
-static inline void md4_transform_helper(struct MD4_Context *ctx)
-{
-	le32_to_cpu_array(ctx->block, sizeof(ctx->block) / sizeof(guint32));
-	md4_transform(ctx->hash, ctx->block);
+static inline void
+md4_transform_helper(PurpleCipher *cipher) {
+	PurpleMD4CipherPrivate *priv = PURPLE_MD4_CIPHER_GET_PRIVATE(cipher);
+
+	le32_to_cpu_array(priv->block, sizeof(priv->block) / sizeof(guint32));
+	md4_transform(priv->hash, priv->block);
+}
+
+/******************************************************************************
+ * Hash Stuff
+ *****************************************************************************/
+static void
+purple_md4_cipher_reset(PurpleCipher *cipher) {
+	PurpleMD4CipherPrivate *priv = PURPLE_MD4_CIPHER_GET_PRIVATE(cipher);
+
+	priv->hash[0] = 0x67452301;
+	priv->hash[1] = 0xefcdab89;
+	priv->hash[2] = 0x98badcfe;
+	priv->hash[3] = 0x10325476;
+
+	priv->byte_count = 0;
+
+	memset(priv->block, 0, sizeof(priv->block));
 }
 
 static void
-md4_init(PurpleCipherContext *context, gpointer extra) {
-	struct MD4_Context *mctx;
-	mctx = g_new0(struct MD4_Context, 1);
-	purple_cipher_context_set_data(context, mctx);
-	purple_cipher_context_reset(context, extra);
+purple_md4_cipher_append(PurpleCipher *cipher, const guchar *data, size_t len) {
+	PurpleMD4CipherPrivate *priv = PURPLE_MD4_CIPHER_GET_PRIVATE(cipher);
+	const guint32 avail = sizeof(priv->block) - (priv->byte_count & 0x3f);
 
-	mctx->hash[0] = 0x67452301;
-	mctx->hash[1] = 0xefcdab89;
-	mctx->hash[2] = 0x98badcfe;
-	mctx->hash[3] = 0x10325476;
-	mctx->byte_count = 0;
-}
+	priv->byte_count += len;
 
-static void
-md4_reset(PurpleCipherContext *context, gpointer extra) {
-	struct MD4_Context *mctx;
-
-	mctx = purple_cipher_context_get_data(context);
-
-	mctx->hash[0] = 0x67452301;
-	mctx->hash[1] = 0xefcdab89;
-	mctx->hash[2] = 0x98badcfe;
-	mctx->hash[3] = 0x10325476;
-	mctx->byte_count = 0;
-}
-
-	static void
-md4_append(PurpleCipherContext *context, const guchar *data, size_t len)
-{
-	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
-	const guint32 avail = sizeof(mctx->block) - (mctx->byte_count & 0x3f);
-
-	mctx->byte_count += len;
-
-	if (avail > len) {
-		memcpy((char *)mctx->block + (sizeof(mctx->block) - avail),
-				data, len);
+	if(avail > len) {
+		memcpy((char *)priv->block +
+			   (sizeof(priv->block) - avail),
+			   data, len);
 		return;
 	}
 
-	memcpy((char *)mctx->block + (sizeof(mctx->block) - avail),
-			data, avail);
+	memcpy((char *)priv->block +
+		   (sizeof(priv->block) - avail),
+		   data, avail);
 
-	md4_transform_helper(mctx);
+	md4_transform_helper(cipher);
 	data += avail;
 	len -= avail;
 
-	while (len >= sizeof(mctx->block)) {
-		memcpy(mctx->block, data, sizeof(mctx->block));
-		md4_transform_helper(mctx);
-		data += sizeof(mctx->block);
-		len -= sizeof(mctx->block);
+	while(len >= sizeof(priv->block)) {
+		memcpy(priv->block, data, sizeof(priv->block));
+		md4_transform_helper(cipher);
+		data += sizeof(priv->block);
+		len -= sizeof(priv->block);
 	}
 
-	memcpy(mctx->block, data, len);
+	memcpy(priv->block, data, len);
 }
 
-	static gboolean
-md4_digest(PurpleCipherContext *context, guchar *out, size_t len)
+static gboolean
+purple_md4_cipher_digest(PurpleCipher *cipher, guchar *out, size_t len)
 {
-	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
-	const unsigned int offset = mctx->byte_count & 0x3f;
-	char *p = (char *)mctx->block + offset;
-	int padding = 56 - (offset + 1);
+	PurpleMD4CipherPrivate *priv = PURPLE_MD4_CIPHER_GET_PRIVATE(cipher);
+	const unsigned int offset = priv->byte_count & 0x3f;
+	gchar *p = (gchar *)priv->block + offset;
+	gint padding = 56 - (offset + 1);
 
+	if(len < 16)
+		return FALSE;
 
-	if(len<16) return FALSE;
 	*p++ = 0x80;
-	if (padding < 0) {
-		memset(p, 0x00, padding + sizeof (guint64));
-		md4_transform_helper(mctx);
-		p = (char *)mctx->block;
+
+	if(padding < 0) {
+		memset(p, 0x00, padding + sizeof(guint64));
+		md4_transform_helper(cipher);
+		p = (gchar *)priv->block;
 		padding = 56;
 	}
 
 	memset(p, 0, padding);
-	mctx->block[14] = mctx->byte_count << 3;
-	mctx->block[15] = mctx->byte_count >> 29;
-	le32_to_cpu_array(mctx->block, (sizeof(mctx->block) -
-				sizeof(guint64)) / sizeof(guint32));
-	md4_transform(mctx->hash, mctx->block);
-	cpu_to_le32_array(mctx->hash, sizeof(mctx->hash) / sizeof(guint32));
-	memcpy(out, mctx->hash, sizeof(mctx->hash));
-	memset(mctx, 0, sizeof(*mctx));
+	priv->block[14] = priv->byte_count << 3;
+	priv->block[15] = priv->byte_count >> 29;
+	le32_to_cpu_array(priv->block,
+					  (sizeof(priv->block) - sizeof(guint64)) /
+					  sizeof(guint32));
+	md4_transform(priv->hash, priv->block);
+	cpu_to_le32_array(priv->hash, sizeof(priv->hash) / sizeof(guint32));
+	memcpy(out, priv->hash, sizeof(priv->hash));
+
 	return TRUE;
 }
 
-	static size_t
-md4_get_digest_size(PurpleCipherContext *context)
+static size_t
+purple_md4_cipher_get_digest_size(PurpleCipher *cipher)
 {
 	return 16;
 }
 
+/******************************************************************************
+ * Object Stuff
+ *****************************************************************************/
 static void
-md4_uninit(PurpleCipherContext *context) {
-	struct MD4_Context *md4_context;
+purple_md4_cipher_class_init(PurpleMD4CipherClass *klass) {
+	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
 
-	purple_cipher_context_reset(context, NULL);
+	parent_class = g_type_class_peek_parent(klass);
 
-	md4_context = purple_cipher_context_get_data(context);
-	memset(md4_context, 0, sizeof(*md4_context));
+	g_type_class_add_private(klass, sizeof(PurpleMD4CipherPrivate));
 
-	g_free(md4_context);
-	md4_context = NULL;
+	cipher_class->reset = purple_md4_cipher_reset;
+	cipher_class->reset_state = purple_md4_cipher_reset;
+	cipher_class->append = purple_md4_cipher_append;
+	cipher_class->digest = purple_md4_cipher_digest;
+	cipher_class->get_digest_size = purple_md4_cipher_get_digest_size;
 }
 
-	static size_t
-md4_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return MD4_HMAC_BLOCK_SIZE;
+/******************************************************************************
+ * API
+ *****************************************************************************/
+GType
+purple_md4_cipher_get_gtype(void) {
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleMD4CipherClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_md4_cipher_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleMD4Cipher),
+			0,
+			(GInstanceInitFunc)purple_cipher_reset,
+			NULL,
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+									  "PurpleMD4Cipher",
+									  &info, 0);
+	}
+
+	return type;
 }
 
-static PurpleCipherOps MD4Ops = {
-	NULL,                   /* Set option */
-	NULL,                   /* Get option */
-	md4_init,               /* init */
-	md4_reset,              /* reset */
-	md4_reset,              /* reset state */
-	md4_uninit,             /* uninit */
-	NULL,                   /* set iv */
-	md4_append,             /* append */
-	md4_digest,             /* digest */
-	md4_get_digest_size,    /* get digest size */
-	NULL,                   /* encrypt */
-	NULL,                   /* decrypt */
-	NULL,                   /* set salt */
-	NULL,                   /* get salt size */
-	NULL,                   /* set key */
-	NULL,                   /* get key size */
-	NULL,                   /* set batch mode */
-	NULL,                   /* get batch mode */
-	md4_get_block_size,     /* get block size */
-	NULL, NULL, NULL, NULL  /* reserved */
-};
-
-PurpleCipherOps *
-purple_md4_cipher_get_ops(void) {
-	return &MD4Ops;
+PurpleCipher *
+purple_md4_cipher_new(void) {
+	return g_object_new(PURPLE_TYPE_MD4_CIPHER, NULL);
 }
-
