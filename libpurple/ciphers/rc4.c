@@ -92,17 +92,6 @@ purple_rc4_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 	g_object_notify(G_OBJECT(rc4_cipher), "key");
 }
 
-
-static size_t
-purple_rc4_cipher_get_key_size(PurpleCipher *cipher)
-{
-	PurpleRC4Cipher *rc4_cipher = PURPLE_RC4_CIPHER(cipher);
-	PurpleRC4CipherPrivate *priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
-
-	return priv->key_len;
-}
-
-
 static ssize_t
 purple_rc4_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_len,
 							guchar output[], size_t out_size)
@@ -197,7 +186,6 @@ purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
 	cipher_class->reset = purple_rc4_cipher_reset;
 	cipher_class->encrypt = purple_rc4_cipher_encrypt;
 	cipher_class->set_key = purple_rc4_cipher_set_key;
-	cipher_class->get_key_size = purple_rc4_cipher_get_key_size;
 	cipher_class->get_name = purple_rc4_cipher_get_name;
 
 	pspec = g_param_spec_int("key_len", "key_len", "key_len",
