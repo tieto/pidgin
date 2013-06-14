@@ -314,7 +314,7 @@ purple_hmac_cipher_get_gtype(void) {
 			NULL,
 			sizeof(PurpleHMACCipher),
 			0,
-			NULL,
+			(GInstanceInitFunc)purple_cipher_reset,
 			NULL,
 		};
 

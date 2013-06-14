@@ -488,6 +488,8 @@ purple_des3_cipher_init(PurpleCipher *cipher) {
 	priv->key1 = purple_des_cipher_new();
 	priv->key2 = purple_des_cipher_new();
 	priv->key3 = purple_des_cipher_new();
+
+	purple_des3_cipher_reset(cipher);
 }
 
 /******************************************************************************

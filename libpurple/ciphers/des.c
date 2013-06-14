@@ -513,12 +513,6 @@ purple_des_cipher_set_property(GObject *obj, guint param_id,
 }
 
 static void
-purple_des_cipher_finalize(GObject *obj)
-{
-	parent_class->finalize(obj);
-}
-
-static void
 purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
@@ -527,7 +521,6 @@ purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->finalize = purple_des_cipher_finalize;
 	obj_class->set_property = purple_des_cipher_set_property;
 
 	cipher_class->encrypt = purple_des_cipher_encrypt;
@@ -555,6 +548,7 @@ purple_des_cipher_get_type(void) {
 			.class_size = sizeof(PurpleDESCipherClass),
 			.class_init = (GClassInitFunc)purple_des_cipher_class_init,
 			.instance_size = sizeof(PurpleDESCipher),
+			.instance_init = (GInstanceInitFunc)purple_cipher_reset,
 		};
 
 		type = g_type_register_static(PURPLE_TYPE_CIPHER,
