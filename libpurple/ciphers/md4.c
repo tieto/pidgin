@@ -19,7 +19,7 @@
 
 #define MD4_DIGEST_SIZE		16
 #define MD4_BLOCK_WORDS		16
-#define MD4_CIPHER_WORDS		4
+#define MD4_HASH_WORDS		4
 
 #define PURPLE_MD4_CIPHER_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MD4_CIPHER, PurpleMD4CipherPrivate))
@@ -28,7 +28,7 @@
  * Structs
  *****************************************************************************/
 typedef struct {
-	guint32 hash[MD4_CIPHER_WORDS];
+	guint32 hash[MD4_HASH_WORDS];
 	guint32 block[MD4_BLOCK_WORDS];
 	guint64 byte_count;
 } PurpleMD4CipherPrivate;
@@ -249,6 +249,13 @@ purple_md4_cipher_get_digest_size(PurpleCipher *cipher)
 	return 16;
 }
 
+static size_t
+purple_md4_cipher_get_block_size(PurpleCipher *cipher)
+{
+	/* This does not change (in this case) */
+	return 64;
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -265,6 +272,7 @@ purple_md4_cipher_class_init(PurpleMD4CipherClass *klass) {
 	cipher_class->append = purple_md4_cipher_append;
 	cipher_class->digest = purple_md4_cipher_digest;
 	cipher_class->get_digest_size = purple_md4_cipher_get_digest_size;
+	cipher_class->get_block_size = purple_md4_cipher_get_block_size;
 }
 
 /******************************************************************************
