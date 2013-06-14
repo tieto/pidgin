@@ -32,10 +32,16 @@
 #include <glib.h>
 #include <string.h>
 
-#include "cipher.h"
 #include "debug.h"
 #include "plugin.h"
 #include "version.h"
+#include "util.h"
+
+#include "ciphers/aes.h"
+#include "ciphers/md5.h"
+#include "ciphers/pbkdf2.h"
+#include "ciphers/sha1.h"
+#include "ciphers/sha256.h"
 
 struct test {
 	const gchar *question;
@@ -63,12 +69,11 @@ struct test md5_tests[8] = {
 static void
 cipher_test_md5(void) {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	gchar digest[33];
 	gboolean ret;
 	gint i = 0;
 
-	cipher = purple_ciphers_find_cipher("md5");
+	cipher = purple_md5_cipher_new();
 	if(!cipher) {
 		purple_debug_info("cipher-test",
 						"could not find md5 cipher, not testing\n");
@@ -77,16 +82,14 @@ cipher_test_md5(void) {
 
 	purple_debug_info("cipher-test", "Running md5 tests\n");
 
-	context = purple_cipher_context_new(cipher, NULL);
-
 	while(md5_tests[i].answer) {
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
 		purple_debug_info("cipher-test", "Testing '%s'\n", md5_tests[i].question);
 
-		purple_cipher_context_append(context, (guchar *)md5_tests[i].question,
+		purple_cipher_append(cipher, (guchar *)md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
-		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
+		ret = purple_cipher_digest_to_str(cipher, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");
@@ -96,11 +99,11 @@ cipher_test_md5(void) {
 							md5_tests[i].answer);
 		}
 
-		purple_cipher_context_reset(context, NULL);
+		purple_cipher_reset(cipher);
 		i++;
 	}
 
-	purple_cipher_context_destroy(context);
+	g_object_unref(cipher);
 
 	purple_debug_info("cipher-test", "md5 tests completed\n\n");
 }
@@ -119,12 +122,11 @@ struct test sha1_tests[5] = {
 static void
 cipher_test_sha1(void) {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	gchar digest[41];
 	gint i = 0;
 	gboolean ret;
 
-	cipher = purple_ciphers_find_cipher("sha1");
+	cipher = purple_sha1_cipher_new();
 	if(!cipher) {
 		purple_debug_info("cipher-test",
 						"could not find sha1 cipher, not testing\n");
@@ -133,8 +135,6 @@ cipher_test_sha1(void) {
 
 	purple_debug_info("cipher-test", "Running sha1 tests\n");
 
-	context = purple_cipher_context_new(cipher, NULL);
-
 	while(sha1_tests[i].answer) {
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
 		purple_debug_info("cipher-test", "Testing '%s'\n",
@@ -142,7 +142,7 @@ cipher_test_sha1(void) {
 						sha1_tests[i].question : "'a'x1000, 1000 times");
 
 		if(sha1_tests[i].question) {
-			purple_cipher_context_append(context, (guchar *)sha1_tests[i].question,
+			purple_cipher_append(cipher, (guchar *)sha1_tests[i].question,
 									   strlen(sha1_tests[i].question));
 		} else {
 			gint j;
@@ -151,10 +151,10 @@ cipher_test_sha1(void) {
 			memset(buff, 'a', 1000);
 
 			for(j = 0; j < 1000; j++)
-				purple_cipher_context_append(context, buff, 1000);
+				purple_cipher_append(cipher, buff, 1000);
 		}
 
-		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
+		ret = purple_cipher_digest_to_str(cipher, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");
@@ -164,11 +164,11 @@ cipher_test_sha1(void) {
 							sha1_tests[i].answer);
 		}
 
-		purple_cipher_context_reset(context, NULL);
+		purple_cipher_reset(cipher);
 		i++;
 	}
 
-	purple_cipher_context_destroy(context);
+	g_object_unref(cipher);
 
 	purple_debug_info("cipher-test", "sha1 tests completed\n\n");
 }
@@ -192,7 +192,7 @@ cipher_test_digest(void)
 
 	purple_debug_info("cipher-test", "Running HTTP Digest tests\n");
 
-	session_key = purple_cipher_http_digest_calculate_session_key(
+	session_key = purple_http_digest_calculate_session_key(
 						algorithm, username, realm, password,
 						nonce, client_nonce);
 
@@ -208,7 +208,7 @@ cipher_test_digest(void)
 		purple_debug_info("cipher-test", "\tsession_key: Got:    %s\n", session_key);
 		purple_debug_info("cipher-test", "\tsession_key: Wanted: %s\n", "939e7578ed9e3c518a452acee763bce9");
 
-		response = purple_cipher_http_digest_calculate_response(
+		response = purple_http_digest_calculate_response(
 				algorithm, method, digest_uri, qop, entity,
 				nonce, nonce_count, client_nonce, session_key);
 
@@ -362,13 +362,11 @@ cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
 static void
 cipher_test_pbkdf2(void)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher, *hash;
 	int i = 0;
 	gboolean fail = FALSE;
 
 	purple_debug_info("cipher-test", "Running PBKDF2 tests\n");
-
-	context = purple_cipher_context_new_by_name("pbkdf2", NULL);
 
 	while (!fail && pbkdf2_tests[i].answer) {
 		pbkdf2_test *test = &pbkdf2_tests[i];
@@ -384,18 +382,28 @@ cipher_test_pbkdf2(void)
 			test->passphrase, test->salt, test->hash,
 			test->iter_count);
 
-		purple_cipher_context_set_option(context, "hash", (gpointer)test->hash);
-		purple_cipher_context_set_option(context, "iter_count", GUINT_TO_POINTER(test->iter_count));
-		purple_cipher_context_set_option(context, "out_len", GUINT_TO_POINTER(test->out_len));
-		purple_cipher_context_set_salt(context, (const guchar*)test->salt, test->salt ? strlen(test->salt): 0);
-		purple_cipher_context_set_key(context, (const guchar*)test->passphrase, strlen(test->passphrase));
+		if (!strcmp(test->hash, "sha1"))
+			hash = purple_sha1_cipher_new();
+		else if (!strcmp(test->hash, "sha256"))
+			hash = purple_sha256_cipher_new();
+		else
+			hash = NULL;
 
-		ret = purple_cipher_context_digest_to_str(context, digest, sizeof(digest));
-		purple_cipher_context_reset(context, NULL);
+		cipher = purple_pbkdf2_cipher_new(hash);
+
+		g_object_set_property(G_OBJECT(cipher), "iter_count", GUINT_TO_POINTER(test->iter_count));
+		g_object_set_property(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(test->out_len));
+		purple_cipher_set_salt(cipher, (const guchar*)test->salt, test->salt ? strlen(test->salt): 0);
+		purple_cipher_set_key(cipher, (const guchar*)test->passphrase, strlen(test->passphrase));
+
+		ret = purple_cipher_digest_to_str(cipher, digest, sizeof(digest));
+		purple_cipher_reset(cipher);
 
 		if (!ret) {
 			purple_debug_info("cipher-test", "\tfailed\n");
 			fail = TRUE;
+			g_object_unref(cipher);
+			g_object_unref(hash);
 			continue;
 		}
 
@@ -431,9 +439,10 @@ cipher_test_pbkdf2(void)
 			purple_debug_info("cipher-test", "\twrong answer\n");
 			fail = TRUE;
 		}
-	}
 
-	purple_cipher_context_destroy(context);
+		g_object_unref(cipher);
+		g_object_unref(hash);
+	}
 
 	if (fail)
 		purple_debug_info("cipher-test", "PBKDF2 tests FAILED\n\n");
@@ -466,14 +475,14 @@ aes_test aes_tests[] = {
 static void
 cipher_test_aes(void)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher;
 	int i = 0;
 	gboolean fail = FALSE;
 
 	purple_debug_info("cipher-test", "Running AES tests\n");
 
-	context = purple_cipher_context_new_by_name("aes", NULL);
-	if (context == NULL) {
+	cipher = purple_aes_cipher_new();
+	if (cipher == NULL) {
 		purple_debug_error("cipher-test", "AES cipher not found\n");
 		fail = TRUE;
 	}
@@ -482,49 +491,49 @@ cipher_test_aes(void)
 		aes_test *test = &aes_tests[i];
 		gsize key_size;
 		guchar *key;
-		guchar cipher[1024], decipher[1024];
+		guchar cipher_s[1024], decipher_s[1024];
 		ssize_t cipher_len, decipher_len;
 		gchar *cipher_b16, *deciphered;
 
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
-		purple_debug_info("cipher-test", "\tTesting '%s' (%dbit) \n",
+		purple_debug_info("cipher-test", "\tTesting '%s' (%lubit) \n",
 			test->plaintext ? test->plaintext : "(null)",
 			strlen(test->key) * 8 / 2);
 
 		i++;
 
-		purple_cipher_context_reset(context, NULL);
+		purple_cipher_reset(cipher);
 
 		if (test->iv) {
 			gsize iv_size;
 			guchar *iv = purple_base16_decode(test->iv, &iv_size);
 			g_assert(iv != NULL);
-			purple_cipher_context_set_iv(context, iv, iv_size);
+			purple_cipher_set_iv(cipher, iv, iv_size);
 			g_free(iv);
 		}
 
 		key = purple_base16_decode(test->key, &key_size);
 		g_assert(key != NULL);
-		purple_cipher_context_set_key(context, key, key_size);
+		purple_cipher_set_key(cipher, key, key_size);
 		g_free(key);
 
-		if (purple_cipher_context_get_key_size(context) != key_size) {
+		if (purple_cipher_get_key_size(cipher) != key_size) {
 			purple_debug_info("cipher-test", "\tinvalid key size\n");
 			fail = TRUE;
 			continue;
 		}
 
-		cipher_len = purple_cipher_context_encrypt(context,
+		cipher_len = purple_cipher_encrypt(cipher,
 			(const guchar*)(test->plaintext ? test->plaintext : ""),
 			test->plaintext ? (strlen(test->plaintext) + 1) : 0,
-			cipher, sizeof(cipher));
+			cipher_s, sizeof(cipher_s));
 		if (cipher_len < 0) {
 			purple_debug_info("cipher-test", "\tencryption failed\n");
 			fail = TRUE;
 			continue;
 		}
 
-		cipher_b16 = purple_base16_encode(cipher, cipher_len);
+		cipher_b16 = purple_base16_encode(cipher_s, cipher_len);
 
 		purple_debug_info("cipher-test", "\tGot:          %s\n", cipher_b16);
 		purple_debug_info("cipher-test", "\tWanted:       %s\n", test->cipher);
@@ -538,15 +547,15 @@ cipher_test_aes(void)
 		}
 		g_free(cipher_b16);
 
-		decipher_len = purple_cipher_context_decrypt(context,
-			cipher, cipher_len, decipher, sizeof(decipher));
+		decipher_len = purple_cipher_decrypt(cipher,
+			cipher_s, cipher_len, decipher_s, sizeof(decipher_s));
 		if (decipher_len < 0) {
 			purple_debug_info("cipher-test", "\tdecryption failed\n");
 			fail = TRUE;
 			continue;
 		}
 
-		deciphered = (decipher_len > 0) ? (gchar*)decipher : NULL;
+		deciphered = (decipher_len > 0) ? (gchar*)decipher_s : NULL;
 
 		if (g_strcmp0(deciphered, test->plaintext) != 0) {
 			purple_debug_info("cipher-test",
@@ -558,8 +567,8 @@ cipher_test_aes(void)
 		purple_debug_info("cipher-test", "\tTest OK\n");
 	}
 
-	if (context != NULL)
-		purple_cipher_context_destroy(context);
+	if (cipher != NULL)
+		g_object_unref(cipher);
 
 	if (fail)
 		purple_debug_info("cipher-test", "AES tests FAILED\n\n");

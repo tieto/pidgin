@@ -719,7 +719,7 @@ plugin_load(PurplePlugin *plugin)
 	void *conn_handle     = purple_connections_get_handle();
 	void *conv_handle     = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
-	void *ciphers_handle  = purple_ciphers_get_handle();
+/*	void *ciphers_handle  = purple_ciphers_get_handle(); */ /* TODO: uncomment after cipherlist is implemented */
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
@@ -831,11 +831,11 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(conv_handle, "chat-topic-changed",
 						plugin, PURPLE_CALLBACK(chat_topic_changed_cb), NULL);
 
-	/* Ciphers signals */
-	purple_signal_connect(ciphers_handle, "cipher-added",
+	/* Ciphers signals */  /* TODO: uncomment after cipherlist is implemented */
+/*	purple_signal_connect(ciphers_handle, "cipher-added",
 						plugin, PURPLE_CALLBACK(cipher_added_cb), NULL);
 	purple_signal_connect(ciphers_handle, "cipher-removed",
-						plugin, PURPLE_CALLBACK(cipher_removed_cb), NULL);
+						plugin, PURPLE_CALLBACK(cipher_removed_cb), NULL);*/
 
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",
