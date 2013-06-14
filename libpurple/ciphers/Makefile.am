@@ -12,11 +12,13 @@ libpurple_ciphers_la_SOURCES=\
 	$(AES_SOURCE) \
 	des.c \
 	des3.c \
-	gchecksum.c \
 	hmac.c \
 	md4.c \
+	md5.c \
 	pbkdf2.c \
-	rc4.c
+	rc4.c \
+	sha1.c \
+	sha256.c
 
 INCLUDES = -I$(top_srcdir)/libpurple
 
