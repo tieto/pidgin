@@ -350,7 +350,7 @@ purple_des3_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mo
 
 	priv->mode = mode;
 
-	g_object_notify(G_OBJECT(des3_cipher), "batchMode");
+	g_object_notify(G_OBJECT(des3_cipher), "batch_mode");
 }
 
 static PurpleCipherBatchMode
