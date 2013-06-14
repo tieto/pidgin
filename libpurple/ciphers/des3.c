@@ -457,7 +457,7 @@ purple_des3_cipher_class_init(PurpleDES3CipherClass *klass) {
 	cipher_class->get_batch_mode = purple_des3_cipher_get_batch_mode;
 	cipher_class->get_key_size = purple_des3_cipher_get_key_size;
 
-	pspec = g_param_spec_enum("batchMode", "batchMode", "batchMode",
+	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
 							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
 							  G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
