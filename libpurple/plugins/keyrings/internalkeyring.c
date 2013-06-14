@@ -26,11 +26,14 @@
 
 #include "internal.h"
 #include "account.h"
-#include "cipher.h"
 #include "debug.h"
 #include "keyring.h"
 #include "plugin.h"
 #include "version.h"
+
+#include "ciphers/aes.h"
+#include "ciphers/pbkdf2.h"
+#include "ciphers/sha256.h"
 
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
@@ -147,30 +150,30 @@ intkeyring_buff_from_base64(const gchar *base64)
 static intkeyring_buff_t *
 intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher, *hash;
 	gboolean succ;
 	intkeyring_buff_t *ret;
 
 	g_return_val_if_fail(passphrase != NULL, NULL);
 
-	context = purple_cipher_context_new_by_name("pbkdf2", NULL);
-	g_return_val_if_fail(context != NULL, NULL);
+	hash = purple_sha256_cipher_new();
+	cipher = purple_pbkdf2_cipher_new(hash);
 
-	purple_cipher_context_set_option(context, "hash", "sha256");
-	purple_cipher_context_set_option(context, "iter_count",
+	g_object_set_property(G_OBJECT(cipher), "iter_count",
 		GUINT_TO_POINTER(purple_prefs_get_int(INTKEYRING_PREFS
 		"pbkdf2_iterations")));
-	purple_cipher_context_set_option(context, "out_len", GUINT_TO_POINTER(
+	g_object_set_property(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(
 		INTKEYRING_KEY_LEN));
-	purple_cipher_context_set_salt(context, salt->data, salt->len);
-	purple_cipher_context_set_key(context, (const guchar*)passphrase,
+	purple_cipher_set_salt(cipher, salt->data, salt->len);
+	purple_cipher_set_key(cipher, (const guchar*)passphrase,
 		strlen(passphrase));
 
 	ret = intkeyring_buff_new(g_new(guchar, INTKEYRING_KEY_LEN),
 		INTKEYRING_KEY_LEN);
-	succ = purple_cipher_context_digest(context, ret->data, ret->len);
+	succ = purple_cipher_digest(cipher, ret->data, ret->len);
 
-	purple_cipher_context_destroy(context);
+	g_object_unref(cipher);
+	g_object_unref(hash);
 
 	if (!succ) {
 		intkeyring_buff_free(ret);
@@ -229,7 +232,7 @@ intkeyring_gen_salt(size_t len)
 static gchar *
 intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher;
 	intkeyring_buff_t *iv;
 	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
 	size_t plaintext_len, text_len, verify_len;
@@ -248,30 +251,30 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 	g_return_val_if_fail(plaintext_len + verify_len <= sizeof(plaintext),
 		NULL);
 
-	context = purple_cipher_context_new_by_name("aes", NULL);
-	g_return_val_if_fail(context != NULL, NULL);
+	cipher = purple_aes_cipher_new();
+	g_return_val_if_fail(cipher != NULL, NULL);
 
 	memset(plaintext, 0, plaintext_len);
 	memcpy(plaintext, str, text_len);
 	memcpy(plaintext + plaintext_len, INTKEYRING_VERIFY_STR, verify_len);
 	plaintext_len += verify_len;
 
-	iv = intkeyring_gen_salt(purple_cipher_context_get_block_size(context));
-	purple_cipher_context_set_iv(context, iv->data, iv->len);
-	purple_cipher_context_set_key(context, key->data, key->len);
-	purple_cipher_context_set_batch_mode(context,
+	iv = intkeyring_gen_salt(purple_cipher_get_block_size(cipher));
+	purple_cipher_set_iv(cipher, iv->data, iv->len);
+	purple_cipher_set_key(cipher, key->data, key->len);
+	purple_cipher_set_batch_mode(cipher,
 		PURPLE_CIPHER_BATCH_MODE_CBC);
 
 	memcpy(encrypted_raw, iv->data, iv->len);
 
-	encrypted_size = purple_cipher_context_encrypt(context,
+	encrypted_size = purple_cipher_encrypt(cipher,
 		plaintext, plaintext_len, encrypted_raw + iv->len,
 		sizeof(encrypted_raw) - iv->len);
 	encrypted_size += iv->len;
 
 	memset(plaintext, 0, plaintext_len);
 	intkeyring_buff_free(iv);
-	purple_cipher_context_destroy(context);
+	g_object_unref(cipher);
 
 	if (encrypted_size < 0)
 		return NULL;
@@ -283,7 +286,7 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 static gchar *
 intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher;
 	guchar *encrypted_raw;
 	gsize encrypted_size;
 	size_t iv_len, verify_len, text_len;
@@ -295,29 +298,29 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	g_return_val_if_fail(key != NULL, NULL);
 	g_return_val_if_fail(str != NULL, NULL);
 
-	context = purple_cipher_context_new_by_name("aes", NULL);
-	g_return_val_if_fail(context != NULL, NULL);
+	cipher = purple_aes_cipher_new();
+	g_return_val_if_fail(cipher != NULL, NULL);
 
 	encrypted_raw = purple_base64_decode(str, &encrypted_size);
 	g_return_val_if_fail(encrypted_raw != NULL, NULL);
 
-	iv_len = purple_cipher_context_get_block_size(context);
+	iv_len = purple_cipher_get_block_size(cipher);
 	if (encrypted_size < iv_len) {
 		g_free(encrypted_raw);
 		return NULL;
 	}
 
-	purple_cipher_context_set_iv(context, encrypted_raw, iv_len);
-	purple_cipher_context_set_key(context, key->data, key->len);
-	purple_cipher_context_set_batch_mode(context,
+	purple_cipher_set_iv(cipher, encrypted_raw, iv_len);
+	purple_cipher_set_key(cipher, key->data, key->len);
+	purple_cipher_set_batch_mode(cipher,
 		PURPLE_CIPHER_BATCH_MODE_CBC);
 
-	plaintext_len = purple_cipher_context_decrypt(context,
+	plaintext_len = purple_cipher_decrypt(cipher,
 		encrypted_raw + iv_len, encrypted_size - iv_len,
 		plaintext, sizeof(plaintext));
 
 	g_free(encrypted_raw);
-	purple_cipher_context_destroy(context);
+	g_object_unref(cipher);
 
 	verify_len = strlen(INTKEYRING_VERIFY_STR);
 	/* Don't remove the len > 0 check! */
