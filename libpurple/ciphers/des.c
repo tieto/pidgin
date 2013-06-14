@@ -381,6 +381,8 @@ purple_des_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 		priv->decrypt_subkeys[i] = priv->encrypt_subkeys[30 - i];
 		priv->decrypt_subkeys[i + 1] = priv->encrypt_subkeys[31 - i];
 	}
+
+	g_object_notify(G_OBJECT(cipher), "key");
 }
 
 static size_t

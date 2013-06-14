@@ -72,6 +72,7 @@ purple_pbkdf2_cipher_set_hash(PurpleCipher *cipher,
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
 	priv->hash = g_object_ref(G_OBJECT(hash));
+	g_object_notify(G_OBJECT(cipher), "hash");
 }
 
 /******************************************************************************
