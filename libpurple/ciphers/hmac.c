@@ -19,229 +19,325 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "hmac.h"
 
-#include "internal.h"
-#include <cipher.h>
-#include "ciphers.h"
+#include <string.h>
 
-#include <util.h>
+/*******************************************************************************
+ * Structs
+ ******************************************************************************/
+#define PURPLE_HMAC_CIPHER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherPrivate))
 
-struct HMAC_Context {
-	PurpleCipherContext *hash;
-	char *name;
-	int blocksize;
-	guchar *opad, *ipad;
+typedef struct {
+	PurpleCipher *hash;
+	guchar *ipad;
+	guchar *opad;
+} PurpleHMACCipherPrivate;
+
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+enum {
+	PROP_NONE,
+	PROP_HASH,
+	PROP_LAST,
 };
 
-	static void
-hmac_init(PurpleCipherContext *context, gpointer extra)
+/*******************************************************************************
+ * Globals
+ ******************************************************************************/
+static GObjectClass *parent_class = NULL;
+
+/*******************************************************************************
+ * Helpers
+ ******************************************************************************/
+static void
+purple_hmac_cipher_set_hash(PurpleCipher *cipher,
+							PurpleCipher *hash)
 {
-	struct HMAC_Context *hctx;
-	hctx = g_new0(struct HMAC_Context, 1);
-	purple_cipher_context_set_data(context, hctx);
-	purple_cipher_context_reset(context, extra);
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
+
+	priv->hash = g_object_ref(G_OBJECT(hash));
 }
 
-	static void
-hmac_reset(PurpleCipherContext *context, gpointer extra)
-{
-	struct HMAC_Context *hctx;
+/*******************************************************************************
+ * Cipher Stuff
+ ******************************************************************************/
+static void
+purple_hmac_cipher_reset(PurpleCipher *cipher) {
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	hctx = purple_cipher_context_get_data(context);
+	if(PURPLE_IS_CIPHER(priv->hash))
+		purple_cipher_reset(priv->hash);
 
-	g_free(hctx->name);
-	hctx->name = NULL;
-	if (hctx->hash)
-		purple_cipher_context_destroy(hctx->hash);
-	hctx->hash = NULL;
-	hctx->blocksize = 0;
-	g_free(hctx->opad);
-	hctx->opad = NULL;
-	g_free(hctx->ipad);
-	hctx->ipad = NULL;
-}
-
-	static void
-hmac_reset_state(PurpleCipherContext *context, gpointer extra)
-{
-	struct HMAC_Context *hctx;
-
-	hctx = purple_cipher_context_get_data(context);
-
-	if (hctx->hash) {
-		purple_cipher_context_reset_state(hctx->hash, NULL);
-		purple_cipher_context_append(hctx->hash, hctx->ipad, hctx->blocksize);
+	if(priv->ipad) {
+		g_free(priv->ipad);
+		priv->ipad = NULL;
+	}
+	if(priv->opad) {
+		g_free(priv->opad);
+		priv->opad = NULL;
 	}
 }
 
-	static void
-hmac_set_opt(PurpleCipherContext *context, const gchar *name, void *value)
-{
-	struct HMAC_Context *hctx;
+static void
+purple_hmac_cipher_reset_state(PurpleCipher *cipher) {
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	hctx = purple_cipher_context_get_data(context);
-
-	if (purple_strequal(name, "hash")) {
-		g_free(hctx->name);
-		if (hctx->hash)
-			purple_cipher_context_destroy(hctx->hash);
-		hctx->name = g_strdup((char*)value);
-		hctx->hash = purple_cipher_context_new_by_name((char *)value, NULL);
-		hctx->blocksize = purple_cipher_context_get_block_size(hctx->hash);
+	if(PURPLE_IS_CIPHER(priv->hash)) {
+		purple_cipher_reset_state(priv->hash);
+		purple_cipher_append(priv->hash, priv->ipad,
+								purple_cipher_get_block_size(priv->hash));
 	}
 }
 
-	static void *
-hmac_get_opt(PurpleCipherContext *context, const gchar *name)
-{
-	struct HMAC_Context *hctx;
+static void
+purple_hmac_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len) {
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	hctx = purple_cipher_context_get_data(context);
-
-	if (purple_strequal(name, "hash")) {
-		return hctx->name;
-	}
-
-	return NULL;
+	if(PURPLE_IS_CIPHER(priv->hash))
+		purple_cipher_set_iv(priv->hash, iv, len);
 }
 
-	static void
-hmac_append(PurpleCipherContext *context, const guchar *data, size_t len)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
+static void
+purple_hmac_cipher_append(PurpleCipher *cipher, const guchar *d, size_t l) {
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	g_return_if_fail(hctx->hash != NULL);
+	g_return_if_fail(PURPLE_IS_CIPHER(priv->hash));
 
-	purple_cipher_context_append(hctx->hash, data, len);
+	purple_cipher_append(priv->hash, d, l);
 }
 
-	static gboolean
-hmac_digest(PurpleCipherContext *context, guchar *out, size_t len)
+static gboolean
+purple_hmac_cipher_digest(PurpleCipher *cipher, guchar *out, size_t len)
 {
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	PurpleCipherContext *hash = hctx->hash;
-	guchar *inner_hash;
-	size_t hash_len;
-	gboolean result;
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
+	guchar *digest = NULL;
+	size_t hash_len, block_size;
+	gboolean result = FALSE;
 
-	g_return_val_if_fail(hash != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CIPHER(priv->hash), FALSE);
 
-	hash_len = purple_cipher_context_get_digest_size(hash);
+	hash_len = purple_cipher_get_digest_size(priv->hash);
 	g_return_val_if_fail(hash_len > 0, FALSE);
 
-	inner_hash = g_malloc(hash_len);
-	result = purple_cipher_context_digest(hash, inner_hash, hash_len);
+	block_size = purple_cipher_get_block_size(priv->hash);
+	digest = g_malloc(hash_len);
 
-	purple_cipher_context_reset(hash, NULL);
+	/* get the digest of the data */
+	result = purple_cipher_digest(priv->hash, digest, hash_len);
+	purple_cipher_reset(priv->hash);
 
-	purple_cipher_context_append(hash, hctx->opad, hctx->blocksize);
-	purple_cipher_context_append(hash, inner_hash, hash_len);
+	if(!result) {
+		g_free(digest);
 
-	g_free(inner_hash);
+		return FALSE;
+	}
 
-	result = result && purple_cipher_context_digest(hash, out, len);
+	/* now append the opad and the digest from above */
+	purple_cipher_append(priv->hash, priv->opad, block_size);
+	purple_cipher_append(priv->hash, digest, hash_len);
+
+	/* do our last digest */
+	result = purple_cipher_digest(priv->hash, out, len);
+
+	/* cleanup */
+	g_free(digest);
 
 	return result;
 }
 
-	static size_t
-hmac_get_digest_size(PurpleCipherContext *context)
+static size_t
+purple_hmac_cipher_get_digest_size(PurpleCipher *cipher)
 {
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	PurpleCipherContext *hash = hctx->hash;
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	g_return_val_if_fail(hash != NULL, 0);
+	g_return_val_if_fail(priv->hash != NULL, 0);
 
-	return purple_cipher_context_get_digest_size(hash);
+	return purple_cipher_get_digest_size(priv->hash);
 }
 
-	static void
-hmac_uninit(PurpleCipherContext *context)
+static void
+purple_hmac_cipher_set_key(PurpleCipher *cipher, const guchar *key,
+								size_t key_len)
 {
-	struct HMAC_Context *hctx;
-
-	purple_cipher_context_reset(context, NULL);
-
-	hctx = purple_cipher_context_get_data(context);
-
-	g_free(hctx);
-}
-
-	static void
-hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	int blocksize, i;
+	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
+	gint block_size, i;
 	guchar *full_key;
 
-	g_return_if_fail(hctx->hash != NULL);
+	g_return_if_fail(priv->hash);
 
-	g_free(hctx->opad);
-	g_free(hctx->ipad);
+	g_free(priv->ipad);
+	g_free(priv->opad);
 
-	blocksize = hctx->blocksize;
-	hctx->ipad = g_malloc(blocksize);
-	hctx->opad = g_malloc(blocksize);
+	block_size = purple_cipher_get_block_size(priv->hash);
+	priv->ipad = g_malloc(block_size);
+	priv->opad = g_malloc(block_size);
 
-	if (key_len > blocksize) {
-		purple_cipher_context_reset(hctx->hash, NULL);
-		purple_cipher_context_append(hctx->hash, key, key_len);
+	if (key_len > block_size) {
+		purple_cipher_reset(priv->hash);
+		purple_cipher_append(priv->hash, key, key_len);
 
-		key_len = purple_cipher_context_get_digest_size(hctx->hash);
+		key_len = purple_cipher_get_digest_size(priv->hash);
 		full_key = g_malloc(key_len);
-		purple_cipher_context_digest(hctx->hash, full_key, key_len);
-	} else
+		purple_cipher_digest(priv->hash, full_key, key_len);
+	} else {
 		full_key = g_memdup(key, key_len);
-
-	if (key_len < blocksize) {
-		full_key = g_realloc(full_key, blocksize);
-		memset(full_key + key_len, 0, blocksize - key_len);
 	}
 
-	for(i = 0; i < blocksize; i++) {
-		hctx->ipad[i] = 0x36 ^ full_key[i];
-		hctx->opad[i] = 0x5c ^ full_key[i];
+    if (key_len < block_size) {
+		full_key = g_realloc(full_key, block_size);
+		memset(full_key + key_len, 0, block_size - key_len);
+    }
+
+	for(i = 0; i < block_size; i++) {
+		priv->ipad[i] = 0x36 ^ full_key[i];
+		priv->opad[i] = 0x5c ^ full_key[i];
 	}
 
 	g_free(full_key);
 
-	purple_cipher_context_reset(hctx->hash, NULL);
-	purple_cipher_context_append(hctx->hash, hctx->ipad, blocksize);
+	purple_cipher_reset(priv->hash);
+	purple_cipher_append(priv->hash, priv->ipad, block_size);
 }
 
-	static size_t
-hmac_get_block_size(PurpleCipherContext *context)
+static size_t
+purple_hmac_cipher_get_block_size(PurpleCipher *cipher)
 {
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
+	PurpleHMACCipherPrivate *priv = NULL;
 
-	return hctx->blocksize;
+	g_return_val_if_fail(PURPLE_IS_HMAC_CIPHER(cipher), 0);
+
+	priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
+
+	return purple_hmac_cipher_get_block_size(priv->hash);
 }
 
-static PurpleCipherOps HMACOps = {
-	hmac_set_opt,           /* Set option */
-	hmac_get_opt,           /* Get option */
-	hmac_init,              /* init */
-	hmac_reset,             /* reset */
-	hmac_reset_state,       /* reset state */
-	hmac_uninit,            /* uninit */
-	NULL,                   /* set iv */
-	hmac_append,            /* append */
-	hmac_digest,            /* digest */
-	hmac_get_digest_size,   /* get digest size */
-	NULL,                   /* encrypt */
-	NULL,                   /* decrypt */
-	NULL,                   /* set salt */
-	NULL,                   /* get salt size */
-	hmac_set_key,           /* set key */
-	NULL,                   /* get key size */
-	NULL,                   /* set batch mode */
-	NULL,                   /* get batch mode */
-	hmac_get_block_size,    /* get block size */
-	NULL, NULL, NULL, NULL  /* reserved */
-};
+/******************************************************************************
+ * Object Stuff
+ *****************************************************************************/
+static void
+purple_hmac_cipher_set_property(GObject *obj, guint param_id,
+								const GValue *value,
+								GParamSpec *pspec)
+{
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
 
-PurpleCipherOps *
-purple_hmac_cipher_get_ops(void) {
-	return &HMACOps;
+	switch(param_id) {
+		case PROP_HASH:
+			purple_hmac_cipher_set_hash(cipher, g_value_get_object(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_hmac_cipher_get_property(GObject *obj, guint param_id, GValue *value,
+								GParamSpec *pspec)
+{
+	PurpleHMACCipher *cipher = PURPLE_HMAC_CIPHER(obj);
+
+	switch(param_id) {
+		case PROP_HASH:
+			g_value_set_object(value,
+							   purple_hmac_cipher_get_hash(cipher));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_hmac_cipher_finalize(GObject *obj) {
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
+
+	/* reset the cipher so we don't leave any data around... */
+	purple_hmac_cipher_reset(cipher);
+
+	parent_class->finalize(obj);
+}
+
+static void
+purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	GParamSpec *pspec;
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PurpleHMACCipherPrivate));
+
+	obj_class->finalize = purple_hmac_cipher_finalize;
+	obj_class->get_property = purple_hmac_cipher_get_property;
+	obj_class->set_property = purple_hmac_cipher_set_property;
+
+	cipher_class->reset = purple_hmac_cipher_reset;
+	cipher_class->reset_state = purple_hmac_cipher_reset_state;
+	cipher_class->set_iv = purple_hmac_cipher_set_iv;
+	cipher_class->append = purple_hmac_cipher_append;
+	cipher_class->digest = purple_hmac_cipher_digest;
+	cipher_class->get_digest_size = purple_hmac_cipher_get_digest_size;
+	cipher_class->set_key = purple_hmac_cipher_set_key;
+	cipher_class->get_block_size = purple_hmac_cipher_get_block_size;
+
+	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_CIPHER,
+								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_HASH, pspec);
+}
+
+/******************************************************************************
+ * PurpleHMACCipher API
+ *****************************************************************************/
+GType
+purple_hmac_cipher_get_gtype(void) {
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleHMACCipherClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_hmac_cipher_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleHMACCipher),
+			0,
+			NULL,
+			NULL,
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+									  "PurpleHMACCipher",
+									  &info, 0);
+	}
+
+	return type;
+}
+
+PurpleCipher *
+purple_hmac_cipher_new(PurpleCipher *hash) {
+	g_return_val_if_fail(PURPLE_IS_CIPHER(hash), NULL);
+
+	return g_object_new(PURPLE_TYPE_HMAC_CIPHER,
+						"hash", hash,
+						NULL);
+}
+
+PurpleCipher *
+purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher) {
+	PurpleHMACCipherPrivate *priv = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_HMAC_CIPHER(cipher), NULL);
+
+	priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
+
+	if(priv && priv->hash)
+		return priv->hash;
+
+	return NULL;
 }
 
