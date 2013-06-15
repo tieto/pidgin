@@ -35,6 +35,7 @@
  */
 #include "internal.h"
 #include "cipher.h"
+#include "debug.h"
 
 /******************************************************************************
  * Globals
@@ -312,8 +313,8 @@ purple_cipher_get_digest_size(PurpleCipher *cipher)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->purple_cipher_get_digest_size)
-		return klass->purple_cipher_get_digest_size(cipher);
+	if(klass && klass->get_digest_size)
+		return klass->get_digest_size(cipher);
 	else
 		purple_debug_warning("cipher", "the %s cipher does not implement the "
 						"get_digest_size method\n",

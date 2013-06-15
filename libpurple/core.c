@@ -139,7 +139,6 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
-	purple_ciphers_init();
 	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
@@ -240,7 +239,6 @@ purple_core_quit(void)
 	purple_idle_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
-	purple_ciphers_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_connections_uninit();

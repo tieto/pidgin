@@ -32,7 +32,7 @@
 #define _PURPLE_PROXY_C_
 
 #include "internal.h"
-#include "cipher.h"
+#include "ciphers/md5.h"
 #include "debug.h"
 #include "dnsquery.h"
 #include "notify.h"
@@ -1681,22 +1681,20 @@ static void
 hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *ctx;
 	int i;
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
 	size_t pwlen;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	ctx = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
 	memset(Kxoripad,0,sizeof(Kxoripad));
 	memset(Kxoropad,0,sizeof(Kxoropad));
 
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
-		purple_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
-		purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
+		purple_cipher_append(cipher, (const guchar *)passwd, strlen(passwd));
+		purple_cipher_digest(cipher, Kxoripad, sizeof(Kxoripad));
 		pwlen=16;
 	} else {
 		memcpy(Kxoripad, passwd, pwlen);
@@ -1708,17 +1706,17 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 		Kxoropad[i]^=0x5c;
 	}
 
-	purple_cipher_context_reset(ctx, NULL);
-	purple_cipher_context_append(ctx, Kxoripad, 64);
-	purple_cipher_context_append(ctx, challenge, challen);
-	purple_cipher_context_digest(ctx, Kxoripad, sizeof(Kxoripad));
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, Kxoripad, 64);
+	purple_cipher_append(cipher, challenge, challen);
+	purple_cipher_digest(cipher, Kxoripad, sizeof(Kxoripad));
 
-	purple_cipher_context_reset(ctx, NULL);
-	purple_cipher_context_append(ctx, Kxoropad, 64);
-	purple_cipher_context_append(ctx, Kxoripad, 16);
-	purple_cipher_context_digest(ctx, response, 16);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, Kxoropad, 64);
+	purple_cipher_append(cipher, Kxoripad, 16);
+	purple_cipher_digest(cipher, response, 16);
 
-	purple_cipher_context_destroy(ctx);
+	g_object_unref(cipher);
 }
 
 static void
