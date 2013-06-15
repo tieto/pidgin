@@ -1,5 +1,5 @@
 /**
- * @file sha256.h Purple SHA256 Cipher
+ * @file pbkdf2.h Purple PBKDF2 Cipher
  * @ingroup core
  */
 
@@ -23,22 +23,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_SHA256_CIPHER_H
-#define PURPLE_SHA256_CIPHER_H
+#ifndef PURPLE_PBKDF2_CIPHER_H
+#define PURPLE_PBKDF2_CIPHER_H
 
 #include "cipher.h"
+#include "hash.h"
 
-#define PURPLE_TYPE_SHA256_CIPHER				(purple_sha256_cipher_get_gtype())
-#define PURPLE_SHA256_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA256_CIPHER, PurpleSHA256Cipher))
-#define PURPLE_SHA256_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SHA256_CIPHER, PurpleSHA256CipherClass))
-#define PURPLE_IS_SHA256_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SHA256_CIPHER))
-#define PURPLE_IS_SHA256_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_SHA256_CIPHER))
-#define PURPLE_SHA256_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SHA256_CIPHER, PurpleSHA256CipherClass))
+#define PURPLE_TYPE_PBKDF2_CIPHER				(purple_pbkdf2_cipher_get_gtype())
+#define PURPLE_PBKDF2_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2Cipher))
+#define PURPLE_PBKDF2_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherClass))
+#define PURPLE_IS_PBKDF2_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PBKDF2_CIPHER))
+#define PURPLE_IS_PBKDF2_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_PBKDF2_CIPHER))
+#define PURPLE_PBKDF2_CIPHER_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherClass))
 
-typedef struct _PurpleSHA256Cipher				PurpleSHA256Cipher;
-typedef struct _PurpleSHA256CipherClass		PurpleSHA256CipherClass;
+typedef struct _PurplePBKDF2Cipher			PurplePBKDF2Cipher;
+typedef struct _PurplePBKDF2CipherClass		PurplePBKDF2CipherClass;
 
-struct _PurpleSHA256Cipher {
+struct _PurplePBKDF2Cipher {
 	PurpleCipher gparent;
 
 	void (*_purple_reserved1)(void);
@@ -47,7 +48,7 @@ struct _PurpleSHA256Cipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurpleSHA256CipherClass {
+struct _PurplePBKDF2CipherClass {
 	PurpleCipherClass gparent;
 
 	void (*_purple_reserved1)(void);
@@ -58,10 +59,13 @@ struct _PurpleSHA256CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_sha256_cipher_get_gtype(void);
+GType purple_pbkdf2_cipher_get_gtype(void);
 
-PurpleCipher *purple_sha256_cipher_new(void);
+PurpleCipher *purple_pbkdf2_cipher_new(PurpleHash *hash);
+
+PurpleHash *purple_pbkdf2_cipher_get_hash(const PurplePBKDF2Cipher *cipher);
 
 G_END_DECLS
 
-#endif /* PURPLE_SHA256_CIPHER_H */
+#endif /* PURPLE_PBKDF2_CIPHER_H */
+

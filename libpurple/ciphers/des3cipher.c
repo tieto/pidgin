@@ -29,8 +29,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "des3.h"
-#include "des.h"
+#include "des3cipher.h"
+#include "descipher.h"
 
 #include <string.h>
 

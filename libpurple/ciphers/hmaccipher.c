@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "hmac.h"
+#include "hmaccipher.h"
 
 #include <string.h>
 
@@ -30,7 +30,7 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherPrivate))
 
 typedef struct {
-	PurpleCipher *hash;
+	PurpleHash *hash;
 	guchar *ipad;
 	guchar *opad;
 } PurpleHMACCipherPrivate;
@@ -69,8 +69,8 @@ static void
 purple_hmac_cipher_reset(PurpleCipher *cipher) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	if(PURPLE_IS_CIPHER(priv->hash))
-		purple_cipher_reset(priv->hash);
+	if(PURPLE_IS_HASH(priv->hash))
+		purple_hash_reset(priv->hash);
 
 	if(priv->ipad) {
 		g_free(priv->ipad);
@@ -86,10 +86,10 @@ static void
 purple_hmac_cipher_reset_state(PurpleCipher *cipher) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	if(PURPLE_IS_CIPHER(priv->hash)) {
-		purple_cipher_reset_state(priv->hash);
-		purple_cipher_append(priv->hash, priv->ipad,
-								purple_cipher_get_block_size(priv->hash));
+	if(PURPLE_IS_HASH(priv->hash)) {
+		purple_hash_reset_state(priv->hash);
+		purple_hash_append(priv->hash, priv->ipad,
+								purple_hash_get_block_size(priv->hash));
 	}
 }
 
@@ -97,17 +97,17 @@ static void
 purple_hmac_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	if(PURPLE_IS_CIPHER(priv->hash))
-		purple_cipher_set_iv(priv->hash, iv, len);
+	if(PURPLE_IS_HASH(priv->hash))
+		purple_hash_set_iv(priv->hash, iv, len);
 }
 
 static void
 purple_hmac_cipher_append(PurpleCipher *cipher, const guchar *d, size_t l) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	g_return_if_fail(PURPLE_IS_CIPHER(priv->hash));
+	g_return_if_fail(PURPLE_IS_HASH(priv->hash));
 
-	purple_cipher_append(priv->hash, d, l);
+	purple_hash_append(priv->hash, d, l);
 }
 
 static gboolean
@@ -118,17 +118,17 @@ purple_hmac_cipher_digest(PurpleCipher *cipher, guchar *out, size_t len)
 	size_t hash_len, block_size;
 	gboolean result = FALSE;
 
-	g_return_val_if_fail(PURPLE_IS_CIPHER(priv->hash), FALSE);
+	g_return_val_if_fail(PURPLE_IS_HASH(priv->hash), FALSE);
 
-	hash_len = purple_cipher_get_digest_size(priv->hash);
+	hash_len = purple_hash_get_digest_size(priv->hash);
 	g_return_val_if_fail(hash_len > 0, FALSE);
 
-	block_size = purple_cipher_get_block_size(priv->hash);
+	block_size = purple_hash_get_block_size(priv->hash);
 	digest = g_malloc(hash_len);
 
 	/* get the digest of the data */
-	result = purple_cipher_digest(priv->hash, digest, hash_len);
-	purple_cipher_reset(priv->hash);
+	result = purple_hash_digest(priv->hash, digest, hash_len);
+	purple_hash_reset(priv->hash);
 
 	if(!result) {
 		g_free(digest);
@@ -137,11 +137,11 @@ purple_hmac_cipher_digest(PurpleCipher *cipher, guchar *out, size_t len)
 	}
 
 	/* now append the opad and the digest from above */
-	purple_cipher_append(priv->hash, priv->opad, block_size);
-	purple_cipher_append(priv->hash, digest, hash_len);
+	purple_hash_append(priv->hash, priv->opad, block_size);
+	purple_hash_append(priv->hash, digest, hash_len);
 
 	/* do our last digest */
-	result = purple_cipher_digest(priv->hash, out, len);
+	result = purple_hash_digest(priv->hash, out, len);
 
 	/* cleanup */
 	g_free(digest);
@@ -156,7 +156,7 @@ purple_hmac_cipher_get_digest_size(PurpleCipher *cipher)
 
 	g_return_val_if_fail(priv->hash != NULL, 0);
 
-	return purple_cipher_get_digest_size(priv->hash);
+	return purple_hash_get_digest_size(priv->hash);
 }
 
 static void
@@ -172,17 +172,17 @@ purple_hmac_cipher_set_key(PurpleCipher *cipher, const guchar *key,
 	g_free(priv->ipad);
 	g_free(priv->opad);
 
-	block_size = purple_cipher_get_block_size(priv->hash);
+	block_size = purple_hash_get_block_size(priv->hash);
 	priv->ipad = g_malloc(block_size);
 	priv->opad = g_malloc(block_size);
 
 	if (key_len > block_size) {
-		purple_cipher_reset(priv->hash);
-		purple_cipher_append(priv->hash, key, key_len);
+		purple_hash_reset(priv->hash);
+		purple_hash_append(priv->hash, key, key_len);
 
-		key_len = purple_cipher_get_digest_size(priv->hash);
+		key_len = purple_hash_get_digest_size(priv->hash);
 		full_key = g_malloc(key_len);
-		purple_cipher_digest(priv->hash, full_key, key_len);
+		purple_hash_digest(priv->hash, full_key, key_len);
 	} else {
 		full_key = g_memdup(key, key_len);
 	}
@@ -199,8 +199,8 @@ purple_hmac_cipher_set_key(PurpleCipher *cipher, const guchar *key,
 
 	g_free(full_key);
 
-	purple_cipher_reset(priv->hash);
-	purple_cipher_append(priv->hash, priv->ipad, block_size);
+	purple_hash_reset(priv->hash);
+	purple_hash_append(priv->hash, priv->ipad, block_size);
 }
 
 static size_t
@@ -212,7 +212,7 @@ purple_hmac_cipher_get_block_size(PurpleCipher *cipher)
 
 	priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	return purple_hmac_cipher_get_block_size(priv->hash);
+	return purple_hash_get_block_size(priv->hash);
 }
 
 static const gchar*
@@ -330,15 +330,15 @@ purple_hmac_cipher_get_gtype(void) {
 }
 
 PurpleCipher *
-purple_hmac_cipher_new(PurpleCipher *hash) {
-	g_return_val_if_fail(PURPLE_IS_CIPHER(hash), NULL);
+purple_hmac_cipher_new(PurpleHash *hash) {
+	g_return_val_if_fail(PURPLE_IS_HASH(hash), NULL);
 
 	return g_object_new(PURPLE_TYPE_HMAC_CIPHER,
 						"hash", hash,
 						NULL);
 }
 
-PurpleCipher *
+PurpleHash *
 purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher) {
 	PurpleHMACCipherPrivate *priv = NULL;
 

@@ -1,5 +1,5 @@
 /**
- * @file hmac.h Purple HMAC Cipher
+ * @file sha256.h Purple SHA256 Hash
  * @ingroup core
  */
 
@@ -23,23 +23,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_HMAC_CIPHER_H
-#define PURPLE_HMAC_CIPHER_H
+#ifndef PURPLE_SHA256_HASH_H
+#define PURPLE_SHA256_HASH_H
 
-#include "cipher.h"
+#include "hash.h"
 
-#define PURPLE_TYPE_HMAC_CIPHER				(purple_hmac_cipher_get_gtype())
-#define PURPLE_HMAC_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipher))
-#define PURPLE_HMAC_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherClass))
-#define PURPLE_IS_HMAC_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_HMAC_CIPHER))
-#define PURPLE_IS_HMAC_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_HMAC_CIPHER))
-#define PURPLE_HMAC_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherClass))
+#define PURPLE_TYPE_SHA256_HASH				(purple_sha256_hash_get_gtype())
+#define PURPLE_SHA256_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA256_HASH, PurpleSHA256Hash))
+#define PURPLE_SHA256_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SHA256_HASH, PurpleSHA256HashClass))
+#define PURPLE_IS_SHA256_HASH(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SHA256_HASH))
+#define PURPLE_IS_SHA256_HASH_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_SHA256_HASH))
+#define PURPLE_SHA256_HASH_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SHA256_HASH, PurpleSHA256HashClass))
 
-typedef struct _PurpleHMACCipher				PurpleHMACCipher;
-typedef struct _PurpleHMACCipherClass			PurpleHMACCipherClass;
+typedef struct _PurpleSHA256Hash			PurpleSHA256Hash;
+typedef struct _PurpleSHA256HashClass		PurpleSHA256HashClass;
 
-struct _PurpleHMACCipher {
-	PurpleCipher gparent;
+struct _PurpleSHA256Hash {
+	PurpleHash gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -47,8 +47,8 @@ struct _PurpleHMACCipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurpleHMACCipherClass {
-	PurpleCipherClass gparent;
+struct _PurpleSHA256HashClass {
+	PurpleHashClass gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -58,14 +58,10 @@ struct _PurpleHMACCipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_hmac_cipher_get_gtype(void);
+GType purple_sha256_hash_get_gtype(void);
 
-PurpleCipher *purple_hmac_cipher_new(PurpleCipher *hash_cipher);
-
-PurpleCipher *purple_hmac_cipher_new(PurpleCipher *hash);
-
-PurpleCipher *purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher);
+PurpleHash *purple_sha256_hash_new(void);
 
 G_END_DECLS
 
-#endif /* PURPLE_HMAC_CIPHER_H */
+#endif /* PURPLE_SHA256_HASH_H */

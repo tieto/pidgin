@@ -22,8 +22,8 @@
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
 
-#include "pbkdf2.h"
-#include "hmac.h"
+#include "pbkdf2cipher.h"
+#include "hmaccipher.h"
 #include "debug.h"
 
 /* 1024bit */
@@ -36,7 +36,7 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherPrivate))
 
 typedef struct {
-	PurpleCipher *hash;
+	PurpleHash *hash;
 	guint iter_count;
 	size_t out_len;
 
@@ -85,8 +85,8 @@ purple_pbkdf2_cipher_reset(PurpleCipher *cipher)
 
 	g_return_if_fail(priv != NULL);
 
-	if(PURPLE_IS_CIPHER(priv->hash))
-		purple_cipher_reset(priv->hash);
+	if(PURPLE_IS_HASH(priv->hash))
+		purple_hash_reset(priv->hash);
 	priv->iter_count = 1;
 	priv->out_len = 256;
 
@@ -395,15 +395,15 @@ purple_pbkdf2_cipher_get_gtype(void) {
 }
 
 PurpleCipher *
-purple_pbkdf2_cipher_new(PurpleCipher *hash) {
-	g_return_val_if_fail(PURPLE_IS_CIPHER(hash), NULL);
+purple_pbkdf2_cipher_new(PurpleHash *hash) {
+	g_return_val_if_fail(PURPLE_IS_HASH(hash), NULL);
 
 	return g_object_new(PURPLE_TYPE_PBKDF2_CIPHER,
 						"hash", hash,
 						NULL);
 }
 
-PurpleCipher *
+PurpleHash *
 purple_pbkdf2_cipher_get_hash(const PurplePBKDF2Cipher *cipher) {
 	PurplePBKDF2CipherPrivate *priv = NULL;
 

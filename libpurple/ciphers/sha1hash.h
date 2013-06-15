@@ -1,5 +1,5 @@
 /**
- * @file sha1.h Purple SHA1 Cipher
+ * @file sha1.h Purple SHA1 Hash
  * @ingroup core
  */
 
@@ -23,23 +23,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_SHA1_CIPHER_H
-#define PURPLE_SHA1_CIPHER_H
+#ifndef PURPLE_SHA1_HASH_H
+#define PURPLE_SHA1_HASH_H
 
-#include "cipher.h"
+#include "hash.h"
 
-#define PURPLE_TYPE_SHA1_CIPHER				(purple_sha1_cipher_get_gtype())
-#define PURPLE_SHA1_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA1_CIPHER, PurpleSHA1Cipher))
-#define PURPLE_SHA1_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SHA1_CIPHER, PurpleSHA1CipherClass))
-#define PURPLE_IS_SHA1_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SHA1_CIPHER))
-#define PURPLE_IS_SHA1_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_SHA1_CIPHER))
-#define PURPLE_SHA1_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SHA1_CIPHER, PurpleSHA1CipherClass))
+#define PURPLE_TYPE_SHA1_HASH				(purple_sha1_hash_get_gtype())
+#define PURPLE_SHA1_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA1_HASH, PurpleSHA1Hash))
+#define PURPLE_SHA1_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SHA1_HASH, PurpleSHA1HashClass))
+#define PURPLE_IS_SHA1_HASH(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SHA1_HASH))
+#define PURPLE_IS_SHA1_HASH_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_SHA1_HASH))
+#define PURPLE_SHA1_HASH_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SHA1_HASH, PurpleSHA1HashClass))
 
-typedef struct _PurpleSHA1Cipher				PurpleSHA1Cipher;
-typedef struct _PurpleSHA1CipherClass		PurpleSHA1CipherClass;
+typedef struct _PurpleSHA1Hash				PurpleSHA1Hash;
+typedef struct _PurpleSHA1HashClass			PurpleSHA1HashClass;
 
-struct _PurpleSHA1Cipher {
-	PurpleCipher gparent;
+struct _PurpleSHA1Hash {
+	PurpleHash gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -47,8 +47,8 @@ struct _PurpleSHA1Cipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurpleSHA1CipherClass {
-	PurpleCipherClass gparent;
+struct _PurpleSHA1HashClass {
+	PurpleHashClass gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -58,10 +58,10 @@ struct _PurpleSHA1CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_sha1_cipher_get_gtype(void);
+GType purple_sha1_hash_get_gtype(void);
 
-PurpleCipher *purple_sha1_cipher_new(void);
+PurpleHash *purple_sha1_hash_new(void);
 
 G_END_DECLS
 
-#endif /* PURPLE_SHA1_CIPHER_H */
+#endif /* PURPLE_SHA1_HASH_H */

@@ -1,8 +1,9 @@
 /**
- * @file md4.h Purple MD4 hash
+ * @file md5.h Purple MD5 Hash
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,25 +21,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_MD4_CIPHER_H
-#define PURPLE_MD4_CIPHER_H
+#ifndef PURPLE_MD5_HASH_H
+#define PURPLE_MD5_HASH_H
 
-#include "cipher.h"
+#include "hash.h"
 
-#define PURPLE_TYPE_MD4_CIPHER				(purple_md4_cipher_get_gtype())
-#define PURPLE_MD4_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD4_CIPHER, PurpleMD4Cipher))
-#define PURPLE_MD4_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MD4_CIPHER, PurpleMD4CipherClass))
-#define PURPLE_IS_MD4_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MD4_CIPHER))
-#define PURPLE_IS_MD4_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_MD4_CIPHER))
-#define PURPLE_MD4_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MD4_CIPHER, PurpleMD4CipherClass))
+#define PURPLE_TYPE_MD5_HASH				(purple_md5_hash_get_gtype())
+#define PURPLE_MD5_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD5_HASH, PurpleMD5Hash))
+#define PURPLE_MD5_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MD5_HASH, PurpleMD5HashClass))
+#define PURPLE_IS_MD5_HASH(obj)				(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MD5_HASH))
+#define PURPLE_IS_MD5_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_MD5_HASH))
+#define PURPLE_MD5_HASH_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MD5_HASH, PurpleMD5HashClass))
 
-typedef struct _PurpleMD4Cipher				PurpleMD4Cipher;
-typedef struct _PurpleMD4CipherClass		PurpleMD4CipherClass;
+typedef struct _PurpleMD5Hash				PurpleMD5Hash;
+typedef struct _PurpleMD5HashClass			PurpleMD5HashClass;
 
-struct _PurpleMD4Cipher {
-	PurpleCipher parent;
+struct _PurpleMD5Hash {
+	PurpleHash gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -46,8 +47,8 @@ struct _PurpleMD4Cipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurpleMD4CipherClass {
-	PurpleCipherClass parent;
+struct _PurpleMD5HashClass {
+	PurpleHashClass gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -57,10 +58,10 @@ struct _PurpleMD4CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_md4_cipher_get_gtype(void);
+GType purple_md5_hash_get_gtype(void);
 
-PurpleCipher *purple_md4_cipher_new(void);
+PurpleHash *purple_md5_hash_new(void);
 
 G_END_DECLS
 
-#endif /* PURPLE_MD4_CIPHER_H */
+#endif /* PURPLE_MD5_HASH_H */

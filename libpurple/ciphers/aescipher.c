@@ -22,7 +22,7 @@
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
 
-#include "aes.h"
+#include "aescipher.h"
 #include "debug.h"
 
 #include <string.h>

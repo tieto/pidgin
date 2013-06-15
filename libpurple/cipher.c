@@ -1,23 +1,8 @@
-/*
- * purple
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- *
- * Original des taken from gpg
- *
- * des.c - DES and Triple-DES encryption/decryption Algorithm
- *	Copyright (C) 1998 Free Software Foundation, Inc.
- *
- *	Please see below for more legal information!
- *
- *	 According to the definition of DES in FIPS PUB 46-2 from December 1993.
- *	 For a description of triple encryption, see:
- *	   Bruce Schneier: Applied Cryptography. Second Edition.
- *	   John Wiley & Sons, 1996. ISBN 0-471-12845-7. Pages 358 ff.
- *
- *	 This file is part of GnuPG.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +36,6 @@ purple_cipher_class_init(PurpleCipherClass *klass) {
 	klass->encrypt = NULL;
 	klass->decrypt = NULL;
 	klass->set_salt = NULL;
-	klass->get_salt_size = NULL;
 	klass->set_key = NULL;
 	klass->get_key_size = NULL;
 	klass->set_batch_mode = NULL;
@@ -399,32 +383,6 @@ purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len) {
 		purple_debug_warning("cipher", "the %s cipher does not implement the "
 						"set_salt method\n",
 						klass->get_name ? klass->get_name(cipher) : "");
-}
-
-/**
- * purple_cipher_get_salt_size:
- * @cipher: The cipher whose salt size to get
- *
- * Gets the size of the salt if the cipher supports it
- *
- * Return Value: The size of the salt
- */
-size_t
-purple_cipher_get_salt_size(PurpleCipher *cipher) {
-	PurpleCipherClass *klass = NULL;
-
-	g_return_val_if_fail(PURPLE_IS_CIPHER(cipher), -1);
-
-	klass = PURPLE_CIPHER_GET_CLASS(cipher);
-
-	if(klass && klass->get_salt_size)
-		return klass->get_salt_size(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"get_salt_size method\n",
-						klass->get_name ? klass->get_name(cipher) : "");
-
-	return -1;
 }
 
 /**

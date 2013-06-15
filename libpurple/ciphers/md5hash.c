@@ -19,17 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "sha1.h"
+#include "md5hash.h"
 
 /*******************************************************************************
  * Structs
  ******************************************************************************/
-#define PURPLE_SHA1_CIPHER_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_SHA1_CIPHER, PurpleSHA1CipherPrivate))
+#define PURPLE_MD5_HASH_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MD5_HASH, PurpleMD5HashPrivate))
 
 typedef struct {
   GChecksum *checksum;
-} PurpleSHA1CipherPrivate;
+} PurpleMD5HashPrivate;
 
 /******************************************************************************
  * Globals
@@ -37,14 +37,14 @@ typedef struct {
 static GObjectClass *parent_class = NULL;
 
 /******************************************************************************
- * Cipher Stuff
+ * Hash Stuff
  *****************************************************************************/
 
 static void
-purple_sha1_cipher_reset(PurpleCipher *cipher)
+purple_md5_hash_reset(PurpleHash *hash)
 {
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
-	PurpleSHA1CipherPrivate *priv = PURPLE_SHA1_CIPHER_GET_PRIVATE(sha1_cipher);
+	PurpleMD5Hash *md5_hash = PURPLE_MD5_HASH(hash);
+	PurpleMD5HashPrivate *priv = PURPLE_MD5_HASH_GET_PRIVATE(md5_hash);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->checksum != NULL);
@@ -53,11 +53,11 @@ purple_sha1_cipher_reset(PurpleCipher *cipher)
 }
 
 static void
-purple_sha1_cipher_append(PurpleCipher *cipher, const guchar *data,
+purple_md5_hash_append(PurpleHash *hash, const guchar *data,
 								gsize len)
 {
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
-	PurpleSHA1CipherPrivate *priv = PURPLE_SHA1_CIPHER_GET_PRIVATE(sha1_cipher);
+	PurpleMD5Hash *md5_hash = PURPLE_MD5_HASH(hash);
+	PurpleMD5HashPrivate *priv = PURPLE_MD5_HASH_GET_PRIVATE(md5_hash);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->checksum != NULL);
@@ -73,12 +73,12 @@ purple_sha1_cipher_append(PurpleCipher *cipher, const guchar *data,
 }
 
 static gboolean
-purple_sha1_cipher_digest(PurpleCipher *cipher, guchar *digest, size_t buff_len)
+purple_md5_hash_digest(PurpleHash *hash, guchar *digest, size_t buff_len)
 {
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
-	PurpleSHA1CipherPrivate *priv = PURPLE_SHA1_CIPHER_GET_PRIVATE(sha1_cipher);
+	PurpleMD5Hash *md5_hash = PURPLE_MD5_HASH(hash);
+	PurpleMD5HashPrivate *priv = PURPLE_MD5_HASH_GET_PRIVATE(md5_hash);
 
-	const gssize required_len = g_checksum_type_get_length(G_CHECKSUM_SHA1);
+	const gssize required_len = g_checksum_type_get_length(G_CHECKSUM_MD5);
 	gsize digest_len = buff_len;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
@@ -90,27 +90,27 @@ purple_sha1_cipher_digest(PurpleCipher *cipher, guchar *digest, size_t buff_len)
 	if (digest_len != required_len)
 		return FALSE;
 
-	purple_sha1_cipher_reset(cipher);
+	purple_md5_hash_reset(hash);
 
 	return TRUE;
 }
 
 static size_t
-purple_sha1_cipher_get_block_size(PurpleCipher *cipher)
+purple_md5_hash_get_block_size(PurpleHash *hash)
 {
 	return 64;
 }
 
 static size_t
-purple_sha1_cipher_get_digest_size(PurpleCipher *cipher)
+purple_md5_hash_get_digest_size(PurpleHash *hash)
 {
-	return g_checksum_type_get_length(G_CHECKSUM_SHA1);
+	return g_checksum_type_get_length(G_CHECKSUM_MD5);
 }
 
 static const gchar*
-purple_sha1_cipher_get_name(PurpleCipher *cipher)
+purple_md5_hash_get_name(PurpleHash *hash)
 {
-	return "sha1";
+	return "md5";
 }
 
 /******************************************************************************
@@ -118,10 +118,10 @@ purple_sha1_cipher_get_name(PurpleCipher *cipher)
  *****************************************************************************/
 
 static void
-purple_sha1_cipher_finalize(GObject *obj)
+purple_md5_hash_finalize(GObject *obj)
 {
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(obj);
-	PurpleSHA1CipherPrivate *priv = PURPLE_SHA1_CIPHER_GET_PRIVATE(sha1_cipher);
+	PurpleMD5Hash *md5_hash = PURPLE_MD5_HASH(obj);
+	PurpleMD5HashPrivate *priv = PURPLE_MD5_HASH_GET_PRIVATE(md5_hash);
 
 	if (priv->checksum)
 		g_checksum_free(priv->checksum);
@@ -130,66 +130,66 @@ purple_sha1_cipher_finalize(GObject *obj)
 }
 
 static void
-purple_sha1_cipher_class_init(PurpleSHA1CipherClass *klass) {
+purple_md5_hash_class_init(PurpleMD5HashClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	PurpleHashClass *hash_class = PURPLE_HASH_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->finalize = purple_sha1_cipher_finalize;
+	obj_class->finalize = purple_md5_hash_finalize;
 
-	cipher_class->reset = purple_sha1_cipher_reset;
-	cipher_class->reset_state = purple_sha1_cipher_reset;
-	cipher_class->append = purple_sha1_cipher_append;
-	cipher_class->digest = purple_sha1_cipher_digest;
-	cipher_class->get_digest_size = purple_sha1_cipher_get_digest_size;
-	cipher_class->get_block_size = purple_sha1_cipher_get_block_size;
-	cipher_class->get_name = purple_sha1_cipher_get_name;
+	hash_class->reset = purple_md5_hash_reset;
+	hash_class->reset_state = purple_md5_hash_reset;
+	hash_class->append = purple_md5_hash_append;
+	hash_class->digest = purple_md5_hash_digest;
+	hash_class->get_digest_size = purple_md5_hash_get_digest_size;
+	hash_class->get_block_size = purple_md5_hash_get_block_size;
+	hash_class->get_name = purple_md5_hash_get_name;
 
-	g_type_class_add_private(klass, sizeof(PurpleSHA1CipherPrivate));
+	g_type_class_add_private(klass, sizeof(PurpleMD5HashPrivate));
 }
 
 static void
-purple_sha1_cipher_init(PurpleCipher *cipher)
+purple_md5_hash_init(PurpleHash *hash)
 {
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
-	PurpleSHA1CipherPrivate *priv = PURPLE_SHA1_CIPHER_GET_PRIVATE(sha1_cipher);
+	PurpleMD5Hash *md5_hash = PURPLE_MD5_HASH(hash);
+	PurpleMD5HashPrivate *priv = PURPLE_MD5_HASH_GET_PRIVATE(md5_hash);
 
-	priv->checksum = g_checksum_new(G_CHECKSUM_SHA1);
+	priv->checksum = g_checksum_new(G_CHECKSUM_MD5);
 
-	purple_sha1_cipher_reset(cipher);
+	purple_md5_hash_reset(hash);
 }
 
 /******************************************************************************
  * API
  *****************************************************************************/
 GType
-purple_sha1_cipher_get_gtype(void) {
+purple_md5_hash_get_gtype(void) {
 	static GType type = 0;
 
 	if(type == 0) {
 		static const GTypeInfo info = {
-			sizeof(PurpleSHA1CipherClass),
+			sizeof(PurpleMD5HashClass),
 			NULL,
 			NULL,
-			(GClassInitFunc)purple_sha1_cipher_class_init,
+			(GClassInitFunc)purple_md5_hash_class_init,
 			NULL,
 			NULL,
-			sizeof(PurpleSHA1Cipher),
+			sizeof(PurpleMD5Hash),
 			0,
-			(GInstanceInitFunc)purple_sha1_cipher_init,
+			(GInstanceInitFunc)purple_md5_hash_init,
 			NULL,
 		};
 
-		type = g_type_register_static(PURPLE_TYPE_CIPHER,
-									  "PurpleSHA1Cipher",
+		type = g_type_register_static(PURPLE_TYPE_HASH,
+									  "PurpleMD5Hash",
 									  &info, 0);
 	}
 
 	return type;
 }
 
-PurpleCipher *
-purple_sha1_cipher_new(void) {
-	return g_object_new(PURPLE_TYPE_SHA1_CIPHER, NULL);
+PurpleHash *
+purple_md5_hash_new(void) {
+	return g_object_new(PURPLE_TYPE_MD5_HASH, NULL);
 }

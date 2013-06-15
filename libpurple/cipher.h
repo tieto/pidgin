@@ -108,9 +108,6 @@ struct _PurpleCipherClass {
 	/** The set salt function */
 	void (*set_salt)(PurpleCipher *cipher, const guchar *salt, size_t len);
 
-	/** The get salt size function */
-	size_t (*get_salt_size)(PurpleCipher *cipher);
-
 	/** The set key function */
 	void (*set_key)(PurpleCipher *cipher, const guchar *key, size_t len);
 
@@ -155,7 +152,6 @@ ssize_t purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t
 ssize_t purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 void purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len);
-size_t purple_cipher_get_salt_size(PurpleCipher *cipher);
 
 void purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len);
 size_t purple_cipher_get_key_size(PurpleCipher *cipher);

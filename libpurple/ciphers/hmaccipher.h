@@ -1,5 +1,5 @@
 /**
- * @file pbkdf2.h Purple PBKDF2 Cipher
+ * @file hmac.h Purple HMAC Cipher
  * @ingroup core
  */
 
@@ -23,22 +23,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_PBKDF2_CIPHER_H
-#define PURPLE_PBKDF2_CIPHER_H
+#ifndef PURPLE_HMAC_CIPHER_H
+#define PURPLE_HMAC_CIPHER_H
 
 #include "cipher.h"
+#include "hash.h"
 
-#define PURPLE_TYPE_PBKDF2_CIPHER				(purple_pbkdf2_cipher_get_gtype())
-#define PURPLE_PBKDF2_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2Cipher))
-#define PURPLE_PBKDF2_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherClass))
-#define PURPLE_IS_PBKDF2_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PBKDF2_CIPHER))
-#define PURPLE_IS_PBKDF2_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_PBKDF2_CIPHER))
-#define PURPLE_PBKDF2_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherClass))
+#define PURPLE_TYPE_HMAC_CIPHER				(purple_hmac_cipher_get_gtype())
+#define PURPLE_HMAC_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipher))
+#define PURPLE_HMAC_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherClass))
+#define PURPLE_IS_HMAC_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_HMAC_CIPHER))
+#define PURPLE_IS_HMAC_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_HMAC_CIPHER))
+#define PURPLE_HMAC_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherClass))
 
-typedef struct _PurplePBKDF2Cipher			PurplePBKDF2Cipher;
-typedef struct _PurplePBKDF2CipherClass		PurplePBKDF2CipherClass;
+typedef struct _PurpleHMACCipher				PurpleHMACCipher;
+typedef struct _PurpleHMACCipherClass			PurpleHMACCipherClass;
 
-struct _PurplePBKDF2Cipher {
+struct _PurpleHMACCipher {
 	PurpleCipher gparent;
 
 	void (*_purple_reserved1)(void);
@@ -47,7 +48,7 @@ struct _PurplePBKDF2Cipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurplePBKDF2CipherClass {
+struct _PurpleHMACCipherClass {
 	PurpleCipherClass gparent;
 
 	void (*_purple_reserved1)(void);
@@ -58,13 +59,12 @@ struct _PurplePBKDF2CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_pbkdf2_cipher_get_gtype(void);
+GType purple_hmac_cipher_get_gtype(void);
 
-PurpleCipher *purple_pbkdf2_cipher_new(PurpleCipher *hash);
+PurpleCipher *purple_hmac_cipher_new(PurpleHash *hash);
 
-PurpleCipher *purple_pbkdf2_cipher_get_hash(const PurplePBKDF2Cipher *cipher);
+PurpleHash *purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher);
 
 G_END_DECLS
 
-#endif /* PURPLE_PBKDF2_CIPHER_H */
-
+#endif /* PURPLE_HMAC_CIPHER_H */
