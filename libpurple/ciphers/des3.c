@@ -94,11 +94,11 @@ purple_des3_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 	g_return_if_fail(len == 24);
 
 	purple_cipher_set_key(PURPLE_CIPHER(priv->key1), key +  0,
-								purple_des3_cipher_get_key_size(cipher));
+					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key1)));
 	purple_cipher_set_key(PURPLE_CIPHER(priv->key2), key +  8,
-								purple_des3_cipher_get_key_size(cipher));
+					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key2)));
 	purple_cipher_set_key(PURPLE_CIPHER(priv->key3), key + 16,
-								purple_des3_cipher_get_key_size(cipher));
+					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key3)));
 
 	g_object_notify(G_OBJECT(des3_cipher), "key");
 }
@@ -115,8 +115,6 @@ purple_des3_cipher_ecb_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while (offset + 8 <= in_len) {
 		purple_des_cipher_ecb_crypt(PURPLE_DES_CIPHER(priv->key1),
 									input + offset, output + offset, 0);
@@ -131,7 +129,6 @@ purple_des3_cipher_ecb_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	out_len = in_len;
 	if (offset < in_len) {
 		out_len += in_len - offset;
-		g_return_val_if_fail(out_size < out_len, -1);
 		tmp = offset;
 		memset(buf, 0, 8);
 		while (tmp < in_len) {
@@ -163,8 +160,6 @@ purple_des3_cipher_cbc_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	memcpy(buf, priv->iv, 8);
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while (offset + 8 <= in_len) {
 		for (i = 0; i < 8; i++)
 			buf[i] ^= input[offset + i];
@@ -183,7 +178,6 @@ purple_des3_cipher_cbc_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	out_len = in_len;
 	if (offset < in_len) {
 		out_len += in_len - offset;
-		g_return_val_if_fail(out_size < out_len, -1);
 		tmp = offset;
 		i = 0;
 		while (tmp < in_len) {
@@ -231,8 +225,6 @@ purple_des3_cipher_ecb_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	ssize_t out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while (offset + 8 <= in_len) {
 		/* NOTE: Apply key in reverse */
 		purple_des_cipher_ecb_crypt(PURPLE_DES_CIPHER(priv->key3),
@@ -248,7 +240,6 @@ purple_des3_cipher_ecb_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	out_len = in_len;
 	if (offset < in_len) {
 		out_len += in_len - offset;
-		g_return_val_if_fail(out_size < out_len, -1);
 		tmp = offset;
 		memset(buf, 0, 8);
 		while (tmp < in_len) {
@@ -279,8 +270,6 @@ purple_des3_cipher_cbc_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	ssize_t out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	memcpy(link, priv->iv, 8);
 	while (offset + 8 <= in_len) {
 		purple_des_cipher_ecb_crypt(PURPLE_DES_CIPHER(priv->key3),
@@ -301,7 +290,6 @@ purple_des3_cipher_cbc_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 	out_len = in_len;
 	if(offset<in_len) {
 		out_len += in_len - offset;
-		g_return_val_if_fail(out_size < out_len, -1);
 		tmp = offset;
 		memset(buf, 0, 8);
 		i = 0;

@@ -433,8 +433,6 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	guint8 buf[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	ssize_t out_len;
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while(offset + 8 <= in_len) {
 		purple_des_cipher_ecb_crypt(des_cipher, input + offset, output + offset, 0);
 		offset += 8;
@@ -465,8 +463,6 @@ purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	ssize_t out_len;
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while(offset + 8 <= in_len) {
 		purple_des_cipher_ecb_crypt(des_cipher, input + offset, output + offset, 1);
 		offset += 8;
@@ -475,7 +471,6 @@ purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 	out_len = in_len;
 	if(offset<in_len) {
 		out_len += in_len - offset;
-		g_return_val_if_fail(out_size < out_len, -1);
 		tmp = offset;
 		while(tmp<in_len) {
 			buf[i++] = input[tmp];
