@@ -29,12 +29,14 @@
  * DO NOT USE ANYTHING HERE OR YOU WILL BE SENT TO THE PIT OF DESPAIR.
  */
 
+#include "cipher.h"
+
 /* Per-connection state stored between messages.
  * This is stored in js->auth_data_mech.
  */
 typedef struct {
 	const char *mech_substr;
-	const char *name;
+	PurpleCipher *(*new_cipher)(void);
 	guint size;
 } JabberScramHash;
 

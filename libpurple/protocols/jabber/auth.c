@@ -24,7 +24,6 @@
 
 #include "account.h"
 #include "debug.h"
-#include "cipher.h"
 #include "core.h"
 #include "conversation.h"
 #include "request.h"
@@ -38,6 +37,9 @@
 #include "jutil.h"
 #include "iq.h"
 #include "notify.h"
+
+#include "ciphers/hmac.h"
+#include "ciphers/md5.h"
 
 static GSList *auth_mechs = NULL;
 
@@ -276,16 +278,17 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			 */
 			const char *challenge;
 			gchar digest[33];
-			PurpleCipherContext *hmac;
+			PurpleCipher *hmac, *md5;
 
 			/* Calculate the MHAC-MD5 digest */
+			md5 = purple_md5_cipher_new();
+			hmac = purple_hmac_cipher_new(md5);
 			challenge = xmlnode_get_attrib(x, "challenge");
-			hmac = purple_cipher_context_new_by_name("hmac", NULL);
-			purple_cipher_context_set_option(hmac, "hash", "md5");
-			purple_cipher_context_set_key(hmac, (guchar *)pw, strlen(pw));
-			purple_cipher_context_append(hmac, (guchar *)challenge, strlen(challenge));
-			purple_cipher_context_digest_to_str(hmac, digest, 33);
-			purple_cipher_context_destroy(hmac);
+			purple_cipher_set_key(hmac, (guchar *)pw, strlen(pw));
+			purple_cipher_append(hmac, (guchar *)challenge, strlen(challenge));
+			purple_cipher_digest_to_str(hmac, digest, 33);
+			g_object_unref(hmac);
+			g_object_unref(md5);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");

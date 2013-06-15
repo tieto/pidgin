@@ -22,7 +22,6 @@
  */
 #include "internal.h"
 #include "account.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "debug.h"
 #include "server.h"
@@ -32,6 +31,10 @@
 #include "chat.h"
 #include "presence.h"
 #include "jutil.h"
+
+#include "ciphers/md4.h"
+#include "ciphers/md5.h"
+#include "ciphers/sha1.h"
 
 #ifdef USE_IDN
 #include <idna.h>
@@ -736,25 +739,31 @@ char *
 jabber_calculate_data_hash(gconstpointer data, size_t len,
     const gchar *hash_algo)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *hash = NULL;
 	static gchar digest[129]; /* 512 bits hex + \0 */
 
-	context = purple_cipher_context_new_by_name(hash_algo, NULL);
-	if (context == NULL)
+	/* FIXME: Check the source of this change and what we need here... */
+	if (g_str_equal(hash_algo, "sha1"))
+		hash = purple_sha1_cipher_new();
+	else if (g_str_equal(hash_algo, "md4"))
+		hash = purple_md4_cipher_new();
+	else if (g_str_equal(hash_algo, "md5"))
+		hash = purple_md5_cipher_new();
+	if (hash == NULL)
 	{
 		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 
 	/* Hash the data */
-	purple_cipher_context_append(context, data, len);
-	if (!purple_cipher_context_digest_to_str(context, digest, sizeof(digest)))
+	purple_cipher_append(hash, data, len);
+	if (!purple_cipher_digest_to_str(hash, digest, sizeof(digest)))
 	{
 		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
 		    hash_algo);
 		g_return_val_if_reached(NULL);
 	}
-	purple_cipher_context_destroy(context);
+	g_object_unref(G_OBJECT(hash));
 
 	return g_strdup(digest);
 }

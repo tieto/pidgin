@@ -23,7 +23,7 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "cipher.h"
+#include "ciphers/md5.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -107,7 +107,6 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
 
@@ -122,35 +121,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_cipher_append(cipher, (const guchar *)x, strlen(x));
+	purple_cipher_digest(cipher, result, sizeof(result));
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a1, a1len);
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a1, a1len);
+	purple_cipher_digest(cipher, result, sizeof(result));
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a2, strlen(a2));
+	purple_cipher_digest(cipher, result, sizeof(result));
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	purple_cipher_context_digest(context, result, sizeof(result));
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)kd, strlen(kd));
+	purple_cipher_digest(cipher, result, sizeof(result));
+	g_object_unref(cipher);
 
 	z = purple_base16_encode(result, 16);
 
