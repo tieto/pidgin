@@ -38,24 +38,10 @@
 #include "debug.h"
 
 /******************************************************************************
- * Globals
- *****************************************************************************/
-static GObjectClass *parent_class = NULL;
-
-/******************************************************************************
  * Object Stuff
  *****************************************************************************/
 static void
-purple_cipher_finalize(GObject *obj) {
-	purple_cipher_reset(PURPLE_CIPHER(obj));
-
-	G_OBJECT_CLASS(parent_class)->finalize(obj);
-}
-
-static void
 purple_cipher_class_init(PurpleCipherClass *klass) {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	klass->reset = NULL;
 	klass->reset_state = NULL;
 	klass->set_iv = NULL;
@@ -72,10 +58,6 @@ purple_cipher_class_init(PurpleCipherClass *klass) {
 	klass->get_batch_mode = NULL;
 	klass->get_block_size = NULL;
 	klass->get_name = NULL;
-
-	parent_class = g_type_class_peek_parent(klass);
-
-	obj_class->finalize = purple_cipher_finalize;
 }
 
 /******************************************************************************

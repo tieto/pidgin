@@ -85,8 +85,8 @@ purple_pbkdf2_cipher_reset(PurpleCipher *cipher)
 
 	g_return_if_fail(priv != NULL);
 
-	g_object_unref(priv->hash);
-	priv->hash = NULL;
+	if(PURPLE_IS_CIPHER(priv->hash))
+		purple_cipher_reset(priv->hash);
 	priv->iter_count = 1;
 	priv->out_len = 256;
 
@@ -315,6 +315,8 @@ purple_pbkdf2_cipher_finalize(GObject *obj)
 {
 	PurpleCipher *cipher = PURPLE_CIPHER(obj);
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
+
+	purple_pbkdf2_cipher_reset(cipher);
 
 	if (priv->hash != NULL)
 		g_object_unref(priv->hash);

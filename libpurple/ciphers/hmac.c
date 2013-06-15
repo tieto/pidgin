@@ -263,6 +263,8 @@ purple_hmac_cipher_finalize(GObject *obj) {
 	PurpleCipher *cipher = PURPLE_CIPHER(obj);
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
+	purple_hmac_cipher_reset(cipher);
+
 	if (priv->hash != NULL)
 		g_object_unref(priv->hash);
 
