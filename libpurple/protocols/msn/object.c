@@ -26,7 +26,7 @@
 #include "object.h"
 #include "debug.h"
 /* Sha1 stuff */
-#include "cipher.h"
+#include "ciphers/sha1.h"
 /* Base64 stuff */
 #include "util.h"
 
@@ -130,7 +130,7 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 {
 	MsnObject *msnobj;
 
-	PurpleCipherContext *ctx;
+	PurpleCipher *cipher;
 	char *buf;
 	gconstpointer data;
 	size_t size;
@@ -157,9 +157,9 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 	/* Compute the SHA1D field. */
 	memset(digest, 0, sizeof(digest));
 
-	ctx = purple_cipher_context_new_by_name("sha1", NULL);
-	purple_cipher_context_append(ctx, data, size);
-	purple_cipher_context_digest(ctx, digest, sizeof(digest));
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, data, size);
+	purple_cipher_digest(cipher, digest, sizeof(digest));
 
 	base64 = purple_base64_encode(digest, sizeof(digest));
 	msn_object_set_sha1d(msnobj, base64);
@@ -179,10 +179,10 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 
 	memset(digest, 0, sizeof(digest));
 
-	purple_cipher_context_reset(ctx, NULL);
-	purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(ctx, digest, sizeof(digest));
-	purple_cipher_context_destroy(ctx);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest(cipher, digest, sizeof(digest));
+	g_object_unref(cipher);
 	g_free(buf);
 
 	base64 = purple_base64_encode(digest, sizeof(digest));

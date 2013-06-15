@@ -23,7 +23,7 @@
  */
 
 #include "internal.h"
-#include "cipher.h"
+#include "ciphers/md5.h"
 #include "core.h"
 #include "debug.h"
 
@@ -1394,7 +1394,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	PurpleCipherContext *cipher;
+	PurpleCipher *cipher;
 	gchar creds[33];
 	char *buf;
 
@@ -1415,10 +1415,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	                      tmp_timestamp,
 	                      purple_connection_get_password(gc));
 
-	cipher = purple_cipher_context_new_by_name("md5", NULL);
-	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest_to_str(cipher, creds, sizeof(creds));
-	purple_cipher_context_destroy(cipher);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest_to_str(cipher, creds, sizeof(creds));
+	g_object_unref(cipher);
 	g_free(buf);
 
 	g_free(session->passport_info.mail_url);

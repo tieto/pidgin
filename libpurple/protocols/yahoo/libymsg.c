@@ -27,7 +27,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
-#include "cipher.h"
+#include "ciphers/md5.h"
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
@@ -1693,17 +1693,15 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const char *name = purple_normalize(account, purple_account_get_username(account));
 	PurpleCipher *md5_cipher;
-	PurpleCipherContext *md5_ctx;
 	guchar md5_digest[16];
 	gchar base64_string[25];
 	struct yahoo_packet *pkt;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage3\n");
 
-	md5_cipher = purple_ciphers_find_cipher("md5");
-	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
-	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
-	purple_cipher_context_digest(md5_ctx, md5_digest, sizeof(md5_digest));
+	md5_cipher = purple_md5_cipher_new();
+	purple_cipher_append(md5_cipher, (guchar *)crypt, strlen(crypt));
+	purple_cipher_digest(md5_cipher, md5_digest, sizeof(md5_digest));
 
 	to_y64(base64_string, md5_digest, 16);
 
@@ -1741,7 +1739,7 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 		yahoo_packet_hash_int(pkt, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 
-	purple_cipher_context_destroy(md5_ctx);
+	g_object_unref(md5_cipher);
 }
 
 static gchar *yahoo_auth16_get_cookie_b(gchar *headers)

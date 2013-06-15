@@ -38,9 +38,10 @@
 
 #include "oscar.h"
 #include "oscarcommon.h"
-
-#include "cipher.h"
 #include "core.h"
+
+#include "ciphers/hmac.h"
+#include "ciphers/sha256.h"
 
 #define AIM_LOGIN_HOST "api.screenname.aol.com"
 #define ICQ_LOGIN_HOST "api.login.icq.net"
@@ -128,15 +129,16 @@ static gchar *generate_error_message(xmlnode *resp, const char *url)
  */
 static gchar *hmac_sha256(const char *key, const char *message)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher, *hash;
 	guchar digest[32];
 
-	context = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(context, "hash", "sha256");
-	purple_cipher_context_set_key(context, (guchar *)key, strlen(key));
-	purple_cipher_context_append(context, (guchar *)message, strlen(message));
-	purple_cipher_context_digest(context, digest, sizeof(digest));
-	purple_cipher_context_destroy(context);
+	hash = purple_sha256_cipher_new();
+	cipher = purple_hmac_cipher_new(hash);
+	purple_cipher_set_key(cipher, (guchar *)key, strlen(key));
+	purple_cipher_append(cipher, (guchar *)message, strlen(message));
+	purple_cipher_digest(cipher, digest, sizeof(digest));
+	g_object_unref(cipher);
+	g_object_unref(hash);
 
 	return purple_base64_encode(digest, sizeof(digest));
 }

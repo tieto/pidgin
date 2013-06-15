@@ -274,7 +274,7 @@ static gchar *auth_header(struct simple_account_data *sip,
 
 	if(auth->type == 1) { /* Digest */
 		sprintf(noncecount, "%08d", auth->nc++);
-		response = purple_cipher_http_digest_calculate_response(
+		response = purple_http_digest_calculate_response(
 							"md5", method, target, NULL, NULL,
 							auth->nonce, noncecount, NULL, auth->digest_session_key);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "response %s\n", response);
@@ -295,7 +295,7 @@ static gchar *auth_header(struct simple_account_data *sip,
 	}
 
 	sprintf(noncecount, "%08d", auth->nc++);
-	response = purple_cipher_http_digest_calculate_response(
+	response = purple_http_digest_calculate_response(
 						"md5", method, target, NULL, NULL,
 						auth->nonce, noncecount, NULL, auth->digest_session_key);
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "response %s\n", response);
@@ -399,7 +399,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 					 auth->realm ? auth->realm : "(null)");
 
 		if(auth->realm) {
-			auth->digest_session_key = purple_cipher_http_digest_calculate_session_key(
+			auth->digest_session_key = purple_http_digest_calculate_session_key(
 				"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);
 
 			auth->nc = 1;

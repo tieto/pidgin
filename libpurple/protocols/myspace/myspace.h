@@ -42,13 +42,16 @@
 #include "plugin.h"
 #include "accountopt.h"
 #include "version.h"
-#include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 #include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
 #include "conversation.h" /* For late normalization */
+
+/* Ciphers */
+#include "ciphers/rc4.h"
+#include "ciphers/sha1.h"
 
 /* MySpaceIM includes */
 #include "persist.h"
