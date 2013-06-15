@@ -155,6 +155,10 @@ purple_cipher_reset(PurpleCipher *cipher) {
 
 	if(klass && klass->reset)
 		klass->reset(cipher);
+	else
+		purple_debug_warning("cipher", "the %s cipher does not implement the "
+						"reset method\n",
+						klass->get_name ? klass->get_name(cipher) : "");
 }
 
 /**
