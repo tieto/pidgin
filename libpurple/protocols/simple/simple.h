@@ -27,7 +27,7 @@
 #include <time.h>
 
 #include "cipher.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "dnsquery.h"
 #include "dnssrv.h"
 #include "network.h"

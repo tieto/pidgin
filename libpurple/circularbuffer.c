@@ -23,7 +23,7 @@
  */
 #include "internal.h"
 
-#include "circbuffer.h"
+#include "circularbuffer.h"
 
 #define DEFAULT_BUF_SIZE 256
 

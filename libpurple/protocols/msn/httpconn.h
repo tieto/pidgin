@@ -26,7 +26,7 @@
 
 typedef struct _MsnHttpConn MsnHttpConn;
 
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "servconn.h"
 #include "session.h"
 

@@ -30,7 +30,7 @@
 #define _OSCAR_H_
 
 #include "internal.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
 #include "proxy.h"

@@ -31,7 +31,7 @@
 #include "xmlnode.h"
 
 #include "account.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 
 typedef struct _BonjourJabber
 {

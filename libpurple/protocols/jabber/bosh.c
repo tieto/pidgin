@@ -21,7 +21,7 @@
  *
  */
 #include "internal.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "core.h"
 #include "cipher.h"
 #include "debug.h"

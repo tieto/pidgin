@@ -56,7 +56,7 @@ typedef struct _JabberStream JabberStream;
 
 #include <libxml/parser.h>
 #include <glib.h>
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "connection.h"
 #include "dnsquery.h"
 #include "dnssrv.h"

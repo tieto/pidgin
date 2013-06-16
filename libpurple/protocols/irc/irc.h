@@ -29,7 +29,7 @@
 #include <sasl/sasl.h>
 #endif
 
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "ft.h"
 #include "roomlist.h"
 #include "sslconn.h"

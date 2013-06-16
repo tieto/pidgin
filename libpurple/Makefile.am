@@ -43,7 +43,7 @@ purple_coresources = \
 	buddyicon.c \
 	certificate.c \
 	cipher.c \
-	circbuffer.c \
+	circularbuffer.c \
 	cmds.c \
 	connection.c \
 	conversation.c \
@@ -113,7 +113,7 @@ purple_coreheaders = \
 	buddyicon.h \
 	certificate.h \
 	cipher.h \
-	circbuffer.h \
+	circularbuffer.h \
 	cmds.h \
 	connection.h \
 	conversation.h \

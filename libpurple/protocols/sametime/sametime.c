@@ -33,7 +33,7 @@
 /* purple includes */
 #include "account.h"
 #include "accountopt.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "conversation.h"
 #include "debug.h"
 #include "ft.h"

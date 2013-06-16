@@ -50,7 +50,7 @@
 #include <buddyicon.h>
 #include <certificate.h>
 #include <cipher.h>
-#include <circbuffer.h>
+#include <circularbuffer.h>
 #include <cmds.h>
 #include <connection.h>
 #include <conversation.h>
