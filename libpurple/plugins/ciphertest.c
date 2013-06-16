@@ -234,6 +234,14 @@ cipher_test_digest(void)
  * PBKDF2 stuff
  **************************************************************************/
 
+#ifdef HAVE_NSS
+#  include <nss.h>
+#  include <secmod.h>
+#  include <pk11func.h>
+#  include <prerror.h>
+#  include <secerr.h>
+#endif
+
 typedef struct {
 	const gchar *hash;
 	const guint iter_count;
@@ -252,6 +260,104 @@ pbkdf2_test pbkdf2_tests[] = {
 	{ "sha1", 10000, "pretty long password W Szczebrzeszynie chrzaszcz brzmi w trzcinie i Szczebrzeszyn z tego slynie", "Grzegorz Brzeczyszczykiewicz", 32, "8cb0cb164f2554733ae02f5751b0e84a88fb385446e85a3991bdcdf1ea11795c"},
 	{ NULL, 0, NULL, NULL, 0, NULL}
 };
+
+#ifdef HAVE_NSS
+
+static gchar*
+cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
+	guint iter_count, guint out_len)
+{
+	PK11SlotInfo *slot;
+	SECAlgorithmID *algorithm = NULL;
+	PK11SymKey *symkey = NULL;
+	const SECItem *symkey_data = NULL;
+	SECItem salt_item, passphrase_item;
+	guchar *passphrase_buff, *salt_buff;
+	gchar *ret;
+
+	g_return_val_if_fail(passphrase != NULL, NULL);
+	g_return_val_if_fail(iter_count > 0, NULL);
+	g_return_val_if_fail(out_len > 0, NULL);
+
+	NSS_NoDB_Init(NULL);
+
+	slot = PK11_GetBestSlot(PK11_AlgtagToMechanism(SEC_OID_PKCS5_PBKDF2),
+		NULL);
+	if (slot == NULL) {
+		purple_debug_error("cipher-test", "NSS: couldn't get slot: "
+			"%d\n", PR_GetError());
+		return NULL;
+	}
+
+	salt_buff = (guchar*)g_strdup(salt ? salt : "");
+	salt_item.type = siBuffer;
+	salt_item.data = salt_buff;
+	salt_item.len = salt ? strlen(salt) : 0;
+
+	algorithm = PK11_CreatePBEV2AlgorithmID(SEC_OID_PKCS5_PBKDF2,
+		SEC_OID_AES_256_CBC, SEC_OID_HMAC_SHA1, out_len, iter_count,
+		&salt_item);
+	if (algorithm == NULL) {
+		purple_debug_error("cipher-test", "NSS: couldn't create "
+			"algorithm ID: %d\n", PR_GetError());
+		PK11_FreeSlot(slot);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	passphrase_buff = (guchar*)g_strdup(passphrase);
+	passphrase_item.type = siBuffer;
+	passphrase_item.data = passphrase_buff;
+	passphrase_item.len = strlen(passphrase);
+
+	symkey = PK11_PBEKeyGen(slot, algorithm, &passphrase_item, PR_FALSE,
+		NULL);
+	if (symkey == NULL) {
+		purple_debug_error("cipher-test", "NSS: Couldn't generate key: "
+			"%d\n", PR_GetError());
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	if (PK11_ExtractKeyValue(symkey) == SECSuccess)
+		symkey_data = PK11_GetKeyData(symkey);
+
+	if (symkey_data == NULL || symkey_data->data == NULL) {
+		purple_debug_error("cipher-test", "NSS: Couldn't extract key "
+			"value: %d\n", PR_GetError());
+		PK11_FreeSymKey(symkey);
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	if (symkey_data->len != out_len) {
+		purple_debug_error("cipher-test", "NSS: Invalid key length: %d "
+			"(should be %d)\n", symkey_data->len, out_len);
+		PK11_FreeSymKey(symkey);
+		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+		PK11_FreeSlot(slot);
+		g_free(passphrase_buff);
+		g_free(salt_buff);
+		return NULL;
+	}
+
+	ret = purple_base16_encode(symkey_data->data, symkey_data->len);
+
+	PK11_FreeSymKey(symkey);
+	SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
+	PK11_FreeSlot(slot);
+	g_free(passphrase_buff);
+	g_free(salt_buff);
+	return ret;
+}
+
+#endif /* HAVE_NSS */
 
 static void
 cipher_test_pbkdf2(void)
@@ -307,7 +413,14 @@ cipher_test_pbkdf2(void)
 		if (test->out_len != 16 && test->out_len != 32)
 			skip_nss = TRUE;
 
+#ifdef HAVE_NSS
+		if (!skip_nss) {
+			digest_nss = cipher_pbkdf2_nss_sha1(test->passphrase,
+				test->salt, test->iter_count, test->out_len);
+		}
+#else
 		skip_nss = TRUE;
+#endif
 
 		if (!ret) {
 			purple_debug_info("cipher-test", "\tnss test failed\n");

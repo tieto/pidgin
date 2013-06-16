@@ -50,7 +50,6 @@ dbus_example_la_LDFLAGS     = -module -avoid-version
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	ciphertest.la \
 	autoaccept.la       \
 	buddynote.la        \
 	idle.la             \
@@ -63,6 +62,7 @@ plugin_LTLIBRARIES = \
 	$(DBUS_LTLIB)
 
 noinst_LTLIBRARIES = \
+	ciphertest.la \
 	codeinline.la \
 	debug_example.la \
 	helloworld.la \
