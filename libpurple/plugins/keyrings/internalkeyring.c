@@ -160,11 +160,11 @@ intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 	hash = purple_sha256_hash_new();
 	cipher = purple_pbkdf2_cipher_new(hash);
 
-	g_object_set_property(G_OBJECT(cipher), "iter_count",
+	g_object_set(G_OBJECT(cipher), "iter_count",
 		GUINT_TO_POINTER(purple_prefs_get_int(INTKEYRING_PREFS
-		"pbkdf2_iterations")));
-	g_object_set_property(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(
-		INTKEYRING_KEY_LEN));
+		"pbkdf2_iterations")), NULL);
+	g_object_set(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(
+		INTKEYRING_KEY_LEN), NULL);
 	purple_cipher_set_salt(cipher, salt->data, salt->len);
 	purple_cipher_set_key(cipher, (const guchar*)passphrase,
 		strlen(passphrase));

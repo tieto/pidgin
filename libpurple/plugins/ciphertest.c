@@ -392,8 +392,8 @@ cipher_test_pbkdf2(void)
 
 		cipher = purple_pbkdf2_cipher_new(hash);
 
-		g_object_set_property(G_OBJECT(cipher), "iter_count", GUINT_TO_POINTER(test->iter_count));
-		g_object_set_property(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(test->out_len));
+		g_object_set(G_OBJECT(cipher), "iter_count", GUINT_TO_POINTER(test->iter_count), NULL);
+		g_object_set(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(test->out_len), NULL);
 		purple_cipher_set_salt(cipher, (const guchar*)test->salt, test->salt ? strlen(test->salt): 0);
 		purple_cipher_set_key(cipher, (const guchar*)test->passphrase, strlen(test->passphrase));
 
