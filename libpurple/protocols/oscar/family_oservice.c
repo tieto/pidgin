@@ -25,7 +25,7 @@
 
 #include "oscar.h"
 
-#include "ciphers/md5.h"
+#include "ciphers/md5hash.h"
 
 /*
  * Each time we make a FLAP connection to an oscar server the server gives
@@ -972,18 +972,18 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		byte_stream_putraw(&bs, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
-		PurpleCipher *cipher;
+		PurpleHash *hash;
 		guchar digest[16];
 
-		cipher = purple_md5_cipher_new();
-		purple_cipher_append(cipher, buf, len);
-		purple_cipher_digest(cipher, digest, sizeof(digest));
-		g_object_unref(cipher);
+		hash = purple_md5_hash_new();
+		purple_hash_append(hash, buf, len);
+		purple_hash_digest(hash, digest, sizeof(digest));
+		g_object_unref(hash);
 
 		byte_stream_putraw(&bs, digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
-		PurpleCipher *cipher;
+		PurpleHash *hash;
 		guchar digest[16];
 		guint8 nil = '\0';
 
@@ -991,10 +991,10 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		 * I'm not sure if we really need the empty append with the
 		 * new MD5 functions, so I'll leave it in, just in case.
 		 */
-		cipher = purple_md5_cipher_new();
-		purple_cipher_append(cipher, &nil, 0);
-		purple_cipher_digest(cipher, digest, sizeof(digest));
-		g_object_unref(cipher);
+		hash = purple_md5_hash_new();
+		purple_hash_append(hash, &nil, 0);
+		purple_hash_digest(hash, digest, sizeof(digest));
+		g_object_unref(hash);
 
 		byte_stream_putraw(&bs, digest, 0x10);
 

@@ -32,9 +32,9 @@
 #include "presence.h"
 #include "jutil.h"
 
-#include "ciphers/md4.h"
-#include "ciphers/md5.h"
-#include "ciphers/sha1.h"
+#include "ciphers/md4hash.h"
+#include "ciphers/md5hash.h"
+#include "ciphers/sha1hash.h"
 
 #ifdef USE_IDN
 #include <idna.h>
@@ -739,16 +739,16 @@ char *
 jabber_calculate_data_hash(gconstpointer data, size_t len,
     const gchar *hash_algo)
 {
-	PurpleCipher *hash = NULL;
+	PurpleHash *hash = NULL;
 	static gchar digest[129]; /* 512 bits hex + \0 */
 
 	/* FIXME: Check the source of this change and what we need here... */
 	if (g_str_equal(hash_algo, "sha1"))
-		hash = purple_sha1_cipher_new();
+		hash = purple_sha1_hash_new();
 	else if (g_str_equal(hash_algo, "md4"))
-		hash = purple_md4_cipher_new();
+		hash = purple_md4_hash_new();
 	else if (g_str_equal(hash_algo, "md5"))
-		hash = purple_md5_cipher_new();
+		hash = purple_md5_hash_new();
 	if (hash == NULL)
 	{
 		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
@@ -756,8 +756,8 @@ jabber_calculate_data_hash(gconstpointer data, size_t len,
 	}
 
 	/* Hash the data */
-	purple_cipher_append(hash, data, len);
-	if (!purple_cipher_digest_to_str(hash, digest, sizeof(digest)))
+	purple_hash_append(hash, data, len);
+	if (!purple_hash_digest_to_str(hash, digest, sizeof(digest)))
 	{
 		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
 		    hash_algo);

@@ -31,7 +31,7 @@
 
 #include <ctype.h>
 
-#include "ciphers/md5.h"
+#include "ciphers/md5hash.h"
 
 /* #define USE_XOR_FOR_ICQ */
 
@@ -75,14 +75,14 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleCipherContext *context;
+	PurpleHash *hash;
 
-	context = purple_cipher_context_new_by_name("md5", NULL);
-	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-	purple_cipher_context_append(context, (const guchar *)password, password_len);
-	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_cipher_context_digest(context, 16, digest, NULL);
-	purple_cipher_context_destroy(context);
+	hash = purple_md5_hash_new();
+	purple_hash_append(hash, (const guchar *)key, strlen(key));
+	purple_hash_append(hash, (const guchar *)password, password_len);
+	purple_hash_append(hash, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	purple_hash_digest(hash, 16, digest, NULL);
+	g_object_unref(hash);
 
 	return 0;
 }
@@ -90,19 +90,19 @@ aim_encode_password_md5(const char *password, size_t password_len, const char *k
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	guchar passdigest[16];
 
-	cipher = purple_md5_cipher_new();
-	purple_cipher_append(cipher, (const guchar *)password, password_len);
-	purple_cipher_digest(cipher, passdigest, sizeof(passdigest));
-	purple_cipher_reset(cipher);
+	hash = purple_md5_hash_new();
+	purple_hash_append(hash, (const guchar *)password, password_len);
+	purple_hash_digest(hash, passdigest, sizeof(passdigest));
+	purple_hash_reset(hash);
 
-	purple_cipher_append(cipher, (const guchar *)key, strlen(key));
-	purple_cipher_append(cipher, passdigest, 16);
-	purple_cipher_append(cipher, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_cipher_digest(cipher, digest, 16);
-	g_object_unref(cipher);
+	purple_hash_append(hash, (const guchar *)key, strlen(key));
+	purple_hash_append(hash, passdigest, 16);
+	purple_hash_append(hash, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	purple_hash_digest(hash, digest, 16);
+	g_object_unref(hash);
 
 	return 0;
 }

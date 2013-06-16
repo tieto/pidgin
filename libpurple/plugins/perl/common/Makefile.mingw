@@ -48,6 +48,7 @@ XS_FILES =		Account.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
+				Hash.xs \
 				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \

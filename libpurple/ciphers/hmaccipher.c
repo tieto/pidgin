@@ -54,7 +54,7 @@ static GObjectClass *parent_class = NULL;
  ******************************************************************************/
 static void
 purple_hmac_cipher_set_hash(PurpleCipher *cipher,
-							PurpleCipher *hash)
+							PurpleHash *hash)
 {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
@@ -295,7 +295,7 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 	cipher_class->get_block_size = purple_hmac_cipher_get_block_size;
 	cipher_class->get_name = purple_hmac_cipher_get_name;
 
-	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_CIPHER,
+	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_HASH, pspec);
 }

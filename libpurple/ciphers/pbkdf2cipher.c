@@ -67,7 +67,7 @@ static GObjectClass *parent_class = NULL;
  ******************************************************************************/
 static void
 purple_pbkdf2_cipher_set_hash(PurpleCipher *cipher,
-								PurpleCipher *hash)
+								PurpleHash *hash)
 {
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
@@ -344,7 +344,7 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	cipher_class->set_key = purple_pbkdf2_cipher_set_key;
 	cipher_class->get_name = purple_pbkdf2_cipher_get_name;
 
-	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_CIPHER,
+	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_HASH, pspec);
 

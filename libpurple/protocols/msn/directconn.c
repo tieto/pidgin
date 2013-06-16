@@ -23,7 +23,7 @@
  */
 
 #include "internal.h"
-#include "ciphers/sha1.h"
+#include "ciphers/sha1hash.h"
 #include "debug.h"
 
 #include "msn.h"
@@ -44,10 +44,10 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 	guchar digest[20];
 
 	if (type == DC_NONCE_SHA1) {
-		PurpleCipher *cipher = purple_sha1_cipher_new();
-		purple_cipher_append(cipher, nonce, nonce_len);
-		purple_cipher_digest(cipher, digest, sizeof(digest));
-		g_object_unref(cipher);
+		PurpleHash *hash = purple_sha1_hash_new();
+		purple_hash_append(hash, nonce, nonce_len);
+		purple_hash_digest(hash, digest, sizeof(digest));
+		g_object_unref(hash);
 	} else if (type == DC_NONCE_PLAIN) {
 		memcpy(digest, nonce, nonce_len);
 	} else {

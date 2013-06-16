@@ -28,7 +28,7 @@
 #include "buddy.h"
 #include "bonjour.h"
 #include "bonjour_ft.h"
-#include "ciphers/sha1.h"
+#include "ciphers/sha1hash.h"
 
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
@@ -1018,7 +1018,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 {
 	PurpleBuddy *pb;
 	PurpleAccount *account = NULL;
-	PurpleCipher *hash;
+	PurpleHash *hash;
 	XepXfer *xf;
 	char dstaddr[41];
 	const gchar *name = NULL;
@@ -1041,9 +1041,9 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 
 	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
 
-	hash = purple_sha1_cipher_new();
-	purple_cipher_append(hash, (guchar *)p, strlen(p));
-	purple_cipher_digest(hash, hashval, sizeof(hashval));
+	hash = purple_sha1_hash_new();
+	purple_hash_append(hash, (guchar *)p, strlen(p));
+	purple_hash_digest(hash, hashval, sizeof(hashval));
 	g_object_unref(G_OBJECT(hash));
 
 	g_free(p);

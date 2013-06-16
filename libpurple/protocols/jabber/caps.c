@@ -30,8 +30,8 @@
 #include "util.h"
 #include "xdata.h"
 
-#include "ciphers/md5.h"
-#include "ciphers/sha1.h"
+#include "ciphers/md5hash.h"
+#include "ciphers/sha1hash.h"
 
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
@@ -457,16 +457,16 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	/* Only validate if these are v1.5 capabilities */
 	if (userdata->hash) {
 		gchar *hash = NULL;
-		PurpleCipher *hasher = NULL;
+		PurpleHash *hasher = NULL;
 		/*
 		 * TODO: If you add *any* hash here, make sure the checksum buffer
 		 * size in jabber_caps_calculate_hash is large enough. The cipher API
 		 * doesn't seem to offer a "Get the hash size" function(?).
 		 */
 		if (g_str_equal(userdata->hash, "sha-1")) {
-			hasher = purple_sha1_cipher_new();
+			hasher = purple_sha1_hash_new();
 		} else if (g_str_equal(userdata->hash, "md5")) {
-			hasher = purple_md5_cipher_new();
+			hasher = purple_md5_hash_new();
 		}
 		hash = jabber_caps_calculate_hash(info, hasher);
 
@@ -811,22 +811,22 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 }
 
 static void
-append_escaped_string(PurpleCipher *cipher, const gchar *str)
+append_escaped_string(PurpleHash *hash, const gchar *str)
 {
-	g_return_if_fail(cipher != NULL);
-	g_object_ref(cipher);
+	g_return_if_fail(hash != NULL);
+	g_object_ref(hash);
 
 	if (str && *str) {
 		char *tmp = g_markup_escape_text(str, -1);
-		purple_cipher_append(cipher, (const guchar *)tmp, strlen(tmp));
+		purple_hash_append(hash, (const guchar *)tmp, strlen(tmp));
 		g_free(tmp);
 	}
 
-	purple_cipher_append(cipher, (const guchar *)"<", 1);
-	g_object_unref(cipher);
+	purple_hash_append(hash, (const guchar *)"<", 1);
+	g_object_unref(hash);
 }
 
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleCipher *hash)
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 {
 	GList *node;
 	guint8 checksum[20];
@@ -860,7 +860,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleCipher *hash
 		tmp = g_strconcat(category, "/", type, "/", lang ? lang : "",
 		                  "/", name ? name : "", "<", NULL);
 
-		purple_cipher_append(hash, (const guchar *)tmp, strlen(tmp));
+		purple_hash_append(hash, (const guchar *)tmp, strlen(tmp));
 
 		g_free(tmp);
 		g_free(category);
@@ -910,8 +910,8 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleCipher *hash
 	}
 
 	/* generate hash */
-	success = purple_cipher_digest(hash, checksum, checksum_size);
-	checksum_size = purple_cipher_get_digest_size(hash);
+	success = purple_hash_digest(hash, checksum, checksum_size);
+	checksum_size = purple_hash_get_digest_size(hash);
 
 	g_object_unref(hash);
 
@@ -920,7 +920,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleCipher *hash
 
 void jabber_caps_calculate_own_hash(JabberStream *js) {
 	JabberCapsClientInfo info;
-	PurpleCipher *hasher;
+	PurpleHash *hasher;
 	GList *iter = 0;
 	GList *features = 0;
 
@@ -951,7 +951,7 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	info.forms = NULL;
 
 	g_free(js->caps_hash);
-	hasher = purple_sha1_cipher_new();
+	hasher = purple_sha1_hash_new();
 	js->caps_hash = jabber_caps_calculate_hash(&info, hasher);
 	g_object_unref(hasher);
 	g_list_free(info.identities);

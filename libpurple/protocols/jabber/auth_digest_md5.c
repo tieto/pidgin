@@ -23,7 +23,7 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "ciphers/md5.h"
+#include "ciphers/md5hash.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -106,7 +106,7 @@ static char *
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	guchar result[16];
 	size_t a1len;
 
@@ -121,34 +121,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_md5_cipher_new();
+	hash = purple_md5_hash_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_append(cipher, (const guchar *)x, strlen(x));
-	purple_cipher_digest(cipher, result, sizeof(result));
+	purple_hash_append(hash, (const guchar *)x, strlen(x));
+	purple_hash_digest(hash, result, sizeof(result));
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_reset(cipher);
-	purple_cipher_append(cipher, (const guchar *)a1, a1len);
-	purple_cipher_digest(cipher, result, sizeof(result));
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)a1, a1len);
+	purple_hash_digest(hash, result, sizeof(result));
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_reset(cipher);
-	purple_cipher_append(cipher, (const guchar *)a2, strlen(a2));
-	purple_cipher_digest(cipher, result, sizeof(result));
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)a2, strlen(a2));
+	purple_hash_digest(hash, result, sizeof(result));
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_reset(cipher);
-	purple_cipher_append(cipher, (const guchar *)kd, strlen(kd));
-	purple_cipher_digest(cipher, result, sizeof(result));
-	g_object_unref(cipher);
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)kd, strlen(kd));
+	purple_hash_digest(hash, result, sizeof(result));
+	g_object_unref(hash);
 
 	z = purple_base16_encode(result, 16);
 

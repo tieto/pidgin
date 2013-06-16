@@ -29,7 +29,6 @@ static void
 purple_hash_class_init(PurpleHashClass *klass) {
 	klass->reset = NULL;
 	klass->reset_state = NULL;
-	klass->set_iv = NULL;
 	klass->append = NULL;
 	klass->digest = NULL;
 	klass->get_digest_size = NULL;
@@ -123,34 +122,6 @@ purple_hash_reset_state(PurpleHash *hash) {
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"reset_state method\n",
-						klass->get_name ? klass->get_name(hash) : "");
-}
-
-/**
- * purple_hash_set_iv:
- * @hash: The hash to set the IV to
- * @iv: The initialization vector to set
- * @len: The len of the IV
- *
- * @note This should only be called right after a hash is created or reset
- *
- * Sets the initialization vector for a hash
- */
-void
-purple_hash_set_iv(PurpleHash *hash, guchar *iv, size_t len)
-{
-	PurpleHashClass *klass = NULL;
-
-	g_return_if_fail(PURPLE_IS_HASH(hash));
-	g_return_if_fail(iv);
-
-	klass = PURPLE_HASH_GET_CLASS(hash);
-
-	if(klass && klass->set_iv)
-		klass->set_iv(hash, iv, len);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"set_iv method\n",
 						klass->get_name ? klass->get_name(hash) : "");
 }
 

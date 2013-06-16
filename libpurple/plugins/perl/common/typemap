@@ -54,9 +54,7 @@ Purple::BuddyList::NodeFlags		T_IV
 Purple::BuddyList::NodeType		T_IV
 
 Purple::Cipher				T_PurpleObj
-Purple::CipherCaps			T_IV
-Purple::Cipher::Ops			T_PurpleObj
-Purple::Cipher::Context			T_PurpleObj
+Purple::Hash				T_PurpleObj
 Purple::Cmd::Flag				T_IV
 Purple::Cmd::Id				T_IV
 Purple::Cmd::Priority			T_IV

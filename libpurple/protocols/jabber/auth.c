@@ -38,8 +38,8 @@
 #include "iq.h"
 #include "notify.h"
 
-#include "ciphers/hmac.h"
-#include "ciphers/md5.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/md5hash.h"
 
 static GSList *auth_mechs = NULL;
 
@@ -278,10 +278,11 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			 */
 			const char *challenge;
 			gchar digest[33];
-			PurpleCipher *hmac, *md5;
+			PurpleCipher *hmac;
+			PurpleHash *md5;
 
 			/* Calculate the MHAC-MD5 digest */
-			md5 = purple_md5_cipher_new();
+			md5 = purple_md5_hash_new();
 			hmac = purple_hmac_cipher_new(md5);
 			challenge = xmlnode_get_attrib(x, "challenge");
 			purple_cipher_set_key(hmac, (guchar *)pw, strlen(pw));

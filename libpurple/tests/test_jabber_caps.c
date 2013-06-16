@@ -3,8 +3,8 @@
 #include "tests.h"
 #include "../xmlnode.h"
 #include "../protocols/jabber/caps.h"
-#include "../ciphers/md5.h"
-#include "../ciphers/sha1.h"
+#include "../ciphers/md5hash.h"
+#include "../ciphers/sha1hash.h"
 
 START_TEST(test_parse_invalid)
 {
@@ -27,13 +27,13 @@ END_TEST
 
 #define assert_caps_calculate_match(hash_func, hash, str) { \
 	xmlnode *query = xmlnode_from_str((str), -1); \
-	PurpleCipher *hasher; \
+	PurpleHash *hasher = NULL; \
 	JabberCapsClientInfo *info = jabber_caps_parse_client_info(query); \
 	gchar *got_hash; \
 	if (g_str_equal(hash_func, "sha-1")) { \
-		hasher = purple_sha1_cipher_new(); \
+		hasher = purple_sha1_hash_new(); \
 	} else if (g_str_equal(hash_func, "md5")) { \
-		hasher = purple_md5_cipher_new(); \
+		hasher = purple_md5_hash_new(); \
 	} \
 	got_hash = jabber_caps_calculate_hash(info, hasher); \
 	g_object_unref(hasher); \

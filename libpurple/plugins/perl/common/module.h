@@ -25,6 +25,7 @@ typedef struct group *Purple__Group;
 #include "buddyicon.h"
 #include "certificate.h"
 #include "cipher.h"
+#include "hash.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
@@ -164,6 +165,9 @@ typedef GtkTextView *			Purple__GTK__TextView;
 
 /* gtkconn.h */
 #endif
+
+/* hash.h */
+typedef PurpleHash *			Purple__Hash;
 
 /* imgstore.h */
 typedef PurpleStoredImage *		Purple__StoredImage;

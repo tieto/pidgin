@@ -24,7 +24,6 @@
 
 #include <stdio.h>
 
-#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -523,21 +522,6 @@ chat_topic_changed_cb(PurpleConversation *conv, const char *who,
 					purple_conversation_get_name(conv), topic,
 					(who) ? who : "unknown");
 }
-/**************************************************************************
- * Ciphers signal callbacks
- **************************************************************************/
-static void
-cipher_added_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s added\n",
-					purple_cipher_get_name(cipher));
-}
-
-static void
-cipher_removed_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s removed\n",
-					purple_cipher_get_name(cipher));
-}
-
 /**************************************************************************
  * Core signal callbacks
  **************************************************************************/

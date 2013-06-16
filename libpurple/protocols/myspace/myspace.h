@@ -50,8 +50,8 @@
 #include "conversation.h" /* For late normalization */
 
 /* Ciphers */
-#include "ciphers/rc4.h"
-#include "ciphers/sha1.h"
+#include "ciphers/rc4cipher.h"
+#include "ciphers/sha1hash.h"
 
 /* MySpaceIM includes */
 #include "persist.h"

@@ -27,7 +27,7 @@
 #include "msn.h"
 #include "msnutils.h"
 
-#include "ciphers/md5.h"
+#include "ciphers/md5hash.h"
 
 /**************************************************************************
  * Util
@@ -542,7 +542,7 @@ msn_email_is_valid(const char *passport)
 void
 msn_handle_chl(char *input, char *output)
 {
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	const guchar productKey[] = MSNP15_WLM_PRODUCT_KEY;
 	const guchar productID[]  = MSNP15_WLM_PRODUCT_ID;
 	const char hexChars[]     = "0123456789abcdef";
@@ -559,12 +559,12 @@ msn_handle_chl(char *input, char *output)
 	int i;
 
 	/* Create the MD5 hash by using Purple MD5 algorithm */
-	cipher = purple_md5_cipher_new();
+	hash = purple_md5_hash_new();
 
-	purple_cipher_append(cipher, (guchar *)input, strlen(input));
-	purple_cipher_append(cipher, productKey, sizeof(productKey) - 1);
-	purple_cipher_digest(cipher, md5Hash, sizeof(md5Hash));
-	g_object_unref(cipher);
+	purple_hash_append(hash, (guchar *)input, strlen(input));
+	purple_hash_append(hash, productKey, sizeof(productKey) - 1);
+	purple_hash_digest(hash, md5Hash, sizeof(md5Hash));
+	g_object_unref(hash);
 
 	/* Split it into four integers */
 	md5Parts = (unsigned int *)md5Hash;

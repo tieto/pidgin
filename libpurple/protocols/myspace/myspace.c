@@ -532,7 +532,7 @@ static gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 		const gchar *email, const gchar *password, guint *response_len)
 {
-	PurpleCipher *sha1;
+	PurpleHash *sha1;
 	PurpleCipher *rc4;
 
 	guchar hash_pw[HASH_SIZE];
@@ -582,11 +582,11 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	}
 
 	/* Compute password hash */
-	sha1 = purple_sha1_cipher_new();
-	purple_cipher_append(sha1, (guchar *)password_utf16le,
+	sha1 = purple_sha1_hash_new();
+	purple_hash_append(sha1, (guchar *)password_utf16le,
 					   conv_bytes_written);
-	purple_cipher_digest(sha1, hash_pw, sizeof(hash_pw));
-	purple_cipher_reset(sha1);
+	purple_hash_digest(sha1, hash_pw, sizeof(hash_pw));
+	purple_hash_reset(sha1);
 	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -597,9 +597,9 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 #endif
 
 	/* key = sha1(sha1(pw) + nonce2) */
-	purple_cipher_append(sha1, hash_pw, HASH_SIZE);
-	purple_cipher_append(sha1, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
-	purple_cipher_digest(sha1, key, sizeof(key));
+	purple_hash_append(sha1, hash_pw, HASH_SIZE);
+	purple_hash_append(sha1, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
+	purple_hash_digest(sha1, key, sizeof(key));
 	g_object_unref(sha1);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE

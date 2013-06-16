@@ -31,9 +31,9 @@
 #include "plugin.h"
 #include "version.h"
 
-#include "ciphers/aes.h"
-#include "ciphers/pbkdf2.h"
-#include "ciphers/sha256.h"
+#include "ciphers/aescipher.h"
+#include "ciphers/pbkdf2cipher.h"
+#include "ciphers/sha256hash.h"
 
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
@@ -150,13 +150,14 @@ intkeyring_buff_from_base64(const gchar *base64)
 static intkeyring_buff_t *
 intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 {
-	PurpleCipher *cipher, *hash;
+	PurpleCipher *cipher;
+	PurpleHash *hash;
 	gboolean succ;
 	intkeyring_buff_t *ret;
 
 	g_return_val_if_fail(passphrase != NULL, NULL);
 
-	hash = purple_sha256_cipher_new();
+	hash = purple_sha256_hash_new();
 	cipher = purple_pbkdf2_cipher_new(hash);
 
 	g_object_set_property(G_OBJECT(cipher), "iter_count",

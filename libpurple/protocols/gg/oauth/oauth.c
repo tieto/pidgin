@@ -26,8 +26,8 @@
 #include "oauth.h"
 
 #include "oauth-parameter.h"
-#include "ciphers/hmac.h"
-#include "ciphers/sha1.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/sha1hash.h"
 
 char *gg_oauth_static_nonce;		/* dla unit testów */
 char *gg_oauth_static_timestamp;	/* dla unit testów */
@@ -49,10 +49,11 @@ static void gg_oauth_generate_nonce(char *buf, int len)
 
 static gchar *gg_hmac_sha1(const char *key, const char *message)
 {
-	PurpleCipher *cipher, *hash;
+	PurpleCipher *cipher;
+	PurpleHash *hash;
 	guchar digest[20];
 
-	hash = purple_sha1_cipher_new();
+	hash = purple_sha1_hash_new();
 	cipher = purple_hmac_cipher_new(hash);
 
 	purple_cipher_set_key(cipher, (guchar *)key, strlen(key));

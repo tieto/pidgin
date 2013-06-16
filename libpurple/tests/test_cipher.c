@@ -7,32 +7,32 @@
 
 #include "tests.h"
 
-#include "../ciphers/des3.h"
-#include "../ciphers/des.h"
-#include "../ciphers/hmac.h"
-#include "../ciphers/md4.h"
-#include "../ciphers/md5.h"
-#include "../ciphers/sha1.h"
-#include "../ciphers/sha256.h"
+#include "../ciphers/des3cipher.h"
+#include "../ciphers/descipher.h"
+#include "../ciphers/hmaccipher.h"
+#include "../ciphers/md4hash.h"
+#include "../ciphers/md5hash.h"
+#include "../ciphers/sha1hash.h"
+#include "../ciphers/sha256hash.h"
 
 /******************************************************************************
  * MD4 Tests
  *****************************************************************************/
 #define MD4_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_md4_cipher_new(); \
-	purple_cipher_append(cipher, (guchar *)(data), strlen((data))); \
+	hash = purple_md4_hash_new(); \
+	purple_hash_append(hash, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_digest_to_str(cipher, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_md4_empty_string) {
@@ -79,20 +79,20 @@ END_TEST
  * MD5 Tests
  *****************************************************************************/
 #define MD5_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_md5_cipher_new(); \
-	purple_cipher_append(cipher, (guchar *)(data), strlen((data))); \
+	hash = purple_md5_hash_new(); \
+	purple_hash_append(hash, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_digest_to_str(cipher, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_md5_empty_string) {
@@ -138,15 +138,15 @@ END_TEST
  * SHA-1 Tests
  *****************************************************************************/
 #define SHA1_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
 	gchar *input = data; \
 	\
-	cipher = purple_sha1_cipher_new(); \
+	hash = purple_sha1_hash_new(); \
 	\
 	if (input) { \
-		purple_cipher_append(cipher, (guchar *)input, strlen(input)); \
+		purple_hash_append(hash, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -154,16 +154,16 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			purple_cipher_append(cipher, buff, 1000); \
+			purple_hash_append(hash, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_digest_to_str(cipher, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_sha1_empty_string) {
@@ -196,15 +196,15 @@ END_TEST
  * SHA-256 Tests
  *****************************************************************************/
 #define SHA256_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[65]; \
 	gboolean ret = FALSE; \
 	gchar *input = data; \
 	\
-	cipher = purple_sha256_cipher_new(); \
+	hash = purple_sha256_hash_new(); \
 	\
 	if (input) { \
-		purple_cipher_append(cipher, (guchar *)input, strlen(input)); \
+		purple_hash_append(hash, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -212,16 +212,16 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			purple_cipher_append(cipher, buff, 1000); \
+			purple_hash_append(hash, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_digest_to_str(cipher, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_sha256_empty_string) {
@@ -464,11 +464,12 @@ END_TEST
  *****************************************************************************/
 
 #define HMAC_TEST(data, data_len, key, key_len, type, digest) { \
-	PurpleCipher *cipher = NULL, *hash = NULL; \
+	PurpleCipher *cipher = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
 	\
-	hash = purple_##type##_cipher_new(); \
+	hash = purple_##type##_hash_new(); \
 	cipher = purple_hmac_cipher_new(hash); \
 	purple_cipher_set_key(cipher, (guchar *)key, (key_len)); \
 	\
@@ -479,6 +480,7 @@ END_TEST
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
 	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 /* HMAC MD5 */

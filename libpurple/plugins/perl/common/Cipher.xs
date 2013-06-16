@@ -160,10 +160,6 @@ purple_cipher_set_salt(cipher, salt, len)
 	guchar *salt
 	size_t len
 
-size_t
-purple_cipher_get_salt_size(cipher)
-	Purple::Cipher cipher
-
 void
 purple_cipher_set_key(cipher, key, len)
 	Purple::Cipher cipher

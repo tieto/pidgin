@@ -30,8 +30,8 @@
 #include "ntlm.h"
 #include "debug.h"
 
-#include "ciphers/des.h"
-#include "ciphers/md4.h"
+#include "ciphers/descipher.h"
+#include "ciphers/md4hash.h"
 
 #include <string.h>
 
@@ -274,7 +274,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	unsigned char magic[] = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 	unsigned char nt_hpw[21];
 	char nt_pw[128];
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	char *tmp;
 	int idx;
 	gchar *ucs2le;
@@ -375,10 +375,10 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 		nt_pw[2 * idx + 1] = 0;
 	}
 
-	cipher = purple_md4_cipher_new();
-	purple_cipher_append(cipher, (guint8 *)nt_pw, 2 * lennt);
-	purple_cipher_digest(cipher, nt_hpw, sizeof(nt_hpw));
-	g_object_unref(cipher);
+	hash = purple_md4_hash_new();
+	purple_hash_append(hash, (guint8 *)nt_pw, 2 * lennt);
+	purple_hash_digest(hash, nt_hpw, sizeof(nt_hpw));
+	g_object_unref(hash);
 
 	memset(nt_hpw + 16, 0, 5);
 	calc_resp(nt_hpw, nonce, nt_resp);

@@ -33,7 +33,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "buddyicon.h"
-#include "ciphers/md5.h"
+#include "ciphers/md5hash.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -5336,15 +5336,15 @@ void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	if (img == NULL) {
 		aim_ssi_delicon(od);
 	} else {
-		PurpleCipher *cipher;
+		PurpleHash *hash;
 		guchar md5[16];
 		gconstpointer data = purple_imgstore_get_data(img);
 		size_t len = purple_imgstore_get_size(img);
 
-		cipher = purple_md5_cipher_new();
-		purple_cipher_append(cipher, data, len);
-		purple_cipher_digest(cipher, md5, sizeof(md5));
-		g_object_unref(cipher);
+		hash = purple_md5_hash_new();
+		purple_hash_append(hash, data, len);
+		purple_hash_digest(hash, md5, sizeof(md5));
+		g_object_unref(hash);
 
 		aim_ssi_seticon(od, md5, 16);
 	}

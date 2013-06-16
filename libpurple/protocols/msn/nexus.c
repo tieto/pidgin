@@ -30,9 +30,9 @@
 #include "nexus.h"
 #include "notification.h"
 
-#include "ciphers/des3.h"
-#include "ciphers/hmac.h"
-#include "ciphers/sha1.h"
+#include "ciphers/des3cipher.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/sha1hash.h"
 
 /**************************************************************************
  * Valid Ticket Tokens
@@ -102,11 +102,12 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	const guchar magic[] = "WS-SecureConversation";
 	const int magic_len = sizeof(magic) - 1;
 
-	PurpleCipher *hmac, *hash;
+	PurpleCipher *hmac;
+	PurpleHash *hash;
 	guchar hash1[20], hash2[20], hash3[20], hash4[20];
 	char *result;
 
-	hash = purple_sha1_cipher_new();
+	hash = purple_sha1_hash_new();
 	hmac = purple_hmac_cipher_new(hash);
 	purple_cipher_set_key(hmac, (guchar *)key, key_len);
 
@@ -172,7 +173,8 @@ msn_rps_encrypt(MsnNexus *nexus)
 	char usr_key_base[MSN_USER_KEY_SIZE], *usr_key;
 	const char magic1[] = "SESSION KEY HASH";
 	const char magic2[] = "SESSION KEY ENCRYPTION";
-	PurpleCipher *hmac, *hasher;
+	PurpleCipher *hmac;
+	PurpleHash *hasher;
 	size_t len;
 	guchar *hash;
 	char *key1, *key2, *key3;
@@ -203,7 +205,7 @@ msn_rps_encrypt(MsnNexus *nexus)
 	key3 = rps_create_key(key1, key1_len, magic2, sizeof(magic2) - 1);
 
 	len = strlen(nexus->nonce);
-	hasher = purple_sha1_cipher_new();
+	hasher = purple_sha1_hash_new();
 	hmac = purple_hmac_cipher_new(hasher);
 	purple_cipher_set_key(hmac, (guchar *)key2, 24);
 	purple_cipher_append(hmac, (guchar *)nexus->nonce, len);
@@ -513,7 +515,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	MsnSession *session = nexus->session;
 	MsnNexusUpdateData *ud;
 	MsnNexusUpdateCallback *update;
-	PurpleCipher *sha1;
+	PurpleHash *sha1;
 	PurpleCipher *hmac;
 
 	char *key;
@@ -565,7 +567,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	ud->nexus = nexus;
 	ud->id = id;
 
-	sha1 = purple_sha1_cipher_new();
+	sha1 = purple_sha1_hash_new();
 
 	domain = g_strdup_printf(MSN_SSO_RST_TEMPLATE,
 	                         id,
@@ -573,8 +575,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	                         ticket_domains[id][SSO_VALID_TICKET_POLICY] != NULL ?
 	                             ticket_domains[id][SSO_VALID_TICKET_POLICY] :
 	                             nexus->policy);
-	purple_cipher_append(sha1, (guchar *)domain, strlen(domain));
-	purple_cipher_digest(sha1, digest, 20);
+	purple_hash_append(sha1, (guchar *)domain, strlen(domain));
+	purple_hash_digest(sha1, digest, 20);
 	domain_b64 = purple_base64_encode(digest, 20);
 
 	now = time(NULL);
@@ -585,13 +587,13 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	timestamp = g_strdup_printf(MSN_SSO_TIMESTAMP_TEMPLATE,
 	                            now_str,
 	                            purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm));
-	purple_cipher_reset(sha1);
-	purple_cipher_append(sha1, (guchar *)timestamp, strlen(timestamp));
-	purple_cipher_digest(sha1, digest, 20);
+	purple_hash_reset(sha1);
+	purple_hash_append(sha1, (guchar *)timestamp, strlen(timestamp));
+	purple_hash_digest(sha1, digest, 20);
 	timestamp_b64 = purple_base64_encode(digest, 20);
 	g_free(now_str);
 
-	purple_cipher_reset(sha1);
+	purple_hash_reset(sha1);
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
 	                             id,

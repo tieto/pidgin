@@ -25,12 +25,12 @@
 #include "auth.h"
 #include "auth_scram.h"
 
-#include "ciphers/hmac.h"
-#include "ciphers/sha1.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/sha1hash.h"
 #include "debug.h"
 
 static const JabberScramHash hashes[] = {
-	{ "-SHA-1", purple_sha1_cipher_new, 20 },
+	{ "-SHA-1", purple_sha1_hash_new, 20 },
 };
 
 static const JabberScramHash *mech_to_hash(const char *mech)
@@ -77,7 +77,8 @@ static const struct {
 guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations)
 {
-	PurpleCipher *hasher, *cipher;
+	PurpleHash *hasher;
+	PurpleCipher *cipher;
 	guchar *result;
 	guint i;
 	guchar *prev, *tmp;
@@ -138,7 +139,8 @@ guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
 static void
 hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *str)
 {
-	PurpleCipher *hasher, *cipher;
+	PurpleHash *hasher;
+	PurpleCipher *cipher;
 
 	hasher = hash->new_cipher();
 	cipher = purple_hmac_cipher_new(hasher);
@@ -152,11 +154,11 @@ hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *s
 static void
 hash(const JabberScramHash *hash, guchar *out, const guchar *data)
 {
-	PurpleCipher *hasher;
+	PurpleHash *hasher;
 
 	hasher = hash->new_cipher();
-	purple_cipher_append(hasher, data, hash->size);
-	purple_cipher_digest(hasher, out, hash->size);
+	purple_hash_append(hasher, data, hash->size);
+	purple_hash_digest(hasher, out, hash->size);
 	g_object_unref(G_OBJECT(hasher));
 }
 

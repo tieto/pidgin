@@ -37,11 +37,11 @@
 #include "version.h"
 #include "util.h"
 
-#include "ciphers/aes.h"
-#include "ciphers/md5.h"
-#include "ciphers/pbkdf2.h"
-#include "ciphers/sha1.h"
-#include "ciphers/sha256.h"
+#include "ciphers/aescipher.h"
+#include "ciphers/md5hash.h"
+#include "ciphers/pbkdf2cipher.h"
+#include "ciphers/sha1hash.h"
+#include "ciphers/sha256hash.h"
 
 struct test {
 	const gchar *question;
@@ -68,13 +68,13 @@ struct test md5_tests[8] = {
 
 static void
 cipher_test_md5(void) {
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	gchar digest[33];
 	gboolean ret;
 	gint i = 0;
 
-	cipher = purple_md5_cipher_new();
-	if(!cipher) {
+	hash = purple_md5_hash_new();
+	if(!hash) {
 		purple_debug_info("cipher-test",
 						"could not find md5 cipher, not testing\n");
 		return;
@@ -86,10 +86,10 @@ cipher_test_md5(void) {
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
 		purple_debug_info("cipher-test", "Testing '%s'\n", md5_tests[i].question);
 
-		purple_cipher_append(cipher, (guchar *)md5_tests[i].question,
+		purple_hash_append(hash, (guchar *)md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
-		ret = purple_cipher_digest_to_str(cipher, digest, sizeof(digest));
+		ret = purple_hash_digest_to_str(hash, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");
@@ -99,11 +99,11 @@ cipher_test_md5(void) {
 							md5_tests[i].answer);
 		}
 
-		purple_cipher_reset(cipher);
+		purple_hash_reset(hash);
 		i++;
 	}
 
-	g_object_unref(cipher);
+	g_object_unref(hash);
 
 	purple_debug_info("cipher-test", "md5 tests completed\n\n");
 }
@@ -121,13 +121,13 @@ struct test sha1_tests[5] = {
 
 static void
 cipher_test_sha1(void) {
-	PurpleCipher *cipher;
+	PurpleHash *hash;
 	gchar digest[41];
 	gint i = 0;
 	gboolean ret;
 
-	cipher = purple_sha1_cipher_new();
-	if(!cipher) {
+	hash = purple_sha1_hash_new();
+	if(!hash) {
 		purple_debug_info("cipher-test",
 						"could not find sha1 cipher, not testing\n");
 		return;
@@ -142,7 +142,7 @@ cipher_test_sha1(void) {
 						sha1_tests[i].question : "'a'x1000, 1000 times");
 
 		if(sha1_tests[i].question) {
-			purple_cipher_append(cipher, (guchar *)sha1_tests[i].question,
+			purple_hash_append(hash, (guchar *)sha1_tests[i].question,
 									   strlen(sha1_tests[i].question));
 		} else {
 			gint j;
@@ -151,10 +151,10 @@ cipher_test_sha1(void) {
 			memset(buff, 'a', 1000);
 
 			for(j = 0; j < 1000; j++)
-				purple_cipher_append(cipher, buff, 1000);
+				purple_hash_append(hash, buff, 1000);
 		}
 
-		ret = purple_cipher_digest_to_str(cipher, digest, sizeof(digest));
+		ret = purple_hash_digest_to_str(hash, digest, sizeof(digest));
 
 		if(!ret) {
 			purple_debug_info("cipher-test", "failed\n");
@@ -164,11 +164,11 @@ cipher_test_sha1(void) {
 							sha1_tests[i].answer);
 		}
 
-		purple_cipher_reset(cipher);
+		purple_hash_reset(hash);
 		i++;
 	}
 
-	g_object_unref(cipher);
+	g_object_unref(hash);
 
 	purple_debug_info("cipher-test", "sha1 tests completed\n\n");
 }
@@ -234,14 +234,6 @@ cipher_test_digest(void)
  * PBKDF2 stuff
  **************************************************************************/
 
-#ifdef HAVE_NSS
-#  include <nss.h>
-#  include <secmod.h>
-#  include <pk11func.h>
-#  include <prerror.h>
-#  include <secerr.h>
-#endif
-
 typedef struct {
 	const gchar *hash;
 	const guint iter_count;
@@ -261,108 +253,11 @@ pbkdf2_test pbkdf2_tests[] = {
 	{ NULL, 0, NULL, NULL, 0, NULL}
 };
 
-#ifdef HAVE_NSS
-
-static gchar*
-cipher_pbkdf2_nss_sha1(const gchar *passphrase, const gchar *salt,
-	guint iter_count, guint out_len)
-{
-	PK11SlotInfo *slot;
-	SECAlgorithmID *algorithm = NULL;
-	PK11SymKey *symkey = NULL;
-	const SECItem *symkey_data = NULL;
-	SECItem salt_item, passphrase_item;
-	guchar *passphrase_buff, *salt_buff;
-	gchar *ret;
-
-	g_return_val_if_fail(passphrase != NULL, NULL);
-	g_return_val_if_fail(iter_count > 0, NULL);
-	g_return_val_if_fail(out_len > 0, NULL);
-
-	NSS_NoDB_Init(NULL);
-
-	slot = PK11_GetBestSlot(PK11_AlgtagToMechanism(SEC_OID_PKCS5_PBKDF2),
-		NULL);
-	if (slot == NULL) {
-		purple_debug_error("cipher-test", "NSS: couldn't get slot: "
-			"%d\n", PR_GetError());
-		return NULL;
-	}
-
-	salt_buff = (guchar*)g_strdup(salt ? salt : "");
-	salt_item.type = siBuffer;
-	salt_item.data = salt_buff;
-	salt_item.len = salt ? strlen(salt) : 0;
-
-	algorithm = PK11_CreatePBEV2AlgorithmID(SEC_OID_PKCS5_PBKDF2,
-		SEC_OID_AES_256_CBC, SEC_OID_HMAC_SHA1, out_len, iter_count,
-		&salt_item);
-	if (algorithm == NULL) {
-		purple_debug_error("cipher-test", "NSS: couldn't create "
-			"algorithm ID: %d\n", PR_GetError());
-		PK11_FreeSlot(slot);
-		g_free(salt_buff);
-		return NULL;
-	}
-
-	passphrase_buff = (guchar*)g_strdup(passphrase);
-	passphrase_item.type = siBuffer;
-	passphrase_item.data = passphrase_buff;
-	passphrase_item.len = strlen(passphrase);
-
-	symkey = PK11_PBEKeyGen(slot, algorithm, &passphrase_item, PR_FALSE,
-		NULL);
-	if (symkey == NULL) {
-		purple_debug_error("cipher-test", "NSS: Couldn't generate key: "
-			"%d\n", PR_GetError());
-		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
-		PK11_FreeSlot(slot);
-		g_free(passphrase_buff);
-		g_free(salt_buff);
-		return NULL;
-	}
-
-	if (PK11_ExtractKeyValue(symkey) == SECSuccess)
-		symkey_data = PK11_GetKeyData(symkey);
-
-	if (symkey_data == NULL || symkey_data->data == NULL) {
-		purple_debug_error("cipher-test", "NSS: Couldn't extract key "
-			"value: %d\n", PR_GetError());
-		PK11_FreeSymKey(symkey);
-		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
-		PK11_FreeSlot(slot);
-		g_free(passphrase_buff);
-		g_free(salt_buff);
-		return NULL;
-	}
-
-	if (symkey_data->len != out_len) {
-		purple_debug_error("cipher-test", "NSS: Invalid key length: %d "
-			"(should be %d)\n", symkey_data->len, out_len);
-		PK11_FreeSymKey(symkey);
-		SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
-		PK11_FreeSlot(slot);
-		g_free(passphrase_buff);
-		g_free(salt_buff);
-		return NULL;
-	}
-
-	ret = purple_base16_encode(symkey_data->data, symkey_data->len);
-
-	PK11_FreeSymKey(symkey);
-	SECOID_DestroyAlgorithmID(algorithm, PR_TRUE);
-	PK11_FreeSlot(slot);
-	g_free(passphrase_buff);
-	g_free(salt_buff);
-	return ret;
-}
-
-#endif /* HAVE_NSS */
-
 static void
 cipher_test_pbkdf2(void)
 {
-	PurpleCipher *cipher, *hash;
+	PurpleCipher *cipher;
+	PurpleHash *hash;
 	int i = 0;
 	gboolean fail = FALSE;
 
@@ -383,9 +278,9 @@ cipher_test_pbkdf2(void)
 			test->iter_count);
 
 		if (!strcmp(test->hash, "sha1"))
-			hash = purple_sha1_cipher_new();
+			hash = purple_sha1_hash_new();
 		else if (!strcmp(test->hash, "sha256"))
-			hash = purple_sha256_cipher_new();
+			hash = purple_sha256_hash_new();
 		else
 			hash = NULL;
 
@@ -412,14 +307,7 @@ cipher_test_pbkdf2(void)
 		if (test->out_len != 16 && test->out_len != 32)
 			skip_nss = TRUE;
 
-#ifdef HAVE_NSS
-		if (!skip_nss) {
-			digest_nss = cipher_pbkdf2_nss_sha1(test->passphrase,
-				test->salt, test->iter_count, test->out_len);
-		}
-#else
 		skip_nss = TRUE;
-#endif
 
 		if (!ret) {
 			purple_debug_info("cipher-test", "\tnss test failed\n");
