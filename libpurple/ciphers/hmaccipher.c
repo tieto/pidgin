@@ -94,14 +94,6 @@ purple_hmac_cipher_reset_state(PurpleCipher *cipher) {
 }
 
 static void
-purple_hmac_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len) {
-	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
-
-	if(PURPLE_IS_HASH(priv->hash))
-		purple_hash_set_iv(priv->hash, iv, len);
-}
-
-static void
 purple_hmac_cipher_append(PurpleCipher *cipher, const guchar *d, size_t l) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
@@ -287,7 +279,6 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 
 	cipher_class->reset = purple_hmac_cipher_reset;
 	cipher_class->reset_state = purple_hmac_cipher_reset_state;
-	cipher_class->set_iv = purple_hmac_cipher_set_iv;
 	cipher_class->append = purple_hmac_cipher_append;
 	cipher_class->digest = purple_hmac_cipher_digest;
 	cipher_class->get_digest_size = purple_hmac_cipher_get_digest_size;
