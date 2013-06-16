@@ -73,9 +73,6 @@ struct _PurpleHashClass {
 	/** The reset state function */
 	void (*reset_state)(PurpleHash *hash);
 
-	/** The set initialization vector function */
-	//void (*set_iv)(PurpleHash *hash, guchar *iv, size_t len);
-
 	/** The append data function */
 	void (*append)(PurpleHash *hash, const guchar *data, size_t len);
 
@@ -105,7 +102,6 @@ const gchar *purple_hash_get_name(PurpleHash *hash);
 
 void purple_hash_reset(PurpleHash *hash);
 void purple_hash_reset_state(PurpleHash *hash);
-void purple_hash_set_iv(PurpleHash *hash, guchar *iv, size_t len);
 
 void purple_hash_append(PurpleHash *hash, const guchar *data, size_t len);
 gboolean purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len);
