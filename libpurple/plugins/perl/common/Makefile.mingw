@@ -37,6 +37,7 @@ LIB_PATHS += \
 ##  SOURCES, OBJECTS
 ##
 XS_FILES =		Account.xs \
+				Accounts.xs \
 				AccountOpts.xs \
 				BuddyIcon.xs \
 				BuddyList.xs \
@@ -59,7 +60,6 @@ XS_FILES =		Account.xs \
 				PluginPref.xs \
 				Pounce.xs \
 				Prefs.xs \
-				Privacy.xs \
 				Proxy.xs \
 				Prpl.xs \
 				Request.xs \

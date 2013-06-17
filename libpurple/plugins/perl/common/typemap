@@ -41,6 +41,7 @@ const void *				T_PTR
 Purple::Account				T_PurpleObj
 Purple::Account::Option			T_PurpleObj
 Purple::Account::UserSplit		T_PurpleObj
+Purple::Account::PrivacyType			T_IV
 
 Purple::Buddy::Icon			T_PurpleObj
 Purple::Buddy::Icon::Spec			T_PurpleObj
@@ -109,7 +110,6 @@ Purple::PluginPref::Frame			T_PurpleObj
 Purple::Pounce				T_PurpleObj
 Purple::PounceEvent			T_IV
 Purple::Presence				T_PurpleObj
-Purple::PrivacyType			T_IV
 Purple::ProtocolOptions			T_IV
 Purple::ProxyInfo				T_PurpleObj
 Purple::ProxyType				T_IV

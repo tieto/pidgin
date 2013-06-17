@@ -20,6 +20,7 @@ typedef struct group *Purple__Group;
 #include "../perl-common.h"
 
 #include "account.h"
+#include "accounts.h"
 #include "accountopt.h"
 #include "blist.h"
 #include "buddyicon.h"
@@ -49,7 +50,6 @@ typedef struct group *Purple__Group;
 #include "pluginpref.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -72,6 +72,7 @@ typedef struct group *Purple__Group;
 typedef PurpleAccount *			Purple__Account;
 typedef PurpleAccountOption *		Purple__Account__Option;
 typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
+typedef PurpleAccountPrivacyType		Purple__Account__PrivacyType;
 
 /* blist.h */
 typedef PurpleBlistNode *			Purple__BuddyList__Node;
@@ -215,9 +216,6 @@ typedef PurplePounceEvent			Purple__PounceEvent;
 
 /* prefs.h */
 typedef PurplePrefType			Purple__PrefType;
-
-/* privacy.h */
-typedef PurplePrivacyType			Purple__PrivacyType;
 
 /* proxy.h */
 typedef PurpleProxyInfo *			Purple__ProxyInfo;
