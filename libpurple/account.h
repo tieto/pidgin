@@ -826,14 +826,13 @@ gboolean purple_account_privacy_deny_remove(PurpleAccount *account,
  *									allow-list, and the user is also added to
  *									the allow-list.
  *
+ * The changes are reflected on the server. The previous allow/deny list is not
+ * restored if the privacy setting is changed.
+ *
  * @param account	The account.
  * @param who		The name of the user.
- * @param local		Whether the change is local-only.
- * @param restore	Should the previous allow/deny list be restored if the
- *					privacy setting is changed.
  */
-void purple_account_privacy_allow(PurpleAccount *account, const char *who,
-									gboolean local, gboolean restore);
+void purple_account_privacy_allow(PurpleAccount *account, const char *who);
 
 /**
  * Block messages from a user. If current privacy setting for the account is:
@@ -851,14 +850,17 @@ void purple_account_privacy_allow(PurpleAccount *account, const char *who,
  *									the buddies are added to the allow-list, and
  *									this user is removed from the list.
  *
+ * The changes are reflected on the server. The previous allow/deny list is not
+ * restored if the privacy setting is changed.
+ *
  * @param account	The account.
  * @param who		The name of the user.
- * @param local		Whether the change is local-only.
- * @param restore	Should the previous allow/deny list be restored if the
- *					privacy setting is changed.
  */
-void purple_account_privacy_deny(PurpleAccount *account, const char *who,
-									gboolean local, gboolean restore);
+void purple_account_privacy_deny(PurpleAccount *account, const char *who);
+
+gboolean purple_account_privacy_permitted();
+gboolean purple_account_privacy_denied();
+
 
 /**
  * Check the privacy-setting for a user.

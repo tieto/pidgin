@@ -2686,15 +2686,8 @@ add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 	}
 }
 
-/*
- * TODO: All callers of this function pass in FALSE for local and
- *       restore and I don't understand when you would ever want to
- *       use TRUE for either of them.  I think both parameters could
- *       safely be removed in the next major version bump.
- */
 void
-purple_account_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
-						gboolean restore)
+purple_account_privacy_allow(PurpleAccount *account, const char *who)
 {
 	GSList *list;
 	PurpleAccountPrivacyType type = purple_account_get_privacy_type(account);
@@ -2703,29 +2696,27 @@ purple_account_privacy_allow(PurpleAccount *account, const char *who, gboolean l
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL:
 			return;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:
-			purple_account_privacy_permit_add(account, who, local);
+			purple_account_privacy_permit_add(account, who, FALSE);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_DENY_USERS:
-			purple_account_privacy_deny_remove(account, who, local);
+			purple_account_privacy_deny_remove(account, who, FALSE);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_DENY_ALL:
-			if (!restore) {
-				/* Empty the allow-list. */
-				const char *norm = purple_normalize(account, who);
-				for (list = account->permit; list != NULL;) {
-					char *person = list->data;
-					list = list->next;
-					if (!purple_strequal(norm, person))
-						purple_account_privacy_permit_remove(account, person, local);
-				}
+			/* Empty the allow-list. */
+			const char *norm = purple_normalize(account, who);
+			for (list = account->permit; list != NULL;) {
+				char *person = list->data;
+				list = list->next;
+				if (!purple_strequal(norm, person))
+					purple_account_privacy_permit_remove(account, person, FALSE);
 			}
-			purple_account_privacy_permit_add(account, who, local);
+			purple_account_privacy_permit_add(account, who, FALSE);
 			purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
 			if (!purple_find_buddy(account, who)) {
-				add_all_buddies_to_permit_list(account, local);
-				purple_account_privacy_permit_add(account, who, local);
+				add_all_buddies_to_permit_list(account, FALSE);
+				purple_account_privacy_permit_add(account, who, FALSE);
 				purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS);
 			}
 			break;
@@ -2738,46 +2729,37 @@ purple_account_privacy_allow(PurpleAccount *account, const char *who, gboolean l
 		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
-/*
- * TODO: All callers of this function pass in FALSE for local and
- *       restore and I don't understand when you would ever want to
- *       use TRUE for either of them.  I think both parameters could
- *       safely be removed in the next major version bump.
- */
 void
-purple_account_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
-					gboolean restore)
+purple_account_privacy_deny(PurpleAccount *account, const char *who)
 {
 	GSList *list;
 	PurpleAccountPrivacyType type = purple_account_get_privacy_type(account);
 
 	switch (type) {
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL:
-			if (!restore) {
-				/* Empty the deny-list. */
-				const char *norm = purple_normalize(account, who);
-				for (list = account->deny; list != NULL; ) {
-					char *person = list->data;
-					list = list->next;
-					if (!purple_strequal(norm, person))
-						purple_account_privacy_deny_remove(account, person, local);
-				}
+			/* Empty the deny-list. */
+			const char *norm = purple_normalize(account, who);
+			for (list = account->deny; list != NULL; ) {
+				char *person = list->data;
+				list = list->next;
+				if (!purple_strequal(norm, person))
+					purple_account_privacy_deny_remove(account, person, FALSE);
 			}
-			purple_account_privacy_deny_add(account, who, local);
+			purple_account_privacy_deny_add(account, who, FALSE);
 			purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_DENY_USERS);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:
-			purple_account_privacy_permit_remove(account, who, local);
+			purple_account_privacy_permit_remove(account, who, FALSE);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_DENY_USERS:
-			purple_account_privacy_deny_add(account, who, local);
+			purple_account_privacy_deny_add(account, who, FALSE);
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_DENY_ALL:
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
 			if (purple_find_buddy(account, who)) {
-				add_all_buddies_to_permit_list(account, local);
-				purple_account_privacy_permit_remove(account, who, local);
+				add_all_buddies_to_permit_list(account, FALSE);
+				purple_account_privacy_permit_remove(account, who, FALSE);
 				purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS);
 			}
 			break;
