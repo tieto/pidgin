@@ -33,7 +33,6 @@
 #include "debug.h"
 #include "network.h"
 #include "notify.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -575,7 +574,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				} else {
 					/* This buddy is on the ignore list (and therefore in no group) */
 					purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n", purple_account_get_username(account), norm_bud);
-					purple_privacy_deny_add(account, norm_bud, 1);
+					purple_account_privacy_deny_add(account, norm_bud, 1);
 				}
 
 				g_free(norm_bud);
@@ -738,7 +737,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		for (bud = buddies; bud && *bud; bud++) {
 			/* The server is already ignoring the user */
 			got_serv_list = TRUE;
-			purple_privacy_deny_add(account, *bud, 1);
+			purple_account_privacy_deny_add(account, *bud, 1);
 		}
 		g_strfreev(buddies);
 
@@ -747,12 +746,12 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (got_serv_list &&
-		((purple_account_get_privacy_type(account) != PURPLE_PRIVACY_ALLOW_BUDDYLIST) &&
-		(purple_account_get_privacy_type(account) != PURPLE_PRIVACY_DENY_ALL) &&
-		(purple_account_get_privacy_type(account) != PURPLE_PRIVACY_ALLOW_USERS)))
+		((purple_account_get_privacy_type(account) != PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST) &&
+		(purple_account_get_privacy_type(account) != PURPLE_ACCOUNT_PRIVACY_DENY_ALL) &&
+		(purple_account_get_privacy_type(account) != PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS)))
 	{
-		purple_account_set_privacy_type(account, PURPLE_PRIVACY_DENY_USERS);
-		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_PRIVACY_DENY_USERS.\n",
+		purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_DENY_USERS);
+		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_ACCOUNT_PRIVACY_DENY_USERS.\n",
 				purple_account_get_username(account));
 	}
 
@@ -820,7 +819,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	}
 
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
-		&& (purple_privacy_check(account, from)))
+		&& (purple_account_privacy_check(account, from)))
 	{
 		char *fed_from = from;
 		switch (fed) {
@@ -1044,7 +1043,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 					{
 						PurpleWhiteboard *wb;
 
-						if (!purple_privacy_check(account, im->from)) {
+						if (!purple_account_privacy_check(account, im->from)) {
 							purple_debug_info("yahoo", "Doodle request from %s dropped.\n",
 												im->from);
 							g_free(im->fed_from);
@@ -1090,7 +1089,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			continue;
 		}
 
-		if (!purple_privacy_check(account, im->fed_from)) {
+		if (!purple_account_privacy_check(account, im->fed_from)) {
 			purple_debug_info("yahoo", "Message from %s dropped.\n", im->fed_from);
 			return;
 		}
@@ -1409,7 +1408,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 		if (add_req->id && add_req->who) {
 			char *alias = NULL, *dec_msg = NULL;
 
-			if (!purple_privacy_check(account, add_req->who))
+			if (!purple_account_privacy_check(account, add_req->who))
 			{
 				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 						  add_req->who);
@@ -1482,7 +1481,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (add_req->id && add_req->who) {
 		char *dec_msg = NULL;
 
-		if (!purple_privacy_check(account, add_req->who)) {
+		if (!purple_account_privacy_check(account, add_req->who)) {
 			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 					  add_req->who);
 			yahoo_buddy_add_deny_cb(NULL, add_req);
@@ -2110,7 +2109,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 
 static void keep_buddy(PurpleBuddy *b)
 {
-	purple_privacy_deny_remove(purple_buddy_get_account(b),
+	purple_account_privacy_deny_remove(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), 1);
 }
 
@@ -2944,7 +2943,7 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
-	if (!purple_privacy_check(account, who)) {
+	if (!purple_account_privacy_check(account, who)) {
 		purple_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
 				purple_account_get_username(account), who);
 		return;
@@ -4937,7 +4936,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, c
 		return;
 
 	fed_bname = bname = purple_buddy_get_name(buddy);
-	if (!purple_privacy_check(purple_connection_get_account(gc), bname))
+	if (!purple_account_privacy_check(purple_connection_get_account(gc), bname))
 		return;
 
 	fed = yahoo_get_federation_from_name(bname);
@@ -5097,16 +5096,16 @@ void yahoo_set_permit_deny(PurpleConnection *gc)
 
 	switch (purple_account_get_privacy_type(account))
 	{
-		case PURPLE_PRIVACY_ALLOW_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
+		case PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL:
+			for (deny = purple_account_privacy_get_denied(account); deny; deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
 
-		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-		case PURPLE_PRIVACY_ALLOW_USERS:
-		case PURPLE_PRIVACY_DENY_USERS:
-		case PURPLE_PRIVACY_DENY_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
+		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
+		case PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:
+		case PURPLE_ACCOUNT_PRIVACY_DENY_USERS:
+		case PURPLE_ACCOUNT_PRIVACY_DENY_ALL:
+			for (deny = purple_account_privacy_get_denied(account); deny; deny = deny->next)
 				yahoo_add_deny(gc, deny->data);
 			break;
 	}

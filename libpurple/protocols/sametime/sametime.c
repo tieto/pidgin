@@ -41,7 +41,6 @@
 #include "mime.h"
 #include "notify.h"
 #include "plugin.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
@@ -1634,7 +1633,7 @@ static void mw_session_setPrivacyInfo(struct mwSession *session) {
   PurpleConnection *gc;
   PurpleAccount *acct;
   struct mwPrivacyInfo *privacy;
-  GSList *l, **ll;
+  GSList *list;
   guint count;
 
   DEBUG_INFO("privacy information set from server\n");
@@ -1653,16 +1652,25 @@ static void mw_session_setPrivacyInfo(struct mwSession *session) {
   privacy = mwSession_getPrivacyInfo(session);
   count = privacy->count;
 
-  ll = (privacy->deny)? &acct->deny: &acct->permit;
-  for(l = *ll; l; l = l->next) g_free(l->data);
-  g_slist_free(*ll);
-  l = *ll = NULL;
-
-  while(count--) {
-    struct mwUserItem *u = privacy->users + count;
-    l = g_slist_prepend(l, g_strdup(u->id));
+  if (privacy->deny) {
+    while ((list = purple_account_privacy_get_denied(acct))) {
+      g_free(list->data);
+      purple_account_privacy_deny_remove(acct, list->data, TRUE);
+    }
+    while (count--) {
+      struct mwUserItem *u = privacy->users + count;
+      purple_account_privacy_deny_add(acct, u->id, TRUE);
+    }
+  } else {
+    while ((list = purple_account_privacy_get_permitted(acct))) {
+      g_free(list->data);
+      purple_account_privacy_permit_remove(acct, list->data, TRUE);
+    }
+    while (count--) {
+      struct mwUserItem *u = privacy->users + count;
+      purple_account_privacy_permit_add(acct, u->id, TRUE);
+    }
   }
-  *ll = l;
 }
 
 
@@ -4604,25 +4612,25 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
   g_return_if_fail(session != NULL);
 
   switch(purple_account_get_privacy_type(acct)) {
-  case PURPLE_PRIVACY_DENY_USERS:
-    DEBUG_INFO("PURPLE_PRIVACY_DENY_USERS\n");
-    privacy_fill(&privacy, acct->deny);
+  case PURPLE_ACCOUNT_PRIVACY_DENY_USERS:
+    DEBUG_INFO("PURPLE_ACCOUNT_PRIVACY_DENY_USERS\n");
+    privacy_fill(&privacy, purple_account_privacy_get_denied(acct));
     privacy.deny = TRUE;
     break;
 
-  case PURPLE_PRIVACY_ALLOW_ALL:
-    DEBUG_INFO("PURPLE_PRIVACY_ALLOW_ALL\n");
+  case PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL:
+    DEBUG_INFO("PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL\n");
     privacy.deny = TRUE;
     break;
 
-  case PURPLE_PRIVACY_ALLOW_USERS:
-    DEBUG_INFO("PURPLE_PRIVACY_ALLOW_USERS\n");
-    privacy_fill(&privacy, acct->permit);
+  case PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:
+    DEBUG_INFO("PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS\n");
+    privacy_fill(&privacy, purple_account_privacy_get_permitted(acct));
     privacy.deny = FALSE;
     break;
 
-  case PURPLE_PRIVACY_DENY_ALL:
-    DEBUG_INFO("PURPLE_PRIVACY_DENY_ALL\n");
+  case PURPLE_ACCOUNT_PRIVACY_DENY_ALL:
+    DEBUG_INFO("PURPLE_ACCOUNT_PRIVACY_DENY_ALL\n");
     privacy.deny = FALSE;
     break;
 

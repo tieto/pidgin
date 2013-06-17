@@ -1303,7 +1303,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	acc = purple_buddy_get_account(pb);
 
-	for(l = acc->deny; l != NULL; l = l->next) {
+	for(l = purple_account_privacy_get_denied(acc); l != NULL; l = l->next) {
 		const gchar *name = purple_buddy_get_name(pb);
 		const gchar *username = bonjour_get_jid(acc);
 

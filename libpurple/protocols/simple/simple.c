@@ -32,7 +32,6 @@
 #include "dnsquery.h"
 #include "debug.h"
 #include "notify.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "plugin.h"
 #include "util.h"
@@ -1455,7 +1454,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	if(!watcher) { /* new subscription */
 		const gchar *acceptheader = sipmsg_find_header(msg, "Accept");
 		gboolean needsxpidf = FALSE;
-		if(!purple_privacy_check(sip->account, from)) {
+		if(!purple_account_privacy_check(sip->account, from)) {
 			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
 			goto privend;
 		}

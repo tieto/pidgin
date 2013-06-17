@@ -33,7 +33,6 @@
 #include "cmds.h"
 #include "debug.h"
 #include "notify.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"

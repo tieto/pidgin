@@ -28,7 +28,7 @@
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	GSList *list = account->deny;
+	GSList *list = purple_account_privacy_get_denied(account);
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	char *jid_norm = (char *)jabber_normalize(account, jid);
 
@@ -64,8 +64,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	jid_norm = g_strdup(jabber_normalize(account, jid));
 
-	on_block_list = NULL != g_slist_find_custom(account->deny, jid_norm,
-	                                            (GCompareFunc)strcmp);
+	on_block_list = NULL != g_slist_find_custom(purple_account_privacy_get_denied(account),
+	                                            jid_norm, (GCompareFunc)strcmp);
 
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		/* Hidden; don't show this buddy. */
@@ -86,10 +86,10 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	if (!on_block_list && (grt && (*grt == 'B' || *grt == 'b'))) {
 		purple_debug_info("jabber", "Blocking %s\n", jid_norm);
-		purple_privacy_deny_add(account, jid_norm, TRUE);
+		purple_account_privacy_deny_add(account, jid_norm, TRUE);
 	} else if (on_block_list && (!grt || (*grt != 'B' && *grt != 'b' ))){
 		purple_debug_info("jabber", "Unblocking %s\n", jid_norm);
-		purple_privacy_deny_remove(account, jid_norm, TRUE);
+		purple_account_privacy_deny_remove(account, jid_norm, TRUE);
 	}
 
 	g_free(jid_norm);

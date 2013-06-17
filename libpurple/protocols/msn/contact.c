@@ -1664,10 +1664,10 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		msn_add_contact_to_list(session, new_state, state->who, MSN_LIST_RL);
 		return;
 	} else if (state->list_id == MSN_LIST_AL) {
-		purple_privacy_permit_remove(session->account, state->who, TRUE);
+		purple_account_privacy_permit_remove(session->account, state->who, TRUE);
 		msn_add_contact_to_list(session, NULL, state->who, MSN_LIST_BL);
 	} else if (state->list_id == MSN_LIST_BL) {
-		purple_privacy_deny_remove(session->account, state->who, TRUE);
+		purple_account_privacy_deny_remove(session->account, state->who, TRUE);
 		msn_add_contact_to_list(session, NULL, state->who, MSN_LIST_AL);
 	}
 
@@ -1764,9 +1764,9 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		if (state->action & MSN_DENIED_BUDDY) {
 			msn_add_contact_to_list(state->session, NULL, state->who, MSN_LIST_BL);
 		} else if (state->list_id == MSN_LIST_AL) {
-			purple_privacy_permit_add(state->session->account, state->who, TRUE);
+			purple_account_privacy_permit_add(state->session->account, state->who, TRUE);
 		} else if (state->list_id == MSN_LIST_BL) {
-			purple_privacy_deny_add(state->session->account, state->who, TRUE);
+			purple_account_privacy_deny_add(state->session->account, state->who, TRUE);
 		}
 	}
 }

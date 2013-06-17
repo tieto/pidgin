@@ -35,7 +35,6 @@
 #include "server.h"
 #include "util.h"
 #include "cmds.h"
-#include "privacy.h"
 #include "version.h"
 
 #include "internal.h"

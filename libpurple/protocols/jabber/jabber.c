@@ -35,7 +35,6 @@
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
-#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
@@ -1799,6 +1798,7 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 	xmlnode *item;
 	PurpleAccount *account;
 	gboolean is_block;
+	GSList *deny;
 
 	if (!jabber_is_own_account(js, from)) {
 		xmlnode *error, *x;
@@ -1824,8 +1824,8 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 		/* Unblock everyone */
 		purple_debug_info("jabber", "Received unblock push. Unblocking everyone.\n");
 
-		while (account->deny != NULL) {
-			purple_privacy_deny_remove(account, account->deny->data, TRUE);
+		while ((deny = purple_account_privacy_get_denied(account)) != NULL) {
+			purple_account_privacy_deny_remove(account, deny->data, TRUE);
 		}
 	} else if (item == NULL) {
 		/* An empty <block/> is bogus */
@@ -1847,9 +1847,9 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 				continue;
 
 			if (is_block)
-				purple_privacy_deny_add(account, jid, TRUE);
+				purple_account_privacy_deny_add(account, jid, TRUE);
 			else
-				purple_privacy_deny_remove(account, jid, TRUE);
+				purple_account_privacy_deny_remove(account, jid, TRUE);
 		}
 	}
 
@@ -1864,6 +1864,7 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 {
 	xmlnode *blocklist, *item;
 	PurpleAccount *account;
+	GSList *deny;
 
 	blocklist = xmlnode_get_child_with_namespace(packet,
 			"blocklist", NS_SIMPLE_BLOCKING);
@@ -1873,19 +1874,19 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 		return;
 
 	/* This is the only privacy method supported by XEP-0191 */
-	purple_account_set_privacy_type(account, PURPLE_PRIVACY_DENY_USERS);
+	purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_DENY_USERS);
 
 	/*
 	 * TODO: When account->deny is something more than a hash table, this can
 	 * be re-written to find the set intersection and difference.
 	 */
-	while (account->deny)
-		purple_privacy_deny_remove(account, account->deny->data, TRUE);
+	while ((deny = purple_account_privacy_get_denied(account)))
+		purple_account_privacy_deny_remove(account, deny->data, TRUE);
 
 	item = xmlnode_get_child(blocklist, "item");
 	while (item != NULL) {
 		const char *jid = xmlnode_get_attrib(item, "jid");
-		purple_privacy_deny_add(account, jid, TRUE);
+		purple_account_privacy_deny_add(account, jid, TRUE);
 		item = xmlnode_get_next_twin(item);
 	}
 }

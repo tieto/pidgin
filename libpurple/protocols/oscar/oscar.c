@@ -41,7 +41,6 @@
 #include "imgstore.h"
 #include "network.h"
 #include "notify.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -3118,10 +3117,12 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	}
 	else {
 		/* Don't send if this turkey is in our deny list */
+		PurpleAccount *account = purple_connection_get_account(gc);
 		GSList *list;
-		for (list=purple_connection_get_account(gc)->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
+
+		for (list=purple_account_privacy_get_denied(account); (list && oscar_util_name_compare(name, list->data)); list=list->next);
 		if (!list) {
-			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), name));
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 			if (bi && bi->typingnot) {
 				if (state == PURPLE_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);
@@ -3599,12 +3600,12 @@ oscar_set_icq_permdeny(PurpleAccount *account)
 
 	/*
 	 * For ICQ the permit/deny setting controls who can see you
-	 * online. Mimicking the official client's behavior, we use PURPLE_PRIVACY_ALLOW_USERS
-	 * when our status is "invisible" and PURPLE_PRIVACY_DENY_USERS otherwise.
+	 * online. Mimicking the official client's behavior, we use PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS
+	 * when our status is "invisible" and PURPLE_ACCOUNT_PRIVACY_DENY_USERS otherwise.
 	 * In the former case, we are visible only to buddies on our "permanently visible" list.
 	 * In the latter, we are invisible only to buddies on our "permanently invisible" list.
 	 */
-	aim_ssi_setpermdeny(od, invisible ? PURPLE_PRIVACY_ALLOW_USERS : PURPLE_PRIVACY_DENY_USERS);
+	aim_ssi_setpermdeny(od, invisible ? PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS : PURPLE_ACCOUNT_PRIVACY_DENY_USERS);
 }
 
 void
@@ -3909,27 +3910,27 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Permit list (ICQ doesn't have one) */
 	if (!od->icq) {
-		next = account->permit;
+		next = purple_account_privacy_get_permitted(account);
 		while (next != NULL) {
 			cur = next;
 			next = next->next;
 			if (!aim_ssi_itemlist_finditem(&od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 				purple_debug_info("oscar",
 						"ssi: removing permit %s from local list\n", (const char *)cur->data);
-				purple_privacy_permit_remove(account, cur->data, TRUE);
+				purple_account_privacy_permit_remove(account, cur->data, TRUE);
 			}
 		}
 	}
 
 	/* Deny list */
-	next = account->deny;
+	next = purple_account_privacy_get_denied(account);
 	while (next != NULL) {
 		cur = next;
 		next = next->next;
 		if (!aim_ssi_itemlist_finditem(&od->ssi.local, NULL, cur->data, deny_entry_type)) {
 			purple_debug_info("oscar",
 					"ssi: removing deny %s from local list\n", (const char *)cur->data);
-			purple_privacy_deny_remove(account, cur->data, TRUE);
+			purple_account_privacy_deny_remove(account, cur->data, TRUE);
 		}
 	}
 
@@ -4016,11 +4017,11 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy (unless we're on ICQ) */
 				if (!od->icq && curitem->name) {
-					for (cur = account->permit; (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
+					for (cur = purple_account_privacy_get_permitted(account); (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
 					if (!cur) {
 						purple_debug_info("oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
-						purple_privacy_permit_add(account, curitem->name, TRUE);
+						purple_account_privacy_permit_add(account, curitem->name, TRUE);
 					}
 				}
 			} break;
@@ -4028,11 +4029,11 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			case AIM_SSI_TYPE_ICQDENY:
 			case AIM_SSI_TYPE_DENY: { /* Deny buddy */
 				if (curitem->type == deny_entry_type && curitem->name) {
-					for (cur = account->deny; (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
+					for (cur = purple_account_privacy_get_denied(account); (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
 					if (!cur) {
 						purple_debug_info("oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
-						purple_privacy_deny_add(account, curitem->name, TRUE);
+						purple_account_privacy_deny_add(account, curitem->name, TRUE);
 					}
 				}
 			} break;

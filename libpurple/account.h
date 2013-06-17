@@ -862,7 +862,7 @@ void purple_account_privacy_deny(PurpleAccount *account, const char *who);
  * Returns the account's permit list.
  *
  * @param account	The account.
- * @return          A GSList of the permitted users
+ * @constreturn     A list of the permitted users
  */
 GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
 
@@ -870,7 +870,7 @@ GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
  * Returns the account's deny list.
  *
  * @param account	The account.
- * @return          A GSList of the denied users
+ * @constreturn     A list of the denied users
  */
 GSList *purple_account_privacy_get_denied(PurpleAccount *account);
 

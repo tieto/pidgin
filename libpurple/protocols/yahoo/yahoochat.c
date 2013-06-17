@@ -33,7 +33,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
-#include "privacy.h"
 #include "prpl.h"
 
 #include "conversation.h"
@@ -181,7 +180,7 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		return;
 	}
 
-	if (!purple_privacy_check(account, who) ||
+	if (!purple_account_privacy_check(account, who) ||
 			(purple_account_get_bool(account, "ignore_invites", FALSE)))
 	{
 		purple_debug_info("yahoo",
@@ -231,7 +230,7 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			break;
 		}
 	}
-	if (!purple_privacy_check(purple_connection_get_account(gc), who))
+	if (!purple_account_privacy_check(purple_connection_get_account(gc), who))
 	{
 		g_free(room);
 		g_free(msg);
@@ -589,9 +588,9 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(PURPLE_CONV_CHAT(c), members);
 	}
 
-	if (account->deny && c) {
+	if (purple_account_privacy_get_denied(account) && c) {
 		PurpleConversationUiOps *ops = purple_conversation_get_ui_ops(c);
-		for (l = account->deny; l != NULL; l = l->next) {
+		for (l = purple_account_privacy_get_denied(account); l != NULL; l = l->next) {
 			for (roomies = members; roomies; roomies = roomies->next) {
 				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
 					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , (char *)roomies->data, room ? room : "");
@@ -729,7 +728,7 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 	if (room && who) {
 		GHashTable *components;
 
-		if (!purple_privacy_check(account, who) ||
+		if (!purple_account_privacy_check(account, who) ||
 				(purple_account_get_bool(account, "ignore_invites", FALSE)))
 		{
 			purple_debug_info("yahoo", "Invite to room %s from %s has been dropped.\n", room, who);

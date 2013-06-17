@@ -36,8 +36,6 @@
 
 #include "myspace.h"
 
-#include "privacy.h"
-
 static void msim_set_status(PurpleAccount *account, PurpleStatus *status);
 static void msim_set_idle(PurpleConnection *gc, int time);
 
@@ -1019,7 +1017,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	visibility = msim_msg_get_integer(contact_info, "Visibility");
 	if (visibility == 2) {
 		/* This buddy is blocked (and therefore not on our buddy list */
-		purple_privacy_deny_add(session->account, username, TRUE);
+		purple_account_privacy_deny_add(session->account, username, TRUE);
 		msim_msg_free(contact_info);
 		g_free(username);
 		g_free(display_name);
@@ -2179,6 +2177,7 @@ msim_login(PurpleAccount *acct)
 {
 	PurpleConnection *gc;
 	const gchar *host;
+	GSList *deny;
 	int port;
 
 	g_return_if_fail(acct != NULL);
@@ -2195,8 +2194,8 @@ msim_login(PurpleAccount *acct)
 	 * list of all blocked buddies from the server, and we shouldn't
 	 * have stuff in the local list that isn't on the server list.
 	 */
-	while (acct->deny != NULL)
-		purple_privacy_deny_remove(acct, acct->deny->data, TRUE);
+	while ((deny = purple_account_privacy_get_denied(acct)) != NULL)
+		purple_account_privacy_deny_remove(acct, deny->data, TRUE);
 
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),

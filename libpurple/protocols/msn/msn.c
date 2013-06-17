@@ -814,8 +814,8 @@ msn_send_privacy(PurpleConnection *gc)
 	session = purple_connection_get_protocol_data(gc);
 	cmdproc = session->notification->cmdproc;
 
-	if (purple_account_get_privacy_type(account) == PURPLE_PRIVACY_ALLOW_ALL ||
-	    purple_account_get_privacy_type(account) == PURPLE_PRIVACY_DENY_USERS)
+	if (purple_account_get_privacy_type(account) == PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL ||
+	    purple_account_get_privacy_type(account) == PURPLE_ACCOUNT_PRIVACY_DENY_USERS)
 		trans = msn_transaction_new(cmdproc, "BLP", "%s", "AL");
 	else
 		trans = msn_transaction_new(cmdproc, "BLP", "%s", "BL");
