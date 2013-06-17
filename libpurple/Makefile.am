@@ -38,6 +38,7 @@ SUBDIRS = $(GCONF_DIR) plugins protocols ciphers . tests example
 
 purple_coresources = \
 	account.c \
+	accounts.c \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
@@ -75,7 +76,6 @@ purple_coresources = \
 	pluginpref.c \
 	pounce.c \
 	prefs.c \
-	privacy.c \
 	proxy.c \
 	prpl.c \
 	request.c \
@@ -108,6 +108,7 @@ purple_builtsources = \
 
 purple_coreheaders = \
 	account.h \
+	accounts.h \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
@@ -141,7 +142,6 @@ purple_coreheaders = \
 	pluginpref.h \
 	pounce.h \
 	prefs.h \
-	privacy.h \
 	proxy.h \
 	prpl.h \
 	request.h \
@@ -203,7 +203,7 @@ CLEANFILES = \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
+dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blist.h buddyicon.h \
                 connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
                 savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 

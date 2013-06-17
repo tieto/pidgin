@@ -30,10 +30,17 @@
 #include <glib.h>
 #include <glib-object.h>
 
-/** @copydoc _PurpleAccountUiOps */
-typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
+#define PURPLE_TYPE_ACCOUNT             (purple_account_get_type())
+#define PURPLE_ACCOUNT(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT, PurpleAccount))
+#define PURPLE_ACCOUNT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+#define PURPLE_IS_ACCOUNT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_IS_ACCOUNT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_ACCOUNT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+
 /** @copydoc _PurpleAccount */
-typedef struct _PurpleAccount      PurpleAccount;
+typedef struct _PurpleAccount       PurpleAccount;
+/** @copydoc _PurpleAccountClass */
+typedef struct _PurpleAccountClass  PurpleAccountClass;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(const char *, void *);
@@ -71,51 +78,24 @@ typedef enum
 	PURPLE_ACCOUNT_RESPONSE_ACCEPT = 1
 } PurpleAccountRequestResponse;
 
-/**  Account UI operations, used to notify the user of status changes and when
- *   buddies add this account to their buddy lists.
+/**
+ * Privacy data types.
  */
-struct _PurpleAccountUiOps
+typedef enum
 {
-	/** A buddy who is already on this account's buddy list added this account
-	 *  to their buddy list.
-	 */
-	void (*notify_added)(PurpleAccount *account,
-	                     const char *remote_user,
-	                     const char *id,
-	                     const char *alias,
-	                     const char *message);
+	PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL = 1,
+	PURPLE_ACCOUNT_PRIVACY_DENY_ALL,
+	PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS,
+	PURPLE_ACCOUNT_PRIVACY_DENY_USERS,
+	PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST
+} PurpleAccountPrivacyType;
 
-	/** This account's status changed. */
-	void (*status_changed)(PurpleAccount *account,
-	                       PurpleStatus *status);
-
-	/** Someone we don't have on our list added us; prompt to add them. */
-	void (*request_add)(PurpleAccount *account,
-	                    const char *remote_user,
-	                    const char *id,
-	                    const char *alias,
-	                    const char *message);
-
-	/** Prompt for authorization when someone adds this account to their buddy
-	 * list.  To authorize them to see this account's presence, call \a
-	 * authorize_cb (\a message, \a user_data); otherwise call
-	 * \a deny_cb (\a message, \a user_data);
-	 * @return a UI-specific handle, as passed to #close_account_request.
-	 */
-	void *(*request_authorize)(PurpleAccount *account,
-	                           const char *remote_user,
-	                           const char *id,
-	                           const char *alias,
-	                           const char *message,
-	                           gboolean on_list,
-	                           PurpleAccountRequestAuthorizationCb authorize_cb,
-	                           PurpleAccountRequestAuthorizationCb deny_cb,
-	                           void *user_data);
-
-	/** Close a pending request for authorization.  \a ui_handle is a handle
-	 *  as returned by #request_authorize.
-	 */
-	void (*close_account_request)(void *ui_handle);
+/** Structure representing an account.
+ */
+struct _PurpleAccount
+{
+	/*< private >*/
+	GObject gparent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -123,57 +103,24 @@ struct _PurpleAccountUiOps
 	void (*_purple_reserved4)(void);
 };
 
-/** Structure representing an account.
+/**
+ * PurpleAccountClass:
+ *
+ * The base class for all #PurpleAccount's.
  */
-struct _PurpleAccount
-{
-	char *username;             /**< The username.                          */
-	char *alias;                /**< How you appear to yourself.            */
-	char *password;             /**< The account password.                  */
-	char *user_info;            /**< User information.                      */
+struct _PurpleAccountClass {
+	/*< private >*/
+	GObjectClass parent_class;
 
-	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
-
-	gboolean remember_pass;     /**< Remember the password.                 */
-
-	char *protocol_id;          /**< The ID of the protocol.                */
-
-	PurpleConnection *gc;         /**< The connection handle.                 */
-	gboolean disconnecting;     /**< The account is currently disconnecting */
-
-	GHashTable *settings;       /**< Protocol-specific settings.            */
-	GHashTable *ui_settings;    /**< UI-specific settings.                  */
-
-	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
-								/*   to NULL when the account inherits      */
-								/*   proxy settings from global prefs.      */
-
-	/*
-	 * TODO: Supplementing the next two linked lists with hash tables
-	 * should help performance a lot when these lists are long.  This
-	 * matters quite a bit for protocols like MSN, where all your
-	 * buddies are added to your permit list.  Currently we have to
-	 * iterate through the entire list if we want to check if someone
-	 * is permitted or denied.  We should do this for 3.0.0.
-	 * Or maybe use a GTree.
-	 */
-	GSList *permit;             /**< Permit list.                           */
-	GSList *deny;               /**< Deny list.                             */
-	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
-
-	GList *status_types;        /**< Status types.                          */
-
-	PurplePresence *presence;     /**< Presence.                              */
-	PurpleLog *system_log;        /**< The system log                         */
-
-	void *ui_data;              /**< The UI can put data here.              */
-	PurpleAccountRegistrationCb registration_cb;
-	void *registration_cb_user_data;
-
-	PurpleConnectionErrorInfo *current_error;	/**< Errors */
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
+
+GType purple_account_get_type(void);
 
 /**************************************************************************/
 /** @name Account API                                                     */
@@ -460,7 +407,7 @@ void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info
  * @param account      The account.
  * @param privacy_type The privacy type.
  */
-void purple_account_set_privacy_type(PurpleAccount *account, PurplePrivacyType privacy_type);
+void purple_account_set_privacy_type(PurpleAccount *account, PurpleAccountPrivacyType privacy_type);
 
 /**
  * Sets the account's status types.
@@ -810,7 +757,121 @@ PurpleProxyInfo *purple_account_get_proxy_info(const PurpleAccount *account);
  *
  * @return The privacy type.
  */
-PurplePrivacyType purple_account_get_privacy_type(const PurpleAccount *account);
+PurpleAccountPrivacyType purple_account_get_privacy_type(const PurpleAccount *account);
+
+/**
+ * Adds a user to the account's permit list.
+ *
+ * @param account    The account.
+ * @param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
+ *
+ * @return TRUE if the user was added successfully, or @c FALSE otherwise.
+ */
+gboolean purple_account_privacy_permit_add(PurpleAccount *account,
+								const char *name, gboolean local_only);
+
+/**
+ * Removes a user from the account's permit list.
+ *
+ * @param account    The account.
+ * @param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
+ *
+ * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
+ */
+gboolean purple_account_privacy_permit_remove(PurpleAccount *account,
+									const char *name, gboolean local_only);
+
+/**
+ * Adds a user to the account's deny list.
+ *
+ * @param account    The account.
+ * @param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
+ *
+ * @return TRUE if the user was added successfully, or @c FALSE otherwise.
+ */
+gboolean purple_account_privacy_deny_add(PurpleAccount *account,
+									const char *name, gboolean local_only);
+
+/**
+ * Removes a user from the account's deny list.
+ *
+ * @param account    The account.
+ * @param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
+ *
+ * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
+ */
+gboolean purple_account_privacy_deny_remove(PurpleAccount *account,
+									const char *name, gboolean local_only);
+
+/**
+ * Allow a user to send messages. If current privacy setting for the account is:
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:	The user is added to the allow-list.
+ *		PURPLE_ACCOUNT_PRIVACY_DENY_USERS	:	The user is removed from the
+ *		                                        deny-list.
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL	:	No changes made.
+ *		PURPLE_ACCOUNT_PRIVACY_DENY_ALL	:	The privacy setting is changed to
+ *									PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS and the
+ *									user is added to the allow-list.
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST: No changes made if the user is
+ *									already in the buddy-list. Otherwise the
+ *									setting is changed to
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS, all the buddies are added to the
+ *									allow-list, and the user is also added to
+ *									the allow-list.
+ *
+ * @param account	The account.
+ * @param who		The name of the user.
+ * @param local		Whether the change is local-only.
+ * @param restore	Should the previous allow/deny list be restored if the
+ *					privacy setting is changed.
+ */
+void purple_account_privacy_allow(PurpleAccount *account, const char *who,
+									gboolean local, gboolean restore);
+
+/**
+ * Block messages from a user. If current privacy setting for the account is:
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS:	The user is removed from the
+ *											allow-list.
+ *		PURPLE_ACCOUNT_PRIVACY_DENY_USERS:	The user is added to the deny-list.
+ *		PURPLE_ACCOUNT_PRIVACY_DENY_ALL:	No changes made.
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL:	The privacy setting is changed to
+ *									PURPLE_ACCOUNT_PRIVACY_DENY_USERS and the
+ *									user is added to the deny-list.
+ *		PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST: If the user is not in the
+ *									buddy-list, then no changes made. Otherwise,
+ *									the setting is changed to
+ *									PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS, all
+ *									the buddies are added to the allow-list, and
+ *									this user is removed from the list.
+ *
+ * @param account	The account.
+ * @param who		The name of the user.
+ * @param local		Whether the change is local-only.
+ * @param restore	Should the previous allow/deny list be restored if the
+ *					privacy setting is changed.
+ */
+void purple_account_privacy_deny(PurpleAccount *account, const char *who,
+									gboolean local, gboolean restore);
+
+/**
+ * Check the privacy-setting for a user.
+ *
+ * @param account	The account.
+ * @param who		The name of the user.
+ *
+ * @return @c FALSE if the specified account's privacy settings block the user
+ *		or @c TRUE otherwise. The meaning of "block" is protocol-dependent and
+ *				generally relates to status and/or sending of messages.
+ */
+gboolean purple_account_privacy_check(PurpleAccount *account, const char *who);
 
 /**
  * Returns the active status for this account.  This looks through
@@ -1079,129 +1140,6 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  * @param account The account whose error state should be cleared.
  */
 void purple_account_clear_current_error(PurpleAccount *account);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Accounts API                                                    */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Adds an account to the list of accounts.
- *
- * @param account The account.
- */
-void purple_accounts_add(PurpleAccount *account);
-
-/**
- * Removes an account from the list of accounts.
- *
- * @param account The account.
- */
-void purple_accounts_remove(PurpleAccount *account);
-
-/**
- * Deletes an account.
- *
- * This will remove any buddies from the buddy list that belong to this
- * account, buddy pounces that belong to this account, and will also
- * destroy @a account.
- *
- * @param account The account.
- */
-void purple_accounts_delete(PurpleAccount *account);
-
-/**
- * Reorders an account.
- *
- * @param account   The account to reorder.
- * @param new_index The new index for the account.
- */
-void purple_accounts_reorder(PurpleAccount *account, gint new_index);
-
-/**
- * Returns a list of all accounts.
- *
- * @constreturn A list of all accounts.
- */
-GList *purple_accounts_get_all(void);
-
-/**
- * Returns a list of all enabled accounts
- *
- * @return A list of all enabled accounts. The list is owned
- *         by the caller, and must be g_list_free()d to avoid
- *         leaking the nodes.
- */
-GList *purple_accounts_get_all_active(void);
-
-/**
- * Finds an account with the specified name and protocol id.
- *
- * @param name     The account username.
- * @param protocol The account protocol ID.
- *
- * @return The account, if found, or @c FALSE otherwise.
- */
-PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
-
-/**
- * This is called by the core after all subsystems and what
- * not have been initialized.  It sets all enabled accounts
- * to their startup status by signing them on, setting them
- * away, etc.
- *
- * You probably shouldn't call this unless you really know
- * what you're doing.
- */
-void purple_accounts_restore_current_statuses(void);
-
-/*@}*/
-
-
-/**************************************************************************/
-/** @name UI Registration Functions                                       */
-/**************************************************************************/
-/*@{*/
-/**
- * Sets the UI operations structure to be used for accounts.
- *
- * @param ops The UI operations structure.
- */
-void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
-
-/**
- * Returns the UI operations structure used for accounts.
- *
- * @return The UI operations structure in use.
- */
-PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
-
-/*@}*/
-
-
-/**************************************************************************/
-/** @name Accounts Subsystem                                              */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Returns the accounts subsystem handle.
- *
- * @return The accounts subsystem handle.
- */
-void *purple_accounts_get_handle(void);
-
-/**
- * Initializes the accounts subsystem.
- */
-void purple_accounts_init(void);
-
-/**
- * Uninitializes the accounts subsystem.
- */
-void purple_accounts_uninit(void);
 
 /*@}*/
 
