@@ -2772,6 +2772,24 @@ purple_account_privacy_deny(PurpleAccount *account, const char *who)
 		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
+GSList *
+purple_account_privacy_get_permitted(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_return_if_fail(priv != NULL);
+
+	return priv->permit;
+}
+
+GSList *
+purple_account_privacy_get_denied(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_return_if_fail(priv != NULL);
+
+	return priv->deny;
+}
+
 gboolean
 purple_account_privacy_check(PurpleAccount *account, const char *who)
 {
