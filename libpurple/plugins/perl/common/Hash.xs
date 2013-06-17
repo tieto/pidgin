@@ -33,10 +33,6 @@ purple_hash_reset(hash)
 	Purple::Hash hash
 
 void
-purple_hash_set_iv(Purple::Hash hash, guchar *iv, size_t length(iv))
-	PROTOTYPE: $$
-
-void
 purple_hash_append(Purple::Hash hash, guchar *data, size_t length(data))
 	PROTOTYPE: $$
 
