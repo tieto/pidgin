@@ -27,6 +27,7 @@
 #define _PURPLE_ACCOUNTS_H_
 
 #include "account.h"
+#include "status.h"
 
 /** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;

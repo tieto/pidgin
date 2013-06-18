@@ -26,7 +26,8 @@
 #include "internal.h"
 #include "accounts.h"
 #include "core.h"
-#include "xmlnode.h"
+#include "dbus-maybe.h"
+#include "debug.h"
 
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
@@ -34,363 +35,9 @@ static GList   *accounts = NULL;
 static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
-static GList *handles = NULL;
-
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
-static void
-setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
-{
-	const char *name;
-	GValue *setting;
-	xmlnode *node, *child;
-	char buf[21];
-
-	name    = (const char *)key;
-	setting = (GValue *)value;
-	node    = (xmlnode *)user_data;
-
-	child = xmlnode_new_child(node, "setting");
-	xmlnode_set_attrib(child, "name", name);
-
-	if (setting->type == PURPLE_PREF_INT) {
-		xmlnode_set_attrib(child, "type", "int");
-		g_snprintf(buf, sizeof(buf), "%d", setting->value.integer);
-		xmlnode_insert_data(child, buf, -1);
-	}
-	else if (setting->type == PURPLE_PREF_STRING && setting->value.string != NULL) {
-		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, setting->value.string, -1);
-	}
-	else if (setting->type == PURPLE_PREF_BOOLEAN) {
-		xmlnode_set_attrib(child, "type", "bool");
-		g_snprintf(buf, sizeof(buf), "%d", setting->value.boolean);
-		xmlnode_insert_data(child, buf, -1);
-	}
-}
-
-static void
-ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
-{
-	const char *ui;
-	GHashTable *table;
-	xmlnode *node, *child;
-
-	ui    = (const char *)key;
-	table = (GHashTable *)value;
-	node  = (xmlnode *)user_data;
-
-	if (g_hash_table_size(table) > 0)
-	{
-		child = xmlnode_new_child(node, "settings");
-		xmlnode_set_attrib(child, "ui", ui);
-		g_hash_table_foreach(table, setting_to_xmlnode, child);
-	}
-}
-
-static xmlnode *
-status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type, const PurpleStatusAttr *attr)
-{
-	xmlnode *node;
-	const char *id;
-	char *value = NULL;
-	PurpleStatusAttr *default_attr;
-	PurpleValue *default_value;
-	PurpleType attr_type;
-	PurpleValue *attr_value;
-
-	id = purple_status_attr_get_id(attr);
-	g_return_val_if_fail(id, NULL);
-
-	attr_value = purple_status_get_attr_value(status, id);
-	g_return_val_if_fail(attr_value, NULL);
-	attr_type = purple_value_get_type(attr_value);
-
-	/*
-	 * If attr_value is a different type than it should be
-	 * then don't write it to the file.
-	 */
-	default_attr = purple_status_type_get_attr(type, id);
-	default_value = purple_status_attr_get_value(default_attr);
-	if (attr_type != purple_value_get_type(default_value))
-		return NULL;
-
-	/*
-	 * If attr_value is the same as the default for this status
-	 * then there is no need to write it to the file.
-	 */
-	if (attr_type == PURPLE_TYPE_STRING)
-	{
-		const char *string_value = purple_value_get_string(attr_value);
-		const char *default_string_value = purple_value_get_string(default_value);
-		if (purple_strequal(string_value, default_string_value))
-			return NULL;
-		value = g_strdup(purple_value_get_string(attr_value));
-	}
-	else if (attr_type == PURPLE_TYPE_INT)
-	{
-		int int_value = purple_value_get_int(attr_value);
-		if (int_value == purple_value_get_int(default_value))
-			return NULL;
-		value = g_strdup_printf("%d", int_value);
-	}
-	else if (attr_type == PURPLE_TYPE_BOOLEAN)
-	{
-		gboolean boolean_value = purple_value_get_boolean(attr_value);
-		if (boolean_value == purple_value_get_boolean(default_value))
-			return NULL;
-		value = g_strdup(boolean_value ?
-								"true" : "false");
-	}
-	else
-	{
-		return NULL;
-	}
-
-	g_return_val_if_fail(value, NULL);
-
-	node = xmlnode_new("attribute");
-
-	xmlnode_set_attrib(node, "id", id);
-	xmlnode_set_attrib(node, "value", value);
-
-	g_free(value);
-
-	return node;
-}
-
-static xmlnode *
-status_attrs_to_xmlnode(const PurpleStatus *status)
-{
-	PurpleStatusType *type = purple_status_get_type(status);
-	xmlnode *node, *child;
-	GList *attrs, *attr;
-
-	node = xmlnode_new("attributes");
-
-	attrs = purple_status_type_get_attrs(type);
-	for (attr = attrs; attr != NULL; attr = attr->next)
-	{
-		child = status_attr_to_xmlnode(status, type, (const PurpleStatusAttr *)attr->data);
-		if (child)
-			xmlnode_insert_child(node, child);
-	}
-
-	return node;
-}
-
-static xmlnode *
-status_to_xmlnode(const PurpleStatus *status)
-{
-	xmlnode *node, *child;
-
-	node = xmlnode_new("status");
-	xmlnode_set_attrib(node, "type", purple_status_get_id(status));
-	if (purple_status_get_name(status) != NULL)
-		xmlnode_set_attrib(node, "name", purple_status_get_name(status));
-	xmlnode_set_attrib(node, "active", purple_status_is_active(status) ? "true" : "false");
-
-	child = status_attrs_to_xmlnode(status);
-	xmlnode_insert_child(node, child);
-
-	return node;
-}
-
-static xmlnode *
-statuses_to_xmlnode(const PurplePresence *presence)
-{
-	xmlnode *node, *child;
-	GList *statuses;
-	PurpleStatus *status;
-
-	node = xmlnode_new("statuses");
-
-	statuses = purple_presence_get_statuses(presence);
-	for (; statuses != NULL; statuses = statuses->next)
-	{
-		status = statuses->data;
-		if (purple_status_type_is_saveable(purple_status_get_type(status)))
-		{
-			child = status_to_xmlnode(status);
-			xmlnode_insert_child(node, child);
-		}
-	}
-
-	return node;
-}
-
-static xmlnode *
-proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
-{
-	xmlnode *node, *child;
-	PurpleProxyType proxy_type;
-	const char *value;
-	int int_value;
-	char buf[21];
-
-	proxy_type = purple_proxy_info_get_type(proxy_info);
-
-	node = xmlnode_new("proxy");
-
-	child = xmlnode_new_child(node, "type");
-	xmlnode_insert_data(child,
-			(proxy_type == PURPLE_PROXY_USE_GLOBAL ? "global" :
-			 proxy_type == PURPLE_PROXY_NONE       ? "none"   :
-			 proxy_type == PURPLE_PROXY_HTTP       ? "http"   :
-			 proxy_type == PURPLE_PROXY_SOCKS4     ? "socks4" :
-			 proxy_type == PURPLE_PROXY_SOCKS5     ? "socks5" :
-			 proxy_type == PURPLE_PROXY_TOR        ? "tor" :
-			 proxy_type == PURPLE_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
-
-	if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
-	{
-		child = xmlnode_new_child(node, "host");
-		xmlnode_insert_data(child, value, -1);
-	}
-
-	if ((int_value = purple_proxy_info_get_port(proxy_info)) != 0)
-	{
-		g_snprintf(buf, sizeof(buf), "%d", int_value);
-		child = xmlnode_new_child(node, "port");
-		xmlnode_insert_data(child, buf, -1);
-	}
-
-	if ((value = purple_proxy_info_get_username(proxy_info)) != NULL)
-	{
-		child = xmlnode_new_child(node, "username");
-		xmlnode_insert_data(child, value, -1);
-	}
-
-	if ((value = purple_proxy_info_get_password(proxy_info)) != NULL)
-	{
-		child = xmlnode_new_child(node, "password");
-		xmlnode_insert_data(child, value, -1);
-	}
-
-	return node;
-}
-
-static xmlnode *
-current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
-{
-	xmlnode *node, *child;
-	char type_str[3];
-
-	node = xmlnode_new("current_error");
-
-	if(err == NULL)
-		return node;
-
-	/* It doesn't make sense to have transient errors persist across a
-	 * restart.
-	 */
-	if(!purple_connection_error_is_fatal (err->type))
-		return node;
-
-	child = xmlnode_new_child(node, "type");
-	g_snprintf(type_str, sizeof(type_str), "%u", err->type);
-	xmlnode_insert_data(child, type_str, -1);
-
-	child = xmlnode_new_child(node, "description");
-	if(err->description) {
-		char *utf8ized = purple_utf8_try_convert(err->description);
-		if(utf8ized == NULL)
-			utf8ized = purple_utf8_salvage(err->description);
-		xmlnode_insert_data(child, utf8ized, -1);
-		g_free(utf8ized);
-	}
-
-	return node;
-}
-
-static xmlnode *
-account_to_xmlnode(PurpleAccount *account)
-{
-	xmlnode *node, *child;
-	const char *tmp;
-	PurplePresence *presence;
-	PurpleProxyInfo *proxy_info;
-
-	node = xmlnode_new("account");
-
-	child = xmlnode_new_child(node, "protocol");
-	xmlnode_insert_data(child, purple_account_get_protocol_id(account), -1);
-
-	child = xmlnode_new_child(node, "name");
-	xmlnode_insert_data(child, purple_account_get_username(account), -1);
-
-	if (purple_account_get_remember_password(account))
-	{
-		const char *keyring_id = NULL;
-		const char *mode = NULL;
-		char *data = NULL;
-		GError *error = NULL;
-		GDestroyNotify destroy = NULL;
-		gboolean exported = purple_keyring_export_password(account,
-			&keyring_id, &mode, &data, &error, &destroy);
-
-		if (error != NULL) {
-			purple_debug_error("account",
-				"Failed to export password for account %s: %s.\n",
-				purple_account_get_username(account),
-				error->message);
-		} else if (exported) {
-			child = xmlnode_new_child(node, "password");
-			if (keyring_id != NULL)
-				xmlnode_set_attrib(child, "keyring_id", keyring_id);
-			if (mode != NULL)
-				xmlnode_set_attrib(child, "mode", mode);
-			if (data != NULL)
-				xmlnode_insert_data(child, data, -1);
-
-			if (destroy != NULL)
-				destroy(data);
-		}
-	}
-
-	if ((tmp = purple_account_get_alias(account)) != NULL)
-	{
-		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, tmp, -1);
-	}
-
-	if ((presence = purple_account_get_presence(account)) != NULL)
-	{
-		child = statuses_to_xmlnode(presence);
-		xmlnode_insert_child(node, child);
-	}
-
-	if ((tmp = purple_account_get_user_info(account)) != NULL)
-	{
-		/* TODO: Do we need to call purple_str_strip_char(tmp, '\r') here? */
-		child = xmlnode_new_child(node, "userinfo");
-		xmlnode_insert_data(child, tmp, -1);
-	}
-
-	if (g_hash_table_size(account->settings) > 0)
-	{
-		child = xmlnode_new_child(node, "settings");
-		g_hash_table_foreach(account->settings, setting_to_xmlnode, child);
-	}
-
-	if (g_hash_table_size(account->ui_settings) > 0)
-	{
-		g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
-	}
-
-	if ((proxy_info = purple_account_get_proxy_info(account)) != NULL)
-	{
-		child = proxy_settings_to_xmlnode(proxy_info);
-		xmlnode_insert_child(node, child);
-	}
-
-	child = current_error_to_xmlnode(account->current_error);
-	xmlnode_insert_child(node, child);
-
-	return node;
-}
-
 static xmlnode *
 accounts_to_xmlnode(void)
 {
@@ -402,7 +49,7 @@ accounts_to_xmlnode(void)
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
-		child = account_to_xmlnode(cur->data);
+		child = purple_account_to_xmlnode(cur->data);
 		xmlnode_insert_child(node, child);
 	}
 
@@ -957,12 +604,10 @@ load_accounts(void)
 static void
 delete_setting(void *data)
 {
-	GValue *setting = (GValue *)data;
+	PurpleAccountSetting *setting = (PurpleAccountSetting *)data;
 
 	g_free(setting->ui);
-
-	if (setting->type == PURPLE_PREF_STRING)
-		g_free(setting->value.string);
+	g_value_unset(&setting->value);
 
 	g_free(setting);
 }
@@ -1151,7 +796,8 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
-		if (!purple_strequal(account->protocol_id, protocol_id))
+
+		if (!purple_strequal(purple_account_get_protocol_id(account), protocol_id))
 			continue;
 
 		who = g_strdup(purple_normalize(account, name));
@@ -1181,8 +827,9 @@ purple_accounts_restore_current_statuses()
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next)
 	{
 		account = (PurpleAccount *)l->data;
+
 		if (purple_account_get_enabled(account, purple_core_get_ui()) &&
-			(purple_presence_is_online(account->presence)))
+			(purple_presence_is_online(purple_account_get_presence(account))))
 		{
 			purple_account_connect(account);
 		}
@@ -1207,6 +854,60 @@ purple_accounts_get_handle(void)
 	static int handle;
 
 	return &handle;
+}
+
+static void
+signed_on_cb(PurpleConnection *gc,
+             gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	purple_account_clear_current_error(account);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-signed-on",
+	                   account);
+}
+
+static void
+signed_off_cb(PurpleConnection *gc,
+              gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-signed-off",
+	                   account);
+}
+
+static void
+connection_error_cb(PurpleConnection *gc,
+                    PurpleConnectionError type,
+                    const gchar *description,
+                    gpointer unused)
+{
+	PurpleAccount *account;
+	PurpleConnectionErrorInfo *err;
+
+	account = purple_connection_get_account(gc);
+
+	g_return_if_fail(account != NULL);
+
+	err = g_new0(PurpleConnectionErrorInfo, 1);
+	PURPLE_DBUS_REGISTER_POINTER(err, PurpleConnectionErrorInfo);
+
+	err->type = type;
+	err->description = g_strdup(description);
+
+	set_current_error(account, err);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-connection-error",
+	                   account, type, description);
+}
+
+static void
+password_migration_cb(PurpleAccount *account)
+{
+	/* account may be NULL (means: all) */
+
+	schedule_accounts_save();
 }
 
 void
