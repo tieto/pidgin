@@ -39,17 +39,16 @@ static GList *handles = NULL;
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
-
 static void
 setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *name;
-	PurpleAccountSetting *setting;
+	GValue *setting;
 	xmlnode *node, *child;
 	char buf[21];
 
 	name    = (const char *)key;
-	setting = (PurpleAccountSetting *)value;
+	setting = (GValue *)value;
 	node    = (xmlnode *)user_data;
 
 	child = xmlnode_new_child(node, "setting");
@@ -958,7 +957,7 @@ load_accounts(void)
 static void
 delete_setting(void *data)
 {
-	PurpleAccountSetting *setting = (PurpleAccountSetting *)data;
+	GValue *setting = (GValue *)data;
 
 	g_free(setting->ui);
 
