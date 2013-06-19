@@ -28,7 +28,6 @@
 
 #include "connection.h"
 #include "debug.h"
-#include "privacy.h"
 #include "request.h"
 #include "util.h"
 
@@ -102,7 +101,7 @@ rebuild_allow_list(PidginPrivacyDialog *dialog)
 
 	gtk_list_store_clear(dialog->allow_store);
 
-	for (l = dialog->account->permit; l != NULL; l = l->next) {
+	for (l = purple_account_privacy_get_permitted(dialog->account); l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->allow_store, &iter);
 		gtk_list_store_set(dialog->allow_store, &iter, 0, l->data, -1);
 	}
@@ -116,7 +115,7 @@ rebuild_block_list(PidginPrivacyDialog *dialog)
 
 	gtk_list_store_clear(dialog->block_store);
 
-	for (l = dialog->account->deny; l != NULL; l = l->next) {
+	for (l = purple_account_privacy_get_denied(dialog->account); l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->block_store, &iter);
 		gtk_list_store_set(dialog->block_store, &iter, 0, l->data, -1);
 	}
@@ -310,9 +309,9 @@ removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	if (dialog->in_allow_list)
-		l = dialog->account->permit;
+		l = purple_account_privacy_get_permitted(dialog->account);
 	else
-		l = dialog->account->deny;
+		l = purple_account_privacy_get_denied(dialog->account);
 	while (l) {
 		char *user;
 		user = l->data;
@@ -465,9 +464,9 @@ static void
 confirm_permit_block_cb(PidginPrivacyRequestData *data, int option)
 {
 	if (data->block)
-		purple_account_privacy_deny(data->account, data->name, FALSE, FALSE);
+		purple_account_privacy_deny(data->account, data->name);
 	else
-		purple_account_privacy_allow(data->account, data->name, FALSE, FALSE);
+		purple_account_privacy_allow(data->account, data->name);
 
 	destroy_request_data(data);
 }

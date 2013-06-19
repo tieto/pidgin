@@ -366,7 +366,7 @@ pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 	g_free(tmp);
 
 	session_set_gchar(session, SmRestartStyleHint, (gchar) SmRestartIfRunning);
-	session_set_string(session, SmProgram, g_get_prgname());
+	session_set_string(session, SmProgram, (gchar *) g_get_prgname());
 
 	myself = g_strdup(argv0);
 	purple_debug(PURPLE_DEBUG_MISC, "Session Management",

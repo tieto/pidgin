@@ -4,7 +4,7 @@ MODULE = Pidgin::Account  PACKAGE = Pidgin::Account  PREFIX = pidgin_account_
 PROTOTYPES: ENABLE
 
 Purple::Handle
-pidgin_account_get_handle()
+pidgin_accounts_get_handle()
 
 MODULE = Pidgin::Account  PACKAGE = Pidgin::Account::Dialog  PREFIX = pidgin_account_dialog_
 PROTOTYPES: ENABLE
