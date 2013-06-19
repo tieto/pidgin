@@ -138,13 +138,6 @@ GType purple_account_get_type(void);
 PurpleAccount *purple_account_new(const char *username, const char *protocol_id);
 
 /**
- * Destroys an account.
- *
- * @param account The account to destroy.
- */
-void purple_account_destroy(PurpleAccount *account);
-
-/**
  * Connects to an account.
  *
  * @param account The account to connect to.

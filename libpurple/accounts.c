@@ -637,7 +637,7 @@ purple_accounts_remove(PurpleAccount *account)
 static void
 purple_accounts_delete_set(PurpleAccount *account, GError *error, gpointer data)
 {
-	purple_account_destroy(account);
+	g_object_unref(G_OBJECT(account));
 }
 
 void
@@ -1040,7 +1040,7 @@ purple_accounts_uninit(void)
 	}
 
 	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
-		purple_account_destroy(accounts->data);
+		g_object_unref(G_OBJECT(accounts->data));
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);

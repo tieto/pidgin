@@ -16,10 +16,6 @@ purple_account_new(class, username, protocol_id)
     username, protocol_id
 
 void
-purple_account_destroy(account)
-    Purple::Account account
-
-void
 purple_account_connect(account)
     Purple::Account account
 
