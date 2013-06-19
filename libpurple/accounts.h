@@ -212,6 +212,11 @@ void purple_accounts_init(void);
  */
 void purple_accounts_uninit(void);
 
+/**
+ * Schedules saving of accounts
+ */
+void purple_accounts_schedule_save(void);
+
 /*@}*/
 
 G_END_DECLS

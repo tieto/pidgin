@@ -132,9 +132,6 @@ enum
 static GObjectClass  *parent_class = NULL;
 static GList         *handles = NULL;
 
-static void set_current_error(PurpleAccount *account,
-	PurpleConnectionErrorInfo *new_err);
-
 
 void
 purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
@@ -717,7 +714,7 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 	g_free(priv->username);
 	priv->username = g_strdup(username);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 
 	/* if the name changes, we should re-write the buddy list
 	 * to disk with the new name */
@@ -739,7 +736,7 @@ purple_account_set_password(PurpleAccount *account, const gchar *password,
 	purple_str_wipe(priv->password);
 	priv->password = g_strdup(password);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 
 	if (!purple_account_get_remember_password(account)) {
 		purple_debug_info("account",
@@ -779,7 +776,7 @@ purple_account_set_alias(PurpleAccount *account, const char *alias)
 						 account, old);
 		g_free(old);
 
-		schedule_accounts_save();
+		purple_accounts_schedule_save();
 	}
 }
 
@@ -795,7 +792,7 @@ purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 	g_free(priv->user_info);
 	priv->user_info = g_strdup(user_info);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path)
@@ -809,7 +806,7 @@ void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path
 	g_free(priv->buddy_icon_path);
 	priv->buddy_icon_path = g_strdup(path);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -825,7 +822,7 @@ purple_account_set_protocol_id(PurpleAccount *account, const char *protocol_id)
 	g_free(priv->protocol_id);
 	priv->protocol_id = g_strdup(protocol_id);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -849,7 +846,7 @@ purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	priv->remember_pass = value;
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -906,7 +903,7 @@ purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info)
 
 	priv->proxy_info = info;
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -987,7 +984,7 @@ purple_account_set_status_list(PurpleAccount *account, const char *status_id,
 	 * Our current statuses are saved to accounts.xml (so that when we
 	 * reconnect, we go back to the previous status).
 	 */
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 struct public_alias_closure
@@ -1090,6 +1087,17 @@ purple_account_set_silence_suppression(PurpleAccount *account, gboolean value)
 	purple_account_set_bool(account, "silence-suppression", value);
 }
 
+static void
+delete_setting(void *data)
+{
+	PurpleAccountSetting *setting = (PurpleAccountSetting *)data;
+
+	g_free(setting->ui);
+	g_value_unset(&setting->value);
+
+	g_free(setting);
+}
+
 void
 purple_account_clear_settings(PurpleAccount *account)
 {
@@ -1135,7 +1143,7 @@ purple_account_set_int(PurpleAccount *account, const char *name, int value)
 
 	g_hash_table_insert(priv->settings, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -1157,7 +1165,7 @@ purple_account_set_string(PurpleAccount *account, const char *name,
 
 	g_hash_table_insert(priv->settings, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -1178,7 +1186,7 @@ purple_account_set_bool(PurpleAccount *account, const char *name, gboolean value
 
 	g_hash_table_insert(priv->settings, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 static GHashTable *
@@ -1219,7 +1227,7 @@ purple_account_set_ui_int(PurpleAccount *account, const char *ui,
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -1243,7 +1251,7 @@ purple_account_set_ui_string(PurpleAccount *account, const char *ui,
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
@@ -1267,7 +1275,7 @@ purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 static PurpleConnectionState
@@ -2376,8 +2384,9 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 	return prpl_info->offline_message(buddy);
 }
 
-static void
-set_current_error(PurpleAccount *account, PurpleConnectionErrorInfo *new_err)
+void
+purple_account_set_current_error(PurpleAccount *account,
+		PurpleConnectionErrorInfo *new_err)
 {
 	PurpleConnectionErrorInfo *old_err;
 	PurpleAccountPrivate *priv;
@@ -2395,7 +2404,7 @@ set_current_error(PurpleAccount *account, PurpleConnectionErrorInfo *new_err)
 	purple_signal_emit(purple_accounts_get_handle(),
 	                   "account-error-changed",
 	                   account, old_err, new_err);
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 
 	if(old_err)
 		g_free(old_err->description);
@@ -2415,11 +2424,12 @@ purple_account_get_current_error(PurpleAccount *account)
 void
 purple_account_clear_current_error(PurpleAccount *account)
 {
-	set_current_error(account, NULL);
+	purple_account_set_current_error(account, NULL);
 }
 
 static xmlnode *
-status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type, const PurpleStatusAttr *attr)
+status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
+		const PurpleStatusAttr *attr)
 {
 	xmlnode *node;
 	const char *id;

@@ -28,6 +28,8 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "network.h"
+#include "pounce.h"
 
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
@@ -84,8 +86,8 @@ save_cb(gpointer data)
 	return FALSE;
 }
 
-static void
-schedule_accounts_save(void)
+void
+purple_accounts_schedule_save(void)
 {
 	if (save_timer == 0)
 		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
@@ -452,7 +454,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 	current_error->type = type;
 	current_error->description = description;
 
-	set_current_error(account, current_error);
+	purple_account_set_current_error(account, current_error);
 }
 
 static PurpleAccount *
@@ -600,19 +602,6 @@ load_accounts(void)
 	_purple_buddy_icons_account_loaded_cb();
 }
 
-
-static void
-delete_setting(void *data)
-{
-	PurpleAccountSetting *setting = (PurpleAccountSetting *)data;
-
-	g_free(setting->ui);
-	g_value_unset(&setting->value);
-
-	g_free(setting);
-}
-
-
 void
 purple_accounts_add(PurpleAccount *account)
 {
@@ -623,7 +612,7 @@ purple_accounts_add(PurpleAccount *account)
 
 	accounts = g_list_append(accounts, account);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 
 	purple_signal_emit(purple_accounts_get_handle(), "account-added", account);
 }
@@ -635,7 +624,7 @@ purple_accounts_remove(PurpleAccount *account)
 
 	accounts = g_list_remove(accounts, account);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 
 	/* Clearing the error ensures that account-error-changed is emitted,
 	 * which is the end of the guarantee that the the error's pointer is
@@ -757,7 +746,7 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 	/* Insert it where it should go. */
 	accounts = g_list_insert(accounts, account, new_index);
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 GList *
@@ -896,7 +885,7 @@ connection_error_cb(PurpleConnection *gc,
 	err->type = type;
 	err->description = g_strdup(description);
 
-	set_current_error(account, err);
+	purple_account_set_current_error(account, err);
 
 	purple_signal_emit(purple_accounts_get_handle(), "account-connection-error",
 	                   account, type, description);
@@ -907,7 +896,7 @@ password_migration_cb(PurpleAccount *account)
 {
 	/* account may be NULL (means: all) */
 
-	schedule_accounts_save();
+	purple_accounts_schedule_save();
 }
 
 void
