@@ -1063,7 +1063,7 @@ finch_write_im(PurpleConversation *conv, const char *who, const char *message,
 	{
 		who = purple_connection_get_display_name(purple_account_get_connection(account));
 		if (!who)
-			who = purple_account_get_alias(account);
+			who = purple_account_get_private_alias(account);
 		if (!who)
 			who = purple_account_get_username(account);
 	}

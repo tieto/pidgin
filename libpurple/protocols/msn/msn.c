@@ -853,7 +853,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	swboard->flag = MSN_SB_FLAG_IM;
 
 	/* Local alias > Display name > Username */
-	if ((alias = purple_account_get_alias(account)) == NULL)
+	if ((alias = purple_account_get_private_alias(account)) == NULL)
 		if ((alias = purple_connection_get_display_name(gc)) == NULL)
 			alias = purple_account_get_username(account);
 

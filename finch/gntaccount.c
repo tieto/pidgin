@@ -188,7 +188,7 @@ save_account_cb(AccountEditDialog *dialog)
 
 	/* Alias */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->alias));
-	purple_account_set_alias(account, value);
+	purple_account_set_private_alias(account, value);
 
 	/* Remember password and password */
 	purple_account_set_remember_password(account,
@@ -628,7 +628,7 @@ edit_account_continue(PurpleAccount *account,
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Alias:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 	if (account)
-		gnt_entry_set_text(GNT_ENTRY(entry), purple_account_get_alias(account));
+		gnt_entry_set_text(GNT_ENTRY(entry), purple_account_get_private_alias(account));
 
 	/* User options */
 	update_user_options(dialog);

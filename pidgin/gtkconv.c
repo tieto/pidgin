@@ -5140,7 +5140,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 			replace = purple_conversation_get_name(conv);
 
 		} else if (g_str_has_prefix(cur, "%sourceName%")) {
-			replace = purple_account_get_alias(account);
+			replace = purple_account_get_private_alias(account);
 			if (replace == NULL)
 				replace = purple_account_get_username(account);
 

@@ -497,7 +497,7 @@ parse_account(xmlnode *node)
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
 		if (*data != '\0')
-			purple_account_set_alias(ret, data);
+			purple_account_set_private_alias(ret, data);
 		g_free(data);
 	}
 

@@ -139,7 +139,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		alias = purple_account_get_alias(account);
+		alias = purple_account_get_private_alias(account);
 		Tcl_SetObjResult(interp, Tcl_NewStringObj(alias ? (char *)alias : "", -1));
 		break;
 	case CMD_ACCOUNT_CONNECT:

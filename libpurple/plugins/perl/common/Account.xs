@@ -50,7 +50,7 @@ CODE:
     purple_perl_account_set_password(account, password, func, data);
 
 void
-purple_account_set_alias(account, alias)
+purple_account_set_private_alias(account, alias)
     Purple::Account account
     const char * alias
 
@@ -140,7 +140,7 @@ CODE:
     purple_perl_account_get_password(account, func, data);
 
 const char *
-purple_account_get_alias(account)
+purple_account_get_private_alias(account)
     Purple::Account account
 
 const char *

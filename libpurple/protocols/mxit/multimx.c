@@ -638,7 +638,7 @@ int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 	if (multimx->nickname)
 		nickname = multimx->nickname;
 	else
-		nickname = purple_account_get_alias(purple_connection_get_account(gc));		/* local alias */
+		nickname = purple_account_get_private_alias(purple_connection_get_account(gc));		/* local alias */
 
 	/* Display message in chat window */
 	serv_got_chat_in(gc, id, nickname, flags, message, time(NULL));

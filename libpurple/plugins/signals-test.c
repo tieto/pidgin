@@ -73,7 +73,7 @@ account_alias_changed(PurpleAccount *account, const char *old, gpointer data)
 {
 	purple_debug_misc("signals test", "account-alias-changed (%s, %s, %s)\n",
 					purple_account_get_username(account),
-					old, purple_account_get_alias(account));
+					old, purple_account_get_private_alias(account));
 }
 
 static int

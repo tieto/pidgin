@@ -863,9 +863,9 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gpointer data = NULL;
 		size_t len = 0;
 
-		if (purple_account_get_alias(dialog->account))
+		if (purple_account_get_private_alias(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->alias_entry),
-							   purple_account_get_alias(dialog->account));
+							   purple_account_get_private_alias(dialog->account));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
 					     purple_account_get_check_mail(dialog->account));
@@ -1489,9 +1489,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
 
 	if (*value != '\0')
-		purple_account_set_alias(account, value);
+		purple_account_set_private_alias(account, value);
 	else
-		purple_account_set_alias(account, NULL);
+		purple_account_set_private_alias(account, NULL);
 
 	/* Buddy Icon */
 	if (dialog->prpl_info != NULL && dialog->prpl_info->icon_spec.format != NULL)

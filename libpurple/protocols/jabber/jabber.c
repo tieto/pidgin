@@ -1421,7 +1421,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	if((node = xmlnode_get_child(query, "name"))) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
-													purple_account_get_alias(purple_connection_get_account(js->gc)), FALSE);
+													purple_account_get_private_alias(purple_connection_get_account(js->gc)), FALSE);
 		else {
 			char *data = xmlnode_get_data(node);
 			field = purple_request_field_string_new("name", _("Name"), data, FALSE);

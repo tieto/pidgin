@@ -986,7 +986,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				if (buddy)
 					their_name = purple_buddy_get_alias(buddy);
 
-				alias = purple_account_get_alias(log->account);
+				alias = purple_account_get_private_alias(log->account);
 				if (alias) {
 					alias_length = strlen(alias);
 				} else {
@@ -1111,8 +1111,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, "<b>");
 
 			if (name_guessed == NAME_GUESS_ME) {
-				if (purple_account_get_alias(log->account))
-					text = g_string_append(text, purple_account_get_alias(log->account));
+				if (purple_account_get_private_alias(log->account))
+					text = g_string_append(text, purple_account_get_private_alias(log->account));
 				else
 					text = g_string_append(text, purple_account_get_username(log->account));
 			}
@@ -1663,7 +1663,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 					const char *acct_name;
 					line2++;
 					line = line2;
-					acct_name = purple_account_get_alias(log->account);
+					acct_name = purple_account_get_private_alias(log->account);
 					if (!acct_name)
 						acct_name = purple_account_get_username(log->account);
 
@@ -2032,7 +2032,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 						}
 					} else {
 						const char *acct_name;
-						acct_name = purple_account_get_alias(log->account);
+						acct_name = purple_account_get_private_alias(log->account);
 						if (!acct_name)
 							acct_name = purple_account_get_username(log->account);
 

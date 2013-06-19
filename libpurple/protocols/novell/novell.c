@@ -101,12 +101,12 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 	if (ret_code == NM_OK) {
 
 		/* Set alias for user if not set (use Full Name) */
-		alias = purple_account_get_alias(user->client_data);
+		alias = purple_account_get_private_alias(user->client_data);
 		if (alias == NULL || *alias == '\0') {
 			alias = nm_user_record_get_full_name(user->user_record);
 
 			if (alias)
-				purple_account_set_alias(user->client_data, alias);
+				purple_account_set_private_alias(user->client_data, alias);
 		}
 
 		/* Tell Purple that we are connected */
@@ -2510,7 +2510,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 				if (!_check_for_disconnect(user, rc)) {
 
 					/* Use the account alias if it is set */
-					name = purple_account_get_alias(user->client_data);
+					name = purple_account_get_private_alias(user->client_data);
 					if (name == NULL || *name == '\0') {
 
 						/* If there is no account alias, try full name */

@@ -733,10 +733,10 @@ create_account_menu(PurpleAccount *default_account,
 				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 		}
 
-		if (purple_account_get_alias(account)) {
+		if (purple_account_get_private_alias(account)) {
 			g_snprintf(buf, sizeof(buf), "%s (%s) (%s)",
 					   purple_account_get_username(account),
-					   purple_account_get_alias(account),
+					   purple_account_get_private_alias(account),
 					   purple_account_get_protocol_name(account));
 		} else {
 			g_snprintf(buf, sizeof(buf), "%s (%s)",

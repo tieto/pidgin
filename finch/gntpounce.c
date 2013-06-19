@@ -849,7 +849,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		 * NULL to the account alias if we have it or the account
 		 * name if that's all we have
 		 */
-		if ((name_shown = purple_account_get_alias(account)) == NULL)
+		if ((name_shown = purple_account_get_private_alias(account)) == NULL)
 			name_shown = purple_account_get_username(account);
 
 		if (reason == NULL)

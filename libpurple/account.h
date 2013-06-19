@@ -319,12 +319,12 @@ void purple_account_set_password(PurpleAccount *account, const gchar *password,
 	PurpleKeyringSaveCallback cb, gpointer data);
 
 /**
- * Sets the account's alias.
+ * Sets the account's private alias.
  *
  * @param account The account.
  * @param alias   The alias.
  */
-void purple_account_set_alias(PurpleAccount *account, const char *alias);
+void purple_account_set_private_alias(PurpleAccount *account, const char *alias);
 
 /**
  * Sets the account's user information
@@ -639,13 +639,13 @@ void purple_account_get_password(PurpleAccount *account,
 	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
- * Returns the account's alias.
+ * Returns the account's private alias.
  *
  * @param account The account.
  *
  * @return The alias.
  */
-const char *purple_account_get_alias(const PurpleAccount *account);
+const char *purple_account_get_private_alias(const PurpleAccount *account);
 
 /**
  * Returns the account's user information.

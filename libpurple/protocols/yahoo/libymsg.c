@@ -4540,7 +4540,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 			return -1;
 		}
 
-		alias = purple_account_get_alias(account);
+		alias = purple_account_get_private_alias(account);
 		pkt = yahoo_packet_new(YAHOO_SERVICE_SMS_MSG, YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash(pkt, "sssss",
 			1, purple_connection_get_display_name(gc),

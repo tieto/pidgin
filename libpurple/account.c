@@ -751,7 +751,7 @@ purple_account_set_password(PurpleAccount *account, const gchar *password,
 }
 
 void
-purple_account_set_alias(PurpleAccount *account, const char *alias)
+purple_account_set_private_alias(PurpleAccount *account, const char *alias)
 {
 	PurpleAccountPrivate *priv;
 
@@ -1375,7 +1375,7 @@ purple_account_get_password(PurpleAccount *account,
 }
 
 const char *
-purple_account_get_alias(const PurpleAccount *account)
+purple_account_get_private_alias(const PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv;
 
@@ -1448,7 +1448,7 @@ purple_account_get_name_for_display(const PurpleAccount *account)
 	PurpleConnection *gc = NULL;
 	const gchar *name = NULL, *username = NULL, *displayname = NULL;
 
-	name = purple_account_get_alias(account);
+	name = purple_account_get_private_alias(account);
 
 	if (name) {
 		return name;
@@ -2739,7 +2739,7 @@ purple_account_to_xmlnode(PurpleAccount *account)
 		}
 	}
 
-	if ((tmp = purple_account_get_alias(account)) != NULL)
+	if ((tmp = purple_account_get_private_alias(account)) != NULL)
 	{
 		child = xmlnode_new_child(node, "alias");
 		xmlnode_insert_data(child, tmp, -1);
@@ -2808,7 +2808,7 @@ purple_account_set_property(GObject *obj, guint param_id, const GValue *value,
 			purple_account_set_username(account, g_value_get_string(value));
 			break;
 		case PROP_PRIVATE_ALIAS:
-			purple_account_set_alias(account, g_value_get_string(value));
+			purple_account_set_private_alias(account, g_value_get_string(value));
 			break;
 		case PROP_ENABLED:
 			purple_account_set_enabled(account, purple_core_get_ui(),
@@ -2853,7 +2853,7 @@ purple_account_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_string(value, purple_account_get_username(account));
 			break;
 		case PROP_PRIVATE_ALIAS:
-			g_value_set_string(value, purple_account_get_alias(account));
+			g_value_set_string(value, purple_account_get_private_alias(account));
 			break;
 		case PROP_ENABLED:
 			g_value_set_boolean(value, purple_account_get_enabled(account,
