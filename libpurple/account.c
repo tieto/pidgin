@@ -51,6 +51,10 @@ typedef struct
 
 	gboolean remember_pass;     /**< Remember the password.                 */
 
+	/*
+	 * TODO: After a GObject representing a protocol is ready, use it
+	 * here instead of the protocol ID.
+	 */
 	char *protocol_id;          /**< The ID of the protocol.                */
 
 	PurpleConnection *gc;         /**< The connection handle.               */
