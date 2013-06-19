@@ -43,7 +43,6 @@
 #include "plugin.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "privacy.h"
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
@@ -172,7 +171,6 @@ purple_core_init(const char *ui)
 	purple_blist_init();
 	purple_log_init();
 	purple_network_init();
-	purple_privacy_init();
 	purple_pounces_init();
 	purple_proxy_init();
 	purple_dnsquery_init();

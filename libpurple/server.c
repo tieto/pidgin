@@ -30,7 +30,6 @@
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
@@ -560,7 +559,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 */
 	flags |= PURPLE_MESSAGE_RECV;
 
-	if (!purple_privacy_check(account, who)) {
+	if (!purple_account_privacy_check(account, who)) {
 		purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
 				account, who, msg, flags, (unsigned int)mtime);
 		return;
@@ -778,7 +777,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	g_return_if_fail(who != NULL);
 
 	account = purple_connection_get_account(gc);
-	if (!purple_privacy_check(account, who)) {
+	if (!purple_account_privacy_check(account, who)) {
 		purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
 				account, who, name, message, data);
 		return;

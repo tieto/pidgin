@@ -30,7 +30,6 @@
 #include "notify.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "server.h"
 #include "signals.h"
@@ -317,13 +316,13 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	g_snprintf(buf, sizeof(buf), "%d", purple_account_get_privacy_type(account));
 	xmlnode_set_attrib(node, "mode", buf);
 
-	for (cur = account->permit; cur; cur = cur->next)
+	for (cur = purple_account_privacy_get_permitted(account); cur; cur = cur->next)
 	{
 		child = xmlnode_new_child(node, "permit");
 		xmlnode_insert_data(child, cur->data, -1);
 	}
 
-	for (cur = account->deny; cur; cur = cur->next)
+	for (cur = purple_account_privacy_get_denied(account); cur; cur = cur->next)
 	{
 		child = xmlnode_new_child(node, "block");
 		xmlnode_insert_data(child, cur->data, -1);
@@ -640,7 +639,7 @@ load_blist(void)
 				continue;
 
 			imode = atoi(mode);
-			purple_account_set_privacy_type(account, (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL));
+			purple_account_set_privacy_type(account, (imode != 0 ? imode : PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL));
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;
@@ -649,11 +648,11 @@ load_blist(void)
 
 				if (purple_strequal(x->name, "permit")) {
 					name = xmlnode_get_data(x);
-					purple_privacy_permit_add(account, name, TRUE);
+					purple_account_privacy_permit_add(account, name, TRUE);
 					g_free(name);
 				} else if (purple_strequal(x->name, "block")) {
 					name = xmlnode_get_data(x);
-					purple_privacy_deny_add(account, name, TRUE);
+					purple_account_privacy_deny_add(account, name, TRUE);
 					g_free(name);
 				}
 			}
