@@ -1401,7 +1401,7 @@ account_register_cb(PurpleAccount *account, gboolean succeeded, void *user_data)
 	if (succeeded)
 	{
 		const PurpleSavedStatus *saved_status = purple_savedstatus_get_current();
-		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
+		purple_signal_emit(pidgin_accounts_get_handle(), "account-modified", account);
 
 		if (saved_status != NULL && purple_account_get_remember_password(account)) {
 			purple_savedstatus_activate_for_account(saved_status, account);
@@ -1668,7 +1668,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	if (new_acct)
 		purple_accounts_add(account);
 	else
-		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
+		purple_signal_emit(pidgin_accounts_get_handle(), "account-modified", account);
 
 	/* If this is a new account, then sign on! */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->register_button))) {
@@ -2555,7 +2555,7 @@ pidgin_accounts_window_show(void)
 	/* Close button */
 	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE, G_CALLBACK(close_accounts_cb), dialog);
 
-	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
+	purple_signal_connect(pidgin_accounts_get_handle(), "account-modified",
 	                    accounts_window,
 	                    PURPLE_CALLBACK(account_modified_cb), accounts_window);
 	purple_prefs_connect_callback(accounts_window,
@@ -2914,14 +2914,14 @@ pidgin_accounts_get_ui_ops(void)
 }
 
 void *
-pidgin_account_get_handle(void) {
+pidgin_accounts_get_handle(void) {
 	static int handle;
 
 	return &handle;
 }
 
 void
-pidgin_account_init(void)
+pidgin_accounts_init(void)
 {
 	char *default_avatar = NULL;
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/accounts");
@@ -2941,29 +2941,29 @@ pidgin_account_init(void)
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon", default_avatar);
 	g_free(default_avatar);
 
-	purple_signal_register(pidgin_account_get_handle(), "account-modified",
+	purple_signal_register(pidgin_accounts_get_handle(), "account-modified",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT));
 
 	/* Setup some purple signal handlers. */
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(add_account_to_liststore), NULL);
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(account_removed_cb), NULL);
 	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
 	purple_signal_connect(purple_accounts_get_handle(), "account-enabled",
-						pidgin_account_get_handle(),
+						pidgin_accounts_get_handle(),
 						PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
 	account_pref_wins =
@@ -2971,7 +2971,7 @@ pidgin_account_init(void)
 }
 
 void
-pidgin_account_uninit(void)
+pidgin_accounts_uninit(void)
 {
 	/*
 	 * TODO: Need to free all the dialogs in here.  Could probably create
@@ -2980,7 +2980,7 @@ pidgin_account_uninit(void)
 	 */
 	g_hash_table_destroy(account_pref_wins);
 
-	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
-	purple_signals_unregister_by_instance(pidgin_account_get_handle());
+	purple_signals_disconnect_by_handle(pidgin_accounts_get_handle());
+	purple_signals_unregister_by_instance(pidgin_accounts_get_handle());
 }
 
