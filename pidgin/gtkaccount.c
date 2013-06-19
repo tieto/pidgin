@@ -165,6 +165,10 @@ static void add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
 
+/* privacy UI ops */
+void pidgin_permit_added_removed(PurpleAccount *account, const char *name);
+void pidgin_deny_added_removed(PurpleAccount *account, const char *name);
+
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
@@ -2901,10 +2905,11 @@ static PurpleAccountUiOps ui_ops =
 	pidgin_accounts_request_add,
 	pidgin_accounts_request_authorization,
 	pidgin_accounts_request_close,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	pidgin_permit_added_removed,
+	pidgin_permit_added_removed,
+	pidgin_deny_added_removed,
+	pidgin_deny_added_removed,
+	NULL, NULL, NULL, NULL
 };
 
 PurpleAccountUiOps *
