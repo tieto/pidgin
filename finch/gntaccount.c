@@ -1157,7 +1157,8 @@ static PurpleAccountUiOps ui_ops =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL, NULL, NULL, NULL
 };
 
 PurpleAccountUiOps *finch_accounts_get_ui_ops()
