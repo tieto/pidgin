@@ -74,7 +74,7 @@ typedef struct
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
-	PurpleAccountPrivacyType perm_deny;  /**< The permit/deny setting.      */
+	PurpleAccountPrivacyType privacy_type;  /**< The permit/deny setting.   */
 
 	GList *status_types;        /**< Status types.                          */
 
@@ -914,7 +914,7 @@ purple_account_set_privacy_type(PurpleAccount *account, PurpleAccountPrivacyType
 	g_return_if_fail(account != NULL);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	priv->perm_deny = privacy_type;
+	priv->privacy_type = privacy_type;
 }
 
 void
@@ -1524,7 +1524,7 @@ purple_account_get_privacy_type(const PurpleAccount *account)
 	g_return_val_if_fail(account != NULL, PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	return priv->perm_deny;
+	return priv->privacy_type;
 }
 
 gboolean
@@ -2898,7 +2898,7 @@ static void purple_account_init(GTypeInstance *instance, gpointer klass)
 			g_free, (GDestroyNotify)g_hash_table_destroy);
 	priv->system_log = NULL;
 
-	priv->perm_deny = PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL;
+	priv->privacy_type = PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL;
 }
 
 /* GObject dispose function */
