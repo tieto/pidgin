@@ -30,7 +30,6 @@
 #include <blist.h>
 #include <log.h>
 #include <notify.h>
-#include <privacy.h>
 #include <request.h>
 #include <savedstatuses.h>
 #include <server.h>
@@ -1267,8 +1266,8 @@ toggle_block_buddy(GntMenuItem *item, gpointer buddy)
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	const char *name = purple_buddy_get_name(buddy);
 
-	block ? purple_privacy_deny(account, name, FALSE, FALSE) :
-		purple_privacy_allow(account, name, FALSE, FALSE);
+	block ? purple_account_privacy_deny(account, name) :
+		purple_account_privacy_allow(account, name);
 }
 
 static void
@@ -1310,7 +1309,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	}
 
 	account = purple_buddy_get_account(buddy);
-	permitted = purple_privacy_check(account, purple_buddy_get_name(buddy));
+	permitted = purple_account_privacy_check(account, purple_buddy_get_name(buddy));
 
 	item = gnt_menuitem_check_new(_("Blocked"));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), !permitted);
@@ -2673,9 +2672,9 @@ block_select_cb(gpointer data, PurpleRequestFields *fields)
 	const char *name = purple_request_fields_get_string(fields,  "screenname");
 	if (account && name && *name != '\0') {
 		if (purple_request_fields_get_choice(fields, "block") == 1) {
-			purple_privacy_deny(account, name, FALSE, FALSE);
+			purple_account_privacy_deny(account, name);
 		} else {
-			purple_privacy_allow(account, name, FALSE, FALSE);
+			purple_account_privacy_allow(account, name);
 		}
 	}
 }
