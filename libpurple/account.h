@@ -569,25 +569,6 @@ void purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 							  const char *name, gboolean value);
 
 /**
- * Returns the UI data associated with this account.
- *
- * @param account The account.
- *
- * @return The UI data associated with this object.  This is a
- *         convenience field provided to the UIs--it is not
- *         used by the libuprple core.
- */
-gpointer purple_account_get_ui_data(const PurpleAccount *account);
-
-/**
- * Set the UI data associated with this account.
- *
- * @param account The account.
- * @param ui_data A pointer to associate with this object.
- */
-void purple_account_set_ui_data(PurpleAccount *account, gpointer ui_data);
-
-/**
  * Returns whether or not the account is connected.
  *
  * @param account The account.

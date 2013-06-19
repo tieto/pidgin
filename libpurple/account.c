@@ -81,7 +81,6 @@ typedef struct
 	PurplePresence *presence;     /**< Presence.                            */
 	PurpleLog *system_log;        /**< The system log                       */
 
-	void *ui_data;              /**< The UI can put data here.              */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
 
@@ -2153,30 +2152,6 @@ purple_account_get_ui_bool(const PurpleAccount *account, const char *ui,
 
 	return g_value_get_boolean(&setting->value);
 }
-
-gpointer
-purple_account_get_ui_data(const PurpleAccount *account)
-{
-	PurpleAccountPrivate *priv;
-
-	g_return_val_if_fail(account != NULL, NULL);
-
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	return priv->ui_data;
-}
-
-void
-purple_account_set_ui_data(PurpleAccount *account,
-                                 gpointer ui_data)
-{
-	PurpleAccountPrivate *priv;
-
-	g_return_if_fail(account != NULL);
-
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	priv->ui_data = ui_data;
-}
-
 
 PurpleLog *
 purple_account_get_log(PurpleAccount *account, gboolean create)
