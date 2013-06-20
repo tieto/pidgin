@@ -1,5 +1,4 @@
 noinst_LTLIBRARIES=libpurple-ciphers.la
-# XXX: cipher.lo won't be updated after a change in cipher files
 
 if USE_NSS
 AES_SOURCE = aescipher.c

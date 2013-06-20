@@ -306,7 +306,10 @@ mediaincludedir=$(includedir)/libpurple/media
 mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
-libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
+libpurple_la_DEPENDENCIES = \
+	$(STATIC_LINK_LIBS) \
+	ciphers/libpurple-ciphers.la
+
 libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
