@@ -48,6 +48,7 @@ purple_coresources = \
 	cmds.c \
 	connection.c \
 	conversation.c \
+	conversations.c \
 	core.c \
 	debug.c \
 	desktopitem.c \
@@ -118,6 +119,7 @@ purple_coreheaders = \
 	cmds.h \
 	connection.h \
 	conversation.h \
+	conversations.h \
 	core.h \
 	dbus-maybe.h \
 	debug.h \
@@ -203,8 +205,8 @@ CLEANFILES = \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blist.h buddyicon.h \
-                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
+dbus_exported = dbus-useful.h dbus-define-api.h accounts.h blist.h buddyicon.h \
+                connection.h conversations.h core.h ft.h log.h notify.h prefs.h roomlist.h \
                 savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \

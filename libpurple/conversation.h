@@ -1,7 +1,6 @@
 /**
  * @file conversation.h Conversation API
  * @ingroup core
- * @see @ref conversation-signals
  */
 
 /* purple
