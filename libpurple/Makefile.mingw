@@ -61,22 +61,27 @@ endif
 
 C_SRC =	\
 			account.c \
+			accounts.c \
 			accountopt.c \
 			blist.c \
 			buddyicon.c \
 			certificate.c \
 			cipher.c \
-			ciphers/aes.c \
-			ciphers/des.c \
-			ciphers/gchecksum.c \
-			ciphers/hmac.c \
-			ciphers/md4.c \
-			ciphers/pbkdf2.c \
-			ciphers/rc4.c \
-			circbuffer.c \
+			ciphers/aescipher.c \
+			ciphers/des3cipher.c \
+			ciphers/descipher.c \
+			ciphers/hmaccipher.c \
+			ciphers/md4hash.c \
+			ciphers/md5hash.c \
+			ciphers/pbkdf2cipher.c \
+			ciphers/rc4cipher.c \
+			ciphers/sha1hash.c \
+			ciphers/sha256hash.c \
+			circularbuffer.c \
 			cmds.c \
 			connection.c \
 			conversation.c \
+			conversations.c \
 			core.c \
 			debug.c \
 			dnsquery.c \
