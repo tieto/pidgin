@@ -30,123 +30,144 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
+/** @copydoc _PurpleConversation */
+typedef struct _PurpleConversation           PurpleConversation;
+/** @copydoc _PurpleConversation */
+typedef struct _PurpleConversationClass      PurpleConversationClass;
+/** @copydoc _PurpleChatConversation */
+typedef struct _PurpleChatConversation       PurpleChatConversation;
+/** @copydoc _PurpleChatConversationClass */
+typedef struct _PurpleChatConversationClass  PurpleChatConversationClass;
+/** @copydoc _PurpleIMConversation */
+typedef struct _PurpleIMConversation         PurpleIMConversation;
+/** @copydoc _PurpleIMConversationClass */
+typedef struct _PurpleIMConversationClass    PurpleIMConversationClass;
 
 /** @copydoc _PurpleConversationUiOps */
-typedef struct _PurpleConversationUiOps PurpleConversationUiOps;
-/** @copydoc _PurpleConversation */
-typedef struct _PurpleConversation      PurpleConversation;
-/** @copydoc _PurpleConvIm */
-typedef struct _PurpleConvIm            PurpleConvIm;
-/** @copydoc _PurpleConvChat */
-typedef struct _PurpleConvChat          PurpleConvChat;
-/** @copydoc _PurpleConvChatBuddy */
-typedef struct _PurpleConvChatBuddy     PurpleConvChatBuddy;
-/** @copydoc _PurpleConvMessage */
-typedef struct _PurpleConvMessage       PurpleConvMessage;
-
-/**
- * A type of conversation.
- */
-typedef enum
-{
-	PURPLE_CONV_TYPE_UNKNOWN = 0, /**< Unknown conversation type. */
-	PURPLE_CONV_TYPE_IM,          /**< Instant Message.           */
-	PURPLE_CONV_TYPE_CHAT,        /**< Chat room.                 */
-	PURPLE_CONV_TYPE_MISC,        /**< A misc. conversation.      */
-	PURPLE_CONV_TYPE_ANY          /**< Any type of conversation.  */
-
-} PurpleConversationType;
+typedef struct _PurpleConversationUiOps      PurpleConversationUiOps;
+/** @copydoc _PurpleChatConversationBuddy */
+typedef struct _PurpleChatConversationBuddy  PurpleChatConversationBuddy;
+/** @copydoc _PurpleConversationMessage */
+typedef struct _PurpleConversationMessage    PurpleConversationMessage;
 
 /**
  * Conversation update type.
  */
 typedef enum
 {
-	PURPLE_CONV_UPDATE_ADD = 0, /**< The buddy associated with the conversation
-	                               was added.   */
-	PURPLE_CONV_UPDATE_REMOVE,  /**< The buddy associated with the conversation
-	                               was removed. */
-	PURPLE_CONV_UPDATE_ACCOUNT, /**< The purple_account was changed. */
-	PURPLE_CONV_UPDATE_TYPING,  /**< The typing state was updated. */
-	PURPLE_CONV_UPDATE_UNSEEN,  /**< The unseen state was updated. */
-	PURPLE_CONV_UPDATE_LOGGING, /**< Logging for this conversation was
-	                               enabled or disabled. */
-	PURPLE_CONV_UPDATE_TOPIC,   /**< The topic for a chat was updated. */
+	PURPLE_CONVERSATION_UPDATE_ADD = 0, /**< The buddy associated with the conversation
+	                                         was added.   */
+	PURPLE_CONVERSATION_UPDATE_REMOVE,  /**< The buddy associated with the conversation
+	                                         was removed. */
+	PURPLE_CONVERSATION_UPDATE_ACCOUNT, /**< The purple_account was changed. */
+	PURPLE_CONVERSATION_UPDATE_TYPING,  /**< The typing state was updated. */
+	PURPLE_CONVERSATION_UPDATE_UNSEEN,  /**< The unseen state was updated. */
+	PURPLE_CONVERSATION_UPDATE_LOGGING, /**< Logging for this conversation was
+	                                         enabled or disabled. */
+	PURPLE_CONVERSATION_UPDATE_TOPIC,   /**< The topic for a chat was updated. */
 	/*
 	 * XXX These need to go when we implement a more generic core/UI event
 	 * system.
 	 */
-	PURPLE_CONV_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
-	PURPLE_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
-	PURPLE_CONV_UPDATE_AWAY,     /**< The other user went away.                */
-	PURPLE_CONV_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
-	PURPLE_CONV_UPDATE_TITLE,
-	PURPLE_CONV_UPDATE_CHATLEFT,
+	PURPLE_CONVERSATION_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
+	PURPLE_CONVERSATION_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
+	PURPLE_CONVERSATION_UPDATE_AWAY,     /**< The other user went away.                */
+	PURPLE_CONVERSATION_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
+	PURPLE_CONVERSATION_UPDATE_TITLE,
+	PURPLE_CONVERSATION_UPDATE_CHATLEFT,
 
-	PURPLE_CONV_UPDATE_FEATURES  /**< The features for a chat have changed */
+	PURPLE_CONVERSATION_UPDATE_FEATURES  /**< The features for a chat have changed */
 
-} PurpleConvUpdateType;
+} PurpleConversationUpdateType;
 
 /**
  * The typing state of a user.
  */
 typedef enum
 {
-	PURPLE_NOT_TYPING = 0,  /**< Not typing.                 */
-	PURPLE_TYPING,          /**< Currently typing.           */
-	PURPLE_TYPED            /**< Stopped typing momentarily. */
+	PURPLE_IM_CONVERSATION_NOT_TYPING = 0,  /**< Not typing.                 */
+	PURPLE_IM_CONVERSATION_TYPING,          /**< Currently typing.           */
+	PURPLE_IM_CONVERSATION_TYPED            /**< Stopped typing momentarily. */
 
-} PurpleTypingState;
+} PurpleIMConversationTypingState;
 
 /**
  * Flags applicable to a message. Most will have send, recv or system.
  */
-typedef enum
+typedef enum /*< flags >*/
 {
-	PURPLE_MESSAGE_SEND        = 0x0001, /**< Outgoing message.        */
-	PURPLE_MESSAGE_RECV        = 0x0002, /**< Incoming message.        */
-	PURPLE_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
-	PURPLE_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
-	PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
-	                                        message should not be
-	                                        shown in conversations
-	                                        which are only open for
-	                                        internal UI purposes
-	                                        (e.g. for contact-aware
-	                                         conversations).           */
-	PURPLE_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
-	PURPLE_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
-	PURPLE_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
-	PURPLE_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
-	PURPLE_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
-	PURPLE_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
-	                                        apply formatting         */
-	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
-	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
-	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
-										   linkified */
-	PURPLE_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
-} PurpleMessageFlags;
+	PURPLE_CONVERSATION_MESSAGE_SEND        = 0x0001, /**< Outgoing message.        */
+	PURPLE_CONVERSATION_MESSAGE_RECV        = 0x0002, /**< Incoming message.        */
+	PURPLE_CONVERSATION_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
+	PURPLE_CONVERSATION_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
+	PURPLE_CONVERSATION_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
+	                                                        message should not be
+	                                                        shown in conversations
+	                                                        which are only open for
+	                                                        internal UI purposes
+	                                                        (e.g. for contact-aware
+	                                                        conversations).         */
+	PURPLE_CONVERSATION_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
+	PURPLE_CONVERSATION_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
+	PURPLE_CONVERSATION_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
+	PURPLE_CONVERSATION_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
+	PURPLE_CONVERSATION_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
+	PURPLE_CONVERSATION_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
+	                                                        apply formatting        */
+	PURPLE_CONVERSATION_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
+	PURPLE_CONVERSATION_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
+	PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
+										                   linkified */
+	PURPLE_CONVERSATION_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
+} PurpleConversationMessageFlags;
 
 /**
  * Flags applicable to users in Chats.
  */
-typedef enum
+typedef enum /*< flags >*/
 {
-	PURPLE_CBFLAGS_NONE          = 0x0000, /**< No flags                     */
-	PURPLE_CBFLAGS_VOICE         = 0x0001, /**< Voiced user or "Participant" */
-	PURPLE_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
-	PURPLE_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
-	PURPLE_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
-	PURPLE_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
-	PURPLE_CBFLAGS_AWAY          = 0x0020  /**< Currently away.              */
+	PURPLE_CHAT_CONVERSATION_BUDDY_NONE     = 0x0000, /**< No flags                     */
+	PURPLE_CHAT_CONVERSATION_BUDDY_VOICE    = 0x0001, /**< Voiced user or "Participant" */
+	PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP   = 0x0002, /**< Half-op                      */
+	PURPLE_CHAT_CONVERSATION_BUDDY_OP       = 0x0004, /**< Channel Op or Moderator      */
+	PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER  = 0x0008, /**< Channel Founder              */
+	PURPLE_CHAT_CONVERSATION_BUDDY_TYPING   = 0x0010, /**< Currently typing             */
+	PURPLE_CHAT_CONVERSATION_BUDDY_AWAY     = 0x0020  /**< Currently away.              */
 
-} PurpleConvChatBuddyFlags;
+} PurpleChatConversationBuddyFlags;
 
 #include "account.h"
 #include "buddyicon.h"
 #include "log.h"
 #include "server.h"
+
+/** Structure representing a conversation.
+ */
+struct _PurpleConversation
+{
+	/*< private >*/
+	GObject gparent;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * PurpleConversationClass:
+ *
+ * The base class for all #PurpleConversation's.
+ */
+struct _PurpleConversationClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 /**
  * Conversation operations and events.
@@ -165,17 +186,17 @@ struct _PurpleConversationUiOps
 	void (*destroy_conversation)(PurpleConversation *conv);
 	/** Write a message to a chat.  If this field is @c NULL, libpurple will
 	 *  fall back to using #write_conv.
-	 *  @see purple_conv_chat_write()
+	 *  @see purple_chat_conversation_write()
 	 */
 	void (*write_chat)(PurpleConversation *conv, const char *who,
-	                   const char *message, PurpleMessageFlags flags,
-	                   time_t mtime);
+	                  const char *message, PurpleConversationMessageFlags flags,
+	                  time_t mtime);
 	/** Write a message to an IM conversation.  If this field is @c NULL,
 	 *  libpurple will fall back to using #write_conv.
-	 *  @see purple_conv_im_write()
+	 *  @see purple_im_conversation_write()
 	 */
 	void (*write_im)(PurpleConversation *conv, const char *who,
-	                 const char *message, PurpleMessageFlags flags,
+	                 const char *message, PurpleConversationMessageFlags flags,
 	                 time_t mtime);
 	/** Write a message to a conversation.  This is used rather than the
 	 *  chat- or im-specific ops for errors, system messages (such as "x is
@@ -189,14 +210,15 @@ struct _PurpleConversationUiOps
 	                   const char *name,
 	                   const char *alias,
 	                   const char *message,
-	                   PurpleMessageFlags flags,
+	                   PurpleConversationMessageFlags flags,
 	                   time_t mtime);
 
 	/** Add @a cbuddies to a chat.
-	 *  @param cbuddies      A @c GList of #PurpleConvChatBuddy structs.
+	 *  @param cbuddies      A @c GList of #PurpleChatConversationBuddy structs.
 	 *  @param new_arrivals  Whether join notices should be shown.
 	 *                       (Join notices are actually written to the
-	 *                       conversation by #purple_conv_chat_add_users().)
+	 *                       conversation by
+	 *                       #purple_chat_conversation_add_users().)
 	 */
 	void (*chat_add_users)(PurpleConversation *conv,
 	                       GList *cbuddies,
@@ -204,17 +226,17 @@ struct _PurpleConversationUiOps
 	/** Rename the user in this chat named @a old_name to @a new_name.  (The
 	 *  rename message is written to the conversation by libpurple.)
 	 *  @param new_alias  @a new_name's new alias, if they have one.
-	 *  @see purple_conv_chat_add_users()
+	 *  @see purple_chat_conversation_add_users()
 	 */
 	void (*chat_rename_user)(PurpleConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
 	 *  @param users    A @c GList of <tt>const char *</tt>s.
-	 *  @see purple_conv_chat_rename_user()
+	 *  @see purple_chat_conversation_rename_user()
 	 */
 	void (*chat_remove_users)(PurpleConversation *conv, GList *users);
 	/** Called when a user's flags are changed.
-	 *  @see purple_conv_chat_user_set_flags()
+	 *  @see purple_chat_conversation_user_set_flags()
 	 */
 	void (*chat_update_user)(PurpleConversation *conv, const char *user);
 
@@ -230,7 +252,8 @@ struct _PurpleConversationUiOps
 	gboolean (*has_focus)(PurpleConversation *conv);
 
 	/* Custom Smileys */
-	gboolean (*custom_smiley_add)(PurpleConversation *conv, const char *smile, gboolean remote);
+	gboolean (*custom_smiley_add)(PurpleConversation *conv, const char *smile,
+	                            boolean remote);
 	void (*custom_smiley_write)(PurpleConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
@@ -261,7 +284,7 @@ G_BEGIN_DECLS
  * @param type    The type of conversation.
  * @param account The account opening the conversation window on the purple
  *                user's end.
- * @param name    The name of the conversation.  For PURPLE_CONV_TYPE_IM,
+ * @param name    The name of the conversation. For PURPLE_CONVERSATION_TYPE_IM,
  *                this is the name of the buddy.
  *
  * @return The new conversation.
@@ -307,13 +330,6 @@ PurpleConversationType purple_conversation_get_type(const PurpleConversation *co
  */
 void purple_conversation_set_ui_ops(PurpleConversation *conv,
 								  PurpleConversationUiOps *ops);
-
-/**
- * Sets the default conversation UI operations structure.
- *
- * @param ops  The UI conversation operations structure.
- */
-void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
 
 /**
  * Returns the specified conversation's UI operations structure.
@@ -411,7 +427,7 @@ const char *purple_conversation_get_name(const PurpleConversation *conv);
  *
  * @return The value of the attribute key.
  */
-const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key);
+const char *purple_chat_conversation_cb_get_attribute(PurpleChatConversationBuddy *cb, const char *key);
 
 /**
  * Get the keys of all atributes of a chat buddy
@@ -420,7 +436,7 @@ const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const cha
  *
  * @return A list of the attributes of a chat buddy.
  */
-GList *purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb);
+GList *purple_chat_conversation_cb_get_attribute_keys(PurpleChatConversationBuddy *cb);
 	
 /**
  * Set an attribute of a chat buddy
@@ -430,7 +446,8 @@ GList *purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb);
  * @param key	The key of the attribute.
  * @param value	The value of the attribute.
  */
-void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb, const char *key, const char *value);
+void purple_chat_conversation_cb_set_attribute(PurpleChatConversation *chat,
+		PurpleChatConversationBuddy *cb, const char *key, const char *value);
 
 /**
  * Set attributes of a chat buddy
@@ -441,7 +458,8 @@ void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy
  * @param values A GList of the values.
  */
 void
-purple_conv_chat_cb_set_attributes(PurpleConvChat *chat, PurpleConvChatBuddy *cb, GList *keys, GList *values);
+purple_chat_conversation_cb_set_attributes(PurpleChatConversation *chat,
+		PurpleChatConversationBuddy *cb, GList *keys, GList *values);
 
 /**
  * Enables or disables logging for this conversation.
@@ -472,32 +490,6 @@ gboolean purple_conversation_is_logging(const PurpleConversation *conv);
 void purple_conversation_close_logs(PurpleConversation *conv);
 
 /**
- * Returns the specified conversation's IM-specific data.
- *
- * If the conversation type is not PURPLE_CONV_TYPE_IM, this will return @c NULL.
- *
- * @param conv The conversation.
- *
- * @return The IM-specific data.
- */
-PurpleConvIm *purple_conversation_get_im_data(const PurpleConversation *conv);
-
-#define PURPLE_CONV_IM(c) (purple_conversation_get_im_data(c))
-
-/**
- * Returns the specified conversation's chat-specific data.
- *
- * If the conversation type is not PURPLE_CONV_TYPE_CHAT, this will return @c NULL.
- *
- * @param conv The conversation.
- *
- * @return The chat-specific data.
- */
-PurpleConvChat *purple_conversation_get_chat_data(const PurpleConversation *conv);
-
-#define PURPLE_CONV_CHAT(c) (purple_conversation_get_chat_data(c))
-
-/**
  * Sets extra data for a conversation.
  *
  * @param conv The conversation.
@@ -518,29 +510,6 @@ void purple_conversation_set_data(PurpleConversation *conv, const char *key,
 gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key);
 
 /**
- * Returns a list of all conversations.
- *
- * This list includes both IMs and chats.
- *
- * @constreturn A GList of all conversations.
- */
-GList *purple_get_conversations(void);
-
-/**
- * Returns a list of all IMs.
- *
- * @constreturn A GList of all IMs.
- */
-GList *purple_get_ims(void);
-
-/**
- * Returns a list of all chats.
- *
- * @constreturn A GList of all chats.
- */
-GList *purple_get_chats(void);
-
-/**
  * Finds a conversation with the specified type, name, and Purple account.
  *
  * @param type The type of the conversation.
@@ -557,7 +526,7 @@ PurpleConversation *purple_find_conversation_with_account(
  * Writes to a conversation window.
  *
  * This function should not be used to write IM or chat messages. Use
- * purple_conv_im_write() and purple_conv_chat_write() instead. Those functions will
+ * purple_im_conversation_write() and purple_chat_conversation_write() instead. Those functions will
  * most likely call this anyway, but they may do their own formatting,
  * sound playback, etc.
  *
@@ -570,11 +539,11 @@ PurpleConversation *purple_find_conversation_with_account(
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  *
- * @see purple_conv_im_write()
- * @see purple_conv_chat_write()
+ * @see purple_im_conversation_write()
+ * @see purple_chat_conversation_write()
  */
 void purple_conversation_write(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags,
+		const char *message, PurpleConversationMessageFlags flags,
 		time_t mtime);
 
 /**
@@ -608,7 +577,7 @@ gboolean purple_conversation_has_focus(PurpleConversation *conv);
  * @param conv The conversation.
  * @param type The update type.
  */
-void purple_conversation_update(PurpleConversation *conv, PurpleConvUpdateType type);
+void purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateType type);
 
 /**
  * Calls a function on each conversation.
@@ -622,7 +591,7 @@ void purple_conversation_foreach(void (*func)(PurpleConversation *conv));
  *
  * @param conv   The conversation
  *
- * @return  A GList of PurpleConvMessage's. The must not modify the list or the data within.
+ * @return  A GList of PurpleConversationMessage's. The must not modify the list or the data within.
  *          The list contains the newest message at the beginning, and the oldest message at
  *          the end.
  */
@@ -636,58 +605,58 @@ GList *purple_conversation_get_message_history(PurpleConversation *conv);
 void purple_conversation_clear_message_history(PurpleConversation *conv);
 
 /**
- * Get the sender from a PurpleConvMessage
+ * Get the sender from a PurpleConversationMessage
  *
- * @param msg   A PurpleConvMessage
- *
- * @return   The name of the sender of the message
- */
-const char *purple_conversation_message_get_sender(const PurpleConvMessage *msg);
-
-/**
- * Get the message from a PurpleConvMessage
- *
- * @param msg   A PurpleConvMessage
+ * @param msg   A PurpleConversationMessage
  *
  * @return   The name of the sender of the message
  */
-const char *purple_conversation_message_get_message(const PurpleConvMessage *msg);
+const char *purple_conversation_message_get_sender(const PurpleConversationMessage *msg);
 
 /**
- * Get the message-flags of a PurpleConvMessage
+ * Get the message from a PurpleConversationMessage
  *
- * @param msg   A PurpleConvMessage
+ * @param msg   A PurpleConversationMessage
+ *
+ * @return   The name of the sender of the message
+ */
+const char *purple_conversation_message_get_message(const PurpleConversationMessage *msg);
+
+/**
+ * Get the message-flags of a PurpleConversationMessage
+ *
+ * @param msg   A PurpleConversationMessage
  *
  * @return   The message flags
  */
-PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConvMessage *msg);
+PurpleConversationMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg);
 
 /**
- * Get the timestamp of a PurpleConvMessage
+ * Get the timestamp of a PurpleConversationMessage
  *
- * @param msg   A PurpleConvMessage
+ * @param msg   A PurpleConversationMessage
  *
  * @return   The timestamp of the message
  */
-time_t purple_conversation_message_get_timestamp(const PurpleConvMessage *msg);
+time_t purple_conversation_message_get_timestamp(const PurpleConversationMessage *msg);
 
 /**
- * Get the alias from a PurpleConvMessage
+ * Get the alias from a PurpleConversationMessage
  *
- * @param msg   A PurpleConvMessage
+ * @param msg   A PurpleConversationMessage
  *
  * @return   The alias of the sender of the message
  */
-const char *purple_conversation_message_get_alias(const PurpleConvMessage *msg);
+const char *purple_conversation_message_get_alias(const PurpleConversationMessage *msg);
 
 /**
- * Get the conversation associated with the PurpleConvMessage
+ * Get the conversation associated with the PurpleConversationMessage
  *
- * @param msg   A PurpleConvMessage
+ * @param msg   A PurpleConversationMessage
  *
  * @return   The conversation
  */
-PurpleConversation *purple_conversation_message_get_conv(const PurpleConvMessage *msg);
+PurpleConversation *purple_conversation_message_get_conv(const PurpleConversationMessage *msg);
 
 /**
  * Set the UI data associated with this conversation.
@@ -723,7 +692,7 @@ gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
  *
  * @return The parent conversation.
  */
-PurpleConversation *purple_conv_im_get_conversation(const PurpleConvIm *im);
+PurpleConversation *purple_im_conversation_get_conversation(const PurpleIMConversation *im);
 
 /**
  * Sets the IM's buddy icon.
@@ -736,7 +705,7 @@ PurpleConversation *purple_conv_im_get_conversation(const PurpleConvIm *im);
  *
  * @see purple_buddy_icon_set_data()
  */
-void purple_conv_im_set_icon(PurpleConvIm *im, PurpleBuddyIcon *icon);
+void purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon);
 
 /**
  * Returns the IM's buddy icon.
@@ -745,7 +714,7 @@ void purple_conv_im_set_icon(PurpleConvIm *im, PurpleBuddyIcon *icon);
  *
  * @return The buddy icon.
  */
-PurpleBuddyIcon *purple_conv_im_get_icon(const PurpleConvIm *im);
+PurpleBuddyIcon *purple_im_conversation_get_icon(const PurpleIMConversation *im);
 
 /**
  * Sets the IM's typing state.
@@ -753,7 +722,7 @@ PurpleBuddyIcon *purple_conv_im_get_icon(const PurpleConvIm *im);
  * @param im    The IM.
  * @param state The typing state.
  */
-void purple_conv_im_set_typing_state(PurpleConvIm *im, PurpleTypingState state);
+void purple_im_conversation_set_typing_state(PurpleIMConversation *im, PurpleIMConversationTypingState state);
 
 /**
  * Returns the IM's typing state.
@@ -762,7 +731,7 @@ void purple_conv_im_set_typing_state(PurpleConvIm *im, PurpleTypingState state);
  *
  * @return The IM's typing state.
  */
-PurpleTypingState purple_conv_im_get_typing_state(const PurpleConvIm *im);
+PurpleIMConversationTypingState purple_im_conversation_get_typing_state(const PurpleIMConversation *im);
 
 /**
  * Starts the IM's typing timeout.
@@ -770,14 +739,14 @@ PurpleTypingState purple_conv_im_get_typing_state(const PurpleConvIm *im);
  * @param im      The IM.
  * @param timeout The timeout.
  */
-void purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout);
+void purple_im_conversation_start_typing_timeout(PurpleIMConversation *im, int timeout);
 
 /**
  * Stops the IM's typing timeout.
  *
  * @param im The IM.
  */
-void purple_conv_im_stop_typing_timeout(PurpleConvIm *im);
+void purple_im_conversation_stop_typing_timeout(PurpleIMConversation *im);
 
 /**
  * Returns the IM's typing timeout.
@@ -786,44 +755,44 @@ void purple_conv_im_stop_typing_timeout(PurpleConvIm *im);
  *
  * @return The timeout.
  */
-guint purple_conv_im_get_typing_timeout(const PurpleConvIm *im);
+guint purple_im_conversation_get_typing_timeout(const PurpleIMConversation *im);
 
 /**
- * Sets the quiet-time when no PURPLE_TYPING messages will be sent.
+ * Sets the quiet-time when no PURPLE_IM_CONVERSATION_TYPING messages will be sent.
  * Few protocols need this (maybe only MSN).  If the user is still
- * typing after this quiet-period, then another PURPLE_TYPING message
+ * typing after this quiet-period, then another PURPLE_IM_CONVERSATION_TYPING message
  * will be sent.
  *
  * @param im  The IM.
  * @param val The number of seconds to wait before allowing another
- *            PURPLE_TYPING message to be sent to the user.  Or 0 to
- *            not send another PURPLE_TYPING message.
+ *            PURPLE_IM_CONVERSATION_TYPING message to be sent to the user.  Or 0 to
+ *            not send another PURPLE_IM_CONVERSATION_TYPING message.
  */
-void purple_conv_im_set_type_again(PurpleConvIm *im, unsigned int val);
+void purple_im_conversation_set_type_again(PurpleIMConversation *im, unsigned int val);
 
 /**
- * Returns the time after which another PURPLE_TYPING message should be sent.
+ * Returns the time after which another PURPLE_IM_CONVERSATION_TYPING message should be sent.
  *
  * @param im The IM.
  *
  * @return The time in seconds since the epoch.  Or 0 if no additional
- *         PURPLE_TYPING message should be sent.
+ *         PURPLE_IM_CONVERSATION_TYPING message should be sent.
  */
-time_t purple_conv_im_get_type_again(const PurpleConvIm *im);
+time_t purple_im_conversation_get_type_again(const PurpleIMConversation *im);
 
 /**
  * Starts the IM's type again timeout.
  *
  * @param im      The IM.
  */
-void purple_conv_im_start_send_typed_timeout(PurpleConvIm *im);
+void purple_im_conversation_start_send_typed_timeout(PurpleIMConversation *im);
 
 /**
  * Stops the IM's type again timeout.
  *
  * @param im The IM.
  */
-void purple_conv_im_stop_send_typed_timeout(PurpleConvIm *im);
+void purple_im_conversation_stop_send_typed_timeout(PurpleIMConversation *im);
 
 /**
  * Returns the IM's type again timeout interval.
@@ -832,14 +801,14 @@ void purple_conv_im_stop_send_typed_timeout(PurpleConvIm *im);
  *
  * @return The type again timeout interval.
  */
-guint purple_conv_im_get_send_typed_timeout(const PurpleConvIm *im);
+guint purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *im);
 
 /**
  * Updates the visual typing notification for an IM conversation.
  *
  * @param im The IM.
  */
-void purple_conv_im_update_typing(PurpleConvIm *im);
+void purple_im_conversation_update_typing(PurpleIMConversation *im);
 
 /**
  * Writes to an IM.
@@ -850,12 +819,12 @@ void purple_conv_im_update_typing(PurpleConvIm *im);
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  */
-void purple_conv_im_write(PurpleConvIm *im, const char *who,
-						const char *message, PurpleMessageFlags flags,
+void purple_im_conversation_write(PurpleIMConversation *im, const char *who,
+						const char *message, PurpleConversationMessageFlags flags,
 						time_t mtime);
 
 /**
- * Presents an IM-error to the user
+ * Presents an IM-error to the user TODO not a method
  *
  * This is a helper function to find a conversation, write an error to it, and
  * raise the window.  If a conversation with this user doesn't already exist,
@@ -875,7 +844,7 @@ gboolean purple_conv_present_error(const char *who, PurpleAccount *account, cons
  * @param im      The IM.
  * @param message The message to send.
  */
-void purple_conv_im_send(PurpleConvIm *im, const char *message);
+void purple_im_conversation_send(PurpleIMConversation *im, const char *message);
 
 /**
  * Sends a message to a conversation after confirming with
@@ -896,9 +865,11 @@ void purple_conv_send_confirm(PurpleConversation *conv, const char *message);
  *
  * @param im      The IM.
  * @param message The message to send.
- * @param flags   The PurpleMessageFlags flags to use in addition to PURPLE_MESSAGE_SEND.
+ * @param flags   The PurpleConversationMessageFlags flags to use in addition to
+ *                PURPLE_CONVERSATION_MESSAGE_SEND.
  */
-void purple_conv_im_send_with_flags(PurpleConvIm *im, const char *message, PurpleMessageFlags flags);
+void purple_im_conversation_send_with_flags(PurpleIMConversation *im,
+		const char *message, PurpleConversationMessageFlags flags);
 
 /**
  * Adds a smiley to the conversation's smiley tree. If this returns
@@ -964,17 +935,17 @@ void purple_conv_custom_smiley_close(PurpleConversation *conv, const char *smile
  *
  * @return The parent conversation.
  */
-PurpleConversation *purple_conv_chat_get_conversation(const PurpleConvChat *chat);
+PurpleConversation *purple_chat_conversation_get_conversation(const PurpleChatConversation *chat);
 
 /**
  * Returns a list of users in the chat room.  The members of the list
- * are PurpleConvChatBuddy objects.
+ * are PurpleChatConversationBuddy objects.
  *
  * @param chat The chat.
  *
  * @constreturn The list of users.
  */
-GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
+GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
 
 /**
  * Ignores a user in a chat room.
@@ -982,7 +953,7 @@ GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void purple_conv_chat_ignore(PurpleConvChat *chat, const char *name);
+void purple_chat_conversation_ignore(PurpleChatConversation *chat, const char *name);
 
 /**
  * Unignores a user in a chat room.
@@ -990,7 +961,7 @@ void purple_conv_chat_ignore(PurpleConvChat *chat, const char *name);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void purple_conv_chat_unignore(PurpleConvChat *chat, const char *name);
+void purple_chat_conversation_unignore(PurpleChatConversation *chat, const char *name);
 
 /**
  * Sets the list of ignored users in the chat room.
@@ -1000,7 +971,7 @@ void purple_conv_chat_unignore(PurpleConvChat *chat, const char *name);
  *
  * @return The list passed.
  */
-GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
+GList *purple_chat_conversation_set_ignored(PurpleChatConversation *chat, GList *ignored);
 
 /**
  * Returns the list of ignored users in the chat room.
@@ -1009,7 +980,7 @@ GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
  *
  * @constreturn The list of ignored users.
  */
-GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
+GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
 
 /**
  * Returns the actual name of the specified ignored user, if it exists in
@@ -1025,7 +996,7 @@ GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
  * @return The ignored user if found, complete with prefixes, or @c NULL
  *         if not found.
  */
-const char *purple_conv_chat_get_ignored_user(const PurpleConvChat *chat,
+const char *purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat,
 											const char *user);
 
 /**
@@ -1036,7 +1007,7 @@ const char *purple_conv_chat_get_ignored_user(const PurpleConvChat *chat,
  *
  * @return @c TRUE if the user is in the ignore list; @c FALSE otherwise.
  */
-gboolean purple_conv_chat_is_user_ignored(const PurpleConvChat *chat,
+gboolean purple_chat_conversation_is_user_ignored(const PurpleChatConversation *chat,
 										const char *user);
 
 /**
@@ -1046,7 +1017,7 @@ gboolean purple_conv_chat_is_user_ignored(const PurpleConvChat *chat,
  * @param who   The user that set the topic.
  * @param topic The topic.
  */
-void purple_conv_chat_set_topic(PurpleConvChat *chat, const char *who,
+void purple_chat_conversation_set_topic(PurpleChatConversation *chat, const char *who,
 							  const char *topic);
 
 /**
@@ -1056,7 +1027,7 @@ void purple_conv_chat_set_topic(PurpleConvChat *chat, const char *who,
  *
  * @return The chat's topic.
  */
-const char *purple_conv_chat_get_topic(const PurpleConvChat *chat);
+const char *purple_chat_conversation_get_topic(const PurpleChatConversation *chat);
 
 /**
  * Sets the chat room's ID.
@@ -1064,7 +1035,7 @@ const char *purple_conv_chat_get_topic(const PurpleConvChat *chat);
  * @param chat The chat.
  * @param id   The ID.
  */
-void purple_conv_chat_set_id(PurpleConvChat *chat, int id);
+void purple_chat_conversation_set_id(PurpleChatConversation *chat, int id);
 
 /**
  * Returns the chat room's ID.
@@ -1073,7 +1044,7 @@ void purple_conv_chat_set_id(PurpleConvChat *chat, int id);
  *
  * @return The ID.
  */
-int purple_conv_chat_get_id(const PurpleConvChat *chat);
+int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
 
 /**
  * Writes to a chat.
@@ -1084,8 +1055,8 @@ int purple_conv_chat_get_id(const PurpleConvChat *chat);
  * @param flags   The flags.
  * @param mtime   The time the message was sent.
  */
-void purple_conv_chat_write(PurpleConvChat *chat, const char *who,
-						  const char *message, PurpleMessageFlags flags,
+void purple_chat_conversation_write(PurpleChatConversation *chat, const char *who,
+						  const char *message, PurpleConversationMessageFlags flags,
 						  time_t mtime);
 
 /**
@@ -1094,16 +1065,17 @@ void purple_conv_chat_write(PurpleConvChat *chat, const char *who,
  * @param chat    The chat.
  * @param message The message to send.
  */
-void purple_conv_chat_send(PurpleConvChat *chat, const char *message);
+void purple_chat_conversation_send(PurpleChatConversation *chat, const char *message);
 
 /**
  * Sends a message to this chat conversation with specified flags.
  *
  * @param chat    The chat.
  * @param message The message to send.
- * @param flags   The PurpleMessageFlags flags to use.
+ * @param flags   The PurpleConversationMessageFlags flags to use.
  */
-void purple_conv_chat_send_with_flags(PurpleConvChat *chat, const char *message, PurpleMessageFlags flags);
+void purple_chat_conversation_send_with_flags(PurpleChatConversation *chat,
+		const char *message, PurpleConversationMessageFlags flags);
 
 /**
  * Adds a user to a chat.
@@ -1114,8 +1086,8 @@ void purple_conv_chat_send_with_flags(PurpleConvChat *chat, const char *message,
  * @param flags       The users flags
  * @param new_arrival Decides whether or not to show a join notice.
  */
-void purple_conv_chat_add_user(PurpleConvChat *chat, const char *user,
-							 const char *extra_msg, PurpleConvChatBuddyFlags flags,
+void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char *user,
+							 const char *extra_msg, PurpleChatConversationBuddyFlags flags,
 							 gboolean new_arrival);
 
 /**
@@ -1135,8 +1107,8 @@ void purple_conv_chat_add_user(PurpleConvChat *chat, const char *user,
  * @param flags        The list of flags for each user.
  * @param new_arrivals Decides whether or not to show join notices.
  */
-void purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs,
-							  GList *flags, gboolean new_arrivals);
+void purple_chat_conversation_add_users(PurpleChatConversation *chat,
+		GList *users, GList *extra_msgs, GList *flags, gboolean new_arrivals);
 
 /**
  * Renames a user in a chat.
@@ -1145,8 +1117,8 @@ void purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra
  * @param old_user The old username.
  * @param new_user The new username.
  */
-void purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
-								const char *new_user);
+void purple_chat_conversation_rename_user(PurpleChatConversation *chat,
+		const char *old_user, const char *new_user);
 
 /**
  * Removes a user from a chat, optionally with a reason.
@@ -1157,8 +1129,8 @@ void purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
  * @param user   The user that is being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
-void purple_conv_chat_remove_user(PurpleConvChat *chat, const char *user,
-								const char *reason);
+void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
+		const char *user, const char *reason);
 
 /**
  * Removes a list of users from a chat, optionally with a single reason.
@@ -1167,8 +1139,8 @@ void purple_conv_chat_remove_user(PurpleConvChat *chat, const char *user,
  * @param users  The users that are being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
-void purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users,
-								 const char *reason);
+void purple_chat_conversation_remove_users(PurpleChatConversation *chat,
+		GList *users, const char *reason);
 
 /**
  * Finds a user in a chat
@@ -1178,7 +1150,8 @@ void purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users,
  *
  * @return TRUE if the user is in the chat, FALSE if not
  */
-gboolean purple_conv_chat_find_user(PurpleConvChat *chat, const char *user);
+gboolean purple_chat_conversation_find_user(PurpleChatConversation *chat,
+		const char *user);
 
 /**
  * Set a users flags in a chat
@@ -1187,8 +1160,8 @@ gboolean purple_conv_chat_find_user(PurpleConvChat *chat, const char *user);
  * @param user   The user to update.
  * @param flags  The new flags.
  */
-void purple_conv_chat_user_set_flags(PurpleConvChat *chat, const char *user,
-								   PurpleConvChatBuddyFlags flags);
+void purple_chat_conversation_user_set_flags(PurpleChatConversation *chat,
+		const char *user, PurpleChatConversationBuddyFlags flags);
 
 /**
  * Get the flags for a user in a chat
@@ -1198,7 +1171,7 @@ void purple_conv_chat_user_set_flags(PurpleConvChat *chat, const char *user,
  *
  * @return The flags for the user
  */
-PurpleConvChatBuddyFlags purple_conv_chat_user_get_flags(PurpleConvChat *chat,
+PurpleChatConversationBuddyFlags purple_chat_conversation_user_get_flags(PurpleChatConversation *chat,
 													 const char *user);
 
 /**
@@ -1206,7 +1179,7 @@ PurpleConvChatBuddyFlags purple_conv_chat_user_get_flags(PurpleConvChat *chat,
  *
  * @param chat The chat.
  */
-void purple_conv_chat_clear_users(PurpleConvChat *chat);
+void purple_chat_conversation_clear_users(PurpleChatConversation *chat);
 
 /**
  * Sets your nickname (used for hilighting) for a chat.
@@ -1214,7 +1187,8 @@ void purple_conv_chat_clear_users(PurpleConvChat *chat);
  * @param chat The chat.
  * @param nick The nick.
  */
-void purple_conv_chat_set_nick(PurpleConvChat *chat, const char *nick);
+void purple_chat_conversation_set_nick(PurpleChatConversation *chat,
+		const char *nick);
 
 /**
  * Gets your nickname (used for hilighting) for a chat.
@@ -1222,17 +1196,7 @@ void purple_conv_chat_set_nick(PurpleConvChat *chat, const char *nick);
  * @param chat The chat.
  * @return  The nick.
  */
-const char *purple_conv_chat_get_nick(PurpleConvChat *chat);
-
-/**
- * Finds a chat with the specified chat ID.
- *
- * @param gc The purple_connection.
- * @param id The chat ID.
- *
- * @return The chat conversation.
- */
-PurpleConversation *purple_find_chat(const PurpleConnection *gc, int id);
+const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
 
 /**
  * Lets the core know we left a chat, without destroying it.
@@ -1240,7 +1204,7 @@ PurpleConversation *purple_find_chat(const PurpleConnection *gc, int id);
  *
  * @param chat The chat.
  */
-void purple_conv_chat_left(PurpleConvChat *chat);
+void purple_chat_conversation_left(PurpleChatConversation *chat);
 
 /**
  * Invite a user to a chat.
@@ -1253,8 +1217,8 @@ void purple_conv_chat_left(PurpleConvChat *chat);
  * @param confirm  Prompt before sending the invitation. The user is always
  *                 prompted if either \a user or \a message is @c NULL.
  */
-void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
-		const char *message, gboolean confirm);
+void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
+		const char *user, const char *message, gboolean confirm);
 
 /**
  * Returns true if we're no longer in this chat,
@@ -1265,7 +1229,7 @@ void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
  * @return @c TRUE if we left the chat already, @c FALSE if
  * we're still there.
  */
-gboolean purple_conv_chat_has_left(PurpleConvChat *chat);
+gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 
 /**
  * Creates a new chat buddy
@@ -1276,8 +1240,8 @@ gboolean purple_conv_chat_has_left(PurpleConvChat *chat);
  *
  * @return The new chat buddy
  */
-PurpleConvChatBuddy *purple_conv_chat_cb_new(const char *name, const char *alias,
-										PurpleConvChatBuddyFlags flags);
+PurpleChatConversationBuddy *purple_chat_conversation_cb_new(const char *name,
+		const char *alias, PurpleChatConversationBuddyFlags flags);
 
 /**
  * Find a chat buddy in a chat
@@ -1285,7 +1249,7 @@ PurpleConvChatBuddy *purple_conv_chat_cb_new(const char *name, const char *alias
  * @param chat The chat.
  * @param name The name of the chat buddy to find.
  */
-PurpleConvChatBuddy *purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name);
+PurpleChatConversationBuddy *purple_chat_conversation_cb_find(PurpleChatConversation *chat, const char *name);
 
 /**
  * Set the UI data associated with this chat buddy.
@@ -1293,7 +1257,7 @@ PurpleConvChatBuddy *purple_conv_chat_cb_find(PurpleConvChat *chat, const char *
  * @param cb			The chat buddy
  * @param ui_data		A pointer to associate with this chat buddy.
  */
-void purple_conv_chat_cb_set_ui_data(PurpleConvChatBuddy *cb, gpointer ui_data);
+void purple_chat_conversation_cb_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data);
 
 /**
  * Get the UI data associated with this chat buddy.
@@ -1304,7 +1268,7 @@ void purple_conv_chat_cb_set_ui_data(PurpleConvChatBuddy *cb, gpointer ui_data);
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
-gpointer purple_conv_chat_cb_get_ui_data(const PurpleConvChatBuddy *conv);
+gpointer purple_chat_conversation_cb_get_ui_data(const PurpleChatConversationBuddy *conv);
 
 /**
  * Get the alias of a chat buddy
@@ -1313,7 +1277,7 @@ gpointer purple_conv_chat_cb_get_ui_data(const PurpleConvChatBuddy *conv);
  *
  * @return The alias of the chat buddy.
  */
-const char *purple_conv_chat_cb_get_alias(const PurpleConvChatBuddy *cb);
+const char *purple_chat_conversation_cb_get_alias(const PurpleChatConversationBuddy *cb);
 
 /**
  * Get the name of a chat buddy
@@ -1322,7 +1286,7 @@ const char *purple_conv_chat_cb_get_alias(const PurpleConvChatBuddy *cb);
  *
  * @return The name of the chat buddy.
  */
-const char *purple_conv_chat_cb_get_name(const PurpleConvChatBuddy *cb);
+const char *purple_chat_conversation_cb_get_name(const PurpleChatConversationBuddy *cb);
 
 /**
  * Get the flags of a chat buddy.
@@ -1331,7 +1295,7 @@ const char *purple_conv_chat_cb_get_name(const PurpleConvChatBuddy *cb);
  *
  * @return The flags of the chat buddy.
  */
-PurpleConvChatBuddyFlags purple_conv_chat_cb_get_flags(const PurpleConvChatBuddy *cb);
+PurpleChatConversationBuddyFlags purple_chat_conversation_cb_get_flags(const PurpleChatConversationBuddy *cb);
 
 /**
  * Indicates if this chat buddy is on the buddy list.
@@ -1340,14 +1304,14 @@ PurpleConvChatBuddyFlags purple_conv_chat_cb_get_flags(const PurpleConvChatBuddy
  *
  * @return TRUE if the chat buddy is on the buddy list.
  */
-gboolean purple_conv_chat_cb_is_buddy(const PurpleConvChatBuddy *cb);
+gboolean purple_chat_conversation_cb_is_buddy(const PurpleChatConversationBuddy *cb);
 
 /**
  * Destroys a chat buddy
  *
  * @param cb The chat buddy to destroy
  */
-void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
+void purple_chat_conversation_cb_destroy(PurpleChatConversationBuddy *cb);
 
 /**
  * Retrieves the extended menu items for the conversation.
@@ -1371,31 +1335,8 @@ GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
  *
  * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
  */
-gboolean purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline, const gchar *markup, gchar **error);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Conversations Subsystem                                         */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Returns the conversation subsystem handle.
- *
- * @return The conversation subsystem handle.
- */
-void *purple_conversations_get_handle(void);
-
-/**
- * Initializes the conversation subsystem.
- */
-void purple_conversations_init(void);
-
-/**
- * Uninitializes the conversation subsystem.
- */
-void purple_conversations_uninit(void);
+gboolean purple_conversation_do_command(PurpleConversation *conv,
+		const gchar *cmdline, const gchar *markup, gchar **error);
 
 /*@}*/
 

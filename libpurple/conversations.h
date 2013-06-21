@@ -27,9 +27,73 @@
 #ifndef _PURPLE_CONVERSATIONS_H_
 #define _PURPLE_CONVERSATIONS_H_
 
-#include <glib.h>
+#include "conversation.h"
 
 G_BEGIN_DECLS
+
+/**************************************************************************/
+/** @name Conversations Subsystem                                         */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns a list of all conversations.
+ *
+ * This list includes both IMs and chats.
+ *
+ * @constreturn A GList of all conversations.
+ */
+GList *purple_conversations_get(void);
+
+/**
+ * Returns a list of all IMs.
+ *
+ * @constreturn A GList of all IMs.
+ */
+GList *purple_conversations_get_ims(void);
+
+/**
+ * Returns a list of all chats.
+ *
+ * @constreturn A GList of all chats.
+ */
+GList *purple_conversations_get_chats(void);
+
+/**
+ * Finds a chat with the specified chat ID.
+ *
+ * @param gc The purple_connection.
+ * @param id The chat ID.
+ *
+ * @return The chat conversation.
+ */
+PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
+
+/**
+ * Sets the default conversation UI operations structure.
+ *
+ * @param ops  The UI conversation operations structure.
+ */
+void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
+
+/**
+ * Returns the conversation subsystem handle.
+ *
+ * @return The conversation subsystem handle.
+ */
+void *purple_conversations_get_handle(void);
+
+/**
+ * Initializes the conversation subsystem.
+ */
+void purple_conversations_init(void);
+
+/**
+ * Uninitializes the conversation subsystem.
+ */
+void purple_conversations_uninit(void);
+
+/*@}*/
 
 G_END_DECLS
 
