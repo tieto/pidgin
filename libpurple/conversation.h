@@ -146,8 +146,10 @@ typedef enum /*< flags >*/
 #include "log.h"
 #include "server.h"
 
-/** Structure representing a conversation.
- */
+/**************************************************************************/
+/** PurpleConversation                                                    */
+/**************************************************************************/
+/** Structure representing a conversation instance. */
 struct _PurpleConversation
 {
 	/*< private >*/
@@ -159,11 +161,7 @@ struct _PurpleConversation
 	void (*_purple_reserved4)(void);
 };
 
-/**
- * PurpleConversationClass:
- *
- * The base class for all #PurpleConversation's.
- */
+/** Base class for all #PurpleConversation's */
 struct _PurpleConversationClass {
 	/*< private >*/
 	GObjectClass parent_class;
@@ -174,8 +172,10 @@ struct _PurpleConversationClass {
 	void (*_purple_reserved4)(void);
 };
 
-/** Structure representing a chat conversation.
- */
+/**************************************************************************/
+/** PurpleChatConversation                                                */
+/**************************************************************************/
+/** Structure representing a chat conversation instance. */
 struct _PurpleChatConversation
 {
 	/*< private >*/
@@ -187,11 +187,7 @@ struct _PurpleChatConversation
 	void (*_purple_reserved4)(void);
 };
 
-/**
- * PurpleChatConversationClass:
- *
- * The base class for all #PurpleChatConversation's.
- */
+/** Base class for all #PurpleChatConversation's */
 struct _PurpleChatConversationClass {
 	/*< private >*/
 	PurpleConversationClass parent_class;
@@ -202,8 +198,10 @@ struct _PurpleChatConversationClass {
 	void (*_purple_reserved4)(void);
 };
 
-/** Structure representing an IM conversation.
- */
+/**************************************************************************/
+/** PurpleIMConversation                                                  */
+/**************************************************************************/
+/** Structure representing an IM conversation instance. */
 struct _PurpleIMConversation
 {
 	/*< private >*/
@@ -215,11 +213,7 @@ struct _PurpleIMConversation
 	void (*_purple_reserved4)(void);
 };
 
-/**
- * PurpleIMConversationClass:
- *
- * The base class for all #PurpleIMConversation's.
- */
+/** Base class for all #PurpleIMConversation's */
 struct _PurpleIMConversationClass {
 	/*< private >*/
 	PurpleConversationClass parent_class;
@@ -230,8 +224,10 @@ struct _PurpleIMConversationClass {
 	void (*_purple_reserved4)(void);
 };
 
-/** Structure representing a chat buddy.
- */
+/**************************************************************************/
+/** PurpleChatConversationBuddy                                           */
+/**************************************************************************/
+/** Structure representing a chat buddy instance. */
 struct _PurpleChatConversationBuddy
 {
 	/*< private >*/
@@ -243,11 +239,7 @@ struct _PurpleChatConversationBuddy
 	void (*_purple_reserved4)(void);
 };
 
-/**
- * PurpleChatConversationBuddyClass:
- *
- * The base class for all #PurpleChatConversationBuddy's.
- */
+/** Base class for all #PurpleChatConversationBuddy's */
 struct _PurpleChatConversationBuddyClass {
 	/*< private >*/
 	GObjectClass parent_class;
@@ -258,34 +250,9 @@ struct _PurpleChatConversationBuddyClass {
 	void (*_purple_reserved4)(void);
 };
 
-/** Structure representing a conversation message.
- */
-struct _PurpleConversationMessage
-{
-	/*< private >*/
-	GObject gparent;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
-/**
- * PurpleConversationMessageClass:
- *
- * The base class for all #PurpleConversationMessage's.
- */
-struct _PurpleConversationMessageClass {
-	/*< private >*/
-	GObjectClass parent_class;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
+/**************************************************************************/
+/** PurpleConversationUiOps                                               */
+/**************************************************************************/
 /**
  * Conversation operations and events.
  *

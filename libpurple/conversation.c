@@ -43,8 +43,6 @@ typedef struct _PurpleChatConversationPrivate     PurpleChatConversationPrivate;
 typedef struct _PurpleIMConversationPrivate       PurpleIMConversationPrivate;
 /** @copydoc _PurpleChatConversationBuddyPrivate */
 typedef struct _PurpleChatConversationBuddyPrivate  PurpleChatConversationBuddyPrivate;
-/** @copydoc _PurpleConversationMessagePrivate */
-typedef struct _PurpleConversationMessagePrivate  PurpleConversationMessagePrivate;
 
 /**
  * A core representation of a conversation between two or more people.
@@ -145,10 +143,10 @@ struct _PurpleChatConversationBuddyPrivate
 	gpointer ui_data;
 };
 
-/**
+/** TODO GBoxed
  * Description of a conversation message
  */
-struct _PurpleConversationMessagePrivate
+struct _PurpleConversationMessage
 {
 	char *who;
 	char *what;
