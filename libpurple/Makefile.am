@@ -48,6 +48,7 @@ purple_coresources = \
 	cmds.c \
 	connection.c \
 	conversation.c \
+	conversationtypes.c \
 	conversations.c \
 	core.c \
 	debug.c \
@@ -120,6 +121,7 @@ purple_coreheaders = \
 	cmds.h \
 	connection.h \
 	conversation.h \
+	conversationtypes.h \
 	conversations.h \
 	core.h \
 	dbus-maybe.h \
@@ -185,6 +187,7 @@ purple_enumheaders = \
 	cipher.h \
 	circularbuffer.h \
 	conversation.h \
+	conversationtypes.h \
 	conversations.h \
 	hash.h \
 	smiley.h \
