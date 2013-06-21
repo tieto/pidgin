@@ -216,6 +216,8 @@ CLEANFILES = \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
+	enums.c \
+	enums.h \
 	marshallers.c \
 	marshallers.h \
 	purple-client-bindings.c \
