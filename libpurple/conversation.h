@@ -34,19 +34,24 @@
 typedef struct _PurpleConversation           PurpleConversation;
 /** @copydoc _PurpleConversation */
 typedef struct _PurpleConversationClass      PurpleConversationClass;
+
 /** @copydoc _PurpleChatConversation */
 typedef struct _PurpleChatConversation       PurpleChatConversation;
 /** @copydoc _PurpleChatConversationClass */
 typedef struct _PurpleChatConversationClass  PurpleChatConversationClass;
+
 /** @copydoc _PurpleIMConversation */
 typedef struct _PurpleIMConversation         PurpleIMConversation;
 /** @copydoc _PurpleIMConversationClass */
 typedef struct _PurpleIMConversationClass    PurpleIMConversationClass;
 
+/** @copydoc _PurpleChatConversationBuddy */
+typedef struct _PurpleChatConversationBuddy       PurpleChatConversationBuddy;
+/** @copydoc _PurpleChatConversationBuddyClass */
+typedef struct _PurpleChatConversationBuddyClass  PurpleChatConversationBuddyClass;
+
 /** @copydoc _PurpleConversationUiOps */
 typedef struct _PurpleConversationUiOps      PurpleConversationUiOps;
-/** @copydoc _PurpleChatConversationBuddy */
-typedef struct _PurpleChatConversationBuddy  PurpleChatConversationBuddy;
 /** @copydoc _PurpleConversationMessage */
 typedef struct _PurpleConversationMessage    PurpleConversationMessage;
 
@@ -169,6 +174,118 @@ struct _PurpleConversationClass {
 	void (*_purple_reserved4)(void);
 };
 
+/** Structure representing a chat conversation.
+ */
+struct _PurpleChatConversation
+{
+	/*< private >*/
+	PurpleConversation parent_object;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * PurpleChatConversationClass:
+ *
+ * The base class for all #PurpleChatConversation's.
+ */
+struct _PurpleChatConversationClass {
+	/*< private >*/
+	PurpleConversationClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/** Structure representing an IM conversation.
+ */
+struct _PurpleIMConversation
+{
+	/*< private >*/
+	PurpleConversation parent_object;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * PurpleIMConversationClass:
+ *
+ * The base class for all #PurpleIMConversation's.
+ */
+struct _PurpleIMConversationClass {
+	/*< private >*/
+	PurpleConversationClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/** Structure representing a chat buddy.
+ */
+struct _PurpleChatConversationBuddy
+{
+	/*< private >*/
+	GObject gparent;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * PurpleChatConversationBuddyClass:
+ *
+ * The base class for all #PurpleChatConversationBuddy's.
+ */
+struct _PurpleChatConversationBuddyClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/** Structure representing a conversation message.
+ */
+struct _PurpleConversationMessage
+{
+	/*< private >*/
+	GObject gparent;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * PurpleConversationMessageClass:
+ *
+ * The base class for all #PurpleConversationMessage's.
+ */
+struct _PurpleConversationMessageClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
 /**
  * Conversation operations and events.
  *
@@ -278,7 +395,7 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-/**
+/** TODO GObjectify
  * Creates a new conversation of the specified type.
  *
  * @param type    The type of conversation.
@@ -293,7 +410,7 @@ PurpleConversation *purple_conversation_new(PurpleConversationType type,
 										PurpleAccount *account,
 										const char *name);
 
-/**
+/** TODO dispose/fnalize
  * Destroys the specified conversation and removes it from the parent
  * window.
  *
@@ -313,7 +430,7 @@ void purple_conversation_destroy(PurpleConversation *conv);
 void purple_conversation_present(PurpleConversation *conv);
 
 
-/**
+/** TODO REMOVE, return the GObject GType
  * Returns the specified conversation's type.
  *
  * @param conv The conversation.
@@ -338,8 +455,7 @@ void purple_conversation_set_ui_ops(PurpleConversation *conv,
  *
  * @return The operations structure.
  */
-PurpleConversationUiOps *purple_conversation_get_ui_ops(
-		const PurpleConversation *conv);
+PurpleConversationUiOps *purple_conversation_get_ui_ops(const PurpleConversation *conv);
 
 /**
  * Sets the specified conversation's purple_account.
@@ -420,48 +536,6 @@ void purple_conversation_set_name(PurpleConversation *conv, const char *name);
 const char *purple_conversation_get_name(const PurpleConversation *conv);
 
 /**
- * Get an attribute of a chat buddy
- *
- * @param cb	The chat buddy.
- * @param key	The key of the attribute.
- *
- * @return The value of the attribute key.
- */
-const char *purple_chat_conversation_cb_get_attribute(PurpleChatConversationBuddy *cb, const char *key);
-
-/**
- * Get the keys of all atributes of a chat buddy
- *
- * @param cb	The chat buddy.
- *
- * @return A list of the attributes of a chat buddy.
- */
-GList *purple_chat_conversation_cb_get_attribute_keys(PurpleChatConversationBuddy *cb);
-	
-/**
- * Set an attribute of a chat buddy
- *
- * @param chat	The chat.
- * @param cb	The chat buddy.
- * @param key	The key of the attribute.
- * @param value	The value of the attribute.
- */
-void purple_chat_conversation_cb_set_attribute(PurpleChatConversation *chat,
-		PurpleChatConversationBuddy *cb, const char *key, const char *value);
-
-/**
- * Set attributes of a chat buddy
- *
- * @param chat	The chat.
- * @param cb	The chat buddy.
- * @param keys	A GList of the keys.
- * @param values A GList of the values.
- */
-void
-purple_chat_conversation_cb_set_attributes(PurpleChatConversation *chat,
-		PurpleChatConversationBuddy *cb, GList *keys, GList *values);
-
-/**
  * Enables or disables logging for this conversation.
  *
  * @param conv The conversation.
@@ -508,19 +582,6 @@ void purple_conversation_set_data(PurpleConversation *conv, const char *key,
  * @return The data associated with the key.
  */
 gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key);
-
-/**
- * Finds a conversation with the specified type, name, and Purple account.
- *
- * @param type The type of the conversation.
- * @param name The name of the conversation.
- * @param account The purple_account associated with the conversation.
- *
- * @return The conversation if found, or @c NULL otherwise.
- */
-PurpleConversation *purple_find_conversation_with_account(
-		PurpleConversationType type, const char *name,
-		const PurpleAccount *account);
 
 /**
  * Writes to a conversation window.
@@ -580,13 +641,6 @@ gboolean purple_conversation_has_focus(PurpleConversation *conv);
 void purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateType type);
 
 /**
- * Calls a function on each conversation.
- *
- * @param func The function.
- */
-void purple_conversation_foreach(void (*func)(PurpleConversation *conv));
-
-/**
  * Retrieve the message history of a conversation.
  *
  * @param conv   The conversation
@@ -603,6 +657,141 @@ GList *purple_conversation_get_message_history(PurpleConversation *conv);
  * @param conv  The conversation
  */
 void purple_conversation_clear_message_history(PurpleConversation *conv);
+
+/**
+ * Set the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ * @param ui_data		A pointer to associate with this conversation.
+ */
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ *
+ * @return The UI data associated with this conversation.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
+
+/**
+ * Sends a message to a conversation after confirming with
+ * the user.
+ *
+ * This function is intended for use in cases where the user
+ * hasn't explicitly and knowingly caused a message to be sent.
+ * The confirmation ensures that the user isn't sending a
+ * message by mistake.
+ *
+ * @param conv    The conversation.
+ * @param message The message to send.
+ */
+void purple_conversation_send_confirm(PurpleConversation *conv, const char *message);
+
+/**
+ * Adds a smiley to the conversation's smiley tree. If this returns
+ * @c TRUE you should call purple_conversation_custom_smiley_write() one or more
+ * times, and then purple_conversation_custom_smiley_close(). If this returns
+ * @c FALSE, either the conv or smile were invalid, or the icon was
+ * found in the cache. In either case, calling write or close would
+ * be an error.
+ *
+ * @param conv The conversation to associate the smiley with.
+ * @param smile The text associated with the smiley
+ * @param cksum_type The type of checksum.
+ * @param chksum The checksum, as a NUL terminated base64 string.
+ * @param remote @c TRUE if the custom smiley is set by the remote user (buddy).
+ * @return      @c TRUE if an icon is expected, else FALSE. Note that
+ *              it is an error to never call purple_conversation_custom_smiley_close if
+ *              this function returns @c TRUE, but an error to call it if
+ *              @c FALSE is returned.
+ */
+
+gboolean purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
+                                      const char *cksum_type, const char *chksum,
+									  gboolean remote);
+
+/**
+ * Updates the image associated with the current smiley.
+ *
+ * @param conv The conversation associated with the smiley.
+ * @param smile The text associated with the smiley.
+ * @param data The actual image data.
+ * @param size The length of the data.
+ */
+
+void purple_conversation_custom_smiley_write(PurpleConversation *conv,
+                                   const char *smile,
+                                   const guchar *data,
+                                   gsize size);
+
+/**
+ * Close the custom smiley, all data has been written with
+ * purple_conversation_custom_smiley_write, and it is no longer valid
+ * to call that function on that smiley.
+ *
+ * @param conv The purple conversation associated with the smiley.
+ * @param smile The text associated with the smiley
+ */
+
+void purple_conversation_custom_smiley_close(PurpleConversation *conv, const char *smile);
+
+/**
+ * Retrieves the extended menu items for the conversation.
+ *
+ * @param conv The conversation.
+ *
+ * @return  A list of PurpleMenuAction items, harvested by the
+ *          chat-extended-menu signal. The list and the menuaction
+ *          items should be freed by the caller.
+ */
+GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
+
+/**
+ * Perform a command in a conversation. Similar to @see purple_cmd_do_command
+ *
+ * @param conv    The conversation.
+ * @param cmdline The entire command including the arguments.
+ * @param markup  @c NULL, or the formatted command line.
+ * @param error   If the command failed errormsg is filled in with the appropriate error
+ *                message, if not @c NULL. It must be freed by the caller with g_free().
+ *
+ * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
+ */
+gboolean purple_conversation_do_command(PurpleConversation *conv,
+		const gchar *cmdline, const gchar *markup, gchar **error);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Conversation Helper API                                         */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Presents an IM-error to the user
+ *
+ * This is a helper function to find a conversation, write an error to it, and
+ * raise the window.  If a conversation with this user doesn't already exist,
+ * the function will return FALSE and the calling function can attempt to present
+ * the error another way (purple_notify_error, most likely)
+ *
+ * @param who     The user this error is about
+ * @param account The account this error is on
+ * @param what    The error
+ * @return        TRUE if the error was presented, else FALSE
+ */
+gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount *account, const char *what);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Conversation Message API                                        */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Get the sender from a PurpleConversationMessage
@@ -658,41 +847,12 @@ const char *purple_conversation_message_get_alias(const PurpleConversationMessag
  */
 PurpleConversation *purple_conversation_message_get_conv(const PurpleConversationMessage *msg);
 
-/**
- * Set the UI data associated with this conversation.
- *
- * @param conv			The conversation.
- * @param ui_data		A pointer to associate with this conversation.
- */
-void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data);
-
-/**
- * Get the UI data associated with this conversation.
- *
- * @param conv			The conversation.
- *
- * @return The UI data associated with this conversation.  This is a
- *         convenience field provided to the UIs--it is not
- *         used by the libpurple core.
- */
-gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
-
 /*@}*/
-
 
 /**************************************************************************/
 /** @name IM Conversation API                                             */
 /**************************************************************************/
 /*@{*/
-
-/**
- * Gets an IM's parent conversation.
- *
- * @param im The IM.
- *
- * @return The parent conversation.
- */
-PurpleConversation *purple_im_conversation_get_conversation(const PurpleIMConversation *im);
 
 /**
  * Sets the IM's buddy icon.
@@ -824,41 +984,12 @@ void purple_im_conversation_write(PurpleIMConversation *im, const char *who,
 						time_t mtime);
 
 /**
- * Presents an IM-error to the user TODO not a method
- *
- * This is a helper function to find a conversation, write an error to it, and
- * raise the window.  If a conversation with this user doesn't already exist,
- * the function will return FALSE and the calling function can attempt to present
- * the error another way (purple_notify_error, most likely)
- *
- * @param who     The user this error is about
- * @param account The account this error is on
- * @param what    The error
- * @return        TRUE if the error was presented, else FALSE
- */
-gboolean purple_conv_present_error(const char *who, PurpleAccount *account, const char *what);
-
-/**
  * Sends a message to this IM conversation.
  *
  * @param im      The IM.
  * @param message The message to send.
  */
 void purple_im_conversation_send(PurpleIMConversation *im, const char *message);
-
-/**
- * Sends a message to a conversation after confirming with
- * the user.
- *
- * This function is intended for use in cases where the user
- * hasn't explicitly and knowingly caused a message to be sent.
- * The confirmation ensures that the user isn't sending a
- * message by mistake.
- *
- * @param conv    The conversation.
- * @param message The message to send.
- */
-void purple_conv_send_confirm(PurpleConversation *conv, const char *message);
 
 /**
  * Sends a message to this IM conversation with specified flags.
@@ -871,71 +1002,12 @@ void purple_conv_send_confirm(PurpleConversation *conv, const char *message);
 void purple_im_conversation_send_with_flags(PurpleIMConversation *im,
 		const char *message, PurpleConversationMessageFlags flags);
 
-/**
- * Adds a smiley to the conversation's smiley tree. If this returns
- * @c TRUE you should call purple_conv_custom_smiley_write() one or more
- * times, and then purple_conv_custom_smiley_close(). If this returns
- * @c FALSE, either the conv or smile were invalid, or the icon was
- * found in the cache. In either case, calling write or close would
- * be an error.
- *
- * @param conv The conversation to associate the smiley with.
- * @param smile The text associated with the smiley
- * @param cksum_type The type of checksum.
- * @param chksum The checksum, as a NUL terminated base64 string.
- * @param remote @c TRUE if the custom smiley is set by the remote user (buddy).
- * @return      @c TRUE if an icon is expected, else FALSE. Note that
- *              it is an error to never call purple_conv_custom_smiley_close if
- *              this function returns @c TRUE, but an error to call it if
- *              @c FALSE is returned.
- */
-
-gboolean purple_conv_custom_smiley_add(PurpleConversation *conv, const char *smile,
-                                      const char *cksum_type, const char *chksum,
-									  gboolean remote);
-
-
-/**
- * Updates the image associated with the current smiley.
- *
- * @param conv The conversation associated with the smiley.
- * @param smile The text associated with the smiley.
- * @param data The actual image data.
- * @param size The length of the data.
- */
-
-void purple_conv_custom_smiley_write(PurpleConversation *conv,
-                                   const char *smile,
-                                   const guchar *data,
-                                   gsize size);
-
-/**
- * Close the custom smiley, all data has been written with
- * purple_conv_custom_smiley_write, and it is no longer valid
- * to call that function on that smiley.
- *
- * @param conv The purple conversation associated with the smiley.
- * @param smile The text associated with the smiley
- */
-
-void purple_conv_custom_smiley_close(PurpleConversation *conv, const char *smile);
-
 /*@}*/
-
 
 /**************************************************************************/
 /** @name Chat Conversation API                                           */
 /**************************************************************************/
 /*@{*/
-
-/**
- * Gets a chat's parent conversation.
- *
- * @param chat The chat.
- *
- * @return The parent conversation.
- */
-PurpleConversation *purple_chat_conversation_get_conversation(const PurpleChatConversation *chat);
 
 /**
  * Returns a list of users in the chat room.  The members of the list
@@ -1007,7 +1079,7 @@ const char *purple_chat_conversation_get_ignored_user(const PurpleChatConversati
  *
  * @return @c TRUE if the user is in the ignore list; @c FALSE otherwise.
  */
-gboolean purple_chat_conversation_is_user_ignored(const PurpleChatConversation *chat,
+gboolean purple_chat_conversation_is_ignored_user(const PurpleChatConversation *chat,
 										const char *user);
 
 /**
@@ -1204,7 +1276,15 @@ const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
  *
  * @param chat The chat.
  */
-void purple_chat_conversation_left(PurpleChatConversation *chat);
+void purple_chat_conversation_leave(PurpleChatConversation *chat);
+
+/**
+ * Find a chat buddy in a chat
+ *
+ * @param chat The chat.
+ * @param name The name of the chat buddy to find.
+ */
+PurpleChatConversationBuddy *purple_chat_conversation_find_buddy(PurpleChatConversation *chat, const char *name);
 
 /**
  * Invite a user to a chat.
@@ -1231,7 +1311,56 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
  */
 gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Chat Conversation Buddy API                                     */
+/**************************************************************************/
+/*@{*/
+
 /**
+ * Get an attribute of a chat buddy
+ *
+ * @param cb	The chat buddy.
+ * @param key	The key of the attribute.
+ *
+ * @return The value of the attribute key.
+ */
+const char *purple_chat_conversation_buddy_get_attribute(PurpleChatConversationBuddy *cb, const char *key);
+
+/**
+ * Get the keys of all atributes of a chat buddy
+ *
+ * @param cb	The chat buddy.
+ *
+ * @return A list of the attributes of a chat buddy.
+ */
+GList *purple_chat_conversation_buddy_get_attribute_keys(PurpleChatConversationBuddy *cb);
+	
+/**
+ * Set an attribute of a chat buddy
+ *
+ * @param chat	The chat.
+ * @param cb	The chat buddy.
+ * @param key	The key of the attribute.
+ * @param value	The value of the attribute.
+ */
+void purple_chat_conversation_buddy_set_attribute(PurpleChatConversation *chat,
+		PurpleChatConversationBuddy *cb, const char *key, const char *value);
+
+/**
+ * Set attributes of a chat buddy
+ *
+ * @param chat	The chat.
+ * @param cb	The chat buddy.
+ * @param keys	A GList of the keys.
+ * @param values A GList of the values.
+ */
+void
+purple_chat_conversation_buddy_set_attributes(PurpleChatConversation *chat,
+		PurpleChatConversationBuddy *cb, GList *keys, GList *values);
+
+/** TODO GObjectify
  * Creates a new chat buddy
  *
  * @param name The name.
@@ -1240,16 +1369,8 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
  *
  * @return The new chat buddy
  */
-PurpleChatConversationBuddy *purple_chat_conversation_cb_new(const char *name,
+PurpleChatConversationBuddy *purple_chat_conversation_buddy_new(const char *name,
 		const char *alias, PurpleChatConversationBuddyFlags flags);
-
-/**
- * Find a chat buddy in a chat
- *
- * @param chat The chat.
- * @param name The name of the chat buddy to find.
- */
-PurpleChatConversationBuddy *purple_chat_conversation_cb_find(PurpleChatConversation *chat, const char *name);
 
 /**
  * Set the UI data associated with this chat buddy.
@@ -1257,7 +1378,7 @@ PurpleChatConversationBuddy *purple_chat_conversation_cb_find(PurpleChatConversa
  * @param cb			The chat buddy
  * @param ui_data		A pointer to associate with this chat buddy.
  */
-void purple_chat_conversation_cb_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data);
+void purple_chat_conversation_buddy_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data);
 
 /**
  * Get the UI data associated with this chat buddy.
@@ -1268,7 +1389,7 @@ void purple_chat_conversation_cb_set_ui_data(PurpleChatConversationBuddy *cb, gp
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
-gpointer purple_chat_conversation_cb_get_ui_data(const PurpleChatConversationBuddy *conv);
+gpointer purple_chat_conversation_buddy_get_ui_data(const PurpleChatConversationBuddy *cb);
 
 /**
  * Get the alias of a chat buddy
@@ -1277,7 +1398,7 @@ gpointer purple_chat_conversation_cb_get_ui_data(const PurpleChatConversationBud
  *
  * @return The alias of the chat buddy.
  */
-const char *purple_chat_conversation_cb_get_alias(const PurpleChatConversationBuddy *cb);
+const char *purple_chat_conversation_buddy_get_alias(const PurpleChatConversationBuddy *cb);
 
 /**
  * Get the name of a chat buddy
@@ -1286,7 +1407,7 @@ const char *purple_chat_conversation_cb_get_alias(const PurpleChatConversationBu
  *
  * @return The name of the chat buddy.
  */
-const char *purple_chat_conversation_cb_get_name(const PurpleChatConversationBuddy *cb);
+const char *purple_chat_conversation_buddy_get_name(const PurpleChatConversationBuddy *cb);
 
 /**
  * Get the flags of a chat buddy.
@@ -1295,7 +1416,7 @@ const char *purple_chat_conversation_cb_get_name(const PurpleChatConversationBud
  *
  * @return The flags of the chat buddy.
  */
-PurpleChatConversationBuddyFlags purple_chat_conversation_cb_get_flags(const PurpleChatConversationBuddy *cb);
+PurpleChatConversationBuddyFlags purple_chat_conversation_buddy_get_flags(const PurpleChatConversationBuddy *cb);
 
 /**
  * Indicates if this chat buddy is on the buddy list.
@@ -1304,39 +1425,14 @@ PurpleChatConversationBuddyFlags purple_chat_conversation_cb_get_flags(const Pur
  *
  * @return TRUE if the chat buddy is on the buddy list.
  */
-gboolean purple_chat_conversation_cb_is_buddy(const PurpleChatConversationBuddy *cb);
+gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBuddy *cb);
 
-/**
+/** TODO finalize/dispose
  * Destroys a chat buddy
  *
  * @param cb The chat buddy to destroy
  */
-void purple_chat_conversation_cb_destroy(PurpleChatConversationBuddy *cb);
-
-/**
- * Retrieves the extended menu items for the conversation.
- *
- * @param conv The conversation.
- *
- * @return  A list of PurpleMenuAction items, harvested by the
- *          chat-extended-menu signal. The list and the menuaction
- *          items should be freed by the caller.
- */
-GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
-
-/**
- * Perform a command in a conversation. Similar to @see purple_cmd_do_command
- *
- * @param conv    The conversation.
- * @param cmdline The entire command including the arguments.
- * @param markup  @c NULL, or the formatted command line.
- * @param error   If the command failed errormsg is filled in with the appropriate error
- *                message, if not @c NULL. It must be freed by the caller with g_free().
- *
- * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
- */
-gboolean purple_conversation_do_command(PurpleConversation *conv,
-		const gchar *cmdline, const gchar *markup, gchar **error);
+void purple_chat_conversation_buddy_destroy(PurpleChatConversationBuddy *cb);
 
 /*@}*/
 

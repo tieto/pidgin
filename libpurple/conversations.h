@@ -60,6 +60,19 @@ GList *purple_conversations_get_ims(void);
 GList *purple_conversations_get_chats(void);
 
 /**
+ * Finds a conversation with the specified type, name, and Purple account.
+ *
+ * @param type The type of the conversation.
+ * @param name The name of the conversation.
+ * @param account The purple_account associated with the conversation.
+ *
+ * @return The conversation if found, or @c NULL otherwise.
+ */
+PurpleConversation *purple_conversations_find_with_account(
+		PurpleConversationType type, const char *name,
+		const PurpleAccount *account);
+
+/**
  * Finds a chat with the specified chat ID.
  *
  * @param gc The purple_connection.

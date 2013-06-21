@@ -36,11 +36,15 @@
 #define SEND_TYPED_TIMEOUT_SECONDS 5
 
 /** @copydoc _PurpleConversationPrivate */
-typedef struct _PurpleConversationPrivate      PurpleConversationPrivate;
+typedef struct _PurpleConversationPrivate         PurpleConversationPrivate;
 /** @copydoc _PurpleChatConversationPrivate */
-typedef struct _PurpleChatConversationPrivate  PurpleChatConversationPrivate;
+typedef struct _PurpleChatConversationPrivate     PurpleChatConversationPrivate;
 /** @copydoc _PurpleIMConversationPrivate */
-typedef struct _PurpleIMConversationPrivate    PurpleIMConversationPrivate;
+typedef struct _PurpleIMConversationPrivate       PurpleIMConversationPrivate;
+/** @copydoc _PurpleChatConversationBuddyPrivate */
+typedef struct _PurpleChatConversationBuddyPrivate  PurpleChatConversationBuddyPrivate;
+/** @copydoc _PurpleConversationMessagePrivate */
+typedef struct _PurpleConversationMessagePrivate  PurpleConversationMessagePrivate;
 
 /**
  * A core representation of a conversation between two or more people.
@@ -104,7 +108,7 @@ struct _PurpleIMConversationPrivate
 /**
  * Data for "Chat Buddies"
  */
-struct _PurpleChatConversationBuddy
+struct _PurpleChatConversationBuddyPrivate
 {
 	/** The chat participant's name in the chat. */
 	char *name;
@@ -144,7 +148,7 @@ struct _PurpleChatConversationBuddy
 /**
  * Description of a conversation message
  */
-struct _PurpleConversationMessage
+struct _PurpleConversationMessagePrivate
 {
 	char *who;
 	char *what;
@@ -321,7 +325,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleConversationMes
 		if (err == -E2BIG) {
 			msg = _("Unable to send message: The message is too large.");
 
-			if (!purple_conv_present_error(who, account, msg)) {
+			if (!purple_conversation_helper_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
 				purple_notify_error(gc, NULL, msg2, _("The message is too large."));
 				g_free(msg2);
@@ -334,7 +338,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleConversationMes
 		else {
 			msg = _("Unable to send message.");
 
-			if (!purple_conv_present_error(who, account, msg)) {
+			if (!purple_conversation_helper_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
 				purple_notify_error(gc, NULL, msg2, NULL);
 				g_free(msg2);
@@ -449,7 +453,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	g_return_val_if_fail(name    != NULL, NULL);
 
 	/* Check if this conversation already exists. */
-	if ((conv = purple_find_conversation_with_account(type, name, account)) != NULL)
+	if ((conv = purple_conversations_find_with_account(type, name, account)) != NULL)
 	{
 		if (purple_conversation_get_type(conv) == PURPLE_CONVERSATION_TYPE_CHAT &&
 				!purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION_GET_PRIVATE(conv))) {
@@ -677,7 +681,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 		g_hash_table_destroy(conv->u.chat->users);
 		conv->u.chat->users = NULL;
 
-		g_list_foreach(conv->u.chat->in_room, (GFunc)purple_chat_conversation_cb_destroy, NULL);
+		g_list_foreach(conv->u.chat->in_room, (GFunc)purple_chat_conversation_buddy_destroy, NULL);
 		g_list_free(conv->u.chat->in_room);
 
 		g_list_foreach(conv->u.chat->ignored, (GFunc)g_free, NULL);
@@ -865,21 +869,6 @@ purple_conversation_autoset_title(PurpleConversation *conv)
 }
 
 void
-purple_conversation_foreach(void (*func)(PurpleConversation *conv))
-{
-	PurpleConversation *conv;
-	GList *l;
-
-	g_return_if_fail(func != NULL);
-
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
-		conv = (PurpleConversation *)l->data;
-
-		func(conv);
-	}
-}
-
-void
 purple_conversation_set_name(PurpleConversation *conv, const char *name)
 {
 	struct _purple_hconv *hc;
@@ -955,40 +944,6 @@ purple_conversation_get_data(PurpleConversation *conv, const char *key)
 	g_return_val_if_fail(key  != NULL, NULL);
 
 	return g_hash_table_lookup(conv->data, key);
-}
-
-PurpleConversation *
-purple_find_conversation_with_account(PurpleConversationType type,
-									const char *name,
-									const PurpleAccount *account)
-{
-	PurpleConversation *c = NULL;
-	struct _purple_hconv hc;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	hc.name = (gchar *)purple_normalize(account, name);
-	hc.account = account;
-	hc.type = type;
-
-	switch (type) {
-		case PURPLE_CONVERSATION_TYPE_IM:
-		case PURPLE_CONVERSATION_TYPE_CHAT:
-			c = g_hash_table_lookup(conversation_cache, &hc);
-			break;
-		case PURPLE_CONVERSATION_TYPE_ANY:
-			hc.type = PURPLE_CONVERSATION_TYPE_IM;
-			c = g_hash_table_lookup(conversation_cache, &hc);
-			if (!c) {
-				hc.type = PURPLE_CONVERSATION_TYPE_CHAT;
-				c = g_hash_table_lookup(conversation_cache, &hc);
-			}
-			break;
-		default:
-			g_return_val_if_reached(NULL);
-	}
-
-	return c;
 }
 
 void
@@ -1134,14 +1089,6 @@ purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateTyp
 /**************************************************************************
  * IM Conversation API
  **************************************************************************/
-PurpleConversation *
-purple_im_conversation_get_conversation(const PurpleIMConversation *im)
-{
-	g_return_val_if_fail(im != NULL, NULL);
-
-	return im->conv;
-}
-
 void
 purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon)
 {
@@ -1318,7 +1265,7 @@ purple_im_conversation_write(PurpleIMConversation *im, const char *who, const ch
 		purple_conversation_write(c, who, message, flags, mtime);
 }
 
-gboolean purple_conv_present_error(const char *who, PurpleAccount *account, const char *what)
+gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount *account, const char *what)
 {
 	PurpleConversation *conv;
 
@@ -1326,7 +1273,7 @@ gboolean purple_conv_present_error(const char *who, PurpleAccount *account, cons
 	g_return_val_if_fail(account !=NULL, FALSE);
 	g_return_val_if_fail(what != NULL, FALSE);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONVERSATION_TYPE_ANY, who, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONVERSATION_TYPE_ANY, who, account);
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, what, PURPLE_CONVERSATION_MESSAGE_ERROR, time(NULL));
 	else
@@ -1342,7 +1289,7 @@ purple_im_conversation_send(PurpleIMConversation *im, const char *message)
 }
 
 static void
-purple_conv_send_confirm_cb(gpointer *data)
+purple_conversation_send_confirm_cb(gpointer *data)
 {
 	PurpleConversation *conv = data[0];
 	char *message = data[1];
@@ -1352,7 +1299,7 @@ purple_conv_send_confirm_cb(gpointer *data)
 }
 
 void
-purple_conv_send_confirm(PurpleConversation *conv, const char *message)
+purple_conversation_send_confirm(PurpleConversation *conv, const char *message)
 {
 	char *text;
 	gpointer *data;
@@ -1374,7 +1321,7 @@ purple_conv_send_confirm(PurpleConversation *conv, const char *message)
 	purple_request_action(conv, NULL, _("Send Message"), text, 0,
 						  purple_conversation_get_account(conv), NULL, conv,
 						  data, 2,
-						  _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
+						  _("_Send Message"), G_CALLBACK(purple_conversation_send_confirm_cb),
 						  _("Cancel"), NULL);
 }
 
@@ -1388,7 +1335,7 @@ purple_im_conversation_send_with_flags(PurpleIMConversation *im, const char *mes
 }
 
 gboolean
-purple_conv_custom_smiley_add(PurpleConversation *conv, const char *smile,
+purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
                             const char *cksum_type, const char *chksum,
 							gboolean remote)
 {
@@ -1408,7 +1355,7 @@ purple_conv_custom_smiley_add(PurpleConversation *conv, const char *smile,
 }
 
 void
-purple_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
+purple_conversation_custom_smiley_write(PurpleConversation *conv, const char *smile,
                                    const guchar *data, gsize size)
 {
 	g_return_if_fail(conv != NULL);
@@ -1421,7 +1368,7 @@ purple_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 }
 
 void
-purple_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
+purple_conversation_custom_smiley_close(PurpleConversation *conv, const char *smile)
 {
 	g_return_if_fail(conv != NULL);
 	g_return_if_fail(smile != NULL && *smile);
@@ -1460,7 +1407,7 @@ purple_chat_conversation_ignore(PurpleChatConversation *chat, const char *name)
 	g_return_if_fail(name != NULL);
 
 	/* Make sure the user isn't already ignored. */
-	if (purple_chat_conversation_is_user_ignored(chat, name))
+	if (purple_chat_conversation_is_ignored_user(chat, name))
 		return;
 
 	purple_chat_conversation_set_ignored(chat,
@@ -1476,7 +1423,7 @@ purple_chat_conversation_unignore(PurpleChatConversation *chat, const char *name
 	g_return_if_fail(name != NULL);
 
 	/* Make sure the user is actually ignored. */
-	if (!purple_chat_conversation_is_user_ignored(chat, name))
+	if (!purple_chat_conversation_is_ignored_user(chat, name))
 		return;
 
 	item = g_list_find(purple_chat_conversation_get_ignored(chat),
@@ -1538,7 +1485,7 @@ purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat, co
 }
 
 gboolean
-purple_chat_conversation_is_user_ignored(const PurpleChatConversation *chat, const char *user)
+purple_chat_conversation_is_ignored_user(const PurpleChatConversation *chat, const char *user)
 {
 	g_return_val_if_fail(chat != NULL, FALSE);
 	g_return_val_if_fail(user != NULL, FALSE);
@@ -1605,7 +1552,7 @@ purple_chat_conversation_write(PurpleChatConversation *chat, const char *who, co
 	account   = purple_connection_get_account(gc);
 
 	/* Don't display this if the person who wrote it is ignored. */
-	if (purple_chat_conversation_is_user_ignored(chat, who))
+	if (purple_chat_conversation_is_ignored_user(chat, who))
 		return;
 
 	if (!(flags & PURPLE_CONVERSATION_MESSAGE_WHISPER)) {
@@ -1662,7 +1609,7 @@ purple_chat_conversation_add_user(PurpleChatConversation *chat, const char *user
 }
 
 static int
-purple_chat_conversation_cb_compare(PurpleChatConversationBuddy *a, PurpleChatConversationBuddy *b)
+purple_chat_conversation_buddy_compare(PurpleChatConversationBuddy *a, PurpleChatConversationBuddy *b)
 {
 	PurpleChatConversationBuddyFlags f1 = 0, f2 = 0;
 	char *user1 = NULL, *user2 = NULL;
@@ -1751,9 +1698,9 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
 						 "chat-buddy-joining", conv, user, flag)) ||
-				purple_chat_conversation_is_user_ignored(chat, user);
+				purple_chat_conversation_is_ignored_user(chat, user);
 
-		cbuddy = purple_chat_conversation_cb_new(user, alias, flag);
+		cbuddy = purple_chat_conversation_buddy_new(user, alias, flag);
 		cbuddy->buddy = purple_find_buddy(conv->account, user) != NULL;
 
 		chat->in_room = g_list_prepend(chat->in_room, cbuddy);
@@ -1789,7 +1736,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 			extra_msgs = extra_msgs->next;
 	}
 
-	cbuddies = g_list_sort(cbuddies, (GCompareFunc)purple_chat_conversation_cb_compare);
+	cbuddies = g_list_sort(cbuddies, (GCompareFunc)purple_chat_conversation_buddy_compare);
 
 	if (ops != NULL && ops->chat_add_users != NULL)
 		ops->chat_add_users(conv, cbuddies, new_arrivals);
@@ -1847,7 +1794,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	}
 
 	flags = purple_chat_conversation_user_get_flags(chat, old_user);
-	cb = purple_chat_conversation_cb_new(new_user, new_alias, flags);
+	cb = purple_chat_conversation_buddy_new(new_user, new_alias, flags);
 	cb->buddy = purple_find_buddy(conv->account, new_user) != NULL;
 
 	chat->in_room = g_list_prepend(chat->in_room, cb);
@@ -1856,26 +1803,26 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(conv, old_user, new_user, new_alias);
 
-	cb = purple_chat_conversation_cb_find(chat, old_user);
+	cb = purple_chat_conversation_find_buddy(chat, old_user);
 
 	if (cb) {
 		chat->in_room = g_list_remove(chat->in_room, cb);
 		g_hash_table_remove(chat->users, cb->name);
-		purple_chat_conversation_cb_destroy(cb);
+		purple_chat_conversation_buddy_destroy(cb);
 	}
 
-	if (purple_chat_conversation_is_user_ignored(chat, old_user)) {
+	if (purple_chat_conversation_is_ignored_user(chat, old_user)) {
 		purple_chat_conversation_unignore(chat, old_user);
 		purple_chat_conversation_ignore(chat, new_user);
 	}
-	else if (purple_chat_conversation_is_user_ignored(chat, new_user))
+	else if (purple_chat_conversation_is_ignored_user(chat, new_user))
 		purple_chat_conversation_unignore(chat, new_user);
 
 	if (is_me)
 		purple_chat_conversation_set_nick(chat, new_user);
 
 	if (purple_prefs_get_bool("/purple/conversations/chat/show_nick_change") &&
-	    !purple_chat_conversation_is_user_ignored(chat, new_user)) {
+	    !purple_chat_conversation_is_ignored_user(chat, new_user)) {
 
 		if (is_me) {
 			char *escaped = g_markup_escape_text(new_user, -1);
@@ -1948,14 +1895,14 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 		const char *user = (const char *)l->data;
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
 					"chat-buddy-leaving", conv, user, reason)) |
-				purple_chat_conversation_is_user_ignored(chat, user);
+				purple_chat_conversation_is_ignored_user(chat, user);
 
-		cb = purple_chat_conversation_cb_find(chat, user);
+		cb = purple_chat_conversation_find_buddy(chat, user);
 
 		if (cb) {
 			chat->in_room = g_list_remove(chat->in_room, cb);
 			g_hash_table_remove(chat->users, cb->name);
-			purple_chat_conversation_cb_destroy(cb);
+			purple_chat_conversation_buddy_destroy(cb);
 		}
 
 		/* NOTE: Don't remove them from ignored in case they re-enter. */
@@ -2031,7 +1978,7 @@ purple_chat_conversation_clear_users(PurpleChatConversation *chat)
 		purple_signal_emit(purple_conversations_get_handle(),
 						 "chat-buddy-left", conv, cb->name, NULL);
 
-		purple_chat_conversation_cb_destroy(cb);
+		purple_chat_conversation_buddy_destroy(cb);
 	}
 
 	g_hash_table_remove_all(chat->users);
@@ -2047,7 +1994,7 @@ purple_chat_conversation_find_user(PurpleChatConversation *chat, const char *use
 	g_return_val_if_fail(chat != NULL, FALSE);
 	g_return_val_if_fail(user != NULL, FALSE);
 
-	return (purple_chat_conversation_cb_find(chat, user) != NULL);
+	return (purple_chat_conversation_find_buddy(chat, user) != NULL);
 }
 
 void
@@ -2062,7 +2009,7 @@ purple_chat_conversation_user_set_flags(PurpleChatConversation *chat, const char
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(user != NULL);
 
-	cb = purple_chat_conversation_cb_find(chat, user);
+	cb = purple_chat_conversation_find_buddy(chat, user);
 
 	if (!cb)
 		return;
@@ -2091,7 +2038,7 @@ purple_chat_conversation_user_get_flags(PurpleChatConversation *chat, const char
 	g_return_val_if_fail(chat != NULL, 0);
 	g_return_val_if_fail(user != NULL, 0);
 
-	cb = purple_chat_conversation_cb_find(chat, user);
+	cb = purple_chat_conversation_find_buddy(chat, user);
 
 	if (!cb)
 		return PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
@@ -2113,7 +2060,7 @@ const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat) {
 }
 
 void
-purple_chat_conversation_left(PurpleChatConversation *chat)
+purple_chat_conversation_leave(PurpleChatConversation *chat)
 {
 	g_return_if_fail(chat != NULL);
 
@@ -2190,7 +2137,7 @@ purple_chat_conversation_has_left(PurpleChatConversation *chat)
 }
 
 PurpleChatConversationBuddy *
-purple_chat_conversation_cb_new(const char *name, const char *alias, PurpleChatConversationBuddyFlags flags)
+purple_chat_conversation_buddy_new(const char *name, const char *alias, PurpleChatConversationBuddyFlags flags)
 {
 	PurpleChatConversationBuddy *cb;
 
@@ -2208,7 +2155,7 @@ purple_chat_conversation_cb_new(const char *name, const char *alias, PurpleChatC
 }
 
 PurpleChatConversationBuddy *
-purple_chat_conversation_cb_find(PurpleChatConversation *chat, const char *name)
+purple_chat_conversation_find_buddy(PurpleChatConversation *chat, const char *name)
 {
 	g_return_val_if_fail(chat != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
@@ -2217,7 +2164,7 @@ purple_chat_conversation_cb_find(PurpleChatConversation *chat, const char *name)
 }
 
 void
-purple_chat_conversation_cb_destroy(PurpleChatConversationBuddy *cb)
+purple_chat_conversation_buddy_destroy(PurpleChatConversationBuddy *cb)
 {
 	if (cb == NULL)
 		return;
@@ -2234,14 +2181,14 @@ purple_chat_conversation_cb_destroy(PurpleChatConversationBuddy *cb)
 	g_free(cb);
 }
 
-void purple_chat_conversation_cb_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data)
+void purple_chat_conversation_buddy_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data)
 {
 	g_return_if_fail(cb != NULL);
 
 	cb->ui_data = ui_data;
 }
 
-gpointer purple_chat_conversation_cb_get_ui_data(const PurpleChatConversationBuddy *cb)
+gpointer purple_chat_conversation_buddy_get_ui_data(const PurpleChatConversationBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 
@@ -2249,7 +2196,7 @@ gpointer purple_chat_conversation_cb_get_ui_data(const PurpleChatConversationBud
 }
 
 const char *
-purple_chat_conversation_cb_get_alias(const PurpleChatConversationBuddy *cb)
+purple_chat_conversation_buddy_get_alias(const PurpleChatConversationBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 
@@ -2257,7 +2204,7 @@ purple_chat_conversation_cb_get_alias(const PurpleChatConversationBuddy *cb)
 }
 
 const char *
-purple_chat_conversation_cb_get_name(const PurpleChatConversationBuddy *cb)
+purple_chat_conversation_buddy_get_name(const PurpleChatConversationBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 
@@ -2265,14 +2212,14 @@ purple_chat_conversation_cb_get_name(const PurpleChatConversationBuddy *cb)
 }
 
 PurpleChatConversationBuddyFlags
-purple_chat_conversation_cb_get_flags(const PurpleChatConversationBuddy *cb)
+purple_chat_conversation_buddy_get_flags(const PurpleChatConversationBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE);
 
 	return cb->flags;
 }
 
-gboolean purple_chat_conversation_cb_is_buddy(const PurpleChatConversationBuddy *cb)
+gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBuddy *cb)
 {
 	g_return_val_if_fail(cb != NULL, FALSE);
 
@@ -2280,7 +2227,7 @@ gboolean purple_chat_conversation_cb_is_buddy(const PurpleChatConversationBuddy 
 }
 
 const char *
-purple_chat_conversation_cb_get_attribute(PurpleChatConversationBuddy *cb, const char *key)
+purple_chat_conversation_buddy_get_attribute(PurpleChatConversationBuddy *cb, const char *key)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
 	g_return_val_if_fail(key != NULL, NULL);
@@ -2296,7 +2243,7 @@ append_attribute_key(gpointer key, gpointer value, gpointer user_data)
 }
 
 GList *
-purple_chat_conversation_cb_get_attribute_keys(PurpleChatConversationBuddy *cb)
+purple_chat_conversation_buddy_get_attribute_keys(PurpleChatConversationBuddy *cb)
 {
 	GList *keys = NULL;
 	
@@ -2308,7 +2255,7 @@ purple_chat_conversation_cb_get_attribute_keys(PurpleChatConversationBuddy *cb)
 }
 
 void
-purple_chat_conversation_cb_set_attribute(PurpleChatConversation *chat, PurpleChatConversationBuddy *cb, const char *key, const char *value)
+purple_chat_conversation_buddy_set_attribute(PurpleChatConversation *chat, PurpleChatConversationBuddy *cb, const char *key, const char *value)
 {
 	PurpleConversation *conv;
 	PurpleConversationUiOps *ops;
@@ -2327,7 +2274,7 @@ purple_chat_conversation_cb_set_attribute(PurpleChatConversation *chat, PurpleCh
 }
 
 void
-purple_chat_conversation_cb_set_attributes(PurpleChatConversation *chat, PurpleChatConversationBuddy *cb, GList *keys, GList *values)
+purple_chat_conversation_buddy_set_attributes(PurpleChatConversation *chat, PurpleChatConversationBuddy *cb, GList *keys, GList *values)
 {
 	PurpleConversation *conv;
 	PurpleConversationUiOps *ops;

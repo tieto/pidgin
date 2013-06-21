@@ -44,6 +44,40 @@ purple_conversations_get_chats(void)
 	return chats;
 }
 
+PurpleConversation *
+purple_conversations_find_with_account(PurpleConversationType type,
+									const char *name,
+									const PurpleAccount *account)
+{
+	PurpleConversation *c = NULL;
+	struct _purple_hconv hc;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	hc.name = (gchar *)purple_normalize(account, name);
+	hc.account = account;
+	hc.type = type;
+
+	switch (type) {
+		case PURPLE_CONVERSATION_TYPE_IM:
+		case PURPLE_CONVERSATION_TYPE_CHAT:
+			c = g_hash_table_lookup(conversation_cache, &hc);
+			break;
+		case PURPLE_CONVERSATION_TYPE_ANY:
+			hc.type = PURPLE_CONVERSATION_TYPE_IM;
+			c = g_hash_table_lookup(conversation_cache, &hc);
+			if (!c) {
+				hc.type = PURPLE_CONVERSATION_TYPE_CHAT;
+				c = g_hash_table_lookup(conversation_cache, &hc);
+			}
+			break;
+		default:
+			g_return_val_if_reached(NULL);
+	}
+
+	return c;
+}
+
 PurpleChatConversation *
 purple_conversations_find_chat(const PurpleConnection *gc, int id)
 {
