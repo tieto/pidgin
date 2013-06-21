@@ -86,23 +86,6 @@ purple_cipher_get_type(void) {
 	return type;
 }
 
-GType
-purple_cipher_batch_mode_get_type(void) {
-	static GType type = 0;
-
-	if(type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_CIPHER_BATCH_MODE_ECB, "ECB", "ECB" },
-			{ PURPLE_CIPHER_BATCH_MODE_CBC, "CBC", "CBC" },
-			{ 0, NULL, NULL },
-		};
-
-		type = g_enum_register_static("PurpleCipherBatchMode", values);
-	}
-
-	return type;
-}
-
 /**
  * purple_cipher_reset:
  * @cipher: The cipher to reset

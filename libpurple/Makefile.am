@@ -105,6 +105,7 @@ purple_coresources = \
 	whiteboard.c
 
 purple_builtsources = \
+	enums.c \
 	marshallers.c
 
 purple_coreheaders = \
@@ -176,7 +177,22 @@ purple_mediaheaders = \
 	codec.h \
 	enum-types.h
 
-purple_builtheaders = purple.h version.h marshallers.h
+purple_builtheaders = purple.h version.h enums.h marshallers.h
+
+purple_enumheaders = \
+	account.h \
+	accounts.h \
+	cipher.h \
+	circularbuffer.h \
+	conversation.h \
+	conversations.h \
+	hash.h \
+	smiley.h \
+	sound-theme.h \
+	sound-theme-loader.h \
+	theme.h \
+	theme-loader.h \
+	theme-manager.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
@@ -184,6 +200,12 @@ marshallers.h: marshallers.list
 marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
+
+enums.h: enums.h.template $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.h.template $(purple_enumheaders) > $@
+
+enums.c: enums.c.template $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.template $(purple_enumheaders) > $@
 
 if ENABLE_DBUS
 

@@ -43,8 +43,6 @@
 typedef struct _PurpleCipher       PurpleCipher;
 typedef struct _PurpleCipherClass  PurpleCipherClass;
 
-#define PURPLE_TYPE_CIPHER_BATCH_MODE	(purple_cipher_batch_mode_get_type())
-
 /**
  * PurpleCipherBatchMode:
  * @PURPLE_CIPHER_BATCH_MODE_ECB: Electronic Codebook Mode
@@ -135,7 +133,6 @@ struct _PurpleCipherClass {
 G_BEGIN_DECLS
 
 GType purple_cipher_get_type(void);
-GType purple_cipher_batch_mode_get_type(void);
 
 const gchar *purple_cipher_get_name(PurpleCipher *cipher);
 
