@@ -86,7 +86,7 @@ static const char*	vibes[] = {
  *  @param buf				The data to dump
  *  @param len				The length of the data
  */
-static void hex_dump( const char* buf, int len )
+static void hex_dump( const gchar* buf, int len )
 {
 	char		msg[256];
 	int			pos;
@@ -102,11 +102,11 @@ static void hex_dump( const char* buf, int len )
 		if ( pos == 0 )
 			pos += sprintf( &msg[pos], "%04i:  ", i );
 
-		pos += sprintf( &msg[pos], "0x%02X ", (unsigned char) buf[i] );
+		pos += sprintf( &msg[pos], "0x%02X ", buf[i] );
 
 		if ( i % 16 == 15 ) {
 			pos += sprintf( &msg[pos], "\n" );
-			purple_debug_info( MXIT_PLUGIN_ID, msg );
+			purple_debug_info( MXIT_PLUGIN_ID, "%s", msg );
 			pos = 0;
 		}
 		else if ( i % 16 == 7 )
@@ -115,7 +115,7 @@ static void hex_dump( const char* buf, int len )
 
 	if ( pos > 0 ) {
 		pos += sprintf( &msg[pos], "\n" );
-		purple_debug_info( MXIT_PLUGIN_ID, msg );
+		purple_debug_info( MXIT_PLUGIN_ID, "%s", msg );
 		pos = 0;
 	}
 }
@@ -166,7 +166,7 @@ void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean i
  *  @param size				The extracted length
  *  @return					The number of bytes extracted
  */
-static unsigned int asn_getlength( const char* data, int* size )
+static unsigned int asn_getlength( const gchar* data, int* size )
 {
 	unsigned int	len		= 0;
 	unsigned char	bytes;
@@ -201,14 +201,14 @@ static unsigned int asn_getlength( const char* data, int* size )
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const char* data, unsigned char type, char** utf8 )
+static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 {
 	int		len;
 
 	/* validate the field type [1 byte] */
 	if ( data[0] != type ) {
 		/* this is not a utf-8 string! */
-		purple_debug_error( MXIT_PLUGIN_ID, "Invalid UTF-8 encoded string in ASN data (0x%02X)\n", (unsigned char) data[0] );
+		purple_debug_error( MXIT_PLUGIN_ID, "Invalid UTF-8 encoded string in ASN data (got 0x%02X, expected 0x%02X)\n", data[0], type );
 		return -1;
 	}
 
@@ -471,9 +471,9 @@ static void parse_emoticon_str( const char* message, char* emid )
 static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message )
 {
 	struct RXMsgData*	mx			= (struct RXMsgData*) user_data;
-	const char*			data		= url_text;
+	const gchar*		data		= url_text;
 	unsigned int		pos			= 0;
-	char				emo[16];
+	char				emo[MXIT_MAX_EMO_ID + 1];
 	int					id;
 	char*				str;
 	int					em_size		= 0;
