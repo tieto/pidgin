@@ -153,7 +153,7 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
 /**************************************************************************/
-/** TODO decide if this is to be split up
+/**
  * Conversation operations and events.
  *
  * Any UI representing a conversation must assign a filled-out

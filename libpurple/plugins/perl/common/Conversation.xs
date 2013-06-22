@@ -197,12 +197,20 @@ purple_conversation_write(conv, who, message, flags, mtime)
 	time_t mtime
 
 void
+purple_conversation_write_message(conv, who, message, flags, mtime)
+	Purple::Conversation conv
+	const char *who
+	const char *message
+	Purple::Conversation::MessageFlags flags
+	time_t mtime
+
+void
 purple_conversation_send(conv, message)
 	Purple::Conversation conv
 	const char *message
 
 void
-purple_conversation_send_with_flags(conv, message, flags)
+purple_conversation_send_message(conv, message, flags)
 	Purple::Conversation conv
 	const char *message
 	Purple::Conversation::MessageFlags flags
