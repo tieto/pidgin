@@ -35,7 +35,7 @@ serv_chat_send(con, a, b, flags)
 	Purple::Connection con 
 	int a
 	const char * b
-	Purple::MessageFlags flags
+	Purple::Conversation::MessageFlags flags
 
 void 
 serv_chat_whisper(con, a, b, c)
@@ -60,7 +60,7 @@ serv_got_chat_in(g, id, who, chatflags, message, mtime)
 	Purple::Connection g
 	int id
 	const char *who
-	Purple::MessageFlags chatflags
+	Purple::Conversation::MessageFlags chatflags
 	const char *message
 	time_t mtime
 
@@ -101,7 +101,7 @@ serv_got_im(gc, who, msg, imflags, mtime)
 	Purple::Connection gc
 	const char *who
 	const char *msg
-	Purple::MessageFlags imflags
+	Purple::Conversation::MessageFlags imflags
 	time_t mtime
 
 Purple::Conversation
@@ -115,7 +115,7 @@ serv_got_typing(gc, name, timeout, state)
 	Purple::Connection gc
 	const char *name
 	int timeout
-	Purple::TypingState state
+	Purple::IMConversation::TypingState state
 
 void 
 serv_got_typing_stopped(gc, name)
@@ -197,13 +197,13 @@ serv_send_im(con, a, b, flags )
 	Purple::Connection con
 	const char * a
 	const char * b
-	Purple::MessageFlags flags
+	Purple::Conversation::MessageFlags flags
 
 int  
 serv_send_typing(con, a, state)
 	Purple::Connection con
 	const char * a
-	Purple::TypingState state
+	Purple::IMConversation::TypingState state
 
 void 
 serv_set_info(con, a)

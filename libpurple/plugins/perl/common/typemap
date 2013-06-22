@@ -37,6 +37,7 @@ xmlnode *				T_PTR
 const xmlnode *				T_PTR
 gssize					T_IV
 const void *				T_PTR
+GType					T_IV
 
 Purple::Account				T_PurpleObj
 Purple::Account::Option			T_PurpleObj

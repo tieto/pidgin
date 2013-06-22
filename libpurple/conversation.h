@@ -100,21 +100,6 @@ typedef enum /*< flags >*/
 	PURPLE_CONVERSATION_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
 } PurpleConversationMessageFlags;
 
-/**
- * Flags applicable to users in Chats.
- */
-typedef enum /*< flags >*/
-{
-	PURPLE_CHAT_CONVERSATION_BUDDY_NONE     = 0x0000, /**< No flags                     */
-	PURPLE_CHAT_CONVERSATION_BUDDY_VOICE    = 0x0001, /**< Voiced user or "Participant" */
-	PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP   = 0x0002, /**< Half-op                      */
-	PURPLE_CHAT_CONVERSATION_BUDDY_OP       = 0x0004, /**< Channel Op or Moderator      */
-	PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER  = 0x0008, /**< Channel Founder              */
-	PURPLE_CHAT_CONVERSATION_BUDDY_TYPING   = 0x0010, /**< Currently typing             */
-	PURPLE_CHAT_CONVERSATION_BUDDY_AWAY     = 0x0020  /**< Currently away.              */
-
-} PurpleChatConversationBuddyFlags;
-
 #include "account.h"
 #include "buddyicon.h"
 #include "log.h"
@@ -268,8 +253,8 @@ G_BEGIN_DECLS
  *
  * @return The new conversation.
  */
-PurpleConversation *purple_conversation_new(PurpleAccount *account,
-										const char *name);
+PurpleConversation *purple_conversation_new(GType type, PurpleAccount *account,
+		const char *name);
 
 /** TODO dispose/fnalize
  * Destroys the specified conversation and removes it from the parent
