@@ -61,17 +61,37 @@ GList *purple_conversations_get_ims(void);
  */
 GList *purple_conversations_get_chats(void);
 
-/** TODO type
- * Finds a conversation with the specified type, name, and Purple account.
+/** TODO all
+ * Finds a conversation of any type with the specified name and Purple account.
  *
- * @param type The type of the conversation.
  * @param name The name of the conversation.
  * @param account The purple_account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-PurpleConversation *purple_conversations_find_with_account(
-		GType type, const char *name,
+PurpleConversation *purple_conversations_find_with_account(const char *name,
+		const PurpleAccount *account);
+
+/** TODO IMs
+ * Finds an IM with the specified name and Purple account.
+ *
+ * @param name The name of the conversation.
+ * @param account The purple_account associated with the conversation.
+ *
+ * @return The conversation if found, or @c NULL otherwise.
+ */
+PurpleConversation *purple_conversations_find_im_with_account(const char *name,
+		const PurpleAccount *account);
+
+/** TODO chats
+ * Finds a chat with the specified name and Purple account.
+ *
+ * @param name The name of the conversation.
+ * @param account The purple_account associated with the conversation.
+ *
+ * @return The conversation if found, or @c NULL otherwise.
+ */
+PurpleConversation *purple_conversations_find_chat_with_account(const char *name,
 		const PurpleAccount *account);
 
 /**
@@ -82,7 +102,7 @@ PurpleConversation *purple_conversations_find_with_account(
  *
  * @return The chat conversation.
  */
-PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
+PurpleConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
 
 /**
  * Sets the default conversation UI operations structure.

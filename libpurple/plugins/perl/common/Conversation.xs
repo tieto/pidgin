@@ -118,8 +118,17 @@ PPCODE:
 	}
 
 Purple::Conversation
-purple_conversations_find_with_account(type, name, account)
-	GType type
+purple_conversations_find_with_account(name, account)
+	const char *name
+	Purple::Account account
+
+Purple::ChatConversation
+purple_conversations_find_chat_with_account(name, account)
+	const char *name
+	Purple::Account account
+
+Purple::IMConversation
+purple_conversations_find_im_with_account(name, account)
 	const char *name
 	Purple::Account account
 
@@ -225,7 +234,7 @@ purple_conversation_do_command(conv, cmdline, markup, error)
 MODULE = Purple::Conversation  PACKAGE = Purple::IMConversation  PREFIX = purple_im_conversation_
 PROTOTYPES: ENABLE
 
-Purple::IMConversation
+Purple::Conversation
 purple_im_conversation_new(class, account, name)
 	Purple::Account account
 	const char *name
@@ -308,7 +317,7 @@ purple_conversation_custom_smiley_close(conv, smile)
 MODULE = Purple::Conversation  PACKAGE = Purple::ChatConversation  PREFIX = purple_chat_conversation_
 PROTOTYPES: ENABLE
 
-Purple::ChatConversation
+Purple::Conversation
 purple_chat_conversation_new(class, account, name)
 	Purple::Account account
 	const char *name

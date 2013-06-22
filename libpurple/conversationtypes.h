@@ -217,7 +217,7 @@ GType purple_im_conversation_get_type(void);
  *
  * @return The new conversation.
  */
-PurpleIMConversation *purple_im_conversation_new(PurpleAccount *account,
+PurpleConversation *purple_im_conversation_new(PurpleAccount *account,
 		const char *name);
 
 /**
@@ -389,7 +389,7 @@ GType purple_chat_conversation_get_type(void);
  *
  * @return The new conversation.
  */
-PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
+PurpleConversation *purple_chat_conversation_new(PurpleAccount *account,
 		const char *name);
 
 /**
