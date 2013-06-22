@@ -29,6 +29,7 @@
 
 #include "debug.h"
 #include "eventloop.h"
+#include "http.h"
 #include "network.h"
 #include "proxy.h"
 #include "signals.h"
@@ -432,36 +433,30 @@ upnp_parse_description_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 static void
 purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd)
 {
+	PurpleHttpURL *url;
 	gchar* httpRequest;
-	gchar* descriptionXMLAddress;
-	gchar* descriptionAddress;
-	int port = 0;
 
 	/* parse the 4 above variables out of the descriptionURL
 	   example description URL: http://192.168.1.1:5678/rootDesc.xml */
 
-	/* parse the url into address, port, path variables */
-	if(!purple_url_parse(descriptionURL, &descriptionAddress,
-			&port, &descriptionXMLAddress, NULL, NULL)) {
+	url = purple_http_url_parse(descriptionURL);
+	if (!url)
 		return;
-	}
-	if(port == 0 || port == -1) {
-		port = DEFAULT_HTTP_PORT;
-	}
 
 	/* for example...
 	   GET /rootDesc.xml HTTP/1.1\r\nHost: 192.168.1.1:5678\r\n\r\n */
 	httpRequest = g_strdup_printf(
-		"GET /%s HTTP/1.1\r\n"
+		"GET %s HTTP/1.1\r\n"
 		"Connection: close\r\n"
 		"Host: %s:%d\r\n\r\n",
-		descriptionXMLAddress, descriptionAddress, port);
-
-	g_free(descriptionXMLAddress);
+		purple_http_url_get_path(url),
+		purple_http_url_get_host(url),
+		purple_http_url_get_port(url));
 
 	dd->full_url = g_strdup_printf("http://%s:%d",
-			descriptionAddress, port);
-	g_free(descriptionAddress);
+		purple_http_url_get_host(url),
+		purple_http_url_get_port(url));
+	purple_http_url_free(url);
 
 	/* Remove the timeout because everything it is waiting for has
 	 * successfully completed */
@@ -702,24 +697,18 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 		gpointer cb_data)
 {
 	PurpleUtilFetchUrlData* gfud;
+	PurpleHttpURL *url;
 	gchar* soapMessage;
 	gchar* totalSendMessage;
-	gchar* pathOfControl;
-	gchar* addressOfControl;
-	int port = 0;
 
-	/* parse the url into address, port, path variables */
-	if(!purple_url_parse(control_info.control_url, &addressOfControl,
-			&port, &pathOfControl, NULL, NULL)) {
-		purple_debug_error("upnp",
-			"generate_action_message_and_send(): Failed In Parse URL\n");
+	url = purple_http_url_parse(control_info.control_url);
+	if (!url) {
+		purple_debug_error("upnp", "generate_action_message_and_send():"
+			" Failed In Parse URL\n");
 		/* XXX: This should probably be async */
 		if(cb)
 			cb(NULL, cb_data, NULL, 0, NULL);
 		return NULL;
-	}
-	if(port == 0 || port == -1) {
-		port = DEFAULT_HTTP_PORT;
 	}
 
 	/* set the soap message */
@@ -728,17 +717,18 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 
 	/* set the HTTP Header, and append the body to it */
 	totalSendMessage = g_strdup_printf(HTTP_HEADER_ACTION "%s",
-		pathOfControl, addressOfControl, port,
+		purple_http_url_get_path(url),
+		purple_http_url_get_host(url),
+		purple_http_url_get_port(url),
 		control_info.service_type, actionName,
 		strlen(soapMessage), soapMessage);
-	g_free(pathOfControl);
 	g_free(soapMessage);
 
 	gfud = purple_util_fetch_url_request(NULL, control_info.control_url, FALSE, NULL, TRUE,
 				totalSendMessage, TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);
-	g_free(addressOfControl);
+	purple_http_url_free(url);
 
 	return gfud;
 }
@@ -835,27 +825,26 @@ looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 static void
 lookup_internal_ip()
 {
-	gchar* addressOfControl;
-	int port = 0;
+	PurpleHttpURL *url;
 
-	if(!purple_url_parse(control_info.control_url, &addressOfControl, &port,
-			NULL, NULL, NULL)) {
+	url = purple_http_url_parse(control_info.control_url);
+	if (!url) {
 		purple_debug_error("upnp",
 			"lookup_internal_ip(): Failed In Parse URL\n");
 		return;
 	}
-	if(port == 0 || port == -1) {
-		port = DEFAULT_HTTP_PORT;
-	}
 
-	if(purple_proxy_connect(NULL, NULL, addressOfControl, port,
-			looked_up_internal_ip_cb, NULL) == NULL)
+	if(purple_proxy_connect(NULL, NULL, purple_http_url_get_host(url),
+		purple_http_url_get_port(url), looked_up_internal_ip_cb,
+		NULL) == NULL)
 	{
-		purple_debug_error("upnp", "Get Local IP Connect Failed: Address: %s @@@ Port %d\n",
-			addressOfControl, port);
+		purple_debug_error("upnp", "Get Local IP Connect Failed: "
+			"Address: %s @@@ Port %d\n",
+			purple_http_url_get_host(url),
+			purple_http_url_get_port(url));
 	}
 
-	g_free(addressOfControl);
+	purple_http_url_free(url);
 }
 
 static void

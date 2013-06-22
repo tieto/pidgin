@@ -26,9 +26,9 @@
 #include "prpl.h"
 #include "util.h"
 #include "debug.h"
+#include "http.h"
 #include "network.h"
 #include "notify.h"
-#include "obsolete.h"
 #include "proxy.h"
 #include "ft.h"
 #include "libymsg.h"
@@ -796,6 +796,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *url = NULL;
 	char *imv = NULL;
 	PurpleXfer *xfer;
+	PurpleHttpURL *url_p;
 	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
@@ -866,10 +867,17 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	/* Setup the Yahoo-specific file transfer data */
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
 	xfer_data->gc = gc;
-	if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
+
+	url_p = purple_http_url_parse(url);
+	if (!url_p) {
 		g_free(xfer_data);
+		purple_debug_error("yahoo_filexfer", "Couldn't parse URL\n");
 		return;
 	}
+	xfer_data->host = g_strdup(purple_http_url_get_host(url_p));
+	xfer_data->port = purple_http_url_get_port(url_p);
+	xfer_data->path = g_strdup(purple_http_url_get_path(url_p));
+	purple_http_url_free(url_p);
 
 	purple_debug_misc("yahoo_filexfer", "Host is %s, port is %d, path is %s, and the full url was %s.\n",
 	                xfer_data->host, xfer_data->port, xfer_data->path, url);
@@ -982,6 +990,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	unsigned char a,b,c,d;
 	PurpleConnection *gc;
 	PurpleAccount *account;
+	PurpleHttpURL *url_p;
 	YahooData *yd;
 	gchar *url;
 	gchar *filename;
@@ -1040,12 +1049,16 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		hosts = g_slist_remove(hosts, hosts->data);
 	}
 
-	if (!purple_url_parse(url, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
+	url_p = purple_http_url_parse(url);
+	g_free(url);
+	if (!url_p) {
 		purple_xfer_cancel_remote(xfer);
-		g_free(url);
 		return;
 	}
-	g_free(url);
+	xd->host = g_strdup(purple_http_url_get_host(url_p));
+	xd->port = purple_http_url_get_port(url_p);
+	xd->path = g_strdup(purple_http_url_get_path(url_p));
+	purple_http_url_free(url_p);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_INFO_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
@@ -1828,10 +1841,17 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
 	if(val_249 == 1 || val_249 == 3) {
 		PurpleAccount *account;
-		if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
+		PurpleHttpURL *url_p;
+
+		url_p = purple_http_url_parse(url);
+		if (!url_p) {
 			purple_xfer_cancel_remote(xfer);
 			return;
 		}
+		xfer_data->host = g_strdup(purple_http_url_get_host(url_p));
+		xfer_data->port = purple_http_url_get_port(url_p);
+		xfer_data->path = g_strdup(purple_http_url_get_path(url_p));
+		purple_http_url_free(url_p);
 
 		account = purple_connection_get_account(xfer_data->gc);
 
@@ -1920,8 +1940,18 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	}
 
 	xfer_data = purple_xfer_get_protocol_data(xfer);
-	if(url)
-		purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL);
+	if (url) {
+		PurpleHttpURL *url_p = purple_http_url_parse(url);
+		if (!url_p) {
+			purple_debug_error("yahoo", "Invalid URL\n");
+			purple_xfer_cancel_remote(xfer);
+			return;
+		}
+		xfer_data->host = g_strdup(purple_http_url_get_host(url_p));
+		xfer_data->port = purple_http_url_get_port(url_p);
+		xfer_data->path = g_strdup(purple_http_url_get_path(url_p));
+		purple_http_url_free(url_p);
+	}
 
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
 	xfer_data->status_15 = ACCEPTED;

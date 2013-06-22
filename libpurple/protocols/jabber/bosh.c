@@ -25,7 +25,7 @@
 #include "core.h"
 #include "cipher.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 #include "prpl.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -200,33 +200,33 @@ PurpleBOSHConnection*
 jabber_bosh_connection_init(JabberStream *js, const char *url)
 {
 	PurpleBOSHConnection *conn;
-	char *host, *path, *user, *passwd;
-	int port;
+	PurpleHttpURL *url_p;
 
-	if (!purple_url_parse(url, &host, &port, &path, &user, &passwd)) {
+	url_p = purple_http_url_parse(url);
+	if (!url_p) {
 		purple_debug_info("jabber", "Unable to parse given URL.\n");
 		return NULL;
 	}
 
 	conn = g_new0(PurpleBOSHConnection, 1);
-	conn->host = host;
-	conn->port = port;
-	conn->path = g_strdup_printf("/%s", path);
-	g_free(path);
+	conn->host = g_strdup(purple_http_url_get_host(url_p));
+	conn->port = purple_http_url_get_port(url_p);
+	conn->path = g_strdup(purple_http_url_get_path(url_p));
 	conn->pipelining = TRUE;
 
-	if (purple_ip_address_is_valid(host))
+	if (purple_ip_address_is_valid(purple_http_url_get_host(url_p)))
 		js->serverFQDN = g_strdup(js->user->domain);
 	else
-		js->serverFQDN = g_strdup(host);
+		js->serverFQDN = g_strdup(purple_http_url_get_host(url_p));
 
-	if ((user && user[0] != '\0') || (passwd && passwd[0] != '\0')) {
+	if (purple_http_url_get_username(url_p) ||
+		purple_http_url_get_password(url_p))
+	{
 		purple_debug_info("jabber", "Ignoring unexpected username and password "
 		                            "in BOSH URL.\n");
 	}
 
-	g_free(user);
-	g_free(passwd);
+	purple_http_url_free(url_p);
 
 	conn->js = js;
 

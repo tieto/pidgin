@@ -104,22 +104,6 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request(
  */
 void purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *url_data);
 
-/**
- * Parses a URL, returning its host, port, file path, username and password.
- *
- * The returned data must be freed.
- *
- * @param url      The URL to parse.
- * @param ret_host The returned host.
- * @param ret_port The returned port.
- * @param ret_path The returned path.
- * @param ret_user The returned username.
- * @param ret_passwd The returned password.
- */
-gboolean purple_url_parse(const char *url, char **ret_host, int *ret_port,
-						char **ret_path, char **ret_user, char **ret_passwd);
-
-
 /*@}*/
 
 #endif /* _PURPLE_OBSOLETE_H_ */
