@@ -56,6 +56,7 @@ libpurple/dbus-bindings.c
 libpurple/dbus-signals.c
 libpurple/dbus-types.c
 libpurple/dbus-types.h
+libpurple/enums.[ch]
 libpurple/example/nullclient
 libpurple/gconf/purple.schemas$
 libpurple/marshallers.[ch]
