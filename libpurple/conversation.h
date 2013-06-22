@@ -136,22 +136,10 @@ struct _PurpleConversationClass {
 			const char *message, PurpleConversationMessageFlags flags,
 			time_t mtime);
 
-	/** TODO pure virtual
-	 * Sends a message to this conversation.
-	 *
-	 * @param conv    The conversation.
-	 * @param message The message to send.
-	 */
+	/** @copydoc purple_conversation_send() TODO */
 	void (*send)(PurpleConversation *conv, const char *message);
 
-	/** TODO pure virtual
-	 * Sends a message to this conversation with specified flags.
-	 *
-	 * @param conv    The conversation.
-	 * @param message The message to send.
-	 * @param flags   The PurpleConversationMessageFlags flags to use in addition to
-	 *                PURPLE_CONVERSATION_MESSAGE_SEND.
-	 */
+	/** @copydoc purple_conversation_send_with_flags() TODO */
 	void (*send_with_flags)(PurpleConversation *conv,
 			const char *message, PurpleConversationMessageFlags flags);
 
@@ -463,6 +451,27 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
 void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleConversationMessageFlags flags,
 		time_t mtime);
+
+/** TODO pure virtual
+ * Sends a message to this conversation.
+ *
+ * @param conv    The conversation.
+ * @param message The message to send.
+ */
+/** @copydoc purple_conversation_send() TODO */
+void purple_conversation_send(PurpleConversation *conv, const char *message);
+
+/** TODO pure virtual
+ * Sends a message to this conversation with specified flags.
+ *
+ * @param conv    The conversation.
+ * @param message The message to send.
+ * @param flags   The PurpleConversationMessageFlags flags to use in addition to
+ *                PURPLE_CONVERSATION_MESSAGE_SEND.
+ */
+/** @copydoc purple_conversation_send_with_flags() TODO */
+void purple_conversation_send_with_flags(PurpleConversation *conv,
+		const char *message, PurpleConversationMessageFlags flags);
 
 /**
 	Set the features as supported for the given conversation.
