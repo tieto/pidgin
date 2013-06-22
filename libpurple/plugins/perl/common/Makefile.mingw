@@ -37,7 +37,6 @@ LIB_PATHS += \
 ##  SOURCES, OBJECTS
 ##
 XS_FILES =		Account.xs \
-				Accounts.xs \
 				AccountOpts.xs \
 				BuddyIcon.xs \
 				BuddyList.xs \
