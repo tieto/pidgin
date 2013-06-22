@@ -196,6 +196,17 @@ purple_conversation_write(conv, who, message, flags, mtime)
 	Purple::Conversation::MessageFlags flags
 	time_t mtime
 
+void
+purple_conversation_send(conv, message)
+	Purple::Conversation conv
+	const char *message
+
+void
+purple_conversation_send_with_flags(conv, message, flags)
+	Purple::Conversation conv
+	const char *message
+	Purple::Conversation::MessageFlags flags
+
 gboolean
 purple_conversation_do_command(conv, cmdline, markup, error)
 	Purple::Conversation conv
@@ -268,25 +279,6 @@ purple_im_conversation_get_send_typed_timeout(im)
 void
 purple_im_conversation_update_typing(im)
 	Purple::IMConversation im
-
-void
-purple_im_conversation_send(im, message)
-	Purple::IMConversation im
-	const char *message
-
-void
-purple_im_conversation_send_with_flags(im, message, flags)
-	Purple::IMConversation im
-	const char *message
-	Purple::Conversation::MessageFlags flags
-
-void
-purple_im_conversation_write(im, who, message, flags, mtime)
-	Purple::IMConversation im
-	const char *who
-	const char *message
-	Purple::Conversation::MessageFlags flags
-	time_t mtime
 
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::Helper  PREFIX = purple_conversation_helper_
 PROTOTYPES: ENABLE
@@ -375,25 +367,6 @@ purple_chat_conversation_set_id(chat, id)
 int
 purple_chat_conversation_get_id(chat)
 	Purple::ChatConversation chat
-
-void
-purple_chat_conversation_send(chat, message)
-	Purple::ChatConversation chat
-	const char * message
-
-void
-purple_chat_conversation_send_with_flags(chat, message, flags)
-	Purple::ChatConversation chat
-	const char * message
-	Purple::Conversation::MessageFlags flags
-
-void
-purple_chat_conversation_write(chat, who, message, flags, mtime)
-	Purple::ChatConversation chat
-	const char *who
-	const char *message
-	Purple::Conversation::MessageFlags flags
-	time_t mtime
 
 void
 purple_chat_conversation_add_users(chat, users, extra_msgs, flags, new_arrivals)
