@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "ft.h"
+#include "obsolete.h"
 #include "util.h"
 
 #include "jabber.h"

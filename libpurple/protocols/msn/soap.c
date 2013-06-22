@@ -27,6 +27,7 @@
 
 #include "soap.h"
 
+#include "obsolete.h"
 #include "session.h"
 
 #include "debug.h"

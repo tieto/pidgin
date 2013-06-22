@@ -33,6 +33,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
+#include "obsolete.h"
 #include "prpl.h"
 
 #include "conversation.h"
