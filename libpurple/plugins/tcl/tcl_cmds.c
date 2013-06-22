@@ -70,7 +70,7 @@ static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *i
 	if (convo == NULL)
 		return NULL;
 
-	for (cur = purple_get_conversations(); cur != NULL; cur = g_list_next(cur)) {
+	for (cur = purple_conversations_get(); cur != NULL; cur = g_list_next(cur)) {
 		if (convo == cur->data)
 			return convo;
 	}
@@ -775,7 +775,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	enum { CMD_CONV_NEW_CHAT, CMD_CONV_NEW_IM } newopt;
 	PurpleConversation *convo;
 	PurpleAccount *account;
-	PurpleConversationType type;
+	gboolean is_chat = FALSE;
 	GList *cur;
 	char *opt, *from, *what;
 	int error, argsused, flags = 0;
@@ -797,8 +797,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		account = NULL;
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-							    Tcl_GetString(objv[3]),
+		convo = purple_conversations_find_with_account(Tcl_GetString(objv[3]),
 							    account);
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefConversation, convo));
 		break;
@@ -813,7 +812,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		break;
 	case CMD_CONV_LIST:
 		list = Tcl_NewListObj(0, NULL);
-		for (cur = purple_get_conversations(); cur != NULL; cur = g_list_next(cur)) {
+		for (cur = purple_conversations_get(); cur != NULL; cur = g_list_next(cur)) {
 			elem = purple_tcl_ref_new(PurpleTclRefConversation, cur->data);
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
@@ -825,7 +824,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			return TCL_ERROR;
 		}
 		argsused = 2;
-		type = PURPLE_CONV_TYPE_IM;
+		is_chat = FALSE;
 		while (argsused < objc) {
 			opt = Tcl_GetString(objv[argsused]);
 			if (*opt == '-') {
@@ -835,10 +834,10 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 				argsused++;
 				switch (newopt) {
 				case CMD_CONV_NEW_CHAT:
-					type = PURPLE_CONV_TYPE_CHAT;
+					is_chat = TRUE;
 					break;
 				case CMD_CONV_NEW_IM:
-					type = PURPLE_CONV_TYPE_IM;
+					is_chat = FALSE;
 					break;
 				}
 			} else {
@@ -851,7 +850,10 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		}
 		if ((account = tcl_validate_account(objv[argsused++], interp)) == NULL)
 			return TCL_ERROR;
-		convo = purple_conversation_new(type, account, Tcl_GetString(objv[argsused]));
+		if (is_chat)
+			convo = purple_chat_conversation_new(account, Tcl_GetString(objv[argsused]));
+		else
+			convo = purple_im_conversation_new(account, Tcl_GetString(objv[argsused]));
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefConversation, convo));
 		break;
 	case CMD_CONV_WRITE:
@@ -868,20 +870,16 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 		switch (style) {
 		case CMD_CONV_WRITE_SEND:
-			flags = PURPLE_MESSAGE_SEND;
+			flags = PURPLE_CONVERSATION_MESSAGE_SEND;
 			break;
 		case CMD_CONV_WRITE_RECV:
-			flags = PURPLE_MESSAGE_RECV;
+			flags = PURPLE_CONVERSATION_MESSAGE_RECV;
 			break;
 		case CMD_CONV_WRITE_SYSTEM:
-			flags = PURPLE_MESSAGE_SYSTEM;
+			flags = PURPLE_CONVERSATION_MESSAGE_SYSTEM;
 			break;
 		}
-		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
-			purple_conv_chat_write(PURPLE_CONV_CHAT(convo), from, what, flags, time(NULL));
-		else
-			purple_conv_im_write(PURPLE_CONV_IM(convo), from, what, flags, time(NULL));
-		break;
+		purple_conversation_write_message(convo, from, what, flags, time(NULL));
 	case CMD_CONV_NAME:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "conversation");
@@ -912,10 +910,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		what = Tcl_GetString(objv[3]);
-		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
-			purple_conv_chat_send(PURPLE_CONV_CHAT(convo), what);
-		else
-			purple_conv_im_send(PURPLE_CONV_IM(convo), what);
+		purple_conversation_send(convo, what);
 		break;
 	}
 
