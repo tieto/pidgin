@@ -205,13 +205,15 @@ MODULE = Purple::Cipher  PACKAGE = Purple::HMACCipher  PREFIX = purple_hmac_ciph
 PROTOTYPES: ENABLE
 
 Purple::Cipher
-purple_hmac_cipher_new()
+purple_hmac_cipher_new(hash)
+	Purple::Hash hash
 
 MODULE = Purple::Cipher  PACKAGE = Purple::PBKDF2Cipher  PREFIX = purple_pbkdf2_cipher_
 PROTOTYPES: ENABLE
 
 Purple::Cipher
-purple_pbkdf2_cipher_new()
+purple_pbkdf2_cipher_new(hash)
+	Purple::Hash hash
 
 MODULE = Purple::Cipher  PACKAGE = Purple::RC4Cipher  PREFIX = purple_rc4_cipher_
 PROTOTYPES: ENABLE
