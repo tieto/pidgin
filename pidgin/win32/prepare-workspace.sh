@@ -6,7 +6,7 @@
 
 # configuration
 
-BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB"
+BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB 2EA34582882FE334694F0BCD7D8DE336"
 ACTIVEPERL_GUID_PACKED="BC98F31FB8440B94CB3674649419766C 547A2C684F806164DB756F228DAB5840 5E7EC16051106BB43818746C209BC8D7"
 PERL_DIR_FALLBACK="/cygdrive/c/Perl/bin"
 NSIS_DIR_REGKEY="HKEY_LOCAL_MACHINE/SOFTWARE/NSIS/@"
@@ -153,6 +153,9 @@ function path_real() {
 function reg_get_path() {
 	reg_ret=""
 	reg_key="/proc/registry/$1"
+	if [ ! -f $reg_key ] ; then
+		reg_key="/proc/registry64/$1"
+	fi
 	if [ -f $reg_key ] ; then
 		path_win32_to_cygwin "`cat ${reg_key}`"
 		reg_ret="${path_ret}"
@@ -325,7 +328,7 @@ if [ ! -e "${PIDGIN_BASE}/ChangeLog" ]; then
 fi
 
 if [ -e "$WIN32DEV_BASE" ] && [ $DEBUG_SKIP_INSTALL == 0 ]; then
-	echo "win32-dev directory exists, please remove it before proceeding"
+	echo "win32-dev directory ($(readlink -f $WIN32DEV_BASE)) exists, please remove it before proceeding"
 	exit 1
 fi
 
@@ -343,7 +346,7 @@ reg_get_install_path "$BONJOUR_GUID_PACKED"
 BONJOUR_SDK_DIR=$reg_ret
 
 if [ "$BONJOUR_SDK_DIR" == "" ]; then
-	echo "Bonjour SDK for Windows v3.0 is not installed, please do it."
+	echo "Bonjour SDK for Windows v3.0/v2.0.4 is not installed, please do it."
 	echo "You can download this SDK from https://developer.apple.com/bonjour/"
 	echo "(Apple ID may be required)."
 	exit 1;
