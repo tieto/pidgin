@@ -25,6 +25,7 @@
 #include "core.h"
 #include "cipher.h"
 #include "debug.h"
+#include "obsolete.h"
 #include "prpl.h"
 #include "util.h"
 #include "xmlnode.h"

@@ -37,6 +37,7 @@
 #include "dnsquery.h"
 #include "notify.h"
 #include "ntlm.h"
+#include "obsolete.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"

@@ -110,37 +110,6 @@ const char *
 purple_url_encode(str)
 	const char *str
 
- # XXX: this made perl assert()...
- #
- #gboolean
- #purple_url_parse(url, OUTLIST gchar_own *ret_host, OUTLIST int ret_port, OUTLIST gchar_own *ret_path, OUTLIST gchar_own *ret_user, OUTLIST gchar_own *ret_passwd)
- #	const char *url
- #	PROTOTYPE: $
-
-void
-purple_url_parse(url)
-	const char *url
-	PREINIT:
-		char *ret_host;
-		int ret_port;
-		char *ret_path;
-		char *ret_user;
-		char *ret_passwd;
-		gboolean ret;
-	PPCODE:
-		ret = purple_url_parse(url, &ret_host, &ret_port, &ret_path, &ret_user, &ret_passwd);
-		XPUSHs(sv_2mortal(newSViv(ret)));
-		XPUSHs(ret_host ? sv_2mortal(newSVpv(ret_host, 0)) : sv_2mortal(newSV(0)));
-		XPUSHs(sv_2mortal(newSViv(ret_port)));
-		XPUSHs(ret_path ? sv_2mortal(newSVpv(ret_path, 0)) : sv_2mortal(newSV(0)));
-		XPUSHs(ret_user ? sv_2mortal(newSVpv(ret_user, 0)) : sv_2mortal(newSV(0)));
-		XPUSHs(ret_passwd ? sv_2mortal(newSVpv(ret_passwd, 0)) : sv_2mortal(newSV(0)));
-		g_free(ret_host);
-		g_free(ret_path);
-		g_free(ret_user);
-		g_free(ret_passwd);
-
-
 const char *
 purple_user_dir()
 

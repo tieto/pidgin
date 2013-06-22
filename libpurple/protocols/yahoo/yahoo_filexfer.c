@@ -28,6 +28,7 @@
 #include "debug.h"
 #include "network.h"
 #include "notify.h"
+#include "obsolete.h"
 #include "proxy.h"
 #include "ft.h"
 #include "libymsg.h"
