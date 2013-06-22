@@ -473,7 +473,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	struct RXMsgData*	mx			= (struct RXMsgData*) user_data;
 	const gchar*		data		= url_text;
 	unsigned int		pos			= 0;
-	char				emo[MXIT_MAX_EMO_ID + 1];
 	int					id;
 	char*				str;
 	int					em_size		= 0;
@@ -482,9 +481,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	int*				intptr		= NULL;
 	int					res;
 
-#ifdef	MXIT_DEBUG_EMO
 	purple_debug_info( MXIT_PLUGIN_ID, "emoticon_returned\n" );
-#endif
 
 	/* remove request from the async outstanding calls list */
 	mx->session->async_calls = g_slist_remove( mx->session->async_calls, url_data );
@@ -499,12 +496,8 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	hex_dump( data, len );
 #endif
 
-	/* parse out the emoticon */
-	pos = 0;
-
-	/* validate the binary data received from the wapsite */
+	/* validate that the returned data starts with the magic constant that indicates it is a custom emoticon */
 	if ( memcmp( MXIT_FRAME_MAGIC, &data[pos], strlen( MXIT_FRAME_MAGIC ) ) != 0 ) {
-		/* bad data, magic constant is wrong */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad magic)\n" );
 		goto done;
 	}
@@ -512,16 +505,14 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 
 	/* validate the image frame desc byte */
 	if ( data[pos] != '\x6F' ) {
-		/* bad frame desc */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad frame desc)\n" );
 		goto done;
 	}
 	pos++;
 
-	/* get the data length */
+	/* get the frame image data length */
 	res = asn_getlength( &data[pos], &em_size );
 	if ( res <= 0 ) {
-		/* bad frame length */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad frame length)\n" );
 		goto done;
 	}
@@ -533,7 +524,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	/* utf-8 (emoticon name) */
 	res = asn_getUtf8( &data[pos], 0x0C, &str );
 	if ( res <= 0 ) {
-		/* bad utf-8 string */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad name string)\n" );
 		goto done;
 	}
@@ -547,7 +537,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	/* utf-8 (emoticon shortcut) */
 	res = asn_getUtf8( &data[pos], 0x81, &str );
 	if ( res <= 0 ) {
-		/* bad utf-8 string */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad shortcut string)\n" );
 		goto done;
 	}
@@ -559,7 +548,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 
 	/* validate the image data type */
 	if ( data[pos] != '\x82' ) {
-		/* bad frame desc */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad data type)\n" );
 		g_free( em_id );
 		goto done;
@@ -579,20 +567,23 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	purple_debug_info( MXIT_PLUGIN_ID, "read the length '%i'\n", em_size );
 #endif
 
+	/* strip the mxit markup tags from the emoticon id (eg, .{XY} -> XY) */
+	if ( ( em_id[0] == '.' ) && ( em_id[1] == '{' ) ) {
+		char	emo[MXIT_MAX_EMO_ID + 1];
+
+		parse_emoticon_str( &em_id[2], emo );
+		strcpy( em_id, emo );
+	}
+
 	if ( g_hash_table_lookup( mx->session->iimages, em_id ) ) {
 		/* emoticon found in the table, so ignore this one */
+		g_free( em_id );
 		goto done;
 	}
 
 	/* make a copy of the data */
 	em_data = g_malloc( em_size );
 	memcpy( em_data, &data[pos], em_size );
-
-	/* strip the mxit markup tags from the emoticon id */
-	if ( ( em_id[0] == '.' ) && ( em_id[1] == '{' ) ) {
-		parse_emoticon_str( &em_id[2], emo );
-		strcpy( em_id, emo );
-	}
 
 	/* we now have the emoticon, store it in the imagestore */
 	id = purple_imgstore_add_with_id( em_data, em_size, NULL );
