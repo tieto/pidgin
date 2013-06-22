@@ -349,7 +349,7 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
 						const char *message, PurpleConversationMessageFlags flags,
 						time_t mtime);*/
 
-/** TODO override
+/** TODO write forward
  * Sends a message to this IM conversation.
  *
  * @param im      The IM.
@@ -514,7 +514,7 @@ int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
 						  const char *message, PurpleConversationMessageFlags flags,
 						  time_t mtime);*/
 
-/** TODO override
+/** TODO write forward
  * Sends a message to this chat conversation.
  *
  * @param chat    The chat.

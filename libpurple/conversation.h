@@ -131,16 +131,17 @@ struct _PurpleConversationClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
-	/** @copydoc purple_conversation_write() TODO */
-	void (*write)(PurpleConversation *conv, const char *who,
+	/** Writes a message to a chat or IM conversation. TODO
+	 *  @see purple_conversation_write_message()
+	 */
+	void (*write_message)(PurpleConversation *conv, const char *who,
 			const char *message, PurpleConversationMessageFlags flags,
 			time_t mtime);
 
-	/** @copydoc purple_conversation_send() TODO */
-	void (*send)(PurpleConversation *conv, const char *message);
-
-	/** @copydoc purple_conversation_send_with_flags() TODO */
-	void (*send_with_flags)(PurpleConversation *conv,
+	/** Sends a message to a chat or IM conversation. TODO
+	 *  @see purple_conversation_send_message()
+	 */
+	void (*send_message)(PurpleConversation *conv,
 			const char *message, PurpleConversationMessageFlags flags);
 
 	void (*_purple_reserved1)(void);
@@ -152,7 +153,7 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
 /**************************************************************************/
-/**
+/** TODO decide if this is to be split up
  * Conversation operations and events.
  *
  * Any UI representing a conversation must assign a filled-out
@@ -428,13 +429,14 @@ void purple_conversation_set_data(PurpleConversation *conv, const char *key,
  */
 gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key);
 
-/** TODO virtual and chainback
+/**
  * Writes to a conversation window.
  *
  * This function should not be used to write IM or chat messages. Use
- * purple_im_conversation_write() and purple_chat_conversation_write() instead. Those functions will
- * most likely call this anyway, but they may do their own formatting,
- * sound playback, etc.
+ * purple_conversation_write_message() instead. This function will
+ * most likely call this anyway, but it may do it's own formatting,
+ * sound playback, etc. depending on whether the conversation is a chat or an
+ * IM.
  *
  * This can be used to write generic messages, such as "so and so closed
  * the conversation window."
@@ -445,20 +447,32 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  *
- * @see purple_im_conversation_write() TODO rectify this
- * @see purple_chat_conversation_write()
+ * @see purple_conversation_write_message()
  */
 void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleConversationMessageFlags flags,
 		time_t mtime);
 
 /** TODO pure virtual
- * Sends a message to this conversation.
+ * Writes to a chat or an IM.
+ *
+ * @param conv    The conversation.
+ * @param who     The user who sent the message.
+ * @param message The message to write.
+ * @param flags   The message flags.
+ * @param mtime   The time the message was sent.
+ */
+void purple_conversation_write_message(PurpleConversation *conv,
+		const char *who, const char *message,
+		PurpleConversationMessageFlags flags, time_t mtime);
+
+/** TODO forward to send_message
+ * Sends a message to this conversation. This function calls
+ * purple_conversation_send_message() with no additional flags.
  *
  * @param conv    The conversation.
  * @param message The message to send.
  */
-/** @copydoc purple_conversation_send() TODO */
 void purple_conversation_send(PurpleConversation *conv, const char *message);
 
 /** TODO pure virtual
@@ -469,9 +483,8 @@ void purple_conversation_send(PurpleConversation *conv, const char *message);
  * @param flags   The PurpleConversationMessageFlags flags to use in addition to
  *                PURPLE_CONVERSATION_MESSAGE_SEND.
  */
-/** @copydoc purple_conversation_send_with_flags() TODO */
-void purple_conversation_send_with_flags(PurpleConversation *conv,
-		const char *message, PurpleConversationMessageFlags flags);
+void purple_conversation_send_message(PurpleConversation *conv, const char *message,
+		PurpleConversationMessageFlags flags);
 
 /**
 	Set the features as supported for the given conversation.
