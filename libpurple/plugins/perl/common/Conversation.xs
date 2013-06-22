@@ -183,14 +183,6 @@ purple_conversation_update(conv, type)
 	Purple::Conversation conv
 	Purple::Conversation::UpdateType type
 
-Purple::Conversation
-purple_conversation_new(class, type, account, name)
-	GType type
-	Purple::Account account
-	const char *name
-    C_ARGS:
-	type, account, name
-
 void
 purple_conversation_set_account(conv, account);
 	Purple::Conversation conv
@@ -213,6 +205,13 @@ purple_conversation_do_command(conv, cmdline, markup, error)
 
 MODULE = Purple::Conversation  PACKAGE = Purple::IMConversation  PREFIX = purple_im_conversation_
 PROTOTYPES: ENABLE
+
+Purple::IMConversation
+purple_im_conversation_new(class, account, name)
+	Purple::Account account
+	const char *name
+    C_ARGS:
+	account, name
 
 void
 purple_im_conversation_set_icon(im, icon)
@@ -308,6 +307,13 @@ purple_conversation_custom_smiley_close(conv, smile)
 
 MODULE = Purple::Conversation  PACKAGE = Purple::ChatConversation  PREFIX = purple_chat_conversation_
 PROTOTYPES: ENABLE
+
+Purple::ChatConversation
+purple_chat_conversation_new(class, account, name)
+	Purple::Account account
+	const char *name
+    C_ARGS:
+	account, name
 
 void
 purple_chat_conversation_get_users(chat)

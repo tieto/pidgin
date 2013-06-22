@@ -26,6 +26,13 @@
 #ifndef _PURPLE_CONVERSATION_H_
 #define _PURPLE_CONVERSATION_H_
 
+#define PURPLE_TYPE_CONVERSATION             (purple_conversation_get_type())
+#define PURPLE_CONVERSATION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONVERSATION, PurpleConversation))
+#define PURPLE_CONVERSATION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CONVERSATION, PurpleConversationClass))
+#define PURPLE_IS_CONVERSATION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CONVERSATION))
+#define PURPLE_IS_CONVERSATION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CONVERSATION))
+#define PURPLE_CONVERSATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CONVERSATION, PurpleConversationClass))
+
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -242,19 +249,10 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-/** TODO GObjectify
- * Creates a new conversation of the specified type.
- *
- * @param type    The type of conversation.
- * @param account The account opening the conversation window on the purple
- *                user's end.
- * @param name    The name of the conversation. For PURPLE_CONVERSATION_TYPE_IM,
- *                this is the name of the buddy.
- *
- * @return The new conversation.
+/** TODO
+ * Returns the GType for the Conversation object.
  */
-PurpleConversation *purple_conversation_new(GType type, PurpleAccount *account,
-		const char *name);
+GType purple_conversation_get_type(void);
 
 /** TODO dispose/fnalize
  * Destroys the specified conversation and removes it from the parent
@@ -267,23 +265,12 @@ PurpleConversation *purple_conversation_new(GType type, PurpleAccount *account,
  */
 void purple_conversation_destroy(PurpleConversation *conv);
 
-
 /**
  * Present a conversation to the user. This allows core code to initiate a
  * conversation by displaying the IM dialog.
  * @param conv The conversation to present
  */
 void purple_conversation_present(PurpleConversation *conv);
-
-
-/** TODO REMOVE, return the GObject GType
- * Returns the specified conversation's type.
- *
- * @param conv The conversation.
- *
- * @return The conversation's type.
- */
-/*PurpleConversationType purple_conversation_get_type(const PurpleConversation *conv);*/
 
 /**
  * Sets the specified conversation's UI operations structure.
