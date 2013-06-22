@@ -131,6 +131,30 @@ struct _PurpleConversationClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
+	/** @copydoc purple_conversation_write() TODO */
+	void (*write)(PurpleConversation *conv, const char *who,
+			const char *message, PurpleConversationMessageFlags flags,
+			time_t mtime);
+
+	/** TODO pure virtual
+	 * Sends a message to this conversation.
+	 *
+	 * @param conv    The conversation.
+	 * @param message The message to send.
+	 */
+	void (*send)(PurpleConversation *conv, const char *message);
+
+	/** TODO pure virtual
+	 * Sends a message to this conversation with specified flags.
+	 *
+	 * @param conv    The conversation.
+	 * @param message The message to send.
+	 * @param flags   The PurpleConversationMessageFlags flags to use in addition to
+	 *                PURPLE_CONVERSATION_MESSAGE_SEND.
+	 */
+	void (*send_with_flags)(PurpleConversation *conv,
+			const char *message, PurpleConversationMessageFlags flags);
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -416,7 +440,7 @@ void purple_conversation_set_data(PurpleConversation *conv, const char *key,
  */
 gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key);
 
-/**
+/** TODO virtual and chainback
  * Writes to a conversation window.
  *
  * This function should not be used to write IM or chat messages. Use
@@ -433,7 +457,7 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  *
- * @see purple_im_conversation_write()
+ * @see purple_im_conversation_write() TODO rectify this
  * @see purple_chat_conversation_write()
  */
 void purple_conversation_write(PurpleConversation *conv, const char *who,

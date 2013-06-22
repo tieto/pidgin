@@ -336,7 +336,7 @@ guint purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *
  */
 void purple_im_conversation_update_typing(PurpleIMConversation *im);
 
-/**
+/** TODO override
  * Writes to an IM.
  *
  * @param im      The IM.
@@ -345,19 +345,19 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  */
-void purple_im_conversation_write(PurpleIMConversation *im, const char *who,
+/*void purple_im_conversation_write(PurpleIMConversation *im, const char *who,
 						const char *message, PurpleConversationMessageFlags flags,
-						time_t mtime);
+						time_t mtime);*/
 
-/**
+/** TODO override
  * Sends a message to this IM conversation.
  *
  * @param im      The IM.
  * @param message The message to send.
  */
-void purple_im_conversation_send(PurpleIMConversation *im, const char *message);
+/*void purple_im_conversation_send(PurpleIMConversation *im, const char *message);*/
 
-/**
+/** TODO override
  * Sends a message to this IM conversation with specified flags.
  *
  * @param im      The IM.
@@ -365,8 +365,8 @@ void purple_im_conversation_send(PurpleIMConversation *im, const char *message);
  * @param flags   The PurpleConversationMessageFlags flags to use in addition to
  *                PURPLE_CONVERSATION_MESSAGE_SEND.
  */
-void purple_im_conversation_send_with_flags(PurpleIMConversation *im,
-		const char *message, PurpleConversationMessageFlags flags);
+/*void purple_im_conversation_send_with_flags(PurpleIMConversation *im,
+		const char *message, PurpleConversationMessageFlags flags);*/
 
 /*@}*/
 
@@ -501,7 +501,7 @@ void purple_chat_conversation_set_id(PurpleChatConversation *chat, int id);
  */
 int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
 
-/**
+/** TODO override
  * Writes to a chat.
  *
  * @param chat    The chat.
@@ -510,27 +510,27 @@ int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
  * @param flags   The flags.
  * @param mtime   The time the message was sent.
  */
-void purple_chat_conversation_write(PurpleChatConversation *chat, const char *who,
+/*void purple_chat_conversation_write(PurpleChatConversation *chat, const char *who,
 						  const char *message, PurpleConversationMessageFlags flags,
-						  time_t mtime);
+						  time_t mtime);*/
 
-/**
+/** TODO override
  * Sends a message to this chat conversation.
  *
  * @param chat    The chat.
  * @param message The message to send.
  */
-void purple_chat_conversation_send(PurpleChatConversation *chat, const char *message);
+/*void purple_chat_conversation_send(PurpleChatConversation *chat, const char *message);*/
 
-/**
+/** TODO override
  * Sends a message to this chat conversation with specified flags.
  *
  * @param chat    The chat.
  * @param message The message to send.
  * @param flags   The PurpleConversationMessageFlags flags to use.
  */
-void purple_chat_conversation_send_with_flags(PurpleChatConversation *chat,
-		const char *message, PurpleConversationMessageFlags flags);
+/*void purple_chat_conversation_send_with_flags(PurpleChatConversation *chat,
+		const char *message, PurpleConversationMessageFlags flags);*/
 
 /**
  * Adds a user to a chat.
