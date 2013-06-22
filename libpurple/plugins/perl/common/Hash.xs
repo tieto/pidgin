@@ -84,3 +84,27 @@ purple_hash_digest_to_str(hash, digest_s)
 size_t
 purple_hash_get_block_size(hash)
 	Purple::Hash hash
+
+MODULE = Purple::Hash  PACKAGE = Purple::MD4Hash  PREFIX = purple_md4_hash_
+PROTOTYPES: ENABLE
+
+Purple::Hash
+purple_md4_hash_new()
+
+MODULE = Purple::Hash  PACKAGE = Purple::MD5Hash  PREFIX = purple_md5_hash_
+PROTOTYPES: ENABLE
+
+Purple::Hash
+purple_md5_hash_new()
+
+MODULE = Purple::Hash  PACKAGE = Purple::SHA1Hash  PREFIX = purple_sha1_hash_
+PROTOTYPES: ENABLE
+
+Purple::Hash
+purple_sha1_hash_new()
+
+MODULE = Purple::Hash  PACKAGE = Purple::SHA256Hash  PREFIX = purple_sha256_hash_
+PROTOTYPES: ENABLE
+
+Purple::Hash
+purple_sha256_hash_new()

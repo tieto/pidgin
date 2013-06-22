@@ -183,3 +183,38 @@ purple_cipher_set_batch_mode(cipher, mode)
 	Purple::Cipher cipher
 	Purple::Cipher::BatchMode mode
 
+MODULE = Purple::Cipher  PACKAGE = Purple::AESCipher  PREFIX = purple_aes_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_aes_cipher_new()
+
+MODULE = Purple::Cipher  PACKAGE = Purple::DES3Cipher  PREFIX = purple_des3_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_des3_cipher_new()
+
+MODULE = Purple::Cipher  PACKAGE = Purple::DESCipher  PREFIX = purple_des_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_des_cipher_new()
+
+MODULE = Purple::Cipher  PACKAGE = Purple::HMACCipher  PREFIX = purple_hmac_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_hmac_cipher_new()
+
+MODULE = Purple::Cipher  PACKAGE = Purple::PBKDF2Cipher  PREFIX = purple_pbkdf2_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_pbkdf2_cipher_new()
+
+MODULE = Purple::Cipher  PACKAGE = Purple::RC4Cipher  PREFIX = purple_rc4_cipher_
+PROTOTYPES: ENABLE
+
+Purple::Cipher
+purple_rc4_cipher_new()
