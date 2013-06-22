@@ -19,7 +19,6 @@ typedef struct group *Purple__Group;
 
 #include "../perl-common.h"
 
-#include "account.h"
 #include "accounts.h"
 #include "accountopt.h"
 #include "blist.h"
@@ -29,7 +28,7 @@ typedef struct group *Purple__Group;
 #include "hash.h"
 #include "cmds.h"
 #include "connection.h"
-#include "conversation.h"
+#include "conversations.h"
 #include "core.h"
 #include "debug.h"
 #include "desktopitem.h"
@@ -110,16 +109,15 @@ typedef PurpleConnection *		Purple__Connection;
 typedef PurpleConnectionFlags		Purple__ConnectionFlags;
 typedef PurpleConnectionState		Purple__ConnectionState;
 
-/* conversation.h */
-typedef PurpleConversationType		Purple__ConversationType;
-typedef PurpleConvUpdateType		Purple__ConvUpdateType;
-typedef PurpleTypingState			Purple__TypingState;
-typedef PurpleMessageFlags		Purple__MessageFlags;
-typedef PurpleConvChatBuddyFlags		Purple__ConvChatBuddyFlags;
+/* conversations.h */
+typedef PurpleConversationUpdateType		Purple__Conversation__UpdateType;
+typedef PurpleIMConversationTypingState		Purple__IMConversation__TypingState;
+typedef PurpleConversationMessageFlags		Purple__Conversation__MessageFlags;
+typedef PurpleChatConversationBuddyFlags	Purple__ChatConversation__Buddy__Flags;
 typedef PurpleConversation *		Purple__Conversation;
-typedef PurpleConvIm *			Purple__Conversation__IM;
-typedef PurpleConvChat *			Purple__Conversation__Chat;
-typedef PurpleConvChatBuddy *		Purple__Conversation__ChatBuddy;
+typedef PurpleIMConversation *			Purple__IMConversation;
+typedef PurpleChatConversation *		Purple__ChatConversation;
+typedef PurpleChatConversationBuddy *	Purple__ChatConversation__Buddy;
 
 /* core.h */
 

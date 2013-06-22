@@ -72,7 +72,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #endif
 
 #include "blist.h"
-#include "conversation.h"
+#include "conversations.h"
 #include "ft.h"
 #include "imgstore.h"
 #include "media.h"
@@ -327,7 +327,7 @@ struct _PurplePluginProtocolInfo
 	 */
 	int  (*send_im)(PurpleConnection *, const char *who,
 					const char *message,
-					PurpleMessageFlags flags);
+					PurpleConversationMessageFlags flags);
 
 	void (*set_info)(PurpleConnection *, const char *info);
 
@@ -338,7 +338,7 @@ struct _PurplePluginProtocolInfo
 	 *         seconds to wait before sending a subsequent notification.
 	 *         Otherwise the PRPL should return 0.
 	 */
-	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleTypingState state);
+	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleIMConversationTypingState state);
 
 	/**
 	 * Should arrange for purple_notify_userinfo() to be called with
@@ -438,12 +438,12 @@ struct _PurplePluginProtocolInfo
 	 *
 	 * @param id      The id of the chat to send the message to.
 	 * @param message The message to send to the chat.
-	 * @param flags   A bitwise OR of #PurpleMessageFlags representing
+	 * @param flags   A bitwise OR of #PurpleConversationMessageFlags representing
 	 *                message flags.
 	 * @return 	  A positive number or 0 in case of success,
 	 *                a negative error number in case of failure.
 	 */
-	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
+	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleConversationMessageFlags flags);
 
 	/** If implemented, this will be called regularly for this prpl's
 	 *  active connections.  You'd want to do this if you need to repeatedly

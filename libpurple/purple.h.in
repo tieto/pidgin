@@ -44,7 +44,7 @@
 
 @PLUGINS_DEFINE@
 
-#include <account.h>
+#include <accounts.h>
 #include <accountopt.h>
 #include <blist.h>
 #include <buddyicon.h>
@@ -53,7 +53,7 @@
 #include <circularbuffer.h>
 #include <cmds.h>
 #include <connection.h>
-#include <conversation.h>
+#include <conversations.h>
 #include <core.h>
 #include <debug.h>
 #include <desktopitem.h>

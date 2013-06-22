@@ -118,7 +118,6 @@ typedef enum /*< flags >*/
 #include "account.h"
 #include "buddyicon.h"
 #include "log.h"
-#include "server.h"
 
 /**************************************************************************/
 /** PurpleConversation                                                    */
@@ -233,7 +232,7 @@ struct _PurpleConversationUiOps
 
 	/* Custom Smileys */
 	gboolean (*custom_smiley_add)(PurpleConversation *conv, const char *smile,
-	                            boolean remote);
+	                            gboolean remote);
 	void (*custom_smiley_write)(PurpleConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
@@ -269,8 +268,7 @@ G_BEGIN_DECLS
  *
  * @return The new conversation.
  */
-PurpleConversation *purple_conversation_new(PurpleConversationType type,
-										PurpleAccount *account,
+PurpleConversation *purple_conversation_new(PurpleAccount *account,
 										const char *name);
 
 /** TODO dispose/fnalize
@@ -300,7 +298,7 @@ void purple_conversation_present(PurpleConversation *conv);
  *
  * @return The conversation's type.
  */
-PurpleConversationType purple_conversation_get_type(const PurpleConversation *conv);
+/*PurpleConversationType purple_conversation_get_type(const PurpleConversation *conv);*/
 
 /**
  * Sets the specified conversation's UI operations structure.

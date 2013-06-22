@@ -70,7 +70,7 @@ struct _PurpleLogLogger {
 
 	/** This is used to write to the log file */
 	gsize (*write)(PurpleLog *log,
-		     PurpleMessageFlags type,
+		     PurpleConversationMessageFlags type,
 		     const char *from,
 		     time_t time,
 		     const char *message);
@@ -222,7 +222,7 @@ void purple_log_free(PurpleLog *log);
  * @param message      The message to log
  */
 void purple_log_write(PurpleLog *log,
-		    PurpleMessageFlags type,
+		    PurpleConversationMessageFlags type,
 		    const char *from,
 		    time_t time,
 		    const char *message);

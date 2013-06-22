@@ -61,10 +61,6 @@ Purple::Cmd::Id				T_IV
 Purple::Cmd::Priority			T_IV
 Purple::Cmd::Ret				T_IV
 Purple::Connection			T_PurpleObj
-Purple::Conversation			T_PurpleObj
-Purple::Conversation::Chat		T_PurpleObj
-Purple::Conversation::ChatBuddy		T_PurpleObj
-Purple::Conversation::IM			T_PurpleObj
 Purple::Core				T_PurpleObj
 
 Purple::Desktop::Item			T_PurpleObj
@@ -178,12 +174,15 @@ Purple::Cipher::BatchMode	T_IV
 /* debug.h */
 Purple::DebugLevel			T_IV
 
-/* conversation.h */
-Purple::ConvChatBuddyFlags		T_IV
-Purple::ConvUpdateType			T_IV
-Purple::ConversationType		T_IV
-Purple::MessageFlags			T_IV
-Purple::TypingState			T_IV
+/* conversations.h */
+Purple::Conversation			T_PurpleObj
+Purple::ChatConversation		T_PurpleObj
+Purple::ChatConversation::Buddy		T_PurpleObj
+Purple::IMConversation			T_PurpleObj
+Purple::ChatConversation::Buddy::Flags	T_IV
+Purple::Conversation::UpdateType	T_IV
+Purple::Conversation::MessageFlags	T_IV
+Purple::IMConversation::TypingState	T_IV
 Purple::UnseenState			T_IV
 
 /* connection.h */

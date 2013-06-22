@@ -28,6 +28,8 @@
 #define _PURPLE_CONVERSATIONS_H_
 
 #include "conversation.h"
+#include "conversationtypes.h"
+#include "server.h"
 
 G_BEGIN_DECLS
 
@@ -59,7 +61,7 @@ GList *purple_conversations_get_ims(void);
  */
 GList *purple_conversations_get_chats(void);
 
-/**
+/** TODO type
  * Finds a conversation with the specified type, name, and Purple account.
  *
  * @param type The type of the conversation.
@@ -69,7 +71,7 @@ GList *purple_conversations_get_chats(void);
  * @return The conversation if found, or @c NULL otherwise.
  */
 PurpleConversation *purple_conversations_find_with_account(
-		PurpleConversationType type, const char *name,
+		GType type, const char *name,
 		const PurpleAccount *account);
 
 /**
