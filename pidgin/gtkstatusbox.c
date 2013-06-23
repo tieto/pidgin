@@ -43,7 +43,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "internal.h"
-#include "obsolete.h"
 
 #include "account.h"
 #include "buddyicon.h"
@@ -370,54 +369,6 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
 	gtk_drag_finish(dc, FALSE, FALSE, t);
-}
-
-static void
-statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-                  const gchar *themedata, size_t len, const gchar *error_message)
-{
-	FILE *f;
-	gchar *path;
-	size_t wc;
-
-	if ((error_message != NULL) || (len == 0))
-		return;
-
-	f = purple_mkstemp(&path, TRUE);
-	wc = fwrite(themedata, len, 1, f);
-	if (wc != 1) {
-		purple_debug_warning("theme_got_url", "Unable to write theme data.\n");
-		fclose(f);
-		g_unlink(path);
-		g_free(path);
-		return;
-	}
-	fclose(f);
-
-	icon_choose_cb(path, user_data);
-
-	g_unlink(path);
-	g_free(path);
-}
-
-
-static gboolean
-statusbox_uri_handler(const char *proto, const char *cmd, GHashTable *params, void *data)
-{
-	const char *src;
-
-	if (g_ascii_strcasecmp(proto, "aim"))
-		return FALSE;
-
-	if (g_ascii_strcasecmp(cmd, "buddyicon"))
-		return FALSE;
-
-	src = g_hash_table_lookup(params, "account");
-	if (src == NULL)
-		return FALSE;
-
-	purple_util_fetch_url(src, TRUE, NULL, FALSE, -1, statusbox_got_url, data);
-	return TRUE;
 }
 
 static gboolean
@@ -1958,8 +1909,6 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 								spellcheck_prefs_cb, status_box);
 	purple_prefs_connect_callback(status_box, PIDGIN_PREFS_ROOT "/accounts/buddyicon",
 	                            update_buddyicon_cb, status_box);
-	purple_signal_connect(purple_get_core(), "uri-handler", status_box,
-					PURPLE_CALLBACK(statusbox_uri_handler), status_box);
 
 }
 

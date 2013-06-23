@@ -27,9 +27,9 @@
 
 #include "internal.h"
 #include "pidgin.h"
-#include "obsolete.h"
 
 #include "debug.h"
+#include "http.h"
 #include "notify.h"
 #include "smiley.h"
 
@@ -61,6 +61,7 @@ typedef struct
 
 	GtkWidget *treeview;
 	GtkListStore *model;
+	PurpleHttpConnection *running_request;
 } SmileyManager;
 
 enum
@@ -723,34 +724,23 @@ edit_selected_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
 }
 
 static void
-smiley_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *smileydata, size_t len, const gchar *error_message)
+smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _dialog)
 {
-	SmileyManager *dialog = user_data;
-	FILE *f;
-	gchar *path;
-	size_t wc;
+	SmileyManager *dialog = _dialog;
 	PidginSmiley *ps;
 	GdkPixbuf *image;
+	const gchar *smileydata;
+	size_t len;
 
-	if ((error_message != NULL) || (len == 0)) {
+	g_assert(http_conn == smiley_manager->running_request);
+	smiley_manager->running_request = NULL;
+
+	if (!purple_http_response_is_successfull(response))
 		return;
-	}
 
-	f = purple_mkstemp(&path, TRUE);
-	wc = fwrite(smileydata, len, 1, f);
-	if (wc != 1) {
-		purple_debug_warning("smiley_got_url", "Unable to write smiley data.\n");
-		fclose(f);
-		g_unlink(path);
-		g_free(path);
-		return;
-	}
-	fclose(f);
-
-	image = pidgin_pixbuf_new_from_file(path);
-	g_unlink(path);
-	g_free(path);
+	smileydata = purple_http_response_get_data(response, &len);
+	image = pidgin_pixbuf_from_data((const guchar *)smileydata, len);
 	if (!image)
 		return;
 
@@ -788,20 +778,15 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			if (gtk_image_get_pixbuf(GTK_IMAGE(ps->smiley_image)) == NULL)
 				gtk_dialog_response(GTK_DIALOG(ps->parent), GTK_RESPONSE_CANCEL);
 			g_free(tmp);
-		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
+		} else if (!g_ascii_strncasecmp(name, "http://", 7) ||
+			!g_ascii_strncasecmp(name, "https://", 8))
+		{
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			purple_util_fetch_url(name, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
-		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
-			/* purple_util_fetch_url() doesn't support HTTPS */
-			char *tmp = g_strdup(name + 1);
-			tmp[0] = 'h';
-			tmp[1] = 't';
-			tmp[2] = 't';
-			tmp[3] = 'p';
-
-			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, -1, smiley_got_url, dialog);
-			g_free(tmp);
+			purple_http_conn_cancel(smiley_manager->
+				running_request);
+			smiley_manager->running_request = purple_http_get(NULL,
+				name, smiley_got_url, dialog);
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
@@ -872,6 +857,7 @@ static void smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:
 			gtk_widget_destroy(dialog->window);
+			purple_http_conn_cancel(smiley_manager->running_request);
 			g_free(smiley_manager);
 			smiley_manager = NULL;
 			break;

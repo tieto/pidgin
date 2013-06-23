@@ -26,9 +26,9 @@
  */
 #include "internal.h"
 #include "pidgin.h"
-#include "obsolete.h"
 
 #include "debug.h"
+#include "http.h"
 #include "nat-pmp.h"
 #include "notify.h"
 #include "prefs.h"
@@ -87,6 +87,9 @@
 
 #define PREFS_OPTIMAL_ICON_SIZE 32
 
+/* 25MB */
+#define PREFS_MAX_DOWNLOADED_THEME_SIZE 26214400
+
 struct theme_info {
 	gchar *type;
 	gchar *extension;
@@ -110,6 +113,7 @@ static GtkWidget *prefs_conv_themes_combo_box;
 static GtkWidget *prefs_conv_variants_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
+static PurpleHttpConnection *prefs_conv_themes_running_request = NULL;
 
 /* Keyrings page */
 static GtkWidget *keyring_page_instance = NULL;
@@ -535,6 +539,10 @@ static void keyring_page_cleanup(void);
 static void
 delete_prefs(GtkWidget *asdf, void *gdsa)
 {
+	/* Cancel HTTP requests */
+	purple_http_conn_cancel(prefs_conv_themes_running_request);
+	prefs_conv_themes_running_request = NULL;
+
 	/* Close any "select sound" request dialogs */
 	purple_request_close_with_handle(prefs);
 
@@ -1060,17 +1068,25 @@ theme_install_theme(char *path, struct theme_info *info)
 }
 
 static void
-theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *themedata, size_t len, const gchar *error_message)
+theme_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info)
 {
+	struct theme_info *info = _info;
+	const gchar *themedata;
+	size_t len;
 	FILE *f;
 	gchar *path;
 	size_t wc;
 
-	if ((error_message != NULL) || (len == 0)) {
-		free_theme_info(user_data);
+	g_assert(http_conn == prefs_conv_themes_running_request);
+	prefs_conv_themes_running_request = NULL;
+
+	if (!purple_http_response_is_successfull(response)) {
+		free_theme_info(info);
 		return;
 	}
+
+	themedata = purple_http_response_get_data(response, &len);
 
 	f = purple_mkstemp(&path, TRUE);
 	wc = fwrite(themedata, len, 1, f);
@@ -1079,12 +1095,12 @@ theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		fclose(f);
 		g_unlink(path);
 		g_free(path);
-		free_theme_info(user_data);
+		free_theme_info(info);
 		return;
 	}
 	fclose(f);
 
-	theme_install_theme(path, user_data);
+	theme_install_theme(path, info);
 
 	g_unlink(path);
 	g_free(path);
@@ -1121,22 +1137,19 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			}
 			theme_install_theme(tmp, info);
 			g_free(tmp);
-		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
+		} else if (!g_ascii_strncasecmp(name, "http://", 7) ||
+			!g_ascii_strncasecmp(name, "https://", 8)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			purple_util_fetch_url(name, TRUE, NULL, FALSE, -1, theme_got_url, info);
-		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
-			/* purple_util_fetch_url() doesn't support HTTPS, but we want users
-			 * to be able to drag and drop links from the SF trackers, so
-			 * we'll try it as an HTTP URL. */
-			char *tmp = g_strdup(name + 1);
-			tmp[0] = 'h';
-			tmp[1] = 't';
-			tmp[2] = 't';
-			tmp[3] = 'p';
+			PurpleHttpRequest *hr;
+			purple_http_conn_cancel(prefs_conv_themes_running_request);
 
-			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, -1, theme_got_url, info);
-			g_free(tmp);
+			hr = purple_http_request_new(name);
+			purple_http_request_set_max_len(hr,
+				PREFS_MAX_DOWNLOADED_THEME_SIZE);
+			prefs_conv_themes_running_request = purple_http_request(
+				NULL, hr, theme_got_url, info);
+			purple_http_request_unref(hr);
 		} else
 			free_theme_info(info);
 
