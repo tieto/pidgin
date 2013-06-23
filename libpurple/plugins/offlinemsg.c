@@ -105,7 +105,7 @@ record_pounce(OfflineMsg *offline)
 	purple_conversation_set_data(conv, "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_YES));
 
-	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), offline->who, offline->message,
+	purple_conversation_write_message(conv, offline->who, offline->message,
 				PURPLE_MESSAGE_SEND, time(NULL));
 
 	discard_data(offline);
