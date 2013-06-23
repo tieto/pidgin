@@ -857,8 +857,8 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 		if ((alias = purple_connection_get_display_name(gc)) == NULL)
 			alias = purple_account_get_username(account);
 
-	purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
-	                          alias, NULL, PURPLE_CBFLAGS_NONE, TRUE);
+	purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
+	                          alias, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 static void
@@ -1639,7 +1639,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 }
 
 static unsigned int
-msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
+msn_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -1650,17 +1650,17 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 	session = purple_connection_get_protocol_data(gc);
 
 	/*
-	 * TODO: I feel like this should be "if (state != PURPLE_TYPING)"
+	 * TODO: I feel like this should be "if (state != PURPLE_IM_CONVERSATION_TYPING)"
 	 *       but this is how it was before, and I don't want to break
 	 *       anything. --KingAnt
 	 */
-	if (state == PURPLE_NOT_TYPING)
+	if (state == PURPLE_IM_CONVERSATION_NOT_TYPING)
 		return 0;
 
 	if (!g_ascii_strcasecmp(who, purple_account_get_username(account)))
 	{
 		/* We'll just fake it, since we're sending to ourself. */
-		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_TYPING);
+		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_IM_CONVERSATION_TYPING);
 
 		return MSN_TYPING_SEND_TIMEOUT;
 	}
@@ -1970,7 +1970,7 @@ msn_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		swboard = msn_switchboard_new(session);
 		msn_switchboard_request(swboard);
 		swboard->chat_id = id;
-		swboard->conv = purple_find_chat(gc, id);
+		swboard->conv = purple_conversations_find_chat(gc, id);
 	}
 
 	swboard->flag |= MSN_SB_FLAG_IM;
@@ -2885,7 +2885,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	if (!g_ascii_strcasecmp(cmd, "Chat")) {
 		char *sname = g_hash_table_lookup(params, "contact");
 		if (sname) {
-			PurpleConversation *conv = purple_find_conversation_with_account(
+			PurpleConversation *conv = purple_conversations_find_with_account(
 				PURPLE_CONV_TYPE_IM, sname, acct);
 			if (conv == NULL)
 				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);

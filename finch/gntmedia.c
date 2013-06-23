@@ -379,7 +379,7 @@ static void
 gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *conv)
 {
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_im_conversation_write_message(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 

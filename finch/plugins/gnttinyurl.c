@@ -208,7 +208,7 @@ static void url_fetched(PurpleUtilFetchUrlData *url_data, gpointer cb_data,
 {
 	CbInfo *data = (CbInfo *)cb_data;
 	PurpleConversation *conv = data->conv;
-	GList *convs = purple_get_conversations();
+	GList *convs = purple_conversations_get();
 	/* ensure the conversation still exists */
 	for (; convs; convs = convs->next) {
 		if ((PurpleConversation *)(convs->data) == conv) {

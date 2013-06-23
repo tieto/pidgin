@@ -716,11 +716,11 @@ join_chat(PurpleChat *chat)
 	alias = chat->alias;
 	chat->alias = NULL;
 	name = purple_chat_get_name(chat);
-	conv = purple_find_conversation_with_account(
+	conv = purple_conversations_find_with_account(
 			PURPLE_CONV_TYPE_CHAT, name, account);
 	chat->alias = (char *)alias;
 
-	if (!conv || purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+	if (!conv || purple_chat_conversation_has_left(PURPLE_CONV_CHAT(conv))) {
 		serv_join_chat(purple_account_get_connection(account),
 				purple_chat_get_components(chat));
 	} else if (conv) {
@@ -1052,7 +1052,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
 		PurpleConversation *conv;
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 					purple_buddy_get_name(buddy),
 					purple_buddy_get_account(buddy));
 		if (!conv) {
@@ -2791,9 +2791,9 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	/* Create a new conversation now. This will give focus to the new window.
 	 * But it's necessary to pretend that we left the chat, because otherwise
 	 * a new conversation window will pop up when we finally join the chat. */
-	if (!(conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
+	if (!(conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
-		purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
+		purple_chat_conversation_left(PURPLE_CONV_CHAT(conv));
 	} else {
 		purple_conversation_present(conv);
 	}

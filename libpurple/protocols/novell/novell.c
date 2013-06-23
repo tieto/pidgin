@@ -217,7 +217,7 @@ _get_details_resp_send_msg(NMUser * user, NMERR_T ret_code,
 
 			/* Set the title for the conversation */
 			/* XXX - Should this be PURPLE_CONV_TYPE_IM? */
-			gconv =	purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+			gconv =	purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY,
 														nm_user_record_get_display_id(user_record),
 														(PurpleAccount *) user->client_data);
 			if (gconv) {
@@ -677,8 +677,8 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 				ur = nm_conference_get_participant(conference, i);
 				if (ur) {
 					name = nm_user_record_get_display_id(ur);
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
-											PURPLE_CBFLAGS_NONE, TRUE);
+					purple_chat_conversation_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
+											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 				}
 			}
 		}
@@ -984,7 +984,7 @@ _get_details_resp_send_invite(NMUser *user, NMERR_T ret_code,
 		for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 			conference = cnode->data;
 			if (conference && (chat = nm_conference_get_data(conference))) {
-				if (purple_conv_chat_get_id(PURPLE_CONV_CHAT(chat)) == id) {
+				if (purple_chat_conversation_get_id(PURPLE_CONV_CHAT(chat)) == id) {
 					rc = nm_send_conference_invite(user, conference, user_record,
 												   NULL, _sendinvite_resp_cb, NULL);
 					_check_for_disconnect(user, rc);
@@ -1802,7 +1802,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 							text, flags,
 							nm_event_get_gmt(event));
 
-				gconv =	purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+				gconv =	purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 					nm_user_record_get_display_id(user_record),
 					(PurpleAccount *) user->client_data);
 				if (gconv) {
@@ -1853,7 +1853,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 				}
 
 				serv_got_chat_in(purple_account_get_connection(user->client_data),
-								 purple_conv_chat_get_id(PURPLE_CONV_CHAT(chat)),
+								 purple_chat_conversation_get_id(PURPLE_CONV_CHAT(chat)),
 								 name, 0, text, nm_event_get_gmt(event));
 			}
 		}
@@ -1876,7 +1876,7 @@ _evt_conference_left(NMUser * user, NMEvent * event)
 												   nm_event_get_source(event));
 
 			if (ur)
-				purple_conv_chat_remove_user(PURPLE_CONV_CHAT(chat),
+				purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(chat),
 										   nm_user_record_get_display_id(ur),
 										   NULL);
 		}
@@ -1978,8 +1978,8 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 					nm_conference_set_data(conference, (gpointer) chat);
 
 					name = nm_user_record_get_display_id(ur);
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
-											PURPLE_CBFLAGS_NONE, TRUE);
+					purple_chat_conversation_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
+											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 
 				}
 			}
@@ -1989,9 +1989,9 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			ur = nm_find_user_record(user, nm_event_get_source(event));
 			if (ur) {
 				name = nm_user_record_get_display_id(ur);
-				if (!purple_conv_chat_find_user(PURPLE_CONV_CHAT(chat), name)) {
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
-											PURPLE_CBFLAGS_NONE, TRUE);
+				if (!purple_chat_conversation_find_user(PURPLE_CONV_CHAT(chat), name)) {
+					purple_chat_conversation_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
+											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 				}
 			}
 		}
@@ -2057,7 +2057,7 @@ _evt_user_typing(NMUser * user, NMEvent * event)
 		user_record = nm_find_user_record(user, nm_event_get_source(event));
 		if (user_record) {
 			serv_got_typing(gc, nm_user_record_get_display_id(user_record),
-							30, PURPLE_TYPING);
+							30, PURPLE_IM_CONVERSATION_TYPING);
 		}
 	}
 }
@@ -2089,7 +2089,7 @@ _evt_undeliverable_status(NMUser * user, NMEvent * event)
 	if (ur) {
 		/* XXX - Should this be PURPLE_CONV_TYPE_IM? */
 		gconv =
-			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+			purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY,
 												nm_user_record_get_display_id(ur),
 												user->client_data);
 		if (gconv) {
@@ -2345,7 +2345,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 }
 
 static unsigned int
-novell_send_typing(PurpleConnection * gc, const char *name, PurpleTypingState state)
+novell_send_typing(PurpleConnection * gc, const char *name, PurpleIMConversationTypingState state)
 {
 	NMConference *conf = NULL;
 	NMUser *user;
@@ -2368,7 +2368,7 @@ novell_send_typing(PurpleConnection * gc, const char *name, PurpleTypingState st
 		if (conf) {
 
 			rc = nm_send_typing(user, conf,
-								((state == PURPLE_TYPING) ? TRUE : FALSE), NULL);
+								((state == PURPLE_IM_CONVERSATION_TYPING) ? TRUE : FALSE), NULL);
 			_check_for_disconnect(user, rc);
 
 		}
@@ -2418,7 +2418,7 @@ novell_chat_leave(PurpleConnection * gc, int id)
 	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 		conference = cnode->data;
 		if (conference && (chat = nm_conference_get_data(conference))) {
-			if (purple_conv_chat_get_id(PURPLE_CONV_CHAT(chat)) == id) {
+			if (purple_chat_conversation_get_id(PURPLE_CONV_CHAT(chat)) == id) {
 				rc = nm_send_leave_conference(user, conference, NULL, NULL);
 				_check_for_disconnect(user, rc);
 				break;
@@ -2457,7 +2457,7 @@ novell_chat_invite(PurpleConnection *gc, int id,
 	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 		conference = cnode->data;
 		if (conference && (chat = nm_conference_get_data(conference))) {
-			if (purple_conv_chat_get_id(PURPLE_CONV_CHAT(chat)) == id) {
+			if (purple_chat_conversation_get_id(PURPLE_CONV_CHAT(chat)) == id) {
 				rc = nm_send_conference_invite(user, conference, user_record,
 											   message, _sendinvite_resp_cb, NULL);
 				_check_for_disconnect(user, rc);
@@ -2493,7 +2493,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 		conference = cnode->data;
 		if (conference && (chat = nm_conference_get_data(conference))) {
-			if (purple_conv_chat_get_id(PURPLE_CONV_CHAT(chat)) == id) {
+			if (purple_chat_conversation_get_id(PURPLE_CONV_CHAT(chat)) == id) {
 
 				nm_message_set_conference(message, conference);
 
@@ -2533,7 +2533,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 
 
 	/* The conference was not found, must be closed */
-	chat = purple_find_chat(gc, id);
+	chat = purple_conversations_find_chat(gc, id);
 	if (chat) {
 		str = g_strdup(_("This conference has been closed."
 						 " No more messages can be sent."));

@@ -79,7 +79,7 @@ static void joinpart_key_destroy(struct joinpart_key *key)
 static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
                                    GHashTable *users)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	int threshold;
 	struct joinpart_key key;
 	time_t *last_said;
@@ -90,7 +90,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	/* If the room is small, don't bother. */
 	chat = PURPLE_CONV_CHAT(conv);
 	threshold = purple_prefs_get_int(THRESHOLD_PREF);
-	if (g_list_length(purple_conv_chat_get_users(chat)) < threshold)
+	if (g_list_length(purple_chat_conversation_get_users(chat)) < threshold)
 		return FALSE;
 
 	if (!purple_prefs_get_bool(HIDE_BUDDIES_PREF) &&
@@ -118,7 +118,7 @@ static gboolean chat_buddy_leaving_cb(PurpleConversation *conv, const char *name
 }
 
 static gboolean chat_buddy_joining_cb(PurpleConversation *conv, const char *name,
-                                      PurpleConvChatBuddyFlags flags,
+                                      PurpleChatConversationBuddyFlags flags,
                                       GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);

@@ -957,7 +957,7 @@ pidgin_dialogs_im_with_user(PurpleAccount *account, const char *username)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, username, account);
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);

@@ -149,16 +149,16 @@ peer_odc_send_cookie(PeerConnection *conn)
  * Send client-to-client typing notification over an established direct connection.
  */
 void
-peer_odc_send_typing(PeerConnection *conn, PurpleTypingState typing)
+peer_odc_send_typing(PeerConnection *conn, PurpleIMConversationTypingState typing)
 {
 	OdcFrame frame;
 
 	memset(&frame, 0, sizeof(OdcFrame));
 	frame.type = 0x0001;
 	frame.subtype = 0x0006;
-	if (typing == PURPLE_TYPING)
+	if (typing == PURPLE_IM_CONVERSATION_TYPING)
 		frame.flags = 0x0002 | 0x0008;
-	else if (typing == PURPLE_TYPED)
+	else if (typing == PURPLE_IM_CONVERSATION_TYPED)
 		frame.flags = 0x0002 | 0x0004;
 	else
 		frame.flags = 0x0002;
@@ -584,11 +584,11 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		purple_debug_info("oscar", "ohmigod! %s has started typing "
 			"(DirectIM). He's going to send you a message! "
 			"*squeal*\n", conn->bn);
-		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPING);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_CONVERSATION_TYPING);
 	}
 	else if (frame->flags & 0x0004)
 	{
-		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPED);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_CONVERSATION_TYPED);
 	}
 	else
 	{

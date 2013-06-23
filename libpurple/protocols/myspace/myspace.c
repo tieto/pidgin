@@ -1491,7 +1491,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 	PurpleConversation *conv;
 
 	/* I know this isn't really a string... but we need it to be one for
-	 * purple_find_conversation_with_account(). */
+	 * purple_conversations_find_with_account(). */
 	userid = msim_msg_get_string(msg, "f");
 
 	purple_debug_info("msim_incoming_im", "UserID is %s", userid);
@@ -1503,7 +1503,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 	}
 
 	/* See if a conversation with their UID already exists...*/
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, userid, session->account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, userid, session->account);
 	if (conv) {
 		/* Since the conversation exists... We need to normalize it */
 		purple_conversation_set_name(conv, username);
@@ -1555,7 +1555,7 @@ msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 			msg_text, username);
 
 	if (g_str_equal(msg_text, "%typing%")) {
-		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
+		serv_got_typing(session->gc, username, 0, PURPLE_IM_CONVERSATION_TYPING);
 		rc = TRUE;
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
@@ -1613,7 +1613,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 	/* Media messages are sent when the user opens a window to someone.
 	 * Tell libpurple they started typing and stopped typing, to inform the Psychic
 	 * Mode plugin so it too can open a window to the user. */
-	serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
+	serv_got_typing(session->gc, username, 0, PURPLE_IM_CONVERSATION_TYPING);
 	serv_got_typing_stopped(session->gc, username);
 
 	g_free(username);
@@ -2326,13 +2326,13 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
  *
  * @param gc
  * @param name The buddy name to which our user is typing to
- * @param state PURPLE_TYPING, PURPLE_TYPED, PURPLE_NOT_TYPING
+ * @param state PURPLE_IM_CONVERSATION_TYPING, PURPLE_IM_CONVERSATION_TYPED, PURPLE_IM_CONVERSATION_NOT_TYPING
  *
  * @return 0
  */
 static unsigned int
 msim_send_typing(PurpleConnection *gc, const gchar *name,
-		PurpleTypingState state)
+		PurpleIMConversationTypingState state)
 {
 	const gchar *typing_str;
 	MsimSession *session;
@@ -2343,12 +2343,12 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	session = purple_connection_get_protocol_data(gc);
 
 	switch (state) {
-		case PURPLE_TYPING:
+		case PURPLE_IM_CONVERSATION_TYPING:
 			typing_str = "%typing%";
 			break;
 
-		case PURPLE_TYPED:
-		case PURPLE_NOT_TYPING:
+		case PURPLE_IM_CONVERSATION_TYPED:
+		case PURPLE_IM_CONVERSATION_NOT_TYPING:
 		default:
 			typing_str = "%stoptyping%";
 			break;
@@ -3498,7 +3498,7 @@ msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer
 	}
 
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, session->account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, username, session->account);
 	if (!conv)  {
 		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, username);

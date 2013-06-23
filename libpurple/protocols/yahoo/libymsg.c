@@ -841,7 +841,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		}
 
 		if (stat && *stat == '1')
-			serv_got_typing(gc, fed_from, 0, PURPLE_TYPING);
+			serv_got_typing(gc, fed_from, 0, PURPLE_IM_CONVERSATION_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
 
@@ -868,7 +868,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 				yahoo_update_status(gc, from, f);
 		}
 	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
-		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
+		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, from, account);
 		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
@@ -928,7 +928,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) ) {
 		if (server_msg) {
 			PurpleConversation *c;
-			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms->from, account);
+			c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms->from, account);
 			if (c == NULL)
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sms->from);
 			purple_conversation_write(c, NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -3715,7 +3715,7 @@ void yahoo_close(PurpleConnection *gc) {
 
 		yahoo_conf_leave(yd, purple_conversation_get_name(conv),
 		                 purple_connection_get_display_name(gc),
-				 purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv)));
+				 purple_chat_conversation_get_users(PURPLE_CONV_CHAT(conv)));
 	}
 	g_slist_free(yd->confs);
 
@@ -4367,7 +4367,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	char *status = NULL;
 	char *carrier = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+	PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -4468,7 +4468,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	else {
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
@@ -4514,7 +4514,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		gchar *carrier = NULL;
 		const char *alias = NULL;
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
+		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, account);
 
 		carrier = g_hash_table_lookup(yd->sms_carrier, who);
 		if (!carrier) {
@@ -4633,7 +4633,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	return ret;
 }
 
-unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
+unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_p2p_data *p2p_data;
@@ -4651,7 +4651,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 	/* check to see if p2p link exists, send through it */
 	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !fed) {
 		yahoo_packet_hash(pkt, "sssssis", 49, "TYPING", 1, purple_connection_get_display_name(gc),
-	                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
+	                  14, " ", 13, state == PURPLE_IM_CONVERSATION_TYPING ? "1" : "0",
 	                  5, who, 11, p2p_data->session_id, 1002, "1");	/* To-do: key 15 to be sent in case of p2p */
 		yahoo_p2p_write_pkt(p2p_data->source, pkt);
 		yahoo_packet_free(pkt);
@@ -4672,7 +4672,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 		}
 
 		yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
-                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
+                  14, " ", 13, state == PURPLE_IM_CONVERSATION_TYPING ? "1" : "0",
                   5, fed_who, 1002, "1");
         if (fed)
         	yahoo_packet_hash_int(pkt, 241, fed);
@@ -5238,14 +5238,14 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 {
 	PurpleConversation *c;
 
-	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+	c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 			username, purple_connection_get_account(gc));
 
 	g_return_val_if_fail(c != NULL, FALSE);
 
 	purple_debug_info("yahoo", "Sending <ding> on account %s to buddy %s.\n",
 			username, purple_conversation_get_name(c));
-	purple_conv_im_send_with_flags(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
+	purple_im_conversation_send_message(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;
 }

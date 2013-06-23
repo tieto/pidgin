@@ -52,7 +52,7 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
     return;
   }
 
-  gconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, acct);
+  gconv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, acct);
   if(! gconv) {
     purple_debug_info("psychic", "no previous conversation exists\n");
     gconv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, name);
@@ -74,7 +74,7 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
     }
 
     /* Necessary because we may be creating a new conversation window. */
-    purple_conv_im_set_typing_state(PURPLE_CONV_IM(gconv), PURPLE_TYPING);
+    purple_im_conversation_set_typing_state(PURPLE_CONV_IM(gconv), PURPLE_IM_CONVERSATION_TYPING);
   }
 }
 

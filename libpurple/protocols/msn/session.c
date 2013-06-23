@@ -186,7 +186,7 @@ msn_session_get_conv(MsnSession *session,const char *passport)
 	g_return_val_if_fail(session != NULL, NULL);
 	account = session->account;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 									passport, account);
 	if(conv == NULL){
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, passport);

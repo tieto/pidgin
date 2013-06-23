@@ -1842,7 +1842,7 @@ static void mw_session_announce(struct mwSession *s,
 
   pd = mwSession_getClientData(s);
   acct = purple_connection_get_account(pd->gc);
-  conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, acct);
+  conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, acct);
   if(! conv) conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, who);
 
   buddy = purple_find_buddy(acct, who);
@@ -1937,14 +1937,14 @@ static void mw_conf_invited(struct mwConference *conf,
 }
 
 
-/* The following mess helps us relate a mwConference to a PurpleConvChat
+/* The following mess helps us relate a mwConference to a PurpleChatConversation
    in the various forms by which either may be indicated */
 
 #define CONF_TO_ID(conf)   (GPOINTER_TO_INT(conf))
 #define ID_TO_CONF(pd, id) (conf_find_by_id((pd), (id)))
 
-#define CHAT_TO_ID(chat)   (purple_conv_chat_get_id(chat))
-#define ID_TO_CHAT(id)     (purple_find_chat(id))
+#define CHAT_TO_ID(chat)   (purple_chat_conversation_get_id(chat))
+#define ID_TO_CHAT(id)     (purple_conversations_find_chat(id))
 
 #define CHAT_TO_CONF(pd, chat)  (ID_TO_CONF((pd), CHAT_TO_ID(chat)))
 #define CONF_TO_CHAT(conf)      (ID_TO_CHAT(CONF_TO_ID(conf)))
@@ -1960,7 +1960,7 @@ conf_find_by_id(struct mwPurplePluginData *pd, int id) {
   ll = mwServiceConference_getConferences(srvc);
   for(l = ll; l; l = l->next) {
     struct mwConference *c = l->data;
-    PurpleConvChat *h = mwConference_getClientData(c);
+    PurpleChatConversation *h = mwConference_getClientData(c);
 
     if(CHAT_TO_ID(h) == id) {
       conf = c;
@@ -1998,8 +1998,8 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
 
   for(; members; members = members->next) {
     struct mwLoginInfo *peer = members->data;
-    purple_conv_chat_add_user(PURPLE_CONV_CHAT(g_conf), peer->user_id,
-			    NULL, PURPLE_CBFLAGS_NONE, FALSE);
+    purple_chat_conversation_add_user(PURPLE_CONV_CHAT(g_conf), peer->user_id,
+			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
   }
 }
 
@@ -2030,7 +2030,7 @@ static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
 static void mw_conf_peer_joined(struct mwConference *conf,
 				struct mwLoginInfo *peer) {
 
-  PurpleConvChat *g_conf;
+  PurpleChatConversation *g_conf;
 
   const char *n = mwConference_getName(conf);
 
@@ -2039,15 +2039,15 @@ static void mw_conf_peer_joined(struct mwConference *conf,
   g_conf = mwConference_getClientData(conf);
   g_return_if_fail(g_conf != NULL);
 
-  purple_conv_chat_add_user(g_conf, peer->user_id,
-			  NULL, PURPLE_CBFLAGS_NONE, TRUE);
+  purple_chat_conversation_add_user(g_conf, peer->user_id,
+			  NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 
 static void mw_conf_peer_parted(struct mwConference *conf,
 				struct mwLoginInfo *peer) {
 
-  PurpleConvChat *g_conf;
+  PurpleChatConversation *g_conf;
 
   const char *n = mwConference_getName(conf);
 
@@ -2056,7 +2056,7 @@ static void mw_conf_peer_parted(struct mwConference *conf,
   g_conf = mwConference_getClientData(conf);
   g_return_if_fail(g_conf != NULL);
 
-  purple_conv_chat_remove_user(g_conf, peer->user_id, NULL);
+  purple_chat_conversation_remove_user(g_conf, peer->user_id, NULL);
 }
 
 
@@ -2425,7 +2425,7 @@ static PurpleConversation *convo_get_gconv(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  return purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+  return purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 					     idb->user, acct);
 }
 
@@ -2660,7 +2660,7 @@ static void im_recv_typing(struct mwConversation *conv,
   idb = mwConversation_getTarget(conv);
 
   serv_got_typing(pd->gc, idb->user, 0,
-		  typing? PURPLE_TYPING: PURPLE_NOT_TYPING);
+		  typing? PURPLE_IM_CONVERSATION_TYPING: PURPLE_IM_CONVERSATION_NOT_TYPING);
 }
 
 
@@ -2945,7 +2945,7 @@ static struct mwServiceIm *mw_srvc_im_new(struct mwSession *s) {
 }
 
 
-/* The following helps us relate a mwPlace to a PurpleConvChat in the
+/* The following helps us relate a mwPlace to a PurpleChatConversation in the
    various forms by which either may be indicated. Uses some of
    the similar macros from the conference service above */
 
@@ -2965,7 +2965,7 @@ place_find_by_id(struct mwPurplePluginData *pd, int id) {
   l = (GList *) mwServicePlace_getPlaces(srvc);
   for(; l; l = l->next) {
     struct mwPlace *p = l->data;
-    PurpleConvChat *h = PURPLE_CONV_CHAT(mwPlace_getClientData(p));
+    PurpleChatConversation *h = PURPLE_CONV_CHAT(mwPlace_getClientData(p));
 
     if(CHAT_TO_ID(h) == id) {
       place = p;
@@ -3006,8 +3006,8 @@ static void mw_place_opened(struct mwPlace *place) {
 
   for(l = members; l; l = l->next) {
     struct mwIdBlock *idb = l->data;
-    purple_conv_chat_add_user(PURPLE_CONV_CHAT(gconf), idb->user,
-			    NULL, PURPLE_CBFLAGS_NONE, FALSE);
+    purple_chat_conversation_add_user(PURPLE_CONV_CHAT(gconf), idb->user,
+			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
   }
   g_list_free(members);
 }
@@ -3047,8 +3047,8 @@ static void mw_place_peerJoined(struct mwPlace *place,
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
 
-  purple_conv_chat_add_user(PURPLE_CONV_CHAT(gconf), peer->user,
-			  NULL, PURPLE_CBFLAGS_NONE, TRUE);
+  purple_chat_conversation_add_user(PURPLE_CONV_CHAT(gconf), peer->user,
+			  NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 
@@ -3063,7 +3063,7 @@ static void mw_place_peerParted(struct mwPlace *place,
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
 
-  purple_conv_chat_remove_user(PURPLE_CONV_CHAT(gconf), peer->user, NULL);
+  purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(gconf), peer->user, NULL);
 }
 
 
@@ -4023,7 +4023,7 @@ static int mw_prpl_send_im(PurpleConnection *gc,
 
 static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
 					const char *name,
-					PurpleTypingState state) {
+					PurpleIMConversationTypingState state) {
 
   struct mwPurplePluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
@@ -4041,7 +4041,7 @@ static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
   if(mwConversation_isOpen(conv)) {
     mwConversation_send(conv, mwImSend_TYPING, t);
 
-  } else if((state == PURPLE_TYPING) || (state == PURPLE_TYPED)) {
+  } else if((state == PURPLE_IM_CONVERSATION_TYPING) || (state == PURPLE_IM_CONVERSATION_TYPED)) {
     /* only open a channel for sending typing notification, not for
        when typing has stopped. There's no point in re-opening a
        channel just to tell someone that this side isn't typing. */
@@ -4279,7 +4279,7 @@ static void notify_im(PurpleConnection *gc, GList *row, void *user_data) {
 
   acct = purple_connection_get_account(gc);
   id = g_list_nth_data(row, 1);
-  conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, id, acct);
+  conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, id, acct);
   if(! conv) conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, id);
   purple_conversation_present(conv);
 }

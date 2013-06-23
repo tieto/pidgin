@@ -19,7 +19,7 @@ gboolean PURPLE_CONNECTION_IS_CONNECTED(PurpleConnection *connection);
 gboolean PURPLE_CONNECTION_IS_VALID(PurpleConnection *connection);
 
 /* conversation.h */
-PurpleConvIm *PURPLE_CONV_IM(const PurpleConversation *conversation);
-PurpleConvIm *PURPLE_CONV_CHAT(const PurpleConversation *conversation);
+PurpleIMConversation *PURPLE_CONV_IM(const PurpleConversation *conversation);
+PurpleIMConversation *PURPLE_CONV_CHAT(const PurpleConversation *conversation);
 
 

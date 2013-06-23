@@ -432,10 +432,10 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, username, account);
 
 	if (conv != NULL)
-		purple_conv_im_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
+		purple_im_conversation_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
 
 	/* icon's refcount was incremented above */
 	purple_buddy_icon_unref(icon);
@@ -884,9 +884,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 
 			buddy = (PurpleBuddy *)child;
 
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 			if (conv)
-				purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
+				purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ICON);
 
 			/* Is this call necessary anymore? Can the buddies
 			 * themselves need updating when the custom buddy
@@ -896,9 +896,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		PurpleConversation *conv = NULL;
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
 		if (conv) {
-			purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
+			purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ICON);
 		}
 	}
 

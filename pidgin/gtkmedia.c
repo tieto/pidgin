@@ -522,7 +522,7 @@ pidgin_media_finalize(GObject *media)
 static void
 pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
+	PurpleConversation *conv = purple_conversations_find_with_account(
 			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)
@@ -595,7 +595,7 @@ realize_cb(GtkWidget *widget, PidginMediaRealizeData *data)
 static void
 pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmedia)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
+	PurpleConversation *conv = purple_conversations_find_with_account(
 			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)

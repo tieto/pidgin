@@ -291,8 +291,8 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	if ((swboard->conv != NULL) &&
 		(purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
-		purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv), msnuser->passport, NULL,
-								PURPLE_CBFLAGS_NONE, TRUE);
+		purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv), msnuser->passport, NULL,
+								PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
 	else if (swboard->current_users > 1)
@@ -322,13 +322,13 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 				tmp_user = ((MsnUser*)l->data)->passport;
 
-				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
-										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
+				purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
+										tmp_user, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 			}
 
-			purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
+			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
 									purple_account_get_username(account),
-									NULL, PURPLE_CBFLAGS_NONE, TRUE);
+									NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 
 			g_free(swboard->im_user);
 			swboard->im_user = NULL;
@@ -336,7 +336,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else if (swboard->conv == NULL)
 	{
-		swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+		swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 															msnuser->passport, account);
 	}
 	else
@@ -622,7 +622,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		GList *passport;
 		/* This is a switchboard used for a chat */
-		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
+		purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
 
 		passport = g_list_find_custom(swboard->users, user, (GCompareFunc)strcmp);
 		if (passport)

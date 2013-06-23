@@ -97,14 +97,14 @@ void cc_net_send_invite(struct crazychat *cc, char *name, PurpleAccount *account
 {
 	struct cc_session *session;
 	PurpleConversation *conv;
-	PurpleConvIm *im;
+	PurpleIMConversation *im;
 	char buf[BUFSIZ];
 
 	session = cc_find_session(cc, name);
 	if (session) return; /* already have a session with this guy */
 	session = cc_add_session(cc, name);
 	session->state = INVITE;
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, name, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, name, account);
 	if (!conv) {
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 	}
@@ -112,7 +112,7 @@ void cc_net_send_invite(struct crazychat *cc, char *name, PurpleAccount *account
 	snprintf(buf, BUFSIZ, "%s%s!%d", CRAZYCHAT_INVITE_CODE,
 		purple_network_get_my_ip(-1), cc->tcp_port);
 	Debug("Sent invite to %s for port: %d\n", name, cc->tcp_port);
-	purple_conv_im_send(im, buf);
+	purple_im_conversation_send(im, buf);
 }
 
 void cc_net_recv_invite(PurpleAccount *account, struct crazychat *cc, char *name,
@@ -131,7 +131,7 @@ void cc_net_recv_invite(PurpleAccount *account, struct crazychat *cc, char *name
 	session = cc_find_session(cc, name);
 	if (!session) {
 		Debug("Creating a CrazyChat session invite dialog box!\n");
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, name, account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, name, account);
 		if (conv) convwin = purple_conversation_get_window(conv);
 		else convwin = NULL;
 		/* pop gtk window asking if want to accept */
@@ -206,15 +206,15 @@ static void cc_net_send_ready(PurpleAccount *account, struct cc_session *session
 
 	/* socket created, send the ready message */
 	PurpleConversation *conv;
-	PurpleConvIm *im;
+	PurpleIMConversation *im;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, session->name, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, session->name, account);
 	if (!conv) {
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account,
 				session->name);
 	}
 	im = purple_conversation_get_im_data(conv);
-	purple_conv_im_send(im, CRAZYCHAT_READY_CODE);
+	purple_im_conversation_send(im, CRAZYCHAT_READY_CODE);
 
 	/* register timer callback for checking socket connection */
 	args = (struct sock_accept_args*)malloc(sizeof(*args));
@@ -260,7 +260,7 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 	struct cc_session *session;
 	char buf[BUFSIZ];
 	PurpleConversation *conv;
-	PurpleConvIm *im;
+	PurpleIMConversation *im;
 
 	if (response == GTK_RESPONSE_ACCEPT) {
 		assert(args);
@@ -272,14 +272,14 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 		session->peer_port = args->peer_port;
 		snprintf(buf, BUFSIZ, "%s%s", CRAZYCHAT_ACCEPT_CODE,
 			purple_network_get_my_ip(-1));
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, args->name,
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, args->name,
 				args->account);
 		if (!conv) {
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 				args->account, args->name);
 		}
 		im = purple_conversation_get_im_data(conv);
-		purple_conv_im_send(im, buf);
+		purple_im_conversation_send(im, buf);
 	}
 	free(args->name);
 	free(args);

@@ -429,7 +429,7 @@ buddy_typing_stopped_cb(PurpleAccount *account, const char *name, void *data)
 
 static gboolean
 chat_buddy_joining_cb(PurpleConversation *conv, const char *user,
-					  PurpleConvChatBuddyFlags flags, void *data)
+					  PurpleChatConversationBuddyFlags flags, void *data)
 {
 	purple_debug_misc("signals test", "chat-buddy-joining (%s, %s, %d)\n",
 					purple_conversation_get_name(conv), user, flags);
@@ -439,7 +439,7 @@ chat_buddy_joining_cb(PurpleConversation *conv, const char *user,
 
 static void
 chat_buddy_joined_cb(PurpleConversation *conv, const char *user,
-					 PurpleConvChatBuddyFlags flags, gboolean new_arrival, void *data)
+					 PurpleChatConversationBuddyFlags flags, gboolean new_arrival, void *data)
 {
 	purple_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d, %d)\n",
 					purple_conversation_get_name(conv), user, flags, new_arrival);
@@ -447,7 +447,7 @@ chat_buddy_joined_cb(PurpleConversation *conv, const char *user,
 
 static void
 chat_buddy_flags_cb(PurpleConversation *conv, const char *user,
-					PurpleConvChatBuddyFlags oldflags, PurpleConvChatBuddyFlags newflags, void *data)
+					PurpleChatConversationBuddyFlags oldflags, PurpleChatConversationBuddyFlags newflags, void *data)
 {
 	purple_debug_misc("signals test", "chat-buddy-flags (%s, %s, %d, %d)\n",
 					purple_conversation_get_name(conv), user, oldflags, newflags);

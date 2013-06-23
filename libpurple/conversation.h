@@ -727,7 +727,7 @@ const char *purple_conversation_message_get_alias(const PurpleConversationMessag
  *
  * @return   The conversation
  */
-PurpleConversation *purple_conversation_message_get_conv(const PurpleConversationMessage *msg);
+PurpleConversation *purple_conversation_message_get_conversation(const PurpleConversationMessage *msg);
 
 /*@}*/
 

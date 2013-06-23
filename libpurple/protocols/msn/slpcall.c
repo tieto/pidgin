@@ -568,7 +568,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (slpcall->slplink && slpcall->slplink->session) {
 			PurpleConversation *conv;
 			gchar *from = slpcall->slplink->remote_user;
-			conv = purple_find_conversation_with_account(
+			conv = purple_conversations_find_with_account(
 					PURPLE_CONV_TYPE_IM, from,
 					slpcall->slplink->session->account);
 			if (conv) {
@@ -590,7 +590,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (slpcall->slplink && slpcall->slplink->session) {
 			PurpleConversation *conv;
 			gchar *from = slpcall->slplink->remote_user;
-			conv = purple_find_conversation_with_account(
+			conv = purple_conversations_find_with_account(
 					PURPLE_CONV_TYPE_IM, from,
 					slpcall->slplink->session->account);
 			if (conv) {

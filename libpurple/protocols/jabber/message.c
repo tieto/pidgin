@@ -79,11 +79,11 @@ static void handle_chat(JabberMessage *jm)
 			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
+			serv_got_typing(gc, jm->from, 0, PURPLE_IM_CONVERSATION_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_TYPED);
+			serv_got_typing(gc, jm->from, 0, PURPLE_IM_CONVERSATION_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
-			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 					jm->from, account);
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
@@ -122,12 +122,12 @@ static void handle_chat(JabberMessage *jm)
 			 * resource (i.e. bind/lock the conversation to this
 			 * resource).
 			 *
-			 * This works because purple_conv_im_send gets the name
+			 * This works because purple_im_conversation_send gets the name
 			 * from purple_conversation_get_name()
 			 */
 			PurpleConversation *conv;
 
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 			                                             jm->from, account);
 			if (conv && !g_str_equal(jm->from,
 			                         purple_conversation_get_name(conv))) {
@@ -230,7 +230,7 @@ static void handle_groupchat(JabberMessage *jm)
 		return;
 
 	if(jm->subject) {
-		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+		purple_chat_conversation_set_topic(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
 		messageFlags |= PURPLE_MESSAGE_NO_LOG;
 		if(!jm->xhtml && !jm->body) {
@@ -241,7 +241,7 @@ static void handle_groupchat(JabberMessage *jm)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -254,7 +254,7 @@ static void handle_groupchat(JabberMessage *jm)
 							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
-			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
+			purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "",
 							jm->xhtml ? jm->xhtml : jm->body,
 							messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 	}
@@ -625,7 +625,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
 						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
-								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+								purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY,
 									from, account);
 							if (!conv) {
 								/* we need to create the conversation here */
@@ -938,7 +938,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 {
 	PurpleAccount *account = purple_connection_get_account(jm->js->gc);
 	PurpleConversation *conv =
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
+		purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
 			account);
 
 	if (jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
@@ -1248,7 +1248,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	return 1;
 }
 
-unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
+unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
 {
 	JabberStream *js;
 	JabberMessage *jm;
@@ -1282,9 +1282,9 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
 
-	if(PURPLE_TYPING == state)
+	if(PURPLE_IM_CONVERSATION_TYPING == state)
 		jm->chat_state = JM_STATE_COMPOSING;
-	else if(PURPLE_TYPED == state)
+	else if(PURPLE_IM_CONVERSATION_TYPED == state)
 		jm->chat_state = JM_STATE_PAUSED;
 	else
 		jm->chat_state = JM_STATE_ACTIVE;

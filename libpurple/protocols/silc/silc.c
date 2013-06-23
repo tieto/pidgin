@@ -1368,7 +1368,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	SilcDList list;
 	gboolean free_list = FALSE;
 
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
+	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 						      sg->account);
 	if (!convo)
 		return;
@@ -1405,7 +1405,7 @@ silcpurple_send_im_resolved(SilcClient client,
 								 buf->data,
 								 silc_buffer_len(buf));
 			silc_mime_partial_free(list);
-			purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
+			purple_im_conversation_write_message(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
 					     im->message, 0, time(NULL));
 			goto out;
 		}
@@ -1414,7 +1414,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
 					 sg->sha1hash, (unsigned char *)im->message, im->message_len);
-	purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
+	purple_im_conversation_write_message(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
 			     im->message, 0, time(NULL));
 	goto out;
 
@@ -1557,11 +1557,11 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if(args && args[0])
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
+		convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
 									purple_connection_get_account(gc));
 
 	if (convo != NULL)
-		id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo));
+		id = purple_chat_conversation_get_id(PURPLE_CONV_CHAT(convo));
 
 	if (id == 0)
 		return PURPLE_CMD_RET_FAILED;
@@ -1581,13 +1581,13 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 	const char *topic;
 
 	gc = purple_conversation_get_connection(conv);
-	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
+	id = purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv));
 
 	if (gc == NULL || id == 0)
 		return PURPLE_CMD_RET_FAILED;
 
 	if (!args || !args[0]) {
-		topic = purple_conv_chat_get_topic (PURPLE_CONV_CHAT(conv));
+		topic = purple_chat_conversation_get_topic (PURPLE_CONV_CHAT(conv));
 		if (topic) {
 			tmp = g_markup_escape_text(topic, -1);
 			tmp2 = purple_markup_linkify(tmp);
@@ -1596,7 +1596,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), purple_account_get_username(purple_connection_get_account(gc)), buf,
+		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(conv), purple_account_get_username(purple_connection_get_account(gc)), buf,
 							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
@@ -1699,7 +1699,7 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 
 	if (args[1]) {
 		ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
-		purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
+		purple_im_conversation_write_message(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
 				args[1], PURPLE_MESSAGE_SEND, time(NULL));
 	}
 
@@ -1795,7 +1795,7 @@ static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 		} else {
 			msg = g_strdup_printf(_("no channel modes are set on %s"), chname);
 		}
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "",
+		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(conv), "",
 							 msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(msg);
 		return PURPLE_CMD_RET_OK;

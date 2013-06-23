@@ -2859,7 +2859,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 	if (args && args[0] && *args[0])
 		jabber_chat_change_topic(chat, args[0]);
 	else {
-		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+		const char *cur = purple_chat_conversation_get_topic(PURPLE_CONV_CHAT(conv));
 		char *buf, *tmp, *tmp2;
 
 		if (cur) {
@@ -2870,7 +2870,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "", buf,
+		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(conv), "", buf,
 				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	}
@@ -3003,7 +3003,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	jabber_chat_invite(purple_conversation_get_connection(conv),
-			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
+			purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
 			args[0]);
 
 	return PURPLE_CMD_RET_OK;
@@ -3218,7 +3218,7 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 	if (!_jabber_send_buzz(js, username, &error)) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv =
-			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username, account);
+			purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, username, account);
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
 
 		if (conv) {

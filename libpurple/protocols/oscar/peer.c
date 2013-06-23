@@ -957,7 +957,7 @@ peer_connection_propose(OscarData *od, guint64 type, const char *bn)
 				purple_debug_info("oscar", "Already have a direct IM "
 						"session with %s.\n", bn);
 				account = purple_connection_get_account(od->gc);
-				conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+				conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 						bn, account);
 				if (conv != NULL)
 					purple_conversation_present(conv);

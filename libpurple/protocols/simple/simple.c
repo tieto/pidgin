@@ -1078,7 +1078,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		statedata = xmlnode_get_data(state);
 		if(statedata) {
 			if(strstr(statedata, "active"))
-				serv_got_typing(sip->gc, from, 0, PURPLE_TYPING);
+				serv_got_typing(sip->gc, from, 0, PURPLE_IM_CONVERSATION_TYPING);
 			else
 				serv_got_typing_stopped(sip->gc, from);
 
@@ -1287,7 +1287,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	send_sip_response(sip->gc, msg, 200, "OK", NULL);
 }
 
-static unsigned int simple_typing(PurpleConnection *gc, const char *name, PurpleTypingState state) {
+static unsigned int simple_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state) {
 	struct simple_account_data *sip = purple_connection_get_protocol_data(gc);
 
 	gchar *xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -1299,11 +1299,11 @@ static unsigned int simple_typing(PurpleConnection *gc, const char *name, Purple
 			"<refresh>60</refresh>\n"
 			"</isComposing>";
 	gchar *recv = g_strdup(name);
-	if(state == PURPLE_TYPING) {
+	if(state == PURPLE_IM_CONVERSATION_TYPING) {
 		gchar *msg = g_strdup_printf(xml, "active");
 		simple_send_message(sip, recv, msg, "application/im-iscomposing+xml");
 		g_free(msg);
-	} else /* TODO: Only if (state == PURPLE_TYPED) ? */ {
+	} else /* TODO: Only if (state == PURPLE_IM_CONVERSATION_TYPED) ? */ {
 		gchar *msg = g_strdup_printf(xml, "idle");
 		simple_send_message(sip, recv, msg, "application/im-iscomposing+xml");
 		g_free(msg);
@@ -1311,7 +1311,7 @@ static unsigned int simple_typing(PurpleConnection *gc, const char *name, Purple
 	g_free(recv);
 	/*
 	 * TODO: Is this right?  It will cause the core to call
-	 *       serv_send_typing(gc, who, PURPLE_TYPING) once every second
+	 *       serv_send_typing(gc, who, PURPLE_IM_CONVERSATION_TYPING) once every second
 	 *       until the user stops typing.  If that's not desired,
 	 *       then return 0 instead.
 	 */

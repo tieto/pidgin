@@ -417,7 +417,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv;
 		const gchar *who = ggp_uin_to_str(ev->sender); // not really sender
-		conv = purple_find_conversation_with_account(
+		conv = purple_conversations_find_with_account(
 			PURPLE_CONV_TYPE_IM, who, account);
 		if (conv == NULL)
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
@@ -444,7 +444,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 						    ev->recipients_count);
 		}
 		conv = ggp_confer_find_by_name(gc, chat_name);
-		chat_id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
+		chat_id = purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv));
 
 		serv_got_chat_in(gc, chat_id,
 			ggp_buddylist_get_buddy_name(gc, ev->sender),
@@ -459,7 +459,7 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
 
 	from = g_strdup_printf("%u", uin);
 	if (length)
-		serv_got_typing(gc, from, 0, PURPLE_TYPING);
+		serv_got_typing(gc, from, 0, PURPLE_IM_CONVERSATION_TYPING);
 	else
 		serv_got_typing_stopped(gc, from);
 	g_free(from);
@@ -1085,7 +1085,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 			else if (prepare_result == GGP_IMAGE_PREPARE_TOO_BIG)
 			{
 				PurpleConversation *conv =
-					purple_find_conversation_with_account(
+					purple_conversations_find_with_account(
 						PURPLE_CONV_TYPE_IM, who,
 						purple_connection_get_account(gc));
 				purple_conversation_write(conv, "",
@@ -1141,17 +1141,17 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	return ret;
 }
 
-static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int dummy_length; // we don't send real length of typed message
 	
-	if (state == PURPLE_TYPED) // not supported
+	if (state == PURPLE_IM_CONVERSATION_TYPED) // not supported
 		return 1;
 	
-	if (state == PURPLE_TYPING)
+	if (state == PURPLE_IM_CONVERSATION_TYPING)
 		dummy_length = (int)g_random_int();
-	else // PURPLE_NOT_TYPING
+	else // PURPLE_IM_CONVERSATION_NOT_TYPING
 		dummy_length = 0;
 	
 	gg_typing_notification(
@@ -1215,9 +1215,9 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 
 	ggp_confer_add_new(gc, chat_name);
 	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
-	purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+	purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv),
 				purple_account_get_username(account), NULL,
-				PURPLE_CBFLAGS_NONE, TRUE);
+				PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 static char *ggp_get_chat_name(GHashTable *data) {
@@ -1235,7 +1235,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 	uin_t *uins;
 	int count = 0;
 
-	if ((conv = purple_find_chat(gc, id)) == NULL)
+	if ((conv = purple_conversations_find_chat(gc, id)) == NULL)
 		return -EINVAL;
 
 	for (l = info->chats; l != NULL; l = l->next) {

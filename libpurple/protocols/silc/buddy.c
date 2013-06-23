@@ -91,7 +91,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 
 
 			/* Open IM window */
-			convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 								      client_entry->nickname, sg->account);
 			if (convo) {
 				/* we don't have windows in the core anymore...but we may want to

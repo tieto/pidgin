@@ -74,7 +74,7 @@ void oscar_login(PurpleAccount *account);
 void oscar_close(PurpleConnection *gc);
 int oscar_send_im(PurpleConnection *gc, const char *name, const char *message, PurpleMessageFlags imflags);
 void oscar_set_info(PurpleConnection *gc, const char *rawinfo);
-unsigned int oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
+unsigned int oscar_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state);
 void oscar_get_info(PurpleConnection *gc, const char *name);
 void oscar_set_status(PurpleAccount *account, PurpleStatus *status);
 void oscar_set_idle(PurpleConnection *gc, int time);

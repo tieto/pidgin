@@ -73,7 +73,7 @@ static void
 auto_accept_complete_cb(PurpleXfer *xfer, PurpleXfer *my)
 {
 	if (xfer == my && purple_prefs_get_bool(PREF_NOTIFY) &&
-			!purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_xfer_get_remote_user(xfer), purple_xfer_get_account(xfer)))
+			!purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_xfer_get_remote_user(xfer), purple_xfer_get_account(xfer)))
 	{
 		char *message = g_strdup_printf(_("Autoaccepted file transfer of \"%s\" from \"%s\" completed."),
 					purple_xfer_get_filename(xfer), purple_xfer_get_remote_user(xfer));

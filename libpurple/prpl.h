@@ -332,7 +332,7 @@ struct _PurplePluginProtocolInfo
 	void (*set_info)(PurpleConnection *, const char *info);
 
 	/**
-	 * @return If this protocol requires the PURPLE_TYPING message to
+	 * @return If this protocol requires the PURPLE_IM_CONVERSATION_TYPING message to
 	 *         be sent repeatedly to signify that the user is still
 	 *         typing, then the PRPL should return the number of
 	 *         seconds to wait before sending a subsequent notification.

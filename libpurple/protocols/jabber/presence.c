@@ -540,7 +540,7 @@ static gboolean
 handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet)
 {
 	static int i = 1;
-	PurpleConvChatBuddyFlags flags = PURPLE_CBFLAGS_NONE;
+	PurpleChatConversationBuddyFlags flags = PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
 	JabberChat *chat = presence->chat;
 
 	if (presence->state == JABBER_BUDDY_STATE_ERROR) {
@@ -613,19 +613,19 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		}
 
 		if (purple_strequal(affiliation, "owner"))
-			flags |= PURPLE_CBFLAGS_FOUNDER;
+			flags |= PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
 		if (role) {
 			if (g_str_equal(role, "moderator"))
-				flags |= PURPLE_CBFLAGS_OP;
+				flags |= PURPLE_CHAT_CONVERSATION_BUDDY_OP;
 			else if (g_str_equal(role, "participant"))
-				flags |= PURPLE_CBFLAGS_VOICE;
+				flags |= PURPLE_CHAT_CONVERSATION_BUDDY_VOICE;
 		}
 
 		if(!chat->conv) {
 			char *room_jid = g_strdup_printf("%s@%s", presence->jid_from->node, presence->jid_from->domain);
 			chat->id = i++;
 			chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
-			purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
+			purple_chat_conversation_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
 			jabber_chat_disco_traffic(chat);
 			g_free(room_jid);
@@ -637,10 +637,10 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		jabber_chat_track_handle(chat, presence->jid_from->resource, jid, affiliation, role);
 
 		if(!jabber_chat_find_buddy(chat->conv, presence->jid_from->resource))
-			purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
+			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 					jid, flags, chat->joined > 0 && ((!presence->delayed) || (presence->sent > chat->joined)));
 		else
-			purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
+			purple_chat_conversation_user_set_flags(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 					flags);
 
 		if (is_our_resource && chat->joined == 0)
@@ -700,7 +700,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 						chat->handle = g_strdup(nick);
 					}
 
-					purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv),
+					purple_chat_conversation_rename_user(PURPLE_CONV_CHAT(chat->conv),
 					                             presence->jid_from->resource,
 					                             nick);
 					jabber_chat_remove_handle(chat,
@@ -783,13 +783,13 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		if(!nick_change) {
 			if (is_our_resource) {
 				if (kick)
-					purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
+					purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 							presence->status, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 				serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);
 			} else {
-				purple_conv_chat_remove_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
+				purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 						presence->status);
 				jabber_chat_remove_handle(chat, presence->jid_from->resource);
 			}
@@ -818,7 +818,7 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 	 * presence changes.  This is locked to a specific resource when
 	 * receiving a message (in message.c).
 	 */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 			buddy_name, account);
 	if (conv) {
 		purple_debug_info("jabber", "Changed conversation binding from %s to %s\n",

@@ -289,7 +289,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 
 	thumbnail_data = purple_xfer_get_thumbnail(xfer, &size);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
 											   purple_xfer_get_account(xfer));
 
 	if (conv == NULL)
@@ -924,7 +924,7 @@ purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 		else
 			msg = g_strdup(_("File transfer complete"));
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
 		                                             purple_xfer_get_account(xfer));
 
 		if (conv != NULL)

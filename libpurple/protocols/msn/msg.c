@@ -717,7 +717,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 							 time(NULL));
 			if (swboard->conv == NULL)
 			{
-				swboard->conv = purple_find_chat(gc, swboard->chat_id);
+				swboard->conv = purple_conversations_find_chat(gc, swboard->chat_id);
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
 		}
@@ -727,7 +727,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			serv_got_im(gc, passport, body_final, 0, time(NULL));
 			if (swboard->conv == NULL)
 			{
-				swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+				swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 										passport, purple_connection_get_account(gc));
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
@@ -758,12 +758,12 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		if (swboard->current_users == 1)
 		{
 			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-							PURPLE_TYPING);
+							PURPLE_IM_CONVERSATION_TYPING);
 		}
 
 	} else {
 		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-						PURPLE_TYPING);
+						PURPLE_IM_CONVERSATION_TYPING);
 	}
 }
 
@@ -795,9 +795,9 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 
 	if (swboard->conv == NULL) {
 		if (chat)
-			swboard->conv = purple_find_chat(purple_account_get_connection(account), swboard->chat_id);
+			swboard->conv = purple_conversations_find_chat(purple_account_get_connection(account), swboard->chat_id);
 		else {
-			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 									who, account);
 			if (swboard->conv == NULL)
 				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
@@ -806,7 +806,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 
 	if (chat)
 		serv_got_chat_in(pc,
-		                 purple_conv_chat_get_id(PURPLE_CONV_CHAT(swboard->conv)),
+		                 purple_chat_conversation_get_id(PURPLE_CONV_CHAT(swboard->conv)),
 		                 who, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM, str,
 		                 time(NULL));
 	else
@@ -1145,7 +1145,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				gchar *buf = NULL;
 
 				if (from)
-					conv = purple_find_conversation_with_account(
+					conv = purple_conversations_find_with_account(
 							PURPLE_CONV_TYPE_IM, from,
 							cmdproc->session->account);
 				if (conv)

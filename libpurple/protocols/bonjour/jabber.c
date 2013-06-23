@@ -302,7 +302,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -348,7 +348,7 @@ _send_data(PurpleBuddy *pb, char *message)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -396,7 +396,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 #if 0
 	if(bconv->pb != NULL) {
 		PurpleConversation *conv;
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
 		if (conv != NULL) {
 			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
 			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -485,7 +485,7 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s error: %s\n",
 				   bname ? bname : "(unknown)", bconv->ip, err ? err : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -550,7 +550,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 
 		if (bconv->pb) {
 			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
 			if (conv != NULL)
 				purple_conversation_write(conv, NULL,
 					  _("Unable to send the message, the conversation couldn't be started."),
@@ -595,7 +595,7 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 		if (bconv->pb) {
 			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
 			if (conv != NULL)
 				purple_conversation_write(conv, NULL,
 					  _("Unable to send the message, the conversation couldn't be started."),
@@ -872,7 +872,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		purple_debug_error("bonjour", "No more addresses for buddy %s. Aborting", purple_buddy_get_name(pb));
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -893,7 +893,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),

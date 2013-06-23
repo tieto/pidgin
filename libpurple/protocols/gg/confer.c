@@ -32,7 +32,7 @@ PurpleConversation *ggp_confer_find_by_name(PurpleConnection *gc, const gchar *n
 	g_return_val_if_fail(gc   != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	return purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name,
+	return purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, name,
 			purple_connection_get_account(gc));
 }
 /* }}} */
@@ -59,8 +59,8 @@ void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_nam
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv), str_uin, NULL,
-						PURPLE_CBFLAGS_NONE, TRUE);
+			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv), str_uin, NULL,
+						PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 
 			g_free(str_uin);
 		}
@@ -97,9 +97,9 @@ void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv),
 						str_uin, NULL,
-						PURPLE_CBFLAGS_NONE, TRUE);
+						PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 			g_free(str_uin);
 		}
 		break;

@@ -201,9 +201,9 @@ static gboolean infopane_entry_activate(PidginConversation *gtkconv);
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
 #endif
 static void gray_stuff_out(PidginConversation *gtkconv);
-static void add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const char *old_name);
+static void add_chat_buddy_common(PurpleConversation *conv, PurpleChatConversationBuddy *cb, const char *old_name);
 static gboolean tab_complete(PurpleConversation *conv);
-static void pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type);
+static void pidgin_conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type);
 static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
@@ -363,9 +363,9 @@ say_command_cb(PurpleConversation *conv,
               const char *cmd, char **args, char **error, void *data)
 {
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-		purple_conv_im_send(PURPLE_CONV_IM(conv), args[0]);
+		purple_im_conversation_send(PURPLE_CONV_IM(conv), args[0]);
 	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-		purple_conv_chat_send(PURPLE_CONV_CHAT(conv), args[0]);
+		purple_chat_conversation_send(PURPLE_CONV_CHAT(conv), args[0]);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -379,9 +379,9 @@ me_command_cb(PurpleConversation *conv,
 	tmp = g_strdup_printf("/me %s", args[0]);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-		purple_conv_im_send(PURPLE_CONV_IM(conv), tmp);
+		purple_im_conversation_send(PURPLE_CONV_IM(conv), tmp);
 	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-		purple_conv_chat_send(PURPLE_CONV_CHAT(conv), tmp);
+		purple_chat_conversation_send(PURPLE_CONV_CHAT(conv), tmp);
 
 	g_free(tmp);
 	return PURPLE_CMD_RET_OK;
@@ -446,9 +446,9 @@ debug_command_cb(PurpleConversation *conv,
 
 	markup = g_markup_escape_text(tmp, -1);
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-		purple_conv_im_send(PURPLE_CONV_IM(conv), markup);
+		purple_im_conversation_send(PURPLE_CONV_IM(conv), markup);
 	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-		purple_conv_chat_send(PURPLE_CONV_CHAT(conv), markup);
+		purple_chat_conversation_send(PURPLE_CONV_CHAT(conv), markup);
 
 	g_free(tmp);
 	g_free(markup);
@@ -646,7 +646,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	}
 
 	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
-		purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+		purple_chat_conversation_has_left(PURPLE_CONV_CHAT(conv)))
 		return;
 
 	if (!purple_account_is_connected(account))
@@ -683,9 +683,9 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		for (i = 0; bufs[i]; i++) {
 			send_history_add(gtkconv, bufs[i]);
 			if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-				purple_conv_im_send_with_flags(PURPLE_CONV_IM(conv), bufs[i], flags);
+				purple_im_conversation_send_message(PURPLE_CONV_IM(conv), bufs[i], flags);
 			else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-				purple_conv_chat_send_with_flags(PURPLE_CONV_CHAT(conv), bufs[i], flags);
+				purple_chat_conversation_send_message(PURPLE_CONV_CHAT(conv), bufs[i], flags);
 		}
 
 		g_strfreev(bufs);
@@ -694,9 +694,9 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	} else {
 		send_history_add(gtkconv, buf);
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-			purple_conv_im_send_with_flags(PURPLE_CONV_IM(conv), buf, flags);
+			purple_im_conversation_send_message(PURPLE_CONV_IM(conv), buf, flags);
 		else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-			purple_conv_chat_send_with_flags(PURPLE_CONV_CHAT(conv), buf, flags);
+			purple_chat_conversation_send_message(PURPLE_CONV_CHAT(conv), buf, flags);
 	}
 
 	g_free(clean);
@@ -744,7 +744,7 @@ static void chat_do_info(PidginConversation *gtkconv, const char *who)
 	PurpleConnection *gc;
 
 	if ((gc = purple_conversation_get_connection(conv))) {
-		pidgin_retrieve_user_info_in_chat(gc, who, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
+		pidgin_retrieve_user_info_in_chat(gc, who, purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)));
 	}
 }
 
@@ -844,7 +844,7 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 			return;
 
 		serv_chat_invite(purple_conversation_get_connection(conv),
-						 purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
+						 purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)),
 						 message, buddy);
 	}
 
@@ -1527,7 +1527,7 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 
 	if (prpl_info && prpl_info->get_cb_real_name)
 		real_who = prpl_info->get_cb_real_name(gc,
-				purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), who);
+				purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)), who);
 
 	if(!who && !real_who)
 		return;
@@ -1543,7 +1543,7 @@ static void
 ignore_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	const char *name;
 
 	chat = PURPLE_CONV_CHAT(conv);
@@ -1552,10 +1552,10 @@ ignore_cb(GtkWidget *w, PidginConversation *gtkconv)
 	if (name == NULL)
 		return;
 
-	if (purple_conv_chat_is_user_ignored(chat, name))
-		purple_conv_chat_unignore(chat, name);
+	if (purple_chat_conversation_is_user_ignored(chat, name))
+		purple_chat_conversation_unignore(chat, name);
 	else
-		purple_conv_chat_ignore(chat, name);
+		purple_chat_conversation_ignore(chat, name);
 
 	pidgin_conv_chat_update_user(conv, name);
 }
@@ -1583,7 +1583,7 @@ menu_chat_send_file_cb(GtkWidget *w, PidginConversation *gtkconv)
 
 	if (prpl_info && prpl_info->get_cb_real_name)
 		real_who = prpl_info->get_cb_real_name(gc,
-				purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), who);
+				purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)), who);
 
 	serv_send_file(gc, real_who ? real_who : who, NULL);
 	g_free(real_who);
@@ -1671,7 +1671,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 {
 	static GtkWidget *menu = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
+	PurpleChatConversation *chat = PURPLE_CONV_CHAT(conv);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	gboolean is_me = FALSE;
 	GtkWidget *button;
@@ -1687,7 +1687,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	if (menu)
 		gtk_widget_destroy(menu);
 
-	if (!strcmp(purple_conv_chat_get_nick(chat), purple_normalize(account, who)))
+	if (!strcmp(purple_chat_conversation_get_nick(chat), purple_normalize(account, who)))
 		is_me = TRUE;
 
 	menu = gtk_menu_new();
@@ -1716,7 +1716,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 				gchar *real_who = NULL;
 				if (prpl_info->get_cb_real_name)
 					real_who = prpl_info->get_cb_real_name(gc,
-						purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), who);
+						purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)), who);
 				if (!(!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, real_who ? real_who : who)))
 					can_receive_file = FALSE;
 				g_free(real_who);
@@ -1729,7 +1729,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 		}
 
 
-		if (purple_conv_chat_is_user_ignored(PURPLE_CONV_CHAT(conv), who))
+		if (purple_chat_conversation_is_user_ignored(PURPLE_CONV_CHAT(conv), who))
 			button = pidgin_new_item_from_stock(menu, _("Un-Ignore"), PIDGIN_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 		else
@@ -2463,7 +2463,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 {
 	PidginConversation *gtkconv = (PidginConversation *)user_data;
 	PurpleConversation *conv;
-	PurpleConvIm *im;
+	PurpleIMConversation *im;
 
 	g_return_if_fail(gtkconv != NULL);
 
@@ -2477,11 +2477,11 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 	if (gtk_text_iter_is_start(start_pos) && gtk_text_iter_is_end(end_pos)) {
 
 		/* We deleted all the text, so turn off typing. */
-		purple_conv_im_stop_send_typed_timeout(im);
+		purple_im_conversation_stop_send_typed_timeout(im);
 
 		serv_send_typing(purple_conversation_get_connection(conv),
 						 purple_conversation_get_name(conv),
-						 PURPLE_NOT_TYPING);
+						 PURPLE_IM_CONVERSATION_NOT_TYPING);
 	}
 	else {
 		/* We're deleting, but not all of it, so it counts as typing. */
@@ -2832,7 +2832,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	const void *data;
 	size_t len;
 
-	icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+	icon = purple_im_conversation_get_icon(PURPLE_CONV_IM(conv));
 	data = purple_buddy_icon_get_data(icon, &len);
 
 	if ((len <= 0) || (data == NULL) || !purple_util_write_data_to_file_absolute(filename, data, len)) {
@@ -2927,7 +2927,7 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	g_return_if_fail(conv != NULL);
 
-	ext = purple_buddy_icon_get_extension(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
+	ext = purple_buddy_icon_get_extension(purple_im_conversation_get_icon(PURPLE_CONV_IM(conv)));
 
 	buf = g_strdup_printf("%s.%s", purple_normalize(purple_conversation_get_account(conv), purple_conversation_get_name(conv)), ext);
 
@@ -3060,11 +3060,11 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 	guint c = 0;
 
 	if (type == PURPLE_CONV_TYPE_IM) {
-		l = purple_get_ims();
+		l = purple_conversations_get_ims();
 	} else if (type == PURPLE_CONV_TYPE_CHAT) {
-		l = purple_get_chats();
+		l = purple_conversations_get_chats();
 	} else {
-		l = purple_get_conversations();
+		l = purple_conversations_get();
 	}
 
 	for (; l != NULL && (max_count == 0 || c < max_count); l = l->next) {
@@ -3747,27 +3747,27 @@ static void
 got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
-	PurpleConvIm *im;
+	PurpleIMConversation *im;
 
 	/*
 	 * We know we got something, so we at least have to make sure we don't
-	 * send PURPLE_TYPED any time soon.
+	 * send PURPLE_IM_CONVERSATION_TYPED any time soon.
 	 */
 
 	im = PURPLE_CONV_IM(conv);
 
-	purple_conv_im_stop_send_typed_timeout(im);
-	purple_conv_im_start_send_typed_timeout(im);
+	purple_im_conversation_stop_send_typed_timeout(im);
+	purple_im_conversation_start_send_typed_timeout(im);
 
-	/* Check if we need to send another PURPLE_TYPING message */
-	if (first || (purple_conv_im_get_type_again(im) != 0 &&
-				  time(NULL) > purple_conv_im_get_type_again(im)))
+	/* Check if we need to send another PURPLE_IM_CONVERSATION_TYPING message */
+	if (first || (purple_im_conversation_get_type_again(im) != 0 &&
+				  time(NULL) > purple_im_conversation_get_type_again(im)))
 	{
 		unsigned int timeout;
 		timeout = serv_send_typing(purple_conversation_get_connection(conv),
 								   purple_conversation_get_name(conv),
-								   PURPLE_TYPING);
-		purple_conv_im_set_type_again(im, timeout);
+								   PURPLE_IM_CONVERSATION_TYPING);
+		purple_im_conversation_set_type_again(im, timeout);
 	}
 }
 
@@ -3854,7 +3854,7 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 static void
 update_typing_icon(PidginConversation *gtkconv)
 {
-	PurpleConvIm *im = NULL;
+	PurpleIMConversation *im = NULL;
 	PurpleConversation *conv = gtkconv->active_conv;
 	char *message = NULL;
 
@@ -3864,7 +3864,7 @@ update_typing_icon(PidginConversation *gtkconv)
 	if (im == NULL)
 		return;
 
-	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
+	if (purple_im_conversation_get_typing_state(im) == PURPLE_IM_CONVERSATION_NOT_TYPING) {
 #ifdef RESERVE_LINE
 		update_typing_message(gtkconv, NULL);
 #else
@@ -3873,7 +3873,7 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 	}
 
-	if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
+	if (purple_im_conversation_get_typing_state(im) == PURPLE_IM_CONVERSATION_TYPING) {
 		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 	} else {
 		message = g_strdup_printf(_("\n%s has stopped typing"), purple_conversation_get_title(conv));
@@ -4126,19 +4126,19 @@ generate_send_to_items(PidginWindow *win)
 }
 
 static const char *
-get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvChatBuddyFlags flags)
+get_chat_buddy_status_icon(PurpleChatConversation *chat, const char *name, PurpleChatConversationBuddyFlags flags)
 {
 	const char *image = NULL;
 
-	if (flags & PURPLE_CBFLAGS_FOUNDER) {
+	if (flags & PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER) {
 		image = PIDGIN_STOCK_STATUS_FOUNDER;
-	} else if (flags & PURPLE_CBFLAGS_OP) {
+	} else if (flags & PURPLE_CHAT_CONVERSATION_BUDDY_OP) {
 		image = PIDGIN_STOCK_STATUS_OPERATOR;
-	} else if (flags & PURPLE_CBFLAGS_HALFOP) {
+	} else if (flags & PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP) {
 		image = PIDGIN_STOCK_STATUS_HALFOP;
-	} else if (flags & PURPLE_CBFLAGS_VOICE) {
+	} else if (flags & PURPLE_CHAT_CONVERSATION_BUDDY_VOICE) {
 		image = PIDGIN_STOCK_STATUS_VOICE;
-	} else if ((!flags) && purple_conv_chat_is_user_ignored(chat, name)) {
+	} else if ((!flags) && purple_chat_conversation_is_user_ignored(chat, name)) {
 		image = PIDGIN_STOCK_STATUS_IGNORED;
 	} else {
 		return NULL;
@@ -4147,22 +4147,22 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 }
 
 static void
-deleting_chat_buddy_cb(PurpleConvChatBuddy *cb)
+deleting_chat_buddy_cb(PurpleChatConversationBuddy *cb)
 {
-	GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cb);
+	GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cb);
 
 	if (ref) {
 		gtk_tree_row_reference_free(ref);
-		purple_conv_chat_cb_set_ui_data(cb, NULL);
+		purple_chat_conversation_cb_set_ui_data(cb, NULL);
 	}
 }
 
 static void
-add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const char *old_name)
+add_chat_buddy_common(PurpleConversation *conv, PurpleChatConversationBuddy *cb, const char *old_name)
 {
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	PurpleConnection *gc;
 	PurplePluginProtocolInfo *prpl_info;
 	GtkTreeModel *tm;
@@ -4174,12 +4174,12 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	gboolean is_buddy;
 	const gchar *name, *alias;
 	gchar *tmp, *alias_key;
-	PurpleConvChatBuddyFlags flags;
+	PurpleChatConversationBuddyFlags flags;
 	GdkColor *color = NULL;
 
-	alias = purple_conv_chat_cb_get_alias(cb);
-	name  = purple_conv_chat_cb_get_name(cb);
-	flags = purple_conv_chat_cb_get_flags(cb);
+	alias = purple_chat_conversation_cb_get_alias(cb);
+	name  = purple_chat_conversation_cb_get_name(cb);
+	flags = purple_chat_conversation_cb_get_flags(cb);
 
 	chat    = PURPLE_CONV_CHAT(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -4194,10 +4194,10 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	stock = get_chat_buddy_status_icon(chat, name, flags);
 
-	if (!strcmp(purple_conv_chat_get_nick(chat), purple_normalize(purple_conversation_get_account(conv), old_name != NULL ? old_name : name)))
+	if (!strcmp(purple_chat_conversation_get_nick(chat), purple_normalize(purple_conversation_get_account(conv), old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
-	is_buddy = purple_conv_chat_cb_is_buddy(cb);
+	is_buddy = purple_chat_conversation_cb_is_buddy(cb);
 
 	tmp = g_utf8_casefold(alias, -1);
 	alias_key = g_utf8_collate_key(tmp, -1);
@@ -4238,13 +4238,13 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 
-	if (purple_conv_chat_cb_get_ui_data(cb)) {
-		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cb);
+	if (purple_chat_conversation_cb_get_ui_data(cb)) {
+		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cb);
 		gtk_tree_row_reference_free(ref);
 	}
 
 	newpath = gtk_tree_model_get_path(tm, &iter);
-	purple_conv_chat_cb_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
+	purple_chat_conversation_cb_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
 	gtk_tree_path_free(newpath);
 
 	if (is_me && color)
@@ -4391,8 +4391,8 @@ tab_complete(PurpleConversation *conv)
 		}
 		g_list_free(list);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
-		GList *l = purple_conv_chat_get_users(chat);
+		PurpleChatConversation *chat = PURPLE_CONV_CHAT(conv);
+		GList *l = purple_chat_conversation_get_users(chat);
 		GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(PIDGIN_CONVERSATION(conv)->u.chat->list));
 		GtkTreeIter iter;
 		int f;
@@ -4400,7 +4400,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, purple_conv_chat_cb_get_name((PurpleConvChatBuddy *)l->data));
+									  &matches, purple_chat_conversation_cb_get_name((PurpleChatConversationBuddy *)l->data));
 		}
 
 
@@ -4509,7 +4509,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 	new_topic = g_strdup(gtk_entry_get_text(GTK_ENTRY(gtkchat->topic_text)));
-	current_topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+	current_topic = purple_chat_conversation_get_topic(PURPLE_CONV_CHAT(conv));
 
 	if(current_topic && !g_utf8_collate(new_topic, current_topic)){
 		g_free(new_topic);
@@ -4521,7 +4521,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	else
 		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), "");
 
-	prpl_info->set_chat_topic(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
+	prpl_info->set_chat_topic(gc, purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)),
 			new_topic);
 
 	g_free(new_topic);
@@ -4530,7 +4530,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 static gint
 sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer userdata)
 {
-	PurpleConvChatBuddyFlags f1 = 0, f2 = 0;
+	PurpleChatConversationBuddyFlags f1 = 0, f2 = 0;
 	char *user1 = NULL, *user2 = NULL;
 	gboolean buddy1 = FALSE, buddy2 = FALSE;
 	gint ret = 0;
@@ -4547,10 +4547,10 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 	                   -1);
 
 	/* Only sort by membership levels */
-	f1 &= PURPLE_CBFLAGS_VOICE | PURPLE_CBFLAGS_HALFOP | PURPLE_CBFLAGS_OP |
-			PURPLE_CBFLAGS_FOUNDER;
-	f2 &= PURPLE_CBFLAGS_VOICE | PURPLE_CBFLAGS_HALFOP | PURPLE_CBFLAGS_OP |
-			PURPLE_CBFLAGS_FOUNDER;
+	f1 &= PURPLE_CHAT_CONVERSATION_BUDDY_VOICE | PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP | PURPLE_CHAT_CONVERSATION_BUDDY_OP |
+			PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
+	f2 &= PURPLE_CHAT_CONVERSATION_BUDDY_VOICE | PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP | PURPLE_CHAT_CONVERSATION_BUDDY_OP |
+			PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
 
 	if (user1 == NULL || user2 == NULL) {
 		if (!(user1 == NULL && user2 == NULL))
@@ -4574,7 +4574,7 @@ static void
 update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection *gc, PurplePluginProtocolInfo *prpl_info)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-	PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
+	PurpleChatConversation *chat = PURPLE_CONV_CHAT(conv);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	GtkTreeModel *model;
 	char *normalized_name;
@@ -4603,7 +4603,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection
 			char *alias_key = NULL;
 			PurpleBuddy *buddy2;
 
-			if (strcmp(purple_conv_chat_get_nick(chat), purple_normalize(account, name))) {
+			if (strcmp(purple_chat_conversation_get_nick(chat), purple_normalize(account, name))) {
 				/* This user is not me, so look into updating the alias. */
 
 				if ((buddy2 = purple_find_buddy(account, name)) != NULL) {
@@ -4849,7 +4849,7 @@ minimum_entry_lines_pref_cb(const char *name,
                             gconstpointer value,
                             gpointer data)
 {
-	GList *l = purple_get_conversations();
+	GList *l = purple_conversations_get();
 	PurpleConversation *conv;
 	while (l != NULL)
 	{
@@ -5153,7 +5153,7 @@ replace_header_tokens(PurpleConversation *conv, const char *text)
 			}
 
 		} else if (g_str_has_prefix(cur, "%incomingIconPath%")) {
-			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+			PurpleBuddyIcon *icon = purple_im_conversation_get_icon(PURPLE_CONV_IM(conv));
 			if (icon)
 				replace = purple_buddy_icon_get_full_path(icon);
 
@@ -5578,14 +5578,14 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
 				strcmp(purple_account_get_protocol_id(convaccount),
 					purple_account_get_protocol_id(buddyaccount)) == 0) {
-		    purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), buddyname, NULL, TRUE);
+		    purple_chat_conversation_invite_user(PURPLE_CONV_CHAT(conv), buddyname, NULL, TRUE);
 		} else {
 			/*
 			 * If we already have an open conversation with this buddy, then
 			 * just move the conv to this window.  Otherwise, create a new
 			 * conv and add it to this window.
 			 */
-			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddyname, buddyaccount);
+			c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddyname, buddyaccount);
 			if (c != NULL) {
 				PidginWindow *oldwin;
 				gtkconv = PIDGIN_CONVERSATION(c);
@@ -5633,7 +5633,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 						prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
 						strcmp(purple_account_get_protocol_id(convaccount), protocol) == 0) {
-					purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), username, NULL, TRUE);
+					purple_chat_conversation_invite_user(PURPLE_CONV_CHAT(conv), username, NULL, TRUE);
 				} else {
 					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
 					gtkconv = PIDGIN_CONVERSATION(c);
@@ -5679,7 +5679,7 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 	for (bn = purple_blist_node_get_first_child(cn); bn; bn = purple_blist_node_get_sibling_next(bn)) {
 		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
-		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), purple_buddy_get_account(b)))) {
+		if ((conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), purple_buddy_get_account(b)))) {
 			if (PIDGIN_CONVERSATION(conv))
 				return PIDGIN_CONVERSATION(conv);
 		}
@@ -5976,7 +5976,7 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		/* Make sure the destroyed conversation is not the active one */
 		if (gtkconv->active_conv == conv) {
 			gtkconv->active_conv = gtkconv->convs->data;
-			purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_FEATURES);
+			purple_conversation_update(gtkconv->active_conv, PURPLE_CONVERSATION_UPDATE_FEATURES);
 		}
 		return;
 	}
@@ -6037,7 +6037,7 @@ pidgin_conv_write_im(PurpleConversation *conv, const char *who,
 	    flags & PURPLE_MESSAGE_ACTIVE_ONLY)
 	{
 		/* Plugins that want these messages suppressed should be
-		 * calling purple_conv_im_write(), so they get suppressed here,
+		 * calling purple_im_conversation_write_message(), so they get suppressed here,
 		 * before being written to the log. */
 		purple_debug_info("gtkconv",
 		                "Suppressing message for an inactive conversation in pidgin_conv_write_im()\n");
@@ -6312,7 +6312,7 @@ replace_message_tokens(
 					replace = freeval = g_build_filename("Outgoing", "buddy_icon.png", NULL);
 				}
 			} else if (flags & PURPLE_MESSAGE_RECV) {
-				PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+				PurpleBuddyIcon *icon = purple_im_conversation_get_icon(PURPLE_CONV_IM(conv));
 				if (icon)
 					replace = purple_buddy_icon_get_full_path(icon);
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
@@ -6429,7 +6429,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		{
 			/* Unless this had PURPLE_MESSAGE_NO_LOG, this message
 			 * was logged.  Plugin writers: if this isn't what
-			 * you wanted, call purple_conv_im_write() instead of
+			 * you wanted, call purple_im_conversation_write_message() instead of
 			 * purple_conversation_write(). */
 			purple_debug_info("gtkconv",
 			                "Suppressing message for an inactive conversation in pidgin_conv_write_conv()\n");
@@ -6479,7 +6479,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	} else if ((flags & PURPLE_MESSAGE_RECV) && (old_flags & PURPLE_MESSAGE_RECV)) {
 		GList *history = purple_conversation_get_message_history(gtkconv->last_conversed);
-		PurpleConvMessage *last_msg = history ? (PurpleConvMessage *)history->data : NULL;
+		PurpleConversationMessage *last_msg = history ? (PurpleConversationMessage *)history->data : NULL;
 
 		g_assert(history != NULL);
 		g_assert(last_msg != NULL);
@@ -6785,7 +6785,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	update_typing_message(gtkconv, NULL);
 }
 
-static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *iter)
+static gboolean get_iter_from_chatbuddy(PurpleChatConversationBuddy *cb, GtkTreeIter *iter)
 {
 	GtkTreeRowReference *ref;
 	GtkTreePath *path;
@@ -6793,7 +6793,7 @@ static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *it
 
 	g_return_val_if_fail(cb != NULL, FALSE);
 
-	ref = purple_conv_chat_cb_get_ui_data(cb);
+	ref = purple_chat_conversation_cb_get_ui_data(cb);
 	if (!ref)
 		return FALSE;
 
@@ -6813,7 +6813,7 @@ static gboolean get_iter_from_chatbuddy(PurpleConvChatBuddy *cb, GtkTreeIter *it
 static void
 pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
 	GtkListStore *ls;
@@ -6826,7 +6826,7 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_conv_chat_get_users(chat));
+	num_users = g_list_length(purple_chat_conversation_get_users(chat));
 
 	g_snprintf(tmp, sizeof(tmp),
 			   ngettext("%d person in room", "%d people in room",
@@ -6842,7 +6842,7 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 
 	l = cbuddies;
 	while (l != NULL) {
-		add_chat_buddy_common(conv, (PurpleConvChatBuddy *)l->data, NULL);
+		add_chat_buddy_common(conv, (PurpleChatConversationBuddy *)l->data, NULL);
 		l = l->next;
 	}
 
@@ -6857,10 +6857,10 @@ static void
 pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 			      const char *new_name, const char *new_alias)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
-	PurpleConvChatBuddy *old_cbuddy, *new_cbuddy;
+	PurpleChatConversationBuddy *old_cbuddy, *new_cbuddy;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTextTag *tag;
@@ -6879,21 +6879,21 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
 		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
 
-	old_cbuddy = purple_conv_chat_cb_find(chat, old_name);
+	old_cbuddy = purple_chat_conversation_cb_find(chat, old_name);
 	if (!old_cbuddy)
 		return;
 
 	if (get_iter_from_chatbuddy(old_cbuddy, &iter)) {
-		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(old_cbuddy);
+		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(old_cbuddy);
 
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		purple_conv_chat_cb_set_ui_data(old_cbuddy, NULL);
+		purple_chat_conversation_cb_set_ui_data(old_cbuddy, NULL);
 	}
 
 	g_return_if_fail(new_alias != NULL);
 
-	new_cbuddy = purple_conv_chat_cb_find(chat, new_name);
+	new_cbuddy = purple_chat_conversation_cb_find(chat, new_name);
 
 	add_chat_buddy_common(conv, new_cbuddy, old_name);
 }
@@ -6901,7 +6901,7 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 static void
 pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
 	GtkTreeIter iter;
@@ -6916,7 +6916,7 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_conv_chat_get_users(chat));
+	num_users = g_list_length(purple_chat_conversation_get_users(chat));
 
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -6956,8 +6956,8 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 static void
 pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 {
-	PurpleConvChat *chat;
-	PurpleConvChatBuddy *cbuddy;
+	PurpleChatConversation *chat;
+	PurpleChatConversationBuddy *cbuddy;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
 	GtkTreeIter iter;
@@ -6972,15 +6972,15 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		return;
 
-	cbuddy = purple_conv_chat_cb_find(chat, user);
+	cbuddy = purple_chat_conversation_cb_find(chat, user);
 	if (!cbuddy)
 		return;
 
 	if (get_iter_from_chatbuddy(cbuddy, &iter)) {
-		GtkTreeRowReference *ref = purple_conv_chat_cb_get_ui_data(cbuddy);
+		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cbuddy);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		purple_conv_chat_cb_set_ui_data(cbuddy, NULL);
+		purple_chat_conversation_cb_set_ui_data(cbuddy, NULL);
 	}
 
 	if (cbuddy)
@@ -7257,7 +7257,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 	 */
 	if ((gc != NULL) &&
 		((purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_CHAT) ||
-		 !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) ))
+		 !purple_chat_conversation_has_left(PURPLE_CONV_CHAT(conv)) ))
 	{
 		PurpleConnectionFlags features = purple_conversation_get_features(conv);
 		/* Account is online */
@@ -7413,12 +7413,12 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
 	{
 		const char *topic;
-		PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
+		PurpleChatConversation *chat = PURPLE_CONV_CHAT(conv);
 		PidginChatPane *gtkchat = gtkconv->u.chat;
 
 		if (gtkchat->topic_text != NULL)
 		{
-			topic = purple_conv_chat_get_topic(chat);
+			topic = purple_chat_conversation_get_topic(chat);
 
 			gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
 			gtk_widget_set_tooltip_text(gtkchat->topic_text,
@@ -7436,7 +7436,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			(fields & PIDGIN_CONV_TOPIC))
 	{
 		char *title;
-		PurpleConvIm *im = NULL;
+		PurpleIMConversation *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
 		PurpleBuddy *buddy = NULL;
 		char *markup = NULL;
@@ -7450,7 +7450,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		if ((account == NULL) ||
 			!purple_account_is_connected(account) ||
 			((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-				&& purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))))
+				&& purple_chat_conversation_has_left(PURPLE_CONV_CHAT(conv))))
 			title = g_strdup_printf("(%s)", purple_conversation_get_title(conv));
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
@@ -7502,11 +7502,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 
 		accessibility_obj = gtk_widget_get_accessible(gtkconv->tab_cont);
 		if (im != NULL &&
-		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
+		    purple_im_conversation_get_typing_state(im) == PURPLE_IM_CONVERSATION_TYPING) {
 			atk_object_set_description(accessibility_obj, _("Typing"));
 			style = "tab-label-typing";
 		} else if (im != NULL &&
-		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED) {
+		         purple_im_conversation_get_typing_state(im) == PURPLE_IM_CONVERSATION_TYPED) {
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
 			style = "tab-label-typed";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
@@ -7557,23 +7557,23 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 }
 
 static void
-pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
+pidgin_conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type)
 {
 	PidginConvFields flags = 0;
 
 	g_return_if_fail(conv != NULL);
 
-	if (type == PURPLE_CONV_UPDATE_ACCOUNT)
+	if (type == PURPLE_CONVERSATION_UPDATE_ACCOUNT)
 	{
 		flags = PIDGIN_CONV_ALL;
 	}
-	else if (type == PURPLE_CONV_UPDATE_TYPING ||
-	         type == PURPLE_CONV_UPDATE_UNSEEN ||
-	         type == PURPLE_CONV_UPDATE_TITLE)
+	else if (type == PURPLE_CONVERSATION_UPDATE_TYPING ||
+	         type == PURPLE_CONVERSATION_UPDATE_UNSEEN ||
+	         type == PURPLE_CONVERSATION_UPDATE_TITLE)
 	{
 		flags = PIDGIN_CONV_COLORIZE_TITLE;
 	}
-	else if (type == PURPLE_CONV_UPDATE_TOPIC)
+	else if (type == PURPLE_CONVERSATION_UPDATE_TOPIC)
 	{
 		flags = PIDGIN_CONV_TOPIC;
 	}
@@ -7582,21 +7582,21 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
 	{
 		flags = PIDGIN_CONV_MENU | PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_SET_TITLE;
 	}
-	else if (type == PURPLE_CONV_UPDATE_AWAY)
+	else if (type == PURPLE_CONVERSATION_UPDATE_AWAY)
 	{
 		flags = PIDGIN_CONV_TAB_ICON;
 	}
-	else if (type == PURPLE_CONV_UPDATE_ADD ||
-	         type == PURPLE_CONV_UPDATE_REMOVE ||
-	         type == PURPLE_CONV_UPDATE_CHATLEFT)
+	else if (type == PURPLE_CONVERSATION_UPDATE_ADD ||
+	         type == PURPLE_CONVERSATION_UPDATE_REMOVE ||
+	         type == PURPLE_CONVERSATION_UPDATE_CHATLEFT)
 	{
 		flags = PIDGIN_CONV_SET_TITLE | PIDGIN_CONV_MENU;
 	}
-	else if (type == PURPLE_CONV_UPDATE_ICON)
+	else if (type == PURPLE_CONVERSATION_UPDATE_ICON)
 	{
 		flags = PIDGIN_CONV_BUDDY_ICON;
 	}
-	else if (type == PURPLE_CONV_UPDATE_FEATURES)
+	else if (type == PURPLE_CONVERSATION_UPDATE_FEATURES)
 	{
 		flags = PIDGIN_CONV_MENU;
 	}
@@ -7744,7 +7744,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	}
 
 	if (data == NULL) {
-		icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+		icon = purple_im_conversation_get_icon(PURPLE_CONV_IM(conv));
 		if (icon == NULL)
 		{
 			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
@@ -7938,7 +7938,7 @@ close_on_tabs_pref_cb(const char *name, PurplePrefType type,
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
@@ -7961,7 +7961,7 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	for (cl = purple_get_conversations(); cl != NULL; cl = cl->next) {
+	for (cl = purple_conversations_get(); cl != NULL; cl = cl->next) {
 
 		conv = (PurpleConversation *)cl->data;
 
@@ -8003,7 +8003,7 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 	PidginConversation *gtkconv;
 	PidginWindow *win;
 
-	for (l = purple_get_conversations(); l != NULL; l = l->next)
+	for (l = purple_conversations_get(); l != NULL; l = l->next)
 	{
 		conv = (PurpleConversation *)l->data;
 
@@ -8039,7 +8039,7 @@ animate_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 		return;
 
 	/* Set the "animate" flag for each icon based on the new preference */
-	for (l = purple_get_ims(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_ims(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv)
@@ -8060,7 +8060,7 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 {
 	GList *l;
 
-	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
 		if (!PIDGIN_CONVERSATION(conv))
 			continue;
@@ -8088,7 +8088,7 @@ show_protocol_icons_pref_cb(const char *name, PurplePrefType type,
 						gconstpointer value, gpointer data)
 {
 	GList *l;
-	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
 		if (PIDGIN_CONVERSATION(conv))
 			update_tab_icon(conv);
@@ -8129,7 +8129,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 
 		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
 		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 	}
 }
 
@@ -8198,7 +8198,7 @@ get_gtkconv_with_contact(PurpleContact *contact)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy*)node;
 		PurpleConversation *conv;
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 		if (conv)
 			return PIDGIN_CONVERSATION(conv);
 	}
@@ -8210,7 +8210,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 {
 	GList *iter;
 
-	for (iter = purple_get_conversations(); iter; iter = iter->next)
+	for (iter = purple_conversations_get(); iter; iter = iter->next)
 	{
 		PurpleConversation *conv = iter->data;
 
@@ -8246,14 +8246,14 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 static void
 account_signing_off(PurpleConnection *gc)
 {
-	GList *list = purple_get_chats();
+	GList *list = purple_conversations_get_chats();
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* We are about to sign off. See which chats we are currently in, and mark
 	 * them for rejoin on reconnect. */
 	while (list) {
 		PurpleConversation *conv = list->data;
-		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) &&
+		if (!purple_chat_conversation_has_left(PURPLE_CONV_CHAT(conv)) &&
 				purple_conversation_get_account(conv) == account) {
 			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
@@ -8301,7 +8301,7 @@ update_buddy_idle_changed(PurpleBuddy *buddy, gboolean old, gboolean newidle)
 {
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
 }
@@ -8311,7 +8311,7 @@ update_buddy_icon(PurpleBuddy *buddy)
 {
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_BUDDY_ICON);
 }
@@ -8347,7 +8347,7 @@ update_buddy_typing(PurpleAccount *account, const char *who)
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, account);
 	if (!conv)
 		return;
 
@@ -8371,11 +8371,11 @@ update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 
 /* Message history stuff */
 
-/* Compare two PurpleConvMessage's, according to time in ascending order. */
+/* Compare two PurpleConversationMessage's, according to time in ascending order. */
 static int
 message_compare(gconstpointer p1, gconstpointer p2)
 {
-	const PurpleConvMessage *m1 = p1, *m2 = p2;
+	const PurpleConversationMessage *m1 = p1, *m2 = p2;
 	return (purple_conversation_message_get_timestamp(m1) > purple_conversation_message_get_timestamp(m2));
 }
 
@@ -8392,14 +8392,14 @@ add_message_history_to_gtkconv(gpointer data)
 
 	gtkconv->attach.timer = 0;
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
-		PurpleConvMessage *msg = gtkconv->attach.current->data;
+		PurpleConversationMessage *msg = gtkconv->attach.current->data;
 		if (!im && when && when < purple_conversation_message_get_timestamp(msg)) {
 			gtk_webview_append_html(webview, "<BR><HR>");
 			gtk_webview_scroll_to_end(webview, TRUE);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
 		pidgin_conv_write_conv(
-				purple_conversation_message_get_conv(msg),
+				purple_conversation_message_get_conversation(msg),
 				purple_conversation_message_get_sender(msg),
 				purple_conversation_message_get_alias(msg),
 				purple_conversation_message_get_message(msg),
@@ -8426,16 +8426,16 @@ add_message_history_to_gtkconv(gpointer data)
 			PurpleConversation *conv = iter->data;
 			GList *history = purple_conversation_get_message_history(conv);
 			for (; history; history = history->next) {
-				PurpleConvMessage *msg = history->data;
+				PurpleConversationMessage *msg = history->data;
 				if (purple_conversation_message_get_timestamp(msg) > when)
 					msgs = g_list_prepend(msgs, msg);
 			}
 		}
 		msgs = g_list_sort(msgs, message_compare);
 		for (; msgs; msgs = g_list_delete_link(msgs, msgs)) {
-			PurpleConvMessage *msg = msgs->data;
+			PurpleConversationMessage *msg = msgs->data;
 			pidgin_conv_write_conv(
-					purple_conversation_message_get_conv(msg),
+					purple_conversation_message_get_conversation(msg),
 					purple_conversation_message_get_sender(msg),
 					purple_conversation_message_get_alias(msg),
 					purple_conversation_message_get_message(msg),
@@ -8501,7 +8501,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 			{
 				GList *convs;
 				list = g_list_copy(list);
-				for (convs = purple_get_ims(); convs; convs = convs->next)
+				for (convs = purple_conversations_get_ims(); convs; convs = convs->next)
 					if (convs->data != conv &&
 							pidgin_conv_find_gtkconv(convs->data) == gtkconv) {
 						pidgin_conv_attach(convs->data);
@@ -8519,7 +8519,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 				g_return_val_if_reached(TRUE);
 		}
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time",
-				GINT_TO_POINTER(purple_conversation_message_get_timestamp((PurpleConvMessage*)(list->data))));
+				GINT_TO_POINTER(purple_conversation_message_get_timestamp((PurpleConversationMessage*)(list->data))));
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
 		purple_signal_emit(pidgin_conversations_get_handle(),
@@ -8528,7 +8528,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
-		pidgin_conv_chat_add_users(conv, purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv)), TRUE);
+		pidgin_conv_chat_add_users(conv, purple_chat_conversation_get_users(PURPLE_CONV_CHAT(conv)), TRUE);
 	}
 
 	return TRUE;
@@ -9083,7 +9083,7 @@ conv_set_unseen(PurpleConversation *conv, PidginUnseenState state)
 	purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(unseen_count));
 	purple_conversation_set_data(conv, "unseen-state", GINT_TO_POINTER(unseen_state));
 
-	purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 }
 
 static void
@@ -9106,7 +9106,7 @@ gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state)
 	purple_conversation_set_data(gtkconv->active_conv, "unseen-count", GINT_TO_POINTER(gtkconv->unseen_count));
 	purple_conversation_set_data(gtkconv->active_conv, "unseen-state", GINT_TO_POINTER(gtkconv->unseen_state));
 
-	purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_UNSEEN);
+	purple_conversation_update(gtkconv->active_conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 }
 
 /*
@@ -9831,7 +9831,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 			/* This protocol doesn't support setting the chat room topic */
 			return FALSE;
 
-		text = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+		text = purple_chat_conversation_get_topic(PURPLE_CONV_CHAT(conv));
 	}
 
 	/* alias label */

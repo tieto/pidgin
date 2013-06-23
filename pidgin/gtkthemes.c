@@ -341,7 +341,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			pidgin_themes_destroy_smiley_theme_smileys(current_smiley_theme);
 		current_smiley_theme = theme;
 
-		for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
+		for (cnv = purple_conversations_get(); cnv != NULL; cnv = cnv->next) {
 			PurpleConversation *conv = cnv->data;
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {

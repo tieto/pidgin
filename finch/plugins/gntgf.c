@@ -256,7 +256,7 @@ received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
 	if (flags & PURPLE_MESSAGE_WHISPER)
 		return;
 
-	nick = purple_conv_chat_get_nick(PURPLE_CONV_CHAT(conv));
+	nick = purple_chat_conversation_get_nick(PURPLE_CONV_CHAT(conv));
 
 	if (g_utf8_collate(sender, nick) == 0)
 		return;

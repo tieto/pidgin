@@ -139,7 +139,7 @@ unmute_login_sounds_cb(gpointer data)
 static gboolean
 chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 {
-	PurpleConvChat *chat = NULL;
+	PurpleChatConversation *chat = NULL;
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
@@ -150,7 +150,7 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 		return ret;
 
 	account = purple_conversation_get_account(conv);
-	nick = g_strdup(purple_normalize(account, purple_conv_chat_get_nick(chat)));
+	nick = g_strdup(purple_normalize(account, purple_chat_conversation_get_nick(chat)));
 	name = g_strdup(purple_normalize(account, aname));
 
 	if (g_utf8_collate(nick, name) == 0)
@@ -214,14 +214,14 @@ static void
 im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
+	PurpleConversation *conv = purple_conversations_find_with_account(
 		PURPLE_CONV_TYPE_IM, receiver, account);
 	play_conv_event(conv, event);
 }
 
 static void
 chat_buddy_join_cb(PurpleConversation *conv, const char *name,
-				   PurpleConvChatBuddyFlags flags, gboolean new_arrival,
+				   PurpleChatConversationBuddyFlags flags, gboolean new_arrival,
 				   PurpleSoundEventID event)
 {
 	if (new_arrival && !chat_nick_matches_name(conv, name))
@@ -244,7 +244,7 @@ chat_msg_sent_cb(PurpleAccount *account, const char *message,
 	PurpleConversation *conv = NULL;
 
 	if (conn!=NULL)
-		conv = purple_find_chat(conn, id);
+		conv = purple_conversations_find_chat(conn, id);
 
 	play_conv_event(conv, event);
 }
@@ -254,7 +254,7 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 					 char *message, PurpleConversation *conv,
 					 PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 
 	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
@@ -262,13 +262,13 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 	chat = purple_conversation_get_chat_data(conv);
 	g_return_if_fail(chat != NULL);
 
-	if (purple_conv_chat_is_user_ignored(chat, sender))
+	if (purple_chat_conversation_is_user_ignored(chat, sender))
 		return;
 
 	if (chat_nick_matches_name(conv, sender))
 		return;
 
-	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_conv_chat_get_nick(chat)))
+	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_chat_conversation_get_nick(chat)))
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);

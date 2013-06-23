@@ -475,7 +475,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 		return;
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_connection_get_account(gc), who);
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
+	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
 	purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
 	g_free(description);
@@ -533,7 +533,7 @@ purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code
 
 	got_attention(gc, -1, who, type_code);
 	conv =
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
+		purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, who, account);
 	if (conv)
 		purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
 			time(NULL));

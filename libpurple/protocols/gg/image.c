@@ -290,7 +290,7 @@ void ggp_image_send(PurpleConnection *gc,
 		purple_imgstore_get_size(image));
 	purple_imgstore_unref(image);
 	
-	conv = purple_find_conversation_with_account(
+	conv = purple_conversations_find_with_account(
 		PURPLE_CONV_TYPE_IM, pending_image->conv_name,
 		purple_connection_get_account(gc));
 	if (conv != NULL)

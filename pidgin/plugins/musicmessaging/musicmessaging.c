@@ -111,7 +111,7 @@ void music_messaging_change_request(const int session, const char *command, cons
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## request %s %s##MM##", command, parameters);
 
-			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 
 			purple_debug_misc("musicmessaging", "Sent request: %s\n", to_send->str);
 		}
@@ -131,7 +131,7 @@ void music_messaging_change_confirmed(const int session, const char *command, co
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## confirm %s %s##MM##", command, parameters);
 
-			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -154,7 +154,7 @@ void music_messaging_change_failed(const int session, const char *id, const char
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## failed %s %s %s##MM##", id, command, parameters);
 
-			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */

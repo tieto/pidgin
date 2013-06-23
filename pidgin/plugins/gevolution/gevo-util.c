@@ -33,7 +33,7 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
 
 	group = purple_find_group(group_name);
 	if (group == NULL)
@@ -53,8 +53,8 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	if (conv != NULL)
 	{
-		purple_buddy_icon_update(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ADD);
+		purple_buddy_icon_update(purple_im_conversation_get_icon(PURPLE_CONV_IM(conv)));
+		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ADD);
 	}
 }
 

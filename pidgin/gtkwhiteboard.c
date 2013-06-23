@@ -351,7 +351,7 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* XXXX because otherwise gettext will see this string, even though it's
 	 * in an #if 0 block. Remove the XXXX if you want to use this code.
 	 * But, it really shouldn't be a Yahoo-specific string. ;) */
-	purple_conv_im_write(PURPLE_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
+	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
 					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
 	yahoo_doodle_command_send_request(gc, to);

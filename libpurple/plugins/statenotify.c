@@ -25,7 +25,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 	account = purple_buddy_get_account(buddy);
 	buddy_name = purple_buddy_get_name(buddy);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 												 buddy_name, account);
 
 	if (conv == NULL)
@@ -42,7 +42,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 	g_snprintf(buf, sizeof(buf), message, escaped);
 	g_free(escaped);
 
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
 }
 
 static void

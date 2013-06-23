@@ -289,9 +289,9 @@ docklet_update_status_cb(void *data)
 }
 
 static void
-docklet_conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type)
+docklet_conv_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType type)
 {
-	if (type == PURPLE_CONV_UPDATE_UNSEEN)
+	if (type == PURPLE_CONVERSATION_UPDATE_UNSEEN)
 		docklet_update_status();
 }
 

@@ -697,7 +697,7 @@ purple_accounts_delete(PurpleAccount *account)
 	}
 
 	/* Remove any open conversation for this account */
-	for (iter = purple_get_conversations(); iter; ) {
+	for (iter = purple_conversations_get(); iter; ) {
 		PurpleConversation *conv = iter->data;
 		iter = iter->next;
 		if (purple_conversation_get_account(conv) == account)

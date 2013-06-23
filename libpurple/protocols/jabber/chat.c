@@ -147,7 +147,7 @@ JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 	if (!gc)
 		return NULL;
 	js = purple_connection_get_protocol_data(gc);
-	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
+	id = purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv));
 	return jabber_chat_find_by_id(js, id);
 }
 
@@ -453,7 +453,7 @@ void jabber_chat_free(JabberChat *chat)
 
 gboolean jabber_chat_find_buddy(PurpleConversation *conv, const char *name)
 {
-	return purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), name);
+	return purple_chat_conversation_find_user(PURPLE_CONV_CHAT(conv), name);
 }
 
 char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
@@ -753,7 +753,7 @@ gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
 	int priority;
 
 	if(!chat->muc) {
-		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
+		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "",
 				_("Nick changing not supported in non-MUC chatrooms"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
 		return FALSE;
@@ -1072,7 +1072,7 @@ jabber_chat_affiliation_list_cb(JabberStream *js, const char *from,
 		buf = g_string_append_len(buf, _("No users found"), -1);
 	}
 
-	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
+	purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
     	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 
 	g_string_free(buf, TRUE);
@@ -1167,7 +1167,7 @@ static void jabber_chat_role_list_cb(JabberStream *js, const char *from,
 		buf = g_string_append_len(buf, _("No users found"), -1);
 	}
 
-	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
+	purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
     	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 
 	g_string_free(buf, TRUE);

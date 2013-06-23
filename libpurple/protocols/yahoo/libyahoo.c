@@ -112,7 +112,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 		if (sname) {
 			char *message = g_hash_table_lookup(params, "m");
 
-			PurpleConversation *conv = purple_find_conversation_with_account(
+			PurpleConversation *conv = purple_conversations_find_with_account(
 				PURPLE_CONV_TYPE_IM, sname, acct);
 			if (conv == NULL)
 				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);

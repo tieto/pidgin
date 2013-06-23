@@ -1262,7 +1262,7 @@ const char *purple_conversation_message_get_alias(const PurpleConversationMessag
 	return msg->alias;
 }
 
-PurpleConversation *purple_conversation_message_get_conv(const PurpleConversationMessage *msg)
+PurpleConversation *purple_conversation_message_get_conversation(const PurpleConversationMessage *msg)
 {
 	g_return_val_if_fail(msg, NULL);
 	return msg->conv;
