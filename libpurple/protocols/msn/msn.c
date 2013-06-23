@@ -2052,14 +2052,14 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	while (smileys) {
 		smile = (MsnEmoticon *)smileys->data;
 		emoticons = msn_msg_emoticon_add(emoticons, smile);
-		if (purple_conv_custom_smiley_add(swboard->conv, smile->smile,
+		if (purple_conversation_custom_smiley_add(swboard->conv, smile->smile,
 		                                  "sha1", purple_smiley_get_checksum(smile->ps),
 		                                  FALSE)) {
 			gconstpointer data;
 			size_t len;
 			data = purple_smiley_get_data(smile->ps, &len);
-			purple_conv_custom_smiley_write(swboard->conv, smile->smile, data, len);
-			purple_conv_custom_smiley_close(swboard->conv, smile->smile);
+			purple_conversation_custom_smiley_write(swboard->conv, smile->smile, data, len);
+			purple_conversation_custom_smiley_close(swboard->conv, smile->smile);
 		}
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);

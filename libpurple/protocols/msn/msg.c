@@ -921,8 +921,8 @@ got_emoticon(MsnSlpCall *slpcall,
 		   instead of all at once, calling write multiple times and
 		   close once at the very end
 		 */
-		purple_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
-		purple_conv_custom_smiley_close(conv, slpcall->data_info );
+		purple_conversation_custom_smiley_write(conv, slpcall->data_info, data, size);
+		purple_conversation_custom_smiley_close(conv, slpcall->data_info );
 	}
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
@@ -999,7 +999,7 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = purple_im_conversation_new(session->account, who);
 		}
 
-		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
+		if (purple_conversation_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 

@@ -454,7 +454,7 @@ conversation_dragging(PurpleConversation *active_conv,
 			printf("if else count = %d\n", count_messages(old_purplewin));
 			/*
 			PurpleConversation *old_active_conv = NULL;
-			old_active_conv = purple_conv_window_get_active_conversation(new_purplewin);
+			old_active_conv = purple_conversation_window_get_active_conversation(new_purplewin);
 
 			purple_conversation_autoset_title(old_active_conv);
 			handle_urgent(old_purplewin, FALSE);

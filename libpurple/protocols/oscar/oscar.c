@@ -5653,7 +5653,7 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conv_send_confirm(conv, message);
+				purple_conversation_send_confirm(conv, message);
 			}
 		}
 		/*else

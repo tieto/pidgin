@@ -96,7 +96,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 			if (convo) {
 				/* we don't have windows in the core anymore...but we may want to
 				 * provide some method for asking the UI to show the window
-				purple_conv_window_show(purple_conversation_get_window(convo));
+				purple_conversation_window_show(purple_conversation_get_window(convo));
 				 */
 			} else {
 				convo = purple_im_conversation_new(sg->account,
