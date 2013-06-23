@@ -49,9 +49,11 @@ libpurple/desktopitem.c
 libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
+libpurple/http.c
 libpurple/keyring.c
 libpurple/log.c
 libpurple/media/backend-fs2.c
+libpurple/obsolete.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
@@ -85,7 +87,14 @@ libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
 libpurple/protocols/bonjour/mdns_win32.c
+libpurple/protocols/gg/account.c
+libpurple/protocols/gg/deprecated.c
 libpurple/protocols/gg/gg.c
+libpurple/protocols/gg/image.c
+libpurple/protocols/gg/pubdir-prpl.c
+libpurple/protocols/gg/purplew.c
+libpurple/protocols/gg/status.c
+libpurple/protocols/gg/validator.c
 libpurple/protocols/irc/cmds.c
 libpurple/protocols/irc/dcc_send.c
 libpurple/protocols/irc/irc.c
@@ -102,6 +111,8 @@ libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
 libpurple/protocols/jabber/jabber.c
 libpurple/protocols/jabber/jutil.c
+libpurple/protocols/jabber/libfacebook.c
+libpurple/protocols/jabber/libgtalk.c
 libpurple/protocols/jabber/libxmpp.c
 libpurple/protocols/jabber/message.c
 libpurple/protocols/jabber/parser.c
@@ -144,7 +155,9 @@ libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/authorization.c
 libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/encoding.c
+libpurple/protocols/oscar/family_auth.c
 libpurple/protocols/oscar/family_chatnav.c
+libpurple/protocols/oscar/family_feedbag.c
 libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
@@ -180,6 +193,7 @@ libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
 libpurple/prpl.c
+libpurple/request.c
 libpurple/request.h
 libpurple/savedstatuses.c
 libpurple/server.c
@@ -217,6 +231,8 @@ pidgin/gtksmiley.c
 pidgin/gtksound.c
 pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
+pidgin/gtkwebview.c
+pidgin/gtkwebviewtoolbar.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
 pidgin/pidginstock.c
@@ -254,9 +270,7 @@ pidgin/plugins/spellchk.c
 pidgin/plugins/themeedit-icon.c
 pidgin/plugins/themeedit.c
 pidgin/plugins/ticker/ticker.c
-pidgin/plugins/timestamp.c
-pidgin/plugins/timestamp_format.c
-pidgin/plugins/vvconfig.c
+pidgin/plugins/webkit.c
 pidgin/plugins/win32/transparency/win2ktrans.c
 pidgin/plugins/win32/winprefs/winprefs.c
 pidgin/plugins/xmppconsole.c
