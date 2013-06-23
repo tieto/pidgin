@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "ft.h"
-#include "obsolete.h"
+#include "http.h"
 #include "util.h"
 
 #include "jabber.h"
@@ -200,8 +200,9 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	JabberOOBXfer *jox;
 	PurpleXfer *xfer;
 	char *filename;
-	char *url;
+	char *url_raw;
 	xmlnode *urlnode;
+	PurpleHttpURL *url;
 
 	if(type != JABBER_IQ_SET)
 		return;
@@ -212,15 +213,20 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	if(!(urlnode = xmlnode_get_child(querynode, "url")))
 		return;
 
-	url = xmlnode_get_data(urlnode);
+	url_raw = xmlnode_get_data(urlnode);
+	url = purple_http_url_parse(url_raw);
+	g_free(url_raw);
+
+	if (!url)
+		return;
 
 	jox = g_new0(JabberOOBXfer, 1);
-	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
-		g_free(url);
-		g_free(jox);
-		return;
-	}
-	g_free(url);
+	jox->address = g_strdup(purple_http_url_get_host(url));
+	jox->port = purple_http_url_get_port(url);
+	jox->page = g_strdup(purple_http_url_get_path(url));
+
+	purple_http_url_free(url);
+
 	jox->js = js;
 	jox->headers = g_string_new("");
 	jox->iq_id = g_strdup(id);

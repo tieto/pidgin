@@ -1,3 +1,6 @@
+syntax: glob
+.*.swp
+
 syntax: regexp
 (.*/)?TAGS$
 (.*/)?\.svn
@@ -72,6 +75,7 @@ libpurple/purple-client-example
 libpurple/purple.h$
 libpurple/tests/check_libpurple
 libpurple/tests/libpurple..
+^libpurple/tests/test-suite\.log$
 libpurple/version.h$
 libpurple/win32/libpurplerc.rc$
 libtool

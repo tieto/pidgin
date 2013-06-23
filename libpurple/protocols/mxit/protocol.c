@@ -38,6 +38,7 @@
 #include	"splashscreen.h"
 #include	"login.h"
 #include	"formcmds.h"
+#include	<libpurple/http.h>
 #include	"http.h"
 #include	"cipher.h"
 #include	"voicevideo.h"
@@ -338,14 +339,13 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 {
 	char		request[256 + packet->datalen];
 	int			reqlen;
-	char*		host_name;
-	int			host_port;
-	gboolean	ok;
+	PurpleHttpURL *url;
 
 	/* extract the HTTP host name and host port number to connect to */
-	ok = purple_url_parse( session->http_server, &host_name, &host_port, NULL, NULL, NULL );
-	if ( !ok ) {
+	url = purple_http_url_parse(session->http_server);
+	if (url == NULL) {
 		purple_debug_error( MXIT_PLUGIN_ID, "HTTP POST error: (host name '%s' not valid)\n", session->http_server );
+		return;
 	}
 
 	/* strip off the last '&' from the header */
@@ -362,7 +362,7 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 					"\r\n",
 					session->http_server,
 					purple_url_encode( packet->header ),
-					host_name,
+					purple_http_url_get_host(url),
 					packet->datalen - MXIT_MS_OFFSET
 	);
 
@@ -376,7 +376,10 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 #endif
 
 	/* send the request to the HTTP server */
-	mxit_http_send_request( session, host_name, host_port, request, reqlen );
+	mxit_http_send_request(session, purple_http_url_get_host(url),
+		purple_http_url_get_port(url), request, reqlen);
+
+	purple_http_url_free(url);
 }
 
 

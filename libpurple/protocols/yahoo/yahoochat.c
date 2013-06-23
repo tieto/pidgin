@@ -33,7 +33,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 #include "prpl.h"
 
 #include "conversation.h"
@@ -1501,6 +1501,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 	PurpleAccount *account;
 	PurpleRoomlist *rl;
 	PurpleRoomlistField *f;
+	PurpleHttpURL *url_p;
 	GList *fields = NULL;
 	struct yahoo_roomlist *yrl;
 	const char *rll, *rlurl;
@@ -1525,8 +1526,15 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 	rl = purple_roomlist_new(account);
 	yrl->list = rl;
 
-	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	url_p = purple_http_url_parse(url);
 	g_free(url);
+	if (!url_p) {
+		purple_debug_error("yahoo", "Couldn't parse URL\n");
+		return NULL;
+	}
+	yrl->host = g_strdup(purple_http_url_get_host(url_p));
+	yrl->path = g_strdup(purple_http_url_get_path(url_p));
+	purple_http_url_free(url_p);
 
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "room", TRUE);
 	fields = g_list_append(fields, f);
@@ -1583,6 +1591,7 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list)
 void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
 	PurpleAccount *account;
+	PurpleHttpURL *url_p;
 	struct yahoo_roomlist *yrl;
 	char *url;
 	char *id;
@@ -1619,8 +1628,15 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	proto_data = g_list_append(proto_data, yrl);
 	purple_roomlist_set_proto_data(list, proto_data);
 
-	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	url_p = purple_http_url_parse(url);
 	g_free(url);
+	if (!url_p) {
+		purple_debug_error("yahoo", "Couldn't parse URL\n");
+		return;
+	}
+	yrl->host = g_strdup(purple_http_url_get_host(url_p));
+	yrl->path = g_strdup(purple_http_url_get_path(url_p));
+	purple_http_url_free(url_p);
 
 	yrl->ucat = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
 	purple_roomlist_room_add(list, yrl->ucat);

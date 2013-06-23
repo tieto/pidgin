@@ -317,7 +317,7 @@ static void mxit_cb_http_connect( gpointer user_data, gint source, const gchar* 
  *	@param data			The HTTP request data (including HTTP headers etc.)
  *	@param datalen		The HTTP request data length
  */
-void mxit_http_send_request( struct MXitSession* session, char* host, int port, const char* data, int datalen )
+void mxit_http_send_request( struct MXitSession* session, const char* host, int port, const char* data, int datalen )
 {
 	PurpleProxyConnectData*		con	= NULL;
 	struct http_request*		req;
@@ -325,7 +325,7 @@ void mxit_http_send_request( struct MXitSession* session, char* host, int port, 
 	/* build the http request */
 	req = g_new0( struct http_request, 1 );
 	req->session = session;
-	req->host = host;
+	req->host = g_strdup(host);
 	req->port = port;
 	req->data = g_malloc0( datalen );
 	memcpy( req->data, data, datalen );

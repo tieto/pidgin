@@ -265,11 +265,11 @@ END_TEST
 	purple_cipher_set_key(cipher, key, 8); \
 	\
 	ret = purple_cipher_encrypt(cipher, decrypt, len, answer, len); \
-	fail_unless(ret != 0, NULL); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
 	ret = purple_cipher_decrypt(cipher, encrypt, len, answer, len); \
-	fail_unless(ret != 0, NULL); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
 	g_object_unref(cipher); \
@@ -310,11 +310,11 @@ END_TEST
 	purple_cipher_set_iv(cipher, (guchar *)iv, 8); \
 	\
 	ret = purple_cipher_encrypt(cipher, decrypt, len, answer, len); \
-	fail_unless(ret != 0, NULL); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
 	ret = purple_cipher_decrypt(cipher, encrypt, len, answer, len); \
-	fail_unless(ret != 0, NULL); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
 	g_object_unref(cipher); \

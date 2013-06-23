@@ -39,7 +39,7 @@ struct http_request
 };
 
 
-void mxit_http_send_request( struct MXitSession* session, char* host, int port, const char* data, int datalen );
+void mxit_http_send_request( struct MXitSession* session, const char* host, int port, const char* data, int datalen );
 
 
 

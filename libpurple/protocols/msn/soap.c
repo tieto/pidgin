@@ -27,7 +27,7 @@
 
 #include "soap.h"
 
-#include "obsolete.h"
+#include "http.h"
 #include "session.h"
 
 #include "debug.h"
@@ -270,27 +270,28 @@ msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 }
 
 static gboolean
-msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
+msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url_raw)
 {
-	char *host;
-	char *path;
+	MsnSoapRequest *req;
+	PurpleHttpURL *url;
 
-	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
+	url = purple_http_url_parse(url_raw);
+	if (!url)
+		return FALSE;
 
-		msn_soap_message_send_internal(conn->session, req->message, host, path,
-			req->secure, req->cb, req->cb_data, TRUE);
+	req = conn->current_request;
+	conn->current_request = NULL;
 
-		msn_soap_request_destroy(req, TRUE);
+	msn_soap_message_send_internal(conn->session, req->message,
+		purple_http_url_get_host(url), purple_http_url_get_path(url),
+		req->secure, req->cb, req->cb_data, TRUE);
 
-		g_free(host);
-		g_free(path);
+	msn_soap_request_destroy(req, TRUE);
 
-		return TRUE;
-	}
+	purple_http_url_free(url);
 
-	return FALSE;
+	return TRUE;
+
 }
 
 static gboolean

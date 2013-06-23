@@ -29,6 +29,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
+#include "http.h"
 #include "util.h"
 #include "request.h"
 #include "version.h"
@@ -189,23 +190,26 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *url;
-	gchar *request, *webpage, *webaddress;
+	gchar *request;
 	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpURL *url_p;
 
 	/* use whole URL if using HTTP Proxy */
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
-	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
-	request = g_strdup_printf("GET %s%s/%s HTTP/1.1\r\n"
+	url_p = purple_http_url_parse(url);
+	g_assert(url_p != NULL);
+
+	request = g_strdup_printf("GET %s%s%s HTTP/1.1\r\n"
 				 "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
 				 "Host: %s\r\n"
 				 "Cache-Control: no-cache\r\n\r\n",
-				  use_whole_url ? "http://" : "", use_whole_url ? webaddress : "", webpage,
+				  use_whole_url ? "http://" : "", use_whole_url ? purple_http_url_get_host(url_p) : "", purple_http_url_get_path(url_p),
 				  yd->cookie_t, yd->cookie_y,
-				  webaddress);
+				  purple_http_url_get_host(url_p));
 
 	/* We have a URL and some header information, let's connect and get some aliases  */
 	url_data = purple_util_fetch_url_request(purple_connection_get_account(gc),
@@ -214,8 +218,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
-	g_free(webaddress);
-	g_free(webpage);
+	purple_http_url_free(url_p);
 	g_free(request);
 }
 
@@ -292,9 +295,10 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	YahooData *yd;
 	const char *url;
-	gchar *content, *request, *webpage, *webaddress;
+	gchar *content, *request;
 	struct callback_data *cb;
 	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpURL *url_p;
 	YahooFriend *f;
 	/* use whole URL if using HTTP Proxy */
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
@@ -321,7 +325,9 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
-	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
+
+	url_p = purple_http_url_parse(url);
+	g_assert(url_p != NULL);
 
 	if (cb->id == NULL) {
 		/* No id for this buddy, so create an address book entry */
@@ -366,16 +372,16 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		}
 	}
 
-	request = g_strdup_printf("POST %s%s/%s HTTP/1.1\r\n"
+	request = g_strdup_printf("POST %s%s%s HTTP/1.1\r\n"
 				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				  "Cookie: T=%s; Y=%s\r\n"
 				  "Host: %s\r\n"
 				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
 				  "Cache-Control: no-cache\r\n\r\n"
 				  "%s",
-				  use_whole_url ? "http://" : "", use_whole_url ? webaddress : "", webpage,
+				  use_whole_url ? "http://" : "", use_whole_url ? purple_http_url_get_host(url_p) : "", purple_http_url_get_path(url_p),
 				  yd->cookie_t, yd->cookie_y,
-				  webaddress,
+				  purple_http_url_get_host(url_p),
 				  strlen(content),
 				  content);
 
@@ -386,8 +392,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
-	g_free(webpage);
-	g_free(webaddress);
+	purple_http_url_free(url_p);
 	g_free(content);
 	g_free(request);
 }
@@ -456,7 +461,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account;
 	PurpleUtilFetchUrlData *url_data;
-	char *webaddress, *webpage;
+	PurpleHttpURL *url_p;
 	char *request, *content;
 	int len;
 	int i;
@@ -479,7 +484,9 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 
 	content = xmlnode_to_formatted_str(node, &len);
 	xmlnode_free(node);
-	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, &webaddress, NULL, &webpage, NULL, NULL);
+
+	url_p = purple_http_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL);
+	g_assert(url_p != NULL);
 
 	request = g_strdup_printf("POST %s HTTP/1.1\r\n"
 				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
@@ -488,9 +495,9 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				  "Content-Length: %d\r\n"
 				  "Cache-Control: no-cache\r\n\r\n"
 				  "%s\r\n\r\n",
-				  webpage,
+				  purple_http_url_get_path(url_p),
 				  yd->cookie_t, yd->cookie_y,
-				  webaddress,
+				  purple_http_url_get_host(url_p),
 				  len + 4,
 				  content);
 
@@ -518,14 +525,13 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	}
 #endif
 
-	url_data = purple_util_fetch_url_request(account, webaddress, FALSE,
+	url_data = purple_util_fetch_url_request(account, purple_http_url_get_host(url_p), FALSE,
 			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_fetch_aliases_cb, gc);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
-	g_free(webaddress);
-	g_free(webpage);
+	purple_http_url_free(url_p);
 	g_free(content);
 	g_free(request);
 }
