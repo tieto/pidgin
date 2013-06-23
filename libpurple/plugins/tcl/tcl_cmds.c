@@ -870,13 +870,13 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 		switch (style) {
 		case CMD_CONV_WRITE_SEND:
-			flags = PURPLE_CONVERSATION_MESSAGE_SEND;
+			flags = PURPLE_MESSAGE_SEND;
 			break;
 		case CMD_CONV_WRITE_RECV:
-			flags = PURPLE_CONVERSATION_MESSAGE_RECV;
+			flags = PURPLE_MESSAGE_RECV;
 			break;
 		case CMD_CONV_WRITE_SYSTEM:
-			flags = PURPLE_CONVERSATION_MESSAGE_SYSTEM;
+			flags = PURPLE_MESSAGE_SYSTEM;
 			break;
 		}
 		purple_conversation_write_message(convo, from, what, flags, time(NULL));

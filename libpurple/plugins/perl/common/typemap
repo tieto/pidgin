@@ -182,7 +182,7 @@ Purple::ChatConversation::Buddy		T_PurpleObj
 Purple::IMConversation			T_PurpleObj
 Purple::ChatConversation::Buddy::Flags	T_IV
 Purple::Conversation::UpdateType	T_IV
-Purple::Conversation::MessageFlags	T_IV
+Purple::MessageFlags			T_IV
 Purple::IMConversation::TypingState	T_IV
 Purple::UnseenState			T_IV
 

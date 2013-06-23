@@ -82,34 +82,33 @@ typedef enum
  */
 typedef enum /*< flags >*/
 {
-	PURPLE_CONVERSATION_MESSAGE_SEND        = 0x0001, /**< Outgoing message.        */
-	PURPLE_CONVERSATION_MESSAGE_RECV        = 0x0002, /**< Incoming message.        */
-	PURPLE_CONVERSATION_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
-	PURPLE_CONVERSATION_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
-	PURPLE_CONVERSATION_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
+	PURPLE_MESSAGE_SEND        = 0x0001, /**< Outgoing message.        */
+	PURPLE_MESSAGE_RECV        = 0x0002, /**< Incoming message.        */
+	PURPLE_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
+	PURPLE_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
+	PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
 	                                                        message should not be
 	                                                        shown in conversations
 	                                                        which are only open for
 	                                                        internal UI purposes
 	                                                        (e.g. for contact-aware
 	                                                        conversations).         */
-	PURPLE_CONVERSATION_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
-	PURPLE_CONVERSATION_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
-	PURPLE_CONVERSATION_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
-	PURPLE_CONVERSATION_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
-	PURPLE_CONVERSATION_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
-	PURPLE_CONVERSATION_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
+	PURPLE_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
+	PURPLE_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
+	PURPLE_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
+	PURPLE_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
+	PURPLE_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
+	PURPLE_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
 	                                                        apply formatting        */
-	PURPLE_CONVERSATION_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
-	PURPLE_CONVERSATION_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
-	PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
+	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
+	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
+	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
 										                   linkified */
-	PURPLE_CONVERSATION_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
-} PurpleConversationMessageFlags;
+	PURPLE_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
+} PurpleMessageFlags;
 
-#include "account.h"
-#include "buddyicon.h"
-#include "log.h"
+#include <glib.h>
+#include <glib-object.h>
 
 /**************************************************************************/
 /** PurpleConversation                                                    */
@@ -135,20 +134,24 @@ struct _PurpleConversationClass {
 	 *  @see purple_conversation_write_message()
 	 */
 	void (*write_message)(PurpleConversation *conv, const char *who,
-			const char *message, PurpleConversationMessageFlags flags,
+			const char *message, PurpleMessageFlags flags,
 			time_t mtime);
 
 	/** Sends a message to a chat or IM conversation. TODO
 	 *  @see purple_conversation_send_message()
 	 */
 	void (*send_message)(PurpleConversation *conv,
-			const char *message, PurpleConversationMessageFlags flags);
+			const char *message, PurpleMessageFlags flags);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };
+
+#include "account.h"
+#include "buddyicon.h"
+#include "log.h"
 
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
@@ -173,14 +176,14 @@ struct _PurpleConversationUiOps
 	 *  @see purple_chat_conversation_write()
 	 */
 	void (*write_chat)(PurpleConversation *conv, const char *who,
-	                  const char *message, PurpleConversationMessageFlags flags,
+	                  const char *message, PurpleMessageFlags flags,
 	                  time_t mtime);
 	/** Write a message to an IM conversation.  If this field is @c NULL,
 	 *  libpurple will fall back to using #write_conv.
 	 *  @see purple_im_conversation_write()
 	 */
 	void (*write_im)(PurpleConversation *conv, const char *who,
-	                 const char *message, PurpleConversationMessageFlags flags,
+	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
 	/** Write a message to a conversation.  This is used rather than the
 	 *  chat- or im-specific ops for errors, system messages (such as "x is
@@ -194,7 +197,7 @@ struct _PurpleConversationUiOps
 	                   const char *name,
 	                   const char *alias,
 	                   const char *message,
-	                   PurpleConversationMessageFlags flags,
+	                   PurpleMessageFlags flags,
 	                   time_t mtime);
 
 	/** Add @a cbuddies to a chat.
@@ -450,7 +453,7 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  * @see purple_conversation_write_message()
  */
 void purple_conversation_write(PurpleConversation *conv, const char *who,
-		const char *message, PurpleConversationMessageFlags flags,
+		const char *message, PurpleMessageFlags flags,
 		time_t mtime);
 
 /** TODO pure virtual
@@ -464,7 +467,7 @@ void purple_conversation_write(PurpleConversation *conv, const char *who,
  */
 void purple_conversation_write_message(PurpleConversation *conv,
 		const char *who, const char *message,
-		PurpleConversationMessageFlags flags, time_t mtime);
+		PurpleMessageFlags flags, time_t mtime);
 
 /** TODO forward to send_message
  * Sends a message to this conversation. This function calls
@@ -480,11 +483,11 @@ void purple_conversation_send(PurpleConversation *conv, const char *message);
  *
  * @param conv    The conversation.
  * @param message The message to send.
- * @param flags   The PurpleConversationMessageFlags flags to use in addition to
- *                PURPLE_CONVERSATION_MESSAGE_SEND.
+ * @param flags   The PurpleMessageFlags flags to use in addition to
+ *                PURPLE_MESSAGE_SEND.
  */
 void purple_conversation_send_message(PurpleConversation *conv, const char *message,
-		PurpleConversationMessageFlags flags);
+		PurpleMessageFlags flags);
 
 /**
 	Set the features as supported for the given conversation.
@@ -697,7 +700,7 @@ const char *purple_conversation_message_get_message(const PurpleConversationMess
  *
  * @return   The message flags
  */
-PurpleConversationMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg);
+PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg);
 
 /**
  * Get the timestamp of a PurpleConversationMessage

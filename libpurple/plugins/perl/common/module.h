@@ -120,14 +120,14 @@ typedef PurpleConnectionFlags		Purple__ConnectionFlags;
 typedef PurpleConnectionState		Purple__ConnectionState;
 
 /* conversations.h */
-typedef PurpleConversationUpdateType		Purple__Conversation__UpdateType;
-typedef PurpleIMConversationTypingState		Purple__IMConversation__TypingState;
-typedef PurpleConversationMessageFlags		Purple__Conversation__MessageFlags;
-typedef PurpleChatConversationBuddyFlags	Purple__ChatConversation__Buddy__Flags;
+typedef PurpleMessageFlags			Purple__MessageFlags;
 typedef PurpleConversation *		Purple__Conversation;
+typedef PurpleConversationUpdateType		Purple__Conversation__UpdateType;
 typedef PurpleIMConversation *			Purple__IMConversation;
+typedef PurpleIMConversationTypingState		Purple__IMConversation__TypingState;
 typedef PurpleChatConversation *		Purple__ChatConversation;
 typedef PurpleChatConversationBuddy *	Purple__ChatConversation__Buddy;
+typedef PurpleChatConversationBuddyFlags	Purple__ChatConversation__Buddy__Flags;
 
 /* core.h */
 

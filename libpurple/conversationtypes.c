@@ -260,7 +260,7 @@ purple_im_conversation_update_typing(PurpleIMConversation *im)
 
 void
 purple_im_conversation_write(PurpleIMConversation *im, const char *who, const char *message,
-			  PurpleConversationMessageFlags flags, time_t mtime)
+			  PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleConversation *c;
 
@@ -269,7 +269,7 @@ purple_im_conversation_write(PurpleIMConversation *im, const char *who, const ch
 
 	c = purple_im_conversation_get_conversation(im);
 
-	if ((flags & PURPLE_CONVERSATION_MESSAGE_RECV) == PURPLE_CONVERSATION_MESSAGE_RECV) {
+	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
 		purple_im_conversation_set_typing_state(im, PURPLE_IM_CONVERSATION_NOT_TYPING);
 	}
 
@@ -287,7 +287,7 @@ purple_im_conversation_send(PurpleIMConversation *im, const char *message)
 }
 
 void
-purple_im_conversation_send_with_flags(PurpleIMConversation *im, const char *message, PurpleConversationMessageFlags flags)
+purple_im_conversation_send_with_flags(PurpleIMConversation *im, const char *message, PurpleMessageFlags flags)
 {
 	g_return_if_fail(im != NULL);
 	g_return_if_fail(message != NULL);
@@ -451,7 +451,7 @@ purple_chat_conversation_get_id(const PurpleChatConversation *chat)
 
 void
 purple_chat_conversation_write(PurpleChatConversation *chat, const char *who, const char *message,
-				PurpleConversationMessageFlags flags, time_t mtime)
+				PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleAccount *account;
 	PurpleConversation *conv;
@@ -469,18 +469,18 @@ purple_chat_conversation_write(PurpleChatConversation *chat, const char *who, co
 	if (purple_chat_conversation_is_ignored_user(chat, who))
 		return;
 
-	if (!(flags & PURPLE_CONVERSATION_MESSAGE_WHISPER)) {
+	if (!(flags & PURPLE_MESSAGE_WHISPER)) {
 		const char *str;
 
 		str = purple_normalize(account, who);
 
 		if (purple_strequal(str, chat->nick)) {
-			flags |= PURPLE_CONVERSATION_MESSAGE_SEND;
+			flags |= PURPLE_MESSAGE_SEND;
 		} else {
-			flags |= PURPLE_CONVERSATION_MESSAGE_RECV;
+			flags |= PURPLE_MESSAGE_RECV;
 
 			if (purple_utf8_has_word(message, chat->nick))
-				flags |= PURPLE_CONVERSATION_MESSAGE_NICK;
+				flags |= PURPLE_MESSAGE_NICK;
 		}
 	}
 
@@ -498,7 +498,7 @@ purple_chat_conversation_send(PurpleChatConversation *chat, const char *message)
 }
 
 void
-purple_chat_conversation_send_with_flags(PurpleChatConversation *chat, const char *message, PurpleConversationMessageFlags flags)
+purple_chat_conversation_send_with_flags(PurpleChatConversation *chat, const char *message, PurpleMessageFlags flags)
 {
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(message != NULL);
@@ -599,7 +599,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
-					PURPLE_CONVERSATION_MESSAGE_SYSTEM | PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
 					time(NULL));
 			g_free(tmp);
 		}
@@ -729,7 +729,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 		}
 
 		purple_conversation_write(conv, NULL, tmp,
-				PURPLE_CONVERSATION_MESSAGE_SYSTEM | PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
 				time(NULL));
 	}
 }
@@ -808,7 +808,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
-					PURPLE_CONVERSATION_MESSAGE_SYSTEM | PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
 					time(NULL));
 			g_free(tmp);
 		}

@@ -71,7 +71,7 @@ struct _PurpleConversationMessage
 {
 	char *who;
 	char *what;
-	PurpleConversationMessageFlags flags;
+	PurpleMessageFlags flags;
 	time_t when;
 	PurpleConversation *conv;
 	char *alias;
@@ -165,7 +165,7 @@ send_typed_cb(gpointer data)
 }
 
 static void
-common_send(PurpleConversation *conv, const char *message, PurpleConversationMessageFlags msgflags)
+common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags msgflags)
 {
 	PurpleConversationType type;
 	PurpleAccount *account;
@@ -186,20 +186,20 @@ common_send(PurpleConversation *conv, const char *message, PurpleConversationMes
 
 	/* Always linkfy the text for display, unless we're
 	 * explicitly asked to do otheriwse*/
-	if (!(msgflags & PURPLE_CONVERSATION_MESSAGE_INVISIBLE)) {
-		if(msgflags & PURPLE_CONVERSATION_MESSAGE_NO_LINKIFY)
+	if (!(msgflags & PURPLE_MESSAGE_INVISIBLE)) {
+		if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
 			displayed = g_strdup(message);
 		else
 			displayed = purple_markup_linkify(message);
 	}
 
 	if (displayed && (conv->features & PURPLE_CONNECTION_HTML) &&
-		!(msgflags & PURPLE_CONVERSATION_MESSAGE_RAW)) {
+		!(msgflags & PURPLE_MESSAGE_RAW)) {
 		sent = g_strdup(displayed);
 	} else
 		sent = g_strdup(message);
 
-	msgflags |= PURPLE_CONVERSATION_MESSAGE_SEND;
+	msgflags |= PURPLE_MESSAGE_SEND;
 
 	if (type == PURPLE_CONVERSATION_TYPE_IM) {
 		PurpleIMConversationPrivate *priv = PURPLE_IM_CONVERSATION_GET_PRIVATE(conv);
@@ -281,14 +281,14 @@ open_log(PurpleConversation *conv)
 
 static void
 add_message_to_history(PurpleConversation *conv, const char *who, const char *alias,
-		const char *message, PurpleConversationMessageFlags flags, time_t when)
+		const char *message, PurpleMessageFlags flags, time_t when)
 {
 	PurpleConversationMessage *msg;
 	PurpleConnection *gc;
 
 	gc = purple_account_get_connection(conv->account);
 
-	if (flags & PURPLE_CONVERSATION_MESSAGE_SEND) {
+	if (flags & PURPLE_MESSAGE_SEND) {
 		const char *me = NULL;
 		if (gc)
 			me = purple_connection_get_display_name(gc);
@@ -867,7 +867,7 @@ purple_conversation_get_data(PurpleConversation *conv, const char *key)
 
 void
 purple_conversation_write(PurpleConversation *conv, const char *who,
-						const char *message, PurpleConversationMessageFlags flags,
+						const char *message, PurpleMessageFlags flags,
 						time_t mtime)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -926,7 +926,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		if (purple_conversation_get_type(conv) == PURPLE_CONVERSATION_TYPE_IM ||
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
-			if (flags & PURPLE_CONVERSATION_MESSAGE_SEND) {
+			if (flags & PURPLE_MESSAGE_SEND) {
 				b = purple_find_buddy(account,
 							purple_account_get_username(account));
 
@@ -949,7 +949,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
-	if (!(flags & PURPLE_CONVERSATION_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
+	if (!(flags & PURPLE_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
 		GList *log;
 
 		if (conv->logs == NULL)
@@ -1015,7 +1015,7 @@ gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount
 
 	conv = purple_conversations_find_with_account(PURPLE_CONVERSATION_TYPE_ANY, who, account);
 	if (conv != NULL)
-		purple_conversation_write(conv, NULL, what, PURPLE_CONVERSATION_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write(conv, NULL, what, PURPLE_MESSAGE_ERROR, time(NULL));
 	else
 		return FALSE;
 
@@ -1244,7 +1244,7 @@ const char *purple_conversation_message_get_message(const PurpleConversationMess
 	return msg->what;
 }
 
-PurpleConversationMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg)
+PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg)
 {
 	g_return_val_if_fail(msg, 0);
 	return msg->flags;

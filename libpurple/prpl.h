@@ -327,7 +327,7 @@ struct _PurplePluginProtocolInfo
 	 */
 	int  (*send_im)(PurpleConnection *, const char *who,
 					const char *message,
-					PurpleConversationMessageFlags flags);
+					PurpleMessageFlags flags);
 
 	void (*set_info)(PurpleConnection *, const char *info);
 
@@ -438,12 +438,12 @@ struct _PurplePluginProtocolInfo
 	 *
 	 * @param id      The id of the chat to send the message to.
 	 * @param message The message to send to the chat.
-	 * @param flags   A bitwise OR of #PurpleConversationMessageFlags representing
+	 * @param flags   A bitwise OR of #PurpleMessageFlags representing
 	 *                message flags.
 	 * @return 	  A positive number or 0 in case of success,
 	 *                a negative error number in case of failure.
 	 */
-	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleConversationMessageFlags flags);
+	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
 
 	/** If implemented, this will be called regularly for this prpl's
 	 *  active connections.  You'd want to do this if you need to repeatedly

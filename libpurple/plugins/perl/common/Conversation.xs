@@ -7,7 +7,7 @@ BOOT:
 {
 	HV *update_stash = gv_stashpv("Purple::Conversation::UpdateType", 1);
 	HV *typing_stash = gv_stashpv("Purple::IMConversation::TypingState", 1);
-	HV *flags_stash = gv_stashpv("Purple::Conversation::MessageFlags", 1);
+	HV *flags_stash = gv_stashpv("Purple::MessageFlags", 1);
 	HV *cbflags_stash = gv_stashpv("Purple::ChatConversation::Buddy::Flags", 1);
 
 	static const constiv *civ, update_const_iv[] = {
@@ -39,7 +39,7 @@ BOOT:
 	};
 	static const constiv flags_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_CONVERSATION_MESSAGE_##name}
+#define const_iv(name) {#name, (IV)PURPLE_MESSAGE_##name}
 		const_iv(SEND),
 		const_iv(RECV),
 		const_iv(SYSTEM),
@@ -85,7 +85,7 @@ PROTOTYPES: ENABLE
 Purple::Handle
 purple_conversations_get_handle()
 
-Purple::ChatConversation
+Purple::Conversation
 purple_conversations_find_chat(gc, id)
 	Purple::Connection gc
 	int id
@@ -122,12 +122,12 @@ purple_conversations_find_with_account(name, account)
 	const char *name
 	Purple::Account account
 
-Purple::ChatConversation
+Purple::Conversation
 purple_conversations_find_chat_with_account(name, account)
 	const char *name
 	Purple::Account account
 
-Purple::IMConversation
+Purple::Conversation
 purple_conversations_find_im_with_account(name, account)
 	const char *name
 	Purple::Account account
@@ -202,7 +202,7 @@ purple_conversation_write(conv, who, message, flags, mtime)
 	Purple::Conversation conv
 	const char *who
 	const char *message
-	Purple::Conversation::MessageFlags flags
+	Purple::MessageFlags flags
 	time_t mtime
 
 void
@@ -210,7 +210,7 @@ purple_conversation_write_message(conv, who, message, flags, mtime)
 	Purple::Conversation conv
 	const char *who
 	const char *message
-	Purple::Conversation::MessageFlags flags
+	Purple::MessageFlags flags
 	time_t mtime
 
 void
@@ -222,7 +222,7 @@ void
 purple_conversation_send_message(conv, message, flags)
 	Purple::Conversation conv
 	const char *message
-	Purple::Conversation::MessageFlags flags
+	Purple::MessageFlags flags
 
 gboolean
 purple_conversation_do_command(conv, cmdline, markup, error)

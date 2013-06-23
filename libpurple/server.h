@@ -51,7 +51,7 @@ G_BEGIN_DECLS
 unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state);
 
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
-int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleConversationMessageFlags flags);
+int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
 
 /** Get information about an account's attention commands, from the prpl.
  *
@@ -70,7 +70,7 @@ void serv_set_permit_deny(PurpleConnection *);
 void serv_chat_invite(PurpleConnection *, int, const char *, const char *);
 void serv_chat_leave(PurpleConnection *, int);
 void serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
-int  serv_chat_send(PurpleConnection *, int, const char *, PurpleConversationMessageFlags flags);
+int  serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags flags);
 void serv_alias_buddy(PurpleBuddy *);
 void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
 
@@ -111,7 +111,7 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 void serv_got_typing_stopped(PurpleConnection *gc, const char *name);
 
 void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
-				 PurpleConversationMessageFlags flags, time_t mtime);
+				 PurpleMessageFlags flags, time_t mtime);
 
 /**
  * @param data The hash function should be g_str_hash() and the equal
@@ -180,7 +180,7 @@ void serv_got_chat_left(PurpleConnection *g, int id);
  * @param mtime   The time when the message was received.
  */
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
-					  PurpleConversationMessageFlags flags, const char *message, time_t mtime);
+					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);
 
 G_END_DECLS
