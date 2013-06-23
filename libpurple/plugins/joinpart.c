@@ -85,7 +85,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	time_t *last_said;
 
 	g_return_val_if_fail(conv != NULL, FALSE);
-	g_return_val_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(conv), FALSE);
 
 	/* If the room is small, don't bother. */
 	chat = PURPLE_CONV_CHAT(conv);

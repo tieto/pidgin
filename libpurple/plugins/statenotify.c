@@ -25,12 +25,11 @@ write_status(PurpleBuddy *buddy, const char *message)
 	account = purple_buddy_get_account(buddy);
 	buddy_name = purple_buddy_get_name(buddy);
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-												 buddy_name, account);
+	conv = purple_conversations_find_im_with_account(buddy_name, account);
 
 	if (conv == NULL)
 		return;
-	g_return_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM);
+	g_return_if_fail(PURPLE_IS_IM_CONVERSATION(conv));
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
 	if (buddy != purple_find_buddy(account, buddy_name))
