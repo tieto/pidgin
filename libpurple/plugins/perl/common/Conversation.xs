@@ -450,7 +450,3 @@ purple_chat_conversation_find_buddy(chat, name)
 const char *
 purple_chat_conversation_buddy_get_name(cb)
 	Purple::ChatConversation::Buddy cb
-
-void
-purple_chat_conversation_buddy_destroy(cb);
-	Purple::ChatConversation::Buddy cb

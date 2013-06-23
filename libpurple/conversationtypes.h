@@ -820,7 +820,7 @@ gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBud
  *
  * @param cb The chat buddy to destroy
  */
-void purple_chat_conversation_buddy_destroy(PurpleChatConversationBuddy *cb);
+/*void purple_chat_conversation_buddy_destroy(PurpleChatConversationBuddy *cb);*/
 
 /*@}*/
 

@@ -279,7 +279,7 @@ GType purple_conversation_get_type(void);
  *
  * @param conv The conversation to destroy.
  */
-void purple_conversation_destroy(PurpleConversation *conv);
+/*void purple_conversation_destroy(PurpleConversation *conv);*/
 
 /**
  * Present a conversation to the user. This allows core code to initiate a
