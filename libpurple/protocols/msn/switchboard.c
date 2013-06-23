@@ -302,7 +302,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		{
 			GList *l;
 
-#if 0 /* TODO if conv exists, it gets leaked? */
+#if 0
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
 			if (swboard->conv != NULL)

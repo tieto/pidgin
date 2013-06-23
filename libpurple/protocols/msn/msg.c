@@ -997,7 +997,6 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		 * the conversation doesn't exist then we cannot associate the new
 		 * smiley with its GtkIMHtml widget. */
 		if (!conv) {
-			/* TODO memory leak - dispose this conv */
 			conv = PURPLE_CONVERSATION(purple_im_conversation_new(session->account, who));
 		}
 
