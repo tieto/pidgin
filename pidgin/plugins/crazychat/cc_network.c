@@ -106,7 +106,7 @@ void cc_net_send_invite(struct crazychat *cc, char *name, PurpleAccount *account
 	session->state = INVITE;
 	conv = purple_conversations_find_with_account(name, account);
 	if (!conv) {
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+		conv = purple_im_conversation_new(account, name);
 	}
 	im = purple_conversation_get_im_data(conv);
 	snprintf(buf, BUFSIZ, "%s%s!%d", CRAZYCHAT_INVITE_CODE,
@@ -210,7 +210,7 @@ static void cc_net_send_ready(PurpleAccount *account, struct cc_session *session
 
 	conv = purple_conversations_find_with_account(session->name, account);
 	if (!conv) {
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account,
+		conv = purple_im_conversation_new(account,
 				session->name);
 	}
 	im = purple_conversation_get_im_data(conv);

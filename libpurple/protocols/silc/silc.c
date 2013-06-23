@@ -1695,7 +1695,7 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 
 	account = purple_connection_get_account(gc);
 
-	convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, args[0]);
+	convo = purple_im_conversation_new(account, args[0]);
 
 	if (args[1]) {
 		ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);

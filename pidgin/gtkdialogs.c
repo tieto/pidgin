@@ -960,7 +960,7 @@ pidgin_dialogs_im_with_user(PurpleAccount *account, const char *username)
 	conv = purple_conversations_find_im_with_account(username, account);
 
 	if (conv == NULL)
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+		conv = purple_im_conversation_new(account, username);
 
 	pidgin_conv_attach_to_conversation(conv);
 	purple_conversation_present(conv);

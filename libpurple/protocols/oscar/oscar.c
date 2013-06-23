@@ -4985,7 +4985,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 
 		/* OSCAR_DISCONNECT_LOCAL_CLOSED doesn't write anything to the convo
 		 * window. Let the user know that we cancelled the Direct IM. */
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+		conv = purple_im_conversation_new(account, name);
 		purple_conversation_write(conv, NULL, _("You closed the connection."),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
@@ -5647,7 +5647,7 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 			PurpleConversation *conv = purple_conversations_find_with_account(
 				PURPLE_CONV_TYPE_IM, bname, acct);
 			if (conv == NULL)
-				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, bname);
+				conv = purple_im_conversation_new(acct, bname);
 			purple_conversation_present(conv);
 
 			if (message) {

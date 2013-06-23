@@ -2731,7 +2731,7 @@ send_im_select_cb(gpointer data, PurpleRequestFields *fields)
 	account  = purple_request_fields_get_account(fields, "account");
 	username = purple_request_fields_get_string(fields,  "screenname");
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+	conv = purple_im_conversation_new(account, username);
 	purple_conversation_present(conv);
 }
 
@@ -2792,7 +2792,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	 * But it's necessary to pretend that we left the chat, because otherwise
 	 * a new conversation window will pop up when we finally join the chat. */
 	if (!(conv = purple_conversations_find_chat_with_account(name, account))) {
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+		conv = purple_chat_conversation_new(account, name);
 		purple_chat_conversation_left(PURPLE_CONV_CHAT(conv));
 	} else {
 		purple_conversation_present(conv);

@@ -800,7 +800,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 			swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 									who, account);
 			if (swboard->conv == NULL)
-				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
+				swboard->conv = purple_im_conversation_new(account, who);
 		}
 	}
 
@@ -996,7 +996,7 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		 * the conversation doesn't exist then we cannot associate the new
 		 * smiley with its GtkIMHtml widget. */
 		if (!conv) {
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, who);
+			conv = purple_im_conversation_new(session->account, who);
 		}
 
 		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {

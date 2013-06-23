@@ -3501,7 +3501,7 @@ msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer
 	conv = purple_conversations_find_im_with_account(username, session->account);
 	if (!conv)  {
 		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, username);
+		conv = purple_im_conversation_new(session->account, username);
 	}
 
 	/* Just open the window so the user can send an IM. */

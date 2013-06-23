@@ -2437,7 +2437,7 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	if (gtk_check_menu_item_get_active((GtkCheckMenuItem*) m) == FALSE)
 		return;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	conv = purple_im_conversation_new(account, name);
 	pidgin_conv_switch_active_conversation(conv);
 }
 
@@ -5595,7 +5595,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 					pidgin_conv_window_add_gtkconv(win, gtkconv);
 				}
 			} else {
-				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, buddyaccount, buddyname);
+				c = purple_im_conversation_new(buddyaccount, buddyname);
 				gtkconv = PIDGIN_CONVERSATION(c);
 				if (gtkconv->win != win) {
 					pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
@@ -5635,7 +5635,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 						strcmp(purple_account_get_protocol_id(convaccount), protocol) == 0) {
 					purple_chat_conversation_invite_user(PURPLE_CONV_CHAT(conv), username, NULL, TRUE);
 				} else {
-					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+					c = purple_im_conversation_new(account, username);
 					gtkconv = PIDGIN_CONVERSATION(c);
 					if (gtkconv->win != win) {
 						pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
@@ -5951,7 +5951,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 
 	if (hide) {
 		ui_ops->create_conversation = pidgin_conv_new_hidden;
-		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
+		purple_im_conversation_new(account, sender);
 		ui_ops->create_conversation = pidgin_conv_new;
 	}
 

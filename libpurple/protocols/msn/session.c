@@ -189,7 +189,7 @@ msn_session_get_conv(MsnSession *session,const char *passport)
 	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
 									passport, account);
 	if(conv == NULL){
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, passport);
+		conv = purple_im_conversation_new(account, passport);
 	}
 	return conv;
 }

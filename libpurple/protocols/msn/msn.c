@@ -2888,7 +2888,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 			PurpleConversation *conv = purple_conversations_find_with_account(
 				PURPLE_CONV_TYPE_IM, sname, acct);
 			if (conv == NULL)
-				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);
+				conv = purple_im_conversation_new(acct, sname);
 			purple_conversation_present(conv);
 		}
 		/*else

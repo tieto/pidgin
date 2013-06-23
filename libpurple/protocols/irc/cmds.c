@@ -452,7 +452,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, irc->account, args[0]);
+	convo = purple_im_conversation_new(irc->account, args[0]);
 	purple_conversation_present(convo);
 
 	if (args[1]) {

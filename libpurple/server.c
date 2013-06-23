@@ -600,7 +600,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		conv = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
 
 	if (conv == NULL)
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+		conv = purple_im_conversation_new(account, name);
 
 	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), name, message, flags, mtime);
 	g_free(message);
@@ -829,7 +829,7 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	conv = purple_chat_conversation_new(account, name);
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	chat = PURPLE_CONV_CHAT(conv);

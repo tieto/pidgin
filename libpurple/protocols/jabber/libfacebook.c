@@ -230,7 +230,7 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 		char *body = g_hash_table_lookup(params, "body");
 		if (user && *user) {
 			PurpleConversation *conv =
-					purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, user);
+					purple_im_conversation_new(acct, user);
 			purple_conversation_present(conv);
 			if (body && *body)
 				purple_conv_send_confirm(conv, body);

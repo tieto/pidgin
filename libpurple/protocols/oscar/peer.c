@@ -752,7 +752,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 				listener_port, ++conn->lastrequestnumber);
 
 		/* Print a message to a local conversation window */
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+		conv = purple_im_conversation_new(account, conn->bn);
 		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for "
 				"Direct IM."), conn->bn, listener_ip, listener_port);
 		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -840,7 +840,7 @@ peer_connection_trynext(PeerConnection *conn)
 			PurpleConversation *conv;
 			tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
 					conn->verifiedip, conn->port);
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+			conv = purple_im_conversation_new(account, conn->bn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
@@ -913,7 +913,7 @@ peer_connection_trynext(PeerConnection *conn)
 			gchar *tmp;
 			PurpleConversation *conv;
 			tmp = g_strdup(_("Attempting to connect via proxy server."));
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+			conv = purple_im_conversation_new(account, conn->bn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);

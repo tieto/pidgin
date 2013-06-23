@@ -930,7 +930,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 			PurpleConversation *c;
 			c = purple_conversations_find_im_with_account(sms->from, account);
 			if (c == NULL)
-				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sms->from);
+				c = purple_im_conversation_new(account, sms->from);
 			purple_conversation_write(c, NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
 		else

@@ -99,7 +99,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 				purple_conv_window_show(purple_conversation_get_window(convo));
 				 */
 			} else {
-				convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, sg->account,
+				convo = purple_im_conversation_new(sg->account,
 								client_entry->nickname);
 			}
 			g_snprintf(tmp, sizeof(tmp), "%s [private key]", client_entry->nickname);

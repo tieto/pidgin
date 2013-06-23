@@ -518,7 +518,7 @@ send_to_cb(GntMenuItem *m, gpointer n)
 {
 	PurpleAccount *account = g_object_get_data(G_OBJECT(m), "purple_account");
 	gchar *buddy = g_object_get_data(G_OBJECT(m), "purple_buddy_name");
-	PurpleConversation *conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, buddy);
+	PurpleConversation *conv = purple_im_conversation_new(account, buddy);
 	finch_conversation_set_active(conv);
 }
 
@@ -725,7 +725,7 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 		realname = prpl_info->get_cb_real_name(gc, purple_chat_conversation_get_id(PURPLE_CONV_CHAT(fc->active_conv)), name);
 	else
 		realname = NULL;
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, realname ? realname : name);
+	purple_im_conversation_new(account, realname ? realname : name);
 	g_free(realname);
 }
 

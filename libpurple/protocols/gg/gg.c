@@ -420,7 +420,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 		conv = purple_conversations_find_with_account(
 			PURPLE_CONV_TYPE_IM, who, account);
 		if (conv == NULL)
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
+			conv = purple_im_conversation_new(account, who);
 		purple_conversation_write(conv, purple_account_get_username(account), msg, PURPLE_MESSAGE_SEND, mtime);
 	} else if (ev->recipients_count == 0) {
 		serv_got_im(gc, from, msg, 0, mtime);

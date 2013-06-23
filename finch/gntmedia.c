@@ -390,7 +390,7 @@ finch_new_media(PurpleMediaManager *manager, PurpleMedia *media,
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	conv = purple_im_conversation_new(account, name);
 
 	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);
