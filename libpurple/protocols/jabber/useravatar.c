@@ -22,8 +22,8 @@
  */
 
 #include "internal.h"
-#include "obsolete.h"
 
+#include "http.h"
 #include "useravatar.h"
 #include "pep.h"
 #include "debug.h"
@@ -260,22 +260,24 @@ typedef struct _JabberBuddyAvatarUpdateURLInfo {
 } JabberBuddyAvatarUpdateURLInfo;
 
 static void
-do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
-                               gpointer user_data, const gchar *url_text,
-                               gsize len, const gchar *error_message)
+do_buddy_avatar_update_fromurl(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _info)
 {
-	JabberBuddyAvatarUpdateURLInfo *info = user_data;
+	JabberBuddyAvatarUpdateURLInfo *info = _info;
 	gpointer icon_data;
+	const gchar *got_data;
+	size_t got_len;
 
-	if(!url_text) {
-		purple_debug_error("jabber",
-		             "do_buddy_avatar_update_fromurl got error \"%s\"",
-		             error_message);
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_error("jabber", "do_buddy_avatar_update_fromurl "
+			"got error \"%s\"",
+			purple_http_response_get_error(response));
 		goto out;
 	}
 
-	icon_data = g_memdup(url_text, len);
-	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, icon_data, len, info->id);
+	got_data = purple_http_response_get_data(response, &got_len);
+	icon_data = g_memdup(got_data, got_len);
+	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, icon_data, got_len, info->id);
 
 out:
 	g_free(info->from);
@@ -378,20 +380,19 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 				jabber_pep_request_item(js, from, NS_AVATAR_1_1_DATA, id,
 				                        do_buddy_avatar_update_data);
 			} else {
-				PurpleUtilFetchUrlData *url_data;
+				PurpleHttpRequest *req;
+				PurpleHttpConnection *http_conn;
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
 
-				url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE,
-										  MAX_HTTP_BUDDYICON_BYTES,
-										  do_buddy_avatar_update_fromurl, info);
-				if (url_data) {
-					info->from = g_strdup(from);
-					info->id = g_strdup(id);
-					js->url_datas = g_slist_prepend(js->url_datas, url_data);
-				} else
-					g_free(info);
+				req = purple_http_request_new(url);
+				purple_http_request_set_max_len(req, MAX_HTTP_BUDDYICON_BYTES);
+				http_conn = purple_http_request(js->gc, req, do_buddy_avatar_update_fromurl, info);
+				purple_http_request_unref(req);
 
+				info->from = g_strdup(from);
+				info->id = g_strdup(id);
+				js->http_conns = g_slist_prepend(js->http_conns, http_conn);
 			}
 		}
 	}

@@ -265,10 +265,10 @@ struct _JabberStream
 	PurpleBOSHConnection *bosh;
 
 	/**
-	 * This linked list contains PurpleUtilFetchUrlData structs
+	 * This linked list contains PurpleHttpConnection structs
 	 * for when we lookup buddy icons from a url
 	 */
-	GSList *url_datas;
+	GSList *http_conns;
 
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;

@@ -3367,93 +3367,6 @@ msim_test_all(void)
 }
 #endif
 
-#ifdef MSIM_CHECK_NEWER_VERSION
-/**
- * Callback for when a currentversion.txt has been downloaded.
- */
-static void
-msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
-		gpointer user_data,
-		const gchar *url_text,
-		gsize len,
-		const gchar *error_message)
-{
-	GKeyFile *keyfile;
-	GError *error;
-	GString *data;
-	gchar *newest_filever;
-
-	if (!url_text) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"got error: %s\n", error_message);
-		return;
-	}
-
-	purple_debug_info("msim_check_newer_version_cb",
-			"url_text=%s\n", url_text ? url_text : "(NULL)");
-
-	/* Prepend [group] so that GKeyFile can parse it (requires a group). */
-	data = g_string_new(url_text);
-	purple_debug_info("msim", "data=%s\n", data->str
-			? data->str : "(NULL)");
-	data = g_string_prepend(data, "[group]\n");
-
-	purple_debug_info("msim", "data=%s\n", data->str
-			? data->str : "(NULL)");
-
-	/* url_text is variable=data\n...†*/
-
-	/* Check FILEVER, 1.0.716.0. 716 is build, MSIM_CLIENT_VERSION */
-	/* New (english) version can be downloaded from SETUPURL+SETUPFILE */
-
-	error = NULL;
-	keyfile = g_key_file_new();
-
-	/* Default list seperator is ;, but currentversion.txt doesn't have
-	 * these, so set to an unused character to avoid parsing problems. */
-	g_key_file_set_list_separator(keyfile, '\0');
-
-	g_key_file_load_from_data(keyfile, data->str, data->len,
-				G_KEY_FILE_NONE, &error);
-	g_string_free(data, TRUE);
-
-	if (error != NULL) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"couldn't parse, error: %d %d %s\n",
-				error->domain, error->code, error->message);
-		g_error_free(error);
-		return;
-	}
-
-	gchar **ks;
-	guint n;
-	ks = g_key_file_get_keys(keyfile, "group", &n, NULL);
-	purple_debug_info("msim", "n=%d\n", n);
-	guint i;
-	for (i = 0; ks[i] != NULL; ++i)
-	{
-		purple_debug_info("msim", "%d=%s\n", i, ks[i]);
-	}
-
-	newest_filever = g_key_file_get_string(keyfile, "group",
-			"FILEVER", &error);
-
-	purple_debug_info("msim_check_newer_version_cb",
-			"newest filever: %s\n", newest_filever ?
-			newest_filever : "(NULL)");
-	if (error != NULL) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"error: %d %d %s\n",
-				error->domain, error->code, error->message);
-		g_error_free(error);
-	}
-
-	g_key_file_free(keyfile);
-
-	exit(0);
-}
-#endif
-
 /**
  Handle a myim:addContact command, after username has been looked up.
  */
@@ -3614,17 +3527,6 @@ init_plugin(PurplePlugin *plugin)
 
 	PurpleAccountOption *option;
 	static gboolean initialized = FALSE;
-
-#ifdef MSIM_CHECK_NEWER_VERSION
-	/* PROBLEM: MySpace's servers always return Content-Location, and
-	 * libpurple redirects to it, infinitely, even though it is the same
-	 * location we requested! */
-	purple_util_fetch_url("http://im.myspace.com/nsis/currentversion.txt",
-			FALSE, /* not full URL */
-			"MSIMAutoUpdateAgent", /* user agent */
-			TRUE,  /* use HTTP/1.1 */
-			msim_check_newer_version_cb, NULL);
-#endif
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */

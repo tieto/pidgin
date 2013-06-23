@@ -95,10 +95,6 @@
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
 
-/* Check for a newer official MySpaceIM client on startup?
- * (Mostly useful for developers) */
-/*#define MSIM_CHECK_NEWER_VERSION*/
-
 /* Language codes from http://www.microsoft.com/globaldev/reference/oslocversion.mspx */
 #define MSIM_LANGUAGE_ID_ENGLISH    1033
 #define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
