@@ -228,11 +228,11 @@ static GHashTable* command_tokenize(char* cmd)
  */
 static void command_clear(struct MXitSession* session, const char* from, GHashTable* hash)
 {
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	char* clearmsgscreen;
 
-	conv = purple_conversations_find_im_with_account(from, session->acc);
-	if (conv == NULL) {
+	im = purple_conversations_find_im_with_account(from, session->acc);
+	if (im == NULL) {
 		purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
 		return;
 	}
@@ -240,7 +240,7 @@ static void command_clear(struct MXitSession* session, const char* from, GHashTa
 	clearmsgscreen = g_hash_table_lookup(hash, "clearmsgscreen");
 	if ( (clearmsgscreen) && (strcmp(clearmsgscreen, "true") == 0) ) {
 		/* this is a command to clear the chat screen */
-		purple_conversation_clear_message_history(conv);
+		purple_conversation_clear_message_history(PURPLE_CONVERSATION(im));
 	}
 }
 

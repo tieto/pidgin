@@ -1488,7 +1488,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 	gchar *msg_msim_markup, *msg_purple_markup;
 	gchar *userid;
 	time_t time_received;
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 
 	/* I know this isn't really a string... but we need it to be one for
 	 * purple_conversations_find_with_account(). */
@@ -1502,11 +1502,11 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 		return FALSE;
 	}
 
-	/* See if a conversation with their UID already exists...*/
-	conv = purple_conversations_find_im_with_account(userid, session->account);
-	if (conv) {
-		/* Since the conversation exists... We need to normalize it */
-		purple_conversation_set_name(conv, username);
+	/* See if an IM with their UID already exists...*/
+	im = purple_conversations_find_im_with_account(userid, session->account);
+	if (im) {
+		/* Since the IM exists... We need to normalize it */
+		purple_conversation_set_name(PURPLE_CONVERSATION(im), username);
 	}
 
 	msg_msim_markup = msim_msg_get_string(msg, "msg");
@@ -3480,7 +3480,7 @@ msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpoi
 static void
 msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	MsimMessage *body;
 	gchar *username;
 
@@ -3498,14 +3498,14 @@ msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer
 	}
 
 
-	conv = purple_conversations_find_im_with_account(username, session->account);
-	if (!conv)  {
+	im = purple_conversations_find_im_with_account(username, session->account);
+	if (!im)  {
 		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
-		conv = purple_im_conversation_new(session->account, username);
+		im = purple_im_conversation_new(session->account, username);
 	}
 
 	/* Just open the window so the user can send an IM. */
-	purple_conversation_present(conv);
+	purple_conversation_present(PURPLE_CONVERSATION(im));
 
 	g_free(username);
 }

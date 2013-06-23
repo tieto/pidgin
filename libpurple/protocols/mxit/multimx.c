@@ -179,11 +179,11 @@ static void room_remove(struct MXitSession* session, struct multimx* multimx)
  *  @param convo		The Conversation object
  *  @param nickname		The nickname of the user who joined the room
  */
-static void member_added(PurpleConversation* convo, const char* nickname)
+static void member_added(PurpleChatConversation* chat, const char* nickname)
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "member_added: '%s'\n", nickname);
 
-	purple_chat_conversation_add_user(PURPLE_CONV_CHAT(convo), nickname, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+	purple_chat_conversation_add_user(chat, nickname, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 
@@ -193,11 +193,11 @@ static void member_added(PurpleConversation* convo, const char* nickname)
  *  @param convo		The Conversation object
  *  @param nickname		The nickname of the user who left the room
  */
-static void member_removed(PurpleConversation* convo, const char* nickname)
+static void member_removed(PurpleChatConversation* chat, const char* nickname)
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "member_removed: '%s'\n", nickname);
 
-	purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(convo), nickname, NULL);
+	purple_chat_conversation_remove_user(chat, nickname, NULL);
 }
 
 
@@ -207,11 +207,11 @@ static void member_removed(PurpleConversation* convo, const char* nickname)
  *  @param convo		The Conversation object
  *  @param nickname		The nickname of the user who was kicked
  */
-static void member_kicked(PurpleConversation* convo, const char* nickname)
+static void member_kicked(PurpleChatConversation* chat, const char* nickname)
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "member_kicked: '%s'\n", nickname);
 
-	purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(convo), nickname, _("was kicked"));
+	purple_chat_conversation_remove_user(chat, nickname, _("was kicked"));
 }
 
 
@@ -222,12 +222,12 @@ static void member_kicked(PurpleConversation* convo, const char* nickname)
  *  @param session		The MXit session object
  *  @param multimx		The MultiMX room object
  */
-static void you_kicked(PurpleConversation* convo, struct MXitSession* session, struct multimx* multimx)
+static void you_kicked(PurpleChatConversation* chat, struct MXitSession* session, struct multimx* multimx)
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "you_kicked\n");
 
-	purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
-	purple_chat_conversation_clear_users(PURPLE_CONV_CHAT(convo));
+	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_chat_conversation_clear_users(chat);
 	serv_got_chat_left(session->con, multimx->chatid);
 }
 
@@ -238,7 +238,7 @@ static void you_kicked(PurpleConversation* convo, struct MXitSession* session, s
  *  @param convo		The Conversation object
  *  @param data			The nicknames of the users in the room (separated by \n)
  */
-static void member_update(PurpleConversation* convo, char* data)
+static void member_update(PurpleChatConversation* chat, char* data)
 {
 	gchar** userlist;
 	int i = 0;
@@ -246,14 +246,14 @@ static void member_update(PurpleConversation* convo, char* data)
 	purple_debug_info(MXIT_PLUGIN_ID, "member_update: '%s'\n", data);
 
 	/* Clear list */
-	purple_chat_conversation_clear_users(PURPLE_CONV_CHAT(convo));
+	purple_chat_conversation_clear_users(chat);
 
 	/* Add each member */
 	data = g_strstrip(data);				/* string leading & trailing whitespace */
 	userlist = g_strsplit(data, "\n", 0);	/* tokenize string */
 	while (userlist[i] != NULL) {
 		purple_debug_info(MXIT_PLUGIN_ID, "member_update - adding: '%s'\n", userlist[i]);
-		purple_chat_conversation_add_user(PURPLE_CONV_CHAT(convo), userlist[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
+		purple_chat_conversation_add_user(chat, userlist[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
 		i++;
 	}
 	g_strfreev(userlist);
@@ -377,8 +377,8 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 		/* Must be a service message */
 		char* ofs;
 
-		PurpleConversation* convo = purple_conversations_find_chat_with_account(multimx->roomname, mx->session->acc);
-		if (convo == NULL) {
+		PurpleChatConversation* chat = purple_conversations_find_chat_with_account(multimx->roomname, mx->session->acc);
+		if (chat == NULL) {
 			purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
 			return;
 		}
@@ -387,28 +387,28 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 		if ((ofs = strstr(msg, " has joined")) != NULL) {
 			/* Somebody has joined */
 			*ofs = '\0';
-			member_added(convo, msg);
+			member_added(chat, msg);
 			mx->processed = TRUE;
 		}
 		else if ((ofs = strstr(msg, " has left")) != NULL) {
 			/* Somebody has left */
 			*ofs = '\0';
-			member_removed(convo, msg);
+			member_removed(chat, msg);
 			mx->processed = TRUE;
 		}
 		else if ((ofs = strstr(msg, " has been kicked")) != NULL) {
 			/* Somebody has been kicked */
 			*ofs = '\0';
-			member_kicked(convo, msg);
+			member_kicked(chat, msg);
 			mx->processed = TRUE;
 		}
 		else if (strcmp(msg, "You have been kicked.") == 0) {
 			/* You have been kicked */
-			you_kicked(convo, mx->session, multimx);
+			you_kicked(chat, mx->session, multimx);
 			mx->processed = TRUE;
 		}
 		else if (g_str_has_prefix(msg, "The following users are in this MultiMx:") == TRUE) {
-			member_update(convo, msg + strlen("The following users are in this MultiMx:") + 1);
+			member_update(chat, msg + strlen("The following users are in this MultiMx:") + 1);
 			mx->processed = TRUE;
 		}
 		else {
@@ -544,7 +544,7 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	struct multimx* multimx = NULL;
 	PurpleBuddy* buddy;
-	PurpleConversation *convo;
+	PurpleChatConversation *chat;
 	char* tmp;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat invite to '%s'\n", username);
@@ -566,15 +566,15 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 		return;
 	}
 
-	convo = purple_conversations_find_chat_with_account(multimx->roomname, session->acc);
-	if (convo == NULL) {
+	chat = purple_conversations_find_chat_with_account(multimx->roomname, session->acc);
+	if (chat == NULL) {
 		purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
 		return;
 	}
 
 	/* Display system message in chat window */
 	tmp = g_strdup_printf("%s: %s", _("You have invited"), purple_buddy_get_alias(buddy));
-	purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), "MXit", tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "MXit", tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 	g_free(tmp);
 }
 
