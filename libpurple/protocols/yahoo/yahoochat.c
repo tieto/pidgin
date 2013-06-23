@@ -770,7 +770,7 @@ void yahoo_conf_leave(YahooData *yd, const char *room, const char *dn, GList *wh
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
-		const char *name = purple_chat_conversation_cb_get_name(w->data);
+		const char *name = purple_chat_conversation_buddy_get_name(w->data);
 		yahoo_packet_hash_str(pkt, 3, name);
 	}
 
@@ -794,7 +794,7 @@ static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *roo
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (who = members; who; who = who->next) {
-		const char *name = purple_chat_conversation_cb_get_name(who->data);
+		const char *name = purple_chat_conversation_buddy_get_name(who->data);
 		yahoo_packet_hash_str(pkt, 53, name);
 	}
 	yahoo_packet_hash(pkt, "ss", 57, room, 14, msg2);
@@ -852,7 +852,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
 	for(; members; members = members->next) {
-		const char *name = purple_chat_conversation_cb_get_name(members->data);
+		const char *name = purple_chat_conversation_buddy_get_name(members->data);
 		if (!strcmp(name, dn))
 			continue;
 		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);

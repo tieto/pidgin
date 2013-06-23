@@ -794,7 +794,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
                     from_username, to_username, purple_conversation_get_name(conv), message);
 
   chat = purple_conversation_get_chat_data(conv);
-  chat_buddy = purple_chat_conversation_cb_find(chat, to_username);
+  chat_buddy = purple_chat_conversation_find_buddy(chat, to_username);
   to = get_nullprpl_gc(to_username);
 
   if (!chat_buddy) {

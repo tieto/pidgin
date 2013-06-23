@@ -4149,11 +4149,11 @@ get_chat_buddy_status_icon(PurpleChatConversation *chat, const char *name, Purpl
 static void
 deleting_chat_buddy_cb(PurpleChatConversationBuddy *cb)
 {
-	GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cb);
+	GtkTreeRowReference *ref = purple_chat_conversation_buddy_get_ui_data(cb);
 
 	if (ref) {
 		gtk_tree_row_reference_free(ref);
-		purple_chat_conversation_cb_set_ui_data(cb, NULL);
+		purple_chat_conversation_buddy_set_ui_data(cb, NULL);
 	}
 }
 
@@ -4177,9 +4177,9 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleChatConversationBuddy *cb,
 	PurpleChatConversationBuddyFlags flags;
 	GdkColor *color = NULL;
 
-	alias = purple_chat_conversation_cb_get_alias(cb);
-	name  = purple_chat_conversation_cb_get_name(cb);
-	flags = purple_chat_conversation_cb_get_flags(cb);
+	alias = purple_chat_conversation_buddy_get_alias(cb);
+	name  = purple_chat_conversation_buddy_get_name(cb);
+	flags = purple_chat_conversation_buddy_get_flags(cb);
 
 	chat    = PURPLE_CONV_CHAT(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -4197,7 +4197,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleChatConversationBuddy *cb,
 	if (!strcmp(purple_chat_conversation_get_nick(chat), purple_normalize(purple_conversation_get_account(conv), old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
-	is_buddy = purple_chat_conversation_cb_is_buddy(cb);
+	is_buddy = purple_chat_conversation_buddy_is_buddy(cb);
 
 	tmp = g_utf8_casefold(alias, -1);
 	alias_key = g_utf8_collate_key(tmp, -1);
@@ -4238,13 +4238,13 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleChatConversationBuddy *cb,
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 
-	if (purple_chat_conversation_cb_get_ui_data(cb)) {
-		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cb);
+	if (purple_chat_conversation_buddy_get_ui_data(cb)) {
+		GtkTreeRowReference *ref = purple_chat_conversation_buddy_get_ui_data(cb);
 		gtk_tree_row_reference_free(ref);
 	}
 
 	newpath = gtk_tree_model_get_path(tm, &iter);
-	purple_chat_conversation_cb_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
+	purple_chat_conversation_buddy_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
 	gtk_tree_path_free(newpath);
 
 	if (is_me && color)
@@ -4400,7 +4400,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, purple_chat_conversation_cb_get_name((PurpleChatConversationBuddy *)l->data));
+									  &matches, purple_chat_conversation_buddy_get_name((PurpleChatConversationBuddy *)l->data));
 		}
 
 
@@ -6793,7 +6793,7 @@ static gboolean get_iter_from_chatbuddy(PurpleChatConversationBuddy *cb, GtkTree
 
 	g_return_val_if_fail(cb != NULL, FALSE);
 
-	ref = purple_chat_conversation_cb_get_ui_data(cb);
+	ref = purple_chat_conversation_buddy_get_ui_data(cb);
 	if (!ref)
 		return FALSE;
 
@@ -6879,21 +6879,21 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
 		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
 
-	old_cbuddy = purple_chat_conversation_cb_find(chat, old_name);
+	old_cbuddy = purple_chat_conversation_find_buddy(chat, old_name);
 	if (!old_cbuddy)
 		return;
 
 	if (get_iter_from_chatbuddy(old_cbuddy, &iter)) {
-		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(old_cbuddy);
+		GtkTreeRowReference *ref = purple_chat_conversation_buddy_get_ui_data(old_cbuddy);
 
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		purple_chat_conversation_cb_set_ui_data(old_cbuddy, NULL);
+		purple_chat_conversation_buddy_set_ui_data(old_cbuddy, NULL);
 	}
 
 	g_return_if_fail(new_alias != NULL);
 
-	new_cbuddy = purple_chat_conversation_cb_find(chat, new_name);
+	new_cbuddy = purple_chat_conversation_find_buddy(chat, new_name);
 
 	add_chat_buddy_common(conv, new_cbuddy, old_name);
 }
@@ -6972,15 +6972,15 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		return;
 
-	cbuddy = purple_chat_conversation_cb_find(chat, user);
+	cbuddy = purple_chat_conversation_find_buddy(chat, user);
 	if (!cbuddy)
 		return;
 
 	if (get_iter_from_chatbuddy(cbuddy, &iter)) {
-		GtkTreeRowReference *ref = purple_chat_conversation_cb_get_ui_data(cbuddy);
+		GtkTreeRowReference *ref = purple_chat_conversation_buddy_get_ui_data(cbuddy);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		purple_chat_conversation_cb_set_ui_data(cbuddy, NULL);
+		purple_chat_conversation_buddy_set_ui_data(cbuddy, NULL);
 	}
 
 	if (cbuddy)
