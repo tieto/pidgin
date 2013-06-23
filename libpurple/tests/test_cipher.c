@@ -22,8 +22,7 @@
 	context = purple_cipher_context_new(cipher, NULL); \
 	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
@@ -85,8 +84,7 @@ END_TEST
 	context = purple_cipher_context_new(cipher, NULL); \
 	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
@@ -159,8 +157,7 @@ END_TEST
 			purple_cipher_context_append(context, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
@@ -220,8 +217,7 @@ END_TEST
 			purple_cipher_context_append(context, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
@@ -267,20 +263,17 @@ END_TEST
 	guchar decrypt[len+1] = in; \
 	guchar key[8+1] = keyz;\
 	guchar encrypt[len+1] = out;\
-	size_t outlen; \
 	\
 	cipher = purple_ciphers_find_cipher("des"); \
 	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, key); \
+	purple_cipher_context_set_key(context, key, sizeof(key)); \
 	\
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, &outlen); \
-	fail_unless(ret == 0, NULL); \
-	fail_unless(outlen == (len), NULL); \
+	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, sizeof(answer)); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, &outlen); \
-	fail_unless(ret == 0, NULL); \
-	fail_unless(outlen == (len), NULL); \
+	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, sizeof(answer)); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
 	purple_cipher_context_destroy(context); \
@@ -314,23 +307,20 @@ END_TEST
 	guchar answer[len+1]; \
 	guchar decrypt[len+1] = in; \
 	guchar encrypt[len+1] = out; \
-	size_t outlen; \
 	gint ret = 0; \
 	\
 	cipher = purple_ciphers_find_cipher("des3"); \
 	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, (guchar *)key); \
+	purple_cipher_context_set_key(context, (guchar *)key, sizeof(key)); \
 	purple_cipher_context_set_batch_mode(context, (mode)); \
 	purple_cipher_context_set_iv(context, (guchar *)iv, 8); \
 	\
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, &outlen); \
-	fail_unless(ret == 0, NULL); \
-	fail_unless(outlen == (len), NULL); \
+	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, sizeof(answer)); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, &outlen); \
-	fail_unless(ret == 0, NULL); \
-	fail_unless(outlen == (len), NULL); \
+	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, sizeof(answer)); \
+	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
 	purple_cipher_context_destroy(context); \
@@ -488,11 +478,10 @@ END_TEST
 	cipher = purple_ciphers_find_cipher("hmac"); \
 	context = purple_cipher_context_new(cipher, NULL); \
 	purple_cipher_context_set_option(context, "hash", type); \
-	purple_cipher_context_set_key_with_len(context, (guchar *)key, (key_len)); \
+	purple_cipher_context_set_key(context, (guchar *)key, (key_len)); \
 	\
 	purple_cipher_context_append(context, (guchar *)(data), (data_len)); \
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
