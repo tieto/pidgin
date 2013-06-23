@@ -1202,8 +1202,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	if (id && strcmp(id, "1")) {
 		PurpleConversation *conv
-			= purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY,
-			                                        who, purple_connection_get_account(gc));
+			= purple_conversations_find_with_account(who, purple_connection_get_account(gc));
 		if (conv != NULL) {
 			const char *error;
 			if (!strcmp(id, "407"))

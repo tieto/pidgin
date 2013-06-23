@@ -705,7 +705,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (swboard->current_users > 1 ||
 			((swboard->conv != NULL) &&
-			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+			 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
 		{
 			/* If current_users is always ok as it should then there is no need to
 			 * check if this is a chat. */
@@ -717,7 +717,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 							 time(NULL));
 			if (swboard->conv == NULL)
 			{
-				swboard->conv = purple_conversations_find_chat(gc, swboard->chat_id);
+				swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, swboard->chat_id));
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
 		}
@@ -727,8 +727,8 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			serv_got_im(gc, passport, body_final, 0, time(NULL));
 			if (swboard->conv == NULL)
 			{
-				swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-										passport, purple_connection_get_account(gc));
+				swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(
+										passport, purple_connection_get_account(gc)));
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
 		}
@@ -795,18 +795,19 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 
 	if (swboard->conv == NULL) {
 		if (chat)
-			swboard->conv = purple_conversations_find_chat(purple_account_get_connection(account), swboard->chat_id);
+			swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_chat(
+					purple_account_get_connection(account), swboard->chat_id));
 		else {
-			swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-									who, account);
+			swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(
+									who, account));
 			if (swboard->conv == NULL)
-				swboard->conv = purple_im_conversation_new(account, who);
+				swboard->conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
 		}
 	}
 
 	if (chat)
 		serv_got_chat_in(pc,
-		                 purple_chat_conversation_get_id(PURPLE_CONV_CHAT(swboard->conv)),
+		                 purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(swboard->conv)),
 		                 who, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM, str,
 		                 time(NULL));
 	else
@@ -996,7 +997,8 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		 * the conversation doesn't exist then we cannot associate the new
 		 * smiley with its GtkIMHtml widget. */
 		if (!conv) {
-			conv = purple_im_conversation_new(session->account, who);
+			/* TODO memory leak - dispose this conv */
+			conv = PURPLE_CONVERSATION(purple_im_conversation_new(session->account, who));
 		}
 
 		if (purple_conversation_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
@@ -1034,7 +1036,7 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			MsnSwitchBoard *swboard = cmdproc->data;
 			if (swboard->current_users > 1 ||
 				((swboard->conv != NULL) &&
-				 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+				 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
 				purple_prpl_got_attention_in_chat(gc, swboard->chat_id, user, MSN_NUDGE);
 
 			else
@@ -1140,21 +1142,20 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			purple_debug_info("msn", "Computer call\n");
 
 			if (cmdproc->session) {
-				PurpleConversation *conv = NULL;
+				PurpleIMConversation *im = NULL;
 				gchar *from = msg->remote_user;
 				gchar *buf = NULL;
 
 				if (from)
-					conv = purple_conversations_find_with_account(
-							PURPLE_CONV_TYPE_IM, from,
-							cmdproc->session->account);
-				if (conv)
+					im = purple_conversations_find_im_with_account(
+							from, cmdproc->session->account);
+				if (im)
 					buf = g_strdup_printf(
 							_("%s sent you a voice chat "
 							"invite, which is not yet "
 							"supported."), from);
 				if (buf) {
-					purple_conversation_write(conv, NULL, buf,
+					purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
 							PURPLE_MESSAGE_SYSTEM |
 							PURPLE_MESSAGE_NOTIFY,
 							time(NULL));

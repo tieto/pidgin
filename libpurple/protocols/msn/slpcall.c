@@ -566,18 +566,17 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 	} else if (!strcmp(euf_guid, MSN_CAM_REQUEST_GUID)) {
 		purple_debug_info("msn", "Cam request.\n");
 		if (slpcall->slplink && slpcall->slplink->session) {
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 			gchar *from = slpcall->slplink->remote_user;
-			conv = purple_conversations_find_with_account(
-					PURPLE_CONV_TYPE_IM, from,
-					slpcall->slplink->session->account);
-			if (conv) {
+			im = purple_conversations_find_im_with_account(
+					from, slpcall->slplink->session->account);
+			if (im) {
 				char *buf;
 				buf = g_strdup_printf(
 						_("%s requests to view your "
 						"webcam, but this request is "
 						"not yet supported."), from);
-				purple_conversation_write(conv, NULL, buf,
+				purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,
 						time(NULL));
@@ -588,17 +587,16 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 	} else if (!strcmp(euf_guid, MSN_CAM_GUID)) {
 		purple_debug_info("msn", "Cam invite.\n");
 		if (slpcall->slplink && slpcall->slplink->session) {
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 			gchar *from = slpcall->slplink->remote_user;
-			conv = purple_conversations_find_with_account(
-					PURPLE_CONV_TYPE_IM, from,
-					slpcall->slplink->session->account);
-			if (conv) {
+			im = purple_conversations_find_im_with_account(
+					from, slpcall->slplink->session->account);
+			if (im) {
 				char *buf;
 				buf = g_strdup_printf(
 						_("%s invited you to view his/her webcam, but "
 						"this is not yet supported."), from);
-				purple_conversation_write(conv, NULL, buf,
+				purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,
 						time(NULL));

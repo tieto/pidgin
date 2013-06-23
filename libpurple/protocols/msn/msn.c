@@ -849,7 +849,8 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = msn_switchboard_get_chat_id();
-	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
+	swboard->conv = PURPLE_CONVERSATION(serv_got_joined_chat(gc,
+			swboard->chat_id, "MSN Chat"));
 	swboard->flag = MSN_SB_FLAG_IM;
 
 	/* Local alias > Display name > Username */
@@ -857,7 +858,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 		if ((alias = purple_connection_get_display_name(gc)) == NULL)
 			alias = purple_account_get_username(account);
 
-	purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
+	purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
 	                          alias, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
@@ -1970,7 +1971,7 @@ msn_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		swboard = msn_switchboard_new(session);
 		msn_switchboard_request(swboard);
 		swboard->chat_id = id;
-		swboard->conv = purple_conversations_find_chat(gc, id);
+		swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, id));
 	}
 
 	swboard->flag |= MSN_SB_FLAG_IM;
@@ -2885,11 +2886,11 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	if (!g_ascii_strcasecmp(cmd, "Chat")) {
 		char *sname = g_hash_table_lookup(params, "contact");
 		if (sname) {
-			PurpleConversation *conv = purple_conversations_find_with_account(
-				PURPLE_CONV_TYPE_IM, sname, acct);
-			if (conv == NULL)
-				conv = purple_im_conversation_new(acct, sname);
-			purple_conversation_present(conv);
+			PurpleIMConversation *im = purple_conversations_find_im_with_account(
+				sname, acct);
+			if (im == NULL)
+				im = purple_im_conversation_new(acct, sname);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
 		}
 		/*else
 			**If pidgindialogs_im() was in the core, we could use it here.

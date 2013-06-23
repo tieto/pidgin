@@ -288,22 +288,21 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		return;
 	}
 
-	if ((swboard->conv != NULL) &&
-		(purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+	if ((swboard->conv != NULL) && (PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
 	{
-		purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv), msnuser->passport, NULL,
-								PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+		purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
+				msnuser->passport, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
 	else if (swboard->current_users > 1)
 	{
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 		if (swboard->conv == NULL ||
-			purple_conversation_get_type(swboard->conv) != PURPLE_CONV_TYPE_CHAT)
+			PURPLE_IS_IM_CONVERSATION(swboard->conv))
 		{
 			GList *l;
 
-#if 0
+#if 0 /* TODO if conv exists, it gets leaked? */
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
 			if (swboard->conv != NULL)
@@ -312,9 +311,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 			swboard->chat_id = msn_switchboard_get_chat_id();
 			swboard->flag |= MSN_SB_FLAG_IM;
-			swboard->conv = serv_got_joined_chat(purple_account_get_connection(account),
+			swboard->conv = PURPLE_CONVERSATION(serv_got_joined_chat(purple_account_get_connection(account),
 												 swboard->chat_id,
-												 "MSN Chat");
+												 "MSN Chat"));
 
 			for (l = swboard->users; l != NULL; l = l->next)
 			{
@@ -322,11 +321,11 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 				tmp_user = ((MsnUser*)l->data)->passport;
 
-				purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
+				purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
 										tmp_user, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 			}
 
-			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(swboard->conv),
+			purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
 									purple_account_get_username(account),
 									NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 
@@ -336,8 +335,8 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else if (swboard->conv == NULL)
 	{
-		swboard->conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-															msnuser->passport, account);
+		swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(
+				msnuser->passport, account));
 	}
 	else
 	{
@@ -359,8 +358,8 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 
 	account = swboard->session->account;
 
-	return (swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-												  account, swboard->im_user));
+	return (swboard->conv = PURPLE_CONVERSATION(purple_im_conversation_new(
+												  account, swboard->im_user)));
 }
 
 static void
@@ -618,11 +617,11 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_switchboard_destroy(swboard);
 	}
 	else if ((swboard->current_users > 1) ||
-			 (purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+			 PURPLE_IS_CHAT_CONVERSATION(swboard->conv))
 	{
 		GList *passport;
 		/* This is a switchboard used for a chat */
-		purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
+		purple_chat_conversation_remove_user(PURPLE_CHAT_CONVERSATION(swboard->conv), user, NULL);
 
 		passport = g_list_find_custom(swboard->users, user, (GCompareFunc)strcmp);
 		if (passport)
@@ -833,7 +832,7 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
-		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+		 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
 		serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
 						 time(NULL));
 	else

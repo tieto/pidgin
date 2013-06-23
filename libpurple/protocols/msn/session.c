@@ -177,21 +177,20 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 	return NULL;
 }
 
-static PurpleConversation *
-msn_session_get_conv(MsnSession *session,const char *passport)
+static PurpleIMConversation *
+msn_session_get_im(MsnSession *session,const char *passport)
 {
 	PurpleAccount *account;
-	PurpleConversation * conv;
+	PurpleIMConversation * im;
 
 	g_return_val_if_fail(session != NULL, NULL);
 	account = session->account;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-									passport, account);
-	if(conv == NULL){
-		conv = purple_im_conversation_new(account, passport);
+	im = purple_conversations_find_im_with_account(passport, account);
+	if(im == NULL){
+		im = purple_im_conversation_new(account, passport);
 	}
-	return conv;
+	return im;
 }
 
 /* put Message to User Conversation
@@ -201,10 +200,10 @@ msn_session_get_conv(MsnSession *session,const char *passport)
 void
 msn_session_report_user(MsnSession *session,const char *passport,const char *msg,PurpleMessageFlags flags)
 {
-	PurpleConversation * conv;
+	PurpleIMConversation * im;
 
-	if ((conv = msn_session_get_conv(session,passport)) != NULL){
-		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
+	if ((im = msn_session_get_im(session,passport)) != NULL){
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, msg, flags, time(NULL));
 	}
 }
 
