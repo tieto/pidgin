@@ -399,8 +399,6 @@ des_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	ssize_t out_len;
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while(offset+8<=in_len) {
 		des_ecb_crypt(purple_cipher_context_get_data(context),
 		              input+offset,
@@ -434,8 +432,6 @@ des_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	int tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	ssize_t out_len;
-
-	g_return_val_if_fail(out_size < in_len, -1);
 
 	while(offset+8<=in_len) {
 		des_ecb_crypt(purple_cipher_context_get_data(context),
@@ -562,8 +558,6 @@ des3_ecb_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	ssize_t out_len;
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while (offset + 8 <= in_len) {
 		des_ecb_crypt(&ctx->key1,
 		              input+offset,
@@ -615,8 +609,6 @@ des3_cbc_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guint8 buf[8];
 	ssize_t out_len;
 	memcpy(buf, ctx->iv, 8);
-
-	g_return_val_if_fail(out_size < in_len, -1);
 
 	while (offset + 8 <= in_len) {
 		for (i = 0; i < 8; i++)
@@ -690,8 +682,6 @@ des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	ssize_t out_len;
 
-	g_return_val_if_fail(out_size < in_len, -1);
-
 	while (offset + 8 <= in_len) {
 		/* NOTE: Apply key in reverse */
 		des_ecb_crypt(&ctx->key3,
@@ -744,8 +734,6 @@ des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	guint8 link[8];
 	ssize_t out_len;
-
-	g_return_val_if_fail(out_size < in_len, -1);
 
 	memcpy(link, ctx->iv, 8);
 	while (offset + 8 <= in_len) {
