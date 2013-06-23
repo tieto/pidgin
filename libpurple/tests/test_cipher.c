@@ -266,13 +266,13 @@ END_TEST
 	\
 	cipher = purple_ciphers_find_cipher("des"); \
 	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, key, sizeof(key)); \
+	purple_cipher_context_set_key(context, key, 8); \
 	\
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, sizeof(answer)); \
+	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, sizeof(answer)); \
+	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
@@ -311,15 +311,16 @@ END_TEST
 	\
 	cipher = purple_ciphers_find_cipher("des3"); \
 	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, (guchar *)key, sizeof(key)); \
+	purple_cipher_context_set_key(context, (guchar *)key, 24); \
 	purple_cipher_context_set_batch_mode(context, (mode)); \
 	purple_cipher_context_set_iv(context, (guchar *)iv, 8); \
 	\
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, sizeof(answer)); \
+	fprintf(stderr, "len: %lu\n", len); \
+	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, sizeof(answer)); \
+	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
