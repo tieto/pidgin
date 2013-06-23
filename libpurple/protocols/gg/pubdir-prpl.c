@@ -793,7 +793,7 @@ static void ggp_pubdir_search_results_add(PurpleConnection *gc, GList *row,
 static void ggp_pubdir_search_results_im(PurpleConnection *gc, GList *row,
 	gpointer _form)
 {
-	purple_conversation_present(purple_conversation_new(PURPLE_CONV_TYPE_IM,
+	purple_conversation_present(purple_im_conversation_new(
 		purple_connection_get_account(gc), g_list_nth_data(row, 0)));
 }
 

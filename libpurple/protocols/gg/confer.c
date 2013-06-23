@@ -59,7 +59,7 @@ void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_nam
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv), str_uin, NULL,
+			purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(conv), str_uin, NULL,
 						PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 
 			g_free(str_uin);
@@ -97,7 +97,7 @@ void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv),
+			purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(conv),
 						str_uin, NULL,
 						PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 			g_free(str_uin);

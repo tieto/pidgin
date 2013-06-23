@@ -417,8 +417,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv;
 		const gchar *who = ggp_uin_to_str(ev->sender); // not really sender
-		conv = purple_conversations_find_with_account(
-			PURPLE_CONV_TYPE_IM, who, account);
+		conv = purple_conversations_find_im_with_account(who, account);
 		if (conv == NULL)
 			conv = purple_im_conversation_new(account, who);
 		purple_conversation_write(conv, purple_account_get_username(account), msg, PURPLE_MESSAGE_SEND, mtime);
@@ -444,7 +443,7 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 						    ev->recipients_count);
 		}
 		conv = ggp_confer_find_by_name(gc, chat_name);
-		chat_id = purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv));
+		chat_id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
 
 		serv_got_chat_in(gc, chat_id,
 			ggp_buddylist_get_buddy_name(gc, ev->sender),
@@ -1085,8 +1084,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 			else if (prepare_result == GGP_IMAGE_PREPARE_TOO_BIG)
 			{
 				PurpleConversation *conv =
-					purple_conversations_find_with_account(
-						PURPLE_CONV_TYPE_IM, who,
+					purple_conversations_find_im_with_account(who,
 						purple_connection_get_account(gc));
 				purple_conversation_write(conv, "",
 					_("Image is too large, please try "
@@ -1215,7 +1213,7 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 
 	ggp_confer_add_new(gc, chat_name);
 	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
-	purple_chat_conversation_add_user(PURPLE_CONV_CHAT(conv),
+	purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(conv),
 				purple_account_get_username(account), NULL,
 				PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }

@@ -41,10 +41,7 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 		return 1;
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
-	if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_IM)
-		purple_im_conversation_write_message(PURPLE_CONV_IM(convo), "", buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
-	else
-		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), "", buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_message(convo, "", buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
 
 	return 1;
@@ -139,12 +136,12 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 		g_free(escaped);
 		if (action[strlen(action) - 1] == '\n')
 			action[strlen(action) - 1] = '\0';
-		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
-			serv_got_chat_in(gc, purple_chat_conversation_get_id(PURPLE_CONV_CHAT(convo)),
+		if (PURPLE_IS_CHAT_CONVERSATION(convo))
+			serv_got_chat_in(gc, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)),
 			                 purple_connection_get_display_name(gc),
 			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
-			purple_im_conversation_write_message(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
+			purple_conversation_write_message(convo, purple_connection_get_display_name(gc),
 			                     action, PURPLE_MESSAGE_SEND, time(NULL));
 		g_free(action);
 	}
@@ -458,7 +455,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (args[1]) {
 		gc = purple_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
-		purple_im_conversation_write_message(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
+		purple_conversation_write_message(convo, purple_connection_get_display_name(gc),
 			      args[1], PURPLE_MESSAGE_SEND, time(NULL));
 	}
 
@@ -527,7 +524,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 		return 0;
 
 	if (!args[0]) {
-		topic = purple_chat_conversation_get_topic (PURPLE_CONV_CHAT(convo));
+		topic = purple_chat_conversation_get_topic (PURPLE_CHAT_CONVERSATION(convo));
 
 		if (topic) {
 			char *tmp, *tmp2;
@@ -538,7 +535,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), target, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_message(convo, target, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
 		return 0;
