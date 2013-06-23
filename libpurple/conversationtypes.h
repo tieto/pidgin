@@ -30,60 +30,54 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
-#define PURPLE_TYPE_IM_CONVERSATION       (purple_im_conversation_get_type())
-#define PURPLE_IM_CONVERSATION(obj)       (G_TYPE_CHECK_INSTANCE_CAST((obj),  \
-                                           PURPLE_TYPE_IM_CONVERSATION,       \
-                                           PurpleIMConversation))
-#define PURPLE_IM_CONVERSATION_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), \
-                                           PURPLE_TYPE_IM_CONVERSATION,       \
-                                           PurpleIMConversationClass))
-#define PURPLE_IS_IM_CONVERSATION(obj)    (G_TYPE_CHECK_INSTANCE_TYPE((obj),  \
-                                           PURPLE_TYPE_IM_CONVERSATION))
-#define PURPLE_IS_IM_CONVERSATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),\
-                                           PURPLE_TYPE_IM_CONVERSATION))
-#define PURPLE_IM_CONVERSATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj),\
-                                           PURPLE_TYPE_IM_CONVERSATION,       \
-                                           PurpleIMConversationClass))
+#define PURPLE_TYPE_IM_CONVERSATION \
+	(purple_im_conversation_get_type())
+#define PURPLE_IM_CONVERSATION(obj) \
+	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversation))
+#define PURPLE_IM_CONVERSATION_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
+#define PURPLE_IS_IM_CONVERSATION(obj) \
+	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_IM_CONVERSATION))
+#define PURPLE_IS_IM_CONVERSATION_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_IM_CONVERSATION))
+#define PURPLE_IM_CONVERSATION_GET_CLASS(obj) \
+	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
 
 /** @copydoc _PurpleIMConversation */
 typedef struct _PurpleIMConversation         PurpleIMConversation;
 /** @copydoc _PurpleIMConversationClass */
 typedef struct _PurpleIMConversationClass    PurpleIMConversationClass;
 
-#define PURPLE_TYPE_CHAT_CONVERSATION     (purple_chat_conversation_get_type())
-#define PURPLE_CHAT_CONVERSATION(obj)     (G_TYPE_CHECK_INSTANCE_CAST((obj),  \
-                                           PURPLE_TYPE_CHAT_CONVERSATION,     \
-                                           PurpleChatConversation))
-#define PURPLE_CHAT_CONVERSATION_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION,     \
-                                           PurpleChatConversationClass))
-#define PURPLE_IS_CHAT_CONVERSATION(obj)  (G_TYPE_CHECK_INSTANCE_TYPE((obj),  \
-                                           PURPLE_TYPE_CHAT_CONVERSATION))
-#define PURPLE_IS_CHAT_CONVERSATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION))
-#define PURPLE_CHAT_CONVERSATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION,     \
-                                           PurpleChatConversationClass))
+#define PURPLE_TYPE_CHAT_CONVERSATION \
+	(purple_chat_conversation_get_type())
+#define PURPLE_CHAT_CONVERSATION(obj) \
+	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversation))
+#define PURPLE_CHAT_CONVERSATION_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
+#define PURPLE_IS_CHAT_CONVERSATION(obj) \
+	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION))
+#define PURPLE_IS_CHAT_CONVERSATION_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION))
+#define PURPLE_CHAT_CONVERSATION_GET_CLASS(obj) \
+	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
 
 /** @copydoc _PurpleChatConversation */
 typedef struct _PurpleChatConversation       PurpleChatConversation;
 /** @copydoc _PurpleChatConversationClass */
 typedef struct _PurpleChatConversationClass  PurpleChatConversationClass;
 
-#define PURPLE_TYPE_CHAT_CONVERSATION_BUDDY (purple_chat_conversation_buddy_get_type())
-#define PURPLE_CHAT_CONVERSATION_BUDDY(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), \
-                                           PURPLE_TYPE_CHAT_CONVERSATION_BUDDY,\
-                                           PurpleChatConversationBuddy))
-#define PURPLE_CHAT_CONVERSATION_BUDDY_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION_BUDDY,\
-                                           PurpleChatConversationBuddyClass))
-#define PURPLE_IS_CHAT_CONVERSATION_BUDDY(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
-#define PURPLE_IS_CHAT_CONVERSATION_BUDDY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
-#define PURPLE_CHAT_CONVERSATION_BUDDY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj),\
-                                           PURPLE_TYPE_CHAT_CONVERSATION_BUDDY,\
-                                           PurpleChatConversationBuddyClass))
+#define PURPLE_TYPE_CHAT_CONVERSATION_BUDDY \
+	(purple_chat_conversation_buddy_get_type())
+#define PURPLE_CHAT_CONVERSATION_BUDDY(obj) \
+	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddy))
+#define PURPLE_CHAT_CONVERSATION_BUDDY_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddyClass))
+#define PURPLE_IS_CHAT_CONVERSATION_BUDDY(obj) \
+	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
+#define PURPLE_IS_CHAT_CONVERSATION_BUDDY_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
+#define PURPLE_CHAT_CONVERSATION_BUDDY_GET_CLASS(obj) \
+	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddyClass))
 
 /** @copydoc _PurpleChatConversationBuddy */
 typedef struct _PurpleChatConversationBuddy       PurpleChatConversationBuddy;
