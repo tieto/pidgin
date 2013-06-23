@@ -2194,7 +2194,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 	}
 
-	if (!purple_conv_present_error(userinfo->bn, account, buf))
+	if (!purple_conversation_helper_present_error(userinfo->bn, account, buf))
 		purple_notify_error(od->gc, NULL, buf, NULL);
 	g_free(buf);
 
@@ -3657,7 +3657,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, co
 	if (!oscar_util_valid_name(bname)) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), bname);
-		if (!purple_conv_present_error(bname, account, buf))
+		if (!purple_conversation_helper_present_error(bname, account, buf))
 			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
 
@@ -4123,7 +4123,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
 				buf = g_strdup_printf(_("Unable to add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
-				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
+				if ((retval->name != NULL) && !purple_conversation_helper_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			} break;
@@ -4138,7 +4138,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				purple_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
 				buf = g_strdup_printf(_("Unable to add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
-				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
+				if ((retval->name != NULL) && !purple_conversation_helper_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			} break;

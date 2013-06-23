@@ -369,7 +369,7 @@ oscar_user_info_display_error(OscarData *od, guint16 error_reason, gchar *buddy)
 	purple_notify_user_info_add_pair_plaintext(user_info, NULL, buf);
 	purple_notify_userinfo(od->gc, buddy, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
-	purple_conv_present_error(buddy, purple_connection_get_account(od->gc), buf);
+	purple_conversation_helper_present_error(buddy, purple_connection_get_account(od->gc), buf);
 	g_free(buf);
 }
 
