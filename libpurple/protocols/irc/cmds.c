@@ -34,7 +34,7 @@ static void irc_do_mode(struct irc_conn *irc, const char *target, const char *si
 
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
-	PurpleConversation *convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, target, irc->account);
+	PurpleConversation *convo = purple_conversations_find_with_account(target, irc->account);
 	char *buf;
 
 	if (!convo)
@@ -132,7 +132,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	g_free(newargs[1]);
 	g_free(newargs);
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, target, irc->account);
+	convo = purple_conversations_find_with_account(target, irc->account);
 	if (convo) {
 		escaped = g_markup_escape_text(args[0], -1);
 		action = g_strdup_printf("/me %s", escaped);
@@ -205,7 +205,7 @@ int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, cons
 	if (!args || !args[0])
 		return 0;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, target, irc->account);
+	convo = purple_conversations_find_chat_with_account(target, irc->account);
 	if (!convo)
 		return 0;
 
@@ -522,7 +522,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args)
 		return 0;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, target, irc->account);
+	convo = purple_conversations_find_chat_with_account(target, irc->account);
 	if (!convo)
 		return 0;
 

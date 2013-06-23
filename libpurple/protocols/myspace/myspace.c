@@ -1503,7 +1503,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 	}
 
 	/* See if a conversation with their UID already exists...*/
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, userid, session->account);
+	conv = purple_conversations_find_im_with_account(userid, session->account);
 	if (conv) {
 		/* Since the conversation exists... We need to normalize it */
 		purple_conversation_set_name(conv, username);
@@ -3498,7 +3498,7 @@ msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer
 	}
 
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, username, session->account);
+	conv = purple_conversations_find_im_with_account(username, session->account);
 	if (!conv)  {
 		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, username);

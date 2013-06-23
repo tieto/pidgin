@@ -533,7 +533,7 @@ purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code
 
 	got_attention(gc, -1, who, type_code);
 	conv =
-		purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, who, account);
+		purple_conversations_find_with_account(who, account);
 	if (conv)
 		purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
 			time(NULL));

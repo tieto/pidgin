@@ -2791,7 +2791,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	/* Create a new conversation now. This will give focus to the new window.
 	 * But it's necessary to pretend that we left the chat, because otherwise
 	 * a new conversation window will pop up when we finally join the chat. */
-	if (!(conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
+	if (!(conv = purple_conversations_find_chat_with_account(name, account))) {
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
 		purple_chat_conversation_left(PURPLE_CONV_CHAT(conv));
 	} else {

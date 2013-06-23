@@ -377,7 +377,7 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 		/* Must be a service message */
 		char* ofs;
 
-		PurpleConversation* convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, multimx->roomname, mx->session->acc);
+		PurpleConversation* convo = purple_conversations_find_chat_with_account(multimx->roomname, mx->session->acc);
 		if (convo == NULL) {
 			purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
 			return;
@@ -566,7 +566,7 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 		return;
 	}
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, multimx->roomname, session->acc);
+	convo = purple_conversations_find_chat_with_account(multimx->roomname, session->acc);
 	if (convo == NULL) {
 		purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
 		return;

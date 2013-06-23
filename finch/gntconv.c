@@ -277,7 +277,7 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 	PurpleIMConversation *im = NULL;
 	char *title, *str;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, account);
+	conv = purple_conversations_find_im_with_account(who, account);
 
 	if (!conv)
 		return;

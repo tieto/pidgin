@@ -3271,7 +3271,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		PurpleStoredImage *img;
 		PurpleBuddy *buddy;
 
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, account);
+		conv = purple_conversations_find_im_with_account(name, account);
 
 		if (strstr(tmp1, "<IMG "))
 			purple_conversation_write(conv, "",

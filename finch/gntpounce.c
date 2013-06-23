@@ -801,7 +801,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 	if (purple_pounce_action_is_enabled(pounce, "open-window"))
 	{
-		if (!purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, pouncee, account))
+		if (!purple_conversations_find_im_with_account(pouncee, account))
 			purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 	}
 
@@ -874,7 +874,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 		if (message != NULL)
 		{
-			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
+			conv = purple_conversations_find_im_with_account(pouncee, account);
 
 			if (conv == NULL)
 				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);

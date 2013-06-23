@@ -2053,7 +2053,7 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 
 	sig = zephyr_get_signature();
 
-	gconv1 = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, zt->name,
+	gconv1 = purple_conversations_find_chat_with_account(zt->name,
 												 purple_connection_get_account(gc));
 	gcc = purple_conversation_get_chat_data(gconv1);
 
@@ -2586,7 +2586,7 @@ static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *top
 	/* find_sub_by_id can return NULL */
 	if (!zt)
 		return;
-	gconv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, zt->name,
+	gconv = purple_conversations_find_chat_with_account(zt->name,
 												purple_connection_get_account(gc));
 	gcc = purple_conversation_get_chat_data(gconv);
 

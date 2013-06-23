@@ -331,7 +331,7 @@ void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, c
 	if (!args || !args[0] || !args[1] || !args[2])
 		return;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (!convo)
 		return;
 
@@ -352,7 +352,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1] || !args[2])
 		return;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (!convo)	/* XXX punt on channels we are not in for now */
 		return;
 
@@ -492,7 +492,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 			return;
 		}
 
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+		conv = purple_conversations_find_chat_with_account(args[1], irc->account);
 		if (!conv) {
 			purple_debug(PURPLE_DEBUG_ERROR, "irc","Got a WHO response for %s, which doesn't exist\n", args[1]);
 			return;
@@ -602,7 +602,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		topic = irc_mirc2txt (args[2]);
 	}
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, chan, irc->account);
+	convo = purple_conversations_find_chat_with_account(chan, irc->account);
 	if (!convo) {
 		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
 		g_free(topic);
@@ -652,7 +652,7 @@ void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from,
 	if (!args || !args[1] || !args[2] || !args[3])
 		return;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (!convo) {
 		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got topic info for %s, which doesn't exist\n", args[1]);
 		return;
@@ -693,7 +693,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 	PurpleConversation *convo;
 
 	if (!strcmp(name, "366")) {
-		convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, args[1], irc->account);
+		convo = purple_conversations_find_with_account(args[1], irc->account);
 		if (!convo) {
 			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a NAMES list for %s, which doesn't exist\n", args[1]);
 			g_string_free(irc->names, TRUE);
@@ -837,7 +837,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	PurpleConnection *gc;
 	PurpleConversation *convo;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, args[1], irc->account);
+	convo = purple_conversations_find_with_account(args[1], irc->account);
 	if (convo) {
 		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT) /* does this happen? */
 			purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), args[1], _("no such channel"),
@@ -862,7 +862,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 	PurpleConnection *gc;
 	PurpleConversation *convo;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (convo) {
 		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(convo), args[1], args[2], PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 	} else {
@@ -874,7 +874,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 
 void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	PurpleConversation *convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	PurpleConversation *convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "We're apparently not in %s, but tried to use it\n", args[1]);
 	if (convo) {
@@ -891,7 +891,7 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!args || !args[1] || !args[2])
 		return;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (!convo)
 		return;
 
@@ -1014,7 +1014,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[0], irc->account);
 	if (convo == NULL) {
 		purple_debug(PURPLE_DEBUG_ERROR, "irc", "JOIN for %s failed\n", args[0]);
 		g_free(nick);
@@ -1044,7 +1044,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
-	PurpleConversation *convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
+	PurpleConversation *convo = purple_conversations_find_chat_with_account(args[0], irc->account);
 	char *nick = irc_mask_nick(from), *buf;
 
 	if (!gc) {
@@ -1080,7 +1080,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 
 	if (*args[0] == '#' || *args[0] == '&') {	/* Channel	*/
 		char *escaped;
-		convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
+		convo = purple_conversations_find_chat_with_account(args[0], irc->account);
 		if (!convo) {
 			purple_debug(PURPLE_DEBUG_ERROR, "irc", "MODE received for %s, which we are not in\n", args[0]);
 			g_free(nick);
@@ -1165,7 +1165,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 		chats = chats->next;
 	}
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, nick,
+	conv = purple_conversations_find_im_with_account(nick,
 						   irc->account);
 	if (conv != NULL)
 		purple_conversation_set_name(conv, args[0]);
@@ -1263,7 +1263,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	 * that I can see.  This catches that. */
 	channel = (args[0][0] == ':') ? &args[0][1] : args[0];
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, channel, irc->account);
+	convo = purple_conversations_find_chat_with_account(channel, irc->account);
 	if (!convo) {
 		purple_debug(PURPLE_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", channel);
 		return;
@@ -1321,7 +1321,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 		msg = g_strdup_printf(_("PING reply -- Lag: %lu seconds"), time(NULL) - oldstamp);
 	}
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, parts[0], irc->account);
+	convo = purple_conversations_find_with_account(parts[0], irc->account);
 	g_strfreev(parts);
 	if (convo) {
 		if (purple_conversation_get_type (convo) == PURPLE_CONV_TYPE_CHAT)
@@ -1380,7 +1380,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 	if (!purple_utf8_strcasecmp(to, purple_connection_get_display_name(gc))) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, irc_nick_skip_mode(irc, to), irc->account);
+		convo = purple_conversations_find_chat_with_account(irc_nick_skip_mode(irc, to), irc->account);
 		if (convo)
 			serv_got_chat_in(gc, purple_chat_conversation_get_id(PURPLE_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else
@@ -1400,7 +1400,7 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 	if (!args || !args[1] || !args[2] || !gc)
 		return;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	convo = purple_conversations_find_chat_with_account(args[1], irc->account);
 	if (convo) {
 		/* This is a channel we're already in; for some reason,
 		 * freenode feels the need to notify us that in some

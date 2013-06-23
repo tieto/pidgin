@@ -405,7 +405,7 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 	else
 		name = purple_chat_get_name(chat);
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, name,
+	conv = purple_conversations_find_chat_with_account(name,
 	                                             account);
 
 	if (conv != NULL) {
@@ -3860,7 +3860,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			else
 				chat_name = g_strdup(purple_chat_get_name(chat));
 
-			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, chat_name,
+			conv = purple_conversations_find_chat_with_account(chat_name,
 					purple_chat_get_account(chat));
 			g_free(chat_name);
 		}
@@ -7298,7 +7298,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		 * Or something.  --Mark
 		 */
 
-		c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, data->rq_data.account);
+		c = purple_conversations_find_im_with_account(who, data->rq_data.account);
 		if (c != NULL) {
 			icon = purple_im_conversation_get_icon(PURPLE_CONV_IM(c));
 			if (icon != NULL)

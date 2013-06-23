@@ -231,7 +231,7 @@ static void command_clear(struct MXitSession* session, const char* from, GHashTa
 	PurpleConversation *conv;
 	char* clearmsgscreen;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
+	conv = purple_conversations_find_im_with_account(from, session->acc);
 	if (conv == NULL) {
 		purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
 		return;

@@ -138,7 +138,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, account);
+	conv = purple_conversations_find_im_with_account(name, account);
 
 	if (prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, flags);
@@ -256,7 +256,7 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 		purple_blist_server_alias_buddy(b, alias);
 
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), account);
+		conv = purple_conversations_find_im_with_account(purple_buddy_get_name(b), account);
 		if (conv != NULL && alias != NULL && !purple_strequal(alias, who))
 		{
 			char *escaped = g_markup_escape_text(who, -1);
@@ -569,7 +569,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, purple_connection_get_account(gc));
+	conv = purple_conversations_find_im_with_account(who, purple_connection_get_account(gc));
 
 	/*
 	 * Make copies of the message and the sender in case plugins want
@@ -597,7 +597,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (conv == NULL)
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
+		conv = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -687,7 +687,7 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 	PurpleConversation *conv;
 	PurpleIMConversation *im = NULL;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
+	conv = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
 	if (conv != NULL) {
 		im = PURPLE_CONV_IM(conv);
 
@@ -719,7 +719,7 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	PurpleConversation *conv;
 	PurpleIMConversation *im;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
+	conv = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
 	if (conv != NULL)
 	{
 		im = PURPLE_CONV_IM(conv);

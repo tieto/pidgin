@@ -5585,7 +5585,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			 * just move the conv to this window.  Otherwise, create a new
 			 * conv and add it to this window.
 			 */
-			c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddyname, buddyaccount);
+			c = purple_conversations_find_im_with_account(buddyname, buddyaccount);
 			if (c != NULL) {
 				PidginWindow *oldwin;
 				gtkconv = PIDGIN_CONVERSATION(c);
@@ -5679,7 +5679,7 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 	for (bn = purple_blist_node_get_first_child(cn); bn; bn = purple_blist_node_get_sibling_next(bn)) {
 		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
-		if ((conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), purple_buddy_get_account(b)))) {
+		if ((conv = purple_conversations_find_im_with_account(purple_buddy_get_name(b), purple_buddy_get_account(b)))) {
 			if (PIDGIN_CONVERSATION(conv))
 				return PIDGIN_CONVERSATION(conv);
 		}
@@ -8198,7 +8198,7 @@ get_gtkconv_with_contact(PurpleContact *contact)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy*)node;
 		PurpleConversation *conv;
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+		conv = purple_conversations_find_im_with_account(purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 		if (conv)
 			return PIDGIN_CONVERSATION(conv);
 	}
@@ -8301,7 +8301,7 @@ update_buddy_idle_changed(PurpleBuddy *buddy, gboolean old, gboolean newidle)
 {
 	PurpleConversation *conv;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+	conv = purple_conversations_find_im_with_account(purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
 }
@@ -8311,7 +8311,7 @@ update_buddy_icon(PurpleBuddy *buddy)
 {
 	PurpleConversation *conv;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+	conv = purple_conversations_find_im_with_account(purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_BUDDY_ICON);
 }
@@ -8347,7 +8347,7 @@ update_buddy_typing(PurpleAccount *account, const char *who)
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, account);
+	conv = purple_conversations_find_im_with_account(who, account);
 	if (!conv)
 		return;
 

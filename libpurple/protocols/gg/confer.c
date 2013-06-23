@@ -32,7 +32,7 @@ PurpleConversation *ggp_confer_find_by_name(PurpleConnection *gc, const gchar *n
 	g_return_val_if_fail(gc   != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	return purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, name,
+	return purple_conversations_find_chat_with_account(name,
 			purple_connection_get_account(gc));
 }
 /* }}} */

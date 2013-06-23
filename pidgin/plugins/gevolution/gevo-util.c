@@ -33,7 +33,7 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
+	conv = purple_conversations_find_im_with_account(buddy_name, account);
 
 	group = purple_find_group(group_name);
 	if (group == NULL)

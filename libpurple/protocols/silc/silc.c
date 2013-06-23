@@ -1368,7 +1368,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	SilcDList list;
 	gboolean free_list = FALSE;
 
-	convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, im->nick,
+	convo = purple_conversations_find_im_with_account(im->nick,
 						      sg->account);
 	if (!convo)
 		return;
@@ -1557,7 +1557,7 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if(args && args[0])
-		convo = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
+		convo = purple_conversations_find_chat_with_account(args[0],
 									purple_connection_get_account(gc));
 
 	if (convo != NULL)

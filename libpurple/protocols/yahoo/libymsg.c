@@ -868,7 +868,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 				yahoo_update_status(gc, from, f);
 		}
 	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
-		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, from, account);
+		PurpleConversation *conv = purple_conversations_find_im_with_account(from, account);
 		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
@@ -928,7 +928,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) ) {
 		if (server_msg) {
 			PurpleConversation *c;
-			c = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms->from, account);
+			c = purple_conversations_find_im_with_account(sms->from, account);
 			if (c == NULL)
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sms->from);
 			purple_conversation_write(c, NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -4367,7 +4367,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	char *status = NULL;
 	char *carrier = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+	PurpleConversation *conv = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -4468,7 +4468,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	else {
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+		PurpleConversation *conv = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
@@ -4514,7 +4514,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		gchar *carrier = NULL;
 		const char *alias = NULL;
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, account);
+		PurpleConversation *conv = purple_conversations_find_im_with_account(who, account);
 
 		carrier = g_hash_table_lookup(yd->sms_carrier, who);
 		if (!carrier) {

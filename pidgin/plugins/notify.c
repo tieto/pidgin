@@ -277,7 +277,7 @@ im_sent_im(PurpleAccount *account, const char *receiver, const char *message)
 	PurpleConversation *conv = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, receiver, account);
+		conv = purple_conversations_find_im_with_account(receiver, account);
 		unnotify(conv, TRUE);
 	}
 }

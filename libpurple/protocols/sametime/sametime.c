@@ -1842,7 +1842,7 @@ static void mw_session_announce(struct mwSession *s,
 
   pd = mwSession_getClientData(s);
   acct = purple_connection_get_account(pd->gc);
-  conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, who, acct);
+  conv = purple_conversations_find_im_with_account(who, acct);
   if(! conv) conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, who);
 
   buddy = purple_find_buddy(acct, who);
@@ -4279,7 +4279,7 @@ static void notify_im(PurpleConnection *gc, GList *row, void *user_data) {
 
   acct = purple_connection_get_account(gc);
   id = g_list_nth_data(row, 1);
-  conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, id, acct);
+  conv = purple_conversations_find_im_with_account(id, acct);
   if(! conv) conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, id);
   purple_conversation_present(conv);
 }

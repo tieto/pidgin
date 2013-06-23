@@ -1036,7 +1036,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-		conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddy->name,
+		conv = purple_conversations_find_im_with_account(buddy->name,
 												   buddy->account);
 		if (conv)
 			purple_conversation_autoset_title(conv);
@@ -1115,7 +1115,7 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddy->name,
+	conv = purple_conversations_find_im_with_account(buddy->name,
 											   buddy->account);
 	if (conv)
 		purple_conversation_autoset_title(conv);
@@ -1157,7 +1157,7 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, buddy->name,
+	conv = purple_conversations_find_im_with_account(buddy->name,
 											   buddy->account);
 	if (conv)
 		purple_conversation_autoset_title(conv);

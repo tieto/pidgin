@@ -1128,7 +1128,7 @@ buddy_typing_cb(PurpleAccount *account, const char *name, void *data)
 {
 	PurpleConversation *conv;
 
-	conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM, name, account);
+	conv = purple_conversations_find_im_with_account(name, account);
 	if (conv != NULL)
 	{
 		PurpleIMConversationTypingState state;

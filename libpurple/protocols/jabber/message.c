@@ -938,7 +938,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 {
 	PurpleAccount *account = purple_connection_get_account(jm->js->gc);
 	PurpleConversation *conv =
-		purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
+		purple_conversations_find_with_account(jm->to,
 			account);
 
 	if (jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
