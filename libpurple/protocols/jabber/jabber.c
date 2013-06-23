@@ -2827,7 +2827,7 @@ char *jabber_parse_error(JabberStream *js,
 static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2839,7 +2839,7 @@ static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2851,7 +2851,7 @@ static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2859,7 +2859,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 	if (args && args[0] && *args[0])
 		jabber_chat_change_topic(chat, args[0]);
 	else {
-		const char *cur = purple_chat_conversation_get_topic(PURPLE_CONV_CHAT(conv));
+		const char *cur = purple_chat_conversation_get_topic(PURPLE_CHAT_CONVERSATION(conv));
 		char *buf, *tmp, *tmp2;
 
 		if (cur) {
@@ -2870,7 +2870,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_chat_conversation_write_message(PURPLE_CONV_CHAT(conv), "", buf,
+		purple_conversation_write_message(conv, "", buf,
 				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	}
@@ -2881,7 +2881,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2900,7 +2900,7 @@ static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2912,7 +2912,7 @@ static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2928,7 +2928,7 @@ static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2964,7 +2964,7 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -3003,7 +3003,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	jabber_chat_invite(purple_conversation_get_connection(conv),
-			purple_chat_conversation_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
+			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), args[1] ? args[1] : "",
 			args[0]);
 
 	return PURPLE_CMD_RET_OK;
@@ -3012,7 +3012,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 	GHashTable *components;
 	JabberID *jid = NULL;
 	const char *room = NULL, *server = NULL, *handle = NULL;
@@ -3059,7 +3059,7 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -3075,7 +3075,7 @@ static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 	char *who;
 
 	if (!chat)
@@ -3175,7 +3175,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 
 	if (!args || !args[0]) {
 		/* use the buddy from conversation, if it's a one-to-one conversation */
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		if (PURPLE_IS_IM_CONVERSATION(conv)) {
 			who = purple_conversation_get_name(conv);
 		} else {
 			return PURPLE_CMD_RET_FAILED;

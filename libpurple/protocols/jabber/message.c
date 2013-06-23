@@ -83,9 +83,9 @@ static void handle_chat(JabberMessage *jm)
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
 			serv_got_typing(gc, jm->from, 0, PURPLE_IM_CONVERSATION_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
-			PurpleConversation *conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
+			PurpleIMConversation *im = purple_conversations_find_im_with_account(
 					jm->from, account);
-			if (conv && jid->node && jid->domain) {
+			if (im && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
 
@@ -105,7 +105,7 @@ static void handle_chat(JabberMessage *jm)
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
-					purple_conversation_write(conv, "", buf,
+					purple_conversation_write(PURPLE_CONVERSATION(im), "", buf,
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
@@ -125,15 +125,14 @@ static void handle_chat(JabberMessage *jm)
 			 * This works because purple_im_conversation_send gets the name
 			 * from purple_conversation_get_name()
 			 */
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 
-			conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-			                                             jm->from, account);
-			if (conv && !g_str_equal(jm->from,
-			                         purple_conversation_get_name(conv))) {
+			im = purple_conversations_find_im_with_account(jm->from, account);
+			if (im && !g_str_equal(jm->from,
+					purple_conversation_get_name(PURPLE_CONVERSATION(im)))) {
 				purple_debug_info("jabber", "Binding conversation to %s\n",
 				                  jm->from);
-				purple_conversation_set_name(conv, jm->from);
+				purple_conversation_set_name(PURPLE_CONVERSATION(im), jm->from);
 			}
 		}
 
@@ -230,7 +229,7 @@ static void handle_groupchat(JabberMessage *jm)
 		return;
 
 	if(jm->subject) {
-		purple_chat_conversation_set_topic(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+		purple_chat_conversation_set_topic(chat->conv, jid->resource,
 				jm->subject);
 		messageFlags |= PURPLE_MESSAGE_NO_LOG;
 		if(!jm->xhtml && !jm->body) {
@@ -241,7 +240,7 @@ static void handle_groupchat(JabberMessage *jm)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -254,7 +253,7 @@ static void handle_groupchat(JabberMessage *jm)
 							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
-			purple_chat_conversation_write_message(PURPLE_CONV_CHAT(chat->conv), "",
+			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "",
 							jm->xhtml ? jm->xhtml : jm->body,
 							messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
 	}
@@ -487,13 +486,13 @@ static void
 jabber_message_request_data_cb(JabberData *data, gchar *alt,
     gpointer userdata)
 {
-	PurpleConversation *conv = (PurpleConversation *) userdata;
+	PurpleConversation *conv = PURPLE_CONVERSATION(userdata);
 
 	if (data) {
-		purple_conv_custom_smiley_write(conv, alt,
+		purple_conversation_custom_smiley_write(conv, alt,
 										jabber_data_get_data(data),
 										jabber_data_get_size(data));
-		purple_conv_custom_smiley_close(conv, alt);
+		purple_conversation_custom_smiley_close(conv, alt);
 	}
 
 	g_free(alt);
@@ -619,19 +618,17 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							if (jid) {
 								chat = jabber_chat_find(js, jid->node, jid->domain);
 								if (chat)
-									conv = chat->conv;
+									conv = PURPLE_CONVERSATION(chat->conv);
 								jabber_id_free(jid);
 							}
 						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
 						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
-								purple_conversations_find_with_account(PURPLE_CONV_TYPE_ANY,
-									from, account);
+								purple_conversations_find_with_account(from, account);
 							if (!conv) {
 								/* we need to create the conversation here */
-								conv =
-									purple_conversation_new(PURPLE_CONV_TYPE_IM,
-									account, from);
+								conv = PURPLE_CONVERSATION(
+									purple_im_conversation_new(account, from));
 							}
 						}
 					}
@@ -662,7 +659,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 					purple_debug_info("jabber",
 						"about to add custom smiley %s to the conv\n", alt);
-					if (purple_conv_custom_smiley_add(conv, alt, "cid", cid,
+					if (purple_conversation_custom_smiley_add(conv, alt, "cid", cid,
 						    TRUE)) {
 						const JabberData *data =
 								jabber_data_find_remote_by_cid(js, from, cid);
@@ -670,10 +667,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						if (data) {
 							purple_debug_info("jabber",
 								"data is already known\n");
-							purple_conv_custom_smiley_write(conv, alt,
+							purple_conversation_custom_smiley_write(conv, alt,
 								jabber_data_get_data(data),
 								jabber_data_get_size(data));
-							purple_conv_custom_smiley_close(conv, alt);
+							purple_conversation_custom_smiley_close(conv, alt);
 						} else {
 							/* we need to request the smiley (data) */
 							purple_debug_info("jabber",
@@ -906,30 +903,24 @@ jabber_conv_support_custom_smileys(JabberStream *js,
 	JabberBuddy *jb;
 	JabberChat *chat;
 
-	switch (purple_conversation_get_type(conv)) {
-		case PURPLE_CONV_TYPE_IM:
-			jb = jabber_buddy_find(js, who, FALSE);
-			if (jb) {
-				return jabber_buddy_has_capability(jb, NS_BOB);
-			} else {
-				return FALSE;
-			}
-			break;
-		case PURPLE_CONV_TYPE_CHAT:
-			chat = jabber_chat_find_by_conv(conv);
-			if (chat) {
-				/* do not attempt to send custom smileys in a MUC with more than
-				 10 people, to avoid getting too many BoB requests */
-				return jabber_chat_get_num_participants(chat) <= 10 &&
-					jabber_chat_all_participants_have_capability(chat,
-						NS_BOB);
-			} else {
-				return FALSE;
-			}
-			break;
-		default:
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		jb = jabber_buddy_find(js, who, FALSE);
+		if (jb) {
+			return jabber_buddy_has_capability(jb, NS_BOB);
+		} else {
 			return FALSE;
-			break;
+		}
+	} else {
+		chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
+		if (chat) {
+			/* do not attempt to send custom smileys in a MUC with more than
+			 10 people, to avoid getting too many BoB requests */
+			return jabber_chat_get_num_participants(chat) <= 10 &&
+				jabber_chat_all_participants_have_capability(chat,
+					NS_BOB);
+		} else {
+			return FALSE;
+		}
 	}
 }
 

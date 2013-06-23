@@ -45,7 +45,7 @@ typedef struct _JabberChat {
 	char *handle;
 	GHashTable *components;
 	int id;
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	gboolean muc;
 	gboolean xhtml;
 	PurpleRequestType config_dialog_type;
@@ -77,10 +77,10 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data);
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);
 JabberChat *jabber_chat_find_by_id(JabberStream *js, int id);
-JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv);
+JabberChat *jabber_chat_find_by_conv(PurpleChatConversation *conv);
 void jabber_chat_destroy(JabberChat *chat);
 void jabber_chat_free(JabberChat *chat);
-gboolean jabber_chat_find_buddy(PurpleConversation *conv, const char *name);
+gboolean jabber_chat_find_buddy(PurpleChatConversation *conv, const char *name);
 void jabber_chat_invite(PurpleConnection *gc, int id, const char *message,
 		const char *name);
 void jabber_chat_leave(PurpleConnection *gc, int id);

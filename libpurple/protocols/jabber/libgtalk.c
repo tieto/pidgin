@@ -229,11 +229,11 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
 		char *body = g_hash_table_lookup(params, "body");
 		if (user && *user) {
-			PurpleConversation *conv =
+			PurpleIMConversation *im =
 					purple_im_conversation_new(acct, user);
-			purple_conversation_present(conv);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
 			if (body && *body)
-				purple_conv_send_confirm(conv, body);
+				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
 		}
 	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
 		char *name = g_hash_table_lookup(params, "name");
