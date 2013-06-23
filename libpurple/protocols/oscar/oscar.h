@@ -602,7 +602,7 @@ struct chat_connection
 	FlapConnection *conn;
 	int id;
 	PurpleConnection *gc;
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	int maxlen;
 	int maxvis;
 };

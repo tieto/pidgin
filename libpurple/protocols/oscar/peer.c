@@ -688,7 +688,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	OscarData *od;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	char *tmp;
 	FlapConnection *bos_conn;
 	const char *listener_ip;
@@ -752,10 +752,11 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 				listener_port, ++conn->lastrequestnumber);
 
 		/* Print a message to a local conversation window */
-		conv = purple_im_conversation_new(account, conn->bn);
+		im = purple_im_conversation_new(account, conn->bn);
 		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for "
 				"Direct IM."), conn->bn, listener_ip, listener_port);
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
@@ -837,11 +838,11 @@ peer_connection_trynext(PeerConnection *conn)
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 		{
 			gchar *tmp;
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 			tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
 					conn->verifiedip, conn->port);
-			conv = purple_im_conversation_new(account, conn->bn);
-			purple_conversation_write(conv, NULL, tmp,
+			im = purple_im_conversation_new(account, conn->bn);
+			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
@@ -911,10 +912,10 @@ peer_connection_trynext(PeerConnection *conn)
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 		{
 			gchar *tmp;
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 			tmp = g_strdup(_("Attempting to connect via proxy server."));
-			conv = purple_im_conversation_new(account, conn->bn);
-			purple_conversation_write(conv, NULL, tmp,
+			im = purple_im_conversation_new(account, conn->bn);
+			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
@@ -952,15 +953,14 @@ peer_connection_propose(OscarData *od, guint64 type, const char *bn)
 			if (conn->ready)
 			{
 				PurpleAccount *account;
-				PurpleConversation *conv;
+				PurpleIMConversation *im;
 
 				purple_debug_info("oscar", "Already have a direct IM "
 						"session with %s.\n", bn);
 				account = purple_connection_get_account(od->gc);
-				conv = purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-						bn, account);
-				if (conv != NULL)
-					purple_conversation_present(conv);
+				im = purple_conversations_find_im_with_account(bn, account);
+				if (im != NULL)
+					purple_conversation_present(PURPLE_CONVERSATION(im));
 				return;
 			}
 

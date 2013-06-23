@@ -60,11 +60,12 @@ peer_odc_close(PeerConnection *conn)
 	if (tmp != NULL)
 	{
 		PurpleAccount *account;
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
 		account = purple_connection_get_account(conn->od->gc);
-		conv = purple_im_conversation_new(account, conn->bn);
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		im = purple_im_conversation_new(account, conn->bn);
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
 
@@ -524,7 +525,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		 */
 
 		PurpleAccount *account;
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
 		if (conn->flags & PEER_CONNECTION_FLAG_IS_INCOMING)
 		{
@@ -565,8 +566,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 		/* Tell the local user that we are connected */
 		account = purple_connection_get_account(gc);
-		conv = purple_im_conversation_new(account, conn->bn);
-		purple_conversation_write(conv, NULL, _("Direct IM established"),
+		im = purple_im_conversation_new(account, conn->bn);
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Direct IM established"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 
@@ -601,7 +602,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		{
 			gchar *tmp, *size1, *size2;
 			PurpleAccount *account;
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 
 			size1 = purple_str_size_to_units(frame->payload.len);
 			size2 = purple_str_size_to_units(DIRECTIM_MAX_FILESIZE);
@@ -610,8 +611,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 			g_free(size2);
 
 			account = purple_connection_get_account(conn->od->gc);
-			conv = purple_im_conversation_new(account, conn->bn);
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			im = purple_im_conversation_new(account, conn->bn);
+			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
