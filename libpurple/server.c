@@ -817,10 +817,9 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 		chat_invite_reject(cid);
 }
 
-PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
+PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 											   int id, const char *name)
 {
-	PurpleConversation *conv;
 	PurpleChatConversation *chat;
 	PurpleAccount *account;
 
@@ -829,19 +828,17 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	conv = purple_chat_conversation_new(account, name);
-	g_return_val_if_fail(conv != NULL, NULL);
+	chat = purple_chat_conversation_new(account, name);
+	g_return_val_if_fail(chat != NULL, NULL);
 
-	chat = PURPLE_CONV_CHAT(conv);
-
-	if (!g_slist_find(gc->buddy_chats, conv))
-		gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
+	if (!g_slist_find(gc->buddy_chats, PURPLE_CONVERSATION(chat)))
+		gc->buddy_chats = g_slist_append(gc->buddy_chats, PURPLE_CONVERSATION(chat));
 
 	purple_chat_conversation_set_id(chat, id);
 
-	purple_signal_emit(purple_conversations_get_handle(), "chat-joined", conv);
+	purple_signal_emit(purple_conversations_get_handle(), "chat-joined", chat);
 
-	return conv;
+	return chat;
 }
 
 void serv_got_chat_left(PurpleConnection *g, int id)

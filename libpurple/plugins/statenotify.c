@@ -16,7 +16,7 @@ static void
 write_status(PurpleBuddy *buddy, const char *message)
 {
 	PurpleAccount *account = NULL;
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	const char *who;
 	char buf[256];
 	char *escaped;
@@ -25,11 +25,10 @@ write_status(PurpleBuddy *buddy, const char *message)
 	account = purple_buddy_get_account(buddy);
 	buddy_name = purple_buddy_get_name(buddy);
 
-	conv = purple_conversations_find_im_with_account(buddy_name, account);
+	im = purple_conversations_find_im_with_account(buddy_name, account);
 
-	if (conv == NULL)
+	if (im == NULL)
 		return;
-	g_return_if_fail(PURPLE_IS_IM_CONVERSATION(conv));
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
 	if (buddy != purple_find_buddy(account, buddy_name))
@@ -41,7 +40,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 	g_snprintf(buf, sizeof(buf), message, escaped);
 	g_free(escaped);
 
-	purple_conversation_write_message(conv, NULL, buf,
+	purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, buf,
 			PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY,
 			time(NULL));
 }

@@ -290,8 +290,8 @@ void ggp_image_send(PurpleConnection *gc,
 		purple_imgstore_get_size(image));
 	purple_imgstore_unref(image);
 	
-	conv = purple_conversations_find_im_with_account(pending_image->conv_name, 
-		purple_connection_get_account(gc));
+	conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(
+		pending_image->conv_name, purple_connection_get_account(gc)));
 	if (conv != NULL)
 		purple_conversation_write(conv, "", _("Image delivered."),
 			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY,

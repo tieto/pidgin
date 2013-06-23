@@ -104,7 +104,7 @@ serv_got_im(gc, who, msg, imflags, mtime)
 	Purple::MessageFlags imflags
 	time_t mtime
 
-Purple::Conversation
+Purple::ChatConversation
 serv_got_joined_chat(gc, id, name)
 	Purple::Connection gc
 	int id

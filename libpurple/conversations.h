@@ -80,7 +80,7 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-PurpleConversation *purple_conversations_find_im_with_account(const char *name,
+PurpleIMConversation *purple_conversations_find_im_with_account(const char *name,
 		const PurpleAccount *account);
 
 /** TODO chats
@@ -91,7 +91,7 @@ PurpleConversation *purple_conversations_find_im_with_account(const char *name,
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-PurpleConversation *purple_conversations_find_chat_with_account(const char *name,
+PurpleChatConversation *purple_conversations_find_chat_with_account(const char *name,
 		const PurpleAccount *account);
 
 /**
@@ -102,7 +102,7 @@ PurpleConversation *purple_conversations_find_chat_with_account(const char *name
  *
  * @return The chat conversation.
  */
-PurpleConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
+PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
 
 /**
  * Sets the default conversation UI operations structure.

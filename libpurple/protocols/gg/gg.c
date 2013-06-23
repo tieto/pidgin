@@ -273,7 +273,7 @@ static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	PurpleConversation *conv;
+	PurpleChatConversation *chat;
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
@@ -415,12 +415,12 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 		purple_debug_warning("gg", "ggp_recv_message_handler: conference multilogon messages are not yet handled\n");
 	} else if (multilogon) {
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 		const gchar *who = ggp_uin_to_str(ev->sender); // not really sender
-		conv = purple_conversations_find_im_with_account(who, account);
-		if (conv == NULL)
-			conv = purple_im_conversation_new(account, who);
-		purple_conversation_write(conv, purple_account_get_username(account), msg, PURPLE_MESSAGE_SEND, mtime);
+		im = purple_conversations_find_im_with_account(who, account);
+		if (im == NULL)
+			im = purple_im_conversation_new(account, who);
+		purple_conversation_write(PURPLE_CONVERSATION(im), purple_account_get_username(account), msg, PURPLE_MESSAGE_SEND, mtime);
 	} else if (ev->recipients_count == 0) {
 		serv_got_im(gc, from, msg, 0, mtime);
 	} else {
@@ -442,8 +442,8 @@ void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *e
 						    ev->recipients,
 						    ev->recipients_count);
 		}
-		conv = ggp_confer_find_by_name(gc, chat_name);
-		chat_id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
+		chat = ggp_confer_find_by_name(gc, chat_name);
+		chat_id = purple_chat_conversation_get_id(chat);
 
 		serv_got_chat_in(gc, chat_id,
 			ggp_buddylist_get_buddy_name(gc, ev->sender),
@@ -1083,10 +1083,10 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 			}
 			else if (prepare_result == GGP_IMAGE_PREPARE_TOO_BIG)
 			{
-				PurpleConversation *conv =
+				PurpleIMConversation *im =
 					purple_conversations_find_im_with_account(who,
 						purple_connection_get_account(gc));
-				purple_conversation_write(conv, "",
+				purple_conversation_write(PURPLE_CONVERSATION(im), "",
 					_("Image is too large, please try "
 					"smaller one."), PURPLE_MESSAGE_ERROR,
 					time(NULL));
@@ -1191,7 +1191,7 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 	GGPChat *chat;
 	char *chat_name;
 	GList *l;
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	chat_name = g_hash_table_lookup(data, "name");
@@ -1213,9 +1213,8 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 
 	ggp_confer_add_new(gc, chat_name);
 	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
-	purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(conv),
-				purple_account_get_username(account), NULL,
-				PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+	purple_chat_conversation_add_user(conv, purple_account_get_username(account),
+				NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 static char *ggp_get_chat_name(GHashTable *data) {
@@ -1224,7 +1223,7 @@ static char *ggp_get_chat_name(GHashTable *data) {
 
 static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat = NULL;
 	GList *l;
@@ -1239,7 +1238,8 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 	for (l = info->chats; l != NULL; l = l->next) {
 		chat = l->data;
 
-		if (g_utf8_collate(chat->name, purple_conversation_get_name(conv)) == 0) {
+		if (g_utf8_collate(chat->name, purple_conversation_get_name(
+				PURPLE_CONVERSATION(conv))) == 0) {
 			break;
 		}
 

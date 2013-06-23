@@ -34,7 +34,7 @@
  *
  * @return PurpleConversation or NULL if not found.
  */
-PurpleConversation *
+PurpleChatConversation *
 ggp_confer_find_by_name(PurpleConnection *gc, const gchar *name);
 
 /**

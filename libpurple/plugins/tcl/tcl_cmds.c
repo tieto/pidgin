@@ -851,9 +851,9 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		if ((account = tcl_validate_account(objv[argsused++], interp)) == NULL)
 			return TCL_ERROR;
 		if (is_chat)
-			convo = purple_chat_conversation_new(account, Tcl_GetString(objv[argsused]));
+			convo = PURPLE_CONVERSATION(purple_chat_conversation_new(account, Tcl_GetString(objv[argsused])));
 		else
-			convo = purple_im_conversation_new(account, Tcl_GetString(objv[argsused]));
+			convo = PURPLE_CONVERSATION(purple_im_conversation_new(account, Tcl_GetString(objv[argsused])));
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefConversation, convo));
 		break;
 	case CMD_CONV_WRITE:

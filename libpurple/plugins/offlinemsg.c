@@ -137,7 +137,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 		return;
 	}
 
-	conv = purple_conversations_find_im_with_account(who, account);
+	conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(who, account));
 
 	if (!conv)
 		return;

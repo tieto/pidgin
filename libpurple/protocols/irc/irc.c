@@ -761,7 +761,7 @@ static char *irc_get_chat_name(GHashTable *data) {
 static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
 	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
-	PurpleConversation *convo = purple_conversations_find_chat(gc, id);
+	PurpleConversation *convo = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, id));
 	const char *args[2];
 
 	if (!convo) {
@@ -777,7 +777,7 @@ static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, c
 static void irc_chat_leave (PurpleConnection *gc, int id)
 {
 	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
-	PurpleConversation *convo = purple_conversations_find_chat(gc, id);
+	PurpleConversation *convo = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, id));
 	const char *args[2];
 
 	if (!convo)
@@ -792,7 +792,7 @@ static void irc_chat_leave (PurpleConnection *gc, int id)
 static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
 {
 	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
-	PurpleConversation *convo = purple_conversations_find_chat(gc, id);
+	PurpleConversation *convo = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, id));
 	const char *args[2];
 	char *tmp;
 
@@ -846,7 +846,8 @@ static void irc_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 	struct irc_conn *irc;
 
 	irc = purple_connection_get_protocol_data(gc);
-	name = purple_conversation_get_name(purple_conversations_find_chat(gc, id));
+	name = purple_conversation_get_name(PURPLE_CONVERSATION(
+			purple_conversations_find_chat(gc, id)));
 
 	if (name == NULL)
 		return;

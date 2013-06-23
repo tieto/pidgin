@@ -148,7 +148,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
  * @param name The name of the chat.
  * @return     The resulting conversation
  */
-PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
+PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
 /**
  * Called by a prpl when an attempt to join a chat via serv_join_chat()
