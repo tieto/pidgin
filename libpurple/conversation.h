@@ -156,6 +156,8 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
 /**************************************************************************/
+typedef struct _PurpleIMConversation    PurpleIMConversation;
+typedef struct _PurpleChatConversation  PurpleChatConversation;
 /**
  * Conversation operations and events.
  *
@@ -175,14 +177,14 @@ struct _PurpleConversationUiOps
 	 *  fall back to using #write_conv.
 	 *  @see purple_chat_conversation_write()
 	 */
-	void (*write_chat)(PurpleConversation *conv, const char *who,
+	void (*write_chat)(PurpleChatConversation *chat, const char *who,
 	                  const char *message, PurpleMessageFlags flags,
 	                  time_t mtime);
 	/** Write a message to an IM conversation.  If this field is @c NULL,
 	 *  libpurple will fall back to using #write_conv.
 	 *  @see purple_im_conversation_write()
 	 */
-	void (*write_im)(PurpleConversation *conv, const char *who,
+	void (*write_im)(PurpleIMConversation *im, const char *who,
 	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
 	/** Write a message to a conversation.  This is used rather than the
@@ -207,7 +209,7 @@ struct _PurpleConversationUiOps
 	 *                       conversation by
 	 *                       #purple_chat_conversation_add_users().)
 	 */
-	void (*chat_add_users)(PurpleConversation *conv,
+	void (*chat_add_users)(PurpleChatConversation *chat,
 	                       GList *cbuddies,
 	                       gboolean new_arrivals);
 	/** Rename the user in this chat named @a old_name to @a new_name.  (The
@@ -215,17 +217,17 @@ struct _PurpleConversationUiOps
 	 *  @param new_alias  @a new_name's new alias, if they have one.
 	 *  @see purple_chat_conversation_add_users()
 	 */
-	void (*chat_rename_user)(PurpleConversation *conv, const char *old_name,
+	void (*chat_rename_user)(PurpleChatConversation *chat, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
 	 *  @param users    A @c GList of <tt>const char *</tt>s.
 	 *  @see purple_chat_conversation_rename_user()
 	 */
-	void (*chat_remove_users)(PurpleConversation *conv, GList *users);
+	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
 	/** Called when a user's flags are changed.
 	 *  @see purple_chat_conversation_user_set_flags()
 	 */
-	void (*chat_update_user)(PurpleConversation *conv, const char *user);
+	void (*chat_update_user)(PurpleChatConversation *chat, const char *user);
 
 	/** Present this conversation to the user; for example, by displaying
 	 *  the IM dialog.
