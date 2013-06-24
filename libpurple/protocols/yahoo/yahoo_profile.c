@@ -24,8 +24,8 @@
 #define PHOTO_SUPPORT 1
 
 #include "internal.h"
-#include "obsolete.h"
 #include "debug.h"
+#include "http.h"
 #include "notify.h"
 #include "util.h"
 #if PHOTO_SUPPORT
@@ -757,15 +757,16 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 }
 
 static void
-yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, size_t len, const gchar *error_message);
+yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info2_data);
 
 #endif /* PHOTO_SUPPORT */
 
-static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *url_text, size_t len, const gchar *error_message)
+static void
+yahoo_got_info(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info_data)
 {
-	YahooGetInfoData *info_data = (YahooGetInfoData *)user_data;
+	YahooGetInfoData *info_data = _info_data;
 	PurpleNotifyUserInfo *user_info;
 	char *p;
 #if PHOTO_SUPPORT
@@ -787,11 +788,12 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	const profile_strings_node_t *strings = NULL;
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
+	const gchar *url_text;
 
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = purple_connection_get_protocol_data(info_data->gc);
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	user_info = purple_notify_user_info_new();
 
@@ -805,7 +807,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 * happen except under unusual error conditions, as Yahoo is observed
 	 * to send back HTML, with a 200 status code.
 	 */
-	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
+	if (!purple_http_response_is_successfull(response)) {
 		purple_notify_user_info_add_pair_html(user_info, _("Error retrieving profile"), NULL);
 		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
@@ -815,6 +817,8 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		g_free(info_data);
 		return;
 	}
+
+	url_text = purple_http_response_get_data(response, NULL);
 
 	/* Construct the correct profile URL */
 	s = g_string_sized_new(80); /* wild guess */
@@ -932,29 +936,20 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
-		PurpleUtilFetchUrlData *url_data;
-		/* use whole URL if using HTTP Proxy */
-		gboolean use_whole_url = yahoo_account_use_http_proxy(info_data->gc);
-
-		/* User-uploaded photos use a different server that requires the Host
-		 * header, but Yahoo Japan will use the "chunked" content encoding if
-		 * we specify HTTP 1.1. So we have to specify 1.0 & fix purple_util_fetch_url
-		 */
-		url_data = purple_util_fetch_url(photo_url_text, use_whole_url, NULL,
-				FALSE, -1, yahoo_got_photo, info2_data);
-		if (url_data != NULL)
-			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+		PurpleHttpConnection *hc;
+		hc = purple_http_get(info_data->gc, photo_url_text, yahoo_got_photo, info2_data);
+		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 	} else {
 		/* Emulate a callback */
-		yahoo_got_photo(NULL, info2_data, NULL, 0, NULL);
+		yahoo_got_photo(NULL, NULL, info2_data);
 	}
 }
 
 static void
-yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, size_t len, const gchar *error_message)
+yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info2_data)
 {
-	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
+	YahooGetInfoStepTwoData *info2_data = _info2_data;
 	YahooData *yd;
 	gboolean found = FALSE;
 	int id = -1;
@@ -985,7 +980,8 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	char *fudged_buffer;
 
 	yd = purple_connection_get_protocol_data(info_data->gc);
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	if (http_conn)
+		yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
@@ -1036,23 +1032,21 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 #if PHOTO_SUPPORT
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (url_text && len != 0) {
-		if (strstr(url_text, "400 Bad Request")
-				|| strstr(url_text, "403 Forbidden")
-				|| strstr(url_text, "404 Not Found")) {
+	if (purple_http_response_is_successfull(response)) {
+		const gchar *data;
+		size_t len;
 
-			purple_debug_info("yahoo", "Error getting %s: %s\n",
-					photo_url_text, url_text);
-		} else {
-			purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT
-					" bytes\n", photo_url_text, len);
-			id = purple_imgstore_new_with_id(g_memdup(url_text, len), len, NULL);
+		data = purple_http_response_get_data(response, &len);
 
-			tmp = g_strdup_printf("<img id=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\"><br>",
-			                      id);
-			purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
-			g_free(tmp);
-		}
+		purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT " bytes\n",
+			photo_url_text, len);
+		id = purple_imgstore_new_with_id(g_memdup(data, len), len,
+			NULL);
+
+		tmp = g_strdup_printf("<img id=\"" PURPLE_STORED_IMAGE_PROTOCOL
+			"%d\"><br>", id);
+		purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
+		g_free(tmp);
 	}
 #endif /* PHOTO_SUPPORT */
 
@@ -1267,7 +1261,7 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YahooGetInfoData *data;
 	char *url;
-	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpConnection *hc;
 
 	data       = g_new0(YahooGetInfoData, 1);
 	data->gc   = gc;
@@ -1276,9 +1270,8 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s",
 			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
 
-	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, -1, yahoo_got_info, data);
-	if (url_data != NULL)
-		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	hc = purple_http_get(gc, url, yahoo_got_info, data);
+	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	g_free(url);
 }

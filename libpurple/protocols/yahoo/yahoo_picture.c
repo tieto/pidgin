@@ -28,6 +28,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
+#include "http.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "util.h"
@@ -45,23 +46,28 @@ struct yahoo_fetch_picture_data {
 };
 
 static void
-yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *pic_data, size_t len, const gchar *error_message)
+yahoo_fetch_picture_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _data)
 {
-	struct yahoo_fetch_picture_data *d;
+	struct yahoo_fetch_picture_data *d = _data;
 	YahooData *yd;
 
-	d = user_data;
 	yd = purple_connection_get_protocol_data(d->gc);
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
-	if (error_message != NULL) {
-		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n", error_message);
-	} else if (len == 0) {
-		purple_debug_error("yahoo", "Fetched an icon with length 0.  Strange.\n");
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n",
+			purple_http_response_get_error(response));
 	} else {
 		char *checksum = g_strdup_printf("%i", d->checksum);
-		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, g_memdup(pic_data, len), len, checksum);
+		const gchar *pic_data;
+		size_t pic_len;
+
+		pic_data = purple_http_response_get_data(response, &pic_len);
+
+		purple_buddy_icons_set_for_user(
+			purple_connection_get_account(d->gc), d->who,
+			g_memdup(pic_data, pic_len), pic_len, checksum);
 		g_free(checksum);
 	}
 
@@ -120,23 +126,16 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
 	if (who && got_icon_info && url && !g_ascii_strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
-		PurpleUtilFetchUrlData *url_data;
+		PurpleHttpConnection *hc;
 		struct yahoo_fetch_picture_data *data;
-		/* use whole URL if using HTTP Proxy */
-		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		/* TODO: Does this need to be MSIE 5.0? */
-		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, -1,
-				yahoo_fetch_picture_cb, data);
-		if (url_data != NULL) {
-			yd = purple_connection_get_protocol_data(gc);
-			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-		}
+		hc = purple_http_get(gc, url, yahoo_fetch_picture_cb, data);
+		yd = purple_connection_get_protocol_data(gc);
+		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
 	}

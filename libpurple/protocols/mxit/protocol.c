@@ -2911,6 +2911,10 @@ void mxit_close_connection( struct MXitSession* session )
 		purple_util_fetch_url_cancel( session->async_calls->data );
 		session->async_calls = g_slist_delete_link( session->async_calls, session->async_calls );
 	}
+	while (session->async_http_reqs) {
+		purple_http_conn_cancel(session->async_http_reqs->data);
+		session->async_http_reqs = g_slist_delete_link(session->async_http_reqs, session->async_http_reqs);
+	}
 
 	/* remove the input cb function */
 	if ( session->inpa ) {

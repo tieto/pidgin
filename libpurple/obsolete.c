@@ -23,8 +23,11 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "http.h"
 #include "ntlm.h"
+
+#if 0
+#include "http.h"
+#endif
 
 struct _PurpleUtilFetchUrlData
 {
@@ -65,16 +68,11 @@ struct _PurpleUtilFetchUrlData
 	gboolean chunked;
 	PurpleAccount *account;
 
+#if 0
 	PurpleHttpConnection *wrapped_request;
+#endif
 	gboolean cancelled;
 };
-
-typedef struct
-{
-	PurpleUtilFetchUrlData *url_data;
-	PurpleUtilFetchUrlCallback cb;
-	gpointer user_data;
-} PurpleUtilLegacyWrapData;
 
 /**
  * Parses a URL, returning its host, port, file path, username and password.
@@ -91,6 +89,14 @@ typedef struct
 static gboolean purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	char **ret_path, char **ret_user, char **ret_passwd);
 
+#if 0
+
+typedef struct
+{
+	PurpleUtilFetchUrlData *url_data;
+	PurpleUtilFetchUrlCallback cb;
+	gpointer user_data;
+} PurpleUtilLegacyWrapData;
 
 static void purple_util_fetch_url_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _wrap_data)
@@ -143,6 +149,8 @@ PurpleUtilFetchUrlData * purple_util_fetch_url(const gchar *url, gboolean full,
 
 	return url_data;
 }
+
+#endif
 
 /**
  * The arguments to this function are similar to printf.
@@ -761,11 +769,13 @@ purple_util_fetch_url_request(PurpleAccount *account,
 void
 purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *gfud)
 {
+#if 0
 	if (gfud->wrapped_request != NULL) {
 		gfud->cancelled = TRUE;
 		purple_http_conn_cancel(gfud->wrapped_request);
 		return;
 	}
+#endif
 
 	if (gfud->ssl_connection != NULL)
 		purple_ssl_close(gfud->ssl_connection);

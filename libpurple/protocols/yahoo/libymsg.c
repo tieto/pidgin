@@ -31,6 +31,7 @@
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
+#include "http.h"
 #include "network.h"
 #include "notify.h"
 #include "prpl.h"
@@ -53,6 +54,7 @@
 
 /* #define YAHOO_DEBUG */
 
+/* Not tested with new HTTP API, because it doesn't compile at the moment. */
 /* #define TRY_WEBMESSENGER_LOGIN 0 */
 
 /* One hour */
@@ -2213,7 +2215,8 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	case 13:
 #ifdef TRY_WEBMESSENGER_LOGIN
 		if (!yd->wm) {
-			PurpleUtilFetchUrlData *url_data;
+			PurpleHttpRequest *req;
+			PurpleHttpConnection *hc;
 			yd->wm = TRUE;
 			if (yd->fd >= 0)
 				close(yd->fd);
@@ -2221,10 +2224,11 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 				purple_input_remove(yd->inpa);
 				yd->inpa = 0;
 			}
-			url_data = purple_util_fetch_url(WEBMESSENGER_URL, TRUE,
-					"Purple/" VERSION, FALSE, -1, yahoo_login_page_cb, gc);
-			if (url_data != NULL)
-				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+			req = purple_http_request_new(WEBMESSENGER_URL);
+			purple_http_request_header_set(req, "User-Agent", "Purple/" VERSION);
+			hc = purple_http_request(gc, req, yahoo_login_page_cb, NULL);
+			purple_http_request_unref(req);
+			yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 			return;
 		}
 #endif /* TRY_WEBMESSENGER_LOGIN */
@@ -3444,15 +3448,17 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 }
 
 static void
-yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *url_text, size_t len, const gchar *error_message)
+yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _unused)
 {
-	PurpleConnection *gc = (PurpleConnection *)user_data;
+	PurpleConnection *gc = purple_http_conn_get_purple_connection(http_conn);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *sn = purple_account_get_username(account);
 	const char *pass = purple_connection_get_password(gc);
-	GHashTable *hash = yahoo_login_page_hash(url_text, len);
+	size_t len;
+	const gchar *got_data;
+	GHashTable *hash;
 	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;
 	int i;
@@ -3460,14 +3466,17 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	PurpleCipherContext *context;
 	guchar digest[16];
 
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
-	if (error_message != NULL)
+	if (!purple_http_response_is_successfull(response))
 	{
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                               error_message);
+			purple_http_response_get_error(response));
 		return;
 	}
+
+	got_data = purple_http_response_get_data(response, &len);
+	hash = yahoo_login_page_hash(got_data, len);
 
 	url = g_string_append(url, sn);
 	url = g_string_append(url, "&passwd=");
@@ -3708,6 +3717,10 @@ void yahoo_close(PurpleConnection *gc) {
 	while (yd->url_datas) {
 		purple_util_fetch_url_cancel(yd->url_datas->data);
 		yd->url_datas = g_slist_delete_link(yd->url_datas, yd->url_datas);
+	}
+	while (yd->http_reqs) {
+		purple_http_conn_cancel(yd->http_reqs->data);
+		yd->http_reqs = g_slist_delete_link(yd->http_reqs, yd->http_reqs);
 	}
 
 	for (l = yd->confs; l; l = l->next) {

@@ -31,6 +31,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "http.h"
 #include "imgstore.h"
 #include "message.h"
 #include "notify.h"
@@ -1642,9 +1643,9 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
-	while(js->url_datas) {
-		purple_util_fetch_url_cancel(js->url_datas->data);
-		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
+	while(js->http_conns) {
+		purple_http_conn_cancel(js->http_conns->data);
+		js->http_conns = g_slist_delete_link(js->http_conns, js->http_conns);
 	}
 
 	g_free(js->stream_id);

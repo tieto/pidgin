@@ -120,7 +120,7 @@ struct _MsnSession
 	guint soap_cleanup_handle;
 	char *guid;
 
-	GSList *url_datas; /**< PurpleUtilFetchUrlData to be cancelled on exit */
+	GSList *http_reqs; /**< PurpleHttpConnection to be cancelled on exit */
 };
 
 /**

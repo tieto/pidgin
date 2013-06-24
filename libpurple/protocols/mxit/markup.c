@@ -25,6 +25,7 @@
 
 #include	"internal.h"
 #include	"debug.h"
+#include	"libpurple/http.h"
 #include	"obsolete.h"
 
 #include	"protocol.h"
@@ -464,17 +465,13 @@ static void parse_emoticon_str( const char* message, char* emid )
 
 /*------------------------------------------------------------------------
  * Callback function invoked when a custom emoticon request to the WAP site completes.
- *
- *  @param url_data
- *  @param user_data		The Markup message object
- *  @param url_text			The data returned from the WAP site
- *  @param len				The length of the data returned
- *  @param error_message	Descriptive error message
  */
-static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message )
+static void emoticon_returned(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
 	struct RXMsgData*	mx			= (struct RXMsgData*) user_data;
-	const char*			data		= url_text;
+	const gchar*			data;
+	size_t				len;
 	unsigned int		pos			= 0;
 	char				emo[16];
 	int					id;
@@ -490,13 +487,15 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 #endif
 
 	/* remove request from the async outstanding calls list */
-	mx->session->async_calls = g_slist_remove( mx->session->async_calls, url_data );
+	mx->session->async_http_reqs = g_slist_remove(mx->session->async_http_reqs, http_conn);
 
-	if ( !url_text ) {
+	if (!purple_http_response_is_successfull(response)) {
 		/* no reply from the WAP site */
 		purple_debug_error( MXIT_PLUGIN_ID, "Error contacting the MXit WAP site. Please try again later (emoticon).\n" );
 		goto done;
 	}
+
+	data = purple_http_response_get_data(response, &len);
 
 #ifdef	MXIT_DEBUG_EMO
 	hex_dump( data, len );
@@ -626,7 +625,7 @@ done:
  */
 static void emoticon_request( struct RXMsgData* mx, const char* id )
 {
-	PurpleUtilFetchUrlData*	url_data;
+	PurpleHttpConnection *hc;
 	const char*				wapserver;
 	char*					url;
 
@@ -634,12 +633,9 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
 
 	wapserver = purple_account_get_string( mx->session->acc, MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
 
-	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver, MXIT_EMOTICON_SIZE, id, time( NULL ) );
-	url_data = purple_util_fetch_url( url, TRUE, NULL, TRUE, -1, emoticon_returned, mx );
-	if ( url_data )
-		mx->session->async_calls = g_slist_prepend( mx->session->async_calls, url_data );
-
+	hc = purple_http_get(mx->session->con, url, emoticon_returned, mx);
+	mx->session->async_http_reqs = g_slist_prepend(mx->session->async_http_reqs, hc);
 	g_free( url );
 }
 

@@ -57,6 +57,7 @@ typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
  */
 typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message);
 
+#if 0
 /**
  * Fetches the data from a URL, and passes it to a callback function.
  *
@@ -72,6 +73,7 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
 PurpleUtilFetchUrlData * purple_util_fetch_url(const gchar *url, gboolean full,
 	const gchar *user_agent, gboolean http11, gssize max_len,
 	PurpleUtilFetchUrlCallback cb, gpointer data);
+#endif
 
 /**
  * Fetches the data from a URL, and passes it to a callback function.

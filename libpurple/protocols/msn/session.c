@@ -24,7 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 
 #include "error.h"
 #include "msnutils.h"
@@ -65,9 +65,9 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
-	while (session->url_datas) {
-		purple_util_fetch_url_cancel(session->url_datas->data);
-		session->url_datas = g_slist_delete_link(session->url_datas, session->url_datas);
+	while (session->http_reqs) {
+		purple_http_conn_cancel(session->http_reqs->data);
+		session->http_reqs = g_slist_delete_link(session->http_reqs, session->http_reqs);
 	}
 
 	if (session->connected)
