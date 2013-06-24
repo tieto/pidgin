@@ -824,7 +824,6 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 	} else {
 		char *buf, *buf2, *buf3;
 		char *send_inst;
-		PurpleConversation *gconv1;
 		PurpleChatConversation *gcc;
 		char *ptr = (char *) notice.z_message + (strlen(notice.z_message) + 1);
 		int len;
@@ -897,9 +896,8 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				}
 			}
 
-			gconv1 = purple_conversations_find_with_account(PURPLE_CONV_TYPE_CHAT,
+			gcc = purple_conversations_find_chat_with_account(
 														 zt2->name, purple_connection_get_account(gc));
-			gcc = purple_conversation_get_chat_data(gconv1);
 #ifndef INET_ADDRSTRLEN
 #define INET_ADDRSTRLEN 16
 #endif
@@ -2040,7 +2038,6 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 {
 	zephyr_triple *zt;
 	const char *sig;
-	PurpleConversation *gconv1;
 	PurpleChatConversation *gcc;
 	char *inst;
 	char *recipient;
@@ -2053,9 +2050,8 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 
 	sig = zephyr_get_signature();
 
-	gconv1 = purple_conversations_find_chat_with_account(zt->name,
+	gcc = purple_conversations_find_chat_with_account(zt->name,
 												 purple_connection_get_account(gc));
-	gcc = purple_conversation_get_chat_data(gconv1);
 
 	if (!(inst = (char *)purple_chat_conversation_get_topic(gcc)))
 		inst = g_strdup("PERSONAL");
@@ -2576,7 +2572,6 @@ static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, Pu
 static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *topic)
 {
 	zephyr_triple *zt;
-	PurpleConversation *gconv;
 	PurpleChatConversation *gcc;
 	gchar *topic_utf8;
 	zephyr_account* zephyr = purple_connection_get_protocol_data(gc);
@@ -2586,9 +2581,8 @@ static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *top
 	/* find_sub_by_id can return NULL */
 	if (!zt)
 		return;
-	gconv = purple_conversations_find_chat_with_account(zt->name,
+	gcc = purple_conversations_find_chat_with_account(zt->name,
 												purple_connection_get_account(gc));
-	gcc = purple_conversation_get_chat_data(gconv);
 
 	topic_utf8 = zephyr_recv_convert(gc,(gchar *)topic);
 	purple_chat_conversation_set_topic(gcc,sender,topic_utf8);
@@ -2637,9 +2631,9 @@ static PurpleCmdRet zephyr_purple_cmd_instance(PurpleConversation *conv,
 	 * all. This might not be the best thing to do, though having
 	 * one word isn't ideal either.	 */
 
-	PurpleChatConversation *gcc = purple_conversation_get_chat_data(conv);
 	const char* instance = args[0];
-	zephyr_chat_set_topic(purple_conversation_get_connection(conv),purple_chat_conversation_get_id(gcc),instance);
+	zephyr_chat_set_topic(purple_conversation_get_connection(conv),
+			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),instance);
 	return PURPLE_CMD_RET_OK;
 }
 
