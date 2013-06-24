@@ -24,6 +24,7 @@
 
 #include "aescipher.h"
 #include "debug.h"
+#include "enums.h"
 
 #include <string.h>
 

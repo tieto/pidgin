@@ -31,6 +31,7 @@
  */
 #include "des3cipher.h"
 #include "descipher.h"
+#include "enums.h"
 
 #include <string.h>
 
