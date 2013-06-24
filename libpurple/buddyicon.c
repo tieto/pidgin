@@ -371,7 +371,7 @@ purple_buddy_icon_unref(PurpleBuddyIcon *icon)
 void
 purple_buddy_icon_update(PurpleBuddyIcon *icon)
 {
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	PurpleAccount *account;
 	const char *username;
 	PurpleBuddyIcon *icon_to_set;
@@ -432,10 +432,10 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
-	conv = purple_conversations_find_im_with_account(username, account);
+	im = purple_conversations_find_im_with_account(username, account);
 
-	if (conv != NULL)
-		purple_im_conversation_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
+	if (im != NULL)
+		purple_im_conversation_set_icon(im, icon_to_set);
 
 	/* icon's refcount was incremented above */
 	purple_buddy_icon_unref(icon);
@@ -877,16 +877,16 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 			 child = purple_blist_node_get_sibling_next(child))
 		{
 			PurpleBuddy *buddy;
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 
 			if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 				continue;
 
 			buddy = (PurpleBuddy *)child;
 
-			conv = purple_conversations_find_im_with_account(purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
-			if (conv)
-				purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ICON);
+			im = purple_conversations_find_im_with_account(purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+			if (im)
+				purple_conversation_update(PURPLE_CONVERSATION(im), PURPLE_CONVERSATION_UPDATE_ICON);
 
 			/* Is this call necessary anymore? Can the buddies
 			 * themselves need updating when the custom buddy
@@ -894,11 +894,11 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 			purple_blist_update_node_icon((PurpleBlistNode*)buddy);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		PurpleConversation *conv = NULL;
+		PurpleChatConversation *chat = NULL;
 
-		conv = purple_conversations_find_chat_with_account(purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
-		if (conv) {
-			purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ICON);
+		chat = purple_conversations_find_chat_with_account(purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
+		if (chat) {
+			purple_conversation_update(PURPLE_CONVERSATION(chat), PURPLE_CONVERSATION_UPDATE_ICON);
 		}
 	}
 

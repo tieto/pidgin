@@ -1002,7 +1002,7 @@ purple_strings_are_different(const char *one, const char *two)
 void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	PurpleBlistNode *bnode;
 	char *old_alias;
 	char *new_alias = NULL;
@@ -1036,10 +1036,10 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-		conv = purple_conversations_find_im_with_account(buddy->name,
+		im = purple_conversations_find_im_with_account(buddy->name,
 												   buddy->account);
-		if (conv)
-			purple_conversation_autoset_title(conv);
+		if (im)
+			purple_conversation_autoset_title(PURPLE_CONVERSATION(im));
 	}
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
@@ -1086,7 +1086,7 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
 void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	char *old_alias;
 	char *new_alias = NULL;
 
@@ -1115,10 +1115,10 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 
-	conv = purple_conversations_find_im_with_account(buddy->name,
+	im = purple_conversations_find_im_with_account(buddy->name,
 											   buddy->account);
-	if (conv)
-		purple_conversation_autoset_title(conv);
+	if (im)
+		purple_conversation_autoset_title(PURPLE_CONVERSATION(im));
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 buddy, old_alias);
@@ -1128,7 +1128,7 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	char *old_alias;
 	char *new_alias = NULL;
 
@@ -1157,10 +1157,10 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 
-	conv = purple_conversations_find_im_with_account(buddy->name,
+	im = purple_conversations_find_im_with_account(buddy->name,
 											   buddy->account);
-	if (conv)
-		purple_conversation_autoset_title(conv);
+	if (im)
+		purple_conversation_autoset_title(PURPLE_CONVERSATION(im));
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 buddy, old_alias);

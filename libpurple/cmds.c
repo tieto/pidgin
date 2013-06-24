@@ -202,7 +202,7 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
 	PurpleCmd *c;
 	GList *l;
 	gchar *err = NULL;
-	gboolean is_im;
+	gboolean is_im = TRUE;
 	gboolean found = FALSE, tried_cmd = FALSE, right_type = FALSE, right_prpl = FALSE;
 	const gchar *prpl_id;
 	gchar **args = NULL;
@@ -212,12 +212,8 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
 	*error = NULL;
 	prpl_id = purple_account_get_protocol_id(purple_conversation_get_account(conv));
 
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-		is_im = TRUE;
-	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+	if (PURPLE_IS_CHAT_CONVERSATION(conv))
 		is_im = FALSE;
-	else
-		return PURPLE_CMD_STATUS_FAILED;
 
 	rest = strchr(cmdline, ' ');
 	if (rest) {
@@ -311,10 +307,10 @@ GList *purple_cmd_list(PurpleConversation *conv)
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM))
+		if (conv && PURPLE_IS_IM_CONVERSATION(conv))
 			if (!(c->flags & PURPLE_CMD_FLAG_IM))
 				continue;
-		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT))
+		if (conv && PURPLE_IS_CHAT_CONVERSATION(conv))
 			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
@@ -343,10 +339,10 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd)
 		if (cmd && !purple_strequal(cmd, c->cmd))
 			continue;
 
-		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM))
+		if (conv && PURPLE_IS_IM_CONVERSATION(conv))
 			if (!(c->flags & PURPLE_CMD_FLAG_IM))
 				continue;
-		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT))
+		if (conv && PURPLE_IS_CHAT_CONVERSATION(conv))
 			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 

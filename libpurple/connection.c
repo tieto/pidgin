@@ -244,10 +244,10 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	while (gc->buddy_chats)
 	{
-		PurpleConversation *b = gc->buddy_chats->data;
+		PurpleChatConversation *b = gc->buddy_chats->data;
 
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
-		purple_chat_conversation_left(PURPLE_CONV_CHAT(b));
+		purple_chat_conversation_leave(b);
 	}
 
 	update_keepalive(gc, FALSE);

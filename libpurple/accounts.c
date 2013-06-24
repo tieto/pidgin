@@ -701,7 +701,7 @@ purple_accounts_delete(PurpleAccount *account)
 		PurpleConversation *conv = iter->data;
 		iter = iter->next;
 		if (purple_conversation_get_account(conv) == account)
-			purple_conversation_destroy(conv);
+			g_object_unref(conv);
 	}
 
 	/* Remove this account's pounces */
