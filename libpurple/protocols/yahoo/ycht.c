@@ -78,7 +78,7 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *room, *topic;
 	PurpleConnection *gc = ycht->gc;
-	PurpleConversation *c = NULL;
+	PurpleChatConversation *c = NULL;
 	gboolean new_room = FALSE;
 	char **members;
 	int i;
@@ -109,15 +109,15 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 	}
 
 	if (topic)
-		purple_chat_conversation_set_topic(PURPLE_CONV_CHAT(c), NULL, topic);
+		purple_chat_conversation_set_topic(c, NULL, topic);
 
 	for (i = 0; members[i]; i++) {
 		if (new_room) {
 			/*if (!strcmp(members[i], purple_connection_get_display_name(ycht->gc)))
 				continue;*/
-			purple_chat_conversation_add_user(PURPLE_CONV_CHAT(c), members[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+			purple_chat_conversation_add_user(c, members[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 		} else {
-			yahoo_chat_add_user(PURPLE_CONV_CHAT(c), members[i], NULL);
+			yahoo_chat_add_user(c, members[i], NULL);
 		}
 	}
 
@@ -132,9 +132,9 @@ static void ycht_process_chatpart(YchtConn *ycht, YchtPkt *pkt)
 	who = g_list_nth_data(pkt->data, 1);
 
 	if (who && room) {
-		PurpleConversation *c = purple_conversations_find_chat(ycht->gc, YAHOO_CHAT_ID);
-		if (c && !purple_utf8_strcasecmp(purple_conversation_get_name(c), room))
-			purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
+		PurpleChatConversation *c = purple_conversations_find_chat(ycht->gc, YAHOO_CHAT_ID);
+		if (c && !purple_utf8_strcasecmp(purple_conversation_get_name(PURPLE_CONVERSATION(c)), room))
+			purple_chat_conversation_remove_user(c, who, NULL);
 
 	}
 }
@@ -142,7 +142,7 @@ static void ycht_process_chatpart(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *who, *what, *msg;
-	PurpleConversation *c;
+	PurpleChatConversation *c;
 	PurpleConnection *gc = ycht->gc;
 
 	who = g_list_nth_data(pkt->data, 1);

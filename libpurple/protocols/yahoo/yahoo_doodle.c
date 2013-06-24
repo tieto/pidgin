@@ -93,7 +93,7 @@ PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char 
 	/* Write a local message to this conversation showing that a request for a
 	 * Doodle session has been made
 	 */
-	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), "", _("Sent Doodle request."),
+	purple_conversation_write_message(conv, "", _("Sent Doodle request."),
 					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
 	return PURPLE_CMD_RET_OK;

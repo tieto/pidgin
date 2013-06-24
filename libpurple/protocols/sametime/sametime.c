@@ -295,7 +295,7 @@ static void convo_data_free(struct convo_data *conv);
 
 static void convo_features(struct mwConversation *conv);
 
-static PurpleConversation *convo_get_gconv(struct mwConversation *conv);
+static PurpleIMConversation *convo_get_im(struct mwConversation *conv);
 
 
 /* name and id */
@@ -1279,7 +1279,7 @@ static void conversation_created_cb(PurpleConversation *g_conv,
   if(pd->gc != gc)
     return; /* not ours */
 
-  if(purple_conversation_get_type(g_conv) != PURPLE_CONV_TYPE_IM)
+  if(PURPLE_IS_CHAT_CONVERSATION(g_conv))
     return; /* wrong type */
 
   who.user = (char *) purple_conversation_get_name(g_conv);
@@ -1835,15 +1835,15 @@ static void mw_session_announce(struct mwSession *s,
 				const char *text) {
   struct mwPurplePluginData *pd;
   PurpleAccount *acct;
-  PurpleConversation *conv;
+  PurpleIMConversation *im;
   PurpleBuddy *buddy;
   char *who = from->user_id;
   char *msg;
 
   pd = mwSession_getClientData(s);
   acct = purple_connection_get_account(pd->gc);
-  conv = purple_conversations_find_im_with_account(who, acct);
-  if(! conv) conv = purple_im_conversation_new(acct, who);
+  im = purple_conversations_find_im_with_account(who, acct);
+  if(! im) im = purple_im_conversation_new(acct, who);
 
   buddy = purple_find_buddy(acct, who);
   if(buddy) who = (char *) purple_buddy_get_contact_alias(buddy);
@@ -1851,7 +1851,8 @@ static void mw_session_announce(struct mwSession *s,
   who = g_strdup_printf(_("Announcement from %s"), who);
   msg = purple_markup_linkify(text);
 
-  purple_conversation_write(conv, who, msg ? msg : "", PURPLE_MESSAGE_RECV, time(NULL));
+  purple_conversation_write(PURPLE_CONVERSATION(im), who, msg ? msg : "",
+  		PURPLE_MESSAGE_RECV, time(NULL));
   g_free(who);
   g_free(msg);
 }
@@ -1978,7 +1979,7 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   struct mwSession *session;
   struct mwPurplePluginData *pd;
   PurpleConnection *gc;
-  PurpleConversation *g_conf;
+  PurpleChatConversation *g_conf;
 
   const char *n = mwConference_getName(conf);
   const char *t = mwConference_getTitle(conf);
@@ -1994,11 +1995,11 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   if(! t) t = "(no title)";
   g_conf = serv_got_joined_chat(gc, CONF_TO_ID(conf), t);
 
-  mwConference_setClientData(conf, PURPLE_CONV_CHAT(g_conf), NULL);
+  mwConference_setClientData(conf, g_conf, NULL);
 
   for(; members; members = members->next) {
     struct mwLoginInfo *peer = members->data;
-    purple_chat_conversation_add_user(PURPLE_CONV_CHAT(g_conf), peer->user_id,
+    purple_chat_conversation_add_user(g_conf, peer->user_id,
 			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
   }
 }
@@ -2408,7 +2409,7 @@ static void convo_data_new(struct mwConversation *conv) {
 }
 
 
-static PurpleConversation *convo_get_gconv(struct mwConversation *conv) {
+static PurpleIMConversation *convo_get_im(struct mwConversation *conv) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
   struct mwPurplePluginData *pd;
@@ -2425,8 +2426,7 @@ static PurpleConversation *convo_get_gconv(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  return purple_conversations_find_with_account(PURPLE_CONV_TYPE_IM,
-					     idb->user, acct);
+  return purple_conversations_find_im_with_account(idb->user, acct);
 }
 
 
@@ -2460,7 +2460,7 @@ static void convo_queue(struct mwConversation *conv,
 
 /* Does what it takes to get an error displayed for a conversation */
 static void convo_error(struct mwConversation *conv, guint32 err) {
-  PurpleConversation *gconv;
+  PurpleIMConversation *im;
   char *tmp, *text;
   struct mwIdBlock *idb;
 
@@ -2469,13 +2469,15 @@ static void convo_error(struct mwConversation *conv, guint32 err) {
   tmp = mwError(err);
   text = g_strconcat(_("Unable to send message: "), tmp, NULL);
 
-  gconv = convo_get_gconv(conv);
-  if(gconv && !purple_conversation_helper_present_error(idb->user, purple_conversation_get_account(gconv), text)) {
+  im = convo_get_im(conv);
+  if(im && !purple_conversation_helper_present_error(idb->user,
+  		purple_conversation_get_account(PURPLE_CONVERSATION(im)), text)) {
 
     g_free(text);
     text = g_strdup_printf(_("Unable to send message to %s:"),
 			   (idb->user)? idb->user: "(unknown)");
-    purple_notify_error(purple_account_get_connection(purple_conversation_get_account(gconv)),
+    purple_notify_error(purple_account_get_connection(
+    		purple_conversation_get_account(PURPLE_CONVERSATION(im))),
 		      NULL, text, tmp);
   }
 
@@ -2507,16 +2509,17 @@ static void convo_queue_send(struct mwConversation *conv) {
      inform the purple conversation that it's unsafe to offer any *cool*
      features. */
 static void convo_nofeatures(struct mwConversation *conv) {
-  PurpleConversation *gconv;
+  PurpleIMConversation *im;
   PurpleConnection *gc;
 
-  gconv = convo_get_gconv(conv);
-  if(! gconv) return;
+  im = convo_get_im(conv);
+  if(! im) return;
 
-  gc = purple_conversation_get_connection(gconv);
+  gc = purple_conversation_get_connection(PURPLE_CONVERSATION(im));
   if(! gc) return;
 
-  purple_conversation_set_features(gconv, purple_connection_get_flags(gc));
+  purple_conversation_set_features(PURPLE_CONVERSATION(im),
+  		purple_connection_get_flags(gc));
 }
 
 
@@ -2524,13 +2527,13 @@ static void convo_nofeatures(struct mwConversation *conv) {
     to inform the purple conversation of what features to offer the
     user */
 static void convo_features(struct mwConversation *conv) {
-  PurpleConversation *gconv;
+  PurpleIMConversation *im;
   PurpleConnectionFlags feat;
 
-  gconv = convo_get_gconv(conv);
-  if(! gconv) return;
+  im = convo_get_im(conv);
+  if(! im) return;
 
-  feat = purple_conversation_get_features(gconv);
+  feat = purple_conversation_get_features(PURPLE_CONVERSATION(im));
 
   if(mwConversation_isOpen(conv)) {
     if(mwConversation_supports(conv, mwImSend_HTML)) {
@@ -2546,7 +2549,7 @@ static void convo_features(struct mwConversation *conv) {
     }
 
     DEBUG_INFO("conversation features set to 0x%04x\n", feat);
-    purple_conversation_set_features(gconv, feat);
+    purple_conversation_set_features(PURPLE_CONVERSATION(im), feat);
 
   } else {
     convo_nofeatures(conv);
@@ -2574,7 +2577,7 @@ static void mw_conversation_opened(struct mwConversation *conv) {
   if(cd) {
     convo_queue_send(conv);
 
-    if(! convo_get_gconv(conv)) {
+    if(! convo_get_im(conv)) {
       mwConversation_free(conv);
       return;
     }
@@ -2965,7 +2968,7 @@ place_find_by_id(struct mwPurplePluginData *pd, int id) {
   l = (GList *) mwServicePlace_getPlaces(srvc);
   for(; l; l = l->next) {
     struct mwPlace *p = l->data;
-    PurpleChatConversation *h = PURPLE_CONV_CHAT(mwPlace_getClientData(p));
+    PurpleChatConversation *h = mwPlace_getClientData(p);
 
     if(CHAT_TO_ID(h) == id) {
       place = p;
@@ -2982,7 +2985,7 @@ static void mw_place_opened(struct mwPlace *place) {
   struct mwSession *session;
   struct mwPurplePluginData *pd;
   PurpleConnection *gc;
-  PurpleConversation *gconf;
+  PurpleChatConversation *gconf;
 
   GList *members, *l;
 
@@ -3006,7 +3009,7 @@ static void mw_place_opened(struct mwPlace *place) {
 
   for(l = members; l; l = l->next) {
     struct mwIdBlock *idb = l->data;
-    purple_chat_conversation_add_user(PURPLE_CONV_CHAT(gconf), idb->user,
+    purple_chat_conversation_add_user(gconf, idb->user,
 			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
   }
   g_list_free(members);
@@ -3038,7 +3041,7 @@ static void mw_place_closed(struct mwPlace *place, guint32 code) {
 
 static void mw_place_peerJoined(struct mwPlace *place,
 				const struct mwIdBlock *peer) {
-  PurpleConversation *gconf;
+  PurpleChatConversation *gconf;
 
   const char *n = mwPlace_getName(place);
 
@@ -3047,14 +3050,14 @@ static void mw_place_peerJoined(struct mwPlace *place,
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
 
-  purple_chat_conversation_add_user(PURPLE_CONV_CHAT(gconf), peer->user,
+  purple_chat_conversation_add_user(gconf, peer->user,
 			  NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 }
 
 
 static void mw_place_peerParted(struct mwPlace *place,
 				const struct mwIdBlock *peer) {
-  PurpleConversation *gconf;
+  PurpleChatConversation *gconf;
 
   const char *n = mwPlace_getName(place);
 
@@ -3063,7 +3066,7 @@ static void mw_place_peerParted(struct mwPlace *place,
   gconf = mwPlace_getClientData(place);
   g_return_if_fail(gconf != NULL);
 
-  purple_chat_conversation_remove_user(PURPLE_CONV_CHAT(gconf), peer->user, NULL);
+  purple_chat_conversation_remove_user(gconf, peer->user, NULL);
 }
 
 
@@ -4274,14 +4277,14 @@ static void mw_prpl_set_idle(PurpleConnection *gc, int t) {
 
 static void notify_im(PurpleConnection *gc, GList *row, void *user_data) {
   PurpleAccount *acct;
-  PurpleConversation *conv;
+  PurpleIMConversation *im;
   char *id;
 
   acct = purple_connection_get_account(gc);
   id = g_list_nth_data(row, 1);
-  conv = purple_conversations_find_im_with_account(id, acct);
-  if(! conv) conv = purple_im_conversation_new(acct, id);
-  purple_conversation_present(conv);
+  im = purple_conversations_find_im_with_account(id, acct);
+  if(! im) im = purple_im_conversation_new(acct, id);
+  purple_conversation_present(PURPLE_CONVERSATION(im));
 }
 
 

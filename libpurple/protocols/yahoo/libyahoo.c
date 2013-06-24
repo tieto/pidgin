@@ -112,16 +112,16 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 		if (sname) {
 			char *message = g_hash_table_lookup(params, "m");
 
-			PurpleConversation *conv = purple_conversations_find_with_account(
-				PURPLE_CONV_TYPE_IM, sname, acct);
-			if (conv == NULL)
-				conv = purple_im_conversation_new(acct, sname);
-			purple_conversation_present(conv);
+			PurpleIMConversation *im = purple_conversations_find_im_with_account(
+				sname, acct);
+			if (im == NULL)
+				im = purple_im_conversation_new(acct, sname);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
 
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conversation_send_confirm(conv, message);
+				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), message);
 			}
 		}
 		/* else
