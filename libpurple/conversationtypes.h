@@ -478,6 +478,15 @@ void purple_chat_conversation_set_topic(PurpleChatConversation *chat, const char
  */
 const char *purple_chat_conversation_get_topic(const PurpleChatConversation *chat);
 
+/** TODO
+ * Returns who set the chat room's topic.
+ *
+ * @param chat The chat.
+ *
+ * @return Who set the topic.
+ */
+const char *purple_chat_conversation_get_topic_who(const PurpleChatConversation *chat);
+
 /**
  * Sets the chat room's ID.
  *

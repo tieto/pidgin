@@ -186,6 +186,7 @@ purple_enumheaders = \
 	accounts.h \
 	cipher.h \
 	circularbuffer.h \
+	connection.h \
 	conversation.h \
 	conversationtypes.h \
 	conversations.h \

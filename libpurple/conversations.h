@@ -38,6 +38,20 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
+/** TODO
+ * Adds a conversation to the list of conversations.
+ *
+ * @param conv The conversation.
+ */
+void purple_conversations_add(PurpleConversation *conv);
+
+/** TODO
+ * Removes a conversation from the list of conversations.
+ *
+ * @param conv The conversation.
+ */
+void purple_conversations_remove(PurpleConversation *conv);
+
 /**
  * Returns a list of all conversations.
  *
@@ -110,6 +124,13 @@ PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *g
  * @param ops  The UI conversation operations structure.
  */
 void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
+
+/** TODO
+ * Gets the default conversation UI operations structure.
+ *
+ * @return  The UI conversation operations structure.
+ */
+PurpleConversationUiOps *purple_conversations_set_ui_ops(void);
 
 /**
  * Returns the conversation subsystem handle.

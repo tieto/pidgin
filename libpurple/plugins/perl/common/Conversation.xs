@@ -82,6 +82,14 @@ BOOT:
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversations  PREFIX = purple_conversations_
 PROTOTYPES: ENABLE
 
+void
+purple_conversations_add(conv)
+    Purple::Conversation conv
+
+void
+purple_conversations_remove(conv)
+    Purple::Conversation conv
+
 Purple::Handle
 purple_conversations_get_handle()
 

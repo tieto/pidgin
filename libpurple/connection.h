@@ -33,7 +33,7 @@ typedef struct _PurpleConnection PurpleConnection;
 /**
  * Flags to change behavior of the client for a given connection.
  */
-typedef enum
+typedef enum /*< flags >*/
 {
 	PURPLE_CONNECTION_HTML       = 0x0001, /**< Connection sends/receives in 'HTML'. */
 	PURPLE_CONNECTION_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive
