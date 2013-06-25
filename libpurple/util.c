@@ -807,7 +807,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				} while (*str >= '0' && *str <= '9');
 			}
 
-			sign = (*str == '+') ? -1 : 1;
+			sign = (*str == '+') ? 1 : -1;
 
 			/* Process the timezone */
 			if (*str == '+' || *str == '-') {
