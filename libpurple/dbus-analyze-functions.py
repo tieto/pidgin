@@ -22,10 +22,10 @@ excluded = [\
     # functions with untranslatable types are skipped, but this script
     # assumes that all non-pointer type names beginning with "Purple"
     # are enums, which is not true in this case.
-    "purple_conv_placement_add_fnc",
-    "purple_conv_placement_get_fnc",
-    "purple_conv_placement_get_current_func",
-    "purple_conv_placement_set_current_func",
+    "purple_conversation_placement_add_fnc",
+    "purple_conversation_placement_get_fnc",
+    "purple_conversation_placement_get_current_func",
+    "purple_conversation_placement_set_current_func",
 
     # Similar to the above:
     "purple_account_set_register_callback",
@@ -70,11 +70,11 @@ constlists = [
     "purple_account_option_get_list",
     "purple_connections_get_all",
     "purple_connections_get_connecting",
-    "purple_get_conversations",
-    "purple_get_ims",
-    "purple_get_chats",
-    "purple_conv_chat_get_users",
-    "purple_conv_chat_get_ignored",
+    "purple_conversations_get_all",
+    "purple_conversations_get_ims",
+    "purple_conversations_get_chats",
+    "purple_chat_conversation_get_users",
+    "purple_chat_conversation_get_ignored",
     "purple_mime_document_get_fields",
     "purple_mime_document_get_parts",
     "purple_mime_part_get_fields",

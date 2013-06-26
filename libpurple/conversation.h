@@ -149,9 +149,6 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
 /**************************************************************************/
-typedef struct _PurpleIMConversation         PurpleIMConversation;
-typedef struct _PurpleChatConversation       PurpleChatConversation;
-typedef struct _PurpleChatConversationBuddy  PurpleChatConversationBuddy;
 /**
  * Conversation operations and events.
  *

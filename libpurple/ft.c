@@ -278,7 +278,7 @@ static void
 purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	const char *message, gboolean is_error, gboolean print_thumbnail)
 {
-	PurpleConversation *conv = NULL;
+	PurpleIMConversation *im = NULL;
 	PurpleMessageFlags flags = PURPLE_MESSAGE_SYSTEM;
 	char *escaped;
 	gconstpointer thumbnail_data;
@@ -289,10 +289,10 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 
 	thumbnail_data = purple_xfer_get_thumbnail(xfer, &size);
 
-	conv = purple_conversations_find_im_with_account(xfer->who,
+	im = purple_conversations_find_im_with_account(xfer->who,
 											   purple_xfer_get_account(xfer));
 
-	if (conv == NULL)
+	if (im == NULL)
 		return;
 
 	escaped = g_markup_escape_text(message, -1);
@@ -308,12 +308,13 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 		message_with_img =
 			g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'> %s",
 			                id, escaped);
-		purple_conversation_write(conv, NULL, message_with_img, flags,
-			time(NULL));
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
+			message_with_img, flags, time(NULL));
 		purple_imgstore_unref_by_id(id);
 		g_free(message_with_img);
 	} else {
-		purple_conversation_write(conv, NULL, escaped, flags, time(NULL));
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, escaped, flags,
+			time(NULL));
 	}
 	g_free(escaped);
 }
@@ -901,7 +902,7 @@ purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 
 	if (completed == TRUE) {
 		char *msg = NULL;
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_DONE);
 
@@ -924,11 +925,12 @@ purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 		else
 			msg = g_strdup(_("File transfer complete"));
 
-		conv = purple_conversations_find_im_with_account(xfer->who,
+		im = purple_conversations_find_im_with_account(xfer->who,
 		                                             purple_xfer_get_account(xfer));
 
-		if (conv != NULL)
-			purple_conversation_write(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		if (im != NULL)
+			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, msg,
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
 

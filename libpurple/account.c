@@ -2894,7 +2894,7 @@ purple_account_dispose(GObject *object)
 	purple_signal_emit(purple_accounts_get_handle(), "account-destroying",
 						account);
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next)
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
 	{
 		PurpleConversation *conv = (PurpleConversation *)l->data;
 

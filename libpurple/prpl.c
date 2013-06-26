@@ -437,7 +437,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	PurpleAttentionType *attn;
 	PurpleMessageFlags flags;
 	PurplePlugin *prpl;
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
 	const char *alias;
@@ -474,9 +474,9 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	if (!send_attention(gc, who, type_code))
 		return;
 
-	conv = purple_im_conversation_new(purple_connection_get_account(gc), who);
-	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
-	purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
+	im = purple_im_conversation_new(purple_connection_get_account(gc), who);
+	purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, description, flags, mtime);
+	purple_prpl_attention(PURPLE_CONVERSATION(im), who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
 	g_free(description);
 }

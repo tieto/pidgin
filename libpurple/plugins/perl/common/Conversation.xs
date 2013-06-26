@@ -110,15 +110,15 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = purple_conversations_get_ims(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::IMConversation")));
 	}
 
 void
-purple_conversations_get()
+purple_conversations_get_all()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
 	}
 
@@ -128,7 +128,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = purple_conversations_get_chats(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ChatConversation")));
 	}
 
 Purple::Conversation

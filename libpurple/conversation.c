@@ -534,7 +534,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		return;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv) &&
-		!g_list_find(purple_conversations_get(), conv))
+		!g_list_find(purple_conversations_get_all(), conv))
 		return;
 
 	displayed = g_strdup(message);
