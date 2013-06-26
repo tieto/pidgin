@@ -197,12 +197,12 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the IMConversation object.
  */
 GType purple_im_conversation_get_type(void);
 
-/** TODO take from conversation.c purple_conversation_new()
+/**
  * Creates a new IM conversation.
  *
  * @param account The account opening the conversation window on the purple
@@ -330,38 +330,6 @@ guint purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *
  */
 void purple_im_conversation_update_typing(PurpleIMConversation *im);
 
-/** TODO override
- * Writes to an IM.
- *
- * @param im      The IM.
- * @param who     The user who sent the message.
- * @param message The message to write.
- * @param flags   The message flags.
- * @param mtime   The time the message was sent.
- */
-/*void purple_im_conversation_write(PurpleIMConversation *im, const char *who,
-						const char *message, PurpleMessageFlags flags,
-						time_t mtime);*/
-
-/** TODO write forward
- * Sends a message to this IM conversation.
- *
- * @param im      The IM.
- * @param message The message to send.
- */
-/*void purple_im_conversation_send(PurpleIMConversation *im, const char *message);*/
-
-/** TODO override
- * Sends a message to this IM conversation with specified flags.
- *
- * @param im      The IM.
- * @param message The message to send.
- * @param flags   The PurpleMessageFlags flags to use in addition to
- *                PURPLE_MESSAGE_SEND.
- */
-/*void purple_im_conversation_send_with_flags(PurpleIMConversation *im,
-		const char *message, PurpleMessageFlags flags);*/
-
 /*@}*/
 
 /**************************************************************************/
@@ -369,12 +337,12 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the ChatConversation object.
  */
 GType purple_chat_conversation_get_type(void);
 
-/** TODO take from conversation.c purple_conversation_new()
+/**
  * Creates a new chat conversation.
  *
  * @param account The account opening the conversation window on the purple
@@ -478,7 +446,7 @@ void purple_chat_conversation_set_topic(PurpleChatConversation *chat, const char
  */
 const char *purple_chat_conversation_get_topic(const PurpleChatConversation *chat);
 
-/** TODO
+/**
  * Returns who set the chat room's topic.
  *
  * @param chat The chat.
@@ -503,37 +471,6 @@ void purple_chat_conversation_set_id(PurpleChatConversation *chat, int id);
  * @return The ID.
  */
 int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
-
-/** TODO override
- * Writes to a chat.
- *
- * @param chat    The chat.
- * @param who     The user who sent the message.
- * @param message The message to write.
- * @param flags   The flags.
- * @param mtime   The time the message was sent.
- */
-/*void purple_chat_conversation_write(PurpleChatConversation *chat, const char *who,
-						  const char *message, PurpleMessageFlags flags,
-						  time_t mtime);*/
-
-/** TODO write forward
- * Sends a message to this chat conversation.
- *
- * @param chat    The chat.
- * @param message The message to send.
- */
-/*void purple_chat_conversation_send(PurpleChatConversation *chat, const char *message);*/
-
-/** TODO override
- * Sends a message to this chat conversation with specified flags.
- *
- * @param chat    The chat.
- * @param message The message to send.
- * @param flags   The PurpleMessageFlags flags to use.
- */
-/*void purple_chat_conversation_send_with_flags(PurpleChatConversation *chat,
-		const char *message, PurpleMessageFlags flags);*/
 
 /**
  * Adds a user to a chat.
@@ -704,7 +641,7 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the ChatConversationBuddy object.
  */
 GType purple_chat_conversation_buddy_get_type(void);
@@ -751,7 +688,7 @@ void
 purple_chat_conversation_buddy_set_attributes(PurpleChatConversation *chat,
 		PurpleChatConversationBuddy *cb, GList *keys, GList *values);
 
-/** TODO GObjectify
+/**
  * Creates a new chat buddy
  *
  * @param name The name.
@@ -817,13 +754,6 @@ PurpleChatConversationBuddyFlags purple_chat_conversation_buddy_get_flags(const 
  * @return TRUE if the chat buddy is on the buddy list.
  */
 gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBuddy *cb);
-
-/** TODO finalize/dispose
- * Destroys a chat buddy
- *
- * @param cb The chat buddy to destroy
- */
-/*void purple_chat_conversation_buddy_destroy(PurpleChatConversationBuddy *cb);*/
 
 /*@}*/
 

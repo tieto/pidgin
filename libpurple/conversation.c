@@ -89,52 +89,8 @@ enum
 	PROP_LAST
 };
 
-/**
- * A hash table used for efficient lookups of conversations by name.
- * struct _purple_hconv => PurpleConversation*
- */
-static GHashTable *conversation_cache = NULL;
+static GObjectClass *parent_class;
 
-struct _purple_hconv {
-	PurpleConversationType type;
-	char *name;
-	const PurpleAccount *account;
-};
-
-static guint _purple_conversations_hconv_hash(struct _purple_hconv *hc)
-{
-	return g_str_hash(hc->name) ^ hc->type ^ g_direct_hash(hc->account);
-}
-
-static guint _purple_conversations_hconv_equal(struct _purple_hconv *hc1, struct _purple_hconv *hc2)
-{
-	return (hc1->type == hc2->type &&
-	        hc1->account == hc2->account &&
-	        g_str_equal(hc1->name, hc2->name));
-}
-
-static void _purple_conversations_hconv_free_key(struct _purple_hconv *hc)
-{
-	g_free(hc->name);
-	g_free(hc);
-}
-
-static guint _purple_conversation_user_hash(gconstpointer data)
-{
-	const gchar *name = data;
-	gchar *collated;
-	guint hash;
-
-	collated = g_utf8_collate_key(name, -1);
-	hash     = g_str_hash(collated);
-	g_free(collated);
-	return hash;
-}
-
-static gboolean _purple_conversation_user_equal(gconstpointer a, gconstpointer b)
-{
-	return !g_utf8_collate(a, b);
-}
 
 static gboolean
 reset_typing_cb(gpointer data)
@@ -673,6 +629,40 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	g_free(displayed);
 }
 
+void
+purple_conversation_write_message(PurpleConversation *conv, const char *who,
+		const char *message, PurpleMessageFlags flags, time_t mtime)
+{
+	PurpleConversationClass *klass = NULL;
+
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
+
+	klass = PURPLE_CONVERSATION_GET_CLASS(conv);
+
+	if (klass && klass->write_message)
+		klass->write_message(conv, who, message, flags, mtime);
+}
+
+void
+purple_conversation_send(PurpleConversation *conv, const char *message)
+{
+	purple_conversation_send_message(conv, message, 0);
+}
+
+void
+purple_conversation_send_message(PurpleConversation *conv, const char *message,
+		PurpleMessageFlags flags)
+{
+	PurpleConversationClass *klass = NULL;
+
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
+
+	klass = PURPLE_CONVERSATION_GET_CLASS(conv);
+
+	if (klass && klass->send_message)
+		klass->send_message(conv, message, flags);
+}
+
 gboolean
 purple_conversation_has_focus(PurpleConversation *conv)
 {
@@ -1072,6 +1062,8 @@ purple_conversation_init(GTypeInstance *instance, gpointer klass)
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
 
 	priv->data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	PURPLE_DBUS_REGISTER_POINTER(conv, PurpleConversation);
 }
 
 /* GObject dispose function */
@@ -1085,7 +1077,6 @@ purple_conversation_dispose(GObject *object)
 	PurpleConversationUiOps *ops;
 	PurpleConnection *gc;
 	const char *name;
-	struct _purple_hconv hc;
 
 	g_return_if_fail(conv != NULL);
 
@@ -1097,12 +1088,6 @@ purple_conversation_dispose(GObject *object)
 
 	/* remove from conversations and im/chats lists prior to emit */
 	purple_conversations_remove(conv);
-
-	hc.name = (gchar *)purple_normalize(priv->account, priv->name);
-	hc.account = priv->account;
-	hc.type = priv->type;
-
-	g_hash_table_remove(conversation_cache, &hc);
 
 	purple_signal_emit(purple_conversations_get_handle(),
 					 "deleting-conversation", conv);

@@ -130,14 +130,13 @@ struct _PurpleConversationClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
-	/** Writes a message to a chat or IM conversation. TODO
+	/** Writes a message to a chat or IM conversation.
 	 *  @see purple_conversation_write_message()
 	 */
 	void (*write_message)(PurpleConversation *conv, const char *who,
-			const char *message, PurpleMessageFlags flags,
-			time_t mtime);
+			const char *message, PurpleMessageFlags flags, time_t mtime);
 
-	/** Sends a message to a chat or IM conversation. TODO
+	/** Sends a message to a chat or IM conversation.
 	 *  @see purple_conversation_send_message()
 	 */
 	void (*send_message)(PurpleConversation *conv,
@@ -447,7 +446,7 @@ void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags,
 		time_t mtime);
 
-/** TODO pure virtual
+/**
  * Writes to a chat or an IM.
  *
  * @param conv    The conversation.
@@ -460,7 +459,7 @@ void purple_conversation_write_message(PurpleConversation *conv,
 		const char *who, const char *message,
 		PurpleMessageFlags flags, time_t mtime);
 
-/** TODO forward to send_message
+/**
  * Sends a message to this conversation. This function calls
  * purple_conversation_send_message() with no additional flags.
  *
@@ -469,7 +468,7 @@ void purple_conversation_write_message(PurpleConversation *conv,
  */
 void purple_conversation_send(PurpleConversation *conv, const char *message);
 
-/** TODO pure virtual
+/**
  * Sends a message to this conversation with specified flags.
  *
  * @param conv    The conversation.

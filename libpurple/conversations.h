@@ -38,14 +38,14 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Adds a conversation to the list of conversations.
  *
  * @param conv The conversation.
  */
 void purple_conversations_add(PurpleConversation *conv);
 
-/** TODO
+/**
  * Removes a conversation from the list of conversations.
  *
  * @param conv The conversation.
@@ -75,7 +75,7 @@ GList *purple_conversations_get_ims(void);
  */
 GList *purple_conversations_get_chats(void);
 
-/** TODO all
+/**
  * Finds a conversation of any type with the specified name and Purple account.
  *
  * @param name The name of the conversation.
@@ -86,7 +86,7 @@ GList *purple_conversations_get_chats(void);
 PurpleConversation *purple_conversations_find_with_account(const char *name,
 		const PurpleAccount *account);
 
-/** TODO IMs
+/**
  * Finds an IM with the specified name and Purple account.
  *
  * @param name The name of the conversation.
@@ -97,7 +97,7 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
 PurpleIMConversation *purple_conversations_find_im_with_account(const char *name,
 		const PurpleAccount *account);
 
-/** TODO chats
+/**
  * Finds a chat with the specified name and Purple account.
  *
  * @param name The name of the conversation.
@@ -125,12 +125,12 @@ PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *g
  */
 void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
 
-/** TODO
+/**
  * Gets the default conversation UI operations structure.
  *
  * @return  The UI conversation operations structure.
  */
-PurpleConversationUiOps *purple_conversations_set_ui_ops(void);
+PurpleConversationUiOps *purple_conversations_get_ui_ops(void);
 
 /**
  * Returns the conversation subsystem handle.

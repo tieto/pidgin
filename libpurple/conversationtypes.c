@@ -46,9 +46,6 @@ typedef struct _PurpleChatConversationBuddyPrivate  PurpleChatConversationBuddyP
  */
 struct _PurpleChatConversationPrivate
 {
-	GList *in_room;                  /**< The users in the room.
-	                                  *   @deprecated Will be removed in 3.0.0 TODO
-									  */
 	GList *ignored;                  /**< Ignored users.                */
 	char  *who;                      /**< The person who set the topic. */
 	char  *topic;                    /**< The topic.                    */
@@ -140,6 +137,9 @@ enum {
 	PROP_FLAGS,
 	PROP_LAST
 };
+
+static PurpleConversationClass *parent_class;
+static GObjectClass *cb_parent_class;
 
 /**************************************************************************
  * IM Conversation API
@@ -298,8 +298,8 @@ purple_im_conversation_update_typing(PurpleIMConversation *im)
 							 PURPLE_CONVERSATION_UPDATE_TYPING);
 }
 
-void
-purple_im_conversation_write(PurpleIMConversation *im, const char *who, const char *message,
+static void
+im_conversation_write_message(PurpleIMConversation *im, const char *who, const char *message,
 			  PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleConversation *c;
@@ -320,14 +320,8 @@ purple_im_conversation_write(PurpleIMConversation *im, const char *who, const ch
 		purple_conversation_write(c, who, message, flags, mtime);
 }
 
-void
-purple_im_conversation_send(PurpleIMConversation *im, const char *message)
-{
-	purple_im_conversation_send_with_flags(im, message, 0);
-}
-
-void
-purple_im_conversation_send_with_flags(PurpleIMConversation *im, const char *message, PurpleMessageFlags flags)
+static void
+im_conversation_send_message(PurpleIMConversation *im, const char *message, PurpleMessageFlags flags)
 {
 	g_return_if_fail(im != NULL);
 	g_return_if_fail(message != NULL);
@@ -438,6 +432,9 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 	obj_class->get_property = purple_im_conversation_get_property;
 	obj_class->set_property = purple_im_conversation_set_property;
 
+	parent_class->write_message = im_conversation_write_message;
+	parent_class->send_message = im_conversation_send_message;
+
 	g_object_class_install_property(obj_class, PROP_TYPING_STATE,
 			g_param_spec_enum(PROP_TYPING_STATE_S, _("Typing state"),
 				_("Status of the user's typing of a message."),
@@ -489,7 +486,6 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 	PurpleConnection *gc;
 	PurpleConversationUiOps *ops;
 	PurpleBuddyIcon *icon;
-	struct _purple_hconv *hc;
 
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name    != NULL, NULL);
@@ -510,8 +506,6 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 			"title",   name,
 			NULL);
 
-	PURPLE_DBUS_REGISTER_POINTER(im, PurpleIMConversation);
-
 	/* copy features from the connection. */
 	purple_conversation_set_features(PURPLE_CONVERSATION(im),
 			purple_connection_get_flags(gc));
@@ -529,14 +523,6 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 		purple_conversation_set_logging(PURPLE_CONVERSATION(im), TRUE);
 		open_log(conv);
 	}
-
-	/* TODO move this to conversations_add */
-	hc = g_new(struct _purple_hconv, 1);
-	hc->name = g_strdup(purple_normalize(account, priv->name));
-	hc->account = account;
-	hc->type = type;
-
-	g_hash_table_insert(conversation_cache, hc, conv);
 
 	/* Auto-set the title. */
 	purple_conversation_autoset_title(PURPLE_CONVERSATION(im));
@@ -694,6 +680,14 @@ purple_chat_conversation_get_topic(const PurpleChatConversation *chat)
 	return priv->topic;
 }
 
+const char *
+purple_chat_conversation_get_topic_who(const PurpleChatConversation *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return priv->who;
+}
+
 void
 purple_chat_conversation_set_id(PurpleChatConversation *chat, int id)
 {
@@ -710,8 +704,8 @@ purple_chat_conversation_get_id(const PurpleChatConversation *chat)
 	return priv->id;
 }
 
-void
-purple_chat_conversation_write(PurpleChatConversation *chat, const char *who, const char *message,
+static void
+chat_conversation_write_message(PurpleChatConversation *chat, const char *who, const char *message,
 				PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleAccount *account;
@@ -752,14 +746,8 @@ purple_chat_conversation_write(PurpleChatConversation *chat, const char *who, co
 		purple_conversation_write(conv, who, message, flags, mtime);
 }
 
-void
-purple_chat_conversation_send(PurpleChatConversation *chat, const char *message)
-{
-	purple_chat_conversation_send_with_flags(chat, message, 0);
-}
-
-void
-purple_chat_conversation_send_with_flags(PurpleChatConversation *chat, const char *message, PurpleMessageFlags flags)
+static void
+chat_conversation_send_message(PurpleChatConversation *chat, const char *message, PurpleMessageFlags flags)
 {
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(message != NULL);
@@ -1410,6 +1398,9 @@ static void purple_chat_conversation_class_init(PurpleChatConversationClass *kla
 	obj_class->get_property = purple_chat_conversation_get_property;
 	obj_class->set_property = purple_chat_conversation_set_property;
 
+	parent_class->write_message = chat_conversation_write_message;
+	parent_class->send_message = chat_conversation_send_message;
+
 	g_object_class_install_property(obj_class, PROP_TOPIC_WHO,
 			g_param_spec_string(PROP_TOPIC_WHO_S, _("Who set topic"),
 				_("Who set the chat topic."), NULL,
@@ -1477,7 +1468,6 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 	PurpleConnection *gc;
 	PurpleConversationUiOps *ops;
 	const char *disp;
-	struct _purple_hconv *hc;
 
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name    != NULL, NULL);
@@ -1516,8 +1506,6 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 			"title",   name,
 			NULL);
 
-	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChatConversation);
-
 	/* copy features from the connection. */
 	purple_conversation_set_features(PURPLE_CONVERSATION(chat),
 			purple_connection_get_flags(gc));
@@ -1535,14 +1523,6 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 		purple_conversation_set_logging(PURPLE_CONVERSATION(chat), TRUE);
 		open_log(conv);
 	}
-
-	/* TODO move this to conversations_add */
-	hc = g_new(struct _purple_hconv, 1);
-	hc->name = g_strdup(purple_normalize(account, priv->name));
-	hc->account = account;
-	hc->type = type;
-
-	g_hash_table_insert(conversation_cache, hc, conv);
 
 	/* Auto-set the title. */
 	purple_conversation_autoset_title(PURPLE_CONVERSATION(chat));
@@ -1770,7 +1750,7 @@ purple_chat_conversation_buddy_dispose(GObject *object)
 			"deleting-chat-buddy", cb);
 	PURPLE_DBUS_UNREGISTER_POINTER(cb);
 
-	parent_class->dispose(object);
+	cb_parent_class->dispose(object);
 }
 
 /* GObject finalize function */
@@ -1782,7 +1762,7 @@ purple_chat_conversation_buddy_finalize(GObject *object)
 	g_free(cb->name);
 	g_hash_table_destroy(cb->attributes);
 
-	parent_class->finalize(object);
+	cb_parent_class->finalize(object);
 }
 
 /* Class initializer function */
@@ -1790,7 +1770,7 @@ static void purple_chat_conversation_buddy_class_init(PurpleChatConversationBudd
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
+	cb_parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_chat_conversation_buddy_dispose;
 	obj_class->finalize = purple_chat_conversation_buddy_finalize;
