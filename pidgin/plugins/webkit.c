@@ -113,7 +113,7 @@ conversation_displayed_cb(PidginConversation *gtkconv)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
 	purple_signal_connect(gtk_conv_handle, "conversation-displayed", plugin,
@@ -136,7 +136,7 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 
 	while (convs) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;

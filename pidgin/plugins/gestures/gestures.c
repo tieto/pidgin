@@ -174,7 +174,7 @@ plugin_load(PurplePlugin *plugin)
 	PurpleConversation *conv;
 	GList *l;
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
@@ -197,7 +197,7 @@ plugin_unload(PurplePlugin *plugin)
 	PidginConversation *gtkconv;
 	GList *l;
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))

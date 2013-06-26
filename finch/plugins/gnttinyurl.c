@@ -210,7 +210,7 @@ static void url_fetched(PurpleHttpConnection *http_conn,
 {
 	CbInfo *data = (CbInfo *)_data;
 	PurpleConversation *conv = data->conv;
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 	const gchar *url;
 
 	if (purple_http_response_is_successfull(response))

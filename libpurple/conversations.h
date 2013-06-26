@@ -27,7 +27,6 @@
 #ifndef _PURPLE_CONVERSATIONS_H_
 #define _PURPLE_CONVERSATIONS_H_
 
-#include "conversation.h"
 #include "conversationtypes.h"
 #include "server.h"
 
@@ -71,7 +70,7 @@ void purple_conversations_update_cache(PurpleConversation *conv,
  *
  * @constreturn A GList of all conversations.
  */
-GList *purple_conversations_get(void);
+GList *purple_conversations_get_all(void);
 
 /**
  * Returns a list of all IMs.

@@ -2119,7 +2119,7 @@ plugin_load(PurplePlugin *plugin)
 	load_conf();
 
 	/* Attach to existing conversations */
-	for (convs = purple_conversations_get(); convs != NULL; convs = convs->next)
+	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
 	{
 		spellchk_new_attach((PurpleConversation *)convs->data);
 	}
@@ -2136,7 +2136,7 @@ plugin_unload(PurplePlugin *plugin)
 	GList *convs;
 
 	/* Detach from existing conversations */
-	for (convs = purple_conversations_get(); convs != NULL; convs = convs->next)
+	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
 	{
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)convs->data);
 		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);

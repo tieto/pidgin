@@ -70,7 +70,7 @@ static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *i
 	if (convo == NULL)
 		return NULL;
 
-	for (cur = purple_conversations_get(); cur != NULL; cur = g_list_next(cur)) {
+	for (cur = purple_conversations_get_all(); cur != NULL; cur = g_list_next(cur)) {
 		if (convo == cur->data)
 			return convo;
 	}
@@ -812,7 +812,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		break;
 	case CMD_CONV_LIST:
 		list = Tcl_NewListObj(0, NULL);
-		for (cur = purple_conversations_get(); cur != NULL; cur = g_list_next(cur)) {
+		for (cur = purple_conversations_get_all(); cur != NULL; cur = g_list_next(cur)) {
 			elem = purple_tcl_ref_new(PurpleTclRefConversation, cur->data);
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}

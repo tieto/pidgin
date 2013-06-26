@@ -143,7 +143,7 @@ purple_conversations_update_cache(PurpleConversation *conv, const char *name,
 }
 
 GList *
-purple_conversations_get(void)
+purple_conversations_get_all(void)
 {
 	return conversations;
 }

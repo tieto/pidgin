@@ -3064,7 +3064,7 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 	} else if (type == PURPLE_CONV_TYPE_CHAT) {
 		l = purple_conversations_get_chats();
 	} else {
-		l = purple_conversations_get();
+		l = purple_conversations_get_all();
 	}
 
 	for (; l != NULL && (max_count == 0 || c < max_count); l = l->next) {
@@ -4849,7 +4849,7 @@ minimum_entry_lines_pref_cb(const char *name,
                             gconstpointer value,
                             gpointer data)
 {
-	GList *l = purple_conversations_get();
+	GList *l = purple_conversations_get_all();
 	PurpleConversation *conv;
 	while (l != NULL)
 	{
@@ -7938,7 +7938,7 @@ close_on_tabs_pref_cb(const char *name, PurplePrefType type,
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
@@ -7961,7 +7961,7 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	for (cl = purple_conversations_get(); cl != NULL; cl = cl->next) {
+	for (cl = purple_conversations_get_all(); cl != NULL; cl = cl->next) {
 
 		conv = (PurpleConversation *)cl->data;
 
@@ -8003,7 +8003,7 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 	PidginConversation *gtkconv;
 	PidginWindow *win;
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next)
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
 	{
 		conv = (PurpleConversation *)l->data;
 
@@ -8060,7 +8060,7 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 {
 	GList *l;
 
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
 		if (!PIDGIN_CONVERSATION(conv))
 			continue;
@@ -8088,7 +8088,7 @@ show_protocol_icons_pref_cb(const char *name, PurplePrefType type,
 						gconstpointer value, gpointer data)
 {
 	GList *l;
-	for (l = purple_conversations_get(); l != NULL; l = l->next) {
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
 		if (PIDGIN_CONVERSATION(conv))
 			update_tab_icon(conv);
@@ -8210,7 +8210,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 {
 	GList *iter;
 
-	for (iter = purple_conversations_get(); iter; iter = iter->next)
+	for (iter = purple_conversations_get_all(); iter; iter = iter->next)
 	{
 		PurpleConversation *conv = iter->data;
 

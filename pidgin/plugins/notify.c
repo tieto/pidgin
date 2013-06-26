@@ -636,7 +636,7 @@ apply_method()
 {
 	GList *convs;
 
-	for (convs = purple_conversations_get(); convs != NULL;
+	for (convs = purple_conversations_get_all(); convs != NULL;
 	     convs = convs->next) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;
 
@@ -652,7 +652,7 @@ apply_method()
 static void
 apply_notify()
 {
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 
 	while (convs) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;
@@ -836,7 +836,7 @@ get_config_frame(PurplePlugin *plugin)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 	void *conv_handle = purple_conversations_get_handle();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
@@ -876,7 +876,7 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	GList *convs = purple_conversations_get();
+	GList *convs = purple_conversations_get_all();
 
 	while (convs) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;
