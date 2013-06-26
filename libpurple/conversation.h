@@ -1,5 +1,5 @@
 /**
- * @file conversation.h Conversation API
+ * @file conversation.h Conversation base class API
  * @ingroup core
  */
 
@@ -136,12 +136,6 @@ struct _PurpleConversationClass {
 	void (*write_message)(PurpleConversation *conv, const char *who,
 			const char *message, PurpleMessageFlags flags, time_t mtime);
 
-	/** Sends a message to a chat or IM conversation.
-	 *  @see purple_conversation_send_message()
-	 */
-	void (*send_message)(PurpleConversation *conv,
-			const char *message, PurpleMessageFlags flags);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -155,8 +149,9 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
 /**************************************************************************/
-typedef struct _PurpleIMConversation    PurpleIMConversation;
-typedef struct _PurpleChatConversation  PurpleChatConversation;
+typedef struct _PurpleIMConversation         PurpleIMConversation;
+typedef struct _PurpleChatConversation       PurpleChatConversation;
+typedef struct _PurpleChatConversationBuddy  PurpleChatConversationBuddy;
 /**
  * Conversation operations and events.
  *
@@ -224,9 +219,9 @@ struct _PurpleConversationUiOps
 	 */
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
 	/** Called when a user's flags are changed.
-	 *  @see purple_chat_conversation_user_set_flags()
+	 *  @see purple_chat_conversation_buddy_set_flags()
 	 */
-	void (*chat_update_user)(PurpleChatConversation *chat, const char *user);
+	void (*chat_update_user)(PurpleChatConversationBuddy *cb);
 
 	/** Present this conversation to the user; for example, by displaying
 	 *  the IM dialog.
@@ -461,7 +456,7 @@ void purple_conversation_write_message(PurpleConversation *conv,
 
 /**
  * Sends a message to this conversation. This function calls
- * purple_conversation_send_message() with no additional flags.
+ * purple_conversation_send_with_flags() with no additional flags.
  *
  * @param conv    The conversation.
  * @param message The message to send.
@@ -476,7 +471,7 @@ void purple_conversation_send(PurpleConversation *conv, const char *message);
  * @param flags   The PurpleMessageFlags flags to use in addition to
  *                PURPLE_MESSAGE_SEND.
  */
-void purple_conversation_send_message(PurpleConversation *conv, const char *message,
+void purple_conversation_send_with_flags(PurpleConversation *conv, const char *message,
 		PurpleMessageFlags flags);
 
 /**

@@ -538,36 +538,15 @@ void purple_chat_conversation_remove_users(PurpleChatConversation *chat,
 		GList *users, const char *reason);
 
 /**
- * Finds a user in a chat
+ * Checks if a user is in a chat
  *
  * @param chat   The chat.
  * @param user   The user to look for.
  *
  * @return TRUE if the user is in the chat, FALSE if not
  */
-gboolean purple_chat_conversation_find_user(PurpleChatConversation *chat,
+gboolean purple_chat_conversation_has_user(PurpleChatConversation *chat,
 		const char *user);
-
-/**
- * Set a users flags in a chat
- *
- * @param chat   The chat.
- * @param user   The user to update.
- * @param flags  The new flags.
- */
-void purple_chat_conversation_user_set_flags(PurpleChatConversation *chat,
-		const char *user, PurpleChatConversationBuddyFlags flags);
-
-/**
- * Get the flags for a user in a chat
- *
- * @param chat   The chat.
- * @param user   The user to find the flags for
- *
- * @return The flags for the user
- */
-PurpleChatConversationBuddyFlags purple_chat_conversation_user_get_flags(PurpleChatConversation *chat,
-													 const char *user);
 
 /**
  * Clears all users from a chat.
@@ -673,8 +652,8 @@ GList *purple_chat_conversation_buddy_get_attribute_keys(PurpleChatConversationB
  * @param key	The key of the attribute.
  * @param value	The value of the attribute.
  */
-void purple_chat_conversation_buddy_set_attribute(PurpleChatConversation *chat,
-		PurpleChatConversationBuddy *cb, const char *key, const char *value);
+void purple_chat_conversation_buddy_set_attribute(PurpleChatConversationBuddy *cb,
+		PurpleChatConversation *chat, const char *key, const char *value);
 
 /**
  * Set attributes of a chat buddy
@@ -684,21 +663,39 @@ void purple_chat_conversation_buddy_set_attribute(PurpleChatConversation *chat,
  * @param keys	A GList of the keys.
  * @param values A GList of the values.
  */
-void
-purple_chat_conversation_buddy_set_attributes(PurpleChatConversation *chat,
-		PurpleChatConversationBuddy *cb, GList *keys, GList *values);
+void purple_chat_conversation_buddy_set_attributes(PurpleChatConversationBuddy *cb,
+		PurpleChatConversation *chat, GList *keys, GList *values);
+
+/**
+ * Set the chat conversation associated with this chat buddy.
+ *
+ * @param cb	The chat buddy
+ * @param chat	The chat conversation that the buddy belongs to.
+ */
+void purple_chat_conversation_buddy_set_chat(PurpleChatConversationBuddy *cb,
+		PurpleChatConversation *chat);
+
+/**
+ * Get the chat conversation associated with this chat buddy.
+ *
+ * @param cb	The chat buddy.
+ *
+ * @return		The chat conversation that the buddy belongs to.
+ */
+PurpleChatConversation *purple_chat_conversation_buddy_get_chat(const PurpleChatConversationBuddy *cb);
 
 /**
  * Creates a new chat buddy
  *
+ * @param chat The chat that the buddy belongs to.
  * @param name The name.
  * @param alias The alias.
  * @param flags The flags.
  *
  * @return The new chat buddy
  */
-PurpleChatConversationBuddy *purple_chat_conversation_buddy_new(const char *name,
-		const char *alias, PurpleChatConversationBuddyFlags flags);
+PurpleChatConversationBuddy *purple_chat_conversation_buddy_new(PurpleChatConversation *chat,
+		const char *name, const char *alias, PurpleChatConversationBuddyFlags flags);
 
 /**
  * Set the UI data associated with this chat buddy.
@@ -738,6 +735,15 @@ const char *purple_chat_conversation_buddy_get_alias(const PurpleChatConversatio
 const char *purple_chat_conversation_buddy_get_name(const PurpleChatConversationBuddy *cb);
 
 /**
+ * Set the flags of a chat buddy.
+ *
+ * @param cb     The chat buddy.
+ * @param flags  The new flags.
+ */
+void purple_chat_conversation_buddy_set_flags(PurpleChatConversationBuddy *cb,
+		PurpleChatConversationBuddyFlags flags);
+
+/**
  * Get the flags of a chat buddy.
  *
  * @param cb	The chat buddy.
@@ -745,6 +751,15 @@ const char *purple_chat_conversation_buddy_get_name(const PurpleChatConversation
  * @return The flags of the chat buddy.
  */
 PurpleChatConversationBuddyFlags purple_chat_conversation_buddy_get_flags(const PurpleChatConversationBuddy *cb);
+
+/**
+ * Sets if this chat buddy is on the buddy list.
+ *
+ * @param cb	The chat buddy.
+ * @param buddy TRUE if the chat buddy is on the buddy list.
+ */
+void purple_chat_conversation_buddy_set_buddy(const PurpleChatConversationBuddy *cb,
+		gboolean buddy);
 
 /**
  * Indicates if this chat buddy is on the buddy list.

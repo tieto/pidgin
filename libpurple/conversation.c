@@ -334,7 +334,7 @@ purple_conversation_set_account(PurpleConversation *conv, PurpleAccount *account
 	if (account == purple_conversation_get_account(conv))
 		return;
 
-	purple_conversations_update_cache_account(conv, account);
+	purple_conversations_update_cache(conv, NULL, account);
 	priv->account = account;
 
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ACCOUNT);
@@ -423,7 +423,7 @@ purple_conversation_set_name(PurpleConversation *conv, const char *name)
 
 	g_return_if_fail(priv != NULL);
 
-	purple_conversations_update_cache_name(conv, name);
+	purple_conversations_update_cache(conv, name, NULL);
 
 	g_free(priv->name);
 	priv->name = g_strdup(name);
@@ -451,6 +451,9 @@ purple_conversation_set_logging(PurpleConversation *conv, gboolean log)
 	if (priv->logging != log)
 	{
 		priv->logging = log;
+		if (log && priv->logs == NULL)
+			open_log(conv);
+
 		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_LOGGING);
 	}
 }
@@ -586,9 +589,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	if (!(flags & PURPLE_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
 		GList *log;
 
-		if (priv->logs == NULL)
-			open_log(conv);
-
 		log = priv->logs;
 		while (log != NULL) {
 			purple_log_write((PurpleLog *)log->data, flags, alias, mtime, displayed);
@@ -625,21 +625,17 @@ purple_conversation_write_message(PurpleConversation *conv, const char *who,
 void
 purple_conversation_send(PurpleConversation *conv, const char *message)
 {
-	purple_conversation_send_message(conv, message, 0);
+	purple_conversation_send_with_flags(conv, message, 0);
 }
 
 void
-purple_conversation_send_message(PurpleConversation *conv, const char *message,
+purple_conversation_send_with_flags(PurpleConversation *conv, const char *message,
 		PurpleMessageFlags flags)
 {
-	PurpleConversationClass *klass = NULL;
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(message != NULL);
 
-	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
-
-	klass = PURPLE_CONVERSATION_GET_CLASS(conv);
-
-	if (klass && klass->send_message)
-		klass->send_message(conv, message, flags);
+	common_send(conv, message, flags);
 }
 
 gboolean

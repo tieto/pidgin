@@ -1,5 +1,5 @@
 /**
- * @file conversations.h Conversations API
+ * @file conversations.h IM and Chat Conversations API
  * @ingroup core
  * @see @ref conversation-signals
  */
@@ -53,26 +53,16 @@ void purple_conversations_add(PurpleConversation *conv);
 void purple_conversations_remove(PurpleConversation *conv);
 
 /**
- * Updates the conversation cache to use a new conversation name. This
- * function only updates the conversation cahe. It is the caller's
- * responsibility to actually update the conversation's name.
- *
- * @param conv The conversation.
- * @param name The new name.
- */
-void purple_conversations_update_cache_name(PurpleConversation *conv,
-		const char *name);
-
-/**
- * Updates the conversation cache to use a new conversation account. This
- * function only updates the conversation cahe. It is the caller's
- * responsibility to actually update the conversation's account.
+ * Updates the conversation cache to use a new conversation name and/or
+ * account. This function only updates the conversation cache. It is the
+ * caller's responsibility to actually update the conversation.
  *
  * @param conv    The conversation.
- * @param account The new account.
+ * @param name    The new name. If no change, use @c NULL.
+ * @param account The new account. If no change, use @c NULL.
  */
-void purple_conversations_update_cache_account(PurpleConversation *conv,
-		PurpleAccount *account);
+void purple_conversations_update_cache(PurpleConversation *conv,
+		const char *name, PurpleAccount *account);
 
 /**
  * Returns a list of all conversations.

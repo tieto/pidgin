@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "internal.h"
 #include "conversations.h"
 
 static GList *conversations = NULL;
@@ -59,25 +60,6 @@ _purple_conversations_hconv_free_key(struct _purple_hconv *hc)
 	g_free(hc);
 }
 
-static guint
-_purple_conversation_user_hash(gconstpointer data)
-{
-	const gchar *name = data;
-	gchar *collated;
-	guint hash;
-
-	collated = g_utf8_collate_key(name, -1);
-	hash     = g_str_hash(collated);
-	g_free(collated);
-	return hash;
-}
-
-static gboolean
-_purple_conversation_user_equal(gconstpointer a, gconstpointer b)
-{
-	return !g_utf8_collate(a, b);
-}
-
 void
 purple_conversations_add(PurpleConversation *conv)
 {
@@ -92,9 +74,9 @@ purple_conversations_add(PurpleConversation *conv)
 	conversations = g_list_prepend(conversations, conv);
 
 	if (PURPLE_IS_IM_CONVERSATION(conv))
-		g_list_prepend(ims, conv);
+		ims = g_list_prepend(ims, conv);
 	else
-		g_list_prepend(chats, conv);
+		chats = g_list_prepend(chats, conv);
 
 	account = purple_conversation_get_account(conv);
 
@@ -118,9 +100,9 @@ purple_conversations_remove(PurpleConversation *conv)
 	conversations = g_list_remove(conversations, conv);
 
 	if (PURPLE_IS_IM_CONVERSATION(conv))
-		g_list_remove(ims, conv);
+		ims = g_list_remove(ims, conv);
 	else
-		g_list_remove(chats, conv);
+		chats = g_list_remove(chats, conv);
 
 	account = purple_conversation_get_account(conv);
 
@@ -133,49 +115,30 @@ purple_conversations_remove(PurpleConversation *conv)
 }
 
 void
-purple_conversations_update_cache_name(PurpleConversation *conv,
-		const char *name)
-{
-	PurpleAccount *account;
-	struct _purple_hconv *hc;
-
-	g_return_if_fail(conv != NULL);
-
-	account = purple_conversation_get_account(conv);
-
-	hc = g_new(struct _purple_hconv, 1);
-	hc->im = PURPLE_IS_IM_CONVERSATION(im);
-	hc->account = account;
-	hc->name = (gchar *)purple_normalize(account,
-				purple_conversation_get_name(conv));
-
-	g_hash_table_remove(conversation_cache, hc);
-
-	hc->name = g_strdup(purple_normalize(account, name));
-	g_hash_table_insert(conversation_cache, hc, conv);
-}
-
-void
-purple_conversations_update_cache_account(PurpleConversation *conv,
+purple_conversations_update_cache(PurpleConversation *conv, const char *name,
 		PurpleAccount *account)
 {
 	PurpleAccount *old_account;
 	struct _purple_hconv *hc;
 
 	g_return_if_fail(conv != NULL);
-	g_return_if_fail(account != NULL);
+	g_return_if_fail(account != NULL || name != NULL);
 
 	old_account = purple_conversation_get_account(conv);
 
 	hc = g_new(struct _purple_hconv, 1);
-	hc->im = PURPLE_IS_IM_CONVERSATION(im);
+	hc->im = PURPLE_IS_IM_CONVERSATION(conv);
 	hc->account = old_account;
 	hc->name = (gchar *)purple_normalize(old_account,
 				purple_conversation_get_name(conv));
 
 	g_hash_table_remove(conversation_cache, hc);
 
-	hc->account = account;
+	if (account)
+		hc->account = account;
+	if (name)
+		hc->name = g_strdup(purple_normalize(account, name));
+
 	g_hash_table_insert(conversation_cache, hc, conv);
 }
 
@@ -208,7 +171,6 @@ purple_conversations_find_with_account(const char *name,
 
 	hc.name = (gchar *)purple_normalize(account, name);
 	hc.account = account;
-	hc.type = type;
 
 	hc.im = TRUE;
 	c = g_hash_table_lookup(conversation_cache, &hc);
@@ -260,14 +222,14 @@ PurpleChatConversation *
 purple_conversations_find_chat(const PurpleConnection *gc, int id)
 {
 	GList *l;
-	PurpleConversation *conv;
+	PurpleChatConversation *chat;
 
 	for (l = purple_conversations_get_chats(); l != NULL; l = l->next) {
-		conv = (PurpleConversation *)l->data;
+		chat = (PurpleChatConversation *)l->data;
 
-		if (purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION_GET_PRIVATE(conv)) == id &&
-			purple_conversation_get_connection(conv) == gc)
-			return conv;
+		if (purple_chat_conversation_get_id(chat) == id &&
+				purple_conversation_get_connection(PURPLE_CONVERSATION(chat)) == gc)
+			return chat;
 	}
 
 	return NULL;
@@ -620,7 +582,8 @@ void
 purple_conversations_uninit(void)
 {
 	while (conversations)
-		purple_conversation_destroy((PurpleConversation*)conversations->data);
+		g_object_unref(G_OBJECT(conversations->data));
+
 	g_hash_table_destroy(conversation_cache);
 	purple_signals_unregister_by_instance(purple_conversations_get_handle());
 }
