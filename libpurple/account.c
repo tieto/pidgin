@@ -2878,6 +2878,8 @@ static void purple_account_init(GTypeInstance *instance, gpointer klass)
 	priv->system_log = NULL;
 
 	priv->privacy_type = PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL;
+
+	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
 }
 
 /* GObject dispose function */
@@ -3072,7 +3074,6 @@ purple_account_new(const char *username, const char *protocol_id)
 					PROP_USERNAME_S, username,
 					PROP_PROTOCOL_ID_S, protocol_id,
 					NULL);
-	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
 
 	purple_signal_emit(purple_accounts_get_handle(), "account-created",
 			account);
