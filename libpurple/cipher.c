@@ -23,28 +23,6 @@
 #include "debug.h"
 
 /******************************************************************************
- * Object Stuff
- *****************************************************************************/
-static void
-purple_cipher_class_init(PurpleCipherClass *klass) {
-	klass->reset = NULL;
-	klass->reset_state = NULL;
-	klass->set_iv = NULL;
-	klass->append = NULL;
-	klass->digest = NULL;
-	klass->get_digest_size = NULL;
-	klass->encrypt = NULL;
-	klass->decrypt = NULL;
-	klass->set_salt = NULL;
-	klass->set_key = NULL;
-	klass->get_key_size = NULL;
-	klass->set_batch_mode = NULL;
-	klass->get_batch_mode = NULL;
-	klass->get_block_size = NULL;
-	klass->get_name = NULL;
-}
-
-/******************************************************************************
  * PurpleCipher API
  *****************************************************************************/
 const gchar *
@@ -69,7 +47,7 @@ purple_cipher_get_type(void) {
 			sizeof(PurpleCipherClass),
 			NULL,
 			NULL,
-			(GClassInitFunc)purple_cipher_class_init,
+			NULL,
 			NULL,
 			NULL,
 			sizeof(PurpleCipher),
