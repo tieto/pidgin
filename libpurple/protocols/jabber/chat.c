@@ -453,7 +453,7 @@ void jabber_chat_free(JabberChat *chat)
 
 gboolean jabber_chat_find_buddy(PurpleChatConversation *conv, const char *name)
 {
-	return purple_chat_conversation_find_user(conv, name);
+	return purple_chat_conversation_has_user(conv, name);
 }
 
 char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)

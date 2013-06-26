@@ -1988,7 +1988,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			ur = nm_find_user_record(user, nm_event_get_source(event));
 			if (ur) {
 				name = nm_user_record_get_display_id(ur);
-				if (!purple_chat_conversation_find_user(chat, name)) {
+				if (!purple_chat_conversation_has_user(chat, name)) {
 					purple_chat_conversation_add_user(chat, name, NULL,
 											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 				}

@@ -901,7 +901,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 #ifndef INET_ADDRSTRLEN
 #define INET_ADDRSTRLEN 16
 #endif
-			if (!purple_chat_conversation_find_user(gcc, stripped_sender)) {
+			if (!purple_chat_conversation_has_user(gcc, stripped_sender)) {
 				gchar ipaddr[INET_ADDRSTRLEN];
 #ifdef HAVE_INET_NTOP
 				inet_ntop(AF_INET, &notice.z_sender_addr.s_addr, ipaddr, sizeof(ipaddr));

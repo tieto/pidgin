@@ -5260,7 +5260,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 
 	purple_debug_info("yahoo", "Sending <ding> on account %s to buddy %s.\n",
 			username, purple_conversation_get_name(PURPLE_CONVERSATION(im)));
-	purple_conversation_send_message(PURPLE_CONVERSATION(im), "<ding>", PURPLE_MESSAGE_INVISIBLE);
+	purple_conversation_send_with_flags(PURPLE_CONVERSATION(im), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;
 }

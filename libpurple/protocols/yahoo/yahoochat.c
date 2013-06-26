@@ -82,7 +82,7 @@ void yahoo_chat_add_users(PurpleChatConversation *chat, GList *newusers)
 	GList *i;
 
 	for (i = newusers; i; i = i->next) {
-		if (purple_chat_conversation_find_user(chat, i->data))
+		if (purple_chat_conversation_has_user(chat, i->data))
 			continue;
 		purple_chat_conversation_add_user(chat, i->data, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
 	}
@@ -90,7 +90,7 @@ void yahoo_chat_add_users(PurpleChatConversation *chat, GList *newusers)
 
 void yahoo_chat_add_user(PurpleChatConversation *chat, const char *user, const char *reason)
 {
-	if (purple_chat_conversation_find_user(chat, user))
+	if (purple_chat_conversation_has_user(chat, user))
 		return;
 
 	purple_chat_conversation_add_user(chat, user, reason, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
@@ -287,7 +287,7 @@ void yahoo_process_conference_logon(PurpleConnection *gc, struct yahoo_packet *p
 		c = yahoo_find_conference(gc, room);
 		if (c)
 		{	/* Prevent duplicate users in the chat */
-			if( !purple_chat_conversation_find_user(c, who) )
+			if( !purple_chat_conversation_has_user(c, who) )
 				yahoo_chat_add_user(c, who, NULL);
 		}
 		g_free(room);
@@ -597,7 +597,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
 					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , (char *)roomies->data, room ? room : "");
 					purple_chat_conversation_ignore(c,roomies->data);
-					ops->chat_update_user(c, roomies->data);
+					ops->chat_update_user(purple_chat_conversation_find_buddy(c, roomies->data));
 				}
 			}
 		}

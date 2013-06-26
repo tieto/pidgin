@@ -76,7 +76,7 @@ static void irc_chat_remove_buddy(PurpleChatConversation *chat, char *data[2])
 	message = g_strdup_printf("quit: %s", stripped);
 	g_free(stripped);
 
-	if (purple_chat_conversation_find_user(chat, data[0]))
+	if (purple_chat_conversation_has_user(chat, data[0]))
 		purple_chat_conversation_remove_user(chat, data[0], message);
 
 	g_free(message);
@@ -518,7 +518,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		keys = g_list_prepend(keys, "realname");
 		values = g_list_prepend(values, realname);
 		
-		purple_chat_conversation_buddy_set_attributes(chat, cb, keys, values);
+		purple_chat_conversation_buddy_set_attributes(cb, chat, keys, values);
 		
 		g_list_free(keys);
 		g_list_free(values);
@@ -533,9 +533,9 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		 * like it's more likely to be confusing than not.
 		 * Comments? */
 		if (args[6][0] == 'G' && !(flags & PURPLE_CHAT_CONVERSATION_BUDDY_AWAY)) {
-			purple_chat_conversation_user_set_flags(chat, purple_chat_conversation_buddy_get_name(cb), flags | PURPLE_CHAT_CONVERSATION_BUDDY_AWAY);
+			purple_chat_conversation_buddy_set_flags(cb, flags | PURPLE_CHAT_CONVERSATION_BUDDY_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CHAT_CONVERSATION_BUDDY_AWAY)) {
-			purple_chat_conversation_user_set_flags(chat, purple_chat_conversation_buddy_get_name(cb), flags & ~PURPLE_CHAT_CONVERSATION_BUDDY_AWAY);
+			purple_chat_conversation_buddy_set_flags(cb, flags & ~PURPLE_CHAT_CONVERSATION_BUDDY_AWAY);
 		}
 	}
 }
@@ -1019,7 +1019,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	cb = purple_chat_conversation_find_buddy(chat, nick);
 	
 	if (cb) {
-		purple_chat_conversation_buddy_set_attribute(chat, cb, "userhost", userhost);		
+		purple_chat_conversation_buddy_set_attribute(cb, chat, "userhost", userhost);		
 	}
 	
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
@@ -1082,6 +1082,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(escaped);
 		g_free(buf);
 		if(args[2]) {
+			PurpleChatConversationBuddy *cb;
 			PurpleChatConversationBuddyFlags newflag, flags;
 			char *mcur, *cur, *end, *user;
 			gboolean add = FALSE;
@@ -1097,7 +1098,8 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 				if (!end)
 					end = cur + strlen(cur);
 				user = g_strndup(cur, end - cur);
-				flags = purple_chat_conversation_user_get_flags(chat, user);
+				cb = purple_chat_conversation_find_buddy(chat, user);
+				flags = purple_chat_conversation_buddy_get_flags(cb);
 				newflag = PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
 				if (*mcur == 'o')
 					newflag = PURPLE_CHAT_CONVERSATION_BUDDY_OP;
@@ -1113,7 +1115,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 						flags |= newflag;
 					else
 						flags &= ~newflag;
-					purple_chat_conversation_user_set_flags(chat, user, flags);
+					purple_chat_conversation_buddy_set_flags(cb, flags);
 				}
 				g_free(user);
 				cur = end;
@@ -1150,7 +1152,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 	while (chats) {
 		PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(chats->data);
 		/* This is ugly ... */
-		if (purple_chat_conversation_find_user(chat, nick))
+		if (purple_chat_conversation_has_user(chat, nick))
 			purple_chat_conversation_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}

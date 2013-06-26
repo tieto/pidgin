@@ -605,7 +605,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 								      chu->channel->channel_name, sg->account);
 			if (!convo)
 				continue;
-			if (purple_chat_conversation_find_user(PURPLE_CONV_CHAT(convo), client_entry->nickname))
+			if (purple_chat_conversation_has_user(PURPLE_CONV_CHAT(convo), client_entry->nickname))
 				purple_chat_conversation_rename_user(PURPLE_CONV_CHAT(convo),
 							     tmp, name);
 		}
