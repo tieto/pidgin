@@ -69,7 +69,7 @@ cancel_poune(OfflineMsg *offline)
 {
 	purple_conversation_set_data(offline->conv, "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_NO));
-	purple_conversation_send_message(offline->conv, offline->message, 0);
+	purple_conversation_send_with_flags(offline->conv, offline->message, 0);
 	discard_data(offline);
 }
 

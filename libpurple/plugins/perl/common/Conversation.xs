@@ -90,6 +90,12 @@ void
 purple_conversations_remove(conv)
     Purple::Conversation conv
 
+void
+purple_conversations_update_cache(conv, name, account)
+	Purple::Conversation conv
+	const char * name
+	Purple::Account account
+
 Purple::Handle
 purple_conversations_get_handle()
 
@@ -227,7 +233,7 @@ purple_conversation_send(conv, message)
 	const char *message
 
 void
-purple_conversation_send_message(conv, message, flags)
+purple_conversation_send_with_flags(conv, message, flags)
 	Purple::Conversation conv
 	const char *message
 	Purple::MessageFlags flags
@@ -429,7 +435,7 @@ PPCODE:
 	g_list_free(t_GL_flags);
 
 gboolean
-purple_chat_conversation_find_user(chat, user)
+purple_chat_conversation_has_user(chat, user)
 	Purple::ChatConversation chat
 	const char * user
 
