@@ -87,23 +87,23 @@ typedef enum /*< flags >*/
 	PURPLE_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
 	PURPLE_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
 	PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
-	                                                        message should not be
-	                                                        shown in conversations
-	                                                        which are only open for
-	                                                        internal UI purposes
-	                                                        (e.g. for contact-aware
-	                                                        conversations).         */
+	                                           message should not be
+	                                           shown in conversations
+	                                           which are only open for
+	                                           internal UI purposes
+	                                           (e.g. for contact-aware
+	                                           conversations).         */
 	PURPLE_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
 	PURPLE_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
 	PURPLE_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
 	PURPLE_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
 	PURPLE_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
 	PURPLE_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
-	                                                        apply formatting        */
+	                                           apply formatting        */
 	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
 	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
 	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
-										                   linkified */
+										      linkified */
 	PURPLE_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
 } PurpleMessageFlags;
 
@@ -210,13 +210,13 @@ struct _PurpleConversationUiOps
 	 *  rename message is written to the conversation by libpurple.)
 	 *  @param new_alias  @a new_name's new alias, if they have one.
 	 *  @see purple_chat_conversation_add_users()
-	 */
+	 */ /* TODO use PurpleChatConversationBuddy */
 	void (*chat_rename_user)(PurpleChatConversation *chat, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
 	 *  @param users    A @c GList of <tt>const char *</tt>s.
 	 *  @see purple_chat_conversation_rename_user()
-	 */
+	 */ /* TODO use PurpleChatConversationBuddy */
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
 	/** Called when a user's flags are changed.
 	 *  @see purple_chat_conversation_buddy_set_flags()
