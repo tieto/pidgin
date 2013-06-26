@@ -53,6 +53,28 @@ void purple_conversations_add(PurpleConversation *conv);
 void purple_conversations_remove(PurpleConversation *conv);
 
 /**
+ * Updates the conversation cache to use a new conversation name. This
+ * function only updates the conversation cahe. It is the caller's
+ * responsibility to actually update the conversation's name.
+ *
+ * @param conv The conversation.
+ * @param name The new name.
+ */
+void purple_conversations_update_cache_name(PurpleConversation *conv,
+		const char *name);
+
+/**
+ * Updates the conversation cache to use a new conversation account. This
+ * function only updates the conversation cahe. It is the caller's
+ * responsibility to actually update the conversation's account.
+ *
+ * @param conv    The conversation.
+ * @param account The new account.
+ */
+void purple_conversations_update_cache_account(PurpleConversation *conv,
+		PurpleAccount *account);
+
+/**
  * Returns a list of all conversations.
  *
  * This list includes both IMs and chats.

@@ -144,6 +144,46 @@ static GObjectClass *cb_parent_class;
 /**************************************************************************
  * IM Conversation API
  **************************************************************************/
+static gboolean
+reset_typing_cb(gpointer data)
+{
+	PurpleConversation *c = (PurpleConversation *)data;
+	PurpleIMConversationPrivate *priv;
+
+	im = PURPLE_IM_CONVERSATION_GET_PRIVATE(c);
+
+	purple_im_conversation_set_typing_state(im, PURPLE_IM_CONVERSATION_NOT_TYPING);
+	purple_im_conversation_stop_typing_timeout(im);
+
+	return FALSE;
+}
+
+static gboolean
+send_typed_cb(gpointer data)
+{
+	PurpleConversation *conv = (PurpleConversation *)data;
+	PurpleConnection *gc;
+	const char *name;
+
+	g_return_val_if_fail(conv != NULL, FALSE);
+
+	gc   = purple_conversation_get_connection(conv);
+	name = purple_conversation_get_name(conv);
+
+	if (gc != NULL && name != NULL) {
+		/* We set this to 1 so that PURPLE_IM_CONVERSATION_TYPING will be sent
+		 * if the Purple user types anything else.
+		 */
+		purple_im_conversation_set_type_again(PURPLE_IM_CONVERSATION_GET_PRIVATE(conv), 1);
+
+		serv_send_typing(gc, name, PURPLE_IM_CONVERSATION_TYPED);
+
+		purple_debug(PURPLE_DEBUG_MISC, "conversation", "typed...\n");
+	}
+
+	return FALSE;
+}
+
 void
 purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon)
 {
@@ -1112,6 +1152,78 @@ purple_chat_conversation_clear_users(PurpleChatConversation *chat)
 	priv->in_room = NULL;
 }
 
+void purple_chat_conversation_set_nick(PurpleChatConversation *chat, const char *nick) {
+	g_return_if_fail(chat != NULL);
+
+	g_free(chat->nick);
+	chat->nick = g_strdup(purple_normalize(chat->priv->account, nick));
+}
+
+const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat) {
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->nick;
+}
+
+static void
+invite_user_to_chat(gpointer data, PurpleRequestFields *fields)
+{
+	PurpleConversation *conv;
+	PurpleChatConversationPrivate *priv;
+	const char *user, *message;
+
+	conv = data;
+	chat = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(conv);
+	user = purple_request_fields_get_string(fields, "screenname");
+	message = purple_request_fields_get_string(fields, "message");
+
+	serv_chat_invite(purple_conversation_get_connection(conv), chat->id, message, user);
+}
+
+void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const char *user,
+		const char *message, gboolean confirm)
+{
+	PurpleAccount *account;
+	PurpleConversation *conv;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	g_return_if_fail(chat);
+
+	if (!user || !*user || !message || !*message)
+		confirm = TRUE;
+
+	conv = chat->conv;
+	account = priv->account;
+
+	if (!confirm) {
+		serv_chat_invite(purple_account_get_connection(account),
+				purple_chat_conversation_get_id(chat), message, user);
+		return;
+	}
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(_("Invite to chat"));
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Buddy"), user, FALSE);
+	purple_request_field_group_add_field(group, field);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_type_hint(field, "screenname");
+
+	field = purple_request_field_string_new("message", _("Message"), message, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	purple_request_fields(conv, _("Invite to chat"), NULL,
+			_("Please enter the name of the user you wish to invite, "
+				"along with an optional invite message."),
+			fields,
+			_("Invite"), G_CALLBACK(invite_user_to_chat),
+			_("Cancel"), NULL,
+			account, user, conv,
+			conv);
+}
 
 gboolean
 purple_chat_conversation_find_user(PurpleChatConversation *chat, const char *user)
@@ -1616,6 +1728,13 @@ purple_chat_conversation_buddy_get_attribute(PurpleChatConversationBuddy *cb, co
 	return g_hash_table_lookup(cb->attributes, key);
 }
 
+static void
+append_attribute_key(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **list = user_data;
+	*list = g_list_prepend(*list, key);
+}
+
 GList *
 purple_chat_conversation_buddy_get_attribute_keys(PurpleChatConversationBuddy *cb)
 {
@@ -1668,6 +1787,27 @@ purple_chat_conversation_buddy_set_attributes(PurpleChatConversation *chat, Purp
 	
 	if (ops != NULL && ops->chat_update_user != NULL)
 		ops->chat_update_user(conv, cb->name);
+}
+
+void purple_chat_conversation_buddy_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data)
+{
+	g_return_if_fail(cb != NULL);
+
+	cb->ui_data = ui_data;
+}
+
+gpointer purple_chat_conversation_buddy_get_ui_data(const PurpleChatConversationBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	return cb->ui_data;
+}
+
+gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, FALSE);
+
+	return cb->buddy;
 }
 
 /**************************************************************************

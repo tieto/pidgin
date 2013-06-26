@@ -132,6 +132,53 @@ purple_conversations_remove(PurpleConversation *conv)
 	g_hash_table_remove(conversation_cache, &hc);
 }
 
+void
+purple_conversations_update_cache_name(PurpleConversation *conv,
+		const char *name)
+{
+	PurpleAccount *account;
+	struct _purple_hconv *hc;
+
+	g_return_if_fail(conv != NULL);
+
+	account = purple_conversation_get_account(conv);
+
+	hc = g_new(struct _purple_hconv, 1);
+	hc->im = PURPLE_IS_IM_CONVERSATION(im);
+	hc->account = account;
+	hc->name = (gchar *)purple_normalize(account,
+				purple_conversation_get_name(conv));
+
+	g_hash_table_remove(conversation_cache, hc);
+
+	hc->name = g_strdup(purple_normalize(account, name));
+	g_hash_table_insert(conversation_cache, hc, conv);
+}
+
+void
+purple_conversations_update_cache_account(PurpleConversation *conv,
+		PurpleAccount *account)
+{
+	PurpleAccount *old_account;
+	struct _purple_hconv *hc;
+
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(account != NULL);
+
+	old_account = purple_conversation_get_account(conv);
+
+	hc = g_new(struct _purple_hconv, 1);
+	hc->im = PURPLE_IS_IM_CONVERSATION(im);
+	hc->account = old_account;
+	hc->name = (gchar *)purple_normalize(old_account,
+				purple_conversation_get_name(conv));
+
+	g_hash_table_remove(conversation_cache, hc);
+
+	hc->account = account;
+	g_hash_table_insert(conversation_cache, hc, conv);
+}
+
 GList *
 purple_conversations_get(void)
 {
