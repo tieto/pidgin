@@ -123,8 +123,10 @@ PidginWindow *pidgin_conv_window_get_at_event(GdkEvent *event);
 GList *pidgin_conv_window_get_gtkconvs(PidginWindow *win);
 guint pidgin_conv_window_get_gtkconv_count(PidginWindow *win);
 
-PidginWindow *pidgin_conv_window_first_with_type(PurpleConversationType type);
-PidginWindow *pidgin_conv_window_last_with_type(PurpleConversationType type);
+PidginWindow *pidgin_conv_window_first_im(void);
+PidginWindow *pidgin_conv_window_last_im(void);
+PidginWindow *pidgin_conv_window_first_chat(void);
+PidginWindow *pidgin_conv_window_last_chat(void);
 
 /*@}*/
 

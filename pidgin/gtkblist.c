@@ -4697,11 +4697,9 @@ unseen_conv_menu(void)
 		menu = NULL;
 	}
 
-	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+	ims = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 0);
 
-	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
-				PIDGIN_UNSEEN_NICK, FALSE, 0);
+	chats = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 0);
 
 	if(ims && chats)
 		convs = g_list_concat(ims, chats);
@@ -4730,12 +4728,10 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 
 	switch (event->button) {
 		case 1:
-			convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-							PIDGIN_UNSEEN_TEXT, FALSE, 1);
+			convs = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 1);
 
 			if(!convs)
-				convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
-								PIDGIN_UNSEEN_NICK, FALSE, 1);
+				convs = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 1);
 			if (convs) {
 				pidgin_conv_present_conversation((PurpleConversation*)convs->data);
 				g_list_free(convs);
@@ -4771,11 +4767,9 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType t
 		gtkblist->menutrayicon = NULL;
 	}
 
-	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+	ims = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 0);
 
-	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
-				PIDGIN_UNSEEN_NICK, FALSE, 0);
+	chats = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 0);
 
 	if(ims && chats)
 		convs = g_list_concat(ims, chats);

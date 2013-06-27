@@ -35,7 +35,8 @@ conv_placement_by_number(PidginConversation *conv)
 	GList *wins = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
-		win = pidgin_conv_window_last_with_type(purple_conversation_get_type(conv->active_conv));
+		win = PURPLE_IS_IM_CONVERSATION(conv->active_conv) ?
+				pidgin_conv_window_last_im() : pidgin_conv_window_last_chat();
 	else if ((wins = pidgin_conv_windows_get_list()) != NULL)
 		win = g_list_last(wins)->data;
 

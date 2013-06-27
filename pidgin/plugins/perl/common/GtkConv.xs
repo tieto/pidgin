@@ -46,8 +46,19 @@ MODULE = Pidgin::Conversation  PACKAGE = Pidgin::Conversations  PREFIX = pidgin_
 PROTOTYPES: ENABLE
 
 void
-pidgin_conversations_find_unseen_list(type, min_state, hidden_only, max_count)
-	Purple::ConversationType type
+pidgin_conversations_get_unseen_all(min_state, hidden_only, max_count)
+	Pidgin::UnseenState min_state
+	gboolean hidden_only
+	guint max_count
+
+void
+pidgin_conversations_get_unseen_ims(min_state, hidden_only, max_count)
+	Pidgin::UnseenState min_state
+	gboolean hidden_only
+	guint max_count
+
+void
+pidgin_conversations_get_unseen_chats(min_state, hidden_only, max_count)
 	Pidgin::UnseenState min_state
 	gboolean hidden_only
 	guint max_count

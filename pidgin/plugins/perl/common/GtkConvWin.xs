@@ -74,12 +74,16 @@ pidgin_conv_window_get_gtkconv_count(win)
 	Pidgin::Conversation::Window win
 
 Pidgin::Conversation::Window
-pidgin_conv_window_first_with_type(type)
-	Purple::ConversationType type
+pidgin_conv_window_first_im()
 
 Pidgin::Conversation::Window
-pidgin_conv_window_last_with_type(type)
-	Purple::ConversationType type
+pidgin_conv_window_last_im()
+
+Pidgin::Conversation::Window
+pidgin_conv_window_first_chat()
+
+Pidgin::Conversation::Window
+pidgin_conv_window_last_chat()
 
 MODULE = Pidgin::Conversation::Window  PACKAGE = Pidgin::Conversation::Placement  PREFIX = pidgin_conv_placement_
 PROTOTYPES: ENABLE

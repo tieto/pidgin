@@ -197,14 +197,13 @@ void pidgin_conv_switch_active_conversation(PurpleConversation *conv);
 void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
 
 /**
- * Returns a list of conversations of the given type which have an unseen
+ * Returns a list of conversations of any type which have an unseen
  * state greater than or equal to the specified minimum state. Using the
  * hidden_only parameter, this search can be limited to hidden
  * conversations. The max_count parameter will limit the total number of
  * converations returned if greater than zero. The returned list should
  * be freed by the caller.
  *
- * @param type         The type of conversation.
  * @param min_state    The minimum unseen state.
  * @param hidden_only  If TRUE, only consider hidden conversations.
  * @param max_count    Maximum number of conversations to return, or 0 for
@@ -212,8 +211,47 @@ void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
  * @return             List of PurpleConversation matching criteria, or NULL.
  */
 GList *
-pidgin_conversations_find_unseen_list(PurpleConversationType type,
-										PidginUnseenState min_state,
+pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count);
+
+/**
+ * Returns a list of IM conversations which have an unseen state greater
+ * than or equal to the specified minimum state. Using the hidden_only
+ * parameter, this search can be limited to hidden IM conversations. The
+ * max_count parameter will limit the total number of IM converations
+ * returned if greater than zero. The returned list should be freed by the
+ * caller.
+ *
+ * @param min_state    The minimum unseen state.
+ * @param hidden_only  If TRUE, only consider hidden conversations.
+ * @param max_count    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ * @return             List of PurpleIMConversation matching criteria,
+ *                     or NULL.
+ */
+GList *
+pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count);
+
+/**
+ * Returns a list of chat conversations which have an unseen state greater
+ * than or equal to the specified minimum state. Using the hidden_only
+ * parameter, this search can be limited to hidden chat conversations. The
+ * max_count parameter will limit the total number of chat converations
+ * returned if greater than zero. The returned list should be freed by the
+ * caller.
+ *
+ * @param min_state    The minimum unseen state.
+ * @param hidden_only  If TRUE, only consider hidden conversations.
+ * @param max_count    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ * @return             List of PurpleChatConversation matching criteria,
+ *                     or NULL.
+ */
+GList *
+pidgin_conversations_get_unseen_chats(PidginUnseenState min_state,
 										gboolean hidden_only,
 										guint max_count);
 

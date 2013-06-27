@@ -3049,23 +3049,14 @@ pidgin_conv_present_conversation(PurpleConversation *conv)
 	gtk_window_present(GTK_WINDOW(gtkconv->win->window));
 }
 
-GList *
-pidgin_conversations_find_unseen_list(PurpleConversationType type,
-										PidginUnseenState min_state,
-										gboolean hidden_only,
-										guint max_count)
+static GList *
+pidgin_conversations_get_unseen(GList *l,
+									PidginUnseenState min_state,
+									gboolean hidden_only,
+									guint max_count)
 {
-	GList *l;
 	GList *r = NULL;
 	guint c = 0;
-
-	if (type == PURPLE_CONV_TYPE_IM) {
-		l = purple_conversations_get_ims();
-	} else if (type == PURPLE_CONV_TYPE_CHAT) {
-		l = purple_conversations_get_chats();
-	} else {
-		l = purple_conversations_get_all();
-	}
 
 	for (; l != NULL && (max_count == 0 || c < max_count); l = l->next) {
 		PurpleConversation *conv = (PurpleConversation*)l->data;
@@ -3084,6 +3075,33 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 	}
 
 	return r;
+}
+
+GList *
+pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count)
+{
+	return pidgin_conversations_get_unseen(purple_conversations_get_all(),
+			min_state, hidden_only, max_count);
+}
+
+GList *
+pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count)
+{
+	return pidgin_conversations_get_unseen(purple_conversations_get_ims(),
+			min_state, hidden_only, max_count);
+}
+
+GList *
+pidgin_conversations_get_unseen_chats(PidginUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count)
+{
+	return pidgin_conversations_get_unseen(purple_conversations_get_chats(),
+			min_state, hidden_only, max_count);
 }
 
 static void
@@ -10585,14 +10603,11 @@ pidgin_conv_window_get_gtkconv_count(PidginWindow *win)
 }
 
 PidginWindow *
-pidgin_conv_window_first_with_type(PurpleConversationType type)
+pidgin_conv_window_first_im(void)
 {
 	GList *wins, *convs;
 	PidginWindow *win;
 	PidginConversation *conv;
-
-	if (type == PURPLE_CONV_TYPE_UNKNOWN)
-		return NULL;
 
 	for (wins = pidgin_conv_windows_get_list(); wins != NULL; wins = wins->next) {
 		win = wins->data;
@@ -10603,7 +10618,7 @@ pidgin_conv_window_first_with_type(PurpleConversationType type)
 
 			conv = convs->data;
 
-			if (purple_conversation_get_type(conv->active_conv) == type)
+			if (PURPLE_IS_IM_CONVERSATION(conv->active_conv))
 				return win;
 		}
 	}
@@ -10612,14 +10627,11 @@ pidgin_conv_window_first_with_type(PurpleConversationType type)
 }
 
 PidginWindow *
-pidgin_conv_window_last_with_type(PurpleConversationType type)
+pidgin_conv_window_last_im(void)
 {
 	GList *wins, *convs;
 	PidginWindow *win;
 	PidginConversation *conv;
-
-	if (type == PURPLE_CONV_TYPE_UNKNOWN)
-		return NULL;
 
 	for (wins = g_list_last(pidgin_conv_windows_get_list());
 	     wins != NULL;
@@ -10633,7 +10645,58 @@ pidgin_conv_window_last_with_type(PurpleConversationType type)
 
 			conv = convs->data;
 
-			if (purple_conversation_get_type(conv->active_conv) == type)
+			if (PURPLE_IS_IM_CONVERSATION(conv->active_conv) == type)
+				return win;
+		}
+	}
+
+	return NULL;
+}
+
+PidginWindow *
+pidgin_conv_window_first_chat(void)
+{
+	GList *wins, *convs;
+	PidginWindow *win;
+	PidginConversation *conv;
+
+	for (wins = pidgin_conv_windows_get_list(); wins != NULL; wins = wins->next) {
+		win = wins->data;
+
+		for (convs = win->gtkconvs;
+		     convs != NULL;
+		     convs = convs->next) {
+
+			conv = convs->data;
+
+			if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv))
+				return win;
+		}
+	}
+
+	return NULL;
+}
+
+PidginWindow *
+pidgin_conv_window_last_chat(void)
+{
+	GList *wins, *convs;
+	PidginWindow *win;
+	PidginConversation *conv;
+
+	for (wins = g_list_last(pidgin_conv_windows_get_list());
+	     wins != NULL;
+	     wins = wins->prev) {
+
+		win = wins->data;
+
+		for (convs = win->gtkconvs;
+		     convs != NULL;
+		     convs = convs->next) {
+
+			conv = convs->data;
+
+			if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv) == type)
 				return win;
 		}
 	}

@@ -132,15 +132,13 @@ get_pending_list(guint max)
 {
 	GList *l_im, *l_chat;
 
-	l_im = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-						       PIDGIN_UNSEEN_TEXT,
-						       FALSE, max);
+	l_im = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, max);
 
 	/* Short circuit if we have our information already */
 	if (max == 1 && l_im != NULL)
 		return l_im;
 
-	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+	l_chat = pidgin_conversations_get_unseen_chats(
 	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat"),
 							 FALSE, max);
 
