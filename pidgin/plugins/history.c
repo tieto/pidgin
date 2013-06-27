@@ -34,7 +34,6 @@ static void historize(PurpleConversation *c)
 {
 	PurpleAccount *account = purple_conversation_get_account(c);
 	const char *name = purple_conversation_get_name(c);
-	PurpleConversationType convtype;
 	GList *logs = NULL;
 	const char *alias = name;
 	guint flags;
@@ -52,13 +51,12 @@ static void historize(PurpleConversation *c)
 	char *escaped_alias;
 	const char *header_date;
 
-	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
 	g_return_if_fail(gtkconv != NULL);
 
 	/* An IM which is the first active conversation. */
 	g_return_if_fail(gtkconv->convs != NULL);
-	if (convtype == PURPLE_CONV_TYPE_IM && !gtkconv->convs->next)
+	if (PURPLE_IS_IM_CONVERSATION(c) && !gtkconv->convs->next)
 	{
 		GSList *buddies;
 		GSList *cur;
@@ -108,7 +106,7 @@ static void historize(PurpleConversation *c)
 		else
 			logs = g_list_sort(logs, purple_log_compare);
 	}
-	else if (convtype == PURPLE_CONV_TYPE_CHAT)
+	else if (PURPLE_IS_CHAT_CONVERSATION(c))
 	{
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */

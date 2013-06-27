@@ -49,7 +49,7 @@ stroke_close(GtkWidget *widget, void *data)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gstroke_cleanup(gtkconv->webview);
-	purple_conversation_destroy(conv);
+	g_object_unref(conv);
 }
 
 static void

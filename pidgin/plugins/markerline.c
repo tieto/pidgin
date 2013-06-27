@@ -45,15 +45,13 @@ static void
 update_marker_for_gtkconv(PidginConversation *gtkconv)
 {
 	PurpleConversation *conv;
-	PurpleConversationType type;
 
 	g_return_if_fail(gtkconv != NULL);
 
 	conv = gtkconv->active_conv;
-	type = purple_conversation_get_type(conv);
 
-	if ((type == PURPLE_CONV_TYPE_CHAT && !purple_prefs_get_bool(PREF_CHATS)) ||
-	    (type == PURPLE_CONV_TYPE_IM && !purple_prefs_get_bool(PREF_IMS)))
+	if ((PURPLE_IS_CHAT_CONVERSATION(conv) && !purple_prefs_get_bool(PREF_CHATS)) ||
+	    (PURPLE_IS_IM_CONVERSATION(conv) && !purple_prefs_get_bool(PREF_IMS)))
 		return;
 
 	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
@@ -166,9 +164,8 @@ jump_to_markerline(PurpleConversation *conv, gpointer null)
 static void
 conv_menu_cb(PurpleConversation *conv, GList **list)
 {
-	PurpleConversationType type = purple_conversation_get_type(conv);
-	gboolean enabled = ((type == PURPLE_CONV_TYPE_IM && purple_prefs_get_bool(PREF_IMS)) ||
-		(type == PURPLE_CONV_TYPE_CHAT && purple_prefs_get_bool(PREF_CHATS)));
+	gboolean enabled = ((PURPLE_IS_IM_CONVERSATION(conv) && purple_prefs_get_bool(PREF_IMS)) ||
+		(PURPLE_IS_CHAT_CONVERSATION(conv) && purple_prefs_get_bool(PREF_CHATS)));
 	PurpleMenuAction *action = purple_menu_action_new(_("Jump to markerline"),
 			enabled ? PURPLE_CALLBACK(jump_to_markerline) : NULL, NULL, NULL);
 	*list = g_list_append(*list, action);

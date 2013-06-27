@@ -10645,7 +10645,7 @@ pidgin_conv_window_last_im(void)
 
 			conv = convs->data;
 
-			if (PURPLE_IS_IM_CONVERSATION(conv->active_conv) == type)
+			if (PURPLE_IS_IM_CONVERSATION(conv->active_conv))
 				return win;
 		}
 	}
@@ -10696,7 +10696,7 @@ pidgin_conv_window_last_chat(void)
 
 			conv = convs->data;
 
-			if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv) == type)
+			if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv))
 				return win;
 		}
 	}

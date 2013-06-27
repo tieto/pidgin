@@ -111,7 +111,7 @@ void music_messaging_change_request(const int session, const char *command, cons
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## request %s %s##MM##", command, parameters);
 
-			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_conversation_send(mmconv->conv, to_send->str);
 
 			purple_debug_misc("musicmessaging", "Sent request: %s\n", to_send->str);
 		}
@@ -131,7 +131,7 @@ void music_messaging_change_confirmed(const int session, const char *command, co
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## confirm %s %s##MM##", command, parameters);
 
-			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_conversation_send(mmconv->conv, to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -154,7 +154,7 @@ void music_messaging_change_failed(const int session, const char *id, const char
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## failed %s %s %s##MM##", id, command, parameters);
 
-			purple_im_conversation_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
+			purple_conversation_send(mmconv->conv, to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -261,6 +261,7 @@ mmconv_from_conv(PurpleConversation *conv)
 static gboolean
 plugin_load(PurplePlugin *plugin) {
 	void *conv_list_handle;
+	GList *l;
 
 	PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
 
@@ -273,7 +274,8 @@ plugin_load(PurplePlugin *plugin) {
 	plugin_pointer = plugin;
 
 	/* Add the button to all the current conversations */
-	purple_conversation_foreach (init_conversation);
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
+		init_conversation((PurpleConversation *)l->data);
 
 	/* Listen for any new conversations */
 	conv_list_handle = purple_conversations_get_handle();

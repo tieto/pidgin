@@ -173,9 +173,9 @@ notify(PurpleConversation *conv, gboolean increment)
 	purplewin = PIDGIN_CONVERSATION(conv)->win;
 
 	/* If we aren't doing notifications for this type of conversation, return */
-	if (((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) &&
+	if ((PURPLE_IS_IM_CONVERSATION(conv) &&
 	     !purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im")) ||
-	    ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
+	    (PURPLE_IS_CHAT_CONVERSATION(conv) &&
 	     !purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat")))
 		return 0;
 
@@ -260,7 +260,7 @@ static gboolean
 message_displayed_cb(PurpleAccount *account, const char *who, char *message,
                      PurpleConversation *conv, PurpleMessageFlags flags)
 {
-	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+	if ((PURPLE_IS_CHAT_CONVERSATION(conv) &&
 	     purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
 	     !(flags & PURPLE_MESSAGE_NICK)))
 	    return FALSE;
@@ -274,22 +274,22 @@ message_displayed_cb(PurpleAccount *account, const char *who, char *message,
 static void
 im_sent_im(PurpleAccount *account, const char *receiver, const char *message)
 {
-	PurpleConversation *conv = NULL;
+	PurpleIMConversation *im = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		conv = purple_conversations_find_im_with_account(receiver, account);
-		unnotify(conv, TRUE);
+		im = purple_conversations_find_im_with_account(receiver, account);
+		unnotify(PURPLE_CONVERSATION(im), TRUE);
 	}
 }
 
 static void
 chat_sent_im(PurpleAccount *account, const char *message, int id)
 {
-	PurpleConversation *conv = NULL;
+	PurpleChatConversation *chat = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		conv = purple_conversations_find_chat(purple_account_get_connection(account), id);
-		unnotify(conv, TRUE);
+		chat = purple_conversations_find_chat(purple_account_get_connection(account), id);
+		unnotify(PURPLE_CONVERSATION(chat), TRUE);
 	}
 }
 
