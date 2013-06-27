@@ -287,7 +287,7 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 	*message = t->str;
 	g_string_free(t, FALSE);
 	if (conv == NULL)
-		conv = purple_im_conversation_new(account, sender);
+		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, sender));
 	purple_conversation_set_data(conv, "TinyURLs", urls);
 	return FALSE;
 }

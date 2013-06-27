@@ -241,22 +241,23 @@ buddy_signed_off(PurpleBuddy *buddy, gpointer null)
 
 static void
 received_im_msg(PurpleAccount *account, const char *sender, const char *msg,
-		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+		PurpleIMConversation *im, PurpleMessageFlags flags, gpointer null)
 {
 	if (purple_prefs_get_bool(PREFS_EVENT_IM_MSG))
-		notify(conv, _("%s sent you a message"), sender);
+		notify(PURPLE_CONVERSATION(im), _("%s sent you a message"), sender);
 }
 
 static void
 received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
-		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+		PurpleChatConversation *chat, PurpleMessageFlags flags, gpointer null)
 {
 	const char *nick;
+	PurpleConversation *conv = PURPLE_CONVERSATION(chat);
 
 	if (flags & PURPLE_MESSAGE_WHISPER)
 		return;
 
-	nick = purple_chat_conversation_get_nick(PURPLE_CONV_CHAT(conv));
+	nick = purple_chat_conversation_get_nick(chat);
 
 	if (g_utf8_collate(sender, nick) == 0)
 		return;

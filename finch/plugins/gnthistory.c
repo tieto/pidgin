@@ -43,7 +43,6 @@ static void historize(PurpleConversation *c)
 {
 	PurpleAccount *account = purple_conversation_get_account(c);
 	const char *name = purple_conversation_get_name(c);
-	PurpleConversationType convtype;
 	GList *logs = NULL;
 	const char *alias = name;
 	PurpleLogReadFlags flags;
@@ -51,8 +50,7 @@ static void historize(PurpleConversation *c)
 	char *header;
 	PurpleMessageFlags mflag;
 
-	convtype = purple_conversation_get_type(c);
-	if (convtype == PURPLE_CONV_TYPE_IM) {
+	if (PURPLE_IS_IM_CONVERSATION(c)) {
 		GSList *buddies;
 		GSList *cur;
 		FinchConv *fc = FINCH_CONV(c);
@@ -100,7 +98,7 @@ static void historize(PurpleConversation *c)
 			logs = purple_log_get_logs(PURPLE_LOG_IM, name, account);
 		else
 			logs = g_list_sort(logs, purple_log_compare);
-	} else if (convtype == PURPLE_CONV_TYPE_CHAT) {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(c)) {
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
 		if (!purple_prefs_get_bool("/purple/logging/log_chats"))

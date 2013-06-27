@@ -378,8 +378,8 @@ finch_media_new(PurpleMedia *media)
 static void
 gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *conv)
 {
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		purple_im_conversation_write_message(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		purple_conversation_write_message(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -390,7 +390,7 @@ finch_new_media(PurpleMediaManager *manager, PurpleMedia *media,
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
 
-	conv = purple_im_conversation_new(account, name);
+	conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, name));
 
 	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);
