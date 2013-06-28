@@ -1759,7 +1759,7 @@ purple_chat_conversation_buddy_set_flags(PurpleChatConversationBuddy *cb,
 		ops->chat_update_user(cb);
 
 	purple_signal_emit(purple_conversations_get_handle(),
-					 "chat-buddy-flags", priv->chat, priv->name, oldflags, flags); /* TODO use ChatBuddy object */
+					 "chat-buddy-flags", cb, oldflags, flags);
 }
 
 PurpleChatConversationBuddyFlags

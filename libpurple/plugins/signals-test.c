@@ -446,11 +446,13 @@ chat_buddy_joined_cb(PurpleConversation *conv, const char *user,
 }
 
 static void
-chat_buddy_flags_cb(PurpleConversation *conv, const char *user,
-					PurpleChatConversationBuddyFlags oldflags, PurpleChatConversationBuddyFlags newflags, void *data)
+chat_buddy_flags_cb(PurpleChatConversationBuddy *cb, PurpleChatConversationBuddyFlags oldflags,
+					 PurpleChatConversationBuddyFlags newflags, void *data)
 {
 	purple_debug_misc("signals test", "chat-buddy-flags (%s, %s, %d, %d)\n",
-					purple_conversation_get_name(conv), user, oldflags, newflags);
+					purple_conversation_get_name(PURPLE_CONVERSATION(
+					purple_chat_conversation_buddy_get_chat(cb))),
+					purple_chat_conversation_buddy_get_name(cb), oldflags, newflags);
 }
 
 static gboolean

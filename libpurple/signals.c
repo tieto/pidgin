@@ -693,6 +693,17 @@ purple_marshal_VOID__POINTER_POINTER_UINT_UINT(PurpleCallback cb, va_list args,
 }
 
 void
+purple_marshal_VOID__POINTER_UINT_UINT(PurpleCallback cb, va_list args,
+										     void *data, void **return_val)
+{
+	void *arg1 = va_arg(args, void *);
+	guint arg2 = va_arg(args, guint);
+	guint arg3 = va_arg(args, guint);
+
+	((void (*)(void *, guint, guint, void *))cb)(arg1, arg2, arg3, data);
+}
+
+void
 purple_marshal_VOID__POINTER_POINTER_POINTER(PurpleCallback cb, va_list args,
 										   void *data, void **return_val)
 {

@@ -482,10 +482,9 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_BOOLEAN));
 
 	purple_signal_register(handle, "chat-buddy-flags",
-						 purple_marshal_VOID__POINTER_POINTER_UINT_UINT, NULL, 4,
+						 purple_marshal_VOID__POINTER_UINT_UINT, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_STRING),
+										PURPLE_SUBTYPE_CONVERSATION_BUDDY),
 						 purple_value_new(PURPLE_TYPE_UINT),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
