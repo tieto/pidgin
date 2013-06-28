@@ -180,7 +180,7 @@ PurpleTheme *pidgin_conversations_get_default_theme(void);
  *
  * @param conv The conversation.
  */
-void pidgin_conv_update_buddy_icon(PurpleConversation *conv);
+void pidgin_conv_update_buddy_icon(PurpleIMConversation *im);
 
 /**
  * Sets the active conversation within a GTK-conversation.
