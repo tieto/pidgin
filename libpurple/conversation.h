@@ -658,6 +658,11 @@ gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount
 /*@{*/
 
 /**
+ * Returns the GType for the PurpleConversationMessage boxed structure.
+ */
+GType purple_conversation_message_get_type(void);
+
+/**
  * Get the sender from a PurpleConversationMessage
  *
  * @param msg   A PurpleConversationMessage

@@ -65,7 +65,7 @@ struct _PurpleConversationPrivate
 	GList *message_history;         /**< Message history, as a GList of PurpleConversationMessage's */
 };
 
-/** TODO GBoxed
+/**
  * Description of a conversation message
  */
 struct _PurpleConversationMessage
@@ -848,6 +848,42 @@ PurpleConversation *purple_conversation_message_get_conversation(const PurpleCon
 {
 	g_return_val_if_fail(msg, NULL);
 	return msg->conv;
+}
+
+static PurpleConversationMessage *
+purple_conversation_message_copy(PurpleConversationMessage *msg)
+{
+	PurpleConversationMessage *newmsg = g_new(PurpleConversationMessage, 1);
+	*newmsg = *msg;
+	newmsg->who = g_strdup(msg->who);
+	newmsg->what = g_strdup(msg->what);
+	newmsg->alias = g_strdup(msg->alias);
+
+	return newmsg;
+}
+
+static void
+purple_conversation_message_free(PurpleConversationMessage *msg)
+{
+	g_free(msg->who);
+	g_free(msg->what);
+	g_free(msg->alias);
+
+	g_free(msg);
+}
+
+GType
+purple_conversation_message_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleConversationMessage",
+				(GBoxedCopyFunc)purple_conversation_message_copy,
+				(GBoxedFreeFunc)purple_conversation_message_free);
+	}
+
+	return type;
 }
 
 void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
