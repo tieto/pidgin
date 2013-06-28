@@ -1151,8 +1151,13 @@ finch_chat_remove_users(PurpleChatConversation *chat, GList *list)
 static void
 finch_chat_update_user(PurpleChatConversationBuddy *cb)
 {
-	PurpleChatConversation *chat = purple_chat_conversation_buddy_get_chat(cb);
-	FinchConv *ggc = FINCH_CONV(PURPLE_CONVERSATION(chat));
+	PurpleChatConversation *chat;
+	FinchConv *ggc;
+	if (!cb)
+		return;
+
+	chat = purple_chat_conversation_buddy_get_chat(cb);
+	ggc = FINCH_CONV(PURPLE_CONVERSATION(chat));
 	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist),
 			(gpointer)purple_chat_conversation_buddy_get_name(cb), 0,
 			chat_flag_text(purple_chat_conversation_buddy_get_flags(cb)));

@@ -207,13 +207,13 @@ struct _PurpleConversationUiOps
 	 *  rename message is written to the conversation by libpurple.)
 	 *  @param new_alias  @a new_name's new alias, if they have one.
 	 *  @see purple_chat_conversation_add_users()
-	 */ /* TODO use PurpleChatConversationBuddy */
+	 */
 	void (*chat_rename_user)(PurpleChatConversation *chat, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
 	 *  @param users    A @c GList of <tt>const char *</tt>s.
 	 *  @see purple_chat_conversation_rename_user()
-	 */ /* TODO use PurpleChatConversationBuddy */
+	 */
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
 	/** Called when a user's flags are changed.
 	 *  @see purple_chat_conversation_buddy_set_flags()
