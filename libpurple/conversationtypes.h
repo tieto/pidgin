@@ -30,54 +30,36 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
-#define PURPLE_TYPE_IM_CONVERSATION \
-	(purple_im_conversation_get_type())
-#define PURPLE_IM_CONVERSATION(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversation))
-#define PURPLE_IM_CONVERSATION_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
-#define PURPLE_IS_IM_CONVERSATION(obj) \
-	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_IM_CONVERSATION))
-#define PURPLE_IS_IM_CONVERSATION_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_IM_CONVERSATION))
-#define PURPLE_IM_CONVERSATION_GET_CLASS(obj) \
-	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
+#define PURPLE_TYPE_IM_CONVERSATION              (purple_im_conversation_get_type())
+#define PURPLE_IM_CONVERSATION(obj)              (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversation))
+#define PURPLE_IM_CONVERSATION_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
+#define PURPLE_IS_IM_CONVERSATION(obj)           (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_IM_CONVERSATION))
+#define PURPLE_IS_IM_CONVERSATION_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_IM_CONVERSATION))
+#define PURPLE_IM_CONVERSATION_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationClass))
 
 /** @copydoc _PurpleIMConversation */
 typedef struct _PurpleIMConversation         PurpleIMConversation;
 /** @copydoc _PurpleIMConversationClass */
 typedef struct _PurpleIMConversationClass    PurpleIMConversationClass;
 
-#define PURPLE_TYPE_CHAT_CONVERSATION \
-	(purple_chat_conversation_get_type())
-#define PURPLE_CHAT_CONVERSATION(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversation))
-#define PURPLE_CHAT_CONVERSATION_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
-#define PURPLE_IS_CHAT_CONVERSATION(obj) \
-	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION))
-#define PURPLE_IS_CHAT_CONVERSATION_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION))
-#define PURPLE_CHAT_CONVERSATION_GET_CLASS(obj) \
-	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
+#define PURPLE_TYPE_CHAT_CONVERSATION            (purple_chat_conversation_get_type())
+#define PURPLE_CHAT_CONVERSATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversation))
+#define PURPLE_CHAT_CONVERSATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
+#define PURPLE_IS_CHAT_CONVERSATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION))
+#define PURPLE_IS_CHAT_CONVERSATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION))
+#define PURPLE_CHAT_CONVERSATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationClass))
 
 /** @copydoc _PurpleChatConversation */
 typedef struct _PurpleChatConversation       PurpleChatConversation;
 /** @copydoc _PurpleChatConversationClass */
 typedef struct _PurpleChatConversationClass  PurpleChatConversationClass;
 
-#define PURPLE_TYPE_CHAT_CONVERSATION_BUDDY \
-	(purple_chat_user_get_type())
-#define PURPLE_CHAT_CONVERSATION_BUDDY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUser))
-#define PURPLE_CHAT_USER_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUserClass))
-#define PURPLE_IS_CHAT_CONVERSATION_BUDDY(obj) \
-	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
-#define PURPLE_IS_CHAT_CONVERSATION_BUDDY_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
-#define PURPLE_CHAT_USER_GET_CLASS(obj) \
-	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUserClass))
+#define PURPLE_TYPE_CHAT_USER                    (purple_chat_user_get_type())
+#define PURPLE_CHAT_USER(obj)                    (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_USER, PurpleChatUser))
+#define PURPLE_CHAT_USER_CLASS(klass)            (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_USER, PurpleChatUserClass))
+#define PURPLE_IS_CHAT_USER(obj)                 (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_USER))
+#define PURPLE_IS_CHAT_USER_CLASS(klass)         (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_USER))
+#define PURPLE_CHAT_USER_GET_CLASS(obj)          (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_USER, PurpleChatUserClass))
 
 /** @copydoc _PurpleChatUser */
 typedef struct _PurpleChatUser       PurpleChatUser;
@@ -586,7 +568,8 @@ void purple_chat_conversation_leave(PurpleChatConversation *chat);
  * @param chat The chat.
  * @param name The name of the chat user to find.
  */
-PurpleChatUser *purple_chat_conversation_find_buddy(PurpleChatConversation *chat, const char *name);
+PurpleChatUser *purple_chat_conversation_find_user(PurpleChatConversation *chat,
+		const char *name);
 
 /**
  * Invite a user to a chat.
@@ -740,8 +723,7 @@ const char *purple_chat_user_get_name(const PurpleChatUser *cb);
  * @param cb     The chat user.
  * @param flags  The new flags.
  */
-void purple_chat_user_set_flags(PurpleChatUser *cb,
-		PurpleChatUserFlags flags);
+void purple_chat_user_set_flags(PurpleChatUser *cb, PurpleChatUserFlags flags);
 
 /**
  * Get the flags of a chat user.
@@ -758,8 +740,7 @@ PurpleChatUserFlags purple_chat_user_get_flags(const PurpleChatUser *cb);
  * @param cb	The chat user.
  * @param buddy TRUE if the chat user is on the buddy list.
  */
-void purple_chat_user_set_buddy(const PurpleChatUser *cb,
-		gboolean buddy);
+void purple_chat_user_set_buddy(const PurpleChatUser *cb, gboolean buddy);
 
 /**
  * Indicates if this chat user is on the buddy list.

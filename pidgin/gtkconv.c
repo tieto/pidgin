@@ -1516,7 +1516,7 @@ ignore_cb(GtkWidget *w, PidginConversation *gtkconv)
 	else
 		purple_chat_conversation_ignore(chat, name);
 
-	pidgin_conv_chat_update_user(purple_chat_conversation_find_buddy(chat, name));
+	pidgin_conv_chat_update_user(purple_chat_conversation_find_user(chat, name));
 }
 
 static void
@@ -6845,7 +6845,7 @@ pidgin_conv_chat_rename_user(PurpleChatConversation *chat, const char *old_name,
 	if ((tag = get_buddy_tag(chat, old_name, PURPLE_MESSAGE_NICK, FALSE)))
 		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
 
-	old_chatuser = purple_chat_conversation_find_buddy(chat, old_name);
+	old_chatuser = purple_chat_conversation_find_user(chat, old_name);
 	if (!old_chatuser)
 		return;
 
@@ -6859,7 +6859,7 @@ pidgin_conv_chat_rename_user(PurpleChatConversation *chat, const char *old_name,
 
 	g_return_if_fail(new_alias != NULL);
 
-	new_chatuser = purple_chat_conversation_find_buddy(chat, new_name);
+	new_chatuser = purple_chat_conversation_find_user(chat, new_name);
 
 	add_chat_user_common(chat, new_chatuser, old_name);
 }

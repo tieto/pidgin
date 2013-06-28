@@ -494,7 +494,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 			return;
 		}
 
-		cb = purple_chat_conversation_find_buddy(chat, args[5]);
+		cb = purple_chat_conversation_find_user(chat, args[5]);
 		if (!cb) {
 			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s who isn't a buddy.\n", args[5]);
 			return;
@@ -1016,7 +1016,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	
 	purple_chat_conversation_add_user(chat, nick, userhost, PURPLE_CHAT_USER_NONE, TRUE);
 	
-	cb = purple_chat_conversation_find_buddy(chat, nick);
+	cb = purple_chat_conversation_find_user(chat, nick);
 	
 	if (cb) {
 		purple_chat_user_set_attribute(cb, chat, "userhost", userhost);		
@@ -1098,7 +1098,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 				if (!end)
 					end = cur + strlen(cur);
 				user = g_strndup(cur, end - cur);
-				cb = purple_chat_conversation_find_buddy(chat, user);
+				cb = purple_chat_conversation_find_user(chat, user);
 				flags = purple_chat_user_get_flags(cb);
 				newflag = PURPLE_CHAT_USER_NONE;
 				if (*mcur == 'o')

@@ -597,7 +597,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
 					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , (char *)roomies->data, room ? room : "");
 					purple_chat_conversation_ignore(c,roomies->data);
-					ops->chat_update_user(purple_chat_conversation_find_buddy(c, roomies->data));
+					ops->chat_update_user(purple_chat_conversation_find_user(c, roomies->data));
 				}
 			}
 		}

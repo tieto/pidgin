@@ -1124,7 +1124,7 @@ finch_chat_rename_user(PurpleChatConversation *chat, const char *old, const char
 	FinchConv *ggc = FINCH_CONV(PURPLE_CONVERSATION(chat));
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
 	GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
-	PurpleChatUser *cb = purple_chat_conversation_find_buddy(chat, new_n);
+	PurpleChatUser *cb = purple_chat_conversation_find_user(chat, new_n);
 
 	gnt_entry_remove_suggest(entry, old);
 	gnt_tree_remove(tree, (gpointer)old);

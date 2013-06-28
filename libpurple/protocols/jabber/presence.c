@@ -640,7 +640,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			purple_chat_conversation_add_user(chat->conv, presence->jid_from->resource,
 					jid, flags, chat->joined > 0 && ((!presence->delayed) || (presence->sent > chat->joined)));
 		else
-			purple_chat_user_set_flags(purple_chat_conversation_find_buddy(chat->conv, presence->jid_from->resource),
+			purple_chat_user_set_flags(purple_chat_conversation_find_user(chat->conv, presence->jid_from->resource),
 					flags);
 
 		if (is_our_resource && chat->joined == 0)

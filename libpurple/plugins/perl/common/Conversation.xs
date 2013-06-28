@@ -457,7 +457,7 @@ gboolean purple_chat_conversation_has_left(chat)
 	Purple::ChatConversation chat
 
 Purple::ChatUser
-purple_chat_conversation_find_buddy(chat, name)
+purple_chat_conversation_find_user(chat, name)
 	Purple::ChatConversation chat
 	const char *name
 
