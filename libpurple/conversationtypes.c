@@ -1939,7 +1939,7 @@ purple_chat_conversation_buddy_set_property(GObject *obj, guint param_id, const 
 
 	switch (param_id) {
 		case CB_PROP_CHAT:
-			purple_chat_conversation_buddy_set_chat(cb, g_value_get_object(value));
+			priv->chat = g_value_get_object(value);
 			break;
 		case CB_PROP_NAME:
 			g_free(priv->name);
@@ -1953,7 +1953,7 @@ purple_chat_conversation_buddy_set_property(GObject *obj, guint param_id, const 
 			priv->buddy = g_value_get_boolean(value);
 			break;
 		case CB_PROP_FLAGS:
-			purple_chat_conversation_buddy_set_flags(cb, g_value_get_flags(value));
+			priv->flags = g_value_get_flags(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
