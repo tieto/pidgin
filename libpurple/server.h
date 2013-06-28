@@ -39,16 +39,16 @@ G_BEGIN_DECLS
  *
  * @param gc    The connection over which to send the typing notification.
  * @param name  The user to send the typing notification to.
- * @param state One of PURPLE_IM_CONVERSATION_TYPING, PURPLE_IM_CONVERSATION_TYPED, or PURPLE_IM_CONVERSATION_NOT_TYPING.
+ * @param state One of PURPLE_IM_TYPING, PURPLE_IM_TYPED, or PURPLE_IM_NOT_TYPING.
  * @return A quiet-period, specified in seconds, where Purple will not
  *         send any additional typing notification messages.  Most
  *         protocols should return 0, which means that no additional
- *         PURPLE_IM_CONVERSATION_TYPING messages need to be sent.  If this is 5, for
+ *         PURPLE_IM_TYPING messages need to be sent.  If this is 5, for
  *         example, then Purple will wait five seconds, and if the Purple
- *         user is still typing then Purple will send another PURPLE_IM_CONVERSATION_TYPING
+ *         user is still typing then Purple will send another PURPLE_IM_TYPING
  *         message.
  */
-unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state);
+unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
 int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
@@ -87,8 +87,8 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
 
 
 /**
- * Receive a typing message from a remote user.  Either PURPLE_IM_CONVERSATION_TYPING
- * or PURPLE_IM_CONVERSATION_TYPED.  If the user has stopped typing then use
+ * Receive a typing message from a remote user.  Either PURPLE_IM_TYPING
+ * or PURPLE_IM_TYPED.  If the user has stopped typing then use
  * serv_got_typing_stopped instead.
  *
  * TODO: Could probably move this into the conversation API.
@@ -97,13 +97,13 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
  * @param name    The name of the remote user.
  * @param timeout If this is a number greater than 0, then
  *        Purple will wait this number of seconds and then
- *        set this buddy to the PURPLE_IM_CONVERSATION_NOT_TYPING state.  This
+ *        set this buddy to the PURPLE_IM_NOT_TYPING state.  This
  *        is used by protocols that send repeated typing messages
  *        while the user is composing the message.
  * @param state   The typing state received
  */
 void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
-					 PurpleIMConversationTypingState state);
+					 PurpleIMTypingState state);
 
 /**
  * TODO: Could probably move this into the conversation API.

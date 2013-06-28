@@ -106,7 +106,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_normalize,				/* normalize */
 	jabber_set_buddy_icon,			/* set_buddy_icon */
 	NULL,							/* remove_group */
-	jabber_chat_buddy_real_name,	/* get_cb_real_name */
+	jabber_chat_user_real_name,	/* get_cb_real_name */
 	jabber_chat_set_topic,			/* set_chat_topic */
 	jabber_find_blist_chat,			/* find_blist_chat */
 	jabber_roomlist_get_list,		/* roomlist_get_list */

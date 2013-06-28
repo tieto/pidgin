@@ -859,7 +859,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 			alias = purple_account_get_username(account);
 
 	purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
-	                          alias, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+	                          alias, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 static void
@@ -1640,7 +1640,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 }
 
 static unsigned int
-msn_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
+msn_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -1651,17 +1651,17 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypin
 	session = purple_connection_get_protocol_data(gc);
 
 	/*
-	 * TODO: I feel like this should be "if (state != PURPLE_IM_CONVERSATION_TYPING)"
+	 * TODO: I feel like this should be "if (state != PURPLE_IM_TYPING)"
 	 *       but this is how it was before, and I don't want to break
 	 *       anything. --KingAnt
 	 */
-	if (state == PURPLE_IM_CONVERSATION_NOT_TYPING)
+	if (state == PURPLE_IM_NOT_TYPING)
 		return 0;
 
 	if (!g_ascii_strcasecmp(who, purple_account_get_username(account)))
 	{
 		/* We'll just fake it, since we're sending to ourself. */
-		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_IM_CONVERSATION_TYPING);
+		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
 
 		return MSN_TYPING_SEND_TIMEOUT;
 	}

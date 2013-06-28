@@ -164,8 +164,8 @@ im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 }
 
 static void
-chat_buddy_join_cb(PurpleChatConversation *chat, const char *name,
-				   PurpleChatConversationBuddyFlags flags, gboolean new_arrival,
+chat_user_join_cb(PurpleChatConversation *chat, const char *name,
+				   PurpleChatUserFlags flags, gboolean new_arrival,
 				   PurpleSoundEventID event)
 {
 	if (new_arrival && !chat_nick_matches_name(chat, name))
@@ -173,7 +173,7 @@ chat_buddy_join_cb(PurpleChatConversation *chat, const char *name,
 }
 
 static void
-chat_buddy_left_cb(PurpleChatConversation *chat, const char *name,
+chat_user_left_cb(PurpleChatConversation *chat, const char *name,
 				   const char *reason, PurpleSoundEventID event)
 {
 	if (!chat_nick_matches_name(chat, name))
@@ -340,11 +340,11 @@ pidgin_sound_init(void)
 	purple_signal_connect(conv_handle, "sent-im-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(im_msg_sent_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_SEND));
-	purple_signal_connect(conv_handle, "chat-buddy-joined",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_join_cb),
+	purple_signal_connect(conv_handle, "chat-user-joined",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_user_join_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_JOIN));
-	purple_signal_connect(conv_handle, "chat-buddy-left",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_left_cb),
+	purple_signal_connect(conv_handle, "chat-user-left",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_user_left_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_LEAVE));
 	purple_signal_connect(conv_handle, "sent-chat-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_sent_cb),

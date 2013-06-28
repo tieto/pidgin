@@ -496,7 +496,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		g_snprintf(buf, sizeof(buf), "%s@%s",
 			   client_entry->username, client_entry->hostname);
 		purple_chat_conversation_add_user(PURPLE_CONV_CHAT(convo),
-					  client_entry->nickname, buf, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+					  client_entry->nickname, buf, PURPLE_CHAT_USER_NONE, TRUE);
 
 		break;
 
@@ -654,7 +654,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 
 	case SILC_NOTIFY_TYPE_CUMODE_CHANGE:
 		{
-			PurpleChatConversationBuddyFlags flags = PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
+			PurpleChatUserFlags flags = PURPLE_CHAT_USER_NONE;
 			idtype = va_arg(va, int);
 			entry = va_arg(va, void *);
 			mode = va_arg(va, SilcUInt32);
@@ -681,9 +681,9 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 					   _("<I>%s</I> set <I>%s's</I> modes to: %s"), name,
 					   client_entry2->nickname, buf2);
 				if (mode & SILC_CHANNEL_UMODE_CHANFO)
-					flags |= PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
+					flags |= PURPLE_CHAT_USER_FOUNDER;
 				if (mode & SILC_CHANNEL_UMODE_CHANOP)
-					flags |= PURPLE_CHAT_CONVERSATION_BUDDY_OP;
+					flags |= PURPLE_CHAT_USER_OP;
 			} else {
 				g_snprintf(buf, sizeof(buf),
 					   _("<I>%s</I> removed all <I>%s's</I> modes"), name,
@@ -1123,13 +1123,13 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			/* Add all users to channel */
 			while (silc_hash_table_get(user_list, NULL, (void *)&chu)) {
-			  PurpleChatConversationBuddyFlags f = PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
+			  PurpleChatUserFlags f = PURPLE_CHAT_USER_NONE;
 			  chu->context = SILC_32_TO_PTR(sg->channel_ids);
 
 			  if (chu->mode & SILC_CHANNEL_UMODE_CHANFO)
-			    f |= PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
+			    f |= PURPLE_CHAT_USER_FOUNDER;
 			  if (chu->mode & SILC_CHANNEL_UMODE_CHANOP)
-			    f |= PURPLE_CHAT_CONVERSATION_BUDDY_OP;
+			    f |= PURPLE_CHAT_USER_OP;
 			  users = g_list_append(users, chu->client->nickname);
 			  flags = g_list_append(flags, GINT_TO_POINTER(f));
 

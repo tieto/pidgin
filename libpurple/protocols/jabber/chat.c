@@ -456,7 +456,7 @@ gboolean jabber_chat_find_buddy(PurpleChatConversation *conv, const char *name)
 	return purple_chat_conversation_has_user(conv, name);
 }
 
-char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
+char *jabber_chat_user_real_name(PurpleConnection *gc, int id, const char *who)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat;

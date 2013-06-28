@@ -115,7 +115,7 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 		if (new_room) {
 			/*if (!strcmp(members[i], purple_connection_get_display_name(ycht->gc)))
 				continue;*/
-			purple_chat_conversation_add_user(c, members[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+			purple_chat_conversation_add_user(c, members[i], NULL, PURPLE_CHAT_USER_NONE, TRUE);
 		} else {
 			yahoo_chat_add_user(c, members[i], NULL);
 		}

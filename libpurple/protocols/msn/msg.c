@@ -758,12 +758,12 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		if (swboard->current_users == 1)
 		{
 			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-							PURPLE_IM_CONVERSATION_TYPING);
+							PURPLE_IM_TYPING);
 		}
 
 	} else {
 		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-						PURPLE_IM_CONVERSATION_TYPING);
+						PURPLE_IM_TYPING);
 	}
 }
 

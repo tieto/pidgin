@@ -843,7 +843,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		}
 
 		if (stat && *stat == '1')
-			serv_got_typing(gc, fed_from, 0, PURPLE_IM_CONVERSATION_TYPING);
+			serv_got_typing(gc, fed_from, 0, PURPLE_IM_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
 
@@ -4648,7 +4648,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	return ret;
 }
 
-unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
+unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_p2p_data *p2p_data;
@@ -4666,7 +4666,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleIMCo
 	/* check to see if p2p link exists, send through it */
 	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !fed) {
 		yahoo_packet_hash(pkt, "sssssis", 49, "TYPING", 1, purple_connection_get_display_name(gc),
-	                  14, " ", 13, state == PURPLE_IM_CONVERSATION_TYPING ? "1" : "0",
+	                  14, " ", 13, state == PURPLE_IM_TYPING ? "1" : "0",
 	                  5, who, 11, p2p_data->session_id, 1002, "1");	/* To-do: key 15 to be sent in case of p2p */
 		yahoo_p2p_write_pkt(p2p_data->source, pkt);
 		yahoo_packet_free(pkt);
@@ -4687,7 +4687,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleIMCo
 		}
 
 		yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
-                  14, " ", 13, state == PURPLE_IM_CONVERSATION_TYPING ? "1" : "0",
+                  14, " ", 13, state == PURPLE_IM_TYPING ? "1" : "0",
                   5, fed_who, 1002, "1");
         if (fed)
         	yahoo_packet_hash_int(pkt, 241, fed);

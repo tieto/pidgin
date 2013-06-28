@@ -464,11 +464,11 @@ static void nullprpl_set_info(PurpleConnection *gc, const char *info) {
                     purple_account_get_username(purple_connection_get_account(gc)), info);
 }
 
-static const char *typing_state_to_string(PurpleIMConversationTypingState typing) {
+static const char *typing_state_to_string(PurpleIMTypingState typing) {
   switch (typing) {
-  case PURPLE_IM_CONVERSATION_NOT_TYPING:  return "is not typing";
-  case PURPLE_IM_CONVERSATION_TYPING:      return "is typing";
-  case PURPLE_IM_CONVERSATION_TYPED:       return "stopped typing momentarily";
+  case PURPLE_IM_NOT_TYPING:  return "is not typing";
+  case PURPLE_IM_TYPING:      return "is typing";
+  case PURPLE_IM_TYPED:       return "stopped typing momentarily";
   default:               return "unknown typing state";
   }
 }
@@ -476,19 +476,19 @@ static const char *typing_state_to_string(PurpleIMConversationTypingState typing
 static void notify_typing(PurpleConnection *from, PurpleConnection *to,
                           gpointer typing) {
   const char *from_username = purple_account_get_username(purple_connection_get_account(from));
-  const char *action = typing_state_to_string((PurpleIMConversationTypingState)typing);
+  const char *action = typing_state_to_string((PurpleIMTypingState)typing);
   purple_debug_info("nullprpl", "notifying %s that %s %s\n",
                     purple_account_get_username(purple_connection_get_account(to)), from_username, action);
 
   serv_got_typing(to,
                   from_username,
                   0, /* if non-zero, a timeout in seconds after which to
-                      * reset the typing status to PURPLE_IM_CONVERSATION_NOT_TYPING */
-                  (PurpleIMConversationTypingState)typing);
+                      * reset the typing status to PURPLE_IM_NOT_TYPING */
+                  (PurpleIMTypingState)typing);
 }
 
 static unsigned int nullprpl_send_typing(PurpleConnection *gc, const char *name,
-                                         PurpleIMConversationTypingState typing) {
+                                         PurpleIMTypingState typing) {
   purple_debug_info("nullprpl", "%s %s\n", purple_account_get_username(purple_connection_get_account(gc)),
                     typing_state_to_string(typing));
   foreach_nullprpl_gc(notify_typing, gc, (gpointer)typing);
@@ -652,7 +652,7 @@ static void joined_chat(PurpleChatConversation *from, PurpleChatConversation *to
   purple_chat_conversation_add_user(to,
                             purple_chat_conversation_get_nick(from),
                             NULL,   /* user-provided join message, IRC style */
-                            PURPLE_CHAT_CONVERSATION_BUDDY_NONE,
+                            PURPLE_CHAT_USER_NONE,
                             TRUE);  /* show a join message */
 
   if (from != to) {
@@ -662,7 +662,7 @@ static void joined_chat(PurpleChatConversation *from, PurpleChatConversation *to
     purple_chat_conversation_add_user(from,
                               purple_chat_conversation_get_nick(to),
                               NULL,   /* user-provided join message, IRC style */
-                              PURPLE_CHAT_CONVERSATION_BUDDY_NONE,
+                              PURPLE_CHAT_USER_NONE,
                               FALSE);  /* show a join message */
   }
 }
@@ -774,7 +774,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
   const char *message;
   const char *from_username;
   PurpleChatConversation *chat;
-  PurpleChatConversationBuddy *chat_buddy;
+  PurpleChatUser *chat_user;
   PurpleConnection *to;
 
   /* parse args */
@@ -794,10 +794,10 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
                     from_username, to_username, purple_conversation_get_name(conv), message);
 
   chat = purple_conversation_get_chat_data(conv);
-  chat_buddy = purple_chat_conversation_find_buddy(chat, to_username);
+  chat_user = purple_chat_conversation_find_buddy(chat, to_username);
   to = get_nullprpl_gc(to_username);
 
-  if (!chat_buddy) {
+  if (!chat_user) {
     /* this will be freed by the caller */
     *error = g_strdup_printf(_("%s is not logged in."), to_username);
     return PURPLE_CMD_RET_FAILED;

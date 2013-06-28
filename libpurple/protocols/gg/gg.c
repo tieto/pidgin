@@ -458,7 +458,7 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
 
 	from = g_strdup_printf("%u", uin);
 	if (length)
-		serv_got_typing(gc, from, 0, PURPLE_IM_CONVERSATION_TYPING);
+		serv_got_typing(gc, from, 0, PURPLE_IM_TYPING);
 	else
 		serv_got_typing_stopped(gc, from);
 	g_free(from);
@@ -1139,17 +1139,17 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	return ret;
 }
 
-static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state)
+static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int dummy_length; // we don't send real length of typed message
 	
-	if (state == PURPLE_IM_CONVERSATION_TYPED) // not supported
+	if (state == PURPLE_IM_TYPED) // not supported
 		return 1;
 	
-	if (state == PURPLE_IM_CONVERSATION_TYPING)
+	if (state == PURPLE_IM_TYPING)
 		dummy_length = (int)g_random_int();
-	else // PURPLE_IM_CONVERSATION_NOT_TYPING
+	else // PURPLE_IM_NOT_TYPING
 		dummy_length = 0;
 	
 	gg_typing_notification(
@@ -1214,7 +1214,7 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 	ggp_confer_add_new(gc, chat_name);
 	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
 	purple_chat_conversation_add_user(conv, purple_account_get_username(account),
-				NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+				NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 static char *ggp_get_chat_name(GHashTable *data) {

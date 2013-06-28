@@ -194,7 +194,7 @@ struct _PurpleConversationUiOps
 	                   time_t mtime);
 
 	/** Add @a cbuddies to a chat.
-	 *  @param cbuddies      A @c GList of #PurpleChatConversationBuddy structs.
+	 *  @param cbuddies      A @c GList of #PurpleChatUser structs.
 	 *  @param new_arrivals  Whether join notices should be shown.
 	 *                       (Join notices are actually written to the
 	 *                       conversation by
@@ -216,9 +216,9 @@ struct _PurpleConversationUiOps
 	 */
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
 	/** Called when a user's flags are changed.
-	 *  @see purple_chat_conversation_buddy_set_flags()
+	 *  @see purple_chat_user_set_flags()
 	 */
-	void (*chat_update_user)(PurpleChatConversationBuddy *cb);
+	void (*chat_update_user)(PurpleChatUser *cb);
 
 	/** Present this conversation to the user; for example, by displaying
 	 *  the IM dialog.

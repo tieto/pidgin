@@ -2358,11 +2358,11 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		} break;
 
 		case 0x0001: { /* Paused typing */
-			serv_got_typing(gc, bn, 0, PURPLE_IM_CONVERSATION_TYPED);
+			serv_got_typing(gc, bn, 0, PURPLE_IM_TYPED);
 		} break;
 
 		case 0x0002: { /* Typing */
-			serv_got_typing(gc, bn, 0, PURPLE_IM_CONVERSATION_TYPING);
+			serv_got_typing(gc, bn, 0, PURPLE_IM_TYPING);
 		} break;
 
 		case 0x000f: { /* Closed IM window */
@@ -2494,7 +2494,7 @@ static int purple_chat_conversation_join(OscarData *od, FlapConnection *conn, Fl
 		return 1;
 
 	for (i = 0; i < count; i++)
-		purple_chat_conversation_add_user(c->conv, info[i].bn, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+		purple_chat_conversation_add_user(c->conv, info[i].bn, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 
 	return 1;
 }
@@ -3104,7 +3104,7 @@ oscar_keepalive(PurpleConnection *gc)
 }
 
 unsigned int
-oscar_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state)
+oscar_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
 	OscarData *od;
 	PeerConnection *conn;
@@ -3125,9 +3125,9 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTy
 		if (!list) {
 			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 			if (bi && bi->typingnot) {
-				if (state == PURPLE_IM_CONVERSATION_TYPING)
+				if (state == PURPLE_IM_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);
-				else if (state == PURPLE_IM_CONVERSATION_TYPED)
+				else if (state == PURPLE_IM_TYPED)
 					aim_im_sendmtn(od, 0x0001, name, 0x0001);
 				else
 					aim_im_sendmtn(od, 0x0001, name, 0x0000);

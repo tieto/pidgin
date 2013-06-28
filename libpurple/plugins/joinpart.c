@@ -111,14 +111,14 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	return TRUE;
 }
 
-static gboolean chat_buddy_leaving_cb(PurpleConversation *conv, const char *name,
+static gboolean chat_user_leaving_cb(PurpleConversation *conv, const char *name,
                                const char *reason, GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
 }
 
-static gboolean chat_buddy_joining_cb(PurpleConversation *conv, const char *name,
-                                      PurpleChatConversationBuddyFlags flags,
+static gboolean chat_user_joining_cb(PurpleConversation *conv, const char *name,
+                                      PurpleChatUserFlags flags,
                                       GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
@@ -186,10 +186,10 @@ static gboolean plugin_load(PurplePlugin *plugin)
 	                              g_free);
 
 	conv_handle = purple_conversations_get_handle();
-	purple_signal_connect(conv_handle, "chat-buddy-joining", plugin,
-	                    PURPLE_CALLBACK(chat_buddy_joining_cb), users);
-	purple_signal_connect(conv_handle, "chat-buddy-leaving", plugin,
-	                    PURPLE_CALLBACK(chat_buddy_leaving_cb), users);
+	purple_signal_connect(conv_handle, "chat-user-joining", plugin,
+	                    PURPLE_CALLBACK(chat_user_joining_cb), users);
+	purple_signal_connect(conv_handle, "chat-user-leaving", plugin,
+	                    PURPLE_CALLBACK(chat_user_leaving_cb), users);
 	purple_signal_connect(conv_handle, "received-chat-msg", plugin,
 	                    PURPLE_CALLBACK(received_chat_msg_cb), users);
 

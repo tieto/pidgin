@@ -6,9 +6,9 @@ PROTOTYPES: ENABLE
 BOOT:
 {
 	HV *update_stash = gv_stashpv("Purple::Conversation::UpdateType", 1);
-	HV *typing_stash = gv_stashpv("Purple::IMConversation::TypingState", 1);
+	HV *typing_stash = gv_stashpv("Purple::IMTypingState", 1);
 	HV *flags_stash = gv_stashpv("Purple::MessageFlags", 1);
-	HV *cbflags_stash = gv_stashpv("Purple::ChatConversation::Buddy::Flags", 1);
+	HV *cbflags_stash = gv_stashpv("Purple::ChatUser::Flags", 1);
 
 	static const constiv *civ, update_const_iv[] = {
 #undef const_iv
@@ -32,7 +32,7 @@ BOOT:
 	};
 	static const constiv typing_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_IM_CONVERSATION_##name}
+#define const_iv(name) {#name, (IV)PURPLE_IM_##name}
 		const_iv(NOT_TYPING),
 		const_iv(TYPING),
 		const_iv(TYPED),
@@ -57,7 +57,7 @@ BOOT:
 	};
 	static const constiv cbflags_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_CHAT_CONVERSATION_BUDDY_##name}
+#define const_iv(name) {#name, (IV)PURPLE_CHAT_USER_##name}
 		const_iv(NONE),
 		const_iv(VOICE),
 		const_iv(HALFOP),
@@ -267,9 +267,9 @@ purple_im_conversation_get_icon(im)
 void
 purple_im_conversation_set_typing_state(im, state)
 	Purple::IMConversation im
-	Purple::IMConversation::TypingState state
+	Purple::IMTypingState state
 
-Purple::IMConversation::TypingState
+Purple::IMTypingState
 purple_im_conversation_get_typing_state(im)
 	Purple::IMConversation im
 
@@ -456,11 +456,11 @@ void purple_chat_conversation_leave(chat)
 gboolean purple_chat_conversation_has_left(chat)
 	Purple::ChatConversation chat
 
-Purple::ChatConversation::Buddy
+Purple::ChatUser
 purple_chat_conversation_find_buddy(chat, name)
 	Purple::ChatConversation chat
 	const char *name
 
 const char *
-purple_chat_conversation_buddy_get_name(cb)
-	Purple::ChatConversation::Buddy cb
+purple_chat_user_get_name(cb)
+	Purple::ChatUser cb

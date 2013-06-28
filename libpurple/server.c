@@ -41,7 +41,7 @@
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
 unsigned int
-serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state)
+serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
@@ -683,7 +683,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 }
 
 void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
-					 PurpleIMConversationTypingState state) {
+					 PurpleIMTypingState state) {
 	PurpleIMConversation *im;
 
 	im = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
@@ -692,15 +692,15 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 	} else {
 		switch (state)
 		{
-			case PURPLE_IM_CONVERSATION_TYPING:
+			case PURPLE_IM_TYPING:
 				purple_signal_emit(purple_conversations_get_handle(),
 								   "buddy-typing", purple_connection_get_account(gc), name);
 				break;
-			case PURPLE_IM_CONVERSATION_TYPED:
+			case PURPLE_IM_TYPED:
 				purple_signal_emit(purple_conversations_get_handle(),
 								   "buddy-typed", purple_connection_get_account(gc), name);
 				break;
-			case PURPLE_IM_CONVERSATION_NOT_TYPING:
+			case PURPLE_IM_NOT_TYPING:
 				purple_signal_emit(purple_conversations_get_handle(),
 								   "buddy-typing-stopped", purple_connection_get_account(gc), name);
 				break;
@@ -718,11 +718,11 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	im = purple_conversations_find_im_with_account(name, purple_connection_get_account(gc));
 	if (im != NULL)
 	{
-		if (purple_im_conversation_get_typing_state(im) == PURPLE_IM_CONVERSATION_NOT_TYPING)
+		if (purple_im_conversation_get_typing_state(im) == PURPLE_IM_NOT_TYPING)
 			return;
 
 		purple_im_conversation_stop_typing_timeout(im);
-		purple_im_conversation_set_typing_state(im, PURPLE_IM_CONVERSATION_NOT_TYPING);
+		purple_im_conversation_set_typing_state(im, PURPLE_IM_NOT_TYPING);
 	}
 	else
 	{

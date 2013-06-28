@@ -1131,13 +1131,13 @@ buddy_typing_cb(PurpleAccount *account, const char *name, void *data)
 	im = purple_conversations_find_im_with_account(name, account);
 	if (im != NULL)
 	{
-		PurpleIMConversationTypingState state;
+		PurpleIMTypingState state;
 		PurplePounceEvent event;
 
 		state = purple_im_conversation_get_typing_state(im);
-		if (state == PURPLE_IM_CONVERSATION_TYPED)
+		if (state == PURPLE_IM_TYPED)
 			event = PURPLE_POUNCE_TYPED;
-		else if (state == PURPLE_IM_CONVERSATION_NOT_TYPING)
+		else if (state == PURPLE_IM_NOT_TYPING)
 			event = PURPLE_POUNCE_TYPING_STOPPED;
 		else
 			event = PURPLE_POUNCE_TYPING;

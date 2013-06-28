@@ -465,7 +465,7 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
-	purple_signal_register(handle, "chat-buddy-joining",
+	purple_signal_register(handle, "chat-user-joining",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
@@ -473,7 +473,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
-	purple_signal_register(handle, "chat-buddy-joined",
+	purple_signal_register(handle, "chat-user-joined",
 						 purple_marshal_VOID__POINTER_POINTER_UINT_UINT, NULL, 4,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
@@ -481,14 +481,14 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_UINT),
 						 purple_value_new(PURPLE_TYPE_BOOLEAN));
 
-	purple_signal_register(handle, "chat-buddy-flags",
+	purple_signal_register(handle, "chat-user-flags",
 						 purple_marshal_VOID__POINTER_UINT_UINT, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION_BUDDY),
+										PURPLE_SUBTYPE_CHATUSER),
 						 purple_value_new(PURPLE_TYPE_UINT),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
-	purple_signal_register(handle, "chat-buddy-leaving",
+	purple_signal_register(handle, "chat-user-leaving",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
@@ -496,17 +496,17 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
-	purple_signal_register(handle, "chat-buddy-left",
+	purple_signal_register(handle, "chat-user-left",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
-	purple_signal_register(handle, "deleting-chat-buddy",
+	purple_signal_register(handle, "deleting-chat-user",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CHATBUDDY));
+										PURPLE_SUBTYPE_CHATUSER));
 
 	purple_signal_register(handle, "chat-inviting-user",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,

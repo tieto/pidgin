@@ -73,7 +73,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		PurpleMessageFlags flags);
 int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 
-unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state);
+unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state);
 
 gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace);
 

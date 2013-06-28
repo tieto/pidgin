@@ -291,7 +291,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	if ((swboard->conv != NULL) && (PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
 	{
 		purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
-				msnuser->passport, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+				msnuser->passport, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
 	else if (swboard->current_users > 1)
@@ -322,12 +322,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 				tmp_user = ((MsnUser*)l->data)->passport;
 
 				purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
-										tmp_user, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+										tmp_user, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 			}
 
 			purple_chat_conversation_add_user(PURPLE_CHAT_CONVERSATION(swboard->conv),
 									purple_account_get_username(account),
-									NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+									NULL, PURPLE_CHAT_USER_NONE, TRUE);
 
 			g_free(swboard->im_user);
 			swboard->im_user = NULL;

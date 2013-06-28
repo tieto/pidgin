@@ -67,48 +67,48 @@ typedef struct _PurpleChatConversation       PurpleChatConversation;
 typedef struct _PurpleChatConversationClass  PurpleChatConversationClass;
 
 #define PURPLE_TYPE_CHAT_CONVERSATION_BUDDY \
-	(purple_chat_conversation_buddy_get_type())
+	(purple_chat_user_get_type())
 #define PURPLE_CHAT_CONVERSATION_BUDDY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddy))
-#define PURPLE_CHAT_CONVERSATION_BUDDY_CLASS(klass) \
-	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddyClass))
+	(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUser))
+#define PURPLE_CHAT_USER_CLASS(klass) \
+	(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUserClass))
 #define PURPLE_IS_CHAT_CONVERSATION_BUDDY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
 #define PURPLE_IS_CHAT_CONVERSATION_BUDDY_CLASS(klass) \
 	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY))
-#define PURPLE_CHAT_CONVERSATION_BUDDY_GET_CLASS(obj) \
-	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatConversationBuddyClass))
+#define PURPLE_CHAT_USER_GET_CLASS(obj) \
+	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT_CONVERSATION_BUDDY, PurpleChatUserClass))
 
-/** @copydoc _PurpleChatConversationBuddy */
-typedef struct _PurpleChatConversationBuddy       PurpleChatConversationBuddy;
-/** @copydoc _PurpleChatConversationBuddyClass */
-typedef struct _PurpleChatConversationBuddyClass  PurpleChatConversationBuddyClass;
+/** @copydoc _PurpleChatUser */
+typedef struct _PurpleChatUser       PurpleChatUser;
+/** @copydoc _PurpleChatUserClass */
+typedef struct _PurpleChatUserClass  PurpleChatUserClass;
 
 /**
  * The typing state of a user.
  */
 typedef enum
 {
-	PURPLE_IM_CONVERSATION_NOT_TYPING = 0,  /**< Not typing.                 */
-	PURPLE_IM_CONVERSATION_TYPING,          /**< Currently typing.           */
-	PURPLE_IM_CONVERSATION_TYPED            /**< Stopped typing momentarily. */
+	PURPLE_IM_NOT_TYPING = 0,  /**< Not typing.                 */
+	PURPLE_IM_TYPING,          /**< Currently typing.           */
+	PURPLE_IM_TYPED            /**< Stopped typing momentarily. */
 
-} PurpleIMConversationTypingState;
+} PurpleIMTypingState;
 
 /**
  * Flags applicable to users in Chats.
  */
 typedef enum /*< flags >*/
 {
-	PURPLE_CHAT_CONVERSATION_BUDDY_NONE     = 0x0000, /**< No flags                     */
-	PURPLE_CHAT_CONVERSATION_BUDDY_VOICE    = 0x0001, /**< Voiced user or "Participant" */
-	PURPLE_CHAT_CONVERSATION_BUDDY_HALFOP   = 0x0002, /**< Half-op                      */
-	PURPLE_CHAT_CONVERSATION_BUDDY_OP       = 0x0004, /**< Channel Op or Moderator      */
-	PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER  = 0x0008, /**< Channel Founder              */
-	PURPLE_CHAT_CONVERSATION_BUDDY_TYPING   = 0x0010, /**< Currently typing             */
-	PURPLE_CHAT_CONVERSATION_BUDDY_AWAY     = 0x0020  /**< Currently away.              */
+	PURPLE_CHAT_USER_NONE     = 0x0000, /**< No flags                     */
+	PURPLE_CHAT_USER_VOICE    = 0x0001, /**< Voiced user or "Participant" */
+	PURPLE_CHAT_USER_HALFOP   = 0x0002, /**< Half-op                      */
+	PURPLE_CHAT_USER_OP       = 0x0004, /**< Channel Op or Moderator      */
+	PURPLE_CHAT_USER_FOUNDER  = 0x0008, /**< Channel Founder              */
+	PURPLE_CHAT_USER_TYPING   = 0x0010, /**< Currently typing             */
+	PURPLE_CHAT_USER_AWAY     = 0x0020  /**< Currently away.              */
 
-} PurpleChatConversationBuddyFlags;
+} PurpleChatUserFlags;
 
 #include "conversation.h"
 
@@ -165,10 +165,10 @@ struct _PurpleChatConversationClass {
 };
 
 /**************************************************************************/
-/** PurpleChatConversationBuddy                                           */
+/** PurpleChatUser                                           */
 /**************************************************************************/
-/** Structure representing a chat buddy instance. */
-struct _PurpleChatConversationBuddy
+/** Structure representing a chat user instance. */
+struct _PurpleChatUser
 {
 	/*< private >*/
 	GObject gparent;
@@ -179,8 +179,8 @@ struct _PurpleChatConversationBuddy
 	void (*_purple_reserved4)(void);
 };
 
-/** Base class for all #PurpleChatConversationBuddy's */
-struct _PurpleChatConversationBuddyClass {
+/** Base class for all #PurpleChatUser's */
+struct _PurpleChatUserClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
@@ -242,7 +242,7 @@ PurpleBuddyIcon *purple_im_conversation_get_icon(const PurpleIMConversation *im)
  * @param im    The IM.
  * @param state The typing state.
  */
-void purple_im_conversation_set_typing_state(PurpleIMConversation *im, PurpleIMConversationTypingState state);
+void purple_im_conversation_set_typing_state(PurpleIMConversation *im, PurpleIMTypingState state);
 
 /**
  * Returns the IM's typing state.
@@ -251,7 +251,7 @@ void purple_im_conversation_set_typing_state(PurpleIMConversation *im, PurpleIMC
  *
  * @return The IM's typing state.
  */
-PurpleIMConversationTypingState purple_im_conversation_get_typing_state(const PurpleIMConversation *im);
+PurpleIMTypingState purple_im_conversation_get_typing_state(const PurpleIMConversation *im);
 
 /**
  * Starts the IM's typing timeout.
@@ -278,25 +278,25 @@ void purple_im_conversation_stop_typing_timeout(PurpleIMConversation *im);
 guint purple_im_conversation_get_typing_timeout(const PurpleIMConversation *im);
 
 /**
- * Sets the quiet-time when no PURPLE_IM_CONVERSATION_TYPING messages will be sent.
+ * Sets the quiet-time when no PURPLE_IM_TYPING messages will be sent.
  * Few protocols need this (maybe only MSN).  If the user is still
- * typing after this quiet-period, then another PURPLE_IM_CONVERSATION_TYPING message
+ * typing after this quiet-period, then another PURPLE_IM_TYPING message
  * will be sent.
  *
  * @param im  The IM.
  * @param val The number of seconds to wait before allowing another
- *            PURPLE_IM_CONVERSATION_TYPING message to be sent to the user.  Or 0 to
- *            not send another PURPLE_IM_CONVERSATION_TYPING message.
+ *            PURPLE_IM_TYPING message to be sent to the user.  Or 0 to
+ *            not send another PURPLE_IM_TYPING message.
  */
 void purple_im_conversation_set_type_again(PurpleIMConversation *im, unsigned int val);
 
 /**
- * Returns the time after which another PURPLE_IM_CONVERSATION_TYPING message should be sent.
+ * Returns the time after which another PURPLE_IM_TYPING message should be sent.
  *
  * @param im The IM.
  *
  * @return The time in seconds since the epoch.  Or 0 if no additional
- *         PURPLE_IM_CONVERSATION_TYPING message should be sent.
+ *         PURPLE_IM_TYPING message should be sent.
  */
 time_t purple_im_conversation_get_type_again(const PurpleIMConversation *im);
 
@@ -356,7 +356,7 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
 
 /**
  * Returns a list of users in the chat room.  The members of the list
- * are PurpleChatConversationBuddy objects.
+ * are PurpleChatUser objects.
  *
  * @param chat The chat.
  *
@@ -482,7 +482,7 @@ int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
  * @param new_arrival Decides whether or not to show a join notice.
  */
 void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char *user,
-							 const char *extra_msg, PurpleChatConversationBuddyFlags flags,
+							 const char *extra_msg, PurpleChatUserFlags flags,
 							 gboolean new_arrival);
 
 /**
@@ -581,12 +581,12 @@ const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
 void purple_chat_conversation_leave(PurpleChatConversation *chat);
 
 /**
- * Find a chat buddy in a chat
+ * Find a chat user in a chat
  *
  * @param chat The chat.
- * @param name The name of the chat buddy to find.
+ * @param name The name of the chat user to find.
  */
-PurpleChatConversationBuddy *purple_chat_conversation_find_buddy(PurpleChatConversation *chat, const char *name);
+PurpleChatUser *purple_chat_conversation_find_buddy(PurpleChatConversation *chat, const char *name);
 
 /**
  * Invite a user to a chat.
@@ -616,159 +616,159 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation Buddy API                                     */
+/** @name Chat Conversation User API                                     */
 /**************************************************************************/
 /*@{*/
 
 /**
  * Returns the GType for the ChatConversationBuddy object.
  */
-GType purple_chat_conversation_buddy_get_type(void);
+GType purple_chat_user_get_type(void);
 
 /**
- * Get an attribute of a chat buddy
+ * Get an attribute of a chat user
  *
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  * @param key	The key of the attribute.
  *
  * @return The value of the attribute key.
  */
-const char *purple_chat_conversation_buddy_get_attribute(PurpleChatConversationBuddy *cb, const char *key);
+const char *purple_chat_user_get_attribute(PurpleChatUser *cb, const char *key);
 
 /**
- * Get the keys of all atributes of a chat buddy
+ * Get the keys of all atributes of a chat user
  *
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  *
- * @return A list of the attributes of a chat buddy.
+ * @return A list of the attributes of a chat user.
  */
-GList *purple_chat_conversation_buddy_get_attribute_keys(PurpleChatConversationBuddy *cb);
+GList *purple_chat_user_get_attribute_keys(PurpleChatUser *cb);
 	
 /**
- * Set an attribute of a chat buddy
+ * Set an attribute of a chat user
  *
  * @param chat	The chat.
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  * @param key	The key of the attribute.
  * @param value	The value of the attribute.
  */
-void purple_chat_conversation_buddy_set_attribute(PurpleChatConversationBuddy *cb,
+void purple_chat_user_set_attribute(PurpleChatUser *cb,
 		PurpleChatConversation *chat, const char *key, const char *value);
 
 /**
- * Set attributes of a chat buddy
+ * Set attributes of a chat user
  *
  * @param chat	The chat.
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  * @param keys	A GList of the keys.
  * @param values A GList of the values.
  */
-void purple_chat_conversation_buddy_set_attributes(PurpleChatConversationBuddy *cb,
+void purple_chat_user_set_attributes(PurpleChatUser *cb,
 		PurpleChatConversation *chat, GList *keys, GList *values);
 
 /**
- * Set the chat conversation associated with this chat buddy.
+ * Set the chat conversation associated with this chat user.
  *
- * @param cb	The chat buddy
+ * @param cb	The chat user
  * @param chat	The chat conversation that the buddy belongs to.
  */
-void purple_chat_conversation_buddy_set_chat(PurpleChatConversationBuddy *cb,
+void purple_chat_user_set_chat(PurpleChatUser *cb,
 		PurpleChatConversation *chat);
 
 /**
- * Get the chat conversation associated with this chat buddy.
+ * Get the chat conversation associated with this chat user.
  *
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  *
  * @return		The chat conversation that the buddy belongs to.
  */
-PurpleChatConversation *purple_chat_conversation_buddy_get_chat(const PurpleChatConversationBuddy *cb);
+PurpleChatConversation *purple_chat_user_get_chat(const PurpleChatUser *cb);
 
 /**
- * Creates a new chat buddy
+ * Creates a new chat user
  *
  * @param chat The chat that the buddy belongs to.
  * @param name The name.
  * @param alias The alias.
  * @param flags The flags.
  *
- * @return The new chat buddy
+ * @return The new chat user
  */
-PurpleChatConversationBuddy *purple_chat_conversation_buddy_new(PurpleChatConversation *chat,
-		const char *name, const char *alias, PurpleChatConversationBuddyFlags flags);
+PurpleChatUser *purple_chat_user_new(PurpleChatConversation *chat,
+		const char *name, const char *alias, PurpleChatUserFlags flags);
 
 /**
- * Set the UI data associated with this chat buddy.
+ * Set the UI data associated with this chat user.
  *
- * @param cb			The chat buddy
- * @param ui_data		A pointer to associate with this chat buddy.
+ * @param cb			The chat user
+ * @param ui_data		A pointer to associate with this chat user.
  */
-void purple_chat_conversation_buddy_set_ui_data(PurpleChatConversationBuddy *cb, gpointer ui_data);
+void purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data);
 
 /**
- * Get the UI data associated with this chat buddy.
+ * Get the UI data associated with this chat user.
  *
- * @param cb			The chat buddy.
+ * @param cb			The chat user.
  *
- * @return The UI data associated with this chat buddy.  This is a
+ * @return The UI data associated with this chat user.  This is a
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
-gpointer purple_chat_conversation_buddy_get_ui_data(const PurpleChatConversationBuddy *cb);
+gpointer purple_chat_user_get_ui_data(const PurpleChatUser *cb);
 
 /**
- * Get the alias of a chat buddy
+ * Get the alias of a chat user
  *
- * @param cb    The chat buddy.
+ * @param cb    The chat user.
  *
- * @return The alias of the chat buddy.
+ * @return The alias of the chat user.
  */
-const char *purple_chat_conversation_buddy_get_alias(const PurpleChatConversationBuddy *cb);
+const char *purple_chat_user_get_alias(const PurpleChatUser *cb);
 
 /**
- * Get the name of a chat buddy
+ * Get the name of a chat user
  *
- * @param cb    The chat buddy.
+ * @param cb    The chat user.
  *
- * @return The name of the chat buddy.
+ * @return The name of the chat user.
  */
-const char *purple_chat_conversation_buddy_get_name(const PurpleChatConversationBuddy *cb);
+const char *purple_chat_user_get_name(const PurpleChatUser *cb);
 
 /**
- * Set the flags of a chat buddy.
+ * Set the flags of a chat user.
  *
- * @param cb     The chat buddy.
+ * @param cb     The chat user.
  * @param flags  The new flags.
  */
-void purple_chat_conversation_buddy_set_flags(PurpleChatConversationBuddy *cb,
-		PurpleChatConversationBuddyFlags flags);
+void purple_chat_user_set_flags(PurpleChatUser *cb,
+		PurpleChatUserFlags flags);
 
 /**
- * Get the flags of a chat buddy.
+ * Get the flags of a chat user.
  *
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  *
- * @return The flags of the chat buddy.
+ * @return The flags of the chat user.
  */
-PurpleChatConversationBuddyFlags purple_chat_conversation_buddy_get_flags(const PurpleChatConversationBuddy *cb);
+PurpleChatUserFlags purple_chat_user_get_flags(const PurpleChatUser *cb);
 
 /**
- * Sets if this chat buddy is on the buddy list.
+ * Sets if this chat user is on the buddy list.
  *
- * @param cb	The chat buddy.
- * @param buddy TRUE if the chat buddy is on the buddy list.
+ * @param cb	The chat user.
+ * @param buddy TRUE if the chat user is on the buddy list.
  */
-void purple_chat_conversation_buddy_set_buddy(const PurpleChatConversationBuddy *cb,
+void purple_chat_user_set_buddy(const PurpleChatUser *cb,
 		gboolean buddy);
 
 /**
- * Indicates if this chat buddy is on the buddy list.
+ * Indicates if this chat user is on the buddy list.
  *
- * @param cb	The chat buddy.
+ * @param cb	The chat user.
  *
- * @return TRUE if the chat buddy is on the buddy list.
+ * @return TRUE if the chat user is on the buddy list.
  */
-gboolean purple_chat_conversation_buddy_is_buddy(const PurpleChatConversationBuddy *cb);
+gboolean purple_chat_user_is_buddy(const PurpleChatUser *cb);
 
 /*@}*/
 

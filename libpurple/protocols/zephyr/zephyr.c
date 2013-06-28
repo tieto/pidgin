@@ -862,7 +862,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				flags |= PURPLE_MESSAGE_AUTO_RESP;
 
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
-				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_IM_CONVERSATION_TYPING);
+				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
 			else
 				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
@@ -908,7 +908,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 #else
 				memcpy(ipaddr,inet_ntoa(notice.z_sender_addr),sizeof(ipaddr));
 #endif
-				purple_chat_conversation_add_user(gcc, stripped_sender, ipaddr, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+				purple_chat_conversation_add_user(gcc, stripped_sender, ipaddr, PURPLE_CHAT_USER_NONE, TRUE);
 			}
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
 			g_free(send_inst_utf8);
@@ -2531,13 +2531,13 @@ static const char *zephyr_list_icon(PurpleAccount * a, PurpleBuddy * b)
 	return "zephyr";
 }
 
-static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state) {
+static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state) {
 	gchar *recipient;
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	if (use_tzc(zephyr))
 		return 0;
 
-	if (state == PURPLE_IM_CONVERSATION_NOT_TYPING)
+	if (state == PURPLE_IM_NOT_TYPING)
 		return 0;
 
 	/* XXX We probably should care if this fails. Or maybe we don't want to */
@@ -2561,7 +2561,7 @@ static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, Pu
 
 	/*
 	 * TODO: Is this correct?  It means we will call
-	 *       serv_send_typing(gc, who, PURPLE_IM_CONVERSATION_TYPING) once every 15 seconds
+	 *       serv_send_typing(gc, who, PURPLE_IM_TYPING) once every 15 seconds
 	 *       until the Purple user stops typing.
 	 */
 	return ZEPHYR_TYPING_SEND_TIMEOUT;

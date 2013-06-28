@@ -671,7 +671,7 @@ static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *ch
  *  @param name		The username of the contact
  *  @param state	The typing state to be reported.
  */
-static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleIMConversationTypingState state )
+static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleIMTypingState state )
 {
 	PurpleAccount*		account		= purple_connection_get_account( gc );
 	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
@@ -697,12 +697,12 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 	messageId = purple_uuid_random();		/* generate a unique message id */
 
 	switch ( state ) {
-		case PURPLE_IM_CONVERSATION_TYPING :		/* currently typing */
+		case PURPLE_IM_TYPING :		/* currently typing */
 			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_TYPING );
 			break;
 
-		case PURPLE_IM_CONVERSATION_TYPED :			/* stopped typing */
-		case PURPLE_IM_CONVERSATION_NOT_TYPING :	/* not typing / erased all text */
+		case PURPLE_IM_TYPED :			/* stopped typing */
+		case PURPLE_IM_NOT_TYPING :	/* not typing / erased all text */
 			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_STOPPED );
 			break;
 

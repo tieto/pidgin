@@ -540,7 +540,7 @@ static gboolean
 handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet)
 {
 	static int i = 1;
-	PurpleChatConversationBuddyFlags flags = PURPLE_CHAT_CONVERSATION_BUDDY_NONE;
+	PurpleChatUserFlags flags = PURPLE_CHAT_USER_NONE;
 	JabberChat *chat = presence->chat;
 
 	if (presence->state == JABBER_BUDDY_STATE_ERROR) {
@@ -613,12 +613,12 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		}
 
 		if (purple_strequal(affiliation, "owner"))
-			flags |= PURPLE_CHAT_CONVERSATION_BUDDY_FOUNDER;
+			flags |= PURPLE_CHAT_USER_FOUNDER;
 		if (role) {
 			if (g_str_equal(role, "moderator"))
-				flags |= PURPLE_CHAT_CONVERSATION_BUDDY_OP;
+				flags |= PURPLE_CHAT_USER_OP;
 			else if (g_str_equal(role, "participant"))
-				flags |= PURPLE_CHAT_CONVERSATION_BUDDY_VOICE;
+				flags |= PURPLE_CHAT_USER_VOICE;
 		}
 
 		if(!chat->conv) {
@@ -640,7 +640,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			purple_chat_conversation_add_user(chat->conv, presence->jid_from->resource,
 					jid, flags, chat->joined > 0 && ((!presence->delayed) || (presence->sent > chat->joined)));
 		else
-			purple_chat_conversation_buddy_set_flags(purple_chat_conversation_find_buddy(chat->conv, presence->jid_from->resource),
+			purple_chat_user_set_flags(purple_chat_conversation_find_buddy(chat->conv, presence->jid_from->resource),
 					flags);
 
 		if (is_our_resource && chat->joined == 0)

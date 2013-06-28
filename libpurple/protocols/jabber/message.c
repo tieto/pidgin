@@ -79,9 +79,9 @@ static void handle_chat(JabberMessage *jm)
 			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_IM_CONVERSATION_TYPING);
+			serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_IM_CONVERSATION_TYPED);
+			serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleIMConversation *im = purple_conversations_find_im_with_account(
 					jm->from, account);
@@ -1239,7 +1239,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	return 1;
 }
 
-unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMConversationTypingState state)
+unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state)
 {
 	JabberStream *js;
 	JabberMessage *jm;
@@ -1273,9 +1273,9 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleIMC
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
 
-	if(PURPLE_IM_CONVERSATION_TYPING == state)
+	if(PURPLE_IM_TYPING == state)
 		jm->chat_state = JM_STATE_COMPOSING;
-	else if(PURPLE_IM_CONVERSATION_TYPED == state)
+	else if(PURPLE_IM_TYPED == state)
 		jm->chat_state = JM_STATE_PAUSED;
 	else
 		jm->chat_state = JM_STATE_ACTIVE;

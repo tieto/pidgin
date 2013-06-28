@@ -84,7 +84,7 @@ void yahoo_chat_add_users(PurpleChatConversation *chat, GList *newusers)
 	for (i = newusers; i; i = i->next) {
 		if (purple_chat_conversation_has_user(chat, i->data))
 			continue;
-		purple_chat_conversation_add_user(chat, i->data, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+		purple_chat_conversation_add_user(chat, i->data, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 	}
 }
 
@@ -93,7 +93,7 @@ void yahoo_chat_add_user(PurpleChatConversation *chat, const char *user, const c
 	if (purple_chat_conversation_has_user(chat, user))
 		return;
 
-	purple_chat_conversation_add_user(chat, user, reason, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+	purple_chat_conversation_add_user(chat, user, reason, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 static PurpleChatConversation *yahoo_find_conference(PurpleConnection *gc, const char *name)
@@ -549,7 +549,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		GList *l;
 		GList *flags = NULL;
 		for (l = members; l; l = l->next)
-			flags = g_list_prepend(flags, GINT_TO_POINTER(PURPLE_CHAT_CONVERSATION_BUDDY_NONE));
+			flags = g_list_prepend(flags, GINT_TO_POINTER(PURPLE_CHAT_USER_NONE));
 		if (c && purple_chat_conversation_has_left(c)) {
 			/* this might be a hack, but oh well, it should nicely */
 			char *tmpmsg;
@@ -772,7 +772,7 @@ void yahoo_conf_leave(YahooData *yd, const char *room, const char *dn, GList *wh
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
-		const char *name = purple_chat_conversation_buddy_get_name(w->data);
+		const char *name = purple_chat_user_get_name(w->data);
 		yahoo_packet_hash_str(pkt, 3, name);
 	}
 
@@ -796,7 +796,7 @@ static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *roo
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (who = members; who; who = who->next) {
-		const char *name = purple_chat_conversation_buddy_get_name(who->data);
+		const char *name = purple_chat_user_get_name(who->data);
 		yahoo_packet_hash_str(pkt, 53, name);
 	}
 	yahoo_packet_hash(pkt, "ss", 57, room, 14, msg2);
@@ -828,7 +828,7 @@ static void yahoo_conf_join(YahooData *yd, PurpleChatConversation *c, const char
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
 			yahoo_packet_hash_str(pkt, 3, memarr[i]);
-			purple_chat_conversation_add_user(c, memarr[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+			purple_chat_conversation_add_user(c, memarr[i], NULL, PURPLE_CHAT_USER_NONE, TRUE);
 		}
 	}
 	yahoo_packet_send_and_free(pkt, yd);
@@ -854,7 +854,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleChatConversation *c,
 
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
 	for(; members; members = members->next) {
-		const char *name = purple_chat_conversation_buddy_get_name(members->data);
+		const char *name = purple_chat_user_get_name(members->data);
 		if (!strcmp(name, dn))
 			continue;
 		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);

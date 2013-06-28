@@ -677,7 +677,7 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 				if (ur) {
 					name = nm_user_record_get_display_id(ur);
 					purple_chat_conversation_add_user(chat, name, NULL,
-											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+											PURPLE_CHAT_USER_NONE, TRUE);
 				}
 			}
 		}
@@ -1978,7 +1978,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 
 					name = nm_user_record_get_display_id(ur);
 					purple_chat_conversation_add_user(chat, name, NULL,
-											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+											PURPLE_CHAT_USER_NONE, TRUE);
 
 				}
 			}
@@ -1990,7 +1990,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 				name = nm_user_record_get_display_id(ur);
 				if (!purple_chat_conversation_has_user(chat, name)) {
 					purple_chat_conversation_add_user(chat, name, NULL,
-											PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+											PURPLE_CHAT_USER_NONE, TRUE);
 				}
 			}
 		}
@@ -2056,7 +2056,7 @@ _evt_user_typing(NMUser * user, NMEvent * event)
 		user_record = nm_find_user_record(user, nm_event_get_source(event));
 		if (user_record) {
 			serv_got_typing(gc, nm_user_record_get_display_id(user_record),
-							30, PURPLE_IM_CONVERSATION_TYPING);
+							30, PURPLE_IM_TYPING);
 		}
 	}
 }
@@ -2343,7 +2343,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 }
 
 static unsigned int
-novell_send_typing(PurpleConnection * gc, const char *name, PurpleIMConversationTypingState state)
+novell_send_typing(PurpleConnection * gc, const char *name, PurpleIMTypingState state)
 {
 	NMConference *conf = NULL;
 	NMUser *user;
@@ -2366,7 +2366,7 @@ novell_send_typing(PurpleConnection * gc, const char *name, PurpleIMConversation
 		if (conf) {
 
 			rc = nm_send_typing(user, conf,
-								((state == PURPLE_IM_CONVERSATION_TYPING) ? TRUE : FALSE), NULL);
+								((state == PURPLE_IM_TYPING) ? TRUE : FALSE), NULL);
 			_check_for_disconnect(user, rc);
 
 		}

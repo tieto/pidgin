@@ -2000,7 +2000,7 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   for(; members; members = members->next) {
     struct mwLoginInfo *peer = members->data;
     purple_chat_conversation_add_user(g_conf, peer->user_id,
-			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
+			    NULL, PURPLE_CHAT_USER_NONE, FALSE);
   }
 }
 
@@ -2041,7 +2041,7 @@ static void mw_conf_peer_joined(struct mwConference *conf,
   g_return_if_fail(g_conf != NULL);
 
   purple_chat_conversation_add_user(g_conf, peer->user_id,
-			  NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+			  NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 
@@ -2663,7 +2663,7 @@ static void im_recv_typing(struct mwConversation *conv,
   idb = mwConversation_getTarget(conv);
 
   serv_got_typing(pd->gc, idb->user, 0,
-		  typing? PURPLE_IM_CONVERSATION_TYPING: PURPLE_IM_CONVERSATION_NOT_TYPING);
+		  typing? PURPLE_IM_TYPING: PURPLE_IM_NOT_TYPING);
 }
 
 
@@ -3010,7 +3010,7 @@ static void mw_place_opened(struct mwPlace *place) {
   for(l = members; l; l = l->next) {
     struct mwIdBlock *idb = l->data;
     purple_chat_conversation_add_user(gconf, idb->user,
-			    NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
+			    NULL, PURPLE_CHAT_USER_NONE, FALSE);
   }
   g_list_free(members);
 }
@@ -3051,7 +3051,7 @@ static void mw_place_peerJoined(struct mwPlace *place,
   g_return_if_fail(gconf != NULL);
 
   purple_chat_conversation_add_user(gconf, peer->user,
-			  NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+			  NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 
@@ -4026,7 +4026,7 @@ static int mw_prpl_send_im(PurpleConnection *gc,
 
 static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
 					const char *name,
-					PurpleIMConversationTypingState state) {
+					PurpleIMTypingState state) {
 
   struct mwPurplePluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
@@ -4044,7 +4044,7 @@ static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
   if(mwConversation_isOpen(conv)) {
     mwConversation_send(conv, mwImSend_TYPING, t);
 
-  } else if((state == PURPLE_IM_CONVERSATION_TYPING) || (state == PURPLE_IM_CONVERSATION_TYPED)) {
+  } else if((state == PURPLE_IM_TYPING) || (state == PURPLE_IM_TYPED)) {
     /* only open a channel for sending typing notification, not for
        when typing has stopped. There's no point in re-opening a
        channel just to tell someone that this side isn't typing. */

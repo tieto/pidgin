@@ -183,7 +183,7 @@ static void member_added(PurpleChatConversation* chat, const char* nickname)
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "member_added: '%s'\n", nickname);
 
-	purple_chat_conversation_add_user(chat, nickname, NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, TRUE);
+	purple_chat_conversation_add_user(chat, nickname, NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 
@@ -253,7 +253,7 @@ static void member_update(PurpleChatConversation* chat, char* data)
 	userlist = g_strsplit(data, "\n", 0);	/* tokenize string */
 	while (userlist[i] != NULL) {
 		purple_debug_info(MXIT_PLUGIN_ID, "member_update - adding: '%s'\n", userlist[i]);
-		purple_chat_conversation_add_user(chat, userlist[i], NULL, PURPLE_CHAT_CONVERSATION_BUDDY_NONE, FALSE);
+		purple_chat_conversation_add_user(chat, userlist[i], NULL, PURPLE_CHAT_USER_NONE, FALSE);
 		i++;
 	}
 	g_strfreev(userlist);

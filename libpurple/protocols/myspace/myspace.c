@@ -1555,7 +1555,7 @@ msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 			msg_text, username);
 
 	if (g_str_equal(msg_text, "%typing%")) {
-		serv_got_typing(session->gc, username, 0, PURPLE_IM_CONVERSATION_TYPING);
+		serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
 		rc = TRUE;
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
@@ -1613,7 +1613,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 	/* Media messages are sent when the user opens a window to someone.
 	 * Tell libpurple they started typing and stopped typing, to inform the Psychic
 	 * Mode plugin so it too can open a window to the user. */
-	serv_got_typing(session->gc, username, 0, PURPLE_IM_CONVERSATION_TYPING);
+	serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
 	serv_got_typing_stopped(session->gc, username);
 
 	g_free(username);
@@ -2326,13 +2326,13 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
  *
  * @param gc
  * @param name The buddy name to which our user is typing to
- * @param state PURPLE_IM_CONVERSATION_TYPING, PURPLE_IM_CONVERSATION_TYPED, PURPLE_IM_CONVERSATION_NOT_TYPING
+ * @param state PURPLE_IM_TYPING, PURPLE_IM_TYPED, PURPLE_IM_NOT_TYPING
  *
  * @return 0
  */
 static unsigned int
 msim_send_typing(PurpleConnection *gc, const gchar *name,
-		PurpleIMConversationTypingState state)
+		PurpleIMTypingState state)
 {
 	const gchar *typing_str;
 	MsimSession *session;
@@ -2343,12 +2343,12 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	session = purple_connection_get_protocol_data(gc);
 
 	switch (state) {
-		case PURPLE_IM_CONVERSATION_TYPING:
+		case PURPLE_IM_TYPING:
 			typing_str = "%typing%";
 			break;
 
-		case PURPLE_IM_CONVERSATION_TYPED:
-		case PURPLE_IM_CONVERSATION_NOT_TYPING:
+		case PURPLE_IM_TYPED:
+		case PURPLE_IM_NOT_TYPING:
 		default:
 			typing_str = "%stoptyping%";
 			break;

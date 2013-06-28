@@ -428,48 +428,48 @@ buddy_typing_stopped_cb(PurpleAccount *account, const char *name, void *data)
 }
 
 static gboolean
-chat_buddy_joining_cb(PurpleConversation *conv, const char *user,
-					  PurpleChatConversationBuddyFlags flags, void *data)
+chat_user_joining_cb(PurpleConversation *conv, const char *user,
+					  PurpleChatUserFlags flags, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-joining (%s, %s, %d)\n",
+	purple_debug_misc("signals test", "chat-user-joining (%s, %s, %d)\n",
 					purple_conversation_get_name(conv), user, flags);
 
 	return FALSE;
 }
 
 static void
-chat_buddy_joined_cb(PurpleConversation *conv, const char *user,
-					 PurpleChatConversationBuddyFlags flags, gboolean new_arrival, void *data)
+chat_user_joined_cb(PurpleConversation *conv, const char *user,
+					 PurpleChatUserFlags flags, gboolean new_arrival, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d, %d)\n",
+	purple_debug_misc("signals test", "chat-user-joined (%s, %s, %d, %d)\n",
 					purple_conversation_get_name(conv), user, flags, new_arrival);
 }
 
 static void
-chat_buddy_flags_cb(PurpleChatConversationBuddy *cb, PurpleChatConversationBuddyFlags oldflags,
-					 PurpleChatConversationBuddyFlags newflags, void *data)
+chat_user_flags_cb(PurpleChatUser *cb, PurpleChatUserFlags oldflags,
+					 PurpleChatUserFlags newflags, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-flags (%s, %s, %d, %d)\n",
+	purple_debug_misc("signals test", "chat-user-flags (%s, %s, %d, %d)\n",
 					purple_conversation_get_name(PURPLE_CONVERSATION(
-					purple_chat_conversation_buddy_get_chat(cb))),
-					purple_chat_conversation_buddy_get_name(cb), oldflags, newflags);
+					purple_chat_user_get_chat(cb))),
+					purple_chat_user_get_name(cb), oldflags, newflags);
 }
 
 static gboolean
-chat_buddy_leaving_cb(PurpleConversation *conv, const char *user,
+chat_user_leaving_cb(PurpleConversation *conv, const char *user,
 					  const char *reason, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-leaving (%s, %s, %s)\n",
+	purple_debug_misc("signals test", "chat-user-leaving (%s, %s, %s)\n",
 					purple_conversation_get_name(conv), user, reason);
 
 	return FALSE;
 }
 
 static void
-chat_buddy_left_cb(PurpleConversation *conv, const char *user,
+chat_user_left_cb(PurpleConversation *conv, const char *user,
 				   const char *reason, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-left (%s, %s, %s)\n",
+	purple_debug_misc("signals test", "chat-user-left (%s, %s, %s)\n",
 					purple_conversation_get_name(conv), user, reason);
 }
 
@@ -793,16 +793,16 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(buddy_typing_cb), NULL);
 	purple_signal_connect(conv_handle, "buddy-typing-stopped",
 						plugin, PURPLE_CALLBACK(buddy_typing_stopped_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-joining",
-						plugin, PURPLE_CALLBACK(chat_buddy_joining_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-joined",
-						plugin, PURPLE_CALLBACK(chat_buddy_joined_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-flags",
-						plugin, PURPLE_CALLBACK(chat_buddy_flags_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-leaving",
-						plugin, PURPLE_CALLBACK(chat_buddy_leaving_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-left",
-						plugin, PURPLE_CALLBACK(chat_buddy_left_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-joining",
+						plugin, PURPLE_CALLBACK(chat_user_joining_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-joined",
+						plugin, PURPLE_CALLBACK(chat_user_joined_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-flags",
+						plugin, PURPLE_CALLBACK(chat_user_flags_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-leaving",
+						plugin, PURPLE_CALLBACK(chat_user_leaving_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-left",
+						plugin, PURPLE_CALLBACK(chat_user_left_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-inviting-user",
 						plugin, PURPLE_CALLBACK(chat_inviting_user_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-invited-user",

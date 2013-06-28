@@ -178,12 +178,12 @@ Purple::DebugLevel			T_IV
 /* conversations.h */
 Purple::Conversation			T_PurpleObj
 Purple::ChatConversation		T_PurpleObj
-Purple::ChatConversation::Buddy		T_PurpleObj
+Purple::ChatUser			T_PurpleObj
 Purple::IMConversation			T_PurpleObj
-Purple::ChatConversation::Buddy::Flags	T_IV
+Purple::ChatUser::Flags			T_IV
 Purple::Conversation::UpdateType	T_IV
 Purple::MessageFlags			T_IV
-Purple::IMConversation::TypingState	T_IV
+Purple::IMTypingState			T_IV
 Purple::UnseenState			T_IV
 
 /* connection.h */
