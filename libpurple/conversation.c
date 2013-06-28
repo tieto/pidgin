@@ -660,7 +660,6 @@ purple_conversation_has_focus(PurpleConversation *conv)
  * core/UI split is cleaner.  Also need to make sure this is called
  * when chats are added/removed from the blist.
  */
-/* TODO override as im-updated and chat-updated */
 void
 purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateType type)
 {

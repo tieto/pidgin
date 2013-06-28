@@ -601,7 +601,7 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 		ops->create_conversation(conv);
 
 	purple_signal_emit(purple_conversations_get_handle(),
-					 "conversation-created", im); /* TODO im-created */
+					 "conversation-created", im);
 
 	return im;
 }
@@ -1664,7 +1664,7 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 		ops->create_conversation(conv);
 
 	purple_signal_emit(purple_conversations_get_handle(),
-					 "conversation-created", chat); /* TODO chat-created */
+					 "conversation-created", chat);
 
 	return chat;
 }
