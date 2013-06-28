@@ -1393,7 +1393,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
 		break;
 	case DND_IM_IMAGE:
-		conv = purple_im_conversation_new(data->account, data->who);
+		conv = PURPLE_CONVERSATION(purple_im_conversation_new(data->account, data->who));
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
 		if (!g_file_get_contents(data->filename, &filedata, &size,
@@ -1573,7 +1573,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				PidginConversation *gtkconv;
 
 			case PURPLE_DESKTOP_ITEM_TYPE_LINK:
-				conv = purple_im_conversation_new(account, who);
+				conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
 				gtkconv =  PIDGIN_CONVERSATION(conv);
 				gtk_webview_insert_link(GTK_WEBVIEW(gtkconv->entry),
 				                        purple_desktop_item_get_string(item, "URL"),

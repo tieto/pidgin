@@ -1618,7 +1618,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
 	gtk_action_set_sensitive(priv->attention,
-		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
+		conv && prpl && PURPLE_IS_IM_CONVERSATION(conv) &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }
 

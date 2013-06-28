@@ -4,8 +4,8 @@ MODULE = Pidgin::Conversation  PACKAGE = Pidgin::Conversation  PREFIX = pidgin_c
 PROTOTYPES: ENABLE
 
 void
-pidgin_conv_update_buddy_icon(conv)
-	Purple::Conversation conv
+pidgin_conv_update_buddy_icon(im)
+	Purple::IMConversation im
 
 void
 pidgin_conv_switch_active_conversation(conv)

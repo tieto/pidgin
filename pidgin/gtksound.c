@@ -85,19 +85,19 @@ unmute_login_sounds_cb(gpointer data)
 }
 
 static gboolean
-chat_nick_matches_name(PurpleConversation *conv, const char *aname)
+chat_nick_matches_name(PurpleChatConversation *chat, const char *aname)
 {
-	PurpleChatConversation *chat = NULL;
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
-	chat = purple_conversation_get_chat_data(conv);
 
 	if (chat==NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(purple_conversation_get_account(conv), purple_chat_conversation_get_nick(chat)));
-	name = g_strdup(purple_normalize(purple_conversation_get_account(conv), aname));
+	nick = g_strdup(purple_normalize(purple_conversation_get_account(
+			PURPLE_CONVERSATION(chat)), purple_chat_conversation_get_nick(chat)));
+	name = g_strdup(purple_normalize(purple_conversation_get_account(
+			PURPLE_CONVERSATION(chat)), aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;
@@ -158,26 +158,26 @@ static void
 im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
-	PurpleConversation *conv = purple_conversations_find_with_account(
-		PURPLE_CONV_TYPE_IM, receiver, account);
+	PurpleConversation *conv = PURPLE_CONVERSATION(
+			purple_conversations_find_im_with_account(receiver, account));
 	play_conv_event(conv, event);
 }
 
 static void
-chat_buddy_join_cb(PurpleConversation *conv, const char *name,
+chat_buddy_join_cb(PurpleChatConversation *chat, const char *name,
 				   PurpleChatConversationBuddyFlags flags, gboolean new_arrival,
 				   PurpleSoundEventID event)
 {
-	if (new_arrival && !chat_nick_matches_name(conv, name))
-		play_conv_event(conv, event);
+	if (new_arrival && !chat_nick_matches_name(chat, name))
+		play_conv_event(PURPLE_CONVERSATION(chat), event);
 }
 
 static void
-chat_buddy_left_cb(PurpleConversation *conv, const char *name,
+chat_buddy_left_cb(PurpleChatConversation *chat, const char *name,
 				   const char *reason, PurpleSoundEventID event)
 {
-	if (!chat_nick_matches_name(conv, name))
-		play_conv_event(conv, event);
+	if (!chat_nick_matches_name(chat, name))
+		play_conv_event(PURPLE_CONVERSATION(chat), event);
 }
 
 static void
@@ -188,28 +188,26 @@ chat_msg_sent_cb(PurpleAccount *account, const char *message,
 	PurpleConversation *conv = NULL;
 
 	if (conn!=NULL)
-		conv = purple_conversations_find_chat(conn,id);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_chat(conn,id));
 
 	play_conv_event(conv, event);
 }
 
 static void
 chat_msg_received_cb(PurpleAccount *account, char *sender,
-					 char *message, PurpleConversation *conv,
+					 char *message, PurpleChatConversation *chat,
 					 PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	PurpleChatConversation *chat;
-
+	PurpleConversation *conv = PURPLE_CONVERSATION(chat);
 	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
 		return;
 
-	chat = purple_conversation_get_chat_data(conv);
-	g_return_if_fail(chat != NULL);
+	g_return_if_fail(conv != NULL);
 
-	if (purple_chat_conversation_is_user_ignored(chat, sender))
+	if (purple_chat_conversation_is_ignored_user(chat, sender))
 		return;
 
-	if (chat_nick_matches_name(conv, sender))
+	if (chat_nick_matches_name(chat, sender))
 		return;
 
 	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_chat_conversation_get_nick(chat)))

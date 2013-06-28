@@ -192,11 +192,10 @@ open_im_foreach(GtkTreeModel *model, GtkTreePath *path,
 			-1);
 
 	if (pounce_data != NULL) {
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-				pounce_data->account, pounce_data->pouncee);
-		purple_conversation_present(conv);
+		im = purple_im_conversation_new(pounce_data->account, pounce_data->pouncee);
+		purple_conversation_present(PURPLE_CONVERSATION(im));
 	}
 }
 

@@ -952,18 +952,18 @@ pidgin_dialogs_im(void)
 void
 pidgin_dialogs_im_with_user(PurpleAccount *account, const char *username)
 {
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
 
-	conv = purple_conversations_find_im_with_account(username, account);
+	im = purple_conversations_find_im_with_account(username, account);
 
-	if (conv == NULL)
-		conv = purple_im_conversation_new(account, username);
+	if (im == NULL)
+		im = purple_im_conversation_new(account, username);
 
-	pidgin_conv_attach_to_conversation(conv);
-	purple_conversation_present(conv);
+	pidgin_conv_attach_to_conversation(PURPLE_CONVERSATION(im));
+	purple_conversation_present(PURPLE_CONVERSATION(im));
 }
 
 static gboolean
