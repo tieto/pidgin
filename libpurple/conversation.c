@@ -896,17 +896,21 @@ purple_conversation_set_property(GObject *obj, guint param_id, const GValue *val
 		GParamSpec *pspec)
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(obj);
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
 
 	switch (param_id) {
-		/* TODO if creation of conversation doesn't work, assign directly */
+		/* account, name and title are assigned directly here as
+		 * purple_im_conversation_new() and purple_chat_conversation_new()
+		 * pass these properties as parameters, and so the conversation hasn't
+		 * finished being set up */
 		case PROP_ACCOUNT:
-			purple_conversation_set_account(conv, g_value_get_object(value));
+			priv->account = g_value_get_object(value);
 			break;
 		case PROP_NAME:
-			purple_conversation_set_name(conv, g_value_get_string(value));
+			priv->name = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_TITLE:
-			purple_conversation_set_title(conv, g_value_get_string(value));
+			priv->title = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_LOGGING:
 			purple_conversation_set_logging(conv, g_value_get_boolean(value));

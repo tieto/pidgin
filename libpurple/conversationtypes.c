@@ -565,9 +565,6 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 	gc = purple_account_get_connection(account);
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	/* TODO check here. conversation-updated signals are emitted before
-	 * conversation-created signals because of the _set()'s
-	 */
 	im = g_object_new(PURPLE_TYPE_IM_CONVERSATION,
 			"account", account,
 			"name",    name,
@@ -1630,9 +1627,6 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 	gc = purple_account_get_connection(account);
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	/* TODO check here. conversation-updated signals are emitted before
-	 * conversation-created signals because of the _set()'s
-	 */
 	chat = g_object_new(PURPLE_TYPE_CHAT_CONVERSATION,
 			"account", account,
 			"name",    name,
