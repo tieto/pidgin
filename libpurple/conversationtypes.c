@@ -149,8 +149,7 @@ enum {
 	CB_PROP_LAST
 };
 
-static PurpleConversationClass *im_parent_class;
-static PurpleConversationClass *chat_parent_class;
+static PurpleConversationClass *parent_class;
 static GObjectClass            *cb_parent_class;
 
 static int purple_chat_conversation_buddy_compare(PurpleChatConversationBuddy *a,
@@ -471,7 +470,7 @@ purple_im_conversation_dispose(GObject *object)
 	purple_im_conversation_stop_typing_timeout(im);
 	purple_im_conversation_stop_send_typed_timeout(im);
 
-	G_OBJECT_CLASS(im_parent_class)->dispose(object);
+	G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -483,15 +482,16 @@ purple_im_conversation_finalize(GObject *object)
 
 	purple_buddy_icon_unref(priv->icon);
 
-	G_OBJECT_CLASS(im_parent_class)->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 /* Class initializer function */
 static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleConversationClass *conv_class = PURPLE_CONVERSATION_CLASS(klass);
 
-	im_parent_class = g_type_class_peek_parent(klass);
+	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_im_conversation_dispose;
 	obj_class->finalize = purple_im_conversation_finalize;
@@ -500,7 +500,7 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 	obj_class->get_property = purple_im_conversation_get_property;
 	obj_class->set_property = purple_im_conversation_set_property;
 
-	im_parent_class->write_message = im_conversation_write_message;
+	conv_class->write_message = im_conversation_write_message;
 
 	g_object_class_install_property(obj_class, IM_PROP_TYPING_STATE,
 			g_param_spec_enum(IM_PROP_TYPING_STATE_S, _("Typing state"),
@@ -1489,7 +1489,7 @@ purple_chat_conversation_dispose(GObject *object)
 			serv_got_chat_left(gc, chat_id);
 	}
 
-	G_OBJECT_CLASS(chat_parent_class)->dispose(object);
+	G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -1511,15 +1511,16 @@ purple_chat_conversation_finalize(GObject *object)
 	g_free(priv->topic);
 	g_free(priv->nick);
 
-	G_OBJECT_CLASS(chat_parent_class)->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 /* Class initializer function */
 static void purple_chat_conversation_class_init(PurpleChatConversationClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleConversationClass *conv_class = PURPLE_CONVERSATION_CLASS(klass);
 
-	chat_parent_class = g_type_class_peek_parent(klass);
+	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_chat_conversation_dispose;
 	obj_class->finalize = purple_chat_conversation_finalize;
@@ -1528,7 +1529,7 @@ static void purple_chat_conversation_class_init(PurpleChatConversationClass *kla
 	obj_class->get_property = purple_chat_conversation_get_property;
 	obj_class->set_property = purple_chat_conversation_set_property;
 
-	chat_parent_class->write_message = chat_conversation_write_message;
+	conv_class->write_message = chat_conversation_write_message;
 
 	g_object_class_install_property(obj_class, CHAT_PROP_TOPIC_WHO,
 			g_param_spec_string(CHAT_PROP_TOPIC_WHO_S, _("Who set topic"),
