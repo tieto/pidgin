@@ -251,7 +251,7 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 	if ((flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_INVISIBLE)))
 		return FALSE;
 
-	urls = purple_conversation_get_data(conv, "TinyURLs");
+	urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
 	if (urls != NULL) /* message was cancelled somewhere? Reset. */
 		g_list_foreach(urls, free_urls, NULL);
 	g_list_free(urls);
@@ -288,7 +288,7 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 	g_string_free(t, FALSE);
 	if (conv == NULL)
 		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, sender));
-	purple_conversation_set_data(conv, "TinyURLs", urls);
+	g_object_set_data(G_OBJECT(conv), "TinyURLs", urls);
 	return FALSE;
 }
 
@@ -297,12 +297,12 @@ static void wrote_msg(PurpleAccount *account, char *sender, char *message,
 {
 	GList *urls;
 
-	urls = purple_conversation_get_data(conv, "TinyURLs");
+	urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
 	if ((flags & PURPLE_MESSAGE_SEND) || urls == NULL)
 		return;
 
 	process_urls(conv, urls);
-	purple_conversation_set_data(conv, "TinyURLs", NULL);
+	g_object_set_data(G_OBJECT(conv), "TinyURLs", NULL);
 }
 
 /* Frees 'urls' */
@@ -345,7 +345,7 @@ process_urls(PurpleConversation *conv, GList *urls)
 static void
 free_conv_urls(PurpleConversation *conv)
 {
-	GList *urls = purple_conversation_get_data(conv, "TinyURLs");
+	GList *urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
 	if (urls)
 		g_list_foreach(urls, free_urls, NULL);
 	g_list_free(urls);

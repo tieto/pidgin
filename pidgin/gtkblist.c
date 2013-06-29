@@ -4789,8 +4789,8 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType t
 
 			if(gtkconv)
 				count = gtkconv->unseen_count;
-			else if(purple_conversation_get_data(l->data, "unseen-count"))
-				count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
+			else if(g_object_get_data(G_OBJECT(l->data), "unseen-count"))
+				count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(l->data), "unseen-count"));
 
 			g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),

@@ -334,7 +334,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 
 			list = list->next;
 			if (purple_conversation_get_account(conv) != purple_connection_get_account(gc) ||
-					!purple_conversation_get_data(conv, "want-to-rejoin"))
+					!g_object_get_data(G_OBJECT(conv), "want-to-rejoin"))
 				continue;
 
 			chat = find_chat_for_conversation(conv);
@@ -364,7 +364,7 @@ account_signing_off(PurpleConnection *gc)
 		PurpleConversation *conv = list->data;
 		if (!purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION(conv)) &&
 				purple_conversation_get_account(conv) == account) {
-			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			g_object_set_data(G_OBJECT(conv), "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
 						"longer in this chat. You will be automatically rejoined in the chat when "
 						"the account reconnects."),
@@ -718,7 +718,7 @@ gained_focus_cb(GntWindow *window, FinchConv *fc)
 {
 	GList *iter;
 	for (iter = fc->list; iter; iter = iter->next) {
-		purple_conversation_set_data(iter->data, "unseen-count", 0);
+		g_object_set_data(G_OBJECT(iter->data), "unseen-count", 0);
 		purple_conversation_update(iter->data, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 	}
 }
@@ -1007,8 +1007,8 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	if (flags & (PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_ERROR))
 		gnt_widget_set_urgent(ggconv->tv);
 	if (flags & PURPLE_MESSAGE_RECV && !gnt_widget_has_focus(ggconv->window)) {
-		int count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"));
-		purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(count + 1));
+		int count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count"));
+		g_object_set_data(G_OBJECT(conv), "unseen-count", GINT_TO_POINTER(count + 1));
 		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 	}
 }

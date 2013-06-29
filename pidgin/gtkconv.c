@@ -1361,11 +1361,11 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 	for (list = g_list_copy(gtkconv->convs); list; list = g_list_delete_link(list, list)) {
 		PurpleConversation *conv = list->data;
 		if (closetimer) {
-			guint timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+			guint timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 			if (timer)
 				purple_timeout_remove(timer);
 			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
-			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(timer));
+			g_object_set_data(G_OBJECT(conv), "close-timer", GINT_TO_POINTER(timer));
 		}
 #if 0
 		/* I will miss you */
@@ -5928,10 +5928,10 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 
 	/* Somebody wants to keep this conversation around, so don't time it out */
 	if (conv) {
-		timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+		timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 		if (timer) {
 			purple_timeout_remove(timer);
-			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+			g_object_set_data(G_OBJECT(conv), "close-timer", GINT_TO_POINTER(0));
 		}
 	}
 }
@@ -8188,7 +8188,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
 				PURPLE_IS_CHAT_CONVERSATION(conv) &&
 				purple_conversation_get_account(conv) == purple_connection_get_account(gc) &&
-				purple_conversation_get_data(conv, "want-to-rejoin")) {
+				g_object_get_data(G_OBJECT(conv), "want-to-rejoin")) {
 			GHashTable *comps = NULL;
 			PurpleChat *chat = purple_blist_find_chat(purple_conversation_get_account(conv), purple_conversation_get_name(conv));
 			if (chat == NULL) {
@@ -8218,7 +8218,7 @@ account_signing_off(PurpleConnection *gc)
 		PurpleConversation *conv = list->data;
 		if (!purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION(conv)) &&
 				purple_conversation_get_account(conv) == account) {
-			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			g_object_set_data(G_OBJECT(conv), "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
 						"longer in this chat. You will automatically rejoin the chat when "
 						"the account reconnects."),
@@ -8420,15 +8420,15 @@ static void
 pidgin_conv_attach(PurpleConversation *conv)
 {
 	int timer;
-	purple_conversation_set_data(conv, "unseen-count", NULL);
-	purple_conversation_set_data(conv, "unseen-state", NULL);
+	g_object_set_data(G_OBJECT(conv), "unseen-count", NULL);
+	g_object_set_data(G_OBJECT(conv), "unseen-state", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
 	if (!PIDGIN_CONVERSATION(conv))
 		private_gtkconv_new(conv, FALSE);
-	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+	timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 	if (timer) {
 		purple_timeout_remove(timer);
-		purple_conversation_set_data(conv, "close-timer", NULL);
+		g_object_set_data(G_OBJECT(conv), "close-timer", NULL);
 	}
 }
 
@@ -9018,11 +9018,11 @@ conv_set_unseen(PurpleConversation *conv, PidginUnseenState state)
 	int unseen_count = 0;
 	PidginUnseenState unseen_state = PIDGIN_UNSEEN_NONE;
 
-	if(purple_conversation_get_data(conv, "unseen-count"))
-		unseen_count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"));
+	if(g_object_get_data(G_OBJECT(conv), "unseen-count"))
+		unseen_count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count"));
 
-	if(purple_conversation_get_data(conv, "unseen-state"))
-		unseen_state = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"));
+	if(g_object_get_data(G_OBJECT(conv), "unseen-state"))
+		unseen_state = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-state"));
 
 	if (state == PIDGIN_UNSEEN_NONE)
 	{
@@ -9038,8 +9038,8 @@ conv_set_unseen(PurpleConversation *conv, PidginUnseenState state)
 			unseen_state = state;
 	}
 
-	purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(unseen_count));
-	purple_conversation_set_data(conv, "unseen-state", GINT_TO_POINTER(unseen_state));
+	g_object_set_data(G_OBJECT(conv), "unseen-count", GINT_TO_POINTER(unseen_count));
+	g_object_set_data(G_OBJECT(conv), "unseen-state", GINT_TO_POINTER(unseen_state));
 
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 }
@@ -9061,8 +9061,8 @@ gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state)
 			gtkconv->unseen_state = state;
 	}
 
-	purple_conversation_set_data(gtkconv->active_conv, "unseen-count", GINT_TO_POINTER(gtkconv->unseen_count));
-	purple_conversation_set_data(gtkconv->active_conv, "unseen-state", GINT_TO_POINTER(gtkconv->unseen_state));
+	g_object_set_data(G_OBJECT(gtkconv->active_conv), "unseen-count", GINT_TO_POINTER(gtkconv->unseen_count));
+	g_object_set_data(G_OBJECT(gtkconv->active_conv), "unseen-state", GINT_TO_POINTER(gtkconv->unseen_state));
 
 	purple_conversation_update(gtkconv->active_conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 }

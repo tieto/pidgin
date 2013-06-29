@@ -395,26 +395,6 @@ gboolean purple_conversation_is_logging(const PurpleConversation *conv);
 void purple_conversation_close_logs(PurpleConversation *conv);
 
 /**
- * Sets extra data for a conversation.
- *
- * @param conv The conversation.
- * @param key  The unique key.
- * @param data The data to assign.
- */
-void purple_conversation_set_data(PurpleConversation *conv, const char *key,
-								gpointer data);
-
-/**
- * Returns extra data in a conversation.
- *
- * @param conv The conversation.
- * @param key  The unqiue key.
- *
- * @return The data associated with the key.
- */
-gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key);
-
-/**
  * Writes to a conversation window.
  *
  * This function should not be used to write IM or chat messages. Use

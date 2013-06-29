@@ -47,22 +47,21 @@ typedef struct _PurpleConversationPrivate  PurpleConversationPrivate;
  */
 struct _PurpleConversationPrivate
 {
-	PurpleAccount *account;       /**< The user using this conversation.  */
+	PurpleAccount *account;           /**< The user using this conversation. */
 
-	char *name;                 /**< The name of the conversation.      */
-	char *title;                /**< The window title.                  */
+	char *name;                       /**< The name of the conversation.     */
+	char *title;                      /**< The window title.                 */
 
-	gboolean logging;           /**< The status of logging.             */
+	gboolean logging;                 /**< The status of logging.            */
 
-	GList *logs;                /**< This conversation's logs           */
+	GList *logs;                      /**< This conversation's logs          */
 
-	PurpleConversationUiOps *ui_ops;           /**< UI-specific operations. */
-	void *ui_data;                           /**< UI-specific data.       */
+	PurpleConversationUiOps *ui_ops;  /**< UI-specific operations.           */
+	void *ui_data;                    /**< UI-specific data.                 */
 
-	GHashTable *data;                        /**< Plugin-specific data.   */
-
-	PurpleConnectionFlags features; /**< The supported features */
-	GList *message_history;         /**< Message history, as a GList of PurpleConversationMessage's */
+	PurpleConnectionFlags features;   /**< The supported features            */
+	GList *message_history;           /**< Message history, as a GList of
+	                                       PurpleConversationMessage's       */
 };
 
 /**
@@ -478,29 +477,6 @@ purple_conversation_close_logs(PurpleConversation *conv)
 	g_list_foreach(priv->logs, (GFunc)purple_log_free, NULL);
 	g_list_free(priv->logs);
 	priv->logs = NULL;
-}
-
-void
-purple_conversation_set_data(PurpleConversation *conv, const char *key,
-						   gpointer data)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(key  != NULL);
-
-	g_hash_table_replace(priv->data, g_strdup(key), data);
-}
-
-gpointer
-purple_conversation_get_data(PurpleConversation *conv, const char *key)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-	g_return_val_if_fail(key  != NULL, NULL);
-
-	return g_hash_table_lookup(priv->data, key);
 }
 
 void
@@ -994,12 +970,7 @@ purple_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_conversation_init(GTypeInstance *instance, gpointer klass)
 {
-	PurpleConversation *conv = PURPLE_CONVERSATION(instance);
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	priv->data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-
-	PURPLE_DBUS_REGISTER_POINTER(conv, PurpleConversation);
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CONVERSATION(instance), PurpleConversation);
 }
 
 /* GObject dispose function */
@@ -1039,9 +1010,6 @@ purple_conversation_finalize(GObject *object)
 
 	priv->name = NULL;
 	priv->title = NULL;
-
-	g_hash_table_destroy(priv->data);
-	priv->data = NULL;
 
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);

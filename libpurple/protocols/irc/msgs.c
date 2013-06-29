@@ -688,7 +688,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 
 		names = cur = g_string_free(irc->names, FALSE);
 		irc->names = NULL;
-		if (purple_conversation_get_data(convo, IRC_NAMES_FLAG)) {
+		if (g_object_get_data(G_OBJECT(convo), IRC_NAMES_FLAG)) {
 			msg = g_strdup_printf(_("Users on %s: %s"), args[1], names ? names : "");
 			purple_conversation_write_message(convo, "", msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
@@ -736,7 +736,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 				g_list_free(flags);
 			}
 
-			purple_conversation_set_data(convo, IRC_NAMES_FLAG,
+			g_object_set_data(G_OBJECT(convo), IRC_NAMES_FLAG,
 						   GINT_TO_POINTER(TRUE));
 		}
 		g_free(names);
@@ -978,7 +978,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 			purple_debug_error("irc", "tried to join %s but couldn't\n", args[0]);
 			return;
 		}
-		purple_conversation_set_data(PURPLE_CONVERSATION(chat), IRC_NAMES_FLAG,
+		g_object_set_data(G_OBJECT(chat), IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
 		
 		// Get the real name and user host for all participants.

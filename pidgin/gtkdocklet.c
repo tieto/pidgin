@@ -200,8 +200,8 @@ docklet_update_status(void)
 			} else {
 				g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
-					GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
-					GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
+					GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count"))),
+					GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count")),
 					purple_conversation_get_title(conv));
 			}
 		}

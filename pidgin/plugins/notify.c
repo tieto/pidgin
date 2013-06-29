@@ -150,7 +150,7 @@ count_messages(PidginWindow *purplewin)
 	for (convs = purplewin->gtkconvs; convs != NULL; convs = convs->next) {
 		PidginConversation *conv = convs->data;
 		for (l = conv->convs; l != NULL; l = l->next) {
-			count += GPOINTER_TO_INT(purple_conversation_get_data(l->data, "notify-message-count"));
+			count += GPOINTER_TO_INT(g_object_get_data(G_OBJECT(l->data), "notify-message-count"));
 		}
 	}
 
@@ -185,9 +185,9 @@ notify(PurpleConversation *conv, gboolean increment)
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ||
 	    !has_focus) {
 		if (increment) {
-			count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "notify-message-count"));
+			count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "notify-message-count"));
 			count++;
-			purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(count));
+			g_object_set_data(G_OBJECT(conv), "notify-message-count", GINT_TO_POINTER(count));
 		}
 
 		notify_win(purplewin, conv);
@@ -237,7 +237,7 @@ unnotify(PurpleConversation *conv, gboolean reset)
 		 * removing it just to have it readded in re-notify is an
 		 * unnecessary couple extra RTs to the server */
 		handle_urgent(purplewin, FALSE);
-		purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+		g_object_set_data(G_OBJECT(conv), "notify-message-count", GINT_TO_POINTER(0));
 		/* Same logic as for the urgent hint, xprops are also a RT.
 		 * This needs to go here so that it gets the updated message
 		 * count. */
@@ -250,7 +250,7 @@ unnotify(PurpleConversation *conv, gboolean reset)
 static int
 unnotify_cb(GtkWidget *widget, gpointer data, PurpleConversation *conv)
 {
-	if (GPOINTER_TO_INT(purple_conversation_get_data(conv, "notify-message-count")) != 0)
+	if (GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "notify-message-count")) != 0)
 		unnotify(conv, TRUE);
 
 	return 0;
@@ -339,8 +339,8 @@ attach_signals(PurpleConversation *conv)
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 	}
 
-	purple_conversation_set_data(conv, "notify-webview-signals", webview_ids);
-	purple_conversation_set_data(conv, "notify-entry-signals", entry_ids);
+	g_object_set_data(G_OBJECT(conv), "notify-webview-signals", webview_ids);
+	g_object_set_data(G_OBJECT(conv), "notify-entry-signals", entry_ids);
 
 	return 0;
 }
@@ -355,26 +355,26 @@ detach_signals(PurpleConversation *conv)
 	if (!gtkconv)
 		return;
 
-	ids = purple_conversation_get_data(conv, "notify-webview-signals");
+	ids = g_object_get_data(G_OBJECT(conv), "notify-webview-signals");
 	for (l = ids; l != NULL; l = l->next)
 		g_signal_handler_disconnect(gtkconv->webview, GPOINTER_TO_INT(l->data));
 	g_slist_free(ids);
 
-	ids = purple_conversation_get_data(conv, "notify-entry-signals");
+	ids = g_object_get_data(G_OBJECT(conv), "notify-entry-signals");
 	for (l = ids; l != NULL; l = l->next)
 		g_signal_handler_disconnect(gtkconv->entry, GPOINTER_TO_INT(l->data));
 	g_slist_free(ids);
 
-	purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+	g_object_set_data(G_OBJECT(conv), "notify-message-count", GINT_TO_POINTER(0));
 
-	purple_conversation_set_data(conv, "notify-webview-signals", NULL);
-	purple_conversation_set_data(conv, "notify-entry-signals", NULL);
+	g_object_set_data(G_OBJECT(conv), "notify-webview-signals", NULL);
+	g_object_set_data(G_OBJECT(conv), "notify-entry-signals", NULL);
 }
 
 static void
 conv_created(PurpleConversation *conv)
 {
-	purple_conversation_set_data(conv, "notify-message-count",
+	g_object_set_data(G_OBJECT(conv), "notify-message-count",
 	                           GINT_TO_POINTER(0));
 
 	/* always attach the signals, notify() will take care of conversation
@@ -423,7 +423,7 @@ deleting_conv(PurpleConversation *conv)
 	purplewin = gtkconv->win;
 
 	handle_urgent(purplewin, FALSE);
-	purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+	g_object_set_data(G_OBJECT(conv), "notify-message-count", GINT_TO_POINTER(0));
 
 	return;
 
@@ -643,7 +643,7 @@ apply_method()
 		/* remove notifications */
 		unnotify(conv, FALSE);
 
-		if (GPOINTER_TO_INT(purple_conversation_get_data(conv, "notify-message-count")) != 0)
+		if (GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "notify-message-count")) != 0)
 			/* reattach appropriate notifications */
 			notify(conv, FALSE);
 	}
