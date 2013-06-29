@@ -96,19 +96,90 @@ struct _PurpleHashClass {
 
 G_BEGIN_DECLS
 
+/*****************************************************************************/
+/** @name PurpleHash API													 */
+/*****************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the Hash object.
+ */
 GType purple_hash_get_type(void);
 
+/**
+ * Gets a hash's name
+ *
+ * @param hash The hash
+ *
+ * @return The hash's name
+ */
 const gchar *purple_hash_get_name(PurpleHash *hash);
 
+/**
+ * Resets a hash to it's default value
+ * @note If you have set an IV you will have to set it after resetting
+ *
+ * @param hash  The hash
+ */
 void purple_hash_reset(PurpleHash *hash);
+
+/**
+ * Resets a hash state to it's default value, but doesn't touch stateless
+ * configuration.
+ *
+ * That means, IV and digest will be wiped out, but keys, ops or salt
+ * will remain untouched.
+ *
+ * @param hash  The hash
+ */
 void purple_hash_reset_state(PurpleHash *hash);
 
+/**
+ * Appends data to the hash context
+ *
+ * @param hash    The hash
+ * @param data    The data to append
+ * @param len     The length of the data
+ */
 void purple_hash_append(PurpleHash *hash, const guchar *data, size_t len);
+
+/**
+ * Digests a hash context
+ *
+ * @param hash    The hash
+ * @param digest  The return buffer for the digest
+ * @param len     The length of the buffer
+ */
 gboolean purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len);
+
+/**
+ * Converts a guchar digest into a hex string
+ *
+ * @param hash     The hash
+ * @param digest_s The return buffer for the string digest
+ * @param len      The length of the buffer
+ */
 gboolean purple_hash_digest_to_str(PurpleHash *hash, gchar digest_s[], size_t len);
+
+/**
+ * Gets the digest size of a hash
+ *
+ * @param hash The hash whose digest size to get
+ *
+ * @return The digest size of the hash
+ */
 size_t purple_hash_get_digest_size(PurpleHash *hash);
 
+/**
+ * Gets the block size of a hash
+ *
+ * @param hash The hash whose block size to get
+ *
+ * @return The block size of the hash
+ */
 size_t purple_hash_get_block_size(PurpleHash *hash);
+
+/*@}*/
 
 G_END_DECLS
 

@@ -120,12 +120,15 @@ struct _PurpleAccountClass {
 
 G_BEGIN_DECLS
 
-GType purple_account_get_type(void);
-
 /**************************************************************************/
 /** @name Account API                                                     */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the Account object.
+ */
+GType purple_account_get_type(void);
 
 /**
  * Creates a new account.
