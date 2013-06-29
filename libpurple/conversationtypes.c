@@ -140,13 +140,13 @@ struct _PurpleChatUserPrivate
 
 /* Chat User Property enums */
 enum {
-	CB_PROP_0,
-	CB_PROP_CHAT,
-	CB_PROP_NAME,
-	CB_PROP_ALIAS,
-	CB_PROP_BUDDY,
-	CB_PROP_FLAGS,
-	CB_PROP_LAST
+	CU_PROP_0,
+	CU_PROP_CHAT,
+	CU_PROP_NAME,
+	CU_PROP_ALIAS,
+	CU_PROP_BUDDY,
+	CU_PROP_FLAGS,
+	CU_PROP_LAST
 };
 
 static PurpleConversationClass *parent_class;
@@ -1923,11 +1923,11 @@ purple_chat_user_is_buddy(const PurpleChatUser *cb)
  **************************************************************************/
 
 /* GObject Property names */
-#define CB_PROP_CHAT_S   "chat"
-#define CB_PROP_NAME_S   "name"
-#define CB_PROP_ALIAS_S  "alias"
-#define CB_PROP_BUDDY_S  "buddy"
-#define CB_PROP_FLAGS_S  "flags"
+#define CU_PROP_CHAT_S   "chat"
+#define CU_PROP_NAME_S   "name"
+#define CU_PROP_ALIAS_S  "alias"
+#define CU_PROP_BUDDY_S  "buddy"
+#define CU_PROP_FLAGS_S  "flags"
 
 /* Set method for GObject properties */
 static void
@@ -1938,21 +1938,21 @@ purple_chat_user_set_property(GObject *obj, guint param_id, const GValue *value,
 	PurpleChatUserPrivate *priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
 
 	switch (param_id) {
-		case CB_PROP_CHAT:
+		case CU_PROP_CHAT:
 			priv->chat = g_value_get_object(value);
 			break;
-		case CB_PROP_NAME:
+		case CU_PROP_NAME:
 			g_free(priv->name);
 			priv->name = g_strdup(g_value_get_string(value));
 			break;
-		case CB_PROP_ALIAS:
+		case CU_PROP_ALIAS:
 			g_free(priv->alias);
 			priv->alias = g_strdup(g_value_get_string(value));
 			break;
-		case CB_PROP_BUDDY:
+		case CU_PROP_BUDDY:
 			priv->buddy = g_value_get_boolean(value);
 			break;
-		case CB_PROP_FLAGS:
+		case CU_PROP_FLAGS:
 			priv->flags = g_value_get_flags(value);
 			break;
 		default:
@@ -1969,19 +1969,19 @@ purple_chat_user_get_property(GObject *obj, guint param_id, GValue *value,
 	PurpleChatUser *cb = PURPLE_CHAT_USER(obj);
 
 	switch (param_id) {
-		case CB_PROP_CHAT:
+		case CU_PROP_CHAT:
 			g_value_set_object(value, purple_chat_user_get_chat(cb));
 			break;
-		case CB_PROP_NAME:
+		case CU_PROP_NAME:
 			g_value_set_string(value, purple_chat_user_get_name(cb));
 			break;
-		case CB_PROP_ALIAS:
+		case CU_PROP_ALIAS:
 			g_value_set_string(value, purple_chat_user_get_alias(cb));
 			break;
-		case CB_PROP_BUDDY:
+		case CU_PROP_BUDDY:
 			g_value_set_boolean(value, purple_chat_user_is_buddy(cb));
 			break;
-		case CB_PROP_FLAGS:
+		case CU_PROP_FLAGS:
 			g_value_set_flags(value, purple_chat_user_get_flags(cb));
 			break;
 		default:
@@ -2042,32 +2042,32 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 	obj_class->get_property = purple_chat_user_get_property;
 	obj_class->set_property = purple_chat_user_set_property;
 
-	g_object_class_install_property(obj_class, CB_PROP_CHAT,
-			g_param_spec_object(CB_PROP_CHAT_S, _("Chat"),
+	g_object_class_install_property(obj_class, CU_PROP_CHAT,
+			g_param_spec_object(CU_PROP_CHAT_S, _("Chat"),
 				_("The chat the buddy belongs to."), PURPLE_TYPE_CHAT_CONVERSATION,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
-	g_object_class_install_property(obj_class, CB_PROP_NAME,
-			g_param_spec_string(CB_PROP_NAME_S, _("Name"),
+	g_object_class_install_property(obj_class, CU_PROP_NAME,
+			g_param_spec_string(CU_PROP_NAME_S, _("Name"),
 				_("Name of the chat user."), NULL,
 				G_PARAM_READWRITE)
 			);
 
-	g_object_class_install_property(obj_class, CB_PROP_ALIAS,
-			g_param_spec_string(CB_PROP_ALIAS_S, _("Alias"),
+	g_object_class_install_property(obj_class, CU_PROP_ALIAS,
+			g_param_spec_string(CU_PROP_ALIAS_S, _("Alias"),
 				_("Alias of the chat user."), NULL,
 				G_PARAM_READWRITE)
 			);
 
-	g_object_class_install_property(obj_class, CB_PROP_BUDDY,
-			g_param_spec_boolean(CB_PROP_BUDDY_S, _("Is buddy"),
+	g_object_class_install_property(obj_class, CU_PROP_BUDDY,
+			g_param_spec_boolean(CU_PROP_BUDDY_S, _("Is buddy"),
 				_("Whether the chat user is in the buddy list."), FALSE,
 				G_PARAM_READWRITE)
 			);
 
-	g_object_class_install_property(obj_class, CB_PROP_FLAGS,
-			g_param_spec_flags(CB_PROP_FLAGS_S, _("Buddy flags"),
+	g_object_class_install_property(obj_class, CU_PROP_FLAGS,
+			g_param_spec_flags(CU_PROP_FLAGS_S, _("Buddy flags"),
 				_("The flags for the chat user."),
 				PURPLE_TYPE_CHAT_USER_FLAGS,
 				PURPLE_CHAT_USER_NONE, G_PARAM_READWRITE)
