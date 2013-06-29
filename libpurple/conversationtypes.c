@@ -50,17 +50,15 @@ typedef struct _PurpleChatUserPrivate  PurpleChatUserPrivate;
  */
 struct _PurpleChatConversationPrivate
 {
-	GList *in_room;                  /**< The users in the room.
-	                                  *   @deprecated Will be removed in 3.0.0 TODO
-									  */
-	GList *ignored;                  /**< Ignored users.                */
-	char  *who;                      /**< The person who set the topic. */
-	char  *topic;                    /**< The topic.                    */
-	int    id;                       /**< The chat ID.                  */
-	char *nick;                      /**< Your nick in this chat.       */
-
-	gboolean left;                   /**< We left the chat and kept the window open */
-	GHashTable *users;               /**< Hash table of the users in the room. */
+	GList *in_room;     /**< The users in the room.
+	                         @deprecated Will be removed in 3.0.0 TODO */
+	GList *ignored;     /**< Ignored users.                            */
+	char  *who;         /**< The person who set the topic.             */
+	char  *topic;       /**< The topic.                                */
+	int    id;          /**< The chat ID.                              */
+	char *nick;         /**< Your nick in this chat.                   */
+	gboolean left;      /**< We left the chat and kept the window open */
+	GHashTable *users;  /**< Hash table of the users in the room.      */
 };
 
 /* Chat Property enums */
@@ -79,12 +77,11 @@ enum {
  */
 struct _PurpleIMConversationPrivate
 {
-	PurpleIMTypingState typing_state;      /**< The current typing state.    */
+	PurpleIMTypingState typing_state;  /**< The current typing state.    */
 	guint  typing_timeout;             /**< The typing timer handle.     */
 	time_t type_again;                 /**< The type again time.         */
 	guint  send_typed_timeout;         /**< The type again timer handle. */
-
-	PurpleBuddyIcon *icon;               /**< The buddy icon.              */
+	PurpleBuddyIcon *icon;             /**< The buddy icon.              */
 };
 
 /* IM Property enums */
@@ -100,33 +97,20 @@ enum {
  */
 struct _PurpleChatUserPrivate
 {
-	/** The chat */
-	PurpleChatConversation *chat;
-
-	/** The chat participant's name in the chat. */
-	char *name;
-
-	/** The chat participant's alias, if known; @a NULL otherwise. */
-	char *alias;
-
-	/**
-	 * A string by which this buddy will be sorted, or @c NULL if the
-	 * buddy should be sorted by its @c name.  (This is currently always
-	 * @c NULL.
-	 */
-	char *alias_key;
-
-	/**
-	 * @a TRUE if this chat participant is on the buddy list;
-	 * @a FALSE otherwise.
-	 */
-	gboolean buddy;
-
-	/**
-	 * A bitwise OR of flags for this participant, such as whether they
-	 * are a channel operator.
-	 */
-	PurpleChatUserFlags flags;
+	PurpleChatConversation *chat;  /**< The chat                              */
+	char *name;                    /**< The chat participant's name in the
+	                                    chat.                                 */
+	char *alias;                   /**< The chat participant's alias, if known;
+	                                    @a NULL otherwise.                    */
+	char *alias_key;               /**< A string by which this user will be
+	                                    sorted, or @c NULL if the user should be
+	                                    sorted by its @c name.
+	                                    (This is currently always @c NULL.    */
+	gboolean buddy;                /**< @a TRUE if this chat participant is on
+	                                    the buddy list; @a FALSE otherwise.   */
+	PurpleChatUserFlags flags;     /**< A bitwise OR of flags for this
+	                                    participant, such as whether they
+	                                    are a channel operator.               */
 };
 
 /* Chat User Property enums */
