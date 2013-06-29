@@ -127,12 +127,6 @@ struct _PurpleChatUserPrivate
 	 * are a channel operator.
 	 */
 	PurpleChatUserFlags flags;
-
-	/**
-	 * A hash table of attributes about the user, such as real name,
-	 * user\@host, etc.
-	 */
-	GHashTable *attributes;
 };
 
 /* Chat User Property enums */
@@ -1770,83 +1764,6 @@ purple_chat_user_get_flags(const PurpleChatUser *cb)
 	return priv->flags;
 }
 
-const char *
-purple_chat_user_get_attribute(PurpleChatUser *cb, const char *key)
-{
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-	g_return_val_if_fail(key != NULL, NULL);
-	
-	return g_hash_table_lookup(priv->attributes, key);
-}
-
-static void
-append_attribute_key(gpointer key, gpointer value, gpointer user_data)
-{
-	GList **list = user_data;
-	*list = g_list_prepend(*list, key);
-}
-
-GList *
-purple_chat_user_get_attribute_keys(PurpleChatUser *cb)
-{
-	GList *keys = NULL;
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-	
-	g_return_val_if_fail(priv != NULL, NULL);
-	
-	g_hash_table_foreach(priv->attributes, (GHFunc)append_attribute_key, &keys);
-	
-	return keys;
-}
-
-void
-purple_chat_user_set_attribute(PurpleChatUser *cb,
-		PurpleChatConversation *chat, const char *key, const char *value)
-{
-	PurpleConversationUiOps *ops;
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(key != NULL);
-	g_return_if_fail(value != NULL);
-
-	g_hash_table_replace(priv->attributes, g_strdup(key), g_strdup(value));
-
-	ops = purple_conversation_get_ui_ops(PURPLE_CONVERSATION(chat));
-
-	if (ops != NULL && ops->chat_update_user != NULL)
-		ops->chat_update_user(cb);
-}
-
-void
-purple_chat_user_set_attributes(PurpleChatUser *cb,
-		PurpleChatConversation *chat, GList *keys, GList *values)
-{
-	PurpleConversationUiOps *ops;
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(keys != NULL);
-	g_return_if_fail(values != NULL);
-
-	while (keys != NULL && values != NULL) {
-		g_hash_table_replace(priv->attributes, g_strdup(keys->data), g_strdup(values->data));
-		keys = g_list_next(keys);
-		values = g_list_next(values);
-	}
-
-	ops = purple_conversation_get_ui_ops(PURPLE_CONVERSATION(chat));
-
-	if (ops != NULL && ops->chat_update_user != NULL)
-		ops->chat_update_user(cb);
-}
-
 void
 purple_chat_user_set_chat(PurpleChatUser *cb,
 		PurpleChatConversation *chat)
@@ -1965,16 +1882,6 @@ purple_chat_user_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
-/* GObject initialization function */
-static void purple_chat_user_init(GTypeInstance *instance, gpointer klass)
-{
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(instance);
-
-	priv->attributes = g_hash_table_new_full(g_str_hash, g_str_equal,
-										   g_free, g_free);
-}
-
 /* GObject dispose function */
 static void
 purple_chat_user_dispose(GObject *object)
@@ -1998,7 +1905,6 @@ purple_chat_user_finalize(GObject *object)
 	g_free(priv->alias);
 	g_free(priv->alias_key);
 	g_free(priv->name);
-	g_hash_table_destroy(priv->attributes);
 
 	cb_parent_class->finalize(object);
 }
@@ -2066,7 +1972,7 @@ purple_chat_user_get_type(void)
 			NULL,
 			sizeof(PurpleChatUser),
 			0,
-			(GInstanceInitFunc)purple_chat_user_init,
+			NULL,
 			NULL,
 		};
 

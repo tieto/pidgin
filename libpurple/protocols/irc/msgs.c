@@ -479,7 +479,6 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		char *cur, *userhost, *realname;
 		
 		PurpleChatUserFlags flags;
-		GList *keys = NULL, *values = NULL;
 
 		if (!args || !args[0] || !args[1] || !args[2] || !args[3]
 		    || !args[4] || !args[5] || !args[6] || !args[7]) {
@@ -512,19 +511,8 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		}
 		realname = g_strdup(cur);
 		
-		keys = g_list_prepend(keys, "userhost");
-		values = g_list_prepend(values, userhost);
-		
-		keys = g_list_prepend(keys, "realname");
-		values = g_list_prepend(values, realname);
-		
-		purple_chat_user_set_attributes(cb, chat, keys, values);
-		
-		g_list_free(keys);
-		g_list_free(values);
-		
-		g_free(userhost);
-		g_free(realname);
+		g_object_set_data_full(G_OBJECT(cb), "userhost", userhost, (GDestroyNotify)g_free);
+		g_object_set_data_full(G_OBJECT(cb), "realname", realname, (GDestroyNotify)g_free);
 		
 		flags = purple_chat_user_get_flags(cb);
 
@@ -1019,7 +1007,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	cb = purple_chat_conversation_find_user(chat, nick);
 	
 	if (cb) {
-		purple_chat_user_set_attribute(cb, chat, "userhost", userhost);		
+		g_object_set_data_full(G_OBJECT(cb), "userhost", userhost, (GDestroyNotify)g_free);
 	}
 	
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
@@ -1027,7 +1015,6 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		irc_buddy_status(nick, ib, irc);
 	}
 
-	g_free(userhost);
 	g_free(nick);
 }
 

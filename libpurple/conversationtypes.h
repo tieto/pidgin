@@ -609,47 +609,6 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 GType purple_chat_user_get_type(void);
 
 /**
- * Get an attribute of a chat user
- *
- * @param cb	The chat user.
- * @param key	The key of the attribute.
- *
- * @return The value of the attribute key.
- */
-const char *purple_chat_user_get_attribute(PurpleChatUser *cb, const char *key);
-
-/**
- * Get the keys of all atributes of a chat user
- *
- * @param cb	The chat user.
- *
- * @return A list of the attributes of a chat user.
- */
-GList *purple_chat_user_get_attribute_keys(PurpleChatUser *cb);
-	
-/**
- * Set an attribute of a chat user
- *
- * @param chat	The chat.
- * @param cb	The chat user.
- * @param key	The key of the attribute.
- * @param value	The value of the attribute.
- */
-void purple_chat_user_set_attribute(PurpleChatUser *cb,
-		PurpleChatConversation *chat, const char *key, const char *value);
-
-/**
- * Set attributes of a chat user
- *
- * @param chat	The chat.
- * @param cb	The chat user.
- * @param keys	A GList of the keys.
- * @param values A GList of the values.
- */
-void purple_chat_user_set_attributes(PurpleChatUser *cb,
-		PurpleChatConversation *chat, GList *keys, GList *values);
-
-/**
  * Set the chat conversation associated with this chat user.
  *
  * @param cb	The chat user
