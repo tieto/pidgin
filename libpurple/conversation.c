@@ -942,9 +942,11 @@ purple_conversation_set_property(GObject *obj, guint param_id, const GValue *val
 			priv->account = g_value_get_object(value);
 			break;
 		case PROP_NAME:
+			g_free(priv->name);
 			priv->name = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_TITLE:
+			g_free(priv->title);
 			priv->title = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_LOGGING:
