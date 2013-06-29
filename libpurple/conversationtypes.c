@@ -133,9 +133,6 @@ struct _PurpleChatUserPrivate
 	 * user\@host, etc.
 	 */
 	GHashTable *attributes;
-
-	/** The UI can put whatever it wants here. */
-	gpointer ui_data;
 };
 
 /* Chat User Property enums */
@@ -1848,28 +1845,6 @@ purple_chat_user_set_attributes(PurpleChatUser *cb,
 
 	if (ops != NULL && ops->chat_update_user != NULL)
 		ops->chat_update_user(cb);
-}
-
-void
-purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data)
-{
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->ui_data = ui_data;
-}
-
-gpointer
-purple_chat_user_get_ui_data(const PurpleChatUser *cb)
-{
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->ui_data;
 }
 
 void

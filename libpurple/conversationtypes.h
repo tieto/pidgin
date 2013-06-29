@@ -681,25 +681,6 @@ PurpleChatUser *purple_chat_user_new(PurpleChatConversation *chat,
 		const char *name, const char *alias, PurpleChatUserFlags flags);
 
 /**
- * Set the UI data associated with this chat user.
- *
- * @param cb			The chat user
- * @param ui_data		A pointer to associate with this chat user.
- */
-void purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data);
-
-/**
- * Get the UI data associated with this chat user.
- *
- * @param cb			The chat user.
- *
- * @return The UI data associated with this chat user.  This is a
- *         convenience field provided to the UIs--it is not
- *         used by the libpurple core.
- */
-gpointer purple_chat_user_get_ui_data(const PurpleChatUser *cb);
-
-/**
  * Get the alias of a chat user
  *
  * @param cb    The chat user.
