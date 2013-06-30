@@ -967,6 +967,42 @@ purple_conversation_init(GTypeInstance *instance, gpointer klass)
 	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CONVERSATION(instance), PurpleConversation);
 }
 
+/* Called when done constructing */
+static void
+purple_conversation_constructed(GObject *object)
+{
+	PurpleConversation *conv = PURPLE_CONVERSATION(object);
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	PurpleConversationUiOps *ops;
+
+	parent_class->constructed(object);
+
+	g_object_get(object, PROP_ACCOUNT_S, &account, NULL);
+	gc = purple_account_get_connection(account);
+
+	/* copy features from the connection. */
+	purple_conversation_set_features(conv, purple_connection_get_flags(gc));
+
+	/* add the conversation to the appropriate lists */
+	purple_conversations_add(conv);
+
+	/* Auto-set the title. */
+	purple_conversation_autoset_title(conv);
+
+	/* Don't move this.. it needs to be one of the last things done otherwise
+	 * it causes mysterious crashes on my system.
+	 *  -- Gary
+	 */
+	ops  = purple_conversations_get_ui_ops();
+	purple_conversation_set_ui_ops(conv, ops);
+	if (ops != NULL && ops->create_conversation != NULL)
+		ops->create_conversation(conv);
+
+	purple_signal_emit(purple_conversations_get_handle(),
+					 "conversation-created", conv);
+}
+
 /* GObject dispose function */
 static void
 purple_conversation_dispose(GObject *object)
@@ -1012,7 +1048,8 @@ purple_conversation_finalize(GObject *object)
 }
 
 /* Class initializer function */
-static void purple_conversation_class_init(PurpleConversationClass *klass)
+static void
+purple_conversation_class_init(PurpleConversationClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -1020,6 +1057,7 @@ static void purple_conversation_class_init(PurpleConversationClass *klass)
 
 	obj_class->dispose = purple_conversation_dispose;
 	obj_class->finalize = purple_conversation_finalize;
+	obj_class->constructed = purple_conversation_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_conversation_get_property;
@@ -1034,13 +1072,13 @@ static void purple_conversation_class_init(PurpleConversationClass *klass)
 	g_object_class_install_property(obj_class, PROP_NAME,
 			g_param_spec_string(PROP_NAME_S, _("Name"),
 				_("The name of the conversation."), NULL,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_TITLE,
 			g_param_spec_string(PROP_TITLE_S, _("Title"),
 				_("The title of the conversation."), NULL,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_LOGGING,

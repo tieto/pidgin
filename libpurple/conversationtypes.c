@@ -421,6 +421,33 @@ purple_im_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
+/* Called when done constructing */
+static void
+purple_im_conversation_constructed(GObject *object)
+{
+	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(object);
+	PurpleAccount *account;
+	PurpleBuddyIcon *icon;
+	gchar *name;
+
+	G_OBJECT_CLASS(parent_class)->constructed(object);
+
+	g_object_get(object,
+			"account", &account,
+			"name",    &name,
+			NULL);
+
+	if ((icon = purple_buddy_icons_find(account, name)))
+	{
+		purple_im_conversation_set_icon(im, icon);
+		/* purple_im_conversation_set_icon refs the icon. */
+		purple_buddy_icon_unref(icon);
+	}
+
+	if (purple_prefs_get_bool("/purple/logging/log_ims"))
+		purple_conversation_set_logging(PURPLE_CONVERSATION(im), TRUE);
+}
+
 /* GObject dispose function */
 static void
 purple_im_conversation_dispose(GObject *object)
@@ -470,6 +497,7 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 
 	obj_class->dispose = purple_im_conversation_dispose;
 	obj_class->finalize = purple_im_conversation_finalize;
+	obj_class->constructed = purple_im_conversation_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_im_conversation_get_property;
@@ -525,10 +553,7 @@ PurpleIMConversation *
 purple_im_conversation_new(PurpleAccount *account, const char *name)
 {
 	PurpleIMConversation *im;
-	PurpleConversation *conv;
 	PurpleConnection *gc;
-	PurpleConversationUiOps *ops;
-	PurpleBuddyIcon *icon;
 
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name    != NULL, NULL);
@@ -545,38 +570,6 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 			"name",    name,
 			"title",   name,
 			NULL);
-
-	conv = PURPLE_CONVERSATION(im);
-
-	/* copy features from the connection. */
-	purple_conversation_set_features(conv,
-			purple_connection_get_flags(gc));
-
-	purple_conversations_add(conv);
-	if ((icon = purple_buddy_icons_find(account, name)))
-	{
-		purple_im_conversation_set_icon(im, icon);
-		/* purple_im_conversation_set_icon refs the icon. */
-		purple_buddy_icon_unref(icon);
-	}
-
-	if (purple_prefs_get_bool("/purple/logging/log_ims"))
-		purple_conversation_set_logging(conv, TRUE);
-
-	/* Auto-set the title. */
-	purple_conversation_autoset_title(conv);
-
-	/* Don't move this.. it needs to be one of the last things done otherwise
-	 * it causes mysterious crashes on my system.
-	 *  -- Gary
-	 */
-	ops  = purple_conversations_get_ui_ops();
-	purple_conversation_set_ui_ops(conv, ops);
-	if (ops != NULL && ops->create_conversation != NULL)
-		ops->create_conversation(conv);
-
-	purple_signal_emit(purple_conversations_get_handle(),
-					 "conversation-created", im);
 
 	return im;
 }
@@ -1411,6 +1404,28 @@ static void purple_chat_conversation_init(GTypeInstance *instance, gpointer klas
 			_purple_conversation_user_equal, g_free, NULL);
 }
 
+/* Called when done constructing */
+static void
+purple_chat_conversation_constructed(GObject *object)
+{
+	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(object);
+	PurpleAccount *account;
+	const char *disp;
+
+	G_OBJECT_CLASS(parent_class)->constructed(object);
+
+	g_object_get(object, "account", &account, NULL);
+
+	if ((disp = purple_connection_get_display_name(purple_account_get_connection(account))))
+		purple_chat_conversation_set_nick(chat, disp);
+	else
+		purple_chat_conversation_set_nick(chat,
+								purple_account_get_username(account));
+
+	if (purple_prefs_get_bool("/purple/logging/log_chats"))
+		purple_conversation_set_logging(PURPLE_CONVERSATION(chat), TRUE);
+}
+
 /* GObject dispose function */
 static void
 purple_chat_conversation_dispose(GObject *object)
@@ -1499,6 +1514,7 @@ static void purple_chat_conversation_class_init(PurpleChatConversationClass *kla
 
 	obj_class->dispose = purple_chat_conversation_dispose;
 	obj_class->finalize = purple_chat_conversation_finalize;
+	obj_class->constructed = purple_chat_conversation_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_chat_conversation_get_property;
@@ -1570,10 +1586,7 @@ PurpleChatConversation *
 purple_chat_conversation_new(PurpleAccount *account, const char *name)
 {
 	PurpleChatConversation *chat;
-	PurpleConversation *conv;
 	PurpleConnection *gc;
-	PurpleConversationUiOps *ops;
-	const char *disp;
 
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name    != NULL, NULL);
@@ -1608,38 +1621,6 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 			"name",    name,
 			"title",   name,
 			NULL);
-
-	conv = PURPLE_CONVERSATION(chat);
-
-	/* copy features from the connection. */
-	purple_conversation_set_features(conv,
-			purple_connection_get_flags(gc));
-
-	purple_conversations_add(conv);
-
-	if ((disp = purple_connection_get_display_name(purple_account_get_connection(account))))
-		purple_chat_conversation_set_nick(chat, disp);
-	else
-		purple_chat_conversation_set_nick(chat,
-								purple_account_get_username(account));
-
-	if (purple_prefs_get_bool("/purple/logging/log_chats"))
-		purple_conversation_set_logging(conv, TRUE);
-
-	/* Auto-set the title. */
-	purple_conversation_autoset_title(conv);
-
-	/* Don't move this.. it needs to be one of the last things done otherwise
-	 * it causes mysterious crashes on my system.
-	 *  -- Gary
-	 */
-	ops  = purple_conversations_get_ui_ops();
-	purple_conversation_set_ui_ops(PURPLE_CONVERSATION(chat), ops);
-	if (ops != NULL && ops->create_conversation != NULL)
-		ops->create_conversation(conv);
-
-	purple_signal_emit(purple_conversations_get_handle(),
-					 "conversation-created", chat);
 
 	return chat;
 }
@@ -1882,6 +1863,13 @@ purple_chat_user_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
+/* GObject initialization function */
+static void
+purple_chat_user_init(GTypeInstance *instance, gpointer klass)
+{
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CHAT_USER(instance), PurpleChatUser);
+}
+
 /* GObject dispose function */
 static void
 purple_chat_user_dispose(GObject *object)
@@ -1932,13 +1920,13 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 	g_object_class_install_property(obj_class, CU_PROP_NAME,
 			g_param_spec_string(CU_PROP_NAME_S, _("Name"),
 				_("Name of the chat user."), NULL,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, CU_PROP_ALIAS,
 			g_param_spec_string(CU_PROP_ALIAS_S, _("Alias"),
 				_("Alias of the chat user."), NULL,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, CU_PROP_BUDDY,
@@ -1950,8 +1938,8 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 	g_object_class_install_property(obj_class, CU_PROP_FLAGS,
 			g_param_spec_flags(CU_PROP_FLAGS_S, _("Buddy flags"),
 				_("The flags for the chat user."),
-				PURPLE_TYPE_CHAT_USER_FLAGS,
-				PURPLE_CHAT_USER_NONE, G_PARAM_READWRITE)
+				PURPLE_TYPE_CHAT_USER_FLAGS, PURPLE_CHAT_USER_NONE,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_type_class_add_private(klass, sizeof(PurpleChatUserPrivate));
@@ -1972,7 +1960,7 @@ purple_chat_user_get_type(void)
 			NULL,
 			sizeof(PurpleChatUser),
 			0,
-			NULL,
+			(GInstanceInitFunc)purple_chat_user_init,
 			NULL,
 		};
 
@@ -1994,12 +1982,11 @@ purple_chat_user_new(PurpleChatConversation *chat, const char *name,
 	g_return_val_if_fail(name != NULL, NULL);
 
 	cb = g_object_new(PURPLE_TYPE_CHAT_USER,
-			"chat", chat,
-			"name",  name,
-			"alias", alias,
-			"flags", flags,
+			CU_PROP_CHAT_S,  chat,
+			CU_PROP_NAME_S,  name,
+			CU_PROP_ALIAS_S, alias,
+			CU_PROP_FLAGS_S, flags,
 			NULL);
 
-	PURPLE_DBUS_REGISTER_POINTER(cb, PurpleChatUser);
 	return cb;
 }
