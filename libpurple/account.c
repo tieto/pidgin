@@ -2970,8 +2970,53 @@ purple_account_finalize(GObject *object)
 	parent_class->finalize(object);
 }
 
+/* Called when done constructing */
+static void
+purple_account_constructed(GObject *object)
+{
+	PurpleAccount *account = PURPLE_ACCOUNT(object);
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	gchar *username, *protocol_id;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleStatusType *status_type;
+
+	parent_class->constructed(object);
+
+	g_object_get(object,
+			PROP_USERNAME_S,    &username,
+			PROP_PROTOCOL_ID_S, &protocol_id,
+			NULL);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-created",
+			account);
+
+	prpl = purple_find_prpl(protocol_id);
+	if (prpl == NULL)
+		return;
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info != NULL && prpl_info->status_types != NULL)
+		purple_account_set_status_types(account,
+				prpl_info->status_types(account));
+
+	priv->presence = purple_presence_new_for_account(account);
+
+	status_type = purple_account_get_status_type_with_primitive(account,
+			PURPLE_STATUS_AVAILABLE);
+	if (status_type != NULL)
+		purple_presence_set_status_active(priv->presence,
+										purple_status_type_get_id(status_type),
+										TRUE);
+	else
+		purple_presence_set_status_active(priv->presence,
+										"offline",
+										TRUE);
+}
+
 /* Class initializer function */
-static void purple_account_class_init(PurpleAccountClass *klass)
+static void
+purple_account_class_init(PurpleAccountClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -2979,6 +3024,7 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 
 	obj_class->dispose = purple_account_dispose;
 	obj_class->finalize = purple_account_finalize;
+	obj_class->constructed = purple_account_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_account_get_property;
@@ -3011,19 +3057,19 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 	g_object_class_install_property(obj_class, PROP_ENABLED,
 			g_param_spec_boolean(PROP_ENABLED_S, _("Enabled"),
 				_("Whether the account is enabled or not."), FALSE,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMEMBER_PASSWORD,
 			g_param_spec_boolean(PROP_REMEMBER_PASSWORD_S, _("Remember password"),
 				_("Whether to remember and store the password for this account."), FALSE,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_CHECK_MAIL,
 			g_param_spec_boolean(PROP_CHECK_MAIL_S, _("Check mail"),
 				_("Whether to check mails for this account."), FALSE,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE)
 			);
 
 #warning TODO: change spec_pointer to spec_object when PurpleConnection is a GObject
@@ -3072,11 +3118,7 @@ purple_account_get_type(void)
 PurpleAccount *
 purple_account_new(const char *username, const char *protocol_id)
 {
-	PurpleAccount *account = NULL;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleStatusType *status_type;
-	PurpleAccountPrivate *priv;
+	PurpleAccount *account;
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(protocol_id != NULL, NULL);
@@ -3087,36 +3129,9 @@ purple_account_new(const char *username, const char *protocol_id)
 		return account;
 
 	account = g_object_new(PURPLE_TYPE_ACCOUNT,
-					PROP_USERNAME_S, username,
+					PROP_USERNAME_S,    username,
 					PROP_PROTOCOL_ID_S, protocol_id,
 					NULL);
-
-	purple_signal_emit(purple_accounts_get_handle(), "account-created",
-			account);
-
-	prpl = purple_find_prpl(protocol_id);
-	if (prpl == NULL)
-		return account;
-
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info != NULL && prpl_info->status_types != NULL)
-		purple_account_set_status_types(account,
-				prpl_info->status_types(account));
-
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-
-	priv->presence = purple_presence_new_for_account(account);
-
-	status_type = purple_account_get_status_type_with_primitive(account,
-			PURPLE_STATUS_AVAILABLE);
-	if (status_type != NULL)
-		purple_presence_set_status_active(priv->presence,
-										purple_status_type_get_id(status_type),
-										TRUE);
-	else
-		purple_presence_set_status_active(priv->presence,
-										"offline",
-										TRUE);
 
 	return account;
 }
