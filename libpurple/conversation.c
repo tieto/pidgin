@@ -1080,7 +1080,7 @@ purple_conversation_get_type(void)
 
 		type = g_type_register_static(G_TYPE_OBJECT,
 				"PurpleConversation",
-				&info, 0);
+				&info, G_TYPE_FLAG_ABSTRACT);
 	}
 
 	return type;
