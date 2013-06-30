@@ -97,6 +97,11 @@ struct _PurpleAccount
 	/*< private >*/
 	GObject gparent;
 
+	/** The UI data associated with this account. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -570,6 +575,25 @@ void purple_account_set_ui_string(PurpleAccount *account, const char *ui,
  */
 void purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 							  const char *name, gboolean value);
+
+/**
+ * Set the UI data associated with this account.
+ *
+ * @param account The account.
+ * @param ui_data A pointer to associate with this object.
+ */
+void purple_account_set_ui_data(PurpleAccount *account, gpointer ui_data);
+
+/**
+ * Returns the UI data associated with this account.
+ *
+ * @param account The account.
+ *
+ * @return The UI data associated with this account.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libuprple core.
+ */
+gpointer purple_account_get_ui_data(const PurpleAccount *account);
 
 /**
  * Returns whether or not the account is connected.

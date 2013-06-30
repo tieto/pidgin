@@ -119,6 +119,11 @@ struct _PurpleConversation
 	/*< private >*/
 	GObject gparent;
 
+	/** The UI data associated with this conversation. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

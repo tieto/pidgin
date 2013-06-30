@@ -111,7 +111,6 @@ struct _PurpleChatUserPrivate
 	PurpleChatUserFlags flags;     /**< A bitwise OR of flags for this
 	                                    participant, such as whether they
 	                                    are a channel operator.               */
-	gpointer ui_data;              /**< UI can put whatever it wants here.    */
 };
 
 /* Chat User Property enums */
@@ -1752,23 +1751,17 @@ purple_chat_user_get_flags(const PurpleChatUser *cb)
 void
 purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data)
 {
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
+	g_return_if_fail(cb != NULL);
 
-	g_return_if_fail(priv != NULL);
-
-	priv->ui_data = ui_data;
+	cb->ui_data = ui_data;
 }
 
 gpointer
 purple_chat_user_get_ui_data(const PurpleChatUser *cb)
 {
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
+	g_return_val_if_fail(cb != NULL, NULL);
 
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->ui_data;
+	return cb->ui_data;
 }
 
 void

@@ -2157,6 +2157,22 @@ purple_account_get_ui_bool(const PurpleAccount *account, const char *ui,
 	return g_value_get_boolean(&setting->value);
 }
 
+gpointer
+purple_account_get_ui_data(const PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->ui_data;
+}
+
+void
+purple_account_set_ui_data(PurpleAccount *account, gpointer ui_data)
+{
+	g_return_if_fail(account != NULL);
+
+	account->ui_data = ui_data;
+}
+
 PurpleLog *
 purple_account_get_log(PurpleAccount *account, gboolean create)
 {
