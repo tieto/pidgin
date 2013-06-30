@@ -57,6 +57,7 @@ struct _PurpleConversationPrivate
 	GList *logs;                      /**< This conversation's logs          */
 
 	PurpleConversationUiOps *ui_ops;  /**< UI-specific operations.           */
+	void *ui_data;                    /**< UI-specific data.                 */
 
 	PurpleConnectionFlags features;   /**< The supported features            */
 	GList *message_history;           /**< Message history, as a GList of
@@ -308,6 +309,7 @@ purple_conversation_set_ui_ops(PurpleConversation *conv,
 	if (priv->ui_ops != NULL && priv->ui_ops->destroy_conversation != NULL)
 		priv->ui_ops->destroy_conversation(conv);
 
+	priv->ui_data = NULL;
 	priv->ui_ops = ops;
 }
 
@@ -859,6 +861,24 @@ purple_conversation_message_get_type(void)
 	return type;
 }
 
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->ui_data = ui_data;
+}
+
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->ui_data;
+}
+
 gboolean
 purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 				const gchar *markup, gchar **error)
@@ -993,6 +1013,7 @@ purple_conversation_finalize(GObject *object)
 
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
+	priv->ui_data = NULL;
 
 	parent_class->finalize(object);
 }

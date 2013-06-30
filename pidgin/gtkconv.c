@@ -1370,7 +1370,6 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 #if 0
 		/* I will miss you */
 		purple_conversation_set_ui_ops(conv, NULL);
-		conv->ui_data = NULL;
 #else
 		pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
 		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
@@ -4120,11 +4119,11 @@ get_chat_user_status_icon(PurpleChatConversation *chat, const char *name, Purple
 static void
 deleting_chat_user_cb(PurpleChatUser *cb)
 {
-	GtkTreeRowReference *ref = cb->ui_data;
+	GtkTreeRowReference *ref = purple_chat_user_get_ui_data(cb);
 
 	if (ref) {
 		gtk_tree_row_reference_free(ref);
-		cb->ui_data = NULL;
+		purple_chat_user_set_ui_data(cb, NULL);
 	}
 }
 
@@ -4209,13 +4208,13 @@ add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const cha
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 
-	if (cb->ui_data) {
-		GtkTreeRowReference *ref = cb->ui_data;
+	if (purple_chat_user_get_ui_data(cb)) {
+		GtkTreeRowReference *ref = purple_chat_user_get_ui_data(cb);
 		gtk_tree_row_reference_free(ref);
 	}
 
 	newpath = gtk_tree_model_get_path(tm, &iter);
-	cb->ui_data = gtk_tree_row_reference_new(tm, newpath);
+	purple_chat_user_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
 	gtk_tree_path_free(newpath);
 
 	if (is_me && color)
@@ -5746,7 +5745,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkTargetList *targets;
 
 	if (!is_chat && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
-		conv->ui_data = gtkconv;
+		purple_conversation_set_ui_data(conv, gtkconv);
 		if (!g_list_find(gtkconv->convs, conv))
 			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 		pidgin_conv_switch_active_conversation(conv);
@@ -5754,7 +5753,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	gtkconv = g_new0(PidginConversation, 1);
-	conv->ui_data = gtkconv;
+	purple_conversation_set_ui_data(conv, gtkconv);
 	gtkconv->active_conv = conv;
 	gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 	gtkconv->send_history = g_list_append(NULL, NULL);
@@ -5785,7 +5784,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 			g_free(gtkconv->u.im);
 
 		g_free(gtkconv);
-		conv->ui_data = NULL;
+		purple_conversation_set_ui_data(conv, NULL);
 		return;
 	}
 
@@ -6764,7 +6763,7 @@ static gboolean get_iter_from_chatuser(PurpleChatUser *cb, GtkTreeIter *iter)
 
 	g_return_val_if_fail(cb != NULL, FALSE);
 
-	ref = cb->ui_data;
+	ref = purple_chat_user_get_ui_data(cb);
 	if (!ref)
 		return FALSE;
 
@@ -6851,11 +6850,11 @@ pidgin_conv_chat_rename_user(PurpleChatConversation *chat, const char *old_name,
 		return;
 
 	if (get_iter_from_chatuser(old_chatuser, &iter)) {
-		GtkTreeRowReference *ref = old_chatuser->ui_data;
+		GtkTreeRowReference *ref = purple_chat_user_get_ui_data(old_chatuser);
 
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		old_chatuser->ui_data = NULL;
+		purple_chat_user_set_ui_data(old_chatuser, NULL);
 	}
 
 	g_return_if_fail(new_alias != NULL);
@@ -6940,10 +6939,10 @@ pidgin_conv_chat_update_user(PurpleChatUser *chatuser)
 		return;
 
 	if (get_iter_from_chatuser(chatuser, &iter)) {
-		GtkTreeRowReference *ref = chatuser->ui_data;
+		GtkTreeRowReference *ref = purple_chat_user_get_ui_data(chatuser);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
-		chatuser->ui_data = NULL;
+		purple_chat_user_set_ui_data(chatuser, NULL);
 	}
 
 	if (chatuser)
@@ -8424,7 +8423,6 @@ pidgin_conv_attach(PurpleConversation *conv)
 	g_object_set_data(G_OBJECT(conv), "unseen-count", NULL);
 	g_object_set_data(G_OBJECT(conv), "unseen-state", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
-	conv->ui_data = NULL;
 	if (!PIDGIN_CONVERSATION(conv))
 		private_gtkconv_new(conv, FALSE);
 	timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));

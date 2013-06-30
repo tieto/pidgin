@@ -119,11 +119,6 @@ struct _PurpleConversation
 	/*< private >*/
 	GObject gparent;
 
-	/** The UI data associated with this conversation. This is a convenience
-	 *  field provided to the UIs -- it is not used by the libpurple core.
-	 */
-	gpointer ui_data;
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -506,6 +501,25 @@ GList *purple_conversation_get_message_history(PurpleConversation *conv);
  * @param conv  The conversation
  */
 void purple_conversation_clear_message_history(PurpleConversation *conv);
+
+/**
+ * Set the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ * @param ui_data		A pointer to associate with this conversation.
+ */
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ *
+ * @return The UI data associated with this conversation.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
 
 /**
  * Sends a message to a conversation after confirming with

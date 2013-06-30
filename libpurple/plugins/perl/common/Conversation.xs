@@ -188,6 +188,11 @@ gboolean
 purple_conversation_is_logging(conv)
 	Purple::Conversation conv
 
+gpointer
+purple_conversation_get_data(conv, key)
+	Purple::Conversation conv
+	const char * key
+
 Purple::ConnectionFlags
 purple_conversation_get_features(conv)
 	Purple::Conversation conv
