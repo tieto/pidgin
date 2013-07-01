@@ -19,11 +19,11 @@
   @signal deleting-conversation
   @signal buddy-typing
   @signal buddy-typing-stopped
-  @signal chat-buddy-joining
-  @signal chat-buddy-joined
-  @signal chat-buddy-flags
-  @signal chat-buddy-leaving
-  @signal chat-buddy-left
+  @signal chat-user-joining
+  @signal chat-user-joined
+  @signal chat-user-flags
+  @signal chat-user-leaving
+  @signal chat-user-left
   @signal chat-inviting-user
   @signal chat-invited-user
   @signal chat-invited
@@ -294,7 +294,7 @@ void (*buddy_typing_stopped)(PurpleAccount *account, const char *name);
   @param name    The name of the user which stopped typing.
  @endsignaldef
 
- @signaldef chat-buddy-joining
+ @signaldef chat-user-joining
   @signalproto
 gboolean (*chat_buddy_joining)(PurpleConversation *conv, const char *name,
                            PurpleConvChatBuddyFlags flags);
@@ -308,7 +308,7 @@ gboolean (*chat_buddy_joining)(PurpleConversation *conv, const char *name,
   @param flags The flags of the user that is joining the conversation.
  @endsignaldef
 
- @signaldef chat-buddy-joined
+ @signaldef chat-user-joined
   @signalproto
 void (*chat_buddy_joined)(PurpleConversation *conv, const char *name,
                           PurpleConvChatBuddyFlags flags,
@@ -334,21 +334,20 @@ void (*chat_join_failed)(PurpleConnection *gc, GHashTable *components);
                  function should be g_str_equal().
  @endsignaldef
 
- @signaldef chat-buddy-flags
+ @signaldef chat-user-flags
   @signalproto
-void (*chat_buddy_flags)(PurpleConversation *conv, const char *name,
+void (*chat_buddy_flags)(PurpleChatUser *chatuser,
                          PurpleConvChatBuddyFlags oldflags,
                          PurpleConvChatBuddyFlags newflags);
   @endsignalproto
   @signaldesc
    Emitted when a user in a chat changes flags.
-  @param conv The chat conversation.
-  @param name The name of the user.
+  @param chatuser The chat user whose flags changed.
   @param oldflags The old flags.
   @param newflags The new flags.
  @endsignaldef
 
- @signaldef chat-buddy-leaving
+ @signaldef chat-user-leaving
   @signalproto
 gboolean (*chat_buddy_leaving)(PurpleConversation *conv, const char *name,
                            const char *reason);
@@ -362,7 +361,7 @@ gboolean (*chat_buddy_leaving)(PurpleConversation *conv, const char *name,
   @param reason The optional reason why the user is leaving.
  @endsignaldef
 
- @signaldef chat-buddy-left
+ @signaldef chat-user-left
   @signalproto
 void (*chat_buddy_left)(PurpleConversation *conv, const char *name,
                         const char *reason);
