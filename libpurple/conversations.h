@@ -1,5 +1,5 @@
 /**
- * @file conversations.h IM and Chat Conversations API
+ * @file conversations.h Conversations subsystem API
  * @ingroup core
  * @see @ref conversation-signals
  */
