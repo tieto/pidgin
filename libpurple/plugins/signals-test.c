@@ -148,12 +148,12 @@ static void
 blist_node_added_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+	if (PURPLE_IS_GROUP(bnode))
 		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+	else if (PURPLE_IS_CONTACT(bnode))
 		/* Close enough */
 		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	else if (PURPLE_IS_BUDDY(bnode))
 		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
 	else
 		name = "(unknown)";
@@ -166,12 +166,12 @@ static void
 blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+	if (PURPLE_IS_GROUP(bnode))
 		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+	else if (PURPLE_IS_CONTACT(bnode))
 		/* Close enough */
 		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	else if (PURPLE_IS_BUDDY(bnode))
 		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
 	else
 		name = "(unknown)";
@@ -188,26 +188,22 @@ blist_node_aliased(PurpleBlistNode *node, const char *old_alias)
 	PurpleChat *c = (PurpleChat *)node;
 	PurpleGroup *g = (PurpleGroup *)node;
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Contact: %s, %s)\n",
 		                  purple_contact_get_alias(p), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if (PURPLE_IS_BUDDY(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Buddy: %s, %s)\n",
 		                  purple_buddy_get_name(b), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_IS_CHAT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Chat: %s, %s)\n",
 		                  purple_chat_get_name(c), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	} else if (PURPLE_IS_GROUP(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Group: %s, %s)\n",
 		                  purple_group_get_name(g), old_alias);
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (UNKNOWN: %d, %s)\n",
-		                  purple_blist_node_get_type(node), old_alias);
 	}
 }
 
@@ -219,26 +215,22 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, void *data)
 	PurpleChat *c = (PurpleChat *)node;
 	PurpleGroup *g = (PurpleGroup *)node;
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Contact: %s)\n",
 		                  purple_contact_get_alias(p));
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if (PURPLE_IS_BUDDY(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Buddy: %s)\n",
 		                  purple_buddy_get_name(b));
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_IS_CHAT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Chat: %s)\n",
 		                  purple_chat_get_name(c));
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	} else if (PURPLE_IS_GROUP(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Group: %s)\n",
 		                  purple_group_get_name(g));
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (UNKNOWN: %d)\n",
-		                  purple_blist_node_get_type(node));
 	}
 }
 

@@ -13,26 +13,6 @@ chat_components_foreach(gpointer key, gpointer value, gpointer user_data)
 MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
-BOOT:
-{
-	HV *stash = gv_stashpv("Purple::BuddyList::Node", 1);
-
-	static const constiv *civ, const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_BLIST_##name##_NODE}
-		const_iv(GROUP),
-		const_iv(CONTACT),
-		const_iv(BUDDY),
-		const_iv(CHAT),
-		const_iv(OTHER),
-#undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_BLIST_NODE_FLAG_##name}
-		const_iv(NO_SAVE),
-	};
-
-	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
-		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
-}
-
 Purple::BuddyList
 purple_get_blist()
 
@@ -287,22 +267,18 @@ purple_blist_node_get_string(node, key)
 	const char * key
 
 void
+purple_blist_node_set_dont_save(node, dont_save)
+	Purple::BuddyList::Node node
+	gboolean dont_save
+
+gboolean
+purple_blist_node_get_dont_save(node);
+	Purple::BuddyList::Node node
+
+void
 purple_blist_node_remove_setting(node, key)
 	Purple::BuddyList::Node node
 	const char * key
-
-void
-purple_blist_node_set_flags(node, flags)
-	Purple::BuddyList::Node node
-	Purple::BuddyList::NodeFlags flags
-
-Purple::BuddyList::NodeFlags
-purple_blist_node_get_flags(node)
-	Purple::BuddyList::Node node
-
-Purple::BuddyList::NodeType
-purple_blist_node_get_type(node)
-	Purple::BuddyList::Node node
 
 Purple::BuddyList::Node
 purple_blist_node_next(node, offline)

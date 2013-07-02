@@ -293,19 +293,17 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					node = *va_arg(args, PurpleBlistNode **);
 				else
 					node = va_arg(args, PurpleBlistNode *);
-				switch (purple_blist_node_get_type(node)) {
-				case PURPLE_BLIST_GROUP_NODE:
+
+				if (PURPLE_IS_GROUP(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("group", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj(purple_group_get_name((PurpleGroup *)node), -1));
-					break;
-				case PURPLE_BLIST_CONTACT_NODE:
+				} else if (PURPLE_IS_CONTACT(node)) {
 					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
 					arg = Tcl_NewStringObj("contact", -1);
-					break;
-				case PURPLE_BLIST_BUDDY_NODE:
+				} else if (PURPLE_IS_BUDDY(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("buddy", -1));
@@ -314,8 +312,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
 										    purple_buddy_get_account((PurpleBuddy *)node)));
-					break;
-				case PURPLE_BLIST_CHAT_NODE:
+				} else if (PURPLE_IS_CHAT(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("chat", -1));
@@ -324,12 +321,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
 										  purple_chat_get_account((PurpleChat *)node)));
-					break;
-				case PURPLE_BLIST_OTHER_NODE:
-					arg = Tcl_NewStringObj("other", -1);
-					break;
 				}
-				break;
 			}
 		}
 		Tcl_ListObjAppendElement(handler->interp, cmd, arg);

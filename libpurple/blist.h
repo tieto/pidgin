@@ -324,6 +324,14 @@ struct _PurpleBlistUiOps
 
 G_BEGIN_DECLS
 
+/* TODO move */
+GType purple_blist_node_get_type(void);
+GType purple_buddy_get_type(void);
+GType purple_contact_get_type(void);
+GType purple_group_get_type(void);
+GType purple_chat_get_type(void);
+GType purple_buddy_list_get_type(void);
+
 /**************************************************************************/
 /** @name Buddy List API                                                  */
 /**************************************************************************/
@@ -1188,32 +1196,22 @@ const char *purple_blist_node_get_string(PurpleBlistNode *node, const char *key)
 void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key);
 
 /**
- * Set the flags for the given node.  Setting a node's flags will overwrite
- * the old flags, so if you want to save them, you must first call
- * purple_blist_node_get_flags and modify that appropriately.
+ * Sets whether the node should be saved with the buddy list or not
  *
- * @param node  The node on which to set the flags.
- * @param flags The flags to set.  This is a bitmask.
+ * @param node  The node
+ * @param dont_save TRUE if the node should NOT be saved, FALSE if node should
+ *                  be saved
  */
-void purple_blist_node_set_flags(PurpleBlistNode *node, PurpleBlistNodeFlags flags);
+void purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save);
 
 /**
- * Get the current flags on a given node.
+ * Gets whether the node should be saved with the buddy list or not
  *
- * @param node The node from which to get the flags.
+ * @param node  The node
  *
- * @return The flags on the node.  This is a bitmask.
+ * @return TRUE if the node should NOT be saved, FALSE if node should be saved
  */
-PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
-
-/**
- * Get the type of a given node.
- *
- * @param node The node.
- *
- * @return The type of the node.
- */
-PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
+gboolean purple_blist_node_get_dont_save(PurpleBlistNode *node);
 
 /*@}*/
 

@@ -100,7 +100,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	   stranger setting. */
 	if (node) {
 		node = purple_blist_node_get_parent(node);
-		g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
+		g_return_if_fail(PURPLE_IS_CONTACT(node));
 		accept_setting = purple_blist_node_get_int(node, "autoaccept");
 	} else {
 		accept_setting = purple_prefs_get_int(PREF_STRANGER);
@@ -182,9 +182,9 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 static void
 save_cb(PurpleBlistNode *node, int choice)
 {
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (PURPLE_IS_BUDDY(node))
 		node = purple_blist_node_get_parent(node);
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
+	g_return_if_fail(PURPLE_IS_CONTACT(node));
 	purple_blist_node_set_int(node, "autoaccept", choice);
 }
 
@@ -193,9 +193,9 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 {
 	char *message;
 
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (PURPLE_IS_BUDDY(node))
 		node = purple_blist_node_get_parent(node);
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
+	g_return_if_fail(PURPLE_IS_CONTACT(node));
 
 	message = g_strdup_printf(_("When a file-transfer request arrives from %s"),
 					purple_contact_get_alias((PurpleContact *)node));
@@ -218,8 +218,8 @@ context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 {
 	PurpleMenuAction *action;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node) && !PURPLE_BLIST_NODE_IS_CONTACT(node) &&
-		!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE))
+	if (!PURPLE_IS_BUDDY(node) && !PURPLE_IS_CONTACT(node) &&
+		!purple_blist_node_get_dont_save(node))
 		return;
 
 	action = purple_menu_action_new(_("Autoaccept File Transfers..."),

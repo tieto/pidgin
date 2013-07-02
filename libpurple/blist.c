@@ -44,7 +44,7 @@ struct _PurpleBlistNodePrivate {
 	PurpleBlistNode *parent;  /**< The parent of this node                 */
 	PurpleBlistNode *child;   /**< The child of this node                  */
 	GHashTable *settings;     /**< per-node settings                       */
-	gboolean no_save;         /**< node should not be saved with the buddy
+	gboolean dont_save;       /**< node should not be saved with the buddy
 	                               list                                    */
 };
 
