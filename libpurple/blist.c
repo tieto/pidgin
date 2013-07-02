@@ -37,6 +37,67 @@
 #include "value.h"
 #include "xmlnode.h"
 
+/** Private data of a buddy list node */
+struct _PurpleBlistNodePrivate {
+	PurpleBlistNode *prev;    /**< The sibling before this buddy.          */
+	PurpleBlistNode *next;    /**< The sibling after this buddy.           */
+	PurpleBlistNode *parent;  /**< The parent of this node                 */
+	PurpleBlistNode *child;   /**< The child of this node                  */
+	GHashTable *settings;     /**< per-node settings                       */
+	gboolean no_save;         /**< node should not be saved with the buddy
+	                               list                                    */
+};
+
+/** Private data for a counting node */
+struct _PurpleCountingNodePrivate {
+	int totalcount;    /**< The number of children                          */
+	int currentcount;  /**< The number of children corresponding to online
+	                        accounts                                        */
+	int onlinecount;   /**< The number of children who are currently online */
+};
+
+/** Private data for a buddy */
+struct _PurpleBuddyPrivate {
+	char *name;                  /**< The name of the buddy.                  */
+	char *alias;                 /**< The user-set alias of the buddy         */
+	char *server_alias;          /**< The server-specified alias of the buddy.
+	                                  (i.e. MSN "Friendly Names")             */
+	void *proto_data;            /**< TODO remove - use protocol subclasses
+	                                  This allows the prpl to associate
+	                                  whatever data it wants with a buddy     */
+	PurpleBuddyIcon *icon;       /**< The buddy icon.                         */
+	PurpleAccount *account;      /**< the account this buddy belongs to       */
+	PurplePresence *presence;    /**< Presense information of the buddy       */
+	PurpleMediaCaps media_caps;  /**< The media capabilities of the buddy.    */
+};
+
+/** Private data for a contact */
+struct _PurpleContactPrivate {
+	char *alias;              /**< The user-set alias of the contact */
+	PurpleBuddy *priority;    /**< The "top" buddy for this contact  */
+	gboolean priority_valid;  /**< Is priority valid?                */
+};
+
+
+/** Private data for a group */
+struct _PurpleGroupPrivate {
+	char *name;  /**< The name of this group. */
+};
+
+/** Private data for a chat node */
+struct _PurpleChatPrivate {
+	char *alias;             /**< The display name of this chat.              */
+	GHashTable *components;  /**< the stuff the protocol needs to know to join
+	                              the chat                                    */
+	PurpleAccount *account;  /**< The account this chat is attached to        */
+};
+
+/** Private data for the buddy list */
+struct _PurpleBuddyListPrivate {
+	PurpleBlistNode *root;  /**< The first node in the buddy list           */
+	GHashTable *buddies;    /**< Every buddy (no pun intended) in this list */
+};
+
 static PurpleBlistUiOps *blist_ui_ops = NULL;
 
 static PurpleBuddyList *purplebuddylist = NULL;
