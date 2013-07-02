@@ -59,11 +59,6 @@ struct _PurpleMedia
 {
 	GObject parent;                /**< The parent of this object. */
 	PurpleMediaPrivate *priv;      /**< The private data of this object. */
-
-	void (*purple_reserved1)(void);
-	void (*purple_reserved2)(void);
-	void (*purple_reserved3)(void);
-	void (*purple_reserved4)(void);
 };
 
 /** The media class */

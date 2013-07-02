@@ -63,11 +63,6 @@ typedef enum  {
 struct _PurpleCipher {
 	/*< private >*/
 	GObject gparent;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 /**

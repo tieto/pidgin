@@ -38,15 +38,12 @@ typedef struct _PurpleCircularBuffer           PurpleCircularBuffer;
 typedef struct _PurpleCircularBufferClass      PurpleCircularBufferClass;
 
 struct _PurpleCircularBuffer {
+	/*< private >*/
 	GObject parent;
-
-	void (*purple_reserved1)(void);
-	void (*purple_reserved2)(void);
-	void (*purple_reserved3)(void);
-	void (*purple_reserved4)(void);
 };
 
 struct _PurpleCircularBufferClass {
+	/*< private >*/
 	GObjectClass parent;
 
 	void (*grow)(PurpleCircularBuffer *buffer, gsize len);

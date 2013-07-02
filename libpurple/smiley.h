@@ -52,16 +52,13 @@ typedef struct _PurpleSmileyClass   PurpleSmileyClass;
 
 struct _PurpleSmiley
 {
+	/*< private >*/
 	GObject parent;
-
-	void (*purple_reserved1)(void);
-	void (*purple_reserved2)(void);
-	void (*purple_reserved3)(void);
-	void (*purple_reserved4)(void);
 };
 
 struct _PurpleSmileyClass
 {
+	/*< private >*/
 	GObjectClass parent_class;
 
 	void (*purple_reserved1)(void);

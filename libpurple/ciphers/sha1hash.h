@@ -39,15 +39,12 @@ typedef struct _PurpleSHA1Hash				PurpleSHA1Hash;
 typedef struct _PurpleSHA1HashClass			PurpleSHA1HashClass;
 
 struct _PurpleSHA1Hash {
+	/*< private >*/
 	PurpleHash gparent;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 struct _PurpleSHA1HashClass {
+	/*< private >*/
 	PurpleHashClass gparent;
 
 	void (*_purple_reserved1)(void);

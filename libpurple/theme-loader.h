@@ -49,17 +49,15 @@ typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 
 struct _PurpleThemeLoader
 {
+	/*< private >*/
 	GObject parent;
-
-	void (*purple_reserved1)(void);
-	void (*purple_reserved2)(void);
-	void (*purple_reserved3)(void);
-	void (*purple_reserved4)(void);
 };
 
 struct _PurpleThemeLoaderClass
 {
+	/*< private >*/
 	GObjectClass parent_class;
+
 	PurpleTheme *((*purple_theme_loader_build)(const gchar*));
 	gboolean (*probe_directory)(const gchar *);
 

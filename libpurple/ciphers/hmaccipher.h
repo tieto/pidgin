@@ -40,15 +40,12 @@ typedef struct _PurpleHMACCipher				PurpleHMACCipher;
 typedef struct _PurpleHMACCipherClass			PurpleHMACCipherClass;
 
 struct _PurpleHMACCipher {
+	/*< private >*/
 	PurpleCipher gparent;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 struct _PurpleHMACCipherClass {
+	/*< private >*/
 	PurpleCipherClass gparent;
 
 	void (*_purple_reserved1)(void);

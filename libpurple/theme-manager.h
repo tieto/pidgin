@@ -45,15 +45,12 @@ typedef struct _PurpleThemeManagerClass PurpleThemeManagerClass;
 #define PURPLE_GET_THEME_MANAGER_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_THEME_MANAGER, PurpleThemeManagerClass))
 
 struct _PurpleThemeManager {
+	/*< private >*/
 	GObject parent;
-
-	void (*purple_reserved1)(void);
-	void (*purple_reserved2)(void);
-	void (*purple_reserved3)(void);
-	void (*purple_reserved4)(void);
 };
 
 struct _PurpleThemeManagerClass {
+	/*< private >*/
 	GObjectClass parent_class;
 
 	void (*purple_reserved1)(void);

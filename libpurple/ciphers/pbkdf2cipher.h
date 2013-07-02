@@ -40,15 +40,12 @@ typedef struct _PurplePBKDF2Cipher			PurplePBKDF2Cipher;
 typedef struct _PurplePBKDF2CipherClass		PurplePBKDF2CipherClass;
 
 struct _PurplePBKDF2Cipher {
+	/*< private >*/
 	PurpleCipher gparent;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 struct _PurplePBKDF2CipherClass {
+	/*< private >*/
 	PurpleCipherClass gparent;
 
 	void (*_purple_reserved1)(void);

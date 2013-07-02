@@ -102,11 +102,6 @@ struct _PurpleIMConversation
 {
 	/*< private >*/
 	PurpleConversation parent_object;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 /** Base class for all #PurpleIMConversation's */
@@ -128,11 +123,6 @@ struct _PurpleChatConversation
 {
 	/*< private >*/
 	PurpleConversation parent_object;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 /** Base class for all #PurpleChatConversation's */
@@ -159,11 +149,6 @@ struct _PurpleChatUser
 	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
 	gpointer ui_data;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 /** Base class for all #PurpleChatUser's */
