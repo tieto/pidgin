@@ -1568,13 +1568,22 @@ dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [enable GNOME Keyring support])], enable_gnome_keyring=no, enable_gnome_keyring=yes)
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [enable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
 
 if test "x$enable_gnome_keyring" = "xyes" ; then
 	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
 		AC_SUBST(GNOMEKEYRING_CFLAGS)
 		AC_SUBST(GNOMEKEYRING_LIBS)
 		AC_DEFINE(HAVE_GNOMEKEYRING, 1, [Define if we have GNOME Keyring.])
+	], [
+		AC_MSG_RESULT(no)
+		enable_gnome_keyring="no"
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNOME Keyring development headers not found
+Use --disable-gnome-keyring if you do not need it.
+])
+		fi
 	])
 fi
 
@@ -1584,7 +1593,7 @@ dnl #######################################################################
 dnl # Check for KWallet headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [enable KWallet support])], enable_kwallet=no, enable_kwallet=yes)
+AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [enable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
 AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
@@ -1595,7 +1604,7 @@ if test "x$enable_kwallet" = "xyes"; then
 		AC_CHECK_PROG(KDE4_CONFIG, kde4-config, kde4-config, no)
 		if test "x$KDE4_CONFIG" = "xno"; then
 			if test "x$force_deps" = "xyes"; then
-				AC_MSG_WARN([
+				AC_MSG_ERROR([
 kde4-config not found. $KDE4_CONFIG
 Use --disable-kwallet if you do not need KWallet support.
 Use --with-kwallet-includes and --with-kwallet-libs to set up includes manually.
@@ -1627,7 +1636,7 @@ if test "x$enable_kwallet" = "xyes"; then
 	AC_CHECK_PROG(CXXTEST, [$CXX], [$CXX])
 	if test "x$CXXTEST" = "x"; then
 		if test "x$force_deps" = "xyes"; then
-			AC_MSG_WARN([
+			AC_MSG_ERROR([
 A C++ compiler was not found.
 Use --disable-kwallet if you do not need KWallet support.
 ])
@@ -1640,18 +1649,19 @@ AC_LANG_PUSH([C++])
 CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
 if test "x$enable_kwallet" = "xyes"; then
-
 	PKG_CHECK_MODULES(QT4, [QtCore], [
-			AC_SUBST(QT4_CFLAGS)
-			AC_SUBST(QT4_LIBS)
-		], [
-			AC_MSG_RESULT(no)
-			AC_MSG_WARN([
+		AC_SUBST(QT4_CFLAGS)
+		AC_SUBST(QT4_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_kwallet=no
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
 Qt4 development headers not found.
 Use --disable-kwallet if you do not need KWallet support.
 ])
-			enable_kwallet=no
-		])
+		fi
+	])
 fi
 
 if test "x$enable_kwallet" = "xyes"; then
