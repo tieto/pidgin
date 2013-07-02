@@ -48,14 +48,6 @@ struct _PurpleBlistNodePrivate {
 	                               list                                    */
 };
 
-/** Private data for a counting node */
-struct _PurpleCountingNodePrivate {
-	int totalcount;    /**< The number of children                          */
-	int currentcount;  /**< The number of children corresponding to online
-	                        accounts                                        */
-	int onlinecount;   /**< The number of children who are currently online */
-};
-
 /** Private data for a buddy */
 struct _PurpleBuddyPrivate {
 	char *name;                  /**< The name of the buddy.                  */
@@ -71,17 +63,27 @@ struct _PurpleBuddyPrivate {
 	PurpleMediaCaps media_caps;  /**< The media capabilities of the buddy.    */
 };
 
-/** Private data for a contact */
+/** Private data for a contact TODO: move counts to PurpleCountingNode */
 struct _PurpleContactPrivate {
-	char *alias;              /**< The user-set alias of the contact */
-	PurpleBuddy *priority;    /**< The "top" buddy for this contact  */
-	gboolean priority_valid;  /**< Is priority valid?                */
+	char *alias;              /**< The user-set alias of the contact         */
+	int totalsize;            /**< The number of buddies in this contact     */
+	int currentsize;          /**< The number of buddies in this contact
+	                               corresponding to online accounts          */
+	int online;               /**< The number of buddies in this contact who
+	                               are currently online                      */
+	PurpleBuddy *priority;    /**< The "top" buddy for this contact          */
+	gboolean priority_valid;  /**< Is priority valid?                        */
 };
 
 
-/** Private data for a group */
+/** Private data for a group TODO: move counts to PurpleCountingNode */
 struct _PurpleGroupPrivate {
-	char *name;  /**< The name of this group. */
+	char *name;       /**< The name of this group.                            */
+	int totalsize;    /**< The number of chats and contacts in this group     */
+	int currentsize;  /**< The number of chats and contacts in this group
+	                       corresponding to online accounts                   */
+	int online;       /**< The number of chats and contacts in this group who
+	                       are currently online                               */
 };
 
 /** Private data for a chat node */
