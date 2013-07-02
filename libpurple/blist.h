@@ -43,18 +43,6 @@ typedef struct _PurpleBlistNode PurpleBlistNode;
 /** @copydoc _PurpleBlistNodeClass */
 typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 
-#define PURPLE_TYPE_COUNTING_NODE             (purple_counting_node_get_type())
-#define PURPLE_COUNTING_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNode))
-#define PURPLE_COUNTING_NODE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodeClass))
-#define PURPLE_IS_COUNTING_NODE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_COUNTING_NODE))
-#define PURPLE_IS_COUNTING_NODE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_COUNTING_NODE))
-#define PURPLE_COUNTING_NODE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodeClass))
-
-/** @copydoc _PurpleCountingNode */
-typedef struct _PurpleCountingNode PurpleCountingNode;
-/** @copydoc _PurpleCountingNodeClass */
-typedef struct _PurpleCountingNodeClass PurpleCountingNodeClass;
-
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())
 #define PURPLE_BUDDY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY, PurpleBuddy))
 #define PURPLE_BUDDY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BUDDY, PurpleBuddyClass))
@@ -146,7 +134,7 @@ struct _PurpleBlistNode {
 	/*< private >*/
 	GObject gparent;
 
-	/** The UI data associated with this account. This is a convenience
+	/** The UI data associated with this node. This is a convenience
 	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
 	gpointer ui_data;
@@ -156,25 +144,6 @@ struct _PurpleBlistNode {
 struct _PurpleBlistNodeClass {
 	/*< private >*/
 	GObjectClass gparent_class;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
-/**
- * A Buddy list node that keeps a count of the number of children it has.
- */
-struct _PurpleCountingNode {
-	/** The Buddy list node that this counting node inherits from */
-	PurpleBlistNode node;
-};
-
-/** The base class for all #PurpleCountingNode's. */
-struct _PurpleCountingNodeClass {
-	/*< private >*/
-	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -207,16 +176,14 @@ struct _PurpleBuddyClass {
  * contact.
  */
 struct _PurpleContact {
-	/** The counting node that keeps a count of the number of buddies in this
-	 *  contact
-	 */
-	PurpleCountingNode cnode;
+	/** The node that this contact inherits from */
+	PurpleBlistNode node;
 };
 
 /** The base class for all #PurpleContact's. */
 struct _PurpleContactClass {
 	/*< private >*/
-	PurpleCountingNodeClass cnode_class;
+	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -229,16 +196,14 @@ struct _PurpleContactClass {
  * group.
  */
 struct _PurpleGroup {
-	/** The counting node that keeps a count of the number of chats and contacts
-	 *  in this group
-	 */
-	PurpleCountingNode cnode;
+	/** The node that this group inherits from */
+	PurpleBlistNode node;
 };
 
 /** The base class for all #PurpleGroup's. */
 struct _PurpleGroupClass {
 	/*< private >*/
-	PurpleCountingNodeClass cnode_class;
+	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -273,7 +238,7 @@ struct _PurpleBuddyList {
 	/*< private >*/
 	GObject gparent;
 
-	/** The UI data associated with this account. This is a convenience
+	/** The UI data associated with the buddy list. This is a convenience
 	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
 	gpointer ui_data;
