@@ -157,9 +157,6 @@ void
 purple_blist_show()
 
 void
-purple_blist_destroy();
-
-void
 purple_blist_set_visible(show)
 	gboolean show
 
