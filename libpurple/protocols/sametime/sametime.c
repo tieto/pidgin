@@ -718,7 +718,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
 			  bn;
 			  bn = purple_blist_node_get_sibling_next(bn)) {
 	if(! PURPLE_IS_BUDDY(bn)) continue;
-	if(! PURPLE_BLIST_NODE_SHOULD_SAVE(bn)) continue;
+	if(purple_blist_node_get_dont_save(bn)) continue;
 
 	bdy = (PurpleBuddy *) bn;
 

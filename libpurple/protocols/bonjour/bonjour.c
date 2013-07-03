@@ -421,19 +421,17 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 }
 
 static void
-bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
-	PurpleBlistNodeFlags oldflags;
-
+bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group)
+{
 	if (buddy == NULL)
 		return;
 
-	oldflags = purple_blist_node_get_flags((PurpleBlistNode *)buddy);
-
 	/* If we're moving them out of the bonjour group, make them persistent */
 	if (purple_strequal(new_group, BONJOUR_GROUP_NAME))
-		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags | PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+		purple_blist_node_set_dont_save(PURPLE_BLIST_NODE(buddy), TRUE);
 	else
-		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags ^ PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+		purple_blist_node_set_dont_save(PURPLE_BLIST_NODE(buddy),
+				!purple_blist_node_get_dont_save(PURPLE_BLIST_NODE(buddy)));
 
 }
 
