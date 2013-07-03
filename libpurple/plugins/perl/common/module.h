@@ -84,7 +84,7 @@ typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
 typedef PurpleAccountPrivacyType		Purple__Account__PrivacyType;
 
 /* blist.h */
-typedef PurpleBlistNode *			Purple__BuddyList__Node;
+typedef PurpleBListNode *			Purple__BuddyList__Node;
 typedef PurpleBuddyList *			Purple__BuddyList;
 typedef PurpleBuddy *			Purple__BuddyList__Buddy;
 typedef PurpleChat *			Purple__BuddyList__Chat;

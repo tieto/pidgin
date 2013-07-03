@@ -91,7 +91,7 @@ oscar_auth_dontgrant(const char *msg, gpointer cbdata)
 }
 
 void
-oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
+oscar_auth_sendrequest_menu(PurpleBListNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;

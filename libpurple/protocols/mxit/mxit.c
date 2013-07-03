@@ -607,7 +607,7 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
  *  @param node		The entry in the buddy list.
  *  @param ignored	(not used)
  */
-static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
+static void mxit_reinvite( PurpleBListNode *node, gpointer ignored )
 {
 	PurpleBuddy*		buddy		= (PurpleBuddy *) node;
 	PurpleConnection*	gc			= purple_account_get_connection( purple_buddy_get_account( buddy ) );
@@ -628,7 +628,7 @@ static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
  *
  *  @param node		The entry in the buddy list.
  */
-static GList* mxit_blist_menu( PurpleBlistNode *node )
+static GList* mxit_blist_menu( PurpleBListNode *node )
 {
 	PurpleBuddy*		buddy;
 	struct contact*		contact;

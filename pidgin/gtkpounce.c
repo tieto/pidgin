@@ -430,7 +430,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
-		PurpleBlistNode *node = NULL;
+		PurpleBListNode *node = NULL;
 		PurpleBuddy *buddy;
 
 		memcpy(&node, sd_data, sizeof(node));

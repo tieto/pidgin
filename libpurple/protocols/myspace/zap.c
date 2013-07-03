@@ -155,7 +155,7 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 
 /** Zap someone. Callback from msim_blist_node_menu zap menu. */
 static void
-msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
+msim_send_zap_from_menu(PurpleBListNode *node, gpointer zap_num_ptr)
 {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
@@ -184,7 +184,7 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 
 /** Return menu, if any, for a buddy list node. */
 GList *
-msim_blist_node_menu(PurpleBlistNode *node)
+msim_blist_node_menu(PurpleBListNode *node)
 {
 	GList *menu, *zap_menu;
 	GList *types;

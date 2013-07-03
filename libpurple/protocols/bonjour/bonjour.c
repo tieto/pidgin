@@ -59,14 +59,14 @@ static void
 bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 {
 	PurpleAccount *account = purple_connection_get_account(conn);
-	PurpleBlistNode *cnode, *cnodenext, *bnode, *bnodenext;
+	PurpleBListNode *cnode, *cnodenext, *bnode, *bnodenext;
 	PurpleBuddy *buddy;
 
 	if (bonjour_group == NULL)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
-	for (cnode = purple_blist_node_get_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
+	for (cnode = purple_blist_node_get_first_child((PurpleBListNode *) bonjour_group); cnode; cnode = cnodenext) {
 		cnodenext = purple_blist_node_get_sibling_next(cnode);
 		if (!PURPLE_IS_CONTACT(cnode))
 			continue;

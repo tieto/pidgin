@@ -49,7 +49,7 @@ blist_created_cb(PurpleBuddyList *blist, void *data) {
 }
 
 static void
-blist_drawing_tooltip_cb(PurpleBlistNode *node, GString *str, gboolean full, void *data) {
+blist_drawing_tooltip_cb(PurpleBListNode *node, GString *str, gboolean full, void *data) {
 	purple_debug_info("gtk-signal-test", "drawing tooltip cb\n");
 }
 

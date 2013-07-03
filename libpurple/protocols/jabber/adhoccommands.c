@@ -223,7 +223,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 	}
 }
 
-void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
+void jabber_adhoc_execute_action(PurpleBListNode *node, gpointer data) {
 	if (PURPLE_IS_BUDDY(node)) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;

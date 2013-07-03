@@ -1076,7 +1076,7 @@ void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const 
  * Adds a list of buddies to the server-side buddy list.
  *
  * @param account The account.
- * @param buddies The list of PurpleBlistNodes representing the buddies to add.
+ * @param buddies The list of PurpleBListNodes representing the buddies to add.
  * @param message The invite message.  This may be ignored by a prpl.
  */
 void purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *message);

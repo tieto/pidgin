@@ -75,14 +75,14 @@ static void historize(PurpleConversation *c)
 
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
-			PurpleBlistNode *node = cur->data;
-			PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(node);
-			PurpleBlistNode *next = purple_blist_node_get_sibling_next(node);
+			PurpleBListNode *node = cur->data;
+			PurpleBListNode *prev = purple_blist_node_get_sibling_prev(node);
+			PurpleBListNode *next = purple_blist_node_get_sibling_next(node);
 			if ((node != NULL) && ((prev != NULL) || (next != NULL)))
 			{
-				PurpleBlistNode *node2;
-				PurpleBlistNode *parent = purple_blist_node_get_parent(node);
-				PurpleBlistNode *child = purple_blist_node_get_first_child(parent);
+				PurpleBListNode *node2;
+				PurpleBListNode *parent = purple_blist_node_get_parent(node);
+				PurpleBListNode *child = purple_blist_node_get_first_child(parent);
 
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 

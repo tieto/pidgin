@@ -100,7 +100,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who);
 
-GList *jabber_blist_node_menu(PurpleBlistNode *node);
+GList *jabber_blist_node_menu(PurpleBListNode *node);
 
 void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);

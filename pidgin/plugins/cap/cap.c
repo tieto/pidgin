@@ -437,7 +437,7 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 }
 
 /* drawing-tooltip */
-static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
+static void drawing_tooltip(PurpleBListNode *node, GString *text, gboolean full) {
 	if(node->type == PURPLE_BLIST_BUDDY_NODE) {
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
 		CapStatistics *stats = get_stats_for(buddy);

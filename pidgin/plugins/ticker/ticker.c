@@ -227,7 +227,7 @@ static void buddy_ticker_remove_buddy(PurpleBuddy *b) {
 
 static void buddy_ticker_show(void)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBListNode *gnode, *cnode, *bnode;
 	PurpleBuddy *b;
 
 	for(gnode = purple_blist_get_root();

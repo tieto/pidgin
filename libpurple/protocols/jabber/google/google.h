@@ -30,6 +30,6 @@
 
 char *jabber_google_format_to_html(const char *text);
 
-void google_buddy_node_chat(PurpleBlistNode *node, gpointer data);
+void google_buddy_node_chat(PurpleBListNode *node, gpointer data);
 
 #endif   /* PURPLE_JABBER_GOOGLE_H_ */

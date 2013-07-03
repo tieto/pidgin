@@ -86,7 +86,7 @@ static void
 file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 {
 	PurpleAccount *account;
-	PurpleBlistNode *node;
+	PurpleBListNode *node;
 	const char *pref;
 	char *filename;
 	char *dirname;
@@ -180,7 +180,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 }
 
 static void
-save_cb(PurpleBlistNode *node, int choice)
+save_cb(PurpleBListNode *node, int choice)
 {
 	if (PURPLE_IS_BUDDY(node))
 		node = purple_blist_node_get_parent(node);
@@ -189,7 +189,7 @@ save_cb(PurpleBlistNode *node, int choice)
 }
 
 static void
-set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
+set_auto_accept_settings(PurpleBListNode *node, gpointer plugin)
 {
 	char *message;
 
@@ -214,7 +214,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 }
 
 static void
-context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
+context_menu(PurpleBListNode *node, GList **menu, gpointer plugin)
 {
 	PurpleMenuAction *action;
 

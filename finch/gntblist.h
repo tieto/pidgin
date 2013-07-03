@@ -44,8 +44,8 @@ typedef struct
 	const char *name;                                  /**< Displayable name for the manager. */
 	gboolean (*init)(void);                            /**< Called right before it's being used. */
 	gboolean (*uninit)(void);                          /**< Called right after it's not being used any more. */
-	gboolean (*can_add_node)(PurpleBlistNode *node);   /**< Whether a node should be added to the view. */
-	gpointer (*find_parent)(PurpleBlistNode *node);    /**< Find the parent row for a node. */
+	gboolean (*can_add_node)(PurpleBListNode *node);   /**< Whether a node should be added to the view. */
+	gpointer (*find_parent)(PurpleBListNode *node);    /**< Find the parent row for a node. */
 	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */
 	gpointer reserved[4];
 } FinchBlistManager;
@@ -152,7 +152,7 @@ FinchBlistManager * finch_blist_manager_find(const char *id);
  *
  * @param node  The node to add
  */
-void finch_blist_manager_add_node(PurpleBlistNode *node);
+void finch_blist_manager_add_node(PurpleBListNode *node);
 
 /*@}*/
 

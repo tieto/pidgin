@@ -662,7 +662,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	}
 
 	if (buddy) {
-		savedfilename = purple_blist_node_get_string((PurpleBlistNode *)buddy,
+		savedfilename = purple_blist_node_get_string((PurpleBListNode *)buddy,
 		                                             "log_reader_msn_log_filename");
 	}
 
@@ -824,7 +824,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	 * detected for both buddies.
 	 */
 	if (buddy && logfile) {
-		PurpleBlistNode *node = (PurpleBlistNode *)buddy;
+		PurpleBListNode *node = (PurpleBListNode *)buddy;
 		purple_blist_node_set_string(node, "log_reader_msn_log_filename", logfile);
 		g_free(logfile);
 	}

@@ -70,11 +70,11 @@ static void historize(PurpleConversation *c)
 			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
 
 		for (cur = buddies; cur != NULL; cur = cur->next) {
-			PurpleBlistNode *node = cur->data;
+			PurpleBListNode *node = cur->data;
 			if ((node != NULL) &&
 					((purple_blist_node_get_sibling_prev(node) != NULL) ||
 						(purple_blist_node_get_sibling_next(node) != NULL))) {
-				PurpleBlistNode *node2;
+				PurpleBListNode *node2;
 
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 

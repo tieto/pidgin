@@ -67,7 +67,7 @@ const char* oscar_list_emblem(PurpleBuddy *b);
 char *oscar_status_text(PurpleBuddy *b);
 void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
 GList *oscar_status_types(PurpleAccount *account);
-GList *oscar_blist_node_menu(PurpleBlistNode *node);
+GList *oscar_blist_node_menu(PurpleBListNode *node);
 GList *oscar_chat_info(PurpleConnection *gc);
 GHashTable *oscar_chat_info_defaults(PurpleConnection *gc, const char *chat_name);
 void oscar_login(PurpleAccount *account);

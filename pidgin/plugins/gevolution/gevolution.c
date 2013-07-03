@@ -218,14 +218,14 @@ signed_on_cb(PurpleConnection *gc)
 }
 
 static void
-menu_item_activate_cb(PurpleBlistNode *node, gpointer user_data)
+menu_item_activate_cb(PurpleBListNode *node, gpointer user_data)
 {
 	PurpleBuddy *buddy = (PurpleBuddy *)node;
 	gevo_associate_buddy_dialog_new(buddy);
 }
 
 static void
-menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
+menu_item_send_mail_activate_cb(PurpleBListNode *node, gpointer user_data)
 {
 	PurpleBuddy *buddy = (PurpleBuddy *)node;
 	char *mail = NULL;
@@ -260,7 +260,7 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 }
 
 static void
-blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
+blist_node_extended_menu_cb(PurpleBListNode *node, GList **menu)
 {
 	PurpleMenuAction *act;
 	PurpleBuddy *buddy;

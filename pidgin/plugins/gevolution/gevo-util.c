@@ -63,7 +63,7 @@ gevo_get_groups(void)
 {
 	static GList *list = NULL;
 	PurpleGroup *g;
-	PurpleBlistNode *gnode;
+	PurpleBListNode *gnode;
 
 	g_list_free(list);
 	list = NULL;

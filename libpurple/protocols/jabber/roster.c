@@ -142,7 +142,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			const char *servernick, *balias;
 
 			/* Previously stored serverside / buddy-supplied alias */
-			if((servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick")))
+			if((servernick = purple_blist_node_get_string((PurpleBListNode*)b, "servernick")))
 				serv_got_alias(js->gc, jid, servernick);
 
 			/* Alias from our roster retrieval */

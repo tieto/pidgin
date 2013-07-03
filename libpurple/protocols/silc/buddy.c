@@ -26,7 +26,7 @@
 /***************************** Key Agreement *********************************/
 
 static void
-silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data);
+silcpurple_buddy_keyagr(PurpleBListNode *node, gpointer data);
 
 static void
 silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
@@ -320,7 +320,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 }
 
 static void
-silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_keyagr(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
@@ -335,7 +335,7 @@ silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data)
 /**************************** Static IM Key **********************************/
 
 static void
-silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_resetkey(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *b;
 	PurpleConnection *gc;
@@ -463,7 +463,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 }
 
 static void
-silcpurple_buddy_privkey_menu(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_privkey_menu(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -592,7 +592,7 @@ silcpurple_buddy_getkey(PurpleConnection *gc, const char *name)
 }
 
 static void
-silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_getkey_menu(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -606,7 +606,7 @@ silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
 }
 
 static void
-silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_showkey(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *b;
 	PurpleConnection *gc;
@@ -691,7 +691,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
 		gpointer proto_data;
-		filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
+		filename = purple_blist_node_get_string((PurpleBListNode *)b, "public-key");
 		if (filename) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
 			   command reply. */
@@ -773,7 +773,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 		g_snprintf(filename, sizeof(filename) - 1,
 			   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
 			   silcpurple_silcdir(), fingerprint);
-		purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
+		purple_blist_node_set_string((PurpleBListNode *)b, "public-key", filename);
 		purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 		silc_free(fingerprint);
 		silc_free(r->offline_pk);
@@ -1004,7 +1004,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 	g_snprintf(filename, sizeof(filename) - 1,
 		   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
 		   silcpurple_silcdir(), fingerprint);
-	purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
+	purple_blist_node_set_string((PurpleBListNode *)b, "public-key", filename);
 
 	/* Update online status */
 	purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
@@ -1216,7 +1216,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 	SilcUInt16 cmd_ident;
 	const char *name;
 
-	filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
+	filename = purple_blist_node_get_string((PurpleBListNode *)b, "public-key");
 
 	/* If the buddy is offline/nonexistent, we will require user
 	   to associate a public key with the buddy or the buddy
@@ -1355,7 +1355,7 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 
 	/* See if we have this buddy's public key.  If we do use that
 	   to search the details. */
-	filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
+	filename = purple_blist_node_get_string((PurpleBListNode *)b, "public-key");
 	if (filename) {
 		SilcPublicKey public_key;
 		SilcAttributeObjPk userpk;
@@ -1615,7 +1615,7 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 }
 
 static void
-silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_kill(PurpleBListNode *node, gpointer data)
 {
 	PurpleBuddy *b;
 	PurpleConnection *gc;
@@ -1638,7 +1638,7 @@ typedef struct {
 } *SilcPurpleBuddyWb;
 
 static void
-silcpurple_buddy_wb(PurpleBlistNode *node, gpointer data)
+silcpurple_buddy_wb(PurpleBListNode *node, gpointer data)
 {
 	SilcPurpleBuddyWb wb = data;
 	silcpurple_wb_init(wb->sg, wb->client_entry);
@@ -1657,7 +1657,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 	GList *m = NULL;
 	SilcPurpleBuddyWb wb;
 
-	pkfile = purple_blist_node_get_string((PurpleBlistNode *) buddy, "public-key");
+	pkfile = purple_blist_node_get_string((PurpleBListNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
 						    sg->conn,
 						    purple_buddy_get_protocol_data(buddy));

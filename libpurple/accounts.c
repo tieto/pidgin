@@ -643,7 +643,7 @@ purple_accounts_delete_set(PurpleAccount *account, GError *error, gpointer data)
 void
 purple_accounts_delete(PurpleAccount *account)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBListNode *gnode, *cnode, *bnode;
 	GList *iter;
 
 	g_return_if_fail(account != NULL);
@@ -671,12 +671,12 @@ purple_accounts_delete(PurpleAccount *account)
 
 		cnode = purple_blist_node_get_first_child(gnode);
 		while (cnode) {
-			PurpleBlistNode *cnode_next = purple_blist_node_get_sibling_next(cnode);
+			PurpleBListNode *cnode_next = purple_blist_node_get_sibling_next(cnode);
 
 			if(PURPLE_IS_CONTACT(cnode)) {
 				bnode = purple_blist_node_get_first_child(cnode);
 				while (bnode) {
-					PurpleBlistNode *bnode_next = purple_blist_node_get_sibling_next(bnode);
+					PurpleBListNode *bnode_next = purple_blist_node_get_sibling_next(bnode);
 
 					if (PURPLE_IS_BUDDY(bnode)) {
 						PurpleBuddy *b = (PurpleBuddy *)bnode;

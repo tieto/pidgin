@@ -33,7 +33,7 @@ static FinchBlistManager *default_manager;
 /**
  * Online/Offline
  */
-static PurpleBlistNode online = {.type = PURPLE_BLIST_OTHER_NODE},
+static PurpleBListNode online = {.type = PURPLE_BLIST_OTHER_NODE},
 					   offline = {.type = PURPLE_BLIST_OTHER_NODE};
 
 static gboolean on_offline_init()
@@ -48,7 +48,7 @@ static gboolean on_offline_init()
 	return TRUE;
 }
 
-static gboolean on_offline_can_add_node(PurpleBlistNode *node)
+static gboolean on_offline_can_add_node(PurpleBListNode *node)
 {
 	switch (purple_blist_node_get_type(node)) {
 		case PURPLE_BLIST_CONTACT_NODE:
@@ -81,7 +81,7 @@ static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 	}
 }
 
-static gpointer on_offline_find_parent(PurpleBlistNode *node)
+static gpointer on_offline_find_parent(PurpleBListNode *node)
 {
 	gpointer ret = NULL;
 
@@ -105,7 +105,7 @@ static gpointer on_offline_find_parent(PurpleBlistNode *node)
 
 static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body, char **tool_title)
 {
-	PurpleBlistNode *node = selected_row;
+	PurpleBListNode *node = selected_row;
 
 	if (purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE) {
 		/* There should be some easy way of getting the total online count,
@@ -134,7 +134,7 @@ static FinchBlistManager on_offline =
 /**
  * Meebo-like Grouping.
  */
-static PurpleBlistNode meebo = {.type = PURPLE_BLIST_OTHER_NODE};
+static PurpleBListNode meebo = {.type = PURPLE_BLIST_OTHER_NODE};
 static gboolean meebo_init()
 {
 	GntTree *tree = finch_blist_get_tree();
@@ -145,7 +145,7 @@ static gboolean meebo_init()
 	return TRUE;
 }
 
-static gpointer meebo_find_parent(PurpleBlistNode *node)
+static gpointer meebo_find_parent(PurpleBListNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
@@ -185,12 +185,12 @@ static gboolean no_group_uninit()
 	return TRUE;
 }
 
-static gboolean no_group_can_add_node(PurpleBlistNode *node)
+static gboolean no_group_can_add_node(PurpleBListNode *node)
 {
 	return on_offline_can_add_node(node);   /* These happen to be the same */
 }
 
-static gpointer no_group_find_parent(PurpleBlistNode *node)
+static gpointer no_group_find_parent(PurpleBListNode *node)
 {
 	gpointer ret = NULL;
 
@@ -239,12 +239,12 @@ nested_group_uninit(void)
 }
 
 static gpointer
-nested_group_find_parent(PurpleBlistNode *node)
+nested_group_find_parent(PurpleBListNode *node)
 {
 	char *name;
 	PurpleGroup *group;
 	char *sep;
-	PurpleBlistNode *ret, *parent;
+	PurpleBListNode *ret, *parent;
 	GntTree *tree;
 
 	if (!PURPLE_IS_GROUP(node))
@@ -262,11 +262,11 @@ nested_group_find_parent(PurpleBlistNode *node)
 
 	while (sep) {
 		*sep = 0;
-		if (*(sep + 1) && (ret = (PurpleBlistNode *)purple_find_group(name))) {
+		if (*(sep + 1) && (ret = (PurpleBListNode *)purple_find_group(name))) {
 			finch_blist_manager_add_node(ret);
 			parent = ret;
 		} else if (!(ret = g_hash_table_lookup(groups, name))) {
-			ret = g_new0(PurpleBlistNode, 1);
+			ret = g_new0(PurpleBListNode, 1);
 			g_hash_table_insert(groups, g_strdup(name), ret);
 			ret->type = PURPLE_BLIST_OTHER_NODE;
 			gnt_tree_add_row_last(tree, ret,
@@ -284,7 +284,7 @@ nested_group_find_parent(PurpleBlistNode *node)
 static gboolean
 nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
 {
-	PurpleBlistNode *node = selected_row;
+	PurpleBListNode *node = selected_row;
 	if (!node ||
 			purple_blist_node_get_type(node) != PURPLE_BLIST_OTHER_NODE)
 		return default_manager->create_tooltip(selected_row, body, title);
@@ -294,9 +294,9 @@ nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
 }
 
 static gboolean
-nested_group_can_add_node(PurpleBlistNode *node)
+nested_group_can_add_node(PurpleBListNode *node)
 {
-	PurpleBlistNode *group;
+	PurpleBListNode *group;
 	int len;
 
 	if (!PURPLE_IS_GROUP(node))
