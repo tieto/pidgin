@@ -39,10 +39,6 @@
 
 /** Private data of a buddy list node */
 struct _PurpleBlistNodePrivate {
-	PurpleBlistNode *prev;    /**< The sibling before this buddy.          */
-	PurpleBlistNode *next;    /**< The sibling after this buddy.           */
-	PurpleBlistNode *parent;  /**< The parent of this node                 */
-	PurpleBlistNode *child;   /**< The child of this node                  */
 	GHashTable *settings;     /**< per-node settings                       */
 	gboolean dont_save;       /**< node should not be saved with the buddy
 	                               list                                    */

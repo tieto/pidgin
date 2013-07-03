@@ -138,6 +138,11 @@ struct _PurpleBlistNode {
 	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
 	gpointer ui_data;
+
+	PurpleBlistNode *prev;    /**< The sibling before this buddy. */
+	PurpleBlistNode *next;    /**< The sibling after this buddy.  */
+	PurpleBlistNode *parent;  /**< The parent of this node        */
+	PurpleBlistNode *child;   /**< The child of this node         */
 };
 
 /** The base class for all #PurpleBlistNode's. */

@@ -101,15 +101,11 @@ GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account
 	g_return_val_if_fail(group != NULL, NULL);
 	
 	gnode = PURPLE_BLIST_NODE(group);
-	for (cnode = purple_blist_node_get_first_child(gnode);
-		cnode != NULL;
-		cnode = purple_blist_node_get_sibling_next(cnode))
+	for (cnode = gnode->child; cnode; cnode = cnode->next)
 	{
 		if (!PURPLE_IS_CONTACT(cnode))
 			continue;
-		for (bnode = purple_blist_node_get_first_child(cnode);
-			bnode != NULL;
-			bnode = purple_blist_node_get_sibling_next(bnode))
+		for (bnode = cnode->child; bnode; bnode = bnode->next)
 		{
 			PurpleBuddy *buddy;
 			if (!PURPLE_IS_BUDDY(bnode))
@@ -128,9 +124,7 @@ GList * ggp_purplew_account_get_groups(PurpleAccount *account, gboolean exclusiv
 {
 	PurpleBlistNode *bnode;
 	GList *groups = NULL;
-	for (bnode = purple_blist_get_root();
-		bnode != NULL;
-		bnode = purple_blist_node_get_sibling_next(bnode))
+	for (bnode = purple_blist_get_root(); bnode; bnode = bnode->next)
 	{
 		PurpleGroup *group;
 		GSList *accounts;
