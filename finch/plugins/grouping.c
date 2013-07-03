@@ -62,7 +62,7 @@ static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 		case PURPLE_BLIST_BUDDY_NODE:
 			{
 				PurpleBuddy *buddy = (PurpleBuddy*)node;
-				if (PURPLE_BUDDY_IS_ONLINE(buddy))
+				if (PURPLE_IS_BUDDY_ONLINE(buddy))
 					return TRUE;
 				if (purple_prefs_get_bool("/finch/blist/showoffline") &&
 						purple_account_is_connected(purple_buddy_get_account(buddy)))
@@ -88,7 +88,7 @@ static gpointer on_offline_find_parent(PurpleBlistNode *node)
 	switch (purple_blist_node_get_type(node)) {
 		case PURPLE_BLIST_CONTACT_NODE:
 			node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
-			ret = PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ? &online : &offline;
+			ret = PURPLE_IS_BUDDY_ONLINE((PurpleBuddy*)node) ? &online : &offline;
 			break;
 		case PURPLE_BLIST_BUDDY_NODE:
 			ret = purple_blist_node_get_parent(node);
@@ -147,9 +147,9 @@ static gboolean meebo_init()
 
 static gpointer meebo_find_parent(PurpleBlistNode *node)
 {
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
+		if (buddy && !PURPLE_IS_BUDDY_ONLINE(buddy)) {
 			return &meebo;
 		}
 	}
@@ -247,7 +247,7 @@ nested_group_find_parent(PurpleBlistNode *node)
 	PurpleBlistNode *ret, *parent;
 	GntTree *tree;
 
-	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+	if (!PURPLE_IS_GROUP(node))
 		return default_manager->find_parent(node);
 
 	group = (PurpleGroup *)node;
@@ -299,7 +299,7 @@ nested_group_can_add_node(PurpleBlistNode *node)
 	PurpleBlistNode *group;
 	int len;
 
-	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+	if (!PURPLE_IS_GROUP(node))
 		return default_manager->can_add_node(node);
 
 	if (default_manager->can_add_node(node))

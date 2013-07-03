@@ -394,7 +394,7 @@ msn_user_is_online(PurpleAccount *account, const char *name)
 	PurpleBuddy *buddy;
 
 	buddy = purple_find_buddy(account, name);
-	return PURPLE_BUDDY_IS_ONLINE(buddy);
+	return PURPLE_IS_BUDDY_ONLINE(buddy);
 }
 
 gboolean

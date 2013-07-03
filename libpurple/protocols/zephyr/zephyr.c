@@ -2506,7 +2506,7 @@ static PurpleChat *zephyr_find_blist_chat(PurpleAccount *account, const char *na
 			char *zclass, *inst, *recip;
 			char** triple;
 			GHashTable *components;
-			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
+			if(!PURPLE_IS_CHAT(cnode))
 				continue;
 			if(purple_chat_get_account(chat) != account)
 				continue;

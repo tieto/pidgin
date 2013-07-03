@@ -426,7 +426,7 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 
 	user = msim_get_user_from_buddy(buddy, TRUE);
 
-	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
+	if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		PurpleConnection *gc = purple_account_get_connection(account);
 		MsimSession *session = purple_connection_get_protocol_data(gc);

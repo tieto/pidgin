@@ -173,7 +173,7 @@ setup_buddy_list_suggestion(GntEntry *entry, gboolean offline)
 {
 	PurpleBlistNode *node = purple_blist_get_root();
 	for (; node; node = purple_blist_node_next(node, offline)) {
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+		if (!PURPLE_IS_BUDDY(node))
 			continue;
 		gnt_entry_add_suggest(entry, purple_buddy_get_name((PurpleBuddy*)node));
 	}
@@ -565,7 +565,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 			gnt_check_box_set_checked(
 				GNT_CHECK_BOX(dialog->signon), TRUE);
 		} else {
-			if (!PURPLE_BUDDY_IS_ONLINE(buddy)) {
+			if (!PURPLE_IS_BUDDY_ONLINE(buddy)) {
 				gnt_check_box_set_checked(
 					GNT_CHECK_BOX(dialog->signon), TRUE);
 			} else {

@@ -3290,7 +3290,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 
 		args.flags = 0;
 
-		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
+		if (!is_sms && (!buddy || !PURPLE_IS_BUDDY_ONLINE(buddy)))
 			args.flags |= AIM_IMFLAGS_OFFLINE;
 
 		if (od->icq) {
@@ -4605,7 +4605,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	OscarData *od;
 	aim_userinfo_t *userinfo;
 
-	if (!PURPLE_BUDDY_IS_ONLINE(b))
+	if (!PURPLE_IS_BUDDY_ONLINE(b))
 		return;
 
 	account = purple_buddy_get_account(b);
@@ -4869,7 +4869,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	PurpleAccount *account;
 	const char *name;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	name = purple_buddy_get_name(buddy);
@@ -4930,7 +4930,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 
 	node = object;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	account = purple_buddy_get_account(buddy);
@@ -4968,7 +4968,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 
 	node = object;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy*)node;
 	name = purple_buddy_get_name(buddy);
@@ -5000,7 +5000,7 @@ static void oscar_get_icqxstatusmsg(PurpleBlistNode *node, gpointer ignore)
 	PurpleAccount *account;
 	const char *bname;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	bname = purple_buddy_get_name(buddy);
@@ -5020,7 +5020,7 @@ oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -5073,7 +5073,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 
 	if (userinfo &&
 		oscar_util_name_compare(purple_account_get_username(account), bname) &&
-		PURPLE_BUDDY_IS_ONLINE(buddy))
+		PURPLE_IS_BUDDY_ONLINE(buddy))
 	{
 		PeerConnection *conn;
 		conn = peer_connection_find_by_type(od, bname, OSCAR_CAPABILITY_DIRECTIM);
@@ -5120,7 +5120,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 
 
 GList *oscar_blist_node_menu(PurpleBlistNode *node) {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		return oscar_buddy_menu((PurpleBuddy *) node);
 	} else {
 		return NULL;

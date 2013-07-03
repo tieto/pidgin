@@ -435,9 +435,9 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		memcpy(&node, sd_data, sizeof(node));
 
-		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		if (PURPLE_IS_CONTACT(node))
 			buddy = purple_contact_get_priority_buddy((PurpleContact *)node);
-		else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		else if (PURPLE_IS_BUDDY(node))
 			buddy = (PurpleBuddy *)node;
 		else
 			return;
@@ -984,7 +984,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 		}
 		else
 		{
-			if (!PURPLE_BUDDY_IS_ONLINE(buddy))
+			if (!PURPLE_IS_BUDDY_ONLINE(buddy))
 			{
 				gtk_toggle_button_set_active(
 					GTK_TOGGLE_BUTTON(dialog->signon), TRUE);

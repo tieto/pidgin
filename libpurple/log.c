@@ -2025,14 +2025,14 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 		     !found && gnode != NULL;
 		     gnode = purple_blist_node_get_sibling_next(gnode))
 		{
-			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			if (!PURPLE_IS_GROUP(gnode))
 				continue;
 
 			for (cnode = purple_blist_node_get_first_child(gnode);
 			     !found && cnode != NULL;
 				 cnode = purple_blist_node_get_sibling_next(cnode))
 			{
-				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+				if (!PURPLE_IS_CONTACT(cnode))
 					continue;
 
 				for (bnode = purple_blist_node_get_first_child(cnode);

@@ -342,7 +342,7 @@ silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
         SilcPurple sg;
 	SilcDList clients;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
@@ -468,7 +468,7 @@ silcpurple_buddy_privkey_menu(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -597,7 +597,7 @@ silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -614,7 +614,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 	SilcPublicKey public_key;
 	const char *pkfile;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
@@ -1621,7 +1621,7 @@ silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	SilcPurple sg;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));

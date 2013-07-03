@@ -103,12 +103,12 @@ GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account
 	gnode = PURPLE_BLIST_NODE(group);
 	for (cnode = gnode->child; cnode; cnode = cnode->next)
 	{
-		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+		if (!PURPLE_IS_CONTACT(cnode))
 			continue;
 		for (bnode = cnode->child; bnode; bnode = bnode->next)
 		{
 			PurpleBuddy *buddy;
-			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+			if (!PURPLE_IS_BUDDY(bnode))
 				continue;
 			
 			buddy = PURPLE_BUDDY(bnode);
@@ -130,7 +130,7 @@ GList * ggp_purplew_account_get_groups(PurpleAccount *account, gboolean exclusiv
 		GSList *accounts;
 		gboolean have_specified = FALSE, have_others = FALSE;
 		
-		if (!PURPLE_BLIST_NODE_IS_GROUP(bnode))
+		if (!PURPLE_IS_GROUP(bnode))
 			continue;
 		
 		group = PURPLE_GROUP(bnode);

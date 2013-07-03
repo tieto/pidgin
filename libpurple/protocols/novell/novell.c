@@ -1240,19 +1240,19 @@ _remove_purple_buddies(NMUser *user)
 
 	for (gnode = purple_blist_get_root(); gnode;
 			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 		group = (PurpleGroup *) gnode;
 		gname = purple_group_get_name(group);
 		for (cnode = purple_blist_node_get_first_child(gnode);
 				cnode;
 				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_IS_CONTACT(cnode))
 				continue;
 			for (bnode = purple_blist_node_get_first_child(cnode);
 					bnode;
 					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+				if (!PURPLE_IS_BUDDY(bnode))
 					continue;
 				buddy = (PurpleBuddy *) bnode;
 				if (purple_buddy_get_account(buddy) == user->client_data) {
@@ -1626,7 +1626,7 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 	NMUserRecord *user_record;
 	NMConference *conference;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -2844,7 +2844,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 	if (gc == NULL || (user = purple_connection_get_protocol_data(gc)) == NULL)
 		return;
 
-	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
+	if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
 		user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
 		if (user_record) {
 			status = nm_user_record_get_status(user_record);
@@ -3448,7 +3448,7 @@ novell_blist_node_menu(PurpleBlistNode *node)
 	GList *list = NULL;
 	PurpleMenuAction *act;
 
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		act = purple_menu_action_new(_("Initiate _Chat"),
 		                           PURPLE_CALLBACK(_initiate_conference_cb),
 		                           NULL, NULL);

@@ -666,19 +666,19 @@ purple_accounts_delete(PurpleAccount *account)
 	     gnode != NULL;
 		 gnode = purple_blist_node_get_sibling_next(gnode))
 	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 
 		cnode = purple_blist_node_get_first_child(gnode);
 		while (cnode) {
 			PurpleBlistNode *cnode_next = purple_blist_node_get_sibling_next(cnode);
 
-			if(PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+			if(PURPLE_IS_CONTACT(cnode)) {
 				bnode = purple_blist_node_get_first_child(cnode);
 				while (bnode) {
 					PurpleBlistNode *bnode_next = purple_blist_node_get_sibling_next(bnode);
 
-					if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+					if (PURPLE_IS_BUDDY(bnode)) {
 						PurpleBuddy *b = (PurpleBuddy *)bnode;
 
 						if (purple_buddy_get_account(b) == account)
@@ -686,7 +686,7 @@ purple_accounts_delete(PurpleAccount *account)
 					}
 					bnode = bnode_next;
 				}
-			} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+			} else if (PURPLE_IS_CHAT(cnode)) {
 				PurpleChat *c = (PurpleChat *)cnode;
 
 				if (purple_chat_get_account(c) == account)

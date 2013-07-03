@@ -1533,9 +1533,9 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 static GList *silcpurple_blist_node_menu(PurpleBlistNode *node) {
 	/* split this single menu building function back into the two
 	   original: one for buddies and one for chats */
-	if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	if(PURPLE_IS_CHAT(node)) {
 		return silcpurple_chat_menu((PurpleChat *) node);
-	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if(PURPLE_IS_BUDDY(node)) {
 		return silcpurple_buddy_menu((PurpleBuddy *) node);
 	} else {
 		g_return_val_if_reached(NULL);

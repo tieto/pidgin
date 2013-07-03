@@ -324,7 +324,7 @@ static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
 static GList *nullprpl_blist_node_menu(PurpleBlistNode *node) {
   purple_debug_info("nullprpl", "providing buddy list context menu item\n");
 
-  if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+  if (PURPLE_IS_BUDDY(node)) {
     PurpleMenuAction *action = purple_menu_action_new(
       _("Nullprpl example menu item"),
       PURPLE_CALLBACK(blist_example_menu_item),

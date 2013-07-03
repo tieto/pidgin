@@ -78,7 +78,7 @@ gevo_get_groups(void)
 			 gnode != NULL;
 			 gnode = gnode->next)
 		{
-			if (PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			if (PURPLE_IS_GROUP(gnode))
 			{
 				g = (PurpleGroup *)gnode;
 				list = g_list_append(list, g->name);

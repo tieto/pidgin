@@ -6,11 +6,11 @@
    program, which makes these macros callable by DBUS.  */
 
 /* blist.h */
-gboolean PURPLE_BLIST_NODE_IS_CHAT(PurpleBlistNode *node);
-gboolean PURPLE_BLIST_NODE_IS_BUDDY(PurpleBlistNode *node);
-gboolean PURPLE_BLIST_NODE_IS_CONTACT(PurpleBlistNode *node);
-gboolean PURPLE_BLIST_NODE_IS_GROUP(PurpleBlistNode *node);
-gboolean PURPLE_BUDDY_IS_ONLINE(PurpleBuddy *buddy);
+gboolean PURPLE_IS_CHAT(PurpleBlistNode *node);
+gboolean PURPLE_IS_BUDDY(PurpleBlistNode *node);
+gboolean PURPLE_IS_CONTACT(PurpleBlistNode *node);
+gboolean PURPLE_IS_GROUP(PurpleBlistNode *node);
+gboolean PURPLE_IS_BUDDY_ONLINE(PurpleBuddy *buddy);
 gboolean PURPLE_BLIST_NODE_HAS_FLAG(PurpleBlistNode *node, int flags);
 gboolean PURPLE_BLIST_NODE_SHOULD_SAVE(PurpleBlistNode *node);
 

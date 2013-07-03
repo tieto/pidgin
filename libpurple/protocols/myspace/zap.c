@@ -163,12 +163,12 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 	MsimSession *session;
 	guint zap;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if (!PURPLE_IS_BUDDY(node)) {
 		/* Only know about buddies for now. */
 		return;
 	}
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 
@@ -191,7 +191,7 @@ msim_blist_node_menu(PurpleBlistNode *node)
 	PurpleMenuAction *act;
 	guint i;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if (!PURPLE_IS_BUDDY(node)) {
 		/* Only know about buddies for now. */
 		return NULL;
 	}

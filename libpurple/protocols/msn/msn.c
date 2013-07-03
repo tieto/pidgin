@@ -778,7 +778,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	PurpleAccount *account;
 	const char *name;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	account = purple_buddy_get_account(buddy);
@@ -835,7 +835,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 
 	const char *alias;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	account = purple_buddy_get_account(buddy);
@@ -1314,7 +1314,7 @@ msn_buddy_menu(PurpleBuddy *buddy)
 static GList *
 msn_blist_node_menu(PurpleBlistNode *node)
 {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if(PURPLE_IS_BUDDY(node))
 	{
 		return msn_buddy_menu((PurpleBuddy *) node);
 	}

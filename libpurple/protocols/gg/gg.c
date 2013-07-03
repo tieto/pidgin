@@ -814,7 +814,7 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 
 	if (msg != NULL) {
-		if (PURPLE_BUDDY_IS_ONLINE(b)) {
+		if (PURPLE_IS_BUDDY_ONLINE(b)) {
 			tmp = g_strdup_printf("%s: %s", name, msg);
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), tmp);
 			g_free(tmp);
@@ -823,7 +823,7 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		}
 		g_free(msg);
 	/* We don't want to duplicate 'Status: Offline'. */
-	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
+	} else if (PURPLE_IS_BUDDY_ONLINE(b)) {
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);
 	}
 }
@@ -836,7 +836,7 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 	PurpleConnection *gc;
 	GGPInfo *info;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return NULL;
 
 	account = purple_buddy_get_account((PurpleBuddy *) node);

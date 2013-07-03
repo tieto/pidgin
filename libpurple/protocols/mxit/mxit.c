@@ -635,7 +635,7 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 	GList*				m = NULL;
 	PurpleMenuAction*	act;
 
-	if ( !PURPLE_BLIST_NODE_IS_BUDDY( node ) )
+	if ( !PURPLE_IS_BUDDY( node ) )
 		return NULL;
 
 	buddy = (PurpleBuddy *) node;

@@ -268,7 +268,7 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 	EContact *contact;
 	char *mail;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return;
 
 	buddy = (PurpleBuddy *)node;

@@ -676,7 +676,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
     enum mwSametimeGroupType gtype;
     gboolean gopen;
 
-    if(! PURPLE_BLIST_NODE_IS_GROUP(gn)) continue;
+    if(! PURPLE_IS_GROUP(gn)) continue;
     grp = (PurpleGroup *) gn;
 
     /* the group's type (normal or dynamic) */
@@ -712,12 +712,12 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
     for(cn = purple_blist_node_get_first_child(gn);
 			cn;
 			cn = purple_blist_node_get_sibling_next(cn)) {
-      if(! PURPLE_BLIST_NODE_IS_CONTACT(cn)) continue;
+      if(! PURPLE_IS_CONTACT(cn)) continue;
 
       for(bn = purple_blist_node_get_first_child(cn);
 			  bn;
 			  bn = purple_blist_node_get_sibling_next(bn)) {
-	if(! PURPLE_BLIST_NODE_IS_BUDDY(bn)) continue;
+	if(! PURPLE_IS_BUDDY(bn)) continue;
 	if(! PURPLE_BLIST_NODE_SHOULD_SAVE(bn)) continue;
 
 	bdy = (PurpleBuddy *) bn;
@@ -936,7 +936,7 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
   for(gn = purple_blist_get_root(); gn;
 		  gn = purple_blist_node_get_sibling_next(gn)) {
     const char *n, *o;
-    if(! PURPLE_BLIST_NODE_IS_GROUP(gn)) continue;
+    if(! PURPLE_IS_GROUP(gn)) continue;
     n = purple_blist_node_get_string(gn, GROUP_KEY_NAME);
     o = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
 
@@ -1023,14 +1023,14 @@ static void group_clear(PurpleGroup *group, PurpleAccount *acct, gboolean del) {
   for(cn = purple_blist_node_get_first_child(gn);
 		  cn;
 		  cn = purple_blist_node_get_sibling_next(cn)) {
-    if(! PURPLE_BLIST_NODE_IS_CONTACT(cn)) continue;
+    if(! PURPLE_IS_CONTACT(cn)) continue;
 
     for(bn = purple_blist_node_get_first_child(cn);
 			bn;
 			bn = purple_blist_node_get_sibling_next(bn)) {
       PurpleBuddy *gb = (PurpleBuddy *) bn;
 
-      if(! PURPLE_BLIST_NODE_IS_BUDDY(bn)) continue;
+      if(! PURPLE_IS_BUDDY(bn)) continue;
 
       if(purple_buddy_get_account(gb) == acct) {
 	DEBUG_INFO("clearing %s from group\n", NSTR(purple_buddy_get_name(gb)));
@@ -1092,14 +1092,14 @@ static void group_prune(PurpleConnection *gc, PurpleGroup *group,
   for(cn = purple_blist_node_get_first_child(gn);
 		  cn;
 		  cn = purple_blist_node_get_sibling_next(cn)) {
-    if(! PURPLE_BLIST_NODE_IS_CONTACT(cn)) continue;
+    if(! PURPLE_IS_CONTACT(cn)) continue;
 
     for(bn = purple_blist_node_get_first_child(cn);
 			bn;
 			bn = purple_blist_node_get_sibling_next(bn)) {
       PurpleBuddy *gb = (PurpleBuddy *) bn;
 
-      if(! PURPLE_BLIST_NODE_IS_BUDDY(bn)) continue;
+      if(! PURPLE_IS_BUDDY(bn)) continue;
 
       /* if the account is correct and they're not in our table, mark
 	 them for pruning */
@@ -1166,7 +1166,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
     const char *gname, *owner;
     struct mwSametimeGroup *stgrp;
 
-    if(! PURPLE_BLIST_NODE_IS_GROUP(gn)) continue;
+    if(! PURPLE_IS_GROUP(gn)) continue;
 
     /* group not belonging to this account */
     if(! purple_group_on_account(grp, acct))
@@ -1307,7 +1307,7 @@ static void blist_menu_nab(PurpleBlistNode *node, gpointer data) {
   gc = pd->gc;
   g_return_if_fail(gc != NULL);
 
-  g_return_if_fail(PURPLE_BLIST_NODE_IS_GROUP(node));
+  g_return_if_fail(PURPLE_IS_GROUP(node));
 
   str = g_string_new(NULL);
 
@@ -1337,7 +1337,7 @@ static void blist_node_menu_cb(PurpleBlistNode *node,
   PurpleMenuAction *act;
 
   /* we only want groups */
-  if(! PURPLE_BLIST_NODE_IS_GROUP(node)) return;
+  if(! PURPLE_IS_GROUP(node)) return;
 
   acct = purple_connection_get_account(pd->gc);
   g_return_if_fail(acct != NULL);
@@ -1375,18 +1375,18 @@ static void blist_init(PurpleAccount *acct) {
 
   for(gnode = purple_blist_get_root(); gnode;
 		  gnode = purple_blist_node_get_sibling_next(gnode)) {
-    if(! PURPLE_BLIST_NODE_IS_GROUP(gnode)) continue;
+    if(! PURPLE_IS_GROUP(gnode)) continue;
 
     for(cnode = purple_blist_node_get_first_child(gnode);
 			cnode;
 			cnode = purple_blist_node_get_sibling_next(cnode)) {
-      if(! PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+      if(! PURPLE_IS_CONTACT(cnode))
 	continue;
       for(bnode = purple_blist_node_get_first_child(cnode);
 			  bnode;
 			  bnode = purple_blist_node_get_sibling_next(bnode)) {
 	PurpleBuddy *b;
-	if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	if(!PURPLE_IS_BUDDY(bnode))
 	  continue;
 
 	b = (PurpleBuddy *)bnode;
@@ -1426,7 +1426,7 @@ static void services_starting(struct mwPurplePluginData *pd) {
     enum mwSametimeGroupType gt;
     const char *owner;
 
-    if(! PURPLE_BLIST_NODE_IS_GROUP(l)) continue;
+    if(! PURPLE_IS_GROUP(l)) continue;
 
     /* if the group is ownerless, or has an owner and we're not it,
        skip it */
@@ -3544,7 +3544,7 @@ static void blist_menu_conf(PurpleBlistNode *node, gpointer data) {
   GList *l;
 
   g_return_if_fail(node != NULL);
-  g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+  g_return_if_fail(PURPLE_IS_BUDDY(node));
 
   acct = purple_buddy_get_account(buddy);
   g_return_if_fail(acct != NULL);
@@ -3583,7 +3583,7 @@ static void blist_menu_announce(PurpleBlistNode *node, gpointer data) {
   GList *rcpt;
 
   g_return_if_fail(node != NULL);
-  g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+  g_return_if_fail(PURPLE_IS_BUDDY(node));
 
   acct = buddy->account;
   g_return_if_fail(acct != NULL);
@@ -3612,7 +3612,7 @@ static GList *mw_prpl_blist_node_menu(PurpleBlistNode *node) {
   GList *l = NULL;
   PurpleMenuAction *act;
 
-  if(! PURPLE_BLIST_NODE_IS_BUDDY(node))
+  if(! PURPLE_IS_BUDDY(node))
     return l;
 
   l = g_list_append(l, NULL);
