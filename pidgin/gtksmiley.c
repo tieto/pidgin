@@ -786,7 +786,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			purple_http_conn_cancel(smiley_manager->
 				running_request);
 			smiley_manager->running_request = purple_http_get(NULL,
-				name, smiley_got_url, dialog);
+				smiley_got_url, dialog, name);
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);

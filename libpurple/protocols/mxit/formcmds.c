@@ -359,7 +359,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 				/* send the request for the inline image */
 				purple_debug_info(MXIT_PLUGIN_ID, "sending request for inline image '%s'\n", iireq->url);
 
-				purple_http_get(mx->session->con, iireq->url, mxit_cb_ii_returned, iireq);
+				purple_http_get(mx->session->con, mxit_cb_ii_returned, iireq, iireq->url);
 				mx->img_count++;
 			}
 		}

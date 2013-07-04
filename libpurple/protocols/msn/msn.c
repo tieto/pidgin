@@ -2800,18 +2800,14 @@ msn_get_info(PurpleConnection *gc, const char *name)
 	PurpleHttpConnection *hc;
 	MsnSession *session = purple_connection_get_protocol_data(gc);
 	MsnGetInfoData *data;
-	char *url;
 
 	data       = g_new0(MsnGetInfoData, 1);
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	url = g_strdup_printf("%s%s", PROFILE_URL, name);
-
-	hc = purple_http_get(gc, url, msn_got_info, data);
+	hc = purple_http_get_printf(gc, msn_got_info, data,
+		"%s%s", PROFILE_URL, name);
 	session->http_reqs = g_slist_prepend(session->http_reqs, hc);
-
-	g_free(url);
 }
 
 static gboolean msn_load(PurplePlugin *plugin)

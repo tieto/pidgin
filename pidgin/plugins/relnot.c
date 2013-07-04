@@ -123,7 +123,7 @@ do_check(void)
 #endif
 		);
 
-		purple_http_get(NULL, url, version_fetch_cb, NULL);
+		purple_http_get(NULL, version_fetch_cb, NULL, url);
 
 		g_free(url);
 

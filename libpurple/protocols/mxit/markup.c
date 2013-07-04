@@ -627,16 +627,15 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
 {
 	PurpleHttpConnection *hc;
 	const char*				wapserver;
-	char*					url;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "sending request for emoticon '%s'\n", id );
 
 	wapserver = purple_account_get_string( mx->session->acc, MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
 
-	url = g_strdup_printf( "%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver, MXIT_EMOTICON_SIZE, id, time( NULL ) );
-	hc = purple_http_get(mx->session->con, url, emoticon_returned, mx);
+	hc = purple_http_get_printf(mx->session->con, emoticon_returned, mx,
+		"%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver,
+		MXIT_EMOTICON_SIZE, id, time( NULL ) );
 	mx->session->async_http_reqs = g_slist_prepend(mx->session->async_http_reqs, hc);
-	g_free( url );
 }
 
 

@@ -329,7 +329,7 @@ process_urls(PurpleConversation *conv, GList *urls)
 			url = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL), purple_url_encode(tmp));
 		}
 		g_free(tmp);
-		purple_http_get(NULL, url, url_fetched, cbdata);
+		purple_http_get(NULL, url_fetched, cbdata, url);
 		i = gnt_text_view_get_lines_below(tv);
 		str = g_strdup_printf(_("\nFetching TinyURL..."));
 		gnt_text_view_append_text_with_tag((tv), str, GNT_TEXT_FLAG_DIM, cbdata->tag);
@@ -401,7 +401,7 @@ tinyurl_notify_uri(const char *uri)
 	 * is destroyed, so that the callback for purple_http_get does not try
 	 * to molest a non-existent window
 	 */
-	hc = purple_http_get(NULL, fullurl, tinyurl_notify_fetch_cb, win);
+	hc = purple_http_get(NULL, tinyurl_notify_fetch_cb, win, fullurl);
 	g_free(fullurl);
 	g_signal_connect_swapped(G_OBJECT(win), "destroy",
 			G_CALLBACK(purple_http_conn_cancel), hc);

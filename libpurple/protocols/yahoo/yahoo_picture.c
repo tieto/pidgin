@@ -134,7 +134,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		hc = purple_http_get(gc, url, yahoo_fetch_picture_cb, data);
+		hc = purple_http_get(gc, yahoo_fetch_picture_cb, data, url);
 		yd = purple_connection_get_protocol_data(gc);
 		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 	} else if (who && send_icon_info) {
