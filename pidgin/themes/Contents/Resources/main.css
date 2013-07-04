@@ -1,7 +1,7 @@
 body {
 	word-wrap: break-word;
 	word-break: break-word;
-	
+
 	font-size: 13px;
 	margin: 2px;
 	overflow-y: scroll;
@@ -32,6 +32,11 @@ body {
 .x-message p
 {
 	margin: 0;
+}
+
+.x-message p:first-child
+{
+	display: inline;
 }
 
 /* Colour-ify things */

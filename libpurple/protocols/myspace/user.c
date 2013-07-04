@@ -383,7 +383,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Only download if URL changed */
 		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
 			purple_http_conn_cancel(user->http_conn);
-			user->http_conn = purple_http_get(NULL, user->image_url, msim_downloaded_buddy_icon, user);
+			user->http_conn = purple_http_get(NULL, msim_downloaded_buddy_icon, user, user->image_url);
 		}
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */

@@ -937,7 +937,7 @@ yahoo_got_info(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
 		PurpleHttpConnection *hc;
-		hc = purple_http_get(info_data->gc, photo_url_text, yahoo_got_photo, info2_data);
+		hc = purple_http_get(info_data->gc, yahoo_got_photo, info2_data, photo_url_text);
 		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 	} else {
 		/* Emulate a callback */
@@ -1260,18 +1260,14 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YahooGetInfoData *data;
-	char *url;
 	PurpleHttpConnection *hc;
 
 	data       = g_new0(YahooGetInfoData, 1);
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	url = g_strdup_printf("%s%s",
-			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
-
-	hc = purple_http_get(gc, url, yahoo_got_info, data);
+	hc = purple_http_get_printf(gc, yahoo_got_info, data,
+		"%s%s", (yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL),
+		name);
 	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
-
-	g_free(url);
 }

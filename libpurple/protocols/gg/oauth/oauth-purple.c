@@ -34,7 +34,7 @@
 #include "../xml.h"
 
 #include <debug.h>
-#include <obsolete.h>
+#include <http.h>
 
 #define GGP_OAUTH_RESPONSE_MAX 10240
 
@@ -51,17 +51,14 @@ typedef struct
 
 static void ggp_oauth_data_free(ggp_oauth_data *data);
 
-static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message);
+static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data);
 
-static void ggp_oauth_authorization_done(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message);
+static void ggp_oauth_authorization_done(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data);
 
-static void ggp_oauth_access_token_got(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message);
+static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data);
 
 static void ggp_oauth_data_free(ggp_oauth_data *data)
 {
@@ -76,10 +73,10 @@ void ggp_oauth_request(PurpleConnection *gc, ggp_oauth_request_cb callback,
 	gpointer user_data, const gchar *sign_method, const gchar *sign_url)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleHttpRequest *req;
 	char *auth;
 	const char *method = "POST";
 	const char *url = "http://api.gadu-gadu.pl/request_token";
-	gchar *request;
 	ggp_oauth_data *data;
 
 	g_return_if_fail((method == NULL) == (url == NULL));
@@ -89,14 +86,6 @@ void ggp_oauth_request(PurpleConnection *gc, ggp_oauth_request_cb callback,
 	auth = gg_oauth_generate_header(method, url,
 		purple_account_get_username(account),
 		purple_connection_get_password(gc), NULL, NULL);
-	request = g_strdup_printf(
-		"POST /request_token HTTP/1.1\r\n"
-		"Host: api.gadu-gadu.pl\r\n"
-		"%s\r\n"
-		"Content-Length: 0\r\n"
-		"\r\n",
-		auth);
-	free(auth);
 
 	data = g_new0(ggp_oauth_data, 1);
 	data->gc = gc;
@@ -105,22 +94,26 @@ void ggp_oauth_request(PurpleConnection *gc, ggp_oauth_request_cb callback,
 	data->sign_method = g_strdup(sign_method);
 	data->sign_url = g_strdup(sign_url);
 
-	purple_util_fetch_url_request(account, url, FALSE, NULL, TRUE, request,
-		FALSE, GGP_OAUTH_RESPONSE_MAX, ggp_oauth_request_token_got,
-		data);
+	req = purple_http_request_new(url);
+	purple_http_request_set_max_len(req, GGP_OAUTH_RESPONSE_MAX);
+	purple_http_request_set_method(req, method);
+	purple_http_request_header_set(req, "Authorization", auth);
+	purple_http_request(gc, req, ggp_oauth_request_token_got, data);
+	purple_http_request_unref(req);
 
-	g_free(request);
+	free(auth);
 }
 
-static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message)
+static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
 	ggp_oauth_data *data = user_data;
 	PurpleAccount *account;
+	PurpleHttpRequest *req;
 	xmlnode *xml;
-	gchar *request, *request_data;
+	gchar *request_data;
 	gboolean succ = TRUE;
+	const gchar *xml_raw;
 
 	if (!PURPLE_CONNECTION_IS_VALID(data->gc))
 	{
@@ -129,7 +122,7 @@ static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
 	}
 	account = purple_connection_get_account(data->gc);
 
-	if (len == 0)
+	if (!purple_http_response_is_successfull(response))
 	{
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
 			"requested token not received\n");
@@ -140,7 +133,8 @@ static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
 	purple_debug_misc("gg", "ggp_oauth_request_token_got: "
 		"got request token, doing authorization...\n");
 
-	xml = xmlnode_from_str(url_text, -1);
+	xml_raw = purple_http_response_get_data(response, NULL);
+	xml = xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
@@ -166,34 +160,31 @@ static void ggp_oauth_request_token_got(PurpleUtilFetchUrlData *url_data,
 		"uin=%s&password=%s", data->token,
 		purple_account_get_username(account),
 		purple_connection_get_password(data->gc));
-	request = g_strdup_printf(
-		"POST /authorize HTTP/1.1\r\n"
-		"Host: login.gadu-gadu.pl\r\n"
-		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
-		"Content-Type: application/x-www-form-urlencoded\r\n"
-		"\r\n%s",
-		strlen(request_data), request_data);
-	g_free(request_data);
 
+	req = purple_http_request_new("https://login.gadu-gadu.pl/authorize");
+	purple_http_request_set_max_len(req, GGP_OAUTH_RESPONSE_MAX);
 	// we don't need any results, nor 302 redirection
-	purple_util_fetch_url_request(account,
-		"https://login.gadu-gadu.pl/authorize", FALSE, NULL, TRUE,
-		request, FALSE, 0,
-		ggp_oauth_authorization_done, data);
+	purple_http_request_set_max_redirects(req, 0);
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "Content-Type", "application/x-www-form-urlencoded");
+	purple_http_request_set_contents(req, request_data, -1);
+	purple_http_request(data->gc, req, ggp_oauth_authorization_done, data);
+	purple_http_request_unref(req);
 
-	g_free(request);
+	g_free(request_data);
 }
 
-static void ggp_oauth_authorization_done(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message)
+static void ggp_oauth_authorization_done(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
 	ggp_oauth_data *data = user_data;
 	PurpleAccount *account;
+	PurpleHttpRequest *req;
 	char *auth;
+	const char *method = "POST";
 	const char *url = "http://api.gadu-gadu.pl/access_token";
-	gchar *request;
-	
+	int response_code;
+
 	if (!PURPLE_CONNECTION_IS_VALID(data->gc))
 	{
 		ggp_oauth_data_free(data);
@@ -201,40 +192,44 @@ static void ggp_oauth_authorization_done(PurpleUtilFetchUrlData *url_data,
 	}
 	account = purple_connection_get_account(data->gc);
 
+	response_code = purple_http_response_get_code(response);
+	if (response_code != 302)
+	{
+		purple_debug_error("gg", "ggp_oauth_authorization_done: "
+			"failed (code = %d)", response_code);
+		ggp_oauth_data_free(data);
+		return;
+	}
+
 	purple_debug_misc("gg", "ggp_oauth_authorization_done: "
 		"authorization done, requesting access token...\n");
 
-	auth = gg_oauth_generate_header("POST", url,
+	auth = gg_oauth_generate_header(method, url,
 		purple_account_get_username(account),
 		purple_connection_get_password(data->gc),
 		data->token, data->token_secret);
 
-	request = g_strdup_printf(
-		"POST /access_token HTTP/1.1\r\n"
-		"Host: api.gadu-gadu.pl\r\n"
-		"%s\r\n"
-		"Content-Length: 0\r\n"
-		"\r\n",
-		auth);
-	free(auth);
-	
-	purple_util_fetch_url_request(account, url, FALSE, NULL, TRUE, request,
-		FALSE, GGP_OAUTH_RESPONSE_MAX, ggp_oauth_access_token_got,
-		data);
+	req = purple_http_request_new(url);
+	purple_http_request_set_max_len(req, GGP_OAUTH_RESPONSE_MAX);
+	purple_http_request_set_method(req, method);
+	purple_http_request_header_set(req, "Authorization", auth);
+	purple_http_request(data->gc, req, ggp_oauth_access_token_got, data);
+	purple_http_request_unref(req);
 
-	g_free(request);
+	free(auth);
 }
 
-static void ggp_oauth_access_token_got(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message)
+static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
 	ggp_oauth_data *data = user_data;
 	gchar *token, *token_secret;
 	xmlnode *xml;
+	const gchar *xml_raw;
 	gboolean succ = TRUE;
 
-	xml = xmlnode_from_str(url_text, -1);
+	xml_raw = purple_http_response_get_data(response, NULL);
+	xml = xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_oauth_access_token_got: "
