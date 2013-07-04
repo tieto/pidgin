@@ -22,7 +22,6 @@
  */
 
 #include "internal.h"
-#include "obsolete.h"
 
 #include "account.h"
 #include "accountopt.h"
@@ -3682,10 +3681,6 @@ void yahoo_close(PurpleConnection *gc) {
 		yd->inpa = 0;
 	}
 
-	while (yd->url_datas) {
-		purple_util_fetch_url_cancel(yd->url_datas->data);
-		yd->url_datas = g_slist_delete_link(yd->url_datas, yd->url_datas);
-	}
 	while (yd->http_reqs) {
 		purple_http_conn_cancel(yd->http_reqs->data);
 		yd->http_reqs = g_slist_delete_link(yd->http_reqs, yd->http_reqs);
@@ -4078,6 +4073,8 @@ static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 	yahoo_doodle_initiate(gc, purple_buddy_get_name(b));
 }
 
+#if 0
+/* XXX: it doesn't seems to work */
 static void
 yahoo_userinfo_blist_node(PurpleBlistNode *node, gpointer data)
 {
@@ -4087,6 +4084,7 @@ yahoo_userinfo_blist_node(PurpleBlistNode *node, gpointer data)
 
 	yahoo_set_userinfo_for_buddy(gc, b);
 }
+#endif
 
 static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 {
@@ -4157,10 +4155,13 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 			m = g_list_append(m, act);
 		}
 
+#if 0
+		/* XXX: it doesn't seems to work */
 		act = purple_menu_action_new(_("Set User Info..."),
 		                           PURPLE_CALLBACK(yahoo_userinfo_blist_node),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
+#endif
 	}
 
 	return m;
@@ -4188,33 +4189,34 @@ static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 }
 
 static void
-yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *token, size_t len, const gchar *error_message)
+yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _unused)
 {
-	PurpleConnection *gc = user_data;
-	gboolean set_cookie = FALSE;
+	PurpleConnection *gc =
+		purple_http_conn_get_purple_connection(http_conn);
 	gchar *url;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
-	if (error_message != NULL)
-		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
-	else if (len > 0 && token && *token) {
-	 	/* Should we not be hardcoding the rd url? */
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_error("yahoo",
+			"Requesting mail login token failed: %s\n",
+			purple_http_response_get_error(response));
+		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+	} else {
+		/* Should we not be hardcoding the rd url? */
+		gchar *token;
+		token = g_strdup(purple_http_response_get_data(response, NULL));
+		g_strstrip(token);
 		url = g_strdup_printf(
 			"http://login.yahoo.com/config/reset_cookies_token?"
 			".token=%s"
-			"&.done=http://us.rd.yahoo.com/messenger/client/%%3fhttp://mail.yahoo.com/",
-			token);
-		set_cookie = TRUE;
-	}
-
-	if (!set_cookie) {
-		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
-		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+			"&.done=http://us.rd.yahoo.com/messenger/client/%%3f"
+			"http://mail.yahoo.com/", token);
+		purple_str_wipe(token);
 	}
 
 	/* Open the mailbox with the parsed url data */
@@ -4231,42 +4233,32 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 	PurpleConnection *gc = action->context;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
+	PurpleHttpRequest *req;
+	PurpleHttpCookieJar *cookiejar;
+	PurpleHttpConnection *hc;
 
-	PurpleUtilFetchUrlData *url_data;
-	const char* base_url = "http://login.yahoo.com";
-	/* use whole URL if using HTTP Proxy */
-	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
-	gchar *request = g_strdup_printf(
-		"POST %s/config/cookie_token HTTP/1.0\r\n"
-		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
-		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
-		"Host: login.yahoo.com\r\n"
-		"Content-Length: 0\r\n\r\n",
-		use_whole_url ? base_url : "",
-		yd->cookie_t, yd->cookie_y);
+	req = purple_http_request_new(
+		"https://login.yahoo.com/config/cookie_token");
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "User-Agent",
+		YAHOO_CLIENT_USERAGENT);
+	cookiejar = purple_http_request_get_cookie_jar(req);
+	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
+	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
+	hc = purple_http_request(gc, req, yahoo_get_inbox_token_cb, NULL);
+	purple_http_request_unref(req);
 
-	url_data = purple_util_fetch_url_request(
-			purple_connection_get_account(gc), base_url, use_whole_url,
-			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
-			yahoo_get_inbox_token_cb, gc);
-
-	g_free(request);
-
-	if (url_data != NULL)
-		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	else {
-		const char *yahoo_mail_url = (yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
-		purple_debug_error("yahoo",
-				   "Unable to request mail login token; forwarding to login screen.");
-		purple_notify_uri(gc, yahoo_mail_url);
-	}
+	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 }
 
+#if 0
+/* XXX: it doesn't seems to work */
 static void
 yahoo_set_userinfo_fn(PurplePluginAction *action)
 {
 	yahoo_set_userinfo(action->context);
 }
+#endif
 
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
@@ -4313,9 +4305,12 @@ GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
 
+#if 0
+	/* XXX: it doesn't seems to work */
 	act = purple_plugin_action_new(_("Set User Info..."),
 			yahoo_set_userinfo_fn);
 	m = g_list_append(m, act);
+#endif
 
 	act = purple_plugin_action_new(_("Activate ID..."),
 			yahoo_show_act_id);
@@ -4339,10 +4334,10 @@ struct yahoo_sms_carrier_cb_data	{
 	char *what;
 };
 
-static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *webdata, size_t len, const gchar *error_message)
+static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _sms_cb_data)
 {
-	struct yahoo_sms_carrier_cb_data *sms_cb_data = user_data;
+	struct yahoo_sms_carrier_cb_data *sms_cb_data = _sms_cb_data;
 	PurpleConnection *gc = sms_cb_data->gc;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *status = NULL;
@@ -4350,18 +4345,18 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
-	if (error_message != NULL) {
+	if (!purple_http_response_is_successfull(response)) {
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
 		g_free(sms_cb_data);
 		return ;
-	}
-	else if (len > 0 && webdata && *webdata) {
-		xmlnode *validate_data_root = xmlnode_from_str(webdata, -1);
+	} else {
+		const gchar *got_data = purple_http_response_get_data(response, NULL);
+		xmlnode *validate_data_root = xmlnode_from_str(got_data, -1);
 		xmlnode *validate_data_child = xmlnode_get_child(validate_data_root, "mobile_no");
 		const char *mobile_no = xmlnode_get_attrib(validate_data_child, "msisdn");
 
@@ -4372,7 +4367,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 		validate_data_child = xmlnode_get_child(validate_data_root, "carrier");
 		carrier = xmlnode_get_data(validate_data_child);
 
-		purple_debug_info("yahoo", "SMS validate data: %s\n", webdata);
+		purple_debug_info("yahoo", "SMS validate data: %s\n", got_data);
 
 		if (status && g_str_equal(status, "Valid")) {
 			g_hash_table_insert(yd->sms_carrier,
@@ -4400,11 +4395,11 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpRequest *req;
+	PurpleHttpCookieJar *cookiejar;
+	PurpleHttpConnection *hc;
 	struct yahoo_sms_carrier_cb_data *sms_cb_data;
 	char *validate_request_str = NULL;
-	char *request = NULL;
-	gboolean use_whole_url = FALSE;
 	xmlnode *validate_request_root = NULL;
 	xmlnode *validate_request_child = NULL;
 
@@ -4424,37 +4419,22 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	xmlnode_free(validate_request_child);
 	xmlnode_free(validate_request_root);
 
-	request = g_strdup_printf(
-		"POST /mobileno?intl=us&version=%s HTTP/1.1\r\n"
-		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
-		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
-		"Host: validate.msg.yahoo.com\r\n"
-		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
-		"Cache-Control: no-cache\r\n\r\n%s",
-		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "http://validate.msg.yahoo.com"
+		"/mobileno?intl=us&version=%s", YAHOO_CLIENT_VERSION);
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "User-Agent",
+		YAHOO_CLIENT_USERAGENT);
+	cookiejar = purple_http_request_get_cookie_jar(req);
+	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
+	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
+	purple_http_request_set_contents(req, validate_request_str, -1);
+	hc = purple_http_request(gc, req, yahoo_get_sms_carrier_cb, data);
+	purple_http_request_unref(req);
 
-	/* use whole URL if using HTTP Proxy */
-	if ((purple_account_get_proxy_info(purple_connection_get_account(gc))) && (purple_proxy_info_get_type(purple_account_get_proxy_info(purple_connection_get_account(gc))) == PURPLE_PROXY_HTTP))
-	    use_whole_url = TRUE;
+	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
-	url_data = purple_util_fetch_url_request(
-			purple_connection_get_account(gc), YAHOO_SMS_CARRIER_URL, use_whole_url,
-			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
-			yahoo_get_sms_carrier_cb, data);
-
-	g_free(request);
 	g_free(validate_request_str);
-
-	if (url_data)
-		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	else {
-		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
-		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
-		g_free(sms_cb_data->who);
-		g_free(sms_cb_data->what);
-		g_free(sms_cb_data);
-	}
 }
 
 int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
