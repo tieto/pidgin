@@ -26,7 +26,6 @@
 #include	"internal.h"
 #include	"debug.h"
 #include	"libpurple/http.h"
-#include	"obsolete.h"
 
 #include	"protocol.h"
 #include	"mxit.h"
