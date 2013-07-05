@@ -1717,6 +1717,8 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage3\n");
 
+	g_return_if_fail(crypt != NULL);
+
 	md5_cipher = purple_ciphers_find_cipher("md5");
 	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
 	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
@@ -1857,6 +1859,9 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 
 		g_strfreev(splits);
 		g_strfreev(split_data);
+
+		if (crumb == NULL)
+			response_no = -1;
 
 		if(response_no != 0) {
 			/* Some error in the login process */
