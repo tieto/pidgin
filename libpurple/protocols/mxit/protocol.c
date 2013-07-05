@@ -26,7 +26,6 @@
 #include	"internal.h"
 #include	"debug.h"
 #include	"version.h"
-#include	"obsolete.h"
 
 #include	"protocol.h"
 #include	"mxit.h"
@@ -258,72 +257,70 @@ static int mxit_write_sock_packet( int fd, const char* pktdata, int pktlen )
 }
 
 
-/*------------------------------------------------------------------------
+/**
  * Callback called for handling a HTTP GET response
  *
- *  @param url_data			libPurple internal object (see purple_util_fetch_url_request)
- *  @param user_data		The MXit session object
- *  @param url_text			The data returned (could be NULL if error)
- *  @param len				The length of the data returned (0 if error)
- *  @param error_message	Descriptive error message
+ * @param http_conn http api object (see http.h)
+ * @param response  http api object (see http.h)
+ * @param _session  The MXit session object
  */
-static void mxit_cb_http_rx( PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message )
+static void
+mxit_cb_http_rx(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _session)
 {
-	struct MXitSession*		session		= (struct MXitSession*) user_data;
+	struct MXitSession *session = _session;
+	const gchar *got_data;
+	size_t got_len;
 
 	/* clear outstanding request */
-	session->async_calls = g_slist_remove( session->async_calls, url_data );
+	session->async_http_reqs = g_slist_remove(session->async_http_reqs,
+		http_conn);
 
-	if ( ( !url_text ) || ( len == 0 ) ) {
-		/* error with request */
-		purple_debug_error( MXIT_PLUGIN_ID, "HTTP response error (%s)\n", error_message );
+	if (!purple_http_response_is_successfull(response)) {
+		purple_debug_error(MXIT_PLUGIN_ID, "HTTP response error (%s)\n",
+			purple_http_response_get_error(response));
 		return;
 	}
 
 	/* convert the HTTP result */
-	memcpy( session->rx_dbuf, url_text, len );
-	session->rx_i = len;
+	got_data = purple_http_response_get_data(response, &got_len);
+	memcpy(session->rx_dbuf, got_data, got_len);
+	session->rx_i = got_len;
 
-	mxit_parse_packet( session );
+	mxit_parse_packet(session);
 }
 
 
-/*------------------------------------------------------------------------
+/**
  * TX Step 3: Write the packet data to the HTTP connection (GET style).
  *
- *  @param session		The MXit session object
- *  @param pktdata		The packet data
- *  @param pktlen		The length of the packet data
- *  @return				Return -1 on error, otherwise 0
+ * @param session The MXit session object
+ * @param packet  The packet data
  */
-static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* packet )
+static void
+mxit_write_http_get(struct MXitSession* session, struct tx_packet* packet)
 {
-	PurpleUtilFetchUrlData*	url_data;
-	char*		part	= NULL;
-	char*		url		= NULL;
+	PurpleHttpRequest *req;
+	PurpleHttpConnection *hc;
+	char *part = NULL;
 
-	if ( packet->datalen > 0 ) {
-		char*	tmp		= NULL;
+	if (packet->datalen > 0) {
+		char *tmp;
 
-		tmp = g_strndup( packet->data, packet->datalen );
-		part = g_strdup( purple_url_encode( tmp ) );
-		g_free( tmp );
+		tmp = g_strndup(packet->data, packet->datalen);
+		part = g_strdup(purple_url_encode(tmp));
+		g_free(tmp);
 	}
 
-	url = g_strdup_printf( "%s?%s%s", session->http_server, purple_url_encode( packet->header ), ( !part ) ? "" : part );
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "%s?%s%s", session->http_server,
+		purple_url_encode(packet->header), part ? part : "");
+	purple_http_request_header_set(req, "User-Agent", MXIT_HTTP_USERAGENT);
+	hc = purple_http_request(session->con, req, mxit_cb_http_rx, session);
+	purple_http_request_unref(req);
+	session->async_http_reqs = g_slist_prepend(session->async_http_reqs, hc);
 
-#ifdef	DEBUG_PROTOCOL
-	purple_debug_info( MXIT_PLUGIN_ID, "HTTP GET: '%s'\n", url );
-#endif
-
-	/* send the HTTP request */
-	url_data = purple_util_fetch_url_request( session->acc, url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, -1, mxit_cb_http_rx, session );
-	if ( url_data )
-		session->async_calls = g_slist_prepend( session->async_calls, url_data );
-
-	g_free( url );
-	if ( part )
-		g_free( part );
+	g_free(part);
 }
 
 
@@ -2907,10 +2904,6 @@ void mxit_close_connection( struct MXitSession* session )
 	session->flags &= ~MXIT_FLAG_CONNECTED;
 
 	/* cancel all outstanding async calls */
-	while ( session->async_calls ) {
-		purple_util_fetch_url_cancel( session->async_calls->data );
-		session->async_calls = g_slist_delete_link( session->async_calls, session->async_calls );
-	}
 	while (session->async_http_reqs) {
 		purple_http_conn_cancel(session->async_http_reqs->data);
 		session->async_http_reqs = g_slist_delete_link(session->async_http_reqs, session->async_http_reqs);

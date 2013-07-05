@@ -318,35 +318,39 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	return TRUE;
 }
 
-static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message)
+static void
+start_oscar_session_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _od)
 {
-	OscarData *od;
+	OscarData *od = _od;
 	PurpleConnection *gc;
 	char *host, *cookie;
 	char *tls_certname = NULL;
 	unsigned short port;
 	guint8 *cookiedata;
 	gsize cookiedata_len = 0;
+	const gchar *got_data;
+	size_t got_len;
 
-	od = user_data;
 	gc = od->gc;
 
-	od->url_data = NULL;
+	od->hc = NULL;
 
-	if (error_message != NULL || len == 0) {
+	if (!purple_http_response_is_successfull(response)) {
 		gchar *tmp;
 		/* Note to translators: The first %s is a URL, the second is an
 		   error message. */
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				get_start_oscar_session_url(od), error_message ?
-				error_message : _("The server returned an empty response"));
+				get_start_oscar_session_url(od),
+				purple_http_response_get_error(response));
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
 
-	if (!parse_start_oscar_session_response(gc, url_text, len, &host, &port, &cookie, &tls_certname))
+	got_data = purple_http_response_get_data(response, &got_len);
+	if (!parse_start_oscar_session_response(gc, got_data, got_len, &host, &port, &cookie, &tls_certname))
 		return;
 
 	cookiedata = purple_base64_decode(cookie, &cookiedata_len);
@@ -360,7 +364,7 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 
 static void send_start_oscar_session(OscarData *od, const char *token, const char *session_key, time_t hosttime)
 {
-	char *query_string, *signature, *url;
+	char *query_string, *signature;
 	PurpleAccount *account = purple_connection_get_account(od->gc);
 	const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 
@@ -381,16 +385,13 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
-	url = g_strdup_printf("%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),
-			query_string, signature);
+
+	od->hc = purple_http_get_printf(od->gc, start_oscar_session_cb, od,
+		"%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),
+		query_string, signature);
+
 	g_free(query_string);
 	g_free(signature);
-
-	/* Make the request */
-	od->url_data = purple_util_fetch_url_request(account,
-			url, TRUE, NULL, FALSE, NULL, FALSE, -1,
-			start_oscar_session_cb, od);
-	g_free(url);
 }
 
 /**
@@ -556,33 +557,40 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	return TRUE;
 }
 
-static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message)
+static void
+client_login_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _od)
 {
-	OscarData *od;
+	OscarData *od = _od;
 	PurpleConnection *gc;
 	char *token, *secret, *session_key;
 	time_t hosttime;
 	int password_len;
 	char *password;
+	const gchar *got_data;
+	size_t got_len;
 
-	od = user_data;
 	gc = od->gc;
 
-	od->url_data = NULL;
+	od->hc = NULL;
 
-	if (error_message != NULL || len == 0) {
+	if (!purple_http_response_is_successfull(response)) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				get_client_login_url(od), error_message ?
-				error_message : _("The server returned an empty response"));
+				get_client_login_url(od),
+				purple_http_response_get_error(response));
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
 
-	if (!parse_client_login_response(gc, url_text, len, &token, &secret, &hosttime))
+	got_data = purple_http_response_get_data(response, &got_len);
+	if (!parse_client_login_response(gc, got_data, got_len, &token, &secret,
+		&hosttime))
+	{
 		return;
+	}
 
 	password_len = strlen(purple_connection_get_password(gc));
 	password = g_strdup_printf("%.*s",
@@ -607,7 +615,8 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 void send_client_login(OscarData *od, const char *username)
 {
 	PurpleConnection *gc;
-	GString *request, *body;
+	PurpleHttpRequest *req;
+	GString *body;
 	const char *tmp;
 	char *password;
 	int password_len;
@@ -637,21 +646,13 @@ void send_client_login(OscarData *od, const char *username)
 	g_string_append_printf(body, "&s=%s", purple_url_encode(username));
 	g_free(password);
 
-	/* Construct an HTTP POST request */
-	request = g_string_new("POST /auth/clientLogin HTTP/1.0\r\n"
-			"Connection: close\r\n"
-			"Accept: */*\r\n");
+	req = purple_http_request_new(get_client_login_url(od));
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "Content-Type",
+		"application/x-www-form-urlencoded; charset=UTF-8");
+	purple_http_request_set_contents(req, body->str, body->len);
+	od->hc = purple_http_request(gc, req, client_login_cb, od);
+	purple_http_request_unref(req);
 
-	/* Tack on the body */
-	g_string_append_printf(request, "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n");
-	g_string_append_printf(request, "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n", body->len);
-	g_string_append_len(request, body->str, body->len);
 	g_string_free(body, TRUE);
-
-	/* Send the POST request  */
-	od->url_data = purple_util_fetch_url_request(
-			purple_connection_get_account(gc), get_client_login_url(od),
-			TRUE, NULL, FALSE, request->str, FALSE, -1,
-			client_login_cb, od);
-	g_string_free(request, TRUE);
 }

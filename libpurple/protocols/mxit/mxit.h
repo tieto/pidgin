@@ -168,7 +168,6 @@ struct MXitSession {
 	int					outack;						/* outstanding ack packet */
 	guint				q_slow_timer_id;			/* timer handle for slow tx queue */
 	guint				q_fast_timer_id;			/* timer handle for fast tx queue */
-	GSList*				async_calls;				/* list of current outstanding async calls */
 	GSList*				async_http_reqs;			/* list of current outstanding async http requests */
 
 	/* receive */

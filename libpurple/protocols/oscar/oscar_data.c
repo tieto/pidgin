@@ -106,8 +106,7 @@ oscar_data_destroy(OscarData *od)
 	aim_cleansnacs(od, -1);
 
 	/* Only used when connecting with clientLogin */
-	if (od->url_data != NULL)
-		purple_util_fetch_url_cancel(od->url_data);
+	purple_http_conn_cancel(od->hc);
 
 	while (od->requesticon)
 	{
