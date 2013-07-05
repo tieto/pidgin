@@ -33,9 +33,9 @@
 #include "circbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
+#include "http.h"
 #include "proxy.h"
 #include "sslconn.h"
-#include "obsolete.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -323,7 +323,7 @@ struct aim_ssi_itemlist {
 struct _OscarData
 {
 	/** Only used when connecting with clientLogin */
-	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpConnection *hc;
 
 	gboolean iconconnecting;
 	gboolean set_icon;
