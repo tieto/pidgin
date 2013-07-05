@@ -25,6 +25,7 @@
  *
  */
 #include "internal.h"
+#include "glibcompat.h"
 #include "pidgin.h"
 
 #include "debug.h"
