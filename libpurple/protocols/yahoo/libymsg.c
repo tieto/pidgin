@@ -4340,12 +4340,13 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 	char *status = NULL;
 	char *carrier = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+	PurpleIMConversation *im = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 
 	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	if (!purple_http_response_is_successfull(response)) {
-		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
+				_("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
