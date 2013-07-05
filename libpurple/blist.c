@@ -971,23 +971,19 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 		cnode = PURPLE_BLIST_NODE(buddy)->parent;
 		contact = PURPLE_CONTACT(cnode);
 		purple_contact_set_online_count_relative(contact, +1);
-		if (purple_contact_get_online_count(contact) == 1) {
-			PurpleGroup *group = PURPLE_GROUP(cnode->parent);
-			purple_group_set_online_count_relative(group, +1);
-		}
+		if (purple_contact_get_online_count(contact) == 1)
+			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), +1);
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
 
-		purple_blist_node_set_int(&buddy, "last_seen", time(NULL));
+		purple_blist_node_set_int(PURPLE_BLIST_NODE(buddy), "last_seen", time(NULL));
 		purple_signal_emit(purple_blist_get_handle(), "buddy-signed-off", buddy);
 
 		cnode = PURPLE_BLIST_NODE(buddy)->parent;
 		contact = PURPLE_CONTACT(cnode);
 		purple_contact_set_online_count_relative(contact, -1);
-		if (purple_contact_get_online_count(contact) == 0) {
-			PurpleGroup *group = PURPLE_GROUP(cnode->parent);
-			purple_group_set_online_count_relative(group, -1);
-		}
+		if (purple_contact_get_online_count(contact) == 0)
+			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), -1);
 	} else {
 		purple_signal_emit(purple_blist_get_handle(),
 		                 "buddy-status-changed", buddy, old_status,
