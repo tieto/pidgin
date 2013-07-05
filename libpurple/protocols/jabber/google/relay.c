@@ -20,7 +20,7 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 
 #include "relay.h"
 
@@ -62,29 +62,12 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 }
 
 static void
-jabber_google_relay_remove_url_data(JabberStream *js,
-	PurpleUtilFetchUrlData *url_data)
-{
-	GList *iter = js->google_relay_requests;
-
-	while (iter) {
-		if (iter->data == url_data) {
-			js->google_relay_requests =
-				g_list_delete_link(js->google_relay_requests, iter);
-			break;
-		}
-	}
-}
-
-static void
-jabber_google_relay_fetch_cb(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message)
+jabber_google_relay_fetch_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
 	JabberGoogleRelayCallbackData *data =
 		(JabberGoogleRelayCallbackData *) user_data;
 	GoogleSession *session = data->session;
-	JabberStream *js = session->js;
 	JabberGoogleRelayCallback *cb = data->cb;
 	gchar *relay_ip = NULL;
 	guint relay_udp = 0;
@@ -95,16 +78,14 @@ jabber_google_relay_fetch_cb(PurpleUtilFetchUrlData *url_data,
 
 	g_free(data);
 
-	if (url_data) {
-		jabber_google_relay_remove_url_data(js, url_data);
-	}
-
 	purple_debug_info("jabber", "got response on HTTP request to relay server\n");
 
-	if (url_text && len > 0) {
+	if (purple_http_response_is_successfull(response)) {
+		const gchar *got_data =
+			purple_http_response_get_data(response, NULL);
 		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
-			url_text);
-		jabber_google_relay_parse_response(url_text, &relay_ip, &relay_udp,
+			got_data);
+		jabber_google_relay_parse_response(got_data, &relay_ip, &relay_udp,
 			&relay_tcp, &relay_ssltcp, &relay_username, &relay_password);
 	}
 
@@ -121,32 +102,20 @@ void
 jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 	JabberGoogleRelayCallback cb)
 {
-	PurpleUtilFetchUrlData *url_data = NULL;
-	gchar *url = g_strdup_printf("http://%s", js->google_relay_host);
-	/* yes, the relay token is included twice as different request headers,
-	   this is apparently needed to make Google's relay servers work... */
-	gchar *request =
-		g_strdup_printf("GET /create_session HTTP/1.0\r\n"
-			            "Host: %s\r\n"
-						"X-Talk-Google-Relay-Auth: %s\r\n"
-						"X-Google-Relay-Auth: %s\r\n\r\n",
-			js->google_relay_host, js->google_relay_token, js->google_relay_token);
+	PurpleHttpRequest *req;
 	JabberGoogleRelayCallbackData *data = g_new0(JabberGoogleRelayCallbackData, 1);
 
 	data->session = session;
 	data->cb = cb;
-	purple_debug_info("jabber",
-		"sending Google relay request %s to %s\n", request, url);
-	url_data =
-		purple_util_fetch_url_request(NULL, url, FALSE, NULL, FALSE, request, FALSE, -1,
-			jabber_google_relay_fetch_cb, data);
-	if (url_data) {
-		js->google_relay_requests =
-			g_list_prepend(js->google_relay_requests, url_data);
-	} else {
-		purple_debug_error("jabber", "unable to create Google relay request\n");
-		jabber_google_relay_fetch_cb(NULL, data, NULL, 0, NULL);
-	}
-	g_free(url);
-	g_free(request);
+	purple_debug_info("jabber", "sending Google relay request\n");
+
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "http://%s/create_session",
+		js->google_relay_host);
+	/* yes, the relay token is included twice as different request headers,
+	   this is apparently needed to make Google's relay servers work... */
+	purple_http_request_header_set(req, "X-Talk-Google-Relay-Auth", js->google_relay_token);
+	purple_http_request_header_set(req, "X-Google-Relay-Auth", js->google_relay_token);
+	purple_http_request(js->gc, req, jabber_google_relay_fetch_cb, data);
+	purple_http_request_unref(req);
 }
