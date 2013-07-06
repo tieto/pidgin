@@ -131,12 +131,12 @@ static void
 value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 {
 	const char *name;
-	PurpleValue *value;
+	GValue *value;
 	xmlnode *node, *child;
 	char buf[21];
 
 	name    = (const char *)key;
-	value   = (PurpleValue *)hvalue;
+	value   = (GValue *)hvalue;
 	node    = (xmlnode *)user_data;
 
 	g_return_if_fail(value != NULL);
@@ -144,18 +144,18 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
-	if (purple_value_get_type(value) == PURPLE_TYPE_INT) {
+	if (G_VALUE_HOLDS_INT(value)) {
 		xmlnode_set_attrib(child, "type", "int");
-		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
+		g_snprintf(buf, sizeof(buf), "%d", g_value_get_int(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING) {
+	else if (G_VALUE_HOLDS_STRING(value)) {
 		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, purple_value_get_string(value), -1);
+		xmlnode_insert_data(child, g_value_get_string(value), -1);
 	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN) {
+	else if (G_VALUE_HOLDS_BOOLEAN(value)) {
 		xmlnode_set_attrib(child, "type", "bool");
-		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
+		g_snprintf(buf, sizeof(buf), "%d", g_value_get_boolean(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -425,7 +425,6 @@ void purple_blist_schedule_save()
 		ops->save_account(NULL);
 }
 
-
 /*********************************************************************
  * Reading from disk                                                 *
  *********************************************************************/
@@ -666,7 +665,7 @@ load_blist(void)
  *****************************************************************************/
 
 void
-purple_blist_boot(void) /* TODO init */
+purple_blist_boot(void)
 {
 	PurpleBListUiOps *ui_ops;
 	GList *account;
@@ -2411,7 +2410,6 @@ purple_blist_init(void)
 			NULL);
 }
 
-/* TODO GObjectify */
 void
 purple_blist_uninit(void)
 {
@@ -2432,7 +2430,7 @@ purple_blist_uninit(void)
 	node = purple_blist_get_root();
 	while (node) {
 		next_node = node->next;
-		purple_blist_node_destroy(node);
+		purple_blist_node_destroy(node); /* TODO replace by a loop, see original blist_destroy */
 		node = next_node;
 	}
 	purplebuddylist->root = NULL;
