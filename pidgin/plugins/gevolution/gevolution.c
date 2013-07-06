@@ -67,8 +67,8 @@ enum
 	NUM_COLUMNS
 };
 
-static PurpleBlistUiOps *backup_blist_ui_ops = NULL;
-static PurpleBlistUiOps *blist_ui_ops = NULL;
+static PurpleBListUiOps *backup_blist_ui_ops = NULL;
+static PurpleBListUiOps *blist_ui_ops = NULL;
 static EBook *book = NULL;
 static gulong timer = 0;
 static gulong book_view_tag = 0;
@@ -342,7 +342,7 @@ plugin_load(PurplePlugin *plugin)
 
 	backup_blist_ui_ops = purple_blist_get_ui_ops();
 
-	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(PurpleBlistUiOps));
+	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(PurpleBListUiOps));
 	blist_ui_ops->request_add_buddy = request_add_buddy;
 
 	purple_blist_set_ui_ops(blist_ui_ops);

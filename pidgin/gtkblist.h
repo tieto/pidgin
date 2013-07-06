@@ -149,7 +149,7 @@ void pidgin_blist_uninit(void);
  *
  * @return The GTK+ list operations structure.
  */
-PurpleBlistUiOps *pidgin_blist_get_ui_ops(void);
+PurpleBListUiOps *pidgin_blist_get_ui_ops(void);
 
 /**
  * Returns the default gtk buddy list

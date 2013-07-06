@@ -33,8 +33,8 @@
 
 /** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyList PurpleBuddyList;
-/** @copydoc _PurpleBlistUiOps */
-typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
+/** @copydoc _PurpleBListUiOps */
+typedef struct _PurpleBListUiOps PurpleBListUiOps;
 
 /**************************************************************************/
 /* Data Structures                                                        */
@@ -52,10 +52,10 @@ struct _PurpleBuddyList {
 /**
  * Buddy list UI operations.
  *
- * Any UI representing a buddy list must assign a filled-out PurpleBlistUiOps
+ * Any UI representing a buddy list must assign a filled-out PurpleBListUiOps
  * structure to the buddy list core.
  */
-struct _PurpleBlistUiOps
+struct _PurpleBListUiOps
 {
 	void (*new_list)(PurpleBuddyList *list); /**< Sets UI-specific data on a buddy list. */
 	void (*new_node)(PurpleBListNode *node); /**< Sets UI-specific data on a node. */
@@ -479,14 +479,14 @@ void purple_blist_request_add_group(void);
  *
  * @param ops The ops struct.
  */
-void purple_blist_set_ui_ops(PurpleBlistUiOps *ops);
+void purple_blist_set_ui_ops(PurpleBListUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used for the buddy list.
  *
  * @return The UI operations structure.
  */
-PurpleBlistUiOps *purple_blist_get_ui_ops(void);
+PurpleBListUiOps *purple_blist_get_ui_ops(void);
 
 /*@}*/
 

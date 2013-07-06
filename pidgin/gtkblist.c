@@ -7622,7 +7622,7 @@ set_urgent(void)
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
-static PurpleBlistUiOps blist_ui_ops =
+static PurpleBListUiOps blist_ui_ops =
 {
 	pidgin_blist_new_list,
 	pidgin_blist_new_node,
@@ -7641,7 +7641,7 @@ static PurpleBlistUiOps blist_ui_ops =
 };
 
 
-PurpleBlistUiOps *
+PurpleBListUiOps *
 pidgin_blist_get_ui_ops(void)
 {
 	return &blist_ui_ops;

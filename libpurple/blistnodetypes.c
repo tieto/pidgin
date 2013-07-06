@@ -102,7 +102,7 @@ struct _PurpleChatPrivate {
 /* TODO GObjectify */
 PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, NULL);
@@ -411,7 +411,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 /* TODO GObjectify */
 PurpleContact *purple_contact_new()
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 
 	PurpleContact *contact = g_new0(PurpleContact, 1);
 	contact->totalsize = 0;
@@ -514,7 +514,7 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 /* TODO GObjectify */
 PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleChat *chat;
 
 	g_return_val_if_fail(account != NULL, NULL);
@@ -608,7 +608,7 @@ purple_chat_get_components(PurpleChat *chat)
 /* TODO GObjectify */
 PurpleGroup *purple_group_new(const char *name)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *group;
 
 	g_return_val_if_fail(name  != NULL, NULL);

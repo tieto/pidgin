@@ -1188,7 +1188,7 @@ static void
 update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 
 	if (!old_idle && idle)

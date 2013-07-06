@@ -707,7 +707,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 void
 purple_account_set_username(PurpleAccount *account, const char *username)
 {
-	PurpleBlistUiOps *blist_ops;
+	PurpleBListUiOps *blist_ops;
 	PurpleAccountPrivate *priv;
 
 	g_return_if_fail(account != NULL);
@@ -1537,7 +1537,7 @@ purple_account_privacy_permit_add(PurpleAccount *account, const char *who,
 	GSList *l;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
+	PurpleBListUiOps *blist_ops;
 	PurpleAccountPrivate *priv;
 	PurpleAccountUiOps *ui_ops = purple_accounts_get_ui_ops();
 
@@ -1589,7 +1589,7 @@ purple_account_privacy_permit_remove(PurpleAccount *account, const char *who,
 	const char *name;
 	PurpleBuddy *buddy;
 	char *del;
-	PurpleBlistUiOps *blist_ops;
+	PurpleBListUiOps *blist_ops;
 	PurpleAccountPrivate *priv;
 	PurpleAccountUiOps *ui_ops = purple_accounts_get_ui_ops();
 
@@ -1641,7 +1641,7 @@ purple_account_privacy_deny_add(PurpleAccount *account, const char *who,
 	GSList *l;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
+	PurpleBListUiOps *blist_ops;
 	PurpleAccountPrivate *priv;
 	PurpleAccountUiOps *ui_ops = purple_accounts_get_ui_ops();
 
@@ -1692,7 +1692,7 @@ purple_account_privacy_deny_remove(PurpleAccount *account, const char *who,
 	const char *normalized;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
+	PurpleBListUiOps *blist_ops;
 	PurpleAccountPrivate *priv;
 	PurpleAccountUiOps *ui_ops = purple_accounts_get_ui_ops();
 

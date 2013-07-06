@@ -2547,7 +2547,7 @@ pidgin_conv_get_icon(PurpleConversation *conv, GtkWidget *parent, const char *ic
 	const char *name = NULL;
 	const char *stock = NULL;
 	GdkPixbuf *status = NULL;
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	GtkIconSize size;
 
 	g_return_val_if_fail(conv != NULL, NULL);

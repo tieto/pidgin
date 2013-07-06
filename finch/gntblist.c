@@ -855,7 +855,7 @@ finch_request_add_group(void)
 			NULL);
 }
 
-static PurpleBlistUiOps blist_ui_ops =
+static PurpleBListUiOps blist_ui_ops =
 {
 	new_list,
 	new_node,
@@ -1030,7 +1030,7 @@ buddy_signed_off(PurpleBuddy *buddy, FinchBlist *ggblist)
 }
 #endif
 
-PurpleBlistUiOps *finch_blist_get_ui_ops()
+PurpleBListUiOps *finch_blist_get_ui_ops()
 {
 	return &blist_ui_ops;
 }

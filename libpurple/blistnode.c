@@ -93,7 +93,7 @@ purple_blist_node_set_ui_data(PurpleBListNode *node, void *ui_data) {
 static void
 purple_blist_node_destroy(PurpleBListNode *node)
 {
-	PurpleBlistUiOps *ui_ops;
+	PurpleBListUiOps *ui_ops;
 	PurpleBListNode *child, *next_child;
 
 	ui_ops = purple_blist_get_ui_ops();
@@ -147,7 +147,7 @@ static void purple_blist_node_initialize_settings(PurpleBListNode *node)
 
 void purple_blist_node_remove_setting(PurpleBListNode *node, const char *key)
 {
-	PurpleBlistUiOps *ops;
+	PurpleBListUiOps *ops;
 	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
@@ -198,7 +198,7 @@ void
 purple_blist_node_set_bool(PurpleBListNode* node, const char *key, gboolean data)
 {
 	PurpleValue *value;
-	PurpleBlistUiOps *ops;
+	PurpleBListUiOps *ops;
 	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
@@ -239,7 +239,7 @@ void
 purple_blist_node_set_int(PurpleBListNode* node, const char *key, int data)
 {
 	PurpleValue *value;
-	PurpleBlistUiOps *ops;
+	PurpleBListUiOps *ops;
 	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
@@ -280,7 +280,7 @@ void
 purple_blist_node_set_string(PurpleBListNode* node, const char *key, const char *data)
 {
 	PurpleValue *value;
-	PurpleBlistUiOps *ops;
+	PurpleBListUiOps *ops;
 	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);

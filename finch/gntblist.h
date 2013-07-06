@@ -53,9 +53,9 @@ typedef struct
 /**
  * Get the ui-functions.
  *
- * @return The PurpleBlistUiOps structure populated with the appropriate functions.
+ * @return The PurpleBListUiOps structure populated with the appropriate functions.
  */
-PurpleBlistUiOps * finch_blist_get_ui_ops(void);
+PurpleBListUiOps * finch_blist_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.
