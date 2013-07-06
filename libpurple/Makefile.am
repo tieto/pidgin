@@ -40,7 +40,9 @@ purple_coresources = \
 	account.c \
 	accounts.c \
 	accountopt.c \
-	blist.c \
+	blistnode.c \
+	blistnodetypes.c \
+	buddylist.c \
 	buddyicon.c \
 	certificate.c \
 	cipher.c \
@@ -112,7 +114,9 @@ purple_coreheaders = \
 	account.h \
 	accounts.h \
 	accountopt.h \
-	blist.h \
+	blistnode.h \
+	blistnodetypes.h \
+	buddylist.h \
 	buddyicon.h \
 	certificate.h \
 	cipher.h \
@@ -182,20 +186,10 @@ purple_builtheaders = purple.h version.h enums.h marshallers.h
 
 purple_enumheaders = \
 	account.h \
-	accounts.h \
 	cipher.h \
-	circularbuffer.h \
 	connection.h \
 	conversation.h \
-	conversationtypes.h \
-	conversations.h \
-	hash.h \
-	smiley.h \
-	sound-theme.h \
-	sound-theme-loader.h \
-	theme.h \
-	theme-loader.h \
-	theme-manager.h
+	conversationtypes.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
@@ -232,11 +226,11 @@ CLEANFILES = \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blist.h \
-                buddyicon.h connection.h conversation.h conversationtypes.h \
-                conversations.h core.h ft.h log.h notify.h prefs.h roomlist.h \
-                savedstatuses.h smiley.h status.h server.h util.h xmlnode.h \
-                prpl.h
+dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
+                blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
+                conversationtypes.h conversations.h core.h ft.h log.h notify.h \
+                prefs.h roomlist.h savedstatuses.h smiley.h status.h server.h util.h \
+                xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
