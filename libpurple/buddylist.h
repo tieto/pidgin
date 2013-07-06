@@ -24,8 +24,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_BLIST_H_
-#define _PURPLE_BLIST_H_
+#ifndef _PURPLE_BUDDY_LIST_H_
+#define _PURPLE_BUDDY_LIST_H_
 
 /* I can't believe I let ChipX86 inspire me to write good code. -Sean */
 
@@ -523,4 +523,4 @@ void purple_blist_uninit(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_BLIST_H_ */
+#endif /* _PURPLE_BUDDY_LIST_H_ */

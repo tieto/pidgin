@@ -55,8 +55,8 @@ GGSOURCES = \
 	utils.c \
 	confer.h \
 	confer.c \
-	buddylist.h \
-	buddylist.c \
+	blist.h \
+	blist.c \
 	gg.h \
 	gg.c \
 	resolver-purple.h \

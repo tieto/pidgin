@@ -41,7 +41,7 @@
 #include "gg.h"
 #include "confer.h"
 #include "search.h"
-#include "buddylist.h"
+#include "blist.h"
 #include "utils.h"
 #include "resolver-purple.h"
 #include "account.h"

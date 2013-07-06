@@ -26,7 +26,7 @@
 
 #include "gg.h"
 #include "utils.h"
-#include "buddylist.h"
+#include "blist.h"
 
 #define F_FIRSTNAME 0
 #define F_LASTNAME 1

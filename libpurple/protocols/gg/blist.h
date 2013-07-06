@@ -1,5 +1,5 @@
 /**
- * @file buddylist.h
+ * @file blist.h
  *
  * purple
  *
