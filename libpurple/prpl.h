@@ -71,7 +71,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #include <unistd.h>
 #endif
 
-#include "blist.h"
+#include "buddylist.h"
 #include "conversations.h"
 #include "ft.h"
 #include "imgstore.h"

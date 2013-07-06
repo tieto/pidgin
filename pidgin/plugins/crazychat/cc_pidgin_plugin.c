@@ -4,7 +4,7 @@
 #include "internal.h"
 #include "plugin.h"
 #include "gtkplugin.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkutils.h"
 #include "connection.h"
 #include "conversation.h"

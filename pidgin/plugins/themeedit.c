@@ -26,7 +26,7 @@
 
 #include "theme-manager.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkblist-theme.h"
 #include "gtkutils.h"
 #include "gtkplugin.h"

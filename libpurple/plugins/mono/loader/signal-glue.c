@@ -1,7 +1,7 @@
 #include "mono-glue.h"
 #include "mono-helper.h"
 #include "debug.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "signals.h"
 #include "value.h"
 

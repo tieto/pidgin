@@ -36,7 +36,7 @@
 #include <string.h>
 
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "dbus-purple.h"
 #include "dbus-server.h"

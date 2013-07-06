@@ -24,7 +24,7 @@
 /* This file is the fullcrap */
 
 #include "internal.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "log.h"

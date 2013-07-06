@@ -24,7 +24,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "core.h"
 #include "cmds.h"
 #include "connection.h"

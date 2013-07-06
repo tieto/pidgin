@@ -23,7 +23,7 @@
 #define _PURPLE_BLIST_C_
 
 #include "internal.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"

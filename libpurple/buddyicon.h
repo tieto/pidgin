@@ -34,7 +34,7 @@
 typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "imgstore.h"
 #include "prpl.h"
 #include "util.h"

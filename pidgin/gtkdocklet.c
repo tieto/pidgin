@@ -33,7 +33,7 @@
 #include "status.h"
 
 #include "gtkaccount.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"

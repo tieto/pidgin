@@ -23,7 +23,7 @@
 #include "internal.h"
 
 #include "conversation.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "notify.h"
 #include "util.h"
 #include "debug.h"

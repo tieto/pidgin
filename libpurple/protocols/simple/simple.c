@@ -27,7 +27,7 @@
 #include "internal.h"
 
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "dnsquery.h"
 #include "debug.h"

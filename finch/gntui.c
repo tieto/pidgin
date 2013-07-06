@@ -25,7 +25,7 @@
 #include "gntui.h"
 
 #include "gntaccount.h"
-#include "gntblist.h"
+#include "gntbuddylist.h"
 #include "gntcertmgr.h"
 #include "gntconn.h"
 #include "gntconv.h"

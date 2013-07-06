@@ -1,5 +1,5 @@
 /**
- * @file gtkblist.h GTK+ Buddy List API
+ * @file gtkbuddylist.h GTK+ Buddy List API
  * @ingroup pidgin
  * @see @ref gtkblist-signals
  */
@@ -59,7 +59,7 @@ typedef enum {
 } PidginStatusIconSize;
 
 #include "pidgin.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "gtkblist-theme.h"
 
 /**************************************************************************

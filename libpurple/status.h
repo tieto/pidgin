@@ -130,7 +130,7 @@ typedef enum
 } PurpleStatusPrimitive;
 
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "value.h"
 

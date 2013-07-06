@@ -20,7 +20,7 @@
 #include "internal.h"
 #include "buddy.h"
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "bonjour.h"
 #include "mdns_interface.h"
 #include "debug.h"

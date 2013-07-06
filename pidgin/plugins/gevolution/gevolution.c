@@ -29,7 +29,7 @@
 #include "util.h"
 #include "version.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"

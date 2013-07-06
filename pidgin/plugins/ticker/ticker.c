@@ -27,14 +27,14 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
 #include "signals.h"
 #include "version.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #include "pidginstock.h"

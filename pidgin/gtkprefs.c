@@ -46,7 +46,7 @@
 #include "network.h"
 #include "keyring.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkconv-theme.h"
 #include "gtkdebug.h"

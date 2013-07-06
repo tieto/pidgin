@@ -1,5 +1,5 @@
 /**
- * @file blist.h Buddy List API
+ * @file buddylist.h Buddy List API
  * @ingroup core
  * @see @ref blist-signals
  */

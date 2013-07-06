@@ -31,7 +31,7 @@
 #include "version.h"
 
 #include "gtkappbar.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"

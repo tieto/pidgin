@@ -22,7 +22,7 @@
  */
 
 #include "internal.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "debug.h"
 
 #include "gtkwhiteboard.h"

@@ -37,7 +37,7 @@
 #include "util.h"
 #include "core.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkdialogs.h"
 #include "gtklog.h"
 #include "gtkutils.h"

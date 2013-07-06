@@ -20,7 +20,7 @@ typedef struct group *Pidgin__Group;
 #include <plugins/perl/common/module.h>
 
 #include "gtkaccount.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkconvwin.h"
@@ -47,7 +47,7 @@ typedef struct group *Pidgin__Group;
 /* gtkaccount.h */
 typedef PidginAccountDialogType		Pidgin__Account__Dialog__Type;
 
-/* gtkblist.h */
+/* gtkbuddylist.h */
 typedef PidginBuddyList *		Pidgin__BuddyList;
 typedef pidgin_blist_sort_function	Pidgin__BuddyList__SortFunction;
 

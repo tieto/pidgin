@@ -458,7 +458,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		return;		/* ignore packet */
 	}
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
 	buddy = purple_find_buddy( session->acc, username );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: unable to find the buddy '%s'\n", username );
@@ -517,7 +517,7 @@ void mxit_update_buddy_avatar( struct MXitSession* session, const char* username
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_avatar: user='%s' avatar='%s'\n", username, avatarId );
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
 	buddy = purple_find_buddy( session->acc, username );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: unable to find the buddy '%s'\n", username );

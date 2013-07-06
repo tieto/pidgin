@@ -11,7 +11,7 @@
 #include "gntwindow.h"
 #include "gntlabel.h"
 
-#include "blist.h"
+#include "buddylist.h"
 
 #define TYPE_S				(s_get_gtype())
 

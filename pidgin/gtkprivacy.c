@@ -31,7 +31,7 @@
 #include "request.h"
 #include "util.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 

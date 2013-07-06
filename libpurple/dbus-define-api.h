@@ -5,7 +5,7 @@
    provides type information for the dbus-analyze-functions.py
    program, which makes these macros callable by DBUS.  */
 
-/* blist.h */
+/* buddylist.h */
 gboolean PURPLE_IS_CHAT(PurpleBListNode *node);
 gboolean PURPLE_IS_BUDDY(PurpleBListNode *node);
 gboolean PURPLE_IS_CONTACT(PurpleBListNode *node);

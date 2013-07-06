@@ -25,7 +25,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "ciphers/md5hash.h"
 #include "cmds.h"
 #include "core.h"

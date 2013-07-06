@@ -1,5 +1,5 @@
 /**
- * @file gntblist.h GNT BuddyList API
+ * @file gntbuddylist.h GNT BuddyList API
  * @ingroup finch
  */
 
@@ -26,7 +26,7 @@
 #ifndef _GNT_BLIST_H
 #define _GNT_BLIST_H
 
-#include "blist.h"
+#include "buddylist.h"
 #include "gnttree.h"
 
 /**********************************************************************

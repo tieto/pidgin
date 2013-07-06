@@ -21,7 +21,7 @@ typedef struct group *Purple__Group;
 
 #include "accounts.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "buddyicon.h"
 #include "certificate.h"
 #include "cipher.h"
@@ -46,7 +46,7 @@ typedef struct group *Purple__Group;
 #include "ft.h"
 #ifdef PURPLE_GTKPERL
 #include "gtkaccount.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkutils.h"
@@ -83,7 +83,7 @@ typedef PurpleAccountOption *		Purple__Account__Option;
 typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
 typedef PurpleAccountPrivacyType		Purple__Account__PrivacyType;
 
-/* blist.h */
+/* buddylist.h */
 typedef PurpleBListNode *			Purple__BuddyList__Node;
 typedef PurpleBuddyList *			Purple__BuddyList;
 typedef PurpleBuddy *			Purple__BuddyList__Buddy;

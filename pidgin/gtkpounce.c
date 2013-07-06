@@ -36,7 +36,7 @@
 #include "sound.h"
 #include "util.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkdialogs.h"
 #include "gtkpounce.h"
 #include "gtknotify.h"

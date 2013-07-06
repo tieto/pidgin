@@ -51,7 +51,7 @@
 #include "version.h"
 
 #include "gtkdnd-hints.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkconvwin.h"
 #include "gtkconv-theme.h"
@@ -8913,7 +8913,7 @@ pidgin_conversations_uninit(void)
 #include "util.h"
 
 #include "gtkdnd-hints.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkmenutray.h"

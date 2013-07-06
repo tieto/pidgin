@@ -27,7 +27,7 @@
 
 #include "internal.h"
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "connection.h"
 #include "dbus-maybe.h"
 #include "debug.h"

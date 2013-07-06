@@ -29,7 +29,7 @@
 #include "account.h"
 #include "server.h"
 #include "notify.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "savedstatuses.h"
 #include "debug.h"
 #include "prefs.h"

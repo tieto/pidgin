@@ -52,7 +52,7 @@
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "xmlnode.h"
 #include "debug.h"
 #include "notify.h"

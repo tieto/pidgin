@@ -3,7 +3,7 @@
 #include "internal.h"
 
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "signals.h"

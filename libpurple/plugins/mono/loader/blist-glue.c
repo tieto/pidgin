@@ -1,5 +1,5 @@
 #include <string.h>
-#include "blist.h"
+#include "buddylist.h"
 #include "mono-helper.h"
 #include "mono-glue.h"
 

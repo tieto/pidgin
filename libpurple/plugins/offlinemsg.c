@@ -29,7 +29,7 @@
 /* Purple headers */
 #include <version.h>
 
-#include <blist.h>
+#include <buddylist.h>
 #include <conversation.h>
 #include <core.h>
 #include <debug.h>

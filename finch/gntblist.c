@@ -27,7 +27,7 @@
 #include "finch.h"
 
 #include <account.h>
-#include <blist.h>
+#include <buddylist.h>
 #include <log.h>
 #include <notify.h>
 #include <request.h>
@@ -56,7 +56,7 @@
 #include "gntutils.h"
 #include "gntwindow.h"
 
-#include "gntblist.h"
+#include "gntbuddylist.h"
 #include "gntconv.h"
 #include "gntstatus.h"
 #include <string.h>

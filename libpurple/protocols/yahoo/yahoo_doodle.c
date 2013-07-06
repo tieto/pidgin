@@ -28,7 +28,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "cipher.h"
 #include "cmds.h"
 #include "debug.h"

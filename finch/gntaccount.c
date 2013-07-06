@@ -48,7 +48,7 @@
 #include <savedstatuses.h>
 
 #include "gntaccount.h"
-#include "gntblist.h"
+#include "gntbuddylist.h"
 
 #include <string.h>
 

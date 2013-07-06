@@ -33,7 +33,7 @@
 #include "status.h"
 #include "util.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "pidgin.h"
 #include "gtksavedstatuses.h"
 #include "pidginstock.h"

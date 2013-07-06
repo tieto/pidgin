@@ -54,7 +54,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "cmds.h"
 #include "conversation.h"
 #include "connection.h"

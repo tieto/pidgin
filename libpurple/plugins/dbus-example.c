@@ -37,7 +37,7 @@
 
 #include "internal.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "notify.h"
 #include "plugin.h"
 #include "version.h"

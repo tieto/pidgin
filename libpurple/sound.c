@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "prefs.h"
 #include "sound.h"
 #include "sound-theme-loader.h"

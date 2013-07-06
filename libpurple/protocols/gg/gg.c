@@ -31,7 +31,7 @@
 #include "plugin.h"
 #include "version.h"
 #include "notify.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "accountopt.h"
 #include "debug.h"
 #include "util.h"

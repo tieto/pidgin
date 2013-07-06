@@ -566,7 +566,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
 	buddy = purple_find_buddy( session->acc, who );
 	if ( buddy ) {
 		/* user is in our contact-list, so it's not an invite */
@@ -679,7 +679,7 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 	struct contact*		contact;
 	gchar*				messageId	= NULL;
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
 	buddy = purple_find_buddy( account, name );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_send_typing: unable to find the buddy '%s'\n", name );

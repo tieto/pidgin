@@ -34,7 +34,7 @@
 #include "util.h"
 
 #include "pidginstock.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtklog.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"

@@ -24,7 +24,7 @@
 
 #include "internal.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "debug.h"
 #include "ft.h"
 #include "request.h"

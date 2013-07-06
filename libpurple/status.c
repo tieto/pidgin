@@ -27,7 +27,7 @@
 
 #include "internal.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"

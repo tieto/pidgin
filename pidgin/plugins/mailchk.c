@@ -4,7 +4,7 @@
 #include "sound.h"
 #include "version.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkplugin.h"
 
 #define MAILCHK_PLUGIN_ID "gtk-mailchk"

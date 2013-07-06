@@ -35,7 +35,7 @@
 #include "pidginstock.h"
 #include "util.h"
 
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtknotify.h"
 #include "gtkpounce.h"
 #include "gtkutils.h"

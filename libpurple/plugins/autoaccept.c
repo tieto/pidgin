@@ -34,7 +34,7 @@
 #include <plugin.h>
 #include <version.h>
 
-#include <blist.h>
+#include <buddylist.h>
 #include <conversation.h>
 #include <ft.h>
 #include <request.h>

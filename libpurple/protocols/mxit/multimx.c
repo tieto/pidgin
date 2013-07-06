@@ -559,7 +559,7 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 	/* Send invite to MXit */
 	mxit_send_groupchat_invite(session, multimx->roomid, 1, &username);
 
-	/* Find the buddy information for this contact (reference: "libpurple/blist.h") */
+	/* Find the buddy information for this contact (reference: "libpurple/buddylist.h") */
 	buddy = purple_find_buddy(session->acc, username);
 	if (!buddy) {
 		purple_debug_warning(MXIT_PLUGIN_ID, "mxit_chat_invite: unable to find the buddy '%s'\n", username);

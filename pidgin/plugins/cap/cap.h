@@ -28,11 +28,11 @@
 #include "conversation.h"
 
 #include "gtkconv.h"
-#include "gtkblist.h"
+#include "gtkbuddylist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "notify.h"
 #include "version.h"
 #include "debug.h"
