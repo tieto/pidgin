@@ -18,7 +18,7 @@
  */
 #include "internal.h"
 
-#include <gtkbuddylist.h>
+#include <gtkblist.h>
 #include <gtkplugin.h>
 
 #include <debug.h>

@@ -33,7 +33,7 @@
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkutils.h"
 #include "signals.h"
 #include "version.h"

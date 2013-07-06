@@ -43,7 +43,7 @@
 #include "whiteboard.h"
 
 #include "gtkaccount.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"

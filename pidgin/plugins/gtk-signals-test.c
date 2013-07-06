@@ -28,7 +28,7 @@
 #include "version.h"
 
 #include "gtkaccount.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 

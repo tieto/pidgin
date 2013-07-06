@@ -41,7 +41,7 @@
 #include "util.h"
 
 #include "gtkaccount.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkutils.h"
 #include "gtkstatusbox.h"

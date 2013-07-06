@@ -27,7 +27,7 @@
 #include <gdk/gdk.h>
 
 #include "internal.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "debug.h"
 
 #include "resource.h"

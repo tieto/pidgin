@@ -34,7 +34,7 @@
 #include <util.h>
 
 #include "gntaccount.h"
-#include "gntbuddylist.h"
+#include "gntblist.h"
 #include "gntconv.h"
 #include "gntdebug.h"
 #include "gntlog.h"

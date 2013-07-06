@@ -34,7 +34,7 @@
 #include "connection.h"
 #include "core.h"
 #include "debug.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkutils.h"
 #include "http.h"
 #include "notify.h"

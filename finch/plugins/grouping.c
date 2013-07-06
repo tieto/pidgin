@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "purple.h"
 
-#include "gntbuddylist.h"
+#include "gntblist.h"
 #include "gntplugin.h"
 
 #include "gnttree.h"

@@ -56,7 +56,7 @@
 #include "gntutils.h"
 #include "gntwindow.h"
 
-#include "gntbuddylist.h"
+#include "gntblist.h"
 #include "gntconv.h"
 #include "gntstatus.h"
 #include <string.h>

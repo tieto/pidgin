@@ -34,7 +34,7 @@
 #include "signals.h"
 #include "version.h"
 
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #include "pidginstock.h"

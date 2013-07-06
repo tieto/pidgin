@@ -46,7 +46,7 @@ typedef struct group *Purple__Group;
 #include "ft.h"
 #ifdef PURPLE_GTKPERL
 #include "gtkaccount.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkutils.h"

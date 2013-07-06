@@ -1,5 +1,5 @@
 /**
- * @file gtkbuddylist.h GTK+ Buddy List API
+ * @file gtkblist.h GTK+ Buddy List API
  * @ingroup pidgin
  * @see @ref gtkblist-signals
  */

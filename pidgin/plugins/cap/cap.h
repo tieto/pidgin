@@ -28,7 +28,7 @@
 #include "conversation.h"
 
 #include "gtkconv.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 

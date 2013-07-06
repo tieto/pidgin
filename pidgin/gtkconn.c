@@ -30,7 +30,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkconn.h"
 #include "gtkdialogs.h"
 #include "gtkstatusbox.h"

@@ -43,7 +43,7 @@
 #include "util.h"
 
 #include "gtkaccount.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkcellrendererexpander.h"
 #include "gtkcertmgr.h"
 #include "gtkconv.h"

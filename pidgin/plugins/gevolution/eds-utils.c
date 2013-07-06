@@ -20,7 +20,7 @@
  */
 
 #include "internal.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "pidgin.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"

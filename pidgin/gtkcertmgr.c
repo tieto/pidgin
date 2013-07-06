@@ -35,7 +35,7 @@
 #include "notify.h"
 #include "request.h"
 
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 #include "gtkutils.h"
 
 #include "gtkcertmgr.h"

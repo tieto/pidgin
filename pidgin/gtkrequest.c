@@ -34,7 +34,7 @@
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
-#include "gtkbuddylist.h"
+#include "gtkblist.h"
 
 #include <gdk/gdkkeysyms.h>
 

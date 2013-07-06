@@ -1,5 +1,5 @@
 /**
- * @file gntbuddylist.h GNT BuddyList API
+ * @file gntblist.h GNT BuddyList API
  * @ingroup finch
  */
 
