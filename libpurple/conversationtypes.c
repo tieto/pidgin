@@ -483,6 +483,7 @@ purple_im_conversation_finalize(GObject *object)
 	PurpleIMConversationPrivate *priv = PURPLE_IM_CONVERSATION_GET_PRIVATE(im);
 
 	purple_buddy_icon_unref(priv->icon);
+	priv->icon = NULL;
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -1490,16 +1491,23 @@ purple_chat_conversation_finalize(GObject *object)
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
 
 	g_hash_table_destroy(priv->users);
+	priv->users = NULL;
 
 	g_list_foreach(priv->in_room, (GFunc)g_object_unref, NULL);
 	g_list_free(priv->in_room);
+	priv->in_room = NULL;
 
 	g_list_foreach(priv->ignored, (GFunc)g_free, NULL);
 	g_list_free(priv->ignored);
+	priv->ignored = NULL;
 
 	g_free(priv->who);
 	g_free(priv->topic);
 	g_free(priv->nick);
+
+	priv->who = NULL;
+	priv->topic = NULL;
+	priv->nick = NULL;
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
