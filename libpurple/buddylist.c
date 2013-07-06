@@ -767,20 +767,6 @@ void purple_blist_set_visible(gboolean show)
 		ops->set_visible(purplebuddylist, show);
 }
 
-static PurpleBListNode *get_next_node(PurpleBListNode *node, gboolean godeep)
-{
-	if (node == NULL)
-		return NULL;
-
-	if (godeep && node->child)
-		return node->child;
-
-	if (node->next)
-		return node->next;
-
-	return get_next_node(node->parent, FALSE);
-}
-
 void
 purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {

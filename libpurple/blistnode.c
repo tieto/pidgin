@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#include "blistnode.h"
+#include "blistnodetypes.h"
+#include "internal.h"
 
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBListNodePrivate))
@@ -47,6 +48,20 @@ static GObjectClass *parent_class;
 /**************************************************************************/
 /* Buddy list node API                                                    */
 /**************************************************************************/
+
+static PurpleBListNode *get_next_node(PurpleBListNode *node, gboolean godeep)
+{
+	if (node == NULL)
+		return NULL;
+
+	if (godeep && node->child)
+		return node->child;
+
+	if (node->next)
+		return node->next;
+
+	return get_next_node(node->parent, FALSE);
+}
 
 PurpleBListNode *purple_blist_node_next(PurpleBListNode *node, gboolean offline)
 {
@@ -244,7 +259,7 @@ purple_blist_node_set_string(PurpleBListNode* node, const char *key, const char 
 
 	value = g_new0(GValue, 1);
 	g_value_init(value, G_TYPE_STRING);
-	g_value_set_int(value, data);
+	g_value_set_string(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
@@ -294,9 +309,9 @@ purple_blist_node_setting_free(gpointer data)
 	g_free(value);
 }
 
-/**************************************************************************/
-/* GObject code
-/**************************************************************************/
+/**************************************************************************
+ * GObject code
+ **************************************************************************/
 
 /* GObject Property names */
 #define PROP_DONT_SAVE_S  "dont-save"
@@ -349,7 +364,7 @@ purple_blist_node_init(GTypeInstance *instance, gpointer klass)
 static void
 purple_blist_node_finalize(GObject *object)
 {
-	PurpleBListNode *priv = PURPLE_BLIST_NODE_GET_PRIVATE(object);
+	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(object);
 
 	g_hash_table_destroy(priv->settings);
 
