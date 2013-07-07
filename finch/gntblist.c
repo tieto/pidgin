@@ -2509,6 +2509,7 @@ buddy_recent_signed_on_off(gpointer data)
 			update_node_display(purple_blist_node_get_parent(node), ggblist);
 	}
 
+	g_object_unref(node);
 	return FALSE;
 }
 
@@ -2522,6 +2523,8 @@ buddy_signed_on_off_cb(gpointer data)
 
 	if (fnode->signed_timer)
 		purple_timeout_remove(fnode->signed_timer);
+
+	g_object_ref(node);
 	fnode->signed_timer = purple_timeout_add_seconds(6, (GSourceFunc)buddy_recent_signed_on_off, data);
 	update_node_display(node, ggblist);
 	if (purple_blist_node_get_parent(node) && PURPLE_IS_CONTACT(purple_blist_node_get_parent(node)))

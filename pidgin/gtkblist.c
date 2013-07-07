@@ -7697,6 +7697,7 @@ static gboolean buddy_signonoff_timeout_cb(PurpleBuddy *buddy)
 
 	pidgin_blist_update(NULL, PURPLE_BLIST_NODE(buddy));
 
+	g_object_unref(buddy);
 	return FALSE;
 }
 
@@ -7714,6 +7715,8 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 
 	if(gtknode->recent_signonoff_timer > 0)
 		purple_timeout_remove(gtknode->recent_signonoff_timer);
+	
+	g_object_ref(buddy);
 	gtknode->recent_signonoff_timer = purple_timeout_add_seconds(10,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }

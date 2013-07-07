@@ -503,13 +503,6 @@ purple_buddy_finalize(GObject *object)
 	g_free(priv->local_alias);
 	g_free(priv->server_alias);
 
-	/* TODO: Now that PurpleBuddy is a GObject, timeout callbacks can
-	 * g_object_ref() it when connecting the callback and
-	 * g_object_unref() it in the handler.  That way, it won't
-	 * get freed while the timeout is pending and this line can
-	 * be removed. */
-	while (g_source_remove_by_user_data((gpointer *)object));
-
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
