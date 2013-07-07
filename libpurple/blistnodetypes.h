@@ -211,6 +211,15 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 void purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon);
 
 /**
+ * Returns a buddy's icon.
+ *
+ * @param buddy The buddy.
+ *
+ * @return The buddy icon.
+ */
+PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
+
+/**
  * Returns a buddy's account.
  *
  * @param buddy The buddy.
@@ -220,6 +229,14 @@ void purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon);
 PurpleAccount *purple_buddy_get_account(const PurpleBuddy *buddy);
 
 /**
+ * Sets a buddy's name
+ *
+ * @param buddy The buddy.
+ * @param name  The name.
+ */
+void purple_buddy_set_name(PurpleBuddy *buddy, const char *name);
+
+/**
  * Returns a buddy's name
  *
  * @param buddy The buddy.
@@ -227,15 +244,6 @@ PurpleAccount *purple_buddy_get_account(const PurpleBuddy *buddy);
  * @return The name.
  */
 const char *purple_buddy_get_name(const PurpleBuddy *buddy);
-
-/**
- * Returns a buddy's icon.
- *
- * @param buddy The buddy.
- *
- * @return The buddy icon.
- */
-PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
 
 /**
  * Returns a buddy's protocol-specific data.
@@ -298,16 +306,24 @@ void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
 /**
  * Returns the alias of a buddy.
  *
- * @param buddy   The buddy whose name will be returned.
+ * @param buddy   The buddy whose alias will be returned.
  * @return        The alias (if set), server alias (if set),
  *                or NULL.
  */
 const char *purple_buddy_get_alias_only(PurpleBuddy *buddy);
 
 /**
+ * Sets the server alias for a buddy.
+ *
+ * @param buddy         The buddy.
+ * @param server_alias  The server alias to be set.
+ */
+void purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *server_alias);
+
+/**
  * Gets the server alias for a buddy.
  *
- * @param buddy  The buddy whose name will be returned
+ * @param buddy  The buddy whose server alias will be returned
  * @return  The server alias, or NULL if it is not set.
  */
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
@@ -317,7 +333,7 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  * into account. In order of precedence: the buddy's alias; the buddy's
  * contact alias; the buddy's server alias; the buddy's user name.
  *
- * @param buddy  The buddy whose name will be returned
+ * @param buddy  The buddy whose alias will be returned
  * @return       The appropriate name or alias, or NULL.
  *
  */
@@ -328,10 +344,18 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
  * the buddy's alias; the buddy's server alias; the buddy's contact alias;
  * the buddy's user name.
  *
- * @param buddy   The buddy whose name will be returned.
+ * @param buddy   The buddy whose alias will be returned.
  * @return        The appropriate name or alias, or NULL
  */
 const char *purple_buddy_get_alias(PurpleBuddy *buddy);
+
+/**
+ * Sets the local alias for the buddy.
+ *
+ * @param buddy  The buddy
+ * @param alias  The local alias for the buddy
+ */
+void purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
  * Returns the local alias for the buddy, or @c NULL if none exists.
@@ -339,7 +363,7 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  * @param buddy  The buddy
  * @return       The local alias for the buddy
  */
-const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
+const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
 
 /**
  * Returns the group of which the buddy is a member.

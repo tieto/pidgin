@@ -52,7 +52,7 @@ typedef struct _PurpleChatPrivate       PurpleChatPrivate;
 /** Private data for a buddy. */
 struct _PurpleBuddyPrivate {
 	char *name;                  /**< The name of the buddy.                  */
-	char *alias;                 /**< The user-set alias of the buddy         */
+	char *local_alias;           /**< The user-set alias of the buddy         */
 	char *server_alias;          /**< The server-specified alias of the buddy.
 	                                  (i.e. MSN "Friendly Names")             */
 	void *proto_data;            /**< TODO remove - use protocol subclasses
@@ -64,6 +64,20 @@ struct _PurpleBuddyPrivate {
 	PurpleMediaCaps media_caps;  /**< The media capabilities of the buddy.    */
 };
 
+/* Buddy property enums */
+enum
+{
+	BUDDY_PROP_0,
+	BUDDY_PROP_NAME,
+	BUDDY_PROP_LOCAL_ALIAS,
+	BUDDY_PROP_SERVER_ALIAS,
+	BUDDY_PROP_ICON,
+	BUDDY_PROP_ACCOUNT,
+	BUDDY_PROP_PRESENCE,
+	BUDDY_PROP_MEDIA_CAPS,
+	BUDDY_PROP_LAST
+};
+
 /** Private data for a contact TODO: move counts to PurpleCountingNode */
 struct _PurpleContactPrivate {
 	char *alias;              /**< The user-set alias of the contact         */
@@ -72,10 +86,19 @@ struct _PurpleContactPrivate {
 	                               corresponding to online accounts          */
 	int online;               /**< The number of buddies in this contact who
 	                               are currently online                      */
-	PurpleBuddy *priority;    /**< The "top" buddy for this contact          */
+	PurpleBuddy *priority;    /**< TODO rename to priority_buddy
+	                               The "top" buddy for this contact          */
 	gboolean priority_valid;  /**< Is priority valid?                        */
 };
 
+/* Contact property enums */
+enum
+{
+	CONTACT_PROP_0,
+	CONTACT_PROP_ALIAS,
+	CONTACT_PROP_PRIORITY_BUDDY,
+	CONTACT_PROP_LAST
+};
 
 /** Private data for a group TODO: move counts to PurpleCountingNode */
 struct _PurpleGroupPrivate {
@@ -87,6 +110,14 @@ struct _PurpleGroupPrivate {
 	                       are currently online                               */
 };
 
+/* Group property enums */
+enum
+{
+	GROUP_PROP_0,
+	GROUP_PROP_NAME,
+	GROUP_PROP_LAST
+};
+
 /** Private data for a chat node */
 struct _PurpleChatPrivate {
 	char *alias;             /**< The display name of this chat.              */
@@ -95,73 +126,20 @@ struct _PurpleChatPrivate {
 	PurpleAccount *account;  /**< The account this chat is attached to        */
 };
 
+/* Chat property enums */
+enum
+{
+	CHAT_PROP_0,
+	CHAT_PROP_ALIAS,
+	CHAT_PROP_ACCOUNT,
+	CHAT_PROP_LAST
+};
+
+static PurpleBListNode *parent_class;
+
 /**************************************************************************/
 /* Buddy API                                                              */
 /**************************************************************************/
-
-/* TODO GObjectify */
-PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
-{
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-	PurpleBuddy *buddy;
-
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-
-	buddy = g_new0(PurpleBuddy, 1);
-	buddy->account  = account;
-	buddy->name     = purple_utf8_strip_unprintables(name);
-	buddy->alias    = purple_utf8_strip_unprintables(alias);
-	buddy->presence = purple_presence_new_for_buddy(buddy);
-	((PurpleBListNode *)buddy)->type = PURPLE_BLIST_BUDDY_NODE;
-
-	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
-
-	purple_blist_node_initialize_settings((PurpleBListNode *)buddy);
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBListNode *)buddy);
-
-	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
-	return buddy;
-}
-
-/* TODO GObjectify */
-void
-purple_buddy_destroy(PurpleBuddy *buddy)
-{
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
-
-	/*
-	 * Tell the owner PRPL that we're about to free the buddy so it
-	 * can free proto_data
-	 */
-	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
-	if (prpl) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		if (prpl_info && prpl_info->buddy_free)
-			prpl_info->buddy_free(buddy);
-	}
-
-	/* Delete the node */
-	purple_buddy_icon_unref(buddy->icon);
-	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_destroy(buddy->presence);
-	g_free(buddy->name);
-	g_free(buddy->alias);
-	g_free(buddy->server_alias);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
-	g_free(buddy);
-
-	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
-	 * g_object_ref() it when connecting the callback and
-	 * g_object_unref() it in the handler.  That way, it won't
-	 * get freed while the timeout is pending and this line can
-	 * be removed. */ /* TODO do this */
-	while (g_source_remove_by_user_data((gpointer *)buddy));
-}
 
 void
 purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
@@ -181,6 +159,16 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 	purple_blist_update_node_icon(PURPLE_BLIST_NODE(buddy));
 }
 
+PurpleBuddyIcon *
+purple_buddy_get_icon(const PurpleBuddy *buddy)
+{
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->icon;
+}
+
 PurpleAccount *
 purple_buddy_get_account(const PurpleBuddy *buddy)
 {
@@ -191,6 +179,16 @@ purple_buddy_get_account(const PurpleBuddy *buddy)
 	return priv->account;
 }
 
+void
+purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
+{
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->name = purple_utf8_strip_unprintables(name);
+}
+
 const char *
 purple_buddy_get_name(const PurpleBuddy *buddy)
 {
@@ -199,16 +197,6 @@ purple_buddy_get_name(const PurpleBuddy *buddy)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->name;
-}
-
-PurpleBuddyIcon *
-purple_buddy_get_icon(const PurpleBuddy *buddy)
-{
-	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->icon;
 }
 
 gpointer
@@ -237,8 +225,8 @@ const char *purple_buddy_get_alias_only(PurpleBuddy *buddy)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	if ((priv->alias != NULL) && (*priv->alias != '\0')) {
-		return priv->alias;
+	if ((priv->local_alias != NULL) && (*priv->local_alias != '\0')) {
+		return priv->local_alias;
 	} else if ((priv->server_alias != NULL) &&
 		   (*priv->server_alias != '\0')) {
 
@@ -248,7 +236,6 @@ const char *purple_buddy_get_alias_only(PurpleBuddy *buddy)
 	return NULL;
 }
 
-
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy)
 {
 	PurpleContact *c;
@@ -257,9 +244,9 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	/* Search for an alias for the buddy. In order of precedence: */
-	/* The buddy alias */
-	if (priv->alias != NULL)
-		return priv->alias;
+	/* The local buddy alias */
+	if (priv->local_alias != NULL)
+		return priv->local_alias;
 
 	/* The contact alias */
 	c = purple_buddy_get_contact(buddy);
@@ -274,7 +261,6 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy)
 	return priv->name;
 }
 
-
 const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 {
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
@@ -283,8 +269,8 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 
 	/* Search for an alias for the buddy. In order of precedence: */
 	/* The buddy alias */
-	if (priv->alias != NULL)
-		return priv->alias;
+	if (priv->local_alias != NULL)
+		return priv->local_alias;
 
 	/* The server alias */
 	if ((priv->server_alias) && (*priv->server_alias))
@@ -294,13 +280,33 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 	return priv->name;
 }
 
-const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy)
+void
+purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 {
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
-	g_return_val_if_fail(priv, NULL);
+	g_return_if_fail(priv != NULL);
 
-	return priv->alias;
+	priv->local_alias = purple_utf8_strip_unprintables(alias);
+}
+
+const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
+{
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->local_alias;
+}
+
+void
+purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *server_alias)
+{
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->server_alias = purple_utf8_strip_unprintables(server_alias);
 }
 
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
@@ -359,6 +365,255 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 	return PURPLE_GROUP(PURPLE_BLIST_NODE(buddy)->parent->parent);
 }
 
+/**************************************************************************
+ * GObject code for PurpleBuddy
+ **************************************************************************/
+
+/* GObject Property names */
+#define BUDDY_PROP_NAME_S          "name"
+#define BUDDY_PROP_LOCAL_ALIAS_S   "local-alias"
+#define BUDDY_PROP_SERVER_ALIAS_S  "server-alias"
+#define BUDDY_PROP_ICON_S          "icon"
+#define BUDDY_PROP_ACCOUNT_S       "account"
+#define BUDDY_PROP_PRESENCE_S      "presence"
+#define BUDDY_PROP_MEDIA_CAPS_S    "media-caps"
+
+/* Set method for GObject properties */
+static void
+purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+
+	switch (param_id) {
+		case BUDDY_PROP_NAME:
+			purple_buddy_set_name(buddy, g_value_get_string(value));
+			break;
+		case BUDDY_PROP_LOCAL_ALIAS:
+			purple_buddy_set_local_alias(buddy, g_value_get_string(value));
+			break;
+		case BUDDY_PROP_SERVER_ALIAS:
+			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
+			break;
+		case BUDDY_PROP_ICON:
+			purple_buddy_set_icon(buddy, g_value_get_pointer(value));
+			break;
+		case BUDDY_PROP_ACCOUNT:
+			priv->account = g_value_get_object(value);
+			break;
+		case BUDDY_PROP_MEDIA_CAPS:
+			purple_buddy_set_media_caps(buddy, g_value_get_enum(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
+
+	switch (param_id) {
+		case BUDDY_PROP_NAME:
+			g_value_set_string(value, purple_buddy_get_name(buddy));
+			break;
+		case BUDDY_PROP_LOCAL_ALIAS:
+			g_value_set_string(value, purple_buddy_get_local_alias(buddy));
+			break;
+		case BUDDY_PROP_SERVER_ALIAS:
+			g_value_set_string(value, purple_buddy_get_server_alias(buddy));
+			break;
+		case BUDDY_PROP_ICON:
+			g_value_set_pointer(value, purple_buddy_get_icon(buddy));
+			break;
+		case BUDDY_PROP_ACCOUNT:
+			g_value_set_object(value, purple_buddy_get_account(buddy));
+			break;
+		case BUDDY_PROP_PRESENCE:
+#warning TODO: change set_pointer to set_object when PurplePresence is a GObject
+			g_value_set_pointer(value, purple_buddy_get_presence(buddy));
+			break;
+		case BUDDY_PROP_MEDIA_CAPS:
+			g_value_set_enum(value, purple_buddy_get_media_caps(buddy));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* GObject initialization function */
+static void
+purple_buddy_init(GTypeInstance *instance, gpointer klass)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(instance);
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	priv->presence = purple_presence_new_for_buddy(buddy);
+	purple_presence_set_status_active(priv->presence, "offline", TRUE);
+
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBListNode *)buddy);
+
+	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
+}
+
+/* GObject dispose function */
+static void
+purple_buddy_dispose(GObject *object)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(object);
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	/*
+	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * can free proto_data
+	 */
+	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
+	if (prpl) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		if (prpl_info && prpl_info->buddy_free)
+			prpl_info->buddy_free(buddy);
+	}
+
+	/* Delete the node */
+	purple_buddy_icon_unref(priv->icon);
+	purple_presence_destroy(priv->presence);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
+
+	G_OBJECT_CLASS(parent_class)->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_buddy_finalize(GObject *object)
+{
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(object);
+
+	g_free(priv->name);
+	g_free(priv->local_alias);
+	g_free(priv->server_alias);
+
+	/* TODO: Now that PurpleBuddy is a GObject, timeout callbacks can
+	 * g_object_ref() it when connecting the callback and
+	 * g_object_unref() it in the handler.  That way, it won't
+	 * get freed while the timeout is pending and this line can
+	 * be removed. */
+	while (g_source_remove_by_user_data((gpointer *)object));
+
+	G_OBJECT_CLASS(parent_class)->finalize(object);
+}
+
+/* Class initializer function */
+static void purple_buddy_class_init(PurpleBuddyClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_buddy_dispose;
+	obj_class->finalize = purple_buddy_finalize;
+
+	/* Setup properties */
+	obj_class->get_property = purple_buddy_get_property;
+	obj_class->set_property = purple_buddy_set_property;
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_NAME,
+			g_param_spec_string(BUDDY_PROP_NAME_S, _("Name"),
+				_("The name of the buddy."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_LOCAL_ALIAS,
+			g_param_spec_string(BUDDY_PROP_LOCAL_ALIAS_S, _("Local alias"),
+				_("Local alias of thee buddy."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_SERVER_ALIAS,
+			g_param_spec_string(BUDDY_PROP_SERVER_ALIAS_S, _("Server alias"),
+				_("Server-side alias of the buddy."), NULL,
+				G_PARAM_READWRITE)
+			);
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_ICON,
+			g_param_spec_pointer(BUDDY_PROP_ICON_S, _("Buddy icon"),
+				_("The icon for the buddy."),
+				G_PARAM_READWRITE)
+			);
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_ACCOUNT,
+			g_param_spec_object(BUDDY_PROP_ACCOUNT_S, _("Account"),
+				_("The account for the buddy."), PURPLE_TYPE_ACCOUNT,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+#warning TODO: change spec_pointer to spec_object when PurplePresence is a GObject
+	g_object_class_install_property(obj_class, BUDDY_PROP_PRESENCE,
+			g_param_spec_pointer(BUDDY_PROP_PRESENCE_S, _("Presence"),
+				_("The status information for the buddy."),
+				G_PARAM_READABLE)
+			);
+
+	g_object_class_install_property(obj_class, BUDDY_PROP_MEDIA_CAPS,
+			g_param_spec_enum(BUDDY_PROP_MEDIA_CAPS_S, _("Media capabilities"),
+				_("The media capabilities of the buddy."),
+				PURPLE_MEDIA_TYPE_CAPS, PURPLE_MEDIA_CAPS_NONE,
+				G_PARAM_READWRITE)
+			);
+
+	g_type_class_add_private(klass, sizeof(PurpleBuddyPrivate));
+}
+
+GType
+purple_buddy_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleBuddyClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_buddy_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleBuddy),
+			0,
+			(GInstanceInitFunc)purple_buddy_init,
+			NULL,
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_BLIST_NODE,
+				"PurpleBuddy",
+				&info, 0);
+	}
+
+	return type;
+}
+
+PurpleBuddy *
+purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	return g_object_new(PURPLE_TYPE_BUDDY,
+			BUDDY_PROP_ACCOUNT_S,      account,
+			BUDDY_PROP_NAME_S,         name,
+			BUDDY_PROP_LOCAL_ALIAS_S,  alias,
+			NULL);
+}
+
 /**************************************************************************/
 /* Contact API                                                            */
 /**************************************************************************/
@@ -406,35 +661,6 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 
 	priv->priority = new_priority;
 	priv->priority_valid = TRUE;
-}
-
-/* TODO GObjectify */
-PurpleContact *purple_contact_new()
-{
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-
-	PurpleContact *contact = g_new0(PurpleContact, 1);
-	contact->totalsize = 0;
-	contact->currentsize = 0;
-	contact->online = 0;
-	purple_blist_node_initialize_settings((PurpleBListNode *)contact);
-	((PurpleBListNode *)contact)->type = PURPLE_BLIST_CONTACT_NODE;
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBListNode *)contact);
-
-	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
-	return contact;
-}
-
-/* TODO GObjectify */
-void
-purple_contact_destroy(PurpleContact *contact)
-{
-	g_hash_table_destroy(contact->node.settings);
-	g_free(contact->alias);
-	PURPLE_DBUS_UNREGISTER_POINTER(contact);
-	g_free(contact);
 }
 
 PurpleGroup *
@@ -507,44 +733,45 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 	return priv->priority;
 }
 
-/**************************************************************************/
-/* Chat API                                                               */
-/**************************************************************************/
+/**************************************************************************
+ * GObject code for PurpleContact
+ **************************************************************************/
+
+/* GObject Property names */
+#define CONTACT_PROP_ALIAS_S           "alias"
+#define CONTACT_PROP_PRIORITY_BUDDY_S  "priority-buddy"
 
 /* TODO GObjectify */
-PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
+PurpleContact *purple_contact_new()
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-	PurpleChat *chat;
 
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(components != NULL, NULL);
+	PurpleContact *contact = g_new0(PurpleContact, 1);
+	contact->totalsize = 0;
+	contact->currentsize = 0;
+	contact->online = 0;
+	purple_blist_node_initialize_settings((PurpleBListNode *)contact);
+	((PurpleBListNode *)contact)->type = PURPLE_BLIST_CONTACT_NODE;
 
-	chat = g_new0(PurpleChat, 1);
-	chat->account = account;
-	if ((alias != NULL) && (*alias != '\0'))
-		chat->alias = purple_utf8_strip_unprintables(alias);
-	chat->components = components;
-	purple_blist_node_initialize_settings((PurpleBListNode *)chat);
-	((PurpleBListNode *)chat)->type = PURPLE_BLIST_CHAT_NODE;
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBListNode *)contact);
 
-	if (ops != NULL && ops->new_node != NULL)
-		ops->new_node((PurpleBListNode *)chat);
-
-	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
-	return chat;
+	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
+	return contact;
 }
 
 /* TODO GObjectify */
 void
-purple_chat_destroy(PurpleChat *chat)
+purple_contact_destroy(PurpleContact *contact)
 {
-	g_hash_table_destroy(chat->components);
-	g_hash_table_destroy(chat->node.settings);
-	g_free(chat->alias);
-	PURPLE_DBUS_UNREGISTER_POINTER(chat);
-	g_free(chat);
+	g_free(contact->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(contact);
+	g_free(contact);
 }
+
+/**************************************************************************/
+/* Chat API                                                               */
+/**************************************************************************/
 
 const char *purple_chat_get_name(PurpleChat *chat)
 {
@@ -601,47 +828,51 @@ purple_chat_get_components(PurpleChat *chat)
 	return priv->components;
 }
 
-/**************************************************************************/
-/* Group API                                                              */
-/**************************************************************************/
+/**************************************************************************
+ * GObject code for PurpleChat
+ **************************************************************************/
+
+/* GObject Property names */
+#define CHAT_PROP_ALIAS_S    "alias"
+#define CHAT_PROP_ACCOUNT_S  "account"
 
 /* TODO GObjectify */
-PurpleGroup *purple_group_new(const char *name)
+PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-	PurpleGroup *group;
+	PurpleChat *chat;
 
-	g_return_val_if_fail(name  != NULL, NULL);
-	g_return_val_if_fail(*name != '\0', NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(components != NULL, NULL);
 
-	group = purple_find_group(name);
-	if (group != NULL)
-		return group;
+	chat = g_new0(PurpleChat, 1);
+	chat->account = account;
+	if ((alias != NULL) && (*alias != '\0'))
+		chat->alias = purple_utf8_strip_unprintables(alias);
+	chat->components = components;
+	purple_blist_node_initialize_settings((PurpleBListNode *)chat);
+	((PurpleBListNode *)chat)->type = PURPLE_BLIST_CHAT_NODE;
 
-	group = g_new0(PurpleGroup, 1);
-	group->name = purple_utf8_strip_unprintables(name);
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->online = 0;
-	purple_blist_node_initialize_settings((PurpleBListNode *)group);
-	((PurpleBListNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((PurpleBListNode *)chat);
 
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBListNode *)group);
-
-	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
-	return group;
+	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
+	return chat;
 }
 
 /* TODO GObjectify */
 void
-purple_group_destroy(PurpleGroup *group)
+purple_chat_destroy(PurpleChat *chat)
 {
-	g_hash_table_destroy(group->node.settings);
-	g_free(group->name);
-	PURPLE_DBUS_UNREGISTER_POINTER(group);
-	g_free(group);
+	g_hash_table_destroy(chat->components);
+	g_free(chat->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(chat);
+	g_free(chat);
 }
+
+/**************************************************************************/
+/* Group API                                                              */
+/**************************************************************************/
 
 GSList *purple_group_get_accounts(PurpleGroup *group)
 {
@@ -691,4 +922,48 @@ const char *purple_group_get_name(PurpleGroup *group)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->name;
+}
+
+/**************************************************************************
+ * GObject code for PurpleGroup
+ **************************************************************************/
+
+/* GObject Property names */
+#define GROUP_PROP_NAME_S          "name"
+
+/* TODO GObjectify */
+PurpleGroup *purple_group_new(const char *name)
+{
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+	PurpleGroup *group;
+
+	g_return_val_if_fail(name  != NULL, NULL);
+	g_return_val_if_fail(*name != '\0', NULL);
+
+	group = purple_find_group(name);
+	if (group != NULL)
+		return group;
+
+	group = g_new0(PurpleGroup, 1);
+	group->name = purple_utf8_strip_unprintables(name);
+	group->totalsize = 0;
+	group->currentsize = 0;
+	group->online = 0;
+	purple_blist_node_initialize_settings((PurpleBListNode *)group);
+	((PurpleBListNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
+
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBListNode *)group);
+
+	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
+	return group;
+}
+
+/* TODO GObjectify */
+void
+purple_group_destroy(PurpleGroup *group)
+{
+	g_free(group->name);
+	PURPLE_DBUS_UNREGISTER_POINTER(group);
+	g_free(group);
 }
