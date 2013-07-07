@@ -146,7 +146,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 				serv_got_alias(js->gc, jid, servernick);
 
 			/* Alias from our roster retrieval */
-			balias = purple_buddy_get_local_buddy_alias(b);
+			balias = purple_buddy_get_local_alias(b);
 			if(alias && !purple_strequal(alias, balias))
 				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
@@ -339,7 +339,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	xmlnode_set_attrib(item, "jid", name);
 
-	balias = purple_buddy_get_local_buddy_alias(b);
+	balias = purple_buddy_get_local_alias(b);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
 
 	for(l = groups; l; l = l->next) {

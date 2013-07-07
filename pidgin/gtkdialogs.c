@@ -1198,7 +1198,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 	secondary = g_strdup_printf(_("Enter an alias for %s."), purple_buddy_get_name(buddy));
 
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
-					   secondary, purple_buddy_get_local_buddy_alias(buddy), FALSE, FALSE, NULL,
+					   secondary, purple_buddy_get_local_alias(buddy), FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
 					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,

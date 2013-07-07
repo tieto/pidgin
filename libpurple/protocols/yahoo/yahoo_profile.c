@@ -700,7 +700,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 			info_data->name);
 
 	if (b) {
-		const char *balias = purple_buddy_get_local_buddy_alias(b);
+		const char *balias = purple_buddy_get_local_alias(b);
 		if(balias && balias[0]) {
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 		}

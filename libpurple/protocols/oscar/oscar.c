@@ -3893,7 +3893,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 			/* Store local alias on server */
 			alias = aim_ssi_getalias(&od->ssi.local, gname, bname);
-			balias = purple_buddy_get_local_buddy_alias(b);
+			balias = purple_buddy_get_local_alias(b);
 			if (!alias && balias && *balias)
 				aim_ssi_aliasbuddy(od, gname, bname, balias);
 			g_free(alias);

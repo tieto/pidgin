@@ -132,7 +132,7 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
 
-	balias = purple_buddy_get_local_buddy_alias(b);
+	balias = purple_buddy_get_local_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(item, "gr:t", "B");
@@ -190,7 +190,7 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
 
-	balias = purple_buddy_get_local_buddy_alias(b);
+	balias = purple_buddy_get_local_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);

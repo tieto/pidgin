@@ -225,7 +225,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 				if (prpl_info->alias_buddy)
 					prpl_info->alias_buddy(gc,
 							purple_buddy_get_name(b),
-							purple_buddy_get_local_buddy_alias(b));
+							purple_buddy_get_local_alias(b));
 			}
 		}
 	}
@@ -291,7 +291,7 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 
 		buddies = g_slist_delete_link(buddies, buddies);
 
-		balias = purple_buddy_get_local_buddy_alias(b);
+		balias = purple_buddy_get_local_alias(b);
 		if (purple_strequal(balias, alias))
 			continue;
 

@@ -793,7 +793,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
 				purple_notify_user_info_add_pair_html(user_info, _("User"), (b ? bname : user));
-				balias = purple_buddy_get_local_buddy_alias(b);
+				balias = purple_buddy_get_local_alias(b);
 				if (b && balias)
 					purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 
@@ -1179,7 +1179,7 @@ static gint check_notify_tzc(gpointer data)
 					         or if we should be using add_pair_plaintext */
 					purple_notify_user_info_add_pair_html(user_info, _("User"), (b ? bname : user));
 
-					balias = b ? purple_buddy_get_local_buddy_alias(b) : NULL;
+					balias = b ? purple_buddy_get_local_alias(b) : NULL;
 					if (balias)
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 

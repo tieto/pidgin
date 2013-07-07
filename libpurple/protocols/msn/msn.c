@@ -2237,7 +2237,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		char *tmp;
 		const char *alias;
 
-		alias = purple_buddy_get_local_buddy_alias(b);
+		alias = purple_buddy_get_local_alias(b);
 		if (alias && alias[0])
 		{
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);

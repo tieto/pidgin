@@ -733,7 +733,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
 	  stu = mwSametimeUser_new(stg, utype, &idb);
 	  mwSametimeUser_setShortName(stu, purple_buddy_get_server_alias(bdy));
-	  mwSametimeUser_setAlias(stu, purple_buddy_get_local_buddy_alias(bdy));
+	  mwSametimeUser_setAlias(stu, purple_buddy_get_local_alias(bdy));
 	}
       }
     }

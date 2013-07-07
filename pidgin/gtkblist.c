@@ -2350,11 +2350,11 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 			protocol,
 			purple_buddy_get_name(buddy));
 
-		if (purple_buddy_get_local_buddy_alias(buddy) != NULL)
+		if (purple_buddy_get_local_alias(buddy) != NULL)
 		{
 			g_string_append_printf(str,
 				"X-IM-Alias: %s\r\n",
-				purple_buddy_get_local_buddy_alias(buddy));
+				purple_buddy_get_local_alias(buddy));
 		}
 
 		g_string_append(str, "\r\n");
@@ -3944,12 +3944,12 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 		/* Alias */
 		/* If there's not a contact alias, the node is being displayed with
 		 * this alias, so there's no point in showing it in the tooltip. */
-		if (full && c && purple_buddy_get_local_buddy_alias(b) != NULL && purple_buddy_get_local_buddy_alias(b)[0] != '\0' &&
+		if (full && c && purple_buddy_get_local_alias(b) != NULL && purple_buddy_get_local_alias(b)[0] != '\0' &&
 		    (c->alias != NULL && c->alias[0] != '\0') &&
-		    strcmp(c->alias, purple_buddy_get_local_buddy_alias(b)) != 0)
+		    strcmp(c->alias, purple_buddy_get_local_alias(b)) != 0)
 		{
 			purple_notify_user_info_add_pair_plaintext(user_info,
-					_("Buddy Alias"), purple_buddy_get_local_buddy_alias(b));
+					_("Buddy Alias"), purple_buddy_get_local_alias(b));
 		}
 
 		/* Nickname/Server Alias */
@@ -5867,10 +5867,10 @@ pidgin_blist_search_equal_func(GtkTreeModel *model, gint column,
 	compare = NULL;
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *b = purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
-		if (!purple_buddy_get_local_buddy_alias(b))
+		if (!purple_buddy_get_local_alias(b))
 			compare = purple_buddy_get_name(b);
 	} else if (PURPLE_IS_BUDDY(node)) {
-		if (!purple_buddy_get_local_buddy_alias(PURPLE_BUDDY(node)))
+		if (!purple_buddy_get_local_alias(PURPLE_BUDDY(node)))
 			compare = purple_buddy_get_name(PURPLE_BUDDY(node));
 	}
 
