@@ -409,6 +409,14 @@ PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
 /**
+ * Sets the alias for a contact.
+ *
+ * @param contact  The contact
+ * @param alias    The alias
+ */
+void purple_contact_set_alias(PurpleContact *contact, const char *alias);
+
+/**
  * Gets the alias for a contact.
  *
  * @param contact  The contact
