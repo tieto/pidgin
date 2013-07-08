@@ -397,7 +397,6 @@ PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
  */
 void purple_blist_add_account(PurpleAccount *account);
 
-
 /**
  * Called when an account disconnects.  Sets the presence of all the buddies to 0
  * and tells the UI to update them.
@@ -405,24 +404,6 @@ void purple_blist_add_account(PurpleAccount *account);
  * @param account   The account
  */
 void purple_blist_remove_account(PurpleAccount *account);
-
-
-/**
- * Determines the total size of a group
- *
- * @param group  The group
- * @param offline Count buddies in offline accounts
- * @return The number of buddies in the group
- */
-int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
-
-/**
- * Determines the number of online buddies in a group
- *
- * @param group The group
- * @return The number of online buddies in the group, or 0 if the group is NULL
- */
-int purple_blist_get_group_online_count(PurpleGroup *group);
 
 /*@}*/
 

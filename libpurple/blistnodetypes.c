@@ -79,16 +79,11 @@ enum
 	BUDDY_PROP_LAST
 };
 
-/** Private data for a contact TODO: move counts to PurpleCountingNode */
+/** Private data for a contact */
 struct _PurpleContactPrivate {
-	char *alias;                  /**< The user-set alias of the contact      */
-	int totalsize;                /**< The number of buddies in this contact  */
-	int currentsize;              /**< The number of buddies in this contact
-	                                   corresponding to online accounts       */
-	int onlinecount;              /**< The number of buddies in this contact
-	                                   who are currently online               */
-	PurpleBuddy *priority_buddy;  /**< The "top" buddy for this contact       */
-	gboolean priority_valid;      /**< Is priority valid?                     */
+	char *alias;                  /**< The user-set alias of the contact  */
+	PurpleBuddy *priority_buddy;  /**< The "top" buddy for this contact   */
+	gboolean priority_valid;      /**< Is priority valid?                 */
 };
 
 /* Contact property enums */
@@ -100,14 +95,9 @@ enum
 	CONTACT_PROP_LAST
 };
 
-/** Private data for a group TODO: move counts to PurpleCountingNode */
+/** Private data for a group */
 struct _PurpleGroupPrivate {
-	char *name;       /**< The name of this group.                            */
-	int totalsize;    /**< The number of chats and contacts in this group     */
-	int currentsize;  /**< The number of chats and contacts in this group
-	                       corresponding to online accounts                   */
-	int onlinecount;  /**< The number of chats and contacts in this group who
-	                       are currently online                               */
+	char *name;  /**< The name of this group. */
 };
 
 /* Group property enums */
@@ -136,7 +126,8 @@ enum
 	CHAT_PROP_LAST
 };
 
-static PurpleBListNode *parent_class;
+static PurpleBListNode     *blistnode_parent_class;
+static PurpleCountingNode  *counting_parent_class;
 
 /**************************************************************************/
 /* Buddy API                                                              */
@@ -497,7 +488,7 @@ purple_buddy_dispose(GObject *object)
 
 	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
+	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -510,7 +501,7 @@ purple_buddy_finalize(GObject *object)
 	g_free(priv->local_alias);
 	g_free(priv->server_alias);
 
-	G_OBJECT_CLASS(parent_class)->finalize(object);
+	G_OBJECT_CLASS(blistnode_parent_class)->finalize(object);
 }
 
 /* Class initializer function */
@@ -518,7 +509,7 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
+	blistnode_parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_buddy_dispose;
 	obj_class->finalize = purple_buddy_finalize;
@@ -723,15 +714,6 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 	priv->priority_valid = FALSE;
 }
 
-int purple_contact_get_contact_size(PurpleContact *contact, gboolean offline)   
-{
-	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(contact);
-
-	g_return_val_if_fail(priv != NULL, 0);
-
-	return offline ? priv->totalsize : priv->currentsize;
-}
-
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 {
 	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(contact);
@@ -794,12 +776,7 @@ static void
 purple_contact_init(GTypeInstance *instance, gpointer klass)
 {
 	PurpleContact *contact = PURPLE_CONTACT(instance);
-	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-
-	priv->totalsize = 0;
-	priv->currentsize = 0;
-	priv->onlinecount = 0;
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(contact));
@@ -813,7 +790,7 @@ purple_contact_dispose(GObject *object)
 {
 	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
+	G_OBJECT_CLASS(counting_parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -822,7 +799,7 @@ purple_contact_finalize(GObject *object)
 {
 	g_free(PURPLE_CONTACT_GET_PRIVATE(object)->alias);
 
-	G_OBJECT_CLASS(parent_class)->finalize(object);
+	G_OBJECT_CLASS(counting_parent_class)->finalize(object);
 }
 
 /* Class initializer function */
@@ -830,7 +807,7 @@ static void purple_contact_class_init(PurpleContactClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
+	counting_parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_contact_dispose;
 	obj_class->finalize = purple_contact_finalize;
@@ -873,7 +850,7 @@ purple_contact_get_type(void)
 			NULL,
 		};
 
-		type = g_type_register_static(PURPLE_TYPE_BLIST_NODE,
+		type = g_type_register_static(PURPLE_TYPE_COUNTING_NODE,
 				"PurpleContact",
 				&info, 0);
 	}
@@ -1036,7 +1013,7 @@ purple_chat_dispose(GObject *object)
 {
 	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
+	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -1048,7 +1025,7 @@ purple_chat_finalize(GObject *object)
 	g_free(priv->alias);
 	g_hash_table_destroy(priv->components);
 
-	G_OBJECT_CLASS(parent_class)->finalize(object);
+	G_OBJECT_CLASS(blistnode_parent_class)->finalize(object);
 }
 
 /* Class initializer function */
@@ -1056,7 +1033,7 @@ static void purple_chat_class_init(PurpleChatClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
+	blistnode_parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_chat_dispose;
 	obj_class->finalize = purple_chat_finalize;
@@ -1236,12 +1213,7 @@ static void
 purple_group_init(GTypeInstance *instance, gpointer klass)
 {
 	PurpleGroup *group = PURPLE_GROUP(instance);
-	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-
-	priv->totalsize = 0;
-	priv->currentsize = 0;
-	priv->onlinecount = 0;
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(group));
@@ -1255,7 +1227,7 @@ purple_group_dispose(GObject *object)
 {
 	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
+	G_OBJECT_CLASS(counting_parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
@@ -1264,7 +1236,7 @@ purple_group_finalize(GObject *object)
 {
 	g_free(PURPLE_GROUP_GET_PRIVATE(object)->name);
 
-	G_OBJECT_CLASS(parent_class)->finalize(object);
+	G_OBJECT_CLASS(counting_parent_class)->finalize(object);
 }
 
 /* Class initializer function */
@@ -1272,7 +1244,7 @@ static void purple_group_class_init(PurpleGroupClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
+	counting_parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_group_dispose;
 	obj_class->finalize = purple_group_finalize;
@@ -1309,7 +1281,7 @@ purple_group_get_type(void)
 			NULL,
 		};
 
-		type = g_type_register_static(PURPLE_TYPE_BLIST_NODE,
+		type = g_type_register_static(PURPLE_TYPE_COUNTING_NODE,
 				"PurpleGroup",
 				&info, 0);
 	}

@@ -775,6 +775,7 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 	PurpleStatus *status;
 	PurpleBListNode *cnode;
 	PurpleContact *contact;
+	PurpleCountingNode *contact_counter, *group_counter;
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
 	g_return_if_fail(priv != NULL);
@@ -792,9 +793,11 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 
 		cnode = PURPLE_BLIST_NODE(buddy)->parent;
 		contact = PURPLE_CONTACT(cnode);
-		purple_contact_set_online_count_relative(contact, +1);
-		if (purple_contact_get_online_count(contact) == 1)
-			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), +1);
+		contact_counter = PURPLE_COUNTING_NODE(contact);
+		group_counter = PURPLE_COUNTING_NODE(cnode->parent);
+		purple_counting_node_change_online_count(contact_counter, +1);
+		if (purple_counting_node_get_online_count(contact_counter) == 1)
+			purple_counting_node_change_online_count(group_counter, +1);
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
 
@@ -803,9 +806,11 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 
 		cnode = PURPLE_BLIST_NODE(buddy)->parent;
 		contact = PURPLE_CONTACT(cnode);
-		purple_contact_set_online_count_relative(contact, -1);
-		if (purple_contact_get_online_count(contact) == 0)
-			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), -1);
+		contact_counter = PURPLE_COUNTING_NODE(contact);
+		group_counter = PURPLE_COUNTING_NODE(cnode->parent);
+		purple_counting_node_change_online_count(contact_counter, -1);
+		if (purple_counting_node_get_online_count(contact_counter) == 0)
+			purple_counting_node_change_online_count(group_counter, -1);
 	} else {
 		purple_signal_emit(purple_blist_get_handle(),
 		                 "buddy-status-changed", buddy, old_status,
@@ -1208,11 +1213,11 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode *node)
 {
-	PurpleBListNode *cnode = (PurpleBListNode*)chat;
+	PurpleBListNode *cnode = PURPLE_BLIST_NODE(chat);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+	PurpleCountingNode *group_counter;
 
 	g_return_if_fail(chat != NULL);
-	g_return_if_fail(PURPLE_IS_CHAT((PurpleBListNode *)chat));
 
 	if (node == NULL) {
 		if (group == NULL)
@@ -1235,10 +1240,11 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 		/* This chat was already in the list and is
 		 * being moved.
 		 */
-		purple_group_set_total_size_relative(PURPLE_GROUP(cnode->parent), -1);
+		group_counter = PURPLE_COUNTING_NODE(cnode->parent);
+		purple_counting_node_change_total_size(group_counter, -1);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), -1);
-			purple_group_set_current_size_relative(PURPLE_GRPUP(cnode->parent), -1);
+			purple_counting_node_change_online_count(group_counter, -1);
+			purple_counting_node_change_current_size(group_counter, -1);
 		}
 		if (cnode->next)
 			cnode->next->prev = cnode->prev;
@@ -1262,10 +1268,11 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 		cnode->prev = node;
 		cnode->parent = node->parent;
 		node->next = cnode;
-		purple_group_set_total_size_relative(PURPLE_GROUP(node->parent), +1);
+		group_counter = PURPLE_COUNTING_NODE(node->parent);
+		purple_counting_node_change_total_size(group_counter, +1);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			purple_group_set_online_count_relative(PURPLE_GROUP(node->parent), +1);
-			purple_group_set_current_size_relative(PURPLE_GROUP(node->parent), +1);
+			purple_counting_node_change_online_count(group_counter, +1);
+			purple_counting_node_change_current_size(group_counter, +1);
 		}
 	} else {
 		if (((PurpleBListNode *)group)->child)
@@ -1273,11 +1280,12 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 		cnode->next = ((PurpleBListNode *)group)->child;
 		cnode->prev = NULL;
 		((PurpleBListNode *)group)->child = cnode;
-		cnode->parent = (PurpleBListNode *)group;
-		purple_group_set_total_size_relative(group, +1);
+		cnode->parent = PURPLE_BLIST_NODE(group);
+		group_counter = PURPLE_COUNTING_NODE(group);
+		purple_counting_node_change_total_size(group_counter, +1);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			purple_group_set_online_count_relative(group, +1);
-			purple_group_set_current_size_relative(group, +1);
+			purple_counting_node_change_online_count(group_counter, +1);
+			purple_counting_node_change_current_size(group_counter, +1);
 		}
 	}
 
@@ -1294,6 +1302,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBListNode *node)
 {
 	PurpleBListNode *cnode, *bnode;
+	PurpleCountingNode *contact_counter, *group_counter;
 	PurpleGroup *g;
 	PurpleContact *c;
 	PurpleAccount *account;
@@ -1336,17 +1345,20 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	cnode = PURPLE_BLIST_NODE(c);
 
 	if (bnode->parent) {
+		contact_counter = PURPLE_COUNTING_NODE(bnode->parent);
+		group_counter = PURPLE_COUNTING_NODE(bnode->parent->parent);
+
 		if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
-			purple_contact_set_online_count_relative(PURPLE_CONTACT(bnode->parent), -1);
-			if (purple_contact_get_online_count(PURPLE_CONTACT(bnode->parent)) == 0)
-				purple_group_set_online_count_relative(PURPLE_GROUP(bnode->parent->parent), -1);
+			purple_counting_node_change_online_count(contact_counter, -1);
+			if (purple_counting_node_get_online_count(contact_counter) == 0)
+				purple_counting_node_change_online_count(group_counter, -1);
 		}
 		if (purple_account_is_connected(account)) {
-			purple_contact_set_current_size_relative(PURPLE_CONTACT(bnode->parent), -1);
-			if (purple_contact_get_current_size(PURPLE_CONTACT(bnode->parent)) == 0)
-				purple_group_set_current_size_relative(PURPLE_GROUP(bnode->parent->parent), -1);
+			purple_counting_node_change_current_size(contact_counter, -1);
+			if (purple_counting_node_get_current_size(contact_counter) == 0)
+				purple_counting_node_change_current_size(group_counter, -1);
 		}
-		purple_contact_set_total_size_relative(PURPLE_CONTACT(bnode->parent), -1);
+		purple_counting_node_change_total_size(contact_counter, -1);
 		/* the group totalsize will be taken care of by remove_contact below */
 
 		if (bnode->parent->parent != (PurpleBListNode*)g)
@@ -1399,17 +1411,20 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		bnode->parent = cnode;
 	}
 
+	contact_counter = PURPLE_COUNTING_NODE(bnode->parent);
+	group_counter = PURPLE_COUNTING_NODE(bnode->parent->parent);
+
 	if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
-		purple_contact_set_online_count_relative(PURPLE_CONTACT(bnode->parent), +1);
-		if (purple_contact_get_online_count(PURPLE_CONTACT(bnode->parent)) == 1)
-			purple_group_set_online_count_relative(PURPLE_GROUP(bnode->parent->parent), +1);
+		purple_counting_node_change_online_count(contact_counter, +1);
+		if (purple_counting_node_get_online_count(contact_counter) == 1)
+			purple_counting_node_change_online_count(group_counter, +1);
 	}
 	if (purple_account_is_connected(account)) {
-		purple_contact_set_current_size_relative(PURPLE_CONTACT(bnode->parent), +1);
-		if (purple_contact_get_online_count(PURPLE_CONTACT(bnode->parent)) == 1)
-			purple_group_set_current_size_relative(PURPLE_GROUP(bnode->parent->parent), +1);
+		purple_counting_node_change_current_size(contact_counter, +1);
+		if (purple_counting_node_get_online_count(contact_counter) == 1)
+			purple_counting_node_change_current_size(group_counter, +1);
 	}
-	purple_contact_set_total_size_relative(PURPLE_CONTACT(bnode->parent), +1);
+	purple_counting_node_change_total_size(contact_counter, +1);
 
 	hb = g_new(struct _purple_hbuddy, 1);
 	hb->name = g_strdup(purple_normalize(account, purple_buddy_get_name(buddy)));
@@ -1447,6 +1462,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *g;
 	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleCountingNode *contact_counter, *group_counter;
 
 	g_return_if_fail(contact != NULL);
 
@@ -1535,11 +1551,14 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 			}
 		}
 
-		if (purple_contact_get_online_count(contact) > 0)
-			purple_group_set_online_count_relative(PURPLE_GROUP(cnode->parent), -1);
-		if (purple_contact_get_current_size(contact) > 0)
-			purple_group_set_current_size_relative(PURPLE_GROUP(cnode->parent), -1);
-		purple_group_set_total_size_relative(PURPLE_GROUP(cnode->parent), -1);
+		contact_counter = PURPLE_COUNTING_NODE(contact);
+		group_counter = PURPLE_COUNTING_NODE(cnode->parent);
+
+		if (purple_counting_node_get_online_count(contact_counter) > 0)
+			purple_counting_node_change_online_count(group_counter, -1);
+		if (purple_counting_node_get_current_size(contact_counter) > 0)
+			purple_counting_node_change_current_size(group_counter, -1);
+		purple_counting_node_change_total_size(group_counter, -1);
 
 		if (ops && ops->remove)
 			ops->remove(purplebuddylist, cnode);
@@ -1565,11 +1584,14 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		cnode->parent = gnode;
 	}
 
-	if (purple_contact_get_online_count(contact) > 0)
-		purple_group_set_online_count_relative(g, +1);
-	if (purple_contact_get_current_size(contact) > 0)
-		purple_group_set_current_size_relative(g, +1);
-	purple_group_set_total_size_relative(g, +1);
+	contact_counter = PURPLE_COUNTING_NODE(contact);
+	group_counter = PURPLE_COUNTING_NODE(g);
+
+	if (purple_counting_node_get_online_count(contact_counter) > 0)
+		purple_counting_node_change_online_count(group_counter, +1);
+	if (purple_counting_node_get_current_size(contact_counter) > 0)
+		purple_counting_node_change_current_size(group_counter, +1);
+	purple_counting_node_change_total_size(group_counter, +1);
 
 	if (ops && ops->save_node)
 	{
@@ -1724,7 +1746,7 @@ void purple_blist_remove_contact(PurpleContact *contact)
 			node->prev->next = node->next;
 		if (node->next)
 			node->next->prev = node->prev;
-		purple_group_set_total_size_relative(group, -1);
+		purple_counting_node_change_total_size(PURPLE_COUNTING_NODE(group), -1);
 
 		/* Update the UI */
 		if (ops && ops->remove)
@@ -1745,6 +1767,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBListNode *node, *cnode, *gnode;
+	PurpleCountingNode *contact_counter, *group_counter;
 	PurpleContact *contact;
 	PurpleGroup *group;
 	struct _purple_hbuddy hb;
@@ -1770,17 +1793,20 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	/* Adjust size counts */
 	if (contact != NULL) {
+		contact_counter = PURPLE_COUNTING_NODE(contact);
+		group_counter = PURPLE_COUNTING_NODE(group);
+
 		if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
-			purple_contact_set_online_count_relative(contact, -1);
-			if (purple_contact_get_online_count(contact) == 0)
-				purple_group_set_online_count(group, -1);
+			purple_counting_node_change_online_count(contact_counter, -1);
+			if (purple_counting_node_get_online_count(contact_counter) == 0)
+				purple_group_set_online_count(group_counter, -1);
 		}
 		if (purple_account_is_connected(account)) {
-			purple_contact_set_current_size_relative(contact, -1);
-			if (purple_contact_get_current_size(contact) == 0)
-				purple_group_set_current_size_relative(group, -1);
+			purple_counting_node_change_current_size(contact_counter, -1);
+			if (purple_counting_node_get_current_size(contact_counter) == 0)
+				purple_counting_node_change_current_size(group_counter, -1);
 		}
-		purple_contact_set_total_size_relative(contact, -1);
+		purple_counting_node_change_total_size(contact_counter, -1);
 
 		/* Re-sort the contact */
 		if (cnode->child && purple_contact_get_priority_buddy(contact) == buddy) {
@@ -1827,6 +1853,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBListNode *node, *gnode;
 	PurpleGroup *group;
+	PurpleCountingNode *group_counter;
 
 	g_return_if_fail(chat != NULL);
 
@@ -1845,11 +1872,12 @@ void purple_blist_remove_chat(PurpleChat *chat)
 			node->next->prev = node->prev;
 
 		/* Adjust size counts */
+		group_counter = PURPLE_COUNTING_NODE(group);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			purple_group_set_online_count_relative(group, -1);
-			purple_group_set_current_size_relative(group, -1);
+			purple_counting_node_change_online_count(group_counter, -1);
+			purple_counting_node_change_current_size(group_counter, -1);
 		}
-		purple_group_set_total_size_relative(group, -1);
+		purple_counting_node_change_total_size(group_counter, -1);
 	}
 
 	/* Update the UI */
@@ -2074,6 +2102,7 @@ void purple_blist_add_account(PurpleAccount *account)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleCountingNode *contact_counter, *group_counter;
 
 	g_return_if_fail(purplebuddylist != NULL);
 
@@ -2090,9 +2119,11 @@ void purple_blist_add_account(PurpleAccount *account)
 						if (PURPLE_IS_BUDDY(bnode) &&
 								purple_buddy_get_account(PURPLE_BUDDY(bnode)) == account) {
 							recompute = TRUE;
-							purple_contact_set_current_size_relative(PURPLE_CONTACT(cnode), +1);
-							if (purple_contact_get_current_size(PURPLE_CONTACT(cnode)) == 1)
-								purple_group_set_current_size_relative(PURPLE_GROUP(gnode), +1);
+							contact_counter = PURPLE_COUNTING_NODE(cnode);
+							group_counter = PURPLE_COUNTING_NODE(gnode);
+							purple_counting_node_change_current_size(contact_counter, +1);
+							if (purple_counting_node_get_current_size(contact_counter) == 1)
+								purple_counting_node_change_current_size(group_counter, +1);
 							ops->update(purplebuddylist, bnode);
 						}
 					}
@@ -2103,8 +2134,9 @@ void purple_blist_add_account(PurpleAccount *account)
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
 					purple_chat_get_account(PURPLE_CHAT(cnode)) == account) {
-				purple_group_set_online_count_relative(PURPLE_GROUP(gnode), +1);
-				purple_group_set_current_size_relative(PURPLE_GROUP(gnode), +1);
+				group_counter = PURPLE_COUNTING_NODE(gnode);
+				purple_counting_node_change_online_count(group_counter, +1);
+				purple_counting_node_change_current_size(group_counter, +1);
 				ops->update(purplebuddylist, cnode);
 			}
 		}
@@ -2116,6 +2148,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleCountingNode *contact_counter, *group_counter;
 	PurpleBuddy *buddy;
 	PurpleChat *chat;
 	PurpleContact *contact;
@@ -2144,19 +2177,21 @@ void purple_blist_remove_account(PurpleAccount *account)
 						PurplePresence *presence;
 
 						presence = purple_buddy_get_presence(buddy);
+						contact_counter = PURPLE_COUNTING_NODE(contact);
+						group_counter = PURPLE_COUNTING_NODE(group);
 
 						if(purple_presence_is_online(presence)) {
-							purple_contact_set_online_count_relative(contact, -1);
-							if (purple_contact_get_online_count(contact) == 0)
-								purple_group_set_online_count_relative(group, -1);
+							purple_counting_node_change_online_count(contact_counter, -1);
+							if (purple_counting_node_get_online_count(contact_counter) == 0)
+								purple_counting_node_change_online_count(group_counter, -1);
 
 							purple_blist_node_set_int(PURPLE_BLIST_NODE(buddy),
 													"last_seen", time(NULL));
 						}
 
-						purple_contact_set_current_size_relative(contact, -1);
-						if (purple_contact_get_current_size(contact) == 0)
-							purple_group_set_current_size_relative(group, -1);
+						purple_counting_node_change_current_size(contact_counter, -1);
+						if (purple_counting_node_get_current_size(contact_counter) == 0)
+							purple_counting_node_change_current_size(group_counter, -1);
 
 						if (!g_list_find(list, presence))
 							list = g_list_prepend(list, presence);
@@ -2180,8 +2215,9 @@ void purple_blist_remove_account(PurpleAccount *account)
 				chat = PURPLE_CHAT(cnode);
 
 				if(purple_chat_get_account(chat) == account) {
-					purple_group_set_current_size_relative(group, -1);
-					purple_group_set_online_count_relative(group, -1);
+					group_counter = PURPLE_COUNTING_NODE(group);
+					purple_counting_node_change_current_size(group_counter, -1);
+					purple_counting_node_change_online_count(group_counter, -1);
 
 					if (ops && ops->remove)
 						ops->remove(purplebuddylist, cnode);
@@ -2230,24 +2266,6 @@ purple_blist_request_add_group(void)
 
 	if (ui_ops != NULL && ui_ops->request_add_group != NULL)
 		ui_ops->request_add_group();
-}
-
-/* TODO move to group */
-int purple_blist_get_group_size(PurpleGroup *group, gboolean offline)
-{
-	if (!group)
-		return 0;
-
-	return offline ? purple_group_get_total_size(group) : purple_group_get_current_size(group);
-}
-
-/* TODO remove, move to group */
-int purple_blist_get_group_online_count(PurpleGroup *group)
-{
-	if (!group)
-		return 0;
-
-	return purple_group_get_online_count(group);
 }
 
 void

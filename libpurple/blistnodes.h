@@ -1,5 +1,5 @@
 /**
- * @file blistnode.h Buddy list node API
+ * @file blistnodes.h Buddy list node and Counting node API
  * @ingroup core
  */
 /* purple
@@ -40,6 +40,18 @@ typedef struct _PurpleBListNode PurpleBListNode;
 /** @copydoc _PurpleBListNodeClass */
 typedef struct _PurpleBListNodeClass PurpleBListNodeClass;
 
+#define PURPLE_TYPE_COUNTING_NODE             (purple_counting_node_get_type())
+#define PURPLE_COUNTING_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNode))
+#define PURPLE_COUNTING_NODE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodeClass))
+#define PURPLE_IS_COUNTING_NODE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_COUNTING_NODE))
+#define PURPLE_IS_COUNTING_NODE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_COUNTING_NODE))
+#define PURPLE_COUNTING_NODE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodeClass))
+
+/** @copydoc _PurpleCountingNode */
+typedef struct _PurpleCountingNode PurpleCountingNode;
+/** @copydoc _PurpleCountingNodeClass */
+typedef struct _PurpleCountingNodeClass PurpleCountingNodeClass;
+
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/
@@ -74,7 +86,33 @@ struct _PurpleBListNodeClass {
 	void (*_purple_reserved4)(void);
 };
 
-/* TODO add PurpleCountingNode */
+/**
+ * A node that keeps count of the number of children that it has. It tracks the
+ * total number of children, the number of children corresponding to online
+ * accounts, and the number of online children.
+ *
+ * The two types of counting nodes are:
+ * 1. Contact: Keeps track of the number of buddies under it.
+ * 2. Group:   Keeps track of the number of chats and contacts under it.
+ *
+ * @see PurpleContact
+ * @see PurpleGroup
+ */
+struct _PurpleCountingNode {
+	/** The blist node that this counting node inherits from */
+	PurpleBListNode node;
+};
+
+/** The base class for all #PurpleCountingNode's. */
+struct _PurpleCountingNodeClass {
+	/*< private >*/
+	PurpleBListNodeClass node_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
 
@@ -273,6 +311,101 @@ gboolean purple_blist_node_get_dont_save(PurpleBListNode *node);
  *          blist-node-extended-menu signal.
  */
 GList *purple_blist_node_get_extended_menu(PurpleBListNode *n);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Counting node API                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the PurpleCountingNode object.
+ */
+GType purple_counting_node_get_type(void);
+
+/**
+ * Returns the total number of children of the counting node.
+ *
+ * @param counter  The node
+ *
+ * @return  The total number of children of the node
+ */
+int purple_counting_node_get_total_size(PurpleCountingNode *counter);
+
+/**
+ * Returns the number of children of the counting node corresponding to online
+ * accounts.
+ *
+ * @param counter  The node
+ *
+ * @return  The number of children with online accounts
+ */
+int purple_counting_node_get_current_size(PurpleCountingNode *counter);
+
+/**
+ * Returns the number of children of the counting node that are online.
+ *
+ * @param counter  The node
+ *
+ * @return  The total number of online children
+ */
+int purple_counting_node_get_online_count(PurpleCountingNode *counter);
+
+/**
+ * Changes the total number of children of the counting node. The provided
+ * delta value is added to the count, or if it's negative, the count is
+ * decreased.
+ *
+ * @param counter  The node
+ * @param delta    The value to change the total size by
+ */
+void purple_counting_node_change_total_size(PurpleCountingNode *counter, int delta);
+
+/**
+ * Changes the number of children of the counting node corresponding to online
+ * accounts. The provided delta value is added to the count, or if it's
+ * negative, the count is decreased.
+ *
+ * @param counter  The node
+ * @param delta    The value to change the current size by
+ */
+void purple_counting_node_change_current_size(PurpleCountingNode *counter, int delta);
+
+/**
+ * Changes the number of children of the counting node that are online. The
+ * provided delta value is added to the count, or if it's negative, the count is
+ * decreased.
+ *
+ * @param counter  The node
+ * @param delta    The value to change the online count by
+ */
+void purple_counting_node_change_online_count(PurpleCountingNode *counter, int delta);
+
+/**
+ * Sets the total number of children of the counting node.
+ *
+ * @param counter    The node
+ * @param totalsize  The total number of children of the node
+ */
+void purple_counting_node_set_total_size(PurpleCountingNode *counter, int totalsize);
+
+/**
+ * Sets the number of children of the counting node corresponding to online
+ * accounts.
+ *
+ * @param counter      The node
+ * @param currentsize  The number of children with online accounts
+ */
+void purple_counting_node_set_current_size(PurpleCountingNode *counter, int currentsize);
+
+/**
+ * Sets the number of children of the counting node that are online.
+ *
+ * @param counter      The node
+ * @param onlinecount  The total number of online children
+ */
+void purple_counting_node_set_online_count(PurpleCountingNode *counter, int onlinecount);
 
 /*@}*/
 

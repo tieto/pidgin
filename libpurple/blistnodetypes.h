@@ -25,7 +25,7 @@
 #ifndef _PURPLE_BLISTNODE_TYPES_H_
 #define _PURPLE_BLISTNODE_TYPES_H_
 
-#include "blistnode.h"
+#include "blistnodes.h"
 
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())
 #define PURPLE_BUDDY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY, PurpleBuddy))
@@ -115,14 +115,17 @@ struct _PurpleBuddyClass {
  * A contact on the buddy list.
  */
 struct _PurpleContact {
-	/** The node that this contact inherits from */
-	PurpleBListNode node;
+	/**
+	 * The counting node that this contact inherits from. This keeps track
+	 * of the counts of the buddies under this contact.
+	 */
+	PurpleCountingNode counting;
 };
 
 /** The base class for all #PurpleContact's. */
 struct _PurpleContactClass {
 	/*< private >*/
-	PurpleBListNodeClass node_class;
+	PurpleCountingNodeClass counting_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -134,14 +137,17 @@ struct _PurpleContactClass {
  * A group on the buddy list.
  */
 struct _PurpleGroup {
-	/** The node that this group inherits from */
-	PurpleBListNode node;
+	/**
+	 * The counting node that this group inherits from. This keeps track
+	 * of the counts of the chats and contacts under this group.
+	 */
+	PurpleCountingNode counting;
 };
 
 /** The base class for all #PurpleGroup's. */
 struct _PurpleGroupClass {
 	/*< private >*/
-	PurpleBListNodeClass node_class;
+	PurpleCountingNodeClass counting_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -441,15 +447,6 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
  * @param contact  The contact
  */
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
-
-/**
- * Determines the total size of a contact.
- *
- * @param contact	The contact
- * @param offline	Count buddies in offline accounts
- * @return The number of buddies in the contact
- */
-int purple_contact_get_contact_size(PurpleContact *contact, gboolean offline);
 
 /*@}*/
 
