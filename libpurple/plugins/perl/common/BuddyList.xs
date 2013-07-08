@@ -198,15 +198,6 @@ void
 purple_blist_remove_account(account)
 	Purple::Account account
 
-int
-purple_blist_get_group_size(group, offline)
-	Purple::BuddyList::Group  group
-	gboolean offline
-
-int
-purple_blist_get_group_online_count(group)
-	Purple::BuddyList::Group  group
-
 void
 purple_blist_schedule_save()
 
@@ -277,10 +268,50 @@ purple_blist_node_remove_setting(node, key)
 	Purple::BuddyList::Node node
 	const char * key
 
-Purple::BuddyList::Node
-purple_blist_node_next(node, offline)
-	Purple::BuddyList::Node node
-	gboolean offline
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::CountingNode  PREFIX = purple_counting_node_
+PROTOTYPES: ENABLE
+
+int
+purple_counting_node_get_total_size(counter);
+	Purple::BuddyList::CountingNode counter
+
+int
+purple_counting_node_get_current_size(counter);
+	Purple::BuddyList::CountingNode counter
+
+int
+purple_counting_node_get_online_count(counter);
+	Purple::BuddyList::CountingNode counter
+
+void
+purple_counting_node_change_total_size(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
+
+void
+purple_counting_node_change_current_size(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
+
+void
+purple_counting_node_change_online_count(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
+
+void
+purple_counting_node_set_total_size(counter, totalsize);
+	Purple::BuddyList::CountingNode counter
+	int totalsize
+
+void
+purple_counting_node_set_current_size(counter, currentsize);
+	Purple::BuddyList::CountingNode counter
+	int currentsize
+
+void
+purple_counting_node_set_online_count(counter, onlinecount);
+	Purple::BuddyList::CountingNode counter
+	int onlinecount
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Chat  PREFIX = purple_chat_
 PROTOTYPES: ENABLE

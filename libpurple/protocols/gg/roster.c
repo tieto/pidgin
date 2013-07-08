@@ -733,7 +733,7 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version,
 	{
 		PurpleGroup *group = it->data;
 		it = g_list_next(it);
-		if (purple_blist_get_group_size(group, TRUE) != 0)
+		if (purple_counting_node_get_total_size(PURPLE_COUNTING_NODE(group)) != 0)
 			continue;
 		purple_debug_info("gg", "ggp_roster_reply_list: "
 			"removing group %s\n", purple_group_get_name(group));

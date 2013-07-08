@@ -52,6 +52,7 @@ Purple::BuddyList::Chat			T_PurpleObj
 Purple::BuddyList::Contact		T_PurpleObj
 Purple::BuddyList::Group			T_PurpleObj
 Purple::BuddyList::Node			T_PurpleObj
+Purple::BuddyList::CountingNode		T_PurpleObj
 
 Purple::Cipher				T_PurpleObj
 Purple::Hash				T_PurpleObj

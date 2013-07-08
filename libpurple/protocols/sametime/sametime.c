@@ -1050,7 +1050,7 @@ static void group_clear(PurpleGroup *group, PurpleAccount *acct, gboolean del) {
   DEBUG_INFO("cleared buddies\n");
 
   /* optionally remove group from blist */
-  if(del && !purple_blist_get_group_size(group, TRUE)) {
+  if(del && !purple_counting_node_get_total_size(PURPLE_COUNTING_NODE(group))) {
     DEBUG_INFO("removing empty group\n");
     purple_blist_remove_group(group);
   }
