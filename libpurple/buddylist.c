@@ -2453,3 +2453,26 @@ purple_blist_uninit(void)
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());
 }
+
+static PurpleBuddyList *
+purple_buddy_list_copy(PurpleBuddyList *blist)
+{
+	PurpleBuddyList *newlist = g_new(PurpleBuddyList, 1);
+	*newlist = *blist;
+
+	return newlist;
+}
+
+GType
+purple_buddy_list_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleBuddyList",
+				(GBoxedCopyFunc)purple_buddy_list_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}

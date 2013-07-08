@@ -31,6 +31,8 @@
 
 #include "blistnodetypes.h"
 
+#define PURPLE_TYPE_BUDDY_LIST  (purple_buddy_list_get_type())
+
 /** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyList PurpleBuddyList;
 /** @copydoc _PurpleBListUiOps */
@@ -40,7 +42,7 @@ typedef struct _PurpleBListUiOps PurpleBListUiOps;
 /* Data Structures                                                        */
 /**************************************************************************/
 
-/** TODO GBoxed
+/**
  * The Buddy List
  */
 struct _PurpleBuddyList {
@@ -121,6 +123,11 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 /* TODO move node methods to appropriate nodes */
+/**
+ * Returns the GType for the PurpleBuddyList boxed structure.
+ */
+GType purple_buddy_list_get_type(void);
+
 /**
  * Returns the main buddy list.
  *
