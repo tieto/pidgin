@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#include "blistnodetypes.h"
+#include "internal.h"
+#include "dbus-maybe.h"
 
 #define PURPLE_BUDDY_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY, PurpleBuddyPrivate))
@@ -646,7 +647,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 		if (purple_account_is_connected(purple_buddy_get_account(buddy)))
 		{
 			int cmp = 1;
-			if (purple_account_is_connected(purple_buddy_get_account(new_priority->account)))
+			if (purple_account_is_connected(purple_buddy_get_account(new_priority)))
 				cmp = purple_presence_compare(purple_buddy_get_presence(new_priority),
 						purple_buddy_get_presence(buddy));
 
