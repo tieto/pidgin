@@ -484,6 +484,14 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 const char *purple_chat_get_name(PurpleChat *chat);
 
 /**
+ * Sets the alias for a blist chat.
+ *
+ * @param chat   The chat
+ * @param alias  The alias
+ */
+void purple_chat_set_alias(PurpleChat *chat, const char *alias);
+
+/**
  * Returns the group of which the chat is a member.
  *
  * @param chat The chat.
