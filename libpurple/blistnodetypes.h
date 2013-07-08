@@ -562,6 +562,14 @@ GSList *purple_group_get_accounts(PurpleGroup *g);
 gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
 
 /**
+ * Sets the name of a group.
+ *
+ * @param group The group.
+ * @param name  The name of the group.
+ */
+void purple_group_set_name(PurpleGroup *group, const char *name);
+
+/**
  * Returns the name of a group.
  *
  * @param group The group.

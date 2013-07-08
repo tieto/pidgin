@@ -120,7 +120,7 @@ G_BEGIN_DECLS
 /** @name Buddy List API                                                  */
 /**************************************************************************/
 /*@{*/
-
+/* TODO move node methods to appropriate nodes */
 /**
  * Returns the main buddy list.
  *
@@ -407,7 +407,7 @@ void purple_blist_add_account(PurpleAccount *account);
 void purple_blist_remove_account(PurpleAccount *account);
 
 
-/** TODO move to group
+/**
  * Determines the total size of a group
  *
  * @param group  The group
@@ -416,7 +416,7 @@ void purple_blist_remove_account(PurpleAccount *account);
  */
 int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
 
-/** TODO move to group
+/**
  * Determines the number of online buddies in a group
  *
  * @param group The group

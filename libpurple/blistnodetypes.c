@@ -1170,6 +1170,16 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 	return FALSE;
 }
 
+void purple_group_set_name(PurpleGroup *group, const char *name)
+{
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
+
+	g_return_if_fail(priv != NULL);
+
+	g_free(priv->name);
+	priv->name = purple_utf8_strip_unprintables(name);
+}
+
 const char *purple_group_get_name(PurpleGroup *group)
 {
 	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
@@ -1184,12 +1194,131 @@ const char *purple_group_get_name(PurpleGroup *group)
  **************************************************************************/
 
 /* GObject Property names */
-#define GROUP_PROP_NAME_S          "name"
+#define GROUP_PROP_NAME_S  "name"
 
-/* TODO GObjectify */
-PurpleGroup *purple_group_new(const char *name)
+/* Set method for GObject properties */
+static void
+purple_group_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
 {
+	PurpleGroup *group = PURPLE_GROUP(obj);
+
+	switch (param_id) {
+		case GROUP_PROP_NAME:
+			purple_group_set_name(group, g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_group_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleGroup *group = PURPLE_GROUP(obj);
+
+	switch (param_id) {
+		case GROUP_PROP_NAME:
+			g_value_set_string(value, purple_group_get_name(group));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* GObject initialization function */
+static void
+purple_group_init(GTypeInstance *instance, gpointer klass)
+{
+	PurpleGroup *group = PURPLE_GROUP(instance);
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	priv->totalsize = 0;
+	priv->currentsize = 0;
+	priv->onlinecount = 0;
+
+	if (ops && ops->new_node)
+		ops->new_node(PURPLE_BLIST_NODE(group));
+
+	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
+}
+
+/* GObject dispose function */
+static void
+purple_group_dispose(GObject *object)
+{
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
+
+	G_OBJECT_CLASS(parent_class)->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_group_finalize(GObject *object)
+{
+	g_free(PURPLE_GROUP_GET_PRIVATE(object)->name);
+
+	G_OBJECT_CLASS(parent_class)->finalize(object);
+}
+
+/* Class initializer function */
+static void purple_group_class_init(PurpleGroupClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_group_dispose;
+	obj_class->finalize = purple_group_finalize;
+
+	/* Setup properties */
+	obj_class->get_property = purple_group_get_property;
+	obj_class->set_property = purple_group_set_property;
+
+	g_object_class_install_property(obj_class, GROUP_PROP_NAME,
+			g_param_spec_string(GROUP_PROP_NAME_S, _("Name"),
+				_("Name of the group."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_type_class_add_private(klass, sizeof(PurpleGroupPrivate));
+}
+
+GType
+purple_group_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleGroupClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_group_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleGroup),
+			0,
+			(GInstanceInitFunc)purple_group_init,
+			NULL,
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_BLIST_NODE,
+				"PurpleGroup",
+				&info, 0);
+	}
+
+	return type;
+}
+
+PurpleGroup *
+purple_group_new(const char *name)
+{
 	PurpleGroup *group;
 
 	g_return_val_if_fail(name  != NULL, NULL);
@@ -1199,24 +1328,5 @@ PurpleGroup *purple_group_new(const char *name)
 	if (group != NULL)
 		return group;
 
-	group = g_new0(PurpleGroup, 1);
-	group->name = purple_utf8_strip_unprintables(name);
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->onlinecount = 0;
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBListNode *)group);
-
-	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
-	return group;
-}
-
-/* TODO GObjectify */
-void
-purple_group_destroy(PurpleGroup *group)
-{
-	g_free(group->name);
-	PURPLE_DBUS_UNREGISTER_POINTER(group);
-	g_free(group);
+	return g_object_new(PURPLE_TYPE_GROUP, GROUP_PROP_NAME_S, name, NULL);
 }
