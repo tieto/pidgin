@@ -188,7 +188,17 @@ void purple_blist_set_visible(gboolean show);
  * @param buddy  The buddy whose name will be changed.
  * @param name   The new name of the buddy.
  */
-void purple_blist_update_cache(PurpleBuddy *buddy, const char *new_name);
+void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name);
+
+/**
+ * Updates the groups hash table when a group has been renamed. This only
+ * updates the cache, the caller is responsible for the actual renaming of
+ * the group after updating the cache.
+ *
+ * @param group  The group whose name will be changed.
+ * @param name   The new name of the group.
+ */
+void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name);
 
 /**
  * Adds a new chat to the buddy list.

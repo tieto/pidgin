@@ -22,6 +22,7 @@
  */
 #include "internal.h"
 #include "dbus-maybe.h"
+#include "debug.h"
 
 #define PURPLE_BUDDY_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY, PurpleBuddyPrivate))
@@ -136,6 +137,8 @@ purple_strings_are_different(const char *one, const char *two)
 			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
 }
 
+PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node);
+
 /**************************************************************************/
 /* Buddy API                                                              */
 /**************************************************************************/
@@ -155,7 +158,7 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
 
-	purple_blist_update_node(PURPLE_BLIST_NODE(buddy));
+	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleBuddyIcon *
@@ -182,10 +185,11 @@ void
 purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
 {
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 
 	g_return_if_fail(priv != NULL);
 
-	purple_blist_update_cache(buddy, name);
+	purple_blist_update_buddies_cache(buddy, name);
 
 	g_free(priv->name);
 	priv->name = purple_utf8_strip_unprintables(name);
@@ -301,17 +305,17 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	if ((alias != NULL) && (*alias != '\0'))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strings_are_different(priv->alias, new_alias)) {
+	if (!purple_strings_are_different(priv->local_alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
 
-	old_alias = priv->alias;
+	old_alias = priv->local_alias;
 
 	if ((new_alias != NULL) && (*new_alias != '\0'))
-		priv->alias = new_alias;
+		priv->local_alias = new_alias;
 	else {
-		priv->alias = NULL;
+		priv->local_alias = NULL;
 		g_free(new_alias); /* could be "\0" */
 	}
 
@@ -413,7 +417,6 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy)
 void
 purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleStatus *status;
 	PurpleBListNode *cnode;
 	PurpleContact *contact;
@@ -1450,7 +1453,6 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 	} else {
 		/* A simple rename */
 		PurpleBListNode *cnode, *bnode;
-		gchar* key;
 
 		/* Build a GList of all buddies in this group */
 		for (cnode = PURPLE_BLIST_NODE(source)->child; cnode != NULL; cnode = cnode->next) {
@@ -1459,15 +1461,10 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 					moved_buddies = g_list_append(moved_buddies, bnode);
 		}
 
+		purple_blist_update_groups_cache(source, new_name);
+
 		old_name = priv->name;
 		priv->name = new_name;
-
-		key = g_utf8_collate_key(old_name, -1);
-		g_hash_table_remove(groups_cache, key);
-		g_free(key);
-
-		key = g_utf8_collate_key(new_name, -1);
-		g_hash_table_insert(groups_cache, key, source);
 	}
 
 	/* Save our changes */

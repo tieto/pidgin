@@ -69,7 +69,7 @@ static PurpleBListNode *purple_blist_get_last_sibling(PurpleBListNode *node)
 	return n;
 }
 
-static PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node)
+PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node)
 {
 	if (!node)
 		return NULL;
@@ -767,7 +767,7 @@ void purple_blist_set_visible(gboolean show)
 		ops->set_visible(purplebuddylist, show);
 }
 
-void purple_blist_update_cache(PurpleBuddy *buddy, const char *new_name)
+void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 {
 	struct _purple_hbuddy *hb, *hb2;
 	GHashTable *account_buddies;
@@ -797,6 +797,16 @@ void purple_blist_update_cache(PurpleBuddy *buddy, const char *new_name)
 	hb2->group = PURPLE_BLIST_NODE(buddy)->parent->parent;
 
 	g_hash_table_replace(account_buddies, hb2, buddy);
+}
+
+void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name)
+{
+		gchar* key = g_utf8_collate_key(purple_group_get_name(group), -1);
+		g_hash_table_remove(groups_cache, key);
+		g_free(key);
+
+		key = g_utf8_collate_key(new_name, -1);
+		g_hash_table_insert(groups_cache, key, group);
 }
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode *node)

@@ -357,7 +357,7 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
 
 /**
  * Returns the correct name to display for a buddy. In order of precedence:
- * the buddy's alias; the buddy's server alias; the buddy's contact alias;
+ * the buddy's local alias; the buddy's server alias; the buddy's contact alias;
  * the buddy's user name.
  *
  * @param buddy   The buddy whose alias will be returned.
