@@ -146,6 +146,7 @@ PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node);
 void
 purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 {
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
 	g_return_if_fail(priv != NULL);
@@ -158,7 +159,8 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
 
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+	if (ops && ops->update)
+		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleBuddyIcon *
@@ -194,10 +196,12 @@ purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
 	g_free(priv->name);
 	priv->name = purple_utf8_strip_unprintables(name);
 
-	if (ops && ops->save_node)
-		ops->save_node(PURPLE_BLIST_NODE(buddy));
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node(PURPLE_BLIST_NODE(buddy));
+		if (ops->update)
+			ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(buddy));
+	}
 }
 
 const char *
@@ -322,7 +326,8 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	if (ops && ops->save_node)
 		ops->save_node(PURPLE_BLIST_NODE(buddy));
 
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+	if (ops && ops->update)
+		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(buddy));
 
 	im = purple_conversations_find_im_with_account(priv->name,
 											   priv->account);
@@ -371,10 +376,12 @@ purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias)
 		g_free(new_alias); /* could be "\0"; */
 	}
 
-	if (ops && ops->save_node)
-		ops->save_node(PURPLE_BLIST_NODE(buddy));
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node(PURPLE_BLIST_NODE(buddy));
+		if (ops->update)
+			ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(buddy));
+	}
 
 	im = purple_conversations_find_im_with_account(priv->name,
 											   priv->account);
@@ -421,6 +428,7 @@ purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 	PurpleBListNode *cnode;
 	PurpleContact *contact;
 	PurpleCountingNode *contact_counter, *group_counter;
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
 	g_return_if_fail(priv != NULL);
@@ -474,7 +482,9 @@ purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 	 * certainly won't hurt anything.  Unless you're on a K6-2 300.
 	 */
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+
+	if (ops && ops->update)
+		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy)
@@ -833,10 +843,12 @@ purple_contact_set_alias(PurpleContact *contact, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	if (ops && ops->save_node)
-		ops->save_node(PURPLE_BLIST_NODE(contact));
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(contact));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node(PURPLE_BLIST_NODE(contact));
+		if (ops->update)
+			ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(contact));
+	}
 
 	for(bnode = PURPLE_BLIST_NODE(contact)->child; bnode != NULL; bnode = bnode->next)
 	{
@@ -971,10 +983,11 @@ purple_contact_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
 	PurpleContact *contact = PURPLE_CONTACT(obj);
+	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
 	switch (param_id) {
 		case CONTACT_PROP_ALIAS:
-			g_value_set_string(value, purple_contact_get_alias(contact));
+			g_value_set_string(value, priv->alias);
 			break;
 		case CONTACT_PROP_PRIORITY_BUDDY:
 			g_value_set_object(value, purple_contact_get_priority_buddy(contact));
@@ -1136,10 +1149,12 @@ purple_chat_set_alias(PurpleChat *chat, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	if (ops && ops->save_node)
-		ops->save_node(PURPLE_BLIST_NODE(chat));
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(chat));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node(PURPLE_BLIST_NODE(chat));
+		if (ops->update)
+			ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(chat));
+	}
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 chat, old_alias);
@@ -1472,7 +1487,8 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		ops->save_node(PURPLE_BLIST_NODE(source));
 
 	/* Update the UI */
-	purple_blist_node_update(PURPLE_BLIST_NODE(source));
+	if (ops && ops->update)
+		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(source));
 
 	/* Notify all PRPLs */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */

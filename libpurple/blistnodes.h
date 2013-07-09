@@ -209,6 +209,15 @@ gpointer purple_blist_node_get_ui_data(const PurpleBListNode *node);
 void purple_blist_node_set_ui_data(PurpleBListNode *node, gpointer ui_data);
 
 /**
+ * Returns a node's settings
+ *
+ * @param node  The node to from which to get settings
+ *
+ * @return The hash table with the node's settings
+ */
+GHashTable *purple_blist_node_get_settings(PurpleBListNode *node);
+
+/**
  * Checks whether a named setting exists for a node in the buddy list
  *
  * @param node  The node to check from which to check settings
@@ -311,13 +320,6 @@ gboolean purple_blist_node_get_dont_save(PurpleBListNode *node);
  *          blist-node-extended-menu signal.
  */
 GList *purple_blist_node_get_extended_menu(PurpleBListNode *n);
-
-/**
- * Updates a node's UI, such as when its custom icon has been changed.
- *
- * @param node  The PurpleBListNode that is to be updated.
- */
-void purple_blist_node_update(PurpleBListNode *node);
 
 /*@}*/
 

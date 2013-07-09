@@ -55,6 +55,8 @@ static GHashTable *groups_cache = NULL;
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
 
+PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node);
+
 /*********************************************************************
  * Private utility functions                                         *
  *********************************************************************/
@@ -122,7 +124,6 @@ purple_blist_buddies_cache_remove_account(const PurpleAccount *account)
 	g_hash_table_remove(buddies_cache, account);
 }
 
-
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -182,19 +183,20 @@ static xmlnode *
 buddy_to_xmlnode(PurpleBuddy *buddy)
 {
 	xmlnode *node, *child;
-	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	const char *alias = purple_buddy_get_local_alias(buddy);
 
 	node = xmlnode_new("buddy");
-	xmlnode_set_attrib(node, "account", purple_account_get_username(buddy->account));
-	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(buddy->account));
+	xmlnode_set_attrib(node, "account", purple_account_get_username(account));
+	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 
 	child = xmlnode_new_child(node, "name");
-	xmlnode_insert_data(child, priv->name, -1);
+	xmlnode_insert_data(child, purple_buddy_get_name(buddy), -1);
 
-	if (priv->alias != NULL)
+	if (alias != NULL)
 	{
 		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, priv->alias, -1);
+		xmlnode_insert_data(child, alias, -1);
 	}
 
 	/* Write buddy settings */
@@ -209,23 +211,24 @@ contact_to_xmlnode(PurpleContact *contact)
 {
 	xmlnode *node, *child;
 	PurpleBListNode *bnode;
-	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	gchar *alias;
 
 	node = xmlnode_new("contact");
+	g_object_get(contact, "alias", &alias, NULL);
 
-	if (priv->alias != NULL)
+	if (alias != NULL)
 	{
-		xmlnode_set_attrib(node, "alias", priv->alias);
+		xmlnode_set_attrib(node, "alias", alias);
 	}
 
 	/* Write buddies */
 	for (bnode = PURPLE_BLIST_NODE(contact)->child; bnode != NULL; bnode = bnode->next)
 	{
-		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(bnode))
+		if (purple_blist_node_get_dont_save(bnode))
 			continue;
 		if (PURPLE_IS_BUDDY(bnode))
 		{
-			child = buddy_to_xmlnode(bnode);
+			child = buddy_to_xmlnode(PURPLE_BUDDY(bnode));
 			xmlnode_insert_child(node, child);
 		}
 	}
@@ -241,22 +244,24 @@ static xmlnode *
 chat_to_xmlnode(PurpleChat *chat)
 {
 	xmlnode *node, *child;
-	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
+	PurpleAccount *account = purple_chat_get_account(chat);
+	gchar *alias;
 
-	chat = (PurpleChat *)cnode;
+	g_object_get(chat, "alias", &alias, NULL);
 
 	node = xmlnode_new("chat");
-	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(priv->account));
-	xmlnode_set_attrib(node, "account", purple_account_get_username(priv->account));
+	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
+	xmlnode_set_attrib(node, "account", purple_account_get_username(account));
 
-	if (priv->alias != NULL)
+	if (alias != NULL)
 	{
 		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, priv->alias, -1);
+		xmlnode_insert_data(child, alias, -1);
 	}
 
 	/* Write chat components */
-	g_hash_table_foreach(priv->components, chat_component_to_xmlnode, node);
+	g_hash_table_foreach(purple_chat_get_components(chat),
+			chat_component_to_xmlnode, node);
 
 	/* Write chat settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(chat)),
@@ -270,10 +275,9 @@ group_to_xmlnode(PurpleGroup *group)
 {
 	xmlnode *node, *child;
 	PurpleBListNode *cnode;
-	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
 
 	node = xmlnode_new("group");
-	xmlnode_set_attrib(node, "name", priv->name);
+	xmlnode_set_attrib(node, "name", purple_group_get_name(group));
 
 	/* Write settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)),
@@ -282,16 +286,16 @@ group_to_xmlnode(PurpleGroup *group)
 	/* Write contacts and chats */
 	for (cnode = PURPLE_BLIST_NODE(group)->child; cnode != NULL; cnode = cnode->next)
 	{
-		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(cnode))
+		if (purple_blist_node_get_dont_save(cnode))
 			continue;
 		if (PURPLE_IS_CONTACT(cnode))
 		{
-			child = contact_to_xmlnode(cnode);
+			child = contact_to_xmlnode(PURPLE_CONTACT(cnode));
 			xmlnode_insert_child(node, child);
 		}
 		else if (PURPLE_IS_CHAT(cnode))
 		{
-			child = chat_to_xmlnode(cnode);
+			child = chat_to_xmlnode(PURPLE_CHAT(cnode));
 			xmlnode_insert_child(node, child);
 		}
 	}
@@ -341,11 +345,11 @@ blist_to_xmlnode(void)
 	child = xmlnode_new_child(node, "blist");
 	for (gnode = purplebuddylist->root; gnode != NULL; gnode = gnode->next)
 	{
-		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(gnode))
+		if (purple_blist_node_get_dont_save(gnode))
 			continue;
 		if (PURPLE_IS_GROUP(gnode))
 		{
-			grandchild = group_to_xmlnode(gnode);
+			grandchild = group_to_xmlnode(PURPLE_GROUP(gnode));
 			xmlnode_insert_child(child, grandchild);
 		}
 	}
@@ -669,7 +673,7 @@ purple_blist_boot(void)
 {
 	PurpleBListUiOps *ui_ops;
 	GList *account;
-	PurpleBuddyList *gbl = g_object_new(PurpleBuddyList, 1);
+	PurpleBuddyList *gbl = g_new0(PurpleBuddyList, 1);
 	PURPLE_DBUS_REGISTER_POINTER(gbl, PurpleBuddyList);
 
 	ui_ops = purple_blist_get_ui_ops();
@@ -749,16 +753,6 @@ void purple_blist_show()
 		ops->show(purplebuddylist);
 }
 
-void purple_blist_destroy()
-{
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-
-	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
-
-	if (ops && ops->destroy)
-		ops->destroy(purplebuddylist);
-}
-
 void purple_blist_set_visible(gboolean show)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
@@ -777,7 +771,7 @@ void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 	g_return_if_fail(buddy != NULL);
 
 	account = purple_buddy_get_account(buddy);
-	name = purple_buddy_get_name(buddy);
+	name = (gchar *)purple_buddy_get_name(buddy);
 
 	hb = g_new(struct _purple_hbuddy, 1);
 	hb->name = (gchar *)purple_normalize(account, name);
@@ -887,10 +881,12 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 		}
 	}
 
-	if (ops && ops->save_node)
-		ops->save_node(cnode);
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(cnode));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node(cnode);
+		if (ops->update)
+			ops->update(purplebuddylist, PURPLE_BLIST_NODE(cnode));
+	}
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
 			cnode);
@@ -987,7 +983,9 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			purple_blist_remove_contact((PurpleContact*)bnode->parent);
 		} else {
 			purple_contact_invalidate_priority_buddy((PurpleContact*)bnode->parent);
-			purple_blist_node_update(bnode->parent);
+
+			if (ops && ops->update)
+				ops->update(purplebuddylist, bnode->parent);
 		}
 	}
 
@@ -1040,10 +1038,12 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 
-	if (ops && ops->save_node)
-		ops->save_node((PurpleBListNode*) buddy);
-
-	purple_blist_node_update(PURPLE_BLIST_NODE(buddy));
+	if (ops) {
+		if (ops->save_node)
+			ops->save_node((PurpleBListNode*) buddy);
+		if (ops->update)
+			ops->update(purplebuddylist, PURPLE_BLIST_NODE(buddy));
+	}
 
 	/* Signal that the buddy has been added */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-added", buddy);
@@ -1360,7 +1360,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 		if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
 			purple_counting_node_change_online_count(contact_counter, -1);
 			if (purple_counting_node_get_online_count(contact_counter) == 0)
-				purple_group_set_online_count(group_counter, -1);
+				purple_counting_node_set_online_count(group_counter, -1);
 		}
 		if (purple_account_is_connected(account)) {
 			purple_counting_node_change_current_size(contact_counter, -1);
@@ -1372,7 +1372,9 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 		/* Re-sort the contact */
 		if (cnode->child && purple_contact_get_priority_buddy(contact) == buddy) {
 			purple_contact_invalidate_priority_buddy(contact);
-			purple_blist_node_update(cnode);
+
+			if (ops && ops->update)
+				ops->update(purplebuddylist, cnode);
 		}
 	}
 
@@ -1768,7 +1770,9 @@ void purple_blist_remove_account(PurpleAccount *account)
 				}
 				if (recompute) {
 					purple_contact_invalidate_priority_buddy(contact);
-					purple_blist_node_update(cnode);
+
+					if (ops && ops->update)
+						ops->update(purplebuddylist, cnode);
 				}
 			} else if (PURPLE_IS_CHAT(cnode)) {
 				chat = PURPLE_CHAT(cnode);
@@ -1973,9 +1977,35 @@ purple_blist_init(void)
 			NULL);
 }
 
+static void
+blist_node_destroy(PurpleBListNode *node)
+{
+	PurpleBListUiOps *ui_ops;
+	PurpleBListNode *child, *next_child;
+
+	ui_ops = purple_blist_get_ui_ops();
+	child = node->child;
+	while (child) {
+		next_child = child->next;
+		blist_node_destroy(child);
+		child = next_child;
+	}
+
+	/* Allow the UI to free data */
+	node->parent = NULL;
+	node->child  = NULL;
+	node->next   = NULL;
+	node->prev   = NULL;
+	if (ui_ops && ui_ops->remove)
+		ui_ops->remove(purplebuddylist, node);
+
+	g_object_unref(node);
+}
+
 void
 purple_blist_uninit(void)
 {
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBListNode *node, *next_node;
 
 	/* This happens if we quit before purple_set_blist is called. */
@@ -1988,17 +2018,20 @@ purple_blist_uninit(void)
 		purple_blist_sync();
 	}
 
-	purple_blist_destroy();
+	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
+
+	if (ops && ops->destroy)
+		ops->destroy(purplebuddylist);
 
 	node = purple_blist_get_root();
 	while (node) {
 		next_node = node->next;
-		purple_blist_node_destroy(node); /* TODO replace by a loop, see original blist_destroy */
+		blist_node_destroy(node);
 		node = next_node;
 	}
 	purplebuddylist->root = NULL;
 
-	g_hash_table_destroy(PURPLE_BUDDY_LIST_GET_PRIVAT(purplebuddylist)->buddies);
+	g_hash_table_destroy(purplebuddylist->buddies);
 	g_hash_table_destroy(buddies_cache);
 	g_hash_table_destroy(groups_cache);
 

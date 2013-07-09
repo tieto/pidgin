@@ -174,6 +174,16 @@ purple_blist_node_get_dont_save(PurpleBListNode *node)
 	return priv->dont_save;
 }
 
+GHashTable *
+purple_blist_node_get_settings(PurpleBListNode *node)
+{
+	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->settings;
+}
+
 gboolean
 purple_blist_node_has_setting(PurpleBListNode* node, const char *key)
 {
@@ -323,17 +333,6 @@ purple_blist_node_get_extended_menu(PurpleBListNode *n)
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-extended-menu",
 			n, &menu);
 	return menu;
-}
-
-void
-purple_blist_node_update(PurpleBListNode *node)
-{
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
-
-	g_return_if_fail(node != NULL);
-
-	if (ops && ops->update)
-		ops->update(purple_blist_get_buddy_list(), node);
 }
 
 static void
