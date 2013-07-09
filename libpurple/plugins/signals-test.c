@@ -183,10 +183,10 @@ blist_node_removed_cb(PurpleBListNode *bnode, void *data)
 static void
 blist_node_aliased(PurpleBListNode *node, const char *old_alias)
 {
-	PurpleContact *p = (PurpleContact *)node;
-	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleChat *c = (PurpleChat *)node;
-	PurpleGroup *g = (PurpleGroup *)node;
+	PurpleContact *p = PURPLE_CONTACT(node);
+	PurpleBuddy *b = PURPLE_BUDDY(node);
+	PurpleChat *c = PURPLE_CHAT(node);
+	PurpleGroup *g = PURPLE_GROUP(node);
 
 	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",
@@ -210,10 +210,10 @@ blist_node_aliased(PurpleBListNode *node, const char *old_alias)
 static void
 blist_node_extended_menu_cb(PurpleBListNode *node, void *data)
 {
-	PurpleContact *p = (PurpleContact *)node;
-	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleChat *c = (PurpleChat *)node;
-	PurpleGroup *g = (PurpleGroup *)node;
+	PurpleContact *p = PURPLE_CONTACT(node);
+	PurpleBuddy *b = PURPLE_BUDDY(node);
+	PurpleChat *c = PURPLE_CHAT(node);
+	PurpleGroup *g = PURPLE_GROUP(node);
 
 	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",

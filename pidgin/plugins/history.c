@@ -71,7 +71,7 @@ static void historize(PurpleConversation *c)
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)
-			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
+			alias = purple_buddy_get_contact_alias(PURPLE_BUDDY(buddies->data));
 
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
@@ -84,7 +84,7 @@ static void historize(PurpleConversation *c)
 				PurpleBListNode *parent = purple_blist_node_get_parent(node);
 				PurpleBListNode *child = purple_blist_node_get_first_child(parent);
 
-				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
+				alias = purple_buddy_get_contact_alias(PURPLE_BUDDY(node));
 
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
@@ -92,8 +92,8 @@ static void historize(PurpleConversation *c)
 				for (node2 = child ; node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2))
 				{
 					logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM,
-							purple_buddy_get_name((PurpleBuddy *)node2),
-							purple_buddy_get_account((PurpleBuddy *)node2)),
+							purple_buddy_get_name(PURPLE_BUDDY(node2)),
+							purple_buddy_get_account(PURPLE_BUDDY(node2))),
 							logs);
 				}
 				break;

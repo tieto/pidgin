@@ -439,10 +439,10 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			return TCL_ERROR;
 		if (PURPLE_IS_CHAT(node))
 			Tcl_SetObjResult(interp,
-					 Tcl_NewStringObj(purple_chat_get_name((PurpleChat *)node), -1));
+					 Tcl_NewStringObj(purple_chat_get_name(PURPLE_CHAT(node)), -1));
 		else if (PURPLE_IS_BUDDY(node))
 			Tcl_SetObjResult(interp,
-                                         Tcl_NewStringObj((char *)purple_buddy_get_alias((PurpleBuddy *)node), -1));
+                                         Tcl_NewStringObj((char *)purple_buddy_get_alias(PURPLE_BUDDY(node)), -1));
 		return TCL_OK;
 		break;
 	case CMD_BUDDY_HANDLE:
@@ -497,7 +497,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			tclgroup = Tcl_NewListObj(0, NULL);
 			Tcl_ListObjAppendElement(interp, tclgroup, Tcl_NewStringObj("group", -1));
 			Tcl_ListObjAppendElement(interp, tclgroup,
-						 Tcl_NewStringObj(purple_group_get_name((PurpleGroup *)gnode), -1));
+						 Tcl_NewStringObj(purple_group_get_name(PURPLE_GROUP(gnode)), -1));
 			tclgrouplist = Tcl_NewListObj(0, NULL);
 			for (node = purple_blist_node_get_first_child(gnode); node != NULL; node = purple_blist_node_get_sibling_next(node)) {
 				PurpleAccount *account;
@@ -512,7 +512,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					for (bnode = purple_blist_node_get_first_child(node); bnode != NULL; bnode = purple_blist_node_get_sibling_next(bnode)) {
 						if (!PURPLE_IS_BUDDY(bnode))
 							continue;
-						bud = (PurpleBuddy *)bnode;
+						bud = PURPLE_BUDDY(bnode);
 						account = purple_buddy_get_account(bud);
 						if (!all && !purple_account_is_connected(account))
 							continue;
@@ -530,7 +530,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_DecrRefCount(tclcontact);
 					Tcl_DecrRefCount(tclcontactlist);
 				} else if (PURPLE_IS_CHAT(node)) {
-					cnode = (PurpleChat *)node;
+					cnode = PURPLE_CHAT(node);
 					account = purple_chat_get_account(cnode);
 					if (!all && !purple_account_is_connected(account))
 						continue;

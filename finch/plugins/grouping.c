@@ -92,12 +92,12 @@ static gboolean on_offline_init()
 static gboolean on_offline_can_add_node(PurpleBListNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
-		PurpleContact *contact = (PurpleContact*)node;
+		PurpleContact *contact = PURPLE_CONTACT(node);
 		if (purple_counting_node_get_current_size(PURPLE_COUNTING_NODE(contact)) > 0)
 			return TRUE;
 		return FALSE;
 	} else if (PURPLE_IS_BUDDY(node)) {
-		PurpleBuddy *buddy = (PurpleBuddy*)node;
+		PurpleBuddy *buddy = PURPLE_BUDDY(node);
 		if (PURPLE_IS_BUDDY_ONLINE(buddy))
 			return TRUE;
 		if (purple_prefs_get_bool("/finch/blist/showoffline") &&
@@ -105,7 +105,7 @@ static gboolean on_offline_can_add_node(PurpleBListNode *node)
 			return TRUE;
 		return FALSE;
 	} else if (PURPLE_IS_CHAT(node)) {
-		PurpleChat *chat = (PurpleChat*)node;
+		PurpleChat *chat = PURPLE_CHAT(node);
 		return purple_account_is_connected(purple_chat_get_account(chat));
 	}
 
@@ -118,7 +118,7 @@ static gpointer on_offline_find_parent(PurpleBListNode *node)
 
 	if (PURPLE_IS_CONTACT(node)) {
 		node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
-		ret = PURPLE_IS_BUDDY_ONLINE((PurpleBuddy*)node) ? online : offline;
+		ret = PURPLE_IS_BUDDY_ONLINE(PURPLE_BUDDY(node)) ? online : offline;
 	} else if (PURPLE_IS_BUDDY(node)) {
 		ret = purple_blist_node_get_parent(node);
 		finch_blist_manager_add_node(ret);
@@ -175,7 +175,7 @@ static gboolean meebo_init()
 static gpointer meebo_find_parent(PurpleBListNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
-		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
+		PurpleBuddy *buddy = purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
 		if (buddy && !PURPLE_IS_BUDDY_ONLINE(buddy)) {
 			return &meebo;
 		}
@@ -274,7 +274,7 @@ nested_group_find_parent(PurpleBListNode *node)
 	if (!PURPLE_IS_GROUP(node))
 		return default_manager->find_parent(node);
 
-	group = (PurpleGroup *)node;
+	group = PURPLE_GROUP(node);
 	name = g_strdup(purple_group_get_name(group));
 	if (!(sep = strchr(name, '/'))) {
 		g_free(name);
@@ -327,13 +327,13 @@ nested_group_can_add_node(PurpleBListNode *node)
 	if (default_manager->can_add_node(node))
 		return TRUE;
 
-	len = strlen(purple_group_get_name((PurpleGroup*)node));
+	len = strlen(purple_group_get_name(PURPLE_GROUP(node)));
 	group = purple_blist_get_root();
 	for (; group; group = purple_blist_node_get_sibling_next(group)) {
 		if (group == node)
 			continue;
-		if (strncmp(purple_group_get_name((PurpleGroup *)node),
-					purple_group_get_name((PurpleGroup *)group), len) == 0 &&
+		if (strncmp(purple_group_get_name(PURPLE_GROUP(node)),
+					purple_group_get_name(PURPLE_GROUP(group)), len) == 0 &&
 				default_manager->can_add_node(group))
 			return TRUE;
 	}

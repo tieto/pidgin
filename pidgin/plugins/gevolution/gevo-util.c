@@ -80,7 +80,7 @@ gevo_get_groups(void)
 		{
 			if (PURPLE_IS_GROUP(gnode))
 			{
-				g = (PurpleGroup *)gnode;
+				g = PURPLE_GROUP(gnode);
 				list = g_list_append(list, g->name);
 			}
 		}
