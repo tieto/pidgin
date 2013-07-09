@@ -538,10 +538,10 @@ purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 
 	switch (param_id) {
 		case BUDDY_PROP_NAME:
-			purple_buddy_set_name(buddy, g_value_get_string(value));
+			priv->name = purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case BUDDY_PROP_LOCAL_ALIAS:
-			purple_buddy_set_local_alias(buddy, g_value_get_string(value));
+			priv->local_alias = purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case BUDDY_PROP_SERVER_ALIAS:
 			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
@@ -1217,7 +1217,7 @@ purple_chat_set_property(GObject *obj, guint param_id, const GValue *value,
 
 	switch (param_id) {
 		case CHAT_PROP_ALIAS:
-			purple_chat_set_alias(chat, g_value_get_string(value));
+			priv->alias = purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case CHAT_PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
@@ -1571,11 +1571,11 @@ static void
 purple_group_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
-	PurpleGroup *group = PURPLE_GROUP(obj);
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(obj);
 
 	switch (param_id) {
 		case GROUP_PROP_NAME:
-			purple_group_set_name(group, g_value_get_string(value));
+			priv->name = purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
