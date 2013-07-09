@@ -46,7 +46,7 @@
 
 #include <accounts.h>
 #include <accountopt.h>
-#include <blist.h>
+#include <buddylist.h>
 #include <buddyicon.h>
 #include <certificate.h>
 #include <cipher.h>
