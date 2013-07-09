@@ -298,6 +298,10 @@ const char *
 purple_chat_get_name(chat)
 	Purple::BuddyList::Chat chat
 
+const char *
+purple_chat_get_name_only(chat)
+	Purple::BuddyList::Chat chat
+
 HV *
 purple_chat_get_components(chat)
 	Purple::BuddyList::Chat chat

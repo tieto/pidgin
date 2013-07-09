@@ -72,15 +72,15 @@ typedef struct
 	GntWidget *tree;
 
 	GntWidget *tooltip;
-	PurpleBListNode *tnode;		/* Who is the tooltip being displayed for? */
-	GList *tagged;          /* A list of tagged blistnodes */
+	PurpleBListNode *tnode;  /* Who is the tooltip being displayed for? */
+	GList *tagged;           /* A list of tagged blistnodes             */
 
 	GntWidget *context;
 	PurpleBListNode *cnode;
 
 	/* XXX: I am KISSing */
-	GntWidget *status;          /* Dropdown with the statuses  */
-	GntWidget *statustext;      /* Status message */
+	GntWidget *status;      /* Dropdown with the statuses  */
+	GntWidget *statustext;  /* Status message              */
 	int typing;
 
 	GntWidget *menu;
@@ -101,8 +101,8 @@ typedef struct
 
 typedef struct
 {
-	gpointer row;                /* the row in the GntTree */
-	guint signed_timer;          /* used when 'recently' signed on/off */
+	gpointer row;        /* the row in the GntTree             */
+	guint signed_timer;  /* used when 'recently' signed on/off */
 } FinchBListNode;
 
 typedef enum
@@ -215,17 +215,13 @@ static gboolean default_can_add_node(PurpleBListNode *node)
 static gpointer default_find_parent(PurpleBListNode *node)
 {
 	gpointer ret = NULL;
-	switch (purple_blist_node_get_type(node)) {
-		case PURPLE_BLIST_BUDDY_NODE:
-		case PURPLE_BLIST_CONTACT_NODE:
-		case PURPLE_BLIST_CHAT_NODE:
-			ret = purple_blist_node_get_parent(node);
-			break;
-		default:
-			break;
-	}
+
+	if (PURPLE_IS_BUDDY(node) || PURPLE_IS_CONTACT(node) || PURPLE_IS_CHAT(node))
+		ret = purple_blist_node_get_parent(node);
+
 	if (ret)
 		add_node(ret, ggblist);
+
 	return ret;
 }
 
@@ -236,8 +232,8 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 	int lastseen = 0;
 	char *title;
 
-	if (!node ||
-			purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE)
+	if (!node || !(PURPLE_IS_BUDDY(node) || PURPLE_IS_CONTACT(node) ||
+	               PURPLE_IS_GROUP(node) || PURPLE_IS_CHAT(node)))
 		return FALSE;
 
 	str = g_string_new("");
@@ -276,8 +272,8 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 		PurpleGroup *group = (PurpleGroup *)node;
 
 		g_string_append_printf(str, _("Online: %d\nTotal: %d"),
-						purple_blist_get_group_online_count(group),
-						purple_blist_get_group_size(group, FALSE));
+				purple_counting_node_get_online_count(PURPLE_COUNTING_NODE(group)),
+				purple_counting_node_get_current_size(PURPLE_COUNTING_NODE(group)));
 
 		title = g_strdup(purple_group_get_name(group));
 	} else if (PURPLE_IS_CHAT(node)) {
@@ -708,16 +704,9 @@ join_chat(PurpleChat *chat)
 	PurpleAccount *account = purple_chat_get_account(chat);
 	const char *name;
 	PurpleChatConversation *conv;
-	const char *alias;
 
-	/* This hack here is to work around the fact that there's no good way of
-	 * getting the actual name of a chat. I don't understand why we return
-	 * the alias for a chat when all we want is the name. */
-	alias = chat->alias;
-	chat->alias = NULL;
-	name = purple_chat_get_name(chat);
+	name = purple_chat_get_name_only(chat);
 	conv = purple_conversations_find_chat_with_account(name, account);
-	chat->alias = (char *)alias;
 
 	if (!conv || purple_chat_conversation_has_left(conv)) {
 		serv_join_chat(purple_account_get_connection(account),
@@ -1512,7 +1501,7 @@ finch_blist_remove_node_cb(PurpleBListNode *selected, PurpleBListNode *node)
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleContact *c = (PurpleContact*)node;
 		name = purple_contact_get_alias(c);
-		if (purple_contact_get_contact_size(c, TRUE) > 1)
+		if (purple_counting_node_get_total_size(PURPLE_COUNTING_NODE(c)) > 1)
 			sec = _("Removing this contact will also remove all the buddies in the contact");
 	} else if (PURPLE_IS_BUDDY(node)) {
 		name = purple_buddy_get_name((PurpleBuddy*)node);
@@ -1564,8 +1553,8 @@ finch_blist_place_tagged(PurpleBListNode *target)
 	PurpleGroup *tg = NULL;
 	PurpleContact *tc = NULL;
 
-	if (target == NULL ||
-			purple_blist_node_get_type(target) == PURPLE_BLIST_OTHER_NODE)
+	if (target == NULL || !(PURPLE_IS_BUDDY(target) || PURPLE_IS_CONTACT(target) ||
+	                        PURPLE_IS_GROUP(target) || PURPLE_IS_CHAT(target)))
 		return;
 
 	if (PURPLE_IS_GROUP(target))
@@ -1649,7 +1638,8 @@ draw_context_menu(FinchBList *ggblist)
 	tree = GNT_TREE(ggblist->tree);
 
 	node = gnt_tree_get_selection_data(tree);
-	if (node && purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE)
+	if (node && !(PURPLE_IS_BUDDY(node) || PURPLE_IS_CONTACT(node) ||
+	              PURPLE_IS_GROUP(node) || PURPLE_IS_CHAT(node)))
 		return;
 
 	if (ggblist->tooltip)
@@ -2355,25 +2345,20 @@ blist_node_compare_text(PurpleBListNode *n1, PurpleBListNode *n2)
 	char *us1, *us2;
 	int ret;
 
-	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
+	if (G_OBJECT_TYPE(n1) != G_OBJECT_TYPE(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (purple_blist_node_get_type(n1))
-	{
-		case PURPLE_BLIST_CHAT_NODE:
-			s1 = purple_chat_get_name((PurpleChat*)n1);
-			s2 = purple_chat_get_name((PurpleChat*)n2);
-			break;
-		case PURPLE_BLIST_BUDDY_NODE:
-			return purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
-					purple_buddy_get_presence((PurpleBuddy*)n2));
-			break;
-		case PURPLE_BLIST_CONTACT_NODE:
-			s1 = purple_contact_get_alias((PurpleContact*)n1);
-			s2 = purple_contact_get_alias((PurpleContact*)n2);
-			break;
-		default:
-			return blist_node_compare_position(n1, n2);
+	if (PURPLE_IS_CHAT(n1)) {
+		s1 = purple_chat_get_name((PurpleChat*)n1);
+		s2 = purple_chat_get_name((PurpleChat*)n2);
+	} else if (PURPLE_IS_BUDDY(n1)) {
+		return purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
+				purple_buddy_get_presence((PurpleBuddy*)n2));
+	} else if (PURPLE_IS_CONTACT(n1)) {
+		s1 = purple_contact_get_alias((PurpleContact*)n1);
+		s2 = purple_contact_get_alias((PurpleContact*)n2);
+	} else {
+		return blist_node_compare_position(n1, n2);
 	}
 
 	us1 = g_utf8_strup(s1, -1);
@@ -2390,23 +2375,21 @@ blist_node_compare_status(PurpleBListNode *n1, PurpleBListNode *n2)
 {
 	int ret;
 
-	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
+	if (G_OBJECT_TYPE(n1) != G_OBJECT_TYPE(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (purple_blist_node_get_type(n1)) {
-		case PURPLE_BLIST_CONTACT_NODE:
-			n1 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n1)));
-			n2 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n2)));
-			/* now compare the presence of the priority buddies */
-		case PURPLE_BLIST_BUDDY_NODE:
-			ret = purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
-					purple_buddy_get_presence((PurpleBuddy*)n2));
-			if (ret != 0)
-				return ret;
-			break;
-		default:
-			return blist_node_compare_position(n1, n2);
-			break;
+	if (PURPLE_IS_CONTACT(n1) || PURPLE_IS_BUDDY(n1)) {
+		n1 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n1)));
+		n2 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n2)));
+	}
+
+	if (PURPLE_IS_BUDDY(n1)) {
+		ret = purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
+				purple_buddy_get_presence((PurpleBuddy*)n2));
+		if (ret != 0)
+			return ret;
+	} else {
+		return blist_node_compare_position(n1, n2);
 	}
 
 	/* Sort alphabetically if presence is not comparable */
@@ -2436,26 +2419,24 @@ blist_node_compare_log(PurpleBListNode *n1, PurpleBListNode *n2)
 	int ret;
 	PurpleBuddy *b1, *b2;
 
-	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
+	if (G_OBJECT_TYPE(n1) != G_OBJECT_TYPE(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (purple_blist_node_get_type(n1)) {
-		case PURPLE_BLIST_BUDDY_NODE:
-			b1 = (PurpleBuddy*)n1;
-			b2 = (PurpleBuddy*)n2;
-			ret = purple_log_get_total_size(PURPLE_LOG_IM, purple_buddy_get_name(b2), purple_buddy_get_account(b2)) -
-					purple_log_get_total_size(PURPLE_LOG_IM, purple_buddy_get_name(b1), purple_buddy_get_account(b1));
-			if (ret != 0)
-				return ret;
-			break;
-		case PURPLE_BLIST_CONTACT_NODE:
-			ret = get_contact_log_size(n2) - get_contact_log_size(n1);
-			if (ret != 0)
-				return ret;
-			break;
-		default:
-			return blist_node_compare_position(n1, n2);
+	if (PURPLE_IS_BUDDY(n1)) {
+		b1 = (PurpleBuddy*)n1;
+		b2 = (PurpleBuddy*)n2;
+		ret = purple_log_get_total_size(PURPLE_LOG_IM, purple_buddy_get_name(b2), purple_buddy_get_account(b2)) -
+				purple_log_get_total_size(PURPLE_LOG_IM, purple_buddy_get_name(b1), purple_buddy_get_account(b1));
+		if (ret != 0)
+			return ret;
+	} else if (PURPLE_IS_CONTACT(n1)) {
+		ret = get_contact_log_size(n2) - get_contact_log_size(n1);
+		if (ret != 0)
+			return ret;
+	} else {
+		return blist_node_compare_position(n1, n2);
 	}
+
 	ret = blist_node_compare_text(n1, n2);
 	return ret;
 }

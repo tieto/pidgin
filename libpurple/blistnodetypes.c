@@ -1097,15 +1097,24 @@ purple_contact_new(void)
 
 const char *purple_chat_get_name(PurpleChat *chat)
 {
-	char *ret = NULL;
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	if ((priv->alias != NULL) && (*priv->alias != '\0'))
 		return priv->alias;
+
+	return purple_chat_get_name_only(chat);
+}
+
+const char *purple_chat_get_name_only(PurpleChat *chat)
+{
+	char *ret = NULL;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
+
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);

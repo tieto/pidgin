@@ -501,6 +501,14 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 const char *purple_chat_get_name(PurpleChat *chat);
 
 /**
+ * Returns the name of the chat
+ *
+ * @param chat   The chat whose name will be returned.
+ * @return       The first component value.
+ */
+const char *purple_chat_get_name_only(PurpleChat *chat);
+
+/**
  * Sets the alias for a blist chat.
  *
  * @param chat   The chat
