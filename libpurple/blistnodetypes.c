@@ -601,17 +601,24 @@ purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_buddy_init(GTypeInstance *instance, gpointer klass)
 {
-	PurpleBuddy *buddy = PURPLE_BUDDY(instance);
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_BUDDY(instance), PurpleBuddy);
+}
+
+/* Called when done constructing */
+static void
+purple_buddy_constructed(GObject *object)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
 
 	priv->presence = purple_presence_new_for_buddy(buddy);
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBListNode *)buddy);
-
-	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
 }
 
 /* GObject dispose function */
@@ -669,6 +676,7 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 	/* Setup properties */
 	obj_class->get_property = purple_buddy_get_property;
 	obj_class->set_property = purple_buddy_set_property;
+	obj_class->constructed = purple_buddy_constructed;
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_NAME,
 			g_param_spec_string(BUDDY_PROP_NAME_S, _("Name"),
@@ -1259,13 +1267,20 @@ purple_chat_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_chat_init(GTypeInstance *instance, gpointer klass)
 {
-	PurpleChat *chat = PURPLE_CHAT(instance);
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CHAT(instance), PurpleChat);
+}
+
+/* Called when done constructing */
+static void
+purple_chat_constructed(GObject *object)
+{
+	PurpleChat *chat = PURPLE_CHAT(object);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
 
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node(PURPLE_BLIST_NODE(chat));
-
-	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
 }
 
 /* GObject dispose function */
@@ -1302,6 +1317,7 @@ static void purple_chat_class_init(PurpleChatClass *klass)
 	/* Setup properties */
 	obj_class->get_property = purple_chat_get_property;
 	obj_class->set_property = purple_chat_set_property;
+	obj_class->constructed = purple_chat_constructed;
 
 	g_object_class_install_property(obj_class, CHAT_PROP_ALIAS,
 			g_param_spec_string(CHAT_PROP_ALIAS_S, _("Alias"),
@@ -1604,13 +1620,20 @@ purple_group_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_group_init(GTypeInstance *instance, gpointer klass)
 {
-	PurpleGroup *group = PURPLE_GROUP(instance);
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_GROUP(instance), PurpleGroup);
+}
+
+/* Called when done constructing */
+static void
+purple_group_constructed(GObject *object)
+{
+	PurpleGroup *group = PURPLE_GROUP(object);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	G_OBJECT_CLASS(counting_parent_class)->constructed(object);
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(group));
-
-	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
 }
 
 /* GObject dispose function */
@@ -1640,6 +1663,7 @@ static void purple_group_class_init(PurpleGroupClass *klass)
 
 	obj_class->dispose = purple_group_dispose;
 	obj_class->finalize = purple_group_finalize;
+	obj_class->constructed = purple_group_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_group_get_property;
