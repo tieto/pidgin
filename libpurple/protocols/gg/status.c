@@ -403,7 +403,7 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	const char *descr)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	PurpleBuddy *buddy = purple_blist_find_buddy(account, ggp_uin_to_str(uin));
 	const gchar *purple_status = ggp_status_to_purplestatus(status);
 	gchar *status_message = NULL;
 	gboolean is_own;

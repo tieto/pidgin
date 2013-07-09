@@ -75,7 +75,7 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 {
 	char *status = NULL;
 
-	if (!gc || !name || !f || !purple_find_buddy(purple_connection_get_account(gc), name))
+	if (!gc || !name || !f || !purple_blist_find_buddy(purple_connection_get_account(gc), name))
 		return;
 
 	switch (f->status) {
@@ -338,7 +338,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (!name)
 				break;
 
-			b = purple_find_buddy(purple_connection_get_account(gc), name);
+			b = purple_blist_find_buddy(purple_connection_get_account(gc), name);
 
 			if (!cksum || (cksum == -1)) {
 				if (f)
@@ -408,7 +408,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	if (g_hash_table_lookup_extended(ht, name, (gpointer *)&oname, (gpointer *)&list))
 		g_hash_table_steal(ht, oname);
 	else
-		list = purple_find_buddies(account, name);
+		list = purple_blist_find_buddies(account, name);
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
@@ -425,7 +425,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	if (!onlist) {
 		purple_debug_misc("yahoo",
 			"Uhoh, %s isn't on the list (or not in this group), adding him to group %s.\n", name, group);
-		if (!(g = purple_find_group(group))) {
+		if (!(g = purple_blist_find_group(group))) {
 			g = purple_group_new(group);
 			purple_blist_add_group(g, NULL);
 		}
@@ -548,10 +548,10 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				if (yd->current_list15_grp) {
 					/* This buddy is in a group */
 					f = yahoo_friend_find_or_new(gc, norm_bud);
-					if (!purple_find_buddy(account, norm_bud)) {
+					if (!purple_blist_find_buddy(account, norm_bud)) {
 						PurpleBuddy *b;
 						PurpleGroup *g;
-						if (!(g = purple_find_group(yd->current_list15_grp))) {
+						if (!(g = purple_blist_find_group(yd->current_list15_grp))) {
 							g = purple_group_new(yd->current_list15_grp);
 							purple_blist_add_group(g, NULL);
 						}
@@ -703,10 +703,10 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 				norm_bud = g_strdup(purple_normalize(account, *bud));
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 
-				if (!purple_find_buddy(account, norm_bud)) {
+				if (!purple_blist_find_buddy(account, norm_bud)) {
 					PurpleBuddy *b;
 					PurpleGroup *g;
-					if (!(g = purple_find_group(grp))) {
+					if (!(g = purple_blist_find_group(grp))) {
 						g = purple_group_new(grp);
 						purple_blist_add_group(g, NULL);
 					}
@@ -850,7 +850,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			g_free(fed_from);
 
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		PurpleBuddy *bud = purple_find_buddy(account, from);
+		PurpleBuddy *bud = purple_blist_find_buddy(account, from);
 
 		if (!bud) {
 			purple_debug_warning("yahoo",
@@ -1432,7 +1432,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			 */
 			 purple_account_request_authorization(account, add_req->who, add_req->id,
 					alias, dec_msg,
-					purple_find_buddy(account, add_req->who) != NULL,
+					purple_blist_find_buddy(account, add_req->who) != NULL,
 					yahoo_buddy_add_authorize_cb,
 					yahoo_buddy_add_deny_cb,
 					add_req);
@@ -1497,7 +1497,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		 */
 		 purple_account_request_authorization(account, add_req->who, add_req->id,
 				NULL, dec_msg,
-				purple_find_buddy(account,add_req->who) != NULL,
+				purple_blist_find_buddy(account,add_req->who) != NULL,
 						yahoo_buddy_add_authorize_cb,
 						yahoo_buddy_add_deny_cb, add_req);
 		g_free(dec_msg);
@@ -2121,7 +2121,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 							  who, (ignore ? "ignoring" : "unignoring"));
 
 			if (ignore) {
-				b = purple_find_buddy(purple_connection_get_account(gc), who);
+				b = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 											   "user is on your buddy list.  Clicking \"Yes\" "
 											   "will remove and ignore the buddy."), who);
@@ -4963,7 +4963,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 	fed = f->fed;
 
 	gname = purple_group_get_name(group);
-	buddies = purple_find_buddies(purple_connection_get_account(gc), bname);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(gc), bname);
 	for (l = buddies; l; l = l->next) {
 		g = purple_buddy_get_group(l->data);
 		if (purple_utf8_strcasecmp(gname, purple_group_get_name(g))) {

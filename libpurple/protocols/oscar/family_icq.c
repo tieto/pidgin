@@ -424,7 +424,7 @@ gotalias(OscarData *od, struct aim_icq_info *info)
 			gchar who[16];
 			g_snprintf(who, sizeof(who), "%u", info->uin);
 			serv_got_alias(gc, who, utf8);
-			if ((b = purple_find_buddy(account, who))) {
+			if ((b = purple_blist_find_buddy(account, who))) {
 				purple_blist_node_set_string((PurpleBListNode*)b, "servernick", utf8);
 			}
 		}
@@ -624,7 +624,7 @@ icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 				PurpleStatus *status;
 
 				account = purple_connection_get_account(od->gc);
-				buddy = purple_find_buddy(account, uin);
+				buddy = purple_blist_find_buddy(account, uin);
 				presence = purple_buddy_get_presence(buddy);
 				status = purple_presence_get_active_status(presence);
 

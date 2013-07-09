@@ -776,9 +776,9 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
 
-			if ((b = purple_find_buddy(purple_connection_get_account(gc), user)) == NULL) {
+			if ((b = purple_blist_find_buddy(purple_connection_get_account(gc), user)) == NULL) {
 				char* stripped_user = zephyr_strip_local_realm(zephyr,user);
-				b = purple_find_buddy(purple_connection_get_account(gc),stripped_user);
+				b = purple_blist_find_buddy(purple_connection_get_account(gc),stripped_user);
 				g_free(stripped_user);
 			}
 
@@ -1155,9 +1155,9 @@ static gint check_notify_tzc(gpointer data)
 				gchar *locval;
 				user = tree_child(find_node(newparsetree,"user"),2)->contents;
 
-				if ((b = purple_find_buddy(purple_connection_get_account(gc), user)) == NULL) {
+				if ((b = purple_blist_find_buddy(purple_connection_get_account(gc), user)) == NULL) {
 					gchar *stripped_user = zephyr_strip_local_realm(zephyr,user);
-					b = purple_find_buddy(purple_connection_get_account(gc), stripped_user);
+					b = purple_blist_find_buddy(purple_connection_get_account(gc), stripped_user);
 					g_free(stripped_user);
 				}
 				locations = find_node(newparsetree,"locations");
@@ -1269,7 +1269,7 @@ static gint check_loc(gpointer data)
 	int numlocs;
 	int one = 1;
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *b = buddies->data;
 		char *chk;
@@ -1304,7 +1304,7 @@ static gint check_loc(gpointer data)
 		ald.version = NULL;
 	}
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *b = buddies->data;
 
@@ -1511,7 +1511,7 @@ static void process_anyone(PurpleConnection *gc)
 	PurpleGroup *g;
 	PurpleBuddy *b;
 
-	if (!(g = purple_find_group(_("Anyone")))) {
+	if (!(g = purple_blist_find_group(_("Anyone")))) {
 		g = purple_group_new(_("Anyone"));
 		purple_blist_add_group(g, NULL);
 	}
@@ -1521,10 +1521,10 @@ static void process_anyone(PurpleConnection *gc)
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
-				if (!purple_find_buddy(purple_connection_get_account(gc), buff)) {
+				if (!purple_blist_find_buddy(purple_connection_get_account(gc), buff)) {
 					char *stripped_user = zephyr_strip_local_realm(zephyr,buff);
 					purple_debug_info("zephyr","stripped_user %s\n",stripped_user);
-					if (!purple_find_buddy(purple_connection_get_account(gc),stripped_user)) {
+					if (!purple_blist_find_buddy(purple_connection_get_account(gc),stripped_user)) {
 						b = purple_buddy_new(purple_connection_get_account(gc), stripped_user, NULL);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
@@ -1951,7 +1951,7 @@ static void write_anyone(zephyr_account *zephyr)
 	}
 
 	account = zephyr->account;
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *b = buddies->data;
 		gchar *stripped_user = zephyr_strip_local_realm(zephyr, purple_buddy_get_name(b));

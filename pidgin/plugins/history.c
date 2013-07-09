@@ -67,7 +67,7 @@ static void historize(PurpleConversation *c)
 			return;
 
 		/* Find buddies for this conversation. */
-		buddies = purple_find_buddies(account, name);
+		buddies = purple_blist_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)

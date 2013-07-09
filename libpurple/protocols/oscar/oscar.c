@@ -1335,7 +1335,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->bn != NULL, 1);
 
-	buddy = purple_find_buddy(account, info->bn);
+	buddy = purple_blist_find_buddy(account, info->bn);
 	if (buddy) {
 		previous_status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
 	}
@@ -1464,7 +1464,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		PurpleBuddy *b = NULL;
 
 		b16 = purple_base16_encode(info->iconcsum, info->iconcsumlen);
-		b = purple_find_buddy(account, info->bn);
+		b = purple_blist_find_buddy(account, info->bn);
 		if (b != NULL)
 			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
@@ -3280,7 +3280,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			                        "You must be Direct Connected to send IM Images."),
 			                        PURPLE_MESSAGE_ERROR, time(NULL));
 
-		buddy = purple_find_buddy(account, name);
+		buddy = purple_blist_find_buddy(account, name);
 
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 		if (!bi) {
@@ -3870,7 +3870,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Buddies */
 	cur = NULL;
-	for (buddies = purple_find_buddies(account, NULL);
+	for (buddies = purple_blist_find_buddies(account, NULL);
 			buddies;
 			buddies = g_slist_delete_link(buddies, buddies))
 	{
@@ -3972,7 +3972,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					gname = groupitem ? groupitem->name : NULL;
 					gname_utf8 = oscar_utf8_try_convert(account, od, gname);
 
-					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Buddies"));
+					g = purple_blist_find_group(gname_utf8 ? gname_utf8 : _("Buddies"));
 					if (g == NULL) {
 						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Buddies"));
 						purple_blist_add_group(g, NULL);
@@ -3981,10 +3981,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					alias = aim_ssi_getalias_from_item(curitem);
 					alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 
-					b = purple_find_buddy_in_group(account, curitem->name, g);
+					b = purple_blist_find_buddy_in_group(account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
-						purple_blist_alias_buddy(b, alias_utf8);
+						purple_buddy_set_local_alias(b, alias_utf8);
 					} else {
 						b = purple_buddy_new(account, curitem->name, alias_utf8);
 
@@ -4010,7 +4010,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			} break;
 
 			case AIM_SSI_TYPE_GROUP: { /* Group */
-				if (curitem->name != NULL && purple_find_group(curitem->name) == NULL) {
+				if (curitem->name != NULL && purple_blist_find_group(curitem->name) == NULL) {
 					g = purple_group_new(curitem->name);
 					purple_blist_add_group(g, NULL);
 				}
@@ -4183,14 +4183,14 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 	g_free(alias);
 
-	b = purple_find_buddy(account, name);
+	b = purple_blist_find_buddy(account, name);
 	if (b) {
 		/*
 		 * You're logged in somewhere else and you aliased one
 		 * of your buddies, so update our local buddy list with
 		 * the person's new alias.
 		 */
-		purple_blist_alias_buddy(b, alias_utf8);
+		purple_buddy_set_local_alias(b, alias_utf8);
 	} else if (snac_subtype == 0x0008) {
 		/*
 		 * You're logged in somewhere else and you added a buddy to
@@ -4198,7 +4198,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 */
 		b = purple_buddy_new(account, name, alias_utf8);
 
-		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Buddies")))) {
+		if (!(g = purple_blist_find_group(gname_utf8 ? gname_utf8 : _("Buddies")))) {
 			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Buddies"));
 			purple_blist_add_group(g, NULL);
 		}
@@ -4248,7 +4248,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: %s has given you permission to add him to your buddy list\n", bn);
 
-	buddy = purple_find_buddy(purple_connection_get_account(gc), bn);
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc), bn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", bn, purple_buddy_get_alias_only(buddy));
 	else
@@ -4317,7 +4317,7 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: received authorization reply from %s.  Reply is 0x%04hx\n", bn, reply);
 
-	buddy = purple_find_buddy(purple_connection_get_account(gc), bn);
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc), bn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", bn, purple_buddy_get_alias_only(buddy));
 	else
@@ -4349,7 +4349,7 @@ static int purple_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *f
 	bn = va_arg(ap, char *);
 	va_end(ap);
 
-	buddy = purple_find_buddy(account, bn);
+	buddy = purple_blist_find_buddy(account, bn);
 	purple_debug_info("oscar", "ssi: %s added you to their buddy list\n", bn);
 	purple_account_notify_added(account, bn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL), NULL);
@@ -4840,7 +4840,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 
-	b = purple_find_buddy(account, data->name);
+	b = purple_blist_find_buddy(account, data->name);
 	if (b == NULL) {
 		oscar_free_name_data(data);
 		return;
@@ -5246,7 +5246,7 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 	GSList *buddies, *filtered_buddies, *cur;
 	gchar *text;
 
-	buddies = purple_find_buddies(account, NULL);
+	buddies = purple_blist_find_buddies(account, NULL);
 	filtered_buddies = NULL;
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy;

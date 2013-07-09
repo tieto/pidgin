@@ -78,7 +78,7 @@ static int color_timestamp;
 static PurpleBuddy *
 find_buddy_for_conversation(PurpleConversation *conv)
 {
-	return purple_find_buddy(purple_conversation_get_account(conv),
+	return purple_blist_find_buddy(purple_conversation_get_account(conv),
 			purple_conversation_get_name(conv));
 }
 
@@ -230,7 +230,7 @@ static PurpleIMConversation *
 find_im_with_contact(PurpleAccount *account, const char *name)
 {
 	PurpleBListNode *node;
-	PurpleBuddy *buddy = purple_find_buddy(account, name);
+	PurpleBuddy *buddy = purple_blist_find_buddy(account, name);
 	PurpleIMConversation *im = NULL;
 
 	if (!buddy)
@@ -529,7 +529,7 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 	name = purple_conversation_get_name(conv);
 	account = purple_conversation_get_account(conv);
 
-	buddies = purple_find_buddies(account, name);
+	buddies = purple_blist_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBListNode *node = cur->data;
 		if ((node != NULL) &&
@@ -552,7 +552,7 @@ generate_send_to_menu(FinchConv *ggc)
 	GSList *buds;
 	GList *list = NULL;
 
-	buds = purple_find_buddies(purple_conversation_get_account(ggc->active_conv),
+	buds = purple_blist_find_buddies(purple_conversation_get_account(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv));
 	if (!buds)
 		return;
@@ -1038,7 +1038,7 @@ finch_write_im(PurpleIMConversation *im, const char *who, const char *message,
 	{
 		PurpleBuddy *buddy;
 		who = purple_conversation_get_name(conv);
-		buddy = purple_find_buddy(account, who);
+		buddy = purple_blist_find_buddy(account, who);
 		if (buddy)
 			who = purple_buddy_get_contact_alias(buddy);
 	}

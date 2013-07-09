@@ -282,7 +282,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 
 	if (log->type == PURPLE_LOG_IM)
 	{
-		PurpleBuddy *buddy = purple_find_buddy(log->account, log->name);
+		PurpleBuddy *buddy = purple_blist_find_buddy(log->account, log->name);
 		if (buddy != NULL)
 			name = purple_buddy_get_contact_alias(buddy);
 		else
@@ -720,7 +720,7 @@ void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *a
 	} else {
 		PurpleBuddy *buddy;
 
-		buddy = purple_find_buddy(account, buddyname);
+		buddy = purple_blist_find_buddy(account, buddyname);
 		if (buddy != NULL)
 			name = purple_buddy_get_contact_alias(buddy);
 

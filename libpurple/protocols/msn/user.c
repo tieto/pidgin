@@ -369,7 +369,7 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 
 	purple_debug_info("msn", "User: group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
 
-	g = purple_find_group(group_name);
+	g = purple_blist_find_group(group_name);
 
 	if ((group_id == NULL) && (g == NULL))
 	{
@@ -377,7 +377,7 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 		purple_blist_add_group(g, NULL);
 	}
 
-	b = purple_find_buddy_in_group(account, passport, g);
+	b = purple_blist_find_buddy_in_group(account, passport, g);
 	if (b == NULL)
 	{
 		b = purple_buddy_new(account, passport, NULL);
@@ -393,7 +393,7 @@ msn_user_is_online(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 
-	buddy = purple_find_buddy(account, name);
+	buddy = purple_blist_find_buddy(account, name);
 	return PURPLE_IS_BUDDY_ONLINE(buddy);
 }
 
@@ -530,7 +530,7 @@ buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 
 	account = purple_connection_get_account(gc);
 
-	buddy = purple_find_buddy(account, msn_object_get_creator(obj));
+	buddy = purple_blist_find_buddy(account, msn_object_get_creator(obj));
 	if (buddy == NULL)
 		return FALSE;
 

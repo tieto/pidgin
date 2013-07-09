@@ -644,7 +644,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	if (!logdir || !*logdir)
 		return NULL;
 
-	buddy = purple_find_buddy(account, sn);
+	buddy = purple_blist_find_buddy(account, sn);
 
 	if ((username = g_strdup(purple_account_get_string(
 			account, "log_reader_msn_log_folder", NULL)))) {
@@ -979,7 +979,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				int friendly_name_length = strlen(friendly_name);
 				const char *alias;
 				int alias_length;
-				PurpleBuddy *buddy = purple_find_buddy(log->account, log->name);
+				PurpleBuddy *buddy = purple_blist_find_buddy(log->account, log->name);
 				gboolean from_name_matches;
 				gboolean to_name_matches;
 
@@ -1434,7 +1434,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	}
 
 	/* Load miscellaneous data. */
-	buddy = purple_find_buddy(log->account, log->name);
+	buddy = purple_blist_find_buddy(log->account, log->name);
 
 	escaped = g_markup_escape_text(read, -1);
 	g_free(read);
@@ -1964,7 +1964,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	contents = g_markup_escape_text(utf8_string, -1);
 	g_free(utf8_string);
 
-	buddy = purple_find_buddy(log->account, log->name);
+	buddy = purple_blist_find_buddy(log->account, log->name);
 
 	/* Apply formatting... */
 	formatted = g_string_sized_new(data->length + 2);

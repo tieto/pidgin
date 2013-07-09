@@ -262,7 +262,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *message = NULL;
 
 		account = purple_media_get_account(gntmedia->priv->media);
-		buddy = purple_find_buddy(account, name);
+		buddy = purple_blist_find_buddy(account, name);
 		alias = buddy ? purple_buddy_get_contact_alias(buddy) :	name;
 
 		if (type & PURPLE_MEDIA_AUDIO) {

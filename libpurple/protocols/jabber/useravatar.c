@@ -325,7 +325,7 @@ do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 static void
 update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(js->gc), from);
 	const char *checksum;
 	xmlnode *item, *metadata;
 	if(!buddy)

@@ -780,7 +780,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 	account = swboard->session->account;
 	pc = purple_account_get_connection(account);
 
-	if ((b = purple_find_buddy(account, who)) != NULL)
+	if ((b = purple_blist_find_buddy(account, who)) != NULL)
 		username = g_markup_escape_text(purple_buddy_get_alias(b), -1);
 	else
 		username = g_markup_escape_text(who, -1);

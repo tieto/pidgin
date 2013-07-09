@@ -407,7 +407,7 @@ void finch_log_show(PurpleLogType type, const char *username, PurpleAccount *acc
 		PurpleBuddy *buddy;
 
 		if (username) {
-			buddy = purple_find_buddy(account, username);
+			buddy = purple_blist_find_buddy(account, username);
 			if (buddy != NULL)
 				name = purple_buddy_get_contact_alias(buddy);
 			title = g_strdup_printf(_("Conversations with %s"), name);

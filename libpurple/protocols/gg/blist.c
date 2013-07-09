@@ -48,13 +48,13 @@ void ggp_buddylist_send(PurpleConnection *gc)
 	int i = 0, ret = 0;
 	int size;
 
-	buddies = purple_find_buddies(account, NULL);
+	buddies = purple_blist_find_buddies(account, NULL);
 
 	size = g_slist_length(buddies);
 	userlist = g_new(uin_t, size);
 	types    = g_new(gchar, size);
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies), ++i)
 	{
 		PurpleBuddy *buddy = buddies->data;
@@ -118,7 +118,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 
 		purple_debug_info("gg", "got buddy: name=%s; show=%s\n", name, show);
 
-		if (purple_find_buddy(purple_connection_get_account(gc), name)) {
+		if (purple_blist_find_buddy(purple_connection_get_account(gc), name)) {
 			g_strfreev(data_tbl);
 			continue;
 		}
@@ -139,7 +139,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 		buddy = purple_buddy_new(purple_connection_get_account(gc), name,
 					 strlen(show) ? show : NULL);
 
-		if (!(group = purple_find_group(g))) {
+		if (!(group = purple_blist_find_group(g))) {
 			group = purple_group_new(g);
 			purple_blist_add_group(group, NULL);
 		}
@@ -163,7 +163,7 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 	GString *buddylist = g_string_sized_new(1024);
 	char *ptr;
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *buddy = buddies->data;
 		PurpleGroup *group = purple_buddy_get_group(buddy);
@@ -189,7 +189,7 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 const char * ggp_buddylist_get_buddy_name(PurpleConnection *gc, const uin_t uin)
 {
 	const char *uin_s = ggp_uin_to_str(uin);
-	PurpleBuddy *buddy = purple_find_buddy(
+	PurpleBuddy *buddy = purple_blist_find_buddy(
 		purple_connection_get_account(gc), uin_s);
 	
 	if (buddy != NULL)

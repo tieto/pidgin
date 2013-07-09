@@ -637,7 +637,7 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 	gchar *message = NULL;
 
 	account = purple_media_get_account(gtkmedia->priv->media);
-	buddy = purple_find_buddy(account, gtkmedia->priv->screenname);
+	buddy = purple_blist_find_buddy(account, gtkmedia->priv->screenname);
 	alias = buddy ? purple_buddy_get_contact_alias(buddy) :
 			gtkmedia->priv->screenname;
 	type = gtkmedia->priv->request_type;
@@ -1045,7 +1045,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
-	PurpleBuddy *buddy = purple_find_buddy(account, screenname);
+	PurpleBuddy *buddy = purple_blist_find_buddy(account, screenname);
 	const gchar *alias = buddy ?
 			purple_buddy_get_contact_alias(buddy) : screenname;
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);

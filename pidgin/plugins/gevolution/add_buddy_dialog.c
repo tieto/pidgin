@@ -192,7 +192,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 		if (account_name == NULL)
 			continue;
 
-		if (purple_find_buddy(dialog->account, account_name) != NULL)
+		if (purple_blist_find_buddy(dialog->account, account_name) != NULL)
 			continue;
 
 		gtk_list_store_append(dialog->model, &iter);

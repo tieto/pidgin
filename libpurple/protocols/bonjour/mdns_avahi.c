@@ -122,7 +122,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 
 	g_return_if_fail(r != NULL);
 
-	pb = purple_find_buddy(account, name);
+	pb = purple_blist_find_buddy(account, name);
 	bb = (pb != NULL) ? purple_buddy_get_protocol_data(pb) : NULL;
 
 	switch (event) {
@@ -266,7 +266,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			break;
 		case AVAHI_BROWSER_REMOVE:
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
-			pb = purple_find_buddy(account, name);
+			pb = purple_blist_find_buddy(account, name);
 			if (pb != NULL) {
 				BonjourBuddy *bb = purple_buddy_get_protocol_data(pb);
 				AvahiBuddyImplData *b_impl;

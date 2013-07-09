@@ -94,7 +94,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
     int accept_setting;
 
 	account = purple_xfer_get_account(xfer);
-	node = PURPLE_BLIST_NODE(purple_find_buddy(account, purple_xfer_get_remote_user(xfer)));
+	node = PURPLE_BLIST_NODE(purple_blist_find_buddy(account, purple_xfer_get_remote_user(xfer)));
 
 	/* If person is on buddy list, use the buddy setting; otherwise, use the
 	   stranger setting. */

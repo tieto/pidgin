@@ -501,7 +501,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 			purple_blist_get_last_child((PurpleBListNode*)group));
 
 	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
-		purple_blist_alias_contact(contact, alias);
+		purple_contact_set_alias(contact, alias);
 	}
 
 	for (x = cnode->child; x; x = x->next) {
@@ -812,7 +812,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
 			group = purple_group_new(_("Chats"));
 
 		/* Add group to blist if isn't already on it. Fixes #2752. */
-		if (!purple_find_group(purple_group_get_name(group))) {
+		if (!purple_blist_find_group(purple_group_get_name(group))) {
 			purple_blist_add_group(group,
 					purple_blist_get_last_sibling(purplebuddylist->root));
 		}
@@ -920,7 +920,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		if (g == NULL)
 			g = purple_group_new(_("Buddies"));
 		/* Add group to blist if isn't already on it. Fixes #2752. */
-		if (!purple_find_group(purple_group_get_name(g))) {
+		if (!purple_blist_find_group(purple_group_get_name(g))) {
 			purple_blist_add_group(g,
 					purple_blist_get_last_sibling(purplebuddylist->root));
 		}
@@ -1060,7 +1060,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 	else if (group)
 		g = group;
 	else {
-		g = purple_find_group(_("Buddies"));
+		g = purple_blist_find_group(_("Buddies"));
 		if (g == NULL) {
 			g = purple_group_new(_("Buddies"));
 			purple_blist_add_group(g,
@@ -1099,7 +1099,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 				account_buddies = g_hash_table_lookup(buddies_cache, account);
 				g_hash_table_remove(account_buddies, hb);
 
-				if (!purple_find_buddy_in_group(account, purple_buddy_get_name(b), g)) {
+				if (!purple_blist_find_buddy_in_group(account, purple_buddy_get_name(b), g)) {
 					hb->group = gnode;
 					g_hash_table_replace(purplebuddylist->buddies, hb, b);
 
@@ -1215,7 +1215,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBListNode *node)
 			return;
 	}
 
-	if (purple_find_group(purple_group_get_name(group))) {
+	if (purple_blist_find_group(purple_group_get_name(group))) {
 		/* This is just being moved */
 
 		if (ops && ops->remove)
@@ -1494,7 +1494,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	g_object_unref(group);
 }
 
-PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
+PurpleBuddy *purple_blist_find_buddy(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 	struct _purple_hbuddy hb;
@@ -1520,7 +1520,7 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	return NULL;
 }
 
-PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name,
+PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char *name,
 		PurpleGroup *group)
 {
 	struct _purple_hbuddy hb;
@@ -1544,7 +1544,7 @@ static void find_acct_buddies(gpointer key, gpointer value, gpointer data)
 	*list = g_slist_prepend(*list, buddy);
 }
 
-GSList *purple_find_buddies(PurpleAccount *account, const char *name)
+GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 	PurpleBListNode *node;
@@ -1577,7 +1577,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 	return ret;
 }
 
-PurpleGroup *purple_find_group(const char *name)
+PurpleGroup *purple_blist_find_group(const char *name)
 {
 	gchar* key;
 	PurpleGroup *group;

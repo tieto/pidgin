@@ -696,7 +696,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 	PurpleBuddy *b;
 	YahooFriend *f;
 
-	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
+	b = purple_blist_find_buddy(purple_connection_get_account(info_data->gc),
 			info_data->name);
 
 	if (b) {
@@ -1199,7 +1199,7 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 					  "or format that is not supported at this time.");
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
-			PurpleBuddy *b = purple_find_buddy
+			PurpleBuddy *b = purple_blist_find_buddy
 					(purple_connection_get_account(info_data->gc),
 							info_data->name);
 			YahooFriend *f = NULL;

@@ -69,7 +69,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		/* Hidden; don't show this buddy. */
-		GSList *buddies = purple_find_buddies(account, jid_norm);
+		GSList *buddies = purple_blist_find_buddies(account, jid_norm);
 		if (buddies) {
 			purple_debug_info("jabber", "Removing %s from local buddy list\n",
 			                  jid_norm);
@@ -111,7 +111,7 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 	jb = jabber_buddy_find(js, who, TRUE);
 
 	account = purple_connection_get_account(js->gc);
-	buddies = purple_find_buddies(account, who);
+	buddies = purple_blist_find_buddies(account, who);
 	if(!buddies)
 		return;
 
@@ -169,7 +169,7 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 	PurpleBuddy *b;
 	const char *balias;
 
-	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(js->gc), who);
 	if(!buddies)
 		return;
 

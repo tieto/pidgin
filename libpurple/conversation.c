@@ -400,7 +400,7 @@ purple_conversation_autoset_title(PurpleConversation *conv)
 	name = purple_conversation_get_name(conv);
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		if (account && ((b = purple_find_buddy(account, name)) != NULL))
+		if (account && ((b = purple_blist_find_buddy(account, name)) != NULL))
 			text = purple_buddy_get_contact_alias(b);
 	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		if (account && ((chat = purple_blist_find_chat(account, name)) != NULL))
@@ -538,7 +538,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 			if (flags & PURPLE_MESSAGE_SEND) {
-				b = purple_find_buddy(account,
+				b = purple_blist_find_buddy(account,
 							purple_account_get_username(account));
 
 				if (purple_account_get_private_alias(account) != NULL)
@@ -552,7 +552,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 			}
 			else
 			{
-				b = purple_find_buddy(account, who);
+				b = purple_blist_find_buddy(account, who);
 
 				if (b != NULL)
 					alias = purple_buddy_get_contact_alias(b);

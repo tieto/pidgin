@@ -105,7 +105,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	}
 
 	/* this used to be in the core, but it's not now */
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies))
 	{
 		PurpleBuddy *b = buddies->data;
@@ -939,7 +939,7 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
-	PurpleBuddy *buddy = purple_find_buddy(irc->account, name);
+	PurpleBuddy *buddy = purple_blist_find_buddy(irc->account, name);
 
 	if (!gc || !buddy)
 		return;

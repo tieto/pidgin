@@ -301,7 +301,7 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
  * @param buddy      The buddy whose status has changed.
  * @param old_status The status from which we are changing.
  */
-void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status);
+void purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status);
 
 /**
  * Gets the media caps from a buddy.
@@ -466,7 +466,7 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
  * @param source  The contact to merge
  * @param node    The place to merge to (a buddy or contact)
  */
-void purple_blist_merge_contact(PurpleContact *source, PurpleBListNode *node);
+void purple_contact_merge(PurpleContact *source, PurpleBListNode *node);
 
 /*@}*/
 

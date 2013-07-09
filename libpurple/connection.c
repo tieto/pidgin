@@ -260,7 +260,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 		(prpl_info->close)(gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
-	buddies = purple_find_buddies(account, NULL);
+	buddies = purple_blist_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;
 		purple_buddy_set_protocol_data(buddy, NULL);

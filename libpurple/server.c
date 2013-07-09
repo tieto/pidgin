@@ -240,7 +240,7 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	PurpleIMConversation *im;
 
 	account = purple_connection_get_account(gc);
-	buddies = purple_find_buddies(account, who);
+	buddies = purple_blist_find_buddies(account, who);
 
 	while (buddies != NULL)
 	{
@@ -254,7 +254,7 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		if (purple_strequal(server_alias, alias))
 			continue;
 
-		purple_blist_server_alias_buddy(b, alias);
+		purple_buddy_set_server_alias(b, alias);
 
 		im = purple_conversations_find_im_with_account(purple_buddy_get_name(b), account);
 		if (im != NULL && alias != NULL && !purple_strequal(alias, who))
@@ -283,7 +283,7 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 	PurpleBuddy *b = NULL;
 
 	account = purple_connection_get_account(gc);
-	buddies = purple_find_buddies(account, who);
+	buddies = purple_blist_find_buddies(account, who);
 
 	while(buddies != NULL) {
 		const char *balias;
@@ -295,7 +295,7 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 		if (purple_strequal(balias, alias))
 			continue;
 
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_local_alias(b, alias);
 	}
 }
 

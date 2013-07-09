@@ -107,7 +107,7 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly, 
 
 	acct = purple_connection_get_account(gc);
 	purple_account_request_authorization(acct, passport, NULL, friendly, message,
-										 purple_find_buddy(acct, passport) != NULL,
+										 purple_blist_find_buddy(acct, passport) != NULL,
 										 msn_accept_add_cb, msn_cancel_add_cb, pa);
 
 }
@@ -733,7 +733,7 @@ msn_userlist_load(MsnSession *session)
 
 	g_return_if_fail(gc != NULL);
 
-	for (l = purple_find_buddies(account, NULL); l != NULL;
+	for (l = purple_blist_find_buddies(account, NULL); l != NULL;
 			l = g_slist_delete_link(l, l)) {
 		PurpleBuddy *buddy = l->data;
 

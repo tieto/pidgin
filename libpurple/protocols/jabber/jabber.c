@@ -3103,7 +3103,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	JabberBuddyResource *jbr;
 	PurpleConnection *gc = js->gc;
 	PurpleBuddy *buddy =
-		purple_find_buddy(purple_connection_get_account(gc), username);
+		purple_blist_find_buddy(purple_connection_get_account(gc), username);
 	const gchar *alias =
 		buddy ? purple_buddy_get_contact_alias(buddy) : username;
 
@@ -3172,7 +3172,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		who = args[0];
 	}
 
-	buddy = purple_find_buddy(account, who);
+	buddy = purple_blist_find_buddy(account, who);
 	if (buddy != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
 	else

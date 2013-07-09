@@ -198,7 +198,7 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 		uid = atol(username);
 	} else {
 		/* Next, see if on buddy list and know uid. */
-		buddy = purple_find_buddy(session->account, username);
+		buddy = purple_blist_find_buddy(session->account, username);
 		if (buddy) {
 			uid = purple_blist_node_get_int(PURPLE_BLIST_NODE(buddy), "UserID");
 		} else {
@@ -289,7 +289,7 @@ msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 	GSList *buddies, *cur;
 	const gchar *ret;
 
-	buddies = purple_find_buddies(account, NULL);
+	buddies = purple_blist_find_buddies(account, NULL);
 
 	if (!buddies)
 	{
@@ -1006,7 +1006,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 		group_name = g_strdup(_("IM Friends"));
 		purple_debug_info("myspace", "No GroupName specified, defaulting to '%s'.\n", group_name);
 	}
-	group = purple_find_group(group_name);
+	group = purple_blist_find_group(group_name);
 	if (!group) {
 		group = purple_group_new(group_name);
 		/* Add group to beginning. See #2752. */
@@ -1025,7 +1025,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	}
 
 	/* 2. Get or create buddy */
-	buddy = purple_find_buddy(session->account, username);
+	buddy = purple_blist_find_buddy(session->account, username);
 	if (!buddy) {
 		purple_debug_info("msim_add_contact_from_server_cb",
 				"creating new buddy: %s\n", username);
@@ -2248,7 +2248,7 @@ msim_close(PurpleConnection *gc)
 	 * should call our buddy_free prpl callback so that we don't need to do
 	 * this... but it doesn't, so we do.
 	 */
-	buddies = purple_find_buddies(purple_connection_get_account(gc), NULL);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(gc), NULL);
 	while (buddies != NULL) {
 		msim_buddy_free(buddies->data);
 		buddies = g_slist_delete_link(buddies, buddies);

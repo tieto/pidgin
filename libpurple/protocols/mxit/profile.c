@@ -201,7 +201,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	PurpleBuddy*			buddy;
 	gchar*					tmp			= NULL;
 
-	buddy = purple_find_buddy( session->acc, username );
+	buddy = purple_blist_find_buddy( session->acc, username );
 	if ( buddy ) {
 		purple_notify_user_info_add_pair_plaintext( info, _( "Alias" ), purple_buddy_get_alias( buddy ) );
 		purple_notify_user_info_add_section_break( info );

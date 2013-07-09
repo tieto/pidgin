@@ -377,17 +377,17 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 	}
 
 	/* find or create a group for this contact */
-	group = purple_find_group( contact->groupname );
+	group = purple_blist_find_group( contact->groupname );
 	if ( !group )
 		group = purple_group_new( contact->groupname );
 
 	/* see if the buddy is not in the group already */
-	buddy = purple_find_buddy_in_group( session->acc, contact->username, group );
+	buddy = purple_blist_find_buddy_in_group( session->acc, contact->username, group );
 	if ( !buddy ) {
 		/* buddy not found in the group */
 
 		/* lets try finding him in all groups */
-		buddy = purple_find_buddy( session->acc, contact->username );
+		buddy = purple_blist_find_buddy( session->acc, contact->username );
 		if ( buddy ) {
 			/* ok, so we found him in another group. to switch him between groups we must delete him and add him again. */
 			purple_blist_remove_buddy( buddy );
@@ -407,7 +407,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 		gpointer data = NULL;
 
 		/* now update the buddy's alias */
-		purple_blist_alias_buddy( buddy, contact->alias );
+		purple_buddy_set_local_alias( buddy, contact->alias );
 
 		/* replace the buddy's contact struct */
 		if ( ( data = purple_buddy_get_protocol_data( buddy ) ) )
@@ -459,7 +459,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	}
 
 	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
-	buddy = purple_find_buddy( session->acc, username );
+	buddy = purple_blist_find_buddy( session->acc, username );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: unable to find the buddy '%s'\n", username );
 		return;
@@ -518,7 +518,7 @@ void mxit_update_buddy_avatar( struct MXitSession* session, const char* username
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_avatar: user='%s' avatar='%s'\n", username, avatarId );
 
 	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
-	buddy = purple_find_buddy( session->acc, username );
+	buddy = purple_blist_find_buddy( session->acc, username );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: unable to find the buddy '%s'\n", username );
 		return;
@@ -558,7 +558,7 @@ void mxit_update_blist( struct MXitSession* session )
 
 	/* remove all buddies we did not receive a roster update for.
 	 * these contacts must have been removed from another client */
-	list = purple_find_buddies( session->acc, NULL );
+	list = purple_blist_find_buddies( session->acc, NULL );
 
 	for ( i = 0; i < g_slist_length( list ); i++ ) {
 		buddy = g_slist_nth_data( list, i );
@@ -700,7 +700,7 @@ gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* user
 	struct contact*		contact	= NULL;
 
 	/* find the buddy */
-	buddy = purple_find_buddy( session->acc, username );
+	buddy = purple_blist_find_buddy( session->acc, username );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "is_mxit_chatroom_contact: unable to find the buddy '%s'\n", username );
 		return FALSE;
@@ -738,7 +738,7 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy '%s' (group='%s')\n", buddy_name, group_name );
 
-	list = purple_find_buddies( session->acc, buddy_name );
+	list = purple_blist_find_buddies( session->acc, buddy_name );
 	if ( g_slist_length( list ) == 1 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy (scenario 1) (list:%i)\n", g_slist_length( list ) );
 		/*
@@ -773,7 +773,7 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 				/* this is our REAL MXit buddy! */
 
 				/* now update the buddy's alias */
-				purple_blist_alias_buddy( mxbuddy, buddy_alias );
+				purple_buddy_set_local_alias( mxbuddy, buddy_alias );
 
 				/* now update the buddy's group */
 //				mxbuddy = mxit_update_buddy_group( session, mxbuddy, group );
@@ -831,7 +831,7 @@ void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_buddy_alias '%s' to '%s\n", who, alias );
 
 	/* find the buddy */
-	buddy = purple_find_buddy( session->acc, who );
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_buddy_alias: unable to find the buddy '%s'\n", who );
 		return;
@@ -864,7 +864,7 @@ void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_gr
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_buddy_group from '%s' to '%s'\n", old_group, new_group );
 
 	/* find the buddy */
-	buddy = purple_find_buddy( session->acc, who );
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_buddy_group: unable to find the buddy '%s'\n", who );
 		return;

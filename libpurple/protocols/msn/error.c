@@ -290,12 +290,12 @@ msn_complete_sync_issue(MsnAddRemData *data)
 	PurpleGroup *group = NULL;
 
 	if (data->group != NULL)
-		group = purple_find_group(data->group);
+		group = purple_blist_find_group(data->group);
 
 	if (group != NULL)
-		buddy = purple_find_buddy_in_group(data->session->account, data->who, group);
+		buddy = purple_blist_find_buddy_in_group(data->session->account, data->who, group);
 	else
-		buddy = purple_find_buddy(data->session->account, data->who);
+		buddy = purple_blist_find_buddy(data->session->account, data->who);
 
 	if (buddy != NULL)
 		purple_blist_remove_buddy(buddy);

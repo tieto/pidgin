@@ -1225,7 +1225,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 		PurpleBuddy *b;
 		/* If we found a serverside alias, set it and tell the core */
 		serv_got_alias(js->gc, bare_jid, serverside_alias);
-		b = purple_find_buddy(account, bare_jid);
+		b = purple_blist_find_buddy(account, bare_jid);
 		if (b) {
 			purple_blist_node_set_string((PurpleBListNode*)b, "servernick", serverside_alias);
 		}

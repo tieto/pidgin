@@ -392,7 +392,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 	/* Ensure that icon remains valid throughout */
 	purple_buddy_icon_ref(icon);
 
-	buddies = purple_find_buddies(account, username);
+	buddies = purple_blist_find_buddies(account, username);
 	while (buddies != NULL)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
@@ -554,7 +554,7 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
 		 * Since we know we're deleting the icon, we only
 		 * need a subset of purple_buddy_icon_update(). */
 
-		GSList *buddies = purple_find_buddies(account, username);
+		GSList *buddies = purple_blist_find_buddies(account, username);
 		while (buddies != NULL)
 		{
 			PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
@@ -625,7 +625,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 	if ((icon_cache == NULL) || ((icon = g_hash_table_lookup(icon_cache, username)) == NULL))
 	{
 		/* The icon is not currently cached in memory--try reading from disk */
-		PurpleBuddy *b = purple_find_buddy(account, username);
+		PurpleBuddy *b = purple_blist_find_buddy(account, username);
 		const char *protocol_icon_file;
 		const char *dirname;
 		gboolean caching;
@@ -891,7 +891,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBListNode *node,
 			/* Is this call necessary anymore? Can the buddies
 			 * themselves need updating when the custom buddy
 			 * icon changes? */
-			purple_blist_update_node_icon((PurpleBListNode*)buddy);
+			purple_blist_node_update((PurpleBListNode*)buddy);
 		}
 	} else if (PURPLE_IS_CHAT(node)) {
 		PurpleChatConversation *chat = NULL;
@@ -902,7 +902,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBListNode *node,
 		}
 	}
 
-	purple_blist_update_node_icon(node);
+	purple_blist_node_update(node);
 
 	if (old_img) {
 		purple_imgstore_unref(old_img);

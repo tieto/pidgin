@@ -558,7 +558,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 		PurpleBuddy *buddy = NULL;
 
 		if (name != NULL)
-			buddy = purple_find_buddy(account, name);
+			buddy = purple_blist_find_buddy(account, name);
 
 		/* Set some defaults */
 		if (buddy == NULL) {
@@ -789,7 +789,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 	pouncee = purple_pounce_get_pouncee(pounce);
 	account = purple_pounce_get_pouncer(pounce);
 
-	buddy = purple_find_buddy(account, pouncee);
+	buddy = purple_blist_find_buddy(account, pouncee);
 	if (buddy != NULL)
 	{
 		alias = purple_buddy_get_alias(buddy);

@@ -20,25 +20,25 @@ MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_find_
 PROTOTYPES: ENABLE
 
 Purple::BuddyList::Buddy
-purple_find_buddy(account, name)
+purple_blist_find_buddy(account, name)
 	Purple::Account account
 	const char * name
 
 void
-purple_find_buddies(account, name)
+purple_blist_find_buddies(account, name)
 	Purple::Account account
 	const char * name
 PREINIT:
 	GSList *l, *ll;
 PPCODE:
-	ll = purple_find_buddies(account, name);
+	ll = purple_blist_find_buddies(account, name);
 	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
 	}
 	g_slist_free(ll);
 
 Purple::BuddyList::Group
-purple_find_group(name)
+purple_blist_find_group(name)
 	const char *name
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_
@@ -110,7 +110,7 @@ purple_blist_add_contact(contact, group, node)
 	Purple::BuddyList::Node node
 
 void
-purple_blist_merge_contact(source, node)
+purple_contact_merge(source, node)
 	Purple::BuddyList::Contact source
 	Purple::BuddyList::Node node
 
@@ -161,32 +161,32 @@ purple_blist_set_visible(show)
 	gboolean show
 
 void
-purple_blist_update_buddy_status(buddy, old_status)
+purple_buddy_update_status(buddy, old_status)
 	Purple::BuddyList::Buddy buddy
 	Purple::Status old_status
 
 void
-purple_blist_rename_buddy(buddy, name)
+purple_buddy_set_name(buddy, name)
 	Purple::BuddyList::Buddy buddy
 	const char * name
 
 void
-purple_blist_alias_buddy(buddy, alias)
+purple_buddy_set_local_alias(buddy, alias)
 	Purple::BuddyList::Buddy buddy
 	const char * alias
 
 void
-purple_blist_server_alias_buddy(buddy, alias)
+purple_buddy_set_server_alias(buddy, alias)
 	Purple::BuddyList::Buddy buddy
 	const char * alias
 
 void
-purple_blist_alias_chat(chat, alias)
+purple_chat_set_alias(chat, alias)
 	Purple::BuddyList::Chat chat
 	const char * alias
 
 void
-purple_blist_rename_group(group, name)
+purple_group_set_name(group, name)
 	Purple::BuddyList::Group  group
 	const char * name
 

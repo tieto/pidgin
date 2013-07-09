@@ -96,7 +96,7 @@ static void remove_purple_buddies(JabberStream *js, const char *jid)
 {
 	GSList *buddies, *l;
 
-	buddies = purple_find_buddies(purple_connection_get_account(js->gc), jid);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(js->gc), jid);
 
 	for(l = buddies; l; l = l->next)
 		purple_blist_remove_buddy(l->data);
@@ -110,7 +110,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	GSList *buddies, *l;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 
-	buddies = purple_find_buddies(purple_connection_get_account(js->gc), jid);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(js->gc), jid);
 
 	if(!groups) {
 		if(!buddies)
@@ -169,7 +169,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	}
 
 	while(groups) {
-		PurpleGroup *g = purple_find_group(groups->data);
+		PurpleGroup *g = purple_blist_find_group(groups->data);
 		PurpleBuddy *b = purple_buddy_new(account, jid, alias);
 
 		if(!g) {
@@ -178,7 +178,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		}
 
 		purple_blist_add_buddy(b, NULL, g, NULL);
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_local_alias(b, alias);
 
 		g_free(groups->data);
 		groups = g_slist_delete_link(groups, groups);
@@ -304,7 +304,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	if (js->currently_parsing_roster_push)
 		return;
 
-	if(!(b = purple_find_buddy(purple_connection_get_account(js->gc), name)))
+	if(!(b = purple_blist_find_buddy(purple_connection_get_account(js->gc), name)))
 		return;
 
 	if (groups) {
@@ -314,7 +314,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		                  "groups]: groups: %s\n", name, tmp);
 		g_free(tmp);
 	} else {
-		GSList *buddies = purple_find_buddies(purple_connection_get_account(js->gc), name);
+		GSList *buddies = purple_blist_find_buddies(purple_connection_get_account(js->gc), name);
 		char *tmp;
 
 		if(!buddies)
@@ -399,7 +399,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		 * If the buddy name added contains a resource, strip that off and
 		 * rename the buddy.
 		 */
-		purple_blist_rename_buddy(buddy, who);
+		purple_buddy_set_name(buddy, who);
 	}
 
 	jb = jabber_buddy_find(js, who, FALSE);
@@ -423,10 +423,10 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 void jabber_roster_alias_change(PurpleConnection *gc, const char *name, const char *alias)
 {
-	PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), name);
+	PurpleBuddy *b = purple_blist_find_buddy(purple_connection_get_account(gc), name);
 
 	if(b != NULL) {
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_local_alias(b, alias);
 
 		purple_debug_info("jabber", "jabber_roster_alias_change(): Aliased %s to %s\n",
 				name, alias ? alias : "(null)");
@@ -446,7 +446,7 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	if(!old_group || !new_group || !strcmp(old_group, new_group))
 		return;
 
-	buddies = purple_find_buddies(purple_connection_get_account(gc), name);
+	buddies = purple_blist_find_buddies(purple_connection_get_account(gc), name);
 	while(buddies) {
 		b = buddies->data;
 		g = purple_buddy_get_group(b);
@@ -478,7 +478,7 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group) {
 	const char *name = purple_buddy_get_name(buddy);
-	GSList *buddies = purple_find_buddies(purple_connection_get_account(gc), name);
+	GSList *buddies = purple_blist_find_buddies(purple_connection_get_account(gc), name);
 
 	buddies = g_slist_remove(buddies, buddy);
 	if(buddies != NULL) {

@@ -99,7 +99,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		me = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 		for (l2 = ims; l2 != NULL; l2 = l2->next)
 		{
-			if (purple_find_buddy(account, l2->data) != NULL ||
+			if (purple_blist_find_buddy(account, l2->data) != NULL ||
 				!strcmp(me, purple_normalize(account, l2->data)))
 				continue;
 

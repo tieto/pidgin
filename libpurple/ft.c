@@ -499,7 +499,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
 	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_ACCEPTED) {
-		PurpleBuddy *buddy = purple_find_buddy(xfer->account, xfer->who);
+		PurpleBuddy *buddy = purple_blist_find_buddy(xfer->account, xfer->who);
 
 		if (purple_xfer_get_filename(xfer) != NULL)
 		{
@@ -559,7 +559,7 @@ static void
 purple_xfer_ask_accept(PurpleXfer *xfer)
 {
 	char *buf, *buf2 = NULL;
-	PurpleBuddy *buddy = purple_find_buddy(xfer->account, xfer->who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(xfer->account, xfer->who);
 
 	buf = g_strdup_printf(_("Accept file transfer request from %s?"),
 				  buddy ? purple_buddy_get_alias(buddy) : xfer->who);
@@ -599,7 +599,7 @@ purple_xfer_request(PurpleXfer *xfer)
 		           purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_ACCEPTED)
 		{
 			gchar* message = NULL;
-			PurpleBuddy *buddy = purple_find_buddy(xfer->account, xfer->who);
+			PurpleBuddy *buddy = purple_blist_find_buddy(xfer->account, xfer->who);
 
 			message = g_strdup_printf(_("%s is offering to send file %s"),
 				buddy ? purple_buddy_get_alias(buddy) : xfer->who, purple_xfer_get_filename(xfer));
@@ -644,7 +644,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 		return;
 	}
 
-	buddy = purple_find_buddy(account, xfer->who);
+	buddy = purple_blist_find_buddy(account, xfer->who);
 
 	if (type == PURPLE_XFER_SEND) {
 		/* Sending a file */
@@ -1598,7 +1598,7 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 	xfer->end_time = time(NULL);
 
 	account = purple_xfer_get_account(xfer);
-	buddy = purple_find_buddy(account, xfer->who);
+	buddy = purple_blist_find_buddy(account, xfer->who);
 
 	if (purple_xfer_get_filename(xfer) != NULL)
 	{
@@ -1658,7 +1658,7 @@ purple_xfer_error(PurpleXferType type, PurpleAccount *account, const char *who, 
 
 	if (account) {
 		PurpleBuddy *buddy;
-		buddy = purple_find_buddy(account, who);
+		buddy = purple_blist_find_buddy(account, who);
 		if (buddy)
 			who = purple_buddy_get_alias(buddy);
 	}

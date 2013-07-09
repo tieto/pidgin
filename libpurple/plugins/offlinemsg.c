@@ -123,7 +123,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 			**message == '\0')
 		return;
 
-	buddy = purple_find_buddy(account, who);
+	buddy = purple_blist_find_buddy(account, who);
 	if (!buddy)
 		return;
 

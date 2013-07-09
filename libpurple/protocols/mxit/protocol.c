@@ -1565,7 +1565,7 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		const char*		name;
 		char			msg[128];
 
-		buddy = purple_find_buddy( session->acc, sender );
+		buddy = purple_blist_find_buddy( session->acc, sender );
 		if ( buddy )
 			name = purple_buddy_get_alias( buddy );
 		else
@@ -1968,7 +1968,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 				/* update the status message */
 				PurpleBuddy*		buddy	= NULL;
 
-				buddy = purple_find_buddy( session->acc, mxitId );
+				buddy = purple_blist_find_buddy( session->acc, mxitId );
 				if ( buddy ) {
 					contact = purple_buddy_get_protocol_data( buddy );
 					if ( contact ) {

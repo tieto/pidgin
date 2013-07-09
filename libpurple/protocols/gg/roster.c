@@ -361,7 +361,7 @@ void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who,
 	purple_debug_misc("gg", "ggp_roster_alias_buddy(\"%s\", \"%s\")\n",
 		who, alias);
 	
-	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 	g_return_if_fail(buddy != NULL);
 	
 	ggp_roster_set_synchronized(gc, buddy, FALSE);
@@ -382,7 +382,7 @@ void ggp_roster_group_buddy(PurpleConnection *gc, const char *who,
 		"who=\"%s\", group=\"%s\" -> \"%s\")\n",
 		who, old_group, new_group);
 	
-	// purple_find_buddy(..., who) is not accessible at this moment
+	// purple_blist_find_buddy(..., who) is not accessible at this moment
 	change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
 	change->data.uin = ggp_str_to_uin(who);
 	rdata->pending_updates = g_list_append(rdata->pending_updates, change);
@@ -538,7 +538,7 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
 	}
 	if (group_name)
 	{
-		group = purple_find_group(group_name);
+		group = purple_blist_find_group(group_name);
 		if (!group)
 		{
 			group = purple_group_new(group_name);
@@ -547,7 +547,7 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
 	}
 	
 	// add buddy, if doesn't exists
-	buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	buddy = purple_blist_find_buddy(account, ggp_uin_to_str(uin));
 	g_hash_table_remove(remove_buddies, GINT_TO_POINTER(uin));
 	if (!buddy)
 	{
@@ -587,7 +587,7 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
 		purple_buddy_get_alias(buddy), alias,
 		currentGroup, group, group_name);
 	if (alias_changed)
-		purple_blist_alias_buddy(buddy, alias);
+		purple_buddy_set_local_alias(buddy, alias);
 	if (currentGroup != group)
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	
@@ -666,7 +666,7 @@ static void ggp_roster_reply_list(PurpleConnection *gc, uint32_t version,
 	// we will:
 	// - remove synchronized ones, if not found in list at server
 	// - upload not synchronized ones
-	local_buddies = purple_find_buddies(account, NULL);
+	local_buddies = purple_blist_find_buddies(account, NULL);
 	remove_buddies = g_hash_table_new(g_direct_hash, g_direct_equal);
 	while (local_buddies)
 	{
@@ -829,7 +829,7 @@ static gboolean ggp_roster_send_update_contact_update(PurpleConnection *gc,
 	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_UPDATE,
 		FALSE);
 	
-	buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	buddy = purple_blist_find_buddy(account, ggp_uin_to_str(uin));
 	if (!buddy)
 		return TRUE;
 	buddy_node = g_hash_table_lookup(content->contact_nodes,
@@ -897,7 +897,7 @@ static gboolean ggp_roster_send_update_contact_remove(PurpleConnection *gc,
 	g_return_val_if_fail(change->type == GGP_ROSTER_CHANGE_CONTACT_REMOVE,
 		FALSE);
 	
-	buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	buddy = purple_blist_find_buddy(account, ggp_uin_to_str(uin));
 	if (buddy)
 	{
 		purple_debug_info("gg", "ggp_roster_send_update_contact_remove:"
@@ -940,7 +940,7 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc,
 	{
 		PurpleGroup *group;
 		GList *group_buddies;
-		group = purple_find_group(new_name);
+		group = purple_blist_find_group(new_name);
 		if (!group)
 			return TRUE;
 		purple_debug_info("gg", "ggp_roster_send_update_group_rename: "
@@ -1058,7 +1058,7 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 		if (change->type != GGP_ROSTER_CHANGE_CONTACT_UPDATE)
 			continue;
 		
-		buddy = purple_find_buddy(account,
+		buddy = purple_blist_find_buddy(account,
 			ggp_uin_to_str(change->data.uin));
 		if (buddy)
 			ggp_roster_set_synchronized(gc, buddy, TRUE);
@@ -1076,7 +1076,7 @@ static void ggp_roster_reply_ack(PurpleConnection *gc, uint32_t version)
 		if (change->type != GGP_ROSTER_CHANGE_CONTACT_UPDATE)
 			continue;
 		
-		buddy = purple_find_buddy(account,
+		buddy = purple_blist_find_buddy(account,
 			ggp_uin_to_str(change->data.uin));
 		if (buddy && ggp_roster_is_synchronized(buddy))
 			ggp_roster_set_synchronized(gc, buddy, FALSE);

@@ -868,7 +868,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 
 				/* Find buddy by associated public key */
-				for (buddies = purple_find_buddies(account, NULL); buddies;
+				for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 						buddies = g_slist_delete_link(buddies, buddies)) {
 					b = buddies->data;
 					f = purple_blist_node_get_string(PURPLE_BLIST_NODE(b), "public-key");
@@ -880,7 +880,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		cont:
 			if (!b) {
 				/* Find buddy by nickname */
-				b = purple_find_buddy(sg->account, client_entry->nickname);
+				b = purple_blist_find_buddy(sg->account, client_entry->nickname);
 				if (!b) {
 					purple_debug_warning("silc", "WATCH for %s, unknown buddy\n",
 						client_entry->nickname);

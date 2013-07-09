@@ -145,7 +145,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 
 				/*  Find the local buddy that matches */
 				f = yahoo_friend_find(gc, yid);
-				b = purple_find_buddy(account, yid);
+				b = purple_blist_find_buddy(account, yid);
 
 				/*  If we don't find a matching buddy, ignore the alias !!  */
 				if (f != NULL && b != NULL) {

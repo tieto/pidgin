@@ -686,7 +686,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = purple_find_buddy(purple_connection_get_account(gc), nick);
+	b = purple_blist_find_buddy(purple_connection_get_account(gc), nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
@@ -1413,7 +1413,7 @@ void silcpurple_send_buddylist(PurpleConnection *gc)
 
 	account = purple_connection_get_account(gc);
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies))
 	{
 		PurpleBuddy *buddy = buddies->data;

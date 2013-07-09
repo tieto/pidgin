@@ -141,7 +141,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	 */
 
 	/* Make sure the Bonjour group exists in our buddy list */
-	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
+	group = purple_blist_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
 	if (group == NULL) {
 		group = purple_group_new(BONJOUR_GROUP_NAME);
 		purple_blist_add_group(group, NULL);
@@ -149,7 +149,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 
 	/* Make sure the buddy exists in our buddy list */
 	if (buddy == NULL)
-		buddy = purple_find_buddy(account, bonjour_buddy->name);
+		buddy = purple_blist_find_buddy(account, bonjour_buddy->name);
 
 	if (buddy == NULL) {
 		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);

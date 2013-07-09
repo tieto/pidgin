@@ -311,7 +311,7 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (buddies = purple_find_buddies(session->account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(session->account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *buddy = buddies->data;
 		const gchar *buddy_name = purple_buddy_get_name(buddy);

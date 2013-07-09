@@ -145,12 +145,12 @@ PurpleBListNode *purple_blist_get_root(void);
 /**
  * Returns a list of every buddy in the list.  Use of this function is
  * discouraged if you do not actually need every buddy in the list.  Use
- * purple_find_buddies instead.
+ * purple_blist_find_buddies instead.
  *
  * @return A list of every buddy in the list. Caller is responsible for
  *         freeing the list.
  *
- * @see purple_find_buddies
+ * @see purple_blist_find_buddies
  */
 GSList *purple_blist_get_buddies(void);
 
@@ -284,7 +284,7 @@ void purple_blist_remove_group(PurpleGroup *group);
  * @param name    The buddy's name
  * @return        The buddy or NULL if the buddy does not exist
  */
-PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name);
+PurpleBuddy *purple_blist_find_buddy(PurpleAccount *account, const char *name);
 
 /**
  * Finds the buddy struct given a name, an account, and a group
@@ -294,7 +294,7 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name);
  * @param group   The group to look in
  * @return        The buddy or NULL if the buddy does not exist in the group
  */
-PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name,
+PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char *name,
 		PurpleGroup *group);
 
 /**
@@ -308,7 +308,7 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
  *                g_slist_free.  Do not free the PurpleBuddy structs that
  *                the list points to.
  */
-GSList *purple_find_buddies(PurpleAccount *account, const char *name);
+GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name);
 
 /**
  * Finds a group by name
@@ -316,7 +316,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name);
  * @param name    The group's name
  * @return        The group or NULL if the group does not exist
  */
-PurpleGroup *purple_find_group(const char *name);
+PurpleGroup *purple_blist_find_group(const char *name);
 
 /**
  * Finds a chat by name.

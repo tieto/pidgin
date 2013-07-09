@@ -1381,7 +1381,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			break;
 		}
 
-		buddy = purple_find_buddy(data->account, data->who);
+		buddy = purple_blist_find_buddy(data->account, data->who);
 		if (!buddy) {
 			purple_debug_info("custom-icon", "You can only set custom icons for people on your buddylist.\n");
 			break;

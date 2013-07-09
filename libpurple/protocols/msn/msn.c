@@ -1529,7 +1529,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
 {
 	PurpleAccount *account;
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(gc), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
@@ -1797,7 +1797,7 @@ msn_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, cons
 	}
 
 	/* Make sure name is normalized */
-	purple_blist_rename_buddy(buddy, bname);
+	purple_buddy_set_name(buddy, bname);
 
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, bname);
@@ -2229,7 +2229,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 {
 	PurpleBuddy *b;
 
-	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
+	b = purple_blist_find_buddy(purple_connection_get_account(info_data->gc),
 						info_data->name);
 
 	if (b)
@@ -2690,7 +2690,7 @@ msn_got_info(PurpleHttpConnection *http_conn,
 		char *p = strstr(url_buffer, "form id=\"SpacesSearch\" name=\"SpacesSearch\"");
 		 * Let's see how long this one holds out for ... */
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
-		PurpleBuddy *b = purple_find_buddy
+		PurpleBuddy *b = purple_blist_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
 		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);

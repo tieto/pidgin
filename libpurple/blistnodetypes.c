@@ -411,7 +411,7 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy)
 }
 
 void
-purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
+purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleStatus *status;
@@ -903,7 +903,7 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 	return priv->priority_buddy;
 }
 
-void purple_blist_merge_contact(PurpleContact *source, PurpleBListNode *node)
+void purple_contact_merge(PurpleContact *source, PurpleBListNode *node)
 {
 	PurpleBListNode *sourcenode = (PurpleBListNode*)source;
 	PurpleBListNode *prev, *cur, *next;
@@ -1405,7 +1405,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		return;
 	}
 
-	dest = purple_find_group(new_name);
+	dest = purple_blist_find_group(new_name);
 	if (dest != NULL && purple_utf8_strcasecmp(priv->name,
 				PURPLE_GROUP_GET_PRIVATE(dest)->name) != 0) {
 		/* We're merging two groups */
@@ -1667,7 +1667,7 @@ purple_group_new(const char *name)
 	g_return_val_if_fail(name  != NULL, NULL);
 	g_return_val_if_fail(*name != '\0', NULL);
 
-	group = purple_find_group(name);
+	group = purple_blist_find_group(name);
 	if (group != NULL)
 		return group;
 

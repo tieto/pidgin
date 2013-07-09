@@ -94,7 +94,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 		return FALSE;
 
 	if (!purple_prefs_get_bool(HIDE_BUDDIES_PREF) &&
-	    purple_find_buddy(purple_conversation_get_account(conv), name))
+	    purple_blist_find_buddy(purple_conversation_get_account(conv), name))
 		return FALSE;
 
 	/* Only show the notice if the user has spoken recently. */

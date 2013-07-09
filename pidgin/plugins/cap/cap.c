@@ -349,7 +349,7 @@ static void sent_im_msg(PurpleAccount *account, const char *receiver, const char
 	guint interval, words;
 	CapStatistics *stats = NULL;
 
-	buddy = purple_find_buddy(account, receiver);
+	buddy = purple_blist_find_buddy(account, receiver);
 
 	if (buddy == NULL)
 		return;
@@ -378,7 +378,7 @@ received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConve
 	if (flags & PURPLE_MESSAGE_AUTO_RESP)
 		return;
 
-	buddy = purple_find_buddy(account, sender);
+	buddy = purple_blist_find_buddy(account, sender);
 
 	if (buddy == NULL)
 		return;

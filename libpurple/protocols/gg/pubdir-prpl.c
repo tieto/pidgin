@@ -389,7 +389,7 @@ static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	g_assert(uin == record->uin);
 	g_assert(records_count == 1);
 	
-	buddy = purple_find_buddy(purple_connection_get_account(gc),
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc),
 		ggp_uin_to_str(uin));
 	if (buddy)
 	{

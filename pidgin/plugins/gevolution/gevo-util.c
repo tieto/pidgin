@@ -35,14 +35,14 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	conv = purple_conversations_find_im_with_account(buddy_name, account);
 
-	group = purple_find_group(group_name);
+	group = purple_blist_find_group(group_name);
 	if (group == NULL)
 	{
 		group = purple_group_new(group_name);
 		purple_blist_add_group(group, NULL);
 	}
 
-	buddy = purple_find_buddy_in_group(account, buddy_name, group);
+	buddy = purple_blist_find_buddy_in_group(account, buddy_name, group);
 	if (buddy == NULL)
 	{
 		buddy = purple_buddy_new(account, buddy_name, alias);

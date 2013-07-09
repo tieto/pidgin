@@ -1108,7 +1108,7 @@ pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 
 		pidgin_set_cursor(gtkblist->window, GDK_WATCH);
 
-		buddies = purple_find_buddies(account, username);
+		buddies = purple_blist_find_buddies(account, username);
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
 			PurpleBListNode *node = cur->data;
@@ -1184,7 +1184,7 @@ pidgin_dialogs_log(void)
 static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
-	purple_blist_alias_buddy(buddy, new_alias);
+	purple_buddy_set_local_alias(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 
@@ -1210,7 +1210,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 static void
 pidgin_dialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 {
-	purple_blist_alias_chat(chat, new_alias);
+	purple_chat_set_alias(chat, new_alias);
 }
 
 void
@@ -1286,7 +1286,7 @@ static void free_ggmo(struct _PidginGroupMergeObject *ggp)
 static void
 pidgin_dialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
 {
-	purple_blist_rename_group(GGP->parent, GGP->new_name);
+	purple_group_set_name(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
 }
 

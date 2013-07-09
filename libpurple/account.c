@@ -1458,7 +1458,7 @@ purple_account_get_name_for_display(const PurpleAccount *account)
 	}
 
 	username = purple_account_get_username(account);
-	self = purple_find_buddy((PurpleAccount *)account, username);
+	self = purple_blist_find_buddy((PurpleAccount *)account, username);
 
 	if (self) {
 		const gchar *calias= purple_buddy_get_contact_alias(self);
@@ -1573,7 +1573,7 @@ purple_account_privacy_permit_add(PurpleAccount *account, const char *who,
 		blist_ops->save_account(account);
 
 	/* This lets the UI know a buddy has had its privacy setting changed */
-	buddy = purple_find_buddy(account, name);
+	buddy = purple_blist_find_buddy(account, name);
 	if (buddy != NULL) {
 		purple_signal_emit(purple_blist_get_handle(),
                 "buddy-privacy-changed", buddy);
@@ -1625,7 +1625,7 @@ purple_account_privacy_permit_remove(PurpleAccount *account, const char *who,
 	if (blist_ops != NULL && blist_ops->save_account != NULL)
 		blist_ops->save_account(account);
 
-	buddy = purple_find_buddy(account, name);
+	buddy = purple_blist_find_buddy(account, name);
 	if (buddy != NULL) {
 		purple_signal_emit(purple_blist_get_handle(),
                 "buddy-privacy-changed", buddy);
@@ -1676,7 +1676,7 @@ purple_account_privacy_deny_add(PurpleAccount *account, const char *who,
 	if (blist_ops != NULL && blist_ops->save_account != NULL)
 		blist_ops->save_account(account);
 
-	buddy = purple_find_buddy(account, name);
+	buddy = purple_blist_find_buddy(account, name);
 	if (buddy != NULL) {
 		purple_signal_emit(purple_blist_get_handle(),
                 "buddy-privacy-changed", buddy);
@@ -1712,7 +1712,7 @@ purple_account_privacy_deny_remove(PurpleAccount *account, const char *who,
 		/* We didn't find the buddy we were looking for, so bail out */
 		return FALSE;
 
-	buddy = purple_find_buddy(account, normalized);
+	buddy = purple_blist_find_buddy(account, normalized);
 
 	name = l->data;
 	priv->deny = g_slist_delete_link(priv->deny, l);
@@ -1751,12 +1751,12 @@ add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 	for (list = priv->permit; list != NULL; ) {
 		char *person = list->data;
 		list = list->next;
-		if (!purple_find_buddy(account, person))
+		if (!purple_blist_find_buddy(account, person))
 			purple_account_privacy_permit_remove(account, person, local);
 	}
 
 	/* Now make sure everyone in the buddylist is in the permit list */
-	list = purple_find_buddies(account, NULL);
+	list = purple_blist_find_buddies(account, NULL);
 	while (list != NULL)
 	{
 		PurpleBuddy *buddy = list->data;
@@ -1799,7 +1799,7 @@ purple_account_privacy_allow(PurpleAccount *account, const char *who)
 			}
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
-			if (!purple_find_buddy(account, who)) {
+			if (!purple_blist_find_buddy(account, who)) {
 				add_all_buddies_to_permit_list(account, FALSE);
 				purple_account_privacy_permit_add(account, who, FALSE);
 				purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS);
@@ -1845,7 +1845,7 @@ purple_account_privacy_deny(PurpleAccount *account, const char *who)
 		case PURPLE_ACCOUNT_PRIVACY_DENY_ALL:
 			break;
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
-			if (purple_find_buddy(account, who)) {
+			if (purple_blist_find_buddy(account, who)) {
 				add_all_buddies_to_permit_list(account, FALSE);
 				purple_account_privacy_permit_remove(account, who, FALSE);
 				purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS);
@@ -1912,7 +1912,7 @@ purple_account_privacy_check(PurpleAccount *account, const char *who)
 			return TRUE;
 
 		case PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST:
-			return (purple_find_buddy(account, who) != NULL);
+			return (purple_blist_find_buddy(account, who) != NULL);
 
 		default:
 			g_return_val_if_reached(TRUE);

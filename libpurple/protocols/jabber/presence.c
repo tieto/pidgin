@@ -130,7 +130,7 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 	 * While we need to track the status of this resource, the core
 	 * only cares if we're on our own buddy list.
 	 */
-	if (purple_find_buddy(account, username)) {
+	if (purple_blist_find_buddy(account, username)) {
 		jbr = jabber_buddy_find_resource(jb, NULL);
 		if (jbr) {
 			purple_prpl_got_user_status(account, username,
@@ -811,7 +811,7 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 	buddy_name = jabber_id_get_bare_jid(presence->jid_from);
 
 	account = purple_connection_get_account(js->gc);
-	b = purple_find_buddy(account, buddy_name);
+	b = purple_blist_find_buddy(account, buddy_name);
 
 	/*
 	 * Unbind/unlock from sending messages to a specific resource on
@@ -957,7 +957,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		xmlnode *nick;
 
 		account = purple_connection_get_account(js->gc);
-		buddy = purple_find_buddy(account, presence.from);
+		buddy = purple_blist_find_buddy(account, presence.from);
 		nick = xmlnode_get_child_with_namespace(packet, "nick", "http://jabber.org/protocol/nick");
 		if (nick)
 			presence.nickname = xmlnode_get_data(nick);

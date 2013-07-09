@@ -199,7 +199,7 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 	const char *name = purple_buddy_get_name(buddy);
 	if(strncmp(name, "sip:", 4)) {
 		gchar *buf = g_strdup_printf("sip:%s", name);
-		purple_blist_rename_buddy(buddy, buf);
+		purple_buddy_set_name(buddy, buf);
 		g_free(buf);
 	}
 	if(!g_hash_table_lookup(sip->buddies, name)) {
@@ -219,7 +219,7 @@ static void simple_get_buddies(PurpleConnection *gc) {
 	purple_debug_info("simple", "simple_get_buddies\n");
 
 	account = purple_connection_get_account(gc);
-	buddies = purple_find_buddies(account, NULL);
+	buddies = purple_blist_find_buddies(account, NULL);
 	while (buddies) {
 		PurpleBuddy *buddy = buddies->data;
 		simple_add_buddy(gc, buddy, purple_buddy_get_group(buddy), NULL);
@@ -891,13 +891,13 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 		if ((group = xmlnode_get_child(isc, "group"))) {
 			name_group = xmlnode_get_attrib(group, "name");
 			purple_debug_info("simple", "name_group->%s\n", name_group);
-			g = purple_find_group(name_group);
+			g = purple_blist_find_group(name_group);
 			if(!g)
 				g = purple_group_new(name_group);
 		}
 
 		if (!g) {
-			g = purple_find_group("Buddies");
+			g = purple_blist_find_group("Buddies");
 			if(!g)
 				g = purple_group_new("Buddies");
 		}
@@ -913,14 +913,14 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 			buddy_name = g_strdup_printf("sip:%s", uri);
 
-			b = purple_find_buddy(sip->account, buddy_name);
+			b = purple_blist_find_buddy(sip->account, buddy_name);
 			if(!b){
 				b = purple_buddy_new(sip->account, buddy_name, uri);
 			}
 			g_free(buddy_name);
 
 			purple_blist_add_buddy(b, NULL, g, NULL);
-			purple_blist_alias_buddy(b, uri);
+			purple_buddy_set_local_alias(b, uri);
 			bs = g_new0(struct simple_buddy, 1);
 			bs->name = g_strdup(purple_buddy_get_name(b));
 			g_hash_table_insert(sip->buddies, bs->name, bs);

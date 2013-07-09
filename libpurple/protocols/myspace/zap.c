@@ -143,7 +143,7 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 		return FALSE;
 	}
 
-	buddy = purple_find_buddy(session->account, username);
+	buddy = purple_blist_find_buddy(session->account, username);
 	if (!buddy) {
 		return FALSE;
 	}

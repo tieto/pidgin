@@ -163,7 +163,7 @@ static void discover_status(PurpleConnection *from, PurpleConnection *to,
   const char *from_username = purple_account_get_username(purple_connection_get_account(from));
   const char *to_username = purple_account_get_username(purple_connection_get_account(to));
 
-  if (purple_find_buddy(purple_connection_get_account(from), to_username)) {
+  if (purple_blist_find_buddy(purple_connection_get_account(from), to_username)) {
     PurpleStatus *status = purple_account_get_active_status(purple_connection_get_account(to));
     const char *status_id = purple_status_get_id(status);
     const char *message = purple_status_get_attr_string(status, "message");
@@ -227,7 +227,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
   purple_debug_info("nullprpl", "getting %s's status text for %s\n",
                     buddy->name, purple_account_get_username(buddy->account));
 
-  if (purple_find_buddy(buddy->account, buddy->name)) {
+  if (purple_blist_find_buddy(buddy->account, buddy->name)) {
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
     const char *name = purple_status_get_name(status);
@@ -561,7 +561,7 @@ static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
     discover_status(gc, buddy_gc, NULL);
 
-    if (purple_find_buddy(buddy_acct, username)) {
+    if (purple_blist_find_buddy(buddy_acct, username)) {
       purple_debug_info("nullprpl", "%s is already on %s's buddy list\n",
                         username, buddy->name);
     } else {

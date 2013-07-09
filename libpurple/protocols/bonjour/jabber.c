@@ -680,7 +680,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
 
-	buddies = purple_find_buddies(jdata->account, NULL);
+	buddies = purple_blist_find_buddies(jdata->account, NULL);
 	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
 	g_slist_free(buddies);
 
@@ -919,7 +919,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 	g_return_if_fail(bconv->ip != NULL);
 	g_return_if_fail(bconv->pb == NULL);
 
-	pb = purple_find_buddy(bconv->account, bconv->buddy_name);
+	pb = purple_blist_find_buddy(bconv->account, bconv->buddy_name);
 	if (pb && (bb = purple_buddy_get_protocol_data(pb))) {
 		const char *ip;
 		GSList *tmp = bb->ips;
@@ -975,7 +975,7 @@ bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = bconv->ip;
 
-	buddies = purple_find_buddies(jdata->account, NULL);
+	buddies = purple_blist_find_buddies(jdata->account, NULL);
 	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
 	g_slist_free(buddies);
 
@@ -1024,7 +1024,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 	g_return_val_if_fail(jdata != NULL, NULL);
 	g_return_val_if_fail(to != NULL, NULL);
 
-	pb = purple_find_buddy(jdata->account, to);
+	pb = purple_blist_find_buddy(jdata->account, to);
 	if (pb == NULL || (bb = purple_buddy_get_protocol_data(pb)) == NULL)
 		/* You can not send a message to an offline buddy */
 		return NULL;
@@ -1227,7 +1227,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 	if (!purple_account_is_disconnected(jdata->account)) {
 		GSList *buddies, *l;
 
-		buddies = purple_find_buddies(jdata->account, NULL);
+		buddies = purple_blist_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
 			if (bb && bb->conversation) {

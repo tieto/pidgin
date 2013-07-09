@@ -408,7 +408,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 
 	purple_debug_info("bonjour", "Bonjour-xfer-init.\n");
 
-	buddy = purple_find_buddy(purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer));
+	buddy = purple_blist_find_buddy(purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer));
 	/* this buddy is offline. */
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
 		return;

@@ -648,7 +648,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		return;
 	}
 
-	grp = purple_find_group(group);
+	grp = purple_blist_find_group(group);
 	if (!grp)
 	{
 		grp = purple_group_new(group);
@@ -657,7 +657,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 
 	/* XXX: Ask to merge if there's already a buddy with the same alias in the same group (#4553) */
 
-	if ((buddy = purple_find_buddy_in_group(account, username, grp)) == NULL)
+	if ((buddy = purple_blist_find_buddy_in_group(account, username, grp)) == NULL)
 	{
 		buddy = purple_buddy_new(account, username, alias);
 		purple_blist_add_buddy(buddy, NULL, grp, NULL);
@@ -759,12 +759,12 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 	chat = purple_chat_new(account, name, hash);
 
 	if (chat != NULL) {
-		if ((grp = purple_find_group(group)) == NULL) {
+		if ((grp = purple_blist_find_group(group)) == NULL) {
 			grp = purple_group_new(group);
 			purple_blist_add_group(grp, NULL);
 		}
 		purple_blist_add_chat(chat, grp, NULL);
-		purple_blist_alias_chat(chat, alias);
+		purple_chat_set_alias(chat, alias);
 		purple_blist_node_set_bool((PurpleBListNode*)chat, "gnt-autojoin", autojoin);
 		if (autojoin) {
 			join_chat(chat);
@@ -818,7 +818,7 @@ add_group_cb(gpointer null, const char *group)
 		return;
 	}
 
-	grp = purple_find_group(group);
+	grp = purple_blist_find_group(group);
 	if (!grp) {
 		grp = purple_group_new(group);
 		purple_blist_add_group(grp, NULL);
@@ -1364,16 +1364,16 @@ rename_blist_node(PurpleBListNode *node, const char *newname)
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleContact *contact = (PurpleContact*)node;
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-		purple_blist_alias_contact(contact, name);
-		purple_blist_alias_buddy(buddy, name);
+		purple_contact_set_alias(contact, name);
+		purple_buddy_set_local_alias(buddy, name);
 		serv_alias_buddy(buddy);
 	} else if (PURPLE_IS_BUDDY(node)) {
-		purple_blist_alias_buddy((PurpleBuddy*)node, name);
+		purple_buddy_set_local_alias((PurpleBuddy*)node, name);
 		serv_alias_buddy((PurpleBuddy*)node);
 	} else if (PURPLE_IS_CHAT(node))
-		purple_blist_alias_chat((PurpleChat*)node, name);
+		purple_chat_set_alias((PurpleChat*)node, name);
 	else if (PURPLE_IS_GROUP(node) && (name != NULL))
-		purple_blist_rename_group((PurpleGroup*)node, name);
+		purple_group_set_name((PurpleGroup*)node, name);
 	else
 		g_return_if_reached();
 }
@@ -1597,7 +1597,7 @@ finch_blist_place_tagged(PurpleBListNode *target)
 					purple_blist_add_contact((PurpleContact*)node, tg, NULL);
 				} else if (tc) {
 					/* The target is either a buddy, or a contact. Merge with that contact. */
-					purple_blist_merge_contact((PurpleContact*)node, (PurpleBListNode*)tc);
+					purple_contact_merge((PurpleContact*)node, (PurpleBListNode*)tc);
 				} else {
 					/* The target is a chat. Add the contact to the group after this chat. */
 					purple_blist_add_contact((PurpleContact*)node, NULL, target);
@@ -2856,7 +2856,7 @@ view_log_select_cb(gpointer data, PurpleRequestFields *fields)
 	account = purple_request_fields_get_account(fields, "account");
 	name = purple_request_fields_get_string(fields,  "screenname");
 
-	buddy = purple_find_buddy(account, name);
+	buddy = purple_blist_find_buddy(account, name);
 	if (buddy) {
 		contact = purple_buddy_get_contact(buddy);
 	} else {

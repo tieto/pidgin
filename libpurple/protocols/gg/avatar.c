@@ -191,7 +191,7 @@ static gboolean ggp_avatar_buddy_update_next(PurpleConnection *gc)
 	pending_update = pending_update_it->data;
 	avdata->pending_updates = g_list_remove(avdata->pending_updates,
 		pending_update);
-	buddy = purple_find_buddy(account, ggp_uin_to_str(pending_update->uin));
+	buddy = purple_blist_find_buddy(account, ggp_uin_to_str(pending_update->uin));
 	
 	if (!buddy)
 	{
@@ -286,7 +286,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
 	}
 
 	account = purple_connection_get_account(gc);
-	buddy = purple_find_buddy(account, ggp_uin_to_str(pending_update->uin));
+	buddy = purple_blist_find_buddy(account, ggp_uin_to_str(pending_update->uin));
 
 	if (!buddy)
 	{

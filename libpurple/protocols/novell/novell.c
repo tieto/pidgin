@@ -164,7 +164,7 @@ _get_status_resp_cb(NMUser * user, NMERR_T ret_code,
 		const char *name = nm_user_record_get_display_id(user_record);
 
 		if (name) {
-			buddies = purple_find_buddies((PurpleAccount *) user->client_data, name);
+			buddies = purple_blist_find_buddies((PurpleAccount *) user->client_data, name);
 			for (bnode = buddies; bnode; bnode = bnode->next) {
 				buddy = (PurpleBuddy *) bnode->data;
 				if (buddy) {
@@ -287,12 +287,12 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 		nm_contact_set_user_record(contact, user_record);
 
 		/* Set the display id */
-		purple_blist_rename_buddy(buddy,
+		purple_buddy_set_name(buddy,
 								nm_user_record_get_display_id(user_record));
 
 		alias = purple_buddy_get_alias(buddy);
 		if (alias == NULL || *alias == '\0' || (strcmp(alias, purple_buddy_get_name(buddy)) == 0)) {
-			purple_blist_alias_buddy(buddy,
+			purple_buddy_set_local_alias(buddy,
 								   nm_user_record_get_full_name(user_record));
 
 			/* Tell the server about the new display name */
@@ -349,7 +349,7 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 			folder_name = NM_ROOT_FOLDER_NAME;
 
 		/* Re-add the buddy now that we got the okay from the server */
-		if (folder_name && (group = purple_find_group(folder_name))) {
+		if (folder_name && (group = purple_blist_find_group(folder_name))) {
 
 			const char *alias = nm_contact_get_display_name(tmp_contact);
 			const char *display_id = nm_contact_get_display_id(new_contact);
@@ -371,7 +371,7 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 			}
 
 			/* Add it to the purple buddy list if it is not there */
-			buddy = purple_find_buddy_in_group(user->client_data, display_id, group);
+			buddy = purple_blist_find_buddy_in_group(user->client_data, display_id, group);
 			if (buddy == NULL) {
 				buddy = purple_buddy_new(user->client_data, display_id, alias);
 				purple_blist_add_buddy(buddy, NULL, group, NULL);
@@ -1298,7 +1298,7 @@ _add_contacts_to_purple_blist(NMUser * user, NMFolder * folder)
 	}
 
 	/* Does the Purple group exist already? */
-	group = purple_find_group(fname);
+	group = purple_blist_find_group(fname);
 	if (group == NULL) {
 		group = purple_group_new(fname);
 		purple_blist_add_group(group, NULL);
@@ -1313,7 +1313,7 @@ _add_contacts_to_purple_blist(NMUser * user, NMFolder * folder)
 			name = nm_contact_get_display_id(contact);
 			if (name) {
 
-				buddy = purple_find_buddy_in_group(user->client_data, name, group);
+				buddy = purple_blist_find_buddy_in_group(user->client_data, name, group);
 				if (buddy == NULL) {
 					/* Add it to the purple buddy list */
 					buddy = purple_buddy_new(user->client_data,
@@ -2015,7 +2015,7 @@ _evt_status_change(NMUser * user, NMEvent * event)
 
 		/* Update status for buddy in all folders */
 		display_id = nm_user_record_get_display_id(user_record);
-		buddies = purple_find_buddies(user->client_data, display_id);
+		buddies = purple_blist_find_buddies(user->client_data, display_id);
 		for (bnode = buddies; bnode; bnode = bnode->next) {
 			buddy = (PurpleBuddy *) bnode->data;
 			if (buddy) {
@@ -2698,16 +2698,16 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 					if (*fname == '\0') {
 						fname = NM_ROOT_FOLDER_NAME;
 					}
-					group = purple_find_group(fname);
+					group = purple_blist_find_group(fname);
 				}
 
 				if (group) {
 					const char *balias;
-					buddy = purple_find_buddy_in_group(user->client_data,
+					buddy = purple_blist_find_buddy_in_group(user->client_data,
 													 name, group);
 					balias = buddy ? purple_buddy_get_local_alias(buddy) : NULL;
 					if (balias && strcmp(balias, alias))
-						purple_blist_alias_buddy(buddy, alias);
+						purple_buddy_set_local_alias(buddy, alias);
 				}
 
 				/* Tell the server to alias the contact */
@@ -2800,7 +2800,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 		const char *gname = purple_group_get_name(group);
 		/* Does new folder exist already? */
 		if (nm_find_folder(user, gname)) {
-			/* purple_blist_rename_group() adds the buddies
+			/* purple_group_set_name() adds the buddies
 			 * to the new group and removes the old group...
 			 * so there is nothing more to do here.
 			 */

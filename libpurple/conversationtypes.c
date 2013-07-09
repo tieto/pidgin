@@ -871,7 +871,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 				}
 			} else {
 				PurpleBuddy *buddy;
-				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
+				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 		}
@@ -881,7 +881,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 				purple_chat_conversation_is_ignored_user(chat, user);
 
 		chatuser = purple_chat_user_new(chat, user, alias, flag);
-		purple_chat_user_set_buddy(chatuser, purple_find_buddy(account, user) != NULL);
+		purple_chat_user_set_buddy(chatuser, purple_blist_find_buddy(account, user) != NULL);
 
 		priv->in_room = g_list_prepend(priv->in_room, chatuser);
 		g_hash_table_replace(priv->users,
@@ -975,13 +975,13 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 		}
 	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
-		if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
+		if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 			new_alias = purple_buddy_get_contact_alias(buddy);
 	}
 
 	flags = purple_chat_user_get_flags(purple_chat_conversation_find_user(chat, old_user));
 	cb = purple_chat_user_new(chat, new_user, new_alias, flags);
-	purple_chat_user_set_buddy(cb, purple_find_buddy(account, new_user) != NULL);
+	purple_chat_user_set_buddy(cb, purple_blist_find_buddy(account, new_user) != NULL);
 
 	priv->in_room = g_list_prepend(priv->in_room, cb);
 	g_hash_table_replace(priv->users,
@@ -1025,9 +1025,9 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
+				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
 					old_alias = purple_buddy_get_contact_alias(buddy);
-				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
+				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 					new_alias = purple_buddy_get_contact_alias(buddy);
 			}
 
@@ -1105,7 +1105,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
+				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 

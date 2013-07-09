@@ -1026,7 +1026,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	GData *attribs;
 	const char *start, *end = NULL, *last;
 	ggp_buddy_data *buddy_data = ggp_buddy_get_data(
-		purple_find_buddy(purple_connection_get_account(gc), who));
+		purple_blist_find_buddy(purple_connection_get_account(gc), who));
 
 	if (msg == NULL || *msg == '\0') {
 		return 0;

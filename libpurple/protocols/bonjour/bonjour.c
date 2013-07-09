@@ -161,7 +161,7 @@ bonjour_close(PurpleConnection *connection)
 	PurpleGroup *bonjour_group;
 	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
-	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
+	bonjour_group = purple_blist_find_group(BONJOUR_GROUP_NAME);
 
 	/* Remove all the bonjour buddies */
 	bonjour_removeallfromlocal(connection, bonjour_group);
@@ -310,7 +310,7 @@ bonjour_status_types(PurpleAccount *account)
 static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 	BonjourBuddy *bb;
 
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
@@ -438,7 +438,7 @@ bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group)
 static void
 bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 
 	bonjour_do_group_change(buddy, new_group);
 
@@ -463,7 +463,7 @@ bonjour_rename_group(PurpleConnection *connection, const char *old_name, PurpleG
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }

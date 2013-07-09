@@ -1723,7 +1723,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 					if (*unescaped_xstatus) {
 						purple_debug_misc("oscar", "X-Status reply: %s\n", unescaped_xstatus);
 						account = purple_connection_get_account(od->gc);
-						buddy = purple_find_buddy(account, bn);
+						buddy = purple_blist_find_buddy(account, bn);
 						presence = purple_buddy_get_presence(buddy);
 						status = purple_presence_get_status(presence, "mood");
 						if (status) {

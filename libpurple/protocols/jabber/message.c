@@ -91,7 +91,7 @@ static void handle_chat(JabberMessage *jm)
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = purple_find_buddy(account, buf))) {
+				if ((buddy = purple_blist_find_buddy(account, buf))) {
 					const char *who;
 					char *escaped;
 
@@ -309,7 +309,7 @@ static void handle_buzz(JabberMessage *jm) {
 
 	account = purple_connection_get_account(jm->js->gc);
 
-	if (purple_find_buddy(account, jm->from) == NULL)
+	if (purple_blist_find_buddy(account, jm->from) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
 	/* xmpp only has 1 attention type, so index is 0 */

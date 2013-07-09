@@ -164,7 +164,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who) {
-		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
+		PurpleBuddy *b = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */

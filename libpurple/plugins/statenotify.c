@@ -31,7 +31,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 		return;
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
-	if (buddy != purple_find_buddy(account, buddy_name))
+	if (buddy != purple_blist_find_buddy(account, buddy_name))
 		return;
 
 	who = purple_buddy_get_alias(buddy);

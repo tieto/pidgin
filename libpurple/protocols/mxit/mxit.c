@@ -193,7 +193,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	purple_debug_info( MXIT_PLUGIN_ID, "Conversation started with '%s'\n", who );
 
 	/* find the buddy object */
-	buddy = purple_find_buddy( session->acc, who );
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( !buddy )
 		return;
 
@@ -567,7 +567,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
 	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
-	buddy = purple_find_buddy( session->acc, who );
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( buddy ) {
 		/* user is in our contact-list, so it's not an invite */
 		contact = purple_buddy_get_protocol_data( buddy );
@@ -680,7 +680,7 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 	gchar*				messageId	= NULL;
 
 	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
-	buddy = purple_find_buddy( account, name );
+	buddy = purple_blist_find_buddy( account, name );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_send_typing: unable to find the buddy '%s'\n", name );
 		return 0;

@@ -262,7 +262,7 @@ nested_group_find_parent(PurpleBListNode *node)
 
 	while (sep) {
 		*sep = 0;
-		if (*(sep + 1) && (ret = (PurpleBListNode *)purple_find_group(name))) {
+		if (*(sep + 1) && (ret = (PurpleBListNode *)purple_blist_find_group(name))) {
 			finch_blist_manager_add_node(ret);
 			parent = ret;
 		} else if (!(ret = g_hash_table_lookup(groups, name))) {

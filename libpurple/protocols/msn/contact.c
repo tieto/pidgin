@@ -616,7 +616,7 @@ msn_parse_addressbook_groups(MsnSession *session, xmlnode *node)
 		msn_group_new(session->userlist, group_id, group_name);
 
 		purple_debug_info("msn", "AB group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
-		if ((purple_find_group(group_name)) == NULL) {
+		if ((purple_blist_find_group(group_name)) == NULL) {
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
 		}
@@ -936,7 +936,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 				  MSN_INDIVIDUALS_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n",
 					  MSN_INDIVIDUALS_GROUP_ID, MSN_INDIVIDUALS_GROUP_NAME);
-	if ((purple_find_group(MSN_INDIVIDUALS_GROUP_NAME)) == NULL){
+	if ((purple_blist_find_group(MSN_INDIVIDUALS_GROUP_NAME)) == NULL){
 		PurpleGroup *g = purple_group_new(MSN_INDIVIDUALS_GROUP_NAME);
 		purple_blist_add_group(g, NULL);
 	}
@@ -944,7 +944,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 	/* Add a "Non-IM Contacts" group */
 	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
-	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
+	if ((purple_blist_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
 		PurpleGroup *g = purple_group_new(MSN_NON_IM_GROUP_NAME);
 		purple_blist_add_group(g, NULL);
 	}
@@ -1067,7 +1067,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			purple_debug_error("msn", "Contact is from a federated domain, but don't know what to do yet!\n");
 
 		} else if (errorcode && !strcmp(errorcode, "InvalidPassportUser")) {
-			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
+			PurpleBuddy *buddy = purple_blist_find_buddy(session->account, state->who);
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
 			purple_notify_error(state->session, _("Buddy Add error"), str,
 			                    _("The username specified does not exist."));
@@ -1163,7 +1163,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			purple_debug_error("msn", "Contact is from a federated domain, but don't know what to do yet!\n");
 
 		} else if (errorcode && !strcmp(errorcode, "InvalidPassportUser")) {
-			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
+			PurpleBuddy *buddy = purple_blist_find_buddy(session->account, state->who);
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
 			purple_notify_error(session, _("Buddy Add error"), str,
 			                    _("The username specified does not exist."));

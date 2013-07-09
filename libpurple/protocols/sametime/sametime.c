@@ -476,7 +476,7 @@ static void blist_resolve_alias_cb(struct mwServiceResolve *srvc,
   match = result->matches->data;
   g_return_if_fail(match != NULL);
 
-  purple_blist_server_alias_buddy(data, match->name);
+  purple_buddy_set_server_alias(data, match->name);
   purple_blist_node_set_string(data, BUDDY_KEY_NAME, match->name);
 }
 
@@ -568,7 +568,7 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
     PurpleBListNode *bnode;
 
     group = g_hash_table_lookup(pd->group_list_map, list);
-    buddy = purple_find_buddy_in_group(acct, id, group);
+    buddy = purple_blist_find_buddy_in_group(acct, id, group);
     bnode = (PurpleBListNode *) buddy;
 
     if(! buddy) {
@@ -860,7 +860,7 @@ static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
   g_return_val_if_fail(id != NULL, NULL);
   g_return_val_if_fail(*id, NULL);
 
-  buddy = purple_find_buddy_in_group(acct, id, group);
+  buddy = purple_blist_find_buddy_in_group(acct, id, group);
   if(! buddy) {
     buddy = purple_buddy_new(acct, id, alias);
 
@@ -868,8 +868,8 @@ static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
     buddy_add(pd, buddy);
   }
 
-  purple_blist_alias_buddy(buddy, alias);
-  purple_blist_server_alias_buddy(buddy, name);
+  purple_buddy_set_local_alias(buddy, alias);
+  purple_buddy_set_server_alias(buddy, name);
   purple_blist_node_set_string((PurpleBListNode *) buddy, BUDDY_KEY_NAME, name);
   purple_blist_node_set_int((PurpleBListNode *) buddy, BUDDY_KEY_TYPE, type);
 
@@ -954,7 +954,7 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
   /* try again, by alias */
   if(! group) {
     DEBUG_INFO("searching for group by alias %s\n", NSTR(alias));
-    group = purple_find_group(alias);
+    group = purple_blist_find_group(alias);
   }
 
   /* oh well, no such group. Let's create it! */
@@ -1845,7 +1845,7 @@ static void mw_session_announce(struct mwSession *s,
   im = purple_conversations_find_im_with_account(who, acct);
   if(! im) im = purple_im_conversation_new(acct, who);
 
-  buddy = purple_find_buddy(acct, who);
+  buddy = purple_blist_find_buddy(acct, who);
   if(buddy) who = (char *) purple_buddy_get_contact_alias(buddy);
 
   who = g_strdup_printf(_("Announcement from %s"), who);
@@ -2591,7 +2591,7 @@ static void mw_conversation_opened(struct mwConversation *conv) {
     struct mwLoginInfo *info;
     info = mwConversation_getTargetInfo(conv);
 
-    buddy = purple_find_buddy(acct, info->user_id);
+    buddy = purple_blist_find_buddy(acct, info->user_id);
     if(buddy) {
       purple_blist_node_set_int((PurpleBListNode *) buddy,
 			      BUDDY_KEY_CLIENT, info->type);
@@ -4134,7 +4134,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
   pd = purple_connection_get_protocol_data(gc);
 
   acct = purple_connection_get_account(gc);
-  b = purple_find_buddy(acct, who);
+  b = purple_blist_find_buddy(acct, who);
   user_info = purple_notify_user_info_new();
 
   if(purple_str_has_prefix(who, "@E ")) {
@@ -4396,7 +4396,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
       } else {
 
 	/* same person, set the server alias */
-	purple_blist_server_alias_buddy(buddy, match->name);
+	purple_buddy_set_server_alias(buddy, match->name);
 	purple_blist_node_set_string((PurpleBListNode *) buddy,
 				   BUDDY_KEY_NAME, match->name);
 
@@ -4527,7 +4527,7 @@ static void mw_prpl_add_buddies(PurpleConnection *gc,
 
     /* nab the saved server alias and stick it on the buddy */
     fn = purple_blist_node_get_string((PurpleBListNode *) b, BUDDY_KEY_NAME);
-    purple_blist_server_alias_buddy(b, fn);
+    purple_buddy_set_server_alias(b, fn);
 
     /* convert PurpleBuddy into a mwAwareIdBlock */
     idb->type = mwAware_USER;
@@ -4887,12 +4887,12 @@ static void mw_prpl_group_buddy(PurpleConnection *gc,
   struct mwAwareList *list;
 
   /* add who to new_group's aware list */
-  group = purple_find_group(new_group);
+  group = purple_blist_find_group(new_group);
   list = list_ensure(pd, group);
   mwAwareList_addAware(list, gl);
 
   /* remove who from old_group's aware list */
-  group = purple_find_group(old_group);
+  group = purple_blist_find_group(old_group);
   list = list_ensure(pd, group);
   mwAwareList_removeAware(list, gl);
 
@@ -4996,7 +4996,7 @@ static gboolean mw_prpl_can_receive_file(PurpleConnection *gc,
   acct = purple_connection_get_account(gc);
   g_return_val_if_fail(acct != NULL, FALSE);
 
-  return purple_find_buddy(acct, who) &&
+  return purple_blist_find_buddy(acct, who) &&
     user_supports(srvc, who, mwAttribute_FILE_TRANSFER);
 }
 
@@ -5339,7 +5339,7 @@ static void remote_group_done(struct mwPurplePluginData *pd,
   acct = purple_connection_get_account(gc);
 
   /* collision checking */
-  group = purple_find_group(name);
+  group = purple_blist_find_group(name);
   if(group) {
     const char *msgA;
     const char *msgB;

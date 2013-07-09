@@ -412,7 +412,7 @@ update_selected_account(GntEntry *username, const char *start, const char *end,
 	GList *accounts = gnt_tree_get_rows(GNT_TREE(accountlist->dropdown));
 	const char *name = gnt_entry_get_text(username);
 	while (accounts) {
-		if (purple_find_buddy(accounts->data, name)) {
+		if (purple_blist_find_buddy(accounts->data, name)) {
 			gnt_combo_box_set_selected(accountlist, accounts->data);
 			gnt_widget_draw(GNT_WIDGET(accountlist));
 			break;
