@@ -790,17 +790,16 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		image = NULL;
 	}
 
-	if (contact->alias != NULL)
-		name = contact->alias;
-	else if (contact->priority != NULL)
-		name = purple_buddy_get_contact_alias(contact->priority);
+	name = purple_contact_get_alias(contact);
 
 	/* This will happen if the contact doesn't have an alias,
 	 * and none of the contact's buddies are online.
 	 * There is probably a better way to deal with this. */
 	if (name == NULL) {
-		if (contact->node.child != NULL && PURPLE_IS_BUDDY(contact->node.child))
-			name = purple_buddy_get_contact_alias((PurpleBuddy *) contact->node.child);
+		if (PURPLE_BLIST_NODE(contact)->child != NULL &&
+				PURPLE_IS_BUDDY(PURPLE_BLIST_NODE(contact)->child))
+			name = purple_buddy_get_contact_alias(PURPLE_BUDDY(
+					PURPLE_BLIST_NODE(contact)->child));
 		if (name == NULL)
 			name = "";
 	}

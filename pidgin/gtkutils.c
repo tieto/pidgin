@@ -1968,6 +1968,7 @@ add_completion_list(PidginCompletionData *data)
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
 	GHashTable *sets;
+	gchar *alias;
 
 	gtk_list_store_clear(data->store);
 
@@ -1988,8 +1989,9 @@ add_completion_list(PidginCompletionData *data)
 				entry.entry.buddy = (PurpleBuddy *) bnode;
 
 				if (filter_func(&entry, user_data)) {
+					g_object_get(cnode, "alias", &alias, NULL);
 					add_buddyname_autocomplete_entry(data->store,
-														((PurpleContact *)cnode)->alias,
+														alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
 														purple_buddy_get_account(entry.entry.buddy),
 														purple_buddy_get_name(entry.entry.buddy)

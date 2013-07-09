@@ -1216,11 +1216,15 @@ pidgin_dialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 void
 pidgin_dialogs_alias_chat(PurpleChat *chat)
 {
+	gchar *alias;
+
 	g_return_if_fail(chat != NULL);
+
+	g_object_get(chat, "alias", &alias, NULL);
 
 	purple_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
-					   chat->alias, FALSE, FALSE, NULL,
+					   alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
 					   purple_chat_get_account(chat), NULL, NULL,
@@ -1256,6 +1260,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 		pidgin_dialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
+		int contact_size = purple_counting_node_get_total_size(PURPLE_COUNTING_NODE(contact));
 		text = g_strdup_printf(
 					ngettext(
 						"You are about to remove the contact containing %s "
@@ -1263,8 +1268,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?",
 						"You are about to remove the contact containing %s "
 						"and %d other buddies from your buddy list.  Do you "
-						"want to continue?", purple_contact_get_contact_size(contact, TRUE) - 1),
-					purple_buddy_get_name(buddy), purple_contact_get_contact_size(contact, TRUE) - 1);
+						"want to continue?", contact_size - 1),
+					purple_buddy_get_name(buddy), contact_size - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,

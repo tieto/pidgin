@@ -3285,8 +3285,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 						g_strdup(purple_conversation_get_name(conv)));
 			}
 			chat = purple_chat_new(account, NULL, components);
-			purple_blist_node_set_flags((PurpleBListNode *)chat,
-					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+			purple_blist_node_set_dont_save((PurpleBListNode *)chat, TRUE);
 			g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_chat",
 					chat, (GDestroyNotify)purple_blist_remove_chat);
 		}
@@ -3300,10 +3299,9 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 
 			if (!buddy) {
 				buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
-				purple_blist_node_set_flags((PurpleBListNode *)buddy,
-						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+				purple_blist_node_set_dont_save((PurpleBListNode *)buddy, TRUE);
 				g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
-						buddy, (GDestroyNotify)purple_buddy_destroy);
+						buddy, (GDestroyNotify)g_object_unref);
 			}
 		}
 	}
