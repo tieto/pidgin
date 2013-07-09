@@ -133,7 +133,7 @@ GType purple_buddy_list_get_type(void);
  *
  * @return The main buddy list.
  */
-PurpleBuddyList *purple_get_blist(void);
+PurpleBuddyList *purple_blist_get_buddy_list(void);
 
 /**
  * Returns the root node of the main buddy list.

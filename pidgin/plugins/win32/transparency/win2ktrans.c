@@ -43,9 +43,9 @@
  */
 #define WINTRANS_PLUGIN_ID	"gtk-win-trans"
 
-#define blist	(purple_get_blist() \
-		? (PIDGIN_BLIST(purple_get_blist()) \
-			? ((PIDGIN_BLIST(purple_get_blist()))->window) \
+#define blist	(purple_blist_get_buddy_list() \
+		? (PIDGIN_BLIST(purple_blist_get_buddy_list()) \
+			? ((PIDGIN_BLIST(purple_blist_get_buddy_list()))->window) \
 			: NULL) \
 		: NULL)
 

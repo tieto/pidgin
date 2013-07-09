@@ -607,7 +607,7 @@ remove_new_empty_group(gpointer data)
 	if (!ggblist)
 		return FALSE;
 
-	list = purple_get_blist();
+	list = purple_blist_get_buddy_list();
 	g_return_val_if_fail(list, FALSE);
 
 	ggblist->new_group_timeout = 0;
@@ -1026,7 +1026,7 @@ buddy_signed_on(PurpleBuddy *buddy, FinchBlist *ggblist)
 static void
 buddy_signed_off(PurpleBuddy *buddy, FinchBlist *ggblist)
 {
-	node_remove(purple_get_blist(), (PurpleBListNode*)buddy);
+	node_remove(purple_blist_get_buddy_list(), (PurpleBListNode*)buddy);
 }
 #endif
 
@@ -1273,9 +1273,9 @@ toggle_show_offline(GntMenuItem *item, gpointer buddy)
 	purple_blist_node_set_bool(buddy, "show_offline",
 			!purple_blist_node_get_bool(buddy, "show_offline"));
 	if (!ggblist->manager->can_add_node(buddy))
-		node_remove(purple_get_blist(), buddy);
+		node_remove(purple_blist_get_buddy_list(), buddy);
 	else
-		node_update(purple_get_blist(), buddy);
+		node_update(purple_blist_get_buddy_list(), buddy);
 }
 
 static void
@@ -1981,7 +1981,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 {
 	PurpleBListNode *node;
 	purple_signals_disconnect_by_handle(finch_blist_get_handle());
-	FINCH_SET_DATA(purple_get_blist(), NULL);
+	FINCH_SET_DATA(purple_blist_get_buddy_list(), NULL);
 
 	node = purple_blist_get_root();
 	while (node) {
@@ -2024,7 +2024,7 @@ populate_buddylist(void)
 			(GCompareFunc)blist_node_compare_log);
 	}
 
-	list = purple_get_blist();
+	list = purple_blist_get_buddy_list();
 	node = purple_blist_get_root();
 	while (node)
 	{
@@ -2502,7 +2502,7 @@ buddy_recent_signed_on_off(gpointer data)
 	fnode->signed_timer = 0;
 
 	if (!ggblist->manager->can_add_node(node)) {
-		node_remove(purple_get_blist(), node);
+		node_remove(purple_blist_get_buddy_list(), node);
 	} else {
 		update_node_display(node, ggblist);
 		if (purple_blist_node_get_parent(node) && PURPLE_IS_CONTACT(purple_blist_node_get_parent(node)))
@@ -2709,7 +2709,7 @@ block_select(GntMenuItem *item, gpointer n)
 	purple_request_field_choice_add(field, _("Unblock"));
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("Block/Unblock"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("Block/Unblock"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "you would like to Block/Unblock."),
@@ -2760,7 +2760,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("New Instant Message"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("New Instant Message"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
@@ -2835,7 +2835,7 @@ join_chat_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("Join a Chat"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("Join a Chat"),
 						NULL,
 						_("Please enter the name of the chat you want to join."),
 						fields,
@@ -2896,7 +2896,7 @@ view_log_cb(GntMenuItem *item, gpointer n)
 	purple_request_field_group_add_field(group, field);
 	purple_request_field_account_set_show_all(field, TRUE);
 
-	purple_request_fields(purple_get_blist(), _("View Log"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("View Log"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "whose log you would like to view."),
@@ -3056,7 +3056,7 @@ create_menu(void)
 
 void finch_blist_show()
 {
-	blist_show(purple_get_blist());
+	blist_show(purple_blist_get_buddy_list());
 }
 
 static void

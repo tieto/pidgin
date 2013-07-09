@@ -1243,7 +1243,7 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 	 */
 
 	if (ops != NULL && ops->update != NULL)
-		ops->update(purple_get_blist(), (PurpleBListNode *)buddy);
+		ops->update(purple_blist_get_buddy_list(), (PurpleBListNode *)buddy);
 }
 
 void

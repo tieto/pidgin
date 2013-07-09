@@ -1971,7 +1971,7 @@ add_completion_list(PidginCompletionData *data)
 
 	gtk_list_store_clear(data->store);
 
-	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	for (gnode = purple_blist_get_buddy_list()->root; gnode != NULL; gnode = gnode->next)
 	{
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;

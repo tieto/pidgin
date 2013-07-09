@@ -699,7 +699,7 @@ purple_blist_boot(void)
 }
 
 PurpleBuddyList *
-purple_get_blist()
+purple_blist_get_buddy_list()
 {
 	return purplebuddylist;
 }

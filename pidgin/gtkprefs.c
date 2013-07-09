@@ -1396,7 +1396,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		g_free(name);
 
 		pidgin_stock_load_status_icon_theme(theme);
-		pidgin_blist_refresh(purple_get_blist());
+		pidgin_blist_refresh(purple_blist_get_buddy_list());
 	}
 }
 

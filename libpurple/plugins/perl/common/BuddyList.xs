@@ -14,7 +14,7 @@ MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
 Purple::BuddyList
-purple_get_blist()
+purple_blist_get_buddy_list()
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_find_
 PROTOTYPES: ENABLE

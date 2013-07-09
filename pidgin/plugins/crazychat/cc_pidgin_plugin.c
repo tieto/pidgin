@@ -413,7 +413,7 @@ static gboolean cc_signed_on(PurpleConnection *gc, void *plugin)
 	    (purple_connections_get_handle(), "signed-on",
 	     plugin, PURPLE_CALLBACK(cc_signed_on));
 	purple_signal_connect(PIDGIN_BLIST
-			    (purple_get_blist()),
+			    (purple_blist_get_buddy_list()),
 			    "drawing-menu", plugin,
 			    PURPLE_CALLBACK(cc_buddy_menu), NULL);
 	conv_handle = purple_conversations_get_handle();
@@ -433,7 +433,7 @@ static gboolean plugin_load(PurplePlugin *plugin)
 		return FALSE;
 
 	cc_init(&cc_info);
-	buddy_list = purple_get_blist();
+	buddy_list = purple_blist_get_buddy_list();
 	if (buddy_list) {
 		purple_signal_connect(PIDGIN_BLIST
 				    (buddy_list),
@@ -464,7 +464,7 @@ static gboolean plugin_unload(PurplePlugin *plugin)
 	cc_destroy(extra);
 	conv_handle = purple_conversations_get_handle();
 	purple_signal_disconnect(PIDGIN_BLIST
-			       (purple_get_blist()),
+			       (purple_blist_get_buddy_list()),
 			       "drawing-menu", plugin,
 			       PURPLE_CALLBACK(cc_buddy_menu));
 	purple_signal_disconnect(conv_handle, "received-im", plugin,

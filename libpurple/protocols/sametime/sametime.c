@@ -912,7 +912,7 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
   acct = purple_connection_get_account(gc);
   owner = purple_account_get_username(acct);
 
-  blist = purple_get_blist();
+  blist = purple_blist_get_buddy_list();
   g_return_val_if_fail(blist != NULL, NULL);
 
   name = mwSametimeGroup_getName(stgroup);
@@ -1145,7 +1145,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
   acct_n = purple_account_get_username(acct);
 
-  blist = purple_get_blist();
+  blist = purple_blist_get_buddy_list();
   g_return_if_fail(blist != NULL);
 
   /* build a hash table for quick lookup while pruning the local

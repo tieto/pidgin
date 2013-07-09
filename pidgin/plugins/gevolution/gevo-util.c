@@ -68,13 +68,13 @@ gevo_get_groups(void)
 	g_list_free(list);
 	list = NULL;
 
-	if (purple_get_blist()->root == NULL)
+	if (purple_blist_get_buddy_list()->root == NULL)
 	{
 		list  = g_list_append(list, (gpointer)_("Buddies"));
 	}
 	else
 	{
-		for (gnode = purple_get_blist()->root;
+		for (gnode = purple_blist_get_buddy_list()->root;
 			 gnode != NULL;
 			 gnode = gnode->next)
 		{

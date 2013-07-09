@@ -128,7 +128,7 @@ GType purple_blist_node_get_type(void);
 
 /**
  * Returns the next node of a given node. This function is to be used to iterate
- * over the tree returned by purple_get_blist.
+ * over the tree returned by purple_blist_get_buddy_list.
  *
  * @param node		A node.
  * @param offline	Whether to include nodes for offline accounts
