@@ -30,10 +30,7 @@
 
 #define FINCH_TYPE_GROUPING_NODE             (finch_grouping_node_get_type())
 #define FINCH_GROUPING_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FINCH_TYPE_GROUPING_NODE, FinchGroupingNode))
-#define FINCH_GROUPING_NODE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), FINCH_TYPE_GROUPING_NODE, FinchGroupingNodeClass))
 #define FINCH_IS_GROUPING_NODE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_GROUPING_NODE))
-#define FINCH_IS_GROUPING_NODE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), FINCH_TYPE_GROUPING_NODE))
-#define FINCH_GROUPING_NODE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), FINCH_TYPE_GROUPING_NODE, FinchGroupingNodeClass))
 
 typedef struct {
 	PurpleBListNode node;
