@@ -181,70 +181,14 @@ void purple_blist_show(void);
 void purple_blist_set_visible(gboolean show);
 
 /**
- * Updates a buddy's status.
- *
- * This should only be called from within Purple.
- *
- * @param buddy      The buddy whose status has changed.
- * @param old_status The status from which we are changing.
- */
-void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status);
-
-/**
- * Updates a node's custom icon.
- *
- * @param node  The PurpleBListNode whose custom icon has changed.
- */
-void purple_blist_update_node_icon(PurpleBListNode *node);
-
-/**
- * Renames a buddy in the buddy list.
+ * Updates the buddies hash table when a buddy has been renamed. This only
+ * updates the cache, the caller is responsible for the actual renaming of
+ * the buddy after updating the cache.
  *
  * @param buddy  The buddy whose name will be changed.
  * @param name   The new name of the buddy.
  */
-void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name);
-
-/**
- * Aliases a contact in the buddy list.
- *
- * @param contact The contact whose alias will be changed.
- * @param alias   The contact's alias.
- */
-void purple_blist_alias_contact(PurpleContact *contact, const char *alias);
-
-/**
- * Aliases a buddy in the buddy list.
- *
- * @param buddy  The buddy whose alias will be changed.
- * @param alias  The buddy's alias.
- */
-void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias);
-
-/**
- * Sets the server-sent alias of a buddy in the buddy list.
- * PRPLs should call serv_got_alias() instead of this.
- *
- * @param buddy  The buddy whose alias will be changed.
- * @param alias  The buddy's "official" alias.
- */
-void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias);
-
-/**
- * Aliases a chat in the buddy list.
- *
- * @param chat  The chat whose alias will be changed.
- * @param alias The chat's new alias.
- */
-void purple_blist_alias_chat(PurpleChat *chat, const char *alias);
-
-/**
- * Renames a group
- *
- * @param group  The group to rename
- * @param name   The new name
- */
-void purple_blist_rename_group(PurpleGroup *group, const char *name);
+void purple_blist_update_cache(PurpleBuddy *buddy, const char *new_name);
 
 /**
  * Adds a new chat to the buddy list.
@@ -298,16 +242,6 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBListNode *node);
 void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBListNode *node);
 
 /**
- * Merges two contacts
- *
- * All of the buddies from source will be moved to target
- *
- * @param source  The contact to merge
- * @param node    The place to merge to (a buddy or contact)
- */
-void purple_blist_merge_contact(PurpleContact *source, PurpleBListNode *node);
-
-/**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  * This doesn't actually try to remove the buddy from the server list.
  *
@@ -342,8 +276,6 @@ void purple_blist_remove_chat(PurpleChat *chat);
  * @param group   The group to be removed
  */
 void purple_blist_remove_group(PurpleGroup *group);
-
-
 
 /**
  * Finds the buddy struct given a name and an account

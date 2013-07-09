@@ -294,6 +294,16 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
 
 /**
+ * Updates a buddy's status.
+ *
+ * This should only be called from within Purple.
+ *
+ * @param buddy      The buddy whose status has changed.
+ * @param old_status The status from which we are changing.
+ */
+void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status);
+
+/**
  * Gets the media caps from a buddy.
  *
  * @param buddy The buddy.
@@ -321,10 +331,10 @@ const char *purple_buddy_get_alias_only(PurpleBuddy *buddy);
 /**
  * Sets the server alias for a buddy.
  *
- * @param buddy         The buddy.
- * @param server_alias  The server alias to be set.
+ * @param buddy  The buddy.
+ * @param alias  The server alias to be set.
  */
-void purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *server_alias);
+void purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
  * Gets the server alias for a buddy.
@@ -447,6 +457,16 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
  * @param contact  The contact
  */
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
+
+/**
+ * Merges two contacts
+ *
+ * All of the buddies from source will be moved to target
+ *
+ * @param source  The contact to merge
+ * @param node    The place to merge to (a buddy or contact)
+ */
+void purple_blist_merge_contact(PurpleContact *source, PurpleBListNode *node);
 
 /*@}*/
 

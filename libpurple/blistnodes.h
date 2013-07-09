@@ -312,6 +312,13 @@ gboolean purple_blist_node_get_dont_save(PurpleBListNode *node);
  */
 GList *purple_blist_node_get_extended_menu(PurpleBListNode *n);
 
+/**
+ * Updates a node's UI, such as when its custom icon has been changed.
+ *
+ * @param node  The PurpleBListNode that is to be updated.
+ */
+void purple_blist_node_update(PurpleBListNode *node);
+
 /*@}*/
 
 /**************************************************************************/

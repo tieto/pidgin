@@ -325,6 +325,17 @@ purple_blist_node_get_extended_menu(PurpleBListNode *n)
 	return menu;
 }
 
+void
+purple_blist_node_update(PurpleBListNode *node)
+{
+	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+
+	g_return_if_fail(node != NULL);
+
+	if (ops && ops->update)
+		ops->update(purple_blist_get_buddy_list(), node);
+}
+
 static void
 purple_blist_node_setting_free(gpointer data)
 {
