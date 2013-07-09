@@ -122,7 +122,7 @@ G_BEGIN_DECLS
 /** @name Buddy List API                                                  */
 /**************************************************************************/
 /*@{*/
-/* TODO move node methods to appropriate nodes */
+
 /**
  * Returns the GType for the PurpleBuddyList boxed structure.
  */
