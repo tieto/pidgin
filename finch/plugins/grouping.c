@@ -28,9 +28,9 @@
 
 #include "gnttree.h"
 
-#define FINCH_TYPE_GROUPING_NODE             (finch_grouping_node_get_type())
-#define FINCH_GROUPING_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FINCH_TYPE_GROUPING_NODE, FinchGroupingNode))
-#define FINCH_IS_GROUPING_NODE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_GROUPING_NODE))
+#define FINCH_TYPE_GROUPING_NODE     (finch_grouping_node_get_type())
+#define FINCH_GROUPING_NODE(obj)     (G_TYPE_CHECK_INSTANCE_CAST((obj), FINCH_TYPE_GROUPING_NODE, FinchGroupingNode))
+#define FINCH_IS_GROUPING_NODE(obj)  (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_GROUPING_NODE))
 
 typedef struct {
 	PurpleBListNode node;
@@ -40,7 +40,7 @@ typedef struct {
 	PurpleBListNodeClass node_class;
 } FinchGroupingNodeClass;
 
-static FinchBlistManager *default_manager;
+static FinchBListManager *default_manager;
 
 /**
  * GObject code
@@ -146,7 +146,7 @@ static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body,
 	}
 }
 
-static FinchBlistManager on_offline =
+static FinchBListManager on_offline =
 {
 	"on-offline",
 	N_("Online/Offline"),
@@ -183,7 +183,7 @@ static gpointer meebo_find_parent(PurpleBListNode *node)
 	return default_manager->find_parent(node);
 }
 
-static FinchBlistManager meebo_group =
+static FinchBListManager meebo_group =
 {
 	"meebo",
 	N_("Meebo"),
@@ -229,7 +229,7 @@ static gpointer no_group_find_parent(PurpleBListNode *node)
 	return ret;
 }
 
-static FinchBlistManager no_group =
+static FinchBListManager no_group =
 {
 	"no-group",
 	N_("No Grouping"),
@@ -340,7 +340,7 @@ nested_group_can_add_node(PurpleBListNode *node)
 	return FALSE;
 }
 
-static FinchBlistManager nested_group =
+static FinchBListManager nested_group =
 {
 	"nested",
 	N_("Nested Grouping (experimental)"),

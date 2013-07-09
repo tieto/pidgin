@@ -48,7 +48,7 @@ typedef struct
 	gpointer (*find_parent)(PurpleBListNode *node);    /**< Find the parent row for a node. */
 	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */
 	gpointer reserved[4];
-} FinchBlistManager;
+} FinchBListManager;
 
 /**
  * Get the ui-functions.
@@ -129,14 +129,14 @@ GntTree * finch_blist_get_tree(void);
  *
  * @param manager   The alternate buddylist manager.
  */
-void finch_blist_install_manager(const FinchBlistManager *manager);
+void finch_blist_install_manager(const FinchBListManager *manager);
 
 /**
  * Remove an alternate buddy list manager.
  *
  * @param manager   The buddy list manager to remove.
  */
-void finch_blist_uninstall_manager(const FinchBlistManager *manager);
+void finch_blist_uninstall_manager(const FinchBListManager *manager);
 
 /**
  * Find a buddy list manager.
@@ -145,7 +145,7 @@ void finch_blist_uninstall_manager(const FinchBlistManager *manager);
  *
  * @return  The manager with the requested identifier, if available. @c NULL otherwise.
  */
-FinchBlistManager * finch_blist_manager_find(const char *id);
+FinchBListManager * finch_blist_manager_find(const char *id);
 
 /**
  * Request the active buddy list manager to add a node.
