@@ -43,6 +43,46 @@
 
 #define KEEPALIVE_INTERVAL 30
 
+#define PURPLE_CONNECTION_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONNECTION, PurpleConnectionPrivate))
+
+/** @copydoc _PurpleConnectionPrivate */
+typedef struct _PurpleConnectionPrivate  PurpleConnectionPrivate;
+
+/** Private data for a connection */
+struct _PurpleConnectionPrivate
+{
+	PurplePlugin *prpl;           /**< The protocol plugin.              */
+	PurpleConnectionFlags flags;  /**< Connection flags.                 */
+
+	PurpleConnectionState state;  /**< The connection state.             */
+
+	PurpleAccount *account;       /**< The account being connected to.   */
+	char *password;               /**< The password used.                */
+
+	GSList *buddy_chats;          /**< A list of active chats
+	                                  (#PurpleChatConversation structs). */
+	void *proto_data;             /**< Protocol-specific data.            
+	                                  TODO Remove this, and use
+	                                       protocol-specific subclasses  */
+
+	char *display_name;           /**< How you appear to other people.   */
+	guint keepalive;              /**< Keep-alive.                       */
+
+	/** Wants to Die state.  This is set when the user chooses to log out, or
+	 * when the protocol is disconnected and should not be automatically
+	 * reconnected (incorrect password, etc.).  prpls should rely on
+	 * purple_connection_error() to set this for them rather than
+	 * setting it themselves.
+	 * @see purple_connection_error_is_fatal
+	 */
+	gboolean wants_to_die;
+
+	guint disconnect_timeout;  /**< Timer used for nasty stack tricks         */
+	time_t last_received;      /**< When we last received a packet. Set by the
+	                                prpl to avoid sending unneeded keepalives */
+};
+
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
