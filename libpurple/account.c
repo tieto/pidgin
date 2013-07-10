@@ -1864,9 +1864,8 @@ GSList *
 purple_account_privacy_get_permitted(PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	g_return_val_if_fail(priv != NULL, NULL);
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->permit;
 }
@@ -1875,9 +1874,8 @@ GSList *
 purple_account_privacy_get_denied(PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	g_return_val_if_fail(priv != NULL, NULL);
 
-	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->deny;
 }
