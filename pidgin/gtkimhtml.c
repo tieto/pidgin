@@ -5713,20 +5713,20 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 {
 	GtkIMHtmlButtons buttons;
 
-	if (flags & PURPLE_CONNECTION_HTML) {
+	if (flags & PURPLE_CONNECTION_FLAG_HTML) {
 		char color[8];
 		GdkColor fg_color, bg_color;
 
 		buttons = GTK_IMHTML_ALL;
 
-		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)
 			buttons &= ~GTK_IMHTML_BACKCOLOR;
-		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE)
 		{
 			buttons &= ~GTK_IMHTML_GROW;
 			buttons &= ~GTK_IMHTML_SHRINK;
 		}
-		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_URLDESC)
 			buttons &= ~GTK_IMHTML_LINKDESC;
 
 		gtk_imhtml_set_format_functions(imhtml, GTK_IMHTML_ALL);
@@ -5742,7 +5742,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		gtk_imhtml_toggle_fontface(imhtml,
 			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
 
-		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		if (!(flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE))
 		{
 			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
 
@@ -5764,7 +5764,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 
 		gtk_imhtml_toggle_forecolor(imhtml, color);
 
-		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
+		if(!(flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR) &&
 		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
 		{
 			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
@@ -5778,7 +5778,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 
 		gtk_imhtml_toggle_background(imhtml, color);
 
-		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+		if (flags & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO)
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, TRUE);
 		else
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, FALSE);
@@ -5787,10 +5787,10 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		imhtml_clear_formatting(imhtml);
 	}
 
-	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+	if (flags & PURPLE_CONNECTION_FLAG_NO_IMAGES)
 		buttons &= ~GTK_IMHTML_IMAGE;
 
-	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+	if (flags & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 		buttons |= GTK_IMHTML_CUSTOM_SMILEY;
 	else
 		buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;

@@ -621,7 +621,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
 	yd->logged_in = TRUE;
 	purple_debug_info("yahoo","Authentication: Connection established\n");
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 	if (yd->picture_upload_todo) {
 		yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
 		yd->picture_upload_todo = NULL;
@@ -3628,7 +3628,7 @@ void yahoo_login(PurpleAccount *account) {
 	PurpleStatus *status = purple_account_get_active_status(account);
 
 	purple_connection_set_protocol_data(gc, yd);
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_NO_BGCOLOR | PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 

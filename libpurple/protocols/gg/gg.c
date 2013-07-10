@@ -688,7 +688,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 							  ggp_callback_recv, gc);
 
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 				
 				ggp_buddylist_send(gc);
 				ggp_roster_request_update(gc);

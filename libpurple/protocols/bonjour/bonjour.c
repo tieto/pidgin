@@ -103,7 +103,7 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif /* _WIN32 */
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML);
 	bd = g_new0(BonjourData, 1);
 	purple_connection_set_protocol_data(gc, bd);
 
@@ -152,7 +152,7 @@ bonjour_login(PurpleAccount *account)
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 
 	/* Show the buddy list by telling Purple we have already connected */
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 }
 
 static void

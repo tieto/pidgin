@@ -742,13 +742,13 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		switch (purple_connection_get_state(gc)) {
-		case PURPLE_DISCONNECTED:
+		case PURPLE_CONNECTION_DISCONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("disconnected", -1));
 			break;
-		case PURPLE_CONNECTED:
+		case PURPLE_CONNECTION_CONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connected", -1));
 			break;
-		case PURPLE_CONNECTING:
+		case PURPLE_CONNECTION_CONNECTING:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connecting", -1));
 			break;
 		}

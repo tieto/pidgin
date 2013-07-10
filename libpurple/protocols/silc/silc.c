@@ -260,7 +260,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		sg->conn = conn;
 
 		/* Connection created successfully */
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 
 		/* Send the server our buddy list */
 		silcpurple_send_buddylist(gc);

@@ -697,7 +697,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 	purple_request_input(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
-					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_HTML) ? "html" : NULL),
+					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
@@ -1286,11 +1286,11 @@ purple_account_get_state(const PurpleAccount *account)
 {
 	PurpleConnection *gc;
 
-	g_return_val_if_fail(account != NULL, PURPLE_DISCONNECTED);
+	g_return_val_if_fail(account != NULL, PURPLE_CONNECTION_DISCONNECTED);
 
 	gc = purple_account_get_connection(account);
 	if (!gc)
-		return PURPLE_DISCONNECTED;
+		return PURPLE_CONNECTION_DISCONNECTED;
 
 	return purple_connection_get_state(gc);
 }
@@ -1298,19 +1298,19 @@ purple_account_get_state(const PurpleAccount *account)
 gboolean
 purple_account_is_connected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTED);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_CONNECTED);
 }
 
 gboolean
 purple_account_is_connecting(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTING);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_CONNECTING);
 }
 
 gboolean
 purple_account_is_disconnected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_DISCONNECTED);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_DISCONNECTED);
 }
 
 const char *

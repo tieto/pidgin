@@ -1088,7 +1088,7 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	PurpleStoredImage *image;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY);
 	js = jabber_stream_new(account);
 	if (js == NULL)
 		return;
@@ -1348,7 +1348,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 
 	if(js->registration) {
 		/* get rid of the login thingy */
-		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
+		purple_connection_set_state(js->gc, PURPLE_CONNECTION_CONNECTED);
 	}
 
 	if(xmlnode_get_child(query, "registered")) {
@@ -1554,8 +1554,8 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
 
-	if (purple_connection_get_state(gc) != PURPLE_CONNECTED) {
-		if (purple_connection_get_state(gc) != PURPLE_CONNECTING)
+	if (purple_connection_get_state(gc) != PURPLE_CONNECTION_CONNECTED) {
+		if (purple_connection_get_state(gc) != PURPLE_CONNECTION_CONNECTING)
 			jabber_login(account);
 		js = purple_connection_get_protocol_data(gc);
 		js->unregistration = TRUE;
@@ -1754,7 +1754,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			/* Start up the inactivity timer */
 			jabber_stream_restart_inactivity_timer(js);
 
-			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
+			purple_connection_set_state(js->gc, PURPLE_CONNECTION_CONNECTED);
 			break;
 	}
 

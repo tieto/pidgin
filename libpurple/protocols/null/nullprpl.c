@@ -375,7 +375,7 @@ static void nullprpl_login(PurpleAccount *acct)
   purple_connection_update_progress(gc, _("Connected"),
                                     1,   /* which connection step this is */
                                     2);  /* total number of steps */
-  purple_connection_set_state(gc, PURPLE_CONNECTED);
+  purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 
   /* tell purple about everyone on our buddy list who's connected */
   foreach_nullprpl_gc(discover_status, gc, NULL);

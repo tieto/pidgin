@@ -143,7 +143,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
-	purple_connection_set_state(gc, PURPLE_CONNECTING);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
 
@@ -212,7 +212,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
-	purple_connection_set_state(gc, PURPLE_CONNECTING);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
 
@@ -237,7 +237,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	purple_debug_info("connection", "Disconnecting connection %p\n", gc);
 
-	if (purple_connection_get_state(gc) != PURPLE_CONNECTING)
+	if (purple_connection_get_state(gc) != PURPLE_CONNECTION_CONNECTING)
 		remove = TRUE;
 
 	purple_signal_emit(purple_connections_get_handle(), "signing-off", gc);
@@ -269,7 +269,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	connections = g_list_remove(connections, gc);
 
-	purple_connection_set_state(gc, PURPLE_DISCONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_DISCONNECTED);
 
 	if (remove)
 		purple_blist_remove_account(account);
@@ -318,14 +318,14 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 	ops = purple_connections_get_ui_ops();
 
-	if (gc->state == PURPLE_CONNECTING) {
+	if (gc->state == PURPLE_CONNECTION_CONNECTING) {
 		connections_connecting = g_list_append(connections_connecting, gc);
 	}
 	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
 
-	if (gc->state == PURPLE_CONNECTED) {
+	if (gc->state == PURPLE_CONNECTION_CONNECTED) {
 		PurpleAccount *account;
 		PurplePresence *presence;
 
@@ -363,7 +363,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		update_keepalive(gc, TRUE);
 	}
-	else if (gc->state == PURPLE_DISCONNECTED) {
+	else if (gc->state == PURPLE_CONNECTION_DISCONNECTED) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
@@ -424,7 +424,7 @@ purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_da
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, PURPLE_DISCONNECTED);
+	g_return_val_if_fail(gc != NULL, PURPLE_CONNECTION_DISCONNECTED);
 
 	return gc->state;
 }

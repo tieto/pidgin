@@ -1107,7 +1107,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				}
 			}
 			sip->registerstatus = SIMPLE_REGISTER_COMPLETE;
-			purple_connection_set_state(sip->gc, PURPLE_CONNECTED);
+			purple_connection_set_state(sip->gc, PURPLE_CONNECTION_CONNECTED);
 
 			/* get buddies from blist */
 			simple_get_buddies(sip->gc);

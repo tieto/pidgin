@@ -485,7 +485,7 @@ msn_session_finish_login(MsnSession *session)
 			purple_imgstore_unref(img);
 
 		session->logged_in = TRUE;
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 
 		/* Sync users */
 		msn_session_sync_users(session);

@@ -1573,7 +1573,7 @@ static void mw_session_stateChange(struct mwSession *session,
 
     msg = _("Connected");
     purple_connection_update_progress(gc, msg, 10, MW_CONNECT_STEPS);
-    purple_connection_set_state(gc, PURPLE_CONNECTED);
+    purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
     break;
 
   case mwSession_STOPPING:
@@ -2537,15 +2537,15 @@ static void convo_features(struct mwConversation *conv) {
 
   if(mwConversation_isOpen(conv)) {
     if(mwConversation_supports(conv, mwImSend_HTML)) {
-      feat |= PURPLE_CONNECTION_HTML;
+      feat |= PURPLE_CONNECTION_FLAG_HTML;
     } else {
-      feat &= ~PURPLE_CONNECTION_HTML;
+      feat &= ~PURPLE_CONNECTION_FLAG_HTML;
     }
 
     if(mwConversation_supports(conv, mwImSend_MIME)) {
-      feat &= ~PURPLE_CONNECTION_NO_IMAGES;
+      feat &= ~PURPLE_CONNECTION_FLAG_NO_IMAGES;
     } else {
-      feat |= PURPLE_CONNECTION_NO_IMAGES;
+      feat |= PURPLE_CONNECTION_FLAG_NO_IMAGES;
     }
 
     DEBUG_INFO("conversation features set to 0x%04x\n", feat);
@@ -3679,7 +3679,7 @@ static void mw_prpl_login(PurpleAccount *account) {
   pd = mwPurplePluginData_new(gc);
 
   /* while we do support images, the default is to not offer it */
-  purple_connection_set_flags(gc, PURPLE_CONNECTION_NO_IMAGES);
+  purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
   user = g_strdup(purple_account_get_username(account));
 

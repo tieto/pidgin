@@ -120,7 +120,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 			displayed = purple_markup_linkify(message);
 	}
 
-	if (displayed && (priv->features & PURPLE_CONNECTION_HTML) &&
+	if (displayed && (priv->features & PURPLE_CONNECTION_FLAG_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW)) {
 		sent = g_strdup(displayed);
 	} else

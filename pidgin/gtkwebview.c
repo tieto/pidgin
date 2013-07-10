@@ -1735,19 +1735,19 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 
 	g_return_if_fail(webview != NULL);
 
-	if (flags & PURPLE_CONNECTION_HTML) {
+	if (flags & PURPLE_CONNECTION_FLAG_HTML) {
 		gboolean bold, italic, underline, strike;
 
 		buttons = GTK_WEBVIEW_ALL;
 
-		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)
 			buttons &= ~GTK_WEBVIEW_BACKCOLOR;
-		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE)
 		{
 			buttons &= ~GTK_WEBVIEW_GROW;
 			buttons &= ~GTK_WEBVIEW_SHRINK;
 		}
-		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_URLDESC)
 			buttons &= ~GTK_WEBVIEW_LINKDESC;
 
 		gtk_webview_get_current_format(webview, &bold, &italic, &underline, &strike);
@@ -1768,7 +1768,7 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 		gtk_webview_toggle_fontface(webview,
 			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
 
-		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		if (!(flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE))
 		{
 			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
 
@@ -1780,14 +1780,14 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 		gtk_webview_toggle_forecolor(webview,
 			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
 
-		if (!(flags & PURPLE_CONNECTION_NO_BGCOLOR)) {
+		if (!(flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)) {
 			gtk_webview_toggle_backcolor(webview,
 				purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
 		} else {
 			gtk_webview_toggle_backcolor(webview, "");
 		}		
 
-		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+		if (flags & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO)
 			gtk_webview_set_whole_buffer_formatting_only(webview, TRUE);
 		else
 			gtk_webview_set_whole_buffer_formatting_only(webview, FALSE);
@@ -1796,10 +1796,10 @@ gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags)
 		webview_clear_formatting(webview);
 	}
 
-	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+	if (flags & PURPLE_CONNECTION_FLAG_NO_IMAGES)
 		buttons &= ~GTK_WEBVIEW_IMAGE;
 
-	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+	if (flags & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 		buttons |= GTK_WEBVIEW_CUSTOM_SMILEY;
 	else
 		buttons &= ~GTK_WEBVIEW_CUSTOM_SMILEY;

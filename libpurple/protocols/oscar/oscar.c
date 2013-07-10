@@ -722,17 +722,17 @@ oscar_login(PurpleAccount *account)
 		return;
 	}
 
-	flags = PURPLE_CONNECTION_HTML;
+	flags = PURPLE_CONNECTION_FLAG_HTML;
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
-		flags |= PURPLE_CONNECTION_AUTO_RESP;
+		flags |= PURPLE_CONNECTION_FLAG_AUTO_RESP;
 	}
 
 	/* Set this flag based on the protocol_id rather than the username,
 	   because that is what's tied to the get_moods prpl callback. */
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
-		flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
+		flags |= PURPLE_CONNECTION_FLAG_SUPPORT_MOODS;
 
 	purple_connection_set_flags(gc, flags);
 
@@ -2913,7 +2913,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		/* Request offline messages for AIM and ICQ */
 		aim_im_reqofflinemsgs(od);
 
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 	}
 
 	return 1;
@@ -4097,7 +4097,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		/* Request offline messages for AIM and ICQ */
 		aim_im_reqofflinemsgs(od);
 
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 	}
 
 	return 1;

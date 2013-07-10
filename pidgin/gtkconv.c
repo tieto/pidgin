@@ -653,7 +653,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 #endif
 
 	gc = NULL/*purple_account_get_connection(account)*/;
-	if (gc && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_NO_NEWLINES)) {
+	if (gc && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_NO_NEWLINES)) {
 #if 0
 		/* TODO WebKit */
 		char **bufs;
@@ -2294,10 +2294,10 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	gtk_webview_set_protocol_name(GTK_WEBVIEW(gtkconv->webview), protocol_name);
 
 	features = purple_conversation_get_features(conv);
-	if (!(features & PURPLE_CONNECTION_HTML))
+	if (!(features & PURPLE_CONNECTION_FLAG_HTML))
 		gtk_webview_clear_formatting(GTK_WEBVIEW(gtkconv->entry));
-	else if (features & PURPLE_CONNECTION_FORMATTING_WBFO &&
-	         !(purple_conversation_get_features(old_conv) & PURPLE_CONNECTION_FORMATTING_WBFO))
+	else if (features & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO &&
+	         !(purple_conversation_get_features(old_conv) & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO))
 	{
 		/* The old conversation allowed formatting on parts of the
 		 * buffer, but the new one only allows it on the whole
@@ -2345,12 +2345,12 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 		gtk_webview_toggle_fontface(entry, fontface);
 
-		if (!(features & PURPLE_CONNECTION_NO_FONTSIZE))
+		if (!(features & PURPLE_CONNECTION_FLAG_NO_FONTSIZE))
 			gtk_webview_font_set_size(entry, fontsize);
 
 		gtk_webview_toggle_forecolor(entry, forecolor);
 
-		if (!(features & PURPLE_CONNECTION_NO_BGCOLOR))
+		if (!(features & PURPLE_CONNECTION_FLAG_NO_BGCOLOR))
 		{
 			gtk_webview_toggle_backcolor(entry, backcolor);
 #if 0
@@ -2372,7 +2372,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 		 * here, we didn't call gtk_imhtml_clear_formatting() (because we want to
 		 * preserve the formatting exactly as it is), so we have to do this now. */
 		gtk_webview_set_whole_buffer_formatting_only(entry,
-			(features & PURPLE_CONNECTION_FORMATTING_WBFO));
+			(features & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO));
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(), "conversation-switched", conv);
@@ -5874,7 +5874,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtkconv->nick_colors = g_array_ref(generated_nick_colors);
 	}
 
-	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 		pidgin_themes_smiley_themeize_custom(gtkconv->entry);
 }
 
@@ -6536,7 +6536,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
-	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
+	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY))
 	{
 		/* We want to see our own smileys. Need to revert it after send*/
 		pidgin_themes_smiley_themeize_custom(gtkconv->webview);
@@ -6698,7 +6698,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 
 #if 0
-	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
+	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY))
 	{
 		/* Restore the smiley-data */
 		pidgin_themes_smiley_themeize(gtkconv->webview);
@@ -7222,32 +7222,32 @@ gray_stuff_out(PidginConversation *gtkconv)
 		PurpleConnectionFlags features = purple_conversation_get_features(conv);
 		/* Account is online */
 		/* Deal with the toolbar */
-		if (features & PURPLE_CONNECTION_HTML)
+		if (features & PURPLE_CONNECTION_FLAG_HTML)
 		{
 			buttons = GTK_WEBVIEW_ALL; /* Everything on */
-			if (features & PURPLE_CONNECTION_NO_BGCOLOR)
+			if (features & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)
 				buttons &= ~GTK_WEBVIEW_BACKCOLOR;
-			if (features & PURPLE_CONNECTION_NO_FONTSIZE)
+			if (features & PURPLE_CONNECTION_FLAG_NO_FONTSIZE)
 			{
 				buttons &= ~GTK_WEBVIEW_GROW;
 				buttons &= ~GTK_WEBVIEW_SHRINK;
 			}
-			if (features & PURPLE_CONNECTION_NO_URLDESC)
+			if (features & PURPLE_CONNECTION_FLAG_NO_URLDESC)
 				buttons &= ~GTK_WEBVIEW_LINKDESC;
 		} else {
 			buttons = GTK_WEBVIEW_SMILEY | GTK_WEBVIEW_IMAGE;
 		}
 
 		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE)
-		 && !(features & PURPLE_CONNECTION_NO_IMAGES)) {
-			features |= PURPLE_CONNECTION_NO_IMAGES;
+		 && !(features & PURPLE_CONNECTION_FLAG_NO_IMAGES)) {
+			features |= PURPLE_CONNECTION_FLAG_NO_IMAGES;
 			purple_conversation_set_features(conv, features);
 		}
 
-		if (features & PURPLE_CONNECTION_NO_IMAGES)
+		if (features & PURPLE_CONNECTION_FLAG_NO_IMAGES)
 			buttons &= ~GTK_WEBVIEW_IMAGE;
 
-		if (features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		if (features & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 			buttons |= GTK_WEBVIEW_CUSTOM_SMILEY;
 		else
 			buttons &= ~GTK_WEBVIEW_CUSTOM_SMILEY;
@@ -7261,8 +7261,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_action_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_action_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_action_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		gtk_action_set_sensitive(win->menu.insert_link, (features & PURPLE_CONNECTION_HTML));
-		gtk_action_set_sensitive(win->menu.insert_image, !(features & PURPLE_CONNECTION_NO_IMAGES));
+		gtk_action_set_sensitive(win->menu.insert_link, (features & PURPLE_CONNECTION_FLAG_HTML));
+		gtk_action_set_sensitive(win->menu.insert_image, !(features & PURPLE_CONNECTION_FLAG_NO_IMAGES));
 
 		if (PURPLE_IS_IM_CONVERSATION(conv))
 		{

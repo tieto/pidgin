@@ -526,8 +526,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			js->pep = TRUE;
 			purple_connection_set_flags(gc,
 					  purple_connection_get_flags(gc)
-					| PURPLE_CONNECTION_SUPPORT_MOODS
-					| PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES);
+					| PURPLE_CONNECTION_FLAG_SUPPORT_MOODS
+					| PURPLE_CONNECTION_FLAG_SUPPORT_MOOD_MESSAGES);
 		}
 		if (!category || strcmp(category, "server"))
 			continue;

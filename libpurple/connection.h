@@ -35,25 +35,25 @@ typedef struct _PurpleConnection PurpleConnection;
  */
 typedef enum /*< flags >*/
 {
-	PURPLE_CONNECTION_HTML       = 0x0001, /**< Connection sends/receives in 'HTML'. */
-	PURPLE_CONNECTION_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive
-					           background colors.                  */
-	PURPLE_CONNECTION_AUTO_RESP  = 0x0004,  /**< Send auto responses when away.       */
-	PURPLE_CONNECTION_FORMATTING_WBFO = 0x0008, /**< The text buffer must be formatted as a whole */
-	PURPLE_CONNECTION_NO_NEWLINES = 0x0010, /**< No new lines are allowed in outgoing messages */
-	PURPLE_CONNECTION_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
-	PURPLE_CONNECTION_NO_URLDESC = 0x0040,  /**< Connection does not support descriptions with links */
-	PURPLE_CONNECTION_NO_IMAGES = 0x0080,  /**< Connection does not support sending of images */
-	PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
-	PURPLE_CONNECTION_SUPPORT_MOODS = 0x0200, /**< Connection supports setting moods */
-	PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES = 0x0400 /**< Connection supports setting a message on moods */
+	PURPLE_CONNECTION_FLAG_HTML       = 0x0001, /**< Connection sends/receives in 'HTML'. */
+	PURPLE_CONNECTION_FLAG_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive
+					                                 background colors.                  */
+	PURPLE_CONNECTION_FLAG_AUTO_RESP  = 0x0004,  /**< Send auto responses when away.       */
+	PURPLE_CONNECTION_FLAG_FORMATTING_WBFO = 0x0008, /**< The text buffer must be formatted as a whole */
+	PURPLE_CONNECTION_FLAG_NO_NEWLINES = 0x0010, /**< No new lines are allowed in outgoing messages */
+	PURPLE_CONNECTION_FLAG_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
+	PURPLE_CONNECTION_FLAG_NO_URLDESC = 0x0040,  /**< Connection does not support descriptions with links */
+	PURPLE_CONNECTION_FLAG_NO_IMAGES = 0x0080,  /**< Connection does not support sending of images */
+	PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
+	PURPLE_CONNECTION_FLAG_SUPPORT_MOODS = 0x0200, /**< Connection supports setting moods */
+	PURPLE_CONNECTION_FLAG_SUPPORT_MOOD_MESSAGES = 0x0400 /**< Connection supports setting a message on moods */
 } PurpleConnectionFlags;
 
 typedef enum
 {
-	PURPLE_DISCONNECTED = 0, /**< Disconnected. */
-	PURPLE_CONNECTED,        /**< Connected.    */
-	PURPLE_CONNECTING        /**< Connecting.   */
+	PURPLE_CONNECTION_DISCONNECTED = 0, /**< Disconnected. */
+	PURPLE_CONNECTION_CONNECTED,        /**< Connected.    */
+	PURPLE_CONNECTION_CONNECTING        /**< Connecting.   */
 
 } PurpleConnectionState;
 
@@ -133,7 +133,7 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
 } PurpleConnectionError;
 
-/** Holds the type of an error along with its description. */
+/** Holds the type of an error along with its description. TODO GBoxed */
 typedef struct
 {
 	/** The type of error. */
@@ -225,7 +225,7 @@ typedef struct
 } PurpleConnectionUiOps;
 
 
-/* Represents an active connection on an account. */
+/* Represents an active connection on an account. TODO GObject */
 struct _PurpleConnection
 {
 	PurplePlugin *prpl;            /**< The protocol plugin.               */
@@ -266,7 +266,7 @@ G_BEGIN_DECLS
 
 /**
  * Sets the connection state.  PRPLs should call this and pass in
- * the state #PURPLE_CONNECTED when the account is completely
+ * the state #PURPLE_CONNECTION_CONNECTED when the account is completely
  * signed on.  What does it mean to be completely signed on?  If
  * the core can call prpl->set_status, and it successfully changes
  * your status, then the account is online.
@@ -332,7 +332,7 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
  * @return TRUE if the account is connected, otherwise returns FALSE.
  */
 #define PURPLE_CONNECTION_IS_CONNECTED(gc) \
-	(purple_connection_get_state(gc) == PURPLE_CONNECTED)
+	(purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED)
 
 /**
  * Returns the connection's account.

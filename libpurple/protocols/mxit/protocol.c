@@ -1474,7 +1474,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	/* we were not yet logged in so we need to complete the login sequence here */
 	session->flags |= MXIT_FLAG_LOGGEDIN;
 	purple_connection_update_progress( session->con, _( "Successfully Logged In..." ), 3, 4 );
-	purple_connection_set_state( session->con, PURPLE_CONNECTED );
+	purple_connection_set_state( session->con, PURPLE_CONNECTION_CONNECTED );
 
 	/* save extra info if this is a HTTP connection */
 	if ( session->http ) {

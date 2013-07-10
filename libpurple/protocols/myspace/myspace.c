@@ -1152,7 +1152,7 @@ msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer u
 			 * signedOn signal, so clients can now do anything with msimprpl, and
 			 * we're ready for it (session key, userid, username all setup). */
 			purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
-			purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+			purple_connection_set_state(session->gc, PURPLE_CONNECTION_CONNECTED);
 			break;
 	}
 
@@ -2187,7 +2187,7 @@ msim_login(PurpleAccount *acct)
 
 	gc = purple_account_get_connection(acct);
 	purple_connection_set_protocol_data(gc, msim_session_new(acct));
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	/*
 	 * Lets wipe out our local list of blocked buddies.  We'll get a
