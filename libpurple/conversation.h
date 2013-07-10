@@ -115,7 +115,11 @@ typedef enum /*< flags >*/
 /**************************************************************************/
 /** PurpleConversation                                                    */
 /**************************************************************************/
-/** Structure representing a conversation instance. */
+/**
+ * A core representation of a conversation between two or more people.
+ *
+ * The conversation can be an IM or a chat.
+ */
 struct _PurpleConversation
 {
 	/*< private >*/

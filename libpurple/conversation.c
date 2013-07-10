@@ -40,11 +40,7 @@
 /** @copydoc _PurpleConversationPrivate */
 typedef struct _PurpleConversationPrivate  PurpleConversationPrivate;
 
-/**
- * A core representation of a conversation between two or more people.
- *
- * The conversation can be an IM or a chat.
- */
+/** General private data for a conversation */
 struct _PurpleConversationPrivate
 {
 	PurpleAccount *account;           /**< The user using this conversation. */
