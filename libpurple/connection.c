@@ -95,14 +95,15 @@ send_keepalive(gpointer data)
 {
 	PurpleConnection *gc = data;
 	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
 	/* Only send keep-alives if we haven't heard from the
 	 * server in a while.
 	 */
-	if ((time(NULL) - gc->last_received) < KEEPALIVE_INTERVAL)
+	if ((time(NULL) - priv->last_received) < KEEPALIVE_INTERVAL)
 		return TRUE;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
 	if (prpl_info->keepalive)
 		prpl_info->keepalive(gc);
 
@@ -113,23 +114,24 @@ static void
 update_keepalive(PurpleConnection *gc, gboolean on)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (priv != NULL && priv->prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
 
 	if (!prpl_info || !prpl_info->keepalive)
 		return;
 
-	if (on && !gc->keepalive)
+	if (on && !priv->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
+		priv->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
-	else if (!on && gc->keepalive > 0)
+	else if (!on && priv->keepalive > 0)
 	{
 		purple_debug_info("connection", "Deactivating keepalive.\n");
-		purple_timeout_remove(gc->keepalive);
-		gc->keepalive = 0;
+		purple_timeout_remove(priv->keepalive);
+		priv->keepalive = 0;
 	}
 }
 
@@ -137,6 +139,7 @@ void
 _purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
 {
 	PurpleConnection *gc;
+	PurpleConnectionPrivate *priv;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
@@ -177,12 +180,14 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		}
 	}
 
-	gc = g_new0(PurpleConnection, 1);
+	gc = g_object_new(PURPLE_TYPE_CONNECTION, NULL);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
 
-	gc->prpl = prpl;
+	priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	priv->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
-		gc->password = g_strdup(password);
+		priv->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
 	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTING);
 	connections = g_list_append(connections, gc);
@@ -195,7 +200,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		purple_debug_info("connection", "Registering.  gc = %p\n", gc);
 
 		/* set this so we don't auto-reconnect after registering */
-		gc->wants_to_die = TRUE;
+		priv->wants_to_die = TRUE;
 
 		prpl_info->register_user(account);
 	}
@@ -213,6 +218,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 {
 	/* Lots of copy/pasted code to avoid API changes. You might want to integrate that into the previous function when posssible. */
 	PurpleConnection *gc;
+	PurpleConnectionPrivate *priv;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
@@ -246,12 +252,14 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 		return;
 	}
 
-	gc = g_new0(PurpleConnection, 1);
+	gc = g_object_new(PURPLE_TYPE_CONNECTION, NULL);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
 
-	gc->prpl = prpl;
+	priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	priv->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
-		gc->password = g_strdup(password);
+		priv->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
 	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTING);
 	connections = g_list_append(connections, gc);
@@ -271,8 +279,9 @@ _purple_connection_destroy(PurpleConnection *gc)
 	GSList *buddies;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean remove = FALSE;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(priv != NULL);
 
 	account = purple_connection_get_account(gc);
 
@@ -283,11 +292,11 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	purple_signal_emit(purple_connections_get_handle(), "signing-off", gc);
 
-	while (gc->buddy_chats)
+	while (priv->buddy_chats)
 	{
-		PurpleChatConversation *b = gc->buddy_chats->data;
+		PurpleChatConversation *b = priv->buddy_chats->data;
 
-		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+		priv->buddy_chats = g_slist_remove(priv->buddy_chats, b);
 		purple_chat_conversation_leave(b);
 	}
 
@@ -296,7 +305,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 	purple_http_conn_cancel_all(gc);
 	purple_proxy_connect_cancel_with_handle(gc);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
 	if (prpl_info->close)
 		(prpl_info->close)(gc);
 
@@ -325,11 +334,11 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	purple_account_set_connection(account, NULL);
 
-	purple_str_wipe(gc->password);
-	g_free(gc->display_name);
+	purple_str_wipe(priv->password);
+	g_free(priv->display_name);
 
-	if (gc->disconnect_timeout > 0)
-		purple_timeout_remove(gc->disconnect_timeout);
+	if (priv->disconnect_timeout > 0)
+		purple_timeout_remove(priv->disconnect_timeout);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(gc);
 	g_free(gc);
@@ -349,24 +358,25 @@ void
 purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 {
 	PurpleConnectionUiOps *ops;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(priv != NULL);
 
-	if (gc->state == state)
+	if (priv->state == state)
 		return;
 
-	gc->state = state;
+	priv->state = state;
 
 	ops = purple_connections_get_ui_ops();
 
-	if (gc->state == PURPLE_CONNECTION_CONNECTING) {
+	if (priv->state == PURPLE_CONNECTION_CONNECTING) {
 		connections_connecting = g_list_append(connections_connecting, gc);
 	}
 	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
 
-	if (gc->state == PURPLE_CONNECTION_CONNECTED) {
+	if (priv->state == PURPLE_CONNECTION_CONNECTED) {
 		PurpleAccount *account;
 		PurplePresence *presence;
 
@@ -404,7 +414,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		update_keepalive(gc, TRUE);
 	}
-	else if (gc->state == PURPLE_CONNECTION_DISCONNECTED) {
+	else if (priv->state == PURPLE_CONNECTION_DISCONNECTED) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
@@ -432,89 +442,113 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 void
 purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 {
-	g_return_if_fail(gc != NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	gc->flags = flags;
+	g_return_if_fail(priv != NULL);
+
+	priv->flags = flags;
 }
 
 void
 purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 {
-	g_return_if_fail(gc != NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(account != NULL);
 
-	gc->account = account;
+	priv->account = account;
 }
 
 void
 purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 {
-	g_return_if_fail(gc != NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_free(gc->display_name);
-	gc->display_name = g_strdup(name);
+	g_return_if_fail(priv != NULL);
+
+	g_free(priv->display_name);
+	priv->display_name = g_strdup(name);
 }
 
 void
-purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data) {
-	g_return_if_fail(connection != NULL);
+purple_connection_set_protocol_data(PurpleConnection *gc, void *proto_data)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	connection->proto_data = proto_data;
+	g_return_if_fail(priv != NULL);
+
+	priv->proto_data = proto_data;
 }
 
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, PURPLE_CONNECTION_DISCONNECTED);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->state;
+	g_return_val_if_fail(priv != NULL, PURPLE_CONNECTION_DISCONNECTED);
+
+	return priv->state;
 }
 
 PurpleConnectionFlags
 purple_connection_get_flags(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, 0);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->flags;
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return priv->flags;
 }
 
 PurpleAccount *
 purple_connection_get_account(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->account;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->account;
 }
 
 PurplePlugin *
 purple_connection_get_prpl(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->prpl;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->prpl;
 }
 
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->password;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->password;
 }
 
 const char *
 purple_connection_get_display_name(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return gc->display_name;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->display_name;
 }
 
 void *
-purple_connection_get_protocol_data(const PurpleConnection *connection) {
-	g_return_val_if_fail(connection != NULL, NULL);
+purple_connection_get_protocol_data(const PurpleConnection *gc)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	return connection->proto_data;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->proto_data;
 }
 
 void
@@ -553,12 +587,14 @@ purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
+	PurpleConnectionPrivate *priv;
 
 	account = data;
 	gc = purple_account_get_connection(account);
+	priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	if (gc != NULL)
-		gc->disconnect_timeout = 0;
+	if (priv != NULL)
+		priv->disconnect_timeout = 0;
 
 	purple_account_disconnect(account);
 	return FALSE;
@@ -570,8 +606,9 @@ purple_connection_error (PurpleConnection *gc,
                                 const char *description)
 {
 	PurpleConnectionUiOps *ops;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(priv != NULL);
 	/* This sanity check relies on PURPLE_CONNECTION_ERROR_OTHER_ERROR
 	 * being the last member of the PurpleConnectionError enum in
 	 * connection.h; if other reasons are added after it, this check should
@@ -590,10 +627,10 @@ purple_connection_error (PurpleConnection *gc,
 	}
 
 	/* If we've already got one error, we don't need any more */
-	if (gc->disconnect_timeout > 0)
+	if (priv->disconnect_timeout > 0)
 		return;
 
-	gc->wants_to_die = purple_connection_error_is_fatal (reason);
+	priv->wants_to_die = purple_connection_error_is_fatal (reason);
 
 	purple_debug_info("connection", "Connection error on %p (reason: %u description: %s)\n",
 	                  gc, reason, description);
@@ -606,7 +643,7 @@ purple_connection_error (PurpleConnection *gc,
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
 
-	gc->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
+	priv->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
 }
 
@@ -667,9 +704,11 @@ purple_connection_error_is_fatal (PurpleConnectionError reason)
 
 void purple_connection_update_last_received(PurpleConnection *gc)
 {
-	g_return_if_fail(gc != NULL);
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	gc->last_received = time(NULL);
+	g_return_if_fail(priv != NULL);
+
+	priv->last_received = time(NULL);
 }
 
 void
@@ -677,11 +716,13 @@ purple_connections_disconnect_all(void)
 {
 	GList *l;
 	PurpleConnection *gc;
+	PurpleConnectionPrivate *priv;
 
 	while ((l = purple_connections_get_all()) != NULL) {
 		gc = l->data;
-		gc->wants_to_die = TRUE;
-		purple_account_disconnect(gc->account);
+		priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+		priv->wants_to_die = TRUE;
+		purple_account_disconnect(priv->account);
 	}
 }
 
