@@ -2808,8 +2808,7 @@ purple_account_set_property(GObject *obj, guint param_id, const GValue *value,
 					g_value_get_boolean(value));
 			break;
 		case PROP_CONNECTION:
-#warning TODO: change get_pointer to get_object when PurpleConnection is a GObject
-			purple_account_set_connection(account, g_value_get_pointer(value));
+			purple_account_set_connection(account, g_value_get_object(value));
 			break;
 		case PROP_PROTOCOL_ID:
 			purple_account_set_protocol_id(account, g_value_get_string(value));
@@ -2853,8 +2852,7 @@ purple_account_get_property(GObject *obj, guint param_id, GValue *value,
 					purple_core_get_ui()));
 			break;
 		case PROP_CONNECTION:
-#warning TODO: change set_pointer to set_object when PurpleConnection is a GObject
-			g_value_set_pointer(value, purple_account_get_connection(account));
+			g_value_set_object(value, purple_account_get_connection(account));
 			break;
 		case PROP_PROTOCOL_ID:
 			g_value_set_string(value, purple_account_get_protocol_id(account));
@@ -3070,10 +3068,9 @@ purple_account_class_init(PurpleAccountClass *klass)
 				G_PARAM_READWRITE)
 			);
 
-#warning TODO: change spec_pointer to spec_object when PurpleConnection is a GObject
 	g_object_class_install_property(obj_class, PROP_CONNECTION,
-			g_param_spec_pointer(PROP_CONNECTION_S, _("Connection"),
-				_("The PurpleConnection object for the account."),
+			g_param_spec_object(PROP_CONNECTION_S, _("Connection"),
+				_("The connection for the account."), PURPLE_TYPE_CONNECTION,
 				G_PARAM_READWRITE)
 			);
 

@@ -34,6 +34,8 @@
 #define PURPLE_IS_CONNECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CONNECTION))
 #define PURPLE_CONNECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CONNECTION, PurpleConnectionClass))
 
+#define PURPLE_TYPE_CONNECTION_ERROR_INFO  (purple_connection_error_info_get_type())
+
 /** @copydoc _PurpleConnection */
 typedef struct _PurpleConnection PurpleConnection;
 /** @copydoc _PurpleConnection */
@@ -141,7 +143,7 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
 } PurpleConnectionError;
 
-/** Holds the type of an error along with its description. TODO GBoxed */
+/** Holds the type of an error along with its description. */
 typedef struct
 {
 	/** The type of error. */
@@ -263,6 +265,11 @@ G_BEGIN_DECLS
  * Returns the GType for the Connection object.
  */
 GType purple_connection_get_type(void);
+
+/**
+ * Returns the GType for the PurpleConnectionErrorInfo boxed structure.
+ */
+GType purple_connection_error_info_get_type(void);
 
 /**
  * Sets the connection state.  PRPLs should call this and pass in
