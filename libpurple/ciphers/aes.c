@@ -276,9 +276,7 @@ purple_aes_decrypt_gnutls(const guchar *input, guchar *output, size_t len,
 	return TRUE;
 }
 
-#endif /* PURPLE_AES_USE_GNUTLS */
-
-#ifdef PURPLE_AES_USE_NSS
+#elif defined(PURPLE_AES_USE_NSS)
 
 typedef struct
 {
