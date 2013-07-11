@@ -241,7 +241,7 @@ purple_aes_encrypt_gnutls(const guchar *input, guchar *output, size_t len,
 	if (handle == NULL)
 		return FALSE;
 
-	ret = gnutls_cipher_encrypt2(handle, input, len, output, len);
+	ret = gnutls_cipher_encrypt2(handle, (void *)input, len, output, len);
 	gnutls_cipher_deinit(handle);
 
 	if (ret != 0) {
