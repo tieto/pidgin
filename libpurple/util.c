@@ -740,7 +740,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	gint year = 0;
 	long tzoff = PURPLE_NO_TZ_OFF;
 	time_t retval;
-	gboolean mktime_with_utc = TRUE;
+	gboolean mktime_with_utc = FALSE;
 
 	if (rest != NULL)
 		*rest = NULL;
@@ -841,7 +841,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				} while (*str >= '0' && *str <= '9');
 			}
 
-			sign = (*str == '+') ? -1 : 1;
+			sign = (*str == '+') ? 1 : -1;
 
 			/* Process the timezone */
 			if (*str == '+' || *str == '-') {
@@ -850,26 +850,29 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				if (((sscanf(str, "%02d:%02d", &tzhrs, &tzmins) == 2 && (str += 5)) ||
 					(sscanf(str, "%02d%02d", &tzhrs, &tzmins) == 2 && (str += 4))))
 				{
+					mktime_with_utc = TRUE;
 					tzoff = tzhrs * 60 * 60 + tzmins * 60;
 					tzoff *= sign;
-				} else {
-					if (rest != NULL && *str != '\0')
-						*rest = str;
-
-					return 0;
 				}
 			} else if (*str == 'Z') {
 				/* 'Z' = Zulu = UTC */
 				str++;
-				utc = TRUE;
-			} else if (!utc) {
-				/* Local Time */
-				t.tm_isdst = -1;
-				mktime_with_utc = FALSE;
+				mktime_with_utc = TRUE;
+				tzoff = 0;
 			}
 
-			if (utc)
-				tzoff = 0;
+			if (!mktime_with_utc)
+			{
+				/* No timezone specified. */
+
+				if (utc) {
+					mktime_with_utc = TRUE;
+					tzoff = 0;
+				} else {
+					/* Local Time */
+					t.tm_isdst = -1;
+				}
+			}
 		}
 	}
 
