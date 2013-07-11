@@ -203,14 +203,13 @@ void _purple_connection_new(PurpleAccount *account, gboolean regist,
 void _purple_connection_new_unregister(PurpleAccount *account, const char *password,
                                        PurpleAccountUnregistrationCb cb, void *user_data);
 /**
- * Disconnects and destroys a PurpleConnection.
+ * Checks if a connection is disconnecting, and should not attempt to reconnect.
  *
- * @note This function should only be called by purple_account_disconnect()
- *        in account.c.  If you're trying to sign off an account, use that
- *        function instead.
+ * @note This function should only be called by purple_account_set_enabled()
+ *       in account.c.
  *
- * @param gc The purple connection to destroy.
+ * @param gc  The connection to check
  */
-void _purple_connection_destroy(PurpleConnection *gc);
+gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
 
 #endif /* _PURPLE_INTERNAL_H_ */

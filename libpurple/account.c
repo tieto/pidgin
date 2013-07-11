@@ -362,7 +362,7 @@ purple_account_disconnect(PurpleAccount *account)
 	priv->disconnecting = TRUE;
 
 	gc = purple_account_get_connection(account);
-	_purple_connection_destroy(gc);
+	g_object_unref(gc);
 	purple_account_set_connection(account, NULL);
 
 	priv->disconnecting = FALSE;
@@ -881,7 +881,7 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 	else if(!was_enabled && value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
-	if ((gc != NULL) && (gc->wants_to_die == TRUE))
+	if ((gc != NULL) && (_purple_connection_wants_to_die(gc)))
 		return;
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);

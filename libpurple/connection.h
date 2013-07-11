@@ -409,9 +409,7 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
 
 /**
  * Closes a connection with an error and a human-readable description of the
- * error.  It also sets @c gc->wants_to_die to the value of
- * #purple_connection_error_is_fatal(@a reason), mainly for
- * backwards-compatibility.
+ * error.
  *
  * @param gc          the connection which is closing.
  * @param reason      why the connection is closing.
@@ -443,8 +441,6 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * misconfiguration of the account which needs the user to go fix it up, so
  * <tt> purple_connection_error_is_fatal
  * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is @c TRUE.
- *
- * (This function is meant to replace checking PurpleConnection.wants_to_die.)
  *
  * @return @c TRUE if the account should not be automatically reconnected, and
  *         @c FALSE otherwise.

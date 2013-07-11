@@ -1232,7 +1232,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
 			if (bb && bb->conversation) {
 				/* Any ongoing connection attempt is cancelled
-				 * by _purple_connection_destroy */
+				 * when a connection is destroyed */
 				bb->conversation->connect_data = NULL;
 				bonjour_jabber_close_conversation(bb->conversation);
 				bb->conversation = NULL;
