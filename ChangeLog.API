@@ -132,6 +132,10 @@ version 3.0.0 (??/??/????):
 		* PurpleXfer.bytes_remaining is now a goffset
 		* PurpleXfer.bytes_sent is now a goffset
 		* PurpleXfer.size is now a goffset
+		* PurpleCertificateScheme.get_times now uses gint64 instead of
+		  time_t to represent times
+		* purple_certificate_get_times now uses gint64 instead of
+		  time_t to represent times
 
 		Removed:
 		* _GntFileType

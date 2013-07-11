@@ -239,7 +239,8 @@ purple_certificate_check_signature_chain(GList *chain,
 	GList *cur;
 	PurpleCertificate *crt, *issuer;
 	gchar *uid;
-	time_t now, activation, expiration;
+	time_t now;
+	gint64 activation, expiration;
 	gboolean ret;
 
 	g_return_val_if_fail(chain, FALSE);
@@ -277,14 +278,31 @@ purple_certificate_check_signature_chain(GList *chain,
 				purple_debug_error("certificate",
 						"...Failed to get validity times for certificate %s\n"
 						"Chain is INVALID\n", uid);
-			else if (now > expiration)
+			else if (now > expiration) {
+#if GLIB_CHECK_VERSION(2,26,0)
+				GDateTime *exp_dt = g_date_time_new_from_unix_local(expiration);
+				gchar *expir_str = g_date_time_format(exp_dt, "%c");
+				g_date_time_unref(exp_dt);
+#else
+				gchar *expir_str = g_strdup(ctime(&expiration));
+#endif
 				purple_debug_error("certificate",
 						"...Issuer %s expired at %s\nChain is INVALID\n",
-						uid, ctime(&expiration));
-			else
+						uid, expir_str);
+				g_free(expir_str);
+			} else {
+#if GLIB_CHECK_VERSION(2,26,0)
+				GDateTime *act_dt = g_date_time_new_from_unix_local(activation);
+				gchar *activ_str = g_date_time_format(act_dt, "%c");
+				g_date_time_unref(act_dt);
+#else
+				gchar *activ_str = g_strdup(ctime(&activation));
+#endif
 				purple_debug_error("certificate",
 						"...Not-yet-activated issuer %s will be valid at %s\n"
-						"Chain is INVALID\n", uid, ctime(&activation));
+						"Chain is INVALID\n", uid, activ_str);
+				g_free(activ_str);
+			}
 
 			if (failing)
 				*failing = crt;
@@ -439,7 +457,7 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 }
 
 gboolean
-purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t *expiration)
+purple_certificate_get_times(PurpleCertificate *crt, gint64 *activation, gint64 *expiration)
 {
 	PurpleCertificateScheme *scheme;
 
@@ -1664,7 +1682,8 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
-	time_t now, activation, expiration;
+	time_t now;
+	gint64 activation, expiration;
 	PurpleCertificateVerificationStatus flags = PURPLE_CERTIFICATE_VALID;
 	gboolean ret;
 
@@ -1687,15 +1706,31 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 				"Failed to get validity times for certificate %s\n",
 				vrq->subject_name);
 	} else if (now > expiration) {
+#if GLIB_CHECK_VERSION(2,26,0)
+		GDateTime *exp_dt = g_date_time_new_from_unix_local(expiration);
+		gchar *expir_str = g_date_time_format(exp_dt, "%c");
+		g_date_time_unref(exp_dt);
+#else
+		gchar *expir_str = g_strdup(ctime(&expiration));
+#endif
 		flags |= PURPLE_CERTIFICATE_EXPIRED;
 		purple_debug_error("certificate/x509/tls_cached",
 				"Certificate %s expired at %s\n",
-				vrq->subject_name, ctime(&expiration));
+				vrq->subject_name, expir_str);
+		g_free(expir_str);
 	} else if (now < activation) {
+#if GLIB_CHECK_VERSION(2,26,0)
+		GDateTime *act_dt = g_date_time_new_from_unix_local(activation);
+		gchar *activ_str = g_date_time_format(act_dt, "%c");
+		g_date_time_unref(act_dt);
+#else
+		gchar *activ_str = g_strdup(ctime(&activation));
+#endif
 		flags |= PURPLE_CERTIFICATE_NOT_ACTIVATED;
 		purple_debug_error("certificate/x509/tls_cached",
 				"Certificate %s is not yet valid, will be at %s\n",
-				vrq->subject_name, ctime(&activation));
+				vrq->subject_name, activ_str);
+		g_free(activ_str);
 	}
 
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);

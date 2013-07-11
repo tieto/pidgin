@@ -897,7 +897,7 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 }
 
 static gboolean
-x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
+x509_times (PurpleCertificate *crt, gint64 *activation, gint64 *expiration)
 {
 	CERTCertificate *crt_dat;
 	PRTime nss_activ, nss_expir;
@@ -923,44 +923,9 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 
 	if (activation) {
 		*activation = nss_activ;
-#if SIZEOF_TIME_T == 4
-		/** Hack to deal with dates past the 32-bit barrier.
-		    Handling is different for signed vs unsigned 32-bit types.
-		 */
-		if (*activation != nss_activ) {
-		       	if (nss_activ < 0) {
-				purple_debug_warning("nss",
-					"Setting Activation Date to epoch to handle pre-epoch value\n");
-				*activation = 0;
-			} else {
-				purple_debug_error("nss",
-					"Activation date past 32-bit barrier, forcing invalidity\n");
-				return FALSE;
-			}
-		}
-#endif
 	}
 	if (expiration) {
 		*expiration = nss_expir;
-#if SIZEOF_TIME_T == 4
-		if (*expiration != nss_expir) {
-			if (*expiration < nss_expir) {
-				if (*expiration < 0) {
-					purple_debug_warning("nss",
-						"Setting Expiration Date to 32-bit signed max\n");
-					*expiration = PR_INT32_MAX;
-				} else {
-					purple_debug_warning("nss",
-						"Setting Expiration Date to 32-bit unsigned max\n");
-					*expiration = PR_UINT32_MAX;
-				}
-			} else {
-				purple_debug_error("nss",
-					"Expiration date prior to unix epoch, forcing invalidity\n");
-				return FALSE;
-			}
-		}
-#endif
 	}
 
 	return TRUE;
@@ -995,9 +960,12 @@ x509_display_string(PurpleCertificate *crt)
 	gchar *sha_asc;
 	GByteArray *sha_bin;
 	gchar *cn;
-	time_t activation, expiration;
+	gint64 activation, expiration;
 	gchar *activ_str, *expir_str;
 	gchar *text;
+#if GLIB_CHECK_VERSION(2,26,0)
+	GDateTime *act_dt, *exp_dt;
+#endif
 
 	/* Pull out the SHA1 checksum */
 	sha_bin = x509_sha1sum(crt);
@@ -1015,8 +983,18 @@ x509_display_string(PurpleCertificate *crt)
 				   "Failed to get certificate times!\n");
 		activation = expiration = 0;
 	}
+#if GLIB_CHECK_VERSION(2,26,0)
+	act_dt = g_date_time_new_from_unix_local(expiration);
+	activ_str = g_date_time_format(act_dt, "%c");
+	g_date_time_unref(act_dt);
+
+	exp_dt = g_date_time_new_from_unix_local(activation);
+	expir_str = g_date_time_format(exp_dt, "%c");
+	g_date_time_unref(exp_dt);
+#else
 	activ_str = g_strdup(ctime(&activation));
 	expir_str = g_strdup(ctime(&expiration));
+#endif
 
 	/* Make messages */
 	text = g_strdup_printf(_("Common name: %s\n\n"
