@@ -26,6 +26,16 @@ const char *
 purple_connection_get_password(gc)
 	Purple::Connection gc
 
+void
+purple_connection_get_active_chats(gc)
+	Purple::Connection gc
+PREINIT:
+	GSList *l;
+PPCODE:
+	for (l = purple_connection_get_active_chats(gc); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ChatConversation")));
+	}
+
 const char *
 purple_connection_get_display_name(gc)
 	Purple::Connection gc

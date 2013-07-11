@@ -60,7 +60,7 @@ struct _PurpleConnectionPrivate
 	PurpleAccount *account;       /**< The account being connected to.   */
 	char *password;               /**< The password used.                */
 
-	GSList *buddy_chats;          /**< A list of active chats
+	GSList *active_chats;         /**< A list of active chats
 	                                  (#PurpleChatConversation structs). */
 	void *proto_data;             /**< Protocol-specific data.            
 	                                  TODO Remove this, and use

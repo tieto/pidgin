@@ -362,6 +362,15 @@ PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 const char *purple_connection_get_password(const PurpleConnection *gc);
 
 /**
+ * Returns a list of active chat conversations on a connection.
+ *
+ * @param gc The connection.
+ *
+ * @return The active chats on the connection.
+ */
+GSList *purple_connection_get_active_chats(const PurpleConnection *gc);
+
+/**
  * Returns the connection's displayed name.
  *
  * @param gc The connection.

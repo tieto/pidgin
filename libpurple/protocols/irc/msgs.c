@@ -1130,7 +1130,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(nick);
 		return;
 	}
-	chats = gc->buddy_chats;
+	chats = purple_connection_get_active_chats(gc);
 
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		purple_connection_set_display_name(gc, args[0]);
@@ -1400,7 +1400,8 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	data[0] = irc_mask_nick(from);
 	data[1] = args[0];
 	/* XXX this should have an API, I shouldn't grab this directly */
-	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
+	g_slist_foreach(purple_connection_get_active_chats(gc),
+			(GFunc)irc_chat_remove_buddy, data);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
 		ib->new_online_status = FALSE;
