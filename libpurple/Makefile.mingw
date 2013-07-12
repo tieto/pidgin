@@ -102,7 +102,6 @@ C_SRC =	\
 			network.c \
 			notify.c \
 			ntlm.c \
-			obsolete.c \
 			plugin.c \
 			pluginpref.c \
 			pounce.c \

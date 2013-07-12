@@ -283,7 +283,7 @@ struct _PurpleCertificateScheme
 	gboolean (* check_subject_name)(PurpleCertificate *crt, const gchar *name);
 
 	/** Retrieve the certificate activation/expiration times */
-	gboolean (* get_times)(PurpleCertificate *crt, time_t *activation, time_t *expiration);
+	gboolean (* get_times)(PurpleCertificate *crt, gint64 *activation, gint64 *expiration);
 
 	/** Imports certificates from a file
 	 *
@@ -613,7 +613,7 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
  * @return TRUE if the requested values were obtained, otherwise FALSE.
  */
 gboolean
-purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t *expiration);
+purple_certificate_get_times(PurpleCertificate *crt, gint64 *activation, gint64 *expiration);
 
 /**
  * Retrieves the certificate data in DER form.

@@ -157,7 +157,7 @@ purple_certificate_verify_complete(vrq, st)
 	Purple::Certificate::VerificationStatus st
 
 gboolean
-purple_certificate_get_times(crt, OUTLIST time_t activation, OUTLIST time_t expiration)
+purple_certificate_get_times(crt, OUTLIST gint64 activation, OUTLIST gint64 expiration)
 	Purple::Certificate crt
 	PROTOTYPE: $
 
