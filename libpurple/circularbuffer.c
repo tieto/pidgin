@@ -246,7 +246,7 @@ purple_circular_buffer_set_property(GObject *obj, guint param_id,
 	switch(param_id) {
 		case PROP_GROW_SIZE:
 			purple_circular_buffer_set_grow_size(buffer,
-			                                     g_value_get_uint(value));
+			                                     g_value_get_ulong(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
