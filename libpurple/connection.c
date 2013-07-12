@@ -605,6 +605,10 @@ purple_connection_set_property(GObject *obj, guint param_id, const GValue *value
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
 	switch (param_id) {
+		case PROP_PRPL:
+#warning TODO: change get_pointer to get_object when prpl is a GObject
+			priv->prpl = g_value_get_pointer(value);
+			break;
 		case PROP_FLAGS:
 			purple_connection_set_flags(gc, g_value_get_flags(value));
 			break;
