@@ -500,7 +500,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		gc = purple_account_get_connection(account);
 
 	if (PURPLE_IS_CHAT_CONVERSATION(conv) &&
-		(gc != NULL && !g_slist_find(gc->buddy_chats, conv)))
+		(gc != NULL && !g_slist_find(purple_connection_get_active_chats(gc), conv)))
 		return;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv) &&

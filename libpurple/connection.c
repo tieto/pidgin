@@ -372,6 +372,26 @@ purple_connection_get_protocol_data(const PurpleConnection *gc)
 }
 
 void
+_purple_connection_add_active_chat(PurpleConnection *gc, PurpleChatConversation *chat)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->active_chats = g_slist_append(priv->active_chats, chat);
+}
+
+void
+_purple_connection_remove_active_chat(PurpleConnection *gc, PurpleChatConversation *chat)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->active_chats = g_slist_remove(priv->active_chats, chat);
+}
+
+void
 purple_connection_update_progress(PurpleConnection *gc, const char *text,
 								size_t step, size_t count)
 {

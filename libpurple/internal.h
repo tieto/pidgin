@@ -212,4 +212,27 @@ void _purple_connection_new_unregister(PurpleAccount *account, const char *passw
  */
 gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
 
+/**
+ * Adds a chat to the active chats list of a connection
+ *
+ * @note This function should only be called by serv_got_joined_chat()
+ *       in server.c.
+ *
+ * @param gc    The connection
+ * @param chat  The chat conversation to add
+ */
+void _purple_connection_add_active_chat(PurpleConnection *gc,
+                                        PurpleChatConversation *chat);
+/**
+ * Removes a chat from the active chats list of a connection
+ *
+ * @note This function should only be called by serv_got_chat_left()
+ *       in server.c.
+ *
+ * @param gc    The connection
+ * @param chat  The chat conversation to remove
+ */
+void _purple_connection_remove_active_chat(PurpleConnection *gc,
+                                           PurpleChatConversation *chat);
+
 #endif /* _PURPLE_INTERNAL_H_ */

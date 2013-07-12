@@ -825,8 +825,8 @@ PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 	chat = purple_chat_conversation_new(account, name);
 	g_return_val_if_fail(chat != NULL, NULL);
 
-	if (!g_slist_find(gc->buddy_chats, PURPLE_CONVERSATION(chat)))
-		gc->buddy_chats = g_slist_append(gc->buddy_chats, PURPLE_CONVERSATION(chat));
+	if (!g_slist_find(purple_connection_get_active_chats(gc), chat))
+		_purple_connection_add_active_chat(gc, chat);
 
 	purple_chat_conversation_set_id(chat, id);
 
@@ -840,7 +840,7 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	GSList *bcs;
 	PurpleChatConversation *chat = NULL;
 
-	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
+	for (bcs = purple_connection_get_active_chats(g); bcs != NULL; bcs = bcs->next) {
 		chat = PURPLE_CHAT_CONVERSATION(bcs->data);
 
 		if (purple_chat_conversation_get_id(chat) == id)
@@ -850,7 +850,7 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	purple_debug(PURPLE_DEBUG_INFO, "server", "Leaving room: %s\n",
 			   purple_conversation_get_name(PURPLE_CONVERSATION(chat)));
 
-	g->buddy_chats = g_slist_remove(g->buddy_chats, chat);
+	_purple_connection_remove_active_chat(g, chat);
 
 	purple_chat_conversation_leave(chat);
 
@@ -874,7 +874,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
 
-	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
+	for (bcs = purple_connection_get_active_chats(g); bcs != NULL; bcs = bcs->next) {
 		chat = PURPLE_CHAT_CONVERSATION(bcs->data);
 
 		if (purple_chat_conversation_get_id(chat) == id)
