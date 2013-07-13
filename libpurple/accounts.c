@@ -37,6 +37,9 @@ static GList   *accounts = NULL;
 static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
+void purple_account_set_current_error(PurpleAccount *account,
+		PurpleConnectionErrorInfo *new_err);
+
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/

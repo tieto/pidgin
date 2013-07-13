@@ -1132,17 +1132,6 @@ void purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy);
 
 /**
- * Sets the error that caused the account to be disconnected.
- * You should not ever need to call this function directly, the error is set
- * by the accouts subsystem. You should only need to retrieve this error.
- *
- * @param account The account whose error should be set.
- * @param new_err The new error.
- */
-void purple_account_set_current_error(PurpleAccount *account,
-									PurpleConnectionErrorInfo *new_err);
-
-/**
  * Get the error that caused the account to be disconnected, or @c NULL if the
  * account is happily connected or disconnected without an error.
  *

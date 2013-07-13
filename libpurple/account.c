@@ -135,7 +135,12 @@ enum
 static GObjectClass  *parent_class = NULL;
 static GList         *handles = NULL;
 
+void purple_account_set_current_error(PurpleAccount *account,
+		PurpleConnectionErrorInfo *new_err);
 
+/***************
+ * Account API *
+ ***************/
 void
 purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
 {
