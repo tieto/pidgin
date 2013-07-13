@@ -79,8 +79,7 @@ struct _PurpleConnectionPrivate
 	 */
 	gboolean wants_to_die;
 
-	guint disconnect_timeout;  /**< Timer used for nasty stack tricks
-	                                TODO Get rid of this.                     */
+	guint disconnect_timeout;  /**< Timer used for nasty stack tricks         */
 	time_t last_received;      /**< When we last received a packet. Set by the
 	                                prpl to avoid sending unneeded keepalives */
 };
