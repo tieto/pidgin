@@ -1377,10 +1377,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 				g_free(href);
 
 				if(js->registration) {
-#warning Is this (gc->wants_to_die) required here? If so, an alternative needed.
-#if 0
-					js->gc->wants_to_die = TRUE;
-#endif
+					purple_connection_disable_reconnection(js->gc);
 					/* succeeded, but we have no login info */
 					purple_account_register_completed(account, TRUE);
 					jabber_connection_schedule_close(js);

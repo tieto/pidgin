@@ -309,7 +309,7 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 
 	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
 #if 0
-			/* FIXME: Is this required here? */
+			/* FIXME  Is this required here? */
 			!js->gc->disconnect_timeout &&
 #endif
 			(js->state == JABBER_STREAM_INITIALIZING ||
