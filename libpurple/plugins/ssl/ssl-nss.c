@@ -984,11 +984,11 @@ x509_display_string(PurpleCertificate *crt)
 		activation = expiration = 0;
 	}
 #if GLIB_CHECK_VERSION(2,26,0)
-	act_dt = g_date_time_new_from_unix_local(expiration);
+	act_dt = g_date_time_new_from_unix_local(activation);
 	activ_str = g_date_time_format(act_dt, "%c");
 	g_date_time_unref(act_dt);
 
-	exp_dt = g_date_time_new_from_unix_local(activation);
+	exp_dt = g_date_time_new_from_unix_local(expiration);
 	expir_str = g_date_time_format(exp_dt, "%c");
 	g_date_time_unref(exp_dt);
 #else
