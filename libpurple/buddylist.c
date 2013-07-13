@@ -55,7 +55,7 @@ static GHashTable *groups_cache = NULL;
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
 
-PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node);
+PurpleBListNode *_purple_blist_get_last_child(PurpleBListNode *node);
 
 /*********************************************************************
  * Private utility functions                                         *
@@ -71,7 +71,7 @@ static PurpleBListNode *purple_blist_get_last_sibling(PurpleBListNode *node)
 	return n;
 }
 
-PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node)
+PurpleBListNode *_purple_blist_get_last_child(PurpleBListNode *node)
 {
 	if (!node)
 		return NULL;
@@ -484,7 +484,7 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 
 	buddy = purple_buddy_new(account, name, alias);
 	purple_blist_add_buddy(buddy, contact, group,
-			purple_blist_get_last_child((PurpleBListNode*)contact));
+			_purple_blist_get_last_child((PurpleBListNode*)contact));
 
 	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
 		parse_setting((PurpleBListNode*)buddy, x);
@@ -502,7 +502,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 	const char *alias;
 
 	purple_blist_add_contact(contact, group,
-			purple_blist_get_last_child((PurpleBListNode*)group));
+			_purple_blist_get_last_child((PurpleBListNode*)group));
 
 	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
 		purple_contact_set_alias(contact, alias);
@@ -559,7 +559,7 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 
 	chat = purple_chat_new(account, alias, components);
 	purple_blist_add_chat(chat, group,
-			purple_blist_get_last_child((PurpleBListNode*)group));
+			_purple_blist_get_last_child((PurpleBListNode*)group));
 
 	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
 		parse_setting((PurpleBListNode*)chat, x);
@@ -932,7 +932,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		}
 		c = purple_contact_new();
 		purple_blist_add_contact(c, g,
-				purple_blist_get_last_child((PurpleBListNode*)g));
+				_purple_blist_get_last_child((PurpleBListNode*)g));
 	}
 
 	cnode = PURPLE_BLIST_NODE(c);

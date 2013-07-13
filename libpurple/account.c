@@ -135,7 +135,7 @@ enum
 static GObjectClass  *parent_class = NULL;
 static GList         *handles = NULL;
 
-void purple_account_set_current_error(PurpleAccount *account,
+void _purple_account_set_current_error(PurpleAccount *account,
 		PurpleConnectionErrorInfo *new_err);
 
 /***************
@@ -2383,7 +2383,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 }
 
 void
-purple_account_set_current_error(PurpleAccount *account,
+_purple_account_set_current_error(PurpleAccount *account,
 		PurpleConnectionErrorInfo *new_err)
 {
 	PurpleConnectionErrorInfo *old_err;
@@ -2422,7 +2422,7 @@ purple_account_get_current_error(PurpleAccount *account)
 void
 purple_account_clear_current_error(PurpleAccount *account)
 {
-	purple_account_set_current_error(account, NULL);
+	_purple_account_set_current_error(account, NULL);
 }
 
 static xmlnode *

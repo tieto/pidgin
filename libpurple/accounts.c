@@ -37,7 +37,7 @@ static GList   *accounts = NULL;
 static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
-void purple_account_set_current_error(PurpleAccount *account,
+void _purple_account_set_current_error(PurpleAccount *account,
 		PurpleConnectionErrorInfo *new_err);
 
 /*********************************************************************
@@ -457,7 +457,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 	current_error->type = type;
 	current_error->description = description;
 
-	purple_account_set_current_error(account, current_error);
+	_purple_account_set_current_error(account, current_error);
 }
 
 static PurpleAccount *
@@ -888,7 +888,7 @@ connection_error_cb(PurpleConnection *gc,
 	err->type = type;
 	err->description = g_strdup(description);
 
-	purple_account_set_current_error(account, err);
+	_purple_account_set_current_error(account, err);
 
 	purple_signal_emit(purple_accounts_get_handle(), "account-connection-error",
 	                   account, type, description);

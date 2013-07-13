@@ -139,7 +139,7 @@ purple_strings_are_different(const char *one, const char *two)
 			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
 }
 
-PurpleBListNode *purple_blist_get_last_child(PurpleBListNode *node);
+PurpleBListNode *_purple_blist_get_last_child(PurpleBListNode *node);
 
 /**************************************************************************/
 /* Buddy API                                                              */
@@ -939,7 +939,7 @@ void purple_contact_merge(PurpleContact *source, PurpleBListNode *node)
 
 	if (PURPLE_IS_CONTACT(node)) {
 		target = (PurpleContact *)node;
-		prev = purple_blist_get_last_child(node);
+		prev = _purple_blist_get_last_child(node);
 	} else if (PURPLE_IS_BUDDY(node)) {
 		target = (PurpleContact *)node->parent;
 		prev = node;
@@ -1456,7 +1456,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		/* We're merging two groups */
 		PurpleBListNode *prev, *child, *next;
 
-		prev = purple_blist_get_last_child((PurpleBListNode*)dest);
+		prev = _purple_blist_get_last_child((PurpleBListNode*)dest);
 		child = PURPLE_BLIST_NODE(source)->child;
 
 		/*
