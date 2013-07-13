@@ -308,7 +308,6 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 	}
 
 	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
-#warning Is this (gc->disconnect_timeout) required here? If so, an alternative is needed.
 #if 0
 			!js->gc->disconnect_timeout &&
 #endif
