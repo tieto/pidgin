@@ -6,7 +6,7 @@
    program, which makes these macros callable by DBUS.  */
 
 /* buddylist.h */
-gboolean PURPLE_IS_BUDDY_ONLINE(PurpleBuddy *buddy);
+gboolean PURPLE_BUDDY_IS_ONLINE(PurpleBuddy *buddy);
 
 /* connection.h */
 gboolean PURPLE_CONNECTION_IS_CONNECTED(PurpleConnection *connection);

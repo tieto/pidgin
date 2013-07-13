@@ -172,7 +172,7 @@ static gboolean default_can_add_node(PurpleBListNode *node)
 		FinchBListNode *fnode = purple_blist_node_get_ui_data(node);
 		if (!purple_buddy_get_contact(buddy))
 			return FALSE; /* When a new buddy is added and show-offline is set */
-		if (PURPLE_IS_BUDDY_ONLINE(buddy))
+		if (PURPLE_BUDDY_IS_ONLINE(buddy))
 			return TRUE;  /* The buddy is online */
 		if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
 			return FALSE; /* The account is disconnected. Do not show */
@@ -240,7 +240,7 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *pr = purple_contact_get_priority_buddy((PurpleContact*)node);
-		gboolean offline = !PURPLE_IS_BUDDY_ONLINE(pr);
+		gboolean offline = !PURPLE_BUDDY_IS_ONLINE(pr);
 		gboolean showoffline = purple_prefs_get_bool(PREF_ROOT "/showoffline");
 		const char *name = purple_buddy_get_name(pr);
 
@@ -257,7 +257,7 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 				continue;
 			if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
 				continue;
-			if (!showoffline && !PURPLE_IS_BUDDY_ONLINE(buddy))
+			if (!showoffline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 				continue;
 			str = g_string_append(str, "\n----------\n");
 			tooltip_for_buddy(buddy, str, FALSE);
@@ -266,7 +266,7 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
 		tooltip_for_buddy(buddy, str, TRUE);
 		title = g_strdup(purple_buddy_get_name(buddy));
-		if (!PURPLE_IS_BUDDY_ONLINE((PurpleBuddy*)node))
+		if (!PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node))
 			lastseen = purple_blist_node_get_int(node, "last_seen");
 	} else if (PURPLE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup *)node;
@@ -430,7 +430,7 @@ is_contact_online(PurpleContact *contact)
 	for (node = purple_blist_node_get_first_child(((PurpleBListNode*)contact)); node;
 			node = purple_blist_node_get_sibling_next(node)) {
 		FinchBListNode *fnode = purple_blist_node_get_ui_data(node);
-		if (PURPLE_IS_BUDDY_ONLINE((PurpleBuddy*)node) ||
+		if (PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ||
 				(fnode && fnode->signed_timer))
 			return TRUE;
 	}

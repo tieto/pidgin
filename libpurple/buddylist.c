@@ -941,7 +941,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		contact_counter = PURPLE_COUNTING_NODE(bnode->parent);
 		group_counter = PURPLE_COUNTING_NODE(bnode->parent->parent);
 
-		if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
+		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			purple_counting_node_change_online_count(contact_counter, -1);
 			if (purple_counting_node_get_online_count(contact_counter) == 0)
 				purple_counting_node_change_online_count(group_counter, -1);
@@ -1008,7 +1008,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	contact_counter = PURPLE_COUNTING_NODE(bnode->parent);
 	group_counter = PURPLE_COUNTING_NODE(bnode->parent->parent);
 
-	if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
+	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		purple_counting_node_change_online_count(contact_counter, +1);
 		if (purple_counting_node_get_online_count(contact_counter) == 1)
 			purple_counting_node_change_online_count(group_counter, +1);
@@ -1357,7 +1357,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 		contact_counter = PURPLE_COUNTING_NODE(contact);
 		group_counter = PURPLE_COUNTING_NODE(group);
 
-		if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
+		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			purple_counting_node_change_online_count(contact_counter, -1);
 			if (purple_counting_node_get_online_count(contact_counter) == 0)
 				purple_counting_node_set_online_count(group_counter, -1);

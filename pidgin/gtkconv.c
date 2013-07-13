@@ -790,7 +790,7 @@ chat_invite_filter(const PidginBuddyCompletionEntry *entry, gpointer data)
 	PurpleAccount *account = NULL;
 
 	if (entry->is_buddy) {
-		if (PURPLE_IS_BUDDY_ONLINE(entry->entry.buddy))
+		if (PURPLE_BUDDY_IS_ONLINE(entry->entry.buddy))
 			account = purple_buddy_get_account(entry->entry.buddy);
 		else
 			return FALSE;
@@ -7316,7 +7316,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			window_icon =
 				gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 
-			if (buddy &&  !PURPLE_IS_BUDDY_ONLINE(buddy))
+			if (buddy &&  !PURPLE_BUDDY_IS_ONLINE(buddy))
 				gdk_pixbuf_saturate_and_pixelate(window_icon, window_icon, 0.0, FALSE);
 
 			g_object_ref(window_icon);
@@ -7790,7 +7790,7 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
-		if (buddy && !PURPLE_IS_BUDDY_ONLINE(buddy))
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}

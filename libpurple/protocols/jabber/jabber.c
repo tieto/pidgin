@@ -2130,7 +2130,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 	if(js)
 		jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
-	if(!PURPLE_IS_BUDDY_ONLINE(b)) {
+	if(!PURPLE_BUDDY_IS_ONLINE(b)) {
 		if(jb && (jb->subscription & JABBER_SUB_PENDING ||
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
@@ -2170,9 +2170,9 @@ char *jabber_status_text(PurpleBuddy *b)
 	if (gc && purple_connection_get_protocol_data(gc))
 		jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), purple_buddy_get_name(b), FALSE);
 
-	if(jb && !PURPLE_IS_BUDDY_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
+	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
-	} else if(jb && !PURPLE_IS_BUDDY_ONLINE(b) && jb->error_msg) {
+	} else if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 		ret = g_strdup(jb->error_msg);
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
@@ -2344,7 +2344,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 		}
 
-		if(!PURPLE_IS_BUDDY_ONLINE(b) && jb->error_msg) {
+		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 			purple_notify_user_info_add_pair_html(user_info, _("Error"), jb->error_msg);
 		}
 	}

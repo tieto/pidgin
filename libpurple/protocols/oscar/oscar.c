@@ -3290,7 +3290,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 
 		args.flags = 0;
 
-		if (!is_sms && (!buddy || !PURPLE_IS_BUDDY_ONLINE(buddy)))
+		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
 			args.flags |= AIM_IMFLAGS_OFFLINE;
 
 		if (od->icq) {
@@ -4605,7 +4605,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	OscarData *od;
 	aim_userinfo_t *userinfo;
 
-	if (!PURPLE_IS_BUDDY_ONLINE(b))
+	if (!PURPLE_BUDDY_IS_ONLINE(b))
 		return;
 
 	account = purple_buddy_get_account(b);
@@ -5073,7 +5073,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 
 	if (userinfo &&
 		oscar_util_name_compare(purple_account_get_username(account), bname) &&
-		PURPLE_IS_BUDDY_ONLINE(buddy))
+		PURPLE_BUDDY_IS_ONLINE(buddy))
 	{
 		PeerConnection *conn;
 		conn = peer_connection_find_by_type(od, bname, OSCAR_CAPABILITY_DIRECTIM);

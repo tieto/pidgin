@@ -2844,7 +2844,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 	if (gc == NULL || (user = purple_connection_get_protocol_data(gc)) == NULL)
 		return;
 
-	if (PURPLE_IS_BUDDY_ONLINE(buddy)) {
+	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
 		if (user_record) {
 			status = nm_user_record_get_status(user_record);

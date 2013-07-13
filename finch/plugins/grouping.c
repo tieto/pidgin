@@ -98,7 +98,7 @@ static gboolean on_offline_can_add_node(PurpleBListNode *node)
 		return FALSE;
 	} else if (PURPLE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = PURPLE_BUDDY(node);
-		if (PURPLE_IS_BUDDY_ONLINE(buddy))
+		if (PURPLE_BUDDY_IS_ONLINE(buddy))
 			return TRUE;
 		if (purple_prefs_get_bool("/finch/blist/showoffline") &&
 				purple_account_is_connected(purple_buddy_get_account(buddy)))
@@ -118,7 +118,7 @@ static gpointer on_offline_find_parent(PurpleBListNode *node)
 
 	if (PURPLE_IS_CONTACT(node)) {
 		node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
-		ret = PURPLE_IS_BUDDY_ONLINE(PURPLE_BUDDY(node)) ? online : offline;
+		ret = PURPLE_BUDDY_IS_ONLINE(PURPLE_BUDDY(node)) ? online : offline;
 	} else if (PURPLE_IS_BUDDY(node)) {
 		ret = purple_blist_node_get_parent(node);
 		finch_blist_manager_add_node(ret);
@@ -176,7 +176,7 @@ static gpointer meebo_find_parent(PurpleBListNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
-		if (buddy && !PURPLE_IS_BUDDY_ONLINE(buddy)) {
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			return &meebo;
 		}
 	}

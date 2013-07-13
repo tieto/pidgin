@@ -80,7 +80,7 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #include "media.h"
 #include "status.h"
 
-#define PURPLE_IS_BUDDY_ONLINE(b) \
+#define PURPLE_BUDDY_IS_ONLINE(b) \
 	(PURPLE_IS_BUDDY(b) \
 	&& purple_account_is_connected(purple_buddy_get_account(PURPLE_BUDDY(b))) \
 	&& purple_presence_is_online(purple_buddy_get_presence(PURPLE_BUDDY(b))))

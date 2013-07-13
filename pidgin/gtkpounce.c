@@ -984,7 +984,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 		}
 		else
 		{
-			if (!PURPLE_IS_BUDDY_ONLINE(buddy))
+			if (!PURPLE_BUDDY_IS_ONLINE(buddy))
 			{
 				gtk_toggle_button_set_active(
 					GTK_TOGGLE_BUTTON(dialog->signon), TRUE);

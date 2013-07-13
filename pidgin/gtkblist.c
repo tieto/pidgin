@@ -1854,7 +1854,7 @@ create_buddy_menu(PurpleBListNode *node, PurpleBuddy *b)
 					continue;
 				if(!purple_account_get_connection(purple_buddy_get_account(buddy)))
 					continue;
-				if(!show_offline && !PURPLE_IS_BUDDY_ONLINE(buddy))
+				if(!show_offline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 					continue;
 
 				menuitem = gtk_image_menu_item_new_with_label(purple_buddy_get_name(buddy));
@@ -2749,7 +2749,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBListNode *node,
 
 		if (buddy) {
 			PurplePresence *presence = purple_buddy_get_presence(buddy);
-			if (!PURPLE_IS_BUDDY_ONLINE(buddy))
+			if (!PURPLE_BUDDY_IS_ONLINE(buddy))
 				offline = TRUE;
 			if (purple_presence_is_idle(presence))
 				idle = TRUE;
@@ -3947,7 +3947,7 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 
 		/* Logged In */
 		signon = purple_presence_get_login_time(presence);
-		if (full && PURPLE_IS_BUDDY_ONLINE(b) && signon > 0)
+		if (full && PURPLE_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
 			if (signon > time(NULL)) {
 				/*
@@ -3975,7 +3975,7 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 		}
 
 		/* Last Seen */
-		if (full && c && !PURPLE_IS_BUDDY_ONLINE(b))
+		if (full && c && !PURPLE_BUDDY_IS_ONLINE(b))
 		{
 			struct _pidgin_blist_node *gtknode = purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(c));
 			PurpleBListNode *bnode;
@@ -4013,7 +4013,7 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 		/* Offline? */
 		/* FIXME: Why is this status special-cased by the core? --rlaager
 		 * FIXME: Alternatively, why not have the core do all of them? --rlaager */
-		if (!PURPLE_IS_BUDDY_ONLINE(b)) {
+		if (!PURPLE_BUDDY_IS_ONLINE(b)) {
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Offline"));
 		}
 
@@ -4267,7 +4267,7 @@ pidgin_blist_get_status_icon(PurpleBListNode *node, PidginStatusIconSize size)
 		p = purple_buddy_get_presence(buddy);
 		trans = purple_presence_is_idle(p);
 
-		if (PURPLE_IS_BUDDY_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
+		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGIN;
 		else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGOUT;
@@ -6712,7 +6712,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBListNode *n
 	if (!avatar) {
 		g_object_ref(G_OBJECT(gtkblist->empty_avatar));
 		avatar = gtkblist->empty_avatar;
-	} else if ((!PURPLE_IS_BUDDY_ONLINE(buddy) || purple_presence_is_idle(presence))) {
+	} else if ((!PURPLE_BUDDY_IS_ONLINE(buddy) || purple_presence_is_idle(presence))) {
 		do_alphashift(avatar, 77);
 	}
 

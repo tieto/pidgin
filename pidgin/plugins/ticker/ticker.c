@@ -249,7 +249,7 @@ static void buddy_ticker_show(void)
 				if(!PURPLE_IS_BUDDY(bnode))
 					continue;
 				b = PURPLE_BUDDY(bnode);
-				if(PURPLE_IS_BUDDY_ONLINE(b))
+				if(PURPLE_BUDDY_IS_ONLINE(b))
 					buddy_ticker_add_buddy(b);
 			}
 		}

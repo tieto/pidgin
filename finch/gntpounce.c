@@ -565,7 +565,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 			gnt_check_box_set_checked(
 				GNT_CHECK_BOX(dialog->signon), TRUE);
 		} else {
-			if (!PURPLE_IS_BUDDY_ONLINE(buddy)) {
+			if (!PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				gnt_check_box_set_checked(
 					GNT_CHECK_BOX(dialog->signon), TRUE);
 			} else {
