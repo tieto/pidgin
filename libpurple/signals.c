@@ -51,8 +51,8 @@ typedef struct
 	PurpleSignalMarshalFunc marshal;
 
 	int num_values;
-	PurpleValue **values;
-	PurpleValue *ret_value;
+	GType *value_types;
+	GType ret_type;
 
 	GList *handlers;
 	size_t handler_count;

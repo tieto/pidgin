@@ -1,5 +1,4 @@
 #include "debug.h"
-#include "value.h"
 
 #include "perl-common.h"
 
@@ -379,30 +378,34 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 #endif
 
 void *
-purple_perl_data_from_sv(PurpleValue *value, SV *sv)
+purple_perl_data_from_sv(GType type, SV *sv)
 {
-
-	switch (purple_value_get_type(value)) {
-		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
-		case PURPLE_TYPE_INT:     return (void *)SvIV(sv);
-		case PURPLE_TYPE_UINT:    return (void *)SvUV(sv);
-		case PURPLE_TYPE_LONG:    return (void *)SvIV(sv);
-		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
-		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
-		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
-		case PURPLE_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
-		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
-		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
-
-		default:
-			return NULL;
-	}
+	if (type == G_TYPE_BOOLEAN)
+		return (void *)SvIV(sv);
+	else if (type == G_TYPE_INT)
+		return (void *)SvIV(sv);
+	else if (type == G_TYPE_UINT)
+		return (void *)SvUV(sv);
+	else if (type == G_TYPE_LONG)
+		return (void *)SvIV(sv);
+	else if (type == G_TYPE_ULONG)
+		return (void *)SvUV(sv);
+	else if (type == G_TYPE_INT64)
+		return (void *)SvIV(sv);
+	else if (type == G_TYPE_UINT64)
+		return (void *)SvUV(sv);
+	else if (type == G_TYPE_STRING)
+		return g_strdup(SvPVutf8_nolen(sv));
+	else if (type == G_TYPE_POINTER)
+		return (void *)SvIV(sv);
+	else if (type == G_TYPE_BOXED)
+		return (void *)SvIV(sv);
 
 	return NULL;
 }
 
 static SV *
-purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
+purple_perl_sv_from_purple_type(const GType type, void *arg)
 {
 	const char *stash = "Purple"; /* ? */
 
@@ -473,7 +476,7 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 }
 
 SV *
-purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_arg)
+purple_perl_sv_from_vargs(const GType type, va_list *args, void ***copy_arg)
 {
 	if (purple_value_is_outgoing(value)) {
 		switch (purple_value_get_type(value)) {
@@ -481,7 +484,7 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
-				return purple_perl_sv_from_subtype(value, *(void **)*copy_arg);
+				return purple_perl_sv_from_purple_type(type, *(void **)*copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
 				if ((*copy_arg = (void *)va_arg(*args, gboolean *)) == NULL)
@@ -557,7 +560,7 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_
 				if ((*copy_arg = va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
-				return purple_perl_sv_from_subtype(value, *copy_arg);
+				return purple_perl_sv_from_purple_type(type, *copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
 				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
