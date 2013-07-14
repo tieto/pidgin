@@ -189,7 +189,8 @@ purple_enumheaders = \
 	cipher.h \
 	connection.h \
 	conversation.h \
-	conversationtypes.h
+	conversationtypes.h \
+	status.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
