@@ -26,6 +26,8 @@
 #ifndef _PURPLE_BUDDYICON_H_
 #define _PURPLE_BUDDYICON_H_
 
+#define PURPLE_TYPE_BUDDY_ICON (purple_buddy_icon_get_type())
+
 /** An opaque structure representing a buddy icon for a particular user on a
  *  particular #PurpleAccount.  Instances are reference-counted; use
  *  purple_buddy_icon_ref() and purple_buddy_icon_unref() to take and release
@@ -45,6 +47,11 @@ G_BEGIN_DECLS
 /** @name Buddy Icon API                                                  */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleBuddyIcon boxed structure.
+ */
+GType purple_buddy_icon_get_type(void);
 
 /**
  * Creates a new buddy icon structure and populates it.
