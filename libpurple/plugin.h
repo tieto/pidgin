@@ -32,7 +32,6 @@
 #include <glib.h>
 #include <gmodule.h>
 #include "signals.h"
-#include "value.h"
 
 /** @copydoc _PurplePlugin */
 typedef struct _PurplePlugin           PurplePlugin;

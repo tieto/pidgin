@@ -132,7 +132,6 @@ typedef enum
 #include "account.h"
 #include "buddylist.h"
 #include "conversation.h"
-#include "value.h"
 
 #define PURPLE_TUNE_ARTIST	"tune_artist"
 #define PURPLE_TUNE_TITLE	"tune_title"

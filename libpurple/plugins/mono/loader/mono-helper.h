@@ -8,7 +8,6 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tokentype.h>
 #include "plugin.h"
-#include "value.h"
 #include "debug.h"
 
 typedef struct {

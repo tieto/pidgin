@@ -29,7 +29,6 @@
 #define _PURPLE_DBUS_SERVER_H_
 
 #include "dbus-purple.h"
-#include "value.h"
 
 G_BEGIN_DECLS
 

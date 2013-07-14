@@ -73,7 +73,6 @@ typedef struct group *Purple__Group;
 #include "stringref.h"
 /* Ewww. perl has it's own util.h which is in the include path :( */
 #include "libpurple/util.h"
-#include "value.h"
 #include "whiteboard.h"
 #include "xmlnode.h"
 
@@ -278,9 +277,6 @@ typedef PurpleStringref *			Purple__Stringref;
 /* util.h */
 typedef PurpleInfoFieldFormatCallback	Purple__Util__InfoFieldFormatCallback;
 typedef PurpleMenuAction *		Purple__Menu__Action;
-
-/* value.h */
-typedef PurpleValue *			Purple__Value;
 
 /* whiteboard.h */
 typedef PurpleWhiteboard *		Purple__Whiteboard;
