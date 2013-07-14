@@ -119,6 +119,11 @@ typedef enum /*< flags >*/
  * A core representation of a conversation between two or more people.
  *
  * The conversation can be an IM or a chat.
+ *
+ * @note When a conversation is destroyed with g_object_unref(), the specified
+ *       conversation is removed from the parent window. If this conversation is
+ *       the only one contained in the parent window, that window is also
+ *       destroyed.
  */
 struct _PurpleConversation
 {
