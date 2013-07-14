@@ -82,10 +82,10 @@
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
-typedef struct _PurpleStatusType      PurpleStatusType; /* TODO GBoxed  */
-typedef struct _PurpleStatusAttr      PurpleStatusAttr; /* TODO GBoxed  */
-typedef struct _PurplePresence        PurplePresence;   /* TODO GObject */
-typedef struct _PurpleStatus          PurpleStatus;     /* TODO GObject */
+typedef struct _PurpleStatusType      PurpleStatusType;
+typedef struct _PurpleStatusAttr      PurpleStatusAttr;
+typedef struct _PurplePresence        PurplePresence;
+typedef struct _PurpleStatus          PurpleStatus;
 
 typedef struct _PurpleMood {
 	const char *mood;
@@ -94,7 +94,7 @@ typedef struct _PurpleMood {
 } PurpleMood;
 
 /**
- * A context for a presence. TODO Remove, subclass PurplePresence
+ * A context for a presence.
  *
  * The context indicates to what the presence applies.
  */
