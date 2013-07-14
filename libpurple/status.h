@@ -259,7 +259,7 @@ PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primit
 												gboolean independent,
 												const char *attr_id,
 												const char *attr_name,
-												PurpleValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
+												GValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Destroys a status type.
@@ -393,12 +393,12 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
  *
  * @param id         The ID of the attribute.
  * @param name       The name presented to the user.
- * @param value_type The type of data contained in the attribute.
+ * @param value      The data contained in the attribute.
  *
  * @return A new status attribute.
  */
 PurpleStatusAttr *purple_status_attr_new(const char *id, const char *name,
-									 PurpleValue *value_type);
+									 GValue *value);
 
 /**
  * Destroys a status attribute.
@@ -432,7 +432,7 @@ const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's value.
  */
-PurpleValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
+GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
 
 /*@}*/
 
@@ -605,7 +605,7 @@ gboolean purple_status_is_online(const PurpleStatus *status);
  *
  * @return The value of the attribute.
  */
-PurpleValue *purple_status_get_attr_value(const PurpleStatus *status,
+GValue *purple_status_get_attr_value(const PurpleStatus *status,
 									  const char *id);
 
 /**

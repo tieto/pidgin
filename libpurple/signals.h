@@ -67,18 +67,16 @@ G_BEGIN_DECLS
  * @param instance   The instance to register the signal for.
  * @param signal     The signal name.
  * @param marshal    The marshal function.
- * @param ret_value  The return value type, or NULL for no return value.
+ * @param ret_type   The return value type, or G_TYPE_NONE for no return value.
  * @param num_values The number of values to be passed to the callbacks.
  * @param ...        The values to pass to the callbacks.
  *
  * @return The signal ID local to that instance, or 0 if the signal
  *         couldn't be registered.
- *
- * @see PurpleValue
  */
 gulong purple_signal_register(void *instance, const char *signal,
 							PurpleSignalMarshalFunc marshal,
-							PurpleValue *ret_value, int num_values, ...);
+							GType ret_type, int num_values, ...);
 
 /**
  * Unregisters a signal in an instance.
@@ -98,15 +96,14 @@ void purple_signals_unregister_by_instance(void *instance);
 /**
  * Returns a list of value types used for a signal.
  *
- * @param instance   The instance the signal is registered to.
- * @param signal     The signal.
- * @param ret_value  The return value from the last signal handler.
- * @param num_values The returned number of values.
- * @param values     The returned list of values.
+ * @param instance    The instance the signal is registered to.
+ * @param signal      The signal.
+ * @param ret_type    The return type for the signal.
+ * @param num_values  The returned number of values.
+ * @param value_types The returned list of value types.
  */
 void purple_signal_get_values(void *instance, const char *signal,
-							PurpleValue **ret_value,
-							int *num_values, PurpleValue ***values);
+						GType *ret_type, int *num_values, GType **value_types);
 
 /**
  * Connects a signal handler to a signal for a particular object.
