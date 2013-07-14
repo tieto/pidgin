@@ -4035,6 +4035,7 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
 		g_free(tmp);
+		g_free(alias);
 
 		purple_notify_user_info_destroy(user_info);
 	} else if (PURPLE_IS_GROUP(node)) {
@@ -4068,7 +4069,6 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 
 		purple_notify_user_info_destroy(user_info);
 	}
-	g_free(alias);
 
 	purple_signal_emit(pidgin_blist_get_handle(), "drawing-tooltip",
 	                   node, str, full);
