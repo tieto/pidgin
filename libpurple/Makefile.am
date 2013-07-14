@@ -101,7 +101,6 @@ purple_coresources = \
 	theme-manager.c \
 	upnp.c \
 	util.c \
-	value.c \
 	version.c \
 	xmlnode.c \
 	whiteboard.c
@@ -172,7 +171,6 @@ purple_coreheaders = \
 	theme-manager.h \
 	upnp.h \
 	util.h \
-	value.h \
 	xmlnode.h \
 	whiteboard.h
 

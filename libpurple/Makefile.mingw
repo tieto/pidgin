@@ -127,7 +127,6 @@ C_SRC =	\
 			theme.c \
 			upnp.c \
 			util.c \
-			value.c \
 			version.c \
 			whiteboard.c \
 			xmlnode.c \
