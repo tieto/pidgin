@@ -2921,8 +2921,11 @@ purple_account_constructed(GObject *object)
 			account);
 
 	prpl = purple_find_prpl(protocol_id);
-	if (prpl == NULL)
+	if (prpl == NULL) {
+		g_free(username);
+		g_free(protocol_id);
 		return;
+	}
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info != NULL && prpl_info->status_types != NULL)
@@ -2941,6 +2944,9 @@ purple_account_constructed(GObject *object)
 		purple_presence_set_status_active(priv->presence,
 										"offline",
 										TRUE);
+
+	g_free(username);
+	g_free(protocol_id);
 }
 
 /* GObject dispose function */

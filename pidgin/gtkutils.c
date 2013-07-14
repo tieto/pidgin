@@ -1982,6 +1982,8 @@ add_completion_list(PidginCompletionData *data)
 			if (!PURPLE_IS_CONTACT(cnode))
 				continue;
 
+			g_object_get(cnode, "alias", &alias, NULL);
+
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
 			{
 				PidginBuddyCompletionEntry entry;
@@ -1989,7 +1991,6 @@ add_completion_list(PidginCompletionData *data)
 				entry.entry.buddy = (PurpleBuddy *) bnode;
 
 				if (filter_func(&entry, user_data)) {
-					g_object_get(cnode, "alias", &alias, NULL);
 					add_buddyname_autocomplete_entry(data->store,
 														alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
@@ -1998,6 +1999,8 @@ add_completion_list(PidginCompletionData *data)
 													 );
 				}
 			}
+
+			g_free(alias);
 		}
 	}
 

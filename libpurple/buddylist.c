@@ -237,6 +237,7 @@ contact_to_xmlnode(PurpleContact *contact)
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(contact)),
 			value_to_xmlnode, node);
 
+	g_free(alias);
 	return node;
 }
 
@@ -267,6 +268,7 @@ chat_to_xmlnode(PurpleChat *chat)
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(chat)),
 			value_to_xmlnode, node);
 
+	g_free(alias);
 	return node;
 }
 

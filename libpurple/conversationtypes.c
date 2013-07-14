@@ -444,6 +444,8 @@ purple_im_conversation_constructed(GObject *object)
 
 	if (purple_prefs_get_bool("/purple/logging/log_ims"))
 		purple_conversation_set_logging(PURPLE_CONVERSATION(im), TRUE);
+
+	g_free(name);
 }
 
 /* GObject dispose function */

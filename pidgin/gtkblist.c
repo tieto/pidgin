@@ -627,6 +627,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		purple_chat_set_alias(PURPLE_CHAT(node), arg2);
 	}
 
+	g_free(alias);
 	pidgin_blist_refresh(list);
 }
 
@@ -3921,11 +3922,10 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 					purple_account_get_username(purple_buddy_get_account(b)));
 		}
 
-		g_object_get(c, "alias", &alias, NULL);
-
 		/* Alias */
 		/* If there's not a contact alias, the node is being displayed with
 		 * this alias, so there's no point in showing it in the tooltip. */
+		g_object_get(c, "alias", &alias, NULL);
 		if (full && c && purple_buddy_get_local_alias(b) != NULL && purple_buddy_get_local_alias(b)[0] != '\0' &&
 		    (alias != NULL && alias[0] != '\0') &&
 		    strcmp(alias, purple_buddy_get_local_alias(b)) != 0)
@@ -4068,6 +4068,7 @@ static char *pidgin_get_tooltip_text(PurpleBListNode *node, gboolean full)
 
 		purple_notify_user_info_destroy(user_info);
 	}
+	g_free(alias);
 
 	purple_signal_emit(pidgin_blist_get_handle(), "drawing-tooltip",
 	                   node, str, full);
@@ -4515,6 +4516,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	g_free(nametext);
 	g_free(statustext);
 	g_free(idletime);
+	g_free(contact_alias);
 
 	if (hidden_conv) {
 		char *tmp = text;
