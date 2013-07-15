@@ -50,6 +50,8 @@ G_BEGIN_DECLS
 
 /**
  * Returns the GType for the PurpleBuddyIcon boxed structure.
+ * TODO Boxing of PurpleBuddyIcon is a temporary solution to having a GType for
+ *      icons. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_buddy_icon_get_type(void);
 
@@ -73,6 +75,7 @@ PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *usern
 
 /**
  * Increments the reference count on a buddy icon.
+ * TODO This can be removed when PurpleBuddyIcon is a GObject.
  *
  * @param icon The buddy icon.
  *
@@ -82,6 +85,7 @@ PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
 
 /**
  * Decrements the reference count on a buddy icon.
+ * TODO This can be removed when PurpleBuddyIcon is a GObject.
  *
  * If the reference count reaches 0, the icon will be destroyed.
  *

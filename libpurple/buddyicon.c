@@ -1135,9 +1135,10 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 static PurpleBuddyIcon *
 purple_buddy_icon_copy(PurpleBuddyIcon *icon)
 {
-	return purple_buddy_icon_new(icon->account, icon->username,
-			(void *)purple_imgstore_get_data(icon->img),
-			purple_imgstore_get_size(icon->img), icon->checksum);
+	PurpleBuddyIcon *icon_copy = g_new(PurpleBuddyIcon, 1);
+	*icon_copy = *icon;
+
+	return icon_copy;
 }
 
 GType
@@ -1148,7 +1149,7 @@ purple_buddy_icon_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleBuddyIcon",
 				(GBoxedCopyFunc)purple_buddy_icon_copy,
-				(GBoxedFreeFunc)purple_buddy_icon_unref);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;
