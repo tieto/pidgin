@@ -1135,7 +1135,11 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 static PurpleBuddyIcon *
 purple_buddy_icon_copy(PurpleBuddyIcon *icon)
 {
-	PurpleBuddyIcon *icon_copy = g_new(PurpleBuddyIcon, 1);
+	PurpleBuddyIcon *icon_copy;
+
+	g_return_val_if_fail(icon != NULL, NULL);
+
+	icon_copy = g_new(PurpleBuddyIcon, 1);
 	*icon_copy = *icon;
 
 	return icon_copy;

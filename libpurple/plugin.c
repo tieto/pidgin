@@ -1616,7 +1616,11 @@ purple_plugin_action_free(PurplePluginAction *action)
 static PurplePlugin *
 purple_plugin_copy(PurplePlugin *plugin)
 {
-	PurplePlugin *plugin_copy = g_new(PurplePlugin, 1);
+	PurplePlugin *plugin_copy;
+
+	g_return_val_if_fail(plugin != NULL, NULL);
+
+	plugin_copy = g_new(PurplePlugin, 1);
 	*plugin_copy = *plugin;
 
 	return plugin_copy;

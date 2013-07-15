@@ -822,10 +822,14 @@ PurpleConversation *purple_conversation_message_get_conversation(const PurpleCon
 static PurpleConversationMessage *
 purple_conversation_message_copy(PurpleConversationMessage *msg)
 {
-	PurpleConversationMessage *newmsg = g_new(PurpleConversationMessage, 1);
+	PurpleConversationMessage *newmsg;
+
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	newmsg  = g_new(PurpleConversationMessage, 1);
 	*newmsg = *msg;
-	newmsg->who = g_strdup(msg->who);
-	newmsg->what = g_strdup(msg->what);
+	newmsg->who   = g_strdup(msg->who);
+	newmsg->what  = g_strdup(msg->what);
 	newmsg->alias = g_strdup(msg->alias);
 
 	return newmsg;
@@ -834,6 +838,8 @@ purple_conversation_message_copy(PurpleConversationMessage *msg)
 static void
 purple_conversation_message_free(PurpleConversationMessage *msg)
 {
+	g_return_if_fail(msg != NULL);
+
 	g_free(msg->who);
 	g_free(msg->what);
 	g_free(msg->alias);

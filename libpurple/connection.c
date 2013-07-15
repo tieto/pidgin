@@ -565,7 +565,11 @@ void purple_connection_disable_reconnection(PurpleConnection *gc)
 static PurpleConnectionErrorInfo *
 purple_connection_error_info_copy(PurpleConnectionErrorInfo *err)
 {
-	PurpleConnectionErrorInfo *newerr = g_new(PurpleConnectionErrorInfo, 1);
+	PurpleConnectionErrorInfo *newerr;
+
+	g_return_val_if_fail(err != NULL, NULL);
+
+	newerr = g_new(PurpleConnectionErrorInfo, 1);
 	*newerr = *err;
 	newerr->description = g_strdup(err->description);
 
@@ -575,6 +579,8 @@ purple_connection_error_info_copy(PurpleConnectionErrorInfo *err)
 static void
 purple_connection_error_info_free(PurpleConnectionErrorInfo *err)
 {
+	g_return_if_fail(err != NULL);
+
 	g_free(err->description);
 	g_free(err);
 }
