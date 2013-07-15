@@ -54,6 +54,7 @@
  *       something we should look into once the status box gets fleshed
  *       out more.
  */
+#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_type())
 
 typedef struct _PurpleSavedStatus     PurpleSavedStatus;
 typedef struct _PurpleSavedStatusSub  PurpleSavedStatusSub;
@@ -66,6 +67,11 @@ G_BEGIN_DECLS
 /** @name Saved status subsystem                                          */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleSavedStatus boxed structure.
+ */
+GType purple_savedstatus_get_type(void);
 
 /**
  * Create a new saved status.  This will add the saved status to the

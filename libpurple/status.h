@@ -82,10 +82,12 @@
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
-typedef struct _PurpleStatusType      PurpleStatusType;
-typedef struct _PurpleStatusAttr      PurpleStatusAttr;
-typedef struct _PurplePresence        PurplePresence;
-typedef struct _PurpleStatus          PurpleStatus;
+#define PURPLE_TYPE_STATUS      (purple_status_get_type())
+typedef struct _PurpleStatus    PurpleStatus;
+
+typedef struct _PurplePresence    PurplePresence;
+typedef struct _PurpleStatusType  PurpleStatusType;
+typedef struct _PurpleStatusAttr  PurpleStatusAttr;
 
 typedef struct _PurpleMood {
 	const char *mood;
@@ -440,6 +442,11 @@ GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
 /** @name PurpleStatus API                                                  */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleStatus boxed structure.
+ */
+GType purple_status_get_type(void);
 
 /**
  * Creates a new status.

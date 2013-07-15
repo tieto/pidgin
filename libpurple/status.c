@@ -1054,6 +1054,29 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 	return 0;
 }
 
+static PurpleStatus *
+purple_status_copy(PurpleStatus *status)
+{
+	PurpleStatus *status_copy = g_new(PurpleStatus, 1);
+	*status_copy = *status;
+
+	return status_copy;
+}
+
+GType
+purple_status_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleStatus",
+				(GBoxedCopyFunc)purple_status_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 
 /**************************************************************************
 * PurplePresence API

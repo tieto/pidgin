@@ -427,21 +427,21 @@ purple_perl_sv_from_purple_type(const GType type, void *arg)
 		stash = "Purple::BuddyList::Node";
 	else if (type == PURPLE_TYPE_CIPHER)
 		stash = "Purple::Cipher";
-	else if (type == PURPLE_TYPE_STATUS) /* TODO */
+	else if (type == PURPLE_TYPE_STATUS)
 		stash = "Purple::Status";
-	else if (type == PURPLE_TYPE_SAVEDSTATUS) /* TODO */
+	else if (type == PURPLE_TYPE_SAVEDSTATUS)
 		stash = "Purple::SavedStatus";
-	else if (type == PURPLE_TYPE_LOG) /* TODO */
+	else if (type == PURPLE_TYPE_LOG)
 		stash = "Purple::Log";
-	else if (type == PURPLE_TYPE_XFER) /* TODO */
+	else if (type == PURPLE_TYPE_XFER)
 		stash = "Purple::Xfer";
-	else if (type == PURPLE_TYPE_XMLNODE) /* TODO */
+	else if (type == PURPLE_TYPE_XMLNODE)
 		stash = "Purple::XMLNode";
-	else if (type == PURPLE_TYPE_USERINFO) /* TODO */
+	else if (type == PURPLE_TYPE_USERINFO)
  		stash = "Purple::NotifyUserInfo";
-	else if (type == PURPLE_TYPE_STORED_IMAGE) /* TODO */
+	else if (type == PURPLE_TYPE_STORED_IMAGE)
  		stash = "Purple::StoredImage";
-	else if (type == PURPLE_TYPE_CERTIFICATEPOOL) /* TODO */
+	else if (type == PURPLE_TYPE_CERTIFICATEPOOL)
  		stash = "Purple::Certificate::Pool";
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));

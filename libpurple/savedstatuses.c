@@ -1172,6 +1172,29 @@ purple_savedstatus_activate_for_account(const PurpleSavedStatus *saved_status,
 	}
 }
 
+static PurpleSavedStatus *
+purple_savedstatus_copy(PurpleSavedStatus *savedstatus)
+{
+	PurpleSavedStatus *savedstatus_copy = g_new(PurpleSavedStatus, 1);
+	*savedstatus_copy = *savedstatus;
+
+	return savedstatus_copy;
+}
+
+GType
+purple_savedstatus_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleSavedStatus",
+				(GBoxedCopyFunc)purple_savedstatus_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 void *
 purple_savedstatuses_get_handle(void)
 {
