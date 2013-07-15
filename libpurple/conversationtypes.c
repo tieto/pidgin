@@ -390,9 +390,9 @@ purple_im_conversation_set_property(GObject *obj, guint param_id, const GValue *
 		case IM_PROP_TYPING_STATE:
 			purple_im_conversation_set_typing_state(im, g_value_get_enum(value));
 			break;
-#warning TODO: change get_boxed to get_object when PurpleBuddyIcon is a GObject
+#warning TODO: change get_pointer to get_object when PurpleBuddyIcon is a GObject
 		case IM_PROP_ICON:
-			purple_im_conversation_set_icon(im, g_value_get_boxed(value));
+			purple_im_conversation_set_icon(im, g_value_get_pointer(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -411,9 +411,9 @@ purple_im_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 		case IM_PROP_TYPING_STATE:
 			g_value_set_enum(value, purple_im_conversation_get_typing_state(im));
 			break;
-#warning TODO: change set_static_boxed to set_object when PurpleBuddyIcon is a GObject
+#warning TODO: change set_pointer to set_object when PurpleBuddyIcon is a GObject
 		case IM_PROP_ICON:
-			g_value_set_static_boxed(value, purple_im_conversation_get_icon(im));
+			g_value_set_pointer(value, purple_im_conversation_get_icon(im));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -515,10 +515,10 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 				G_PARAM_READWRITE)
 			);
 
-#warning TODO: change spec_boxed to spec_object when PurpleBuddyIcon is a GObject
+#warning TODO: change spec_pointer to spec_object when PurpleBuddyIcon is a GObject
 	g_object_class_install_property(obj_class, IM_PROP_ICON,
-			g_param_spec_boxed(IM_PROP_ICON_S, _("Buddy icon"),
-				_("The buddy icon for the IM."), PURPLE_TYPE_BUDDY_ICON,
+			g_param_spec_pointer(IM_PROP_ICON_S, _("Buddy icon"),
+				_("The buddy icon for the IM."),
 				G_PARAM_READWRITE)
 			);
 
