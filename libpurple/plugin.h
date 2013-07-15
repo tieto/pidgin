@@ -33,6 +33,9 @@
 #include <gmodule.h>
 #include "signals.h"
 
+/** Returns the GType for the PurplePlugin boxed structure */
+#define PURPLE_TYPE_PLUGIN  (purple_plugin_get_type())
+
 /** @copydoc _PurplePlugin */
 typedef struct _PurplePlugin           PurplePlugin;
 /** @copydoc _PurplePluginInfo */
@@ -244,6 +247,13 @@ G_BEGIN_DECLS
 /** @name Plugin API                                                      */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurplePlugin boxed structure.
+ * TODO Boxing of PurplePlugin is a temporary solution to having a GType for
+ *      plugins. This should rather be a GObject instead of a GBoxed.
+ */
+GType purple_plugin_get_type(void);
 
 /**
  * Creates a new plugin structure.

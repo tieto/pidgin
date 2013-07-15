@@ -614,8 +614,8 @@ purple_connection_set_property(GObject *obj, guint param_id, const GValue *value
 
 	switch (param_id) {
 		case PROP_PRPL:
-#warning TODO: change get_pointer to get_object when prpl is a GObject
-			priv->prpl = g_value_get_pointer(value);
+#warning TODO: change get_boxed to get_object when prpl is a GObject
+			priv->prpl = g_value_get_boxed(value);
 			break;
 		case PROP_FLAGS:
 			purple_connection_set_flags(gc, g_value_get_flags(value));
@@ -648,8 +648,8 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case PROP_PRPL:
-#warning TODO: change set_pointer to set_object when prpl is a GObject
-			g_value_set_pointer(value, purple_connection_get_prpl(gc));
+#warning TODO: change set_static_boxed to set_object when prpl is a GObject
+			g_value_set_static_boxed(value, purple_connection_get_prpl(gc));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_connection_get_flags(gc));
@@ -796,10 +796,10 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->get_property = purple_connection_get_property;
 	obj_class->set_property = purple_connection_set_property;
 
-#warning TODO: change spec_pointer to spec_object when prpl is a GObject
+#warning TODO: change spec_boxed to spec_object when prpl is a GObject
 	g_object_class_install_property(obj_class, PROP_PRPL,
-			g_param_spec_pointer(PROP_PRPL_S, _("Protocol plugin"),
-				_("The prpl that is using the connection."),
+			g_param_spec_boxed(PROP_PRPL_S, _("Protocol plugin"),
+				_("The prpl that is using the connection."), PURPLE_TYPE_PLUGIN,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 

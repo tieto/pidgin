@@ -1612,3 +1612,26 @@ purple_plugin_action_free(PurplePluginAction *action)
 	g_free(action->label);
 	g_free(action);
 }
+
+static PurplePlugin *
+purple_plugin_copy(PurplePlugin *plugin)
+{
+	PurplePlugin *plugin_copy = g_new(PurplePlugin, 1);
+	*plugin_copy = *plugin;
+
+	return plugin_copy;
+}
+
+GType
+purple_plugin_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurplePlugin",
+				(GBoxedCopyFunc)purple_plugin_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
