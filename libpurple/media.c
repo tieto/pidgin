@@ -198,9 +198,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 			G_PARAM_READABLE));
 
 	g_object_class_install_property(gobject_class, PROP_ACCOUNT,
-			g_param_spec_pointer("account",
-			"PurpleAccount",
-			"The account this media session is on.",
+			g_param_spec_object("account", "PurpleAccount",
+			"The account this media session is on.", PURPLE_TYPE_ACCOUNT,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,
@@ -360,7 +359,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			media->priv->manager = g_value_dup_object(value);
 			break;
 		case PROP_ACCOUNT:
-			media->priv->account = g_value_get_pointer(value);
+			media->priv->account = g_value_get_object(value);
 			break;
 		case PROP_CONFERENCE_TYPE:
 			media->priv->conference_type =
@@ -421,7 +420,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			g_value_set_object(value, media->priv->backend);
 			break;
 		case PROP_ACCOUNT:
-			g_value_set_pointer(value, media->priv->account);
+			g_value_set_object(value, media->priv->account);
 			break;
 		case PROP_CONFERENCE_TYPE:
 			g_value_set_string(value,
