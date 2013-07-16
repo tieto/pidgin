@@ -216,7 +216,7 @@ const char *
 purple_status_attr_get_name(attr)
 	Purple::StatusAttr attr
 
-Purple::Value
+GValue *
 purple_status_attr_get_value(attr)
 	Purple::StatusAttr attr
 
@@ -224,7 +224,7 @@ Purple::StatusAttr
 purple_status_attr_new(id, name, value_type)
 	const char *id
 	const char *name
-	Purple::Value value_type
+	GValue *value_type
 
 MODULE = Purple::Status  PACKAGE = Purple::Status  PREFIX = purple_status_
 PROTOTYPES: ENABLE
@@ -253,7 +253,7 @@ purple_status_get_attr_string(status, id)
 	Purple::Status status
 	const char *id
 
-Purple::Value
+GValue *
 purple_status_get_attr_value(status, id)
 	Purple::Status status
 	const char *id

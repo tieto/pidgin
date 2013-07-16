@@ -38,6 +38,7 @@ xmlnode *				T_PTR
 const xmlnode *				T_PTR
 gssize					T_IV
 const void *				T_PTR
+GValue *				T_PTR
 GType					T_IV
 
 Purple::Account				T_PurpleObj
@@ -148,7 +149,6 @@ Purple::String::Format::Type		T_IV
 Purple::Stringref				T_PurpleObj
 Purple::Util::FetchUrlData	T_PTR
 Purple::Util::InfoFieldFormatCallback	T_PTR
-Purple::Value				T_PurpleObj
 
 Purple::Xfer				T_PurpleObj
 Purple::XferType				T_IV
