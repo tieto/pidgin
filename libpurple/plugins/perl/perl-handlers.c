@@ -285,7 +285,7 @@ perl_signal_cb(va_list args, void *data)
 	int i;
 	int count;
 	int value_count;
-	PurpleValue *ret_value, **values;
+	GType ret_type, *value_types;
 	SV **sv_args;
 	DATATYPE **copy_args;
 
@@ -296,14 +296,14 @@ perl_signal_cb(va_list args, void *data)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	purple_signal_get_values(handler->instance, handler->signal,
-	                         &ret_value, &value_count, &values);
+	purple_signal_get_types(handler->instance, handler->signal,
+	                         &ret_type, &value_count, &value_types);
 
 	sv_args   = g_new(SV *,    value_count);
 	copy_args = g_new(void **, value_count);
 
 	for (i = 0; i < value_count; i++) {
-		sv_args[i] = purple_perl_sv_from_vargs(values[i],
+		sv_args[i] = purple_perl_sv_from_vargs(value_types[i],
 #ifdef VA_COPY_AS_ARRAY
 		                                       (va_list*)args,
 #else
@@ -318,7 +318,7 @@ perl_signal_cb(va_list args, void *data)
 
 	PUTBACK;
 
-	if (ret_value != NULL) {
+	if (ret_type != G_TYPE_NONE) {
 		count = call_sv(handler->callback, G_EVAL | G_SCALAR);
 
 		SPAGAIN;
@@ -326,7 +326,7 @@ perl_signal_cb(va_list args, void *data)
 		if (count != 1)
 			croak("Uh oh! call_sv returned %i != 1", i);
 		else
-			ret_val = purple_perl_data_from_sv(ret_value, POPs);
+			ret_val = purple_perl_data_from_sv(ret_type, POPs);
 	} else {
 		call_sv(handler->callback, G_EVAL | G_SCALAR);
 
@@ -339,6 +339,7 @@ perl_signal_cb(va_list args, void *data)
 		                 SvPVutf8_nolen(ERRSV));
 	}
 
+#if 0
 	/* See if any parameters changed. */
 	for (i = 0; i < value_count; i++) {
 		if (purple_value_is_outgoing(values[i])) {
@@ -401,6 +402,7 @@ perl_signal_cb(va_list args, void *data)
 #endif
 		}
 	}
+#endif
 
 	PUTBACK;
 	FREETMPS;
