@@ -95,7 +95,6 @@
 #include <theme-manager.h>
 #include <upnp.h>
 #include <util.h>
-#include <value.h>
 #include <version.h>
 #include <whiteboard.h>
 #include <xmlnode.h>

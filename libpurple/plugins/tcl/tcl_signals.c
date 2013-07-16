@@ -29,7 +29,6 @@
 #include "conversation.h"
 #include "signals.h"
 #include "debug.h"
-#include "value.h"
 #include "core.h"
 
 static GList *tcl_callbacks;

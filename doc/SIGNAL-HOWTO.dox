@@ -78,8 +78,6 @@
 
   @todo Describe this more.
 
-  @see value.h
-
   @section connect Connecting to the signal
   Once the signal is registered, you can connect callbacks to it. First, you
   must define a callback function, such as this one from gtkplugin.c :

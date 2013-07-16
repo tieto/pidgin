@@ -3,7 +3,6 @@
 #include "debug.h"
 #include "buddylist.h"
 #include "signals.h"
-#include "value.h"
 
 typedef struct {
 	MonoObject *func;

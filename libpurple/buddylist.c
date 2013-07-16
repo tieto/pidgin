@@ -32,7 +32,6 @@
 #include "server.h"
 #include "signals.h"
 #include "util.h"
-#include "value.h"
 #include "xmlnode.h"
 
 #define PURPLE_BUDDY_LIST_GET_PRIVATE(obj) \

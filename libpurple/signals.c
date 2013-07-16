@@ -28,7 +28,6 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "signals.h"
-#include "value.h"
 
 /* must include this to use G_VA_COPY */
 #include <string.h>

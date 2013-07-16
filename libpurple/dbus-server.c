@@ -47,7 +47,6 @@
 #include "savedstatuses.h"
 #include "smiley.h"
 #include "util.h"
-#include "value.h"
 #include "xmlnode.h"
 
 
