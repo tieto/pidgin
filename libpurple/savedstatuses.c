@@ -1175,7 +1175,11 @@ purple_savedstatus_activate_for_account(const PurpleSavedStatus *saved_status,
 static PurpleSavedStatus *
 purple_savedstatus_copy(PurpleSavedStatus *savedstatus)
 {
-	PurpleSavedStatus *savedstatus_copy = g_new(PurpleSavedStatus, 1);
+	PurpleSavedStatus *savedstatus_copy;
+
+	g_return_val_if_fail(savedstatus != NULL, NULL);
+
+	savedstatus_copy = g_new(PurpleSavedStatus, 1);
 	*savedstatus_copy = *savedstatus;
 
 	return savedstatus_copy;

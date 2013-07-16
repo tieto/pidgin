@@ -70,6 +70,8 @@ G_BEGIN_DECLS
 
 /**
  * Returns the GType for the PurpleSavedStatus boxed structure.
+ * TODO Boxing of PurpleSavedStatus is a temporary solution to having a GType
+ *      for saved statuses. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_savedstatus_get_type(void);
 

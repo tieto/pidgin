@@ -2051,10 +2051,14 @@ purple_blist_uninit(void)
 static PurpleBuddyList *
 purple_buddy_list_copy(PurpleBuddyList *blist)
 {
-	PurpleBuddyList *newlist = g_new(PurpleBuddyList, 1);
-	*newlist = *blist;
+	PurpleBuddyList *blist_copy;
 
-	return newlist;
+	g_return_val_if_fail(blist != NULL, NULL);
+
+	blist_copy = g_new(PurpleBuddyList, 1);
+	*blist_copy = *blist;
+
+	return blist_copy;
 }
 
 GType

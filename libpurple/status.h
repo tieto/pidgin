@@ -445,6 +445,8 @@ GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
 
 /**
  * Returns the GType for the PurpleStatus boxed structure.
+ * TODO Boxing of PurpleStatus is a temporary solution to having a GType for
+ *      statuses. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_status_get_type(void);
 

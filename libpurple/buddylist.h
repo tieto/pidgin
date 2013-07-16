@@ -125,6 +125,8 @@ G_BEGIN_DECLS
 
 /**
  * Returns the GType for the PurpleBuddyList boxed structure.
+ * TODO Boxing of PurpleBuddyList is a temporary solution to having a GType for
+ *      buddy list. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_buddy_list_get_type(void);
 

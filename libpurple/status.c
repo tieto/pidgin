@@ -1057,7 +1057,11 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 static PurpleStatus *
 purple_status_copy(PurpleStatus *status)
 {
-	PurpleStatus *status_copy = g_new(PurpleStatus, 1);
+	PurpleStatus *status_copy;
+
+	g_return_val_if_fail(status != NULL, NULL);
+
+	status_copy = g_new(PurpleStatus, 1);
 	*status_copy = *status;
 
 	return status_copy;

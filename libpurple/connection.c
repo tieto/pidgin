@@ -570,7 +570,7 @@ purple_connection_error_info_copy(PurpleConnectionErrorInfo *err)
 	g_return_val_if_fail(err != NULL, NULL);
 
 	newerr = g_new(PurpleConnectionErrorInfo, 1);
-	*newerr = *err;
+	newerr->type        = err->type;
 	newerr->description = g_strdup(err->description);
 
 	return newerr;
