@@ -28,6 +28,8 @@
 
 #include <glib.h>
 
+#define PURPLE_TYPE_XMLNODE  (xmlnode_get_type())
+
 /**
  * The valid types for an xmlnode
  */
@@ -58,6 +60,11 @@ struct _xmlnode
 };
 
 G_BEGIN_DECLS
+
+/**
+ * Returns the GType for the xmlnode boxed structure.
+ */
+GType xmlnode_get_type(void);
 
 /**
  * Creates a new xmlnode.

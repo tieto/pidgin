@@ -967,3 +967,17 @@ xmlnode_get_next_twin(xmlnode *node)
 
 	return NULL;
 }
+
+GType
+xmlnode_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("xmlnode",
+				(GBoxedCopyFunc)xmlnode_copy,
+				(GBoxedFreeFunc)xmlnode_free);
+	}
+
+	return type;
+}
