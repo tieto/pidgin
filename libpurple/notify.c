@@ -453,7 +453,7 @@ purple_notify_user_info_entry_new(const char *label, const char *value)
 	return user_info_entry;
 }
 
-static void
+void
 purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_if_fail(user_info_entry != NULL);
