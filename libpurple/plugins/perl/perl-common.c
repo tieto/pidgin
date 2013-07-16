@@ -1,6 +1,8 @@
-#include "debug.h"
-
 #include "perl-common.h"
+
+#include "cipher.h"
+#include "debug.h"
+#include "savedstatuses.h"
 
 extern PerlInterpreter *my_perl;
 
@@ -378,102 +380,77 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 #endif
 
 void *
-purple_perl_data_from_sv(PurpleValue *value, SV *sv)
+purple_perl_data_from_sv(GType type, SV *sv)
 {
-
-	switch (purple_value_get_type(value)) {
-		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
-		case PURPLE_TYPE_INT:     return (void *)SvIV(sv);
-		case PURPLE_TYPE_UINT:    return (void *)SvUV(sv);
-		case PURPLE_TYPE_LONG:    return (void *)SvIV(sv);
-		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
-		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
-		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
-		case PURPLE_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
-		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
-		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
-
-		default:
-			return NULL;
+	switch (type) {
+		case G_TYPE_BOOLEAN: return (void *)SvIV(sv);
+		case G_TYPE_INT:     return (void *)SvIV(sv);
+		case G_TYPE_UINT:    return (void *)SvUV(sv);
+		case G_TYPE_LONG:    return (void *)SvIV(sv);
+		case G_TYPE_ULONG:   return (void *)SvUV(sv);
+		case G_TYPE_INT64:   return (void *)SvIV(sv);
+		case G_TYPE_UINT64:  return (void *)SvUV(sv);
+		case G_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
+		case G_TYPE_POINTER: return (void *)SvIV(sv);
+		case G_TYPE_BOXED:   return (void *)SvIV(sv);
 	}
 
 	return NULL;
 }
 
 static SV *
-purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
+purple_perl_sv_from_purple_type(GType type, void *arg)
 {
 	const char *stash = "Purple"; /* ? */
 
-	switch (purple_value_get_subtype(value)) {
-		case PURPLE_SUBTYPE_ACCOUNT:
-			stash = "Purple::Account";
-			break;
-		case PURPLE_SUBTYPE_BLIST:
-			stash = "Purple::BuddyList";
-			break;
-		case PURPLE_SUBTYPE_BLIST_BUDDY:
-			stash = "Purple::BuddyList::Buddy";
-			break;
-		case PURPLE_SUBTYPE_BLIST_GROUP:
-			stash = "Purple::BuddyList::Group";
-			break;
-		case PURPLE_SUBTYPE_BLIST_CHAT:
-			stash = "Purple::BuddyList::Chat";
-			break;
-		case PURPLE_SUBTYPE_BUDDY_ICON:
-			stash = "Purple::Buddy::Icon";
-			break;
-		case PURPLE_SUBTYPE_CONNECTION:
-			stash = "Purple::Connection";
-			break;
-		case PURPLE_SUBTYPE_CONVERSATION:
-			stash = "Purple::Conversation";
-			break;
-		case PURPLE_SUBTYPE_PLUGIN:
-			stash = "Purple::Plugin";
-			break;
-		case PURPLE_SUBTYPE_BLIST_NODE:
-			stash = "Purple::BuddyList::Node";
-			break;
-		case PURPLE_SUBTYPE_CIPHER:
-			stash = "Purple::Cipher";
-			break;
-		case PURPLE_SUBTYPE_STATUS:
-			stash = "Purple::Status";
-			break;
-		case PURPLE_SUBTYPE_SAVEDSTATUS:
-			stash = "Purple::SavedStatus";
-			break;
-		case PURPLE_SUBTYPE_LOG:
-			stash = "Purple::Log";
-			break;
-		case PURPLE_SUBTYPE_XFER:
-			stash = "Purple::Xfer";
-			break;
-		case PURPLE_SUBTYPE_XMLNODE:
-			stash = "Purple::XMLNode";
-			break;
- 		case PURPLE_SUBTYPE_USERINFO:
- 			stash = "Purple::NotifyUserInfo";
- 			break;
- 		case PURPLE_SUBTYPE_STORED_IMAGE:
- 			stash = "Purple::StoredImage";
- 			break;
- 		case PURPLE_SUBTYPE_CERTIFICATEPOOL:
- 			stash = "Purple::Certificate::Pool";
- 			break;
- 		case PURPLE_SUBTYPE_UNKNOWN:
- 			stash = "Purple::Unknown";
- 			break;
-  	}
+	if (type == PURPLE_TYPE_ACCOUNT)
+		stash = "Purple::Account";
+	else if (type == PURPLE_TYPE_BUDDY_LIST)
+		stash = "Purple::BuddyList";
+	else if (type == PURPLE_TYPE_BUDDY)
+		stash = "Purple::BuddyList::Buddy";
+	else if (type == PURPLE_TYPE_GROUP)
+		stash = "Purple::BuddyList::Group";
+	else if (type == PURPLE_TYPE_CHAT)
+		stash = "Purple::BuddyList::Chat";
+	else if (type == PURPLE_TYPE_BUDDY_ICON)
+		stash = "Purple::Buddy::Icon";
+	else if (type == PURPLE_TYPE_CONNECTION)
+		stash = "Purple::Connection";
+	else if (type == PURPLE_TYPE_CONVERSATION)
+		stash = "Purple::Conversation";
+	else if (type == PURPLE_TYPE_PLUGIN)
+		stash = "Purple::Plugin";
+	else if (type == PURPLE_TYPE_BLIST_NODE)
+		stash = "Purple::BuddyList::Node";
+	else if (type == PURPLE_TYPE_CIPHER)
+		stash = "Purple::Cipher";
+	else if (type == PURPLE_TYPE_STATUS)
+		stash = "Purple::Status";
+	else if (type == PURPLE_TYPE_SAVEDSTATUS)
+		stash = "Purple::SavedStatus";
+	else if (type == PURPLE_TYPE_LOG)
+		stash = "Purple::Log";
+	else if (type == PURPLE_TYPE_XFER)
+		stash = "Purple::Xfer";
+	else if (type == PURPLE_TYPE_XMLNODE)
+		stash = "Purple::XMLNode";
+	else if (type == PURPLE_TYPE_NOTIFY_USER_INFO)
+ 		stash = "Purple::NotifyUserInfo";
+	else if (type == PURPLE_TYPE_STORED_IMAGE)
+ 		stash = "Purple::StoredImage";
+	else if (type == PURPLE_TYPE_CERTIFICATE_POOL)
+ 		stash = "Purple::Certificate::Pool";
+	else
+ 		stash = "Purple::Unknown";
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));
 }
 
 SV *
-purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_arg)
+purple_perl_sv_from_vargs(GType type, va_list *args, void ***copy_arg)
 {
+#if 0
 	if (purple_value_is_outgoing(value)) {
 		switch (purple_value_get_type(value)) {
 			case PURPLE_TYPE_SUBTYPE:
@@ -551,80 +528,60 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_
 				return NULL;
 		}
 	} else {
-		switch (purple_value_get_type(value)) {
-			case PURPLE_TYPE_SUBTYPE:
-				if ((*copy_arg = va_arg(*args, void *)) == NULL)
-					return &PL_sv_undef;
-
-				return purple_perl_sv_from_subtype(value, *copy_arg);
-
-			case PURPLE_TYPE_BOOLEAN:
-				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
-
-				return newSViv((gboolean)GPOINTER_TO_INT(*copy_arg));
-
-			case PURPLE_TYPE_INT:
-				*copy_arg = GINT_TO_POINTER( va_arg(*args, int) );
-
-				return newSViv(GPOINTER_TO_INT(*copy_arg));
-
-			case PURPLE_TYPE_UINT:
-				*copy_arg = GUINT_TO_POINTER(va_arg(*args, unsigned int));
-
-				return newSVuv(GPOINTER_TO_UINT(*copy_arg));
-
-			case PURPLE_TYPE_LONG:
-				*copy_arg = (void *)va_arg(*args, long);
-
-				return newSViv((long)*copy_arg);
-
-			case PURPLE_TYPE_ULONG:
-				*copy_arg = (void *)va_arg(*args, unsigned long);
-
-				return newSVuv((unsigned long)*copy_arg);
-
-			case PURPLE_TYPE_INT64:
-#if 0
-				/* XXX This yells and complains. */
-				*copy_arg = va_arg(*args, gint64);
-
-				return newSViv(*copy_arg);
 #endif
-				break;
+	switch (type) {
+		case G_TYPE_BOOLEAN:
+			*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
 
-			case PURPLE_TYPE_UINT64:
-				/* XXX This also yells and complains. */
-#if 0
-				*copy_arg = (void *)va_arg(*args, guint64);
+			return newSViv((gboolean)GPOINTER_TO_INT(*copy_arg));
 
-				return newSVuv(*copy_arg);
-#endif
-				break;
+		case G_TYPE_INT:
+			*copy_arg = GINT_TO_POINTER( va_arg(*args, int) );
 
-			case PURPLE_TYPE_STRING:
-				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
-					return &PL_sv_undef;
+			return newSViv(GPOINTER_TO_INT(*copy_arg));
 
-				return newSVGChar((char *)*copy_arg);
+		case G_TYPE_UINT:
+			*copy_arg = GUINT_TO_POINTER(va_arg(*args, unsigned int));
 
-			case PURPLE_TYPE_POINTER:
-				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
-					return &PL_sv_undef;
+			return newSVuv(GPOINTER_TO_UINT(*copy_arg));
 
-				return newSViv((IV)*copy_arg);
+		case G_TYPE_LONG:
+			*copy_arg = (void *)va_arg(*args, long);
 
-			case PURPLE_TYPE_BOXED:
-				/* Uh.. I dunno. Try this? */
-				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
-					return &PL_sv_undef;
+			return newSViv((long)*copy_arg);
 
-				return sv_2mortal(purple_perl_bless_object(*copy_arg,
-						purple_value_get_specific_type(value)));
+		case G_TYPE_ULONG:
+			*copy_arg = (void *)va_arg(*args, unsigned long);
 
-			default:
-				/* If this happens, things are going to get screwed up... */
-				return NULL;
-		}
+			return newSVuv((unsigned long)*copy_arg);
+
+		case G_TYPE_INT64:
+			*copy_arg = (void *)va_arg(*args, gint64);
+
+			return newSViv((gint64)*copy_arg);
+
+		case G_TYPE_UINT64:
+			*copy_arg = (void *)va_arg(*args, guint64);
+
+			return newSVuv((guint64)*copy_arg);
+
+		case G_TYPE_STRING:
+			if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
+				return &PL_sv_undef;
+
+			return newSVGChar((char *)*copy_arg);
+
+		case G_TYPE_POINTER:
+			if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
+				return &PL_sv_undef;
+
+			return newSViv((IV)*copy_arg);
+
+		default:
+			if ((*copy_arg = va_arg(*args, void *)) == NULL)
+				return &PL_sv_undef;
+
+			return purple_perl_sv_from_purple_type(type, *copy_arg);
 	}
 
 	return NULL;

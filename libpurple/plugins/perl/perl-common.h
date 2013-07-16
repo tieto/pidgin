@@ -67,8 +67,7 @@ gboolean purple_perl_value_from_sv(PurpleValue *value, SV *sv);
 SV *purple_perl_sv_from_value(const PurpleValue *value);
 #endif
 
-void *purple_perl_data_from_sv(PurpleValue *value, SV *sv);
-SV *purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args,
-                            void ***copy_arg);
+void *purple_perl_data_from_sv(GType type, SV *sv);
+SV *purple_perl_sv_from_vargs(GType type, va_list *args, void ***copy_arg);
 SV *purple_perl_sv_from_fun(PurplePlugin *plugin, SV *callback);
 #endif /* _PURPLE_PERL_COMMON_H_ */
