@@ -82,7 +82,7 @@
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
-#define PURPLE_TYPE_STATUS      (purple_status_get_type())
+#define PURPLE_TYPE_STATUS      (purple_status_get_g_type())
 typedef struct _PurpleStatus    PurpleStatus;
 
 typedef struct _PurplePresence    PurplePresence;
@@ -448,7 +448,7 @@ GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
  * TODO Boxing of PurpleStatus is a temporary solution to having a GType for
  *      statuses. This should rather be a GObject instead of a GBoxed.
  */
-GType purple_status_get_type(void);
+GType purple_status_get_g_type(void);
 
 /**
  * Creates a new status.

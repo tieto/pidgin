@@ -1068,7 +1068,7 @@ purple_status_copy(PurpleStatus *status)
 }
 
 GType
-purple_status_get_type(void)
+purple_status_get_g_type(void)
 {
 	static GType type = 0;
 

@@ -1,6 +1,8 @@
-#include "debug.h"
-
 #include "perl-common.h"
+
+#include "cipher.h"
+#include "debug.h"
+#include "savedstatuses.h"
 
 extern PerlInterpreter *my_perl;
 
@@ -437,11 +439,11 @@ purple_perl_sv_from_purple_type(const GType type, void *arg)
 		stash = "Purple::Xfer";
 	else if (type == PURPLE_TYPE_XMLNODE)
 		stash = "Purple::XMLNode";
-	else if (type == PURPLE_TYPE_USERINFO)
+	else if (type == PURPLE_TYPE_NOTIFY_USER_INFO)
  		stash = "Purple::NotifyUserInfo";
 	else if (type == PURPLE_TYPE_STORED_IMAGE)
  		stash = "Purple::StoredImage";
-	else if (type == PURPLE_TYPE_CERTIFICATEPOOL)
+	else if (type == PURPLE_TYPE_CERTIFICATE_POOL)
  		stash = "Purple::Certificate::Pool";
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));

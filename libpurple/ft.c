@@ -1776,7 +1776,7 @@ purple_xfer_copy(PurpleXfer *xfer)
 }
 
 GType
-purple_xfer_get_type(void)
+purple_xfer_get_g_type(void)
 {
 	static GType type = 0;
 
