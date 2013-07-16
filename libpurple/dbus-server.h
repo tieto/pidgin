@@ -140,11 +140,12 @@ void purple_dbus_unregister_pointer(gpointer node);
 
     @param name        The name of the signal ("bla-bla-blaa")
     @param num_values  The number of parameters.
-    @param types       Array of the types of the parameters.
+    @param values      Array of pointers to #PurpleValue objects representing
+                       the types of the parameters.
     @param vargs       A va_list containing the actual parameters.
   */
 void purple_dbus_signal_emit_purple(const char *name, int num_values,
-				GType *types, va_list vargs);
+				PurpleValue **values, va_list vargs);
 
 /**
  * Returns whether Purple's D-BUS subsystem is up and running.  If it's

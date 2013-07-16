@@ -1,8 +1,7 @@
-#include "perl-common.h"
-
-#include "cipher.h"
 #include "debug.h"
-#include "savedstatuses.h"
+#include "value.h"
+
+#include "perl-common.h"
 
 extern PerlInterpreter *my_perl;
 
@@ -380,20 +379,20 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 #endif
 
 void *
-purple_perl_data_from_sv(GType type, SV *sv)
+purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 {
 
-	switch (type) {
-		case G_TYPE_BOOLEAN: return (void *)SvIV(sv);
-		case G_TYPE_INT:     return (void *)SvIV(sv);
-		case G_TYPE_UINT:    return (void *)SvUV(sv);
-		case G_TYPE_LONG:    return (void *)SvIV(sv);
-		case G_TYPE_ULONG:   return (void *)SvUV(sv);
-		case G_TYPE_INT64:   return (void *)SvIV(sv);
-		case G_TYPE_UINT64:  return (void *)SvUV(sv);
-		case G_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
-		case G_TYPE_POINTER: return (void *)SvIV(sv);
-		case G_TYPE_BOXED:   return (void *)SvIV(sv);
+	switch (purple_value_get_type(value)) {
+		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
+		case PURPLE_TYPE_INT:     return (void *)SvIV(sv);
+		case PURPLE_TYPE_UINT:    return (void *)SvUV(sv);
+		case PURPLE_TYPE_LONG:    return (void *)SvIV(sv);
+		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
+		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
+		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
+		case PURPLE_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
+		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
+		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
 
 		default:
 			return NULL;
@@ -403,54 +402,78 @@ purple_perl_data_from_sv(GType type, SV *sv)
 }
 
 static SV *
-purple_perl_sv_from_purple_type(const GType type, void *arg)
+purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 {
 	const char *stash = "Purple"; /* ? */
 
-	if (type == PURPLE_TYPE_ACCOUNT)
-		stash = "Purple::Account";
-	else if (type == PURPLE_TYPE_BUDDY_LIST)
-		stash = "Purple::BuddyList";
-	else if (type == PURPLE_TYPE_BUDDY)
-		stash = "Purple::BuddyList::Buddy";
-	else if (type == PURPLE_TYPE_GROUP)
-		stash = "Purple::BuddyList::Group";
-	else if (type == PURPLE_TYPE_CHAT)
-		stash = "Purple::BuddyList::Chat";
-	else if (type == PURPLE_TYPE_BUDDY_ICON)
-		stash = "Purple::Buddy::Icon";
-	else if (type == PURPLE_TYPE_CONNECTION)
-		stash = "Purple::Connection";
-	else if (type == PURPLE_TYPE_CONVERSATION)
-		stash = "Purple::Conversation";
-	else if (type == PURPLE_TYPE_PLUGIN)
-		stash = "Purple::Plugin";
-	else if (type == PURPLE_TYPE_BLIST_NODE)
-		stash = "Purple::BuddyList::Node";
-	else if (type == PURPLE_TYPE_CIPHER)
-		stash = "Purple::Cipher";
-	else if (type == PURPLE_TYPE_STATUS)
-		stash = "Purple::Status";
-	else if (type == PURPLE_TYPE_SAVEDSTATUS)
-		stash = "Purple::SavedStatus";
-	else if (type == PURPLE_TYPE_LOG)
-		stash = "Purple::Log";
-	else if (type == PURPLE_TYPE_XFER)
-		stash = "Purple::Xfer";
-	else if (type == PURPLE_TYPE_XMLNODE)
-		stash = "Purple::XMLNode";
-	else if (type == PURPLE_TYPE_NOTIFY_USER_INFO)
- 		stash = "Purple::NotifyUserInfo";
-	else if (type == PURPLE_TYPE_STORED_IMAGE)
- 		stash = "Purple::StoredImage";
-	else if (type == PURPLE_TYPE_CERTIFICATE_POOL)
- 		stash = "Purple::Certificate::Pool";
+	switch (purple_value_get_subtype(value)) {
+		case PURPLE_SUBTYPE_ACCOUNT:
+			stash = "Purple::Account";
+			break;
+		case PURPLE_SUBTYPE_BLIST:
+			stash = "Purple::BuddyList";
+			break;
+		case PURPLE_SUBTYPE_BLIST_BUDDY:
+			stash = "Purple::BuddyList::Buddy";
+			break;
+		case PURPLE_SUBTYPE_BLIST_GROUP:
+			stash = "Purple::BuddyList::Group";
+			break;
+		case PURPLE_SUBTYPE_BLIST_CHAT:
+			stash = "Purple::BuddyList::Chat";
+			break;
+		case PURPLE_SUBTYPE_BUDDY_ICON:
+			stash = "Purple::Buddy::Icon";
+			break;
+		case PURPLE_SUBTYPE_CONNECTION:
+			stash = "Purple::Connection";
+			break;
+		case PURPLE_SUBTYPE_CONVERSATION:
+			stash = "Purple::Conversation";
+			break;
+		case PURPLE_SUBTYPE_PLUGIN:
+			stash = "Purple::Plugin";
+			break;
+		case PURPLE_SUBTYPE_BLIST_NODE:
+			stash = "Purple::BuddyList::Node";
+			break;
+		case PURPLE_SUBTYPE_CIPHER:
+			stash = "Purple::Cipher";
+			break;
+		case PURPLE_SUBTYPE_STATUS:
+			stash = "Purple::Status";
+			break;
+		case PURPLE_SUBTYPE_SAVEDSTATUS:
+			stash = "Purple::SavedStatus";
+			break;
+		case PURPLE_SUBTYPE_LOG:
+			stash = "Purple::Log";
+			break;
+		case PURPLE_SUBTYPE_XFER:
+			stash = "Purple::Xfer";
+			break;
+		case PURPLE_SUBTYPE_XMLNODE:
+			stash = "Purple::XMLNode";
+			break;
+ 		case PURPLE_SUBTYPE_USERINFO:
+ 			stash = "Purple::NotifyUserInfo";
+ 			break;
+ 		case PURPLE_SUBTYPE_STORED_IMAGE:
+ 			stash = "Purple::StoredImage";
+ 			break;
+ 		case PURPLE_SUBTYPE_CERTIFICATEPOOL:
+ 			stash = "Purple::Certificate::Pool";
+ 			break;
+ 		case PURPLE_SUBTYPE_UNKNOWN:
+ 			stash = "Purple::Unknown";
+ 			break;
+  	}
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));
 }
 
 SV *
-purple_perl_sv_from_vargs(const GType type, va_list *args, void ***copy_arg)
+purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_arg)
 {
 	if (purple_value_is_outgoing(value)) {
 		switch (purple_value_get_type(value)) {
@@ -458,7 +481,7 @@ purple_perl_sv_from_vargs(const GType type, va_list *args, void ***copy_arg)
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
-				return purple_perl_sv_from_purple_type(type, *(void **)*copy_arg);
+				return purple_perl_sv_from_subtype(value, *(void **)*copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
 				if ((*copy_arg = (void *)va_arg(*args, gboolean *)) == NULL)
@@ -534,7 +557,7 @@ purple_perl_sv_from_vargs(const GType type, va_list *args, void ***copy_arg)
 				if ((*copy_arg = va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
-				return purple_perl_sv_from_purple_type(type, *copy_arg);
+				return purple_perl_sv_from_subtype(value, *copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
 				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
