@@ -446,7 +446,7 @@ const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
  * @param command    The name of the command.
  * @param func       The function to execute.
  * @param marshal    The marshalling function.
- * @param ret_value  The return value type.
+ * @param ret_type   The return type.
  * @param num_params The number of parameters.
  * @param ...        The parameter types.
  *
@@ -456,7 +456,7 @@ const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
 gboolean purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
 								  PurpleCallback func,
 								  PurpleSignalMarshalFunc marshal,
-								  PurpleValue *ret_value, int num_params, ...);
+								  GType ret_type, int num_params, ...);
 
 /**
  * Unregisters an IPC command in a plugin.
@@ -476,17 +476,17 @@ void purple_plugin_ipc_unregister_all(PurplePlugin *plugin);
 /**
  * Returns a list of value types used for an IPC command.
  *
- * @param plugin     The plugin.
- * @param command    The name of the command.
- * @param ret_value  The returned return value.
- * @param num_params The returned number of parameters.
- * @param params     The returned list of parameters.
+ * @param plugin      The plugin.
+ * @param command     The name of the command.
+ * @param ret_type    The returned return type.
+ * @param num_params  The returned number of parameters.
+ * @param param_types The returned list of parameter types.
  *
  * @return TRUE if the command was found, or FALSE otherwise.
  */
-gboolean purple_plugin_ipc_get_params(PurplePlugin *plugin, const char *command,
-									PurpleValue **ret_value, int *num_params,
-									PurpleValue ***params);
+gboolean purple_plugin_ipc_get_types(PurplePlugin *plugin, const char *command,
+									GType *ret_type, int *num_params,
+									GType **param_types);
 
 /**
  * Executes an IPC command.
