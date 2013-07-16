@@ -745,6 +745,33 @@ purple_log_uninit(void)
 	g_hash_table_destroy(logsize_users_decayed);
 }
 
+static PurpleLog *
+purple_log_copy(PurpleLog *log)
+{
+	PurpleLog *log_copy;
+
+	g_return_val_if_fail(log != NULL, NULL);
+
+	log_copy = g_new(PurpleLog, 1);
+	*log_copy = *log;
+
+	return log_copy;
+}
+
+GType
+purple_log_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleLog",
+				(GBoxedCopyFunc)purple_log_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 /****************************************************************************
  * LOGGERS ******************************************************************
  ****************************************************************************/

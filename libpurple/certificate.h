@@ -81,8 +81,12 @@ typedef enum
 	PURPLE_CERTIFICATE_LAST = 0x80000,
 } PurpleCertificateVerificationStatus;
 
+#define PURPLE_TYPE_CERTIFICATE   (purple_certificate_get_type())
 typedef struct _PurpleCertificate PurpleCertificate;
+
+#define PURPLE_TYPE_CERTIFICATE_POOL  (purple_certificate_pool_get_type())
 typedef struct _PurpleCertificatePool PurpleCertificatePool;
+
 typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
 typedef struct _PurpleCertificateVerifier PurpleCertificateVerifier;
 typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificationRequest;
@@ -456,6 +460,11 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 /*@{*/
 
 /**
+ * Returns the GType for the PurpleCertificate boxed structure.
+ */
+GType purple_certificate_get_type(void);
+
+/**
  * Makes a duplicate of a certificate
  *
  * @param crt        Instance to duplicate
@@ -643,6 +652,15 @@ purple_certificate_get_display_string(PurpleCertificate *crt);
 /** @name Certificate Pool Functions                                         */
 /*****************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleCertificatePool boxed structure.
+ * TODO Boxing of PurpleCertificatePool is a temporary solution to having a
+ *      GType for certificate pools. This should rather be a GObject instead of
+ *      a GBoxed.
+ */
+GType purple_certificate_pool_get_type(void);
+
 /**
  * Helper function for generating file paths in ~/.purple/certificates for
  * CertificatePools that use them.

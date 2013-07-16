@@ -1762,6 +1762,33 @@ gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer)
 	return xfer->ui_data;
 }
 
+static PurpleXfer *
+purple_xfer_copy(PurpleXfer *xfer)
+{
+	PurpleXfer *xfer_copy;
+
+	g_return_val_if_fail(xfer != NULL, NULL);
+
+	xfer_copy = g_new(PurpleXfer, 1);
+	*xfer_copy = *xfer;
+
+	return xfer_copy;
+}
+
+GType
+purple_xfer_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleXfer",
+				(GBoxedCopyFunc)purple_xfer_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 
 /**************************************************************************
  * File Transfer Subsystem API

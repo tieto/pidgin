@@ -27,6 +27,8 @@
 #ifndef _PURPLE_FT_H_
 #define _PURPLE_FT_H_
 
+#define PURPLE_TYPE_XFER  (purple_xfer_get_type())
+
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -190,6 +192,13 @@ G_BEGIN_DECLS
 /** @name File Transfer API                                               */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleXfer boxed structure.
+ * TODO Boxing of PurpleXfer is a temporary solution to having a GType for
+ *      file transfers. This should rather be a GObject instead of a GBoxed.
+ */
+GType purple_plugin_get_type(void);
 
 /**
  * Creates a new file transfer handle.
