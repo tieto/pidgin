@@ -32,7 +32,10 @@
 #include <glib.h>
 
 typedef struct _PurpleNotifyUserInfoEntry	PurpleNotifyUserInfoEntry;
+
+#define  PURPLE_TYPE_NOTIFY_USER_INFO  (purple_notify_user_info_get_type())
 typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
+
 /** @copydoc _PurpleNotifySearchColumn */
 typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
@@ -420,6 +423,11 @@ void *purple_notify_formatted(void *handle, const char *title,
 void *purple_notify_userinfo(PurpleConnection *gc, const char *who,
 						   PurpleNotifyUserInfo *user_info, PurpleNotifyCloseCallback cb,
 						   gpointer user_data);
+
+/**
+ * Returns the GType for the PurpleNotifyUserInfo boxed structure.
+ */
+GType purple_notify_user_info_get_type(void);
 
 /**
  * Create a new PurpleNotifyUserInfo which is suitable for passing to

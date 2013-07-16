@@ -692,6 +692,42 @@ purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info)
 		purple_notify_user_info_entry_destroy(entry);
 }
 
+static PurpleNotifyUserInfo *
+purple_notify_user_info_copy(PurpleNotifyUserInfo *user_info)
+{
+	PurpleNotifyUserInfo *user_info_copy;
+	GList *l;
+
+	g_return_val_if_fail(user_info != NULL, NULL);
+
+	user_info_copy = purple_notify_user_info_new();
+
+	for (l = user_info->entries.head; l != NULL; l = l->next) {
+		PurpleNotifyUserInfoEntry *new_entry, *user_info_entry = l->data;
+
+		new_entry = purple_notify_user_info_entry_new(user_info_entry->label,
+				user_info_entry->value);
+		new_entry->type = user_info_entry->type;
+		g_queue_push_tail(&user_info_copy->entries, new_entry);
+	}
+
+	return user_info_copy;
+}
+
+GType
+purple_notify_user_info_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleNotifyUserInfo",
+				(GBoxedCopyFunc)purple_notify_user_info_copy,
+				(GBoxedFreeFunc)purple_notify_user_info_destroy);
+	}
+
+	return type;
+}
+
 void *
 purple_notify_uri(void *handle, const char *uri)
 {
