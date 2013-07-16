@@ -75,7 +75,6 @@ PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *usern
 
 /**
  * Increments the reference count on a buddy icon.
- * TODO This can be removed when PurpleBuddyIcon is a GObject.
  *
  * @param icon The buddy icon.
  *
@@ -85,7 +84,6 @@ PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
 
 /**
  * Decrements the reference count on a buddy icon.
- * TODO This can be removed when PurpleBuddyIcon is a GObject.
  *
  * If the reference count reaches 0, the icon will be destroyed.
  *
