@@ -229,3 +229,30 @@ purple_imgstore_uninit()
 
 	purple_signals_unregister_by_instance(purple_imgstore_get_handle());
 }
+
+static PurpleStoredImage *
+purple_imgstore_copy(PurpleStoredImage *img)
+{
+	PurpleStoredImage *img_copy;
+
+	g_return_val_if_fail(img != NULL, NULL);
+
+	img_copy = g_new(PurpleStoredImage, 1);
+	*img_copy = *img;
+
+	return img_copy;
+}
+
+GType
+purple_imgstore_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleStoredImage",
+				(GBoxedCopyFunc)purple_imgstore_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}

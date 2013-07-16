@@ -37,7 +37,16 @@
  */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
+#define PURPLE_TYPE_STORED_IMAGE  (purple_imgstore_get_type())
+
 G_BEGIN_DECLS
+
+/**
+ * Returns the GType for the PurpleStoredImage boxed structure.
+ * TODO Boxing of PurpleStoredImage is a temporary solution to having a GType
+ *      for stored images. This should rather be a GObject instead of a GBoxed.
+ */
+GType purple_imgstore_get_type(void);
 
 /**
  * Create a new PurpleStoredImage.
