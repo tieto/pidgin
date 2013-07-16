@@ -198,7 +198,7 @@ G_BEGIN_DECLS
  * TODO Boxing of PurpleXfer is a temporary solution to having a GType for
  *      file transfers. This should rather be a GObject instead of a GBoxed.
  */
-GType purple_plugin_get_type(void);
+GType purple_xfer_get_type(void);
 
 /**
  * Creates a new file transfer handle.
