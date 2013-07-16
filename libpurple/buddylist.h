@@ -31,24 +31,49 @@
 
 #include "blistnodetypes.h"
 
-#define PURPLE_TYPE_BUDDY_LIST  (purple_buddy_list_get_type())
+#define PURPLE_TYPE_BUDDY_LIST             (purple_buddy_list_get_type())
+#define PURPLE_BUDDY_LIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyList))
+#define PURPLE_BUDDY_LIST_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListClass))
+#define PURPLE_IS_BUDDY_LIST(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_BUDDY_LIST))
+#define PURPLE_IS_BUDDY_LIST_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_BUDDY_LIST))
+#define PURPLE_BUDDY_LIST_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListClass))
 
 /** @copydoc _PurpleBuddyList */
-typedef struct _PurpleBuddyList PurpleBuddyList;
+typedef struct _PurpleBuddyList       PurpleBuddyList;
+/** @copydoc _PurpleBuddyList */
+typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
+
 /** @copydoc _PurpleBListUiOps */
 typedef struct _PurpleBListUiOps PurpleBListUiOps;
 
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/
-
 /**
  * The Buddy List
  */
 struct _PurpleBuddyList {
-	PurpleBListNode *root;  /**< The first node in the buddy list */
-	GHashTable *buddies;    /**< Every buddy in this list         */
-	void *ui_data;          /**< UI-specific data.                */
+	/*< private >*/
+	GObject gparent;
+
+	/** The UI data associated with this buddy list. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
+
+	/** The first node in the buddy list */
+	PurpleBListNode *root;
+};
+
+/** The base class for all #PurpleBuddyList's. */
+struct _PurpleBuddyListClass {
+	/*< private >*/
+	GObjectClass gparent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**
@@ -124,9 +149,7 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Returns the GType for the PurpleBuddyList boxed structure.
- * TODO Boxing of PurpleBuddyList is a temporary solution to having a GType for
- *      buddy list. This should rather be a GObject instead of a GBoxed.
+ * Returns the GType for the PurpleBuddyList object.
  */
 GType purple_buddy_list_get_type(void);
 

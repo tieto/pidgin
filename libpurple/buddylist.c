@@ -35,6 +35,14 @@
 #include "value.h"
 #include "xmlnode.h"
 
+#define PURPLE_BUDDY_LIST_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListPrivate))
+
+/** Private data for a buddy list. */
+typedef struct  {
+	GHashTable *buddies;  /**< Every buddy in this list  */
+} PurpleBuddyListPrivate;
+
 static PurpleBListUiOps *blist_ui_ops = NULL;
 
 static PurpleBuddyList *purplebuddylist = NULL;
