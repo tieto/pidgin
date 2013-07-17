@@ -1943,7 +1943,8 @@ purple_blist_init(void)
 
 	purple_signal_register(handle, "blist-node-extended-menu",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_BLIST_NODE, G_TYPE_POINTER);
+			     PURPLE_TYPE_BLIST_NODE,
+			     G_TYPE_POINTER); /* (GList **) */
 
 	purple_signal_register(handle, "blist-node-aliased",
 						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
