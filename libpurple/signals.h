@@ -27,6 +27,7 @@
 #define _PURPLE_SIGNALS_H_
 
 #include <glib.h>
+#include <glib-object.h>
 
 #define PURPLE_CALLBACK(func) ((PurpleCallback)func)
 
