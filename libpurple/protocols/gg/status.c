@@ -90,32 +90,32 @@ GList * ggp_status_types(PurpleAccount *account)
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AVAILABLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AVAILABLE, "freeforchat", _("Chatty"),
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AWAY, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_UNAVAILABLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_INVISIBLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_OFFLINE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_g_value_new(G_TYPE_STRING), NULL));
 
 	return types;
 }

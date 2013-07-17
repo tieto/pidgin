@@ -274,7 +274,7 @@ static GList *irc_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		"message", _("Message"), purple_g_value_new(G_TYPE_STRING),
 		NULL);
 	types = g_list_append(types, type);
 
@@ -994,13 +994,11 @@ static PurplePluginProtocolInfo prpl_info =
 static gboolean load_plugin (PurplePlugin *plugin) {
 
 	purple_signal_register(plugin, "irc-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION, G_TYPE_STRING);
 	purple_signal_register(plugin, "irc-receiving-text",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION, G_TYPE_STRING);
 	return TRUE;
 }
 
