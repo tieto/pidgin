@@ -392,7 +392,6 @@ purple_perl_data_from_sv(GType type, SV *sv)
 		case G_TYPE_UINT64:  return (void *)SvUV(sv);
 		case G_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
 		case G_TYPE_POINTER: return (void *)SvIV(sv);
-		case G_TYPE_BOXED:   return (void *)SvIV(sv);
 	}
 
 	return NULL;
@@ -405,8 +404,8 @@ purple_perl_sv_from_purple_type(GType type, void *arg)
 
 	if (type == PURPLE_TYPE_ACCOUNT)
 		stash = "Purple::Account";
-	else if (type == PURPLE_TYPE_BUDDY_LIST)
-		stash = "Purple::BuddyList";
+	else if (type == PURPLE_TYPE_CONTACT)
+		stash = "Purple::BuddyList::Contact";
 	else if (type == PURPLE_TYPE_BUDDY)
 		stash = "Purple::BuddyList::Buddy";
 	else if (type == PURPLE_TYPE_GROUP)
