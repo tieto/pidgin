@@ -369,13 +369,11 @@ void purple_cmds_init(void)
 	gpointer handle = purple_cmds_get_handle();
 
 	purple_signal_register(handle, "cmd-added",
-			purple_marshal_VOID__POINTER_INT_INT, NULL, 3,
-			purple_value_new(PURPLE_TYPE_STRING),
-			purple_value_new(PURPLE_TYPE_INT),
-			purple_value_new(PURPLE_TYPE_INT));
+			purple_marshal_VOID__POINTER_INT_INT, G_TYPE_NONE, 3,
+			G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT);
 	purple_signal_register(handle, "cmd-removed",
-			purple_marshal_VOID__POINTER, NULL, 1,
-			purple_value_new(PURPLE_TYPE_STRING));
+			purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+			G_TYPE_STRING);
 }
 
 void purple_cmds_uninit(void)

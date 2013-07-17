@@ -1036,36 +1036,29 @@ purple_connections_init(void)
 	void *handle = purple_connections_get_handle();
 
 	purple_signal_register(handle, "signing-on",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_CONNECTION);
 
 	purple_signal_register(handle, "signed-on",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_CONNECTION);
 
 	purple_signal_register(handle, "signing-off",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_CONNECTION);
 
 	purple_signal_register(handle, "signed-off",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_CONNECTION);
 
 	purple_signal_register(handle, "connection-error",
-	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 3,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_CONNECTION),
-	                       purple_value_new(PURPLE_TYPE_ENUM),
-	                       purple_value_new(PURPLE_TYPE_STRING));
+	                       purple_marshal_VOID__POINTER_INT_POINTER,
+	                       G_TYPE_NONE, 3, PURPLE_TYPE_CONNECTION,
+	                       PURPLE_TYPE_CONNECTION_ERROR, G_TYPE_STRING);
 
 	purple_signal_register(handle, "autojoin",
-	                       purple_marshal_BOOLEAN__POINTER, NULL, 1,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_CONNECTION));
+	                       purple_marshal_BOOLEAN__POINTER, G_TYPE_NONE, 1,
+	                       PURPLE_TYPE_CONNECTION);
 
 }
 
