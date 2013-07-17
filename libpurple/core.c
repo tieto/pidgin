@@ -111,13 +111,15 @@ purple_core_init(const char *ui)
 
 	purple_signal_register(core, "uri-handler",
 		purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-		purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
-		purple_value_new(PURPLE_TYPE_STRING), /* Protocol */
-		purple_value_new(PURPLE_TYPE_STRING), /* Command */
-		purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *")); /* Parameters */
+		G_TYPE_BOOLEAN, 3,
+		G_TYPE_STRING, /* Protocol */
+		G_TYPE_STRING, /* Command */
+		G_TYPE_POINTER); /* Parameters (GHashTable *) */
 
-	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
-	purple_signal_register(core, "core-initialized", purple_marshal_VOID, NULL, 0);
+	purple_signal_register(core, "quitting", purple_marshal_VOID, G_TYPE_NONE,
+		0);
+	purple_signal_register(core, "core-initialized", purple_marshal_VOID,
+		G_TYPE_NONE, 0);
 
 	/* The prefs subsystem needs to be initialized before static protocols
 	 * for protocol prefs to work. */

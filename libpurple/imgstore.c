@@ -214,10 +214,8 @@ purple_imgstore_init()
 	void *handle = purple_imgstore_get_handle();
 
 	purple_signal_register(handle, "image-deleting",
-	                       purple_marshal_VOID__POINTER, NULL,
-	                       1,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_STORED_IMAGE));
+	                       purple_marshal_VOID__POINTER, G_TYPE_NONE,
+	                       1, PURPLE_TYPE_STORED_IMAGE);
 
 	imgstore = g_hash_table_new(g_int_hash, g_int_equal);
 }

@@ -1809,41 +1809,32 @@ purple_xfers_init(void) {
 
 	/* register signals */
 	purple_signal_register(handle, "file-recv-accept",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-send-accept",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-recv-start",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-send-start",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-send-cancel",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-recv-cancel",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-send-complete",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-recv-complete",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 	purple_signal_register(handle, "file-recv-request",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_XFER));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_XFER);
 }
 
 void
