@@ -28,6 +28,7 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "enums.h"
 #include "network.h"
 #include "pounce.h"
 
@@ -248,7 +249,7 @@ parse_status_attrs(xmlnode *node, PurpleStatus *status)
 {
 	GList *list = NULL;
 	xmlnode *child;
-	PurpleValue *attr_value;
+	GValue *attr_value;
 
 	for (child = xmlnode_get_child(node, "attribute"); child != NULL;
 			child = xmlnode_get_next_twin(child))
@@ -265,13 +266,13 @@ parse_status_attrs(xmlnode *node, PurpleStatus *status)
 
 		list = g_list_append(list, (char *)id);
 
-		switch (purple_value_get_type(attr_value))
+		switch (G_VALUE_TYPE(attr_value))
 		{
-			case PURPLE_TYPE_STRING:
+			case G_TYPE_STRING:
 				list = g_list_append(list, (char *)value);
 				break;
-			case PURPLE_TYPE_INT:
-			case PURPLE_TYPE_BOOLEAN:
+			case G_TYPE_INT:
+			case G_TYPE_BOOLEAN:
 			{
 				int v;
 				if (sscanf(value, "%d", &v) == 1)
@@ -909,114 +910,85 @@ purple_accounts_init(void)
 	void *conn_handle = purple_connections_get_handle();
 
 	purple_signal_register(handle, "account-connecting",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-disabled",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-enabled",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-setting-info",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-set-info",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-created",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-destroying",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-added",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-removed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-status-changed",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_STATUS),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_STATUS));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
+						 PURPLE_TYPE_STATUS, PURPLE_TYPE_STATUS);
 
 	purple_signal_register(handle, "account-actions-changed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-alias-changed",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-							 			PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-authorization-requested",
 						purple_marshal_INT__POINTER_POINTER_POINTER,
-						purple_value_new(PURPLE_TYPE_INT), 4,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						purple_value_new(PURPLE_TYPE_STRING),
-						purple_value_new(PURPLE_TYPE_STRING),
-						purple_value_new(PURPLE_TYPE_STRING));
+						G_TYPE_INT, 4, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-authorization-denied",
-						purple_marshal_VOID__POINTER_POINTER, NULL, 3,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						purple_value_new(PURPLE_TYPE_STRING),
-						purple_value_new(PURPLE_TYPE_STRING));
+						purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 3,
+						PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-authorization-granted",
-						purple_marshal_VOID__POINTER_POINTER, NULL, 3,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						purple_value_new(PURPLE_TYPE_STRING),
-						purple_value_new(PURPLE_TYPE_STRING));
+						purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 3,
+						PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "account-error-changed",
 	                       purple_marshal_VOID__POINTER_POINTER_POINTER,
-	                       NULL, 3,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_ACCOUNT),
-	                       purple_value_new(PURPLE_TYPE_POINTER),
-	                       purple_value_new(PURPLE_TYPE_POINTER));
+	                       G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
+	                       PURPLE_TYPE_CONNECTION_ERROR_INFO,
+	                       PURPLE_TYPE_CONNECTION_ERROR_INFO);
 
 	purple_signal_register(handle, "account-signed-on",
-	                       purple_marshal_VOID__POINTER, NULL, 1,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_ACCOUNT));
+	                       purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                       PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-signed-off",
-	                       purple_marshal_VOID__POINTER, NULL, 1,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_ACCOUNT));
+	                       purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                       PURPLE_TYPE_ACCOUNT);
 
 	purple_signal_register(handle, "account-connection-error",
-	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 3,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_ACCOUNT),
-	                       purple_value_new(PURPLE_TYPE_ENUM),
-	                       purple_value_new(PURPLE_TYPE_STRING));
+	                       purple_marshal_VOID__POINTER_INT_POINTER,
+	                       G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
+	                       PURPLE_TYPE_CONNECTION_ERROR, G_TYPE_STRING);
 
 	purple_signal_connect(conn_handle, "signed-on", handle,
 	                      PURPLE_CALLBACK(signed_on_cb), NULL);

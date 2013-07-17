@@ -2075,20 +2075,16 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 	purple_signal_register(pool, /* Signals emitted from pool */
 			       "certificate-stored",
 			       purple_marshal_VOID__POINTER_POINTER,
-			       NULL, /* No callback return value */
+			       G_TYPE_NONE, /* No callback return value */
 			       2,    /* Two non-data arguments */
-			       purple_value_new(PURPLE_TYPE_SUBTYPE,
-						PURPLE_SUBTYPE_CERTIFICATEPOOL),
-			       purple_value_new(PURPLE_TYPE_STRING));
+			       PURPLE_TYPE_CERTIFICATE_POOL, G_TYPE_STRING);
 
 	purple_signal_register(pool, /* Signals emitted from pool */
 			       "certificate-deleted",
 			       purple_marshal_VOID__POINTER_POINTER,
-			       NULL, /* No callback return value */
+			       G_TYPE_NONE, /* No callback return value */
 			       2,    /* Two non-data arguments */
-			       purple_value_new(PURPLE_TYPE_SUBTYPE,
-						PURPLE_SUBTYPE_CERTIFICATEPOOL),
-			       purple_value_new(PURPLE_TYPE_STRING));
+			       PURPLE_TYPE_CERTIFICATE_POOL, G_TYPE_STRING);
 
 	purple_debug_info("certificate",
 		  "CertificatePool %s registered\n",

@@ -1895,89 +1895,63 @@ purple_blist_init(void)
 	void *handle = purple_blist_get_handle();
 
 	purple_signal_register(handle, "buddy-status-changed",
-	                     purple_marshal_VOID__POINTER_POINTER_POINTER, NULL,
-	                     3,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST_BUDDY),
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_STATUS),
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_STATUS));
+	                     purple_marshal_VOID__POINTER_POINTER_POINTER,
+	                     G_TYPE_NONE, 3, PURPLE_TYPE_BUDDY, PURPLE_TYPE_STATUS, 
+	                     PURPLE_TYPE_STATUS);
 	purple_signal_register(handle, "buddy-privacy-changed",
-	                     purple_marshal_VOID__POINTER, NULL,
-	                     1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST_BUDDY));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE,
+	                     1, PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-idle-changed",
-	                     purple_marshal_VOID__POINTER_INT_INT, NULL,
-	                     3,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST_BUDDY),
-	                     purple_value_new(PURPLE_TYPE_INT),
-	                     purple_value_new(PURPLE_TYPE_INT));
-
+	                     purple_marshal_VOID__POINTER_INT_INT, G_TYPE_NONE,
+	                     3, PURPLE_TYPE_BUDDY, G_TYPE_INT, G_TYPE_INT);
 
 	purple_signal_register(handle, "buddy-signed-on",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-signed-off",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-got-login-time",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "blist-node-added",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_NODE));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BLIST_NODE);
 
 	purple_signal_register(handle, "blist-node-removed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_NODE));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BLIST_NODE);
 
 	purple_signal_register(handle, "buddy-added",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-removed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-icon-changed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
-	purple_signal_register(handle, "update-idle", purple_marshal_VOID, NULL, 0);
+	purple_signal_register(handle, "update-idle", purple_marshal_VOID,
+						 G_TYPE_NONE, 0);
 
 	purple_signal_register(handle, "blist-node-extended-menu",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE,
-					    PURPLE_SUBTYPE_BLIST_NODE),
-			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_BLIST_NODE, G_TYPE_POINTER);
 
 	purple_signal_register(handle, "blist-node-aliased",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_NODE),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+						 PURPLE_TYPE_BLIST_NODE, G_TYPE_STRING);
 
 	purple_signal_register(handle, "buddy-caps-changed",
-			purple_marshal_VOID__POINTER_INT_INT, NULL,
-			3, purple_value_new(PURPLE_TYPE_SUBTYPE,
-				PURPLE_SUBTYPE_BLIST_BUDDY),
-			purple_value_new(PURPLE_TYPE_INT),
-			purple_value_new(PURPLE_TYPE_INT));
+			purple_marshal_VOID__POINTER_INT_INT, G_TYPE_NONE,
+			3, PURPLE_TYPE_BUDDY, G_TYPE_INT, G_TYPE_INT);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-created",
 			handle,

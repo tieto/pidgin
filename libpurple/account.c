@@ -2433,16 +2433,16 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 	const char *id;
 	char *value = NULL;
 	PurpleStatusAttr *default_attr;
-	PurpleValue *default_value;
-	PurpleType attr_type;
-	PurpleValue *attr_value;
+	GValue *default_value;
+	GType attr_type;
+	GValue *attr_value;
 
 	id = purple_status_attr_get_id(attr);
 	g_return_val_if_fail(id, NULL);
 
 	attr_value = purple_status_get_attr_value(status, id);
 	g_return_val_if_fail(attr_value, NULL);
-	attr_type = purple_value_get_type(attr_value);
+	attr_type = G_VALUE_TYPE(attr_value);
 
 	/*
 	 * If attr_value is a different type than it should be
@@ -2450,32 +2450,32 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 	 */
 	default_attr = purple_status_type_get_attr(type, id);
 	default_value = purple_status_attr_get_value(default_attr);
-	if (attr_type != purple_value_get_type(default_value))
+	if (attr_type != G_VALUE_TYPE(default_value))
 		return NULL;
 
 	/*
 	 * If attr_value is the same as the default for this status
 	 * then there is no need to write it to the file.
 	 */
-	if (attr_type == PURPLE_TYPE_STRING)
+	if (attr_type == G_TYPE_STRING)
 	{
-		const char *string_value = purple_value_get_string(attr_value);
-		const char *default_string_value = purple_value_get_string(default_value);
+		const char *string_value = g_value_get_string(attr_value);
+		const char *default_string_value = g_value_get_string(default_value);
 		if (purple_strequal(string_value, default_string_value))
 			return NULL;
-		value = g_strdup(purple_value_get_string(attr_value));
+		value = g_strdup(g_value_get_string(attr_value));
 	}
-	else if (attr_type == PURPLE_TYPE_INT)
+	else if (attr_type == G_TYPE_INT)
 	{
-		int int_value = purple_value_get_int(attr_value);
-		if (int_value == purple_value_get_int(default_value))
+		int int_value = g_value_get_int(attr_value);
+		if (int_value == g_value_get_int(default_value))
 			return NULL;
 		value = g_strdup_printf("%d", int_value);
 	}
-	else if (attr_type == PURPLE_TYPE_BOOLEAN)
+	else if (attr_type == G_TYPE_BOOLEAN)
 	{
-		gboolean boolean_value = purple_value_get_boolean(attr_value);
-		if (boolean_value == purple_value_get_boolean(default_value))
+		gboolean boolean_value = g_value_get_boolean(attr_value);
+		if (boolean_value == g_value_get_boolean(default_value))
 			return NULL;
 		value = g_strdup(boolean_value ?
 								"true" : "false");
