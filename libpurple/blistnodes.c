@@ -208,8 +208,7 @@ purple_blist_node_set_bool(PurpleBListNode* node, const char *key, gboolean data
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = g_new0(GValue, 1);
-	g_value_init(value, G_TYPE_BOOLEAN);
+	value = purple_g_value_new(G_TYPE_BOOLEAN);
 	g_value_set_boolean(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -250,8 +249,7 @@ purple_blist_node_set_int(PurpleBListNode* node, const char *key, int data)
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = g_new0(GValue, 1);
-	g_value_init(value, G_TYPE_INT);
+	value = purple_g_value_new(G_TYPE_INT);
 	g_value_set_int(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -292,8 +290,7 @@ purple_blist_node_set_string(PurpleBListNode* node, const char *key, const char 
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = g_new0(GValue, 1);
-	g_value_init(value, G_TYPE_STRING);
+	value = purple_g_value_new(G_TYPE_STRING);
 	g_value_set_string(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -333,15 +330,6 @@ purple_blist_node_get_extended_menu(PurpleBListNode *n)
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-extended-menu",
 			n, &menu);
 	return menu;
-}
-
-static void
-purple_blist_node_setting_free(gpointer data)
-{
-	GValue *value = (GValue *)data;
-
-	g_value_unset(value);
-	g_free(value);
 }
 
 /**************************************************************************
@@ -392,7 +380,7 @@ purple_blist_node_init(GTypeInstance *instance, gpointer klass)
 	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(instance);
 
 	priv->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-			(GDestroyNotify)purple_blist_node_setting_free);
+			(GDestroyNotify)purple_g_value_free);
 }
 
 /* GObject finalize function */
