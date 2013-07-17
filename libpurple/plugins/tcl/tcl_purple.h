@@ -40,9 +40,9 @@ struct tcl_signal_handler {
 	Tcl_Obj *args;
 	Tcl_Obj *proc;
 
-	PurpleValue *returntype;
+	GType returntype;
 	int nargs;
-	PurpleValue **argtypes;
+	GType *argtypes;
 };
 
 struct tcl_cmd_handler {

@@ -118,7 +118,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	PurpleAccount *account;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
-	PurpleValue *value;
+	GValue *value;
 	char *attr_id;
 	int error;
 	int b, i;
@@ -292,27 +292,27 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 					Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid attribute for account", -1));
 					return TCL_ERROR;
 				}
-				switch (purple_value_get_type(value)) {
-				case PURPLE_TYPE_BOOLEAN:
+				switch (G_VALUE_TYPE(value)) {
+				case G_TYPE_BOOLEAN:
 					error = Tcl_GetBooleanFromObj(interp, objv[i + 1], &b);
 					if (error != TCL_OK)
 						return error;
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, GINT_TO_POINTER(b));
 					break;
-				case PURPLE_TYPE_INT:
+				case G_TYPE_INT:
 					error = Tcl_GetIntFromObj(interp, objv[i + 1], &b);
 					if (error != TCL_OK)
 						return error;
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, GINT_TO_POINTER(b));
 					break;
-				case PURPLE_TYPE_STRING:
+				case G_TYPE_STRING:
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, Tcl_GetString(objv[i + 1]));
 					break;
 				default:
-					Tcl_SetObjResult(interp, Tcl_NewStringObj("unknown PurpleValue type", -1));
+					Tcl_SetObjResult(interp, Tcl_NewStringObj("unknown GValue type", -1));
 					return TCL_ERROR;
 				}
 			}
