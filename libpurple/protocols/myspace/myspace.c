@@ -473,7 +473,7 @@ msim_status_types(PurpleAccount *acct)
 	/* Attributes - each status can have a message. */          \
 	"message",                                                  \
 	_("Message"),                                               \
-	purple_g_value_new(G_TYPE_STRING),                       \
+	purple_g_value_new(G_TYPE_STRING),                          \
 	NULL);                                                      \
 	                                                            \
 	                                                            \
