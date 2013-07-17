@@ -244,7 +244,7 @@ static GList *simple_status_types(PurpleAccount *acc) {
 
 	type = purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		"message", _("Message"), purple_g_value_new(G_TYPE_STRING),
 		NULL);
 	types = g_list_append(types, type);
 

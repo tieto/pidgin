@@ -75,7 +75,7 @@ GList* mxit_status_types( PurpleAccount* account )
 
 		/* add mxit status (reference: "libpurple/status.h") */
 		type = purple_status_type_new_with_attrs( status->primitive, status->id, _( status->name ), TRUE, TRUE, FALSE,
-					"message", _( "Message" ), purple_value_new( PURPLE_TYPE_STRING ),
+					"message", _( "Message" ), purple_g_value_new( G_TYPE_STRING ),
 					NULL );
 
 		statuslist = g_list_append( statuslist, type );
@@ -83,7 +83,7 @@ GList* mxit_status_types( PurpleAccount* account )
 
 	/* add Mood option */
 	type = purple_status_type_new_with_attrs( PURPLE_STATUS_MOOD, "mood", NULL, FALSE, TRUE, TRUE,
-		PURPLE_MOOD_NAME, _( "Mood Name" ), purple_value_new( PURPLE_TYPE_STRING ),
+		PURPLE_MOOD_NAME, _( "Mood Name" ), purple_g_value_new( G_TYPE_STRING ),
 		NULL );
 	statuslist = g_list_append( statuslist, type );
 

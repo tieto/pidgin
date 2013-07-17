@@ -2982,19 +2982,19 @@ novell_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE, NOVELL_STATUS_TYPE_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY, NOVELL_STATUS_TYPE_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE, NOVELL_STATUS_TYPE_BUSY,
 										   _("Busy"), TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 

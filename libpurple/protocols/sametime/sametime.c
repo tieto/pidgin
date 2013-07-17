@@ -3341,19 +3341,19 @@ static GList *mw_prpl_status_types(PurpleAccount *acct)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			MW_STATE_ACTIVE, NULL, TRUE, TRUE, FALSE,
-			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			MW_STATE_MESSAGE, _("Message"), purple_g_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 			MW_STATE_AWAY, NULL, TRUE, TRUE, FALSE,
-			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			MW_STATE_MESSAGE, _("Message"), purple_g_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 			MW_STATE_BUSY, _("Do Not Disturb"), TRUE, TRUE, FALSE,
-			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			MW_STATE_MESSAGE, _("Message"), purple_g_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
