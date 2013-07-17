@@ -840,30 +840,22 @@ purple_notify_init(void)
 	gpointer handle = purple_notify_get_handle();
 
 	purple_signal_register(handle, "displaying-email-notification",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER, NULL, 4,
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 4, G_TYPE_STRING, G_TYPE_STRING,
+						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "displaying-emails-notification",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT, NULL, 5,
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_UINT));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
+						 G_TYPE_NONE, 5, G_TYPE_POINTER, G_TYPE_POINTER,
+						 G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_UINT);
 
 	purple_signal_register(handle, "displaying-emails-clear",
-						 purple_marshal_VOID, NULL, 0);
+						 purple_marshal_VOID, G_TYPE_NONE, 0);
 
 	purple_signal_register(handle, "displaying-userinfo",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_USERINFO));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 PURPLE_TYPE_NOTIFY_USER_INFO);
 }
 
 void
