@@ -3991,11 +3991,13 @@ void jabber_plugin_init(PurplePlugin *plugin)
 
 	purple_signal_register(plugin, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			PURPLE_TYPE_CONNECTION, PURPLE_TYPE_XMLNODE);
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_POINTER); /* modifiable xmlnode */
 
 	purple_signal_register(plugin, "jabber-sending-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			PURPLE_TYPE_CONNECTION, PURPLE_TYPE_XMLNODE);
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_POINTER); /* modifiable xmlnode */
 
 	/*
 	 * Do not remove this or the plugin will fail. Completely. You have been
@@ -4007,7 +4009,8 @@ void jabber_plugin_init(PurplePlugin *plugin)
 
 	purple_signal_register(plugin, "jabber-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION, G_TYPE_STRING);
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
 
 	purple_signal_register(plugin, "jabber-receiving-message",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,

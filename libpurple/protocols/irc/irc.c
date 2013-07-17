@@ -995,10 +995,12 @@ static gboolean load_plugin (PurplePlugin *plugin) {
 
 	purple_signal_register(plugin, "irc-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION, G_TYPE_STRING);
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
 	purple_signal_register(plugin, "irc-receiving-text",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION, G_TYPE_STRING);
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
 	return TRUE;
 }
 
