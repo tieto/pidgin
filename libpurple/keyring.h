@@ -30,6 +30,8 @@
 #include "account.h"
 #include "request.h"
 
+#define PURPLE_TYPE_KEYRING  (purple_keyring_get_type())
+
 /**
  * Default keyring ID.
  */
@@ -356,6 +358,11 @@ purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 /** @name PurpleKeyring accessors                                         */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleKeyring boxed structure.
+ */
+GType purple_keyring_get_type(void);
 
 /**
  * Creates a new keyring wrapper.

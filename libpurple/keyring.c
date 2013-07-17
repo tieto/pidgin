@@ -1244,12 +1244,9 @@ purple_keyring_init(void)
 	 * @param keyring_id The keyring ID.
 	 * @param keyring    The keyring.
 	 */
-	purple_signal_register(purple_keyring_get_handle(),
-		"keyring-register",
-		purple_marshal_VOID__POINTER_POINTER,
-		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *"));
+	purple_signal_register(purple_keyring_get_handle(), "keyring-register",
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2, G_TYPE_STRING,
+		PURPLE_TYPE_KEYRING);
 
 	/* void keyring_unregister(const char *keyring_id,
 	 *      PurpleKeyring * keyring);
@@ -1259,12 +1256,9 @@ purple_keyring_init(void)
 	 * @param keyring_id The keyring ID.
 	 * @param keyring    The keyring.
 	 */
-	purple_signal_register(purple_keyring_get_handle(),
-		"keyring-unregister",
-		purple_marshal_VOID__POINTER_POINTER,
-		NULL, 2,
-		purple_value_new(PURPLE_TYPE_STRING),
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleKeyring *"));
+	purple_signal_register(purple_keyring_get_handle(), "keyring-unregister",
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2, G_TYPE_STRING,
+		PURPLE_TYPE_KEYRING);
 
 	/* void password_migration(PurpleAccount* account);
 	 *
@@ -1273,11 +1267,8 @@ purple_keyring_init(void)
 	 *
 	 * @param account The account.
 	 */
-	purple_signal_register(purple_keyring_get_handle(),
-		"password-migration",
-		purple_marshal_VOID__POINTER,
-		NULL, 1,
-		purple_value_new(PURPLE_TYPE_BOXED, "PurpleAccount *"));
+	purple_signal_register(purple_keyring_get_handle(), "password-migration",
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1, PURPLE_TYPE_ACCOUNT);
 
 	touse = purple_prefs_get_string("/purple/keyring/active");
 	if (touse == NULL) {
@@ -1354,4 +1345,34 @@ purple_keyring_get_handle(void)
 	static int handle;
 
 	return &handle;
+}
+
+static PurpleKeyring *
+purple_keyring_copy(PurpleKeyring *keyring)
+{
+	PurpleKeyring *keyring_copy;
+
+	g_return_val_if_fail(keyring != NULL, NULL);
+
+	keyring_copy = purple_keyring_new();
+	*keyring_copy = *keyring;
+
+	keyring_copy->name = g_strdup(keyring->name);
+	keyring_copy->id   = g_strdup(keyring->id);
+
+	return keyring_copy;
+}
+
+GType
+purple_keyring_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleKeyring",
+				(GBoxedCopyFunc)purple_keyring_copy,
+				(GBoxedFreeFunc)purple_keyring_free);
+	}
+
+	return type;
 }
