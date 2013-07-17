@@ -1432,6 +1432,22 @@ const gchar *purple_get_host_name(void);
 gchar *purple_uuid_random(void);
 
 /**
+ * Creates a new GValue of the specified type.
+ *
+ * @param type  The type of data to be held by the GValue
+ *
+ * @return  The created GValue
+ */
+GValue *purple_g_value_new(GType type);
+
+/**
+ * Frees a GValue.
+ *
+ * @param value  The GValue to free.
+ */
+void purple_g_value_free(GValue *value);
+
+/**
  * Calculates a session key for HTTP Digest authentation
  *
  * See RFC 2617 for more information.

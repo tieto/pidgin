@@ -4747,6 +4747,28 @@ purple_uuid_random(void)
 			(tmp >> 16) & 0xFFFF, g_random_int());
 }
 
+GValue *
+purple_g_value_new(GType type)
+{
+	GValue *ret;
+
+	g_return_val_if_fail(type != G_TYPE_NONE, NULL);
+
+	ret = g_new0(GValue, 1);
+	g_value_init(ret, type);
+
+	return 0;
+}
+
+void
+purple_g_value_free(GValue *value)
+{
+	g_return_if_fail(value != NULL);
+
+	g_value_unset(value);
+	g_free(value);
+}
+
 gchar *purple_http_digest_calculate_session_key(
 		const gchar *algorithm,
 		const gchar *username,
