@@ -4757,7 +4757,21 @@ purple_g_value_new(GType type)
 	ret = g_new0(GValue, 1);
 	g_value_init(ret, type);
 
-	return 0;
+	return ret;
+}
+
+GValue *
+purple_g_value_dup(GValue *value)
+{
+	GValue *ret;
+
+	g_return_val_if_fail(value != NULL, NULL);
+
+	ret = g_new0(GValue, 1);
+	g_value_init(ret, G_VALUE_TYPE(value));
+	g_value_copy(value, ret);
+
+	return ret;
 }
 
 void

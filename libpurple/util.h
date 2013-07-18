@@ -1441,6 +1441,15 @@ gchar *purple_uuid_random(void);
 GValue *purple_g_value_new(GType type);
 
 /**
+ * Duplicates a GValue.
+ *
+ * @param value  The GValue to duplicate
+ *
+ * @return  The duplicated GValue
+ */
+GValue *purple_g_value_dup(GValue *value);
+
+/**
  * Frees a GValue.
  *
  * @param value  The GValue to free.
