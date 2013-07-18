@@ -1231,26 +1231,20 @@ purple_savedstatuses_init(void)
 	load_statuses();
 
 	purple_signal_register(handle, "savedstatus-changed",
-					 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-					 purple_value_new(PURPLE_TYPE_SUBTYPE,
-									PURPLE_SUBTYPE_SAVEDSTATUS),
-					 purple_value_new(PURPLE_TYPE_SUBTYPE,
-									PURPLE_SUBTYPE_SAVEDSTATUS));
+					 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+					 PURPLE_TYPE_SAVEDSTATUS, PURPLE_TYPE_SAVEDSTATUS);
 
 	purple_signal_register(handle, "savedstatus-added",
-		purple_marshal_VOID__POINTER, NULL, 1,
-		purple_value_new(PURPLE_TYPE_SUBTYPE,
-			PURPLE_SUBTYPE_SAVEDSTATUS));
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		PURPLE_TYPE_SAVEDSTATUS);
 
 	purple_signal_register(handle, "savedstatus-deleted",
-		purple_marshal_VOID__POINTER, NULL, 1,
-		purple_value_new(PURPLE_TYPE_SUBTYPE,
-			PURPLE_SUBTYPE_SAVEDSTATUS));
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		PURPLE_TYPE_SAVEDSTATUS);
 
 	purple_signal_register(handle, "savedstatus-modified",
-		purple_marshal_VOID__POINTER, NULL, 1,
-		purple_value_new(PURPLE_TYPE_SUBTYPE,
-			PURPLE_SUBTYPE_SAVEDSTATUS));
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		PURPLE_TYPE_SAVEDSTATUS);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 			handle,

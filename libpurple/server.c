@@ -641,7 +641,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 			return;
 		}
 
-		away_msg = purple_value_get_string(
+		away_msg = g_value_get_string(
 			purple_status_get_attr_value(status, "message"));
 
 		if ((away_msg != NULL) && (*away_msg != '\0')) {

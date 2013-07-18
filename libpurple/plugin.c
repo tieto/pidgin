@@ -49,8 +49,8 @@ typedef struct
 	PurpleSignalMarshalFunc marshal;
 
 	int num_params;
-	PurpleValue **params;
-	PurpleValue *ret_value;
+	GType *param_types;
+	GType ret_type;
 
 } PurplePluginIpcCommand;
 
@@ -962,26 +962,15 @@ static void
 destroy_ipc_info(void *data)
 {
 	PurplePluginIpcCommand *ipc_command = (PurplePluginIpcCommand *)data;
-	int i;
 
-	if (ipc_command->params != NULL)
-	{
-		for (i = 0; i < ipc_command->num_params; i++)
-			purple_value_destroy(ipc_command->params[i]);
-
-		g_free(ipc_command->params);
-	}
-
-	if (ipc_command->ret_value != NULL)
-		purple_value_destroy(ipc_command->ret_value);
-
+	g_free(ipc_command->param_types);
 	g_free(ipc_command);
 }
 
 gboolean
 purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
 						 PurpleCallback func, PurpleSignalMarshalFunc marshal,
-						 PurpleValue *ret_value, int num_params, ...)
+						 GType ret_type, int num_params, ...)
 {
 	PurplePluginIpcInfo *ipc_info;
 	PurplePluginIpcCommand *ipc_command;
@@ -1004,19 +993,19 @@ purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
 	ipc_command->func       = func;
 	ipc_command->marshal    = marshal;
 	ipc_command->num_params = num_params;
-	ipc_command->ret_value  = ret_value;
+	ipc_command->ret_type   = ret_type;
 
 	if (num_params > 0)
 	{
 		va_list args;
 		int i;
 
-		ipc_command->params = g_new0(PurpleValue *, num_params);
+		ipc_command->param_types = g_new0(GType, num_params);
 
 		va_start(args, num_params);
 
 		for (i = 0; i < num_params; i++)
-			ipc_command->params[i] = va_arg(args, PurpleValue *);
+			ipc_command->param_types[i] = va_arg(args, GType);
 
 		va_end(args);
 	}
@@ -1079,9 +1068,9 @@ purple_plugin_ipc_unregister_all(PurplePlugin *plugin)
 }
 
 gboolean
-purple_plugin_ipc_get_params(PurplePlugin *plugin, const char *command,
-						   PurpleValue **ret_value, int *num_params,
-						   PurpleValue ***params)
+purple_plugin_ipc_get_types(PurplePlugin *plugin, const char *command,
+						   GType *ret_type, int *num_params,
+						   GType **param_types)
 {
 	PurplePluginIpcInfo *ipc_info;
 	PurplePluginIpcCommand *ipc_command;
@@ -1105,11 +1094,11 @@ purple_plugin_ipc_get_params(PurplePlugin *plugin, const char *command,
 	if (num_params != NULL)
 		*num_params = ipc_command->num_params;
 
-	if (params != NULL)
-		*params = ipc_command->params;
+	if (param_types != NULL)
+		*param_types = ipc_command->param_types;
 
-	if (ret_value != NULL)
-		*ret_value = ipc_command->ret_value;
+	if (ret_type != NULL)
+		*ret_type = ipc_command->ret_type;
 
 	return TRUE;
 }
@@ -1170,14 +1159,10 @@ purple_plugins_init(void) {
 
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
-						 NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_PLUGIN));
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 	purple_signal_register(handle, "plugin-unload",
 						 purple_marshal_VOID__POINTER,
-						 NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_PLUGIN));
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 }
 
 void
