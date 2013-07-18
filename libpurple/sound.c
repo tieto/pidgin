@@ -128,10 +128,7 @@ purple_sound_init()
 
 	purple_signal_register(handle, "playing-sound-event",
 	                     purple_marshal_BOOLEAN__INT_POINTER,
-	                     purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
-	                     purple_value_new(PURPLE_TYPE_INT),
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_ACCOUNT));
+	                     G_TYPE_BOOLEAN, 2, G_TYPE_INT, PURPLE_TYPE_ACCOUNT);
 
 	purple_prefs_add_none("/purple/sound");
 	purple_prefs_add_int("/purple/sound/while_status", STATUS_AVAILABLE);

@@ -50,8 +50,8 @@ typedef struct
 	PurpleSignalMarshalFunc marshal;
 
 	int num_values;
-	PurpleValue **values;
-	PurpleValue *ret_value;
+	GType *value_types;
+	GType ret_type;
 
 	GList *handlers;
 	size_t handler_count;
@@ -86,25 +86,14 @@ destroy_signal_data(PurpleSignalData *signal_data)
 	g_list_foreach(signal_data->handlers, (GFunc)g_free, NULL);
 	g_list_free(signal_data->handlers);
 
-	if (signal_data->values != NULL)
-	{
-		int i;
-
-		for (i = 0; i < signal_data->num_values; i++)
-			purple_value_destroy((PurpleValue *)signal_data->values[i]);
-
-		g_free(signal_data->values);
-	}
-
-	if (signal_data->ret_value != NULL)
-		purple_value_destroy(signal_data->ret_value);
+	g_free(signal_data->value_types);
 	g_free(signal_data);
 }
 
 gulong
 purple_signal_register(void *instance, const char *signal,
 					 PurpleSignalMarshalFunc marshal,
-					 PurpleValue *ret_value, int num_values, ...)
+					 GType ret_type, int num_values, ...)
 {
 	PurpleInstanceData *instance_data;
 	PurpleSignalData *signal_data;
@@ -135,19 +124,19 @@ purple_signal_register(void *instance, const char *signal,
 	signal_data->id              = instance_data->next_signal_id;
 	signal_data->marshal         = marshal;
 	signal_data->next_handler_id = 1;
-	signal_data->ret_value       = ret_value;
+	signal_data->ret_type        = ret_type;
 	signal_data->num_values      = num_values;
 
 	if (num_values > 0)
 	{
 		int i;
 
-		signal_data->values = g_new0(PurpleValue *, num_values);
+		signal_data->value_types = g_new0(GType, num_values);
 
 		va_start(args, num_values);
 
 		for (i = 0; i < num_values; i++)
-			signal_data->values[i] = va_arg(args, PurpleValue *);
+			signal_data->value_types[i] = va_arg(args, GType);
 
 		va_end(args);
 	}
@@ -202,17 +191,17 @@ purple_signals_unregister_by_instance(void *instance)
 }
 
 void
-purple_signal_get_values(void *instance, const char *signal,
-					   PurpleValue **ret_value,
-					   int *num_values, PurpleValue ***values)
+purple_signal_get_types(void *instance, const char *signal,
+					   GType *ret_type,
+					   int *num_values, GType **value_types)
 {
 	PurpleInstanceData *instance_data;
 	PurpleSignalData *signal_data;
 
-	g_return_if_fail(instance   != NULL);
-	g_return_if_fail(signal     != NULL);
-	g_return_if_fail(num_values != NULL);
-	g_return_if_fail(values     != NULL);
+	g_return_if_fail(instance    != NULL);
+	g_return_if_fail(signal      != NULL);
+	g_return_if_fail(num_values  != NULL);
+	g_return_if_fail(value_types != NULL);
 
 	/* Get the instance data */
 	instance_data =
@@ -226,11 +215,11 @@ purple_signal_get_values(void *instance, const char *signal,
 
 	g_return_if_fail(signal_data != NULL);
 
-	*num_values = signal_data->num_values;
-	*values     = signal_data->values;
+	*num_values  = signal_data->num_values;
+	*value_types = signal_data->value_types;
 
-	if (ret_value != NULL)
-		*ret_value = signal_data->ret_value;
+	if (ret_type != NULL)
+		*ret_type = signal_data->ret_type;
 }
 
 static gint handler_priority(void * a, void * b) {
@@ -487,7 +476,7 @@ purple_signal_emit_vargs(void *instance, const char *signal, va_list args)
 
 #ifdef HAVE_DBUS
 	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
-				   signal_data->values, args);
+				   signal_data->value_types, args);
 #endif	/* HAVE_DBUS */
 
 }
@@ -539,7 +528,7 @@ purple_signal_emit_vargs_return_1(void *instance, const char *signal,
 #ifdef HAVE_DBUS
 	G_VA_COPY(tmp, args);
 	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
-				   signal_data->values, tmp);
+				   signal_data->value_types, tmp);
 	va_end(tmp);
 #endif	/* HAVE_DBUS */
 
