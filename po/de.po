@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-03 20:47+0200\n"
-"PO-Revision-Date: 2013-04-03 20:46+0200\n"
+"POT-Creation-Date: 2013-07-18 21:34+0200\n"
+"PO-Revision-Date: 2013-07-18 21:34+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -2978,7 +2978,7 @@ msgid "Buddy Goes _Idle"
 msgstr "Buddy _untätig wird"
 
 msgid "Buddy _Signs On/Off"
-msgstr "Buddy hat_sich an- oder abgemeldet"
+msgstr "Buddy _sich an- oder abgemeldet hat"
 
 #. *< type
 #. *< ui_requirement
