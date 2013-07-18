@@ -916,9 +916,6 @@ proxy_do_write(gpointer data, gint source, PurpleInputCondition cond)
 			PURPLE_INPUT_READ, connect_data->read_cb, connect_data);
 }
 
-#define HTTP_GOODSTRING "HTTP/1.0 200"
-#define HTTP_GOODSTRING2 "HTTP/1.1 200"
-
 /**
  * We're using an HTTP proxy for a non-port 80 tunnel.  Read the
  * response to the CONNECT request.

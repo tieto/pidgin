@@ -465,6 +465,11 @@ intkeyring_encrypt_password_if_needed(PurpleAccount *account)
 	const gchar *plaintext;
 	gchar *ciphertext;
 
+	if (intkeyring_key == NULL) {
+		g_hash_table_remove(intkeyring_ciphertexts, account);
+		return;
+	}
+
 	ciphertext = g_hash_table_lookup(intkeyring_ciphertexts, account);
 	if (ciphertext != NULL)
 		return;
