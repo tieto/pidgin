@@ -209,7 +209,6 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 		case G_TYPE_UINT:
 		case G_TYPE_LONG:
 		case G_TYPE_ULONG:
-		case G_TYPE_ENUM:
 			/* I should really cast these individually to
 			 * preserve as much information as possible ...
 			 * but heh */
@@ -324,6 +323,10 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 								 purple_tcl_ref_new(PurpleTclRefAccount,
 										  purple_chat_get_account(PURPLE_CHAT(node))));
 				}
+			}
+			else if (G_TYPE_IS_ENUM(handler->argtypes[i]))
+			{
+				arg = Tcl_NewIntObj(va_arg(args, int));
 			}
 			else
 			{
