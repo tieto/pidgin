@@ -533,11 +533,9 @@ void finch_log_init(void)
 
 	purple_signal_register(handle, "log-displaying",
 	                     purple_marshal_VOID__POINTER_POINTER,
-	                     NULL, 2,
-	                     purple_value_new(PURPLE_TYPE_BOXED,
-	                                    "FinchLogViewer *"),
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_LOG));
+	                     G_TYPE_NONE, 2,
+	                     G_TYPE_POINTER, /* (FinchLogViewer *) */
+	                     PURPLE_TYPE_LOG);
 }
 
 void
