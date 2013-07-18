@@ -813,11 +813,6 @@ typedef struct aim_userinfo_s
 	struct aim_userinfo_s *next;
 } aim_userinfo_t;
 
-#define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
-#define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
-
-int aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
-
 struct aim_invite_priv
 {
 	char *bn;

@@ -52,8 +52,6 @@
 #include "oscar.h"
 #include "peer.h"
 
-#define AIMHASHDATA "https://pidgin.im/aim_data.php3"
-
 static guint64 purple_caps =
 	OSCAR_CAPABILITY_CHAT
 		| OSCAR_CAPABILITY_BUDDYICON
@@ -112,7 +110,6 @@ static int purple_parse_mtn        (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_locaterights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_buddyrights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_popup            (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_parseerr     (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -693,7 +690,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_REDIRECT, purple_handle_redirect, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_MOTD, purple_parse_motd, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_POPUP, 0x0002, purple_popup, 0);
@@ -844,162 +840,6 @@ oscar_close(PurpleConnection *gc)
 	purple_prefs_disconnect_by_handle(gc);
 
 	purple_debug_info("oscar", "Signed off.\n");
-}
-
-/* XXX - Should use purple_util_fetch_url for the below stuff */
-struct pieceofcrap {
-	PurpleConnection *gc;
-	unsigned long offset;
-	unsigned long len;
-	char *modname;
-	int fd;
-	FlapConnection *conn;
-	unsigned int inpa;
-};
-
-static void damn_you(gpointer data, gint source, PurpleInputCondition c)
-{
-	struct pieceofcrap *pos = data;
-	OscarData *od = purple_connection_get_protocol_data(pos->gc);
-	char in = '\0';
-	int x = 0;
-	unsigned char m[17];
-	GString *msg;
-
-	while (read(pos->fd, &in, 1) == 1) {
-		if (in == '\n')
-			x++;
-		else if (in != '\r')
-			x = 0;
-		if (x == 2)
-			break;
-		in = '\0';
-	}
-	if (in != '\n') {
-		char buf[256];
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
-				"If so, check %s for updates."),
-				oscar_get_ui_info_string("website", PURPLE_WEBSITE));
-		purple_notify_warning(pos->gc, NULL,
-							_("Unable to get a valid AIM login hash."),
-							buf);
-		purple_input_remove(pos->inpa);
-		close(pos->fd);
-		g_free(pos);
-		return;
-	}
-	if (read(pos->fd, m, 16) != 16)
-	{
-		purple_debug_warning("oscar", "Could not read full AIM login hash "
-				"from " AIMHASHDATA "--that's bad.\n");
-	}
-	m[16] = '\0';
-
-	msg = g_string_new("Sending hash: ");
-	for (x = 0; x < 16; x++)
-		g_string_append_printf(msg, "%02hx ", m[x] & 0xFF);
-	g_string_append(msg, "\n");
-	purple_debug_misc("oscar", "%s", msg->str);
-	g_string_free(msg, TRUE);
-
-	purple_input_remove(pos->inpa);
-	close(pos->fd);
-	aim_sendmemblock(od, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
-	g_free(pos);
-}
-
-static void
-straight_to_hell(gpointer data, gint source, const gchar *error_message)
-{
-	struct pieceofcrap *pos = data;
-	gchar *buf;
-	gssize result;
-
-	pos->fd = source;
-
-	if (source < 0) {
-		buf = g_strdup_printf(_("You may be disconnected shortly.  "
-				"If so, check %s for updates."),
-				oscar_get_ui_info_string("website", PURPLE_WEBSITE));
-		purple_notify_warning(pos->gc, NULL,
-							_("Unable to get a valid AIM login hash."),
-							buf);
-		g_free(buf);
-		g_free(pos->modname);
-		g_free(pos);
-		return;
-	}
-
-	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
-			pos->offset, pos->len, pos->modname ? pos->modname : "");
-	result = send(pos->fd, buf, strlen(buf), 0);
-	if (result != strlen(buf)) {
-		if (result < 0)
-			purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
-					" bytes to fetch AIM hash data: %s\n",
-					strlen(buf), g_strerror(errno));
-		else
-			purple_debug_error("oscar", "Tried to write %"
-					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
-					"instead wrote %" G_GSSIZE_FORMAT " bytes\n",
-					strlen(buf), result);
-	}
-	g_free(buf);
-	g_free(pos->modname);
-	pos->inpa = purple_input_add(pos->fd, PURPLE_INPUT_READ, damn_you, pos);
-	return;
-}
-
-/* size of icbmui.ocm, the largest module in AIM 3.5 */
-#define AIM_MAX_FILE_SIZE 98304
-
-static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	va_list ap;
-	struct pieceofcrap *pos;
-	guint32 offset, len;
-	char *modname;
-
-	va_start(ap, fr);
-	offset = va_arg(ap, guint32);
-	len = va_arg(ap, guint32);
-	modname = va_arg(ap, char *);
-	va_end(ap);
-
-	purple_debug_misc("oscar", "offset: %u, len: %u, file: %s\n",
-					offset, len, (modname ? modname : "aim.exe"));
-
-	if (len == 0) {
-		purple_debug_misc("oscar", "len is 0, hashing NULL\n");
-		aim_sendmemblock(od, conn, offset, len, NULL,
-				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
-		return 1;
-	}
-
-	pos = g_new0(struct pieceofcrap, 1);
-	pos->gc = od->gc;
-	pos->conn = conn;
-
-	pos->offset = offset;
-	pos->len = len;
-	pos->modname = g_strdup(modname);
-
-	if (purple_proxy_connect(pos->gc, purple_connection_get_account(pos->gc), "pidgin.im", 80,
-			straight_to_hell, pos) == NULL)
-	{
-		char buf[256];
-		g_free(pos->modname);
-		g_free(pos);
-
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
-			"If so, check %s for updates."),
-			oscar_get_ui_info_string("website", PURPLE_WEBSITE));
-		purple_notify_warning(pos->gc, NULL,
-							_("Unable to get a valid login hash."),
-							buf);
-	}
-
-	return 1;
 }
 
 int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen, const char *tls_certname)

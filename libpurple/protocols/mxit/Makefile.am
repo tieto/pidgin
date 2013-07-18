@@ -16,8 +16,6 @@ MXITSOURCES = \
 	filexfer.h \
 	formcmds.c \
 	formcmds.h \
-	http.c \
-	http.h \
 	login.c \
 	login.h \
 	markup.c \

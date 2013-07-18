@@ -37,7 +37,6 @@
 #include	"splashscreen.h"
 #include	"login.h"
 #include	"formcmds.h"
-#include	<libpurple/http.h>
 #include	"http.h"
 #include	"cipher.h"
 #include	"voicevideo.h"
@@ -324,59 +323,35 @@ mxit_write_http_get(struct MXitSession* session, struct tx_packet* packet)
 }
 
 
-/*------------------------------------------------------------------------
+/**
  * TX Step 3: Write the packet data to the HTTP connection (POST style).
  *
- *  @param session		The MXit session object
- *  @param pktdata		The packet data
- *  @param pktlen		The length of the packet data
- *  @return				Return -1 on error, otherwise 0
+ * @param session The MXit session object
+ * @param packet  The packet data
  */
-static void mxit_write_http_post( struct MXitSession* session, struct tx_packet* packet )
+static void
+mxit_write_http_post(struct MXitSession* session, struct tx_packet* packet)
 {
-	char		request[256 + packet->datalen];
-	int			reqlen;
-	PurpleHttpURL *url;
-
-	/* extract the HTTP host name and host port number to connect to */
-	url = purple_http_url_parse(session->http_server);
-	if (url == NULL) {
-		purple_debug_error( MXIT_PLUGIN_ID, "HTTP POST error: (host name '%s' not valid)\n", session->http_server );
-		return;
-	}
+	PurpleHttpRequest *req;
+	PurpleHttpConnection *hc;
 
 	/* strip off the last '&' from the header */
 	packet->header[packet->headerlen - 1] = '\0';
 	packet->headerlen--;
 
-	/* build the HTTP request packet */
-	reqlen = g_snprintf( request, 256,
-					"POST %s?%s HTTP/1.1\r\n"
-					"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
-					"Content-Type: application/octet-stream\r\n"
-					"Host: %s\r\n"
-					"Content-Length: %d\r\n"
-					"\r\n",
-					session->http_server,
-					purple_url_encode( packet->header ),
-					purple_http_url_get_host(url),
-					packet->datalen - MXIT_MS_OFFSET
-	);
-
-	/* copy over the packet body data (could be binary) */
-	memcpy( request + reqlen, packet->data + MXIT_MS_OFFSET, packet->datalen - MXIT_MS_OFFSET );
-	reqlen += packet->datalen;
-
-#ifdef	DEBUG_PROTOCOL
-	purple_debug_info( MXIT_PLUGIN_ID, "HTTP POST:\n" );
-	dump_bytes( session, request, reqlen );
-#endif
-
-	/* send the request to the HTTP server */
-	mxit_http_send_request(session, purple_http_url_get_host(url),
-		purple_http_url_get_port(url), request, reqlen);
-
-	purple_http_url_free(url);
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "%s?%s", session->http_server,
+		purple_url_encode(packet->header));
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "User-Agent", MXIT_HTTP_USERAGENT);
+	purple_http_request_header_set(req, "Content-Type",
+		"application/octet-stream");
+	purple_http_request_set_contents(req, packet->data + MXIT_MS_OFFSET,
+		packet->datalen - MXIT_MS_OFFSET);
+	hc = purple_http_request(session->con, req, mxit_cb_http_rx, session);
+	purple_http_request_unref(req);
+	session->async_http_reqs =
+		g_slist_prepend(session->async_http_reqs, hc);
 }
 
 

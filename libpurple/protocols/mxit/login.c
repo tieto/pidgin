@@ -25,7 +25,7 @@
 
 #include	"internal.h"
 #include	"debug.h"
-#include	"libpurple/http.h"
+#include	"http.h"
 #include	"request.h"
 #include	"version.h"
 
