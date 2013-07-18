@@ -7756,32 +7756,26 @@ void pidgin_blist_init(void)
 
 	/* Register our signals */
 	purple_signal_register(gtk_blist_handle, "gtkblist-hiding",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_BUDDY_LIST);
 
 	purple_signal_register(gtk_blist_handle, "gtkblist-unhiding",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_BUDDY_LIST);
 
 	purple_signal_register(gtk_blist_handle, "gtkblist-created",
-	                     purple_marshal_VOID__POINTER, NULL, 1,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST));
+	                     purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+	                     PURPLE_TYPE_BUDDY_LIST);
 
 	purple_signal_register(gtk_blist_handle, "drawing-tooltip",
-	                     purple_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_BLIST_NODE),
-	                     purple_value_new_outgoing(PURPLE_TYPE_BOXED, "GString *"),
-	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
+	                     purple_marshal_VOID__POINTER_POINTER_UINT, G_TYPE_NONE,
+	                     3, PURPLE_TYPE_BLIST_NODE,
+	                     G_TYPE_POINTER, /* pointer to a (GString *) */
+	                     G_TYPE_BOOLEAN);
 
 	purple_signal_register(gtk_blist_handle, "drawing-buddy",
 						purple_marshal_POINTER__POINTER,
-						purple_value_new(PURPLE_TYPE_STRING), 1,
-						purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_BLIST_BUDDY));
+						G_TYPE_STRING, 1, PURPLE_TYPE_BUDDY);
 
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on",
 			gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);

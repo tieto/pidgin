@@ -2947,9 +2947,8 @@ pidgin_accounts_init(void)
 	g_free(default_avatar);
 
 	purple_signal_register(pidgin_accounts_get_handle(), "account-modified",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_ACCOUNT);
 
 	/* Setup some purple signal handlers. */
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",

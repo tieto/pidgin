@@ -8607,11 +8607,9 @@ pidgin_conversations_init(void)
 	 * Register signals
 	 **********************************************************************/
 	purple_signal_register(handle, "conversation-dragging",
-	                     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-	                     purple_value_new(PURPLE_TYPE_BOXED,
-	                                    "PidginWindow *"),
-	                     purple_value_new(PURPLE_TYPE_BOXED,
-	                                    "PidginWindow *"));
+	                     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+	                     G_TYPE_POINTER, /* pointer to a (PidginWindow *) */
+	                     G_TYPE_POINTER); /* pointer to a (PidginWindow *) */
 
 	purple_signal_register(handle, "conversation-timestamp",
 #if SIZEOF_TIME_T == 4
@@ -8621,90 +8619,58 @@ pidgin_conversations_init(void)
 #else
 #error Unkown size of time_t
 #endif
-	                     purple_value_new(PURPLE_TYPE_STRING), 3,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_CONVERSATION),
+	                     G_TYPE_STRING, 3, PURPLE_TYPE_CONVERSATION,
 #if SIZEOF_TIME_T == 4
-	                     purple_value_new(PURPLE_TYPE_INT),
+	                     G_TYPE_INT,
 #elif SIZEOF_TIME_T == 8
-	                     purple_value_new(PURPLE_TYPE_INT64),
+	                     G_TYPE_INT64,
 #else
 # error Unknown size of time_t
 #endif
-	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
+	                     G_TYPE_BOOLEAN);
 
 	purple_signal_register(handle, "displaying-im-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new_outgoing(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_INT));
+						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 G_TYPE_POINTER, /* pointer to a string */
+						 PURPLE_TYPE_CONVERSATION, G_TYPE_INT);
 
 	purple_signal_register(handle, "displayed-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
-						 NULL, 5,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_INT));
+						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_INT);
 
 	purple_signal_register(handle, "displaying-chat-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new_outgoing(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_INT));
+						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 G_TYPE_POINTER, /* pointer to a string */
+						 PURPLE_TYPE_CONVERSATION, G_TYPE_INT);
 
 	purple_signal_register(handle, "displayed-chat-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
-						 NULL, 5,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_INT));
+						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_INT);
 
 	purple_signal_register(handle, "conversation-switched",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONVERSATION));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_CONVERSATION);
 
 	purple_signal_register(handle, "conversation-hiding",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_BOXED,
-										"PidginConversation *"));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 G_TYPE_POINTER); /* (PidginConversation *) */
 
 	purple_signal_register(handle, "conversation-displayed",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_BOXED,
-										"PidginConversation *"));
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 G_TYPE_POINTER); /* (PidginConversation *) */
 
 	purple_signal_register(handle, "chat-nick-autocomplete",
 						 purple_marshal_BOOLEAN__POINTER_BOOLEAN,
-						 purple_value_new(PURPLE_TYPE_BOOLEAN), 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-							 			PURPLE_SUBTYPE_CONVERSATION));
+						 G_TYPE_BOOLEAN, 1, PURPLE_TYPE_CONVERSATION);
 
 	purple_signal_register(handle, "chat-nick-clicked",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_UINT,
-						 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-							 			PURPLE_SUBTYPE_CONVERSATION),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_UINT));
+						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_STRING, G_TYPE_UINT);
 
 
 	/**********************************************************************
