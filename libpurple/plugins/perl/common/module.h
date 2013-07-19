@@ -59,6 +59,7 @@ typedef struct group *Purple__Group;
 #include "pluginpref.h"
 #include "pounce.h"
 #include "prefs.h"
+#include "presence.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -223,6 +224,12 @@ typedef PurplePounceEvent			Purple__PounceEvent;
 /* prefs.h */
 typedef PurplePrefType			Purple__PrefType;
 
+/* presence.h */
+typedef PurplePresence *		Purple__Presence;
+typedef PurpleAccountPresence *		Purple__AccountPresence;
+typedef PurpleConversationPresence *	Purple__ConversationPresence;
+typedef PurpleBuddyPresence *		Purple__BuddyPresence;
+
 /* proxy.h */
 typedef PurpleProxyInfo *			Purple__ProxyInfo;
 typedef PurpleProxyType			Purple__ProxyType;
@@ -264,8 +271,6 @@ typedef PurpleSslErrorType		Purple__SslErrorType;
 typedef PurpleSslOps *			Purple__Ssl__Ops;
 
 /* status.h */
-typedef PurplePresence *			Purple__Presence;
-typedef PurplePresenceContext		Purple__PresenceContext;
 typedef PurpleStatus *			Purple__Status;
 typedef PurpleStatusAttr *		Purple__StatusAttr;
 typedef PurpleStatusPrimitive		Purple__StatusPrimitive;

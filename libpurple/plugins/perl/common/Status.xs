@@ -39,22 +39,14 @@ purple_status_set_active_with_attrs(status, active, args)
 
 	*/
 
-MODULE = Purple::Status  PACKAGE = Purple::Presence  PREFIX = purple_presence_
+MODULE = Purple::Status  PACKAGE = Purple::Primitive  PREFIX = purple_primitive_
 PROTOTYPES: ENABLE
 
 BOOT:
 {
-	HV *context_stash = gv_stashpv("Purple::Presence::Context", 1);
 	HV *primitive_stash = gv_stashpv("Purple::Status::Primitive", 1);
 
-	static const constiv *civ, context_const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_PRESENCE_CONTEXT_##name}
-		const_iv(UNSET),
-		const_iv(ACCOUNT),
-		const_iv(CONV),
-		const_iv(BUDDY),
-	};
-	static const constiv primitive_const_iv[] = {
+	static const constiv *civ, primitive_const_iv[] = {
 #undef const_iv
 #define const_iv(name) {#name, (IV)PURPLE_STATUS_##name}
 		const_iv(UNSET),
@@ -67,127 +59,9 @@ BOOT:
 		const_iv(MOBILE),
 	};
 
-	for (civ = context_const_iv + sizeof(context_const_iv) / sizeof(context_const_iv[0]); civ-- > context_const_iv; )
-		newCONSTSUB(context_stash, (char *)civ->name, newSViv(civ->iv));
-
 	for (civ = primitive_const_iv + sizeof(primitive_const_iv) / sizeof(primitive_const_iv[0]); civ-- > primitive_const_iv; )
 		newCONSTSUB(primitive_stash, (char *)civ->name, newSViv(civ->iv));
 }
-
-gint
-purple_presence_compare(presence1, presence2)
-	Purple::Presence presence1
-	Purple::Presence presence2
-
-void
-purple_presence_destroy(presence)
-	Purple::Presence presence
-
-Purple::Account
-purple_presence_get_account(presence)
-	Purple::Presence presence
-
-Purple::Status
-purple_presence_get_active_status(presence)
-	Purple::Presence presence
-
-const char *
-purple_presence_get_chat_user(presence)
-	Purple::Presence presence
-
-Purple::PresenceContext
-purple_presence_get_context(presence)
-	Purple::Presence presence
-
-Purple::Conversation
-purple_presence_get_conversation(presence)
-	Purple::Presence presence
-
-time_t
-purple_presence_get_idle_time(presence)
-	Purple::Presence presence
-
-time_t
-purple_presence_get_login_time(presence)
-	Purple::Presence presence
-
-Purple::Status
-purple_presence_get_status(presence, status_id)
-	Purple::Presence presence
-	const char *status_id
-
-void
-purple_presence_get_statuses(presence)
-	Purple::Presence presence
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = purple_presence_get_statuses(presence); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Status")));
-	}
-
-gboolean
-purple_presence_is_available(presence)
-	Purple::Presence presence
-
-gboolean
-purple_presence_is_idle(presence)
-	Purple::Presence presence
-
-gboolean
-purple_presence_is_online(presence)
-	Purple::Presence presence
-
-gboolean
-purple_presence_is_status_active(presence, status_id)
-	Purple::Presence presence
-	const char *status_id
-
-gboolean
-purple_presence_is_status_primitive_active(presence, primitive)
-	Purple::Presence presence
-	Purple::StatusPrimitive primitive
-
-Purple::Presence
-purple_presence_new(context)
-	Purple::PresenceContext context
-
-Purple::Presence
-purple_presence_new_for_account(account)
-	Purple::Account account
-
-Purple::Presence
-purple_presence_new_for_buddy(buddy)
-	Purple::BuddyList::Buddy buddy
-
-Purple::Presence
-purple_presence_new_for_conv(conv)
-	Purple::Conversation conv
-
-void
-purple_presence_set_idle(presence, idle, idle_time)
-	Purple::Presence presence
-	gboolean idle
-	time_t idle_time
-
-void
-purple_presence_set_login_time(presence, login_time)
-	Purple::Presence presence
-	time_t login_time
-
-void
-purple_presence_set_status_active(presence, status_id, active)
-	Purple::Presence presence
-	const char *status_id
-	gboolean active
-
-void
-purple_presence_switch_status(presence, status_id)
-	Purple::Presence presence
-	const char *status_id
-
-MODULE = Purple::Status  PACKAGE = Purple::Primitive  PREFIX = purple_primitive_
-PROTOTYPES: ENABLE
 
 const char *
 purple_primitive_get_id_from_type(type)

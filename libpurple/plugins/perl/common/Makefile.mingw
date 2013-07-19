@@ -59,6 +59,7 @@ XS_FILES =		Account.xs \
 				PluginPref.xs \
 				Pounce.xs \
 				Prefs.xs \
+				Presence.xs \
 				Proxy.xs \
 				Prpl.xs \
 				Request.xs \

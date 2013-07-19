@@ -18,6 +18,7 @@ Plugin.xs
 PluginPref.xs
 Pounce.xs
 Prefs.xs
+Presence.xs
 Proxy.xs
 Prpl.xs
 Purple.pm

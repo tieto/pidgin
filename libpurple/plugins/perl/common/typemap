@@ -107,7 +107,6 @@ Purple::PluginPrefType			T_IV
 Purple::PluginPref::Frame			T_PurpleObj
 Purple::Pounce				T_PurpleObj
 Purple::PounceEvent			T_IV
-Purple::Presence				T_PurpleObj
 Purple::ProtocolOptions			T_IV
 Purple::ProxyInfo				T_PurpleObj
 Purple::ProxyType				T_IV
@@ -136,7 +135,9 @@ Purple::Ssl::Connection			T_PurpleObj
 Purple::Ssl::Ops				T_PurpleObj
 
 Purple::Presence				T_PurpleObj
-Purple::PresenceContext			T_IV
+Purple::AccountPresence				T_PurpleObj
+Purple::ConversationPresence			T_PurpleObj
+Purple::BuddyPresence				T_PurpleObj
 Purple::Smiley				T_PurpleObj
 Purple::Status				T_PurpleObj
 Purple::StatusAttr			T_PurpleObj
