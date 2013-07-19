@@ -26,20 +26,46 @@
 #ifndef _PURPLE_BUDDYICON_H_
 #define _PURPLE_BUDDYICON_H_
 
-#define PURPLE_TYPE_BUDDY_ICON (purple_buddy_icon_get_type())
+#define PURPLE_TYPE_BUDDY_ICON             (purple_buddy_icon_get_type())
+#define PURPLE_BUDDY_ICON(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY_ICON, PurpleBuddyIcon))
+#define PURPLE_BUDDY_ICON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BUDDY_ICON, PurpleBuddyIconClass))
+#define PURPLE_IS_BUDDY_ICON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_BUDDY_ICON))
+#define PURPLE_IS_BUDDY_ICON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_BUDDY_ICON))
+#define PURPLE_BUDDY_ICON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BUDDY_ICON, PurpleBuddyIconClass))
 
-/** An opaque structure representing a buddy icon for a particular user on a
- *  particular #PurpleAccount.  Instances are reference-counted; use
- *  purple_buddy_icon_ref() and purple_buddy_icon_unref() to take and release
- *  references.
- */
+/** @copydoc _PurpleBuddyIcon */
 typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
+/** @copydoc _PurpleBuddyIconClass */
+typedef struct _PurpleBuddyIconClass PurpleBuddyIconClass;
 
 #include "account.h"
 #include "buddylist.h"
 #include "imgstore.h"
 #include "prpl.h"
 #include "util.h"
+
+/** An object representing a buddy icon for a particular user on a particular
+ *  #PurpleAccount.  Use g_object_ref() and g_object_unref() to take and release
+ *  references.
+ */
+struct _PurpleBuddyIcon
+{
+	/*< private >*/
+	GObject gparent;
+};
+
+/**
+ * The base class for all #PurpleBuddyIcon's.
+ */
+struct _PurpleBuddyIconClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
 
@@ -49,9 +75,7 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Returns the GType for the PurpleBuddyIcon boxed structure.
- * TODO Boxing of PurpleBuddyIcon is a temporary solution to having a GType for
- *      icons. This should rather be a GObject instead of a GBoxed.
+ * Returns the GType for the PurpleBuddyIcon object.
  */
 GType purple_buddy_icon_get_type(void);
 
@@ -72,24 +96,6 @@ GType purple_buddy_icon_get_type(void);
 PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *username,
                                        void *icon_data, size_t icon_len,
                                        const char *checksum);
-
-/**
- * Increments the reference count on a buddy icon.
- *
- * @param icon The buddy icon.
- *
- * @return @a icon.
- */
-PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
-
-/**
- * Decrements the reference count on a buddy icon.
- *
- * If the reference count reaches 0, the icon will be destroyed.
- *
- * @param icon The buddy icon.
- */
-void purple_buddy_icon_unref(PurpleBuddyIcon *icon);
 
 /**
  * Updates every instance of this icon.
