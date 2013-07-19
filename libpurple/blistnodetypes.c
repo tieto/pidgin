@@ -155,8 +155,8 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 
 	if (priv->icon != icon)
 	{
-		g_object_unref(priv->icon);
-		priv->icon = (icon != NULL ? g_object_ref(icon) : NULL);
+		purple_buddy_icon_unref(priv->icon);
+		priv->icon = (icon != NULL ? purple_buddy_icon_ref(icon) : NULL);
 	}
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
@@ -549,7 +549,8 @@ purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
 			break;
 		case BUDDY_PROP_ICON:
-			purple_buddy_set_icon(buddy, g_value_get_object(value));
+#warning TODO: change get_pointer to get_object when PurpleBuddyIcon is a GObject
+			purple_buddy_set_icon(buddy, g_value_get_pointer(value));
 			break;
 		case BUDDY_PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
@@ -581,7 +582,8 @@ purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_string(value, purple_buddy_get_server_alias(buddy));
 			break;
 		case BUDDY_PROP_ICON:
-			g_value_set_object(value, purple_buddy_get_icon(buddy));
+#warning TODO: change set_pointer to set_object when PurpleBuddyIcon is a GObject
+			g_value_set_pointer(value, purple_buddy_get_icon(buddy));
 			break;
 		case BUDDY_PROP_ACCOUNT:
 			g_value_set_object(value, purple_buddy_get_account(buddy));
@@ -644,7 +646,7 @@ purple_buddy_dispose(GObject *object)
 	}
 
 	/* Delete the node */
-	g_object_unref(priv->icon);
+	purple_buddy_icon_unref(priv->icon);
 	purple_presence_destroy(priv->presence);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
@@ -698,9 +700,10 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 				G_PARAM_READWRITE)
 			);
 
+#warning TODO: change spec_pointer to spec_object when PurpleBuddyIcon is a GObject
 	g_object_class_install_property(obj_class, BUDDY_PROP_ICON,
-			g_param_spec_object(BUDDY_PROP_ICON_S, _("Buddy icon"),
-				_("The icon for the buddy."), PURPLE_TYPE_BUDDY_ICON,
+			g_param_spec_pointer(BUDDY_PROP_ICON_S, _("Buddy icon"),
+				_("The icon for the buddy."),
 				G_PARAM_READWRITE)
 			);
 
