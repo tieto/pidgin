@@ -64,7 +64,7 @@
  * A PurplePresence is like a collection of PurpleStatuses (plus some
  * other random info).
  *
- * @see presence.h
+ * @see presences.h
  */
 
 /**

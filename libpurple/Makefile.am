@@ -79,7 +79,7 @@ purple_coresources = \
 	pluginpref.c \
 	pounce.c \
 	prefs.c \
-	presence.c \
+	presences.c \
 	proxy.c \
 	prpl.c \
 	request.c \
@@ -150,7 +150,7 @@ purple_coreheaders = \
 	pluginpref.h \
 	pounce.h \
 	prefs.h \
-	presence.h \
+	presences.h \
 	proxy.h \
 	prpl.h \
 	request.h \
@@ -230,7 +230,7 @@ dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-d
 dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnodes.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h ft.h log.h notify.h \
-                prefs.h presence.h roomlist.h savedstatuses.h smiley.h status.h \
+                prefs.h presences.h roomlist.h savedstatuses.h smiley.h status.h \
                 server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
