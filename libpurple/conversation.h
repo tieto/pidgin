@@ -120,10 +120,10 @@ typedef enum /*< flags >*/
  *
  * The conversation can be an IM or a chat.
  *
- * @note When a conversation is destroyed with g_object_unref(), the specified
- *       conversation is removed from the parent window. If this conversation is
- *       the only one contained in the parent window, that window is also
- *       destroyed.
+ * @note When a conversation is destroyed with the last g_object_unref(), the
+ *       specified conversation is removed from the parent window. If this
+ *       conversation is the only one contained in the parent window, that
+ *       window is also destroyed.
  */
 struct _PurpleConversation
 {
