@@ -587,8 +587,7 @@ purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_object(value, purple_buddy_get_account(buddy));
 			break;
 		case BUDDY_PROP_PRESENCE:
-#warning TODO: change set_pointer to set_object when PurplePresence is a GObject
-			g_value_set_pointer(value, purple_buddy_get_presence(buddy));
+			g_value_set_object(value, purple_buddy_get_presence(buddy));
 			break;
 		case BUDDY_PROP_MEDIA_CAPS:
 			g_value_set_enum(value, purple_buddy_get_media_caps(buddy));
@@ -710,10 +709,9 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
-#warning TODO: change spec_pointer to spec_object when PurplePresence is a GObject
 	g_object_class_install_property(obj_class, BUDDY_PROP_PRESENCE,
-			g_param_spec_pointer(BUDDY_PROP_PRESENCE_S, _("Presence"),
-				_("The status information for the buddy."),
+			g_param_spec_object(BUDDY_PROP_PRESENCE_S, _("Presence"),
+				_("The status information for the buddy."), PURPLE_TYPE_PRESENCE,
 				G_PARAM_READABLE)
 			);
 

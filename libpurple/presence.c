@@ -26,11 +26,27 @@
 /** @copydoc _PurplePresencePrivate */
 typedef struct _PurplePresencePrivate  PurplePresencePrivate;
 
+#define PURPLE_ACCOUNT_PRESENCE_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ACCOUNT_PRESENCE, PurpleAccountPresencePrivate))
+
+/** @copydoc _PurpleAccountPresencePrivate */
+typedef struct _PurpleAccountPresencePrivate  PurpleAccountPresencePrivate;
+
+#define PURPLE_CONVERSATION_PRESENCE_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONVERSATION_PRESENCE, PurpleConversationPresencePrivate))
+
+/** @copydoc _PurpleConversationPresencePrivate */
+typedef struct _PurpleConversationPresencePrivate  PurpleConversationPresencePrivate;
+
+#define PURPLE_BUDDY_PRESENCE_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_PRESENCE, PurpleBuddyPresencePrivate))
+
+/** @copydoc _PurpleBuddyPresencePrivate */
+typedef struct _PurpleBuddyPresencePrivate  PurpleBuddyPresencePrivate;
+
 /** Private data for a presence */
 struct _PurplePresencePrivate
 {
-	PurplePresenceContext context;
-
 	gboolean idle;
 	time_t idle_time;
 	time_t login_time;
@@ -39,27 +55,24 @@ struct _PurplePresencePrivate
 	GHashTable *status_table;
 
 	PurpleStatus *active_status;
+};
 
-	union
-	{
-		PurpleAccount *account;
+/** Private data for an account presence */
+struct _PurpleAccountPresencePrivate
+{
+	PurpleAccount *account;
+};
 
-		struct
-		{
-			PurpleConversation *conv;
-			char *user;
+/** Private data for a conversation presence */
+struct _PurpleConversationPresencePrivate
+{
+	PurpleConversation *conv;
+};
 
-		} chat;
-
-		struct
-		{
-			PurpleAccount *account;
-			char *name;
-			PurpleBuddy *buddy;
-
-		} buddy;
-
-	} u;
+/** Private data for a buddy presence */
+struct _PurpleBuddyPresencePrivate
+{
+	PurpleBuddy *buddy;
 };
 
 /**************************************************************************

@@ -33,19 +33,20 @@ typedef struct _PurplePresence  PurplePresence;
 /** @copydoc _PurplePresenceClass */
 typedef struct _PurplePresenceClass  PurplePresenceClass;
 
-/** TODO Remove
- * A context for a presence.
- *
- * The context indicates to what the presence applies.
- */
-typedef enum
-{
-	PURPLE_PRESENCE_CONTEXT_UNSET   = 0,
-	PURPLE_PRESENCE_CONTEXT_ACCOUNT,
-	PURPLE_PRESENCE_CONTEXT_CONV,
-	PURPLE_PRESENCE_CONTEXT_BUDDY
+/** @copydoc _PurpleAccountPresence */
+typedef struct _PurpleAccountPresence  PurpleAccountPresence;
+/** @copydoc _PurpleAccountPresenceClass */
+typedef struct _PurpleAccountPresenceClass  PurpleAccountPresenceClass;
 
-} PurplePresenceContext;
+/** @copydoc _PurpleConversationPresence */
+typedef struct _PurpleConversationPresence  PurpleConversationPresence;
+/** @copydoc _PurpleConversationPresenceClass */
+typedef struct _PurpleConversationPresenceClass  PurpleConversationPresenceClass;
+
+/** @copydoc _PurpleBuddyPresence */
+typedef struct _PurpleBuddyPresence  PurpleBuddyPresence;
+/** @copydoc _PurpleBuddyPresenceClass */
+typedef struct _PurpleBuddyPresenceClass  PurpleBuddyPresenceClass;
 
 /**
  * A PurplePresence is like a collection of PurpleStatuses (plus some
@@ -57,6 +58,9 @@ typedef enum
  * and it contains their current idle time.  PurplePresences are
  * never saved to disk.  The information they contain is only relevant
  * for the current PurpleSession.
+ *
+ * @note When a presence is destroyed with the last g_object_unref(), all
+ *       statuses added to this list will be destroyed along with the presence.
  */
 struct _PurplePresence
 {
@@ -75,58 +79,147 @@ struct _PurplePresenceClass {
 	void (*_purple_reserved4)(void);
 };
 
+/**
+ * A presence for an account
+ */
+struct _PurpleAccountPresence
+{
+	/*< private >*/
+	PurplePresence parent;
+};
+
+/** Base class for all #PurpleAccountPresence's */
+struct _PurpleAccountPresenceClass {
+	/*< private >*/
+	PurplePresenceClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * A presence for a conversation
+ */
+struct _PurpleConversationPresence
+{
+	/*< private >*/
+	PurplePresence parent;
+};
+
+/** Base class for all #PurpleConversationPresence's */
+struct _PurpleConversationPresenceClass {
+	/*< private >*/
+	PurplePresenceClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
+/**
+ * A presence for a buddy
+ */
+struct _PurpleBuddyPresence
+{
+	/*< private >*/
+	PurplePresence parent;
+};
+
+/** Base class for all #PurpleBuddyPresence's */
+struct _PurpleBuddyPresenceClass {
+	/*< private >*/
+	PurplePresenceClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PurplePresence API                                                */
+/** @name PurpleAccountPresence API                                       */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Creates a new presence.
- *
- * @param context The presence context.
- *
- * @return A new presence.
- */
-PurplePresence *purple_presence_new(PurplePresenceContext context);
-
-/**
  * Creates a presence for an account.
  *
- * @param account The account.
+ * @param account The account to associate with the presence.
  *
  * @return The new presence.
  */
-PurplePresence *purple_presence_new_for_account(PurpleAccount *account);
+PurpleAccountPresence *purple_account_presence_new(PurpleAccount *account);
+
+/**
+ * Returns an account presence's account.
+ *
+ * @param presence The presence.
+ *
+ * @return The presence's account.
+ */
+PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *presence);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PurpleConversationPresence API                                  */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Creates a presence for a conversation.
  *
- * @param conv The conversation.
+ * @param conv The conversation to associate with the presence.
  *
  * @return The new presence.
  */
-PurplePresence *purple_presence_new_for_conv(PurpleConversation *conv);
+PurpleConversationPresence *purple_conversation_presence_new(PurpleConversation *conv);
+
+/**
+ * Returns a conversation presence's conversation.
+ *
+ * @param presence The presence.
+ *
+ * @return The presence's conversation.
+ */
+PurpleConversation *purple_conversation_presence_get_conversation(const PurpleConversationPresence *presence);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PurpleBuddyPresence API                                         */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Creates a presence for a buddy.
  *
- * @param buddy The buddy.
+ * @param buddy The buddy to associate with the presence.
  *
  * @return The new presence.
  */
-PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
+PurpleBuddyPresence *purple_buddy_presence_new(PurpleBuddy *buddy);
 
 /**
- * Destroys a presence.
+ * Returns the buddy presence's buddy.
  *
- * All statuses added to this list will be destroyed along with
- * the presence.
+ * @param presence The presence.
  *
- * @param presence The presence to destroy.
+ * @return The presence's buddy.
  */
-void purple_presence_destroy(PurplePresence *presence);
+PurpleBuddy *purple_buddy_presence_get_buddy(const PurpleBuddyPresence *presence);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PurplePresence API                                              */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Sets the active state of a status in a presence.
@@ -174,52 +267,6 @@ void purple_presence_set_idle(PurplePresence *presence, gboolean idle,
  * @param login_time The login time.
  */
 void purple_presence_set_login_time(PurplePresence *presence, time_t login_time);
-
-
-/**
- * Returns the presence's context.
- *
- * @param presence The presence.
- *
- * @return The presence's context.
- */
-PurplePresenceContext purple_presence_get_context(const PurplePresence *presence);
-
-/**
- * Returns a presence's account.
- *
- * @param presence The presence.
- *
- * @return The presence's account.
- */
-PurpleAccount *purple_presence_get_account(const PurplePresence *presence);
-
-/**
- * Returns a presence's conversation.
- *
- * @param presence The presence.
- *
- * @return The presence's conversation.
- */
-PurpleConversation *purple_presence_get_conversation(const PurplePresence *presence);
-
-/**
- * Returns a presence's chat user.
- *
- * @param presence The presence.
- *
- * @return The chat's user.
- */
-const char *purple_presence_get_chat_user(const PurplePresence *presence);
-
-/**
- * Returns the presence's buddy.
- *
- * @param presence The presence.
- *
- * @return The presence's buddy.
- */
-PurpleBuddy *purple_presence_get_buddy(const PurplePresence *presence);
 
 /**
  * Returns all the statuses in a presence.
