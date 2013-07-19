@@ -33,6 +33,7 @@
 #include "savedstatuses.h"
 #include "debug.h"
 #include "prefs.h"
+#include "presences.h"
 #include "core.h"
 
 #include "tcl_purple.h"
@@ -1168,12 +1169,11 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	const char *cmds[] = { "account", "active_status", "available",
-			       "chat_user", "context", "conversation", "idle",
-			       "login", "online", "status", "statuses", NULL };
+			       "idle", "type", "login", "online", "status",
+			       "statuses", NULL };
 	enum { CMD_PRESENCE_ACCOUNT, CMD_PRESENCE_ACTIVE_STATUS,
-	       CMD_PRESENCE_AVAILABLE, CMD_PRESENCE_CHAT_USER,
-	       CMD_PRESENCE_CONTEXT, CMD_PRESENCE_CONVERSATION,
-	       CMD_PRESENCE_IDLE, CMD_PRESENCE_LOGIN, CMD_PRESENCE_ONLINE,
+	       CMD_PRESENCE_AVAILABLE, CMD_PRESENCE_IDLE, CMD_PRESENCE_TYPE,
+	       CMD_PRESENCE_LOGIN, CMD_PRESENCE_ONLINE,
 	       CMD_PRESENCE_STATUS, CMD_PRESENCE_STATUSES } cmd;
 	Tcl_Obj *result;
 	Tcl_Obj *list, *elem;
@@ -1198,7 +1198,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefAccount,
-		                                          purple_account_presence_get_account(presence)));
+		                    purple_account_presence_get_account(PURPLE_ACCOUNT_PRESENCE(presence))));
 		break;
 	case CMD_PRESENCE_ACTIVE_STATUS:
 		if (objc != 3 && objc != 4 && objc != 5) {
@@ -1249,47 +1249,17 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		Tcl_SetObjResult(interp,
 				 Tcl_NewBooleanObj(purple_presence_is_available(presence)));
 		break;
-	case CMD_PRESENCE_CHAT_USER:
+	case CMD_PRESENCE_TYPE:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "presence");
 			return TCL_ERROR;
 		}
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetObjResult(interp,
-				 Tcl_NewStringObj(purple_presence_get_chat_user(presence), -1));
-		break;
-	case CMD_PRESENCE_CONTEXT:
-		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "presence");
-			return TCL_ERROR;
-		}
-		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
-			return TCL_ERROR;
-		switch (purple_presence_get_context(presence)) {
-		case PURPLE_PRESENCE_CONTEXT_UNSET:
-			Tcl_SetObjResult(interp, Tcl_NewStringObj("unset", -1));
-			break;
-		case PURPLE_PRESENCE_CONTEXT_ACCOUNT:
+		if (PURPLE_IS_ACCOUNT_PRESENCE(presence))
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("account", -1));
-			break;
-		case PURPLE_PRESENCE_CONTEXT_CONV:
-			Tcl_SetObjResult(interp, Tcl_NewStringObj("conversation", -1));
-			break;
-		case PURPLE_PRESENCE_CONTEXT_BUDDY:
+		else if (PURPLE_IS_BUDDY_PRESENCE(presence))
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("buddy", -1));
-			break;
-		}
-		break;
-	case CMD_PRESENCE_CONVERSATION:
-		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "presence");
-			return TCL_ERROR;
-		}
-		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
-			return TCL_ERROR;
-		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefConversation,
-		                                          purple_conversation_presence_get_conversation(presence)));
 		break;
 	case CMD_PRESENCE_IDLE:
 		if (objc < 3 || objc > 5) {
