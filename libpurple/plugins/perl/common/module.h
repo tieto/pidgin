@@ -227,7 +227,6 @@ typedef PurplePrefType			Purple__PrefType;
 /* presence.h */
 typedef PurplePresence *		Purple__Presence;
 typedef PurpleAccountPresence *		Purple__AccountPresence;
-typedef PurpleConversationPresence *	Purple__ConversationPresence;
 typedef PurpleBuddyPresence *		Purple__BuddyPresence;
 
 /* proxy.h */

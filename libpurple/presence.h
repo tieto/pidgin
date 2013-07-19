@@ -38,11 +38,6 @@ typedef struct _PurpleAccountPresence  PurpleAccountPresence;
 /** @copydoc _PurpleAccountPresenceClass */
 typedef struct _PurpleAccountPresenceClass  PurpleAccountPresenceClass;
 
-/** @copydoc _PurpleConversationPresence */
-typedef struct _PurpleConversationPresence  PurpleConversationPresence;
-/** @copydoc _PurpleConversationPresenceClass */
-typedef struct _PurpleConversationPresenceClass  PurpleConversationPresenceClass;
-
 /** @copydoc _PurpleBuddyPresence */
 typedef struct _PurpleBuddyPresence  PurpleBuddyPresence;
 /** @copydoc _PurpleBuddyPresenceClass */
@@ -100,26 +95,6 @@ struct _PurpleAccountPresenceClass {
 };
 
 /**
- * A presence for a conversation
- */
-struct _PurpleConversationPresence
-{
-	/*< private >*/
-	PurplePresence parent;
-};
-
-/** Base class for all #PurpleConversationPresence's */
-struct _PurpleConversationPresenceClass {
-	/*< private >*/
-	PurplePresenceClass parent_class;
-
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
-/**
  * A presence for a buddy
  */
 struct _PurpleBuddyPresence
@@ -163,31 +138,6 @@ PurpleAccountPresence *purple_account_presence_new(PurpleAccount *account);
  * @return The presence's account.
  */
 PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *presence);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name PurpleConversationPresence API                                  */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Creates a presence for a conversation.
- *
- * @param conv The conversation to associate with the presence.
- *
- * @return The new presence.
- */
-PurpleConversationPresence *purple_conversation_presence_new(PurpleConversation *conv);
-
-/**
- * Returns a conversation presence's conversation.
- *
- * @param presence The presence.
- *
- * @return The presence's conversation.
- */
-PurpleConversation *purple_conversation_presence_get_conversation(const PurpleConversationPresence *presence);
 
 /*@}*/
 

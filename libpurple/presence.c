@@ -32,12 +32,6 @@ typedef struct _PurplePresencePrivate  PurplePresencePrivate;
 /** @copydoc _PurpleAccountPresencePrivate */
 typedef struct _PurpleAccountPresencePrivate  PurpleAccountPresencePrivate;
 
-#define PURPLE_CONVERSATION_PRESENCE_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONVERSATION_PRESENCE, PurpleConversationPresencePrivate))
-
-/** @copydoc _PurpleConversationPresencePrivate */
-typedef struct _PurpleConversationPresencePrivate  PurpleConversationPresencePrivate;
-
 #define PURPLE_BUDDY_PRESENCE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_PRESENCE, PurpleBuddyPresencePrivate))
 
@@ -61,12 +55,6 @@ struct _PurplePresencePrivate
 struct _PurpleAccountPresencePrivate
 {
 	PurpleAccount *account;
-};
-
-/** Private data for a conversation presence */
-struct _PurpleConversationPresencePrivate
-{
-	PurpleConversation *conv;
 };
 
 /** Private data for a buddy presence */

@@ -12,10 +12,6 @@ Purple::Account
 purple_account_presence_get_account(presence)
 	Purple::AccountPresence presence
 
-Purple::Conversation
-purple_conversation_presence_get_conversation(presence)
-	Purple::ConversationPresence presence
-
 Purple::BuddyList::Buddy
 purple_buddy_presence_get_buddy(presence)
 	Purple::BuddyPresence presence
@@ -72,10 +68,6 @@ purple_presence_is_status_primitive_active(presence, primitive)
 Purple::AccountPresence
 purple_account_presence_new(account)
 	Purple::Account account
-
-Purple::ConversationPresence
-purple_conversation_presence_new(conv)
-	Purple::Conversation conv
 
 Purple::BuddyPresence
 purple_buddy_presence_new(buddy)
