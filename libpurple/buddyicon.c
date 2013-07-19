@@ -33,19 +33,17 @@
 #include "imgstore.h"
 #include "util.h"
 
-#define PURPLE_BUDDY_ICON_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_ICON, PurpleBuddyIconPrivate))
-
-/** Private data for buddy icons */
-typedef struct
+/* NOTE: Instances of this struct are allocated without zeroing the memory, so
+ * NOTE: be sure to update purple_buddy_icon_new() if you add members. */
+struct _PurpleBuddyIcon
 {
 	PurpleAccount *account;    /**< The account the user is on.          */
 	PurpleStoredImage *img;    /**< The stored image containing
 	                                the icon data.                       */
 	char *username;            /**< The username the icon belongs to.    */
 	char *checksum;            /**< The protocol checksum.               */
-
-} PurpleBuddyIconPrivate;
+	unsigned int ref_count;    /**< The buddy icon reference count.      */
+};
 
 /**
  * This is the big grand daddy hash table that contains references to
@@ -1132,4 +1130,31 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 
 	*width = new_width;
 	*height = new_height;
+}
+
+static PurpleBuddyIcon *
+purple_buddy_icon_copy(PurpleBuddyIcon *icon)
+{
+	PurpleBuddyIcon *icon_copy;
+
+	g_return_val_if_fail(icon != NULL, NULL);
+
+	icon_copy = g_new(PurpleBuddyIcon, 1);
+	*icon_copy = *icon;
+
+	return icon_copy;
+}
+
+GType
+purple_buddy_icon_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleBuddyIcon",
+				(GBoxedCopyFunc)purple_buddy_icon_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
 }
