@@ -34,7 +34,6 @@
 #include <core.h>
 #include <debug.h>
 #include <pounce.h>
-#include <presences.h>
 #include <request.h>
 
 #define	PREF_PREFIX		"/plugins/core/" PLUGIN_ID

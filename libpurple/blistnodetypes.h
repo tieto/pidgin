@@ -78,6 +78,7 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #include "account.h"
 #include "buddyicon.h"
 #include "media.h"
+#include "presences.h"
 #include "status.h"
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \

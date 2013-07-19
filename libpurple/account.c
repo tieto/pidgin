@@ -2932,7 +2932,7 @@ purple_account_constructed(GObject *object)
 		purple_account_set_status_types(account,
 				prpl_info->status_types(account));
 
-	priv->presence = purple_account_presence_new(account);
+	priv->presence = PURPLE_PRESENCE(purple_account_presence_new(account));
 
 	status_type = purple_account_get_status_type_with_primitive(account,
 			PURPLE_STATUS_AVAILABLE);

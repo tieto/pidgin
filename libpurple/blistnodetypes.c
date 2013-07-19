@@ -615,7 +615,7 @@ purple_buddy_constructed(GObject *object)
 
 	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
 
-	priv->presence = purple_buddy_presence_new(buddy);
+	priv->presence = PURPLE_PRESENCE(purple_buddy_presence_new(buddy));
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);
 
 	if (ops && ops->new_node)
