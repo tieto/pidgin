@@ -549,7 +549,6 @@ purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
 			break;
 		case BUDDY_PROP_ICON:
-#warning TODO: change get_pointer to get_object when PurpleBuddyIcon is a GObject
 			purple_buddy_set_icon(buddy, g_value_get_pointer(value));
 			break;
 		case BUDDY_PROP_ACCOUNT:
@@ -582,7 +581,6 @@ purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_string(value, purple_buddy_get_server_alias(buddy));
 			break;
 		case BUDDY_PROP_ICON:
-#warning TODO: change set_pointer to set_object when PurpleBuddyIcon is a GObject
 			g_value_set_pointer(value, purple_buddy_get_icon(buddy));
 			break;
 		case BUDDY_PROP_ACCOUNT:
@@ -700,7 +698,6 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 				G_PARAM_READWRITE)
 			);
 
-#warning TODO: change spec_pointer to spec_object when PurpleBuddyIcon is a GObject
 	g_object_class_install_property(obj_class, BUDDY_PROP_ICON,
 			g_param_spec_pointer(BUDDY_PROP_ICON_S, _("Buddy icon"),
 				_("The icon for the buddy."),

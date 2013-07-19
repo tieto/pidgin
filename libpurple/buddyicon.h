@@ -50,8 +50,6 @@ G_BEGIN_DECLS
 
 /**
  * Returns the GType for the PurpleBuddyIcon boxed structure.
- * TODO Boxing of PurpleBuddyIcon is a temporary solution to having a GType for
- *      icons. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_buddy_icon_get_type(void);
 

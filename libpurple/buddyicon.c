@@ -1132,19 +1132,6 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 	*height = new_height;
 }
 
-static PurpleBuddyIcon *
-purple_buddy_icon_copy(PurpleBuddyIcon *icon)
-{
-	PurpleBuddyIcon *icon_copy;
-
-	g_return_val_if_fail(icon != NULL, NULL);
-
-	icon_copy = g_new(PurpleBuddyIcon, 1);
-	*icon_copy = *icon;
-
-	return icon_copy;
-}
-
 GType
 purple_buddy_icon_get_type(void)
 {
@@ -1152,8 +1139,8 @@ purple_buddy_icon_get_type(void)
 
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleBuddyIcon",
-				(GBoxedCopyFunc)purple_buddy_icon_copy,
-				(GBoxedFreeFunc)g_free);
+				(GBoxedCopyFunc)purple_buddy_icon_ref,
+				(GBoxedFreeFunc)purple_buddy_icon_unref);
 	}
 
 	return type;
