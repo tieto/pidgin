@@ -1,3 +1,7 @@
+/**
+ * @file status.h Status API
+ * @ingroup core
+ */
 /*
  * purple
  *
@@ -22,10 +26,7 @@
 #ifndef _PURPLE_STATUS_H_
 #define _PURPLE_STATUS_H_
 
-/**
- * @file status.h Status API
- * @ingroup core
- *
+/*
  * A brief explanation of the status API:
  *
  * PurpleStatusType's are created by each PRPL.  They outline the
@@ -54,7 +55,6 @@
  * If "saveable" is set to FALSE then the status is NEVER saved.
  * All PurpleStatuses should be inside a PurplePresence.
  *
- *
  * A PurpleStatus is either "independent" or "exclusive."
  * Independent statuses can be active or inactive and they don't
  * affect anything else.  However, you can only have one exclusive
@@ -62,14 +62,9 @@
  * then the previous exclusive status is automatically deactivated.
  *
  * A PurplePresence is like a collection of PurpleStatuses (plus some
- * other random info).  For any buddy, or for any one of your accounts,
- * or for any person with which you're chatting, you may know various
- * amounts of information.  This information is all contained in
- * one PurplePresence.  If one of your buddies is away and idle,
- * then the presence contains the PurpleStatus for their awayness,
- * and it contains their current idle time.  PurplePresences are
- * never saved to disk.  The information they contain is only relevant
- * for the current PurpleSession.
+ * other random info).
+ *
+ * @see presence.h
  */
 
 /**
@@ -85,29 +80,16 @@
 #define PURPLE_TYPE_STATUS      (purple_status_get_g_type())
 typedef struct _PurpleStatus    PurpleStatus;
 
-typedef struct _PurplePresence    PurplePresence;
 typedef struct _PurpleStatusType  PurpleStatusType;
 typedef struct _PurpleStatusAttr  PurpleStatusAttr;
+
+typedef struct _PurplePresence  PurplePresence;
 
 typedef struct _PurpleMood {
 	const char *mood;
 	const char *description;
 	gpointer *padding;
 } PurpleMood;
-
-/**
- * A context for a presence.
- *
- * The context indicates to what the presence applies.
- */
-typedef enum
-{
-	PURPLE_PRESENCE_CONTEXT_UNSET   = 0,
-	PURPLE_PRESENCE_CONTEXT_ACCOUNT,
-	PURPLE_PRESENCE_CONTEXT_CONV,
-	PURPLE_PRESENCE_CONTEXT_BUDDY
-
-} PurplePresenceContext;
 
 /**
  * A primitive defining the basic structure of a status type.
@@ -660,270 +642,6 @@ const char *purple_status_get_attr_string(const PurpleStatus *status,
  *          1 if @a status2 is more available than @a status1.
  */
 gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name PurplePresence API                                                */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Creates a new presence.
- *
- * @param context The presence context.
- *
- * @return A new presence.
- */
-PurplePresence *purple_presence_new(PurplePresenceContext context);
-
-/**
- * Creates a presence for an account.
- *
- * @param account The account.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_account(PurpleAccount *account);
-
-/**
- * Creates a presence for a conversation.
- *
- * @param conv The conversation.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_conv(PurpleConversation *conv);
-
-/**
- * Creates a presence for a buddy.
- *
- * @param buddy The buddy.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
-
-/**
- * Destroys a presence.
- *
- * All statuses added to this list will be destroyed along with
- * the presence.
- *
- * @param presence The presence to destroy.
- */
-void purple_presence_destroy(PurplePresence *presence);
-
-/**
- * Sets the active state of a status in a presence.
- *
- * Only independent statuses can be set unactive. Normal statuses can only
- * be set active, so if you wish to disable a status, set another
- * non-independent status to active, or use purple_presence_switch_status().
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- * @param active    The active state.
- */
-void purple_presence_set_status_active(PurplePresence *presence,
-									 const char *status_id, gboolean active);
-
-/**
- * Switches the active status in a presence.
- *
- * This is similar to purple_presence_set_status_active(), except it won't
- * activate independent statuses.
- *
- * @param presence The presence.
- * @param status_id The status ID to switch to.
- */
-void purple_presence_switch_status(PurplePresence *presence,
-								 const char *status_id);
-
-/**
- * Sets the idle state and time on a presence.
- *
- * @param presence  The presence.
- * @param idle      The idle state.
- * @param idle_time The idle time, if @a idle is TRUE.  This
- *                  is the time at which the user became idle,
- *                  in seconds since the epoch.  If this value is
- *                  unknown then 0 should be used.
- */
-void purple_presence_set_idle(PurplePresence *presence, gboolean idle,
-							time_t idle_time);
-
-/**
- * Sets the login time on a presence.
- *
- * @param presence   The presence.
- * @param login_time The login time.
- */
-void purple_presence_set_login_time(PurplePresence *presence, time_t login_time);
-
-
-/**
- * Returns the presence's context.
- *
- * @param presence The presence.
- *
- * @return The presence's context.
- */
-PurplePresenceContext purple_presence_get_context(const PurplePresence *presence);
-
-/**
- * Returns a presence's account.
- *
- * @param presence The presence.
- *
- * @return The presence's account.
- */
-PurpleAccount *purple_presence_get_account(const PurplePresence *presence);
-
-/**
- * Returns a presence's conversation.
- *
- * @param presence The presence.
- *
- * @return The presence's conversation.
- */
-PurpleConversation *purple_presence_get_conversation(const PurplePresence *presence);
-
-/**
- * Returns a presence's chat user.
- *
- * @param presence The presence.
- *
- * @return The chat's user.
- */
-const char *purple_presence_get_chat_user(const PurplePresence *presence);
-
-/**
- * Returns the presence's buddy.
- *
- * @param presence The presence.
- *
- * @return The presence's buddy.
- */
-PurpleBuddy *purple_presence_get_buddy(const PurplePresence *presence);
-
-/**
- * Returns all the statuses in a presence.
- *
- * @param presence The presence.
- *
- * @constreturn The statuses.
- */
-GList *purple_presence_get_statuses(const PurplePresence *presence);
-
-/**
- * Returns the status with the specified ID from a presence.
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- *
- * @return The status if found, or NULL.
- */
-PurpleStatus *purple_presence_get_status(const PurplePresence *presence,
-									 const char *status_id);
-
-/**
- * Returns the active exclusive status from a presence.
- *
- * @param presence The presence.
- *
- * @return The active exclusive status.
- */
-PurpleStatus *purple_presence_get_active_status(const PurplePresence *presence);
-
-/**
- * Returns whether or not a presence is available.
- *
- * Available presences are online and possibly invisible, but not away or idle.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is available, or FALSE otherwise.
- */
-gboolean purple_presence_is_available(const PurplePresence *presence);
-
-/**
- * Returns whether or not a presence is online.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is online, or FALSE otherwise.
- */
-gboolean purple_presence_is_online(const PurplePresence *presence);
-
-/**
- * Returns whether or not a status in a presence is active.
- *
- * A status is active if itself or any of its sub-statuses are active.
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- *
- * @return TRUE if the status is active, or FALSE.
- */
-gboolean purple_presence_is_status_active(const PurplePresence *presence,
-										const char *status_id);
-
-/**
- * Returns whether or not a status with the specified primitive type
- * in a presence is active.
- *
- * A status is active if itself or any of its sub-statuses are active.
- *
- * @param presence  The presence.
- * @param primitive The status primitive.
- *
- * @return TRUE if the status is active, or FALSE.
- */
-gboolean purple_presence_is_status_primitive_active(
-	const PurplePresence *presence, PurpleStatusPrimitive primitive);
-
-/**
- * Returns whether or not a presence is idle.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is idle, or FALSE otherwise.
- *         If the presence is offline (purple_presence_is_online()
- *         returns FALSE) then FALSE is returned.
- */
-gboolean purple_presence_is_idle(const PurplePresence *presence);
-
-/**
- * Returns the presence's idle time.
- *
- * @param presence The presence.
- *
- * @return The presence's idle time.
- */
-time_t purple_presence_get_idle_time(const PurplePresence *presence);
-
-/**
- * Returns the presence's login time.
- *
- * @param presence The presence.
- *
- * @return The presence's login time.
- */
-time_t purple_presence_get_login_time(const PurplePresence *presence);
-
-/**
- * Compares two presences for availability.
- *
- * @param presence1 The first presence.
- * @param presence2 The second presence.
- *
- * @return -1 if @a presence1 is more available than @a presence2.
- *          0 if @a presence1 is equal to @a presence2.
- *          1 if @a presence1 is less available than @a presence2.
- */
-gint purple_presence_compare(const PurplePresence *presence1,
-						   const PurplePresence *presence2);
 
 /*@}*/
 
