@@ -28,15 +28,36 @@
 
 #include "status.h"
 
+#define PURPLE_TYPE_PRESENCE             (purple_presence_get_type())
+#define PURPLE_PRESENCE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PRESENCE, PurplePresence))
+#define PURPLE_PRESENCE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PRESENCE, PurplePresenceClass))
+#define PURPLE_IS_PRESENCE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PRESENCE))
+#define PURPLE_IS_PRESENCE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PRESENCE))
+#define PURPLE_PRESENCE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PRESENCE, PurplePresenceClass))
+
 /** @copydoc _PurplePresence */
 typedef struct _PurplePresence  PurplePresence;
 /** @copydoc _PurplePresenceClass */
 typedef struct _PurplePresenceClass  PurplePresenceClass;
 
+#define PURPLE_TYPE_ACCOUNT_PRESENCE             (purple_account_presence_get_type())
+#define PURPLE_ACCOUNT_PRESENCE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT_PRESENCE, PurpleAccountPresence))
+#define PURPLE_ACCOUNT_PRESENCE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT_PRESENCE, PurpleAccountPresenceClass))
+#define PURPLE_IS_ACCOUNT_PRESENCE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT_PRESENCE))
+#define PURPLE_IS_ACCOUNT_PRESENCE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT_PRESENCE))
+#define PURPLE_ACCOUNT_PRESENCE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT_PRESENCE, PurpleAccountPresenceClass))
+
 /** @copydoc _PurpleAccountPresence */
 typedef struct _PurpleAccountPresence  PurpleAccountPresence;
 /** @copydoc _PurpleAccountPresenceClass */
 typedef struct _PurpleAccountPresenceClass  PurpleAccountPresenceClass;
+
+#define PURPLE_TYPE_BUDDY_PRESENCE             (purple_buddy_presence_get_type())
+#define PURPLE_BUDDY_PRESENCE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY_PRESENCE, PurpleBuddyPresence))
+#define PURPLE_BUDDY_PRESENCE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BUDDY_PRESENCE, PurpleBuddyPresenceClass))
+#define PURPLE_IS_BUDDY_PRESENCE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_BUDDY_PRESENCE))
+#define PURPLE_IS_BUDDY_PRESENCE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_BUDDY_PRESENCE))
+#define PURPLE_BUDDY_PRESENCE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BUDDY_PRESENCE, PurpleBuddyPresenceClass))
 
 /** @copydoc _PurpleBuddyPresence */
 typedef struct _PurpleBuddyPresence  PurpleBuddyPresence;
@@ -122,6 +143,11 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * Returns the GType for the PurpleAccountPresence object.
+ */
+GType purple_account_presence_get_type(void);
+
+/**
  * Creates a presence for an account.
  *
  * @param account The account to associate with the presence.
@@ -147,6 +173,11 @@ PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *
 /*@{*/
 
 /**
+ * Returns the GType for the PurpleBuddyPresence object.
+ */
+GType purple_buddy_presence_get_type(void);
+
+/**
  * Creates a presence for a buddy.
  *
  * @param buddy The buddy to associate with the presence.
@@ -170,6 +201,11 @@ PurpleBuddy *purple_buddy_presence_get_buddy(const PurpleBuddyPresence *presence
 /** @name PurplePresence API                                              */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurplePresence object.
+ */
+GType purple_presence_get_type(void);
 
 /**
  * Sets the active state of a status in a presence.
