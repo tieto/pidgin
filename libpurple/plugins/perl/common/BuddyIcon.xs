@@ -3,14 +3,6 @@
 MODULE = Purple::Buddy::Icon PACKAGE = Purple::Buddy::Icon   PREFIX = purple_buddy_icon_
 PROTOTYPES: ENABLE
 
-Purple::Buddy::Icon
-purple_buddy_icon_ref(icon)
-	Purple::Buddy::Icon icon
-
-void
-purple_buddy_icon_unref(icon)
-	Purple::Buddy::Icon icon
-
 void
 purple_buddy_icon_update(icon)
 	Purple::Buddy::Icon icon

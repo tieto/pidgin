@@ -179,9 +179,9 @@ purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon)
 
 	if (priv->icon != icon)
 	{
-		purple_buddy_icon_unref(priv->icon);
+		g_object_unref(priv->icon);
 
-		priv->icon = (icon == NULL ? NULL : purple_buddy_icon_ref(icon));
+		priv->icon = (icon == NULL ? NULL : g_object_ref(icon));
 	}
 
 	purple_conversation_update(PURPLE_CONVERSATION(im),
@@ -390,9 +390,8 @@ purple_im_conversation_set_property(GObject *obj, guint param_id, const GValue *
 		case IM_PROP_TYPING_STATE:
 			purple_im_conversation_set_typing_state(im, g_value_get_enum(value));
 			break;
-#warning TODO: change get_pointer to get_object when PurpleBuddyIcon is a GObject
 		case IM_PROP_ICON:
-			purple_im_conversation_set_icon(im, g_value_get_pointer(value));
+			purple_im_conversation_set_icon(im, g_value_get_object(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -411,9 +410,8 @@ purple_im_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 		case IM_PROP_TYPING_STATE:
 			g_value_set_enum(value, purple_im_conversation_get_typing_state(im));
 			break;
-#warning TODO: change set_pointer to set_object when PurpleBuddyIcon is a GObject
 		case IM_PROP_ICON:
-			g_value_set_pointer(value, purple_im_conversation_get_icon(im));
+			g_value_set_object(value, purple_im_conversation_get_icon(im));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -441,7 +439,7 @@ purple_im_conversation_constructed(GObject *object)
 	{
 		purple_im_conversation_set_icon(im, icon);
 		/* purple_im_conversation_set_icon refs the icon. */
-		purple_buddy_icon_unref(icon);
+		g_object_unref(icon);
 	}
 
 	if (purple_prefs_get_bool("/purple/logging/log_ims"))
@@ -484,7 +482,7 @@ purple_im_conversation_finalize(GObject *object)
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(object);
 	PurpleIMConversationPrivate *priv = PURPLE_IM_CONVERSATION_GET_PRIVATE(im);
 
-	purple_buddy_icon_unref(priv->icon);
+	g_object_unref(priv->icon);
 	priv->icon = NULL;
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
@@ -515,10 +513,9 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 				G_PARAM_READWRITE)
 			);
 
-#warning TODO: change spec_pointer to spec_object when PurpleBuddyIcon is a GObject
 	g_object_class_install_property(obj_class, IM_PROP_ICON,
-			g_param_spec_pointer(IM_PROP_ICON_S, _("Buddy icon"),
-				_("The buddy icon for the IM."),
+			g_param_spec_object(IM_PROP_ICON_S, _("Buddy icon"),
+				_("The buddy icon for the IM."), PURPLE_TYPE_BUDDY_ICON,
 				G_PARAM_READWRITE)
 			);
 

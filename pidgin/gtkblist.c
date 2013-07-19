@@ -2731,7 +2731,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBListNode *node,
 	}
 
 	buf = pidgin_pixbuf_from_data(data, len);
-	purple_buddy_icon_unref(icon);
+	g_object_unref(icon);
 	if (!buf) {
 		purple_debug_warning("gtkblist", "Couldn't load buddy icon "
 				"on account %s (%s)  buddyname=%s  "
