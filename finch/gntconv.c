@@ -581,7 +581,7 @@ generate_send_to_menu(FinchConv *ggc)
 	}
 	for (list = g_list_reverse(list); list != NULL; list = g_list_delete_link(list, list)) {
 		PurplePresence *pre = list->data;
-		PurpleBuddy *buddy = purple_presence_get_buddy(pre);
+		PurpleBuddy *buddy = purple_buddy_presence_get_buddy(pre);
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		gchar *name = g_strdup(purple_buddy_get_name(buddy));
 		gchar *text = g_strdup_printf("%s (%s)", purple_buddy_get_name(buddy), purple_account_get_username(account));

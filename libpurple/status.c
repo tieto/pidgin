@@ -578,7 +578,7 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 
 	if (context == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
-		PurpleAccount *account = purple_presence_get_account(presence);
+		PurpleAccount *account = purple_account_presence_get_account(presence);
 		PurpleAccountUiOps *ops = purple_accounts_get_ui_ops();
 
 		if (purple_account_get_enabled(account, purple_core_get_ui()))
@@ -591,7 +591,7 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 	}
 	else if (context == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-			notify_buddy_status_update(purple_presence_get_buddy(presence), presence,
+			notify_buddy_status_update(purple_buddy_presence_get_buddy(presence), presence,
 					old_status, new_status);
 	}
 }

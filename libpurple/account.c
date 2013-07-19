@@ -2932,7 +2932,7 @@ purple_account_constructed(GObject *object)
 		purple_account_set_status_types(account,
 				prpl_info->status_types(account));
 
-	priv->presence = purple_presence_new_for_account(account);
+	priv->presence = purple_account_presence_new(account);
 
 	status_type = purple_account_get_status_type_with_primitive(account,
 			PURPLE_STATUS_AVAILABLE);
@@ -2975,7 +2975,7 @@ purple_account_dispose(GObject *object)
 		purple_proxy_info_destroy(priv->proxy_info);
 
 	if (priv->presence)
-		purple_presence_destroy(priv->presence);
+		g_object_unref(priv->presence);
 
 	if(priv->system_log)
 		purple_log_free(priv->system_log);

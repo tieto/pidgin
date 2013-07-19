@@ -615,7 +615,7 @@ purple_buddy_constructed(GObject *object)
 
 	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
 
-	priv->presence = purple_presence_new_for_buddy(buddy);
+	priv->presence = purple_buddy_presence_new(buddy);
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);
 
 	if (ops && ops->new_node)
@@ -644,7 +644,7 @@ purple_buddy_dispose(GObject *object)
 
 	/* Delete the node */
 	purple_buddy_icon_unref(priv->icon);
-	purple_presence_destroy(priv->presence);
+	g_object_unref(priv->presence);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
 

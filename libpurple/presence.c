@@ -98,7 +98,7 @@ purple_presence_new(PurplePresenceContext context)
 }
 
 PurplePresence *
-purple_presence_new_for_account(PurpleAccount *account)
+purple_account_presence_new(PurpleAccount *account)
 {
 	PurplePresence *presence = NULL;
 	g_return_val_if_fail(account != NULL, NULL);
@@ -111,7 +111,7 @@ purple_presence_new_for_account(PurpleAccount *account)
 }
 
 PurplePresence *
-purple_presence_new_for_conv(PurpleConversation *conv)
+purple_conversation_presence_new(PurpleConversation *conv)
 {
 	PurplePresence *presence;
 
@@ -125,7 +125,7 @@ purple_presence_new_for_conv(PurpleConversation *conv)
 }
 
 PurplePresence *
-purple_presence_new_for_buddy(PurpleBuddy *buddy)
+purple_buddy_presence_new(PurpleBuddy *buddy)
 {
 	PurplePresence *presence;
 	PurpleAccount *account;
@@ -285,7 +285,7 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-		update_buddy_idle(purple_presence_get_buddy(presence), presence, current_time,
+		update_buddy_idle(purple_buddy_presence_get_buddy(presence), presence, current_time,
 		                  old_idle, idle);
 	}
 	else if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
@@ -295,7 +295,7 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 		PurplePlugin *prpl = NULL;
 		PurplePluginProtocolInfo *prpl_info = NULL;
 
-		account = purple_presence_get_account(presence);
+		account = purple_account_presence_get_account(presence);
 
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
@@ -352,7 +352,7 @@ purple_presence_get_context(const PurplePresence *presence)
 }
 
 PurpleAccount *
-purple_presence_get_account(const PurplePresence *presence)
+purple_account_presence_get_account(const PurplePresence *presence)
 {
 	PurplePresenceContext context;
 
@@ -367,7 +367,7 @@ purple_presence_get_account(const PurplePresence *presence)
 }
 
 PurpleConversation *
-purple_presence_get_conversation(const PurplePresence *presence)
+purple_conversation_presence_get_conversation(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
 	g_return_val_if_fail(purple_presence_get_context(presence) ==
@@ -387,7 +387,7 @@ purple_presence_get_chat_user(const PurplePresence *presence)
 }
 
 PurpleBuddy *
-purple_presence_get_buddy(const PurplePresence *presence)
+purple_buddy_presence_get_buddy(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
 	g_return_val_if_fail(purple_presence_get_context(presence) ==
@@ -542,13 +542,13 @@ purple_presence_compute_score(const PurplePresence *presence)
 		if (purple_status_is_active(status)) {
 			score += primitive_scores[purple_status_type_get_primitive(type)];
 			if (!purple_status_is_online(status)) {
-				PurpleBuddy *b = purple_presence_get_buddy(presence);
+				PurpleBuddy *b = purple_buddy_presence_get_buddy(presence);
 				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b), b))
 					score += primitive_scores[SCORE_OFFLINE_MESSAGE];
 			}
 		}
 	}
-	score += purple_account_get_int(purple_presence_get_account(presence), "score", 0);
+	score += purple_account_get_int(purple_account_presence_get_account(presence), "score", 0);
 	if (purple_presence_is_idle(presence))
 		score += primitive_scores[SCORE_IDLE];
 	return score;

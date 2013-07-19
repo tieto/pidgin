@@ -1198,7 +1198,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefAccount,
-		                                          purple_presence_get_account(presence)));
+		                                          purple_account_presence_get_account(presence)));
 		break;
 	case CMD_PRESENCE_ACTIVE_STATUS:
 		if (objc != 3 && objc != 4 && objc != 5) {
@@ -1289,7 +1289,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefConversation,
-		                                          purple_presence_get_conversation(presence)));
+		                                          purple_conversation_presence_get_conversation(presence)));
 		break;
 	case CMD_PRESENCE_IDLE:
 		if (objc < 3 || objc > 5) {
