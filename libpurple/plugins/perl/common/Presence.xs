@@ -3,19 +3,6 @@
 MODULE = Purple::Presence  PACKAGE = Purple::Presence  PREFIX = purple_presence_
 PROTOTYPES: ENABLE
 
-gint
-purple_presence_compare(presence1, presence2)
-	Purple::Presence presence1
-	Purple::Presence presence2
-
-Purple::Account
-purple_account_presence_get_account(presence)
-	Purple::AccountPresence presence
-
-Purple::BuddyList::Buddy
-purple_buddy_presence_get_buddy(presence)
-	Purple::BuddyPresence presence
-
 Purple::Status
 purple_presence_get_active_status(presence)
 	Purple::Presence presence
@@ -65,14 +52,6 @@ purple_presence_is_status_primitive_active(presence, primitive)
 	Purple::Presence presence
 	Purple::StatusPrimitive primitive
 
-Purple::AccountPresence
-purple_account_presence_new(account)
-	Purple::Account account
-
-Purple::BuddyPresence
-purple_buddy_presence_new(buddy)
-	Purple::BuddyList::Buddy buddy
-
 void
 purple_presence_set_idle(presence, idle, idle_time)
 	Purple::Presence presence
@@ -94,3 +73,30 @@ void
 purple_presence_switch_status(presence, status_id)
 	Purple::Presence presence
 	const char *status_id
+
+MODULE = Purple::Presence  PACKAGE = Purple::AccountPresence  PREFIX = purple_account_presence_
+PROTOTYPES: ENABLE
+
+Purple::Account
+purple_account_presence_get_account(presence)
+	Purple::AccountPresence presence
+
+Purple::AccountPresence
+purple_account_presence_new(account)
+	Purple::Account account
+
+MODULE = Purple::Presence  PACKAGE = Purple::BuddyPresence  PREFIX = purple_buddy_presence_
+PROTOTYPES: ENABLE
+
+gint
+purple_buddy_presence_compare(presence1, presence2)
+	Purple::BuddyPresence presence1
+	Purple::BuddyPresence presence2
+
+Purple::BuddyList::Buddy
+purple_buddy_presence_get_buddy(presence)
+	Purple::BuddyPresence presence
+
+Purple::BuddyPresence
+purple_buddy_presence_new(buddy)
+	Purple::BuddyList::Buddy buddy

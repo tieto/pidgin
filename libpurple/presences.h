@@ -89,6 +89,12 @@ struct _PurplePresenceClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
+	/**
+	 * Updates the logs and the UI when the idle state or time of the presence
+	 * changes.
+	 */
+	void (*update_idle)(PurplePresence *presence, gboolean old_idle);
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -194,6 +200,19 @@ PurpleBuddyPresence *purple_buddy_presence_new(PurpleBuddy *buddy);
  * @return The presence's buddy.
  */
 PurpleBuddy *purple_buddy_presence_get_buddy(const PurpleBuddyPresence *presence);
+
+/**
+ * Compares two buddy presences for availability.
+ *
+ * @param buddy_presence1 The first presence.
+ * @param buddy_presence2 The second presence.
+ *
+ * @return -1 if @a buddy_presence1 is more available than @a buddy_presence2.
+ *          0 if @a buddy_presence1 is equal to @a buddy_presence2.
+ *          1 if @a buddy_presence1 is less available than @a buddy_presence2.
+ */
+gint purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
+						   const PurpleBuddyPresence *buddy_presence2);
 
 /*@}*/
 
@@ -358,19 +377,6 @@ time_t purple_presence_get_idle_time(const PurplePresence *presence);
  * @return The presence's login time.
  */
 time_t purple_presence_get_login_time(const PurplePresence *presence);
-
-/**
- * Compares two presences for availability.
- *
- * @param presence1 The first presence.
- * @param presence2 The second presence.
- *
- * @return -1 if @a presence1 is more available than @a presence2.
- *          0 if @a presence1 is equal to @a presence2.
- *          1 if @a presence1 is less available than @a presence2.
- */
-gint purple_presence_compare(const PurplePresence *presence1,
-						   const PurplePresence *presence2);
 
 /*@}*/
 
