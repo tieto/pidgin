@@ -3995,8 +3995,8 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 	/* This is necessary because multiple PurpleBuddy's don't share the same
 	 * PurplePresence anymore.
 	 */
-	PurpleBuddy *b1 = purple_buddy_presence_get_buddy(p1);
-	PurpleBuddy *b2 = purple_buddy_presence_get_buddy(p2);
+	PurpleBuddy *b1 = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(p1));
+	PurpleBuddy *b2 = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(p2));
 	if (purple_buddy_get_account(b1) == purple_buddy_get_account(b2) &&
 			strcmp(purple_buddy_get_name(b1), purple_buddy_get_name(b2)) == 0)
 		return FALSE;
@@ -4074,7 +4074,7 @@ generate_send_to_items(PidginWindow *win)
 				 * since we did a g_list_prepend() earlier. */
 				for (iter = g_list_last(list); iter != NULL; iter = iter->prev) {
 					PurplePresence *pre = iter->data;
-					PurpleBuddy *buddy = purple_buddy_presence_get_buddy(pre);
+					PurpleBuddy *buddy = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(pre));
 					create_sendto_item(menu, sg, &group, buddy,
 							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 				}

@@ -7993,9 +7993,9 @@ static void sort_method_status(PurpleBListNode *node, PurpleBuddyList *blist, Gt
 			 ? purple_contact_get_alias(purple_buddy_get_contact(this_buddy))
 			 : NULL));
 
-		presence_cmp = purple_presence_compare(
-			purple_buddy_get_presence(my_buddy),
-			this_buddy ? purple_buddy_get_presence(this_buddy) : NULL);
+		presence_cmp = purple_buddy_presence_compare(
+			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(my_buddy)),
+			this_buddy ? PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(this_buddy)) : NULL);
 
 		if (this_buddy == NULL ||
 			(presence_cmp < 0 ||
