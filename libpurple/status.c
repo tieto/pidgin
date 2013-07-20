@@ -100,6 +100,8 @@ static int primitive_scores[] =
 #define SCORE_IDLE_TIME 10
 #define SCORE_OFFLINE_MESSAGE 11
 
+int *_purple_get_primitive_scores(void);
+
 /**************************************************************************
  * PurpleStatusPrimitive API
  **************************************************************************/
@@ -122,6 +124,12 @@ static struct PurpleStatusPrimitiveMap
 	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music"), },
 	{ PURPLE_STATUS_MOOD,            "mood",            N_("Feeling")             },
 };
+
+int *
+_purple_get_primitive_scores(void)
+{
+	return primitive_scores;
+}
 
 const char *
 purple_primitive_get_id_from_type(PurpleStatusPrimitive type)
@@ -574,11 +582,10 @@ static void
 notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 					 PurpleStatus *new_status)
 {
-	PurplePresenceContext context = purple_presence_get_context(presence);
-
-	if (context == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
+	if (PURPLE_IS_ACCOUNT_PRESENCE(presence))
 	{
-		PurpleAccount *account = purple_account_presence_get_account(presence);
+		PurpleAccount *account = purple_account_presence_get_account(
+				PURPLE_ACCOUNT_PRESENCE(presence));
 		PurpleAccountUiOps *ops = purple_accounts_get_ui_ops();
 
 		if (purple_account_get_enabled(account, purple_core_get_ui()))
@@ -589,10 +596,11 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 			ops->status_changed(account, new_status);
 		}
 	}
-	else if (context == PURPLE_PRESENCE_CONTEXT_BUDDY)
+	else if (PURPLE_IS_BUDDY_PRESENCE(presence))
 	{
-			notify_buddy_status_update(purple_buddy_presence_get_buddy(presence), presence,
-					old_status, new_status);
+			notify_buddy_status_update(purple_buddy_presence_get_buddy(
+					PURPLE_BUDDY_PRESENCE(presence)), presence, old_status,
+					new_status);
 	}
 }
 
@@ -614,7 +622,8 @@ status_has_changed(PurpleStatus *status)
 		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status))
 			old_status->active = FALSE;
-		presence->active_status = status;
+		purple_presence_set_status_active(presence, purple_status_get_id(status),
+				TRUE);
 	}
 	else
 		old_status = NULL;
@@ -1075,6 +1084,8 @@ purple_status_init(void)
 			primitive_scores[PURPLE_STATUS_EXTENDED_AWAY]);
 	purple_prefs_add_int("/purple/status/scores/idle",
 			primitive_scores[SCORE_IDLE]);
+	purple_prefs_add_int("/purple/status/scores/idle_time",
+			primitive_scores[SCORE_IDLE_TIME]);
 	purple_prefs_add_int("/purple/status/scores/offline_msg",
 			primitive_scores[SCORE_OFFLINE_MESSAGE]);
 

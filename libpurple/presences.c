@@ -20,6 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
+#include "dbus-maybe.h"
 #include "presences.h"
 
 #define PURPLE_PRESENCE_GET_PRIVATE(obj) \
@@ -93,7 +94,10 @@ enum
 	BUDPRES_PROP_LAST
 };
 
-static GObjectClass *parent_class;
+static GObjectClass         *parent_class;
+static PurplePresenceClass  *presence_class;
+
+int *_purple_get_primitive_scores(void);
 
 /**************************************************************************
 * PurplePresence API
@@ -140,9 +144,10 @@ void
 purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_time)
 {
 	gboolean old_idle;
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
 	PurplePresenceClass *klass = PURPLE_PRESENCE_GET_CLASS(presence);
 
-	g_return_if_fail(presence != NULL);
+	g_return_if_fail(priv != NULL);
 
 	if (priv->idle == idle && priv->idle_time == idle_time)
 		return;
@@ -158,7 +163,9 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 void
 purple_presence_set_login_time(PurplePresence *presence, time_t login_time)
 {
-	g_return_if_fail(presence != NULL);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_if_fail(priv != NULL);
 
 	if (priv->login_time == login_time)
 		return;
@@ -169,7 +176,9 @@ purple_presence_set_login_time(PurplePresence *presence, time_t login_time)
 GList *
 purple_presence_get_statuses(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, NULL);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->statuses;
 }
@@ -178,9 +187,10 @@ PurpleStatus *
 purple_presence_get_status(const PurplePresence *presence, const char *status_id)
 {
 	PurpleStatus *status;
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
 	GList *l = NULL;
 
-	g_return_val_if_fail(presence  != NULL, NULL);
+	g_return_val_if_fail(priv      != NULL, NULL);
 	g_return_val_if_fail(status_id != NULL, NULL);
 
 	/* What's the purpose of this hash table? */
@@ -208,7 +218,9 @@ purple_presence_get_status(const PurplePresence *presence, const char *status_id
 PurpleStatus *
 purple_presence_get_active_status(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, NULL);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->active_status;
 }
@@ -278,7 +290,9 @@ purple_presence_is_status_primitive_active(const PurplePresence *presence,
 gboolean
 purple_presence_is_idle(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, FALSE);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
 
 	return purple_presence_is_online(presence) && priv->idle;
 }
@@ -286,7 +300,9 @@ purple_presence_is_idle(const PurplePresence *presence)
 time_t
 purple_presence_get_idle_time(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, 0);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_val_if_fail(priv != NULL, 0);
 
 	return priv->idle_time;
 }
@@ -294,7 +310,9 @@ purple_presence_get_idle_time(const PurplePresence *presence)
 time_t
 purple_presence_get_login_time(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, 0);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
+
+	g_return_val_if_fail(priv != NULL, 0);
 
 	return purple_presence_is_online(presence) ? priv->login_time : 0;
 }
@@ -316,7 +334,6 @@ purple_presence_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
 	PurplePresence *presence = PURPLE_PRESENCE(obj);
-	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
 
 	switch (param_id) {
 		case PRES_PROP_IDLE:
@@ -339,9 +356,6 @@ purple_presence_set_property(GObject *obj, guint param_id, const GValue *value,
 #else
 #error Unknown size of time_t
 #endif
-			break;
-		case PRES_PROP_STATUSES:
-			priv->statuses = g_value_get_pointer(value);
 			break;
 		case PRES_PROP_ACTIVE_STATUS:
 			{
@@ -366,22 +380,22 @@ purple_presence_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case PRES_PROP_IDLE:
-			g_value_set_boolean(value, purple_presence_is_idle(presence);
+			g_value_set_boolean(value, purple_presence_is_idle(presence));
 			break;
 		case PRES_PROP_IDLE_TIME:
 #if SIZEOF_TIME_T == 4
-			g_value_set_int(value, purple_presence_get_idle_time(presence);
+			g_value_set_int(value, purple_presence_get_idle_time(presence));
 #elif SIZEOF_TIME_T == 8
-			g_value_set_int64(value, purple_presence_get_idle_time(presence);
+			g_value_set_int64(value, purple_presence_get_idle_time(presence));
 #else
 #error Unknown size of time_t
 #endif
 			break;
 		case PRES_PROP_LOGIN_TIME:
 #if SIZEOF_TIME_T == 4
-			g_value_set_int(value, purple_presence_get_login_time(presence);
+			g_value_set_int(value, purple_presence_get_login_time(presence));
 #elif SIZEOF_TIME_T == 8
-			g_value_set_int64(value, purple_presence_get_login_time(presence);
+			g_value_set_int64(value, purple_presence_get_login_time(presence));
 #else
 #error Unknown size of time_t
 #endif
@@ -498,7 +512,7 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 	g_object_class_install_property(obj_class, PRES_PROP_STATUSES,
 			g_param_spec_pointer(PRES_PROP_STATUSES_S, _("Statuses"),
 				_("The list of statuses in the presence."),
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, PRES_PROP_ACTIVE_STATUS,
@@ -540,14 +554,17 @@ purple_presence_get_type(void)
 * PurpleAccountPresence API
 **************************************************************************/
 static void
-purple_account_presence_update_idle(PurpleAccountPresence *presence, gboolean old_idle)
+purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
+	gboolean idle = purple_presence_is_idle(presence);
+	time_t idle_time = purple_presence_get_idle_time(presence);
+	time_t current_time = time(NULL);
 
-	account = purple_account_presence_get_account(presence);
+	account = purple_account_presence_get_account(PURPLE_ACCOUNT_PRESENCE(presence));
 
 	if (purple_prefs_get_bool("/purple/logging/log_system"))
 	{
@@ -600,6 +617,9 @@ purple_buddy_presence_compute_score(const PurpleBuddyPresence *buddy_presence)
 	int score = 0;
 	PurplePresence *presence = PURPLE_PRESENCE(buddy_presence);
 	PurpleBuddy *b = purple_buddy_presence_get_buddy(buddy_presence);
+	int *primitive_scores = _purple_get_primitive_scores();
+	int offline_score = purple_prefs_get_int("/purple/status/scores/offline_msg");
+	int idle_score = purple_prefs_get_int("/purple/status/scores/idle");
 
 	for (l = purple_presence_get_statuses(presence); l != NULL; l = l->next) {
 		PurpleStatus *status = (PurpleStatus *)l->data;
@@ -609,13 +629,13 @@ purple_buddy_presence_compute_score(const PurpleBuddyPresence *buddy_presence)
 			score += primitive_scores[purple_status_type_get_primitive(type)];
 			if (!purple_status_is_online(status)) {
 				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b), b))
-					score += primitive_scores[SCORE_OFFLINE_MESSAGE];
+					score += offline_score;
 			}
 		}
 	}
-	score += purple_account_get_int(purple_account_presence_get_account(presence), "score", 0);
+	score += purple_account_get_int(purple_buddy_get_account(b), "score", 0);
 	if (purple_presence_is_idle(presence))
-		score += primitive_scores[SCORE_IDLE];
+		score += idle_score;
 	return score;
 }
 
@@ -627,6 +647,7 @@ purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
 	PurplePresence *presence2 = PURPLE_PRESENCE(buddy_presence2);
 	time_t idle_time_1, idle_time_2;
 	int score1 = 0, score2 = 0;
+	int idle_time_score = purple_prefs_get_int("/purple/status/scores/idle_time");
 
 	if (presence1 == presence2)
 		return 0;
@@ -652,9 +673,9 @@ purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
 	idle_time_2 = time(NULL) - purple_presence_get_idle_time(presence2);
 
 	if (idle_time_1 > idle_time_2)
-		score1 += primitive_scores[SCORE_IDLE_TIME];
+		score1 += idle_time_score;
 	else if (idle_time_1 < idle_time_2)
-		score2 += primitive_scores[SCORE_IDLE_TIME];
+		score2 += idle_time_score;
 
 	if (score1 < score2)
 		return 1;
@@ -708,12 +729,29 @@ purple_account_presence_get_property(GObject *obj, guint param_id, GValue *value
 	}
 }
 
+/* Called when done constructing */
+static void
+purple_account_presence_constructed(GObject *object)
+{
+	PurplePresence *presence = PURPLE_PRESENCE(object);
+	PurpleAccountPresencePrivate *priv = PURPLE_ACCOUNT_PRESENCE_GET_PRIVATE(presence);
+
+	G_OBJECT_CLASS(presence_class)->constructed(object);
+
+	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
+			purple_prpl_get_statuses(priv->account, presence);
+}
+
 /* Class initializer function */
 static void purple_account_presence_class_init(PurpleAccountPresenceClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	PURPLE_PRESENCE_CLASS(klass)->update_idle = purple_account_presence_update_idle;
+
+	presence_class = g_type_class_peek_parent(klass);
+
+	obj_class->constructed = purple_account_presence_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_account_presence_get_property;
@@ -762,7 +800,7 @@ purple_account_presence_new(PurpleAccount *account)
 
 	return g_object_new(PURPLE_TYPE_ACCOUNT_PRESENCE,
 			ACPRES_PROP_ACCOUNT_S, account,
-			PRES_PROP_STATUSES_S,  purple_prpl_get_statuses(account, presence));
+			NULL);
 }
 
 /**************************************************************************
@@ -771,8 +809,7 @@ purple_account_presence_new(PurpleAccount *account)
 static void
 purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
-	PurpleBuddyPresence *buddy_presence = PURPLE_BUDDY_PRESENCE(presence);
-	PurpleBuddy *buddy = purple_buddy_presence_get_buddy(presence)
+	PurpleBuddy *buddy = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(presence));
 	time_t current_time = time(NULL);
 	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
 	PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -887,12 +924,31 @@ purple_buddy_presence_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
+/* Called when done constructing */
+static void
+purple_buddy_presence_constructed(GObject *object)
+{
+	PurplePresence *presence = PURPLE_PRESENCE(object);
+	PurpleBuddyPresencePrivate *priv = PURPLE_BUDDY_PRESENCE_GET_PRIVATE(presence);
+	PurpleAccount *account;
+
+	G_OBJECT_CLASS(presence_class)->constructed(object);
+
+	account = purple_buddy_get_account(priv->buddy);
+	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
+			purple_prpl_get_statuses(account, presence);
+}
+
 /* Class initializer function */
 static void purple_buddy_presence_class_init(PurpleBuddyPresenceClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	PURPLE_PRESENCE_CLASS(klass)->update_idle = purple_buddy_presence_update_idle;
+
+	presence_class = g_type_class_peek_parent(klass);
+
+	obj_class->constructed = purple_buddy_presence_constructed;
 
 	/* Setup properties */
 	obj_class->get_property = purple_buddy_presence_get_property;
@@ -937,13 +993,9 @@ purple_buddy_presence_get_type(void)
 PurpleBuddyPresence *
 purple_buddy_presence_new(PurpleBuddy *buddy)
 {
-	PurpleAccount *account;
-
 	g_return_val_if_fail(buddy != NULL, NULL);
-
-	account = purple_buddy_get_account(buddy);
 
 	return g_object_new(PURPLE_TYPE_BUDDY_PRESENCE,
 			BUDPRES_PROP_BUDDY_S, buddy,
-			PRES_PROP_STATUSES_S, purple_prpl_get_statuses(account, presence));
+			NULL);
 }
