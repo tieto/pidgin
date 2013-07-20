@@ -622,8 +622,7 @@ status_has_changed(PurpleStatus *status)
 		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status))
 			old_status->active = FALSE;
-		purple_presence_set_status_active(presence, purple_status_get_id(status),
-				TRUE);
+		g_object_set(presence, "active-status", status, NULL);
 	}
 	else
 		old_status = NULL;

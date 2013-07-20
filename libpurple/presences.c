@@ -334,6 +334,7 @@ purple_presence_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
 	PurplePresence *presence = PURPLE_PRESENCE(obj);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(presence);
 
 	switch (param_id) {
 		case PRES_PROP_IDLE:
@@ -358,12 +359,8 @@ purple_presence_set_property(GObject *obj, guint param_id, const GValue *value,
 #endif
 			break;
 		case PRES_PROP_ACTIVE_STATUS:
-			{
 #warning TODO: change get_pointer to get_object when PurpleStatus is a GObject
-				PurpleStatus *status = g_value_get_pointer(value);
-				purple_presence_set_status_active(presence,
-						purple_status_get_id(status), TRUE);
-			}
+			priv->active_status = g_value_get_pointer(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
