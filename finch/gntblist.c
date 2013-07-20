@@ -2352,8 +2352,9 @@ blist_node_compare_text(PurpleBListNode *n1, PurpleBListNode *n2)
 		s1 = purple_chat_get_name((PurpleChat*)n1);
 		s2 = purple_chat_get_name((PurpleChat*)n2);
 	} else if (PURPLE_IS_BUDDY(n1)) {
-		return purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
-				purple_buddy_get_presence((PurpleBuddy*)n2));
+		return purple_buddy_presence_compare(
+			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n1))),
+			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n2))));
 	} else if (PURPLE_IS_CONTACT(n1)) {
 		s1 = purple_contact_get_alias((PurpleContact*)n1);
 		s2 = purple_contact_get_alias((PurpleContact*)n2);
@@ -2384,8 +2385,9 @@ blist_node_compare_status(PurpleBListNode *n1, PurpleBListNode *n2)
 	}
 
 	if (PURPLE_IS_BUDDY(n1)) {
-		ret = purple_presence_compare(purple_buddy_get_presence((PurpleBuddy*)n1),
-				purple_buddy_get_presence((PurpleBuddy*)n2));
+		ret = purple_buddy_presence_compare(
+			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n1))),
+			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n2))));
 		if (ret != 0)
 			return ret;
 	} else {
