@@ -26,8 +26,6 @@
 #ifndef _PURPLE_PRESENCE_H_
 #define _PURPLE_PRESENCE_H_
 
-#include "status.h"
-
 #define PURPLE_TYPE_PRESENCE             (purple_presence_get_type())
 #define PURPLE_PRESENCE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PRESENCE, PurplePresence))
 #define PURPLE_PRESENCE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PRESENCE, PurplePresenceClass))
@@ -63,6 +61,10 @@ typedef struct _PurpleAccountPresenceClass  PurpleAccountPresenceClass;
 typedef struct _PurpleBuddyPresence  PurpleBuddyPresence;
 /** @copydoc _PurpleBuddyPresenceClass */
 typedef struct _PurpleBuddyPresenceClass  PurpleBuddyPresenceClass;
+
+#include "account.h"
+#include "buddylist.h"
+#include "status.h"
 
 /**
  * A PurplePresence is like a collection of PurpleStatuses (plus some

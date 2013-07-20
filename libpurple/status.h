@@ -83,8 +83,6 @@ typedef struct _PurpleStatus    PurpleStatus;
 typedef struct _PurpleStatusType  PurpleStatusType;
 typedef struct _PurpleStatusAttr  PurpleStatusAttr;
 
-typedef struct _PurplePresence  PurplePresence;
-
 typedef struct _PurpleMood {
 	const char *mood;
 	const char *description;
@@ -113,9 +111,7 @@ typedef enum
 	PURPLE_STATUS_NUM_PRIMITIVES
 } PurpleStatusPrimitive;
 
-#include "account.h"
-#include "buddylist.h"
-#include "conversation.h"
+#include "presences.h"
 
 #define PURPLE_TUNE_ARTIST	"tune_artist"
 #define PURPLE_TUNE_TITLE	"tune_title"
