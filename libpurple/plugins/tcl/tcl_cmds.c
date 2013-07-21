@@ -1471,7 +1471,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	const char *cmds[] = { "attr", "type", NULL };
-	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
+	enum { CMD_STATUS_ATTRIBUTE, CMD_STATUS_TYPE } cmd;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
 	int error;
@@ -1491,7 +1491,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		return error;
 
 	switch (cmd) {
-	case CMD_STATUS_ATTR:
+	case CMD_STATUS_ATTRIBUTE:
 # if (0)
 /* #if !(defined PURPLE_DISABLE_DEPRECATED) */
 		if (objc != 4 && objc != 5) {
@@ -1560,8 +1560,8 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	const char *cmds[] = { "id", "name", NULL };
-	enum { CMD_STATUS_ATTR_ID, CMD_STATUS_ATTR_NAME } cmd;
-	PurpleStatusAttr *attr;
+	enum { CMD_STATUS_ATTRIBUTE_ID, CMD_STATUS_ATTRIBUTE_NAME } cmd;
+	PurpleStatusAttribute *attr;
 	int error;
 
 	if (objc < 2) {
@@ -1573,7 +1573,7 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		return error;
 
 	switch (cmd) {
-	case CMD_STATUS_ATTR_ID:
+	case CMD_STATUS_ATTRIBUTE_ID:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "attr");
 			return TCL_ERROR;
@@ -1581,9 +1581,9 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		if ((attr = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusAttr)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp,
-				 Tcl_NewStringObj(purple_status_attr_get_id(attr), -1));
+				 Tcl_NewStringObj(purple_status_attribute_get_id(attr), -1));
 		break;
-	case CMD_STATUS_ATTR_NAME:
+	case CMD_STATUS_ATTRIBUTE_NAME:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "attr");
 			return TCL_ERROR;
@@ -1591,7 +1591,7 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		if ((attr = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusAttr)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp,
-				 Tcl_NewStringObj(purple_status_attr_get_name(attr), -1));
+				 Tcl_NewStringObj(purple_status_attribute_get_name(attr), -1));
 		break;
 	}
 

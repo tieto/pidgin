@@ -75,27 +75,27 @@ Purple::StatusPrimitive
 purple_primitive_get_type_from_id(id)
 	const char *id
 
-MODULE = Purple::Status  PACKAGE = Purple::StatusAttr PREFIX = purple_status_attr_
+MODULE = Purple::Status  PACKAGE = Purple::StatusAttr PREFIX = purple_status_attribute_
 PROTOTYPES: ENABLE
 
 void
-purple_status_attr_destroy(attr)
+purple_status_attribute_destroy(attr)
 	Purple::StatusAttr attr
 
 const char *
-purple_status_attr_get_id(attr)
+purple_status_attribute_get_id(attr)
 	Purple::StatusAttr attr
 
 const char *
-purple_status_attr_get_name(attr)
+purple_status_attribute_get_name(attr)
 	Purple::StatusAttr attr
 
 GValue *
-purple_status_attr_get_value(attr)
+purple_status_attribute_get_value(attr)
 	Purple::StatusAttr attr
 
 Purple::StatusAttr
-purple_status_attr_new(id, name, value_type)
+purple_status_attribute_new(id, name, value_type)
 	const char *id
 	const char *name
 	GValue *value_type

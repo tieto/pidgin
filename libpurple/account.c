@@ -2426,18 +2426,18 @@ purple_account_clear_current_error(PurpleAccount *account)
 }
 
 static xmlnode *
-status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
-		const PurpleStatusAttr *attr)
+status_attribute_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
+		const PurpleStatusAttribute *attr)
 {
 	xmlnode *node;
 	const char *id;
 	char *value = NULL;
-	PurpleStatusAttr *default_attr;
+	PurpleStatusAttribute *default_attr;
 	GValue *default_value;
 	GType attr_type;
 	GValue *attr_value;
 
-	id = purple_status_attr_get_id(attr);
+	id = purple_status_attribute_get_id(attr);
 	g_return_val_if_fail(id, NULL);
 
 	attr_value = purple_status_get_attr_value(status, id);
@@ -2449,7 +2449,7 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 	 * then don't write it to the file.
 	 */
 	default_attr = purple_status_type_get_attr(type, id);
-	default_value = purple_status_attr_get_value(default_attr);
+	default_value = purple_status_attribute_get_value(default_attr);
 	if (attr_type != G_VALUE_TYPE(default_value))
 		return NULL;
 
@@ -2509,7 +2509,7 @@ status_attrs_to_xmlnode(const PurpleStatus *status)
 	attrs = purple_status_type_get_attrs(type);
 	for (attr = attrs; attr != NULL; attr = attr->next)
 	{
-		child = status_attr_to_xmlnode(status, type, (const PurpleStatusAttr *)attr->data);
+		child = status_attribute_to_xmlnode(status, type, (const PurpleStatusAttribute *)attr->data);
 		if (child)
 			xmlnode_insert_child(node, child);
 	}

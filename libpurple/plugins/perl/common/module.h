@@ -271,7 +271,7 @@ typedef PurpleSslOps *			Purple__Ssl__Ops;
 
 /* status.h */
 typedef PurpleStatus *			Purple__Status;
-typedef PurpleStatusAttr *		Purple__StatusAttr;
+typedef PurpleStatusAttribute *		Purple__StatusAttr;
 typedef PurpleStatusPrimitive		Purple__StatusPrimitive;
 typedef PurpleStatusType *		Purple__StatusType;
 

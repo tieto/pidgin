@@ -93,9 +93,9 @@ typedef struct _PurpleStatusClass      PurpleStatusClass;
 
 typedef struct _PurpleStatusType       PurpleStatusType;
 
-#define PURPLE_TYPE_STATUS_ATTR        (purple_status_attr_get_type())
+#define PURPLE_TYPE_STATUS_ATTRIBUTE   (purple_status_attribute_get_type())
 
-typedef struct _PurpleStatusAttr       PurpleStatusAttr;
+typedef struct _PurpleStatusAttribute  PurpleStatusAttribute;
 
 #define PURPLE_TYPE_MOOD               (purple_mood_get_type())
 
@@ -378,7 +378,7 @@ gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
  *
  * @return The attribute, if found. NULL otherwise.
  */
-PurpleStatusAttr *purple_status_type_get_attr(const PurpleStatusType *status_type,
+PurpleStatusAttribute *purple_status_type_get_attr(const PurpleStatusType *status_type,
 										  const char *id);
 
 /**
@@ -405,14 +405,14 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusAttr API                                            */
+/** @name PurpleStatusAttribute API                                       */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Returns the GType for the PurpleStatusAttr boxed structure.
+ * Returns the GType for the PurpleStatusAttribute boxed structure.
  */
-GType purple_status_attr_get_type(void);
+GType purple_status_attribute_get_type(void);
 
 /**
  * Creates a new status attribute.
@@ -423,7 +423,7 @@ GType purple_status_attr_get_type(void);
  *
  * @return A new status attribute.
  */
-PurpleStatusAttr *purple_status_attr_new(const char *id, const char *name,
+PurpleStatusAttribute *purple_status_attribute_new(const char *id, const char *name,
 									 GValue *value_type);
 
 /**
@@ -431,7 +431,7 @@ PurpleStatusAttr *purple_status_attr_new(const char *id, const char *name,
  *
  * @param attr The status attribute to destroy.
  */
-void purple_status_attr_destroy(PurpleStatusAttr *attr);
+void purple_status_attribute_destroy(PurpleStatusAttribute *attr);
 
 /**
  * Returns the ID of a status attribute.
@@ -440,7 +440,7 @@ void purple_status_attr_destroy(PurpleStatusAttr *attr);
  *
  * @return The status attribute's ID.
  */
-const char *purple_status_attr_get_id(const PurpleStatusAttr *attr);
+const char *purple_status_attribute_get_id(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the name of a status attribute.
@@ -449,7 +449,7 @@ const char *purple_status_attr_get_id(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's name.
  */
-const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
+const char *purple_status_attribute_get_name(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the value of a status attribute.
@@ -458,7 +458,7 @@ const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's value.
  */
-GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
+GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 
 /*@}*/
 

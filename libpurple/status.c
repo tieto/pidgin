@@ -53,7 +53,7 @@ struct _PurpleStatusType
 /**
  * A status attribute.
  */
-struct _PurpleStatusAttr
+struct _PurpleStatusAttribute
 {
 	char *id;
 	char *name;
@@ -241,14 +241,14 @@ static void
 status_type_add_attr(PurpleStatusType *status_type, const char *id,
 		const char *name, GValue *value)
 {
-	PurpleStatusAttr *attr;
+	PurpleStatusAttribute *attr;
 
 	g_return_if_fail(status_type != NULL);
 	g_return_if_fail(id          != NULL);
 	g_return_if_fail(name        != NULL);
 	g_return_if_fail(value       != NULL);
 
-	attr = purple_status_attr_new(id, name, value);
+	attr = purple_status_attribute_new(id, name, value);
 
 	status_type->attrs = g_list_append(status_type->attrs, attr);
 }
@@ -310,7 +310,7 @@ purple_status_type_destroy(PurpleStatusType *status_type)
 	g_free(status_type->id);
 	g_free(status_type->name);
 
-	g_list_foreach(status_type->attrs, (GFunc)purple_status_attr_destroy, NULL);
+	g_list_foreach(status_type->attrs, (GFunc)purple_status_attribute_destroy, NULL);
 	g_list_free(status_type->attrs);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(status_type);
@@ -385,7 +385,7 @@ purple_status_type_is_available(const PurpleStatusType *status_type)
 	return (primitive == PURPLE_STATUS_AVAILABLE);
 }
 
-PurpleStatusAttr *
+PurpleStatusAttribute *
 purple_status_type_get_attr(const PurpleStatusType *status_type, const char *id)
 {
 	GList *l;
@@ -395,9 +395,9 @@ purple_status_type_get_attr(const PurpleStatusType *status_type, const char *id)
 
 	for (l = status_type->attrs; l != NULL; l = l->next)
 	{
-		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
+		PurpleStatusAttribute *attr = (PurpleStatusAttribute *)l->data;
 
-		if (purple_strequal(purple_status_attr_get_id(attr), id))
+		if (purple_strequal(purple_status_attribute_get_id(attr), id))
 			return attr;
 	}
 
@@ -434,19 +434,19 @@ purple_status_type_find_with_id(GList *status_types, const char *id)
 
 
 /**************************************************************************
-* PurpleStatusAttr API
+* PurpleStatusAttribute API
 **************************************************************************/
-PurpleStatusAttr *
-purple_status_attr_new(const char *id, const char *name, GValue *value_type)
+PurpleStatusAttribute *
+purple_status_attribute_new(const char *id, const char *name, GValue *value_type)
 {
-	PurpleStatusAttr *attr;
+	PurpleStatusAttribute *attr;
 
 	g_return_val_if_fail(id         != NULL, NULL);
 	g_return_val_if_fail(name       != NULL, NULL);
 	g_return_val_if_fail(value_type != NULL, NULL);
 
-	attr = g_new0(PurpleStatusAttr, 1);
-	PURPLE_DBUS_REGISTER_POINTER(attr, PurpleStatusAttr);
+	attr = g_new0(PurpleStatusAttribute, 1);
+	PURPLE_DBUS_REGISTER_POINTER(attr, PurpleStatusAttribute);
 
 	attr->id         = g_strdup(id);
 	attr->name       = g_strdup(name);
@@ -456,7 +456,7 @@ purple_status_attr_new(const char *id, const char *name, GValue *value_type)
 }
 
 void
-purple_status_attr_destroy(PurpleStatusAttr *attr)
+purple_status_attribute_destroy(PurpleStatusAttribute *attr)
 {
 	g_return_if_fail(attr != NULL);
 
@@ -470,7 +470,7 @@ purple_status_attr_destroy(PurpleStatusAttr *attr)
 }
 
 const char *
-purple_status_attr_get_id(const PurpleStatusAttr *attr)
+purple_status_attribute_get_id(const PurpleStatusAttribute *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -478,7 +478,7 @@ purple_status_attr_get_id(const PurpleStatusAttr *attr)
 }
 
 const char *
-purple_status_attr_get_name(const PurpleStatusAttr *attr)
+purple_status_attribute_get_name(const PurpleStatusAttribute *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -486,7 +486,7 @@ purple_status_attr_get_name(const PurpleStatusAttr *attr)
 }
 
 GValue *
-purple_status_attr_get_value(const PurpleStatusAttr *attr)
+purple_status_attribute_get_value(const PurpleStatusAttribute *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -777,14 +777,14 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	status_type = purple_status_get_status_type(status);
 	l = purple_status_type_get_attrs(status_type);
 	while (l != NULL) {
-		PurpleStatusAttr *attr;
+		PurpleStatusAttribute *attr;
 
 		attr = l->data;
 		l = l->next;
 
 		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
 			GValue *default_value;
-			default_value = purple_status_attr_get_value(attr);
+			default_value = purple_status_attribute_get_value(attr);
 			if (G_VALUE_TYPE(default_value) == G_TYPE_STRING) {
 				const char *cur = purple_status_get_attr_string(status, attr->id);
 				const char *def = g_value_get_string(default_value);
@@ -1015,9 +1015,9 @@ purple_status_type_copy(PurpleStatusType *status_type)
 	                                               status_type->independent);
 
 	for (l = status_type->attrs; l != NULL; l = l->next) {
-		PurpleStatusAttr *new_attr, *attr = l->data;
+		PurpleStatusAttribute *new_attr, *attr = l->data;
 
-		new_attr = g_boxed_copy(PURPLE_TYPE_STATUS_ATTR, attr);
+		new_attr = g_boxed_copy(PURPLE_TYPE_STATUS_ATTRIBUTE, attr);
 		status_type_copy->attrs = g_list_append(status_type_copy->attrs, new_attr);
 	}
 
@@ -1039,27 +1039,27 @@ purple_status_type_get_type(void)
 }
 
 /**************************************************************************
-* GBoxed code for PurpleStatusAttr
+* GBoxed code for PurpleStatusAttribute
 **************************************************************************/
-static PurpleStatusAttr *
-purple_status_attr_copy(PurpleStatusAttr *status_attr)
+static PurpleStatusAttribute *
+purple_status_attribute_copy(PurpleStatusAttribute *status_attr)
 {
 	g_return_val_if_fail(status_attr != NULL, NULL);
 
-	return purple_status_attr_new(status_attr->id,
+	return purple_status_attribute_new(status_attr->id,
 	                              status_attr->name,
 	                              purple_g_value_dup(status_attr->value_type));
 }
 
 GType
-purple_status_attr_get_type(void)
+purple_status_attribute_get_type(void)
 {
 	static GType type = 0;
 
 	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleStatusAttr",
-				(GBoxedCopyFunc)purple_status_attr_copy,
-				(GBoxedFreeFunc)purple_status_attr_destroy);
+		type = g_boxed_type_register_static("PurpleStatusAttribute",
+				(GBoxedCopyFunc)purple_status_attribute_copy,
+				(GBoxedFreeFunc)purple_status_attribute_destroy);
 	}
 
 	return type;
@@ -1187,12 +1187,12 @@ purple_status_constructed(GObject *object)
 
 	for (l = purple_status_type_get_attrs(priv->status_type); l != NULL; l = l->next)
 	{
-		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
-		GValue *value = purple_status_attr_get_value(attr);
+		PurpleStatusAttribute *attr = (PurpleStatusAttribute *)l->data;
+		GValue *value = purple_status_attribute_get_value(attr);
 		GValue *new_value = purple_g_value_dup(value);
 
 		g_hash_table_insert(priv->attr_values,
-							(char *)purple_status_attr_get_id(attr),
+							(char *)purple_status_attribute_get_id(attr),
 							new_value);
 	}
 }
