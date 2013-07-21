@@ -33,7 +33,7 @@
 #include "savedstatuses.h"
 #include "debug.h"
 #include "prefs.h"
-#include "presences.h"
+#include "presence.h"
 #include "core.h"
 
 #include "tcl_purple.h"

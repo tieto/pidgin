@@ -64,7 +64,7 @@
  * A PurplePresence is like a collection of PurpleStatuses (plus some
  * other random info).
  *
- * @see presences.h
+ * @see presence.h
  */
 
 /**
@@ -111,7 +111,7 @@ typedef enum
 	PURPLE_STATUS_NUM_PRIMITIVES
 } PurpleStatusPrimitive;
 
-#include "presences.h"
+#include "presence.h"
 
 #define PURPLE_TUNE_ARTIST	"tune_artist"
 #define PURPLE_TUNE_TITLE	"tune_title"

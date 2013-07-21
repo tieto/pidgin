@@ -59,7 +59,7 @@ typedef struct group *Purple__Group;
 #include "pluginpref.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "presences.h"
+#include "presence.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"

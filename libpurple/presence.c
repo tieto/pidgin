@@ -21,7 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "dbus-maybe.h"
-#include "presences.h"
+#include "presence.h"
 
 #define PURPLE_PRESENCE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PRESENCE, PurplePresencePrivate))

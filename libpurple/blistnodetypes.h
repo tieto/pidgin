@@ -25,7 +25,7 @@
 #ifndef _PURPLE_BLISTNODE_TYPES_H_
 #define _PURPLE_BLISTNODE_TYPES_H_
 
-#include "blistnodes.h"
+#include "blistnode.h"
 
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())
 #define PURPLE_BUDDY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY, PurpleBuddy))
@@ -78,7 +78,7 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #include "account.h"
 #include "buddyicon.h"
 #include "media.h"
-#include "presences.h"
+#include "presence.h"
 #include "status.h"
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \

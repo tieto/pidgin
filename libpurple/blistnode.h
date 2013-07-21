@@ -1,5 +1,5 @@
 /**
- * @file blistnodes.h Buddy list node and Counting node API
+ * @file blistnode.h Buddy list node and Counting node API
  * @ingroup core
  */
 /* purple

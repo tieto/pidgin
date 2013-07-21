@@ -40,7 +40,7 @@ purple_coresources = \
 	account.c \
 	accounts.c \
 	accountopt.c \
-	blistnodes.c \
+	blistnode.c \
 	blistnodetypes.c \
 	buddylist.c \
 	buddyicon.c \
@@ -79,7 +79,7 @@ purple_coresources = \
 	pluginpref.c \
 	pounce.c \
 	prefs.c \
-	presences.c \
+	presence.c \
 	proxy.c \
 	prpl.c \
 	request.c \
@@ -114,7 +114,7 @@ purple_coreheaders = \
 	account.h \
 	accounts.h \
 	accountopt.h \
-	blistnodes.h \
+	blistnode.h \
 	blistnodetypes.h \
 	buddylist.h \
 	buddyicon.h \
@@ -150,7 +150,7 @@ purple_coreheaders = \
 	pluginpref.h \
 	pounce.h \
 	prefs.h \
-	presences.h \
+	presence.h \
 	proxy.h \
 	prpl.h \
 	request.h \
@@ -227,10 +227,10 @@ CLEANFILES = \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnodes.h \
+dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h ft.h log.h notify.h \
-                prefs.h presences.h roomlist.h savedstatuses.h smiley.h status.h \
+                prefs.h presence.h roomlist.h savedstatuses.h smiley.h status.h \
                 server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \

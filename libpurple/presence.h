@@ -1,5 +1,5 @@
 /**
- * @file presences.h Presence, account presence and buddy presence API
+ * @file presence.h Presence, account presence and buddy presence API
  * @ingroup core
  */
 /*
