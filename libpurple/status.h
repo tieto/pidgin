@@ -77,11 +77,24 @@
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
-#define PURPLE_TYPE_STATUS      (purple_status_get_g_type())
-typedef struct _PurpleStatus    PurpleStatus;
+#define PURPLE_TYPE_STATUS             (purple_status_get_type())
+#define PURPLE_STATUS(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_STATUS, PurpleStatus))
+#define PURPLE_STATUS_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_STATUS, PurpleStatusClass))
+#define PURPLE_IS_STATUS(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_STATUS))
+#define PURPLE_IS_STATUS_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_STATUS))
+#define PURPLE_STATUS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_STATUS, PurpleStatusClass))
 
-typedef struct _PurpleStatusType  PurpleStatusType;
-typedef struct _PurpleStatusAttr  PurpleStatusAttr;
+typedef struct _PurpleStatus           PurpleStatus;
+
+#define PURPLE_TYPE_STATUS_TYPE        (purple_status_type_get_type())
+
+typedef struct _PurpleStatusType       PurpleStatusType;
+
+#define PURPLE_TYPE_STATUS_ATTR        (purple_status_attr_get_type())
+
+typedef struct _PurpleStatusAttr       PurpleStatusAttr;
+
+#define PURPLE_TYPE_MOOD               (purple_mood_get_type())
 
 typedef struct _PurpleMood {
 	const char *mood;
@@ -127,6 +140,26 @@ typedef enum
 #define PURPLE_MOOD_NAME	"mood"
 #define PURPLE_MOOD_COMMENT	"moodtext"
 
+/**
+ * Represents an active status.
+ */
+struct _PurpleStatus
+{
+	/*< private >*/
+	GObject gparent;
+};
+
+/** Base class for all #PurpleStatus's */
+struct _PurpleStatusClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
 G_BEGIN_DECLS
 
 /**************************************************************************/
@@ -171,6 +204,11 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /** @name PurpleStatusType API                                            */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleStatusType boxed structure.
+ */
+GType purple_status_type_get_type(void);
 
 /**
  * Creates a new status type.
@@ -364,9 +402,14 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusAttr API                                              */
+/** @name PurpleStatusAttr API                                            */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleStatusAttr boxed structure.
+ */
+GType purple_status_attr_get_type(void);
 
 /**
  * Creates a new status attribute.
@@ -417,16 +460,26 @@ GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatus API                                                  */
+/** @name PurpleMood API                                                  */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Returns the GType for the PurpleStatus boxed structure.
- * TODO Boxing of PurpleStatus is a temporary solution to having a GType for
- *      statuses. This should rather be a GObject instead of a GBoxed.
+ * Returns the GType for the PurpleMood boxed structure.
  */
-GType purple_status_get_g_type(void);
+GType purple_mood_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PurpleStatus API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the Status object.
+ */
+GType purple_status_get_type(void);
 
 /**
  * Creates a new status.
@@ -438,13 +491,6 @@ GType purple_status_get_g_type(void);
  */
 PurpleStatus *purple_status_new(PurpleStatusType *status_type,
 							PurplePresence *presence);
-
-/**
- * Destroys a status.
- *
- * @param status The status to destroy.
- */
-void purple_status_destroy(PurpleStatus *status);
 
 /**
  * Sets whether or not a status is active.
@@ -493,7 +539,7 @@ void purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean act
  *
  * @return The status's type.
  */
-PurpleStatusType *purple_status_get_type(const PurpleStatus *status);
+PurpleStatusType *purple_status_get_status_type(const PurpleStatus *status);
 
 /**
  * Returns the status's presence.
@@ -642,7 +688,7 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
 /*@}*/
 
 /**************************************************************************/
-/** @name Status subsystem                                                */
+/** @name Statuses subsystem                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -651,17 +697,17 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
  *
  * @return the handle to the status subsystem
  */
-void *purple_status_get_handle(void);
+void *purple_statuses_get_handle(void);
 
 /**
  * Initializes the status subsystem.
  */
-void purple_status_init(void);
+void purple_statuses_init(void);
 
 /**
  * Uninitializes the status subsystem.
  */
-void purple_status_uninit(void);
+void purple_statuses_uninit(void);
 
 /*@}*/
 

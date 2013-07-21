@@ -27,6 +27,12 @@
 #include "prefs.h"
 #include "status.h"
 
+#define PURPLE_STATUS_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_STATUS, PurpleStatusPrivate))
+
+/** @copydoc _PurpleStatusPrivate */
+typedef struct _PurpleStatusPrivate  PurpleStatusPrivate;
+
 /**
  * A type of status.
  */
@@ -55,9 +61,9 @@ struct _PurpleStatusAttr
 };
 
 /**
- * An active status.
+ * Private data for PurpleStatus
  */
-struct _PurpleStatus
+struct _PurpleStatusPrivate
 {
 	PurpleStatusType *type;
 	PurplePresence *presence;
@@ -491,10 +497,10 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 	status = g_new0(PurpleStatus, 1);
 	PURPLE_DBUS_REGISTER_POINTER(status, PurpleStatus);
 
-	status->type     = status_type;
-	status->presence = presence;
+	priv->type     = status_type;
+	priv->presence = presence;
 
-	status->attr_values =
+	priv->attr_values =
 		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 		(GDestroyNotify)purple_g_value_free);
 
@@ -504,7 +510,7 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 		GValue *value = purple_status_attr_get_value(attr);
 		GValue *new_value = purple_g_value_dup(value);
 
-		g_hash_table_insert(status->attr_values,
+		g_hash_table_insert(priv->attr_values,
 							(char *)purple_status_attr_get_id(attr),
 							new_value);
 	}
@@ -521,7 +527,7 @@ purple_status_destroy(PurpleStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
-	g_hash_table_destroy(status->attr_values);
+	g_hash_table_destroy(priv->attr_values);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
@@ -621,7 +627,7 @@ status_has_changed(PurpleStatus *status)
 	{
 		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status))
-			old_status->active = FALSE;
+			old_priv->active = FALSE;
 		g_object_set(presence, "active-status", status, NULL);
 	}
 	else
@@ -740,12 +746,12 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		return;
 	}
 
-	if (status->active != active)
+	if (priv->active != active)
 	{
 		changed = TRUE;
 	}
 
-	status->active = active;
+	priv->active = active;
 
 	/* Set any attributes */
 	l = attrs;
@@ -760,7 +766,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		if (value == NULL)
 		{
 			purple_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
-							   "not supported.\n", id, status->type->name);
+							   "not supported.\n", id, priv->type->name);
 			/* Skip over the data and move on to the next attribute */
 			l = l->next;
 			continue;
@@ -850,11 +856,11 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 }
 
 PurpleStatusType *
-purple_status_get_type(const PurpleStatus *status)
+purple_status_get_status_type(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return status->type;
+	return priv->type;
 }
 
 PurplePresence *
@@ -862,7 +868,7 @@ purple_status_get_presence(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return status->presence;
+	return priv->presence;
 }
 
 const char *
@@ -910,7 +916,7 @@ purple_status_is_active(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return status->active;
+	return priv->active;
 }
 
 gboolean
@@ -932,7 +938,7 @@ purple_status_get_attr_value(const PurpleStatus *status, const char *id)
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	return (GValue *)g_hash_table_lookup(status->attr_values, id);
+	return (GValue *)g_hash_table_lookup(priv->attr_values, id);
 }
 
 gboolean
@@ -1057,14 +1063,14 @@ score_pref_changed_cb(const char *name, PurplePrefType type,
 }
 
 void *
-purple_status_get_handle(void) {
+purple_statuses_get_handle(void) {
 	static int handle;
 
 	return &handle;
 }
 
 void
-purple_status_init(void)
+purple_statuses_init(void)
 {
 	void *handle = purple_status_get_handle();
 
@@ -1120,7 +1126,7 @@ purple_status_init(void)
 }
 
 void
-purple_status_uninit(void)
+purple_statuses_uninit(void)
 {
 	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
 }
