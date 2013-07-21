@@ -3334,7 +3334,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	char *status_text = NULL;
 	const char *itmsurl = NULL;
 
-	status_type = purple_status_get_type(status);
+	status_type = purple_status_get_status_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
 
 	if (!setinfo)
@@ -3469,7 +3469,7 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 	od = purple_connection_get_protocol_data(pc);
 
 	/* There's no need to do the stuff below for mood updates. */
-	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
+	if (purple_status_type_get_primitive(purple_status_get_status_type(status)) == PURPLE_STATUS_MOOD) {
 		aim_locate_setcaps(od, purple_caps);
 		return;
 	}

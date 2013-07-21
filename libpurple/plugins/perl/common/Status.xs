@@ -133,7 +133,7 @@ purple_status_get_attr_value(status, id)
 	const char *id
 
 Purple::Handle
-purple_status_get_handle()
+purple_statuses_get_handle()
 
 const char *
 purple_status_get_id(status)
@@ -148,7 +148,7 @@ purple_status_get_presence(status)
 	Purple::Status status
 
 Purple::StatusType
-purple_status_get_type(status)
+purple_status_get_status_type(status)
 	Purple::Status status
 
 gboolean

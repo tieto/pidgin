@@ -161,7 +161,7 @@ purple_core_init(const char *ui)
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
 	 */
-	purple_status_init();
+	purple_statuses_init();
 	purple_buddy_icons_init();
 	purple_connections_init();
 
@@ -244,7 +244,7 @@ purple_core_quit(void)
 	purple_connections_uninit();
 	purple_buddy_icons_uninit();
 	purple_savedstatuses_uninit();
-	purple_status_uninit();
+	purple_statuses_uninit();
 	purple_accounts_uninit();
 	purple_keyring_uninit(); /* after accounts */
 	purple_sound_uninit();

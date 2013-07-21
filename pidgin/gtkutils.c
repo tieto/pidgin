@@ -1688,7 +1688,7 @@ pidgin_stock_id_from_presence(PurplePresence *presence)
 	g_return_val_if_fail(presence, NULL);
 
 	status = purple_presence_get_active_status(presence);
-	type = purple_status_get_type(status);
+	type = purple_status_get_status_type(status);
 	prim = purple_status_type_get_primitive(type);
 
 	idle = purple_presence_is_idle(presence);

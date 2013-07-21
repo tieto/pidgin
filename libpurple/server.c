@@ -628,7 +628,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 		presence = purple_account_get_presence(account);
 		status = purple_presence_get_active_status(presence);
-		status_type = purple_status_get_type(status);
+		status_type = purple_status_get_status_type(status);
 		primitive = purple_status_type_get_primitive(status_type);
 		mobile = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE);
 		if ((primitive == PURPLE_STATUS_AVAILABLE) ||

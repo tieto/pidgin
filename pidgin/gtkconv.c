@@ -2527,7 +2527,7 @@ pidgin_conv_get_icon_stock(PurpleConversation *conv)
 		if (b != NULL) {
 			PurplePresence *p = purple_buddy_get_presence(b);
 			PurpleStatus *active = purple_presence_get_active_status(p);
-			PurpleStatusType *type = purple_status_get_type(active);
+			PurpleStatusType *type = purple_status_get_status_type(active);
 			PurpleStatusPrimitive prim = purple_status_type_get_primitive(type);
 			stock = pidgin_stock_id_from_status_primitive(prim);
 		} else {

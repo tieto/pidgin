@@ -100,7 +100,7 @@ static void do_notifies(struct simple_account_data *sip) {
 
 static void simple_set_status(PurpleAccount *account, PurpleStatus *status) {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_type(status));
+	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_status_type(status));
 	struct simple_account_data *sip = NULL;
 
 	if (!purple_status_is_active(status))

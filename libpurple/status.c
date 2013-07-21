@@ -688,7 +688,7 @@ status_set_attr_string(PurpleStatus *status, const char *id,
 				 "Attempted to set status attribute '%s' for "
 				 "status '%s', which is not legal.  Fix "
                                  "this!\n", id,
-				 purple_status_type_get_name(purple_status_get_type(status)));
+				 purple_status_type_get_name(purple_status_get_status_type(status)));
 		return;
 	}
 	g_return_if_fail(G_VALUE_TYPE(attr_value) == G_TYPE_STRING);
@@ -809,7 +809,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	}
 
 	/* Reset any unspecified attributes to their default value */
-	status_type = purple_status_get_type(status);
+	status_type = purple_status_get_status_type(status);
 	l = purple_status_type_get_attrs(status_type);
 	while (l != NULL) {
 		PurpleStatusAttr *attr;
@@ -876,7 +876,7 @@ purple_status_get_id(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return purple_status_type_get_id(purple_status_get_type(status));
+	return purple_status_type_get_id(purple_status_get_status_type(status));
 }
 
 const char *
@@ -884,7 +884,7 @@ purple_status_get_name(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return purple_status_type_get_name(purple_status_get_type(status));
+	return purple_status_type_get_name(purple_status_get_status_type(status));
 }
 
 gboolean
@@ -892,7 +892,7 @@ purple_status_is_independent(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return purple_status_type_is_independent(purple_status_get_type(status));
+	return purple_status_type_is_independent(purple_status_get_status_type(status));
 }
 
 gboolean
@@ -900,7 +900,7 @@ purple_status_is_exclusive(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return purple_status_type_is_exclusive(purple_status_get_type(status));
+	return purple_status_type_is_exclusive(purple_status_get_status_type(status));
 }
 
 gboolean
@@ -908,7 +908,7 @@ purple_status_is_available(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return purple_status_type_is_available(purple_status_get_type(status));
+	return purple_status_type_is_available(purple_status_get_status_type(status));
 }
 
 gboolean
@@ -926,7 +926,7 @@ purple_status_is_online(const PurpleStatus *status)
 
 	g_return_val_if_fail( status != NULL, FALSE);
 
-	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
+	primitive = purple_status_type_get_primitive(purple_status_get_status_type(status));
 
 	return (primitive != PURPLE_STATUS_UNSET &&
 			primitive != PURPLE_STATUS_OFFLINE);
@@ -1005,8 +1005,8 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 	else if (status2 == NULL)
 		return -1;
 
-	type1 = purple_status_get_type(status1);
-	type2 = purple_status_get_type(status2);
+	type1 = purple_status_get_status_type(status1);
+	type2 = purple_status_get_status_type(status2);
 
 	if (purple_status_is_active(status1))
 		score1 = primitive_scores[purple_status_type_get_primitive(type1)];
@@ -1020,33 +1020,6 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 		return 1;
 
 	return 0;
-}
-
-static PurpleStatus *
-purple_status_copy(PurpleStatus *status)
-{
-	PurpleStatus *status_copy;
-
-	g_return_val_if_fail(status != NULL, NULL);
-
-	status_copy = g_new(PurpleStatus, 1);
-	*status_copy = *status;
-
-	return status_copy;
-}
-
-GType
-purple_status_get_g_type(void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleStatus",
-				(GBoxedCopyFunc)purple_status_copy,
-				(GBoxedFreeFunc)g_free);
-	}
-
-	return type;
 }
 
 
@@ -1072,7 +1045,7 @@ purple_statuses_get_handle(void) {
 void
 purple_statuses_init(void)
 {
-	void *handle = purple_status_get_handle();
+	void *handle = purple_statuses_get_handle();
 
 	purple_prefs_add_none("/purple/status");
 	purple_prefs_add_none("/purple/status/scores");

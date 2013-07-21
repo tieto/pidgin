@@ -2500,7 +2500,7 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 static xmlnode *
 status_attrs_to_xmlnode(const PurpleStatus *status)
 {
-	PurpleStatusType *type = purple_status_get_type(status);
+	PurpleStatusType *type = purple_status_get_status_type(status);
 	xmlnode *node, *child;
 	GList *attrs, *attr;
 
@@ -2547,7 +2547,7 @@ statuses_to_xmlnode(const PurplePresence *presence)
 	for (; statuses != NULL; statuses = statuses->next)
 	{
 		status = statuses->data;
-		if (purple_status_type_is_saveable(purple_status_get_type(status)))
+		if (purple_status_type_is_saveable(purple_status_get_status_type(status)))
 		{
 			child = status_to_xmlnode(status);
 			xmlnode_insert_child(node, child);

@@ -2287,7 +2287,7 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 	size_t result;
 	PurpleConnection *gc = purple_account_get_connection(account);
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
-	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_type(status));
+	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_status_type(status));
 
 	if (zephyr->away) {
 		g_free(zephyr->away);

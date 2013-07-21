@@ -254,7 +254,7 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 	const char *message;
 
 	statustype = purple_status_type_find_with_id((GList *)purple_account_get_status_types(account),
-	                                           (char *)purple_status_type_get_id(purple_status_get_type(newstatus)));
+	                                           (char *)purple_status_type_get_id(purple_status_get_status_type(newstatus)));
 
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
@@ -702,7 +702,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    PurpleStatusType *status_type;
 	    PurpleStatusPrimitive prim;
 	    if (account_status) {
-			status_type = purple_status_get_type(purple_account_get_active_status(acct));
+			status_type = purple_status_get_status_type(purple_account_get_active_status(acct));
 	        prim = purple_status_type_get_primitive(status_type);
 	    } else {
 			prim = purple_savedstatus_get_type(saved_status);

@@ -278,7 +278,7 @@ purple_presence_is_status_primitive_active(const PurplePresence *presence,
 	     l != NULL; l = l->next)
 	{
 		PurpleStatus *temp_status = l->data;
-		PurpleStatusType *type = purple_status_get_type(temp_status);
+		PurpleStatusType *type = purple_status_get_status_type(temp_status);
 
 		if (purple_status_type_get_primitive(type) == primitive &&
 		    purple_status_is_active(temp_status))
@@ -428,7 +428,7 @@ purple_presence_dispose(GObject *object)
 	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	g_list_foreach(PURPLE_PRESENCE_GET_PRIVATE(object)->statuses,
-			(GFunc)purple_status_destroy, NULL);
+			(GFunc)g_object_unref, NULL);
 
 	parent_class->dispose(object);
 }
@@ -620,7 +620,7 @@ purple_buddy_presence_compute_score(const PurpleBuddyPresence *buddy_presence)
 
 	for (l = purple_presence_get_statuses(presence); l != NULL; l = l->next) {
 		PurpleStatus *status = (PurpleStatus *)l->data;
-		PurpleStatusType *type = purple_status_get_type(status);
+		PurpleStatusType *type = purple_status_get_status_type(status);
 
 		if (purple_status_is_active(status)) {
 			score += primitive_scores[purple_status_type_get_primitive(type)];

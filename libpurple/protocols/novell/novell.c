@@ -3024,7 +3024,7 @@ novell_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	connected = purple_account_is_connected(account);
 	presence = purple_status_get_presence(status);
-	type = purple_status_get_type(status);
+	type = purple_status_get_status_type(status);
 	primitive = purple_status_type_get_primitive(type);
 
 	/*

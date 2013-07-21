@@ -1548,7 +1548,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		}
 		if ((status = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatus)) == NULL)
 			return TCL_ERROR;
-		status_type = purple_status_get_type(status);
+		status_type = purple_status_get_status_type(status);
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefStatusType,
 		                                          status_type));
 		break;

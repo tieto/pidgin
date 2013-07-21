@@ -2494,7 +2494,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	session = purple_connection_get_protocol_data(gc);
 
-	type = purple_status_get_type(status);
+	type = purple_status_get_status_type(status);
 	pres = purple_status_get_presence(status);
 
 	switch (purple_status_type_get_primitive(type)) {

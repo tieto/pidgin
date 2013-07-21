@@ -166,7 +166,7 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	js = purple_connection_get_protocol_data(gc);
 
 	/* it's a mood update */
-	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
+	if (purple_status_type_get_primitive(purple_status_get_status_type(status)) == PURPLE_STATUS_MOOD) {
 		const char *mood =
 			purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
 		const char *mood_text =

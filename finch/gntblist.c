@@ -912,7 +912,7 @@ get_display_name(PurpleBListNode *node)
 		else {
 			now = purple_presence_get_active_status(presence);
 
-			prim = purple_status_type_get_primitive(purple_status_get_type(now));
+			prim = purple_status_type_get_primitive(purple_status_get_status_type(now));
 
 			switch(prim) {
 				case PURPLE_STATUS_OFFLINE:
