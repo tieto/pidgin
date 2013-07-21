@@ -84,7 +84,10 @@
 #define PURPLE_IS_STATUS_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_STATUS))
 #define PURPLE_STATUS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_STATUS, PurpleStatusClass))
 
+/** @copydoc _PurpleStatus */
 typedef struct _PurpleStatus           PurpleStatus;
+/** @copydoc _PurpleStatusClass */
+typedef struct _PurpleStatusClass      PurpleStatusClass;
 
 #define PURPLE_TYPE_STATUS_TYPE        (purple_status_type_get_type())
 

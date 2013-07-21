@@ -65,7 +65,7 @@ struct _PurpleStatusAttr
  */
 struct _PurpleStatusPrivate
 {
-	PurpleStatusType *type;
+	PurpleStatusType *status_type;
 	PurplePresence *presence;
 
 	gboolean active;
@@ -79,11 +79,23 @@ struct _PurpleStatusPrivate
 	GHashTable *attr_values;
 };
 
+/* GObject property enums */
+enum
+{
+	PROP_0,
+	PROP_STATUS_TYPE,
+	PROP_PRESENCE,
+	PROP_ACTIVE,
+	PROP_LAST
+};
+
 typedef struct
 {
 	PurpleAccount *account;
 	char *name;
 } PurpleStatusBuddyKey;
+
+static GObjectClass *parent_class;
 
 static int primitive_scores[] =
 {
@@ -485,54 +497,6 @@ purple_status_attr_get_value(const PurpleStatusAttr *attr)
 /**************************************************************************
 * PurpleStatus API
 **************************************************************************/
-PurpleStatus *
-purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
-{
-	PurpleStatus *status;
-	GList *l;
-
-	g_return_val_if_fail(status_type != NULL, NULL);
-	g_return_val_if_fail(presence    != NULL, NULL);
-
-	status = g_new0(PurpleStatus, 1);
-	PURPLE_DBUS_REGISTER_POINTER(status, PurpleStatus);
-
-	priv->type     = status_type;
-	priv->presence = presence;
-
-	priv->attr_values =
-		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
-		(GDestroyNotify)purple_g_value_free);
-
-	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
-	{
-		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
-		GValue *value = purple_status_attr_get_value(attr);
-		GValue *new_value = purple_g_value_dup(value);
-
-		g_hash_table_insert(priv->attr_values,
-							(char *)purple_status_attr_get_id(attr),
-							new_value);
-	}
-
-	return status;
-}
-
-/*
- * TODO: If the PurpleStatus is in a PurplePresence, then
- *       remove it from the PurplePresence?
- */
-void
-purple_status_destroy(PurpleStatus *status)
-{
-	g_return_if_fail(status != NULL);
-
-	g_hash_table_destroy(priv->attr_values);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(status);
-	g_free(status);
-}
-
 static void
 notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		PurpleStatus *old_status, PurpleStatus *new_status)
@@ -604,9 +568,9 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 	}
 	else if (PURPLE_IS_BUDDY_PRESENCE(presence))
 	{
-			notify_buddy_status_update(purple_buddy_presence_get_buddy(
-					PURPLE_BUDDY_PRESENCE(presence)), presence, old_status,
-					new_status);
+		notify_buddy_status_update(purple_buddy_presence_get_buddy(
+				PURPLE_BUDDY_PRESENCE(presence)), presence, old_status,
+				new_status);
 	}
 }
 
@@ -627,7 +591,7 @@ status_has_changed(PurpleStatus *status)
 	{
 		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status))
-			old_priv->active = FALSE;
+			PURPLE_STATUS_GET_PRIVATE(old_status)->active = FALSE;
 		g_object_set(presence, "active-status", status, NULL);
 	}
 	else
@@ -735,8 +699,9 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	GList *l;
 	GList *specified_attr_ids = NULL;
 	PurpleStatusType *status_type;
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
 
-	g_return_if_fail(status != NULL);
+	g_return_if_fail(priv != NULL);
 
 	if (!active && purple_status_is_exclusive(status))
 	{
@@ -766,7 +731,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		if (value == NULL)
 		{
 			purple_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
-							   "not supported.\n", id, priv->type->name);
+							   "not supported.\n", id, priv->status_type->name);
 			/* Skip over the data and move on to the next attribute */
 			l = l->next;
 			continue;
@@ -858,15 +823,19 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 PurpleStatusType *
 purple_status_get_status_type(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, NULL);
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
 
-	return priv->type;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->status_type;
 }
 
 PurplePresence *
 purple_status_get_presence(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, NULL);
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
+
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->presence;
 }
@@ -914,7 +883,9 @@ purple_status_is_available(const PurpleStatus *status)
 gboolean
 purple_status_is_active(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, FALSE);
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
 
 	return priv->active;
 }
@@ -935,8 +906,10 @@ purple_status_is_online(const PurpleStatus *status)
 GValue *
 purple_status_get_attr_value(const PurpleStatus *status, const char *id)
 {
-	g_return_val_if_fail(status != NULL, NULL);
-	g_return_val_if_fail(id     != NULL, NULL);
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(id   != NULL, NULL);
 
 	return (GValue *)g_hash_table_lookup(priv->attr_values, id);
 }
@@ -1020,6 +993,306 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 		return 1;
 
 	return 0;
+}
+
+
+/**************************************************************************
+* GBoxed code for PurpleStatusType
+**************************************************************************/
+static PurpleStatusType *
+purple_status_type_copy(PurpleStatusType *status_type)
+{
+	PurpleStatusType *status_type_copy;
+	GList *l;
+
+	g_return_val_if_fail(status_type != NULL, NULL);
+
+	status_type_copy = purple_status_type_new_full(status_type->primitive,
+	                                               status_type->id,
+	                                               status_type->name,
+	                                               status_type->saveable,
+	                                               status_type->user_settable,
+	                                               status_type->independent);
+
+	for (l = status_type->attrs; l != NULL; l = l->next) {
+		PurpleStatusAttr *new_attr, *attr = l->data;
+
+		new_attr = g_boxed_copy(PURPLE_TYPE_STATUS_ATTR, attr);
+		status_type_copy->attrs = g_list_append(status_type_copy->attrs, new_attr);
+	}
+
+	return status_type_copy;
+}
+
+GType
+purple_status_type_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleStatusType",
+				(GBoxedCopyFunc)purple_status_type_copy,
+				(GBoxedFreeFunc)purple_status_type_destroy);
+	}
+
+	return type;
+}
+
+/**************************************************************************
+* GBoxed code for PurpleStatusAttr
+**************************************************************************/
+static PurpleStatusAttr *
+purple_status_attr_copy(PurpleStatusAttr *status_attr)
+{
+	g_return_val_if_fail(status_attr != NULL, NULL);
+
+	return purple_status_attr_new(status_attr->id,
+	                              status_attr->name,
+	                              purple_g_value_dup(status_attr->value_type));
+}
+
+GType
+purple_status_attr_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleStatusAttr",
+				(GBoxedCopyFunc)purple_status_attr_copy,
+				(GBoxedFreeFunc)purple_status_attr_destroy);
+	}
+
+	return type;
+}
+
+/**************************************************************************
+* GBoxed code for PurpleMood
+**************************************************************************/
+static PurpleMood *
+purple_mood_copy(PurpleMood *mood)
+{
+	PurpleMood *mood_copy;
+
+	g_return_val_if_fail(mood != NULL, NULL);
+
+	mood_copy = g_new(PurpleMood, 1);
+
+	mood_copy->mood        = g_strdup(mood->mood);
+	mood_copy->description = g_strdup(mood->description);
+
+	return mood_copy;
+}
+
+static void
+purple_mood_free(PurpleMood *mood)
+{
+	g_free((gchar *)mood->mood);
+	g_free((gchar *)mood->description);
+
+	g_free(mood);
+}
+
+GType
+purple_mood_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleMood",
+				(GBoxedCopyFunc)purple_mood_copy,
+				(GBoxedFreeFunc)purple_mood_free);
+	}
+
+	return type;
+}
+
+
+/**************************************************************************
+* GObject code
+**************************************************************************/
+
+/* GObject Property names */
+#define PROP_STATUS_TYPE_S  "status-type"
+#define PROP_PRESENCE_S     "presence"
+#define PROP_ACTIVE_S       "active"
+
+/* Set method for GObject properties */
+static void
+purple_status_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleStatus *status = PURPLE_STATUS(obj);
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(status);
+
+	switch (param_id) {
+		case PROP_STATUS_TYPE:
+			priv->status_type = g_value_get_pointer(value);
+			break;
+		case PROP_PRESENCE:
+			priv->presence = g_value_get_object(value);
+			break;
+		case PROP_ACTIVE:
+			purple_status_set_active(status, g_value_get_boolean(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_status_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleStatus *status = PURPLE_STATUS(obj);
+
+	switch (param_id) {
+		case PROP_STATUS_TYPE:
+			g_value_set_pointer(value, purple_status_get_status_type(status));
+			break;
+		case PROP_PRESENCE:
+			g_value_set_object(value, purple_status_get_presence(status));
+			break;
+		case PROP_ACTIVE:
+			g_value_set_boolean(value, purple_status_is_active(status));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* GObject initialization function */
+static void
+purple_status_init(GTypeInstance *instance, gpointer klass)
+{
+	PurpleStatus *status = PURPLE_STATUS(instance);
+
+	PURPLE_DBUS_REGISTER_POINTER(status, PurpleStatus);
+
+	PURPLE_STATUS_GET_PRIVATE(status)->attr_values =
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+		(GDestroyNotify)purple_g_value_free);
+}
+
+/* Called when done constructing */
+static void
+purple_status_constructed(GObject *object)
+{
+	GList *l;
+	PurpleStatusPrivate *priv = PURPLE_STATUS_GET_PRIVATE(object);
+
+	parent_class->constructed(object);
+
+	for (l = purple_status_type_get_attrs(priv->status_type); l != NULL; l = l->next)
+	{
+		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
+		GValue *value = purple_status_attr_get_value(attr);
+		GValue *new_value = purple_g_value_dup(value);
+
+		g_hash_table_insert(priv->attr_values,
+							(char *)purple_status_attr_get_id(attr),
+							new_value);
+	}
+}
+
+/*
+ * GObject dispose function
+ * TODO: If the PurpleStatus is in a PurplePresence, then
+ *       remove it from the PurplePresence?
+ */
+static void
+purple_status_dispose(GObject *object)
+{
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
+
+	parent_class->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_status_finalize(GObject *object)
+{
+	g_hash_table_destroy(PURPLE_STATUS_GET_PRIVATE(object)->attr_values);
+
+	parent_class->finalize(object);
+}
+
+/* Class initializer function */
+static void
+purple_status_class_init(PurpleStatusClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_status_dispose;
+	obj_class->finalize = purple_status_finalize;
+	obj_class->constructed = purple_status_constructed;
+
+	/* Setup properties */
+	obj_class->get_property = purple_status_get_property;
+	obj_class->set_property = purple_status_set_property;
+
+	g_object_class_install_property(obj_class, PROP_STATUS_TYPE,
+			g_param_spec_pointer(PROP_STATUS_TYPE_S, _("Status type"),
+				_("The PurpleStatusType of the status."),
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_PRESENCE,
+			g_param_spec_object(PROP_PRESENCE_S, _("Presence"),
+				_("The presence that the status belongs to."), PURPLE_TYPE_PRESENCE,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_ACTIVE,
+			g_param_spec_boolean(PROP_ACTIVE_S, _("Active"),
+				_("Whether the status is active or not."), FALSE,
+				G_PARAM_READWRITE)
+			);
+
+	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
+}
+
+GType
+purple_status_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleStatusClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_status_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleStatus),
+			0,
+			(GInstanceInitFunc)purple_status_init,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT,
+				"PurpleStatus",
+				&info, 0);
+	}
+
+	return type;
+}
+
+PurpleStatus *
+purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
+{
+	g_return_val_if_fail(status_type != NULL, NULL);
+	g_return_val_if_fail(presence    != NULL, NULL);
+
+	return g_object_new(PURPLE_TYPE_STATUS,
+			PROP_STATUS_TYPE_S,  status_type,
+			PROP_PRESENCE_S,     presence,
+			NULL);
 }
 
 
