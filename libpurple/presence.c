@@ -359,8 +359,7 @@ purple_presence_set_property(GObject *obj, guint param_id, const GValue *value,
 #endif
 			break;
 		case PRES_PROP_ACTIVE_STATUS:
-#warning TODO: change get_pointer to get_object when PurpleStatus is a GObject
-			priv->active_status = g_value_get_pointer(value);
+			priv->active_status = g_value_get_object(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -401,8 +400,7 @@ purple_presence_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_pointer(value, purple_presence_get_statuses(presence));
 			break;
 		case PRES_PROP_ACTIVE_STATUS:
-#warning TODO: change set_pointer to set_object when PurpleStatus is a GObject
-			g_value_set_pointer(value, purple_presence_get_active_status(presence));
+			g_value_set_object(value, purple_presence_get_active_status(presence));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -513,8 +511,8 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 			);
 
 	g_object_class_install_property(obj_class, PRES_PROP_ACTIVE_STATUS,
-			g_param_spec_pointer(PRES_PROP_ACTIVE_STATUS_S, _("Active status"),
-				_("The active status for the presence."),
+			g_param_spec_object(PRES_PROP_ACTIVE_STATUS_S, _("Active status"),
+				_("The active status for the presence."), PURPLE_TYPE_STATUS,
 				G_PARAM_READWRITE)
 			);
 

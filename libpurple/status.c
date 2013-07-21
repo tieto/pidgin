@@ -1085,6 +1085,9 @@ purple_statuses_init(void)
 	purple_prefs_connect_callback(handle, "/purple/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
+	purple_prefs_connect_callback(handle, "/purple/status/scores/idle_time",
+			score_pref_changed_cb,
+			GINT_TO_POINTER(SCORE_IDLE_TIME));
 	purple_prefs_connect_callback(handle, "/purple/status/scores/offline_msg",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_OFFLINE_MESSAGE));
@@ -1095,6 +1098,7 @@ purple_statuses_init(void)
 	purple_prefs_trigger_callback("/purple/status/scores/away");
 	purple_prefs_trigger_callback("/purple/status/scores/extended_away");
 	purple_prefs_trigger_callback("/purple/status/scores/idle");
+	purple_prefs_trigger_callback("/purple/status/scores/idle_time");
 	purple_prefs_trigger_callback("/purple/status/scores/offline_msg");
 }
 

@@ -108,10 +108,6 @@ purple_status_compare(status1, status2)
 	Purple::Status status1
 	Purple::Status status2
 
-void
-purple_status_destroy(status)
-	Purple::Status status
-
 gboolean
 purple_status_get_attr_boolean(status, id)
 	Purple::Status status
