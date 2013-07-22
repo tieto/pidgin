@@ -267,7 +267,7 @@ PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
  *                      status type.
  * @param attr_id       The ID of the first attribute.
  * @param attr_name     The name of the first attribute.
- * @param attr_value    The value type of the first attribute attribute.
+ * @param attr_value    The value type of the first attribute.
  * @param ...           Additional attribute information.
  *
  * @return A new status type.
