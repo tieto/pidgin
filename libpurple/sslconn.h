@@ -238,6 +238,16 @@ void purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 						void *data);
 
 /**
+ * Removes an input watcher, added with purple_ssl_input_add().
+ *
+ * If there is no input watcher set, does nothing.
+ *
+ * @param gsc The SSL connection handle.
+ */
+void
+purple_ssl_input_remove(PurpleSslConnection *gsc);
+
+/**
  * Closes a SSL connection.
  *
  * @param gsc The SSL connection to close.

@@ -24,6 +24,8 @@
 #ifndef MSN_SERVCONN_H
 #define MSN_SERVCONN_H
 
+#include "circularbuffer.h"
+
 typedef struct _MsnServConn MsnServConn;
 
 /**
