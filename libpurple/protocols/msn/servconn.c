@@ -225,12 +225,9 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	{
 		/* HTTP Connection. */
 
-		if (!servconn->httpconn->connected || force)
-			if (!msn_httpconn_connect(servconn->httpconn, host, port))
-				return FALSE;
+		msn_httpconn_connect(servconn->httpconn, host, port);
 
 		servconn->connected = TRUE;
-		servconn->httpconn->virgin = TRUE;
 		servconn_timeout_renew(servconn);
 
 		/* Someone wants to know we connected. */

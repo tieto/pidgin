@@ -1,5 +1,5 @@
 /**
- * @file httpconn.h HTTP connection
+ * @file httpconn.h HTTP-tunnelled connections
  *
  * purple
  *
@@ -19,94 +19,63 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 #ifndef MSN_HTTPCONN_H
 #define MSN_HTTPCONN_H
 
 typedef struct _MsnHttpConn MsnHttpConn;
 
-#include "circbuffer.h"
-#include "servconn.h"
-#include "session.h"
+#include "internal.h"
 
-/**
- * An HTTP Connection.
- */
-struct _MsnHttpConn
-{
-	MsnSession *session; /**< The MSN Session. */
-	MsnServConn *servconn; /**< The connection object. */
-
-	PurpleProxyConnectData *connect_data;
-
-	char *full_session_id; /**< The full session id. */
-	char *session_id; /**< The trimmed session id. */
-
-	int timer; /**< The timer for polling. */
-
-	gboolean waiting_response; /**< The flag that states if we are waiting
-								 a response from the server. */
-	gboolean connected;        /**< The flag that states if the connection is on. */
-	gboolean virgin;           /**< The flag that states if this connection
-								 should specify the host (not gateway) to
-								 connect to. */
-
-	char *host; /**< The HTTP gateway host. */
-	GList *queue; /**< The queue of data chunks to write. */
-
-	int fd; /**< The connection's file descriptor. */
-	guint inpa; /**< The connection's input handler. */
-
-	char *rx_buf; /**< The receive buffer. */
-	int rx_len; /**< The receive buffer length. */
-
-	PurpleCircBuffer *tx_buf;
-	guint tx_handler;
-};
+#include "msn.h"
 
 /**
  * Creates a new HTTP connection object.
  *
  * @param servconn The connection object.
  *
- * @return The new object.
+ * @return The new HTTP connection object.
  */
-MsnHttpConn *msn_httpconn_new(MsnServConn *servconn);
+MsnHttpConn *
+msn_httpconn_new(MsnServConn *servconn);
 
 /**
  * Destroys an HTTP connection object.
  *
  * @param httpconn The HTTP connection object.
  */
-void msn_httpconn_destroy(MsnHttpConn *httpconn);
+void
+msn_httpconn_destroy(MsnHttpConn *httpconn);
 
 /**
- * Writes a chunk of data to the HTTP connection.
- *
- * @param servconn    The server connection.
- * @param data        The data to write.
- * @param data_len    The size of the data to write.
- *
- * @return The number of bytes written.
- */
-gssize msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t data_len);
-
-/**
- * Connects the HTTP connection object to a host.
+ * Virtually estabilishes the HTTP connection with a host.
  *
  * @param httpconn The HTTP connection object.
- * @param host The host to connect to.
- * @param port The port to connect to.
+ * @param host     The host to connect to.
+ * @param port     The port to connect to (currently ignored).
  */
-gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
-							  const char *host, int port);
+void
+msn_httpconn_connect(MsnHttpConn *httpconn, const gchar *host, int port);
 
 /**
  * Disconnects the HTTP connection object.
  *
  * @param httpconn The HTTP connection object.
  */
-void msn_httpconn_disconnect(MsnHttpConn *httpconn);
+void
+msn_httpconn_disconnect(MsnHttpConn *httpconn);
+
+/**
+ * Writes a chunk of data to the HTTP connection.
+ *
+ * @param servconn The server connection.
+ * @param data     The data to write.
+ * @param data_len The size of the data to write.
+ *
+ * @return The number of bytes written.
+ */
+ssize_t
+msn_httpconn_write(MsnHttpConn *httpconn, const gchar *data, size_t data_len);
 
 #endif /* MSN_HTTPCONN_H */
