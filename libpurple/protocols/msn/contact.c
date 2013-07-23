@@ -218,11 +218,11 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	}
 
  	/* Update CacheKey if necessary */
- 	cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKeyChanged");
+ 	cachekey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/ServiceHeader/CacheKeyChanged");
  	if (cachekey != NULL) {
  		changed = xmlnode_get_data(cachekey);
  		if (changed && !strcmp(changed, "true")) {
- 			cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKey");
+ 			cachekey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/ServiceHeader/CacheKey");
  			g_free(state->session->abch_cachekey);
  			state->session->abch_cachekey = xmlnode_get_data(cachekey);
  			purple_debug_info("msn", "Updated CacheKey for %s to '%s'.\n",
@@ -232,7 +232,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
  		g_free(changed);
  	}
 
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 
 	if (fault == NULL) {
 		/* No errors */
@@ -322,7 +322,7 @@ static void
 msn_create_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 {
 	MsnCallbackState *state = data;
-	if (resp && xmlnode_get_child(resp->xml, "Body/Fault") == NULL) {
+	if (resp && xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault") == NULL) {
 		purple_debug_info("msn", "Address Book successfully created!\n");
 		msn_get_address_book(state->session, MSN_PS_INITIAL, NULL, NULL);
 	} else {
@@ -536,7 +536,7 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
-		if (msn_parse_contact_list(session, resp->xml)) {
+		if (msn_parse_contact_list(session, msn_soap_message_get_xml(resp))) {
 #ifdef MSN_PARTIAL_LISTS
 			abLastChange = purple_account_get_string(session->account,
 				"ablastChange", NULL);
@@ -992,7 +992,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	purple_debug_misc("msn", "Got the Address Book!\n");
 
-	if (msn_parse_addressbook(session, resp->xml)) {
+	if (msn_parse_addressbook(session, msn_soap_message_get_xml(resp))) {
 		msn_send_privacy(purple_account_get_connection(session->account));
 		msn_notification_dump_contact(session);
 	} else {
@@ -1059,7 +1059,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 	userlist = session->userlist;
 
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *errorcode = xmlnode_get_data(xmlnode_get_child(fault, "detail/errorcode"));
 		if (errorcode && !strcmp(errorcode, "EmailDomainIsFederated")) {
@@ -1096,7 +1096,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
 
-	guid = xmlnode_get_child(resp->xml,
+	guid = xmlnode_get_child(msn_soap_message_get_xml(resp),
 		"Body/ABContactAddResponse/ABContactAddResult/guid");
 	if (guid != NULL) {
 		char *uid = xmlnode_get_data(guid);
@@ -1155,7 +1155,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 	userlist = session->userlist;
 
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *errorcode = xmlnode_get_data(xmlnode_get_child(fault, "detail/errorcode"));
 		if (errorcode && !strcmp(errorcode, "EmailDomainIsFederated")) {
@@ -1193,7 +1193,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	if (state->action & MSN_ADD_BUDDY) {
 		MsnUser *user = msn_userlist_find_user(userlist, state->who);
-		xmlnode *guid = xmlnode_get_child(resp->xml,
+		xmlnode *guid = xmlnode_get_child(msn_soap_message_get_xml(resp),
 			"Body/ABGroupContactAddResponse/ABGroupContactAddResult/guid");
 
 		if (guid != NULL) {
@@ -1315,7 +1315,7 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1371,7 +1371,7 @@ msn_del_contact_from_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1453,7 +1453,7 @@ msn_update_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1551,7 +1551,7 @@ msn_annotate_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1643,7 +1643,7 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1741,7 +1741,7 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1855,7 +1855,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	fault = xmlnode_get_child(msn_soap_message_get_xml(resp), "Body/Fault");
 	if (fault != NULL) {
 		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
@@ -1882,7 +1882,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		/* the response is taken from
 		   http://telepathy.freedesktop.org/wiki/Pymsn/MSNP/ContactListActions
 		   should copy it to msnpiki some day */
-		xmlnode *guid_node = xmlnode_get_child(resp->xml,
+		xmlnode *guid_node = xmlnode_get_child(msn_soap_message_get_xml(resp),
 			"Body/ABGroupAddResponse/ABGroupAddResult/guid");
 
 		if (guid_node) {

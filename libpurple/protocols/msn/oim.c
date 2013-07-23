@@ -167,7 +167,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	xmlnode *faultcode = NULL;
 
 	if (response != NULL)
-		fault = xmlnode_get_child(response->xml, "Body/Fault");
+		fault = xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
 
 	if (fault && (faultcode = xmlnode_get_child(fault, "faultcode"))) {
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
@@ -282,7 +282,7 @@ msn_oim_get_metadata_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 	if (response) {
 		msn_parse_oim_xml(oim,
-			xmlnode_get_child(response->xml, "Body/GetMetadataResponse/MD"));
+			xmlnode_get_child(msn_soap_message_get_xml(response), "Body/GetMetadataResponse/MD"));
 	}
 }
 
@@ -351,7 +351,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	if (response == NULL) {
 		purple_debug_info("msn", "cannot send OIM: %s\n", msg->oim_msg);
 	} else {
-		xmlnode	*faultNode = xmlnode_get_child(response->xml, "Body/Fault");
+		xmlnode	*faultNode = xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
 
 		if (faultNode == NULL) {
 			/*Send OK! return*/
@@ -499,7 +499,7 @@ msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 {
 	MsnOimRecvData *rdata = data;
 
-	if (response && xmlnode_get_child(response->xml, "Body/Fault") == NULL)
+	if (response && xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault") == NULL)
 		purple_debug_info("msn", "Delete OIM success\n");
 	else
 		purple_debug_info("msn", "Delete OIM failed\n");
@@ -761,7 +761,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	MsnOimRecvData *rdata = data;
 
 	if (response != NULL) {
-		xmlnode *msg_node = xmlnode_get_child(response->xml,
+		xmlnode *msg_node = xmlnode_get_child(msn_soap_message_get_xml(response),
 			"Body/GetMessageResponse/GetMessageResult");
 
 		if (msg_node) {
@@ -769,7 +769,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			msn_oim_report_to_user(rdata, msg_str);
 			g_free(msg_str);
 		} else {
-			char *str = xmlnode_to_str(response->xml, NULL);
+			char *str = xmlnode_to_str(msn_soap_message_get_xml(response), NULL);
 			purple_debug_info("msn", "Unknown OIM response: %s\n", str);
 			g_free(str);
 			msn_oim_recv_data_free(rdata);

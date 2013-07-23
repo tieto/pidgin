@@ -23,22 +23,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 
-#include "internal.h"
-
 #include "soap.h"
 
-#include "http.h"
-#include "session.h"
+#include "internal.h"
 
 #include "debug.h"
-#include "xmlnode.h"
-
-#include <glib.h>
-#if !defined(_WIN32) || !defined(_WINERROR_)
-#include <error.h>
-#endif
+#include "http.h"
 
 #define SOAP_TIMEOUT (5 * 60)
+
+struct _MsnSoapMessage {
+	gchar *action;
+	xmlnode *xml;
+	GSList *headers;
+};
+
+xmlnode *
+msn_soap_message_get_xml(MsnSoapMessage *message)
+{
+	g_return_val_if_fail(message != NULL, NULL);
+
+	return message->xml;
+}
 
 typedef struct _MsnSoapRequest {
 	char *path;

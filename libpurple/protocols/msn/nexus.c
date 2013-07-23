@@ -352,7 +352,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	if (!nexus_parse_collection(nexus, -1,
-	                            xmlnode_get_child(resp->xml,
+	                            xmlnode_get_child(msn_soap_message_get_xml(resp),
 	                                              "Body/RequestSecurityTokenResponseCollection"))) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
@@ -438,7 +438,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
-	enckey = xmlnode_get_child(resp->xml, "Header/Security/DerivedKeyToken");
+	enckey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
 	while (enckey) {
 		if (g_str_equal(xmlnode_get_attrib(enckey, "Id"), "EncKey"))
 			break;
@@ -467,7 +467,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 #endif
 
-	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
+	tmp = xmlnode_get_data(xmlnode_get_child(msn_soap_message_get_xml(resp),
 		"Body/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		char *unescaped;
