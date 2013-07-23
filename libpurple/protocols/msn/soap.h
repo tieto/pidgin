@@ -1,6 +1,5 @@
 /**
- * @file soap.h
- * 	header file for SOAP connection related process
+ * @file soap.h SOAP handling
  *
  * purple
  *
@@ -20,33 +19,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 #ifndef MSN_SOAP_H
 #define MSN_SOAP_H
 
-typedef struct _MsnSoapMessage MsnSoapMessage;
-
-#include <glib.h>
-
 #include "xmlnode.h"
 
-#include "session.h"
-#include "sslconn.h"
+typedef struct _MsnSoapMessage MsnSoapMessage;
+
+typedef struct _MsnSoapService MsnSoapService;
 
 typedef void (*MsnSoapCallback)(MsnSoapMessage *request,
 	MsnSoapMessage *response, gpointer cb_data);
 
-struct _MsnSoapMessage {
-	char *action;
-	xmlnode *xml;
-	GSList *headers;
-};
+#include "session.h"
 
-MsnSoapMessage *msn_soap_message_new(const char *action, xmlnode *xml);
+MsnSoapMessage *
+msn_soap_message_new(const gchar *action, xmlnode *xml);
 
-void msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path, gboolean secure,
+xmlnode *
+msn_soap_message_get_xml(MsnSoapMessage *message);
+
+MsnSoapService *
+msn_soap_service_new(MsnSession *session);
+
+void
+msn_soap_service_destroy(MsnSoapService *soaps);
+
+void
+msn_soap_service_send_message(MsnSoapService *soaps, MsnSoapMessage *message,
+	const gchar *host, const gchar *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data);
 
 #endif /* MSN_SOAP_H */
