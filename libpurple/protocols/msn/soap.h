@@ -26,12 +26,14 @@
 
 #include "xmlnode.h"
 
-#include "session.h"
-
 typedef struct _MsnSoapMessage MsnSoapMessage;
+
+typedef struct _MsnSoapService MsnSoapService;
 
 typedef void (*MsnSoapCallback)(MsnSoapMessage *request,
 	MsnSoapMessage *response, gpointer cb_data);
+
+#include "session.h"
 
 MsnSoapMessage *
 msn_soap_message_new(const gchar *action, xmlnode *xml);
@@ -39,8 +41,14 @@ msn_soap_message_new(const gchar *action, xmlnode *xml);
 xmlnode *
 msn_soap_message_get_xml(MsnSoapMessage *message);
 
+MsnSoapService *
+msn_soap_service_new(MsnSession *session);
+
 void
-msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
+msn_soap_service_destroy(MsnSoapService *soaps);
+
+void
+msn_soap_service_send_message(MsnSoapService *soaps, MsnSoapMessage *message,
 	const gchar *host, const gchar *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data);
 

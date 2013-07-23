@@ -376,8 +376,6 @@ msn_nexus_connect(MsnNexus *nexus)
 	char *request;
 	int i;
 
-	MsnSoapMessage *soap;
-
 	purple_debug_info("msn", "Starting Windows Live ID authentication\n");
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
@@ -409,10 +407,11 @@ msn_nexus_connect(MsnNexus *nexus)
 	g_free(password_xml);
 	g_string_free(domains, TRUE);
 
-	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
+	msn_soap_service_send_message(session->soap,
+		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		MSN_SSO_SERVER, SSO_POST_URL, TRUE,
+		nexus_got_response_cb, nexus);
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
-	                      nexus_got_response_cb, nexus);
 }
 
 static void
@@ -532,7 +531,6 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	guchar signature[20];
 
 	char *request;
-	MsnSoapMessage *soap;
 
 	update = g_new0(MsnNexusUpdateCallback, 1);
 	update->cb = cb;
@@ -623,10 +621,10 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	g_free(signedinfo);
 	g_free(domain);
 
-	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
-	                      nexus_got_update_cb, ud);
+	msn_soap_service_send_message(session->soap,
+		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		MSN_SSO_SERVER, SSO_POST_URL, TRUE, nexus_got_update_cb, ud);
 }
 
 GHashTable *

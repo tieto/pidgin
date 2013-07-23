@@ -244,10 +244,9 @@ msn_oim_request_helper(MsnOimRequestData *data)
 		xmlnode_insert_data(xml_p, msn_p, -1);
 	}
 
-	msn_soap_message_send(session,
+	msn_soap_service_send_message(session->soap,
 		msn_soap_message_new(data->action, xmlnode_copy(data->body)),
-		data->host, data->url, FALSE,
-		msn_oim_request_cb, data);
+		data->host, data->url, FALSE, msn_oim_request_cb, data);
 
 	return FALSE;
 }

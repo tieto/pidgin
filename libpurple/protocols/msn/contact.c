@@ -288,7 +288,7 @@ msn_contact_request(MsnCallbackState *state)
 	xmlnode_free(state->token->child);
 	xmlnode_insert_data(state->token,
 		msn_nexus_get_token_str(state->session->nexus, MSN_AUTH_CONTACTS), -1);
-	msn_soap_message_send(state->session,
+	msn_soap_service_send_message(state->session->soap,
 		msn_soap_message_new(state->post_action, xmlnode_copy(state->body)),
 		MSN_CONTACT_SERVER, state->post_url, FALSE,
 		msn_contact_request_cb, state);
