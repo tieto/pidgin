@@ -27,6 +27,7 @@
 #define _PURPLE_XMLNODE_H_
 
 #include <glib.h>
+#include <glib-object.h>
 
 #define PURPLE_TYPE_XMLNODE  (xmlnode_get_type())
 
