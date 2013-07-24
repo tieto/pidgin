@@ -156,7 +156,7 @@ static PurpleStringref *ref_purple_type(GType type)
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler)
 {
 	GString *name, *val;
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 	int i;
 	void *retval = NULL;
 	Tcl_Obj *cmd, *arg, *result;
@@ -290,10 +290,10 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				/* We're going to switch again for code-deduping */
 #if 0
 				if (purple_value_is_outgoing(handler->argtypes[i]))
-					node = *va_arg(args, PurpleBListNode **);
+					node = *va_arg(args, PurpleBlistNode **);
 				else
 #endif
-				node = va_arg(args, PurpleBListNode *);
+				node = va_arg(args, PurpleBlistNode *);
 
 				if (PURPLE_IS_GROUP(node)) {
 					arg = Tcl_NewListObj(0, NULL);

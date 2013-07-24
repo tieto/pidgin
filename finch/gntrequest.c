@@ -440,7 +440,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 	gnt_entry_set_masked(GNT_ENTRY(entry),
 			purple_request_field_string_is_masked(field));
 	if (hint && purple_str_has_prefix(hint, "screenname")) {
-		PurpleBListNode *node = purple_blist_get_root();
+		PurpleBlistNode *node = purple_blist_get_root();
 		gboolean offline = purple_str_has_suffix(hint, "all");
 		for (; node; node = purple_blist_node_next(node, offline)) {
 			if (!PURPLE_IS_BUDDY(node))
@@ -451,7 +451,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		if (username)
 			*username = entry;
 	} else if (hint && !strcmp(hint, "group")) {
-		PurpleBListNode *node;
+		PurpleBlistNode *node;
 		for (node = purple_blist_get_root(); node;
 				node = purple_blist_node_get_sibling_next(node)) {
 			if (PURPLE_IS_GROUP(node))

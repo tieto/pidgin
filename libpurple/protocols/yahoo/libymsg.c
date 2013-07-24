@@ -3830,7 +3830,7 @@ static const char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
-static void yahoo_initiate_conference(PurpleBListNode *node, gpointer data) {
+static void yahoo_initiate_conference(PurpleBlistNode *node, gpointer data) {
 
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -3857,7 +3857,7 @@ static void yahoo_initiate_conference(PurpleBListNode *node, gpointer data) {
 	yahoo_c_invite(gc, id, "Join my conference...", purple_buddy_get_name(buddy));
 }
 
-static void yahoo_presence_settings(PurpleBListNode *node, gpointer data) {
+static void yahoo_presence_settings(PurpleBlistNode *node, gpointer data) {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 	int presence_val = GPOINTER_TO_INT(data);
@@ -3868,7 +3868,7 @@ static void yahoo_presence_settings(PurpleBListNode *node, gpointer data) {
 	yahoo_friend_update_presence(gc, purple_buddy_get_name(buddy), presence_val);
 }
 
-static void yahoo_game(PurpleBListNode *node, gpointer data) {
+static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -3996,7 +3996,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	}
 }
 
-static void yahoo_addbuddyfrommenu_cb(PurpleBListNode *node, gpointer data)
+static void yahoo_addbuddyfrommenu_cb(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -4010,7 +4010,7 @@ static void yahoo_addbuddyfrommenu_cb(PurpleBListNode *node, gpointer data)
 }
 
 
-static void yahoo_chat_goto_menu(PurpleBListNode *node, gpointer data)
+static void yahoo_chat_goto_menu(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -4061,7 +4061,7 @@ static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
 	return m;
 }
 
-static void yahoo_doodle_blist_node(PurpleBListNode *node, gpointer data)
+static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *b = (PurpleBuddy *)node;
 	PurpleAccount *account = purple_buddy_get_account(b);
@@ -4073,7 +4073,7 @@ static void yahoo_doodle_blist_node(PurpleBListNode *node, gpointer data)
 #if 0
 /* XXX: it doesn't seems to work */
 static void
-yahoo_userinfo_blist_node(PurpleBListNode *node, gpointer data)
+yahoo_userinfo_blist_node(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *b = (PurpleBuddy *)node;
 	PurpleAccount *account = purple_buddy_get_account(b);
@@ -4164,7 +4164,7 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 	return m;
 }
 
-GList *yahoo_blist_node_menu(PurpleBListNode *node)
+GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 {
 	if(PURPLE_IS_BUDDY(node)) {
 		return yahoo_buddy_menu((PurpleBuddy *) node);

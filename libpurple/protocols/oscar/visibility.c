@@ -55,7 +55,7 @@ is_buddy_on_list(OscarData *od, const char *bname)
 }
 
 static void
-visibility_cb(PurpleBListNode *node, gpointer whatever)
+visibility_cb(PurpleBlistNode *node, gpointer whatever)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(node);
 	const char* bname = purple_buddy_get_name(buddy);

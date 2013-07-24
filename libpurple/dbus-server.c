@@ -90,10 +90,10 @@ purple_dbus_init_ids(void)
 	map_id_type = g_hash_table_new(g_direct_hash, g_direct_equal);
 	map_node_id = g_hash_table_new(g_direct_hash, g_direct_equal);
 
-	PURPLE_DBUS_TYPE(PurpleBuddy)->parent   = PURPLE_DBUS_TYPE(PurpleBListNode);
-	PURPLE_DBUS_TYPE(PurpleContact)->parent = PURPLE_DBUS_TYPE(PurpleBListNode);
-	PURPLE_DBUS_TYPE(PurpleChat)->parent    = PURPLE_DBUS_TYPE(PurpleBListNode);
-	PURPLE_DBUS_TYPE(PurpleGroup)->parent   = PURPLE_DBUS_TYPE(PurpleBListNode);
+	PURPLE_DBUS_TYPE(PurpleBuddy)->parent   = PURPLE_DBUS_TYPE(PurpleBlistNode);
+	PURPLE_DBUS_TYPE(PurpleContact)->parent = PURPLE_DBUS_TYPE(PurpleBlistNode);
+	PURPLE_DBUS_TYPE(PurpleChat)->parent    = PURPLE_DBUS_TYPE(PurpleBlistNode);
+	PURPLE_DBUS_TYPE(PurpleGroup)->parent   = PURPLE_DBUS_TYPE(PurpleBlistNode);
 }
 
 void

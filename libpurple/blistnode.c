@@ -24,10 +24,10 @@
 #include "internal.h"
 
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBListNodePrivate))
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodePrivate))
 
-/** @copydoc _PurpleBListNodePrivate */
-typedef struct _PurpleBListNodePrivate  PurpleBListNodePrivate;
+/** @copydoc _PurpleBlistNodePrivate */
+typedef struct _PurpleBlistNodePrivate  PurpleBlistNodePrivate;
 
 #define PURPLE_COUNTING_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodePrivate))
@@ -36,12 +36,12 @@ typedef struct _PurpleBListNodePrivate  PurpleBListNodePrivate;
 typedef struct _PurpleCountingNodePrivate  PurpleCountingNodePrivate;
 
 /** Private data of a buddy list node */
-struct _PurpleBListNodePrivate {
+struct _PurpleBlistNodePrivate {
 	GHashTable *settings;  /**< per-node settings                            */
 	gboolean dont_save;    /**< node should not be saved with the buddy list */
 };
 
-/* BList node property enums */
+/* Blist node property enums */
 enum
 {
 	BLNODE_PROP_0,
@@ -74,7 +74,7 @@ static GObjectClass *parent_class;
 /* Buddy list node API                                                    */
 /**************************************************************************/
 
-static PurpleBListNode *get_next_node(PurpleBListNode *node, gboolean godeep)
+static PurpleBlistNode *get_next_node(PurpleBlistNode *node, gboolean godeep)
 {
 	if (node == NULL)
 		return NULL;
@@ -88,9 +88,9 @@ static PurpleBListNode *get_next_node(PurpleBListNode *node, gboolean godeep)
 	return get_next_node(node->parent, FALSE);
 }
 
-PurpleBListNode *purple_blist_node_next(PurpleBListNode *node, gboolean offline)
+PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
 {
-	PurpleBListNode *ret = node;
+	PurpleBlistNode *ret = node;
 
 	if (offline)
 		return get_next_node(ret, TRUE);
@@ -103,28 +103,28 @@ PurpleBListNode *purple_blist_node_next(PurpleBListNode *node, gboolean offline)
 	return ret;
 }
 
-PurpleBListNode *purple_blist_node_get_parent(PurpleBListNode *node)
+PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node)
 {
 	return node ? node->parent : NULL;
 }
 
-PurpleBListNode *purple_blist_node_get_first_child(PurpleBListNode *node)
+PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node)
 {
 	return node ? node->child : NULL;
 }
 
-PurpleBListNode *purple_blist_node_get_sibling_next(PurpleBListNode *node)
+PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node)
 {
 	return node? node->next : NULL;
 }
 
-PurpleBListNode *purple_blist_node_get_sibling_prev(PurpleBListNode *node)
+PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node)
 {
 	return node? node->prev : NULL;
 }
 
 void *
-purple_blist_node_get_ui_data(const PurpleBListNode *node)
+purple_blist_node_get_ui_data(const PurpleBlistNode *node)
 {
 	g_return_val_if_fail(node, NULL);
 
@@ -132,16 +132,16 @@ purple_blist_node_get_ui_data(const PurpleBListNode *node)
 }
 
 void
-purple_blist_node_set_ui_data(PurpleBListNode *node, void *ui_data) {
+purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data) {
 	g_return_if_fail(node);
 
 	node->ui_data = ui_data;
 }
 
-void purple_blist_node_remove_setting(PurpleBListNode *node, const char *key)
+void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 {
-	PurpleBListUiOps *ops;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistUiOps *ops;
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->settings != NULL);
@@ -155,9 +155,9 @@ void purple_blist_node_remove_setting(PurpleBListNode *node, const char *key)
 }
 
 void
-purple_blist_node_set_dont_save(PurpleBListNode *node, gboolean dont_save)
+purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 
@@ -165,9 +165,9 @@ purple_blist_node_set_dont_save(PurpleBListNode *node, gboolean dont_save)
 }
 
 gboolean
-purple_blist_node_get_dont_save(PurpleBListNode *node)
+purple_blist_node_get_dont_save(PurpleBlistNode *node)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, 0);
 
@@ -175,9 +175,9 @@ purple_blist_node_get_dont_save(PurpleBListNode *node)
 }
 
 GHashTable *
-purple_blist_node_get_settings(PurpleBListNode *node)
+purple_blist_node_get_settings(PurpleBlistNode *node)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -185,9 +185,9 @@ purple_blist_node_get_settings(PurpleBListNode *node)
 }
 
 gboolean
-purple_blist_node_has_setting(PurpleBListNode* node, const char *key)
+purple_blist_node_has_setting(PurpleBlistNode* node, const char *key)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 	g_return_val_if_fail(priv->settings != NULL, FALSE);
@@ -198,11 +198,11 @@ purple_blist_node_has_setting(PurpleBListNode* node, const char *key)
 }
 
 void
-purple_blist_node_set_bool(PurpleBListNode* node, const char *key, gboolean data)
+purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data)
 {
 	GValue *value;
-	PurpleBListUiOps *ops;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistUiOps *ops;
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->settings != NULL);
@@ -219,10 +219,10 @@ purple_blist_node_set_bool(PurpleBListNode* node, const char *key, gboolean data
 }
 
 gboolean
-purple_blist_node_get_bool(PurpleBListNode* node, const char *key)
+purple_blist_node_get_bool(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 	g_return_val_if_fail(priv->settings != NULL, FALSE);
@@ -239,11 +239,11 @@ purple_blist_node_get_bool(PurpleBListNode* node, const char *key)
 }
 
 void
-purple_blist_node_set_int(PurpleBListNode* node, const char *key, int data)
+purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 {
 	GValue *value;
-	PurpleBListUiOps *ops;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistUiOps *ops;
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->settings != NULL);
@@ -260,10 +260,10 @@ purple_blist_node_set_int(PurpleBListNode* node, const char *key, int data)
 }
 
 int
-purple_blist_node_get_int(PurpleBListNode* node, const char *key)
+purple_blist_node_get_int(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, 0);
 	g_return_val_if_fail(priv->settings != NULL, 0);
@@ -280,11 +280,11 @@ purple_blist_node_get_int(PurpleBListNode* node, const char *key)
 }
 
 void
-purple_blist_node_set_string(PurpleBListNode* node, const char *key, const char *data)
+purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char *data)
 {
 	GValue *value;
-	PurpleBListUiOps *ops;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistUiOps *ops;
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(priv->settings != NULL);
@@ -301,10 +301,10 @@ purple_blist_node_set_string(PurpleBListNode* node, const char *key, const char 
 }
 
 const char *
-purple_blist_node_get_string(PurpleBListNode* node, const char *key)
+purple_blist_node_get_string(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 	g_return_val_if_fail(priv->settings != NULL, NULL);
@@ -321,7 +321,7 @@ purple_blist_node_get_string(PurpleBListNode* node, const char *key)
 }
 
 GList *
-purple_blist_node_get_extended_menu(PurpleBListNode *n)
+purple_blist_node_get_extended_menu(PurpleBlistNode *n)
 {
 	GList *menu = NULL;
 
@@ -333,7 +333,7 @@ purple_blist_node_get_extended_menu(PurpleBListNode *n)
 }
 
 /**************************************************************************
- * GObject code for PurpleBListNode
+ * GObject code for PurpleBlistNode
  **************************************************************************/
 
 /* GObject Property names */
@@ -344,7 +344,7 @@ static void
 purple_blist_node_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
-	PurpleBListNode *node = PURPLE_BLIST_NODE(obj);
+	PurpleBlistNode *node = PURPLE_BLIST_NODE(obj);
 
 	switch (param_id) {
 		case BLNODE_PROP_DONT_SAVE:
@@ -361,7 +361,7 @@ static void
 purple_blist_node_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
-	PurpleBListNode *node = PURPLE_BLIST_NODE(obj);
+	PurpleBlistNode *node = PURPLE_BLIST_NODE(obj);
 
 	switch (param_id) {
 		case BLNODE_PROP_DONT_SAVE:
@@ -377,7 +377,7 @@ purple_blist_node_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_blist_node_init(GTypeInstance *instance, gpointer klass)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(instance);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(instance);
 
 	priv->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 			(GDestroyNotify)purple_g_value_free);
@@ -387,7 +387,7 @@ purple_blist_node_init(GTypeInstance *instance, gpointer klass)
 static void
 purple_blist_node_finalize(GObject *object)
 {
-	PurpleBListNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(object);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(object);
 
 	g_hash_table_destroy(priv->settings);
 
@@ -396,7 +396,7 @@ purple_blist_node_finalize(GObject *object)
 
 /* Class initializer function */
 static void
-purple_blist_node_class_init(PurpleBListNodeClass *klass)
+purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -414,7 +414,7 @@ purple_blist_node_class_init(PurpleBListNodeClass *klass)
 				FALSE, G_PARAM_READWRITE)
 			);
 
-	g_type_class_add_private(klass, sizeof(PurpleBListNodePrivate));
+	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
 }
 
 GType
@@ -424,19 +424,19 @@ purple_blist_node_get_type(void)
 
 	if(type == 0) {
 		static const GTypeInfo info = {
-			sizeof(PurpleBListNodeClass),
+			sizeof(PurpleBlistNodeClass),
 			NULL,
 			NULL,
 			(GClassInitFunc)purple_blist_node_class_init,
 			NULL,
 			NULL,
-			sizeof(PurpleBListNode),
+			sizeof(PurpleBlistNode),
 			0,
 			(GInstanceInitFunc)purple_blist_node_init,
 			NULL,
 		};
 
-		type = g_type_register_static(G_TYPE_OBJECT, "PurpleBListNode",
+		type = g_type_register_static(G_TYPE_OBJECT, "PurpleBlistNode",
 				&info, G_TYPE_FLAG_ABSTRACT);
 	}
 

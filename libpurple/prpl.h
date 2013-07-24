@@ -285,7 +285,7 @@ struct _PurplePluginProtocolInfo
 	 * actions to be shown in (for example) the right-click menu for @a
 	 * node.
 	 */
-	GList *(*blist_node_menu)(PurpleBListNode *node);
+	GList *(*blist_node_menu)(PurpleBlistNode *node);
 
 	/**
 	 * Returns a list of #proto_chat_entry structs, which represent

@@ -34,7 +34,7 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
 
 void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
 
-void jabber_adhoc_execute_action(PurpleBListNode *node, gpointer data);
+void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data);
 
 void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query);
 

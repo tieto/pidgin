@@ -25,7 +25,7 @@
 #include <version.h>
 
 static void
-append_to_tooltip(PurpleBListNode *node, GString *text, gboolean full)
+append_to_tooltip(PurpleBlistNode *node, GString *text, gboolean full)
 {
 	if (full) {
 		const gchar *note = purple_blist_node_get_string(node, "notes");

@@ -84,7 +84,7 @@ typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
 typedef PurpleAccountPrivacyType		Purple__Account__PrivacyType;
 
 /* buddylist.h */
-typedef PurpleBListNode *			Purple__BuddyList__Node;
+typedef PurpleBlistNode *			Purple__BuddyList__Node;
 typedef PurpleCountingNode *			Purple__BuddyList__CountingNode;
 typedef PurpleBuddyList *			Purple__BuddyList;
 typedef PurpleBuddy *			Purple__BuddyList__Buddy;

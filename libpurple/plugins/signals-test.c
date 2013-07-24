@@ -145,7 +145,7 @@ buddy_signed_off_cb(PurpleBuddy *buddy, void *data)
 }
 
 static void
-blist_node_added_cb(PurpleBListNode *bnode, void *data)
+blist_node_added_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
 	if (PURPLE_IS_GROUP(bnode))
@@ -163,7 +163,7 @@ blist_node_added_cb(PurpleBListNode *bnode, void *data)
 }
 
 static void
-blist_node_removed_cb(PurpleBListNode *bnode, void *data)
+blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
 	if (PURPLE_IS_GROUP(bnode))
@@ -181,7 +181,7 @@ blist_node_removed_cb(PurpleBListNode *bnode, void *data)
 }
 
 static void
-blist_node_aliased(PurpleBListNode *node, const char *old_alias)
+blist_node_aliased(PurpleBlistNode *node, const char *old_alias)
 {
 	PurpleContact *p = PURPLE_CONTACT(node);
 	PurpleBuddy *b = PURPLE_BUDDY(node);
@@ -208,7 +208,7 @@ blist_node_aliased(PurpleBListNode *node, const char *old_alias)
 }
 
 static void
-blist_node_extended_menu_cb(PurpleBListNode *node, void *data)
+blist_node_extended_menu_cb(PurpleBlistNode *node, void *data)
 {
 	PurpleContact *p = PURPLE_CONTACT(node);
 	PurpleBuddy *b = PURPLE_BUDDY(node);

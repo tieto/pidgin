@@ -43,8 +43,8 @@ typedef struct _PurpleBuddyList       PurpleBuddyList;
 /** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
 
-/** @copydoc _PurpleBListUiOps */
-typedef struct _PurpleBListUiOps PurpleBListUiOps;
+/** @copydoc _PurpleBlistUiOps */
+typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
 /**************************************************************************/
 /* Data Structures                                                        */
@@ -62,7 +62,7 @@ struct _PurpleBuddyList {
 	gpointer ui_data;
 
 	/** The first node in the buddy list */
-	PurpleBListNode *root;
+	PurpleBlistNode *root;
 };
 
 /** The base class for all #PurpleBuddyList's. */
@@ -79,18 +79,18 @@ struct _PurpleBuddyListClass {
 /**
  * Buddy list UI operations.
  *
- * Any UI representing a buddy list must assign a filled-out PurpleBListUiOps
+ * Any UI representing a buddy list must assign a filled-out PurpleBlistUiOps
  * structure to the buddy list core.
  */
-struct _PurpleBListUiOps
+struct _PurpleBlistUiOps
 {
 	void (*new_list)(PurpleBuddyList *list); /**< Sets UI-specific data on a buddy list. */
-	void (*new_node)(PurpleBListNode *node); /**< Sets UI-specific data on a node. */
+	void (*new_node)(PurpleBlistNode *node); /**< Sets UI-specific data on a node. */
 	void (*show)(PurpleBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
 	void (*update)(PurpleBuddyList *list,
-		       PurpleBListNode *node);       /**< This will update a node in the buddy list. */
+		       PurpleBlistNode *node);       /**< This will update a node in the buddy list. */
 	void (*remove)(PurpleBuddyList *list,
-		       PurpleBListNode *node);       /**< This removes a node from the list */
+		       PurpleBlistNode *node);       /**< This removes a node from the list */
 	void (*destroy)(PurpleBuddyList *list);  /**< When the list is destroyed, this is called to destroy the UI. */
 	void (*set_visible)(PurpleBuddyList *list,
 			    gboolean show);            /**< Hides or unhides the buddy list */
@@ -109,7 +109,7 @@ struct _PurpleBListUiOps
 	 *
 	 * @param node    The node which has been modified.
 	 */
-	void (*save_node)(PurpleBListNode *node);
+	void (*save_node)(PurpleBlistNode *node);
 
 	/**
 	 * Called when a node is about to be removed from the buddy list.
@@ -122,7 +122,7 @@ struct _PurpleBListUiOps
 	 *
 	 * @param node  The node which has been modified.
 	 */
-	void (*remove_node)(PurpleBListNode *node);
+	void (*remove_node)(PurpleBlistNode *node);
 
 	/**
 	 * Called to save all the data for an account. If the UI sets this,
@@ -165,7 +165,7 @@ PurpleBuddyList *purple_blist_get_buddy_list(void);
  *
  * @return The root node.
  */
-PurpleBListNode *purple_blist_get_root(void);
+PurpleBlistNode *purple_blist_get_root(void);
 
 /**
  * Returns a list of every buddy in the list.  Use of this function is
@@ -236,7 +236,7 @@ void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name);
  * @param group  The group to add the new chat to.
  * @param node   The insertion point
  */
-void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode *node);
+void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
  * Adds a new buddy to the buddy list.
@@ -251,7 +251,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBListNode
  * @param node    The insertion point.  Pass in NULL to add the node as
  *                the first child in the given group.
  */
-void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBListNode *node);
+void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
  * Adds a new group to the buddy list.
@@ -262,7 +262,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
  * @param group  The group
  * @param node   The insertion point
  */
-void purple_blist_add_group(PurpleGroup *group, PurpleBListNode *node);
+void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node);
 
 /**
  * Adds a new contact to the buddy list.
@@ -274,7 +274,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBListNode *node);
  * @param group   The group to add the contact to
  * @param node    The insertion point
  */
-void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBListNode *node);
+void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
@@ -434,14 +434,14 @@ void purple_blist_request_add_group(void);
  *
  * @param ops The ops struct.
  */
-void purple_blist_set_ui_ops(PurpleBListUiOps *ops);
+void purple_blist_set_ui_ops(PurpleBlistUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used for the buddy list.
  *
  * @return The UI operations structure.
  */
-PurpleBListUiOps *purple_blist_get_ui_ops(void);
+PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 
 /*@}*/
 

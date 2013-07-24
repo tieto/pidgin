@@ -1111,7 +1111,7 @@ pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 		buddies = purple_blist_find_buddies(account, username);
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
-			PurpleBListNode *node = cur->data;
+			PurpleBlistNode *node = cur->data;
 			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 			{
 				pidgin_log_show_contact((PurpleContact *)node->parent);
@@ -1234,10 +1234,10 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 static void
 pidgin_dialogs_remove_contact_cb(PurpleContact *contact)
 {
-	PurpleBListNode *bnode, *cnode;
+	PurpleBlistNode *bnode, *cnode;
 	PurpleGroup *group;
 
-	cnode = (PurpleBListNode *)contact;
+	cnode = (PurpleBlistNode *)contact;
 	group = (PurpleGroup*)cnode->parent;
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		PurpleBuddy *buddy = (PurpleBuddy*)bnode;
@@ -1324,9 +1324,9 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 static void
 pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 {
-	PurpleBListNode *cnode, *bnode;
+	PurpleBlistNode *cnode, *bnode;
 
-	cnode = ((PurpleBListNode*)group)->child;
+	cnode = ((PurpleBlistNode*)group)->child;
 
 	while (cnode) {
 		if (PURPLE_IS_CONTACT(cnode)) {

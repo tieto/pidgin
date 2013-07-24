@@ -29,16 +29,16 @@
 #include <glib-object.h>
 
 #define PURPLE_TYPE_BLIST_NODE             (purple_blist_node_get_type())
-#define PURPLE_BLIST_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BLIST_NODE, PurpleBListNode))
-#define PURPLE_BLIST_NODE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BLIST_NODE, PurpleBListNodeClass))
+#define PURPLE_BLIST_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNode))
+#define PURPLE_BLIST_NODE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodeClass))
 #define PURPLE_IS_BLIST_NODE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_BLIST_NODE))
 #define PURPLE_IS_BLIST_NODE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_BLIST_NODE))
-#define PURPLE_BLIST_NODE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BLIST_NODE, PurpleBListNodeClass))
+#define PURPLE_BLIST_NODE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodeClass))
 
-/** @copydoc _PurpleBListNode */
-typedef struct _PurpleBListNode PurpleBListNode;
-/** @copydoc _PurpleBListNodeClass */
-typedef struct _PurpleBListNodeClass PurpleBListNodeClass;
+/** @copydoc _PurpleBlistNode */
+typedef struct _PurpleBlistNode PurpleBlistNode;
+/** @copydoc _PurpleBlistNodeClass */
+typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 
 #define PURPLE_TYPE_COUNTING_NODE             (purple_counting_node_get_type())
 #define PURPLE_COUNTING_NODE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNode))
@@ -60,7 +60,7 @@ typedef struct _PurpleCountingNodeClass PurpleCountingNodeClass;
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
  * anything else that wants to put itself in the buddy list. */
-struct _PurpleBListNode {
+struct _PurpleBlistNode {
 	/*< private >*/
 	GObject gparent;
 
@@ -69,14 +69,14 @@ struct _PurpleBListNode {
 	 */
 	gpointer ui_data;
 
-	PurpleBListNode *prev;    /**< The sibling before this buddy. */
-	PurpleBListNode *next;    /**< The sibling after this buddy.  */
-	PurpleBListNode *parent;  /**< The parent of this node        */
-	PurpleBListNode *child;   /**< The child of this node         */
+	PurpleBlistNode *prev;    /**< The sibling before this buddy. */
+	PurpleBlistNode *next;    /**< The sibling after this buddy.  */
+	PurpleBlistNode *parent;  /**< The parent of this node        */
+	PurpleBlistNode *child;   /**< The child of this node         */
 };
 
-/** The base class for all #PurpleBListNode's. */
-struct _PurpleBListNodeClass {
+/** The base class for all #PurpleBlistNode's. */
+struct _PurpleBlistNodeClass {
 	/*< private >*/
 	GObjectClass gparent_class;
 
@@ -100,13 +100,13 @@ struct _PurpleBListNodeClass {
  */
 struct _PurpleCountingNode {
 	/** The blist node that this counting node inherits from */
-	PurpleBListNode node;
+	PurpleBlistNode node;
 };
 
 /** The base class for all #PurpleCountingNode's. */
 struct _PurpleCountingNodeClass {
 	/*< private >*/
-	PurpleBListNodeClass node_class;
+	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -122,7 +122,7 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Returns the GType for the PurpleBListNode object.
+ * Returns the GType for the PurpleBlistNode object.
  */
 GType purple_blist_node_get_type(void);
 
@@ -138,7 +138,7 @@ GType purple_blist_node_get_type(void);
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
  */
-PurpleBListNode *purple_blist_node_next(PurpleBListNode *node, gboolean offline);
+PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
 
 /**
  * Returns the parent node of a given node.
@@ -151,7 +151,7 @@ PurpleBListNode *purple_blist_node_next(PurpleBListNode *node, gboolean offline)
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBListNode *purple_blist_node_get_parent(PurpleBListNode *node);
+PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
 
 /**
  * Returns the the first child node of a given node.
@@ -164,7 +164,7 @@ PurpleBListNode *purple_blist_node_get_parent(PurpleBListNode *node);
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBListNode *purple_blist_node_get_first_child(PurpleBListNode *node);
+PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
 
 /**
  * Returns the sibling node of a given node.
@@ -177,7 +177,7 @@ PurpleBListNode *purple_blist_node_get_first_child(PurpleBListNode *node);
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBListNode *purple_blist_node_get_sibling_next(PurpleBListNode *node);
+PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
 
 /**
  * Returns the previous sibling node of a given node.
@@ -190,7 +190,7 @@ PurpleBListNode *purple_blist_node_get_sibling_next(PurpleBListNode *node);
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_next
  */
-PurpleBListNode *purple_blist_node_get_sibling_prev(PurpleBListNode *node);
+PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
 
 /**
  * Returns the UI data of a given node.
@@ -198,7 +198,7 @@ PurpleBListNode *purple_blist_node_get_sibling_prev(PurpleBListNode *node);
  * @param node The node.
  * @return The UI data.
  */
-gpointer purple_blist_node_get_ui_data(const PurpleBListNode *node);
+gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
 
 /**
  * Sets the UI data of a given node.
@@ -206,7 +206,7 @@ gpointer purple_blist_node_get_ui_data(const PurpleBListNode *node);
  * @param node The node.
  * @param ui_data The UI data.
  */
-void purple_blist_node_set_ui_data(PurpleBListNode *node, gpointer ui_data);
+void purple_blist_node_set_ui_data(PurpleBlistNode *node, gpointer ui_data);
 
 /**
  * Returns a node's settings
@@ -215,7 +215,7 @@ void purple_blist_node_set_ui_data(PurpleBListNode *node, gpointer ui_data);
  *
  * @return The hash table with the node's settings
  */
-GHashTable *purple_blist_node_get_settings(PurpleBListNode *node);
+GHashTable *purple_blist_node_get_settings(PurpleBlistNode *node);
 
 /**
  * Checks whether a named setting exists for a node in the buddy list
@@ -225,7 +225,7 @@ GHashTable *purple_blist_node_get_settings(PurpleBListNode *node);
  *
  * @return TRUE if a value exists, or FALSE if there is no setting
  */
-gboolean purple_blist_node_has_setting(PurpleBListNode *node, const char *key);
+gboolean purple_blist_node_has_setting(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates a boolean with a node in the buddy list
@@ -234,7 +234,7 @@ gboolean purple_blist_node_has_setting(PurpleBListNode *node, const char *key);
  * @param key   The identifier for the data
  * @param value The value to set
  */
-void purple_blist_node_set_bool(PurpleBListNode *node, const char *key, gboolean value);
+void purple_blist_node_set_bool(PurpleBlistNode *node, const char *key, gboolean value);
 
 /**
  * Retrieves a named boolean setting from a node in the buddy list
@@ -244,7 +244,7 @@ void purple_blist_node_set_bool(PurpleBListNode *node, const char *key, gboolean
  *
  * @return The value, or FALSE if there is no setting
  */
-gboolean purple_blist_node_get_bool(PurpleBListNode *node, const char *key);
+gboolean purple_blist_node_get_bool(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates an integer with a node in the buddy list
@@ -253,7 +253,7 @@ gboolean purple_blist_node_get_bool(PurpleBListNode *node, const char *key);
  * @param key   The identifier for the data
  * @param value The value to set
  */
-void purple_blist_node_set_int(PurpleBListNode *node, const char *key, int value);
+void purple_blist_node_set_int(PurpleBlistNode *node, const char *key, int value);
 
 /**
  * Retrieves a named integer setting from a node in the buddy list
@@ -263,7 +263,7 @@ void purple_blist_node_set_int(PurpleBListNode *node, const char *key, int value
  *
  * @return The value, or 0 if there is no setting
  */
-int purple_blist_node_get_int(PurpleBListNode *node, const char *key);
+int purple_blist_node_get_int(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates a string with a node in the buddy list
@@ -272,7 +272,7 @@ int purple_blist_node_get_int(PurpleBListNode *node, const char *key);
  * @param key   The identifier for the data
  * @param value The value to set
  */
-void purple_blist_node_set_string(PurpleBListNode *node, const char *key,
+void purple_blist_node_set_string(PurpleBlistNode *node, const char *key,
 		const char *value);
 
 /**
@@ -283,7 +283,7 @@ void purple_blist_node_set_string(PurpleBListNode *node, const char *key,
  *
  * @return The value, or NULL if there is no setting
  */
-const char *purple_blist_node_get_string(PurpleBListNode *node, const char *key);
+const char *purple_blist_node_get_string(PurpleBlistNode *node, const char *key);
 
 /**
  * Removes a named setting from a blist node
@@ -291,7 +291,7 @@ const char *purple_blist_node_get_string(PurpleBListNode *node, const char *key)
  * @param node  The node from which to remove the setting
  * @param key   The name of the setting
  */
-void purple_blist_node_remove_setting(PurpleBListNode *node, const char *key);
+void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key);
 
 /**
  * Sets whether the node should be saved with the buddy list or not
@@ -300,7 +300,7 @@ void purple_blist_node_remove_setting(PurpleBListNode *node, const char *key);
  * @param dont_save TRUE if the node should NOT be saved, FALSE if node should
  *                  be saved
  */
-void purple_blist_node_set_dont_save(PurpleBListNode *node, gboolean dont_save);
+void purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save);
 
 /**
  * Gets whether the node should be saved with the buddy list or not
@@ -309,7 +309,7 @@ void purple_blist_node_set_dont_save(PurpleBListNode *node, gboolean dont_save);
  *
  * @return TRUE if the node should NOT be saved, FALSE if node should be saved
  */
-gboolean purple_blist_node_get_dont_save(PurpleBListNode *node);
+gboolean purple_blist_node_get_dont_save(PurpleBlistNode *node);
 
 /*@}*/
 
@@ -319,7 +319,7 @@ gboolean purple_blist_node_get_dont_save(PurpleBListNode *node);
  * @return  A list of PurpleMenuAction items, as harvested by the
  *          blist-node-extended-menu signal.
  */
-GList *purple_blist_node_get_extended_menu(PurpleBListNode *n);
+GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
 
 /*@}*/
 

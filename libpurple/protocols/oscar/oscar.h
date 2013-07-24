@@ -1315,7 +1315,7 @@ void oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo);
 
 /* authorization.c - OSCAR authorization requests */
 void oscar_auth_sendrequest(PurpleConnection *gc, const char *name, const char *msg);
-void oscar_auth_sendrequest_menu(PurpleBListNode *node, gpointer ignored);
+void oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored);
 void oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *reason);
 
 void oscar_set_aim_permdeny(PurpleConnection *gc);

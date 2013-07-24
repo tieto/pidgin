@@ -3583,7 +3583,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 
 			/* Make a list of what the groups each buddy is in */
 			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
-				PurpleBListNode *node = cur->data;
+				PurpleBlistNode *node = cur->data;
 				/* node is PurpleBuddy, parent is a PurpleContact.
 				 * We must go two levels up to get the Group */
 				groups = g_list_append(groups,
@@ -3725,7 +3725,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 		if (aim_ssi_itemlist_exists(&od->ssi.local, bname)) {
 			/* If the buddy is an ICQ user then load his nickname */
-			const char *servernick = purple_blist_node_get_string((PurpleBListNode*)b, "servernick");
+			const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
 			char *alias;
 			const char *balias;
 			if (servernick)
@@ -4696,7 +4696,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	oscar_free_name_data(data);
 }
 
-static void oscar_buddycb_edit_comment(PurpleBListNode *node, gpointer ignore) {
+static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -4761,7 +4761,7 @@ oscar_ask_directim_no_cb(struct oscar_ask_directim_data *data)
 static void
 oscar_ask_directim(gpointer object, gpointer ignored)
 {
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 	gchar *buf;
@@ -4797,7 +4797,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 static void
 oscar_close_directim(gpointer object, gpointer ignored)
 {
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -4832,7 +4832,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 	}
 }
 
-static void oscar_get_icqxstatusmsg(PurpleBListNode *node, gpointer ignore)
+static void oscar_get_icqxstatusmsg(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -4855,7 +4855,7 @@ static void oscar_get_icqxstatusmsg(PurpleBListNode *node, gpointer ignore)
 }
 
 static void
-oscar_get_aim_info_cb(PurpleBListNode *node, gpointer ignore)
+oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -4959,7 +4959,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 }
 
 
-GList *oscar_blist_node_menu(PurpleBListNode *node) {
+GList *oscar_blist_node_menu(PurpleBlistNode *node) {
 	if(PURPLE_IS_BUDDY(node)) {
 		return oscar_buddy_menu((PurpleBuddy *) node);
 	} else {

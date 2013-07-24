@@ -806,7 +806,7 @@ purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
 	PurpleBuddy *buddy = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(presence));
 	time_t current_time = time(NULL);
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	gboolean idle = purple_presence_is_idle(presence);
 
@@ -862,7 +862,7 @@ purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 	 */
 
 	if (ops != NULL && ops->update != NULL)
-		ops->update(purple_blist_get_buddy_list(), (PurpleBListNode *)buddy);
+		ops->update(purple_blist_get_buddy_list(), (PurpleBlistNode *)buddy);
 }
 
 PurpleBuddy *

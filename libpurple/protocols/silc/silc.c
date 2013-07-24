@@ -1530,7 +1530,7 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 }
 
 
-static GList *silcpurple_blist_node_menu(PurpleBListNode *node) {
+static GList *silcpurple_blist_node_menu(PurpleBlistNode *node) {
 	/* split this single menu building function back into the two
 	   original: one for buddies and one for chats */
 	if(PURPLE_IS_CHAT(node)) {

@@ -311,7 +311,7 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
   return g_list_reverse(types);
 }
 
-static void blist_example_menu_item(PurpleBListNode *node, gpointer userdata) {
+static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
   purple_debug_info("nullprpl", "example menu item clicked on user %s\n",
                     ((PurpleBuddy *)node)->name);
 
@@ -321,7 +321,7 @@ static void blist_example_menu_item(PurpleBListNode *node, gpointer userdata) {
                      _("This is the callback for the nullprpl menu item."));
 }
 
-static GList *nullprpl_blist_node_menu(PurpleBListNode *node) {
+static GList *nullprpl_blist_node_menu(PurpleBlistNode *node) {
   purple_debug_info("nullprpl", "providing buddy list context menu item\n");
 
   if (PURPLE_IS_BUDDY(node)) {

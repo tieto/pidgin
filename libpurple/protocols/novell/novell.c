@@ -1228,9 +1228,9 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 static void
 _remove_purple_buddies(NMUser *user)
 {
-	PurpleBListNode *gnode;
-	PurpleBListNode *cnode;
-	PurpleBListNode *bnode;
+	PurpleBlistNode *gnode;
+	PurpleBlistNode *cnode;
+	PurpleBlistNode *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
 	GSList *rem_list = NULL;
@@ -1615,7 +1615,7 @@ _reject_conference_cb(GSList * parms)
 }
 
 static void
-_initiate_conference_cb(PurpleBListNode *node, gpointer ignored)
+_initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -3443,7 +3443,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 }
 
 static GList *
-novell_blist_node_menu(PurpleBListNode *node)
+novell_blist_node_menu(PurpleBlistNode *node)
 {
 	GList *list = NULL;
 	PurpleMenuAction *act;

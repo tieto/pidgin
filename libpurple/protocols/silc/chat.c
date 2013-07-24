@@ -180,7 +180,7 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 
 
 static void
-silcpurple_chat_getinfo_menu(PurpleBListNode *node, gpointer data)
+silcpurple_chat_getinfo_menu(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat = (PurpleChat *)node;
 	PurpleAccount *account = purple_chat_get_account(chat);
@@ -194,7 +194,7 @@ silcpurple_chat_getinfo_menu(PurpleBListNode *node, gpointer data)
 /************************** Channel Invite List ******************************/
 
 static void
-silcpurple_chat_invitelist(PurpleBListNode *node, gpointer data);
+silcpurple_chat_invitelist(PurpleBlistNode *node, gpointer data);
 {
 
 }
@@ -203,7 +203,7 @@ silcpurple_chat_invitelist(PurpleBListNode *node, gpointer data);
 /**************************** Channel Ban List *******************************/
 
 static void
-silcpurple_chat_banlist(PurpleBListNode *node, gpointer data);
+silcpurple_chat_banlist(PurpleBlistNode *node, gpointer data);
 {
 
 }
@@ -366,7 +366,7 @@ silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 
 	f = purple_request_fields_get_field(fields, "passphrase");
 	val = purple_request_field_string_get_value(f);
-	curpass = purple_blist_node_get_string((PurpleBListNode *)sgc->c, "passphrase");
+	curpass = purple_blist_node_get_string((PurpleBlistNode *)sgc->c, "passphrase");
 
 	if (!val && curpass)
 		set = 0;
@@ -380,11 +380,11 @@ silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	if (set == 1) {
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "+a", val, NULL);
-		purple_blist_node_set_string((PurpleBListNode *)sgc->c, "passphrase", val);
+		purple_blist_node_set_string((PurpleBlistNode *)sgc->c, "passphrase", val);
 	} else if (set == 0) {
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "-a", NULL);
-		purple_blist_node_remove_setting((PurpleBListNode *)sgc->c, "passphrase");
+		purple_blist_node_remove_setting((PurpleBlistNode *)sgc->c, "passphrase");
 	}
 
 	if (sgc->pubkeys) {
@@ -421,7 +421,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	fields = purple_request_fields_new();
 
 	if (sgc->c)
-	  curpass = purple_blist_node_get_string((PurpleBListNode *)sgc->c, "passphrase");
+	  curpass = purple_blist_node_get_string((PurpleBlistNode *)sgc->c, "passphrase");
 
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_string_new("passphrase", _("Channel Passphrase"),
@@ -490,7 +490,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 }
 
 static void
-silcpurple_chat_chauth(PurpleBListNode *node, gpointer data)
+silcpurple_chat_chauth(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -553,10 +553,10 @@ silcpurple_chat_prv_add(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 
 	cn = purple_chat_new(sg->account, alias, comp);
 	g = purple_chat_get_group(p->c);
-	purple_blist_add_chat(cn, g, (PurpleBListNode *)p->c);
+	purple_blist_add_chat(cn, g, (PurpleBlistNode *)p->c);
 
 	/* Associate to a real channel */
-	purple_blist_node_set_string((PurpleBListNode *)cn, "parentch", p->channel);
+	purple_blist_node_set_string((PurpleBlistNode *)cn, "parentch", p->channel);
 
 	/* Join the group */
 	silcpurple_chat_join(sg->gc, comp);
@@ -571,7 +571,7 @@ silcpurple_chat_prv_cancel(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 }
 
 static void
-silcpurple_chat_prv(PurpleBListNode *node, gpointer data)
+silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -627,7 +627,7 @@ silcpurple_chat_prv(PurpleBListNode *node, gpointer data)
 /****************************** Channel Modes ********************************/
 
 static void
-silcpurple_chat_permanent_reset(PurpleBListNode *node, gpointer data)
+silcpurple_chat_permanent_reset(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -645,7 +645,7 @@ silcpurple_chat_permanent_reset(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_permanent(PurpleBListNode *node, gpointer data)
+silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -718,7 +718,7 @@ silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 }
 
 static void
-silcpurple_chat_ulimit(PurpleBListNode *node, gpointer data)
+silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -758,7 +758,7 @@ silcpurple_chat_ulimit(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_resettopic(PurpleBListNode *node, gpointer data)
+silcpurple_chat_resettopic(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -776,7 +776,7 @@ silcpurple_chat_resettopic(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_settopic(PurpleBListNode *node, gpointer data)
+silcpurple_chat_settopic(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -794,7 +794,7 @@ silcpurple_chat_settopic(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_resetprivate(PurpleBListNode *node, gpointer data)
+silcpurple_chat_resetprivate(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -812,7 +812,7 @@ silcpurple_chat_resetprivate(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_setprivate(PurpleBListNode *node, gpointer data)
+silcpurple_chat_setprivate(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -830,7 +830,7 @@ silcpurple_chat_setprivate(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_resetsecret(PurpleBListNode *node, gpointer data)
+silcpurple_chat_resetsecret(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -848,7 +848,7 @@ silcpurple_chat_resetsecret(PurpleBListNode *node, gpointer data)
 }
 
 static void
-silcpurple_chat_setsecret(PurpleBListNode *node, gpointer data)
+silcpurple_chat_setsecret(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat;
 	PurpleConnection *gc;
@@ -871,7 +871,7 @@ typedef struct {
 } *SilcPurpleChatWb;
 
 static void
-silcpurple_chat_wb(PurpleBListNode *node, gpointer data)
+silcpurple_chat_wb(PurpleBlistNode *node, gpointer data)
 {
 	SilcPurpleChatWb wb = data;
 	silcpurple_wb_init_ch(wb->sg, wb->channel);
@@ -1040,7 +1040,7 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 		SilcPurplePrvgrp grp;
 
 		c = purple_blist_find_chat(sg->account, channel);
-		parentch = purple_blist_node_get_string((PurpleBListNode *)c, "parentch");
+		parentch = purple_blist_node_get_string((PurpleBlistNode *)c, "parentch");
 		if (!parentch)
 			return;
 
