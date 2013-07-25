@@ -740,7 +740,7 @@ void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *a
 
 void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht;
-	PurpleBListNode *child;
+	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
 	GList *logs = NULL;
 	GdkPixbuf *pixbuf;
@@ -763,7 +763,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		return;
 	}
 
-	for (child = purple_blist_node_get_first_child((PurpleBListNode*)contact) ;
+	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact) ;
 	     child != NULL ;
 	     child = purple_blist_node_get_sibling_next(child)) {
 		const char *buddy_name;

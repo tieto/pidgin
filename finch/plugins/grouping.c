@@ -33,14 +33,14 @@
 #define FINCH_IS_GROUPING_NODE(obj)  (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_GROUPING_NODE))
 
 typedef struct {
-	PurpleBListNode node;
+	PurpleBlistNode node;
 } FinchGroupingNode;
 
 typedef struct {
-	PurpleBListNodeClass node_class;
+	PurpleBlistNodeClass node_class;
 } FinchGroupingNodeClass;
 
-static FinchBListManager *default_manager;
+static FinchBlistManager *default_manager;
 
 /**
  * GObject code
@@ -89,7 +89,7 @@ static gboolean on_offline_init()
 	return TRUE;
 }
 
-static gboolean on_offline_can_add_node(PurpleBListNode *node)
+static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleContact *contact = PURPLE_CONTACT(node);
@@ -112,7 +112,7 @@ static gboolean on_offline_can_add_node(PurpleBListNode *node)
 	return FALSE;
 }
 
-static gpointer on_offline_find_parent(PurpleBListNode *node)
+static gpointer on_offline_find_parent(PurpleBlistNode *node)
 {
 	gpointer ret = NULL;
 
@@ -131,7 +131,7 @@ static gpointer on_offline_find_parent(PurpleBListNode *node)
 
 static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body, char **tool_title)
 {
-	PurpleBListNode *node = selected_row;
+	PurpleBlistNode *node = selected_row;
 
 	if (FINCH_IS_GROUPING_NODE(node)) {
 		/* There should be some easy way of getting the total online count,
@@ -146,7 +146,7 @@ static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body,
 	}
 }
 
-static FinchBListManager on_offline =
+static FinchBlistManager on_offline =
 {
 	"on-offline",
 	N_("Online/Offline"),
@@ -172,7 +172,7 @@ static gboolean meebo_init()
 	return TRUE;
 }
 
-static gpointer meebo_find_parent(PurpleBListNode *node)
+static gpointer meebo_find_parent(PurpleBlistNode *node)
 {
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
@@ -183,7 +183,7 @@ static gpointer meebo_find_parent(PurpleBListNode *node)
 	return default_manager->find_parent(node);
 }
 
-static FinchBListManager meebo_group =
+static FinchBlistManager meebo_group =
 {
 	"meebo",
 	N_("Meebo"),
@@ -212,12 +212,12 @@ static gboolean no_group_uninit()
 	return TRUE;
 }
 
-static gboolean no_group_can_add_node(PurpleBListNode *node)
+static gboolean no_group_can_add_node(PurpleBlistNode *node)
 {
 	return on_offline_can_add_node(node);   /* These happen to be the same */
 }
 
-static gpointer no_group_find_parent(PurpleBListNode *node)
+static gpointer no_group_find_parent(PurpleBlistNode *node)
 {
 	gpointer ret = NULL;
 
@@ -229,7 +229,7 @@ static gpointer no_group_find_parent(PurpleBListNode *node)
 	return ret;
 }
 
-static FinchBListManager no_group =
+static FinchBlistManager no_group =
 {
 	"no-group",
 	N_("No Grouping"),
@@ -263,12 +263,12 @@ nested_group_uninit(void)
 }
 
 static gpointer
-nested_group_find_parent(PurpleBListNode *node)
+nested_group_find_parent(PurpleBlistNode *node)
 {
 	char *name;
 	PurpleGroup *group;
 	char *sep;
-	PurpleBListNode *ret, *parent;
+	PurpleBlistNode *ret, *parent;
 	GntTree *tree;
 
 	if (!PURPLE_IS_GROUP(node))
@@ -307,7 +307,7 @@ nested_group_find_parent(PurpleBListNode *node)
 static gboolean
 nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
 {
-	PurpleBListNode *node = selected_row;
+	PurpleBlistNode *node = selected_row;
 	if (!node || !FINCH_IS_GROUPING_NODE(node))
 		return default_manager->create_tooltip(selected_row, body, title);
 	if (body)
@@ -316,9 +316,9 @@ nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
 }
 
 static gboolean
-nested_group_can_add_node(PurpleBListNode *node)
+nested_group_can_add_node(PurpleBlistNode *node)
 {
-	PurpleBListNode *group;
+	PurpleBlistNode *group;
 	int len;
 
 	if (!PURPLE_IS_GROUP(node))
@@ -340,7 +340,7 @@ nested_group_can_add_node(PurpleBListNode *node)
 	return FALSE;
 }
 
-static FinchBListManager nested_group =
+static FinchBlistManager nested_group =
 {
 	"nested",
 	N_("Nested Grouping (experimental)"),

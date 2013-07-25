@@ -96,12 +96,12 @@ struct _PidginBuddyList {
 	GdkRectangle contact_rect;       /**< This is the bounding rectangle of the contact node
 					      and its children.  This is used for auto-expand on
 					      mouseover. */
-	PurpleBListNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
+	PurpleBlistNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
 
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
-	PurpleBListNode *selected_node;    /**< The currently selected node */
+	PurpleBlistNode *selected_node;    /**< The currently selected node */
 
 	GtkWidget *scrollbook;          /**< Scrollbook for alerts */
 	GtkWidget *headline;            /**< Widget for headline notifications */
@@ -149,7 +149,7 @@ void pidgin_blist_uninit(void);
  *
  * @return The GTK+ list operations structure.
  */
-PurpleBListUiOps *pidgin_blist_get_ui_ops(void);
+PurpleBlistUiOps *pidgin_blist_get_ui_ops(void);
 
 /**
  * Returns the default gtk buddy list
@@ -193,12 +193,12 @@ void pidgin_blist_update_refresh_timeout(void);
  * @return  A GdkPixbuf for the emblem to show, or NULL
  */
 GdkPixbuf *
-pidgin_blist_get_emblem(PurpleBListNode *node);
+pidgin_blist_get_emblem(PurpleBlistNode *node);
 
 /**
  * Useful for the buddy ticker
  */
-GdkPixbuf *pidgin_blist_get_status_icon(PurpleBListNode *node,
+GdkPixbuf *pidgin_blist_get_status_icon(PurpleBlistNode *node,
 		PidginStatusIconSize size);
 
 /**
@@ -210,7 +210,7 @@ GdkPixbuf *pidgin_blist_get_status_icon(PurpleBListNode *node,
  * @param node The node in question.
  * @return A boolean indicating if @a node is part of an expanded contact.
  */
-gboolean pidgin_blist_node_is_contact_expanded(PurpleBListNode *node);
+gboolean pidgin_blist_node_is_contact_expanded(PurpleBlistNode *node);
 
 /**
  * Intelligently toggles the visibility of the buddy list. If the buddy
@@ -260,7 +260,7 @@ PidginBlistTheme *pidgin_blist_get_theme(void);
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
 
-typedef void (*pidgin_blist_sort_function)(PurpleBListNode *new, PurpleBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
+typedef void (*pidgin_blist_sort_function)(PurpleBlistNode *new, PurpleBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /**
  * Gets the current list of sort methods.
@@ -335,22 +335,22 @@ gboolean pidgin_blist_joinchat_is_showable(void);
 void pidgin_blist_joinchat_show(void);
 
 /**
- * Appends the privacy menu items for a PurpleBListNode
+ * Appends the privacy menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBListNode *node);
+void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
- * Appends the protocol specific menu items for a PurpleBListNode
+ * Appends the protocol specific menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc, PurpleBListNode *node);
+void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc, PurpleBlistNode *node);
 
 /**
- * Appends the extended menu items for a PurpleBListNode
+ * Appends the extended menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBListNode *node);
+void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
  * Sets a headline notification
@@ -386,7 +386,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gbool
  * @param node The buddy list node to show a tooltip for
  * @param widget The widget to draw the tooltip on
  */
-void pidgin_blist_draw_tooltip(PurpleBListNode *node, GtkWidget *widget);
+void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
 
 /**
  * Destroys the current (if any) Buddy List tooltip

@@ -98,13 +98,13 @@ typedef struct _PurpleChatClass PurpleChatClass;
  */
 struct _PurpleBuddy {
 	/** The node that this buddy inherits from */
-	PurpleBListNode node;
+	PurpleBlistNode node;
 };
 
 /** The base class for all #PurpleBuddy's. */
 struct _PurpleBuddyClass {
 	/*< private >*/
-	PurpleBListNodeClass node_class;
+	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -161,13 +161,13 @@ struct _PurpleGroupClass {
  */
 struct _PurpleChat {
 	/** The node that this chat inherits from */
-	PurpleBListNode node;
+	PurpleBlistNode node;
 };
 
 /** The base class for all #PurpleChat's. */
 struct _PurpleChatClass {
 	/*< private >*/
-	PurpleBListNodeClass node_class;
+	PurpleBlistNodeClass node_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -467,7 +467,7 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
  * @param source  The contact to merge
  * @param node    The place to merge to (a buddy or contact)
  */
-void purple_contact_merge(PurpleContact *source, PurpleBListNode *node);
+void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 
 /*@}*/
 

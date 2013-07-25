@@ -383,9 +383,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	return TCL_OK;
 }
 
-static PurpleBListNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj **elems)
+static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj **elems)
 {
-	PurpleBListNode *node = NULL;
+	PurpleBlistNode *node = NULL;
 	PurpleAccount *account;
 	char *name;
 	char *type;
@@ -415,7 +415,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclcontact, *tclcontactlist, *tclbud, **elems, *result;
 	const char *cmds[] = { "alias", "handle", "info", "list", NULL };
 	enum { CMD_BUDDY_ALIAS, CMD_BUDDY_HANDLE, CMD_BUDDY_INFO, CMD_BUDDY_LIST } cmd;
-	PurpleBListNode *node, *gnode, *bnode;
+	PurpleBlistNode *node, *gnode, *bnode;
 	PurpleAccount *account;
 	PurpleBuddy *bud;
 	PurpleChat *cnode;

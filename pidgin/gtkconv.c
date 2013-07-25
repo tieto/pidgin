@@ -242,11 +242,11 @@ static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *n
 	return &col;
 }
 
-static PurpleBListNode *
+static PurpleBlistNode *
 get_conversation_blist_node(PurpleConversation *conv)
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
-	PurpleBListNode *node = NULL;
+	PurpleBlistNode *node = NULL;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
 		node = PURPLE_BLIST_NODE(purple_blist_find_buddy(account, purple_conversation_get_name(conv)));
@@ -841,7 +841,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 	if (dnd_info == PIDGIN_DRAG_BLIST_NODE)
 	{
-		PurpleBListNode *node = NULL;
+		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
 		const guchar *data = gtk_selection_data_get_data(sd);
 
@@ -1140,7 +1140,7 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 	buddies = purple_blist_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next)
 	{
-		PurpleBListNode *node = cur->data;
+		PurpleBlistNode *node = cur->data;
 		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 		{
 			pidgin_log_show_contact((PurpleContact *)node->parent);
@@ -1391,7 +1391,7 @@ menu_logging_cb(GtkAction *action, gpointer data)
 	PidginWindow *win = data;
 	PurpleConversation *conv;
 	gboolean logging;
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -1453,7 +1453,7 @@ menu_sounds_cb(GtkAction *action, gpointer data)
 	PidginWindow *win = data;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -1735,8 +1735,8 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 	{
 		if (purple_account_is_connected(account))
 			pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(account),
-												  (PurpleBListNode *)buddy);
-		pidgin_append_blist_node_extended_menu(menu, (PurpleBListNode *)buddy);
+												  (PurpleBlistNode *)buddy);
+		pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 		gtk_widget_show_all(menu);
 	}
 
@@ -2547,7 +2547,7 @@ pidgin_conv_get_icon(PurpleConversation *conv, GtkWidget *parent, const char *ic
 	const char *name = NULL;
 	const char *stock = NULL;
 	GdkPixbuf *status = NULL;
-	PurpleBListUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	GtkIconSize size;
 
 	g_return_val_if_fail(conv != NULL, NULL);
@@ -2566,7 +2566,7 @@ pidgin_conv_get_icon(PurpleConversation *conv, GtkWidget *parent, const char *ic
 			 * displays in the conv tab even though it shouldn't.
 			 * A better solution would be great. */
 			if (ops && ops->update)
-				ops->update(NULL, (PurpleBListNode*)b);
+				ops->update(NULL, (PurpleBlistNode*)b);
 		}
 	}
 
@@ -2606,7 +2606,7 @@ update_tab_icon(PurpleConversation *conv)
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
 		PurpleBuddy *b = purple_blist_find_buddy(purple_conversation_get_account(conv), purple_conversation_get_name(conv));
 		if (b)
-			emblem = pidgin_blist_get_emblem((PurpleBListNode*)b);
+			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
 	}
 
 	g_return_if_fail(status != NULL);
@@ -2817,7 +2817,7 @@ custom_icon_sel_cb(const char *filename, gpointer data)
 		}
 		contact = purple_buddy_get_contact(buddy);
 
-		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBListNode*)contact, filename);
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 	}
 }
 
@@ -2852,7 +2852,7 @@ change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	for (; buddies; buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *buddy = buddies->data;
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		purple_blist_node_set_int((PurpleBListNode*)contact, "pidgin-infopane-iconsize", size);
+		purple_blist_node_set_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize", size);
 	}
 }
 
@@ -2873,7 +2873,7 @@ remove_custom_icon_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	}
 	contact = purple_buddy_get_contact(buddy);
 
-	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBListNode*)contact, NULL);
+	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, NULL);
 }
 
 static void
@@ -2974,7 +2974,7 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 	if (buddy)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		if (contact && purple_buddy_icons_node_has_custom_icon((PurpleBListNode*)contact))
+		if (contact && purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact))
 		{
 			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
@@ -3254,7 +3254,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 	GList *list;
 	PurpleConversation *conv;
 	PurpleAccount *account;
-	PurpleBListNode *node = NULL;
+	PurpleBlistNode *node = NULL;
 	PurpleChat *chat = NULL;
 	PurpleBuddy *buddy = NULL;
 	gboolean ret;
@@ -3285,7 +3285,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 						g_strdup(purple_conversation_get_name(conv)));
 			}
 			chat = purple_chat_new(account, NULL, components);
-			purple_blist_node_set_dont_save((PurpleBListNode *)chat, TRUE);
+			purple_blist_node_set_dont_save((PurpleBlistNode *)chat, TRUE);
 			g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_chat",
 					chat, (GDestroyNotify)purple_blist_remove_chat);
 		}
@@ -3299,7 +3299,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 
 			if (!buddy) {
 				buddy = purple_buddy_new(account, purple_conversation_get_name(conv), NULL);
-				purple_blist_node_set_dont_save((PurpleBListNode *)buddy, TRUE);
+				purple_blist_node_set_dont_save((PurpleBlistNode *)buddy, TRUE);
 				g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
 						buddy, (GDestroyNotify)g_object_unref);
 			}
@@ -3307,9 +3307,9 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 	}
 
 	if (chat)
-		node = (PurpleBListNode *)chat;
+		node = (PurpleBlistNode *)chat;
 	else if (buddy)
-		node = (PurpleBListNode *)buddy;
+		node = (PurpleBlistNode *)buddy;
 
 	/* Now add the stuff */
 	if (all) {
@@ -4044,7 +4044,7 @@ generate_send_to_items(PidginWindow *win)
 			GList *list = NULL, *iter;
 			for (l = buds; l != NULL; l = l->next)
 			{
-				PurpleBListNode *node;
+				PurpleBlistNode *node;
 
 				node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(l->data)));
 
@@ -4600,7 +4600,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleChatConversation *chat, PurpleConnec
 }
 
 static void
-blist_node_aliased_cb(PurpleBListNode *node, const char *old_alias, PurpleChatConversation *chat)
+blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleChatConversation *chat)
 {
 	PurpleConnection *gc;
 	PurplePluginProtocolInfo *prpl_info;
@@ -4619,7 +4619,7 @@ blist_node_aliased_cb(PurpleBListNode *node, const char *old_alias, PurpleChatCo
 
 	if (PURPLE_IS_CONTACT(node))
 	{
-		PurpleBListNode *bnode;
+		PurpleBlistNode *bnode;
 
 		for(bnode = node->child; bnode; bnode = bnode->next) {
 
@@ -4683,7 +4683,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleChatConversation *chat, gboolean is_bu
 
 	g_free(normalized_name);
 
-	blist_node_aliased_cb((PurpleBListNode *)buddy, NULL, chat);
+	blist_node_aliased_cb((PurpleBlistNode *)buddy, NULL, chat);
 
 	texttag = get_buddy_tag(chat, purple_buddy_get_name(buddy), 0, FALSE); /* XXX: do we want the normalized name? */
 	if (texttag) {
@@ -4692,7 +4692,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleChatConversation *chat, gboolean is_bu
 }
 
 static void
-buddy_added_cb(PurpleBListNode *node, PurpleChatConversation *chat)
+buddy_added_cb(PurpleBlistNode *node, PurpleChatConversation *chat)
 {
 	if (!PURPLE_IS_BUDDY(node))
 		return;
@@ -4701,7 +4701,7 @@ buddy_added_cb(PurpleBListNode *node, PurpleChatConversation *chat)
 }
 
 static void
-buddy_removed_cb(PurpleBListNode *node, PurpleChatConversation *chat)
+buddy_removed_cb(PurpleBlistNode *node, PurpleChatConversation *chat)
 {
 	if (!PURPLE_IS_BUDDY(node))
 		return;
@@ -4872,7 +4872,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	GtkTreeIter iter;
 	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkconv->u.chat->list));
 	PurpleConversation *conv = gtkconv->active_conv;
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	char *who = NULL;
@@ -4886,7 +4886,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(purple_account_get_connection(account)));
-	node = (PurpleBListNode*)(purple_blist_find_buddy(purple_conversation_get_account(conv), who));
+	node = (PurpleBlistNode*)(purple_blist_find_buddy(purple_conversation_get_account(conv), who));
 	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME))
 		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
 
@@ -4995,17 +4995,17 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 static gboolean
 pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int *h)
 {
-	PurpleBListNode *node = NULL;
+	PurpleBlistNode *node = NULL;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv = userdata;
 
 	conv = gtkconv->active_conv;
 	if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
-		node = (PurpleBListNode*)(purple_blist_find_chat(purple_conversation_get_account(conv), purple_conversation_get_name(conv)));
+		node = (PurpleBlistNode*)(purple_blist_find_chat(purple_conversation_get_account(conv), purple_conversation_get_name(conv)));
 		if (!node)
 			node = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_chat");
 	} else {
-		node = (PurpleBListNode*)(purple_blist_find_buddy(purple_conversation_get_account(conv), purple_conversation_get_name(conv)));
+		node = (PurpleBlistNode*)(purple_blist_find_buddy(purple_conversation_get_account(conv), purple_conversation_get_name(conv)));
 #if 0
 		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
@@ -5381,7 +5381,7 @@ setup_common_pane(PidginConversation *gtkconv)
 						purple_conversation_get_name(conv))) != NULL) {
 			PurpleContact *contact = purple_buddy_get_contact(buddy);
 			if (contact) {
-				buddyicon_size = purple_blist_node_get_int((PurpleBListNode*)contact, "pidgin-infopane-iconsize");
+				buddyicon_size = purple_blist_node_get_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize");
 			}
 		}
 		buddyicon_size = CLAMP(buddyicon_size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
@@ -5522,13 +5522,13 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 	if (info == PIDGIN_DRAG_BLIST_NODE)
 	{
-		PurpleBListNode *n = NULL;
+		PurpleBlistNode *n = NULL;
 		PurpleBuddy *b;
 		PidginConversation *gtkconv = NULL;
 		PurpleAccount *buddyaccount;
 		const char *buddyname;
 
-		n = *(PurpleBListNode **) data;
+		n = *(PurpleBlistNode **) data;
 
 		if (PURPLE_IS_CONTACT(n))
 			b = purple_contact_get_priority_buddy((PurpleContact*)n);
@@ -5636,7 +5636,7 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 {
 	PurpleBuddy *bud = purple_blist_find_buddy(purple_conversation_get_account(conv), purple_conversation_get_name(conv));
 	PurpleContact *c;
-	PurpleBListNode *cn, *bn;
+	PurpleBlistNode *cn, *bn;
 
 	if (!bud)
 		return NULL;
@@ -5658,7 +5658,7 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 }
 
 static void
-buddy_update_cb(PurpleBListNode *bnode, gpointer null)
+buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 {
 	GList *list;
 
@@ -5739,7 +5739,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gboolean is_chat = PURPLE_IS_CHAT_CONVERSATION(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
-	PurpleBListNode *convnode;
+	PurpleBlistNode *convnode;
 	GtkTargetList *targets;
 
 	if (!is_chat && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
@@ -7695,7 +7695,7 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
 		if (contact) {
-			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBListNode*)contact);
+			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
 				data = purple_imgstore_get_data(custom_img);
@@ -8151,9 +8151,9 @@ conv_placement_pref_cb(const char *name, PurplePrefType type,
 static PidginConversation *
 get_gtkconv_with_contact(PurpleContact *contact)
 {
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 
-	node = ((PurpleBListNode*)contact)->child;
+	node = ((PurpleBlistNode*)contact)->child;
 
 	for (; node; node = node->next)
 	{

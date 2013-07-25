@@ -279,7 +279,7 @@ purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
  * @return A boolean indicating if @a node has a custom buddy icon.
  */
 gboolean
-purple_buddy_icons_node_has_custom_icon(PurpleBListNode *node);
+purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
 
 /**
  * Returns the custom buddy icon image for a blist node.
@@ -296,7 +296,7 @@ purple_buddy_icons_node_has_custom_icon(PurpleBListNode *node);
  * @return The custom buddy icon.
  */
 PurpleStoredImage *
-purple_buddy_icons_node_find_custom_icon(PurpleBListNode *node);
+purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
 
 /**
  * Sets a custom buddy icon for a blist node.
@@ -313,7 +313,7 @@ purple_buddy_icons_node_find_custom_icon(PurpleBListNode *node);
  *         and must call purple_imgstore_ref() if it wants one.
  */
 PurpleStoredImage *
-purple_buddy_icons_node_set_custom_icon(PurpleBListNode *node,
+purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
                                         guchar *icon_data, size_t icon_len);
 
 /**
@@ -330,7 +330,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBListNode *node,
  *         and must call purple_imgstore_ref() if it wants one.
  */
 PurpleStoredImage *
-purple_buddy_icons_node_set_custom_icon_from_file(PurpleBListNode *node,
+purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename);
 
 /**

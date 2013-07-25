@@ -89,16 +89,16 @@ find_chat_for_conversation(PurpleConversation *conv)
 			purple_conversation_get_name(conv));
 }
 
-static PurpleBListNode *
+static PurpleBlistNode *
 get_conversation_blist_node(PurpleConversation *conv)
 {
-	PurpleBListNode *node = NULL;
+	PurpleBlistNode *node = NULL;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		node = (PurpleBListNode*)find_buddy_for_conversation(conv);
+		node = (PurpleBlistNode*)find_buddy_for_conversation(conv);
 		node = node ? purple_blist_node_get_parent(node) : NULL;
 	} else {
-		node = (PurpleBListNode*)find_chat_for_conversation(conv);
+		node = (PurpleBlistNode*)find_chat_for_conversation(conv);
 	}
 
 	return node;
@@ -229,16 +229,16 @@ save_position_cb(GntWidget *w, int x, int y)
 static PurpleIMConversation *
 find_im_with_contact(PurpleAccount *account, const char *name)
 {
-	PurpleBListNode *node;
+	PurpleBlistNode *node;
 	PurpleBuddy *buddy = purple_blist_find_buddy(account, name);
 	PurpleIMConversation *im = NULL;
 
 	if (!buddy)
 		return NULL;
 
-	for (node = purple_blist_node_get_first_child(purple_blist_node_get_parent((PurpleBListNode*)buddy));
+	for (node = purple_blist_node_get_first_child(purple_blist_node_get_parent((PurpleBlistNode*)buddy));
 				node; node = purple_blist_node_get_sibling_next(node)) {
-		if (node == (PurpleBListNode*)buddy)
+		if (node == (PurpleBlistNode*)buddy)
 			continue;
 		if ((im = purple_conversations_find_im_with_account(
 				purple_buddy_get_name((PurpleBuddy*)node), purple_buddy_get_account((PurpleBuddy*)node))) != NULL)
@@ -492,7 +492,7 @@ static void
 toggle_sound_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *fc = ggconv;
-	PurpleBListNode *node = get_conversation_blist_node(fc->active_conv);
+	PurpleBlistNode *node = get_conversation_blist_node(fc->active_conv);
 	fc->flags ^= FINCH_CONV_NO_SOUND;
 	if (node)
 		purple_blist_node_set_bool(node, "gnt-mute-sound", !!(fc->flags & FINCH_CONV_NO_SOUND));
@@ -531,7 +531,7 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 
 	buddies = purple_blist_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next) {
-		PurpleBListNode *node = cur->data;
+		PurpleBlistNode *node = cur->data;
 		if ((node != NULL) &&
 				(purple_blist_node_get_sibling_prev(node) || purple_blist_node_get_sibling_next(node))) {
 			finch_log_show_contact((PurpleContact *)purple_blist_node_get_parent(node));
@@ -566,7 +566,7 @@ generate_send_to_menu(FinchConv *ggc)
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	for (; buds; buds = g_slist_delete_link(buds, buds)) {
-		PurpleBListNode *node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(buds->data)));
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(buds->data)));
 		for (node = purple_blist_node_get_first_child(node); node != NULL;
 				node = purple_blist_node_get_sibling_next(node)) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;
@@ -774,7 +774,7 @@ finch_create_conversation(PurpleConversation *conv)
 	char *title;
 	PurpleConversation *cc;
 	PurpleAccount *account;
-	PurpleBListNode *convnode = NULL;
+	PurpleBlistNode *convnode = NULL;
 
 	if (ggc) {
 		gnt_window_present(ggc->window);

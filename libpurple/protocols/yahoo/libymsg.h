@@ -367,7 +367,7 @@ const char *yahoo_list_emblem(PurpleBuddy *b);
 char *yahoo_status_text(PurpleBuddy *b);
 void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
 GList *yahoo_status_types(PurpleAccount *account);
-GList *yahoo_blist_node_menu(PurpleBListNode *node);
+GList *yahoo_blist_node_menu(PurpleBlistNode *node);
 void yahoo_login(PurpleAccount *account);
 void yahoo_close(PurpleConnection *gc);
 int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags);

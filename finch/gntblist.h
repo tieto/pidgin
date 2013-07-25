@@ -44,18 +44,18 @@ typedef struct
 	const char *name;                                  /**< Displayable name for the manager. */
 	gboolean (*init)(void);                            /**< Called right before it's being used. */
 	gboolean (*uninit)(void);                          /**< Called right after it's not being used any more. */
-	gboolean (*can_add_node)(PurpleBListNode *node);   /**< Whether a node should be added to the view. */
-	gpointer (*find_parent)(PurpleBListNode *node);    /**< Find the parent row for a node. */
+	gboolean (*can_add_node)(PurpleBlistNode *node);   /**< Whether a node should be added to the view. */
+	gpointer (*find_parent)(PurpleBlistNode *node);    /**< Find the parent row for a node. */
 	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */
 	gpointer reserved[4];
-} FinchBListManager;
+} FinchBlistManager;
 
 /**
  * Get the ui-functions.
  *
- * @return The PurpleBListUiOps structure populated with the appropriate functions.
+ * @return The PurpleBlistUiOps structure populated with the appropriate functions.
  */
-PurpleBListUiOps * finch_blist_get_ui_ops(void);
+PurpleBlistUiOps * finch_blist_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.
@@ -129,14 +129,14 @@ GntTree * finch_blist_get_tree(void);
  *
  * @param manager   The alternate buddylist manager.
  */
-void finch_blist_install_manager(const FinchBListManager *manager);
+void finch_blist_install_manager(const FinchBlistManager *manager);
 
 /**
  * Remove an alternate buddy list manager.
  *
  * @param manager   The buddy list manager to remove.
  */
-void finch_blist_uninstall_manager(const FinchBListManager *manager);
+void finch_blist_uninstall_manager(const FinchBlistManager *manager);
 
 /**
  * Find a buddy list manager.
@@ -145,14 +145,14 @@ void finch_blist_uninstall_manager(const FinchBListManager *manager);
  *
  * @return  The manager with the requested identifier, if available. @c NULL otherwise.
  */
-FinchBListManager * finch_blist_manager_find(const char *id);
+FinchBlistManager * finch_blist_manager_find(const char *id);
 
 /**
  * Request the active buddy list manager to add a node.
  *
  * @param node  The node to add
  */
-void finch_blist_manager_add_node(PurpleBListNode *node);
+void finch_blist_manager_add_node(PurpleBlistNode *node);
 
 /*@}*/
 

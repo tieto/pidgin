@@ -54,7 +54,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 	user = purple_buddy_get_protocol_data(buddy);
 	if (create && !user) {
-		PurpleBListNode *node = PURPLE_BLIST_NODE(buddy);
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(buddy);
 
 		/* No MsimUser for this buddy; make one. */
 

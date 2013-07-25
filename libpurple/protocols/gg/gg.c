@@ -192,7 +192,7 @@ static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields 
 					ggp_str_to_uin(purple_buddy_get_name(buddy)));
 }
 
-static void ggp_bmenu_add_to_chat(PurpleBListNode *node, gpointer ignored)
+static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -828,7 +828,7 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	}
 }
 
-static GList *ggp_blist_node_menu(PurpleBListNode *node)
+static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 {
 	PurpleMenuAction *act;
 	GList *m = NULL;

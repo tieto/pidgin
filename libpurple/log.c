@@ -1999,7 +1999,7 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 	char *log_path = g_build_filename(purple_user_dir(), "logs", NULL);
 	GDir *log_dir = g_dir_open(log_path, 0, NULL);
 	gchar *name;
-	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 
 	g_free(log_path);
 	if (log_dir == NULL)

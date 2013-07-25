@@ -22,7 +22,7 @@
 
 GList *msim_attention_types(PurpleAccount *acct);
 gboolean msim_send_attention(PurpleConnection *gc, const gchar *username, guint code);
-GList *msim_blist_node_menu(PurpleBListNode *node);
+GList *msim_blist_node_menu(PurpleBlistNode *node);
 gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg);
 
 #endif /* !_MYSPACE_ZAP_H */

@@ -55,6 +55,8 @@ msn_session_new(PurpleAccount *account)
 
 	session->guid = rand_guid();
 
+	session->soap = msn_soap_service_new(session);
+
 	return session;
 }
 
@@ -73,11 +75,7 @@ msn_session_destroy(MsnSession *session)
 	if (session->connected)
 		msn_session_disconnect(session);
 
-	if (session->soap_cleanup_handle)
-		purple_timeout_remove(session->soap_cleanup_handle);
-
-	if (session->soap_table != NULL)
-		g_hash_table_destroy(session->soap_table);
+	msn_soap_service_destroy(session->soap);
 
 	while (session->slplinks != NULL)
 		msn_slplink_unref(session->slplinks->data);

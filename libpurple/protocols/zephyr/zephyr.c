@@ -2494,7 +2494,7 @@ static void zephyr_chat_leave(PurpleConnection * gc, int id)
 
 static PurpleChat *zephyr_find_blist_chat(PurpleAccount *account, const char *name)
 {
-	PurpleBListNode *gnode, *cnode;
+	PurpleBlistNode *gnode, *cnode;
 
 	/* XXX needs to be %host%,%canon%, and %me% clean */
 	for(gnode = purple_blist_get_root(); gnode;

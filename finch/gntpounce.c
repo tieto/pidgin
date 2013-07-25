@@ -171,7 +171,7 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 static void
 setup_buddy_list_suggestion(GntEntry *entry, gboolean offline)
 {
-	PurpleBListNode *node = purple_blist_get_root();
+	PurpleBlistNode *node = purple_blist_get_root();
 	for (; node; node = purple_blist_node_next(node, offline)) {
 		if (!PURPLE_IS_BUDDY(node))
 			continue;

@@ -2587,7 +2587,7 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 {
-	PurpleBListNode *gnode, *cnode;
+	PurpleBlistNode *gnode, *cnode;
 	JabberID *jid;
 
 	if(!(jid = jabber_id_new(name)))

@@ -1387,7 +1387,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			break;
 		}
 		contact = purple_buddy_get_contact(buddy);
-		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBListNode*)contact, data->filename);
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
 		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
@@ -1964,7 +1964,7 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 static void
 add_completion_list(PidginCompletionData *data)
 {
-	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
 	GHashTable *sets;

@@ -770,7 +770,7 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 }
 
 static void
-show_send_to_mobile_cb(PurpleBListNode *node, gpointer ignored)
+show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -824,7 +824,7 @@ msn_send_privacy(PurpleConnection *gc)
 }
 
 static void
-initiate_chat_cb(PurpleBListNode *node, gpointer data)
+initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
@@ -1312,7 +1312,7 @@ msn_buddy_menu(PurpleBuddy *buddy)
 }
 
 static GList *
-msn_blist_node_menu(PurpleBListNode *node)
+msn_blist_node_menu(PurpleBlistNode *node)
 {
 	if(PURPLE_IS_BUDDY(node))
 	{

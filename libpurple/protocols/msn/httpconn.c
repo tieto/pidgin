@@ -1,5 +1,5 @@
 /**
- * @file httpconn.c HTTP connection method
+ * @file httpconn.h HTTP-tunnelled connections
  *
  * purple
  *
@@ -19,583 +19,88 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
-#include "msn.h"
-#include "debug.h"
+
 #include "httpconn.h"
 
-typedef struct
+#include "debug.h"
+#include "http.h"
+
+#include "msn.h"
+
+typedef struct _MsnHttpConnWriteQueueElement MsnHttpConnWriteQueueElement;
+
+struct _MsnHttpConn
 {
-	MsnHttpConn *httpconn;
-	char *body;
-	size_t body_len;
-} MsnHttpQueueData;
-
-static void
-msn_httpconn_process_queue(MsnHttpConn *httpconn)
-{
-	httpconn->waiting_response = FALSE;
-
-	if (httpconn->queue != NULL)
-	{
-		MsnHttpQueueData *queue_data;
-
-		queue_data = (MsnHttpQueueData *)httpconn->queue->data;
-
-		httpconn->queue = g_list_remove(httpconn->queue, queue_data);
-
-		msn_httpconn_write(queue_data->httpconn,
-						   queue_data->body,
-						   queue_data->body_len);
-
-		g_free(queue_data->body);
-		g_free(queue_data);
-	}
-}
-
-static gboolean
-msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
-						size_t size, char **ret_buf, size_t *ret_size,
-						gboolean *error)
-{
-	const char *s, *c;
-	char *header, *body;
-	const char *body_start;
-	char *tmp;
-	size_t body_len = 0;
-
-	g_return_val_if_fail(httpconn != NULL, FALSE);
-	g_return_val_if_fail(buf      != NULL, FALSE);
-	g_return_val_if_fail(size      > 0,    FALSE);
-	g_return_val_if_fail(ret_buf  != NULL, FALSE);
-	g_return_val_if_fail(ret_size != NULL, FALSE);
-	g_return_val_if_fail(error    != NULL, FALSE);
-
-#if 0
-	purple_debug_info("msn", "HTTP: parsing data {%s}\n", buf);
-#endif
-
-	/* Healthy defaults. */
-	body = NULL;
-
-	*ret_buf  = NULL;
-	*ret_size = 0;
-	*error    = FALSE;
-
-	/* First, some tests to see if we have a full block of stuff. */
-	if (((strncmp(buf, "HTTP/1.1 200 OK\r\n", 17) != 0) &&
-		 (strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) != 0)) &&
-		((strncmp(buf, "HTTP/1.0 200 OK\r\n", 17) != 0) &&
-		 (strncmp(buf, "HTTP/1.0 100 Continue\r\n", 23) != 0)))
-	{
-		*error = TRUE;
-
-		return FALSE;
-	}
-
-	if (strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) == 0)
-	{
-		if ((s = strstr(buf, "\r\n\r\n")) == NULL)
-			return FALSE;
-
-		s += 4;
-
-		if (*s == '\0')
-		{
-			*ret_buf = g_strdup("");
-			*ret_size = 0;
-
-			msn_httpconn_process_queue(httpconn);
-
-			return TRUE;
-		}
-
-		size -= (s - buf);
-		buf = s;
-	}
-
-	if ((s = strstr(buf, "\r\n\r\n")) == NULL)
-		/* Need to wait for the full HTTP header to arrive */
-		return FALSE;
-
-	s += 4; /* Skip \r\n\r\n */
-	header = g_strndup(buf, s - buf);
-	body_start = s;
-	body_len = size - (body_start - buf);
-
-	if ((s = purple_strcasestr(header, "Content-Length: ")) != NULL)
-	{
-		int tmp_len;
-
-		s += strlen("Content-Length: ");
-
-		if ((c = strchr(s, '\r')) == NULL)
-		{
-			g_free(header);
-
-			return FALSE;
-		}
-
-		tmp = g_strndup(s, c - s);
-		tmp_len = atoi(tmp);
-		g_free(tmp);
-
-		if (body_len != tmp_len)
-		{
-			/* Need to wait for the full packet to arrive */
-
-			g_free(header);
-
-#if 0
-			purple_debug_warning("msn",
-							   "body length (%d) != content length (%d)\n",
-							   body_len, tmp_len);
-#endif
-
-			return FALSE;
-		}
-	}
-
-	body = g_malloc(body_len + 1);
-	memcpy(body, body_start, body_len);
-	body[body_len] = '\0';
-
-	if (purple_debug_is_verbose())
-		purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s}\n",
-		                  header);
-
-	/* Now we should be able to process the data. */
-	if ((s = purple_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
-	{
-		gchar *full_session_id = NULL, *gw_ip = NULL, *session_action = NULL;
-		char *t, *session_id;
-		char **elems, **cur, **tokens;
-
-		full_session_id = gw_ip = session_action = NULL;
-
-		s += strlen("X-MSN-Messenger: ");
-
-		if ((c = strchr(s, '\r')) == NULL)
-		{
-			msn_session_set_error(httpconn->session,
-								  MSN_ERROR_HTTP_MALFORMED, NULL);
-			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}\n",
-							 buf);
-
-			g_free(header);
-			g_free(body);
-			return FALSE;
-		}
-
-		tmp = g_strndup(s, c - s);
-
-		elems = g_strsplit(tmp, "; ", 0);
-
-		for (cur = elems; *cur != NULL; cur++)
-		{
-			tokens = g_strsplit(*cur, "=", 2);
-
-			if (strcmp(tokens[0], "SessionID") == 0) {
-				g_free(full_session_id);
-				full_session_id = tokens[1];
-			} else if (strcmp(tokens[0], "GW-IP") == 0) {
-				g_free(gw_ip);
-				gw_ip = tokens[1];
-			} else if (strcmp(tokens[0], "Session") == 0) {
-				g_free(session_action);
-				session_action = tokens[1];
-			} else
-				g_free(tokens[1]);
-
-			g_free(tokens[0]);
-			/* Don't free each of the tokens, only the array. */
-			g_free(tokens);
-		}
-
-		g_strfreev(elems);
-
-		g_free(tmp);
-
-		t = full_session_id ? strchr(full_session_id, '.') : NULL;
-		if (t != NULL)
-			session_id = g_strndup(full_session_id, t - full_session_id);
-		else {
-			purple_debug_error("msn", "Malformed full_session_id[%s]\n",
-					   full_session_id ? full_session_id : NULL);
-			session_id = g_strdup(full_session_id);
-		}
-
-		if (session_action == NULL || strcmp(session_action, "close") != 0)
-		{
-			g_free(httpconn->full_session_id);
-			httpconn->full_session_id = full_session_id;
-
-			g_free(httpconn->session_id);
-			httpconn->session_id = session_id;
-
-			g_free(httpconn->host);
-			httpconn->host = gw_ip;
-		}
-		else
-		{
-			/* I'll be honest, I don't fully understand all this, but this
-			 * causes crashes, Stu. */
-#if 0
-			MsnServConn *servconn;
-
-			/* It's going to die. */
-			/* poor thing */
-
-			servconn = httpconn->servconn;
-
-			if (servconn != NULL)
-				servconn->wasted = TRUE;
-#endif
-
-			g_free(full_session_id);
-			g_free(session_id);
-			g_free(gw_ip);
-		}
-
-		g_free(session_action);
-	}
-
-	g_free(header);
-
-	*ret_buf  = body;
-	*ret_size = body_len;
-
-	msn_httpconn_process_queue(httpconn);
-
-	return TRUE;
-}
-
-static void
-read_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	MsnHttpConn *httpconn;
-	MsnServConn *servconn;
-	char buf[MSN_BUF_LEN];
-	gssize len;
-	char *result_msg = NULL;
-	size_t result_len = 0;
-	gboolean error = FALSE;
-
-	httpconn = data;
-	servconn = httpconn->servconn;
-
-	if (servconn->type == MSN_SERVCONN_NS) {
-		PurpleConnection *gc = purple_account_get_connection(servconn->session->account);
-		purple_connection_update_last_received(gc);
-	}
-
-	len = read(httpconn->fd, buf, sizeof(buf) - 1);
-	if (len < 0 && errno == EAGAIN)
-		return;
-	if (len <= 0) {
-		purple_debug_error("msn", "HTTP: servconn %03d read error, "
-			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
-			servconn->num, len, error, g_strerror(errno));
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
-
-		return;
-	}
-
-	buf[len] = '\0';
-
-	httpconn->rx_buf = g_realloc(httpconn->rx_buf, len + httpconn->rx_len + 1);
-	memcpy(httpconn->rx_buf + httpconn->rx_len, buf, len + 1);
-	httpconn->rx_len += len;
-
-	if (!msn_httpconn_parse_data(httpconn, httpconn->rx_buf, httpconn->rx_len,
-								 &result_msg, &result_len, &error))
-	{
-		/* Either we must wait for more input, or something went wrong */
-		if (error)
-			msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
-
-		return;
-	}
-
-	if (error)
-	{
-		purple_debug_error("msn", "HTTP: Special error\n");
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
-
-		return;
-	}
-
-	g_free(httpconn->rx_buf);
-	httpconn->rx_buf = NULL;
-	httpconn->rx_len = 0;
-
-	if (result_len == 0)
-	{
-		/* Nothing to do here */
-#if 0
-		purple_debug_info("msn", "HTTP: nothing to do here\n");
-#endif
-		g_free(result_msg);
-		return;
-	}
-
-	g_free(servconn->rx_buf);
-	servconn->rx_buf = result_msg;
-	servconn->rx_len = result_len;
-
-	msn_servconn_process_data(servconn);
-}
-
-static void
-httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	MsnHttpConn *httpconn;
-	gssize ret;
-	int writelen;
-	const gchar *output = NULL;
-
-	httpconn = data;
-	writelen = purple_circular_buffer_get_max_read(httpconn->tx_buf);
-	output = purple_circular_buffer_get_output(httpconn->tx_buf);
-
-	if (writelen == 0)
-	{
-		purple_input_remove(httpconn->tx_handler);
-		httpconn->tx_handler = 0;
-		return;
-	}
-
-	ret = write(httpconn->fd, output, writelen);
-	if (ret <= 0)
-	{
-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
-			/* No worries */
-			return;
-
-		/* Error! */
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
-		return;
-	}
-
-	purple_circular_buffer_mark_read(httpconn->tx_buf, ret);
-
-	/* TODO: I don't think these 2 lines are needed.  Remove them? */
-	if (ret == writelen)
-		httpconn_write_cb(data, source, cond);
-}
-
-static gboolean
-write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
-{
-	gssize res; /* result of the write operation */
-
-	if (httpconn->tx_handler == 0)
-		res = write(httpconn->fd, data, data_len);
-	else
-	{
-		res = -1;
-		errno = EAGAIN;
-	}
-
-	if ((res <= 0) && ((errno != EAGAIN) && (errno != EWOULDBLOCK)))
-	{
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
-		return FALSE;
-	}
-
-	if (res < 0 || res < data_len)
-	{
-		if (res < 0)
-			res = 0;
-		if (httpconn->tx_handler == 0 && httpconn->fd)
-			httpconn->tx_handler = purple_input_add(httpconn->fd,
-				PURPLE_INPUT_WRITE, httpconn_write_cb, httpconn);
-		purple_circular_buffer_append(httpconn->tx_buf, data + res,
-			data_len - res);
-	}
-
-	return TRUE;
-}
-
-static char *
-msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
-{
-	PurpleAccount *account;
-	PurpleProxyInfo *gpi;
-	const char *username, *password;
-	char *auth = NULL;
-
-	account = httpconn->session->account;
-
-	gpi = purple_proxy_get_setup(account);
-
-	if (gpi == NULL || !(purple_proxy_info_get_type(gpi) == PURPLE_PROXY_HTTP ||
-						 purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR))
-		return NULL;
-
-	username = purple_proxy_info_get_username(gpi);
-	password = purple_proxy_info_get_password(gpi);
-
-	if (username != NULL) {
-		char *tmp;
-		auth = g_strdup_printf("%s:%s", username, password ? password : "");
-		tmp = purple_base64_encode((const guchar *)auth, strlen(auth));
-		g_free(auth);
-		auth = g_strdup_printf("Proxy-Authorization: Basic %s\r\n", tmp);
-		g_free(tmp);
-	}
-
-	return auth;
-}
-
-static gboolean
-msn_httpconn_poll(gpointer data)
-{
-	MsnHttpConn *httpconn;
-	char *header;
-	char *auth;
-
-	httpconn = data;
-
-	g_return_val_if_fail(httpconn != NULL, FALSE);
-
-	if ((httpconn->host == NULL) || (httpconn->full_session_id == NULL))
-	{
-		/* There's no need to poll if the session is not fully established */
-		return TRUE;
-	}
-
-	if (httpconn->waiting_response)
-	{
-		/* There's no need to poll if we're already waiting for a response */
-		return TRUE;
-	}
-
-	auth = msn_httpconn_proxy_auth(httpconn);
-
-	header = g_strdup_printf(
-		"POST http://%s/gateway/gateway.dll?Action=poll&SessionID=%s HTTP/1.1\r\n"
-		"Accept: */*\r\n"
-		"Accept-Language: en-us\r\n"
-		"User-Agent: MSMSGS\r\n"
-		"Host: %s\r\n"
-		"Proxy-Connection: Keep-Alive\r\n"
-		"%s" /* Proxy auth */
-		"Connection: Keep-Alive\r\n"
-		"Pragma: no-cache\r\n"
-		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: 0\r\n\r\n",
-		httpconn->host,
-		httpconn->full_session_id,
-		httpconn->host,
-		auth ? auth : "");
-
-	g_free(auth);
-
-	if (write_raw(httpconn, header, strlen(header)))
-		httpconn->waiting_response = TRUE;
-
-	g_free(header);
-
-	return TRUE;
-}
-
-gssize
-msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
-{
-	char *params;
-	char *data;
-	int header_len;
-	char *auth;
-	const char *server_types[] = { "NS", "SB" };
-	const char *server_type;
-	char *host;
 	MsnServConn *servconn;
 
-	/* TODO: remove http data from servconn */
+	gboolean connected;
+	gboolean is_disconnecting;
+	gboolean is_externally_disconnected;
 
-	g_return_val_if_fail(httpconn != NULL, 0);
-	g_return_val_if_fail(body != NULL, 0);
-	g_return_val_if_fail(body_len > 0, 0);
+	gchar *host_dest;
+	gchar *host_gw;
+	int port;
 
-	servconn = httpconn->servconn;
+	gchar *session_id; /* changes after every request */
 
-	if (httpconn->waiting_response)
+	PurpleHttpConnection *current_request;
+	int polling_timer;
+	int finish_timer;
+	PurpleHttpKeepalivePool *keepalive_pool;
+	GSList *write_queue;
+};
+
+struct _MsnHttpConnWriteQueueElement
+{
+	gchar *data;
+	size_t len;
+};
+
+static MsnHttpConnWriteQueueElement *
+msn_httpconn_writequeueelement_new(const gchar *data, size_t len)
+{
+	MsnHttpConnWriteQueueElement *wqe;
+
+	g_return_val_if_fail(!(len > 0 && data == NULL), NULL);
+
+	wqe = g_new(MsnHttpConnWriteQueueElement, 1);
+	wqe->data = g_memdup(data, len);
+	wqe->len = len;
+
+	return wqe;
+}
+
+static void
+msn_httpconn_writequeueelement_free(MsnHttpConnWriteQueueElement *wqe)
+{
+	g_free(wqe->data);
+	g_free(wqe);
+}
+
+static void
+msn_httpconn_writequeueelement_process(MsnHttpConn *httpconn)
+{
+	MsnHttpConnWriteQueueElement *wqe;
+
+	g_return_if_fail(httpconn != NULL);
+
+	if (httpconn->current_request != NULL || httpconn->finish_timer > 0)
 	{
-		MsnHttpQueueData *queue_data = g_new0(MsnHttpQueueData, 1);
-
-		queue_data->httpconn = httpconn;
-		queue_data->body     = g_memdup(body, body_len);
-		queue_data->body_len = body_len;
-
-		httpconn->queue = g_list_append(httpconn->queue, queue_data);
-
-		return body_len;
-	}
-
-	server_type = server_types[servconn->type];
-
-	if (httpconn->virgin)
-	{
-		/* QuLogic: This doesn't look right to me, but it still seems to work */
-		host = MSN_HTTPCONN_SERVER;
-
-		/* The first time servconn->host is the host we should connect to. */
-		params = g_strdup_printf("Action=open&Server=%s&IP=%s",
-								 server_type,
-								 servconn->host);
-		httpconn->virgin = FALSE;
-	}
-	else
-	{
-		/* The rest of the times servconn->host is the gateway host. */
-		host = httpconn->host;
-
-		if (host == NULL || httpconn->full_session_id == NULL)
-		{
-			purple_debug_warning("msn", "Attempted HTTP write before session is established\n");
-			return -1;
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("msn", "cannot process queue: "
+				"there is a request already running\n");
 		}
-
-		params = g_strdup_printf("SessionID=%s",
-			httpconn->full_session_id);
+		return;
 	}
+	if (httpconn->write_queue == NULL)
+		return;
 
-	auth = msn_httpconn_proxy_auth(httpconn);
-
-	data = g_strdup_printf(
-		"POST http://%s/gateway/gateway.dll?%s HTTP/1.1\r\n"
-		"Accept: */*\r\n"
-		"Accept-Language: en-us\r\n"
-		"User-Agent: MSMSGS\r\n"
-		"Host: %s\r\n"
-		"Proxy-Connection: Keep-Alive\r\n"
-		"%s" /* Proxy auth */
-		"Connection: Keep-Alive\r\n"
-		"Pragma: no-cache\r\n"
-		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: %d\r\n\r\n",
-		host,
-		params,
-		host,
-		auth ? auth : "",
-		(int) body_len);
-
-	g_free(params);
-
-	g_free(auth);
-
-	header_len = strlen(data);
-	data = g_realloc(data, header_len + body_len);
-	memcpy(data + header_len, body, body_len);
-
-	if (write_raw(httpconn, data, header_len + body_len))
-		httpconn->waiting_response = TRUE;
-
-	g_free(data);
-
-	return body_len;
+	wqe = httpconn->write_queue->data;
+	httpconn->write_queue = g_slist_remove(httpconn->write_queue, wqe);
+	msn_httpconn_write(httpconn, wqe->data, wqe->len);
+	msn_httpconn_writequeueelement_free(wqe);
 }
 
 MsnHttpConn *
@@ -607,17 +112,7 @@ msn_httpconn_new(MsnServConn *servconn)
 
 	httpconn = g_new0(MsnHttpConn, 1);
 
-	purple_debug_info("msn", "new httpconn (%p)\n", httpconn);
-
-	/* TODO: Remove this */
-	httpconn->session = servconn->session;
-
 	httpconn->servconn = servconn;
-
-	httpconn->tx_buf = purple_circular_buffer_new(MSN_BUF_LEN);
-	httpconn->tx_handler = 0;
-
-	httpconn->fd = -1;
 
 	return httpconn;
 }
@@ -625,83 +120,65 @@ msn_httpconn_new(MsnServConn *servconn)
 void
 msn_httpconn_destroy(MsnHttpConn *httpconn)
 {
-	g_return_if_fail(httpconn != NULL);
-
-	purple_debug_info("msn", "destroy httpconn (%p)\n", httpconn);
+	if (httpconn == NULL)
+		return;
 
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
-
-	g_free(httpconn->full_session_id);
-
-	g_free(httpconn->session_id);
-
-	g_free(httpconn->host);
-
-	while (httpconn->queue != NULL) {
-		MsnHttpQueueData *queue_data;
-
-		queue_data = (MsnHttpQueueData *) httpconn->queue->data;
-
-		httpconn->queue = g_list_delete_link(httpconn->queue, httpconn->queue);
-
-		g_free(queue_data->body);
-		g_free(queue_data);
-	}
-
-	g_object_unref(G_OBJECT(httpconn->tx_buf));
-	if (httpconn->tx_handler > 0)
-		purple_input_remove(httpconn->tx_handler);
 
 	g_free(httpconn);
 }
 
-static void
-connect_cb(gpointer data, gint source, const gchar *error_message)
+static gboolean
+msn_httpconn_poll(gpointer _httpconn)
 {
-	MsnHttpConn *httpconn;
+	MsnHttpConn *httpconn = _httpconn;
 
-	httpconn = data;
-	httpconn->connect_data = NULL;
-	httpconn->fd = source;
-
-	if (source >= 0)
-	{
-		httpconn->inpa = purple_input_add(httpconn->fd, PURPLE_INPUT_READ,
-			read_cb, data);
-
-		httpconn->timer = purple_timeout_add_seconds(2, msn_httpconn_poll, httpconn);
-
-		msn_httpconn_process_queue(httpconn);
+	if (!httpconn->connected) {
+		purple_debug_error("msn", "msn_httpconn_poll: invalid state\n");
+		return FALSE;
 	}
-	else
-	{
-		purple_debug_error("msn", "HTTP: Connection error: %s\n",
-		                   error_message ? error_message : "(null)");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT, error_message);
+
+	/* There's no need to poll if the session is not fully established. */
+	if (!httpconn->session_id)
+		return TRUE;
+
+	/* There's no need to poll if we're already waiting for a response. */
+	if (httpconn->current_request || httpconn->finish_timer > 0)
+		return TRUE;
+
+	if (httpconn->write_queue) {
+		purple_debug_warning("msn", "There are pending packets, but no "
+			"request running\n");
+		return TRUE;
 	}
+
+	msn_httpconn_write(httpconn, NULL, 0);
+
+	return TRUE;
 }
 
-gboolean
-msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
+void
+msn_httpconn_connect(MsnHttpConn *httpconn, const gchar *host, int port)
 {
-	g_return_val_if_fail(httpconn != NULL, FALSE);
-	g_return_val_if_fail(host     != NULL, FALSE);
-	g_return_val_if_fail(port      > 0,    FALSE);
+	g_return_if_fail(httpconn != NULL);
+	g_return_if_fail(host != NULL);
 
-	if (httpconn->connected)
-		msn_httpconn_disconnect(httpconn);
-
-	httpconn->connect_data = purple_proxy_connect(NULL, httpconn->session->account,
-		host, 80, connect_cb, httpconn);
-
-	if (httpconn->connect_data != NULL)
-	{
-		httpconn->waiting_response = TRUE;
-		httpconn->connected = TRUE;
+	if (httpconn->connected) {
+		purple_debug_warning("msn", "http already (virtually) "
+			"connected\n");
+		return;
 	}
 
-	return httpconn->connected;
+	httpconn->host_dest = g_strdup(host);
+	httpconn->port = port;
+	httpconn->connected = TRUE;
+
+	httpconn->polling_timer = purple_timeout_add_seconds(2,
+		msn_httpconn_poll, httpconn);
+	httpconn->keepalive_pool = purple_http_keepalive_pool_new();
+
+	msn_httpconn_writequeueelement_process(httpconn);
 }
 
 void
@@ -709,35 +186,223 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 {
 	g_return_if_fail(httpconn != NULL);
 
-	if (!httpconn->connected)
+	if (!httpconn->connected) {
+		purple_debug_warning("msn", "http is not connected\n");
 		return;
-
-	if (httpconn->connect_data != NULL)
-	{
-		purple_proxy_connect_cancel(httpconn->connect_data);
-		httpconn->connect_data = NULL;
 	}
-
-	if (httpconn->timer)
-	{
-		purple_timeout_remove(httpconn->timer);
-		httpconn->timer = 0;
-	}
-
-	if (httpconn->inpa > 0)
-	{
-		purple_input_remove(httpconn->inpa);
-		httpconn->inpa = 0;
-	}
-
-	close(httpconn->fd);
-	httpconn->fd = -1;
-
-	g_free(httpconn->rx_buf);
-	httpconn->rx_buf = NULL;
-	httpconn->rx_len = 0;
-
 	httpconn->connected = FALSE;
+	httpconn->is_disconnecting = TRUE;
 
-	/* msn_servconn_disconnect(httpconn->servconn); */
+	g_slist_free_full(httpconn->write_queue,
+		(GDestroyNotify)msn_httpconn_writequeueelement_free);
+	httpconn->write_queue = NULL;
+
+	if (httpconn->polling_timer > 0) {
+		purple_timeout_remove(httpconn->polling_timer);
+		httpconn->polling_timer = 0;
+	}
+
+	if (httpconn->finish_timer > 0) {
+		purple_timeout_remove(httpconn->finish_timer);
+		httpconn->finish_timer = 0;
+	}
+
+	if (httpconn->current_request != NULL) {
+		purple_http_conn_cancel(httpconn->current_request);
+		httpconn->current_request = NULL;
+	}
+
+	g_free(httpconn->host_dest);
+	httpconn->host_dest = NULL;
+	g_free(httpconn->host_gw);
+	httpconn->host_gw = NULL;
+	g_free(httpconn->session_id);
+	httpconn->session_id = NULL;
+
+	purple_http_keepalive_pool_unref(httpconn->keepalive_pool);
+	httpconn->keepalive_pool = NULL;
+	httpconn->is_disconnecting = FALSE;
+}
+
+static void
+msn_httpconn_parse_header(MsnHttpConn *httpconn, const gchar *header)
+{
+	gchar *session_id = NULL, *gw_ip = NULL, *session_action = NULL;
+	gchar **elems;
+	int i;
+
+	elems = g_strsplit(header, ";", 10);
+
+	for (i = 0; elems[i] != NULL; i++) {
+		gchar **tokens = g_strsplit(elems[i], "=", 2);
+		if (tokens[0] == NULL || tokens[1] == NULL) {
+			g_strfreev(tokens);
+			continue;
+		}
+
+		g_strstrip(tokens[0]);
+		g_strstrip(tokens[1]);
+
+		if (g_strcmp0(tokens[0], "SessionID") == 0) {
+			g_free(session_id);
+			session_id = g_strdup(tokens[1]);
+		} else if (g_strcmp0(tokens[0], "GW-IP") == 0) {
+			g_free(gw_ip);
+			gw_ip = g_strdup(tokens[1]);
+		} else if (g_strcmp0(tokens[0], "Session") == 0) {
+			g_free(session_action);
+			session_action = g_strdup(tokens[1]);
+		}
+
+		g_strfreev(tokens);
+	}
+
+	g_strfreev(elems);
+
+	if (session_id != NULL) {
+		g_free(httpconn->session_id);
+		httpconn->session_id = session_id;
+	}
+
+	if (gw_ip != NULL) {
+		g_free(httpconn->host_gw);
+		httpconn->host_gw = gw_ip;
+	}
+
+	if (g_strcmp0(session_action, "close") == 0) {
+		g_free(httpconn->session_id);
+		httpconn->session_id = NULL;
+		g_free(httpconn->host_gw);
+		httpconn->host_gw = NULL;
+		httpconn->is_externally_disconnected = TRUE;
+	}
+	g_free(session_action);
+}
+
+static gboolean
+msn_httpconn_read_finish(gpointer _httpconn)
+{
+	MsnHttpConn *httpconn = _httpconn;
+
+	httpconn->finish_timer = 0;
+
+	if (httpconn->servconn->rx_len > 0) {
+		if (msn_servconn_process_data(httpconn->servconn) == NULL)
+			return FALSE;
+	}
+
+	msn_httpconn_writequeueelement_process(httpconn);
+
+	return FALSE;
+}
+
+static void
+msn_httpconn_read(PurpleHttpConnection *phc, PurpleHttpResponse *response,
+	gpointer _httpconn)
+{
+	MsnHttpConn *httpconn = _httpconn;
+	const gchar *msn_header;
+	const gchar *got_data;
+	size_t got_len;
+
+	if (!purple_http_response_is_successfull(response)) {
+		httpconn->current_request = NULL;
+		msn_servconn_got_error(httpconn->servconn,
+			MSN_SERVCONN_ERROR_READ,
+			purple_http_response_get_error(response));
+		return;
+	}
+
+	if (httpconn->servconn->type == MSN_SERVCONN_NS) {
+		purple_connection_update_last_received(
+			purple_account_get_connection(httpconn->servconn->
+				session->account));
+	}
+
+	msn_header = purple_http_response_get_header(response,
+		"X-MSN-Messenger");
+	if (msn_header != NULL)
+		msn_httpconn_parse_header(httpconn, msn_header);
+
+	got_data = purple_http_response_get_data(response, &got_len);
+
+	g_free(httpconn->servconn->rx_buf);
+	httpconn->servconn->rx_buf = g_memdup(got_data, got_len);
+	httpconn->servconn->rx_len = got_len;
+
+	httpconn->current_request = NULL;
+	httpconn->finish_timer = purple_timeout_add(0, msn_httpconn_read_finish,
+		httpconn);
+}
+
+ssize_t
+msn_httpconn_write(MsnHttpConn *httpconn, const gchar *data, size_t data_len)
+{
+	PurpleAccount *account;
+	PurpleHttpRequest *req;
+	static const gchar *server_types[] = { "NS", "SB" };
+	const gchar *server_type;
+	const gchar *host;
+	gchar *params;
+
+	g_return_val_if_fail(httpconn != NULL, -1);
+	g_return_val_if_fail(!(data == NULL && data_len > 0), -1);
+
+	if (httpconn->is_disconnecting) {
+		purple_debug_warning("msn", "http connection is in "
+			"disconnecting state\n");
+		return -1;
+	}
+
+	if (httpconn->is_externally_disconnected) {
+		purple_debug_warning("msn", "http connection was externally "
+			"disconnected\n");
+		return -1;
+	}
+
+	if (httpconn->current_request != NULL) {
+		httpconn->write_queue = g_slist_append(httpconn->write_queue,
+			msn_httpconn_writequeueelement_new(data, data_len));
+		return data_len;
+	}
+
+	server_type = server_types[httpconn->servconn->type];
+
+	if (httpconn->session_id == NULL || httpconn->host_gw == NULL) {
+		/* I'm not sure, if this shouldn't be MSN_HTTPCONN_SERVER */
+		host = httpconn->host_dest;
+		params = g_strdup_printf("Action=open&Server=%s&IP=%s",
+			server_type, httpconn->host_dest);
+	} else {
+		host = httpconn->host_gw;
+		params = g_strdup_printf("SessionID=%s", httpconn->session_id);
+	}
+
+	if (data_len == 0) {
+		gchar *tmp = params;
+		params = g_strdup_printf("Action=poll&%s", params);
+		g_free(tmp);
+	}
+
+	account = httpconn->servconn->session->account;
+
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_keepalive_pool(req, httpconn->keepalive_pool);
+	purple_http_request_set_url_printf(req,
+		"http://%s/gateway/gateway.dll?%s", host, params);
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "Accept-Language", "en-us");
+	purple_http_request_header_set(req, "User-Agent", "MSMSGS");
+	purple_http_request_header_set(req, "Pragma", "no-cache");
+	purple_http_request_header_set(req, "Content-Type",
+		"application/x-msn-messenger");
+	purple_http_request_set_contents(req, data, data_len);
+	httpconn->current_request = purple_http_request(
+		purple_account_get_connection(account), req,
+		msn_httpconn_read, httpconn);
+	purple_http_request_unref(req);
+
+	g_free(params);
+
+	return data_len;
 }

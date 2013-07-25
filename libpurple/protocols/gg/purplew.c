@@ -96,7 +96,7 @@ PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy)
 GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account)
 {
 	GList *buddies = NULL;
-	PurpleBListNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	
 	g_return_val_if_fail(group != NULL, NULL);
 	
@@ -122,7 +122,7 @@ GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account
 
 GList * ggp_purplew_account_get_groups(PurpleAccount *account, gboolean exclusive)
 {
-	PurpleBListNode *bnode;
+	PurpleBlistNode *bnode;
 	GList *groups = NULL;
 	for (bnode = purple_blist_get_root(); bnode; bnode = bnode->next)
 	{
