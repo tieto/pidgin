@@ -335,10 +335,7 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.20 (required)
 dnl #######################################################################
-# TODO: gmodule-2.0 is only needed if enable_plugins is 'yes'.  It
-#       might be nice to change this check so that it's not required
-#       if enable_plugins is 'no'.
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
@@ -1701,6 +1698,21 @@ AC_SUBST(KWALLET_CXXFLAGS)
 AC_SUBST(KWALLET_LIBS)
 
 AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
+
+dnl #######################################################################
+dnl # Check for GPlugin 0.0.3
+dnl #######################################################################
+if test "x$enable_plugins" = "xyes" ; then
+	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.3 gmodule-2.0], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+	GPlugin 0.0.3 development headers not found, which are required if you wish
+	to enable plugins.
+	Use --disable-plugins if you do not need plugins.
+	])])
+	AC_SUBST(GPLUGIN_CFLAGS)
+	AC_SUBST(GPLUGIN_LIBS)
+fi
 
 dnl #######################################################################
 dnl # Check for Python
