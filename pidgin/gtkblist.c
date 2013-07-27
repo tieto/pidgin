@@ -1556,7 +1556,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
-	if (!purple_blist_node_get_dont_save(node)) {
+	if (!purple_blist_node_is_transient(node)) {
 		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
 		pidgin_new_item_from_stock(menu, show_offline ? _("Hide When Offline") : _("Show When Offline"),
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
@@ -1736,7 +1736,7 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
-	if (!purple_blist_node_get_dont_save(node)) {
+	if (!purple_blist_node_is_transient(node)) {
 		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
 		pidgin_new_item_from_stock(menu, show_offline ? _("Hide When Offline") : _("Show When Offline"),
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);

@@ -38,7 +38,7 @@ typedef struct _PurpleCountingNodePrivate  PurpleCountingNodePrivate;
 /** Private data of a buddy list node */
 struct _PurpleBlistNodePrivate {
 	GHashTable *settings;  /**< per-node settings                            */
-	gboolean dont_save;    /**< node should not be saved with the buddy list */
+	gboolean transient;    /**< node should not be saved with the buddy list */
 };
 
 /* Blist node property enums */
@@ -155,23 +155,23 @@ void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 }
 
 void
-purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save)
+purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient)
 {
 	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_if_fail(priv != NULL);
 
-	priv->dont_save = dont_save;
+	priv->transient = transient;
 }
 
 gboolean
-purple_blist_node_get_dont_save(PurpleBlistNode *node)
+purple_blist_node_is_transient(PurpleBlistNode *node)
 {
 	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	g_return_val_if_fail(priv != NULL, 0);
 
-	return priv->dont_save;
+	return priv->transient;
 }
 
 GHashTable *
@@ -348,7 +348,7 @@ purple_blist_node_set_property(GObject *obj, guint param_id, const GValue *value
 
 	switch (param_id) {
 		case BLNODE_PROP_DONT_SAVE:
-			purple_blist_node_set_dont_save(node, g_value_get_boolean(value));
+			purple_blist_node_set_transient(node, g_value_get_boolean(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -365,7 +365,7 @@ purple_blist_node_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case BLNODE_PROP_DONT_SAVE:
-			g_value_set_boolean(value, purple_blist_node_get_dont_save(node));
+			g_value_set_boolean(value, purple_blist_node_is_transient(node));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);

@@ -297,10 +297,10 @@ void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key);
  * Sets whether the node should be saved with the buddy list or not
  *
  * @param node  The node
- * @param dont_save TRUE if the node should NOT be saved, FALSE if node should
+ * @param transient TRUE if the node should NOT be saved, FALSE if node should
  *                  be saved
  */
-void purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save);
+void purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient);
 
 /**
  * Gets whether the node should be saved with the buddy list or not
@@ -309,7 +309,7 @@ void purple_blist_node_set_dont_save(PurpleBlistNode *node, gboolean dont_save);
  *
  * @return TRUE if the node should NOT be saved, FALSE if node should be saved
  */
-gboolean purple_blist_node_get_dont_save(PurpleBlistNode *node);
+gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
 
 /*@}*/
 

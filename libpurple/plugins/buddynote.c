@@ -58,7 +58,7 @@ buddynote_extended_menu_cb(PurpleBlistNode *node, GList **m)
 {
 	PurpleMenuAction *bna = NULL;
 
-	if (purple_blist_node_get_dont_save(node))
+	if (purple_blist_node_is_transient(node))
 		return;
 
 	*m = g_list_append(*m, bna);
