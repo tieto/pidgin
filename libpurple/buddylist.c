@@ -233,7 +233,7 @@ contact_to_xmlnode(PurpleContact *contact)
 	/* Write buddies */
 	for (bnode = PURPLE_BLIST_NODE(contact)->child; bnode != NULL; bnode = bnode->next)
 	{
-		if (purple_blist_node_get_dont_save(bnode))
+		if (purple_blist_node_is_transient(bnode))
 			continue;
 		if (PURPLE_IS_BUDDY(bnode))
 		{
@@ -297,7 +297,7 @@ group_to_xmlnode(PurpleGroup *group)
 	/* Write contacts and chats */
 	for (cnode = PURPLE_BLIST_NODE(group)->child; cnode != NULL; cnode = cnode->next)
 	{
-		if (purple_blist_node_get_dont_save(cnode))
+		if (purple_blist_node_is_transient(cnode))
 			continue;
 		if (PURPLE_IS_CONTACT(cnode))
 		{
@@ -356,7 +356,7 @@ blist_to_xmlnode(void)
 	child = xmlnode_new_child(node, "blist");
 	for (gnode = purplebuddylist->root; gnode != NULL; gnode = gnode->next)
 	{
-		if (purple_blist_node_get_dont_save(gnode))
+		if (purple_blist_node_is_transient(gnode))
 			continue;
 		if (PURPLE_IS_GROUP(gnode))
 		{

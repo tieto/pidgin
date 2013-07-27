@@ -550,15 +550,6 @@ void purple_connection_update_last_received(PurpleConnection *gc)
 	priv->last_received = time(NULL);
 }
 
-void purple_connection_disable_reconnection(PurpleConnection *gc)
-{
-	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->wants_to_die = TRUE;
-}
-
 /**************************************************************************
  * GBoxed code
  **************************************************************************/

@@ -428,10 +428,10 @@ bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group)
 
 	/* If we're moving them out of the bonjour group, make them persistent */
 	if (purple_strequal(new_group, BONJOUR_GROUP_NAME))
-		purple_blist_node_set_dont_save(PURPLE_BLIST_NODE(buddy), TRUE);
+		purple_blist_node_set_transient(PURPLE_BLIST_NODE(buddy), TRUE);
 	else
-		purple_blist_node_set_dont_save(PURPLE_BLIST_NODE(buddy),
-				!purple_blist_node_get_dont_save(PURPLE_BLIST_NODE(buddy)));
+		purple_blist_node_set_transient(PURPLE_BLIST_NODE(buddy),
+				!purple_blist_node_is_transient(PURPLE_BLIST_NODE(buddy)));
 
 }
 

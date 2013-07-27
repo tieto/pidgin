@@ -224,12 +224,12 @@ purple_blist_node_get_string(node, key)
 	const char * key
 
 void
-purple_blist_node_set_dont_save(node, dont_save)
+purple_blist_node_set_transient(node, transient)
 	Purple::BuddyList::Node node
-	gboolean dont_save
+	gboolean transient
 
 gboolean
-purple_blist_node_get_dont_save(node);
+purple_blist_node_is_transient(node);
 	Purple::BuddyList::Node node
 
 void

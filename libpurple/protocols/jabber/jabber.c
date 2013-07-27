@@ -1377,9 +1377,10 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 				g_free(href);
 
 				if(js->registration) {
-					purple_connection_disable_reconnection(js->gc);
 					/* succeeded, but we have no login info */
 					purple_account_register_completed(account, TRUE);
+					purple_connection_error(js->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+							_("Registration completed successfully. Please reconnect to continue."));
 					jabber_connection_schedule_close(js);
 				}
 				return;
