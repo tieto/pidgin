@@ -463,15 +463,6 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
  */
 void purple_connection_update_last_received(PurpleConnection *gc);
 
-/**
- * Disables reconnection after the connection disconnects.
- * Called by prpls in handling of queries for user registration. This is not
- * required when implementing prpl_info->register_user.
- *
- * @param gc   The connection.
- */
-void purple_connection_disable_reconnection(PurpleConnection *gc);
-
 /*@}*/
 
 /**************************************************************************/
