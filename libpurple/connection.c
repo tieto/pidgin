@@ -53,7 +53,7 @@ typedef struct _PurpleConnectionPrivate  PurpleConnectionPrivate;
 /** Private data for a connection */
 struct _PurpleConnectionPrivate
 {
-	PurplePlugin *prpl;           /**< The protocol plugin.              */
+	PurplePluginProtocolInfo *prpl_info;  /**< The protocol.             */
 	PurpleConnectionFlags flags;  /**< Connection flags.                 */
 
 	PurpleConnectionState state;  /**< The connection state.             */
@@ -88,7 +88,7 @@ struct _PurpleConnectionPrivate
 enum
 {
 	PROP_0,
-	PROP_PRPL,
+	PROP_PROTOCOL,
 	PROP_FLAGS,
 	PROP_STATE,
 	PROP_ACCOUNT,
@@ -112,7 +112,6 @@ static gboolean
 send_keepalive(gpointer data)
 {
 	PurpleConnection *gc = data;
-	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
 	/* Only send keep-alives if we haven't heard from the
@@ -121,9 +120,8 @@ send_keepalive(gpointer data)
 	if ((time(NULL) - priv->last_received) < KEEPALIVE_INTERVAL)
 		return TRUE;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
-	if (prpl_info->keepalive)
-		prpl_info->keepalive(gc);
+	if (priv->prpl_info->keepalive)
+		priv->prpl_info->keepalive(gc);
 
 	return TRUE;
 }
@@ -131,13 +129,11 @@ send_keepalive(gpointer data)
 static void
 update_keepalive(PurpleConnection *gc, gboolean on)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	if (priv != NULL && priv->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
+	g_return_if_fail(priv != NULL);
 
-	if (!prpl_info || !prpl_info->keepalive)
+	if (!priv->prpl_info->keepalive)
 		return;
 
 	if (on && !priv->keepalive)
@@ -327,7 +323,7 @@ purple_connection_get_protocol_info(const PurpleConnection *gc)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->prpl;
+	return priv->prpl_info;
 }
 
 const char *
@@ -594,7 +590,7 @@ purple_connection_error_info_get_type(void)
  * GObject code
  **************************************************************************/
 /* GObject Property names */
-#define PROP_PRPL_S          "prpl"
+#define PROP_PROTOCOL_S      "protocol"
 #define PROP_FLAGS_S         "flags"
 #define PROP_STATE_S         "state"
 #define PROP_ACCOUNT_S       "account"
@@ -610,9 +606,9 @@ purple_connection_set_property(GObject *obj, guint param_id, const GValue *value
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
 	switch (param_id) {
-		case PROP_PRPL:
-#warning TODO: change get_pointer to get_object when prpl is a GObject
-			priv->prpl = g_value_get_pointer(value);
+		case PROP_PROTOCOL:
+#warning TODO: change get_pointer to get_object when PurplePluginProtocolInfo is a GObject
+			priv->prpl_info = g_value_get_pointer(value);
 			break;
 		case PROP_FLAGS:
 			purple_connection_set_flags(gc, g_value_get_flags(value));
@@ -644,8 +640,8 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 	PurpleConnection *gc = PURPLE_CONNECTION(obj);
 
 	switch (param_id) {
-		case PROP_PRPL:
-#warning TODO: change set_pointer to set_object when prpl is a GObject
+		case PROP_PROTOCOL:
+#warning TODO: change set_pointer to set_object when PurplePluginProtocolInfo is a GObject
 			g_value_set_pointer(value, purple_connection_get_protocol_info(gc));
 			break;
 		case PROP_FLAGS:
@@ -704,7 +700,6 @@ purple_connection_dispose(GObject *object)
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 	PurpleAccount *account;
 	GSList *buddies;
-	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean remove = FALSE;
 
 	account = purple_connection_get_account(gc);
@@ -729,9 +724,8 @@ purple_connection_dispose(GObject *object)
 	purple_http_conn_cancel_all(gc);
 	purple_proxy_connect_cancel_with_handle(gc);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
-	if (prpl_info->close)
-		(prpl_info->close)(gc);
+	if (priv->prpl_info->close)
+		priv->prpl_info->close(gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_blist_find_buddies(account, NULL);
@@ -793,9 +787,9 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->get_property = purple_connection_get_property;
 	obj_class->set_property = purple_connection_set_property;
 
-#warning TODO: change spec_pointer to spec_object when prpl is a GObject
-	g_object_class_install_property(obj_class, PROP_PRPL,
-			g_param_spec_pointer(PROP_PRPL_S, _("Protocol plugin"),
+#warning TODO: change spec_pointer to spec_object when PurplePluginProtocolInfo is a GObject
+	g_object_class_install_property(obj_class, PROP_PROTOCOL,
+			g_param_spec_pointer(PROP_PROTOCOL_S, _("Protocol plugin"),
 				_("The prpl that is using the connection."),
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
@@ -865,7 +859,6 @@ void
 _purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
 {
 	PurpleConnection *gc;
-	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(account != NULL);
@@ -873,11 +866,9 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	if (!purple_account_is_disconnected(account))
 		return;
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	else {
+	if (prpl_info == NULL) {
 		gchar *message;
 
 		message = g_strdup_printf(_("Missing protocol plugin for %s"),
@@ -906,7 +897,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	}
 
 	gc = g_object_new(PURPLE_TYPE_CONNECTION,
-			PROP_PRPL_S,      prpl,
+			PROP_PROTOCOL_S,  prpl_info,
 			PROP_PASSWORD_S,  password,
 			PROP_ACCOUNT_S,   account,
 			NULL);
@@ -935,16 +926,13 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 {
 	/* Lots of copy/pasted code to avoid API changes. You might want to integrate that into the previous function when posssible. */
 	PurpleConnection *gc;
-	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(account != NULL);
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	else {
+	if (prpl_info == NULL) {
 		gchar *message;
 
 		message = g_strdup_printf(_("Missing protocol plugin for %s"),
@@ -969,7 +957,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 	}
 
 	gc = g_object_new(PURPLE_TYPE_CONNECTION,
-			PROP_PRPL_S,      prpl,
+			PROP_PROTOCOL_S,  prpl_info,
 			PROP_PASSWORD_S,  password,
 			PROP_ACCOUNT_S,   account,
 			NULL);
