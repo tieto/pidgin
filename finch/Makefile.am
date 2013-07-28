@@ -72,6 +72,7 @@ finch_LDADD = \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -89,6 +90,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/libgnt/ \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \

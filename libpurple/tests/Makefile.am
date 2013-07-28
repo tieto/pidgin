@@ -23,6 +23,7 @@ check_libpurple_SOURCES=\
 check_libpurple_CFLAGS=\
         @CHECK_CFLAGS@ \
 		$(GLIB_CFLAGS) \
+		$(GPLUGIN_CFLAGS) \
 		$(DEBUG_CFLAGS) \
 		$(LIBXML_CFLAGS) \
 		-I.. \
@@ -35,6 +36,7 @@ check_libpurple_LDADD=\
 		$(top_builddir)/libpurple/protocols/yahoo/libymsg.la \
 		$(top_builddir)/libpurple/libpurple.la \
         @CHECK_LIBS@ \
-		$(GLIB_LIBS)
+		$(GLIB_LIBS) \
+		$(GPLUGIN_LIBS)
 
 endif

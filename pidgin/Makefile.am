@@ -168,6 +168,7 @@ pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -197,6 +198,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GSTVIDEO_CFLAGS) \

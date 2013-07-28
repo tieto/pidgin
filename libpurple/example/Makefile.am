@@ -7,6 +7,7 @@ nullclient_LDADD = \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -21,5 +22,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS)

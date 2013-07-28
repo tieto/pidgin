@@ -340,6 +340,7 @@ libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(NETWORKMANAGER_LIBS) \
 	$(INTLLIBS) \
@@ -360,6 +361,7 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
