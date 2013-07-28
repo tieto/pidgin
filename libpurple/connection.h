@@ -155,7 +155,7 @@ typedef struct
 #include <time.h>
 
 #include "account.h"
-#include "plugin.h"
+#include "prpl.h"
 #include "status.h"
 #include "sslconn.h"
 

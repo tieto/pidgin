@@ -1622,7 +1622,6 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 {
 	char *chat_name;
 	PurpleChat *chat;
-	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	struct proto_chat_entry *pce;
 	PurpleBlistNode *node, *group;
@@ -1635,8 +1634,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	if (!purple_account_is_connected(account))
 		return NULL;
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	if (prpl_info->find_blist_chat != NULL)
 		return prpl_info->find_blist_chat(account, name);
