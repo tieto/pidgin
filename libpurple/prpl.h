@@ -634,13 +634,6 @@ struct _PurplePluginProtocolInfo
 	(G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size && \
 	 prpl->member != NULL)
 
-
-#define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
-	((plugin)->info->type == PURPLE_PLUGIN_PROTOCOL)
-
-#define PURPLE_PLUGIN_PROTOCOL_INFO(plugin) \
-	((PurplePluginProtocolInfo *)(plugin)->info->extra_info)
-
 G_BEGIN_DECLS
 
 /**************************************************************************/
