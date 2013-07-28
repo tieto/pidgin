@@ -40,6 +40,8 @@ typedef struct _PurplePlugin PurplePlugin;
 /** @copydoc _PurplePluginClass */
 typedef struct _PurplePluginClass PurplePluginClass;
 
+#include "pluginpref.h"
+
 /**
  * Represents a plugin that can be loaded/unloaded by libpurple.
  *
