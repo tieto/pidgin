@@ -219,6 +219,7 @@ typedef enum
 struct _PurplePluginProtocolInfo
 {
 	const char *id;
+	const char *name;
 
 	/**
 	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
