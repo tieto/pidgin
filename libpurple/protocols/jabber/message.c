@@ -510,7 +510,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	to   = xmlnode_get_attrib(packet, "to");
 	type = xmlnode_get_attrib(packet, "type");
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc),
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_protocol_info(js->gc),
 			"jabber-receiving-message", js->gc, type, id, from, to, packet));
 	if (signal_return)
 		return;

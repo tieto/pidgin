@@ -213,7 +213,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 	g_return_val_if_fail(gc != NULL, NULL);
 	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
-	prpl = purple_connection_get_prpl(gc);
+	prpl = purple_connection_get_protocol_info(gc);
 
 	if(prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -237,7 +237,7 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -260,7 +260,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);

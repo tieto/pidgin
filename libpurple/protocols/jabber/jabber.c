@@ -332,7 +332,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 	const char *name;
 	const char *xmlns;
 
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(purple_connection_get_protocol_info(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -514,7 +514,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	purple_signal_emit(purple_connection_get_prpl(gc), "jabber-sending-text", gc, &data);
+	purple_signal_emit(purple_connection_get_protocol_info(gc), "jabber-sending-text", gc, &data);
 	if (data == NULL)
 		return;
 
@@ -614,7 +614,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 
 void jabber_send(JabberStream *js, xmlnode *packet)
 {
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(purple_connection_get_protocol_info(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
 }
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)

@@ -204,7 +204,7 @@ message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 
 	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
 

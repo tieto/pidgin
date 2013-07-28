@@ -118,7 +118,7 @@ static void fl_add_chat(GntWidget *button, gpointer null)
 	if (gc == NULL || room == NULL)
 		return;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 
 	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
 		name = prpl_info->roomlist_room_serialize(room);
@@ -240,7 +240,7 @@ reset_account_list(PurpleAccount *account)
 		PurplePluginProtocolInfo *prpl_info = NULL;
 		PurpleConnection *gc = list->data;
 
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
 		        prpl_info->roomlist_get_list != NULL) {
 			PurpleAccount *account = purple_connection_get_account(gc);

@@ -558,7 +558,7 @@ purple_prpl_initiate_media(PurpleAccount *account,
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
@@ -581,7 +581,7 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 

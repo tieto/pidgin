@@ -586,7 +586,7 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 	gc = purple_account_get_connection(account);
 
 	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 
 	if(PURPLE_CONNECTION_IS_CONNECTED(gc) && prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);

@@ -460,7 +460,7 @@ purple_im_conversation_dispose(GObject *object)
 	if (gc != NULL)
 	{
 		/* Still connected */
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 
 		if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 			serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
@@ -848,7 +848,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 	account = purple_conversation_get_account(conv);
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	ul = users;
@@ -955,7 +955,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	if (purple_strequal(priv->nick, purple_normalize(account, old_user))) {
@@ -1078,7 +1078,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	ops  = purple_conversation_get_ui_ops(conv);

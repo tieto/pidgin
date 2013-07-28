@@ -65,7 +65,7 @@ CODE:
 	if (!gc)
 		RETVAL = 0;
 	else {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 		if (prpl_info && prpl_info->send_raw != NULL) {
 			RETVAL = prpl_info->send_raw(gc, str, strlen(str));
 		} else {

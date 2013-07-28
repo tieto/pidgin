@@ -676,7 +676,7 @@ jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
 		xmlnode_set_attrib(iq, "id", id);
 		xmlnode_set_attrib(iq, "type", "result");
 
-		purple_signal_emit(purple_connection_get_prpl(pc),
+		purple_signal_emit(purple_connection_get_protocol_info(pc),
 		                   "jabber-sending-xmlnode", pc, &iq);
 		if (iq != NULL)
 			xmlnode_free(iq);

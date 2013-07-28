@@ -741,7 +741,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		group = _("Chats");
 
 	gc = purple_account_get_connection(account);
-	info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 	if (info->chat_info_defaults != NULL)
 		hash = info->chat_info_defaults(gc, name);
 
@@ -1061,7 +1061,7 @@ static void
 append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 {
 	GList *list;
-	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 
 	if(!prpl_info || !prpl_info->blist_node_menu)
 		return;
@@ -1125,7 +1125,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	purple_request_fields_add_group(fields, group);
 
 	gc = purple_account_get_connection(purple_chat_get_account(chat));
-	parts = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info(gc);
+	parts = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc))->chat_info(gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -1276,7 +1276,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 	if (prpl_info && prpl_info->get_info)
 	{
 		add_custom_action(menu, _("Get Info"),
@@ -2578,7 +2578,7 @@ reconstruct_accounts_menu(void)
 
 		if (!gc || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 			continue;
-		prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_protocol_info(gc);
 
 		if (PURPLE_PLUGIN_HAS_ACTIONS(prpl)) {
 			item = gnt_menuitem_new(purple_account_get_username(account));
@@ -2783,7 +2783,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
-		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 		if (info->chat_info_defaults != NULL)
 			hash = info->chat_info_defaults(gc, name);
 	} else {

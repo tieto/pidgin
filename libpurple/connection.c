@@ -320,8 +320,8 @@ purple_connection_get_account(const PurpleConnection *gc)
 	return priv->account;
 }
 
-PurplePlugin *
-purple_connection_get_prpl(const PurpleConnection *gc)
+PurplePluginProtocolInfo *
+purple_connection_get_protocol_info(const PurpleConnection *gc)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
@@ -646,7 +646,7 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 	switch (param_id) {
 		case PROP_PRPL:
 #warning TODO: change set_pointer to set_object when prpl is a GObject
-			g_value_set_pointer(value, purple_connection_get_prpl(gc));
+			g_value_set_pointer(value, purple_connection_get_protocol_info(gc));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_connection_get_flags(gc));
