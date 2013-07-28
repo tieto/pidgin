@@ -635,7 +635,7 @@ purple_buddy_dispose(GObject *object)
 	 * Tell the owner PRPL that we're about to free the buddy so it
 	 * can free proto_data
 	 */
-	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 	if (prpl) {
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 		if (prpl_info && prpl_info->buddy_free)
@@ -1125,7 +1125,7 @@ const char *purple_chat_get_name_only(PurpleChat *chat)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info->chat_info) {

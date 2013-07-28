@@ -1452,7 +1452,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 	PurpleStoredImage *img = NULL;
 
 	if (box->account) {
-		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
+		PurplePlugin *plug = purple_find_protocol_info(purple_account_get_protocol_id(box->account));
 		if (plug) {
 			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 			if (prplinfo && prplinfo->icon_spec.format) {
@@ -1477,7 +1477,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
+			PurplePlugin *plug = purple_find_protocol_info(purple_account_get_protocol_id(account));
 			if (plug) {
 				PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 				if (prplinfo != NULL &&

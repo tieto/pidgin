@@ -505,7 +505,7 @@ void finch_syslog_show()
 	for(accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
-		if(purple_find_prpl(purple_account_get_protocol_id(account)) == NULL)
+		if(purple_find_protocol_info(purple_account_get_protocol_id(account)) == NULL)
 			continue;
 
 		logs = g_list_concat(purple_log_get_system_logs(account), logs);

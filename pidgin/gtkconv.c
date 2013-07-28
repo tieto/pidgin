@@ -2456,7 +2456,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 static GList *get_prpl_icon_list(PurpleAccount *account)
 {
 	GList *l = NULL;
-	PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	PurplePlugin *prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	const char *prplname = prpl_info->list_icon(account, NULL);
 	l = g_hash_table_lookup(prpl_lists, prplname);
@@ -3272,7 +3272,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 		if ((chat == NULL) && (gtkconv->webview != NULL)) {
 			GHashTable *components;
 			PurpleAccount *account = purple_conversation_get_account(conv);
-			PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+			PurplePlugin *prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 			if (purple_account_get_connection(account) != NULL &&
 					PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_info_defaults)) {
@@ -6531,7 +6531,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES | GTK_IMHTML_NO_FORMATTING;
 
 	/* this is gonna crash one day, I can feel it. */
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(purple_conversation_get_account(conv))))->options &
+	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_protocol_info(purple_account_get_protocol_id(purple_conversation_get_account(conv))))->options &
 	    OPT_PROTO_USE_POINTSIZE) {
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}

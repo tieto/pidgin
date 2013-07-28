@@ -3389,7 +3389,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 	if (account != NULL)
 	{
-		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+		PurplePlugin *prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 		if (prpl != NULL)
 		{

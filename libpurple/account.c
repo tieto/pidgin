@@ -324,7 +324,7 @@ purple_account_connect(PurpleAccount *account)
 		return;
 	}
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	if (prpl == NULL) {
 		gchar *message;
 
@@ -1433,7 +1433,7 @@ purple_account_get_protocol_name(const PurpleAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	p = purple_find_prpl(purple_account_get_protocol_id(account));
+	p = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }
@@ -2920,7 +2920,7 @@ purple_account_constructed(GObject *object)
 	purple_signal_emit(purple_accounts_get_handle(), "account-created",
 			account);
 
-	prpl = purple_find_prpl(protocol_id);
+	prpl = purple_find_protocol_info(protocol_id);
 	if (prpl == NULL) {
 		g_free(username);
 		g_free(protocol_id);

@@ -237,7 +237,7 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 {
 	PurplePlugin *new_plugin;
 
-	new_plugin = purple_find_prpl(id);
+	new_plugin = purple_find_protocol_info(id);
 
 	dialog->plugin = new_plugin;
 
@@ -1743,7 +1743,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 			g_strdup(purple_account_get_protocol_id(dialog->account));
 	}
 
-	if ((dialog->plugin = purple_find_prpl(dialog->protocol_id)) != NULL)
+	if ((dialog->plugin = purple_find_protocol_info(dialog->protocol_id)) != NULL)
 		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 	dialog->window = win = pidgin_create_dialog((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
@@ -2250,7 +2250,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL) {
@@ -2716,7 +2716,7 @@ authorize_reason_cb(struct auth_request *ar)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	protocol_id = purple_account_get_protocol_id(ar->account);
-	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+	if ((plugin = purple_find_protocol_info(protocol_id)) != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
@@ -2761,7 +2761,7 @@ deny_reason_cb(struct auth_request *ar)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	protocol_id = purple_account_get_protocol_id(ar->account);
-	if ((plugin = purple_find_prpl(protocol_id)) != NULL)
+	if ((plugin = purple_find_protocol_info(protocol_id)) != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {

@@ -711,7 +711,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	PurplePlugin *jabber;
 
-	jabber = purple_find_prpl("prpl-jabber");
+	jabber = purple_find_protocol_info("prpl-jabber");
 	if (!jabber)
 		return FALSE;
 

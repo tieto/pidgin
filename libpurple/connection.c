@@ -873,7 +873,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	if (!purple_account_is_disconnected(account))
 		return;
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -940,7 +940,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 
 	g_return_if_fail(account != NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);

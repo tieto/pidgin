@@ -1703,7 +1703,7 @@ pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	if (prpl == NULL)
 		return NULL;
 	return pidgin_create_prpl_icon_from_prpl(prpl, size, account);

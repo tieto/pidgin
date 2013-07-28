@@ -218,6 +218,8 @@ typedef enum
  */
 struct _PurplePluginProtocolInfo
 {
+	const char *id;
+
 	/**
 	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
 	 * This allows adding more functions to this struct without requiring a major version bump.
@@ -954,11 +956,11 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 /*@{*/
 
 /**
- * Finds a protocol plugin structure of the specified type.
+ * Finds a protocol plugin info structure of the specified type.
  *
  * @param id The protocol plugin;
  */
-PurplePlugin *purple_find_prpl(const char *id);
+PurplePluginProtocolInfo *purple_find_protocol_info(const char *id);
 
 /*@}*/
 

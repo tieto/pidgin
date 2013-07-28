@@ -53,7 +53,7 @@ idleable_filter(PurpleAccount *account)
 {
 	PurplePlugin *prpl;
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	g_return_val_if_fail(prpl != NULL, FALSE);
 
 	return (PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);

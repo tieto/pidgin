@@ -373,7 +373,7 @@ do_prpl_change_account_status(PurpleAccount *account,
 		 */
 		return;
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	if (prpl == NULL)
 		return;
@@ -447,7 +447,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(purple_connection_get_account(gc)));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
 	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
 	g_return_if_fail(send_attention != NULL);
 
@@ -630,8 +630,8 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
  * Protocol Plugin Subsystem API
  **************************************************************************/
 
-PurplePlugin *
-purple_find_prpl(const char *id)
+PurplePluginProtocolInfo *
+purple_find_protocol_info(const char *id)
 {
 	GList *l;
 	PurplePlugin *plugin;

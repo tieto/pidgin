@@ -1635,7 +1635,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	if (!purple_account_is_connected(account))
 		return NULL;
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info->find_blist_chat != NULL)
