@@ -553,7 +553,6 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc = NULL;
-	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean idle = purple_presence_is_idle(presence);
 	time_t idle_time = purple_presence_get_idle_time(presence);
@@ -585,11 +584,8 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 
 	gc = purple_account_get_connection(account);
 
-	if(gc)
-		prpl = purple_connection_get_protocol_info(gc);
-
-	if(PURPLE_CONNECTION_IS_CONNECTED(gc) && prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if(PURPLE_CONNECTION_IS_CONNECTED(gc))
+		prpl_info = purple_connection_get_protocol_info(gc);
 
 	if (prpl_info && prpl_info->set_idle)
 		prpl_info->set_idle(gc, (idle ? (current_time - idle_time) : 0));
