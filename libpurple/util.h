@@ -50,7 +50,7 @@ typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 #include "signals.h"
 #include "xmlnode.h"
 #include "notify.h"
-#include "plugins.h"
+#include "prpl.h"
 
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
@@ -961,7 +961,7 @@ const char *purple_normalize_nocase(const PurpleAccount *account, const char *st
  *
  * @return TRUE, if string is valid, otherwise FALSE.
  */
-gboolean purple_validate(const PurplePlugin *prpl, const char *str);
+gboolean purple_validate(const PurplePluginProtocolInfo *prpl_info, const char *str);
 
 /**
  * Compares two strings to see if the first contains the second as
