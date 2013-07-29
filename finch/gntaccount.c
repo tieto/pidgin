@@ -43,7 +43,7 @@
 #include <accountopt.h>
 #include <connection.h>
 #include <notify.h>
-#include <plugin.h>
+#include <<plugins.h>>
 #include <request.h>
 #include <savedstatuses.h>
 

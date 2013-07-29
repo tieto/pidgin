@@ -39,7 +39,7 @@
 #endif
 
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "accountopt.h"
 #include "version.h"
 #include "util.h"       /* for base64 */

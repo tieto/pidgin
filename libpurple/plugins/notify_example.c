@@ -47,7 +47,7 @@
 #define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
 
 #include <notify.h>
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 
 static PurplePlugin *notify_example = NULL;

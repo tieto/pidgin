@@ -48,7 +48,7 @@
  * that we're including them in alphabetical order.  This isn't necessary but
  * we do this throughout our source for consistency. */
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 /* It's more convenient to type PLUGIN_ID all the time than it is to type

@@ -1,5 +1,5 @@
 /**
- * @file plugin.h Plugin API
+ * @file plugins.h Plugins API
  * @ingroup core
  */
 
@@ -79,6 +79,30 @@ G_BEGIN_DECLS
  * Returns the GType for the PurplePlugin object.
  */
 GType purple_plugin_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Plugins Subsystem API                                            */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the plugin subsystem handle.
+ *
+ * @return The plugin sybsystem handle.
+ */
+void *purple_plugins_get_handle(void);
+
+/**
+ * Initializes the plugin subsystem
+ */
+void purple_plugins_init(void);
+
+/**
+ * Uninitializes the plugin subsystem
+ */
+void purple_plugins_uninit(void);
 
 /*@}*/
 

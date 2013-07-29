@@ -21,7 +21,7 @@
  */
 
 #include "internal.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "notify.h"
 #include "util.h"
 #include "version.h"

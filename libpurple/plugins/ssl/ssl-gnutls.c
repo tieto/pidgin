@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "certificate.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "sslconn.h"
 #include "version.h"
 #include "util.h"

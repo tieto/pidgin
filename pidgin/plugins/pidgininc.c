@@ -1,5 +1,5 @@
 #include "internal.h"
-#include "plugin.h"
+#include "plugins.h"
 
 #include "account.h"
 #include "connection.h"

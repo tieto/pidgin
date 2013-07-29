@@ -75,7 +75,7 @@ purple_coresources = \
 	network.c \
 	ntlm.c \
 	notify.c \
-	plugin.c \
+	plugins.c \
 	pluginpref.c \
 	pounce.c \
 	prefs.c \
@@ -146,7 +146,7 @@ purple_coreheaders = \
 	network.h \
 	notify.h \
 	ntlm.h \
-	plugin.h \
+	plugins.h \
 	pluginpref.h \
 	pounce.h \
 	prefs.h \

@@ -29,7 +29,7 @@
 #include "core.h"
 #include "debug.h"
 #include "keyring.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include <QQueue>

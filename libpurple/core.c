@@ -40,7 +40,7 @@
 #include "keyring.h"
 #include "network.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "pounce.h"
 #include "prefs.h"
 #include "proxy.h"
@@ -150,8 +150,6 @@ purple_core_init(const char *ui)
 	/* Initialize all static protocols. */
 	static_proto_init();
 
-	purple_plugins_probe(G_MODULE_SUFFIX);
-
 	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
 
@@ -228,11 +226,6 @@ purple_core_quit(void)
 	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
 
-	/* Unload all non-loader, non-prpl plugins before shutting down
-	 * subsystems. */
-	purple_debug_info("main", "Unloading normal plugins\n");
-	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
-
 	/* Save .xml files, remove signals, etc. */
 	purple_smileys_uninit();
 	purple_http_uninit();
@@ -254,11 +247,6 @@ purple_core_quit(void)
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
 	purple_network_uninit();
-
-	/* Everything after unloading all plugins must not fail if prpls aren't
-	 * around */
-	purple_debug_info("main", "Unloading all plugins\n");
-	purple_plugins_destroy_all();
 
 	ops = purple_core_get_ui_ops();
 	if (ops != NULL && ops->quit != NULL)

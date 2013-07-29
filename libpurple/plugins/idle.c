@@ -27,7 +27,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "presence.h"
 #include "request.h"
 #include "server.h"

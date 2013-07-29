@@ -32,7 +32,7 @@ typedef struct _XmppDiscoService XmppDiscoService;
 #define NS_MUC              "http://jabber.org/protocol/muc"
 #define NS_REGISTER         "jabber:iq:register"
 
-#include "plugin.h"
+#include "plugins.h"
 extern PurplePlugin *my_plugin;
 
 /**

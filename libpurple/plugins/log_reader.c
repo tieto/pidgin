@@ -4,7 +4,7 @@
 
 #include "debug.h"
 #include "log.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "pluginpref.h"
 #include "prefs.h"
 #include "stringref.h"

@@ -38,7 +38,7 @@
 #include "account.h"
 #include "debug.h"
 #include "keyring.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include <libsecret/secret.h>

@@ -90,7 +90,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #endif
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "signals.h"
 #include "version.h"
 

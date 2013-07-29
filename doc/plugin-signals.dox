@@ -5,7 +5,7 @@
   @signal plugin-unload
  @endsignals
 
- @see plugin.h
+ @see plugins.h
 
  <hr>
 

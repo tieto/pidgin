@@ -42,7 +42,7 @@
 
 #include <glib.h>
 
-#include <plugin.h>
+#include <<plugins.h>>
 #include <version.h>
 #include <buddylist.h>
 #include <conversation.h>

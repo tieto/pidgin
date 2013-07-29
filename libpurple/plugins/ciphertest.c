@@ -33,7 +33,7 @@
 #include <string.h>
 
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 #include "util.h"
 

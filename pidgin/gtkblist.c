@@ -34,7 +34,7 @@
 #include "notify.h"
 #include "prpl.h"
 #include "prefs.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "request.h"
 #include "signals.h"
 #include "pidginstock.h"

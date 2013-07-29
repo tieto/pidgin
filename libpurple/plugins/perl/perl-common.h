@@ -20,7 +20,7 @@
 #ifdef _WIN32
 #undef _WIN32DEP_H_
 #endif
-#include "plugin.h"
+#include "plugins.h"
 
 #define is_hvref(o) \
 	((o) && SvROK(o) && SvRV(o) && (SvTYPE(SvRV(o)) == SVt_PVHV))

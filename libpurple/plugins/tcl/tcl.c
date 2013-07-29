@@ -38,7 +38,7 @@
 
 #include "internal.h"
 #include "connection.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "signals.h"
 #include "debug.h"
 #include "util.h"

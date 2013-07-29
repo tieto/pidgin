@@ -29,7 +29,7 @@
 
 #include "internal.h"
 
-#include "plugin.h"
+#include "plugins.h"
 #include "pluginpref.h"
 #include "prefs.h"
 #include "version.h"

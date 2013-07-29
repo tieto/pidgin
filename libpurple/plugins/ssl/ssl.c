@@ -21,7 +21,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "sslconn.h"
 #include "version.h"
 

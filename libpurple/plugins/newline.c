@@ -22,7 +22,7 @@
 
 #include <conversation.h>
 #include <debug.h>
-#include <plugin.h>
+#include <plugins.h>
 #include <signals.h>
 #include <util.h>
 #include <version.h>

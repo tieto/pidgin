@@ -31,7 +31,7 @@
 
 #include "debug.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "request.h"
 #include "util.h"

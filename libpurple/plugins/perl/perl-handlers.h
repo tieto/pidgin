@@ -2,7 +2,7 @@
 #define _PURPLE_PERL_HANDLERS_H_
 
 #include "cmds.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "prefs.h"
 #include "pluginpref.h"
 #ifdef PURPLE_GTKPERL

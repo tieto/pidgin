@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "plugin.h"
+#include "plugins.h"
 
 #define PURPLE_PLUGIN_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN, PurplePluginPrivate))
@@ -153,3 +153,44 @@ purple_plugin_get_type(void)
 	return type;
 }
 
+/**************************************************************************
+ * Plugins Subsystem API
+ **************************************************************************/
+void *
+purple_plugins_get_handle(void) {
+	static int handle;
+
+	return &handle;
+}
+
+void
+purple_plugins_init(void) {
+	void *handle = purple_plugins_get_handle();
+
+	gplugin_init();
+	gplugin_plugin_manager_append_path(LIBDIR);
+	gplugin_plugin_manager_refresh();
+
+	/* TODO GPlugin already has signals for these, these should be removed once
+	        the new plugin API is properly established */
+	purple_signal_register(handle, "plugin-load",
+						 purple_marshal_VOID__POINTER,
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+	purple_signal_register(handle, "plugin-unload",
+						 purple_marshal_VOID__POINTER,
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+}
+
+void
+purple_plugins_uninit(void)
+{
+	void *handle = purple_plugins_get_handle();
+
+	purple_debug_info("plugins", "Unloading all plugins\n");
+	purple_plugins_destroy_all();
+
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
+
+	gplugin_uninit();
+}

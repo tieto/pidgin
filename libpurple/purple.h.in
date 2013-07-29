@@ -71,7 +71,7 @@
 #include <network.h>
 #include <notify.h>
 #include <ntlm.h>
-#include <plugin.h>
+#include <plugins.h>
 #include <pluginpref.h>
 #include <pounce.h>
 #include <prefs.h>

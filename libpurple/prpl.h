@@ -78,7 +78,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #include "media.h"
 #include "notify.h"
 #include "proxy.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"

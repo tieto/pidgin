@@ -55,7 +55,7 @@ typedef struct group *Purple__Group;
 #include "imgstore.h"
 #include "network.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "pluginpref.h"
 #include "pounce.h"
 #include "prefs.h"
@@ -203,7 +203,7 @@ typedef PurpleNotifyType			Purple__NotifyType;
 typedef PurpleNotifyUserInfo *	Purple__NotifyUserInfo;
 typedef PurpleNotifyUserInfoEntry *	Purple__NotifyUserInfoEntry;
 
-/* plugin.h */
+/* plugins.h */
 typedef PurplePlugin *			Purple__Plugin;
 typedef PurplePluginAction *		Purple__Plugin__Action;
 typedef PurplePluginInfo *		Purple__PluginInfo;

@@ -27,7 +27,7 @@
 #include "debug.h"
 #include "internal.h"
 #include "keyring.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include <wincred.h>

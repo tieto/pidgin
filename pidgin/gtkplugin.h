@@ -27,7 +27,7 @@
 #define _PIDGINPLUGIN_H_
 
 #include "pidgin.h"
-#include "plugin.h"
+#include "plugins.h"
 
 typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
 

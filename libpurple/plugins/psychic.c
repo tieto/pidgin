@@ -10,7 +10,7 @@
 #include "status.h"
 #include "version.h"
 
-#include "plugin.h"
+#include "plugins.h"
 #include "pluginpref.h"
 #include "prefs.h"
 

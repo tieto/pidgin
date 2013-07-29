@@ -33,7 +33,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "prpl.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "util.h"
 #include "version.h"
 #include "network.h"

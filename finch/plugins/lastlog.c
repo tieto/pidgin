@@ -23,7 +23,7 @@
 
 #include "internal.h"
 
-#include <plugin.h>
+#include <<plugins.h>>
 #include <version.h>
 
 #include <cmds.h>

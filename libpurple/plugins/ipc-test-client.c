@@ -20,7 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #define IPC_TEST_CLIENT_PLUGIN_ID "core-ipc-test-client"

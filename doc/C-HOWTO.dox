@@ -26,7 +26,7 @@
 #include <glib.h>
 
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 static gboolean
@@ -83,7 +83,7 @@ PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
   like described before.  Next we include glib.h, mainly for gboolean and the
   glib wrappers of the standard C types.
 
-  Next, we include plugin.h which has all the plugin specific stuff that we
+  Next, we include plugins.h which has all the plugin specific stuff that we
   need.  For example: @c PurplePlugin, @c PurplePluginInfo,
   @c PURPLE_PLUGIN_MAGIC, and @c PURPLE_INIT_PLUGIN().
 

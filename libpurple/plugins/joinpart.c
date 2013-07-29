@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "conversation.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #define JOINPART_PLUGIN_ID "core-rlaager-joinpart"

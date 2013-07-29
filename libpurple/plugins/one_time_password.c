@@ -20,7 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 #include "account.h"
 #include "accountopt.h"

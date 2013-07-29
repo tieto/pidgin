@@ -27,7 +27,7 @@
 
 #include "internal.h"
 #include "cmds.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "stringref.h"
 
 struct tcl_signal_handler {

@@ -28,7 +28,7 @@
 
 #include <internal.h>
 
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 #include "notify.h"
 #include "buddylist.h"

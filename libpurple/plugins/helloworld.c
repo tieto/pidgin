@@ -44,7 +44,7 @@
 #endif
 
 #include <notify.h>
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 
 /* we're adding this here and assigning it in plugin_load because we need

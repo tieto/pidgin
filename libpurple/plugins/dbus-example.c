@@ -39,7 +39,7 @@
 
 #include "buddylist.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include <stdio.h>

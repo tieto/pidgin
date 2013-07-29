@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 /** Plugin id : type-author-name (to guarantee uniqueness) */

@@ -31,7 +31,7 @@
 #include <glib/gstdio.h>
 
 /* Purple headers */
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 
 #include <buddylist.h>
