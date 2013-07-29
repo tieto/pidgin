@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "internal.h"
+
 #include "debug.h"
 #include "plugins.h"
 
@@ -142,7 +144,7 @@ static void
 purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
-	PurplePluginInfo *plugin = PURPLE_PLUGIN_INFO(obj);
+	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
 		case PROP_0: /* TODO remove */
@@ -226,10 +228,10 @@ purple_plugins_get_all(void)
 
 	for (l = ids; l; l = l->next) {
 		plugins = gplugin_plugin_manager_find_plugins(l->data);
-		for (ll = plugins; ll; ll->next)
+		for (ll = plugins; ll; ll = ll->next)
 			ret = g_list_append(ret, GPLUGIN_PLUGIN(ll->data));
 
-		g_slist_free(plugins);
+		gplugin_plugin_manager_free_plugin_list(plugins);
 	}
 	g_list_free(ids);
 
