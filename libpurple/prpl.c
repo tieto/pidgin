@@ -648,6 +648,20 @@ gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
 	return TRUE;
 }
 
+GList *
+purple_protocols_get_all(void)
+{
+	GList *ret = NULL;
+	PurplePluginProtocolInfo *prpl_info;
+	GHashTableIter iter;
+
+	g_hash_table_iter_init(&iter, protocols);
+	while (g_hash_table_iter_next(&iter, NULL, (gpointer *)&prpl_info))
+		ret = g_list_append(ret, prpl_info);
+
+	return ret;
+}
+
 /**************************************************************************
  * Protocols Subsystem API
  **************************************************************************/

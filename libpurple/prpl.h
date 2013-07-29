@@ -981,6 +981,13 @@ gboolean purple_protocols_add(PurplePluginProtocolInfo *prpl_info);
  */
 gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info);
 
+/** TODO A sanity check is needed
+ * Returns a list of all loaded protocols.
+ *
+ * @constreturn A list of all loaded protocols.
+ */
+GList *purple_protocols_get_all(void);
+
 /*@}*/
 
 /**************************************************************************/
