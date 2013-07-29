@@ -38,16 +38,18 @@ static PurpleSslOps *_ssl_ops = NULL;
 static gboolean
 ssl_init(void)
 {
-	PurplePlugin *plugin;
+	GPluginPlugin *plugin;
 	PurpleSslOps *ops;
 
 	if (_ssl_initialized)
 		return FALSE;
 
-	plugin = purple_plugins_find_with_id("core-ssl");
+	plugin = gplugin_plugin_manager_find_plugin("core-ssl");
 
 	if (plugin != NULL && !purple_plugin_is_loaded(plugin))
 		purple_plugin_load(plugin);
+
+	g_object_unref(plugin); /* gplugin_plugin_manager_find_plugin() refs plugin */
 
 	ops = purple_ssl_get_ops();
 	if ((ops == NULL) || (ops->init == NULL) || (ops->uninit == NULL) ||

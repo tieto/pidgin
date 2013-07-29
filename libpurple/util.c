@@ -3437,7 +3437,7 @@ purple_validate(const PurplePluginProtocolInfo *prpl_info, const char *str)
 {
 	const char *normalized;
 
-	g_return_val_if_fail(prpl != NULL, FALSE);
+	g_return_val_if_fail(prpl_info != NULL, FALSE);
 	g_return_val_if_fail(str != NULL, FALSE);
 
 	if (str[0] == '\0')
