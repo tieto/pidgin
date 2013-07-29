@@ -952,7 +952,7 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol Plugin Subsystem API                                   */
+/** @name Protocols API                                                   */
 /**************************************************************************/
 /*@{*/
 
@@ -962,6 +962,48 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
  * @param id The protocol plugin;
  */
 PurplePluginProtocolInfo *purple_find_protocol_info(const char *id);
+
+/** TODO A sanity check is needed
+ * Adds a protocol to the list of protocols.
+ *
+ * @param prpl_info  The protocol to add.
+ *
+ * @return TRUE if the protocol was added, else FALSE.
+ */
+gboolean purple_protocols_add(PurplePluginProtocolInfo *prpl_info);
+
+/** TODO A sanity check is needed
+ * Removes a protocol from the list of protocols.
+ *
+ * @param prpl_info  The protocol to remove.
+ *
+ * @return TRUE if the protocol was removed, else FALSE.
+ */
+gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocols Subsytem API                                          */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the protocols subsystem.
+ */
+void purple_protocols_init(void);
+
+/** TODO Make protocols use this handle, instead of plugins handle
+ * Returns the protocols subsystem handle.
+ *
+ * @return The protocols subsystem handle.
+ */
+void *purple_protocols_get_handle(void);
+
+/**
+ * Uninitializes the protocols subsystem.
+ */
+void purple_protocols_uninit(void);
 
 /*@}*/
 

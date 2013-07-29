@@ -141,6 +141,7 @@ purple_core_init(const char *ui)
 #endif
 
 	purple_cmds_init();
+	purple_protocols_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
@@ -255,6 +256,8 @@ purple_core_quit(void)
 	/* Everything after prefs_uninit must not try to read any prefs */
 	purple_prefs_uninit();
 	purple_plugins_uninit();
+	purple_protocols_uninit();
+
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
