@@ -245,6 +245,54 @@ purple_plugins_get_loaded(void)
 }
 
 void
+purple_plugins_save_loaded(const char *key)
+{
+	GList *pl;
+	GList *ids = NULL;
+
+	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
+		GPluginPlugin *plugin = GPLUGIN_PLUGIN(pl->data);
+		GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugin);
+
+		ids = g_list_append(ids, (gchar *)gplugin_plugin_info_get_id(plugin_info));
+	}
+
+	purple_prefs_set_string_list(key, ids);
+	g_list_free(ids);
+}
+
+void
+purple_plugins_load_saved(const char *key)
+{
+	GList *l, *ids;
+
+	g_return_if_fail(key != NULL);
+
+	ids = purple_prefs_get_string_list(key);
+
+	for (l = ids; l; l = l->next)
+	{
+		char *id;
+		GPluginPlugin *plugin;
+
+		if (l->data == NULL)
+			continue;
+
+		id = l->data;
+		plugin = gplugin_plugin_manager_find_plugin(id);
+
+		if (plugin) {
+			purple_debug_info("plugins", "Loading saved plugin %s\n", id);
+			purple_plugin_load(plugin);
+		} else {
+			purple_debug_error("plugins", "Unable to find saved plugin %s\n", id);
+		}
+	}
+
+	g_list_free_full(ids, (GDestroyNotify)g_free);
+}
+
+void
 purple_plugins_unload_all(void)
 {
 	while (loaded_plugins != NULL)

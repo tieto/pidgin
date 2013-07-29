@@ -137,6 +137,21 @@ GList *purple_plugins_get_all(void);
 GList *purple_plugins_get_loaded(void);
 
 /**
+ * Saves the list of loaded plugins to the specified preference key
+ *
+ * @param key The preference key to save the list of plugins to.
+ */
+void purple_plugins_save_loaded(const char *key);
+
+/**
+ * Attempts to load all the plugins in the specified preference key
+ * that were loaded when purple last quit.
+ *
+ * @param key The preference key containing the list of plugins.
+ */
+void purple_plugins_load_saved(const char *key);
+
+/**
  * Unloads all loaded plugins.
  */
 void purple_plugins_unload_all(void);
