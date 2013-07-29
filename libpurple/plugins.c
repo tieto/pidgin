@@ -21,31 +21,29 @@
  */
 #include "plugins.h"
 
-#define PURPLE_PLUGIN_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN, PurplePluginPrivate))
+#define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoPrivate))
 
-/** @copydoc _PurplePluginPrivate */
-typedef struct _PurplePluginPrivate  PurplePluginPrivate;
+/** @copydoc _PurplePluginInfoPrivate */
+typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
 
 /**************************************************************************
  * Private data
  **************************************************************************/
-struct _PurplePluginPrivate {
-	gboolean unloadable;
+struct _PurplePluginInfoPrivate {
 };
 
-/* Plugin property enums */
+/* Plugin info property enums */
 enum
 {
 	PROP_0,
-	PROP_UNLOADABLE,
 	PROP_LAST
 };
 
-static GPluginPluginImplementationClass *parent_class;
+static GPluginPluginInfoClass *parent_class;
 
 /**************************************************************************
- * Plugin API
+ * PluginInfo API
  **************************************************************************/
 
 
@@ -53,17 +51,17 @@ static GPluginPluginImplementationClass *parent_class;
  * GObject code
  **************************************************************************/
 /* GObject Property names */
-#define PROP_UNLOADABLE_S  "unloadable"
+#define PROP_S  ""
 
 /* Set method for GObject properties */
 static void
-purple_plugin_set_property(GObject *obj, guint param_id, const GValue *value,
+purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
-	PurplePlugin *plugin = PURPLE_PLUGIN(obj);
+	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
-		case PROP_UNLOADABLE:
+		case PROP_0: /* TODO remove */
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -73,13 +71,13 @@ purple_plugin_set_property(GObject *obj, guint param_id, const GValue *value,
 
 /* Get method for GObject properties */
 static void
-purple_plugin_get_property(GObject *obj, guint param_id, GValue *value,
+purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
-	PurplePlugin *plugin = PURPLE_PLUGIN(obj);
+	PurplePluginInfo *plugin = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
-		case PROP_UNLOADABLE:
+		case PROP_0: /* TODO remove */
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -89,65 +87,56 @@ purple_plugin_get_property(GObject *obj, guint param_id, GValue *value,
 
 /* GObject initialization function */
 static void
-purple_plugin_init(GTypeInstance *instance, gpointer klass)
+purple_plugin_info_init(GTypeInstance *instance, gpointer klass)
 {
-	PurplePluginPrivate *priv = PURPLE_PLUGIN_GET_PRIVATE(instance);
-
-	priv->unloadable = TRUE;
 }
 
 /* GObject dispose function */
 static void
-purple_plugin_dispose(GObject *object)
+purple_plugin_info_dispose(GObject *object)
 {
 	G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 /* GObject finalize function */
 static void
-purple_plugin_finalize(GObject *object)
+purple_plugin_info_finalize(GObject *object)
 {
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 /* Class initializer function */
-static void purple_plugin_class_init(PurplePluginClass *klass)
+static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	g_type_class_add_private(klass, sizeof(PurplePluginPrivate));
+	g_type_class_add_private(klass, sizeof(PurplePluginInfoPrivate));
 
-	obj_class->dispose = purple_plugin_dispose;
-	obj_class->finalize = purple_plugin_finalize;
+	obj_class->dispose = purple_plugin_info_dispose;
+	obj_class->finalize = purple_plugin_info_finalize;
 
 	/* Setup properties */
-	obj_class->get_property = purple_plugin_get_property;
-	obj_class->set_property = purple_plugin_set_property;
-
-	g_object_class_install_property(obj_class, PROP_UNLOADABLE,
-			g_param_spec_boolean(PROP_UNLOADABLE_S, _("Unloadable"),
-				_("Whether the plugin can be unloaded or not."), TRUE,
-				G_PARAM_READWRITE)
-			);
+	obj_class->get_property = purple_plugin_info_get_property;
+	obj_class->set_property = purple_plugin_info_set_property;
 }
 
 GType
-purple_plugin_get_type(void)
+purple_plugin_info_get_type(void)
 {
 	static GType type = 0;
 
 	if (G_UNLIKELY(type == 0)) {
 		static const GTypeInfo info = {
-			.class_size = sizeof(PurplePluginClass),
-			.class_init = (GClassInitFunc)purple_plugin_class_init,
-			.instance_size = sizeof(PurplePlugin),
-			.instance_init = (GInstanceInitFunc)purple_plugin_init,
+			.class_size = sizeof(PurplePluginInfoClass),
+			.class_init = (GClassInitFunc)purple_plugin_info_class_init,
+			.instance_size = sizeof(PurplePluginInfo),
+			.instance_init = (GInstanceInitFunc)purple_plugin_info_init,
 		};
 
-		type = g_type_register_static(GPLUGIN_TYPE_PLUGIN_IMPLEMENTATION,
-		                              "PurplePlugin", &info, 0);
+		type = g_type_register_static(GPLUGIN_TYPE_PLUGIN_INFO,
+		                              "PurplePluginInfo", &info, 0);
 	}
 
 	return type;
@@ -175,10 +164,10 @@ purple_plugins_init(void) {
 	        the new plugin API is properly established */
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN_INFO);
 	purple_signal_register(handle, "plugin-unload",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN_INFO);
 }
 
 void

@@ -23,44 +23,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_PLUGIN_H_
-#define _PURPLE_PLUGIN_H_
+#ifndef _PURPLE_PLUGINS_H_
+#define _PURPLE_PLUGINS_H_
 
 #include <gplugin.h>
 
-#define PURPLE_TYPE_PLUGIN             (purple_plugin_get_type())
-#define PURPLE_PLUGIN(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PLUGIN, PurplePlugin))
-#define PURPLE_PLUGIN_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PLUGIN, PurplePluginClass))
-#define PURPLE_IS_PLUGIN(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PLUGIN))
-#define PURPLE_IS_PLUGIN_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PLUGIN))
-#define PURPLE_PLUGIN_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PLUGIN, PurplePluginClass))
+#define PURPLE_TYPE_PLUGIN_INFO             (purple_plugin_info_get_type())
+#define PURPLE_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfo))
+#define PURPLE_PLUGIN_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoClass))
+#define PURPLE_IS_PLUGIN_INFO(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PLUGIN_INFO))
+#define PURPLE_IS_PLUGIN_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PLUGIN_INFO))
+#define PURPLE_PLUGIN_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoClass))
 
-/** @copydoc _PurplePlugin */
-typedef struct _PurplePlugin PurplePlugin;
-/** @copydoc _PurplePluginClass */
-typedef struct _PurplePluginClass PurplePluginClass;
+/** @copydoc _PurplePluginInfo */
+typedef struct _PurplePluginInfo PurplePluginInfo;
+/** @copydoc _PurplePluginInfoClass */
+typedef struct _PurplePluginInfoClass PurplePluginInfoClass;
 
 #include "pluginpref.h"
 
 /**
- * Represents a plugin that can be loaded/unloaded by libpurple.
- *
- * #PurplePlugin inherits #GPluginPluginImplementation, which holds the
- * low-level details about the plugin in a #GPluginPlugin instance.
+ * Detailed information about a plugin.
  */
-struct _PurplePlugin {
+struct _PurplePluginInfo {
 	/*< private >*/
-	GPluginPluginImplementation parent;
+	GPluginPluginInfo parent;
 };
 
 /**
- * PurplePluginClass:
+ * PurplePluginInfoClass:
  *
- * The base class for all #PurplePlugin's.
+ * The base class for all #PurplePluginInfo's.
  */
-struct _PurplePluginClass {
+struct _PurplePluginInfoClass {
 	/*< private >*/
-	GPluginPluginImplementationClass parent_class;
+	GPluginPluginInfoClass parent_class;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -71,14 +68,14 @@ struct _PurplePluginClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Plugin API                                                      */
+/** @name PluginInfo API                                                      */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Returns the GType for the PurplePlugin object.
+ * Returns the GType for the PurplePluginInfo object.
  */
-GType purple_plugin_get_type(void);
+GType purple_plugin_info_get_type(void);
 
 /*@}*/
 
@@ -108,4 +105,4 @@ void purple_plugins_uninit(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_PLUGIN_H_ */
+#endif /* _PURPLE_PLUGINS_H_ */
