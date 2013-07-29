@@ -68,7 +68,45 @@ struct _PurplePluginInfoClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PluginInfo API                                                      */
+/** @name Plugin API                                                      */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Attempts to load a plugin.
+ *
+ * @param plugin The plugin to load.
+ *
+ * @return @c TRUE if successful, or @c FALSE otherwise.
+ *
+ * @see purple_plugin_unload()
+ */
+gboolean purple_plugin_load(GPluginPlugin *plugin);
+
+/**
+ * Unloads the specified plugin.
+ *
+ * @param plugin The plugin handle.
+ *
+ * @return @c TRUE if successful, or @c FALSE otherwise.
+ *
+ * @see purple_plugin_load()
+ */
+gboolean purple_plugin_unload(GPluginPlugin *plugin);
+
+/**
+ * Returns whether or not a plugin is currently loaded.
+ *
+ * @param plugin The plugin.
+ *
+ * @return @c TRUE if loaded, or @c FALSE otherwise.
+ */
+gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PluginInfo API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -80,7 +118,33 @@ GType purple_plugin_info_get_type(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Plugins Subsystem API                                            */
+/** @name Plugins API                                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns a list of all plugins, whether loaded or not.
+ *
+ * @constreturn A list of all plugins.
+ */
+GList *purple_plugins_get_all(void);
+
+/**
+ * Returns a list of all loaded plugins.
+ *
+ * @constreturn A list of all loaded plugins.
+ */
+GList *purple_plugins_get_loaded(void);
+
+/**
+ * Unloads all loaded plugins.
+ */
+void purple_plugins_unload_all(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Plugins Subsystem API                                           */
 /**************************************************************************/
 /*@{*/
 

@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "debug.h"
 #include "plugins.h"
 
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
@@ -28,12 +29,11 @@
 typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
 
 /**************************************************************************
- * Private data
+ * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
 };
 
-/* Plugin info property enums */
 enum
 {
 	PROP_0,
@@ -43,12 +43,80 @@ enum
 static GPluginPluginInfoClass *parent_class;
 
 /**************************************************************************
- * PluginInfo API
+ * Globals
  **************************************************************************/
-
+static GList *loaded_plugins = NULL;
 
 /**************************************************************************
- * GObject code
+ * Plugin API
+ **************************************************************************/
+gboolean
+purple_plugin_load(GPluginPlugin *plugin)
+{
+	GError *error = NULL;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	if (purple_plugin_is_loaded(plugin))
+		return TRUE;
+
+	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
+		purple_debug_error("plugins", "Failed to load plugin %s: %s",
+				gplugin_plugin_get_filename(plugin), error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	loaded_plugins = g_list_append(loaded_plugins, plugin);
+
+	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
+
+	return TRUE;
+}
+
+gboolean
+purple_plugin_unload(GPluginPlugin *plugin)
+{
+	GError *error = NULL;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+	g_return_val_if_fail(purple_plugin_is_loaded(plugin), FALSE);
+
+	purple_debug_info("plugins", "Unloading plugin %s\n",
+			gplugin_plugin_get_filename(plugin));
+
+	if (!gplugin_plugin_manager_unload_plugin(plugin, &error)) {
+		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
+				gplugin_plugin_get_filename(plugin), error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	/* cancel any pending dialogs the plugin has */
+	purple_request_close_with_handle(plugin);
+	purple_notify_close_with_handle(plugin);
+
+	purple_signals_disconnect_by_handle(plugin);
+
+	loaded_plugins = g_list_remove(loaded_plugins, plugin);
+
+	purple_signal_emit(purple_plugins_get_handle(), "plugin-unload", plugin);
+
+	purple_prefs_disconnect_by_handle(plugin);
+
+	return TRUE;
+}
+
+gboolean
+purple_plugin_is_loaded(const GPluginPlugin *plugin)
+{
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	return (gplugin_plugin_get_state(plugin) == GPLUGIN_PLUGIN_STATE_LOADED);
+}
+
+/**************************************************************************
+ * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
 #define PROP_S  ""
@@ -122,6 +190,9 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	obj_class->set_property = purple_plugin_info_set_property;
 }
 
+/**************************************************************************
+ * PluginInfo API
+ **************************************************************************/
 GType
 purple_plugin_info_get_type(void)
 {
@@ -143,17 +214,55 @@ purple_plugin_info_get_type(void)
 }
 
 /**************************************************************************
+ * Plugins API
+ **************************************************************************/
+GList *
+purple_plugins_get_all(void)
+{
+	GList *ret = NULL, *ids, *l;
+	GSList *plugins, *ll;
+
+	ids = gplugin_plugin_manager_list_plugins();
+
+	for (l = ids; l; l = l->next) {
+		plugins = gplugin_plugin_manager_find_plugins(l->data);
+		for (ll = plugins; ll; ll->next)
+			ret = g_list_append(ret, GPLUGIN_PLUGIN(ll->data));
+
+		g_slist_free(plugins);
+	}
+	g_list_free(ids);
+
+	return ret;
+}
+
+GList *
+purple_plugins_get_loaded(void)
+{
+	return loaded_plugins;
+}
+
+void
+purple_plugins_unload_all(void)
+{
+	while (loaded_plugins != NULL)
+		purple_plugin_unload(loaded_plugins->data);
+}
+
+/**************************************************************************
  * Plugins Subsystem API
  **************************************************************************/
 void *
-purple_plugins_get_handle(void) {
+purple_plugins_get_handle(void)
+{
 	static int handle;
 
 	return &handle;
 }
 
 void
-purple_plugins_init(void) {
+purple_plugins_init(void)
+{
 	void *handle = purple_plugins_get_handle();
 
 	gplugin_init();
@@ -164,19 +273,19 @@ purple_plugins_init(void) {
 	        the new plugin API is properly established */
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN_INFO);
+						 G_TYPE_NONE, 1, GPLUGIN_TYPE_PLUGIN);
 	purple_signal_register(handle, "plugin-unload",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN_INFO);
+						 G_TYPE_NONE, 1, GPLUGIN_TYPE_PLUGIN);
 }
 
 void
-purple_plugins_uninit(void)
+purple_plugins_uninit(void) 
 {
 	void *handle = purple_plugins_get_handle();
 
 	purple_debug_info("plugins", "Unloading all plugins\n");
-	purple_plugins_destroy_all();
+	purple_plugins_unload_all();
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
