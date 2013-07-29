@@ -268,6 +268,7 @@ purple_plugins_init(void)
 	void *handle = purple_plugins_get_handle();
 
 	gplugin_init();
+	gplugin_set_plugin_info_type(PURPLE_TYPE_PLUGIN_INFO);
 	gplugin_plugin_manager_append_path(LIBDIR);
 	gplugin_plugin_manager_refresh();
 
