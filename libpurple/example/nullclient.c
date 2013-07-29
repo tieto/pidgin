@@ -198,11 +198,6 @@ init_libpurple(void)
 	 * copy this verbatim. */
 	purple_eventloop_set_ui_ops(&glib_eventloops);
 
-	/* Set path to search for plugins. The core (libpurple) takes care of loading the
-	 * core-plugins, which includes the protocol-plugins. So it is not essential to add
-	 * any path here, but it might be desired, especially for ui-specific plugins. */
-	purple_plugins_add_search_path(CUSTOM_PLUGIN_PATH);
-
 	/* Now that all the essential stuff has been set, let's try to init the core. It's
 	 * necessary to provide a non-NULL name for the current ui to the core. This name
 	 * is used by stuff that depends on this ui, for example the ui-specific plugins. */
@@ -213,6 +208,12 @@ init_libpurple(void)
 				"Please report this!\n");
 		abort();
 	}
+
+	/* Set path to search for plugins. The core (libpurple) takes care of loading the
+	 * core-plugins, which includes the protocol-plugins. So it is not essential to add
+	 * any path here, but it might be desired, especially for ui-specific plugins. */
+	gplugin_plugin_manager_append_path(CUSTOM_PLUGIN_PATH);
+	gplugin_plugin_manager_refresh();
 
 	/* Load the preferences. */
 	purple_prefs_load();
@@ -263,10 +264,9 @@ int main(int argc, char *argv[])
 
 	printf("libpurple initialized.\n");
 
-	iter = purple_plugins_get_protocols();
+	iter = purple_protocols_get_all();
 	for (i = 0; iter; iter = iter->next) {
-		PurplePlugin *plugin = iter->data;
-		PurplePluginInfo *info = plugin->info;
+		PurplePluginProtocolInfo *info = iter->data;
 		if (info && info->name) {
 			printf("\t%d: %s\n", i++, info->name);
 			names = g_list_append(names, (gpointer)info->id);
