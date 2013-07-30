@@ -726,7 +726,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 	GHashTable *hash = NULL;
 	PurpleConnection *gc;
 	gboolean autojoin;
-	PurplePluginProtocolInfo *info;
+	PurplePluginProtocolInfo *prpl_info;
 
 	account = purple_request_fields_get_account(allfields, "account");
 	name = purple_request_fields_get_string(allfields, "name");
@@ -741,9 +741,9 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		group = _("Chats");
 
 	gc = purple_account_get_connection(account);
-	info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
-	if (info->chat_info_defaults != NULL)
-		hash = info->chat_info_defaults(gc, name);
+	prpl_info = purple_connection_get_protocol_info(gc);
+	if (prpl_info->chat_info_defaults != NULL)
+		hash = prpl_info->chat_info_defaults(gc, name);
 
 	chat = purple_chat_new(account, name, hash);
 
@@ -1061,7 +1061,7 @@ static void
 append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 {
 	GList *list;
-	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+	PurplePluginProtocolInfo *prpl_info = purple_connection_get_protocol_info(gc);
 
 	if(!prpl_info || !prpl_info->blist_node_menu)
 		return;
@@ -1125,7 +1125,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	purple_request_fields_add_group(fields, group);
 
 	gc = purple_account_get_connection(purple_chat_get_account(chat));
-	parts = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc))->chat_info(gc);
+	parts = purple_connection_get_protocol_info(gc)->chat_info(gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -1276,7 +1276,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+	prpl_info = purple_connection_get_protocol_info(gc);
 	if (prpl_info && prpl_info->get_info)
 	{
 		add_custom_action(menu, _("Get Info"),
@@ -1414,7 +1414,7 @@ static void showlog_cb(PurpleBlistNode *sel, PurpleBlistNode *node)
 		PurplePluginProtocolInfo *prpl_info = NULL;
 		type = PURPLE_LOG_CHAT;
 		account = purple_chat_get_account(c);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_protocol_info(purple_account_get_protocol_id(account)));
+		prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 		if (prpl_info && prpl_info->get_chat_name) {
 			name = prpl_info->get_chat_name(purple_chat_get_components(c));
 		}
@@ -1714,7 +1714,6 @@ draw_context_menu(FinchBlist *ggblist)
 static void
 tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 {
-	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleAccount *account;
 	PurpleNotifyUserInfo *user_info;
@@ -1737,8 +1736,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	purple_notify_user_info_add_pair_plaintext(user_info, _("Account"), tmp);
 	g_free(tmp);
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	if (prpl_info && prpl_info->tooltip_text) {
 		prpl_info->tooltip_text(buddy, user_info, full);
 	}
@@ -2783,9 +2781,9 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
-		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
-		if (info->chat_info_defaults != NULL)
-			hash = info->chat_info_defaults(gc, name);
+		PurplePluginProtocolInfo *prpl_info = purple_connection_get_protocol_info(gc);
+		if (prpl_info->chat_info_defaults != NULL)
+			hash = prpl_info->chat_info_defaults(gc, name);
 	} else {
 		hash = purple_chat_get_components(chat);
 	}
