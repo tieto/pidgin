@@ -34,7 +34,7 @@
 
 #include <glib.h>
 
-#include <<plugins.h>>
+#include <plugins.h>
 #include <version.h>
 #include <debug.h>
 #include <notify.h>

@@ -28,7 +28,7 @@
 
 #include <gnt.h>
 
-#include <<plugins.h>>
+#include <plugins.h>
 #include <pluginpref.h>
 
 #include <string.h>
