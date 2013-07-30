@@ -255,6 +255,8 @@ purple_plugins_save_loaded(const char *key)
 		GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugin);
 
 		ids = g_list_append(ids, (gchar *)gplugin_plugin_info_get_id(plugin_info));
+
+		g_object_unref(plugin_info);
 	}
 
 	purple_prefs_set_string_list(key, ids);
@@ -284,6 +286,7 @@ purple_plugins_load_saved(const char *key)
 		if (plugin) {
 			purple_debug_info("plugins", "Loading saved plugin %s\n", id);
 			purple_plugin_load(plugin);
+			g_object_unref(plugin);
 		} else {
 			purple_debug_error("plugins", "Unable to find saved plugin %s\n", id);
 		}

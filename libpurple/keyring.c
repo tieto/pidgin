@@ -1286,10 +1286,15 @@ purple_keyring_init(void)
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(it->data);
 		GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
 
-		if (info == NULL || gplugin_plugin_info_get_id(info) == NULL)
+		if (info == NULL || gplugin_plugin_info_get_id(info) == NULL) {
+			g_object_unref(info);
 			continue;
-		if (strncmp(gplugin_plugin_info_get_id(info), "keyring-", 8) != 0)
+		}
+		if (strncmp(gplugin_plugin_info_get_id(info), "keyring-", 8) != 0) {
+			g_object_unref(info);
 			continue;
+		}
+		g_object_unref(info);
 
 		if (purple_plugin_is_loaded(plugin))
 			continue;
