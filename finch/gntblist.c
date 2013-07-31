@@ -2450,25 +2450,21 @@ plugin_action(GntMenuItem *item, gpointer data)
 }
 
 static void
-build_plugin_actions(GntMenuItem *item, PurplePlugin *plugin, gpointer context)
+build_menu_actions(GntMenuItem *item, GList *actions)
 {
 	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
-	GList *actions;
+	GList *l;
 	GntMenuItem *menuitem;
 
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
-	for (actions = PURPLE_PLUGIN_ACTIONS(plugin, context); actions;
-			actions = g_list_delete_link(actions, actions)) {
-		if (actions->data) {
-			PurplePluginAction *action = actions->data;
-			action->plugin = plugin;
-			action->context = context;
+	for (l = actions; l; l = l->next) {
+		if (l->data) {
+			PurplePluginAction *action = l->data;
 			menuitem = gnt_menuitem_new(action->label);
 			gnt_menu_add_item(GNT_MENU(sub), menuitem);
 
 			gnt_menuitem_set_callback(menuitem, plugin_action, action);
-			g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
-								   action, (GDestroyNotify)purple_plugin_action_free);
+			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
 		}
 	}
 }
@@ -2537,17 +2533,24 @@ reconstruct_plugins_menu(void)
 	gnt_menuitem_set_submenu(plg, GNT_MENU(sub));
 
 	for (iter = purple_plugins_get_loaded(); iter; iter = iter->next) {
-		PurplePlugin *plugin = iter->data;
+		GPluginPlugin *plugin = iter->data;
+		PurplePluginInfo *plugin_info =
+				PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
 		GntMenuItem *item;
-		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+
+		if (!plugin_info)
 			continue;
 
-		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
+		if (!purple_plugin_info_get_actions(plugin_info)) {
+			g_object_unref(plugin_info);
 			continue;
+		}
 
-		item = gnt_menuitem_new(_(plugin->info->name));
+		item = gnt_menuitem_new(_(gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(plugin_info))));
 		gnt_menu_add_item(GNT_MENU(sub), item);
-		build_plugin_actions(item, plugin, NULL);
+		build_menu_actions(item, purple_plugin_info_get_actions(plugin_info));
+
+		g_object_unref(plugin_info);
 	}
 }
 
@@ -2572,16 +2575,16 @@ reconstruct_accounts_menu(void)
 			iter = g_list_delete_link(iter, iter)) {
 		PurpleAccount *account = iter->data;
 		PurpleConnection *gc = purple_account_get_connection(account);
-		PurplePlugin *prpl;
+		PurplePluginProtocolInfo *prpl_info;
 
 		if (!gc || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 			continue;
-		prpl = purple_connection_get_protocol_info(gc);
+		prpl_info = purple_connection_get_protocol_info(gc);
 
-		if (PURPLE_PLUGIN_HAS_ACTIONS(prpl)) {
+		if (prpl_info->actions != NULL) {
 			item = gnt_menuitem_new(purple_account_get_username(account));
 			gnt_menu_add_item(GNT_MENU(sub), item);
-			build_plugin_actions(item, prpl, gc);
+			build_menu_actions(item, prpl_info->actions);
 		}
 	}
 }
