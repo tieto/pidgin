@@ -1,6 +1,9 @@
 /**
  * @file plugins.h Plugins API
  * @ingroup core
+ * @see @ref plugin-signals
+ * @see @ref plugin-ids
+ * @see @ref plugin-i18n
  */
 
 /* purple
