@@ -223,8 +223,18 @@ purple_plugin_info_get_type(void)
 	return type;
 }
 
+GList *
+purple_plugin_info_get_actions(PurplePluginInfo *plugin_info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->actions;
+}
+
 /**************************************************************************
- * PluginAction API
+ * Plugin actions API
  **************************************************************************/
 static void
 purple_plugin_action_free(PurplePluginAction *action)
@@ -232,6 +242,7 @@ purple_plugin_action_free(PurplePluginAction *action)
 	g_return_if_fail(action != NULL);
 
 	g_free(action->label);
+	g_object_unref(action->plugin);
 	g_free(action);
 }
 
@@ -246,6 +257,7 @@ purple_plugin_action_copy(PurplePluginAction *action)
 
 	action_copy->label    = g_strdup(action->label);
 	action_copy->callback = action->callback;
+	action_copy->plugin   = g_object_ref(action->plugin);
 
 	return action_copy;
 }
@@ -264,9 +276,6 @@ purple_plugin_action_get_type(void)
 	return type;
 }
 
-/**************************************************************************
- * Actions API
- **************************************************************************/
 void
 purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
                           PurplePluginActionCallback callback)
@@ -285,6 +294,7 @@ purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
 
 	action->label    = g_strdup(label);
 	action->callback = callback;
+	action->plugin   = g_object_ref(plugin);
 
 	priv->actions = g_list_append(priv->actions, action);
 

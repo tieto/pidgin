@@ -45,7 +45,7 @@ typedef struct _PurplePluginInfoClass PurplePluginInfoClass;
 /** @copydoc _PurplePluginAction */
 typedef struct _PurplePluginAction PurplePluginAction;
 
-typedef void (*PurplePluginActionCallback)(GPluginPlugin *);
+typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
 
 #include "pluginpref.h"
 
@@ -79,6 +79,7 @@ struct _PurplePluginInfoClass {
 struct _PurplePluginAction {
 	char *label;
 	PurplePluginActionCallback callback;
+	GPluginPlugin *plugin;
 };
 
 G_BEGIN_DECLS
@@ -131,10 +132,22 @@ gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
  */
 GType purple_plugin_info_get_type(void);
 
+/**
+ * Returns a list of actions that a plugin can perform.
+ *
+ * @param plugin_info The plugin info to get the actions from.
+ *
+ * @return A list of #PurplePluginAction instances corresponding to the actions
+ *         a plugin can perform.
+ *
+ * @see purple_plugin_actions_add()
+ */
+GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
+
 /*@}*/
 
 /**************************************************************************/
-/** @name PluginAction API                                                */
+/** @name Plugin actions API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -142,13 +155,6 @@ GType purple_plugin_info_get_type(void);
  * Returns the GType for the PurplePluginAction boxed structure.
  */
 GType purple_plugin_action_get_type(void);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Actions API                                                     */
-/**************************************************************************/
-/*@{*/
 
 /**
  * Adds a new action to a plugin.
