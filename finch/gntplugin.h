@@ -35,28 +35,59 @@
 
 #include "finch.h"
 
+#define FINCH_TYPE_PLUGIN_INFO             (finch_plugin_info_get_type())
+#define FINCH_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FINCH_TYPE_PLUGIN_INFO, FinchPluginInfo))
+#define FINCH_PLUGIN_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), FINCH_TYPE_PLUGIN_INFO, FinchPluginInfoClass))
+#define FINCH_IS_PLUGIN_INFO(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_PLUGIN_INFO))
+#define FINCH_IS_PLUGIN_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), FINCH_TYPE_PLUGIN_INFO))
+#define FINCH_PLUGIN_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), FINCH_TYPE_PLUGIN_INFO, FinchPluginInfoClass))
+
+/** @copydoc _FinchPluginInfo */
+typedef struct _FinchPluginInfo FinchPluginInfo;
+/** @copydoc _FinchPluginInfoClass */
+typedef struct _FinchPluginInfoClass FinchPluginInfoClass;
+
+typedef GntWidget* (*FinchPluginFrame) (void);
+
+/**
+ * Extends #PurplePluginInfo to hold UI information for finch.
+ */
+struct _FinchPluginInfo {
+	/*< private >*/
+	PurplePluginInfo parent;
+};
+
+/**
+ * FinchPluginInfoClass:
+ *
+ * The base class for all #FinchPluginInfo's.
+ */
+struct _FinchPluginInfoClass {
+	/*< private >*/
+	PurplePluginInfoClass parent_class;
+
+	void (*_gnt_reserved1)(void);
+	void (*_gnt_reserved2)(void);
+	void (*_gnt_reserved3)(void);
+	void (*_gnt_reserved4)(void);
+};
+
+/**********************************************************************
+ * @name Plugin Info API
+ **********************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the FinchPluginInfo object.
+ */
+GType finch_plugin_info_get_type(void);
+
+/*@}*/
+
 /**********************************************************************
  * @name GNT Plugins API
  **********************************************************************/
 /*@{*/
-
-typedef GntWidget* (*FinchPluginFrame) (void);
-
-/* Guess where these came from */
-#define FINCH_PLUGIN_TYPE FINCH_UI
-
-/**
- * Decide whether a plugin is a GNT-plugin.
- */
-#define PURPLE_IS_GNT_PLUGIN(plugin) \
-	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
-
-/**
- * Get the ui-info from GNT-plugins.
- */
-#define FINCH_PLUGIN_UI_INFO(plugin) \
-	(FinchPluginFrame)((plugin)->info->ui_info)
 
 /**
  * Show a list of plugins.

@@ -42,6 +42,14 @@
 #include "gntplugin.h"
 #include "gntrequest.h"
 
+#define FINCH_PLUGIN_INFO_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), FINCH_TYPE_PLUGIN_INFO, FinchPluginInfoPrivate))
+
+typedef struct
+{
+	FinchPluginFrame frame;
+} FinchPluginInfoPrivate;
+
 static struct
 {
 	GntWidget *tree;
@@ -54,6 +62,31 @@ static GHashTable *confwins;
 
 static GntWidget *process_pref_frame(PurplePluginPrefFrame *frame);
 
+/* Class initializer function */
+static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
+{
+	g_type_class_add_private(klass, sizeof(FinchPluginInfoPrivate));
+}
+
+GType
+finch_plugin_info_get_type(void)
+{
+	static GType type = 0;
+
+	if (G_UNLIKELY(type == 0)) {
+		static const GTypeInfo info = {
+			.class_size = sizeof(FinchPluginInfoClass),
+			.class_init = (GClassInitFunc)finch_plugin_info_class_init,
+			.instance_size = sizeof(FinchPluginInfo),
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_PLUGIN_INFO,
+		                              "FinchPluginInfo", &info, 0);
+	}
+
+	return type;
+}
+
 static void
 free_stringlist(GList *list)
 {
@@ -62,17 +95,23 @@ free_stringlist(GList *list)
 }
 
 static void
-decide_conf_button(PurplePlugin *plugin)
+decide_conf_button(GPluginPlugin *plugin)
 {
-	if (purple_plugin_is_loaded(plugin) &&
-		((PURPLE_IS_GNT_PLUGIN(plugin) &&
-			FINCH_PLUGIN_UI_INFO(plugin) != NULL) ||
-		(plugin->info->prefs_info &&
-			plugin->info->prefs_info->get_plugin_pref_frame)))
-		gnt_widget_set_visible(plugins.conf, TRUE);
-	else
-		gnt_widget_set_visible(plugins.conf, FALSE);
+	gboolean visible = FALSE;
+	GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
 
+	if (purple_plugin_is_loaded(plugin)) {
+		if (FINCH_IS_PLUGIN_INFO(info)) {
+			FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
+			if (priv->frame)
+				visible = TRUE;
+		} else if (purple_plugin_info_get_pref_frame_callback(PURPLE_PLUGIN_INFO(info))) {
+			visible = TRUE;
+		}
+	}
+	g_object_unref(info);
+
+	gnt_widget_set_visible(plugins.conf, visible);
 	gnt_box_readjust(GNT_BOX(plugins.window));
 	gnt_widget_draw(plugins.window);
 }

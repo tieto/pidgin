@@ -48,9 +48,10 @@ typedef struct _PurplePluginInfoClass PurplePluginInfoClass;
 /** @copydoc _PurplePluginAction */
 typedef struct _PurplePluginAction PurplePluginAction;
 
-typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
-
 #include "pluginpref.h"
+
+typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
+typedef PurplePluginPrefFrame (*PurplePluginPrefFrameCallback)(GPluginPlugin *);
 
 /**
  * Holds information about a plugin.
@@ -146,6 +147,25 @@ GType purple_plugin_info_get_type(void);
  * @see purple_plugin_actions_add()
  */
 GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
+
+/**
+ * Sets a callback to be invoked to retrieve the preferences frame for a plugin.
+ *
+ * @param plugin_info The plugin info to set the callback for.
+ * @param callback    The callback that returns the preferences frame.
+ */
+void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
+		PurplePluginPrefFrameCallback callback);
+
+/**
+ * Returns the callback that retrieves the preferences frame for a plugin.
+ *
+ * @param plugin_info The plugin info to get the callback from.
+ *
+ * @return The callback that returns the preferences frame.
+ */
+PurplePluginPrefFrameCallback
+purple_plugin_info_get_pref_frame_callback(PurplePluginInfo *plugin_info);
 
 /*@}*/
 
