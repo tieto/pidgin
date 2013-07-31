@@ -34,6 +34,7 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
+	GList *actions;  /**< Actions that the plugin can perform >*/
 };
 
 enum
@@ -172,6 +173,13 @@ purple_plugin_info_dispose(GObject *object)
 static void
 purple_plugin_info_finalize(GObject *object)
 {
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(object);
+
+	while (priv->actions) {
+		g_boxed_free(PURPLE_TYPE_PLUGIN_ACTION, priv->actions->data);
+		priv->actions = g_list_delete_link(priv->actions, priv->actions);
+	}
+
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
@@ -213,6 +221,74 @@ purple_plugin_info_get_type(void)
 	}
 
 	return type;
+}
+
+/**************************************************************************
+ * PluginAction API
+ **************************************************************************/
+static void
+purple_plugin_action_free(PurplePluginAction *action)
+{
+	g_return_if_fail(action != NULL);
+
+	g_free(action->label);
+	g_free(action);
+}
+
+static PurplePluginAction *
+purple_plugin_action_copy(PurplePluginAction *action)
+{
+	PurplePluginAction *action_copy;
+
+	g_return_val_if_fail(action != NULL, NULL);
+
+	action_copy = g_new(PurplePluginAction, 1);
+
+	action_copy->label    = g_strdup(action->label);
+	action_copy->callback = action->callback;
+
+	return action_copy;
+}
+
+GType
+purple_plugin_action_get_type(void)
+{
+	static GType type = 0;
+
+	if (G_UNLIKELY(type == 0)) {
+		type = g_boxed_type_register_static("PurplePluginAction",
+				(GBoxedCopyFunc)purple_plugin_action_copy,
+				(GBoxedFreeFunc)purple_plugin_action_free);
+	}
+
+	return type;
+}
+
+/**************************************************************************
+ * Actions API
+ **************************************************************************/
+void
+purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
+                          PurplePluginActionCallback callback)
+{
+	GPluginPluginInfo *plugin_info;
+	PurplePluginInfoPrivate *priv;
+	PurplePluginAction *action;
+
+	g_return_if_fail(plugin != NULL);
+	g_return_if_fail(label != NULL && callback != NULL);
+
+	plugin_info = gplugin_plugin_get_info(plugin);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+
+	action = g_new0(PurplePluginAction, 1);
+
+	action->label    = g_strdup(label);
+	action->callback = callback;
+
+	priv->actions = g_list_append(priv->actions, action);
+
+	g_object_unref(plugin_info);
 }
 
 /**************************************************************************
@@ -290,9 +366,11 @@ purple_plugins_load_saved(const char *key)
 		} else {
 			purple_debug_error("plugins", "Unable to find saved plugin %s\n", id);
 		}
+
+		g_free(l->data);
 	}
 
-	g_list_free_full(ids, (GDestroyNotify)g_free);
+	g_list_free(ids);
 }
 
 void

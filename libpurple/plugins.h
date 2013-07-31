@@ -40,10 +40,17 @@ typedef struct _PurplePluginInfo PurplePluginInfo;
 /** @copydoc _PurplePluginInfoClass */
 typedef struct _PurplePluginInfoClass PurplePluginInfoClass;
 
+#define PURPLE_TYPE_PLUGIN_ACTION  (purple_plugin_action_get_type())
+
+/** @copydoc _PurplePluginAction */
+typedef struct _PurplePluginAction PurplePluginAction;
+
+typedef void (*PurplePluginActionCallback)(GPluginPlugin *);
+
 #include "pluginpref.h"
 
 /**
- * Detailed information about a plugin.
+ * Holds information about a plugin.
  */
 struct _PurplePluginInfo {
 	/*< private >*/
@@ -63,6 +70,15 @@ struct _PurplePluginInfoClass {
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
+};
+
+/**
+ * Represents an action that the plugin can perform. This shows up in the Tools
+ * menu, under a submenu with the name of the plugin.
+ */
+struct _PurplePluginAction {
+	char *label;
+	PurplePluginActionCallback callback;
 };
 
 G_BEGIN_DECLS
@@ -114,6 +130,34 @@ gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
  * Returns the GType for the PurplePluginInfo object.
  */
 GType purple_plugin_info_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PluginAction API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the PurplePluginAction boxed structure.
+ */
+GType purple_plugin_action_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Actions API                                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Adds a new action to a plugin.
+ *
+ * @param label    The description of the action to show to the user.
+ * @param callback The callback to call when the user selects this action.
+ */
+void purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
+                               PurplePluginActionCallback callback);
 
 /*@}*/
 
