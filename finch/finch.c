@@ -361,14 +361,6 @@ init_libpurple(int argc, char **argv)
 	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
-	path = g_build_filename(purple_user_dir(), "plugins", NULL);
-	if (!g_stat(path, &st))
-		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
-	purple_plugins_add_search_path(path);
-	g_free(path);
-
-	purple_plugins_add_search_path(LIBDIR);
-
 	if (!purple_core_init(FINCH_UI))
 	{
 		fprintf(stderr,
@@ -376,6 +368,13 @@ init_libpurple(int argc, char **argv)
 				"Please report this!\n");
 		abort();
 	}
+
+	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(path, &st))
+		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
+	gplugin_plugin_manager_append_path(path);
+	gplugin_plugin_manager_refresh();
+	g_free(path);
 
 	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
