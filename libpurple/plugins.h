@@ -140,8 +140,8 @@ GType purple_plugin_info_get_type(void);
  *
  * @param plugin_info The plugin info to get the actions from.
  *
- * @return A list of #PurplePluginAction instances corresponding to the actions
- *         a plugin can perform.
+ * @constreturn A list of #PurplePluginAction instances corresponding to the
+ *              actions a plugin can perform.
  *
  * @see purple_plugin_actions_add()
  */
