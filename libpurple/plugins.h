@@ -51,7 +51,7 @@ typedef struct _PurplePluginAction PurplePluginAction;
 #include "pluginpref.h"
 
 typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
-typedef PurplePluginPrefFrame (*PurplePluginPrefFrameCallback)(GPluginPlugin *);
+typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(GPluginPlugin *);
 
 /**
  * Holds information about a plugin.
