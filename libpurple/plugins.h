@@ -153,6 +153,7 @@ GType purple_plugin_action_get_type(void);
 /**
  * Adds a new action to a plugin.
  *
+ * @param plugin   The plugin to add the action to.
  * @param label    The description of the action to show to the user.
  * @param callback The callback to call when the user selects this action.
  */
