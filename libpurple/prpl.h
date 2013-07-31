@@ -32,6 +32,10 @@
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
 
+typedef struct _PurpleProtocolAction PurpleProtocolAction;
+
+typedef void (*PurpleProtocolActionCallback)(PurplePluginProtocolInfo *);
+
 /** Represents "nudges" and "buzzes" that you may send to a buddy to attract
  *  their attention (or vice-versa).
  */
@@ -210,6 +214,15 @@ typedef enum
 } PurpleProtocolOptions;
 
 /**
+ * Represents an action that the protocol can perform. This shows up in the
+ * Accounts menu, under a submenu with the name of the account.
+ */
+struct _PurpleProtocolAction {
+	char *label;
+	PurpleProtocolActionCallback callback;
+};
+
+/**
  * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
@@ -220,6 +233,11 @@ struct _PurplePluginProtocolInfo
 {
 	const char *id;
 	const char *name;
+
+	/**
+	 * Actions that the protocol can perform
+	 */
+	GList *actions;
 
 	/**
 	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
@@ -950,6 +968,21 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
 void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
 /*@}*/
+
+/**************************************************************************/
+/** @name Protocol actions API                                            */
+/**************************************************************************/
+/*@{*/
+
+/** TODO A sanity check is needed
+ * Adds a new action to a protocol.
+ *
+ * @param prpl_info The protocol to add the action to.
+ * @param label     The description of the action to show to the user.
+ * @param callback  The callback to call when the user selects this action.
+ */
+void purple_protocol_actions_add(PurplePluginProtocolInfo *prpl_info,
+		const char* label, PurpleProtocolActionCallback callback);
 
 /**************************************************************************/
 /** @name Protocols API                                                   */

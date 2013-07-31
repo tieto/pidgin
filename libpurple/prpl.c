@@ -620,6 +620,27 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 }
 
 /**************************************************************************
+ * Protocol actions API
+ **************************************************************************/
+
+void
+purple_protocol_actions_add(PurplePluginProtocolInfo *prpl_info,
+		const char* label, PurpleProtocolActionCallback callback)
+{
+	PurpleProtocolAction *action;
+
+	g_return_if_fail(prpl_info != NULL);
+	g_return_if_fail(label != NULL && callback != NULL);
+
+	action = g_new0(PurpleProtocolAction, 1);
+
+	action->label    = g_strdup(label);
+	action->callback = callback;
+
+	prpl_info->actions = g_list_append(prpl_info->actions, action);
+}
+
+/**************************************************************************
  * Protocols API
  **************************************************************************/
 
