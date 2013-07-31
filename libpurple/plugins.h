@@ -124,6 +124,16 @@ gboolean purple_plugin_unload(GPluginPlugin *plugin);
  */
 gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
 
+/**
+ * Adds a new action to a plugin.
+ *
+ * @param plugin   The plugin to add the action to.
+ * @param label    The description of the action to show to the user.
+ * @param callback The callback to call when the user selects this action.
+ */
+void purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
+                              PurplePluginActionCallback callback);
+
 /*@}*/
 
 /**************************************************************************/
@@ -144,7 +154,7 @@ GType purple_plugin_info_get_type(void);
  * @constreturn A list of #PurplePluginAction instances corresponding to the
  *              actions a plugin can perform.
  *
- * @see purple_plugin_actions_add()
+ * @see purple_plugin_add_action()
  */
 GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
 
@@ -170,7 +180,7 @@ purple_plugin_info_get_pref_frame_callback(PurplePluginInfo *plugin_info);
 /*@}*/
 
 /**************************************************************************/
-/** @name Plugin actions API                                              */
+/** @name PluginAction API                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -178,16 +188,6 @@ purple_plugin_info_get_pref_frame_callback(PurplePluginInfo *plugin_info);
  * Returns the GType for the PurplePluginAction boxed structure.
  */
 GType purple_plugin_action_get_type(void);
-
-/**
- * Adds a new action to a plugin.
- *
- * @param plugin   The plugin to add the action to.
- * @param label    The description of the action to show to the user.
- * @param callback The callback to call when the user selects this action.
- */
-void purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
-                               PurplePluginActionCallback callback);
 
 /*@}*/
 

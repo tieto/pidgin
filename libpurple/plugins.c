@@ -122,6 +122,31 @@ purple_plugin_is_loaded(const GPluginPlugin *plugin)
 	return (gplugin_plugin_get_state(plugin) == GPLUGIN_PLUGIN_STATE_LOADED);
 }
 
+void
+purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
+                         PurplePluginActionCallback callback)
+{
+	GPluginPluginInfo *plugin_info;
+	PurplePluginInfoPrivate *priv;
+	PurplePluginAction *action;
+
+	g_return_if_fail(plugin != NULL);
+	g_return_if_fail(label != NULL && callback != NULL);
+
+	plugin_info = gplugin_plugin_get_info(plugin);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+
+	action = g_new0(PurplePluginAction, 1);
+
+	action->label    = g_strdup(label);
+	action->callback = callback;
+	action->plugin   = g_object_ref(plugin);
+
+	priv->actions = g_list_append(priv->actions, action);
+
+	g_object_unref(plugin_info);
+}
+
 /**************************************************************************
  * GObject code for PurplePluginInfo
  **************************************************************************/
@@ -269,7 +294,7 @@ purple_plugin_info_get_pref_frame_callback(PurplePluginInfo *plugin_info)
 }
 
 /**************************************************************************
- * Plugin actions API
+ * PluginAction API
  **************************************************************************/
 static void
 purple_plugin_action_free(PurplePluginAction *action)
@@ -309,31 +334,6 @@ purple_plugin_action_get_type(void)
 	}
 
 	return type;
-}
-
-void
-purple_plugin_actions_add(GPluginPlugin *plugin, const char* label,
-                          PurplePluginActionCallback callback)
-{
-	GPluginPluginInfo *plugin_info;
-	PurplePluginInfoPrivate *priv;
-	PurplePluginAction *action;
-
-	g_return_if_fail(plugin != NULL);
-	g_return_if_fail(label != NULL && callback != NULL);
-
-	plugin_info = gplugin_plugin_get_info(plugin);
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
-
-	action = g_new0(PurplePluginAction, 1);
-
-	action->label    = g_strdup(label);
-	action->callback = callback;
-	action->plugin   = g_object_ref(plugin);
-
-	priv->actions = g_list_append(priv->actions, action);
-
-	g_object_unref(plugin_info);
 }
 
 /**************************************************************************

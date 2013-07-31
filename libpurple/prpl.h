@@ -967,13 +967,6 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
  */
 void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
-/*@}*/
-
-/**************************************************************************/
-/** @name Protocol actions API                                            */
-/**************************************************************************/
-/*@{*/
-
 /** TODO A sanity check is needed
  * Adds a new action to a protocol.
  *
@@ -981,7 +974,7 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
  * @param label     The description of the action to show to the user.
  * @param callback  The callback to call when the user selects this action.
  */
-void purple_protocol_actions_add(PurplePluginProtocolInfo *prpl_info,
+void purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
 		const char* label, PurpleProtocolActionCallback callback);
 
 /**************************************************************************/
