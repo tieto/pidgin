@@ -52,7 +52,8 @@ static GPluginPluginInfoClass *parent_class;
 /**************************************************************************
  * Globals
  **************************************************************************/
-static GList *loaded_plugins = NULL;
+static GList *loaded_plugins     = NULL;
+static GList *plugins_to_disable = NULL;
 
 /**************************************************************************
  * Plugin API
@@ -105,7 +106,8 @@ purple_plugin_unload(GPluginPlugin *plugin)
 
 	purple_signals_disconnect_by_handle(plugin);
 
-	loaded_plugins = g_list_remove(loaded_plugins, plugin);
+	loaded_plugins     = g_list_remove(loaded_plugins, plugin);
+	plugins_to_disable = g_list_remove(plugins_to_disable, plugin);
 
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-unload", plugin);
 
@@ -145,6 +147,15 @@ purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
 	priv->actions = g_list_append(priv->actions, action);
 
 	g_object_unref(plugin_info);
+}
+
+void
+purple_plugin_disable(GPluginPlugin *plugin)
+{
+	g_return_if_fail(plugin != NULL);
+
+	if (!g_list_find(plugins_to_disable, plugin))
+		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
 }
 
 /**************************************************************************
@@ -373,11 +384,13 @@ purple_plugins_save_loaded(const char *key)
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(pl->data);
-		GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugin);
+		if (!g_list_find(plugins_to_disable, plugin)) {
 
-		ids = g_list_append(ids, (gchar *)gplugin_plugin_info_get_id(plugin_info));
+			GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugin);
+			ids = g_list_append(ids, (gchar *)gplugin_plugin_info_get_id(plugin_info));
 
-		g_object_unref(plugin_info);
+			g_object_unref(plugin_info);
+		}
 	}
 
 	purple_prefs_set_string_list(key, ids);

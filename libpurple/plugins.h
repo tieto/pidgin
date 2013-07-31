@@ -134,6 +134,16 @@ gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
 void purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
                               PurplePluginActionCallback callback);
 
+/**
+ * Disable a plugin.
+ *
+ * This function adds the plugin to a list of plugins to "disable at the next
+ * startup" by excluding said plugins from the list of plugins to save.  The
+ * UI needs to call purple_plugins_save_loaded() after calling this for it
+ * to have any effect.
+ */
+void purple_plugin_disable(GPluginPlugin *plugin);
+
 /*@}*/
 
 /**************************************************************************/
