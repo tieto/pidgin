@@ -2450,11 +2450,13 @@ plugin_action(GntMenuItem *item, gpointer data)
 }
 
 static void
-build_menu_actions(GntMenuItem *item, GList *actions)
+build_plugin_actions(GntMenuItem *item, PurplePluginInfo *plugin_info)
 {
 	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
-	GList *l;
+	GList *actions, *l;
 	GntMenuItem *menuitem;
+
+	actions = purple_plugin_info_get_actions(plugin_info);
 
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 	for (l = actions; l; l = l->next) {
@@ -2465,6 +2467,34 @@ build_menu_actions(GntMenuItem *item, GList *actions)
 
 			gnt_menuitem_set_callback(menuitem, plugin_action, action);
 			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
+		}
+	}
+}
+
+static void
+protocol_action(GntMenuItem *item, gpointer data)
+{
+	PurpleProtocolAction *action = data;
+	if (action && action->callback)
+		action->callback(action);
+}
+
+static void
+build_protocol_actions(GntMenuItem *item, PurplePluginProtocolInfo *prpl_info)
+{
+	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
+	GList *l;
+	GntMenuItem *menuitem;
+
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+	for (l = prpl_info->actions; l; l = l->next) {
+		if (l->data) {
+			PurpleProtocolAction *action = l->data;
+			menuitem = gnt_menuitem_new(action->label);
+			gnt_menu_add_item(GNT_MENU(sub), menuitem);
+
+			gnt_menuitem_set_callback(menuitem, protocol_action, action);
+			g_object_set_data(G_OBJECT(menuitem), "protocol_action", action);
 		}
 	}
 }
@@ -2548,7 +2578,7 @@ reconstruct_plugins_menu(void)
 
 		item = gnt_menuitem_new(_(gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(plugin_info))));
 		gnt_menu_add_item(GNT_MENU(sub), item);
-		build_menu_actions(item, purple_plugin_info_get_actions(plugin_info));
+		build_plugin_actions(item, plugin_info);
 
 		g_object_unref(plugin_info);
 	}
@@ -2584,7 +2614,7 @@ reconstruct_accounts_menu(void)
 		if (prpl_info->actions != NULL) {
 			item = gnt_menuitem_new(purple_account_get_username(account));
 			gnt_menu_add_item(GNT_MENU(sub), item);
-			build_menu_actions(item, prpl_info->actions);
+			build_protocol_actions(item, prpl_info);
 		}
 	}
 }
