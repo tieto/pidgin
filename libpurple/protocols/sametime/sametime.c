@@ -2470,7 +2470,7 @@ static void convo_error(struct mwConversation *conv, guint32 err) {
   text = g_strconcat(_("Unable to send message: "), tmp, NULL);
 
   im = convo_get_im(conv);
-  if(im && !purple_conversation_helper_present_error(idb->user,
+  if(im && !purple_conversation_present_error(idb->user,
   		purple_conversation_get_account(PURPLE_CONVERSATION(im)), text)) {
 
     g_free(text);

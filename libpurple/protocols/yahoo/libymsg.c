@@ -2313,7 +2313,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	decoded_group = yahoo_string_decode(gc, group, FALSE);
 	buf = g_strdup_printf(_("Unable to add buddy %s to group %s to the server list on account %s."),
 				who, decoded_group, purple_connection_get_display_name(gc));
-	if (!purple_conversation_helper_present_error(who, purple_connection_get_account(gc), buf))
+	if (!purple_conversation_present_error(who, purple_connection_get_account(gc), buf))
 		purple_notify_error(gc, NULL, _("Unable to add buddy to server list"), buf);
 	g_free(buf);
 	g_free(decoded_group);

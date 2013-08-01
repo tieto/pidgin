@@ -310,7 +310,7 @@ MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::Helper  PREFIX = 
 PROTOTYPES: ENABLE
 
 gboolean
-purple_conversation_helper_present_error(who, account, what)
+purple_conversation_present_error(who, account, what)
 	const char *who
 	Purple::Account account
 	const char *what

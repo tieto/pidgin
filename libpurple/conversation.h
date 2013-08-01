@@ -639,7 +639,7 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
  * @param what    The error
  * @return        TRUE if the error was presented, else FALSE
  */
-gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount *account, const char *what);
+gboolean purple_conversation_present_error(const char *who, PurpleAccount *account, const char *what);
 
 /*@}*/
 

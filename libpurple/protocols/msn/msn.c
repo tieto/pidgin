@@ -1786,7 +1786,7 @@ msn_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, cons
 	if (!msn_email_is_valid(bname)) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
-		if (!purple_conversation_helper_present_error(bname, account, buf))
+		if (!purple_conversation_present_error(bname, account, buf))
 			purple_notify_error(pc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
 

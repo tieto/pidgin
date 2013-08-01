@@ -166,7 +166,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		if (err == -E2BIG) {
 			msg = _("Unable to send message: The message is too large.");
 
-			if (!purple_conversation_helper_present_error(who, account, msg)) {
+			if (!purple_conversation_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
 				purple_notify_error(gc, NULL, msg2, _("The message is too large."));
 				g_free(msg2);
@@ -179,7 +179,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		else {
 			msg = _("Unable to send message.");
 
-			if (!purple_conversation_helper_present_error(who, account, msg)) {
+			if (!purple_conversation_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
 				purple_notify_error(gc, NULL, msg2, NULL);
 				g_free(msg2);
@@ -639,7 +639,7 @@ purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateTyp
 					 "conversation-updated", conv, type);
 }
 
-gboolean purple_conversation_helper_present_error(const char *who, PurpleAccount *account, const char *what)
+gboolean purple_conversation_present_error(const char *who, PurpleAccount *account, const char *what)
 {
 	PurpleConversation *conv;
 
