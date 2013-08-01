@@ -2269,9 +2269,8 @@ str_array_match(char **a, char **b)
 }
 
 gpointer
-pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
+pidgin_convert_buddy_icon(PurplePluginProtocolInfo *prpl_info, const char *path, size_t *len)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	PurpleBuddyIconSpec *spec;
 	int orig_width, orig_height, new_width, new_height;
 	GdkPixbufFormat *format;
@@ -2285,7 +2284,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	int i;
 	gchar *tmp;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	spec = &prpl_info->icon_spec;
 	g_return_val_if_fail(spec->format != NULL, NULL);
 
@@ -2432,7 +2430,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	g_object_unref(G_OBJECT(original));
 
 	tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
-			path, plugin->info->name);
+			path, prpl_info->name);
 	purple_notify_error(NULL, _("Icon Error"), _("Could not set icon"), tmp);
 	g_free(tmp);
 
