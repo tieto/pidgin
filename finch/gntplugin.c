@@ -170,9 +170,10 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	 * I probably mean 'plugin developers' by 'users' here. */
 	list = g_object_get_data(G_OBJECT(widget), "seen-list");
 	if (list)
-		iter = g_list_find_custom(list, plugin->path, (GCompareFunc)strcmp);
+		iter = g_list_find_custom(list, gplugin_plugin_get_filename(plugin),
+					(GCompareFunc)strcmp);
 	if (!iter) {
-		list = g_list_prepend(list, g_strdup(plugin->path));
+		list = g_list_prepend(list, g_strdup(gplugin_plugin_get_filename(plugin)));
 		g_object_set_data(G_OBJECT(widget), "seen-list", list);
 	}
 
@@ -311,6 +312,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	g_object_unref(info);
 }
 
+#if 0
 static void
 install_selected_file_cb(gpointer handle, const char *filename)
 {
@@ -397,19 +399,18 @@ install_plugin_cb(GntWidget *w, gpointer null)
 			NULL, NULL, NULL, &handle);
 	g_signal_connect_swapped(G_OBJECT(w), "destroy", G_CALLBACK(purple_request_close_with_handle), &handle);
 }
+#endif
 
-void finch_plugins_show_all()
+void finch_plugins_show_all(void)
 {
 	GntWidget *window, *tree, *box, *aboot, *button;
-	GList *iter;
+	GList *plugin_list, *iter;
 	GList *seen;
 
 	if (plugins.window) {
 		gnt_window_present(plugins.window);
 		return;
 	}
-
-	purple_plugins_probe(G_MODULE_SUFFIX);
 
 	plugins.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
@@ -438,10 +439,12 @@ void finch_plugins_show_all()
 	gnt_box_add_widget(GNT_BOX(box), aboot);
 
 	seen = purple_prefs_get_path_list("/finch/plugins/seen");
-	for (iter = purple_plugins_get_all(); iter; iter = iter->next)
+
+	plugin_list = purple_plugins_find_all();
+	for (iter = plugin_list; iter; iter = iter->next)
 	{
 		GPluginPlugin *plug = iter->data;
-
+#if 0
 		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
 			GList *cur;
 			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
@@ -454,13 +457,20 @@ void finch_plugins_show_all()
 			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
 			plug->error)
 			continue;
+#endif
+		GPluginPluginInfo *info = gplugin_plugin_get_info(plug);
 
 		gnt_tree_add_choice(GNT_TREE(tree), plug,
-				gnt_tree_create_row(GNT_TREE(tree), plug->info->name), NULL, NULL);
+				gnt_tree_create_row(GNT_TREE(tree), gplugin_plugin_info_get_name(info)), NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(tree), plug, purple_plugin_is_loaded(plug));
-		if (!g_list_find_custom(seen, plug->path, (GCompareFunc)strcmp))
+		if (!g_list_find_custom(seen, gplugin_plugin_get_filename(plug),
+				(GCompareFunc)strcmp))
 			gnt_tree_set_row_flags(GNT_TREE(tree), plug, GNT_TEXT_FLAG_BOLD);
+
+		g_object_unref(info);
 	}
+	purple_plugins_free_found_list(plugin_list);
+
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
@@ -469,10 +479,12 @@ void finch_plugins_show_all()
 	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
 
+#if 0
 	button = gnt_button_new(_("Install Plugin..."));
 	gnt_box_add_widget(GNT_BOX(box), button);
 	gnt_util_set_trigger_widget(GNT_WIDGET(tree), GNT_KEY_INS, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(install_plugin_cb), NULL);
+#endif
 
 	button = gnt_button_new(_("Close"));
 	gnt_box_add_widget(GNT_BOX(box), button);
