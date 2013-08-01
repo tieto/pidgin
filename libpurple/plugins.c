@@ -376,59 +376,69 @@ purple_plugins_get_loaded(void)
 	return loaded_plugins;
 }
 
+GPluginPlugin *
+purple_plugins_find_by_filename(const char *filename)
+{
+	GList *l;
+
+	for (l = purple_plugins_get_all(); l != NULL; l = l->next) {
+		GPluginPlugin *plugin = GPLUGIN_PLUGIN(l->data);
+
+		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename))
+			return plugin;
+	}
+
+	return NULL;
+}
+
 void
 purple_plugins_save_loaded(const char *key)
 {
 	GList *pl;
-	GList *ids = NULL;
+	GList *files = NULL;
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(pl->data);
-		if (!g_list_find(plugins_to_disable, plugin)) {
-
-			GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugin);
-			ids = g_list_append(ids, (gchar *)gplugin_plugin_info_get_id(plugin_info));
-
-			g_object_unref(plugin_info);
-		}
+		if (!g_list_find(plugins_to_disable, plugin))
+			files = g_list_append(files, (gchar *)gplugin_plugin_get_filename(plugin));
 	}
 
-	purple_prefs_set_string_list(key, ids);
-	g_list_free(ids);
+	purple_prefs_set_string_list(key, files);
+	g_list_free(files);
 }
 
 void
 purple_plugins_load_saved(const char *key)
 {
-	GList *l, *ids;
+	GList *l, *files;
 
 	g_return_if_fail(key != NULL);
 
-	ids = purple_prefs_get_string_list(key);
+	files = purple_prefs_get_string_list(key);
 
-	for (l = ids; l; l = l->next)
+	for (l = files; l; l = l->next)
 	{
-		char *id;
+		char *file;
 		GPluginPlugin *plugin;
 
 		if (l->data == NULL)
 			continue;
 
-		id = l->data;
-		plugin = gplugin_plugin_manager_find_plugin(id);
+		file = l->data;
+		plugin = purple_plugins_find_by_filename(file);
 
 		if (plugin) {
-			purple_debug_info("plugins", "Loading saved plugin %s\n", id);
+			purple_debug_info("plugins", "Loading saved plugin %s\n", file);
 			purple_plugin_load(plugin);
 			g_object_unref(plugin);
 		} else {
-			purple_debug_error("plugins", "Unable to find saved plugin %s\n", id);
+			purple_debug_error("plugins", "Unable to find saved plugin %s\n", file);
 		}
 
 		g_free(l->data);
 	}
 
-	g_list_free(ids);
+	g_list_free(files);
 }
 
 void

@@ -221,6 +221,15 @@ GList *purple_plugins_get_all(void);
 GList *purple_plugins_get_loaded(void);
 
 /**
+ * Finds a plugin with the specified filename (filename with a path).
+ *
+ * @param filename The plugin filename.
+ *
+ * @return The plugin if found, or @c NULL if not found.
+ */
+GPluginPlugin *purple_plugins_find_by_filename(const char *filename);
+
+/**
  * Saves the list of loaded plugins to the specified preference key
  *
  * @param key The preference key to save the list of plugins to.
