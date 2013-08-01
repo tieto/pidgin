@@ -98,7 +98,6 @@ typedef struct
 
 	PurpleAccount *account;
 	char *protocol_id;
-	PurplePlugin *plugin;
 	PurplePluginProtocolInfo *prpl_info;
 
 	PurpleProxyType new_proxy_type;
@@ -235,19 +234,13 @@ static void
 set_account_protocol_cb(GtkWidget *widget, const char *id,
 						AccountPrefsDialog *dialog)
 {
-	PurplePlugin *new_plugin;
+	PurplePluginProtocolInfo *new_prpl_info;
 
-	new_plugin = purple_find_protocol_info(id);
+	new_prpl_info = purple_find_protocol_info(id);
 
-	dialog->plugin = new_plugin;
-
-	if (dialog->plugin != NULL)
-	{
-		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-
-		g_free(dialog->protocol_id);
-		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
-	}
+	dialog->prpl_info = new_prpl_info;
+	g_free(dialog->protocol_id);
+	dialog->protocol_id = dialog->prpl_info ? g_strdup(dialog->prpl_info->id) : NULL;
 
 	if (dialog->account != NULL)
 		purple_account_clear_settings(dialog->account);
@@ -281,7 +274,7 @@ username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
 	gboolean opt_noscreenname = (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME));
-	gboolean username_valid = purple_validate(dialog->plugin,
+	gboolean username_valid = purple_validate(dialog->prpl_info,
 		gtk_entry_get_text(entry));
 
 	if (dialog->ok_button) {
@@ -484,7 +477,7 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 	if (filename != NULL)
 	{
 		size_t len;
-		gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
+		gpointer data = pidgin_convert_buddy_icon(dialog->prpl_info, filename, &len);
 		set_dialog_icon(dialog, data, len, g_strdup(filename));
 	}
 
@@ -531,7 +524,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
 
-			data = pidgin_convert_buddy_icon(dialog->plugin, tmp, &len);
+			data = pidgin_convert_buddy_icon(dialog->prpl_info, tmp, &len);
 			/* This takes ownership of tmp */
 			set_dialog_icon(dialog, data, len, tmp);
 		}
@@ -1524,7 +1517,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		else if ((filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) && icon_change)
 		{
 			size_t len;
-			gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
+			gpointer data = pidgin_convert_buddy_icon(dialog->prpl_info, filename, &len);
 			purple_account_set_buddy_icon_path(account, filename);
 			purple_buddy_icons_set_account_icon(account, data, len);
 		}
@@ -1732,10 +1725,10 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 	dialog->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (dialog->account == NULL) {
-		/* Select the first prpl in the list*/
-		GList *prpl_list = purple_plugins_get_protocols();
-		if (prpl_list != NULL)
-			dialog->protocol_id = g_strdup(((PurplePlugin *) prpl_list->data)->info->id);
+		/* Select the first protocol in the list*/
+		GList *protocol_list = purple_protocols_get_all();
+		if (protocol_list != NULL)
+			dialog->protocol_id = g_strdup(((PurplePluginProtocolInfo *) protocol_list->data)->id);
 	}
 	else
 	{
@@ -1743,8 +1736,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 			g_strdup(purple_account_get_protocol_id(dialog->account));
 	}
 
-	if ((dialog->plugin = purple_find_protocol_info(dialog->protocol_id)) != NULL)
-		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+	dialog->prpl_info = purple_find_protocol_info(dialog->protocol_id);
 
 	dialog->window = win = pidgin_create_dialog((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
 		PIDGIN_HIG_BOX_SPACE, "account", FALSE);
@@ -2243,16 +2235,13 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 {
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
 	PurpleStoredImage *img = NULL;
-	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL) {
 		if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 			if (global_buddyicon != NULL)
@@ -2712,12 +2701,10 @@ static void
 authorize_reason_cb(struct auth_request *ar)
 {
 	const char *protocol_id;
-	PurplePlugin *plugin;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	protocol_id = purple_account_get_protocol_id(ar->account);
-	if ((plugin = purple_find_protocol_info(protocol_id)) != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+	prpl_info = purple_find_protocol_info(protocol_id);
 
 	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
 		/* Duplicate information because ar is freed by closing minidialog */
@@ -2757,12 +2744,10 @@ static void
 deny_reason_cb(struct auth_request *ar)
 {
 	const char *protocol_id;
-	PurplePlugin *plugin;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	protocol_id = purple_account_get_protocol_id(ar->account);
-	if ((plugin = purple_find_protocol_info(protocol_id)) != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+	prpl_info = purple_find_protocol_info(protocol_id);
 
 	if (prpl_info && (prpl_info->options & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {
 		/* Duplicate information because ar is freed by closing minidialog */
