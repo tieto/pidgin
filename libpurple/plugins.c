@@ -351,7 +351,7 @@ purple_plugin_action_get_type(void)
  * Plugins API
  **************************************************************************/
 GList *
-purple_plugins_get_all(void)
+purple_plugins_find_all(void)
 {
 	GList *ret = NULL, *ids, *l;
 	GSList *plugins, *ll;
@@ -361,13 +361,24 @@ purple_plugins_get_all(void)
 	for (l = ids; l; l = l->next) {
 		plugins = gplugin_plugin_manager_find_plugins(l->data);
 		for (ll = plugins; ll; ll = ll->next)
-			ret = g_list_append(ret, GPLUGIN_PLUGIN(ll->data));
+			ret = g_list_append(ret, g_object_ref(ll->data));
 
 		gplugin_plugin_manager_free_plugin_list(plugins);
 	}
 	g_list_free(ids);
 
 	return ret;
+}
+
+void
+purple_plugins_free_found_list(GList *plugins)
+{
+	GList *l;
+
+	for (l = plugins; l != NULL; l = l->next)
+		g_object_unref(l->data);
+
+	g_list_free(plugins);
 }
 
 GList *
@@ -385,7 +396,7 @@ purple_plugins_find_by_filename(const char *filename)
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(l->data);
 
 		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename))
-			return plugin;
+			return g_object_ref(plugin);
 	}
 
 	return NULL;

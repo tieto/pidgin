@@ -208,10 +208,18 @@ GType purple_plugin_action_get_type(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
+ * Use purple_plugins_free_found_list() to free this list when done with it.
  *
- * @constreturn A list of all plugins.
+ * @return A list of all referenced plugins.
  */
-GList *purple_plugins_get_all(void);
+GList *purple_plugins_find_all(void);
+
+/**
+ * Frees a list of referenced plugins by unreferencing them first.
+ *
+ * @param plugins The list of referenced plugins.
+ */
+void purple_plugins_free_found_list(GList *plugins);
 
 /**
  * Returns a list of all loaded plugins.
