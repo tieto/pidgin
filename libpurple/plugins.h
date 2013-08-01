@@ -31,6 +31,13 @@
 
 #include <gplugin.h>
 
+/** Returns an ABI version to set in plugins using major and minor versions */
+#define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
+/** Returns the major version from an ABI version */
+#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
+/** Returns the minor version from an ABI version */
+#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
+
 #define PURPLE_TYPE_PLUGIN_INFO             (purple_plugin_info_get_type())
 #define PURPLE_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfo))
 #define PURPLE_PLUGIN_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoClass))
@@ -167,6 +174,32 @@ GType purple_plugin_info_get_type(void);
  * @see purple_plugin_add_action()
  */
 GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
+
+/**
+ * Returns whether or not a plugin is loadable.
+ *
+ * If this returns @c FALSE, the plugin is guaranteed to not
+ * be loadable. However, a return value of @c TRUE does not
+ * guarantee the plugin is loadable.
+ * An error is set if the plugin is not loadable.
+ *
+ * @param plugin_info The plugin info of the plugin.
+ *
+ * @return @c TRUE if the plugin may be loadable, @c FALSE if the plugin is not
+ *         loadable.
+ *
+ * @see purple_plugin_info_get_error()
+ */
+gboolean purple_plugin_info_is_loadable(PurplePluginInfo *plugin_info);
+
+/**
+ * If a plugin is not loadable, this returns the reason.
+ *
+ * @param plugin_info The plugin info of the plugin.
+ *
+ * @return The reason why the plugin is not loadable.
+ */
+gchar *purple_plugin_info_get_error(PurplePluginInfo *plugin_info);
 
 /**
  * Sets a callback to be invoked to retrieve the preferences frame for a plugin.

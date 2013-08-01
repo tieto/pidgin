@@ -21,8 +21,10 @@
  */
 #include "internal.h"
 
+#include "core.h"
 #include "debug.h"
 #include "plugins.h"
+#include "version.h"
 
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoPrivate))
@@ -34,15 +36,19 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
-	GList *actions;  /**< Actions that the plugin can perform                >*/
-	PurplePluginPrefFrameCallback get_pref_frame;  /**< Callback that returns a
-	                                                    preferences frame for a
-	                                                    plugin               >*/
+	char *ui_requirement;  /**< ID of UI that is required to load the plugin >*/
+	GList *actions;        /**< Actions that the plugin can perform          >*/
+	gboolean loadable;     /**< Whether the plugin is loadable               >*/
+	char *error;           /**< Why the plugin is not loadable               >*/
+
+	/** Callback that returns a preferences frame for a plugin >*/
+	PurplePluginPrefFrameCallback get_pref_frame;
 };
 
 enum
 {
 	PROP_0,
+	PROP_UI_REQUIREMENT,
 	PROP_PREF_FRAME_CALLBACK,
 	PROP_LAST
 };
@@ -61,12 +67,21 @@ static GList *plugins_to_disable = NULL;
 gboolean
 purple_plugin_load(GPluginPlugin *plugin)
 {
+	PurplePluginInfo *plugin_info;
 	GError *error = NULL;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
+
+	plugin_info = PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
+
+	if (!purple_plugin_info_is_loadable(plugin_info)) {
+		g_object_unref(plugin_info);
+		return FALSE;
+	}
+	g_object_unref(plugin_info);
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
@@ -162,7 +177,8 @@ purple_plugin_disable(GPluginPlugin *plugin)
  * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
-#define PROP_PREF_FRAME_CALLBACK_S  "pref-frame-callback"
+#define PROP_UI_REQUIREMENT_S       "ui-requirement"
+#define PROP_PREF_FRAME_CALLBACK_S  "preferences-callback"
 
 /* Set method for GObject properties */
 static void
@@ -170,8 +186,12 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 		GParamSpec *pspec)
 {
 	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(obj);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
 
 	switch (param_id) {
+		case PROP_UI_REQUIREMENT:
+			priv->ui_requirement = g_strdup(g_value_get_string(value));
+			break;
 		case PROP_PREF_FRAME_CALLBACK:
 			purple_plugin_info_set_pref_frame_callback(plugin_info,
 					g_value_get_pointer(value));
@@ -200,17 +220,50 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
-/* GObject initialization function */
+/* Called when done constructing */
 static void
-purple_plugin_info_init(GTypeInstance *instance, gpointer klass)
+purple_plugin_info_constructed(GObject *object)
 {
-}
+	GPluginPluginInfo *plugin_info = GPLUGIN_PLUGIN_INFO(object);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	const char *id = gplugin_plugin_info_get_id(plugin_info);
+	guint32 abi_version;
 
-/* GObject dispose function */
-static void
-purple_plugin_info_dispose(GObject *object)
-{
-	G_OBJECT_CLASS(parent_class)->dispose(object);
+	G_OBJECT_CLASS(parent_class)->constructed(object);
+
+	priv->loadable = TRUE;
+
+	if (id == NULL || *id == '\0')
+	{
+		/* GPlugin already logs a warning when a plugin has no ID */
+
+		priv->error = g_strdup(_("This plugin has not defined an ID."));
+		priv->loadable = FALSE;
+	}
+
+	if (priv->ui_requirement && !purple_strequal(priv->ui_requirement, purple_core_get_ui()))
+	{
+		priv->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),
+				purple_core_get_ui(), priv->ui_requirement);
+		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met. (%s)\n",
+				id, priv->error);
+		priv->loadable = FALSE;
+	}
+
+	abi_version = gplugin_plugin_info_get_abi_version(plugin_info);
+	if (PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi_version) != PURPLE_MAJOR_VERSION ||
+		PURPLE_PLUGIN_ABI_MINOR_VERSION(abi_version) > PURPLE_MINOR_VERSION)
+	{
+		priv->error = g_strdup_printf(_("ABI version mismatch %d.%d.x (need %d.%d.x)"),
+				PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi_version),
+				PURPLE_PLUGIN_ABI_MINOR_VERSION(abi_version),
+				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION);
+		purple_debug_error("plugins", "%s is not loadable: ABI version mismatch %d.%d.x (need %d.%d.x)\n",
+				id, PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi_version),
+				PURPLE_PLUGIN_ABI_MINOR_VERSION(abi_version),
+				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION);
+		priv->loadable = FALSE;
+	}
 }
 
 /* GObject finalize function */
@@ -224,6 +277,9 @@ purple_plugin_info_finalize(GObject *object)
 		priv->actions = g_list_delete_link(priv->actions, priv->actions);
 	}
 
+	g_free(priv->ui_requirement);
+	g_free(priv->error);
+
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
@@ -236,18 +292,24 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 
 	g_type_class_add_private(klass, sizeof(PurplePluginInfoPrivate));
 
-	obj_class->dispose = purple_plugin_info_dispose;
+	obj_class->constructed = purple_plugin_info_constructed;
 	obj_class->finalize = purple_plugin_info_finalize;
 
 	/* Setup properties */
 	obj_class->get_property = purple_plugin_info_get_property;
 	obj_class->set_property = purple_plugin_info_set_property;
 
+	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
+		g_param_spec_string(PROP_UI_REQUIREMENT_S,
+		                    "UI Requirement",
+		                    "ID of UI that is required by this plugin", NULL,
+		                    G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+
 	g_object_class_install_property(obj_class, PROP_PREF_FRAME_CALLBACK,
 		g_param_spec_pointer(PROP_PREF_FRAME_CALLBACK_S,
 		                     "Preferences frame callback",
 		                     "The callback that returns the preferences frame",
-		                     G_PARAM_READWRITE));
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 /**************************************************************************
@@ -263,7 +325,6 @@ purple_plugin_info_get_type(void)
 			.class_size = sizeof(PurplePluginInfoClass),
 			.class_init = (GClassInitFunc)purple_plugin_info_class_init,
 			.instance_size = sizeof(PurplePluginInfo),
-			.instance_init = (GInstanceInitFunc)purple_plugin_info_init,
 		};
 
 		type = g_type_register_static(GPLUGIN_TYPE_PLUGIN_INFO,
@@ -281,6 +342,26 @@ purple_plugin_info_get_actions(PurplePluginInfo *plugin_info)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->actions;
+}
+
+gboolean
+purple_plugin_info_is_loadable(PurplePluginInfo *plugin_info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	return priv->loadable;
+}
+
+gchar *
+purple_plugin_info_get_error(PurplePluginInfo *plugin_info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->error;
 }
 
 void
