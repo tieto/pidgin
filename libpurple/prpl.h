@@ -34,7 +34,7 @@ typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
 
 typedef struct _PurpleProtocolAction PurpleProtocolAction;
 
-typedef void (*PurpleProtocolActionCallback)(PurplePluginProtocolInfo *);
+typedef void (*PurpleProtocolActionCallback)(PurpleProtocolAction *);
 
 /** Represents "nudges" and "buzzes" that you may send to a buddy to attract
  *  their attention (or vice-versa).
@@ -220,6 +220,7 @@ typedef enum
 struct _PurpleProtocolAction {
 	char *label;
 	PurpleProtocolActionCallback callback;
+	PurplePluginProtocolInfo *prpl_info;
 };
 
 /**
