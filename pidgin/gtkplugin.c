@@ -37,7 +37,14 @@
 
 #include "gtk3compat.h"
 
+#define PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfoPrivate))
+
 #define PIDGIN_RESPONSE_CONFIGURE 98121
+
+typedef struct
+{
+} PidginPluginInfoPrivate;
 
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
                                   GtkTreeIter *iter, gboolean unload);
@@ -55,6 +62,31 @@ static GtkLabel *plugin_filename = NULL;
 
 static GtkWidget *pref_button = NULL;
 static GHashTable *plugin_pref_dialogs = NULL;
+
+/* Class initializer function */
+static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
+{
+	g_type_class_add_private(klass, sizeof(PidginPluginInfoPrivate));
+}
+
+GType
+pidgin_plugin_info_get_type(void)
+{
+	static GType type = 0;
+
+	if (G_UNLIKELY(type == 0)) {
+		static const GTypeInfo info = {
+			.class_size = sizeof(PidginPluginInfoClass),
+			.class_init = (GClassInitFunc)pidgin_plugin_info_class_init,
+			.instance_size = sizeof(PidginPluginInfo),
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_PLUGIN_INFO,
+		                              "PidginPluginInfo", &info, 0);
+	}
+
+	return type;
+}
 
 GtkWidget *
 pidgin_plugin_get_config_frame(PurplePlugin *plugin)

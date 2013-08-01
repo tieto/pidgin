@@ -29,34 +29,49 @@
 #include "pidgin.h"
 #include "plugins.h"
 
-typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
+#define PIDGIN_TYPE_PLUGIN_INFO             (pidgin_plugin_info_get_type())
+#define PIDGIN_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfo))
+#define PIDGIN_PLUGIN_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfoClass))
+#define PIDGIN_IS_PLUGIN_INFO(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_PLUGIN_INFO))
+#define PIDGIN_IS_PLUGIN_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_PLUGIN_INFO))
+#define PIDGIN_PLUGIN_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfoClass))
+
+/** @copydoc _PidginPluginInfo */
+typedef struct _PidginPluginInfo PidginPluginInfo;
+/** @copydoc _PidginPluginInfoClass */
+typedef struct _PidginPluginInfoClass PidginPluginInfoClass;
+
+typedef GtkWidget *(*PidginPluginConfigFrame)(GPluginPlugin *);
 
 /**
- * A GTK+ UI structure for plugins.
+ * Extends #PurplePluginInfo to hold UI information for pidgin.
  */
-struct _PidginPluginUiInfo
-{
-	GtkWidget *(*get_config_frame)(PurplePlugin *plugin);
+struct _PidginPluginInfo {
+	/*< private >*/
+	PurplePluginInfo parent;
+};
 
-	int page_num;                                         /**< Reserved */
+/**
+ * PidginPluginInfoClass:
+ *
+ * The base class for all #PidginPluginInfo's.
+ */
+struct _PidginPluginInfoClass {
+	/*< private >*/
+	PurplePluginInfoClass parent_class;
 
-	/* padding */
 	void (*_pidgin_reserved1)(void);
 	void (*_pidgin_reserved2)(void);
 	void (*_pidgin_reserved3)(void);
 	void (*_pidgin_reserved4)(void);
 };
 
-#define PIDGIN_PLUGIN_TYPE PIDGIN_UI
-
-#define PIDGIN_IS_PIDGIN_PLUGIN(plugin) \
-	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, PIDGIN_PLUGIN_TYPE))
-
-#define PIDGIN_PLUGIN_UI_INFO(plugin) \
-	((PidginPluginUiInfo *)(plugin)->info->ui_info)
-
 G_BEGIN_DECLS
+
+/**
+ * Returns the GType for the PidginPluginInfo object.
+ */
+GType pidgin_plugin_info_get_type(void);
 
 /**
  * Returns the configuration frame widget for a GTK+ plugin, if one
@@ -67,7 +82,7 @@ G_BEGIN_DECLS
  * @return The frame, if the plugin is a GTK+ plugin and provides a
  *         configuration frame.
  */
-GtkWidget *pidgin_plugin_get_config_frame(PurplePlugin *plugin);
+GtkWidget *pidgin_plugin_get_config_frame(GPluginPlugin *plugin);
 
 /**
  * Saves all loaded plugins.
