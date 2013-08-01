@@ -233,7 +233,7 @@ GList *purple_plugins_get_loaded(void);
  *
  * @param filename The plugin filename.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * @return The referenced plugin if found, or @c NULL if not found.
  */
 GPluginPlugin *purple_plugins_find_by_filename(const char *filename);
 

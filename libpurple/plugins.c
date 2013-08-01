@@ -142,7 +142,7 @@ purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
 
 	action->label    = g_strdup(label);
 	action->callback = callback;
-	action->plugin   = g_object_ref(plugin);
+	action->plugin   = plugin;
 
 	priv->actions = g_list_append(priv->actions, action);
 
@@ -313,7 +313,6 @@ purple_plugin_action_free(PurplePluginAction *action)
 	g_return_if_fail(action != NULL);
 
 	g_free(action->label);
-	g_object_unref(action->plugin);
 	g_free(action);
 }
 
@@ -328,7 +327,7 @@ purple_plugin_action_copy(PurplePluginAction *action)
 
 	action_copy->label    = g_strdup(action->label);
 	action_copy->callback = action->callback;
-	action_copy->plugin   = g_object_ref(action->plugin);
+	action_copy->plugin   = action->plugin;
 
 	return action_copy;
 }
@@ -396,8 +395,10 @@ purple_plugins_find_by_filename(const char *filename)
 	for (l = plugins; l != NULL; l = l->next) {
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(l->data);
 
-		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename))
+		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename)) {
+			purple_plugins_free_found_list(plugins);
 			return g_object_ref(plugin);
+		}
 	}
 	purple_plugins_free_found_list(plugins);
 
