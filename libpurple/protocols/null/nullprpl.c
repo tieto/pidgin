@@ -429,7 +429,7 @@ static int nullprpl_send_im(PurpleConnection *gc, const char *who,
     purple_debug_info("nullprpl",
                       "discarding; %s is blocked by %s's privacy settings\n",
                       from_username, who);
-    purple_conversation_helper_present_error(who, purple_connection_get_account(gc), msg);
+    purple_conversation_present_error(who, purple_connection_get_account(gc), msg);
     g_free(msg);
     return 0;
   }

@@ -174,7 +174,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	else
 		buf = g_strdup_printf(_("Unable to send message: %s"), reason_str);
 
-	if (!purple_conversation_helper_present_error(bn, purple_connection_get_account(gc), buf)) {
+	if (!purple_conversation_present_error(bn, purple_connection_get_account(gc), buf)) {
 		g_free(buf);
 		if (errcode != 0 && errcode < errcodereasonlen)
 			buf = g_strdup_printf(_("Unable to send message to %s: %s (%s)"),

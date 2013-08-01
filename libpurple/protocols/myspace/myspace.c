@@ -132,7 +132,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, const MsimMessage *userinfo,
 		gchar *msg;
 
 		msg = g_strdup_printf(_("No such user: %s"), username);
-		if (!purple_conversation_helper_present_error(username, session->account, msg)) {
+		if (!purple_conversation_present_error(username, session->account, msg)) {
 			purple_notify_error(NULL, NULL, _("User lookup"), msg);
 		}
 
