@@ -390,14 +390,16 @@ purple_plugins_get_loaded(void)
 GPluginPlugin *
 purple_plugins_find_by_filename(const char *filename)
 {
-	GList *l;
+	GList *plugins, *l;
+	plugins = purple_plugins_find_all();
 
-	for (l = purple_plugins_get_all(); l != NULL; l = l->next) {
+	for (l = plugins; l != NULL; l = l->next) {
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(l->data);
 
 		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename))
 			return g_object_ref(plugin);
 	}
+	purple_plugins_free_found_list(plugins);
 
 	return NULL;
 }

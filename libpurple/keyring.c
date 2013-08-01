@@ -1227,7 +1227,7 @@ void
 purple_keyring_init(void)
 {
 	const gchar *touse;
-	GList *it;
+	GList *plugins, *it;
 
 	purple_keyring_keyrings = NULL;
 	purple_keyring_inuse = NULL;
@@ -1281,7 +1281,8 @@ purple_keyring_init(void)
 
 	purple_keyring_pref_connect();
 
-	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
+	plugins = purple_plugins_find_all();
+	for (it = plugins; it != NULL; it = it->next)
 	{
 		GPluginPlugin *plugin = GPLUGIN_PLUGIN(it->data);
 		GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
@@ -1305,6 +1306,7 @@ purple_keyring_init(void)
 				purple_keyring_loaded_plugins, plugin);
 		}
 	}
+	purple_plugins_free_found_list(plugins);
 
 	if (purple_keyring_inuse == NULL)
 		purple_debug_error("keyring", "Selected keyring failed to load\n");
