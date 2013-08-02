@@ -138,9 +138,9 @@ smiley_parse_markup(const char *markup, const char *proto_id)
 	const char *proto_name = "default";
 
 	if (proto_id != NULL) {
-		PurplePlugin *proto;
-		proto = purple_find_protocol_info(proto_id);
-		proto_name = proto->info->name;
+		PurplePluginProtocolInfo *prpl_info;
+		prpl_info = purple_find_protocol_info(proto_id);
+		proto_name = prpl_info->name;
 	}
 
 	/* unnecessarily slow, but lets manage for now. */

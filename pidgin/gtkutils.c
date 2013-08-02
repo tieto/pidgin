@@ -552,15 +552,13 @@ aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
 }
 
 static GdkPixbuf *
-pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, PurpleAccount *account)
+pidgin_create_prpl_icon_from_protocol(PurplePluginProtocolInfo *prpl_info, PidginPrplIconSize size, PurpleAccount *account)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
 	char *tmp;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info->list_icon == NULL)
 		return NULL;
 
@@ -629,7 +627,7 @@ static AopMenu *
 create_protocols_menu(const char *default_proto_id)
 {
 	AopMenu *aop_menu = NULL;
-	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info;
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
 	GtkListStore *ls;
@@ -642,25 +640,25 @@ create_protocols_menu(const char *default_proto_id)
 	aop_menu->default_item = 0;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
-	for (p = purple_plugins_get_protocols(), i = 0;
+	for (p = purple_protocols_get_all(), i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
 
-		plugin = (PurplePlugin *)p->data;
+		prpl_info = (PurplePluginProtocolInfo *)p->data;
 
-		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
+		pixbuf = pidgin_create_prpl_icon_from_protocol(prpl_info, PIDGIN_PRPL_ICON_SMALL, NULL);
 
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
 		                   AOP_ICON_COLUMN, pixbuf,
-		                   AOP_NAME_COLUMN, plugin->info->name,
-		                   AOP_DATA_COLUMN, plugin->info->id,
+		                   AOP_NAME_COLUMN, prpl_info->name,
+		                   AOP_DATA_COLUMN, prpl_info->id,
 		                   -1);
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
+		if (default_proto_id != NULL && !strcmp(prpl_info->id, default_proto_id))
 			aop_menu->default_item = i;
 	}
 
@@ -921,7 +919,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 		return;
 	}
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(conn));
+	prpl_info = purple_connection_get_protocol_info(conn);
 	if (prpl_info != NULL && prpl_info->get_cb_real_name)
 		who = prpl_info->get_cb_real_name(conn, chat, name);
 	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
@@ -1024,30 +1022,27 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			{
 				PurpleConnection *gc;
 				PurplePluginProtocolInfo *prpl_info = NULL;
-				PurplePlugin *plugin;
 
 				if (all_accounts)
 				{
 					account = (PurpleAccount *)l->data;
 
-					plugin = purple_plugins_find_with_id(
+					prpl_info = purple_find_protocol_info(
 						purple_account_get_protocol_id(account));
 
-					if (plugin == NULL)
+					if (prpl_info == NULL)
 					{
 						account = NULL;
 
 						continue;
 					}
-
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 				}
 				else
 				{
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+					prpl_info = purple_connection_get_protocol_info(gc);
 				}
 
 				protoname = prpl_info->list_icon(account, NULL);
@@ -1066,30 +1061,27 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 				{
 					PurpleConnection *gc;
 					PurplePluginProtocolInfo *prpl_info = NULL;
-					PurplePlugin *plugin;
 
 					if (all_accounts)
 					{
 						account = (PurpleAccount *)l->data;
 
-						plugin = purple_plugins_find_with_id(
+						prpl_info = purple_find_protocol_info(
 							purple_account_get_protocol_id(account));
 
-						if (plugin == NULL)
+						if (prpl_info == NULL)
 						{
 							account = NULL;
 
 							continue;
 						}
-
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 					}
 					else
 					{
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+						prpl_info = purple_connection_get_protocol_info(gc);
 					}
 
 					protoname = prpl_info->list_icon(account, NULL);
@@ -1498,7 +1490,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			data->account = account;
 
 			if (gc)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+				prpl_info = purple_connection_get_protocol_info(gc);
 
 			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
@@ -1699,14 +1691,14 @@ pidgin_stock_id_from_presence(PurplePresence *presence)
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
 {
-	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	prpl = purple_find_protocol_info(purple_account_get_protocol_id(account));
-	if (prpl == NULL)
+	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	if (prpl_info == NULL)
 		return NULL;
-	return pidgin_create_prpl_icon_from_prpl(prpl, size, account);
+	return pidgin_create_prpl_icon_from_protocol(prpl_info, size, account);
 }
 
 static void

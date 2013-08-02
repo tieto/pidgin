@@ -494,12 +494,10 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ICON_SEL:
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
-				PurplePlugin *plug = purple_plugins_find_with_id(purple_account_get_protocol_id(statusbox->account));
-				if (plug) {
-					PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-					if (prplinfo && prplinfo->icon_spec.format != NULL)
-						setup_icon_box(statusbox);
-				}
+				PurplePluginProtocolInfo *prpl_info =
+						purple_find_protocol_info(purple_account_get_protocol_id(statusbox->account));
+				if (prpl_info && prpl_info->icon_spec.format != NULL)
+					setup_icon_box(statusbox);
 			} else {
 				setup_icon_box(statusbox);
 			}
@@ -1452,44 +1450,40 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 	PurpleStoredImage *img = NULL;
 
 	if (box->account) {
-		PurplePlugin *plug = purple_find_protocol_info(purple_account_get_protocol_id(box->account));
-		if (plug) {
-			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-			if (prplinfo && prplinfo->icon_spec.format) {
-				gpointer data = NULL;
-				size_t len = 0;
-				if (filename)
-					data = pidgin_convert_buddy_icon(plug, filename, &len);
-				img = purple_buddy_icons_set_account_icon(box->account, data, len);
-				if (img)
-					/*
-					 * set_account_icon doesn't give us a reference, but we
-					 * unref one below (for the other code path)
-					 */
-					purple_imgstore_ref(img);
+		PurplePluginProtocolInfo *prpl_info =
+				purple_find_protocol_info(purple_account_get_protocol_id(box->account));
+		if (prpl_info && prpl_info->icon_spec.format) {
+			gpointer data = NULL;
+			size_t len = 0;
+			if (filename)
+				data = pidgin_convert_buddy_icon(prpl_info, filename, &len);
+			img = purple_buddy_icons_set_account_icon(box->account, data, len);
+			if (img)
+				/*
+				 * set_account_icon doesn't give us a reference, but we
+				 * unref one below (for the other code path)
+				 */
+				purple_imgstore_ref(img);
 
-				purple_account_set_buddy_icon_path(box->account, filename);
+			purple_account_set_buddy_icon_path(box->account, filename);
 
-				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
-			}
+			purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 		}
 	} else {
 		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			PurplePlugin *plug = purple_find_protocol_info(purple_account_get_protocol_id(account));
-			if (plug) {
-				PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-				if (prplinfo != NULL &&
-				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
-				    prplinfo->icon_spec.format) {
-					gpointer data = NULL;
-					size_t len = 0;
-					if (filename)
-						data = pidgin_convert_buddy_icon(plug, filename, &len);
-					purple_buddy_icons_set_account_icon(account, data, len);
-					purple_account_set_buddy_icon_path(account, filename);
-				}
+			PurplePluginProtocolInfo *prpl_info =
+					purple_find_protocol_info(purple_account_get_protocol_id(account));
+			if (prpl_info != NULL &&
+			    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
+			    prpl_info->icon_spec.format) {
+				gpointer data = NULL;
+				size_t len = 0;
+				if (filename)
+					data = pidgin_convert_buddy_icon(prpl_info, filename, &len);
+				purple_buddy_icons_set_account_icon(account, data, len);
+				purple_account_set_buddy_icon_path(account, filename);
 			}
 		}
 
