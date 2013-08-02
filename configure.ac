@@ -1706,9 +1706,10 @@ if test "x$enable_plugins" = "xyes" ; then
 	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.4 gmodule-2.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
-	GPlugin 0.0.4 development headers not found, which are required if you wish
-	to enable plugins.
-	Use --disable-plugins if you do not need plugins.
+	GPlugin 0.0.4 development headers not found, which are required if you wish to
+	enable plugins.
+	Use --disable-plugins if you want to disable plugins (will also disable
+	protocols).
 	])])
 	AC_SUBST(GPLUGIN_CFLAGS)
 	AC_SUBST(GPLUGIN_LIBS)
