@@ -412,6 +412,8 @@ void finch_plugins_show_all(void)
 		return;
 	}
 
+	gplugin_plugin_manager_refresh();
+
 	plugins.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), _("Plugins"));

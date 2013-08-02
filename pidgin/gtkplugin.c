@@ -144,7 +144,7 @@ update_plugin_list(void *data)
 	PurplePlugin *plug;
 
 	gtk_list_store_clear(ls);
-	purple_plugins_probe(G_MODULE_SUFFIX);
+	gplugin_plugin_manager_refresh();
 
 	for (probes = purple_plugins_get_all();
 		 probes != NULL;
