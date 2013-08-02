@@ -248,7 +248,6 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	GPluginPlugin *plugin;
 	PurplePluginInfo *info;
 	FinchPluginInfoPrivate *priv = NULL;
-	FinchPluginFrame callback;
 
 	g_return_if_fail(plugins.tree != NULL);
 
@@ -267,7 +266,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (FINCH_IS_PLUGIN_INFO(info))
 		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
-	if (priv && (callback = priv->get_pref_frame) != NULL)
+	if (priv && priv->get_pref_frame != NULL)
 	{
 		GntWidget *window = gnt_vbox_new(FALSE);
 		GntWidget *box, *button;
@@ -277,7 +276,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 				gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(info)));
 		gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
-		box = callback();
+		box = priv->get_pref_frame();
 		gnt_box_add_widget(GNT_BOX(window), box);
 
 		box = gnt_hbox_new(FALSE);
