@@ -414,12 +414,12 @@ static void plugin_toggled_stage_two(GPluginPlugin *plug, GtkTreeModel *model, G
 		g_free(error);
 		g_free(name);
 	}
-	g_object_unref(info);
 
 	gtk_list_store_set(GTK_LIST_STORE (model), iter,
 	                   0, purple_plugin_is_loaded(plug),
 	                   -1);
 	g_free(iter);
+	g_object_unref(info);
 
 	pidgin_plugins_save();
 }
@@ -522,7 +522,6 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_idle_add(ensure_plugin_visible, sel);
 
 	g_value_unset(&val);
-
 	g_object_unref(info);
 }
 

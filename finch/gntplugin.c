@@ -110,11 +110,12 @@ decide_conf_button(GPluginPlugin *plugin)
 			visible = TRUE;
 		}
 	}
-	g_object_unref(info);
 
 	gnt_widget_set_visible(plugins.conf, visible);
 	gnt_box_readjust(GNT_BOX(plugins.window));
 	gnt_widget_draw(plugins.window);
+
+	g_object_unref(info);
 }
 
 static void
@@ -164,6 +165,8 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	if (!plugin)
 		return;
 
+	info = gplugin_plugin_get_info(plugin);
+
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it
 	 * crashes, it won't get marked as seen so the user can fix the bug and still
@@ -178,8 +181,6 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 		g_object_set_data(G_OBJECT(widget), "seen-list", list);
 	}
 
-	info = gplugin_plugin_get_info(plugin);
-
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
 	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
@@ -190,13 +191,13 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 			SAFE(_(gplugin_plugin_info_get_website(info))),
 			SAFE(gplugin_plugin_get_filename(plugin)));
 
-	g_object_unref(info);
-
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
 	g_free(text);
 	decide_conf_button(plugin);
+
+	g_object_unref(info);
 }
 
 static void

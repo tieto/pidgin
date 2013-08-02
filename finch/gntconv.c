@@ -1253,10 +1253,11 @@ debug_command_cb(PurpleConversation *conv,
 			for (; plugins; plugins = plugins->next) {
 				GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugins->data);
 				str = g_string_append(str, gplugin_plugin_info_get_name(plugin_info));
-				g_object_unref(plugin_info);
 
 				if (plugins->next)
 					str = g_string_append(str, ", ");
+
+				g_object_unref(plugin_info);
 			}
 		} else {
 			str = g_string_append(str, "(none)");
