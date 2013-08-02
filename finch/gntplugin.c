@@ -101,11 +101,12 @@ decide_conf_button(GPluginPlugin *plugin)
 	GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
 
 	if (purple_plugin_is_loaded(plugin)) {
-		if (FINCH_IS_PLUGIN_INFO(info)) {
-			FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
-			if (priv->get_pref_frame)
-				visible = TRUE;
-		} else if (purple_plugin_info_get_pref_frame_callback(PURPLE_PLUGIN_INFO(info))) {
+		FinchPluginInfoPrivate *priv = NULL;
+		if (FINCH_IS_PLUGIN_INFO(info))
+			priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
+
+		if ((priv && priv->get_pref_frame) ||
+			(purple_plugin_info_get_pref_frame_callback(PURPLE_PLUGIN_INFO(info)))) {
 			visible = TRUE;
 		}
 	}
