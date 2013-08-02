@@ -335,7 +335,7 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.20 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gthread-2.0 gmodule-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
@@ -1702,18 +1702,13 @@ AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 dnl #######################################################################
 dnl # Check for GPlugin 0.0.4
 dnl #######################################################################
-if test "x$enable_plugins" = "xyes" ; then
-	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.4 gmodule-2.0], , [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
-	GPlugin 0.0.4 development headers not found, which are required if you wish to
-	enable plugins.
-	Use --disable-plugins if you want to disable plugins (will also disable
-	protocols).
-	])])
-	AC_SUBST(GPLUGIN_CFLAGS)
-	AC_SUBST(GPLUGIN_LIBS)
-fi
+PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.4], , [
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([
+You must have GPlugin 0.0.4 or newer development headers installed to build.
+])])
+AC_SUBST(GPLUGIN_CFLAGS)
+AC_SUBST(GPLUGIN_LIBS)
 
 dnl #######################################################################
 dnl # Check for Python
