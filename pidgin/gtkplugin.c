@@ -323,7 +323,8 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 		if (plugin_pref_dialogs != NULL &&
 			(dialog = g_hash_table_lookup(plugin_pref_dialogs, plug)))
 			pref_dialog_response_cb(dialog, GTK_RESPONSE_DELETE_EVENT, plug);
-
+#warning TODO: Re-enable this section when GPlugin returns dependent plugins!
+#if 0
 		if (plug->dependent_plugins != NULL)
 		{
 			GString *tmp = g_string_new(_("The following plugins will be unloaded."));
@@ -360,6 +361,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			g_string_free(tmp, TRUE);
 		}
 		else
+#endif
 			plugin_toggled_stage_two(plug, model, iter, TRUE);
 	}
 
