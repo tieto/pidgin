@@ -984,9 +984,9 @@ void purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
 /*@{*/
 
 /**
- * Finds a protocol plugin info structure of the specified type.
+ * Finds a protocol plugin info structure by ID.
  *
- * @param id The protocol plugin;
+ * @param id The protocol's ID.
  */
 PurplePluginProtocolInfo *purple_find_protocol_info(const char *id);
 
