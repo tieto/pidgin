@@ -6,7 +6,7 @@ AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])
 # Owen Taylor     1997-2001
 
 dnl AM_PATH_GLIB_2_0([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
-dnl Test for GLIB, and define GLIB_CFLAGS and GLIB_LIBS, if gmodule, gobject or
+dnl Test for GLIB, and define GLIB_CFLAGS and GLIB_LIBS, if gobject or 
 dnl gthread is specified in MODULES, pass to pkg-config
 dnl
 AC_DEFUN([AM_PATH_GLIB_2_0],
@@ -25,9 +25,6 @@ AC_ARG_ENABLE(glibtest, [  --disable-glibtest      do not try to compile and run
          ;;
          gthread) 
              pkg_config_args="$pkg_config_args gthread-2.0"
-         ;;
-         gmodule) 
-             pkg_config_args="$pkg_config_args gmodule-2.0"
          ;;
       esac
   done
