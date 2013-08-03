@@ -29,7 +29,12 @@
 #ifndef _PURPLE_PLUGINS_H_
 #define _PURPLE_PLUGINS_H_
 
+#ifdef PURPLE_PLUGINS
 #include <gplugin.h>
+#else
+#include <glib.h>
+#include <glib-object.h>
+#endif
 
 /** Returns an ABI version to set in plugins using major and minor versions */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
@@ -37,6 +42,8 @@
 #define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
 /** Returns the minor version from an ABI version */
 #define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
+
+#ifdef PURPLE_PLUGINS
 
 #define PURPLE_TYPE_PLUGIN             GPLUGIN_TYPE_PLUGIN
 #define PURPLE_PLUGIN(obj)             GPLUGIN_PLUGIN(obj)
@@ -56,6 +63,20 @@ typedef GPluginPlugin PurplePlugin;
  * This type is an alias for GPluginPluginClass.
  */
 typedef GPluginPluginClass PurplePluginClass;
+
+#else /* !defined(PURPLE_PLUGINS) */
+
+#define PURPLE_TYPE_PLUGIN             G_TYPE_OBJECT
+#define PURPLE_PLUGIN(obj)             G_OBJECT(obj)
+#define PURPLE_PLUGIN_CLASS(klass)     G_OBJECT_CLASS(klass)
+#define PURPLE_IS_PLUGIN(obj)          G_IS_OBJECT(obj)
+#define PURPLE_IS_PLUGIN_CLASS(klass)  G_IS_OBJECT_CLASS(klass)
+#define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
+
+typedef GObject PurplePlugin;
+typedef GObjectClass PurplePluginClass;
+
+#endif /* PURPLE_PLUGINS */
 
 #define PURPLE_TYPE_PLUGIN_INFO             (purple_plugin_info_get_type())
 #define PURPLE_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfo))
@@ -83,8 +104,13 @@ typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(PurplePlugin *);
  * Holds information about a plugin.
  */
 struct _PurplePluginInfo {
+#ifdef PURPLE_PLUGINS
 	/*< private >*/
 	GPluginPluginInfo parent;
+#else
+	/*< private >*/
+	GObject parent;
+#endif
 };
 
 /**
@@ -93,8 +119,13 @@ struct _PurplePluginInfo {
  * The base class for all #PurplePluginInfo's.
  */
 struct _PurplePluginInfoClass {
+#ifdef PURPLE_PLUGINS
 	/*< private >*/
 	GPluginPluginInfoClass parent_class;
+#else
+	/*< private >*/
+	GObjectClass parent_class;
+#endif
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
