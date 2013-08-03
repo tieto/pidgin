@@ -150,10 +150,22 @@ gboolean purple_plugin_unload(PurplePlugin *plugin);
  */
 gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
-/* TODO */
+/**
+ * Returns a plugin's filename, along with the path.
+ *
+ * @param info The plugin.
+ *
+ * @return The plugin's filename.
+ */
 const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
 
-/* TODO */
+/**
+ * Returns a plugin's #PurplePluginInfo instance.
+ *
+ * @param info The plugin.
+ *
+ * @return The plugin's #PurplePluginInfo instance.
+ */
 PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
 
 /**
@@ -188,43 +200,109 @@ void purple_plugin_disable(PurplePlugin *plugin);
  */
 GType purple_plugin_info_get_type(void);
 
-/* TODO */
+/**
+ * Returns a plugin's ID.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The plugin's ID.
+ */
 const gchar *purple_plugin_info_get_id(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's name.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The name of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's version.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The version of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's primary category.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The primary category of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_category(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's summary.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The summary of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's description.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The description of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's author.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The author of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_author(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's website.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The website of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns the path to a plugin's icon.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The path to the plugin's icon, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a plugin's license.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The license of the plugin, or @c NULL.
+ */
 const gchar *purple_plugin_info_get_license(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns the required ABI version for a plugin.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The required ABI version for the plugin, or @c NULL.
+ */
 guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 
 /**
  * Returns a list of actions that a plugin can perform.
  *
- * @param plugin_info The plugin info to get the actions from.
+ * @param info The plugin info to get the actions from.
  *
  * @constreturn A list of #PurplePluginAction instances corresponding to the
  *              actions a plugin can perform.
@@ -241,7 +319,7 @@ GList *purple_plugin_info_get_actions(const PurplePluginInfo *info);
  * guarantee the plugin is loadable.
  * An error is set if the plugin is not loadable.
  *
- * @param plugin_info The plugin info of the plugin.
+ * @param info The plugin info of the plugin.
  *
  * @return @c TRUE if the plugin may be loadable, @c FALSE if the plugin is not
  *         loadable.
@@ -253,19 +331,25 @@ gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *info);
 /**
  * If a plugin is not loadable, this returns the reason.
  *
- * @param plugin_info The plugin info of the plugin.
+ * @param info The plugin info of the plugin.
  *
  * @return The reason why the plugin is not loadable.
  */
 gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
 
-/* TODO */
+/**
+ * Returns a list of plugins that a particular plugin depends on.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @constreturn The list of dependencies of a plugin.
+ */
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
  * Sets a callback to be invoked to retrieve the preferences frame for a plugin.
  *
- * @param plugin_info The plugin info to set the callback for.
+ * @param info The plugin info to set the callback for.
  * @param callback    The callback that returns the preferences frame.
  */
 void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
@@ -274,7 +358,7 @@ void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
 /**
  * Returns the callback that retrieves the preferences frame for a plugin.
  *
- * @param plugin_info The plugin info to get the callback from.
+ * @param info The plugin info to get the callback from.
  *
  * @return The callback that returns the preferences frame.
  */
@@ -314,13 +398,27 @@ GList *purple_plugins_find_all(void);
  */
 GList *purple_plugins_get_loaded(void);
 
-/* TODO */
+/**
+ * Add a new directory to search for plugins
+ *
+ * @param path The new search path.
+ */
 void purple_plugins_add_search_path(const gchar *path);
 
-/* TODO */
+/**
+ * Forces a refresh of all plugins found in the search paths.
+ *
+ * @see purple_plugins_add_search_path()
+ */
 void purple_plugins_refresh(void);
 
-/* TODO */
+/**
+ * Finds a plugin with the specified plugin ID.
+ *
+ * @param id The plugin ID.
+ *
+ * @return The plugin if found, or @c NULL if not found.
+ */
 PurplePlugin *purple_plugins_find_plugin(const gchar *id);
 
 /**
