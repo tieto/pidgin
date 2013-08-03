@@ -566,7 +566,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 #endif
 
 	if (js->bosh)
-		jabber_bosh_connection_send_raw(js->bosh, data);
+		jabber_bosh_connection_send(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
 }
@@ -775,7 +775,7 @@ txt_resolved_cb(GList *responses, gpointer data)
 		token = g_strsplit(purple_txt_response_get_content(resp), "=", 2);
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
-			js->bosh = jabber_bosh_connection_init(js, token[1]);
+			js->bosh = jabber_bosh_connection_new(js, token[1]);
 			g_strfreev(token);
 			break;
 		}
@@ -784,10 +784,8 @@ txt_resolved_cb(GList *responses, gpointer data)
 		responses = g_list_delete_link(responses, responses);
 	}
 
-	if (js->bosh) {
+	if (js->bosh)
 		found = TRUE;
-		jabber_bosh_connection_connect(js->bosh);
-	}
 
 	if (!found) {
 		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
@@ -1036,10 +1034,8 @@ jabber_stream_connect(JabberStream *js)
 	 * attached to that choice, though.
 	 */
 	if (*bosh_url) {
-		js->bosh = jabber_bosh_connection_init(js, bosh_url);
-		if (js->bosh)
-			jabber_bosh_connection_connect(js->bosh);
-		else {
+		js->bosh = jabber_bosh_connection_new(js, bosh_url);
+		if (!js->bosh) {
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Malformed BOSH URL"));
@@ -1591,9 +1587,10 @@ void jabber_close(PurpleConnection *gc)
 	/* Close all of the open Jingle sessions on this stream */
 	jingle_terminate_sessions(js);
 
-	if (js->bosh)
-		jabber_bosh_connection_close(js->bosh);
-	else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
+	if (js->bosh) {
+		jabber_bosh_connection_destroy(js->bosh);
+		js->bosh = NULL;
+	} else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
@@ -1608,9 +1605,6 @@ void jabber_close(PurpleConnection *gc)
 		}
 		close(js->fd);
 	}
-
-	if (js->bosh)
-		jabber_bosh_connection_destroy(js->bosh);
 
 	jabber_buddy_remove_all_pending_buddy_info_requests(js);
 
