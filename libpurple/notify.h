@@ -54,8 +54,8 @@ typedef void  (*PurpleNotifyCloseCallback) (gpointer user_data);
 typedef enum
 {
 	PURPLE_NOTIFY_MESSAGE = 0,   /**< Message notification.         */
-	PURPLE_NOTIFY_EMAIL,         /**< Single email notification.   */
-	PURPLE_NOTIFY_EMAILS,        /**< Multiple email notification. */
+	PURPLE_NOTIFY_EMAIL,         /**< Single email notification.    */
+	PURPLE_NOTIFY_EMAILS,        /**< Multiple email notification.  */
 	PURPLE_NOTIFY_FORMATTED,     /**< Formatted text.               */
 	PURPLE_NOTIFY_SEARCHRESULTS, /**< Buddy search results.         */
 	PURPLE_NOTIFY_USERINFO,      /**< Formatted userinfo text.      */
@@ -716,7 +716,7 @@ PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Notify Subsystem                                         */
+/** @name Notify Subsystem                                                */
 /**************************************************************************/
 /*@{*/
 
