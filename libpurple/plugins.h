@@ -150,6 +150,12 @@ gboolean purple_plugin_unload(PurplePlugin *plugin);
  */
 gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
+/* TODO */
+const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
+
+/* TODO */
+PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
+
 /**
  * Adds a new action to a plugin.
  *
@@ -182,6 +188,30 @@ void purple_plugin_disable(PurplePlugin *plugin);
  */
 GType purple_plugin_info_get_type(void);
 
+/* TODO */
+const gchar *purple_plugin_info_get_id(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_author(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
+
+/* TODO */
+guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
+
 /**
  * Returns a list of actions that a plugin can perform.
  *
@@ -192,7 +222,7 @@ GType purple_plugin_info_get_type(void);
  *
  * @see purple_plugin_add_action()
  */
-GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
+GList *purple_plugin_info_get_actions(const PurplePluginInfo *plugin_info);
 
 /**
  * Returns whether or not a plugin is loadable.
@@ -209,7 +239,7 @@ GList *purple_plugin_info_get_actions(PurplePluginInfo *plugin_info);
  *
  * @see purple_plugin_info_get_error()
  */
-gboolean purple_plugin_info_is_loadable(PurplePluginInfo *plugin_info);
+gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *plugin_info);
 
 /**
  * If a plugin is not loadable, this returns the reason.
@@ -218,7 +248,10 @@ gboolean purple_plugin_info_is_loadable(PurplePluginInfo *plugin_info);
  *
  * @return The reason why the plugin is not loadable.
  */
-gchar *purple_plugin_info_get_error(PurplePluginInfo *plugin_info);
+gchar *purple_plugin_info_get_error(const PurplePluginInfo *plugin_info);
+
+/* TODO */
+GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
  * Sets a callback to be invoked to retrieve the preferences frame for a plugin.
@@ -237,7 +270,7 @@ void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
  * @return The callback that returns the preferences frame.
  */
 PurplePluginPrefFrameCallback
-purple_plugin_info_get_pref_frame_callback(PurplePluginInfo *plugin_info);
+purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *plugin_info);
 
 /*@}*/
 
@@ -260,18 +293,10 @@ GType purple_plugin_action_get_type(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
- * Use purple_plugins_free_found_list() to free this list when done with it.
  *
- * @return A list of all referenced plugins.
+ * @return A list of all plugins.
  */
 GList *purple_plugins_find_all(void);
-
-/**
- * Frees a list of referenced plugins by unreferencing them first.
- *
- * @param plugins The list of referenced plugins.
- */
-void purple_plugins_free_found_list(GList *plugins);
 
 /**
  * Returns a list of all loaded plugins.
@@ -280,12 +305,21 @@ void purple_plugins_free_found_list(GList *plugins);
  */
 GList *purple_plugins_get_loaded(void);
 
+/* TODO */
+void purple_plugins_add_search_path(const gchar *path);
+
+/* TODO */
+void purple_plugins_refresh(void);
+
+/* TODO */
+PurplePlugin *purple_plugins_find_plugin(const gchar *id);
+
 /**
  * Finds a plugin with the specified filename (filename with a path).
  *
  * @param filename The plugin filename.
  *
- * @return The referenced plugin if found, or @c NULL if not found.
+ * @return The plugin if found, or @c NULL if not found.
  */
 PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
