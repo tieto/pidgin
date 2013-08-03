@@ -1736,6 +1736,11 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 			g_strdup(purple_account_get_protocol_id(dialog->account));
 	}
 
+	/* TODO if no protocols are loaded, this should inform the user that
+	        protocols need to be loaded instead of just doing nothing */
+	if (!dialog->prpl_info)
+		return;
+
 	dialog->prpl_info = purple_find_protocol_info(dialog->protocol_id);
 
 	dialog->window = win = pidgin_create_dialog((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
