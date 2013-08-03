@@ -631,14 +631,13 @@ plugin_act(GtkWidget *widget, PurplePluginAction *pam)
 }
 
 static void
-build_plugin_actions(GtkWidget *menu, GPluginPlugin *plugin)
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 {
-	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
 	GtkWidget *menuitem;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	actions = purple_plugin_info_get_actions(info);
+	actions = purple_plugin_info_get_actions(purple_plugin_get_info(plugin));
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -657,8 +656,6 @@ build_plugin_actions(GtkWidget *menu, GPluginPlugin *plugin)
 		else
 			pidgin_separator(menu);
 	}
-
-	g_object_unref(info);
 }
 
 
@@ -666,8 +663,8 @@ static void
 docklet_plugin_actions(GtkWidget *menu)
 {
 	GtkWidget *menuitem, *submenu;
-	GPluginPlugin *plugin = NULL;
-	GPluginPluginInfo *info;
+	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	GList *l;
 	int c = 0;
 
@@ -675,24 +672,21 @@ docklet_plugin_actions(GtkWidget *menu)
 
 	/* Add a submenu for each plugin with custom actions */
 	for (l = purple_plugins_get_loaded(); l; l = l->next) {
-		plugin = GPLUGIN_PLUGIN(l->data);
-		info = gplugin_plugin_get_info(plugin);
+		plugin = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plugin);
 
-		if (!purple_plugin_info_get_actions(PURPLE_PLUGIN_INFO(info))) {
-			g_object_unref(info);
+		if (!purple_plugin_info_get_actions(info))
 			continue;
-		}
 
-		menuitem = gtk_image_menu_item_new_with_label(_(gplugin_plugin_info_get_name(info)));
+		menuitem = gtk_image_menu_item_new_with_label(_(purple_plugin_info_get_name(info)));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 		build_plugin_actions(submenu, plugin);
-		c++;
 
-		g_object_unref(info);
+		c++;
 	}
 	if(c>0)
 		pidgin_separator(menu);

@@ -41,7 +41,7 @@ typedef struct _PidginPluginInfo PidginPluginInfo;
 /** @copydoc _PidginPluginInfoClass */
 typedef struct _PidginPluginInfoClass PidginPluginInfoClass;
 
-typedef GtkWidget *(*PidginPluginConfigFrame)(GPluginPlugin *);
+typedef GtkWidget *(*PidginPluginConfigFrame)(PurplePlugin *);
 
 /**
  * Extends #PurplePluginInfo to hold UI information for pidgin.
@@ -82,7 +82,7 @@ GType pidgin_plugin_info_get_type(void);
  * @return The frame, if the plugin is a GTK+ plugin and provides a
  *         configuration frame.
  */
-GtkWidget *pidgin_plugin_get_config_frame(GPluginPlugin *plugin);
+GtkWidget *pidgin_plugin_get_config_frame(PurplePlugin *plugin);
 
 /**
  * Saves all loaded plugins.

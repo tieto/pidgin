@@ -385,13 +385,11 @@ debug_command_cb(PurpleConversation *conv,
 		const GList *plugins = purple_plugins_get_loaded();
 		if (plugins) {
 			for (; plugins; plugins = plugins->next) {
-				GPluginPluginInfo *info = gplugin_plugin_get_info(GPLUGIN_PLUGIN(plugins->data));
-				str = g_string_append(str, gplugin_plugin_info_get_name(info));
+				PurplePluginInfo *info = purple_plugin_get_info(PURPLE_PLUGIN(plugins->data));
+				str = g_string_append(str, purple_plugin_info_get_name(info));
 
 				if (plugins->next)
 					str = g_string_append(str, ", ");
-
-				g_object_unref(info);
 			}
 		} else {
 			str = g_string_append(str, "(none)");
@@ -9879,7 +9877,7 @@ create_icon_lists(GtkWidget *w)
 }
 
 static void
-plugin_changed_cb(GPluginPlugin *p, gpointer data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	regenerate_plugins_items(data);
 }

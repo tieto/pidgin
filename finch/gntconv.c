@@ -603,7 +603,7 @@ invite_cb(GntMenuItem *item, gpointer ggconv)
 }
 
 static void
-plugin_changed_cb(GPluginPlugin *p, gpointer data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	gg_extended_menu(data);
 }
@@ -1251,13 +1251,11 @@ debug_command_cb(PurpleConversation *conv,
 		const GList *plugins = purple_plugins_get_loaded();
 		if (plugins) {
 			for (; plugins; plugins = plugins->next) {
-				GPluginPluginInfo *plugin_info = gplugin_plugin_get_info(plugins->data);
-				str = g_string_append(str, gplugin_plugin_info_get_name(plugin_info));
+				PurplePluginInfo *plugin_info = purple_plugin_get_info(plugins->data);
+				str = g_string_append(str, purple_plugin_info_get_name(plugin_info));
 
 				if (plugins->next)
 					str = g_string_append(str, ", ");
-
-				g_object_unref(plugin_info);
 			}
 		} else {
 			str = g_string_append(str, "(none)");

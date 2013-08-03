@@ -72,20 +72,24 @@ purple_plugin_load(PurplePlugin *plugin)
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
+	plugin_info = purple_plugin_get_info(plugin);
+
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
 
-	plugin_info = PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
-
-	if (!purple_plugin_info_is_loadable(plugin_info)) {
-		g_object_unref(plugin_info);
+	if (!plugin_info) {
+		purple_debug_error("plugins",
+				"Failed to load plugin %s: Plugin does not return a PluginInfo",
+				purple_plugin_get_filename(plugin));
 		return FALSE;
 	}
-	g_object_unref(plugin_info);
+
+	if (!purple_plugin_info_is_loadable(plugin_info))
+		return FALSE;
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				gplugin_plugin_get_filename(plugin), error->message);
+				purple_plugin_get_filename(plugin), error->message);
 		g_error_free(error);
 		return FALSE;
 	}
@@ -106,11 +110,11 @@ purple_plugin_unload(PurplePlugin *plugin)
 	g_return_val_if_fail(purple_plugin_is_loaded(plugin), FALSE);
 
 	purple_debug_info("plugins", "Unloading plugin %s\n",
-			gplugin_plugin_get_filename(plugin));
+			purple_plugin_get_filename(plugin));
 
 	if (!gplugin_plugin_manager_unload_plugin(plugin, &error)) {
 		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
-				gplugin_plugin_get_filename(plugin), error->message);
+				purple_plugin_get_filename(plugin), error->message);
 		g_error_free(error);
 		return FALSE;
 	}
@@ -148,22 +152,23 @@ purple_plugin_get_filename(const PurplePlugin *plugin)
 PurplePluginInfo *
 purple_plugin_get_info(const PurplePlugin *plugin)
 {
-	return PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
+	GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
+	g_object_unref(info);
+
+	return PURPLE_PLUGIN_INFO(info);
 }
 
 void
 purple_plugin_add_action(PurplePlugin *plugin, const char* label,
                          PurplePluginActionCallback callback)
 {
-	GPluginPluginInfo *plugin_info;
 	PurplePluginInfoPrivate *priv;
 	PurplePluginAction *action;
 
 	g_return_if_fail(plugin != NULL);
 	g_return_if_fail(label != NULL && callback != NULL);
 
-	plugin_info = gplugin_plugin_get_info(plugin);
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
 	action = g_new0(PurplePluginAction, 1);
 
@@ -172,8 +177,6 @@ purple_plugin_add_action(PurplePlugin *plugin, const char* label,
 	action->plugin   = plugin;
 
 	priv->actions = g_list_append(priv->actions, action);
-
-	g_object_unref(plugin_info);
 }
 
 void
@@ -236,9 +239,9 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_plugin_info_constructed(GObject *object)
 {
-	GPluginPluginInfo *plugin_info = GPLUGIN_PLUGIN_INFO(object);
+	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(object);
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
-	const char *id = gplugin_plugin_info_get_id(plugin_info);
+	const char *id = purple_plugin_info_get_id(plugin_info);
 	guint32 abi_version;
 
 	G_OBJECT_CLASS(parent_class)->constructed(object);
@@ -262,7 +265,7 @@ purple_plugin_info_constructed(GObject *object)
 		priv->loadable = FALSE;
 	}
 
-	abi_version = gplugin_plugin_info_get_abi_version(plugin_info);
+	abi_version = purple_plugin_info_get_abi_version(plugin_info);
 	if (PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi_version) != PURPLE_MAJOR_VERSION ||
 		PURPLE_PLUGIN_ABI_MINOR_VERSION(abi_version) > PURPLE_MINOR_VERSION)
 	{
@@ -537,7 +540,10 @@ purple_plugins_refresh(void)
 PurplePlugin *
 purple_plugins_find_plugin(const gchar *id)
 {
-	return gplugin_plugin_manager_find_plugin(id);
+	PurplePlugin *plugin = gplugin_plugin_manager_find_plugin(id);
+	g_object_unref(plugin);
+
+	return plugin;
 }
 
 PurplePlugin *
@@ -549,7 +555,7 @@ purple_plugins_find_by_filename(const char *filename)
 	for (l = plugins; l != NULL; l = l->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(l->data);
 
-		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename)) {
+		if (purple_strequal(purple_plugin_get_filename(plugin), filename)) {
 			g_list_free(plugins);
 			return plugin;
 		}
@@ -568,7 +574,7 @@ purple_plugins_save_loaded(const char *key)
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(pl->data);
 		if (!g_list_find(plugins_to_disable, plugin))
-			files = g_list_append(files, (gchar *)gplugin_plugin_get_filename(plugin));
+			files = g_list_append(files, (gchar *)purple_plugin_get_filename(plugin));
 	}
 
 	purple_prefs_set_string_list(key, files);
@@ -598,7 +604,6 @@ purple_plugins_load_saved(const char *key)
 		if (plugin) {
 			purple_debug_info("plugins", "Loading saved plugin %s\n", file);
 			purple_plugin_load(plugin);
-			g_object_unref(plugin);
 		} else {
 			purple_debug_error("plugins", "Unable to find saved plugin %s\n", file);
 		}
@@ -633,12 +638,9 @@ purple_plugins_init(void)
 	void *handle = purple_plugins_get_handle();
 
 	gplugin_init();
-	gplugin_set_plugin_info_type(PURPLE_TYPE_PLUGIN_INFO);
-	gplugin_plugin_manager_append_path(LIBDIR);
-	gplugin_plugin_manager_refresh();
+	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_refresh();
 
-	/* TODO GPlugin already has signals for these, these should be removed once
-	        the new plugin API is properly established */
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
 						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);

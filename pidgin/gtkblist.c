@@ -4653,7 +4653,7 @@ sign_on_off_cb(PurpleConnection *gc, PurpleBuddyList *blist)
 }
 
 static void
-plugin_changed_cb(GPluginPlugin *p, gpointer data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	pidgin_blist_update_plugin_actions();
 }
@@ -8350,7 +8350,7 @@ static GtkActionGroup *plugins_action_group = NULL;
 void
 pidgin_blist_update_plugin_actions(void)
 {
-	GPluginPlugin *plugin = NULL;
+	PurplePlugin *plugin = NULL;
 	GList *l;
 
 	GtkAction *action;
@@ -8379,20 +8379,18 @@ pidgin_blist_update_plugin_actions(void)
 		char *name;
 		PurplePluginInfo *info;
 
-		plugin = GPLUGIN_PLUGIN(l->data);
-		info = PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
+		plugin = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plugin);
 
 		if (!info)
 			continue;
 
-		if (!purple_plugin_info_get_actions(info)) {
-			g_object_unref(info);
+		if (!purple_plugin_info_get_actions(info))
 			continue;
-		}
 
 		name = g_strdup_printf("plugin%d", count);
 		action = gtk_action_new(name,
-				gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(info)), NULL, NULL);
+				purple_plugin_info_get_name(info), NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 
@@ -8402,7 +8400,6 @@ pidgin_blist_update_plugin_actions(void)
 		count++;
 
 		g_free(name);
-		g_object_unref(info);
 	}
 
 	ui_string = g_strconcat("<ui><menubar action='BList'><menu action='ToolsMenu'><placeholder name='PluginActions'>",

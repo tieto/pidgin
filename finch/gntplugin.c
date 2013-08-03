@@ -95,10 +95,10 @@ free_stringlist(GList *list)
 }
 
 static void
-decide_conf_button(GPluginPlugin *plugin)
+decide_conf_button(PurplePlugin *plugin)
 {
 	gboolean visible = FALSE;
-	GPluginPluginInfo *info = gplugin_plugin_get_info(plugin);
+	PurplePluginInfo *info = purple_plugin_get_info(plugin);
 
 	if (purple_plugin_is_loaded(plugin)) {
 		FinchPluginInfoPrivate *priv = NULL;
@@ -106,7 +106,7 @@ decide_conf_button(GPluginPlugin *plugin)
 			priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
 		if ((priv && priv->get_pref_frame) ||
-			(purple_plugin_info_get_pref_frame_callback(PURPLE_PLUGIN_INFO(info)))) {
+			(purple_plugin_info_get_pref_frame_callback(info))) {
 			visible = TRUE;
 		}
 	}
@@ -114,12 +114,10 @@ decide_conf_button(GPluginPlugin *plugin)
 	gnt_widget_set_visible(plugins.conf, visible);
 	gnt_box_readjust(GNT_BOX(plugins.window));
 	gnt_widget_draw(plugins.window);
-
-	g_object_unref(info);
 }
 
 static void
-plugin_toggled_cb(GntWidget *tree, GPluginPlugin *plugin, gpointer null)
+plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 {
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
@@ -157,15 +155,15 @@ finch_plugins_save_loaded(void)
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer null)
 {
-	GPluginPlugin *plugin = current;
-	GPluginPluginInfo *info;
+	PurplePlugin *plugin = current;
+	PurplePluginInfo *info;
 	char *text;
 	GList *list = NULL, *iter = NULL;
 
 	if (!plugin)
 		return;
 
-	info = gplugin_plugin_get_info(plugin);
+	info = purple_plugin_get_info(plugin);
 
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it
@@ -174,30 +172,28 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	 * I probably mean 'plugin developers' by 'users' here. */
 	list = g_object_get_data(G_OBJECT(widget), "seen-list");
 	if (list)
-		iter = g_list_find_custom(list, gplugin_plugin_get_filename(plugin),
+		iter = g_list_find_custom(list, purple_plugin_get_filename(plugin),
 					(GCompareFunc)strcmp);
 	if (!iter) {
-		list = g_list_prepend(list, g_strdup(gplugin_plugin_get_filename(plugin)));
+		list = g_list_prepend(list, g_strdup(purple_plugin_get_filename(plugin)));
 		g_object_set_data(G_OBJECT(widget), "seen-list", list);
 	}
 
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
 	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
-			SAFE(_(gplugin_plugin_info_get_name(info))),
-			SAFE(_(gplugin_plugin_info_get_version(info))),
-			SAFE(_(gplugin_plugin_info_get_description(info))),
-			SAFE(_(gplugin_plugin_info_get_author(info))),
-			SAFE(_(gplugin_plugin_info_get_website(info))),
-			SAFE(gplugin_plugin_get_filename(plugin)));
+			SAFE(_(purple_plugin_info_get_name(info))),
+			SAFE(_(purple_plugin_info_get_version(info))),
+			SAFE(_(purple_plugin_info_get_description(info))),
+			SAFE(_(purple_plugin_info_get_author(info))),
+			SAFE(_(purple_plugin_info_get_website(info))),
+			SAFE(purple_plugin_get_filename(plugin)));
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
 	g_free(text);
 	decide_conf_button(plugin);
-
-	g_object_unref(info);
 }
 
 static void
@@ -214,19 +210,13 @@ reset_plugin_window(GntWidget *window, gpointer null)
 }
 
 static int
-plugin_compare(GPluginPlugin *p1, GPluginPlugin *p2)
+plugin_compare(PurplePlugin *p1, PurplePlugin *p2)
 {
-	GPluginPluginInfo *info1 = gplugin_plugin_get_info(p1);
-	GPluginPluginInfo *info2 = gplugin_plugin_get_info(p2);
-	char *s1 = g_utf8_strup(gplugin_plugin_info_get_name(info1), -1);
-	char *s2 = g_utf8_strup(gplugin_plugin_info_get_name(info2), -1);
-
+	char *s1 = g_utf8_strup(purple_plugin_info_get_name(purple_plugin_get_info(p1)), -1);
+	char *s2 = g_utf8_strup(purple_plugin_info_get_name(purple_plugin_get_info(p2)), -1);
 	int ret = g_utf8_collate(s1, s2);
-
 	g_free(s1);
 	g_free(s2);
-	g_object_unref(info1);
-	g_object_unref(info2);
 
 	return ret;
 }
@@ -246,7 +236,7 @@ remove_confwin(GntWidget *window, gpointer plugin)
 static void
 configure_plugin_cb(GntWidget *button, gpointer null)
 {
-	GPluginPlugin *plugin;
+	PurplePlugin *plugin;
 	PurplePluginInfo *info;
 	FinchPluginInfoPrivate *priv = NULL;
 
@@ -263,7 +253,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (confwins && g_hash_table_lookup(confwins, plugin))
 		return;
 
-	info = PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
+	info = purple_plugin_get_info(plugin);
 	if (FINCH_IS_PLUGIN_INFO(info))
 		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
@@ -274,7 +264,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 
 		gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 		gnt_box_set_title(GNT_BOX(window),
-				gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(info)));
+				purple_plugin_info_get_name(info));
 		gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
 		box = priv->get_pref_frame();
@@ -309,8 +299,6 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 		purple_notify_info(plugin, _("Error"),
 			_("No configuration options for this plugin."), NULL);
 	}
-
-	g_object_unref(info);
 }
 
 #if 0
@@ -324,7 +312,7 @@ install_selected_file_cb(gpointer handle, const char *filename)
 	 * Select the plugin in the plugin list.
 	 */
 	char *path;
-	GPluginPlugin *plugin;
+	PurplePlugin *plugin;
 
 	g_return_if_fail(plugins.window);
 
@@ -413,7 +401,7 @@ void finch_plugins_show_all(void)
 		return;
 	}
 
-	gplugin_plugin_manager_refresh();
+	purple_plugins_refresh();
 
 	plugins.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
@@ -446,31 +434,16 @@ void finch_plugins_show_all(void)
 	plugin_list = purple_plugins_find_all();
 	for (iter = plugin_list; iter; iter = iter->next)
 	{
-		GPluginPlugin *plug = iter->data;
-#if 0
-		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
-			GList *cur;
-			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
-					 cur = cur->next)
-				purple_plugins_probe(cur->data);
-			continue;
-		}
-
-		if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
-			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
-			plug->error)
-			continue;
-#endif
-		GPluginPluginInfo *info = gplugin_plugin_get_info(plug);
+		PurplePlugin *plug = PURPLE_PLUGIN(iter->data);
 
 		gnt_tree_add_choice(GNT_TREE(tree), plug,
-				gnt_tree_create_row(GNT_TREE(tree), gplugin_plugin_info_get_name(info)), NULL, NULL);
+				gnt_tree_create_row(GNT_TREE(tree),
+				purple_plugin_info_get_name(purple_plugin_get_info(plug))),
+				NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(tree), plug, purple_plugin_is_loaded(plug));
-		if (!g_list_find_custom(seen, gplugin_plugin_get_filename(plug),
+		if (!g_list_find_custom(seen, purple_plugin_get_filename(plug),
 				(GCompareFunc)strcmp))
 			gnt_tree_set_row_flags(GNT_TREE(tree), plug, GNT_TEXT_FLAG_BOLD);
-
-		g_object_unref(info);
 	}
 	g_list_free(plugin_list);
 

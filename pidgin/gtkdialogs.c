@@ -565,7 +565,6 @@ void pidgin_dialogs_buildinfo(void)
 	GString *str;
 	char *tmp;
 	static GtkWidget *buildinfo = NULL;
-	GPluginPlugin *plugin;
 
 	if (buildinfo != NULL) {
 		gtk_window_present(GTK_WINDOW(buildinfo));
@@ -687,23 +686,18 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Network Security Services (NSS):</dt><dd>Disabled</dd>");
 #endif
 
-	plugin = gplugin_plugin_manager_find_plugin("core-perl");
-	if (plugin != NULL) {
+	if (purple_plugins_find_plugin("core-perl") != NULL)
 		g_string_append(str, "<dt>Perl:</dt><dd>Enabled</dd>");
-		g_object_unref(plugin);
-	} else {
+	else
 		g_string_append(str, "<dt>Perl:</dt><dd>Disabled</dd>");
-	}
 
-	plugin = gplugin_plugin_manager_find_plugin("core-tcl");
-	if (plugin != NULL) {
+	if (purple_plugins_find_plugin("core-tcl") != NULL) {
 		g_string_append(str, "<dt>Tcl:</dt><dd>Enabled</dd>");
 #ifdef HAVE_TK
 		g_string_append(str, "<dt>Tk:</dt><dd>Enabled</dd>");
 #else
 		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
 #endif
-		g_object_unref(plugin);
 	} else {
 		g_string_append(str, "<dt>Tcl:</dt><dd>Disabled</dd>");
 		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
@@ -835,8 +829,8 @@ void pidgin_dialogs_plugins_info(void)
 {
 	GString *str;
 	GList *plugins, *l = NULL;
-	GPluginPlugin *plugin = NULL;
-	GPluginPluginInfo *info;
+	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
 	char *pname = NULL, *pauthor = NULL;
 	const char *pver, *pwebsite, *pid;
@@ -850,16 +844,16 @@ void pidgin_dialogs_plugins_info(void)
 	plugins = purple_plugins_find_all();
 
 	for(l = plugins; l; l = l->next) {
-		plugin = GPLUGIN_PLUGIN(l->data);
-		info = gplugin_plugin_get_info(plugin);
+		plugin = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plugin);
 
-		pname = g_markup_escape_text(gplugin_plugin_info_get_name(info), -1);
-		if ((pauthor = (char *)gplugin_plugin_info_get_author(info)) != NULL)
+		pname = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
+		if ((pauthor = (char *)purple_plugin_info_get_author(info)) != NULL)
 			pauthor = g_markup_escape_text(pauthor, -1);
-		pver = gplugin_plugin_info_get_version(info);
-		pwebsite = gplugin_plugin_info_get_website(info);
-		pid = gplugin_plugin_info_get_id(info);
-		ploadable = purple_plugin_info_is_loadable(PURPLE_PLUGIN_INFO(info));
+		pver = purple_plugin_info_get_version(info);
+		pwebsite = purple_plugin_info_get_website(info);
+		pid = purple_plugin_info_get_id(info);
+		ploadable = purple_plugin_info_is_loadable(info);
 		ploaded = purple_plugin_is_loaded(plugin);
 
 		g_string_append_printf(str,
@@ -878,7 +872,6 @@ void pidgin_dialogs_plugins_info(void)
 
 		g_free(pname);
 		g_free(pauthor);
-		g_object_unref(info);
 	}
 	g_list_free(plugins);
 

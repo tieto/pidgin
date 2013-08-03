@@ -2563,24 +2563,16 @@ reconstruct_plugins_menu(void)
 	gnt_menuitem_set_submenu(plg, GNT_MENU(sub));
 
 	for (iter = purple_plugins_get_loaded(); iter; iter = iter->next) {
-		GPluginPlugin *plugin = iter->data;
-		PurplePluginInfo *plugin_info =
-				PURPLE_PLUGIN_INFO(gplugin_plugin_get_info(plugin));
+		PurplePlugin *plugin = PURPLE_PLUGIN(iter->data);
+		PurplePluginInfo *plugin_info = purple_plugin_get_info(plugin);
 		GntMenuItem *item;
 
-		if (!plugin_info)
+		if (!purple_plugin_info_get_actions(plugin_info))
 			continue;
 
-		if (!purple_plugin_info_get_actions(plugin_info)) {
-			g_object_unref(plugin_info);
-			continue;
-		}
-
-		item = gnt_menuitem_new(_(gplugin_plugin_info_get_name(GPLUGIN_PLUGIN_INFO(plugin_info))));
+		item = gnt_menuitem_new(_(purple_plugin_info_get_name(plugin_info)));
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		build_plugin_actions(item, plugin_info);
-
-		g_object_unref(plugin_info);
 	}
 }
 

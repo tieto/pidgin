@@ -372,8 +372,8 @@ init_libpurple(int argc, char **argv)
 	path = g_build_filename(purple_user_dir(), "plugins", NULL);
 	if (!g_stat(path, &st))
 		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
-	gplugin_plugin_manager_append_path(path);
-	gplugin_plugin_manager_refresh();
+	purple_plugins_add_search_path(path);
+	purple_plugins_refresh();
 	g_free(path);
 
 	/* TODO: should this be moved into finch_prefs_init() ? */
