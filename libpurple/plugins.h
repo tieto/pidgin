@@ -169,6 +169,16 @@ const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
 PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
 
 /**
+ * Disable a plugin.
+ *
+ * This function adds the plugin to a list of plugins to "disable at the next
+ * startup" by excluding said plugins from the list of plugins to save.  The
+ * UI needs to call purple_plugins_save_loaded() after calling this for it
+ * to have any effect.
+ */
+void purple_plugin_disable(PurplePlugin *plugin);
+
+/**
  * Adds a new action to a plugin.
  *
  * @param plugin   The plugin to add the action to.
@@ -179,14 +189,51 @@ void purple_plugin_add_action(PurplePlugin *plugin, const char* label,
                               PurplePluginActionCallback callback);
 
 /**
- * Disable a plugin.
+ * Returns a list of actions that a plugin can perform.
  *
- * This function adds the plugin to a list of plugins to "disable at the next
- * startup" by excluding said plugins from the list of plugins to save.  The
- * UI needs to call purple_plugins_save_loaded() after calling this for it
- * to have any effect.
+ * @param plugin The plugin to get the actions from.
+ *
+ * @constreturn A list of #PurplePluginAction instances corresponding to the
+ *              actions a plugin can perform.
+ *
+ * @see purple_plugin_add_action()
  */
-void purple_plugin_disable(PurplePlugin *plugin);
+GList *purple_plugin_get_actions(const PurplePlugin *plugin);
+
+/**
+ * Returns whether or not a plugin is loadable.
+ *
+ * If this returns @c FALSE, the plugin is guaranteed to not
+ * be loadable. However, a return value of @c TRUE does not
+ * guarantee the plugin is loadable.
+ * An error is set if the plugin is not loadable.
+ *
+ * @param plugin The plugin.
+ *
+ * @return @c TRUE if the plugin may be loadable, @c FALSE if the plugin is not
+ *         loadable.
+ *
+ * @see purple_plugin_get_error()
+ */
+gboolean purple_plugin_is_loadable(const PurplePlugin *plugin);
+
+/**
+ * If a plugin is not loadable, this returns the reason.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The reason why the plugin is not loadable.
+ */
+gchar *purple_plugin_get_error(const PurplePlugin *plugin);
+
+/**
+ * Returns a list of plugins that depend on a particular plugin.
+ *
+ * @param plugin The plugin whose dependent plugins are returned.
+ *
+ * @constreturn The list of a plugins that depend on the specified plugin.
+ */
+GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 
 /*@}*/
 
@@ -300,44 +347,6 @@ const gchar *purple_plugin_info_get_license(const PurplePluginInfo *info);
 guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 
 /**
- * Returns a list of actions that a plugin can perform.
- *
- * @param info The plugin info to get the actions from.
- *
- * @constreturn A list of #PurplePluginAction instances corresponding to the
- *              actions a plugin can perform.
- *
- * @see purple_plugin_add_action()
- */
-GList *purple_plugin_info_get_actions(const PurplePluginInfo *info);
-
-/**
- * Returns whether or not a plugin is loadable.
- *
- * If this returns @c FALSE, the plugin is guaranteed to not
- * be loadable. However, a return value of @c TRUE does not
- * guarantee the plugin is loadable.
- * An error is set if the plugin is not loadable.
- *
- * @param info The plugin info of the plugin.
- *
- * @return @c TRUE if the plugin may be loadable, @c FALSE if the plugin is not
- *         loadable.
- *
- * @see purple_plugin_info_get_error()
- */
-gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *info);
-
-/**
- * If a plugin is not loadable, this returns the reason.
- *
- * @param info The plugin info of the plugin.
- *
- * @return The reason why the plugin is not loadable.
- */
-gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
-
-/**
  * Returns a list of plugins that a particular plugin depends on.
  *
  * @param info The plugin's info instance.
@@ -345,15 +354,6 @@ gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
  * @constreturn The list of dependencies of a plugin.
  */
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
-
-/**
- * Returns a list of plugins that depend on a particular plugin.
- *
- * @param info The plugin info of the plugin whos dependent plugins are needed.
- *
- * @constreturn The list of a plugins that depend on the specified plugin.
- */
-GSList *purple_plugin_info_get_dependent_plugins(const PurplePluginInfo *info);
 
 /**
  * Sets a callback to be invoked to retrieve the preferences frame for a plugin.

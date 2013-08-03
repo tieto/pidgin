@@ -69,24 +69,21 @@ static GList *plugins_to_disable = NULL;
 gboolean
 purple_plugin_load(PurplePlugin *plugin)
 {
-	PurplePluginInfo *info;
 	GError *error = NULL;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	info = purple_plugin_get_info(plugin);
-
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
 
-	if (!info) {
+	if (!purple_plugin_get_info(plugin)) {
 		purple_debug_error("plugins",
 				"Failed to load plugin %s: Plugin does not return a PluginInfo",
 				purple_plugin_get_filename(plugin));
 		return FALSE;
 	}
 
-	if (!purple_plugin_info_is_loadable(info))
+	if (!purple_plugin_is_loadable(plugin))
 		return FALSE;
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
@@ -167,6 +164,15 @@ purple_plugin_get_info(const PurplePlugin *plugin)
 }
 
 void
+purple_plugin_disable(PurplePlugin *plugin)
+{
+	g_return_if_fail(plugin != NULL);
+
+	if (!g_list_find(plugins_to_disable, plugin))
+		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
+}
+
+void
 purple_plugin_add_action(PurplePlugin *plugin, const char* label,
                          PurplePluginActionCallback callback)
 {
@@ -187,13 +193,59 @@ purple_plugin_add_action(PurplePlugin *plugin, const char* label,
 	priv->actions = g_list_append(priv->actions, action);
 }
 
-void
-purple_plugin_disable(PurplePlugin *plugin)
+GList *
+purple_plugin_get_actions(const PurplePlugin *plugin)
 {
-	g_return_if_fail(plugin != NULL);
+	PurplePluginInfo *info;
+	PurplePluginInfoPrivate *priv;
 
-	if (!g_list_find(plugins_to_disable, plugin))
-		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
+	g_return_val_if_fail(plugin != NULL, NULL);
+
+	info = purple_plugin_get_info(plugin);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->actions;
+}
+
+gboolean
+purple_plugin_is_loadable(const PurplePlugin *plugin)
+{
+	PurplePluginInfo *info;
+	PurplePluginInfoPrivate *priv;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	info = purple_plugin_get_info(plugin);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	return priv->loadable;
+}
+
+gchar *
+purple_plugin_get_error(const PurplePlugin *plugin)
+{
+	PurplePluginInfo *info;
+	PurplePluginInfoPrivate *priv;
+
+	g_return_val_if_fail(plugin != NULL, NULL);
+
+	info = purple_plugin_get_info(plugin);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->error;
+}
+
+GSList *
+purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
+{
+#warning TODO: Implement this when GPlugin can return dependent plugins.
+	return NULL;
 }
 
 /**************************************************************************
@@ -461,49 +513,12 @@ purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 	return gplugin_plugin_info_get_abi_version(GPLUGIN_PLUGIN_INFO(info));
 }
 
-GList *
-purple_plugin_info_get_actions(const PurplePluginInfo *info)
-{
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->actions;
-}
-
-gboolean
-purple_plugin_info_is_loadable(const PurplePluginInfo *info)
-{
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	return priv->loadable;
-}
-
-gchar *
-purple_plugin_info_get_error(const PurplePluginInfo *info)
-{
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->error;
-}
-
 GSList *
 purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
 {
 	g_return_val_if_fail(info != NULL, NULL);
 
 	return gplugin_plugin_info_get_dependencies(GPLUGIN_PLUGIN_INFO(info));
-}
-
-GSList *
-purple_plugin_info_get_dependent_plugins(const PurplePluginInfo *info)
-{
-#warning TODO: Implement this when GPlugin can return dependent plugins.
-	return NULL;
 }
 
 void
