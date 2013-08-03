@@ -2620,11 +2620,13 @@ if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
 	PLUGINS_DEFINE="#define PURPLE_PLUGINS 1"
+	PLUGINS_MACRO="PURPLE_PLUGINS"
 else
 	AM_CONDITIONAL(PLUGINS, false)
 	PLUGINS_DEFINE="#undef PURPLE_PLUGINS"
 fi
 AC_SUBST(PLUGINS_DEFINE)
+AC_SUBST(PLUGINS_MACRO)
 
 dnl #######################################################################
 dnl # Check for Cyrus-SASL (for xmpp/irc)
