@@ -637,7 +637,7 @@ build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	actions = purple_plugin_info_get_actions(purple_plugin_get_info(plugin));
+	actions = purple_plugin_get_actions(plugin);
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -675,7 +675,7 @@ docklet_plugin_actions(GtkWidget *menu)
 		plugin = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plugin);
 
-		if (!purple_plugin_info_get_actions(info))
+		if (!purple_plugin_get_actions(plugin))
 			continue;
 
 		menuitem = gtk_image_menu_item_new_with_label(_(purple_plugin_info_get_name(info)));

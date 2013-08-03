@@ -2450,13 +2450,13 @@ plugin_action(GntMenuItem *item, gpointer data)
 }
 
 static void
-build_plugin_actions(GntMenuItem *item, PurplePluginInfo *plugin_info)
+build_plugin_actions(GntMenuItem *item, PurplePlugin *plugin)
 {
 	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
 	GList *actions, *l;
 	GntMenuItem *menuitem;
 
-	actions = purple_plugin_info_get_actions(plugin_info);
+	actions = purple_plugin_get_actions(plugin);
 
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 	for (l = actions; l; l = l->next) {
@@ -2567,12 +2567,12 @@ reconstruct_plugins_menu(void)
 		PurplePluginInfo *plugin_info = purple_plugin_get_info(plugin);
 		GntMenuItem *item;
 
-		if (!purple_plugin_info_get_actions(plugin_info))
+		if (!purple_plugin_get_actions(plugin))
 			continue;
 
 		item = gnt_menuitem_new(_(purple_plugin_info_get_name(plugin_info)));
 		gnt_menu_add_item(GNT_MENU(sub), item);
-		build_plugin_actions(item, plugin_info);
+		build_plugin_actions(item, plugin);
 	}
 }
 

@@ -8109,7 +8109,7 @@ plugin_act(GtkWidget *obj, PurplePluginAction *pam)
 
 static void
 build_plugin_actions(GtkActionGroup *action_group, GString *ui, char *parent,
-		PurplePluginInfo *plugin_info)
+		PurplePlugin *plugin)
 {
 	GtkAction *menuaction;
 	PurplePluginAction *action = NULL;
@@ -8117,7 +8117,7 @@ build_plugin_actions(GtkActionGroup *action_group, GString *ui, char *parent,
 	char *name;
 	int count = 0;
 
-	actions = purple_plugin_info_get_actions(plugin_info);
+	actions = purple_plugin_get_actions(plugin);
 
 	for (l = actions; l != NULL; l = l->next) {
 		if (l->data) {
@@ -8382,10 +8382,7 @@ pidgin_blist_update_plugin_actions(void)
 		plugin = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plugin);
 
-		if (!info)
-			continue;
-
-		if (!purple_plugin_info_get_actions(info))
+		if (!purple_plugin_get_actions(plugin))
 			continue;
 
 		name = g_strdup_printf("plugin%d", count);
@@ -8394,7 +8391,7 @@ pidgin_blist_update_plugin_actions(void)
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 
-		build_plugin_actions(plugins_action_group, plugins_ui, name, info);
+		build_plugin_actions(plugins_action_group, plugins_ui, name, plugin);
 
 		g_string_append(plugins_ui, "</menu>");
 		count++;

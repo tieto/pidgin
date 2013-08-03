@@ -853,7 +853,7 @@ void pidgin_dialogs_plugins_info(void)
 		pver = purple_plugin_info_get_version(info);
 		pwebsite = purple_plugin_info_get_website(info);
 		pid = purple_plugin_info_get_id(info);
-		ploadable = purple_plugin_info_is_loadable(info);
+		ploadable = purple_plugin_is_loadable(plugin);
 		ploaded = purple_plugin_is_loaded(plugin);
 
 		g_string_append_printf(str,

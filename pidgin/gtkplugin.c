@@ -199,7 +199,7 @@ update_plugin_list(void *data)
 				   0, purple_plugin_is_loaded(plug),
 				   1, desc,
 				   2, plug,
-				   3, !purple_plugin_info_is_loadable(info),
+				   3, !purple_plugin_is_loadable(plug),
 				   -1);
 		g_free(desc);
 	}
@@ -287,17 +287,14 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	PurplePlugin *plug;
-	PurplePluginInfo *info;
 	GtkWidget *dialog = NULL;
 
 	gtk_tree_model_get_iter(model, iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(model, iter, 2, &plug, -1);
 
-	info = purple_plugin_get_info(plug);
-
 	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
-	if (!purple_plugin_info_is_loadable(info))
+	if (!purple_plugin_is_loadable(plug))
 	{
 		g_free(iter);
 		return;
@@ -318,13 +315,13 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			(dialog = g_hash_table_lookup(plugin_pref_dialogs, plug)))
 			pref_dialog_response_cb(dialog, GTK_RESPONSE_DELETE_EVENT, plug);
 
-		if (purple_plugin_info_get_dependent_plugins(info) != NULL)
+		if (purple_plugin_get_dependent_plugins(plug) != NULL)
 		{
 			GString *tmp = g_string_new(_("The following plugins will be unloaded."));
 			GSList *l;
 			gpointer *cb_data;
 
-			for (l = purple_plugin_info_get_dependent_plugins(info); l != NULL ; l = l->next)
+			for (l = purple_plugin_get_dependent_plugins(plug); l != NULL ; l = l->next)
 			{
 				const char *dep_name = (const char *)l->data;
 				PurplePlugin *dep_plugin = purple_plugins_find_plugin(dep_name);
@@ -378,11 +375,11 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 	gtk_widget_set_sensitive(pref_button,
 		purple_plugin_is_loaded(plug) && pidgin_plugin_has_config_frame(plug));
 
-	if (purple_plugin_info_get_error(info) != NULL)
+	if (purple_plugin_get_error(plug) != NULL)
 	{
 		gchar *name = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 
-		gchar *error = g_markup_escape_text(purple_plugin_info_get_error(info), -1);
+		gchar *error = g_markup_escape_text(purple_plugin_get_error(plug), -1);
 		gchar *text;
 
 		text = g_strdup_printf(
@@ -485,13 +482,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		gtk_label_set_text(plugin_website, NULL);
 	}
 
-	if (purple_plugin_info_get_error(info) == NULL)
+	if (purple_plugin_get_error(plug) == NULL)
 	{
 		gtk_label_set_text(plugin_error, NULL);
 	}
 	else
 	{
-		tmp = g_markup_escape_text(purple_plugin_info_get_error(info), -1);
+		tmp = g_markup_escape_text(purple_plugin_get_error(plug), -1);
 		buf = g_strdup_printf(
 			_("<span foreground=\"red\" weight=\"bold\">"
 			  "Error: %s\n"
