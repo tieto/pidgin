@@ -36,6 +36,7 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
+	char *category;        /**< The category the plugin belongs to           >*/
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin >*/
 	GList *actions;        /**< Actions that the plugin can perform          >*/
 	gboolean loadable;     /**< Whether the plugin is loadable               >*/
@@ -48,6 +49,7 @@ struct _PurplePluginInfoPrivate {
 enum
 {
 	PROP_0,
+	PROP_CATEGORY,
 	PROP_UI_REQUIREMENT,
 	PROP_PREF_FRAME_CALLBACK,
 	PROP_LAST
@@ -67,24 +69,24 @@ static GList *plugins_to_disable = NULL;
 gboolean
 purple_plugin_load(PurplePlugin *plugin)
 {
-	PurplePluginInfo *plugin_info;
+	PurplePluginInfo *info;
 	GError *error = NULL;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	plugin_info = purple_plugin_get_info(plugin);
+	info = purple_plugin_get_info(plugin);
 
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
 
-	if (!plugin_info) {
+	if (!info) {
 		purple_debug_error("plugins",
 				"Failed to load plugin %s: Plugin does not return a PluginInfo",
 				purple_plugin_get_filename(plugin));
 		return FALSE;
 	}
 
-	if (!purple_plugin_info_is_loadable(plugin_info))
+	if (!purple_plugin_info_is_loadable(info))
 		return FALSE;
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
@@ -198,6 +200,7 @@ purple_plugin_disable(PurplePlugin *plugin)
  * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
+#define PROP_CATEGORY_S             "category"
 #define PROP_UI_REQUIREMENT_S       "ui-requirement"
 #define PROP_PREF_FRAME_CALLBACK_S  "preferences-callback"
 
@@ -206,15 +209,18 @@ static void
 purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
-	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(obj);
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(obj);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	switch (param_id) {
+		case PROP_CATEGORY:
+			priv->category = g_strdup(g_value_get_string(value));
+			break;
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_PREF_FRAME_CALLBACK:
-			purple_plugin_info_set_pref_frame_callback(plugin_info,
+			purple_plugin_info_set_pref_frame_callback(info,
 					g_value_get_pointer(value));
 			break;
 		default:
@@ -228,12 +234,15 @@ static void
 purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
-	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(obj);
+	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
+		case PROP_CATEGORY:
+			g_value_set_string(value, purple_plugin_info_get_category(info));
+			break;
 		case PROP_PREF_FRAME_CALLBACK:
 			g_value_set_pointer(value,
-					purple_plugin_info_get_pref_frame_callback(plugin_info));
+					purple_plugin_info_get_pref_frame_callback(info));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -245,9 +254,9 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 static void
 purple_plugin_info_constructed(GObject *object)
 {
-	PurplePluginInfo *plugin_info = PURPLE_PLUGIN_INFO(object);
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
-	const char *id = purple_plugin_info_get_id(plugin_info);
+	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(object);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+	const char *id = purple_plugin_info_get_id(info);
 	guint32 abi_version;
 
 	G_OBJECT_CLASS(parent_class)->constructed(object);
@@ -271,7 +280,7 @@ purple_plugin_info_constructed(GObject *object)
 		priv->loadable = FALSE;
 	}
 
-	abi_version = purple_plugin_info_get_abi_version(plugin_info);
+	abi_version = purple_plugin_info_get_abi_version(info);
 	if (PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi_version) != PURPLE_MAJOR_VERSION ||
 		PURPLE_PLUGIN_ABI_MINOR_VERSION(abi_version) > PURPLE_MINOR_VERSION)
 	{
@@ -298,6 +307,7 @@ purple_plugin_info_finalize(GObject *object)
 		priv->actions = g_list_delete_link(priv->actions, priv->actions);
 	}
 
+	g_free(priv->category);
 	g_free(priv->ui_requirement);
 	g_free(priv->error);
 
@@ -319,6 +329,12 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	/* Setup properties */
 	obj_class->get_property = purple_plugin_info_get_property;
 	obj_class->set_property = purple_plugin_info_set_property;
+
+	g_object_class_install_property(obj_class, PROP_CATEGORY,
+		g_param_spec_string(PROP_CATEGORY_S,
+		                    "Category",
+		                    "The category that the plugin belongs to", NULL,
+		                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
 		g_param_spec_string(PROP_UI_REQUIREMENT_S,
@@ -380,6 +396,16 @@ purple_plugin_info_get_version(const PurplePluginInfo *info)
 }
 
 const gchar *
+purple_plugin_info_get_category(const PurplePluginInfo *info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->category;
+}
+
+const gchar *
 purple_plugin_info_get_summary(const PurplePluginInfo *info)
 {
 	g_return_val_if_fail(info != NULL, NULL);
@@ -411,6 +437,22 @@ purple_plugin_info_get_website(const PurplePluginInfo *info)
 	return gplugin_plugin_info_get_website(GPLUGIN_PLUGIN_INFO(info));
 }
 
+const gchar *
+purple_plugin_info_get_icon(const PurplePluginInfo *info)
+{
+	g_return_val_if_fail(info != NULL, NULL);
+
+	return gplugin_plugin_info_get_icon(GPLUGIN_PLUGIN_INFO(info));
+}
+
+const gchar *
+purple_plugin_info_get_license(const PurplePluginInfo *info)
+{
+	g_return_val_if_fail(info != NULL, NULL);
+
+	return gplugin_plugin_info_get_license(GPLUGIN_PLUGIN_INFO(info));
+}
+
 guint32
 purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 {
@@ -420,9 +462,9 @@ purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 }
 
 GList *
-purple_plugin_info_get_actions(const PurplePluginInfo *plugin_info)
+purple_plugin_info_get_actions(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -430,9 +472,9 @@ purple_plugin_info_get_actions(const PurplePluginInfo *plugin_info)
 }
 
 gboolean
-purple_plugin_info_is_loadable(const PurplePluginInfo *plugin_info)
+purple_plugin_info_is_loadable(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -440,9 +482,9 @@ purple_plugin_info_is_loadable(const PurplePluginInfo *plugin_info)
 }
 
 gchar *
-purple_plugin_info_get_error(const PurplePluginInfo *plugin_info)
+purple_plugin_info_get_error(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -458,10 +500,10 @@ purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
 }
 
 void
-purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
+purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
 		PurplePluginPrefFrameCallback callback)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_if_fail(priv != NULL);
 
@@ -469,9 +511,9 @@ purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
 }
 
 PurplePluginPrefFrameCallback
-purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *plugin_info)
+purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(plugin_info);
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 

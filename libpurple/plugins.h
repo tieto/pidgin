@@ -198,6 +198,9 @@ const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
 const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
 
 /* TODO */
+const gchar *purple_plugin_info_get_category(const PurplePluginInfo *info);
+
+/* TODO */
 const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
 
 /* TODO */
@@ -208,6 +211,12 @@ const gchar *purple_plugin_info_get_author(const PurplePluginInfo *info);
 
 /* TODO */
 const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
+
+/* TODO */
+const gchar *purple_plugin_info_get_license(const PurplePluginInfo *info);
 
 /* TODO */
 guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
@@ -222,7 +231,7 @@ guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
  *
  * @see purple_plugin_add_action()
  */
-GList *purple_plugin_info_get_actions(const PurplePluginInfo *plugin_info);
+GList *purple_plugin_info_get_actions(const PurplePluginInfo *info);
 
 /**
  * Returns whether or not a plugin is loadable.
@@ -239,7 +248,7 @@ GList *purple_plugin_info_get_actions(const PurplePluginInfo *plugin_info);
  *
  * @see purple_plugin_info_get_error()
  */
-gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *plugin_info);
+gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *info);
 
 /**
  * If a plugin is not loadable, this returns the reason.
@@ -248,7 +257,7 @@ gboolean purple_plugin_info_is_loadable(const PurplePluginInfo *plugin_info);
  *
  * @return The reason why the plugin is not loadable.
  */
-gchar *purple_plugin_info_get_error(const PurplePluginInfo *plugin_info);
+gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
 
 /* TODO */
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
@@ -259,7 +268,7 @@ GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
  * @param plugin_info The plugin info to set the callback for.
  * @param callback    The callback that returns the preferences frame.
  */
-void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
+void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
 		PurplePluginPrefFrameCallback callback);
 
 /**
@@ -270,7 +279,7 @@ void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *plugin_info,
  * @return The callback that returns the preferences frame.
  */
 PurplePluginPrefFrameCallback
-purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *plugin_info);
+purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info);
 
 /*@}*/
 
