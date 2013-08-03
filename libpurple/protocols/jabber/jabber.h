@@ -261,8 +261,7 @@ struct _JabberStream
 	guint srv_rec_idx;
 	guint max_srv_rec_idx;
 
-	/* BOSH stuff */
-	PurpleBOSHConnection *bosh;
+	PurpleJabberBOSHConnection *bosh;
 
 	/**
 	 * This linked list contains PurpleHttpConnection structs
