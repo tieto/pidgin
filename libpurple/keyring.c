@@ -1306,7 +1306,7 @@ purple_keyring_init(void)
 				purple_keyring_loaded_plugins, plugin);
 		}
 	}
-	purple_plugins_free_found_list(plugins);
+	g_list_free(plugins);
 
 	if (purple_keyring_inuse == NULL)
 		purple_debug_error("keyring", "Selected keyring failed to load\n");

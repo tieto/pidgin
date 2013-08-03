@@ -880,7 +880,7 @@ void pidgin_dialogs_plugins_info(void)
 		g_free(pauthor);
 		g_object_unref(info);
 	}
-	purple_plugins_free_found_list(plugins);
+	g_list_free(plugins);
 
 	g_string_append(str, "</dl>");
 

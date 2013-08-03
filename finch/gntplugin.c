@@ -472,7 +472,7 @@ void finch_plugins_show_all(void)
 
 		g_object_unref(info);
 	}
-	purple_plugins_free_found_list(plugin_list);
+	g_list_free(plugin_list);
 
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);

@@ -209,7 +209,7 @@ update_plugin_list(void *data)
 		g_object_unref(info);
 	}
 
-	purple_plugins_free_found_list(plugins);
+	g_list_free(plugins);
 }
 
 static void plugin_loading_common(GPluginPlugin *plugin, GtkTreeView *view, gboolean loaded)
