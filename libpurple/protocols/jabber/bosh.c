@@ -152,10 +152,8 @@ jabber_bosh_connection_destroy(PurpleJabberBOSHConnection *conn)
 	if (conn->send_timer)
 		purple_timeout_remove(conn->send_timer);
 
-	if (conn->sc_req != NULL) {
-		purple_http_conn_cancel(conn->sc_req);
-		conn->sc_req = NULL;
-	}
+	purple_http_conn_cancel(conn->sc_req);
+	conn->sc_req = NULL;
 
 	purple_http_keepalive_pool_unref(conn->kapool);
 	conn->kapool = NULL;

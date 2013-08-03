@@ -177,8 +177,6 @@ fetched_user_display(PurpleHttpConnection *http_conn,
 	MsnFetchUserDisplayData *data = _data;
 	MsnSession *session = data->session;
 
-	session->http_reqs = g_slist_remove(session->http_reqs, http_conn);
-
 	if (purple_http_response_is_successfull(response)) {
 		size_t len;
 		const gchar *icon_data;
@@ -254,7 +252,6 @@ msn_request_user_display(MsnUser *user)
 		const char *url = msn_object_get_url1(obj);
 		if (url) {
 			PurpleHttpRequest *req;
-			PurpleHttpConnection *hc;
 			MsnFetchUserDisplayData *data = g_new0(MsnFetchUserDisplayData, 1);
 			data->session = session;
 			data->remote_user = user->passport;
@@ -262,9 +259,10 @@ msn_request_user_display(MsnUser *user)
 
 			req = purple_http_request_new(url);
 			purple_http_request_set_max_len(req, 200*1024);
-			hc = purple_http_request(NULL, req, fetched_user_display, data);
+			purple_http_connection_set_add(session->http_reqs,
+				purple_http_request(NULL, req,
+					fetched_user_display, data));
 			purple_http_request_unref(req);
-			session->http_reqs = g_slist_prepend(session->http_reqs, hc);
 		} else {
 			msn_slplink_request_object(slplink, info, got_user_display,
 			                           end_user_display, obj);

@@ -63,6 +63,8 @@ typedef enum
 
 #define MSN_LOGIN_FQY_TIMEOUT 30
 
+#include "http.h"
+
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
@@ -120,7 +122,7 @@ struct _MsnSession
 	MsnSoapService *soap;
 	char *guid;
 
-	GSList *http_reqs; /**< PurpleHttpConnection to be cancelled on exit */
+	PurpleHttpConnectionSet *http_reqs;
 };
 
 /**

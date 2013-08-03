@@ -27,6 +27,7 @@
 
 #include "circbuffer.h"
 #include "cmds.h"
+#include "http.h"
 #include "prpl.h"
 #include "network.h"
 
@@ -240,10 +241,10 @@ typedef struct {
 	struct _YchtConn *ycht;
 
 	/**
-	 * This linked list contains PurpleHttpConnection structs
+	 * This set contains HTTP connections
 	 * for when we lookup people profile or photo information.
 	 */
-	GSList *http_reqs;
+	PurpleHttpConnectionSet *http_reqs;
 
 	GHashTable *xfer_peer_idstring_map;/* Hey, i dont know, but putting this HashTable next to friends gives a run time fault... */
 	GSList *cookies;/* contains all cookies, including _y and _t */

@@ -41,6 +41,8 @@ msn_session_new(PurpleAccount *account)
 
 	session = g_new0(MsnSession, 1);
 
+	session->http_reqs = purple_http_connection_set_new();
+
 	session->account = account;
 	session->notification = msn_notification_new(session);
 	session->userlist = msn_userlist_new(session);
@@ -67,10 +69,7 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
-	while (session->http_reqs) {
-		purple_http_conn_cancel(session->http_reqs->data);
-		session->http_reqs = g_slist_delete_link(session->http_reqs, session->http_reqs);
-	}
+	purple_http_connection_set_destroy(session->http_reqs);
 
 	if (session->connected)
 		msn_session_disconnect(session);

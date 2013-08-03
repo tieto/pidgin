@@ -79,8 +79,6 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 		purple_http_conn_get_purple_connection(http_conn);
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_info("yahoo", "yahoo_fetch_aliases_cb error: %s\n",
 			purple_http_response_get_error(response));
@@ -199,7 +197,6 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	PurpleHttpCookieJar *cookiejar;
 
 	req = purple_http_request_new(yd->jp ? YAHOOJP_ALIAS_FETCH_URL :
@@ -210,10 +207,9 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	cookiejar = purple_http_request_get_cookie_jar(req);
 	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
 	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
-	hc = purple_http_request(gc, req, yahoo_fetch_aliases_cb, NULL);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_fetch_aliases_cb, NULL));
 	purple_http_request_unref(req);
-
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 }
 
 /**************************************************************************
@@ -226,11 +222,6 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 {
 	xmlnode *node, *result;
 	struct callback_data *cb = _cb;
-	PurpleConnection *gc = cb->gc;
-	YahooData *yd;
-
-	yd = purple_connection_get_protocol_data(gc);
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_info("yahoo", "Error updating alias for %s: %s\n",
@@ -289,7 +280,6 @@ void
 yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	PurpleHttpCookieJar *cookiejar;
 	YahooData *yd;
 	gchar *content;
@@ -371,10 +361,9 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
 	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
 	purple_http_request_set_contents(req, content, -1);
-	hc = purple_http_request(gc, req, yahoo_update_alias_cb, cb);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_update_alias_cb, cb));
 	purple_http_request_unref(req);
-
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	g_free(content);
 }
@@ -439,7 +428,6 @@ static void
 yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	PurpleHttpCookieJar *cookiejar;
 
 	xmlnode *node = xmlnode_new("ab");
@@ -500,10 +488,9 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
 	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
 	purple_http_request_set_contents(req, content, -1);
-	hc = purple_http_request(gc, req, yahoo_fetch_aliases_cb, NULL);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_fetch_aliases_cb, NULL));
 	purple_http_request_unref(req);
-
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	g_free(content);
 }

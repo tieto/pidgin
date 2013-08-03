@@ -793,7 +793,6 @@ yahoo_got_info(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = purple_connection_get_protocol_data(info_data->gc);
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	user_info = purple_notify_user_info_new();
 
@@ -936,9 +935,9 @@ yahoo_got_info(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
-		PurpleHttpConnection *hc;
-		hc = purple_http_get(info_data->gc, yahoo_got_photo, info2_data, photo_url_text);
-		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
+		purple_http_connection_set_add(yd->http_reqs, purple_http_get(
+			info_data->gc, yahoo_got_photo, info2_data,
+			photo_url_text));
 	} else {
 		/* Emulate a callback */
 		yahoo_got_photo(NULL, NULL, info2_data);
@@ -980,8 +979,6 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	char *fudged_buffer;
 
 	yd = purple_connection_get_protocol_data(info_data->gc);
-	if (http_conn)
-		yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
@@ -1260,14 +1257,12 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YahooGetInfoData *data;
-	PurpleHttpConnection *hc;
 
 	data       = g_new0(YahooGetInfoData, 1);
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	hc = purple_http_get_printf(gc, yahoo_got_info, data,
-		"%s%s", (yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL),
-		name);
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_get_printf(gc,
+		yahoo_got_info, data, "%s%s",
+		(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name));
 }

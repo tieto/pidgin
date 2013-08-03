@@ -931,6 +931,7 @@ jabber_stream_new(PurpleAccount *account)
 	purple_connection_set_protocol_data(gc, js);
 	js->gc = gc;
 	js->fd = -1;
+	js->http_conns = purple_http_connection_set_new();
 
 	user = g_strdup(purple_account_get_username(account));
 	/* jabber_id_new doesn't accept "user@domain/" as valid */
@@ -1633,10 +1634,7 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
-	while(js->http_conns) {
-		purple_http_conn_cancel(js->http_conns->data);
-		js->http_conns = g_slist_delete_link(js->http_conns, js->http_conns);
-	}
+	purple_http_connection_set_destroy(js->http_conns);
 
 	g_free(js->stream_id);
 	if(js->user)

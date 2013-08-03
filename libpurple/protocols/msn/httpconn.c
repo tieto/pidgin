@@ -207,10 +207,8 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 		httpconn->finish_timer = 0;
 	}
 
-	if (httpconn->current_request != NULL) {
-		purple_http_conn_cancel(httpconn->current_request);
-		httpconn->current_request = NULL;
-	}
+	purple_http_conn_cancel(httpconn->current_request);
+	httpconn->current_request = NULL;
 
 	g_free(httpconn->host_dest);
 	httpconn->host_dest = NULL;

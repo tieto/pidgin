@@ -381,18 +381,18 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 				                        do_buddy_avatar_update_data);
 			} else {
 				PurpleHttpRequest *req;
-				PurpleHttpConnection *http_conn;
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
 
 				req = purple_http_request_new(url);
 				purple_http_request_set_max_len(req, MAX_HTTP_BUDDYICON_BYTES);
-				http_conn = purple_http_request(js->gc, req, do_buddy_avatar_update_fromurl, info);
+				purple_http_connection_set_add(js->http_conns,
+					purple_http_request(js->gc, req,
+					do_buddy_avatar_update_fromurl, info));
 				purple_http_request_unref(req);
 
 				info->from = g_strdup(from);
 				info->id = g_strdup(id);
-				js->http_conns = g_slist_prepend(js->http_conns, http_conn);
 			}
 		}
 	}

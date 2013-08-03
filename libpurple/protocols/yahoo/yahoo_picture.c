@@ -50,10 +50,6 @@ yahoo_fetch_picture_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *resp
 	gpointer _data)
 {
 	struct yahoo_fetch_picture_data *d = _data;
-	YahooData *yd;
-
-	yd = purple_connection_get_protocol_data(d->gc);
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n",
@@ -126,16 +122,15 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
 	if (who && got_icon_info && url && !g_ascii_strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
-		PurpleHttpConnection *hc;
 		struct yahoo_fetch_picture_data *data;
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		hc = purple_http_get(gc, yahoo_fetch_picture_cb, data, url);
 		yd = purple_connection_get_protocol_data(gc);
-		yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
+		purple_http_connection_set_add(yd->http_reqs, purple_http_get(
+			gc, yahoo_fetch_picture_cb, data, url));
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
 	}
