@@ -67,9 +67,11 @@ if [ "$CHECK_SHA1SUM" != "$BUNDLE_SHA1SUM" ]; then
 	if [[ "$PIDGIN_VERSION" == *"devel" ]]; then
 		echo "Continuing GTK+ Bundle creation for development version of Pidgin"
 	else
+		echo "Couldn't download GTK+ Bundle"
 		exit 1
 	fi
 else
+	echo "GTK+ Bundle is up to date"
 	exit 0
 fi
 
