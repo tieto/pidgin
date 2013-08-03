@@ -347,6 +347,15 @@ gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
+ * Returns a list of plugins that depend on a particular plugin.
+ *
+ * @param info The plugin info of the plugin whos dependent plugins are needed.
+ *
+ * @constreturn The list of a plugins that depend on the specified plugin.
+ */
+GSList *purple_plugin_info_get_dependent_plugins(const PurplePluginInfo *info);
+
+/**
  * Sets a callback to be invoked to retrieve the preferences frame for a plugin.
  *
  * @param info The plugin info to set the callback for.

@@ -499,6 +499,13 @@ purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
 	return gplugin_plugin_info_get_dependencies(GPLUGIN_PLUGIN_INFO(info));
 }
 
+GSList *
+purple_plugin_info_get_dependent_plugins(const PurplePluginInfo *info)
+{
+#warning TODO: Implement this when GPlugin can return dependent plugins.
+	return NULL;
+}
+
 void
 purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
 		PurplePluginPrefFrameCallback callback)
