@@ -321,7 +321,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 		if (purple_plugin_info_get_dependent_plugins(info) != NULL)
 		{
 			GString *tmp = g_string_new(_("The following plugins will be unloaded."));
-			GList *l;
+			GSList *l;
 			gpointer *cb_data;
 
 			for (l = purple_plugin_info_get_dependent_plugins(info); l != NULL ; l = l->next)
