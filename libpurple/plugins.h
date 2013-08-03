@@ -38,6 +38,25 @@
 /** Returns the minor version from an ABI version */
 #define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
 
+#define PURPLE_TYPE_PLUGIN             GPLUGIN_TYPE_PLUGIN
+#define PURPLE_PLUGIN(obj)             GPLUGIN_PLUGIN(obj)
+#define PURPLE_PLUGIN_CLASS(klass)     GPLUGIN_PLUGIN_CLASS(klass)
+#define PURPLE_IS_PLUGIN(obj)          GPLUGIN_IS_PLUGIN(obj)
+#define PURPLE_IS_PLUGIN_CLASS(klass)  GPLUGIN_IS_PLUGIN_CLASS(klass)
+#define PURPLE_PLUGIN_GET_CLASS(obj)   GPLUGIN_PLUGIN_GET_CLASS(obj)
+
+/**
+ * Represents a plugin handle.
+ * This type is an alias for GPluginPlugin.
+ */
+typedef GPluginPlugin PurplePlugin;
+
+/**
+ * The base class for all #PurplePlugin's.
+ * This type is an alias for GPluginPluginClass.
+ */
+typedef GPluginPluginClass PurplePluginClass;
+
 #define PURPLE_TYPE_PLUGIN_INFO             (purple_plugin_info_get_type())
 #define PURPLE_PLUGIN_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfo))
 #define PURPLE_PLUGIN_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoClass))
@@ -58,7 +77,7 @@ typedef struct _PurplePluginAction PurplePluginAction;
 #include "pluginpref.h"
 
 typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
-typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(GPluginPlugin *);
+typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(PurplePlugin *);
 
 /**
  * Holds information about a plugin.
@@ -90,7 +109,7 @@ struct _PurplePluginInfoClass {
 struct _PurplePluginAction {
 	char *label;
 	PurplePluginActionCallback callback;
-	GPluginPlugin *plugin;
+	PurplePlugin *plugin;
 };
 
 G_BEGIN_DECLS
@@ -109,7 +128,7 @@ G_BEGIN_DECLS
  *
  * @see purple_plugin_unload()
  */
-gboolean purple_plugin_load(GPluginPlugin *plugin);
+gboolean purple_plugin_load(PurplePlugin *plugin);
 
 /**
  * Unloads the specified plugin.
@@ -120,7 +139,7 @@ gboolean purple_plugin_load(GPluginPlugin *plugin);
  *
  * @see purple_plugin_load()
  */
-gboolean purple_plugin_unload(GPluginPlugin *plugin);
+gboolean purple_plugin_unload(PurplePlugin *plugin);
 
 /**
  * Returns whether or not a plugin is currently loaded.
@@ -129,7 +148,7 @@ gboolean purple_plugin_unload(GPluginPlugin *plugin);
  *
  * @return @c TRUE if loaded, or @c FALSE otherwise.
  */
-gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
+gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
 /**
  * Adds a new action to a plugin.
@@ -138,7 +157,7 @@ gboolean purple_plugin_is_loaded(const GPluginPlugin *plugin);
  * @param label    The description of the action to show to the user.
  * @param callback The callback to call when the user selects this action.
  */
-void purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
+void purple_plugin_add_action(PurplePlugin *plugin, const char* label,
                               PurplePluginActionCallback callback);
 
 /**
@@ -149,7 +168,7 @@ void purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
  * UI needs to call purple_plugins_save_loaded() after calling this for it
  * to have any effect.
  */
-void purple_plugin_disable(GPluginPlugin *plugin);
+void purple_plugin_disable(PurplePlugin *plugin);
 
 /*@}*/
 
@@ -268,7 +287,7 @@ GList *purple_plugins_get_loaded(void);
  *
  * @return The referenced plugin if found, or @c NULL if not found.
  */
-GPluginPlugin *purple_plugins_find_by_filename(const char *filename);
+PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
 /**
  * Saves the list of loaded plugins to the specified preference key

@@ -65,7 +65,7 @@ static GList *plugins_to_disable = NULL;
  * Plugin API
  **************************************************************************/
 gboolean
-purple_plugin_load(GPluginPlugin *plugin)
+purple_plugin_load(PurplePlugin *plugin)
 {
 	PurplePluginInfo *plugin_info;
 	GError *error = NULL;
@@ -98,7 +98,7 @@ purple_plugin_load(GPluginPlugin *plugin)
 }
 
 gboolean
-purple_plugin_unload(GPluginPlugin *plugin)
+purple_plugin_unload(PurplePlugin *plugin)
 {
 	GError *error = NULL;
 
@@ -132,7 +132,7 @@ purple_plugin_unload(GPluginPlugin *plugin)
 }
 
 gboolean
-purple_plugin_is_loaded(const GPluginPlugin *plugin)
+purple_plugin_is_loaded(const PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
@@ -140,7 +140,7 @@ purple_plugin_is_loaded(const GPluginPlugin *plugin)
 }
 
 void
-purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
+purple_plugin_add_action(PurplePlugin *plugin, const char* label,
                          PurplePluginActionCallback callback)
 {
 	GPluginPluginInfo *plugin_info;
@@ -165,7 +165,7 @@ purple_plugin_add_action(GPluginPlugin *plugin, const char* label,
 }
 
 void
-purple_plugin_disable(GPluginPlugin *plugin)
+purple_plugin_disable(PurplePlugin *plugin)
 {
 	g_return_if_fail(plugin != NULL);
 
@@ -467,14 +467,14 @@ purple_plugins_get_loaded(void)
 	return loaded_plugins;
 }
 
-GPluginPlugin *
+PurplePlugin *
 purple_plugins_find_by_filename(const char *filename)
 {
 	GList *plugins, *l;
 	plugins = purple_plugins_find_all();
 
 	for (l = plugins; l != NULL; l = l->next) {
-		GPluginPlugin *plugin = GPLUGIN_PLUGIN(l->data);
+		PurplePlugin *plugin = PURPLE_PLUGIN(l->data);
 
 		if (purple_strequal(gplugin_plugin_get_filename(plugin), filename)) {
 			purple_plugins_free_found_list(plugins);
@@ -493,7 +493,7 @@ purple_plugins_save_loaded(const char *key)
 	GList *files = NULL;
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
-		GPluginPlugin *plugin = GPLUGIN_PLUGIN(pl->data);
+		PurplePlugin *plugin = PURPLE_PLUGIN(pl->data);
 		if (!g_list_find(plugins_to_disable, plugin))
 			files = g_list_append(files, (gchar *)gplugin_plugin_get_filename(plugin));
 	}
@@ -514,7 +514,7 @@ purple_plugins_load_saved(const char *key)
 	for (l = files; l; l = l->next)
 	{
 		char *file;
-		GPluginPlugin *plugin;
+		PurplePlugin *plugin;
 
 		if (l->data == NULL)
 			continue;
@@ -568,10 +568,10 @@ purple_plugins_init(void)
 	        the new plugin API is properly established */
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, GPLUGIN_TYPE_PLUGIN);
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 	purple_signal_register(handle, "plugin-unload",
 						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, GPLUGIN_TYPE_PLUGIN);
+						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 }
 
 void
