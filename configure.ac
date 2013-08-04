@@ -1565,7 +1565,7 @@ dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [enable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
 
 if test "x$enable_gnome_keyring" = "xyes" ; then
 	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
@@ -1590,7 +1590,7 @@ dnl #######################################################################
 dnl # Check for KWallet headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [enable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
+AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [disable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
 AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
