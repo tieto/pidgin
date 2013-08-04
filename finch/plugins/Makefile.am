@@ -47,6 +47,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/finch/libgnt \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(GNT_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 

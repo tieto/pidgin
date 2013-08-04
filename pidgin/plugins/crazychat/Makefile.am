@@ -36,6 +36,7 @@ AM_CPPFLAGS = -DPURPLE_PLUGINS \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \
 	$(GTK_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(GTKGLEXT_CFLAGS) \
 	$(DEBUG_CPPFLAGS) \
 	$(DEBUG_CFLAGS) \

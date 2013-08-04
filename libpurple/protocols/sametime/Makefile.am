@@ -32,6 +32,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(MEANWHILE_CFLAGS) \
 	-DG_LOG_DOMAIN=\"sametime\"
 

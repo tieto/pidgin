@@ -133,6 +133,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(IDN_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(FARSIGHT_CFLAGS) \
