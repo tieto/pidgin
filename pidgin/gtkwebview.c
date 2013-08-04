@@ -32,6 +32,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "gtkutils.h"
 #include "gtkwebview.h"
+#include "gtkwebviewtoolbar.h"
 
 #include "gtk3compat.h"
 
@@ -120,6 +121,7 @@ typedef struct _GtkWebViewPriv {
 
 	/* Format options */
 	GtkWebViewButtons format_functions;
+	GtkWebViewToolbar *toolbar;
 	struct {
 		gboolean wbfo:1;	/* Whole buffer formatting only. */
 		gboolean block_changed:1;
@@ -2203,5 +2205,55 @@ gtk_webview_insert_image(GtkWebView *webview, int id)
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);
 	priv->edit.block_changed = FALSE;
 	g_free(img);
+}
+
+void
+gtk_webview_set_toolbar(GtkWebView *webview, GtkWidget *toolbar)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	priv->toolbar = GTK_WEBVIEWTOOLBAR(toolbar);
+}
+
+void
+gtk_webview_show_toolbar(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	g_return_if_fail(priv->toolbar != NULL);
+
+	gtk_widget_show(GTK_WIDGET(priv->toolbar));
+}
+
+void
+gtk_webview_hide_toolbar(GtkWebView *webview)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	g_return_if_fail(priv->toolbar != NULL);
+
+	gtk_widget_hide(GTK_WIDGET(priv->toolbar));
+}
+
+void
+gtk_webview_activate_toolbar(GtkWebView *webview, GtkWebViewAction action)
+{
+	GtkWebViewPriv *priv;
+
+	g_return_if_fail(webview != NULL);
+
+	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	g_return_if_fail(priv->toolbar != NULL);
+
+	gtk_webviewtoolbar_activate(priv->toolbar, action);
 }
 

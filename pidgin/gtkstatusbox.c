@@ -1836,7 +1836,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
-	status_box->sw = pidgin_create_webview(FALSE, &status_box->webview, NULL, NULL);
+	status_box->sw = pidgin_create_webview(FALSE, &status_box->webview, NULL);
 	gtk_webview_set_editable(GTK_WEBVIEW(status_box->webview), TRUE);
 
 #if 0

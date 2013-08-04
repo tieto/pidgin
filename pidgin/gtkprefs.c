@@ -58,7 +58,6 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
-#include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
 #ifdef USE_VV
 #include "media-gst.h"
@@ -1538,7 +1537,7 @@ theme_page(void)
 }
 
 static void
-formatting_toggle_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *toolbar)
+formatting_toggle_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *data)
 {
 	gboolean bold, italic, uline, strike;
 
@@ -1837,7 +1836,6 @@ conv_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-	GtkWidget *toolbar;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
 	GtkWidget *webview;
@@ -1935,7 +1933,7 @@ conv_page(void)
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 
-	frame = pidgin_create_webview(TRUE, &webview, &toolbar, NULL);
+	frame = pidgin_create_webview(TRUE, &webview, NULL);
 	gtk_widget_show(frame);
 	gtk_widget_set_name(webview, "pidgin_prefs_font_webview");
 	gtk_widget_set_size_request(frame, 450, -1);
@@ -1963,7 +1961,7 @@ conv_page(void)
 	                        PURPLE_CONNECTION_FORMATTING_WBFO);
 
 	g_signal_connect_after(G_OBJECT(webview), "format-toggled",
-	                       G_CALLBACK(formatting_toggle_cb), toolbar);
+	                       G_CALLBACK(formatting_toggle_cb), NULL);
 	g_signal_connect_after(G_OBJECT(webview), "format-cleared",
 	                       G_CALLBACK(formatting_clear_cb), NULL);
 	sample_webview = webview;

@@ -105,7 +105,6 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				GtkWidget *hbox;
 				GtkWidget *spacer;
 				GtkWidget *webview;
-				GtkWidget *toolbar;
 				GtkWidget *frame;
 
 				box = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -129,9 +128,10 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
 				gtk_widget_show(spacer);
 
-				frame = pidgin_create_webview(TRUE, &webview, &toolbar, NULL);
-				if (!(format & PURPLE_STRING_FORMAT_TYPE_HTML)) {
-					gtk_widget_destroy(toolbar);
+				if ((format & PURPLE_STRING_FORMAT_TYPE_HTML) != 0) {
+					frame = pidgin_create_webview(TRUE, &webview, NULL);
+				} else {
+					frame = pidgin_create_webview(FALSE, &webview, NULL);
 					gtk_webview_set_format_functions(GTK_WEBVIEW(webview), 0);
 				}
 

@@ -325,7 +325,6 @@ pidgin_request_input(const char *title, const char *primary,
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *img;
-	GtkWidget *toolbar;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 
@@ -408,7 +407,7 @@ pidgin_request_input(const char *title, const char *primary,
 		GtkWidget *frame;
 
 		/* webview */
-		frame = pidgin_create_webview(TRUE, &entry, &toolbar, NULL);
+		frame = pidgin_create_webview(TRUE, &entry, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
 		gtk_widget_set_name(entry, "pidgin_request_webview");
 		if (default_value != NULL)

@@ -1624,7 +1624,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 
 void
 gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
-                            GtkWebViewToolbarAction action)
+                            GtkWebViewAction action)
 {
 	GtkWebViewToolbarPriv *priv;
 	GtkAction *act;
@@ -1633,69 +1633,69 @@ gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
 
 	priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	switch (action) {
-		case GTK_WEBVIEWTOOLBAR_ACTION_BOLD:
+		case GTK_WEBVIEW_ACTION_BOLD:
 			act = priv->bold;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_ITALIC:
+		case GTK_WEBVIEW_ACTION_ITALIC:
 			act = priv->italic;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_UNDERLINE:
+		case GTK_WEBVIEW_ACTION_UNDERLINE:
 			act = priv->underline;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_STRIKE:
+		case GTK_WEBVIEW_ACTION_STRIKE:
 			act = priv->strike;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_LARGER:
+		case GTK_WEBVIEW_ACTION_LARGER:
 			act = priv->larger_size;
 			break;
 
 #if 0
-		case GTK_WEBVIEWTOOLBAR_ACTION_NORMAL:
+		case GTK_WEBVIEW_ACTION_NORMAL:
 			act = priv->normal_size;
 			break;
 #endif
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_SMALLER:
+		case GTK_WEBVIEW_ACTION_SMALLER:
 			act = priv->smaller_size;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_FONTFACE:
+		case GTK_WEBVIEW_ACTION_FONTFACE:
 			act = priv->font;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_FGCOLOR:
+		case GTK_WEBVIEW_ACTION_FGCOLOR:
 			act = priv->fgcolor;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_BGCOLOR:
+		case GTK_WEBVIEW_ACTION_BGCOLOR:
 			act = priv->bgcolor;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_CLEAR:
+		case GTK_WEBVIEW_ACTION_CLEAR:
 			act = priv->clear;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_IMAGE:
+		case GTK_WEBVIEW_ACTION_IMAGE:
 			act = priv->image;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_LINK:
+		case GTK_WEBVIEW_ACTION_LINK:
 			act = priv->link;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_HR:
+		case GTK_WEBVIEW_ACTION_HR:
 			act = priv->hr;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_SMILEY:
+		case GTK_WEBVIEW_ACTION_SMILEY:
 			act = priv->smiley;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_ATTENTION:
+		case GTK_WEBVIEW_ACTION_ATTENTION:
 			act = priv->attention;
 			break;
 

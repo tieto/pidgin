@@ -661,7 +661,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
-	frame = pidgin_create_webview(FALSE, &lv->web_view, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &lv->web_view, NULL);
 	gtk_widget_set_name(lv->web_view, "pidgin_log_web_view");
 	gtk_widget_set_size_request(lv->web_view, 320, 200);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);

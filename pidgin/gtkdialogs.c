@@ -473,7 +473,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = pidgin_create_webview(FALSE, &webview, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &webview, NULL);
 	gtk_webview_set_format_functions(GTK_WEBVIEW(webview), GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 

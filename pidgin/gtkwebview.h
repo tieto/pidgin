@@ -62,6 +62,27 @@ typedef enum {
 	GTK_WEBVIEW_SMILEY_CUSTOM = 1 << 0
 } GtkWebViewSmileyFlags;
 
+typedef enum {
+	GTK_WEBVIEW_ACTION_BOLD,
+	GTK_WEBVIEW_ACTION_ITALIC,
+	GTK_WEBVIEW_ACTION_UNDERLINE,
+	GTK_WEBVIEW_ACTION_STRIKE,
+	GTK_WEBVIEW_ACTION_LARGER,
+#if 0
+	GTK_WEBVIEW_ACTION_NORMAL,
+#endif
+	GTK_WEBVIEW_ACTION_SMALLER,
+	GTK_WEBVIEW_ACTION_FONTFACE,
+	GTK_WEBVIEW_ACTION_FGCOLOR,
+	GTK_WEBVIEW_ACTION_BGCOLOR,
+	GTK_WEBVIEW_ACTION_CLEAR,
+	GTK_WEBVIEW_ACTION_IMAGE,
+	GTK_WEBVIEW_ACTION_LINK,
+	GTK_WEBVIEW_ACTION_HR,
+	GTK_WEBVIEW_ACTION_SMILEY,
+	GTK_WEBVIEW_ACTION_ATTENTION
+} GtkWebViewAction;
+
 typedef struct _GtkWebView GtkWebView;
 typedef struct _GtkWebViewClass GtkWebViewClass;
 typedef struct _GtkWebViewSmiley GtkWebViewSmiley;
@@ -617,6 +638,32 @@ void gtk_webview_remove_smileys(GtkWebView *webview);
  */
 void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
                                const char *smiley);
+
+/**
+ * Makes the toolbar associated with a GtkWebView visible.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_show_toolbar(GtkWebView *webview);
+
+/**
+ * Makes the toolbar associated with a GtkWebView invisible.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_hide_toolbar(GtkWebView *webview);
+
+/**
+ * Activate an action on the toolbar associated with a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param action  The GtkWebViewAction
+ */
+void gtk_webview_activate_toolbar(GtkWebView *webview, GtkWebViewAction action);
+
+/* Do not use. */
+void
+gtk_webview_set_toolbar(GtkWebView *webview, GtkWidget *toolbar);
 
 G_END_DECLS
 

@@ -98,15 +98,12 @@ void pidgin_setup_webview(GtkWidget *webview);
  *        later.
  * @param webview_ret A pointer to a pointer to a GtkWidget.  This pointer
  *        will be set to the webview when this function exits.
- * @param toolbar_ret A pointer to a pointer to a GtkWidget.  If editable is
- *        TRUE then this will be set to the toolbar when this function exits.
- *        Otherwise this will be set to @c NULL.
  * @param sw_ret This will be filled with a pointer to the scrolled window
  *        widget which contains the webview.
  *
  * @return The GtkFrame containing the toolbar and webview.
  */
-GtkWidget *pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
+GtkWidget *pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw_ret);
 
 /**
  * Creates a small button
