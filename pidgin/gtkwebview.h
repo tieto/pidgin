@@ -118,9 +118,11 @@ GType gtk_webview_get_type(void);
 /**
  * Create a new GtkWebView object
  *
+ * @param editable Whether this GtkWebView will be user-editable
+ *
  * @return A GtkWidget corresponding to the GtkWebView object
  */
-GtkWidget *gtk_webview_new(void);
+GtkWidget *gtk_webview_new(gboolean editable);
 
 /**
  * A very basic routine to append html, which can be considered
@@ -220,14 +222,6 @@ void gtk_webview_page_up(GtkWebView *webview);
  * @param webview The GtkWebView.
  */
 void gtk_webview_page_down(GtkWebView *webview);
-
-/**
- * Enables or disables editing in a GtkWebView.
- *
- * @param webview  The GtkWebView
- * @param editable @c TRUE to make the widget editable, or @c FALSE otherwise.
- */
-void gtk_webview_set_editable(GtkWebView *webview, gboolean editable);
 
 /**
  * Setup formatting for a GtkWebView depending on the flags specified.
@@ -357,15 +351,6 @@ char *gtk_webview_get_current_backcolor(GtkWebView *webview);
  * @return The HTML font size.
  */
 gint gtk_webview_get_current_fontsize(GtkWebView *webview);
-
-/**
- * Checks whether a GtkWebView is marked as editable.
- *
- * @param webview The GtkWebView
- *
- * @return @c TRUE if the IM/HTML is editable, or @c FALSE otherwise.
- */
-gboolean gtk_webview_get_editable(GtkWebView *webview);
 
 /**
  * Gets the content of the head element of a GtkWebView as HTML.

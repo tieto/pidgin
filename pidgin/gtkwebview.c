@@ -1354,11 +1354,16 @@ editable_input_cb(GtkWebView *webview, gpointer data)
  *****************************************************************************/
 
 GtkWidget *
-gtk_webview_new(void)
+gtk_webview_new(gboolean editable)
 {
-	WebKitWebView *webview = WEBKIT_WEB_VIEW(g_object_new(gtk_webview_get_type(), NULL));
-	WebKitWebSettings *settings = webkit_web_view_get_settings(webview);
-	
+	GtkWidget *result;
+	WebKitWebView *webview;
+	WebKitWebSettings *settings;
+
+	result = g_object_new(gtk_webview_get_type(), NULL);
+	webview = WEBKIT_WEB_VIEW(result);
+	settings = webkit_web_view_get_settings(webview);
+
 	g_object_set(G_OBJECT(settings), "default-encoding", "utf-8", NULL);
 #ifdef _WIN32
 	/* XXX: win32 WebKitGTK replaces backslash with yen sign for
@@ -1369,8 +1374,15 @@ gtk_webview_new(void)
 	g_object_set(G_OBJECT(settings), "default-font-family", "Verdana", NULL);
 #endif
 	webkit_web_view_set_settings(webview, settings);
-	
-	return GTK_WIDGET(webview);
+
+	if (editable) {
+		webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
+
+		g_signal_connect(G_OBJECT(webview), "user-changed-contents",
+		                 G_CALLBACK(editable_input_cb), NULL);
+	}
+
+	return result;
 }
 
 static void
@@ -1406,6 +1418,8 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	gobject_class = G_OBJECT_CLASS(klass);
 
 	g_type_class_add_private(klass, sizeof(GtkWebViewPriv));
+
+	/* Signals */
 
 	signals[BUTTONS_UPDATE] = g_signal_new("allowed-formats-updated",
 	                                       G_TYPE_FROM_CLASS(gobject_class),
@@ -1446,10 +1460,14 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	                                      G_TYPE_NONE, 1, WEBKIT_TYPE_DOM_RANGE,
 	                                      NULL);
 
+	/* Class Methods */
+
 	klass->toggle_format = webview_toggle_format;
 	klass->clear_format = webview_clear_formatting;
 
 	gobject_class->finalize = gtk_webview_finalize;
+
+	/* Key Bindings */
 
 	binding_set = gtk_binding_set_by_class(parent_class);
 	gtk_binding_entry_add_signal(binding_set, GDK_KEY_b, GDK_CONTROL_MASK,
@@ -1707,27 +1725,6 @@ gtk_webview_page_down(GtkWebView *webview)
 	scroll_val = MIN(scroll_val, gtk_adjustment_get_upper(vadj) - page_size);
 
 	gtk_adjustment_set_value(vadj, scroll_val);
-}
-
-void
-gtk_webview_set_editable(GtkWebView *webview, gboolean editable)
-{
-	GtkWebViewPriv *priv;
-	g_return_if_fail(webview != NULL);
-
-	priv = GTK_WEBVIEW_GET_PRIVATE(webview);
-	webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webview), editable);
-
-	if (editable) {
-		g_signal_connect(G_OBJECT(webview), "user-changed-contents",
-		                 G_CALLBACK(editable_input_cb), NULL);
-	} else {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(webview),
-		                                     G_CALLBACK(editable_input_cb),
-		                                     NULL);
-	}
-
-	priv->format_functions = GTK_WEBVIEW_ALL;
 }
 
 void
@@ -2044,12 +2041,6 @@ gtk_webview_get_current_fontsize(GtkWebView *webview)
 	g_free(text);
 
 	return size;
-}
-
-gboolean
-gtk_webview_get_editable(GtkWebView *webview)
-{
-	return webkit_web_view_get_editable(WEBKIT_WEB_VIEW(webview));
 }
 
 void
