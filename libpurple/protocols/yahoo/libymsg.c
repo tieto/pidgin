@@ -1760,8 +1760,6 @@ static void yahoo_auth16_stage2(PurpleHttpConnection *http_conn,
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		const gchar *error_message = purple_http_response_get_error(response);
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
@@ -1859,8 +1857,6 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1_cb\n");
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		const gchar *error_message = purple_http_response_get_error(response);
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
@@ -1952,10 +1948,9 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 			g_free(token);
 		}
 		else {
-				/* OK to login, correct information provided */
+			/* OK to login, correct information provided */
 			gboolean yahoojp = yahoo_is_japan(account);
 			PurpleHttpRequest *req;
-			PurpleHttpConnection *hc;
 
 			req = purple_http_request_new(NULL);
 			purple_http_request_set_url_printf(req,
@@ -1963,10 +1958,10 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 				token);
 			purple_http_request_header_set(req, "User-Agent",
 				YAHOO_CLIENT_USERAGENT);
-			hc = purple_http_request(gc, req, yahoo_auth16_stage2,
-				auth_data);
+			purple_http_connection_set_add(yd->http_reqs,
+				purple_http_request(gc, req,
+					yahoo_auth16_stage2, auth_data));
 			purple_http_request_unref(req);
-			yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 			g_free(token);
 		}
@@ -1978,7 +1973,6 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *encoded_username;
 	char *encoded_password;
@@ -2003,9 +1997,9 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 		yahoojp ? YAHOOJP_TOKEN_URL : YAHOO_TOKEN_URL,
 		encoded_username, encoded_password, purple_url_encode(seed));
 	purple_http_request_header_set(req, "User-Agent", YAHOO_CLIENT_USERAGENT);
-	hc = purple_http_request(gc, req, yahoo_auth16_stage1_cb, auth_data);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_auth16_stage1_cb, auth_data));
 	purple_http_request_unref(req);
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	purple_str_wipe(encoded_password);
 	g_free(encoded_username);
@@ -3562,8 +3556,6 @@ static void yahoo_got_pager_server(PurpleHttpConnection *http_conn,
 	int stringslen = 0;
 	const gchar *got_data;
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_error("yahoo", "Unable to retrieve server info: %s\n",
 			purple_http_response_get_error(response));
@@ -3623,7 +3615,6 @@ static void yahoo_got_pager_server(PurpleHttpConnection *http_conn,
 void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	YahooData *yd = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
 
@@ -3641,6 +3632,7 @@ void yahoo_login(PurpleAccount *account) {
 	yd->txhandler = 0;
 	/* TODO: Is there a good grow size for the buffer? */
 	yd->txbuf = purple_circular_buffer_new(0);
+	yd->http_reqs = purple_http_connection_set_new();
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
@@ -3662,9 +3654,9 @@ void yahoo_login(PurpleAccount *account) {
 	req = purple_http_request_new(yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL :
 		YAHOO_PAGER_HOST_REQ_URL);
 	purple_http_request_header_set(req, "User-Agent", YAHOO_CLIENT_USERAGENT);
-	hc = purple_http_request(gc, req, yahoo_got_pager_server, yd);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_got_pager_server, yd));
 	purple_http_request_unref(req);
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	return;
 }
@@ -3678,10 +3670,8 @@ void yahoo_close(PurpleConnection *gc) {
 		yd->inpa = 0;
 	}
 
-	while (yd->http_reqs) {
-		purple_http_conn_cancel(yd->http_reqs->data);
-		yd->http_reqs = g_slist_delete_link(yd->http_reqs, yd->http_reqs);
-	}
+	purple_http_connection_set_destroy(yd->http_reqs);
+	yd->http_reqs = NULL;
 
 	for (l = yd->confs; l; l = l->next) {
 		PurpleChatConversation *conv = l->data;
@@ -4196,8 +4186,6 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_error("yahoo",
 			"Requesting mail login token failed: %s\n",
@@ -4232,7 +4220,6 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
-	PurpleHttpConnection *hc;
 
 	req = purple_http_request_new(
 		"https://login.yahoo.com/config/cookie_token");
@@ -4242,10 +4229,9 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	cookiejar = purple_http_request_get_cookie_jar(req);
 	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
 	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
-	hc = purple_http_request(gc, req, yahoo_get_inbox_token_cb, NULL);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_get_inbox_token_cb, NULL));
 	purple_http_request_unref(req);
-
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 }
 
 #if 0
@@ -4342,8 +4328,6 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
 				_("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -4395,7 +4379,6 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
-	PurpleHttpConnection *hc;
 	struct yahoo_sms_carrier_cb_data *sms_cb_data;
 	char *validate_request_str = NULL;
 	xmlnode *validate_request_root = NULL;
@@ -4427,10 +4410,9 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	purple_http_cookie_jar_set(cookiejar, "T", yd->cookie_t);
 	purple_http_cookie_jar_set(cookiejar, "Y", yd->cookie_y);
 	purple_http_request_set_contents(req, validate_request_str, -1);
-	hc = purple_http_request(gc, req, yahoo_get_sms_carrier_cb, data);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_get_sms_carrier_cb, data));
 	purple_http_request_unref(req);
-
-	yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
 
 	g_free(validate_request_str);
 }

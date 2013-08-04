@@ -91,6 +91,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	session->rx_state = RX_STATE_RLEN;
 	session->http_interval = MXIT_HTTP_POLL_MIN;
 	session->http_last_poll = mxit_now_milli();
+	session->async_http_reqs = purple_http_connection_set_new();
 
 	return session;
 }
@@ -391,9 +392,6 @@ mxit_cb_clientinfo2(PurpleHttpConnection *http_conn,
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_clientinfo_cb2\n" );
 
-	/* remove request from the async outstanding calls list */
-	session->async_http_reqs = g_slist_remove(session->async_http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		/* no reply from the WAP site */
 		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
@@ -518,7 +516,6 @@ static void free_logindata( struct login_data* data )
 static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* fields )
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 	PurpleRequestField*		field;
 	const char*				captcha_resp;
@@ -571,11 +568,10 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
 		MXIT_CP_OS, MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH,
 		time(NULL));
 	purple_http_request_header_set(req, "User-Agent", MXIT_HTTP_USERAGENT);
-	hc = purple_http_request(session->con, req, mxit_cb_clientinfo2,
-		session);
+	purple_http_connection_set_add(session->async_http_reqs,
+		purple_http_request(session->con, req, mxit_cb_clientinfo2,
+			session));
 	purple_http_request_unref(req);
-	session->async_http_reqs =
-		g_slist_prepend(session->async_http_reqs, hc);
 
 	/* free up the login resources */
 	free_logindata( session->logindata );
@@ -629,10 +625,6 @@ mxit_cb_clientinfo1(PurpleHttpConnection *http_conn,
 	purple_debug_info( MXIT_PLUGIN_ID, "RESPONSE: %s\n",
 		purple_http_response_get_data(response, NULL));
 #endif
-
-	/* remove request from the async outstanding calls list */
-	session->async_http_reqs = g_slist_remove(session->async_http_reqs,
-		http_conn);
 
 	if (!purple_http_response_is_successfull(response)) {
 		/* no reply from the WAP site */
@@ -729,7 +721,6 @@ static void
 get_clientinfo(struct MXitSession* session)
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	const char *wapserver;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "get_clientinfo\n");
@@ -749,9 +740,10 @@ get_clientinfo(struct MXitSession* session)
 		"&ts=%li", wapserver, MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH,
 		time(NULL));
 	purple_http_request_header_set(req, "User-Agent", MXIT_HTTP_USERAGENT);
-	hc = purple_http_request(session->con, req, mxit_cb_clientinfo1, session);
+	purple_http_connection_set_add(session->async_http_reqs,
+		purple_http_request(session->con, req, mxit_cb_clientinfo1,
+			session));
 	purple_http_request_unref(req);
-	session->async_http_reqs = g_slist_prepend(session->async_http_reqs, hc);
 }
 
 

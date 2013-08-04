@@ -60,6 +60,7 @@ typedef struct _JabberStream JabberStream;
 #include "connection.h"
 #include "dnsquery.h"
 #include "dnssrv.h"
+#include "http.h"
 #include "media.h"
 #include "mediamanager.h"
 #include "roomlist.h"
@@ -263,11 +264,7 @@ struct _JabberStream
 
 	PurpleJabberBOSHConnection *bosh;
 
-	/**
-	 * This linked list contains PurpleHttpConnection structs
-	 * for when we lookup buddy icons from a url
-	 */
-	GSList *http_conns;
+	PurpleHttpConnectionSet *http_conns;
 
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;

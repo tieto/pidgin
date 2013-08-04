@@ -2339,7 +2339,6 @@ msn_got_info(PurpleHttpConnection *http_conn,
 #endif
 
 	session = purple_connection_get_protocol_data(info_data->gc);
-	session->http_reqs = g_slist_remove(session->http_reqs, http_conn);
 
 	user_info = purple_notify_user_info_new();
 	has_tooltip_text = msn_tooltip_extract_info_text(user_info, info_data);
@@ -2729,14 +2728,13 @@ msn_got_info(PurpleHttpConnection *http_conn,
 	if (photo_url_text)
 	{
 		PurpleHttpRequest *req;
-		PurpleHttpConnection *hc;
 
 		req = purple_http_request_new(photo_url_text);
 		purple_http_request_set_max_len(req, MAX_HTTP_BUDDYICON_BYTES);
-		hc = purple_http_request(info_data->gc, req, msn_got_photo, info2_data);
+		purple_http_connection_set_add(session->http_reqs,
+			purple_http_request(info_data->gc, req, msn_got_photo,
+				info2_data));
 		purple_http_request_unref(req);
-
-		session->http_reqs = g_slist_prepend(session->http_reqs, hc);
 	}
 	else
 	{
@@ -2758,11 +2756,6 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	char *url_buffer = info2_data->url_buffer;
 	PurpleNotifyUserInfo *user_info = info2_data->user_info;
 	char *photo_url_text = info2_data->photo_url_text;
-
-	if (http_conn) {
-		MsnSession *session = purple_connection_get_protocol_data(info_data->gc);
-		session->http_reqs = g_slist_remove(session->http_reqs, http_conn);
-	}
 
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (response && purple_http_response_is_successfull(response))
@@ -2798,7 +2791,6 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 static void
 msn_get_info(PurpleConnection *gc, const char *name)
 {
-	PurpleHttpConnection *hc;
 	MsnSession *session = purple_connection_get_protocol_data(gc);
 	MsnGetInfoData *data;
 
@@ -2806,9 +2798,9 @@ msn_get_info(PurpleConnection *gc, const char *name)
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	hc = purple_http_get_printf(gc, msn_got_info, data,
-		"%s%s", PROFILE_URL, name);
-	session->http_reqs = g_slist_prepend(session->http_reqs, hc);
+	purple_http_connection_set_add(session->http_reqs,
+		purple_http_get_printf(gc, msn_got_info, data, "%s%s",
+			PROFILE_URL, name));
 }
 
 static gboolean msn_load(PurplePlugin *plugin)

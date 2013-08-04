@@ -482,9 +482,6 @@ static void emoticon_returned(PurpleHttpConnection *http_conn,
 
 	purple_debug_info( MXIT_PLUGIN_ID, "emoticon_returned\n" );
 
-	/* remove request from the async outstanding calls list */
-	mx->session->async_http_reqs = g_slist_remove(mx->session->async_http_reqs, http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		/* no reply from the WAP site */
 		purple_debug_error( MXIT_PLUGIN_ID, "Error contacting the MXit WAP site. Please try again later (emoticon).\n" );
@@ -615,17 +612,16 @@ done:
  */
 static void emoticon_request( struct RXMsgData* mx, const char* id )
 {
-	PurpleHttpConnection *hc;
 	const char*				wapserver;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "sending request for emoticon '%s'\n", id );
 
 	wapserver = purple_account_get_string( mx->session->acc, MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
 
-	hc = purple_http_get_printf(mx->session->con, emoticon_returned, mx,
-		"%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver,
-		MXIT_EMOTICON_SIZE, id, time( NULL ) );
-	mx->session->async_http_reqs = g_slist_prepend(mx->session->async_http_reqs, hc);
+	purple_http_connection_set_add(mx->session->async_http_reqs,
+		purple_http_get_printf(mx->session->con, emoticon_returned, mx,
+			"%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver,
+			MXIT_EMOTICON_SIZE, id, time( NULL ) ));
 }
 
 

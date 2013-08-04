@@ -271,10 +271,6 @@ mxit_cb_http_rx(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	const gchar *got_data;
 	size_t got_len;
 
-	/* clear outstanding request */
-	session->async_http_reqs = g_slist_remove(session->async_http_reqs,
-		http_conn);
-
 	if (!purple_http_response_is_successfull(response)) {
 		purple_debug_error(MXIT_PLUGIN_ID, "HTTP response error (%s)\n",
 			purple_http_response_get_error(response));
@@ -300,7 +296,6 @@ static void
 mxit_write_http_get(struct MXitSession* session, struct tx_packet* packet)
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 	char *part = NULL;
 
 	if (packet->datalen > 0) {
@@ -315,9 +310,10 @@ mxit_write_http_get(struct MXitSession* session, struct tx_packet* packet)
 	purple_http_request_set_url_printf(req, "%s?%s%s", session->http_server,
 		purple_url_encode(packet->header), part ? part : "");
 	purple_http_request_header_set(req, "User-Agent", MXIT_HTTP_USERAGENT);
-	hc = purple_http_request(session->con, req, mxit_cb_http_rx, session);
+	purple_http_connection_set_add(session->async_http_reqs,
+		purple_http_request(session->con, req, mxit_cb_http_rx,
+			session));
 	purple_http_request_unref(req);
-	session->async_http_reqs = g_slist_prepend(session->async_http_reqs, hc);
 
 	g_free(part);
 }
@@ -333,7 +329,6 @@ static void
 mxit_write_http_post(struct MXitSession* session, struct tx_packet* packet)
 {
 	PurpleHttpRequest *req;
-	PurpleHttpConnection *hc;
 
 	/* strip off the last '&' from the header */
 	packet->header[packet->headerlen - 1] = '\0';
@@ -348,10 +343,10 @@ mxit_write_http_post(struct MXitSession* session, struct tx_packet* packet)
 		"application/octet-stream");
 	purple_http_request_set_contents(req, packet->data + MXIT_MS_OFFSET,
 		packet->datalen - MXIT_MS_OFFSET);
-	hc = purple_http_request(session->con, req, mxit_cb_http_rx, session);
+	purple_http_connection_set_add(session->async_http_reqs,
+		purple_http_request(session->con, req, mxit_cb_http_rx,
+			session));
 	purple_http_request_unref(req);
-	session->async_http_reqs =
-		g_slist_prepend(session->async_http_reqs, hc);
 }
 
 
@@ -2879,10 +2874,8 @@ void mxit_close_connection( struct MXitSession* session )
 	session->flags &= ~MXIT_FLAG_CONNECTED;
 
 	/* cancel all outstanding async calls */
-	while (session->async_http_reqs) {
-		purple_http_conn_cancel(session->async_http_reqs->data);
-		session->async_http_reqs = g_slist_delete_link(session->async_http_reqs, session->async_http_reqs);
-	}
+	purple_http_connection_set_destroy(session->async_http_reqs);
+	session->async_http_reqs = NULL;
 
 	/* remove the input cb function */
 	if ( session->inpa ) {
