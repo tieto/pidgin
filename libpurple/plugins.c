@@ -306,8 +306,7 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_PREFERENCES_FRAME:
-			purple_plugin_info_set_pref_frame_callback(info,
-					g_value_get_pointer(value));
+			priv->get_pref_frame = g_value_get_pointer(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -432,7 +431,7 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
 		                     "Preferences frame callback",
 		                     "The callback that returns the preferences frame",
-		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 /**************************************************************************
@@ -631,17 +630,6 @@ purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
 #else
 	return NULL;
 #endif
-}
-
-void
-purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
-		PurplePluginPrefFrameCallback callback)
-{
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->get_pref_frame = callback;
 }
 
 PurplePluginPrefFrameCallback

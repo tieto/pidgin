@@ -50,6 +50,13 @@ typedef struct
 	FinchPluginFrame get_pref_frame;
 } FinchPluginInfoPrivate;
 
+enum
+{
+	PROP_0,
+	PROP_FINCH_PREFERENCES_FRAME,
+	PROP_LAST
+};
+
 static struct
 {
 	GntWidget *tree;
@@ -62,10 +69,56 @@ static GHashTable *confwins;
 
 static GntWidget *process_pref_frame(PurplePluginPrefFrame *frame);
 
+/* Set method for GObject properties */
+static void
+finch_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_FINCH_PREFERENCES_FRAME:
+			priv->get_pref_frame = g_value_get_pointer(value);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+finch_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_FINCH_PREFERENCES_FRAME:
+			g_value_set_pointer(value, priv->get_pref_frame);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
 /* Class initializer function */
 static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
 	g_type_class_add_private(klass, sizeof(FinchPluginInfoPrivate));
+
+	/* Setup properties */
+	obj_class->get_property = finch_plugin_info_get_property;
+	obj_class->set_property = finch_plugin_info_set_property;
+
+	g_object_class_install_property(obj_class, PROP_FINCH_PREFERENCES_FRAME,
+		g_param_spec_pointer("finch_preferences_frame",
+		                     "Finch preferences frame callback",
+		                     "Callback that returns a GNT preferences frame",
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 GType

@@ -47,6 +47,13 @@ typedef struct
 	PidginPluginConfigFrame get_config_frame;
 } PidginPluginInfoPrivate;
 
+enum
+{
+	PROP_0,
+	PROP_PIDGIN_CONFIG_FRAME,
+	PROP_LAST
+};
+
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
                                   GtkTreeIter *iter, gboolean unload);
 
@@ -64,10 +71,56 @@ static GtkLabel *plugin_filename = NULL;
 static GtkWidget *pref_button = NULL;
 static GHashTable *plugin_pref_dialogs = NULL;
 
+/* Set method for GObject properties */
+static void
+pidgin_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_PIDGIN_CONFIG_FRAME:
+			priv->get_config_frame = g_value_get_pointer(value);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+pidgin_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_PIDGIN_CONFIG_FRAME:
+			g_value_set_pointer(value, priv->get_config_frame);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
 /* Class initializer function */
 static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
 {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
 	g_type_class_add_private(klass, sizeof(PidginPluginInfoPrivate));
+
+	/* Setup properties */
+	obj_class->get_property = pidgin_plugin_info_get_property;
+	obj_class->set_property = pidgin_plugin_info_set_property;
+
+	g_object_class_install_property(obj_class, PROP_PIDGIN_CONFIG_FRAME,
+		g_param_spec_pointer("pidgin_config_frame",
+		                     "Pidgin configuration frame callback",
+		                     "Callback that returns a GTK configuration frame",
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 GType

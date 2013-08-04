@@ -420,15 +420,6 @@ guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
- * Sets a callback to be invoked to retrieve the preferences frame for a plugin.
- *
- * @param info The plugin info to set the callback for.
- * @param callback    The callback that returns the preferences frame.
- */
-void purple_plugin_info_set_pref_frame_callback(PurplePluginInfo *info,
-		PurplePluginPrefFrameCallback callback);
-
-/**
  * Returns the callback that retrieves the preferences frame for a plugin.
  *
  * @param info The plugin info to get the callback from.
