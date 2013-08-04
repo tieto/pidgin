@@ -835,6 +835,7 @@ purple_keyring_get_password(PurpleAccount *account,
 			_("No keyring configured."));
 		cb(account, NULL, error, data);
 		g_error_free(error);
+		return;
 	}
 
 	read_cb = purple_keyring_get_read_password(inuse);
