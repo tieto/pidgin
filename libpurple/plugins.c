@@ -51,7 +51,7 @@ enum
 	PROP_0,
 	PROP_CATEGORY,
 	PROP_UI_REQUIREMENT,
-	PROP_PREF_FRAME_CALLBACK,
+	PROP_PREFERENCES_FRAME,
 	PROP_LAST
 };
 
@@ -286,9 +286,9 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
  * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
-#define PROP_CATEGORY_S             "category"
-#define PROP_UI_REQUIREMENT_S       "ui-requirement"
-#define PROP_PREF_FRAME_CALLBACK_S  "preferences-callback"
+#define PROP_CATEGORY_S           "category"
+#define PROP_UI_REQUIREMENT_S     "ui_requirement"
+#define PROP_PREFERENCES_FRAME_S  "preferences_frame"
 
 /* Set method for GObject properties */
 static void
@@ -305,7 +305,7 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
 			break;
-		case PROP_PREF_FRAME_CALLBACK:
+		case PROP_PREFERENCES_FRAME:
 			purple_plugin_info_set_pref_frame_callback(info,
 					g_value_get_pointer(value));
 			break;
@@ -326,7 +326,7 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_CATEGORY:
 			g_value_set_string(value, purple_plugin_info_get_category(info));
 			break;
-		case PROP_PREF_FRAME_CALLBACK:
+		case PROP_PREFERENCES_FRAME:
 			g_value_set_pointer(value,
 					purple_plugin_info_get_pref_frame_callback(info));
 			break;
@@ -426,10 +426,10 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		g_param_spec_string(PROP_UI_REQUIREMENT_S,
 		                    "UI Requirement",
 		                    "ID of UI that is required by this plugin", NULL,
-		                    G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+		                    G_PARAM_WRITABLE));
 
-	g_object_class_install_property(obj_class, PROP_PREF_FRAME_CALLBACK,
-		g_param_spec_pointer(PROP_PREF_FRAME_CALLBACK_S,
+	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
+		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
 		                     "Preferences frame callback",
 		                     "The callback that returns the preferences frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
@@ -460,6 +460,24 @@ purple_plugin_info_get_type(void)
 	}
 
 	return type;
+}
+
+PurplePluginInfo *
+purple_plugin_info_new(const char *first_property, ...)
+{
+	GObject *info;
+	va_list var_args;
+
+	/* at least ID is required */
+	if (!first_property)
+		return NULL;
+
+	va_start(var_args, first_property);
+	info = g_object_new_valist(PURPLE_TYPE_PLUGIN_INFO, first_property,
+	                           var_args);
+	va_end(var_args);
+
+	return PURPLE_PLUGIN_INFO(info);
 }
 
 const gchar *

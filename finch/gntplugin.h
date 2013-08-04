@@ -82,6 +82,26 @@ struct _FinchPluginInfoClass {
  */
 GType finch_plugin_info_get_type(void);
 
+/**
+ * Creates a new #FinchPluginInfo instance to be returned from
+ * gplugin_plugin_query() of a finch plugin, using the provided name/value
+ * pairs.
+ *
+ * See purple_plugin_info_new() for a list of available property names.
+ * Additionally, you can provide the property "finch_preferences_frame",
+ * which should be a callback that returns a GntWidget for the plugin's
+ * preferences (see FinchPluginFrame).
+ *
+ * @param first_property  The first property name
+ * @param ...  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by @c NULL
+ *
+ * @return A new #FinchPluginInfo instance.
+ *
+ * @see purple_plugin_info_new()
+ */
+FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...);
+
 /*@}*/
 
 /**********************************************************************

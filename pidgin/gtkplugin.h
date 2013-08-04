@@ -74,6 +74,26 @@ G_BEGIN_DECLS
 GType pidgin_plugin_info_get_type(void);
 
 /**
+ * Creates a new #PidginPluginInfo instance to be returned from
+ * gplugin_plugin_query() of a pidgin plugin, using the provided name/value
+ * pairs.
+ *
+ * See purple_plugin_info_new() for a list of available property names.
+ * Additionally, you can provide the property "pidgin_config_frame",
+ * which should be a callback that returns a GtkWidget for the plugin's
+ * configuration (see PidginPluginConfigFrame).
+ *
+ * @param first_property  The first property name
+ * @param ...  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by @c NULL
+ *
+ * @return A new #PidginPluginInfo instance.
+ *
+ * @see purple_plugin_info_new()
+ */
+PidginPluginInfo *pidgin_plugin_info_new(const char *first_property, ...);
+
+/**
  * Returns the configuration frame widget for a GTK+ plugin, if one
  * exists.
  *

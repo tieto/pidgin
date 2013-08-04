@@ -279,6 +279,39 @@ GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 GType purple_plugin_info_get_type(void);
 
 /**
+ * Creates a new #PurplePluginInfo instance to be returned from
+ * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
+ *
+ * All properties except "id" are optional.
+ *
+ * Valid property names are:                                                 \n
+ * "id"                 (string) The ID of the plugin.                       \n
+ * "name"               (string) The name of the plugin.                     \n
+ * "version"            (string) Version of the plugin.                      \n
+ * "category"           (string) Primary category of the plugin.             \n
+ * "summary"            (string) Summary of the plugin.                      \n
+ * "description"        (string) Description of the plugin                   \n
+ * "author"             (string) Author of the plugin                        \n
+ * "website"            (string) Website of the plugin                       \n
+ * "icon"               (string) Path to a plugin's icon                     \n
+ * "license"            (string) The plugin's license                        \n
+ * "abi_version"        (guint32) The required ABI version for the plugin.   \n
+ * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
+ * "preferences_frame"  (PurplePluginPrefFrameCallback) Callback that returns
+ *                      a preferences frame for the plugin.
+ *
+ * @param first_property  The first property name
+ * @param ...  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by @c NULL
+ *
+ * @return A new #PurplePluginInfo instance.
+ *
+ * @see PURPLE_PLUGIN_ABI_VERSION
+ * @see @ref plugin-ids
+ */
+PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...);
+
+/**
  * Returns a plugin's ID.
  *
  * @param info The plugin's info instance.

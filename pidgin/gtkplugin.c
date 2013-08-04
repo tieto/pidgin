@@ -89,6 +89,26 @@ pidgin_plugin_info_get_type(void)
 	return type;
 }
 
+PidginPluginInfo *
+pidgin_plugin_info_new(const char *first_property, ...)
+{
+	GObject *info;
+	va_list var_args;
+
+	/* at least ID is required */
+	if (!first_property)
+		return NULL;
+
+	va_start(var_args, first_property);
+	info = g_object_new_valist(PIDGIN_TYPE_PLUGIN_INFO, first_property,
+	                           var_args);
+	va_end(var_args);
+
+	g_object_set(info, "ui_requirement", PIDGIN_UI, NULL);
+
+	return PIDGIN_PLUGIN_INFO(info);
+}
+
 GtkWidget *
 pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 {

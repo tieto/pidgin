@@ -87,6 +87,26 @@ finch_plugin_info_get_type(void)
 	return type;
 }
 
+FinchPluginInfo *
+finch_plugin_info_new(const char *first_property, ...)
+{
+	GObject *info;
+	va_list var_args;
+
+	/* at least ID is required */
+	if (!first_property)
+		return NULL;
+
+	va_start(var_args, first_property);
+	info = g_object_new_valist(FINCH_TYPE_PLUGIN_INFO, first_property,
+	                           var_args);
+	va_end(var_args);
+
+	g_object_set(info, "ui_requirement", FINCH_UI, NULL);
+
+	return FINCH_PLUGIN_INFO(info);
+}
+
 static void
 free_stringlist(GList *list)
 {
