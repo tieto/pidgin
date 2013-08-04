@@ -78,6 +78,10 @@ ARC_GT7="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-devel-2.28.0-1.2.noarch.rpm;gtk: GDK
 ARCHIVES+="ARC_GT7 "
 ARC_GT8="${DOWNLOAD_HOST}mingw32-pango-devel-1.34.0-2.3.noarch.rpm;gtk: Pango;1.34.0-2.3;c875ae60dacf05b642d7da5f289a3c58ff9b0e52;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT8 "
+ARC_GT9="${DOWNLOAD_HOST}mingw32-glib2-2.36.1-1.1.noarch.rpm;gtk: Glib runtimes;2.36.1-1.1;ed468f064f61c5a12b716c83cba8ccbe05d22992;${OBS_SKIP};${GTK_DIR}"
+ARCHIVES+="ARC_GT9 "
+ARC_G10="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm;gtk: libintl;0.18.1.1-13.6;0e6fde8e86788874366f308e25634f95613e906a;${OBS_SKIP};${GTK_DIR}"
+ARCHIVES+="ARC_G10 "
 
 ARC_ENC="${DOWNLOAD_HOST}mingw32-enchant-devel-1.6.0-3.9.noarch.rpm;Enchant;1.6.0-3.9;1daadbb4fbeb06a6ad26bed916dc2a980d971c49;${OBS_SKIP};enchant-1.6"
 ARCHIVES+="ARC_ENC "

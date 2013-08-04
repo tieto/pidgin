@@ -28,6 +28,7 @@
 
 
 #include "internal.h"
+#include "http.h"
 
 
 #if defined( __APPLE__ )
@@ -168,7 +169,7 @@ struct MXitSession {
 	int					outack;						/* outstanding ack packet */
 	guint				q_slow_timer_id;			/* timer handle for slow tx queue */
 	guint				q_fast_timer_id;			/* timer handle for fast tx queue */
-	GSList*				async_http_reqs;			/* list of current outstanding async http requests */
+	PurpleHttpConnectionSet*	async_http_reqs;			/* list of current outstanding async http requests */
 
 	/* receive */
 	char				rx_lbuf[16];				/* receive byte buffer (socket packet length) */
