@@ -31,44 +31,28 @@
 #include "oob.h"
 
 typedef struct _JabberOOBXfer {
-	char *address;
-	int port;
-	char *page;
-
-	GString *headers;
-
-	char *iq_id;
-
 	JabberStream *js;
-
-	gchar *write_buffer;
-	gsize written_len;
-	guint writeh;
-
+	gchar *iq_id;
+	gchar *url;
+	PurpleHttpConnection *hc;
 } JabberOOBXfer;
 
 static void jabber_oob_xfer_init(PurpleXfer *xfer)
 {
-	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
-	purple_xfer_start(xfer, -1, jox->address, jox->port);
+	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
 static void jabber_oob_xfer_free(PurpleXfer *xfer)
 {
 	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
+
+	purple_xfer_set_protocol_data(xfer, NULL);
 	jox->js->oob_file_transfers = g_list_remove(jox->js->oob_file_transfers,
 			xfer);
 
-	g_string_free(jox->headers, TRUE);
-	g_free(jox->address);
-	g_free(jox->page);
 	g_free(jox->iq_id);
-	g_free(jox->write_buffer);
-	if(jox->writeh)
-		purple_input_remove(jox->writeh);
+	g_free(jox->url);
 	g_free(jox);
-
-	purple_xfer_set_protocol_data(xfer, NULL);
 }
 
 static void jabber_oob_xfer_end(PurpleXfer *xfer)
@@ -85,82 +69,67 @@ static void jabber_oob_xfer_end(PurpleXfer *xfer)
 	jabber_oob_xfer_free(xfer);
 }
 
-static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInputCondition cond) {
-	PurpleXfer *xfer = data;
-	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
-	int len, total_len = strlen(jox->write_buffer);
+static void
+jabber_oob_xfer_got(PurpleHttpConnection *hc, PurpleHttpResponse *response,
+	gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+	JabberOOBXfer *jox;
 
-	len = purple_xfer_write(xfer, (guchar*) jox->write_buffer + jox->written_len,
-		total_len - jox->written_len);
-
-	if(len < 0 && errno == EAGAIN)
+	if (purple_xfer_is_cancelled(xfer))
 		return;
-	else if(len < 0) {
-		purple_debug_error("jabber", "Write error on oob xfer!\n");
-		purple_input_remove(jox->writeh);
-		purple_xfer_cancel_local(xfer);
-	}
-	jox->written_len += len;
 
-	if(jox->written_len == total_len) {
-		purple_input_remove(jox->writeh);
-		g_free(jox->write_buffer);
-		jox->write_buffer = NULL;
+	jox = purple_xfer_get_protocol_data(xfer);
+	jox->hc = NULL;
+
+	if (!purple_http_response_is_successfull(response) ||
+		purple_xfer_get_bytes_remaining(xfer) > 0)
+	{
+		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
+		purple_xfer_end(xfer);
+	} else {
+		purple_xfer_set_completed(xfer, TRUE);
+		purple_xfer_end(xfer);
 	}
+}
+
+static void
+jabber_oob_xfer_progress_watcher(PurpleHttpConnection *hc,
+	gboolean reading_state, int processed, int total, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+
+	if (!reading_state)
+		return;
+
+	purple_xfer_set_size(xfer, total);
+	purple_xfer_update_progress(xfer);
+}
+
+static gboolean
+jabber_oob_xfer_writer(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, const gchar *buffer, size_t offset,
+	size_t length, gpointer _xfer)
+{
+	PurpleXfer *xfer = _xfer;
+
+	return purple_xfer_write_file(xfer, (const guchar*)buffer, length);
 }
 
 static void jabber_oob_xfer_start(PurpleXfer *xfer)
 {
+	PurpleHttpRequest *req;
 	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
 
-	if(jox->write_buffer == NULL) {
-		jox->write_buffer = g_strdup_printf(
-			"GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n",
-			jox->page, jox->address);
-		jox->written_len = 0;
-	}
+	req = purple_http_request_new(jox->url);
+	purple_http_request_set_max_len(req, -1);
+	purple_http_request_set_response_writer(req, jabber_oob_xfer_writer,
+		xfer);
+	jox->hc = purple_http_request(jox->js->gc, req, jabber_oob_xfer_got,
+		xfer);
 
-	jox->writeh = purple_input_add(purple_xfer_get_fd(xfer), PURPLE_INPUT_WRITE,
-		jabber_oob_xfer_request_send, xfer);
-
-	jabber_oob_xfer_request_send(xfer, purple_xfer_get_fd(xfer), PURPLE_INPUT_WRITE);
-}
-
-static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
-	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
-	char test[2048];
-	char *tmp, *lenstr;
-	int len;
-
-	if((len = read(purple_xfer_get_fd(xfer), test, sizeof(test))) > 0) {
-		jox->headers = g_string_append_len(jox->headers, test, len);
-		if((tmp = strstr(jox->headers->str, "\r\n\r\n"))) {
-			*tmp = '\0';
-			lenstr = strstr(jox->headers->str, "Content-Length: ");
-			if(lenstr) {
-				goffset size;
-				if (sscanf(lenstr, "Content-Length: %" G_GOFFSET_FORMAT, &size) == 1)
-					purple_xfer_set_size(xfer, size);
-				else {
-					purple_debug_error("jabber", "Unable to parse Content-Length!\n");
-					purple_xfer_cancel_local(xfer);
-					return 0;
-				}
-			}
-			purple_xfer_set_read_fnc(xfer, NULL);
-
-			tmp += 4;
-
-			*buffer = (unsigned char*) g_strdup(tmp);
-			return strlen(tmp);
-		}
-		return 0;
-	} else if (errno != EAGAIN) {
-		purple_debug_error("jabber", "Read error on oob xfer!\n");
-		purple_xfer_cancel_local(xfer);
-	}
-
-	return 0;
+	purple_http_conn_set_progress_watcher(jox->hc,
+		jabber_oob_xfer_progress_watcher, xfer, -1);
 }
 
 static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
@@ -192,17 +161,19 @@ static void jabber_oob_xfer_recv_denied(PurpleXfer *xfer) {
 }
 
 static void jabber_oob_xfer_recv_cancelled(PurpleXfer *xfer) {
+	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
+
+	purple_http_conn_cancel(jox->hc);
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
 void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
-                      const char *id, xmlnode *querynode) {
+	const char *id, xmlnode *querynode) {
 	JabberOOBXfer *jox;
 	PurpleXfer *xfer;
-	char *filename;
-	char *url_raw;
+	const gchar *filename, *slash;
+	gchar *url;
 	xmlnode *urlnode;
-	PurpleHttpURL *url;
 
 	if(type != JABBER_IQ_SET)
 		return;
@@ -213,47 +184,37 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	if(!(urlnode = xmlnode_get_child(querynode, "url")))
 		return;
 
-	url_raw = xmlnode_get_data(urlnode);
-	url = purple_http_url_parse(url_raw);
-	g_free(url_raw);
-
+	url = xmlnode_get_data(urlnode);
 	if (!url)
 		return;
 
-	jox = g_new0(JabberOOBXfer, 1);
-	jox->address = g_strdup(purple_http_url_get_host(url));
-	jox->port = purple_http_url_get_port(url);
-	jox->page = g_strdup(purple_http_url_get_path(url));
-
-	purple_http_url_free(url);
-
-	jox->js = js;
-	jox->headers = g_string_new("");
-	jox->iq_id = g_strdup(id);
-
-	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE, from);
-	if (xfer)
-	{
-		purple_xfer_set_protocol_data(xfer, jox);
-
-		if(!(filename = g_strdup(g_strrstr(jox->page, "/"))))
-			filename = g_strdup(jox->page);
-
-		purple_xfer_set_filename(xfer, filename);
-
-		g_free(filename);
-
-		purple_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
-		purple_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
-		purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_cancelled);
-		purple_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
-		purple_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
-
-		js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
-
-		purple_xfer_request(xfer);
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc),
+		PURPLE_XFER_RECEIVE, from);
+	if (!xfer) {
+		g_free(url);
+		return;
 	}
+
+	jox = g_new0(JabberOOBXfer, 1);
+	jox->iq_id = g_strdup(id);
+	jox->js = js;
+	jox->url = url;
+	purple_xfer_set_protocol_data(xfer, jox);
+
+	slash = strrchr(url, '/');
+	if (slash == NULL)
+		filename = url;
+	else
+		filename = slash + 1;
+	purple_xfer_set_filename(xfer, filename);
+
+	purple_xfer_set_init_fnc(xfer, jabber_oob_xfer_init);
+	purple_xfer_set_end_fnc(xfer, jabber_oob_xfer_end);
+	purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
+	purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_cancelled);
+	purple_xfer_set_start_fnc(xfer, jabber_oob_xfer_start);
+
+	js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
+
+	purple_xfer_request(xfer);
 }
-
-
