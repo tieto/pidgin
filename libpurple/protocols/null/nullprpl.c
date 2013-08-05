@@ -69,6 +69,7 @@
 
 #define NULLPRPL_ID "prpl-null"
 static PurplePluginProtocolInfo *_null_protocol = NULL;
+static PurpleCmdId msg_cmd;
 
 #define NULL_STATUS_ONLINE   "online"
 #define NULL_STATUS_AWAY     "away"
@@ -1168,7 +1169,7 @@ gplugin_plugin_load(PurplePlugin *plugin)
   prpl_info.protocol_options = g_list_append(NULL, option);
 
   /* register whisper chat command, /msg */
-  purple_cmd_register("msg",
+  msg_cmd = purple_cmd_register("msg",
                     "ws",                  /* args: recipient and message */
                     PURPLE_CMD_P_DEFAULT,  /* priority */
                     PURPLE_CMD_FLAG_CHAT,
@@ -1196,6 +1197,8 @@ gplugin_plugin_unload(PurplePlugin *plugin)
 {
   purple_debug_info("nullprpl", "shutting down\n");
 
+  purple_cmd_unregister(msg_cmd);
   purple_protocols_remove(_null_protocol);
+
   return TRUE;
 }
