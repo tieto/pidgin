@@ -8313,6 +8313,7 @@ pidgin_blist_update_accounts_menu(void)
 					if (l->data)
 					{
 						action = (PurpleProtocolAction *) l->data;
+						action->connection = gc;
 
 						menuitem = gtk_menu_item_new_with_label(action->label);
 						gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);

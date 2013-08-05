@@ -220,7 +220,7 @@ typedef enum
 struct _PurpleProtocolAction {
 	char *label;
 	PurpleProtocolActionCallback callback;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *connection;
 };
 
 /**
@@ -234,11 +234,6 @@ struct _PurplePluginProtocolInfo
 {
 	const char *id;
 	const char *name;
-
-	/**
-	 * Actions that the protocol can perform
-	 */
-	GList *actions;
 
 	/**
 	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
@@ -265,6 +260,11 @@ struct _PurplePluginProtocolInfo
 
 	GList *user_splits;      /**< A GList of PurpleAccountUserSplit */
 	GList *protocol_options; /**< A GList of PurpleAccountOption    */
+
+	/**
+	 * Actions that the protocol can perform
+	 */
+	GList *actions;
 
 	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
 
