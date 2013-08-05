@@ -1738,7 +1738,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 
 	/* TODO if no protocols are loaded, this should inform the user that
 	        protocols need to be loaded instead of just doing nothing */
-	if (!dialog->prpl_info)
+	if (!dialog->protocol_id)
 		return;
 
 	dialog->prpl_info = purple_find_protocol_info(dialog->protocol_id);
