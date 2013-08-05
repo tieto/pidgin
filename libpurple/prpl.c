@@ -21,6 +21,7 @@
  *
  */
 #include "internal.h"
+#include "accountopt.h"
 #include "conversation.h"
 #include "debug.h"
 #include "network.h"
@@ -660,6 +661,28 @@ gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
 {
 	if (purple_find_protocol_info(prpl_info->id) == NULL)
 		return FALSE;
+
+	while (prpl_info->user_splits) {
+		PurpleAccountUserSplit *split = prpl_info->user_splits->data;
+		purple_account_user_split_destroy(split);
+		prpl_info->user_splits = g_list_delete_link(prpl_info->user_splits,
+				prpl_info->user_splits);
+	}
+
+	while (prpl_info->protocol_options) {
+		PurpleAccountOption *option = prpl_info->protocol_options->data;
+		purple_account_option_destroy(option);
+		prpl_info->protocol_options =
+				g_list_delete_link(prpl_info->protocol_options,
+				prpl_info->protocol_options);
+	}
+
+	while (prpl_info->actions) {
+		PurpleProtocolAction *action = prpl_info->actions->data;
+		g_free(action->label);
+		prpl_info->actions = g_list_delete_link(prpl_info->actions,
+				prpl_info->actions);
+	}
 
 	g_hash_table_remove(protocols, prpl_info->id);
 	return TRUE;
