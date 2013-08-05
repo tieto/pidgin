@@ -1595,49 +1595,15 @@ AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [co
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
 if test "x$enable_kwallet" = "xyes"; then
-	KWALLET_CXXFLAGS=""
-	KWALLET_LIBS=""
-	if test -z "$with_kwallet_includes" || test -z "$with_kwallet_libs"; then
-		AC_CHECK_PROG(KDE4_CONFIG, kde4-config, kde4-config, no)
-		if test "x$KDE4_CONFIG" = "xno"; then
-			if test "x$force_deps" = "xyes"; then
-				AC_MSG_ERROR([
-kde4-config not found. $KDE4_CONFIG
-Use --disable-kwallet if you do not need KWallet support.
-Use --with-kwallet-includes and --with-kwallet-libs to set up includes manually.
-])
-			enable_kwallet=no
-			fi
-		fi
-	fi
-fi
-
-if test "x$enable_kwallet" = "xyes"; then
-	AC_LANG_PUSH([C++])
-	CPPFLAGS_save="$CPPFLAGS"
-
-	if test "$ac_kwallet_includes" != "no"; then
-		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
-	elif test "x$KDE4_CONFIG" != "xno"; then
-		KWALLET_CXXFLAGS="-I`$KDE4_CONFIG --path include`"
-	fi
-	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
-	AC_CHECK_HEADER([kwallet.h], , [enable_kwallet=no])
-
-	CPPFLAGS="$CPPFLAGS_save"
-	AC_LANG_POP
-fi
-
-if test "x$enable_kwallet" = "xyes"; then
 	dnl Ensure C++ compiler works
 	AC_CHECK_PROG(CXXTEST, [$CXX], [$CXX])
 	if test "x$CXXTEST" = "x"; then
+		enable_kwallet=no
 		if test "x$force_deps" = "xyes"; then
 			AC_MSG_ERROR([
 A C++ compiler was not found.
 Use --disable-kwallet if you do not need KWallet support.
 ])
-		enable_kwallet=no
 		fi
 	fi
 fi
@@ -1645,6 +1611,7 @@ fi
 AC_LANG_PUSH([C++])
 CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
+
 if test "x$enable_kwallet" = "xyes"; then
 	PKG_CHECK_MODULES(QT4, [QtCore], [
 		AC_SUBST(QT4_CFLAGS)
@@ -1667,7 +1634,42 @@ if test "x$enable_kwallet" = "xyes"; then
 	AC_SUBST(MOC)
 	AC_MSG_RESULT([$MOC])
 
+	KWALLET_CXXFLAGS=""
+	KWALLET_LIBS=""
+	if test -z "$with_kwallet_includes" || test -z "$with_kwallet_libs"; then
+		AC_CHECK_PROG(KDE4_CONFIG, kde4-config, kde4-config, no)
+		if test "x$KDE4_CONFIG" = "xno"; then
+			enable_kwallet=no
+			if test "x$force_deps" = "xyes"; then
+				AC_MSG_ERROR([
+kde4-config not found. $KDE4_CONFIG
+Use --disable-kwallet if you do not need KWallet support.
+Use --with-kwallet-includes and --with-kwallet-libs to set up includes manually.
+])
+			fi
+		fi
+	fi
+fi
 
+if test "x$enable_kwallet" = "xyes"; then
+	if test "$ac_kwallet_includes" != "no"; then
+		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
+	elif test "x$KDE4_CONFIG" != "xno"; then
+		KWALLET_CXXFLAGS="-I`$KDE4_CONFIG --path include`"
+	fi
+	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
+	AC_CHECK_HEADER([kwallet.h], , [
+		enable_kwallet=no
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
+KWallet development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		fi
+])
+fi
+
+if test "x$enable_kwallet" = "xyes"; then
 	AC_MSG_CHECKING([for KWallet libraries])
 	if test "$ac_kwallet_libs" != "no"; then
 		KWALLET_LIBS="-L$ac_kwallet_libs -lkdeui"
@@ -1677,19 +1679,21 @@ if test "x$enable_kwallet" = "xyes"; then
 		KWALLET_LIBS="-lkdeui"
 	fi
 	KWALLET_LIBS="$KWALLET_LIBS"
-	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
 	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
 		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
-		[if test "x$force_deps" = "xyes"; then
-AC_MSG_ERROR([
+		[
+			AC_MSG_RESULT(no)
+			enable_kwallet=no
+			if test "x$force_deps" = "xyes"; then
+				AC_MSG_ERROR([
 KWallet development libraries not found.
 Use --disable-kwallet if you do not need KWallet support.
 ])
+			fi
+		])
 fi
-])
 
-fi
 CPPFLAGS="$CPPFLAGS_save"
 LDFLAGS="$LDFLAGS_save"
 AC_LANG_POP
