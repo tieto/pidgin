@@ -629,6 +629,18 @@ gssize purple_xfer_read(PurpleXfer *xfer, guchar **buffer);
 gssize purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size);
 
 /**
+ * Writes chunk of received file.
+ *
+ * @param xfer   The file transfer.
+ * @param buffer The buffer to read the data from.
+ * @param size   The number of bytes to write.
+ *
+ * @return TRUE on success, FALSE otherwise.
+ */
+gboolean
+purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size);
+
+/**
  * Starts a file transfer.
  *
  * Either @a fd must be specified <i>or</i> @a ip and @a port on a

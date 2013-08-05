@@ -1144,6 +1144,43 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 	return r;
 }
 
+gboolean
+purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
+{
+	PurpleXferUiOps *ui_ops;
+	gsize wc;
+	gboolean fs_known;
+
+	g_return_val_if_fail(xfer != NULL, FALSE);
+	g_return_val_if_fail(buffer != NULL, FALSE);
+
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+	fs_known = (purple_xfer_get_size(xfer) > 0);
+
+	if (fs_known && size > purple_xfer_get_bytes_remaining(xfer)) {
+		purple_debug_warning("filetransfer",
+			"Got too much data (truncating).\n");
+		size = purple_xfer_get_bytes_remaining(xfer);
+	}
+
+	if (ui_ops && ui_ops->ui_write)
+		wc = ui_ops->ui_write(xfer, buffer, size);
+	else
+		wc = fwrite(buffer, 1, size, xfer->dest_fp);
+
+	if (wc != size) {
+		purple_debug_error("filetransfer",
+			"Unable to write whole buffer.\n");
+		purple_xfer_cancel_local(xfer);
+		return FALSE;
+	}
+
+	purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) +
+		size);
+
+	return TRUE;
+}
+
 static void
 do_transfer(PurpleXfer *xfer)
 {
@@ -1156,15 +1193,7 @@ do_transfer(PurpleXfer *xfer)
 	if (xfer->type == PURPLE_XFER_RECEIVE) {
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
-			size_t wc;
-			if (ui_ops && ui_ops->ui_write)
-				wc = ui_ops->ui_write(xfer, buffer, r);
-			else
-				wc = fwrite(buffer, 1, r, xfer->dest_fp);
-
-			if (wc != r) {
-				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
+			if (!purple_xfer_write_file(xfer, buffer, r)) {
 				g_free(buffer);
 				return;
 			}
