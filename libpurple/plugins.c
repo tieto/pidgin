@@ -85,8 +85,12 @@ purple_plugin_load(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	if (!purple_plugin_is_loadable(plugin))
+	if (!purple_plugin_is_loadable(plugin)) {
+		purple_debug_error("plugins", "Failed to load plugin %s: %s",
+				purple_plugin_get_filename(plugin),
+				purple_plugin_get_error(plugin));
 		return FALSE;
+	}
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
@@ -96,6 +100,9 @@ purple_plugin_load(PurplePlugin *plugin)
 	}
 
 	loaded_plugins = g_list_append(loaded_plugins, plugin);
+
+	purple_debug_info("plugins", "Loaded plugin %s\n",
+			purple_plugin_get_filename(plugin));
 
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
 
@@ -788,7 +795,7 @@ purple_plugins_save_loaded(const char *key)
 			files = g_list_append(files, (gchar *)purple_plugin_get_filename(plugin));
 	}
 
-	purple_prefs_set_string_list(key, files);
+	purple_prefs_set_path_list(key, files);
 	g_list_free(files);
 #endif
 }
@@ -801,7 +808,7 @@ purple_plugins_load_saved(const char *key)
 
 	g_return_if_fail(key != NULL && *key != '\0');
 
-	files = purple_prefs_get_string_list(key);
+	files = purple_prefs_get_path_list(key);
 
 	for (l = files; l; l = l->next)
 	{
