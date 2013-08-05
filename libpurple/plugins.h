@@ -36,12 +36,21 @@
 #include <glib-object.h>
 #endif
 
+#include "version.h"
+
 /** Returns an ABI version to set in plugins using major and minor versions */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
 /** Returns the major version from an ABI version */
 #define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
 /** Returns the minor version from an ABI version */
 #define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
+
+/**
+  * A convenience‎ macro that returns an ABI version using PURPLE_MAJOR_VERSION
+  * and PURPLE_MINOR_VERSION
+  */
+#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION,\
+                                                     PURPLE_MINOR_VERSION)
 
 #ifdef PURPLE_PLUGINS
 

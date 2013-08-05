@@ -24,7 +24,6 @@
 #include "core.h"
 #include "debug.h"
 #include "plugins.h"
-#include "version.h"
 
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoPrivate))
