@@ -523,7 +523,8 @@ GType purple_plugin_action_get_type(void);
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
- * @return A list of all plugins.
+ * @return A list of all plugins. The list is owned by the caller, and must be
+ *         g_list_free()d to avoid leaking the nodes.
  */
 GList *purple_plugins_find_all(void);
 
