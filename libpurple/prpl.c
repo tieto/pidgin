@@ -640,27 +640,22 @@ purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
 /**************************************************************************
  * Protocols API
  **************************************************************************/
-
-PurplePluginProtocolInfo *
-purple_find_protocol_info(const char *id)
+static void
+purple_protocol_destroy(PurplePluginProtocolInfo *prpl_info)
 {
-	return g_hash_table_lookup(protocols, id);
-}
+	GList *accounts, *l;
 
-gboolean
-purple_protocols_add(PurplePluginProtocolInfo *prpl_info)
-{
-	if (purple_find_protocol_info(prpl_info->id))
-		return FALSE;
+	accounts = purple_accounts_get_all_active();
+	for (l = accounts; l != NULL; l = l->next) {
+		PurpleAccount *account = PURPLE_ACCOUNT(l->data);
+		if (purple_account_is_disconnected(account))
+			continue;
 
-	g_hash_table_insert(protocols, g_strdup(prpl_info->id), prpl_info);
-	return TRUE;
-}
+		if (purple_strequal(prpl_info->id, purple_account_get_protocol_id(account)))
+			purple_account_disconnect(account);
+	}
 
-gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
-{
-	if (purple_find_protocol_info(prpl_info->id) == NULL)
-		return FALSE;
+	g_list_free(accounts);
 
 	while (prpl_info->user_splits) {
 		PurpleAccountUserSplit *split = prpl_info->user_splits->data;
@@ -683,8 +678,32 @@ gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
 		prpl_info->actions = g_list_delete_link(prpl_info->actions,
 				prpl_info->actions);
 	}
+}
+
+PurplePluginProtocolInfo *
+purple_find_protocol_info(const char *id)
+{
+	return g_hash_table_lookup(protocols, id);
+}
+
+gboolean
+purple_protocols_add(PurplePluginProtocolInfo *prpl_info)
+{
+	if (purple_find_protocol_info(prpl_info->id))
+		return FALSE;
+
+	g_hash_table_insert(protocols, g_strdup(prpl_info->id), prpl_info);
+	return TRUE;
+}
+
+gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
+{
+	if (purple_find_protocol_info(prpl_info->id) == NULL)
+		return FALSE;
 
 	g_hash_table_remove(protocols, prpl_info->id);
+	purple_protocol_destroy(prpl_info);
+
 	return TRUE;
 }
 
@@ -705,12 +724,11 @@ purple_protocols_get_all(void)
 /**************************************************************************
  * Protocols Subsystem API
  **************************************************************************/
-
 void
 purple_protocols_init(void)
 {
-	/* TODO Use g_object_unref for value destroy when PurpleProtocol is a GObject */
-	protocols = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	protocols = g_hash_table_new_full(g_str_hash, g_str_equal,
+			(GDestroyNotify)purple_protocol_destroy, NULL);
 }
 
 void *
