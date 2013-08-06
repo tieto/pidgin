@@ -888,7 +888,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(label);
 
 	/* Add the webview */
-	frame = pidgin_create_webview(FALSE, &web_view, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &web_view, NULL);
 	gtk_widget_set_name(web_view, "pidgin_notify_webview");
 	gtk_widget_set_size_request(web_view, 300, 250);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);

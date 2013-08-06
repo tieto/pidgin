@@ -605,7 +605,7 @@ debug_window_new(void)
 	}
 
 	/* Add the gtkwebview */
-	frame = pidgin_create_webview(FALSE, &win->text, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &win->text, NULL);
 	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
 	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
 	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), gtkdebug_html);

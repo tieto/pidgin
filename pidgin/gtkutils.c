@@ -213,7 +213,7 @@ GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
 }
 
 GtkWidget *
-pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
+pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw_ret)
 {
 	GtkWidget *frame;
 	GtkWidget *webview;
@@ -241,8 +241,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 		gtk_widget_show(sep);
 	}
 
-	webview = gtk_webview_new();
-	gtk_webview_set_editable(GTK_WEBVIEW(webview), editable);
+	webview = gtk_webview_new(editable);
 	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_webview_set_spellcheck(GTK_WEBVIEW(webview), TRUE);
 	gtk_widget_show(webview);
@@ -250,6 +249,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 	if (editable) {
 		gtk_webviewtoolbar_attach(GTK_WEBVIEWTOOLBAR(toolbar), webview);
 		gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(toolbar), "default");
+		gtk_webview_set_toolbar(webview, toolbar);
 	}
 	pidgin_setup_webview(webview);
 
@@ -261,9 +261,6 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 
 	if (webview_ret != NULL)
 		*webview_ret = webview;
-
-	if (editable && (toolbar_ret != NULL))
-		*toolbar_ret = toolbar;
 
 	if (sw_ret != NULL)
 		*sw_ret = sw;

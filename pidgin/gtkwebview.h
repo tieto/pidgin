@@ -62,6 +62,27 @@ typedef enum {
 	GTK_WEBVIEW_SMILEY_CUSTOM = 1 << 0
 } GtkWebViewSmileyFlags;
 
+typedef enum {
+	GTK_WEBVIEW_ACTION_BOLD,
+	GTK_WEBVIEW_ACTION_ITALIC,
+	GTK_WEBVIEW_ACTION_UNDERLINE,
+	GTK_WEBVIEW_ACTION_STRIKE,
+	GTK_WEBVIEW_ACTION_LARGER,
+#if 0
+	GTK_WEBVIEW_ACTION_NORMAL,
+#endif
+	GTK_WEBVIEW_ACTION_SMALLER,
+	GTK_WEBVIEW_ACTION_FONTFACE,
+	GTK_WEBVIEW_ACTION_FGCOLOR,
+	GTK_WEBVIEW_ACTION_BGCOLOR,
+	GTK_WEBVIEW_ACTION_CLEAR,
+	GTK_WEBVIEW_ACTION_IMAGE,
+	GTK_WEBVIEW_ACTION_LINK,
+	GTK_WEBVIEW_ACTION_HR,
+	GTK_WEBVIEW_ACTION_SMILEY,
+	GTK_WEBVIEW_ACTION_ATTENTION
+} GtkWebViewAction;
+
 typedef struct _GtkWebView GtkWebView;
 typedef struct _GtkWebViewClass GtkWebViewClass;
 typedef struct _GtkWebViewSmiley GtkWebViewSmiley;
@@ -97,9 +118,11 @@ GType gtk_webview_get_type(void);
 /**
  * Create a new GtkWebView object
  *
+ * @param editable Whether this GtkWebView will be user-editable
+ *
  * @return A GtkWidget corresponding to the GtkWebView object
  */
-GtkWidget *gtk_webview_new(void);
+GtkWidget *gtk_webview_new(gboolean editable);
 
 /**
  * A very basic routine to append html, which can be considered
@@ -199,14 +222,6 @@ void gtk_webview_page_up(GtkWebView *webview);
  * @param webview The GtkWebView.
  */
 void gtk_webview_page_down(GtkWebView *webview);
-
-/**
- * Enables or disables editing in a GtkWebView.
- *
- * @param webview  The GtkWebView
- * @param editable @c TRUE to make the widget editable, or @c FALSE otherwise.
- */
-void gtk_webview_set_editable(GtkWebView *webview, gboolean editable);
 
 /**
  * Setup formatting for a GtkWebView depending on the flags specified.
@@ -336,15 +351,6 @@ char *gtk_webview_get_current_backcolor(GtkWebView *webview);
  * @return The HTML font size.
  */
 gint gtk_webview_get_current_fontsize(GtkWebView *webview);
-
-/**
- * Checks whether a GtkWebView is marked as editable.
- *
- * @param webview The GtkWebView
- *
- * @return @c TRUE if the IM/HTML is editable, or @c FALSE otherwise.
- */
-gboolean gtk_webview_get_editable(GtkWebView *webview);
 
 /**
  * Gets the content of the head element of a GtkWebView as HTML.
@@ -617,6 +623,32 @@ void gtk_webview_remove_smileys(GtkWebView *webview);
  */
 void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
                                const char *smiley);
+
+/**
+ * Makes the toolbar associated with a GtkWebView visible.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_show_toolbar(GtkWebView *webview);
+
+/**
+ * Makes the toolbar associated with a GtkWebView invisible.
+ *
+ * @param webview The GtkWebView.
+ */
+void gtk_webview_hide_toolbar(GtkWebView *webview);
+
+/**
+ * Activate an action on the toolbar associated with a GtkWebView.
+ *
+ * @param webview The GtkWebView
+ * @param action  The GtkWebViewAction
+ */
+void gtk_webview_activate_toolbar(GtkWebView *webview, GtkWebViewAction action);
+
+/* Do not use. */
+void
+gtk_webview_set_toolbar(GtkWebView *webview, GtkWidget *toolbar);
 
 G_END_DECLS
 
