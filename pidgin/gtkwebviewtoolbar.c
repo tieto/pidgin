@@ -1014,7 +1014,8 @@ update_buttons_cb(GtkWebView *webview, GtkWebViewButtons buttons,
 
 	gtk_action_set_sensitive(priv->image, buttons & GTK_WEBVIEW_IMAGE);
 	gtk_action_set_sensitive(priv->link, buttons & GTK_WEBVIEW_LINK);
-	gtk_action_set_sensitive(priv->smiley, buttons & GTK_WEBVIEW_SMILEY);
+	gtk_action_set_sensitive(priv->smiley, (buttons & GTK_WEBVIEW_SMILEY) &&
+		pidgin_themes_get_proto_smileys(priv->sml));
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -1333,7 +1334,7 @@ gtk_webviewtoolbar_create_actions(GtkWebViewToolbar *toolbar)
 		{&priv->link, "InsertLink", PIDGIN_STOCK_TOOLBAR_INSERT_LINK, N_("_Link"), N_("Insert Link"), insert_link_cb, TRUE},
 		{&priv->hr, "InsertHR", NULL, N_("_Horizontal rule"), N_("Insert Horizontal rule"), insert_hr_cb, FALSE},
 		{&priv->smiley, "InsertSmiley", PIDGIN_STOCK_TOOLBAR_SMILEY, N_("_Smile!"), N_("Insert Smiley"), insert_smiley_cb, TRUE},
-		{&priv->attention, "SendAttention", PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, N_("_Attention!"), N_("Send Attention"), send_attention_cb, FALSE},
+		{&priv->attention, "SendAttention", PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, N_("_Attention!"), N_("Get Attention"), send_attention_cb, FALSE},
 	};
 
 	action_group = gtk_action_group_new("GtkWebViewToolbar");
@@ -1343,14 +1344,15 @@ gtk_webviewtoolbar_create_actions(GtkWebViewToolbar *toolbar)
 
 	for (i = 0; i < G_N_ELEMENTS(actions); i++) {
 		GtkAction *action;
-		if (actions[i].toggle)
-			action = GTK_ACTION(gtk_toggle_action_new(actions[i].name,
-			                                          actions[i].label,
-			                                          actions[i].tooltip,
-			                                          actions[i].stock));
-		else
-			action = gtk_action_new(actions[i].name, actions[i].label,
-			                        actions[i].tooltip, actions[i].stock);
+		if (actions[i].toggle) {
+			action = GTK_ACTION(gtk_toggle_action_new(
+				actions[i].name, _(actions[i].label),
+				_(actions[i].tooltip), actions[i].stock));
+		} else {
+			action = gtk_action_new(actions[i].name,
+				_(actions[i].label), _(actions[i].tooltip),
+				actions[i].stock);
+		}
 		gtk_action_set_is_important(action, TRUE);
 		gtk_action_group_add_action(action_group, action);
 		g_signal_connect(G_OBJECT(action), "activate", actions[i].cb, toolbar);
@@ -1521,6 +1523,9 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	/* set attention button to be greyed out until we get a conversation */
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
+	gtk_action_set_sensitive(priv->smiley,
+		(gboolean)pidgin_themes_get_proto_smileys(NULL));
+
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 	                              webviewtoolbar_view_pref_changed, toolbar);
@@ -1620,11 +1625,14 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	gtk_action_set_sensitive(priv->attention,
 		conv && prpl_info && PURPLE_IS_IM_CONVERSATION(conv) &&
 		prpl_info->send_attention != NULL);
+
+	gtk_action_set_sensitive(priv->smiley,
+		(gboolean)pidgin_themes_get_proto_smileys(priv->sml));
 }
 
 void
 gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
-                            GtkWebViewToolbarAction action)
+                            GtkWebViewAction action)
 {
 	GtkWebViewToolbarPriv *priv;
 	GtkAction *act;
@@ -1633,69 +1641,69 @@ gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
 
 	priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	switch (action) {
-		case GTK_WEBVIEWTOOLBAR_ACTION_BOLD:
+		case GTK_WEBVIEW_ACTION_BOLD:
 			act = priv->bold;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_ITALIC:
+		case GTK_WEBVIEW_ACTION_ITALIC:
 			act = priv->italic;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_UNDERLINE:
+		case GTK_WEBVIEW_ACTION_UNDERLINE:
 			act = priv->underline;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_STRIKE:
+		case GTK_WEBVIEW_ACTION_STRIKE:
 			act = priv->strike;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_LARGER:
+		case GTK_WEBVIEW_ACTION_LARGER:
 			act = priv->larger_size;
 			break;
 
 #if 0
-		case GTK_WEBVIEWTOOLBAR_ACTION_NORMAL:
+		case GTK_WEBVIEW_ACTION_NORMAL:
 			act = priv->normal_size;
 			break;
 #endif
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_SMALLER:
+		case GTK_WEBVIEW_ACTION_SMALLER:
 			act = priv->smaller_size;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_FONTFACE:
+		case GTK_WEBVIEW_ACTION_FONTFACE:
 			act = priv->font;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_FGCOLOR:
+		case GTK_WEBVIEW_ACTION_FGCOLOR:
 			act = priv->fgcolor;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_BGCOLOR:
+		case GTK_WEBVIEW_ACTION_BGCOLOR:
 			act = priv->bgcolor;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_CLEAR:
+		case GTK_WEBVIEW_ACTION_CLEAR:
 			act = priv->clear;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_IMAGE:
+		case GTK_WEBVIEW_ACTION_IMAGE:
 			act = priv->image;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_LINK:
+		case GTK_WEBVIEW_ACTION_LINK:
 			act = priv->link;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_HR:
+		case GTK_WEBVIEW_ACTION_HR:
 			act = priv->hr;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_SMILEY:
+		case GTK_WEBVIEW_ACTION_SMILEY:
 			act = priv->smiley;
 			break;
 
-		case GTK_WEBVIEWTOOLBAR_ACTION_ATTENTION:
+		case GTK_WEBVIEW_ACTION_ATTENTION:
 			act = priv->attention;
 			break;
 

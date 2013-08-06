@@ -65,7 +65,6 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
-#include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
 #include "pidgintooltip.h"
 #include "smileyparser.h"
@@ -1242,12 +1241,12 @@ menu_insert_link_cb(GtkAction *action, gpointer data)
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
-	GtkWebViewToolbar *toolbar;
+	GtkWebView *entry;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	toolbar = GTK_WEBVIEWTOOLBAR(gtkconv->toolbar);
+	entry = GTK_WEBVIEW(gtkconv->entry);
 
-	gtk_webviewtoolbar_activate(toolbar, GTK_WEBVIEWTOOLBAR_ACTION_LINK);
+	gtk_webview_activate_toolbar(entry, GTK_WEBVIEW_ACTION_LINK);
 }
 
 static void
@@ -1255,12 +1254,12 @@ menu_insert_image_cb(GtkAction *action, gpointer data)
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
-	GtkWebViewToolbar *toolbar;
+	GtkWebView *entry;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	toolbar = GTK_WEBVIEWTOOLBAR(gtkconv->toolbar);
+	entry = GTK_WEBVIEW(gtkconv->entry);
 
-	gtk_webviewtoolbar_activate(toolbar, GTK_WEBVIEWTOOLBAR_ACTION_IMAGE);
+	gtk_webview_activate_toolbar(entry, GTK_WEBVIEW_ACTION_IMAGE);
 }
 
 static void
@@ -2277,8 +2276,6 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	old_conv = gtkconv->active_conv;
 
 	purple_debug_info("gtkconv", "setting active conversation on toolbar %p\n",
-		conv);
-	gtk_webviewtoolbar_switch_active_conversation(GTK_WEBVIEWTOOLBAR(gtkconv->toolbar),
 		conv);
 
 	if (old_conv == conv)
@@ -3566,6 +3563,9 @@ setup_menubar(PidginWindow *win)
 	GtkWidget *menuitem;
 
 	action_group = gtk_action_group_new("ConversationActions");
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(action_group, PACKAGE);
+#endif
 	gtk_action_group_add_actions(action_group,
 	                             menu_entries,
 	                             G_N_ELEMENTS(menu_entries),
@@ -3574,10 +3574,6 @@ setup_menubar(PidginWindow *win)
 	                                    menu_toggle_entries,
 	                                    G_N_ELEMENTS(menu_toggle_entries),
 	                                    win);
-#ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(action_group,
-	                                        PACKAGE);
-#endif
 
 	win->menu.ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(win->menu.ui, action_group, 0);
@@ -5419,7 +5415,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	/* Setup the webkit widget */
-	frame = pidgin_create_webview(FALSE, &gtkconv->webview, NULL, &webview_sw);
+	frame = pidgin_create_webview(FALSE, &gtkconv->webview, &webview_sw);
 	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
 
 	load_conv_theme(gtkconv);
@@ -5459,8 +5455,8 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
 
-	/* Setup the toolbar, entry widget and all signals */
-	frame = pidgin_create_webview(TRUE, &gtkconv->entry, &gtkconv->toolbar, NULL);
+	/* Setup the entry widget and all signals */
+	frame = pidgin_create_webview(TRUE, &gtkconv->entry, NULL);
 	gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -5845,9 +5841,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))
-		gtk_widget_show(gtkconv->toolbar);
+		gtk_webview_show_toolbar(GTK_WEBVIEW(gtkconv->entry));
 	else
-		gtk_widget_hide(gtkconv->toolbar);
+		gtk_webview_hide_toolbar(GTK_WEBVIEW(gtkconv->entry));
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -7253,7 +7249,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		gtk_webview_set_format_functions(GTK_WEBVIEW(gtkconv->entry), buttons);
 		if (account != NULL)
-			gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));
+			gtk_webview_set_protocol_name(GTK_WEBVIEW(gtkconv->entry), purple_account_get_protocol_id(account));
 
 		/* Deal with menu items */
 		gtk_action_set_sensitive(win->menu.view_log, TRUE);
@@ -7978,9 +7974,9 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		        (gboolean)GPOINTER_TO_INT(value));
 
 		if ((gboolean)GPOINTER_TO_INT(value))
-			gtk_widget_show(gtkconv->toolbar);
+			gtk_webview_show_toolbar(GTK_WEBVIEW(gtkconv->entry));
 		else
-			gtk_widget_hide(gtkconv->toolbar);
+			gtk_webview_hide_toolbar(GTK_WEBVIEW(gtkconv->entry));
 
 		g_idle_add((GSourceFunc)resize_webview_cb, gtkconv);
 	}

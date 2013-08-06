@@ -698,7 +698,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->play_sound
 		= gtk_check_button_new_with_mnemonic(_("P_lay a sound"));
 
-	send_msg_webview = pidgin_create_webview(TRUE, &dialog->send_msg_entry, NULL, NULL);
+	send_msg_webview = pidgin_create_webview(TRUE, &dialog->send_msg_entry, NULL);
 	reset_send_msg_entry(dialog, NULL);
 	dialog->exec_cmd_entry    = gtk_entry_new();
 	dialog->popup_entry       = gtk_entry_new();

@@ -497,7 +497,7 @@ cipher_test_aes(void)
 		gchar *cipher_b16, *deciphered;
 
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
-		purple_debug_info("cipher-test", "\tTesting '%s' (%lubit) \n",
+		purple_debug_info("cipher-test", "\tTesting '%s' (%" G_GSIZE_FORMAT "bit) \n",
 			test->plaintext ? test->plaintext : "(null)",
 			strlen(test->key) * 8 / 2);
 

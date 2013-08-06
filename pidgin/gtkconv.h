@@ -118,8 +118,6 @@ struct _PidginConversation
 
 	GtkWidget *lower_hbox;
 
-	GtkWidget *toolbar;
-
 	PidginUnseenState unseen_state;
 	guint unseen_count;
 

@@ -614,8 +614,10 @@ static void add_button (MMConversation *mmconv)
 	gtk_widget_show(image);
 	gtk_widget_show(button);
 
+#if 0
 	gtk_box_pack_start(GTK_BOX(PIDGIN_CONVERSATION(conv)->toolbar), sep, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(PIDGIN_CONVERSATION(conv)->toolbar), button, FALSE, FALSE, 0);
+#endif
 }
 
 static void remove_widget (GtkWidget *button)

@@ -257,7 +257,7 @@ ss_init(void)
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, SECRETSERVICE_NAME);
+	purple_keyring_set_name(keyring_handler, _(SECRETSERVICE_NAME));
 	purple_keyring_set_id(keyring_handler, SECRETSERVICE_ID);
 	purple_keyring_set_read_password(keyring_handler, ss_read);
 	purple_keyring_set_save_password(keyring_handler, ss_save);

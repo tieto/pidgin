@@ -164,7 +164,7 @@ purple_aes_cipher_unpad_pkcs7(guchar input[], size_t in_len)
 	if (padding_len <= 0 || padding_len > PURPLE_AES_BLOCK_SIZE ||
 		padding_len > in_len) {
 		purple_debug_warning("cipher-aes",
-			"Invalid padding length: %d (total %lu) - "
+			"Invalid padding length: %d (total %" G_GSIZE_FORMAT ") - "
 			"most probably, the key was invalid\n",
 			padding_len, in_len);
 		return -1;

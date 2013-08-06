@@ -1830,8 +1830,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
-	status_box->sw = pidgin_create_webview(FALSE, &status_box->webview, NULL, NULL);
-	gtk_webview_set_editable(GTK_WEBVIEW(status_box->webview), TRUE);
+	status_box->sw = pidgin_create_webview(TRUE, &status_box->webview, NULL);
+	gtk_webview_hide_toolbar(GTK_WEBVIEW(status_box->webview));
 
 #if 0
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",

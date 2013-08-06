@@ -260,7 +260,7 @@ wincred_load(PurplePlugin *plugin)
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, WINCRED_NAME);
+	purple_keyring_set_name(keyring_handler, _(WINCRED_NAME));
 	purple_keyring_set_id(keyring_handler, WINCRED_ID);
 	purple_keyring_set_read_password(keyring_handler, wincred_read);
 	purple_keyring_set_save_password(keyring_handler, wincred_save);
