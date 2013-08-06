@@ -3592,6 +3592,9 @@ setup_menubar(PidginWindow *win)
 	GtkWidget *menuitem;
 
 	action_group = gtk_action_group_new("ConversationActions");
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(action_group, PACKAGE);
+#endif
 	gtk_action_group_add_actions(action_group,
 	                             menu_entries,
 	                             G_N_ELEMENTS(menu_entries),
@@ -3600,10 +3603,6 @@ setup_menubar(PidginWindow *win)
 	                                    menu_toggle_entries,
 	                                    G_N_ELEMENTS(menu_toggle_entries),
 	                                    win);
-#ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(action_group,
-	                                        PACKAGE);
-#endif
 
 	win->menu.ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(win->menu.ui, action_group, 0);
