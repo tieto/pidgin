@@ -1134,8 +1134,8 @@ static PurplePluginProtocolInfo prpl_info =
   NULL                                 /* get_public_alias */
 };
 
-G_MODULE_EXPORT PurplePluginInfo *
-gplugin_plugin_query(void)
+static PurplePluginInfo *
+plugin_query(void)
 {
   return purple_plugin_info_new(
     "id",           NULLPRPL_ID,
@@ -1150,8 +1150,8 @@ gplugin_plugin_query(void)
   );
 }
 
-G_MODULE_EXPORT gboolean
-gplugin_plugin_load(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin)
 {
   /* see accountopt.h for information about user splits and protocol options */
   PurpleAccountUserSplit *split = purple_account_user_split_new(
@@ -1192,8 +1192,8 @@ gplugin_plugin_load(PurplePlugin *plugin)
   return TRUE;
 }
 
-G_MODULE_EXPORT gboolean
-gplugin_plugin_unload(PurplePlugin *plugin)
+static gboolean
+plugin_unload(PurplePlugin *plugin)
 {
   purple_debug_info("nullprpl", "shutting down\n");
 
@@ -1202,3 +1202,5 @@ gplugin_plugin_unload(PurplePlugin *plugin)
 
   return TRUE;
 }
+
+PURPLE_PLUGIN_INIT(null, plugin_query, plugin_load, plugin_unload);

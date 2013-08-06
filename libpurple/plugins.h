@@ -31,26 +31,13 @@
 
 #ifdef PURPLE_PLUGINS
 #include <gplugin.h>
+#include <gplugin-native.h>
 #else
 #include <glib.h>
 #include <glib-object.h>
 #endif
 
 #include "version.h"
-
-/** Returns an ABI version to set in plugins using major and minor versions */
-#define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
-/** Returns the major version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
-/** Returns the minor version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
-
-/**
-  * A convenience‎ macro that returns an ABI version using PURPLE_MAJOR_VERSION
-  * and PURPLE_MINOR_VERSION
-  */
-#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION,\
-                                                     PURPLE_MINOR_VERSION)
 
 #ifdef PURPLE_PLUGINS
 
@@ -151,6 +138,53 @@ struct _PurplePluginAction {
 	PurplePluginActionCallback callback;
 	PurplePlugin *plugin;
 };
+
+/** Returns an ABI version to set in plugins using major and minor versions */
+#define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
+/** Returns the major version from an ABI version */
+#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
+/** Returns the minor version from an ABI version */
+#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
+
+/**
+  * A convenience‎ macro that returns an ABI version using PURPLE_MAJOR_VERSION
+  * and PURPLE_MINOR_VERSION
+  */
+#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION,\
+                                                     PURPLE_MINOR_VERSION)
+
+/**
+ * Handles the initialization of modules.
+ */
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
+#define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
+	PurplePluginInfo * pluginname##_plugin_query(void); \
+	PurplePluginInfo * pluginname##_plugin_query(void) { \
+		return pluginquery(); \
+	} \
+	gboolean pluginname##_plugin_load(void); \
+	gboolean pluginname##_plugin_load(void) { \
+		return pluginload(NULL); \
+	} \
+	gboolean pluginname##_plugin_unload(void); \
+	gboolean pluginname##_plugin_unload(void) { \
+		return pluginunload(NULL); \
+	}
+#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
+#define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(void); \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(void) { \
+		return GPLUGIN_PLUGIN_INFO(pluginquery()); \
+	} \
+	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p) { \
+		return pluginload(PURPLE_PLUGIN(p)); \
+	} \
+	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p) { \
+		return pluginunload(PURPLE_PLUGIN(p)); \
+	}
+#endif
 
 G_BEGIN_DECLS
 

@@ -1298,31 +1298,43 @@ if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
-extern_init=
+extern_load=
 load_proto=
+extern_unload=
+unload_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
 	dnl ... and Ugly special case for multi-protocol oscar and yahoo
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
-		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
-		load_proto="$load_proto purple_init_aim_plugin();"
-		load_proto="$load_proto purple_init_icq_plugin();"
+		extern_load="$extern_load extern gboolean aim_plugin_load();"
+		extern_load="$extern_load extern gboolean icq_plugin_load();"
+		load_proto="$load_proto aim_plugin_load();"
+		load_proto="$load_proto icq_plugin_load();"
+		extern_unload="$extern_unload extern gboolean aim_plugin_unload();"
+		extern_unload="$extern_unload extern gboolean icq_plugin_unload();"
+		unload_proto="$unload_proto aim_plugin_unload();"
+		unload_proto="$unload_proto icq_plugin_unload();"
 	elif test "x$i" = "xyahoo"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
-		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
-		load_proto="$load_proto purple_init_yahoo_plugin();"
-		load_proto="$load_proto purple_init_yahoojp_plugin();"
+		extern_load="$extern_load extern gboolean yahoo_plugin_load();"
+		extern_load="$extern_load extern gboolean yahoojp_plugin_load();"
+		load_proto="$load_proto yahoo_plugin_load();"
+		load_proto="$load_proto yahoojp_plugin_load();"
+		extern_unload="$extern_unload extern gboolean yahoo_plugin_unload();"
+		extern_unload="$extern_unload extern gboolean yahoojp_plugin_unload();"
+		unload_proto="$unload_proto yahoo_plugin_unload();"
+		unload_proto="$unload_proto yahoojp_plugin_unload();"
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
 		else
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 		fi
-		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
-		load_proto="$load_proto purple_init_${i}_plugin();"
+		extern_load="$extern_load extern gboolean ${i}_plugin_load();"
+		load_proto="$load_proto ${i}_plugin_load();"
+		extern_unload="$extern_unload extern gboolean ${i}_plugin_unload();"
+		unload_proto="$unload_proto ${i}_plugin_unload();"
 	fi
 	case $i in
 		bonjour)	static_bonjour=yes ;;
@@ -1359,8 +1371,10 @@ AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
-AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init(void) { $load_proto },
-	[Loads static protocol plugin module initialization functions.])
+AC_DEFINE_UNQUOTED(STATIC_PROTO_LOAD, $extern_load static void static_proto_load(void) { $load_proto },
+	[Loads protocols from static protocol plugin modules.])
+AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_unload(void) { $unload_proto },
+	[Unloads protocols from static protocol plugin modules.])
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then

@@ -75,7 +75,8 @@ struct PurpleCore
 static PurpleCoreUiOps *_ops  = NULL;
 static PurpleCore      *_core = NULL;
 
-STATIC_PROTO_INIT
+STATIC_PROTO_LOAD
+STATIC_PROTO_UNLOAD
 
 gboolean
 purple_core_init(const char *ui)
@@ -143,13 +144,13 @@ purple_core_init(const char *ui)
 	purple_cmds_init();
 	purple_protocols_init();
 
+	/* Load all static protocols. */
+	static_proto_load();
+
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
 	 */
 	purple_plugins_init();
-
-	/* Initialize all static protocols. */
-	static_proto_init();
 
 	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
@@ -256,6 +257,8 @@ purple_core_quit(void)
 	/* Everything after prefs_uninit must not try to read any prefs */
 	purple_prefs_uninit();
 	purple_plugins_uninit();
+
+	static_proto_unload();	
 	purple_protocols_uninit();
 
 #ifdef HAVE_DBUS
