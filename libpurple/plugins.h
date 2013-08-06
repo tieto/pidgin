@@ -253,6 +253,35 @@ PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
 void purple_plugin_disable(PurplePlugin *plugin);
 
 /**
+ * Registers a new dynamic type.
+ *
+ * @param plugin  The plugin that is registering the type.
+ * @param parent  Type from which this type will be derived.
+ * @param name    Name of the new type.
+ * @param info    Information to initialize and destroy a type's classes and
+ *                instances.
+ * @param flags   Bitwise combination of values that determines the nature
+ *                (e.g. abstract or not) of the type.
+ *
+ * @return The new GType, or @c G_TYPE_INVALID if registration failed.
+ */
+GType purple_plugin_register_type(PurplePlugin *plugin, GType parent,
+                                  const gchar *name, const GTypeInfo *info,
+                                  GTypeFlags flags);
+
+/**
+ * Adds a dynamic interface type to an instantiable type.
+ *
+ * @param plugin          The plugin that is adding the interface type.
+ * @param instance_type   The GType of the instantiable type.
+ * @param interface_type  The GType of the interface type.
+ * @param interface_info  Information used to manage the interface type.
+ */
+void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
+                                 GType interface_type,
+                                 const GInterfaceInfo *interface_info);
+
+/**
  * Adds a new action to a plugin.
  *
  * @param plugin   The plugin to add the action to.

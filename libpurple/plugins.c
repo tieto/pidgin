@@ -59,8 +59,8 @@ static GObjectClass *parent_class;
 /**************************************************************************
  * Globals
  **************************************************************************/
-static GList *loaded_plugins     = NULL;
 #ifdef PURPLE_PLUGINS
+static GList *loaded_plugins     = NULL;
 static GList *plugins_to_disable = NULL;
 #endif
 
@@ -204,6 +204,32 @@ purple_plugin_disable(PurplePlugin *plugin)
 
 	if (!g_list_find(plugins_to_disable, plugin))
 		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
+#endif
+}
+
+GType
+purple_plugin_register_type(PurplePlugin *plugin, GType parent,
+                            const gchar *name, const GTypeInfo *info,
+                            GTypeFlags flags)
+{
+#ifdef PURPLE_PLUGINS
+	return gplugin_native_plugin_register_type(GPLUGIN_NATIVE_PLUGIN(plugin),
+	                                           parent, name, info, flags);
+
+#else
+	return G_TYPE_INVALID;
+#endif
+}
+
+void
+purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
+                            GType interface_type,
+                            const GInterfaceInfo *interface_info)
+{
+#ifdef PURPLE_PLUGINS
+	gplugin_native_plugin_add_interface(GPLUGIN_NATIVE_PLUGIN(plugin),
+	                                    instance_type, interface_type,
+	                                    interface_info);
 #endif
 }
 
@@ -721,7 +747,11 @@ purple_plugins_find_all(void)
 GList *
 purple_plugins_get_loaded(void)
 {
+#ifdef PURPLE_PLUGINS
 	return loaded_plugins;
+#else
+	return NULL;
+#endif
 }
 
 void
