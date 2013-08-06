@@ -1014,7 +1014,8 @@ update_buttons_cb(GtkWebView *webview, GtkWebViewButtons buttons,
 
 	gtk_action_set_sensitive(priv->image, buttons & GTK_WEBVIEW_IMAGE);
 	gtk_action_set_sensitive(priv->link, buttons & GTK_WEBVIEW_LINK);
-	gtk_action_set_sensitive(priv->smiley, buttons & GTK_WEBVIEW_SMILEY);
+	gtk_action_set_sensitive(priv->smiley, (buttons & GTK_WEBVIEW_SMILEY) &&
+		pidgin_themes_get_proto_smileys(priv->sml));
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -1522,6 +1523,9 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	/* set attention button to be greyed out until we get a conversation */
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
+	gtk_action_set_sensitive(priv->smiley,
+		(gboolean)pidgin_themes_get_proto_smileys(NULL));
+
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 	                              webviewtoolbar_view_pref_changed, toolbar);
@@ -1621,6 +1625,9 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	gtk_action_set_sensitive(priv->attention,
 		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
+
+	gtk_action_set_sensitive(priv->smiley,
+		(gboolean)pidgin_themes_get_proto_smileys(priv->sml));
 }
 
 void
