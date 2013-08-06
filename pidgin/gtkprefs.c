@@ -146,7 +146,7 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"pulsesrc",	"PulseAudio",
 	"sndiosrc",	"sndio",
 	/* "audiotestsrc wave=silence", "Silence", */
-	"audiotestsrc",	"Test Sound",
+	"audiotestsrc",	N_("Test Sound"),
 	NULL
 };
 
@@ -164,7 +164,7 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
 	"videodisabledsrc",	N_("Disabled"),
-	"videotestsrc",	"Test Input",
+	"videotestsrc",	N_("Test Input"),
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
 	"qcamsrc",	"Quickcam",
@@ -3612,7 +3612,7 @@ get_vv_element_plugins(const gchar **plugins)
 #endif
 			|| g_strcmp0(plugins[0], "videodisabledsrc") == 0)
 		{
-			ret = g_list_prepend(ret, (gpointer)plugins[1]);
+			ret = g_list_prepend(ret, (gpointer)_(plugins[1]));
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
 		}
 	}

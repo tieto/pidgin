@@ -955,7 +955,7 @@ intkeyring_load(PurplePlugin *plugin)
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, INTKEYRING_NAME);
+	purple_keyring_set_name(keyring_handler, _(INTKEYRING_NAME));
 	purple_keyring_set_id(keyring_handler, INTKEYRING_ID);
 	purple_keyring_set_read_password(keyring_handler,
 		intkeyring_read);

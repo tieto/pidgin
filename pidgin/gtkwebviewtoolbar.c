@@ -1343,14 +1343,15 @@ gtk_webviewtoolbar_create_actions(GtkWebViewToolbar *toolbar)
 
 	for (i = 0; i < G_N_ELEMENTS(actions); i++) {
 		GtkAction *action;
-		if (actions[i].toggle)
-			action = GTK_ACTION(gtk_toggle_action_new(actions[i].name,
-			                                          actions[i].label,
-			                                          actions[i].tooltip,
-			                                          actions[i].stock));
-		else
-			action = gtk_action_new(actions[i].name, actions[i].label,
-			                        actions[i].tooltip, actions[i].stock);
+		if (actions[i].toggle) {
+			action = GTK_ACTION(gtk_toggle_action_new(
+				actions[i].name, _(actions[i].label),
+				_(actions[i].tooltip), actions[i].stock));
+		} else {
+			action = gtk_action_new(actions[i].name,
+				_(actions[i].label), _(actions[i].tooltip),
+				actions[i].stock);
+		}
 		gtk_action_set_is_important(action, TRUE);
 		gtk_action_group_add_action(action_group, action);
 		g_signal_connect(G_OBJECT(action), "activate", actions[i].cb, toolbar);
