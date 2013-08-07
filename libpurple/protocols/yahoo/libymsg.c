@@ -3731,8 +3731,7 @@ void yahoo_close(PurpleConnection *gc) {
 	yd->rxlen = 0;
 	g_free(yd->picture_url);
 
-	if (yd->buddy_icon_connect_data)
-		purple_proxy_connect_cancel(yd->buddy_icon_connect_data);
+	purple_http_conn_cancel(yd->picture_upload_hc);
 	if (yd->picture_upload_todo)
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)

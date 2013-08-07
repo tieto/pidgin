@@ -150,11 +150,8 @@ typedef enum {
 
 struct yahoo_buddy_icon_upload_data {
 	PurpleConnection *gc;
-	GString *str;
 	char *filename;
-	int pos;
-	int fd;
-	guint watcher;
+	GString *picture_data;
 };
 
 struct yahoo_p2p_data	{
@@ -236,7 +233,7 @@ typedef struct {
 	/* ew. we have to check the icon before we connect,
 	 * but can't upload it til we're connected. */
 	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
-	PurpleProxyConnectData *buddy_icon_connect_data;
+	PurpleHttpConnection *picture_upload_hc;
 
 	struct _YchtConn *ycht;
 
