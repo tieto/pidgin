@@ -727,8 +727,8 @@ purple_protocols_get_all(void)
 void
 purple_protocols_init(void)
 {
-	protocols = g_hash_table_new_full(g_str_hash, g_str_equal,
-			(GDestroyNotify)purple_protocol_destroy, NULL);
+	protocols = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+			(GDestroyNotify)purple_protocol_destroy);
 }
 
 void *
