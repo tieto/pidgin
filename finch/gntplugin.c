@@ -509,7 +509,7 @@ void finch_plugins_show_all(void)
 	{
 		PurplePlugin *plug = PURPLE_PLUGIN(iter->data);
 
-		if (purple_plugin_loads_on_query(plug))
+		if (purple_plugin_is_internal(plug))
 			continue;
 
 		gnt_tree_add_choice(GNT_TREE(tree), plug,

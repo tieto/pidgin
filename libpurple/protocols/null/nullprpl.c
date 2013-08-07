@@ -1146,6 +1146,11 @@ plugin_query(void)
     "description",  N_("Null Protocol Plugin"),
     "website",      PURPLE_WEBSITE,
     "abi_version",  PURPLE_ABI_VERSION,
+
+    /* If you're using this as the basis of a protocol plugin that will be
+     * distributed separately from libpurple, do not include these flags.*/
+    "flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+                    GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
     NULL
   );
 }

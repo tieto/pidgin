@@ -249,7 +249,7 @@ update_plugin_list(void *data)
 		plug = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plug);
 
-		if (purple_plugin_loads_on_query(plug))
+		if (purple_plugin_is_internal(plug))
 			continue;
 
 		gtk_list_store_append (ls, &iter);

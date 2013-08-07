@@ -70,6 +70,7 @@ typedef GPluginPluginClass PurplePluginClass;
 #define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
 
 #define GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY 0
+#define GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL      0
 
 typedef GObject PurplePlugin;
 typedef GObjectClass PurplePluginClass;
@@ -306,6 +307,17 @@ void purple_plugin_add_action(PurplePlugin *plugin, const char* label,
 GList *purple_plugin_get_actions(const PurplePlugin *plugin);
 
 /**
+ * Returns whether a plugin is an internal plugin. Internal plugins provide
+ * required additional functionality to the libpurple core. Examples of such
+ * plugins are in-tree protocol plugins, loaders etc.
+ *
+ * @param plugin The plugin.
+ *
+ * @return @c TRUE if the plugin is an internal plugin, @c FALSE otherwise.
+ */
+gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
+
+/**
  * Returns whether or not a plugin is loadable.
  *
  * If this returns @c FALSE, the plugin is guaranteed to not
@@ -321,16 +333,6 @@ GList *purple_plugin_get_actions(const PurplePlugin *plugin);
  * @see purple_plugin_get_error()
  */
 gboolean purple_plugin_is_loadable(const PurplePlugin *plugin);
-
-/**
- * Returns whether a plugin auto-loads on query or not. Plugins that auto-loaded
- * on query are not saved by purple_plugins_save_loaded().
- *
- * @param plugin The plugin.
- *
- * @return @c TRUE if the plugin auto-loads on query, @c FALSE if it doesn't.
- */
-gboolean purple_plugin_loads_on_query(const PurplePlugin *plugin);
 
 /**
  * If a plugin is not loadable, this returns the reason.
@@ -383,6 +385,12 @@ GType purple_plugin_info_get_type(void);
  * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
  * "preferences_frame"  (PurplePluginPrefFrameCallback) Callback that returns
  *                      a preferences frame for the plugin.
+ *
+ * Additionally, you can provide a "flags" property if the plugin is to be
+ * distributed with libpurple, the value for which should be a bitwise
+ * combination of:                                                           \n
+ * GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL: Internal plugin, not shown in lists.  \n
+ * GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY: Auto-load on query.              \n
  *
  * @param first_property  The first property name
  * @param ...  The value of the first property, followed optionally by more
@@ -559,7 +567,6 @@ void purple_plugins_add_search_path(const gchar *path);
  * that are to be loaded on query.
  *
  * @see purple_plugins_add_search_path()
- * @see purple_plugin_loads_on_query()
  */
 void purple_plugins_refresh(void);
 
@@ -582,7 +589,8 @@ PurplePlugin *purple_plugins_find_plugin(const gchar *id);
 PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
 /**
- * Saves the list of loaded plugins to the specified preference key
+ * Saves the list of loaded plugins to the specified preference key.
+ * Plugins that are set to load on query are not saved.
  *
  * @param key The preference key to save the list of plugins to.
  */
