@@ -249,6 +249,9 @@ update_plugin_list(void *data)
 		plug = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plug);
 
+		if (purple_plugin_loads_on_query(plug))
+			continue;
+
 		gtk_list_store_append (ls, &iter);
 
 		if (purple_plugin_info_get_name(info)) {

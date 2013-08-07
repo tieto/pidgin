@@ -509,6 +509,9 @@ void finch_plugins_show_all(void)
 	{
 		PurplePlugin *plug = PURPLE_PLUGIN(iter->data);
 
+		if (purple_plugin_loads_on_query(plug))
+			continue;
+
 		gnt_tree_add_choice(GNT_TREE(tree), plug,
 				gnt_tree_create_row(GNT_TREE(tree),
 				purple_plugin_info_get_name(purple_plugin_get_info(plug))),
