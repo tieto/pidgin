@@ -604,11 +604,6 @@ void purple_plugins_save_loaded(const char *key);
  */
 void purple_plugins_load_saved(const char *key);
 
-/**
- * Unloads all loaded plugins.
- */
-void purple_plugins_unload_all(void);
-
 /*@}*/
 
 /**************************************************************************/

@@ -910,15 +910,6 @@ purple_plugins_load_saved(const char *key)
 #endif /* PURPLE_PLUGINS */
 }
 
-void
-purple_plugins_unload_all(void)
-{
-#ifdef PURPLE_PLUGINS
-	while (loaded_plugins != NULL)
-		purple_plugin_unload(loaded_plugins->data);
-#endif
-}
-
 /**************************************************************************
  * Plugins Subsystem API
  **************************************************************************/
@@ -956,7 +947,8 @@ purple_plugins_uninit(void)
 
 #ifdef PURPLE_PLUGINS
 	purple_debug_info("plugins", "Unloading all plugins\n");
-	purple_plugins_unload_all();
+	while (loaded_plugins != NULL)
+		purple_plugin_unload(loaded_plugins->data);
 #endif
 
 	purple_signals_disconnect_by_handle(handle);
