@@ -102,7 +102,7 @@ purple_plugin_load(PurplePlugin *plugin)
 	loaded_plugins = g_list_append(loaded_plugins, plugin);
 
 	purple_debug_info("plugins", "Loaded plugin %s\n",
-			purple_plugin_get_filename(plugin));
+	                  purple_plugin_get_filename(plugin));
 
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
 
@@ -284,6 +284,23 @@ purple_plugin_is_loadable(const PurplePlugin *plugin)
 	g_return_val_if_fail(priv != NULL, FALSE);
 
 	return priv->loadable;
+}
+
+gboolean
+purple_plugin_loads_on_query(const PurplePlugin *plugin)
+{
+#ifdef PURPLE_PLUGINS
+	GPluginPluginInfo *info;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	info = GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+	return (gplugin_plugin_info_get_flags(info) &
+	        GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY);
+
+#else
+	return FALSE;
+#endif
 }
 
 gchar *
@@ -766,7 +783,24 @@ void
 purple_plugins_refresh(void)
 {
 #ifdef PURPLE_PLUGINS
+	GList *plugins, *l;
+
 	gplugin_plugin_manager_refresh();
+
+	plugins = purple_plugins_find_all();
+	for (l = plugins; l != NULL; l = l->next) {
+		PurplePlugin *plugin = PURPLE_PLUGIN(l->data);
+		if (purple_plugin_is_loaded(plugin))
+			continue;
+
+		if (purple_plugin_loads_on_query(plugin)) {
+			purple_debug_info("plugins", "Auto-loading plugin %s\n",
+			                  purple_plugin_get_filename(plugin));
+			purple_plugin_load(plugin);
+		}
+	}
+
+	g_list_free(plugins);
 #endif
 }
 
@@ -821,6 +855,9 @@ purple_plugins_save_loaded(const char *key)
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(pl->data);
+		if (purple_plugin_loads_on_query(plugin))
+			continue;
+
 		if (!g_list_find(plugins_to_disable, plugin))
 			files = g_list_append(files, (gchar *)purple_plugin_get_filename(plugin));
 	}

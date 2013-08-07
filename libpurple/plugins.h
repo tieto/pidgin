@@ -69,6 +69,8 @@ typedef GPluginPluginClass PurplePluginClass;
 #define PURPLE_IS_PLUGIN_CLASS(klass)  G_IS_OBJECT_CLASS(klass)
 #define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
 
+#define GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY 0
+
 typedef GObject PurplePlugin;
 typedef GObjectClass PurplePluginClass;
 
@@ -321,6 +323,16 @@ GList *purple_plugin_get_actions(const PurplePlugin *plugin);
 gboolean purple_plugin_is_loadable(const PurplePlugin *plugin);
 
 /**
+ * Returns whether a plugin auto-loads on query or not. Plugins that auto-loaded
+ * on query are not saved by purple_plugins_save_loaded().
+ *
+ * @param plugin The plugin.
+ *
+ * @return @c TRUE if the plugin auto-loads on query, @c FALSE if it doesn't.
+ */
+gboolean purple_plugin_loads_on_query(const PurplePlugin *plugin);
+
+/**
  * If a plugin is not loadable, this returns the reason.
  *
  * @param plugin The plugin.
@@ -543,9 +555,11 @@ GList *purple_plugins_get_loaded(void);
 void purple_plugins_add_search_path(const gchar *path);
 
 /**
- * Forces a refresh of all plugins found in the search paths.
+ * Forces a refresh of all plugins found in the search paths, and loads plugins
+ * that are to be loaded on query.
  *
  * @see purple_plugins_add_search_path()
+ * @see purple_plugin_loads_on_query()
  */
 void purple_plugins_refresh(void);
 
