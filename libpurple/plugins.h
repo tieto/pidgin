@@ -368,7 +368,7 @@ GType purple_plugin_info_get_type(void);
  * Creates a new #PurplePluginInfo instance to be returned from
  * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
  *
- * All properties except "id" are optional.
+ * All properties except "id" and "abi_version" are optional.
  *
  * Valid property names are:                                                 \n
  * "id"                 (string) The ID of the plugin.                       \n
