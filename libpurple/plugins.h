@@ -308,8 +308,9 @@ GList *purple_plugin_get_actions(const PurplePlugin *plugin);
 
 /**
  * Returns whether a plugin is an internal plugin. Internal plugins provide
- * required additional functionality to the libpurple core. Examples of such
- * plugins are in-tree protocol plugins, loaders etc.
+ * required additional functionality to the libpurple core. These plugins must
+ * not be shown in plugin lists. Examples of such plugins are in-tree protocol
+ * plugins, loaders etc.
  *
  * @param plugin The plugin.
  *
