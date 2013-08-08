@@ -35,14 +35,18 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
-	char *category;        /**< The category the plugin belongs to           >*/
-	char *ui_requirement;  /**< ID of UI that is required to load the plugin >*/
-	GList *actions;        /**< Actions that the plugin can perform          >*/
-	gboolean loadable;     /**< Whether the plugin is loadable               >*/
-	char *error;           /**< Why the plugin is not loadable               >*/
+	char *category;        /**< The category the plugin belongs to           */
+	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
+	GList *actions;        /**< Actions that the plugin can perform          */
+	gboolean loadable;     /**< Whether the plugin is loadable               */
+	char *error;           /**< Why the plugin is not loadable               */
 
-	/** Callback that returns a preferences frame for a plugin >*/
+	/** Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCallback get_pref_frame;
+
+	/** TRUE if a plugin has been unloaded at least once. Load-on-query
+	 *  plugins that have been unloaded once will not be auto-loaded again.  */
+	gboolean unloaded;
 };
 
 enum
@@ -147,6 +151,7 @@ purple_plugin_unload(PurplePlugin *plugin)
 		g_boxed_free(PURPLE_TYPE_PLUGIN_ACTION, priv->actions->data);
 		priv->actions = g_list_delete_link(priv->actions, priv->actions);
 	}
+	priv->unloaded = TRUE;
 
 	loaded_plugins     = g_list_remove(loaded_plugins, plugin);
 	plugins_to_disable = g_list_remove(plugins_to_disable, plugin);
@@ -800,6 +805,8 @@ purple_plugins_refresh(void)
 	for (l = plugins; l != NULL; l = l->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(l->data);
 		GPluginPluginInfo *info;
+		PurplePluginInfoPrivate *priv;
+
 		if (purple_plugin_is_loaded(plugin))
 			continue;
 
@@ -807,7 +814,9 @@ purple_plugins_refresh(void)
 		if (!info)
 			continue;
 
-		if (gplugin_plugin_info_get_flags(info) &
+		priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+		if (!priv->unloaded && gplugin_plugin_info_get_flags(info) &
 				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY) {
 			purple_debug_info("plugins", "Auto-loading plugin %s\n",
 			                  purple_plugin_get_filename(plugin));
