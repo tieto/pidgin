@@ -1000,7 +1000,8 @@ PurplePluginProtocolInfo *purple_find_protocol_info(const char *id);
 gboolean purple_protocols_add(PurplePluginProtocolInfo *prpl_info);
 
 /** TODO A sanity check is needed
- * Removes a protocol from the list of protocols, and frees its user splits,
+ * Removes a protocol from the list of protocols. This will disconnect all
+ * connected accounts using this protocol, and free the protocol's user splits,
  * protocol options, and actions.
  *
  * @param prpl_info  The protocol to remove.
