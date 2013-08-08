@@ -118,9 +118,12 @@ purple_plugin_unload(PurplePlugin *plugin)
 {
 #ifdef PURPLE_PLUGINS
 	GError *error = NULL;
+	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 	g_return_val_if_fail(purple_plugin_is_loaded(plugin), FALSE);
+
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
 	purple_debug_info("plugins", "Unloading plugin %s\n",
 			purple_plugin_get_filename(plugin));
@@ -137,6 +140,11 @@ purple_plugin_unload(PurplePlugin *plugin)
 	purple_notify_close_with_handle(plugin);
 
 	purple_signals_disconnect_by_handle(plugin);
+
+	while (priv->actions) {
+		g_boxed_free(PURPLE_TYPE_PLUGIN_ACTION, priv->actions->data);
+		priv->actions = g_list_delete_link(priv->actions, priv->actions);
+	}
 
 	loaded_plugins     = g_list_remove(loaded_plugins, plugin);
 	plugins_to_disable = g_list_remove(plugins_to_disable, plugin);
