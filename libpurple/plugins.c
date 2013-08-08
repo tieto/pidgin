@@ -125,6 +125,8 @@ purple_plugin_unload(PurplePlugin *plugin)
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
+	g_return_val_if_fail(priv != NULL, FALSE);
+
 	purple_debug_info("plugins", "Unloading plugin %s\n",
 			purple_plugin_get_filename(plugin));
 
@@ -253,6 +255,8 @@ purple_plugin_add_action(PurplePlugin *plugin, const char* label,
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
+	g_return_if_fail(priv != NULL);
+
 	action = g_new0(PurplePluginAction, 1);
 
 	action->label    = g_strdup(label);
@@ -265,13 +269,11 @@ purple_plugin_add_action(PurplePlugin *plugin, const char* label,
 GList *
 purple_plugin_get_actions(const PurplePlugin *plugin)
 {
-	PurplePluginInfo *info;
 	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 
-	info = purple_plugin_get_info(plugin);
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -287,6 +289,9 @@ purple_plugin_is_internal(const PurplePlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	info = GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+
+	g_return_val_if_fail(info != NULL, FALSE);
+
 	return (gplugin_plugin_info_get_flags(info) &
 	        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL);
 
@@ -298,13 +303,11 @@ purple_plugin_is_internal(const PurplePlugin *plugin)
 gboolean
 purple_plugin_is_loadable(const PurplePlugin *plugin)
 {
-	PurplePluginInfo *info;
 	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	info = purple_plugin_get_info(plugin);
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -314,13 +317,11 @@ purple_plugin_is_loadable(const PurplePlugin *plugin)
 gchar *
 purple_plugin_get_error(const PurplePlugin *plugin)
 {
-	PurplePluginInfo *info;
 	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 
-	info = purple_plugin_get_info(plugin);
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -803,6 +804,8 @@ purple_plugins_refresh(void)
 			continue;
 
 		info = GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+		if (!info)
+			continue;
 
 		if (gplugin_plugin_info_get_flags(info) &
 				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY) {
@@ -869,6 +872,9 @@ purple_plugins_save_loaded(const char *key)
 		PurplePlugin *plugin = PURPLE_PLUGIN(pl->data);
 		GPluginPluginInfo *info =
 				GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+
+		if (!info)
+			continue;
 
 		if (gplugin_plugin_info_get_flags(info) &
 				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY)
