@@ -372,22 +372,29 @@ GType purple_plugin_info_get_type(void);
  * All properties except "id" and "abi-version" are optional.
  *
  * Valid property names are:                                                 \n
- * "id"                 (string) The ID of the plugin.                       \n
- * "name"               (string) The name of the plugin.                     \n
+ * "id"                 (string) The ID of the plugin.                       
+ *                               format: <application>/<name of the plugin>  \n
+ * "name"               (string) The translated name of the plugin.          \n
  * "version"            (string) Version of the plugin.                      \n
  * "category"           (string) Primary category of the plugin.             \n
- * "summary"            (string) Summary of the plugin.                      \n
- * "description"        (string) Description of the plugin                   \n
- * "author"             (string) Author of the plugin                        \n
- * "website"            (string) Website of the plugin                       \n
- * "icon"               (string) Path to a plugin's icon                     \n
- * "license"            (string) The plugin's license ID                     \n
- * "license-text"       (string) The plugin's license text                   \n
- * "license-url"        (string) The plugin's license URL                    \n
- * "abi-version"        (guint32) The required ABI version for the plugin.   \n
+ * "summary"            (string) Brief summary of the plugin.                \n
+ * "description"        (string) Full description of the plugin.             \n
+ * "author"             (string) Name and e-mail address of the author.
+ *                               format: First Last <user@domain.com>        \n
+ * "website"            (string) Website of the plugin.                      \n
+ * "icon"               (string) Path to a plugin's icon.                    \n
+ * "license"            (string) Short name of the plugin's license. This
+ *                               should either be an identifier of the
+ *                               license from http://spdx.org/licenses/ or
+ *                               "Other" for custom licenses.                \n
+ * "license-text"       (string) The text of the plugin's license, if
+ *                               unlisted on SPDX.                           \n
+ * "license-url"        (string) The plugin's license URL, if unlisted on
+ *                               SPDX.                                       \n
+ * "abi-version"        (guint32) The GPlugin ABI version of the plugin.     \n
  * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
  * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
- *                      a preferences frame for the plugin.
+ *                                        a preferences frame for the plugin.
  *
  * Additionally, you can provide a "flags" property if the plugin is to be
  * distributed with libpurple, the value for which should be a bitwise
@@ -416,7 +423,7 @@ PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...);
 const gchar *purple_plugin_info_get_id(const PurplePluginInfo *info);
 
 /**
- * Returns a plugin's name.
+ * Returns a plugin's translated name.
  *
  * @param info The plugin's info instance.
  *
@@ -488,22 +495,31 @@ const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
 const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
 
 /**
- * Returns a plugin's license.
+ * Returns a short name of the plugin's license.
  *
  * @param info The plugin's info instance.
  *
- * @return The license of the plugin, or @c NULL.
+ * @return The license name of the plugin, or @c NULL.
  */
 const gchar *purple_plugin_info_get_license(const PurplePluginInfo *info);
 
 /**
- * Returns the required ABI version for a plugin.
+ * Returns the text of a plugin's license.
  *
  * @param info The plugin's info instance.
  *
- * @return The required ABI version for the plugin, or @c NULL.
+ * @return The license text of the plugin, or @c NULL.
  */
-guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
+const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
+
+/**
+ * Returns the URL of a plugin's license.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The license URL of the plugin, or @c NULL.
+ */
+const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
 
 /**
  * Returns a list of plugins that a particular plugin depends on.

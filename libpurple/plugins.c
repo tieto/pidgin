@@ -669,16 +669,29 @@ purple_plugin_info_get_license(const PurplePluginInfo *info)
 #endif
 }
 
-guint32
-purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
+const gchar *
+purple_plugin_info_get_license_text(const PurplePluginInfo *info)
 {
 #ifdef PURPLE_PLUGINS
-	g_return_val_if_fail(info != NULL, 0);
+	g_return_val_if_fail(info != NULL, NULL);
 
-	return gplugin_plugin_info_get_abi_version(GPLUGIN_PLUGIN_INFO(info));
+	return gplugin_plugin_info_get_license_text(GPLUGIN_PLUGIN_INFO(info));
 
 #else
-	return 0;
+	return NULL;
+#endif
+}
+
+const gchar *
+purple_plugin_info_get_license_url(const PurplePluginInfo *info)
+{
+#ifdef PURPLE_PLUGINS
+	g_return_val_if_fail(info != NULL, NULL);
+
+	return gplugin_plugin_info_get_license_url(GPLUGIN_PLUGIN_INFO(info));
+
+#else
+	return NULL;
 #endif
 }
 
