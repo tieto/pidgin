@@ -1159,14 +1159,22 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 
 	if (fs_known && size > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_warning("filetransfer",
-			"Got too much data (truncating).\n");
+			"Got too much data (truncating at %" G_GOFFSET_FORMAT
+			").\n", purple_xfer_get_size(xfer));
 		size = purple_xfer_get_bytes_remaining(xfer);
 	}
 
 	if (ui_ops && ui_ops->ui_write)
 		wc = ui_ops->ui_write(xfer, buffer, size);
-	else
+	else {
+		if (xfer->dest_fp == NULL) {
+			purple_debug_error("filetransfer",
+				"File is not opened for writing\n");
+			purple_xfer_cancel_local(xfer);
+			return FALSE;
+		}
 		wc = fwrite(buffer, 1, size, xfer->dest_fp);
+	}
 
 	if (wc != size) {
 		purple_debug_error("filetransfer",
@@ -1179,6 +1187,57 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 		size);
 
 	return TRUE;
+}
+
+gssize
+purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
+{
+	PurpleXferUiOps *ui_ops;
+	gssize got_len;
+
+	g_return_val_if_fail(xfer != NULL, FALSE);
+	g_return_val_if_fail(buffer != NULL, FALSE);
+
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+
+	if (ui_ops && ui_ops->ui_read) {
+		guchar *buffer_got = NULL;
+
+		got_len = ui_ops->ui_read(xfer, &buffer_got, size);
+
+		if (got_len > size) {
+			g_free(buffer_got);
+			purple_debug_error("filetransfer",
+				"Got too much data from UI.\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+
+		if (got_len > 0)
+			memcpy(buffer, buffer_got, got_len);
+		g_free(buffer_got);
+	} else {
+		if (xfer->dest_fp == NULL) {
+			purple_debug_error("filetransfer",
+				"File is not opened for reading\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+		got_len = fread(buffer, 1, size, xfer->dest_fp);
+		if (got_len != size && ferror(xfer->dest_fp)) {
+			purple_debug_error("filetransfer",
+				"Unable to read file.\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+	}
+
+	if (got_len > 0) {
+		purple_xfer_set_bytes_sent(xfer,
+			purple_xfer_get_bytes_sent(xfer) + got_len);
+	}
+
+	return got_len;
 }
 
 static void
@@ -1207,7 +1266,7 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 	} else if (xfer->type == PURPLE_XFER_SEND) {
-		size_t result = 0;
+		gssize result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
 		gboolean read = TRUE;
@@ -1232,40 +1291,26 @@ do_transfer(PurpleXfer *xfer)
 		}
 
 		if (read) {
-			if (ui_ops && ui_ops->ui_read) {
-				gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
-				if (tmp == 0) {
-					/*
-					 * The UI claimed it was ready, but didn't have any data for
-					 * us...  It will call purple_xfer_ui_ready when ready, which
-					 * sets back up this watcher.
-					 */
-					if (xfer->watcher != 0) {
-						purple_input_remove(xfer->watcher);
-						xfer->watcher = 0;
-					}
-
-					/* Need to indicate the prpl is still ready... */
-					priv->ready |= PURPLE_XFER_READY_PRPL;
-
-					g_return_if_reached();
-				} else if (tmp < 0) {
-					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-					purple_xfer_cancel_local(xfer);
-					return;
+			buffer = g_new(guchar, s);
+			result = purple_xfer_read_file(xfer, buffer, s);
+			if (result == 0) {
+				/*
+				 * The UI claimed it was ready, but didn't have any data for
+				 * us...  It will call purple_xfer_ui_ready when ready, which
+				 * sets back up this watcher.
+				 */
+				if (xfer->watcher != 0) {
+					purple_input_remove(xfer->watcher);
+					xfer->watcher = 0;
 				}
 
-				result = tmp;
-			} else {
-				buffer = g_malloc(s);
-				result = fread(buffer, 1, s, xfer->dest_fp);
-				if (result != s) {
-					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-					purple_xfer_cancel_local(xfer);
-					g_free(buffer);
-					return;
-				}
+				/* Need to indicate the prpl is still ready... */
+				priv->ready |= PURPLE_XFER_READY_PRPL;
+
+				g_return_if_reached();
 			}
+			if (result < 0)
+				return;
 		}
 
 		if (priv->buffer) {

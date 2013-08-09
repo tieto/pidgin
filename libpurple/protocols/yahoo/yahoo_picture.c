@@ -403,10 +403,9 @@ yahoo_buddy_icon_upload(PurpleConnection *gc,
 	purple_http_conn_cancel(yd->picture_upload_hc);
 
 	req = purple_http_request_new(NULL);
-	purple_http_request_set_url_printf(req, "http://%s:%d/notifyft",
+	purple_http_request_set_url_printf(req, "http://%s/notifyft",
 		purple_account_get_string(account, "xfer_host", yd->jp ?
-			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST),
-		purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT));
+			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST));
 	purple_http_request_set_method(req, "POST");
 	cjar = purple_http_request_get_cookie_jar(req);
 	purple_http_cookie_jar_set(cjar, "T", yd->cookie_t);

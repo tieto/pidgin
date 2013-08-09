@@ -42,7 +42,6 @@
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "http://rd.yahoo.com/messenger/client/?http://mail.yahoo.com/"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
-#define YAHOO_XFER_PORT 80
 #define YAHOO_XFER_RELAY_HOST "relay.msg.yahoo.com"
 #define YAHOO_XFER_RELAY_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"

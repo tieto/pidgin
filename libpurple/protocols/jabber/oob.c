@@ -122,6 +122,7 @@ static void jabber_oob_xfer_start(PurpleXfer *xfer)
 	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
 
 	req = purple_http_request_new(jox->url);
+	purple_http_request_set_timeout(req, -1);
 	purple_http_request_set_max_len(req, -1);
 	purple_http_request_set_response_writer(req, jabber_oob_xfer_writer,
 		xfer);

@@ -3028,7 +3028,8 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yahoo_process_p2p(gc, pkt);	/* P2PFILEXFER handled the same way as process_p2p */
 		yahoo_process_p2pfilexfer(gc, pkt);	/* redundant ??, need to have a break now */
 	case YAHOO_SERVICE_FILETRANSFER:
-		yahoo_process_filetransfer(gc, pkt);
+		purple_debug_error("yahoo", "Legacy file transfers are not "
+			"supported anymore.\n");
 		break;
 	case YAHOO_SERVICE_PEERTOPEER:
 		yahoo_process_p2p(gc, pkt);
@@ -3484,6 +3485,7 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	url = g_string_append(url, "&.hash=1&.md5=1 HTTP/1.1\r\n"
 			      "Host: login.yahoo.com\r\n\r\n");
 	g_hash_table_destroy(hash);
+
 	yd->auth = g_string_free(url, FALSE);
 	if (purple_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
