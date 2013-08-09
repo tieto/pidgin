@@ -395,7 +395,7 @@ _purple_connection_wants_to_die(const PurpleConnection *gc)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_if_fail(priv != NULL);
+	g_return_val_if_fail(priv != NULL, FALSE);
 
 	return priv->wants_to_die;
 }
