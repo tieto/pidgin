@@ -225,7 +225,7 @@ msim_downloaded_buddy_icon(PurpleHttpConnection *http_conn,
 	g_assert(user->http_conn == http_conn);
 	user->http_conn = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_info("msim_downloaded_buddy_icon",
 				"failed to download icon for %s",
 				name);

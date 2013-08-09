@@ -275,7 +275,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
 	g_assert(pending_update == avdata->current_update);
 	avdata->current_update = NULL;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_debug_error("gg", "ggp_avatar_buddy_update_received: bad"
 			" response while getting avatar for %u: %s\n",
@@ -388,7 +388,7 @@ static void ggp_avatar_own_sent(PurpleHttpConnection *http_conn,
 	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("gg", "ggp_avatar_own_sent: "
 			"avatar not sent. %s\n",
 			purple_http_response_get_error(response));

@@ -50,7 +50,7 @@ yahoo_fetch_picture_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *resp
 {
 	struct yahoo_fetch_picture_data *d = _data;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n",
 			purple_http_response_get_error(response));
 	} else {
@@ -344,7 +344,7 @@ yahoo_buddy_icon_upload_done(PurpleHttpConnection *http_conn,
 
 	yd->picture_upload_hc = NULL;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 		purple_debug_info("yahoo", "Error uploading buddy icon.\n");
 	else
 		purple_debug_misc("yahoo", "Finished uploading buddy icon.\n");
@@ -402,10 +402,9 @@ yahoo_buddy_icon_upload(PurpleConnection *gc,
 	purple_http_conn_cancel(yd->picture_upload_hc);
 
 	req = purple_http_request_new(NULL);
-	purple_http_request_set_url_printf(req, "http://%s:%d/notifyft",
+	purple_http_request_set_url_printf(req, "http://%s/notifyft",
 		purple_account_get_string(account, "xfer_host", yd->jp ?
-			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST),
-		purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT));
+			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST));
 	purple_http_request_set_method(req, "POST");
 	cjar = purple_http_request_get_cookie_jar(req);
 	purple_http_cookie_jar_set(cjar, "T", yd->cookie_t);

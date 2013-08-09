@@ -192,7 +192,7 @@ jabber_bosh_connection_parse(PurpleJabberBOSHConnection *conn,
 		return NULL;
 	}
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_connection_error(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
