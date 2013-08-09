@@ -342,7 +342,7 @@ gboolean purple_plugin_is_loadable(const PurplePlugin *plugin);
  *
  * @return The reason why the plugin is not loadable.
  */
-gchar *purple_plugin_get_error(const PurplePlugin *plugin);
+const gchar *purple_plugin_get_error(const PurplePlugin *plugin);
 
 /**
  * Returns a list of plugins that depend on a particular plugin.

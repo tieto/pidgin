@@ -82,13 +82,6 @@ purple_plugin_load(PurplePlugin *plugin)
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
 
-	if (!purple_plugin_get_info(plugin)) {
-		purple_debug_error("plugins",
-				"Failed to load plugin %s: Plugin does not return a PluginInfo",
-				purple_plugin_get_filename(plugin));
-		return FALSE;
-	}
-
 	if (!purple_plugin_is_loadable(plugin)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
 				purple_plugin_get_filename(plugin),
@@ -319,7 +312,7 @@ purple_plugin_is_loadable(const PurplePlugin *plugin)
 	return priv->loadable;
 }
 
-gchar *
+const gchar *
 purple_plugin_get_error(const PurplePlugin *plugin)
 {
 	PurplePluginInfoPrivate *priv;
@@ -328,9 +321,10 @@ purple_plugin_get_error(const PurplePlugin *plugin)
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->error;
+	if (priv)
+		return priv->error;
+	else
+		return _("This plugin does not return a PurplePluginInfo.");
 }
 
 GSList *
