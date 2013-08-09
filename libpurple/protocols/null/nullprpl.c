@@ -1138,19 +1138,20 @@ static PurplePluginInfo *
 plugin_query(void)
 {
   return purple_plugin_info_new(
-    "id",           NULLPRPL_ID,
-    "name",         "Null - Testing Plugin",
-    "version",      DISPLAY_VERSION,
-    "category",     "Protocol",
-    "summary",      N_("Null Protocol Plugin"),
-    "description",  N_("Null Protocol Plugin"),
-    "website",      PURPLE_WEBSITE,
-    "abi-version",  PURPLE_ABI_VERSION,
+    "id",              NULLPRPL_ID,
+    "name",            "Null - Testing Plugin",
+    "version",         DISPLAY_VERSION,
+    "category",        N_("Protocol"),
+    "summary",         N_("Null Protocol Plugin"),
+    "description",     N_("Null Protocol Plugin"),
+    "website",         PURPLE_WEBSITE,
+    "purple-version",  PURPLE_ABI_VERSION,
+    "abi-version",     GPLUGIN_NATIVE_PLUGIN_ABI_VERSION,
 
     /* If you're using this as the basis of a protocol plugin that will be
      * distributed separately from libpurple, do not include these flags.*/
-    "flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-                    GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+    "flags",           GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+                       GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
     NULL
   );
 }

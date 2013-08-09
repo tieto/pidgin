@@ -369,7 +369,7 @@ GType purple_plugin_info_get_type(void);
  * Creates a new #PurplePluginInfo instance to be returned from
  * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
  *
- * All properties except "id" and "abi-version" are optional.
+ * All properties except "id", "purple-version", and "abi-version" are optional.
  *
  * Valid property names are:                                                 \n
  * "id"                 (string) The ID of the plugin.                       
@@ -391,6 +391,7 @@ GType purple_plugin_info_get_type(void);
  *                               unlisted on SPDX.                           \n
  * "license-url"        (string) The plugin's license URL, if unlisted on
  *                               SPDX.                                       \n
+ * "purple-version"     (guint32) The purple ABI version required by plugin. \n
  * "abi-version"        (guint32) The GPlugin ABI version of the plugin.     \n
  * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
  * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
@@ -520,6 +521,15 @@ const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
  * @return The license URL of the plugin, or @c NULL.
  */
 const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
+
+/**
+ * Returns the required purple ABI version for a plugin.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The required purple ABI version for the plugin.
+ */
+guint32 purple_plugin_info_get_purple_version(const PurplePluginInfo *info);
 
 /**
  * Returns a list of plugins that a particular plugin depends on.
