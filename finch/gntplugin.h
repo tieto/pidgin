@@ -88,7 +88,7 @@ GType finch_plugin_info_get_type(void);
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "finch_preferences_frame",
+ * Additionally, you can provide the property "finch-preferences-frame",
  * which should be a callback that returns a GntWidget for the plugin's
  * preferences (see FinchPluginFrame).
  *

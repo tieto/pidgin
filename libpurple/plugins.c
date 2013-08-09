@@ -90,9 +90,15 @@ purple_plugin_load(PurplePlugin *plugin)
 	}
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
-		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin), error->message);
+		PurplePluginInfoPrivate *priv =
+				PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
+		g_free(priv->error);
+		priv->error = g_strdup(error->message);
 		g_error_free(error);
+
+		purple_debug_error("plugins", "Failed to load plugin %s: %s",
+				purple_plugin_get_filename(plugin),
+				purple_plugin_get_error(plugin));
 		return FALSE;
 	}
 
@@ -344,8 +350,8 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
  **************************************************************************/
 /* GObject Property names */
 #define PROP_CATEGORY_S           "category"
-#define PROP_UI_REQUIREMENT_S     "ui_requirement"
-#define PROP_PREFERENCES_FRAME_S  "preferences_frame"
+#define PROP_UI_REQUIREMENT_S     "ui-requirement"
+#define PROP_PREFERENCES_FRAME_S  "preferences-frame"
 
 /* Set method for GObject properties */
 static void

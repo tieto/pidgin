@@ -115,7 +115,7 @@ static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 	obj_class->set_property = finch_plugin_info_set_property;
 
 	g_object_class_install_property(obj_class, PROP_FINCH_PREFERENCES_FRAME,
-		g_param_spec_pointer("finch_preferences_frame",
+		g_param_spec_pointer("finch-preferences-frame",
 		                     "Finch preferences frame callback",
 		                     "Callback that returns a GNT preferences frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -155,7 +155,7 @@ finch_plugin_info_new(const char *first_property, ...)
 	                           var_args);
 	va_end(var_args);
 
-	g_object_set(info, "ui_requirement", FINCH_UI, NULL);
+	g_object_set(info, "ui-requirement", FINCH_UI, NULL);
 
 	return FINCH_PLUGIN_INFO(info);
 }

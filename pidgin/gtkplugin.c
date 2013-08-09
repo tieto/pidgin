@@ -117,7 +117,7 @@ static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
 	obj_class->set_property = pidgin_plugin_info_set_property;
 
 	g_object_class_install_property(obj_class, PROP_PIDGIN_CONFIG_FRAME,
-		g_param_spec_pointer("pidgin_config_frame",
+		g_param_spec_pointer("pidgin-config-frame",
 		                     "Pidgin configuration frame callback",
 		                     "Callback that returns a GTK configuration frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -157,7 +157,7 @@ pidgin_plugin_info_new(const char *first_property, ...)
 	                           var_args);
 	va_end(var_args);
 
-	g_object_set(info, "ui_requirement", PIDGIN_UI, NULL);
+	g_object_set(info, "ui-requirement", PIDGIN_UI, NULL);
 
 	return PIDGIN_PLUGIN_INFO(info);
 }

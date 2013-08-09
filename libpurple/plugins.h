@@ -369,7 +369,7 @@ GType purple_plugin_info_get_type(void);
  * Creates a new #PurplePluginInfo instance to be returned from
  * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
  *
- * All properties except "id" and "abi_version" are optional.
+ * All properties except "id" and "abi-version" are optional.
  *
  * Valid property names are:                                                 \n
  * "id"                 (string) The ID of the plugin.                       \n
@@ -381,10 +381,12 @@ GType purple_plugin_info_get_type(void);
  * "author"             (string) Author of the plugin                        \n
  * "website"            (string) Website of the plugin                       \n
  * "icon"               (string) Path to a plugin's icon                     \n
- * "license"            (string) The plugin's license                        \n
- * "abi_version"        (guint32) The required ABI version for the plugin.   \n
+ * "license"            (string) The plugin's license ID                     \n
+ * "license-text"       (string) The plugin's license text                   \n
+ * "license-url"        (string) The plugin's license URL                    \n
+ * "abi-version"        (guint32) The required ABI version for the plugin.   \n
  * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
- * "preferences_frame"  (PurplePluginPrefFrameCallback) Callback that returns
+ * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
  *                      a preferences frame for the plugin.
  *
  * Additionally, you can provide a "flags" property if the plugin is to be
