@@ -54,8 +54,10 @@
 
 /* #define YAHOO_DEBUG */
 
-/* Not tested with new HTTP API, because it doesn't compile at the moment. */
-/* #define TRY_WEBMESSENGER_LOGIN 0 */
+/* It doesn't looks like working (previously used host is down, another one
+ * doesn't sends us back cookies.
+ */
+#define TRY_WEBMESSENGER_LOGIN 0
 
 /* One hour */
 #define PING_TIMEOUT 3600
@@ -63,8 +65,10 @@
 /* One minute */
 #define KEEPALIVE_TIMEOUT 60
 
-#ifdef TRY_WEBMESSENGER_LOGIN
-static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
+#if TRY_WEBMESSENGER_LOGIN
+static void
+yahoo_login_page_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _unused);
 #endif /* TRY_WEBMESSENGER_LOGIN */
 
 static gboolean yahoo_is_japan(PurpleAccount *account)
@@ -2142,11 +2146,38 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+#if TRY_WEBMESSENGER_LOGIN
+
+static gboolean
+yahoo_try_webmessenger_login(PurpleConnection *gc)
+{
+	YahooData *yd = purple_connection_get_protocol_data(gc);
+	PurpleHttpRequest *req;
+
+	if (yd->wm)
+		return FALSE;
+
+	yd->wm = TRUE;
+	if (yd->fd >= 0)
+		close(yd->fd);
+	if (yd->inpa) {
+		purple_input_remove(yd->inpa);
+		yd->inpa = 0;
+	}
+
+	req = purple_http_request_new(WEBMESSENGER_URL);
+	purple_http_request_header_set(req, "User-Agent", "Purple/" VERSION);
+	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
+		req, yahoo_login_page_cb, NULL));
+	purple_http_request_unref(req);
+
+	return TRUE;
+}
+
+#endif /* TRY_WEBMESSENGER_LOGIN */
+
 static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-#ifdef TRY_WEBMESSENGER_LOGIN
-	YahooData *yd = purple_connection_get_protocol_data(gc);
-#endif /* TRY_WEBMESSENGER_LOGIN */
 	GSList *l = pkt->hash;
 	int err = 0;
 	char *msg;
@@ -2176,24 +2207,11 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	case 13:
-#ifdef TRY_WEBMESSENGER_LOGIN
-		if (!yd->wm) {
-			PurpleHttpRequest *req;
-			PurpleHttpConnection *hc;
-			yd->wm = TRUE;
-			if (yd->fd >= 0)
-				close(yd->fd);
-			if (yd->inpa) {
-				purple_input_remove(yd->inpa);
-				yd->inpa = 0;
-			}
-			req = purple_http_request_new(WEBMESSENGER_URL);
-			purple_http_request_header_set(req, "User-Agent", "Purple/" VERSION);
-			hc = purple_http_request(gc, req, yahoo_login_page_cb, NULL);
-			purple_http_request_unref(req);
-			yd->http_reqs = g_slist_prepend(yd->http_reqs, hc);
+#if TRY_WEBMESSENGER_LOGIN
+		if (yahoo_try_webmessenger_login(gc))
 			return;
-		}
+#else
+		purple_debug_info("yahoo", "Web messenger login is disabled\n");
 #endif /* TRY_WEBMESSENGER_LOGIN */
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL, NULL, NULL);
@@ -3194,7 +3212,8 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	yd->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
-#ifdef TRY_WEBMESSENGER_LOGIN
+#if TRY_WEBMESSENGER_LOGIN
+
 static void yahoo_got_web_connected(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
@@ -3224,140 +3243,50 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	yd->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition cond)
+static void
+yahoo_login_page_got(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
+	gpointer _unused)
 {
-	PurpleConnection *gc = data;
+	PurpleConnection *gc = purple_http_conn_get_purple_connection(hc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
-	YahooData *yd = purple_connection_get_protocol_data(gc);
-	char bufread[2048], *i = bufread, *buf = bufread;
-	int len;
-	GString *s;
+	PurpleHttpCookieJar *cjar;
+	GString *auth_s;
+	const gchar *cookie;
 
-	len = read(source, bufread, sizeof(bufread) - 1);
-
-	if (len < 0) {
-		gchar *tmp;
-
-		if (errno == EAGAIN)
-			/* No worries */
-			return;
-
-		tmp = g_strdup_printf(_("Lost connection with server: %s"),
-				g_strerror(errno));
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
-		return;
-	} else if (len == 0) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Server closed the connection"));
+	if (purple_http_response_get_code(resp) != 302) {
+		purple_connection_error(gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Unable to connect"));
 		return;
 	}
 
-	if (yd->rxlen > 0 || !g_strstr_len(buf, len, "\r\n\r\n")) {
-		yd->rxqueue = g_realloc(yd->rxqueue, yd->rxlen + len + 1);
-		memcpy(yd->rxqueue + yd->rxlen, buf, len);
-		yd->rxlen += len;
-		i = buf = (char *)yd->rxqueue;
-		len = yd->rxlen;
-	}
-	buf[len] = '\0';
+	auth_s = g_string_new(NULL);
+	cjar = purple_http_conn_get_cookie_jar(hc);
+	cookie = purple_http_cookie_jar_get(cjar, "B");
+	if (cookie)
+		g_string_append_printf(auth_s, "B=%s; ", cookie);
+	cookie = purple_http_cookie_jar_get(cjar, "T");
+	if (cookie)
+		g_string_append_printf(auth_s, "T=%s; ", cookie);
+	cookie = purple_http_cookie_jar_get(cjar, "Y");
+	if (cookie)
+		g_string_append_printf(auth_s, "Y=%s; ", cookie);
 
-	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
-			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Received unexpected HTTP response from server"));
-		purple_debug_misc("yahoo", "Unexpected HTTP response: %s\n", buf);
-		return;
-	}
-
-	s = g_string_sized_new(len);
-
-	while ((i = strstr(i, "Set-Cookie: "))) {
-
-		i += strlen("Set-Cookie: ");
-		for (;*i != ';' && *i != '\0'; i++)
-			g_string_append_c(s, *i);
-
-		g_string_append(s, "; ");
-		/* Should these cookies be included too when trying for xfer?
-		 * It seems to work without these
-		 */
-	}
-
-	yd->auth = g_string_free(s, FALSE);
-	purple_input_remove(yd->inpa);
-	yd->inpa = 0;
-	close(source);
-	g_free(yd->rxqueue);
-	yd->rxqueue = NULL;
-	yd->rxlen = 0;
+	yd->auth = g_string_free(auth_s, FALSE);
 	/* Now we have our cookies to login with.  I'll go get the milk. */
-	if (purple_proxy_connect(gc, account, "wcs2.msg.dcn.yahoo.com",
-	                         purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
-	                         yahoo_got_web_connected, gc) == NULL) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                               _("Unable to connect"));
-		return;
-	}
-}
 
-static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	PurpleConnection *gc = data;
-	YahooData *yd = purple_connection_get_protocol_data(gc);
-	int written, remaining;
-
-	remaining = strlen(yd->auth) - yd->auth_written;
-	written = write(source, yd->auth + yd->auth_written, remaining);
-
-	if (written < 0 && errno == EAGAIN)
-		written = 0;
-	else if (written <= 0) {
-		gchar *tmp;
-		g_free(yd->auth);
-		yd->auth = NULL;
-		if (yd->inpa) {
-			purple_input_remove(yd->inpa);
-			yd->inpa = 0;
-		}
-		tmp = g_strdup_printf(_("Lost connection with %s: %s"),
-				"login.yahoo.com:80", g_strerror(errno));
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
-		return;
-	}
-
-	if (written < remaining) {
-		yd->auth_written += written;
-		return;
-	}
-
-	g_free(yd->auth);
-	yd->auth = NULL;
-	yd->auth_written = 0;
-	purple_input_remove(yd->inpa);
-	yd->inpa = purple_input_add(source, PURPLE_INPUT_READ, yahoo_web_pending, gc);
-}
-
-static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_message)
-{
-	PurpleConnection *gc = data;
-	YahooData *yd = purple_connection_get_protocol_data(gc);
-
-	if (source < 0) {
-		gchar *tmp;
-		tmp = g_strdup_printf(_("Unable to establish a connection with %s: %s"),
-				"login.yahoo.com:80", error_message);
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
-		return;
-	}
-
-	if (yd->inpa == 0)
+	/* XXX: wcs2.msg.dcn.yahoo.com is down, so I used
+	 * YAHOO_PAGER_HOST_FALLBACK. But I'm not sure, if its correct host.
+	 */
+	if (purple_proxy_connect(gc, account, YAHOO_PAGER_HOST_FALLBACK,
+		purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
+		yahoo_got_web_connected, gc) == NULL)
 	{
-		yd->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
-			yahoo_got_cookies_send_cb, gc);
-		yahoo_got_cookies_send_cb(gc, source, PURPLE_INPUT_WRITE);
+		purple_connection_error(gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Unable to connect"));
+		return;
 	}
 }
 
@@ -3412,25 +3341,23 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 }
 
 static void
-yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
-	gpointer _unused)
+yahoo_login_page_cb(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _unused)
 {
 	PurpleConnection *gc = purple_http_conn_get_purple_connection(http_conn);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	const char *sn = purple_account_get_username(account);
 	const char *pass = purple_connection_get_password(gc);
 	size_t len;
 	const gchar *got_data;
 	GHashTable *hash;
-	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
+	GString *url;
 	char md5[33], *hashp = md5, *chal;
 	int i;
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 	guchar digest[16];
-
-	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
+	PurpleHttpRequest *req;
 
 	if (!purple_http_response_is_successful(response))
 	{
@@ -3442,14 +3369,11 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	got_data = purple_http_response_get_data(response, &len);
 	hash = yahoo_login_page_hash(got_data, len);
 
-	url = g_string_append(url, sn);
-	url = g_string_append(url, "&passwd=");
-
 	cipher = purple_ciphers_find_cipher("md5");
 	context = purple_cipher_context_new(cipher, NULL);
 
 	purple_cipher_context_append(context, (const guchar *)pass, strlen(pass));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest(context, digest, sizeof(digest));
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
 		hashp += 2;
@@ -3458,7 +3382,7 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
 	purple_cipher_context_reset(context, NULL);
 	purple_cipher_context_append(context, (const guchar *)chal, strlen(chal));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest(context, digest, sizeof(digest));
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
@@ -3479,22 +3403,21 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	*/
 	g_free(chal);
 
-	url = g_string_append(url, md5);
+	url = g_string_new(NULL);
+	g_string_printf(url, "http://login.yahoo.com/config/login?login=%s&passwd=%s", purple_account_get_username(account), md5);
 	g_hash_table_foreach(hash, (GHFunc)yahoo_login_page_hash_iter, url);
+	url = g_string_append(url, "&.hash=1&.md5=1");
 
-	url = g_string_append(url, "&.hash=1&.md5=1 HTTP/1.1\r\n"
-			      "Host: login.yahoo.com\r\n\r\n");
 	g_hash_table_destroy(hash);
-
-	yd->auth = g_string_free(url, FALSE);
-	if (purple_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                               _("Unable to connect"));
-		return;
-	}
-
 	purple_cipher_context_destroy(context);
+
+	req = purple_http_request_new(g_string_free(url, FALSE));
+	purple_http_request_set_max_redirects(req, 0);
+	purple_http_connection_set_add(yd->http_reqs,
+		purple_http_request(gc, req, yahoo_login_page_got, NULL));
+	purple_http_request_unref(req);
 }
+
 #endif /* TRY_WEBMESSENGER_LOGIN */
 
 static void yahoo_picture_check(PurpleAccount *account)

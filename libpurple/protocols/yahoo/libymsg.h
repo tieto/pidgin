@@ -218,7 +218,6 @@ typedef struct {
 	char *pending_chat_topic;
 	char *pending_chat_goto;
 	char *auth;
-	gsize auth_written;
 	char *cookie_y;
 	char *cookie_t;
 	char *cookie_b;
