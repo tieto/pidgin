@@ -2343,7 +2343,7 @@ msn_got_info(PurpleHttpConnection *http_conn,
 	user_info = purple_notify_user_info_new();
 	has_tooltip_text = msn_tooltip_extract_info_text(user_info, info_data);
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
@@ -2758,7 +2758,7 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	char *photo_url_text = info2_data->photo_url_text;
 
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (response && purple_http_response_is_successfull(response))
+	if (response && purple_http_response_is_successful(response))
 	{
 		char buf[1024];
 		const gchar *photo_data;

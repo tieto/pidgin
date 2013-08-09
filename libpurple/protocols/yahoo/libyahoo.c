@@ -312,9 +312,6 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

@@ -303,7 +303,7 @@ msn_httpconn_read(PurpleHttpConnection *phc, PurpleHttpResponse *response,
 	const gchar *got_data;
 	size_t got_len;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		httpconn->current_request = NULL;
 		msn_servconn_got_error(httpconn->servconn,
 			MSN_SERVCONN_ERROR_READ,

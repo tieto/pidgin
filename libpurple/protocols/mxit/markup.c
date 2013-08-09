@@ -482,7 +482,7 @@ static void emoticon_returned(PurpleHttpConnection *http_conn,
 
 	purple_debug_info( MXIT_PLUGIN_ID, "emoticon_returned\n" );
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		/* no reply from the WAP site */
 		purple_debug_error( MXIT_PLUGIN_ID, "Error contacting the MXit WAP site. Please try again later (emoticon).\n" );
 		goto done;

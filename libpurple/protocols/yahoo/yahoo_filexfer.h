@@ -30,11 +30,6 @@
 void yahoo_process_p2pfilexfer( PurpleConnection *gc, struct yahoo_packet *pkt );
 
 /**
- * Process ymsg file receive invites.
- */
-void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
-
-/**
  * Create a new PurpleXfer
  *
  * @param gc The PurpleConnection handle.

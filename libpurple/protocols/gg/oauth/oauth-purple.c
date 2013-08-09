@@ -122,7 +122,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	}
 	account = purple_connection_get_account(data->gc);
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
 			"requested token not received\n");

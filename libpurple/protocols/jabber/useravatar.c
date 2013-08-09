@@ -268,7 +268,7 @@ do_buddy_avatar_update_fromurl(PurpleHttpConnection *http_conn,
 	const gchar *got_data;
 	size_t got_len;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("jabber", "do_buddy_avatar_update_fromurl "
 			"got error \"%s\"",
 			purple_http_response_get_error(response));

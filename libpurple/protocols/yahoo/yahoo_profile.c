@@ -806,7 +806,7 @@ yahoo_got_info(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	 * happen except under unusual error conditions, as Yahoo is observed
 	 * to send back HTML, with a 200 status code.
 	 */
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_notify_user_info_add_pair_html(user_info, _("Error retrieving profile"), NULL);
 		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
@@ -1029,7 +1029,7 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 
 #if PHOTO_SUPPORT
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (purple_http_response_is_successfull(response)) {
+	if (purple_http_response_is_successful(response)) {
 		const gchar *data;
 		size_t len;
 
