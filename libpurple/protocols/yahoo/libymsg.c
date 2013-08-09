@@ -54,8 +54,8 @@
 
 /* #define YAHOO_DEBUG */
 
-/* It doesn't looks like working (previously used host is down, another one
- * doesn't sends us back cookies.
+/* It doesn't look like it is working (the previously used host is down, another
+ * one doesn't send us back cookies).
  */
 #define TRY_WEBMESSENGER_LOGIN 0
 
@@ -3277,7 +3277,8 @@ yahoo_login_page_got(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
 	/* Now we have our cookies to login with.  I'll go get the milk. */
 
 	/* XXX: wcs2.msg.dcn.yahoo.com is down, so I used
-	 * YAHOO_PAGER_HOST_FALLBACK. But I'm not sure, if its correct host.
+	 * YAHOO_PAGER_HOST_FALLBACK, but I'm not sure, if it is the correct
+	 * host.
 	 */
 	if (purple_proxy_connect(gc, account, YAHOO_PAGER_HOST_FALLBACK,
 		purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
