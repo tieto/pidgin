@@ -390,6 +390,16 @@ _purple_connection_remove_active_chat(PurpleConnection *gc, PurpleChatConversati
 	priv->active_chats = g_slist_remove(priv->active_chats, chat);
 }
 
+gboolean
+_purple_connection_wants_to_die(const PurpleConnection *gc)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_if_fail(priv != NULL);
+
+	return priv->wants_to_die;
+}
+
 void
 purple_connection_update_progress(PurpleConnection *gc, const char *text,
 								size_t step, size_t count)
