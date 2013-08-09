@@ -102,9 +102,9 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		return;
 
 	account = purple_conversation_get_account(conv);
-	gc = purple_conversation_get_connection(conv);
-
 	g_return_if_fail(account != NULL);
+
+	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
 
 	/* Always linkfy the text for display, unless we're
