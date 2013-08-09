@@ -35,12 +35,12 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
-	guint32 purple_version; /**< The version of purple required by the plugin */
-	char *category;         /**< The category the plugin belongs to           */
-	char *ui_requirement;   /**< ID of UI that is required to load the plugin */
-	GList *actions;         /**< Actions that the plugin can perform          */
-	gboolean loadable;      /**< Whether the plugin is loadable               */
-	char *error;            /**< Why the plugin is not loadable               */
+	guint32 purple_abi;    /**< ABI version of purple required by the plugin */
+	char *category;        /**< The category the plugin belongs to           */
+	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
+	GList *actions;        /**< Actions that the plugin can perform          */
+	gboolean loadable;     /**< Whether the plugin is loadable               */
+	char *error;           /**< Why the plugin is not loadable               */
 
 	/** Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCallback get_pref_frame;
@@ -53,7 +53,7 @@ struct _PurplePluginInfoPrivate {
 enum
 {
 	PROP_0,
-	PROP_PURPLE_VERSION,
+	PROP_PURPLE_ABI,
 	PROP_CATEGORY,
 	PROP_UI_REQUIREMENT,
 	PROP_PREFERENCES_FRAME,
@@ -351,7 +351,7 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
  * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
-#define PROP_PURPLE_VERSION_S     "purple-version"
+#define PROP_PURPLE_ABI_S         "purple-abi"
 #define PROP_CATEGORY_S           "category"
 #define PROP_UI_REQUIREMENT_S     "ui-requirement"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
@@ -365,8 +365,8 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	switch (param_id) {
-		case PROP_PURPLE_VERSION:
-			priv->purple_version = g_value_get_uint(value);
+		case PROP_PURPLE_ABI:
+			priv->purple_abi = g_value_get_uint(value);
 			break;
 		case PROP_CATEGORY:
 			priv->category = g_strdup(g_value_get_string(value));
@@ -391,9 +391,8 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
-		case PROP_PURPLE_VERSION:
-			g_value_set_uint(value,
-					purple_plugin_info_get_purple_version(info));
+		case PROP_PURPLE_ABI:
+			g_value_set_uint(value, purple_plugin_info_get_abi_version(info));
 			break;
 		case PROP_CATEGORY:
 			g_value_set_string(value, purple_plugin_info_get_category(info));
@@ -438,7 +437,7 @@ purple_plugin_info_constructed(GObject *object)
 		priv->loadable = FALSE;
 	}
 
-	version = purple_plugin_info_get_purple_version(info);
+	version = purple_plugin_info_get_abi_version(info);
 	if (PURPLE_PLUGIN_ABI_MAJOR_VERSION(version) != PURPLE_MAJOR_VERSION ||
 		PURPLE_PLUGIN_ABI_MINOR_VERSION(version) > PURPLE_MINOR_VERSION)
 	{
@@ -488,9 +487,9 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	obj_class->get_property = purple_plugin_info_get_property;
 	obj_class->set_property = purple_plugin_info_set_property;
 
-	g_object_class_install_property(obj_class, PROP_PURPLE_VERSION,
-		g_param_spec_uint(PROP_PURPLE_VERSION_S,
-		                  "Purple version",
+	g_object_class_install_property(obj_class, PROP_PURPLE_ABI,
+		g_param_spec_uint(PROP_PURPLE_ABI_S,
+		                  "ABI version",
 		                  "The libpurple ABI version required by the plugin",
 		                  0, G_MAXUINT32, 0,
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -713,13 +712,13 @@ purple_plugin_info_get_license_url(const PurplePluginInfo *info)
 }
 
 guint32
-purple_plugin_info_get_purple_version(const PurplePluginInfo *info)
+purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, 0);
 
-	return priv->purple_version;
+	return priv->purple_abi;
 }
 
 GSList *
