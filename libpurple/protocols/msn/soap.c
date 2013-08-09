@@ -145,7 +145,7 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 		msn_soap_request_free(sreq);
 		return;
 	}
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("msn-soap", "SOAP request failed\n");
 		msn_session_set_error(sreq->soaps->session,
 			MSN_ERROR_SERV_UNAVAILABLE, NULL);

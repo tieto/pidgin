@@ -177,7 +177,7 @@ fetched_user_display(PurpleHttpConnection *http_conn,
 	MsnFetchUserDisplayData *data = _data;
 	MsnSession *session = data->session;
 
-	if (purple_http_response_is_successfull(response)) {
+	if (purple_http_response_is_successful(response)) {
 		size_t len;
 		const gchar *icon_data;
 

@@ -333,7 +333,7 @@ start_oscar_session_cb(PurpleHttpConnection *http_conn,
 
 	od->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		gchar *tmp;
 		/* Note to translators: The first %s is a URL, the second is an
 		   error message. */
@@ -571,7 +571,7 @@ client_login_cb(PurpleHttpConnection *http_conn,
 
 	od->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
 				get_client_login_url(od),

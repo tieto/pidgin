@@ -973,7 +973,7 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 static void ggp_pubdir_set_info_got_response(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("gg", "ggp_pubdir_set_info_got_response: "
 			"failed\n");
 		return;

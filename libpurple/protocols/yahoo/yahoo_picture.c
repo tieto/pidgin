@@ -51,7 +51,7 @@ yahoo_fetch_picture_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *resp
 {
 	struct yahoo_fetch_picture_data *d = _data;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n",
 			purple_http_response_get_error(response));
 	} else {
@@ -345,7 +345,7 @@ yahoo_buddy_icon_upload_done(PurpleHttpConnection *http_conn,
 
 	yd->picture_upload_hc = NULL;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 		purple_debug_info("yahoo", "Error uploading buddy icon.\n");
 	else
 		purple_debug_misc("yahoo", "Finished uploading buddy icon.\n");

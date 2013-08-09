@@ -373,7 +373,7 @@ upnp_parse_description_cb(PurpleHttpConnection *http_conn,
 	UPnPDiscoveryData *dd = _dd;
 	gchar *control_url = NULL;
 
-	if (response && purple_http_response_is_successfull(response)) {
+	if (response && purple_http_response_is_successful(response)) {
 		const gchar *got_data;
 		size_t got_len;
 
@@ -717,7 +717,7 @@ looked_up_public_ip_cb(PurpleHttpConnection *http_conn,
 	const gchar *got_data;
 	size_t got_len;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 		return;
 
 	/* extract the ip, or see if there is an error */
@@ -819,7 +819,7 @@ done_port_mapping_cb(PurpleHttpConnection *http_conn,
 	gboolean success = TRUE;
 
 	/* determine if port mapping was a success */
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_debug_error("upnp",
 			"purple_upnp_set_port_mapping(): Failed HTTP_OK\n%s\n",

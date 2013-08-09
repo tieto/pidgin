@@ -79,7 +79,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 		purple_http_conn_get_purple_connection(http_conn);
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_info("yahoo", "yahoo_fetch_aliases_cb error: %s\n",
 			purple_http_response_get_error(response));
 	} else {
@@ -223,7 +223,7 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 	xmlnode *node, *result;
 	struct callback_data *cb = _cb;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_info("yahoo", "Error updating alias for %s: %s\n",
 			cb->who, purple_http_response_get_error(response));
 		g_free(cb->who);

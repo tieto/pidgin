@@ -271,7 +271,7 @@ mxit_cb_http_rx(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	const gchar *got_data;
 	size_t got_len;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error(MXIT_PLUGIN_ID, "HTTP response error (%s)\n",
 			purple_http_response_get_error(response));
 		return;

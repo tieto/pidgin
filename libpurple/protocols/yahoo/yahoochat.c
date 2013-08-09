@@ -1381,7 +1381,7 @@ yahoo_roomlist_got(PurpleHttpConnection *http_conn,
 	gc = purple_account_get_connection(purple_roomlist_get_account(
 		yrl->list));
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_notify_error(gc, NULL, _("Unable to connect"),
 			_("Fetching the room list failed."));
 		yahoo_roomlist_cleanup(yrl->list, yrl);

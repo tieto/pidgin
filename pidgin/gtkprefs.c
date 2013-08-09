@@ -1081,7 +1081,7 @@ theme_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	g_assert(http_conn == prefs_conv_themes_running_request);
 	prefs_conv_themes_running_request = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		free_theme_info(info);
 		return;
 	}

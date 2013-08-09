@@ -736,7 +736,7 @@ smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	g_assert(http_conn == smiley_manager->running_request);
 	smiley_manager->running_request = NULL;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 		return;
 
 	smileydata = purple_http_response_get_data(response, &len);

@@ -392,7 +392,7 @@ mxit_cb_clientinfo2(PurpleHttpConnection *http_conn,
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_clientinfo_cb2\n" );
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		/* no reply from the WAP site */
 		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;
@@ -626,7 +626,7 @@ mxit_cb_clientinfo1(PurpleHttpConnection *http_conn,
 		purple_http_response_get_data(response, NULL));
 #endif
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		/* no reply from the WAP site */
 		purple_connection_error( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;

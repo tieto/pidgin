@@ -82,7 +82,7 @@ jabber_oob_xfer_got(PurpleHttpConnection *hc, PurpleHttpResponse *response,
 	jox = purple_xfer_get_protocol_data(xfer);
 	jox->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response) ||
+	if (!purple_http_response_is_successful(response) ||
 		purple_xfer_get_bytes_remaining(xfer) > 0)
 	{
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);

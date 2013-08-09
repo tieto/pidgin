@@ -213,7 +213,7 @@ static void url_fetched(PurpleHttpConnection *http_conn,
 	GList *convs = purple_get_conversations();
 	const gchar *url;
 
-	if (purple_http_response_is_successfull(response))
+	if (purple_http_response_is_successful(response))
 		url = purple_http_response_get_data(response, NULL);
 	else
 		url = _("Error while querying TinyURL");
@@ -360,7 +360,7 @@ tinyurl_notify_fetch_cb(PurpleHttpConnection *http_conn,
 	char *message;
 	const gchar *url;
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 		return;
 
 	url = purple_http_response_get_data(response, NULL);

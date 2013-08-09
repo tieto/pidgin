@@ -90,7 +90,7 @@ mxit_cb_ii_returned(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	purple_debug_info(MXIT_PLUGIN_ID, "Inline Image returned from %s\n", iireq->url);
 #endif
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		/* no reply from the WAP site */
 		purple_debug_error(MXIT_PLUGIN_ID, "Error downloading Inline Image from %s.\n", iireq->url);
 		goto done;

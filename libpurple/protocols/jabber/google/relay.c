@@ -80,7 +80,7 @@ jabber_google_relay_fetch_cb(PurpleHttpConnection *http_conn,
 
 	purple_debug_info("jabber", "got response on HTTP request to relay server\n");
 
-	if (purple_http_response_is_successfull(response)) {
+	if (purple_http_response_is_successful(response)) {
 		const gchar *got_data =
 			purple_http_response_get_data(response, NULL);
 		purple_debug_info("jabber", "got Google relay request response:\n%s\n",

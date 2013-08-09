@@ -1763,7 +1763,7 @@ static void yahoo_auth16_stage2(PurpleHttpConnection *http_conn,
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		const gchar *error_message = purple_http_response_get_error(response);
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
@@ -1860,7 +1860,7 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1_cb\n");
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		const gchar *error_message = purple_http_response_get_error(response);
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
@@ -3432,7 +3432,7 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 
 	yd->http_reqs = g_slist_remove(yd->http_reqs, http_conn);
 
-	if (!purple_http_response_is_successfull(response))
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			purple_http_response_get_error(response));
@@ -3561,7 +3561,7 @@ static void yahoo_got_pager_server(PurpleHttpConnection *http_conn,
 	int stringslen = 0;
 	const gchar *got_data;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo", "Unable to retrieve server info: %s\n",
 			purple_http_response_get_error(response));
 
@@ -4190,7 +4190,7 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo",
 			"Requesting mail login token failed: %s\n",
 			purple_http_response_get_error(response));
@@ -4332,7 +4332,7 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		g_free(sms_cb_data->who);

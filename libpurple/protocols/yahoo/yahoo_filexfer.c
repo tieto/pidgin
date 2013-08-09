@@ -768,7 +768,7 @@ yahoo_process_filetrans_15_sent(PurpleHttpConnection *hc,
 	if (purple_xfer_is_cancelled(xfer))
 		return;
 
-	if (!purple_http_response_is_successfull(response) ||
+	if (!purple_http_response_is_successful(response) ||
 		purple_xfer_get_bytes_remaining(xfer) > 0)
 	{
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
@@ -793,7 +793,7 @@ yahoo_process_filetrans_15_downloaded(PurpleHttpConnection *hc,
 	if (purple_xfer_is_cancelled(xfer))
 		return;
 
-	if (!purple_http_response_is_successfull(response) ||
+	if (!purple_http_response_is_successful(response) ||
 		purple_xfer_get_bytes_remaining(xfer) > 0)
 	{
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
@@ -894,7 +894,7 @@ yahoo_process_filetrans_info_15_got(PurpleHttpConnection *hc,
 
 	xd->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_notify_error(yd->gc, NULL, _("File Transfer Failed"),
 			_("Unable to get file header."));
 		purple_xfer_cancel_remote(xfer);
