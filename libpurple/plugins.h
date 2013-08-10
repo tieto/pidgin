@@ -536,8 +536,6 @@ GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
  *
  * @constreturn The callback that returns a list of #PurplePluginAction
  *              instances corresponding to the actions a plugin can perform.
- *
- * @see purple_plugin_add_action()
  */
 PurplePluginGetActionsCallback
 purple_plugin_info_get_actions_callback(const PurplePluginInfo *info);
