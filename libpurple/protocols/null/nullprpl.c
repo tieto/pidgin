@@ -87,7 +87,7 @@ typedef struct {
 
 /*
  * stores offline messages that haven't been delivered yet. maps username
- * (char *) to GList * of GOfflineMessages. initialized in gplugin_plugin_load.
+ * (char *) to GList * of GOfflineMessages. initialized in plugin_load.
  */
 GHashTable* goffline_messages = NULL;
 
@@ -203,10 +203,16 @@ static void nullprpl_input_user_info(PurpleProtocolAction *action)
   purple_account_request_change_user_info(acct);
 }
 
-
 /*
  * prpl functions
  */
+static GList *nullprpl_get_actions(PurpleConnection *gc)
+{
+  PurpleProtocolAction *action = purple_protocol_action_new(
+    _("Set User Info..."), nullprpl_input_user_info);
+  return g_list_append(NULL, action);
+}
+
 static const char *nullprpl_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
   return "null";
@@ -1054,9 +1060,8 @@ static PurplePluginProtocolInfo prpl_info =
   "Null - Testing protocol",           /* name */
   sizeof(PurplePluginProtocolInfo),    /* struct_size */
   OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC,  /* options */
-  NULL,               /* user_splits, initialized in gplugin_plugin_load() */
-  NULL,               /* protocol_options, initialized in gplugin_plugin_load() */
-  NULL,               /* actions, initialized in gplugin_plugin_load() */
+  NULL,               /* user_splits, initialized in plugin_load() */
+  NULL,               /* protocol_options, initialized in plugin_load() */
   {   /* icon_spec, a PurpleBuddyIconSpec */
       "png,jpg,gif",                   /* format */
       0,                               /* min_width */
@@ -1066,6 +1071,7 @@ static PurplePluginProtocolInfo prpl_info =
       10000,                           /* max_filesize */
       PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
   },
+  nullprpl_get_actions,                /* get_actions */
   nullprpl_list_icon,                  /* list_icon */
   NULL,                                /* list_emblem */
   nullprpl_status_text,                /* status_text */
@@ -1190,8 +1196,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
                                             NULL);       /* value free fn */
 
   _null_protocol = &prpl_info;
-
-  purple_protocol_add_action(_null_protocol, _("Set User Info..."), nullprpl_input_user_info);
   purple_protocols_add(_null_protocol);
 
   return TRUE;
