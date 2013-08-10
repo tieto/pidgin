@@ -315,9 +315,10 @@ purple_plugin_is_loadable(const PurplePlugin *plugin)
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	return priv->loadable;
+	if (priv)
+		return priv->loadable;
+	else
+		return FALSE;
 }
 
 const gchar *
@@ -496,21 +497,21 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 
 	g_object_class_install_property(obj_class, PROP_CATEGORY,
 		g_param_spec_string(PROP_CATEGORY_S,
-		                    "Category",
-		                    "The category that the plugin belongs to", NULL,
-		                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		                  "Category",
+		                  "The category that the plugin belongs to", NULL,
+		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
 		g_param_spec_string(PROP_UI_REQUIREMENT_S,
-		                    "UI Requirement",
-		                    "ID of UI that is required by this plugin", NULL,
-		                    G_PARAM_WRITABLE));
+		                  "UI Requirement",
+		                  "ID of UI that is required by this plugin", NULL,
+		                  G_PARAM_WRITABLE));
 
 	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
 		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
-		                     "Preferences frame callback",
-		                     "The callback that returns the preferences frame",
-		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		                  "Preferences frame callback",
+		                  "The callback that returns the preferences frame",
+		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 /**************************************************************************
@@ -995,11 +996,11 @@ purple_plugins_init(void)
 #endif
 
 	purple_signal_register(handle, "plugin-load",
-						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+	                       purple_marshal_VOID__POINTER,
+	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 	purple_signal_register(handle, "plugin-unload",
-						 purple_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+	                       purple_marshal_VOID__POINTER,
+	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 }
 
 void
