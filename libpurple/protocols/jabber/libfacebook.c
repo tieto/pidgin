@@ -210,11 +210,13 @@ plugin_query(GError **error)
 		"id",           "prpl-facebook-xmpp",
 		"name",         "Facebook (XMPP)",
 		"version",      DISPLAY_VERSION,
-		"category",     _("Protocol"),
+		"category",     N_("Protocol"),
 		"summary",      N_("Facebook XMPP Protocol Plugin"),
 		"description",  N_("Facebook XMPP Protocol Plugin"),
 		"website",      PURPLE_WEBSITE,
 		"purple-abi",   PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
