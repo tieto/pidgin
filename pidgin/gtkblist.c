@@ -8108,21 +8108,24 @@ plugin_act(GtkWidget *obj, PurplePluginAction *pam)
 
 static void
 build_plugin_actions(GtkActionGroup *action_group, GString *ui, char *parent,
-		PurplePlugin *plugin, gpointer context)
+		PurplePlugin *plugin)
 {
 	GtkAction *menuaction;
+	PurplePluginGetActionsCallback get_actions;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 	char *name;
 	int count = 0;
 
-	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
+	get_actions =
+		purple_plugin_info_get_actions_callback(purple_plugin_get_info(plugin));
+
+	actions = get_actions(plugin);
 
 	for (l = actions; l != NULL; l = l->next) {
 		if (l->data) {
 			action = (PurplePluginAction *)l->data;
 			action->plugin = plugin;
-			action->context = context;
 
 			name = g_strdup_printf("%s-action-%d", parent, count++);
 			menuaction = gtk_action_new(name, action->label, NULL, NULL);
@@ -8168,6 +8171,13 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	PurpleAccount *account = data;
 
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+}
+
+static void
+protocol_act(GtkWidget *obj, PurpleProtocolAction *pam)
+{
+	if (pam && pam->callback)
+		pam->callback(pam);
 }
 
 void
@@ -8251,7 +8261,6 @@ pidgin_blist_update_accounts_menu(void)
 		PurpleConnection *gc = NULL;
 		PurpleAccount *account = NULL;
 		GdkPixbuf *pixbuf = NULL;
-		PurplePlugin *plugin = NULL;
 		PurplePluginProtocolInfo *prpl_info;
 
 		account = accounts->data;
@@ -8292,12 +8301,12 @@ pidgin_blist_update_accounts_menu(void)
 		pidgin_separator(submenu);
 
 		gc = purple_account_get_connection(account);
-		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? purple_connection_get_prpl(gc) : NULL;
-		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
+		prpl_info = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ?
+				purple_connection_get_protocol_info(gc) : NULL;
 
 		if (prpl_info &&
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
-			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
+			 PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_actions))) {
 			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
 			    (purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_SUPPORT_MOODS)) {
 
@@ -8309,29 +8318,28 @@ pidgin_blist_update_accounts_menu(void)
 				}
 			}
 
-			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_actions)) {
 				GtkWidget *menuitem;
-				PurplePluginAction *action = NULL;
+				PurpleProtocolAction *action = NULL;
 				GList *actions, *l;
 
-				actions = PURPLE_PLUGIN_ACTIONS(plugin, gc);
+				actions = prpl_info->get_actions(gc);
 
 				for (l = actions; l != NULL; l = l->next)
 				{
 					if (l->data)
 					{
-						action = (PurplePluginAction *) l->data;
-						action->plugin = plugin;
-						action->context = gc;
+						action = (PurpleProtocolAction *) l->data;
+						action->connection = gc;
 
 						menuitem = gtk_menu_item_new_with_label(action->label);
 						gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 
 						g_signal_connect(G_OBJECT(menuitem), "activate",
-								G_CALLBACK(plugin_act), action);
-						g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+								G_CALLBACK(protocol_act), action);
+						g_object_set_data_full(G_OBJECT(menuitem), "protocol_action",
 											   action,
-											   (GDestroyNotify)purple_plugin_action_free);
+											   (GDestroyNotify)purple_protocol_action_free);
 						gtk_widget_show(menuitem);
 					}
 					else
@@ -8364,6 +8372,7 @@ void
 pidgin_blist_update_plugin_actions(void)
 {
 	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	GList *l;
 
 	GtkAction *action;
@@ -8392,19 +8401,17 @@ pidgin_blist_update_plugin_actions(void)
 		char *name;
 
 		plugin = (PurplePlugin *)l->data;
+		info = purple_plugin_get_info(plugin);
 
-		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
-			continue;
-
-		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
+		if (!purple_plugin_info_get_actions_callback(info))
 			continue;
 
 		name = g_strdup_printf("plugin%d", count);
-		action = gtk_action_new(name, plugin->info->name, NULL, NULL);
+		action = gtk_action_new(name, purple_plugin_info_get_name(info), NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 
-		build_plugin_actions(plugins_action_group, plugins_ui, name, plugin, NULL);
+		build_plugin_actions(plugins_action_group, plugins_ui, name, plugin);
 
 		g_string_append(plugins_ui, "</menu>");
 		count++;
