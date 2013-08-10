@@ -624,9 +624,9 @@ jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
  * string (if any) into GSLists for the (multi-entry) edit dialog and
  * calls the set_vcard dialog.
  */
-void jabber_setup_set_info(PurplePluginAction *action)
+void jabber_setup_set_info(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -2270,9 +2270,9 @@ void jabber_user_search(JabberStream *js, const char *directory)
 	jabber_iq_send(iq);
 }
 
-void jabber_user_search_begin(PurplePluginAction *action)
+void jabber_user_search_begin(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	const char *def_val = purple_account_get_string(purple_connection_get_account(js->gc), "user_directory", "");
 	if(!*def_val && js->user_directories)

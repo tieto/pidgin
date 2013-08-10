@@ -85,8 +85,8 @@ static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode 
 	g_free(oldnickname);
 }
 
-static void do_nick_set_nick(PurplePluginAction *action) {
-	PurpleConnection *gc = action->context;
+static void do_nick_set_nick(PurpleProtocolAction *action) {
+	PurpleConnection *gc = action->connection;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	/* since the nickname might have been changed by another resource of this account, we always have to request the old one
@@ -100,6 +100,6 @@ void jabber_nick_init(void) {
 }
 
 void jabber_nick_init_action(GList **m) {
-	PurplePluginAction *act = purple_plugin_action_new(_("Set Nickname..."), do_nick_set_nick);
+	PurpleProtocolAction *act = purple_protocol_action_new(_("Set Nickname..."), do_nick_set_nick);
 	*m = g_list_append(*m, act);
 }

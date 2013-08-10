@@ -2513,10 +2513,10 @@ static void jabber_password_change_cb(JabberStream *js,
 	jabber_iq_send(iq);
 }
 
-static void jabber_password_change(PurplePluginAction *action)
+static void jabber_password_change(PurpleProtocolAction *action)
 {
 
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -2546,28 +2546,27 @@ static void jabber_password_change(PurplePluginAction *action)
 			js);
 }
 
-GList *jabber_actions(PurplePlugin *plugin, gpointer context)
+GList *jabber_get_actions(PurpleConnection *gc)
 {
-	PurpleConnection *gc = (PurpleConnection *) context;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	GList *m = NULL;
-	PurplePluginAction *act;
+	PurpleProtocolAction *act;
 
-	act = purple_plugin_action_new(_("Set User Info..."),
+	act = purple_protocol_action_new(_("Set User Info..."),
 	                             jabber_setup_set_info);
 	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
-		act = purple_plugin_action_new(_("Change Password..."),
+		act = purple_protocol_action_new(_("Change Password..."),
 		                             jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
-	act = purple_plugin_action_new(_("Search for Users..."),
+	act = purple_protocol_action_new(_("Search for Users..."),
 	                             jabber_user_search_begin);
 	m = g_list_append(m, act);
 
-	purple_debug_info("jabber", "jabber_actions: have pep: %s\n", js->pep?"YES":"NO");
+	purple_debug_info("jabber", "jabber_get_actions: have pep: %s\n", js->pep?"YES":"NO");
 
 	if(js->pep)
 		jabber_pep_init_actions(&m);
@@ -3736,6 +3735,7 @@ static void jabber_unregister_commands(PurplePlugin *plugin)
 	g_hash_table_remove(jabber_cmds, plugin);
 }
 
+#if 0
 /* IPC functions */
 
 /**
@@ -3783,6 +3783,7 @@ jabber_ipc_add_feature(const gchar *feature)
 	/* send presence with new caps info for all connected accounts */
 	jabber_caps_broadcast_change();
 }
+#endif
 
 static void
 jabber_do_init(void)
@@ -3940,6 +3941,7 @@ void jabber_plugin_init(PurplePlugin *plugin)
 
 	jabber_register_commands(plugin);
 
+#if 0
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
@@ -3963,6 +3965,7 @@ void jabber_plugin_init(PurplePlugin *plugin)
 	                           G_TYPE_NONE, 2,
 	                           G_TYPE_STRING,  /* node */
 	                           G_TYPE_STRING); /* namespace */
+#endif
 
 	purple_signal_register(plugin, "jabber-register-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
@@ -4047,8 +4050,9 @@ void jabber_plugin_uninit(PurplePlugin *plugin)
 	g_return_if_fail(plugin_ref > 0);
 
 	purple_signals_unregister_by_instance(plugin);
+#if 0
 	purple_plugin_ipc_unregister_all(plugin);
-
+#endif
 	jabber_unregister_commands(plugin);
 
 	--plugin_ref;

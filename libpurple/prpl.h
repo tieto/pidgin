@@ -221,7 +221,7 @@ struct _PurpleProtocolAction {
 	char *label;
 	PurpleProtocolActionCallback callback;
 	PurpleConnection *connection;
-	gpointer *user_data;
+	gpointer user_data;
 };
 
 /**

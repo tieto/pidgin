@@ -55,10 +55,12 @@ facebook_list_icon(PurpleAccount *a, PurpleBuddy *b)
 	return "facebook";
 }
 
-static PurplePlugin *my_protocol = NULL;
+static PurplePluginProtocolInfo *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-facebook-xmpp",                   /* id */
+	"Facebook (XMPP)",                      /* name */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL
@@ -68,6 +70,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	jabber_get_actions,				/* get_actions */
 	facebook_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
@@ -136,57 +139,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL  /* get_public_alias */
 };
 
-static gboolean load_plugin(PurplePlugin *plugin)
-{
-	jabber_plugin_init(plugin);
-
-	return TRUE;
-}
-
-static gboolean unload_plugin(PurplePlugin *plugin)
-{
-	jabber_plugin_uninit(plugin);
-
-	return TRUE;
-}
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                         /**< type           */
-	NULL,                                           /**< ui_requirement */
-	0,                                              /**< flags          */
-	NULL,                                           /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                        /**< priority       */
-
-	"prpl-facebook-xmpp",                           /**< id             */
-	"Facebook (XMPP)",                              /**< name           */
-	DISPLAY_VERSION,                                /**< version        */
-	                                                /**  summary        */
-	N_("Facebook XMPP Protocol Plugin"),
-	                                                /**  description    */
-	N_("Facebook XMPP Protocol Plugin"),
-	NULL,                                           /**< author         */
-	PURPLE_WEBSITE,                                 /**< homepage       */
-
-	load_plugin,                                    /**< load           */
-	unload_plugin,                                  /**< unload         */
-	NULL,                                           /**< destroy        */
-
-	NULL,                                           /**< ui_info        */
-	&prpl_info,                                     /**< extra_info     */
-	NULL,                                           /**< prefs_info     */
-	jabber_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
 static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
@@ -219,7 +171,7 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 	if (g_ascii_strcasecmp(proto, "xmpp"))
 		return FALSE;
 
-	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
+	acct = find_acct(my_protocol->id, acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -251,9 +203,24 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 	return FALSE;
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-facebook-xmpp",
+		"name",         "Facebook (XMPP)",
+		"version",      DISPLAY_VERSION,
+		"category",     _("Protocol"),
+		"summary",      N_("Facebook XMPP Protocol Plugin"),
+		"description",  N_("Facebook XMPP Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"purple-abi",   PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
@@ -316,11 +283,25 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
 
-	my_protocol = plugin;
+	my_protocol = &prpl_info;
 
 	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+
+	purple_protocols_add(my_protocol);
+	jabber_plugin_init(plugin);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(facebookxmpp, init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	jabber_plugin_uninit(plugin);
+	purple_protocols_remove(my_protocol);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(facebookxmpp, plugin_query, plugin_load, plugin_unload);
 
