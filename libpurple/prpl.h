@@ -221,6 +221,7 @@ struct _PurpleProtocolAction {
 	char *label;
 	PurpleProtocolActionCallback callback;
 	PurpleConnection *connection;
+	gpointer *user_data;
 };
 
 /**
@@ -262,9 +263,9 @@ struct _PurplePluginProtocolInfo
 	GList *protocol_options; /**< A GList of PurpleAccountOption    */
 
 	/**
-	 * Actions that the protocol can perform
+	 * Callback that returns the actions the protocol can perform
 	 */
-	GList *actions;
+	GList *(*actions)(PurpleConnection *);
 
 	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
 
@@ -969,14 +970,21 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
 void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
 /** TODO A sanity check is needed
- * Adds a new action to a protocol.
+ * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
+ * a list in the actions callback of the protocol.
  *
- * @param prpl_info The protocol to add the action to.
- * @param label     The description of the action to show to the user.
- * @param callback  The callback to call when the user selects this action.
+ * @param label    The description of the action to show to the user.
+ * @param callback The callback to call when the user selects this action.
  */
-void purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
-		const char* label, PurpleProtocolActionCallback callback);
+PurpleProtocolAction *purple_protocol_action_new(const char* label,
+		PurpleProtocolActionCallback callback);
+
+/** TODO A sanity check is needed
+ * Frees a PurpleProtocolAction
+ *
+ * @param action The PurpleProtocolAction to free.
+ */
+void purple_protocol_action_free(PurpleProtocolAction *action);
 
 /**************************************************************************/
 /** @name Protocols API                                                   */

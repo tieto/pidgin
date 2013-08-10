@@ -38,9 +38,11 @@ struct _PurplePluginInfoPrivate {
 	guint32 purple_abi;    /**< ABI version of purple required by the plugin */
 	char *category;        /**< The category the plugin belongs to           */
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
-	GList *actions;        /**< Actions that the plugin can perform          */
 	gboolean loadable;     /**< Whether the plugin is loadable               */
 	char *error;           /**< Why the plugin is not loadable               */
+
+	/** Callback that returns a list of actions the plugin can perform */
+	PurplePluginGetActionsCallback get_actions;
 
 	/** Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCallback get_pref_frame;
@@ -56,6 +58,7 @@ enum
 	PROP_PURPLE_ABI,
 	PROP_CATEGORY,
 	PROP_UI_REQUIREMENT,
+	PROP_GET_ACTIONS,
 	PROP_PREFERENCES_FRAME,
 	PROP_LAST
 };
@@ -249,43 +252,6 @@ purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
 #endif
 }
 
-void
-purple_plugin_add_action(PurplePlugin *plugin, const char* label,
-                         PurplePluginActionCallback callback)
-{
-	PurplePluginInfoPrivate *priv;
-	PurplePluginAction *action;
-
-	g_return_if_fail(plugin != NULL);
-	g_return_if_fail(label != NULL && callback != NULL);
-
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-
-	g_return_if_fail(priv != NULL);
-
-	action = g_new0(PurplePluginAction, 1);
-
-	action->label    = g_strdup(label);
-	action->callback = callback;
-	action->plugin   = plugin;
-
-	priv->actions = g_list_append(priv->actions, action);
-}
-
-GList *
-purple_plugin_get_actions(const PurplePlugin *plugin)
-{
-	PurplePluginInfoPrivate *priv;
-
-	g_return_val_if_fail(plugin != NULL, NULL);
-
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->actions;
-}
-
 gboolean
 purple_plugin_is_internal(const PurplePlugin *plugin)
 {
@@ -355,6 +321,7 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
 #define PROP_PURPLE_ABI_S         "purple-abi"
 #define PROP_CATEGORY_S           "category"
 #define PROP_UI_REQUIREMENT_S     "ui-requirement"
+#define PROP_GET_ACTIONS_S        "get-actions"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
 
 /* Set method for GObject properties */
@@ -374,6 +341,9 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 			break;
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_GET_ACTIONS:
+			priv->get_actions = g_value_get_pointer(value);
 			break;
 		case PROP_PREFERENCES_FRAME:
 			priv->get_pref_frame = g_value_get_pointer(value);
@@ -397,6 +367,10 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 			break;
 		case PROP_CATEGORY:
 			g_value_set_string(value, purple_plugin_info_get_category(info));
+			break;
+		case PROP_GET_ACTIONS:
+			g_value_set_pointer(value,
+					purple_plugin_info_get_actions_callback(info));
 			break;
 		case PROP_PREFERENCES_FRAME:
 			g_value_set_pointer(value,
@@ -506,6 +480,12 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		                  "UI Requirement",
 		                  "ID of UI that is required by this plugin", NULL,
 		                  G_PARAM_WRITABLE));
+
+	g_object_class_install_property(obj_class, PROP_GET_ACTIONS,
+		g_param_spec_pointer(PROP_GET_ACTIONS_S,
+		                  "Plugin actions",
+		                  "Callback that returns list of the plugin's actions",
+		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
 		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
@@ -735,6 +715,16 @@ purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
 #endif
 }
 
+PurplePluginGetActionsCallback
+purple_plugin_info_get_actions_callback(const PurplePluginInfo *info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->get_actions;
+}
+
 PurplePluginPrefFrameCallback
 purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 {
@@ -748,7 +738,23 @@ purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 /**************************************************************************
  * PluginAction API
  **************************************************************************/
-static void
+PurplePluginAction *
+purple_plugin_action_new(const char* label, PurplePluginActionCallback callback)
+{
+	PurplePluginAction *action;
+
+	g_return_if_fail(label != NULL && callback != NULL);
+
+	action = g_new0(PurplePluginAction, 1);
+
+	action->label    = g_strdup(label);
+	action->callback = callback;
+	action->plugin   = plugin;
+
+	return action;
+}
+
+void
 purple_plugin_action_free(PurplePluginAction *action)
 {
 	g_return_if_fail(action != NULL);
@@ -765,10 +771,9 @@ purple_plugin_action_copy(PurplePluginAction *action)
 	g_return_val_if_fail(action != NULL, NULL);
 
 	action_copy = g_new(PurplePluginAction, 1);
+	*action_copy = *action;
 
 	action_copy->label    = g_strdup(action->label);
-	action_copy->callback = action->callback;
-	action_copy->plugin   = action->plugin;
 
 	return action_copy;
 }

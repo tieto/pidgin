@@ -97,6 +97,7 @@ typedef struct _PurplePluginAction PurplePluginAction;
 #include "pluginpref.h"
 
 typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
+typedef GList *(*PurplePluginGetActionsCallback)(PurplePlugin *);
 typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(PurplePlugin *);
 
 /**
@@ -140,6 +141,7 @@ struct _PurplePluginAction {
 	char *label;
 	PurplePluginActionCallback callback;
 	PurplePlugin *plugin;
+	gpointer *user_data;
 };
 
 /** Returns an ABI version to set in plugins using major and minor versions */
@@ -291,28 +293,6 @@ void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
                                  const GInterfaceInfo *interface_info);
 
 /**
- * Adds a new action to a plugin.
- *
- * @param plugin   The plugin to add the action to.
- * @param label    The description of the action to show to the user.
- * @param callback The callback to call when the user selects this action.
- */
-void purple_plugin_add_action(PurplePlugin *plugin, const char* label,
-                              PurplePluginActionCallback callback);
-
-/**
- * Returns a list of actions that a plugin can perform.
- *
- * @param plugin The plugin to get the actions from.
- *
- * @constreturn A list of #PurplePluginAction instances corresponding to the
- *              actions a plugin can perform.
- *
- * @see purple_plugin_add_action()
- */
-GList *purple_plugin_get_actions(const PurplePlugin *plugin);
-
-/**
  * Returns whether a plugin is an internal plugin. Internal plugins provide
  * required additional functionality to the libpurple core. These plugins must
  * not be shown in plugin lists. Examples of such plugins are in-tree protocol
@@ -399,8 +379,11 @@ GType purple_plugin_info_get_type(void);
  *                               SPDX.                                       \n
  * "purple-abi"         (guint32) The purple ABI version required by plugin. \n
  * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
+ * "get-actions"        (PurplePluginGetActionsCallback) Callback that
+ *                               returns a list of actions the plugin can
+ *                               perform.                                    \n
  * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
- *                                        a preferences frame for the plugin.
+ *                               a preferences frame for the plugin.
  *
  * Additionally, you can provide a "flags" property if the plugin is to be
  * distributed with libpurple, the value for which should be a bitwise
@@ -546,6 +529,20 @@ guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
+ * Returns the callback that retrieves the list of actions a plugin can perform
+ * at that moment.
+ *
+ * @param info The plugin info to get the callback from.
+ *
+ * @constreturn The callback that returns a list of #PurplePluginAction
+ *              instances corresponding to the actions a plugin can perform.
+ *
+ * @see purple_plugin_add_action()
+ */
+PurplePluginGetActionsCallback
+purple_plugin_info_get_actions_callback(const PurplePluginInfo *info);
+
+/**
  * Returns the callback that retrieves the preferences frame for a plugin.
  *
  * @param info The plugin info to get the callback from.
@@ -566,6 +563,23 @@ purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info);
  * Returns the GType for the PurplePluginAction boxed structure.
  */
 GType purple_plugin_action_get_type(void);
+
+/**
+ * Allocates and returns a new PurplePluginAction. Use this to add actions in a
+ * list in the "get-actions" callback for your plugin.
+ *
+ * @param label    The description of the action to show to the user.
+ * @param callback The callback to call when the user selects this action.
+ */
+PurplePluginAction *purple_plugin_action_new(const char* label,
+		PurplePluginActionCallback callback);
+
+/**
+ * Frees a PurplePluginAction
+ *
+ * @param action The PurplePluginAction to free.
+ */
+void purple_plugin_action_free(PurplePluginAction *action);
 
 /*@}*/
 

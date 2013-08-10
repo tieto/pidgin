@@ -620,13 +620,12 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 #endif
 }
 
-void
-purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
-		const char* label, PurpleProtocolActionCallback callback)
+PurpleProtocolAction *
+purple_protocol_action_new(const char* label,
+		PurpleProtocolActionCallback callback)
 {
 	PurpleProtocolAction *action;
 
-	g_return_if_fail(prpl_info != NULL);
 	g_return_if_fail(label != NULL && callback != NULL);
 
 	action = g_new0(PurpleProtocolAction, 1);
@@ -634,7 +633,16 @@ purple_protocol_add_action(PurplePluginProtocolInfo *prpl_info,
 	action->label    = g_strdup(label);
 	action->callback = callback;
 
-	prpl_info->actions = g_list_append(prpl_info->actions, action);
+	return action;
+}
+
+void
+purple_protocol_action_free(PurpleProtocolAction *action)
+{
+	g_return_if_fail(action != NULL);
+
+	g_free(action->label);
+	g_free(action);
 }
 
 /**************************************************************************
@@ -670,13 +678,6 @@ purple_protocol_destroy(PurplePluginProtocolInfo *prpl_info)
 		prpl_info->protocol_options =
 				g_list_delete_link(prpl_info->protocol_options,
 				prpl_info->protocol_options);
-	}
-
-	while (prpl_info->actions) {
-		PurpleProtocolAction *action = prpl_info->actions->data;
-		g_free(action->label);
-		prpl_info->actions = g_list_delete_link(prpl_info->actions,
-				prpl_info->actions);
 	}
 }
 
