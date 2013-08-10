@@ -1275,8 +1275,26 @@ static PurpleSslOps ssl_ops =
 	NULL
 };
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           SSL_GNUTLS_PLUGIN_ID,
+		"name",         N_("GNUTLS"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("SSL"),
+		"summary",      N_("Provides SSL support through GNUTLS."),
+		"description",  N_("Provides SSL support through GNUTLS."),
+		"author",       "Christian Hammond <chipx86@gnupdate.org>",
+		"website",      PURPLE_WEBSITE,
+		"purple-abi",   PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	if(!purple_ssl_get_ops()) {
 		purple_ssl_set_ops(&ssl_ops);
@@ -1292,7 +1310,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if(purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
@@ -1303,46 +1321,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	SSL_GNUTLS_PLUGIN_ID,                             /**< id             */
-	N_("GNUTLS"),                                     /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Provides SSL support through GNUTLS."),
-	                                                  /**  description    */
-	N_("Provides SSL support through GNUTLS."),
-	"Christian Hammond <chipx86@gnupdate.org>",
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	NULL,                                             /**< actions        */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(ssl_gnutls, init_plugin, info)
+PURPLE_PLUGIN_INIT(ssl_gnutls, plugin_query, plugin_load, plugin_unload);
