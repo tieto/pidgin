@@ -141,7 +141,7 @@ struct _PurplePluginAction {
 	char *label;
 	PurplePluginActionCallback callback;
 	PurplePlugin *plugin;
-	gpointer *user_data;
+	gpointer user_data;
 };
 
 /** Returns an ABI version to set in plugins using major and minor versions */
@@ -358,8 +358,7 @@ GType purple_plugin_info_get_type(void);
  * All properties except "id" and "purple-abi" are optional.
  *
  * Valid property names are:                                                 \n
- * "id"                 (string) The ID of the plugin.                       
- *                               format: <application>/<name of the plugin>  \n
+ * "id"                 (string) The ID of the plugin.                       \n
  * "name"               (string) The translated name of the plugin.          \n
  * "version"            (string) Version of the plugin.                      \n
  * "category"           (string) Primary category of the plugin.             \n
