@@ -38,6 +38,7 @@
 	"credentials.")
 #define WINCRED_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
 #define WINCRED_ID          "keyring-wincred"
+#define WINCRED_DOMAIN      (g_quark_from_static_string(WINCRED_ID))
 
 #define WINCRED_MAX_TARGET_NAME 256
 
@@ -255,8 +256,26 @@ wincred_save(PurpleAccount *account, const gchar *password,
 		g_error_free(error);
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           WINCRED_ID,
+		"name",         WINCRED_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Keyring"),
+		"summary",      WINCRED_SUMMARY,
+		"description",  WINCRED_DESCRIPTION,
+		"author",       WINCRED_AUTHOR,
+		"website",      PURPLE_WEBSITE,
+		"purple-abi",   PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
+}
+
 static gboolean
-wincred_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	keyring_handler = purple_keyring_new();
 
@@ -271,9 +290,11 @@ wincred_load(PurplePlugin *plugin)
 }
 
 static gboolean
-wincred_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (purple_keyring_get_inuse() == keyring_handler) {
+		g_set_error(error, WINCRED_DOMAIN, 0, "The keyring is currently "
+			"in use.");
 		purple_debug_warning("keyring-wincred",
 			"keyring in use, cannot unload\n");
 		return FALSE;
@@ -286,36 +307,4 @@ wincred_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,		/* magic */
-	PURPLE_MAJOR_VERSION,		/* major_version */
-	PURPLE_MINOR_VERSION,		/* minor_version */
-	PURPLE_PLUGIN_STANDARD,		/* type */
-	NULL,				/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
-	NULL,				/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,	/* priority */
-	WINCRED_ID,			/* id */
-	WINCRED_NAME,			/* name */
-	DISPLAY_VERSION,		/* version */
-	WINCRED_SUMMARY,		/* summary */
-	WINCRED_DESCRIPTION,		/* description */
-	WINCRED_AUTHOR,			/* author */
-	PURPLE_WEBSITE,			/* homepage */
-	wincred_load,			/* load */
-	wincred_unload,			/* unload */
-	NULL,				/* destroy */
-	NULL,				/* ui_info */
-	NULL,				/* extra_info */
-	NULL,				/* prefs_info */
-	NULL,				/* actions */
-	NULL, NULL, NULL, NULL		/* padding */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(wincred_keyring, init_plugin, plugininfo)
+PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);

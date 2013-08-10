@@ -40,6 +40,7 @@
 #define KWALLET_DESCRIPTION N_("This plugin will store passwords in KWallet.")
 #define KWALLET_AUTHOR      "QuLogic (qulogic[at]pidgin.im)"
 #define KWALLET_ID          "keyring-kwallet"
+#define KWALLET_DOMAIN      (g_quark_from_static_string(KWALLET_ID))
 
 #define KWALLET_WALLET_NAME KWallet::Wallet::NetworkWallet()
 #define KWALLET_APP_NAME "Libpurple"
@@ -488,8 +489,26 @@ static const char *kwallet_get_ui_name(void)
 	return ui_name;
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           KWALLET_ID,
+		"name",         KWALLET_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Keyring"),
+		"summary",      "KWallet Keyring Plugin",
+		"description",  KWALLET_DESCRIPTION,
+		"author",       KWALLET_AUTHOR,
+		"website",      PURPLE_WEBSITE,
+		"purple-abi",   PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
+}
+
 static gboolean
-kwallet_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	if (!qCoreApp) {
 		int argc = 0;
@@ -498,6 +517,7 @@ kwallet_load(PurplePlugin *plugin)
 	}
 
 	if (!kwallet_is_enabled()) {
+		g_set_error(error, KWALLET_DOMAIN, 0, "KWallet service is disabled.");
 		purple_debug_info("keyring-kwallet",
 			"KWallet service is disabled\n");
 		return FALSE;
@@ -519,9 +539,11 @@ kwallet_load(PurplePlugin *plugin)
 }
 
 static gboolean
-kwallet_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (purple_keyring_get_inuse() == keyring_handler) {
+		g_set_error(error, KWALLET_DOMAIN, 0, "The keyring is currently "
+			"in use.");
 		purple_debug_warning("keyring-kwallet",
 			"keyring in use, cannot unload\n");
 		return FALSE;
@@ -543,39 +565,7 @@ kwallet_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,			/* magic */
-	PURPLE_MAJOR_VERSION,			/* major_version */
-	PURPLE_MINOR_VERSION,			/* minor_version */
-	PURPLE_PLUGIN_STANDARD,			/* type */
-	NULL,					/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,		/* flags */
-	NULL,					/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,		/* priority */
-	KWALLET_ID,				/* id */
-	KWALLET_NAME,				/* name */
-	DISPLAY_VERSION,			/* version */
-	"KWallet Keyring Plugin",		/* summary */
-	KWALLET_DESCRIPTION,			/* description */
-	KWALLET_AUTHOR,				/* author */
-	PURPLE_WEBSITE,				/* homepage */
-	kwallet_load,				/* load */
-	kwallet_unload,				/* unload */
-	NULL,					/* destroy */
-	NULL,					/* ui_info */
-	NULL,					/* extra_info */
-	NULL,					/* prefs_info */
-	NULL,					/* actions */
-	NULL, NULL, NULL, NULL			/* padding */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
+PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);
 
 } /* extern "C" */
 

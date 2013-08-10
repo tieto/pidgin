@@ -45,6 +45,7 @@
 
 #define SECRETSERVICE_NAME        N_("Secret Service")
 #define SECRETSERVICE_ID          "keyring-libsecret"
+#define SECRETSERVICE_DOMAIN      (g_quark_from_static_string(SECRETSERVICE_ID))
 
 static PurpleKeyring *keyring_handler = NULL;
 
@@ -253,7 +254,7 @@ ss_close(void)
 }
 
 static gboolean
-ss_init(void)
+ss_init(GError **error)
 {
 	keyring_handler = purple_keyring_new();
 
@@ -281,57 +282,43 @@ ss_uninit(void)
 /*     Plugin interface                        */
 /***********************************************/
 
-static gboolean
-ss_load(PurplePlugin *plugin)
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	return ss_init();
+	return purple_plugin_info_new(
+		"id",           SECRETSERVICE_ID,
+		"name",         SECRETSERVICE_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Keyring"),
+		"summary",      "Secret Service Plugin",
+		"description",  N_("This plugin will store passwords in Secret Service."),
+		"author",       "Elliott Sales de Andrade (qulogic[at]pidgin.im)",
+		"website",      PURPLE_WEBSITE,
+		"purple-abi",   PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
 }
 
 static gboolean
-ss_unload(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
-	if (purple_keyring_get_inuse() == keyring_handler)
+	return ss_init(error);
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	if (purple_keyring_get_inuse() == keyring_handler) {
+		g_set_error(error, SECRETSERVICE_DOMAIN, 0, "The keyring is currently "
+			"in use.");
 		return FALSE;
+	}
 
 	ss_uninit();
 
 	return TRUE;
 }
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,		/* magic */
-	PURPLE_MAJOR_VERSION,		/* major_version */
-	PURPLE_MINOR_VERSION,		/* minor_version */
-	PURPLE_PLUGIN_STANDARD,		/* type */
-	NULL,						/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
-	NULL,						/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,	/* priority */
-	SECRETSERVICE_ID,			/* id */
-	SECRETSERVICE_NAME,			/* name */
-	DISPLAY_VERSION,			/* version */
-	"Secret Service Plugin",		/* summary */
-	N_("This plugin will store passwords in Secret Service."),	/* description */
-	"Elliott Sales de Andrade (qulogic[at]pidgin.im)",		/* author */
-	PURPLE_WEBSITE,				/* homepage */
-	ss_load,					/* load */
-	ss_unload,					/* unload */
-	NULL,						/* destroy */
-	NULL,						/* ui_info */
-	NULL,						/* extra_info */
-	NULL,						/* prefs_info */
-	NULL,						/* actions */
-	NULL,						/* padding... */
-	NULL,
-	NULL,
-	NULL,
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(secret_service, init_plugin, plugininfo)
+PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);
 
