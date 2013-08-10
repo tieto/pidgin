@@ -680,19 +680,6 @@ purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 	return priv->purple_abi;
 }
 
-GSList *
-purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
-{
-#ifdef PURPLE_PLUGINS
-	g_return_val_if_fail(info != NULL, NULL);
-
-	return gplugin_plugin_info_get_dependencies(GPLUGIN_PLUGIN_INFO(info));
-
-#else
-	return NULL;
-#endif
-}
-
 PurplePluginGetActionsCallback
 purple_plugin_info_get_actions_callback(const PurplePluginInfo *info)
 {

@@ -520,15 +520,6 @@ const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
 guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 
 /**
- * Returns a list of plugins that a particular plugin depends on.
- *
- * @param info The plugin's info instance.
- *
- * @constreturn The list of dependencies of a plugin.
- */
-GSList *purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
-
-/**
  * Returns the callback that retrieves the list of actions a plugin can perform
  * at that moment.
  *
