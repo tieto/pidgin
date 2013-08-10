@@ -216,7 +216,7 @@ G_BEGIN_DECLS
 gboolean purple_plugin_load(PurplePlugin *plugin);
 
 /**
- * Unloads the specified plugin, and frees associated actions.
+ * Unloads the specified plugin.
  *
  * @param plugin The plugin handle.
  *

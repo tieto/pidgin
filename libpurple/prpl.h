@@ -262,12 +262,12 @@ struct _PurplePluginProtocolInfo
 	GList *user_splits;      /**< A GList of PurpleAccountUserSplit */
 	GList *protocol_options; /**< A GList of PurpleAccountOption    */
 
+	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
+
 	/**
 	 * Callback that returns the actions the protocol can perform
 	 */
 	GList *(*get_actions)(PurpleConnection *);
-
-	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
@@ -971,7 +971,7 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
 /** TODO A sanity check is needed
  * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
- * a list in the actions callback of the protocol.
+ * a list in the get_actions function of the protocol.
  *
  * @param label    The description of the action to show to the user.
  * @param callback The callback to call when the user selects this action.
@@ -1009,8 +1009,8 @@ gboolean purple_protocols_add(PurplePluginProtocolInfo *prpl_info);
 
 /** TODO A sanity check is needed
  * Removes a protocol from the list of protocols. This will disconnect all
- * connected accounts using this protocol, and free the protocol's user splits,
- * protocol options, and actions.
+ * connected accounts using this protocol, and free the protocol's user splits
+ * and protocol options.
  *
  * @param prpl_info  The protocol to remove.
  *
