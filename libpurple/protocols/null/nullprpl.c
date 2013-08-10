@@ -1135,7 +1135,7 @@ static PurplePluginProtocolInfo prpl_info =
 };
 
 static PurplePluginInfo *
-plugin_query(void)
+plugin_query(GError **error)
 {
   return purple_plugin_info_new(
     "id",           NULLPRPL_ID,
@@ -1156,7 +1156,7 @@ plugin_query(void)
 }
 
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
   /* see accountopt.h for information about user splits and protocol options */
   PurpleAccountUserSplit *split = purple_account_user_split_new(
@@ -1198,7 +1198,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
   purple_debug_info("nullprpl", "shutting down\n");
 

@@ -163,29 +163,35 @@ struct _PurplePluginAction {
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	PurplePluginInfo * pluginname##_plugin_query(void); \
 	PurplePluginInfo * pluginname##_plugin_query(void) { \
-		return pluginquery(); \
+		return pluginquery(NULL); \
 	} \
 	gboolean pluginname##_plugin_load(void); \
 	gboolean pluginname##_plugin_load(void) { \
-		return pluginload(NULL); \
+		GError *e = NULL; \
+		gboolean loaded = pluginload(NULL, &e); \
+		if (e) g_error_free(e); \
+		return loaded; \
 	} \
 	gboolean pluginname##_plugin_unload(void); \
 	gboolean pluginname##_plugin_unload(void) { \
-		return pluginunload(NULL); \
+		GError *e = NULL; \
+		gboolean unloaded = pluginunload(NULL, &e); \
+		if (e) g_error_free(e); \
+		return unloaded; \
 	}
 #else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(void); \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(void) { \
-		return GPLUGIN_PLUGIN_INFO(pluginquery()); \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
+		return GPLUGIN_PLUGIN_INFO(pluginquery(e)); \
 	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p) { \
-		return pluginload(PURPLE_PLUGIN(p)); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e) { \
+		return pluginload(PURPLE_PLUGIN(p), e); \
 	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p) { \
-		return pluginunload(PURPLE_PLUGIN(p)); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e); \
+	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e) { \
+		return pluginunload(PURPLE_PLUGIN(p), e); \
 	}
 #endif
 
