@@ -631,14 +631,16 @@ plugin_act(GtkWidget *widget, PurplePluginAction *pam)
 }
 
 static void
-build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
-		gpointer context)
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 {
 	GtkWidget *menuitem;
+	PurplePluginGetActionsCallback get_actions;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
+	get_actions =
+		purple_plugin_info_get_actions_callback(purple_plugin_get_info(plugin));
+	actions = get_actions(plugin);
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -646,7 +648,6 @@ build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
 		{
 			action = (PurplePluginAction *) l->data;
 			action->plugin = plugin;
-			action->context = context;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -671,6 +672,7 @@ docklet_plugin_actions(GtkWidget *menu)
 {
 	GtkWidget *menuitem, *submenu;
 	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	GList *l;
 	int c = 0;
 
@@ -678,21 +680,20 @@ docklet_plugin_actions(GtkWidget *menu)
 
 	/* Add a submenu for each plugin with custom actions */
 	for (l = purple_plugins_get_loaded(); l; l = l->next) {
-		plugin = (PurplePlugin *) l->data;
+		plugin = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plugin);
 
-		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+		if (!purple_plugin_info_get_actions_callback(info))
 			continue;
 
-		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
-			continue;
-
-		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
+		menuitem =
+			gtk_image_menu_item_new_with_label(_(purple_plugin_info_get_name(info)));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-		build_plugin_actions(submenu, plugin, NULL);
+		build_plugin_actions(submenu, plugin);
 
 		c++;
 	}
