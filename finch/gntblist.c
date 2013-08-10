@@ -2493,7 +2493,7 @@ build_protocol_actions(GntMenuItem *item, PurplePluginProtocolInfo *prpl_info,
 	GntMenuItem *menuitem;
 
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
-	for (actions = prpl_info->actions(gc); actions;
+	for (actions = prpl_info->get_actions(gc); actions;
 			actions = g_list_delete_link(actions, actions)) {
 		if (actions->data) {
 			PurpleProtocolAction *action = actions->data;
@@ -2612,7 +2612,7 @@ reconstruct_accounts_menu(void)
 			continue;
 		prpl_info = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->actions) {
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_actions)) {
 			item = gnt_menuitem_new(purple_account_get_username(account));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			build_protocol_actions(item, prpl_info, gc);

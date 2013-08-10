@@ -265,7 +265,7 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Callback that returns the actions the protocol can perform
 	 */
-	GList *(*actions)(PurpleConnection *);
+	GList *(*get_actions)(PurpleConnection *);
 
 	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
 
