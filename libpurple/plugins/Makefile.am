@@ -1,3 +1,9 @@
+DIST_SUBDIRS = ssl keyrings
+
+SUBDIRS = \
+	ssl \
+	keyrings
+
 #DIST_SUBDIRS = mono perl ssl tcl keyrings
 #
 #if USE_PERL
