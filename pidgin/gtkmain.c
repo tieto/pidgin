@@ -759,8 +759,10 @@ int main(int argc, char *argv[])
 	if (!g_stat(search_path, &st))
 		g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(search_path);
-	purple_plugins_refresh();
 	g_free(search_path);
+
+	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_refresh();
 
 	if (opt_si && !purple_core_ensure_single_instance()) {
 #ifdef HAVE_DBUS

@@ -373,8 +373,10 @@ init_libpurple(int argc, char **argv)
 	if (!g_stat(path, &st))
 		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(path);
-	purple_plugins_refresh();
 	g_free(path);
+
+	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_refresh();
 
 	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
