@@ -36,7 +36,6 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
 	guint32 purple_abi;    /**< ABI version of purple required by the plugin */
-	char *category;        /**< The category the plugin belongs to           */
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
 	gboolean loadable;     /**< Whether the plugin is loadable               */
 	char *error;           /**< Why the plugin is not loadable               */
@@ -56,7 +55,6 @@ enum
 {
 	PROP_0,
 	PROP_PURPLE_ABI,
-	PROP_CATEGORY,
 	PROP_UI_REQUIREMENT,
 	PROP_GET_ACTIONS,
 	PROP_PREFERENCES_FRAME,
@@ -315,7 +313,6 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
  **************************************************************************/
 /* GObject Property names */
 #define PROP_PURPLE_ABI_S         "purple-abi"
-#define PROP_CATEGORY_S           "category"
 #define PROP_UI_REQUIREMENT_S     "ui-requirement"
 #define PROP_GET_ACTIONS_S        "get-actions"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
@@ -331,9 +328,6 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 	switch (param_id) {
 		case PROP_PURPLE_ABI:
 			priv->purple_abi = g_value_get_uint(value);
-			break;
-		case PROP_CATEGORY:
-			priv->category = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
@@ -360,9 +354,6 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	switch (param_id) {
 		case PROP_PURPLE_ABI:
 			g_value_set_uint(value, purple_plugin_info_get_abi_version(info));
-			break;
-		case PROP_CATEGORY:
-			g_value_set_string(value, purple_plugin_info_get_category(info));
 			break;
 		case PROP_GET_ACTIONS:
 			g_value_set_pointer(value,
@@ -430,7 +421,6 @@ purple_plugin_info_finalize(GObject *object)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(object);
 
-	g_free(priv->category);
 	g_free(priv->ui_requirement);
 	g_free(priv->error);
 
@@ -458,12 +448,6 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		                  "ABI version",
 		                  "The libpurple ABI version required by the plugin",
 		                  0, G_MAXUINT32, 0,
-		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-
-	g_object_class_install_property(obj_class, PROP_CATEGORY,
-		g_param_spec_string(PROP_CATEGORY_S,
-		                  "Category",
-		                  "The category that the plugin belongs to", NULL,
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
@@ -572,11 +556,14 @@ purple_plugin_info_get_version(const PurplePluginInfo *info)
 const gchar *
 purple_plugin_info_get_category(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+#ifdef PURPLE_PLUGINS
+	g_return_val_if_fail(info != NULL, NULL);
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	return gplugin_plugin_info_get_category(GPLUGIN_PLUGIN_INFO(info));
 
-	return priv->category;
+#else
+	return NULL;
+#endif
 }
 
 const gchar *

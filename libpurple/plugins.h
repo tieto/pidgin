@@ -376,8 +376,9 @@ GType purple_plugin_info_get_type(void);
  *                               unlisted on SPDX.                           \n
  * "license-url"        (string) The plugin's license URL, if unlisted on
  *                               SPDX.                                       \n
+ * "dependencies"       (string) Comma-seperated list of plugin IDs required
+ *                               by the plugin.                              \n
  * "purple-abi"         (guint32) The purple ABI version required by plugin. \n
- * "dependencies"       (GSList) List of plugin IDs required by the plugin.  \n
  * "get-actions"        (PurplePluginGetActionsCallback) Callback that
  *                               returns a list of actions the plugin can
  *                               perform.                                    \n
