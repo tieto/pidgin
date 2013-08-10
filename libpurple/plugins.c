@@ -151,10 +151,6 @@ purple_plugin_unload(PurplePlugin *plugin)
 
 	purple_signals_disconnect_by_handle(plugin);
 
-	while (priv->actions) {
-		g_boxed_free(PURPLE_TYPE_PLUGIN_ACTION, priv->actions->data);
-		priv->actions = g_list_delete_link(priv->actions, priv->actions);
-	}
 	priv->unloaded = TRUE;
 
 	loaded_plugins     = g_list_remove(loaded_plugins, plugin);
@@ -433,11 +429,6 @@ static void
 purple_plugin_info_finalize(GObject *object)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(object);
-
-	while (priv->actions) {
-		g_boxed_free(PURPLE_TYPE_PLUGIN_ACTION, priv->actions->data);
-		priv->actions = g_list_delete_link(priv->actions, priv->actions);
-	}
 
 	g_free(priv->category);
 	g_free(priv->ui_requirement);
@@ -743,13 +734,12 @@ purple_plugin_action_new(const char* label, PurplePluginActionCallback callback)
 {
 	PurplePluginAction *action;
 
-	g_return_if_fail(label != NULL && callback != NULL);
+	g_return_val_if_fail(label != NULL && callback != NULL, NULL);
 
 	action = g_new0(PurplePluginAction, 1);
 
 	action->label    = g_strdup(label);
 	action->callback = callback;
-	action->plugin   = plugin;
 
 	return action;
 }

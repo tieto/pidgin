@@ -626,7 +626,7 @@ purple_protocol_action_new(const char* label,
 {
 	PurpleProtocolAction *action;
 
-	g_return_if_fail(label != NULL && callback != NULL);
+	g_return_val_if_fail(label != NULL && callback != NULL, NULL);
 
 	action = g_new0(PurpleProtocolAction, 1);
 
