@@ -156,6 +156,7 @@ purple_plugin_unload(PurplePlugin *plugin, GError **error)
 	purple_notify_close_with_handle(plugin);
 
 	purple_signals_disconnect_by_handle(plugin);
+	purple_signals_unregister_by_instance(plugin);
 
 	priv->unloaded = TRUE;
 
