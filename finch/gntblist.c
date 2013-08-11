@@ -31,6 +31,7 @@
 #include <log.h>
 #include <notify.h>
 #include <request.h>
+#include <plugins.h>
 #include <savedstatuses.h>
 #include <server.h>
 #include <signal.h>

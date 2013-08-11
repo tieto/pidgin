@@ -192,21 +192,27 @@ decide_conf_button(PurplePlugin *plugin)
 static void
 plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 {
+	GError *error = NULL;
+
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
-		if (!purple_plugin_load(plugin)) {
-			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"), NULL);
+		if (!purple_plugin_load(plugin, &error)) {
+			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"),
+					error->message);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, FALSE);
+			g_error_free(error);
 		}
 	}
 	else
 	{
 		GntWidget *win;
 
-		if (!purple_plugin_unload(plugin)) {
-			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), NULL);
+		if (!purple_plugin_unload(plugin, &error)) {
+			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"),
+					error->message);
 			purple_plugin_disable(plugin);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
+			g_error_free(error);
 		}
 
 		if (confwins && (win = g_hash_table_lookup(confwins, plugin)) != NULL)

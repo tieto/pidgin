@@ -30,7 +30,7 @@
 #include "ft.h"
 #include "log.h"
 #include "notify.h"
-#include "prefs.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "pounce.h"
 #include "savedstatuses.h"
