@@ -24,17 +24,22 @@
  * which contains all the shared implementation code with libicq
  */
 
+#include "plugins.h"
+
 #include "oscarcommon.h"
 #include "oscar.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-aim",				/* id */
+	"AIM",					/* name */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{"gif,jpeg,bmp,ico", 0, 0, 64, 64, 7168, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-	oscar_list_icon_aim,		/* list_icon */
+	oscar_get_actions,		/* get_actions */
+	oscar_list_icon_aim,	/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */
 	oscar_tooltip_text,		/* tooltip_text */
@@ -102,47 +107,37 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL					/* get_public_alias */
 };
 
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	"prpl-aim",                                       /**< id             */
-	"AIM",                                            /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("AIM Protocol Plugin"),
-	                                                  /**  description    */
-	N_("AIM Protocol Plugin"),
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,
-	oscar_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	oscar_init(plugin, FALSE);
+	return purple_plugin_info_new(
+		"id",           "prpl-aim",
+		"name",         "AIM",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("AIM Protocol Plugin"),
+		"description",  N_("AIM Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(aim, init_plugin, info);
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	oscar_init(&prpl_info, FALSE);
+	purple_protocols_add(&prpl_info);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(&prpl_info);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(aim, plugin_query, plugin_load, plugin_unload);

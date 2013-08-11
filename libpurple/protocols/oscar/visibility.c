@@ -86,9 +86,9 @@ create_visibility_menu_item(OscarData *od, const char *bname)
 }
 
 static void
-show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *title, const gchar *list_description, const gchar *menu_action_name)
+show_private_list(PurpleProtocolAction *action, guint16 list_type, const gchar *title, const gchar *list_description, const gchar *menu_action_name)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	GSList *buddies, *filtered_buddies, *cur;
@@ -122,7 +122,7 @@ show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *ti
 }
 
 void
-oscar_show_visible_list(PurplePluginAction *action)
+oscar_show_visible_list(PurpleProtocolAction *action)
 {
 	show_private_list(action, AIM_SSI_TYPE_PERMIT, _("Visible List"),
 							_("These buddies will see "
@@ -132,7 +132,7 @@ oscar_show_visible_list(PurplePluginAction *action)
 }
 
 void
-oscar_show_invisible_list(PurplePluginAction *action)
+oscar_show_invisible_list(PurpleProtocolAction *action)
 {
 	show_private_list(action, AIM_SSI_TYPE_DENY, _("Invisible List"),
 							_("These buddies will always see you as offline"),
