@@ -679,6 +679,11 @@ purple_protocol_destroy(PurplePluginProtocolInfo *prpl_info)
 				g_list_delete_link(prpl_info->protocol_options,
 				prpl_info->protocol_options);
 	}
+
+	purple_request_close_with_handle(prpl_info);
+	purple_notify_close_with_handle(prpl_info);
+
+	purple_signals_disconnect_by_handle(prpl_info);
 }
 
 PurplePluginProtocolInfo *
