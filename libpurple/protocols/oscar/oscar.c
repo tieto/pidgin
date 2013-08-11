@@ -745,8 +745,8 @@ oscar_login(PurpleAccount *account)
 	od->use_ssl = purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
 
 	/* Connect to core Purple signals */
-	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
-	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
+	purple_prefs_connect_callback(purple_connection_get_protocol_info(gc), "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
+	purple_prefs_connect_callback(purple_connection_get_protocol_info(gc), "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	/*
 	 * On 2008-03-05 AOL released some documentation on the OSCAR protocol
