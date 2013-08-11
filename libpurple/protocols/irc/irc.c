@@ -43,7 +43,7 @@ static void irc_ison_buddy_init(char *name, struct irc_buddy *ib, GList **list);
 
 static const char *irc_blist_icon(PurpleAccount *a, PurpleBuddy *b);
 static GList *irc_status_types(PurpleAccount *account);
-static GList *irc_actions(PurplePlugin *plugin, gpointer context);
+static GList *irc_get_actions(PurpleConnection *gc);
 /* static GList *irc_chat_info(PurpleConnection *gc); */
 static void irc_login(PurpleAccount *account);
 static void irc_login_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
@@ -60,11 +60,11 @@ static guint irc_nick_hash(const char *nick);
 static gboolean irc_nick_equal(const char *nick1, const char *nick2);
 static void irc_buddy_free(struct irc_buddy *ib);
 
-PurplePlugin *_irc_plugin = NULL;
+PurplePluginProtocolInfo *_irc_protocol = NULL;
 
-static void irc_view_motd(PurplePluginAction *action)
+static void irc_view_motd(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	struct irc_conn *irc;
 	char *title;
 
@@ -157,7 +157,7 @@ int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 	int ret;
  	char *tosend= g_strdup(buf);
 
-	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
+	purple_signal_emit(_irc_protocol, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
 	
 	if (tosend == NULL)
 		return 0;
@@ -284,12 +284,12 @@ static GList *irc_status_types(PurpleAccount *account)
 	return types;
 }
 
-static GList *irc_actions(PurplePlugin *plugin, gpointer context)
+static GList *irc_get_actions(PurpleConnection *gc)
 {
 	GList *list = NULL;
-	PurplePluginAction *act = NULL;
+	PurpleProtocolAction *act = NULL;
 
-	act = purple_plugin_action_new(_("View MOTD"), irc_view_motd);
+	act = purple_protocol_action_new(_("View MOTD"), irc_view_motd);
 	list = g_list_append(list, act);
 
 	return list;
@@ -917,12 +917,15 @@ static void irc_keepalive(PurpleConnection *gc)
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-irc",			/* id */
+	"IRC",					/* name */
 	sizeof(PurplePluginProtocolInfo),    /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL |
 	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,		/* icon_spec */
+	irc_get_actions,		/* get_actions */
 	irc_blist_icon,		/* list_icon */
 	NULL,			/* list_emblems */
 	NULL,					/* status_text */
@@ -991,56 +994,24 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL					 /* get_public_alias */
 };
 
-static gboolean load_plugin (PurplePlugin *plugin) {
-
-	purple_signal_register(plugin, "irc-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION,
-			     G_TYPE_POINTER); /* pointer to a string */
-	purple_signal_register(plugin, "irc-receiving-text",
-			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION,
-			     G_TYPE_POINTER); /* pointer to a string */
-	return TRUE;
-}
-
-
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	"prpl-irc",                                       /**< id             */
-	"IRC",                                            /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	N_("IRC Protocol Plugin"),                        /**  summary        */
-	N_("The IRC Protocol Plugin that Sucks Less"),    /**  description    */
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	load_plugin,                                      /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	irc_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	return purple_plugin_info_new(
+		"id",           "prpl-irc",
+		"name",         "IRC",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("IRC Protocol Plugin"),
+		"description",  N_("The IRC Protocol Plugin that Sucks Less"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
 };
 
-static void _init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
@@ -1081,12 +1052,33 @@ static void _init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
-	_irc_plugin = plugin;
+	_irc_protocol = &prpl_info;
 
 	purple_prefs_remove("/plugins/prpl/irc/quitmsg");
 	purple_prefs_remove("/plugins/prpl/irc");
 
 	irc_register_commands();
+
+	purple_signal_register(_irc_protocol, "irc-sending-text",
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
+	purple_signal_register(_irc_protocol, "irc-receiving-text",
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
+
+	purple_protocols_add(_irc_protocol);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(irc, _init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(_irc_protocol);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(irc, plugin_query, plugin_load, plugin_unload);
