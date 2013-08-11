@@ -3006,7 +3006,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	purple_prefs_remove("/plugins/prpl/msn");
 
-	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
+	purple_signal_connect(purple_get_core(), "uri-handler", &prpl_info,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
 
 	msn_notification_init();

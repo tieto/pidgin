@@ -288,7 +288,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	my_protocol = &prpl_info;
 
-	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
+	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 
 	purple_protocols_add(my_protocol);
