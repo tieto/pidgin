@@ -73,10 +73,10 @@ static GList *plugins_to_disable = NULL;
  * Plugin API
  **************************************************************************/
 gboolean
-purple_plugin_load(PurplePlugin *plugin)
+purple_plugin_load(PurplePlugin *plugin, GError **error)
 {
 #ifdef PURPLE_PLUGINS
-	GError *error = NULL;
+	GError *err = NULL;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
@@ -87,13 +87,24 @@ purple_plugin_load(PurplePlugin *plugin)
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
 				purple_plugin_get_filename(plugin),
 				purple_plugin_get_error(plugin));
+
+		if (error) {
+			*error = g_error_new(PURPLE_PLUGINS_DOMAIN, 0,
+			                     "Plugin is not loadable: %s",
+			                     purple_plugin_get_error(plugin));
+		}
+
 		return FALSE;
 	}
 
-	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
+	if (!gplugin_plugin_manager_load_plugin(plugin, &err)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin), error->message);
-		g_error_free(error);
+				purple_plugin_get_filename(plugin), err->message);
+
+		if (error)
+			*error = g_error_copy(err);
+		g_error_free(err);
+
 		return FALSE;
 	}
 
@@ -112,14 +123,16 @@ purple_plugin_load(PurplePlugin *plugin)
 }
 
 gboolean
-purple_plugin_unload(PurplePlugin *plugin)
+purple_plugin_unload(PurplePlugin *plugin, GError **error)
 {
 #ifdef PURPLE_PLUGINS
-	GError *error = NULL;
+	GError *err = NULL;
 	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
-	g_return_val_if_fail(purple_plugin_is_loaded(plugin), FALSE);
+
+	if (!purple_plugin_is_loaded(plugin))
+		return TRUE;
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
@@ -128,10 +141,14 @@ purple_plugin_unload(PurplePlugin *plugin)
 	purple_debug_info("plugins", "Unloading plugin %s\n",
 			purple_plugin_get_filename(plugin));
 
-	if (!gplugin_plugin_manager_unload_plugin(plugin, &error)) {
+	if (!gplugin_plugin_manager_unload_plugin(plugin, &err)) {
 		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
-				purple_plugin_get_filename(plugin), error->message);
-		g_error_free(error);
+				purple_plugin_get_filename(plugin), err->message);
+
+		if (error)
+			*error = g_error_copy(err);
+		g_error_free(err);
+
 		return FALSE;
 	}
 
@@ -815,7 +832,7 @@ purple_plugins_refresh(void)
 				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY) {
 			purple_debug_info("plugins", "Auto-loading plugin %s\n",
 			                  purple_plugin_get_filename(plugin));
-			purple_plugin_load(plugin);
+			purple_plugin_load(plugin, NULL);
 		}
 	}
 
@@ -916,7 +933,7 @@ purple_plugins_load_saved(const char *key)
 
 		if (plugin) {
 			purple_debug_info("plugins", "Loading saved plugin %s\n", file);
-			purple_plugin_load(plugin);
+			purple_plugin_load(plugin, NULL);
 		} else {
 			purple_debug_error("plugins", "Unable to find saved plugin %s\n", file);
 		}
@@ -966,7 +983,7 @@ purple_plugins_uninit(void)
 #ifdef PURPLE_PLUGINS
 	purple_debug_info("plugins", "Unloading all plugins\n");
 	while (loaded_plugins != NULL)
-		purple_plugin_unload(loaded_plugins->data);
+		purple_plugin_unload(loaded_plugins->data, NULL);
 #endif
 
 	purple_signals_disconnect_by_handle(handle);

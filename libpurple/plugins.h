@@ -211,23 +211,27 @@ G_BEGIN_DECLS
  * Attempts to load a plugin.
  *
  * @param plugin The plugin to load.
+ * @param error  Return location for a #GError or @c NULL. If provided, this
+ *               will be set to the reason if the load fails.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * @return @c TRUE if successful or already loaded, @c FALSE otherwise.
  *
  * @see purple_plugin_unload()
  */
-gboolean purple_plugin_load(PurplePlugin *plugin);
+gboolean purple_plugin_load(PurplePlugin *plugin, GError **error);
 
 /**
  * Unloads the specified plugin.
  *
  * @param plugin The plugin handle.
+ * @param error  Return location for a #GError or @c NULL. If provided, this
+ *               will be set to the reason if the unload fails.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * @return @c TRUE if successful or not loaded, @c FALSE otherwise.
  *
  * @see purple_plugin_load()
  */
-gboolean purple_plugin_unload(PurplePlugin *plugin);
+gboolean purple_plugin_unload(PurplePlugin *plugin, GError **error);
 
 /**
  * Returns whether or not a plugin is currently loaded.
