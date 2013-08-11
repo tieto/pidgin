@@ -659,6 +659,16 @@ purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 	return priv->get_pref_frame;
 }
 
+const gchar *
+purple_plugin_info_get_error(const PurplePluginInfo *info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->error;
+}
+
 /**************************************************************************
  * PluginAction API
  **************************************************************************/

@@ -523,6 +523,16 @@ purple_plugin_info_get_actions_callback(const PurplePluginInfo *info);
 PurplePluginPrefFrameCallback
 purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info);
 
+/**
+ * Returns an error in the plugin info that would prevent the plugin from being
+ * loaded.
+ *
+ * @param info The plugin info.
+ *
+ * @return The plugin info error, or @c NULL.
+ */
+const gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
+
 /*@}*/
 
 /**************************************************************************/
