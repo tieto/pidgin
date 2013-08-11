@@ -26,6 +26,7 @@
 #include	"internal.h"
 #include	"debug.h"
 #include	"accountopt.h"
+#include	"plugins.h"
 #include	"version.h"
 
 #include	"mxit.h"
@@ -719,6 +720,8 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 /*========================================================================================================================*/
 
 static PurplePluginProtocolInfo proto_info = {
+	MXIT_PLUGIN_ID,			/* protocol id (must be unique) */
+	MXIT_PLUGIN_NAME,		/* protocol name (this will be displayed in the UI) */
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,	/* options */
 	NULL,					/* user_splits */
@@ -730,6 +733,7 @@ static PurplePluginProtocolInfo proto_info = {
 		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
 	},
+	mxit_get_actions,		/* get_actions				[actions.c] */
 	mxit_list_icon,			/* list_icon */
 	mxit_list_emblem,		/* list_emblem */
 	mxit_status_text,		/* status_text */
@@ -799,48 +803,35 @@ static PurplePluginProtocolInfo proto_info = {
 };
 
 
-static PurplePluginInfo plugin_info = {
-	PURPLE_PLUGIN_MAGIC,								/* purple magic, this must always be PURPLE_PLUGIN_MAGIC */
-	PURPLE_MAJOR_VERSION,								/* libpurple version */
-	PURPLE_MINOR_VERSION,								/* libpurple version */
-	PURPLE_PLUGIN_PROTOCOL,								/* plugin type (connecting to another network) */
-	NULL,												/* UI requirement (NULL for core plugin) */
-	0,													/* plugin flags (zero is default) */
-	NULL,												/* plugin dependencies (set this value to NULL no matter what) */
-	PURPLE_PRIORITY_DEFAULT,							/* libpurple priority */
-
-	MXIT_PLUGIN_ID,										/* plugin id (must be unique) */
-	MXIT_PLUGIN_NAME,									/* plugin name (this will be displayed in the UI) */
-	DISPLAY_VERSION,									/* version of the plugin */
-
-	MXIT_PLUGIN_SUMMARY,								/* short summary of the plugin */
-	MXIT_PLUGIN_DESC,									/* description of the plugin (can be long) */
-	MXIT_PLUGIN_EMAIL,									/* plugin author name and email address */
-	MXIT_PLUGIN_WWW,									/* plugin website (to find new versions and reporting of bugs) */
-
-	NULL,												/* function pointer for loading the plugin */
-	NULL,												/* function pointer for unloading the plugin */
-	NULL,												/* function pointer for destroying the plugin */
-
-	NULL,												/* pointer to an UI-specific struct */
-	&proto_info,										/* pointer to either a PurplePluginLoaderInfo or PurplePluginProtocolInfo struct */
-	NULL,												/* pointer to a PurplePluginUiInfo struct */
-	mxit_actions,										/* function pointer where you can define plugin-actions */
-
-	/* padding */
-	NULL,												/* pointer reserved for future use */
-	NULL,												/* pointer reserved for future use */
-	NULL,												/* pointer reserved for future use */
-	NULL												/* pointer reserved for future use */
-};
+/*------------------------------------------------------------------------
+ * Querying the MXit plugin.
+ *
+ *  @param error	Query error (if any)
+ */
+static PurplePluginInfo *plugin_query( GError **error )
+{
+	return purple_plugin_info_new(
+		"id",			MXIT_PLUGIN_ID,			/* plugin id (must be unique) */
+		"name",			MXIT_PLUGIN_NAME,		/* plugin name (this will be displayed in the UI) */
+		"version",		DISPLAY_VERSION,		/* version of the plugin */
+		"category",		MXIT_PLUGIN_CATEGORY,	/* category of the plugin */
+		"summary",		MXIT_PLUGIN_SUMMARY,	/* short summary of the plugin */
+		"description",	MXIT_PLUGIN_DESC,		/* description of the plugin (can be long) */
+		"author",		MXIT_PLUGIN_AUTHOR,		/* plugin author name and email address */
+		"website",		MXIT_PLUGIN_WWW,		/* plugin website (to find new versions and reporting of bugs) */
+		"abi-version",	PURPLE_ABI_VERSION,		/* ABI version required by the plugin */
+		NULL
+	);
+}
 
 
 /*------------------------------------------------------------------------
- * Initialising the MXit plugin.
+ * Loading the MXit plugin.
  *
  *  @param plugin	The plugin object
+ *  @param error	Load error (if any)
  */
-static void init_plugin( PurplePlugin* plugin )
+static gboolean plugin_load( PurplePlugin* plugin, GError **error )
 {
 	PurpleAccountOption*	option;
 
@@ -857,7 +848,25 @@ static void init_plugin( PurplePlugin* plugin )
 
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
 	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
+
+	purple_protocols_add( &proto_info );
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN( mxit, init_plugin, plugin_info );
+
+/*------------------------------------------------------------------------
+ * Unloading the MXit plugin.
+ *
+ *  @param plugin	The plugin object
+ *  @param error	Unload error (if any)
+ */
+static gboolean plugin_unload( PurplePlugin* plugin, GError **error )
+{
+	purple_protocols_remove( &proto_info );
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT( mxit, plugin_query, plugin_load, plugin_unload );
 

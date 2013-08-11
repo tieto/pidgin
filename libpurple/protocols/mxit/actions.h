@@ -28,7 +28,7 @@
 
 
 /* callbacks */
-GList* mxit_actions( PurplePlugin* plugin, gpointer context );
+GList* mxit_get_actions( PurpleConnection *gc );
 
 
 #endif		/* _MXIT_ACTIONS_H_ */

@@ -207,9 +207,9 @@ out:
  *
  *  @param action	The action object
  */
-static void mxit_profile_action( PurplePluginAction* action )
+static void mxit_profile_action( PurpleProtocolAction* action )
 {
-	PurpleConnection*			gc		= (PurpleConnection*) action->context;
+	PurpleConnection*			gc		= action->connection;
 	struct MXitSession*			session	= purple_connection_get_protocol_data( gc );
 	struct MXitProfile*			profile	= session->profile;
 
@@ -382,9 +382,9 @@ out:
  *
  *  @param action	The action object
  */
-static void mxit_change_pin_action( PurplePluginAction* action )
+static void mxit_change_pin_action( PurpleProtocolAction* action )
 {
-	PurpleConnection*			gc		= (PurpleConnection*) action->context;
+	PurpleConnection*			gc		= action->connection;
 
 	PurpleRequestFields*		fields	= NULL;
 	PurpleRequestFieldGroup*	group	= NULL;
@@ -417,9 +417,9 @@ static void mxit_change_pin_action( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_splash_action( PurplePluginAction* action )
+static void mxit_splash_action( PurpleProtocolAction* action )
 {
-	PurpleConnection*		gc		= (PurpleConnection*) action->context;
+	PurpleConnection*		gc		= action->connection;
 	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 
 	if ( splash_current( session ) != NULL )
@@ -434,7 +434,7 @@ static void mxit_splash_action( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_about_action( PurplePluginAction* action )
+static void mxit_about_action( PurpleProtocolAction* action )
 {
 	char	version[256];
 
@@ -454,9 +454,9 @@ static void mxit_about_action( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_suggested_friends_action( PurplePluginAction* action )
+static void mxit_suggested_friends_action( PurpleProtocolAction* action )
 {
-	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+	PurpleConnection*		gc				= action->connection;
 	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= {
 				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
@@ -489,9 +489,9 @@ static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
  *
  *  @param action	The action object
  */
-static void mxit_user_search_action( PurplePluginAction* action )
+static void mxit_user_search_action( PurpleProtocolAction* action )
 {
-	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+	PurpleConnection*		gc				= action->connection;
 
 	purple_request_input( gc, _( "Search for user" ),
 		_( "Search for a MXit contact" ),
@@ -507,37 +507,36 @@ static void mxit_user_search_action( PurplePluginAction* action )
 /*------------------------------------------------------------------------
  * Associate actions with the MXit plugin.
  *
- *  @param plugin	The MXit protocol plugin
- *  @param context	The connection context (if available)
+ *  @param gc		The connection
  *  @return			The list of plugin actions
  */
-GList* mxit_actions( PurplePlugin* plugin, gpointer context )
+GList* mxit_get_actions( PurpleConnection *gc )
 {
-	PurplePluginAction*		action	= NULL;
+	PurpleProtocolAction*		action	= NULL;
 	GList*					m		= NULL;
 
 	/* display / change profile */
-	action = purple_plugin_action_new( _( "Change Profile..." ), mxit_profile_action );
+	action = purple_protocol_action_new( _( "Change Profile..." ), mxit_profile_action );
 	m = g_list_append( m, action );
 
 	/* change PIN */
-	action = purple_plugin_action_new( _( "Change PIN..." ), mxit_change_pin_action );
+	action = purple_protocol_action_new( _( "Change PIN..." ), mxit_change_pin_action );
 	m = g_list_append( m, action );
 
 	/* suggested friends */
-	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_suggested_friends_action );
+	action = purple_protocol_action_new( _( "Suggested friends..." ), mxit_suggested_friends_action );
 	m = g_list_append( m, action );
 
 	/* search for contacts */
-	action = purple_plugin_action_new( _( "Search for contacts..." ), mxit_user_search_action );
+	action = purple_protocol_action_new( _( "Search for contacts..." ), mxit_user_search_action );
 	m = g_list_append( m, action );
 
 	/* display splash-screen */
-	action = purple_plugin_action_new( _( "View Splash..." ), mxit_splash_action );
+	action = purple_protocol_action_new( _( "View Splash..." ), mxit_splash_action );
 	m = g_list_append( m, action );
 
 	/* display plugin version */
-	action = purple_plugin_action_new( _( "About..." ), mxit_about_action );
+	action = purple_protocol_action_new( _( "About..." ), mxit_about_action );
 	m = g_list_append( m, action );
 
 	return m;
