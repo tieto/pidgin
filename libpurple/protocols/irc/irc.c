@@ -1008,7 +1008,7 @@ plugin_query(GError **error)
 		"abi-version",  PURPLE_ABI_VERSION,
 		NULL
 	);
-};
+}
 
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
