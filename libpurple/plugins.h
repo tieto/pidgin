@@ -313,32 +313,6 @@ void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
 gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
 
 /**
- * Returns whether or not a plugin is loadable.
- *
- * If this returns @c FALSE, the plugin is guaranteed to not
- * be loadable. However, a return value of @c TRUE does not
- * guarantee the plugin is loadable.
- * An error is set if the plugin is not loadable.
- *
- * @param plugin The plugin.
- *
- * @return @c TRUE if the plugin may be loadable, @c FALSE if the plugin is not
- *         loadable.
- *
- * @see purple_plugin_get_error()
- */
-gboolean purple_plugin_is_loadable(const PurplePlugin *plugin);
-
-/**
- * If a plugin is not loadable, this returns the reason.
- *
- * @param plugin The plugin.
- *
- * @return The reason why the plugin is not loadable.
- */
-const gchar *purple_plugin_get_error(const PurplePlugin *plugin);
-
-/**
  * Returns a list of plugins that depend on a particular plugin.
  *
  * @param plugin The plugin whose dependent plugins are returned.

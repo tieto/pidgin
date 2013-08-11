@@ -77,22 +77,21 @@ purple_plugin_load(PurplePlugin *plugin, GError **error)
 {
 #ifdef PURPLE_PLUGINS
 	GError *err = NULL;
+	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	if (purple_plugin_is_loaded(plugin))
 		return TRUE;
 
-	if (!purple_plugin_is_loadable(plugin)) {
-		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin),
-				purple_plugin_get_error(plugin));
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
-		if (error) {
-			*error = g_error_new(PURPLE_PLUGINS_DOMAIN, 0,
-			                     "Plugin is not loadable: %s",
-			                     purple_plugin_get_error(plugin));
-		}
+	if (!priv->loadable) {
+		purple_debug_error("plugins", "Failed to load plugin %s: %s",
+		                   purple_plugin_get_filename(plugin), priv->error);
+
+		g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0,
+		            "Plugin is not loadable: %s", priv->error);
 
 		return FALSE;
 	}
@@ -118,7 +117,8 @@ purple_plugin_load(PurplePlugin *plugin, GError **error)
 	return TRUE;
 
 #else
-	return TRUE;
+	g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0, "Plugin support is disabled.");
+	return FALSE;
 #endif /* PURPLE_PLUGINS */
 }
 
@@ -170,7 +170,8 @@ purple_plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 
 #else
-	return TRUE;
+	g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0, "Plugin support is disabled.");
+	return FALSE;
 #endif /* PURPLE_PLUGINS */
 }
 
@@ -272,41 +273,6 @@ purple_plugin_is_internal(const PurplePlugin *plugin)
 
 #else
 	return FALSE;
-#endif
-}
-
-gboolean
-purple_plugin_is_loadable(const PurplePlugin *plugin)
-{
-	PurplePluginInfoPrivate *priv;
-
-	g_return_val_if_fail(plugin != NULL, FALSE);
-
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-
-	if (priv)
-		return priv->loadable;
-	else
-		return FALSE;
-}
-
-const gchar *
-purple_plugin_get_error(const PurplePlugin *plugin)
-{
-#ifdef PURPLE_PLUGINS
-	PurplePluginInfoPrivate *priv;
-
-	g_return_val_if_fail(plugin != NULL, NULL);
-
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-
-	if (priv)
-		return priv->error;
-	else
-		return _("This plugin does not return a PurplePluginInfo.");
-
-#else
-	return _("Plugin support is disabled.");
 #endif
 }
 
@@ -976,7 +942,7 @@ purple_plugins_init(void)
 }
 
 void
-purple_plugins_uninit(void) 
+purple_plugins_uninit(void)
 {
 	void *handle = purple_plugins_get_handle();
 
