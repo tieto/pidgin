@@ -299,7 +299,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 
 	purple_protocols_add(my_protocol);
-	jabber_plugin_init(plugin);
+	jabber_plugin_init(my_protocol);
 
 	return TRUE;
 }
@@ -307,7 +307,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	jabber_plugin_uninit(plugin);
+	jabber_plugin_uninit(my_protocol);
 	purple_protocols_remove(my_protocol);
 
 	return TRUE;
