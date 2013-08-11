@@ -32,8 +32,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#define PURPLE_PLUGIN
-
+#include "plugins.h"
 #include "myspace.h"
 
 static void msim_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -3002,9 +3001,99 @@ msim_get_account_text_table(PurpleAccount *unused)
 }
 
 /**
+ * Called when friends have been imported to buddy list on server.
+ */
+static void
+msim_import_friends_cb(MsimSession *session, const MsimMessage *reply, gpointer user_data)
+{
+	MsimMessage *body;
+	gchar *completed;
+
+	/* Check if the friends were imported successfully. */
+	body = msim_msg_get_dictionary(reply, "body");
+	g_return_if_fail(body != NULL);
+	completed = msim_msg_get_string(body, "Completed");
+	msim_msg_free(body);
+	g_return_if_fail(completed != NULL);
+	if (!g_str_equal(completed, "True"))
+	{
+		purple_debug_info("msim_import_friends_cb",
+				"failed to import friends: %s", completed);
+		purple_notify_error(session->account, _("Add friends from MySpace.com"),
+				_("Importing friends failed"), NULL);
+		g_free(completed);
+		return;
+	}
+	g_free(completed);
+
+	purple_debug_info("msim_import_friends_cb",
+			"added friends to server-side buddy list, requesting new contacts from server");
+
+	msim_get_contact_list(session, MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS);
+
+	/* TODO: show, X friends have been added */
+}
+
+/**
+ * Import friends from myspace.com.
+ */
+static void msim_import_friends(PurpleProtocolAction *action)
+{
+	PurpleConnection *gc;
+	MsimSession *session;
+	gchar *group_name;
+
+	gc = action->connection;
+	session = purple_connection_get_protocol_data(gc);
+
+	group_name = "MySpace Friends";
+
+	g_return_if_fail(msim_send(session,
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_PUT,
+			"dsn", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_DSN,
+			"lid", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_LID,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER,
+				msim_new_reply_callback(session, msim_import_friends_cb, NULL),
+			"body", MSIM_TYPE_STRING,
+				g_strdup_printf("GroupName=%s", group_name),
+			NULL));
+}
+
+/**
+ * Actions menu for account.
+ */
+static GList *
+msim_get_actions(PurpleConnection *gc)
+{
+	GList *menu;
+	PurpleProtocolAction *act;
+
+	menu = NULL;
+
+#if 0
+	/* TODO: find out how */
+	act = purple_protocol_action_new(_("Find people..."), msim_);
+	menu = g_list_append(menu, act);
+
+	act = purple_protocol_action_new(_("Change IM name..."), NULL);
+	menu = g_list_append(menu, act);
+#endif
+
+	act = purple_protocol_action_new(_("Add friends from MySpace.com"), msim_import_friends);
+	menu = g_list_append(menu, act);
+
+	return menu;
+}
+
+/**
  * Callbacks called by Purple, to access this plugin.
  */
 static PurplePluginProtocolInfo prpl_info = {
+	"prpl-myspace",    /* id */
+	"MySpaceIM",       /* name */
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
@@ -3014,6 +3103,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,              /* user_splits */
 	NULL,              /* protocol_options */
 	NO_BUDDY_ICONS,    /* icon_spec - TODO: eventually should add this */
+	msim_get_actions,  /* get_actions */
 	msim_list_icon,    /* list_icon */
 	NULL,              /* list_emblems */
 	msim_status_text,  /* status_text */
@@ -3080,139 +3170,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* get_moods */
 	NULL,                   /* set_public_alias */
 	NULL                    /* get_public_alias */
-};
-
-/**
- * Load the plugin.
- */
-static gboolean
-msim_load(PurplePlugin *plugin)
-{
-	return TRUE;
-}
-
-/**
- * Called when friends have been imported to buddy list on server.
- */
-static void
-msim_import_friends_cb(MsimSession *session, const MsimMessage *reply, gpointer user_data)
-{
-	MsimMessage *body;
-	gchar *completed;
-
-	/* Check if the friends were imported successfully. */
-	body = msim_msg_get_dictionary(reply, "body");
-	g_return_if_fail(body != NULL);
-	completed = msim_msg_get_string(body, "Completed");
-	msim_msg_free(body);
-	g_return_if_fail(completed != NULL);
-	if (!g_str_equal(completed, "True"))
-	{
-		purple_debug_info("msim_import_friends_cb",
-				"failed to import friends: %s", completed);
-		purple_notify_error(session->account, _("Add friends from MySpace.com"),
-				_("Importing friends failed"), NULL);
-		g_free(completed);
-		return;
-	}
-	g_free(completed);
-
-	purple_debug_info("msim_import_friends_cb",
-			"added friends to server-side buddy list, requesting new contacts from server");
-
-	msim_get_contact_list(session, MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS);
-
-	/* TODO: show, X friends have been added */
-}
-
-/**
- * Import friends from myspace.com.
- */
-static void msim_import_friends(PurplePluginAction *action)
-{
-	PurpleConnection *gc;
-	MsimSession *session;
-	gchar *group_name;
-
-	gc = (PurpleConnection *)action->context;
-	session = purple_connection_get_protocol_data(gc);
-
-	group_name = "MySpace Friends";
-
-	g_return_if_fail(msim_send(session,
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_PUT,
-			"dsn", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_DSN,
-			"lid", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_LID,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
-			"rid", MSIM_TYPE_INTEGER,
-				msim_new_reply_callback(session, msim_import_friends_cb, NULL),
-			"body", MSIM_TYPE_STRING,
-				g_strdup_printf("GroupName=%s", group_name),
-			NULL));
-}
-
-/**
- * Actions menu for account.
- */
-static GList *
-msim_actions(PurplePlugin *plugin, gpointer context /* PurpleConnection* */)
-{
-	GList *menu;
-	PurplePluginAction *act;
-
-	menu = NULL;
-
-#if 0
-	/* TODO: find out how */
-	act = purple_plugin_action_new(_("Find people..."), msim_);
-	menu = g_list_append(menu, act);
-
-	act = purple_plugin_action_new(_("Change IM name..."), NULL);
-	menu = g_list_append(menu, act);
-#endif
-
-	act = purple_plugin_action_new(_("Add friends from MySpace.com"), msim_import_friends);
-	menu = g_list_append(menu, act);
-
-	return menu;
-}
-
-/**
- * Based on MSN's plugin info comments.
- */
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	"prpl-myspace",                                   /**< id             */
-	"MySpaceIM",                                      /**< name           */
-	MSIM_PRPL_VERSION_STRING,                         /**< version        */
-	                                                  /**  summary        */
-	"MySpaceIM Protocol Plugin",
-	                                                  /**  description    */
-	"MySpaceIM Protocol Plugin",
-	"Jeff Connelly <jeff2@soc.pidgin.im>",            /**< author         */
-	"https://developer.pidgin.im/wiki/MySpaceIM/",    /**< homepage       */
-
-	msim_load,                                        /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	msim_actions,                                     /**< msim_actions   */
-	NULL,                                             /**< reserved1      */
-	NULL,                                             /**< reserved2      */
-	NULL,                                             /**< reserved3      */
-	NULL                                              /**< reserved4      */
 };
 
 #ifdef MSIM_SELF_TEST
@@ -3504,10 +3461,30 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 }
 
 /**
- * Initialize plugin.
+ * Query the plugin
  */
-static void
-init_plugin(PurplePlugin *plugin)
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-myspace",
+		"name",         "MySpaceIM",
+		"version",      MSIM_PRPL_VERSION_STRING,
+		"category",     "Protocol",
+		"summary",      "MySpaceIM Protocol Plugin",
+		"description",  "MySpaceIM Protocol Plugin",
+		"author",       "Jeff Connelly <jeff2@soc.pidgin.im>",
+		"website",      "https://developer.pidgin.im/wiki/MySpaceIM/",
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
+/**
+ * Load the plugin.
+ */
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
@@ -3515,7 +3492,6 @@ init_plugin(PurplePlugin *plugin)
 #endif /* MSIM_SELF_TEST */
 
 	PurpleAccountOption *option;
-	static gboolean initialized = FALSE;
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
@@ -3546,14 +3522,23 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
-	/* Code below only runs once. Based on oscar.c's oscar_init(). */
-	if (initialized)
-		return;
-
-	initialized = TRUE;
-
-	purple_signal_connect(purple_get_core(), "uri-handler", &initialized,
+	purple_signal_connect(purple_get_core(), "uri-handler", &prpl_info,
 			PURPLE_CALLBACK(msim_uri_handler), NULL);
+
+	purple_protocols_add(&prpl_info);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(myspace, init_plugin, info);
+/**
+ * Unload the plugin.
+ */
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(&prpl_info);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(myspace, plugin_query, plugin_load, plugin_unload);
