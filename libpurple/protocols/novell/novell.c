@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "accountopt.h"
 #include "debug.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "server.h"
 #include "nmuser.h"
@@ -43,7 +44,7 @@
 #define NOVELL_STATUS_TYPE_IDLE "idle"
 #define NOVELL_STATUS_TYPE_APPEAR_OFFLINE "appearoffline"
 
-static PurplePlugin *my_protocol = NULL;
+static PurplePluginProtocolInfo *my_protocol = NULL;
 
 static gboolean
 _is_disconnect_error(NMERR_T err);
@@ -3476,13 +3477,16 @@ novell_keepalive(PurpleConnection *gc)
 }
 
 static PurplePluginProtocolInfo prpl_info = {
+	"prpl-novell",				/* id */
+	"GroupWise",				/* name */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
 	NO_BUDDY_ICONS,				/* icon_spec */
+	NULL,						/* get_actions */
 	novell_list_icon,			/* list_icon */
-	NULL,				/* list_emblems */
+	NULL,						/* list_emblems */
 	novell_status_text,			/* status_text */
 	novell_tooltip_text,		/* tooltip_text */
 	novell_status_types,		/* status_types */
@@ -3549,43 +3553,24 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL						/* get_public_alias */
 };
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,			/**< type           */
-	NULL,					/**< ui_requirement */
-	0,					/**< flags          */
-	NULL,					/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,			/**< priority       */
-	"prpl-novell",				/**< id             */
-	"GroupWise",				/**< name           */
-	DISPLAY_VERSION,			/**< version        */
-	/**  summary        */
-	N_("Novell GroupWise Messenger Protocol Plugin"),
-	/**  description    */
-	N_("Novell GroupWise Messenger Protocol Plugin"),
-	NULL,					/**< author         */
-	PURPLE_WEBSITE,				/**< homepage       */
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-novell",
+		"name",         "GroupWise",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Novell GroupWise Messenger Protocol Plugin"),
+		"description",  N_("Novell GroupWise Messenger Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-	NULL,					/**< load           */
-	NULL,					/**< unload         */
-	NULL,					/**< destroy        */
-
-	NULL,					/**< ui_info        */
-	&prpl_info,				/**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin * plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 
@@ -3597,7 +3582,18 @@ init_plugin(PurplePlugin * plugin)
 	prpl_info.protocol_options =
 		g_list_append(prpl_info.protocol_options, option);
 
-	my_protocol = plugin;
+	my_protocol = &prpl_info;
+	purple_protocols_add(my_protocol);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(novell, init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(my_protocol);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(novell, plugin_query, plugin_load, plugin_unload);
