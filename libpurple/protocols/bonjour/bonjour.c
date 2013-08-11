@@ -35,6 +35,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "debug.h"
+#include "plugins.h"
 #include "util.h"
 #include "version.h"
 
@@ -468,26 +469,18 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	/* These shouldn't happen here because they are allocated in _init() */
-
-	g_free(default_firstname);
-	g_free(default_lastname);
-
-	return TRUE;
-}
-
-static PurplePlugin *my_protocol = NULL;
+static PurplePluginProtocolInfo *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-bonjour",                                          /* id */
+	"Bonjour",                                               /* name */
 	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
 	{"png,gif,jpeg", 0, 0, 96, 96, 65535, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	NULL,                                                    /* get_actions */
 	bonjour_list_icon,                                       /* list_icon */
 	NULL,                                                    /* list_emblem */
 	bonjour_status_text,                                     /* status_text */
@@ -554,43 +547,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* get_moods */
 	NULL,                                                    /* set_public_alias */
 	NULL                                                     /* get_public_alias */
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	"prpl-bonjour",                                   /**< id             */
-	"Bonjour",                                        /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Bonjour Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Bonjour Protocol Plugin"),
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                   /**< homepage       */
-
-	NULL,                                             /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
 };
 
 #ifdef WIN32
@@ -745,8 +701,24 @@ initialize_default_account_values(void)
 	g_free(conv);
 }
 
-static void
-init_plugin(PurplePlugin *plugin)
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-bonjour",
+		"name", "       Bonjour",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Bonjour Protocol Plugin"),
+		"description",  N_("Bonjour Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 
@@ -771,7 +743,21 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	my_protocol = plugin;
+	my_protocol = &prpl_info;
+	purple_protocols_add(my_protocol);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(bonjour, init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	g_free(default_firstname);
+	g_free(default_lastname);
+
+	purple_protocols_remove(my_protocol);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(bonjour, plugin_query, plugin_load, plugin_unload);
