@@ -282,6 +282,7 @@ purple_plugin_is_loadable(const PurplePlugin *plugin)
 const gchar *
 purple_plugin_get_error(const PurplePlugin *plugin)
 {
+#ifdef PURPLE_PLUGINS
 	PurplePluginInfoPrivate *priv;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
@@ -292,6 +293,10 @@ purple_plugin_get_error(const PurplePlugin *plugin)
 		return priv->error;
 	else
 		return _("This plugin does not return a PurplePluginInfo.");
+
+#else
+	return _("Plugin support is disabled.");
+#endif
 }
 
 GSList *
