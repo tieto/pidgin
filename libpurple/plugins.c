@@ -36,8 +36,7 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
-	gboolean loadable;     /**< Whether the plugin is loadable               */
-	char *error;           /**< Why the plugin is not loadable               */
+	char *error;           /**< Why a plugin is not loadable                 */
 
 	/** Callback that returns a list of actions the plugin can perform */
 	PurplePluginGetActionsCallback get_actions;
@@ -86,7 +85,7 @@ purple_plugin_load(PurplePlugin *plugin, GError **error)
 
 	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
 
-	if (!priv->loadable) {
+	if (priv->error) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
 		                   purple_plugin_get_filename(plugin), priv->error);
 
@@ -353,15 +352,8 @@ purple_plugin_info_constructed(GObject *object)
 
 	parent_class->constructed(object);
 
-	priv->loadable = TRUE;
-
 	if (id == NULL || *id == '\0')
-	{
-		/* GPlugin already logs a warning when a plugin has no ID */
-
 		priv->error = g_strdup(_("This plugin has not defined an ID."));
-		priv->loadable = FALSE;
-	}
 
 	if (priv->ui_requirement && !purple_strequal(priv->ui_requirement, purple_core_get_ui()))
 	{
@@ -369,7 +361,6 @@ purple_plugin_info_constructed(GObject *object)
 				purple_core_get_ui(), priv->ui_requirement);
 		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met. (%s)\n",
 				id, priv->error);
-		priv->loadable = FALSE;
 	}
 
 	version = purple_plugin_info_get_abi_version(info);
@@ -384,7 +375,6 @@ purple_plugin_info_constructed(GObject *object)
 				id, PURPLE_PLUGIN_ABI_MAJOR_VERSION(version),
 				PURPLE_PLUGIN_ABI_MINOR_VERSION(version),
 				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION);
-		priv->loadable = FALSE;
 	}
 }
 
