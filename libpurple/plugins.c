@@ -958,18 +958,18 @@ purple_plugins_init(void)
 {
 	void *handle = purple_plugins_get_handle();
 
-#ifdef PURPLE_PLUGINS
-	gplugin_init();
-	purple_plugins_add_search_path(LIBDIR);
-	purple_plugins_refresh();
-#endif
-
 	purple_signal_register(handle, "plugin-load",
 	                       purple_marshal_VOID__POINTER,
 	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
 	purple_signal_register(handle, "plugin-unload",
 	                       purple_marshal_VOID__POINTER,
 	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
+
+#ifdef PURPLE_PLUGINS
+	gplugin_init();
+	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_refresh();
+#endif
 }
 
 void
