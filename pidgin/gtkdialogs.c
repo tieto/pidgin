@@ -834,7 +834,7 @@ void pidgin_dialogs_plugins_info(void)
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
 	char *pname = NULL, *pauthor = NULL;
 	const char *pver, *plicense, *pwebsite, *pid;
-	gboolean ploaded;
+	gboolean ploaded, ploadable;
 	static GtkWidget *plugins_info = NULL;
 
 	str = g_string_sized_new(4096);
@@ -854,6 +854,7 @@ void pidgin_dialogs_plugins_info(void)
 		plicense = purple_plugin_info_get_license(info);
 		pwebsite = purple_plugin_info_get_website(info);
 		pid = purple_plugin_info_get_id(info);
+		ploadable = !purple_plugin_info_get_error(info);
 		ploaded = purple_plugin_is_loaded(plugin);
 
 		g_string_append_printf(str,
@@ -863,15 +864,17 @@ void pidgin_dialogs_plugins_info(void)
 				"<b>License:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
 				"<b>ID String:</b> %s<br/>"
+				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
-				pname,
-				pauthor  ? pauthor  : "(null)",
-				pver     ? pver     : "(null)",
-				plicense ? plicense : "(null)",
-				pwebsite ? pwebsite : "(null)",
+				pname    ? pname    : "",
+				pauthor  ? pauthor  : "",
+				pver     ? pver     : "",
+				plicense ? plicense : "",
+				pwebsite ? pwebsite : "",
 				pid,
-				ploaded  ? "Yes" : "No");
+				ploadable ? "Yes" : "<span style=\"color: #FF0000;\"><b>No</b></span>",
+				ploaded   ? "Yes" : "No");
 
 		g_free(pname);
 		g_free(pauthor);

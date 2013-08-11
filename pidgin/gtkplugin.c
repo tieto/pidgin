@@ -55,7 +55,7 @@ enum
 };
 
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
-                                  GtkTreeIter *iter, gboolean unload);
+                                  GtkTreeIter *iter, GError *error, gboolean unload);
 
 static GtkWidget *expander = NULL;
 static GtkWidget *plugin_dialog = NULL;
@@ -275,7 +275,6 @@ update_plugin_list(void *data)
 				   0, purple_plugin_is_loaded(plug),
 				   1, desc,
 				   2, plug,
-				   3, !purple_plugin_is_loadable(plug),
 				   -1);
 		g_free(desc);
 	}
@@ -352,7 +351,7 @@ static void plugin_unload_confirm_cb(gpointer *data)
 	GtkTreeModel *model = (GtkTreeModel *)data[1];
 	GtkTreeIter *iter = (GtkTreeIter *)data[2];
 
-	plugin_toggled_stage_two(plugin, model, iter, TRUE);
+	plugin_toggled_stage_two(plugin, model, iter, NULL, TRUE);
 
 	g_free(data);
 }
@@ -363,25 +362,19 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	PurplePlugin *plug;
+	GError *error = NULL;
 	GtkWidget *dialog = NULL;
 
 	gtk_tree_model_get_iter(model, iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(model, iter, 2, &plug, -1);
 
-	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
-	if (!purple_plugin_is_loadable(plug))
-	{
-		g_free(iter);
-		return;
-	}
-
 	if (!purple_plugin_is_loaded(plug))
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		purple_plugin_load(plug);
-		plugin_toggled_stage_two(plug, model, iter, FALSE);
+		purple_plugin_load(plug, &error);
+		plugin_toggled_stage_two(plug, model, iter, error, FALSE);
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
@@ -424,11 +417,11 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			g_string_free(tmp, TRUE);
 		}
 		else
-			plugin_toggled_stage_two(plug, model, iter, TRUE);
+			plugin_toggled_stage_two(plug, model, iter, NULL, TRUE);
 	}
 }
 
-static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
+static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, GError *error, gboolean unload)
 {
 	PurplePluginInfo *info = purple_plugin_get_info(plug);
 
@@ -436,12 +429,15 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		if (!purple_plugin_unload(plug))
+		if (!purple_plugin_unload(plug, &error))
 		{
 			const char *primary = _("Could not unload plugin");
 			const char *reload = _("The plugin could not be unloaded now, but will be disabled at the next startup.");
 
-			purple_notify_warning(NULL, NULL, primary, reload);
+			char *tmp = g_strdup_printf("%s\n\n%s", reload, error->message);
+			purple_notify_warning(NULL, NULL, primary, tmp);
+			g_free(tmp);
+
 			purple_plugin_disable(plug);
 		}
 
@@ -451,17 +447,17 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 	gtk_widget_set_sensitive(pref_button,
 		purple_plugin_is_loaded(plug) && pidgin_plugin_has_config_frame(plug));
 
-	if (purple_plugin_get_error(plug) != NULL)
+	if (error != NULL)
 	{
 		gchar *name = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 
-		gchar *error = g_markup_escape_text(purple_plugin_get_error(plug), -1);
+		gchar *disp_error = g_markup_escape_text(error->message, -1);
 		gchar *text;
 
 		text = g_strdup_printf(
 			"<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
 			purple_plugin_info_get_name(info),
-			purple_plugin_info_get_version(info), error);
+			purple_plugin_info_get_version(info), disp_error);
 		gtk_list_store_set(GTK_LIST_STORE (model), iter,
 				   1, text,
 				   -1);
@@ -469,12 +465,14 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 
 		text = g_strdup_printf(
 			"<span weight=\"bold\" color=\"red\">%s</span>",
-			error);
+			disp_error);
 		gtk_label_set_markup(plugin_error, text);
 		g_free(text);
 
-		g_free(error);
+		g_free(disp_error);
 		g_free(name);
+
+		g_error_free(error);
 	}
 
 	gtk_list_store_set(GTK_LIST_STORE (model), iter,
@@ -558,13 +556,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		gtk_label_set_text(plugin_website, NULL);
 	}
 
-	if (purple_plugin_get_error(plug) == NULL)
+	if (purple_plugin_info_get_error(info) == NULL)
 	{
 		gtk_label_set_text(plugin_error, NULL);
 	}
 	else
 	{
-		tmp = g_markup_escape_text(purple_plugin_get_error(plug), -1);
+		tmp = g_markup_escape_text(purple_plugin_info_get_error(info), -1);
 		buf = g_strdup_printf(
 			_("<span foreground=\"red\" weight=\"bold\">"
 			  "Error: %s\n"
@@ -839,7 +837,7 @@ void pidgin_plugin_dialog_show()
 	gtk_widget_set_sensitive(pref_button, FALSE);
 	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
 
-	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
+	ls = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
 					     1, GTK_SORT_ASCENDING);
 
