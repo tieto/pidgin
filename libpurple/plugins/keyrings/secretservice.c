@@ -294,7 +294,7 @@ plugin_query(GError **error)
 		"description",  N_("This plugin will store passwords in Secret Service."),
 		"author",       "Elliott Sales de Andrade (qulogic[at]pidgin.im)",
 		"website",      PURPLE_WEBSITE,
-		"purple-abi",   PURPLE_ABI_VERSION,
+		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
 		NULL
 	);

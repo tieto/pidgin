@@ -35,7 +35,6 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
-	guint32 purple_abi;    /**< ABI version of purple required by the plugin */
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
 	gboolean loadable;     /**< Whether the plugin is loadable               */
 	char *error;           /**< Why the plugin is not loadable               */
@@ -54,7 +53,6 @@ struct _PurplePluginInfoPrivate {
 enum
 {
 	PROP_0,
-	PROP_PURPLE_ABI,
 	PROP_UI_REQUIREMENT,
 	PROP_GET_ACTIONS,
 	PROP_PREFERENCES_FRAME,
@@ -312,7 +310,6 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
  * GObject code for PurplePluginInfo
  **************************************************************************/
 /* GObject Property names */
-#define PROP_PURPLE_ABI_S         "purple-abi"
 #define PROP_UI_REQUIREMENT_S     "ui-requirement"
 #define PROP_GET_ACTIONS_S        "get-actions"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
@@ -326,9 +323,6 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	switch (param_id) {
-		case PROP_PURPLE_ABI:
-			priv->purple_abi = g_value_get_uint(value);
-			break;
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
 			break;
@@ -352,9 +346,6 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
-		case PROP_PURPLE_ABI:
-			g_value_set_uint(value, purple_plugin_info_get_abi_version(info));
-			break;
 		case PROP_GET_ACTIONS:
 			g_value_set_pointer(value,
 					purple_plugin_info_get_actions_callback(info));
@@ -442,13 +433,6 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	/* Setup properties */
 	obj_class->get_property = purple_plugin_info_get_property;
 	obj_class->set_property = purple_plugin_info_set_property;
-
-	g_object_class_install_property(obj_class, PROP_PURPLE_ABI,
-		g_param_spec_uint(PROP_PURPLE_ABI_S,
-		                  "ABI version",
-		                  "The libpurple ABI version required by the plugin",
-		                  0, G_MAXUINT32, 0,
-		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
 		g_param_spec_string(PROP_UI_REQUIREMENT_S,
@@ -673,11 +657,14 @@ purple_plugin_info_get_license_url(const PurplePluginInfo *info)
 guint32
 purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 {
-	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+#ifdef PURPLE_PLUGINS
+	g_return_val_if_fail(info != NULL, 0);
 
-	g_return_val_if_fail(priv != NULL, 0);
+	return gplugin_plugin_info_get_abi_version(GPLUGIN_PLUGIN_INFO(info));
 
-	return priv->purple_abi;
+#else
+	return 0;
+#endif
 }
 
 PurplePluginGetActionsCallback

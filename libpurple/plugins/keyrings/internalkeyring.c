@@ -967,7 +967,7 @@ plugin_query(GError **error)
 		"description",  INTKEYRING_DESCRIPTION,
 		"author",       INTKEYRING_AUTHOR,
 		"website",      PURPLE_WEBSITE,
-		"purple-abi",   PURPLE_ABI_VERSION,
+		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
 		NULL
 	);

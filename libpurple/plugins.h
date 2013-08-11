@@ -69,6 +69,7 @@ typedef GPluginPluginClass PurplePluginClass;
 #define PURPLE_IS_PLUGIN_CLASS(klass)  G_IS_OBJECT_CLASS(klass)
 #define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
 
+#define GPLUGIN_NATIVE_ABI_VERSION              0
 #define GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY 0
 #define GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL      0
 
@@ -145,17 +146,19 @@ struct _PurplePluginAction {
 };
 
 /** Returns an ABI version to set in plugins using major and minor versions */
-#define PURPLE_PLUGIN_ABI_VERSION(major,minor) ((major << 16) + minor)
+#define PURPLE_PLUGIN_ABI_VERSION(major,minor) (0x01000000 | \
+                                               ((major) << 16) | (minor))
+
 /** Returns the major version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   (abi >> 16)
+#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   ((abi >> 16) & 0xff)
 /** Returns the minor version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xFFFF)
+#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xffff)
 
 /**
   * A convenience‎ macro that returns an ABI version using PURPLE_MAJOR_VERSION
   * and PURPLE_MINOR_VERSION
   */
-#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION,\
+#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION, \
                                                      PURPLE_MINOR_VERSION)
 
 /**
@@ -378,7 +381,7 @@ GType purple_plugin_info_get_type(void);
  *                               SPDX.                                       \n
  * "dependencies"       (string) Comma-seperated list of plugin IDs required
  *                               by the plugin.                              \n
- * "purple-abi"         (guint32) The purple ABI version required by plugin. \n
+ * "abi-version"        (guint32) The ABI version required by the plugin.    \n
  * "get-actions"        (PurplePluginGetActionsCallback) Callback that
  *                               returns a list of actions the plugin can
  *                               perform.                                    \n

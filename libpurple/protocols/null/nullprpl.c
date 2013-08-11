@@ -1151,7 +1151,7 @@ plugin_query(GError **error)
     "summary",      N_("Null Protocol Plugin"),
     "description",  N_("Null Protocol Plugin"),
     "website",      PURPLE_WEBSITE,
-    "purple-abi",   PURPLE_ABI_VERSION,
+    "abi-version",  PURPLE_ABI_VERSION,
 
     /* If you're using this as the basis of a protocol plugin that will be
      * distributed separately from libpurple, do not include these flags.*/
