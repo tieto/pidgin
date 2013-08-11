@@ -98,8 +98,6 @@
 #include <langinfo.h>
 #endif
 
-#include <gmodule.h>
-
 #ifdef PURPLE_PLUGINS
 # ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
@@ -158,6 +156,7 @@
 
 #include "accounts.h"
 #include "connection.h"
+#include "prefs.h"
 
 /* This is for the accounts code to notify the buddy icon code that
  * it's done loading.  We may want to replace this with a signal. */

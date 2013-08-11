@@ -50,7 +50,7 @@ probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 		if (strncmp(purple_plugin_info_get_id(purple_plugin_get_info(plugin)),
 				"ssl-", 4) == 0)
 		{
-			if (purple_plugin_is_loaded(plugin) || purple_plugin_load(plugin))
+			if (purple_plugin_load(plugin, NULL))
 			{
 				ssl_plugin = plugin;
 
@@ -63,7 +63,7 @@ probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 
 	if (ssl_plugin == NULL) {
 		g_set_error(error, SSL_PLUGIN_DOMAIN, 0,
-				"Could not find a plugin that implements SSL.");
+				"Could not load a plugin that implements SSL.");
 		return FALSE;
 	} else {
 		return TRUE;
@@ -100,7 +100,8 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	if (ssl_plugin != NULL &&
 		g_list_find(purple_plugins_get_loaded(), ssl_plugin) != NULL)
 	{
-		purple_plugin_unload(ssl_plugin);
+		if (!purple_plugin_unload(ssl_plugin, error))
+			return FALSE;
 	}
 
 	ssl_plugin = NULL;

@@ -33,6 +33,7 @@
 #include "debug.h"
 #include "internal.h"
 #include "dbus-maybe.h"
+#include "plugins.h"
 
 struct _PurpleKeyring
 {
@@ -1297,7 +1298,7 @@ purple_keyring_init(void)
 		if (purple_plugin_is_loaded(plugin))
 			continue;
 
-		if (purple_plugin_load(plugin))
+		if (purple_plugin_load(plugin, NULL))
 		{
 			purple_keyring_loaded_plugins = g_list_append(
 				purple_keyring_loaded_plugins, plugin);
@@ -1335,7 +1336,7 @@ purple_keyring_uninit(void)
 		PurplePlugin *plugin = PURPLE_PLUGIN(it->data);
 		if (g_list_find(purple_plugins_get_loaded(), plugin) == NULL)
 			continue;
-		purple_plugin_unload(plugin);
+		purple_plugin_unload(plugin, NULL);
 	}
 	g_list_free(purple_keyring_loaded_plugins);
 	purple_keyring_loaded_plugins = NULL;

@@ -39,6 +39,8 @@
 
 #include "version.h"
 
+#define PURPLE_PLUGINS_DOMAIN          (g_quark_from_static_string("plugins"))
+
 #ifdef PURPLE_PLUGINS
 
 #define PURPLE_TYPE_PLUGIN             GPLUGIN_TYPE_PLUGIN
@@ -69,7 +71,6 @@ typedef GPluginPluginClass PurplePluginClass;
 #define PURPLE_IS_PLUGIN_CLASS(klass)  G_IS_OBJECT_CLASS(klass)
 #define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
 
-#define GPLUGIN_NATIVE_ABI_VERSION              0
 #define GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY 0
 #define GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL      0
 

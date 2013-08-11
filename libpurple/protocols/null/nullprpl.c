@@ -60,6 +60,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "notify.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "roomlist.h"
 #include "status.h"

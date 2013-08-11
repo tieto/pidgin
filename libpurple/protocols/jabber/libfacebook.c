@@ -40,6 +40,7 @@
 #include "roster.h"
 #include "si.h"
 #include "message.h"
+#include "plugins.h"
 #include "presence.h"
 #include "google/google.h"
 #include "pep.h"
