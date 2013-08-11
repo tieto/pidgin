@@ -91,15 +91,9 @@ purple_plugin_load(PurplePlugin *plugin)
 	}
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &error)) {
-		PurplePluginInfoPrivate *priv =
-				PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-		g_free(priv->error);
-		priv->error = g_strdup(error->message);
-		g_error_free(error);
-
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin),
-				purple_plugin_get_error(plugin));
+				purple_plugin_get_filename(plugin), error->message);
+		g_error_free(error);
 		return FALSE;
 	}
 
