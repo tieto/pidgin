@@ -33,7 +33,7 @@
 #include "contact.h"
 #include "msg.h"
 #include "page.h"
-#include "pluginpref.h"
+#include "plugins.h"
 #include "prefs.h"
 #include "session.h"
 #include "smiley.h"
@@ -434,13 +434,13 @@ close_mobile_page_cb(MsnMobileData *data, const char *entry)
 /* -- */
 
 static void
-msn_show_set_friendly_name(PurplePluginAction *action)
+msn_show_set_friendly_name(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	char *tmp;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 	account = purple_connection_get_account(gc);
 
 	tmp = g_strdup_printf(_("Set friendly name for %s."),
@@ -504,7 +504,7 @@ update_endpoint_cb(MsnLocationData *data, PurpleRequestFields *fields)
 }
 
 static void
-msn_show_locations(PurplePluginAction *action)
+msn_show_locations(PurpleProtocolAction *action)
 {
 	PurpleConnection *pc;
 	PurpleAccount *account;
@@ -516,7 +516,7 @@ msn_show_locations(PurplePluginAction *action)
 	GSList *l;
 	MsnLocationData *data;
 
-	pc = (PurpleConnection *)action->context;
+	pc = action->connection;
 	account = purple_connection_get_account(pc);
 	session = purple_connection_get_protocol_data(pc);
 
@@ -624,11 +624,11 @@ disable_mpop_cb(PurpleConnection *pc)
 }
 
 static void
-msn_show_set_mpop(PurplePluginAction *action)
+msn_show_set_mpop(PurpleProtocolAction *action)
 {
 	PurpleConnection *pc;
 
-	pc = (PurpleConnection *)action->context;
+	pc = action->connection;
 
 	purple_request_action(pc, NULL, _("Allow multiple logins?"),
 						_("Do you want to allow or disallow connecting from "
@@ -642,12 +642,12 @@ msn_show_set_mpop(PurplePluginAction *action)
 }
 
 static void
-msn_show_set_home_phone(PurplePluginAction *action)
+msn_show_set_home_phone(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 	MsnSession *session;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your home phone number."), NULL,
@@ -659,12 +659,12 @@ msn_show_set_home_phone(PurplePluginAction *action)
 }
 
 static void
-msn_show_set_work_phone(PurplePluginAction *action)
+msn_show_set_work_phone(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 	MsnSession *session;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your work phone number."), NULL,
@@ -676,12 +676,12 @@ msn_show_set_work_phone(PurplePluginAction *action)
 }
 
 static void
-msn_show_set_mobile_phone(PurplePluginAction *action)
+msn_show_set_mobile_phone(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 	MsnSession *session;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
@@ -693,11 +693,11 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 }
 
 static void
-msn_show_set_mobile_pages(PurplePluginAction *action)
+msn_show_set_mobile_pages(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 
 	purple_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
 						_("Do you want to allow or disallow people on "
@@ -714,9 +714,9 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 /* QuLogic: Disabled until confirmed correct. */
 #if 0
 static void
-msn_show_blocked_text(PurplePluginAction *action)
+msn_show_blocked_text(PurpleProtocolAction *action)
 {
-	PurpleConnection *pc = (PurpleConnection *) action->context;
+	PurpleConnection *pc = action->connection;
 	MsnSession *session;
 	char *title;
 
@@ -738,12 +738,12 @@ msn_show_blocked_text(PurplePluginAction *action)
 #endif
 
 static void
-msn_show_hotmail_inbox(PurplePluginAction *action)
+msn_show_hotmail_inbox(PurpleProtocolAction *action)
 {
 	PurpleConnection *gc;
 	MsnSession *session;
 
-	gc = (PurpleConnection *) action->context;
+	gc = action->connection;
 	session = purple_connection_get_protocol_data(gc);
 
 	if (!session->passport_info.email_enabled) {
@@ -1210,66 +1210,64 @@ msn_status_types(PurpleAccount *account)
 }
 
 static GList *
-msn_actions(PurplePlugin *plugin, gpointer context)
+msn_get_actions(PurpleConnection *gc)
 {
-	PurpleConnection *gc;
 	MsnSession *session;
 	GList *m = NULL;
-	PurplePluginAction *act;
+	PurpleProtocolAction *act;
 
-	gc = (PurpleConnection *) context;
 	session = purple_connection_get_protocol_data(gc);
 
-	act = purple_plugin_action_new(_("Set Friendly Name..."),
+	act = purple_protocol_action_new(_("Set Friendly Name..."),
 								 msn_show_set_friendly_name);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
 	if (session->enable_mpop)
 	{
-		act = purple_plugin_action_new(_("View Locations..."),
+		act = purple_protocol_action_new(_("View Locations..."),
 		                               msn_show_locations);
 		m = g_list_append(m, act);
 		m = g_list_append(m, NULL);
 	}
 
-	act = purple_plugin_action_new(_("Set Home Phone Number..."),
+	act = purple_protocol_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Set Work Phone Number..."),
+	act = purple_protocol_action_new(_("Set Work Phone Number..."),
 			msn_show_set_work_phone);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Set Mobile Phone Number..."),
+	act = purple_protocol_action_new(_("Set Mobile Phone Number..."),
 			msn_show_set_mobile_phone);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
 #if 0
-	act = purple_plugin_action_new(_("Enable/Disable Mobile Devices..."),
+	act = purple_protocol_action_new(_("Enable/Disable Mobile Devices..."),
 			msn_show_set_mobile_support);
 	m = g_list_append(m, act);
 #endif
 
-	act = purple_plugin_action_new(_("Allow/Disallow Multiple Logins..."),
+	act = purple_protocol_action_new(_("Allow/Disallow Multiple Logins..."),
 			msn_show_set_mpop);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Allow/Disallow Mobile Pages..."),
+	act = purple_protocol_action_new(_("Allow/Disallow Mobile Pages..."),
 			msn_show_set_mobile_pages);
 	m = g_list_append(m, act);
 
 /* QuLogic: Disabled until confirmed correct. */
 #if 0
 	m = g_list_append(m, NULL);
-	act = purple_plugin_action_new(_("View Blocked Text..."),
+	act = purple_protocol_action_new(_("View Blocked Text..."),
 			msn_show_blocked_text);
 	m = g_list_append(m, act);
 #endif
 
 	m = g_list_append(m, NULL);
-	act = purple_plugin_action_new(_("Open Hotmail Inbox"),
+	act = purple_protocol_action_new(_("Open Hotmail Inbox"),
 			msn_show_hotmail_inbox);
 	m = g_list_append(m, act);
 
@@ -2803,22 +2801,6 @@ msn_get_info(PurpleConnection *gc, const char *name)
 			PROFILE_URL, name));
 }
 
-static gboolean msn_load(PurplePlugin *plugin)
-{
-	msn_notification_init();
-	msn_switchboard_init();
-
-	return TRUE;
-}
-
-static gboolean msn_unload(PurplePlugin *plugin)
-{
-	msn_notification_end();
-	msn_switchboard_end();
-
-	return TRUE;
-}
-
 static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
@@ -2886,11 +2868,14 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-msn",                         /* id */
+	"MSN",                              /* name */
 	sizeof(PurplePluginProtocolInfo),	/* struct_size */
 	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
 	NULL,                               /* user_splits */
 	NULL,                               /* protocol_options */
 	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},   /* icon_spec */
+	msn_get_actions,                    /* get_actions */
 	msn_list_icon,                      /* list_icon */
 	msn_list_emblems,                   /* list_emblems */
 	msn_status_text,                    /* status_text */
@@ -2959,43 +2944,24 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_get_public_alias                /* get_public_alias */
 };
 
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
+	return purple_plugin_info_new(
+		"id",           "prpl-msn",
+		"name",         "MSN",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Windows Live Messenger Protocol Plugin"),
+		"description",  N_("Windows Live Messenger Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-	"prpl-msn",                                       /**< id             */
-	"MSN",                                            /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	N_("Windows Live Messenger Protocol Plugin"),     /**< summary        */
-	N_("Windows Live Messenger Protocol Plugin"),     /**< description    */
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                   /**< homepage       */
-
-	msn_load,                                         /**< load           */
-	msn_unload,                                       /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	msn_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 
@@ -3042,6 +3008,24 @@ init_plugin(PurplePlugin *plugin)
 
 	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
+
+	msn_notification_init();
+	msn_switchboard_init();
+
+	purple_protocols_add(&prpl_info);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(msn, init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	msn_notification_end();
+	msn_switchboard_end();
+
+	purple_protocols_remove(&prpl_info);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(msn, plugin_query, plugin_load, plugin_unload);
