@@ -43,6 +43,7 @@
 #include "imgstore.h"
 #include "log.h"
 #include "notify.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "request.h"
 #include "theme-loader.h"

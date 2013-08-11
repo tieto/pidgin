@@ -833,8 +833,8 @@ void pidgin_dialogs_plugins_info(void)
 	PurplePluginInfo *info;
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
 	char *pname = NULL, *pauthor = NULL;
-	const char *pver, *pwebsite, *pid;
-	gboolean ploaded, ploadable;
+	const char *pver, *plicense, *pwebsite, *pid;
+	gboolean ploaded;
 	static GtkWidget *plugins_info = NULL;
 
 	str = g_string_sized_new(4096);
@@ -851,24 +851,27 @@ void pidgin_dialogs_plugins_info(void)
 		if ((pauthor = (char *)purple_plugin_info_get_author(info)) != NULL)
 			pauthor = g_markup_escape_text(pauthor, -1);
 		pver = purple_plugin_info_get_version(info);
+		plicense = purple_plugin_info_get_license(info);
 		pwebsite = purple_plugin_info_get_website(info);
 		pid = purple_plugin_info_get_id(info);
-		ploadable = purple_plugin_is_loadable(plugin);
 		ploaded = purple_plugin_is_loaded(plugin);
 
 		g_string_append_printf(str,
 				"<dt>%s</dt><dd>"
 				"<b>Author:</b> %s<br/>"
 				"<b>Version:</b> %s<br/>"
+				"<b>License:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
 				"<b>ID String:</b> %s<br/>"
-				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
-				pname, pauthor ? pauthor : "(null)",
-				pver, pwebsite, pid,
-				ploadable ? "Yes" : "<span style=\"color: #FF0000;\"><b>No</b></span>",
-				ploaded ? "Yes" : "No");
+				pname,
+				pauthor  ? pauthor  : "(null)",
+				pver     ? pver     : "(null)",
+				plicense ? plicense : "(null)",
+				pwebsite ? pwebsite : "(null)",
+				pid,
+				ploaded  ? "Yes" : "No");
 
 		g_free(pname);
 		g_free(pauthor);
