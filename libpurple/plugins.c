@@ -367,14 +367,14 @@ purple_plugin_info_constructed(GObject *object)
 	if (PURPLE_PLUGIN_ABI_MAJOR_VERSION(version) != PURPLE_MAJOR_VERSION ||
 		PURPLE_PLUGIN_ABI_MINOR_VERSION(version) > PURPLE_MINOR_VERSION)
 	{
-		priv->error = g_strdup_printf(_("libpurple version mismatch %d.%d.x (need %d.%d.x)"),
+		priv->error = g_strdup_printf(_("Your libpurple version is %d.%d.x (need %d.%d.x)"),
+				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION,
 				PURPLE_PLUGIN_ABI_MAJOR_VERSION(version),
-				PURPLE_PLUGIN_ABI_MINOR_VERSION(version),
-				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION);
-		purple_debug_error("plugins", "%s is not loadable: libpurple version mismatch %d.%d.x (need %d.%d.x)\n",
-				id, PURPLE_PLUGIN_ABI_MAJOR_VERSION(version),
-				PURPLE_PLUGIN_ABI_MINOR_VERSION(version),
-				PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION);
+				PURPLE_PLUGIN_ABI_MINOR_VERSION(version));
+		purple_debug_error("plugins", "%s is not loadable: libpurple version is %d.%d.x (need %d.%d.x)\n",
+				id, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION,
+				PURPLE_PLUGIN_ABI_MAJOR_VERSION(version),
+				PURPLE_PLUGIN_ABI_MINOR_VERSION(version));
 	}
 }
 
