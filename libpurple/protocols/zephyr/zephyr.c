@@ -31,6 +31,7 @@
 #include "accountopt.h"
 #include "debug.h"
 #include "notify.h"
+#include "plugins.h"
 #include "prpl.h"
 #include "server.h"
 #include "util.h"
@@ -2797,17 +2798,17 @@ static int zephyr_resubscribe(PurpleConnection *gc)
 }
 
 
-static void zephyr_action_resubscribe(PurplePluginAction *action)
+static void zephyr_action_resubscribe(PurpleProtocolAction *action)
 {
 
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	zephyr_resubscribe(gc);
 }
 
 
-static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
+static void zephyr_action_get_subs_from_server(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	gchar *title;
 	int retval, nsubs, one,i;
@@ -2850,28 +2851,31 @@ static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 }
 
 
-static GList *zephyr_actions(PurplePlugin *plugin, gpointer context)
+static GList *zephyr_get_actions(PurpleConnection *gc)
 {
 	GList *list = NULL;
-	PurplePluginAction *act = NULL;
+	PurpleProtocolAction *act = NULL;
 
-	act = purple_plugin_action_new(_("Resubscribe"), zephyr_action_resubscribe);
+	act = purple_protocol_action_new(_("Resubscribe"), zephyr_action_resubscribe);
 	list = g_list_append(list, act);
 
-	act = purple_plugin_action_new(_("Retrieve subscriptions from server"), zephyr_action_get_subs_from_server);
+	act = purple_protocol_action_new(_("Retrieve subscriptions from server"), zephyr_action_get_subs_from_server);
 	list = g_list_append(list,act);
 
 	return list;
 }
 
-static PurplePlugin *my_protocol = NULL;
+static PurplePluginProtocolInfo *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info = {
+	"prpl-zephyr",			/* id */
+	"Zephyr",				/* name */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
 	NULL,					/* ??? user_splits */
 	NULL,					/* ??? protocol_options */
 	NO_BUDDY_ICONS,
+	zephyr_get_actions,
 	zephyr_list_icon,
 	NULL,					/* ??? list_emblems */
 	NULL,					/* ??? status_text */
@@ -2941,43 +2945,22 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL					/* get_public_alias */
 };
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,				  /**< type	      */
-	NULL,						  /**< ui_requirement */
-	0,							  /**< flags	      */
-	NULL,						  /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,				  /**< priority	      */
+static PurplePluginInfo *plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-zephyr",
+		"name",         "Zephyr",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Zephyr Protocol Plugin"),
+		"description",  N_("Zephyr Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-	"prpl-zephyr",					   /**< id	       */
-	"Zephyr",						 /**< name	     */
-	DISPLAY_VERSION,					  /**< version	      */
-	/**  summary	    */
-	N_("Zephyr Protocol Plugin"),
-	/**  description    */
-	N_("Zephyr Protocol Plugin"),
-	NULL,						  /**< author	      */
-	PURPLE_WEBSITE,					  /**< homepage	      */
-
-	NULL,						  /**< load	      */
-	NULL,						  /**< unload	      */
-	NULL,						  /**< destroy	      */
-
-	NULL,						  /**< ui_info	      */
-	&prpl_info,					  /**< extra_info     */
-	NULL,
-	zephyr_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void init_plugin(PurplePlugin * plugin)
+static gboolean plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 	char *tmp = get_exposure_level();
@@ -3009,8 +2992,17 @@ static void init_plugin(PurplePlugin * plugin)
 	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	my_protocol = plugin;
+	my_protocol = &prpl_info;
 	zephyr_register_slash_commands();
+
+	purple_protocols_add(my_protocol);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(zephyr, init_plugin, info);
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(my_protocol);
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(zephyr, plugin_query, plugin_load, plugin_unload);
