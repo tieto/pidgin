@@ -156,4 +156,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(aim, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT(icq, plugin_query, plugin_load, plugin_unload);
