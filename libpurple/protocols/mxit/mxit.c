@@ -820,6 +820,8 @@ static PurplePluginInfo *plugin_query( GError **error )
 		"author",		MXIT_PLUGIN_AUTHOR,		/* plugin author name and email address */
 		"website",		MXIT_PLUGIN_WWW,		/* plugin website (to find new versions and reporting of bugs) */
 		"abi-version",	PURPLE_ABI_VERSION,		/* ABI version required by the plugin */
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }

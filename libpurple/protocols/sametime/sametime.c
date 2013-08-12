@@ -5703,6 +5703,8 @@ plugin_query(GError **error)
 		"website",            PLUGIN_HOMEPAGE,
 		"abi-version",        PURPLE_ABI_VERSION,
 		"preferences-frame",  mw_plugin_get_plugin_pref_frame,
+		"flags",              GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                      GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }

@@ -1481,6 +1481,8 @@ plugin_query(GError **error)
 		"author",       "boler@sourceforge.net",
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }

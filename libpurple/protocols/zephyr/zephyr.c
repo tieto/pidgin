@@ -2956,6 +2956,8 @@ static PurplePluginInfo *plugin_query(GError **error)
 		"description",  N_("Zephyr Protocol Plugin"),
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }

@@ -3476,6 +3476,8 @@ plugin_query(GError **error)
 		"author",       "Jeff Connelly <jeff2@soc.pidgin.im>",
 		"website",      "https://developer.pidgin.im/wiki/MySpaceIM/",
 		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }

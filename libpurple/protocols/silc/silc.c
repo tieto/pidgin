@@ -2135,15 +2135,17 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"abi-version", PURPLE_ABI_VERSION,
-		"category", N_("Protocol"),
-		"id", "prpl-silc",
-		"name", "SILC",
-		"version", "1.1",
-		"summary", N_("SILC Protocol Plugin"),
-		"description", N_("Secure Internet Live Conferencing (SILC) Protocol"),
-		"author", "Pekka Riikonen",
-		"website", "http://silcnet.org/",
+		"id",           "prpl-silc",
+		"name",         "SILC",
+		"version",      "1.1",
+		"category",     N_("Protocol"),
+		"summary",      N_("SILC Protocol Plugin"),
+		"description",  N_("Secure Internet Live Conferencing (SILC) Protocol"),
+		"author",       "Pekka Riikonen",
+		"website",      "http://silcnet.org/",
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
