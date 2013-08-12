@@ -71,6 +71,7 @@
 /* scratch that, I just added it to the prpl options panel */
 #define PLUGIN_ID        "prpl-meanwhile"
 #define PLUGIN_NAME      "Sametime"
+#define PLUGIN_CATEGORY  "Protocol"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"
 #define PLUGIN_DESC      "Open implementation of a Lotus Sametime client"
 #define PLUGIN_AUTHOR    "Christopher (siege) O'Brien <siege@preoccupied.net>"
@@ -197,7 +198,7 @@ static guint log_handler[2] = { 0, 0 };
 
 /** the purple plugin data.
     available as purple_connection_get_protocol_data(gc) and mwSession_getClientData */
-struct mwPurplePluginData {
+struct mwPurpleProtocolData {
   struct mwSession *session;
 
   struct mwServiceAware *srvc_aware;
@@ -236,9 +237,9 @@ typedef struct {
 
 static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist);
 
-static void blist_store(struct mwPurplePluginData *pd);
+static void blist_store(struct mwPurpleProtocolData *pd);
 
-static void blist_schedule(struct mwPurplePluginData *pd);
+static void blist_schedule(struct mwPurpleProtocolData *pd);
 
 static void blist_merge(PurpleConnection *gc, struct mwSametimeList *stlist);
 
@@ -246,19 +247,19 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist);
 
 static gboolean buddy_is_external(PurpleBuddy *b);
 
-static void buddy_add(struct mwPurplePluginData *pd, PurpleBuddy *buddy);
+static void buddy_add(struct mwPurpleProtocolData *pd, PurpleBuddy *buddy);
 
 static PurpleBuddy *
 buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
 	     struct mwSametimeUser *stuser);
 
-static void group_add(struct mwPurplePluginData *pd, PurpleGroup *group);
+static void group_add(struct mwPurpleProtocolData *pd, PurpleGroup *group);
 
 static PurpleGroup *
 group_ensure(PurpleConnection *gc, struct mwSametimeGroup *stgroup);
 
 static struct mwAwareList *
-list_ensure(struct mwPurplePluginData *pd, PurpleGroup *group);
+list_ensure(struct mwPurpleProtocolData *pd, PurpleGroup *group);
 
 
 /* session functions */
@@ -272,7 +273,7 @@ static PurpleConnection *session_to_gc(struct mwSession *session);
 /* conference functions */
 
 static struct mwConference *
-conf_find_by_id(struct mwPurplePluginData *pd, int id);
+conf_find_by_id(struct mwPurpleProtocolData *pd, int id);
 
 
 /* conversation functions */
@@ -316,7 +317,7 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message);
 
 /** resolves a mwSession from a PurpleConnection */
 static struct mwSession *gc_to_session(PurpleConnection *gc) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   g_return_val_if_fail(gc != NULL, NULL);
 
@@ -329,7 +330,7 @@ static struct mwSession *gc_to_session(PurpleConnection *gc) {
 
 /** resolves a PurpleConnection from a mwSession */
 static PurpleConnection *session_to_gc(struct mwSession *session) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   g_return_val_if_fail(session != NULL, NULL);
 
@@ -341,7 +342,7 @@ static PurpleConnection *session_to_gc(struct mwSession *session) {
 
 
 static void write_cb(gpointer data, gint source, PurpleInputCondition cond) {
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
   PurpleCircularBuffer *circ = pd->sock_buf;
   gsize avail;
   int ret;
@@ -373,7 +374,7 @@ static void write_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
 static int mw_session_io_write(struct mwSession *session,
 			       const guchar *buf, gsize len) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   gssize ret = 0;
   int err = 0;
 
@@ -431,7 +432,7 @@ static int mw_session_io_write(struct mwSession *session,
 
 
 static void mw_session_io_close(struct mwSession *session) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   pd = mwSession_getClientData(session);
   g_return_if_fail(pd != NULL);
@@ -487,7 +488,7 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   PurpleConnection *gc;
   PurpleAccount *acct;
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   guint32 idle;
   guint stat;
   const char *id;
@@ -624,7 +625,7 @@ static struct mwAwareListHandler mw_aware_list_handler = {
 /** Ensures that an Aware List is associated with the given group, and
     returns that list. */
 static struct mwAwareList *
-list_ensure(struct mwPurplePluginData *pd, PurpleGroup *group) {
+list_ensure(struct mwPurpleProtocolData *pd, PurpleGroup *group) {
 
   struct mwAwareList *list;
 
@@ -741,7 +742,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
 }
 
 
-static void blist_store(struct mwPurplePluginData *pd) {
+static void blist_store(struct mwPurpleProtocolData *pd) {
 
   struct mwSametimeList *stlist;
   struct mwServiceStorage *srvc;
@@ -794,7 +795,7 @@ static void blist_store(struct mwPurplePluginData *pd) {
 
 
 static gboolean blist_save_cb(gpointer data) {
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
 
   blist_store(pd);
   pd->save_event = 0;
@@ -803,7 +804,7 @@ static gboolean blist_save_cb(gpointer data) {
 
 
 /** schedules the buddy list to be saved to the server */
-static void blist_schedule(struct mwPurplePluginData *pd) {
+static void blist_schedule(struct mwPurpleProtocolData *pd) {
   if(pd->save_event) return;
 
   pd->save_event = purple_timeout_add_seconds(BLIST_SAVE_SECONDS,
@@ -819,7 +820,7 @@ static gboolean buddy_is_external(PurpleBuddy *b) {
 
 /** Actually add a buddy to the aware service, and schedule the buddy
     list to be saved to the server */
-static void buddy_add(struct mwPurplePluginData *pd,
+static void buddy_add(struct mwPurpleProtocolData *pd,
 		      PurpleBuddy *buddy) {
 
   struct mwAwareIdBlock idb = { mwAware_USER, (char *) purple_buddy_get_name(buddy), NULL };
@@ -848,7 +849,7 @@ static void buddy_add(struct mwPurplePluginData *pd,
 static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
 			       struct mwSametimeUser *stuser) {
 
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   PurpleBuddy *buddy;
   PurpleAccount *acct = purple_connection_get_account(gc);
 
@@ -878,7 +879,7 @@ static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
 
 
 /** add aware watch for a dynamic group */
-static void group_add(struct mwPurplePluginData *pd,
+static void group_add(struct mwPurpleProtocolData *pd,
 		      PurpleGroup *group) {
 
   struct mwAwareIdBlock idb = { mwAware_GROUP, NULL, NULL };
@@ -1227,7 +1228,7 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
 			   guint32 result, struct mwStorageUnit *item,
 			   gpointer data) {
 
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
   struct mwSametimeList *stlist;
 
   struct mwGetBuffer *b;
@@ -1260,7 +1261,7 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
 
 /** signal triggered when a conversation is opened in Purple */
 static void conversation_created_cb(PurpleConversation *g_conv,
-				    struct mwPurplePluginData *pd) {
+				    struct mwPurpleProtocolData *pd) {
 
   /* we need to tell the IM service to negotiate features for the
      conversation right away, otherwise it'll wait until the first
@@ -1293,7 +1294,7 @@ static void conversation_created_cb(PurpleConversation *g_conv,
 
 
 static void blist_menu_nab(PurpleBlistNode *node, gpointer data) {
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
   PurpleConnection *gc;
 
   PurpleGroup *group = (PurpleGroup *) node;
@@ -1331,7 +1332,7 @@ static void blist_menu_nab(PurpleBlistNode *node, gpointer data) {
     so we use the blist-node-extended-menu signal to trigger this
     handler */
 static void blist_node_menu_cb(PurpleBlistNode *node,
-                               GList **menu, struct mwPurplePluginData *pd) {
+                               GList **menu, struct mwPurpleProtocolData *pd) {
   const char *owner;
   PurpleAccount *acct;
   PurpleMenuAction *act;
@@ -1405,7 +1406,7 @@ static void blist_init(PurpleAccount *acct) {
 
 
 /** Last thing to happen from a started session */
-static void services_starting(struct mwPurplePluginData *pd) {
+static void services_starting(struct mwPurpleProtocolData *pd) {
 
   PurpleConnection *gc;
   PurpleAccount *acct;
@@ -1457,7 +1458,7 @@ static void services_starting(struct mwPurplePluginData *pd) {
 
 static void session_loginRedirect(struct mwSession *session,
 				  const char *host) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleAccount *account;
   guint port;
@@ -1489,7 +1490,7 @@ static void mw_prpl_set_status(PurpleAccount *acct, PurpleStatus *status);
 /** called from mw_session_stateChange when the session's state is
     mwSession_STARTED. Any finalizing of start-up stuff should go
     here */
-static void session_started(struct mwPurplePluginData *pd) {
+static void session_started(struct mwPurpleProtocolData *pd) {
   PurpleStatus *status;
   PurpleAccount *acct;
 
@@ -1513,7 +1514,7 @@ static void session_started(struct mwPurplePluginData *pd) {
 }
 
 
-static void session_stopping(struct mwPurplePluginData *pd) {
+static void session_stopping(struct mwPurpleProtocolData *pd) {
   /* stop watching the signals from session_started */
   purple_signals_disconnect_by_handle(pd);
 }
@@ -1522,7 +1523,7 @@ static void session_stopping(struct mwPurplePluginData *pd) {
 static void mw_session_stateChange(struct mwSession *session,
 				   enum mwSessionState state,
 				   gpointer info) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   const char *msg = NULL;
 
@@ -1629,7 +1630,7 @@ static void mw_session_stateChange(struct mwSession *session,
 
 
 static void mw_session_setPrivacyInfo(struct mwSession *session) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleAccount *acct;
   struct mwPrivacyInfo *privacy;
@@ -1675,7 +1676,7 @@ static void mw_session_setPrivacyInfo(struct mwSession *session) {
 
 
 static void mw_session_setUserStatus(struct mwSession *session) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   struct mwAwareIdBlock idb = { mwAware_USER, NULL, NULL };
   struct mwUserStatus *stat;
@@ -1743,7 +1744,7 @@ static int read_recv(struct mwSession *session, int sock) {
 /** callback triggered from purple_input_add, watches the socked for
     available data to be processed by the session */
 static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
   int ret = 0, err = 0;
 
   g_return_if_fail(pd != NULL);
@@ -1794,7 +1795,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     in, and if the session logging in receives a redirect message */
 static void connect_cb(gpointer data, gint source, const gchar *error_message) {
 
-  struct mwPurplePluginData *pd = data;
+  struct mwPurpleProtocolData *pd = data;
 
   if(source < 0) {
     /* connection failed */
@@ -1833,7 +1834,7 @@ static void mw_session_announce(struct mwSession *s,
 				struct mwLoginInfo *from,
 				gboolean may_reply,
 				const char *text) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleAccount *acct;
   PurpleIMConversation *im;
   PurpleBuddy *buddy;
@@ -1903,7 +1904,7 @@ static void mw_conf_invited(struct mwConference *conf,
 
   struct mwServiceConference *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
 
   char *c_inviter, *c_name, *c_topic, *c_invitation;
@@ -1952,7 +1953,7 @@ static void mw_conf_invited(struct mwConference *conf,
 
 
 static struct mwConference *
-conf_find_by_id(struct mwPurplePluginData *pd, int id) {
+conf_find_by_id(struct mwPurpleProtocolData *pd, int id) {
 
   struct mwServiceConference *srvc = pd->srvc_conf;
   struct mwConference *conf = NULL;
@@ -1977,7 +1978,7 @@ conf_find_by_id(struct mwPurplePluginData *pd, int id) {
 static void mw_conf_opened(struct mwConference *conf, GList *members) {
   struct mwServiceConference *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleChatConversation *g_conf;
 
@@ -2008,7 +2009,7 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
 static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
   struct mwServiceConference *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
 
   const char *n = mwConference_getName(conf);
@@ -2066,7 +2067,7 @@ static void mw_conf_text(struct mwConference *conf,
 
   struct mwServiceConference *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   char *esc;
 
@@ -2167,7 +2168,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 
   struct mwServiceFileTransfer *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleAccount *acct;
   const char *who;
@@ -2412,7 +2413,7 @@ static void convo_data_new(struct mwConversation *conv) {
 static PurpleIMConversation *convo_get_im(struct mwConversation *conv) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleAccount *acct;
 
@@ -2560,7 +2561,7 @@ static void convo_features(struct mwConversation *conv) {
 static void mw_conversation_opened(struct mwConversation *conv) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleAccount *acct;
 
@@ -2635,7 +2636,7 @@ static void mw_conversation_closed(struct mwConversation *conv,
 
 
 static void im_recv_text(struct mwConversation *conv,
-			 struct mwPurplePluginData *pd,
+			 struct mwPurpleProtocolData *pd,
 			 const char *msg) {
 
   struct mwIdBlock *idb;
@@ -2656,7 +2657,7 @@ static void im_recv_text(struct mwConversation *conv,
 
 
 static void im_recv_typing(struct mwConversation *conv,
-			   struct mwPurplePluginData *pd,
+			   struct mwPurpleProtocolData *pd,
 			   gboolean typing) {
 
   struct mwIdBlock *idb;
@@ -2668,7 +2669,7 @@ static void im_recv_typing(struct mwConversation *conv,
 
 
 static void im_recv_html(struct mwConversation *conv,
-			 struct mwPurplePluginData *pd,
+			 struct mwPurpleProtocolData *pd,
 			 const char *msg) {
   struct mwIdBlock *idb;
   char *t1, *t2;
@@ -2692,7 +2693,7 @@ static void im_recv_html(struct mwConversation *conv,
 
 
 static void im_recv_subj(struct mwConversation *conv,
-			 struct mwPurplePluginData *pd,
+			 struct mwPurpleProtocolData *pd,
 			 const char *subj) {
 
   /** @todo somehow indicate receipt of a conversation subject. It
@@ -2721,7 +2722,7 @@ static char *make_cid(const char *cid) {
 
 
 static void im_recv_mime(struct mwConversation *conv,
-			 struct mwPurplePluginData *pd,
+			 struct mwPurpleProtocolData *pd,
 			 const char *data) {
 
   GHashTable *img_by_cid;
@@ -2860,7 +2861,7 @@ static void mw_conversation_recv(struct mwConversation *conv,
 				 gconstpointer msg) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   srvc = mwConversation_getService(conv);
   session = mwService_getSession(MW_SERVICE(srvc));
@@ -2899,7 +2900,7 @@ static void mw_place_invite(struct mwConversation *conv,
 			    const char *title, const char *name) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   struct mwIdBlock *idb;
   GHashTable *ht;
@@ -2960,7 +2961,7 @@ static struct mwServiceIm *mw_srvc_im_new(struct mwSession *s) {
 
 
 static struct mwPlace *
-place_find_by_id(struct mwPurplePluginData *pd, int id) {
+place_find_by_id(struct mwPurpleProtocolData *pd, int id) {
   struct mwServicePlace *srvc = pd->srvc_place;
   struct mwPlace *place = NULL;
   GList *l;
@@ -2983,7 +2984,7 @@ place_find_by_id(struct mwPurplePluginData *pd, int id) {
 static void mw_place_opened(struct mwPlace *place) {
   struct mwServicePlace *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   PurpleChatConversation *gconf;
 
@@ -3019,7 +3020,7 @@ static void mw_place_opened(struct mwPlace *place) {
 static void mw_place_closed(struct mwPlace *place, guint32 code) {
   struct mwServicePlace *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
 
   const char *n = mwPlace_getName(place);
@@ -3089,7 +3090,7 @@ static void mw_place_message(struct mwPlace *place,
 			     const char *msg) {
   struct mwServicePlace *srvc;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
   char *esc;
 
@@ -3144,13 +3145,13 @@ static struct mwServiceStorage *mw_srvc_store_new(struct mwSession *s) {
 }
 
 
-/** allocate and associate a mwPurplePluginData with a PurpleConnection */
-static struct mwPurplePluginData *mwPurplePluginData_new(PurpleConnection *gc) {
-  struct mwPurplePluginData *pd;
+/** allocate and associate a mwPurpleProtocolData with a PurpleConnection */
+static struct mwPurpleProtocolData *mwPurpleProtocolData_new(PurpleConnection *gc) {
+  struct mwPurpleProtocolData *pd;
 
   g_return_val_if_fail(gc != NULL, NULL);
 
-  pd = g_new0(struct mwPurplePluginData, 1);
+  pd = g_new0(struct mwPurpleProtocolData, 1);
   pd->gc = gc;
   pd->session = mwSession_new(&mw_session_handler);
   pd->srvc_aware = mw_srvc_aware_new(pd->session);
@@ -3181,7 +3182,7 @@ static struct mwPurplePluginData *mwPurplePluginData_new(PurpleConnection *gc) {
 }
 
 
-static void mwPurplePluginData_free(struct mwPurplePluginData *pd) {
+static void mwPurpleProtocolData_free(struct mwPurpleProtocolData *pd) {
   g_return_if_fail(pd != NULL);
 
   purple_connection_set_protocol_data(pd->gc, NULL);
@@ -3241,7 +3242,7 @@ static const char* mw_prpl_list_emblem(PurpleBuddy *b)
 
 static char *mw_prpl_status_text(PurpleBuddy *b) {
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwAwareIdBlock t = { mwAware_USER, (char *)purple_buddy_get_name(b), NULL };
   const char *ret = NULL;
 
@@ -3301,7 +3302,7 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 
 static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd = NULL;
+  struct mwPurpleProtocolData *pd = NULL;
   struct mwAwareIdBlock idb = { mwAware_USER, (char *)purple_buddy_get_name(b), NULL };
 
   const char *message = NULL;
@@ -3375,7 +3376,7 @@ static void conf_create_prompt_join(PurpleBuddy *buddy,
 				    PurpleRequestFields *fields) {
   PurpleAccount *acct;
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceConference *srvc;
 
   PurpleRequestField *f;
@@ -3540,7 +3541,7 @@ static void blist_menu_conf(PurpleBlistNode *node, gpointer data) {
   PurpleBuddy *buddy = (PurpleBuddy *) node;
   PurpleAccount *acct;
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   GList *l;
 
   g_return_if_fail(node != NULL);
@@ -3577,7 +3578,7 @@ static void blist_menu_announce(PurpleBlistNode *node, gpointer data) {
   PurpleBuddy *buddy = (PurpleBuddy *) node;
   PurpleAccount *acct;
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwSession *session;
   char *rcpt_name;
   GList *rcpt;
@@ -3670,13 +3671,13 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void mw_prpl_login(PurpleAccount *account) {
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   char *user, *pass, *host;
   guint port;
 
   gc = purple_account_get_connection(account);
-  pd = mwPurplePluginData_new(gc);
+  pd = mwPurpleProtocolData_new(gc);
 
   /* while we do support images, the default is to not offer it */
   purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
@@ -3751,7 +3752,7 @@ static void mw_prpl_login(PurpleAccount *account) {
 
 
 static void mw_prpl_close(PurpleConnection *gc) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   g_return_if_fail(gc != NULL);
 
@@ -3778,7 +3779,7 @@ static void mw_prpl_close(PurpleConnection *gc) {
   }
 
   /* clean up the rest */
-  mwPurplePluginData_free(pd);
+  mwPurpleProtocolData_free(pd);
 }
 
 
@@ -3955,7 +3956,7 @@ static int mw_prpl_send_im(PurpleConnection *gc,
 			   const char *message,
 			   PurpleMessageFlags flags) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
   struct mwConversation *conv;
 
@@ -4028,7 +4029,7 @@ static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
 					const char *name,
 					PurpleIMTypingState state) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
   struct mwConversation *conv;
 
@@ -4121,7 +4122,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 
   struct mwAwareIdBlock idb = { mwAware_USER, (char *) who, NULL };
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleAccount *acct;
   PurpleBuddy *b;
   PurpleNotifyUserInfo *user_info;
@@ -4369,7 +4370,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
   BuddyAddData *data = b;
   PurpleBuddy *buddy = NULL;
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
 
   g_return_if_fail(data != NULL);
 
@@ -4458,7 +4459,7 @@ static void mw_prpl_add_buddy(PurpleConnection *gc,
 			      PurpleGroup *group,
 			      const char *message) {
 
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   struct mwServiceResolve *srvc;
   GList *query;
   enum mwResolveFlag flags;
@@ -4492,7 +4493,7 @@ static void mw_prpl_add_buddy(PurpleConnection *gc,
 
 
 static void foreach_add_buddies(PurpleGroup *group, GList *buddies,
-				struct mwPurplePluginData *pd) {
+				struct mwPurpleProtocolData *pd) {
   struct mwAwareList *list;
 
   list = list_ensure(pd, group);
@@ -4506,7 +4507,7 @@ static void mw_prpl_add_buddies(PurpleConnection *gc,
 				GList *groups,
 				const char *message) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   GHashTable *group_sets;
   struct mwAwareIdBlock *idbs, *idb;
 
@@ -4555,7 +4556,7 @@ static void mw_prpl_add_buddies(PurpleConnection *gc,
 static void mw_prpl_remove_buddy(PurpleConnection *gc,
 				 PurpleBuddy *buddy, PurpleGroup *group) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwAwareIdBlock idb = { mwAware_USER, (char *)purple_buddy_get_name(buddy), NULL };
   struct mwAwareList *list;
 
@@ -4594,7 +4595,7 @@ static void privacy_fill(struct mwPrivacyInfo *priv,
 
 static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
   PurpleAccount *acct;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwSession *session;
 
   struct mwPrivacyInfo privacy = {
@@ -4689,7 +4690,7 @@ static struct mwConference *conf_find(struct mwServiceConference *srvc,
 static void mw_prpl_join_chat(PurpleConnection *gc,
 			      GHashTable *components) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   char *c, *t;
 
   pd = purple_connection_get_protocol_data(gc);
@@ -4730,7 +4731,7 @@ static void mw_prpl_join_chat(PurpleConnection *gc,
 static void mw_prpl_reject_chat(PurpleConnection *gc,
 				GHashTable *components) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceConference *srvc;
   char *c;
 
@@ -4761,7 +4762,7 @@ static void mw_prpl_chat_invite(PurpleConnection *gc,
 				const char *invitation,
 				const char *who) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwConference *conf;
   struct mwPlace *place;
   struct mwIdBlock idb = { (char *) who, NULL };
@@ -4787,7 +4788,7 @@ static void mw_prpl_chat_invite(PurpleConnection *gc,
 static void mw_prpl_chat_leave(PurpleConnection *gc,
 			       int id) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwConference *conf;
 
   pd = purple_connection_get_protocol_data(gc);
@@ -4821,7 +4822,7 @@ static int mw_prpl_chat_send(PurpleConnection *gc,
 			     const char *message,
 			     PurpleMessageFlags flags) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwConference *conf;
   char *msg;
   int ret;
@@ -4864,7 +4865,7 @@ static void mw_prpl_alias_buddy(PurpleConnection *gc,
 				const char *who,
 				const char *alias) {
 
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   g_return_if_fail(pd != NULL);
 
   /* it's a change to the buddy list, so we've gotta reflect that in
@@ -4882,7 +4883,7 @@ static void mw_prpl_group_buddy(PurpleConnection *gc,
   struct mwAwareIdBlock idb = { mwAware_USER, (char *) who, NULL };
   GList *gl = g_list_prepend(NULL, &idb);
 
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   PurpleGroup *group;
   struct mwAwareList *list;
 
@@ -4908,7 +4909,7 @@ static void mw_prpl_rename_group(PurpleConnection *gc,
 				 PurpleGroup *group,
 				 GList *buddies) {
 
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   g_return_if_fail(pd != NULL);
 
   /* it's a change in the buddy list, so we've gotta reflect that in
@@ -4928,7 +4929,7 @@ static void mw_prpl_buddy_free(PurpleBuddy *buddy) {
 
 
 static void mw_prpl_convo_closed(PurpleConnection *gc, const char *who) {
-  struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
+  struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   struct mwServiceIm *srvc;
   struct mwConversation *conv;
   struct mwIdBlock idb = { (char *) who, NULL };
@@ -4960,7 +4961,7 @@ static const char *mw_prpl_normalize(const PurpleAccount *account,
 
 
 static void mw_prpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwAwareList *list;
 
   pd = purple_connection_get_protocol_data(gc);
@@ -4981,7 +4982,7 @@ static void mw_prpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
 
 static gboolean mw_prpl_can_receive_file(PurpleConnection *gc,
 					 const char *who) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceAware *srvc;
   PurpleAccount *acct;
 
@@ -5005,7 +5006,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   PurpleAccount *acct;
   PurpleConnection *gc;
 
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceFileTransfer *srvc;
   struct mwFileTransfer *ft;
 
@@ -5100,81 +5101,6 @@ static void mw_prpl_send_file(PurpleConnection *gc,
 }
 
 
-static PurplePluginProtocolInfo mw_prpl_info = {
-  sizeof(PurplePluginProtocolInfo),
-  OPT_PROTO_IM_IMAGE,
-  NULL, /*< set in mw_plugin_init */
-  NULL, /*< set in mw_plugin_init */
-  NO_BUDDY_ICONS,
-  mw_prpl_list_icon,
-  mw_prpl_list_emblem,
-  mw_prpl_status_text,
-  mw_prpl_tooltip_text,
-  mw_prpl_status_types,
-  mw_prpl_blist_node_menu,
-  mw_prpl_chat_info,
-  mw_prpl_chat_info_defaults,
-  mw_prpl_login,
-  mw_prpl_close,
-  mw_prpl_send_im,
-  NULL,
-  mw_prpl_send_typing,
-  mw_prpl_get_info,
-  mw_prpl_set_status,
-  mw_prpl_set_idle,
-  NULL,
-  mw_prpl_add_buddy,
-  mw_prpl_add_buddies,
-  mw_prpl_remove_buddy,
-  NULL,
-  mw_prpl_add_permit,
-  mw_prpl_add_deny,
-  mw_prpl_rem_permit,
-  mw_prpl_rem_deny,
-  mw_prpl_set_permit_deny,
-  mw_prpl_join_chat,
-  mw_prpl_reject_chat,
-  mw_prpl_get_chat_name,
-  mw_prpl_chat_invite,
-  mw_prpl_chat_leave,
-  mw_prpl_chat_whisper,
-  mw_prpl_chat_send,
-  mw_prpl_keepalive,
-  NULL,
-  NULL,
-  mw_prpl_alias_buddy,
-  mw_prpl_group_buddy,
-  mw_prpl_rename_group,
-  mw_prpl_buddy_free,
-  mw_prpl_convo_closed,
-  mw_prpl_normalize,
-  NULL,
-  mw_prpl_remove_group,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  mw_prpl_can_receive_file,
-  mw_prpl_send_file,
-  mw_prpl_new_xfer,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-
 static PurplePluginPrefFrame *
 mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
   PurplePluginPrefFrame *frame;
@@ -5205,17 +5131,6 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
 }
 
 
-static PurplePluginUiInfo mw_plugin_ui_info = {
-  mw_plugin_get_plugin_pref_frame,
-  0,    /* page_num */
-  NULL, /* frame */
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-
 static void st_import_action_cb(PurpleConnection *gc, char *filename) {
   struct mwSametimeList *l;
 
@@ -5244,12 +5159,12 @@ static void st_import_action_cb(PurpleConnection *gc, char *filename) {
 
 
 /** prompts for a file to import blist from */
-static void st_import_action(PurplePluginAction *act) {
+static void st_import_action(PurpleProtocolAction *act) {
   PurpleConnection *gc;
   PurpleAccount *account;
   char *title;
 
-  gc = act->context;
+  gc = act->connection;
   account = purple_connection_get_account(gc);
   title = g_strdup_printf(_("Import Sametime List for Account %s"),
 			  purple_account_get_username(account));
@@ -5284,12 +5199,12 @@ static void st_export_action_cb(PurpleConnection *gc, char *filename) {
 
 
 /** prompts for a file to export blist to */
-static void st_export_action(PurplePluginAction *act) {
+static void st_export_action(PurpleProtocolAction *act) {
   PurpleConnection *gc;
   PurpleAccount *account;
   char *title;
 
-  gc = act->context;
+  gc = act->connection;
   account = purple_connection_get_account(gc);
   title = g_strdup_printf(_("Export Sametime List for Account %s"),
 			  purple_account_get_username(account));
@@ -5325,7 +5240,7 @@ static void remote_group_multi_cleanup(gpointer ignore,
 }
 
 
-static void remote_group_done(struct mwPurplePluginData *pd,
+static void remote_group_done(struct mwPurpleProtocolData *pd,
 			      const char *id, const char *name) {
   PurpleConnection *gc;
   PurpleAccount *acct;
@@ -5370,7 +5285,7 @@ static void remote_group_done(struct mwPurplePluginData *pd,
 }
 
 
-static void remote_group_multi_cb(struct mwPurplePluginData *pd,
+static void remote_group_multi_cb(struct mwPurpleProtocolData *pd,
 				  PurpleRequestFields *fields) {
   PurpleRequestField *f;
   GList *l;
@@ -5391,7 +5306,7 @@ static void remote_group_multi_cb(struct mwPurplePluginData *pd,
 
 
 static void remote_group_multi(struct mwResolveResult *result,
-			       struct mwPurplePluginData *pd) {
+			       struct mwPurpleProtocolData *pd) {
 
   PurpleRequestFields *fields;
   PurpleRequestFieldGroup *g;
@@ -5447,7 +5362,7 @@ static void remote_group_resolved(struct mwServiceResolve *srvc,
 
   struct mwResolveResult *res = NULL;
   struct mwSession *session;
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   PurpleConnection *gc;
 
   session = mwService_getSession(MW_SERVICE(srvc));
@@ -5487,7 +5402,7 @@ static void remote_group_resolved(struct mwServiceResolve *srvc,
 
 
 static void remote_group_action_cb(PurpleConnection *gc, const char *name) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceResolve *srvc;
   GList *query;
   enum mwResolveFlag flags;
@@ -5509,12 +5424,12 @@ static void remote_group_action_cb(PurpleConnection *gc, const char *name) {
 }
 
 
-static void remote_group_action(PurplePluginAction *act) {
+static void remote_group_action(PurpleProtocolAction *act) {
   PurpleConnection *gc;
   const char *msgA;
   const char *msgB;
 
-  gc = act->context;
+  gc = act->connection;
 
   msgA = _("Notes Address Book Group");
   msgB = _("Enter the name of a Notes Address Book group in the field below"
@@ -5612,7 +5527,7 @@ static void search_resolved(struct mwServiceResolve *srvc,
 
 
 static void search_action_cb(PurpleConnection *gc, const char *name) {
-  struct mwPurplePluginData *pd;
+  struct mwPurpleProtocolData *pd;
   struct mwServiceResolve *srvc;
   GList *query;
   enum mwResolveFlag flags;
@@ -5634,12 +5549,12 @@ static void search_action_cb(PurpleConnection *gc, const char *name) {
 }
 
 
-static void search_action(PurplePluginAction *act) {
+static void search_action(PurpleProtocolAction *act) {
   PurpleConnection *gc;
   const char *msgA;
   const char *msgB;
 
-  gc = act->context;
+  gc = act->connection;
 
   msgA = _("Search for a user");
   msgB = _("Enter a name or partial ID in the field below to search"
@@ -5654,79 +5569,28 @@ static void search_action(PurplePluginAction *act) {
 }
 
 
-static GList *mw_plugin_actions(PurplePlugin *plugin, gpointer context) {
-  PurplePluginAction *act;
+static GList *mw_prpl_get_actions(PurpleConnection *gc) {
+  PurpleProtocolAction *act;
   GList *l = NULL;
 
-  act = purple_plugin_action_new(_("Import Sametime List..."),
+  act = purple_protocol_action_new(_("Import Sametime List..."),
 			       st_import_action);
   l = g_list_append(l, act);
 
-  act = purple_plugin_action_new(_("Export Sametime List..."),
+  act = purple_protocol_action_new(_("Export Sametime List..."),
 			       st_export_action);
   l = g_list_append(l, act);
 
-  act = purple_plugin_action_new(_("Add Notes Address Book Group..."),
+  act = purple_protocol_action_new(_("Add Notes Address Book Group..."),
 			       remote_group_action);
   l = g_list_append(l, act);
 
-  act = purple_plugin_action_new(_("User Search..."),
+  act = purple_protocol_action_new(_("User Search..."),
 			       search_action);
   l = g_list_append(l, act);
 
   return l;
 }
-
-
-static gboolean mw_plugin_load(PurplePlugin *plugin) {
-  return TRUE;
-}
-
-
-static gboolean mw_plugin_unload(PurplePlugin *plugin) {
-  return TRUE;
-}
-
-
-static void mw_plugin_destroy(PurplePlugin *plugin) {
-  g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
-  g_log_remove_handler("meanwhile", log_handler[1]);
-}
-
-static PurplePluginInfo mw_plugin_info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	PLUGIN_ID,                                        /**< id             */
-	PLUGIN_NAME,                                      /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	PLUGIN_SUMMARY,                                   /**< summary        */
-	PLUGIN_DESC,                                      /**<  description    */
-	PLUGIN_AUTHOR,                                    /**< author         */
-	PLUGIN_HOMEPAGE,                                  /**< homepage       */
-
-	mw_plugin_load,                                   /**< load           */
-	mw_plugin_unload,                                 /**< unload         */
-	mw_plugin_destroy,                                /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&mw_prpl_info,                                    /**< extra_info     */
-	&mw_plugin_ui_info,                               /**< prefs_info     */
-	mw_plugin_actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
 
 
 static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
@@ -5747,7 +5611,104 @@ static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 }
 
 
-static void mw_plugin_init(PurplePlugin *plugin) {
+static PurplePluginProtocolInfo mw_prpl_info = {
+  PLUGIN_ID,
+  PLUGIN_NAME,
+  sizeof(PurplePluginProtocolInfo),
+  OPT_PROTO_IM_IMAGE,
+  NULL, /*< set in mw_plugin_init */
+  NULL, /*< set in mw_plugin_init */
+  NO_BUDDY_ICONS,
+  mw_prpl_get_actions,
+  mw_prpl_list_icon,
+  mw_prpl_list_emblem,
+  mw_prpl_status_text,
+  mw_prpl_tooltip_text,
+  mw_prpl_status_types,
+  mw_prpl_blist_node_menu,
+  mw_prpl_chat_info,
+  mw_prpl_chat_info_defaults,
+  mw_prpl_login,
+  mw_prpl_close,
+  mw_prpl_send_im,
+  NULL,
+  mw_prpl_send_typing,
+  mw_prpl_get_info,
+  mw_prpl_set_status,
+  mw_prpl_set_idle,
+  NULL,
+  mw_prpl_add_buddy,
+  mw_prpl_add_buddies,
+  mw_prpl_remove_buddy,
+  NULL,
+  mw_prpl_add_permit,
+  mw_prpl_add_deny,
+  mw_prpl_rem_permit,
+  mw_prpl_rem_deny,
+  mw_prpl_set_permit_deny,
+  mw_prpl_join_chat,
+  mw_prpl_reject_chat,
+  mw_prpl_get_chat_name,
+  mw_prpl_chat_invite,
+  mw_prpl_chat_leave,
+  mw_prpl_chat_whisper,
+  mw_prpl_chat_send,
+  mw_prpl_keepalive,
+  NULL,
+  NULL,
+  mw_prpl_alias_buddy,
+  mw_prpl_group_buddy,
+  mw_prpl_rename_group,
+  mw_prpl_buddy_free,
+  mw_prpl_convo_closed,
+  mw_prpl_normalize,
+  NULL,
+  mw_prpl_remove_group,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  mw_prpl_can_receive_file,
+  mw_prpl_send_file,
+  mw_prpl_new_xfer,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
+
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",                 PLUGIN_ID,
+		"name",               PLUGIN_NAME,
+		"version",            DISPLAY_VERSION,
+		"category",           PLUGIN_CATEGORY,
+		"summary",            PLUGIN_SUMMARY,
+		"description",        PLUGIN_DESC,
+		"author",             PLUGIN_AUTHOR,
+		"website",            PLUGIN_HOMEPAGE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  mw_plugin_get_plugin_pref_frame,
+		NULL
+	);
+};
+
+
+static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
   PurpleAccountUserSplit *split;
   PurpleAccountOption *opt;
   GList *l = NULL;
@@ -5803,9 +5764,21 @@ static void mw_plugin_init(PurplePlugin *plugin) {
   /* redirect meanwhile's logging to purple's */
   log_handler[1] = g_log_set_handler("meanwhile", logflags,
 				     mw_log_handler, NULL);
+
+  purple_protocols_add(&mw_prpl_info);
+  return TRUE;
 }
 
 
-PURPLE_INIT_PLUGIN(sametime, mw_plugin_init, mw_plugin_info);
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
+  g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
+  g_log_remove_handler("meanwhile", log_handler[1]);
+
+  purple_protocols_remove(&mw_prpl_info);
+  return TRUE;
+}
+
+
+PURPLE_PLUGIN_INIT(sametime, plugin_query, plugin_load, plugin_unload);
 /* The End. */
 
