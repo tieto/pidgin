@@ -24,6 +24,7 @@
 #include "internal.h"
 
 #include <account.h>
+#include <plugins.h>
 
 #include "libymsg.h"
 #include "yahoochat.h"
@@ -63,13 +64,6 @@ yahoojp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static gboolean yahoojp_unload_plugin(PurplePlugin *plugin)
-{
-	yahoo_dest_colorht();
-
-	return TRUE;
-}
-
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
@@ -90,11 +84,14 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-yahoojp",
+	"Yahoo JAPAN",
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
 	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},
+	yahoo_get_actions,
 	yahoo_list_icon,
 	yahoo_list_emblem,
 	yahoo_status_text,
@@ -165,42 +162,24 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL  /* get_public_alias */
 };
 
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-	"prpl-yahoojp",                                     /**< id             */
-	"Yahoo JAPAN",	                                      /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Yahoo! JAPAN Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Yahoo! JAPAN Protocol Plugin"),
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-	NULL,                                             /**< load           */
-	yahoojp_unload_plugin,                              /**< unload         */
-	NULL,                                             /**< destroy        */
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,
-	yahoo_actions,
+	return purple_plugin_info_new(
+		"id",           "prpl-yahoojp",
+		"name",         "Yahoo JAPAN",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Yahoo! JAPAN Protocol Plugin"),
+		"description",  N_("Yahoo! JAPAN Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 
@@ -229,7 +208,19 @@ init_plugin(PurplePlugin *plugin)
 
 	yahoojp_register_commands();
 	yahoo_init_colorht();
+
+	purple_protocols_add(&prpl_info);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(yahoojp, init_plugin, info);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	yahoo_dest_colorht();
+	purple_protocols_remove(&prpl_info);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(yahoojp, plugin_query, plugin_load, plugin_unload);
 

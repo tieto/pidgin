@@ -382,7 +382,7 @@ gboolean yahoo_offline_message(const PurpleBuddy *buddy);
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
-GList *yahoo_actions(PurplePlugin *plugin, gpointer context);
+GList *yahoo_get_actions(PurpleConnection *gc);
 void yahoopurple_register_commands(void);
 
 PurpleCmdRet yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data);

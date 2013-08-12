@@ -4134,12 +4134,12 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 }
 
 
-static void yahoo_show_inbox(PurplePluginAction *action)
+static void yahoo_show_inbox(PurpleProtocolAction *action)
 {
 	/* Setup a cookie that can be used by the browser */
 	/* XXX I have no idea how this will work with Yahoo! Japan. */
 
-	PurpleConnection *gc = action->context;
+	PurpleConnection *gc = action->connection;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
@@ -4160,18 +4160,18 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 #if 0
 /* XXX: it doesn't seems to work */
 static void
-yahoo_set_userinfo_fn(PurplePluginAction *action)
+yahoo_set_userinfo_fn(PurpleProtocolAction *action)
 {
-	yahoo_set_userinfo(action->context);
+	yahoo_set_userinfo(action->connection);
 }
 #endif
 
-static void yahoo_show_act_id(PurplePluginAction *action)
+static void yahoo_show_act_id(PurpleProtocolAction *action)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *name = purple_connection_get_display_name(gc);
 	int iter;
@@ -4196,9 +4196,9 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 					   gc);
 }
 
-static void yahoo_show_chat_goto(PurplePluginAction *action)
+static void yahoo_show_chat_goto(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
@@ -4207,27 +4207,27 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   gc);
 }
 
-GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
+GList *yahoo_get_actions(PurpleConnection *gc) {
 	GList *m = NULL;
-	PurplePluginAction *act;
+	PurpleProtocolAction *act;
 
 #if 0
 	/* XXX: it doesn't seems to work */
-	act = purple_plugin_action_new(_("Set User Info..."),
+	act = purple_protocol_action_new(_("Set User Info..."),
 			yahoo_set_userinfo_fn);
 	m = g_list_append(m, act);
 #endif
 
-	act = purple_plugin_action_new(_("Activate ID..."),
+	act = purple_protocol_action_new(_("Activate ID..."),
 			yahoo_show_act_id);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Join User in Chat..."),
+	act = purple_protocol_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
-	act = purple_plugin_action_new(_("Open Inbox"),
+	act = purple_protocol_action_new(_("Open Inbox"),
 			yahoo_show_inbox);
 	m = g_list_append(m, act);
 
