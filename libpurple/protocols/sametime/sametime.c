@@ -5705,7 +5705,7 @@ plugin_query(GError **error)
 		"preferences-frame",  mw_plugin_get_plugin_pref_frame,
 		NULL
 	);
-};
+}
 
 
 static gboolean plugin_load(PurplePlugin *plugin, GError **error) {

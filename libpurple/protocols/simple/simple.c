@@ -2048,11 +2048,14 @@ static void simple_close(PurpleConnection *gc)
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	"prpl-simple",			/* id */
+	"SIMPLE",				/* name */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	0,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,			/* icon_spec */
+	NULL,					/* get_actions */
 	simple_list_icon,		/* list_icon */
 	NULL,					/* list_emblems */
 	NULL,					/* status_text */
@@ -2121,43 +2124,24 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL					/* get_public_alias */
 };
 
-
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	return purple_plugin_info_new(
+		"id",			"prpl-simple",
+		"name",			"SIMPLE",
+		"version",		DISPLAY_VERSION,
+		"category",		N_("Protocol"),
+		"summary",		N_("SIP/SIMPLE Protocol Plugin"),
+		"description",	N_("The SIP/SIMPLE Protocol Plugin"),
+		"author",		"Thomas Butter <butter@uni-mannheim.de>",
+		"website",		PURPLE_WEBSITE,
+		"abi-version",	PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
-	"prpl-simple",                                    /**< id             */
-	"SIMPLE",                                         /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	N_("SIP/SIMPLE Protocol Plugin"),                 /**  summary        */
-	N_("The SIP/SIMPLE Protocol Plugin"),             /**  description    */
-	"Thomas Butter <butter@uni-mannheim.de>",         /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void _init_plugin(PurplePlugin *plugin)
+static gboolean plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
@@ -2181,6 +2165,15 @@ static void _init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = purple_account_option_string_new(_("Auth Domain"), "authdomain", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	purple_protocols_add(&prpl_info);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(simple, _init_plugin, info);
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_protocols_remove(&prpl_info);
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(simple, plugin_query, plugin_load, plugin_unload);
