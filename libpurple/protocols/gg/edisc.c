@@ -439,7 +439,7 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 
 	edisc_xfer->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		int error_id = ggp_edisc_parse_error(data);
 		if (error_id == 206) /* recipient not logged in */
 			ggp_edisc_xfer_error(xfer,
@@ -609,7 +609,7 @@ static void ggp_edisc_xfer_send_done(PurpleHttpConnection *hc,
 
 	edisc_xfer->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		ggp_edisc_xfer_error(xfer, _("Error while sending a file"));
 		return;
 	}
@@ -747,7 +747,7 @@ static void ggp_edisc_xfer_recv_ticket_update_got(PurpleHttpConnection *hc,
 	uin_t sender, recipient;
 	int file_size;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("gg",
 			"ggp_edisc_xfer_recv_ticket_update_got: "
 			"cannot fetch update for ticket (code=%d)\n",
@@ -908,7 +908,7 @@ static void ggp_edisc_xfer_recv_ack_done(PurpleHttpConnection *hc,
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	edisc_xfer->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		ggp_edisc_xfer_error(xfer, _("Cannot confirm file transfer."));
 		return;
 	}
@@ -1016,7 +1016,7 @@ static void ggp_edisc_xfer_recv_done(PurpleHttpConnection *hc,
 
 	edisc_xfer->hc = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		ggp_edisc_xfer_error(xfer, _("Error while receiving a file"));
 		return;
 	}
@@ -1138,7 +1138,7 @@ static void ggp_ggdrive_auth_done(PurpleHttpConnection *hc,
 
 	sdata->auth_request = NULL;
 
-	if (!purple_http_response_is_successfull(response)) {
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_misc("gg", "ggp_ggdrive_auth_done: authentication "
 			"failed due to unsuccessful request (code = %d)\n",
 			purple_http_response_get_code(response));
