@@ -796,7 +796,7 @@ create_console(PurplePluginAction *action)
 	gtk_box_pack_start(GTK_BOX(console->hbox), console->dropdown, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(console->dropdown), "changed", G_CALLBACK(dropdown_changed_cb), NULL);
 
-	console->webview = gtk_webview_new();
+	console->webview = gtk_webview_new(FALSE);
 	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
 	if (console->count == 0) {
 		char *tmp = g_strdup_printf("<div class=info>%s</div>",
@@ -826,13 +826,13 @@ create_console(PurplePluginAction *action)
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-	console->entry = gtk_webview_new();
+	console->entry = gtk_webview_new(TRUE);
+	gtk_webview_hide_toolbar(GTK_WEBVIEW(console->entry));
 	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"key-press-event", G_CALLBACK(message_send_cb), console);
 
 	console->sw = pidgin_make_scrollable(console->entry, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), console->sw, FALSE, FALSE, 0);
-	gtk_webview_set_editable(GTK_WEBVIEW(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry), "changed", G_CALLBACK(entry_changed_cb), NULL);
 
 	entry_changed_cb(console->entry, NULL);

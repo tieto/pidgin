@@ -7,7 +7,7 @@ use Purple;
 	summary => "Makes a countdown in days from today.", 
 	description => "Long description coming....", 
 	author => "John H. Kelm <johnhkelm\@gmail.com>", 
-	url => "http://pidgin.im", 
+	url => "https://pidgin.im", 
 	
 	load => "plugin_load", 
 	unload => "plugin_unload" 

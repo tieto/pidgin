@@ -658,7 +658,8 @@ static void ggp_login(PurpleAccount *account)
 	ggp_edisc_setup(gc);
 
 	glp->uin = ggp_str_to_uin(purple_account_get_username(account));
-	glp->password = ggp_convert_to_cp1250(purple_account_get_password(account));
+	glp->password =
+		ggp_convert_to_cp1250(purple_connection_get_password(gc));
 
 	if (glp->uin == 0) {
 		purple_connection_error(gc,

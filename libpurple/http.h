@@ -48,10 +48,25 @@ typedef struct _PurpleHttpConnection PurpleHttpConnection;
 typedef struct _PurpleHttpResponse PurpleHttpResponse;
 
 /**
+ * Parsed representation for the URL.
+ */
+typedef struct _PurpleHttpURL PurpleHttpURL;
+
+/**
  * An collection of cookies, got from HTTP response or provided for HTTP
  * request.
  */
 typedef struct _PurpleHttpCookieJar PurpleHttpCookieJar;
+
+/**
+ * A pool of TCP connections for HTTP Keep-Alive session.
+ */
+typedef struct _PurpleHttpKeepalivePool PurpleHttpKeepalivePool;
+
+/**
+ * A set of running HTTP requests. Can be used to cancel all of them at once.
+ */
+typedef struct _PurpleHttpConnectionSet PurpleHttpConnectionSet;
 
 /**
  * An callback called after performing (successfully or not) HTTP request.
@@ -120,14 +135,28 @@ G_BEGIN_DECLS
  * Fetches the data from a URL with GET request, and passes it to a callback
  * function.
  *
- * @param gc       The connection for which the request is needed, or NULL.
- * @param url      The URL.
- * @param callback The callback function.
- * @param data     The user data to pass to the callback function.
- * @return         The HTTP connection struct.
+ * @param gc        The connection for which the request is needed, or NULL.
+ * @param callback  The callback function.
+ * @param user_data The user data to pass to the callback function.
+ * @param url       The URL.
+ * @return          The HTTP connection struct.
  */
-PurpleHttpConnection * purple_http_get(PurpleConnection *gc, const gchar *url,
-	PurpleHttpCallback callback, gpointer user_data);
+PurpleHttpConnection * purple_http_get(PurpleConnection *gc,
+	PurpleHttpCallback callback, gpointer user_data, const gchar *url);
+
+/**
+ * Constructs an URL and fetches the data from it with GET request, then passes
+ * it to a callback function.
+ *
+ * @param gc        The connection for which the request is needed, or NULL.
+ * @param callback  The callback function.
+ * @param user_data The user data to pass to the callback function.
+ * @param format    The format string.
+ * @return          The HTTP connection struct.
+ */
+PurpleHttpConnection * purple_http_get_printf(PurpleConnection *gc,
+	PurpleHttpCallback callback, gpointer user_data,
+	const gchar *format, ...) G_GNUC_PRINTF(4, 5);
 
 /**
  * Fetches a HTTP request and passes the response to a callback function.
@@ -206,11 +235,125 @@ PurpleConnection * purple_http_conn_get_purple_connection(
  * @param watcher            The watcher.
  * @param user_data          The user data to pass to the callback function.
  * @param interval_threshold Minimum interval (in microseconds) of calls to
- *                           watcher.
+ *                           watcher, or -1 for default.
  */
 void purple_http_conn_set_progress_watcher(PurpleHttpConnection *http_conn,
 	PurpleHttpProgressWatcher watcher, gpointer user_data,
-	guint interval_threshold);
+	gint interval_threshold);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name URL processing API                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Parses a URL.
+ *
+ * The returned data must be freed with purple_http_url_free.
+ *
+ * @param url The URL to parse.
+ * @return    The parsed url or NULL, if the URL is invalid.
+ */
+PurpleHttpURL *
+purple_http_url_parse(const char *url);
+
+/**
+ * Frees the parsed URL struct.
+ *
+ * @param parsed_url The parsed URL struct, or NULL.
+ */
+void
+purple_http_url_free(PurpleHttpURL *parsed_url);
+
+/**
+ * Converts the base URL to the absolute form of the provided relative URL.
+ *
+ * Example: "https://example.com/path/to/file.html" + "subdir/other-file.html" =
+ *          "https://example.com/path/to/subdir/another-file.html"
+ *
+ * @param base_url     The base URL. The result is stored here.
+ * @param relative_url The relative URL.
+ */
+void
+purple_http_url_relative(PurpleHttpURL *base_url, PurpleHttpURL *relative_url);
+
+/**
+ * Converts the URL struct to the printable form. The result may not be a valid
+ * URL (in cases, when the struct doesn't have all fields filled properly).
+ *
+ * The result must be g_free'd.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The printable form of the URL.
+ */
+gchar *
+purple_http_url_print(PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the protocol part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The protocol.
+ */
+const gchar *
+purple_http_url_get_protocol(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the username part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The username.
+ */
+const gchar *
+purple_http_url_get_username(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the password part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The password.
+ */
+const gchar *
+purple_http_url_get_password(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the hostname part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The hostname.
+ */
+const gchar *
+purple_http_url_get_host(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the port part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The port number.
+ */
+int
+purple_http_url_get_port(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the path part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The path.
+ */
+const gchar *
+purple_http_url_get_path(const PurpleHttpURL *parsed_url);
+
+/**
+ * Gets the fragment part of URL.
+ *
+ * @param parsed_url The URL struct.
+ * @return           The fragment.
+ */
+const gchar *
+purple_http_url_get_fragment(const PurpleHttpURL *parsed_url);
 
 /*@}*/
 
@@ -284,7 +427,8 @@ gboolean purple_http_cookie_jar_is_empty(PurpleHttpCookieJar *cookie_jar);
 /**
  * Creates the new instance of HTTP request configuration.
  *
- * @param url The URL to request for.
+ * @param url The URL to request for, or NULL to leave empty (to be set with
+ *            purple_http_request_set_url).
  * @return The new instance of HTTP request struct.
  */
 PurpleHttpRequest * purple_http_request_new(const gchar *url);
@@ -315,6 +459,15 @@ PurpleHttpRequest * purple_http_request_unref(PurpleHttpRequest *request);
 void purple_http_request_set_url(PurpleHttpRequest *request, const gchar *url);
 
 /**
+ * Constructs and sets an URL for HTTP request.
+ *
+ * @param request The request.
+ * @param format  The format string.
+ */
+void purple_http_request_set_url_printf(PurpleHttpRequest *request,
+	const gchar *format, ...) G_GNUC_PRINTF(2, 3);
+
+/**
  * Gets URL set for the HTTP request.
  *
  * @param request The request.
@@ -338,6 +491,29 @@ void purple_http_request_set_method(PurpleHttpRequest *request,
  * @return        The method.
  */
 const gchar * purple_http_request_get_method(PurpleHttpRequest *request);
+
+/**
+ * Sets HTTP KeepAlive connections pool for the request.
+ *
+ * It increases pool's reference count.
+ *
+ * @param request The request.
+ * @param pool    The new KeepAlive pool, or NULL to reset.
+ */
+void
+purple_http_request_set_keepalive_pool(PurpleHttpRequest *request,
+	PurpleHttpKeepalivePool *pool);
+
+/**
+ * Gets HTTP KeepAlive connections pool associated with the request.
+ *
+ * It doesn't affect pool's reference count.
+ *
+ * @param request The request.
+ * @return        The KeepAlive pool, used for the request.
+ */
+PurpleHttpKeepalivePool *
+purple_http_request_get_keepalive_pool(PurpleHttpRequest *request);
 
 /**
  * Sets contents of HTTP request (for example, POST data).
@@ -461,14 +637,22 @@ int purple_http_request_get_max_len(PurpleHttpRequest *request);
 /**
  * Sets (replaces, if exists) specified HTTP request header with provided value.
  *
- * @param key   A header to be set.
- * @param value A value to set, or NULL to remove specified header from request.
+ * @param request The request.
+ * @param key     A header to be set.
+ * @param value   A value to set, or NULL to remove specified header.
  *
  * @see purple_http_request_header_add
  */
 void purple_http_request_header_set(PurpleHttpRequest *request,
 	const gchar *key, const gchar *value);
 
+/**
+ * Constructs and sets (replaces, if exists) specified HTTP request header.
+ *
+ * @param request The request.
+ * @param key     A header to be set.
+ * @param format  The format string.
+ */
 void purple_http_request_header_set_printf(PurpleHttpRequest *request,
 	const gchar *key, const gchar *format, ...) G_GNUC_PRINTF(3, 4);
 
@@ -485,6 +669,80 @@ void purple_http_request_header_add(PurpleHttpRequest *request,
 
 /*@}*/
 
+
+/**************************************************************************/
+/** @name HTTP Keep-Alive pool API                                        */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a new HTTP Keep-Alive pool.
+ */
+PurpleHttpKeepalivePool *
+purple_http_keepalive_pool_new(void);
+
+/**
+ * Increment the reference count.
+ *
+ * @param pool The HTTP Keep-Alive pool.
+ */
+void
+purple_http_keepalive_pool_ref(PurpleHttpKeepalivePool *pool);
+
+/**
+ * Decrement the reference count.
+ *
+ * If the reference count reaches zero, the pool will be freed and all
+ * connections will be closed.
+ *
+ * @param pool The HTTP Keep-Alive pool.
+ * @return @a pool or @c NULL if the reference count reached zero.
+ */
+PurpleHttpKeepalivePool *
+purple_http_keepalive_pool_unref(PurpleHttpKeepalivePool *pool);
+
+/**
+ * Sets maximum allowed number of connections to specific host-triple (is_ssl +
+ * hostname + port).
+ *
+ * @param pool  The HTTP Keep-Alive pool.
+ * @param limit The new limit, 0 for unlimited.
+ */
+void
+purple_http_keepalive_pool_set_limit_per_host(PurpleHttpKeepalivePool *pool,
+	guint limit);
+
+/**
+ * Gets maximum allowed number of connections to specific host-triple (is_ssl +
+ * hostname + port).
+ *
+ * @param pool The HTTP Keep-Alive pool.
+ * @return     The limit.
+ */
+guint
+purple_http_keepalive_pool_get_limit_per_host(PurpleHttpKeepalivePool *pool);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name HTTP connection set API                                         */
+/**************************************************************************/
+/*@{*/
+
+PurpleHttpConnectionSet *
+purple_http_connection_set_new(void);
+
+void
+purple_http_connection_set_destroy(PurpleHttpConnectionSet *set);
+
+void
+purple_http_connection_set_add(PurpleHttpConnectionSet *set,
+	PurpleHttpConnection *http_conn);
+
+/*@}*/
+
+
 /**************************************************************************/
 /** @name HTTP response API                                               */
 /**************************************************************************/
@@ -496,7 +754,7 @@ void purple_http_request_header_add(PurpleHttpRequest *request,
  * @param response The response.
  * @return         TRUE, if request was performed successfully.
  */
-gboolean purple_http_response_is_successfull(PurpleHttpResponse *response);
+gboolean purple_http_response_is_successful(PurpleHttpResponse *response);
 
 /**
  * Gets HTTP response code.

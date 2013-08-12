@@ -362,7 +362,12 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Use GStreamer for playing sounds */
-/* #define USE_GSTREAMER 1 */
+/* It's defined in global.mak. */
+/* #undef USE_GSTREAMER */
+
+/* Use voice and video */
+/* It's defined in global.mak. */
+/* #undef USE_VV */
 
 /* Define if we're using GtkSpell */
 #define USE_GTKSPELL 1

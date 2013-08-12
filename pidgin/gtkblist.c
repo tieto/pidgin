@@ -5297,7 +5297,7 @@ generic_error_destroy_cb(GtkWidget *dialog,
 		purple_account_clear_current_error(account);
 }
 
-#define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
+#define SSL_FAQ_URI "https://developer.pidgin.im/wiki/FAQssl"
 
 static void
 ssl_faq_clicked_cb(PidginMiniDialog *mini_dialog,
@@ -5978,6 +5978,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	/******************************* Menu bar *************************************/
 	action_group = gtk_action_group_new("BListActions");
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(action_group, PACKAGE);
+#endif
 	gtk_action_group_add_actions(action_group,
 	                             blist_menu_entries,
 	                             G_N_ELEMENTS(blist_menu_entries),
@@ -5986,10 +5989,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	                                    blist_menu_toggle_entries,
 	                                    G_N_ELEMENTS(blist_menu_toggle_entries),
 	                                    GTK_WINDOW(gtkblist->window));
-#ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(action_group,
-	                                        PACKAGE);
-#endif
 
 	gtkblist->ui = gtk_ui_manager_new();
 	gtk_ui_manager_insert_action_group(gtkblist->ui, action_group, 0);

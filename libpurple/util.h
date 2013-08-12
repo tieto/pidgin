@@ -1132,6 +1132,33 @@ char *purple_str_seconds_to_string(guint sec);
  * @return A newly allocated ASCIIZ string.
  */
 char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
+
+/**
+ * Calculates UTF-16 string size (in bytes).
+ *
+ * @param str String to check.
+ * @return    Number of bytes (including NUL character) that string occupies.
+ */
+size_t purple_utf16_size(const gunichar2 *str);
+
+/**
+ * Fills a NUL-terminated string with zeros and frees it.
+ *
+ * It should be used to free sensitive data, like passwords.
+ *
+ * @param str A NUL-terminated string to free, or a NULL-pointer.
+ */
+void purple_str_wipe(gchar *str);
+
+/**
+ * Fills a NUL-terminated UTF-16 string with zeros and frees it.
+ *
+ * It should be used to free sensitive data, like passwords.
+ *
+ * @param str A NUL-terminated string to free, or a NULL-pointer.
+ */
+void purple_utf16_wipe(gunichar2 *str);
+
 /*@}*/
 
 
@@ -1141,21 +1168,6 @@ char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
 /*@{*/
 
 void purple_got_protocol_handler_uri(const char *uri);
-
-/**
- * Parses a URL, returning its host, port, file path, username and password.
- *
- * The returned data must be freed.
- *
- * @param url      The URL to parse.
- * @param ret_host The returned host.
- * @param ret_port The returned port.
- * @param ret_path The returned path.
- * @param ret_user The returned username.
- * @param ret_passwd The returned password.
- */
-gboolean purple_url_parse(const char *url, char **ret_host, int *ret_port,
-						char **ret_path, char **ret_user, char **ret_passwd);
 
 /**
  * Decodes a URL into a plain string.

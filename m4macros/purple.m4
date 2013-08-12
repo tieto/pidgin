@@ -84,7 +84,7 @@ AC_DEFUN([AM_PATH_PURPLE],
 		if test x"found_version" != x"" ; then
 			echo "*** A new enough version of purple was not found."
 			echo "*** You have version $found_version"
-			echo "*** See http://pidgin.im/"
+			echo "*** See https://pidgin.im/"
 		fi
 
 		PURPLE_CFLAGS=""

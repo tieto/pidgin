@@ -42,6 +42,11 @@ void finch_prefs_init(void);
 void finch_prefs_show_all(void);
 
 /**
+ * Show the preferences dialog for the selected keyring.
+ */
+void finch_prefs_show_keyring(void);
+
+/**
  * You don't need to know about this.
  */
 void finch_prefs_update_old(void);

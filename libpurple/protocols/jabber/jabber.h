@@ -37,7 +37,7 @@ typedef enum {
 	JABBER_CAP_IQ_REGISTER    = 1 << 8,
 
 	/* Google Talk extensions:
-	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
+	 * https://developers.google.com/talk/jep_extensions/extensions
 	 */
 	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
@@ -60,6 +60,7 @@ typedef struct _JabberStream JabberStream;
 #include "connection.h"
 #include "dnsquery.h"
 #include "dnssrv.h"
+#include "http.h"
 #include "media.h"
 #include "mediamanager.h"
 #include "roomlist.h"
@@ -78,7 +79,7 @@ typedef struct _JabberStream JabberStream;
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://pidgin.im/"
+#define CAPS0115_NODE "https://pidgin.im/"
 
 #define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
@@ -150,9 +151,9 @@ struct _JabberStream
 	 * when we receive a roster push.
 	 *
 	 * See these bug reports:
-	 * http://trac.adiumx.com/ticket/8834
-	 * http://developer.pidgin.im/ticket/5484
-	 * http://developer.pidgin.im/ticket/6188
+	 * https://trac.adium.im/ticket/8834
+	 * https://developer.pidgin.im/ticket/5484
+	 * https://developer.pidgin.im/ticket/6188
 	 */
 	gboolean currently_parsing_roster_push;
 
@@ -261,14 +262,9 @@ struct _JabberStream
 	guint srv_rec_idx;
 	guint max_srv_rec_idx;
 
-	/* BOSH stuff */
-	PurpleBOSHConnection *bosh;
+	PurpleJabberBOSHConnection *bosh;
 
-	/**
-	 * This linked list contains PurpleUtilFetchUrlData structs
-	 * for when we lookup buddy icons from a url
-	 */
-	GSList *url_datas;
+	PurpleHttpConnectionSet *http_conns;
 
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;
@@ -281,8 +277,6 @@ struct _JabberStream
 	/* stuff for Google's relay handling */
 	gchar *google_relay_token;
 	gchar *google_relay_host;
-	GList *google_relay_requests; /* the HTTP requests to get */
-												/* relay info */
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
@@ -353,7 +347,7 @@ void jabber_remove_feature(const gchar *namespace);
 
 /** Adds an identity to this jabber library instance. For list of valid values
  * visit the website of the XMPP Registrar
- * (http://www.xmpp.org/registrar/disco-categories.html#client).
+ * (http://xmpp.org/registrar/disco-categories.html#client)
  *
  * Like with jabber_add_feature, if you call this while accounts are connected,
  * Bad Things will happen.

@@ -39,7 +39,6 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
-#include "gtkwebviewtoolbar.h"
 
 #include "gtk3compat.h"
 
@@ -132,7 +131,6 @@ typedef struct
 	GtkListStore *model;
 	GtkComboBox *box;
 	GtkWebView *message;
-	GtkWebViewToolbar *toolbar;
 } SubStatusEditor;
 
 static StatusWindow *status_window = NULL;
@@ -1084,7 +1082,6 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *text;
-	GtkWidget *toolbar;
 	GtkWidget *vbox;
 	GtkWidget *win;
 	GList *focus_chain = NULL;
@@ -1149,7 +1146,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Status:"), sg, dropdown, TRUE, NULL);
 
 	/* Status message */
-	frame = pidgin_create_webview(TRUE, &text, &toolbar, NULL);
+	frame = pidgin_create_webview(TRUE, &text, NULL);
 	dialog->message = GTK_WEBVIEW(text);
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Message:"), sg, frame, TRUE, NULL);
 	gtk_container_child_set(GTK_CONTAINER(vbox), hbox, "expand", TRUE, "fill", TRUE, NULL);
@@ -1260,12 +1257,10 @@ substatus_selection_changed_cb(GtkComboBox *box, gpointer user_data)
 	if (purple_status_type_get_attr(type, "message") == NULL)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(select->message), FALSE);
-		gtk_widget_set_sensitive(GTK_WIDGET(select->toolbar), FALSE);
 	}
 	else
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(select->message), TRUE);
-		gtk_widget_set_sensitive(GTK_WIDGET(select->toolbar), TRUE);
 	}
 }
 
@@ -1381,7 +1376,6 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *text;
-	GtkWidget *toolbar;
 	GtkWidget *vbox;
 	GtkWidget *win;
 	GtkTreeIter iter;
@@ -1467,9 +1461,8 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	frame = pidgin_create_webview(TRUE, &text, &toolbar, NULL);
+	frame = pidgin_create_webview(TRUE, &text, NULL);
 	dialog->message = GTK_WEBVIEW(text);
-	dialog->toolbar = GTK_WEBVIEWTOOLBAR(toolbar);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
 	/* Cancel button */

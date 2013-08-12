@@ -284,7 +284,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 
 	purple_account_set_connection(account, NULL);
 
-	g_free(gc->password);
+	purple_str_wipe(gc->password);
 	g_free(gc->display_name);
 
 	if (gc->disconnect_timeout > 0)
@@ -458,7 +458,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : purple_account_get_password(gc->account);
+	return gc->password;
 }
 
 const char *
@@ -512,7 +512,6 @@ purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *password;
 
 	account = data;
 	gc = purple_account_get_connection(account);
@@ -520,11 +519,7 @@ purple_connection_disconnect_cb(gpointer data)
 	if (gc != NULL)
 		gc->disconnect_timeout = 0;
 
-	password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
-	purple_account_set_password(account, password);
-	g_free(password);
-
 	return FALSE;
 }
 

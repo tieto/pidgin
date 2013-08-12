@@ -22,12 +22,12 @@
  */
 
 #include "internal.h"
-#include "obsolete.h"
 
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
+#include "http.h"
 #include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
@@ -46,23 +46,24 @@ struct yahoo_fetch_picture_data {
 };
 
 static void
-yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *pic_data, size_t len, const gchar *error_message)
+yahoo_fetch_picture_cb(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _data)
 {
-	struct yahoo_fetch_picture_data *d;
-	YahooData *yd;
+	struct yahoo_fetch_picture_data *d = _data;
 
-	d = user_data;
-	yd = purple_connection_get_protocol_data(d->gc);
-	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
-
-	if (error_message != NULL) {
-		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n", error_message);
-	} else if (len == 0) {
-		purple_debug_error("yahoo", "Fetched an icon with length 0.  Strange.\n");
+	if (!purple_http_response_is_successful(response)) {
+		purple_debug_error("yahoo", "Fetching buddy icon failed: %s\n",
+			purple_http_response_get_error(response));
 	} else {
 		char *checksum = g_strdup_printf("%i", d->checksum);
-		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, g_memdup(pic_data, len), len, checksum);
+		const gchar *pic_data;
+		size_t pic_len;
+
+		pic_data = purple_http_response_get_data(response, &pic_len);
+
+		purple_buddy_icons_set_for_user(
+			purple_connection_get_account(d->gc), d->who,
+			g_memdup(pic_data, pic_len), pic_len, checksum);
 		g_free(checksum);
 	}
 
@@ -121,23 +122,15 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
 	if (who && got_icon_info && url && !g_ascii_strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
-		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
-		/* use whole URL if using HTTP Proxy */
-		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		/* TODO: Does this need to be MSIE 5.0? */
-		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, -1,
-				yahoo_fetch_picture_cb, data);
-		if (url_data != NULL) {
-			yd = purple_connection_get_protocol_data(gc);
-			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-		}
+		yd = purple_connection_get_protocol_data(gc);
+		purple_http_connection_set_add(yd->http_reqs, purple_http_get(
+			gc, yahoo_fetch_picture_cb, data, url));
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
 	}
@@ -336,176 +329,99 @@ void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d)
 {
 	purple_debug_misc("yahoo", "In yahoo_buddy_icon_upload_data_free()\n");
 
-	if (d->str)
-		g_string_free(d->str, TRUE);
+	if (d->picture_data)
+		g_string_free(d->picture_data, TRUE);
 	g_free(d->filename);
-	if (d->watcher)
-		purple_input_remove(d->watcher);
-	if (d->fd != -1)
-		close(d->fd);
 	g_free(d);
 }
 
-/* we couldn't care less about the server's response, but yahoo gets grumpy if we close before it sends it */
-static void yahoo_buddy_icon_upload_reading(gpointer data, gint source, PurpleInputCondition condition)
+static void
+yahoo_buddy_icon_upload_done(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _d)
 {
-	struct yahoo_buddy_icon_upload_data *d = data;
+	struct yahoo_buddy_icon_upload_data *d = _d;
 	PurpleConnection *gc = d->gc;
-	char buf[1024];
-	int ret;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		yahoo_buddy_icon_upload_data_free(d);
-		return;
-	}
+	yd->picture_upload_hc = NULL;
 
-	ret = read(d->fd, buf, sizeof(buf));
-
-	if (ret < 0 && errno == EAGAIN)
-		return;
-	else if (ret <= 0) {
-		/* There are other problems if d->str->len overflows, so shut up the
-		 * warning on 64-bit. */
-		purple_debug_info("yahoo", "Buddy icon upload response (%" G_GSIZE_FORMAT ") bytes (> ~400 indicates failure):\n%.*s\n",
-			d->str->len, (guint)d->str->len, d->str->str);
-
-		yahoo_buddy_icon_upload_data_free(d);
-		return;
-	}
-
-	g_string_append_len(d->str, buf, ret);
-}
-
-static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleInputCondition condition)
-{
-	struct yahoo_buddy_icon_upload_data *d = data;
-	PurpleConnection *gc = d->gc;
-	gssize wrote;
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		yahoo_buddy_icon_upload_data_free(d);
-		return;
-	}
-
-	wrote = write(d->fd, d->str->str + d->pos, d->str->len - d->pos);
-	if (wrote < 0 && errno == EAGAIN)
-		return;
-	if (wrote <= 0) {
+	if (!purple_http_response_is_successful(response))
 		purple_debug_info("yahoo", "Error uploading buddy icon.\n");
-		yahoo_buddy_icon_upload_data_free(d);
-		return;
-	}
-	d->pos += wrote;
-	if (d->pos >= d->str->len) {
+	else
 		purple_debug_misc("yahoo", "Finished uploading buddy icon.\n");
-		purple_input_remove(d->watcher);
-		/* Clean out the sent buffer and reuse it to read the result */
-		g_string_free(d->str, TRUE);
-		d->str = g_string_new("");
-		d->watcher = purple_input_add(d->fd, PURPLE_INPUT_READ, yahoo_buddy_icon_upload_reading, d);
-	}
+
+	yahoo_buddy_icon_upload_data_free(d);
 }
 
-static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const gchar *error_message)
+static void
+yahoo_buddy_icon_build_packet(struct yahoo_buddy_icon_upload_data *d)
 {
-	struct yahoo_buddy_icon_upload_data *d = data;
 	struct yahoo_packet *pkt;
-	gchar *tmp, *header;
-	guchar *pkt_buf;
-	const char *host;
-	int port;
-	gsize pkt_buf_len;
 	PurpleConnection *gc = d->gc;
-	PurpleAccount *account;
-	YahooData *yd;
-	/* use whole URL if using HTTP Proxy */
-	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
+	gchar *len_str;
+	guchar *pkt_buf;
+	gsize pkt_buf_len;
 
-	account = purple_connection_get_account(gc);
-	yd = purple_connection_get_protocol_data(gc);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD,
+		YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	/* Buddy icon connect is now complete; clear the PurpleProxyConnectData */
-	yd->buddy_icon_connect_data = NULL;
-
-	if (source < 0) {
-		purple_debug_error("yahoo", "Buddy icon upload failed: %s\n", error_message);
-		yahoo_buddy_icon_upload_data_free(d);
-		return;
-	}
-
-	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
-
-	tmp = g_strdup_printf("%" G_GSIZE_FORMAT, d->str->len);
-	/* 1 = me, 38 = expire time(?), 0 = me, 28 = size, 27 = filename, 14 = NULL, 29 = data */
+	len_str = g_strdup_printf("%" G_GSIZE_FORMAT, d->picture_data->len);
+	/* 1 = me, 38 = expire time(?), 0 = me, 28 = size, 27 = filename,
+	 * 14 = NULL, 29 = data
+	 */
 	yahoo_packet_hash_str(pkt, 1, purple_connection_get_display_name(gc));
 	yahoo_packet_hash_str(pkt, 38, "604800"); /* time til expire */
-	purple_account_set_int(account, YAHOO_PICEXPIRE_SETTING, time(NULL) + 604800);
+	purple_account_set_int(purple_connection_get_account(gc),
+		YAHOO_PICEXPIRE_SETTING, time(NULL) + 604800);
 	yahoo_packet_hash_str(pkt, 0, purple_connection_get_display_name(gc));
-	yahoo_packet_hash_str(pkt, 28, tmp);
-	g_free(tmp);
+	yahoo_packet_hash_str(pkt, 28, len_str);
+	g_free(len_str);
 	yahoo_packet_hash_str(pkt, 27, d->filename);
 	yahoo_packet_hash_str(pkt, 14, "");
 	/* 4 padding for the 29 key name */
 	pkt_buf_len = yahoo_packet_build(pkt, 4, FALSE, yd->jp, &pkt_buf);
 	yahoo_packet_free(pkt);
 
-	/* header + packet + "29" + 0xc0 + 0x80) + pictureblob */
-
-	host = purple_account_get_string(account, "xfer_host", yd->jp? YAHOOJP_XFER_HOST : YAHOO_XFER_HOST);
-	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
-	tmp = g_strdup_printf("%s:%d", host, port);
-	header = g_strdup_printf("POST %s%s/notifyft HTTP/1.1\r\n"
-		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
-		"Cookie: T=%s; Y=%s\r\n"
-		"Host: %s\r\n"
-		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
-		"Cache-Control: no-cache\r\n\r\n",
-		use_whole_url ? "http://" : "", use_whole_url ? tmp : "",
-		yd->cookie_t, yd->cookie_y,
-		tmp,
-		pkt_buf_len + 4 + d->str->len);
-	g_free(tmp);
-
 	/* There's no magic here, we just need to prepend in reverse order */
-	g_string_prepend(d->str, "29\xc0\x80");
+	g_string_prepend(d->picture_data, "29\xc0\x80");
 
-	g_string_prepend_len(d->str, (char *)pkt_buf, pkt_buf_len);
+	g_string_prepend_len(d->picture_data, (char *)pkt_buf, pkt_buf_len);
 	g_free(pkt_buf);
-
-	g_string_prepend(d->str, header);
-	g_free(header);
-
-	/* There are other problems if we're uploading over 4GB of data */
-	purple_debug_info("yahoo", "Buddy icon upload data:\n%.*s\n", (guint)d->str->len, d->str->str);
-
-	d->fd = source;
-	d->watcher = purple_input_add(d->fd, PURPLE_INPUT_WRITE, yahoo_buddy_icon_upload_pending, d);
-
-	yahoo_buddy_icon_upload_pending(d, d->fd, PURPLE_INPUT_WRITE);
 }
 
-void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_upload_data *d)
+void
+yahoo_buddy_icon_upload(PurpleConnection *gc,
+	struct yahoo_buddy_icon_upload_data *d)
 {
+	PurpleHttpRequest *req;
+	PurpleHttpCookieJar *cjar;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	if (yd->buddy_icon_connect_data != NULL) {
-		/* Cancel any in-progress buddy icon upload */
-		purple_proxy_connect_cancel(yd->buddy_icon_connect_data);
-		yd->buddy_icon_connect_data = NULL;
-	}
+	/* Cancel any in-progress buddy icon upload */
+	purple_http_conn_cancel(yd->picture_upload_hc);
 
-	yd->buddy_icon_connect_data = purple_proxy_connect(NULL, account,
-			purple_account_get_string(account, "xfer_host",
-				yd->jp? YAHOOJP_XFER_HOST : YAHOO_XFER_HOST),
-			purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-			yahoo_buddy_icon_upload_connected, d);
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "http://%s/notifyft",
+		purple_account_get_string(account, "xfer_host", yd->jp ?
+			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST));
+	purple_http_request_set_method(req, "POST");
+	cjar = purple_http_request_get_cookie_jar(req);
+	purple_http_cookie_jar_set(cjar, "T", yd->cookie_t);
+	purple_http_cookie_jar_set(cjar, "Y", yd->cookie_y);
+	purple_http_request_header_set(req, "Cache-Control", "no-cache");
+	purple_http_request_header_set(req, "User-Agent",
+		YAHOO_CLIENT_USERAGENT);
 
-	if (yd->buddy_icon_connect_data == NULL)
-	{
-		purple_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
-		yahoo_buddy_icon_upload_data_free(d);
-	}
+	yahoo_buddy_icon_build_packet(d);
+	purple_http_request_set_contents(req, d->picture_data->str,
+		d->picture_data->len);
+	g_string_free(d->picture_data, TRUE);
+	d->picture_data = NULL;
+
+	yd->picture_upload_hc = purple_http_request(gc, req,
+		yahoo_buddy_icon_upload_done, d);
 }
 
 static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
@@ -572,8 +488,7 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		/* We use this solely for sending a filename to the server */
 		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
 		d->gc = gc;
-		d->str = s;
-		d->fd = -1;
+		d->picture_data = s;
 		d->filename = g_strdup(purple_imgstore_get_filename(img));
 
 		if (!yd->logged_in) {

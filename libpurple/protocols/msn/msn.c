@@ -26,8 +26,8 @@
 #include "internal.h"
 
 #include "debug.h"
+#include "http.h"
 #include "request.h"
-#include "obsolete.h"
 
 #include "accountopt.h"
 #include "contact.h"
@@ -2277,8 +2277,8 @@ msn_get_photo_url(const char *url_text)
 	return NULL;
 }
 
-static void msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, gsize len, const gchar *error_message);
+static void msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info2_data);
 
 #endif
 
@@ -2315,10 +2315,10 @@ msn_info_strip_search_link(const char *field, size_t len)
 }
 
 static void
-msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, size_t len, const gchar *error_message)
+msn_got_info(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _info_data)
 {
-	MsnGetInfoData *info_data = (MsnGetInfoData *)data;
+	MsnGetInfoData *info_data = _info_data;
 	MsnSession *session;
 	PurpleNotifyUserInfo *user_info;
 	char *stripped, *p, *q, *tmp;
@@ -2330,20 +2330,19 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	gboolean has_contact_info = FALSE;
 	char *url_buffer;
 	int stripped_len;
+	const gchar *got_data;
+	size_t got_len;
 #if PHOTO_SUPPORT
 	char *photo_url_text = NULL;
 	MsnGetInfoStepTwoData *info2_data = NULL;
 #endif
 
-	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
-
 	session = purple_connection_get_protocol_data(info_data->gc);
-	session->url_datas = g_slist_remove(session->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
 	has_tooltip_text = msn_tooltip_extract_info_text(user_info, info_data);
 
-	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
+	if (!purple_http_response_is_successful(response))
 	{
 		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
@@ -2356,12 +2355,16 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		return;
 	}
 
-	url_buffer = g_strdup(url_text);
+	got_data = purple_http_response_get_data(response, &got_len);
+
+	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n", got_data);
+
+	url_buffer = g_strdup(got_data);
 
 	/* If they have a homepage link, MSN masks it such that we need to
 	 * fetch the url out before purple_markup_strip_html() nukes it */
 	/* I don't think this works with the new spaces profiles - Stu 3/2/06 */
-	if ((p = strstr(url_text,
+	if ((p = strstr(url_buffer,
 			"Take a look at my </font><A class=viewDesc title=\"")) != NULL)
 	{
 		p += 50;
@@ -2709,7 +2712,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
-	photo_url_text = msn_get_photo_url(url_text);
+	photo_url_text = msn_get_photo_url(got_data);
 	purple_debug_info("msn", "photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
@@ -2723,23 +2726,27 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text)
 	{
-		url_data = purple_util_fetch_url(photo_url_text, FALSE, NULL, FALSE,
-		                                     MAX_HTTP_BUDDYICON_BYTES,
-		                                     msn_got_photo, info2_data);
-		session->url_datas = g_slist_prepend(session->url_datas, url_data);
+		PurpleHttpRequest *req;
+
+		req = purple_http_request_new(photo_url_text);
+		purple_http_request_set_max_len(req, MAX_HTTP_BUDDYICON_BYTES);
+		purple_http_connection_set_add(session->http_reqs,
+			purple_http_request(info_data->gc, req, msn_got_photo,
+				info2_data));
+		purple_http_request_unref(req);
 	}
 	else
 	{
 		/* Finish the Get Info and show the user something */
-		msn_got_photo(NULL, info2_data, NULL, 0, NULL);
+		msn_got_photo(NULL, NULL, info2_data);
 	}
 }
 
 static void
-msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *url_text, gsize len, const gchar *error_message)
+msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _info2_data)
 {
-	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)user_data;
+	MsnGetInfoStepTwoData *info2_data = _info2_data;
 	int id = -1;
 
 	/* Unmarshall the saved state */
@@ -2749,44 +2756,18 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	PurpleNotifyUserInfo *user_info = info2_data->user_info;
 	char *photo_url_text = info2_data->photo_url_text;
 
-	if (url_data) {
-		MsnSession *session = purple_connection_get_protocol_data(info_data->gc);
-		session->url_datas = g_slist_remove(session->url_datas, url_data);
-	}
-
-	if (url_text && error_message)
-	{
-		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
-		g_free(stripped);
-		g_free(url_buffer);
-		purple_notify_user_info_destroy(user_info);
-		g_free(info_data->name);
-		g_free(info_data);
-		g_free(photo_url_text);
-		g_free(info2_data);
-
-		return;
-	}
-
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (url_text && len != 0)
+	if (response && purple_http_response_is_successful(response))
 	{
-		if (strstr(url_text, "400 Bad Request")
-			|| strstr(url_text, "403 Forbidden")
-			|| strstr(url_text, "404 Not Found"))
-		{
+		char buf[1024];
+		const gchar *photo_data;
+		size_t len;
 
-			purple_debug_info("msn", "Error getting %s: %s\n",
-					photo_url_text, url_text);
-		}
-		else
-		{
-			char buf[1024];
-			purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
-			id = purple_imgstore_new_with_id(g_memdup(url_text, len), len, NULL);
-			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
-			purple_notify_user_info_prepend_pair_html(user_info, NULL, buf);
-		}
+		photo_data = purple_http_response_get_data(response, &len);
+		purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
+		id = purple_imgstore_new_with_id(g_memdup(photo_data, len), len, NULL);
+		g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
+		purple_notify_user_info_prepend_pair_html(user_info, NULL, buf);
 	}
 
 	/* We continue here from msn_got_info, as if nothing has happened */
@@ -2811,21 +2792,14 @@ msn_get_info(PurpleConnection *gc, const char *name)
 {
 	MsnSession *session = purple_connection_get_protocol_data(gc);
 	MsnGetInfoData *data;
-	char *url;
-	PurpleUtilFetchUrlData *url_data;
 
 	data       = g_new0(MsnGetInfoData, 1);
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	url = g_strdup_printf("%s%s", PROFILE_URL, name);
-
-	url_data = purple_util_fetch_url(url, FALSE,
-	                                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
-	                                 TRUE, -1, msn_got_info, data);
-	session->url_datas = g_slist_prepend(session->url_datas, url_data);
-
-	g_free(url);
+	purple_http_connection_set_add(session->http_reqs,
+		purple_http_get_printf(gc, msn_got_info, data, "%s%s",
+			PROFILE_URL, name));
 }
 
 static gboolean msn_load(PurplePlugin *plugin)

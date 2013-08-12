@@ -71,7 +71,7 @@ static void version_fetch_cb(PurpleHttpConnection *hc,
 	GString *message;
 	int i = 0;
 
-	if(!purple_http_response_is_successfull(response))
+	if(!purple_http_response_is_successful(response))
 		return;
 
 	changelog = purple_http_response_get_data(response, NULL);
@@ -123,7 +123,7 @@ do_check(void)
 #endif
 		);
 
-		purple_http_get(NULL, url, version_fetch_cb, NULL);
+		purple_http_get(NULL, version_fetch_cb, NULL, url);
 
 		g_free(url);
 

@@ -31,6 +31,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "http.h"
 #include "imgstore.h"
 #include "message.h"
 #include "notify.h"
@@ -44,7 +45,6 @@
 #include "util.h"
 #include "version.h"
 #include "xmlnode.h"
-#include "obsolete.h"
 
 #include "auth.h"
 #include "buddy.h"
@@ -564,7 +564,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 #endif
 
 	if (js->bosh)
-		jabber_bosh_connection_send_raw(js->bosh, data);
+		jabber_bosh_connection_send(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
 }
@@ -773,7 +773,7 @@ txt_resolved_cb(GList *responses, gpointer data)
 		token = g_strsplit(purple_txt_response_get_content(resp), "=", 2);
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
-			js->bosh = jabber_bosh_connection_init(js, token[1]);
+			js->bosh = jabber_bosh_connection_new(js, token[1]);
 			g_strfreev(token);
 			break;
 		}
@@ -782,10 +782,8 @@ txt_resolved_cb(GList *responses, gpointer data)
 		responses = g_list_delete_link(responses, responses);
 	}
 
-	if (js->bosh) {
+	if (js->bosh)
 		found = TRUE;
-		jabber_bosh_connection_connect(js->bosh);
-	}
 
 	if (!found) {
 		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
@@ -933,6 +931,7 @@ jabber_stream_new(PurpleAccount *account)
 	purple_connection_set_protocol_data(gc, js);
 	js->gc = gc;
 	js->fd = -1;
+	js->http_conns = purple_http_connection_set_new();
 
 	user = g_strdup(purple_account_get_username(account));
 	/* jabber_id_new doesn't accept "user@domain/" as valid */
@@ -1007,7 +1006,6 @@ jabber_stream_new(PurpleAccount *account)
 	js->stun_query = NULL;
 	js->google_relay_token = NULL;
 	js->google_relay_host = NULL;
-	js->google_relay_requests = NULL;
 
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
@@ -1035,10 +1033,8 @@ jabber_stream_connect(JabberStream *js)
 	 * attached to that choice, though.
 	 */
 	if (*bosh_url) {
-		js->bosh = jabber_bosh_connection_init(js, bosh_url);
-		if (js->bosh)
-			jabber_bosh_connection_connect(js->bosh);
-		else {
+		js->bosh = jabber_bosh_connection_new(js, bosh_url);
+		if (!js->bosh) {
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Malformed BOSH URL"));
@@ -1263,7 +1259,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					cbdata->js->user->node = g_strdup(value);
 				}
 				if(cbdata->js->registration && !strcmp(id, "password"))
-					purple_account_set_password(purple_connection_get_account(cbdata->js->gc), value);
+					purple_account_set_password(purple_connection_get_account(cbdata->js->gc), value, NULL, NULL);
 			}
 		}
 	}
@@ -1589,9 +1585,10 @@ void jabber_close(PurpleConnection *gc)
 	/* Close all of the open Jingle sessions on this stream */
 	jingle_terminate_sessions(js);
 
-	if (js->bosh)
-		jabber_bosh_connection_close(js->bosh);
-	else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
+	if (js->bosh) {
+		jabber_bosh_connection_destroy(js->bosh);
+		js->bosh = NULL;
+	} else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
@@ -1606,9 +1603,6 @@ void jabber_close(PurpleConnection *gc)
 		}
 		close(js->fd);
 	}
-
-	if (js->bosh)
-		jabber_bosh_connection_destroy(js->bosh);
 
 	jabber_buddy_remove_all_pending_buddy_info_requests(js);
 
@@ -1640,10 +1634,7 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
-	while(js->url_datas) {
-		purple_util_fetch_url_cancel(js->url_datas->data);
-		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
-	}
+	purple_http_connection_set_destroy(js->http_conns);
 
 	g_free(js->stream_id);
 	if(js->user)
@@ -1711,17 +1702,6 @@ void jabber_close(PurpleConnection *gc)
 	/* remove Google relay-related stuff */
 	g_free(js->google_relay_token);
 	g_free(js->google_relay_host);
-	if (js->google_relay_requests) {
-		while (js->google_relay_requests) {
-			PurpleUtilFetchUrlData *url_data =
-				(PurpleUtilFetchUrlData *) js->google_relay_requests->data;
-			purple_util_fetch_url_cancel(url_data);
-			g_free(url_data);
-			js->google_relay_requests =
-				g_list_delete_link(js->google_relay_requests,
-					js->google_relay_requests);
-		}
-	}
 
 	g_free(js);
 
@@ -2485,7 +2465,7 @@ jabber_password_change_result_cb(JabberStream *js, const char *from,
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 
-		purple_account_set_password(purple_connection_get_account(js->gc), (char *)data);
+		purple_account_set_password(purple_connection_get_account(js->gc), (const char *)data, NULL, NULL);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
@@ -2741,7 +2721,7 @@ char *jabber_parse_error(JabberStream *js,
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(purple_connection_get_account(js->gc)))
-				purple_account_set_password(purple_connection_get_account(js->gc), NULL);
+				purple_account_set_password(purple_connection_get_account(js->gc), NULL, NULL, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");

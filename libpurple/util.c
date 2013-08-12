@@ -740,7 +740,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	gint year = 0;
 	long tzoff = PURPLE_NO_TZ_OFF;
 	time_t retval;
-	gboolean mktime_with_utc = TRUE;
+	gboolean mktime_with_utc = FALSE;
 
 	if (rest != NULL)
 		*rest = NULL;
@@ -841,7 +841,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				} while (*str >= '0' && *str <= '9');
 			}
 
-			sign = (*str == '+') ? -1 : 1;
+			sign = (*str == '+') ? 1 : -1;
 
 			/* Process the timezone */
 			if (*str == '+' || *str == '-') {
@@ -850,26 +850,29 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				if (((sscanf(str, "%02d:%02d", &tzhrs, &tzmins) == 2 && (str += 5)) ||
 					(sscanf(str, "%02d%02d", &tzhrs, &tzmins) == 2 && (str += 4))))
 				{
+					mktime_with_utc = TRUE;
 					tzoff = tzhrs * 60 * 60 + tzmins * 60;
 					tzoff *= sign;
-				} else {
-					if (rest != NULL && *str != '\0')
-						*rest = str;
-
-					return 0;
 				}
 			} else if (*str == 'Z') {
 				/* 'Z' = Zulu = UTC */
 				str++;
-				utc = TRUE;
-			} else if (!utc) {
-				/* Local Time */
-				t.tm_isdst = -1;
-				mktime_with_utc = FALSE;
+				mktime_with_utc = TRUE;
+				tzoff = 0;
 			}
 
-			if (utc)
-				tzoff = 0;
+			if (!mktime_with_utc)
+			{
+				/* No timezone specified. */
+
+				if (utc) {
+					mktime_with_utc = TRUE;
+					tzoff = 0;
+				} else {
+					/* Local Time */
+					t.tm_isdst = -1;
+				}
+			}
 		}
 	}
 
@@ -3762,6 +3765,41 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 	return g_string_free(ret, FALSE);
 }
 
+size_t
+purple_utf16_size(const gunichar2 *str)
+{
+	/* UTF16 cannot contain two consequent NUL bytes starting at even
+	 * position - see Unicode standards Chapter 3.9 D91 or RFC2781
+	 * Chapter 2.
+	 */
+
+	size_t i = 0;
+
+	g_return_val_if_fail(str != NULL, 0);
+
+	while (str[i++]);
+
+	return i * sizeof(gunichar2);
+}
+
+void
+purple_str_wipe(gchar *str)
+{
+	if (str == NULL)
+		return;
+	memset(str, 0, strlen(str));
+	g_free(str);
+}
+
+void
+purple_utf16_wipe(gunichar2 *str)
+{
+	if (str == NULL)
+		return;
+	memset(str, 0, purple_utf16_size(str));
+	g_free(str);
+}
+
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/
@@ -3836,114 +3874,6 @@ void purple_got_protocol_handler_uri(const char *uri)
 	if (params)
 		g_hash_table_destroy(params);
 }
-
-/*
- * TODO: Should probably add a "gboolean *ret_ishttps" parameter that
- *       is set to TRUE if this URL is https, otherwise it is set to
- *       FALSE.  But that change will break the API.
- *
- *       This is important for Yahoo! web messenger login.  They now
- *       force https login, and if you access the web messenger login
- *       page via http then it redirects you to the https version, but
- *       purple_util_fetch_url() ignores the "https" and attempts to
- *       fetch the URL via http again, which gets redirected again.
- */
-gboolean
-purple_url_parse(const char *url, char **ret_host, int *ret_port,
-			   char **ret_path, char **ret_user, char **ret_passwd)
-{
-	gboolean is_https = FALSE;
-	const char * scan_info;
-	char port_str[6];
-	int f;
-	const char *at, *slash;
-	const char *turl;
-	char host[256], path[256], user[256], passwd[256];
-	int port = 0;
-	/* hyphen at end includes it in control set */
-
-#define ADDR_CTRL "A-Za-z0-9.-"
-#define PORT_CTRL "0-9"
-#define PAGE_CTRL "A-Za-z0-9.,~_/:*!@&%%?=+^-"
-#define USER_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
-#define PASSWD_CTRL "A-Za-z0-9.,~_/*!&%%?=+^-"
-
-	g_return_val_if_fail(url != NULL, FALSE);
-
-	if ((turl = purple_strcasestr(url, "http://")) != NULL)
-	{
-		turl += 7;
-		url = turl;
-	}
-	else if ((turl = purple_strcasestr(url, "https://")) != NULL)
-	{
-		is_https = TRUE;
-		turl += 8;
-		url = turl;
-	}
-
-	/* parse out authentication information if supplied */
-	/* Only care about @ char BEFORE the first / */
-	at = strchr(url, '@');
-	slash = strchr(url, '/');
-	f = 0;
-	if (at && (!slash || at < slash)) {
-		scan_info = "%255[" USER_CTRL "]:%255[" PASSWD_CTRL "]^@";
-		f = sscanf(url, scan_info, user, passwd);
-
-		if (f == 1) {
-			/* No passwd, possibly just username supplied */
-			scan_info = "%255[" USER_CTRL "]^@";
-			f = sscanf(url, scan_info, user);
-		}
-
-		url = at+1; /* move pointer after the @ char */
-	}
-
-	if (f < 1) {
-		*user = '\0';
-		*passwd = '\0';
-	} else if (f == 1)
-		*passwd = '\0';
-
-	scan_info = "%255[" ADDR_CTRL "]:%5[" PORT_CTRL "]/%255[" PAGE_CTRL "]";
-	f = sscanf(url, scan_info, host, port_str, path);
-
-	if (f == 1)
-	{
-		scan_info = "%255[" ADDR_CTRL "]/%255[" PAGE_CTRL "]";
-		f = sscanf(url, scan_info, host, path);
-		/* Use the default port */
-		if (is_https)
-			g_snprintf(port_str, sizeof(port_str), "443");
-		else
-			g_snprintf(port_str, sizeof(port_str), "80");
-	}
-
-	if (f == 0)
-		*host = '\0';
-
-	if (f <= 1)
-		*path = '\0';
-
-	if (sscanf(port_str, "%d", &port) != 1)
-		purple_debug_error("util", "Error parsing URL port from %s\n", url);
-
-	if (ret_host != NULL) *ret_host = g_strdup(host);
-	if (ret_port != NULL) *ret_port = port;
-	if (ret_path != NULL) *ret_path = g_strdup(path);
-	if (ret_user != NULL) *ret_user = g_strdup(user);
-	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
-
-	return ((*host != '\0') ? TRUE : FALSE);
-
-#undef ADDR_CTRL
-#undef PORT_CTRL
-#undef PAGE_CTRL
-#undef USER_CTRL
-#undef PASSWD_CTRL
-}
-
 
 const char *
 purple_url_decode(const char *str)

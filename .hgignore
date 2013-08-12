@@ -1,3 +1,6 @@
+syntax: glob
+.*.swp
+
 syntax: regexp
 (.*/)?TAGS$
 (.*/)?\.svn
@@ -28,6 +31,7 @@ syntax: regexp
 .*\.pyo$
 .*\.rej$
 .*\.so$
+.*\.moc$
 Doxyfile(\.mingw)?$
 VERSION$
 aclocal.m4
@@ -70,6 +74,7 @@ libpurple/purple-client-example
 libpurple/purple.h$
 libpurple/tests/check_libpurple
 libpurple/tests/libpurple..
+^libpurple/tests/test-suite\.log$
 libpurple/version.h$
 libpurple/win32/libpurplerc.rc$
 libtool

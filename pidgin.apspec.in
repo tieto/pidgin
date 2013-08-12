@@ -5,7 +5,7 @@ RootName: @pidgin.im/pidgin:$SOFTWAREVERSION
 DisplayName: Pidgin Internet Messenger
 ShortName: Pidgin
 Maintainer: The Pidgin Developers
-URL: http://pidgin.im/
+URL: https://pidgin.im/
 Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
 Summary: A GTK+ based multiprotocol instant messaging client
 SoftwareVersion: @VERSION@

@@ -88,7 +88,7 @@ char *gg_oauth_parameter_join(gg_oauth_parameter_t *list, int header)
 	char *res, *out;
 
 	if (header)
-		len += strlen("Authorization: OAuth ");
+		len += strlen("OAuth ");
 
 	for (p = list; p; p = p->next) {
 		gchar *escaped;
@@ -114,7 +114,7 @@ char *gg_oauth_parameter_join(gg_oauth_parameter_t *list, int header)
 	*out = 0;
 
 	if (header) {
-		strcpy(out, "Authorization: OAuth ");
+		strcpy(out, "OAuth ");
 		out += strlen(out);
 	}
 

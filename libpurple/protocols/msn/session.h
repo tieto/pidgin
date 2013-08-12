@@ -63,9 +63,12 @@ typedef enum
 
 #define MSN_LOGIN_FQY_TIMEOUT 30
 
+#include "http.h"
+
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
+#include "soap.h"
 #include "switchboard.h"
 #include "user.h"
 #include "userlist.h"
@@ -116,11 +119,10 @@ struct _MsnSession
 		gboolean email_enabled;
 	} passport_info;
 
-	GHashTable *soap_table;
-	guint soap_cleanup_handle;
+	MsnSoapService *soap;
 	char *guid;
 
-	GSList *url_datas; /**< PurpleUtilFetchUrlData to be cancelled on exit */
+	PurpleHttpConnectionSet *http_reqs;
 };
 
 /**

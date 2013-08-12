@@ -566,12 +566,12 @@ for the status window.
 .SH FAQ
 FAQ for \fBfinch\fR is located at
 .br
-\fIhttp://developer.pidgin.im/wiki/Using%20Finch\fR
+\fIhttps://developer.pidgin.im/wiki/Using%20Finch\fR
 
 .SH BUGS
 Known bugs are listed at
 .br
-\fIhttp://developer.pidgin.im/query?status=new&status=assigned&status=reopened&component=finch+%28gnt%2Fncurses%29&order=priority\fR
+\fIhttps://developer.pidgin.im/query?status=new&status=assigned&status=reopened&component=finch+%28gnt%2Fncurses%29&order=priority\fR
 
 Before sending a bug report, please verify that you have the latest
 version of \fBfinch\fR and libpurple.  Many bugs (major and minor) are
@@ -581,15 +581,15 @@ been solved.
 .SH PATCHES
 If you fix a bug in \fBfinch\fR (or otherwise enhance it), please submit a
 patch (using \fBmtn diff > my.diff\fR against the latest version from the
-Monotone repository) at \fIhttp://developer.pidgin.im/simpleticket\fR
+Monotone repository) at \fIhttps://developer.pidgin.im/simpleticket\fR
 
 You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR
 to discuss development.
 
 .SH SEE ALSO
-\fIhttp://pidgin.im/\fR
+\fIhttps://pidgin.im/\fR
 .br
-\fIhttp://developer.pidgin.im/\fR
+\fIhttps://developer.pidgin.im/\fR
 .br
 \fBpurple-remote\fR(1)
 .br

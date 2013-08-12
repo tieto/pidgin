@@ -1116,7 +1116,7 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 }
 
 static gboolean
-x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
+x509_times (PurpleCertificate *crt, gint64 *activation, gint64 *expiration)
 {
 	gnutls_x509_crt_t crt_dat;
 	/* GnuTLS time functions return this on error */
@@ -1179,9 +1179,12 @@ x509_display_string(PurpleCertificate *crt)
 	gchar *sha_asc;
 	GByteArray *sha_bin;
 	gchar *cn;
-	time_t activation, expiration;
+	gint64 activation, expiration;
 	gchar *activ_str, *expir_str;
 	gchar *text;
+#if GLIB_CHECK_VERSION(2,26,0)
+	GDateTime *act_dt, *exp_dt;
+#endif
 
 	/* Pull out the SHA1 checksum */
 	sha_bin = x509_sha1sum(crt);
@@ -1199,8 +1202,19 @@ x509_display_string(PurpleCertificate *crt)
 				   "Failed to get certificate times!\n");
 		activation = expiration = 0;
 	}
+
+#if GLIB_CHECK_VERSION(2,26,0)
+	act_dt = g_date_time_new_from_unix_local(activation);
+	activ_str = g_date_time_format(act_dt, "%c");
+	g_date_time_unref(act_dt);
+
+	exp_dt = g_date_time_new_from_unix_local(expiration);
+	expir_str = g_date_time_format(exp_dt, "%c");
+	g_date_time_unref(exp_dt);
+#else
 	activ_str = g_strdup(ctime(&activation));
 	expir_str = g_strdup(ctime(&expiration));
+#endif
 
 	/* Make messages */
 	text = g_strdup_printf(_("Common name: %s\n\n"

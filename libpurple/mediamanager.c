@@ -830,7 +830,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				if (g_object_class_find_property(klass,
 						"sync"))
 					g_object_set(G_OBJECT(ow->sink),
-							"sync", "FALSE", NULL);
+							"sync", FALSE, NULL);
 				if (g_object_class_find_property(klass,
 						"async"))
 					g_object_set(G_OBJECT(ow->sink),

@@ -38,20 +38,35 @@
 
 #define PURPLE_HTTP_REQUEST_DEFAULT_MAX_REDIRECTS 20
 #define PURPLE_HTTP_REQUEST_DEFAULT_TIMEOUT 30
+#define PURPLE_HTTP_REQUEST_DEFAULT_MAX_LENGTH 1048576
 
-typedef struct _PurpleHttpURL PurpleHttpURL;
+#define PURPLE_HTTP_PROGRESS_WATCHER_DEFAULT_INTERVAL 250000
 
 typedef struct _PurpleHttpSocket PurpleHttpSocket;
 
 typedef struct _PurpleHttpHeaders PurpleHttpHeaders;
 
+typedef struct _PurpleHttpKeepaliveHost PurpleHttpKeepaliveHost;
+
+typedef struct _PurpleHttpKeepaliveRequest PurpleHttpKeepaliveRequest;
+
+typedef void (*PurpleHttpSocketConnectCb)(PurpleHttpSocket *hs,
+	const gchar *error, gpointer user_data);
+
 struct _PurpleHttpSocket
 {
 	gboolean is_ssl;
+	gboolean is_busy;
+	guint use_count;
+	PurpleHttpKeepaliveHost *host;
+
 	PurpleSslConnection *ssl_connection;
 	PurpleProxyConnectData *raw_connection;
 	int fd;
 	guint inpa;
+	PurpleInputFunction watch_cb;
+	PurpleHttpSocketConnectCb connect_cb;
+	gpointer cb_data;
 };
 
 struct _PurpleHttpRequest
@@ -62,6 +77,7 @@ struct _PurpleHttpRequest
 	gchar *method;
 	PurpleHttpHeaders *headers;
 	PurpleHttpCookieJar *cookie_jar;
+	PurpleHttpKeepalivePool *keepalive_pool;
 
 	gchar *contents;
 	int contents_length;
@@ -82,12 +98,16 @@ struct _PurpleHttpConnection
 	PurpleHttpCallback callback;
 	gpointer user_data;
 	gboolean is_reading;
+	gboolean is_keepalive;
+	gboolean is_cancelling;
 
 	PurpleHttpURL *url;
 	PurpleHttpRequest *request;
 	PurpleHttpResponse *response;
 
-	PurpleHttpSocket socket;
+	PurpleHttpKeepaliveRequest *socket_request;
+	PurpleHttpConnectionSet *connection_set;
+	PurpleHttpSocket *socket;
 	GString *request_header;
 	int request_header_written, request_contents_written;
 	gboolean main_header_got, headers_got;
@@ -97,7 +117,6 @@ struct _PurpleHttpConnection
 	gboolean contents_reader_requested;
 
 	int redirects_count;
-	int data_length_got;
 
 	int length_expected, length_got;
 
@@ -127,7 +146,7 @@ struct _PurpleHttpResponse
 struct _PurpleHttpURL
 {
 	gchar *protocol;
-	gchar *user;
+	gchar *username;
 	gchar *password;
 	gchar *host;
 	int port;
@@ -154,12 +173,60 @@ struct _PurpleHttpCookieJar
 	GHashTable *tab;
 };
 
+struct _PurpleHttpKeepaliveRequest
+{
+	PurpleConnection *gc;
+	PurpleHttpSocketConnectCb cb;
+	gpointer user_data;
+
+	PurpleHttpKeepaliveHost *host;
+	PurpleHttpSocket *hs;
+};
+
+struct _PurpleHttpKeepaliveHost
+{
+	PurpleHttpKeepalivePool *pool;
+
+	gchar *host;
+	int port;
+	gboolean is_ssl;
+
+	GSList *sockets; /* list of PurpleHttpSocket */
+
+	GSList *queue; /* list of PurpleHttpKeepaliveRequest */
+	guint process_queue_timeout;
+};
+
+struct _PurpleHttpKeepalivePool
+{
+	gboolean is_destroying;
+
+	int ref_count;
+
+	guint limit_per_host;
+
+	/* key: purple_http_socket_hash, value: PurpleHttpKeepaliveHost */
+	GHashTable *by_hash;
+};
+
+struct _PurpleHttpConnectionSet
+{
+	gboolean is_destroying;
+
+	GHashTable *connections;
+};
+
 static time_t purple_http_rfc1123_to_time(const gchar *str);
+
+static gboolean purple_http_request_is_method(PurpleHttpRequest *request,
+	const gchar *method);
 
 static PurpleHttpConnection * purple_http_connection_new(
 	PurpleHttpRequest *request, PurpleConnection *gc);
 static void purple_http_connection_terminate(PurpleHttpConnection *hc);
 static void purple_http_conn_notify_progress_watcher(PurpleHttpConnection *hc);
+static void
+purple_http_conn_retry(PurpleHttpConnection *http_conn);
 
 static PurpleHttpResponse * purple_http_response_new(void);
 static void purple_http_response_free(PurpleHttpResponse *response);
@@ -169,11 +236,18 @@ static void purple_http_cookie_jar_parse(PurpleHttpCookieJar *cookie_jar,
 static gchar * purple_http_cookie_jar_gen(PurpleHttpCookieJar *cookie_jar);
 gchar * purple_http_cookie_jar_dump(PurpleHttpCookieJar *cjar);
 
-static PurpleHttpURL * purple_http_url_parse(const char *url);
-static void purple_http_url_free(PurpleHttpURL *parsed_url);
-static void purple_http_url_relative(PurpleHttpURL *base_url,
-	PurpleHttpURL *relative_url);
-static gchar * purple_http_url_print(PurpleHttpURL *parsed_url);
+static PurpleHttpKeepaliveRequest *
+purple_http_keepalive_pool_request(PurpleHttpKeepalivePool *pool,
+	PurpleConnection *gc, const gchar *host, int port, gboolean is_ssl,
+	PurpleHttpSocketConnectCb cb, gpointer user_data);
+static void
+purple_http_keepalive_pool_request_cancel(PurpleHttpKeepaliveRequest *req);
+static void
+purple_http_keepalive_pool_release(PurpleHttpSocket *hs, gboolean invalidate);
+
+static void
+purple_http_connection_set_remove(PurpleHttpConnectionSet *set,
+	PurpleHttpConnection *http_conn);
 
 static GRegex *purple_http_re_url, *purple_http_re_url_host,
 	*purple_http_re_rfc1123;
@@ -188,6 +262,12 @@ static GList *purple_http_hc_list;
  * Values: GList of pointers to running PurpleHttpConnection.
  */
 static GHashTable *purple_http_hc_by_gc;
+
+/**
+ * Keys: pointers to PurpleConnection.
+ * Values: gboolean TRUE.
+ */
+static GHashTable *purple_http_cancelling_gc;
 
 /**
  * Keys: pointers to PurpleHttpConnection.
@@ -249,6 +329,188 @@ static time_t purple_http_rfc1123_to_time(const gchar *str)
 	g_free(iso_date);
 
 	return t;
+}
+
+/*** HTTP Sockets *************************************************************/
+
+static void _purple_http_socket_connected_raw(gpointer _hs, gint fd,
+	const gchar *error_message)
+{
+	PurpleHttpSocket *hs = _hs;
+
+	hs->raw_connection = NULL;
+
+	if (fd == -1 || error_message != NULL) {
+		if (error_message == NULL)
+			error_message = _("Unknown error");
+		hs->connect_cb(hs, error_message, hs->cb_data);
+		return;
+	}
+
+	hs->fd = fd;
+	hs->connect_cb(hs, NULL, hs->cb_data);
+}
+
+static void _purple_http_socket_connected_ssl(gpointer _hs,
+	PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
+{
+	PurpleHttpSocket *hs = _hs;
+
+	hs->fd = hs->ssl_connection->fd;
+	hs->connect_cb(hs, NULL, hs->cb_data);
+}
+
+static void _purple_http_socket_connected_ssl_error(
+	PurpleSslConnection *ssl_connection, PurpleSslErrorType error,
+	gpointer _hs)
+{
+	PurpleHttpSocket *hs = _hs;
+
+	hs->ssl_connection = NULL;
+	hs->connect_cb(hs, purple_ssl_strerror(error), hs->cb_data);
+}
+
+static gchar *
+purple_http_socket_hash(const gchar *host, int port, gboolean is_ssl)
+{
+	return g_strdup_printf("%c:%s:%d", (is_ssl ? 'S' : 'R'), host, port);
+}
+
+static PurpleHttpSocket *
+purple_http_socket_connect_new(PurpleConnection *gc, const gchar *host, int port, gboolean is_ssl, PurpleHttpSocketConnectCb cb, gpointer user_data)
+{
+	PurpleHttpSocket *hs = g_new0(PurpleHttpSocket, 1);
+	PurpleAccount *account = NULL;
+
+	if (gc != NULL)
+		account = purple_connection_get_account(gc);
+
+	hs->is_ssl = is_ssl;
+	hs->connect_cb = cb;
+	hs->cb_data = user_data;
+	hs->fd = -1;
+
+	if (is_ssl) {
+		if (!purple_ssl_is_supported()) {
+			g_free(hs);
+			return NULL;
+		}
+
+		hs->ssl_connection = purple_ssl_connect(account,
+			host, port,
+			_purple_http_socket_connected_ssl,
+			_purple_http_socket_connected_ssl_error, hs);
+/* TODO
+		purple_ssl_set_compatibility_level(hs->ssl_connection,
+			PURPLE_SSL_COMPATIBILITY_SECURE);
+*/
+	} else {
+		hs->raw_connection = purple_proxy_connect(gc, account,
+			host, port,
+			_purple_http_socket_connected_raw, hs);
+	}
+
+	if (hs->ssl_connection == NULL &&
+		hs->raw_connection == NULL) {
+		g_free(hs);
+		return NULL;
+	}
+
+	if (purple_debug_is_verbose())
+		purple_debug_misc("http", "new socket created: %p\n", hs);
+
+	return hs;
+}
+
+static int
+purple_http_socket_read(PurpleHttpSocket *hs, gchar *buf, size_t len)
+{
+	g_return_val_if_fail(hs != NULL, -1);
+	g_return_val_if_fail(buf != NULL, -1);
+
+	if (hs->is_ssl)
+		return purple_ssl_read(hs->ssl_connection, buf, sizeof(buf));
+	else
+		return read(hs->fd, buf, sizeof(buf));
+}
+
+static int
+purple_http_socket_write(PurpleHttpSocket *hs, const gchar *buf, size_t len)
+{
+	g_return_val_if_fail(hs != NULL, -1);
+	g_return_val_if_fail(buf != NULL, -1);
+
+	if (hs->is_ssl)
+		return purple_ssl_write(hs->ssl_connection, buf, len);
+	else
+		return write(hs->fd, buf, len);
+}
+
+static void _purple_http_socket_watch_recv_ssl(gpointer _hs,
+	PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
+{
+	PurpleHttpSocket *hs = _hs;
+
+	g_return_if_fail(hs != NULL);
+
+	hs->watch_cb(hs->cb_data, hs->fd, cond);
+}
+
+static void
+purple_http_socket_watch(PurpleHttpSocket *hs, PurpleInputCondition cond,
+	PurpleInputFunction func, gpointer user_data)
+{
+	g_return_if_fail(hs != NULL);
+
+	if (hs->inpa > 0)
+		purple_input_remove(hs->inpa);
+	hs->inpa = 0;
+
+	if (cond == PURPLE_INPUT_READ && hs->is_ssl) {
+		hs->watch_cb = func;
+		hs->cb_data = user_data;
+		purple_ssl_input_add(hs->ssl_connection,
+			_purple_http_socket_watch_recv_ssl, hs);
+	}
+	else
+		hs->inpa = purple_input_add(hs->fd, cond, func, user_data);
+}
+
+static void
+purple_http_socket_dontwatch(PurpleHttpSocket *hs)
+{
+	g_return_if_fail(hs != NULL);
+
+	if (hs->inpa > 0)
+		purple_input_remove(hs->inpa);
+	hs->inpa = 0;
+	if (hs->ssl_connection)
+		purple_ssl_input_remove(hs->ssl_connection);
+}
+
+static void
+purple_http_socket_close_free(PurpleHttpSocket *hs)
+{
+	if (hs == NULL)
+		return;
+
+	if (purple_debug_is_verbose())
+		purple_debug_misc("http", "destroying socket: %p\n", hs);
+
+	if (hs->inpa != 0)
+		purple_input_remove(hs->inpa);
+
+	if (hs->is_ssl) {
+		if (hs->ssl_connection != NULL)
+			purple_ssl_close(hs->ssl_connection);
+	} else {
+		if (hs->raw_connection != NULL)
+			purple_proxy_connect_cancel(hs->raw_connection);
+		if (hs->fd > 0)
+			close(hs->fd);
+	}
+
+	g_free(hs);
 }
 
 /*** Headers collection *******************************************************/
@@ -429,23 +691,14 @@ static gchar * purple_http_headers_dump(PurpleHttpHeaders *hdrs)
 
 /*** HTTP protocol backend ****************************************************/
 
-static void _purple_http_disconnect(PurpleHttpConnection *hc);
+static void _purple_http_disconnect(PurpleHttpConnection *hc,
+	gboolean is_graceful);
 
 static void _purple_http_gen_headers(PurpleHttpConnection *hc);
 static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd);
 static void _purple_http_recv(gpointer _hc, gint fd,
 	PurpleInputCondition cond);
-static void _purple_http_recv_ssl(gpointer _hc,
-	PurpleSslConnection *ssl_connection, PurpleInputCondition cond);
 static void _purple_http_send(gpointer _hc, gint fd, PurpleInputCondition cond);
-
-static void _purple_http_connected_raw(gpointer _hc, gint source,
-	const gchar *error_message);
-static void _purple_http_connected_ssl(gpointer _hc,
-	PurpleSslConnection *ssl_connection, PurpleInputCondition cond);
-static void _purple_http_connected_ssl_error(
-	PurpleSslConnection *ssl_connection, PurpleSslErrorType error,
-	gpointer _hc);
 
 /* closes current connection (if exists), estabilishes one and proceeds with
  * request */
@@ -462,6 +715,9 @@ static void _purple_http_error(PurpleHttpConnection *hc, const char *format,
 	va_start(args, format);
 	hc->response->error = g_strdup_vprintf(format, args);
 	va_end(args);
+
+	if (purple_debug_is_verbose())
+		purple_debug_warning("http", "error: %s\n", hc->response->error);
 
 	purple_http_conn_cancel(hc);
 }
@@ -515,18 +771,24 @@ static void _purple_http_gen_headers(PurpleHttpConnection *hc)
 
 	if (!purple_http_headers_get(hdrs, "host"))
 		g_string_append_printf(h, "Host: %s\r\n", url->host);
-	if (!purple_http_headers_get(hdrs, "connection"))
-		g_string_append(h, "Connection: close\r\n");
+	if (!purple_http_headers_get(hdrs, "connection")) {
+		g_string_append(h, "Connection: ");
+		g_string_append(h, hc->is_keepalive ?
+			"Keep-Alive\r\n" : "close\r\n");
+	}
 	if (!purple_http_headers_get(hdrs, "accept"))
 		g_string_append(h, "Accept: */*\r\n");
 
-	if (req->contents_length > 0 && !purple_http_headers_get(hdrs,
-		"content-length"))
+	if (!purple_http_headers_get(hdrs, "content-length") && (
+		req->contents_length > 0 ||
+		purple_http_request_is_method(req, "post")))
+	{
 		g_string_append_printf(h, "Content-Length: %u\r\n",
 			req->contents_length);
+	}
 
 	if (proxy_http)
-		g_string_append(h, "Proxy-Connection: close\r\n");
+		g_string_append(h, "Proxy-Connection: close\r\n"); /* TEST: proxy+KeepAlive */
 
 	proxy_username = purple_proxy_info_get_username(proxy);
 	if (proxy_http && proxy_username != NULL && proxy_username[0] != '\0') {
@@ -549,7 +811,7 @@ static void _purple_http_gen_headers(PurpleHttpConnection *hc)
 			proxy_auth);
 		g_string_append_printf(h, "Proxy-Authorization: NTLM %s\r\n",
 			ntlm_type1);
-		g_string_append(h, "Proxy-Connection: Close\r\n");
+		g_string_append(h, "Proxy-Connection: close\r\n"); /* TEST: proxy+KeepAlive */
 
 		memset(proxy_auth, 0, strlen(proxy_auth));
 		g_free(proxy_auth);
@@ -607,15 +869,24 @@ static gboolean _purple_http_recv_headers(PurpleHttpConnection *hc,
 
 		if (hdrline[0] == '\0') {
 			if (!hc->main_header_got) {
-				hc->response->code = 0;
-				purple_debug_warning("http",
-					"Main header not present\n");
-				_purple_http_error(hc, _("Error parsing HTTP"));
-				return FALSE;
+				if (purple_debug_is_verbose() &&
+					hc->is_keepalive)
+				{
+					purple_debug_misc("http", "Got keep-"
+						"alive terminator from previous"
+						" request\n");
+				} else {
+					purple_debug_warning("http", "Got empty"
+						" line at the beginning - this "
+						"may be a HTTP server quirk\n");
+				}
+			} else /* hc->main_header_got */ {
+				hc->headers_got = TRUE;
+				if (purple_debug_is_verbose()) {
+					purple_debug_misc("http", "Got headers "
+						"end\n");
+				}
 			}
-			hc->headers_got = TRUE;
-			if (purple_debug_is_verbose())
-				purple_debug_misc("http", "Got headers end\n");
 		} else if (!hc->main_header_got) {
 			hc->main_header_got = TRUE;
 			delim = strchr(hdrline, ' ');
@@ -659,15 +930,22 @@ static gboolean _purple_http_recv_headers(PurpleHttpConnection *hc,
 static gboolean _purple_http_recv_body_data(PurpleHttpConnection *hc,
 	const gchar *buf, int len)
 {
-	int current_offset = hc->data_length_got;
+	int current_offset = hc->length_got;
 
+	if (hc->length_expected >= 0 &&
+		len + hc->length_got > hc->length_expected)
+	{
+		len = hc->length_expected - hc->length_got;
+	}
 	if (hc->request->max_length >= 0) {
-		if (hc->data_length_got + len > hc->request->max_length) {
-			len = hc->request->max_length - hc->data_length_got;
-			hc->length_expected = hc->length_got;
+		if (hc->length_got + len > hc->request->max_length) {
+			purple_debug_warning("http",
+				"Maximum length exceeded, truncating\n");
+			len = hc->request->max_length - hc->length_got;
+			hc->length_expected = hc->request->max_length;
 		}
 	}
-	hc->data_length_got += len;
+	hc->length_got += len;
 
 	if (len == 0)
 		return TRUE;
@@ -726,10 +1004,6 @@ static gboolean _purple_http_recv_body_chunked(PurpleHttpConnection *hc,
 			g_string_erase(hc->response_buffer, 0, got_now);
 			hc->in_chunk = (hc->chunk_got < hc->chunk_length);
 
-			if (purple_debug_is_verbose())
-				purple_debug_misc("http", "Chunk (%d/%d)\n",
-					hc->chunk_got, hc->chunk_length);
-
 			continue;
 		}
 
@@ -785,30 +1059,18 @@ static gboolean _purple_http_recv_body(PurpleHttpConnection *hc,
 	const gchar *buf, int len)
 {
 	if (hc->is_chunked)
-	{
-		hc->length_got += len;
 		return _purple_http_recv_body_chunked(hc, buf, len);
-	}
-
-	if (hc->length_expected >= 0 &&
-		len + hc->length_got > hc->length_expected)
-		len = hc->length_expected - hc->length_got;
-	hc->length_got += len;
 
 	return _purple_http_recv_body_data(hc, buf, len);
 }
 
 static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 {
-	PurpleHttpSocket *hs = &hc->socket;
 	int len;
 	gchar buf[4096];
 	gboolean got_anything;
 
-	if (hs->is_ssl)
-		len = purple_ssl_read(hs->ssl_connection, buf, sizeof(buf));
-	else
-		len = read(fd, buf, sizeof(buf));
+	len = purple_http_socket_read(hc->socket, buf, sizeof(buf));
 	got_anything = (len > 0);
 
 	if (len < 0 && errno == EAGAIN)
@@ -822,6 +1084,12 @@ static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 
 	/* EOF */
 	if (len == 0) {
+		if (hc->request->max_length == 0) {
+			/* It's definitely YHttpServer quirk. */
+			purple_debug_warning("http", "Got EOF, but no data was "
+				"expected (this may be a server quirk)\n");
+			hc->length_expected = hc->length_got;
+		}
 		if (hc->length_expected >= 0 &&
 			hc->length_got < hc->length_expected) {
 			purple_debug_warning("http", "No more data while reading"
@@ -831,11 +1099,27 @@ static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 		}
 		if (hc->headers_got)
 			hc->length_expected = hc->length_got;
-		else {
-			purple_debug_warning("http", "No more data while "
-				"parsing headers\n");
-			_purple_http_error(hc, _("Error parsing HTTP"));
+		else if (hc->length_got == 0 && hc->socket->use_count > 1) {
+			purple_debug_info("http", "Keep-alive connection "
+				"expired (when reading), retrying...\n");
+			purple_http_conn_retry(hc);
 			return FALSE;
+		} else {
+			if (g_ascii_strcasecmp(purple_http_headers_get(
+				hc->response->headers, "Server"),
+				"YHttpServer") == 0)
+			{
+				purple_debug_warning("http", "No more data "
+					"while parsing headers (YHttpServer "
+					"quirk)\n");
+				hc->headers_got = TRUE;
+				hc->length_expected = hc->length_got = 0;
+			} else {
+				purple_debug_warning("http", "No more data "
+					"while parsing headers\n");
+				_purple_http_error(hc, _("Error parsing HTTP"));
+				return FALSE;
+			}
 		}
 	}
 
@@ -867,11 +1151,19 @@ static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 			return FALSE;
 	}
 
-	if (hc->is_chunked && hc->chunks_done)
+	if (hc->is_chunked && hc->chunks_done && hc->length_expected < 0)
 		hc->length_expected = hc->length_got;
 
 	if (hc->length_expected >= 0 && hc->length_got >= hc->length_expected) {
 		const gchar *redirect;
+
+		if (hc->is_chunked && !hc->chunks_done) {
+			if (purple_debug_is_verbose()) {
+				purple_debug_misc("http",
+					"I need the terminating empty chunk\n");
+			}
+			return TRUE;
+		}
 
 		if (!hc->headers_got) {
 			hc->response->code = 0;
@@ -932,7 +1224,7 @@ static gboolean _purple_http_recv_loopbody(PurpleHttpConnection *hc, gint fd)
 			return FALSE;
 		}
 
-		_purple_http_disconnect(hc);
+		_purple_http_disconnect(hc, TRUE);
 		purple_http_connection_terminate(hc);
 		return FALSE;
 	}
@@ -945,12 +1237,6 @@ static void _purple_http_recv(gpointer _hc, gint fd, PurpleInputCondition cond)
 	PurpleHttpConnection *hc = _hc;
 
 	while (_purple_http_recv_loopbody(hc, fd));
-}
-
-static void _purple_http_recv_ssl(gpointer _hc,
-	PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
-{
-	_purple_http_recv(_hc, -1, cond);
 }
 
 static void _purple_http_send_got_data(PurpleHttpConnection *hc,
@@ -983,7 +1269,6 @@ static void _purple_http_send_got_data(PurpleHttpConnection *hc,
 static void _purple_http_send(gpointer _hc, gint fd, PurpleInputCondition cond)
 {
 	PurpleHttpConnection *hc = _hc;
-	PurpleHttpSocket *hs = &hc->socket;
 	int written, write_len;
 	const gchar *write_from;
 	gboolean writing_headers;
@@ -1031,16 +1316,24 @@ static void _purple_http_send(gpointer _hc, gint fd, PurpleInputCondition cond)
 	if (write_len == 0) {
 		purple_debug_warning("http", "Nothing to write\n");
 		written = 0;
-	} else if (hs->is_ssl)
-		written = purple_ssl_write(hs->ssl_connection,
-			write_from, write_len);
-	else
-		written = write(hs->fd, write_from, write_len);
+	} else {
+		written = purple_http_socket_write(hc->socket, write_from,
+			write_len);
+	}
 
 	if (written < 0 && errno == EAGAIN)
 		return;
 
 	if (written < 0) {
+		if (hc->request_header_written == 0 &&
+			hc->socket->use_count > 1)
+		{
+			purple_debug_info("http", "Keep-alive connection "
+				"expired (when writing), retrying...\n");
+			purple_http_conn_retry(hc);
+			return;
+		}
+
 		_purple_http_error(hc, _("Error writing to %s: %s"),
 			hc->url->host, g_strerror(errno));
 		return;
@@ -1064,99 +1357,56 @@ static void _purple_http_send(gpointer _hc, gint fd, PurpleInputCondition cond)
 
 	/* request is completely written, let's read the response */
 	hc->is_reading = TRUE;
-	purple_input_remove(hs->inpa);
-	hs->inpa = 0;
-	if (hs->is_ssl)
-		purple_ssl_input_add(hs->ssl_connection,
-			_purple_http_recv_ssl, hc);
-	else
-		hs->inpa = purple_input_add(hs->fd, PURPLE_INPUT_READ,
-			_purple_http_recv, hc);
+	purple_http_socket_watch(hc->socket, PURPLE_INPUT_READ,
+		_purple_http_recv, hc);
 }
 
-static void _purple_http_connected_raw(gpointer _hc, gint fd,
-	const gchar *error_message)
+static void _purple_http_disconnect(PurpleHttpConnection *hc,
+	gboolean is_graceful)
 {
-	PurpleHttpConnection *hc = _hc;
-	PurpleHttpSocket *hs = &hc->socket;
-
-	hs->raw_connection = NULL;
-
-	if (fd == -1) {
-		_purple_http_error(hc, _("Unable to connect to %s: %s"),
-			hc->url->host, error_message);
-		return;
-	}
-
-	hs->fd = fd;
-	hs->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE,
-		_purple_http_send, hc);
-}
-
-static void _purple_http_connected_ssl(gpointer _hc,
-	PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
-{
-	PurpleHttpConnection *hc = _hc;
-	PurpleHttpSocket *hs = &hc->socket;
-
-	hs->fd = hs->ssl_connection->fd;
-	hs->inpa = purple_input_add(hs->fd, PURPLE_INPUT_WRITE,
-		_purple_http_send, hc);
-}
-
-static void _purple_http_connected_ssl_error(
-	PurpleSslConnection *ssl_connection, PurpleSslErrorType error,
-	gpointer _hc)
-{
-	PurpleHttpConnection *hc = _hc;
-	PurpleHttpSocket *hs = &hc->socket;
-
-	hs->ssl_connection = NULL;
-	_purple_http_error(hc, _("Unable to connect to %s: %s"),
-		hc->url->host, purple_ssl_strerror(error));
-}
-
-static void _purple_http_disconnect(PurpleHttpConnection *hc)
-{
-	PurpleHttpSocket *hs;
-
 	g_return_if_fail(hc != NULL);
-
-	hs = &hc->socket;
 
 	if (hc->request_header)
 		g_string_free(hc->request_header, TRUE);
 	hc->request_header = NULL;
+
 	if (hc->response_buffer)
 		g_string_free(hc->response_buffer, TRUE);
 	hc->response_buffer = NULL;
 
-	if (hs->inpa != 0)
-		purple_input_remove(hs->inpa);
+	if (hc->socket_request)
+		purple_http_keepalive_pool_request_cancel(hc->socket_request);
+	else {
+		purple_http_keepalive_pool_release(hc->socket, !is_graceful);
+		hc->socket = NULL;
+	}
+}
 
-	if (hs->is_ssl) {
-		if (hs->ssl_connection != NULL)
-			purple_ssl_close(hs->ssl_connection);
-	} else {
-		if (hs->raw_connection != NULL)
-			purple_proxy_connect_cancel(hs->raw_connection);
-		if (hs->fd > 0)
-			close(hs->fd);
+static void  _purple_http_connected(PurpleHttpSocket *hs, const gchar *error, gpointer _hc)
+{
+	PurpleHttpConnection *hc = _hc;
+
+	hc->socket_request = NULL;
+	hc->socket = hs;
+
+	if (error != NULL) {
+		_purple_http_error(hc, _("Unable to connect to %s: %s"),
+			hc->url->host, error);
+		return;
 	}
 
-	memset(hs, 0, sizeof(PurpleHttpSocket));
+	purple_http_socket_watch(hs, PURPLE_INPUT_WRITE, _purple_http_send, hc);
 }
 
 static gboolean _purple_http_reconnect(PurpleHttpConnection *hc)
 {
 	PurpleHttpURL *url;
 	gboolean is_ssl = FALSE;
-	PurpleAccount *account = NULL;
 
 	g_return_val_if_fail(hc != NULL, FALSE);
 	g_return_val_if_fail(hc->url != NULL, FALSE);
 
-	_purple_http_disconnect(hc);
+	_purple_http_disconnect(hc, TRUE);
 
 	if (purple_debug_is_verbose()) {
 		if (purple_debug_is_unsafe()) {
@@ -1167,9 +1417,6 @@ static gboolean _purple_http_reconnect(PurpleHttpConnection *hc)
 			purple_debug_misc("http", "Connecting to %s...\n",
 				hc->url->host);
 	}
-
-	if (hc->gc)
-		account = purple_connection_get_account(hc->gc);
 
 	url = hc->url;
 	if (url->protocol[0] == '\0' ||
@@ -1183,30 +1430,23 @@ static gboolean _purple_http_reconnect(PurpleHttpConnection *hc)
 		return FALSE;
 	}
 
-	hc->socket.is_ssl = is_ssl;
-	if (is_ssl) {
-		if (!purple_ssl_is_supported()) {
-			_purple_http_error(hc, _("Unable to connect to %s: %s"),
-				url->host, _("Server requires TLS/SSL, "
-				"but no TLS/SSL support was found."));
-			return FALSE;
-		}
-		hc->socket.ssl_connection = purple_ssl_connect(account,
-			url->host, url->port,
-			_purple_http_connected_ssl,
-			_purple_http_connected_ssl_error, hc);
-/* TODO
-		purple_ssl_set_compatibility_level(hc->socket.ssl_connection,
-			PURPLE_SSL_COMPATIBILITY_SECURE);
-*/
-	} else {
-		hc->socket.raw_connection = purple_proxy_connect(hc->gc, account,
-			url->host, url->port,
-			_purple_http_connected_raw, hc);
+	if (is_ssl && !purple_ssl_is_supported()) {
+		_purple_http_error(hc, _("Unable to connect to %s: %s"),
+			url->host, _("Server requires TLS/SSL, "
+			"but no TLS/SSL support was found."));
+		return FALSE;
 	}
 
-	if (hc->socket.ssl_connection == NULL &&
-		hc->socket.raw_connection == NULL) {
+	if (hc->request->keepalive_pool != NULL) {
+		hc->socket_request = purple_http_keepalive_pool_request(
+			hc->request->keepalive_pool, hc->gc, url->host,
+			url->port, is_ssl, _purple_http_connected, hc);
+	} else {
+		hc->socket = purple_http_socket_connect_new(hc->gc, url->host,
+			url->port, is_ssl, _purple_http_connected, hc);
+	}
+
+	if (hc->socket_request == NULL && hc->socket == NULL) {
 		_purple_http_error(hc, _("Unable to connect to %s"), url->host);
 		return FALSE;
 	}
@@ -1220,7 +1460,6 @@ static gboolean _purple_http_reconnect(PurpleHttpConnection *hc)
 		g_string_free(hc->response->contents, TRUE);
 	hc->response->contents = NULL;
 	hc->length_got = 0;
-	hc->data_length_got = 0;
 	hc->length_expected = -1;
 	hc->is_chunked = FALSE;
 	hc->in_chunk = FALSE;
@@ -1244,8 +1483,8 @@ static gboolean purple_http_request_timeout(gpointer _hc)
 	return FALSE;
 }
 
-PurpleHttpConnection * purple_http_get(PurpleConnection *gc, const gchar *url,
-	PurpleHttpCallback callback, gpointer user_data)
+PurpleHttpConnection * purple_http_get(PurpleConnection *gc,
+	PurpleHttpCallback callback, gpointer user_data, const gchar *url)
 {
 	PurpleHttpRequest *request;
 	PurpleHttpConnection *hc;
@@ -1259,6 +1498,26 @@ PurpleHttpConnection * purple_http_get(PurpleConnection *gc, const gchar *url,
 	return hc;
 }
 
+PurpleHttpConnection * purple_http_get_printf(PurpleConnection *gc,
+	PurpleHttpCallback callback, gpointer user_data,
+	const gchar *format, ...)
+{
+	va_list args;
+	gchar *value;
+	PurpleHttpConnection *ret;
+
+	g_return_val_if_fail(format != NULL, NULL);
+
+	va_start(args, format);
+	value = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	ret = purple_http_get(gc, callback, user_data, value);
+	g_free(value);
+
+	return ret;
+}
+
 PurpleHttpConnection * purple_http_request(PurpleConnection *gc,
 	PurpleHttpRequest *request, PurpleHttpCallback callback,
 	gpointer user_data)
@@ -1267,18 +1526,33 @@ PurpleHttpConnection * purple_http_request(PurpleConnection *gc,
 
 	g_return_val_if_fail(request != NULL, NULL);
 
+	if (request->url == NULL) {
+		purple_debug_error("http", "Cannot perform new request - "
+			"URL is not set\n");
+		return NULL;
+	}
+
+	if (g_hash_table_lookup(purple_http_cancelling_gc, gc)) {
+		purple_debug_warning("http", "Cannot perform another HTTP "
+			"request while cancelling all related with this "
+			"PurpleConnection\n");
+		return NULL;
+	}
+
 	hc = purple_http_connection_new(request, gc);
 	hc->callback = callback;
 	hc->user_data = user_data;
+
+	hc->url = purple_http_url_parse(request->url);
 
 	if (purple_debug_is_unsafe())
 		purple_debug_misc("http", "Performing new request %p for %s.\n",
 			hc, request->url);
 	else
-		purple_debug_misc("http", "Performing new request %p.\n", hc);
+		purple_debug_misc("http", "Performing new request %p to %s.\n",
+			hc, hc->url ? hc->url->host : NULL);
 
-	hc->url = purple_http_url_parse(request->url);
-	if (!hc->url || hc->url->host[0] == '\0') {
+	if (!hc->url || hc->url->host == NULL || hc->url->host[0] == '\0') {
 		purple_debug_error("http", "Invalid URL requested.\n");
 		purple_http_connection_terminate(hc);
 		return NULL;
@@ -1305,6 +1579,7 @@ static PurpleHttpConnection * purple_http_connection_new(
 	hc->request = request;
 	purple_http_request_ref(request);
 	hc->response = purple_http_response_new();
+	hc->is_keepalive = (request->keepalive_pool != NULL);
 
 	hc->link_global = purple_http_hc_list =
 		g_list_prepend(purple_http_hc_list, hc);
@@ -1326,6 +1601,9 @@ static void purple_http_connection_free(PurpleHttpConnection *hc)
 		purple_timeout_remove(hc->timeout_handle);
 	if (hc->watcher_delayed_handle)
 		purple_timeout_remove(hc->watcher_delayed_handle);
+
+	if (hc->connection_set != NULL)
+		purple_http_connection_set_remove(hc->connection_set, hc);
 
 	purple_http_url_free(hc->url);
 	purple_http_request_unref(hc->request);
@@ -1363,7 +1641,7 @@ static void purple_http_connection_terminate(PurpleHttpConnection *hc)
 	g_return_if_fail(hc != NULL);
 
 	purple_debug_misc("http", "Request %p performed %s.\n", hc,
-		purple_http_response_is_successfull(hc->response) ?
+		purple_http_response_is_successful(hc->response) ?
 		"successfully" : "without success");
 
 	if (hc->callback)
@@ -1377,14 +1655,45 @@ void purple_http_conn_cancel(PurpleHttpConnection *http_conn)
 	if (http_conn == NULL)
 		return;
 
+	if (http_conn->is_cancelling)
+		return;
+	http_conn->is_cancelling = TRUE;
+
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("http", "Cancelling connection %p...\n",
+			http_conn);
+	}
+
 	http_conn->response->code = 0;
-	_purple_http_disconnect(http_conn);
+	_purple_http_disconnect(http_conn, FALSE);
 	purple_http_connection_terminate(http_conn);
+}
+
+static void
+purple_http_conn_retry(PurpleHttpConnection *http_conn)
+{
+	if (http_conn == NULL)
+		return;
+
+	purple_debug_info("http", "Retrying connection %p...\n", http_conn);
+
+	http_conn->response->code = 0;
+	_purple_http_disconnect(http_conn, FALSE);
+	_purple_http_reconnect(http_conn);
 }
 
 void purple_http_conn_cancel_all(PurpleConnection *gc)
 {
-	GList *gc_list = g_hash_table_lookup(purple_http_hc_by_gc, gc);
+	GList *gc_list;
+
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("http", "Cancelling all running HTTP "
+			"connections\n");
+	}
+
+	gc_list = g_hash_table_lookup(purple_http_hc_by_gc, gc);
+
+	g_hash_table_insert(purple_http_cancelling_gc, gc, GINT_TO_POINTER(TRUE));
 
 	while (gc_list) {
 		PurpleHttpConnection *hc = gc_list->data;
@@ -1392,9 +1701,11 @@ void purple_http_conn_cancel_all(PurpleConnection *gc)
 		purple_http_conn_cancel(hc);
 	}
 
+	g_hash_table_remove(purple_http_cancelling_gc, gc);
+
 	if (NULL != g_hash_table_lookup(purple_http_hc_by_gc, gc))
-		purple_debug_error("http", "Couldn't cancel all connections "
-			"related to gc=%p\n", gc);
+		purple_debug_fatal("http", "Couldn't cancel all connections "
+			"related to gc=%p (it shouldn't happen)\n", gc);
 }
 
 gboolean purple_http_conn_is_running(PurpleHttpConnection *http_conn)
@@ -1428,9 +1739,14 @@ PurpleConnection * purple_http_conn_get_purple_connection(
 
 void purple_http_conn_set_progress_watcher(PurpleHttpConnection *http_conn,
 	PurpleHttpProgressWatcher watcher, gpointer user_data,
-	guint interval_threshold)
+	gint interval_threshold)
 {
 	g_return_if_fail(http_conn != NULL);
+
+	if (interval_threshold < 0) {
+		interval_threshold =
+			PURPLE_HTTP_PROGRESS_WATCHER_DEFAULT_INTERVAL;
+	}
 
 	http_conn->watcher = watcher;
 	http_conn->watcher_user_data = user_data;
@@ -1702,6 +2018,346 @@ gboolean purple_http_cookie_jar_is_empty(PurpleHttpCookieJar *cookie_jar)
 	return g_hash_table_size(cookie_jar->tab) == 0;
 }
 
+/*** HTTP Keep-Alive pool API *************************************************/
+
+static void
+purple_http_keepalive_host_process_queue(PurpleHttpKeepaliveHost *host);
+
+static void
+purple_http_keepalive_host_free(gpointer _host)
+{
+	PurpleHttpKeepaliveHost *host = _host;
+
+	if (host->process_queue_timeout > 0) {
+		purple_timeout_remove(host->process_queue_timeout);
+		host->process_queue_timeout = 0;
+	}
+
+	g_free(host->host);
+
+	g_slist_free_full(host->queue,
+		(GDestroyNotify)purple_http_keepalive_pool_request_cancel);
+	g_slist_free_full(host->sockets,
+		(GDestroyNotify)purple_http_socket_close_free);
+
+	g_free(host);
+}
+
+PurpleHttpKeepalivePool *
+purple_http_keepalive_pool_new(void)
+{
+	PurpleHttpKeepalivePool *pool = g_new0(PurpleHttpKeepalivePool, 1);
+
+	pool->ref_count = 1;
+	pool->by_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+		purple_http_keepalive_host_free);
+
+	return pool;
+}
+
+static void
+purple_http_keepalive_pool_free(PurpleHttpKeepalivePool *pool)
+{
+	g_return_if_fail(pool != NULL);
+
+	if (pool->is_destroying)
+		return;
+	pool->is_destroying = TRUE;
+	g_hash_table_destroy(pool->by_hash);
+	g_free(pool);
+}
+
+void
+purple_http_keepalive_pool_ref(PurpleHttpKeepalivePool *pool)
+{
+	g_return_if_fail(pool != NULL);
+
+	pool->ref_count++;
+}
+
+PurpleHttpKeepalivePool *
+purple_http_keepalive_pool_unref(PurpleHttpKeepalivePool *pool)
+{
+	if (pool == NULL)
+		return NULL;
+
+	g_return_val_if_fail(pool->ref_count > 0, NULL);
+
+	pool->ref_count--;
+	if (pool->ref_count > 0)
+		return pool;
+
+	purple_http_keepalive_pool_free(pool);
+	return NULL;
+}
+
+static PurpleHttpKeepaliveRequest *
+purple_http_keepalive_pool_request(PurpleHttpKeepalivePool *pool,
+	PurpleConnection *gc, const gchar *host, int port, gboolean is_ssl,
+	PurpleHttpSocketConnectCb cb, gpointer user_data)
+{
+	PurpleHttpKeepaliveRequest *req;
+	PurpleHttpKeepaliveHost *kahost;
+	gchar *hash;
+
+	g_return_val_if_fail(pool != NULL, NULL);
+	g_return_val_if_fail(host != NULL, NULL);
+
+	if (pool->is_destroying) {
+		purple_debug_error("http", "pool is destroying\n");
+		return NULL;
+	}
+
+	hash = purple_http_socket_hash(host, port, is_ssl);
+	kahost = g_hash_table_lookup(pool->by_hash, hash);
+
+	if (kahost == NULL) {
+		kahost = g_new0(PurpleHttpKeepaliveHost, 1);
+		kahost->pool = pool;
+		kahost->host = g_strdup(host);
+		kahost->port = port;
+		kahost->is_ssl = is_ssl;
+
+		g_hash_table_insert(pool->by_hash, g_strdup(hash), kahost);
+	}
+
+	g_free(hash);
+
+	req = g_new0(PurpleHttpKeepaliveRequest, 1);
+	req->gc = gc;
+	req->cb = cb;
+	req->user_data = user_data;
+	req->host = kahost;
+
+	kahost->queue = g_slist_append(kahost->queue, req);
+
+	purple_http_keepalive_host_process_queue(kahost);
+
+	return req;
+}
+
+static void
+_purple_http_keepalive_socket_connected(PurpleHttpSocket *hs,
+	const gchar *error, gpointer _req)
+{
+	PurpleHttpKeepaliveRequest *req = _req;
+
+	if (hs != NULL)
+		hs->use_count++;
+
+	req->cb(hs, error, req->user_data);
+	g_free(req);
+}
+
+static gboolean
+_purple_http_keepalive_host_process_queue_cb(gpointer _host)
+{
+	PurpleHttpKeepaliveRequest *req;
+	PurpleHttpKeepaliveHost *host = _host;
+	PurpleHttpSocket *hs = NULL;
+	GSList *it;
+	int sockets_count;
+
+	g_return_val_if_fail(host != NULL, FALSE);
+
+	host->process_queue_timeout = 0;
+
+	if (host->queue == NULL)
+		return FALSE;
+
+	sockets_count = 0;
+	it = host->sockets;
+	while (it != NULL) {
+		PurpleHttpSocket *hs_current = it->data;
+
+		sockets_count++;
+
+		if (!hs_current->is_busy) {
+			hs = hs_current;
+			break;
+		}
+
+		it = g_slist_next(it);
+	}
+
+	/* There are no free sockets and we cannot create another one. */
+	if (hs == NULL && sockets_count >= host->pool->limit_per_host &&
+		host->pool->limit_per_host > 0)
+	{
+		return FALSE;
+	}
+
+	req = host->queue->data;
+	host->queue = g_slist_remove(host->queue, req);
+
+	if (hs != NULL) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("http", "locking a (previously used) "
+				"socket: %p\n", hs);
+		}
+
+		hs->is_busy = TRUE;
+		hs->use_count++;
+
+		req->cb(hs, NULL, req->user_data);
+		g_free(req);
+
+		return TRUE; /* run again */
+	}
+
+	hs = purple_http_socket_connect_new(req->gc, req->host->host,
+		req->host->port, req->host->is_ssl,
+		_purple_http_keepalive_socket_connected, req);
+	req->hs = hs;
+	hs->is_busy = TRUE;
+	hs->host = host;
+
+	if (purple_debug_is_verbose())
+		purple_debug_misc("http", "locking a (new) socket: %p\n", hs);
+
+	host->sockets = g_slist_append(host->sockets, hs);
+
+	return FALSE;
+}
+
+static void
+purple_http_keepalive_host_process_queue(PurpleHttpKeepaliveHost *host)
+{
+	g_return_if_fail(host != NULL);
+
+	if (host->process_queue_timeout > 0)
+		return;
+
+	host->process_queue_timeout = purple_timeout_add(0,
+		_purple_http_keepalive_host_process_queue_cb, host);
+}
+
+static void
+purple_http_keepalive_pool_request_cancel(PurpleHttpKeepaliveRequest *req)
+{
+	if (req == NULL)
+		return;
+
+	if (req->host != NULL)
+		req->host->queue = g_slist_remove(req->host->queue, req);
+
+	if (req->hs != NULL) {
+		req->host->sockets = g_slist_remove(req->host->sockets,
+			req->hs);
+		purple_http_socket_close_free(req->hs);
+		/* req should already be free'd here */
+	} else {
+		req->cb(req->hs, _("Cancelled"), req->user_data);
+		g_free(req);
+	}
+}
+
+static void
+purple_http_keepalive_pool_release(PurpleHttpSocket *hs, gboolean invalidate)
+{
+	PurpleHttpKeepaliveHost *host;
+
+	if (hs == NULL)
+		return;
+
+	if (purple_debug_is_verbose())
+		purple_debug_misc("http", "releasing a socket: %p\n", hs);
+
+	purple_http_socket_dontwatch(hs);
+	hs->is_busy = FALSE;
+	host = hs->host;
+
+	if (host == NULL) {
+		purple_http_socket_close_free(hs);
+		return;
+	}
+
+	if (invalidate) {
+		host->sockets = g_slist_remove(host->sockets, hs);
+		purple_http_socket_close_free(hs);
+	}
+
+	purple_http_keepalive_host_process_queue(host);
+}
+
+void
+purple_http_keepalive_pool_set_limit_per_host(PurpleHttpKeepalivePool *pool,
+	guint limit)
+{
+	g_return_if_fail(pool != NULL);
+
+	pool->limit_per_host = limit;
+}
+
+guint
+purple_http_keepalive_pool_get_limit_per_host(PurpleHttpKeepalivePool *pool)
+{
+	g_return_val_if_fail(pool != NULL, 0);
+
+	return pool->limit_per_host;
+}
+
+/*** HTTP connection set API **************************************************/
+
+PurpleHttpConnectionSet *
+purple_http_connection_set_new(void)
+{
+	PurpleHttpConnectionSet *set;
+
+	set = g_new0(PurpleHttpConnectionSet, 1);
+	set->connections = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+	return set;
+}
+
+void
+purple_http_connection_set_destroy(PurpleHttpConnectionSet *set)
+{
+	if (set == NULL)
+		return;
+
+	set->is_destroying = TRUE;
+
+	while (TRUE) {
+		GHashTableIter iter;
+		PurpleHttpConnection *http_conn;
+
+		g_hash_table_iter_init(&iter, set->connections);
+		if (!g_hash_table_iter_next(&iter, (gpointer*)&http_conn, NULL))
+			break;
+
+		purple_http_conn_cancel(http_conn);
+	}
+
+	g_hash_table_destroy(set->connections);
+	g_free(set);
+}
+
+void
+purple_http_connection_set_add(PurpleHttpConnectionSet *set,
+	PurpleHttpConnection *http_conn)
+{
+	if (set->is_destroying)
+		return;
+	if (http_conn->connection_set == set)
+		return;
+	if (http_conn->connection_set != NULL) {
+		purple_http_connection_set_remove(http_conn->connection_set,
+			http_conn);
+	}
+	g_hash_table_insert(set->connections, http_conn, (gpointer)TRUE);
+	http_conn->connection_set = set;
+}
+
+static void
+purple_http_connection_set_remove(PurpleHttpConnectionSet *set,
+	PurpleHttpConnection *http_conn)
+{
+	g_hash_table_remove(set->connections, http_conn);
+	if (http_conn->connection_set == set)
+		http_conn->connection_set = NULL;
+}
+
 /*** Request API **************************************************************/
 
 static void purple_http_request_free(PurpleHttpRequest *request);
@@ -1710,19 +2366,18 @@ PurpleHttpRequest * purple_http_request_new(const gchar *url)
 {
 	PurpleHttpRequest *request;
 
-	g_return_val_if_fail(url != NULL, NULL);
-
 	request = g_new0(PurpleHttpRequest, 1);
 
 	request->ref_count = 1;
 	request->url = g_strdup(url);
 	request->headers = purple_http_headers_new();
 	request->cookie_jar = purple_http_cookie_jar_new();
+	request->keepalive_pool = purple_http_keepalive_pool_new();
 
 	request->timeout = PURPLE_HTTP_REQUEST_DEFAULT_TIMEOUT;
 	request->max_redirects = PURPLE_HTTP_REQUEST_DEFAULT_MAX_REDIRECTS;
 	request->http11 = TRUE;
-	request->max_length = -1;
+	request->max_length = PURPLE_HTTP_REQUEST_DEFAULT_MAX_LENGTH;
 
 	return request;
 }
@@ -1731,6 +2386,7 @@ static void purple_http_request_free(PurpleHttpRequest *request)
 {
 	purple_http_headers_free(request->headers);
 	purple_http_cookie_jar_unref(request->cookie_jar);
+	purple_http_keepalive_pool_unref(request->keepalive_pool);
 	g_free(request->url);
 	g_free(request);
 }
@@ -1766,6 +2422,23 @@ void purple_http_request_set_url(PurpleHttpRequest *request, const gchar *url)
 	request->url = g_strdup(url);
 }
 
+void purple_http_request_set_url_printf(PurpleHttpRequest *request,
+	const gchar *format, ...)
+{
+	va_list args;
+	gchar *value;
+
+	g_return_if_fail(request != NULL);
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	value = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	purple_http_request_set_url(request, value);
+	g_free(value);
+}
+
 const gchar * purple_http_request_get_url(PurpleHttpRequest *request)
 {
 	g_return_val_if_fail(request != NULL, NULL);
@@ -1786,6 +2459,46 @@ const gchar * purple_http_request_get_method(PurpleHttpRequest *request)
 	g_return_val_if_fail(request != NULL, NULL);
 
 	return request->method;
+}
+
+static gboolean purple_http_request_is_method(PurpleHttpRequest *request,
+	const gchar *method)
+{
+	const gchar *rmethod;
+
+	g_return_val_if_fail(request != NULL, FALSE);
+	g_return_val_if_fail(method != NULL, FALSE);
+
+	rmethod = purple_http_request_get_method(request);
+	if (rmethod == NULL)
+		return (g_ascii_strcasecmp(method, "get") == 0);
+	return (g_ascii_strcasecmp(method, rmethod) == 0);
+}
+
+void
+purple_http_request_set_keepalive_pool(PurpleHttpRequest *request,
+	PurpleHttpKeepalivePool *pool)
+{
+	g_return_if_fail(request != NULL);
+
+	if (pool != NULL)
+		purple_http_keepalive_pool_ref(pool);
+
+	if (request->keepalive_pool != NULL) {
+		purple_http_keepalive_pool_unref(request->keepalive_pool);
+		request->keepalive_pool = NULL;
+	}
+
+	if (pool != NULL)
+		request->keepalive_pool = pool;
+}
+
+PurpleHttpKeepalivePool *
+purple_http_request_get_keepalive_pool(PurpleHttpRequest *request)
+{
+	g_return_val_if_fail(request != NULL, FALSE);
+
+	return request->keepalive_pool;
 }
 
 void purple_http_request_set_contents(PurpleHttpRequest *request,
@@ -1976,7 +2689,7 @@ static void purple_http_response_free(PurpleHttpResponse *response)
 	g_free(response);
 }
 
-gboolean purple_http_response_is_successfull(PurpleHttpResponse *response)
+gboolean purple_http_response_is_successful(PurpleHttpResponse *response)
 {
 	int code;
 
@@ -1986,6 +2699,8 @@ gboolean purple_http_response_is_successfull(PurpleHttpResponse *response)
 
 	if (code <= 0)
 		return FALSE;
+
+	/* TODO: HTTP/1.1 100 Continue */
 
 	if (code / 100 == 2)
 		return TRUE;
@@ -2004,7 +2719,23 @@ const gchar * purple_http_response_get_error(PurpleHttpResponse *response)
 {
 	g_return_val_if_fail(response != NULL, NULL);
 
-	return response->error;
+	if (response->error != NULL)
+		return response->error;
+
+	if (!purple_http_response_is_successful(response)) {
+		static gchar errmsg[200];
+		if (response->code <= 0) {
+			g_snprintf(errmsg, sizeof(errmsg),
+				_("Unknown HTTP error"));
+		} else {
+			g_snprintf(errmsg, sizeof(errmsg),
+				_("Invalid HTTP response code (%d)"),
+				response->code);
+		}
+		return errmsg;
+	}
+
+	return NULL;
 }
 
 gsize purple_http_response_get_data_len(PurpleHttpResponse *response)
@@ -2021,7 +2752,7 @@ const gchar * purple_http_response_get_data(PurpleHttpResponse *response, size_t
 {
 	const gchar *ret = "";
 
-	g_return_val_if_fail(response != NULL, NULL);
+	g_return_val_if_fail(response != NULL, "");
 
 	if (response->contents != NULL) {
 		ret = response->contents->str;
@@ -2062,7 +2793,8 @@ const gchar * purple_http_response_get_header(PurpleHttpResponse *response,
 
 /*** URL functions ************************************************************/
 
-static PurpleHttpURL * purple_http_url_parse(const char *raw_url)
+PurpleHttpURL *
+purple_http_url_parse(const char *raw_url)
 {
 	PurpleHttpURL *url;
 	GMatchInfo *match_info;
@@ -2125,7 +2857,7 @@ static PurpleHttpURL * purple_http_url_parse(const char *raw_url)
 			return NULL;
 		}
 
-		url->user = g_match_info_fetch(match_info, 1);
+		url->username = g_match_info_fetch(match_info, 1);
 		url->password = g_match_info_fetch(match_info, 2);
 		url->host = g_match_info_fetch(match_info, 3);
 		port_str = g_match_info_fetch(match_info, 4);
@@ -2133,9 +2865,9 @@ static PurpleHttpURL * purple_http_url_parse(const char *raw_url)
 		if (port_str && port_str[0])
 			url->port = atoi(port_str);
 
-		if (url->user[0] == '\0') {
-			g_free(url->user);
-			url->user = NULL;
+		if (url->username[0] == '\0') {
+			g_free(url->username);
+			url->username = NULL;
 		}
 		if (url->password[0] == '\0') {
 			g_free(url->password);
@@ -2174,13 +2906,14 @@ static PurpleHttpURL * purple_http_url_parse(const char *raw_url)
 	return url;
 }
 
-static void purple_http_url_free(PurpleHttpURL *parsed_url)
+void
+purple_http_url_free(PurpleHttpURL *parsed_url)
 {
 	if (parsed_url == NULL)
 		return;
 
 	g_free(parsed_url->protocol);
-	g_free(parsed_url->user);
+	g_free(parsed_url->username);
 	g_free(parsed_url->password);
 	g_free(parsed_url->host);
 	g_free(parsed_url->path);
@@ -2188,8 +2921,8 @@ static void purple_http_url_free(PurpleHttpURL *parsed_url)
 	g_free(parsed_url);
 }
 
-static void purple_http_url_relative(PurpleHttpURL *base_url,
-	PurpleHttpURL *relative_url)
+void
+purple_http_url_relative(PurpleHttpURL *base_url, PurpleHttpURL *relative_url)
 {
 	g_return_if_fail(base_url != NULL);
 	g_return_if_fail(relative_url != NULL);
@@ -2197,8 +2930,8 @@ static void purple_http_url_relative(PurpleHttpURL *base_url,
 	if (relative_url->host) {
 		g_free(base_url->protocol);
 		base_url->protocol = g_strdup(relative_url->protocol);
-		g_free(base_url->user);
-		base_url->user = g_strdup(relative_url->user);
+		g_free(base_url->username);
+		base_url->username = g_strdup(relative_url->username);
 		g_free(base_url->password);
 		base_url->password = g_strdup(relative_url->password);
 		g_free(base_url->host);
@@ -2232,7 +2965,8 @@ static void purple_http_url_relative(PurpleHttpURL *base_url,
 	base_url->fragment = g_strdup(relative_url->fragment);
 }
 
-static gchar * purple_http_url_print(PurpleHttpURL *parsed_url)
+gchar *
+purple_http_url_print(PurpleHttpURL *parsed_url)
 {
 	GString *url = g_string_new("");
 	gboolean before_host_printed = FALSE, host_printed = FALSE;
@@ -2248,9 +2982,9 @@ static gchar * purple_http_url_print(PurpleHttpURL *parsed_url)
 			"https"))
 			port_is_default = TRUE;
 	}
-	if (parsed_url->user || parsed_url->password) {
-		if (parsed_url->user)
-			g_string_append(url, parsed_url->user);
+	if (parsed_url->username || parsed_url->password) {
+		if (parsed_url->username)
+			g_string_append(url, parsed_url->username);
 		g_string_append_printf(url, ":%s", parsed_url->password);
 		g_string_append(url, "@");
 		before_host_printed = TRUE;
@@ -2276,6 +3010,62 @@ static gchar * purple_http_url_print(PurpleHttpURL *parsed_url)
 		g_string_append_printf(url, "#%s", parsed_url->fragment);
 
 	return g_string_free(url, FALSE);
+}
+
+const gchar *
+purple_http_url_get_protocol(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->protocol;
+}
+
+const gchar *
+purple_http_url_get_username(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->username;
+}
+
+const gchar *
+purple_http_url_get_password(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->password;
+}
+
+const gchar *
+purple_http_url_get_host(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->host;
+}
+
+int
+purple_http_url_get_port(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, 0);
+
+	return parsed_url->port;
+}
+
+const gchar *
+purple_http_url_get_path(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->path;
+}
+
+const gchar *
+purple_http_url_get_fragment(const PurpleHttpURL *parsed_url)
+{
+	g_return_val_if_fail(parsed_url != NULL, NULL);
+
+	return parsed_url->fragment;
 }
 
 /*** HTTP Subsystem ***********************************************************/
@@ -2323,6 +3113,7 @@ void purple_http_init(void)
 	purple_http_hc_by_ptr = g_hash_table_new(g_direct_hash, g_direct_equal);
 	purple_http_hc_by_gc = g_hash_table_new_full(g_direct_hash,
 		g_direct_equal, NULL, (GDestroyNotify)g_list_free);
+	purple_http_cancelling_gc = g_hash_table_new(g_direct_hash, g_direct_equal);
 }
 
 static void purple_http_foreach_conn_cancel(gpointer _hc, gpointer user_data)
@@ -2355,4 +3146,6 @@ void purple_http_uninit(void)
 	purple_http_hc_by_gc = NULL;
 	g_hash_table_destroy(purple_http_hc_by_ptr);
 	purple_http_hc_by_ptr = NULL;
+	g_hash_table_destroy(purple_http_cancelling_gc);
+	purple_http_cancelling_gc = NULL;
 }

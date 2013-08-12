@@ -47,15 +47,15 @@ _URIHANDLERSSECTIONTITLE=URI Handlers
 #Installer Subsection Text
 _PIDGINSPELLCHECKSECTIONTITLE=Spellchecking Support
 # $R3 will display the URL that the Dictionary failed to download from
-_PIDGINSPELLCHECKERROR=Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: http://developer.pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation
+_PIDGINSPELLCHECKERROR=Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: https://developer.pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation
 #Installer Subsection Detailed Description
 _PIDGINSPELLCHECKSECTIONDESCRIPTION=Support for Spellchecking.  (Internet connection required for installation)
 
 # $R2 will display the URL that the Debug Symbols failed to download from
-_PIDGINDEBUGSYMBOLSERROR=Error Installing Debug Symbols ($R2).$\rIf retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ .
+_PIDGINDEBUGSYMBOLSERROR=Error Installing Debug Symbols ($R2).$\rIf retrying fails, you may need to use the 'Offline Installer' from https://pidgin.im/download/windows/ .
 
 # $R2 will display the URL that the GTK+ Runtime failed to download from
-_PIDGINGTKDOWNLOADERROR=Error Downloading the GTK+ Runtime ($R2).$\rThis is required for Pidgin to function; if retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ .
+_PIDGINGTKDOWNLOADERROR=Error Downloading the GTK+ Runtime ($R2).$\rThis is required for Pidgin to function; if retrying fails, you may need to use the 'Offline Installer' from https://pidgin.im/download/windows/ .
 
 _PIDGINUNINSTALLERROR1=The uninstaller could not find registry entries for Pidgin.$\rIt is likely that another user installed this application.
 _PIDGINUNINSTALLERROR2=You do not have permission to uninstall this application.

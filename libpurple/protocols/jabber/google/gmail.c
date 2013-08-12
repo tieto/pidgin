@@ -188,7 +188,7 @@ void jabber_gmail_init(JabberStream *js) {
 		return;
 
 	/*
-	 * Quoting http://code.google.com/apis/talk/jep_extensions/usersettings.html:
+	 * Quoting https://developers.google.com/talk/jep_extensions/usersettings:
 	 * To ensure better compatibility with other clients, rather than
 	 * setting this value to "false" to turn off notifications, it is
 	 * recommended that a client set this to "true" and filter incoming

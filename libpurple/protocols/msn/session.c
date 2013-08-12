@@ -24,7 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 
 #include "error.h"
 #include "msnutils.h"
@@ -41,6 +41,8 @@ msn_session_new(PurpleAccount *account)
 
 	session = g_new0(MsnSession, 1);
 
+	session->http_reqs = purple_http_connection_set_new();
+
 	session->account = account;
 	session->notification = msn_notification_new(session);
 	session->userlist = msn_userlist_new(session);
@@ -55,6 +57,8 @@ msn_session_new(PurpleAccount *account)
 
 	session->guid = rand_guid();
 
+	session->soap = msn_soap_service_new(session);
+
 	return session;
 }
 
@@ -65,19 +69,12 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
-	while (session->url_datas) {
-		purple_util_fetch_url_cancel(session->url_datas->data);
-		session->url_datas = g_slist_delete_link(session->url_datas, session->url_datas);
-	}
+	purple_http_connection_set_destroy(session->http_reqs);
 
 	if (session->connected)
 		msn_session_disconnect(session);
 
-	if (session->soap_cleanup_handle)
-		purple_timeout_remove(session->soap_cleanup_handle);
-
-	if (session->soap_table != NULL)
-		g_hash_table_destroy(session->soap_table);
+	msn_soap_service_destroy(session->soap);
 
 	while (session->slplinks != NULL)
 		msn_slplink_unref(session->slplinks->data);
@@ -385,7 +382,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			msg = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
+				purple_account_set_password(session->account, NULL, NULL, NULL);
 			break;
 		case MSN_ERROR_SERV_UNAVAILABLE:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
@@ -405,7 +402,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 								  _("Unknown error") : info);
 			/* Clear the password if it isn't being saved */
 			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
+				purple_account_set_password(session->account, NULL, NULL, NULL);
 			break;
 		case MSN_ERROR_BAD_BLIST:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;

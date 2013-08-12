@@ -36,9 +36,9 @@
     - qpe       - A plugin for the (now-abandoned) Qutopia user interface.
 
   The @em username must be a unique identifier for you. It
-  @em should be your http://developer.pidgin.im Trac user ID. Failing that, you
+  @em should be your https://developer.pidgin.im Trac user ID. Failing that, you
   could use your SourceForge user ID or your Freenode IRC nickname, if you
-  have either. The http://developer.pidgin.im Trac user ID is preferred.
+  have either. The https://developer.pidgin.im Trac user ID is preferred.
   Do @em not leave this field blank!
 
   The @em pluginname is the name of your plugin. It is usually all

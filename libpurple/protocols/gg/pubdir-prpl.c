@@ -30,8 +30,8 @@
 #include "pubdir-prpl.h"
 
 #include <debug.h>
+#include <http.h>
 #include <request.h>
-#include <obsolete.h>
 
 #include "oauth/oauth-purple.h"
 #include "xml.h"
@@ -63,9 +63,8 @@ void ggp_pubdir_record_free(ggp_pubdir_record *records, int count);
 
 static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 	const gchar *token, gpointer _request);
-static void ggp_pubdir_got_data(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message);
+static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data);
 
 static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
@@ -125,9 +124,9 @@ static void ggp_pubdir_set_info_request(PurpleConnection *gc,
 	PurpleRequestFields *fields);
 static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 	const gchar *token, gpointer _record);
-static void ggp_pubdir_set_info_got_response(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message);
+
+static void ggp_pubdir_set_info_got_response(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data);
 
 /******************************************************************************/
 
@@ -197,9 +196,8 @@ void ggp_pubdir_get_info(PurpleConnection *gc, uin_t uin,
 static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 	const gchar *token, gpointer _request)
 {
-	gchar *http_request;
+	PurpleHttpRequest *req;
 	ggp_pubdir_request *request = _request;
-	gchar *url;
 
 	if (!token || !PURPLE_CONNECTION_IS_VALID(gc))
 	{
@@ -208,40 +206,35 @@ static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 		return;
 	}
 
-	url = g_strdup_printf("http://api.gadu-gadu.pl/users/%u",
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req,
+		"http://api.gadu-gadu.pl/users/%u",
 		request->params.user_info.uin);
-	http_request = g_strdup_printf(
-		"GET /users/%u HTTP/1.1\r\n"
-		"Host: api.gadu-gadu.pl\r\n"
-		"%s\r\n"
-		"\r\n",
-		request->params.user_info.uin,
-		token);
-	
-	purple_util_fetch_url_request(purple_connection_get_account(gc), url,
-		FALSE, NULL, TRUE, http_request, FALSE, -1,
-		ggp_pubdir_got_data, request);
-	
-	g_free(url);
-	g_free(http_request);
+	purple_http_request_header_set(req, "Authorization", token);
+	purple_http_request(gc, req, ggp_pubdir_got_data, request);
+	purple_http_request_unref(req);
 }
 
-static void ggp_pubdir_got_data(PurpleUtilFetchUrlData *url_data,
-	gpointer _request, const gchar *url_text, gsize len,
-	const gchar *error_message)
+static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _request)
 {
 	ggp_pubdir_request *request = _request;
 	PurpleConnection *gc = request->gc;
 	gboolean succ = TRUE;
 	xmlnode *xml;
+	const gchar *xml_raw;
 	unsigned int status, next_offset;
 	int record_count, i;
 	ggp_pubdir_record *records;
 
-	//TODO: verbose
-	//purple_debug_misc("gg", "ggp_pubdir_got_data: [%s]\n", url_text);
+	xml_raw = purple_http_response_get_data(response, NULL);
 
-	xml = xmlnode_from_str(url_text, -1);
+	if (purple_debug_is_verbose() && purple_debug_is_unsafe()) {
+		purple_debug_misc("gg", "ggp_pubdir_got_data: xml=[%s]\n",
+			xml_raw);
+	}
+
+	xml = xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_pubdir_got_data: "
@@ -646,9 +639,8 @@ static void ggp_pubdir_search_execute(PurpleConnection *gc,
 static void ggp_pubdir_search_got_token(PurpleConnection *gc,
 	const gchar *token, gpointer _request)
 {
-	gchar *http_request;
+	PurpleHttpRequest *req;
 	ggp_pubdir_request *request = _request;
-	gchar *url;
 	gchar *query;
 
 	if (!token || !PURPLE_CONNECTION_IS_VALID(gc))
@@ -661,21 +653,14 @@ static void ggp_pubdir_search_got_token(PurpleConnection *gc,
 	purple_debug_misc("gg", "ggp_pubdir_search_got_token\n");
 
 	query = ggp_pubdir_search_make_query(request->params.search_form);
-	url = g_strdup_printf("http://api.gadu-gadu.pl%s", query);
-	http_request = g_strdup_printf(
-		"GET %s HTTP/1.1\r\n"
-		"Host: api.gadu-gadu.pl\r\n"
-		"%s\r\n"
-		"\r\n",
-		query, token);
+
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_url_printf(req, "http://api.gadu-gadu.pl%s", query);
+	purple_http_request_header_set(req, "Authorization", token);
+	purple_http_request(gc, req, ggp_pubdir_got_data, request);
+	purple_http_request_unref(req);
+
 	g_free(query);
-	
-	purple_util_fetch_url_request(purple_connection_get_account(gc), url,
-		FALSE, NULL, TRUE, http_request, FALSE, -1,
-		ggp_pubdir_got_data, request);
-	
-	g_free(url);
-	g_free(http_request);
 }
 
 
@@ -933,8 +918,9 @@ static void ggp_pubdir_set_info_request(PurpleConnection *gc,
 static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 	const gchar *token, gpointer _record)
 {
+	PurpleHttpRequest *req;
 	ggp_pubdir_record *record = _record;
-	gchar *request, *request_data, *url;
+	gchar *request_data;
 	gchar *name, *surname, *city;
 	uin_t uin = record->uin;
 
@@ -963,37 +949,39 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 		record->gender,
 		city,
 		record->province);
-	
-	//TODO: verbose
-	//purple_debug_misc("gg", "ggp_pubdir_set_info_got_token: query [%s]\n",
-	//	request_data);
 
-	url = g_strdup_printf("http://api.gadu-gadu.pl/users/%u.xml", uin);
-	request = g_strdup_printf(
-		"PUT /users/%u.xml HTTP/1.1\r\n"
-		"Host: api.gadu-gadu.pl\r\n"
-		"%s\r\n"
-		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
-		"Content-Type: application/x-www-form-urlencoded\r\n"
-		"\r\n%s",
-		uin, token, strlen(request_data), request_data);
+	if (purple_debug_is_verbose() && purple_debug_is_unsafe()) {
+		purple_debug_misc("gg", "ggp_pubdir_set_info_got_token: "
+			"query [%s]\n", request_data);
+	}
 
-	purple_util_fetch_url_request(purple_connection_get_account(gc), url,
-		FALSE, NULL, TRUE, request, FALSE, -1,
-		ggp_pubdir_set_info_got_response, NULL);
+	req = purple_http_request_new(NULL);
+	purple_http_request_set_method(req, "PUT");
+	purple_http_request_set_url_printf(req,
+		"http://api.gadu-gadu.pl/users/%u.xml", uin);
+	purple_http_request_header_set(req, "Authorization", token);
+	purple_http_request_header_set(req, "Content-Type",
+		"application/x-www-form-urlencoded");
+	purple_http_request_set_contents(req, request_data, -1);
+	purple_http_request(gc, req, ggp_pubdir_set_info_got_response, NULL);
+	purple_http_request_unref(req);
 
-	g_free(request);
 	g_free(request_data);
-	g_free(url);
 	ggp_pubdir_record_free(record, 1);
 }
 
-static void ggp_pubdir_set_info_got_response(PurpleUtilFetchUrlData *url_data,
-	gpointer user_data, const gchar *url_text, gsize len,
-	const gchar *error_message)
+static void ggp_pubdir_set_info_got_response(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer user_data)
 {
-	purple_debug_info("gg", "ggp_pubdir_set_info_got_response: [%s]\n", url_text);
-	//<result><status>0</status></result>
-	
-	//TODO: notify about failure
+	if (!purple_http_response_is_successful(response)) {
+		purple_debug_error("gg", "ggp_pubdir_set_info_got_response: "
+			"failed\n");
+		return;
+	}
+
+	purple_debug_info("gg", "ggp_pubdir_set_info_got_response: [%s]\n",
+		purple_http_response_get_data(response, NULL));
+	/* <result><status>0</status></result> */
+
+	/* TODO: notify about failure */
 }

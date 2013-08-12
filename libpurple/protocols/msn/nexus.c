@@ -352,7 +352,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	if (!nexus_parse_collection(nexus, -1,
-	                            xmlnode_get_child(resp->xml,
+	                            xmlnode_get_child(msn_soap_message_get_xml(resp),
 	                                              "Body/RequestSecurityTokenResponseCollection"))) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
@@ -375,8 +375,6 @@ msn_nexus_connect(MsnNexus *nexus)
 	GString *domains;
 	char *request;
 	int i;
-
-	MsnSoapMessage *soap;
 
 	purple_debug_info("msn", "Starting Windows Live ID authentication\n");
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
@@ -409,10 +407,11 @@ msn_nexus_connect(MsnNexus *nexus)
 	g_free(password_xml);
 	g_string_free(domains, TRUE);
 
-	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
+	msn_soap_service_send_message(session->soap,
+		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		MSN_SSO_SERVER, SSO_POST_URL, TRUE,
+		nexus_got_response_cb, nexus);
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
-	                      nexus_got_response_cb, nexus);
 }
 
 static void
@@ -438,7 +437,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
-	enckey = xmlnode_get_child(resp->xml, "Header/Security/DerivedKeyToken");
+	enckey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
 	while (enckey) {
 		if (g_str_equal(xmlnode_get_attrib(enckey, "Id"), "EncKey"))
 			break;
@@ -467,7 +466,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 #endif
 
-	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
+	tmp = xmlnode_get_data(xmlnode_get_child(msn_soap_message_get_xml(resp),
 		"Body/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		char *unescaped;
@@ -532,7 +531,6 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	guchar signature[20];
 
 	char *request;
-	MsnSoapMessage *soap;
 
 	update = g_new0(MsnNexusUpdateCallback, 1);
 	update->cb = cb;
@@ -623,10 +621,10 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	g_free(signedinfo);
 	g_free(domain);
 
-	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
-	                      nexus_got_update_cb, ud);
+	msn_soap_service_send_message(session->soap,
+		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		MSN_SSO_SERVER, SSO_POST_URL, TRUE, nexus_got_update_cb, ud);
 }
 
 GHashTable *

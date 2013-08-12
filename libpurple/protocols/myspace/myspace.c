@@ -363,7 +363,7 @@ static const gchar *
 msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
 	/* Use a MySpace icon submitted by hbons at
-	 * http://developer.pidgin.im/wiki/MySpaceIM. */
+	 * https://developer.pidgin.im/wiki/MySpaceIM. */
 	return "myspace";
 }
 
@@ -704,7 +704,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
 	response_len = 0;
-	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_account_get_password(account), &response_len);
+	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_connection_get_password(session->gc), &response_len);
 
 	g_free(nc);
 
@@ -1835,9 +1835,9 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_INCORRECT_PASSWORD: /* Incorrect password */
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
-				if (purple_account_get_password(session->account) && (strlen(purple_account_get_password(session->account)) > MSIM_MAX_PASSWORD_LENGTH)) {
+				if (purple_connection_get_password(session->gc) && (strlen(purple_connection_get_password(session->gc)) > MSIM_MAX_PASSWORD_LENGTH)) {
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
@@ -1845,7 +1845,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 							"maximum length of %d.  Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg,
-							(gsize)strlen(purple_account_get_password(session->account)),
+							(gsize)strlen(purple_connection_get_password(session->gc)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */
@@ -1860,7 +1860,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			case MSIM_ERROR_LOGGED_IN_ELSEWHERE: /* Logged in elsewhere */
 				reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 				if (!purple_account_get_remember_password(session->account))
-					purple_account_set_password(session->account, NULL);
+					purple_account_set_password(session->account, NULL, NULL, NULL);
 				break;
 		}
 		purple_connection_error(session->gc, reason, full_errmsg);
@@ -3211,7 +3211,7 @@ static PurplePluginInfo info = {
 	                                                  /**  description    */
 	"MySpaceIM Protocol Plugin",
 	"Jeff Connelly <jeff2@soc.pidgin.im>",            /**< author         */
-	"http://developer.pidgin.im/wiki/MySpaceIM/",     /**< homepage       */
+	"https://developer.pidgin.im/wiki/MySpaceIM/",    /**< homepage       */
 
 	msim_load,                                        /**< load           */
 	NULL,                                             /**< unload         */
@@ -3363,93 +3363,6 @@ msim_test_all(void)
 	} else {
 		purple_debug_info("msim", "msim_test_all - all tests passed!\n");
 	}
-	exit(0);
-}
-#endif
-
-#ifdef MSIM_CHECK_NEWER_VERSION
-/**
- * Callback for when a currentversion.txt has been downloaded.
- */
-static void
-msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
-		gpointer user_data,
-		const gchar *url_text,
-		gsize len,
-		const gchar *error_message)
-{
-	GKeyFile *keyfile;
-	GError *error;
-	GString *data;
-	gchar *newest_filever;
-
-	if (!url_text) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"got error: %s\n", error_message);
-		return;
-	}
-
-	purple_debug_info("msim_check_newer_version_cb",
-			"url_text=%s\n", url_text ? url_text : "(NULL)");
-
-	/* Prepend [group] so that GKeyFile can parse it (requires a group). */
-	data = g_string_new(url_text);
-	purple_debug_info("msim", "data=%s\n", data->str
-			? data->str : "(NULL)");
-	data = g_string_prepend(data, "[group]\n");
-
-	purple_debug_info("msim", "data=%s\n", data->str
-			? data->str : "(NULL)");
-
-	/* url_text is variable=data\n...†*/
-
-	/* Check FILEVER, 1.0.716.0. 716 is build, MSIM_CLIENT_VERSION */
-	/* New (english) version can be downloaded from SETUPURL+SETUPFILE */
-
-	error = NULL;
-	keyfile = g_key_file_new();
-
-	/* Default list seperator is ;, but currentversion.txt doesn't have
-	 * these, so set to an unused character to avoid parsing problems. */
-	g_key_file_set_list_separator(keyfile, '\0');
-
-	g_key_file_load_from_data(keyfile, data->str, data->len,
-				G_KEY_FILE_NONE, &error);
-	g_string_free(data, TRUE);
-
-	if (error != NULL) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"couldn't parse, error: %d %d %s\n",
-				error->domain, error->code, error->message);
-		g_error_free(error);
-		return;
-	}
-
-	gchar **ks;
-	guint n;
-	ks = g_key_file_get_keys(keyfile, "group", &n, NULL);
-	purple_debug_info("msim", "n=%d\n", n);
-	guint i;
-	for (i = 0; ks[i] != NULL; ++i)
-	{
-		purple_debug_info("msim", "%d=%s\n", i, ks[i]);
-	}
-
-	newest_filever = g_key_file_get_string(keyfile, "group",
-			"FILEVER", &error);
-
-	purple_debug_info("msim_check_newer_version_cb",
-			"newest filever: %s\n", newest_filever ?
-			newest_filever : "(NULL)");
-	if (error != NULL) {
-		purple_debug_info("msim_check_newer_version_cb",
-				"error: %d %d %s\n",
-				error->domain, error->code, error->message);
-		g_error_free(error);
-	}
-
-	g_key_file_free(keyfile);
-
 	exit(0);
 }
 #endif
@@ -3614,17 +3527,6 @@ init_plugin(PurplePlugin *plugin)
 
 	PurpleAccountOption *option;
 	static gboolean initialized = FALSE;
-
-#ifdef MSIM_CHECK_NEWER_VERSION
-	/* PROBLEM: MySpace's servers always return Content-Location, and
-	 * libpurple redirects to it, infinitely, even though it is the same
-	 * location we requested! */
-	purple_util_fetch_url("http://im.myspace.com/nsis/currentversion.txt",
-			FALSE, /* not full URL */
-			"MSIMAutoUpdateAgent", /* user agent */
-			TRUE,  /* use HTTP/1.1 */
-			msim_check_newer_version_cb, NULL);
-#endif
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */

@@ -43,7 +43,6 @@ C_SRC =			actions.c \
 			cipher.c \
 			filexfer.c \
 			formcmds.c \
-			http.c \
 			login.c \
 			markup.c \
 			multimx.c \

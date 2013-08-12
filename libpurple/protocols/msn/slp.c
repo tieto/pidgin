@@ -24,7 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 
 #include "slp.h"
 #include "slpcall.h"
@@ -171,23 +171,25 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 }
 
 static void
-fetched_user_display(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-	const gchar *url_text, gsize len, const gchar *error_message)
+fetched_user_display(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _data)
 {
-	MsnFetchUserDisplayData *data = user_data;
+	MsnFetchUserDisplayData *data = _data;
 	MsnSession *session = data->session;
 
-	session->url_datas = g_slist_remove(session->url_datas, url_data);
+	if (purple_http_response_is_successful(response)) {
+		size_t len;
+		const gchar *icon_data;
 
-	if (url_text) {
-		purple_buddy_icons_set_for_user(session->account, data->remote_user,
-		                                g_memdup(url_text, len), len,
-		                                data->sha1);
+		icon_data = purple_http_response_get_data(response, &len);
+		purple_buddy_icons_set_for_user(session->account,
+			data->remote_user, g_memdup(icon_data, len), len,
+			data->sha1);
 	}
 
 	end_user_display(NULL, session);
 
-	g_free(user_data);
+	g_free(data);
 }
 
 static void
@@ -249,14 +251,18 @@ msn_request_user_display(MsnUser *user)
 	{
 		const char *url = msn_object_get_url1(obj);
 		if (url) {
+			PurpleHttpRequest *req;
 			MsnFetchUserDisplayData *data = g_new0(MsnFetchUserDisplayData, 1);
-			PurpleUtilFetchUrlData *url_data;
 			data->session = session;
 			data->remote_user = user->passport;
 			data->sha1 = info;
-			url_data = purple_util_fetch_url(url, TRUE, NULL, TRUE, 200*1024,
-			                                     fetched_user_display, data);
-			session->url_datas = g_slist_prepend(session->url_datas, url_data);
+
+			req = purple_http_request_new(url);
+			purple_http_request_set_max_len(req, 200*1024);
+			purple_http_connection_set_add(session->http_reqs,
+				purple_http_request(NULL, req,
+					fetched_user_display, data));
+			purple_http_request_unref(req);
 		} else {
 			msn_slplink_request_object(slplink, info, got_user_display,
 			                           end_user_display, obj);

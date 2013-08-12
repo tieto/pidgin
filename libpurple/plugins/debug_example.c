@@ -113,7 +113,7 @@ static PurplePluginInfo info = {
 	"Debug API Example",        /* summary */
 	"Debug API Example",        /* description */
 	PLUGIN_AUTHOR,              /* author */
-	"http://pidgin.im",         /* homepage */
+	"https://pidgin.im",         /* homepage */
 
 	plugin_load,                /* load */
 	NULL,                       /* unload */

@@ -35,6 +35,7 @@
 #include "cipher.h"
 #include "debug.h"
 #include "dnsquery.h"
+#include "http.h"
 #include "notify.h"
 #include "ntlm.h"
 #include "prefs.h"
@@ -914,9 +915,6 @@ proxy_do_write(gpointer data, gint source, PurpleInputCondition cond)
 	connect_data->inpa = purple_input_add(connect_data->fd,
 			PURPLE_INPUT_READ, connect_data->read_cb, connect_data);
 }
-
-#define HTTP_GOODSTRING "HTTP/1.0 200"
-#define HTTP_GOODSTRING2 "HTTP/1.1 200"
 
 /**
  * We're using an HTTP proxy for a non-port 80 tunnel.  Read the
@@ -2272,44 +2270,39 @@ purple_proxy_get_setup(PurpleAccount *account)
 	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
-			(tmp = g_getenv("HTTPPROXY")) != NULL) {
-			char *proxyhost, *proxyuser, *proxypasswd;
-			int proxyport;
+			(tmp = g_getenv("HTTPPROXY")) != NULL)
+		{
+			PurpleHttpURL *url;
 
 			/* http_proxy-format:
 			 * export http_proxy="http://user:passwd@your.proxy.server:port/"
 			 */
-			if(purple_url_parse(tmp, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
-				purple_proxy_info_set_host(gpi, proxyhost);
-				g_free(proxyhost);
-
-				purple_proxy_info_set_username(gpi, proxyuser);
-				g_free(proxyuser);
-
-				purple_proxy_info_set_password(gpi, proxypasswd);
-				g_free(proxypasswd);
-
-				/* only for backward compatibility */
-				if (proxyport == 80 &&
-				    ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
-				     (tmp = g_getenv("http_proxy_port")) != NULL ||
-				     (tmp = g_getenv("HTTPPROXYPORT")) != NULL))
-					proxyport = atoi(tmp);
-
-				purple_proxy_info_set_port(gpi, proxyport);
-
-				/* XXX: Do we want to skip this step if user/password were part of url? */
-				if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
-					(tmp = g_getenv("http_proxy_user")) != NULL ||
-					(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
-					purple_proxy_info_set_username(gpi, tmp);
-
-				if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
-					(tmp = g_getenv("http_proxy_pass")) != NULL ||
-					(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
-					purple_proxy_info_set_password(gpi, tmp);
-
+			url = purple_http_url_parse(tmp);
+			if (!url) {
+				purple_debug_warning("proxy", "Couldn't parse URL\n");
+				return gpi;
 			}
+
+			purple_proxy_info_set_host(gpi, purple_http_url_get_host(url));
+			purple_proxy_info_set_username(gpi, purple_http_url_get_username(url));
+			purple_proxy_info_set_password(gpi, purple_http_url_get_password(url));
+			purple_proxy_info_set_port(gpi, purple_http_url_get_port(url));
+
+			/* XXX: Do we want to skip this step if user/password/port were part of url? */
+			if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
+				(tmp = g_getenv("http_proxy_user")) != NULL ||
+				(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
+				purple_proxy_info_set_username(gpi, tmp);
+
+			if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
+				(tmp = g_getenv("http_proxy_pass")) != NULL ||
+				(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
+				purple_proxy_info_set_password(gpi, tmp);
+
+			if ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
+				(tmp = g_getenv("http_proxy_port")) != NULL ||
+				(tmp = g_getenv("HTTPPROXYPORT")) != NULL)
+				purple_proxy_info_set_port(gpi, atoi(tmp));
 		} else {
 #ifdef _WIN32
 			PurpleProxyInfo *wgpi;

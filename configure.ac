@@ -110,6 +110,7 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_CXX
 LT_PREREQ([2.2.6])
 LT_INIT([disable-static])
 LIBTOOL="$LIBTOOL --silent"
@@ -1487,6 +1488,7 @@ if test "x$GCC" = "xyes"; then
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
+DEBUG_CPPFLAGS=`echo "$DEBUG_CFLAGS" | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//' | $sedpath 's/-Waggregate-return//'`
 
 if test "x$SUNCC" = "xyes"; then
         CFLAGS="$CFLAGS -features=extensions" 
@@ -1540,6 +1542,166 @@ Use --disable-nm if you do not need NetworkManager support.
 else
 	enable_nm=no
 fi
+
+dnl #######################################################################
+dnl # Check for Secret Service headers
+dnl #######################################################################
+
+# disabled - see secretservice.c
+#AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
+
+#if test "x$enable_secret_service" = "xyes" ; then
+#	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
+#		AC_SUBST(SECRETSERVICE_CFLAGS)
+#		AC_SUBST(SECRETSERVICE_LIBS)
+#		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+#	])
+#fi
+
+#AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
+AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x1" = "x2")
+
+dnl #######################################################################
+dnl # Check for GNOME Keyring headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
+
+if test "x$enable_gnome_keyring" = "xyes" ; then
+	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
+		AC_SUBST(GNOMEKEYRING_CFLAGS)
+		AC_SUBST(GNOMEKEYRING_LIBS)
+		AC_DEFINE(HAVE_GNOMEKEYRING, 1, [Define if we have GNOME Keyring.])
+	], [
+		AC_MSG_RESULT(no)
+		enable_gnome_keyring="no"
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNOME Keyring development headers not found
+Use --disable-gnome-keyring if you do not need it.
+])
+		fi
+	])
+fi
+
+AM_CONDITIONAL(ENABLE_GNOMEKEYRING, test "x$enable_gnome_keyring" = "xyes")
+
+dnl #######################################################################
+dnl # Check for KWallet headers
+dnl #######################################################################
+
+AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [disable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
+AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
+AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
+
+if test "x$enable_kwallet" = "xyes"; then
+	dnl Ensure C++ compiler works
+	AC_CHECK_PROG(CXXTEST, [$CXX], [$CXX])
+	if test "x$CXXTEST" = "x"; then
+		enable_kwallet=no
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
+A C++ compiler was not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		fi
+	fi
+fi
+
+AC_LANG_PUSH([C++])
+CPPFLAGS_save="$CPPFLAGS"
+LDFLAGS_save="$LDFLAGS"
+
+if test "x$enable_kwallet" = "xyes"; then
+	PKG_CHECK_MODULES(QT4, [QtCore], [
+		AC_SUBST(QT4_CFLAGS)
+		AC_SUBST(QT4_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_kwallet=no
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
+Qt4 development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		fi
+	])
+fi
+
+if test "x$enable_kwallet" = "xyes"; then
+	AC_MSG_CHECKING([for metaobject compiler])
+	MOC=`$PKG_CONFIG --variable=moc_location QtCore`
+	AC_SUBST(MOC)
+	AC_MSG_RESULT([$MOC])
+
+	KWALLET_CXXFLAGS=""
+	KWALLET_LIBS=""
+	if test -z "$with_kwallet_includes" || test -z "$with_kwallet_libs"; then
+		AC_CHECK_PROG(KDE4_CONFIG, kde4-config, kde4-config, no)
+		if test "x$KDE4_CONFIG" = "xno"; then
+			enable_kwallet=no
+			if test "x$force_deps" = "xyes"; then
+				AC_MSG_ERROR([
+kde4-config not found. $KDE4_CONFIG
+Use --disable-kwallet if you do not need KWallet support.
+Use --with-kwallet-includes and --with-kwallet-libs to set up includes manually.
+])
+			fi
+		fi
+	fi
+fi
+
+if test "x$enable_kwallet" = "xyes"; then
+	if test "$ac_kwallet_includes" != "no"; then
+		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
+	elif test "x$KDE4_CONFIG" != "xno"; then
+		KWALLET_CXXFLAGS="-I`$KDE4_CONFIG --path include`"
+	fi
+	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
+	AC_CHECK_HEADER([kwallet.h], , [
+		enable_kwallet=no
+		if test "x$force_deps" = "xyes"; then
+			AC_MSG_ERROR([
+KWallet development headers not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+		fi
+])
+fi
+
+if test "x$enable_kwallet" = "xyes"; then
+	AC_MSG_CHECKING([for KWallet libraries])
+	if test "$ac_kwallet_libs" != "no"; then
+		KWALLET_LIBS="-L$ac_kwallet_libs -lkdeui"
+	elif test "x$KDE4_CONFIG" != "xno"; then
+		KWALLET_LIBS="-L`$KDE4_CONFIG --install lib`/kde4/devel -lkdeui"
+	else
+		KWALLET_LIBS="-lkdeui"
+	fi
+	KWALLET_LIBS="$KWALLET_LIBS"
+	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
+		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
+		[
+			AC_MSG_RESULT(no)
+			enable_kwallet=no
+			if test "x$force_deps" = "xyes"; then
+				AC_MSG_ERROR([
+KWallet development libraries not found.
+Use --disable-kwallet if you do not need KWallet support.
+])
+			fi
+		])
+fi
+
+CPPFLAGS="$CPPFLAGS_save"
+LDFLAGS="$LDFLAGS_save"
+AC_LANG_POP
+
+AC_SUBST(KWALLET_CXXFLAGS)
+AC_SUBST(KWALLET_LIBS)
+
+AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Python
@@ -2437,6 +2599,7 @@ if test "$ac_cv_cygwin" = yes ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AC_SUBST(DEBUG_CPPFLAGS)
 AC_SUBST(DEBUG_CFLAGS)
 AC_SUBST(LDADD)
 AC_SUBST(LIBS)
@@ -2715,6 +2878,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/purple-3.pc
 		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
+		   libpurple/plugins/keyrings/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
 		   libpurple/plugins/mono/loader/Makefile
@@ -2797,6 +2961,10 @@ echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with GCR widgets........ : $enable_gcr
+echo
+echo Build with GNOME Keyring...... : $enable_gnome_keyring
+echo Build with KWallet............ : $enable_kwallet
+#echo Build with Secret Service..... : $enable_secret_service
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono

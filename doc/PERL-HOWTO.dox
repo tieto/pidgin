@@ -19,7 +19,7 @@ use Purple;
 	summary => "Test plugin for the Perl interpreter.",
 	description => "Your description here",
 	author => "John H. Kelm <johnhkelm\@gmail.com",
-	url => "http://pidgin.im",
+	url => "https://pidgin.im",
 
 	load => "plugin_load",
 	unload => "plugin_unload"

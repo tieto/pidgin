@@ -50,6 +50,7 @@ typedef void (*PurpleGetPublicAliasFailureCallback)(PurpleAccount *account, cons
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
+#include "keyring.h"
 
 /**
  * Account request types.
@@ -364,10 +365,18 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
 /**
  * Sets the account's password.
  *
+ * The password in the keyring might not be immediately updated, but the cached
+ * version will be, and it is therefore safe to read the password back before
+ * the callback has been triggered. One can also set a NULL callback if
+ * notification of saving to the keyring is not required.
+ *
  * @param account  The account.
  * @param password The password.
+ * @param cb       A callback for once the password is saved.
+ * @param data     A pointer to be passed to the callback.
  */
-void purple_account_set_password(PurpleAccount *account, const char *password);
+void purple_account_set_password(PurpleAccount *account, const gchar *password,
+	PurpleKeyringSaveCallback cb, gpointer data);
 
 /**
  * Sets the account's alias.
@@ -675,13 +684,19 @@ gboolean purple_account_is_disconnected(const PurpleAccount *account);
 const char *purple_account_get_username(const PurpleAccount *account);
 
 /**
- * Returns the account's password.
+ * Reads the password for the account.
+ *
+ * This is an asynchronous call, that will return the password in a callback
+ * once it has been read from the keyring. If the account is connected, and you
+ * require the password immediately, then consider using @ref
+ * purple_connection_get_password instead.
  *
  * @param account The account.
- *
- * @return The password.
+ * @param cb      The callback to give the password.
+ * @param data    A pointer passed to the callback.
  */
-const char *purple_account_get_password(const PurpleAccount *account);
+void purple_account_get_password(PurpleAccount *account,
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
  * Returns the account's alias.

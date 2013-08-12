@@ -361,7 +361,7 @@ static void mxit_change_pin_cb( PurpleConnection* gc, PurpleRequestFields* field
 out:
 	if ( !err ) {
 		/* update PIN in account */
-		purple_account_set_password( session->acc, pin );
+		purple_account_set_password( session->acc, pin, NULL, NULL );
 
 		/* update session object */
 		g_free( session->encpwd );
@@ -385,7 +385,6 @@ out:
 static void mxit_change_pin_action( PurplePluginAction* action )
 {
 	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= purple_connection_get_protocol_data( gc );
 
 	PurpleRequestFields*		fields	= NULL;
 	PurpleRequestFieldGroup*	group	= NULL;
@@ -398,12 +397,12 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 	purple_request_fields_add_group( fields, group );
 
 	/* pin */
-	field = purple_request_field_string_new( "pin", _( "PIN" ), purple_account_get_password( session->acc ), FALSE );
+	field = purple_request_field_string_new( "pin", _( "PIN" ), purple_connection_get_password( gc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* verify pin */
-	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), purple_account_get_password( session->acc ), FALSE );
+	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), purple_connection_get_password( gc ), FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 

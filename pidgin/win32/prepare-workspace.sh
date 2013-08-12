@@ -6,7 +6,7 @@
 
 # configuration
 
-BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB"
+BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB 2EA34582882FE334694F0BCD7D8DE336"
 ACTIVEPERL_GUID_PACKED="BC98F31FB8440B94CB3674649419766C 547A2C684F806164DB756F228DAB5840 5E7EC16051106BB43818746C209BC8D7"
 PERL_DIR_FALLBACK="/cygdrive/c/Perl/bin"
 NSIS_DIR_REGKEY="HKEY_LOCAL_MACHINE/SOFTWARE/NSIS/@"
@@ -78,6 +78,10 @@ ARC_GT7="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-devel-2.28.0-1.2.noarch.rpm;gtk: GDK
 ARCHIVES+="ARC_GT7 "
 ARC_GT8="${DOWNLOAD_HOST}mingw32-pango-devel-1.34.0-2.3.noarch.rpm;gtk: Pango;1.34.0-2.3;c875ae60dacf05b642d7da5f289a3c58ff9b0e52;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT8 "
+ARC_GT9="${DOWNLOAD_HOST}mingw32-glib2-2.36.1-1.1.noarch.rpm;gtk: Glib runtimes;2.36.1-1.1;ed468f064f61c5a12b716c83cba8ccbe05d22992;${OBS_SKIP};${GTK_DIR}"
+ARCHIVES+="ARC_GT9 "
+ARC_G10="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm;gtk: libintl;0.18.1.1-13.6;0e6fde8e86788874366f308e25634f95613e906a;${OBS_SKIP};${GTK_DIR}"
+ARCHIVES+="ARC_G10 "
 
 ARC_ENC="${DOWNLOAD_HOST}mingw32-enchant-devel-1.6.0-3.9.noarch.rpm;Enchant;1.6.0-3.9;1daadbb4fbeb06a6ad26bed916dc2a980d971c49;${OBS_SKIP};enchant-1.6"
 ARCHIVES+="ARC_ENC "
@@ -123,6 +127,13 @@ ARCHIVES+="ARC_GTT "
 ARC_GTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm;gettext: libintl;0.18.1.1-13.6;0e6fde8e86788874366f308e25634f95613e906a;${OBS_SKIP};gettext-0.18"
 ARCHIVES+="ARC_GTL "
 
+ARC_VV1="${DOWNLOAD_HOST}mingw32-gstreamer-devel-0.10.36-10.1.noarch.rpm;gstreamer;0.10.36-10.1;a54b53b31a47dd3d4243b8e772553e0b05430aaf;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV1 "
+ARC_VV2="${DOWNLOAD_HOST}mingw32-gst-plugins-base-devel-0.10.36-15.1.noarch.rpm;gst-plugins-base;0.10.36-15.1;5bc0d94abdce4f2f2bafceda8046f01a5b29bd71;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV2 "
+ARC_VV3="${DOWNLOAD_HOST}mingw32-farstream-devel-0.1.2-19.1.noarch.rpm;farstream;0.1.2-19.1;6c9f29de289b661d192c88998ed5bdf17de7bcec;${OBS_SKIP};gstreamer-0.10"
+ARCHIVES+="ARC_VV3 "
+
 # implementation
 
 if [ `uname -o` != "Cygwin" ]; then
@@ -146,6 +157,9 @@ function path_real() {
 function reg_get_path() {
 	reg_ret=""
 	reg_key="/proc/registry/$1"
+	if [ ! -f $reg_key ] ; then
+		reg_key="/proc/registry64/$1"
+	fi
 	if [ -f $reg_key ] ; then
 		path_win32_to_cygwin "`cat ${reg_key}`"
 		reg_ret="${path_ret}"
@@ -318,7 +332,7 @@ if [ ! -e "${PIDGIN_BASE}/ChangeLog" ]; then
 fi
 
 if [ -e "$WIN32DEV_BASE" ] && [ $DEBUG_SKIP_INSTALL == 0 ]; then
-	echo "win32-dev directory exists, please remove it before proceeding"
+	echo "win32-dev directory ($(readlink -f $WIN32DEV_BASE)) exists, please remove it before proceeding"
 	exit 1
 fi
 
@@ -336,7 +350,7 @@ reg_get_install_path "$BONJOUR_GUID_PACKED"
 BONJOUR_SDK_DIR=$reg_ret
 
 if [ "$BONJOUR_SDK_DIR" == "" ]; then
-	echo "Bonjour SDK for Windows v3.0 is not installed, please do it."
+	echo "Bonjour SDK for Windows v3.0/v2.0.4 is not installed, please do it."
 	echo "You can download this SDK from https://developer.apple.com/bonjour/"
 	echo "(Apple ID may be required)."
 	exit 1;

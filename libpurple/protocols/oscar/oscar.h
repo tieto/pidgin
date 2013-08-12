@@ -33,9 +33,9 @@
 #include "circbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
+#include "http.h"
 #include "proxy.h"
 #include "sslconn.h"
-#include "obsolete.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -323,7 +323,7 @@ struct aim_ssi_itemlist {
 struct _OscarData
 {
 	/** Only used when connecting with clientLogin */
-	PurpleUtilFetchUrlData *url_data;
+	PurpleHttpConnection *hc;
 
 	gboolean iconconnecting;
 	gboolean set_icon;
@@ -812,11 +812,6 @@ typedef struct aim_userinfo_s
 
 	struct aim_userinfo_s *next;
 } aim_userinfo_t;
-
-#define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
-#define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
-
-int aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
 
 struct aim_invite_priv
 {

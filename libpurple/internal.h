@@ -150,8 +150,8 @@
 
 #include <glib-object.h>
 
-#define PURPLE_WEBSITE "http://pidgin.im/"
-#define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
+#define PURPLE_WEBSITE "https://pidgin.im/"
+#define PURPLE_DEVEL_WEBSITE "https://developer.pidgin.im/"
 
 
 /* INTERNAL FUNCTIONS */

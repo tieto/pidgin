@@ -450,10 +450,11 @@ void wpurple_init(void) {
 		g_thread_init(NULL);
 #endif
 
-	purple_debug_info("wpurple", "wpurple_init start\n");
-	purple_debug_info("wpurple", "libpurple version: " DISPLAY_VERSION "\n");
+	if (purple_debug_is_verbose())
+		purple_debug_misc("wpurple", "wpurple_init start\n");
 
-	purple_debug_info("wpurple", "Glib:%u.%u.%u\n",
+	purple_debug_info("wpurple", "libpurple version: " DISPLAY_VERSION "\n");
+	purple_debug_info("wpurple", "Glib: %u.%u.%u\n",
 		glib_major_version, glib_minor_version, glib_micro_version);
 
 	/* Winsock init */
@@ -469,7 +470,8 @@ void wpurple_init(void) {
 		WSACleanup();
 	}
 
-	purple_debug_info("wpurple", "wpurple_init end\n");
+	if (purple_debug_is_verbose())
+		purple_debug_misc("wpurple", "wpurple_init end\n");
 }
 
 /* Windows Cleanup */

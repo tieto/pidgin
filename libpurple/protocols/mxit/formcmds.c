@@ -26,7 +26,7 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "obsolete.h"
+#include "http.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -75,24 +75,22 @@ struct ii_url_request
 
 /*------------------------------------------------------------------------
  * Callback function invoked when an inline image request to a web site completes.
- *
- *  @param url_data
- *  @param user_data		The Markup message object
- *  @param url_text			The data returned from the WAP site
- *  @param len				The length of the data returned
- *  @param error_message	Descriptive error message
  */
-static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message)
+static void
+mxit_cb_ii_returned(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
+	gpointer _iireq)
 {
-	struct ii_url_request*	iireq		= (struct ii_url_request*) user_data;
+	struct ii_url_request*	iireq		= _iireq;
 	int*					intptr		= NULL;
 	int						id;
+	const gchar* data;
+	size_t len;
 
 #ifdef	MXIT_DEBUG_COMMANDS
 	purple_debug_info(MXIT_PLUGIN_ID, "Inline Image returned from %s\n", iireq->url);
 #endif
 
-	if (!url_text) {
+	if (!purple_http_response_is_successful(response)) {
 		/* no reply from the WAP site */
 		purple_debug_error(MXIT_PLUGIN_ID, "Error downloading Inline Image from %s.\n", iireq->url);
 		goto done;
@@ -105,7 +103,8 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 	}
 
 	/* we now have the inline image, store a copy in the imagestore */
-	id = purple_imgstore_new_with_id(g_memdup(url_text, len), len, NULL);
+	data = purple_http_response_get_data(response, &len);
+	id = purple_imgstore_new_with_id(g_memdup(data, len), len, NULL);
 
 	/* map the inline image id to purple image id */
 	intptr = g_malloc(sizeof(int));
@@ -360,8 +359,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 				/* send the request for the inline image */
 				purple_debug_info(MXIT_PLUGIN_ID, "sending request for inline image '%s'\n", iireq->url);
 
-				/* request the image (reference: "libpurple/util.h") */
-				purple_util_fetch_url(iireq->url, TRUE, NULL, TRUE, -1, mxit_cb_ii_returned, iireq);
+				purple_http_get(mx->session->con, mxit_cb_ii_returned, iireq, iireq->url);
 				mx->img_count++;
 			}
 		}
