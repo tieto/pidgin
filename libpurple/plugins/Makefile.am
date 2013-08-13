@@ -124,10 +124,12 @@ SUBDIRS = \
 #.PHONY: always
 #
 #$(top_builddir)/libpurple/dbus-types.h: always
-#	cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
+#	@echo -e "  GEN\t$@"
+#	@cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 #
 #dbus-example-bindings.c: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(dbus_example_la_SOURCES)
-#	cat $(srcdir)/$(dbus_example_la_SOURCES) | \
+#	@echo -e "  GEN\t$@"
+#	@cat $(srcdir)/$(dbus_example_la_SOURCES) | \
 #	$(PYTHON) $(top_srcdir)/libpurple/dbus-analyze-functions.py --export-only > $@
 #
 #$(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.c $(top_builddir)/libpurple/dbus-types.h

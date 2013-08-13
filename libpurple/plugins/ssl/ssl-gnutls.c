@@ -386,7 +386,6 @@ static void
 ssl_gnutls_connect(PurpleSslConnection *gsc)
 {
 	PurpleSslGnutlsData *gnutls_data;
-	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 
 	gnutls_data = g_new0(PurpleSslGnutlsData, 1);
 	gsc->private_data = gnutls_data;
@@ -413,8 +412,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_set_default_priority(gnutls_data->session);
 #endif
 
-	gnutls_certificate_type_set_priority(gnutls_data->session,
-		cert_type_priority);
+	gnutls_server_name_set(gnutls_data->session, GNUTLS_NAME_DNS, gsc->host,
+		strlen(gsc->host));
 
 	gnutls_credentials_set(gnutls_data->session, GNUTLS_CRD_CERTIFICATE,
 		xcred);
