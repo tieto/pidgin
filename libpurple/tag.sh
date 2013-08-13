@@ -7,8 +7,9 @@
 tag=$1
 found=0
 object=""
-c_file=""
-xs_file=""
+file_1=""
+file_2=""
+is_final=0
 for arg in "$@"
 do
 	if [ "$found" == 1 ]; then
@@ -21,16 +22,22 @@ do
 	if [ "$tag" == "auto" ] && [ "$arg" == "-shared" ]; then
 		tag="CCLD"
 	fi
-	if [ "$tag" == "PERL" ] && [ "$arg" == "-e" ]; then
-		found=1
+	if [ "$tag" == "PERL" ] && [ "${arg%(*}" == "Mkbootstrap" ]; then
+		object="${arg%;}"
+		is_final=1
+		break
 	fi
 	ext_1=${arg#${arg%??}}
 	if [ "${ext_1}" == ".c" ]; then
-		c_file="$arg"
+		file_1="$arg"
 	fi
 	ext_2=${arg#${arg%???}}
 	if [ "${ext_2}" == ".xs" ]; then
-		xs_file="$arg"
+		file_2="$arg"
+	fi
+	ext_3=${arg#${arg%????}}
+	if [ "${ext_3}" == ".3pm" ]; then
+		file_2="$arg"
 	fi
 done
 
@@ -38,15 +45,15 @@ if [ "$tag" == "auto" ]; then
 	tag="CC"
 fi
 
-if [ "$tag" == "PERL" ]; then
+if [ "$tag" == "PERL" ] && [ "$is_final" == 0 ]; then
 	object=`echo "$object" | sed -n 's|.*output *=> *"\([^"]*\)".*|\1|p'`
 fi
 
-if [ "$object" == "" ] && [ "${c_file}" != "" ]; then
-	object="${c_file}"
+if [ "$object" == "" ] && [ "${file_1}" != "" ]; then
+	object="${file_1}"
 fi
-if [ "$object" == "" ] && [ "${xs_file}" != "" ]; then
-	object="${xs_file}"
+if [ "$object" == "" ] && [ "${file_2}" != "" ]; then
+	object="${file_2}"
 fi
 
 shift 1
