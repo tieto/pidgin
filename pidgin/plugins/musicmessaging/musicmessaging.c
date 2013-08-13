@@ -588,7 +588,9 @@ static void conv_destroyed (PurpleConversation *conv)
 
 static void add_button (MMConversation *mmconv)
 {
+#if 0
 	PurpleConversation *conv = mmconv->conv;
+#endif
 
 	GtkWidget *button, *image, *sep;
 	gchar *file_path;

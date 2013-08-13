@@ -73,11 +73,13 @@ CLEANFILES = \
 	gntmarshal.c
 
 gntmarshal.c: $(srcdir)/genmarshal gntmarshal.h
-	echo "#include \"gntmarshal.h\"" > $@
-	glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/genmarshal >> $@
+	@echo -e "  GEN\t$@"
+	@echo "#include \"gntmarshal.h\"" > $@
+	@glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/genmarshal >> $@
 
 gntmarshal.h: $(srcdir)/genmarshal
-	glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/genmarshal > $@
+	@echo -e "  GEN\t$@"
+	@glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/genmarshal > $@
 
 libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \

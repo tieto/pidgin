@@ -972,8 +972,9 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 		xfer_data->is_relay = (val_249 == 3);
 
 		if (!xfer_data->is_relay) {
+			purple_debug_error("yahoo", "Non-relay FT aren't tested yet.\n");
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
-				_("Non-relay FT aren't tested yet."));
+				_("Unsupported method"));
 			purple_xfer_cancel_remote(xfer);
 		}
 

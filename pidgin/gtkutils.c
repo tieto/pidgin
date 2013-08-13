@@ -249,7 +249,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 	if (editable) {
 		gtk_webviewtoolbar_attach(GTK_WEBVIEWTOOLBAR(toolbar), webview);
 		gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(toolbar), "default");
-		gtk_webview_set_toolbar(webview, toolbar);
+		gtk_webview_set_toolbar(GTK_WEBVIEW(webview), toolbar);
 	}
 	pidgin_setup_webview(webview);
 
