@@ -399,6 +399,19 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	GModule *gkr_module;
+
+	/* libgnome-keyring may crash, if was unloaded before glib main loop
+	 * termination.
+	 */
+	gkr_module = g_module_open("libgnome-keyring", 0);
+	if (gkr_module == NULL) {
+		purple_debug_info("keyring-gnome", "GNOME Keyring module not "
+			"found\n");
+		return FALSE;
+	}
+	g_module_make_resident(gkr_module);
+
 	if (!gnome_keyring_is_available()) {
 		g_set_error(error, GNOMEKEYRING_DOMAIN, 0, "GNOME Keyring service is "
 			"disabled.");
