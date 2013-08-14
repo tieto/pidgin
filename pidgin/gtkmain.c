@@ -88,6 +88,7 @@ static const int catch_sig_list[] = {
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
+	SIGCHLD,
 	-1
 };
 
@@ -182,8 +183,15 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 		return FALSE;
 	}
 
-	purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-	purple_core_quit();
+	switch (sig) {
+		case SIGCHLD:
+			/* Restore signal catching */
+			signal(SIGCHLD, sighandler);
+			break;
+		default:
+			purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+			purple_core_quit();
+	}
 
 	return TRUE;
 }
