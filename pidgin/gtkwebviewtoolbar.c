@@ -1097,6 +1097,12 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	g_free(tmp);
 
 	tmp = gtk_webview_get_current_forecolor(GTK_WEBVIEW(toolbar->webview));
+	/* TODO: rgb()/rgba() colors are not supported by GTK, so let's get rid
+	 * of such warnings for now. There are two solutions: rewrite those
+	 * colors to #aabbcc or implement the toolbar in javascript.
+	 */
+	if (tmp && strncmp(tmp, "rgb", 3) == 0)
+		tmp[0] = '\0';
 	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->fgcolor),
 	                               (tmp && *tmp), toolbar);
 	if (tmp && *tmp) {
@@ -1108,6 +1114,9 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	g_free(tmp);
 
 	tmp = gtk_webview_get_current_backcolor(GTK_WEBVIEW(toolbar->webview));
+	/* TODO: see comment above */
+	if (tmp && strncmp(tmp, "rgb", 3) == 0)
+		tmp[0] = '\0';
 	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->bgcolor),
 	                               (tmp && *tmp), toolbar);
 	if (tmp && *tmp) {

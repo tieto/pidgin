@@ -90,7 +90,8 @@ remove_inspector(PidginConversation *gtkconv)
 	WebKitWebSettings *settings;
 
 	win = g_object_get_data(G_OBJECT(webview), "inspector-window");
-	gtk_widget_destroy(win);
+	if (win != NULL)
+		gtk_widget_destroy(win);
 	g_object_set_data(G_OBJECT(webview), "inspector-window", NULL);
 
 	settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview));
