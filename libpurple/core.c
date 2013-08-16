@@ -78,6 +78,29 @@ static PurpleCore      *_core = NULL;
 
 STATIC_PROTO_INIT
 
+static void
+purple_core_print_version(void)
+{
+	GHashTable *ui_info = purple_core_get_ui_info();
+	const gchar *ui_name;
+	const gchar *ui_version;
+	gchar *ui_full_name = NULL;
+
+	ui_name = ui_info ? g_hash_table_lookup(ui_info, "name") : NULL;
+	ui_version = ui_info ? g_hash_table_lookup(ui_info, "version") : NULL;
+
+	if (ui_name) {
+		ui_full_name = g_strdup_printf("%s%s%s", ui_name,
+			ui_version ? " " : "", ui_version);
+	}
+
+	purple_debug_info("main", "Launching %s%slibpurple %s",
+		ui_full_name ? ui_full_name : "",
+		ui_full_name ? " with " : "",
+		purple_core_get_version());
+
+}
+
 gboolean
 purple_core_init(const char *ui)
 {
@@ -119,6 +142,8 @@ purple_core_init(const char *ui)
 
 	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
 	purple_signal_register(core, "core-initialized", purple_marshal_VOID, NULL, 0);
+
+	purple_core_print_version();
 
 	/* The prefs subsystem needs to be initialized before static protocols
 	 * for protocol prefs to work. */

@@ -437,7 +437,8 @@ jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 void
 jabber_data_init(void)
 {
-	purple_debug_info("jabber", "creating hash tables for data objects\n");
+	if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "creating hash tables for data objects");
 	local_data_by_alt = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, NULL);
 	local_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -451,7 +452,8 @@ jabber_data_init(void)
 void
 jabber_data_uninit(void)
 {
-	purple_debug_info("jabber", "destroying hash tables for data objects\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("jabber", "destroying hash tables for data objects");
 	g_hash_table_destroy(local_data_by_alt);
 	g_hash_table_destroy(local_data_by_cid);
 	g_hash_table_destroy(remote_data_by_cid);

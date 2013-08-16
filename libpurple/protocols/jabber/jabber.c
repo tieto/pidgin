@@ -656,7 +656,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_update_last_received(gc);
 		buf[len] = '\0';
-		purple_debug_info("jabber", "Recv (ssl)(%d): %s\n", len, buf);
+		purple_debug_misc("jabber", "Recv (ssl)(%d): %s", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
@@ -716,7 +716,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		}
 #endif
 		buf[len] = '\0';
-		purple_debug_info("jabber", "Recv (%d): %s\n", len, buf);
+		purple_debug_misc("jabber", "Recv (%d): %s", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);

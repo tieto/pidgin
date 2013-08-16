@@ -835,7 +835,7 @@ xmlnode_from_file(const char *dir,const char *filename, const char *description,
 
 	g_return_val_if_fail(dir != NULL, NULL);
 
-	purple_debug_info(process, "Reading file %s from directory %s\n",
+	purple_debug_misc(process, "Reading file %s from directory %s\n",
 					filename, dir);
 
 	filename_full = g_build_filename(dir, filename, NULL);
