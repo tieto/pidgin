@@ -189,6 +189,13 @@ void purple_debug_set_unsafe(gboolean unsafe);
  */
 gboolean purple_debug_is_unsafe(void);
 
+/**
+ * Enable or disable colored output for bash console.
+ *
+ * @param colored TRUE to enable colored output, FALSE to disable it.
+ */
+void purple_debug_set_colored(gboolean colored);
+
 /*@}*/
 
 /**************************************************************************/
