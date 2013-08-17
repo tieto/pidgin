@@ -456,8 +456,6 @@ msim_status_types(PurpleAccount *acct)
 	GList *types;
 	PurpleStatusType *status;
 
-	purple_debug_info("myspace", "returning status types\n");
-
 	types = NULL;
 
 	/* Statuses are almost all the same. Define a macro to reduce code repetition. */

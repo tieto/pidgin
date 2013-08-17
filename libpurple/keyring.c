@@ -478,8 +478,8 @@ purple_keyring_register(PurpleKeyring *keyring)
 	/* If this is the configured keyring, use it. */
 	if (purple_keyring_inuse == NULL &&
 		g_strcmp0(keyring_id, purple_keyring_to_use) == 0) {
-		purple_debug_info("keyring", "Keyring %s matches keyring to "
-			"use, using it.\n", keyring_id);
+		purple_debug_misc("keyring", "Keyring %s matches keyring to "
+			"use, using it.", keyring_id);
 		purple_keyring_set_inuse(keyring, TRUE, NULL, NULL);
 	}
 

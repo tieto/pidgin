@@ -4285,8 +4285,6 @@ pidgin_prefs_init(void)
 void
 pidgin_prefs_update_old(void)
 {
-	const char *str = NULL;
-
 	/* Rename some old prefs */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/purple/logging/log_ims");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/purple/logging/log_chats");
@@ -4299,13 +4297,19 @@ pidgin_prefs_update_old(void)
 									 PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting");
 
 	/*
-	 * this path pref changed to a string, so migrate.  I know this will break
-	 * things for and confuse users that use multiple versions with the same
-	 * config directory, but I'm not inclined to want to deal with that at the
-	 * moment. -- rekkanoryo
+	 * This path pref changed to a string, so migrate. I know this will
+	 * break things for and confuse users that use multiple versions with
+	 * the same config directory, but I'm not inclined to want to deal with
+	 * that at the moment. -- rekkanoryo
 	 */
-	if((str = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command")) != NULL) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", str);
+	if (purple_prefs_exists(PIDGIN_PREFS_ROOT "/browsers/command") &&
+		purple_prefs_get_type(PIDGIN_PREFS_ROOT "/browsers/command") ==
+			PURPLE_PREF_PATH)
+	{
+		const char *str = purple_prefs_get_path(
+			PIDGIN_PREFS_ROOT "/browsers/command");
+		purple_prefs_set_string(
+			PIDGIN_PREFS_ROOT "/browsers/manual_command", str);
 		purple_prefs_remove(PIDGIN_PREFS_ROOT "/browsers/command");
 	}
 
