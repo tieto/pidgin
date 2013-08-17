@@ -1279,7 +1279,7 @@ AC_SUBST(GADU_LIBGADU_VERSION)
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 DYNAMIC_PRPLS=all
-AC_ARG_WITH(static-prpls, [AS_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
+AC_ARG_WITH(static-prpls, [AS_HELP_STRING([--with-static-protocols], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 	DYNAMIC_PRPLS=""
 fi
@@ -1376,7 +1376,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_LOAD, $extern_load static void static_proto_load
 AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_unload(void) { $unload_proto },
 	[Unloads protocols from static protocol plugin modules.])
 
-AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
+AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-protocols], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="bonjour gg irc jabber msn mxit myspace novell oscar sametime silc simple yahoo zephyr"
 fi
