@@ -72,7 +72,10 @@ static void ice_process_messages(gpointer data, gint fd,
 		IceSetShutdownNegotiation(conninfo->connection, False);
 		IceCloseConnection(conninfo->connection);
 
-		purple_debug(PURPLE_DEBUG_INFO, NULL, "done.\n");
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("Session Management",
+				"Connection closed.");
+		}
 
 		/* cancel the handler */
 		purple_input_remove(conninfo->input_id);
@@ -84,8 +87,8 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 	struct ice_connection_info *conninfo = NULL;
 
 	if (opening) {
-		purple_debug(PURPLE_DEBUG_INFO, "Session Management",
-				   "Handling new ICE connection... \n");
+		purple_debug_misc("Session Management",
+			"Handling new ICE connection...");
 
 		/* ensure ICE connection is not passed to child processes */
 		fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC);
@@ -107,7 +110,10 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 		g_free(conninfo);
 	}
 
-	purple_debug(PURPLE_DEBUG_INFO, NULL, "done.\n");
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("Session Management",
+			"ICE connection handled.");
+	}
 }
 
 /* We call any handler installed before (or after) ice_init but
@@ -124,7 +130,10 @@ static void ice_io_error_handler(IceConn connection) {
 	if (ice_installed_io_error_handler)
 		(*ice_installed_io_error_handler)(connection);
 
-	purple_debug(PURPLE_DEBUG_INFO, NULL, "done.\n");
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("Session Management",
+			"ICE IO error handled.");
+	}
 }
 
 static void ice_init(void) {
@@ -138,8 +147,9 @@ static void ice_init(void) {
 
 	IceAddConnectionWatch(ice_connection_watch, NULL);
 
-	purple_debug(PURPLE_DEBUG_INFO, "Session Management",
-			   "ICE initialized.\n");
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("Session Management", "ICE initialized.");
+	}
 }
 
 /* my magic utility function */

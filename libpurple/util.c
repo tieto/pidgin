@@ -2942,7 +2942,7 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 
 	g_return_val_if_fail(user_dir != NULL, FALSE);
 
-	purple_debug_info("util", "Writing file %s to directory %s\n",
+	purple_debug_misc("util", "Writing file %s to directory %s",
 					filename, user_dir);
 
 	/* Ensure the user directory exists */
@@ -2975,7 +2975,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	int fd;
 #endif
 
-	purple_debug_info("util", "Writing file %s\n",
+	purple_debug_misc("util", "Writing file %s",
 					filename_full);
 
 	g_return_val_if_fail((size >= -1), FALSE);

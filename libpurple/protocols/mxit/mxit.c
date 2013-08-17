@@ -488,8 +488,6 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 {
 	struct contact*		contact;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_free_buddy\n" );
-
 	contact = purple_buddy_get_protocol_data( buddy );
 	if ( contact ) {
 		if ( contact->statusMsg )
@@ -836,8 +834,6 @@ static PurplePluginInfo *plugin_query( GError **error )
 static gboolean plugin_load( PurplePlugin* plugin, GError **error )
 {
 	PurpleAccountOption*	option;
-
-	purple_debug_info( MXIT_PLUGIN_ID, "Loading MXit libPurple plugin...\n" );
 
 	/* Configuration options */
 

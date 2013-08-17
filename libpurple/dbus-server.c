@@ -625,8 +625,6 @@ purple_dbus_dispatch_init(void)
 
 	dbus_connection_setup_with_g_main(purple_dbus_connection, NULL);
 
-	purple_debug_misc("dbus", "okkk\n");
-
 	purple_signal_register(purple_dbus_get_handle(), "dbus-method-called",
 			 purple_marshal_BOOLEAN__POINTER_POINTER,
 			 G_TYPE_BOOLEAN, 2, G_TYPE_POINTER, G_TYPE_POINTER);
@@ -636,6 +634,9 @@ purple_dbus_dispatch_init(void)
 			 G_TYPE_POINTER); /* pointer to a pointer */
 
 	PURPLE_DBUS_REGISTER_BINDINGS(purple_dbus_get_handle());
+
+	if (purple_debug_is_verbose())
+		purple_debug_misc("dbus", "initialized");
 }
 
 

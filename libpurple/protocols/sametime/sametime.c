@@ -5100,7 +5100,7 @@ static void mw_prpl_send_file(PurpleConnection *gc,
   }
 }
 
-
+#if 0
 static PurplePluginPrefFrame *
 mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
   PurplePluginPrefFrame *frame;
@@ -5129,7 +5129,7 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
 
   return frame;
 }
-
+#endif
 
 static void st_import_action_cb(PurpleConnection *gc, char *filename) {
   struct mwSametimeList *l;
@@ -5693,18 +5693,17 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",                 PLUGIN_ID,
-		"name",               PLUGIN_NAME,
-		"version",            DISPLAY_VERSION,
-		"category",           PLUGIN_CATEGORY,
-		"summary",            PLUGIN_SUMMARY,
-		"description",        PLUGIN_DESC,
-		"author",             PLUGIN_AUTHOR,
-		"website",            PLUGIN_HOMEPAGE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  mw_plugin_get_plugin_pref_frame,
-		"flags",              GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                      GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"id",           PLUGIN_ID,
+		"name",         PLUGIN_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     PLUGIN_CATEGORY,
+		"summary",      PLUGIN_SUMMARY,
+		"description",  PLUGIN_DESC,
+		"author",       PLUGIN_AUTHOR,
+		"website",      PLUGIN_HOMEPAGE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
