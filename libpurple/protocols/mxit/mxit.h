@@ -57,7 +57,7 @@
 #endif
 
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"profile.h"
 
 

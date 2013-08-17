@@ -12,6 +12,8 @@ MXITSOURCES = \
 	chunk.h \
 	cipher.c \
 	cipher.h \
+	client.c \
+	client.h \
 	filexfer.c \
 	filexfer.h \
 	formcmds.c \
@@ -26,8 +28,6 @@ MXITSOURCES = \
 	mxit.h \
 	profile.c \
 	profile.h \
-	protocol.c \
-	protocol.h \
 	roster.c \
 	roster.h \
 	splashscreen.c \

@@ -28,7 +28,7 @@
 #include "imgstore.h"
 #include "request.h"
 
-#include "protocol.h"
+#include "client.h"
 #include "mxit.h"
 #include "splashscreen.h"
 

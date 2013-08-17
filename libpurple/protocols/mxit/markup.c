@@ -27,7 +27,7 @@
 #include	"debug.h"
 #include	"http.h"
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"mxit.h"
 #include	"markup.h"
 #include	"chunk.h"

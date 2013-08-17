@@ -30,7 +30,7 @@
 #include	"version.h"
 
 #include	"mxit.h"
-#include	"protocol.h"
+#include	"client.h"
 #include	"login.h"
 #include	"roster.h"
 #include	"chunk.h"

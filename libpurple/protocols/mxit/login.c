@@ -29,7 +29,7 @@
 #include	"request.h"
 #include	"version.h"
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"mxit.h"
 #include	"cipher.h"
 #include	"login.h"
