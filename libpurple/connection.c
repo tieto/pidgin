@@ -53,7 +53,7 @@ typedef struct _PurpleConnectionPrivate  PurpleConnectionPrivate;
 /** Private data for a connection */
 struct _PurpleConnectionPrivate
 {
-	PurpleProtocol *protocol;  /**< The protocol.             */
+	PurpleProtocol *protocol;     /**< The protocol.                     */
 	PurpleConnectionFlags flags;  /**< Connection flags.                 */
 
 	PurpleConnectionState state;  /**< The connection state.             */
@@ -617,8 +617,7 @@ purple_connection_set_property(GObject *obj, guint param_id, const GValue *value
 
 	switch (param_id) {
 		case PROP_PROTOCOL:
-#warning TODO: change get_pointer to get_object when PurpleProtocol is a GObject
-			priv->protocol = g_value_get_pointer(value);
+			priv->protocol = g_value_get_object(value);
 			break;
 		case PROP_FLAGS:
 			purple_connection_set_flags(gc, g_value_get_flags(value));
@@ -651,8 +650,7 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case PROP_PROTOCOL:
-#warning TODO: change set_pointer to set_object when PurpleProtocol is a GObject
-			g_value_set_pointer(value, purple_connection_get_protocol_info(gc));
+			g_value_set_object(value, purple_connection_get_protocol_info(gc));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_connection_get_flags(gc));
@@ -797,10 +795,10 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->get_property = purple_connection_get_property;
 	obj_class->set_property = purple_connection_set_property;
 
-#warning TODO: change spec_pointer to spec_object when PurpleProtocol is a GObject
 	g_object_class_install_property(obj_class, PROP_PROTOCOL,
-			g_param_spec_pointer(PROP_PROTOCOL_S, _("Protocol plugin"),
-				_("The prpl that is using the connection."),
+			g_param_spec_object(PROP_PROTOCOL_S, _("Protocol"),
+				_("The protocol that the connection is using."),
+				PURPLE_TYPE_PROTOCOL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
