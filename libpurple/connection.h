@@ -38,7 +38,7 @@
 
 /** @copydoc _PurpleConnection */
 typedef struct _PurpleConnection PurpleConnection;
-/** @copydoc _PurpleConnection */
+/** @copydoc _PurpleConnectionClass */
 typedef struct _PurpleConnectionClass PurpleConnectionClass;
 
 /**
