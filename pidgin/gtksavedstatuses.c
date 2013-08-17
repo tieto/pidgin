@@ -1002,7 +1002,7 @@ status_editor_set_account(GtkListStore *store, PurpleAccount *account,
 	const char *id = NULL, *name = NULL, *message = NULL;
 	PurpleStatusPrimitive prim = PURPLE_STATUS_UNSET;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && !purple_account_is_connected(account))
 	{
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);

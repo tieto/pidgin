@@ -1914,120 +1914,120 @@ static PurpleCmdRet silcpurple_cmd_call(PurpleConversation *conv,
 static void
 silcpurple_register_commands(void)
 {
-	purple_cmd_register("part", "w", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("part", "w", PURPLE_CMD_P_PROTOCOL,
 			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			PURPLE_CMD_FLAG_PROTOCOL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcpurple_cmd_chat_part, _("part [channel]:  Leave the chat"), NULL);
-	purple_cmd_register("leave", "w", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("leave", "w", PURPLE_CMD_P_PROTOCOL,
 			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			PURPLE_CMD_FLAG_PROTOCOL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcpurple_cmd_chat_part, _("leave [channel]:  Leave the chat"), NULL);
-	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("topic", "s", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
 			silcpurple_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"), NULL);
-	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("join", "ws", PURPLE_CMD_P_PROTOCOL,
 			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			PURPLE_CMD_FLAG_PROTOCOL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcpurple_cmd_chat_join,
 			_("join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"), NULL);
-	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
 			silcpurple_cmd_chat_list, _("list:  List channels on this network"), NULL);
-	purple_cmd_register("whois", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("whois", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc",
 			silcpurple_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"), NULL);
-	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_msg,
 			_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
-	purple_cmd_register("query", "ws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("query", "ws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_query,
 			_("query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"), NULL);
-	purple_cmd_register("motd", "", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("motd", "", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_motd,
 			_("motd:  View the server's Message Of The Day"), NULL);
-	purple_cmd_register("detach", "", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("detach", "", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_detach,
 			_("detach:  Detach this session"), NULL);
-	purple_cmd_register("quit", "s", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("quit", "s", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_quit,
 			_("quit [message]:  Disconnect from the server, with an optional message"), NULL);
-	purple_cmd_register("call", "s", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("call", "s", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_call,
 			_("call &lt;command&gt;:  Call any silc client command"), NULL);
 	/* These below just get passed through for the silc client library to deal
 	 * with */
-	purple_cmd_register("kill", "ws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("kill", "ws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"), NULL);
-	purple_cmd_register("nick", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("nick", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("nick &lt;newnick&gt;:  Change your nickname"), NULL);
-	purple_cmd_register("whowas", "ww", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("whowas", "ww", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("whowas &lt;nick&gt;:  View nick's information"), NULL);
-	purple_cmd_register("cmode", "wws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("cmode", "wws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_cmode,
 			_("cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"), NULL);
-	purple_cmd_register("cumode", "wws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("cumode", "wws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes on channel"), NULL);
-	purple_cmd_register("umode", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("umode", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("umode &lt;usermodes&gt;:  Set your modes in the network"), NULL);
-	purple_cmd_register("oper", "s", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("oper", "s", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"), NULL);
-	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from channel invite list"), NULL);
-	purple_cmd_register("kick", "wws", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("kick", "wws", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"), NULL);
-	purple_cmd_register("info", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("info", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("info [server]:  View server administrative details"), NULL);
-	purple_cmd_register("ban", "ww", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("ban", "ww", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"), NULL);
-	purple_cmd_register("getkey", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("getkey", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"), NULL);
-	purple_cmd_register("stats", "", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("stats", "", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("stats:  View server and network statistics"), NULL);
-	purple_cmd_register("ping", "", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("ping", "", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_generic,
 			_("ping:  Send PING to the connected server"), NULL);
 #if 0 /* Purple doesn't handle these yet */
-	purple_cmd_register("users", "w", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("users", "w", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			"prpl-silc", silcpurple_cmd_users,
 			_("users &lt;channel&gt;:  List users in channel"));
-	purple_cmd_register("names", "ww", PURPLE_CMD_P_PRPL,
-			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	purple_cmd_register("names", "ww", PURPLE_CMD_P_PROTOCOL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_names,
 			_("names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List specific users in channel(s)"));
 #endif
@@ -2117,7 +2117,7 @@ static PurpleProtocol protocol =
 	silcpurple_ftp_send_file,		/* send_file */
 	silcpurple_ftp_new_xfer,		/* new_xfer */
 	NULL,					/* offline_message */
-	&silcpurple_wb_ops,			/* whiteboard_prpl_ops */
+	&silcpurple_wb_ops,			/* whiteboard_protocol_ops */
 	NULL,					/* send_raw */
 	NULL,				        /* roomlist_room_serialize */
 	NULL,				        /* unregister_user */

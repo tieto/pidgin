@@ -66,7 +66,7 @@ static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data);
 
-static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
+static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
 	void *_uin_p);
 
@@ -350,19 +350,19 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	ggp_pubdir_record_free(records, record_count);
 }
 
-void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name)
+void ggp_pubdir_get_info_protocol(PurpleConnection *gc, const char *name)
 {
 	uin_t uin = ggp_str_to_uin(name);
 	uin_t *uin_p = g_new0(uin_t, 1);
 
 	*uin_p = uin;
 
-	purple_debug_info("gg", "ggp_pubdir_get_info_prpl: %u\n", uin);
+	purple_debug_info("gg", "ggp_pubdir_get_info_protocol: %u\n", uin);
 
-	ggp_pubdir_get_info(gc, uin, ggp_pubdir_get_info_prpl_got, uin_p);
+	ggp_pubdir_get_info(gc, uin, ggp_pubdir_get_info_protocol_got, uin_p);
 }
 
-static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
+static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
 	void *_uin_p)
 {
@@ -375,7 +375,7 @@ static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	
 	if (records_count < 1)
 	{
-		purple_debug_error("gg", "ggp_pubdir_get_info_prpl_got: "
+		purple_debug_error("gg", "ggp_pubdir_get_info_protocol_got: "
 			"couldn't get info for %u\n", uin);
 		purple_notify_user_info_add_pair_plaintext(info, NULL,
 			_("Cannot get user information"));
@@ -385,7 +385,7 @@ static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 		return;
 	}
 	
-	purple_debug_info("gg", "ggp_pubdir_get_info_prpl_got: %u\n", uin);
+	purple_debug_info("gg", "ggp_pubdir_get_info_protocol_got: %u\n", uin);
 	g_assert(uin == record->uin);
 	g_assert(records_count == 1);
 	
@@ -785,7 +785,7 @@ static void ggp_pubdir_search_results_im(PurpleConnection *gc, GList *row,
 static void ggp_pubdir_search_results_info(PurpleConnection *gc, GList *row,
 	gpointer _form)
 {
-	ggp_pubdir_get_info_prpl(gc, g_list_nth_data(row, 0));
+	ggp_pubdir_get_info_protocol(gc, g_list_nth_data(row, 0));
 }
 
 static void ggp_pubdir_search_results_new(PurpleConnection *gc, GList *row,

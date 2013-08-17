@@ -757,7 +757,7 @@ void purple_xfer_ui_ready(PurpleXfer *xfer);
  *
  * @param xfer The file transfer which is ready.
  */
-void purple_xfer_prpl_ready(PurpleXfer *xfer);
+void purple_xfer_protocol_ready(PurpleXfer *xfer);
 
 /**
  * Gets the thumbnail data for a transfer

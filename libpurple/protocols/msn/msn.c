@@ -163,7 +163,7 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 
 	username = purple_conversation_get_name(conv);
 
-	purple_prpl_send_attention(gc, username, MSN_NUDGE);
+	purple_protocol_send_attention(gc, username, MSN_NUDGE);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -590,7 +590,7 @@ enable_mpop_cb(PurpleConnection *pc)
 	session->enable_mpop = TRUE;
 	msn_annotate_contact(session, "Me", "MSN.IM.MPOP", "1", NULL);
 
-	purple_prpl_got_account_actions(purple_connection_get_account(pc));
+	purple_protocol_got_account_actions(purple_connection_get_account(pc));
 }
 
 static void
@@ -620,7 +620,7 @@ disable_mpop_cb(PurpleConnection *pc)
 		g_free(user);
 	}
 
-	purple_prpl_got_account_actions(account);
+	purple_protocol_got_account_actions(account);
 }
 
 static void
@@ -2930,7 +2930,7 @@ static PurpleProtocol protocol =
 	msn_send_file,                      /* send_file */
 	msn_new_xfer,                       /* new_xfer */
 	msn_offline_message,                /* offline_message */
-	NULL,                               /* whiteboard_prpl_ops */
+	NULL,                               /* whiteboard_protocol_ops */
 	NULL,                               /* send_raw */
 	NULL,                               /* roomlist_room_serialize */
 	NULL,                               /* unregister_user */
@@ -3001,8 +3001,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
-	purple_cmd_register("nudge", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                 "prpl-msn", msn_cmd_nudge,
 	                  _("nudge: nudge a user to get their attention"), NULL);
 

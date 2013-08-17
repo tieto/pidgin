@@ -1390,7 +1390,7 @@ static PurpleProtocol protocol =
 	ggp_send_im,			/* send_im */
 	NULL,				/* set_info */
 	ggp_send_typing,		/* send_typing */
-	ggp_pubdir_get_info_prpl,	/* get_info */
+	ggp_pubdir_get_info_protocol,	/* get_info */
 	ggp_status_set_purplestatus,	/* set_away */
 	NULL,				/* set_idle */
 	NULL,				/* change_passwd */
@@ -1431,7 +1431,7 @@ static PurpleProtocol protocol =
 	NULL,				/* send_file */
 	NULL,				/* new_xfer */
 	ggp_offline_message,		/* offline_message */
-	NULL,				/* whiteboard_prpl_ops */
+	NULL,				/* whiteboard_protocol_ops */
 	NULL,				/* send_raw */
 	NULL,				/* roomlist_room_serialize */
 	NULL,				/* unregister_user */

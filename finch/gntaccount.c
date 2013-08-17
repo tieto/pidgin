@@ -74,7 +74,7 @@ typedef struct
 	GntWidget *splits;
 	GList *split_entries;
 
-	GList *prpl_entries;
+	GList *protocol_entries;
 	GntWidget *prpls;
 
 	GntWidget *newmail;
@@ -101,7 +101,7 @@ static void
 edit_dialog_destroy(AccountEditDialog *dialog)
 {
 	accountdialogs = g_list_remove(accountdialogs, dialog);
-	g_list_free(dialog->prpl_entries);
+	g_list_free(dialog->protocol_entries);
 	g_list_free(dialog->split_entries);
 	g_free(dialog);
 }
@@ -206,7 +206,7 @@ save_account_cb(AccountEditDialog *dialog)
 	{
 		GList *iter, *entries;
 
-		for (iter = protocol->protocol_options, entries = dialog->prpl_entries;
+		for (iter = protocol->protocol_options, entries = dialog->protocol_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
 			PurpleAccountOption *option = iter->data;
@@ -379,10 +379,10 @@ add_protocol_options(AccountEditDialog *dialog)
 		gnt_box_set_fill(GNT_BOX(vbox), TRUE);
 	}
 
-	if (dialog->prpl_entries)
+	if (dialog->protocol_entries)
 	{
-		g_list_free(dialog->prpl_entries);
-		dialog->prpl_entries = NULL;
+		g_list_free(dialog->protocol_entries);
+		dialog->protocol_entries = NULL;
 	}
 
 	vbox = dialog->prpls;
@@ -406,7 +406,7 @@ add_protocol_options(AccountEditDialog *dialog)
 		{
 			GntWidget *widget = gnt_check_box_new(purple_account_option_get_text(option));
 			gnt_box_add_widget(GNT_BOX(box), widget);
-			dialog->prpl_entries = g_list_append(dialog->prpl_entries, widget);
+			dialog->protocol_entries = g_list_append(dialog->protocol_entries, widget);
 
 			if (account)
 				gnt_check_box_set_checked(GNT_CHECK_BOX(widget),
@@ -434,7 +434,7 @@ add_protocol_options(AccountEditDialog *dialog)
 						purple_account_option_get_setting(option), dv);
 
 				gnt_box_add_widget(GNT_BOX(box), combo);
-				dialog->prpl_entries = g_list_append(dialog->prpl_entries, combo);
+				dialog->protocol_entries = g_list_append(dialog->protocol_entries, combo);
 
 				for ( ; opt_iter; opt_iter = opt_iter->next)
 				{
@@ -449,7 +449,7 @@ add_protocol_options(AccountEditDialog *dialog)
 			{
 				GntWidget *entry = gnt_entry_new(NULL);
 				gnt_box_add_widget(GNT_BOX(box), entry);
-				dialog->prpl_entries = g_list_append(dialog->prpl_entries, entry);
+				dialog->protocol_entries = g_list_append(dialog->protocol_entries, entry);
 
 				if (type == PURPLE_PREF_STRING)
 				{
@@ -514,7 +514,7 @@ update_user_options(AccountEditDialog *dialog)
 }
 
 static void
-prpl_changed_cb(GntWidget *combo, PurpleProtocol *old, PurpleProtocol *new, AccountEditDialog *dialog)
+protocol_changed_cb(GntWidget *combo, PurpleProtocol *old, PurpleProtocol *new, AccountEditDialog *dialog)
 {
 	update_user_splits(dialog);
 	add_protocol_options(dialog);
@@ -582,7 +582,7 @@ edit_account_continue(PurpleAccount *account,
 	else
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), list->data);
 
-	g_signal_connect(G_OBJECT(combo), "selection-changed", G_CALLBACK(prpl_changed_cb), dialog);
+	g_signal_connect(G_OBJECT(combo), "selection-changed", G_CALLBACK(protocol_changed_cb), dialog);
 
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Protocol:")));
 	gnt_box_add_widget(GNT_BOX(hbox), combo);

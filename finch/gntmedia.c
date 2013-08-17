@@ -405,7 +405,7 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	if (!purple_prpl_initiate_media(account,
+	if (!purple_protocol_initiate_media(account,
 			purple_conversation_get_name(conv),
 			PURPLE_MEDIA_AUDIO))
 		return PURPLE_CMD_STATUS_FAILED;

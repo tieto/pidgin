@@ -413,7 +413,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	} else if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		jabber_presence_subscription_set(js, who, "subscribe");
 	} else if((jbr =jabber_buddy_find_resource(jb, NULL))) {
-		purple_prpl_got_user_status(purple_connection_get_account(gc), who,
+		purple_protocol_got_user_status(purple_connection_get_account(gc), who,
 				jabber_buddy_state_get_status_id(jbr->state),
 				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 	}

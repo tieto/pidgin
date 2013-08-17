@@ -68,7 +68,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	const char *logdir;
 	PurplePlugin *plugin;
 	PurpleProtocol *protocol;
-	char *prpl_name;
+	char *protocol_name;
 	char *temp;
 	char *path;
 	GDir *dir;
@@ -90,9 +90,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	if (!protocol->list_icon)
 		return NULL;
 
-	prpl_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
+	protocol_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
 
-	temp = g_strdup_printf("%s.%s", prpl_name, purple_account_get_username(account));
+	temp = g_strdup_printf("%s.%s", protocol_name, purple_account_get_username(account));
 	path = g_build_filename(logdir, temp, sn, NULL);
 	g_free(temp);
 
@@ -227,7 +227,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 		g_dir_close(dir);
 	}
 
-	g_free(prpl_name);
+	g_free(protocol_name);
 	g_free(path);
 
 	return list;
@@ -1207,7 +1207,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	const char *logdir;
 	PurplePlugin *plugin;
 	PurpleProtocol *protocol;
-	char *prpl_name;
+	char *protocol_name;
 	const char *buddy_name;
 	char *filename;
 	char *path;
@@ -1234,13 +1234,13 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	if (!protocol->list_icon)
 		return NULL;
 
-	prpl_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
+	protocol_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
 
 	buddy_name = purple_normalize(account, sn);
 
 	filename = g_strdup_printf("%s.log", buddy_name);
 	path = g_build_filename(
-		logdir, prpl_name, filename, NULL);
+		logdir, protocol_name, filename, NULL);
 
 	purple_debug_info("Trillian log list", "Reading %s\n", path);
 	/* FIXME: There's really no need to read the entire file at once.
@@ -1254,7 +1254,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 		g_free(path);
 
 		path = g_build_filename(
-			logdir, prpl_name, "Query", filename, NULL);
+			logdir, protocol_name, "Query", filename, NULL);
 		purple_debug_info("Trillian log list", "Reading %s\n", path);
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
 			if (error)
@@ -1390,7 +1390,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	}
 	g_free(path);
 
-	g_free(prpl_name);
+	g_free(protocol_name);
 
 	return g_list_reverse(list);
 }

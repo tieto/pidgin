@@ -121,8 +121,8 @@ void gevo_add_buddy(PurpleAccount *account, const char *group_name,
 					const char *screenname, const char *alias);
 GList *gevo_get_groups(void);
 
-EContactField gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy);
-gboolean gevo_prpl_is_supported(PurpleAccount *account, PurpleBuddy *buddy);
+EContactField gevo_protocol_get_field(PurpleAccount *account, PurpleBuddy *buddy);
+gboolean gevo_protocol_is_supported(PurpleAccount *account, PurpleBuddy *buddy);
 gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
 char *gevo_get_email_for_buddy(PurpleBuddy *buddy);
 

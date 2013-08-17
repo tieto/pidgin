@@ -628,7 +628,7 @@ icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 				presence = purple_buddy_get_presence(buddy);
 				status = purple_presence_get_active_status(presence);
 
-				purple_prpl_got_user_status(account, uin,
+				purple_protocol_got_user_status(account, uin,
 						purple_status_get_id(status),
 						"message", NULL, NULL);
 

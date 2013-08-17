@@ -337,7 +337,7 @@ char *
 purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *account)
 {
 	PurpleProtocol *protocol;
-	const char *prpl_name;
+	const char *protocol_name;
 	char *acct_name;
 	const char *target;
 	char *dir;
@@ -346,7 +346,7 @@ purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *acco
 	if (!protocol)
 		return NULL;
 
-	prpl_name = protocol->list_icon(account, NULL);
+	protocol_name = protocol->list_icon(account, NULL);
 
 	acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
 				purple_account_get_username(account))));
@@ -361,7 +361,7 @@ purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *acco
 		target = purple_escape_filename(purple_normalize(account, name));
 	}
 
-	dir = g_build_filename(purple_user_dir(), "logs", prpl_name, acct_name, target, NULL);
+	dir = g_build_filename(purple_user_dir(), "logs", protocol_name, acct_name, target, NULL);
 
 	g_free(acct_name);
 

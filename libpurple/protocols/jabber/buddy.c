@@ -1361,7 +1361,7 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 
 									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(purple_connection_get_account(js->gc),
+										purple_protocol_got_user_idle(purple_connection_get_account(js->gc),
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}

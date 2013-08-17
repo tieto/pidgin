@@ -133,21 +133,21 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 
 	if (status) {
 		if (f->status == YAHOO_STATUS_CUSTOM)
-			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, "message",
+			purple_protocol_got_user_status(purple_connection_get_account(gc), name, status, "message",
 			                          yahoo_friend_get_status_message(f), NULL);
 		else
-			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, NULL);
+			purple_protocol_got_user_status(purple_connection_get_account(gc), name, status, NULL);
 	}
 
 	if (f->idle != 0)
-		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, TRUE, f->idle);
+		purple_protocol_got_user_idle(purple_connection_get_account(gc), name, TRUE, f->idle);
 	else
-		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, FALSE, 0);
+		purple_protocol_got_user_idle(purple_connection_get_account(gc), name, FALSE, 0);
 
 	if (f->sms)
-		purple_prpl_got_user_status(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
+		purple_protocol_got_user_status(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
 	else
-		purple_prpl_got_user_status_deactive(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
+		purple_protocol_got_user_status_deactive(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
 }
 
 static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -302,8 +302,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
 				if (name) {
-					purple_prpl_got_user_status(account, name, "offline", NULL);
-					purple_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
+					purple_protocol_got_user_status(account, name, "offline", NULL);
+					purple_protocol_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
 				}
 				break;
 			}
@@ -1134,7 +1134,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			char *username;
 
 			username = g_markup_escape_text(im->fed_from, -1);
-			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
+			purple_protocol_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
 			g_free(im->fed_from);
@@ -1295,7 +1295,7 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, co
 	g_free(notify_msg);
 
 	g_hash_table_remove(yd->friends, who);
-	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+	purple_protocol_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
 	/* TODO: Shouldn't we remove the buddy from our local list? */
 }
 
@@ -5054,7 +5054,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	purple_prpl_send_attention(purple_account_get_connection(account), purple_conversation_get_name(c), YAHOO_BUZZ);
+	purple_protocol_send_attention(purple_account_get_connection(account), purple_conversation_get_name(c), YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }

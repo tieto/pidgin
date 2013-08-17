@@ -190,7 +190,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			slpmsg->slpcall->xfer_msg = slpmsg;
-			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
+			purple_xfer_protocol_ready(slpmsg->slpcall->xfer);
 		}
 		else
 			msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);

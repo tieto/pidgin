@@ -156,7 +156,7 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		}
 	}
 
-	purple_prpl_got_user_status(account, who, "offline", NULL);
+	purple_protocol_got_user_status(account, who, "offline", NULL);
 }
 
 void jabber_google_roster_rem_deny(JabberStream *js, const char *who)

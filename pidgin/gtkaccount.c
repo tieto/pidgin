@@ -1851,7 +1851,7 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+		pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -2242,7 +2242,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 	PurpleStoredImage *img = NULL;
 	PurpleProtocol *protocol = NULL;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -2810,7 +2810,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	PurpleConnection *gc;
 	GtkWidget *alert;
 	PidginMiniDialog *dialog;
-	GdkPixbuf *prpl_icon;
+	GdkPixbuf *protocol_icon;
 	struct auth_request *aa;
 	const char *our_name;
 	gboolean have_valid_alias;
@@ -2849,7 +2849,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	g_free(escaped_our_name);
 	g_free(escaped_message);
 
-	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	protocol_icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 	aa = g_new0(struct auth_request, 1);
 	aa->auth_cb = auth_cb;
@@ -2861,7 +2861,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	aa->add_buddy_after_auth = !on_list;
 
 	alert = pidgin_make_mini_dialog_with_custom_icon(
-		gc, prpl_icon,
+		gc, protocol_icon,
 		_("Authorize buddy?"), NULL, aa,
 		_("Authorize"), authorize_reason_cb,
 		_("Deny"), deny_reason_cb,

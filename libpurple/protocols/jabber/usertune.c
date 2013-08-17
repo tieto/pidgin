@@ -92,7 +92,7 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	}
 
 	if (valid) {
-		purple_prpl_got_user_status(purple_connection_get_account(js->gc), from, "tune",
+		purple_protocol_got_user_status(purple_connection_get_account(js->gc), from, "tune",
 				PURPLE_TUNE_ARTIST, tuneinfodata.artist,
 				PURPLE_TUNE_TITLE, tuneinfodata.title,
 				PURPLE_TUNE_ALBUM, tuneinfodata.album,
@@ -100,7 +100,7 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 				PURPLE_TUNE_TIME, tuneinfodata.time,
 				PURPLE_TUNE_URL, tuneinfodata.url, NULL);
 	} else {
-		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), from, "tune");
+		purple_protocol_got_user_status_deactive(purple_connection_get_account(js->gc), from, "tune");
 	}
 
 	g_free(tuneinfodata.artist);

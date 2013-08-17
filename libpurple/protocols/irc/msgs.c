@@ -945,10 +945,10 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 		return;
 
 	if (ib->online && !ib->new_online_status) {
-		purple_prpl_got_user_status(irc->account, name, "offline", NULL);
+		purple_protocol_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
 	} else if (!ib->online && ib->new_online_status) {
-		purple_prpl_got_user_status(irc->account, name, "available", NULL);
+		purple_protocol_got_user_status(irc->account, name, "available", NULL);
 		ib->online = TRUE;
 	}
 }

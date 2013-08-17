@@ -187,7 +187,7 @@ static GList *away_list = NULL;
 static GList *busy_list = NULL;
 static GList *xa_list = NULL;
 static GList *offline_list = NULL;
-static GHashTable *prpl_lists = NULL;
+static GHashTable *protocol_lists = NULL;
 
 static PurpleTheme *default_conv_theme = NULL;
 
@@ -598,7 +598,7 @@ check_for_and_do_command(PurpleConversation *conv)
 							PURPLE_MESSAGE_NO_LOG, time(NULL));
 				retval = TRUE;
 				break;
-			case PURPLE_CMD_STATUS_WRONG_PRPL:
+			case PURPLE_CMD_STATUS_WRONG_PROTOCOL:
 				purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
 						PURPLE_MESSAGE_NO_LOG, time(NULL));
 				retval = TRUE;
@@ -1187,7 +1187,7 @@ menu_initiate_media_call_cb(GtkAction *action, gpointer data)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	purple_prpl_initiate_media(account,
+	purple_protocol_initiate_media(account,
 			purple_conversation_get_name(conv),
 			action == win->menu.audio_call ? PURPLE_MEDIA_AUDIO :
 			action == win->menu.video_call ? PURPLE_MEDIA_VIDEO :
@@ -1220,7 +1220,7 @@ menu_get_attention_cb(GObject *obj, gpointer data)
 			index = 0;
 		else
 			index = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(obj), "index"));
-		purple_prpl_send_attention(purple_conversation_get_connection(conv),
+		purple_protocol_send_attention(purple_conversation_get_connection(conv),
 			purple_conversation_get_name(conv), index);
 	}
 }
@@ -2453,21 +2453,21 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
  * A bunch of buddy icon functions
  **************************************************************************/
 
-static GList *get_prpl_icon_list(PurpleAccount *account)
+static GList *get_protocol_icon_list(PurpleAccount *account)
 {
 	GList *l = NULL;
 	PurpleProtocol *protocol =
 			purple_find_protocol_info(purple_account_get_protocol_id(account));
 	const char *prplname = protocol->list_icon(account, NULL);
-	l = g_hash_table_lookup(prpl_lists, prplname);
+	l = g_hash_table_lookup(protocol_lists, prplname);
 	if (l)
 		return l;
 
-	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE));
-	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM));
-	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL));
+	l = g_list_prepend(l, pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_LARGE));
+	l = g_list_prepend(l, pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM));
+	l = g_list_prepend(l, pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL));
 
-	g_hash_table_insert(prpl_lists, g_strdup(prplname), l);
+	g_hash_table_insert(protocol_lists, g_strdup(prplname), l);
 	return l;
 }
 
@@ -2504,7 +2504,7 @@ pidgin_conv_get_tab_icons(PurpleConversation *conv)
 		}
 	}
 
-	return get_prpl_icon_list(account);
+	return get_protocol_icon_list(account);
 }
 
 static const char *
@@ -2625,7 +2625,7 @@ update_tab_icon(PurpleConversation *conv)
 		g_object_unref(emblem);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons")) {
-		emblem = pidgin_create_prpl_icon(purple_conversation_get_account(gtkconv->active_conv), PIDGIN_PRPL_ICON_SMALL);
+		emblem = pidgin_create_protocol_icon(purple_conversation_get_account(gtkconv->active_conv), PIDGIN_PROTOCOL_ICON_SMALL);
 	} else {
 		emblem = NULL;
 	}
@@ -3362,7 +3362,7 @@ regenerate_media_items(PidginWindow *win)
 	 */
 	if (account != NULL && PURPLE_IS_IM_CONVERSATION(conv)) {
 		PurpleMediaCaps caps =
-				purple_prpl_get_media_caps(account,
+				purple_protocol_get_media_caps(account,
 				purple_conversation_get_name(conv));
 
 		gtk_action_set_sensitive(win->menu.audio_call,
@@ -3922,7 +3922,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gchar *text;
 
 	/* Create a pixmap for the protocol icon. */
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 	/* Now convert it to GtkImage */
 	if (pixbuf == NULL)
@@ -9870,7 +9870,7 @@ create_icon_lists(GtkWidget *w)
 	xa_list = make_status_icon_list(PIDGIN_STOCK_STATUS_XA, w);
 	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
 	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
-	prpl_lists = g_hash_table_new(g_str_hash, g_str_equal);
+	protocol_lists = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
 static void

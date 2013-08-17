@@ -713,7 +713,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
 				       purple_account_get_username(status_box->account),
 				       aa_color, secondary ? secondary : primary);
-		emblem = pidgin_create_prpl_icon(status_box->account, PIDGIN_PRPL_ICON_SMALL);
+		emblem = pidgin_create_protocol_icon(status_box->account, PIDGIN_PROTOCOL_ICON_SMALL);
 	} else if (secondary != NULL) {
 		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
 				       primary, aa_color, secondary);

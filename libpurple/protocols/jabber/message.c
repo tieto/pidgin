@@ -313,7 +313,7 @@ static void handle_buzz(JabberMessage *jm) {
 		return; /* Do not accept buzzes from unknown people */
 
 	/* xmpp only has 1 attention type, so index is 0 */
-	purple_prpl_got_attention(jm->js->gc, jm->from, 0);
+	purple_protocol_got_attention(jm->js->gc, jm->from, 0);
 }
 
 /* used internally by the functions below */

@@ -1300,7 +1300,7 @@ msim_send_unofficial_client(MsimSession *session, gchar *username)
 			PURPLE_MAJOR_VERSION,
 			PURPLE_MINOR_VERSION,
 			PURPLE_MICRO_VERSION,
-			MSIM_PRPL_VERSION_STRING);
+			MSIM_PROTOCOL_VERSION_STRING);
 
 	ret = msim_send_bm(session, username, our_info, MSIM_BM_UNOFFICIAL_CLIENT);
 
@@ -1439,14 +1439,14 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 			g_free(unrecognized_msg);
 	}
 
-	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
+	purple_protocol_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
 
 	if (status_code == MSIM_STATUS_CODE_IDLE) {
 		purple_debug_info("msim", "msim_status: got idle: %s\n", username);
-		purple_prpl_got_user_idle(session->account, username, TRUE, 0);
+		purple_protocol_got_user_idle(session->account, username, TRUE, 0);
 	} else {
 		/* All other statuses indicate going back to non-idle. */
-		purple_prpl_got_user_idle(session->account, username, FALSE, 0);
+		purple_protocol_got_user_idle(session->account, username, FALSE, 0);
 	}
 
 #ifdef MSIM_SEND_CLIENT_VERSION
@@ -3156,7 +3156,7 @@ static PurpleProtocol protocol = {
 	NULL,              /* send_file */
 	NULL,              /* new_xfer */
 	msim_offline_message,  /* offline_message */
-	NULL,              /* whiteboard_prpl_ops */
+	NULL,              /* whiteboard_protocol_ops */
 	msim_send_really_raw,  /* send_raw */
 	NULL,                  /* roomlist_room_serialize */
 	NULL,                  /* unregister_user */
@@ -3467,7 +3467,7 @@ plugin_query(GError **error)
 	return purple_plugin_info_new(
 		"id",           "prpl-myspace",
 		"name",         "MySpaceIM",
-		"version",      MSIM_PRPL_VERSION_STRING,
+		"version",      MSIM_PROTOCOL_VERSION_STRING,
 		"category",     "Protocol",
 		"summary",      "MySpaceIM Protocol Plugin",
 		"description",  "MySpaceIM Protocol Plugin",

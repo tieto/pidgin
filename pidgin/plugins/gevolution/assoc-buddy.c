@@ -134,7 +134,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 {
 	EBook *book;
 	EBookQuery *query;
-	const char *prpl_id;
+	const char *protocol_id;
 	gboolean status;
 	GList *cards, *c;
 	GError *err = NULL;
@@ -188,7 +188,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 		return;
 	}
 
-	prpl_id = purple_account_get_protocol_id(dialog->buddy->account);
+	protocol_id = purple_account_get_protocol_id(dialog->buddy->account);
 
 	for (c = cards; c != NULL; c = c->next)
 	{
@@ -207,7 +207,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 						   -1);
 
 		/* See if this user has the buddy in its list. */
-		protocol_field = gevo_prpl_get_field(dialog->buddy->account,
+		protocol_field = gevo_protocol_get_field(dialog->buddy->account,
 											 dialog->buddy);
 
 		if (protocol_field > 0)
@@ -289,7 +289,7 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 					   COLUMN_DATA, &contact,
 					   -1);
 
-	protocol_field = gevo_prpl_get_field(dialog->buddy->account, dialog->buddy);
+	protocol_field = gevo_protocol_get_field(dialog->buddy->account, dialog->buddy);
 
 	if (protocol_field == 0)
 		return; /* XXX */

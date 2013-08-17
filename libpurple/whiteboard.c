@@ -37,7 +37,7 @@ struct _PurpleWhiteboard
 
 	void *ui_data;                   /**< Graphical user-interface data */
 	void *proto_data;                /**< Protocol specific data */
-	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
+	PurpleWhiteboardPrplOps *protocol_ops; /**< Protocol-plugin operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
 };
@@ -46,7 +46,7 @@ struct _PurpleWhiteboard
  * Globals
  *****************************************************************************/
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
-/* static PurpleWhiteboardPrplOps *whiteboard_prpl_ops = NULL; */
+/* static PurpleWhiteboardPrplOps *whiteboard_protocol_ops = NULL; */
 
 static GList *wbList = NULL;
 
@@ -60,9 +60,9 @@ void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops)
 	whiteboard_ui_ops = ops;
 }
 
-void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops)
+void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops)
 {
-	wb->prpl_ops = ops;
+	wb->protocol_ops = ops;
 }
 
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
@@ -75,11 +75,11 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 	wb->who     = g_strdup(who);
 
 	protocol = purple_connection_get_protocol_info(purple_account_get_connection(account));
-	purple_whiteboard_set_prpl_ops(wb, protocol->whiteboard_prpl_ops);
+	purple_whiteboard_set_protocol_ops(wb, protocol->whiteboard_protocol_ops);
 
 	/* Start up protocol specifics */
-	if(wb->prpl_ops && wb->prpl_ops->start)
-		wb->prpl_ops->start(wb);
+	if(wb->protocol_ops && wb->protocol_ops->start)
+		wb->protocol_ops->start(wb);
 
 	wbList = g_list_append(wbList, wb);
 
@@ -98,8 +98,8 @@ void purple_whiteboard_destroy(PurpleWhiteboard *wb)
 	}
 
 	/* Do protocol specific session ending procedures */
-	if(wb->prpl_ops && wb->prpl_ops->end)
-		wb->prpl_ops->end(wb);
+	if(wb->protocol_ops && wb->protocol_ops->end)
+		wb->protocol_ops->end(wb);
 
 	g_free(wb->who);
 	wbList = g_list_remove(wbList, wb);
@@ -173,11 +173,11 @@ void purple_whiteboard_draw_list_destroy(GList *draw_list)
 
 gboolean purple_whiteboard_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
 
-	if (prpl_ops && prpl_ops->get_dimensions)
+	if (protocol_ops && protocol_ops->get_dimensions)
 	{
-		prpl_ops->get_dimensions(wb, width, height);
+		protocol_ops->get_dimensions(wb, width, height);
 		return TRUE;
 	}
 
@@ -192,10 +192,10 @@ void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int heigh
 
 void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
 
-	if (prpl_ops && prpl_ops->send_draw_list)
-		prpl_ops->send_draw_list(wb, list);
+	if (protocol_ops && protocol_ops->send_draw_list)
+		protocol_ops->send_draw_list(wb, list);
 }
 
 void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color, int size)
@@ -218,27 +218,27 @@ void purple_whiteboard_clear(PurpleWhiteboard *wb)
 
 void purple_whiteboard_send_clear(PurpleWhiteboard *wb)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
 
-	if (prpl_ops && prpl_ops->clear)
-		prpl_ops->clear(wb);
+	if (protocol_ops && protocol_ops->clear)
+		protocol_ops->clear(wb);
 }
 
 void purple_whiteboard_send_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
 
-	if (prpl_ops && prpl_ops->set_brush)
-		prpl_ops->set_brush(wb, size, color);
+	if (protocol_ops && protocol_ops->set_brush)
+		protocol_ops->set_brush(wb, size, color);
 }
 
 gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
 
-	if (prpl_ops && prpl_ops->get_brush)
+	if (protocol_ops && protocol_ops->get_brush)
 	{
-		prpl_ops->get_brush(wb, size, color);
+		protocol_ops->get_brush(wb, size, color);
 		return TRUE;
 	}
 	return FALSE;

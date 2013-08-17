@@ -313,7 +313,7 @@ void ggp_status_fake_to_self(PurpleConnection *gc)
 			GG_STATUS_DESCR_MAXSIZE);
 	}
 	
-	purple_prpl_got_user_status(account,
+	purple_protocol_got_user_status(account,
 		purple_account_get_username(account),
 		purple_status_get_id(status),
 		status_msg_gg ? "message" : NULL, status_msg_gg, NULL);
@@ -446,12 +446,12 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	
 	if (status_message)
 	{
-		purple_prpl_got_user_status(account, ggp_uin_to_str(uin),
+		purple_protocol_got_user_status(account, ggp_uin_to_str(uin),
 			purple_status, "message", status_message, NULL);
 	}
 	else
 	{
-		purple_prpl_got_user_status(account, ggp_uin_to_str(uin),
+		purple_protocol_got_user_status(account, ggp_uin_to_str(uin),
 			purple_status, NULL);
 	}
 	

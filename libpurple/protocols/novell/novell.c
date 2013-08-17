@@ -1217,9 +1217,9 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 		}
 	}
 
-	purple_prpl_got_user_status(account, name, status_id,
+	purple_protocol_got_user_status(account, name, status_id,
 							  "message", text, NULL);
-	purple_prpl_got_user_idle(account, name,
+	purple_protocol_got_user_idle(account, name,
 							(novellstatus == NM_STATUS_AWAY_IDLE), idle);
 }
 
@@ -3539,7 +3539,7 @@ static PurpleProtocol protocol = {
 	NULL,						/* send_file */
 	NULL,						/* new_xfer */
 	NULL,						/* offline_message */
-	NULL,						/* whiteboard_prpl_ops */
+	NULL,						/* whiteboard_protocol_ops */
 	NULL,						/* send_raw */
 	NULL,						/* roomlist_room_serialize */
 	NULL,						/* unregister_user */

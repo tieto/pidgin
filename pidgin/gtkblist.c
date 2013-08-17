@@ -322,7 +322,7 @@ static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
 #ifdef USE_VV
 static void gtk_blist_menu_audio_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	purple_prpl_initiate_media(purple_buddy_get_account(b),
+	purple_protocol_initiate_media(purple_buddy_get_account(b),
 		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO);
 }
 
@@ -330,13 +330,13 @@ static void gtk_blist_menu_video_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	/* if the buddy supports both audio and video, start a combined call,
 	 otherwise start a pure video session */
-	if (purple_prpl_get_media_caps(purple_buddy_get_account(b),
+	if (purple_protocol_get_media_caps(purple_buddy_get_account(b),
 			purple_buddy_get_name(b)) &
 			PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
-		purple_prpl_initiate_media(purple_buddy_get_account(b),
+		purple_protocol_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 	} else {
-		purple_prpl_initiate_media(purple_buddy_get_account(b),
+		purple_protocol_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_VIDEO);
 	}
 }
@@ -1513,7 +1513,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	if (protocol && protocol->get_media_caps) {
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		const gchar *who = purple_buddy_get_name(buddy);
-		PurpleMediaCaps caps = purple_prpl_get_media_caps(account, who);
+		PurpleMediaCaps caps = purple_protocol_get_media_caps(account, who);
 		if (caps & PURPLE_MEDIA_CAPS_AUDIO) {
 			pidgin_new_item_from_stock(menu, _("_Audio Call"),
 				PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
@@ -1859,7 +1859,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 					continue;
 
 				menuitem = gtk_image_menu_item_new_with_label(purple_buddy_get_name(buddy));
-				buf = pidgin_create_prpl_icon(purple_buddy_get_account(buddy), PIDGIN_PRPL_ICON_SMALL);
+				buf = pidgin_create_protocol_icon(purple_buddy_get_account(buddy), PIDGIN_PROTOCOL_ICON_SMALL);
 				image = gtk_image_new_from_pixbuf(buf);
 				g_object_unref(G_OBJECT(buf));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
@@ -2101,7 +2101,7 @@ pidgin_blist_sound_method_pref_cb(const char *name, PurplePrefType type,
 }
 
 static void
-add_buddies_from_vcard(const char *prpl_id, PurpleGroup *group, GList *list,
+add_buddies_from_vcard(const char *protocol_id, PurpleGroup *group, GList *list,
 					   const char *alias)
 {
 	GList *l;
@@ -2116,7 +2116,7 @@ add_buddies_from_vcard(const char *prpl_id, PurpleGroup *group, GList *list,
 		gc = (PurpleConnection *)l->data;
 		account = purple_connection_get_account(gc);
 
-		if (!strcmp(purple_account_get_protocol_id(account), prpl_id))
+		if (!strcmp(purple_account_get_protocol_id(account), protocol_id))
 			break;
 
 		account = NULL;
@@ -2834,14 +2834,14 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
-#define PRPL_SIZE 16
+#define PROTOCOL_SIZE 16
 struct tooltip_data {
 	PangoLayout *layout;
 	PangoLayout *name_layout;
-	GdkPixbuf *prpl_icon;
+	GdkPixbuf *protocol_icon;
 	GdkPixbuf *status_icon;
 	GdkPixbuf *avatar;
-	gboolean avatar_is_prpl_icon;
+	gboolean avatar_is_protocol_icon;
 	int avatar_width;
 	int avatar_height;
 	int name_height;
@@ -2872,8 +2872,8 @@ static PangoLayout * create_pango_layout(const char *markup, int *width, int *he
 static struct tooltip_data * create_tip_for_account(PurpleAccount *account)
 {
 	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
-	td->status_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-		/* Yes, status_icon, not prpl_icon */
+	td->status_icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
+		/* Yes, status_icon, not protocol_icon */
 	if (purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(td->status_icon, td->status_icon, 0.0, FALSE);
 	td->layout = create_pango_layout(purple_account_get_username(account), &td->width, &td->height);
@@ -2897,7 +2897,7 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	td->status_icon = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_LARGE);
 	td->avatar = pidgin_blist_get_buddy_icon(node, !full, FALSE);
 	if (account != NULL) {
-		td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		td->protocol_icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 	}
 	tooltip_text = pidgin_get_tooltip_text(node, full);
 	if (tooltip_text && *tooltip_text) {
@@ -2921,12 +2921,12 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	g_free(tmp);
 
 	td->name_layout = create_pango_layout(node_name, &td->name_width, &td->name_height);
-	td->name_width += SMALL_SPACE + PRPL_SIZE;
-	td->name_height = MAX(td->name_height, PRPL_SIZE + SMALL_SPACE);
+	td->name_width += SMALL_SPACE + PROTOCOL_SIZE;
+	td->name_height = MAX(td->name_height, PROTOCOL_SIZE + SMALL_SPACE);
 #if 0  /* PRPL Icon as avatar */
 	if(!td->avatar && full) {
-		td->avatar = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
-		td->avatar_is_prpl_icon = TRUE;
+		td->avatar = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_LARGE);
+		td->avatar_is_protocol_icon = TRUE;
 	}
 #endif
 
@@ -2952,7 +2952,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 	int max_text_width;
 	int max_avatar_width;
 	GList *l;
-	int prpl_col = 0;
+	int protocol_col = 0;
 	GtkTextDirection dir = gtk_widget_get_direction(widget);
 	int status_size = 0;
 
@@ -2982,9 +2982,9 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 
 	max_width = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
 	if (dir == GTK_TEXT_DIR_RTL)
-		prpl_col = TOOLTIP_BORDER + max_avatar_width + SMALL_SPACE;
+		protocol_col = TOOLTIP_BORDER + max_avatar_width + SMALL_SPACE;
 	else
-		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
+		protocol_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PROTOCOL_SIZE;
 
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
@@ -3051,10 +3051,10 @@ pidgin_blist_paint_tip(GtkWidget *widget, cairo_t *cr, gpointer null)
 			}
 		}
 
-		if (!td->avatar_is_prpl_icon && td->prpl_icon) {
-			gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
+		if (!td->avatar_is_protocol_icon && td->protocol_icon) {
+			gdk_cairo_set_source_pixbuf(cr, td->protocol_icon, protocol_col,
 			                            current_height +
-			                               (td->name_height - PRPL_SIZE) / 2);
+			                               (td->name_height - PROTOCOL_SIZE) / 2);
 			cairo_paint(cr);
 		}
 
@@ -3128,8 +3128,8 @@ pidgin_blist_destroy_tooltip_data(void)
 			g_object_unref(td->avatar);
 		if(td->status_icon)
 			g_object_unref(td->status_icon);
-		if(td->prpl_icon)
-			g_object_unref(td->prpl_icon);
+		if(td->protocol_icon)
+			g_object_unref(td->protocol_icon);
 		if (td->layout)
 			g_object_unref(td->layout);
 		if (td->name_layout)
@@ -4125,7 +4125,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		if (((struct _pidgin_blist_node*)purple_blist_node_get_ui_data(node->parent))->contact_expanded) {
 			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
 				return NULL;
-			return pidgin_create_prpl_icon(purple_buddy_get_account((PurpleBuddy*)node), PIDGIN_PRPL_ICON_SMALL);
+			return pidgin_create_protocol_icon(purple_buddy_get_account((PurpleBuddy*)node), PIDGIN_PROTOCOL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
@@ -5170,13 +5170,13 @@ find_account_widget(GObject *widget,
 }
 
 static void
-pack_prpl_icon_start(GtkWidget *box,
+pack_protocol_icon_start(GtkWidget *box,
                      PurpleAccount *account)
 {
 	GdkPixbuf *pixbuf;
 	GtkWidget *image;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 	if (pixbuf != NULL) {
 		image = gtk_image_new_from_pixbuf(pixbuf);
 		g_object_unref(pixbuf);
@@ -5436,7 +5436,7 @@ create_account_label(PurpleAccount *account)
 	hbox = gtk_hbox_new(FALSE, 6);
 	g_object_set_data(G_OBJECT(hbox), OBJECT_DATA_KEY_ACCOUNT, account);
 
-	pack_prpl_icon_start(hbox, account);
+	pack_protocol_icon_start(hbox, account);
 
 	label = gtk_label_new(NULL);
 	markup = g_strdup_printf("<span size=\"smaller\">%s</span>", username);
@@ -6676,7 +6676,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *node)
 {
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
-	GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
+	GdkPixbuf *status, *avatar, *emblem, *protocol_icon;
 	GdkColor *color = NULL;
 	char *mark;
 	char *idle = NULL;
@@ -6745,7 +6745,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		}
 	}
 
-	prpl_icon = pidgin_create_prpl_icon(purple_buddy_get_account(buddy), PIDGIN_PRPL_ICON_SMALL);
+	protocol_icon = pidgin_create_protocol_icon(purple_buddy_get_account(buddy), PIDGIN_PROTOCOL_ICON_SMALL);
 
 	if (theme != NULL)
 		color = pidgin_blist_theme_get_contact_color(theme);
@@ -6760,7 +6760,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			   BUDDY_ICON_VISIBLE_COLUMN, biglist,
 			   EMBLEM_COLUMN, emblem,
 			   EMBLEM_VISIBLE_COLUMN, (emblem != NULL),
-			   PROTOCOL_ICON_COLUMN, prpl_icon,
+			   PROTOCOL_ICON_COLUMN, protocol_icon,
 			   PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 			   BGCOLOR_COLUMN, color,
 			   CONTACT_EXPANDER_COLUMN, NULL,
@@ -6776,8 +6776,8 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		g_object_unref(status);
 	if(avatar)
 		g_object_unref(avatar);
-	if(prpl_icon)
-		g_object_unref(prpl_icon);
+	if(protocol_icon)
+		g_object_unref(protocol_icon);
 }
 
 /* This is a variation on the original gtk_blist_update_contact. Here we
@@ -6926,7 +6926,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 	if(purple_account_is_connected(purple_chat_get_account(chat))) {
 		GtkTreeIter iter;
-		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
+		GdkPixbuf *status, *avatar, *emblem, *protocol_icon;
 		const gchar *color, *font;
 		gchar *mark, *tmp;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
@@ -6988,7 +6988,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		g_free(mark);
 		mark = tmp;
 
-		prpl_icon = pidgin_create_prpl_icon(purple_chat_get_account(chat), PIDGIN_PRPL_ICON_SMALL);
+		protocol_icon = pidgin_create_protocol_icon(purple_chat_get_account(chat), PIDGIN_PROTOCOL_ICON_SMALL);
 
 		if (theme != NULL)
 			bgcolor = pidgin_blist_theme_get_contact_color(theme);
@@ -7000,7 +7000,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 				BUDDY_ICON_VISIBLE_COLUMN, showicons,
 				EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
-				PROTOCOL_ICON_COLUMN, prpl_icon,
+				PROTOCOL_ICON_COLUMN, protocol_icon,
 				PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 				NAME_COLUMN, mark,
 				BGCOLOR_COLUMN, bgcolor,
@@ -7014,8 +7014,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			g_object_unref(status);
 		if(avatar)
 			g_object_unref(avatar);
-		if(prpl_icon)
-			g_object_unref(prpl_icon);
+		if(protocol_icon)
+			g_object_unref(protocol_icon);
 
 	} else {
 		pidgin_blist_hide_node(list, node, TRUE);
@@ -8228,7 +8228,7 @@ pidgin_blist_update_accounts_menu(void)
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 			g_free(buf);
 
-			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+			pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 			if (pixbuf != NULL) {
 				if (!purple_account_is_connected(account))
 					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
@@ -8274,7 +8274,7 @@ pidgin_blist_update_accounts_menu(void)
 		accel_path_buf = g_strconcat("<Actions>/AccountActions/", buf, NULL);
 		g_free(buf);
 
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 		if (pixbuf != NULL) {
 			if (!purple_account_is_connected(account))
 				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,

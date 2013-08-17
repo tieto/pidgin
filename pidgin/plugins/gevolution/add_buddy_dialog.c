@@ -32,7 +32,7 @@
 enum
 {
 	COLUMN_NAME,
-	COLUMN_PRPL_ICON,
+	COLUMN_PROTOCOL_ICON,
 	COLUMN_USERNAME,
 	COLUMN_DATA,
 	NUM_COLUMNS
@@ -147,7 +147,7 @@ add_columns(GevoAddBuddyDialog *dialog)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "pixbuf", COLUMN_PRPL_ICON);
+									   "pixbuf", COLUMN_PROTOCOL_ICON);
 
 	/* Account name */
 	renderer = gtk_cell_renderer_text_new();
@@ -183,7 +183,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 	if (account == NULL)
 		return;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 	for (l = list; l != NULL; l = l->next)
 	{
@@ -199,7 +199,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 
 		gtk_list_store_set(dialog->model, &iter,
 						   COLUMN_NAME, name,
-						   COLUMN_PRPL_ICON, pixbuf,
+						   COLUMN_PROTOCOL_ICON, pixbuf,
 						   COLUMN_USERNAME, account_name,
 						   COLUMN_DATA, contact,
 						   -1);
@@ -602,13 +602,13 @@ gevo_add_buddy_dialog_add_person(GevoAddBuddyDialog *dialog,
 	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 	gtk_list_store_append(dialog->model, &iter);
 
 	gtk_list_store_set(dialog->model, &iter,
 					   COLUMN_NAME, name,
-					   COLUMN_PRPL_ICON, pixbuf,
+					   COLUMN_PROTOCOL_ICON, pixbuf,
 					   COLUMN_DATA, contact,
 					   COLUMN_USERNAME, screenname,
 					   -1);

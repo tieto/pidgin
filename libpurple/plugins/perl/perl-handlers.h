@@ -15,7 +15,7 @@ typedef struct
 	PurpleCmdId id;
 	SV *callback;
 	SV *data;
-	gchar *prpl_id;
+	gchar *protocol_id;
 	gchar *cmd;
 	PurplePlugin *plugin;
 } PurplePerlCmdHandler;
@@ -73,7 +73,7 @@ void purple_perl_signal_clear(void);
 
 PurpleCmdId purple_perl_cmd_register(PurplePlugin *plugin, const gchar *cmd,
                                  const gchar *args, PurpleCmdPriority priority,
-                                 PurpleCmdFlag flag, const gchar *prpl_id,
+                                 PurpleCmdFlag flag, const gchar *protocol_id,
                                  SV *callback, const gchar *helpstr, SV *data);
 void purple_perl_cmd_unregister(PurpleCmdId id);
 void purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin);

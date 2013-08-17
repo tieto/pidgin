@@ -269,7 +269,7 @@ jabber_adhoc_got_server_list(JabberStream *js, const char *from, xmlnode *query)
 	}
 
 	if (js->state == JABBER_STREAM_CONNECTED)
-		purple_prpl_got_account_actions(purple_connection_get_account(js->gc));
+		purple_protocol_got_account_actions(purple_connection_get_account(js->gc));
 }
 
 static void

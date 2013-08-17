@@ -79,11 +79,11 @@
 
 
 /* plugin preference names */
-#define MW_PRPL_OPT_BASE          "/plugins/prpl/meanwhile"
-#define MW_PRPL_OPT_BLIST_ACTION  MW_PRPL_OPT_BASE "/blist_action"
-#define MW_PRPL_OPT_PSYCHIC       MW_PRPL_OPT_BASE "/psychic"
-#define MW_PRPL_OPT_FORCE_LOGIN   MW_PRPL_OPT_BASE "/force_login"
-#define MW_PRPL_OPT_SAVE_DYNAMIC  MW_PRPL_OPT_BASE "/save_dynamic"
+#define MW_PROTOCOL_OPT_BASE          "/plugins/prpl/meanwhile"
+#define MW_PROTOCOL_OPT_BLIST_ACTION  MW_PROTOCOL_OPT_BASE "/blist_action"
+#define MW_PROTOCOL_OPT_PSYCHIC       MW_PROTOCOL_OPT_BASE "/psychic"
+#define MW_PROTOCOL_OPT_FORCE_LOGIN   MW_PROTOCOL_OPT_BASE "/force_login"
+#define MW_PROTOCOL_OPT_SAVE_DYNAMIC  MW_PROTOCOL_OPT_BASE "/save_dynamic"
 
 
 /* stages of connecting-ness */
@@ -163,7 +163,7 @@ enum blist_choice {
 
 
 /* testing for the above */
-#define BLIST_PREF_IS(n) (purple_prefs_get_int(MW_PRPL_OPT_BLIST_ACTION)==(n))
+#define BLIST_PREF_IS(n) (purple_prefs_get_int(MW_PROTOCOL_OPT_BLIST_ACTION)==(n))
 #define BLIST_PREF_IS_LOCAL()  BLIST_PREF_IS(blist_choice_LOCAL)
 #define BLIST_PREF_IS_MERGE()  BLIST_PREF_IS(blist_choice_MERGE)
 #define BLIST_PREF_IS_STORE()  BLIST_PREF_IS(blist_choice_STORE)
@@ -593,11 +593,11 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   }
 
   if(aware->online) {
-    purple_prpl_got_user_status(acct, id, status, NULL);
-    purple_prpl_got_user_idle(acct, id, !!idle, (time_t) idle);
+    purple_protocol_got_user_status(acct, id, status, NULL);
+    purple_protocol_got_user_idle(acct, id, !!idle, (time_t) idle);
 
   } else {
-    purple_prpl_got_user_status(acct, id, MW_STATE_OFFLINE, NULL);
+    purple_protocol_got_user_status(acct, id, MW_STATE_OFFLINE, NULL);
   }
 }
 
@@ -1484,7 +1484,7 @@ static void session_loginRedirect(struct mwSession *session,
 }
 
 
-static void mw_prpl_set_status(PurpleAccount *acct, PurpleStatus *status);
+static void mw_protocol_set_status(PurpleAccount *acct, PurpleStatus *status);
 
 
 /** called from mw_session_stateChange when the session's state is
@@ -1497,7 +1497,7 @@ static void session_started(struct mwPurpleProtocolData *pd) {
   /* set out initial status */
   acct = purple_connection_get_account(pd->gc);
   status = purple_account_get_active_status(acct);
-  mw_prpl_set_status(acct, status);
+  mw_protocol_set_status(acct, status);
 
   /* start watching for new conversations */
   purple_signal_connect(purple_conversations_get_handle(),
@@ -3215,7 +3215,7 @@ static void mwPurpleProtocolData_free(struct mwPurpleProtocolData *pd) {
 }
 
 
-static const char *mw_prpl_list_icon(PurpleAccount *a, PurpleBuddy *b) {
+static const char *mw_protocol_list_icon(PurpleAccount *a, PurpleBuddy *b) {
   /* my little green dude is a chopped up version of the aim running
      guy.  First, cut off the head and store someplace safe. Then,
      take the left-half side of the body and throw it away. Make a
@@ -3231,7 +3231,7 @@ static const char *mw_prpl_list_icon(PurpleAccount *a, PurpleBuddy *b) {
 }
 
 
-static const char* mw_prpl_list_emblem(PurpleBuddy *b)
+static const char* mw_protocol_list_emblem(PurpleBuddy *b)
 {
   if(buddy_is_external(b))
     return "external";
@@ -3240,7 +3240,7 @@ static const char* mw_prpl_list_emblem(PurpleBuddy *b)
 }
 
 
-static char *mw_prpl_status_text(PurpleBuddy *b) {
+static char *mw_protocol_status_text(PurpleBuddy *b) {
   PurpleConnection *gc;
   struct mwPurpleProtocolData *pd;
   struct mwAwareIdBlock t = { mwAware_USER, (char *)purple_buddy_get_name(b), NULL };
@@ -3300,7 +3300,7 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 }
 
 
-static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
+static void mw_protocol_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
   PurpleConnection *gc;
   struct mwPurpleProtocolData *pd = NULL;
   struct mwAwareIdBlock idb = { mwAware_USER, (char *)purple_buddy_get_name(b), NULL };
@@ -3335,7 +3335,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   }
 }
 
-static GList *mw_prpl_status_types(PurpleAccount *acct)
+static GList *mw_protocol_status_types(PurpleAccount *acct)
 {
 	GList *types = NULL;
 	PurpleStatusType *type;
@@ -3609,7 +3609,7 @@ static void blist_menu_announce(PurpleBlistNode *node, gpointer data) {
 #endif
 
 
-static GList *mw_prpl_blist_node_menu(PurpleBlistNode *node) {
+static GList *mw_protocol_blist_node_menu(PurpleBlistNode *node) {
   GList *l = NULL;
   PurpleMenuAction *act;
 
@@ -3637,7 +3637,7 @@ static GList *mw_prpl_blist_node_menu(PurpleBlistNode *node) {
 }
 
 
-static GList *mw_prpl_chat_info(PurpleConnection *gc) {
+static GList *mw_protocol_chat_info(PurpleConnection *gc) {
   GList *l = NULL;
   struct proto_chat_entry *pce;
 
@@ -3650,7 +3650,7 @@ static GList *mw_prpl_chat_info(PurpleConnection *gc) {
 }
 
 
-static GHashTable *mw_prpl_chat_info_defaults(PurpleConnection *gc,
+static GHashTable *mw_protocol_chat_info_defaults(PurpleConnection *gc,
 					      const char *name) {
   GHashTable *table;
 
@@ -3666,10 +3666,10 @@ static GHashTable *mw_prpl_chat_info_defaults(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_login(PurpleAccount *acct);
+static void mw_protocol_login(PurpleAccount *acct);
 
 
-static void mw_prpl_login(PurpleAccount *account) {
+static void mw_protocol_login(PurpleAccount *account) {
   PurpleConnection *gc;
   struct mwPurpleProtocolData *pd;
 
@@ -3751,7 +3751,7 @@ static void mw_prpl_login(PurpleAccount *account) {
 }
 
 
-static void mw_prpl_close(PurpleConnection *gc) {
+static void mw_protocol_close(PurpleConnection *gc) {
   struct mwPurpleProtocolData *pd;
 
   g_return_if_fail(gc != NULL);
@@ -3951,7 +3951,7 @@ static char *im_mime_convert(PurpleConnection *gc,
 }
 
 
-static int mw_prpl_send_im(PurpleConnection *gc,
+static int mw_protocol_send_im(PurpleConnection *gc,
 			   const char *name,
 			   const char *message,
 			   PurpleMessageFlags flags) {
@@ -4025,7 +4025,7 @@ static int mw_prpl_send_im(PurpleConnection *gc,
 }
 
 
-static unsigned int mw_prpl_send_typing(PurpleConnection *gc,
+static unsigned int mw_protocol_send_typing(PurpleConnection *gc,
 					const char *name,
 					PurpleIMTypingState state) {
 
@@ -4118,7 +4118,7 @@ static const char *mw_client_name(guint16 type) {
 }
 
 
-static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
+static void mw_protocol_get_info(PurpleConnection *gc, const char *who) {
 
   struct mwAwareIdBlock idb = { mwAware_USER, (char *) who, NULL };
 
@@ -4191,7 +4191,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 }
 
 
-static void mw_prpl_set_status(PurpleAccount *acct, PurpleStatus *status) {
+static void mw_protocol_set_status(PurpleAccount *acct, PurpleStatus *status) {
   PurpleConnection *gc;
   const char *state;
   char *message = NULL;
@@ -4244,7 +4244,7 @@ static void mw_prpl_set_status(PurpleAccount *acct, PurpleStatus *status) {
 }
 
 
-static void mw_prpl_set_idle(PurpleConnection *gc, int t) {
+static void mw_protocol_set_idle(PurpleConnection *gc, int t) {
   struct mwSession *session;
   struct mwUserStatus stat;
 
@@ -4454,7 +4454,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 }
 
 
-static void mw_prpl_add_buddy(PurpleConnection *gc,
+static void mw_protocol_add_buddy(PurpleConnection *gc,
 			      PurpleBuddy *buddy,
 			      PurpleGroup *group,
 			      const char *message) {
@@ -4502,7 +4502,7 @@ static void foreach_add_buddies(PurpleGroup *group, GList *buddies,
 }
 
 
-static void mw_prpl_add_buddies(PurpleConnection *gc,
+static void mw_protocol_add_buddies(PurpleConnection *gc,
 				GList *buddies,
 				GList *groups,
 				const char *message) {
@@ -4553,7 +4553,7 @@ static void mw_prpl_add_buddies(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_remove_buddy(PurpleConnection *gc,
+static void mw_protocol_remove_buddy(PurpleConnection *gc,
 				 PurpleBuddy *buddy, PurpleGroup *group) {
 
   struct mwPurpleProtocolData *pd;
@@ -4593,7 +4593,7 @@ static void privacy_fill(struct mwPrivacyInfo *priv,
 }
 
 
-static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
+static void mw_protocol_set_permit_deny(PurpleConnection *gc) {
   PurpleAccount *acct;
   struct mwPurpleProtocolData *pd;
   struct mwSession *session;
@@ -4648,23 +4648,23 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
 }
 
 
-static void mw_prpl_add_permit(PurpleConnection *gc, const char *name) {
-  mw_prpl_set_permit_deny(gc);
+static void mw_protocol_add_permit(PurpleConnection *gc, const char *name) {
+  mw_protocol_set_permit_deny(gc);
 }
 
 
-static void mw_prpl_add_deny(PurpleConnection *gc, const char *name) {
-  mw_prpl_set_permit_deny(gc);
+static void mw_protocol_add_deny(PurpleConnection *gc, const char *name) {
+  mw_protocol_set_permit_deny(gc);
 }
 
 
-static void mw_prpl_rem_permit(PurpleConnection *gc, const char *name) {
-  mw_prpl_set_permit_deny(gc);
+static void mw_protocol_rem_permit(PurpleConnection *gc, const char *name) {
+  mw_protocol_set_permit_deny(gc);
 }
 
 
-static void mw_prpl_rem_deny(PurpleConnection *gc, const char *name) {
-  mw_prpl_set_permit_deny(gc);
+static void mw_protocol_rem_deny(PurpleConnection *gc, const char *name) {
+  mw_protocol_set_permit_deny(gc);
 }
 
 
@@ -4687,7 +4687,7 @@ static struct mwConference *conf_find(struct mwServiceConference *srvc,
 }
 
 
-static void mw_prpl_join_chat(PurpleConnection *gc,
+static void mw_protocol_join_chat(PurpleConnection *gc,
 			      GHashTable *components) {
 
   struct mwPurpleProtocolData *pd;
@@ -4728,7 +4728,7 @@ static void mw_prpl_join_chat(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_reject_chat(PurpleConnection *gc,
+static void mw_protocol_reject_chat(PurpleConnection *gc,
 				GHashTable *components) {
 
   struct mwPurpleProtocolData *pd;
@@ -4752,12 +4752,12 @@ static void mw_prpl_reject_chat(PurpleConnection *gc,
 }
 
 
-static char *mw_prpl_get_chat_name(GHashTable *components) {
+static char *mw_protocol_get_chat_name(GHashTable *components) {
   return g_hash_table_lookup(components, CHAT_KEY_NAME);
 }
 
 
-static void mw_prpl_chat_invite(PurpleConnection *gc,
+static void mw_protocol_chat_invite(PurpleConnection *gc,
 				int id,
 				const char *invitation,
 				const char *who) {
@@ -4785,7 +4785,7 @@ static void mw_prpl_chat_invite(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_chat_leave(PurpleConnection *gc,
+static void mw_protocol_chat_leave(PurpleConnection *gc,
 			       int id) {
 
   struct mwPurpleProtocolData *pd;
@@ -4808,16 +4808,16 @@ static void mw_prpl_chat_leave(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_chat_whisper(PurpleConnection *gc,
+static void mw_protocol_chat_whisper(PurpleConnection *gc,
 				 int id,
 				 const char *who,
 				 const char *message) {
 
-  mw_prpl_send_im(gc, who, message, 0);
+  mw_protocol_send_im(gc, who, message, 0);
 }
 
 
-static int mw_prpl_chat_send(PurpleConnection *gc,
+static int mw_protocol_chat_send(PurpleConnection *gc,
 			     int id,
 			     const char *message,
 			     PurpleMessageFlags flags) {
@@ -4849,7 +4849,7 @@ static int mw_prpl_chat_send(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_keepalive(PurpleConnection *gc) {
+static void mw_protocol_keepalive(PurpleConnection *gc) {
   struct mwSession *session;
 
   g_return_if_fail(gc != NULL);
@@ -4861,7 +4861,7 @@ static void mw_prpl_keepalive(PurpleConnection *gc) {
 }
 
 
-static void mw_prpl_alias_buddy(PurpleConnection *gc,
+static void mw_protocol_alias_buddy(PurpleConnection *gc,
 				const char *who,
 				const char *alias) {
 
@@ -4875,7 +4875,7 @@ static void mw_prpl_alias_buddy(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_group_buddy(PurpleConnection *gc,
+static void mw_protocol_group_buddy(PurpleConnection *gc,
 				const char *who,
 				const char *old_group,
 				const char *new_group) {
@@ -4904,7 +4904,7 @@ static void mw_prpl_group_buddy(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_rename_group(PurpleConnection *gc,
+static void mw_protocol_rename_group(PurpleConnection *gc,
 				 const char *old,
 				 PurpleGroup *group,
 				 GList *buddies) {
@@ -4922,13 +4922,13 @@ static void mw_prpl_rename_group(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_buddy_free(PurpleBuddy *buddy) {
+static void mw_protocol_buddy_free(PurpleBuddy *buddy) {
   /* I don't think we have any cleanup for buddies yet */
   ;
 }
 
 
-static void mw_prpl_convo_closed(PurpleConnection *gc, const char *who) {
+static void mw_protocol_convo_closed(PurpleConnection *gc, const char *who) {
   struct mwPurpleProtocolData *pd = purple_connection_get_protocol_data(gc);
   struct mwServiceIm *srvc;
   struct mwConversation *conv;
@@ -4947,7 +4947,7 @@ static void mw_prpl_convo_closed(PurpleConnection *gc, const char *who) {
 }
 
 
-static const char *mw_prpl_normalize(const PurpleAccount *account,
+static const char *mw_protocol_normalize(const PurpleAccount *account,
 				     const char *id) {
 
   /* code elsewhere assumes that the return value points to different
@@ -4960,7 +4960,7 @@ static const char *mw_prpl_normalize(const PurpleAccount *account,
 }
 
 
-static void mw_prpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
+static void mw_protocol_remove_group(PurpleConnection *gc, PurpleGroup *group) {
   struct mwPurpleProtocolData *pd;
   struct mwAwareList *list;
 
@@ -4980,7 +4980,7 @@ static void mw_prpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
 }
 
 
-static gboolean mw_prpl_can_receive_file(PurpleConnection *gc,
+static gboolean mw_protocol_can_receive_file(PurpleConnection *gc,
 					 const char *who) {
   struct mwPurpleProtocolData *pd;
   struct mwServiceAware *srvc;
@@ -5069,7 +5069,7 @@ static void ft_outgoing_cancel(PurpleXfer *xfer) {
 }
 
 
-static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
+static PurpleXfer *mw_protocol_new_xfer(PurpleConnection *gc, const char *who) {
   PurpleAccount *acct;
   PurpleXfer *xfer;
 
@@ -5085,10 +5085,10 @@ static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
   return xfer;
 }
 
-static void mw_prpl_send_file(PurpleConnection *gc,
+static void mw_protocol_send_file(PurpleConnection *gc,
 			      const char *who, const char *file) {
 
-  PurpleXfer *xfer = mw_prpl_new_xfer(gc, who);
+  PurpleXfer *xfer = mw_protocol_new_xfer(gc, who);
 
   if(file) {
     DEBUG_INFO("file != NULL\n");
@@ -5112,7 +5112,7 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
   purple_plugin_pref_frame_add(frame, pref);
 
 
-  pref = purple_plugin_pref_new_with_name(MW_PRPL_OPT_BLIST_ACTION);
+  pref = purple_plugin_pref_new_with_name(MW_PROTOCOL_OPT_BLIST_ACTION);
   purple_plugin_pref_set_label(pref, _("Buddy List Storage Mode"));
 
   purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
@@ -5569,7 +5569,7 @@ static void search_action(PurpleProtocolAction *act) {
 }
 
 
-static GList *mw_prpl_get_actions(PurpleConnection *gc) {
+static GList *mw_protocol_get_actions(PurpleConnection *gc) {
   PurpleProtocolAction *act;
   GList *l = NULL;
 
@@ -5619,60 +5619,60 @@ static PurpleProtocol mw_protocol = {
   NULL, /*< set in mw_plugin_init */
   NULL, /*< set in mw_plugin_init */
   NO_BUDDY_ICONS,
-  mw_prpl_get_actions,
-  mw_prpl_list_icon,
-  mw_prpl_list_emblem,
-  mw_prpl_status_text,
-  mw_prpl_tooltip_text,
-  mw_prpl_status_types,
-  mw_prpl_blist_node_menu,
-  mw_prpl_chat_info,
-  mw_prpl_chat_info_defaults,
-  mw_prpl_login,
-  mw_prpl_close,
-  mw_prpl_send_im,
+  mw_protocol_get_actions,
+  mw_protocol_list_icon,
+  mw_protocol_list_emblem,
+  mw_protocol_status_text,
+  mw_protocol_tooltip_text,
+  mw_protocol_status_types,
+  mw_protocol_blist_node_menu,
+  mw_protocol_chat_info,
+  mw_protocol_chat_info_defaults,
+  mw_protocol_login,
+  mw_protocol_close,
+  mw_protocol_send_im,
   NULL,
-  mw_prpl_send_typing,
-  mw_prpl_get_info,
-  mw_prpl_set_status,
-  mw_prpl_set_idle,
+  mw_protocol_send_typing,
+  mw_protocol_get_info,
+  mw_protocol_set_status,
+  mw_protocol_set_idle,
   NULL,
-  mw_prpl_add_buddy,
-  mw_prpl_add_buddies,
-  mw_prpl_remove_buddy,
+  mw_protocol_add_buddy,
+  mw_protocol_add_buddies,
+  mw_protocol_remove_buddy,
   NULL,
-  mw_prpl_add_permit,
-  mw_prpl_add_deny,
-  mw_prpl_rem_permit,
-  mw_prpl_rem_deny,
-  mw_prpl_set_permit_deny,
-  mw_prpl_join_chat,
-  mw_prpl_reject_chat,
-  mw_prpl_get_chat_name,
-  mw_prpl_chat_invite,
-  mw_prpl_chat_leave,
-  mw_prpl_chat_whisper,
-  mw_prpl_chat_send,
-  mw_prpl_keepalive,
-  NULL,
-  NULL,
-  mw_prpl_alias_buddy,
-  mw_prpl_group_buddy,
-  mw_prpl_rename_group,
-  mw_prpl_buddy_free,
-  mw_prpl_convo_closed,
-  mw_prpl_normalize,
-  NULL,
-  mw_prpl_remove_group,
+  mw_protocol_add_permit,
+  mw_protocol_add_deny,
+  mw_protocol_rem_permit,
+  mw_protocol_rem_deny,
+  mw_protocol_set_permit_deny,
+  mw_protocol_join_chat,
+  mw_protocol_reject_chat,
+  mw_protocol_get_chat_name,
+  mw_protocol_chat_invite,
+  mw_protocol_chat_leave,
+  mw_protocol_chat_whisper,
+  mw_protocol_chat_send,
+  mw_protocol_keepalive,
   NULL,
   NULL,
+  mw_protocol_alias_buddy,
+  mw_protocol_group_buddy,
+  mw_protocol_rename_group,
+  mw_protocol_buddy_free,
+  mw_protocol_convo_closed,
+  mw_protocol_normalize,
+  NULL,
+  mw_protocol_remove_group,
   NULL,
   NULL,
   NULL,
   NULL,
-  mw_prpl_can_receive_file,
-  mw_prpl_send_file,
-  mw_prpl_new_xfer,
+  NULL,
+  NULL,
+  mw_protocol_can_receive_file,
+  mw_protocol_send_file,
+  mw_protocol_new_xfer,
   NULL,
   NULL,
   NULL,
@@ -5718,8 +5718,8 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
     G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
 
   /* set up the preferences */
-  purple_prefs_add_none(MW_PRPL_OPT_BASE);
-  purple_prefs_add_int(MW_PRPL_OPT_BLIST_ACTION, BLIST_CHOICE_DEFAULT);
+  purple_prefs_add_none(MW_PROTOCOL_OPT_BASE);
+  purple_prefs_add_int(MW_PROTOCOL_OPT_BLIST_ACTION, BLIST_CHOICE_DEFAULT);
 
   /* set up account ID as user:server */
   split = purple_account_user_split_new(_("Server"),
@@ -5727,8 +5727,8 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
   mw_protocol.user_splits = g_list_append(mw_protocol.user_splits, split);
 
   /* remove dead preferences */
-  purple_prefs_remove(MW_PRPL_OPT_PSYCHIC);
-  purple_prefs_remove(MW_PRPL_OPT_SAVE_DYNAMIC);
+  purple_prefs_remove(MW_PROTOCOL_OPT_PSYCHIC);
+  purple_prefs_remove(MW_PROTOCOL_OPT_SAVE_DYNAMIC);
 
   /* port to connect to */
   opt = purple_account_option_int_new(_("Port"), MW_KEY_PORT,
@@ -5741,8 +5741,8 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
     gboolean b = FALSE;
     const char *label = _("Force login (ignore server redirects)");
 
-    if(purple_prefs_exists(MW_PRPL_OPT_FORCE_LOGIN))
-      b = purple_prefs_get_bool(MW_PRPL_OPT_FORCE_LOGIN);
+    if(purple_prefs_exists(MW_PROTOCOL_OPT_FORCE_LOGIN))
+      b = purple_prefs_get_bool(MW_PROTOCOL_OPT_FORCE_LOGIN);
 
     opt = purple_account_option_bool_new(label, MW_KEY_FORCE, b);
     l = g_list_append(l, opt);

@@ -17,7 +17,7 @@ BOOT:
 		const_iv(FAILED),
 		const_iv(NOT_FOUND),
 		const_iv(WRONG_ARGS),
-		const_iv(WRONG_PRPL),
+		const_iv(WRONG_PROTOCOL),
 		const_iv(WRONG_TYPE),
 	};
 	static const constiv ret_const_iv[] = {
@@ -44,7 +44,7 @@ BOOT:
 #define const_iv(name) {#name, (IV)PURPLE_CMD_FLAG_##name}
 		const_iv(IM),
 		const_iv(CHAT),
-		const_iv(PRPL_ONLY),
+		const_iv(PROTOCOL_ONLY),
 		const_iv(ALLOW_WRONG_ARGS),
 	};
 
@@ -85,19 +85,19 @@ PPCODE:
 	g_list_free(ll);
 
 Purple::Cmd::Id
-purple_cmd_register(plugin, command, args, priority, flag, prpl_id, func, helpstr, data = 0)
+purple_cmd_register(plugin, command, args, priority, flag, protocol_id, func, helpstr, data = 0)
 	Purple::Plugin plugin
 	const gchar *command
 	const gchar *args
 	Purple::Cmd::Priority priority
 	Purple::Cmd::Flag flag
-	const gchar *prpl_id
+	const gchar *protocol_id
 	SV *func
 	const gchar *helpstr
 	SV *data
 CODE:
 	RETVAL = purple_perl_cmd_register(plugin, command, args, priority, flag,
-	                                prpl_id, func, helpstr, data);
+	                                protocol_id, func, helpstr, data);
 OUTPUT:
 	RETVAL
 

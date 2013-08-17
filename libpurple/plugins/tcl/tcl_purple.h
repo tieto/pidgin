@@ -55,7 +55,7 @@ struct tcl_cmd_handler {
 	const char *args;
 	int priority;
 	int flags;
-	const char *prpl_id;
+	const char *protocol_id;
 	Tcl_Obj *proc;
 	const char *helpstr;
 

@@ -200,7 +200,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 	char *format;
 	size_t i;
 
-	f = PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY
+	f = PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY
 	    | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS;
 
 	format = c->format;
@@ -221,7 +221,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	purple_cmd_register(c->name, args, PURPLE_CMD_P_PRPL, f, "prpl-irc",
+	purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "prpl-irc",
 	                  irc_parse_purple_cmd, _(c->help), NULL);
 }
 

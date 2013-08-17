@@ -76,7 +76,7 @@ static EBookView *book_view = NULL;
 
 static void
 update_ims_from_contact(EContact *contact, const char *name,
-						const char *prpl_id, EContactField field)
+						const char *protocol_id, EContactField field)
 {
 	GList *ims = e_contact_get(contact, field);
 	GList *l, *l2;
@@ -90,7 +90,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		PurpleAccount *account = purple_connection_get_account(gc);
 		char *me;
 
-		if (strcmp(purple_account_get_protocol_id(account), prpl_id))
+		if (strcmp(purple_account_get_protocol_id(account), protocol_id))
 			continue;
 
 		if (!purple_account_get_bool(account, "gevo-autoadd", FALSE))
@@ -274,7 +274,7 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 	buddy = PURPLE_BUDDY(node);
 	account = purple_buddy_get_account(buddy);
 
-	if (!gevo_prpl_is_supported(account, buddy))
+	if (!gevo_protocol_is_supported(account, buddy))
 		return;
 
 	contact = gevo_search_buddy_in_contacts(buddy, NULL);
@@ -489,7 +489,7 @@ get_config_frame(PurplePlugin *plugin)
 
 		gtk_list_store_append(model, &iter);
 
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 		if ((pixbuf != NULL) && (!purple_account_is_connected(account)))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 

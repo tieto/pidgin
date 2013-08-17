@@ -93,7 +93,7 @@ static PurpleProtocol protocol =
 	oscar_send_file,		/* send_file */
 	oscar_new_xfer,			/* new_xfer */
 	oscar_offline_message,	/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* whiteboard_protocol_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
 	NULL,					/* unregister_user */

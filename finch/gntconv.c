@@ -175,7 +175,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 					purple_conversation_write(conv, "", _("That command only works in IMs, not chats."),
 							PURPLE_MESSAGE_NO_LOG, time(NULL));
 				break;
-			case PURPLE_CMD_STATUS_WRONG_PRPL:
+			case PURPLE_CMD_STATUS_WRONG_PROTOCOL:
 				purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
 						PURPLE_MESSAGE_NO_LOG, time(NULL));
 				break;

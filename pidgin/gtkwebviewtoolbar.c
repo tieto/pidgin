@@ -979,7 +979,7 @@ send_attention_cb(GtkAction *attention, GtkWebViewToolbar *toolbar)
 	const gchar *who = purple_conversation_get_name(conv);
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 
-	purple_prpl_send_attention(gc, who, 0);
+	purple_protocol_send_attention(gc, who, 0);
 	gtk_widget_grab_focus(toolbar->webview);
 }
 

@@ -402,7 +402,7 @@ GList *jabber_attention_types(PurpleAccount *account);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);
-int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
+int jabber_protocol_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_get_actions(PurpleConnection *gc);
 
 gboolean jabber_audio_enabled(JabberStream *js, const char *unused);

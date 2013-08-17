@@ -171,7 +171,7 @@ static void discover_status(PurpleConnection *from, PurpleConnection *to,
         !strcmp(status_id, NULL_STATUS_OFFLINE)) {
       purple_debug_info("nullprpl", "%s sees that %s is %s: %s\n",
                         from_username, to_username, status_id, message);
-      purple_prpl_got_user_status(purple_connection_get_account(from), to_username, status_id,
+      purple_protocol_got_user_status(purple_connection_get_account(from), to_username, status_id,
                                   (message) ? "message" : NULL, message, NULL);
     } else {
       purple_debug_error("nullprpl",
@@ -1125,7 +1125,7 @@ static PurpleProtocol protocol =
   NULL,                                /* send_file */
   NULL,                                /* new_xfer */
   nullprpl_offline_message,            /* offline_message */
-  NULL,                                /* whiteboard_prpl_ops */
+  NULL,                                /* whiteboard_protocol_ops */
   NULL,                                /* send_raw */
   NULL,                                /* roomlist_room_serialize */
   NULL,                                /* unregister_user */

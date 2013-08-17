@@ -731,7 +731,7 @@ silcpurple_add_buddy_pk_no(SilcPurpleBuddyRes r)
 			    _("You cannot receive buddy notifications until you "
 			      "import his/her public key.  You can use the Get Public Key "
 			      "command to get the public key."));
-	purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
+	purple_protocol_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 }
 
 static void
@@ -774,7 +774,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 			   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
 			   silcpurple_silcdir(), fingerprint);
 		purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
-		purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
+		purple_protocol_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 		silc_free(fingerprint);
 		silc_free(r->offline_pk);
 		if (r->public_key)
@@ -1007,7 +1007,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 	purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
 
 	/* Update online status */
-	purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
+	purple_protocol_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
 
 	/* Finally, start watching this user so we receive its status
 	   changes from the server */

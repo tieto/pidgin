@@ -179,12 +179,12 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 
 	/* Set the user's status */
 	if (bonjour_buddy->msg != NULL)
-		purple_prpl_got_user_status(account, name, status_id,
+		purple_protocol_got_user_status(account, name, status_id,
 					    "message", bonjour_buddy->msg, NULL);
 	else
-		purple_prpl_got_user_status(account, name, status_id, NULL);
+		purple_protocol_got_user_status(account, name, status_id, NULL);
 
-	purple_prpl_got_user_idle(account, name, FALSE, 0);
+	purple_protocol_got_user_idle(account, name, FALSE, 0);
 
 	/* TODO: Because we don't save Bonjour buddies in blist.xml,
 	 * we will always have to look up the buddy icon at login time.
@@ -211,7 +211,7 @@ void bonjour_buddy_signed_off(PurpleBuddy *pb) {
 		purple_account_remove_buddy(purple_buddy_get_account(pb), pb, NULL);
 		purple_blist_remove_buddy(pb);
 	} else {
-		purple_prpl_got_user_status(purple_buddy_get_account(pb),
+		purple_protocol_got_user_status(purple_buddy_get_account(pb),
 					    purple_buddy_get_name(pb), "offline", NULL);
 		bonjour_buddy_delete(purple_buddy_get_protocol_data(pb));
 		purple_buddy_set_protocol_data(pb, NULL);

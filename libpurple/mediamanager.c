@@ -456,7 +456,7 @@ purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
 		GstElement *src = gst_bin_get_by_name(GST_BIN(manager->priv->pipeline), id);
 
 		if (src) {
-			GstElement *capsfilter = gst_bin_get_by_name(GST_BIN(src), "prpl_video_caps");
+			GstElement *capsfilter = gst_bin_get_by_name(GST_BIN(src), "protocol_video_caps");
 			g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
 		}
 
@@ -530,7 +530,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 				GstElement *capsfilter;
 
 				videoscale = gst_element_factory_make("videoscale", NULL);
-				capsfilter = gst_element_factory_make("capsfilter", "prpl_video_caps");
+				capsfilter = gst_element_factory_make("capsfilter", "protocol_video_caps");
 
 				g_object_set(G_OBJECT(capsfilter),
 					"caps", purple_media_manager_get_video_caps(manager), NULL);

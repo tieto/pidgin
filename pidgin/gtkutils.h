@@ -49,9 +49,9 @@ typedef enum
 
 typedef enum
 {
-	PIDGIN_PRPL_ICON_SMALL,
-	PIDGIN_PRPL_ICON_MEDIUM,
-	PIDGIN_PRPL_ICON_LARGE
+	PIDGIN_PROTOCOL_ICON_SMALL,
+	PIDGIN_PROTOCOL_ICON_MEDIUM,
+	PIDGIN_PROTOCOL_ICON_LARGE
 } PidginPrplIconSize;
 
 #ifndef _WIN32
@@ -514,7 +514,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec,
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size);
+GdkPixbuf *pidgin_create_protocol_icon(PurpleAccount *account, PidginPrplIconSize size);
 
 /**
  * Creates a status icon for a given primitve

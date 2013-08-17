@@ -55,10 +55,10 @@ oscar_auth_sendrequest(PurpleConnection *gc, const char *bname, const char *msg)
 
 			/* Mobile users should always be online */
 			if (bname[0] == '+') {
-				purple_prpl_got_user_status(account,
+				purple_protocol_got_user_status(account,
 						purple_buddy_get_name(buddy),
 						OSCAR_STATUS_ID_AVAILABLE, NULL);
-				purple_prpl_got_user_status(account,
+				purple_protocol_got_user_status(account,
 						purple_buddy_get_name(buddy),
 						OSCAR_STATUS_ID_MOBILE, NULL);
 			}

@@ -256,7 +256,7 @@ msim_downloaded_buddy_icon(PurpleHttpConnection *http_conn,
  * If new_artist and new_title are NULL/empty, deactivate PURPLE_STATUS_TUNE.
  *
  * This function is useful because it lets you set the artist or title
- * individually, which purple_prpl_got_user_status() doesn't do.
+ * individually, which purple_protocol_got_user_status() doesn't do.
  */
 static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, const char *new_title)
 {
@@ -281,7 +281,7 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	name = purple_buddy_get_name(user->buddy);
 
 	if (!new_artist && !new_title) {
-		purple_prpl_got_user_status_deactive(account, name, "tune");
+		purple_protocol_got_user_status_deactive(account, name, "tune");
 		return;
 	}
 
@@ -301,7 +301,7 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	if (!new_title)
 		new_title = prev_title;
 
-	purple_prpl_got_user_status(account, name, "tune",
+	purple_protocol_got_user_status(account, name, "tune",
 			PURPLE_TUNE_TITLE, new_title,
 			PURPLE_TUNE_ARTIST, new_artist,
 			NULL);

@@ -167,12 +167,12 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 			break;
 	}
 	if (newmood != NULL) {
-		purple_prpl_got_user_status(purple_connection_get_account(js->gc), from, "mood",
+		purple_protocol_got_user_status(purple_connection_get_account(js->gc), from, "mood",
 				PURPLE_MOOD_NAME, newmood,
 				PURPLE_MOOD_COMMENT, moodtext,
 				NULL);
 	} else {
-		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), from, "mood");
+		purple_protocol_got_user_status_deactive(purple_connection_get_account(js->gc), from, "mood");
 	}
 	g_free(moodtext);
 }

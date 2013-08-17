@@ -1036,12 +1036,12 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			if (swboard->current_users > 1 ||
 				((swboard->conv != NULL) &&
 				 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
-				purple_prpl_got_attention_in_chat(gc, swboard->chat_id, user, MSN_NUDGE);
+				purple_protocol_got_attention_in_chat(gc, swboard->chat_id, user, MSN_NUDGE);
 
 			else
-				purple_prpl_got_attention(gc, user, MSN_NUDGE);
+				purple_protocol_got_attention(gc, user, MSN_NUDGE);
 		} else {
-			purple_prpl_got_attention(gc, user, MSN_NUDGE);
+			purple_protocol_got_attention(gc, user, MSN_NUDGE);
 		}
 
 	} else if (!strcmp(id, "2")) {

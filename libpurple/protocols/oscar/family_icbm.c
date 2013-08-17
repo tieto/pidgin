@@ -1727,7 +1727,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 						presence = purple_buddy_get_presence(buddy);
 						status = purple_presence_get_status(presence, "mood");
 						if (status) {
-							purple_prpl_got_user_status(account, bn,
+							purple_protocol_got_user_status(account, bn,
 									"mood",
 									PURPLE_MOOD_NAME, purple_status_get_attr_string(status, PURPLE_MOOD_NAME),
 									PURPLE_MOOD_COMMENT, unescaped_xstatus, NULL);

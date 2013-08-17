@@ -1244,9 +1244,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 
 	if (info->flags & AIM_FLAG_WIRELESS) {
-		purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_MOBILE, NULL);
+		purple_protocol_got_user_status(account, info->bn, OSCAR_STATUS_ID_MOBILE, NULL);
 	} else {
-		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
+		purple_protocol_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
 	message = (info->status && info->status_len > 0)
@@ -1262,10 +1262,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = g_strdup(purple_status_get_attr_string(previous_status, "itmsurl"));
 		}
 		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message ? message : "(null)", itmsurl ? itmsurl : "(null)");
-		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
+		purple_protocol_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
 	} else {
 		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message ? message : "(null)");
-		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, NULL);
+		purple_protocol_got_user_status(account, info->bn, status_id, "message", message, NULL);
 	}
 
 	g_free(message);
@@ -1276,7 +1276,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = info->onlinesince;
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
-	purple_prpl_got_user_login_time(account, info->bn, signon);
+	purple_protocol_got_user_login_time(account, info->bn, signon);
 
 	/* Idle time stuff */
 	/* info->idletime is the number of minutes that this user has been idle */
@@ -1284,9 +1284,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		time_idle = time(NULL) - info->idletime * 60;
 
 	if (time_idle > 0)
-		purple_prpl_got_user_idle(account, info->bn, TRUE, time_idle);
+		purple_protocol_got_user_idle(account, info->bn, TRUE, time_idle);
 	else
-		purple_prpl_got_user_idle(account, info->bn, FALSE, 0);
+		purple_protocol_got_user_idle(account, info->bn, FALSE, 0);
 
 	/* Server stored icon stuff */
 	bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, info->bn));
@@ -1337,8 +1337,8 @@ static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame 
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_OFFLINE, NULL);
-	purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
+	purple_protocol_got_user_status(account, info->bn, OSCAR_STATUS_ID_OFFLINE, NULL);
+	purple_protocol_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	g_hash_table_remove(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), info->bn));
 
 	return 1;
@@ -3516,9 +3516,9 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, co
 
 			/* Mobile users should always be online */
 			if (bname[0] == '+') {
-				purple_prpl_got_user_status(account, bname,
+				purple_protocol_got_user_status(account, bname,
 						OSCAR_STATUS_ID_AVAILABLE, NULL);
-				purple_prpl_got_user_status(account, bname,
+				purple_protocol_got_user_status(account, bname,
 						OSCAR_STATUS_ID_MOBILE, NULL);
 			}
 		} else if (aim_ssi_waitingforauth(&od->ssi.local,
@@ -3835,10 +3835,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 					/* Mobile users should always be online */
 					if (curitem->name[0] == '+') {
-						purple_prpl_got_user_status(account,
+						purple_protocol_got_user_status(account,
 								purple_buddy_get_name(b),
 								OSCAR_STATUS_ID_AVAILABLE, NULL);
-						purple_prpl_got_user_status(account,
+						purple_protocol_got_user_status(account,
 								purple_buddy_get_name(b),
 								OSCAR_STATUS_ID_MOBILE, NULL);
 					}
@@ -4049,9 +4049,9 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 		/* Mobile users should always be online */
 		if (name[0] == '+') {
-			purple_prpl_got_user_status(account,
+			purple_protocol_got_user_status(account,
 					name, OSCAR_STATUS_ID_AVAILABLE, NULL);
-			purple_prpl_got_user_status(account,
+			purple_protocol_got_user_status(account,
 					name, OSCAR_STATUS_ID_MOBILE, NULL);
 		}
 

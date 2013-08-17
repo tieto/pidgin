@@ -820,7 +820,7 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 
 	/* we can not subscribe -> user is offline (TODO unknown status?) */
 
-	purple_prpl_got_user_status(sip->account, to, "offline", NULL);
+	purple_protocol_got_user_status(sip->account, to, "offline", NULL);
 	g_free(to);
 	return TRUE;
 }
@@ -1239,7 +1239,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 						b->dialog = NULL;
 					}
 
-					purple_prpl_got_user_status(sip->account, from, "offline", NULL);
+					purple_protocol_got_user_status(sip->account, from, "offline", NULL);
 					break;
 				}
 				i++;
@@ -1276,9 +1276,9 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 
 	if(isonline)
-		purple_prpl_got_user_status(sip->account, from, "available", NULL);
+		purple_protocol_got_user_status(sip->account, from, "available", NULL);
 	else
-		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
+		purple_protocol_got_user_status(sip->account, from, "offline", NULL);
 
 	xmlnode_free(pidf);
 	g_free(from);
@@ -2110,7 +2110,7 @@ static PurpleProtocol protocol =
 	NULL,					/* send_file */
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* whiteboard_protocol_ops */
 	simple_send_raw,		/* send_raw */
 	NULL,					/* roomlist_room_serialize */
 	NULL,					/* unregister_user */

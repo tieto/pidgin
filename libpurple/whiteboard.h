@@ -99,7 +99,7 @@ void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops);
  * @param wb  The whiteboard for which to set the prpl operations
  * @param ops The prpl operations to set
  */
-void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops);
+void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops);
 
 /**
  * Creates a whiteboard

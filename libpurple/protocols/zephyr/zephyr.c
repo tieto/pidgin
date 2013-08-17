@@ -815,9 +815,9 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				purple_notify_user_info_destroy(user_info);
 			} else {
 				if (nlocs>0)
-					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? bname : user, "available", NULL);
+					purple_protocol_got_user_status(purple_connection_get_account(gc), b ? bname : user, "available", NULL);
 				else
-					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? bname : user, "offline", NULL);
+					purple_protocol_got_user_status(purple_connection_get_account(gc), b ? bname : user, "offline", NULL);
 			}
 
 			g_free(user);
@@ -1200,9 +1200,9 @@ static gint check_notify_tzc(gpointer data)
 					purple_notify_user_info_destroy(user_info);
 				} else {
 					if (nlocs>0)
-						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? bname : user, "available", NULL);
+						purple_protocol_got_user_status(purple_connection_get_account(gc), b ? bname : user, "available", NULL);
 					else
-						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? bname : user, "offline", NULL);
+						purple_protocol_got_user_status(purple_connection_get_account(gc), b ? bname : user, "offline", NULL);
 				}
 			}
 			else if (!g_ascii_strncasecmp(spewtype,"subscribed",10)) {
@@ -1326,9 +1326,9 @@ static gint check_loc(gpointer data)
 				for(i=0;i<numlocs;i++) {
 					ZGetLocations(&locations,&one);
 					if (nlocs>0)
-						purple_prpl_got_user_status(account,name,"available",NULL);
+						purple_protocol_got_user_status(account,name,"available",NULL);
 					else
-						purple_prpl_got_user_status(account,name,"offline",NULL);
+						purple_protocol_got_user_status(account,name,"offline",NULL);
 				}
 			}
 #else
@@ -2713,67 +2713,67 @@ static PurpleCmdRet zephyr_purple_cmd_zc(PurpleConversation *conv,
 static void zephyr_register_slash_commands(void)
 {
 
-	purple_cmd_register("msg","ws", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("msg","ws", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_msg, _("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
 
-	purple_cmd_register("zlocate","w", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zlocate","w", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zlocate, _("zlocate &lt;nick&gt;: Locate user"), NULL);
 
-	purple_cmd_register("zl","w", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zl","w", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zlocate, _("zl &lt;nick&gt;: Locate user"), NULL);
 
-	purple_cmd_register("instance","s", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("instance","s", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	purple_cmd_register("inst","s", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("inst","s", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	purple_cmd_register("topic","s", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("topic","s", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_instance, _("topic &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	purple_cmd_register("sub", "www", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("sub", "www", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_joinchat_cir,
 			  _("sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"), NULL);
 
-	purple_cmd_register("zi","ws", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zi","ws", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zi, _("zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"), NULL);
 
-	purple_cmd_register("zci","wws",PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zci","wws",PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zci,
 			  _("zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,*&gt;"), NULL);
 
-	purple_cmd_register("zcir","wwws",PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zcir","wwws",PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zcir,
 			  _("zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
-	purple_cmd_register("zir","wws",PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zir","wws",PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zir,
 			  _("zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
-	purple_cmd_register("zc","ws", PURPLE_CMD_P_PRPL,
-			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zc","ws", PURPLE_CMD_P_PROTOCOL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 			  "prpl-zephyr",
 			  zephyr_purple_cmd_zc, _("zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"), NULL);
 
@@ -2930,7 +2930,7 @@ static PurpleProtocol protocol = {
 	NULL,					/* send_file */
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* whiteboard_protocol_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
 

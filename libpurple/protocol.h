@@ -27,8 +27,8 @@
 /* this file should be all that prpls need to include. therefore, by including
  * this file, they should get glib, proxy, purple_connection, prpl, etc. */
 
-#ifndef _PURPLE_PRPL_H_
-#define _PURPLE_PRPL_H_
+#ifndef _PURPLE_PROTOCOL_H_
+#define _PURPLE_PROTOCOL_H_
 
 typedef struct _PurpleProtocol PurpleProtocol;
 
@@ -555,7 +555,7 @@ struct _PurpleProtocol
 	 */
 	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
-	PurpleWhiteboardPrplOps *whiteboard_prpl_ops;
+	PurpleWhiteboardPrplOps *whiteboard_protocol_ops;
 
 	/** For use in plugins that may understand the underlying protocol */
 	int (*send_raw)(PurpleConnection *gc, const char *buf, int len);
@@ -784,7 +784,7 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
  * @param idle      The user's idle state.
  * @param idle_time The user's idle time.
  */
-void purple_prpl_got_account_idle(PurpleAccount *account, gboolean idle,
+void purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,
 								time_t idle_time);
 
 /**
@@ -795,7 +795,7 @@ void purple_prpl_got_account_idle(PurpleAccount *account, gboolean idle,
  * @param account    The account the user is on.
  * @param login_time The user's log-in time.
  */
-void purple_prpl_got_account_login_time(PurpleAccount *account, time_t login_time);
+void purple_protocol_got_account_login_time(PurpleAccount *account, time_t login_time);
 
 /**
  * Notifies Purple that our account's status has changed.
@@ -807,7 +807,7 @@ void purple_prpl_got_account_login_time(PurpleAccount *account, time_t login_tim
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
-void purple_prpl_got_account_status(PurpleAccount *account,
+void purple_protocol_got_account_status(PurpleAccount *account,
 								  const char *status_id, ...) G_GNUC_NULL_TERMINATED;
 
 /**
@@ -821,7 +821,7 @@ void purple_prpl_got_account_status(PurpleAccount *account,
  *
  * @see account-actions-changed
  */
-void purple_prpl_got_account_actions(PurpleAccount *account);
+void purple_protocol_got_account_actions(PurpleAccount *account);
 
 /**
  * Notifies Purple that a buddy's idle state and time have changed.
@@ -836,7 +836,7 @@ void purple_prpl_got_account_actions(PurpleAccount *account);
  *                  the epoch.  If the PRPL does not know this value
  *                  then it should pass 0.
  */
-void purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
+void purple_protocol_got_user_idle(PurpleAccount *account, const char *name,
 							 gboolean idle, time_t idle_time);
 
 /**
@@ -848,7 +848,7 @@ void purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
  * @param name       The name of the buddy.
  * @param login_time The user's log-in time.
  */
-void purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
+void purple_protocol_got_user_login_time(PurpleAccount *account, const char *name,
 								   time_t login_time);
 
 /**
@@ -862,7 +862,7 @@ void purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
-void purple_prpl_got_user_status(PurpleAccount *account, const char *name,
+void purple_protocol_got_user_status(PurpleAccount *account, const char *name,
 							   const char *status_id, ...) G_GNUC_NULL_TERMINATED;
 
 /**
@@ -874,7 +874,7 @@ void purple_prpl_got_user_status(PurpleAccount *account, const char *name,
  * @param name      The name of the buddy.
  * @param status_id The status ID.
  */
-void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
+void purple_protocol_got_user_status_deactive(PurpleAccount *account, const char *name,
 					const char *status_id);
 
 /**
@@ -885,7 +885,7 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
  * @param new_status The status that was activated, or deactivated
  *                   (in the case of independent statuses).
  */
-void purple_prpl_change_account_status(PurpleAccount *account,
+void purple_protocol_change_account_status(PurpleAccount *account,
 									 PurpleStatus *old_status,
 									 PurpleStatus *new_status);
 
@@ -897,7 +897,7 @@ void purple_prpl_change_account_status(PurpleAccount *account,
  *
  * @return List of statuses
  */
-GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence);
+GList *purple_protocol_get_statuses(PurpleAccount *account, PurplePresence *presence);
 
 /**
  * Send an attention request message.
@@ -911,7 +911,7 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
  * only a fixed set of attention commands.
  */
-void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
+void purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type_code);
 
 /**
  * Process an incoming attention message.
@@ -921,7 +921,7 @@ void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint typ
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
  */
-void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
+void purple_protocol_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
 /**
  * Process an incoming attention message in a chat.
@@ -932,7 +932,7 @@ void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type
  * @param type_code An index into the prpl's attention_types list determining the type
  *        of the attention request command to send.
  */
-void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
+void purple_protocol_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
 
 /**
  * Determines if the contact supports the given media session type.
@@ -942,7 +942,7 @@ void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char 
  *
  * @return The media caps the contact supports.
  */
-PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount *account,
+PurpleMediaCaps purple_protocol_get_media_caps(PurpleAccount *account,
 				  const char *who);
 
 /**
@@ -954,7 +954,7 @@ PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount *account,
  *
  * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media session or stream will be successfully created)
  */
-gboolean purple_prpl_initiate_media(PurpleAccount *account,
+gboolean purple_protocol_initiate_media(PurpleAccount *account,
 					const char *who,
 					PurpleMediaSessionType type);
 
@@ -966,7 +966,7 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
  * @param account The account the user is on.
  * @param who The name of the contact for which capabilities have been received.
  */
-void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
+void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 
 /** TODO A sanity check is needed
  * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
@@ -1052,4 +1052,4 @@ void purple_protocols_uninit(void);
 
 G_END_DECLS
 
-#endif /* _PRPL_H_ */
+#endif /* _PROTOCOL_H_ */

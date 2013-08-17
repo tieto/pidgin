@@ -215,7 +215,7 @@ jingle_rtp_get_media(JingleSession *session)
 
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		JingleSession *media_session =
-				purple_media_get_prpl_data(iter->data);
+				purple_media_get_protocol_data(iter->data);
 		if (media_session == session) {
 			media = iter->data;
 			break;
@@ -425,7 +425,7 @@ jingle_rtp_create_media(JingleContent *content)
 		return NULL;
 	}
 
-	purple_media_set_prpl_data(media, session);
+	purple_media_set_protocol_data(media, session);
 
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "candidates-prepared",

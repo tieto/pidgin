@@ -35,22 +35,22 @@
 
 static void yahoojp_register_commands(void)
 {
-	purple_cmd_register("join", "s", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "prpl-yahoojp", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "prpl-yahoojp", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
-	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "prpl-yahoojp", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
-	purple_cmd_register("doodle", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "prpl-yahoojp", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
 }
@@ -64,7 +64,7 @@ yahoojp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
+static PurpleWhiteboardPrplOps yahoo_whiteboard_protocol_ops =
 {
 	yahoo_doodle_start,
 	yahoo_doodle_end,
@@ -146,7 +146,7 @@ static PurpleProtocol protocol =
 	yahoo_send_file,
 	yahoo_new_xfer,
 	yahoo_offline_message, /* offline_message */
-	&yahoo_whiteboard_prpl_ops,
+	&yahoo_whiteboard_protocol_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
 	NULL, /* unregister_user */

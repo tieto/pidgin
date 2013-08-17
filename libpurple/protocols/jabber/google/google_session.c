@@ -357,7 +357,7 @@ jabber_google_relay_response_session_initiate_cb(GoogleSession *session,
 			purple_connection_get_account(js->gc),
 			"fsrtpconference", session->remote_jid, TRUE);
 
-	purple_media_set_prpl_data(session_data->media, session);
+	purple_media_set_protocol_data(session_data->media, session);
 
 	g_signal_connect_swapped(G_OBJECT(session_data->media),
 			"candidates-prepared",
@@ -584,7 +584,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			purple_connection_get_account(js->gc),
 			"fsrtpconference", session->remote_jid, FALSE);
 
-	purple_media_set_prpl_data(session_data->media, session);
+	purple_media_set_protocol_data(session_data->media, session);
 
 	g_signal_connect_swapped(G_OBJECT(session_data->media),
 			"candidates-prepared",
@@ -829,7 +829,7 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 			purple_connection_get_account(js->gc));
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		GoogleSession *gsession =
-				purple_media_get_prpl_data(iter->data);
+				purple_media_get_protocol_data(iter->data);
 		if (google_session_id_equal(&(gsession->id), &id)) {
 			session = gsession;
 			break;

@@ -617,12 +617,12 @@ signed_off_cb(PurpleConnection *pc, gpointer unused)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	PurplePlugin *xmpp_prpl;
+	PurplePlugin *xmpp_protocol;
 
 	my_plugin = plugin;
 
-	xmpp_prpl = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
-	if (NULL == xmpp_prpl)
+	xmpp_protocol = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
+	if (NULL == xmpp_protocol)
 		return FALSE;
 
 	purple_signal_connect(purple_connections_get_handle(), "signing-off",

@@ -126,8 +126,8 @@ static PurpleProtocol protocol =
 	NULL,							/* send_file */
 	NULL,							/* new_xfer */
 	jabber_offline_message,			/* offline_message */
-	NULL,							/* whiteboard_prpl_ops */
-	jabber_prpl_send_raw,			/* send_raw */
+	NULL,							/* whiteboard_protocol_ops */
+	jabber_protocol_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 	NULL,							/* unregister_user */
 	NULL,							/* send_attention */

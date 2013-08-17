@@ -614,7 +614,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	ib = g_hash_table_lookup(irc->buddies, bname);
 	if (ib != NULL) {
 		ib->ref++;
-		purple_prpl_got_user_status(irc->account, bname,
+		purple_protocol_got_user_status(irc->account, bname,
 				ib->online ? "available" : "offline", NULL);
 	} else {
 		ib = g_new0(struct irc_buddy, 1);
@@ -980,7 +980,7 @@ static PurpleProtocol protocol =
 	irc_dccsend_send_file,	/* send_file */
 	irc_dccsend_new_xfer,	/* new_xfer */
 	NULL,					/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* whiteboard_protocol_ops */
 	irc_send_raw,			/* send_raw */
 	NULL,					/* roomlist_room_serialize */
 	NULL,                   /* unregister_user */

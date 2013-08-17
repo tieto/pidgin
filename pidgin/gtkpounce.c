@@ -203,7 +203,7 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 
 	account = purple_pounce_get_pouncer(pounce);
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 
 	pouncer = purple_account_get_username(account);
 	pouncee = purple_pounce_get_pouncee(pounce);

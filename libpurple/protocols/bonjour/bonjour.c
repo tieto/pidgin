@@ -535,7 +535,7 @@ static PurpleProtocol protocol =
 	bonjour_send_file,                                       /* send_file */
 	bonjour_new_xfer,                                        /* new_xfer */
 	NULL,                                                    /* offline_message */
-	NULL,                                                    /* whiteboard_prpl_ops */
+	NULL,                                                    /* whiteboard_protocol_ops */
 	NULL,                                                    /* send_raw */
 	NULL,                                                    /* roomlist_room_serialize */
 	NULL,                                                    /* unregister_user */

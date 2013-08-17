@@ -730,7 +730,7 @@ purple_account_presence_constructed(GObject *object)
 	G_OBJECT_CLASS(presence_class)->constructed(object);
 
 	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
-			purple_prpl_get_statuses(priv->account, presence);
+			purple_protocol_get_statuses(priv->account, presence);
 }
 
 /* Class initializer function */
@@ -927,7 +927,7 @@ purple_buddy_presence_constructed(GObject *object)
 
 	account = purple_buddy_get_account(priv->buddy);
 	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
-			purple_prpl_get_statuses(account, presence);
+			purple_protocol_get_statuses(account, presence);
 }
 
 /* Class initializer function */

@@ -165,7 +165,7 @@ struct _PurplePluginAction {
 /**
  * Handles the initialization of modules.
  */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	PurplePluginInfo * pluginname##_plugin_query(void); \
 	PurplePluginInfo * pluginname##_plugin_query(void) { \
@@ -185,7 +185,7 @@ struct _PurplePluginAction {
 		if (e) g_error_free(e); \
 		return unloaded; \
 	}
-#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
+#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PROTOCOL */
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
