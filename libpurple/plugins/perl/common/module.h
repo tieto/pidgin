@@ -236,7 +236,7 @@ typedef PurpleProxyType			Purple__ProxyType;
 /* protocol.h */
 typedef PurpleBuddyIconSpec *		Purple__Buddy__Icon__Spec;
 typedef PurpleIconScaleRules		Purple__IconScaleRules;
-typedef PurplePluginProtocolInfo *	Purple__PluginProtocolInfo;
+typedef PurpleProtocol *	Purple__PluginProtocolInfo;
 typedef PurpleProtocolOptions		Purple__ProtocolOptions;
 
 /* request.h */

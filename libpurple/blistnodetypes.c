@@ -628,15 +628,15 @@ purple_buddy_dispose(GObject *object)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	/*
 	 * Tell the owner PRPL that we're about to free the buddy so it
 	 * can free proto_data
 	 */
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
-	if (prpl_info && prpl_info->buddy_free)
-		prpl_info->buddy_free(buddy);
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
+	if (protocol && protocol->buddy_free)
+		protocol->buddy_free(buddy);
 
 	/* Delete the node */
 	purple_buddy_icon_unref(priv->icon);
@@ -1115,16 +1115,16 @@ const char *purple_chat_get_name(PurpleChat *chat)
 const char *purple_chat_get_name_only(PurpleChat *chat)
 {
 	char *ret = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 
-	if (prpl_info->chat_info) {
+	if (protocol->chat_info) {
 		struct proto_chat_entry *pce;
-		GList *parts = prpl_info->chat_info(purple_account_get_connection(priv->account));
+		GList *parts = protocol->chat_info(purple_account_get_connection(priv->account));
 		pce = parts->data;
 		ret = g_hash_table_lookup(priv->components, pce->identifier);
 		g_list_foreach(parts, (GFunc)g_free, NULL);
@@ -1516,15 +1516,15 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			PurpleAccount *account = accts->data;
 			PurpleConnection *gc = NULL;
-			PurplePluginProtocolInfo *prpl_info = NULL;
+			PurpleProtocol *protocol = NULL;
 			GList *l = NULL, *buddies = NULL;
 
 			gc = purple_account_get_connection(account);
 
 			if(gc)
-				prpl_info = purple_connection_get_protocol_info(gc);
+				protocol = purple_connection_get_protocol_info(gc);
 
-			if(!prpl_info)
+			if(!protocol)
 				continue;
 
 			for(l = moved_buddies; l; l = l->next) {
@@ -1534,8 +1534,8 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 					buddies = g_list_append(buddies, (PurpleBlistNode *)buddy);
 			}
 
-			if(prpl_info->rename_group) {
-				prpl_info->rename_group(gc, old_name, source, buddies);
+			if(protocol->rename_group) {
+				protocol->rename_group(gc, old_name, source, buddies);
 			} else {
 				GList *cur, *groups = NULL;
 

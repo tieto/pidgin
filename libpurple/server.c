@@ -43,13 +43,13 @@
 unsigned int
 serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->send_typing)
-			return prpl_info->send_typing(gc, name, state);
+		if (protocol->send_typing)
+			return protocol->send_typing(gc, name, state);
 	}
 
 	return 0;
@@ -120,23 +120,23 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	PurpleIMConversation *im = NULL;
 	PurpleAccount *account = NULL;
 	PurplePresence *presence = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref = NULL;
 
 	g_return_val_if_fail(gc != NULL, val);
 
-	prpl_info = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol_info(gc);
 
-	g_return_val_if_fail(prpl_info != NULL, val);
+	g_return_val_if_fail(protocol != NULL, val);
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
 
 	im = purple_conversations_find_im_with_account(name, account);
 
-	if (prpl_info->send_im)
-		val = prpl_info->send_im(gc, name, message, flags);
+	if (protocol->send_im)
+		val = protocol->send_im(gc, name, message, flags);
 
 	/*
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
@@ -160,32 +160,32 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 void serv_get_info(PurpleConnection *gc, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->get_info)
-			prpl_info->get_info(gc, name);
+		if (protocol->get_info)
+			protocol->get_info(gc, name);
 	}
 }
 
 void serv_set_info(PurpleConnection *gc, const char *info)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleAccount *account;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->set_info) {
+		if (protocol->set_info) {
 			account = purple_connection_get_account(gc);
 
 			if (purple_signal_emit_return_1(purple_accounts_get_handle(),
 					"account-setting-info", account, info))
 				return;
 
-			prpl_info->set_info(gc, info);
+			protocol->set_info(gc, info);
 
 			purple_signal_emit(purple_accounts_get_handle(),
 					"account-set-info", account, info);
@@ -200,7 +200,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (b) {
 		account = purple_buddy_get_account(b);
@@ -209,10 +209,10 @@ void serv_alias_buddy(PurpleBuddy *b)
 			gc = purple_account_get_connection(account);
 
 			if (gc) {
-				prpl_info = purple_connection_get_protocol_info(gc);
+				protocol = purple_connection_get_protocol_info(gc);
 
-				if (prpl_info->alias_buddy)
-					prpl_info->alias_buddy(gc,
+				if (protocol->alias_buddy)
+					protocol->alias_buddy(gc,
 							purple_buddy_get_name(b),
 							purple_buddy_get_local_alias(b));
 			}
@@ -291,16 +291,16 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleAttentionType* attn;
 	GList *(*get_attention_types)(PurpleAccount *);
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
-	get_attention_types = prpl_info->get_attention_types;
+	get_attention_types = protocol->get_attention_types;
 	if (get_attention_types) {
 		GList *attention_types;
 
@@ -325,7 +325,7 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	g_return_if_fail(b != NULL);
 	g_return_if_fail(og != NULL);
@@ -335,10 +335,10 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 	gc = purple_account_get_connection(account);
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->group_buddy)
-			prpl_info->group_buddy(gc, purple_buddy_get_name(b),
+		if (protocol->group_buddy)
+			protocol->group_buddy(gc, purple_buddy_get_name(b),
 					purple_group_get_name(og),
 					purple_group_get_name(ng));
 	}
@@ -346,58 +346,58 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 
 void serv_add_permit(PurpleConnection *gc, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->add_permit)
-			prpl_info->add_permit(gc, name);
+		if (protocol->add_permit)
+			protocol->add_permit(gc, name);
 	}
 }
 
 void serv_add_deny(PurpleConnection *gc, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->add_deny)
-			prpl_info->add_deny(gc, name);
+		if (protocol->add_deny)
+			protocol->add_deny(gc, name);
 	}
 }
 
 void serv_rem_permit(PurpleConnection *gc, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->rem_permit)
-			prpl_info->rem_permit(gc, name);
+		if (protocol->rem_permit)
+			protocol->rem_permit(gc, name);
 	}
 }
 
 void serv_rem_deny(PurpleConnection *gc, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->rem_deny)
-			prpl_info->rem_deny(gc, name);
+		if (protocol->rem_deny)
+			protocol->rem_deny(gc, name);
 	}
 }
 
 void serv_set_permit_deny(PurpleConnection *gc)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
 		/*
 		 * this is called when either you import a buddy list, and make lots
@@ -405,39 +405,39 @@ void serv_set_permit_deny(PurpleConnection *gc)
 		 * in the prefs. In either case you should probably be resetting and
 		 * resending the permit/deny info when you get this.
 		 */
-		if (prpl_info->set_permit_deny)
-			prpl_info->set_permit_deny(gc);
+		if (protocol->set_permit_deny)
+			protocol->set_permit_deny(gc);
 	}
 }
 
 void serv_join_chat(PurpleConnection *gc, GHashTable *data)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->join_chat)
-			prpl_info->join_chat(gc, data);
+		if (protocol->join_chat)
+			protocol->join_chat(gc, data);
 	}
 }
 
 
 void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->reject_chat)
-			prpl_info->reject_chat(gc, data);
+		if (protocol->reject_chat)
+			protocol->reject_chat(gc, data);
 	}
 }
 
 void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleChatConversation *chat;
 	char *buffy = message && *message ? g_strdup(message) : NULL;
 
@@ -447,13 +447,13 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
 		return;
 
 	if(gc)
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-inviting-user",
 					 chat, name, &buffy);
 
-	if (prpl_info && prpl_info->chat_invite)
-		prpl_info->chat_invite(gc, id, buffy, name);
+	if (protocol && protocol->chat_invite)
+		protocol->chat_invite(gc, id, buffy, name);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-invited-user",
 					 chat, name, buffy);
@@ -468,34 +468,34 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
  */
 void serv_chat_leave(PurpleConnection *gc, int id)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
-	prpl_info = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol_info(gc);
 
-	if (prpl_info->chat_leave)
-		prpl_info->chat_leave(gc, id);
+	if (protocol->chat_leave)
+		protocol->chat_leave(gc, id);
 }
 
 void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->chat_whisper)
-			prpl_info->chat_whisper(gc, id, who, message);
+		if (protocol->chat_whisper)
+			protocol->chat_whisper(gc, id, who, message);
 	}
 }
 
 int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
-	prpl_info = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol_info(gc);
 
-	if (prpl_info->chat_send)
-		return prpl_info->chat_send(gc, id, message, flags);
+	if (protocol->chat_send)
+		return protocol->chat_send(gc, id, message, flags);
 
 	return -EINVAL;
 }
@@ -886,14 +886,14 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (gc) {
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info->send_file &&
-				(!prpl_info->can_receive_file
-						|| prpl_info->can_receive_file(gc, who)))
-			prpl_info->send_file(gc, who, file);
+		if (protocol->send_file &&
+				(!protocol->can_receive_file
+						|| protocol->can_receive_file(gc, who)))
+			protocol->send_file(gc, who, file);
 	}
 }

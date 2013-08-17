@@ -2051,11 +2051,11 @@ static PurpleWhiteboardPrplOps silcpurple_wb_ops =
 	NULL
 };
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-silc",			/* id */
 	"SILC",					/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
 	OPT_PROTO_SLASH_COMMANDS_NATIVE,
@@ -2172,23 +2172,23 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	silc_plugin = plugin;
 
 	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	protocol.user_splits = g_list_append(protocol.user_splits, split);
 
 	/* Account options */
 	option = purple_account_option_string_new(_("Connect server"),
 						  "server",
 						  "silc.silcnet.org");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_int_new(_("Port"), "port", 706);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
 	option = purple_account_option_string_new(_("Public Key file"),
 						  "public-key", tmp);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	option = purple_account_option_string_new(_("Private Key file"),
 						  "private-key", tmp);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	for (i = 0; silc_default_ciphers[i].name; i++) {
 		kvp = g_new0(PurpleKeyValuePair, 1);
@@ -2197,7 +2197,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		list = g_list_append(list, kvp);
 	}
 	option = purple_account_option_list_new(_("Cipher"), "cipher", list);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	list = NULL;
 	for (i = 0; silc_default_hmacs[i].name; i++) {
@@ -2207,27 +2207,27 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		list = g_list_append(list, kvp);
 	}
 	option = purple_account_option_list_new(_("HMAC"), "hmac", list);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use Perfect Forward Secrecy"),
 						"pfs", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Public key authentication"),
 						"pubkey-auth", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
 						"block-ims", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
 						"block-wb", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_bool_new(_("Automatically open whiteboard"),
 						"open-wb", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
 						"sign-verify", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	purple_prefs_remove("/plugins/prpl/silc");
 
@@ -2241,14 +2241,14 @@ silc_log_quick(TRUE);
 silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
 #endif
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 	return TRUE;
 }
 

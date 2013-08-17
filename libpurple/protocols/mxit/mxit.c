@@ -717,10 +717,10 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 
 /*========================================================================================================================*/
 
-static PurplePluginProtocolInfo proto_info = {
+static PurpleProtocol proto_info = {
 	MXIT_PLUGIN_ID,			/* protocol id (must be unique) */
 	MXIT_PLUGIN_NAME,		/* protocol name (this will be displayed in the UI) */
-	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
+	sizeof( PurpleProtocol ),		/* struct_size */
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,	/* options */
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */

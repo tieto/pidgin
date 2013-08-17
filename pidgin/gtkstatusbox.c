@@ -494,9 +494,9 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ICON_SEL:
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
-				PurplePluginProtocolInfo *prpl_info =
+				PurpleProtocol *protocol =
 						purple_find_protocol_info(purple_account_get_protocol_id(statusbox->account));
-				if (prpl_info && prpl_info->icon_spec.format != NULL)
+				if (protocol && protocol->icon_spec.format != NULL)
 					setup_icon_box(statusbox);
 			} else {
 				setup_icon_box(statusbox);
@@ -1450,13 +1450,13 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 	PurpleStoredImage *img = NULL;
 
 	if (box->account) {
-		PurplePluginProtocolInfo *prpl_info =
+		PurpleProtocol *protocol =
 				purple_find_protocol_info(purple_account_get_protocol_id(box->account));
-		if (prpl_info && prpl_info->icon_spec.format) {
+		if (protocol && protocol->icon_spec.format) {
 			gpointer data = NULL;
 			size_t len = 0;
 			if (filename)
-				data = pidgin_convert_buddy_icon(prpl_info, filename, &len);
+				data = pidgin_convert_buddy_icon(protocol, filename, &len);
 			img = purple_buddy_icons_set_account_icon(box->account, data, len);
 			if (img)
 				/*
@@ -1473,15 +1473,15 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			PurplePluginProtocolInfo *prpl_info =
+			PurpleProtocol *protocol =
 					purple_find_protocol_info(purple_account_get_protocol_id(account));
-			if (prpl_info != NULL &&
+			if (protocol != NULL &&
 			    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
-			    prpl_info->icon_spec.format) {
+			    protocol->icon_spec.format) {
 				gpointer data = NULL;
 				size_t len = 0;
 				if (filename)
-					data = pidgin_convert_buddy_icon(prpl_info, filename, &len);
+					data = pidgin_convert_buddy_icon(protocol, filename, &len);
 				purple_buddy_icons_set_account_icon(account, data, len);
 				purple_account_set_buddy_icon_path(account, filename);
 			}

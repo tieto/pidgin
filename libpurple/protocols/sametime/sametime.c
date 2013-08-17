@@ -5611,10 +5611,10 @@ static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 }
 
 
-static PurplePluginProtocolInfo mw_prpl_info = {
+static PurpleProtocol mw_protocol = {
   PLUGIN_ID,
   PLUGIN_NAME,
-  sizeof(PurplePluginProtocolInfo),
+  sizeof(PurpleProtocol),
   OPT_PROTO_IM_IMAGE,
   NULL, /*< set in mw_plugin_init */
   NULL, /*< set in mw_plugin_init */
@@ -5724,7 +5724,7 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
   /* set up account ID as user:server */
   split = purple_account_user_split_new(_("Server"),
                                         MW_PLUGIN_DEFAULT_HOST, ':');
-  mw_prpl_info.user_splits = g_list_append(mw_prpl_info.user_splits, split);
+  mw_protocol.user_splits = g_list_append(mw_protocol.user_splits, split);
 
   /* remove dead preferences */
   purple_prefs_remove(MW_PRPL_OPT_PSYCHIC);
@@ -5753,7 +5753,7 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 				     MW_KEY_FAKE_IT, FALSE);
   l = g_list_append(l, opt);
 
-  mw_prpl_info.protocol_options = l;
+  mw_protocol.protocol_options = l;
   l = NULL;
 
   /* forward all our g_log messages to purple. Generally all the logging
@@ -5766,7 +5766,7 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
   log_handler[1] = g_log_set_handler("meanwhile", logflags,
 				     mw_log_handler, NULL);
 
-  purple_protocols_add(&mw_prpl_info);
+  purple_protocols_add(&mw_protocol);
   return TRUE;
 }
 
@@ -5775,7 +5775,7 @@ static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
   g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
   g_log_remove_handler("meanwhile", log_handler[1]);
 
-  purple_protocols_remove(&mw_prpl_info);
+  purple_protocols_remove(&mw_protocol);
   return TRUE;
 }
 

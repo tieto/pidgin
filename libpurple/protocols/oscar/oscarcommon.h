@@ -103,4 +103,4 @@ void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
 PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
 GList *oscar_get_actions(PurpleConnection *gc);
-void oscar_init(PurplePluginProtocolInfo *prpl_info, gboolean is_icq);
+void oscar_init(PurpleProtocol *protocol, gboolean is_icq);

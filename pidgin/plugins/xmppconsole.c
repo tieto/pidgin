@@ -194,7 +194,7 @@ xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 static gboolean
 message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
 	gchar *text;
 
@@ -204,12 +204,12 @@ message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
+		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol_info(gc));
 
 	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
 
-	if (prpl_info && prpl_info->send_raw != NULL)
-		prpl_info->send_raw(gc, text, strlen(text));
+	if (protocol && protocol->send_raw != NULL)
+		protocol->send_raw(gc, text, strlen(text));
 
 	g_free(text);
 	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), "");

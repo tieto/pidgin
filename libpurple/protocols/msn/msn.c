@@ -2866,11 +2866,11 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 }
 
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-msn",                         /* id */
 	"MSN",                              /* name */
-	sizeof(PurplePluginProtocolInfo),	/* struct_size */
+	sizeof(PurpleProtocol),	/* struct_size */
 	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
 	NULL,                               /* user_splits */
 	NULL,                               /* protocol_options */
@@ -2969,36 +2969,36 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	option = purple_account_option_string_new(_("Server"), "server",
 											MSN_SERVER);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Use HTTP Method"),
 										  "http_method", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_string_new(_("HTTP Method Server"),
 										  "http_method_server", MSN_HTTPCONN_SERVER);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Show custom smileys"),
 										  "custom_smileys", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow direct connections"),
 										  "direct_connect", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
 										  "mpop", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 											   option);
 
 	purple_cmd_register("nudge", "", PURPLE_CMD_P_PRPL,
@@ -3008,13 +3008,13 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	purple_prefs_remove("/plugins/prpl/msn");
 
-	purple_signal_connect(purple_get_core(), "uri-handler", &prpl_info,
+	purple_signal_connect(purple_get_core(), "uri-handler", &protocol,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
 
 	msn_notification_init();
 	msn_switchboard_init();
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -3025,7 +3025,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	msn_notification_end();
 	msn_switchboard_end();
 
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

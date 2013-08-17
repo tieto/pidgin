@@ -2918,7 +2918,7 @@ msim_offline_message(const PurpleBuddy *buddy)
 /**
  * Send raw data to the server, possibly with embedded NULs.
  *
- * Used in prpl_info struct, so that plugins can have the most possible
+ * Used in protocol struct, so that plugins can have the most possible
  * control of what is sent over the connection. Inside this prpl,
  * msim_send_raw() is used, since it sends NUL-terminated strings (easier).
  *
@@ -3089,10 +3089,10 @@ msim_get_actions(PurpleConnection *gc)
 /**
  * Callbacks called by Purple, to access this plugin.
  */
-static PurplePluginProtocolInfo prpl_info = {
+static PurpleProtocol protocol = {
 	"prpl-myspace",    /* id */
 	"MySpaceIM",       /* name */
-	sizeof(PurplePluginProtocolInfo), /* struct_size */
+	sizeof(PurpleProtocol), /* struct_size */
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,
@@ -3496,36 +3496,36 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
 	option = purple_account_option_string_new(_("Connect server"), "server", MSIM_SERVER);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 #ifdef MSIM_USER_WANTS_TO_CONFIGURE_STATUS_TEXT
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 #endif
 
 #ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
 	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 #endif
 
 #ifdef MSIM_USER_REALLY_CARES_ABOUT_PRECISE_FONT_SIZES
 	option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 #endif
 
-	purple_signal_connect(purple_get_core(), "uri-handler", &prpl_info,
+	purple_signal_connect(purple_get_core(), "uri-handler", &protocol,
 			PURPLE_CALLBACK(msim_uri_handler), NULL);
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -3536,7 +3536,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

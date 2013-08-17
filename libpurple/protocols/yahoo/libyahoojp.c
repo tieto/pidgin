@@ -82,11 +82,11 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 	NULL
 };
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-yahoojp",
 	"Yahoo JAPAN",
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
@@ -186,32 +186,32 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOOJP_XFER_HOST);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOOJP_ROOMLIST_LOCALE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 #if 0
 	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 #endif
 
 	yahoojp_register_commands();
 	yahoo_init_colorht();
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 	return TRUE;
 }
 
@@ -219,7 +219,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	yahoo_dest_colorht();
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

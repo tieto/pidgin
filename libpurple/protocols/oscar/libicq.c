@@ -37,11 +37,11 @@ icq_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-icq",				/* id */
 	"ICQ",					/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -138,12 +138,12 @@ plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleAccountOption *option;
 
-	oscar_init(&prpl_info, TRUE);
+	oscar_init(&protocol, TRUE);
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -151,7 +151,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

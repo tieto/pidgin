@@ -29,11 +29,11 @@
 #include "oscarcommon.h"
 #include "oscar.h"
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-aim",				/* id */
 	"AIM",					/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -128,8 +128,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	oscar_init(&prpl_info, FALSE);
-	purple_protocols_add(&prpl_info);
+	oscar_init(&protocol, FALSE);
+	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -137,7 +137,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

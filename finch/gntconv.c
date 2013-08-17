@@ -339,7 +339,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 
 			chat = find_chat_for_conversation(conv);
 			if (chat == NULL) {
-				PurplePluginProtocolInfo *info = purple_connection_get_protocol_info(gc);
+				PurpleProtocol *info = purple_connection_get_protocol_info(gc);
 				if (info->chat_info_defaults != NULL)
 					comps = info->chat_info_defaults(gc, purple_conversation_get_name(conv));
 			} else {
@@ -636,7 +636,7 @@ gg_create_menu(FinchConv *ggc)
 	if (PURPLE_IS_IM_CONVERSATION(ggc->active_conv)) {
 		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
 		PurpleConnection *gc = purple_account_get_connection(account);
-		PurplePluginProtocolInfo *pinfo =
+		PurpleProtocol *pinfo =
 			gc ? purple_connection_get_protocol_info(gc) : NULL;
 
 		if (pinfo && pinfo->get_info) {
@@ -692,7 +692,7 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 {
 	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	char *name, *realname;
 
 	if (!gc) {
@@ -703,9 +703,9 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 
 	name = gnt_tree_get_selection_data(GNT_TREE(widget));
 
-	prpl_info = purple_connection_get_protocol_info(gc);
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_cb_real_name))
-		realname = prpl_info->get_cb_real_name(gc, purple_chat_conversation_get_id(
+	protocol = purple_connection_get_protocol_info(gc);
+	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, get_cb_real_name))
+		realname = protocol->get_cb_real_name(gc, purple_chat_conversation_get_id(
 				PURPLE_CHAT_CONVERSATION(fc->active_conv)), name);
 	else
 		realname = NULL;

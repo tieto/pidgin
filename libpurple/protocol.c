@@ -346,7 +346,7 @@ static void
 do_prpl_change_account_status(PurpleAccount *account,
 								PurpleStatus *old_status, PurpleStatus *new_status)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	if (purple_status_is_online(new_status) &&
 		purple_account_is_disconnected(account) &&
@@ -375,14 +375,14 @@ do_prpl_change_account_status(PurpleAccount *account,
 		 */
 		return;
 
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
-	if (prpl_info == NULL)
+	if (protocol == NULL)
 		return;
 
-	if (!purple_account_is_disconnected(account) && prpl_info->set_status != NULL)
+	if (!purple_account_is_disconnected(account) && protocol->set_status != NULL)
 	{
-		prpl_info->set_status(account, new_status);
+		protocol->set_status(account, new_status);
 	}
 }
 
@@ -436,7 +436,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 {
 	PurpleAttentionType *attn;
 	PurpleMessageFlags flags;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleIMConversation *im;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
@@ -447,8 +447,8 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
-	send_attention = prpl_info->send_attention;
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
+	send_attention = protocol->send_attention;
 	g_return_if_fail(send_attention != NULL);
 
 	mtime = time(NULL);
@@ -552,16 +552,16 @@ purple_prpl_initiate_media(PurpleAccount *account,
 {
 #ifdef USE_VV
 	PurpleConnection *gc = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, initiate_media)) {
+	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, initiate_media)) {
 		/* should check that the protocol supports this media type here? */
-		return prpl_info->initiate_media(account, who, type);
+		return protocol->initiate_media(account, who, type);
 	} else
 #endif
 	return FALSE;
@@ -572,16 +572,16 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 {
 #ifdef USE_VV
 	PurpleConnection *gc = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
+	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol,
 			get_media_caps)) {
-		return prpl_info->get_media_caps(account, who);
+		return protocol->get_media_caps(account, who);
 	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;
@@ -649,7 +649,7 @@ purple_protocol_action_free(PurpleProtocolAction *action)
  * Protocols API
  **************************************************************************/
 static void
-purple_protocol_destroy(PurplePluginProtocolInfo *prpl_info)
+purple_protocol_destroy(PurpleProtocol *protocol)
 {
 	GList *accounts, *l;
 
@@ -659,59 +659,59 @@ purple_protocol_destroy(PurplePluginProtocolInfo *prpl_info)
 		if (purple_account_is_disconnected(account))
 			continue;
 
-		if (purple_strequal(prpl_info->id, purple_account_get_protocol_id(account)))
+		if (purple_strequal(protocol->id, purple_account_get_protocol_id(account)))
 			purple_account_disconnect(account);
 	}
 
 	g_list_free(accounts);
 
-	while (prpl_info->user_splits) {
-		PurpleAccountUserSplit *split = prpl_info->user_splits->data;
+	while (protocol->user_splits) {
+		PurpleAccountUserSplit *split = protocol->user_splits->data;
 		purple_account_user_split_destroy(split);
-		prpl_info->user_splits = g_list_delete_link(prpl_info->user_splits,
-				prpl_info->user_splits);
+		protocol->user_splits = g_list_delete_link(protocol->user_splits,
+				protocol->user_splits);
 	}
 
-	while (prpl_info->protocol_options) {
-		PurpleAccountOption *option = prpl_info->protocol_options->data;
+	while (protocol->protocol_options) {
+		PurpleAccountOption *option = protocol->protocol_options->data;
 		purple_account_option_destroy(option);
-		prpl_info->protocol_options =
-				g_list_delete_link(prpl_info->protocol_options,
-				prpl_info->protocol_options);
+		protocol->protocol_options =
+				g_list_delete_link(protocol->protocol_options,
+				protocol->protocol_options);
 	}
 
-	purple_request_close_with_handle(prpl_info);
-	purple_notify_close_with_handle(prpl_info);
+	purple_request_close_with_handle(protocol);
+	purple_notify_close_with_handle(protocol);
 
-	purple_signals_disconnect_by_handle(prpl_info);
-	purple_signals_unregister_by_instance(prpl_info);
+	purple_signals_disconnect_by_handle(protocol);
+	purple_signals_unregister_by_instance(protocol);
 
-	purple_prefs_disconnect_by_handle(prpl_info);
+	purple_prefs_disconnect_by_handle(protocol);
 }
 
-PurplePluginProtocolInfo *
+PurpleProtocol *
 purple_find_protocol_info(const char *id)
 {
 	return g_hash_table_lookup(protocols, id);
 }
 
 gboolean
-purple_protocols_add(PurplePluginProtocolInfo *prpl_info)
+purple_protocols_add(PurpleProtocol *protocol)
 {
-	if (purple_find_protocol_info(prpl_info->id))
+	if (purple_find_protocol_info(protocol->id))
 		return FALSE;
 
-	g_hash_table_insert(protocols, g_strdup(prpl_info->id), prpl_info);
+	g_hash_table_insert(protocols, g_strdup(protocol->id), protocol);
 	return TRUE;
 }
 
-gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info)
+gboolean purple_protocols_remove(PurpleProtocol *protocol)
 {
-	if (purple_find_protocol_info(prpl_info->id) == NULL)
+	if (purple_find_protocol_info(protocol->id) == NULL)
 		return FALSE;
 
-	g_hash_table_remove(protocols, prpl_info->id);
-	purple_protocol_destroy(prpl_info);
+	g_hash_table_remove(protocols, protocol->id);
+	purple_protocol_destroy(protocol);
 
 	return TRUE;
 }
@@ -720,12 +720,12 @@ GList *
 purple_protocols_get_all(void)
 {
 	GList *ret = NULL;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	GHashTableIter iter;
 
 	g_hash_table_iter_init(&iter, protocols);
-	while (g_hash_table_iter_next(&iter, NULL, (gpointer *)&prpl_info))
-		ret = g_list_append(ret, prpl_info);
+	while (g_hash_table_iter_next(&iter, NULL, (gpointer *)&protocol))
+		ret = g_list_append(ret, protocol);
 
 	return ret;
 }

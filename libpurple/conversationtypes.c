@@ -454,19 +454,19 @@ purple_im_conversation_dispose(GObject *object)
 {
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(object);
 	PurpleConnection *gc = purple_conversation_get_connection(PURPLE_CONVERSATION(im));
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	const char *name = purple_conversation_get_name(PURPLE_CONVERSATION(im));
 
 	if (gc != NULL)
 	{
 		/* Still connected */
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
 		if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 			serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
 
-		if (gc && prpl_info->convo_closed != NULL)
-			prpl_info->convo_closed(gc, name);
+		if (gc && protocol->convo_closed != NULL)
+			protocol->convo_closed(gc, name);
 	}
 
 	purple_im_conversation_stop_typing_timeout(im);
@@ -833,7 +833,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 	PurpleChatConversationPrivate *priv;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	GList *ul, *fl;
 	GList *cbuddies = NULL;
 
@@ -848,8 +848,8 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 	account = purple_conversation_get_account(conv);
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = purple_connection_get_protocol_info(gc);
-	g_return_if_fail(prpl_info != NULL);
+	protocol = purple_connection_get_protocol_info(gc);
+	g_return_if_fail(protocol != NULL);
 
 	ul = users;
 	fl = flags;
@@ -860,7 +860,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 		PurpleChatUserFlags flag = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
-		if(!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if(!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 			if (purple_strequal(priv->nick, purple_normalize(account, user))) {
 				const char *alias2 = purple_account_get_private_alias(account);
 				if (alias2 != NULL)
@@ -935,7 +935,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	PurpleConversationUiOps *ops;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleChatUser *cb;
 	PurpleChatUserFlags flags;
 	PurpleChatConversationPrivate *priv;
@@ -955,8 +955,8 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = purple_connection_get_protocol_info(gc);
-	g_return_if_fail(prpl_info != NULL);
+	protocol = purple_connection_get_protocol_info(gc);
+	g_return_if_fail(protocol != NULL);
 
 	if (purple_strequal(priv->nick, purple_normalize(account, old_user))) {
 		const char *alias;
@@ -964,7 +964,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 		/* Note this for later. */
 		is_me = TRUE;
 
-		if(!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if(!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 			alias = purple_account_get_private_alias(account);
 			if (alias != NULL)
 				new_alias = alias;
@@ -975,7 +975,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 					new_alias = display_name;
 			}
 		}
-	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+	} else if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
 		if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 			new_alias = purple_buddy_get_contact_alias(buddy);
@@ -1024,7 +1024,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 			char *escaped;
 			char *escaped2;
 
-			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
 				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
@@ -1062,7 +1062,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 {
 	PurpleConversation *conv;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleConversationUiOps *ops;
 	PurpleChatUser *cb;
 	PurpleChatConversationPrivate *priv;
@@ -1078,8 +1078,8 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = purple_connection_get_protocol_info(gc);
-	g_return_if_fail(prpl_info != NULL);
+	protocol = purple_connection_get_protocol_info(gc);
+	g_return_if_fail(protocol != NULL);
 
 	ops  = purple_conversation_get_ui_ops(conv);
 
@@ -1104,7 +1104,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 			char *alias_esc;
 			char *tmp;
 
-			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
 				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), user)) != NULL)

@@ -593,13 +593,13 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 /**
  * Converts a buddy icon to the required size and format
  *
- * @param prpl_info  The prpl to convert the icon
+ * @param protocol  The prpl to convert the icon
  * @param path       The path of a file to convert
  * @param len        If not @c NULL, the length of the returned data will be set here.
  *
  * @return           The converted image data, or @c NULL if an error occurred.
  */
-gpointer pidgin_convert_buddy_icon(PurplePluginProtocolInfo *prpl_info, const char *path, size_t *len);
+gpointer pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *len);
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing

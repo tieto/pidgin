@@ -907,15 +907,15 @@ pidgin_dialogs_im_name_validator(PurpleRequestField *field, gchar **errmsg,
 {
 	PurpleRequestFields *fields = _fields;
 	PurpleAccount *account;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	const char *username;
 	gboolean valid;
 
 	account = purple_request_fields_get_account(fields, "account");
-	prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
 	username = purple_request_fields_get_string(fields, "screenname");
 
-	valid = purple_validate(prpl_info, username);
+	valid = purple_validate(protocol, username);
 
 	if (errmsg && !valid)
 		*errmsg = g_strdup(_("Invalid username"));

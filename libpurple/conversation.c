@@ -478,7 +478,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 						const char *message, PurpleMessageFlags flags,
 						time_t mtime)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = NULL;
 	PurpleAccount *account;
 	PurpleConversationUiOps *ops;
@@ -528,10 +528,10 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	}
 
 	if (account != NULL) {
-		prpl_info = purple_find_protocol_info(purple_account_get_protocol_id(account));
+		protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
 		if (PURPLE_IS_IM_CONVERSATION(conv) ||
-			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 			if (flags & PURPLE_MESSAGE_SEND) {
 				b = purple_blist_find_buddy(account,

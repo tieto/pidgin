@@ -207,22 +207,22 @@ void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 
 PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	g_return_val_if_fail(gc != NULL, NULL);
 	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
-	prpl_info = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol_info(gc);
 
-	if(prpl_info && prpl_info->roomlist_get_list)
-		return prpl_info->roomlist_get_list(gc);
+	if(protocol && protocol->roomlist_get_list)
+		return protocol->roomlist_get_list(gc);
 
 	return NULL;
 }
 
 void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
@@ -232,15 +232,15 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-	if(prpl_info && prpl_info->roomlist_cancel)
-		prpl_info->roomlist_cancel(list);
+	if(protocol && protocol->roomlist_cancel)
+		protocol->roomlist_cancel(list);
 }
 
 void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
@@ -251,10 +251,10 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-	if(prpl_info && prpl_info->roomlist_expand_category)
-		prpl_info->roomlist_expand_category(list, category);
+	if(protocol && protocol->roomlist_expand_category)
+		protocol->roomlist_expand_category(list, category);
 }
 
 GList * purple_roomlist_get_fields(PurpleRoomlist *list)

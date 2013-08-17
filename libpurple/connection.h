@@ -357,7 +357,7 @@ PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
  *
  * @return The protocol plugin.
  */
-PurplePluginProtocolInfo *purple_connection_get_protocol_info(const PurpleConnection *gc);
+PurpleProtocol *purple_connection_get_protocol_info(const PurpleConnection *gc);
 
 /**
  * Returns the connection's password.

@@ -56,13 +56,13 @@ gtalk_list_icon(PurpleAccount *a, PurpleBuddy *b)
 	return "google-talk";
 }
 
-static PurplePluginProtocolInfo *my_protocol = NULL;
+static PurpleProtocol *my_protocol = NULL;
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-gtalk",                           /* id */
 	"Google Talk (XMPP)",                   /* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL
 	OPT_PROTO_PASSWORD_OPTIONAL |
@@ -232,11 +232,11 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
 	purple_account_user_split_set_reverse(split, FALSE);
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	protocol.user_splits = g_list_append(protocol.user_splits, split);
 
 	split = purple_account_user_split_new(_("Resource"), "", '/');
 	purple_account_user_split_set_reverse(split, FALSE);
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	protocol.user_splits = g_list_append(protocol.user_splits, split);
 
 #define ADD_VALUE(list, desc, v) { \
 	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
@@ -256,22 +256,22 @@ plugin_load(PurplePlugin *plugin, GError **error)
 #undef ADD_VALUE
 
 	option = purple_account_option_list_new(_("Connection security"), "connection_security", encryption_values);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						   option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						   option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						   option);
 
 	option = purple_account_option_string_new(_("Connect server"),
 						  "connect_server", NULL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						  option);
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
@@ -279,22 +279,22 @@ plugin_load(PurplePlugin *plugin, GError **error)
 						/* TODO: Is this an acceptable default?
 						 * Also, keep this in sync as they add more servers */
 						  JABBER_DEFAULT_FT_PROXIES);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						  option);
 
 	option = purple_account_option_string_new(_("BOSH URL"),
 						  "bosh_url", NULL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 						  option);
 
 	/* this should probably be part of global smiley theme settings later on,
 	  shared with MSN */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),
 		"custom_smileys", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 		option);
 
-	my_protocol = &prpl_info;
+	my_protocol = &protocol;
 
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);

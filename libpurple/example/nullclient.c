@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 
 	iter = purple_protocols_get_all();
 	for (i = 0; iter; iter = iter->next) {
-		PurplePluginProtocolInfo *info = iter->data;
+		PurpleProtocol *info = iter->data;
 		if (info && info->name) {
 			printf("\t%d: %s\n", i++, info->name);
 			names = g_list_append(names, (gpointer)info->id);

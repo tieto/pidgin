@@ -260,8 +260,8 @@ online_account_supports_chat(void)
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;
-		PurplePluginProtocolInfo *prpl_info = purple_connection_get_protocol_info(gc);
-		if (prpl_info != NULL && prpl_info->chat_info != NULL)
+		PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+		if (protocol != NULL && protocol->chat_info != NULL)
 			return TRUE;
 		c = c->next;
 	}

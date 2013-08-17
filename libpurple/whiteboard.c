@@ -67,15 +67,15 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleWhiteboard *wb = g_new0(PurpleWhiteboard, 1);
 
 	wb->account = account;
 	wb->state   = state;
 	wb->who     = g_strdup(who);
 
-	prpl_info = purple_connection_get_protocol_info(purple_account_get_connection(account));
-	purple_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
+	protocol = purple_connection_get_protocol_info(purple_account_get_connection(account));
+	purple_whiteboard_set_prpl_ops(wb, protocol->whiteboard_prpl_ops);
 
 	/* Start up protocol specifics */
 	if(wb->prpl_ops && wb->prpl_ops->start)

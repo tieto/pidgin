@@ -412,7 +412,7 @@ gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
 gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
-void jabber_plugin_init(PurplePluginProtocolInfo *prpl_info);
-void jabber_plugin_uninit(PurplePluginProtocolInfo *prpl_info);
+void jabber_plugin_init(PurpleProtocol *protocol);
+void jabber_plugin_uninit(PurpleProtocol *protocol);
 
 #endif /* PURPLE_JABBER_H_ */

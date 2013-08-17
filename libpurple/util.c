@@ -3389,11 +3389,11 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 	if (account != NULL)
 	{
-		PurplePluginProtocolInfo *prpl_info =
+		PurpleProtocol *protocol =
 				purple_find_protocol_info(purple_account_get_protocol_id(account));
 
-		if (prpl_info != NULL && prpl_info->normalize)
-			ret = prpl_info->normalize(account, str);
+		if (protocol != NULL && protocol->normalize)
+			ret = protocol->normalize(account, str);
 	}
 
 	if (ret == NULL)
@@ -3433,20 +3433,20 @@ purple_normalize_nocase(const PurpleAccount *account, const char *str)
 }
 
 gboolean
-purple_validate(const PurplePluginProtocolInfo *prpl_info, const char *str)
+purple_validate(const PurpleProtocol *protocol, const char *str)
 {
 	const char *normalized;
 
-	g_return_val_if_fail(prpl_info != NULL, FALSE);
+	g_return_val_if_fail(protocol != NULL, FALSE);
 	g_return_val_if_fail(str != NULL, FALSE);
 
 	if (str[0] == '\0')
 		return FALSE;
 
-	if (!prpl_info->normalize)
+	if (!protocol->normalize)
 		return TRUE;
 
-	normalized = prpl_info->normalize(NULL, str);
+	normalized = protocol->normalize(NULL, str);
 
 	return (NULL != normalized);
 }

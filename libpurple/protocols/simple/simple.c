@@ -2046,11 +2046,11 @@ static void simple_close(PurpleConnection *gc)
 	purple_connection_set_protocol_data(gc, NULL);
 }
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-simple",			/* id */
 	"SIMPLE",				/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	0,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -2149,32 +2149,32 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error)
 	PurpleAccountOption *option;
 
 	split = purple_account_user_split_new(_("Server"), "", '@');
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	protocol.user_splits = g_list_append(protocol.user_splits, split);
 
 	option = purple_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 0);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use UDP"), "udp", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_bool_new(_("Use proxy"), "useproxy", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_string_new(_("Proxy"), "proxy", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_string_new(_("Auth User"), "authuser", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 	option = purple_account_option_string_new(_("Auth Domain"), "authdomain", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 	return TRUE;
 }
 
 static gboolean plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 	return TRUE;
 }
 

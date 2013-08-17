@@ -44,7 +44,7 @@ static char *irc_mirc_colors[16] = {
 		"orange", "yellow", "green", "teal", "cyan", "light blue",
 		"pink", "grey", "light grey" };
 
-extern PurplePluginProtocolInfo *_irc_protocol;
+extern PurpleProtocol *_irc_protocol;
 
 /*typedef void (*IRCMsgCallback)(struct irc_conn *irc, char *from, char *name, char **args);*/
 static struct _irc_msg {

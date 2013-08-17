@@ -44,7 +44,7 @@
 #define NOVELL_STATUS_TYPE_IDLE "idle"
 #define NOVELL_STATUS_TYPE_APPEAR_OFFLINE "appearoffline"
 
-static PurplePluginProtocolInfo *my_protocol = NULL;
+static PurpleProtocol *my_protocol = NULL;
 
 static gboolean
 _is_disconnect_error(NMERR_T err);
@@ -3476,10 +3476,10 @@ novell_keepalive(PurpleConnection *gc)
 	_check_for_disconnect(user, rc);
 }
 
-static PurplePluginProtocolInfo prpl_info = {
+static PurpleProtocol protocol = {
 	"prpl-novell",				/* id */
 	"GroupWise",				/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
@@ -3577,14 +3577,14 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_string_new(_("Server address"), "server", NULL);
-	prpl_info.protocol_options =
-		g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options =
+		g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Server port"), "port", DEFAULT_PORT);
-	prpl_info.protocol_options =
-		g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options =
+		g_list_append(protocol.protocol_options, option);
 
-	my_protocol = &prpl_info;
+	my_protocol = &protocol;
 	purple_protocols_add(my_protocol);
 
 	return TRUE;

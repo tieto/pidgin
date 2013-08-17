@@ -1625,15 +1625,15 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
-	PurplePluginProtocolInfo *prpl_info = purple_connection_get_protocol_info(gc);
+	PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
 
 	priv->active_conv = conv;
 
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
 	gtk_action_set_sensitive(priv->attention,
-		conv && prpl_info && PURPLE_IS_IM_CONVERSATION(conv) &&
-		prpl_info->send_attention != NULL);
+		conv && protocol && PURPLE_IS_IM_CONVERSATION(conv) &&
+		protocol->send_attention != NULL);
 
 	gtk_action_set_sensitive(priv->smiley,
 		(gboolean)pidgin_themes_get_proto_smileys(priv->sml));

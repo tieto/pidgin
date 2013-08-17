@@ -396,7 +396,7 @@ void pidgin_themes_smiley_theme_probe()
 }
 
 GSList *pidgin_themes_get_proto_smileys(const char *id) {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	struct smiley_list *list, *def;
 
 	if ((current_smiley_theme == NULL) || (current_smiley_theme->list == NULL))
@@ -407,12 +407,12 @@ GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	if (id == NULL)
 		return def->smileys;
 
-	prpl_info = purple_find_protocol_info(id);
+	protocol = purple_find_protocol_info(id);
 
 	while (list) {
 		if (!strcmp(list->sml, "default"))
 			def = list;
-		else if (prpl_info && !strcmp(prpl_info->name, list->sml))
+		else if (protocol && !strcmp(protocol->name, list->sml))
 			break;
 
 		list = list->next;

@@ -776,7 +776,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 }
 
 /* ---------------------------------------------------------------------- */
-/* ----- PurplePluginProtocolInfo ----------------------------------------- */
+/* ----- PurpleProtocol ----------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
 static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
@@ -1367,11 +1367,11 @@ static GHashTable * ggp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-gg",			/* id */
 	"Gadu-Gadu",			/* name */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	sizeof(PurpleProtocol),       /* struct_size */
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_IM_IMAGE,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
@@ -1499,7 +1499,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 			option);
 	ggp_server_option = option;
 
@@ -1517,12 +1517,12 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 		option);
 
 	option = purple_account_option_bool_new(_("Show links from strangers"),
 		"show_links_from_strangers", 1);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+	protocol.protocol_options = g_list_append(protocol.protocol_options,
 		option);
 
 	gg_debug_handler = purple_gg_debug_handler;
@@ -1533,7 +1533,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	ggp_resolver_purple_setup();
 	ggp_servconn_setup(ggp_server_option);
 
-	purple_protocols_add(&prpl_info);
+	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -1542,7 +1542,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	ggp_servconn_cleanup();
-	purple_protocols_remove(&prpl_info);
+	purple_protocols_remove(&protocol);
 
 	return TRUE;
 }

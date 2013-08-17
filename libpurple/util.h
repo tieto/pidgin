@@ -961,7 +961,7 @@ const char *purple_normalize_nocase(const PurpleAccount *account, const char *st
  *
  * @return TRUE, if string is valid, otherwise FALSE.
  */
-gboolean purple_validate(const PurplePluginProtocolInfo *prpl_info, const char *str);
+gboolean purple_validate(const PurpleProtocol *protocol, const char *str);
 
 /**
  * Compares two strings to see if the first contains the second as

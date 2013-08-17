@@ -68,7 +68,7 @@
 #include "version.h"
 
 #define NULLPRPL_ID "prpl-null"
-static PurplePluginProtocolInfo *_null_protocol = NULL;
+static PurpleProtocol *_null_protocol = NULL;
 
 #define NULL_STATUS_ONLINE   "online"
 #define NULL_STATUS_AWAY     "away"
@@ -1053,11 +1053,11 @@ static gboolean nullprpl_offline_message(const PurpleBuddy *buddy) {
  * Protocol stuff. see protocol.h for more information.
  */
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
   NULLPRPL_ID,                         /* id */
   "Null - Testing protocol",           /* name */
-  sizeof(PurplePluginProtocolInfo),    /* struct_size */
+  sizeof(PurpleProtocol),    /* struct_size */
   OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC,  /* options */
   NULL,               /* user_splits, initialized in plugin_load() */
   NULL,               /* protocol_options, initialized in plugin_load() */
@@ -1175,8 +1175,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
   purple_debug_info("nullprpl", "starting up\n");
 
-  prpl_info.user_splits = g_list_append(NULL, split);
-  prpl_info.protocol_options = g_list_append(NULL, option);
+  protocol.user_splits = g_list_append(NULL, split);
+  protocol.protocol_options = g_list_append(NULL, option);
 
   /* register whisper chat command, /msg */
   purple_cmd_register("msg",
@@ -1194,7 +1194,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
                                             g_free,      /* key free fn */
                                             NULL);       /* value free fn */
 
-  _null_protocol = &prpl_info;
+  _null_protocol = &protocol;
   purple_protocols_add(_null_protocol);
 
   return TRUE;

@@ -30,7 +30,7 @@
 #ifndef _PURPLE_PRPL_H_
 #define _PURPLE_PRPL_H_
 
-typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
+typedef struct _PurpleProtocol PurpleProtocol;
 
 typedef struct _PurpleProtocolAction PurpleProtocolAction;
 
@@ -230,13 +230,13 @@ struct _PurpleProtocolAction {
  * between purple and the protocol plugin.  Many of these callbacks can be
  * NULL.  If a callback must be implemented, it has a comment indicating so.
  */
-struct _PurplePluginProtocolInfo
+struct _PurpleProtocol
 {
 	const char *id;
 	const char *name;
 
 	/**
-	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
+	 * The size of the PurpleProtocol. This should always be sizeof(PurpleProtocol).
 	 * This allows adding more functions to this struct without requiring a major version bump.
 	 */
 	unsigned long struct_size;
@@ -479,7 +479,7 @@ struct _PurplePluginProtocolInfo
 	void (*register_user)(PurpleAccount *);
 
 	/**
-	 * @deprecated Use #PurplePluginProtocolInfo.get_info instead.
+	 * @deprecated Use #PurpleProtocol.get_info instead.
 	 */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
 
@@ -653,7 +653,7 @@ struct _PurplePluginProtocolInfo
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
-	(G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size && \
+	(G_STRUCT_OFFSET(PurpleProtocol, member) < prpl->struct_size && \
 	 prpl->member != NULL)
 
 G_BEGIN_DECLS
@@ -995,27 +995,27 @@ void purple_protocol_action_free(PurpleProtocolAction *action);
  *
  * @param id The protocol's ID.
  */
-PurplePluginProtocolInfo *purple_find_protocol_info(const char *id);
+PurpleProtocol *purple_find_protocol_info(const char *id);
 
 /** TODO A sanity check is needed
  * Adds a protocol to the list of protocols.
  *
- * @param prpl_info  The protocol to add.
+ * @param protocol  The protocol to add.
  *
  * @return TRUE if the protocol was added, else FALSE.
  */
-gboolean purple_protocols_add(PurplePluginProtocolInfo *prpl_info);
+gboolean purple_protocols_add(PurpleProtocol *protocol);
 
 /** TODO A sanity check is needed
  * Removes a protocol from the list of protocols. This will disconnect all
  * connected accounts using this protocol, and free the protocol's user splits
  * and protocol options.
  *
- * @param prpl_info  The protocol to remove.
+ * @param protocol  The protocol to remove.
  *
  * @return TRUE if the protocol was removed, else FALSE.
  */
-gboolean purple_protocols_remove(PurplePluginProtocolInfo *prpl_info);
+gboolean purple_protocols_remove(PurpleProtocol *protocol);
 
 /** TODO A sanity check is needed
  * Returns a list of all loaded protocols.

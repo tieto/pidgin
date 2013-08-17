@@ -745,13 +745,13 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	if (!purple_account_is_disconnected(account))
 	{
 		PurpleConnection *gc;
-		PurplePluginProtocolInfo *prpl_info;
+		PurpleProtocol *protocol;
 
 		gc = purple_account_get_connection(account);
-		prpl_info = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol_info(gc);
 
-		if (prpl_info && prpl_info->set_buddy_icon)
-			prpl_info->set_buddy_icon(gc, img);
+		if (protocol && protocol->set_buddy_icon)
+			protocol->set_buddy_icon(gc, img);
 	}
 
 	if (old_img)

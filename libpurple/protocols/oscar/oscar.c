@@ -5529,7 +5529,7 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurplePluginProtocolInfo *prpl_info, gboolean is_icq)
+void oscar_init(PurpleProtocol *protocol, gboolean is_icq)
 {
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
@@ -5549,10 +5549,10 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info, gboolean is_icq)
 	int i;
 
 	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, TRUE));
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	for (i = 0; encryption_keys[i]; i++) {
 		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
@@ -5561,21 +5561,21 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info, gboolean is_icq)
 		encryption_options = g_list_append(encryption_options, kvp);
 	}
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
 			OSCAR_DEFAULT_USE_CLIENTLOGIN);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(
 		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
-	if (g_str_equal(prpl_info->id, "prpl-aim")) {
+	if (g_str_equal(protocol->id, "prpl-aim")) {
 		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-		prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+		protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	}
 
 	if (init)
@@ -5591,7 +5591,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info, gboolean is_icq)
 
 	/* protocol handler */
 	/* TODO: figure out a good instance to use here */
-	purple_signal_connect(purple_get_core(), "uri-handler", prpl_info,
+	purple_signal_connect(purple_get_core(), "uri-handler", protocol,
 		PURPLE_CALLBACK(oscar_uri_handler), NULL);
 }
 

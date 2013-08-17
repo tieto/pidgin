@@ -469,13 +469,13 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
-static PurplePluginProtocolInfo *my_protocol = NULL;
+static PurpleProtocol *my_protocol = NULL;
 
-static PurplePluginProtocolInfo prpl_info =
+static PurpleProtocol protocol =
 {
 	"prpl-bonjour",                                          /* id */
 	"Bonjour",                                               /* name */
-	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
+	sizeof(PurpleProtocol),                        /* struct_size */
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
@@ -554,7 +554,7 @@ static gboolean
 _set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
-	GList *tmp = prpl_info.protocol_options;
+	GList *tmp = protocol.protocol_options;
 	PurpleAccountOption *option;
 
 	if (!fullname) {
@@ -728,24 +728,24 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Email"), "email", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
-	my_protocol = &prpl_info;
+	my_protocol = &protocol;
 	purple_protocols_add(my_protocol);
 
 	return TRUE;

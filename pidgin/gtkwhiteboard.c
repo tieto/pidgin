@@ -330,7 +330,7 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWh
 
 /*
  * Whiteboard start button on conversation window (move this code to gtkconv?
- * and use new prpl_info member?)
+ * and use new protocol member?)
  */
 #if 0
 static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data)
