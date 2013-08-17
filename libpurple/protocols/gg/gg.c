@@ -474,12 +474,11 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-				const gchar * server_ip = ggp_ipv4_to_str(
-					info->session->server_addr);
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS:"
 					" successfully connected to %s\n",
-					server_ip);
-				ggp_servconn_add_server(server_ip);
+					info->session->connect_host);
+				ggp_servconn_add_server(info->session->
+					connect_host);
 				purple_input_remove(info->inpa);
 				info->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
@@ -643,7 +642,8 @@ static void ggp_login(PurpleAccount *account)
 
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
 
-	glp = g_new0(struct gg_login_params, 1); // TODO: definitely lost
+	glp = g_new0(struct gg_login_params, 1);
+	glp->struct_size = sizeof(struct gg_login_params);
 	info = g_new0(GGPInfo, 1);
 
 	purple_connection_set_protocol_data(gc, info);
@@ -665,6 +665,7 @@ static void ggp_login(PurpleAccount *account)
 		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_USERNAME,
 			_("The username specified is invalid."));
+		g_free(glp->password);
 		g_free(glp);
 		return;
 	}
@@ -695,6 +696,7 @@ static void ggp_login(PurpleAccount *account)
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
+			g_free(glp->password);
 			g_free(glp);
 			return;
 		}
@@ -713,31 +715,21 @@ static void ggp_login(PurpleAccount *account)
 		glp->protocol_version = GG_PROTOCOL_VERSION_110;
 
 	ggp_status_set_initial(gc, glp);
-	
+
 	address = purple_account_get_string(account, "gg_server", "");
 	if (address && *address)
-	{
-		glp->server_addr = inet_addr(address);
-		glp->server_port = 8074;
-		
-		if (glp->server_addr == INADDR_NONE)
-		{
-			purple_connection_error(gc,
-				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Provided server IP address is not valid"));
-			g_free(glp);
-			return;
-		}
-	} else
-		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
+		glp->connect_host = g_strdup(address);
 
 	info->session = gg_login(glp);
+	g_free(glp->connect_host);
+	g_free(glp->password);
+	g_free(glp);
+
 	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
 	if (info->session == NULL) {
 		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Connection failed"));
-		g_free(glp);
 		return;
 	}
 	info->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,

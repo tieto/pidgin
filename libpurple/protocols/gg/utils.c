@@ -190,20 +190,6 @@ gchar * ggp_strjoin_list(const gchar *separator, GList *list)
 	return joined;
 }
 
-const gchar * ggp_ipv4_to_str(uint32_t raw_ip)
-{
-	static gchar buff[INET_ADDRSTRLEN];
-	buff[0] = '\0';
-	
-	g_snprintf(buff, sizeof(buff), "%d.%d.%d.%d",
-		((raw_ip >>  0) & 0xFF),
-		((raw_ip >>  8) & 0xFF),
-		((raw_ip >> 16) & 0xFF),
-		((raw_ip >> 24) & 0xFF));
-	
-	return buff;
-}
-
 GList * ggp_list_truncate(GList *list, gint length, GDestroyNotify free_func)
 {
 	while (g_list_length(list) > length)
