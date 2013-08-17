@@ -935,9 +935,9 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 							PurpleAccount **ret_account, char **ret_protocol,
 							char **ret_username, char **ret_alias)
 {
-	char *protocol = NULL;
-	char *username = NULL;
-	char *alias    = NULL;
+	char *protocol_id = NULL;
+	char *username    = NULL;
+	char *alias       = NULL;
 	char *str;
 	char *s;
 	gboolean valid;
@@ -986,18 +986,18 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
 				username = g_strdup(value);
 			else if (!g_ascii_strcasecmp(key, "X-IM-Protocol:"))
-				protocol = g_strdup(value);
+				protocol_id = g_strdup(value);
 			else if (!g_ascii_strcasecmp(key, "X-IM-Alias:"))
 				alias = g_strdup(value);
 		}
 	}
 
-	if (username != NULL && protocol != NULL)
+	if (username != NULL && protocol_id != NULL)
 	{
 		valid = TRUE;
 
 		*ret_username = username;
-		*ret_protocol = protocol;
+		*ret_protocol = protocol_id;
 
 		if (ret_alias != NULL)
 			*ret_alias = alias;
@@ -1044,15 +1044,15 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 				protoname = protocol->list_icon(account, NULL);
 
-				if (!strcmp(protoname, protocol))
+				if (!strcmp(protoname, protocol_id))
 					break;
 
 				account = NULL;
 			}
 
 			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol, "aim") ||
-									!strcmp(protocol, "icq")))
+			if (account == NULL && (!strcmp(protocol_id, "aim") ||
+									!strcmp(protocol_id, "icq")))
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
@@ -1098,7 +1098,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		valid = FALSE;
 
 		g_free(username);
-		g_free(protocol);
+		g_free(protocol_id);
 		g_free(alias);
 	}
 

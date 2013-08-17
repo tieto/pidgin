@@ -5577,13 +5577,13 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	}
 	else if (info == PIDGIN_DRAG_IM_CONTACT)
 	{
-		char *protocol = NULL;
+		char *protocol_id = NULL;
 		char *username = NULL;
 		PurpleAccount *account;
 		PidginConversation *gtkconv;
 
 		if (pidgin_parse_x_im_contact((const char *) data, FALSE, &account,
-						&protocol, &username, NULL))
+						&protocol_id, &username, NULL))
 		{
 			if (account == NULL)
 			{
@@ -5597,7 +5597,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				 */
 				if (PURPLE_IS_CHAT_CONVERSATION(conv) &&
 						protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, chat_invite) &&
-						strcmp(purple_account_get_protocol_id(convaccount), protocol) == 0) {
+						strcmp(purple_account_get_protocol_id(convaccount), protocol_id) == 0) {
 					purple_chat_conversation_invite_user(PURPLE_CHAT_CONVERSATION(conv), username, NULL, TRUE);
 				} else {
 					im = purple_im_conversation_new(account, username);
@@ -5611,7 +5611,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		}
 
 		g_free(username);
-		g_free(protocol);
+		g_free(protocol_id);
 
 		gtk_drag_finish(dc, TRUE,
 		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
