@@ -30,7 +30,7 @@
 #include "buddylist.h"
 #include "conversation.h"
 #include "debug.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "signals.h"
 #include "version.h"
 

@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "imgstore.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "notify.h"
 #include "request.h"
 #include "util.h"

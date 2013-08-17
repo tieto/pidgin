@@ -29,7 +29,7 @@
 #include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "signals.h"
 #include "util.h"

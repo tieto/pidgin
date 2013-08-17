@@ -43,7 +43,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "server.h"
 #include "util.h"

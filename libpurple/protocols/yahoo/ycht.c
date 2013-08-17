@@ -26,7 +26,7 @@
  */
 
 #include "internal.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "notify.h"
 #include "account.h"
 #include "proxy.h"

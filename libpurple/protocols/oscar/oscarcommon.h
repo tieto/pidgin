@@ -27,7 +27,7 @@
 #include "internal.h"
 
 #include "accountopt.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "version.h"
 #include "notify.h"
 #include "status.h"

@@ -325,7 +325,7 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 		/* now re-instate his presence again */
 		if ( contact ) {
 
-			/* update the buddy's status (reference: "libpurple/prpl.h") */
+			/* update the buddy's status (reference: "libpurple/protocol.h") */
 			if ( contact->statusMsg )
 				purple_prpl_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
 			else
@@ -422,7 +422,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 	else
 		contact->avatarId = NULL;
 
-	/* update the buddy's status (reference: "libpurple/prpl.h") */
+	/* update the buddy's status (reference: "libpurple/protocol.h") */
 	purple_prpl_got_user_status( session->acc, contact->username, mxit_statuses[contact->presence].id, NULL );
 
 	/* update the buddy's mood */
@@ -488,7 +488,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	if ( ( statusMsg ) && ( statusMsg[0] != '\0' ) )
 		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
-	/* update the buddy's status (reference: "libpurple/prpl.h") */
+	/* update the buddy's status (reference: "libpurple/protocol.h") */
 	if ( contact->statusMsg )
 		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
 	else

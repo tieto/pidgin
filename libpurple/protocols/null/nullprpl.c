@@ -61,7 +61,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "plugins.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "roomlist.h"
 #include "status.h"
 #include "util.h"
@@ -333,7 +333,7 @@ static GList *nullprpl_blist_node_menu(PurpleBlistNode *node) {
 }
 
 static GList *nullprpl_chat_info(PurpleConnection *gc) {
-  struct proto_chat_entry *pce; /* defined in prpl.h */
+  struct proto_chat_entry *pce; /* defined in protocol.h */
 
   purple_debug_info("nullprpl", "returning chat setting 'room'\n");
 
@@ -1050,7 +1050,7 @@ static gboolean nullprpl_offline_message(const PurpleBuddy *buddy) {
 
 
 /*
- * prpl stuff. see prpl.h for more information.
+ * Protocol stuff. see protocol.h for more information.
  */
 
 static PurplePluginProtocolInfo prpl_info =

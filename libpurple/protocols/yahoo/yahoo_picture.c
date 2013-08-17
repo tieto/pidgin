@@ -28,7 +28,7 @@
 #include "buddylist.h"
 #include "debug.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "proxy.h"
 #include "util.h"
 

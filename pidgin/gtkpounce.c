@@ -30,7 +30,7 @@
 #include "account.h"
 #include "conversation.h"
 #include "debug.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "server.h"
 #include "sound.h"

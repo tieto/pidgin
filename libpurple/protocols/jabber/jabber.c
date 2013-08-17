@@ -37,7 +37,7 @@
 #include "notify.h"
 #include "pluginpref.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "server.h"
 #include "status.h"

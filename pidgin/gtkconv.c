@@ -44,7 +44,7 @@
 #include "log.h"
 #include "notify.h"
 #include "plugins.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "theme-loader.h"
 #include "theme-manager.h"
@@ -8868,7 +8868,7 @@ pidgin_conversations_uninit(void)
 #include "imgstore.h"
 #include "log.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "util.h"
 

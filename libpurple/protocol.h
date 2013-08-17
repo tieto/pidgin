@@ -1,5 +1,5 @@
 /**
- * @file prpl.h Protocol Plugin functions
+ * @file protocol.h Protocol Plugin functions
  * @ingroup core
  */
 

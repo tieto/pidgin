@@ -34,7 +34,7 @@
 #include "notify.h"
 #include "plugins.h"
 #include "prefs.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "savedstatuses.h"
 #include "signals.h"

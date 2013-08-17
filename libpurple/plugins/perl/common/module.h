@@ -60,7 +60,7 @@ typedef struct group *Purple__Group;
 #include "pounce.h"
 #include "prefs.h"
 #include "presence.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "proxy.h"
 #include "request.h"
 #include "roomlist.h"
@@ -233,7 +233,7 @@ typedef PurpleBuddyPresence *		Purple__BuddyPresence;
 typedef PurpleProxyInfo *			Purple__ProxyInfo;
 typedef PurpleProxyType			Purple__ProxyType;
 
-/* prpl.h */
+/* protocol.h */
 typedef PurpleBuddyIconSpec *		Purple__Buddy__Icon__Spec;
 typedef PurpleIconScaleRules		Purple__IconScaleRules;
 typedef PurplePluginProtocolInfo *	Purple__PluginProtocolInfo;

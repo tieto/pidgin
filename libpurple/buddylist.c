@@ -28,7 +28,7 @@
 #include "notify.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "server.h"
 #include "signals.h"
 #include "util.h"

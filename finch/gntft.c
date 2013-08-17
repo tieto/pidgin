@@ -36,7 +36,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "ft.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "util.h"
 
 #include "gntft.h"

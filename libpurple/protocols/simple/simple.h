@@ -32,7 +32,7 @@
 #include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 
 #include "sipmsg.h"
 

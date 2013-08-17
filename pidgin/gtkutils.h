@@ -28,7 +28,7 @@
 
 #include "gtkconv.h"
 #include "pidgin.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "util.h"
 
 typedef enum

@@ -34,7 +34,7 @@
 
 #include "debug.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 
 #include "conversation.h"
 #include "notify.h"

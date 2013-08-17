@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "gtkplugin.h"
 #include "version.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "xmlnode.h"
 
 #include "gtkimhtml.h"

@@ -41,7 +41,7 @@
 #include "util.h"
 #include "cmds.h"
 #include "core.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "msnutils.h"
 #include "version.h"
 

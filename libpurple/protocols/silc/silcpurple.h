@@ -29,7 +29,7 @@
 #include "debug.h"
 #include "ft.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "roomlist.h"
 #include "server.h"

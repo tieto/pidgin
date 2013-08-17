@@ -32,7 +32,7 @@
 #include "dnsquery.h"
 #include "debug.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "plugins.h"
 #include "util.h"
 #include "version.h"

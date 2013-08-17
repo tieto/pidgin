@@ -33,7 +33,7 @@
 #include "http.h"
 #include "network.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "proxy.h"
 #include "request.h"
 #include "server.h"

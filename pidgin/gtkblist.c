@@ -32,7 +32,7 @@
 #include "core.h"
 #include "debug.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "prefs.h"
 #include "plugins.h"
 #include "request.h"

@@ -31,7 +31,7 @@
 #include "log.h"
 #include "notify.h"
 #include "plugins.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "pounce.h"
 #include "savedstatuses.h"
 #include "sound.h"

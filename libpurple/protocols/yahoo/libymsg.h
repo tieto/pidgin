@@ -28,7 +28,7 @@
 #include "circularbuffer.h"
 #include "cmds.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "network.h"
 
 #define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
