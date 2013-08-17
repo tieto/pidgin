@@ -665,7 +665,7 @@ static void ggp_login(PurpleAccount *account)
 		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_USERNAME,
 			_("The username specified is invalid."));
-		g_free(glp->password);
+		purple_str_wipe(glp->password);
 		g_free(glp);
 		return;
 	}
@@ -696,7 +696,7 @@ static void ggp_login(PurpleAccount *account)
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
-			g_free(glp->password);
+			purple_str_wipe(glp->password);
 			g_free(glp);
 			return;
 		}
@@ -722,7 +722,7 @@ static void ggp_login(PurpleAccount *account)
 
 	info->session = gg_login(glp);
 	g_free(glp->connect_host);
-	g_free(glp->password);
+	purple_str_wipe(glp->password);
 	g_free(glp);
 
 	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
