@@ -89,7 +89,8 @@ typedef enum
 	PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST
 } PurpleAccountPrivacyType;
 
-/** Structure representing an account.
+/**
+ * Structure representing an account.
  */
 struct _PurpleAccount
 {
