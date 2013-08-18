@@ -1035,15 +1035,36 @@ PurpleProtocolAction *purple_protocol_action_new(const char* label,
  */
 void purple_protocol_action_free(PurpleProtocolAction *action);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Buddy Icon Spec API                                             */
+/**************************************************************************/
+/*@{*/
+
 /** TODO
  * Returns the GType for the #PurpleBuddyIconSpec boxed structure.
  */
 GType purple_buddy_icon_spec_get_type(void);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Thumbnail API                                                   */
+/**************************************************************************/
+/*@{*/
+
 /** TODO
  * Returns the GType for the #PurpleThumbnailSpec boxed structure.
  */
 GType purple_thumbnail_spec_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Chat Entry API                                         */
+/**************************************************************************/
+/*@{*/
 
 /** TODO
  * Returns the GType for the #PurpleProtocolChatEntry boxed structure.
