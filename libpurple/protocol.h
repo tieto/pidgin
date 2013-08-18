@@ -779,7 +779,7 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol        API                                             */
+/** @name Protocol API                                                    */
 /**************************************************************************/
 /*@{*/
 
