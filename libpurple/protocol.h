@@ -27,6 +27,14 @@
 #ifndef _PURPLE_PROTOCOL_H_
 #define _PURPLE_PROTOCOL_H_
 
+#define PURPLE_TYPE_PROTOCOL                (purple_protocol_get_type())
+#define PURPLE_PROTOCOL(obj)                (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocol))
+#define PURPLE_PROTOCOL_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
+#define PURPLE_IS_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL))
+#define PURPLE_IS_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PROTOCOL))
+#define PURPLE_PROTOCOL_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
+#define PURPLE_PROTOCOL_GET_INTERFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolInterface))
+
 /** @copydoc _PurpleProtocol */
 typedef struct _PurpleProtocol PurpleProtocol;
 /** @copydoc _PurpleProtocolClass */
@@ -35,9 +43,13 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
 /** @copydoc _PurpleProtocolInterface */
 typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 
+#define PURPLE_TYPE_PROTOCOL_ACTION  (purple_protocol_action_get_type())
+
 /** @copydoc _PurpleProtocolAction */
 typedef struct _PurpleProtocolAction PurpleProtocolAction;
 typedef void (*PurpleProtocolActionCallback)(PurpleProtocolAction *);
+
+#define PURPLE_TYPE_ATTENTION_TYPE  (purple_attention_type_get_type())
 
 /** Represents "nudges" and "buzzes" that you may send to a buddy to attract
  *  their attention (or vice-versa).
@@ -53,23 +65,27 @@ typedef enum {
 	PURPLE_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
 } PurpleIconScaleRules;
 
+#define PURPLE_TYPE_BUDDY_ICON_SPEC  (purple_buddy_icon_spec_get_type())
+
 /**
  * A description of a Buddy Icon specification.  This tells Purple what kind of image file
- * it should give this prpl, and what kind of image file it should expect back.
+ * it should give this protocol, and what kind of image file it should expect back.
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
+#define PURPLE_TYPE_THUMBNAIL_SPEC  (purple_thumbnail_spec_get_type())
+
 /**
  * A description of a file transfer thumbnail specification.
- * This tells the UI if and what image formats the prpl support for file
+ * This tells the UI if and what image formats the protocol support for file
  * transfer thumbnails.
  */
 typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
- * field in the prpl info struct for protocols that couldn't care less.
+ * field in the protocol info struct for protocols that couldn't care less.
  */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0, 0}
 
@@ -92,7 +108,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
 	/** This is a comma-delimited list of image formats or @c NULL if icons
-	 *  are not supported.  Neither the core nor the prpl will actually
+	 *  are not supported.  Neither the core nor the protocol will actually
 	 *  check to see if the data it's given matches this; it's entirely up
 	 *  to the UI to do what it wants
 	 */
@@ -106,18 +122,21 @@ struct _PurpleBuddyIconSpec {
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
-/** Represents an entry containing information that must be supplied by the
- *  user when joining a chat.
+#define PURPLE_TYPE_PROTOCOL_CHAT_ENTRY  (purple_protocol_chat_entry_get_type())
+
+/** TODO replace proto_chat_entry
+ * Represents an entry containing information that must be supplied by the
+ * user when joining a chat.
  */
-struct proto_chat_entry {
+typedef struct {
 	const char *label;       /**< User-friendly name of the entry */
-	const char *identifier;  /**< Used by the PRPL to identify the option */
+	const char *identifier;  /**< Used by the protocol to identify the option */
 	gboolean required;       /**< True if it's required */
 	gboolean is_int;         /**< True if the entry expects an integer */
 	int min;                 /**< Minimum value in case of integer */
 	int max;                 /**< Maximum value in case of integer */
 	gboolean secret;         /**< True if the entry is secret (password) */
-};
+} PurpleProtocolChatEntry;
 
 /**
  * Protocol options
@@ -303,7 +322,7 @@ struct _PurpleProtocolInterface
 	char *(*status_text)(PurpleBuddy *buddy);
 
 	/**
-	 * Allows the prpl to add text to a buddy's tooltip.
+	 * Allows the protocol to add text to a buddy's tooltip.
 	 */
 	void (*tooltip_text)(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
 
@@ -322,20 +341,21 @@ struct _PurpleProtocolInterface
 	GList *(*blist_node_menu)(PurpleBlistNode *node);
 
 	/**
-	 * Returns a list of #proto_chat_entry structs, which represent
-	 * information required by the PRPL to join a chat. libpurple will
+	 * Returns a list of #PurpleProtocolChatEntry structs, which represent
+	 * information required by the protocol to join a chat. libpurple will
 	 * call join_chat along with the information filled by the user.
 	 *
-	 * @return A list of #proto_chat_entry structs
+	 * @return A list of #PurpleProtocolChatEntry structs
 	 */
 	GList *(*chat_info)(PurpleConnection *);
 
 	/**
-	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
-	 * to default options as strings based on chat_name. The resulting
-	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
-	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
-	 * to extract a chat name from a hashtable.
+	 * Returns a hashtable which maps #PurpleProtocolChatEntry struct
+	 * identifiers to default options as strings based on chat_name. The
+	 * resulting hashtable should be created with
+	 * g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);. Use
+	 * #get_chat_name if you instead need to extract a chat name from a
+	 * hashtable.
 	 *
 	 * @param chat_name The chat name to be turned into components
 	 * @return Hashtable containing the information extracted from chat_name
@@ -351,10 +371,10 @@ struct _PurpleProtocolInterface
 	void (*close)(PurpleConnection *);
 
 	/**
-	 * This PRPL function should return a positive value on success.
+	 * This protocol function should return a positive value on success.
 	 * If the message is too big to be sent, return -E2BIG.  If
 	 * the account is not connected, return -ENOTCONN.  If the
-	 * PRPL is unable to send the message for another reason, return
+	 * protocol is unable to send the message for another reason, return
 	 * some other negative value.  You can use one of the valid
 	 * errno values, or just big something.  If the message should
 	 * not be echoed to the conversation window, return 0.
@@ -368,9 +388,9 @@ struct _PurpleProtocolInterface
 	/**
 	 * @return If this protocol requires the PURPLE_IM_TYPING message to
 	 *         be sent repeatedly to signify that the user is still
-	 *         typing, then the PRPL should return the number of
+	 *         typing, then the protocol should return the number of
 	 *         seconds to wait before sending a subsequent notification.
-	 *         Otherwise the PRPL should return 0.
+	 *         Otherwise the protocol should return 0.
 	 */
 	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleIMTypingState state);
 
@@ -388,7 +408,7 @@ struct _PurpleProtocolInterface
 	/**
 	 * Add a buddy to a group on the server.
 	 *
-	 * This PRPL function may be called in situations in which the buddy is
+	 * This protocol function may be called in situations in which the buddy is
 	 * already in the specified group. If the protocol supports
 	 * authorization and the user is not already authorized to see the
 	 * status of \a buddy, \a add_buddy should request authorization.
@@ -463,10 +483,10 @@ struct _PurpleProtocolInterface
 
 	/**
 	 * Send a message to a chat.
-	 * This PRPL function should return a positive value on success.
+	 * This protocol function should return a positive value on success.
 	 * If the message is too big to be sent, return -E2BIG.  If
 	 * the account is not connected, return -ENOTCONN.  If the
-	 * PRPL is unable to send the message for another reason, return
+	 * protocol is unable to send the message for another reason, return
 	 * some other negative value.  You can use one of the valid
 	 * errno values, or just big something.
 	 *
@@ -479,7 +499,7 @@ struct _PurpleProtocolInterface
 	 */
 	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
 
-	/** If implemented, this will be called regularly for this prpl's
+	/** If implemented, this will be called regularly for this protocol's
 	 *  active connections.  You'd want to do this if you need to repeatedly
 	 *  send some kind of keepalive packet to the server to avoid being
 	 *  disconnected.  ("Regularly" is defined by
@@ -528,7 +548,7 @@ struct _PurpleProtocolInterface
 	const char *(*normalize)(const PurpleAccount *account, const char *who);
 
 	/**
-	 * Set the buddy icon for the given connection to @a img.  The prpl
+	 * Set the buddy icon for the given connection to @a img.  The protocol
 	 * does NOT own a reference to @a img; if it needs one, it must
 	 * #purple_imgstore_ref(@a img) itself.
 	 */
@@ -551,7 +571,7 @@ struct _PurpleProtocolInterface
 
 	PurpleChat *(*find_blist_chat)(PurpleAccount *account, const char *name);
 
-	/* room listing prpl callbacks */
+	/* room listing protocol callbacks */
 	PurpleRoomlist *(*roomlist_get_list)(PurpleConnection *gc);
 	void (*roomlist_cancel)(PurpleRoomlist *list);
 	void (*roomlist_expand_category)(PurpleRoomlist *list, PurpleRoomlistRoom *category);
@@ -655,7 +675,7 @@ struct _PurpleProtocolInterface
 	 *
 	 * @param gc    The connection for which to retireve the alias
 	 * @param success_cb Callback to be called with the retrieved alias
-	 * @param failure_cb Callback to be called if the prpl is unable to
+	 * @param failure_cb Callback to be called if the protocol is unable to
 	 *                   retrieve the alias
 	 * @see purple_account_get_public_alias
 	 */
@@ -670,6 +690,11 @@ G_BEGIN_DECLS
 /** @name Attention Type API                                              */
 /**************************************************************************/
 /*@{*/
+
+/** TODO
+ * Returns the GType for the #PurpleAttentionType boxed structure.
+ */
+GType purple_attention_type_get_type(void);
 
 /**
  * Creates a new #PurpleAttentionType object and sets its mandatory parameters.
@@ -783,6 +808,11 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /**************************************************************************/
 /*@{*/
 
+/** TODO
+ * Returns the GType for #PurpleProtocol.
+ */
+GType purple_protocol_get_type(void);
+
 /**
  * Notifies Purple that our account's idle state and time have changed.
  *
@@ -841,7 +871,7 @@ void purple_protocol_got_account_actions(PurpleAccount *account);
  * @param idle      The user's idle state.
  * @param idle_time The user's idle time.  This is the time at
  *                  which the user became idle, in seconds since
- *                  the epoch.  If the PRPL does not know this value
+ *                  the epoch.  If the protocol does not know this value
  *                  then it should pass 0.
  */
 void purple_protocol_got_user_idle(PurpleAccount *account, const char *name,
@@ -898,7 +928,7 @@ void purple_protocol_change_account_status(PurpleAccount *account,
 									 PurpleStatus *new_status);
 
 /**
- * Retrieves the list of stock status types from a prpl.
+ * Retrieves the list of stock status types from a protocol.
  *
  * @param account The account the user is on.
  * @param presence The presence for which we're going to get statuses
@@ -912,8 +942,8 @@ GList *purple_protocol_get_statuses(PurpleAccount *account, PurplePresence *pres
  *
  * @param gc The connection to send the message on.
  * @param who Whose attention to request.
- * @param type_code An index into the prpl's attention_types list determining the type
- *        of the attention request command to send. 0 if prpl only defines one
+ * @param type_code An index into the protocol's attention_types list determining the type
+ *        of the attention request command to send. 0 if protocol only defines one
  *        (for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
  *
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
@@ -926,7 +956,7 @@ void purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint
  *
  * @param gc The connection that received the attention message.
  * @param who Who requested your attention.
- * @param type_code An index into the prpl's attention_types list determining the type
+ * @param type_code An index into the protocol's attention_types list determining the type
  *        of the attention request command to send.
  */
 void purple_protocol_got_attention(PurpleConnection *gc, const char *who, guint type_code);
@@ -937,7 +967,7 @@ void purple_protocol_got_attention(PurpleConnection *gc, const char *who, guint 
  * @param gc The connection that received the attention message.
  * @param id The chat id.
  * @param who Who requested your attention.
- * @param type_code An index into the prpl's attention_types list determining the type
+ * @param type_code An index into the protocol's attention_types list determining the type
  *        of the attention request command to send.
  */
 void purple_protocol_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
@@ -967,14 +997,26 @@ gboolean purple_protocol_initiate_media(PurpleAccount *account,
 					PurpleMediaSessionType type);
 
 /**
- * Signals that the prpl received capabilities for the given contact.
+ * Signals that the protocol received capabilities for the given contact.
  *
- * This function is intended to be used only by prpls.
+ * This function is intended to be used only by protocols.
  *
  * @param account The account the user is on.
  * @param who The name of the contact for which capabilities have been received.
  */
 void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Action API                                             */
+/**************************************************************************/
+/*@{*/
+
+/** TODO
+ * Returns the GType for the #PurpleProtocolAction boxed structure.
+ */
+GType purple_protocol_action_get_type(void);
 
 /** TODO A sanity check is needed
  * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
@@ -992,6 +1034,23 @@ PurpleProtocolAction *purple_protocol_action_new(const char* label,
  * @param action The PurpleProtocolAction to free.
  */
 void purple_protocol_action_free(PurpleProtocolAction *action);
+
+/** TODO
+ * Returns the GType for the #PurpleBuddyIconSpec boxed structure.
+ */
+GType purple_buddy_icon_spec_get_type(void);
+
+/** TODO
+ * Returns the GType for the #PurpleThumbnailSpec boxed structure.
+ */
+GType purple_thumbnail_spec_get_type(void);
+
+/** TODO
+ * Returns the GType for the #PurpleProtocolChatEntry boxed structure.
+ */
+GType purple_protocol_chat_entry_get_type(void);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Protocols API                                                   */
