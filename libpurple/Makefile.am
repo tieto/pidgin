@@ -190,6 +190,7 @@ purple_enumheaders = \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
+	protocol.h \
 	status.h
 
 marshallers.h: marshallers.list
