@@ -855,9 +855,9 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 static GList *ggp_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("Chat _name:");
 	pce->identifier = "name";
 	pce->required = TRUE;

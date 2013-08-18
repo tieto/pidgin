@@ -664,7 +664,7 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 	PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
 	PurpleRequestField *field;
 	GList *parts, *iter;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 	PurpleConnection *gc;
 	PurpleChat *chat = (PurpleChat*)node;
 
@@ -1045,7 +1045,7 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 	PurpleProtocol *protocol;
 	GList *list = NULL, *tmp;
 	GHashTable *defaults = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 	gboolean focus = TRUE;
 
 	g_return_if_fail(data->rq_data.account != NULL);
@@ -3808,7 +3808,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		PurpleChat *chat;
 		GList *connections;
 		GList *cur;
-		struct proto_chat_entry *pce;
+		PurpleProtocolChatEntry *pce;
 		char *name, *value;
 		PurpleChatConversation *conv;
 		PidginBlistNode *bnode = purple_blist_node_get_ui_data(node);

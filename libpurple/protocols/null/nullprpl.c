@@ -333,11 +333,11 @@ static GList *nullprpl_blist_node_menu(PurpleBlistNode *node) {
 }
 
 static GList *nullprpl_chat_info(PurpleConnection *gc) {
-  struct proto_chat_entry *pce; /* defined in protocol.h */
+  PurpleProtocolChatEntry *pce; /* defined in protocol.h */
 
   purple_debug_info("nullprpl", "returning chat setting 'room'\n");
 
-  pce = g_new0(struct proto_chat_entry, 1);
+  pce = g_new0(PurpleProtocolChatEntry, 1);
   pce->label = _("Chat _room");
   pce->identifier = "room";
   pce->required = TRUE;

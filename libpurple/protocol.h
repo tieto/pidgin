@@ -124,7 +124,7 @@ struct _PurpleBuddyIconSpec {
 
 #define PURPLE_TYPE_PROTOCOL_CHAT_ENTRY  (purple_protocol_chat_entry_get_type())
 
-/** TODO replace proto_chat_entry
+/**
  * Represents an entry containing information that must be supplied by the
  * user when joining a chat.
  */

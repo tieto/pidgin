@@ -434,10 +434,10 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 GList* mxit_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
 	/* Configuration option: Room Name */
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _( "_Room Name:" );
 	pce->identifier = "room";
 	pce->required = TRUE;

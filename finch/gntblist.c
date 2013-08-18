@@ -1120,7 +1120,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
 	PurpleRequestField *field;
 	GList *parts, *iter;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 	PurpleConnection *gc;
 
 	purple_request_fields_add_group(fields, group);

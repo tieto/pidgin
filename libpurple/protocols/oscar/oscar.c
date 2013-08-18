@@ -4199,15 +4199,15 @@ static int purple_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 GList *oscar_chat_info(PurpleConnection *gc) {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Exchange:");
 	pce->identifier = "exchange";
 	pce->required = TRUE;

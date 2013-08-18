@@ -28,15 +28,15 @@
 GList *silcpurple_chat_info(PurpleConnection *gc)
 {
 	GList *ci = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Channel:");
 	pce->identifier = "channel";
 	pce->required = TRUE;
 	ci = g_list_append(ci, pce);
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Passphrase:");
 	pce->identifier = "passphrase";
 	pce->secret = TRUE;

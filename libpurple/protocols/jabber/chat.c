@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "protocol.h" /* for proto_chat_entry */
+#include "protocol.h" /* for PurpleProtocolChatEntry */
 #include "notify.h"
 #include "request.h"
 #include "roomlist.h"
@@ -38,27 +38,27 @@
 GList *jabber_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Server:");
 	pce->identifier = "server";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Handle:");
 	pce->identifier = "handle";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Password:");
 	pce->identifier = "password";
 	pce->secret = TRUE;

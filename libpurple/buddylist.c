@@ -1623,7 +1623,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	char *chat_name;
 	PurpleChat *chat;
 	PurpleProtocol *protocol = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 	PurpleBlistNode *node, *group;
 	GList *parts;
 	char *normname;

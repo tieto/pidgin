@@ -1079,9 +1079,9 @@ int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 GList *yahoo_c_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
 	pce->required = TRUE;

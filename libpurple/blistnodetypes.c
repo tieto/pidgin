@@ -1123,7 +1123,7 @@ const char *purple_chat_get_name_only(PurpleChat *chat)
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 
 	if (protocol->chat_info) {
-		struct proto_chat_entry *pce;
+		PurpleProtocolChatEntry *pce;
 		GList *parts = protocol->chat_info(purple_account_get_connection(priv->account));
 		pce = parts->data;
 		ret = g_hash_table_lookup(priv->components, pce->identifier);

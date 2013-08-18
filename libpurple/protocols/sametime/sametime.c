@@ -3639,9 +3639,9 @@ static GList *mw_protocol_blist_node_menu(PurpleBlistNode *node) {
 
 static GList *mw_protocol_chat_info(PurpleConnection *gc) {
   GList *l = NULL;
-  struct proto_chat_entry *pce;
+  PurpleProtocolChatEntry *pce;
 
-  pce = g_new0(struct proto_chat_entry, 1);
+  pce = g_new0(PurpleProtocolChatEntry, 1);
   pce->label = _("Topic:");
   pce->identifier = CHAT_KEY_TOPIC;
   l = g_list_append(l, pce);
