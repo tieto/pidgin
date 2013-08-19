@@ -1083,7 +1083,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
 			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
 		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
-			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
+			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.\n", host, port, redir->group);
 			purple_connection_error(
 				gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
