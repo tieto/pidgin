@@ -228,8 +228,8 @@ struct _PurpleProtocolInterface
 	void (*remove_buddies)(PurpleConnection *, GList *buddies, GList *groups);
 	void (*add_permit)(PurpleConnection *, const char *name);
 	void (*add_deny)(PurpleConnection *, const char *name);
-	void (*rem_permit)(PurpleConnection *, const char *name); /* TODO rename */
-	void (*rem_deny)(PurpleConnection *, const char *name); /* TODO rename */
+	void (*rem_permit)(PurpleConnection *, const char *name);
+	void (*rem_deny)(PurpleConnection *, const char *name);
 	void (*set_permit_deny)(PurpleConnection *);
 
 	/**
@@ -721,270 +721,290 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 /*@{*/
 
 /** @copydoc  _PurpleProtocolInterface::get_actions */
-GList *purple_protocol_get_actions(PurpleProtocol *, PurpleConnection *);
+GList *purple_protocol_iface_get_actions(PurpleProtocol *, PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolInterface::list_icon */
-const char *purple_protocol_list_icon(PurpleProtocol *, PurpleAccount *account,
-                                      PurpleBuddy *buddy);
+const char *purple_protocol_iface_list_icon(PurpleProtocol *,
+                                            PurpleAccount *account,
+                                            PurpleBuddy *buddy);
 
 /** @copydoc  _PurpleProtocolInterface::list_emblem */
-const char *purple_protocol_list_emblem(PurpleProtocol *, PurpleBuddy *buddy);
+const char *purple_protocol_iface_list_emblem(PurpleProtocol *,
+                                              PurpleBuddy *buddy);
 
 /** @copydoc  _PurpleProtocolInterface::status_text */
-char *purple_protocol_status_text(PurpleProtocol *, PurpleBuddy *buddy);
+char *purple_protocol_iface_status_text(PurpleProtocol *, PurpleBuddy *buddy);
 
 /** @copydoc  _PurpleProtocolInterface::tooltip_text */
-void purple_protocol_tooltip_text(PurpleProtocol *, PurpleBuddy *buddy,
-                                  PurpleNotifyUserInfo *user_info,
-                                  gboolean full);
+void purple_protocol_iface_tooltip_text(PurpleProtocol *, PurpleBuddy *buddy,
+                                        PurpleNotifyUserInfo *user_info,
+                                        gboolean full);
 
 /** @copydoc  _PurpleProtocolInterface::status_types */
-GList *purple_protocol_status_types(PurpleProtocol *, PurpleAccount *account);
+GList *purple_protocol_iface_status_types(PurpleProtocol *,
+                                          PurpleAccount *account);
 
 /** @copydoc  _PurpleProtocolInterface::blist_node_menu */
-GList *purple_protocol_blist_node_menu(PurpleProtocol *, PurpleBlistNode *node);
+GList *purple_protocol_iface_blist_node_menu(PurpleProtocol *,
+                                             PurpleBlistNode *node);
 
 /** @copydoc  _PurpleProtocolInterface::chat_info */
-GList *purple_protocol_chat_info(PurpleProtocol *, PurpleConnection *);
+GList *purple_protocol_iface_chat_info(PurpleProtocol *, PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolInterface::chat_info_defaults */
-GHashTable *purple_protocol_chat_info_defaults(PurpleProtocol *,
-                                               PurpleConnection *,
-                                               const char *chat_name);
+GHashTable *purple_protocol_iface_chat_info_defaults(PurpleProtocol *,
+                                                     PurpleConnection *,
+                                                     const char *chat_name);
 
 /** @copydoc  _PurpleProtocolInterface::login */
-void purple_protocol_login(PurpleProtocol *, PurpleAccount *);
+void purple_protocol_iface_login(PurpleProtocol *, PurpleAccount *);
 
 /** @copydoc  _PurpleProtocolInterface::close */
-void purple_protocol_close(PurpleProtocol *, PurpleConnection *);
+void purple_protocol_iface_close(PurpleProtocol *, PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolInterface::send_im */
-int  purple_protocol_send_im(PurpleProtocol *, PurpleConnection *, 
-                             const char *who, const char *message,
-                             PurpleMessageFlags flags);
+int  purple_protocol_iface_send_im(PurpleProtocol *, PurpleConnection *, 
+                                   const char *who, const char *message,
+                                   PurpleMessageFlags flags);
 
 /** @copydoc  _PurpleProtocolInterface::set_info */
-void purple_protocol_set_info(PurpleProtocol *, PurpleConnection *,
-                              const char *info);
+void purple_protocol_iface_set_info(PurpleProtocol *, PurpleConnection *,
+                                    const char *info);
 
 /** @copydoc  _PurpleProtocolInterface::send_typing */
-unsigned int purple_protocol_send_typing(PurpleProtocol *, PurpleConnection *,
-                                         const char *name,
-                                         PurpleIMTypingState state);
+unsigned int purple_protocol_iface_send_typing(PurpleProtocol *,
+                                               PurpleConnection *,
+                                               const char *name,
+                                               PurpleIMTypingState state);
 
 /** @copydoc  _PurpleProtocolInterface::get_info */
-void purple_protocol_get_info(PurpleProtocol *, PurpleConnection *,
-                              const char *who);
+void purple_protocol_iface_get_info(PurpleProtocol *, PurpleConnection *,
+                                    const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::set_status */
-void purple_protocol_set_status(PurpleProtocol *, PurpleAccount *account,
-                                PurpleStatus *status);
+void purple_protocol_iface_set_status(PurpleProtocol *, PurpleAccount *account,
+                                      PurpleStatus *status);
 
 /** @copydoc  _PurpleProtocolInterface::set_idle */
-void purple_protocol_set_idle(PurpleProtocol *, PurpleConnection *,
-                              int idletime);
+void purple_protocol_iface_set_idle(PurpleProtocol *, PurpleConnection *,
+                                    int idletime);
 
 /** @copydoc  _PurpleProtocolInterface::change_passwd */
-void purple_protocol_change_passwd(PurpleProtocol *, PurpleConnection *,
-                                   const char *old_pass, const char *new_pass);
+void purple_protocol_iface_change_passwd(PurpleProtocol *, PurpleConnection *,
+                                         const char *old_pass,
+                                         const char *new_pass);
 
 /** @copydoc  _PurpleProtocolInterface::add_buddy */
-void purple_protocol_add_buddy(PurpleProtocol *, PurpleConnection *pc,
-                               PurpleBuddy *buddy, PurpleGroup *group,
-                               const char *message);
+void purple_protocol_iface_add_buddy(PurpleProtocol *, PurpleConnection *pc,
+                                     PurpleBuddy *buddy, PurpleGroup *group,
+                                     const char *message);
 
 /** @copydoc  _PurpleProtocolInterface::add_buddies */
-void purple_protocol_add_buddies(PurpleProtocol *, PurpleConnection *pc,
-                                 GList *buddies, GList *groups,
-                                 const char *message);
+void purple_protocol_iface_add_buddies(PurpleProtocol *, PurpleConnection *pc,
+                                       GList *buddies, GList *groups,
+                                       const char *message);
 
 /** @copydoc  _PurpleProtocolInterface::remove_buddy */
-void purple_protocol_remove_buddy(PurpleProtocol *, PurpleConnection *,
-                                  PurpleBuddy *buddy, PurpleGroup *group);
+void purple_protocol_iface_remove_buddy(PurpleProtocol *, PurpleConnection *,
+                                        PurpleBuddy *buddy, PurpleGroup *group);
 
 /** @copydoc  _PurpleProtocolInterface::remove_buddies */
-void purple_protocol_remove_buddies(PurpleProtocol *, PurpleConnection *,
-                                    GList *buddies, GList *groups);
+void purple_protocol_iface_remove_buddies(PurpleProtocol *, PurpleConnection *,
+                                          GList *buddies, GList *groups);
 
 /** @copydoc  _PurpleProtocolInterface::add_permit */
-void purple_protocol_add_permit(PurpleProtocol *, PurpleConnection *,
-                                const char *name);
+void purple_protocol_iface_add_permit(PurpleProtocol *, PurpleConnection *,
+                                      const char *name);
 
 /** @copydoc  _PurpleProtocolInterface::add_deny */
-void purple_protocol_add_deny(PurpleProtocol *, PurpleConnection *,
-                              const char *name);
+void purple_protocol_iface_add_deny(PurpleProtocol *, PurpleConnection *,
+                                    const char *name);
 
-/* TODO rename */
 /** @copydoc  _PurpleProtocolInterface::rem_permit */
-void purple_protocol_rem_permit(PurpleProtocol *, PurpleConnection *,
-                                const char *name);
+void purple_protocol_iface_rem_permit(PurpleProtocol *, PurpleConnection *,
+                                      const char *name);
 
-/* TODO rename */
 /** @copydoc  _PurpleProtocolInterface::rem_deny */
-void purple_protocol_rem_deny(PurpleProtocol *, PurpleConnection *,
-                              const char *name);
+void purple_protocol_iface_rem_deny(PurpleProtocol *, PurpleConnection *,
+                                    const char *name);
 
 /** @copydoc  _PurpleProtocolInterface::set_permit_deny */
-void purple_protocol_set_permit_deny(PurpleProtocol *, PurpleConnection *);
+void purple_protocol_iface_set_permit_deny(PurpleProtocol *,
+                                           PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolInterface::join_chat */
-void purple_protocol_join_chat(PurpleProtocol *, PurpleConnection *,
-                               GHashTable *components);
+void purple_protocol_iface_join_chat(PurpleProtocol *, PurpleConnection *,
+                                     GHashTable *components);
 
 /** @copydoc  _PurpleProtocolInterface::reject_chat */
-void purple_protocol_reject_chat(PurpleProtocol *, PurpleConnection *,
-                                 GHashTable *components);
+void purple_protocol_iface_reject_chat(PurpleProtocol *, PurpleConnection *,
+                                       GHashTable *components);
 
 /** @copydoc  _PurpleProtocolInterface::get_chat_name */
-char *purple_protocol_get_chat_name(PurpleProtocol *, GHashTable *components);
+char *purple_protocol_iface_get_chat_name(PurpleProtocol *,
+                                          GHashTable *components);
 
 /** @copydoc  _PurpleProtocolInterface::chat_invite */
-void purple_protocol_chat_invite(PurpleProtocol *, PurpleConnection *, int id,
-                                 const char *message, const char *who);
+void purple_protocol_iface_chat_invite(PurpleProtocol *, PurpleConnection *,
+                                       int id, const char *message,
+                                       const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::chat_leave */
-void purple_protocol_chat_leave(PurpleProtocol *, PurpleConnection *, int id);
+void purple_protocol_iface_chat_leave(PurpleProtocol *, PurpleConnection *,
+                                      int id);
 
 /** @copydoc  _PurpleProtocolInterface::chat_whisper */
-void purple_protocol_chat_whisper(PurpleProtocol *, PurpleConnection *, int id,
-                                  const char *who, const char *message);
+void purple_protocol_iface_chat_whisper(PurpleProtocol *, PurpleConnection *,
+                                        int id, const char *who,
+                                        const char *message);
 
 /** @copydoc  _PurpleProtocolInterface::chat_send */
-int  purple_protocol_chat_send(PurpleProtocol *, PurpleConnection *, int id,
-                               const char *message, PurpleMessageFlags flags);
+int  purple_protocol_iface_chat_send(PurpleProtocol *, PurpleConnection *,
+                                     int id, const char *message,
+                                     PurpleMessageFlags flags);
 
 /** @copydoc  _PurpleProtocolInterface::keepalive */
-void purple_protocol_keepalive(PurpleProtocol *, PurpleConnection *);
+void purple_protocol_iface_keepalive(PurpleProtocol *, PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolInterface::register_user */
-void purple_protocol_register_user(PurpleProtocol *, PurpleAccount *);
+void purple_protocol_iface_register_user(PurpleProtocol *, PurpleAccount *);
 
 /** @copydoc  _PurpleProtocolInterface::unregister_user */
-void purple_protocol_unregister_user(PurpleProtocol *, PurpleAccount *,
+void purple_protocol_iface_unregister_user(PurpleProtocol *, PurpleAccount *,
                                      PurpleAccountUnregistrationCb cb,
                                      void *user_data);
 
 /** @copydoc  _PurpleProtocolInterface::get_cb_info */
-void purple_protocol_get_cb_info(PurpleProtocol *, PurpleConnection *, int,
-                                 const char *who);
+void purple_protocol_iface_get_cb_info(PurpleProtocol *, PurpleConnection *,
+                                       int, const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::alias_buddy */
-void purple_protocol_alias_buddy(PurpleProtocol *, PurpleConnection *,
-                                 const char *who, const char *alias);
+void purple_protocol_iface_alias_buddy(PurpleProtocol *, PurpleConnection *,
+                                       const char *who, const char *alias);
 
 /** @copydoc  _PurpleProtocolInterface::group_buddy */
-void purple_protocol_group_buddy(PurpleProtocol *, PurpleConnection *,
-                                 const char *who, const char *old_group,
-                                 const char *new_group);
+void purple_protocol_iface_group_buddy(PurpleProtocol *, PurpleConnection *,
+                                       const char *who, const char *old_group,
+                                       const char *new_group);
 
 /** @copydoc  _PurpleProtocolInterface::rename_group */
-void purple_protocol_rename_group(PurpleProtocol *, PurpleConnection *,
-                                  const char *old_name, PurpleGroup *group,
-                                  GList *moved_buddies);
+void purple_protocol_iface_rename_group(PurpleProtocol *, PurpleConnection *,
+                                        const char *old_name,
+                                        PurpleGroup *group,
+                                        GList *moved_buddies);
 
 /** @copydoc  _PurpleProtocolInterface::buddy_free */
-void purple_protocol_buddy_free(PurpleProtocol *, PurpleBuddy *);
+void purple_protocol_iface_buddy_free(PurpleProtocol *, PurpleBuddy *);
 
 /** @copydoc  _PurpleProtocolInterface::convo_closed */
-void purple_protocol_convo_closed(PurpleProtocol *, PurpleConnection *,
-                                  const char *who);
+void purple_protocol_iface_convo_closed(PurpleProtocol *, PurpleConnection *,
+                                        const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::normalize */
-const char *purple_protocol_normalize(PurpleProtocol *,
-                                      const PurpleAccount *account,
-                                      const char *who);
+const char *purple_protocol_iface_normalize(PurpleProtocol *,
+                                            const PurpleAccount *account,
+                                            const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::set_buddy_icon */
-void purple_protocol_set_buddy_icon(PurpleProtocol *, PurpleConnection *,
-                                    PurpleStoredImage *img);
+void purple_protocol_iface_set_buddy_icon(PurpleProtocol *, PurpleConnection *,
+                                          PurpleStoredImage *img);
 
 /** @copydoc  _PurpleProtocolInterface::remove_group */
-void purple_protocol_remove_group(PurpleProtocol *, PurpleConnection *gc,
-                                  PurpleGroup *group);
+void purple_protocol_iface_remove_group(PurpleProtocol *, PurpleConnection *gc,
+                                        PurpleGroup *group);
 
 /** @copydoc  _PurpleProtocolInterface::get_cb_real_name */
-char *purple_protocol_get_cb_real_name(PurpleProtocol *, PurpleConnection *gc,
-                                       int id, const char *who);
+char *purple_protocol_iface_get_cb_real_name(PurpleProtocol *,
+                                             PurpleConnection *gc, int id,
+                                             const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::set_chat_topic */
-void purple_protocol_set_chat_topic(PurpleProtocol *, PurpleConnection *gc,
-                                    int id, const char *topic);
+void purple_protocol_iface_set_chat_topic(PurpleProtocol *,
+                                          PurpleConnection *gc, int id,
+                                          const char *topic);
 
 /** @copydoc  _PurpleProtocolInterface::find_blist_chat */
-PurpleChat *purple_protocol_find_blist_chat(PurpleProtocol *,
-                                            PurpleAccount *account,
-                                            const char *name);
+PurpleChat *purple_protocol_iface_find_blist_chat(PurpleProtocol *,
+                                                  PurpleAccount *account,
+                                                  const char *name);
 
 /** @copydoc  _PurpleProtocolInterface::roomlist_get_list */
-PurpleRoomlist *purple_protocol_roomlist_get_list(PurpleProtocol *,
-                                                  PurpleConnection *gc);
+PurpleRoomlist *purple_protocol_iface_roomlist_get_list(PurpleProtocol *,
+                                                        PurpleConnection *gc);
 
 /** @copydoc  _PurpleProtocolInterface::roomlist_cancel */
-void purple_protocol_roomlist_cancel(PurpleProtocol *, PurpleRoomlist *list);
+void purple_protocol_iface_roomlist_cancel(PurpleProtocol *,
+                                           PurpleRoomlist *list);
 
 /** @copydoc  _PurpleProtocolInterface::roomlist_expand_category */
-void purple_protocol_roomlist_expand_category(PurpleProtocol *,
-                                              PurpleRoomlist *list,
-                                              PurpleRoomlistRoom *category);
+void purple_protocol_iface_roomlist_expand_category(
+                                                  PurpleProtocol *,
+                                                  PurpleRoomlist *list,
+                                                  PurpleRoomlistRoom *category);
 
 /** @copydoc  _PurpleProtocolInterface::can_receive_file */
-gboolean purple_protocol_can_receive_file(PurpleProtocol *, PurpleConnection *,
-                                          const char *who);
+gboolean purple_protocol_iface_can_receive_file(PurpleProtocol *,
+                                                PurpleConnection *,
+                                                const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::send_file */
-void purple_protocol_send_file(PurpleProtocol *, PurpleConnection *,
-                               const char *who, const char *filename);
+void purple_protocol_iface_send_file(PurpleProtocol *, PurpleConnection *,
+                                     const char *who, const char *filename);
 
 /** @copydoc  _PurpleProtocolInterface::new_xfer */
-PurpleXfer *purple_protocol_new_xfer(PurpleProtocol *, PurpleConnection *,
-                                     const char *who);
+PurpleXfer *purple_protocol_iface_new_xfer(PurpleProtocol *, PurpleConnection *,
+                                           const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::offline_message */
-gboolean purple_protocol_offline_message(PurpleProtocol *,
-                                         const PurpleBuddy *buddy);
+gboolean purple_protocol_iface_offline_message(PurpleProtocol *,
+                                               const PurpleBuddy *buddy);
 
 /** @copydoc  _PurpleProtocolInterface::send_raw */
-int purple_protocol_send_raw(PurpleProtocol *, PurpleConnection *gc,
-                             const char *buf, int len);
+int purple_protocol_iface_send_raw(PurpleProtocol *, PurpleConnection *gc,
+                                   const char *buf, int len);
 
 /** @copydoc  _PurpleProtocolInterface::roomlist_room_serialize */
-char *purple_protocol_roomlist_room_serialize(PurpleProtocol *,
-                                              PurpleRoomlistRoom *room);
+char *purple_protocol_iface_roomlist_room_serialize(PurpleProtocol *,
+                                                    PurpleRoomlistRoom *room);
 
 /** @copydoc  _PurpleProtocolInterface::send_attention */
-gboolean purple_protocol_send_attention(PurpleProtocol *, PurpleConnection *gc,
-                                        const char *username, guint type);
+gboolean purple_protocol_iface_send_attention(PurpleProtocol *,
+                                              PurpleConnection *gc,
+                                              const char *username, guint type);
 
 /** @copydoc  _PurpleProtocolInterface::get_attention_types */
-GList *purple_protocol_get_attention_types(PurpleProtocol *,
-                                           PurpleAccount *acct);
+GList *purple_protocol_iface_get_attention_types(PurpleProtocol *,
+                                                 PurpleAccount *acct);
 
 /** @copydoc  _PurpleProtocolInterface::get_account_text_table */
-GHashTable *purple_protocol_get_account_text_table(PurpleProtocol *,
-                                                   PurpleAccount *account);
+GHashTable *purple_protocol_iface_get_account_text_table(
+                                                        PurpleProtocol *,
+                                                        PurpleAccount *account);
 
 /** @copydoc  _PurpleProtocolInterface::initiate_media */
-gboolean purple_protocol_initiate_media(PurpleProtocol *,
-                                        PurpleAccount *account, const char *who,
-                                        PurpleMediaSessionType type);
+gboolean purple_protocol_iface_initiate_media(PurpleProtocol *,
+                                              PurpleAccount *account,
+                                              const char *who,
+                                              PurpleMediaSessionType type);
 
 /** @copydoc  _PurpleProtocolInterface::get_media_caps */
-PurpleMediaCaps purple_protocol_get_media_caps(PurpleProtocol *,
-                                               PurpleAccount *account,
-                                               const char *who);
+PurpleMediaCaps purple_protocol_iface_get_media_caps(PurpleProtocol *,
+                                                     PurpleAccount *account,
+                                                     const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::get_moods */
-PurpleMood *purple_protocol_get_moods(PurpleProtocol *, PurpleAccount *account);
+PurpleMood *purple_protocol_iface_get_moods(PurpleProtocol *,
+                                            PurpleAccount *account);
 
 /** @copydoc  _PurpleProtocolInterface::set_public_alias */
-void purple_protocol_set_public_alias(
+void purple_protocol_iface_set_public_alias(
                                 PurpleProtocol *, PurpleConnection *gc,
                                 const char *alias,
                                 PurpleSetPublicAliasSuccessCallback success_cb,
                                 PurpleSetPublicAliasFailureCallback failure_cb);
 
 /** @copydoc  _PurpleProtocolInterface::get_public_alias */
-void purple_protocol_get_public_alias(
+void purple_protocol_iface_get_public_alias(
                                 PurpleProtocol *, PurpleConnection *gc,
                                 PurpleGetPublicAliasSuccessCallback success_cb,
                                 PurpleGetPublicAliasFailureCallback failure_cb);
