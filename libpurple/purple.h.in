@@ -77,7 +77,7 @@
 #include <prefs.h>
 #include <presence.h>
 #include <proxy.h>
-#include <protocols.h>
+#include <protocol.h>
 #include <request.h>
 #include <roomlist.h>
 #include <savedstatuses.h>
