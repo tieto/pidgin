@@ -82,6 +82,7 @@ purple_coresources = \
 	presence.c \
 	proxy.c \
 	protocol.c \
+	protocols.c \
 	request.c \
 	roomlist.c \
 	savedstatuses.c \
@@ -153,6 +154,7 @@ purple_coreheaders = \
 	presence.h \
 	proxy.h \
 	protocol.h \
+	protocols.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \
@@ -190,7 +192,7 @@ purple_enumheaders = \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
-	protocol.h \
+	protocols.h \
 	status.h
 
 marshallers.h: marshallers.list
@@ -232,7 +234,7 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h ft.h log.h notify.h \
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h status.h \
-                server.h util.h xmlnode.h protocol.h
+                server.h util.h xmlnode.h protocol.h protocols.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
