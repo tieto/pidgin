@@ -91,7 +91,8 @@ GType pidgin_plugin_info_get_type(void);
  *
  * @see purple_plugin_info_new()
  */
-PidginPluginInfo *pidgin_plugin_info_new(const char *first_property, ...);
+PidginPluginInfo *pidgin_plugin_info_new(const char *first_property, ...)
+                  G_GNUC_NULL_TERMINATED;
 
 /**
  * Returns the configuration frame widget for a GTK+ plugin, if one

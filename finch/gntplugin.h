@@ -100,7 +100,8 @@ GType finch_plugin_info_get_type(void);
  *
  * @see purple_plugin_info_new()
  */
-FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...);
+FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
+                 G_GNUC_NULL_TERMINATED;
 
 /*@}*/
 

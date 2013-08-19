@@ -382,7 +382,8 @@ GType purple_plugin_info_get_type(void);
  * @see PURPLE_PLUGIN_ABI_VERSION
  * @see @ref plugin-ids
  */
-PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...);
+PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...)
+                  G_GNUC_NULL_TERMINATED;
 
 /**
  * Returns a plugin's ID.
