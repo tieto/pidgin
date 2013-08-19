@@ -43,6 +43,14 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
 /** @copydoc _PurpleProtocolInterface */
 typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 
+#include "account.h"
+#include "buddylist.h"
+#include "connection.h"
+#include "conversations.h"
+#include "ft.h"
+#include "roomlist.h"
+#include "whiteboard.h"
+
 /**
  * Represents an instance of a protocol registered with the protocols
  * subsystem.

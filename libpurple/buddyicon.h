@@ -38,7 +38,7 @@ typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 #include "account.h"
 #include "buddylist.h"
 #include "imgstore.h"
-#include "protocol.h"
+#include "protocols.h"
 #include "util.h"
 
 G_BEGIN_DECLS
