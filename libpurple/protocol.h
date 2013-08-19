@@ -1,5 +1,5 @@
 /**
- * @file protocol.h Protocol API
+ * @file protocol.h PurpleProtocol and PurpleProtocolInterface API
  * @ingroup core
  */
 
