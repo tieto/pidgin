@@ -192,58 +192,6 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 
 /* ---------------------------------------------------------------------- */
 
-/**
- * Request buddylist from the server.
- * Buddylist is received in the ggp_callback_recv().
- *
- * @param Current action handler.
- */
-static void ggp_action_buddylist_get(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	purple_debug_info("gg", "Downloading...\n");
-
-	gg_userlist_request(info->session, GG_USERLIST_GET, NULL);
-}
-
-/**
- * Upload the buddylist to the server.
- *
- * @param action Current action handler.
- */
-static void ggp_action_buddylist_put(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
-
-	purple_debug_info("gg", "Uploading...\n");
-
-	if (buddylist == NULL)
-		return;
-
-	gg_userlist_request(info->session, GG_USERLIST_PUT, buddylist);
-	g_free(buddylist);
-}
-
-/**
- * Delete buddylist from the server.
- *
- * @param action Current action handler.
- */
-static void ggp_action_buddylist_delete(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	purple_debug_info("gg", "Deleting...\n");
-
-	gg_userlist_request(info->session, GG_USERLIST_PUT, NULL);
-}
-
 static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *filename)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -1809,22 +1757,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_generic_status_handler(gc, ev->event.status60.uin,
 				GG_S(ev->event.status60.status), ev->event.status60.descr);
 			break;
-		case GG_EVENT_USERLIST:
-			if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
-				purple_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
-				purple_notify_info(gc, NULL,
-					_("Buddy list downloaded"),
-					_("Your buddy list was downloaded from the server."));
-				if (ev->event.userlist.reply != NULL) {
-					ggp_buddylist_load(gc, ev->event.userlist.reply);
-				}
-			} else {
-				purple_debug_info("gg", "GG_USERLIST_PUT_REPLY\n");
-				purple_notify_info(gc, NULL,
-					_("Buddy list uploaded"),
-					_("Your buddy list was stored on the server."));
-			}
-			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
 			break;
@@ -2623,18 +2555,6 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
-
-	act = purple_plugin_action_new(_("Upload buddylist to Server"),
-				     ggp_action_buddylist_put);
-	m = g_list_append(m, act);
-
-	act = purple_plugin_action_new(_("Download buddylist from Server"),
-				     ggp_action_buddylist_get);
-	m = g_list_append(m, act);
-
-	act = purple_plugin_action_new(_("Delete buddylist from Server"),
-				     ggp_action_buddylist_delete);
-	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Save buddylist to file..."),
 				     ggp_action_buddylist_save);

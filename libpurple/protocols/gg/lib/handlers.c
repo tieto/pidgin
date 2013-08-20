@@ -1766,7 +1766,7 @@ static const gg_packet_handler_t handlers[] =
 	{ GG_DISCONNECT_ACK, GG_STATE_DISCONNECTING, 0, gg_session_handle_disconnect_ack },
 	{ GG_XML_EVENT, GG_STATE_CONNECTED, 0, gg_session_handle_xml_event },
 	{ GG_PUBDIR50_REPLY, GG_STATE_CONNECTED, 0, gg_session_handle_pubdir50_reply },
-	{ GG_USERLIST_REPLY, GG_STATE_CONNECTED, 0, gg_session_handle_userlist_reply },
+	{ GG_USERLIST_REPLY, GG_STATE_CONNECTED, sizeof(char), gg_session_handle_userlist_reply },
 	{ GG_DCC7_ID_REPLY, GG_STATE_CONNECTED, sizeof(struct gg_dcc7_id_reply), gg_session_handle_dcc7_id_reply },
 	{ GG_DCC7_ACCEPT, GG_STATE_CONNECTED, sizeof(struct gg_dcc7_accept), gg_session_handle_dcc7_accept },
 	{ GG_DCC7_NEW, GG_STATE_CONNECTED, sizeof(struct gg_dcc7_new), gg_session_handle_dcc7_new },
