@@ -471,9 +471,11 @@ ssl_gnutls_read(PurpleSslConnection *gsc, void *data, size_t len)
 	if(s == GNUTLS_E_AGAIN || s == GNUTLS_E_INTERRUPTED) {
 		s = -1;
 		errno = EAGAIN;
+#ifdef GNUTLS_E_PREMATURE_TERMINATION
 	} else if (s == GNUTLS_E_PREMATURE_TERMINATION) {
 		purple_debug_warning("gnutls", "premature termination\n");
 		s = 0;
+#endif
 	} else if(s < 0) {
 		purple_debug_error("gnutls", "receive failed: %s\n",
 				gnutls_strerror(s));
