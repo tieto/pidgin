@@ -37,6 +37,8 @@
    specified a length) */
 #define DEFAULT_MAX_HTTP_DOWNLOAD (512 * 1024)
 
+#define MAX_HTTP_CHUNK_SIZE (10 * 1024 * 1024)
+
 struct _PurpleUtilFetchUrlData
 {
 	PurpleUtilFetchUrlCallback callback;
@@ -3781,11 +3783,12 @@ process_chunked_data(char *data, gsize *len)
 			break;
 		s += 2;
 
-		if (s + sz > data + *len) {
+		if (sz > MAX_HTTP_CHUNK_SIZE || s + sz > data + *len) {
 			purple_debug_error("util", "Error processing chunked data: "
 					"Chunk size %" G_GSIZE_FORMAT " bytes was longer "
 					"than the data remaining in the buffer (%"
 					G_GSIZE_FORMAT " bytes)\n", sz, data + *len - s);
+			break;
 		}
 
 		/* Move all data overtop of the chunk length that we read in earlier */
@@ -3793,7 +3796,7 @@ process_chunked_data(char *data, gsize *len)
 		p += sz;
 		s += sz;
 		newlen += sz;
-		if (*s != '\r' && *(s + 1) != '\n') {
+		if (*s == '\0' || (*s != '\r' && *(s + 1) != '\n')) {
 			purple_debug_error("util", "Error processing chunked data: "
 					"Expected \\r\\n, found: %s\n", s);
 			break;
