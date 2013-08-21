@@ -765,7 +765,8 @@ account_list_key_pressed_cb(GntWidget *widget, const char *text, gpointer null)
 	count = g_list_length(accounts);
 	pos = g_list_index(accounts, account);
 	pos = (move + pos + count + 1) % (count + 1);
-	purple_accounts_reorder(account, pos);
+	if (pos >= 0)
+		purple_accounts_reorder(account, pos);
 
 	/* I don't like this, but recreating the entire list seems to be
 	 * the easiest way of doing it */

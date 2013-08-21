@@ -628,8 +628,8 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	const gchar *errmsg;
 	MsimMessage *body;
 
-	guint rid;
-	gint cmd,dsn,lid,code;
+	guint rid, dsn, lid;
+	gint cmd, code;
 	/* \persistr\\cmd\258\dsn\9\uid\204084363\lid\14\rid\369\body\UserName=TheAlbinoRhino1.Code=0\final\ */
 
 	purple_debug_info("msim","username_is_set made\n");
@@ -656,7 +656,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	msim_msg_free(body);
 
 	purple_debug_info("msim_username_is_set_cb",
-			"cmd = %d, dsn = %d, lid = %d, code = %d, username = %s\n",
+			"cmd = %d, dsn = %u, lid = %u, code = %d, username = %s\n",
 			cmd, dsn, lid, code, username);
 
 	if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_PUT)

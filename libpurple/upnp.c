@@ -351,7 +351,7 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 			const char *path, *start = strstr(baseURL, "://");
 			start = start ? start + 3 : baseURL;
 			path = strchr(start, '/');
-			length = path ? path - baseURL : strlen(baseURL);
+			length = path ? (gsize)(path - baseURL) : strlen(baseURL);
 			controlURL = g_strdup_printf("%.*s%s", (int)length, baseURL, tmp);
 		} else {
 			controlURL = g_strdup_printf("%s%s", baseURL, tmp);
@@ -579,10 +579,10 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 		totalSize = strlen(sendMessage);
 
 		do {
-			if(sendto(dd->fd, sendMessage, totalSize, 0,
-					(struct sockaddr*) &(dd->server),
-					sizeof(struct sockaddr_in)
-					) == totalSize) {
+			gssize sent = sendto(dd->fd, sendMessage, totalSize, 0,
+				(struct sockaddr*) &(dd->server),
+				sizeof(struct sockaddr_in));
+			if(sent >= 0 && (gsize)sent == totalSize) {
 				sentSuccess = TRUE;
 				break;
 			}

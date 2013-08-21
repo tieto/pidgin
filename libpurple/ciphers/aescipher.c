@@ -154,14 +154,14 @@ purple_aes_cipher_pad_pkcs7(const guchar input[], size_t in_len, size_t *out_len
 static ssize_t
 purple_aes_cipher_unpad_pkcs7(guchar input[], size_t in_len)
 {
-	int padding_len, i;
+	guchar padding_len, i;
 	size_t out_len;
 
 	g_return_val_if_fail(input != NULL, -1);
 	g_return_val_if_fail(in_len > 0, -1);
 
 	padding_len = input[in_len - 1];
-	if (padding_len <= 0 || padding_len > PURPLE_AES_BLOCK_SIZE ||
+	if (padding_len == 0 || padding_len > PURPLE_AES_BLOCK_SIZE ||
 		padding_len > in_len) {
 		purple_debug_warning("cipher-aes",
 			"Invalid padding length: %d (total %" G_GSIZE_FORMAT ") - "

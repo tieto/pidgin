@@ -133,7 +133,9 @@ msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len)
 			header->opcode = msn_pop8(wire);
 			header->message_len = msn_pop16be(wire);
 			header->base_id = msn_pop32be(wire);
-			if (header->header_len + header->message_len + P2P_PACKET_FOOTER_SIZE > max_len) {
+			if ((gsize)header->header_len + header->message_len +
+				P2P_PACKET_FOOTER_SIZE > max_len)
+			{
 				/* Invalid header and data length */
 				len = 0;
 				break;

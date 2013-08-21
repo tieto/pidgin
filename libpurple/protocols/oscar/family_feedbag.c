@@ -107,7 +107,7 @@ aim_ssi_type_to_string(guint16 type)
 		{ 0x0020, "ICQ-MDir" },
 		{ 0x0029, "Facebook" },
 	};
-	int i;
+	size_t i;
 	for (i = 0; i < G_N_ELEMENTS(type_strings); i++) {
 		if (type_strings[i].type == type) {
 			return type_strings[i].string;

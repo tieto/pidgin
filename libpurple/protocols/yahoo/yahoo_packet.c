@@ -139,7 +139,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 	char key[64];
 	const guchar *delimiter;
 	gboolean accept;
-	int x;
+	guint x;
 	struct yahoo_pair *pair;
 
 	while (pos + 1 < len)
@@ -373,7 +373,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, YahooData *yd)
 		return ret;
 	}
 
-	if (ret < len) {
+	if ((gsize)ret < len) {
 		if (yd->txhandler == 0)
 			yd->txhandler = purple_input_add(yd->fd, PURPLE_INPUT_WRITE,
 				yahoo_packet_send_can_write, yd);

@@ -582,7 +582,7 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 	 */
 
 	jabber_send_raw(js, buf, len);
-	return (len < 0 ? strlen(buf) : len);
+	return (len < 0 ? (int)strlen(buf) : len);
 }
 
 void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,

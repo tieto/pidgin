@@ -150,7 +150,7 @@ static const gchar *ggp_pubdir_provinces[] =
 	"zachodniopomorskie",
 };
 
-static int ggp_pubdir_provinces_count = sizeof(ggp_pubdir_provinces)/sizeof(gchar*);
+static gsize ggp_pubdir_provinces_count = sizeof(ggp_pubdir_provinces)/sizeof(gchar*);
 
 /******************************************************************************/
 
@@ -812,7 +812,8 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	int default_gender, i;
+	int default_gender;
+	gsize i;
 	const ggp_pubdir_record *record;
 	
 	purple_debug_info("gg", "ggp_pubdir_set_info_dialog (record: %d)\n",

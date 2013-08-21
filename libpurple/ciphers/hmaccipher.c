@@ -156,7 +156,7 @@ purple_hmac_cipher_set_key(PurpleCipher *cipher, const guchar *key,
 								size_t key_len)
 {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
-	gint block_size, i;
+	gsize blocksize, i;
 	guchar *full_key;
 
 	g_return_if_fail(priv->hash);

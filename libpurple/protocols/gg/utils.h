@@ -87,7 +87,7 @@ gchar * ggp_strjoin_list(const gchar *separator, GList *list);
 
 const gchar * ggp_ipv4_to_str(uint32_t raw_ip);
 
-GList * ggp_list_truncate(GList *list, gint length, GDestroyNotify free_func);
+GList * ggp_list_truncate(GList *list, guint length, GDestroyNotify free_func);
 
 gchar * ggp_free_if_equal(gchar *str, const gchar *pattern);
 

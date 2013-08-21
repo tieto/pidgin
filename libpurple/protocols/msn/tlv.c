@@ -339,7 +339,7 @@ msn_tlvlist_write(GSList *list, size_t *out_len)
 	for (; list; list = g_slist_next(list)) {
 		msn_tlv_t *tlv = (msn_tlv_t *)list->data;
 
-		if (G_UNLIKELY(tlv->length + 2 > bytes_left)) {
+		if (G_UNLIKELY((gsize)tlv->length + 2 > bytes_left)) {
 			buf = g_realloc(buf, total_len + 256);
 			bytes_left += 256;
 			total_len += 256;

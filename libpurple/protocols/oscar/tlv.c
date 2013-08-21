@@ -267,10 +267,10 @@ int aim_tlvlist_count(GSList *list)
  * @return The number of bytes that would be needed to
  *         write the passed TLV chain to a data buffer.
  */
-int aim_tlvlist_size(GSList *list)
+size_t aim_tlvlist_size(GSList *list)
 {
 	GSList *cur;
-	int size;
+	size_t size;
 
 	if (list == NULL)
 		return 0;
@@ -658,7 +658,7 @@ void aim_tlvlist_remove(GSList **list, const guint16 type)
  */
 int aim_tlvlist_write(ByteStream *bs, GSList **list)
 {
-	int goodbuflen;
+	size_t goodbuflen;
 	GSList *cur;
 	aim_tlv_t *tlv;
 

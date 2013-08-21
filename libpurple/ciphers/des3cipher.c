@@ -108,11 +108,11 @@ static ssize_t
 purple_des3_cipher_ecb_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
 	g_return_val_if_fail(out_size >= in_len, -1);
@@ -130,6 +130,7 @@ purple_des3_cipher_ecb_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -154,12 +155,13 @@ static ssize_t
 purple_des3_cipher_cbc_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8];
-	ssize_t out_len;
+	gsize out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
+
 	memcpy(buf, priv->iv, 8);
 
 	g_return_val_if_fail(out_size >= in_len, -1);
@@ -181,6 +183,7 @@ purple_des3_cipher_cbc_encrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -223,11 +226,11 @@ static ssize_t
 purple_des3_cipher_ecb_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
 	g_return_val_if_fail(out_size >= in_len, -1);
@@ -246,6 +249,7 @@ purple_des3_cipher_ecb_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -270,12 +274,12 @@ static ssize_t
 purple_des3_cipher_cbc_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	guint8 link[8];
-	ssize_t out_len;
+	gsize out_len;
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
 	g_return_val_if_fail(out_size >= in_len, -1);
@@ -299,6 +303,7 @@ purple_des3_cipher_cbc_decrypt(PurpleDES3Cipher *des3_cipher, const guchar input
 
 	out_len = in_len;
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
