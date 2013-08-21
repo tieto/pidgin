@@ -285,9 +285,9 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 		{
 			const gnutls_datum_t *cert_list;
-			unsigned int cert_list_size = 0;
+			guint cert_list_size = 0;
 			gnutls_session_t session=gnutls_data->session;
-			int i;
+			guint i;
 
 			cert_list =
 				gnutls_certificate_get_peers(session, &cert_list_size);

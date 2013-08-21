@@ -750,7 +750,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 	char filename[512], filename2[512], *fingerprint = NULL, *tmp;
 	SilcUInt32 len;
 	SilcHash hash;
-	int i;
+	gsize i;
 
 	if (!success) {
 		/* The user did not trust the public key. */

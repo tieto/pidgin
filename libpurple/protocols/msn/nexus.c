@@ -56,7 +56,7 @@ MsnNexus *
 msn_nexus_new(MsnSession *session)
 {
 	MsnNexus *nexus;
-	int i;
+	gsize i;
 
 	nexus = g_new0(MsnNexus, 1);
 	nexus->session = session;
@@ -74,7 +74,7 @@ msn_nexus_new(MsnSession *session)
 void
 msn_nexus_destroy(MsnNexus *nexus)
 {
-	int i;
+	gsize i;
 	for (i = 0; i < nexus->token_len; i++) {
 		g_hash_table_destroy(nexus->tokens[i].token);
 		g_free(nexus->tokens[i].secret);
@@ -262,7 +262,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 			return FALSE;
 
 		id = atol(id_str + 7) - 1;	/* 'Compact#' or 'PPToken#' */
-		if (id >= nexus->token_len)
+		if (id < 0 || (gsize)id >= nexus->token_len)
 			return FALSE;	/* Where did this come from? */
 	}
 
@@ -374,7 +374,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	char *password_xml;
 	GString *domains;
 	char *request;
-	int i;
+	gsize i;
 
 	purple_debug_info("msn", "Starting Windows Live ID authentication\n");
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);

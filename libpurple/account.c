@@ -3037,7 +3037,7 @@ purple_accounts_delete(PurpleAccount *account)
 }
 
 void
-purple_accounts_reorder(PurpleAccount *account, gint new_index)
+purple_accounts_reorder(PurpleAccount *account, guint new_index)
 {
 	gint index;
 	GList *l;
@@ -3047,7 +3047,7 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 
 	index = g_list_index(accounts, account);
 
-	if (index == -1) {
+	if (index < 0) {
 		purple_debug_error("account",
 				   "Unregistered account (%s) discovered during reorder!\n",
 				   purple_account_get_username(account));
@@ -3056,7 +3056,7 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 
 	l = g_list_nth(accounts, index);
 
-	if (new_index > index)
+	if (new_index > (guint)index)
 		new_index--;
 
 	/* Remove the old one. */

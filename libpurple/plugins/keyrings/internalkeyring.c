@@ -321,7 +321,7 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 
 	verify_len = strlen(INTKEYRING_VERIFY_STR);
 	/* Don't remove the len > 0 check! */
-	if (plaintext_len > 0 && plaintext_len > verify_len &&
+	if (plaintext_len > 0 && (gsize)plaintext_len > verify_len &&
 		plaintext[plaintext_len] == '\0')
 	{
 		verify_str = (gchar*)plaintext + plaintext_len - verify_len;

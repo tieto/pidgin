@@ -157,7 +157,7 @@ purple_util_uninit(void)
 gchar *
 purple_base16_encode(const guchar *data, gsize len)
 {
-	int i;
+	gsize i;
 	gchar *ascii = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -221,7 +221,7 @@ purple_base16_decode(const char *str, gsize *ret_len)
 gchar *
 purple_base16_encode_chunked(const guchar *data, gsize len)
 {
-	int i;
+	gsize i;
 	gchar *ascii = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -906,7 +906,7 @@ char *
 purple_uts35_to_str(const char *format, size_t len, struct tm *tm)
 {
 	GString *string;
-	int i, count;
+	guint i, count;
 
 	if (tm == NULL) {
 		time_t now = time(NULL);
@@ -2390,9 +2390,9 @@ purple_markup_strip_html(const char *str)
 					size_t hrlen = strlen(href);
 
 					/* Only insert the href if it's different from the CDATA. */
-					if ((hrlen != j - href_st ||
+					if ((hrlen != (gsize)(j - href_st) ||
 					     strncmp(str2 + href_st, href, hrlen)) &&
-					    (hrlen != j - href_st + 7 || /* 7 == strlen("http://") */
+					    (hrlen != (gsize)(j - href_st + 7) || /* 7 == strlen("http://") */
 					     strncmp(str2 + href_st, href + 7, hrlen - 7)))
 					{
 						str2[j++] = ' ';
@@ -3665,7 +3665,7 @@ purple_str_size_to_units(goffset size)
 {
 	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 	float size_mag;
-	int size_index = 0;
+	gsize size_index = 0;
 
 	if (size == -1) {
 		return g_strdup(_("Calculating..."));
@@ -3811,13 +3811,13 @@ void purple_got_protocol_handler_uri(const char *uri)
 	const char *tmp, *param_string;
 	char *cmd;
 	GHashTable *params = NULL;
-	int len;
+	gsize len;
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
 	}
 
-	len = MIN(sizeof(proto) - 1, (tmp - uri));
+	len = MIN(sizeof(proto) - 1, (gsize)(tmp - uri));
 
 	strncpy(proto, uri, len);
 	proto[len] = '\0';
@@ -3925,7 +3925,8 @@ purple_url_encode(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	guint i, j = 0;
+	int i;
+	guint j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
@@ -4438,7 +4439,7 @@ purple_utf8_has_word(const char *haystack, const char *needle)
 				   ("!g_unichar_isalnum()" is not a valid way to determine word
 				    boundaries, but it is the only reasonable thing to do here),
 				   and isn't the '&' from a "&amp;" or some such entity*/
-				(before != -2 && !g_unichar_isalnum(before) && *(p - 1) != '&'))
+				(before != -2 && !g_unichar_isalnum(before) && *(p - 1) != '&')) /* XXX: what does "-2" means? */
 				&& after != -2 && !g_unichar_isalnum(after)) {
 			ret = TRUE;
 			break;
@@ -4578,7 +4579,8 @@ purple_escape_filename(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	guint i, j = 0;
+	int i;
+	guint j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);

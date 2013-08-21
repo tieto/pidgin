@@ -893,7 +893,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	PurpleConnection *gc = od->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *host; int port;
-	int i;
+	gsize i;
 	FlapConnection *newconn;
 	va_list ap;
 	struct aim_authresp_info *info;

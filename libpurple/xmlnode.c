@@ -122,7 +122,7 @@ xmlnode_insert_data(xmlnode *node, const char *data, gssize size)
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(size != 0);
 
-	real_size = size == -1 ? strlen(data) : size;
+	real_size = size == -1 ? strlen(data) : (gsize)size;
 
 	child = new_node(NULL, XMLNODE_TYPE_DATA);
 
@@ -803,7 +803,7 @@ xmlnode_from_str(const char *str, gssize size)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	real_size = size < 0 ? strlen(str) : size;
+	real_size = size < 0 ? strlen(str) : (gsize)size;
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
 
 	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, real_size) < 0) {

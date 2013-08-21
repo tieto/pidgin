@@ -490,7 +490,7 @@ static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 	while (1) {
 		YchtPkt *pkt;
 		int pos = 0;
-		int pktlen;
+		guint pktlen;
 		guint service;
 		guint version;
 		gint status;

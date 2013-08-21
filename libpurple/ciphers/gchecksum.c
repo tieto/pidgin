@@ -62,12 +62,13 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 
     checksum = purple_cipher_context_get_data(context);
 
-    g_return_val_if_fail(buff_len >= required_len, FALSE);
+    g_return_val_if_fail(required_len >= 0, FALSE);
+    g_return_val_if_fail(buff_len >= (gsize)required_len, FALSE);
     g_return_val_if_fail(checksum != NULL, FALSE);
 
     g_checksum_get_digest(checksum, digest, &digest_len);
 
-    if (digest_len != required_len)
+    if (digest_len != (gsize)required_len)
         return FALSE;
 
     purple_cipher_context_reset(context, NULL);

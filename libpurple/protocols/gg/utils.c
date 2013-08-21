@@ -114,7 +114,7 @@ guint64 ggp_microtime(void)
 
 gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 {
-	int raw_len = strlen(str);
+	size_t raw_len = strlen(str);
 	gchar *end_ptr;
 	if (str == NULL)
 		return NULL;
@@ -206,7 +206,7 @@ const gchar * ggp_ipv4_to_str(uint32_t raw_ip)
 	return buff;
 }
 
-GList * ggp_list_truncate(GList *list, gint length, GDestroyNotify free_func)
+GList * ggp_list_truncate(GList *list, guint length, GDestroyNotify free_func)
 {
 	while (g_list_length(list) > length)
 	{
