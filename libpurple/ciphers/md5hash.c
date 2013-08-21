@@ -83,11 +83,13 @@ purple_md5_hash_digest(PurpleHash *hash, guchar *digest, size_t buff_len)
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 	g_return_val_if_fail(priv->checksum != NULL, FALSE);
-	g_return_val_if_fail(buff_len >= required_len, FALSE);
+
+	g_return_val_if_fail(required_len >= 0, FALSE);
+	g_return_val_if_fail(buff_len >= (gsize)required_len, FALSE);
 
 	g_checksum_get_digest(priv->checksum, digest, &digest_len);
 
-	if (digest_len != required_len)
+	if (digest_len != (gsize)required_len)
 		return FALSE;
 
 	purple_md5_hash_reset(hash);
