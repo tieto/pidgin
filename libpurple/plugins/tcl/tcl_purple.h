@@ -46,7 +46,7 @@ struct tcl_signal_handler {
 };
 
 struct tcl_cmd_handler {
-	int id;
+	PurpleCmdId id;
 	Tcl_Obj *cmd;
 	Tcl_Interp *interp;
 

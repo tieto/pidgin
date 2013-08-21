@@ -166,7 +166,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	struct stun_conn *sc = data;
 	char buffer[65536];
 	char *tmp;
-	int len;
+	gssize len;
 	struct in_addr in;
 	struct stun_attrib *attrib;
 	struct stun_header *hdr;
@@ -177,19 +177,19 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	memset(&in, 0, sizeof(in));
 
 	len = recv(source, buffer, sizeof(buffer) - 1, 0);
-	if (!len) {
+	if (len <= 0) {
 		purple_debug_warning("stun", "unable to read stun response\n");
 		return;
 	}
 	buffer[len] = '\0';
 
-	if (len < sizeof(struct stun_header)) {
+	if ((gsize)len < sizeof(struct stun_header)) {
 		purple_debug_warning("stun", "got invalid response\n");
 		return;
 	}
 
 	hdr = (struct stun_header*) buffer;
-	if (len != (ntohs(hdr->len) + sizeof(struct stun_header))) {
+	if ((gsize)len != (ntohs(hdr->len) + sizeof(struct stun_header))) {
 		purple_debug_warning("stun", "got incomplete response\n");
 		return;
 	}
@@ -318,7 +318,7 @@ static void hbn_listen_cb(int fd, gpointer data) {
 
 	if(sendto(sc->fd, &hdr_data, sizeof(struct stun_header), 0,
 			(struct sockaddr *)&(sc->addr),
-			sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
+			sizeof(struct sockaddr_in)) < (gssize)sizeof(struct stun_header)) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 		do_callbacks();

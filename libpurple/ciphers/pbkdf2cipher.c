@@ -210,7 +210,7 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 		memset(halfkey, 0, halfkey_len);
 
 		for (iter_no = 1; iter_no <= priv->iter_count; iter_no++) {
-			int i;
+			guint i;
 
 			purple_cipher_reset_state(hash);
 

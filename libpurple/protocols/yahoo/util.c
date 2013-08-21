@@ -522,7 +522,7 @@ char *yahoo_codes_to_html(const char *x)
 	size_t x_len;
 	xmlnode *html, *cur;
 	GString *cdata = g_string_new(NULL);
-	int i, j;
+	guint i, j;
 	gboolean no_more_gt_brackets = FALSE;
 	const char *match;
 	gchar *xmlstr1, *xmlstr2, *esc;
@@ -778,7 +778,7 @@ char *yahoo_html_to_codes(const char *src)
 	GSList *tags = NULL;
 
 	size_t src_len;
-	int i, j;
+	guint i, j;
 	GString *dest;
 	char *esc;
 	gboolean no_more_gt_brackets = FALSE;

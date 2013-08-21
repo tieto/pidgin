@@ -240,7 +240,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	PurpleAccount *account;
 	gboolean protocol_supported = FALSE;
-	int proto_ver;
+	guint proto_ver;
 	size_t i;
 
 	session = cmdproc->session;
@@ -249,7 +249,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	session->protocol_ver = 0;
 	for (i = 1; i < cmd->param_count; i++)
 	{
-		if (sscanf(cmd->params[i], "MSNP%d", &proto_ver) == 1) {
+		if (sscanf(cmd->params[i], "MSNP%u", &proto_ver) == 1) {
 			if (proto_ver >= WLM_MIN_PROTOCOL
 			 && proto_ver <= WLM_MAX_PROTOCOL
 			 && proto_ver > session->protocol_ver) {

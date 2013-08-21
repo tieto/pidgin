@@ -405,7 +405,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	dc->progress = TRUE;
 
 	dc->msg_pos += bytes_sent;
-	if (dc->msg_pos == p->length) {
+	if ((guint32)dc->msg_pos == p->length) {
 		if (p->sent_cb != NULL)
 			p->sent_cb(p);
 
@@ -670,7 +670,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		}
 
 		/* Wait for the whole packet to arrive */
-		if (dc->in_pos < 4 + packet_length)
+		if ((guint32)dc->in_pos < 4 + packet_length)
 			return;
 
 		switch (msn_dc_process_packet(dc, packet_length)) {
@@ -684,7 +684,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 		}
 
-		if (dc->in_pos > packet_length + 4) {
+		if ((guint32)dc->in_pos > packet_length + 4) {
 			g_memmove(dc->in_buffer, dc->in_buffer + 4 + packet_length, dc->in_pos - packet_length - 4);
 		}
 

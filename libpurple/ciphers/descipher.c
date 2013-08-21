@@ -430,9 +430,12 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
 	PurpleDESCipher *des_cipher = PURPLE_DES_CIPHER(cipher);
-	gint offset = 0, i = 0, tmp;
-	guint8 buf[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	ssize_t out_len;
+
+	gsize offset = 0;
+	int i = 0;
+	gsize tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -444,6 +447,7 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	out_len = in_len;
 
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -463,9 +467,12 @@ purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
 {
 	PurpleDESCipher *des_cipher = PURPLE_DES_CIPHER(cipher);
-	int offset = 0, i = 0, tmp;
+
+	gsize offset = 0;
+	int i = 0;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -476,6 +483,7 @@ purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 
 	out_len = in_len;
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;

@@ -1976,7 +1976,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	  we need to do this to allow them to override when using non-standard
 	  TURN modes, like Google f.ex. */
 	gboolean got_turn_from_protocol = FALSE;
-	int i;
+	guint i;
 
 	session = get_session(self, sess_id);
 

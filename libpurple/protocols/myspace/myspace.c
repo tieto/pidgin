@@ -1032,7 +1032,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
 
-	if (strtol(username, NULL, 10) == uid) {
+	if (strtoul(username, NULL, 10) == uid) {
 		/*
 		 * This user has not set their username!  Set their server
 		 * alias to their display name so that we don't see a bunch
@@ -2977,13 +2977,15 @@ gboolean
 msim_send_raw(MsimSession *session, const gchar *msg)
 {
 	size_t len;
+	int sent;
 
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
 	len = strlen(msg);
 
-	return msim_send_really_raw(session->gc, msg, len) == len;
+	sent = msim_send_really_raw(session->gc, msg, len);
+	return sent > 0 && (size_t)sent == len;
 }
 
 static GHashTable *
@@ -3416,7 +3418,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 	l = purple_accounts_get_all();
 	while (l) {
 		if (purple_account_is_connected(l->data) &&
-			(uid == 0 || purple_account_get_int(l->data, "uid", 0) == uid)) {
+			(uid == 0 || (guint)purple_account_get_int(l->data, "uid", 0) == uid)) {
 			account = l->data;
 			break;
 		}

@@ -122,7 +122,7 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 				  SilcVerifyPublicKey completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	int i;
+	gsize i;
 	char file[256], filename[256], filename2[256], *ipf, *hostf = NULL;
 	char *fingerprint, *babbleprint;
 	struct passwd *pw;

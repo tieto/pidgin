@@ -456,7 +456,6 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	SilcNotifyType notify;
 	PurpleBuddy *b;
 	SilcDList list;
-	int i;
 
 	va_start(va, type);
 	memset(buf, 0, sizeof(buf));
@@ -852,6 +851,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			if (public_key) {
 				GSList *buddies;
 				const char *f;
+				gsize i;
 
 				pk = silc_pkcs_public_key_encode(public_key, &pk_len);
 				if (!pk)

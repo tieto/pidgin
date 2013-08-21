@@ -128,7 +128,7 @@ void purple_accounts_delete(PurpleAccount *account);
  * @param account   The account to reorder.
  * @param new_index The new index for the account.
  */
-void purple_accounts_reorder(PurpleAccount *account, gint new_index);
+void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 
 /**
  * Returns a list of all accounts.

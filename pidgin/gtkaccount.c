@@ -2057,7 +2057,8 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					return;
 			}
 
-			purple_accounts_reorder(a, dest_index);
+			if (dest_index >= 0)
+				purple_accounts_reorder(a, dest_index);
 		}
 	}
 }

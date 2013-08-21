@@ -2086,8 +2086,7 @@ static int zephyr_send_im(PurpleConnection * gc, const char *who, const char *im
 
 static char* zephyr_tzc_escape_msg(const char *message)
 {
-	int pos = 0;
-	int pos2 = 0;
+	gsize pos = 0, pos2 = 0;
 	char *newmsg;
 
 	if (message && *message) {
@@ -2118,8 +2117,7 @@ static char* zephyr_tzc_escape_msg(const char *message)
 
 char* zephyr_tzc_deescape_str(const char *message)
 {
-	int pos = 0;
-	int pos2 = 0;
+	gsize pos = 0, pos2 = 0;
 	char *newmsg;
 
 	if (message && *message) {

@@ -680,14 +680,14 @@ static void
 silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 {
 	SilcChannelEntry channel;
-	int ulimit = 0;
+	guint ulimit = 0;
 
 	channel = silc_client_get_channel(s->sg->client, s->sg->conn,
 					  (char *)s->channel);
 	if (!channel)
 		return;
 	if (limit)
-		ulimit = atoi(limit);
+		ulimit = strtoul(limit, NULL, 10);
 
 	if (!limit || !(*limit) || *limit == '0') {
 		if (limit && ulimit == channel->user_limit) {
@@ -1120,7 +1120,7 @@ void silcpurple_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcPurplePrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == (gulong)id)
 				break;
 		if (!l)
 			return;
@@ -1131,7 +1131,7 @@ void silcpurple_chat_invite(PurpleConnection *gc, int id, const char *msg,
 	/* Find channel by id */
 	silc_hash_table_list(conn->local_entry->channels, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+		if (SILC_PTR_TO_32(chu->channel->context) == (gulong)id ) {
 			found = TRUE;
 			break;
 		}
@@ -1165,7 +1165,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 		SilcChannelEntry channel;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcPurplePrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == (gulong)id)
 				break;
 		if (!l)
 			return;
@@ -1185,7 +1185,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 	/* Find channel by id */
 	silc_hash_table_list(conn->local_entry->channels, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+		if (SILC_PTR_TO_32(chu->channel->context) == (gulong)id ) {
 			found = TRUE;
 			break;
 		}
@@ -1202,7 +1202,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 
 	/* Leave from private groups on this channel as well */
 	for (l = sg->grps; l; l = l->next)
-		if (((SilcPurplePrvgrp)l->data)->chid == id) {
+		if (((SilcPurplePrvgrp)l->data)->chid == (gulong)id) {
 			prv = l->data;
 			silc_client_del_channel_private_key(client, conn,
 							    chu->channel,
@@ -1266,7 +1266,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcPurplePrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == (gulong)id)
 				break;
 		if (!l) {
 			g_free(tmp);
@@ -1286,7 +1286,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 		/* Find channel by id */
 		silc_hash_table_list(conn->local_entry->channels, &htl);
 		while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-			if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+			if (SILC_PTR_TO_32(chu->channel->context) == (gulong)id ) {
 				found = TRUE;
 				break;
 			}
@@ -1357,7 +1357,7 @@ void silcpurple_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcPurplePrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == (gulong)id)
 				break;
 		if (!l)
 			return;
@@ -1368,7 +1368,7 @@ void silcpurple_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 	/* Find channel by id */
 	silc_hash_table_list(conn->local_entry->channels, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+		if (SILC_PTR_TO_32(chu->channel->context) == (gulong)id ) {
 			found = TRUE;
 			break;
 		}

@@ -35,7 +35,7 @@
 
 void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 {
-	int user_idx;
+	guint user_idx;
 	gboolean is_update;
 	
 	purple_debug_info("gg", "GG_EVENT_USER_DATA [type=%d, user_count=%"
@@ -54,7 +54,7 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 		struct gg_event_user_data_user *data_user =
 			&data->users[user_idx];
 		uin_t uin = data_user->uin;
-		int attr_idx;
+		guint attr_idx;
 		gboolean got_avatar = FALSE;
 		for (attr_idx = 0; attr_idx < data_user->attr_count; attr_idx++)
 		{
