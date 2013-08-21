@@ -687,6 +687,8 @@ purple_protocol_destroy(PurpleProtocol *protocol)
 	purple_signals_unregister_by_instance(protocol);
 
 	purple_prefs_disconnect_by_handle(protocol);
+
+	g_object_unref(protocol);
 }
 
 PurpleProtocol *
@@ -695,22 +697,26 @@ purple_find_protocol_info(const char *id)
 	return g_hash_table_lookup(protocols, id);
 }
 
-gboolean
-purple_protocols_add(PurpleProtocol *protocol)
+PurpleProtocol *
+purple_protocols_add(GType protocol_type)
 {
-	if (purple_find_protocol_info(protocol->id))
-		return FALSE;
+	PurpleProtocol *protocol = g_object_new(protocol_type, NULL);
+	if (purple_find_protocol_info(purple_protocol_get_id(protocol))) {
+		g_object_unref(protocol);
+		return NULL;
+	}
 
-	g_hash_table_insert(protocols, g_strdup(protocol->id), protocol);
-	return TRUE;
+	g_hash_table_insert(protocols, g_strdup(purple_protocol_get_id(protocol)),
+	                    protocol);
+	return protocol;
 }
 
 gboolean purple_protocols_remove(PurpleProtocol *protocol)
 {
-	if (purple_find_protocol_info(protocol->id) == NULL)
+	if (purple_find_protocol_info(purple_protocol_get_id(protocol)) == NULL)
 		return FALSE;
 
-	g_hash_table_remove(protocols, protocol->id);
+	g_hash_table_remove(protocols, purple_protocol_get_id(protocol));
 	purple_protocol_destroy(protocol);
 
 	return TRUE;

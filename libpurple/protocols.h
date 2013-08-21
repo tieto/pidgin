@@ -410,11 +410,11 @@ PurpleProtocol *purple_find_protocol_info(const char *id);
 /** TODO A sanity check is needed
  * Adds a protocol to the list of protocols.
  *
- * @param protocol  The protocol to add.
+ * @param protocol_type  The type of the protocol to add.
  *
- * @return TRUE if the protocol was added, else FALSE.
+ * @return The protocol instance if the protocol was added, else @c NULL.
  */
-gboolean purple_protocols_add(PurpleProtocol *protocol);
+PurpleProtocol *purple_protocols_add(GType protocol_type);
 
 /** TODO A sanity check is needed
  * Removes a protocol from the list of protocols. This will disconnect all
