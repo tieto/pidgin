@@ -503,6 +503,31 @@ struct _PurpleProtocolInterface
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
 };
 
+/**
+ * Defines a protocol type using the CamelCase type name of the protocol and
+ * the function prefix for the *_get_type(), *_base_init(), *_base_finalize()
+ * and *_interface_init() functions of the protocol.
+ */
+#define PURPLE_PROTOCOL_DEFINE(TypeName, func_prefix) \
+	GType func_prefix##_get_type(void) { \
+		static GType type = 0; \
+		if (type == 0) { \
+			static const GTypeInfo info = { \
+				.instance_size = sizeof(TypeName), \
+				.class_size = sizeof(TypeName##Class), \
+				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
+				.base_finalize = (GBaseFinalizeFunc)func_prefix##_base_finalize, \
+			}; \
+			static const GInterfaceInfo iface_info = { \
+				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
+			}; \
+			type = g_type_register_static(PURPLE_TYPE_PROTOCOL, #TypeName, \
+				                          &info, 0); \
+			g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL, &iface_info); \
+		} \
+		return type; \
+	}
+
 G_BEGIN_DECLS
 
 /**************************************************************************/
