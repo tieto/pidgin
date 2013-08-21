@@ -137,7 +137,7 @@ struct _PurpleChatConversationClass {
 };
 
 /**************************************************************************/
-/** PurpleChatUser                                           */
+/** PurpleChatUser                                                        */
 /**************************************************************************/
 /** Structure representing a chat user instance. */
 struct _PurpleChatUser
