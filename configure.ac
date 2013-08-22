@@ -1424,11 +1424,6 @@ if test "x$GCC" = "xyes"; then
 	dnl	This leads to spurious warnings using GPOINTER_TO_INT(), et al. directly on a function call.
 	dnl		We'd need an intermediate variable.
 	dnl
-	dnl Consider adding -Wfloat-equal.
-	dnl	This leads to warnings with Perl.
-	dnl		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
-	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
-	dnl
 	for newflag in \
 			"-Waggregate-return" \
 			"-Wcast-align" \
@@ -1443,6 +1438,7 @@ if test "x$GCC" = "xyes"; then
 			"-Wmissing-noreturn" \
 			"-Wmissing-prototypes" \
 			"-Wpointer-arith" \
+			"-Wfloat-equal" \
 			"-Wundef" \
 	; do
 		orig_CFLAGS="$CFLAGS"
