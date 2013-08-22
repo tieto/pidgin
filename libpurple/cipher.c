@@ -128,7 +128,7 @@ purple_cipher_digest_region(const gchar *name, const guchar *data,
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
-	ssize_t digest_size;
+	size_t digest_size;
 	gboolean succ;
 
 	g_return_val_if_fail(name, -1);
@@ -157,7 +157,7 @@ purple_cipher_digest_region(const gchar *name, const guchar *data,
 	succ = purple_cipher_context_digest(context, digest, out_size);
 	purple_cipher_context_destroy(context);
 
-	return succ ? digest_size : -1;
+	return succ ? (ssize_t)digest_size : -1;
 }
 
 /******************************************************************************
@@ -453,8 +453,7 @@ purple_cipher_context_digest_to_str(PurpleCipherContext *context,
 {
 	/* 8k is a bit excessive, will tweak later. */
 	guchar digest[BUF_LEN * 4];
-	gint n = 0;
-	size_t digest_size;
+	size_t digest_size, n;
 
 	g_return_val_if_fail(context, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);

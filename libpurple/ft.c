@@ -98,7 +98,7 @@ purple_xfer_status_type_to_string(PurpleXferStatusType type)
 		{ PURPLE_XFER_STATUS_CANCEL_LOCAL, "cancelled locally" },
 		{ PURPLE_XFER_STATUS_CANCEL_REMOTE, "cancelled remotely" }
 	};
-	int i;
+	gsize i;
 
 	for (i = 0; i < G_N_ELEMENTS(type_names); ++i)
 		if (type_names[i].type == type)
@@ -1107,7 +1107,7 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 			r = -1;
 	}
 
-	if (r == xfer->current_buffer_size)
+	if (r >= 0 && (gsize)r == xfer->current_buffer_size)
 		/*
 		 * We managed to read the entire buffer.  This means our this
 		 * network is fast and our buffer is too small, so make it
@@ -1205,7 +1205,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 
 		got_len = ui_ops->ui_read(xfer, &buffer_got, size);
 
-		if (got_len > size) {
+		if (got_len >= 0 && (gsize)got_len > size) {
 			g_free(buffer_got);
 			purple_debug_error("filetransfer",
 				"Got too much data from UI.\n");
@@ -1224,7 +1224,9 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 			return -1;
 		}
 		got_len = fread(buffer, 1, size, xfer->dest_fp);
-		if (got_len != size && ferror(xfer->dest_fp)) {
+		if ((got_len < 0 || (gsize)got_len != size) &&
+			ferror(xfer->dest_fp))
+		{
 			purple_debug_error("filetransfer",
 				"Unable to read file.\n");
 			purple_xfer_cancel_local(xfer);

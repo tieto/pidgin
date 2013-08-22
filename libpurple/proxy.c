@@ -903,7 +903,7 @@ proxy_do_write(gpointer data, gint source, PurpleInputCondition cond)
 		purple_proxy_connect_data_disconnect(connect_data, g_strerror(errno));
 		return;
 	}
-	if (ret < request_len) {
+	if ((gsize)ret < request_len) {
 		connect_data->written_len += ret;
 		return;
 	}
@@ -965,7 +965,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	if (p != NULL) {
 		*p = '\0';
 		headers_len = (p - (char *)connect_data->read_buffer) + 4;
-	} else if(len == max_read)
+	} else if((gsize)len == max_read)
 		headers_len = len;
 	else
 		return;
@@ -1489,7 +1489,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 }
 
 static gboolean
-s5_ensure_buffer_length(PurpleProxyConnectData *connect_data, int len)
+s5_ensure_buffer_length(PurpleProxyConnectData *connect_data, guint len)
 {
 	if(connect_data->read_len < len) {
 		if(connect_data->read_buf_len < len) {
