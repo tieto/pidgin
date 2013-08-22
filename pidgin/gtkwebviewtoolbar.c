@@ -1316,7 +1316,7 @@ gtk_webviewtoolbar_create_actions(GtkWebViewToolbar *toolbar)
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkActionGroup *action_group;
-	int i;
+	gsize i;
 	struct {
 		GtkAction **action;
 		char *name;
@@ -1397,7 +1397,7 @@ gtk_webviewtoolbar_create_wide_view(GtkWebViewToolbar *toolbar)
 		priv->smiley,
 		priv->attention
 	};
-	int i;
+	gsize i;
 	GtkToolItem *item;
 
 	priv->wide_view = gtk_toolbar_new();

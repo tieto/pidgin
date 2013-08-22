@@ -1429,16 +1429,13 @@ if test "x$GCC" = "xyes"; then
 	dnl		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
 	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
 	dnl
-	dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
-	dnl	This is likely non-trivial.
-	dnl
 	for newflag in \
 			"-Waggregate-return" \
 			"-Wcast-align" \
 			"-Wdeclaration-after-statement" \
 			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
-			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
+			"-Wextra -Wno-unused-parameter" \
 			"-Wformat-security" \
 				"-Werror=format-security" \
 			"-Winit-self" \
