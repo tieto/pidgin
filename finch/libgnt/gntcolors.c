@@ -296,7 +296,7 @@ int gnt_color_pair(int pair)
 {
 	return (hascolors ? COLOR_PAIR(pair) :
 		((pair == GNT_COLOR_NORMAL || pair == GNT_COLOR_HIGHLIGHT_D ||
-		  pair == GNT_COLOR_TITLE_D || pair == GNT_COLOR_DISABLED) ? 0 : A_STANDOUT));
+		  pair == GNT_COLOR_TITLE_D || pair == GNT_COLOR_DISABLED) ? 0 : (int)A_STANDOUT));
 }
 
 int gnt_color_add_pair(int fg, int bg)

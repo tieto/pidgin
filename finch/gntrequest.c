@@ -262,7 +262,7 @@ finch_request_action(const char *title, const char *primary,
 		va_list actions)
 {
 	GntWidget *window, *box, *button, *focus = NULL;
-	int i;
+	gsize i;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_ACTION);
 
@@ -281,7 +281,7 @@ finch_request_action(const char *title, const char *primary,
 		g_object_set_data(G_OBJECT(button), "activate-id", GINT_TO_POINTER(i));
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(request_action_cb), window);
 
-		if (i == default_value)
+		if (default_value >= 0 && i == (gsize)default_value)
 			focus = button;
 	}
 

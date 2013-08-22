@@ -65,7 +65,7 @@ struct _GntMenu
 	GntMenuType type;
 
 	GList *list;
-	int selected;
+	guint selected;
 
 	/* This will keep track of its immediate submenu which is visible so that
 	 * keystrokes can be passed to it. */
