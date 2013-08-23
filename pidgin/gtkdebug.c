@@ -413,7 +413,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 		item = gtk_check_menu_item_new_with_mnemonic(text[i]);
 		g_object_set_data(G_OBJECT(item), "user_data", GINT_TO_POINTER(value[i]));
 		g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(toolbar_icon_pref_changed), toolbar);
-		if (value[i] == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"))
+		if (value[i] == (GtkToolbarStyle)purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"))
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}

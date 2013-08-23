@@ -108,7 +108,7 @@ static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
 static GString *
 make_gtkrc_string(void)
 {
-	gint i;
+	gsize i;
 	gchar *prefbase = NULL;
 	GString *style_string = g_string_new("");
 
@@ -366,7 +366,7 @@ purplerc_make_interface_vbox(void)
 {
 	GtkWidget *vbox = NULL, *hbox = NULL, *check = NULL;
 	GtkSizeGroup *labelsg = NULL;
-	gint i;
+	gsize i;
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	labelsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -405,7 +405,7 @@ purplerc_make_fonts_vbox(void)
 {
 	GtkWidget *vbox = NULL, *hbox = NULL, *check = NULL, *widget = NULL;
 	GtkSizeGroup *labelsg = NULL;
-	int i;
+	gsize i;
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	labelsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -465,7 +465,7 @@ purplerc_make_misc_vbox(void)
 	 * the size group not the whole thing, which isn't what I want. */
 	GtkWidget *vbox = NULL, *hbox = NULL, *check = NULL, *widget = NULL;
 	GtkSizeGroup *labelsg = NULL;
-	int i;
+	gsize i;
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	labelsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -644,7 +644,7 @@ static PurplePluginInfo purplerc_info =
 static void
 purplerc_init(PurplePlugin *plugin)
 {
-	gint i;
+	gsize i;
 
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gtk");

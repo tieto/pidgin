@@ -169,4 +169,5 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
-	$(PERL_CFLAGS)
+	$(PERL_CFLAGS) \
+	-Wno-float-equal

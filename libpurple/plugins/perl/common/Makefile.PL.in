@@ -9,7 +9,7 @@ WriteMakefile(
     ($] >= 5.005 ? ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM    => '@srcdir@/Purple.pm', # finds $ABSTRACT
        AUTHOR           => 'Purple <https://pidgin.im/>') : ()),
-    'DEFINE'            => '@DEBUG_CFLAGS@',
+    'DEFINE'            => '@DEBUG_CFLAGS@ -Wno-float-equal',
     'dynamic_lib'       => { 'OTHERLDFLAGS' => '@LDFLAGS@' },
     'INC'               => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple @GLIB_CFLAGS@',
     'OBJECT'            => '$(O_FILES)', # link all the C files too

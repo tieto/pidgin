@@ -882,7 +882,7 @@ webview_find_protocol(const char *url, gboolean reverse)
 	GtkWebViewClass *klass;
 	GList *iter;
 	GtkWebViewProtocol *proto = NULL;
-	int length = reverse ? strlen(url) : -1;
+	gssize length = reverse ? (gssize)strlen(url) : -1;
 
 	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
 	for (iter = klass->protocols; iter; iter = iter->next) {
@@ -992,7 +992,7 @@ get_unicode_menu(WebKitWebView *webview)
 	gboolean show = TRUE;
 	GtkWidget *menuitem;
 	GtkWidget *menu;
-	int i;
+	gsize i;
 
 	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
 

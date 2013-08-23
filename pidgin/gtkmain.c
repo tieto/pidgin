@@ -204,7 +204,7 @@ ui_main(void)
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
-	int i;
+	gsize i;
 	struct {
 		const char *dir;
 		const char *filename;

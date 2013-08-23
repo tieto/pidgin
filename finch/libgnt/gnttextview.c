@@ -513,7 +513,7 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 			GntTextFormatFlags flags, const char *tagname)
 {
 	GntWidget *widget = GNT_WIDGET(view);
-	int fl = 0;
+	chtype fl = 0;
 	const char *start, *end;
 	GList *list = view->list;
 	GntTextLine *line;

@@ -158,7 +158,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 		else if (purple_xfer_is_cancelled(xfer)) {
 			*time_remaining = g_strdup(_("Cancelled"));
 		}
-		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
+		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps < 0.001)) {
 			*time_remaining = g_strdup(_("Unknown"));
 		}
 		else if (kb_sent <= 0) {
@@ -636,7 +636,7 @@ make_info_table(PidginXferDialog *dialog)
 {
 	GtkWidget *table;
 	GtkWidget *label;
-	int i;
+	gsize i;
 
 	struct
 	{

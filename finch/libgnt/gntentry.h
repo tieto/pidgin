@@ -178,7 +178,7 @@ void gnt_entry_add_to_history(GntEntry *entry, const char *text);
  * Set the length of history for the entry box.
  *
  * @param entry  The entry box.
- * @param num    The maximum length of the history.
+ * @param num    The maximum length of the history, -1 for unlimited.
  */
 void gnt_entry_set_history_length(GntEntry *entry, int num);
 

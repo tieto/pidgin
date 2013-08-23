@@ -294,7 +294,7 @@ pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 {
 	gboolean sensitivity;
 	gpointer element;
-	int i;
+	guint i;
 
 	for (i=0; i < data->len; i++) {
 		element = g_ptr_array_index(data,i);

@@ -4432,8 +4432,8 @@ purple_utf8_has_word(const char *haystack, const char *needle)
 				   ("!g_unichar_isalnum()" is not a valid way to determine word
 				    boundaries, but it is the only reasonable thing to do here),
 				   and isn't the '&' from a "&amp;" or some such entity*/
-				(before != -2 && !g_unichar_isalnum(before) && *(p - 1) != '&')) /* XXX: what does "-2" means? */
-				&& after != -2 && !g_unichar_isalnum(after)) {
+				(before != (gunichar)-2 && !g_unichar_isalnum(before) && *(p - 1) != '&'))
+				&& after != (gunichar)-2 && !g_unichar_isalnum(after)) {
 			ret = TRUE;
 			break;
 		}

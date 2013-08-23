@@ -144,6 +144,7 @@ finch_debug_print(PurpleDebugLevel level, const char *category,
 		}
 
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview), args, flag);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview), "\n", GNT_TEXT_FLAG_NORMAL);
 		if (pos <= 1)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(debug.tview), 0);
 	}

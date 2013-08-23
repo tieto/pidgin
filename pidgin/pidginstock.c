@@ -403,7 +403,7 @@ void
 pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 {
 	GtkIconFactory *icon_factory;
-	gint i;
+	gsize i;
 	GtkIconSet *normal;
 	GtkIconSet *translucent = NULL;
 	GtkWidget *win;
@@ -491,7 +491,7 @@ void
 pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 {
 	GtkIconFactory *icon_factory;
-	gint i;
+	gsize i;
 	GtkWidget *win;
 
 	if (theme != NULL) {

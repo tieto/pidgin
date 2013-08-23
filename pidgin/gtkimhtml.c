@@ -1528,7 +1528,7 @@ imhtml_find_protocol(const char *url, gboolean reverse)
 	GtkIMHtmlClass *klass;
 	GList *iter;
 	GtkIMHtmlProtocol *proto = NULL;
-	int length = reverse ? strlen(url) : -1;
+	gssize length = reverse ? (gssize)strlen(url) : -1;
 
 	klass = g_type_class_ref(GTK_TYPE_IMHTML);
 	for (iter = klass->protocols; iter; iter = iter->next) {

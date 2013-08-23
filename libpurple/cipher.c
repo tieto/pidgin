@@ -64,14 +64,6 @@ purple_cipher_get_type(void) {
 	return type;
 }
 
-/**
- * purple_cipher_reset:
- * @cipher: The cipher to reset
- *
- * Resets a cipher to it's default value
- *
- * @note If you have set an IV you will have to set it after resetting
- */
 void
 purple_cipher_reset(PurpleCipher *cipher) {
 	PurpleCipherClass *klass = NULL;
@@ -88,13 +80,6 @@ purple_cipher_reset(PurpleCipher *cipher) {
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * Resets a cipher state to it's default value, but doesn't touch stateless
- * configuration.
- *
- * That means, IV and digest context will be wiped out, but keys, ops or salt
- * will remain untouched.
- */
 void
 purple_cipher_reset_state(PurpleCipher *cipher) {
 	PurpleCipherClass *klass = NULL;
@@ -111,16 +96,6 @@ purple_cipher_reset_state(PurpleCipher *cipher) {
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_set_iv:
- * @cipher: The cipher to set the IV to
- * @iv: The initialization vector to set
- * @len: The len of the IV
- *
- * @note This should only be called right after a cipher is created or reset
- *
- * Sets the initialization vector for a cipher
- */
 void
 purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 {
@@ -139,14 +114,6 @@ purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_append:
- * @cipher: The cipher to append data to
- * @data: The data to append
- * @len: The length of the data
- *
- * Appends data to the cipher
- */
 void
 purple_cipher_append(PurpleCipher *cipher, const guchar *data,
 								size_t len)
@@ -165,17 +132,6 @@ purple_cipher_append(PurpleCipher *cipher, const guchar *data,
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_digest:
- * @cipher: The cipher to digest
- * @in_len: The length of the buffer
- * @digest: The return buffer for the digest
- * @out_len: The length of the returned value
- *
- * Digests a cipher
- *
- * Return Value: TRUE if the digest was successful, FALSE otherwise.
- */
 gboolean
 purple_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 {
@@ -195,24 +151,12 @@ purple_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 	return FALSE;
 }
 
-/**
- * purple_cipher_digest_to_str:
- * @cipher: The cipher to get a digest from
- * @in_len: The length of the buffer
- * @digest_s: The return buffer for the string digest
- * @out_len: The length of the returned value
- *
- * Converts a guchar digest into a hex string
- *
- * Return Value: TRUE if the digest was successful, FALSE otherwise.
- */
 gboolean
 purple_cipher_digest_to_str(PurpleCipher *cipher, gchar digest_s[], size_t len)
 {
 	/* 8k is a bit excessive, will tweak later. */
 	guchar digest[BUF_LEN * 4];
-	gint n = 0;
-	size_t digest_size;
+	size_t digest_size, n;
 
 	g_return_val_if_fail(cipher, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
@@ -254,18 +198,6 @@ purple_cipher_get_digest_size(PurpleCipher *cipher)
 	return FALSE;
 }
 
-/**
- * purple_cipher_encrypt:
- * @cipher: The cipher
- * @data: The data to encrypt
- * @len: The length of the data
- * @output: The output buffer
- * @outlen: The len of data that was outputed
- *
- * Encrypts data using the cipher
- *
- * Return Value: A cipher specific status code
- */
 ssize_t
 purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
@@ -289,18 +221,6 @@ purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	return -1;
 }
 
-/**
- * purple_cipher_decrypt:
- * @cipher: The cipher
- * @data: The data to encrypt
- * @len: The length of the returned value
- * @output: The output buffer
- * @outlen: The len of data that was outputed
- *
- * Decrypts data using the cipher
- *
- * Return Value: A cipher specific status code
- */
 ssize_t
 purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 							size_t in_len, guchar output[], size_t out_size)
@@ -323,13 +243,6 @@ purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 	return -1;
 }
 
-/**
- * purple_cipher_set_salt:
- * @cipher: The cipher whose salt to set
- * @salt: The salt
- *
- * Sets the salt on a cipher
- */
 void
 purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len) {
 	PurpleCipherClass *klass = NULL;
@@ -346,13 +259,6 @@ purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len) {
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_set_key:
- * @cipher: The cipher whose key to set
- * @key: The key
- *
- * Sets the key on a cipher
- */
 void
 purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 	PurpleCipherClass *klass = NULL;
@@ -369,14 +275,6 @@ purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_get_key_size:
- * @cipher: The cipher whose key size to get
- *
- * Gets the key size for a cipher
- *
- * Return Value: The size of the key
- */
 size_t
 purple_cipher_get_key_size(PurpleCipher *cipher) {
 	PurpleCipherClass *klass = NULL;
@@ -395,13 +293,6 @@ purple_cipher_get_key_size(PurpleCipher *cipher) {
 	return -1;
 }
 
-/**
- * purple_cipher_set_batch_mode:
- * @cipher: The cipher whose batch mode to set
- * @mode: The batch mode under which the cipher should operate
- *
- * Sets the batch mode of a cipher
- */
 void
 purple_cipher_set_batch_mode(PurpleCipher *cipher,
                                      PurpleCipherBatchMode mode)
@@ -420,14 +311,6 @@ purple_cipher_set_batch_mode(PurpleCipher *cipher,
 						klass->get_name ? klass->get_name(cipher) : "");
 }
 
-/**
- * purple_cipher_get_batch_mode:
- * @cipher: The cipher whose batch mode to get
- *
- * Gets the batch mode of a cipher
- *
- * Return Value: The batch mode under which the cipher is operating
- */
 PurpleCipherBatchMode
 purple_cipher_get_batch_mode(PurpleCipher *cipher)
 {
@@ -447,14 +330,6 @@ purple_cipher_get_batch_mode(PurpleCipher *cipher)
 	return -1;
 }
 
-/**
- * purple_cipher_get_block_size:
- * @cipher: The cipher whose block size to get
- *
- * Gets the block size of a cipher
- *
- * Return Value: The block size of the cipher
- */
 size_t
 purple_cipher_get_block_size(PurpleCipher *cipher)
 {

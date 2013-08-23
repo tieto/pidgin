@@ -3461,7 +3461,7 @@ get_vv_element_devices(const gchar *element_name)
 #if !GST_CHECK_VERSION(1,0,0)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
-	gint i;
+	guint i;
 	GValueArray *array;
 	enum {
 		PROBE_NONE,

@@ -125,7 +125,8 @@ make_word_proper(const gchar *word)
 	gchar *ret;
 
 	bytes = g_unichar_to_utf8(g_unichar_toupper(g_utf8_get_char(word)), buf);
-	buf[MIN(bytes, sizeof(buf) - 1)] = '\0';
+	g_assert(bytes >= 0);
+	buf[MIN((gsize)bytes, sizeof(buf) - 1)] = '\0';
 
 	ret = g_strconcat(buf, g_utf8_offset_to_pointer(lower, 1), NULL);
 	g_free(lower);
@@ -678,10 +679,10 @@ spellchk_new_attach(PurpleConversation *conv)
 	return;
 }
 
-static int buf_get_line(char *ibuf, char **buf, int *position, gsize len)
+static int buf_get_line(char *ibuf, char **buf, gsize *position, gsize len)
 {
-	int pos = *position;
-	int spos = pos;
+	gsize pos = *position;
+	gsize spos = pos;
 
 	if (pos == len)
 		return 0;
@@ -1778,7 +1779,7 @@ static void load_conf(void)
 	GHashTable *hashes;
 	char bad[82] = "";
 	char good[256] = "";
-	int pnt = 0;
+	gsize pnt = 0;
 	gsize size;
 	gboolean complete = TRUE;
 	gboolean case_sensitive = FALSE;

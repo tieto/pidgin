@@ -525,7 +525,7 @@ static void
 pidgin_status_box_finalize(GObject *obj)
 {
 	PidginStatusBox *statusbox = PIDGIN_STATUS_BOX(obj);
-	int i;
+	gsize i;
 
 	purple_signals_disconnect_by_handle(statusbox);
 	purple_prefs_disconnect_by_handle(statusbox);
@@ -829,7 +829,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 				/* This is a special case because Primitives for the token_status_account are actually
 				 * saved statuses with substatuses for the enabled accounts */
 				if (status_box->token_status_account && purple_savedstatus_is_transient(saved_status)
-					&& type == PIDGIN_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
+					&& type == PIDGIN_STATUS_BOX_TYPE_PRIMITIVE && primitive == (PurpleStatusPrimitive)GPOINTER_TO_INT(data))
 				{
 					char *name;
 					const char *acct_status_name = purple_status_get_name(
@@ -1155,7 +1155,7 @@ static void
 cache_pixbufs(PidginStatusBox *status_box)
 {
 	GtkIconSize icon_size;
-	int i;
+	gsize i;
 
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
