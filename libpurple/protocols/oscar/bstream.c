@@ -52,7 +52,7 @@ void byte_stream_destroy(ByteStream *bs)
 size_t byte_stream_bytes_left(ByteStream *bs)
 {
 	g_return_val_if_fail(bs != NULL, 0);
-	g_return_val_if_fail(bs->len < bs->offset, 0);
+	g_return_val_if_fail(bs->len >= bs->offset, 0);
 
 	return bs->len - bs->offset;
 }
