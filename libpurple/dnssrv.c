@@ -543,7 +543,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 						res->content = g_new0(gchar, len);
 
 						red = read(source, res->content, len);
-						if (red != len) {
+						if (red < 0 || (gsize)red != len) {
 							purple_debug_error("dnssrv","unable to read txt "
 									"response: %s\n", g_strerror(errno));
 							size = 0;

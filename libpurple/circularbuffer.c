@@ -65,8 +65,8 @@ static GObjectClass *parent_class = NULL;
 static void
 purple_circular_buffer_real_grow(PurpleCircularBuffer *buffer, gsize len) {
 	PurpleCircularBufferPrivate *priv = NULL;
-	gint in_offset = 0, out_offset = 0;
-	gint start_buflen;
+	gsize in_offset = 0, out_offset = 0;
+	gsize start_buflen;
 
 	priv = PURPLE_CIRCULAR_BUFFER_GET_PRIVATE(buffer);
 
@@ -95,7 +95,7 @@ purple_circular_buffer_real_grow(PurpleCircularBuffer *buffer, gsize len) {
 	if(in_offset < out_offset
 			|| (in_offset == out_offset && priv->bufused > 0))
 	{
-		gint shift_n = MIN(priv->buflen - start_buflen, in_offset);
+		gsize shift_n = MIN(priv->buflen - start_buflen, in_offset);
 		memcpy(priv->buffer + start_buflen, priv->buffer, shift_n);
 
 		/* If we couldn't fit the wrapped read buffer at the end */
@@ -113,7 +113,7 @@ purple_circular_buffer_real_append(PurpleCircularBuffer *buffer,
                                    gconstpointer src, gsize len)
 {
 	PurpleCircularBufferPrivate *priv = NULL;
-	gint len_stored;
+	gsize len_stored;
 
 	priv = PURPLE_CIRCULAR_BUFFER_GET_PRIVATE(buffer);
 
@@ -174,7 +174,7 @@ purple_circular_buffer_real_mark_read(PurpleCircularBuffer *buffer,
 	priv->bufused -= len;
 
 	/* wrap to the start if we're at the end */
-	if((priv->output - priv->buffer) == priv->buflen)
+	if((gsize)(priv->output - priv->buffer) == priv->buflen)
 		priv->output = priv->buffer;
 
 	return TRUE;

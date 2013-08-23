@@ -168,7 +168,7 @@ void gnt_style_read_workspaces(GntWM *wm)
 	gsize c;
 
 	for (i = 1; i < MAX_WORKSPACES; ++i) {
-		int j;
+		gsize j;
 		GntWS *ws;
 		gchar **titles;
 		char group[32];
