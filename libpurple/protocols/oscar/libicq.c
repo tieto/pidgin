@@ -37,6 +37,13 @@ icq_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
+static gsize
+icq_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 2346;
+}
+
 static PurpleProtocol protocol =
 {
 	"prpl-icq",				/* id */
@@ -112,7 +119,8 @@ static PurpleProtocol protocol =
 	NULL,					/* can_do_media */
 	oscar_get_purple_moods, /* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	icq_get_max_message_size		/* get_max_message_size */
 };
 
 static PurplePluginInfo *

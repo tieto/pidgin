@@ -3476,6 +3476,13 @@ novell_keepalive(PurpleConnection *gc)
 	_check_for_disconnect(user, rc);
 }
 
+static gsize
+novell_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 1792;
+}
+
 static PurpleProtocol protocol = {
 	"prpl-novell",				/* id */
 	"GroupWise",				/* name */
@@ -3550,7 +3557,8 @@ static PurpleProtocol protocol = {
 	NULL,						/* get_media_caps */
 	NULL,						/* get_moods */
 	NULL,						/* set_public_alias */
-	NULL						/* get_public_alias */
+	NULL,						/* get_public_alias */
+	novell_get_max_message_size			/* get_max_message_size */
 };
 
 static PurplePluginInfo *

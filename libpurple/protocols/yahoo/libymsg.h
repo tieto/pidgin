@@ -384,6 +384,7 @@ GList *yahoo_attention_types(PurpleAccount *account);
 
 GList *yahoo_get_actions(PurpleConnection *gc);
 void yahoopurple_register_commands(void);
+gsize yahoo_get_max_message_size(PurpleConnection *gc);
 
 PurpleCmdRet yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data);
 PurpleCmdRet yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd, char **args, char **error, void *data);

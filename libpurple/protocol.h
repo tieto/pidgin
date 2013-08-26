@@ -503,6 +503,21 @@ struct _PurpleProtocolInterface
 	void (*get_public_alias)(PurpleConnection *gc,
 	                         PurpleGetPublicAliasSuccessCallback success_cb,
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
+
+	/**
+	 * Gets the maximum message size for the protocol. It may depend on
+	 * connection-specific variables (like protocol version).
+	 *
+	 * This value is intended for plaintext message, the exact value may be
+	 * lower because of:
+	 *  - used newlines (some protocols count them as more than one byte),
+	 *  - formatting,
+	 *  - used special characters.
+	 *
+	 * @param gc The connection to query, or NULL to get safe minimum.
+	 * @return   Maximum message size, or 0 if unspecified or infinite.
+	 */
+	gsize (*get_max_message_size)(PurpleConnection *gc);
 };
 
 /**
@@ -1115,6 +1130,10 @@ void purple_protocol_iface_get_public_alias(
                                 PurpleProtocol *, PurpleConnection *gc,
                                 PurpleGetPublicAliasSuccessCallback success_cb,
                                 PurpleGetPublicAliasFailureCallback failure_cb);
+
+/** @copydoc  _PurpleProtocolInterface::get_max_message_size */
+gsize purple_protocol_iface_get_max_message_size(PurpleProtocol *,
+                                                 PurpleConnection *gc);
 
 /*@}*/
 

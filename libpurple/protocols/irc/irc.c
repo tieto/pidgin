@@ -915,6 +915,13 @@ static void irc_keepalive(PurpleConnection *gc)
 		irc_cmd_ping(irc, NULL, NULL, NULL);
 }
 
+static gsize
+irc_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 417;
+}
+
 static void
 irc_protocol_base_init(IRCProtocolClass *klass)
 {
@@ -981,31 +988,32 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 static void
 irc_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->get_actions        = irc_get_actions;
-	iface->list_icon          = irc_blist_icon;
-	iface->status_types       = irc_status_types;
-	iface->chat_info          = irc_chat_join_info;
-	iface->chat_info_defaults = irc_chat_info_defaults;
-	iface->login              = irc_login;
-	iface->close              = irc_close;
-	iface->send_im            = irc_im_send;
-	iface->get_info           = irc_get_info;
-	iface->set_status         = irc_set_status;
-	iface->add_buddy          = irc_add_buddy;
-	iface->remove_buddy       = irc_remove_buddy;
-	iface->join_chat          = irc_chat_join;
-	iface->get_chat_name      = irc_get_chat_name;
-	iface->chat_invite        = irc_chat_invite;
-	iface->chat_leave         = irc_chat_leave;
-	iface->chat_send          = irc_chat_send;
-	iface->keepalive          = irc_keepalive;
-	iface->normalize          = purple_normalize_nocase;
-	iface->set_chat_topic     = irc_chat_set_topic;
-	iface->roomlist_get_list  = irc_roomlist_get_list;
-	iface->roomlist_cancel    = irc_roomlist_cancel;
-	iface->send_file          = irc_dccsend_send_file;
-	iface->new_xfer           = irc_dccsend_new_xfer;
-	iface->send_raw           = irc_send_raw;
+	iface->get_actions          = irc_get_actions;
+	iface->list_icon            = irc_blist_icon;
+	iface->status_types         = irc_status_types;
+	iface->chat_info            = irc_chat_join_info;
+	iface->chat_info_defaults   = irc_chat_info_defaults;
+	iface->login                = irc_login;
+	iface->close                = irc_close;
+	iface->send_im              = irc_im_send;
+	iface->get_info             = irc_get_info;
+	iface->set_status           = irc_set_status;
+	iface->add_buddy            = irc_add_buddy;
+	iface->remove_buddy         = irc_remove_buddy;
+	iface->join_chat            = irc_chat_join;
+	iface->get_chat_name        = irc_get_chat_name;
+	iface->chat_invite          = irc_chat_invite;
+	iface->chat_leave           = irc_chat_leave;
+	iface->chat_send            = irc_chat_send;
+	iface->keepalive            = irc_keepalive;
+	iface->normalize            = purple_normalize_nocase;
+	iface->set_chat_topic       = irc_chat_set_topic;
+	iface->roomlist_get_list    = irc_roomlist_get_list;
+	iface->roomlist_cancel      = irc_roomlist_cancel;
+	iface->send_file            = irc_dccsend_send_file;
+	iface->new_xfer             = irc_dccsend_new_xfer;
+	iface->send_raw             = irc_send_raw;
+	iface->get_max_message_size = irc_get_max_message_size;
 }
 
 static void irc_protocol_base_finalize(IRCProtocolClass *klass) { }

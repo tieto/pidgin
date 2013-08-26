@@ -1370,6 +1370,13 @@ static GHashTable * ggp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
+static gsize
+ggp_get_max_message_size(PurpleConnection *gc)
+{
+	/* it may depend on protocol version or other factors - check it */
+	return 1232;
+}
+
 static void purple_gg_debug_handler(int level, const char * format, va_list args) {
 	PurpleDebugLevel purple_level;
 	char *msg = g_strdup_vprintf(format, args);
@@ -1488,6 +1495,7 @@ ggp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->set_buddy_icon         = ggp_avatar_own_set;
 	iface->offline_message        = ggp_offline_message;
 	iface->get_account_text_table = ggp_get_account_text_table;
+	iface->get_max_message_size   = ggp_get_max_message_size;
 }
 
 static PurplePluginInfo *

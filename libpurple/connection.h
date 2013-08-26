@@ -464,6 +464,18 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
  */
 void purple_connection_update_last_received(PurpleConnection *gc);
 
+/**
+ * Gets the maximum message size for the protocol. It may depend on
+ * connection-specific variables (like protocol version).
+ *
+ * @see PurplePluginProtocolInfo#get_max_message_size
+ *
+ * @param gc The connection to query.
+ * @return   Maximum message size, or 0 if unspecified or infinite.
+ */
+gsize
+purple_connection_get_max_message_size(PurpleConnection *gc);
+
 /*@}*/
 
 /**************************************************************************/

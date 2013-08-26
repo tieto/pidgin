@@ -471,6 +471,14 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
+static gsize
+bonjour_get_max_message_size(PurpleConnection *gc)
+{
+	/* It looks, like the message length is practically unlimited (I've
+	 * tried 5MB). */
+	return 0;
+}
+
 #ifdef WIN32
 static gboolean
 _set_default_name_cb(gpointer data) {
@@ -671,23 +679,24 @@ bonjour_protocol_base_finalize(BonjourProtocolClass *klass)
 static void
 bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->list_icon        = bonjour_list_icon;
-	iface->status_text      = bonjour_status_text;
-	iface->tooltip_text     = bonjour_tooltip_text;
-	iface->status_types     = bonjour_status_types;
-	iface->login            = bonjour_login;
-	iface->close            = bonjour_close;
-	iface->send_im          = bonjour_send_im;
-	iface->set_status       = bonjour_set_status;
-	iface->add_buddy        = bonjour_fake_add_buddy;
-	iface->remove_buddy     = bonjour_remove_buddy;
-	iface->group_buddy      = bonjour_group_buddy;
-	iface->rename_group     = bonjour_rename_group;
-	iface->convo_closed     = bonjour_convo_closed;
-	iface->set_buddy_icon   = bonjour_set_buddy_icon;
-	iface->can_receive_file = bonjour_can_receive_file;
-	iface->send_file        = bonjour_send_file;
-	iface->new_xfer         = bonjour_new_xfer;
+	iface->list_icon            = bonjour_list_icon;
+	iface->status_text          = bonjour_status_text;
+	iface->tooltip_text         = bonjour_tooltip_text;
+	iface->status_types         = bonjour_status_types;
+	iface->login                = bonjour_login;
+	iface->close                = bonjour_close;
+	iface->send_im              = bonjour_send_im;
+	iface->set_status           = bonjour_set_status;
+	iface->add_buddy            = bonjour_fake_add_buddy;
+	iface->remove_buddy         = bonjour_remove_buddy;
+	iface->group_buddy          = bonjour_group_buddy;
+	iface->rename_group         = bonjour_rename_group;
+	iface->convo_closed         = bonjour_convo_closed;
+	iface->set_buddy_icon       = bonjour_set_buddy_icon;
+	iface->can_receive_file     = bonjour_can_receive_file;
+	iface->send_file            = bonjour_send_file;
+	iface->new_xfer             = bonjour_new_xfer;
+	iface->get_max_message_size = bonjour_get_max_message_size;
 }
 
 static PurplePluginInfo *

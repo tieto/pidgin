@@ -2865,6 +2865,12 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	return FALSE;
 }
 
+static gsize
+msn_get_max_message_size(PurpleConnection *gc)
+{
+	/* pidgin-otr says: 1409 */
+	return 1525 - strlen(VERSION);
+}
 
 static PurpleProtocol protocol =
 {
@@ -2941,7 +2947,8 @@ static PurpleProtocol protocol =
 	NULL,                               /* get_media_caps */
 	NULL,                               /* get_moods */
 	msn_set_public_alias,               /* set_public_alias */
-	msn_get_public_alias                /* get_public_alias */
+	msn_get_public_alias,               /* get_public_alias */
+	msn_get_max_message_size            /* get_max_message_size */
 };
 
 static PurplePluginInfo *

@@ -104,7 +104,8 @@ static PurpleProtocol protocol =
 	NULL,					/* get_media_caps */
 	NULL,					/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	oscar_get_max_message_size		/* get_max_message_size */
 };
 
 static PurplePluginInfo *
