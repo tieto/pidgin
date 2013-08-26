@@ -509,6 +509,15 @@ struct _PurpleProtocolInterface
  * and *_interface_init() functions of the protocol.
  */
 #define PURPLE_PROTOCOL_DEFINE(TypeName, func_prefix) \
+	PURPLE_PROTOCOL_DEFINE_EXTENDED(TypeName, func_prefix, \
+	                                PURPLE_TYPE_PROTOCOL, 0)
+
+/** TODO register type dynamically (or statically if configured so)
+ * Defines a protocol type using the CamelCase type name of the protocol, the
+ * function prefix for the *_get_type(), *_base_init(), *_base_finalize() and
+ * *_interface_init() functions, the base type, and the type flags.
+ */
+#define PURPLE_PROTOCOL_DEFINE_EXTENDED(TypeName, func_prefix, BaseType, TypeFlags) \
 	GType func_prefix##_get_type(void) { \
 		static GType type = 0; \
 		if (type == 0) { \
@@ -521,8 +530,8 @@ struct _PurpleProtocolInterface
 			static const GInterfaceInfo iface_info = { \
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
 			}; \
-			type = g_type_register_static(PURPLE_TYPE_PROTOCOL, #TypeName, \
-				                          &info, 0); \
+			type = g_type_register_static(BaseType, #TypeName, \
+				                          &info, TypeFlags); \
 			g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL, &iface_info); \
 		} \
 		return type; \
