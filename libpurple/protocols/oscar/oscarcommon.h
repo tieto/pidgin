@@ -102,5 +102,6 @@ gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
 void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
 PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
+gsize oscar_get_max_message_size(PurpleConnection *gc);
 GList *oscar_actions(PurplePlugin *plugin, gpointer context);
 void oscar_init(PurplePlugin *plugin, gboolean is_icq);

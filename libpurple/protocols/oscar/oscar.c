@@ -5433,6 +5433,13 @@ oscar_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+gsize
+oscar_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 2343;
+}
+
 /* TODO: Find somewhere to put this instead of including it in a bunch of places.
  * Maybe just change purple_accounts_find() to return anything for the prpl if there is no acct_id.
  */
