@@ -50,7 +50,7 @@ typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 #include "signals.h"
 #include "xmlnode.h"
 #include "notify.h"
-#include "protocol.h"
+#include "protocols.h"
 
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);

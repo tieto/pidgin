@@ -168,8 +168,6 @@ typedef enum
 
 } PurpleProtocolOptions;
 
-#include "protocol.h"
-
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
 	/** This is a comma-delimited list of image formats or @c NULL if icons
@@ -186,6 +184,8 @@ struct _PurpleBuddyIconSpec {
 	size_t max_filesize;               /**< Maximum size in bytes */
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
+
+#include "protocol.h"
 
 #define PURPLE_TYPE_PROTOCOL_CHAT_ENTRY  (purple_protocol_chat_entry_get_type())
 

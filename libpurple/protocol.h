@@ -44,10 +44,12 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
 typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 
 #include "account.h"
+#include "accountopt.h"
 #include "buddylist.h"
 #include "connection.h"
 #include "conversations.h"
 #include "ft.h"
+#include "imgstore.h"
 #include "roomlist.h"
 #include "whiteboard.h"
 
@@ -548,6 +550,69 @@ G_BEGIN_DECLS
  * Returns the GType for #PurpleProtocol.
  */
 GType purple_protocol_get_type(void);
+
+/** TODO
+ * Returns the ID of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The ID of the protocol.
+ */
+const char *purple_protocol_get_id(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the translated name of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The translated name of the protocol.
+ */
+const char *purple_protocol_get_name(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the options of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The options of the protocol.
+ */
+PurpleProtocolOptions purple_protocol_get_options(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the user splits of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The user splits of the protocol.
+ */
+GList *purple_protocol_get_user_splits(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the protocol options of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The protocol options of the protocol.
+ */
+GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the icon spec of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The icon spec of the protocol.
+ */
+PurpleBuddyIconSpec purple_protocol_get_icon_spec(const PurpleProtocol *protocol);
+
+/** TODO
+ * Returns the whiteboard ops of a protocol.
+ *
+ * @param protocol The protocol.
+ *
+ * @return The whiteboard ops of the protocol.
+ */
+PurpleWhiteboardPrplOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
 
 /**
  * Notifies Purple that our account's idle state and time have changed.
