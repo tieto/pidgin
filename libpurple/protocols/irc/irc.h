@@ -34,6 +34,17 @@
 #include "roomlist.h"
 #include "sslconn.h"
 
+#define IRC_ID     "prpl-irc"
+#define IRC_NAME   "IRC"
+#define IRC_DOMAIN (g_quark_from_static_string(IRC_ID))
+
+#define IRC_TYPE_PROTOCOL             (irc_protocol_get_type())
+#define IRC_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), IRC_TYPE_PROTOCOL, IRCProtocol))
+#define IRC_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), IRC_TYPE_PROTOCOL, IRCProtocolClass))
+#define IRC_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), IRC_TYPE_PROTOCOL))
+#define IRC_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), IRC_TYPE_PROTOCOL))
+#define IRC_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), IRC_TYPE_PROTOCOL, IRCProtocolClass))
+
 #define IRC_DEFAULT_SERVER "irc.freenode.net"
 #define IRC_DEFAULT_PORT 6667
 #define IRC_DEFAULT_SSL_PORT 994
@@ -48,9 +59,18 @@
 
 #define IRC_NAMES_FLAG "irc-namelist"
 
-
 enum { IRC_USEROPT_SERVER, IRC_USEROPT_PORT, IRC_USEROPT_CHARSET };
 enum irc_state { IRC_STATE_NEW, IRC_STATE_ESTABLISHED };
+
+typedef struct _IRCProtocol
+{
+	PurpleProtocol parent;
+} IRCProtocol;
+
+typedef struct _IRCProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} IRCProtocolClass;
 
 struct irc_conn {
 	PurpleAccount *account;
@@ -115,6 +135,8 @@ struct irc_buddy {
 };
 
 typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+
+GType irc_protocol_get_type(void);
 
 int irc_send(struct irc_conn *irc, const char *buf);
 int irc_send_len(struct irc_conn *irc, const char *buf, int len);

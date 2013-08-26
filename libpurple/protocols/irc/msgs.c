@@ -101,7 +101,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	status = purple_account_get_active_status(irc->account);
 	if (purple_status_type_get_primitive(purple_status_get_status_type(status)) != PURPLE_STATUS_AVAILABLE) {
 		PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
-		protocol->set_status(irc->account, status);
+		purple_protocol_iface_set_status(protocol, irc->account, status);
 	}
 
 	/* this used to be in the core, but it's not now */
