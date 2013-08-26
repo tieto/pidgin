@@ -3932,7 +3932,7 @@ jabber_do_uninit(void)
 	jabber_cmds = NULL;
 }
 
-void jabber_plugin_init(PurpleProtocol *protocol)
+void jabber_protocol_init(PurpleProtocol *protocol)
 {
 	++plugin_ref;
 
@@ -4045,7 +4045,7 @@ void jabber_plugin_init(PurpleProtocol *protocol)
 			PURPLE_TYPE_XMLNODE);
 }
 
-void jabber_plugin_uninit(PurpleProtocol *protocol)
+void jabber_protocol_uninit(PurpleProtocol *protocol)
 {
 	g_return_if_fail(plugin_ref > 0);
 
@@ -4059,3 +4059,81 @@ void jabber_plugin_uninit(PurpleProtocol *protocol)
 	if (plugin_ref == 0)
 		jabber_do_uninit();
 }
+
+static void
+jabber_protocol_base_init(JabberProtocolClass *klass)
+{
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+
+	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	                         OPT_PROTO_MAIL_CHECK |
+#ifdef HAVE_CYRUS_SASL
+	                         OPT_PROTO_PASSWORD_OPTIONAL |
+#endif
+	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
+
+	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png", 32, 32, 96, 96, 0,
+	                                                PURPLE_ICON_SCALE_SEND |
+	                                                PURPLE_ICON_SCALE_DISPLAY};
+}
+
+static void
+jabber_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions             = jabber_get_actions;
+	iface->list_icon               = jabber_list_icon;
+	iface->list_emblem             = jabber_list_emblem;
+	iface->status_text             = jabber_status_text;
+	iface->tooltip_text            = jabber_tooltip_text;
+	iface->status_types            = jabber_status_types;
+	iface->blist_node_menu         = jabber_blist_node_menu;
+	iface->chat_info               = jabber_chat_info;
+	iface->chat_info_defaults      = jabber_chat_info_defaults;
+	iface->login                   = jabber_login;
+	iface->close                   = jabber_close;
+	iface->send_im                 = jabber_message_send_im;
+	iface->set_info                = jabber_set_info;
+	iface->send_typing             = jabber_send_typing;
+	iface->get_info                = jabber_buddy_get_info;
+	iface->set_status              = jabber_set_status;
+	iface->set_idle                = jabber_idle_set;
+	iface->add_buddy               = jabber_roster_add_buddy;
+	iface->remove_buddy            = jabber_roster_remove_buddy;
+	iface->add_deny                = jabber_add_deny;
+	iface->rem_deny                = jabber_rem_deny;
+	iface->join_chat               = jabber_chat_join;
+	iface->get_chat_name           = jabber_get_chat_name;
+	iface->chat_invite             = jabber_chat_invite;
+	iface->chat_leave              = jabber_chat_leave;
+	iface->chat_send               = jabber_message_send_chat;
+	iface->keepalive               = jabber_keepalive;
+	iface->register_user           = jabber_register_account;
+	iface->unregister_user         = jabber_unregister_account;
+	iface->alias_buddy             = jabber_roster_alias_change;
+	iface->group_buddy             = jabber_roster_group_change;
+	iface->rename_group            = jabber_roster_group_rename;
+	iface->convo_closed            = jabber_convo_closed;
+	iface->normalize               = jabber_normalize;
+	iface->set_buddy_icon          = jabber_set_buddy_icon;
+	iface->get_cb_real_name        = jabber_chat_user_real_name;
+	iface->set_chat_topic          = jabber_chat_set_topic;
+	iface->find_blist_chat         = jabber_find_blist_chat;
+	iface->roomlist_get_list       = jabber_roomlist_get_list;
+	iface->roomlist_cancel         = jabber_roomlist_cancel;
+	iface->can_receive_file        = jabber_can_receive_file;
+	iface->send_file               = jabber_si_xfer_send;
+	iface->new_xfer                = jabber_si_new_xfer;
+	iface->offline_message         = jabber_offline_message;
+	iface->send_raw                = jabber_protocol_send_raw;
+	iface->roomlist_room_serialize = jabber_roomlist_room_serialize;
+	iface->send_attention          = jabber_send_attention;
+	iface->get_attention_types     = jabber_attention_types;
+	iface->initiate_media          = jabber_initiate_media;
+	iface->get_media_caps          = jabber_get_media_caps;
+	iface->get_moods               = jabber_get_moods;
+}
+
+static void jabber_protocol_base_finalize(JabberProtocolClass *klass) { }
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED (JabberProtocol, jabber_protocol,
+                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);

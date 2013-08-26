@@ -63,6 +63,7 @@ typedef struct _JabberStream JabberStream;
 #include "http.h"
 #include "media.h"
 #include "mediamanager.h"
+#include "protocol.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -81,6 +82,13 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "https://pidgin.im/"
 
+#define JABBER_TYPE_PROTOCOL             (jabber_protocol_get_type())
+#define JABBER_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), JABBER_TYPE_PROTOCOL, JabberProtocol))
+#define JABBER_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), JABBER_TYPE_PROTOCOL, JabberProtocolClass))
+#define JABBER_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), JABBER_TYPE_PROTOCOL))
+#define JABBER_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), JABBER_TYPE_PROTOCOL))
+#define JABBER_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), JABBER_TYPE_PROTOCOL, JabberProtocolClass))
+
 #define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
 
@@ -96,6 +104,16 @@ typedef enum {
 	JABBER_STREAM_POST_AUTH,
 	JABBER_STREAM_CONNECTED
 } JabberStreamState;
+
+typedef struct _JabberProtocol
+{
+	PurpleProtocol parent;
+} JabberProtocol;
+
+typedef struct _JabberProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} JabberProtocolClass;
 
 struct _JabberStream
 {
@@ -309,6 +327,11 @@ extern GList *jabber_features;
  */
 extern GList *jabber_identities;
 
+/**
+ * Returns the GType for the JabberProtocol object.
+ */
+GType jabber_protocol_get_type(void);
+
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
@@ -412,7 +435,7 @@ gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
 gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
-void jabber_plugin_init(PurpleProtocol *protocol);
-void jabber_plugin_uninit(PurpleProtocol *protocol);
+void jabber_protocol_init(PurpleProtocol *protocol);
+void jabber_protocol_uninit(PurpleProtocol *protocol);
 
 #endif /* PURPLE_JABBER_H_ */
