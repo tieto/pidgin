@@ -915,6 +915,13 @@ static void irc_keepalive(PurpleConnection *gc)
 		irc_cmd_ping(irc, NULL, NULL, NULL);
 }
 
+static gsize
+irc_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 417;
+}
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),    /* struct_size */
@@ -988,7 +995,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					 /* get_media_caps */
 	NULL,					 /* get_moods */
 	NULL,					 /* set_public_alias */
-	NULL					 /* get_public_alias */
+	NULL,					 /* get_public_alias */
+	irc_get_max_message_size		/* get_max_message_size */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

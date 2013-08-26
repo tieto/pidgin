@@ -468,6 +468,14 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
+static gsize
+bonjour_get_max_message_size(PurpleConnection *gc)
+{
+	/* It looks, like the message length is practically unlimited (I've
+	 * tried 5MB). */
+	return 0;
+}
+
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
@@ -553,7 +561,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* get_media_caps */
 	NULL,                                                    /* get_moods */
 	NULL,                                                    /* set_public_alias */
-	NULL                                                     /* get_public_alias */
+	NULL,                                                    /* get_public_alias */
+	bonjour_get_max_message_size                             /* get_max_message_size */
 };
 
 static PurplePluginInfo info =

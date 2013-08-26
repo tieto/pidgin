@@ -3079,7 +3079,8 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* get_media_caps */
 	NULL,                   /* get_moods */
 	NULL,                   /* set_public_alias */
-	NULL                    /* get_public_alias */
+	NULL,                   /* get_public_alias */
+	NULL                    /* get_max_message_size */
 };
 
 /**

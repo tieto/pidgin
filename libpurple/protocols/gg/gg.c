@@ -1367,6 +1367,13 @@ static GHashTable * ggp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
+static gsize
+ggp_get_max_message_size(PurpleConnection *gc)
+{
+	/* it may depend on protocol version or other factors - check it */
+	return 1232;
+}
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
@@ -1439,7 +1446,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* can_do_media */
 	NULL,				/* get_moods */
 	NULL,				/* set_public_alias */
-	NULL				/* get_public_alias */
+	NULL,				/* get_public_alias */
+	ggp_get_max_message_size	/* get_max_message_size */
 };
 
 static gboolean ggp_load(PurplePlugin *plugin);
