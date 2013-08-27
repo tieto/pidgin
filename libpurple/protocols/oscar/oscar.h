@@ -56,6 +56,13 @@
 #include "libc_interface.h"
 #endif
 
+#define OSCAR_TYPE_PROTOCOL             (oscar_protocol_get_type())
+#define OSCAR_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), OSCAR_TYPE_PROTOCOL, OscarProtocol))
+#define OSCAR_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), OSCAR_TYPE_PROTOCOL, OscarProtocolClass))
+#define OSCAR_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), OSCAR_TYPE_PROTOCOL))
+#define OSCAR_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), OSCAR_TYPE_PROTOCOL))
+#define OSCAR_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), OSCAR_TYPE_PROTOCOL, OscarProtocolClass))
+
 typedef struct _ByteStream         ByteStream;
 typedef struct _ClientInfo         ClientInfo;
 typedef struct _FlapConnection     FlapConnection;
@@ -223,6 +230,21 @@ typedef enum
 #define OSCAR_STATUS_ID_ATHOME      "athome"
 #define OSCAR_STATUS_ID_ATWORK      "atwork"
 #define OSCAR_STATUS_ID_LUNCH       "lunch"
+
+typedef struct _OscarProtocol
+{
+	PurpleProtocol parent;
+} OscarProtocol;
+
+typedef struct _OscarProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} OscarProtocolClass;
+
+/**
+ * Returns the GType for the OscarProtocol object.
+ */
+GType oscar_protocol_get_type(void);
 
 /*
  * Byte Stream type. Sort of.

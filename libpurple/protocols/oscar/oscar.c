@@ -608,8 +608,8 @@ static const gchar *login_servers[] = {
 	ICQ_DEFAULT_SSL_LOGIN_SERVER,
 };
 
-static const gchar *
-get_login_server(gboolean is_icq, gboolean use_ssl)
+const gchar *
+oscar_get_login_server(gboolean is_icq, gboolean use_ssl)
 {
 	return login_servers[(is_icq ? 2 : 0) + (use_ssl ? 1 : 0)];
 }
@@ -767,7 +767,7 @@ oscar_login(PurpleAccount *account)
 		newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 
 		if (od->use_ssl) {
-			server = purple_account_get_string(account, "server", get_login_server(od->icq, TRUE));
+			server = purple_account_get_string(account, "server", oscar_get_login_server(od->icq, TRUE));
 
 			/*
 			 * If the account's server is what the oscar prpl has offered as
@@ -776,27 +776,27 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
+			if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
-				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
-				server = get_login_server(od->icq, TRUE);
+				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, TRUE));
+				server = oscar_get_login_server(od->icq, TRUE);
 			}
 
 			newconn->gsc = purple_ssl_connect(account, server,
 					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
 		} else {
-			server = purple_account_get_string(account, "server", get_login_server(od->icq, FALSE));
+			server = purple_account_get_string(account, "server", oscar_get_login_server(od->icq, FALSE));
 
 			/*
 			 * See the comment above. We do the reverse here. If they don't want
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, TRUE))) {
+			if (!strcmp(server, oscar_get_login_server(od->icq, TRUE))) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
-				purple_account_set_string(account, "server", get_login_server(od->icq, FALSE));
-				server = get_login_server(od->icq, FALSE);
+				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, FALSE));
+				server = oscar_get_login_server(od->icq, FALSE);
 			}
 
 			newconn->connect_data = purple_proxy_connect(NULL, account, server,
@@ -5468,8 +5468,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 	return acct;
 }
 
-
-static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params)
+gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params)
 {
 	char *acct_id = g_hash_table_lookup(params, "account");
 	char prpl[11];
@@ -5536,10 +5535,11 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurpleProtocol *protocol, gboolean is_icq)
+static void
+oscar_protocol_base_init(OscarProtocolClass *klass)
 {
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
-	static gboolean init = FALSE;
 	static const gchar *encryption_keys[] = {
 		N_("Use encryption if available"),
 		N_("Require encryption"),
@@ -5555,11 +5555,17 @@ void oscar_init(PurpleProtocol *protocol, gboolean is_icq)
 	GList *encryption_options = NULL;
 	int i;
 
-	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, TRUE));
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE |
+	                         OPT_PROTO_INVITE_MESSAGE |
+	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
+
+	proto_class->icon_spec = (PurpleBuddyIconSpec) {"gif,jpeg,bmp,ico",
+	                                                0, 0, 64, 64, 7168,
+	                                                PURPLE_ICON_SCALE_SEND |
+	                                                PURPLE_ICON_SCALE_DISPLAY};
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
 	for (i = 0; encryption_keys[i]; i++) {
 		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
@@ -5568,26 +5574,22 @@ void oscar_init(PurpleProtocol *protocol, gboolean is_icq)
 		encryption_options = g_list_append(encryption_options, kvp);
 	}
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
 			OSCAR_DEFAULT_USE_CLIENTLOGIN);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
 	option = purple_account_option_bool_new(
 		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
-	if (g_str_equal(protocol->id, "prpl-aim")) {
+	if (g_str_equal(proto_class->id, "prpl-aim")) {
 		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-		protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+		proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 	}
-
-	if (init)
-		return;
-	init = TRUE;
 
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
@@ -5595,10 +5597,52 @@ void oscar_init(PurpleProtocol *protocol, gboolean is_icq)
 
 	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
-
-	/* protocol handler */
-	/* TODO: figure out a good instance to use here */
-	purple_signal_connect(purple_get_core(), "uri-handler", protocol,
-		PURPLE_CALLBACK(oscar_uri_handler), NULL);
 }
 
+static void
+oscar_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions        = oscar_get_actions;
+	iface->list_emblem        = oscar_list_emblem;
+	iface->status_text        = oscar_status_text;
+	iface->tooltip_text       = oscar_tooltip_text;
+	iface->status_types       = oscar_status_types;
+	iface->blist_node_menu    = oscar_blist_node_menu;
+	iface->chat_info          = oscar_chat_info;
+	iface->chat_info_defaults = oscar_chat_info_defaults;
+	iface->login              = oscar_login;
+	iface->close              = oscar_close;
+	iface->send_im            = oscar_send_im;
+	iface->set_info           = oscar_set_info;
+	iface->send_typing        = oscar_send_typing;
+	iface->get_info           = oscar_get_info;
+	iface->set_status         = oscar_set_status;
+	iface->set_idle           = oscar_set_idle;
+	iface->change_passwd      = oscar_change_passwd;
+	iface->add_buddy          = oscar_add_buddy;
+	iface->remove_buddy       = oscar_remove_buddy;
+	iface->add_deny           = oscar_add_deny;
+	iface->rem_deny           = oscar_rem_deny;
+	iface->join_chat          = oscar_join_chat;
+	iface->get_chat_name      = oscar_get_chat_name;
+	iface->chat_invite        = oscar_chat_invite;
+	iface->chat_leave         = oscar_chat_leave;
+	iface->chat_send          = oscar_send_chat;
+	iface->keepalive          = oscar_keepalive;
+	iface->alias_buddy        = oscar_alias_buddy;
+	iface->group_buddy        = oscar_move_buddy;
+	iface->rename_group       = oscar_rename_group;
+	iface->convo_closed       = oscar_convo_closed;
+	iface->normalize          = oscar_normalize;
+	iface->set_buddy_icon     = oscar_set_icon;
+	iface->remove_group       = oscar_remove_group;
+	iface->can_receive_file   = oscar_can_receive_file;
+	iface->send_file          = oscar_send_file;
+	iface->new_xfer           = oscar_new_xfer;
+	iface->offline_message    = oscar_offline_message;
+}
+
+static void oscar_protocol_base_finalize(OscarProtocolClass *klass) { }
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED (OscarProtocol, oscar_protocol,
+                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);

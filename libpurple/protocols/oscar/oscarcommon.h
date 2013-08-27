@@ -104,4 +104,5 @@ PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
 gsize oscar_get_max_message_size(PurpleConnection *gc);
 GList *oscar_get_actions(PurpleConnection *gc);
-void oscar_init(PurpleProtocol *protocol, gboolean is_icq);
+const gchar *oscar_get_login_server(gboolean is_icq, gboolean use_ssl);
+gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params);

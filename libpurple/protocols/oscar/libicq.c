@@ -24,9 +24,14 @@
  * which contains all the shared implementation code with libaim
  */
 
+#include "core.h"
 #include "plugins.h"
+#include "signals.h"
 
+#include "libicq.h"
 #include "oscarcommon.h"
+
+static PurpleProtocol *my_protocol = NULL;
 
 static GHashTable *
 icq_get_account_text_table(PurpleAccount *account)
@@ -44,91 +49,39 @@ icq_get_max_message_size(PurpleConnection *gc)
 	return 2346;
 }
 
-static PurpleProtocol protocol =
+static void
+icq_protocol_base_init(ICQProtocolClass *klass)
 {
-	"prpl-icq",				/* id */
-	"ICQ",					/* name */
-	sizeof(PurpleProtocol),       /* struct_size */
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
-	NULL,					/* user_splits */
-	NULL,					/* protocol_options */
-	{"gif,jpeg,bmp,ico", 0, 0, 64, 64, 7168, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-	oscar_get_actions,		/* get_actions */
-	oscar_list_icon_icq,	/* list_icon */
-	oscar_list_emblem,		/* list_emblems */
-	oscar_status_text,		/* status_text */
-	oscar_tooltip_text,		/* tooltip_text */
-	oscar_status_types,		/* status_types */
-	oscar_blist_node_menu,	/* blist_node_menu */
-	oscar_chat_info,		/* chat_info */
-	oscar_chat_info_defaults, /* chat_info_defaults */
-	oscar_login,			/* login */
-	oscar_close,			/* close */
-	oscar_send_im,			/* send_im */
-	oscar_set_info,			/* set_info */
-	oscar_send_typing,		/* send_typing */
-	oscar_get_info,			/* get_info */
-	oscar_set_status,		/* set_status */
-	oscar_set_idle,			/* set_idle */
-	oscar_change_passwd,	/* change_passwd */
-	oscar_add_buddy,		/* add_buddy */
-	NULL,					/* add_buddies */
-	oscar_remove_buddy,		/* remove_buddy */
-	NULL,					/* remove_buddies */
-	NULL,		/* add_permit */
-	oscar_add_deny,			/* add_deny */
-	NULL,		/* rem_permit */
-	oscar_rem_deny,			/* rem_deny */
-	NULL,	/* set_permit_deny */
-	oscar_join_chat,		/* join_chat */
-	NULL,					/* reject_chat */
-	oscar_get_chat_name,	/* get_chat_name */
-	oscar_chat_invite,		/* chat_invite */
-	oscar_chat_leave,		/* chat_leave */
-	NULL,					/* chat_whisper */
-	oscar_send_chat,		/* chat_send */
-	oscar_keepalive,		/* keepalive */
-	NULL,					/* register_user */
-	NULL,					/* get_cb_info */
-	oscar_alias_buddy,		/* alias_buddy */
-	oscar_move_buddy,		/* group_buddy */
-	oscar_rename_group,		/* rename_group */
-	NULL,					/* buddy_free */
-	oscar_convo_closed,		/* convo_closed */
-	oscar_normalize,		/* normalize */
-	oscar_set_icon,			/* set_buddy_icon */
-	oscar_remove_group,		/* remove_group */
-	NULL,					/* get_cb_real_name */
-	NULL,					/* set_chat_topic */
-	NULL,					/* find_blist_chat */
-	NULL,					/* roomlist_get_list */
-	NULL,					/* roomlist_cancel */
-	NULL,					/* roomlist_expand_category */
-	oscar_can_receive_file,	/* can_receive_file */
-	oscar_send_file,		/* send_file */
-	oscar_new_xfer,			/* new_xfer */
-	oscar_offline_message,	/* offline_message */
-	NULL,					/* whiteboard_protocol_ops */
-	NULL,					/* send_raw */
-	NULL,					/* roomlist_room_serialize */
-	NULL,					/* unregister_user */
-	NULL,					/* send_attention */
-	NULL,					/* get_attention_types */
-	icq_get_account_text_table, /* get_account_text_table */
-	NULL,					/* initiate_media */
-	NULL,					/* can_do_media */
-	oscar_get_purple_moods, /* get_moods */
-	NULL,					/* set_public_alias */
-	NULL,					/* get_public_alias */
-	icq_get_max_message_size		/* get_max_message_size */
-};
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+
+	proto_class->id        = ICQ_ID;
+	proto_class->name      = ICQ_NAME;
+
+	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(TRUE, TRUE));
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+}
+
+static void
+icq_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->list_icon              = oscar_list_icon_icq;
+	iface->get_account_text_table = icq_get_account_text_table;
+	iface->get_moods              = oscar_get_purple_moods;
+	iface->get_max_message_size   = icq_get_max_message_size;
+}
+
+static void icq_protocol_base_finalize(ICQProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-icq",
-		"name",         "ICQ",
+		"id",           ICQ_ID,
+		"name",         ICQ_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("ICQ Protocol Plugin"),
@@ -144,14 +97,14 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
+	my_protocol = purple_protocols_add(ICQ_TYPE_PROTOCOL);
+	if (!my_protocol) {
+		g_set_error(error, ICQ_DOMAIN, 0, _("Failed to add icq protocol"));
+		return FALSE;
+	}
 
-	oscar_init(&protocol, TRUE);
-
-	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	purple_protocols_add(&protocol);
+	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
+		PURPLE_CALLBACK(oscar_uri_handler), NULL);
 
 	return TRUE;
 }
@@ -159,9 +112,15 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, ICQ_DOMAIN, 0, _("Failed to remove icq protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(ICQProtocol, icq_protocol,
+                                OSCAR_TYPE_PROTOCOL, 0);
 
 PURPLE_PLUGIN_INIT(icq, plugin_query, plugin_load, plugin_unload);
