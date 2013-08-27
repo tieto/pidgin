@@ -96,6 +96,8 @@ typedef struct
 	MsnObject *obj;
 } MsnEmoticon;
 
+static PurpleProtocol *my_protocol = NULL;
+
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -2872,91 +2874,123 @@ msn_get_max_message_size(PurpleConnection *gc)
 	return 1525 - strlen(VERSION);
 }
 
-static PurpleProtocol protocol =
+static void
+msn_protocol_base_init(MSNProtocolClass *klass)
 {
-	"prpl-msn",                         /* id */
-	"MSN",                              /* name */
-	sizeof(PurpleProtocol),	/* struct_size */
-	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
-	NULL,                               /* user_splits */
-	NULL,                               /* protocol_options */
-	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},   /* icon_spec */
-	msn_get_actions,                    /* get_actions */
-	msn_list_icon,                      /* list_icon */
-	msn_list_emblems,                   /* list_emblems */
-	msn_status_text,                    /* status_text */
-	msn_tooltip_text,                   /* tooltip_text */
-	msn_status_types,                   /* away_states */
-	msn_blist_node_menu,                /* blist_node_menu */
-	NULL,                               /* chat_info */
-	NULL,                               /* chat_info_defaults */
-	msn_login,                          /* login */
-	msn_close,                          /* close */
-	msn_send_im,                        /* send_im */
-	NULL,                               /* set_info */
-	msn_send_typing,                    /* send_typing */
-	msn_get_info,                       /* get_info */
-	msn_set_status,                     /* set_away */
-	msn_set_idle,                       /* set_idle */
-	NULL,                               /* change_passwd */
-	msn_add_buddy,                      /* add_buddy */
-	NULL,                               /* add_buddies */
-	msn_rem_buddy,                      /* remove_buddy */
-	NULL,                               /* remove_buddies */
-	msn_add_permit,                     /* add_permit */
-	msn_add_deny,                       /* add_deny */
-	msn_rem_permit,                     /* rem_permit */
-	msn_rem_deny,                       /* rem_deny */
-	msn_set_permit_deny,                /* set_permit_deny */
-	NULL,                               /* join_chat */
-	NULL,                               /* reject chat invite */
-	NULL,                               /* get_chat_name */
-	msn_chat_invite,                    /* chat_invite */
-	msn_chat_leave,                     /* chat_leave */
-	NULL,                               /* chat_whisper */
-	msn_chat_send,                      /* chat_send */
-	msn_keepalive,                      /* keepalive */
-	NULL,                               /* register_user */
-	NULL,                               /* get_cb_info */
-	msn_alias_buddy,                    /* alias_buddy */
-	msn_group_buddy,                    /* group_buddy */
-	msn_rename_group,                   /* rename_group */
-	NULL,                               /* buddy_free */
-	msn_convo_closed,                   /* convo_closed */
-	msn_normalize,                      /* normalize */
-	msn_set_buddy_icon,                 /* set_buddy_icon */
-	msn_remove_group,                   /* remove_group */
-	NULL,                               /* get_cb_real_name */
-	NULL,                               /* set_chat_topic */
-	NULL,                               /* find_blist_chat */
-	NULL,                               /* roomlist_get_list */
-	NULL,                               /* roomlist_cancel */
-	NULL,                               /* roomlist_expand_category */
-	msn_can_receive_file,               /* can_receive_file */
-	msn_send_file,                      /* send_file */
-	msn_new_xfer,                       /* new_xfer */
-	msn_offline_message,                /* offline_message */
-	NULL,                               /* whiteboard_protocol_ops */
-	NULL,                               /* send_raw */
-	NULL,                               /* roomlist_room_serialize */
-	NULL,                               /* unregister_user */
-	msn_send_attention,                 /* send_attention */
-	msn_attention_types,                /* attention_types */
-	msn_get_account_text_table,         /* get_account_text_table */
-	NULL,                               /* initiate_media */
-	NULL,                               /* get_media_caps */
-	NULL,                               /* get_moods */
-	msn_set_public_alias,               /* set_public_alias */
-	msn_get_public_alias,               /* get_public_alias */
-	msn_get_max_message_size            /* get_max_message_size */
-};
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+
+	proto_class->id        = MSN_ID;
+	proto_class->name      = MSN_NAME;
+	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
+	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png,gif", 0, 0, 96, 96, 0,
+	                                                PURPLE_ICON_SCALE_SEND};
+
+	option = purple_account_option_string_new(_("Server"), "server",
+											MSN_SERVER);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Use HTTP Method"),
+										  "http_method", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_string_new(_("HTTP Method Server"),
+										  "http_method_server", MSN_HTTPCONN_SERVER);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Show custom smileys"),
+										  "custom_smileys", TRUE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Allow direct connections"),
+										  "direct_connect", TRUE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
+										  "mpop", TRUE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+											   option);
+
+	purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
+	                 "prpl-msn", msn_cmd_nudge,
+	                  _("nudge: nudge a user to get their attention"), NULL);
+
+	purple_prefs_remove("/plugins/prpl/msn");
+
+	msn_notification_init();
+	msn_switchboard_init();
+}
+
+static void
+msn_protocol_base_finalize(MSNProtocolClass *klass)
+{
+	msn_notification_end();
+	msn_switchboard_end();
+}
+
+static void
+msn_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions            = msn_get_actions;
+	iface->list_icon              = msn_list_icon;
+	iface->list_emblem            = msn_list_emblems;
+	iface->status_text            = msn_status_text;
+	iface->tooltip_text           = msn_tooltip_text;
+	iface->status_types           = msn_status_types;
+	iface->blist_node_menu        = msn_blist_node_menu;
+	iface->login                  = msn_login;
+	iface->close                  = msn_close;
+	iface->send_im                = msn_send_im;
+	iface->send_typing            = msn_send_typing;
+	iface->get_info               = msn_get_info;
+	iface->set_status             = msn_set_status;
+	iface->set_idle               = msn_set_idle;
+	iface->add_buddy              = msn_add_buddy;
+	iface->remove_buddy           = msn_rem_buddy;
+	iface->add_permit             = msn_add_permit;
+	iface->add_deny               = msn_add_deny;
+	iface->rem_permit             = msn_rem_permit;
+	iface->rem_deny               = msn_rem_deny;
+	iface->set_permit_deny        = msn_set_permit_deny;
+	iface->chat_invite            = msn_chat_invite;
+	iface->chat_leave             = msn_chat_leave;
+	iface->chat_send              = msn_chat_send;
+	iface->keepalive              = msn_keepalive;
+	iface->alias_buddy            = msn_alias_buddy;
+	iface->group_buddy            = msn_group_buddy;
+	iface->rename_group           = msn_rename_group;
+	iface->convo_closed           = msn_convo_closed;
+	iface->normalize              = msn_normalize;
+	iface->set_buddy_icon         = msn_set_buddy_icon;
+	iface->remove_group           = msn_remove_group;
+	iface->can_receive_file       = msn_can_receive_file;
+	iface->send_file              = msn_send_file;
+	iface->new_xfer               = msn_new_xfer;
+	iface->offline_message        = msn_offline_message;
+	iface->send_attention         = msn_send_attention;
+	iface->get_attention_types    = msn_attention_types;
+	iface->get_account_text_table = msn_get_account_text_table;
+	iface->set_public_alias       = msn_set_public_alias;
+	iface->get_public_alias       = msn_get_public_alias;
+	iface->get_max_message_size   = msn_get_max_message_size;
+}
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-msn",
-		"name",         "MSN",
+		"id",           MSN_ID,
+		"name",         MSN_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Windows Live Messenger Protocol Plugin"),
@@ -2972,56 +3006,14 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
+	my_protocol = purple_protocols_add(MSN_TYPE_PROTOCOL);
+	if (!my_protocol) {
+		g_set_error(error, MSN_DOMAIN, 0, _("Failed to add msn protocol"));
+		return FALSE;
+	}
 
-	option = purple_account_option_string_new(_("Server"), "server",
-											MSN_SERVER);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_bool_new(_("Use HTTP Method"),
-										  "http_method", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_string_new(_("HTTP Method Server"),
-										  "http_method_server", MSN_HTTPCONN_SERVER);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_bool_new(_("Show custom smileys"),
-										  "custom_smileys", TRUE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_bool_new(_("Allow direct connections"),
-										  "direct_connect", TRUE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
-										  "mpop", TRUE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options,
-											   option);
-
-	purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                 "prpl-msn", msn_cmd_nudge,
-	                  _("nudge: nudge a user to get their attention"), NULL);
-
-	purple_prefs_remove("/plugins/prpl/msn");
-
-	purple_signal_connect(purple_get_core(), "uri-handler", &protocol,
+	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
-
-	msn_notification_init();
-	msn_switchboard_init();
-
-	purple_protocols_add(&protocol);
 
 	return TRUE;
 }
@@ -3029,12 +3021,13 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	msn_notification_end();
-	msn_switchboard_end();
-
-	purple_protocols_remove(&protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, MSN_DOMAIN, 0, _("Failed to remove msn protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(msn, plugin_query, plugin_load, plugin_unload);
+PURPLE_PROTOCOL_DEFINE (MSNProtocol, msn_protocol);
+PURPLE_PLUGIN_INIT     (msn, plugin_query, plugin_load, plugin_unload);
