@@ -70,7 +70,18 @@
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
 #define		MXIT_PLUGIN_DESC			"MXit"
 
+#define 	MXIT_PLUGIN_DOMAIN			(g_quark_from_static_string(MXIT_PLUGIN_ID))
+
 #define		MXIT_HTTP_USERAGENT			"libpurple-"DISPLAY_VERSION
+
+
+/* protocol type macros */
+#define MXIT_TYPE_PROTOCOL             (mxit_protocol_get_type())
+#define MXIT_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MXIT_TYPE_PROTOCOL, MXitProtocol))
+#define MXIT_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MXIT_TYPE_PROTOCOL, MXitProtocolClass))
+#define MXIT_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MXIT_TYPE_PROTOCOL))
+#define MXIT_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MXIT_TYPE_PROTOCOL))
+#define MXIT_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MXIT_TYPE_PROTOCOL, MXitProtocolClass))
 
 
 /* default connection settings */
@@ -123,6 +134,17 @@
 
 
 #define		ARRAY_SIZE( x )				( sizeof( x ) / sizeof( x[0] ) )
+
+
+typedef struct _MXitProtocol
+{
+	PurpleProtocol parent;
+} MXitProtocol;
+
+typedef struct _MXitProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} MXitProtocolClass;
 
 
 /*
@@ -189,6 +211,7 @@ struct MXitSession {
 	GHashTable*			iimages;					/* table which maps inline images (including emoticons) to purple's imgstore id's */
 };
 
+GType mxit_protocol_get_type(void);
 
 char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );
