@@ -4,7 +4,9 @@ EXTRA_DIST = \
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-NULLSOURCES = nullprpl.c
+NULLSOURCES = \
+	nullprotocol.h \
+	nullprotocol.c
 
 AM_CFLAGS = $(st)
 
