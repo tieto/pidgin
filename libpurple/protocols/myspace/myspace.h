@@ -61,6 +61,17 @@
 #include "markup.h"
 #include "user.h"
 
+#define MSIM_ID     "prpl-msim"
+#define MSIM_NAME   "MySpaceIM"
+#define MSIM_DOMAIN (g_quark_from_static_string(MSIM_ID))
+
+#define MSIM_TYPE_PROTOCOL             (msim_protocol_get_type())
+#define MSIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocol))
+#define MSIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSIM_TYPE_PROTOCOL, MySpaceProtocolClass))
+#define MSIM_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MSIM_TYPE_PROTOCOL))
+#define MSIM_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MSIM_TYPE_PROTOCOL))
+#define MSIM_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocolClass))
+
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
 /*#define MSIM_SEND_CLIENT_VERSION              */
@@ -189,7 +200,19 @@
 #define MSIM_ERROR_INCORRECT_PASSWORD           260
 #define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
 
+typedef struct _MySpaceProtocol
+{
+	PurpleProtocol parent;
+} MySpaceProtocol;
+
+typedef struct _MySpaceProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} MySpaceProtocolClass;
+
 /* Functions */
+GType msim_protocol_get_type(void);
+
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
