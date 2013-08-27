@@ -37,6 +37,8 @@
 #ifndef _PURPLE_CORE_H_
 #define _PURPLE_CORE_H_
 
+#include <glib.h>
+
 typedef struct PurpleCore PurpleCore;
 
 /** Callbacks that fire at different points of the initialization and teardown
