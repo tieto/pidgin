@@ -51,7 +51,7 @@ typedef enum {
 } PurpleLogReadFlags;
 
 #include "account.h"
-#include "conversation.h"
+#include "conversations.h"
 
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
