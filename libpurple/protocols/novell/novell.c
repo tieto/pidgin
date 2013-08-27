@@ -18,11 +18,12 @@
  *
  */
 
+#include "novell.h"
+
 #include "internal.h"
 #include "accountopt.h"
 #include "debug.h"
 #include "plugins.h"
-#include "protocol.h"
 #include "server.h"
 #include "nmuser.h"
 #include "notify.h"
@@ -3483,90 +3484,67 @@ novell_get_max_message_size(PurpleConnection *gc)
 	return 1792;
 }
 
-static PurpleProtocol protocol = {
-	"prpl-novell",				/* id */
-	"GroupWise",				/* name */
-	sizeof(PurpleProtocol),       /* struct_size */
-	0,
-	NULL,						/* user_splits */
-	NULL,						/* protocol_options */
-	NO_BUDDY_ICONS,				/* icon_spec */
-	NULL,						/* get_actions */
-	novell_list_icon,			/* list_icon */
-	NULL,						/* list_emblems */
-	novell_status_text,			/* status_text */
-	novell_tooltip_text,		/* tooltip_text */
-	novell_status_types,		/* status_types */
-	novell_blist_node_menu,		/* blist_node_menu */
-	NULL,						/* chat_info */
-	NULL,						/* chat_info_defaults */
-	novell_login,				/* login */
-	novell_close,				/* close */
-	novell_send_im,				/* send_im */
-	NULL,						/* set_info */
-	novell_send_typing,			/* send_typing */
-	novell_get_info,			/* get_info */
-	novell_set_status,			/* set_status */
-	novell_set_idle,			/* set_idle */
-	NULL,						/* change_passwd */
-	novell_add_buddy,			/* add_buddy */
-	NULL,						/* add_buddies */
-	novell_remove_buddy,		/* remove_buddy */
-	NULL,						/* remove_buddies */
-	novell_add_permit,			/* add_permit */
-	novell_add_deny,			/* add_deny */
-	novell_rem_permit,			/* rem_permit */
-	novell_rem_deny,			/* rem_deny */
-	novell_set_permit_deny,		/* set_permit_deny */
-	NULL,						/* join_chat */
-	NULL,						/* reject_chat */
-	NULL,					/* get_chat_name */
-	novell_chat_invite,			/* chat_invite */
-	novell_chat_leave,			/* chat_leave */
-	NULL,						/* chat_whisper */
-	novell_chat_send,			/* chat_send */
-	novell_keepalive,			/* keepalive */
-	NULL,						/* register_user */
-	NULL,						/* get_cb_info */
-	novell_alias_buddy,			/* alias_buddy */
-	novell_group_buddy,			/* group_buddy */
-	novell_rename_group,		/* rename_group */
-	NULL,						/* buddy_free */
-	novell_convo_closed,		/* convo_closed */
-	purple_normalize_nocase,		/* normalize */
-	NULL,						/* set_buddy_icon */
-	novell_remove_group,		/* remove_group */
-	NULL,						/* get_cb_real_name */
-	NULL,						/* set_chat_topic */
-	NULL,						/* find_blist_chat */
-	NULL,						/* roomlist_get_list */
-	NULL,						/* roomlist_cancel */
-	NULL,						/* roomlist_expand_category */
-	NULL,						/* can_receive_file */
-	NULL,						/* send_file */
-	NULL,						/* new_xfer */
-	NULL,						/* offline_message */
-	NULL,						/* whiteboard_protocol_ops */
-	NULL,						/* send_raw */
-	NULL,						/* roomlist_room_serialize */
-	NULL,						/* unregister_user */
-	NULL,						/* send_attention */
-	NULL,						/* get_attention_types */
-	NULL,						/* get_account_text_table */
-	NULL,						/* initiate_media */
-	NULL,						/* get_media_caps */
-	NULL,						/* get_moods */
-	NULL,						/* set_public_alias */
-	NULL,						/* get_public_alias */
-	novell_get_max_message_size			/* get_max_message_size */
-};
+static void
+novell_protocol_base_init(NovellProtocolClass *klass)
+{
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+
+	proto_class->id        = NOVELL_ID;
+	proto_class->name      = NOVELL_NAME;
+
+	option = purple_account_option_string_new(_("Server address"), "server", NULL);
+	proto_class->protocol_options =
+		g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_int_new(_("Server port"), "port", DEFAULT_PORT);
+	proto_class->protocol_options =
+		g_list_append(proto_class->protocol_options, option);
+}
+
+static void
+novell_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->list_icon            = novell_list_icon;
+	iface->status_text          = novell_status_text;
+	iface->tooltip_text         = novell_tooltip_text;
+	iface->status_types         = novell_status_types;
+	iface->blist_node_menu      = novell_blist_node_menu;
+	iface->login                = novell_login;
+	iface->close                = novell_close;
+	iface->send_im              = novell_send_im;
+	iface->send_typing          = novell_send_typing;
+	iface->get_info             = novell_get_info;
+	iface->set_status           = novell_set_status;
+	iface->set_idle             = novell_set_idle;
+	iface->add_buddy            = novell_add_buddy;
+	iface->remove_buddy         = novell_remove_buddy;
+	iface->add_permit           = novell_add_permit;
+	iface->add_deny             = novell_add_deny;
+	iface->rem_permit           = novell_rem_permit;
+	iface->rem_deny             = novell_rem_deny;
+	iface->set_permit_deny      = novell_set_permit_deny;
+	iface->chat_invite          = novell_chat_invite;
+	iface->chat_leave           = novell_chat_leave;
+	iface->chat_send            = novell_chat_send;
+	iface->keepalive            = novell_keepalive;
+	iface->alias_buddy          = novell_alias_buddy;
+	iface->group_buddy          = novell_group_buddy;
+	iface->rename_group         = novell_rename_group;
+	iface->convo_closed         = novell_convo_closed;
+	iface->normalize            = purple_normalize_nocase;
+	iface->remove_group         = novell_remove_group;
+	iface->get_max_message_size = novell_get_max_message_size;
+}
+
+static void novell_protocol_base_finalize(NovellProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-novell",
-		"name",         "GroupWise",
+		"id",           NOVELL_ID,
+		"name",         NOVELL_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Novell GroupWise Messenger Protocol Plugin"),
@@ -3582,18 +3560,12 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
+	my_protocol = purple_protocols_add(NOVELL_TYPE_PROTOCOL);
 
-	option = purple_account_option_string_new(_("Server address"), "server", NULL);
-	protocol.protocol_options =
-		g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_int_new(_("Server port"), "port", DEFAULT_PORT);
-	protocol.protocol_options =
-		g_list_append(protocol.protocol_options, option);
-
-	my_protocol = &protocol;
-	purple_protocols_add(my_protocol);
+	if (!my_protocol) {
+		g_set_error(error, NOVELL_DOMAIN, 0, _("Failed to add novell protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -3601,9 +3573,13 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(my_protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, NOVELL_DOMAIN, 0, _("Failed to remove novell protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(novell, plugin_query, plugin_load, plugin_unload);
+PURPLE_PROTOCOL_DEFINE (NovellProtocol, novell_protocol);
+PURPLE_PLUGIN_INIT     (novell, plugin_query, plugin_load, plugin_unload);

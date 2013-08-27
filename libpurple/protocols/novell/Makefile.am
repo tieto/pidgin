@@ -24,6 +24,7 @@ NOVELLSOURCES = \
 		nmuser.c \
 		nmuserrecord.h \
 		nmuserrecord.c \
+		novell.h \
 		novell.c
 
 AM_CFLAGS = $(st)
