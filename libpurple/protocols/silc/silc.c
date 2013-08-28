@@ -18,6 +18,7 @@
 */
 
 #include "internal.h"
+#include "plugins.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -26,7 +27,7 @@
 #include "core.h"
 
 extern SilcClientOperations ops;
-static PurplePlugin *silc_plugin = NULL;
+static PurpleProtocol *my_protocol = NULL;
 
 /* Error log message callback */
 
@@ -2051,93 +2052,151 @@ static PurpleWhiteboardPrplOps silcpurple_wb_ops =
 	NULL
 };
 
-static PurpleProtocol protocol =
+#if 0
+static SilcBool silcpurple_debug_cb(char *file, char *function, int line,
+		char *message, void *context)
 {
-	"prpl-silc",			/* id */
-	"SILC",					/* name */
-	sizeof(PurpleProtocol),       /* struct_size */
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
-	OPT_PROTO_SLASH_COMMANDS_NATIVE,
-	NULL,					/* user_splits */
-	NULL,					/* protocol_options */
-	{"jpeg,gif,png,bmp", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-	silcpurple_get_actions,                 /* get_actions */
-	silcpurple_list_icon,	                /* list_icon */
-	NULL,					/* list_emblems */
-	silcpurple_status_text,			/* status_text */
-	silcpurple_tooltip_text,		/* tooltip_text */
-	silcpurple_away_states,			/* away_states */
-	silcpurple_blist_node_menu,		/* blist_node_menu */
-	silcpurple_chat_info,			/* chat_info */
-	silcpurple_chat_info_defaults,	        /* chat_info_defaults */
-	silcpurple_login,			/* login */
-	silcpurple_close,			/* close */
-	silcpurple_send_im,			/* send_im */
-	silcpurple_set_info,			/* set_info */
-	NULL,					/* send_typing */
-	silcpurple_get_info,			/* get_info */
-	silcpurple_set_status,			/* set_status */
-	silcpurple_idle_set,			/* set_idle */
-	silcpurple_change_passwd,		/* change_passwd */
-	silcpurple_add_buddy,			/* add_buddy */
-	NULL,					/* add_buddies */
-	silcpurple_remove_buddy,		/* remove_buddy */
-	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* rem_permit */
-	NULL,					/* rem_deny */
-	NULL,					/* set_permit_deny */
-	silcpurple_chat_join,			/* join_chat */
-	NULL,					/* reject_chat */
-	silcpurple_get_chat_name,		/* get_chat_name */
-	silcpurple_chat_invite,			/* chat_invite */
-	silcpurple_chat_leave,			/* chat_leave */
-	NULL,					/* chat_whisper */
-	silcpurple_chat_send,			/* chat_send */
-	silcpurple_keepalive,			/* keepalive */
-	NULL,					/* register_user */
-	NULL,					/* get_cb_info */
-	NULL,					/* alias_buddy */
-	NULL,					/* group_buddy */
-	NULL,					/* rename_group */
-	NULL,					/* buddy_free */
-	NULL,					/* convo_closed */
-	NULL,					/* normalize */
-	silcpurple_buddy_set_icon,		/* set_buddy_icon */
-	NULL,					/* remove_group */
-	NULL,					/* get_cb_real_name */
-	silcpurple_chat_set_topic,		/* set_chat_topic */
-	NULL,					/* find_blist_chat */
-	silcpurple_roomlist_get_list,	        /* roomlist_get_list */
-	silcpurple_roomlist_cancel,		/* roomlist_cancel */
-	NULL,				        /* roomlist_expand_category */
-	NULL,					/* can_receive_file */
-	silcpurple_ftp_send_file,		/* send_file */
-	silcpurple_ftp_new_xfer,		/* new_xfer */
-	NULL,					/* offline_message */
-	&silcpurple_wb_ops,			/* whiteboard_protocol_ops */
-	NULL,					/* send_raw */
-	NULL,				        /* roomlist_room_serialize */
-	NULL,				        /* unregister_user */
-	NULL,				        /* send_attention */
-	NULL,				        /* get_attention_types */
-	NULL,				        /* get_account_text_table */
-	NULL,				        /* initiate_media */
-	NULL,				        /* get_media_caps */
-	NULL,				        /* get_moods */
-	NULL,				        /* set_public_alias */
-	NULL,				        /* get_public_alias */
-	NULL					/* get_max_message_size */
-};
+	purple_debug_info("SILC", "%s:%d:%s - %s\n", file ? file : "(null)", line, function ? function : "(null)", message ? message : "(null)");
+	return TRUE;
+}
+#endif
+
+static void
+silcpurple_protocol_base_init(SILCProtocolClass *klass)
+{
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+	PurpleAccountUserSplit *split;
+	char tmp[256];
+	int i;
+	PurpleKeyValuePair *kvp;
+	GList *list = NULL;
+
+	proto_class->id        = SILCPURPLE_ID;
+	proto_class->name      = SILCPURPLE_NAME;
+	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	                         OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
+	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
+	proto_class->icon_spec = (PurpleBuddyIconSpec) {"jpeg,gif,png,bmp",
+	                                                0, 0, 96, 96, 0,
+	                                                PURPLE_ICON_SCALE_DISPLAY};
+
+	proto_class->whiteboard_protocol_ops = &silcpurple_wb_ops;
+
+	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
+	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+
+	/* Account options */
+	option = purple_account_option_string_new(_("Connect server"),
+						  "server",
+						  "silc.silcnet.org");
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	option = purple_account_option_int_new(_("Port"), "port", 706);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
+	option = purple_account_option_string_new(_("Public Key file"),
+						  "public-key", tmp);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
+	option = purple_account_option_string_new(_("Private Key file"),
+						  "private-key", tmp);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	for (i = 0; silc_default_ciphers[i].name; i++) {
+		kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(silc_default_ciphers[i].name);
+		kvp->value = g_strdup(silc_default_ciphers[i].name);
+		list = g_list_append(list, kvp);
+	}
+	option = purple_account_option_list_new(_("Cipher"), "cipher", list);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	list = NULL;
+	for (i = 0; silc_default_hmacs[i].name; i++) {
+		kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(silc_default_hmacs[i].name);
+		kvp->value = g_strdup(silc_default_hmacs[i].name);
+		list = g_list_append(list, kvp);
+	}
+	option = purple_account_option_list_new(_("HMAC"), "hmac", list);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use Perfect Forward Secrecy"),
+						"pfs", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Public key authentication"),
+						"pubkey-auth", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
+						"block-ims", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
+						"block-wb", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	option = purple_account_option_bool_new(_("Automatically open whiteboard"),
+						"open-wb", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
+						"sign-verify", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	purple_prefs_remove("/plugins/prpl/silc");
+
+	silc_log_set_callback(SILC_LOG_ERROR, silcpurple_log_error, NULL);
+	silcpurple_register_commands();
+
+#if 0
+silc_log_debug(TRUE);
+silc_log_set_debug_string("*client*");
+silc_log_quick(TRUE);
+silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
+#endif
+}
+
+static void
+silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions        = silcpurple_get_actions;
+	iface->list_icon          = silcpurple_list_icon;
+	iface->status_text        = silcpurple_status_text;
+	iface->tooltip_text       = silcpurple_tooltip_text;
+	iface->status_types       = silcpurple_away_states;
+	iface->blist_node_menu    = silcpurple_blist_node_menu;
+	iface->chat_info          = silcpurple_chat_info;
+	iface->chat_info_defaults = silcpurple_chat_info_defaults;
+	iface->login              = silcpurple_login;
+	iface->close              = silcpurple_close;
+	iface->send_im            = silcpurple_send_im;
+	iface->set_info           = silcpurple_set_info;
+	iface->get_info           = silcpurple_get_info;
+	iface->set_status         = silcpurple_set_status;
+	iface->set_idle           = silcpurple_idle_set;
+	iface->change_passwd      = silcpurple_change_passwd;
+	iface->add_buddy          = silcpurple_add_buddy;
+	iface->remove_buddy       = silcpurple_remove_buddy;
+	iface->join_chat          = silcpurple_chat_join;
+	iface->get_chat_name      = silcpurple_get_chat_name;
+	iface->chat_invite        = silcpurple_chat_invite;
+	iface->chat_leave         = silcpurple_chat_leave;
+	iface->chat_send          = silcpurple_chat_send;
+	iface->keepalive          = silcpurple_keepalive;
+	iface->set_buddy_icon     = silcpurple_buddy_set_icon;
+	iface->set_chat_topic     = silcpurple_chat_set_topic;
+	iface->roomlist_get_list  = silcpurple_roomlist_get_list;
+	iface->roomlist_cancel    = silcpurple_roomlist_cancel;
+	iface->send_file          = silcpurple_ftp_send_file;
+	iface->new_xfer           = silcpurple_ftp_new_xfer;
+}
+
+static void silcpurple_protocol_base_finalize(SILCProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-silc",
-		"name",         "SILC",
+		"id",           SILCPURPLE_ID,
+		"name",         SILCPURPLE_NAME,
 		"version",      "1.1",
 		"category",     N_("Protocol"),
 		"summary",      N_("SILC Protocol Plugin"),
@@ -2151,106 +2210,29 @@ plugin_query(GError **error)
 	);
 }
 
-#if 0
-static SilcBool silcpurple_debug_cb(char *file, char *function, int line,
-		char *message, void *context)
-{
-	purple_debug_info("SILC", "%s:%d:%s - %s\n", file ? file : "(null)", line, function ? function : "(null)", message ? message : "(null)");
-	return TRUE;
-}
-#endif
-
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
-	PurpleAccountUserSplit *split;
-	char tmp[256];
-	int i;
-	PurpleKeyValuePair *kvp;
-	GList *list = NULL;
+	my_protocol = purple_protocols_add(SILCPURPLE_TYPE_PROTOCOL);
 
-	silc_plugin = plugin;
-
-	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
-	protocol.user_splits = g_list_append(protocol.user_splits, split);
-
-	/* Account options */
-	option = purple_account_option_string_new(_("Connect server"),
-						  "server",
-						  "silc.silcnet.org");
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	option = purple_account_option_int_new(_("Port"), "port", 706);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
-	option = purple_account_option_string_new(_("Public Key file"),
-						  "public-key", tmp);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
-	option = purple_account_option_string_new(_("Private Key file"),
-						  "private-key", tmp);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	for (i = 0; silc_default_ciphers[i].name; i++) {
-		kvp = g_new0(PurpleKeyValuePair, 1);
-		kvp->key = g_strdup(silc_default_ciphers[i].name);
-		kvp->value = g_strdup(silc_default_ciphers[i].name);
-		list = g_list_append(list, kvp);
+	if (!my_protocol) {
+		g_set_error(error, SILCPURPLE_DOMAIN, 0, _("Failed to add silc protocol"));
+		return FALSE;
 	}
-	option = purple_account_option_list_new(_("Cipher"), "cipher", list);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
 
-	list = NULL;
-	for (i = 0; silc_default_hmacs[i].name; i++) {
-		kvp = g_new0(PurpleKeyValuePair, 1);
-		kvp->key = g_strdup(silc_default_hmacs[i].name);
-		kvp->value = g_strdup(silc_default_hmacs[i].name);
-		list = g_list_append(list, kvp);
-	}
-	option = purple_account_option_list_new(_("HMAC"), "hmac", list);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Use Perfect Forward Secrecy"),
-						"pfs", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Public key authentication"),
-						"pubkey-auth", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
-						"block-ims", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
-						"block-wb", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	option = purple_account_option_bool_new(_("Automatically open whiteboard"),
-						"open-wb", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
-						"sign-verify", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	purple_prefs_remove("/plugins/prpl/silc");
-
-	silc_log_set_callback(SILC_LOG_ERROR, silcpurple_log_error, NULL);
-	silcpurple_register_commands();
-
-#if 0
-silc_log_debug(TRUE);
-silc_log_set_debug_string("*client*");
-silc_log_quick(TRUE);
-silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
-#endif
-
-	purple_protocols_add(&protocol);
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(&protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, SILCPURPLE_DOMAIN, 0, _("Failed to remove silc protocol"));
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(silc, plugin_query, plugin_load, plugin_unload);
+PURPLE_PROTOCOL_DEFINE (SILCProtocol, silcpurple_protocol);
+PURPLE_PLUGIN_INIT     (silc, plugin_query, plugin_load, plugin_unload);
