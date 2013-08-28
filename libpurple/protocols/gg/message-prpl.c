@@ -394,7 +394,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	gchar *text_new, *tmp;
 	GList *rt = NULL; /* reformatted text */
 	GMatchInfo *match;
-	int pos = 0;
+	guint pos = 0;
 	GList *pending_objects = NULL;
 	GList *font_stack = NULL;
 	static int html_sizes_pt[7] = { 7, 8, 9, 10, 12, 14, 16 };
@@ -440,7 +440,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 		/* reading tag and its contents */
 		g_match_info_fetch_pos(match, 0, &m_start, &m_end);
 		g_assert(m_start >= 0 && m_end >= 0);
-		text_before = (m_start > pos);
+		text_before = ((guint)m_start > pos);
 		g_match_info_fetch_pos(match, 1, &m_pos, NULL);
 		tag_close = (m_pos >= 0);
 		tag_str = g_match_info_fetch(match, 2);

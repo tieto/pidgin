@@ -151,7 +151,7 @@ void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev)
 {
 	ggp_chat_session_data *sdata = ggp_chat_get_sdata(gc);
 	ggp_chat_local_info *chat;
-	int i;
+	uint32_t i;
 
 	if (ev->type == GG_EVENT_CHAT_INFO)
 	{

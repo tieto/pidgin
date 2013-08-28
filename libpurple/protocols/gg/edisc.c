@@ -45,7 +45,7 @@ struct _ggp_edisc_xfer
 	PurpleConnection *gc;
 	PurpleHttpConnection *hc;
 
-	int already_read;
+	gsize already_read;
 };
 
 typedef enum
@@ -970,7 +970,7 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 {
 	PurpleXfer *xfer = _xfer;
 	ggp_edisc_xfer *edisc_xfer;
-	int stored;
+	gssize stored;
 
 	g_return_val_if_fail(xfer != NULL, FALSE);
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
@@ -981,7 +981,7 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	else
 		stored = fwrite(buffer, 1, length, xfer->dest_fp);
 
-	if (stored != length) {
+	if (stored < 0 || (gsize)stored != length) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
 			"saved too less\n");
 		return FALSE;
