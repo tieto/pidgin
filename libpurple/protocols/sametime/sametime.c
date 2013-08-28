@@ -5160,10 +5160,11 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   NULL,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
-
+#if 0
 static PurplePluginPrefFrame *
 mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
   PurplePluginPrefFrame *frame;
@@ -5192,18 +5193,7 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
 
   return frame;
 }
-
-
-static PurplePluginUiInfo mw_plugin_ui_info = {
-  mw_plugin_get_plugin_pref_frame,
-  0,    /* page_num */
-  NULL, /* frame */
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
+#endif
 
 static void st_import_action_cb(PurpleConnection *gc, char *filename) {
   struct mwSametimeList *l;
@@ -5707,7 +5697,7 @@ static PurplePluginInfo mw_plugin_info =
 
 	NULL,                                             /**< ui_info        */
 	&mw_prpl_info,                                    /**< extra_info     */
-	&mw_plugin_ui_info,                               /**< prefs_info     */
+	NULL,                                             /**< prefs_info     */
 	mw_plugin_actions,
 
 	/* padding */

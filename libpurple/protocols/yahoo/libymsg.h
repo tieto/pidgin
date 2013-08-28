@@ -129,7 +129,7 @@ enum yahoo_status {
 	YAHOO_STATUS_WEBLOGIN = 0x5a55aa55,
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
 	YAHOO_STATUS_TYPING = 0x16,
-	YAHOO_STATUS_DISCONNECTED = 0xffffffff /* in ymsg 15. doesnt mean the normal sense of 'disconnected' */
+	YAHOO_STATUS_DISCONNECTED = -1 /* 0xffffffff; in ymsg 15. doesnt mean the normal sense of 'disconnected' */
 };
 
 /*
@@ -384,6 +384,7 @@ GList *yahoo_attention_types(PurpleAccount *account);
 
 GList *yahoo_actions(PurplePlugin *plugin, gpointer context);
 void yahoopurple_register_commands(void);
+gsize yahoo_get_max_message_size(PurpleConnection *gc);
 
 PurpleCmdRet yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data);
 PurpleCmdRet yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd, char **args, char **error, void *data);

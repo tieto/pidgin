@@ -15,7 +15,7 @@ static DBusGProxy *purple_proxy;
 static GList *garray_int_to_glist(GArray *array)
 {
 	GList *list = NULL;
-	int i;
+	gsize i;
 
 	for (i = 0; i < array->len; i++)
 		list = g_list_append(list, GINT_TO_POINTER(g_array_index(array,gint,i)));
@@ -27,7 +27,7 @@ static GList *garray_int_to_glist(GArray *array)
 static GSList *garray_int_to_gslist(GArray *array)
 {
 	GSList *list = NULL;
-	int i;
+	gsize i;
 
 	for (i = 0; i < array->len; i++)
 		list = g_slist_append(list, GINT_TO_POINTER(g_array_index(array,gint,i)));

@@ -37,7 +37,7 @@ typedef struct
 	gchar *id;
 	gpointer data;
 	size_t size;
-	int length;
+	guint length;
 } ggp_account_token;
 
 /**

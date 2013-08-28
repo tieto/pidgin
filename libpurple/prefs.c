@@ -386,7 +386,7 @@ purple_prefs_load()
 		return FALSE;
 	}
 
-	purple_debug_info("prefs", "Reading %s\n", filename);
+	purple_debug_misc("prefs", "Reading %s", filename);
 
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
 #ifdef _WIN32
@@ -438,7 +438,8 @@ purple_prefs_load()
 		return FALSE;
 	}
 
-	purple_debug_info("prefs", "Finished reading %s\n", filename);
+	if (purple_debug_is_verbose())
+		purple_debug_misc("prefs", "Finished reading %s", filename);
 	g_markup_parse_context_free(context);
 	g_free(contents);
 	g_free(filename);

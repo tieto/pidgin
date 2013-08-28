@@ -507,7 +507,7 @@ rtf_parse_keyword(NMRtfContext *ctx)
     int param = 0;
     char keyword[30];
     char parameter[20];
-	int i;
+	gsize i;
 
     keyword[0] = '\0';
     parameter[0] = '\0';

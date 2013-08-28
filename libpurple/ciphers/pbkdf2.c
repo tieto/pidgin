@@ -249,7 +249,7 @@ purple_pbkdf2_digest(PurpleCipherContext *context, guchar digest[], size_t len)
 		memset(halfkey, 0, halfkey_len);
 
 		for (iter_no = 1; iter_no <= ctx_data->iter_count; iter_no++) {
-			int i;
+			guint i;
 
 			purple_cipher_context_reset_state(hash, NULL);
 

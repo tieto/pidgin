@@ -285,9 +285,9 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 		{
 			const gnutls_datum_t *cert_list;
-			unsigned int cert_list_size = 0;
+			guint cert_list_size = 0;
 			gnutls_session_t session=gnutls_data->session;
-			int i;
+			guint i;
 
 			cert_list =
 				gnutls_certificate_get_peers(session, &cert_list_size);
@@ -386,7 +386,6 @@ static void
 ssl_gnutls_connect(PurpleSslConnection *gsc)
 {
 	PurpleSslGnutlsData *gnutls_data;
-	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 
 	gnutls_data = g_new0(PurpleSslGnutlsData, 1);
 	gsc->private_data = gnutls_data;
@@ -413,8 +412,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_set_default_priority(gnutls_data->session);
 #endif
 
-	gnutls_certificate_type_set_priority(gnutls_data->session,
-		cert_type_priority);
+	gnutls_server_name_set(gnutls_data->session, GNUTLS_NAME_DNS, gsc->host,
+		strlen(gsc->host));
 
 	gnutls_credentials_set(gnutls_data->session, GNUTLS_CRD_CERTIFICATE,
 		xcred);
@@ -472,6 +471,11 @@ ssl_gnutls_read(PurpleSslConnection *gsc, void *data, size_t len)
 	if(s == GNUTLS_E_AGAIN || s == GNUTLS_E_INTERRUPTED) {
 		s = -1;
 		errno = EAGAIN;
+#ifdef GNUTLS_E_PREMATURE_TERMINATION
+	} else if (s == GNUTLS_E_PREMATURE_TERMINATION) {
+		purple_debug_warning("gnutls", "premature termination\n");
+		s = 0;
+#endif
 	} else if(s < 0) {
 		purple_debug_error("gnutls", "receive failed: %s\n",
 				gnutls_strerror(s));

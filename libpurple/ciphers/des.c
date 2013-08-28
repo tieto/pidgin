@@ -393,11 +393,11 @@ static ssize_t
 des_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -410,6 +410,7 @@ des_encrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -429,11 +430,11 @@ static ssize_t
 des_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -446,6 +447,7 @@ des_decrypt(PurpleCipherContext *context, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -556,11 +558,11 @@ static ssize_t
 des3_ecb_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -581,6 +583,7 @@ des3_ecb_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -609,11 +612,11 @@ static ssize_t
 des3_cbc_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8];
-	ssize_t out_len;
+	gsize out_len;
 	memcpy(buf, ctx->iv, 8);
 
 	g_return_val_if_fail(out_size >= in_len, -1);
@@ -639,6 +642,7 @@ des3_cbc_encrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -684,11 +688,11 @@ static ssize_t
 des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -710,6 +714,7 @@ des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if (offset < in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;
@@ -738,12 +743,12 @@ static ssize_t
 des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	guchar output[], size_t out_size)
 {
-	int offset = 0;
+	gsize offset = 0;
 	int i = 0;
-	int tmp;
+	gsize tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	guint8 link[8];
-	ssize_t out_len;
+	gsize out_len;
 
 	g_return_val_if_fail(out_size >= in_len, -1);
 
@@ -768,6 +773,7 @@ des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar input[], size_t in_len,
 	}
 	out_len = in_len;
 	if(offset<in_len) {
+		g_return_val_if_fail(in_len >= offset, -1);
 		out_len += in_len - offset;
 		g_return_val_if_fail(out_size >= out_len, -1);
 		tmp = offset;

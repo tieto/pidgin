@@ -289,7 +289,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnSlpMessagePart *part;
 	MsnP2PInfo *info;
-	long long real_size;
+	gsize real_size;
 	size_t len = 0;
 	guint64 offset;
 
@@ -422,7 +422,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnP2PInfo *info)
 }
 
 static MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
+msn_slplink_message_find(MsnSlpLink *slplink, guint32 session_id, long id)
 {
 	GList *e;
 

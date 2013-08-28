@@ -171,7 +171,7 @@ hmac_uninit(PurpleCipherContext *context)
 hmac_set_key(PurpleCipherContext *context, const guchar * key, size_t key_len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	int blocksize, i;
+	gsize blocksize, i;
 	guchar *full_key;
 
 	g_return_if_fail(hctx->hash != NULL);

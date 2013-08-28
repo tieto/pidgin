@@ -153,7 +153,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 	else
 		value = gtk_entry_get_text(GTK_ENTRY(data->u.input.entry));
 
-	if (id < data->cb_count && data->cbs[id] != NULL)
+	if (id >= 0 && (gsize)id < data->cb_count && data->cbs[id] != NULL)
 		((PurpleRequestInputCb)data->cbs[id])(data->user_data, value);
 	else if (data->cbs[1] != NULL)
 		((PurpleRequestInputCb)data->cbs[1])(data->user_data, value);
@@ -169,7 +169,7 @@ action_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 {
 	generic_response_start(data);
 
-	if (id < data->cb_count && data->cbs[id] != NULL)
+	if (id >= 0 && (gsize)id < data->cb_count && data->cbs[id] != NULL)
 		((PurpleRequestActionCb)data->cbs[id])(data->user_data, id);
 
 	purple_request_close(PURPLE_REQUEST_INPUT, data);
@@ -184,7 +184,7 @@ choice_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 
 	generic_response_start(data);
 
-	if (id < data->cb_count && data->cbs[id] != NULL)
+	if (id >= 0 && (gsize)id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
 				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
@@ -595,7 +595,7 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	void **buttons;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
-	int i;
+	gsize i;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_ACTION;

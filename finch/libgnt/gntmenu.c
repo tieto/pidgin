@@ -79,7 +79,7 @@ gnt_menu_draw(GntWidget *widget)
 	GntMenu *menu = GNT_MENU(widget);
 	GList *iter;
 	chtype type;
-	int i;
+	guint i;
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
 		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
@@ -277,7 +277,7 @@ static gboolean
 gnt_menu_key_pressed(GntWidget *widget, const char *text)
 {
 	GntMenu *menu = GNT_MENU(widget);
-	int current = menu->selected;
+	guint current = menu->selected;
 
 	if (menu->submenu) {
 		GntMenu *sub = menu;
@@ -304,9 +304,10 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
 		if (strcmp(text, GNT_KEY_LEFT) == 0) {
-			menu->selected--;
-			if (menu->selected < 0)
+			if (menu->selected == 0)
 				menu->selected = g_list_length(menu->list) - 1;
+			else
+				menu->selected--;
 		} else if (strcmp(text, GNT_KEY_RIGHT) == 0) {
 			menu->selected++;
 			if (menu->selected >= g_list_length(menu->list))

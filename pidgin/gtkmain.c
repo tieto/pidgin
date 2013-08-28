@@ -88,6 +88,7 @@ static const int catch_sig_list[] = {
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
+	SIGCHLD,
 	-1
 };
 
@@ -182,8 +183,15 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 		return FALSE;
 	}
 
-	purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-	purple_core_quit();
+	switch (sig) {
+		case SIGCHLD:
+			/* Restore signal catching */
+			signal(SIGCHLD, sighandler);
+			break;
+		default:
+			purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+			purple_core_quit();
+	}
 
 	return TRUE;
 }
@@ -196,7 +204,7 @@ ui_main(void)
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
-	int i;
+	gsize i;
 	struct {
 		const char *dir;
 		const char *filename;
@@ -380,7 +388,7 @@ show_usage(const char *name, gboolean terse)
 		g_string_append_printf(str, _("Usage: %s [OPTION]...\n\n"), name);
 		g_string_append_printf(str, "  -c, --config=%s    %s\n",
 				_("DIR"), _("use DIR for config files"));
-		g_string_append_printf(str, "  -d, --debug         %s\n",
+		g_string_append_printf(str, "  -d, --debug[=colored] %s\n",
 				_("print debugging messages to stdout"));
 		g_string_append_printf(str, "  -f, --force-online  %s\n",
 				_("force online, regardless of network status"));
@@ -450,13 +458,13 @@ int main(int argc, char *argv[])
 #endif
 	int opt;
 	gboolean gui_check;
-	gboolean debug_enabled;
+	gboolean debug_enabled, debug_colored;
 	GList *active_accounts;
 	GStatBuf st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
-		{"debug",        no_argument,       NULL, 'd'},
+		{"debug",        optional_argument, NULL, 'd'},
 		{"force-online", no_argument,       NULL, 'f'},
 		{"help",         no_argument,       NULL, 'h'},
 		{"login",        optional_argument, NULL, 'l'},
@@ -469,6 +477,7 @@ int main(int argc, char *argv[])
 		{0, 0, 0, 0}
 	};
 
+	debug_colored = FALSE;
 #ifdef DEBUG
 	debug_enabled = TRUE;
 #else
@@ -616,6 +625,8 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':	/* debug */
 			debug_enabled = TRUE;
+			if (g_strcmp0(optarg, "colored") == 0)
+				debug_colored = TRUE;
 			break;
 		case 'f':	/* force-online */
 			opt_force_online = TRUE;
@@ -695,6 +706,7 @@ int main(int argc, char *argv[])
 	 */
 
 	purple_debug_set_enabled(debug_enabled);
+	purple_debug_set_colored(debug_colored);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	search_path = g_build_filename(purple_user_dir(), "gtkrc-2.0", NULL);

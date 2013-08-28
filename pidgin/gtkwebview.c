@@ -131,6 +131,10 @@ typedef struct _GtkWebViewPriv {
 	char *protocol_name;
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
+
+	/* WebKit inspector */
+	WebKitWebView *inspector_view;
+	GtkWindow *inspector_win;
 } GtkWebViewPriv;
 
 /******************************************************************************
@@ -837,9 +841,39 @@ webview_load_finished(WebKitWebView *webview, WebKitWebFrame *frame,
 }
 
 static void
-webview_show_inspector_cb(GtkWidget *item, GtkWebViewInspectData *data)
+webview_inspector_inspect_element(GtkWidget *item, GtkWebViewInspectData *data)
 {
 	webkit_web_inspector_inspect_node(data->inspector, data->node);
+}
+
+static WebKitWebView *
+webview_inspector_create(WebKitWebInspector *inspector,
+	WebKitWebView *webview, gpointer _unused)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	if (priv->inspector_view != NULL)
+		return priv->inspector_view;
+
+	priv->inspector_win = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+	gtk_window_set_title(priv->inspector_win, _("WebKit inspector"));
+	gtk_window_set_default_size(priv->inspector_win, 600, 400);
+
+	priv->inspector_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+	gtk_container_add(GTK_CONTAINER(priv->inspector_win),
+		GTK_WIDGET(priv->inspector_view));
+
+	return priv->inspector_view;
+}
+
+static gboolean
+webview_inspector_show(WebKitWebInspector *inspector, GtkWidget *webview)
+{
+	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+
+	gtk_widget_show_all(GTK_WIDGET(priv->inspector_win));
+
+	return TRUE;
 }
 
 static GtkWebViewProtocol *
@@ -848,7 +882,7 @@ webview_find_protocol(const char *url, gboolean reverse)
 	GtkWebViewClass *klass;
 	GList *iter;
 	GtkWebViewProtocol *proto = NULL;
-	int length = reverse ? strlen(url) : -1;
+	gssize length = reverse ? (gssize)strlen(url) : -1;
 
 	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
 	for (iter = klass->protocols; iter; iter = iter->next) {
@@ -958,7 +992,7 @@ get_unicode_menu(WebKitWebView *webview)
 	gboolean show = TRUE;
 	GtkWidget *menuitem;
 	GtkWidget *menu;
-	int i;
+	gsize i;
 
 	settings = webview ? gtk_widget_get_settings(GTK_WIDGET(webview)) : gtk_settings_get_default();
 
@@ -997,8 +1031,6 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 {
 	GtkWidget *menu;
 	GtkWidget *cut, *copy, *paste, *delete, *select;
-	WebKitWebSettings *settings;
-	gboolean inspector;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
@@ -1077,11 +1109,15 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 			webkit_web_view_can_cut_clipboard(webview));
 	}
 
-	settings = webkit_web_view_get_settings(webview);
-	g_object_get(G_OBJECT(settings), "enable-developer-extras", &inspector, NULL);
-	if (inspector) {
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT
+		"/webview/inspector_enabled"))
+	{
+		WebKitWebSettings *settings;
 		GtkWidget *inspect;
 		GtkWebViewInspectData *data;
+
+		settings = webkit_web_view_get_settings(webview);
+		g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
 
 		data = g_new0(GtkWebViewInspectData, 1);
 		data->inspector = webkit_web_view_get_inspector(webview);
@@ -1092,7 +1128,7 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"), NULL,
 		                                     NULL, NULL, 0, 0, NULL);
 		g_signal_connect_data(G_OBJECT(inspect), "activate",
-		                      G_CALLBACK(webview_show_inspector_cb),
+		                      G_CALLBACK(webview_inspector_inspect_element),
 		                      data, (GClosureNotify)g_free, 0);
 	}
 
@@ -1391,6 +1427,9 @@ gtk_webview_finalize(GObject *webview)
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
 	gpointer temp;
 
+	if (priv->inspector_win != NULL)
+		gtk_widget_destroy(GTK_WIDGET(priv->inspector_win));
+
 	if (priv->loader)
 		g_source_remove(priv->loader);
 
@@ -1492,12 +1531,16 @@ gtk_webview_class_init(GtkWebViewClass *klass, gpointer userdata)
 	binding_set = gtk_binding_set_by_class(klass);
 	gtk_binding_entry_add_signal(binding_set, GDK_KEY_r, GDK_CONTROL_MASK,
 	                             "format-cleared", 0);
+
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/webview");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);
 }
 
 static void
 gtk_webview_init(GtkWebView *webview, gpointer userdata)
 {
 	GtkWebViewPriv *priv = GTK_WEBVIEW_GET_PRIVATE(webview);
+	WebKitWebInspector *inspector;
 
 	priv->load_queue = g_queue_new();
 
@@ -1522,6 +1565,12 @@ gtk_webview_init(GtkWebView *webview, gpointer userdata)
 
 	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
 	                 G_CALLBACK(webview_resource_loading), NULL);
+
+	inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(webview));
+	g_signal_connect(G_OBJECT(inspector), "inspect-web-view",
+		G_CALLBACK(webview_inspector_create), NULL);
+	g_signal_connect(G_OBJECT(inspector), "show-window",
+		G_CALLBACK(webview_inspector_show), webview);
 }
 
 GType

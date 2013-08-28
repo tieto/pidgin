@@ -487,8 +487,6 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 {
 	struct contact*		contact;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_free_buddy\n" );
-
 	contact = purple_buddy_get_protocol_data( buddy );
 	if ( contact ) {
 		if ( contact->statusMsg )
@@ -795,7 +793,8 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_media_caps,		/* get_media_caps */
 	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	NULL					/* get_max_message_size */
 };
 
 
@@ -843,8 +842,6 @@ static PurplePluginInfo plugin_info = {
 static void init_plugin( PurplePlugin* plugin )
 {
 	PurpleAccountOption*	option;
-
-	purple_debug_info( MXIT_PLUGIN_ID, "Loading MXit libPurple plugin...\n" );
 
 	/* Configuration options */
 

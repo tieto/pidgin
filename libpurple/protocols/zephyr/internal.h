@@ -105,7 +105,7 @@ void Z_RemQueue __P((struct _Z_InputQ *));
 Code_t Z_AddNoticeToEntry __P((struct _Z_InputQ*, ZNotice_t*, int));
 Code_t Z_FormatAuthHeader __P((ZNotice_t *, char *, int, int *, Z_AuthProc));
 Code_t Z_FormatHeader __P((ZNotice_t *, char *, int, int *, Z_AuthProc));
-Code_t Z_FormatRawHeader __P((ZNotice_t *, char*, int,
+Code_t Z_FormatRawHeader __P((ZNotice_t *, char*, gsize,
 			      int*, char **, char **));
 Code_t Z_ReadEnqueue __P((void));
 Code_t Z_ReadWait __P((void));

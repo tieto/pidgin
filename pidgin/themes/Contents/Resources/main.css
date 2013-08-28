@@ -39,6 +39,12 @@ body {
 	display: inline;
 }
 
+/* Don't let inline images overflow the window */
+img
+{
+	max-width: 100%
+}
+
 /* Colour-ify things */
 
 #Chat:not(.groupchat) .x-container.incoming .x-header

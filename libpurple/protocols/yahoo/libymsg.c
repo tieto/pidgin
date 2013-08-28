@@ -2339,11 +2339,13 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 static void yahoo_p2p_write_pkt(gint source, struct yahoo_packet *pkt)
 {
 	size_t pkt_len;
+	gssize written;
 	guchar *raw_packet;
 
 	/*build the raw packet and send it to the host*/
 	pkt_len = yahoo_packet_build(pkt, 0, 0, 0, &raw_packet);
-	if(write(source, raw_packet, pkt_len) != pkt_len)
+	written = write(source, raw_packet, pkt_len);
+	if (written < 0 || (gsize)written != pkt_len)
 		purple_debug_warning("yahoo","p2p: couldn't write to the source\n");
 	g_free(raw_packet);
 }
@@ -5132,3 +5134,9 @@ GList *yahoo_attention_types(PurpleAccount *account)
 	return list;
 }
 
+gsize
+yahoo_get_max_message_size(PurpleConnection *gc)
+{
+	/* got from pidgin-otr */
+	return 799;
+}

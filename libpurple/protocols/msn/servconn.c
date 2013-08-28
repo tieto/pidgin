@@ -386,7 +386,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 		if (ret < 0 && errno == EAGAIN)
 			ret = 0;
-		if (ret >= 0 && ret < len) {
+		if (ret >= 0 && (size_t)ret < len) {
 			if (servconn->tx_handler == 0)
 				servconn->tx_handler = purple_input_add(
 					servconn->fd, PURPLE_INPUT_WRITE,
@@ -461,9 +461,12 @@ MsnServConn *msn_servconn_process_data(MsnServConn *servconn)
 
 		if (servconn->payload_len)
 		{
-			if (servconn->payload_len > servconn->rx_len)
+			if (servconn->rx_len < 0 || servconn->payload_len >
+				(gsize)servconn->rx_len)
+			{
 				/* The payload is still not complete. */
 				break;
+			}
 
 			cur_len = servconn->payload_len;
 			end += cur_len;

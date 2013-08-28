@@ -206,7 +206,7 @@ static int varline(bfr, var)
 #define max(a,b) ((a > b) ? (a) : (b))
 #endif
 
-    if (g_ascii_strncasecmp(bfr, var, max(strlen(var), cp - bfr)))
+    if (g_ascii_strncasecmp(bfr, var, max(strlen(var), (gsize)(cp - bfr))))
 	return(0);			/* var is not the var in
 					   bfr ==> no match */
 
