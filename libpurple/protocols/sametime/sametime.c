@@ -65,6 +65,8 @@
 #include "sametime.h"
 
 
+static PurpleProtocol *my_protocol = NULL;
+
 /* considering that there's no display of this information for prpls,
    I don't know why I even bother providing these. Oh valiant reader,
    I do it all for you. */
@@ -76,6 +78,8 @@
 #define PLUGIN_DESC      "Open implementation of a Lotus Sametime client"
 #define PLUGIN_AUTHOR    "Christopher (siege) O'Brien <siege@preoccupied.net>"
 #define PLUGIN_HOMEPAGE  "http://meanwhile.sourceforge.net/"
+
+#define PLUGIN_DOMAIN    (g_quark_from_static_string(PLUGIN_ID))
 
 
 /* plugin preference names */
@@ -5611,111 +5615,20 @@ static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 }
 
 
-static PurpleProtocol mw_protocol = {
-  PLUGIN_ID,
-  PLUGIN_NAME,
-  sizeof(PurpleProtocol),
-  OPT_PROTO_IM_IMAGE,
-  NULL, /*< set in mw_plugin_init */
-  NULL, /*< set in mw_plugin_init */
-  NO_BUDDY_ICONS,
-  mw_protocol_get_actions,
-  mw_protocol_list_icon,
-  mw_protocol_list_emblem,
-  mw_protocol_status_text,
-  mw_protocol_tooltip_text,
-  mw_protocol_status_types,
-  mw_protocol_blist_node_menu,
-  mw_protocol_chat_info,
-  mw_protocol_chat_info_defaults,
-  mw_protocol_login,
-  mw_protocol_close,
-  mw_protocol_send_im,
-  NULL,
-  mw_protocol_send_typing,
-  mw_protocol_get_info,
-  mw_protocol_set_status,
-  mw_protocol_set_idle,
-  NULL,
-  mw_protocol_add_buddy,
-  mw_protocol_add_buddies,
-  mw_protocol_remove_buddy,
-  NULL,
-  mw_protocol_add_permit,
-  mw_protocol_add_deny,
-  mw_protocol_rem_permit,
-  mw_protocol_rem_deny,
-  mw_protocol_set_permit_deny,
-  mw_protocol_join_chat,
-  mw_protocol_reject_chat,
-  mw_protocol_get_chat_name,
-  mw_protocol_chat_invite,
-  mw_protocol_chat_leave,
-  mw_protocol_chat_whisper,
-  mw_protocol_chat_send,
-  mw_protocol_keepalive,
-  NULL,
-  NULL,
-  mw_protocol_alias_buddy,
-  mw_protocol_group_buddy,
-  mw_protocol_rename_group,
-  mw_protocol_buddy_free,
-  mw_protocol_convo_closed,
-  mw_protocol_normalize,
-  NULL,
-  mw_protocol_remove_group,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  mw_protocol_can_receive_file,
-  mw_protocol_send_file,
-  mw_protocol_new_xfer,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-
-static PurplePluginInfo *
-plugin_query(GError **error)
+static void
+mw_protocol_base_init(SametimeProtocolClass *klass)
 {
-	return purple_plugin_info_new(
-		"id",           PLUGIN_ID,
-		"name",         PLUGIN_NAME,
-		"version",      DISPLAY_VERSION,
-		"category",     PLUGIN_CATEGORY,
-		"summary",      PLUGIN_SUMMARY,
-		"description",  PLUGIN_DESC,
-		"author",       PLUGIN_AUTHOR,
-		"website",      PLUGIN_HOMEPAGE,
-		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
-		NULL
-	);
-}
-
-
-static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
+  PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
   PurpleAccountOption *opt;
   GList *l = NULL;
 
   GLogLevelFlags logflags =
     G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
+
+  proto_class->id      = PLUGIN_ID;
+  proto_class->name    = PLUGIN_NAME;
+  proto_class->options = OPT_PROTO_IM_IMAGE;
 
   /* set up the preferences */
   purple_prefs_add_none(MW_PROTOCOL_OPT_BASE);
@@ -5724,7 +5637,7 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
   /* set up account ID as user:server */
   split = purple_account_user_split_new(_("Server"),
                                         MW_PLUGIN_DEFAULT_HOST, ':');
-  mw_protocol.user_splits = g_list_append(mw_protocol.user_splits, split);
+  proto_class->user_splits = g_list_append(proto_class->user_splits, split);
 
   /* remove dead preferences */
   purple_prefs_remove(MW_PROTOCOL_OPT_PSYCHIC);
@@ -5732,7 +5645,7 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 
   /* port to connect to */
   opt = purple_account_option_int_new(_("Port"), MW_KEY_PORT,
-				    MW_PLUGIN_DEFAULT_PORT);
+            MW_PLUGIN_DEFAULT_PORT);
   l = g_list_append(l, opt);
 
   { /* copy the old force login setting from prefs if it's
@@ -5750,36 +5663,127 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 
   /* pretend to be Sametime Connect */
   opt = purple_account_option_bool_new(_("Hide client identity"),
-				     MW_KEY_FAKE_IT, FALSE);
+             MW_KEY_FAKE_IT, FALSE);
   l = g_list_append(l, opt);
 
-  mw_protocol.protocol_options = l;
+  proto_class->protocol_options = l;
   l = NULL;
 
   /* forward all our g_log messages to purple. Generally all the logging
      calls are using purple_log directly, but the g_return macros will
      get caught here */
   log_handler[0] = g_log_set_handler(G_LOG_DOMAIN, logflags,
-				     mw_log_handler, NULL);
+             mw_log_handler, NULL);
 
   /* redirect meanwhile's logging to purple's */
   log_handler[1] = g_log_set_handler("meanwhile", logflags,
-				     mw_log_handler, NULL);
-
-  purple_protocols_add(&mw_protocol);
-  return TRUE;
+             mw_log_handler, NULL);
 }
 
 
-static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
+static void
+mw_protocol_base_finalize(SametimeProtocolClass *klass)
+{
   g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
   g_log_remove_handler("meanwhile", log_handler[1]);
+}
 
-  purple_protocols_remove(&mw_protocol);
+
+static void
+mw_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+  iface->get_actions        = mw_protocol_get_actions;
+  iface->list_icon          = mw_protocol_list_icon;
+  iface->list_emblem        = mw_protocol_list_emblem;
+  iface->status_text        = mw_protocol_status_text;
+  iface->tooltip_text       = mw_protocol_tooltip_text;
+  iface->status_types       = mw_protocol_status_types;
+  iface->blist_node_menu    = mw_protocol_blist_node_menu;
+  iface->chat_info          = mw_protocol_chat_info;
+  iface->chat_info_defaults = mw_protocol_chat_info_defaults;
+  iface->login              = mw_protocol_login;
+  iface->close              = mw_protocol_close;
+  iface->send_im            = mw_protocol_send_im;
+  iface->send_typing        = mw_protocol_send_typing;
+  iface->get_info           = mw_protocol_get_info;
+  iface->set_status         = mw_protocol_set_status;
+  iface->set_idle           = mw_protocol_set_idle;
+  iface->add_buddy          = mw_protocol_add_buddy;
+  iface->add_buddies        = mw_protocol_add_buddies;
+  iface->remove_buddy       = mw_protocol_remove_buddy;
+  iface->add_permit         = mw_protocol_add_permit;
+  iface->add_deny           = mw_protocol_add_deny;
+  iface->rem_permit         = mw_protocol_rem_permit;
+  iface->rem_deny           = mw_protocol_rem_deny;
+  iface->set_permit_deny    = mw_protocol_set_permit_deny;
+  iface->join_chat          = mw_protocol_join_chat;
+  iface->reject_chat        = mw_protocol_reject_chat;
+  iface->get_chat_name      = mw_protocol_get_chat_name;
+  iface->chat_invite        = mw_protocol_chat_invite;
+  iface->chat_leave         = mw_protocol_chat_leave;
+  iface->chat_whisper       = mw_protocol_chat_whisper;
+  iface->chat_send          = mw_protocol_chat_send;
+  iface->keepalive          = mw_protocol_keepalive;
+  iface->alias_buddy        = mw_protocol_alias_buddy;
+  iface->group_buddy        = mw_protocol_group_buddy;
+  iface->rename_group       = mw_protocol_rename_group;
+  iface->buddy_free         = mw_protocol_buddy_free;
+  iface->convo_closed       = mw_protocol_convo_closed;
+  iface->normalize          = mw_protocol_normalize;
+  iface->remove_group       = mw_protocol_remove_group;
+  iface->can_receive_file   = mw_protocol_can_receive_file;
+  iface->send_file          = mw_protocol_send_file;
+  iface->new_xfer           = mw_protocol_new_xfer;
+}
+
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+  return purple_plugin_info_new(
+    "id",           PLUGIN_ID,
+    "name",         PLUGIN_NAME,
+    "version",      DISPLAY_VERSION,
+    "category",     PLUGIN_CATEGORY,
+    "summary",      PLUGIN_SUMMARY,
+    "description",  PLUGIN_DESC,
+    "author",       PLUGIN_AUTHOR,
+    "website",      PLUGIN_HOMEPAGE,
+    "abi-version",  PURPLE_ABI_VERSION,
+    "flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+                    GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+    NULL
+  );
+}
+
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+  my_protocol = purple_protocols_add(MW_TYPE_PROTOCOL);
+
+  if (!my_protocol) {
+    g_set_error(error, PLUGIN_DOMAIN, 0, _("Failed to add sametime protocol"));
+    return FALSE;
+  }
+
   return TRUE;
 }
 
 
-PURPLE_PLUGIN_INIT(sametime, plugin_query, plugin_load, plugin_unload);
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+  if (!purple_protocols_remove(my_protocol)) {
+    g_set_error(error, PLUGIN_DOMAIN, 0, _("Failed to remove sametime protocol"));
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+
+PURPLE_PROTOCOL_DEFINE (SametimeProtocol, mw_protocol);
+PURPLE_PLUGIN_INIT     (sametime, plugin_query, plugin_load, plugin_unload);
 /* The End. */
 
