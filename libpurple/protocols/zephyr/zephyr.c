@@ -32,13 +32,13 @@
 #include "debug.h"
 #include "notify.h"
 #include "plugins.h"
-#include "protocol.h"
 #include "server.h"
 #include "util.h"
 #include "cmds.h"
 #include "version.h"
 
 #include "internal.h"
+#include "zephyr.h"
 
 #include <strings.h>
 
@@ -49,6 +49,8 @@
 #define ZEPHYR_TYPING_RECV_TIMEOUT 10
 #define ZEPHYR_FD_READ 0
 #define ZEPHYR_FD_WRITE 1
+
+static PurpleProtocol *my_protocol = NULL;
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
@@ -2863,92 +2865,80 @@ static GList *zephyr_get_actions(PurpleConnection *gc)
 	return list;
 }
 
-static PurpleProtocol *my_protocol = NULL;
 
-static PurpleProtocol protocol = {
-	"prpl-zephyr",			/* id */
-	"Zephyr",				/* name */
-	sizeof(PurpleProtocol),       /* struct_size */
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
-	NULL,					/* ??? user_splits */
-	NULL,					/* ??? protocol_options */
-	NO_BUDDY_ICONS,
-	zephyr_get_actions,
-	zephyr_list_icon,
-	NULL,					/* ??? list_emblems */
-	NULL,					/* ??? status_text */
-	NULL,					/* ??? tooltip_text */
-	zephyr_status_types,	/* status_types */
-	NULL,					/* ??? blist_node_menu - probably all useful actions are already handled*/
-	zephyr_chat_info,		/* chat_info */
-	NULL,					/* chat_info_defaults */
-	zephyr_login,			/* login */
-	zephyr_close,			/* close */
-	zephyr_send_im,			/* send_im */
-	NULL,					/* XXX set info (Location?) */
-	zephyr_send_typing,		/* send_typing */
-	zephyr_zloc,			/* get_info */
-	zephyr_set_status,		/* set_status */
-	NULL,					/* ??? set idle */
-	NULL,					/* change password */
-	NULL,					/* add_buddy */
-	NULL,					/* add_buddies */
-	NULL,					/* remove_buddy */
-	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* remove_permit */
-	NULL,					/* remove_deny */
-	NULL,					/* set_permit_deny */
-	zephyr_join_chat,		/* join_chat */
-	NULL,					/* reject_chat -- No chat invites*/
-	zephyr_get_chat_name,	/* get_chat_name */
-	NULL,					/* chat_invite -- No chat invites*/
-	zephyr_chat_leave,		/* chat_leave */
-	NULL,					/* chat_whisper -- No "whispering"*/
-	zephyr_chat_send,		/* chat_send */
-	NULL,					/* keepalive -- Not necessary*/
-	NULL,					/* register_user -- Not supported*/
-	NULL,					/* XXX get_cb_info */
-	NULL,					/* alias_buddy */
-	NULL,					/* group_buddy */
-	NULL,					/* rename_group */
-	NULL,					/* buddy_free */
-	NULL,					/* convo_closed */
-	zephyr_normalize,		/* normalize */
-	NULL,					/* XXX set_buddy_icon */
-	NULL,					/* remove_group */
-	NULL,					/* XXX get_cb_real_name */
-	zephyr_chat_set_topic,	/* set_chat_topic */
-	zephyr_find_blist_chat,	/* find_blist_chat */
-	NULL,					/* roomlist_get_list */
-	NULL,					/* roomlist_cancel */
-	NULL,					/* roomlist_expand_category */
-	NULL,					/* can_receive_file */
-	NULL,					/* send_file */
-	NULL,					/* new_xfer */
-	NULL,					/* offline_message */
-	NULL,					/* whiteboard_protocol_ops */
-	NULL,					/* send_raw */
-	NULL,					/* roomlist_room_serialize */
+static void
+zephyr_protocol_base_init(ZephyrProtocolClass *klass)
+{
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+	char *tmp = get_exposure_level();
 
-	NULL,
-	NULL,
-	NULL,
-	NULL,					/* get_account_text_table */
-	NULL,					/* initate_media */
-	NULL,					/* get_media_caps */
-	NULL,					/* get_moods */
-	NULL,					/* set_public_alias */
-	NULL,					/* get_public_alias */
-	NULL					/* get_max_message_size */
-};
+	proto_class->id      = ZEPHYR_ID;
+	proto_class->name    = ZEPHYR_NAME;
+	proto_class->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
+
+	option = purple_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Realm"), "realm", "");
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	zephyr_register_slash_commands();
+}
+
+
+static void
+zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions     = zephyr_get_actions;
+	iface->list_icon       = zephyr_list_icon;
+	iface->status_types    = zephyr_status_types;
+	iface->chat_info       = zephyr_chat_info;
+	iface->login           = zephyr_login;
+	iface->close           = zephyr_close;
+	iface->send_im         = zephyr_send_im;
+	iface->send_typing     = zephyr_send_typing;
+	iface->get_info        = zephyr_zloc;
+	iface->set_status      = zephyr_set_status;
+	iface->join_chat       = zephyr_join_chat;
+	iface->get_chat_name   = zephyr_get_chat_name;
+	iface->chat_leave      = zephyr_chat_leave;
+	iface->chat_send       = zephyr_chat_send;
+	iface->normalize       = zephyr_normalize;
+	iface->set_chat_topic  = zephyr_chat_set_topic;
+	iface->find_blist_chat = zephyr_find_blist_chat;
+}
+
+
+static void zephyr_protocol_base_finalize(ZephyrProtocolClass *klass) { }
+
 
 static PurplePluginInfo *plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-zephyr",
-		"name",         "Zephyr",
+		"id",           ZEPHYR_ID,
+		"name",         ZEPHYR_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Zephyr Protocol Plugin"),
@@ -2961,49 +2951,32 @@ static PurplePluginInfo *plugin_query(GError **error)
 	);
 }
 
-static gboolean plugin_load(PurplePlugin *plugin, GError **error)
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
-	char *tmp = get_exposure_level();
+	my_protocol = purple_protocols_add(ZEPHYR_TYPE_PROTOCOL);
 
-	option = purple_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
+	if (!my_protocol) {
+		g_set_error(error, ZEPHYR_DOMAIN, 0, _("Failed to add zephyr protocol"));
+		return FALSE;
+	}
 
-	option = purple_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Realm"), "realm", "");
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	my_protocol = &protocol;
-	zephyr_register_slash_commands();
-
-	purple_protocols_add(my_protocol);
 	return TRUE;
 }
 
-static gboolean plugin_unload(PurplePlugin *plugin, GError **error)
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_protocols_remove(my_protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, ZEPHYR_DOMAIN, 0, _("Failed to remove zephyr protocol"));
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(zephyr, plugin_query, plugin_load, plugin_unload);
+
+PURPLE_PROTOCOL_DEFINE (ZephyrProtocol, zephyr_protocol);
+PURPLE_PLUGIN_INIT     (zephyr, plugin_query, plugin_load, plugin_unload);

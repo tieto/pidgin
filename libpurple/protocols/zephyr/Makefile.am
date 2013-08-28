@@ -62,9 +62,10 @@ ZEPHYRSOURCES = \
 	zephyr_err.c \
 	zephyr_err.h \
 	zephyr_internal.h \
-	zephyr.c
+	zephyr.c \
+	zephyr.h
 
-ZEPHYRSOURCESEXT = zephyr.c
+ZEPHYRSOURCESEXT = zephyr.c zephyr.h
 
 AM_CFLAGS = $(st)
 
