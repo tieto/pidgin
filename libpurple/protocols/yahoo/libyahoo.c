@@ -27,6 +27,7 @@
 #include <core.h>
 #include <plugins.h>
 
+#include "libyahoo.h"
 #include "libymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
@@ -101,7 +102,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	if (g_ascii_strcasecmp(proto, "ymsgr"))
 		return FALSE;
 
-	acct = find_acct(my_protocol->id, acct_id);
+	acct = find_acct(purple_protocol_get_id(my_protocol), acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -186,91 +187,108 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_protocol_ops =
 	NULL
 };
 
-static PurpleProtocol protocol =
+static void
+yahoo_protocol_base_init(YahooProtocolClass *klass)
 {
-	"prpl-yahoo",
-	"Yahoo",
-	sizeof(PurpleProtocol),       /* struct_size */
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
-	NULL, /* user_splits */
-	NULL, /* protocol_options */
-	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},
-	yahoo_get_actions,
-	yahoo_list_icon,
-	yahoo_list_emblem,
-	yahoo_status_text,
-	yahoo_tooltip_text,
-	yahoo_status_types,
-	yahoo_blist_node_menu,
-	yahoo_c_info,
-	yahoo_c_info_defaults,
-	yahoo_login,
-	yahoo_close,
-	yahoo_send_im,
-	NULL, /* set info */
-	yahoo_send_typing,
-	yahoo_get_info,
-	yahoo_set_status,
-	yahoo_set_idle,
-	NULL, /* change_passwd*/
-	yahoo_add_buddy,
-	NULL, /* add_buddies */
-	yahoo_remove_buddy,
-	NULL, /* remove_buddies */
-	NULL, /* add_permit */
-	yahoo_add_deny,
-	NULL, /* rem_permit */
-	yahoo_rem_deny,
-	yahoo_set_permit_deny,
-	yahoo_c_join,
-	NULL, /* reject chat invite */
-	yahoo_get_chat_name,
-	yahoo_c_invite,
-	yahoo_c_leave,
-	NULL, /* chat whisper */
-	yahoo_c_send,
-	yahoo_keepalive,
-	NULL, /* register_user */
-	NULL, /* get_cb_info */
-	yahoo_update_alias, /* alias_buddy */
-	yahoo_change_buddys_group,
-	yahoo_rename_group,
-	NULL, /* buddy_free */
-	NULL, /* convo_closed */
-	purple_normalize_nocase, /* normalize */
-	yahoo_set_buddy_icon,
-	NULL, /* void (*remove_group)(PurpleConnection *gc, const char *group);*/
-	NULL, /* char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who); */
-	NULL, /* set_chat_topic */
-	NULL, /* find_blist_chat */
-	yahoo_roomlist_get_list,
-	yahoo_roomlist_cancel,
-	yahoo_roomlist_expand_category,
-	yahoo_can_receive_file, /* can_receive_file */
-	yahoo_send_file,
-	yahoo_new_xfer,
-	yahoo_offline_message, /* offline_message */
-	&yahoo_whiteboard_protocol_ops,
-	NULL, /* send_raw */
-	NULL, /* roomlist_room_serialize */
-	NULL, /* unregister_user */
-	yahoo_send_attention,
-	yahoo_attention_types,
-	yahoo_get_account_text_table,    /* get_account_text_table */
-	NULL, /* initiate_media */
-	NULL,  /* get_media_caps */
-	NULL,  /* get_moods */
-	NULL,  /* set_public_alias */
-	NULL,  /* get_public_alias */
-	yahoo_get_max_message_size
-};
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
+
+	proto_class->id        = YAHOO_ID;
+	proto_class->name      = YAHOO_NAME;
+	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
+	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
+	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png,gif,jpeg",
+	                                                96, 96, 96, 96, 0,
+	                                                PURPLE_ICON_SCALE_SEND};
+
+	proto_class->whiteboard_protocol_ops = &yahoo_whiteboard_protocol_ops;
+
+	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+#if 0
+	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+#endif
+
+	yahoo_init_colorht();
+}
+
+static void
+yahoo_protocol_base_finalize(YahooProtocolClass *klass)
+{
+	yahoo_dest_colorht();
+}
+
+static void
+yahoo_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->get_actions              = yahoo_get_actions;
+	iface->list_icon                = yahoo_list_icon;
+	iface->list_emblem              = yahoo_list_emblem;
+	iface->status_text              = yahoo_status_text;
+	iface->tooltip_text             = yahoo_tooltip_text;
+	iface->status_types             = yahoo_status_types;
+	iface->blist_node_menu          = yahoo_blist_node_menu;
+	iface->chat_info                = yahoo_c_info;
+	iface->chat_info_defaults       = yahoo_c_info_defaults;
+	iface->login                    = yahoo_login;
+	iface->close                    = yahoo_close;
+	iface->send_im                  = yahoo_send_im;
+	iface->send_typing              = yahoo_send_typing;
+	iface->get_info                 = yahoo_get_info;
+	iface->set_status               = yahoo_set_status;
+	iface->set_idle                 = yahoo_set_idle;
+	iface->add_buddy                = yahoo_add_buddy;
+	iface->remove_buddy             = yahoo_remove_buddy;
+	iface->add_deny                 = yahoo_add_deny;
+	iface->rem_deny                 = yahoo_rem_deny;
+	iface->set_permit_deny          = yahoo_set_permit_deny;
+	iface->join_chat                = yahoo_c_join;
+	iface->get_chat_name            = yahoo_get_chat_name;
+	iface->chat_invite              = yahoo_c_invite;
+	iface->chat_leave               = yahoo_c_leave;
+	iface->chat_send                = yahoo_c_send;
+	iface->keepalive                = yahoo_keepalive;
+	iface->alias_buddy              = yahoo_update_alias;
+	iface->group_buddy              = yahoo_change_buddys_group;
+	iface->rename_group             = yahoo_rename_group;
+	iface->normalize                = purple_normalize_nocase;
+	iface->set_buddy_icon           = yahoo_set_buddy_icon;
+	iface->roomlist_get_list        = yahoo_roomlist_get_list;
+	iface->roomlist_cancel          = yahoo_roomlist_cancel;
+	iface->roomlist_expand_category = yahoo_roomlist_expand_category;
+	iface->can_receive_file         = yahoo_can_receive_file;
+	iface->send_file                = yahoo_send_file;
+	iface->new_xfer                 = yahoo_new_xfer;
+	iface->offline_message          = yahoo_offline_message;
+	iface->send_attention           = yahoo_send_attention;
+	iface->get_attention_types      = yahoo_attention_types;
+	iface->get_account_text_table   = yahoo_get_account_text_table;
+	iface->get_max_message_size     = yahoo_get_max_message_size;
+}
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-yahoo",
-		"name",         "Yahoo",
+		"id",           YAHOO_ID,
+		"name",         YAHOO_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Yahoo! Protocol Plugin"),
@@ -286,39 +304,16 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
+	my_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL);
+	if (!my_protocol) {
+		g_set_error(error, YAHOO_DOMAIN, 0, _("Failed to add yahoo protocol"));
+		return FALSE;
+	}
 
-	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-#if 0
-	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-#endif
-
-	my_protocol = &protocol;
 	yahoo_register_commands();
-	yahoo_init_colorht();
 
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(yahoo_uri_handler), NULL);
-
-	purple_protocols_add(my_protocol);
 
 	return TRUE;
 }
@@ -326,10 +321,13 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	yahoo_dest_colorht();
-	purple_protocols_remove(my_protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, YAHOO_DOMAIN, 0, _("Failed to remove yahoo protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(yahoo, plugin_query, plugin_load, plugin_unload);
+PURPLE_PROTOCOL_DEFINE (YahooProtocol, yahoo_protocol);
+PURPLE_PLUGIN_INIT     (yahoo, plugin_query, plugin_load, plugin_unload);

@@ -223,9 +223,13 @@ char *yahoo_convert_to_numeric(const char *str)
 
 static GHashTable *esc_codes_ht = NULL;
 static GHashTable *tags_ht = NULL;
+static gint ref_count = 0;
 
 void yahoo_init_colorht()
 {
+	if (ref_count++)
+		return;
+
 	if (esc_codes_ht != NULL)
 		/* Hash table has already been initialized */
 		return;
@@ -347,6 +351,9 @@ void yahoo_init_colorht()
 
 void yahoo_dest_colorht()
 {
+	if (--ref_count)
+		return;
+
 	if (esc_codes_ht == NULL)
 		/* Hash table has already been destroyed */
 		return;

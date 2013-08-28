@@ -26,12 +26,15 @@
 #include <account.h>
 #include <plugins.h>
 
+#include "libyahoojp.h"
 #include "libymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
+
+static PurpleProtocol *my_protocol = NULL;
 
 static void yahoojp_register_commands(void)
 {
@@ -64,111 +67,57 @@ yahoojp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static PurpleWhiteboardPrplOps yahoo_whiteboard_protocol_ops =
+static void
+yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 {
-	yahoo_doodle_start,
-	yahoo_doodle_end,
-	yahoo_doodle_get_dimensions,
-	NULL,
-	yahoo_doodle_get_brush,
-	yahoo_doodle_set_brush,
-	yahoo_doodle_send_draw_list,
-	yahoo_doodle_clear,
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
+	PurpleAccountOption *option;
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	proto_class->id        = YAHOOJP_ID;
+	proto_class->name      = YAHOOJP_NAME;
 
-static PurpleProtocol protocol =
+	/* delete yahoo's protocol options */
+	while (proto_class->protocol_options) {
+		PurpleAccountOption *option = proto_class->protocol_options->data;
+		purple_account_option_destroy(option);
+		proto_class->protocol_options =
+				g_list_delete_link(proto_class->protocol_options,
+				proto_class->protocol_options);
+	}
+
+	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOOJP_XFER_HOST);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOOJP_ROOMLIST_LOCALE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+}
+
+static void
+yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	"prpl-yahoojp",
-	"Yahoo JAPAN",
-	sizeof(PurpleProtocol),       /* struct_size */
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE,
-	NULL, /* user_splits */
-	NULL, /* protocol_options */
-	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},
-	yahoo_get_actions,
-	yahoo_list_icon,
-	yahoo_list_emblem,
-	yahoo_status_text,
-	yahoo_tooltip_text,
-	yahoo_status_types,
-	yahoo_blist_node_menu,
-	yahoo_c_info,
-	yahoo_c_info_defaults,
-	yahoo_login,
-	yahoo_close,
-	yahoo_send_im,
-	NULL, /* set info */
-	yahoo_send_typing,
-	yahoo_get_info,
-	yahoo_set_status,
-	yahoo_set_idle,
-	NULL, /* change_passwd*/
-	yahoo_add_buddy,
-	NULL, /* add_buddies */
-	yahoo_remove_buddy,
-	NULL, /* remove_buddies */
-	NULL, /* add_permit */
-	yahoo_add_deny,
-	NULL, /* rem_permit */
-	yahoo_rem_deny,
-	yahoo_set_permit_deny,
-	yahoo_c_join,
-	NULL, /* reject chat invite */
-	yahoo_get_chat_name,
-	yahoo_c_invite,
-	yahoo_c_leave,
-	NULL, /* chat whisper */
-	yahoo_c_send,
-	yahoo_keepalive,
-	NULL, /* register_user */
-	NULL, /* get_cb_info */
-	yahoo_update_alias, /* alias_buddy */
-	yahoo_change_buddys_group,
-	yahoo_rename_group,
-	NULL, /* buddy_free */
-	NULL, /* convo_closed */
-	purple_normalize_nocase, /* normalize */
-	yahoo_set_buddy_icon,
-	NULL, /* void (*remove_group)(PurpleConnection *gc, const char *group);*/
-	NULL, /* char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who); */
-	NULL, /* set_chat_topic */
-	NULL, /* find_blist_chat */
-	yahoo_roomlist_get_list,
-	yahoo_roomlist_cancel,
-	yahoo_roomlist_expand_category,
-	NULL, /* can_receive_file */
-	yahoo_send_file,
-	yahoo_new_xfer,
-	yahoo_offline_message, /* offline_message */
-	&yahoo_whiteboard_protocol_ops,
-	NULL, /* send_raw */
-	NULL, /* roomlist_room_serialize */
-	NULL, /* unregister_user */
+	iface->get_account_text_table   = yahoojp_get_account_text_table;
 
-	yahoo_send_attention,
-	yahoo_attention_types,
+	/* disable yahoo functions not available for yahoojp */
+	iface->can_receive_file         = NULL;
+}
 
-	yahoojp_get_account_text_table,    /* get_account_text_table */
-	NULL, /* initiate_media */
-	NULL, /* get_media_caps */
-	NULL, /* get_moods */
-	NULL, /* set_public_alias */
-	NULL, /* get_public_alias */
-	yahoo_get_max_message_size
-};
+static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "prpl-yahoojp",
-		"name",         "Yahoo JAPAN",
+		"id",           YAHOOJP_ID,
+		"name",         YAHOOJP_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Yahoo! JAPAN Protocol Plugin"),
@@ -184,46 +133,30 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PurpleAccountOption *option;
+	my_protocol = purple_protocols_add(YAHOOJP_TYPE_PROTOCOL);
 
-	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOOJP_XFER_HOST);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOOJP_ROOMLIST_LOCALE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-#if 0
-	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	protocol.protocol_options = g_list_append(protocol.protocol_options, option);
-#endif
+	if (!my_protocol) {
+		g_set_error(error, YAHOOJP_DOMAIN, 0, _("Failed to add yahoojp protocol"));
+		return FALSE;
+	}
 
 	yahoojp_register_commands();
-	yahoo_init_colorht();
 
-	purple_protocols_add(&protocol);
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	yahoo_dest_colorht();
-	purple_protocols_remove(&protocol);
+	if (!purple_protocols_remove(my_protocol)) {
+		g_set_error(error, YAHOOJP_DOMAIN, 0, _("Failed to remove yahoojp protocol"));
+		return FALSE;
+	}
 
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(yahoojp, plugin_query, plugin_load, plugin_unload);
+PURPLE_PROTOCOL_DEFINE_EXTENDED(YahooJPProtocol, yahoojp_protocol,
+                                YAHOO_TYPE_PROTOCOL, 0);
 
+PURPLE_PLUGIN_INIT(yahoojp, plugin_query, plugin_load, plugin_unload);
