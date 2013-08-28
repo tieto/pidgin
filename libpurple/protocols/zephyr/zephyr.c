@@ -2911,23 +2911,29 @@ zephyr_protocol_base_init(ZephyrProtocolClass *klass)
 static void
 zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->get_actions     = zephyr_get_actions;
-	iface->list_icon       = zephyr_list_icon;
-	iface->status_types    = zephyr_status_types;
-	iface->chat_info       = zephyr_chat_info;
-	iface->login           = zephyr_login;
-	iface->close           = zephyr_close;
-	iface->send_im         = zephyr_send_im;
-	iface->send_typing     = zephyr_send_typing;
-	iface->get_info        = zephyr_zloc;
-	iface->set_status      = zephyr_set_status;
-	iface->join_chat       = zephyr_join_chat;
-	iface->get_chat_name   = zephyr_get_chat_name;
-	iface->chat_leave      = zephyr_chat_leave;
-	iface->chat_send       = zephyr_chat_send;
-	iface->normalize       = zephyr_normalize;
-	iface->set_chat_topic  = zephyr_chat_set_topic;
-	iface->find_blist_chat = zephyr_find_blist_chat;
+	iface->get_actions      = zephyr_get_actions;
+	iface->list_icon        = zephyr_list_icon;
+	iface->status_types     = zephyr_status_types;
+	iface->chat_info        = zephyr_chat_info;
+	iface->login            = zephyr_login;
+	iface->close            = zephyr_close;
+	iface->send_im          = zephyr_send_im;
+	iface->send_typing      = zephyr_send_typing;
+	iface->get_info         = zephyr_zloc;
+	iface->set_status       = zephyr_set_status;
+	iface->join_chat        = zephyr_join_chat;
+	iface->get_chat_name    = zephyr_get_chat_name;
+	iface->chat_leave       = zephyr_chat_leave;
+	iface->chat_send        = zephyr_chat_send;
+	iface->normalize        = zephyr_normalize;
+	iface->set_chat_topic   = zephyr_chat_set_topic;
+	iface->find_blist_chat  = zephyr_find_blist_chat;
+
+	iface->set_info         = NULL; /* XXX Location? */
+	iface->get_cb_info      = NULL; /* XXX */
+	iface->set_buddy_icon   = NULL; /* XXX */
+	iface->get_cb_real_name = NULL; /* XXX */
+
 }
 
 
