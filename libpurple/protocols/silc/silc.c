@@ -26,7 +26,6 @@
 #include "core.h"
 
 extern SilcClientOperations ops;
-static PurplePlugin *silc_plugin = NULL;
 
 /* Error log message callback */
 
@@ -2184,8 +2183,6 @@ init_plugin(PurplePlugin *plugin)
 	int i;
 	PurpleKeyValuePair *kvp;
 	GList *list = NULL;
-
-	silc_plugin = plugin;
 
 	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
