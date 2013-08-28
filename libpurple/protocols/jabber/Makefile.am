@@ -105,7 +105,14 @@ if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES   = libjabber.la
-libjabber_la_SOURCES = $(JABBERSOURCES) libfacebook.c libgtalk.c libxmpp.c
+libjabber_la_SOURCES = $(JABBERSOURCES) \
+	libfacebook.c \
+	libfacebook.h \
+	libgtalk.c \
+	libgtalk.h \
+	libxmpp.c \
+	libxmpp.h
+
 libjabber_la_CFLAGS  = $(AM_CFLAGS)
 
 else
@@ -117,13 +124,13 @@ libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
 	$(FARSIGHT_LIBS) \
 	$(GSTREAMER_LIBS)
 
-libfacebook_la_SOURCES = libfacebook.c
+libfacebook_la_SOURCES = libfacebook.c libfacebook.h
 libfacebook_la_LIBADD = libjabber.la
 
-libgtalk_la_SOURCES = libgtalk.c
+libgtalk_la_SOURCES = libgtalk.c libgtalk.h
 libgtalk_la_LIBADD = libjabber.la
 
-libxmpp_la_SOURCES = libxmpp.c
+libxmpp_la_SOURCES = libxmpp.c libxmpp.h
 libxmpp_la_LIBADD = libjabber.la
 
 endif

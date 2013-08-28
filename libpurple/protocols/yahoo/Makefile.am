@@ -34,7 +34,12 @@ if STATIC_YAHOO
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES  = libymsg.la
-libymsg_la_SOURCES = $(YAHOOSOURCES) libyahoo.c libyahoojp.c
+libymsg_la_SOURCES = $(YAHOOSOURCES) \
+	libyahoo.c \
+	libyahoo.h \
+	libyahoojp.c \
+	libyahoojp.h
+
 libymsg_la_CFLAGS  = $(AM_CFLAGS)
 
 else
@@ -45,10 +50,10 @@ pkg_LTLIBRARIES     = libymsg.la libyahoo.la libyahoojp.la
 libymsg_la_SOURCES = $(YAHOOSOURCES)
 libymsg_la_LIBADD  = $(GLIB_LIBS)
 
-libyahoo_la_SOURCES = libyahoo.c
+libyahoo_la_SOURCES = libyahoo.c libyahoo.h
 libyahoo_la_LIBADD = libymsg.la
 
-libyahoojp_la_SOURCES = libyahoojp.c
+libyahoojp_la_SOURCES = libyahoojp.c libyahoojp.h
 libyahoojp_la_LIBADD = libymsg.la
 
 endif
