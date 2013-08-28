@@ -61,7 +61,7 @@
 #include "markup.h"
 #include "user.h"
 
-#define MSIM_ID     "prpl-msim"
+#define MSIM_ID     "prpl-myspace"
 #define MSIM_NAME   "MySpaceIM"
 #define MSIM_DOMAIN (g_quark_from_static_string(MSIM_ID))
 
