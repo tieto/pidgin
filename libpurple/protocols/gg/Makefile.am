@@ -92,6 +92,8 @@ GGSOURCES = \
 	servconn.h \
 	status.c \
 	status.h \
+	tcpsocket.c \
+	tcpsocket.h \
 	utils.c \
 	utils.h \
 	validator.c \

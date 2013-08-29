@@ -78,6 +78,7 @@ C_SRC =	\
 	roster.c \
 	servconn.c \
 	status.c \
+	tcpsocket.c \
 	utils.c \
 	validator.c \
 	xml.c

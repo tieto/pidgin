@@ -51,6 +51,7 @@
 #include "multilogon.h"
 #include "status.h"
 #include "servconn.h"
+#include "tcpsocket.h"
 #include "pubdir-prpl.h"
 #include "message-prpl.h"
 #include "html.h"
@@ -396,7 +397,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 	gg_free_event(ev);
 }
 
-static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
+void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
 	GGPInfo *info;
@@ -648,6 +649,7 @@ static void ggp_login(PurpleAccount *account)
 
 	purple_connection_set_protocol_data(gc, info);
 
+	ggp_tcpsocket_setup(gc, glp);
 	ggp_image_setup(gc);
 	ggp_avatar_setup(gc);
 	ggp_roster_setup(gc);
@@ -732,8 +734,11 @@ static void ggp_login(PurpleAccount *account)
 			_("Connection failed"));
 		return;
 	}
-	info->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+
+	if (info->session->fd > 0) {
+		info->inpa = purple_input_add(info->session->fd,
+			PURPLE_INPUT_READ, ggp_async_login_handler, gc);
+	}
 }
 
 static void ggp_close(PurpleConnection *gc)

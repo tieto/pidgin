@@ -70,4 +70,6 @@ const gchar * ggp_get_imtoken(PurpleConnection *gc);
 
 uin_t ggp_own_uin(PurpleConnection *gc);
 
+void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond);
+
 #endif /* _PURPLE_GG_H */
