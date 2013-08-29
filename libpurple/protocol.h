@@ -524,23 +524,46 @@ struct _PurpleProtocolInterface
 };
 
 /**
- * Defines a protocol type using the CamelCase type name of the protocol and
- * the function prefix for the *_get_type(), *_base_init(), *_base_finalize()
- * and *_interface_init() functions of the protocol.
+ * PURPLE_PROTOCOL_DEFINE:
+ *
+ * Defines a protocol type in a plugin (given as a PurplePlugin *) by using the
+ * CamelCase type name of the protocol and the function prefix for the
+ * *_get_type(), *_base_init(), *_base_finalize() and *_interface_init()
+ * functions of the protocol.
+ *
+ * The type may be registered statically or dynamically.
  */
-#define PURPLE_PROTOCOL_DEFINE(TypeName, func_prefix) \
-	PURPLE_PROTOCOL_DEFINE_EXTENDED(TypeName, func_prefix, \
+#define PURPLE_PROTOCOL_DEFINE(plugin, TypeName, func_prefix) \
+	PURPLE_PROTOCOL_DEFINE_EXTENDED(plugin, TypeName, func_prefix, \
 	                                PURPLE_TYPE_PROTOCOL, 0)
 
-/** TODO register type dynamically (or statically if configured so)
- * Defines a protocol type using the CamelCase type name of the protocol, the
- * function prefix for the *_get_type(), *_base_init(), *_base_finalize() and
- * *_interface_init() functions, the base type, and the type flags.
+/**
+ * PURPLE_PROTOCOL_DEFINE_EXTENDED:
+ *
+ * Defines a protocol type similar to PURPLE_PROTOCOL_DEFINE, by additionally
+ * specifying the base type and the type flags.
+ *
+ * The type may be registered statically or dynamically.
  */
-#define PURPLE_PROTOCOL_DEFINE_EXTENDED(TypeName, func_prefix, BaseType, TypeFlags) \
-	GType func_prefix##_get_type(void) { \
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#define PURPLE_PROTOCOL_DEFINE_EXTENDED(plugin, TypeName, func_prefix, BaseType, TypeFlags) \
+	PURPLE_PROTOCOL_DEFINE_STATIC(TypeName, func_prefix, BaseType, TypeFlags)
+#else
+#define PURPLE_PROTOCOL_DEFINE_EXTENDED(plugin, TypeName, func_prefix, BaseType, TypeFlags) \
+	PURPLE_PROTOCOL_DEFINE_DYNAMIC(plugin, TypeName, func_prefix, BaseType, TypeFlags)
+#endif
+
+/**
+ * PURPLE_PROTOCOL_DEFINE_STATIC:
+ *
+ * Defines a protocol type statically using the type name, function prefix,
+ * base type and type flags.
+ */
+#define PURPLE_PROTOCOL_DEFINE_STATIC(TypeName, func_prefix, BaseType, TypeFlags) \
+	GType func_prefix##_get_type(void) \
+	{ \
 		static GType type = 0; \
-		if (type == 0) { \
+		if (G_UNLIKELY(type == 0)) { \
 			static const GTypeInfo info = { \
 				.instance_size = sizeof(TypeName), \
 				.class_size = sizeof(TypeName##Class), \
@@ -551,8 +574,43 @@ struct _PurpleProtocolInterface
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
 			}; \
 			type = g_type_register_static(BaseType, #TypeName, \
-				                          &info, TypeFlags); \
-			g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL, &iface_info); \
+					                      &info, TypeFlags); \
+			if (type != G_TYPE_INVALID) \
+				g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL, &iface_info); \
+		} \
+		return type; \
+	}
+
+/**
+ * PURPLE_PROTOCOL_DEFINE_DYNAMIC:
+ *
+ * Defines a protocol type dynamically using the plugin, type name,
+ * function prefix, base type and type flags.
+ */
+#define PURPLE_PROTOCOL_DEFINE_DYNAMIC(plugin, TypeName, func_prefix, BaseType, TypeFlags) \
+	GType func_prefix##_get_type(void) \
+	{ \
+		static GType type = 0; \
+		if (G_UNLIKELY(type == 0)) { \
+			static const GTypeInfo info = { \
+				.instance_size = sizeof(TypeName), \
+				.class_size = sizeof(TypeName##Class), \
+				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
+				.base_finalize = (GBaseFinalizeFunc)func_prefix##_base_finalize, \
+			}; \
+			static const GInterfaceInfo iface_info = { \
+				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
+			}; \
+			if (plugin == NULL) { \
+				purple_debug_error(#TypeName, "Failed to use the type " #TypeName \
+					               " as it's plugin has not been loaded"); \
+				return G_TYPE_INVALID; \
+			} \
+			type = purple_plugin_register_type(plugin, BaseType, #TypeName, \
+				                               &info, TypeFlags); \
+			if (type != G_TYPE_INVALID) \
+				purple_plugin_add_interface(plugin, type, PURPLE_TYPE_PROTOCOL, \
+					                        &iface_info); \
 		} \
 		return type; \
 	}
