@@ -90,7 +90,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	if (!protocol->list_icon)
 		return NULL;
 
-	protocol_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
+	protocol_name = g_ascii_strup(purple_protocol_iface_list_icon(protocol, account, NULL), -1);
 
 	temp = g_strdup_printf("%s.%s", protocol_name, purple_account_get_username(account));
 	path = g_build_filename(logdir, temp, sn, NULL);
@@ -1234,7 +1234,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	if (!protocol->list_icon)
 		return NULL;
 
-	protocol_name = g_ascii_strup(protocol->list_icon(account, NULL), -1);
+	protocol_name = g_ascii_strup(purple_protocol_iface_list_icon(protocol, account, NULL), -1);
 
 	buddy_name = purple_normalize(account, sn);
 

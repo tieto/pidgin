@@ -121,7 +121,7 @@ send_keepalive(gpointer data)
 		return TRUE;
 
 	if (priv->protocol->keepalive)
-		priv->protocol->keepalive(gc);
+		priv->purple_protocol_iface_keepalive(protocol, gc);
 
 	return TRUE;
 }
@@ -753,7 +753,7 @@ purple_connection_dispose(GObject *object)
 	purple_proxy_connect_cancel_with_handle(gc);
 
 	if (priv->protocol->close)
-		priv->protocol->close(gc);
+		priv->purple_protocol_iface_close(protocol, gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_blist_find_buddies(account, NULL);
@@ -937,14 +937,14 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		/* set this so we don't auto-reconnect after registering */
 		PURPLE_CONNECTION_GET_PRIVATE(gc)->wants_to_die = TRUE;
 
-		protocol->register_user(account);
+		purple_protocol_iface_register_user(protocol, account);
 	}
 	else
 	{
 		purple_debug_info("connection", "Connecting. gc = %p\n", gc);
 
 		purple_signal_emit(purple_accounts_get_handle(), "account-connecting", account);
-		protocol->login(account);
+		purple_protocol_iface_login(protocol, account);
 	}
 }
 
@@ -971,7 +971,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 	}
 
 	if (!purple_account_is_disconnected(account)) {
-		protocol->unregister_user(account, cb, user_data);
+		purple_protocol_iface_unregister_user(protocol, account, cb, user_data);
 		return;
 	}
 
@@ -992,7 +992,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 
-	protocol->unregister_user(account, cb, user_data);
+	purple_protocol_iface_unregister_user(protocol, account, cb, user_data);
 }
 
 /**************************************************************************

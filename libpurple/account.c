@@ -1024,7 +1024,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 	protocol = purple_connection_get_protocol_info(gc);
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, set_public_alias))
-		protocol->set_public_alias(gc, alias, success_cb, failure_cb);
+		purple_protocol_iface_set_public_alias(protocol, gc, alias, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
@@ -1062,7 +1062,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 	protocol = purple_connection_get_protocol_info(gc);
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, get_public_alias))
-		protocol->get_public_alias(gc, success_cb, failure_cb);
+		purple_protocol_iface_get_public_alias(protocol, gc, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
@@ -2221,7 +2221,7 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const char 
 
 	if (protocol != NULL) {
 		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, add_buddy))
-			protocol->add_buddy(gc, buddy, purple_buddy_get_group(buddy), message);
+			purple_protocol_iface_add_buddy(protocol, gc, buddy, purple_buddy_get_group(buddy), message);
 	}
 }
 
@@ -2244,12 +2244,12 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *m
 		}
 
 		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, add_buddies))
-			protocol->add_buddies(gc, buddies, groups, message);
+			purple_protocol_iface_add_buddies(protocol, gc, buddies, groups, message);
 		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
-				protocol->add_buddy(gc, curb->data, curg->data, message);
+				purple_protocol_iface_add_buddy(protocol, gc, curb->data, curg->data, message);
 				curb = curb->next;
 				curg = curg->next;
 			}
@@ -2270,7 +2270,7 @@ purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 		protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol && protocol->remove_buddy)
-		protocol->remove_buddy(gc, buddy, group);
+		purple_protocol_iface_remove_buddy(protocol, gc, buddy, group);
 }
 
 void
@@ -2284,7 +2284,7 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 
 	if (protocol) {
 		if (protocol->remove_buddies)
-			protocol->remove_buddies(gc, buddies, groups);
+			purple_protocol_iface_remove_buddies(protocol, gc, buddies, groups);
 		else {
 			GList *curb = buddies;
 			GList *curg = groups;
@@ -2307,7 +2307,7 @@ purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 		protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol && protocol->remove_group)
-		protocol->remove_group(gc, group);
+		purple_protocol_iface_remove_group(protocol, gc, group);
 }
 
 void
@@ -2323,7 +2323,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 		protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol && protocol->change_passwd)
-		protocol->change_passwd(gc, orig_pw, new_pw);
+		purple_protocol_iface_change_passwd(protocol, gc, orig_pw, new_pw);
 }
 
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy)
@@ -2342,7 +2342,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 
 	if (!protocol || !protocol->offline_message)
 		return FALSE;
-	return protocol->offline_message(buddy);
+	return purple_protocol_iface_offline_message(protocol, buddy);
 }
 
 void
@@ -2891,7 +2891,7 @@ purple_account_constructed(GObject *object)
 
 	if (protocol->status_types != NULL)
 		purple_account_set_status_types(account,
-				protocol->status_types(account));
+				purple_protocol_iface_status_types(protocol, account));
 
 	priv->presence = PURPLE_PRESENCE(purple_account_presence_new(account));
 

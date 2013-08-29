@@ -636,7 +636,7 @@ purple_buddy_dispose(GObject *object)
 	 */
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 	if (protocol && protocol->buddy_free)
-		protocol->buddy_free(buddy);
+		purple_protocol_iface_buddy_free(protocol, buddy);
 
 	/* Delete the node */
 	purple_buddy_icon_unref(priv->icon);
@@ -1124,7 +1124,7 @@ const char *purple_chat_get_name_only(PurpleChat *chat)
 
 	if (protocol->chat_info) {
 		PurpleProtocolChatEntry *pce;
-		GList *parts = protocol->chat_info(purple_account_get_connection(priv->account));
+		GList *parts = purple_protocol_iface_chat_info(protocol, purple_account_get_connection(priv->account));
 		pce = parts->data;
 		ret = g_hash_table_lookup(priv->components, pce->identifier);
 		g_list_foreach(parts, (GFunc)g_free, NULL);
@@ -1535,7 +1535,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 			}
 
 			if(protocol->rename_group) {
-				protocol->rename_group(gc, old_name, source, buddies);
+				purple_protocol_iface_rename_group(protocol, gc, old_name, source, buddies);
 			} else {
 				GList *cur, *groups = NULL;
 

@@ -382,7 +382,7 @@ do_protocol_change_account_status(PurpleAccount *account,
 
 	if (!purple_account_is_disconnected(account) && protocol->set_status != NULL)
 	{
-		protocol->set_status(account, new_status);
+		purple_protocol_iface_set_status(protocol, account, new_status);
 	}
 }
 
@@ -561,7 +561,7 @@ purple_protocol_initiate_media(PurpleAccount *account,
 
 	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, initiate_media)) {
 		/* should check that the protocol supports this media type here? */
-		return protocol->initiate_media(account, who, type);
+		return purple_protocol_iface_initiate_media(protocol, account, who, type);
 	} else
 #endif
 	return FALSE;
@@ -581,7 +581,7 @@ purple_protocol_get_media_caps(PurpleAccount *account, const char *who)
 
 	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol,
 			get_media_caps)) {
-		return protocol->get_media_caps(account, who);
+		return purple_protocol_iface_get_media_caps(protocol, account, who);
 	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;

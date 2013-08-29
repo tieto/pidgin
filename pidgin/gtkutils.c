@@ -559,7 +559,7 @@ pidgin_create_protocol_icon_from_protocol(PurpleProtocol *protocol, PidginPrplIc
 	if (protocol->list_icon == NULL)
 		return NULL;
 
-	protoname = protocol->list_icon(account, NULL);
+	protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
 	if (protoname == NULL)
 		return NULL;
 
@@ -918,7 +918,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 
 	protocol = purple_connection_get_protocol_info(conn);
 	if (protocol != NULL && protocol->get_cb_real_name)
-		who = protocol->get_cb_real_name(conn, chat, name);
+		who = purple_protocol_iface_get_cb_real_name(protocol, conn, chat, name);
 	if (protocol == NULL || protocol->get_cb_info == NULL) {
 		pidgin_retrieve_user_info(conn, who ? who : name);
 		g_free(who);
@@ -926,7 +926,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 	}
 
 	show_retrieveing_info(conn, who ? who : name);
-	protocol->get_cb_info(conn, chat, name);
+	purple_protocol_iface_get_cb_info(protocol, conn, chat, name);
 	g_free(who);
 }
 
@@ -1042,7 +1042,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					protocol = purple_connection_get_protocol_info(gc);
 				}
 
-				protoname = protocol->list_icon(account, NULL);
+				protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
 
 				if (!strcmp(protoname, protocol_id))
 					break;
@@ -1081,7 +1081,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						protocol = purple_connection_get_protocol_info(gc);
 					}
 
-					protoname = protocol->list_icon(account, NULL);
+					protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
 
 					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
 						break;
@@ -1493,7 +1493,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				im = TRUE;
 
 			if (protocol && protocol->can_receive_file)
-				ft = protocol->can_receive_file(gc, who);
+				ft = purple_protocol_iface_can_receive_file(protocol, gc, who);
 			else if (protocol && protocol->send_file)
 				ft = TRUE;
 

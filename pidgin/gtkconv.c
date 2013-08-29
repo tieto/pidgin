@@ -1489,7 +1489,7 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 	protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol && protocol->get_cb_real_name)
-		real_who = protocol->get_cb_real_name(gc,
+		real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
 				purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), who);
 
 	if(!who && !real_who)
@@ -1543,7 +1543,7 @@ menu_chat_send_file_cb(GtkWidget *w, PidginConversation *gtkconv)
 	protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol && protocol->get_cb_real_name)
-		real_who = protocol->get_cb_real_name(gc,
+		real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
 				purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), who);
 
 	serv_send_file(gc, real_who ? real_who : who, NULL);
@@ -1676,9 +1676,9 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 			else {
 				gchar *real_who = NULL;
 				if (protocol->get_cb_real_name)
-					real_who = protocol->get_cb_real_name(gc,
+					real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
 						purple_chat_conversation_get_id(chat), who);
-				if (!(!protocol->can_receive_file || protocol->can_receive_file(gc, real_who ? real_who : who)))
+				if (!(!protocol->can_receive_file || purple_protocol_iface_can_receive_file(protocol, gc, real_who ? real_who : who)))
 					can_receive_file = FALSE;
 				g_free(real_who);
 			}
@@ -2458,7 +2458,7 @@ static GList *get_protocol_icon_list(PurpleAccount *account)
 	GList *l = NULL;
 	PurpleProtocol *protocol =
 			purple_find_protocol_info(purple_account_get_protocol_id(account));
-	const char *prplname = protocol->list_icon(account, NULL);
+	const char *prplname = purple_protocol_iface_list_icon(protocol, account, NULL);
 	l = g_hash_table_lookup(protocol_lists, prplname);
 	if (l)
 		return l;
@@ -3276,7 +3276,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 					purple_find_protocol_info(purple_account_get_protocol_id(account));
 			if (purple_account_get_connection(account) != NULL &&
 					PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, chat_info_defaults)) {
-				components = protocol->chat_info_defaults(purple_account_get_connection(account),
+				components = purple_protocol_iface_chat_info_defaults(protocol, purple_account_get_connection(account),
 						purple_conversation_get_name(conv));
 			} else {
 				components = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -3412,7 +3412,7 @@ regenerate_attention_items(PidginWindow *win)
 		protocol = purple_connection_get_protocol_info(pc);
 
 	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, get_attention_types)) {
-		list = protocol->get_attention_types(purple_connection_get_account(pc));
+		list = purple_protocol_iface_get_attention_types(protocol, purple_connection_get_account(pc));
 
 		/* Multiple attention types */
 		if (list && list->next) {
@@ -4485,7 +4485,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	else
 		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), "");
 
-	protocol->set_chat_topic(gc, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),
+	purple_protocol_iface_set_chat_topic(protocol, gc, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),
 			new_topic);
 
 	g_free(new_topic);
@@ -7266,7 +7266,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_action_set_sensitive(win->menu.remove, (protocol->remove_buddy != NULL));
 			gtk_action_set_sensitive(win->menu.send_file,
 									 (protocol->send_file != NULL && (!protocol->can_receive_file ||
-									  protocol->can_receive_file(gc, purple_conversation_get_name(conv)))));
+									  purple_protocol_iface_can_receive_file(protocol, gc, purple_conversation_get_name(conv)))));
 			gtk_action_set_sensitive(win->menu.get_attention, (protocol->send_attention != NULL));
 			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
@@ -8189,7 +8189,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 				PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
 				
 				if (protocol->chat_info_defaults != NULL)
-					comps = protocol->chat_info_defaults(gc, purple_conversation_get_name(conv));
+					comps = purple_protocol_iface_chat_info_defaults(protocol, gc, purple_conversation_get_name(conv));
 			} else {
 				comps = purple_chat_get_components(chat);
 			}

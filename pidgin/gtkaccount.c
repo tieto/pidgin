@@ -308,7 +308,7 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 		return FALSE;
 	}
 
-	table = dialog->protocol->get_account_text_table(NULL);
+	table = dialog->purple_protocol_iface_get_account_text_table(protocol, NULL);
 	label = g_hash_table_lookup(table, "login_label");
 
 	if(!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
@@ -332,7 +332,7 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 	const char *label = NULL;
 
 	if(PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->protocol, get_account_text_table)) {
-		table = dialog->protocol->get_account_text_table(NULL);
+		table = dialog->purple_protocol_iface_get_account_text_table(protocol, NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
 		if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
@@ -371,7 +371,7 @@ username_themechange_cb(GObject *widget, GdkEventFocus *event, AccountPrefsDialo
 #endif
 	gint xsize;
 
-	table = dialog->protocol->get_account_text_table(NULL);
+	table = dialog->purple_protocol_iface_get_account_text_table(protocol, NULL);
 	label = g_hash_table_lookup(table, "login_label");
 	text = gtk_entry_get_text(GTK_ENTRY(widget));
 
@@ -626,7 +626,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->protocol, get_account_text_table)) {
 		GHashTable *table;
 		const char *label;
-		table = dialog->protocol->get_account_text_table(NULL);
+		table = dialog->purple_protocol_iface_get_account_text_table(protocol, NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
 #if GTK_CHECK_VERSION(3,2,0)

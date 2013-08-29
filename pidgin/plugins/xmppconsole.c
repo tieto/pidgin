@@ -209,7 +209,7 @@ message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
 
 	if (protocol && protocol->send_raw != NULL)
-		protocol->send_raw(gc, text, strlen(text));
+		purple_protocol_iface_send_raw(protocol, gc, text, strlen(text));
 
 	g_free(text);
 	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), "");
