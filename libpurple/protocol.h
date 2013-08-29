@@ -506,8 +506,8 @@ struct _PurpleProtocolInterface
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
 
 	/**
-	 * Gets the maximum message size for the protocol. It may depend on
-	 * connection-specific variables (like protocol version).
+	 * Gets the maximum message size in bytes for the protocol. It may
+	 * depend on connection-specific variables (like protocol version).
 	 *
 	 * This value is intended for plaintext message, the exact value may be
 	 * lower because of:
