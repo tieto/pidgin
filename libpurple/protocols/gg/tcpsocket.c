@@ -37,8 +37,7 @@ ggp_tcpsocket_connect(void *_gc, const char *host, int port, int is_tls,
 	g_return_val_if_fail(host != NULL, NULL);
 	g_return_val_if_fail(is_async, NULL);
 
-	purple_debug_misc("gg",
-		"ggp_socket_manager_connect(%p, %s:%d, %s, %p)",
+	purple_debug_misc("gg", "ggp_tcpsocket_connect(%p, %s:%d, %s, %p)",
 		gc, host, port, is_tls ? "tls" : "tcp", priv);
 
 	ps = purple_socket_new(gc);
