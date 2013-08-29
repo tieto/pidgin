@@ -116,16 +116,17 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           YAHOOJP_ID,
-		"name",         YAHOOJP_NAME,
-		"version",      DISPLAY_VERSION,
-		"category",     N_("Protocol"),
-		"summary",      N_("Yahoo! JAPAN Protocol Plugin"),
-		"description",  N_("Yahoo! JAPAN Protocol Plugin"),
-		"website",      PURPLE_WEBSITE,
-		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"id",            YAHOOJP_ID,
+		"name",          YAHOOJP_NAME,
+		"version",       DISPLAY_VERSION,
+		"category",      N_("Protocol"),
+		"summary",       N_("Yahoo! JAPAN Protocol Plugin"),
+		"description",   N_("Yahoo! JAPAN Protocol Plugin"),
+		"website",       PURPLE_WEBSITE,
+		"abi-version",   PURPLE_ABI_VERSION,
+		"dependencies",  YAHOO_ID,
+		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
