@@ -2273,7 +2273,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 	int i;
 	gchar *tmp;
 
-	spec = &purple_protocol_get_icon_spec(protocol);
+	spec = purple_protocol_get_icon_spec(protocol);
 	g_return_val_if_fail(spec->format != NULL, NULL);
 
 	format = gdk_pixbuf_get_file_info(path, &orig_width, &orig_height);

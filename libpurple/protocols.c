@@ -648,9 +648,11 @@ purple_protocol_action_free(PurpleProtocolAction *action)
 /**************************************************************************
  * Protocols API
  **************************************************************************/
+/* TODO make this PurpleProtocolClass's base finalize */
 static void
 purple_protocol_destroy(PurpleProtocol *protocol)
 {
+	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_GET_CLASS(protocol);
 	GList *accounts, *l;
 
 	accounts = purple_accounts_get_all_active();
@@ -659,26 +661,28 @@ purple_protocol_destroy(PurpleProtocol *protocol)
 		if (purple_account_is_disconnected(account))
 			continue;
 
-		if (purple_strequal(purple_protocol_get_id(protocol), purple_account_get_protocol_id(account)))
+		if (purple_strequal(proto_class->id, purple_account_get_protocol_id(account)))
 			purple_account_disconnect(account);
 	}
 
 	g_list_free(accounts);
 
-	while (purple_protocol_get_user_splits(protocol)) {
-		PurpleAccountUserSplit *split = purple_protocol_get_user_splits(protocol)->data;
+	while (proto_class->user_splits) {
+		PurpleAccountUserSplit *split = proto_class->user_splits->data;
 		purple_account_user_split_destroy(split);
-		purple_protocol_get_user_splits(protocol) = g_list_delete_link(purple_protocol_get_user_splits(protocol),
-				purple_protocol_get_user_splits(protocol));
+		proto_class->user_splits = g_list_delete_link(proto_class->user_splits,
+				proto_class->user_splits);
 	}
 
-	while (purple_protocol_get_protocol_options(protocol)) {
-		PurpleAccountOption *option = purple_protocol_get_protocol_options(protocol)->data;
+	while (proto_class->protocol_options) {
+		PurpleAccountOption *option = proto_class->protocol_options->data;
 		purple_account_option_destroy(option);
-		purple_protocol_get_protocol_options(protocol) =
-				g_list_delete_link(purple_protocol_get_protocol_options(protocol),
-				purple_protocol_get_protocol_options(protocol));
+		proto_class->protocol_options =
+				g_list_delete_link(proto_class->protocol_options,
+				proto_class->protocol_options);
 	}
+
+	purple_buddy_icon_spec_destroy(proto_class->icon_spec);
 
 	purple_request_close_with_handle(protocol);
 	purple_notify_close_with_handle(protocol);

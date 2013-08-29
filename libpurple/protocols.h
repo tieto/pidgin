@@ -369,6 +369,31 @@ void purple_protocol_action_free(PurpleProtocolAction *action);
  */
 GType purple_buddy_icon_spec_get_type(void);
 
+/** TODO
+ * Creates a new #PurpleBuddyIconSpec instance.
+ *
+ * @param format        A comma-delimited list of image formats or @c NULL if
+ *                      icons are not supported
+ * @param min_width     Minimum width of an icon
+ * @param min_height    Minimum height of an icon
+ * @param max_width     Maximum width of an icon
+ * @param max_height    Maximum height of an icon
+ * @param max_filesize  Maximum file size in bytes
+ * @param scale_rules   How to stretch this icon
+ *
+ * @return  A new buddy icon spec.
+ */
+PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
+		int min_height, int max_width, int max_height, size_t max_filesize,
+		PurpleIconScaleRules scale_rules);
+
+/** TODO needed?
+ * Destroys a #PurpleBuddyIconSpec instance.
+ *
+ * @param icon_spec  The icon spec to destroy.
+ */
+void purple_buddy_icon_spec_destroy(PurpleBuddyIconSpec *icon_spec);
+
 /*@}*/
 
 /**************************************************************************/

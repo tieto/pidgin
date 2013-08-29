@@ -75,15 +75,15 @@ struct _PurpleProtocolClass
 	/*< private >*/
 	GObjectClass parent_class;
 
-	const char *id;                 /**< Protocol ID */
-	const char *name;               /**< Translated name of the protocol */
+	const char *id;                  /**< Protocol ID */
+	const char *name;                /**< Translated name of the protocol */
 
-	PurpleProtocolOptions options;  /**< Protocol options */
+	PurpleProtocolOptions options;   /**< Protocol options */
 
-	GList *user_splits;             /**< A GList of PurpleAccountUserSplit */
-	GList *protocol_options;        /**< A GList of PurpleAccountOption */
+	GList *user_splits;              /**< A GList of PurpleAccountUserSplit */
+	GList *protocol_options;         /**< A GList of PurpleAccountOption */
 
-	PurpleBuddyIconSpec icon_spec;  /**< The icon spec. */
+	PurpleBuddyIconSpec *icon_spec;  /**< The icon spec. */
 
 	PurpleWhiteboardPrplOps *whiteboard_protocol_ops;
 
@@ -619,7 +619,7 @@ GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
  *
  * @return The icon spec of the protocol.
  */
-PurpleBuddyIconSpec purple_protocol_get_icon_spec(const PurpleProtocol *protocol);
+PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protocol);
 
 /** TODO
  * Returns the whiteboard ops of a protocol.
