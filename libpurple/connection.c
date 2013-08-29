@@ -120,8 +120,7 @@ send_keepalive(gpointer data)
 	if ((time(NULL) - priv->last_received) < KEEPALIVE_INTERVAL)
 		return TRUE;
 
-	if (priv->protocol->keepalive)
-		priv->purple_protocol_iface_keepalive(protocol, gc);
+	purple_protocol_iface_keepalive(priv->protocol, gc);
 
 	return TRUE;
 }
@@ -133,7 +132,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 
 	g_return_if_fail(priv != NULL);
 
-	if (!priv->protocol->keepalive)
+	if (!PURPLE_PROTOCOL_GET_INTERFACE(priv->protocol)->keepalive)
 		return;
 
 	if (on && !priv->keepalive)
@@ -559,21 +558,11 @@ void purple_connection_update_last_received(PurpleConnection *gc)
 gsize
 purple_connection_get_max_message_size(PurpleConnection *gc)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_val_if_fail(gc != NULL, 0);
+	g_return_val_if_fail(priv != NULL, 0);
 
-	prpl = purple_connection_get_prpl(gc);
-	g_return_val_if_fail(prpl != NULL, 0);
-
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	g_return_val_if_fail(prpl_info != NULL, 0);
-
-	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
-		return 0;
-
-	return prpl_info->get_max_message_size(gc);
+	return purple_protocol_iface_get_max_message_size(priv->protocol, gc);
 }
 
 /**************************************************************************
@@ -752,8 +741,7 @@ purple_connection_dispose(GObject *object)
 	purple_http_conn_cancel_all(gc);
 	purple_proxy_connect_cancel_with_handle(gc);
 
-	if (priv->protocol->close)
-		priv->purple_protocol_iface_close(protocol, gc);
+	purple_protocol_iface_close(priv->protocol, gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_blist_find_buddies(account, NULL);
@@ -909,7 +897,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 
 	if (regist)
 	{
-		if (protocol->register_user == NULL)
+		if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->register_user == NULL)
 			return;
 	}
 	else

@@ -1636,7 +1636,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
 
-	if (protocol->find_blist_chat != NULL)
+	if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->find_blist_chat != NULL)
 		return purple_protocol_iface_find_blist_chat(protocol, account, name);
 
 	normname = g_strdup(purple_normalize(account, name));

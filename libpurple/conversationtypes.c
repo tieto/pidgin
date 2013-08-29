@@ -465,8 +465,7 @@ purple_im_conversation_dispose(GObject *object)
 		if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 			serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
 
-		if (gc && protocol->convo_closed != NULL)
-			purple_protocol_iface_convo_closed(protocol, gc, name);
+		purple_protocol_iface_convo_closed(protocol, gc, name);
 	}
 
 	purple_im_conversation_stop_typing_timeout(im);

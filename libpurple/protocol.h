@@ -51,6 +51,7 @@ typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 #include "ft.h"
 #include "imgstore.h"
 #include "media.h"
+#include "notify.h"
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"
