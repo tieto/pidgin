@@ -704,7 +704,11 @@ purple_find_protocol_info(const char *id)
 PurpleProtocol *
 purple_protocols_add(GType protocol_type)
 {
-	PurpleProtocol *protocol = g_object_new(protocol_type, NULL);
+	PurpleProtocol *protocol;
+
+	g_return_val_if_fail(type != G_TYPE_INVALID && type != G_TYPE_NONE, NULL);
+
+	protocol = g_object_new(protocol_type, NULL);
 	if (purple_find_protocol_info(purple_protocol_get_id(protocol))) {
 		g_object_unref(protocol);
 		return NULL;
