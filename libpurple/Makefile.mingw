@@ -109,6 +109,7 @@ C_SRC =	\
 			privacy.c \
 			proxy.c \
 			prpl.c \
+			purple-socket.c \
 			request.c \
 			roomlist.c \
 			savedstatuses.c \
