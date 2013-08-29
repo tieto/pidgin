@@ -640,9 +640,9 @@ bonjour_protocol_base_init(BonjourProtocolClass *klass)
 	proto_class->id        = BONJOUR_ID;
 	proto_class->name      = BONJOUR_NAME;
 	proto_class->options   = OPT_PROTO_NO_PASSWORD;
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png,gif,jpeg",
-	                                                0, 0, 96, 96, 65535,
-	                                                PURPLE_ICON_SCALE_DISPLAY};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
+	                                                 0, 0, 96, 96, 65535,
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
 	initialize_default_account_values();
 

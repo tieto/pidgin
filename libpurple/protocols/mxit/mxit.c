@@ -735,14 +735,13 @@ mxit_protocol_base_init( MXitProtocolClass *klass )
 	                         OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE |
 	                         OPT_PROTO_INVITE_MESSAGE |
 	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
-	proto_class->icon_spec = (PurpleBuddyIconSpec)
-	{
+	proto_class->icon_spec = purple_buddy_icon_spec_new(
 		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
 		800, 800,											/* max width & height */
 		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
-	};
+	);
 
 	/* Configuration options */
 

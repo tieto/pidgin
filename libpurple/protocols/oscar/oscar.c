@@ -5559,10 +5559,10 @@ oscar_protocol_base_init(OscarProtocolClass *klass)
 	                         OPT_PROTO_INVITE_MESSAGE |
 	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
 
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"gif,jpeg,bmp,ico",
-	                                                0, 0, 64, 64, 7168,
-	                                                PURPLE_ICON_SCALE_SEND |
-	                                                PURPLE_ICON_SCALE_DISPLAY};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("gif,jpeg,bmp,ico",
+	                                                 0, 0, 64, 64, 7168,
+	                                                 PURPLE_ICON_SCALE_SEND |
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);

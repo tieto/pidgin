@@ -2883,8 +2883,9 @@ msn_protocol_base_init(MSNProtocolClass *klass)
 	proto_class->id        = MSN_ID;
 	proto_class->name      = MSN_NAME;
 	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png,gif", 0, 0, 96, 96, 0,
-	                                                PURPLE_ICON_SCALE_SEND};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif",
+	                                                    0, 0, 96, 96, 0,
+	                                                    PURPLE_ICON_SCALE_SEND);
 
 	option = purple_account_option_string_new(_("Server"), "server",
 											MSN_SERVER);

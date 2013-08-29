@@ -197,9 +197,9 @@ yahoo_protocol_base_init(YahooProtocolClass *klass)
 	proto_class->name      = YAHOO_NAME;
 	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
 	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png,gif,jpeg",
-	                                                96, 96, 96, 96, 0,
-	                                                PURPLE_ICON_SCALE_SEND};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
+	                                                    96, 96, 96, 96, 0,
+	                                                    PURPLE_ICON_SCALE_SEND);
 
 	proto_class->whiteboard_protocol_ops = &yahoo_whiteboard_protocol_ops;
 

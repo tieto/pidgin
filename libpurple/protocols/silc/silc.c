@@ -2077,9 +2077,9 @@ silcpurple_protocol_base_init(SILCProtocolClass *klass)
 	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                         OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
 	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"jpeg,gif,png,bmp",
-	                                                0, 0, 96, 96, 0,
-	                                                PURPLE_ICON_SCALE_DISPLAY};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("jpeg,gif,png,bmp",
+	                                                 0, 0, 96, 96, 0,
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
 	proto_class->whiteboard_protocol_ops = &silcpurple_wb_ops;
 

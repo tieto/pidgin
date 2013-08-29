@@ -4072,9 +4072,10 @@ jabber_protocol_base_init(JabberProtocolClass *klass)
 #endif
 	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
 
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png", 32, 32, 96, 96, 0,
-	                                                PURPLE_ICON_SCALE_SEND |
-	                                                PURPLE_ICON_SCALE_DISPLAY};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("png",
+	                                                 32, 32, 96, 96, 0,
+	                                                 PURPLE_ICON_SCALE_SEND |
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
 }
 
 static void

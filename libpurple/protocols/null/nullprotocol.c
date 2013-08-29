@@ -1061,8 +1061,7 @@ null_protocol_base_init(NullProtocolClass *klass)
   proto_class->id        = NULL_ID;
   proto_class->name      = NULL_NAME;
   proto_class->options   = OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC;
-  proto_class->icon_spec = (PurpleBuddyIconSpec)
-  {
+  proto_class->icon_spec = purple_buddy_icon_spec_new(
       "png,jpg,gif",                   /* format */
       0,                               /* min_width */
       0,                               /* min_height */
@@ -1070,7 +1069,7 @@ null_protocol_base_init(NullProtocolClass *klass)
       128,                             /* max_height */
       10000,                           /* max_filesize */
       PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
-  };
+  );
 
   /* see accountopt.h for information about user splits and protocol options */
   split = purple_account_user_split_new(

@@ -1412,9 +1412,10 @@ ggp_protocol_base_init(GaduGaduProtocolClass *klass)
 	proto_class->name      = GGP_NAME;
 	proto_class->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
 	                         OPT_PROTO_IM_IMAGE;
-	proto_class->icon_spec = (PurpleBuddyIconSpec) {"png", 1, 1, 200, 200, 0,
-	                                                PURPLE_ICON_SCALE_DISPLAY |
-	                                                PURPLE_ICON_SCALE_SEND};
+	proto_class->icon_spec = purple_buddy_icon_spec_new("png",
+	                                                 1, 1, 200, 200, 0,
+	                                                 PURPLE_ICON_SCALE_DISPLAY |
+	                                                 PURPLE_ICON_SCALE_SEND);
 
 	purple_prefs_add_none("/plugins/prpl/gg");
 
