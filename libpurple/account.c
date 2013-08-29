@@ -296,8 +296,8 @@ purple_account_connect_got_password_cb(PurpleAccount *account,
 	PurpleProtocol *protocol = data;
 
 	if ((password == NULL || *password == '\0') &&
-		!(protocol->options & OPT_PROTO_NO_PASSWORD) &&
-		!(protocol->options & OPT_PROTO_PASSWORD_OPTIONAL))
+		!(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD) &&
+		!(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_account_request_password(account,
 			G_CALLBACK(request_password_ok_cb),
 			G_CALLBACK(request_password_cancel_cb), account);
@@ -632,7 +632,7 @@ purple_account_request_change_password(PurpleAccount *account)
 	field = purple_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!protocol || !(protocol->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -640,7 +640,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!protocol || !(protocol->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -648,7 +648,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password (again)"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!protocol || !(protocol->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 

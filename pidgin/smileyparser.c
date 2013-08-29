@@ -140,7 +140,7 @@ smiley_parse_markup(const char *markup, const char *proto_id)
 	if (proto_id != NULL) {
 		PurpleProtocol *protocol;
 		protocol = purple_find_protocol_info(proto_id);
-		proto_name = protocol->name;
+		proto_name = purple_protocol_get_name(protocol);
 	}
 
 	/* unnecessarily slow, but lets manage for now. */

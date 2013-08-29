@@ -203,13 +203,13 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	}
 
 	if (pixbuf && dialog->protocol &&
-	    (dialog->protocol->icon_spec.scale_rules & PURPLE_ICON_SCALE_DISPLAY))
+	    (dialog->purple_protocol_get_icon_spec(protocol).scale_rules & PURPLE_ICON_SCALE_DISPLAY))
 	{
 		/* Scale the icon to something reasonable */
 		int width, height;
 		GdkPixbuf *scale;
 
-		pidgin_buddy_icon_get_scale_size(pixbuf, &dialog->protocol->icon_spec,
+		pidgin_buddy_icon_get_scale_size(pixbuf, &dialog->purple_protocol_get_icon_spec(protocol),
 				PURPLE_ICON_SCALE_DISPLAY, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
@@ -240,7 +240,7 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 
 	dialog->protocol = new_protocol;
 	g_free(dialog->protocol_id);
-	dialog->protocol_id = dialog->protocol ? g_strdup(dialog->protocol->id) : NULL;
+	dialog->protocol_id = dialog->protocol ? g_strdup(dialog->purple_protocol_get_id(protocol)) : NULL;
 
 	if (dialog->account != NULL)
 		purple_account_clear_settings(dialog->account);
@@ -258,7 +258,7 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 		gtk_widget_hide(dialog->register_button);
 	} else {
 		if (dialog->protocol != NULL &&
-		   (dialog->protocol->options & OPT_PROTO_REGISTER_NOSCREENNAME)) {
+		   (dialog->purple_protocol_get_options(protocol) & OPT_PROTO_REGISTER_NOSCREENNAME)) {
 			gtk_widget_set_sensitive(dialog->register_button, TRUE);
 		} else {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
@@ -273,7 +273,7 @@ static void
 username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
 	gboolean opt_noscreenname = (dialog->protocol != NULL &&
-		(dialog->protocol->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+		(dialog->purple_protocol_get_options(protocol) & OPT_PROTO_REGISTER_NOSCREENNAME));
 	gboolean username_valid = purple_validate(dialog->protocol,
 		gtk_entry_get_text(entry));
 
@@ -440,7 +440,7 @@ register_button_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
 	int register_checked = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(dialog->register_button));
 	int opt_noscreenname = (dialog->protocol != NULL &&
-		(dialog->protocol->options & OPT_PROTO_REGISTER_NOSCREENNAME));
+		(dialog->purple_protocol_get_options(protocol) & OPT_PROTO_REGISTER_NOSCREENNAME));
 	int register_noscreenname = (opt_noscreenname && register_checked);
 
 #if !GTK_CHECK_VERSION(3,2,0)
@@ -652,7 +652,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->protocol == NULL)
 		user_splits = NULL;
 	else
-		user_splits = dialog->protocol->user_splits;
+		user_splits = dialog->purple_protocol_get_user_splits(protocol);
 
 	if (dialog->user_split_entries != NULL) {
 		g_list_free(dialog->user_split_entries);
@@ -742,7 +742,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 
 	if (dialog->protocol != NULL &&
-		(dialog->protocol->options & OPT_PROTO_NO_PASSWORD)) {
+		(dialog->purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 
 		gtk_widget_hide(dialog->password_box);
 		gtk_widget_hide(dialog->remember_pass_check);
@@ -842,10 +842,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(button);
 
 	if (dialog->protocol != NULL) {
-		if (!(dialog->protocol->options & OPT_PROTO_MAIL_CHECK))
+		if (!(dialog->purple_protocol_get_options(protocol) & OPT_PROTO_MAIL_CHECK))
 			gtk_widget_hide(dialog->new_mail_check);
 
-		if (dialog->protocol->icon_spec.format == NULL) {
+		if (dialog->purple_protocol_get_icon_spec(protocol).format == NULL) {
 			gtk_widget_hide(dialog->icon_check);
 			gtk_widget_hide(dialog->icon_hbox);
 		}
@@ -881,8 +881,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 #if 0
 	if (!dialog->protocol ||
-			(!(dialog->protocol->options & OPT_PROTO_MAIL_CHECK) &&
-			 (dialog->protocol->icon_spec.format ==  NULL))) {
+			(!(dialog->purple_protocol_get_options(protocol) & OPT_PROTO_MAIL_CHECK) &&
+			 (dialog->purple_protocol_get_icon_spec(protocol).format ==  NULL))) {
 
 		/* Nothing to see :( aww. */
 		gtk_widget_hide(dialog->user_frame);
@@ -923,7 +923,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	}
 
 	if (dialog->protocol == NULL ||
-			dialog->protocol->protocol_options == NULL)
+			dialog->purple_protocol_get_protocol_options(protocol) == NULL)
 		return;
 
 	account = dialog->account;
@@ -935,7 +935,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
 
-	for (l = dialog->protocol->protocol_options; l != NULL; l = l->next)
+	for (l = dialog->purple_protocol_get_protocol_options(protocol); l != NULL; l = l->next)
 	{
 		option = (PurpleAccountOption *)l->data;
 
@@ -1426,7 +1426,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	if (dialog->protocol != NULL)
 	{
-		for (l = dialog->protocol->user_splits,
+		for (l = dialog->purple_protocol_get_user_splits(protocol),
 			 l2 = dialog->user_split_entries;
 			 l != NULL && l2 != NULL;
 			 l = l->next, l2 = l2->next)
@@ -1487,7 +1487,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		purple_account_set_private_alias(account, NULL);
 
 	/* Buddy Icon */
-	if (dialog->protocol != NULL && dialog->protocol->icon_spec.format != NULL)
+	if (dialog->protocol != NULL && dialog->purple_protocol_get_icon_spec(protocol).format != NULL)
 	{
 		const char *filename;
 
@@ -1533,7 +1533,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	purple_account_set_remember_password(account, remember);
 
 	/* Check Mail */
-	if (dialog->protocol && dialog->protocol->options & OPT_PROTO_MAIL_CHECK)
+	if (dialog->protocol && dialog->purple_protocol_get_options(protocol) & OPT_PROTO_MAIL_CHECK)
 		purple_account_set_check_mail(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
@@ -2248,7 +2248,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
-	if (protocol != NULL && protocol->icon_spec.format != NULL) {
+	if (protocol != NULL && purple_protocol_get_icon_spec(protocol).format != NULL) {
 		if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 			if (global_buddyicon != NULL)
 				buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
@@ -2712,7 +2712,7 @@ authorize_reason_cb(struct auth_request *ar)
 	protocol_id = purple_account_get_protocol_id(ar->account);
 	protocol = purple_find_protocol_info(protocol_id);
 
-	if (protocol && (protocol->options & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
+	if (protocol && (purple_protocol_get_options(protocol) & OPT_PROTO_AUTHORIZATION_GRANTED_MESSAGE)) {
 		/* Duplicate information because ar is freed by closing minidialog */
 		struct auth_request *aa = g_new0(struct auth_request, 1);
 		aa->auth_cb = ar->auth_cb;
@@ -2755,7 +2755,7 @@ deny_reason_cb(struct auth_request *ar)
 	protocol_id = purple_account_get_protocol_id(ar->account);
 	protocol = purple_find_protocol_info(protocol_id);
 
-	if (protocol && (protocol->options & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {
+	if (protocol && (purple_protocol_get_options(protocol) & OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE)) {
 		/* Duplicate information because ar is freed by closing minidialog */
 		struct auth_request *aa = g_new0(struct auth_request, 1);
 		aa->auth_cb = ar->auth_cb;

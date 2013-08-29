@@ -561,7 +561,7 @@ check_for_and_do_command(PurpleConversation *conv)
 					if ((gc = purple_conversation_get_connection(conv)))
 						protocol = purple_connection_get_protocol_info(gc);
 
-					if ((protocol != NULL) && (protocol->options & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
+					if ((protocol != NULL) && (purple_protocol_get_options(protocol) & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
 						char *spaceslash;
 
 						/* If the first word in the entered text has a '/' in it, then the user
@@ -1713,7 +1713,7 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	if (!is_me && protocol && !(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+	if (!is_me && protocol && !(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if ((buddy = purple_blist_find_buddy(account, who)) != NULL)
 			button = pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 						G_CALLBACK(menu_chat_add_remove_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
@@ -4610,7 +4610,7 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleChatCo
 	g_return_if_fail(purple_connection_get_protocol_info(gc) != NULL);
 	protocol = purple_connection_get_protocol_info(gc);
 
-	if (protocol->options & OPT_PROTO_UNIQUE_CHATNAME)
+	if (purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)
 		return;
 
 	if (PURPLE_IS_CONTACT(node))
@@ -4833,7 +4833,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
-	if (protocol->options & OPT_PROTO_CHAT_TOPIC)
+	if (purple_protocol_get_options(protocol) & OPT_PROTO_CHAT_TOPIC)
 	{
 		GtkWidget *hbox, *label;
 		PidginChatPane *gtkchat = gtkconv->u.chat;
@@ -4883,7 +4883,7 @@ pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 
 	protocol = purple_connection_get_protocol_info(purple_account_get_connection(account));
 	node = (PurpleBlistNode*)(purple_blist_find_buddy(purple_conversation_get_account(conv), who));
-	if (node && protocol && (protocol->options & OPT_PROTO_UNIQUE_CHATNAME))
+	if (node && protocol && (purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME))
 		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
 
 	g_free(who);
@@ -7234,7 +7234,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons = GTK_WEBVIEW_SMILEY | GTK_WEBVIEW_IMAGE;
 		}
 
-		if (!(protocol->options & OPT_PROTO_IM_IMAGE)
+		if (!(purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
 		 && !(features & PURPLE_CONNECTION_FLAG_NO_IMAGES)) {
 			features |= PURPLE_CONNECTION_FLAG_NO_IMAGES;
 			purple_conversation_set_features(conv, features);

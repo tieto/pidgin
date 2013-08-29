@@ -496,7 +496,7 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 			if (statusbox->account) {
 				PurpleProtocol *protocol =
 						purple_find_protocol_info(purple_account_get_protocol_id(statusbox->account));
-				if (protocol && protocol->icon_spec.format != NULL)
+				if (protocol && purple_protocol_get_icon_spec(protocol).format != NULL)
 					setup_icon_box(statusbox);
 			} else {
 				setup_icon_box(statusbox);
@@ -1452,7 +1452,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 	if (box->account) {
 		PurpleProtocol *protocol =
 				purple_find_protocol_info(purple_account_get_protocol_id(box->account));
-		if (protocol && protocol->icon_spec.format) {
+		if (protocol && purple_protocol_get_icon_spec(protocol).format) {
 			gpointer data = NULL;
 			size_t len = 0;
 			if (filename)
@@ -1477,7 +1477,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 					purple_find_protocol_info(purple_account_get_protocol_id(account));
 			if (protocol != NULL &&
 			    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
-			    protocol->icon_spec.format) {
+			    purple_protocol_get_icon_spec(protocol).format) {
 				gpointer data = NULL;
 				size_t len = 0;
 				if (filename)

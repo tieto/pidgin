@@ -412,7 +412,7 @@ GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	while (list) {
 		if (!strcmp(list->sml, "default"))
 			def = list;
-		else if (protocol && !strcmp(protocol->name, list->sml))
+		else if (protocol && !strcmp(purple_protocol_get_name(protocol), list->sml))
 			break;
 
 		list = list->next;

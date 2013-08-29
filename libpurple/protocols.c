@@ -659,25 +659,25 @@ purple_protocol_destroy(PurpleProtocol *protocol)
 		if (purple_account_is_disconnected(account))
 			continue;
 
-		if (purple_strequal(protocol->id, purple_account_get_protocol_id(account)))
+		if (purple_strequal(purple_protocol_get_id(protocol), purple_account_get_protocol_id(account)))
 			purple_account_disconnect(account);
 	}
 
 	g_list_free(accounts);
 
-	while (protocol->user_splits) {
-		PurpleAccountUserSplit *split = protocol->user_splits->data;
+	while (purple_protocol_get_user_splits(protocol)) {
+		PurpleAccountUserSplit *split = purple_protocol_get_user_splits(protocol)->data;
 		purple_account_user_split_destroy(split);
-		protocol->user_splits = g_list_delete_link(protocol->user_splits,
-				protocol->user_splits);
+		purple_protocol_get_user_splits(protocol) = g_list_delete_link(purple_protocol_get_user_splits(protocol),
+				purple_protocol_get_user_splits(protocol));
 	}
 
-	while (protocol->protocol_options) {
-		PurpleAccountOption *option = protocol->protocol_options->data;
+	while (purple_protocol_get_protocol_options(protocol)) {
+		PurpleAccountOption *option = purple_protocol_get_protocol_options(protocol)->data;
 		purple_account_option_destroy(option);
-		protocol->protocol_options =
-				g_list_delete_link(protocol->protocol_options,
-				protocol->protocol_options);
+		purple_protocol_get_protocol_options(protocol) =
+				g_list_delete_link(purple_protocol_get_protocol_options(protocol),
+				purple_protocol_get_protocol_options(protocol));
 	}
 
 	purple_request_close_with_handle(protocol);

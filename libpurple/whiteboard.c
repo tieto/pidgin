@@ -75,7 +75,7 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 	wb->who     = g_strdup(who);
 
 	protocol = purple_connection_get_protocol_info(purple_account_get_connection(account));
-	purple_whiteboard_set_protocol_ops(wb, protocol->whiteboard_protocol_ops);
+	purple_whiteboard_set_protocol_ops(wb, purple_protocol_get_whiteboard_ops(protocol));
 
 	/* Start up protocol specifics */
 	if(wb->protocol_ops && wb->protocol_ops->start)

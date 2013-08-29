@@ -134,7 +134,7 @@ save_account_cb(AccountEditDialog *dialog)
 	if (protocol != NULL)
 	{
 		GList *iter, *entries;
-		for (iter = protocol->user_splits, entries = dialog->split_entries;
+		for (iter = purple_protocol_get_user_splits(protocol), entries = dialog->split_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
 			PurpleAccountUserSplit *split = iter->data;
@@ -151,7 +151,7 @@ save_account_cb(AccountEditDialog *dialog)
 
 	if (dialog->account == NULL)
 	{
-		account = purple_account_new(username->str, protocol->id);
+		account = purple_account_new(username->str, purple_protocol_get_id(protocol));
 		purple_accounts_add(account);
 	}
 	else
@@ -160,12 +160,12 @@ save_account_cb(AccountEditDialog *dialog)
 
 		/* Protocol */
 		if (purple_account_is_disconnected(account)) {
-			purple_account_set_protocol_id(account, protocol->id);
+			purple_account_set_protocol_id(account, purple_protocol_get_id(protocol));
 			purple_account_set_username(account, username->str);
 		} else {
 			const char *old = purple_account_get_protocol_id(account);
 			char *oldprpl;
-			if (strcmp(old, protocol->id)) {
+			if (strcmp(old, purple_protocol_get_id(protocol))) {
 				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
 						_("The account's protocol cannot be changed while it is connected to the server."));
 				return;
@@ -206,7 +206,7 @@ save_account_cb(AccountEditDialog *dialog)
 	{
 		GList *iter, *entries;
 
-		for (iter = protocol->protocol_options, entries = dialog->protocol_entries;
+		for (iter = purple_protocol_get_protocol_options(protocol), entries = dialog->protocol_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
 			PurpleAccountOption *option = iter->data;
@@ -307,7 +307,7 @@ update_user_splits(AccountEditDialog *dialog)
 
 	username = dialog->account ? g_strdup(purple_account_get_username(dialog->account)) : NULL;
 
-	for (iter = protocol->user_splits; iter; iter = iter->next)
+	for (iter = purple_protocol_get_user_splits(protocol); iter; iter = iter->next)
 	{
 		PurpleAccountUserSplit *split = iter->data;
 		GntWidget *entry;
@@ -326,7 +326,7 @@ update_user_splits(AccountEditDialog *dialog)
 		g_free(buf);
 	}
 
-	for (iter = g_list_last(protocol->user_splits), entries = g_list_last(dialog->split_entries);
+	for (iter = g_list_last(purple_protocol_get_user_splits(protocol)), entries = g_list_last(dialog->split_entries);
 			iter && entries; iter = iter->prev, entries = entries->prev)
 	{
 		GntWidget *entry = entries->data;
@@ -393,7 +393,7 @@ add_protocol_options(AccountEditDialog *dialog)
 
 	account = dialog->account;
 
-	for (iter = protocol->protocol_options; iter; iter = iter->next)
+	for (iter = purple_protocol_get_protocol_options(protocol); iter; iter = iter->next)
 	{
 		PurpleAccountOption *option = iter->data;
 		PurplePrefType type = purple_account_option_get_type(option);
@@ -501,7 +501,7 @@ update_user_options(AccountEditDialog *dialog)
 	if (dialog->account)
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->newmail),
 				purple_account_get_check_mail(dialog->account));
-	if (!protocol || !(protocol->options & OPT_PROTO_MAIL_CHECK))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_MAIL_CHECK))
 		gnt_widget_set_visible(dialog->newmail, FALSE);
 	else
 		gnt_widget_set_visible(dialog->newmail, TRUE);

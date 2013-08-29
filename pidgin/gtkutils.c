@@ -648,14 +648,14 @@ create_protocols_menu(const char *default_proto_id)
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
 		                   AOP_ICON_COLUMN, pixbuf,
-		                   AOP_NAME_COLUMN, protocol->name,
-		                   AOP_DATA_COLUMN, protocol->id,
+		                   AOP_NAME_COLUMN, purple_protocol_get_name(protocol),
+		                   AOP_DATA_COLUMN, purple_protocol_get_id(protocol),
 		                   -1);
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(protocol->id, default_proto_id))
+		if (default_proto_id != NULL && !strcmp(purple_protocol_get_id(protocol), default_proto_id))
 			aop_menu->default_item = i;
 	}
 
@@ -1489,7 +1489,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			if (gc)
 				protocol = purple_connection_get_protocol_info(gc);
 
-			if (protocol && protocol->options & OPT_PROTO_IM_IMAGE)
+			if (protocol && purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
 
 			if (protocol && protocol->can_receive_file)
@@ -2273,7 +2273,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 	int i;
 	gchar *tmp;
 
-	spec = &protocol->icon_spec;
+	spec = &purple_protocol_get_icon_spec(protocol);
 	g_return_val_if_fail(spec->format != NULL, NULL);
 
 	format = gdk_pixbuf_get_file_info(path, &orig_width, &orig_height);
@@ -2419,7 +2419,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 	g_object_unref(G_OBJECT(original));
 
 	tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
-			path, protocol->name);
+			path, purple_protocol_get_name(protocol));
 	purple_notify_error(NULL, _("Icon Error"), _("Could not set icon"), tmp);
 	g_free(tmp);
 

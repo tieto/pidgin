@@ -2768,8 +2768,8 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	scale_width = orig_width = gdk_pixbuf_get_width(buf);
 	scale_height = orig_height = gdk_pixbuf_get_height(buf);
 
-	if (protocol && protocol->icon_spec.scale_rules & PURPLE_ICON_SCALE_DISPLAY)
-		purple_buddy_icon_get_scale_size(&protocol->icon_spec, &scale_width, &scale_height);
+	if (protocol && purple_protocol_get_icon_spec(protocol).scale_rules & PURPLE_ICON_SCALE_DISPLAY)
+		purple_buddy_icon_get_scale_size(&purple_protocol_get_icon_spec(protocol), &scale_width, &scale_height);
 
 	if (scaled || scale_height > 200 || scale_width > 200) {
 		GdkPixbuf *tmpbuf;
@@ -3842,7 +3842,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			g_string_append_printf(str, _("\n<b>Occupants:</b> %d"),
 					g_list_length(purple_chat_conversation_get_users(conv)));
 
-			if (protocol && (protocol->options & OPT_PROTO_CHAT_TOPIC)) {
+			if (protocol && (purple_protocol_get_options(protocol) & OPT_PROTO_CHAT_TOPIC)) {
 				const char *chattopic = purple_chat_conversation_get_topic(conv);
 				char *topic = chattopic ? g_markup_escape_text(chattopic, -1) : NULL;
 				g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
@@ -7163,7 +7163,7 @@ add_buddy_select_account_cb(GObject *w, PurpleAccount *account,
 		pc = purple_account_get_connection(account);
 	if (pc)
 		protocol = purple_connection_get_protocol_info(pc);
-	if (protocol && !(protocol->options & OPT_PROTO_INVITE_MESSAGE))
+	if (protocol && !(purple_protocol_get_options(protocol) & OPT_PROTO_INVITE_MESSAGE))
 		invite_enabled = FALSE;
 
 	gtk_widget_set_sensitive(data->entry_for_invite, invite_enabled);

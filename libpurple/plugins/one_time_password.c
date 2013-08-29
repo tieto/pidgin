@@ -64,10 +64,10 @@ plugin_load(PurplePlugin *plugin)
 	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
 		prpl = (PurplePlugin *)l->data;
 		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		if (protocol != NULL && !(protocol->options & OPT_PROTO_NO_PASSWORD)) {
+		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			option = purple_account_option_bool_new(_("One Time Password"),
 								PREF_NAME, FALSE);
-			protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+			purple_protocol_get_protocol_options(protocol) = g_list_append(purple_protocol_get_protocol_options(protocol), option);
 		}
 	}
 
@@ -90,12 +90,12 @@ plugin_unload(PurplePlugin *plugin)
 	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
 		prpl = (PurplePlugin *)l->data;
 		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		if (protocol != NULL && !(protocol->options & OPT_PROTO_NO_PASSWORD)) {
-			options = protocol->protocol_options;
+		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
+			options = purple_protocol_get_protocol_options(protocol);
 			while (options != NULL) {
 				option = (PurpleAccountOption *) options->data;
 				if (strcmp(PREF_NAME, purple_account_option_get_setting(option)) == 0) {
-					protocol->protocol_options = g_list_delete_link(protocol->protocol_options, options);
+					purple_protocol_get_protocol_options(protocol) = g_list_delete_link(purple_protocol_get_protocol_options(protocol), options);
 					purple_account_option_destroy(option);
 					break;
 				}

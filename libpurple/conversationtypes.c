@@ -860,7 +860,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 		PurpleChatUserFlags flag = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
-		if(!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if(!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 			if (purple_strequal(priv->nick, purple_normalize(account, user))) {
 				const char *alias2 = purple_account_get_private_alias(account);
 				if (alias2 != NULL)
@@ -964,7 +964,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 		/* Note this for later. */
 		is_me = TRUE;
 
-		if(!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if(!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 			alias = purple_account_get_private_alias(account);
 			if (alias != NULL)
 				new_alias = alias;
@@ -975,7 +975,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 					new_alias = display_name;
 			}
 		}
-	} else if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+	} else if (!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
 		if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 			new_alias = purple_buddy_get_contact_alias(buddy);
@@ -1024,7 +1024,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 			char *escaped;
 			char *escaped2;
 
-			if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			if (!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
 				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
@@ -1104,7 +1104,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 			char *alias_esc;
 			char *tmp;
 
-			if (!(protocol->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			if (!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
 				if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), user)) != NULL)
