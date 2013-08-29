@@ -45,6 +45,7 @@ struct _PurpleSocket
 	gchar *host;
 	int port;
 	gboolean is_tls;
+	GHashTable *data;
 
 	PurpleSocketState state;
 
@@ -65,6 +66,7 @@ purple_socket_new(PurpleConnection *gc)
 	ps->gc = gc;
 	ps->fd = -1;
 	ps->port = -1;
+	ps->data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	return ps;
 }
@@ -304,6 +306,27 @@ purple_socket_get_fd(PurpleSocket *ps)
 }
 
 void
+purple_socket_set_data(PurpleSocket *ps, const gchar *key, gpointer data)
+{
+	g_return_if_fail(ps != NULL);
+	g_return_if_fail(key != NULL);
+
+	if (data == NULL)
+		g_hash_table_remove(ps->data, key);
+	else
+		g_hash_table_insert(ps->data, g_strdup(key), data);
+}
+
+gpointer
+purple_socket_get_data(PurpleSocket *ps, const gchar *key)
+{
+	g_return_val_if_fail(ps != NULL, NULL);
+	g_return_val_if_fail(key != NULL, NULL);
+
+	return g_hash_table_lookup(ps->data, key);
+}
+
+void
 purple_socket_destroy(PurpleSocket *ps)
 {
 	if (ps == NULL)
@@ -326,5 +349,6 @@ purple_socket_destroy(PurpleSocket *ps)
 	if (ps->fd > 0)
 		close(ps->fd);
 
+	g_hash_table_destroy(ps->data);
 	g_free(ps);
 }

@@ -166,6 +166,27 @@ int
 purple_socket_get_fd(PurpleSocket *ps);
 
 /**
+ * Sets extra data for a socket.
+ *
+ * @param ps   The socket.
+ * @param key  The unique key.
+ * @param data The data to assign, or NULL to remove.
+ */
+void
+purple_socket_set_data(PurpleSocket *ps, const gchar *key, gpointer data);
+
+/**
+ * Returns extra data in a socket.
+ *
+ * @param ps  The socket.
+ * @param key The unqiue key.
+ *
+ * @return The data associated with the key.
+ */
+gpointer
+purple_socket_get_data(PurpleSocket *ps, const gchar *key);
+
+/**
  * Destroys the socket, closes connection and frees all resources.
  *
  * If file descriptor for the socket was extracted with purple_socket_get_fd and
