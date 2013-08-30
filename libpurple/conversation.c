@@ -2513,6 +2513,27 @@ purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 	return (status == PURPLE_CMD_STATUS_OK);
 }
 
+gssize
+purple_conversation_get_max_message_size(PurpleConversation *conv)
+{
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	g_return_val_if_fail(conv != NULL, 0);
+
+	prpl = purple_conversation_get_connection(
+		purple_connection_get_prpl(gc));
+	g_return_val_if_fail(prpl != NULL, 0);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	g_return_val_if_fail(prpl_info != NULL, 0);
+
+	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
+		return 0;
+
+	return prpl_info->get_max_message_size(conv);
+}
+
 void *
 purple_conversations_get_handle(void)
 {

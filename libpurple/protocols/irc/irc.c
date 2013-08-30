@@ -911,10 +911,11 @@ static void irc_keepalive(PurpleConnection *gc)
 		irc_cmd_ping(irc, NULL, NULL, NULL);
 }
 
-static gsize
-irc_get_max_message_size(PurpleConnection *gc)
+static gssize
+irc_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* TODO: this static value is got from pidgin-otr, but it depends on
+	 * some factors, for example IRC channel name. */
 	return 417;
 }
 

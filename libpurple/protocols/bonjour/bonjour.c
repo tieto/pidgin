@@ -470,12 +470,10 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
-static gsize
-bonjour_get_max_message_size(PurpleConnection *gc)
+static gssize
+bonjour_get_max_message_size(PurpleConversation *conv)
 {
-	/* It looks, like the message length is practically unlimited (I've
-	 * tried 5MB). */
-	return 0;
+	return -1; /* 5MB successfully tested. */
 }
 
 static gboolean

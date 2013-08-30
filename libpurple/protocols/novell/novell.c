@@ -3465,10 +3465,10 @@ novell_keepalive(PurpleConnection *gc)
 	_check_for_disconnect(user, rc);
 }
 
-static gsize
-novell_get_max_message_size(PurpleConnection *gc)
+static gssize
+novell_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* XXX: got from pidgin-otr - verify and document it */
 	return 1792;
 }
 
