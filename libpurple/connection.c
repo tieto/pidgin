@@ -631,6 +631,26 @@ void purple_connection_update_last_received(PurpleConnection *gc)
 	gc->last_received = time(NULL);
 }
 
+gsize
+purple_connection_get_max_message_size(PurpleConnection *gc)
+{
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	g_return_val_if_fail(gc != NULL, 0);
+
+	prpl = purple_connection_get_prpl(gc);
+	g_return_val_if_fail(prpl != NULL, 0);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	g_return_val_if_fail(prpl_info != NULL, 0);
+
+	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
+		return 0;
+
+	return prpl_info->get_max_message_size(gc);
+}
+
 void
 purple_connections_disconnect_all(void)
 {
