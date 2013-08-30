@@ -380,10 +380,8 @@ do_protocol_change_account_status(PurpleAccount *account,
 	if (protocol == NULL)
 		return;
 
-	if (!purple_account_is_disconnected(account) && protocol->set_status != NULL)
-	{
+	if (!purple_account_is_disconnected(account))
 		purple_protocol_iface_set_status(protocol, account, new_status);
-	}
 }
 
 void
@@ -438,7 +436,6 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	PurpleMessageFlags flags;
 	PurpleProtocol *protocol;
 	PurpleIMConversation *im;
-	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
 	const char *alias;
 	gchar *description;
@@ -448,8 +445,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	g_return_if_fail(who != NULL);
 
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
-	send_attention = protocol->send_attention;
-	g_return_if_fail(send_attention != NULL);
+	g_return_if_fail(PURPLE_PROTOCOL_GET_INTERFACE(protocol)->send_attention != NULL);
 
 	mtime = time(NULL);
 
@@ -471,7 +467,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
 			description, who);
 
-	if (!send_attention(gc, who, type_code))
+	if (!purple_protocol_iface_send_attention(protocol, gc, who, type_code))
 		return;
 
 	im = purple_im_conversation_new(purple_connection_get_account(gc), who);
@@ -559,7 +555,7 @@ purple_protocol_initiate_media(PurpleAccount *account,
 	if (gc)
 		protocol = purple_connection_get_protocol_info(gc);
 
-	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, initiate_media)) {
+	if (protocol) {
 		/* should check that the protocol supports this media type here? */
 		return purple_protocol_iface_initiate_media(protocol, account, who, type);
 	} else
@@ -579,10 +575,8 @@ purple_protocol_get_media_caps(PurpleAccount *account, const char *who)
 	if (gc)
 		protocol = purple_connection_get_protocol_info(gc);
 
-	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol,
-			get_media_caps)) {
+	if (protocol)
 		return purple_protocol_iface_get_media_caps(protocol, account, who);
-	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;
 }
@@ -659,7 +653,8 @@ purple_protocols_add(GType protocol_type)
 {
 	PurpleProtocol *protocol;
 
-	g_return_val_if_fail(type != G_TYPE_INVALID && type != G_TYPE_NONE, NULL);
+	g_return_val_if_fail(protocol_type != G_TYPE_INVALID &&
+	                     protocol_type != G_TYPE_NONE, NULL);
 
 	protocol = g_object_new(protocol_type, NULL);
 	if (purple_find_protocol_info(purple_protocol_get_id(protocol))) {
