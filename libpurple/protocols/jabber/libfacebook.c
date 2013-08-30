@@ -204,16 +204,17 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           FACEBOOK_ID,
-		"name",         FACEBOOK_NAME,
-		"version",      DISPLAY_VERSION,
-		"category",     N_("Protocol"),
-		"summary",      N_("Facebook XMPP Protocol Plugin"),
-		"description",  N_("Facebook XMPP Protocol Plugin"),
-		"website",      PURPLE_WEBSITE,
-		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"id",            FACEBOOK_ID,
+		"name",          FACEBOOK_NAME,
+		"version",       DISPLAY_VERSION,
+		"category",      N_("Protocol"),
+		"summary",       N_("Facebook XMPP Protocol Plugin"),
+		"description",   N_("Facebook XMPP Protocol Plugin"),
+		"website",       PURPLE_WEBSITE,
+		"abi-version",   PURPLE_ABI_VERSION,
+		"dependencies",  JABBER_ID,
+		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
@@ -246,7 +247,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(FacebookProtocol, facebook_protocol,
+static PurplePlugin *my_plugin;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, FacebookProtocol, facebook_protocol,
                                 JABBER_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT(facebookxmpp, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, facebookxmpp, plugin_query, plugin_load,
+                       plugin_unload);

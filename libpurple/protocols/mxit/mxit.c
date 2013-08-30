@@ -883,6 +883,9 @@ plugin_unload( PurplePlugin *plugin, GError **error )
 }
 
 
-PURPLE_PROTOCOL_DEFINE ( MXitProtocol, mxit_protocol );
-PURPLE_PLUGIN_INIT     ( mxit, plugin_query, plugin_load, plugin_unload );
+static PurplePlugin *my_plugin;
 
+PURPLE_PROTOCOL_DEFINE( my_plugin, MXitProtocol, mxit_protocol );
+
+PURPLE_PLUGIN_INIT_VAL( my_plugin, mxit, plugin_query, plugin_load,
+                        plugin_unload);

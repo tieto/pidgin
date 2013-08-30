@@ -157,7 +157,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(YahooJPProtocol, yahoojp_protocol,
+static PurplePlugin *my_plugin;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, YahooJPProtocol, yahoojp_protocol,
                                 YAHOO_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT(yahoojp, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, yahoojp, plugin_query, plugin_load,
+                       plugin_unload);

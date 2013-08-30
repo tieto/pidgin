@@ -3581,5 +3581,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE (NovellProtocol, novell_protocol);
-PURPLE_PLUGIN_INIT     (novell, plugin_query, plugin_load, plugin_unload);
+static PurplePlugin *my_plugin;
+PURPLE_PROTOCOL_DEFINE(my_plugin, NovellProtocol, novell_protocol);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, novell, plugin_query, plugin_load,
+                       plugin_unload);

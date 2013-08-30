@@ -4065,6 +4065,8 @@ jabber_protocol_base_init(JabberProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 
+	proto_class->id        = JABBER_ID;
+	proto_class->name      = JABBER_NAME;
 	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                         OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL
@@ -4136,5 +4138,7 @@ jabber_protocol_interface_init(PurpleProtocolInterface *iface)
 
 static void jabber_protocol_base_finalize(JabberProtocolClass *klass) { }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED (JabberProtocol, jabber_protocol,
-                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
+PurplePlugin *_jabber_plugin = NULL;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, JabberProtocol, jabber_protocol,
+                                PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);

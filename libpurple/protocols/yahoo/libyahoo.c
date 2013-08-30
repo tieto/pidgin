@@ -329,5 +329,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE (YahooProtocol, yahoo_protocol);
-PURPLE_PLUGIN_INIT     (yahoo, plugin_query, plugin_load, plugin_unload);
+static PurplePlugin *my_plugin;
+PURPLE_PROTOCOL_DEFINE(my_plugin, YahooProtocol, yahoo_protocol);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, yahoo, plugin_query, plugin_load,
+                       plugin_unload);

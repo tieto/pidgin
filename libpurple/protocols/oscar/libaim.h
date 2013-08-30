@@ -24,8 +24,6 @@
 
 #include "oscar.h"
 
-#define AIM_ID     "prpl-aim"
-#define AIM_NAME   "AIM"
 #define AIM_DOMAIN (g_quark_from_static_string(AIM_ID))
 
 #define AIM_TYPE_PROTOCOL             (aim_protocol_get_type())

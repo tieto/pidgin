@@ -156,7 +156,6 @@
 
 #include "accounts.h"
 #include "connection.h"
-#include "prefs.h"
 
 /* This is for the accounts code to notify the buddy icon code that
  * it's done loading.  We may want to replace this with a signal. */

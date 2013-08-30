@@ -102,7 +102,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(AIMProtocol, aim_protocol,
+extern PurplePlugin *_oscar_plugin;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, AIMProtocol, aim_protocol,
                                 OSCAR_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT(aim, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT_VAL(_oscar_plugin, aim, plugin_query, plugin_load,
+                       plugin_unload);

@@ -80,16 +80,17 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           ICQ_ID,
-		"name",         ICQ_NAME,
-		"version",      DISPLAY_VERSION,
-		"category",     N_("Protocol"),
-		"summary",      N_("ICQ Protocol Plugin"),
-		"description",  N_("ICQ Protocol Plugin"),
-		"website",      PURPLE_WEBSITE,
-		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"id",            ICQ_ID,
+		"name",          ICQ_NAME,
+		"version",       DISPLAY_VERSION,
+		"category",      N_("Protocol"),
+		"summary",       N_("ICQ Protocol Plugin"),
+		"description",   N_("ICQ Protocol Plugin"),
+		"website",       PURPLE_WEBSITE,
+		"abi-version",   PURPLE_ABI_VERSION,
+		"dependencies",  AIM_ID,
+		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
+		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL
 	);
 }
@@ -120,7 +121,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(ICQProtocol, icq_protocol,
+static PurplePlugin *my_plugin;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, ICQProtocol, icq_protocol,
                                 OSCAR_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT(icq, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, icq, plugin_query, plugin_load,
+                       plugin_unload);

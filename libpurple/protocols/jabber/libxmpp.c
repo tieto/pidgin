@@ -106,9 +106,6 @@ xmpp_protocol_base_init(XMPPProtocolClass *klass)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	proto_class->id        = XMPP_ID;
-	proto_class->name      = XMPP_NAME;
-
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), NULL, '@');
 	purple_account_user_split_set_reverse(split, FALSE);
@@ -184,8 +181,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           XMPP_ID,
-		"name",         XMPP_NAME,
+		"id",           JABBER_ID,
+		"name",         JABBER_NAME,
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("XMPP Protocol Plugin"),
@@ -226,7 +223,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(XMPPProtocol, xmpp_protocol,
+extern PurplePlugin *_jabber_plugin;
+
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, XMPPProtocol, xmpp_protocol,
                                 JABBER_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT(jabber, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT_VAL(_jabber_plugin, jabber, plugin_query, plugin_load,
+                       plugin_unload);

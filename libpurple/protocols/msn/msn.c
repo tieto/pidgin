@@ -3030,5 +3030,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PROTOCOL_DEFINE (MSNProtocol, msn_protocol);
-PURPLE_PLUGIN_INIT     (msn, plugin_query, plugin_load, plugin_unload);
+static PurplePlugin *my_plugin;
+PURPLE_PROTOCOL_DEFINE(my_plugin, MSNProtocol, msn_protocol);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, msn, plugin_query, plugin_load,
+                       plugin_unload);
