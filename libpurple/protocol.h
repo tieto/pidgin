@@ -1,5 +1,5 @@
 /**
- * @file protocol.h PurpleProtocol and PurpleProtocolInterface API
+ * @file protocol.h Protocol class and interface API
  * @ingroup core
  */
 
@@ -693,7 +693,6 @@ PurpleWhiteboardPrplOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol
 
 /*@}*/
 
-/* TODO */
 /**************************************************************************/
 /** @name Protocol Interface API                                          */
 /**************************************************************************/
