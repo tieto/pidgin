@@ -589,7 +589,7 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation User API                                     */
+/** @name Chat Conversation User API                                      */
 /**************************************************************************/
 /*@{*/
 

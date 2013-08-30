@@ -121,7 +121,7 @@ st =
 pkg_LTLIBRARIES      = libjabber.la libfacebook.la libgtalk.la libxmpp.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
-	$(FARSIGHT_LIBS) \
+	$(FARSTREAM_LIBS) \
 	$(GSTREAMER_LIBS)
 
 libfacebook_la_SOURCES = libfacebook.c libfacebook.h
@@ -143,5 +143,5 @@ AM_CPPFLAGS = \
 	$(GPLUGIN_CFLAGS) \
 	$(IDN_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(FARSIGHT_CFLAGS) \
+	$(FARSTREAM_CFLAGS) \
 	$(GSTREAMER_CFLAGS)
