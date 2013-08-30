@@ -23,6 +23,7 @@
 
 #include "core.h"
 #include "debug.h"
+#include "dbus-maybe.h"
 #include "plugins.h"
 
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
@@ -296,6 +297,13 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
 #define PROP_GET_ACTIONS_S        "get-actions"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
 
+/* GObject initialization function */
+static void
+purple_plugin_info_init(GTypeInstance *instance, gpointer klass)
+{
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_PLUGIN_INFO(instance), PurplePluginInfo);
+}
+
 /* Set method for GObject properties */
 static void
 purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -379,6 +387,15 @@ purple_plugin_info_constructed(GObject *object)
 	}
 }
 
+/* GObject dispose function */
+static void
+purple_plugin_info_dispose(GObject *object)
+{
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
+
+	parent_class->dispose(object);
+}
+
 /* GObject finalize function */
 static void
 purple_plugin_info_finalize(GObject *object)
@@ -401,7 +418,8 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	g_type_class_add_private(klass, sizeof(PurplePluginInfoPrivate));
 
 	obj_class->constructed = purple_plugin_info_constructed;
-	obj_class->finalize = purple_plugin_info_finalize;
+	obj_class->dispose     = purple_plugin_info_dispose;
+	obj_class->finalize    = purple_plugin_info_finalize;
 
 	/* Setup properties */
 	obj_class->get_property = purple_plugin_info_get_property;
@@ -439,6 +457,7 @@ purple_plugin_info_get_type(void)
 			.class_size = sizeof(PurplePluginInfoClass),
 			.class_init = (GClassInitFunc)purple_plugin_info_class_init,
 			.instance_size = sizeof(PurplePluginInfo),
+			.instance_init = (GInstanceInitFunc)purple_plugin_info_init,
 		};
 
 		type = g_type_register_static(
