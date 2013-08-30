@@ -984,14 +984,14 @@ if test "x$enable_farstream" != "xno"; then
 		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
- 		], [
+		], [
 		        enable_farstream="no"
 		])
 	else
 		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.1], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
- 		], [
+		], [
 			# Try farsight.
 			PKG_CHECK_MODULES(FARSTREAM, [farsight2-0.10 >= 0.0.9], [
 			        AC_DEFINE(HAVE_FARSIGHT, 1, [Use Farsight instead of Farstream])
@@ -1000,7 +1000,7 @@ if test "x$enable_farstream" != "xno"; then
 			], [
 			        enable_farstream="no"
 			])
- 		])
+		])
 	fi
 fi
 
@@ -1487,7 +1487,7 @@ fi
 DEBUG_CPPFLAGS=`echo "$DEBUG_CFLAGS" | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//' | $sedpath 's/-Waggregate-return//'`
 
 if test "x$SUNCC" = "xyes"; then
-        CFLAGS="$CFLAGS -features=extensions" 
+        CFLAGS="$CFLAGS -features=extensions"
 fi
 AC_SUBST(CFLAGS)
 
