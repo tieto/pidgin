@@ -2930,7 +2930,6 @@ zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->find_blist_chat  = zephyr_find_blist_chat;
 
 	iface->set_info         = NULL; /* XXX Location? */
-	iface->get_cb_info      = NULL; /* XXX */
 	iface->set_buddy_icon   = NULL; /* XXX */
 	iface->get_cb_real_name = NULL; /* XXX */
 
