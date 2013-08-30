@@ -2883,10 +2883,10 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	return FALSE;
 }
 
-static gsize
-msn_get_max_message_size(PurpleConnection *gc)
+static gssize
+msn_get_max_message_size(PurpleConversation *conv)
 {
-	/* pidgin-otr says: 1409 */
+	/* XXX: pidgin-otr says 1409. Verify and document it. */
 	return 1525 - strlen(VERSION);
 }
 

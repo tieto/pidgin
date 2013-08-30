@@ -1367,10 +1367,10 @@ static GHashTable * ggp_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static gsize
-ggp_get_max_message_size(PurpleConnection *gc)
+static gssize
+ggp_get_max_message_size(PurpleConversation *conv)
 {
-	/* it may depend on protocol version or other factors - check it */
+	/* TODO: it may depend on protocol version or other factors */
 	return 1232;
 }
 

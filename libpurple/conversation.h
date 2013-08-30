@@ -619,6 +619,18 @@ GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
 gboolean purple_conversation_do_command(PurpleConversation *conv,
 		const gchar *cmdline, const gchar *markup, gchar **error);
 
+/**
+ * Gets the maximum message size in bytes for the conversation.
+ *
+ * @see PurplePluginProtocolInfo#get_max_message_size
+ *
+ * @param conv The conversation to query.
+ *
+ * @return Maximum message size, 0 if unspecified, -1 for infinite.
+ */
+gssize
+purple_conversation_get_max_message_size(PurpleConversation *conv);
+
 /*@}*/
 
 /**************************************************************************/
