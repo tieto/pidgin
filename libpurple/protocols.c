@@ -648,53 +648,6 @@ purple_protocol_action_free(PurpleProtocolAction *action)
 /**************************************************************************
  * Protocols API
  **************************************************************************/
-/* TODO make this PurpleProtocolClass's base finalize */
-static void
-purple_protocol_destroy(PurpleProtocol *protocol)
-{
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	GList *accounts, *l;
-
-	accounts = purple_accounts_get_all_active();
-	for (l = accounts; l != NULL; l = l->next) {
-		PurpleAccount *account = PURPLE_ACCOUNT(l->data);
-		if (purple_account_is_disconnected(account))
-			continue;
-
-		if (purple_strequal(proto_class->id, purple_account_get_protocol_id(account)))
-			purple_account_disconnect(account);
-	}
-
-	g_list_free(accounts);
-
-	while (proto_class->user_splits) {
-		PurpleAccountUserSplit *split = proto_class->user_splits->data;
-		purple_account_user_split_destroy(split);
-		proto_class->user_splits = g_list_delete_link(proto_class->user_splits,
-				proto_class->user_splits);
-	}
-
-	while (proto_class->protocol_options) {
-		PurpleAccountOption *option = proto_class->protocol_options->data;
-		purple_account_option_destroy(option);
-		proto_class->protocol_options =
-				g_list_delete_link(proto_class->protocol_options,
-				proto_class->protocol_options);
-	}
-
-	purple_buddy_icon_spec_destroy(proto_class->icon_spec);
-
-	purple_request_close_with_handle(protocol);
-	purple_notify_close_with_handle(protocol);
-
-	purple_signals_disconnect_by_handle(protocol);
-	purple_signals_unregister_by_instance(protocol);
-
-	purple_prefs_disconnect_by_handle(protocol);
-
-	g_object_unref(protocol);
-}
-
 PurpleProtocol *
 purple_find_protocol_info(const char *id)
 {
@@ -725,8 +678,6 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol)
 		return FALSE;
 
 	g_hash_table_remove(protocols, purple_protocol_get_id(protocol));
-	purple_protocol_destroy(protocol);
-
 	return TRUE;
 }
 
@@ -751,7 +702,7 @@ void
 purple_protocols_init(void)
 {
 	protocols = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-			(GDestroyNotify)purple_protocol_destroy);
+			(GDestroyNotify)g_object_unref);
 }
 
 void *

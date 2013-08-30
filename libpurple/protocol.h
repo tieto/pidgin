@@ -33,7 +33,10 @@
 #define PURPLE_IS_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL))
 #define PURPLE_IS_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PROTOCOL))
 #define PURPLE_PROTOCOL_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
-#define PURPLE_PROTOCOL_GET_INTERFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolInterface))
+
+#define PURPLE_TYPE_PROTOCOL_INTERFACE      (purple_protocol_iface_get_type())
+#define PURPLE_IS_PROTOCOL_INTERFACE(obj)   (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_INTERFACE))
+#define PURPLE_PROTOCOL_GET_INTERFACE(inst) (G_TYPE_INSTANCE_GET_INTERFACE((inst), PURPLE_TYPE_PROTOCOL_INTERFACE, PurpleProtocolInterface))
 
 /** @copydoc _PurpleProtocol */
 typedef struct _PurpleProtocol PurpleProtocol;
@@ -340,11 +343,6 @@ struct _PurpleProtocolInterface
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb,
 							void *user_data);
 
-	/**
-	 * @deprecated Use #PurpleProtocol.get_info instead.
-	 */
-	void (*get_cb_info)(PurpleConnection *, int, const char *who);
-
 	/** save/store buddy's alias on server list/roster */
 	void (*alias_buddy)(PurpleConnection *, const char *who,
 						const char *alias);
@@ -578,7 +576,8 @@ struct _PurpleProtocolInterface
 			type = g_type_register_static(BaseType, #TypeName, \
 					                      &info, TypeFlags); \
 			if (type != G_TYPE_INVALID) \
-				g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL, &iface_info); \
+				g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL_INTERFACE, \
+				                            &iface_info); \
 		} \
 		return type; \
 	}
@@ -611,7 +610,7 @@ struct _PurpleProtocolInterface
 			type = purple_plugin_register_type(plugin, BaseType, #TypeName, \
 				                               &info, TypeFlags); \
 			if (type != G_TYPE_INVALID) \
-				purple_plugin_add_interface(plugin, type, PURPLE_TYPE_PROTOCOL, \
+				purple_plugin_add_interface(plugin, type, PURPLE_TYPE_PROTOCOL_INTERFACE, \
 					                        &iface_info); \
 		} \
 		return type; \
@@ -620,16 +619,16 @@ struct _PurpleProtocolInterface
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Protocol API                                                    */
+/** @name Protocol Class API                                              */
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for #PurpleProtocol.
  */
 GType purple_protocol_get_type(void);
 
-/** TODO
+/**
  * Returns the ID of a protocol.
  *
  * @param protocol The protocol.
@@ -638,7 +637,7 @@ GType purple_protocol_get_type(void);
  */
 const char *purple_protocol_get_id(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the translated name of a protocol.
  *
  * @param protocol The protocol.
@@ -647,7 +646,7 @@ const char *purple_protocol_get_id(const PurpleProtocol *protocol);
  */
 const char *purple_protocol_get_name(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the options of a protocol.
  *
  * @param protocol The protocol.
@@ -656,7 +655,7 @@ const char *purple_protocol_get_name(const PurpleProtocol *protocol);
  */
 PurpleProtocolOptions purple_protocol_get_options(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the user splits of a protocol.
  *
  * @param protocol The protocol.
@@ -665,7 +664,7 @@ PurpleProtocolOptions purple_protocol_get_options(const PurpleProtocol *protocol
  */
 GList *purple_protocol_get_user_splits(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the protocol options of a protocol.
  *
  * @param protocol The protocol.
@@ -674,7 +673,7 @@ GList *purple_protocol_get_user_splits(const PurpleProtocol *protocol);
  */
 GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the icon spec of a protocol.
  *
  * @param protocol The protocol.
@@ -683,7 +682,7 @@ GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
  */
 PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protocol);
 
-/** TODO
+/**
  * Returns the whiteboard ops of a protocol.
  *
  * @param protocol The protocol.
@@ -692,211 +691,6 @@ PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protoco
  */
 PurpleWhiteboardPrplOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
 
-/**
- * Notifies Purple that our account's idle state and time have changed.
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account.
- * @param idle      The user's idle state.
- * @param idle_time The user's idle time.
- */
-void purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,
-                                      time_t idle_time);
-
-/**
- * Notifies Purple of our account's log-in time.
- *
- * This is meant to be called from protocols.
- *
- * @param account    The account the user is on.
- * @param login_time The user's log-in time.
- */
-void purple_protocol_got_account_login_time(PurpleAccount *account,
-                                            time_t login_time);
-
-/**
- * Notifies Purple that our account's status has changed.
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account the user is on.
- * @param status_id The status ID.
- * @param ...       A NULL-terminated list of attribute IDs and values,
- *                  beginning with the value for @a attr_id.
- */
-void purple_protocol_got_account_status(PurpleAccount *account,
-                                        const char *status_id, ...)
-                                        G_GNUC_NULL_TERMINATED;
-
-/**
- * Notifies Purple that our account's actions have changed. This is only
- * called after the initial connection. Emits the account-actions-changed
- * signal.
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account.
- *
- * @see account-actions-changed
- */
-void purple_protocol_got_account_actions(PurpleAccount *account);
-
-/**
- * Notifies Purple that a buddy's idle state and time have changed.
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account the user is on.
- * @param name      The name of the buddy.
- * @param idle      The user's idle state.
- * @param idle_time The user's idle time.  This is the time at
- *                  which the user became idle, in seconds since
- *                  the epoch.  If the protocol does not know this value
- *                  then it should pass 0.
- */
-void purple_protocol_got_user_idle(PurpleAccount *account, const char *name,
-                                   gboolean idle, time_t idle_time);
-
-/**
- * Notifies Purple of a buddy's log-in time.
- *
- * This is meant to be called from protocols.
- *
- * @param account    The account the user is on.
- * @param name       The name of the buddy.
- * @param login_time The user's log-in time.
- */
-void purple_protocol_got_user_login_time(PurpleAccount *account,
-                                         const char *name, time_t login_time);
-
-/**
- * Notifies Purple that a buddy's status has been activated.
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account the user is on.
- * @param name      The name of the buddy.
- * @param status_id The status ID.
- * @param ...       A NULL-terminated list of attribute IDs and values,
- *                  beginning with the value for @a attr_id.
- */
-void purple_protocol_got_user_status(PurpleAccount *account, const char *name,
-                                     const char *status_id, ...)
-                                     G_GNUC_NULL_TERMINATED;
-
-/**
- * Notifies libpurple that a buddy's status has been deactivated
- *
- * This is meant to be called from protocols.
- *
- * @param account   The account the user is on.
- * @param name      The name of the buddy.
- * @param status_id The status ID.
- */
-void purple_protocol_got_user_status_deactive(PurpleAccount *account,
-                                              const char *name,
-                                              const char *status_id);
-
-/**
- * Informs the server that our account's status changed.
- *
- * @param account    The account the user is on.
- * @param old_status The previous status.
- * @param new_status The status that was activated, or deactivated
- *                   (in the case of independent statuses).
- */
-void purple_protocol_change_account_status(PurpleAccount *account,
-                                           PurpleStatus *old_status,
-                                           PurpleStatus *new_status);
-
-/**
- * Retrieves the list of stock status types from a protocol.
- *
- * @param account The account the user is on.
- * @param presence The presence for which we're going to get statuses
- *
- * @return List of statuses
- */
-GList *purple_protocol_get_statuses(PurpleAccount *account,
-                                    PurplePresence *presence);
-
-/**
- * Send an attention request message.
- *
- * @param gc The connection to send the message on.
- * @param who Whose attention to request.
- * @param type_code An index into the protocol's attention_types list
- *                  determining the type of the attention request command to
- *                  send. 0 if protocol only defines one (for example, Yahoo and
- *                  MSN), but some protocols define more (MySpaceIM).
- *
- * Note that you can't send arbitrary PurpleAttentionType's, because there is
- * only a fixed set of attention commands.
- */
-void purple_protocol_send_attention(PurpleConnection *gc, const char *who,
-                                    guint type_code);
-
-/**
- * Process an incoming attention message.
- *
- * @param gc The connection that received the attention message.
- * @param who Who requested your attention.
- * @param type_code An index into the protocol's attention_types list
- *                  determining the type of the attention request command to
- *                  send.
- */
-void purple_protocol_got_attention(PurpleConnection *gc, const char *who,
-                                   guint type_code);
-
-/**
- * Process an incoming attention message in a chat.
- *
- * @param gc The connection that received the attention message.
- * @param id The chat id.
- * @param who Who requested your attention.
- * @param type_code An index into the protocol's attention_types list
- *                  determining the type of the attention request command to
- *                  send.
- */
-void purple_protocol_got_attention_in_chat(PurpleConnection *gc, int id,
-                                           const char *who, guint type_code);
-
-/**
- * Determines if the contact supports the given media session type.
- *
- * @param account The account the user is on.
- * @param who The name of the contact to check capabilities for.
- *
- * @return The media caps the contact supports.
- */
-PurpleMediaCaps purple_protocol_get_media_caps(PurpleAccount *account,
-                                               const char *who);
-
-/**
- * Initiates a media session with the given contact.
- *
- * @param account The account the user is on.
- * @param who The name of the contact to start a session with.
- * @param type The type of media session to start.
- *
- * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media
- *         session or stream will be successfully created)
- */
-gboolean purple_protocol_initiate_media(PurpleAccount *account,
-                                        const char *who,
-                                        PurpleMediaSessionType type);
-
-/**
- * Signals that the protocol received capabilities for the given contact.
- *
- * This function is intended to be used only by protocols.
- *
- * @param account The account the user is on.
- * @param who The name of the contact for which capabilities have been received.
- */
-void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
-
 /*@}*/
 
 /* TODO */
@@ -904,6 +698,11 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 /** @name Protocol Interface API                                          */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the protocol interface.
+ */
+GType purple_protocol_iface_get_type(void);
 
 /** @copydoc  _PurpleProtocolInterface::get_actions */
 GList *purple_protocol_iface_get_actions(PurpleProtocol *, PurpleConnection *);
@@ -1056,12 +855,8 @@ void purple_protocol_iface_register_user(PurpleProtocol *, PurpleAccount *);
 
 /** @copydoc  _PurpleProtocolInterface::unregister_user */
 void purple_protocol_iface_unregister_user(PurpleProtocol *, PurpleAccount *,
-                                     PurpleAccountUnregistrationCb cb,
-                                     void *user_data);
-
-/** @copydoc  _PurpleProtocolInterface::get_cb_info */
-void purple_protocol_iface_get_cb_info(PurpleProtocol *, PurpleConnection *,
-                                       int, const char *who);
+                                           PurpleAccountUnregistrationCb cb,
+                                           void *user_data);
 
 /** @copydoc  _PurpleProtocolInterface::alias_buddy */
 void purple_protocol_iface_alias_buddy(PurpleProtocol *, PurpleConnection *,
@@ -1122,8 +917,7 @@ void purple_protocol_iface_roomlist_cancel(PurpleProtocol *,
                                            PurpleRoomlist *list);
 
 /** @copydoc  _PurpleProtocolInterface::roomlist_expand_category */
-void purple_protocol_iface_roomlist_expand_category(
-                                                  PurpleProtocol *,
+void purple_protocol_iface_roomlist_expand_category(PurpleProtocol *,
                                                   PurpleRoomlist *list,
                                                   PurpleRoomlistRoom *category);
 
@@ -1162,8 +956,7 @@ GList *purple_protocol_iface_get_attention_types(PurpleProtocol *,
                                                  PurpleAccount *acct);
 
 /** @copydoc  _PurpleProtocolInterface::get_account_text_table */
-GHashTable *purple_protocol_iface_get_account_text_table(
-                                                        PurpleProtocol *,
+GHashTable *purple_protocol_iface_get_account_text_table(PurpleProtocol *,
                                                         PurpleAccount *account);
 
 /** @copydoc  _PurpleProtocolInterface::initiate_media */
@@ -1182,15 +975,14 @@ PurpleMood *purple_protocol_iface_get_moods(PurpleProtocol *,
                                             PurpleAccount *account);
 
 /** @copydoc  _PurpleProtocolInterface::set_public_alias */
-void purple_protocol_iface_set_public_alias(
-                                PurpleProtocol *, PurpleConnection *gc,
-                                const char *alias,
+void purple_protocol_iface_set_public_alias(PurpleProtocol *,
+                                PurpleConnection *gc, const char *alias,
                                 PurpleSetPublicAliasSuccessCallback success_cb,
                                 PurpleSetPublicAliasFailureCallback failure_cb);
 
 /** @copydoc  _PurpleProtocolInterface::get_public_alias */
-void purple_protocol_iface_get_public_alias(
-                                PurpleProtocol *, PurpleConnection *gc,
+void purple_protocol_iface_get_public_alias(PurpleProtocol *,
+                                PurpleConnection *gc,
                                 PurpleGetPublicAliasSuccessCallback success_cb,
                                 PurpleGetPublicAliasFailureCallback failure_cb);
 
