@@ -737,7 +737,7 @@ purple_protocol_action_get_type(void)
 PurpleProtocol *
 purple_protocols_find(const char *id)
 {
-	g_return_if_fail(protocols != NULL && id != NULL);
+	g_return_val_if_fail(protocols != NULL && id != NULL, NULL);
 
 	return g_hash_table_lookup(protocols, id);
 }
