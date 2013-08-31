@@ -87,7 +87,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 		return NULL;
 
 	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	if (!protocol->list_icon)
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon))
 		return NULL;
 
 	protocol_name = g_ascii_strup(purple_protocol_iface_list_icon(protocol, account, NULL), -1);
@@ -1231,7 +1231,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 		return NULL;
 
 	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	if (!protocol->list_icon)
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocoL, list_icon))
 		return NULL;
 
 	protocol_name = g_ascii_strup(purple_protocol_iface_list_icon(protocol, account, NULL), -1);
@@ -1791,7 +1791,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		return NULL;
 
 	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	if (!protocol->list_icon)
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon))
 		return NULL;
 
 	username = g_strdup(purple_normalize(account, purple_account_get_username(account)));

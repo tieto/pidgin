@@ -65,12 +65,9 @@ CODE:
 	if (!gc)
 		RETVAL = 0;
 	else {
-		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol(gc));
-		if (protocol && protocol->send_raw != NULL) {
+		protocol = purple_connection_get_protocol(gc);
+		if (protocol)
 			RETVAL = purple_protocol_iface_send_raw(protocol, gc, str, strlen(str));
-		} else {
-			RETVAL = 0;
-		}
 	}
 OUTPUT:
 	RETVAL

@@ -339,9 +339,9 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 
 			chat = find_chat_for_conversation(conv);
 			if (chat == NULL) {
-				PurpleProtocol *info = purple_connection_get_protocol(gc);
-				if (info->chat_info_defaults != NULL)
-					comps = info->chat_info_defaults(gc, purple_conversation_get_name(conv));
+				PurpleProtocol *protocol = purple_connection_get_protocol(gc);
+				comps = purple_protocol_iface_chat_info_defaults(protocol, gc,
+						purple_conversation_get_name(conv));
 			} else {
 				comps = purple_chat_get_components(chat);
 			}
@@ -636,10 +636,10 @@ gg_create_menu(FinchConv *ggc)
 	if (PURPLE_IS_IM_CONVERSATION(ggc->active_conv)) {
 		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
 		PurpleConnection *gc = purple_account_get_connection(account);
-		PurpleProtocol *pinfo =
+		PurpleProtocol *protocol =
 			gc ? purple_connection_get_protocol(gc) : NULL;
 
-		if (pinfo && pinfo->get_info) {
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_info)) {
 			item = gnt_menuitem_new(_("Get Info"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, get_info_cb, ggc);
@@ -649,9 +649,10 @@ gg_create_menu(FinchConv *ggc)
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
 
-		if (pinfo && pinfo->send_file &&
-				(!pinfo->can_receive_file ||
-					pinfo->can_receive_file(gc, purple_conversation_get_name(ggc->active_conv)))) {
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file) &&
+				(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+					purple_protocol_iface_can_receive_file(protocol, gc,
+					purple_conversation_get_name(ggc->active_conv)))) {
 			item = gnt_menuitem_new(_("Send File"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, send_file_cb, ggc);
@@ -693,7 +694,7 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurpleProtocol *protocol = NULL;
-	char *name, *realname;
+	char *name, *realname = NULL;
 
 	if (!gc) {
 		purple_conversation_write(fc->active_conv, NULL, _("You are not connected."),
@@ -704,11 +705,10 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 	name = gnt_tree_get_selection_data(GNT_TREE(widget));
 
 	protocol = purple_connection_get_protocol(gc);
-	if (protocol && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, get_cb_real_name))
+	if (protocol)
 		realname = purple_protocol_iface_get_cb_real_name(protocol, gc, purple_chat_conversation_get_id(
 				PURPLE_CHAT_CONVERSATION(fc->active_conv)), name);
-	else
-		realname = NULL;
+
 	purple_im_conversation_new(account, realname ? realname : name);
 	g_free(realname);
 }
