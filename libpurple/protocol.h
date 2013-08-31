@@ -524,8 +524,12 @@ struct _PurpleProtocolInterface
 };
 
 /**
- * PURPLE_PROTOCOL_DEFINE:
- *
+ * Returns TRUE if a protocol implements a function, FALSE otherwise.
+ */
+#define PURPLE_PROTOCOL_IMPLEMENTS(protocol,func) \
+	(PURPLE_PROTOCOL_GET_INTERFACE(protocol)->func != NULL)
+
+/**
  * Defines a protocol type in a plugin (given as a PurplePlugin *) by using the
  * CamelCase type name of the protocol and the function prefix for the
  * *_get_type(), *_base_init(), *_base_finalize() and *_interface_init()
@@ -554,8 +558,6 @@ struct _PurpleProtocolInterface
 #endif
 
 /**
- * PURPLE_PROTOCOL_DEFINE_STATIC:
- *
  * Defines a protocol type statically using the type name, function prefix,
  * base type and type flags.
  */
@@ -583,8 +585,6 @@ struct _PurpleProtocolInterface
 	}
 
 /**
- * PURPLE_PROTOCOL_DEFINE_DYNAMIC:
- *
  * Defines a protocol type dynamically using the plugin, type name,
  * function prefix, base type and type flags.
  */

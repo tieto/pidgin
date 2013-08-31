@@ -1023,7 +1023,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 	gc = purple_account_get_connection(account);
 	protocol = purple_connection_get_protocol_info(gc);
 
-	if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->set_public_alias)
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_public_alias))
 		purple_protocol_iface_set_public_alias(protocol, gc, alias, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
@@ -1061,7 +1061,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 	gc = purple_account_get_connection(account);
 	protocol = purple_connection_get_protocol_info(gc);
 
-	if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->get_public_alias)
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_public_alias))
 		purple_protocol_iface_get_public_alias(protocol, gc, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
@@ -2243,9 +2243,9 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *m
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->add_buddies)
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, add_buddies))
 			purple_protocol_iface_add_buddies(protocol, gc, buddies, groups, message);
-		else if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->add_buddy) {
+		else if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
@@ -2283,7 +2283,7 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 		protocol = purple_connection_get_protocol_info(gc);
 
 	if (protocol) {
-		if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->remove_buddies)
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, remove_buddies))
 			purple_protocol_iface_remove_buddies(protocol, gc, buddies, groups);
 		else {
 			GList *curb = buddies;
@@ -2889,7 +2889,7 @@ purple_account_constructed(GObject *object)
 		return;
 	}
 
-	if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->status_types != NULL)
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, status_types))
 		purple_account_set_status_types(account,
 				purple_protocol_iface_status_types(protocol, account));
 

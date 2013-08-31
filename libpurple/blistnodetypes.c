@@ -1122,7 +1122,7 @@ const char *purple_chat_get_name_only(PurpleChat *chat)
 
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(priv->account));
 
-	if (PURPLE_PROTOCOL_GET_INTERFACE(protocol)->chat_info) {
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_info)) {
 		PurpleProtocolChatEntry *pce;
 		GList *parts = purple_protocol_iface_chat_info(protocol, purple_account_get_connection(priv->account));
 		pce = parts->data;
@@ -1534,7 +1534,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 					buddies = g_list_append(buddies, (PurpleBlistNode *)buddy);
 			}
 
-			if(PURPLE_PROTOCOL_GET_INTERFACE(protocol)->rename_group) {
+			if(PURPLE_PROTOCOL_IMPLEMENTS(protocol, rename_group)) {
 				purple_protocol_iface_rename_group(protocol, gc, old_name, source, buddies);
 			} else {
 				GList *cur, *groups = NULL;

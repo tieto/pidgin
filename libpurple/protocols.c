@@ -445,7 +445,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	g_return_if_fail(who != NULL);
 
 	protocol = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
-	g_return_if_fail(PURPLE_PROTOCOL_GET_INTERFACE(protocol)->send_attention != NULL);
+	g_return_if_fail(PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention));
 
 	mtime = time(NULL);
 
