@@ -556,7 +556,7 @@ pidgin_create_protocol_icon_from_protocol(PurpleProtocol *protocol, PidginPrplIc
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
-	if (protocol->list_icon == NULL)
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon))
 		return NULL;
 
 	protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
@@ -917,16 +917,10 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 	}
 
 	protocol = purple_connection_get_protocol(conn);
-	if (protocol != NULL && protocol->get_cb_real_name)
+	if (protocol != NULL)
 		who = purple_protocol_iface_get_cb_real_name(protocol, conn, chat, name);
-	if (protocol == NULL || protocol->get_cb_info == NULL) {
-		pidgin_retrieve_user_info(conn, who ? who : name);
-		g_free(who);
-		return;
-	}
 
-	show_retrieveing_info(conn, who ? who : name);
-	purple_protocol_iface_get_cb_info(protocol, conn, chat, name);
+	pidgin_retrieve_user_info(conn, who ? who : name);
 	g_free(who);
 }
 
@@ -1492,9 +1486,9 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			if (protocol && purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
 
-			if (protocol && protocol->can_receive_file)
+			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file))
 				ft = purple_protocol_iface_can_receive_file(protocol, gc, who);
-			else if (protocol && protocol->send_file)
+			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file))
 				ft = TRUE;
 
 			if (im && ft)

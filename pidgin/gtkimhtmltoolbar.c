@@ -1601,6 +1601,6 @@ void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	 for the time being it is always disabled for chats */
 	gtk_widget_set_sensitive(toolbar->attention,
 		conv && protocol && PURPLE_IS_IM_CONVERSATION(conv) &&
-		protocol->send_attention != NULL);
+		PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention));
 }
 

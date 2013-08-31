@@ -494,9 +494,12 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ICON_SEL:
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
+				PurpleBuddyIconSpec *icon_spec = NULL;
 				PurpleProtocol *protocol =
 						purple_protocols_find(purple_account_get_protocol_id(statusbox->account));
-				if (protocol && purple_protocol_get_icon_spec(protocol).format != NULL)
+				if (protocol)
+					icon_spec = purple_protocol_get_icon_spec(protocol);
+				if (icon_spec && icon_spec->format != NULL)
 					setup_icon_box(statusbox);
 			} else {
 				setup_icon_box(statusbox);
@@ -1448,11 +1451,14 @@ static void
 buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
 	PurpleStoredImage *img = NULL;
+	PurpleBuddyIconSpec *icon_spec = NULL;
 
 	if (box->account) {
 		PurpleProtocol *protocol =
 				purple_protocols_find(purple_account_get_protocol_id(box->account));
-		if (protocol && purple_protocol_get_icon_spec(protocol).format) {
+		if (protocol)
+			icon_spec = purple_protocol_get_icon_spec(protocol);
+		if (icon_spec && icon_spec->format) {
 			gpointer data = NULL;
 			size_t len = 0;
 			if (filename)
@@ -1475,9 +1481,10 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			PurpleAccount *account = accounts->data;
 			PurpleProtocol *protocol =
 					purple_protocols_find(purple_account_get_protocol_id(account));
-			if (protocol != NULL &&
-			    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
-			    purple_protocol_get_icon_spec(protocol).format) {
+			if (protocol)
+				icon_spec = purple_protocol_get_icon_spec(protocol);
+			if (icon_spec && icon_spec->format &&
+			    purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 				gpointer data = NULL;
 				size_t len = 0;
 				if (filename)

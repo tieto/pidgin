@@ -1633,7 +1633,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 	 for the time being it is always disabled for chats */
 	gtk_action_set_sensitive(priv->attention,
 		conv && protocol && PURPLE_IS_IM_CONVERSATION(conv) &&
-		protocol->send_attention != NULL);
+		PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention));
 
 	gtk_action_set_sensitive(priv->smiley,
 		(gboolean)pidgin_themes_get_proto_smileys(priv->sml));
