@@ -496,7 +496,7 @@ void pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 void pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who);
 
 /**
- * Convenience wrapper for purple_buddy_icon_get_scale_size
+ * Convenience wrapper for purple_buddy_icon_spec_get_scaled_size
  */
 void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height);
 

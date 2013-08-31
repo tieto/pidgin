@@ -1610,7 +1610,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec,
 	if ((spec == NULL) || !(spec->scale_rules & rules))
 		return;
 
-	purple_buddy_icon_get_scale_size(spec, width, height);
+	purple_buddy_icon_spec_get_scaled_size(spec, width, height);
 
 	/* and now for some arbitrary sanity checks */
 	if(*width > 100)
@@ -2333,7 +2333,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 		(orig_width < spec->min_width || orig_width > spec->max_width ||
 		 orig_height < spec->min_height || orig_height > spec->max_height))
 	{
-		purple_buddy_icon_get_scale_size(spec, &new_width, &new_height);
+		purple_buddy_icon_spec_get_scaled_size(spec, &new_width, &new_height);
 
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = gdk_pixbuf_scale_simple(original, new_width, new_height, GDK_INTERP_HYPER);

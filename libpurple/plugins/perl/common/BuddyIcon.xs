@@ -40,7 +40,7 @@ purple_buddy_icon_get_extension(icon)
 	Purple::Buddy::Icon icon
 
 void
-purple_buddy_icon_get_scale_size(spec, width, height)
+purple_buddy_icon_spec_get_scaled_size(spec, width, height)
 	Purple::Buddy::Icon::Spec spec
 	int *width
 	int *height

@@ -2769,7 +2769,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	scale_height = orig_height = gdk_pixbuf_get_height(buf);
 
 	if (protocol && purple_protocol_get_icon_spec(protocol).scale_rules & PURPLE_ICON_SCALE_DISPLAY)
-		purple_buddy_icon_get_scale_size(purple_protocol_get_icon_spec(protocol), &scale_width, &scale_height);
+		purple_buddy_icon_spec_get_scaled_size(purple_protocol_get_icon_spec(protocol), &scale_width, &scale_height);
 
 	if (scaled || scale_height > 200 || scale_width > 200) {
 		GdkPixbuf *tmpbuf;
