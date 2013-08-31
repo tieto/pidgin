@@ -752,6 +752,22 @@ purple_protocols_add(GType protocol_type, GError **error)
 
 	protocol = g_object_new(protocol_type, NULL);
 
+	if (!PURPLE_IS_PROTOCOL(protocol)) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol type does not inherit PurpleProtocol"));
+
+		g_object_unref(protocol);
+		return NULL;
+	}
+
+	if (!PURPLE_IS_PROTOCOL_INTERFACE(protocol)) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol does not implement PurpleProtocolInterface"));
+
+		g_object_unref(protocol);
+		return NULL;
+	}
+
 	if (!purple_protocol_get_id(protocol)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Protocol does not provide an ID"));
