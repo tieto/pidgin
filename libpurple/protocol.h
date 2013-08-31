@@ -508,8 +508,10 @@ struct _PurpleProtocolInterface
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
 
 	/**
-	 * Gets the maximum message size in bytes for the protocol. It may
-	 * depend on connection-specific variables (like protocol version).
+	 * Gets the maximum message size in bytes for the conversation.
+	 *
+	 * It may depend on connection-specific or conversation-specific
+	 * variables, like channel or buddy's name length.
 	 *
 	 * This value is intended for plaintext message, the exact value may be
 	 * lower because of:
@@ -517,10 +519,12 @@ struct _PurpleProtocolInterface
 	 *  - formatting,
 	 *  - used special characters.
 	 *
-	 * @param gc The connection to query, or NULL to get safe minimum.
-	 * @return   Maximum message size, or 0 if unspecified or infinite.
+	 * @param conv The conversation to query, or NULL to get safe minimum
+	 *             for the protocol.
+	 *
+	 * @return     Maximum message size, 0 if unspecified, -1 for infinite.
 	 */
-	gsize (*get_max_message_size)(PurpleConnection *gc);
+	gssize (*get_max_message_size)(PurpleConversation *conv);
 };
 
 /**
@@ -986,8 +990,8 @@ void purple_protocol_iface_get_public_alias(PurpleProtocol *,
                                 PurpleGetPublicAliasFailureCallback failure_cb);
 
 /** @copydoc  _PurpleProtocolInterface::get_max_message_size */
-gsize purple_protocol_iface_get_max_message_size(PurpleProtocol *,
-                                                 PurpleConnection *gc);
+gssize purple_protocol_iface_get_max_message_size(PurpleProtocol *,
+                                                  PurpleConversation *conv);
 
 /*@}*/
 

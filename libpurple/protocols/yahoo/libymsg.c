@@ -5130,9 +5130,8 @@ GList *yahoo_attention_types(PurpleAccount *account)
 	return list;
 }
 
-gsize
-yahoo_get_max_message_size(PurpleConnection *gc)
+gssize
+yahoo_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
-	return 799;
+	return YAHOO_MAX_MESSAGE_LENGTH_CHARS;
 }

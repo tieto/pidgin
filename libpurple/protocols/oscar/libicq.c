@@ -42,10 +42,10 @@ icq_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static gsize
-icq_get_max_message_size(PurpleConnection *gc)
+static gssize
+icq_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* XXX: got from pidgin-otr - verify and document it */
 	return 2346;
 }
 

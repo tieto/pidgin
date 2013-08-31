@@ -555,16 +555,6 @@ void purple_connection_update_last_received(PurpleConnection *gc)
 	priv->last_received = time(NULL);
 }
 
-gsize
-purple_connection_get_max_message_size(PurpleConnection *gc)
-{
-	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
-
-	g_return_val_if_fail(priv != NULL, 0);
-
-	return purple_protocol_iface_get_max_message_size(priv->protocol, gc);
-}
-
 /**************************************************************************
  * GBoxed code
  **************************************************************************/

@@ -5434,10 +5434,10 @@ oscar_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-gsize
-oscar_get_max_message_size(PurpleConnection *gc)
+gssize
+oscar_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* XXX: got from pidgin-otr - verify and document it */
 	return 2343;
 }
 

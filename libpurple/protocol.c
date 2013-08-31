@@ -723,10 +723,10 @@ purple_protocol_iface_get_public_alias(PurpleProtocol *protocol,
 	                     failure_cb);
 }
 
-gsize
+gssize
 purple_protocol_iface_get_max_message_size(PurpleProtocol *protocol,
-                                           PurpleConnection *gc)
+                                           PurpleConversation *conv)
 {
-	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, get_max_message_size, gc);
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, get_max_message_size, conv);
 }
 
