@@ -170,6 +170,7 @@ static PurpleConnectionUiOps ops =
 	finch_connection_report_disconnect,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 
