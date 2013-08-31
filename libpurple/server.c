@@ -47,9 +47,7 @@ serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState sta
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->send_typing)
-			return purple_protocol_iface_send_typing(protocol, gc, name, state);
+		return purple_protocol_iface_send_typing(protocol, gc, name, state);
 	}
 
 	return 0;
@@ -135,7 +133,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 	im = purple_conversations_find_im_with_account(name, account);
 
-	if (protocol->send_im)
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_im))
 		val = purple_protocol_iface_send_im(protocol, gc, name, message, flags);
 
 	/*
@@ -164,9 +162,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->get_info)
-			purple_protocol_iface_get_info(protocol, gc, name);
+		purple_protocol_iface_get_info(protocol, gc, name);
 	}
 }
 
@@ -178,7 +174,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
 
-		if (protocol->set_info) {
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_info)) {
 			account = purple_connection_get_account(gc);
 
 			if (purple_signal_emit_return_1(purple_accounts_get_handle(),
@@ -210,11 +206,9 @@ void serv_alias_buddy(PurpleBuddy *b)
 
 			if (gc) {
 				protocol = purple_connection_get_protocol(gc);
-
-				if (protocol->alias_buddy)
-					purple_protocol_iface_alias_buddy(protocol, gc,
-							purple_buddy_get_name(b),
-							purple_buddy_get_local_alias(b));
+				purple_protocol_iface_alias_buddy(protocol, gc,
+						purple_buddy_get_name(b),
+						purple_buddy_get_local_alias(b));
 			}
 		}
 	}
@@ -293,18 +287,16 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 {
 	PurpleProtocol *protocol;
 	PurpleAttentionType* attn;
-	GList *(*get_attention_types)(PurpleAccount *);
 
 	g_return_val_if_fail(account != NULL, NULL);
 
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
-	get_attention_types = protocol->get_attention_types;
-	if (get_attention_types) {
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_attention_types)) {
 		GList *attention_types;
 
-		attention_types = get_attention_types(account);
+		attention_types = purple_protocol_iface_get_attention_types(protocol, account);
 		attn = (PurpleAttentionType *)g_list_nth_data(attention_types, type_code);
 	} else {
 		attn = NULL;
@@ -336,11 +328,9 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->group_buddy)
-			purple_protocol_iface_group_buddy(protocol, gc, purple_buddy_get_name(b),
-					purple_group_get_name(og),
-					purple_group_get_name(ng));
+		purple_protocol_iface_group_buddy(protocol, gc, purple_buddy_get_name(b),
+				purple_group_get_name(og),
+				purple_group_get_name(ng));
 	}
 }
 
@@ -350,9 +340,7 @@ void serv_add_permit(PurpleConnection *gc, const char *name)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->add_permit)
-			purple_protocol_iface_add_permit(protocol, gc, name);
+		purple_protocol_iface_add_permit(protocol, gc, name);
 	}
 }
 
@@ -362,9 +350,7 @@ void serv_add_deny(PurpleConnection *gc, const char *name)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->add_deny)
-			purple_protocol_iface_add_deny(protocol, gc, name);
+		purple_protocol_iface_add_deny(protocol, gc, name);
 	}
 }
 
@@ -374,9 +360,7 @@ void serv_rem_permit(PurpleConnection *gc, const char *name)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->rem_permit)
-			purple_protocol_iface_rem_permit(protocol, gc, name);
+		purple_protocol_iface_rem_permit(protocol, gc, name);
 	}
 }
 
@@ -386,9 +370,7 @@ void serv_rem_deny(PurpleConnection *gc, const char *name)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->rem_deny)
-			purple_protocol_iface_rem_deny(protocol, gc, name);
+		purple_protocol_iface_rem_deny(protocol, gc, name);
 	}
 }
 
@@ -405,8 +387,7 @@ void serv_set_permit_deny(PurpleConnection *gc)
 		 * in the prefs. In either case you should probably be resetting and
 		 * resending the permit/deny info when you get this.
 		 */
-		if (protocol->set_permit_deny)
-			purple_protocol_iface_set_permit_deny(protocol, gc);
+		purple_protocol_iface_set_permit_deny(protocol, gc);
 	}
 }
 
@@ -416,9 +397,7 @@ void serv_join_chat(PurpleConnection *gc, GHashTable *data)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->join_chat)
-			purple_protocol_iface_join_chat(protocol, gc, data);
+		purple_protocol_iface_join_chat(protocol, gc, data);
 	}
 }
 
@@ -429,9 +408,7 @@ void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->reject_chat)
-			purple_protocol_iface_reject_chat(protocol, gc, data);
+		purple_protocol_iface_reject_chat(protocol, gc, data);
 	}
 }
 
@@ -452,7 +429,7 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
 	purple_signal_emit(purple_conversations_get_handle(), "chat-inviting-user",
 					 chat, name, &buffy);
 
-	if (protocol && protocol->chat_invite)
+	if (protocol)
 		purple_protocol_iface_chat_invite(protocol, gc, id, buffy, name);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-invited-user",
@@ -471,9 +448,7 @@ void serv_chat_leave(PurpleConnection *gc, int id)
 	PurpleProtocol *protocol;
 
 	protocol = purple_connection_get_protocol(gc);
-
-	if (protocol->chat_leave)
-		purple_protocol_iface_chat_leave(protocol, gc, id);
+	purple_protocol_iface_chat_leave(protocol, gc, id);
 }
 
 void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
@@ -482,9 +457,7 @@ void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-
-		if (protocol->chat_whisper)
-			purple_protocol_iface_chat_whisper(protocol, gc, id, who, message);
+		purple_protocol_iface_chat_whisper(protocol, gc, id, who, message);
 	}
 }
 
@@ -494,7 +467,7 @@ int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 
 	protocol = purple_connection_get_protocol(gc);
 
-	if (protocol->chat_send)
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_send))
 		return purple_protocol_iface_chat_send(protocol, gc, id, message, flags);
 
 	return -EINVAL;
@@ -891,9 +864,9 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
 
-		if (protocol->send_file &&
-				(!protocol->can_receive_file
-						|| purple_protocol_iface_can_receive_file(protocol, gc, who)))
+		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+				purple_protocol_iface_can_receive_file(protocol, gc, who))
+
 			purple_protocol_iface_send_file(protocol, gc, who, file);
 	}
 }

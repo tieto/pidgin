@@ -266,10 +266,10 @@ int main(int argc, char *argv[])
 
 	iter = purple_protocols_get_all();
 	for (i = 0; iter; iter = iter->next) {
-		PurpleProtocol *info = iter->data;
-		if (info && info->name) {
-			printf("\t%d: %s\n", i++, info->name);
-			names = g_list_append(names, (gpointer)info->id);
+		PurpleProtocol *protocol = iter->data;
+		if (protocol && purple_protocol_get_name(protocol)) {
+			printf("\t%d: %s\n", i++, purple_protocol_get_name(protocol));
+			names = g_list_append(names, (gpointer)purple_protocol_get_id(protocol));
 		}
 	}
 	printf("Select the protocol [0-%d]: ", i-1);

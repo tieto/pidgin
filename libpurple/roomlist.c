@@ -214,7 +214,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 
 	protocol = purple_connection_get_protocol(gc);
 
-	if(protocol && protocol->roomlist_get_list)
+	if(protocol)
 		return purple_protocol_iface_roomlist_get_list(protocol, gc);
 
 	return NULL;
@@ -234,7 +234,7 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 	if(gc)
 		protocol = purple_connection_get_protocol(gc);
 
-	if(protocol && protocol->roomlist_cancel)
+	if(protocol)
 		purple_protocol_iface_roomlist_cancel(protocol, list);
 }
 
@@ -253,7 +253,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	if(gc)
 		protocol = purple_connection_get_protocol(gc);
 
-	if(protocol && protocol->roomlist_expand_category)
+	if(protocol)
 		purple_protocol_iface_roomlist_expand_category(protocol, list, category);
 }
 

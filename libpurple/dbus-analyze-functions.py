@@ -31,6 +31,9 @@ excluded = [\
     "purple_account_set_register_callback",
     "purple_account_unregister",
 
+    # Similar to the above:
+    "purple_protocol_iface_unregister_user",
+
     # Similar to the above, again
     "purple_menu_action_new",
     "purple_menu_action_set_callback",
