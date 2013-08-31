@@ -27,6 +27,8 @@
 #ifndef _PURPLE_PROTOCOLS_H_
 #define _PURPLE_PROTOCOLS_H_
 
+#define PURPLE_PROTOCOLS_DOMAIN  (g_quark_from_static_string("protocols"))
+
 #define PURPLE_TYPE_PROTOCOL_ACTION  (purple_protocol_action_get_type())
 
 /** @copydoc _PurpleProtocolAction */
@@ -564,10 +566,12 @@ PurpleProtocol *purple_protocols_find(const char *id);
  * Adds a protocol to the list of protocols.
  *
  * @param protocol_type  The type of the protocol to add.
+ * @param error  Return location for a #GError or @c NULL. If provided, this
+ *               will be set to the reason if adding fails.
  *
  * @return The protocol instance if the protocol was added, else @c NULL.
  */
-PurpleProtocol *purple_protocols_add(GType protocol_type);
+PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
 
 /**
  * Removes a protocol from the list of protocols. This will disconnect all
@@ -575,10 +579,12 @@ PurpleProtocol *purple_protocols_add(GType protocol_type);
  * and protocol options.
  *
  * @param protocol  The protocol to remove.
- *
+ * @param error  Return location for a #GError or @c NULL. If provided, this
+ *               will be set to the reason if removing fails.
+
  * @return TRUE if the protocol was removed, else FALSE.
  */
-gboolean purple_protocols_remove(PurpleProtocol *protocol);
+gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);
 
 /**
  * Returns a list of all loaded protocols.

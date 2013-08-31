@@ -743,7 +743,7 @@ purple_protocols_find(const char *id)
 }
 
 PurpleProtocol *
-purple_protocols_add(GType protocol_type)
+purple_protocols_add(GType protocol_type, GError **error)
 {
 	PurpleProtocol *protocol;
 
@@ -751,7 +751,34 @@ purple_protocols_add(GType protocol_type)
 	                     protocol_type != G_TYPE_NONE, NULL);
 
 	protocol = g_object_new(protocol_type, NULL);
+
+	if (!purple_protocol_get_id(protocol)) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol does not provide an ID"));
+
+		g_object_unref(protocol);
+		return NULL;
+	}
+
 	if (purple_protocols_find(purple_protocol_get_id(protocol))) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("A protocol with the ID %s is already added."),
+		            purple_protocol_get_id(protocol));
+
+		g_object_unref(protocol);
+		return NULL;
+	}
+
+	/* Make sure the protocol implements the required functions */
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon) ||
+	    !PURPLE_PROTOCOL_IMPLEMENTS(protocol, login)     ||
+	    !PURPLE_PROTOCOL_IMPLEMENTS(protocol, close))
+	{
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol %s does not implement all the required "
+		            "functions (list_icon, login and close)"),
+		            purple_protocol_get_id(protocol));
+
 		g_object_unref(protocol);
 		return NULL;
 	}
@@ -761,10 +788,18 @@ purple_protocols_add(GType protocol_type)
 	return protocol;
 }
 
-gboolean purple_protocols_remove(PurpleProtocol *protocol)
+gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error)
 {
-	if (purple_protocols_find(purple_protocol_get_id(protocol)) == NULL)
+	g_return_val_if_fail(protocol != NULL, FALSE);
+	g_return_val_if_fail(purple_protocol_get_id(protocol) != NULL, FALSE);
+
+	if (purple_protocols_find(purple_protocol_get_id(protocol)) == NULL) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol %s is not added."),
+		            purple_protocol_get_id(protocol));
+
 		return FALSE;
+	}
 
 	g_hash_table_remove(protocols, purple_protocol_get_id(protocol));
 	return TRUE;
