@@ -175,7 +175,7 @@ purple_protocol_base_finalize(PurpleProtocolClass *klass)
 				klass->protocol_options);
 	}
 
-	purple_buddy_icon_spec_destroy(klass->icon_spec);
+	purple_buddy_icon_spec_free(klass->icon_spec);
 }
 
 GType

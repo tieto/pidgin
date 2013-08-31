@@ -49,24 +49,6 @@ typedef enum {
 	PURPLE_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
 } PurpleIconScaleRules;
 
-#define PURPLE_TYPE_BUDDY_ICON_SPEC  (purple_buddy_icon_spec_get_type())
-
-/**
- * A description of a Buddy Icon specification.  This tells Purple what kind of image file
- * it should give this protocol, and what kind of image file it should expect back.
- * Dimensions less than 1 should be ignored and the image not scaled.
- */
-typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
-
-#define PURPLE_TYPE_THUMBNAIL_SPEC  (purple_thumbnail_spec_get_type())
-
-/**
- * A description of a file transfer thumbnail specification.
- * This tells the UI if and what image formats the protocol support for file
- * transfer thumbnails.
- */
-typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
-
 /**
  * Represents an entry containing information that must be supplied by the
  * user when joining a chat.
@@ -168,26 +150,7 @@ typedef enum
 
 } PurpleProtocolOptions;
 
-/** @copydoc PurpleBuddyIconSpec */
-struct _PurpleBuddyIconSpec {
-	/** This is a comma-delimited list of image formats or @c NULL if icons
-	 *  are not supported.  Neither the core nor the protocol will actually
-	 *  check to see if the data it's given matches this; it's entirely up
-	 *  to the UI to do what it wants
-	 */
-	char *format;
-
-	int min_width;                     /**< Minimum width of this icon  */
-	int min_height;                    /**< Minimum height of this icon */
-	int max_width;                     /**< Maximum width of this icon  */
-	int max_height;                    /**< Maximum height of this icon */
-	size_t max_filesize;               /**< Maximum size in bytes */
-	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
-};
-
-#include "media.h"
 #include "protocol.h"
-#include "status.h"
 
 #define PURPLE_TYPE_PROTOCOL_CHAT_ENTRY  (purple_protocol_chat_entry_get_type())
 
@@ -220,7 +183,7 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the #PurpleAttentionType boxed structure.
  */
 GType purple_attention_type_get_type(void);
@@ -337,12 +300,12 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the #PurpleProtocolAction boxed structure.
  */
 GType purple_protocol_action_get_type(void);
 
-/** TODO A sanity check is needed
+/**
  * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
  * a list in the get_actions function of the protocol.
  *
@@ -352,7 +315,7 @@ GType purple_protocol_action_get_type(void);
 PurpleProtocolAction *purple_protocol_action_new(const char* label,
 		PurpleProtocolActionCallback callback);
 
-/** TODO A sanity check is needed
+/**
  * Frees a PurpleProtocolAction
  *
  * @param action The PurpleProtocolAction to free.
@@ -362,60 +325,11 @@ void purple_protocol_action_free(PurpleProtocolAction *action);
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy Icon Spec API                                             */
-/**************************************************************************/
-/*@{*/
-
-/** TODO
- * Returns the GType for the #PurpleBuddyIconSpec boxed structure.
- */
-GType purple_buddy_icon_spec_get_type(void);
-
-/** TODO
- * Creates a new #PurpleBuddyIconSpec instance.
- *
- * @param format        A comma-delimited list of image formats or @c NULL if
- *                      icons are not supported
- * @param min_width     Minimum width of an icon
- * @param min_height    Minimum height of an icon
- * @param max_width     Maximum width of an icon
- * @param max_height    Maximum height of an icon
- * @param max_filesize  Maximum file size in bytes
- * @param scale_rules   How to stretch this icon
- *
- * @return  A new buddy icon spec.
- */
-PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
-		int min_height, int max_width, int max_height, size_t max_filesize,
-		PurpleIconScaleRules scale_rules);
-
-/** TODO needed?
- * Destroys a #PurpleBuddyIconSpec instance.
- *
- * @param icon_spec  The icon spec to destroy.
- */
-void purple_buddy_icon_spec_destroy(PurpleBuddyIconSpec *icon_spec);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Thumbnail API                                                   */
-/**************************************************************************/
-/*@{*/
-
-/** TODO
- * Returns the GType for the #PurpleThumbnailSpec boxed structure.
- */
-GType purple_thumbnail_spec_get_type(void);
-
-/*@}*/
-
-/**************************************************************************/
 /** @name Protocol Chat Entry API                                         */
 /**************************************************************************/
 /*@{*/
 
-/** TODO
+/**
  * Returns the GType for the #PurpleProtocolChatEntry boxed structure.
  */
 GType purple_protocol_chat_entry_get_type(void);
@@ -639,14 +553,14 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 /**************************************************************************/
 /*@{*/
 
-/** TODO rename
+/**
  * Finds a protocol by ID.
  *
  * @param id The protocol's ID.
  */
-PurpleProtocol *purple_find_protocol_info(const char *id);
+PurpleProtocol *purple_protocols_find(const char *id);
 
-/** TODO A sanity check is needed
+/**
  * Adds a protocol to the list of protocols.
  *
  * @param protocol_type  The type of the protocol to add.
@@ -655,7 +569,7 @@ PurpleProtocol *purple_find_protocol_info(const char *id);
  */
 PurpleProtocol *purple_protocols_add(GType protocol_type);
 
-/** TODO A sanity check is needed
+/**
  * Removes a protocol from the list of protocols. This will disconnect all
  * connected accounts using this protocol, and free the protocol's user splits
  * and protocol options.
@@ -666,7 +580,7 @@ PurpleProtocol *purple_protocols_add(GType protocol_type);
  */
 gboolean purple_protocols_remove(PurpleProtocol *protocol);
 
-/** TODO A sanity check is needed
+/**
  * Returns a list of all loaded protocols.
  *
  * @constreturn A list of all loaded protocols.
@@ -685,7 +599,7 @@ GList *purple_protocols_get_all(void);
  */
 void purple_protocols_init(void);
 
-/** TODO Make protocols use this handle, instead of plugins handle
+/**
  * Returns the protocols subsystem handle.
  *
  * @return The protocols subsystem handle.

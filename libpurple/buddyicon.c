@@ -1103,7 +1103,55 @@ purple_buddy_icons_uninit()
 	cache_dir = NULL;
 }
 
-void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height)
+GType
+purple_buddy_icon_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleBuddyIcon",
+				(GBoxedCopyFunc)purple_buddy_icon_ref,
+				(GBoxedFreeFunc)purple_buddy_icon_unref);
+	}
+
+	return type;
+}
+
+PurpleBuddyIconSpec *
+purple_buddy_icon_spec_new(char *format, int min_width, int min_height,
+		int max_width, int max_height, size_t max_filesize,
+		PurpleIconScaleRules scale_rules)
+{
+	PurpleBuddyIconSpec *icon_spec;
+
+	icon_spec = g_new0(PurpleBuddyIconSpec, 1);
+
+	icon_spec->format       = format;
+	icon_spec->min_width    = min_width;
+	icon_spec->min_height   = min_height;
+	icon_spec->max_width    = max_width;
+	icon_spec->max_height   = max_height;
+	icon_spec->max_filesize = max_filesize;
+	icon_spec->scale_rules  = scale_rules;
+
+	return icon_spec;
+}
+
+static PurpleBuddyIconSpec *
+purple_buddy_icon_spec_copy(PurpleBuddyIconSpec *icon_spec)
+{
+	PurpleBuddyIconSpec *icon_spec_copy;
+
+	g_return_val_if_fail(icon_spec != NULL, NULL);
+
+	icon_spec_copy  = g_new0(PurpleBuddyIconSpec, 1);
+	*icon_spec_copy = *icon_spec;
+
+	return icon_spec_copy;
+}
+
+void purple_buddy_icon_spec_get_scaled_size(PurpleBuddyIconSpec *spec,
+		int *width, int *height)
 {
 	int new_width, new_height;
 
@@ -1133,14 +1181,14 @@ void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int
 }
 
 GType
-purple_buddy_icon_get_type(void)
+purple_buddy_icon_spec_get_type(void)
 {
 	static GType type = 0;
 
 	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleBuddyIcon",
-				(GBoxedCopyFunc)purple_buddy_icon_ref,
-				(GBoxedFreeFunc)purple_buddy_icon_unref);
+		type = g_boxed_type_register_static("PurpleBuddyIconSpec",
+				(GBoxedCopyFunc)purple_buddy_icon_spec_copy,
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;

@@ -144,8 +144,70 @@ purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type)
 	return type->unlocalized_name;
 }
 
+/**************************************************************************
+ * GBoxed code for PurpleAttentionType
+ **************************************************************************/
+
+static PurpleAttentionType *
+purple_attention_type_copy(PurpleAttentionType *attn)
+{
+	PurpleAttentionType *attn_copy;
+
+	g_return_val_if_fail(attn != NULL, NULL);
+
+	attn_copy  = g_new(PurpleAttentionType, 1);
+	*attn_copy = *attn;
+
+	return attn_copy;
+}
+
+GType
+purple_attention_type_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleAttentionType",
+				(GBoxedCopyFunc)purple_attention_type_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
+/**************************************************************************
+ * GBoxed code for PurpleProtocolChatEntry
+ **************************************************************************/
+
+static PurpleProtocolChatEntry *
+purple_protocol_chat_entry_copy(PurpleProtocolChatEntry *pce)
+{
+	PurpleProtocolChatEntry *pce_copy;
+
+	g_return_val_if_fail(pce != NULL, NULL);
+
+	pce_copy  = g_new(PurpleProtocolChatEntry, 1);
+	*pce_copy = *pce;
+
+	return pce_copy;
+}
+
+GType
+purple_protocol_chat_entry_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleProtocolChatEntry",
+				(GBoxedCopyFunc)purple_protocol_chat_entry_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 /**************************************************************************/
-/** @name Protocol Plugin API  */
+/** @name Protocol API                                                    */
 /**************************************************************************/
 void
 purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,
@@ -375,7 +437,7 @@ do_protocol_change_account_status(PurpleAccount *account,
 		 */
 		return;
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	if (protocol == NULL)
 		return;
@@ -444,7 +506,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(purple_connection_get_account(gc)));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(purple_connection_get_account(gc)));
 	g_return_if_fail(PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention));
 
 	mtime = time(NULL);
@@ -614,6 +676,10 @@ purple_protocol_got_media_caps(PurpleAccount *account, const char *name)
 #endif
 }
 
+/**************************************************************************/
+/** @name Protocol Action API                                             */
+/**************************************************************************/
+
 PurpleProtocolAction *
 purple_protocol_action_new(const char* label,
 		PurpleProtocolActionCallback callback)
@@ -640,11 +706,39 @@ purple_protocol_action_free(PurpleProtocolAction *action)
 }
 
 /**************************************************************************
+ * GBoxed code for PurpleProtocolAction
+ **************************************************************************/
+
+static PurpleProtocolAction *
+purple_protocol_action_copy(PurpleProtocolAction *action)
+{
+	g_return_val_if_fail(action != NULL, NULL);
+
+	return purple_protocol_action_new(action->label, action->callback);
+}
+
+GType
+purple_protocol_action_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleProtocolAction",
+				(GBoxedCopyFunc)purple_protocol_action_copy,
+				(GBoxedFreeFunc)purple_protocol_action_free);
+	}
+
+	return type;
+}
+
+/**************************************************************************
  * Protocols API
  **************************************************************************/
 PurpleProtocol *
-purple_find_protocol_info(const char *id)
+purple_protocols_find(const char *id)
 {
+	g_return_if_fail(protocols != NULL && id != NULL);
+
 	return g_hash_table_lookup(protocols, id);
 }
 
@@ -657,7 +751,7 @@ purple_protocols_add(GType protocol_type)
 	                     protocol_type != G_TYPE_NONE, NULL);
 
 	protocol = g_object_new(protocol_type, NULL);
-	if (purple_find_protocol_info(purple_protocol_get_id(protocol))) {
+	if (purple_protocols_find(purple_protocol_get_id(protocol))) {
 		g_object_unref(protocol);
 		return NULL;
 	}
@@ -669,7 +763,7 @@ purple_protocols_add(GType protocol_type)
 
 gboolean purple_protocols_remove(PurpleProtocol *protocol)
 {
-	if (purple_find_protocol_info(purple_protocol_get_id(protocol)) == NULL)
+	if (purple_protocols_find(purple_protocol_get_id(protocol)) == NULL)
 		return FALSE;
 
 	g_hash_table_remove(protocols, purple_protocol_get_id(protocol));
