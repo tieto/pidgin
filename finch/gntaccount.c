@@ -575,7 +575,7 @@ edit_account_continue(PurpleAccount *account,
 				((PurpleProtocol*)iter->data)->name);
 	}
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	if (account && protocol)
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), protocol);

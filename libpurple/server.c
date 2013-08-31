@@ -297,7 +297,7 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
 	get_attention_types = protocol->get_attention_types;

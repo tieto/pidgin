@@ -342,7 +342,7 @@ purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *acco
 	const char *target;
 	char *dir;
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 	if (!protocol)
 		return NULL;
 
@@ -1105,7 +1105,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 		for (account_iter = purple_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
 			PurpleProtocol *protocol;
 
-			protocol = purple_find_protocol_info(purple_account_get_protocol_id((PurpleAccount *)account_iter->data));
+			protocol = purple_protocols_find(purple_account_get_protocol_id((PurpleAccount *)account_iter->data));
 			if (!protocol)
 				continue;
 
@@ -1404,7 +1404,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	char *header;
 	char *escaped_from;
 	PurpleProtocol *protocol =
-			purple_find_protocol_info(purple_account_get_protocol_id(log->account));
+			purple_protocols_find(purple_account_get_protocol_id(log->account));
 	PurpleLogCommonLoggerData *data = log->logger_data;
 	gsize written = 0;
 
@@ -1559,7 +1559,7 @@ static gsize txt_logger_write(PurpleLog *log,
 {
 	char *date;
 	PurpleProtocol *protocol =
-			purple_find_protocol_info(purple_account_get_protocol_id(log->account));
+			purple_protocols_find(purple_account_get_protocol_id(log->account));
 	PurpleLogCommonLoggerData *data = log->logger_data;
 	char *stripped = NULL;
 

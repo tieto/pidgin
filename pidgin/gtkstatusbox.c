@@ -495,7 +495,7 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
 				PurpleProtocol *protocol =
-						purple_find_protocol_info(purple_account_get_protocol_id(statusbox->account));
+						purple_protocols_find(purple_account_get_protocol_id(statusbox->account));
 				if (protocol && purple_protocol_get_icon_spec(protocol).format != NULL)
 					setup_icon_box(statusbox);
 			} else {
@@ -1451,7 +1451,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 
 	if (box->account) {
 		PurpleProtocol *protocol =
-				purple_find_protocol_info(purple_account_get_protocol_id(box->account));
+				purple_protocols_find(purple_account_get_protocol_id(box->account));
 		if (protocol && purple_protocol_get_icon_spec(protocol).format) {
 			gpointer data = NULL;
 			size_t len = 0;
@@ -1474,7 +1474,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
 			PurpleProtocol *protocol =
-					purple_find_protocol_info(purple_account_get_protocol_id(account));
+					purple_protocols_find(purple_account_get_protocol_id(account));
 			if (protocol != NULL &&
 			    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
 			    purple_protocol_get_icon_spec(protocol).format) {

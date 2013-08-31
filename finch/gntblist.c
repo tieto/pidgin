@@ -1415,7 +1415,7 @@ static void showlog_cb(PurpleBlistNode *sel, PurpleBlistNode *node)
 		PurpleProtocol *protocol = NULL;
 		type = PURPLE_LOG_CHAT;
 		account = purple_chat_get_account(c);
-		protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+		protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 		if (protocol && protocol->get_chat_name) {
 			name = purple_protocol_iface_get_chat_name(protocol, purple_chat_get_components(c));
 		}
@@ -1737,7 +1737,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	purple_notify_user_info_add_pair_plaintext(user_info, _("Account"), tmp);
 	g_free(tmp);
 
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 	if (protocol && protocol->tooltip_text) {
 		purple_protocol_iface_tooltip_text(protocol, buddy, user_info, full);
 	}

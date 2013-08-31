@@ -3390,7 +3390,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 	if (account != NULL)
 	{
 		PurpleProtocol *protocol =
-				purple_find_protocol_info(purple_account_get_protocol_id(account));
+				purple_protocols_find(purple_account_get_protocol_id(account));
 
 		if (protocol != NULL && protocol->normalize)
 			ret = purple_protocol_iface_normalize(protocol, account, str);

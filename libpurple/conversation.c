@@ -528,7 +528,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	}
 
 	if (account != NULL) {
-		protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+		protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 		if (PURPLE_IS_IM_CONVERSATION(conv) ||
 			!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {

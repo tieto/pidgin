@@ -407,7 +407,7 @@ GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	if (id == NULL)
 		return def->smileys;
 
-	protocol = purple_find_protocol_info(id);
+	protocol = purple_protocols_find(id);
 
 	while (list) {
 		if (!strcmp(list->sml, "default"))

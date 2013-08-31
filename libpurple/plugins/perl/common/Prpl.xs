@@ -4,7 +4,7 @@ MODULE = Purple::Prpl  PACKAGE = Purple::Find  PREFIX = purple_find_
 PROTOTYPES: ENABLE
 
 Purple::Plugin
-purple_find_protocol_info(id)
+purple_protocols_find(id)
 	const char *id
 
 MODULE = Purple::Prpl  PACKAGE = Purple::Prpl  PREFIX = purple_protocol_

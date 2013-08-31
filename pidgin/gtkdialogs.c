@@ -912,7 +912,7 @@ pidgin_dialogs_im_name_validator(PurpleRequestField *field, gchar **errmsg,
 	gboolean valid;
 
 	account = purple_request_fields_get_account(fields, "account");
-	protocol = purple_find_protocol_info(purple_account_get_protocol_id(account));
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 	username = purple_request_fields_get_string(fields, "screenname");
 
 	valid = purple_validate(protocol, username);
